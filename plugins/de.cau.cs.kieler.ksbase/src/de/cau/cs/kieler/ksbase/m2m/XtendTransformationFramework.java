@@ -34,9 +34,8 @@ import org.eclipse.xtend.expression.EvaluationException;
 import org.eclipse.xtend.typesystem.emf.EcoreUtil2;
 import org.eclipse.xtend.typesystem.emf.EmfMetaModel;
 
-import de.cau.cs.kieler.core.model.CoreModelPlugin;
-import de.cau.cs.kieler.core.model.gmf.util.GmfModelingUtil;
-import de.cau.cs.kieler.core.model.m2m.TransformException;
+import de.cau.cs.kieler.ksbase.KSBasEPlugin;
+import de.cau.cs.kieler.ksbase.core.TransformException;
 
 /**
  * An implementation of the ITransformationFramework interface for the use with the Xtend framework.
@@ -94,7 +93,8 @@ public class XtendTransformationFramework implements ITransformationFramework {
             final String... parameter) {
         List<EObject> slist = null;
         if (parametersToMap == null) {
-            slist = GmfModelingUtil.getModelElementsFromSelection();
+            // FIXME
+            throw new RuntimeException("If you meet this error, this isn't dead code as expected!");
         } else {
             slist = new LinkedList<EObject>();
             slist.addAll(parametersToMap);
@@ -226,8 +226,8 @@ public class XtendTransformationFramework implements ITransformationFramework {
         String withFileExt = fileName;
 
         if (withFileExt.contains("." + XtendFile.FILE_EXTENSION)) {
-            withFileExt = withFileExt.substring(0,
-                    withFileExt.indexOf("." + XtendFile.FILE_EXTENSION));
+            withFileExt =
+                    withFileExt.substring(0, withFileExt.indexOf("." + XtendFile.FILE_EXTENSION));
         }
         xtendFacade = XtendFacade.create(withFileExt);
         // Register all meta models
@@ -278,7 +278,7 @@ public class XtendTransformationFramework implements ITransformationFramework {
                 throw new TransformException(e0);
             }
         } else {
-            CoreModelPlugin.getDefault().logError(
+            KSBasEPlugin.getDefault().logError(
                     "Could not execute transformation: Transformation not initalized properly");
         }
         initalized = false;
@@ -304,8 +304,8 @@ public class XtendTransformationFramework implements ITransformationFramework {
                 Reader reader = new InputStreamReader(fileName.openStream());
                 Object o = parser.parse(reader, "features.ext"); //$NON-NLS-1$
                 if (o != null) {
-                    LinkedList<AbstractTransformation> transformations
-                            = new LinkedList<AbstractTransformation>();
+                    LinkedList<AbstractTransformation> transformations =
+                            new LinkedList<AbstractTransformation>();
                     XtendFile xtFile = (XtendFile) o;
                     for (Extension ext : xtFile.getExtensions()) {
                         // Only read in-place methods
@@ -328,10 +328,10 @@ public class XtendTransformationFramework implements ITransformationFramework {
                     return transformations;
                 }
             } catch (SecurityException sec) {
-                CoreModelPlugin.getDefault().logError(
+                KSBasEPlugin.getDefault().logError(
                         "Unable to parse Xtend file: Not allowed to open file."); //$NON-NLS-1$
             } catch (IOException e) {
-                CoreModelPlugin.getDefault().logError(
+                KSBasEPlugin.getDefault().logError(
                         "Unable to parse Xtend file: Error while reading file."); //$NON-NLS-1$
             }
         }

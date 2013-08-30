@@ -43,7 +43,7 @@ import de.cau.cs.kieler.klay.test.utils.TestPath;
  */
 public class LayerConstraintProcessorTest extends AbstractLayeredProcessorTest {
 
-    private static final String TEST_FOLDER = "layer_constraints";
+    private static final String TEST_FOLDER = "klay_layered/layer_constraints";
 
     // CHECKSTYLEOFF javadoc
     public LayerConstraintProcessorTest(final GraphTestObject testObject,

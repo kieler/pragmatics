@@ -91,6 +91,9 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
     /** whether to always transform the whole graph with all hierarchy levels. */
     public static final IProperty<Boolean> FULL_EXPORT = new Property<Boolean>(
             "dotExporter.fullExport", true);
+    /** the additional spacing that is created around edges. */
+    public static final IProperty<Float> LABEL_SPACING = new Property<Float>(
+            LayoutOptions.LABEL_SPACING, 0.0f, 0.0f);
     
     /** default multiplier for font sizes. */
     private static final double FONT_SIZE_MULT = 1.4;
@@ -254,8 +257,9 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
             final boolean hierarchy, final TransformationData<KNode, GraphvizModel> transData) {
         boolean fullExport = transData.getProperty(FULL_EXPORT);
         KShapeLayout parentLayout = parent.getData(KShapeLayout.class);
-        Direction layoutDirection = parentLayout.getProperty(LayoutOptions.DIRECTION);
-        boolean vertical = layoutDirection == Direction.DOWN || layoutDirection == Direction.UP;
+        Direction direction = parentLayout.getProperty(LayoutOptions.DIRECTION);
+        boolean vertical = direction == Direction.DOWN || direction == Direction.UP
+                || direction == Direction.UNDEFINED;
         LinkedList<KNode> nodes = new LinkedList<KNode>(parent.getChildren());
         BiMap<KGraphElement, String> nodeIds = transData.getProperty(GRAPH_ELEMS).inverse();
         
@@ -422,7 +426,7 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
             case RIGHT:
                 graphAttrs.add(createAttribute(Attributes.RANKDIR, "LR"));
                 break;
-            default: //DOWN
+            default: // DOWN
                 graphAttrs.add(createAttribute(Attributes.RANKDIR, "TB"));
             }
             // set aspect ratio (formerly crashed dot, but doesn't seem to anymore; see KIELER-1799)
@@ -594,12 +598,6 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
             EdgeLabelPlacement placement = labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT);
             boolean takeFontName = false, takeFontSize = false;
             switch (placement) {
-            case CENTER:
-                takeFontName = fontName == null || !isCenterFontName;
-                isCenterFontName = true;
-                takeFontSize = fontSize <= 0 || !isCenterFontSize;
-                isCenterFontSize = true;
-                break;
             case HEAD:
                 takeFontName = fontName == null;
                 takeFontSize = fontSize <= 0;
@@ -609,6 +607,12 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
                 takeFontName = fontName == null;
                 takeFontSize = fontSize <= 0;
                 buffer = tailLabel;
+                break;
+            default: // CENTER
+                takeFontName = fontName == null || !isCenterFontName;
+                isCenterFontName = true;
+                takeFontSize = fontSize <= 0 || !isCenterFontSize;
+                isCenterFontSize = true;
                 break;
             }
             if (buffer.length() > 0) {
@@ -631,7 +635,7 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
         // set mid label: if empty, it is filled with a dummy string to avoid
         // edge overlapping
         if (midLabel.length() > 0) {
-            float labelSpacing = edgeLayout.getProperty(LayoutOptions.LABEL_SPACING);
+            float labelSpacing = edgeLayout.getProperty(LABEL_SPACING);
             int charsToAdd = (labelSpacing < 1 ? 0 : (int) labelSpacing) - 1;
             for (int i = 0; i < charsToAdd; i++) {
                 midLabel.append(isVertical ? "O" : "\nO");
@@ -798,7 +802,7 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
                                     nodeOffset.x = -(baseOffset.x + leftx);
                                     nodeOffset.y = -(baseOffset.y + topy);
                                 }
-                                KimlUtil.resizeNode(parentNode, width, height, false);
+                                KimlUtil.resizeNode(parentNode, width, height, false, true);
                                 parentLayout.setProperty(LayoutOptions.SIZE_CONSTRAINT,
                                         SizeConstraint.fixed());
                                 break attr_loop;
@@ -1018,7 +1022,9 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
         float combinedWidth = 0.0f, combinedHeight = 0.0f;
         for (KLabel label : kedge.getLabels()) {
             KShapeLayout labelLayout = label.getData(KShapeLayout.class);
-            if (labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT) == placement) {
+            EdgeLabelPlacement elp = labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT);
+            if (elp == placement || elp == EdgeLabelPlacement.UNDEFINED
+                    && placement == EdgeLabelPlacement.CENTER) {
                 combinedWidth = Math.max(combinedWidth, labelLayout.getWidth());
                 combinedHeight += labelLayout.getHeight();
             }
@@ -1030,7 +1036,9 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
             float ypos = (float) (pos.y - combinedHeight / 2 + offset.y);
             for (KLabel label : kedge.getLabels()) {
                 KShapeLayout labelLayout = label.getData(KShapeLayout.class);
-                if (labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT) == placement) {
+                EdgeLabelPlacement elp = labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT);
+                if (elp == placement || elp == EdgeLabelPlacement.UNDEFINED
+                        && placement == EdgeLabelPlacement.CENTER) {
                     float xoffset = (combinedWidth - labelLayout.getWidth()) / 2;
                     labelLayout.setXpos(xpos + xoffset);
                     labelLayout.setYpos(ypos);

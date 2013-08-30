@@ -21,7 +21,6 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.ui.IWorkbenchPart;
 
-import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.LayoutContext;
@@ -29,6 +28,7 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.SizeConstraint;
@@ -203,14 +203,14 @@ public class EclipseLayoutConfig implements ILayoutConfig {
      * Return the dynamic value for the size constraint option.
      * 
      * @param context a context for layout configuration
-     * @return {@code FIXED} if the selected node has no children, and {@code MIN_PORTS} or
-     *          {@code MIN_DEFAULT} otherwise
+     * @return {@code null} if the selected node has no children, and {@code MINIMUM_SIZE}
+     *          / {@code PORTS} otherwise
      */
     private EnumSet<SizeConstraint> getSizeConstraintValue(final LayoutContext context) {
         Set<LayoutOptionData.Target> targets = context.getProperty(LayoutContext.OPT_TARGETS);
         if (targets != null && targets.contains(LayoutOptionData.Target.NODES)) {
             if (!targets.contains(LayoutOptionData.Target.PARENTS)) {
-                return SizeConstraint.fixed();
+                return null; // default value: SizeConstraint.fixed()
             }
             Boolean hasPorts = context.getProperty(DefaultLayoutConfig.HAS_PORTS);
             if (hasPorts != null && hasPorts) {
@@ -218,7 +218,7 @@ public class EclipseLayoutConfig implements ILayoutConfig {
             }
             return EnumSet.of(SizeConstraint.MINIMUM_SIZE);
         }
-        return SizeConstraint.fixed();
+        return null; // default value: SizeConstraint.fixed()
     }
     
     /**
@@ -258,7 +258,7 @@ public class EclipseLayoutConfig implements ILayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public void transferValues(final KGraphData graphData, final LayoutContext context) {
+    public void transferValues(final KLayoutData graphData, final LayoutContext context) {
         EclipseLayoutInfoService infoService = EclipseLayoutInfoService.getInstance();
         LayoutDataService dataService = LayoutDataService.getInstance();
         Object value;

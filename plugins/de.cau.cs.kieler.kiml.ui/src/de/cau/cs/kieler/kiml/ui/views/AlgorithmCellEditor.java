@@ -47,6 +47,18 @@ public class AlgorithmCellEditor extends DialogCellEditor {
      * {@inheritDoc}
      */
     @Override
+    protected void fireApplyEditorValue() {
+        super.fireApplyEditorValue();
+        // Applying the editor value will cause the layout view to refresh,
+        // which will in turn cause the active cell editor to apply its value again;
+        // this can be avoided by firing a cancel event on the cell editor
+        fireCancelEditor();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     protected Control createContents(final Composite cell) {
         Control label = super.createContents(cell);
         label.addMouseListener(new MouseAdapter() {
@@ -57,7 +69,7 @@ public class AlgorithmCellEditor extends DialogCellEditor {
                     doSetValue(newValue);
                     fireApplyEditorValue();
                 }
-                // set focus on the layout view in order to be able to respond to key bindings
+                // Set focus on the layout view in order to be able to respond to key bindings
                 LayoutViewPart layoutView = LayoutViewPart.findView();
                 if (layoutView != null) {
                     layoutView.setFocus();

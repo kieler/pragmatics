@@ -36,8 +36,8 @@ import de.cau.cs.kieler.core.kivi.menu.KiviMenuContributionService;
 import de.cau.cs.kieler.core.kivi.menu.ButtonTrigger.ButtonState;
 import de.cau.cs.kieler.core.kivi.menu.KiviMenuContributionService.LocationScheme;
 import de.cau.cs.kieler.klighd.LightDiagramServices;
-import de.cau.cs.kieler.klighd.ViewContext;
 import de.cau.cs.kieler.klighd.effects.KlighdDiagramEffect;
+import de.cau.cs.kieler.klighd.util.KlighdProperties;
 
 /**
  * An abstract {@link de.cau.cs.kieler.core.kivi.ICombination} for visualizing a chosen element in
@@ -109,7 +109,7 @@ public abstract class VisualizeChosenElementCombination extends AbstractCombinat
         if (!buttonState.getButtonId().equals(buttonId)) {
             return;
         }
-                
+
         if (visibilityExpression.getEditorInputPath() != null
                 && visibilityExpression.getElement() != null) {
             this.schedule(new KlighdDiagramEffect(visibilityExpression.getEditorInputPath()
@@ -128,7 +128,7 @@ public abstract class VisualizeChosenElementCombination extends AbstractCombinat
                                 .get("element"), buttonState.getEditor());
                 // TODO: it seems to be reasonable to hand over the element as well as the editor by
                 // means of an IProperty as well.
-                effect.setProperty(ViewContext.MODEL_ACCESS, buttonState.getParameters()
+                effect.setProperty(KlighdProperties.MODEL_ACCESS, buttonState.getParameters()
                         .get("modelAccess"));
                 effect.setProperty(LightDiagramServices.REQUESTED_UPDATE_STRATEGY,
                         "de.cau.cs.kieler.klighd.krendering.SimpleUpdateStrategy");

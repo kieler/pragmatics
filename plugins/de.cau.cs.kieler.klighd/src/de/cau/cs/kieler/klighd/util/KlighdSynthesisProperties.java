@@ -30,6 +30,15 @@ public class KlighdSynthesisProperties extends MapPropertyHolder {
     private static final long serialVersionUID = -5635072164749313580L;
 
     /**
+     * Factory method.
+     * 
+     * @return a new instance of {@link KlighdSynthesisProperties}.
+     */
+    public static KlighdSynthesisProperties newInstance() {
+        return new KlighdSynthesisProperties();
+    }
+    
+    /**
      * Configures a 'use simple update strategy' setting.
      * 
      * @return <code>this<code> {@link KlighdSynthesisProperties} object.
@@ -37,5 +46,5 @@ public class KlighdSynthesisProperties extends MapPropertyHolder {
     public KlighdSynthesisProperties useSimpleUpdateStrategy() {
         this.setProperty(LightDiagramServices.REQUESTED_UPDATE_STRATEGY, SimpleUpdateStrategy.ID);
         return this;
-    }    
+    }
 }

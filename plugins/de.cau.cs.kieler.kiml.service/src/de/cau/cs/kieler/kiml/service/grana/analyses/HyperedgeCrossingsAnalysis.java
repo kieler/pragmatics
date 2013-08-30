@@ -14,14 +14,20 @@
 package de.cau.cs.kieler.kiml.service.grana.analyses;
 
 import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.math.KielerMath;
@@ -36,11 +42,9 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
 /**
  * A special edge crossings analysis for hyperedges. Works best with data flow diagrams.
  * 
- * <p>There is one case of crossings which the algorithm fails to count. When an edge
- * intersects another edge without joining it, but with the intersection point being a
- * bend point, the crossing isn't counted. This is usually not a problem for orthogonally
- * routed diagrams, but may be one for others. I haven't fixed that yet because there's
- * no easy obvious way to do so, and the case is sufficiently rare.</p>
+ * <p>Edges that are directly or indirectly connected with the same set of ports are regarded as
+ * belonging to the same hyperedge. Crossings between edges that belong to the same hyperedge are
+ * not counted by this analysis.</p>
  * 
  * @author msp
  * @author cds
@@ -60,45 +64,52 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
         progressMonitor.begin("Hyperedge crossings analysis", 1);
         
         // Collect all edge segments, merge them and count crossings
-        List<Line2D.Double> edgeSegments = collectEdgeSegments(parentNode);
+        Map<KVectorChain, Hyperedge> chain2HyperedgeMap = collectHyperedges(parentNode);
         
-        mergeEdgeSegments(edgeSegments);
+        Hyperedge[] hyperedges = new HashSet<Hyperedge>(chain2HyperedgeMap.values())
+                .toArray(new Hyperedge[0]);
+        for (Hyperedge he : hyperedges) {
+            collectEdgeSegments(he);
+            mergeEdgeSegments(he);
+        }
         
-        int crossings = countCrossings(edgeSegments.toArray(new Line2D.Double[edgeSegments.size()]));
+        int crossings = countCrossings(hyperedges);
         
         progressMonitor.done();
         return crossings;
     }
     
-    
     ///////////////////////////////////////////////////////////////////////////////
     // Edge Collection
     
     /**
-     * Goes through all the edges in the given node and its children and builds
-     * a list of their segments.
+     * Collect all hyperedges of the given graph.
      * 
-     * @param parentNode the node.
-     * @return 
+     * @param parentNode the parent node of the graph
+     * @return a map of vector chains to hyperedges
      */
-    private List<Line2D.Double> collectEdgeSegments(final KNode parentNode) {
-        List<Line2D.Double> segments = new LinkedList<Line2D.Double>(); 
+    private Map<KVectorChain, Hyperedge> collectHyperedges(final KNode parentNode) {
         boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
                 AnalysisOptions.ANALYZE_HIERARCHY);
-        LinkedList<KNode> nodeQueue = new LinkedList<KNode>();
-        nodeQueue.addAll(parentNode.getChildren());
         
+        // collect all edges and translate their coordinates to absolute
+        LinkedList<KNode> nodeQueue = new LinkedList<KNode>();
+        List<KVectorChain> chains = new ArrayList<KVectorChain>();
+        Map<KVectorChain, Hyperedge> chain2HyperedgeMap = Maps.newHashMap();
+        Map<KPort, Hyperedge> port2HyperedgeMap = Maps.newHashMap();
+        nodeQueue.addAll(parentNode.getChildren());
         while (!nodeQueue.isEmpty()) {
+            // poll the first element
             KNode node = nodeQueue.poll();
             
-            // Iterate over the node's outgoing edges
+            // collect the outgoing edges
             for (KEdge edge : node.getOutgoingEdges()) {
                 if (!hierarchy && edge.getTarget().getParent() != parentNode) {
                     continue;
                 }
                 KVectorChain chain = edge.getData(KEdgeLayout.class).createVectorChain();
                 
-                // Translate the bend point coordinates to absolute
+                // translate the bend point coordinates to absolute
                 KNode parent = node;
                 if (!KimlUtil.isDescendant(edge.getTarget(), parent)) {
                     parent = node.getParent();
@@ -107,33 +118,79 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
                 KimlUtil.toAbsolute(referencePoint, parent);
                 chain.translate(referencePoint);
                 
-                // Transform spline control points to approximated bend points
+                // transform spline control points to approximated bend points
                 if (edge.getData(KEdgeLayout.class).getProperty(LayoutOptions.EDGE_ROUTING)
                         == EdgeRouting.SPLINES) {
-                    
                     chain = KielerMath.approximateSpline(chain);
                 }
                 
-                // Transform the vector chain into a list of line segments
-                KVector p1 = chain.getFirst();
-                ListIterator<KVector> pointIter = chain.listIterator(1);
-                while (pointIter.hasNext()) {
-                    KVector p2 = pointIter.next();
-                    
-                    Line2D.Double segment = new Line2D.Double(p1.x, p1.y, p2.x, p2.y);
-                    segments.add(segment);
-                    
-                    p1 = p2;
+                chains.add(chain);
+                KPort sourcePort = edge.getSourcePort();
+                KPort targetPort = edge.getTargetPort();
+                Hyperedge sourceHE = port2HyperedgeMap.get(sourcePort);
+                Hyperedge targetHE = port2HyperedgeMap.get(targetPort);
+                if (sourceHE == null && targetHE == null) {
+                    Hyperedge hyperedge = new Hyperedge();
+                    hyperedge.chains.add(chain);
+                    chain2HyperedgeMap.put(chain, hyperedge);
+                    hyperedge.ports.add(sourcePort);
+                    port2HyperedgeMap.put(sourcePort, hyperedge);
+                    hyperedge.ports.add(targetPort);
+                    port2HyperedgeMap.put(targetPort, hyperedge);
+                } else if (sourceHE == null) {
+                    targetHE.chains.add(chain);
+                    chain2HyperedgeMap.put(chain, targetHE);
+                    targetHE.ports.add(sourcePort);
+                    port2HyperedgeMap.put(sourcePort, targetHE);
+                } else if (targetHE == null) {
+                    sourceHE.chains.add(chain);
+                    chain2HyperedgeMap.put(chain, sourceHE);
+                    sourceHE.ports.add(targetPort);
+                    port2HyperedgeMap.put(targetPort, sourceHE);
+                } else if (sourceHE == targetHE) {
+                    sourceHE.chains.add(chain);
+                    chain2HyperedgeMap.put(chain, sourceHE);
+                } else {
+                    sourceHE.chains.add(chain);
+                    chain2HyperedgeMap.put(chain, sourceHE);
+                    for (KVectorChain c : targetHE.chains) {
+                        chain2HyperedgeMap.put(c, sourceHE);
+                    }
+                    for (KPort p : targetHE.ports) {
+                        port2HyperedgeMap.put(p, sourceHE);
+                    }
+                    sourceHE.chains.addAll(targetHE.chains);
+                    sourceHE.ports.addAll(targetHE.ports);
                 }
             }
             
-            // Enqueue the child nodes
+            // enqueue the child nodes
             if (hierarchy) {
                 nodeQueue.addAll(node.getChildren());
             }
         }
-        
-        return segments;
+        return chain2HyperedgeMap;
+    }
+    
+    /**
+     * Go through all the edges in the given hyperedge and build a list of their segments.
+     * 
+     * @param hyperedge a hyperedge
+     */
+    private void collectEdgeSegments(final Hyperedge hyperedge) {
+        for (KVectorChain chain : hyperedge.chains) {
+            // Transform the vector chain into a list of line segments
+            KVector p1 = chain.getFirst();
+            ListIterator<KVector> pointIter = chain.listIterator(1);
+            while (pointIter.hasNext()) {
+                KVector p2 = pointIter.next();
+                
+                Line segment = new Line(p1.x, p1.y, p2.x, p2.y);
+                hyperedge.segments.add(segment);
+                
+                p1 = p2;
+            }
+        }
     }
     
     
@@ -141,16 +198,15 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
     // Edge Merging
     
     /**
-     * Merges segments of the given list, if possible.
+     * Merge segments of the given hyperedge, if possible.
      * 
-     * @param segments the list of segments to merge. The list will usually contain less
-     *                 segments than before after this method is finished.
+     * @param hyperedge a hyperedge
      */
-    private void mergeEdgeSegments(final List<Line2D.Double> segments) {
+    private void mergeEdgeSegments(final Hyperedge hyperedge) {
         // Iterate over the lines in the list
-        ListIterator<Line2D.Double> iterator1 = segments.listIterator();
+        ListIterator<Line> iterator1 = hyperedge.segments.listIterator();
         while (iterator1.hasNext()) {
-            Line2D.Double line1 = iterator1.next();
+            Line line1 = iterator1.next();
             
             // If we have reached the end of the list, stop
             if (!iterator1.hasNext()) {
@@ -164,12 +220,13 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
             }
             
             // Go through the rest of the line segments, looking for one to merge with this segment
-            ListIterator<Line2D.Double> iterator2 = segments.listIterator(iterator1.nextIndex());
+            ListIterator<Line> iterator2 = hyperedge.segments.listIterator(iterator1.nextIndex());
             while (iterator2.hasNext()) {
-                Line2D.Double line2 = iterator2.next();
+                Line line2 = iterator2.next();
                 
                 // If the current segment has already been removed, continue
-                if (line2.x1 == line2.x2 && line2.y1 == line2.y2) {
+                if (Math.abs(line2.x1 - line2.x2) < TOLERANCE
+                        && Math.abs(line2.y1 - line2.y2) < TOLERANCE) {
                     continue;
                 }
                 
@@ -186,63 +243,69 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
         }
         
         // Iterate over the segments again and remove the ones that are to be removed
-        ListIterator<Line2D.Double> iterator = segments.listIterator();
+        ListIterator<Line> iterator = hyperedge.segments.listIterator();
         while (iterator.hasNext()) {
-            Line2D.Double line = iterator.next();
+            Line line = iterator.next();
             
-            if (line.x1 == line.x2 && line.y1 == line.y2) {
+            if (Math.abs(line.x1 - line.x2) < TOLERANCE
+                    && Math.abs(line.y1 - line.y2) < TOLERANCE) {
                 iterator.remove();
             }
         }
     }
     
     /**
-     * Checks if the two lines can be merged. Two lines can be merged if the two lines
+     * Check if the two lines can be merged. Two lines can be merged if the two lines
      * overlap and if the infinitely extended lines defined by the two lines are equal.
      * 
      * @param line1 the first line.
      * @param line2 the second line.
      * @return {@code true} if they can be merged, {@code false} otherwise.
      */
-    private boolean canBeMerged(final Line2D.Double line1, final Line2D.Double line2) {
+    private boolean canBeMerged(final Line line1, final Line line2) {
         // The lines have to intersect
         if (!line1.intersectsLine(line2)) {
             return false;
         }
         
-        // The lines have to be parallel, which means that the distance between line1 and
-        // both points defining line2 have to be equal
-        return Math.abs(line1.ptLineDist(line2.x1, line2.y1) - line1.ptLineDist(line2.x2, line2.y2))
-                < TOLERANCE;
+        // The lines have to be parallel
+        double s = (line2.y2 - line2.y1) * (line1.x2 - line1.x1)
+                - (line2.x2 - line2.x1) * (line1.y2 - line1.y1);
+        return Math.abs(s) < TOLERANCE;
     }
     
     /**
-     * Merges the two lines by updating the first line. The second line is left untouched.
+     * Merge the two lines by updating the first line. The second line is left untouched.
+     * The lines are assumed to be parallel.
      * 
      * @param line1 the first line, which the second line is merged into.
      * @param line2 the second line.
      */
-    private void mergeSegments(final Line2D.Double line1, final Line2D.Double line2) {
-        Point2D.Double start = new Point2D.Double(line1.x1, line1.y1);
-        Point2D.Double end = new Point2D.Double(line1.x2, line1.y2);
+    private void mergeSegments(final Line line1, final Line line2) {
+        KVector start = new KVector(Integer.MAX_VALUE, Integer.MAX_VALUE);
+        KVector end = new KVector(Integer.MIN_VALUE, Integer.MIN_VALUE);
+        KVector[] points = new KVector[] { line1.getV1(), line1.getV2(), line2.getV1(), line2.getV2() };
         
-        // If the lines are vertical, we use the points with the lowest and highest
-        // y coordinate as the merged line's end points. Otherwise, we use the points
-        // with the lowest and highest x coordinate
-        if (Math.abs(line1.x1 - line1.x2) < TOLERANCE) {
-            // Vertical
-            start.x = line1.x1;
-            start.y = KielerMath.mind(line1.y1, line1.y2, line2.y1, line2.y2);
-            
-            end.x = line1.x1;
-            end.y = KielerMath.maxd(line1.y1, line1.y2, line2.y1, line2.y2);
+        if (Math.abs(line1.x2 - line1.x1) >= Math.abs(line1.y2 - line1.y1)) {
+            // The line is arranged horizontally
+            for (KVector p : points) {
+                if (p.x < start.x) {
+                    start = p;
+                }
+                if (p.x > end.x) {
+                    end = p;
+                }
+            }
         } else {
-            // Horizontal
-            start.x = KielerMath.mind(line1.x1, line1.x2, line2.x1, line2.x2);
-            start.y = line1.y1;
-            
-            end.x = KielerMath.maxd(line1.x1, line1.x2, line2.x1, line2.x2);
-            end.y = line1.y1;
+           // The line is arranged vertically
+            for (KVector p : points) {
+                if (p.y < start.y) {
+                    start = p;
+                }
+                if (p.y > end.y) {
+                    end = p;
+                }
+            }
         }
         
         // Set new start and end points
@@ -257,36 +320,95 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
     // Cross Counting
     
     /**
-     * Counts all crossings between lines in the given array. This method assumes that
-     * segments have already been merged. If they have not, the result may be too high.
+     * Count all crossings between lines in the given array. This method assumes that
+     * segments have already been merged.
      * 
-     * @param segments the array of segments.
-     * @return the number of segment crossings.
+     * @param hyperedges array of hyperedges
+     * @return the number of segment crossings
      */
-    private int countCrossings(final Line2D.Double[] segments) {
+    private int countCrossings(final Hyperedge[] hyperedges) {
         int crossings = 0;
         
-        for (int i = 0; i < segments.length; i++) {
-            for (int j = i + 1; j < segments.length; j++) {
-                // Find out if the two cross each other. However, not every crossing
-                // is counted. We take the usual definition for crossings ("two lines
-                // cross if they have a common point.") and extend it with the following
-                // exception: "Two lines cross if they have a common point that is not
-                // an end point of either of them."
-                
-                if (segments[i].intersectsLine(segments[j])) {
-                    if (!(segments[i].ptLineDist(segments[j].x1, segments[j].y1) == 0.0
-                            || segments[i].ptLineDist(segments[j].x2, segments[j].y2) == 0.0
-                            || segments[j].ptLineDist(segments[i].x1, segments[i].y1) == 0.0
-                            || segments[j].ptLineDist(segments[i].x2, segments[i].y2) == 0.0))
-                    {
-                        crossings++; 
+        for (int i = 0; i < hyperedges.length; i++) {
+            for (int j = i + 1; j < hyperedges.length; j++) {
+                for (Line line1 : hyperedges[i].segments) {
+                    for (Line line2 : hyperedges[j].segments) {
+                        if (line1.intersectsLine(line2)) {
+                            crossings++;
+                        }
                     }
                 }
             }
         }
         
         return crossings;
+    }
+    
+    /**
+     * Hyperedge class.
+     */
+    private static class Hyperedge {
+        /** the edges that are part of this hyperedge, represented by vector chains. */
+        private final List<KVectorChain> chains = Lists.newLinkedList();
+        /** the ports to which the edges of this hyperedge are connected. */
+        private final List<KPort> ports = Lists.newLinkedList();
+        /** the line segments derived from the vector chains. */
+        private final List<Line> segments = Lists.newLinkedList();
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            return "Chains: " + chains.toString() + ", Ports: " + ports.toString();
+        }
+    }
+    
+    /**
+     * A specialized line class.
+     */
+    @SuppressWarnings("serial")
+    private static class Line extends Line2D.Double {
+        
+        /**
+         * Constructs and initializes a line from the specified coordinates.
+         * 
+         * @param x1 the X coordinate of the start point
+         * @param y1 the Y coordinate of the start point
+         * @param x2 the X coordinate of the end point
+         * @param y2 the Y coordinate of the end point
+         * @since 1.2
+         */
+        public Line(final double x1, final double y1, final double x2, final double y2) {
+            super(x1, y1, x2, y2);
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            return "(" + x1 + "," + y1 + ")->(" + x2 + "," + y2 + ")";
+        }
+        
+        /**
+         * Create a vector with the first point.
+         * 
+         * @return the first point
+         */
+        public KVector getV1() {
+            return new KVector(x1, y1);
+        }
+        
+        /**
+         * Create a vector with the second point.
+         * 
+         * @return the second point
+         */
+        public KVector getV2() {
+            return new KVector(x2, y2);
+        }
+        
     }
     
 }

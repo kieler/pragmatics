@@ -41,14 +41,14 @@ import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.SizeOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.Util;
-import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
+import de.cau.cs.kieler.klay.layered.graph.LGraphElement.HashCodeCounter;
+import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
-import de.cau.cs.kieler.klay.layered.graph.LGraph;
-import de.cau.cs.kieler.klay.layered.graph.LGraphElement.HashCodeCounter;
 import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
@@ -243,14 +243,23 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         PortSide portSide = portLayout.getProperty(LayoutOptions.PORT_SIDE);
         Float offset = portLayout.getProperty(LayoutOptions.OFFSET);
         PortConstraints portConstraints = graphLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS);
+        
         if (portSide == PortSide.UNDEFINED) {
             portSide = KimlUtil.calcPortSide(kport, direction);
             portLayout.setProperty(LayoutOptions.PORT_SIDE, portSide);
         }
+        
         if (offset == null) {
-            offset = KimlUtil.calcPortOffset(kport, portSide);
+            // if port coordinates are (0,0), we default to port offset 0 to make the common case
+            // frustration-free
+            if (portLayout.getXpos() == 0.0f && portLayout.getYpos() == 0.0f) {
+                offset = 0.0f;
+            } else {
+                offset = KimlUtil.calcPortOffset(kport, portSide);
+            }
             portLayout.setProperty(LayoutOptions.OFFSET, offset);
         }
+        
         LNode dummy = createExternalPortDummy(
                 kport,
                 portConstraints,
@@ -328,9 +337,13 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                 // calculate the port side and offset from the port's current position
                 portSide = KimlUtil.calcPortSide(kport, direction);
                 portLayout.setProperty(LayoutOptions.PORT_SIDE, portSide);
+                
                 if (offset == null && portSide != PortSide.UNDEFINED) {
-                    offset = KimlUtil.calcPortOffset(kport, portSide);
-                    portLayout.setProperty(LayoutOptions.OFFSET, offset);
+                    // if port coordinates are (0,0), we default to port offset 0 to make the common case
+                    // frustration-free
+                    if (portLayout.getXpos() != 0.0f || portLayout.getYpos() != 0.0f) {
+                        offset = KimlUtil.calcPortOffset(kport, portSide);
+                    }
                 }
             }
 
@@ -340,6 +353,8 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             if (offset != null) {
                 newPort.setProperty(Properties.OFFSET, offset);
             }
+            newPort.setProperty(LayoutOptions.PORT_INDEX,
+                    portLayout.getProperty(LayoutOptions.PORT_INDEX));
             
             // if the port anchor property is set, use it as anchor point
             KVector anchorPos = portLayout.getProperty(Properties.PORT_ANCHOR);
@@ -738,7 +753,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             return;
         }
         KNode parentNode = (KNode) target;
-
+        
         // determine the border spacing, which influences the offset
         KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
         float borderSpacing = layeredGraph.getProperty(Properties.BORDER_SPACING);
@@ -878,22 +893,28 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             }
         }
 
-        // set up the parent node
-        KInsets insets = parentLayout.getInsets();
-        float width = (float) layeredGraph.getSize().x + 2 * borderSpacing + insets.getLeft()
-                + insets.getRight();
-        float height = (float) layeredGraph.getSize().y + 2 * borderSpacing + insets.getTop()
-                + insets.getBottom();
-
+        // setup the parent node
+        KVector actualGraphSize = layeredGraph.getActualSize();
+        
         if (layeredGraph.getProperty(Properties.GRAPH_PROPERTIES).contains(
                 GraphProperties.EXTERNAL_PORTS)) {
-
-            // ports have been positioned using dummy nodes
+            
+            // ports have positions assigned, the graph's size is final
             parentLayout.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
-            KimlUtil.resizeNode(parentNode, width, height, false);
+            KimlUtil.resizeNode(
+                    parentNode,
+                    (float) actualGraphSize.x,
+                    (float) actualGraphSize.y,
+                    false,
+                    true);
         } else {
             // ports have not been positioned yet - leave this for next layouter
-            KimlUtil.resizeNode(parentNode, width, height, true);
+            KimlUtil.resizeNode(
+                    parentNode,
+                    (float) actualGraphSize.x,
+                    (float) actualGraphSize.y,
+                    true,
+                    true);
         }
     }
 

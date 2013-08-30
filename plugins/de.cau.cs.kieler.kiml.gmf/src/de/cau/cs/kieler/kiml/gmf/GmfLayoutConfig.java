@@ -35,7 +35,6 @@ import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
 
-import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Maybe;
@@ -44,6 +43,7 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutConfig;
 
@@ -52,7 +52,7 @@ import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutConfig;
  *
  * @author msp
  * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
+ * @kieler.rating yellow 2013-07-01 review KI-38 by cds, uru
  */
 public class GmfLayoutConfig implements IMutableLayoutConfig {
     
@@ -91,6 +91,7 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
         return PRIORITY;
     }
     
+    /** The aspect ratio is rounded at two decimal places. */
     private static final float ASPECT_RATIO_ROUND = 100;
 
     /**
@@ -101,6 +102,7 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
         if (editPart instanceof IGraphicalEditPart && !isNoLayout((EditPart) editPart)) {
             IGraphicalEditPart focusEditPart = (IGraphicalEditPart) editPart;
             if (focusEditPart instanceof CompartmentEditPart) {
+                // if the selected object is a compartment, put its parent element into the context
                 focusEditPart = (IGraphicalEditPart) focusEditPart.getParent();
                 context.setProperty(LayoutContext.DIAGRAM_PART, focusEditPart);
             }
@@ -109,7 +111,8 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
             context.setProperty(NOTATION_VIEW, notationView);
             if (context.getProperty(LayoutContext.DOMAIN_MODEL) == null) {
                 EObject object = notationView.getElement();
-                // put the EObject into the context only if the edit part has its own model element
+                // put the EObject into the context only if the edit part has its own model element,
+                // otherwise we would wrongly receive options that are meant for the parent element
                 if (focusEditPart.getParent() == null
                         || !(focusEditPart.getParent().getModel() instanceof View)
                         || ((View) focusEditPart.getParent().getModel()).getElement() != object) {
@@ -208,24 +211,30 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
             final Maybe<Boolean> hasPorts) {
         Set<LayoutOptionData.Target> partTarget = null;
         if (editPart instanceof AbstractBorderItemEditPart) {
+            // this is a border item, i.e. a port 
             partTarget = EnumSet.of(LayoutOptionData.Target.PORTS);
+            // the container is the parent of the port's containing node
             containerEditPart.set((IGraphicalEditPart) editPart.getParent().getParent());
             
         } else if (editPart instanceof ShapeNodeEditPart) {
-            // check whether the node is a parent
+            // this is a node
             partTarget = EnumSet.of(LayoutOptionData.Target.NODES);
             containerEditPart.set((IGraphicalEditPart) editPart.getParent());
+            // check whether the node is a parent
             if (findContainingEditPart(editPart, hasPorts) != null) {
                 partTarget.add(LayoutOptionData.Target.PARENTS);
             }
             
         } else if (editPart instanceof ConnectionEditPart) {
+            // this is a connection, i.e. an edge
             partTarget = EnumSet.of(LayoutOptionData.Target.EDGES);
             EditPart sourcePart = ((ConnectionEditPart) editPart).getSource();
             EditPart parentPart;
             if (sourcePart instanceof AbstractBorderItemEditPart) {
+                // the source element is a port
                 parentPart = sourcePart.getParent().getParent();
             } else {
+                // the source element is a node
                 parentPart = sourcePart.getParent();
             }
             if (parentPart instanceof IGraphicalEditPart) {
@@ -233,9 +242,11 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
             }
             
         } else if (editPart instanceof LabelEditPart) {
+            // this is a label
             partTarget = EnumSet.of(LayoutOptionData.Target.LABELS);
             containerEditPart.set((IGraphicalEditPart) editPart.getParent());
             if (containerEditPart.get() instanceof ConnectionEditPart) {
+                // we have an edge label, so apply the same container rule as for edges
                 EditPart sourcePart = ((ConnectionEditPart) containerEditPart.get()).getSource();
                 if (sourcePart instanceof AbstractBorderItemEditPart) {
                     containerEditPart.set((IGraphicalEditPart) sourcePart.getParent().getParent());
@@ -243,13 +254,16 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
                     containerEditPart.set((IGraphicalEditPart) sourcePart.getParent());
                 }
             } else if (containerEditPart.get() instanceof AbstractBorderItemEditPart) {
+                // we have a port label, so apply the same container rule as for ports
                 containerEditPart.set((IGraphicalEditPart) containerEditPart.get()
                         .getParent().getParent());
             } else if (containerEditPart.get() instanceof ShapeNodeEditPart) {
+                // we have a node label
                 containerEditPart.set((IGraphicalEditPart) containerEditPart.get().getParent());
             }
             
         } else if (editPart instanceof DiagramEditPart) {
+            // this is a diagram
             partTarget = EnumSet.of(LayoutOptionData.Target.PARENTS);
         }
         
@@ -261,33 +275,41 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
     
     /**
      * Finds the edit part that contains layoutable children, if there are any. The returned
-     * edit part is either the parent edit part itself or one of its compartments. 
+     * edit part is either the parent edit part itself or one of its compartments. While looking
+     * for layoutable children, the existence of contained ports is also checked.
      * 
      * @param editPart a node edit part
-     * @param hasPorts if ports are found, this reference parameter is set to {@code true}
+     * @param hasPorts if the node contains ports, this reference parameter is set to {@code true}
      * @return the edit part that contains other node edit parts, or {@code null} if there is none
      */
     private static IGraphicalEditPart findContainingEditPart(final IGraphicalEditPart editPart,
             final Maybe<Boolean> hasPorts) {
         hasPorts.set(Boolean.FALSE);
+        IGraphicalEditPart result = null;
         for (Object child : editPart.getChildren()) {
-            if (child instanceof AbstractBorderItemEditPart && !isNoLayout((EditPart) child)) {
-                hasPorts.set(Boolean.TRUE);
-            } else if (child instanceof ShapeNodeEditPart
-                    && !(child instanceof AbstractBorderItemEditPart)
-                    && !isNoLayout((EditPart) child)) {
-                return editPart;
-            } else if (child instanceof CompartmentEditPart
-                    && !isNoLayout((EditPart) child)) {
-                for (Object grandChild : ((CompartmentEditPart) child).getChildren()) {
-                    if (grandChild instanceof ShapeNodeEditPart
-                            && !isNoLayout((EditPart) grandChild)) {
-                        return (IGraphicalEditPart) child;
+            if (!isNoLayout((EditPart) child)) {
+                if (child instanceof AbstractBorderItemEditPart) {
+                    hasPorts.set(Boolean.TRUE);
+                    if (result != null) {
+                        break;
+                    }
+                } else if (child instanceof ShapeNodeEditPart) {
+                    result = editPart;
+                    if (hasPorts.get()) {
+                        break;
+                    }
+                } else if (child instanceof CompartmentEditPart) {
+                    for (Object grandChild : ((CompartmentEditPart) child).getChildren()) {
+                        if (grandChild instanceof ShapeNodeEditPart
+                                && !isNoLayout((EditPart) grandChild)) {
+                            result = (IGraphicalEditPart) child;
+                            break;
+                        }
                     }
                 }
             }
         }
-        return null;
+        return result;
     }
 
     /**
@@ -344,7 +366,7 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public void transferValues(final KGraphData graphData, final LayoutContext context) {
+    public void transferValues(final KLayoutData graphData, final LayoutContext context) {
         Object editPart = context.getProperty(LayoutContext.DIAGRAM_PART);
         if (editPart instanceof IGraphicalEditPart) {
             // add user defined global layout options
@@ -364,13 +386,14 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
     }
 
     /**
-     * Add the options from the list of properties to the options map.
+     * Add the options from the list of properties to the options map. Only properties whose key
+     * starts with the given prefix are considered.
      * 
      * @param graphData a graph data instance that can hold layout options
-     * @param prefix the prefix for the property key
+     * @param prefix the expected prefix of the property keys
      * @param view a notation view
      */
-    private void transferValues(final KGraphData graphData, final String prefix,
+    private void transferValues(final KLayoutData graphData, final String prefix,
             final View view) {
         LayoutDataService layoutServices = LayoutDataService.getInstance();
         for (Object obj : view.getStyles()) {

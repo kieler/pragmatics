@@ -22,7 +22,6 @@ import org.eclipse.graphiti.mm.MmFactory;
 import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
-import org.eclipse.graphiti.mm.pictograms.BoxRelativeAnchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
@@ -37,7 +36,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchPart;
 
-import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.LayoutContext;
@@ -45,6 +43,7 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutConfig;
 
@@ -71,7 +70,19 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
     public static final IProperty<PictogramElement> PICTO_ELEM
             = new de.cau.cs.kieler.core.properties.Property<PictogramElement>(
                     "context.pictogramElement");
+    
+    /** the layout manager for which this configurator was created. */
+    private GraphitiDiagramLayoutManager layoutManager;
 
+    /**
+     * Create a Graphiti layout configurator for the given layout manager.
+     * 
+     * @param layoutManager a Graphiti layout manager
+     */
+    public GraphitiLayoutConfig(final GraphitiDiagramLayoutManager layoutManager) {
+        this.layoutManager = layoutManager;
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -204,7 +215,7 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
      *          set to {@code true}
      * @return the layout option targets
      */
-    private static Set<LayoutOptionData.Target> findTarget(final PictogramElement pe,
+    private Set<LayoutOptionData.Target> findTarget(final PictogramElement pe,
             final Maybe<PictogramElement> containerPe, final Maybe<Boolean> hasPorts) {
         PictogramsSwitch<Set<LayoutOptionData.Target>> pictogramsSwitch
                 = new PictogramsSwitch<Set<LayoutOptionData.Target>>() {
@@ -218,7 +229,7 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
                 if (pe instanceof ContainerShape) {
                     // the same check for relevant children as in the layout manager must be made here
                     for (Shape child : ((ContainerShape) pe).getChildren()) {
-                        if (!child.getAnchors().isEmpty()) {
+                        if (layoutManager.isNodeShape(child)) {
                             targets.add(LayoutOptionData.Target.PARENTS);
                             break;
                         }
@@ -226,7 +237,7 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
                 }
                 // the same check for ports as in the layout manager must be made here
                 for (Anchor anchor : ((Shape) pe).getAnchors()) {
-                    if (anchor instanceof BoxRelativeAnchor) {
+                    if (layoutManager.isPortAnchor(anchor)) {
                         hasPorts.set(Boolean.TRUE);
                         break;
                     }
@@ -304,7 +315,7 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public void transferValues(final KGraphData graphData, final LayoutContext context) {
+    public void transferValues(final KLayoutData graphData, final LayoutContext context) {
         PictogramElement pe = context.getProperty(PICTO_ELEM);
         if (pe != null) {
             // add user defined global layout options
@@ -325,7 +336,7 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
      * @param prefix the prefix for the property key
      * @param pe a pictogram element
      */
-    private void transferValues(final KGraphData graphData, final String prefix,
+    private void transferValues(final KLayoutData graphData, final String prefix,
             final PictogramElement pe) {
         LayoutDataService layoutServices = LayoutDataService.getInstance();
         for (Property prop : pe.getProperties()) {

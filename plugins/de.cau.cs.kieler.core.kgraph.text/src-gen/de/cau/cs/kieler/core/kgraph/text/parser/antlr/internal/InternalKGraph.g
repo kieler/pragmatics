@@ -6071,9 +6071,9 @@ ruleKPointPlacementData returns [EObject current=null]
 					{ 
 	 				  getUnorderedGroupHelper().select(grammarAccess.getKPointPlacementDataAccess().getUnorderedGroup_3(), 1);
 	 				}
-					({true}?=>(	otherlv_7='minWidth' 
+					({true}?=>(	otherlv_7='minimalWidth' 
     {
-    	newLeafNode(otherlv_7, grammarAccess.getKPointPlacementDataAccess().getMinWidthKeyword_3_1_0());
+    	newLeafNode(otherlv_7, grammarAccess.getKPointPlacementDataAccess().getMinimalWidthKeyword_3_1_0());
     }
 	otherlv_8='=' 
     {
@@ -6109,9 +6109,9 @@ ruleKPointPlacementData returns [EObject current=null]
 					{ 
 	 				  getUnorderedGroupHelper().select(grammarAccess.getKPointPlacementDataAccess().getUnorderedGroup_3(), 2);
 	 				}
-					({true}?=>(	otherlv_10='minHeight' 
+					({true}?=>(	otherlv_10='minimalHeight' 
     {
-    	newLeafNode(otherlv_10, grammarAccess.getKPointPlacementDataAccess().getMinHeightKeyword_3_2_0());
+    	newLeafNode(otherlv_10, grammarAccess.getKPointPlacementDataAccess().getMinimalHeightKeyword_3_2_0());
     }
 	otherlv_11='=' 
     {
@@ -7059,11 +7059,11 @@ ruleKXPosition returns [EObject current=null]
         $current = $this_KRightPosition_1.current; 
         afterParserOrEnumRuleCall();
     }
-)((((
+)((
 (
 		lv_relative_2_0=RULE_PERCENT
 		{
-			newLeafNode(lv_relative_2_0, grammarAccess.getKXPositionAccess().getRelativePERCENTTerminalRuleCall_1_0_0_0_0()); 
+			newLeafNode(lv_relative_2_0, grammarAccess.getKXPositionAccess().getRelativePERCENTTerminalRuleCall_1_0_0()); 
 		}
 		{
 	        if ($current==null) {
@@ -7077,34 +7077,12 @@ ruleKXPosition returns [EObject current=null]
 	    }
 
 )
-)	otherlv_3='+' 
-    {
-    	newLeafNode(otherlv_3, grammarAccess.getKXPositionAccess().getPlusSignKeyword_1_0_0_1());
-    }
-)?(
-(
-		{ 
-	        newCompositeNode(grammarAccess.getKXPositionAccess().getAbsoluteFloatParserRuleCall_1_0_1_0()); 
-	    }
-		lv_absolute_4_0=ruleFloat		{
-	        if ($current==null) {
-	            $current = createModelElementForParent(grammarAccess.getKXPositionRule());
-	        }
-       		set(
-       			$current, 
-       			"absolute",
-        		lv_absolute_4_0, 
-        		"Float");
-	        afterParserOrEnumRuleCall();
-	    }
-
 )
-)?)
-    |(
+    |(((
 (
-		lv_relative_5_0=RULE_PERCENT
+		lv_relative_3_0=RULE_PERCENT
 		{
-			newLeafNode(lv_relative_5_0, grammarAccess.getKXPositionAccess().getRelativePERCENTTerminalRuleCall_1_1_0()); 
+			newLeafNode(lv_relative_3_0, grammarAccess.getKXPositionAccess().getRelativePERCENTTerminalRuleCall_1_1_0_0_0()); 
 		}
 		{
 	        if ($current==null) {
@@ -7113,12 +7091,34 @@ ruleKXPosition returns [EObject current=null]
        		setWithLastConsumed(
        			$current, 
        			"relative",
-        		lv_relative_5_0, 
+        		lv_relative_3_0, 
         		"PERCENT");
 	    }
 
 )
-)))
+)	otherlv_4='+' 
+    {
+    	newLeafNode(otherlv_4, grammarAccess.getKXPositionAccess().getPlusSignKeyword_1_1_0_1());
+    }
+)?(
+(
+		{ 
+	        newCompositeNode(grammarAccess.getKXPositionAccess().getAbsoluteFloatParserRuleCall_1_1_1_0()); 
+	    }
+		lv_absolute_5_0=ruleFloat		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getKXPositionRule());
+	        }
+       		set(
+       			$current, 
+       			"absolute",
+        		lv_absolute_5_0, 
+        		"Float");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
+)))?)
 ;
 
 
@@ -7220,11 +7220,11 @@ ruleKYPosition returns [EObject current=null]
         $current = $this_KBottomPosition_1.current; 
         afterParserOrEnumRuleCall();
     }
-)((((
+)((
 (
 		lv_relative_2_0=RULE_PERCENT
 		{
-			newLeafNode(lv_relative_2_0, grammarAccess.getKYPositionAccess().getRelativePERCENTTerminalRuleCall_1_0_0_0_0()); 
+			newLeafNode(lv_relative_2_0, grammarAccess.getKYPositionAccess().getRelativePERCENTTerminalRuleCall_1_0_0()); 
 		}
 		{
 	        if ($current==null) {
@@ -7238,34 +7238,12 @@ ruleKYPosition returns [EObject current=null]
 	    }
 
 )
-)	otherlv_3='+' 
-    {
-    	newLeafNode(otherlv_3, grammarAccess.getKYPositionAccess().getPlusSignKeyword_1_0_0_1());
-    }
-)?(
-(
-		{ 
-	        newCompositeNode(grammarAccess.getKYPositionAccess().getAbsoluteFloatParserRuleCall_1_0_1_0()); 
-	    }
-		lv_absolute_4_0=ruleFloat		{
-	        if ($current==null) {
-	            $current = createModelElementForParent(grammarAccess.getKYPositionRule());
-	        }
-       		set(
-       			$current, 
-       			"absolute",
-        		lv_absolute_4_0, 
-        		"Float");
-	        afterParserOrEnumRuleCall();
-	    }
-
 )
-)?)
-    |(
+    |(((
 (
-		lv_relative_5_0=RULE_PERCENT
+		lv_relative_3_0=RULE_PERCENT
 		{
-			newLeafNode(lv_relative_5_0, grammarAccess.getKYPositionAccess().getRelativePERCENTTerminalRuleCall_1_1_0()); 
+			newLeafNode(lv_relative_3_0, grammarAccess.getKYPositionAccess().getRelativePERCENTTerminalRuleCall_1_1_0_0_0()); 
 		}
 		{
 	        if ($current==null) {
@@ -7274,12 +7252,34 @@ ruleKYPosition returns [EObject current=null]
        		setWithLastConsumed(
        			$current, 
        			"relative",
-        		lv_relative_5_0, 
+        		lv_relative_3_0, 
         		"PERCENT");
 	    }
 
 )
-)))
+)	otherlv_4='+' 
+    {
+    	newLeafNode(otherlv_4, grammarAccess.getKYPositionAccess().getPlusSignKeyword_1_1_0_1());
+    }
+)?(
+(
+		{ 
+	        newCompositeNode(grammarAccess.getKYPositionAccess().getAbsoluteFloatParserRuleCall_1_1_1_0()); 
+	    }
+		lv_absolute_5_0=ruleFloat		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getKYPositionRule());
+	        }
+       		set(
+       			$current, 
+       			"absolute",
+        		lv_absolute_5_0, 
+        		"Float");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
+)))?)
 ;
 
 
@@ -7546,20 +7546,28 @@ rulePropertyValue returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleT
     @init { enterRule(); 
     }
     @after { leaveRule(); }:
-(    this_STRING_0=RULE_STRING    {
-		$current.merge(this_STRING_0);
+(    this_BOOLEAN_0=RULE_BOOLEAN    {
+		$current.merge(this_BOOLEAN_0);
     }
 
     { 
-    newLeafNode(this_STRING_0, grammarAccess.getPropertyValueAccess().getSTRINGTerminalRuleCall_0()); 
+    newLeafNode(this_BOOLEAN_0, grammarAccess.getPropertyValueAccess().getBOOLEANTerminalRuleCall_0()); 
+    }
+
+    |    this_STRING_1=RULE_STRING    {
+		$current.merge(this_STRING_1);
+    }
+
+    { 
+    newLeafNode(this_STRING_1, grammarAccess.getPropertyValueAccess().getSTRINGTerminalRuleCall_1()); 
     }
 
     |
     { 
-        newCompositeNode(grammarAccess.getPropertyValueAccess().getFloatParserRuleCall_1()); 
+        newCompositeNode(grammarAccess.getPropertyValueAccess().getFloatParserRuleCall_2()); 
     }
-    this_Float_1=ruleFloat    {
-		$current.merge(this_Float_1);
+    this_Float_2=ruleFloat    {
+		$current.merge(this_Float_2);
     }
 
     { 
@@ -7568,10 +7576,10 @@ rulePropertyValue returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleT
 
     |
     { 
-        newCompositeNode(grammarAccess.getPropertyValueAccess().getQualifiedIDParserRuleCall_2()); 
+        newCompositeNode(grammarAccess.getPropertyValueAccess().getQualifiedIDParserRuleCall_3()); 
     }
-    this_QualifiedID_2=ruleQualifiedID    {
-		$current.merge(this_QualifiedID_2);
+    this_QualifiedID_3=ruleQualifiedID    {
+		$current.merge(this_QualifiedID_3);
     }
 
     { 
@@ -7866,7 +7874,7 @@ RULE_NATURAL : ('0'..'9')+;
 
 RULE_ID : '^'? ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*;
 
-RULE_STRING : '"' ('\\' ('b'|'t'|'n'|'f'|'r'|'u'|'"'|'\\')|~(('\\'|'"')))* '"';
+RULE_STRING : '"' ('\\' ('b'|'t'|'n'|'f'|'r'|'u'|'"'|'\''|'\\')|~(('\\'|'"')))* '"';
 
 RULE_ML_COMMENT : '/*' ( options {greedy=false;} : . )*'*/';
 

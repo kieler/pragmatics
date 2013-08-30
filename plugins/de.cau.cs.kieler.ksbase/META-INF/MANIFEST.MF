@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: KIELER Structure Based Editing Infrastructure
 Bundle-SymbolicName: de.cau.cs.kieler.ksbase;singleton:=true
-Bundle-Version: 0.5.2.qualifier
+Bundle-Version: 0.6.0.qualifier
 Bundle-Activator: de.cau.cs.kieler.ksbase.KSBasEPlugin
 Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.5.0",
@@ -11,9 +11,7 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.5.0",
  org.eclipse.emf.ecore;bundle-version="2.8.1",
  com.google.inject;bundle-version="3.0.0",
  org.eclipse.xtend;bundle-version="1.2.0";visibility:=reexport,
- org.eclipse.xtend.typesystem.emf;bundle-version="1.2.0";visibility:=reexport,
- de.cau.cs.kieler.core.model,
- de.cau.cs.kieler.core.model.gmf
+ org.eclipse.xtend.typesystem.emf;bundle-version="1.2.0";visibility:=reexport
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Export-Package: de.cau.cs.kieler.ksbase,

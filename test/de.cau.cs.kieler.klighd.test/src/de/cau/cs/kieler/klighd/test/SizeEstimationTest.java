@@ -13,11 +13,14 @@
  */
 package de.cau.cs.kieler.klighd.test;
 
-import static de.cau.cs.kieler.klighd.KlighdConstants.KLIGHD_TESTING_EXPECTED_HEIGHT;
-import static de.cau.cs.kieler.klighd.KlighdConstants.KLIGHD_TESTING_EXPECTED_WIDTH;
-import static de.cau.cs.kieler.klighd.KlighdConstants.KLIGHD_TESTING_IGNORE;
-import static de.cau.cs.kieler.klighd.KlighdConstants.KLIGHD_TESTING_HEIGHT;
-import static de.cau.cs.kieler.klighd.KlighdConstants.KLIGHD_TESTING_WIDTH;
+// SUPPRESS CHECKSTYLE NEXT 2 LineLength
+import static de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties.KLIGHD_TESTING_EXPECTED_HEIGHT;
+import static de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties.KLIGHD_TESTING_EXPECTED_WIDTH;
+import static de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties.KLIGHD_TESTING_IGNORE;
+import static de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties.KLIGHD_TESTING_HEIGHT;
+import static de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties.KLIGHD_TESTING_WIDTH;
+import static de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties.PRED_TESTING_HEIGHT;
+import static de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties.PRED_TESTING_WIDTH;
 
 import java.util.Iterator;
 
@@ -27,6 +30,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -120,8 +124,8 @@ public class SizeEstimationTest {
         for (Iterator<KText> it = Iterators.filter(node.eAllContents(), KText.class); containsSizeData
                 && it.hasNext();) {
             KText text = it.next();
-            containsSizeData &= text.getProperties().get(KLIGHD_TESTING_HEIGHT) != null;
-            containsSizeData &= text.getProperties().get(KLIGHD_TESTING_WIDTH) != null;
+            containsSizeData &= Iterables.any(text.getPersistentEntries(), PRED_TESTING_HEIGHT);
+            containsSizeData &= Iterables.any(text.getPersistentEntries(), PRED_TESTING_WIDTH);
         }
         
         if (!containsSizeData) {

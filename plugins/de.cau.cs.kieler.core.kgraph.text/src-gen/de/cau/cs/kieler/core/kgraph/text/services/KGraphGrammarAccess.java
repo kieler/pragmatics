@@ -3517,12 +3517,12 @@ public class KGraphGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cReferencePointAssignment_3_0_2 = (Assignment)cGroup_3_0.eContents().get(2);
 		private final RuleCall cReferencePointKPositionParserRuleCall_3_0_2_0 = (RuleCall)cReferencePointAssignment_3_0_2.eContents().get(0);
 		private final Group cGroup_3_1 = (Group)cUnorderedGroup_3.eContents().get(1);
-		private final Keyword cMinWidthKeyword_3_1_0 = (Keyword)cGroup_3_1.eContents().get(0);
+		private final Keyword cMinimalWidthKeyword_3_1_0 = (Keyword)cGroup_3_1.eContents().get(0);
 		private final Keyword cEqualsSignKeyword_3_1_1 = (Keyword)cGroup_3_1.eContents().get(1);
 		private final Assignment cMinWidthAssignment_3_1_2 = (Assignment)cGroup_3_1.eContents().get(2);
 		private final RuleCall cMinWidthFloatParserRuleCall_3_1_2_0 = (RuleCall)cMinWidthAssignment_3_1_2.eContents().get(0);
 		private final Group cGroup_3_2 = (Group)cUnorderedGroup_3.eContents().get(2);
-		private final Keyword cMinHeightKeyword_3_2_0 = (Keyword)cGroup_3_2.eContents().get(0);
+		private final Keyword cMinimalHeightKeyword_3_2_0 = (Keyword)cGroup_3_2.eContents().get(0);
 		private final Keyword cEqualsSignKeyword_3_2_1 = (Keyword)cGroup_3_2.eContents().get(1);
 		private final Assignment cMinHeightAssignment_3_2_2 = (Assignment)cGroup_3_2.eContents().get(2);
 		private final RuleCall cMinHeightFloatParserRuleCall_3_2_2_0 = (RuleCall)cMinHeightAssignment_3_2_2.eContents().get(0);
@@ -3548,14 +3548,14 @@ public class KGraphGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cVerticalMarginFloatParserRuleCall_3_6_2_0 = (RuleCall)cVerticalMarginAssignment_3_6_2.eContents().get(0);
 		
 		//KPointPlacementData:
-		//	{KPointPlacementData} "pointData" ":" (("referencePoint" "=" referencePoint=KPosition)? & ("minWidth" "="
-		//	minWidth=Float)? & ("minHeight" "=" minHeight=Float)? & ("horizontalAlignment" "="
+		//	{KPointPlacementData} "pointData" ":" (("referencePoint" "=" referencePoint=KPosition)? & ("minimalWidth" "="
+		//	minWidth=Float)? & ("minimalHeight" "=" minHeight=Float)? & ("horizontalAlignment" "="
 		//	horizontalAlignment=HorizontalAlignment)? & ("verticalAlignment" "=" verticalAlignment=VerticalAlignment)? &
 		//	("horizontalMargin" "=" horizontalMargin=Float)? & ("verticalMargin" "=" verticalMargin=Float)?);
 		public ParserRule getRule() { return rule; }
 
-		//{KPointPlacementData} "pointData" ":" (("referencePoint" "=" referencePoint=KPosition)? & ("minWidth" "="
-		//minWidth=Float)? & ("minHeight" "=" minHeight=Float)? & ("horizontalAlignment" "="
+		//{KPointPlacementData} "pointData" ":" (("referencePoint" "=" referencePoint=KPosition)? & ("minimalWidth" "="
+		//minWidth=Float)? & ("minimalHeight" "=" minHeight=Float)? & ("horizontalAlignment" "="
 		//horizontalAlignment=HorizontalAlignment)? & ("verticalAlignment" "=" verticalAlignment=VerticalAlignment)? &
 		//("horizontalMargin" "=" horizontalMargin=Float)? & ("verticalMargin" "=" verticalMargin=Float)?)
 		public Group getGroup() { return cGroup; }
@@ -3569,8 +3569,8 @@ public class KGraphGrammarAccess extends AbstractGrammarElementFinder {
 		//":"
 		public Keyword getColonKeyword_2() { return cColonKeyword_2; }
 
-		//("referencePoint" "=" referencePoint=KPosition)? & ("minWidth" "=" minWidth=Float)? & ("minHeight" "=" minHeight=Float)?
-		//& ("horizontalAlignment" "=" horizontalAlignment=HorizontalAlignment)? & ("verticalAlignment" "="
+		//("referencePoint" "=" referencePoint=KPosition)? & ("minimalWidth" "=" minWidth=Float)? & ("minimalHeight" "="
+		//minHeight=Float)? & ("horizontalAlignment" "=" horizontalAlignment=HorizontalAlignment)? & ("verticalAlignment" "="
 		//verticalAlignment=VerticalAlignment)? & ("horizontalMargin" "=" horizontalMargin=Float)? & ("verticalMargin" "="
 		//verticalMargin=Float)?
 		public UnorderedGroup getUnorderedGroup_3() { return cUnorderedGroup_3; }
@@ -3590,11 +3590,11 @@ public class KGraphGrammarAccess extends AbstractGrammarElementFinder {
 		//KPosition
 		public RuleCall getReferencePointKPositionParserRuleCall_3_0_2_0() { return cReferencePointKPositionParserRuleCall_3_0_2_0; }
 
-		//("minWidth" "=" minWidth=Float)?
+		//("minimalWidth" "=" minWidth=Float)?
 		public Group getGroup_3_1() { return cGroup_3_1; }
 
-		//"minWidth"
-		public Keyword getMinWidthKeyword_3_1_0() { return cMinWidthKeyword_3_1_0; }
+		//"minimalWidth"
+		public Keyword getMinimalWidthKeyword_3_1_0() { return cMinimalWidthKeyword_3_1_0; }
 
 		//"="
 		public Keyword getEqualsSignKeyword_3_1_1() { return cEqualsSignKeyword_3_1_1; }
@@ -3605,11 +3605,11 @@ public class KGraphGrammarAccess extends AbstractGrammarElementFinder {
 		//Float
 		public RuleCall getMinWidthFloatParserRuleCall_3_1_2_0() { return cMinWidthFloatParserRuleCall_3_1_2_0; }
 
-		//("minHeight" "=" minHeight=Float)?
+		//("minimalHeight" "=" minHeight=Float)?
 		public Group getGroup_3_2() { return cGroup_3_2; }
 
-		//"minHeight"
-		public Keyword getMinHeightKeyword_3_2_0() { return cMinHeightKeyword_3_2_0; }
+		//"minimalHeight"
+		public Keyword getMinimalHeightKeyword_3_2_0() { return cMinimalHeightKeyword_3_2_0; }
 
 		//"="
 		public Keyword getEqualsSignKeyword_3_2_1() { return cEqualsSignKeyword_3_2_1; }
@@ -4080,21 +4080,21 @@ public class KGraphGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cKLeftPositionParserRuleCall_0_0 = (RuleCall)cAlternatives_0.eContents().get(0);
 		private final RuleCall cKRightPositionParserRuleCall_0_1 = (RuleCall)cAlternatives_0.eContents().get(1);
 		private final Alternatives cAlternatives_1 = (Alternatives)cGroup.eContents().get(1);
-		private final Group cGroup_1_0 = (Group)cAlternatives_1.eContents().get(0);
-		private final Group cGroup_1_0_0 = (Group)cGroup_1_0.eContents().get(0);
-		private final Assignment cRelativeAssignment_1_0_0_0 = (Assignment)cGroup_1_0_0.eContents().get(0);
-		private final RuleCall cRelativePERCENTTerminalRuleCall_1_0_0_0_0 = (RuleCall)cRelativeAssignment_1_0_0_0.eContents().get(0);
-		private final Keyword cPlusSignKeyword_1_0_0_1 = (Keyword)cGroup_1_0_0.eContents().get(1);
-		private final Assignment cAbsoluteAssignment_1_0_1 = (Assignment)cGroup_1_0.eContents().get(1);
-		private final RuleCall cAbsoluteFloatParserRuleCall_1_0_1_0 = (RuleCall)cAbsoluteAssignment_1_0_1.eContents().get(0);
-		private final Assignment cRelativeAssignment_1_1 = (Assignment)cAlternatives_1.eContents().get(1);
-		private final RuleCall cRelativePERCENTTerminalRuleCall_1_1_0 = (RuleCall)cRelativeAssignment_1_1.eContents().get(0);
+		private final Assignment cRelativeAssignment_1_0 = (Assignment)cAlternatives_1.eContents().get(0);
+		private final RuleCall cRelativePERCENTTerminalRuleCall_1_0_0 = (RuleCall)cRelativeAssignment_1_0.eContents().get(0);
+		private final Group cGroup_1_1 = (Group)cAlternatives_1.eContents().get(1);
+		private final Group cGroup_1_1_0 = (Group)cGroup_1_1.eContents().get(0);
+		private final Assignment cRelativeAssignment_1_1_0_0 = (Assignment)cGroup_1_1_0.eContents().get(0);
+		private final RuleCall cRelativePERCENTTerminalRuleCall_1_1_0_0_0 = (RuleCall)cRelativeAssignment_1_1_0_0.eContents().get(0);
+		private final Keyword cPlusSignKeyword_1_1_0_1 = (Keyword)cGroup_1_1_0.eContents().get(1);
+		private final Assignment cAbsoluteAssignment_1_1_1 = (Assignment)cGroup_1_1.eContents().get(1);
+		private final RuleCall cAbsoluteFloatParserRuleCall_1_1_1_0 = (RuleCall)cAbsoluteAssignment_1_1_1.eContents().get(0);
 		
 		//KXPosition:
-		//	(KLeftPosition | KRightPosition) ((relative=PERCENT "+")? absolute=Float? | relative=PERCENT);
+		//	(KLeftPosition | KRightPosition) (relative=PERCENT | (relative=PERCENT "+")? absolute=Float)?;
 		public ParserRule getRule() { return rule; }
 
-		//(KLeftPosition | KRightPosition) ((relative=PERCENT "+")? absolute=Float? | relative=PERCENT)
+		//(KLeftPosition | KRightPosition) (relative=PERCENT | (relative=PERCENT "+")? absolute=Float)?
 		public Group getGroup() { return cGroup; }
 
 		//KLeftPosition | KRightPosition
@@ -4106,35 +4106,35 @@ public class KGraphGrammarAccess extends AbstractGrammarElementFinder {
 		//KRightPosition
 		public RuleCall getKRightPositionParserRuleCall_0_1() { return cKRightPositionParserRuleCall_0_1; }
 
-		//(relative=PERCENT "+")? absolute=Float? | relative=PERCENT
+		//(relative=PERCENT | (relative=PERCENT "+")? absolute=Float)?
 		public Alternatives getAlternatives_1() { return cAlternatives_1; }
 
-		//(relative=PERCENT "+")? absolute=Float?
-		public Group getGroup_1_0() { return cGroup_1_0; }
+		//relative=PERCENT
+		public Assignment getRelativeAssignment_1_0() { return cRelativeAssignment_1_0; }
+
+		//PERCENT
+		public RuleCall getRelativePERCENTTerminalRuleCall_1_0_0() { return cRelativePERCENTTerminalRuleCall_1_0_0; }
+
+		//(relative=PERCENT "+")? absolute=Float
+		public Group getGroup_1_1() { return cGroup_1_1; }
 
 		//(relative=PERCENT "+")?
-		public Group getGroup_1_0_0() { return cGroup_1_0_0; }
+		public Group getGroup_1_1_0() { return cGroup_1_1_0; }
 
 		//relative=PERCENT
-		public Assignment getRelativeAssignment_1_0_0_0() { return cRelativeAssignment_1_0_0_0; }
+		public Assignment getRelativeAssignment_1_1_0_0() { return cRelativeAssignment_1_1_0_0; }
 
 		//PERCENT
-		public RuleCall getRelativePERCENTTerminalRuleCall_1_0_0_0_0() { return cRelativePERCENTTerminalRuleCall_1_0_0_0_0; }
+		public RuleCall getRelativePERCENTTerminalRuleCall_1_1_0_0_0() { return cRelativePERCENTTerminalRuleCall_1_1_0_0_0; }
 
 		//"+"
-		public Keyword getPlusSignKeyword_1_0_0_1() { return cPlusSignKeyword_1_0_0_1; }
+		public Keyword getPlusSignKeyword_1_1_0_1() { return cPlusSignKeyword_1_1_0_1; }
 
-		//absolute=Float?
-		public Assignment getAbsoluteAssignment_1_0_1() { return cAbsoluteAssignment_1_0_1; }
+		//absolute=Float
+		public Assignment getAbsoluteAssignment_1_1_1() { return cAbsoluteAssignment_1_1_1; }
 
 		//Float
-		public RuleCall getAbsoluteFloatParserRuleCall_1_0_1_0() { return cAbsoluteFloatParserRuleCall_1_0_1_0; }
-
-		//relative=PERCENT
-		public Assignment getRelativeAssignment_1_1() { return cRelativeAssignment_1_1; }
-
-		//PERCENT
-		public RuleCall getRelativePERCENTTerminalRuleCall_1_1_0() { return cRelativePERCENTTerminalRuleCall_1_1_0; }
+		public RuleCall getAbsoluteFloatParserRuleCall_1_1_1_0() { return cAbsoluteFloatParserRuleCall_1_1_1_0; }
 	}
 
 	public class KLeftPositionElements extends AbstractParserRuleElementFinder {
@@ -4184,21 +4184,21 @@ public class KGraphGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cKTopPositionParserRuleCall_0_0 = (RuleCall)cAlternatives_0.eContents().get(0);
 		private final RuleCall cKBottomPositionParserRuleCall_0_1 = (RuleCall)cAlternatives_0.eContents().get(1);
 		private final Alternatives cAlternatives_1 = (Alternatives)cGroup.eContents().get(1);
-		private final Group cGroup_1_0 = (Group)cAlternatives_1.eContents().get(0);
-		private final Group cGroup_1_0_0 = (Group)cGroup_1_0.eContents().get(0);
-		private final Assignment cRelativeAssignment_1_0_0_0 = (Assignment)cGroup_1_0_0.eContents().get(0);
-		private final RuleCall cRelativePERCENTTerminalRuleCall_1_0_0_0_0 = (RuleCall)cRelativeAssignment_1_0_0_0.eContents().get(0);
-		private final Keyword cPlusSignKeyword_1_0_0_1 = (Keyword)cGroup_1_0_0.eContents().get(1);
-		private final Assignment cAbsoluteAssignment_1_0_1 = (Assignment)cGroup_1_0.eContents().get(1);
-		private final RuleCall cAbsoluteFloatParserRuleCall_1_0_1_0 = (RuleCall)cAbsoluteAssignment_1_0_1.eContents().get(0);
-		private final Assignment cRelativeAssignment_1_1 = (Assignment)cAlternatives_1.eContents().get(1);
-		private final RuleCall cRelativePERCENTTerminalRuleCall_1_1_0 = (RuleCall)cRelativeAssignment_1_1.eContents().get(0);
+		private final Assignment cRelativeAssignment_1_0 = (Assignment)cAlternatives_1.eContents().get(0);
+		private final RuleCall cRelativePERCENTTerminalRuleCall_1_0_0 = (RuleCall)cRelativeAssignment_1_0.eContents().get(0);
+		private final Group cGroup_1_1 = (Group)cAlternatives_1.eContents().get(1);
+		private final Group cGroup_1_1_0 = (Group)cGroup_1_1.eContents().get(0);
+		private final Assignment cRelativeAssignment_1_1_0_0 = (Assignment)cGroup_1_1_0.eContents().get(0);
+		private final RuleCall cRelativePERCENTTerminalRuleCall_1_1_0_0_0 = (RuleCall)cRelativeAssignment_1_1_0_0.eContents().get(0);
+		private final Keyword cPlusSignKeyword_1_1_0_1 = (Keyword)cGroup_1_1_0.eContents().get(1);
+		private final Assignment cAbsoluteAssignment_1_1_1 = (Assignment)cGroup_1_1.eContents().get(1);
+		private final RuleCall cAbsoluteFloatParserRuleCall_1_1_1_0 = (RuleCall)cAbsoluteAssignment_1_1_1.eContents().get(0);
 		
 		//KYPosition:
-		//	(KTopPosition | KBottomPosition) ((relative=PERCENT "+")? absolute=Float? | relative=PERCENT);
+		//	(KTopPosition | KBottomPosition) (relative=PERCENT | (relative=PERCENT "+")? absolute=Float)?;
 		public ParserRule getRule() { return rule; }
 
-		//(KTopPosition | KBottomPosition) ((relative=PERCENT "+")? absolute=Float? | relative=PERCENT)
+		//(KTopPosition | KBottomPosition) (relative=PERCENT | (relative=PERCENT "+")? absolute=Float)?
 		public Group getGroup() { return cGroup; }
 
 		//KTopPosition | KBottomPosition
@@ -4210,35 +4210,35 @@ public class KGraphGrammarAccess extends AbstractGrammarElementFinder {
 		//KBottomPosition
 		public RuleCall getKBottomPositionParserRuleCall_0_1() { return cKBottomPositionParserRuleCall_0_1; }
 
-		//(relative=PERCENT "+")? absolute=Float? | relative=PERCENT
+		//(relative=PERCENT | (relative=PERCENT "+")? absolute=Float)?
 		public Alternatives getAlternatives_1() { return cAlternatives_1; }
 
-		//(relative=PERCENT "+")? absolute=Float?
-		public Group getGroup_1_0() { return cGroup_1_0; }
+		//relative=PERCENT
+		public Assignment getRelativeAssignment_1_0() { return cRelativeAssignment_1_0; }
+
+		//PERCENT
+		public RuleCall getRelativePERCENTTerminalRuleCall_1_0_0() { return cRelativePERCENTTerminalRuleCall_1_0_0; }
+
+		//(relative=PERCENT "+")? absolute=Float
+		public Group getGroup_1_1() { return cGroup_1_1; }
 
 		//(relative=PERCENT "+")?
-		public Group getGroup_1_0_0() { return cGroup_1_0_0; }
+		public Group getGroup_1_1_0() { return cGroup_1_1_0; }
 
 		//relative=PERCENT
-		public Assignment getRelativeAssignment_1_0_0_0() { return cRelativeAssignment_1_0_0_0; }
+		public Assignment getRelativeAssignment_1_1_0_0() { return cRelativeAssignment_1_1_0_0; }
 
 		//PERCENT
-		public RuleCall getRelativePERCENTTerminalRuleCall_1_0_0_0_0() { return cRelativePERCENTTerminalRuleCall_1_0_0_0_0; }
+		public RuleCall getRelativePERCENTTerminalRuleCall_1_1_0_0_0() { return cRelativePERCENTTerminalRuleCall_1_1_0_0_0; }
 
 		//"+"
-		public Keyword getPlusSignKeyword_1_0_0_1() { return cPlusSignKeyword_1_0_0_1; }
+		public Keyword getPlusSignKeyword_1_1_0_1() { return cPlusSignKeyword_1_1_0_1; }
 
-		//absolute=Float?
-		public Assignment getAbsoluteAssignment_1_0_1() { return cAbsoluteAssignment_1_0_1; }
+		//absolute=Float
+		public Assignment getAbsoluteAssignment_1_1_1() { return cAbsoluteAssignment_1_1_1; }
 
 		//Float
-		public RuleCall getAbsoluteFloatParserRuleCall_1_0_1_0() { return cAbsoluteFloatParserRuleCall_1_0_1_0; }
-
-		//relative=PERCENT
-		public Assignment getRelativeAssignment_1_1() { return cRelativeAssignment_1_1; }
-
-		//PERCENT
-		public RuleCall getRelativePERCENTTerminalRuleCall_1_1_0() { return cRelativePERCENTTerminalRuleCall_1_1_0; }
+		public RuleCall getAbsoluteFloatParserRuleCall_1_1_1_0() { return cAbsoluteFloatParserRuleCall_1_1_1_0; }
 	}
 
 	public class KTopPositionElements extends AbstractParserRuleElementFinder {
@@ -4405,25 +4405,29 @@ public class KGraphGrammarAccess extends AbstractGrammarElementFinder {
 	public class PropertyValueElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "PropertyValue");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final RuleCall cSTRINGTerminalRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
-		private final RuleCall cFloatParserRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
-		private final RuleCall cQualifiedIDParserRuleCall_2 = (RuleCall)cAlternatives.eContents().get(2);
+		private final RuleCall cBOOLEANTerminalRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
+		private final RuleCall cSTRINGTerminalRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
+		private final RuleCall cFloatParserRuleCall_2 = (RuleCall)cAlternatives.eContents().get(2);
+		private final RuleCall cQualifiedIDParserRuleCall_3 = (RuleCall)cAlternatives.eContents().get(3);
 		
 		//PropertyValue returns ecore::EString:
-		//	STRING | Float | QualifiedID;
+		//	BOOLEAN | STRING | Float | QualifiedID;
 		public ParserRule getRule() { return rule; }
 
-		//STRING | Float | QualifiedID
+		//BOOLEAN | STRING | Float | QualifiedID
 		public Alternatives getAlternatives() { return cAlternatives; }
 
+		//BOOLEAN
+		public RuleCall getBOOLEANTerminalRuleCall_0() { return cBOOLEANTerminalRuleCall_0; }
+
 		//STRING
-		public RuleCall getSTRINGTerminalRuleCall_0() { return cSTRINGTerminalRuleCall_0; }
+		public RuleCall getSTRINGTerminalRuleCall_1() { return cSTRINGTerminalRuleCall_1; }
 
 		//Float
-		public RuleCall getFloatParserRuleCall_1() { return cFloatParserRuleCall_1; }
+		public RuleCall getFloatParserRuleCall_2() { return cFloatParserRuleCall_2; }
 
 		//QualifiedID
-		public RuleCall getQualifiedIDParserRuleCall_2() { return cQualifiedIDParserRuleCall_2; }
+		public RuleCall getQualifiedIDParserRuleCall_3() { return cQualifiedIDParserRuleCall_3; }
 	}
 
 	public class FloatElements extends AbstractParserRuleElementFinder {
@@ -5516,8 +5520,8 @@ public class KGraphGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//KPointPlacementData:
-	//	{KPointPlacementData} "pointData" ":" (("referencePoint" "=" referencePoint=KPosition)? & ("minWidth" "="
-	//	minWidth=Float)? & ("minHeight" "=" minHeight=Float)? & ("horizontalAlignment" "="
+	//	{KPointPlacementData} "pointData" ":" (("referencePoint" "=" referencePoint=KPosition)? & ("minimalWidth" "="
+	//	minWidth=Float)? & ("minimalHeight" "=" minHeight=Float)? & ("horizontalAlignment" "="
 	//	horizontalAlignment=HorizontalAlignment)? & ("verticalAlignment" "=" verticalAlignment=VerticalAlignment)? &
 	//	("horizontalMargin" "=" horizontalMargin=Float)? & ("verticalMargin" "=" verticalMargin=Float)?);
 	public KPointPlacementDataElements getKPointPlacementDataAccess() {
@@ -5573,7 +5577,7 @@ public class KGraphGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//KXPosition:
-	//	(KLeftPosition | KRightPosition) ((relative=PERCENT "+")? absolute=Float? | relative=PERCENT);
+	//	(KLeftPosition | KRightPosition) (relative=PERCENT | (relative=PERCENT "+")? absolute=Float)?;
 	public KXPositionElements getKXPositionAccess() {
 		return (pKXPosition != null) ? pKXPosition : (pKXPosition = new KXPositionElements());
 	}
@@ -5603,7 +5607,7 @@ public class KGraphGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//KYPosition:
-	//	(KTopPosition | KBottomPosition) ((relative=PERCENT "+")? absolute=Float? | relative=PERCENT);
+	//	(KTopPosition | KBottomPosition) (relative=PERCENT | (relative=PERCENT "+")? absolute=Float)?;
 	public KYPositionElements getKYPositionAccess() {
 		return (pKYPosition != null) ? pKYPosition : (pKYPosition = new KYPositionElements());
 	}
@@ -5654,7 +5658,7 @@ public class KGraphGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//PropertyValue returns ecore::EString:
-	//	STRING | Float | QualifiedID;
+	//	BOOLEAN | STRING | Float | QualifiedID;
 	public PropertyValueElements getPropertyValueAccess() {
 		return (pPropertyValue != null) ? pPropertyValue : (pPropertyValue = new PropertyValueElements());
 	}
@@ -5821,8 +5825,8 @@ public class KGraphGrammarAccess extends AbstractGrammarElementFinder {
 		return (tID != null) ? tID : (tID = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "ID"));
 	} 
 
-	//terminal STRING:
-	//	"\"" ("\\" ("b" | "t" | "n" | "f" | "r" | "u" | "\"" | "\\") | !("\\" | "\""))* "\"";
+	//terminal STRING: // chsch: added '\'' alternative! 
+	//	"\"" ("\\" ("b" | "t" | "n" | "f" | "r" | "u" | "\"" | "\'" | "\\") | !("\\" | "\""))* "\"";
 	public TerminalRule getSTRINGRule() {
 		return (tSTRING != null) ? tSTRING : (tSTRING = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "STRING"));
 	} 

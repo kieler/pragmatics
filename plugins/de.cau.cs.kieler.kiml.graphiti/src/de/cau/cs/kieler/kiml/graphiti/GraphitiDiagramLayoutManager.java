@@ -11,6 +11,8 @@
  */
 package de.cau.cs.kieler.kiml.graphiti;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -36,6 +38,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
@@ -61,12 +64,21 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
      * {@inheritDoc}
      */
     public boolean supports(final Object object) {
+        if (object instanceof Collection) {
+            Collection<?> collection = (Collection<?>) object;
+            for (Object o : collection) {
+                if (o instanceof IPictogramElementEditPart || o instanceof PictogramElement) {
+                    return true;
+                }
+            }
+            return false;
+        }
         return object instanceof DiagramEditor || object instanceof IPictogramElementEditPart
                 || object instanceof PictogramElement;
     }
     
     /** the cached layout configuration for Graphiti. */
-    private GraphitiLayoutConfig layoutConfig = new GraphitiLayoutConfig();
+    private GraphitiLayoutConfig layoutConfig = new GraphitiLayoutConfig(this);
 
     /**
      * {@inheritDoc}
@@ -144,37 +156,102 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
             mapping.setProperty(KimlGraphitiUtil.DIAGRAM_EDITOR, (DiagramEditor) workbenchPart);
         }
 
-        EditPart layoutRootPart = null;
-        if (diagramPart instanceof IPictogramElementEditPart) {
-            layoutRootPart = (EditPart) diagramPart;
-        } else if (mapping.getProperty(KimlGraphitiUtil.DIAGRAM_EDITOR) != null) {
-            layoutRootPart = mapping.getProperty(KimlGraphitiUtil.DIAGRAM_EDITOR)
-                    .getGraphicalViewer().getContents();
+        Shape rootElement = null;
+        List<Shape> selectedElements = null;
+        if (diagramPart instanceof Shape) {
+            rootElement = (Shape) diagramPart;
+        } else if (diagramPart instanceof IPictogramElementEditPart) {
+            PictogramElement pe = ((IPictogramElementEditPart) diagramPart).getPictogramElement();
+            if (pe instanceof Shape) {
+                rootElement = (Shape) pe;
+            }
+        } else if (diagramPart instanceof Collection) {
+            Collection<?> selection = (Collection<?>) diagramPart;
+            List<Shape> shapes = new LinkedList<Shape>();
+            // determine the layout root part from the selection
+            for (Object object : selection) {
+                Shape shape = null;
+                if (object instanceof Shape) {
+                    shape = (Shape) object;
+                } else if (object instanceof IPictogramElementEditPart) {
+                    PictogramElement pe = ((IPictogramElementEditPart) object).getPictogramElement();
+                    if (pe instanceof Shape) {
+                        shape = (Shape) pe;
+                    }
+                }
+                if (shape != null) {
+                    if (rootElement != null) {
+                        Shape parent = commonParent(rootElement, shape);
+                        if (parent != null) {
+                            rootElement = parent;
+                        }
+                    } else {
+                        rootElement = shape;
+                    }
+                    shapes.add(shape);
+                }
+            }
+            // build a list of shapes that shall be layouted completely
+            if (rootElement != null) {
+                selectedElements = new ArrayList<Shape>(shapes.size());
+                for (Shape shape : shapes) {
+                    while (shape != null && shape.getContainer() != rootElement) {
+                        shape = shape.getContainer();
+                    }
+                    if (!selectedElements.contains(shape)) {
+                        selectedElements.add(shape);
+                    }
+                }
+            }
         }
-        if (!(layoutRootPart instanceof IPictogramElementEditPart)) {
+        if (rootElement == null && mapping.getProperty(KimlGraphitiUtil.DIAGRAM_EDITOR) != null) {
+            EditPart editorContent = mapping.getProperty(KimlGraphitiUtil.DIAGRAM_EDITOR)
+                    .getGraphicalViewer().getContents();
+            PictogramElement pe = ((IPictogramElementEditPart) editorContent).getPictogramElement();
+            if (pe instanceof Shape) {
+                rootElement = (Shape) pe;
+            }
+        }
+        if (rootElement == null) {
             throw new UnsupportedOperationException(
                     "Not supported by this layout manager: Workbench part "
-                    + workbenchPart + ", Edit part " + diagramPart);
+                    + workbenchPart + ", Element " + diagramPart);
         }
-        PictogramElement element = ((IPictogramElementEditPart) layoutRootPart)
-                .getPictogramElement();
-        mapping.setParentElement(element);
+        mapping.setParentElement(rootElement);
 
-        if (element instanceof Diagram) {
-            KNode topNode = KimlUtil.createInitializedNode();
+        KNode topNode;
+        if (rootElement instanceof Diagram) {
+            topNode = KimlUtil.createInitializedNode();
             KShapeLayout shapeLayout = topNode.getData(KShapeLayout.class);
-            GraphicsAlgorithm ga = element.getGraphicsAlgorithm();
+            GraphicsAlgorithm ga = rootElement.getGraphicsAlgorithm();
             shapeLayout.setPos(ga.getX(), ga.getY());
             shapeLayout.setSize(ga.getWidth(), ga.getHeight());
-            mapping.getGraphMap().put(topNode, element);
-
-            buildLayoutGraphRecursively(mapping, (Diagram) element, topNode);
-            
-            mapping.setLayoutGraph(topNode);
-        } else if (element instanceof Shape) {
-            mapping.setLayoutGraph(createNode(mapping, null, (Shape) element));
+            mapping.getGraphMap().put(topNode, rootElement);
+        } else {
+            topNode = createNode(mapping, null, rootElement);
         }
+        mapping.setLayoutGraph(topNode);
 
+        if (selectedElements != null && !selectedElements.isEmpty()) {
+            // layout only the selected elements
+            double minx = Integer.MAX_VALUE;
+            double miny = Integer.MAX_VALUE;
+            for (Shape shape : selectedElements) {
+                KNode node = createNode(mapping, topNode, shape);
+                KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+                minx = Math.min(minx, nodeLayout.getXpos());
+                miny = Math.min(miny, nodeLayout.getYpos());
+                if (shape instanceof ContainerShape) {
+                    buildLayoutGraphRecursively(mapping, (ContainerShape) shape, node);
+                }
+            }
+            mapping.setProperty(KimlGraphitiUtil.COORDINATE_OFFSET, new KVector(minx, miny));
+        } else if (rootElement instanceof ContainerShape) {
+            // traverse all children of the layout root part
+            buildLayoutGraphRecursively(mapping, (ContainerShape) rootElement, topNode);
+        }
+        
+        // transform all connections in the selected area
         for (Connection entry : mapping.getProperty(KimlGraphitiUtil.CONNECTIONS)) {
             KimlGraphitiUtil.createEdge(mapping, entry);
         }
@@ -184,6 +261,47 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
         mapping.getLayoutConfigs().add(layoutConfig);
 
         return mapping;
+    }
+    
+    /**
+     * Determine the lowest common parent of the two shapes.
+     * 
+     * @param shape1 the first shape
+     * @param shape2 the second shape
+     * @return the common parent, or {@code null} if there is none
+     */
+    private static Shape commonParent(final Shape shape1, final Shape shape2) {
+        Shape s1 = shape1;
+        Shape s2 = shape2;
+        do {
+            if (isParent(s1, s2)) {
+                return s1;
+            }
+            if (isParent(s2, s1)) {
+                return s2;
+            }
+            s1 = s1.getContainer();
+            s2 = s2.getContainer();
+        } while (s1 != null && s2 != null);
+        return null;
+    }
+    
+    /**
+     * Determine whether the first shape is a parent of or equals the second one.
+     * 
+     * @param parent the tentative parent
+     * @param child the tentative child
+     * @return true if the parent is actually a parent of the child
+     */
+    private static boolean isParent(final Shape parent, final Shape child) {
+        Shape shape = child;
+        do {
+            if (shape == parent) {
+                return true;
+            }
+            shape = shape.getContainer();
+        } while (shape != null);
+        return false;
     }
 
     /**
@@ -198,6 +316,33 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
             command.add(entry.getKey(), entry.getValue());
         }
         mapping.setProperty(KimlGraphitiUtil.LAYOUT_COMMAND, command);
+        
+        // correct the layout by adding the offset determined from the selection
+        KVector offset = mapping.getProperty(KimlGraphitiUtil.COORDINATE_OFFSET);
+        if (offset != null) {
+            addOffset(mapping.getLayoutGraph(), offset);
+        }
+    }
+    
+    /**
+     * Add the given offset to all direct children of the given graph.
+     * 
+     * @param parentNode the parent node
+     * @param offset the offset to add
+     */
+    private static void addOffset(final KNode parentNode, final KVector offset) {
+        // correct the offset with the minimal computed coordinates
+        double minx = Integer.MAX_VALUE;
+        double miny = Integer.MAX_VALUE;
+        for (KNode child : parentNode.getChildren()) {
+            KShapeLayout nodeLayout = child.getData(KShapeLayout.class);
+            minx = Math.min(minx, nodeLayout.getXpos());
+            miny = Math.min(miny, nodeLayout.getYpos());
+        }
+        
+        // add the corrected offset
+        offset.translate(-minx, -miny);
+        KimlUtil.translate(parentNode, (float) offset.x, (float) offset.y);
     }
 
     /**
@@ -211,7 +356,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
     }
 
     /** the fixed minimal size of shapes. */
-    private static final float MIN_SIZE = 15.0f;
+    private static final float MIN_SIZE = 3.0f;
     
     /**
      * Recursively builds a layout graph by analyzing the children of the given current pictogram
@@ -224,11 +369,43 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
     protected void buildLayoutGraphRecursively(final LayoutMapping<PictogramElement> mapping,
             final ContainerShape parentElement, final KNode parentNode) {
         for (Shape shape : parentElement.getChildren()) {
-            // relevant shapes are those that can be connected
-            if (!shape.getAnchors().isEmpty()) {
-                createNode(mapping, parentNode, shape);
+            if (isNodeShape(shape)) {
+                KNode node = createNode(mapping, parentNode, shape);
+                if (shape instanceof ContainerShape) {
+                    // process the children of the container shape
+                    buildLayoutGraphRecursively(mapping, (ContainerShape) shape, node);
+                }
             }
         }
+    }
+    
+    /**
+     * Determine whether the given shape shall be treated as a node in the layout graph.
+     * 
+     * <p>This implementation always returns {@code true}. Subclasses may override this in order
+     * to implement some checks for excluding shapes that are not to be included in the layout
+     * graph.</p>
+     * 
+     * @param shape a shape
+     * @return whether the shape shall be treated a a node
+     */
+    protected boolean isNodeShape(final Shape shape) {
+        return true;
+    }
+    
+    /**
+     * Determine whether the given anchor shall be treated as a port in the layout graph.
+     * 
+     * <p>This implementation returns true if the anchor has a graphics algorithm and it is
+     * either a {@link BoxRelativeAnchor} or a {@link FixPointAnchor}. Subclasses may override
+     * this.</p>
+     * 
+     * @param anchor an anchor
+     * @return whether the anchor shall be treated a a port
+     */
+    protected boolean isPortAnchor(final Anchor anchor) {
+        return anchor.getGraphicsAlgorithm() != null
+                && (anchor instanceof BoxRelativeAnchor || anchor instanceof FixPointAnchor);
     }
     
     /**
@@ -266,7 +443,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
         // the modification flag must initially be false
         ((KShapeLayoutImpl) nodeLayout).resetModificationFlag();
 
-        // FIXME find a way to specify the minimal size dynamically
+        // this very minimal size configuration should be corrected in subclasses
         staticConfig.setValue(LayoutOptions.MIN_WIDTH, childNode, LayoutContext.GRAPH_ELEM, MIN_SIZE);
         staticConfig.setValue(LayoutOptions.MIN_HEIGHT, childNode, LayoutContext.GRAPH_ELEM, MIN_SIZE);
 
@@ -281,14 +458,11 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
                             -nodeInsets.getLeft(), -nodeInsets.getTop());
                 }
             }
-            
-            // process the children of the container shape
-            buildLayoutGraphRecursively(mapping, (ContainerShape) shape, childNode);
         }
 
         for (Anchor anchor : shape.getAnchors()) {
             // box-relative anchors and fixed-position anchors are interpreted as ports
-            if (anchor.getGraphicsAlgorithm() != null) {
+            if (isPortAnchor(anchor)) {
                 if (anchor instanceof BoxRelativeAnchor) {
                     createPort(mapping, childNode, (BoxRelativeAnchor) anchor);
                 } else if (anchor instanceof FixPointAnchor) {

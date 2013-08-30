@@ -37,6 +37,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPathEditorInput;
@@ -47,7 +48,11 @@ import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
+import de.cau.cs.kieler.core.WrappedException;
+import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.klighd.KlighdPlugin;
 import de.cau.cs.kieler.klighd.LightDiagramServices;
 import de.cau.cs.kieler.klighd.ViewContext;
@@ -60,7 +65,7 @@ import de.cau.cs.kieler.klighd.viewers.ContextViewer;
  *
  * @author msp
  */
-public class DiagramEditorPart extends EditorPart {
+public class DiagramEditorPart extends EditorPart implements IDiagramWorkbenchPart {
     
     /** the resource set managed by this editor part. */
     private ResourceSet resourceSet;
@@ -68,6 +73,8 @@ public class DiagramEditorPart extends EditorPart {
     private Object model;
     /** the viewer for this editor part. */
     private ContextViewer viewer;
+    /** the dirty status of the editor. */
+    private boolean dirty;
 
     /**
      * Creates a diagram editor part.
@@ -84,8 +91,7 @@ public class DiagramEditorPart extends EditorPart {
         setSite(site);
         setInput(input);
         loadModel();
-        ResourcesPlugin.getWorkspace().addResourceChangeListener(resourceChangeListener,
-                IResourceChangeEvent.POST_CHANGE);
+        registerResourceChangeListener();
     }
 
     /**
@@ -97,17 +103,22 @@ public class DiagramEditorPart extends EditorPart {
         setPartName(getEditorInput().getName());
         
         // create a context viewer
-        viewer = new ContextViewer(parent, getEditorInput().getName(), this);
-        
-        MapPropertyHolder props = new MapPropertyHolder();
-        props.setProperty(LightDiagramServices.REQUESTED_UPDATE_STRATEGY, SimpleUpdateStrategy.ID);
+        viewer = new ContextViewer(parent, "diagramEditor:" + getEditorInput().toString(), this);
         
         // create a view context for the viewer
-        ViewContext viewContext = LightDiagramServices.getInstance().createViewContext(model, props);
+        ViewContext viewContext = LightDiagramServices.getInstance().createViewContext(
+                model, configureKlighdProperties());
         if (viewContext != null) {
             viewer.setModel(viewContext);
             // do an initial update of the view context
             LightDiagramServices.getInstance().updateViewContext(viewContext, model);
+            
+            DiagramViewManager.getInstance().registerView(this);
+            
+            if (requiresInitialLayout(viewContext)) {
+                LightDiagramServices.getInstance().layoutDiagram(viewContext, false, false);
+            }
+            viewer.updateOptions(false);
 
             // since no initial selection is set in the view context/context viewer implementation,
             // define some here by selection the root of the view model representing the diagram canvas!
@@ -118,6 +129,23 @@ public class DiagramEditorPart extends EditorPart {
         
         // register the context viewer as selection provider on the workbench
         getSite().setSelectionProvider(viewer);
+        
+        // the initialization of the context menu is done in PiccoloViewer#addContextMenu()
+    }
+    
+    /**
+     * Tester that decides on the need for computing the diagram layout while opening the diagram.<br>
+     * May be overridden by subclasses.
+     * 
+     * @param viewContext
+     *            provides context data that might be incorporated in the decision
+     * @return true if the layout shall be (re-) computed while opening the diagram.
+     */
+    public boolean requiresInitialLayout(final ViewContext viewContext) {
+        final KNode viewModel = (KNode) viewContext.getViewModel();
+        final KShapeLayout diagramLayout = viewModel.getData(KShapeLayout.class);
+        
+        return diagramLayout.getWidth() == 0 && diagramLayout.getHeight() == 0;
     }
     
     /**
@@ -125,8 +153,12 @@ public class DiagramEditorPart extends EditorPart {
      */
     @Override
     public void dispose() {
-        ResourcesPlugin.getWorkspace().removeResourceChangeListener(resourceChangeListener);
-        viewer.dispose();
+        unregisterResourceChangeListener();
+        
+        if (viewer != null) {
+            viewer.dispose();
+        }
+        
         super.dispose();
     }
     
@@ -145,9 +177,7 @@ public class DiagramEditorPart extends EditorPart {
     }
 
     /**
-     * Returns the context viewer represented by this editor part.
-     * 
-     * @return the context viewer
+     * {@inheritDoc}
      */
     public ContextViewer getContextViewer() {
         return viewer;
@@ -166,8 +196,17 @@ public class DiagramEditorPart extends EditorPart {
      */
     @Override
     public boolean isDirty() {
-        // this is merely a viewer, so the content is never dirty
-        return false;
+        return dirty;
+    }
+    
+    /**
+     * Set the dirty status of the editor.
+     * 
+     * @param dirty the new dirty status
+     */
+    public void setDirty(final boolean dirty) {
+        this.dirty = dirty;
+        firePropertyChange(IEditorPart.PROP_DIRTY);
     }
 
     /**
@@ -175,7 +214,23 @@ public class DiagramEditorPart extends EditorPart {
      */
     @Override
     public void doSave(final IProgressMonitor monitor) {
-        // this is merely a viewer, so we have nothing to save
+        try {
+            
+            // stop listening so the resource saving won't cause a model update
+            unregisterResourceChangeListener();
+            
+            // save all opened resources
+            for (Resource resource : resourceSet.getResources()) {
+                resource.save(Collections.emptyMap());
+            }
+            
+            // restart listening to future resource updates
+            registerResourceChangeListener();
+            
+            setDirty(false);
+        } catch (IOException exception) {
+            throw new WrappedException(exception);
+        }
     }
 
     /**
@@ -199,7 +254,7 @@ public class DiagramEditorPart extends EditorPart {
      * 
      * @throws PartInitException if loading the model fails
      */
-    private void loadModel() throws PartInitException {
+    protected void loadModel() throws PartInitException {
         // get a URI or an input stream from the editor input
         URI uri = null;
         InputStream inputStream = null;
@@ -228,6 +283,7 @@ public class DiagramEditorPart extends EditorPart {
         Resource resource;
         try {
             resourceSet = new ResourceSetImpl();
+            configureResourceSet(resourceSet);
             if (inputStream != null) {
                 // load a stream-based resource
                 uri = URI.createFileURI("temp.xmi");
@@ -235,11 +291,13 @@ public class DiagramEditorPart extends EditorPart {
                 resource.load(inputStream, Collections.EMPTY_MAP);
             } else {
                 // load a URI-based resource
-                resource = resourceSet.createResource(uri);
-                resource.load(Collections.EMPTY_MAP);
+                resource = resourceSet.getResource(uri, true);
             }
         } catch (IOException exception) {
             throw new PartInitException("An error occurred while loading the resource.", exception);
+        } catch (WrappedException exception) {
+            throw new PartInitException("An error occurred while loading the resource.",
+                    exception.getCause());
         }
         
         if (resource.getContents().isEmpty()) {
@@ -249,6 +307,27 @@ public class DiagramEditorPart extends EditorPart {
         model = resource.getContents().get(0);
     }
     
+    /**
+     * Configures the given resource set. The default implementation does nothing.
+     * 
+     * @param set the resource set to be configured.
+     */
+    protected void configureResourceSet(final ResourceSet set) {
+        
+    }
+
+    /**
+     * Returns a configuration for the KLighD view. Override this method to use a custom configuration.
+     * The default implementation configures KLighD to use the simple update strategy.
+     * 
+     * @return KLighD configuration.
+     */
+    protected IPropertyHolder configureKlighdProperties() {
+        MapPropertyHolder props = new MapPropertyHolder();
+        props.setProperty(LightDiagramServices.REQUESTED_UPDATE_STRATEGY, SimpleUpdateStrategy.ID);
+        return props;
+    }
+
     /**
      * Update the viewed model using the given resource.
      * 
@@ -271,6 +350,21 @@ public class DiagramEditorPart extends EditorPart {
                 StatusManager.getManager().handle(status);
             }
         }
+    }
+    
+    /**
+     * Register the resource change listener.
+     */
+    private void registerResourceChangeListener() {
+        ResourcesPlugin.getWorkspace().addResourceChangeListener(resourceChangeListener,
+                IResourceChangeEvent.POST_CHANGE);
+    }
+    
+    /**
+     * Unregister the resource change listener.
+     */
+    private void unregisterResourceChangeListener() {
+        ResourcesPlugin.getWorkspace().removeResourceChangeListener(resourceChangeListener);
     }
     
     /**

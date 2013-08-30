@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Set;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -32,6 +31,7 @@ import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 
 /**
  * Default implementation of the layout configuration interface. This configuration handles the
@@ -92,8 +92,7 @@ public class DefaultLayoutConfig implements ILayoutConfig {
     /**
      * A switch class for KGraph elements that determines the layout option targets.
      */
-    private final KGraphSwitch<Set<LayoutOptionData.Target>> kgraphSwitch
-            = new KGraphSwitch<Set<LayoutOptionData.Target>>() {
+    public static class OptionTargetSwitch extends KGraphSwitch<Set<LayoutOptionData.Target>> {
         
         @Override
         public Set<LayoutOptionData.Target> caseKNode(final KNode node) {
@@ -123,6 +122,9 @@ public class DefaultLayoutConfig implements ILayoutConfig {
         }
         
     };
+    
+    /** the cached switch for computing layout option targets. */
+    private OptionTargetSwitch kgraphSwitch = new OptionTargetSwitch();
 
     /**
      * {@inheritDoc}
@@ -346,7 +348,7 @@ public class DefaultLayoutConfig implements ILayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public void transferValues(final KGraphData graphData, final LayoutContext context) {
+    public void transferValues(final KLayoutData graphData, final LayoutContext context) {
         // nothing to do
     }
 

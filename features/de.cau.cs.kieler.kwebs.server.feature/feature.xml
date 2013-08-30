@@ -6,16 +6,7 @@
       provider-name="Christian-Albrechts-Universität zu Kiel">
 
    <description url="http://rtsys.informatik.uni-kiel.de/confluence/x/nQEF">
-      The KIELER KWebS server feature contains all neccesary plugins
-and features for building
-the layout web server. This feature uses
-libraries from the jETI project from the TU Dortmund.
-Java Electronic Tool Integration - jETI
-Copyright (C) 2004-2011 Chair for Programming Systems, TU Dortmund
-licensed under the GNU Lesser General Public License v3 or any
-later version, see
-http://www.gnu.org/licenses/lgpl-3.0.html
-http://www.gnu.org/licenses/gpl-3.0-standalone.html
+      The KIELER KWebS server feature contains all neccesary plugins and features for building the layout web server.
    </description>
 
    <copyright>
@@ -119,10 +110,6 @@ This Agreement is governed by the laws of the State of New York and the intellec
 
    <includes
          id="org.eclipse.rcp"
-         version="0.0.0"/>
-
-   <includes
-         id="de.unido.ls5.eti.toolserver.feature"
          version="0.0.0"/>
 
    <plugin
@@ -458,13 +445,6 @@ This Agreement is governed by the laws of the State of New York and the intellec
 
    <plugin
          id="org.eclipse.xtext.util"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kwebs.jaxws"
          download-size="0"
          install-size="0"
          version="0.0.0"

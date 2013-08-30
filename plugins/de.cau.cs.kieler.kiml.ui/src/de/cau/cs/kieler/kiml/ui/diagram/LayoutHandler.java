@@ -69,8 +69,14 @@ public class LayoutHandler extends AbstractHandler {
         if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
             // perform layout with the given selection (only the first element is considered)
             IStructuredSelection structuredSelection = (IStructuredSelection) selection;
-            DiagramLayoutEngine.INSTANCE.layout(editorPart, structuredSelection.getFirstElement(),
-                    animation, progressDialog, false, zoomToFit);
+            Object diagramPart;
+            if (structuredSelection.size() == 1) {
+                diagramPart = structuredSelection.getFirstElement();
+            } else {
+                diagramPart = structuredSelection.toList();
+            }
+            DiagramLayoutEngine.INSTANCE.layout(editorPart, diagramPart, animation, progressDialog,
+                    false, zoomToFit);
         } else {
             // perform layout on the whole diagram
             DiagramLayoutEngine.INSTANCE.layout(editorPart, null, animation, progressDialog,

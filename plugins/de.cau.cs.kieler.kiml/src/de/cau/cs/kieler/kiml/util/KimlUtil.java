@@ -13,20 +13,18 @@
  */
 package de.cau.cs.kieler.kiml.util;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphData;
@@ -44,6 +42,7 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
@@ -324,7 +323,7 @@ public final class KimlUtil {
      */
     public static KVector resizeNode(final KNode node) {
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-        EnumSet<SizeConstraint> sizeConstraint = nodeLayout.getProperty(LayoutOptions.SIZE_CONSTRAINT);
+        Set<SizeConstraint> sizeConstraint = nodeLayout.getProperty(LayoutOptions.SIZE_CONSTRAINT);
         if (sizeConstraint.isEmpty()) {
             return null;
         }
@@ -385,7 +384,7 @@ public final class KimlUtil {
             newHeight = Math.max(minEast, minWest);
         }
         
-        return resizeNode(node, newWidth, newHeight, true);
+        return resizeNode(node, newWidth, newHeight, true, true);
     }
     
     /**
@@ -394,19 +393,20 @@ public final class KimlUtil {
      * @param node a node
      * @param newWidth the new width to set
      * @param newHeight the new height to set
-     * @param movePorts whether port positions shall be adjusted
+     * @param movePorts whether port positions should be adjusted
+     * @param moveLabels whether label positions should be adjusted
      * @return a vector holding the width and height resizing ratio
      */
     public static KVector resizeNode(final KNode node, final float newWidth, final float newHeight,
-            final boolean movePorts) {
+            final boolean movePorts, final boolean moveLabels) {
         
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
         if (nodeLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
             // don't resize nodes that aren't laid out
             return null;
         }
-        EnumSet<SizeConstraint> sizeConstraint = nodeLayout.getProperty(LayoutOptions.SIZE_CONSTRAINT);
-        EnumSet<SizeOptions> sizeOptions = nodeLayout.getProperty(LayoutOptions.SIZE_OPTIONS);
+        Set<SizeConstraint> sizeConstraint = nodeLayout.getProperty(LayoutOptions.SIZE_CONSTRAINT);
+        Set<SizeOptions> sizeOptions = nodeLayout.getProperty(LayoutOptions.SIZE_OPTIONS);
         
         KVector oldSize = new KVector(nodeLayout.getWidth(), nodeLayout.getHeight());
         KVector newSize;
@@ -442,8 +442,8 @@ public final class KimlUtil {
             Direction direction = node.getParent() == null
                     ? nodeLayout.getProperty(LayoutOptions.DIRECTION)
                     : node.getParent().getData(KShapeLayout.class).getProperty(LayoutOptions.DIRECTION);
-            boolean fixedPorts = nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS)
-                    == PortConstraints.FIXED_POS;
+            boolean fixedPorts =
+                    nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS) == PortConstraints.FIXED_POS;
             
             for (KPort port : node.getPorts()) {
                 KShapeLayout portLayout = port.getData(KShapeLayout.class);
@@ -485,22 +485,24 @@ public final class KimlUtil {
         nodeLayout.setSize((float) newSize.x, (float) newSize.y);
         
         // update label positions
-        for (KLabel label : node.getLabels()) {
-            KShapeLayout labelLayout = label.getData(KShapeLayout.class);
-            float midx = labelLayout.getXpos() + labelLayout.getWidth() / 2;
-            float midy = labelLayout.getYpos() + labelLayout.getHeight() / 2;
-            float widthPercent = midx / (float) oldSize.x;
-            float heightPercent = midy / (float) oldSize.y;
-            
-            if (widthPercent + heightPercent >= 1) {
-                if (widthPercent - heightPercent > 0 && midy >= 0) {
-                    // label is on the right
-                    labelLayout.setXpos(labelLayout.getXpos() + widthDiff);
-                    labelLayout.setYpos(labelLayout.getYpos() + heightDiff * heightPercent);
-                } else if (widthPercent - heightPercent < 0 && midx >= 0) {
-                    // label is on the bottom
-                    labelLayout.setXpos(labelLayout.getXpos() + widthDiff * widthPercent);
-                    labelLayout.setYpos(labelLayout.getYpos() + heightDiff);
+        if (moveLabels) {
+            for (KLabel label : node.getLabels()) {
+                KShapeLayout labelLayout = label.getData(KShapeLayout.class);
+                float midx = labelLayout.getXpos() + labelLayout.getWidth() / 2;
+                float midy = labelLayout.getYpos() + labelLayout.getHeight() / 2;
+                float widthPercent = midx / (float) oldSize.x;
+                float heightPercent = midy / (float) oldSize.y;
+                
+                if (widthPercent + heightPercent >= 1) {
+                    if (widthPercent - heightPercent > 0 && midy >= 0) {
+                        // label is on the right
+                        labelLayout.setXpos(labelLayout.getXpos() + widthDiff);
+                        labelLayout.setYpos(labelLayout.getYpos() + heightDiff * heightPercent);
+                    } else if (widthPercent - heightPercent < 0 && midx >= 0) {
+                        // label is on the bottom
+                        labelLayout.setXpos(labelLayout.getXpos() + widthDiff * widthPercent);
+                        labelLayout.setYpos(labelLayout.getYpos() + heightDiff);
+                    }
                 }
             }
         }
@@ -656,8 +658,8 @@ public final class KimlUtil {
         TreeIterator<EObject> iterator = graph.eAllContents();
         while (iterator.hasNext()) {
             EObject eObject = iterator.next();
-            if (eObject instanceof KGraphData) {
-                KGraphData kgraphData = (KGraphData) eObject;
+            if (eObject instanceof KLayoutData) {
+                KLayoutData kgraphData = (KLayoutData) eObject;
                 for (PersistentEntry persistentEntry : kgraphData.getPersistentEntries()) {
                     String key = persistentEntry.getKey();
                     String value = persistentEntry.getValue();
@@ -693,11 +695,11 @@ public final class KimlUtil {
      */
     public static KVectorChain determineJunctionPoints(final KEdge edge) {
         KVectorChain junctionPoints = new KVectorChain();
-        Map<KEdge, KVector[]> pointsMap = new HashMap<KEdge, KVector[]>();
+        Map<KEdge, KVector[]> pointsMap = Maps.newHashMap();
         pointsMap.put(edge, getPoints(edge));
         
         // for each connected port p
-        List<KPort> connectedPorts = new ArrayList<KPort>(2);
+        List<KPort> connectedPorts = Lists.newArrayListWithCapacity(2);
         if (edge.getSourcePort() != null) {
             connectedPorts.add(edge.getSourcePort());
         }
@@ -707,7 +709,7 @@ public final class KimlUtil {
         for (KPort p : connectedPorts) {
             
             // let allConnectedEdges be the set of edges connected to p without the main edge
-            List<KEdge> allConnectedEdges = new LinkedList<KEdge>();
+            List<KEdge> allConnectedEdges = Lists.newLinkedList();
             allConnectedEdges.addAll(p.getEdges());
             allConnectedEdges.remove(edge);
             if (!allConnectedEdges.isEmpty()) {

@@ -14,10 +14,25 @@
 package de.cau.cs.kieler.klighd.transformations;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
 
+import com.google.common.collect.Iterables;
+
+import de.cau.cs.kieler.core.kgraph.KGraphData;
+import de.cau.cs.kieler.core.kgraph.KGraphElement;
+import de.cau.cs.kieler.core.kgraph.KGraphPackage;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.krendering.KRenderingFactory;
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.klighd.TransformationContext;
+// SUPPRESS CHECKSTYLE PREVIOUS LineLength
+import de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties;
+import de.cau.cs.kieler.klighd.util.ExpansionAwareLayoutOption;
+import de.cau.cs.kieler.klighd.util.ExpansionAwareLayoutOption.ExpansionAwareLayoutOptionData;
 
 /**
  * This is a specialized {@link AbstractTransformation} with target model type {@link KNode}.<br>
@@ -56,6 +71,22 @@ public abstract class AbstractDiagramSynthesis<S> extends AbstractTransformation
      */
     public abstract KNode transform(S model);
 
+    
+    @Override 
+    @SuppressWarnings("unchecked")
+    public <D> D putToLookUpWith(final D derived, final Object source) {
+        if (KGraphPackage.eINSTANCE.getKGraphData().isInstance(derived)) {
+            ((KGraphData) derived).setProperty(KlighdInternalProperties.MODEL_ELEMEMT, source);
+        } else if (KGraphPackage.eINSTANCE.getKGraphElement().isInstance(derived)) {
+            Iterables.getFirst(
+                    (Iterable<KGraphData>) (Iterable<?>) Iterables.filter(
+                            ((KGraphElement) derived).getData(), KLayoutData.class), null)
+                    .setProperty(KlighdInternalProperties.MODEL_ELEMEMT, source);
+        }
+        
+        return super.putToLookUpWith(derived, source);
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -82,5 +113,103 @@ public abstract class AbstractDiagramSynthesis<S> extends AbstractTransformation
             this.setSourceClass(transformMethod.getParameterTypes()[0]);
             this.setTargetClass(KNode.class);
         }
+    }
+
+
+    // ---------------------------------------------------------------------------------- //
+    //  Recommended layout option handling    
+
+    /**
+     * Concrete implementations may provide a set of recommended layout options and optionally a
+     * restricted set of values to be provided in the user interface for configuring the layout of
+     * the displayed diagram.
+     * 
+     * @return a map of options (map keys) and related values (map values)
+     */
+    public Map<IProperty<?>, Collection<?>> getRecommendedLayoutOptions() {
+        return Collections.emptyMap();
+    }
+
+
+    // ---------------------------------------------------------------------------------- //
+    //  Convenience methods to be used in concrete implementations   
+
+    /**
+     * Convenience method for defining layout options for {@link KGraphElement KGraphElements}.
+     * 
+     * @param <T>
+     *            the property value type
+     * @param element
+     *            the element to set the layout option on
+     * @param option
+     *            the particular layout option, e.g. one of
+     *            {@link de.cau.cs.kieler.kiml.options.LayoutOptions LayoutOptions}
+     * @param value
+     *            the option value
+     * @return <code>node</code> allowing to perform multiple operations on it in one statement
+     */
+    protected <T> KGraphElement setLayoutOption(final KGraphElement element,
+            final IProperty<T> option, final T value) {
+        element.getData(KLayoutData.class).setProperty(option, value);
+        return element;
+    }
+    
+    /**
+     * Convenience method for defining collapse/expand state dependent layout options for
+     * {@link KNode KNodes}.
+     * 
+     * @param <T>
+     *            the property value type
+     * @param node
+     *            the node to set the layout option on
+     * @param option
+     *            the particular layout option, e.g. one of
+     *            {@link de.cau.cs.kieler.kiml.options.LayoutOptions LayoutOptions}
+     * @param collapsedValue
+     *            the value in case <code>node</code> is collapsed
+     * @param expandedValue
+     *            the value in case <code>node</code> is expanded
+     * @return <code>node</code> allowing to perform multiple operations on it in one statement
+     */
+    protected <T> KNode setExpansionAwareLayoutOption(final KNode node, final IProperty<T> option,
+            final T collapsedValue, final T expandedValue) {
+        KLayoutData sl = node.getData(KLayoutData.class);
+        if (sl != null) {
+            ExpansionAwareLayoutOption.setProperty(sl, option, collapsedValue, expandedValue);
+        }
+        return node;
+    }
+
+    /**
+     * Convenience method for defining collapse/expand state dependent layout options for
+     * {@link KPort KPorts}. The collapse/expand state refers to that of the {@link KNode}
+     * containing the {@link KPort}.
+     * 
+     * @param <T>
+     *            the property value type
+     * @param port
+     *            the port to set the layout option on
+     * @param option
+     *            the particular layout option, e.g. one of
+     *            {@link de.cau.cs.kieler.kiml.options.LayoutOptions LayoutOptions}
+     * @param collapsedValue
+     *            the value in case <code>port</code>'s container node is collapsed
+     * @param expandedValue
+     *            the value in case <code>port</code>'s container node is expanded
+     * @return <code>node</code> allowing to perform multiple operations on it in one statement
+     */
+    protected <T> KPort setExpansionAwareLayoutOption(final KPort port, final IProperty<T> option,
+            final T collapsedValue, final T expandedValue) {
+        KLayoutData sl = port.getData(KLayoutData.class); 
+        ExpansionAwareLayoutOptionData data = sl.getProperty(ExpansionAwareLayoutOption.OPTION);
+        
+        if (data == null) {
+            data = new ExpansionAwareLayoutOptionData();
+            sl.setProperty(ExpansionAwareLayoutOption.OPTION, data);
+        }
+        
+        data.setProperty(option, collapsedValue, expandedValue);
+                
+        return port;
     }
 }

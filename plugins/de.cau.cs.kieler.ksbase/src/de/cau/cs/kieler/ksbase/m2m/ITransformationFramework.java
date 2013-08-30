@@ -19,7 +19,7 @@ import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
 
-import de.cau.cs.kieler.core.model.m2m.TransformException;
+import de.cau.cs.kieler.ksbase.core.TransformException;
 
 /**
  * Interface for creating a bridge between a transformation framework and KIELER.

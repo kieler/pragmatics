@@ -15,6 +15,8 @@ package de.cau.cs.kieler.klighd;
 
 import java.util.List;
 
+import de.cau.cs.kieler.core.util.Pair;
+
 /**
  * Represents a view synthesis option provided a view synthesis transformation. By means of such
  * transformations the tool user can customize the diagram. It provides a type (on/off, choice of
@@ -32,11 +34,13 @@ public final class TransformationOption {
     /**
      * Static factory method providing an 'OnOff' {@link TransformationOption}.<br>
      * <br>
-     * Hint: Declare {@link TransformationOption TransformationOptions} by means of static
-     * fields if the transformation is a re-initialized one (determined in the registration). 
-     *
-     * @param name the name of the option
-     * @param initiallyChecked true is the option shall be set initially.
+     * Hint: Declare {@link TransformationOption TransformationOptions} by means of static fields if
+     * the transformation is a re-initialized one (determined in the registration).
+     * 
+     * @param name
+     *            the name of the option
+     * @param initiallyChecked
+     *            true is the option shall be set initially.
      * @return an 'OnOff' {@link TransformationOption}
      */
     public static TransformationOption createCheckOption(final String name,
@@ -45,12 +49,13 @@ public final class TransformationOption {
     }
     
     /**
-     * Static factory method providing an 'Choice' {@link TransformationOption}.<br>
+     * Static factory method providing a 'Choice' {@link TransformationOption}.<br>
      * <br>
-     * Hint: Declare {@link TransformationOption TransformationOptions} by means of static
-     * fields if the transformation is a re-initialized one (determined in the registration). 
-     *
-     * @param name the name of the option
+     * Hint: Declare {@link TransformationOption TransformationOptions} by means of static fields if
+     * the transformation is a re-initialized one (determined in the registration).
+     * 
+     * @param name
+     *            the name of the option
      * @return an 'Choice' {@link TransformationOption}
      */
     public static TransformationOption createChoiceOption(final String name) {
@@ -58,14 +63,17 @@ public final class TransformationOption {
     }    
 
     /**
-     * Static factory method providing an 'Choice' {@link TransformationOption}.<br>
+     * Static factory method providing a 'Choice' {@link TransformationOption}.<br>
      * <br>
-     * Hint: Declare {@link TransformationOption TransformationOptions} by means of static
-     * fields if the transformation is a re-initialized one (determined in the registration). 
+     * Hint: Declare {@link TransformationOption TransformationOptions} by means of static fields if
+     * the transformation is a re-initialized one (determined in the registration).
      * 
-     * @param name the name of the option
-     * @param values the available option values.
-     * @param initialValue the initially selected option value.
+     * @param name
+     *            the name of the option
+     * @param values
+     *            the available option values.
+     * @param initialValue
+     *            the initially selected option value.
      * @return an 'Choice' {@link TransformationOption}
      */
     public static TransformationOption createChoiceOption(final String name, final List<?> values,
@@ -73,6 +81,68 @@ public final class TransformationOption {
         TransformationOption option = new TransformationOption(name,
                 TransformationOptionType.CHOICE, initialValue);
         option.setValues(values);
+        return option;
+    }
+    
+    /**
+     * Static factory method providing a 'Range' {@link TransformationOption}.<br>
+     * <br>
+     * Hint: Declare {@link TransformationOption TransformationOptions} by means of static fields if
+     * the transformation is a re-initialized one (determined in the registration).
+     * 
+     * @param <S>
+     *            concrete type of the range's start value
+     * @param <T>
+     *            concrete type of the range's end value
+     * @param name
+     *            the name of the option
+     * @param values
+     *            the available option values.
+     * @param initialValue
+     *            the initially selected option value.
+     * @return an 'Choice' {@link TransformationOption}
+     */
+    public static <S extends Number, T extends Number> TransformationOption createRangeOption(
+            final String name, final Pair<S, T> values, final Object initialValue) {
+        TransformationOption option = new TransformationOption(name,
+                TransformationOptionType.RANGE, initialValue);
+        option.setValues(values);
+        option.setStepSize(DEFAULT_STEP_SIZE);
+        return option;
+    }
+    
+    /**
+     * The standard step size of 'range' options.
+     */
+    public static final float DEFAULT_STEP_SIZE = 10 ^ -2; // SUPPRESS CHECKSTYLE MagicNumber
+    
+    /**
+     * Static factory method providing a 'Range' {@link TransformationOption}.<br>
+     * <br>
+     * Hint: Declare {@link TransformationOption TransformationOptions} by means of static fields if
+     * the transformation is a re-initialized one (determined in the registration).
+     * 
+     * @param <S>
+     *            concrete type of the range's start value
+     * @param <T>
+     *            concrete type of the range's end value
+     * @param name
+     *            the name of the option
+     * @param values
+     *            the available option values.
+     * @param stepSize
+     *            the step size determining the option value granularity
+     * @param initialValue
+     *            the initially selected option value.
+     * @return an 'Choice' {@link TransformationOption}
+     */
+    public static <S extends Number, T extends Number> TransformationOption createRangeOption(
+            final String name, final Pair<S, T> values, final Number stepSize,
+            final Object initialValue) {
+        TransformationOption option = new TransformationOption(name,
+                TransformationOptionType.RANGE, initialValue);
+        option.setValues(values);
+        option.setStepSize(stepSize);
         return option;
     }
     
@@ -89,13 +159,17 @@ public final class TransformationOption {
         
         /** Options of this type are just set or not set. */
         CHECK,
-        /** Options of this type provide a set of possible disjoint values.*/
-        CHOICE;
+        /** Options of this type provide a set of possible disjoint values. */
+        CHOICE,
+        /** Options of this type provide a range of possible continuous values. */
+        RANGE;
     }
     
     private String name;    
     private TransformationOptionType type;
     private List<?> values;
+    private Pair<? extends Number, ? extends Number> range;
+    private Number stepSize;
     private Object initialValue;
     
     /**
@@ -130,10 +204,43 @@ public final class TransformationOption {
     }
 
     /**
+     * @return the type
+     */
+    public Boolean isRangeOption() {
+        return type.equals(TransformationOptionType.RANGE);
+    }
+
+    /**
      * @return the optionValues
      */
     public List<?> getValues() {
-        return values;
+        if (isChoiceOption()) {
+            return values;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * @return the optionValues
+     */
+    public Pair<? extends Number, ? extends Number> getRange() {
+        if (isRangeOption()) {
+            return range;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * @return the option value step size
+     */
+    public Number getStepSize() {
+        if (isRangeOption()) {
+            return stepSize;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -153,6 +260,32 @@ public final class TransformationOption {
             throw new UnsupportedOperationException(
                     "KLighD transformation registry: Option values are only allowed for"
                     + " 'Choice' options.");
+        }
+    }
+
+    /**
+     * @param values the optionValues to set
+     */
+    private void setValues(final Pair<? extends Number, ? extends Number> theRange) {
+        if (this.isChoiceOption() || this.isRangeOption()) { 
+            this.range = theRange;
+        } else {
+            throw new UnsupportedOperationException(
+                    "KLighD transformation registry: Option values are only allowed for"
+                    + " 'choice' and 'range' options.");
+        }
+    }
+    
+    /**
+     * @param values the optionValues to set
+     */
+    private void setStepSize(final Number theStepSize) {
+        if (this.isRangeOption()) { 
+            this.stepSize = theStepSize;
+        } else {
+            throw new UnsupportedOperationException(
+                    "KLighD transformation registry: The step size is only allowed for"
+                    + " 'range' options.");
         }
     }
 }

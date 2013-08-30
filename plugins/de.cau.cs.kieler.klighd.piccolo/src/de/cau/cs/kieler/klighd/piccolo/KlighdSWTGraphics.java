@@ -18,69 +18,71 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 
 import org.eclipse.swt.graphics.Device;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.LineAttributes;
+import org.eclipse.swt.graphics.Path;
 import org.eclipse.swt.graphics.RGB;
 
-import de.cau.cs.kieler.klighd.piccolo.util.RGBGradient;
+import de.cau.cs.kieler.klighd.piccolo.internal.util.RGBGradient;
 
 /**
  * This interface defines methods to be used by custom {@link edu.umd.cs.piccolo.PNode PNode}
- * implementations to draw there shapes. Its aim is to abstract the concrete
- * {@link edu.umd.cs.piccolox.swt.SWTGraphics2D SWTGraphics2D} implementation contributed by the
- * <code>edu.umd.cs.piccolo</code> packages.<br>
+ * implementations to draw there shapes. Its aim is to abstract the concrete implementation of
+ * {@link java.awt.Graphics2D Graphics2D} like {@link edu.umd.cs.piccolox.swt.SWTGraphics2D
+ * SWTGraphics2D} contributed by the <code>edu.umd.cs.piccolox.swt</code> package. Instead a
+ * <i>Graphics</i> layer realizing e.g. an SVG output shall be supported interchangeably.<br>
  * <br>
- * For drawing basic figures (except text fields) only {@link #draw(Shape)} and {@link #fill(Shape)}
- * are provided, since drawing and coloring such elements is to be performed by means of
- * {@link java.awt.geom.PathIterator PathIterators}, which are provided by AWT {@link Shape Shapes}
- * via {@link Shape#getPathIterator(AffineTransform)}.<br>
+ * For drawing basic figures (i.e. no text fields and images) {@link #draw(Path)} and
+ * {@link #fill(Path)} as well as {@link #draw(Shape)} and {@link #fill(Shape)} are provided. If an
+ * implementation is dedicated to draw on an SWT {@link Device}, indicated by {@link #getDevice()}
+ * <code>!= null</code> the former <code>draw()</code> and <code>fill()</code> methods shall be used
+ * by clients. This way clients can control the life cycle of the {@link Path} objects in order to
+ * reduce waste of performance due to continuous object creation and dismiss. Otherwise the latter
+ * pair of methods is to be used, e.g. for drawing on an SVG graphics.<br>
  * <br>
- * The rational of this approach is the decision to draw all basic figures by means of SWT
- * {@link org.eclipse.swt.graphics.Path Path} objects. This is currently the only way of passing
- * floating-point-based coordinates to the {@link org.eclipse.swt.graphics.GC GC}. Such SWT
- * {@link org.eclipse.swt.graphics.Path Paths} can be easily built-up by means of AWT Geometry
- * {@link java.awt.geom.PathIterator PathIterators}, see
+ * The rational of using Paths/Shapes for drawing is the decision to draw all basic figures by means
+ * of SWT {@link Path Paths} objects. This is currently the only way of passing floating-point-based
+ * coordinates to the {@link org.eclipse.swt.graphics.GC GC}, and thus to get rid of rounding
+ * issues. Such SWT {@link Path Paths} can be easily built-up from {@link Shape Shapes} by means of
+ * AWT Geometry {@link java.awt.geom.PathIterator PathIterators}, see
  * {@link edu.umd.cs.piccolox.swt.SWTGraphics2D#pathIterator2Path(java.awt.geom.PathIterator)
  * SWTGraphics2D#pathIterator2Path(PathIterator)}.<br>
  * <br>
- * Since the coordinates of the particular figures are relative to their parent figures, all
- * coordinates must be adjusted by the currently visible area and zoom factor. In order to do that
- * the path object must be inspected and the segment values updated. This is task is, fortunately,
- * also performed by the {@link java.awt.geom.PathIterator PathIterators}.<br>
- * <br>
- * A further of this approach is an easier support of rotation of basic figures. This requires the
- * rotation of the coordinates while drawing the figures on the one hand, and the incorporation of
- * the rotation for determining the currently picked figure while processing mouse input events.
- * Relying on the AWT Geometry {@link java.awt.geom.PathIterator PathIterators} enables consistent
- * and homogeneous calculations for both use cases.<br>
- * <br>
- * To be continued for text stuff.
+ * Consequently, we can delegate the application of {@link AffineTransform AffineTransforms} to SWT
+ * by simply transforming them into an SWT {@link org.eclipse.swt.graphics.Transform Transform} and
+ * calling {@link org.eclipse.swt.graphics.GC#setTransform(org.eclipse.swt.graphics.Transform)
+ * GC#setTransform(Transform)}.
  * 
  * @author chsch
  */
 public interface KlighdSWTGraphics {
 
     /**
+     * Returns the SWT {@link Device} to draw on. This method is to be used for creating
+     * {@link Device}-dependent objects like {@link org.eclipse.swt.graphics.Color Colors},
+     * {@link org.eclipse.swt.graphics.Font Fonts}, {@link Image Images}, and {@link Path Paths}.<br>
+     * <br>
+     * If the return value is <code>null</code> the current canvas is not an SWT-based one.<br>
+     * In that case only the AWT {@link Shape}-based <code>draw()</code> and <code>fill()</code>
+     * methods are supported.
      * 
-     * @return the {@link Device} to work with
+     * @return the {@link Device} to work with, or <code>null</code>, if a non-SWT canvas is used
      */
     Device getDevice();
-
     
     /**
      * This setter allows to (re-) use an object adhering to this interface for multiple paint runs.
-     * 
-     * @author chsch
      * 
      * @param theDevice
      *            the {@link Device} to work with
      */
     void setDevice(Device theDevice);
-
+    
     /**
      * This setter allows to (re-) use an object adhering to this interface for multiple paint runs.
-     * 
-     * @author chsch
      * 
      * @param theGc
      *            the {@link GC} to paint on
@@ -88,42 +90,16 @@ public interface KlighdSWTGraphics {
     void setGC(GC theGc);
 
     /**
-     * Returns the currently configured line attributes in a {@link LineAttributes} record
-     * structure.
-     * 
-     * @return a {@link LineAttributes} object reflecting the currently set line attributes.
-     */
-    LineAttributes getLineAttributes();
-    
-    /**
      * Sets the line attributes to use when drawing shapes.
      * 
      * @param attributes of lines when drawing shapes
      */
     void setLineAttributes(LineAttributes attributes);
-    
-    /**
-     * Returns the line width to use when drawing shapes.
-     * 
-     * @author chsch
-     * 
-     * @return width of lines when drawing shapes
-     */
-    float getLineWidth();
 
-    /**
-     * Sets the line width to use when drawing shapes.
-     * 
-     * @author chsch
-     * 
-     * @param lineWidth
-     *            width of lines when drawing shapes
-     */
-    void setLineWidth(final float lineWidth);
 
-    /*---------------------------------------------*/
-    /* Desired coloring & style getter and setter. */
-    /*---------------------------------------------*/
+    /*------------------------------*/
+    /* The coloring & style setter. */
+    /*------------------------------*/
     
     /**
      * Returns the alpha value currently used by the current {@link GC}.
@@ -136,11 +112,16 @@ public interface KlighdSWTGraphics {
 
     /**
      * Sets the alpha value to be used during the subsequent paint instructions.<br>
-     * <b>Caution:</b> This value will also set by Piccolo for realizing the transparency. That
-     * feature is used in the {@link de.cau.cs.kieler.klighd.piccolo.activities.FadeNodeInActivity
-     * FadeNodeInActivity} and {@link de.cau.cs.kieler.klighd.piccolo.activities.FadeEdgeInActivity
-     * FadeEdgeInActivity} activities. Thus do <b>not</b> set the alpha to an absolute value, but to
-     * a relative one. The current value can be obtain by {@link #getAlpha()}.
+     * <b>Caution:</b> This value will also set by Piccolo2D for realizing the transparency. That
+     * feature is used in the
+     * {@link de.cau.cs.kieler.klighd.piccolo.internal.activities.FadeNodeInActivity
+     * FadeNodeInActivity} and
+     * {@link de.cau.cs.kieler.klighd.piccolo.internal.activities.FadeEdgeInActivity
+     * FadeEdgeInActivity} activities. Thus do <b>not</b> set the alpha to an absolute value, but
+     * only to someone relative to the current value. The current value can be obtained by
+     * {@link #getAlpha()}, the denominator is
+     * {@link de.cau.cs.kieler.klighd.KlighdConstants#ALPHA_FULL_OPAQUE
+     * KlighdConstants#ALPHA_FULL_OPAQUE}.
      * 
      * @author chsch
      * 
@@ -157,7 +138,7 @@ public interface KlighdSWTGraphics {
      * @param color
      *            new stroke color
      */
-    void setColor(final RGB color);
+    void setStrokeColor(final RGB color);
 
     /**
      * Sets the stroke color gradient to the provided {@link RGBGradient} descriptor.
@@ -169,7 +150,7 @@ public interface KlighdSWTGraphics {
      * @param bounds
      *            the local (non-adjusted) bounds within the gradient is to be applied
      */
-    void setPattern(final RGBGradient gradient, final Rectangle2D bounds);
+    void setStrokePattern(final RGBGradient gradient, final Rectangle2D bounds);
 
     /**
      * Sets the background color to the provided {@link RGB} color descriptor.
@@ -179,7 +160,7 @@ public interface KlighdSWTGraphics {
      * @param backgroundColor
      *            new background color
      */
-    void setBackground(final RGB backgroundColor);
+    void setFillColor(final RGB backgroundColor);
 
     /**
      * Sets the background color gradient to the provided {@link RGBGradient} descriptor.
@@ -191,56 +172,121 @@ public interface KlighdSWTGraphics {
      * @param bounds
      *            the local (non-adjusted) bounds within the gradient is to be applied
      */
-    void setBackgroundPattern(final RGBGradient backgroundGradient, final Rectangle2D bounds);
+    void setFillPattern(final RGBGradient backgroundGradient, final Rectangle2D bounds);
 
 
-    /*-----------------------------------------------------------------------*/
-    /* Some AffineTransform-related methods required by the PSWTAdvancedPath */
-    /* for properly applying the translation and scaling of related shape.   */
-    /*-----------------------------------------------------------------------*/
+    /*-------------------------------*/
+    /* The font & text style setter. */
+    /*-------------------------------*/
     
     /**
-     * Returns a copy of the current <code>Transform</code> in the <code>Graphics2D</code> context.<br>
+     * Set the font by means of a {@link FontData}.
      * 
-     * @author <b>Copied from {@link java.awt.Graphics2D#getTransform()}!</b>
+     * @param fontData
+     *            font configuration to be applied while drawing text
+     */
+    void setFont(final FontData fontData);
+    
+    /**
+     * Sets the underline for next text to be drawn.
      * 
-     * @return the current <code>AffineTransform</code> in the <code>Graphics2D</code> context.
-     * @see #transform
-     * @see #setTransform
+     * @param theUnderlining
+     *            the underline style constant, see {@link org.eclipse.swt.SWT SWT} class
+     * @param color
+     *            the underline color
+     */
+    void setUnderline(final int theUnderlining, final RGB color);
+
+    /**
+     * Sets the strikeout flag for next text to be drawn.
+     * 
+     * @param theStrikeout
+     *            indicate whether to strike out
+     * @param color
+     *            the underline color
+     */
+    void setStrikeout(final boolean theStrikeout, final RGB color);
+
+
+    /*--------------------------------------------------------*/
+    /* Some AffineTransform-related methods for properly      */
+    /* realizing shifts, scalings, and rotations of shapes.   */
+    /*--------------------------------------------------------*/
+    
+    /**
+     * Returns a copy of the current {@link AffineTransform} of this {@link KlighdSWTGraphics}
+     * context.<br>
+     * 
+     * @return the desired copy.
      */
     AffineTransform getTransform();
 
     /**
-     * Composes an <code>AffineTransform</code> object with the <code>Transform</code> in this
-     * <code>Graphics2D</code> according to the rule last-specified-first-applied. If the current
-     * <code>Transform</code> is Cx, the result of composition with Tx is a new
-     * <code>Transform</code> Cx'. Cx' becomes the current <code>Transform</code> for this
-     * <code>Graphics2D</code>. Transforming a point p by the updated <code>Transform</code> Cx' is
-     * equivalent to first transforming p by Tx and then transforming the result by the original
-     * <code>Transform</code> Cx. In other words, Cx'(p) = Cx(Tx(p)). A copy of the Tx is made, if
-     * necessary, so further modifications to Tx do not affect rendering.<br>
-     * 
-     * @author <b>Copied from {@link java.awt.Graphics2D#getTransform()}!</b>
+     * Re-initializes the {@link AffineTransform} of this {@link KlighdSWTGraphics} context with the
+     * data of the provided {@link AffineTransform} <code>transform</code>.<br>
+     * See {@link AffineTransform#setTransform(AffineTransform)} for more details!
      * 
      * @param transform
-     *            the <code>AffineTransform</code> object to be composed with the current
-     *            <code>Transform</code>
-     * @see #setTransform
-     * @see AffineTransform
-     */
-    void transform(final AffineTransform transform);
-    
-    /**
-     * See {@link java.awt.Graphics2D#setTransform(AffineTransform)}!
-     * 
-     * @param transform
-     *            the <code>AffineTransform</code> that was retrieved from the
-     *            <code>getTransform</code> method
-     * @see #transform
-     * @see #getTransform
-     * @see AffineTransform
+     *            the <code>AffineTransform</code> that is to be applied
      */
     void setTransform(final AffineTransform transform);
+    
+    /**
+     * Concatenates the {@link AffineTransform} in this {@link KlighdSWTGraphics} context with the
+     * provided {@link AffineTransform} <code>transform</code>. Operations of the resulting compound
+     * transform are applied according to the rule last-specified-first-applied.<br>
+     * See e.g. {@link AffineTransform#concatenate(AffineTransform)} for more details
+     * 
+     * @param transform
+     *            the {@link AffineTransform} object to be appended to the current one.
+     */
+    void transform(final AffineTransform transform);
+
+
+    /*-------------------------------------------------------------------------*/
+    /* Some clipping-related methods for limiting the screen area to paint on. */
+    /*-------------------------------------------------------------------------*/
+
+    /**
+     * Gets the current clipping area. Position and size of the are adjusted by the current
+     * {@link AffineTransform} data. If no clip has previously been set, or
+     * 
+     * @return a <code>Shape</code> object representing the current clipping area, or
+     *         <code>null</code> if no clip is set (e.g. after it has been cleared through
+     *         {@link #setClip(Shape) setClip(null)} or {@link #clip(Shape) clip(null)}).
+     */
+    Shape getClip();
+
+    /**
+     * Sets the current clipping area to the provided {@link Shape} <code>clip</code>.
+     * <code>clip</code> will be adjusted by the currently set {@link AffineTransform} of this
+     * {@link KlighdSWTGraphics} context. Not all objects that implement the {@link Shape} interface
+     * can be used to set the clip. The only {@link Shape} objects that are guaranteed to be
+     * supported are {@link Rectangle2D Rectangle2Ds}.
+     * 
+     * @param clip
+     *            the {@link Shape} forming the clip area; if <code>clip</code> is <code>null</code>
+     *            this method removes the current clip area
+     */
+    void setClip(final Shape clip);
+    
+    /**
+     * Intersects the current clip area with the provided {@link Shape} <code>clip</code>.
+     * <code>clip</code> will be adjusted by the currently set {@link AffineTransform} of this
+     * {@link KlighdSWTGraphics} context. If no clip area has previously been set, or if the clip
+     * area has been cleared using {@link #setClip(Shape) setClip(null)}, the specified
+     * <code>Shape</code> becomes the new clip.
+     * 
+     * @param clip
+     *            the {@link Shape} to be intersected with the current clip area; if
+     *            <code>clip</code> is <code>null</code> this method removes the current clip area
+     */
+    void clip(final Shape clip);
+
+
+    /*-----------------------------*/
+    /* The drawing/filling methods */
+    /*-----------------------------*/
 
     /**
      * Draws the provided AWT {@link Shape} by relying on the provided
@@ -249,10 +295,22 @@ public interface KlighdSWTGraphics {
      * any caching.
      * 
      * @param s
-     *            the <code>Shape</code> to be rendered
+     *            the {@link Shape} to be rendered
      */
     void draw(final Shape s);
-    
+
+    /**
+     * Draws the provided SWT {@link Path}.
+     * 
+     * <b>Care</b> this method can only be used if you are sure that an SWT environment is
+     * available, i.e., the {@link #getDevice()} method does not return <code>null</code>. Otherwise
+     * use {@link #draw(Shape)}.
+     * 
+     * @param p
+     *            the {@link Path} to be rendered
+     */
+    void draw(final Path p);
+
     /**
      * Fills the provided AWT {@link Shape} by relying on the provided
      * {@link java.awt.geom.PathIterator PathIterator} (
@@ -263,5 +321,55 @@ public interface KlighdSWTGraphics {
      *            the <code>Shape</code> to be filled
      */
     void fill(final Shape s);
+
+    /**
+     * Fills the provided SWT {@link Path}.
+     * 
+     * <b>Care</b> this method can only be used if you are sure that an SWT environment is
+     * available, i.e., the {@link #getDevice()} method does not return <code>null</code>. Otherwise
+     * use {@link #fill(Shape)}.
+     * 
+     * @param p
+     *            the {@link Path} to be rendered
+     */
+    void fill(final Path p);
     
+    /**
+     * Draws the provided image at the specified position with the specified width and height.<br>
+     * Its position can be determined by means of {@link #setTransform(AffineTransform)}.
+     * 
+     * <b>Care</b> this method can only be used if you are sure that an SWT environment is
+     * available, i.e., the {@link #getDevice()} method does not return <code>null</code>. Otherwise
+     * use {@link #drawImage(ImageData, double, double)}.
+     * 
+     * @param image
+     *            {@link Image} to draw
+     * @param width
+     *            the width of the image drawing
+     * @param height
+     *            the height of the image drawing
+     */
+    void drawImage(final Image image, final double width, final double height);
+    
+    /**
+     * Draws the provided image at the specified position with the specified width and height.<br>
+     * Its position can be determined by means of {@link #setTransform(AffineTransform)}.
+     * 
+     * @param imageData
+     *            {@link ImageData} to draw
+     * @param width
+     *            the width of the image drawing
+     * @param height
+     *            the height of the image drawing
+     */
+    void drawImage(final ImageData imageData, final double width, final double height);
+
+    /**
+     * Draws the provided string while respecting the recently set font & text style settings.<br>
+     * Its position can be determined by means of {@link #setTransform(AffineTransform)}.
+     * 
+     * @param string
+     *            the text to be drawn on the canvas
+     */
+    void drawText(final String string);
 }

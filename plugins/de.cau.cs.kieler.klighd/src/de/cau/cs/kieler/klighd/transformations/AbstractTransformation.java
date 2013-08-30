@@ -92,7 +92,7 @@ public abstract class AbstractTransformation<S, T> implements ITransformation<S,
      * @param option the option to evaluate the configuration state / the configured value.
      * @return the configured value of {@link TransformationOption} option.
      */
-    public Boolean getOptionBooleanValue(final TransformationOption option) {
+    public boolean getOptionBooleanValue(final TransformationOption option) {
         Object result = this.getUsedContext().getOptionValue(option);
         if (result instanceof Boolean) {
             return (Boolean) result; 
@@ -105,11 +105,47 @@ public abstract class AbstractTransformation<S, T> implements ITransformation<S,
     }
     
     /**
+     * Convenience getter.
+     * 
+     * @param option the option to evaluate the configuration state / the configured value.
+     * @return the configured value of {@link TransformationOption} option.
+     */
+    public int getOptionIntValue(final TransformationOption option) {
+        Object result = this.getUsedContext().getOptionValue(option);
+        if (result instanceof Integer) {
+            return (Integer) result; 
+        } else {
+            throw new IllegalArgumentException("KLighD transformation option handling: "
+                    + "The transformation " + this
+                    + " attempted to evaluate the non-Integer valued transformation option "
+                    + option.getName() + " expecting a int value.");
+        }
+    }
+    
+    /**
+     * Convenience getter.
+     * 
+     * @param option the option to evaluate the configuration state / the configured value.
+     * @return the configured value of {@link TransformationOption} option.
+     */
+    public float getOptionFloatValue(final TransformationOption option) {
+        Object result = this.getUsedContext().getOptionValue(option);
+        if (result instanceof Float) {
+            return (Float) result; 
+        } else {
+            throw new IllegalArgumentException("KLighD transformation option handling: "
+                    + "The transformation " + this
+                    + " attempted to evaluate the non-Float valued transformation option "
+                    + option.getName() + " expecting a float value.");
+        }
+    }
+    
+    /**
      * Method to put a pair of source target into the lookup table.<br>
      * Name, Parameter ordering, and return value (the target) are optimized for
      * calling in Xtend2 based transformations in a fluent interface fashion, like
-     * "model.createShape().putToSourceTargetLookUpWith(model);"<br><br>
-     * 
+     * "model.createShape().putToLookUpWith(model);"<br>
+     * <br>
      * Usage requires to perform 'use(TransformationContext)' at the beginning of
      * {@link ITransformation#transform(Object, TransformationContext)}.
      * 

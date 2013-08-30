@@ -84,6 +84,10 @@ public final class KimlGraphitiUtil {
     /** list of all connections in the diagram. */
     public static final IProperty<List<Connection>> CONNECTIONS = new Property<List<Connection>>(
             "graphiti.connections");
+    
+    /** the offset to add for all coordinates. */
+    public static final IProperty<KVector> COORDINATE_OFFSET = new Property<KVector>(
+            "graphiti.coordinateOffset");
 
     /**
      * the volatile layout configurator for static properties such as minimal node sizes.
@@ -177,37 +181,39 @@ public final class KimlGraphitiUtil {
      */
     public static void createEdge(final LayoutMapping<PictogramElement> mapping,
             final Connection connection) {
-        KEdge edge = KimlUtil.createInitializedEdge();
         BiMap<KGraphElement, PictogramElement> graphMap = mapping.getGraphMap();
-        VolatileLayoutConfig staticConfig = mapping.getProperty(STATIC_CONFIG);
 
         // set target node and port
         KNode targetNode;
         Anchor targetAnchor = connection.getEnd();
         KPort targetPort = (KPort) graphMap.inverse().get(targetAnchor);
         if (targetPort != null) {
-            edge.setTargetPort(targetPort);
             targetNode = targetPort.getNode();
         } else {
             targetNode = (KNode) graphMap.inverse().get(targetAnchor.getParent());
         }
-        edge.setTarget(targetNode);
+        if (targetNode == null) {
+            return;
+        }
 
         // set source node and port
         KNode sourceNode;
         Anchor sourceAnchor = connection.getStart();
         KPort sourcePort = (KPort) graphMap.inverse().get(sourceAnchor);
         if (sourcePort != null) {
-            edge.setSourcePort(sourcePort);
             sourceNode = sourcePort.getNode();
         } else {
             sourceNode = (KNode) graphMap.inverse().get(sourceAnchor.getParent());
         }
-        edge.setSource(sourceNode);
-
-        if (sourceNode == null || targetNode == null) {
+        if (sourceNode == null) {
             return;
         }
+        
+        KEdge edge = KimlUtil.createInitializedEdge();
+        edge.setTarget(targetNode);
+        edge.setTargetPort(targetPort);
+        edge.setSource(sourceNode);
+        edge.setSourcePort(sourcePort);
 
         // calculate offset for bend points and labels
         KNode referenceNode = sourceNode;
@@ -243,6 +249,7 @@ public final class KimlGraphitiUtil {
         graphMap.put(edge, connection);
 
         // find labels for the connection
+        VolatileLayoutConfig staticConfig = mapping.getProperty(STATIC_CONFIG);
         for (ConnectionDecorator decorator : connection.getConnectionDecorators()) {
             GraphicsAlgorithm ga = decorator.getGraphicsAlgorithm();
             if (ga instanceof AbstractText) {

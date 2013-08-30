@@ -416,6 +416,7 @@ public abstract class AbstractService {
         statistics.setEdges(edges);
         // Execution time related statistics
         statistics.setTimeLayout(layoutTime);
+        statistics.setTimeRemoteSupplemental(supplementalTime);
         KIdentifier identifier = sourceGraph.getData(KIdentifier.class);
         if (identifier == null) {
             identifier = KLayoutDataFactoryImpl.eINSTANCE.createKIdentifier();

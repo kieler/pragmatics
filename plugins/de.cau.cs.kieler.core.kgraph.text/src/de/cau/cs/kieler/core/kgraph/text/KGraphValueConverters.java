@@ -13,21 +13,26 @@
  */
 package de.cau.cs.kieler.core.kgraph.text;
 
+import java.util.Collections;
+import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.inject.Inject;
+
 import org.eclipse.xtext.conversion.IValueConverter;
+import org.eclipse.xtext.conversion.IValueConverterService;
 import org.eclipse.xtext.conversion.ValueConverter;
 import org.eclipse.xtext.conversion.ValueConverterException;
 import org.eclipse.xtext.conversion.impl.AbstractDeclarativeValueConverterService;
 import org.eclipse.xtext.conversion.impl.AbstractIDValueConverter;
 import org.eclipse.xtext.conversion.impl.AbstractNullSafeConverter;
+import org.eclipse.xtext.conversion.impl.IDValueConverter;
 import org.eclipse.xtext.conversion.impl.INTValueConverter;
 import org.eclipse.xtext.conversion.impl.STRINGValueConverter;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.util.Strings;
 
-import com.google.inject.Inject;
 
 /**
  * Value converter for the KGraph grammar.
@@ -35,25 +40,58 @@ import com.google.inject.Inject;
  * @author msp
  */
 public class KGraphValueConverters extends AbstractDeclarativeValueConverterService {
+    
+    /** precision of float outputs below which they are converted to integers. */
+    private static final float FLOAT_PREC = 1e-4f;
 
     @Inject
     private AbstractIDValueConverter idValueConverter;
 
+    // CHECKSTYLEOFF MethodName
+    
+    /**
+     * Create a converter for the ID rule.
+     * 
+     * @return a value converter for ID
+     */
     @ValueConverter(rule = "ID")
     public IValueConverter<String> ID() {
         return idValueConverter;
     }
+    
+    @Inject
+    private QualifiedIDValueConverter qualifiedIdValueConverter;
+
+    /**
+     * Create a converter for the QualifiedID rule.
+     * 
+     * @return a value converter for QualifiedID
+     */
+    @ValueConverter(rule = "QualifiedID")
+    public IValueConverter<String> QualifiedID() {
+        return qualifiedIdValueConverter;
+    }
 
     @Inject
     private STRINGValueConverter stringValueConverter;
-    
+
+    /**
+     * Create a converter for the STRING rule.
+     * 
+     * @return a value converter for STRING
+     */
     @ValueConverter(rule = "STRING")
     public IValueConverter<String> STRING() {
         return stringValueConverter;
     }
     
     private PropertyValueConverter propertyValueConverter = new PropertyValueConverter();
-    
+
+    /**
+     * Create a converter for the PropertyValue rule.
+     * 
+     * @return a value converter for PropertyValue
+     */
     @ValueConverter(rule = "PropertyValue")
     public IValueConverter<String> propertyValue() {
         return propertyValueConverter;
@@ -61,47 +99,126 @@ public class KGraphValueConverters extends AbstractDeclarativeValueConverterServ
 
     @Inject
     private INTValueConverter intValueConverter;
-    
+
+    /**
+     * Create a converter for the NATURAL rule.
+     * 
+     * @return a value converter for NATURAL
+     */
     @ValueConverter(rule = "NATURAL")
     public IValueConverter<Integer> NATURAL() {
         return intValueConverter;
     }
-    
+
+    /**
+     * Create a converter for the Float rule.
+     * 
+     * @return a value converter for Float
+     */
+    @ValueConverter(rule = "Float")
+    public IValueConverter<Float> Float() {
+        return new FloatValueConverter();
+    }
+
+    /**
+     * Create a converter for the RED rule.
+     * 
+     * @return a value converter for RED
+     */
     @ValueConverter(rule = "RED")
     public IValueConverter<Integer> RED() {
         return new IntUnitSuffixConverter("r");
     }
-    
+
+    /**
+     * Create a converter for the GREEN rule.
+     * 
+     * @return a value converter for GREEN
+     */
     @ValueConverter(rule = "GREEN")
     public IValueConverter<Integer> GREEN() {
         return new IntUnitSuffixConverter("g");
     }
-    
+
+    /**
+     * Create a converter for the BLUE rule.
+     * 
+     * @return a value converter for BLUE
+     */
     @ValueConverter(rule = "BLUE")
     public IValueConverter<Integer> BLUE() {
         return new IntUnitSuffixConverter("b");
     }
-    
+
+    /**
+     * Create a converter for the ALPHA rule.
+     * 
+     * @return a value converter for ALPHA
+     */
     @ValueConverter(rule = "ALPHA")
     public IValueConverter<Integer> ALPHA() {
         return new IntUnitSuffixConverter("a");
     }
-    
+
+    /**
+     * Create a converter for the FSIZE rule.
+     * 
+     * @return a value converter for FSIZE
+     */
     @ValueConverter(rule = "FSIZE")
     public IValueConverter<Integer> FSIZE() {
         return new IntUnitSuffixConverter("pt");
     }
-    
+
+    /**
+     * Create a converter for the DEGREES rule.
+     * 
+     * @return a value converter for DEGREES
+     */
     @ValueConverter(rule = "DEGREES")
     public IValueConverter<Float> DEGREES() {
         return new FloatUnitSuffixConverter(1, "deg");
     }
-    
+
+    /**
+     * Create a converter for the PERCENT rule.
+     * 
+     * @return a value converter for PERCENT
+     */
     @ValueConverter(rule = "PERCENT")
     public IValueConverter<Float> PERCENT() {
-        return new FloatUnitSuffixConverter(100, "%");
+        return new FloatUnitSuffixConverter(100, "%"); // SUPPRESS CHECKSTYLE MagicNumber
     }
     
+    
+    /**
+     * Value converter for qualified identifiers.
+     */
+    private static class QualifiedIDValueConverter extends IDValueConverter {
+
+        @Inject
+        private IValueConverterService valueConverter;
+
+        public String toString(final String s) {
+            String res = "";
+            for (Object ss : Collections.list(new StringTokenizer(s, "."))) {
+                res += "." + valueConverter.toString(ss, "ID");
+            }            
+            return res.substring(1);
+        }
+        
+        public String toValue(final String string, final INode node) {
+            String res = super.toValue(string, node);
+            if (res != null) {
+                return res.replace(".^", ".");
+            }
+            return null;
+        }
+    }
+    
+    /**
+     * Value converter for integer values with a unit suffix.
+     */
     private class IntUnitSuffixConverter extends AbstractNullSafeConverter<Integer> {
         private String suffix;
         
@@ -115,8 +232,7 @@ public class KGraphValueConverters extends AbstractDeclarativeValueConverterServ
         }
         
         @Override
-        protected Integer internalToValue(final String string, final INode node)
-                throws ValueConverterException {
+        protected Integer internalToValue(final String string, final INode node) {
             int i = (string == null) ? -1 : string.indexOf(suffix);
             if (i >= 0) {
                 return intValueConverter.toValue(string.substring(0, i), node);
@@ -125,6 +241,9 @@ public class KGraphValueConverters extends AbstractDeclarativeValueConverterServ
         }
     }
     
+    /**
+     * Value converter for floating point values with a unit suffix.
+     */
     private class FloatUnitSuffixConverter extends AbstractNullSafeConverter<Float> {
         private float factor;
         private String suffix;
@@ -136,15 +255,17 @@ public class KGraphValueConverters extends AbstractDeclarativeValueConverterServ
         
         @Override
         protected String internalToString(final Float value) {
-            if (value == null) {
-                throw new ValueConverterException("Float value may not be null.", null, null);
+            float outputValue = value * factor;
+            int intOutputValue = Math.round(outputValue);
+            if (Math.abs(outputValue - intOutputValue) < FLOAT_PREC) {
+                return Integer.toString(intOutputValue) + suffix;
+            } else {
+                return Float.toString(outputValue) + suffix;
             }
-            return Float.toString(value * factor) + suffix;
         }
         
         @Override
-        protected Float internalToValue(final String string, final INode node)
-                throws ValueConverterException {
+        protected Float internalToValue(final String string, final INode node) {
             if (Strings.isEmpty(string)) {
                 throw new ValueConverterException("Couldn't convert empty string to a float value.",
                         node, null);
@@ -155,6 +276,36 @@ public class KGraphValueConverters extends AbstractDeclarativeValueConverterServ
                     return Float.parseFloat(string.substring(0, i)) / factor;
                 }
                 return Float.parseFloat(string) / factor;
+            } catch (NumberFormatException e) {
+                throw new ValueConverterException("Couldn't convert '" + string + "' to a float value.",
+                        node, e);
+            }
+        }
+    }
+    
+    /**
+     * Value converter for floating point values.
+     */
+    private class FloatValueConverter extends AbstractNullSafeConverter<Float> {
+        
+        @Override
+        protected String internalToString(final Float value) {
+            int intValue = Math.round(value);
+            if (Math.abs(value - intValue) < FLOAT_PREC) {
+                return Integer.toString(intValue);
+            } else {
+                return Float.toString(value);
+            }
+        }
+        
+        @Override
+        protected Float internalToValue(final String string, final INode node) {
+            if (Strings.isEmpty(string)) {
+                throw new ValueConverterException("Couldn't convert empty string to a float value.",
+                        node, null);
+            }
+            try {
+                return Float.parseFloat(string);
             } catch (NumberFormatException e) {
                 throw new ValueConverterException("Couldn't convert '" + string + "' to a float value.",
                         node, e);
@@ -174,11 +325,11 @@ public class KGraphValueConverters extends AbstractDeclarativeValueConverterServ
         /**
          * Regular expression pattern that matches instances of the QualifiedName rule.
          */
-        Pattern qualifiedNamePattern = Pattern.compile(
+        private Pattern qualifiedNamePattern = Pattern.compile(
                 "[a-zA-Z_][a-zA-Z0-9_]*(\\.[a-zA-Z_][a-zA-Z0-9_]*)*");
         
         @Override
-        protected String internalToString(String value) {
+        protected String internalToString(final String value) {
             // Check if the value can be parsed as a Float
             try {
                 Float.parseFloat(value);
@@ -199,7 +350,7 @@ public class KGraphValueConverters extends AbstractDeclarativeValueConverterServ
         }
 
         @Override
-        protected String internalToValue(String string, INode node) throws ValueConverterException {
+        protected String internalToValue(final String string, final INode node) {
             // Strip leading and trailing quotation mark, if any (this can be simplified if we assume
             // that the string passed to the method either has both, a leading and a trailing quotation
             // mark, or none; but even though we should be able to assume that, we decide to program

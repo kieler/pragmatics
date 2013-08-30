@@ -42,7 +42,7 @@ import de.cau.cs.kieler.kiml.grana.batch.Batch;
 import de.cau.cs.kieler.kiml.grana.batch.BatchJob;
 import de.cau.cs.kieler.kiml.grana.batch.BatchResult;
 import de.cau.cs.kieler.kiml.grana.batch.CSVResultSerializer;
-import de.cau.cs.kieler.kiml.grana.batch.GmfKGraphProvider;
+import de.cau.cs.kieler.kiml.grana.batch.FileKGraphProvider;
 import de.cau.cs.kieler.kiml.grana.batch.IBatchResultSerializer;
 import de.cau.cs.kieler.kiml.grana.ui.BatchWizard;
 import de.cau.cs.kieler.kiml.ui.util.ProgressMonitorAdapter;
@@ -94,8 +94,9 @@ public class BatchHandler extends AbstractHandler {
                             Batch batch = new Batch(wizard.getAnalyses());
                             // create a batch job for every selected file
                             for (IPath file : wizard.getSelectedFiles()) {
-                                GmfKGraphProvider provider = new GmfKGraphProvider();
+                                FileKGraphProvider provider = new FileKGraphProvider();
                                 provider.setLayoutBeforeAnalysis(wizard.getLayoutBeforeAnalysis());
+                                provider.setLayoutConfigurator(wizard.getLayoutConfig());
                                 BatchJob<IPath> batchJob = new BatchJob<IPath>(file, provider);
                                 batch.appendJob(batchJob);
                             }

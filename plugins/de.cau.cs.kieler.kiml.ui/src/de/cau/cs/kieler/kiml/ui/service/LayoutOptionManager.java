@@ -25,7 +25,6 @@ import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -35,8 +34,7 @@ import de.cau.cs.kieler.kiml.config.CompoundLayoutConfig;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
-import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.service.LayoutInfoService;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 
@@ -177,12 +175,11 @@ public class LayoutOptionManager {
         config.enrich(context);
 
         // clear the previous configuration
-        KGraphData graphData = graphElement.getData(
-                graphElement instanceof KEdge ? KEdgeLayout.class : KShapeLayout.class);
-        graphData.getProperties().clear();
+        KLayoutData layoutData = graphElement.getData(KLayoutData.class);
+        layoutData.getProperties().clear();
         
         // transfer the options from the layout configuration
-        config.transferValues(graphData, context);
+        config.transferValues(layoutData, context);
 
         // remove the semantic layout configurations again
         config.removeAll(semanticConfigs);

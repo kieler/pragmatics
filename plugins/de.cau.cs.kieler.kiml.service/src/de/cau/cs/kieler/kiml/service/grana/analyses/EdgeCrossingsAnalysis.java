@@ -51,6 +51,9 @@ public class EdgeCrossingsAnalysis implements IAnalysis {
      * Identifier of the edge crossings analysis.
      */
     public static final String ID = "de.cau.cs.kieler.kiml.grana.edgeCrossings";
+    
+    /** tolerance for double equality. */
+    private static final double TOLERANCE = 1e-4;
 
     /**
      * Returns whether two line segments have an intersection.
@@ -69,7 +72,7 @@ public class EdgeCrossingsAnalysis implements IAnalysis {
             final KVector q1, final KVector q2) {
         double s = (q2.y - q1.y) * (p2.x - p1.x) - (q2.x - q1.x) * (p2.y - p1.y);
         // are the line segments parallel?
-        if (s == 0) {
+        if (s < TOLERANCE) {
             return false;
         }
         double a1 = (q2.x - q1.x) * (p1.y - q1.y) - (q2.y - q1.y) * (p1.x - q1.x);

@@ -23,11 +23,17 @@ import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.core.properties.Property;
 
 /**
- * Context information for configuration of layout options.
+ * Context information for configuration of layout options. A layout context contains references
+ * to a diagram (view model) element, its corresponding domain model element, its corresponding
+ * graph element, and other information that is relevant for the layout of that element.
+ * Contexts are used by {@link de.cau.cs.kieler.kiml.config.ILayoutConfig ILayoutConfigs}:
+ * first a context is enriched with properties that hold required information, then layout options
+ * can be queried either one at a time or all at once. The most important properties that should
+ * be contained in a layout context are defined here.
  *
  * @author msp
  * @kieler.design proposed by msp
- * @kieler.rating proposed yellow 2012-07-10 msp
+ * @kieler.rating yellow 2013-07-01 review KI-38 by cds, uru
  */
 public class LayoutContext extends MapPropertyHolder {
     
@@ -54,7 +60,8 @@ public class LayoutContext extends MapPropertyHolder {
     public static final IProperty<Object> CONTAINER_DIAGRAM_PART = new Property<Object>(
             "context.containerDiagramPart");
     
-    /** the types of targets for layout options. */
+    /** the types of targets for layout options: this determines whether the graph element in
+     *  the current context is a node, edge, port, or label. */
     public static final IProperty<Set<LayoutOptionData.Target>> OPT_TARGETS
             = new Property<Set<LayoutOptionData.Target>>("context.optionTargets");
 
@@ -65,7 +72,7 @@ public class LayoutContext extends MapPropertyHolder {
     }
     
     /**
-     * Copy the content of the given layout context into a new one.
+     * Create a new layout context initialized with the content of an existing context.
      * 
      * @param other another layout context
      */

@@ -355,14 +355,10 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
         List<LEdge> northSouthSelfLoopEdges = new ArrayList<LEdge>(ports.size());
         
         for (LPort port : ports) {
-            // Go through the port's outgoing edges, looking for self-loops and counting them along
-            // the way
-            int outgoingSelfLoopEdges = 0;
+            // Go through the port's outgoing edges, looking for self-loops that need special handling
             for (LEdge edge : port.getOutgoingEdges()) {
                 // Check for self loops we'd be interested in
                 if (edge.getSource().getNode() == edge.getTarget().getNode()) {
-                    outgoingSelfLoopEdges++;
-                    
                     // Check which sides the ports are on
                     if (port.getSide() == edge.getTarget().getSide()) {
                         // Same side
@@ -376,31 +372,8 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
                         // South->North self-loop cannot happen
                         northSouthSelfLoopEdges.add(edge);
                         continue;
-                    } else {
-                        // This case should never occur
-                        assert false;
                     }
                 }
-            }
-            
-            // Count incoming self-loops
-            int incomingSelfLoopEdges = 0;
-            for (LEdge edge : port.getIncomingEdges()) {
-                if (edge.getSource().getNode() == edge.getTarget().getNode()) {
-                    incomingSelfLoopEdges++;
-                }
-            }
-            
-            // Find out if the port has incoming or outgoing edges
-            boolean in = port.getIncomingEdges().size() - incomingSelfLoopEdges > 0;
-            boolean out = port.getOutgoingEdges().size() - outgoingSelfLoopEdges > 0;
-            
-            if (in && out) {
-                inOutPorts.add(port);
-            } else if (in) {
-                inPorts.add(port);
-            } else if (out) {
-                outPorts.add(port);
             }
         }
         
@@ -415,6 +388,22 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
         // Second, create the dummy nodes that handle same-side self-loops
         for (LEdge edge : sameSideSelfLoopEdges) {
             createSameSideSelfLoopDummyNode(layeredGraph, edge, dummyNodes);
+        }
+        
+        // Now we iterate over the ports again, with certain self-loop edges already removed, and check
+        // if they are input ports, output ports, or both
+        for (LPort port : ports) {
+            // Find out if the port has incoming or outgoing edges
+            boolean in = port.getIncomingEdges().size() > 0;
+            boolean out = port.getOutgoingEdges().size() > 0;
+            
+            if (in && out) {
+                inOutPorts.add(port);
+            } else if (in) {
+                inPorts.add(port);
+            } else if (out) {
+                outPorts.add(port);
+            }
         }
         
         // We will now create dummy nodes for input ports and for output ports. How we create them
@@ -626,7 +615,7 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
         LNode southDummy = new LNode(layeredGraph);
         southDummy.setProperty(Properties.NODE_TYPE, NodeType.NORTH_SOUTH_PORT);
         southDummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
-        northDummy.setProperty(Properties.ORIGIN, selfLoop.getTarget().getNode());
+        southDummy.setProperty(Properties.ORIGIN, selfLoop.getTarget().getNode());
         
         LPort southDummyInputPort = new LPort(layeredGraph);
         southDummyInputPort.setProperty(Properties.ORIGIN, selfLoop.getTarget());

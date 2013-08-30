@@ -113,7 +113,7 @@ public class KPointImpl extends EObjectImpl implements KPoint {
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @generated
+     * @generated NOT
      */
     public void setX(float newX) {
         float oldX = x;
@@ -121,8 +121,9 @@ public class KPointImpl extends EObjectImpl implements KPoint {
         if (eContainer instanceof KEdgeLayoutImpl) {
             ((KEdgeLayoutImpl) eContainer).modified = true;
         }
-        if (eNotificationRequired())
+        if (eNotificationRequired()) {
             eNotify(new ENotificationImpl(this, Notification.SET, KLayoutDataPackage.KPOINT__X, oldX, x));
+        }
     }
 
     /**
@@ -137,7 +138,7 @@ public class KPointImpl extends EObjectImpl implements KPoint {
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @generated
+     * @generated NOT
      */
     public void setY(float newY) {
         float oldY = y;
@@ -145,8 +146,9 @@ public class KPointImpl extends EObjectImpl implements KPoint {
         if (eContainer instanceof KEdgeLayoutImpl) {
             ((KEdgeLayoutImpl) eContainer).modified = true;
         }
-        if (eNotificationRequired())
+        if (eNotificationRequired()) {
             eNotify(new ENotificationImpl(this, Notification.SET, KLayoutDataPackage.KPOINT__Y, oldY, y));
+        }
     }
 
     /**

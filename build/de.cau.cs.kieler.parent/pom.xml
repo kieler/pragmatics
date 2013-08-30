@@ -15,13 +15,22 @@
     <module>../de.cau.cs.kieler.pragmatics.repository</module>
     <module>../de.cau.cs.kieler.kwebs.repository</module>
     <module>../de.cau.cs.kieler.papyrus.repository</module>
+    
+    <!-- the ptolemy rcp plugin is not part of the usual plugins pom.xml, 
+		 we have to add it here so it gets built for the actual product. -->     									
+    <module>../../plugins-dev/de.cau.cs.kieler.ptolemy.rcp</module>
+    <module>../de.cau.cs.kieler.ptolemy.rcp.repository</module>
+    
+    <module>../../plugins/de.cau.cs.kieler.klighd.piccolo.svg</module>
+    <module>../../plugins/de.cau.cs.kieler.klighdning</module>
+    <module>../de.cau.cs.kieler.klighdning.repository</module>
   </modules>
 
   <profiles>
     <profile>
       <id>juno42</id>
       <properties>
-        <tycho-version>0.17.0</tycho-version>
+        <tycho-version>0.18.0</tycho-version>
         <targetJdk>1.5</targetJdk>
       </properties>
 
@@ -45,6 +54,11 @@
           <id>p2.papyrus</id>
           <layout>p2</layout>
           <url>http://download.eclipse.org/modeling/mdt/papyrus/updates/releases/maintenance/juno</url>
+        </repository>
+        <repository>
+          <id>p2.jetty</id>
+          <layout>p2</layout>
+          <url>http://download.eclipse.org/jetty/updates/jetty-bundles-8.x</url>
         </repository>
       </repositories>
     </profile>
@@ -83,6 +97,17 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+      
+      <!-- Enable java assertions during junit test runs. -->
+      <!-- The "enableAssertions" property is only available in the maven-surefire plugin. -->
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-surefire-plugin</artifactId>
+        <version>${tycho-version}</version>
+        <configuration>
+          <argLine>-ea</argLine>
+        </configuration>
       </plugin>
 
       <plugin>
@@ -137,6 +162,7 @@
             <version>0.0.1-SNAPSHOT</version>
           </docletArtifact>
           <useStandardDocletOptions>false</useStandardDocletOptions>
+          <additionalJOption>-p pragmatics</additionalJOption>
         </configuration>
 
         <!--        <executions>

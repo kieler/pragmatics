@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.Method;
 import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
@@ -33,15 +34,17 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.ui.statushandlers.StatusManager;
 
+import de.cau.cs.kieler.klighd.KlighdConstants;
 import de.cau.cs.kieler.klighd.piccolo.KlighdPiccoloPlugin;
-import de.cau.cs.kieler.klighd.piccolo.KlighdSWTGraphicsImpl;
-import de.cau.cs.kieler.klighd.piccolo.krendering.viewer.PiccoloViewer;
+import de.cau.cs.kieler.klighd.piccolo.internal.Constants;
+import de.cau.cs.kieler.klighd.piccolo.internal.KlighdSWTGraphicsImpl;
+import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdCanvas;
+import de.cau.cs.kieler.klighd.piccolo.viewer.PiccoloViewer;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.util.PAffineTransform;
 import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolo.util.PPaintContext;
-import edu.umd.cs.piccolox.swt.PSWTCanvas;
 
 /**
  * An action which invokes the 'save-as-image' dialog and performs the save for Piccolo.
@@ -81,7 +84,7 @@ public class SaveAsImageAction extends Action {
                         createOutputStream(dialog.getFilePath(), dialog.isWorkspacePath());
                 // render the canvas to an image and write it to the stream
                 toImage(stream, viewer.getCanvas(), dialog.isCameraViewport(),
-                        dialog.getSWTImageFormat());
+                        dialog.getSWTImageFormat(), dialog.getScaleFactor());
                 stream.close();
             } catch (IOException exception) {
                 Status myStatus =
@@ -122,10 +125,32 @@ public class SaveAsImageAction extends Action {
      *            what is visible on the canvas; false to render the whole scene graph
      * @param format
      *            the file format, see {@code FileLoader}
+     * @param scale
+     *            the scale factor to apply while constructing the image
      */
-    public static void toImage(final OutputStream stream, final PSWTCanvas canvas,
-            final boolean cameraViewport, final int format) {
+    public static void toImage(final OutputStream stream, final KlighdCanvas canvas,
+            final boolean cameraViewport, final int format, final int scale) {
         PCamera camera = canvas.getCamera();
+
+        // in case of the SVG format invoke the SVG exporter and return
+        if (format == KlighdConstants.IMAGE_SVG) {
+            
+            // TODO The following call could be replaced by an extension point in future.
+            try {
+                Method m = Class.forName(Constants.KLIGHD_SVG_CANVAS).getMethod(
+                        Constants.KLIGHD_SVG_RENDER_METHOD, PCamera.class, Boolean.class,
+                        Boolean.class, OutputStream.class);
+                m.invoke(null, camera, cameraViewport, false, stream);
+            } catch (Exception e) {
+                final String msg = "KLighD: Creation of desired SVG diagram failed,"
+                        + "most probably due to unavailability of the plug-in \""
+                        + KlighdPiccoloPlugin.PLUGIN_ID + ".svg\".";
+                StatusManager.getManager().handle(
+                    new Status(IStatus.INFO, KlighdPiccoloPlugin.PLUGIN_ID, msg), StatusManager.SHOW);
+            }
+            return;
+        }
+
         // create the target image and a linked graphics context
         PBounds bounds;
         if (cameraViewport) {
@@ -133,26 +158,35 @@ public class SaveAsImageAction extends Action {
         } else {
             bounds = camera.getUnionOfLayerFullBounds();
         }
-        
-        // reveal the size and add some space in order to fully print out bounding strokes
-        //  (half width might get clipped otherwise)
-        int width = (int) bounds.getWidth() + 2;
-        int height = (int) bounds.getHeight() + 2;
+
+        // construct an affine transform for applying the scale factor
+        // and apply it to the camera's bounds
+        PAffineTransform transform = new PAffineTransform();
+        transform.scale(scale, scale);
+        transform.transform(bounds, bounds);
+
+        // reveal the size and respect the indentation imposed by x/y on both sides
+        // in order to avoid clippings of root figure drawings
+        int width = (int) (bounds.width + 2 * bounds.x);
+        int height = (int) (bounds.height + 2 * bounds.y);
+
+        // let Piccolo render onto a image GC
         Image image = new Image(canvas.getDisplay(), width, height);
         GC gc = new GC(image);
-        // let Piccolo render onto the image GC
-        PPaintContext paintContext = new PPaintContext(new KlighdSWTGraphicsImpl(gc,
-                canvas.getDisplay()));
+
+        PPaintContext paintContext =
+                new PPaintContext(new KlighdSWTGraphicsImpl(gc, canvas.getDisplay()));
+
+        // apply scaling translation to the paint context, too, for actually scaling the diagram
+        paintContext.pushTransform(transform);
+
         if (cameraViewport) {
             camera.fullPaint(paintContext);
         } else {
-            // apply a translation to fit the bounds
-            PAffineTransform transform = new PAffineTransform();
-            transform.setToTranslation(-bounds.getX(), -bounds.getY());
-            paintContext.pushTransform(transform);
             fullPaintLayers(paintContext, camera);
-            paintContext.popTransform(transform);
         }
+        paintContext.popTransform(transform);
+
         // create an image loader to save the image
         ImageLoader loader = new ImageLoader();
         loader.data = new ImageData[] { image.getImageData() };
