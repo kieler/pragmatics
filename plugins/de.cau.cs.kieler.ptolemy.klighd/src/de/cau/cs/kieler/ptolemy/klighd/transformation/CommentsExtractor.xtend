@@ -360,15 +360,13 @@ class CommentsExtractor {
         val commentBounds = getPtolemyBounds(commentNode)
         
         // TODO: Update the comment size
-        commentBounds.width = 10
-        commentBounds.height = 10
         
         var currentNearestDistance = maxAttachmentDistance + 1
         var KNode currentNearestSibling = null
         
         for (sibling : commentNode.parent.children) {
             if (!sibling.markedAsComment) {
-                val distance = computeDistance(commentBounds, getPtolemyBounds(sibling))
+                val distance = computeSquaredDistance(commentBounds, getPtolemyBounds(sibling))
                 
                 if (distance < currentNearestDistance && distance <= maxAttachmentDistance) {
                     currentNearestDistance = distance
@@ -380,33 +378,114 @@ class CommentsExtractor {
         return currentNearestSibling
     }
     
+    private val OUT_TOP_LEFT = Rectangle2D::OUT_TOP.bitwiseOr(Rectangle2D::OUT_LEFT)
+    private val OUT_BOTTOM_LEFT = Rectangle2D::OUT_BOTTOM.bitwiseOr(Rectangle2D::OUT_LEFT)
+    private val OUT_TOP_RIGHT = Rectangle2D::OUT_TOP.bitwiseOr(Rectangle2D::OUT_RIGHT)
+    private val OUT_BOTTOM_RIGHT = Rectangle2D::OUT_BOTTOM.bitwiseOr(Rectangle2D::OUT_RIGHT)
+    
     /**
-     * Compute a measure of distance between the two shapes defined by the given bounds. If at least
-     * one of the bounds has a width or height of zero, a value bigger than the maximum attachment
-     * distance is returned. If the two shapes intersect, a distance of zero is returned.
+     * Compute the squared distance between the two shapes defined by the given bounds. If the two
+     * shapes intersect, a distance of zero is returned.
      * 
      * <p>The current implementation simply returns the square of the euclidean distance, which is
      * perfectly fine.</p>
      * 
      * @param bounds1 the first shape.
      * @param bounds2 the second shape.
-     * @return a measure of distance between the two shapes.
+     * @return the squared distance between the two shapes.
      */
-    def private double computeDistance(Rectangle2D$Double bounds1, Rectangle2D$Double bounds2) {
-        // Check if one of the shapes has zero height or width
-        if (bounds1.width == 0 || bounds1.height == 0 || bounds2.width == 0 || bounds2.height == 0) {
-            return maxAttachmentDistance + 1
-        }
-        
+    def private double computeSquaredDistance(Rectangle2D$Double bounds1, Rectangle2D$Double bounds2) {
         // Check if the two shapes intersect
         if (bounds1.intersects(bounds2)) {
             return 0
         }
         
-        // TODO: Compute a proper distance
+        // Check where the top left and bottom right corners of shape 1 lie with respect to shape 2
+        val topLeftPos = bounds2.outcode(bounds1.x, bounds1.y)
+        val bottomRightPos = bounds2.outcode(bounds1.x + bounds1.width, bounds1.y + bounds1.height)
         
-        val deltaX = bounds2.x - bounds1.x
-        val deltaY = bounds2.y - bounds1.y
+        // What we use to compute the distances depends entirely on where the two corners are
+        if (topLeftPos.bitwiseAnd(OUT_TOP_LEFT) != 0
+            && bottomRightPos.bitwiseAnd(OUT_TOP_LEFT) != 0) {
+            
+            // Return distance between shape1.bottomRight and shape2.topLeft
+            return computeSquaredDistance(
+                bounds1.x + bounds1.width,
+                bounds1.y + bounds1.height,
+                bounds2.x,
+                bounds2.y
+            )
+        } else if (topLeftPos.bitwiseAnd(OUT_BOTTOM_LEFT) != 0
+            && bottomRightPos.bitwiseAnd(OUT_BOTTOM_LEFT) != 0) {
+            
+            // Return distance between shape1.topRight and shape2.bottomLeft
+            return computeSquaredDistance(
+                bounds1.x + bounds1.width,
+                bounds1.y,
+                bounds2.x,
+                bounds2.y + bounds2.height
+            )
+        } else if (topLeftPos.bitwiseAnd(OUT_TOP_RIGHT) != 0
+            && bottomRightPos.bitwiseAnd(OUT_TOP_RIGHT) != 0) {
+            
+            // Return distance between shape1.bottomLeft and shape2.topRight
+            return computeSquaredDistance(
+                bounds1.x,
+                bounds1.y + bounds1.height,
+                bounds2.x + bounds2.width,
+                bounds2.y
+            )
+        } else if (topLeftPos.bitwiseAnd(OUT_BOTTOM_RIGHT) != 0
+            && bottomRightPos.bitwiseAnd(OUT_BOTTOM_RIGHT) != 0) {
+            
+            // return distance between shape1.topLeft and shape2.bottomRight
+            return computeSquaredDistance(
+                bounds1.x,
+                bounds1.y,
+                bounds2.x + bounds2.width,
+                bounds2.y + bounds2.height
+            )
+        } else if (topLeftPos.bitwiseAnd(Rectangle2D::OUT_LEFT) != 0
+            && bottomRightPos.bitwiseAnd(Rectangle2D::OUT_LEFT) != 0) {
+            
+            // return distance between shape1.right and shape2.left
+            val distance = bounds1.x + bounds1.width - bounds2.x
+            return distance * distance
+        } else if (topLeftPos.bitwiseAnd(Rectangle2D::OUT_RIGHT) != 0
+            && bottomRightPos.bitwiseAnd(Rectangle2D::OUT_RIGHT) != 0) {
+            
+            // return distance between shape1.left and shape2.right
+            val distance = bounds1.x - bounds2.x - bounds2.width
+            return distance * distance
+        } else if (topLeftPos.bitwiseAnd(Rectangle2D::OUT_TOP) != 0
+            && bottomRightPos.bitwiseAnd(Rectangle2D::OUT_TOP) != 0) {
+            
+            // return distance between shape1.bottom and shape2.top
+            val distance = bounds1.y + bounds1.height - bounds2.y
+            return distance * distance
+        } else if (topLeftPos.bitwiseAnd(Rectangle2D::OUT_BOTTOM) != 0
+            && bottomRightPos.bitwiseAnd(Rectangle2D::OUT_BOTTOM) != 0) {
+            
+            // return distance between shape1.top and shape2.bottom
+            val distance = bounds1.y - bounds2.y - bounds2.height
+            return distance * distance
+        }
+        
+        return 0
+    }
+    
+    /**
+     * Returns the square of the distance between the two points defined by the given coordinates.
+     * 
+     * @param x1 x coordinate of the first point.
+     * @param y1 y coordinate of the first point.
+     * @param x2 x coordinate of the second point.
+     * @param y2 y coordinate of the second point.
+     * @return the squared distance between the two points.
+     */
+    def private double computeSquaredDistance(double x1, double y1, double x2, double y2) {
+        val deltaX = x2 - x1
+        val deltaY = y2 - y1
         
         return deltaX * deltaX + deltaY * deltaY
     }

@@ -596,6 +596,8 @@ class Ptolemy2KGraphVisualization {
      *                  case a default size is assumed.
      */
     def private void setLayoutSize(KShapeLayout layout, KRendering rendering) {
+        // TODO Provide proper size information for every actor
+        
         if (rendering == null) {
             // If we have no rendering in the first place, fix the size
             layout.height = 50
