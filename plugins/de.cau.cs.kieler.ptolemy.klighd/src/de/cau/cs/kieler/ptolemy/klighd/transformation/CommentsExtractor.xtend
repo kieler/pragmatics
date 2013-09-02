@@ -17,6 +17,7 @@ import com.google.inject.Inject
 import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.core.util.Pair
 import de.cau.cs.kieler.kiml.util.KimlUtil
+import de.cau.cs.kieler.klighd.microlayout.PlacementUtil
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.LabelExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MarkerExtensions
@@ -30,7 +31,6 @@ import org.ptolemy.moml.PropertyType
 
 import static de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties.*
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
 
 /**
  * Extracts comments from the model and turns them into special comment nodes. Also tries to find the
@@ -155,6 +155,8 @@ class CommentsExtractor {
     @Inject extension MarkerExtensions
     /** Miscellaneous stuff to make my life easier. */
     @Inject extension MiscellaneousExtensions
+    /** Utility class for attaching the correct rendering to comment edges. */
+    @Inject extension KRenderingFigureProvider
     
     /** If true, the attachment heuristics are disabled once explicitly attached comments are found. */
     val boolean heuristicsOverride = false
@@ -165,22 +167,17 @@ class CommentsExtractor {
     val double maxAttachmentDistance = 10000.0
     
     /** List of comment nodes created in the process. */
-    var List<KNode> createdCommentNodes = newLinkedList()
+    val List<KNode> createdCommentNodes = newLinkedList()
     /** List of explicit attachments from comment nodes to other nodes. */
-    var List<Pair<KNode, KNode>> explicitAttachments = newLinkedList()
+    val List<Pair<KNode, KNode>> explicitAttachments = newLinkedList()
     /** List of heuristically found attachments from comment nodes to other nodes. */
-    var List<Pair<KNode, KNode>> heuristicAttachments = newLinkedList()
+    val List<Pair<KNode, KNode>> heuristicAttachments = newLinkedList()
     
     
     /**
      * Finds comments and comment attachments in the tree rooted at the given node.
      */
     def void extractAndAttachComments(KNode root) {
-        // Initialize lists
-        createdCommentNodes = newLinkedList()
-        explicitAttachments = newLinkedList()
-        heuristicAttachments = newLinkedList()
-        
         extractComments(root)
         attachComments()
     }
@@ -356,10 +353,8 @@ class CommentsExtractor {
      * @return the nearest sibling or {@code null} if none could be found within the maximum distance.
      */
     def private KNode findNearestNonCommentSibling(KNode commentNode) {
-        // Find the comment node's position in the original diagram
+        // Find the comment node's position in the original diagram and its size in our diagram
         val commentBounds = getPtolemyBounds(commentNode)
-        
-        // TODO: Update the comment size
         
         var currentNearestDistance = maxAttachmentDistance + 1
         var KNode currentNearestSibling = null
@@ -521,6 +516,9 @@ class CommentsExtractor {
      */
     def private void attachCommentNode(KNode commentNode, KNode attachedNode) {
         val edge = KimlUtil::createInitializedEdge()
+        val edgeRendering = createCommentEdgeRendering(edge)
+        edge.data += edgeRendering
+        
         edge.source = commentNode
         edge.target = attachedNode
     }
@@ -577,8 +575,9 @@ class CommentsExtractor {
                 bounds.y = Double::valueOf(locationArray.get(1))
                 
                 // Save the node's size in the bounds as well
-                bounds.width = (node.layout as KShapeLayout).width
-                bounds.height = (node.layout as KShapeLayout).height
+                val estimatedSize = PlacementUtil::estimateSize(node)
+                bounds.width = estimatedSize.width
+                bounds.height = estimatedSize.height
             } catch (NumberFormatException e) {
                 
             }

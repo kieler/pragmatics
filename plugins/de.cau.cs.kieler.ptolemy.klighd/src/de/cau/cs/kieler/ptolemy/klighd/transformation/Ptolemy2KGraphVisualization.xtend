@@ -275,6 +275,9 @@ class Ptolemy2KGraphVisualization {
         node.data += rendering
         
         // The rendering of all the comments edges is also special
+        // (note: the current implementation of the comment attachment heuristic only runs after the
+        // visualization data have been attached; thus, no edges connect comments and nodes at this
+        // point. However, the code remains here in case the heuristic changes later)
         for (edge : node.incidentEdges) {
             val edgeRendering = createCommentEdgeRendering(edge)
             edge.data += edgeRendering
