@@ -164,7 +164,7 @@ class CommentsExtractor {
      * The maximum distance between a comment node and a regular node for them to be considered to be
      * attached by the comment attachment heuristic.
      */
-    val double maxAttachmentDistance = 10000.0
+    val double maxAttachmentDistance = 8000.0
     
     /** List of comment nodes created in the process. */
     val List<KNode> createdCommentNodes = newLinkedList()
