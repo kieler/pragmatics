@@ -38,18 +38,23 @@
         <repository>
           <id>p2.juno42</id>
           <layout>p2</layout>
+          <url>http://rtsys.informatik.uni-kiel.de/~kieler/repository/juno422/</url>
+<!--
           <url>file:/home/java/repository/juno422/</url>
+-->
         </repository>
         <repository>
           <id>p2.ptolemy</id>
           <layout>p2</layout>
           <url>http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/ptolemy/</url>
         </repository>
+<!--
         <repository>
           <id>p2.eclipse.juno</id>
           <layout>p2</layout>
           <url>http://download.eclipse.org/releases/juno</url>
         </repository>
+-->
         <repository>
           <id>p2.papyrus</id>
           <layout>p2</layout>
