@@ -13,11 +13,13 @@
  */
  package de.cau.cs.kieler.ptolemy.klighd.transformation
 
+import com.google.inject.Inject
+import de.cau.cs.kieler.core.kgraph.KEdge
 import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.kiml.util.KimlUtil
-import com.google.inject.Inject
+import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MarkerExtensions
+import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MiscellaneousExtensions
 import java.util.List
-import de.cau.cs.kieler.core.kgraph.KEdge
 
 /**
  * Optional optimization that flattens the graph by eliminating all composite actors.

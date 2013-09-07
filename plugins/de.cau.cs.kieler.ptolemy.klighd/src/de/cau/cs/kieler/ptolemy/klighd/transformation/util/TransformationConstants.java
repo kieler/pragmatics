@@ -12,7 +12,7 @@
  * See the file epl-v10.html for the license text.
  */
 
-package de.cau.cs.kieler.ptolemy.klighd.transformation;
+package de.cau.cs.kieler.ptolemy.klighd.transformation.util;
 
 /**
  * Contains constants used during the transformations. This class is not to be instantiated.
@@ -22,7 +22,7 @@ package de.cau.cs.kieler.ptolemy.klighd.transformation;
  * 
  * @author cds
  */
-final class TransformationConstants {
+public final class TransformationConstants {
     
     // PORT NAMES
     

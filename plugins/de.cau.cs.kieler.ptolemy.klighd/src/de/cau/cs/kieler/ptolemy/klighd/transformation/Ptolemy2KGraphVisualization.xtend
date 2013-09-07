@@ -39,13 +39,17 @@ import de.cau.cs.kieler.kiml.options.PortSide
 import de.cau.cs.kieler.kiml.options.SizeConstraint
 import de.cau.cs.kieler.klay.layered.properties.Properties
 import de.cau.cs.kieler.klighd.KlighdConstants
+import de.cau.cs.kieler.klighd.microlayout.PlacementUtil
 import de.cau.cs.kieler.klighd.util.KlighdProperties
+import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExtensions
+import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.LabelExtensions
+import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MarkerExtensions
+import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MiscellaneousExtensions
 import java.util.EnumSet
 
-import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConstants.*
+import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
 
 import static extension com.google.common.base.Strings.*
-import de.cau.cs.kieler.klighd.microlayout.PlacementUtil
 
 /**
  * Enriches a KGraph model freshly transformed from a Ptolemy2 model with the KRendering information
@@ -271,6 +275,9 @@ class Ptolemy2KGraphVisualization {
         node.data += rendering
         
         // The rendering of all the comments edges is also special
+        // (note: the current implementation of the comment attachment heuristic only runs after the
+        // visualization data have been attached; thus, no edges connect comments and nodes at this
+        // point. However, the code remains here in case the heuristic changes later)
         for (edge : node.incidentEdges) {
             val edgeRendering = createCommentEdgeRendering(edge)
             edge.data += edgeRendering
@@ -592,6 +599,8 @@ class Ptolemy2KGraphVisualization {
      *                  case a default size is assumed.
      */
     def private void setLayoutSize(KShapeLayout layout, KRendering rendering) {
+        // TODO Provide proper size information for every actor
+        
         if (rendering == null) {
             // If we have no rendering in the first place, fix the size
             layout.height = 50

@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.ptolemy.klighd.transformation
+package de.cau.cs.kieler.ptolemy.klighd.transformation.extensions
 
 import com.google.inject.Inject
 import de.cau.cs.kieler.core.kgraph.KEdge
@@ -20,7 +20,7 @@ import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
 import de.cau.cs.kieler.kiml.options.LayoutOptions
 
-import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConstants.*
+import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
 
 import static extension com.google.common.base.Strings.*
 

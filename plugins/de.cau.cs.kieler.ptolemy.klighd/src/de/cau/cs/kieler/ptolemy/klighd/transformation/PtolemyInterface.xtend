@@ -15,8 +15,12 @@ package de.cau.cs.kieler.ptolemy.klighd.transformation
 
 import com.google.inject.Inject
 import de.cau.cs.kieler.core.kgraph.KPort
+import de.cau.cs.kieler.kiml.options.LayoutOptions
 import de.cau.cs.kieler.kiml.util.KimlUtil
 import de.cau.cs.kieler.ptolemy.klighd.PluginConstants
+import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExtensions
+import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.LabelExtensions
+import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MarkerExtensions
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.List
@@ -28,6 +32,7 @@ import org.ptolemy.moml.ClassType
 import org.ptolemy.moml.EntityType
 import ptolemy.actor.IOPort
 import ptolemy.actor.TypedCompositeActor
+import ptolemy.actor.parameters.ParameterPort
 import ptolemy.kernel.CompositeEntity
 import ptolemy.kernel.Entity
 import ptolemy.kernel.util.Attribute
@@ -35,10 +40,9 @@ import ptolemy.kernel.util.NamedObj
 import ptolemy.kernel.util.StringAttribute
 import ptolemy.moml.MoMLParser
 import ptolemy.moml.filter.BackwardCompatibility
-import ptolemy.actor.parameters.ParameterPort
 
-import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConstants.*
-import de.cau.cs.kieler.kiml.options.LayoutOptions
+import static de.cau.cs.kieler.ptolemy.klighd.transformation.PtolemyInterface.*
+import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
 
 /**
  * Provides an interface to the Ptolemy library to instantiate actors. This is used during the

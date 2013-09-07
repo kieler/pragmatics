@@ -17,8 +17,13 @@ import com.google.inject.Inject
 import de.cau.cs.kieler.core.kgraph.KGraphElement
 import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.core.kgraph.KPort
+import de.cau.cs.kieler.kiml.options.LayoutOptions
 import de.cau.cs.kieler.kiml.util.KimlUtil
 import de.cau.cs.kieler.ptolemy.klighd.PluginConstants
+import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExtensions
+import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.LabelExtensions
+import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MarkerExtensions
+import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MiscellaneousExtensions
 import java.util.ArrayList
 import java.util.List
 import org.eclipse.core.runtime.CoreException
@@ -33,10 +38,9 @@ import org.ptolemy.moml.PortType
 import org.ptolemy.moml.PropertyType
 import org.ptolemy.moml.RelationType
 
-import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConstants.*
+import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
 
 import static extension com.google.common.base.Strings.*
-import de.cau.cs.kieler.kiml.options.LayoutOptions
 
 /**
  * Transforms a Ptolemy2 model to a KGraph. This is step one of the Ptolemy model transformation

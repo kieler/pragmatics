@@ -19,11 +19,17 @@ import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.core.kgraph.KPort
 import de.cau.cs.kieler.core.util.Pair
 import de.cau.cs.kieler.kiml.util.KimlUtil
+import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExtensions
+import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.LabelExtensions
+import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MarkerExtensions
+import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MiscellaneousExtensions
+import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.PortExtensions
+import de.cau.cs.kieler.ptolemy.klighd.transformation.util.HyperedgeGatherer
 import java.util.List
 import org.ptolemy.moml.PropertyType
 
 import static de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties.*
-import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConstants.*
+import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
 
 /**
  * Optimizes a KGraph model freshly transformed from a Ptolemy2 model. This is step two of the Ptolemy
@@ -37,7 +43,7 @@ import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConst
  * @author haf
  * @kieler.rating yellow 2012-06-14 KI-12 cmot, grh
  */
-class Ptolemy2KGraphOptimization {
+public class Ptolemy2KGraphOptimization {
     
     /** Handling annotations. */
     @Inject extension AnnotationExtensions
@@ -49,8 +55,6 @@ class Ptolemy2KGraphOptimization {
     @Inject extension MiscellaneousExtensions
     /** Handling ports. */
     @Inject extension PortExtensions
-    /** Handling comments. */
-    @Inject CommentsExtractor commentsExtractor
     /** Flattening. */
     @Inject Flattener flattener;
     
@@ -64,11 +68,15 @@ class Ptolemy2KGraphOptimization {
      * important.</p>
      * 
      * @param kGraph the model to optimize.
-     * @param showComments {@code true} if comments should be imported.
      * @param hideRelations {@code true} if relations should be replaced by hyperedges; otherwise, we
      *                      only try and hide as many relations as possible.
+     * @param flatten {@code true} if the graph should be flattened by removing all hierarchy.
+     * @param commentsExtractor the extractor to use for extracting comments, or {@code null} if no
+     *                          comments should be extracted.
      */
-    def void optimize(KNode kGraph, boolean showComments, boolean hideRelations, boolean flatten) {
+    def void optimize(KNode kGraph, boolean hideRelations, boolean flatten,
+        CommentsExtractor commentsExtractor) {
+        
         // Infer edge directions
         inferEdgeDirections(kGraph)
         
@@ -86,8 +94,8 @@ class Ptolemy2KGraphOptimization {
         convertAnnotationsToNodes(kGraph)
         
         // Convert comments into nodes
-        if (showComments) {
-            commentsExtractor.extractAndAttachComments(kGraph)
+        if (commentsExtractor != null) {
+            commentsExtractor.extractComments(kGraph)
         }
         
         // Flatten
@@ -307,7 +315,7 @@ class Ptolemy2KGraphOptimization {
                 }
             } else if (directedOutgoingEdge != null) {
                 // The port has an outgoing edge of known direction!
-                if (unknownPort.node.children.contains(directedIncomingEdge.target)) {
+                if (unknownPort.node.children.contains(directedOutgoingEdge.target)) {
                     // Connection to the inside -> the port is an input port
                     unknownPort.markAsInputPort(true)
                 } else {
@@ -400,6 +408,17 @@ class Ptolemy2KGraphOptimization {
                     undirectedEdge.markAsUndirected(false)
                     unknownEdges.remove(undirectedEdge)
                     fixedEdgeInThisIteration = true
+                } else if (fixedIncomingEdges.size > 0) {
+                    // ...the remaining edges should be outgoing
+                    for (edge : undirectedIncidentEdges) {
+                        if (edge.source != unknownRelation) {
+                            edge.reverseEdge()
+                        }
+                        
+                        edge.markAsUndirected(false)
+                        unknownEdges.remove(edge)
+                        fixedEdgeInThisIteration = true
+                    }
                 }
             }
             

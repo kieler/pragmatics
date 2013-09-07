@@ -38,7 +38,7 @@
     <property name="outputFolder.temp" location="${outputFolder}/temp" />
     <property name="outputFile.withoutdeps" location="${outputFolder}/klay_nightly_${timestamp}.jar" />
     <property name="outputFile.withdeps" location="${outputFolder}/klay-emf_nightly_${timestamp}.jar" />
-    <property name="licenseFile" location="${productFolder}/epl-v10.html" />
+    <property name="licenseFile" location="epl-v10.html" />
     
     
     <!-- TARGET -setupTempFolder (internal) -->
@@ -58,6 +58,7 @@
                 <include name="de.cau.cs.kieler.kiml_*.jar"/>
                 <include name="de.cau.cs.kieler.klay.layered_*.jar"/>
                 <include name="de.cau.cs.kieler.klay.force_*.jar"/>
+                <include name="de.cau.cs.kieler.klay.tree_*.jar"/>
             </fileset>
             <patternset>
                 <exclude name="META-INF/*"/>
