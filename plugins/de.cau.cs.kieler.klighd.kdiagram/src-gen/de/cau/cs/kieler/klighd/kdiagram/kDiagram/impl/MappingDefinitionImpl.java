@@ -2,9 +2,11 @@
  */
 package de.cau.cs.kieler.klighd.kdiagram.kDiagram.impl;
 
+import de.cau.cs.kieler.klighd.kdiagram.kDiagram.EdgeMapping;
 import de.cau.cs.kieler.klighd.kdiagram.kDiagram.KDiagramPackage;
+import de.cau.cs.kieler.klighd.kdiagram.kDiagram.MappingDefinition;
 import de.cau.cs.kieler.klighd.kdiagram.kDiagram.NodeMapping;
-import de.cau.cs.kieler.klighd.kdiagram.kDiagram.XVariableDeclaration;
+import de.cau.cs.kieler.klighd.kdiagram.kDiagram.PortMapping;
 
 import java.util.Collection;
 
@@ -26,20 +28,22 @@ import org.eclipse.xtext.common.types.JvmParameterizedTypeReference;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>XVariable Declaration</b></em>'.
+ * An implementation of the model object '<em><b>Mapping Definition</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link de.cau.cs.kieler.klighd.kdiagram.kDiagram.impl.XVariableDeclarationImpl#getType <em>Type</em>}</li>
- *   <li>{@link de.cau.cs.kieler.klighd.kdiagram.kDiagram.impl.XVariableDeclarationImpl#getName <em>Name</em>}</li>
- *   <li>{@link de.cau.cs.kieler.klighd.kdiagram.kDiagram.impl.XVariableDeclarationImpl#getNodeMappings <em>Node Mappings</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.klighd.kdiagram.kDiagram.impl.MappingDefinitionImpl#getType <em>Type</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.klighd.kdiagram.kDiagram.impl.MappingDefinitionImpl#getName <em>Name</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.klighd.kdiagram.kDiagram.impl.MappingDefinitionImpl#getNodeMappings <em>Node Mappings</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.klighd.kdiagram.kDiagram.impl.MappingDefinitionImpl#getPortMappings <em>Port Mappings</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.klighd.kdiagram.kDiagram.impl.MappingDefinitionImpl#getEdgeMappings <em>Edge Mappings</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class XVariableDeclarationImpl extends MinimalEObjectImpl.Container implements XVariableDeclaration
+public class MappingDefinitionImpl extends MinimalEObjectImpl.Container implements MappingDefinition
 {
   /**
    * The cached value of the '{@link #getType() <em>Type</em>}' containment reference.
@@ -82,11 +86,31 @@ public class XVariableDeclarationImpl extends MinimalEObjectImpl.Container imple
   protected EList<NodeMapping> nodeMappings;
 
   /**
+   * The cached value of the '{@link #getPortMappings() <em>Port Mappings</em>}' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getPortMappings()
+   * @generated
+   * @ordered
+   */
+  protected EList<PortMapping> portMappings;
+
+  /**
+   * The cached value of the '{@link #getEdgeMappings() <em>Edge Mappings</em>}' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getEdgeMappings()
+   * @generated
+   * @ordered
+   */
+  protected EList<EdgeMapping> edgeMappings;
+
+  /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected XVariableDeclarationImpl()
+  protected MappingDefinitionImpl()
   {
     super();
   }
@@ -99,7 +123,7 @@ public class XVariableDeclarationImpl extends MinimalEObjectImpl.Container imple
   @Override
   protected EClass eStaticClass()
   {
-    return KDiagramPackage.Literals.XVARIABLE_DECLARATION;
+    return KDiagramPackage.Literals.MAPPING_DEFINITION;
   }
 
   /**
@@ -123,7 +147,7 @@ public class XVariableDeclarationImpl extends MinimalEObjectImpl.Container imple
     type = newType;
     if (eNotificationRequired())
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KDiagramPackage.XVARIABLE_DECLARATION__TYPE, oldType, newType);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KDiagramPackage.MAPPING_DEFINITION__TYPE, oldType, newType);
       if (msgs == null) msgs = notification; else msgs.add(notification);
     }
     return msgs;
@@ -140,14 +164,14 @@ public class XVariableDeclarationImpl extends MinimalEObjectImpl.Container imple
     {
       NotificationChain msgs = null;
       if (type != null)
-        msgs = ((InternalEObject)type).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KDiagramPackage.XVARIABLE_DECLARATION__TYPE, null, msgs);
+        msgs = ((InternalEObject)type).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KDiagramPackage.MAPPING_DEFINITION__TYPE, null, msgs);
       if (newType != null)
-        msgs = ((InternalEObject)newType).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KDiagramPackage.XVARIABLE_DECLARATION__TYPE, null, msgs);
+        msgs = ((InternalEObject)newType).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KDiagramPackage.MAPPING_DEFINITION__TYPE, null, msgs);
       msgs = basicSetType(newType, msgs);
       if (msgs != null) msgs.dispatch();
     }
     else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KDiagramPackage.XVARIABLE_DECLARATION__TYPE, newType, newType));
+      eNotify(new ENotificationImpl(this, Notification.SET, KDiagramPackage.MAPPING_DEFINITION__TYPE, newType, newType));
   }
 
   /**
@@ -170,7 +194,7 @@ public class XVariableDeclarationImpl extends MinimalEObjectImpl.Container imple
     String oldName = name;
     name = newName;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KDiagramPackage.XVARIABLE_DECLARATION__NAME, oldName, name));
+      eNotify(new ENotificationImpl(this, Notification.SET, KDiagramPackage.MAPPING_DEFINITION__NAME, oldName, name));
   }
 
   /**
@@ -182,9 +206,37 @@ public class XVariableDeclarationImpl extends MinimalEObjectImpl.Container imple
   {
     if (nodeMappings == null)
     {
-      nodeMappings = new EObjectContainmentEList<NodeMapping>(NodeMapping.class, this, KDiagramPackage.XVARIABLE_DECLARATION__NODE_MAPPINGS);
+      nodeMappings = new EObjectContainmentEList<NodeMapping>(NodeMapping.class, this, KDiagramPackage.MAPPING_DEFINITION__NODE_MAPPINGS);
     }
     return nodeMappings;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EList<PortMapping> getPortMappings()
+  {
+    if (portMappings == null)
+    {
+      portMappings = new EObjectContainmentEList<PortMapping>(PortMapping.class, this, KDiagramPackage.MAPPING_DEFINITION__PORT_MAPPINGS);
+    }
+    return portMappings;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EList<EdgeMapping> getEdgeMappings()
+  {
+    if (edgeMappings == null)
+    {
+      edgeMappings = new EObjectContainmentEList<EdgeMapping>(EdgeMapping.class, this, KDiagramPackage.MAPPING_DEFINITION__EDGE_MAPPINGS);
+    }
+    return edgeMappings;
   }
 
   /**
@@ -197,10 +249,14 @@ public class XVariableDeclarationImpl extends MinimalEObjectImpl.Container imple
   {
     switch (featureID)
     {
-      case KDiagramPackage.XVARIABLE_DECLARATION__TYPE:
+      case KDiagramPackage.MAPPING_DEFINITION__TYPE:
         return basicSetType(null, msgs);
-      case KDiagramPackage.XVARIABLE_DECLARATION__NODE_MAPPINGS:
+      case KDiagramPackage.MAPPING_DEFINITION__NODE_MAPPINGS:
         return ((InternalEList<?>)getNodeMappings()).basicRemove(otherEnd, msgs);
+      case KDiagramPackage.MAPPING_DEFINITION__PORT_MAPPINGS:
+        return ((InternalEList<?>)getPortMappings()).basicRemove(otherEnd, msgs);
+      case KDiagramPackage.MAPPING_DEFINITION__EDGE_MAPPINGS:
+        return ((InternalEList<?>)getEdgeMappings()).basicRemove(otherEnd, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -215,12 +271,16 @@ public class XVariableDeclarationImpl extends MinimalEObjectImpl.Container imple
   {
     switch (featureID)
     {
-      case KDiagramPackage.XVARIABLE_DECLARATION__TYPE:
+      case KDiagramPackage.MAPPING_DEFINITION__TYPE:
         return getType();
-      case KDiagramPackage.XVARIABLE_DECLARATION__NAME:
+      case KDiagramPackage.MAPPING_DEFINITION__NAME:
         return getName();
-      case KDiagramPackage.XVARIABLE_DECLARATION__NODE_MAPPINGS:
+      case KDiagramPackage.MAPPING_DEFINITION__NODE_MAPPINGS:
         return getNodeMappings();
+      case KDiagramPackage.MAPPING_DEFINITION__PORT_MAPPINGS:
+        return getPortMappings();
+      case KDiagramPackage.MAPPING_DEFINITION__EDGE_MAPPINGS:
+        return getEdgeMappings();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -236,15 +296,23 @@ public class XVariableDeclarationImpl extends MinimalEObjectImpl.Container imple
   {
     switch (featureID)
     {
-      case KDiagramPackage.XVARIABLE_DECLARATION__TYPE:
+      case KDiagramPackage.MAPPING_DEFINITION__TYPE:
         setType((JvmParameterizedTypeReference)newValue);
         return;
-      case KDiagramPackage.XVARIABLE_DECLARATION__NAME:
+      case KDiagramPackage.MAPPING_DEFINITION__NAME:
         setName((String)newValue);
         return;
-      case KDiagramPackage.XVARIABLE_DECLARATION__NODE_MAPPINGS:
+      case KDiagramPackage.MAPPING_DEFINITION__NODE_MAPPINGS:
         getNodeMappings().clear();
         getNodeMappings().addAll((Collection<? extends NodeMapping>)newValue);
+        return;
+      case KDiagramPackage.MAPPING_DEFINITION__PORT_MAPPINGS:
+        getPortMappings().clear();
+        getPortMappings().addAll((Collection<? extends PortMapping>)newValue);
+        return;
+      case KDiagramPackage.MAPPING_DEFINITION__EDGE_MAPPINGS:
+        getEdgeMappings().clear();
+        getEdgeMappings().addAll((Collection<? extends EdgeMapping>)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -260,14 +328,20 @@ public class XVariableDeclarationImpl extends MinimalEObjectImpl.Container imple
   {
     switch (featureID)
     {
-      case KDiagramPackage.XVARIABLE_DECLARATION__TYPE:
+      case KDiagramPackage.MAPPING_DEFINITION__TYPE:
         setType((JvmParameterizedTypeReference)null);
         return;
-      case KDiagramPackage.XVARIABLE_DECLARATION__NAME:
+      case KDiagramPackage.MAPPING_DEFINITION__NAME:
         setName(NAME_EDEFAULT);
         return;
-      case KDiagramPackage.XVARIABLE_DECLARATION__NODE_MAPPINGS:
+      case KDiagramPackage.MAPPING_DEFINITION__NODE_MAPPINGS:
         getNodeMappings().clear();
+        return;
+      case KDiagramPackage.MAPPING_DEFINITION__PORT_MAPPINGS:
+        getPortMappings().clear();
+        return;
+      case KDiagramPackage.MAPPING_DEFINITION__EDGE_MAPPINGS:
+        getEdgeMappings().clear();
         return;
     }
     super.eUnset(featureID);
@@ -283,12 +357,16 @@ public class XVariableDeclarationImpl extends MinimalEObjectImpl.Container imple
   {
     switch (featureID)
     {
-      case KDiagramPackage.XVARIABLE_DECLARATION__TYPE:
+      case KDiagramPackage.MAPPING_DEFINITION__TYPE:
         return type != null;
-      case KDiagramPackage.XVARIABLE_DECLARATION__NAME:
+      case KDiagramPackage.MAPPING_DEFINITION__NAME:
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-      case KDiagramPackage.XVARIABLE_DECLARATION__NODE_MAPPINGS:
+      case KDiagramPackage.MAPPING_DEFINITION__NODE_MAPPINGS:
         return nodeMappings != null && !nodeMappings.isEmpty();
+      case KDiagramPackage.MAPPING_DEFINITION__PORT_MAPPINGS:
+        return portMappings != null && !portMappings.isEmpty();
+      case KDiagramPackage.MAPPING_DEFINITION__EDGE_MAPPINGS:
+        return edgeMappings != null && !edgeMappings.isEmpty();
     }
     return super.eIsSet(featureID);
   }
@@ -310,4 +388,4 @@ public class XVariableDeclarationImpl extends MinimalEObjectImpl.Container imple
     return result.toString();
   }
 
-} //XVariableDeclarationImpl
+} //MappingDefinitionImpl

@@ -32,13 +32,13 @@ public interface KDiagramFactory extends EFactory
   DiagramSynthesis createDiagramSynthesis();
 
   /**
-   * Returns a new object of class '<em>XVariable Declaration</em>'.
+   * Returns a new object of class '<em>Mapping Definition</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>XVariable Declaration</em>'.
+   * @return a new object of class '<em>Mapping Definition</em>'.
    * @generated
    */
-  XVariableDeclaration createXVariableDeclaration();
+  MappingDefinition createMappingDefinition();
 
   /**
    * Returns a new object of class '<em>Node Mapping</em>'.
@@ -48,6 +48,15 @@ public interface KDiagramFactory extends EFactory
    * @generated
    */
   NodeMapping createNodeMapping();
+
+  /**
+   * Returns a new object of class '<em>Port Mapping</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Port Mapping</em>'.
+   * @generated
+   */
+  PortMapping createPortMapping();
 
   /**
    * Returns a new object of class '<em>Edge Mapping</em>'.

@@ -79,10 +79,10 @@ public class KDiagramSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case KDiagramPackage.XVARIABLE_DECLARATION:
+      case KDiagramPackage.MAPPING_DEFINITION:
       {
-        XVariableDeclaration xVariableDeclaration = (XVariableDeclaration)theEObject;
-        T result = caseXVariableDeclaration(xVariableDeclaration);
+        MappingDefinition mappingDefinition = (MappingDefinition)theEObject;
+        T result = caseMappingDefinition(mappingDefinition);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -90,6 +90,13 @@ public class KDiagramSwitch<T> extends Switch<T>
       {
         NodeMapping nodeMapping = (NodeMapping)theEObject;
         T result = caseNodeMapping(nodeMapping);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KDiagramPackage.PORT_MAPPING:
+      {
+        PortMapping portMapping = (PortMapping)theEObject;
+        T result = casePortMapping(portMapping);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -121,17 +128,17 @@ public class KDiagramSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>XVariable Declaration</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Mapping Definition</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>XVariable Declaration</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Mapping Definition</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseXVariableDeclaration(XVariableDeclaration object)
+  public T caseMappingDefinition(MappingDefinition object)
   {
     return null;
   }
@@ -148,6 +155,22 @@ public class KDiagramSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseNodeMapping(NodeMapping object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Port Mapping</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Port Mapping</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T casePortMapping(PortMapping object)
   {
     return null;
   }

@@ -25,5 +25,6 @@ Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: de.cau.cs.kieler.klighd.kdiagram.ui.contentassist,
  de.cau.cs.kieler.klighd.kdiagram.ui.contentassist.antlr,
- de.cau.cs.kieler.klighd.kdiagram.ui.internal
+ de.cau.cs.kieler.klighd.kdiagram.ui.internal,
+ de.cau.cs.kieler.klighd.kdiagram.ui.quickfix
 Bundle-Activator: de.cau.cs.kieler.klighd.kdiagram.ui.internal.KDiagramActivator

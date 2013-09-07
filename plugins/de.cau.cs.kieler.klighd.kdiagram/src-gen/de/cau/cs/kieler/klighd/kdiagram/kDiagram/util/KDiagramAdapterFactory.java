@@ -80,14 +80,19 @@ public class KDiagramAdapterFactory extends AdapterFactoryImpl
         return createDiagramSynthesisAdapter();
       }
       @Override
-      public Adapter caseXVariableDeclaration(XVariableDeclaration object)
+      public Adapter caseMappingDefinition(MappingDefinition object)
       {
-        return createXVariableDeclarationAdapter();
+        return createMappingDefinitionAdapter();
       }
       @Override
       public Adapter caseNodeMapping(NodeMapping object)
       {
         return createNodeMappingAdapter();
+      }
+      @Override
+      public Adapter casePortMapping(PortMapping object)
+      {
+        return createPortMappingAdapter();
       }
       @Override
       public Adapter caseEdgeMapping(EdgeMapping object)
@@ -132,16 +137,16 @@ public class KDiagramAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.klighd.kdiagram.kDiagram.XVariableDeclaration <em>XVariable Declaration</em>}'.
+   * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.klighd.kdiagram.kDiagram.MappingDefinition <em>Mapping Definition</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.cau.cs.kieler.klighd.kdiagram.kDiagram.XVariableDeclaration
+   * @see de.cau.cs.kieler.klighd.kdiagram.kDiagram.MappingDefinition
    * @generated
    */
-  public Adapter createXVariableDeclarationAdapter()
+  public Adapter createMappingDefinitionAdapter()
   {
     return null;
   }
@@ -157,6 +162,21 @@ public class KDiagramAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createNodeMappingAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.klighd.kdiagram.kDiagram.PortMapping <em>Port Mapping</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.cau.cs.kieler.klighd.kdiagram.kDiagram.PortMapping
+   * @generated
+   */
+  public Adapter createPortMappingAdapter()
   {
     return null;
   }

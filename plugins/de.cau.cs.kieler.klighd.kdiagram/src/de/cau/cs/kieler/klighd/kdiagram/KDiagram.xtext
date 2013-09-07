@@ -15,43 +15,44 @@ grammar de.cau.cs.kieler.klighd.kdiagram.KDiagram with org.eclipse.xtext.xbase.X
 
 import "http://www.eclipse.org/xtext/common/JavaVMTypes" as types
 import "http://www.eclipse.org/xtext/xbase/Xbase" as xbase
-import "http://www.eclipse.org/xtend" as xtend
+import "http://www.eclipse.org/xtext/xbase/Xtype" as xtype
 
 generate kDiagram "http://www.cau.de/cs/kieler/klighd/kdiagram/KDiagram"
 
 
 DiagramSynthesis:
     ('package' packageName=QualifiedName ';'?)?
-    (imports+=Import)*
+    importSection=XImportSection?
     
     'diagram' name=QualifiedName mapping=MappingDefinition
 ;
 
-Import returns xtend::XtendImport : 
-    'import' (
-        (static?='static' extension?='extension'? importedType=[types::JvmType|QualifiedName] '.' '*') 
-        | importedType=[types::JvmType|QualifiedName] 
-        | importedNamespace=QualifiedNameWithWildCard) ';'?
-;
-
-QualifiedNameWithWildCard :
-    QualifiedName  '.' '*';
-
-MappingDefinition returns XVariableDeclaration:
-    'for' type=JvmParameterizedTypeReference name=ValidID ':'?
-    (nodeMappings+=NodeMapping)+
+MappingDefinition:
+    'for' type=JvmParameterizedTypeReference name=ID ':'?
+    (nodeMappings+=NodeMapping | portMappings+=PortMapping | edgeMappings+=EdgeMapping)*
 ;
 
 NodeMapping:
     'nodes' name=ID '=' elements=XExpression '{'
-        'depictedBy' figureType=[types::JvmType|QualifiedName]
-    '}'
+    (
+        ('withPorts' withPorts += XFeatureCall (',' withPorts += XFeatureCall))?
+        & ('depictedBy' figureType=[types::JvmType|QualifiedName])
+        & (portMappings += PortMapping)*
+     ) '}'
+;
+
+PortMapping:
+    'ports' name=ID '('nodeElementType=JvmParameterizedTypeReference nodeElementName = ID ')' '=' elements=XExpression '{'
+     (
+        ('identifiedBy' identifiedBy += XFeatureCall (',' indentifiedBy += XFeatureCall))?
+        & ('depictedBy' figureType=[types::JvmType|QualifiedName])
+      ) '}'
 ;
 
 EdgeMapping:
     'edges' name=ID '=' elements=XExpression '{'
-        'from' from=XExpression
-        'to' to=XExpression
-        'depictedBy' figureType=[types::JvmType|QualifiedName]
-    '}'
+    (
+        ('from' from=XExpression 'to' to=XExpression)
+        & ('depictedBy' figureType=[types::JvmType|QualifiedName])
+     ) '}'
 ;

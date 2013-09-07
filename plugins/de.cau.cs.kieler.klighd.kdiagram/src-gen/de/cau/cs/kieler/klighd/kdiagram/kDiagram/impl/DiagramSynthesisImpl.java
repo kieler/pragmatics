@@ -4,14 +4,10 @@ package de.cau.cs.kieler.klighd.kdiagram.kDiagram.impl;
 
 import de.cau.cs.kieler.klighd.kdiagram.kDiagram.DiagramSynthesis;
 import de.cau.cs.kieler.klighd.kdiagram.kDiagram.KDiagramPackage;
-import de.cau.cs.kieler.klighd.kdiagram.kDiagram.XVariableDeclaration;
-
-import java.util.Collection;
+import de.cau.cs.kieler.klighd.kdiagram.kDiagram.MappingDefinition;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
-
-import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
@@ -19,10 +15,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
-import org.eclipse.emf.ecore.util.EObjectContainmentEList;
-import org.eclipse.emf.ecore.util.InternalEList;
-
-import org.eclipse.xtend.core.xtend.XtendImport;
+import org.eclipse.xtext.xtype.XImportSection;
 
 /**
  * <!-- begin-user-doc -->
@@ -32,7 +25,7 @@ import org.eclipse.xtend.core.xtend.XtendImport;
  * The following features are implemented:
  * <ul>
  *   <li>{@link de.cau.cs.kieler.klighd.kdiagram.kDiagram.impl.DiagramSynthesisImpl#getPackageName <em>Package Name</em>}</li>
- *   <li>{@link de.cau.cs.kieler.klighd.kdiagram.kDiagram.impl.DiagramSynthesisImpl#getImports <em>Imports</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.klighd.kdiagram.kDiagram.impl.DiagramSynthesisImpl#getImportSection <em>Import Section</em>}</li>
  *   <li>{@link de.cau.cs.kieler.klighd.kdiagram.kDiagram.impl.DiagramSynthesisImpl#getName <em>Name</em>}</li>
  *   <li>{@link de.cau.cs.kieler.klighd.kdiagram.kDiagram.impl.DiagramSynthesisImpl#getMapping <em>Mapping</em>}</li>
  * </ul>
@@ -63,14 +56,14 @@ public class DiagramSynthesisImpl extends MinimalEObjectImpl.Container implement
   protected String packageName = PACKAGE_NAME_EDEFAULT;
 
   /**
-   * The cached value of the '{@link #getImports() <em>Imports</em>}' containment reference list.
+   * The cached value of the '{@link #getImportSection() <em>Import Section</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getImports()
+   * @see #getImportSection()
    * @generated
    * @ordered
    */
-  protected EList<XtendImport> imports;
+  protected XImportSection importSection;
 
   /**
    * The default value of the '{@link #getName() <em>Name</em>}' attribute.
@@ -100,7 +93,7 @@ public class DiagramSynthesisImpl extends MinimalEObjectImpl.Container implement
    * @generated
    * @ordered
    */
-  protected XVariableDeclaration mapping;
+  protected MappingDefinition mapping;
 
   /**
    * <!-- begin-user-doc -->
@@ -151,13 +144,47 @@ public class DiagramSynthesisImpl extends MinimalEObjectImpl.Container implement
    * <!-- end-user-doc -->
    * @generated
    */
-  public EList<XtendImport> getImports()
+  public XImportSection getImportSection()
   {
-    if (imports == null)
+    return importSection;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetImportSection(XImportSection newImportSection, NotificationChain msgs)
+  {
+    XImportSection oldImportSection = importSection;
+    importSection = newImportSection;
+    if (eNotificationRequired())
     {
-      imports = new EObjectContainmentEList<XtendImport>(XtendImport.class, this, KDiagramPackage.DIAGRAM_SYNTHESIS__IMPORTS);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KDiagramPackage.DIAGRAM_SYNTHESIS__IMPORT_SECTION, oldImportSection, newImportSection);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
     }
-    return imports;
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setImportSection(XImportSection newImportSection)
+  {
+    if (newImportSection != importSection)
+    {
+      NotificationChain msgs = null;
+      if (importSection != null)
+        msgs = ((InternalEObject)importSection).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KDiagramPackage.DIAGRAM_SYNTHESIS__IMPORT_SECTION, null, msgs);
+      if (newImportSection != null)
+        msgs = ((InternalEObject)newImportSection).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KDiagramPackage.DIAGRAM_SYNTHESIS__IMPORT_SECTION, null, msgs);
+      msgs = basicSetImportSection(newImportSection, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KDiagramPackage.DIAGRAM_SYNTHESIS__IMPORT_SECTION, newImportSection, newImportSection));
   }
 
   /**
@@ -188,7 +215,7 @@ public class DiagramSynthesisImpl extends MinimalEObjectImpl.Container implement
    * <!-- end-user-doc -->
    * @generated
    */
-  public XVariableDeclaration getMapping()
+  public MappingDefinition getMapping()
   {
     return mapping;
   }
@@ -198,9 +225,9 @@ public class DiagramSynthesisImpl extends MinimalEObjectImpl.Container implement
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetMapping(XVariableDeclaration newMapping, NotificationChain msgs)
+  public NotificationChain basicSetMapping(MappingDefinition newMapping, NotificationChain msgs)
   {
-    XVariableDeclaration oldMapping = mapping;
+    MappingDefinition oldMapping = mapping;
     mapping = newMapping;
     if (eNotificationRequired())
     {
@@ -215,7 +242,7 @@ public class DiagramSynthesisImpl extends MinimalEObjectImpl.Container implement
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setMapping(XVariableDeclaration newMapping)
+  public void setMapping(MappingDefinition newMapping)
   {
     if (newMapping != mapping)
     {
@@ -241,8 +268,8 @@ public class DiagramSynthesisImpl extends MinimalEObjectImpl.Container implement
   {
     switch (featureID)
     {
-      case KDiagramPackage.DIAGRAM_SYNTHESIS__IMPORTS:
-        return ((InternalEList<?>)getImports()).basicRemove(otherEnd, msgs);
+      case KDiagramPackage.DIAGRAM_SYNTHESIS__IMPORT_SECTION:
+        return basicSetImportSection(null, msgs);
       case KDiagramPackage.DIAGRAM_SYNTHESIS__MAPPING:
         return basicSetMapping(null, msgs);
     }
@@ -261,8 +288,8 @@ public class DiagramSynthesisImpl extends MinimalEObjectImpl.Container implement
     {
       case KDiagramPackage.DIAGRAM_SYNTHESIS__PACKAGE_NAME:
         return getPackageName();
-      case KDiagramPackage.DIAGRAM_SYNTHESIS__IMPORTS:
-        return getImports();
+      case KDiagramPackage.DIAGRAM_SYNTHESIS__IMPORT_SECTION:
+        return getImportSection();
       case KDiagramPackage.DIAGRAM_SYNTHESIS__NAME:
         return getName();
       case KDiagramPackage.DIAGRAM_SYNTHESIS__MAPPING:
@@ -276,7 +303,6 @@ public class DiagramSynthesisImpl extends MinimalEObjectImpl.Container implement
    * <!-- end-user-doc -->
    * @generated
    */
-  @SuppressWarnings("unchecked")
   @Override
   public void eSet(int featureID, Object newValue)
   {
@@ -285,15 +311,14 @@ public class DiagramSynthesisImpl extends MinimalEObjectImpl.Container implement
       case KDiagramPackage.DIAGRAM_SYNTHESIS__PACKAGE_NAME:
         setPackageName((String)newValue);
         return;
-      case KDiagramPackage.DIAGRAM_SYNTHESIS__IMPORTS:
-        getImports().clear();
-        getImports().addAll((Collection<? extends XtendImport>)newValue);
+      case KDiagramPackage.DIAGRAM_SYNTHESIS__IMPORT_SECTION:
+        setImportSection((XImportSection)newValue);
         return;
       case KDiagramPackage.DIAGRAM_SYNTHESIS__NAME:
         setName((String)newValue);
         return;
       case KDiagramPackage.DIAGRAM_SYNTHESIS__MAPPING:
-        setMapping((XVariableDeclaration)newValue);
+        setMapping((MappingDefinition)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -312,14 +337,14 @@ public class DiagramSynthesisImpl extends MinimalEObjectImpl.Container implement
       case KDiagramPackage.DIAGRAM_SYNTHESIS__PACKAGE_NAME:
         setPackageName(PACKAGE_NAME_EDEFAULT);
         return;
-      case KDiagramPackage.DIAGRAM_SYNTHESIS__IMPORTS:
-        getImports().clear();
+      case KDiagramPackage.DIAGRAM_SYNTHESIS__IMPORT_SECTION:
+        setImportSection((XImportSection)null);
         return;
       case KDiagramPackage.DIAGRAM_SYNTHESIS__NAME:
         setName(NAME_EDEFAULT);
         return;
       case KDiagramPackage.DIAGRAM_SYNTHESIS__MAPPING:
-        setMapping((XVariableDeclaration)null);
+        setMapping((MappingDefinition)null);
         return;
     }
     super.eUnset(featureID);
@@ -337,8 +362,8 @@ public class DiagramSynthesisImpl extends MinimalEObjectImpl.Container implement
     {
       case KDiagramPackage.DIAGRAM_SYNTHESIS__PACKAGE_NAME:
         return PACKAGE_NAME_EDEFAULT == null ? packageName != null : !PACKAGE_NAME_EDEFAULT.equals(packageName);
-      case KDiagramPackage.DIAGRAM_SYNTHESIS__IMPORTS:
-        return imports != null && !imports.isEmpty();
+      case KDiagramPackage.DIAGRAM_SYNTHESIS__IMPORT_SECTION:
+        return importSection != null;
       case KDiagramPackage.DIAGRAM_SYNTHESIS__NAME:
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
       case KDiagramPackage.DIAGRAM_SYNTHESIS__MAPPING:

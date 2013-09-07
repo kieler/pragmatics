@@ -30,7 +30,7 @@ public class KDiagramFactoryImpl extends EFactoryImpl implements KDiagramFactory
   {
     try
     {
-      KDiagramFactory theKDiagramFactory = (KDiagramFactory)EPackage.Registry.INSTANCE.getEFactory("http://www.cau.de/cs/kieler/klighd/kdiagram/KDiagram"); 
+      KDiagramFactory theKDiagramFactory = (KDiagramFactory)EPackage.Registry.INSTANCE.getEFactory(KDiagramPackage.eNS_URI);
       if (theKDiagramFactory != null)
       {
         return theKDiagramFactory;
@@ -65,8 +65,9 @@ public class KDiagramFactoryImpl extends EFactoryImpl implements KDiagramFactory
     switch (eClass.getClassifierID())
     {
       case KDiagramPackage.DIAGRAM_SYNTHESIS: return createDiagramSynthesis();
-      case KDiagramPackage.XVARIABLE_DECLARATION: return createXVariableDeclaration();
+      case KDiagramPackage.MAPPING_DEFINITION: return createMappingDefinition();
       case KDiagramPackage.NODE_MAPPING: return createNodeMapping();
+      case KDiagramPackage.PORT_MAPPING: return createPortMapping();
       case KDiagramPackage.EDGE_MAPPING: return createEdgeMapping();
       default:
         throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
@@ -89,10 +90,10 @@ public class KDiagramFactoryImpl extends EFactoryImpl implements KDiagramFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public XVariableDeclaration createXVariableDeclaration()
+  public MappingDefinition createMappingDefinition()
   {
-    XVariableDeclarationImpl xVariableDeclaration = new XVariableDeclarationImpl();
-    return xVariableDeclaration;
+    MappingDefinitionImpl mappingDefinition = new MappingDefinitionImpl();
+    return mappingDefinition;
   }
 
   /**
@@ -104,6 +105,17 @@ public class KDiagramFactoryImpl extends EFactoryImpl implements KDiagramFactory
   {
     NodeMappingImpl nodeMapping = new NodeMappingImpl();
     return nodeMapping;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public PortMapping createPortMapping()
+  {
+    PortMappingImpl portMapping = new PortMappingImpl();
+    return portMapping;
   }
 
   /**

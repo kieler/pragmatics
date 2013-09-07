@@ -5,12 +5,11 @@ import com.google.inject.Provider;
 import de.cau.cs.kieler.klighd.kdiagram.kDiagram.DiagramSynthesis;
 import de.cau.cs.kieler.klighd.kdiagram.kDiagram.EdgeMapping;
 import de.cau.cs.kieler.klighd.kdiagram.kDiagram.KDiagramPackage;
+import de.cau.cs.kieler.klighd.kdiagram.kDiagram.MappingDefinition;
 import de.cau.cs.kieler.klighd.kdiagram.kDiagram.NodeMapping;
-import de.cau.cs.kieler.klighd.kdiagram.kDiagram.XVariableDeclaration;
+import de.cau.cs.kieler.klighd.kdiagram.kDiagram.PortMapping;
 import de.cau.cs.kieler.klighd.kdiagram.services.KDiagramGrammarAccess;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.xtend.core.xtend.XtendImport;
-import org.eclipse.xtend.core.xtend.XtendPackage;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
 import org.eclipse.xtext.common.types.JvmGenericArrayTypeReference;
 import org.eclipse.xtext.common.types.JvmLowerBound;
@@ -42,20 +41,25 @@ import org.eclipse.xtext.xbase.XFeatureCall;
 import org.eclipse.xtext.xbase.XForLoopExpression;
 import org.eclipse.xtext.xbase.XIfExpression;
 import org.eclipse.xtext.xbase.XInstanceOfExpression;
+import org.eclipse.xtext.xbase.XListLiteral;
 import org.eclipse.xtext.xbase.XMemberFeatureCall;
 import org.eclipse.xtext.xbase.XNullLiteral;
 import org.eclipse.xtext.xbase.XNumberLiteral;
 import org.eclipse.xtext.xbase.XReturnExpression;
+import org.eclipse.xtext.xbase.XSetLiteral;
 import org.eclipse.xtext.xbase.XStringLiteral;
 import org.eclipse.xtext.xbase.XSwitchExpression;
 import org.eclipse.xtext.xbase.XThrowExpression;
 import org.eclipse.xtext.xbase.XTryCatchFinallyExpression;
 import org.eclipse.xtext.xbase.XTypeLiteral;
 import org.eclipse.xtext.xbase.XUnaryOperation;
+import org.eclipse.xtext.xbase.XVariableDeclaration;
 import org.eclipse.xtext.xbase.XWhileExpression;
 import org.eclipse.xtext.xbase.XbasePackage;
 import org.eclipse.xtext.xbase.serializer.XbaseSemanticSequencer;
 import org.eclipse.xtext.xtype.XFunctionTypeRef;
+import org.eclipse.xtext.xtype.XImportDeclaration;
+import org.eclipse.xtext.xtype.XImportSection;
 import org.eclipse.xtext.xtype.XtypePackage;
 
 @SuppressWarnings("all")
@@ -78,15 +82,21 @@ public class KDiagramSemanticSequencer extends XbaseSemanticSequencer {
 					return; 
 				}
 				else break;
+			case KDiagramPackage.MAPPING_DEFINITION:
+				if(context == grammarAccess.getMappingDefinitionRule()) {
+					sequence_MappingDefinition(context, (MappingDefinition) semanticObject); 
+					return; 
+				}
+				else break;
 			case KDiagramPackage.NODE_MAPPING:
 				if(context == grammarAccess.getNodeMappingRule()) {
 					sequence_NodeMapping(context, (NodeMapping) semanticObject); 
 					return; 
 				}
 				else break;
-			case KDiagramPackage.XVARIABLE_DECLARATION:
-				if(context == grammarAccess.getMappingDefinitionRule()) {
-					sequence_MappingDefinition(context, (XVariableDeclaration) semanticObject); 
+			case KDiagramPackage.PORT_MAPPING:
+				if(context == grammarAccess.getPortMappingRule()) {
+					sequence_PortMapping(context, (PortMapping) semanticObject); 
 					return; 
 				}
 				else break;
@@ -564,6 +574,41 @@ public class KDiagramSemanticSequencer extends XbaseSemanticSequencer {
 					return; 
 				}
 				else break;
+			case XbasePackage.XLIST_LITERAL:
+				if(context == grammarAccess.getXAdditiveExpressionRule() ||
+				   context == grammarAccess.getXAdditiveExpressionAccess().getXBinaryOperationLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getXAndExpressionRule() ||
+				   context == grammarAccess.getXAndExpressionAccess().getXBinaryOperationLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getXAssignmentRule() ||
+				   context == grammarAccess.getXAssignmentAccess().getXBinaryOperationLeftOperandAction_1_1_0_0_0() ||
+				   context == grammarAccess.getXCastedExpressionRule() ||
+				   context == grammarAccess.getXCastedExpressionAccess().getXCastedExpressionTargetAction_1_0_0_0() ||
+				   context == grammarAccess.getXCollectionLiteralRule() ||
+				   context == grammarAccess.getXEqualityExpressionRule() ||
+				   context == grammarAccess.getXEqualityExpressionAccess().getXBinaryOperationLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getXExpressionRule() ||
+				   context == grammarAccess.getXExpressionInsideBlockRule() ||
+				   context == grammarAccess.getXListLiteralRule() ||
+				   context == grammarAccess.getXLiteralRule() ||
+				   context == grammarAccess.getXMemberFeatureCallRule() ||
+				   context == grammarAccess.getXMemberFeatureCallAccess().getXAssignmentAssignableAction_1_0_0_0_0() ||
+				   context == grammarAccess.getXMemberFeatureCallAccess().getXMemberFeatureCallMemberCallTargetAction_1_1_0_0_0() ||
+				   context == grammarAccess.getXMultiplicativeExpressionRule() ||
+				   context == grammarAccess.getXMultiplicativeExpressionAccess().getXBinaryOperationLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getXOrExpressionRule() ||
+				   context == grammarAccess.getXOrExpressionAccess().getXBinaryOperationLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getXOtherOperatorExpressionRule() ||
+				   context == grammarAccess.getXOtherOperatorExpressionAccess().getXBinaryOperationLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getXParenthesizedExpressionRule() ||
+				   context == grammarAccess.getXPrimaryExpressionRule() ||
+				   context == grammarAccess.getXRelationalExpressionRule() ||
+				   context == grammarAccess.getXRelationalExpressionAccess().getXBinaryOperationLeftOperandAction_1_1_0_0_0() ||
+				   context == grammarAccess.getXRelationalExpressionAccess().getXInstanceOfExpressionExpressionAction_1_0_0_0_0() ||
+				   context == grammarAccess.getXUnaryOperationRule()) {
+					sequence_XListLiteral(context, (XListLiteral) semanticObject); 
+					return; 
+				}
+				else break;
 			case XbasePackage.XMEMBER_FEATURE_CALL:
 				if(context == grammarAccess.getXAdditiveExpressionRule() ||
 				   context == grammarAccess.getXAdditiveExpressionAccess().getXBinaryOperationLeftOperandAction_1_0_0_0() ||
@@ -694,6 +739,41 @@ public class KDiagramSemanticSequencer extends XbaseSemanticSequencer {
 				   context == grammarAccess.getXReturnExpressionRule() ||
 				   context == grammarAccess.getXUnaryOperationRule()) {
 					sequence_XReturnExpression(context, (XReturnExpression) semanticObject); 
+					return; 
+				}
+				else break;
+			case XbasePackage.XSET_LITERAL:
+				if(context == grammarAccess.getXAdditiveExpressionRule() ||
+				   context == grammarAccess.getXAdditiveExpressionAccess().getXBinaryOperationLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getXAndExpressionRule() ||
+				   context == grammarAccess.getXAndExpressionAccess().getXBinaryOperationLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getXAssignmentRule() ||
+				   context == grammarAccess.getXAssignmentAccess().getXBinaryOperationLeftOperandAction_1_1_0_0_0() ||
+				   context == grammarAccess.getXCastedExpressionRule() ||
+				   context == grammarAccess.getXCastedExpressionAccess().getXCastedExpressionTargetAction_1_0_0_0() ||
+				   context == grammarAccess.getXCollectionLiteralRule() ||
+				   context == grammarAccess.getXEqualityExpressionRule() ||
+				   context == grammarAccess.getXEqualityExpressionAccess().getXBinaryOperationLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getXExpressionRule() ||
+				   context == grammarAccess.getXExpressionInsideBlockRule() ||
+				   context == grammarAccess.getXLiteralRule() ||
+				   context == grammarAccess.getXMemberFeatureCallRule() ||
+				   context == grammarAccess.getXMemberFeatureCallAccess().getXAssignmentAssignableAction_1_0_0_0_0() ||
+				   context == grammarAccess.getXMemberFeatureCallAccess().getXMemberFeatureCallMemberCallTargetAction_1_1_0_0_0() ||
+				   context == grammarAccess.getXMultiplicativeExpressionRule() ||
+				   context == grammarAccess.getXMultiplicativeExpressionAccess().getXBinaryOperationLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getXOrExpressionRule() ||
+				   context == grammarAccess.getXOrExpressionAccess().getXBinaryOperationLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getXOtherOperatorExpressionRule() ||
+				   context == grammarAccess.getXOtherOperatorExpressionAccess().getXBinaryOperationLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getXParenthesizedExpressionRule() ||
+				   context == grammarAccess.getXPrimaryExpressionRule() ||
+				   context == grammarAccess.getXRelationalExpressionRule() ||
+				   context == grammarAccess.getXRelationalExpressionAccess().getXBinaryOperationLeftOperandAction_1_1_0_0_0() ||
+				   context == grammarAccess.getXRelationalExpressionAccess().getXInstanceOfExpressionExpressionAction_1_0_0_0_0() ||
+				   context == grammarAccess.getXSetLiteralRule() ||
+				   context == grammarAccess.getXUnaryOperationRule()) {
+					sequence_XSetLiteral(context, (XSetLiteral) semanticObject); 
 					return; 
 				}
 				else break;
@@ -899,7 +979,7 @@ public class KDiagramSemanticSequencer extends XbaseSemanticSequencer {
 			case XbasePackage.XVARIABLE_DECLARATION:
 				if(context == grammarAccess.getXExpressionInsideBlockRule() ||
 				   context == grammarAccess.getXVariableDeclarationRule()) {
-					sequence_XVariableDeclaration(context, (org.eclipse.xtext.xbase.XVariableDeclaration) semanticObject); 
+					sequence_XVariableDeclaration(context, (XVariableDeclaration) semanticObject); 
 					return; 
 				}
 				else break;
@@ -937,14 +1017,6 @@ public class KDiagramSemanticSequencer extends XbaseSemanticSequencer {
 				}
 				else break;
 			}
-		else if(semanticObject.eClass().getEPackage() == XtendPackage.eINSTANCE) switch(semanticObject.eClass().getClassifierID()) {
-			case XtendPackage.XTEND_IMPORT:
-				if(context == grammarAccess.getImportRule()) {
-					sequence_Import(context, (XtendImport) semanticObject); 
-					return; 
-				}
-				else break;
-			}
 		else if(semanticObject.eClass().getEPackage() == XtypePackage.eINSTANCE) switch(semanticObject.eClass().getClassifierID()) {
 			case XtypePackage.XFUNCTION_TYPE_REF:
 				if(context == grammarAccess.getJvmArgumentTypeReferenceRule() ||
@@ -954,13 +1026,25 @@ public class KDiagramSemanticSequencer extends XbaseSemanticSequencer {
 					return; 
 				}
 				else break;
+			case XtypePackage.XIMPORT_DECLARATION:
+				if(context == grammarAccess.getXImportDeclarationRule()) {
+					sequence_XImportDeclaration(context, (XImportDeclaration) semanticObject); 
+					return; 
+				}
+				else break;
+			case XtypePackage.XIMPORT_SECTION:
+				if(context == grammarAccess.getXImportSectionRule()) {
+					sequence_XImportSection(context, (XImportSection) semanticObject); 
+					return; 
+				}
+				else break;
 			}
 		if (errorAcceptor != null) errorAcceptor.accept(diagnosticProvider.createInvalidContextOrTypeDiagnostic(semanticObject, context));
 	}
 	
 	/**
 	 * Constraint:
-	 *     (packageName=QualifiedName? imports+=Import* name=QualifiedName mapping=MappingDefinition)
+	 *     (packageName=QualifiedName? importSection=XImportSection? name=QualifiedName mapping=MappingDefinition)
 	 */
 	protected void sequence_DiagramSynthesis(EObject context, DiagramSynthesis semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -988,53 +1072,43 @@ public class KDiagramSemanticSequencer extends XbaseSemanticSequencer {
 		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
 		feeder.accept(grammarAccess.getEdgeMappingAccess().getNameIDTerminalRuleCall_1_0(), semanticObject.getName());
 		feeder.accept(grammarAccess.getEdgeMappingAccess().getElementsXExpressionParserRuleCall_3_0(), semanticObject.getElements());
-		feeder.accept(grammarAccess.getEdgeMappingAccess().getFromXExpressionParserRuleCall_6_0(), semanticObject.getFrom());
-		feeder.accept(grammarAccess.getEdgeMappingAccess().getToXExpressionParserRuleCall_8_0(), semanticObject.getTo());
-		feeder.accept(grammarAccess.getEdgeMappingAccess().getFigureTypeJvmTypeQualifiedNameParserRuleCall_10_0_1(), semanticObject.getFigureType());
+		feeder.accept(grammarAccess.getEdgeMappingAccess().getFromXExpressionParserRuleCall_5_0_1_0(), semanticObject.getFrom());
+		feeder.accept(grammarAccess.getEdgeMappingAccess().getToXExpressionParserRuleCall_5_0_3_0(), semanticObject.getTo());
+		feeder.accept(grammarAccess.getEdgeMappingAccess().getFigureTypeJvmTypeQualifiedNameParserRuleCall_5_1_1_0_1(), semanticObject.getFigureType());
 		feeder.finish();
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     (type=JvmParameterizedTypeReference name=ID (nodeMappings+=NodeMapping | portMappings+=PortMapping | edgeMappings+=EdgeMapping)*)
+	 */
+	protected void sequence_MappingDefinition(EObject context, MappingDefinition semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     (name=ID elements=XExpression (withPorts+=XFeatureCall withPorts+=XFeatureCall)? figureType=[JvmType|QualifiedName] portMappings+=PortMapping*)
+	 */
+	protected void sequence_NodeMapping(EObject context, NodeMapping semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	
 	/**
 	 * Constraint:
 	 *     (
-	 *         (static?='static' extension?='extension'? importedType=[JvmType|QualifiedName]) | 
-	 *         importedType=[JvmType|QualifiedName] | 
-	 *         importedNamespace=QualifiedNameWithWildCard
+	 *         name=ID 
+	 *         nodeElementType=JvmParameterizedTypeReference 
+	 *         nodeElementName=ID 
+	 *         elements=XExpression 
+	 *         (identifiedBy+=XFeatureCall indentifiedBy+=XFeatureCall)? 
+	 *         figureType=[JvmType|QualifiedName]
 	 *     )
 	 */
-	protected void sequence_Import(EObject context, XtendImport semanticObject) {
+	protected void sequence_PortMapping(EObject context, PortMapping semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Constraint:
-	 *     (type=JvmParameterizedTypeReference name=ValidID nodeMappings+=NodeMapping+)
-	 */
-	protected void sequence_MappingDefinition(EObject context, XVariableDeclaration semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Constraint:
-	 *     (name=ID elements=XExpression figureType=[JvmType|QualifiedName])
-	 */
-	protected void sequence_NodeMapping(EObject context, NodeMapping semanticObject) {
-		if(errorAcceptor != null) {
-			if(transientValues.isValueTransient(semanticObject, KDiagramPackage.Literals.NODE_MAPPING__NAME) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, KDiagramPackage.Literals.NODE_MAPPING__NAME));
-			if(transientValues.isValueTransient(semanticObject, KDiagramPackage.Literals.NODE_MAPPING__ELEMENTS) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, KDiagramPackage.Literals.NODE_MAPPING__ELEMENTS));
-			if(transientValues.isValueTransient(semanticObject, KDiagramPackage.Literals.NODE_MAPPING__FIGURE_TYPE) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, KDiagramPackage.Literals.NODE_MAPPING__FIGURE_TYPE));
-		}
-		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
-		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
-		feeder.accept(grammarAccess.getNodeMappingAccess().getNameIDTerminalRuleCall_1_0(), semanticObject.getName());
-		feeder.accept(grammarAccess.getNodeMappingAccess().getElementsXExpressionParserRuleCall_3_0(), semanticObject.getElements());
-		feeder.accept(grammarAccess.getNodeMappingAccess().getFigureTypeJvmTypeQualifiedNameParserRuleCall_6_0_1(), semanticObject.getFigureType());
-		feeder.finish();
 	}
 }

@@ -2,11 +2,9 @@
  */
 package de.cau.cs.kieler.klighd.kdiagram.kDiagram;
 
-import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.ecore.EObject;
 
-import org.eclipse.xtend.core.xtend.XtendImport;
+import org.eclipse.xtext.xtype.XImportSection;
 
 /**
  * <!-- begin-user-doc -->
@@ -17,7 +15,7 @@ import org.eclipse.xtend.core.xtend.XtendImport;
  * The following features are supported:
  * <ul>
  *   <li>{@link de.cau.cs.kieler.klighd.kdiagram.kDiagram.DiagramSynthesis#getPackageName <em>Package Name</em>}</li>
- *   <li>{@link de.cau.cs.kieler.klighd.kdiagram.kDiagram.DiagramSynthesis#getImports <em>Imports</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.klighd.kdiagram.kDiagram.DiagramSynthesis#getImportSection <em>Import Section</em>}</li>
  *   <li>{@link de.cau.cs.kieler.klighd.kdiagram.kDiagram.DiagramSynthesis#getName <em>Name</em>}</li>
  *   <li>{@link de.cau.cs.kieler.klighd.kdiagram.kDiagram.DiagramSynthesis#getMapping <em>Mapping</em>}</li>
  * </ul>
@@ -56,20 +54,30 @@ public interface DiagramSynthesis extends EObject
   void setPackageName(String value);
 
   /**
-   * Returns the value of the '<em><b>Imports</b></em>' containment reference list.
-   * The list contents are of type {@link org.eclipse.xtend.core.xtend.XtendImport}.
+   * Returns the value of the '<em><b>Import Section</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Imports</em>' containment reference list isn't clear,
+   * If the meaning of the '<em>Import Section</em>' containment reference isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Imports</em>' containment reference list.
-   * @see de.cau.cs.kieler.klighd.kdiagram.kDiagram.KDiagramPackage#getDiagramSynthesis_Imports()
+   * @return the value of the '<em>Import Section</em>' containment reference.
+   * @see #setImportSection(XImportSection)
+   * @see de.cau.cs.kieler.klighd.kdiagram.kDiagram.KDiagramPackage#getDiagramSynthesis_ImportSection()
    * @model containment="true"
    * @generated
    */
-  EList<XtendImport> getImports();
+  XImportSection getImportSection();
+
+  /**
+   * Sets the value of the '{@link de.cau.cs.kieler.klighd.kdiagram.kDiagram.DiagramSynthesis#getImportSection <em>Import Section</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Import Section</em>' containment reference.
+   * @see #getImportSection()
+   * @generated
+   */
+  void setImportSection(XImportSection value);
 
   /**
    * Returns the value of the '<em><b>Name</b></em>' attribute.
@@ -106,12 +114,12 @@ public interface DiagramSynthesis extends EObject
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Mapping</em>' containment reference.
-   * @see #setMapping(XVariableDeclaration)
+   * @see #setMapping(MappingDefinition)
    * @see de.cau.cs.kieler.klighd.kdiagram.kDiagram.KDiagramPackage#getDiagramSynthesis_Mapping()
    * @model containment="true"
    * @generated
    */
-  XVariableDeclaration getMapping();
+  MappingDefinition getMapping();
 
   /**
    * Sets the value of the '{@link de.cau.cs.kieler.klighd.kdiagram.kDiagram.DiagramSynthesis#getMapping <em>Mapping</em>}' containment reference.
@@ -121,6 +129,6 @@ public interface DiagramSynthesis extends EObject
    * @see #getMapping()
    * @generated
    */
-  void setMapping(XVariableDeclaration value);
+  void setMapping(MappingDefinition value);
 
 } // DiagramSynthesis

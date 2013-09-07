@@ -4,25 +4,38 @@
     editorDirectory="/de.cau.cs.kieler.klighd.kdiagram.editor/src" modelPluginID="de.cau.cs.kieler.klighd.kdiagram"
     forceOverwrite="true" modelName="KDiagram" updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
     complianceLevel="5.0" copyrightFields="false" editPluginID="de.cau.cs.kieler.klighd.kdiagram.edit"
-    editorPluginID="de.cau.cs.kieler.klighd.kdiagram.editor" runtimeVersion="2.8"
-    usedGenPackages="../../../../../../../../org.eclipse.xtend.core/model/Xtend.genmodel#//xtend ../../../../../../../../org.eclipse.xtext.common.types/model/JavaVMTypes.genmodel#//types ../../../../../../../../org.eclipse.xtext.xbase/model/Xbase.genmodel#//xbase">
+    editorPluginID="de.cau.cs.kieler.klighd.kdiagram.editor" runtimeVersion="2.9"
+    usedGenPackages="../../../../../../../../org.eclipse.xtext.common.types/model/JavaVMTypes.genmodel#//types ../../../../../../../../org.eclipse.xtext.xbase/model/Xbase.genmodel#//xbase ../../../../../../../../org.eclipse.xtext.xbase/model/Xbase.genmodel#//xtype">
   <genPackages prefix="KDiagram" basePackage="de.cau.cs.kieler.klighd.kdiagram" disposableProviderFactory="true"
       ecorePackage="KDiagram.ecore#/">
     <genClasses ecoreClass="KDiagram.ecore#//DiagramSynthesis">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute KDiagram.ecore#//DiagramSynthesis/packageName"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference KDiagram.ecore#//DiagramSynthesis/imports"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference KDiagram.ecore#//DiagramSynthesis/importSection"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute KDiagram.ecore#//DiagramSynthesis/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference KDiagram.ecore#//DiagramSynthesis/mapping"/>
     </genClasses>
-    <genClasses ecoreClass="KDiagram.ecore#//XVariableDeclaration">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference KDiagram.ecore#//XVariableDeclaration/type"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute KDiagram.ecore#//XVariableDeclaration/name"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference KDiagram.ecore#//XVariableDeclaration/nodeMappings"/>
+    <genClasses ecoreClass="KDiagram.ecore#//MappingDefinition">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference KDiagram.ecore#//MappingDefinition/type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute KDiagram.ecore#//MappingDefinition/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference KDiagram.ecore#//MappingDefinition/nodeMappings"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference KDiagram.ecore#//MappingDefinition/portMappings"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference KDiagram.ecore#//MappingDefinition/edgeMappings"/>
     </genClasses>
     <genClasses ecoreClass="KDiagram.ecore#//NodeMapping">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute KDiagram.ecore#//NodeMapping/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference KDiagram.ecore#//NodeMapping/elements"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference KDiagram.ecore#//NodeMapping/withPorts"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference KDiagram.ecore#//NodeMapping/figureType"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference KDiagram.ecore#//NodeMapping/portMappings"/>
+    </genClasses>
+    <genClasses ecoreClass="KDiagram.ecore#//PortMapping">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute KDiagram.ecore#//PortMapping/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference KDiagram.ecore#//PortMapping/nodeElementType"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute KDiagram.ecore#//PortMapping/nodeElementName"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference KDiagram.ecore#//PortMapping/elements"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference KDiagram.ecore#//PortMapping/identifiedBy"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference KDiagram.ecore#//PortMapping/indentifiedBy"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference KDiagram.ecore#//PortMapping/figureType"/>
     </genClasses>
     <genClasses ecoreClass="KDiagram.ecore#//EdgeMapping">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute KDiagram.ecore#//EdgeMapping/name"/>

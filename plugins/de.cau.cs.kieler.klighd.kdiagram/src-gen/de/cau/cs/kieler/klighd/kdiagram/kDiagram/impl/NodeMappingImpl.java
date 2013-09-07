@@ -4,15 +4,23 @@ package de.cau.cs.kieler.klighd.kdiagram.kDiagram.impl;
 
 import de.cau.cs.kieler.klighd.kdiagram.kDiagram.KDiagramPackage;
 import de.cau.cs.kieler.klighd.kdiagram.kDiagram.NodeMapping;
+import de.cau.cs.kieler.klighd.kdiagram.kDiagram.PortMapping;
+
+import java.util.Collection;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
+
+import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
+
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.eclipse.xtext.common.types.JvmType;
 
@@ -27,7 +35,9 @@ import org.eclipse.xtext.xbase.XExpression;
  * <ul>
  *   <li>{@link de.cau.cs.kieler.klighd.kdiagram.kDiagram.impl.NodeMappingImpl#getName <em>Name</em>}</li>
  *   <li>{@link de.cau.cs.kieler.klighd.kdiagram.kDiagram.impl.NodeMappingImpl#getElements <em>Elements</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.klighd.kdiagram.kDiagram.impl.NodeMappingImpl#getWithPorts <em>With Ports</em>}</li>
  *   <li>{@link de.cau.cs.kieler.klighd.kdiagram.kDiagram.impl.NodeMappingImpl#getFigureType <em>Figure Type</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.klighd.kdiagram.kDiagram.impl.NodeMappingImpl#getPortMappings <em>Port Mappings</em>}</li>
  * </ul>
  * </p>
  *
@@ -66,6 +76,16 @@ public class NodeMappingImpl extends MinimalEObjectImpl.Container implements Nod
   protected XExpression elements;
 
   /**
+   * The cached value of the '{@link #getWithPorts() <em>With Ports</em>}' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getWithPorts()
+   * @generated
+   * @ordered
+   */
+  protected EList<XExpression> withPorts;
+
+  /**
    * The cached value of the '{@link #getFigureType() <em>Figure Type</em>}' reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -74,6 +94,16 @@ public class NodeMappingImpl extends MinimalEObjectImpl.Container implements Nod
    * @ordered
    */
   protected JvmType figureType;
+
+  /**
+   * The cached value of the '{@link #getPortMappings() <em>Port Mappings</em>}' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getPortMappings()
+   * @generated
+   * @ordered
+   */
+  protected EList<PortMapping> portMappings;
 
   /**
    * <!-- begin-user-doc -->
@@ -172,6 +202,20 @@ public class NodeMappingImpl extends MinimalEObjectImpl.Container implements Nod
    * <!-- end-user-doc -->
    * @generated
    */
+  public EList<XExpression> getWithPorts()
+  {
+    if (withPorts == null)
+    {
+      withPorts = new EObjectContainmentEList<XExpression>(XExpression.class, this, KDiagramPackage.NODE_MAPPING__WITH_PORTS);
+    }
+    return withPorts;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public JvmType getFigureType()
   {
     if (figureType != null && figureType.eIsProxy())
@@ -215,6 +259,20 @@ public class NodeMappingImpl extends MinimalEObjectImpl.Container implements Nod
    * <!-- end-user-doc -->
    * @generated
    */
+  public EList<PortMapping> getPortMappings()
+  {
+    if (portMappings == null)
+    {
+      portMappings = new EObjectContainmentEList<PortMapping>(PortMapping.class, this, KDiagramPackage.NODE_MAPPING__PORT_MAPPINGS);
+    }
+    return portMappings;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
@@ -222,6 +280,10 @@ public class NodeMappingImpl extends MinimalEObjectImpl.Container implements Nod
     {
       case KDiagramPackage.NODE_MAPPING__ELEMENTS:
         return basicSetElements(null, msgs);
+      case KDiagramPackage.NODE_MAPPING__WITH_PORTS:
+        return ((InternalEList<?>)getWithPorts()).basicRemove(otherEnd, msgs);
+      case KDiagramPackage.NODE_MAPPING__PORT_MAPPINGS:
+        return ((InternalEList<?>)getPortMappings()).basicRemove(otherEnd, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -240,9 +302,13 @@ public class NodeMappingImpl extends MinimalEObjectImpl.Container implements Nod
         return getName();
       case KDiagramPackage.NODE_MAPPING__ELEMENTS:
         return getElements();
+      case KDiagramPackage.NODE_MAPPING__WITH_PORTS:
+        return getWithPorts();
       case KDiagramPackage.NODE_MAPPING__FIGURE_TYPE:
         if (resolve) return getFigureType();
         return basicGetFigureType();
+      case KDiagramPackage.NODE_MAPPING__PORT_MAPPINGS:
+        return getPortMappings();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -252,6 +318,7 @@ public class NodeMappingImpl extends MinimalEObjectImpl.Container implements Nod
    * <!-- end-user-doc -->
    * @generated
    */
+  @SuppressWarnings("unchecked")
   @Override
   public void eSet(int featureID, Object newValue)
   {
@@ -263,8 +330,16 @@ public class NodeMappingImpl extends MinimalEObjectImpl.Container implements Nod
       case KDiagramPackage.NODE_MAPPING__ELEMENTS:
         setElements((XExpression)newValue);
         return;
+      case KDiagramPackage.NODE_MAPPING__WITH_PORTS:
+        getWithPorts().clear();
+        getWithPorts().addAll((Collection<? extends XExpression>)newValue);
+        return;
       case KDiagramPackage.NODE_MAPPING__FIGURE_TYPE:
         setFigureType((JvmType)newValue);
+        return;
+      case KDiagramPackage.NODE_MAPPING__PORT_MAPPINGS:
+        getPortMappings().clear();
+        getPortMappings().addAll((Collection<? extends PortMapping>)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -286,8 +361,14 @@ public class NodeMappingImpl extends MinimalEObjectImpl.Container implements Nod
       case KDiagramPackage.NODE_MAPPING__ELEMENTS:
         setElements((XExpression)null);
         return;
+      case KDiagramPackage.NODE_MAPPING__WITH_PORTS:
+        getWithPorts().clear();
+        return;
       case KDiagramPackage.NODE_MAPPING__FIGURE_TYPE:
         setFigureType((JvmType)null);
+        return;
+      case KDiagramPackage.NODE_MAPPING__PORT_MAPPINGS:
+        getPortMappings().clear();
         return;
     }
     super.eUnset(featureID);
@@ -307,8 +388,12 @@ public class NodeMappingImpl extends MinimalEObjectImpl.Container implements Nod
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
       case KDiagramPackage.NODE_MAPPING__ELEMENTS:
         return elements != null;
+      case KDiagramPackage.NODE_MAPPING__WITH_PORTS:
+        return withPorts != null && !withPorts.isEmpty();
       case KDiagramPackage.NODE_MAPPING__FIGURE_TYPE:
         return figureType != null;
+      case KDiagramPackage.NODE_MAPPING__PORT_MAPPINGS:
+        return portMappings != null && !portMappings.isEmpty();
     }
     return super.eIsSet(featureID);
   }

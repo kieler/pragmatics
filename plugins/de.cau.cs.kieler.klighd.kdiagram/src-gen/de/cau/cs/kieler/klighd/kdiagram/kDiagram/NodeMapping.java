@@ -2,6 +2,8 @@
  */
 package de.cau.cs.kieler.klighd.kdiagram.kDiagram;
 
+import org.eclipse.emf.common.util.EList;
+
 import org.eclipse.emf.ecore.EObject;
 
 import org.eclipse.xtext.common.types.JvmType;
@@ -18,7 +20,9 @@ import org.eclipse.xtext.xbase.XExpression;
  * <ul>
  *   <li>{@link de.cau.cs.kieler.klighd.kdiagram.kDiagram.NodeMapping#getName <em>Name</em>}</li>
  *   <li>{@link de.cau.cs.kieler.klighd.kdiagram.kDiagram.NodeMapping#getElements <em>Elements</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.klighd.kdiagram.kDiagram.NodeMapping#getWithPorts <em>With Ports</em>}</li>
  *   <li>{@link de.cau.cs.kieler.klighd.kdiagram.kDiagram.NodeMapping#getFigureType <em>Figure Type</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.klighd.kdiagram.kDiagram.NodeMapping#getPortMappings <em>Port Mappings</em>}</li>
  * </ul>
  * </p>
  *
@@ -81,6 +85,22 @@ public interface NodeMapping extends EObject
   void setElements(XExpression value);
 
   /**
+   * Returns the value of the '<em><b>With Ports</b></em>' containment reference list.
+   * The list contents are of type {@link org.eclipse.xtext.xbase.XExpression}.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>With Ports</em>' containment reference list isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>With Ports</em>' containment reference list.
+   * @see de.cau.cs.kieler.klighd.kdiagram.kDiagram.KDiagramPackage#getNodeMapping_WithPorts()
+   * @model containment="true"
+   * @generated
+   */
+  EList<XExpression> getWithPorts();
+
+  /**
    * Returns the value of the '<em><b>Figure Type</b></em>' reference.
    * <!-- begin-user-doc -->
    * <p>
@@ -105,5 +125,21 @@ public interface NodeMapping extends EObject
    * @generated
    */
   void setFigureType(JvmType value);
+
+  /**
+   * Returns the value of the '<em><b>Port Mappings</b></em>' containment reference list.
+   * The list contents are of type {@link de.cau.cs.kieler.klighd.kdiagram.kDiagram.PortMapping}.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Port Mappings</em>' containment reference list isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Port Mappings</em>' containment reference list.
+   * @see de.cau.cs.kieler.klighd.kdiagram.kDiagram.KDiagramPackage#getNodeMapping_PortMappings()
+   * @model containment="true"
+   * @generated
+   */
+  EList<PortMapping> getPortMappings();
 
 } // NodeMapping
