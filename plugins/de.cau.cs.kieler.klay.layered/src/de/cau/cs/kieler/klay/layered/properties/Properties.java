@@ -433,5 +433,4 @@ public final class Properties {
      */
     private Properties() {
     }
-
 }

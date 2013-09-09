@@ -1193,5 +1193,4 @@ public final class BKNodePlacer implements ILayoutPhase {
     private enum HDirection {
         TOP, BOTTOM;
     }
-
 }
