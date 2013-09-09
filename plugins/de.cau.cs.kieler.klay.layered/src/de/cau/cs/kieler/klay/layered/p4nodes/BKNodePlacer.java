@@ -172,7 +172,8 @@ public final class BKNodePlacer implements ILayoutPhase {
                 nodeCount, VDirection.RIGHT, HDirection.BOTTOM);
 
         // Initialize spacing value from layout options.
-        normalSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
+        normalSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING) 
+                * layeredGraph.getProperty(Properties.OBJ_SPACING_VERTICAL_FACTOR);
         smallSpacing = normalSpacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
 
         // Regard possible other layout options.

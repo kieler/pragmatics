@@ -333,6 +333,14 @@ public final class Properties {
     /** minimal spacing between objects. */
     public static final Property<Float> OBJ_SPACING = new Property<Float>(LayoutOptions.SPACING,
             20.0f, 0.0f);
+    
+    /**
+     * the factor by which the vertical spacing between objects differs from the horizontal
+     * {@link Properties#OBJ_SPACING}.
+     */
+    public static final IProperty<Float> OBJ_SPACING_VERTICAL_FACTOR = new Property<Float>(
+            "de.cau.cs.kieler.klay.layered.verticalSpacingFactor", 1.0f, 0f);
+    
     /** spacing to the border of the drawing. */
     public static final Property<Float> BORDER_SPACING = new Property<Float>(
             LayoutOptions.BORDER_SPACING, 20.0f, 0.0f);

@@ -134,6 +134,9 @@
          <knownOption
                option="de.cau.cs.kieler.klay.layered.networkSimplexMaxIterations">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.verticalSpacingFactor">
+         </knownOption>
       </layoutAlgorithm>
       <layoutOption
             appliesTo="parents"
@@ -304,6 +307,17 @@
                option="de.cau.cs.kieler.klay.layered.nodeLayering"
                value="NETWORK_SIMPLEX">
          </dependency>
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="1"
+            description="Factor by which the usual spacing is multiplied to determine the vertical spacing between objects."
+            id="de.cau.cs.kieler.klay.layered.verticalSpacingFactor"
+            lowerBound="0.01"
+            name="Vertical Spacing Factor"
+            type="float"
+            upperBound="100">
       </layoutOption>
    </extension>
 
