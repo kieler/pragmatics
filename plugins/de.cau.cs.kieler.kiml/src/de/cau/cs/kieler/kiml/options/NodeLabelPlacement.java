@@ -149,4 +149,13 @@ public enum NodeLabelPlacement {
     public static EnumSet<NodeLabelPlacement> outsideTopLeft() {
         return EnumSet.of(OUTSIDE, V_TOP, H_LEFT);
     }
+    
+    /**
+     * Returns a node label placement to place the node label outside the node, left on top..
+     * 
+     * @return node label placement for outside top left placement.
+     */
+    public static EnumSet<NodeLabelPlacement> outsideBottomRight() {
+        return EnumSet.of(OUTSIDE, V_BOTTOM, H_RIGHT);
+    }
 }
