@@ -123,6 +123,9 @@ var webSocketConnect = function() {
 
         // if starts with id
         if (hashcode) {
+          // indicate busy
+          $("#busy").show();
+          
           // send expand toggle command
           sendJson({
             type : 'EXPAND',
