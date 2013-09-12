@@ -85,7 +85,7 @@ class HtmlGenerator {
     
     
     
-    def String permaLinkPage(String svgData) {
+    def String permaLinkPage(String svgData, boolean mightDiffer) {
 	'''
 	<html encoding='UTF8'>
 		<head>
@@ -100,6 +100,9 @@ class HtmlGenerator {
 			</style>
 		</head>
 		<body>
+		«IF mightDiffer»
+			<div>CARE: The file has likely changed since the permalink was created.</div>
+		«ENDIF»
 			<div id="data">
 				«svgData»
 			</div>

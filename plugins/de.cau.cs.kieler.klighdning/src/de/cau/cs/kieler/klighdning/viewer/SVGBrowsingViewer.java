@@ -75,6 +75,7 @@ public class SVGBrowsingViewer {
     // permalink
     private String resourcePath;
     private String svgTransform;
+    private String resourceChecksum;
 
     /**
      * 
@@ -200,7 +201,14 @@ public class SVGBrowsingViewer {
     public String getSvgTransform() {
         return svgTransform;
     }
-
+    
+    /**
+     * @param resourceLastModified the resourceLastModified to set
+     */
+    public void setResourceChecksum(final String resourceLastModified) {
+        this.resourceChecksum = resourceLastModified;
+    }
+    
     /*------------------------------------
      * Internal functionality.
      */
@@ -269,6 +277,9 @@ public class SVGBrowsingViewer {
             if (svgTransform != null) {
                 permaLink += "&transform=" + URLEncoder.encode(svgTransform, "utf8");
             }
+            
+            // add checksum
+            permaLink += "&cs=" + resourceChecksum;
 
             return permaLink;
         } catch (UnsupportedEncodingException uee) {
