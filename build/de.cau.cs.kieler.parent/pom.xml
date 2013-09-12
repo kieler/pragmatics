@@ -48,7 +48,7 @@
         <repository>
           <id>p2.papyrus</id>
           <layout>p2</layout>
-          <url>http://download.eclipse.org/modeling/mdt/papyrus/updates/releases/maintenance/kepler</url>
+          <url>http://download.eclipse.org/modeling/mdt/papyrus/updates/releases/kepler</url>
         </repository>
         <repository>
           <id>p2.jetty</id>
