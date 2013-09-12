@@ -141,7 +141,7 @@ import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.Transformation
  * </ol>
  * 
  * <p>This is still kind of experimental. It does work, but the heuristic is quite
- * simpllistic and doesn't always give correct results.</p>
+ * simplistic and doesn't always give correct results.</p>
  * 
  * @author cds
  */
@@ -297,8 +297,10 @@ class CommentsExtractor {
                 // Run our heuristic to find an implicit attachment
                 val heuristicAttachment = findNearestNonCommentSibling(commentNode)
                 
-                if (heuristicAttachment != null) {
-                    heuristicAttachments += new Pair(commentNode, heuristicAttachment)
+                if (heuristicAttachment != null) { 
+                	// FIXME xtend 2.4.3 seems to have trouble when the generics have to be inferred
+                	// heuristicAttachments += new Pair(commentNode, heuristicAttachment)
+                    heuristicAttachments += new Pair<KNode, KNode>(commentNode, heuristicAttachment)
                 }
             }
         }
