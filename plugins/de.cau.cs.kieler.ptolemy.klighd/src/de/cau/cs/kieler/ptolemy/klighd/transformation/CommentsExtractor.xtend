@@ -298,9 +298,12 @@ class CommentsExtractor {
                 val heuristicAttachment = findNearestNonCommentSibling(commentNode)
                 
                 if (heuristicAttachment != null) { 
-                	// FIXME xtend 2.4.3 seems to have trouble when the generics have to be inferred
+                	// CARE xtend's "+=" allows to have iterables on both sides, due to the 
+                	// fact that Pair implements Iterable and no generics are specified during
+                	// the creation of the pair, xtend thinks of the pair as an iterable and 
+                	// adds both elements of the to the list. Not, as intended, the pair itself
                 	// heuristicAttachments += new Pair(commentNode, heuristicAttachment)
-                    heuristicAttachments += new Pair<KNode, KNode>(commentNode, heuristicAttachment)
+                    heuristicAttachments.add(new Pair(commentNode, heuristicAttachment))
                 }
             }
         }
