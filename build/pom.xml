@@ -81,7 +81,6 @@
       <modules>
         <module>../plugins</module>
         <module>../features</module>
-        <module>../plugins/de.cau.cs.kieler.klighd.piccolo.svg</module>
         <module>../plugins/de.cau.cs.kieler.klighdning</module>
         <module>de.cau.cs.kieler.klighdning.repository</module>
       </modules>
@@ -122,7 +121,7 @@
       <modules>
         <module>../plugins</module>
         <module>../features</module>
-        <module>de.cau.cs.kieler.pragmatics.repository</module>
+        <module>de.cau.cs.kieler.papyrus.repository</module>
       </modules>
     </profile>
       
