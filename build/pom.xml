@@ -7,22 +7,6 @@
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <!--<modules>
-    <module>../../plugins</module>
-    <module>../../features</module>
-    <module>../de.cau.cs.kieler.pragmatics.repository</module>
-    <module>../de.cau.cs.kieler.kwebs.repository</module>
-    <module>../de.cau.cs.kieler.papyrus.repository</module>-->
-    
-    <!-- the ptolemy rcp plugin is not part of the usual plugins pom.xml, 
-         we have to add it here so it gets built for the actual product. -->
-    <!--<module>../../plugins-dev/de.cau.cs.kieler.ptolemy.rcp</module>
-    <module>../de.cau.cs.kieler.ptolemy.rcp.repository</module>
-    
-    <module>../../plugins/de.cau.cs.kieler.klighd.piccolo.svg</module>
-    <module>../../plugins/de.cau.cs.kieler.klighdning</module>
-    <module>../de.cau.cs.kieler.klighdning.repository</module>
-  </modules>-->
   
   <!-- Define a few properties used throughout all build profiles. -->
   <properties>
