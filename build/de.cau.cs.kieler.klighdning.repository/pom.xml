@@ -40,7 +40,7 @@
             <product>
               <id>de.cau.cs.kieler.klighdning.product</id>
               <rootFolder>klighdning</rootFolder>
-              <archiveFileName>KlighDning_${buildQualifier}</archiveFileName>
+              <archiveFileName>klighdning_nightly_${buildQualifier}</archiveFileName>
             </product>
           </products>
         </configuration>

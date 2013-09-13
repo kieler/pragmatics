@@ -40,7 +40,7 @@
             <product>
               <id>de.cau.cs.kieler.ptolemy.rcp.product</id>
               <rootFolder>prcp</rootFolder>
-              <archiveFileName>ptolemy_rcp_${buildQualifier}</archiveFileName>
+              <archiveFileName>ptolemy_rcp_nightly_${buildQualifier}</archiveFileName>
             </product>
           </products>
         </configuration>
