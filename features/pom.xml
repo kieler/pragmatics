@@ -25,7 +25,6 @@
     <module>de.cau.cs.kieler.klighd.examples.feature</module>
     <module>de.cau.cs.kieler.kwebs.client.jaxws.feature</module>
     <module>de.cau.cs.kieler.kwebs.server.feature</module>
-    <module>de.cau.cs.kieler.papyrus.layout.feature</module>
     <module>de.cau.cs.kieler.ptview.feature</module>
     <module>net.ogdf.bin.feature</module>
   </modules>

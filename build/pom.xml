@@ -70,42 +70,6 @@
       </modules>
     </profile>
       
-    <!-- The Papyrus update site. -->
-    <profile>
-      <id>papyrus</id>
-      
-      <repositories>
-        <repository>
-          <id>p2.targetPlatform</id>
-          <layout>p2</layout>
-          <url>http://rtsys.informatik.uni-kiel.de/~kieler/repository/kepler43/</url>
-        </repository>
-        <repository>
-          <id>p2.nightly_pragmatics</id>
-          <layout>p2</layout>
-          <url>http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/pragmatics/</url>
-        </repository>
-        <repository>
-            <id>p2.papyrus</id>
-            <layout>p2</layout>
-            <url>http://download.eclipse.org/modeling/mdt/papyrus/updates/releases/maintenance/kepler</url>
-        </repository>
-<!--        <repository>
-          <id>p2.eclipse.kepler</id>
-          <layout>p2</layout>
-          <url>http://download.eclipse.org/releases/kepler</url>
-        </repository>
--->
-      </repositories>
-      
-      <modules>
-        <module>../plugins/de.cau.cs.kieler.papyrus</module>
-        <module>../plugins/de.cau.cs.kieler.papyrus.sequence</module>
-        <module>../features/de.cau.cs.kieler.papyrus.layout.feature</module>
-        <module>de.cau.cs.kieler.papyrus.repository</module>
-      </modules>
-    </profile>
-      
     <!-- The Pragmatics update site. -->
     <profile>
       <id>pragmatics</id>
