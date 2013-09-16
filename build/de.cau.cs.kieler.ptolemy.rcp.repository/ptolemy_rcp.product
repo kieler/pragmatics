@@ -43,7 +43,6 @@
       <plugin id="de.cau.cs.kieler.klay.layered"/>
       <plugin id="de.cau.cs.kieler.klighd"/>
       <plugin id="de.cau.cs.kieler.klighd.piccolo"/>
-      <plugin id="de.cau.cs.kieler.klighd.piccolo.draw2d" fragment="true"/>
       <plugin id="de.cau.cs.kieler.ptolemy.klighd"/>
       <plugin id="de.cau.cs.kieler.ptolemy.rcp"/>
       <plugin id="edu.umd.cs.piccolo"/>
