@@ -38,15 +38,15 @@
           <url>http://download.eclipse.org/releases/juno</url>
         </repository>
         <repository>
-          <id>p2.jetty</id>
+          <id>p2.nightly_pragmatics</id>
           <layout>p2</layout>
-          <url>http://download.eclipse.org/jetty/updates/jetty-bundles-8.x</url>
+          <url>http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/pragmatics/</url>
         </repository>
       </repositories>
       
       <modules>
-        <module>../plugins</module>
-        <module>../features</module>
+        <module>de.cau.cs.kieler.kwebs.server</module>
+        <module>de.cau.cs.kieler.kwebs.server.feature</module>
         <module>de.cau.cs.kieler.kwebs.repository</module>
       </modules>
     </profile>
@@ -76,11 +76,14 @@
           <layout>p2</layout>
           <url>http://download.eclipse.org/jetty/updates/jetty-bundles-8.x</url>
         </repository>
+        <repository>
+          <id>p2.nightly_pragmatics</id>
+          <layout>p2</layout>
+          <url>http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/pragmatics/</url>
+        </repository>
       </repositories>
       
       <modules>
-        <module>../plugins</module>
-        <module>../features</module>
         <module>../plugins/de.cau.cs.kieler.klighdning</module>
         <module>de.cau.cs.kieler.klighdning.repository</module>
       </modules>
@@ -107,20 +110,21 @@
           <url>http://download.eclipse.org/releases/juno</url>
         </repository>
         <repository>
-          <id>p2.jetty</id>
-          <layout>p2</layout>
-          <url>http://download.eclipse.org/jetty/updates/jetty-bundles-8.x</url>
-        </repository>
-        <repository>
             <id>p2.papyrus</id>
             <layout>p2</layout>
             <url>http://download.eclipse.org/modeling/mdt/papyrus/updates/releases/maintenance/juno</url>
         </repository>
+        <repository>
+          <id>p2.nightly_pragmatics</id>
+          <layout>p2</layout>
+          <url>http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/pragmatics/</url>
+        </repository>
       </repositories>
       
       <modules>
-        <module>../plugins</module>
-        <module>../features</module>
+        <module>de.cau.cs.kieler.papyrus</module>
+        <module>de.cau.cs.kieler.papyrus.sequence</module>
+        <module>de.cau.cs.kieler.papyrus.layout.feature</module>
         <module>de.cau.cs.kieler.papyrus.repository</module>
       </modules>
     </profile>
@@ -179,11 +183,14 @@
           <layout>p2</layout>
           <url>http://download.eclipse.org/releases/juno</url>
         </repository>
+        <repository>
+          <id>p2.nightly_pragmatics</id>
+          <layout>p2</layout>
+          <url>http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/pragmatics/</url>
+        </repository>
       </repositories>
       
       <modules>
-        <module>../plugins</module>
-        <module>../features</module>
         <module>../plugins-dev/de.cau.cs.kieler.ptolemy.rcp</module>
         <module>de.cau.cs.kieler.ptolemy.rcp.repository</module>
       </modules>
