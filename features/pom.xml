@@ -23,6 +23,7 @@
     <module>de.cau.cs.kieler.kiml.ogdf.feature</module>
     <module>de.cau.cs.kieler.klighd.feature</module>
     <module>de.cau.cs.kieler.klighd.examples.feature</module>
+    <module>de.cau.cs.kieler.klighdning.feature</module>
     <module>de.cau.cs.kieler.kwebs.client.jaxws.feature</module>
     <module>de.cau.cs.kieler.kwebs.server.feature</module>
     <module>de.cau.cs.kieler.papyrus.layout.feature</module>
