@@ -40,7 +40,6 @@ e:/Uni/ma/models</programArgs>
       <plugin id="de.cau.cs.kieler.klighd"/>
       <plugin id="de.cau.cs.kieler.klighd.incremental"/>
       <plugin id="de.cau.cs.kieler.klighd.piccolo"/>
-      <plugin id="de.cau.cs.kieler.klighd.piccolo.draw2d" fragment="true"/>
       <plugin id="de.cau.cs.kieler.klighd.piccolo.svg"/>
       <plugin id="de.cau.cs.kieler.klighdning"/>
       <plugin id="de.cau.cs.kieler.ptolemy.klighd"/>
