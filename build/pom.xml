@@ -45,8 +45,8 @@
       </repositories>
       
       <modules>
-        <module>de.cau.cs.kieler.kwebs.server</module>
-        <module>de.cau.cs.kieler.kwebs.server.feature</module>
+        <module>../plugins/de.cau.cs.kieler.kwebs.server</module>
+        <module>../features/de.cau.cs.kieler.kwebs.server.feature</module>
         <module>de.cau.cs.kieler.kwebs.repository</module>
       </modules>
     </profile>
@@ -122,9 +122,9 @@
       </repositories>
       
       <modules>
-        <module>de.cau.cs.kieler.papyrus</module>
-        <module>de.cau.cs.kieler.papyrus.sequence</module>
-        <module>de.cau.cs.kieler.papyrus.layout.feature</module>
+        <module>../plugins/de.cau.cs.kieler.papyrus</module>
+        <module>../plugins/de.cau.cs.kieler.papyrus.sequence</module>
+        <module>../features/de.cau.cs.kieler.papyrus.layout.feature</module>
         <module>de.cau.cs.kieler.papyrus.repository</module>
       </modules>
     </profile>
