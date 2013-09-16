@@ -12,6 +12,12 @@
   <properties>
     <tycho-version>0.18.1</tycho-version>
     <targetJdk>1.5</targetJdk>
+
+    <!-- guarantee that we use utf8 for compilation, this is especially required
+         due to xtend's template symbols («) when running maven on windows. -->
+	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	<project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
+	<maven.compiler.encoding>UTF-8</maven.compiler.encoding>
   </properties>
   
   
@@ -79,8 +85,8 @@
       </repositories>
       
       <modules>
-      	<module>../plugins/de.cau.cs.kieler.klighd.piccolo.svg</module>
         <module>../plugins/de.cau.cs.kieler.klighdning</module>
+        <module>../features/de.cau.cs.kieler.klighdning.feature</module>
         <module>de.cau.cs.kieler.klighdning.repository</module>
       </modules>
     </profile>
@@ -211,7 +217,7 @@
 
   <!-- Modify the build process to add Tycho and configure some utility plug-ins. -->
   <build>
-    <plugins>
+    <plugins>    
       <!-- we need tycho plugin to build eclipse plugins -->
       <plugin>
         <groupId>org.eclipse.tycho</groupId>
