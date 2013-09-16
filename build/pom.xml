@@ -7,36 +7,52 @@
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-<!-- all plugins need to be listed as module -->
-
-  <modules>
-    <module>../../plugins</module>
-    <module>../../features</module>
-    <module>../de.cau.cs.kieler.pragmatics.repository</module>
-    <module>../de.cau.cs.kieler.kwebs.repository</module>
-    <module>../de.cau.cs.kieler.papyrus.repository</module>
-    
-    <!-- the ptolemy rcp plugin is not part of the usual plugins pom.xml, 
-		 we have to add it here so it gets built for the actual product. -->     									
-    <module>../../plugins-dev/de.cau.cs.kieler.ptolemy.rcp</module>
-    <module>../de.cau.cs.kieler.ptolemy.rcp.repository</module>
-    
-    <module>../../plugins/de.cau.cs.kieler.klighd.piccolo.svg</module>
-    <module>../../plugins/de.cau.cs.kieler.klighdning</module>
-    <module>../de.cau.cs.kieler.klighdning.repository</module>
-  </modules>
-
+  
+  <!-- Define a few properties used throughout all build profiles. -->
+  <properties>
+    <tycho-version>0.18.1</tycho-version>
+    <targetJdk>1.5</targetJdk>
+  </properties>
+  
+  
+  <!-- Define one profile for each output target we have. -->
   <profiles>
+    <!-- The KWebS product. -->
     <profile>
-      <id>juno42</id>
-      <properties>
-        <tycho-version>0.18.1</tycho-version>
-        <targetJdk>1.5</targetJdk>
-      </properties>
-
+      <id>kwebs</id>
+      
       <repositories>
         <repository>
-          <id>p2.juno42</id>
+          <id>p2.targetPlatform</id>
+          <layout>p2</layout>
+          <url>http://rtsys.informatik.uni-kiel.de/~kieler/repository/kepler43/</url>
+        </repository>
+        <repository>
+          <id>p2.eclipse.kepler</id>
+          <layout>p2</layout>
+          <url>http://download.eclipse.org/releases/kepler</url>
+        </repository>
+        <repository>
+          <id>p2.nightly_pragmatics</id>
+          <layout>p2</layout>
+          <url>http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/pragmatics/</url>
+        </repository>
+      </repositories>
+      
+      <modules>
+        <module>../plugins/de.cau.cs.kieler.kwebs.server</module>
+        <module>../features/de.cau.cs.kieler.kwebs.server.feature</module>
+        <module>de.cau.cs.kieler.kwebs.repository</module>
+      </modules>
+    </profile>
+      
+    <!-- The KLighDning update site. -->
+    <profile>
+      <id>klighdning</id>
+      
+      <repositories>
+        <repository>
+          <id>p2.targetPlatform</id>
           <layout>p2</layout>
           <url>http://rtsys.informatik.uni-kiel.de/~kieler/repository/kepler43/</url>
         </repository>
@@ -46,9 +62,83 @@
           <url>http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/ptolemy/</url>
         </repository>
         <repository>
-          <id>p2.papyrus</id>
+          <id>p2.eclipse.kepler</id>
           <layout>p2</layout>
-          <url>http://download.eclipse.org/modeling/mdt/papyrus/updates/releases/kepler</url>
+          <url>http://download.eclipse.org/releases/kepler</url>
+        </repository>
+        <repository>
+          <id>p2.jetty</id>
+          <layout>p2</layout>
+          <url>http://download.eclipse.org/jetty/updates/jetty-bundles-8.x</url>
+        </repository>
+        <repository>
+          <id>p2.nightly_pragmatics</id>
+          <layout>p2</layout>
+          <url>http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/pragmatics/</url>
+        </repository>
+      </repositories>
+      
+      <modules>
+      	<module>../plugins/de.cau.cs.kieler.klighd.piccolo.svg</module>
+        <module>../plugins/de.cau.cs.kieler.klighdning</module>
+        <module>de.cau.cs.kieler.klighdning.repository</module>
+      </modules>
+    </profile>
+      
+    <!-- The Papyrus update site. -->
+    <profile>
+      <id>papyrus</id>
+      
+      <repositories>
+        <repository>
+          <id>p2.targetPlatform</id>
+          <layout>p2</layout>
+          <url>http://rtsys.informatik.uni-kiel.de/~kieler/repository/kepler43/</url>
+        </repository>
+        <repository>
+          <id>p2.eclipse.kepler</id>
+          <layout>p2</layout>
+          <url>http://download.eclipse.org/releases/kepler</url>
+        </repository>
+        <repository>
+            <id>p2.papyrus</id>
+            <layout>p2</layout>
+            <url>http://download.eclipse.org/modeling/mdt/papyrus/updates/releases/maintenance/kepler</url>
+        </repository>
+        <repository>
+          <id>p2.nightly_pragmatics</id>
+          <layout>p2</layout>
+          <url>http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/pragmatics/</url>
+        </repository>
+      </repositories>
+      
+      <modules>
+        <module>../plugins/de.cau.cs.kieler.papyrus</module>
+        <module>../plugins/de.cau.cs.kieler.papyrus.sequence</module>
+        <module>../features/de.cau.cs.kieler.papyrus.layout.feature</module>
+        <module>de.cau.cs.kieler.papyrus.repository</module>
+      </modules>
+    </profile>
+      
+    <!-- The Pragmatics update site. -->
+    <profile>
+      <id>pragmatics</id>
+      
+      <repositories>
+        <repository>
+          <id>p2.targetPlatform</id>
+          <layout>p2</layout>
+          <url>http://rtsys.informatik.uni-kiel.de/~kieler/repository/kepler43/</url>
+        </repository>
+        <repository>
+          <id>p2.ptolemy</id>
+          <layout>p2</layout>
+          <url>http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/ptolemy/</url>
+        </repository>
+        <repository>
+          <id>p2.eclipse.kepler</id>
+          <layout>p2</layout>
+          <url>http://download.eclipse.org/releases/kepler</url>
         </repository>
         <repository>
           <id>p2.jetty</id>
@@ -56,11 +146,50 @@
           <url>http://download.eclipse.org/jetty/updates/jetty-bundles-8.x</url>
         </repository>
       </repositories>
+      
+      <modules>
+        <module>../plugins</module>
+        <module>../features</module>
+        <module>de.cau.cs.kieler.pragmatics.repository</module>
+      </modules>
+    </profile>
+    
+    <!-- The Ptolemy RCP. -->
+    <profile>
+      <id>ptolemy-rcp</id>
+      
+      <repositories>
+        <repository>
+          <id>p2.targetPlatform</id>
+          <layout>p2</layout>
+          <url>http://rtsys.informatik.uni-kiel.de/~kieler/repository/kepler43/</url>
+        </repository>
+        <repository>
+          <id>p2.ptolemy</id>
+          <layout>p2</layout>
+          <url>http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/ptolemy/</url>
+        </repository>
+        <repository>
+          <id>p2.eclipse.kepler</id>
+          <layout>p2</layout>
+          <url>http://download.eclipse.org/releases/kepler</url>
+        </repository>
+        <repository>
+          <id>p2.nightly_pragmatics</id>
+          <layout>p2</layout>
+          <url>http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/pragmatics/</url>
+        </repository>
+      </repositories>
+      
+      <modules>
+        <module>../plugins-dev/de.cau.cs.kieler.ptolemy.rcp</module>
+        <module>de.cau.cs.kieler.ptolemy.rcp.repository</module>
+      </modules>
     </profile>
   </profiles>
 
 
-<!-- maven plugin repositories -->
+  <!-- Maven plugin repositories -->
   <pluginRepositories>
     <pluginRepository>
       <id>xtend</id>
@@ -71,13 +200,16 @@
       <id>jboss-releases</id>
       <name>JBoss Releases Maven Repository</name>
       <url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
-<!--      <releases>
+<!--
+      <releases>
         <enabled>true</enabled>
-      </releases> -->
+      </releases>
+-->
     </pluginRepository>
   </pluginRepositories>
 
 
+  <!-- Modify the build process to add Tycho and configure some utility plug-ins. -->
   <build>
     <plugins>
       <!-- we need tycho plugin to build eclipse plugins -->
@@ -168,7 +300,8 @@
           <additionalJOption>-p pragmatics</additionalJOption>
         </configuration>
 
-        <!--        <executions>
+<!--
+        <executions>
           <execution>
             <id>aggregate</id>
             <goals>
@@ -176,7 +309,8 @@
             </goals>
             <phase>integration-test</phase>
           </execution>
-        </executions> -->
+        </executions>
+-->
       </plugin>
 
 
@@ -186,14 +320,16 @@
         <artifactId>target-platform-configuration</artifactId>
         <version>${tycho-version}</version>
         <configuration>
-          <!-- <target>
+<!--
+          <target>
             <artifact>
               <groupId>de.cau.cs.kieler</groupId>
               <artifactId>de.cau.cs.kieler.target</artifactId>
               <version>0.0.1-SNAPSHOT</version>
               <classifier>indigo</classifier>
             </artifact>
-          </target> -->
+          </target>
+-->
           <environments>
             <environment>
               <os>linux</os>
@@ -229,8 +365,10 @@
         </configuration>
       </plugin>
     </plugins>
+    
     <pluginManagement>
       <plugins>
+      
         <!-- maven xtend plugin to tell maven how to compile xtend code -->
         <plugin>
           <groupId>org.eclipse.xtend</groupId>
@@ -240,6 +378,7 @@
             <outputDirectory>${basedir}/xtend-gen</outputDirectory>
           </configuration>
         </plugin>
+        
         <!-- add src-gen and xtend-gen to source-directories -->
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -263,6 +402,7 @@
             </execution>
           </executions>
         </plugin>
+        
         <!-- generated code needs cleanup too -->
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>

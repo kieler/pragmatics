@@ -17,6 +17,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.Adler32;
+import java.util.zip.Checksum;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -29,6 +31,7 @@ import org.eclipse.jetty.util.ajax.JSON;
 import org.eclipse.jetty.websocket.WebSocket;
 
 import com.google.common.collect.Maps;
+import com.google.common.io.Files;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.klighd.LightDiagramServices;
@@ -56,6 +59,8 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
 
     private String currentRoom = null;
     private Connection connection;
+    
+    private Checksum checksum = new Adler32();
 
     /**
      * Determines to which clients a message is broadcasted.
@@ -295,9 +300,10 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
                 // rs.getResourceFactoryRegistry().getExtensionToFactoryMap()
                 // .put("xml", new MomlResourceFactoryImpl());
 
+                File file = new File(docRoot, path);
                 final Resource r =
                         rs.getResource(
-                                URI.createFileURI(new File(docRoot, path).getAbsolutePath()), true);
+                                URI.createFileURI(file.getAbsolutePath()), true);
 
                 System.out.println("Loading resource (WS): " + r);
 
@@ -310,6 +316,7 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
                             LightDiagramServices.translateModel(r.getContents().get(0), null);
                     viewer.setModel(currentModel, true);
                     viewer.setResourcePath(path);
+                    viewer.setResourceChecksum(Files.getChecksum(file, checksum) + "");
                     // applyLayout();
 
                     layoutBroadcastSVG(Broadcast.All, true);

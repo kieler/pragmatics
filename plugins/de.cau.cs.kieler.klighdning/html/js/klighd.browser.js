@@ -22,6 +22,17 @@ function sendJson(obj) {
   }
 }
 
+
+// register busy indicator for all ajax calls
+$.ajaxSetup({
+  beforeSend : function() {
+    $("#busy").show();
+  },
+  complete : function() {
+    $("#busy").hide();
+  }
+});
+
 /**
  * Call this when the websocket is disconnected or the page is reloaded.
  */
@@ -112,6 +123,9 @@ var webSocketConnect = function() {
 
         // if starts with id
         if (hashcode) {
+          // indicate busy
+          $("#busy").show();
+          
           // send expand toggle command
           sendJson({
             type : 'EXPAND',
@@ -148,6 +162,9 @@ var webSocketConnect = function() {
     } else if (json.type === "ERROR") {
       error(json.data);
     }
+    
+    // not busy anymore
+    $("#busy").hide();
   };
 
   // -- Try to connect
@@ -239,6 +256,9 @@ function loadRepository() {
         e.preventDefault();
         var path = $(this).attr("data-path");
 
+        // set busy
+        $("#busy").show();
+        
         connection.send(JSON.stringify({
           type : 'RESOURCE',
           path : path

@@ -141,7 +141,7 @@ import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.Transformation
  * </ol>
  * 
  * <p>This is still kind of experimental. It does work, but the heuristic is quite
- * simpllistic and doesn't always give correct results.</p>
+ * simplistic and doesn't always give correct results.</p>
  * 
  * @author cds
  */
@@ -297,8 +297,13 @@ class CommentsExtractor {
                 // Run our heuristic to find an implicit attachment
                 val heuristicAttachment = findNearestNonCommentSibling(commentNode)
                 
-                if (heuristicAttachment != null) {
-                    heuristicAttachments += new Pair(commentNode, heuristicAttachment)
+                if (heuristicAttachment != null) { 
+                	// CARE xtend's "+=" allows to have iterables on both sides, due to the 
+                	// fact that Pair implements Iterable and no generics are specified during
+                	// the creation of the pair, xtend thinks of the pair as an iterable and 
+                	// adds both elements of the to the list. Not, as intended, the pair itself
+                	// heuristicAttachments += new Pair(commentNode, heuristicAttachment)
+                    heuristicAttachments.add(new Pair(commentNode, heuristicAttachment))
                 }
             }
         }
