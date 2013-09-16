@@ -28,11 +28,6 @@
           <url>http://rtsys.informatik.uni-kiel.de/~kieler/repository/kepler43/</url>
         </repository>
         <repository>
-          <id>p2.eclipse.kepler</id>
-          <layout>p2</layout>
-          <url>http://download.eclipse.org/releases/kepler</url>
-        </repository>
-        <repository>
           <id>p2.nightly_pragmatics</id>
           <layout>p2</layout>
           <url>http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/pragmatics/</url>
@@ -57,24 +52,14 @@
           <url>http://rtsys.informatik.uni-kiel.de/~kieler/repository/kepler43/</url>
         </repository>
         <repository>
-          <id>p2.ptolemy</id>
-          <layout>p2</layout>
-          <url>http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/ptolemy/</url>
-        </repository>
-        <repository>
-          <id>p2.eclipse.kepler</id>
-          <layout>p2</layout>
-          <url>http://download.eclipse.org/releases/kepler</url>
-        </repository>
-        <repository>
-          <id>p2.jetty</id>
-          <layout>p2</layout>
-          <url>http://download.eclipse.org/jetty/updates/jetty-bundles-8.x</url>
-        </repository>
-        <repository>
           <id>p2.nightly_pragmatics</id>
           <layout>p2</layout>
           <url>http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/pragmatics/</url>
+        </repository>
+        <repository>
+          <id>p2.ptolemy</id>
+          <layout>p2</layout>
+          <url>http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/ptolemy/</url>
         </repository>
       </repositories>
       
@@ -96,20 +81,21 @@
           <url>http://rtsys.informatik.uni-kiel.de/~kieler/repository/kepler43/</url>
         </repository>
         <repository>
-          <id>p2.eclipse.kepler</id>
+          <id>p2.nightly_pragmatics</id>
           <layout>p2</layout>
-          <url>http://download.eclipse.org/releases/kepler</url>
+          <url>http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/pragmatics/</url>
         </repository>
         <repository>
             <id>p2.papyrus</id>
             <layout>p2</layout>
             <url>http://download.eclipse.org/modeling/mdt/papyrus/updates/releases/maintenance/kepler</url>
         </repository>
-        <repository>
-          <id>p2.nightly_pragmatics</id>
+<!--        <repository>
+          <id>p2.eclipse.kepler</id>
           <layout>p2</layout>
-          <url>http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/pragmatics/</url>
+          <url>http://download.eclipse.org/releases/kepler</url>
         </repository>
+-->
       </repositories>
       
       <modules>
@@ -135,16 +121,6 @@
           <layout>p2</layout>
           <url>http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/ptolemy/</url>
         </repository>
-        <repository>
-          <id>p2.eclipse.kepler</id>
-          <layout>p2</layout>
-          <url>http://download.eclipse.org/releases/kepler</url>
-        </repository>
-        <repository>
-          <id>p2.jetty</id>
-          <layout>p2</layout>
-          <url>http://download.eclipse.org/jetty/updates/jetty-bundles-8.x</url>
-        </repository>
       </repositories>
       
       <modules>
@@ -165,19 +141,14 @@
           <url>http://rtsys.informatik.uni-kiel.de/~kieler/repository/kepler43/</url>
         </repository>
         <repository>
-          <id>p2.ptolemy</id>
-          <layout>p2</layout>
-          <url>http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/ptolemy/</url>
-        </repository>
-        <repository>
-          <id>p2.eclipse.kepler</id>
-          <layout>p2</layout>
-          <url>http://download.eclipse.org/releases/kepler</url>
-        </repository>
-        <repository>
           <id>p2.nightly_pragmatics</id>
           <layout>p2</layout>
           <url>http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/pragmatics/</url>
+        </repository>
+        <repository>
+          <id>p2.ptolemy</id>
+          <layout>p2</layout>
+          <url>http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/ptolemy/</url>
         </repository>
       </repositories>
       
