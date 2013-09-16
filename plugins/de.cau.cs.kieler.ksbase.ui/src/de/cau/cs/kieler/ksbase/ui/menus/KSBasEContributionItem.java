@@ -23,11 +23,6 @@ import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.IParameter;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.expressions.Expression;
-import org.eclipse.core.internal.expressions.AndExpression;
-import org.eclipse.core.internal.expressions.CompositeExpression;
-import org.eclipse.core.internal.expressions.EqualsExpression;
-import org.eclipse.core.internal.expressions.OrExpression;
-import org.eclipse.core.internal.expressions.WithExpression;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.bindings.Binding;
@@ -41,11 +36,9 @@ import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.keys.BindingService;
-import org.eclipse.ui.internal.menus.WorkbenchMenuService;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
-import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.menus.IWorkbenchContribution;
 import org.eclipse.ui.services.IEvaluationReference;
 import org.eclipse.ui.services.IEvaluationService;
@@ -109,7 +102,8 @@ public class KSBasEContributionItem extends CompoundContributionItem implements
      * This will remove the warning about discouraged access due to restrictions on internal menu
      * code.
      */
-    private WorkbenchMenuService menuService;
+    //private WorkbenchMenuService menuService;
+    //private SlaveMenuService slaveMenuService;
 
     // dunno how to get the formatter to make a linebreak here
     // CHECKSTYLEOFF MaximumLineLength
@@ -166,7 +160,8 @@ public class KSBasEContributionItem extends CompoundContributionItem implements
     public void initialize(final IServiceLocator theServiceLocator) {
         this.serviceLocator = theServiceLocator;
         this.commandService = (ICommandService) serviceLocator.getService(ICommandService.class);
-        this.menuService = (WorkbenchMenuService) serviceLocator.getService(IMenuService.class);
+        
+        //this.menuService = (WorkbenchMenuService) serviceLocator.getService(IMenuService.class);
         this.evaluationService = (IEvaluationService) serviceLocator
                 .getService(IEvaluationService.class);
         this.handlerService = (IHandlerService) serviceLocator.getService(IHandlerService.class);
@@ -248,8 +243,7 @@ public class KSBasEContributionItem extends CompoundContributionItem implements
                         */
                     }
                     if (visibilityExpression != null) {
-                        menuService
-                                .registerVisibleWhen(separator, visibilityExpression, null, null);
+                        //menuService.registerVisibleWhen(separator, visibilityExpression, null, null);
                         
                         if (!visibilities.containsKey(separator)) {
                             ContributionItemUpdater listener = new ContributionItemUpdater(
@@ -357,7 +351,7 @@ public class KSBasEContributionItem extends CompoundContributionItem implements
                         */
                     }
                     if (visibilityExpression != null) {
-                        menuService.registerVisibleWhen(item, visibilityExpression, null, null);
+                        //menuService.registerVisibleWhen(item, visibilityExpression, null, null);
                         
                         if (!visibilities.containsKey(item)) {
                             ContributionItemUpdater listener = new ContributionItemUpdater(item);
