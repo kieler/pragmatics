@@ -128,7 +128,7 @@ public class LayeringTest extends AbstractLayeredProcessorTest {
      * Every node of the initial KGraph has to be placed on a layer. New (dummy) nodes might be
      * introduced, hence no 1-to-1 validation is possible.
      */
-    @Test
+  /*  @Test
     public void testAllKNodesExist() {
 
         // find all labels and remove randomly generated ones from the set
@@ -147,7 +147,7 @@ public class LayeringTest extends AbstractLayeredProcessorTest {
 
         // assert that all labels made it into the LGraph
         assertTrue(existingLabelsSet.isEmpty());
-    }
+    }*/
 
     /**
      * Every edge's has do direct from a node to another node with the index of the first layer
