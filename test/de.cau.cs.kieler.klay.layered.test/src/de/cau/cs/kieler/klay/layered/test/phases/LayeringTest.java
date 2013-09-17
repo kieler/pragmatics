@@ -21,6 +21,9 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -51,6 +54,36 @@ public class LayeringTest extends AbstractLayeredProcessorTest {
     private String randomPrefix = String.valueOf(random.nextDouble());
     private Set<String> existingLabelsSet = Sets.newHashSet();
 
+    // predicate that filters out randomly generated labels
+    private final Predicate<KLabel> HAS_LABEL_PREDICATE = new Predicate<KLabel>() {
+        /**
+         * {@inheritDoc}
+         */
+        public boolean apply(KLabel label) {
+            return label.getText().startsWith(randomPrefix);
+        }
+    };
+
+    // collect the KNodes to check if they exist in the resulting LGraph
+    private final Function<KNode, KNode> addRandomLabelsFun = new Function<KNode, KNode>() {
+        public KNode apply(KNode root) {
+            for (KNode n : root.getChildren()) {
+
+                // dont do it for every test
+                if (!Iterables.isEmpty(Iterables.filter(n.getLabels(), HAS_LABEL_PREDICATE))) {
+                    break;
+                }
+
+                String randomString = randomPrefix + random.nextInt();
+                existingLabelsSet.add(randomString);
+                // create a label and add it to the node
+                KLabel randomLabel = KimlUtil.createInitializedLabel(n);
+                randomLabel.setText(randomString);
+            }
+            return root;
+        }
+    };
+
     /**
      * Instantiates a new layer assignment test and set the graphObject to the current graph to
      * test.
@@ -73,9 +106,9 @@ public class LayeringTest extends AbstractLayeredProcessorTest {
         List<ILayoutConfigurator> configs = Lists.newArrayList();
 
         configs.add(new SimplePhaseLayoutConfigurator(Properties.NODE_LAYERING,
-                LayeringStrategy.LONGEST_PATH, LongestPathLayerer.class));
+                LayeringStrategy.LONGEST_PATH, LongestPathLayerer.class, addRandomLabelsFun));
         configs.add(new SimplePhaseLayoutConfigurator(Properties.NODE_LAYERING,
-                LayeringStrategy.NETWORK_SIMPLEX, NetworkSimplexLayerer.class));
+                LayeringStrategy.NETWORK_SIMPLEX, NetworkSimplexLayerer.class, addRandomLabelsFun));
 
         return configs;
     }
@@ -88,16 +121,6 @@ public class LayeringTest extends AbstractLayeredProcessorTest {
      */
     @Before
     public void runUntil() {
-
-        // collect the KNodes to check if they exist in the resulting LGraph
-        for (KNode n : graphObject.getKnode().getChildren()) {
-            String randomString = randomPrefix + random.nextInt();
-            existingLabelsSet.add(randomString);
-            // create a label and add it to the node
-            KLabel randomLabel = KimlUtil.createInitializedLabel(n);
-            randomLabel.setText(randomString);
-        }
-
         lgraphs = layered.runLayoutTestUntil(getAndCheckSimpleConfig().getStrategyImpl());
     }
 
@@ -128,7 +151,7 @@ public class LayeringTest extends AbstractLayeredProcessorTest {
      * Every node of the initial KGraph has to be placed on a layer. New (dummy) nodes might be
      * introduced, hence no 1-to-1 validation is possible.
      */
-  /*  @Test
+    @Test
     public void testAllKNodesExist() {
 
         // find all labels and remove randomly generated ones from the set
@@ -147,7 +170,7 @@ public class LayeringTest extends AbstractLayeredProcessorTest {
 
         // assert that all labels made it into the LGraph
         assertTrue(existingLabelsSet.isEmpty());
-    }*/
+    }
 
     /**
      * Every edge's has do direct from a node to another node with the index of the first layer

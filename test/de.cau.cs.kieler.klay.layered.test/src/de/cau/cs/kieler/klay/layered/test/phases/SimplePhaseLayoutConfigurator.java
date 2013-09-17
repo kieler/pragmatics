@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.klay.layered.test.phases;
 
+import com.google.common.base.Function;
+
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
@@ -29,6 +31,7 @@ public class SimplePhaseLayoutConfigurator implements ILayoutConfigurator {
     private IProperty<?> phase;
     private Object strategy;
     private Class<? extends ILayoutProcessor> strategyImpl;
+    private Function<KNode, KNode>[] modifiers;
 
     /**
      * Exemplarily creation.
@@ -44,13 +47,19 @@ public class SimplePhaseLayoutConfigurator implements ILayoutConfigurator {
      *            the Enum descriptor of the strategy.
      * @param strategyImpl
      *            the implementing {@link Class} of the phase.
+     * @param modifierFuns
+     *            function that modify the root node in an arbitrary manner. The type has to be
+     *            Function<KNode, KNode>, the constructor leaves it raw to avoid some nasty compiler
+     *            warnings.
      */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public SimplePhaseLayoutConfigurator(final IProperty<?> phase, final Object strategy,
-            final Class<? extends ILayoutProcessor> strategyImpl) {
+            final Class<? extends ILayoutProcessor> strategyImpl, final Function... modifierFuns) {
         super();
         this.phase = phase;
         this.strategy = strategy;
         this.strategyImpl = strategyImpl;
+        modifiers = modifierFuns;
     }
 
     /**
@@ -58,6 +67,10 @@ public class SimplePhaseLayoutConfigurator implements ILayoutConfigurator {
      */
     public void applyConfiguration(final KNode root) {
         root.getData(KShapeLayout.class).setProperty(phase, strategy);
+
+        for (Function<KNode, KNode> m : modifiers) {
+            m.apply(root);
+        }
     }
 
     /**
