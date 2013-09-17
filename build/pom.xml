@@ -80,6 +80,10 @@
     <profile>
       <id>pragmatics</id>
       
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      
       <repositories>
         <repository>
           <id>p2.targetPlatform</id>
