@@ -217,10 +217,9 @@ litigation.
    </url>
 
    <requires>
-      <import feature="com.google.guava.runtime.feature" version="10.0.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.platform" version="3.8.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.emf.compare" version="1.3.3.v20130213-0806" match="compatible"/>
       <import plugin="org.eclipse.xtext.xbase.lib" version="2.3.0" match="greaterOrEqual"/>
+      <import plugin="com.google.guava"/>
    </requires>
 
    <plugin
