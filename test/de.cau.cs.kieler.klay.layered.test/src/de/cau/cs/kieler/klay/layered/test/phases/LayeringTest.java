@@ -55,22 +55,22 @@ public class LayeringTest extends AbstractLayeredProcessorTest {
     private Set<String> existingLabelsSet = Sets.newHashSet();
 
     // predicate that filters out randomly generated labels
-    private final Predicate<KLabel> HAS_LABEL_PREDICATE = new Predicate<KLabel>() {
+    private final Predicate<KLabel> hasLabelPredicate = new Predicate<KLabel>() {
         /**
          * {@inheritDoc}
          */
-        public boolean apply(KLabel label) {
+        public boolean apply(final KLabel label) {
             return label.getText().startsWith(randomPrefix);
         }
     };
 
     // collect the KNodes to check if they exist in the resulting LGraph
     private final Function<KNode, KNode> addRandomLabelsFun = new Function<KNode, KNode>() {
-        public KNode apply(KNode root) {
+        public KNode apply(final KNode root) {
             for (KNode n : root.getChildren()) {
 
                 // dont do it for every test
-                if (!Iterables.isEmpty(Iterables.filter(n.getLabels(), HAS_LABEL_PREDICATE))) {
+                if (!Iterables.isEmpty(Iterables.filter(n.getLabels(), hasLabelPredicate))) {
                     break;
                 }
 
