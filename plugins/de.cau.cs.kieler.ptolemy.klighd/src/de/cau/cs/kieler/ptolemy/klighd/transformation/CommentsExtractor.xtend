@@ -21,7 +21,6 @@ import de.cau.cs.kieler.klighd.microlayout.PlacementUtil
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.LabelExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MarkerExtensions
-import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MiscellaneousExtensions
 import java.awt.geom.Rectangle2D
 import java.util.List
 import org.eclipse.emf.ecore.util.FeatureMap
@@ -153,8 +152,6 @@ class CommentsExtractor {
     @Inject extension LabelExtensions
     /** Marking nodes. */
     @Inject extension MarkerExtensions
-    /** Miscellaneous stuff to make my life easier. */
-    @Inject extension MiscellaneousExtensions
     /** Utility class for attaching the correct rendering to comment edges. */
     @Inject extension KRenderingFigureProvider
     

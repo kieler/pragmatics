@@ -24,8 +24,6 @@ import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphTransformati
 import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphVisualization
 import org.ptolemy.moml.DocumentRoot
 
-import static de.cau.cs.kieler.ptolemy.klighd.PtolemyDiagramSynthesis.*
-
 /**
  * Synthesis for turning Ptolemy models into KGraphs.
  * 
