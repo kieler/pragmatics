@@ -3,7 +3,8 @@
       id="de.cau.cs.kieler.klighdning.feature"
       label="KIELER KlighDning Feature"
       version="0.1.0.qualifier"
-      provider-name="Christian-Albrechts-Universität zu Kiel">
+      provider-name="Christian-Albrechts-Universität zu Kiel"
+      plugin="de.cau.cs.kieler.klighdning">
 
    <description url="http://www.informatik.uni-kiel.de/rtsys/kieler">
       The KLighDning feature combines the necessary plugins
