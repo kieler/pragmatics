@@ -187,30 +187,6 @@ class CommentsExtractor {
     def void extractAndAttachComments(KNode root) {
         extractComments(root)
         attachComments()
-        
-        // Save our debug graphics to sensible files and dispose of them without anyone noticing...
-        val timestamp = System.currentTimeMillis
-        for (entry : debugGraphics.entrySet) {
-            // Create debug directory
-            val path = new StringBuilder(System.getProperty("user.home"))
-            if (path.substring(path.length - File.separator.length, path.length).equals(File.separator)) {
-                path.append("tmp").append(File.separator).append("attachment")
-            } else {
-                path.append(File.separator).append("tmp").append(File.separator).append("attachment")
-            }
-            new File(path.toString()).mkdirs();
-            
-            // Find proper debug file name
-            val debugFileName = timestamp + "_" + entry.key.hashCode() + ".svg"
-            val debugFileWriter = new FileWriter(new File(path + File.separator + debugFileName));
-            
-            // Save graphics and dispose of stuff
-            entry.value.stream(debugFileWriter)
-            debugFileWriter.close()
-            entry.value.dispose()
-        }
-        
-        debugGraphics.clear()
     }
     
     
@@ -351,6 +327,30 @@ class CommentsExtractor {
                 attachCommentNode(attachment.first, attachment.second)
             }
         }
+        
+        // Save our debug graphics to sensible files and dispose of them without anyone noticing...
+        val timestamp = System.currentTimeMillis
+        for (entry : debugGraphics.entrySet) {
+            // Create debug directory
+            val path = new StringBuilder(System.getProperty("user.home"))
+            if (path.substring(path.length - File.separator.length, path.length).equals(File.separator)) {
+                path.append("tmp").append(File.separator).append("attachment")
+            } else {
+                path.append(File.separator).append("tmp").append(File.separator).append("attachment")
+            }
+            new File(path.toString()).mkdirs();
+            
+            // Find proper debug file name
+            val debugFileName = timestamp + "_" + entry.key.hashCode() + ".svg"
+            val debugFileWriter = new FileWriter(new File(path + File.separator + debugFileName));
+            
+            // Save graphics and dispose of stuff
+            entry.value.stream(debugFileWriter)
+            debugFileWriter.close()
+            entry.value.dispose()
+        }
+        
+        debugGraphics.clear()
     }
     
     /**
@@ -633,6 +633,11 @@ class CommentsExtractor {
             // Draw node
             graphics.setPaint(Color.CYAN)
             graphics.fill(new Rectangle(bounds.x as int, bounds.y as int, bounds.width as int, bounds.height as int))
+            
+            if (node.labels.size > 0 && node.labels.get(0).text != null) {
+                graphics.setPaint(Color.BLACK)
+                graphics.drawString(node.labels.get(0).text, (bounds.x as int) + 2, (bounds.y as int) + 2)
+            }
         }
     }
     
