@@ -3,7 +3,8 @@
       id="de.cau.cs.kieler.kgraph.feature"
       label="KIELER KGraph Editing and Visualization"
       version="0.1.1.qualifier"
-      provider-name="Christian-Albrechts-Universität zu Kiel">
+      provider-name="Christian-Albrechts-Universität zu Kiel"
+      plugin="de.cau.cs.kieler.core.kgraph">
 
    <description url="http://www.informatik.uni-kiel.de/rtsys/kieler">
       Textual editing of KGraphs and visualization using KLighD technology. This feature is all you need to start developing layout algorithms.

@@ -41,7 +41,6 @@ import ptolemy.kernel.util.StringAttribute
 import ptolemy.moml.MoMLParser
 import ptolemy.moml.filter.BackwardCompatibility
 
-import static de.cau.cs.kieler.ptolemy.klighd.transformation.PtolemyInterface.*
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
 
 /**

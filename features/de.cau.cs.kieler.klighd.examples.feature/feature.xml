@@ -3,7 +3,8 @@
       id="de.cau.cs.kieler.klighd.examples.feature"
       label="KIELER Lightweight Diagrams Demo Examples"
       version="0.2.1.qualifier"
-      provider-name="Christian-Albrechts-Universität zu Kiel">
+      provider-name="Christian-Albrechts-Universität zu Kiel"
+      plugin="de.cau.cs.kieler.klighd.examples">
 
    <description url="http://www.informatik.uni-kiel.de/rtsys/kieler">
       This feature provides diagram synthesis examples for automatically creating class diagrams from a given Ecore specification (or a selected subset) as well as for UML2 UseCase diagrams. We suggest to also install the related source feature in order to be able to import the source code into your workspace and read it.
