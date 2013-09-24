@@ -3,7 +3,8 @@
       id="de.cau.cs.kieler.ptview.feature"
       label="KIELER Ptolemy Viewer"
       version="0.1.1.qualifier"
-      provider-name="Christian-Albrechts-Universität zu Kiel">
+      provider-name="Christian-Albrechts-Universität zu Kiel"
+      plugin="de.cau.cs.kieler.ptolemy.klighd">
 
    <description url="http://www.informatik.uni-kiel.de/rtsys/kieler">
       Adds a KLighD-based editor for viewing Ptolemy models in Eclipse.
