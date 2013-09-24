@@ -26,7 +26,9 @@ public class PSWTMouseWheelEvent extends MouseWheelEvent {
 
     public PSWTMouseWheelEvent(final org.eclipse.swt.events.MouseEvent me, final int type,
             final int scrollType) {
-        super(fakeSrc, type, me.time, 0, me.x, me.y, 1, false, scrollType, me.count, me.count < 0 ? -1 : 1);
+        // uru: my touchpad fires loads of me.count == 0, hence with the old version, way too many 1's are passed.
+        super(fakeSrc, type, me.time, 0, me.x, me.y, 1, false, scrollType, me.count, me.count < 0 ? -1 : (me.count > 0 ? 1 : 0));
+        //super(fakeSrc, type, me.time, 0, me.x, me.y, 1, false, scrollType, me.count, me.count < 0 ? -1 : 1);
         swtEvent = me;
     }
     
