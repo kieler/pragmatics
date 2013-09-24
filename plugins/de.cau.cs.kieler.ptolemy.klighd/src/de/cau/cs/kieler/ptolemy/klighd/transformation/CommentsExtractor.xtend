@@ -21,15 +21,8 @@ import de.cau.cs.kieler.klighd.microlayout.PlacementUtil
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.LabelExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MarkerExtensions
-import java.awt.Color
-import java.awt.Rectangle
 import java.awt.geom.Rectangle2D
-import java.io.File
-import java.io.FileWriter
 import java.util.List
-import java.util.Map
-import org.apache.batik.dom.GenericDOMImplementation
-import org.apache.batik.svggen.SVGGraphics2D
 import org.eclipse.emf.ecore.util.FeatureMap
 import org.eclipse.emf.ecore.xmi.XMLResource
 import org.eclipse.emf.ecore.xml.type.AnyType
@@ -176,9 +169,6 @@ class CommentsExtractor {
     val List<Pair<KNode, KNode>> explicitAttachments = newLinkedList()
     /** List of heuristically found attachments from comment nodes to other nodes. */
     val List<Pair<KNode, KNode>> heuristicAttachments = newLinkedList()
-    
-    /** Map of parent nodes to the graphics objects used to draw the bounds of their children. */
-    val Map<KNode, SVGGraphics2D> debugGraphics = newHashMap()
     
     
     /**
@@ -327,30 +317,6 @@ class CommentsExtractor {
                 attachCommentNode(attachment.first, attachment.second)
             }
         }
-        
-        // Save our debug graphics to sensible files and dispose of them without anyone noticing...
-        val timestamp = System.currentTimeMillis
-        for (entry : debugGraphics.entrySet) {
-            // Create debug directory
-            val path = new StringBuilder(System.getProperty("user.home"))
-            if (path.substring(path.length - File.separator.length, path.length).equals(File.separator)) {
-                path.append("tmp").append(File.separator).append("attachment")
-            } else {
-                path.append(File.separator).append("tmp").append(File.separator).append("attachment")
-            }
-            new File(path.toString()).mkdirs();
-            
-            // Find proper debug file name
-            val debugFileName = timestamp + "_" + entry.key.hashCode() + ".svg"
-            val debugFileWriter = new FileWriter(new File(path + File.separator + debugFileName));
-            
-            // Save graphics and dispose of stuff
-            entry.value.stream(debugFileWriter)
-            debugFileWriter.close()
-            entry.value.dispose()
-        }
-        
-        debugGraphics.clear()
     }
     
     /**
@@ -666,27 +632,6 @@ class CommentsExtractor {
             default: {
                 bounds.x = bounds.x - bounds.width / 2
                 bounds.y = bounds.y - bounds.height / 2
-            }
-        }
-        
-        // Write debug graphics stuff
-        if (bounds.x < 10000 && bounds.y < 10000) {
-            // Retrieve graphics object for parent node
-            var SVGGraphics2D graphics = debugGraphics.get(node.parent)
-            if (graphics == null) {
-                val domImpl = GenericDOMImplementation.DOMImplementation
-                val document = domImpl.createDocument("http://www.w3.org/2000/svg", "svg", null)
-                graphics = new SVGGraphics2D(document)
-                debugGraphics.put(node.parent, graphics)
-            }
-            
-            // Draw node
-            graphics.setPaint(Color.CYAN)
-            graphics.fill(new Rectangle(bounds.x as int, bounds.y as int, bounds.width as int, bounds.height as int))
-            
-            if (node.labels.size > 0 && node.labels.get(0).text != null) {
-                graphics.setPaint(Color.BLACK)
-                graphics.drawString(node.labels.get(0).text, (bounds.x as int) + 2, (bounds.y as int) + 2)
             }
         }
     }
