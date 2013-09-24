@@ -168,7 +168,7 @@ class CommentsExtractor {
      * The maximum distance between a comment node and a regular node for them to be considered to be
      * attached by the comment attachment heuristic.
      */
-    val double maxAttachmentDistance = 8000.0
+    val double maxAttachmentDistance = 1500.0
     
     /** List of comment nodes created in the process. */
     val List<KNode> createdCommentNodes = newLinkedList()
@@ -436,8 +436,8 @@ class CommentsExtractor {
         val bottomRightPos = bounds2.outcode(bounds1.x + bounds1.width, bounds1.y + bounds1.height)
         
         // What we use to compute the distances depends entirely on where the two corners are
-        if (topLeftPos.bitwiseAnd(OUT_TOP_LEFT) != 0
-            && bottomRightPos.bitwiseAnd(OUT_TOP_LEFT) != 0) {
+        if (topLeftPos.bitwiseAnd(OUT_TOP_LEFT) == OUT_TOP_LEFT
+            && bottomRightPos.bitwiseAnd(OUT_TOP_LEFT) == OUT_TOP_LEFT) {
             
             // Return distance between shape1.bottomRight and shape2.topLeft
             return computeSquaredDistance(
@@ -446,8 +446,8 @@ class CommentsExtractor {
                 bounds2.x,
                 bounds2.y
             )
-        } else if (topLeftPos.bitwiseAnd(OUT_BOTTOM_LEFT) != 0
-            && bottomRightPos.bitwiseAnd(OUT_BOTTOM_LEFT) != 0) {
+        } else if (topLeftPos.bitwiseAnd(OUT_BOTTOM_LEFT) == OUT_BOTTOM_LEFT
+            && bottomRightPos.bitwiseAnd(OUT_BOTTOM_LEFT) == OUT_BOTTOM_LEFT) {
             
             // Return distance between shape1.topRight and shape2.bottomLeft
             return computeSquaredDistance(
@@ -456,8 +456,8 @@ class CommentsExtractor {
                 bounds2.x,
                 bounds2.y + bounds2.height
             )
-        } else if (topLeftPos.bitwiseAnd(OUT_TOP_RIGHT) != 0
-            && bottomRightPos.bitwiseAnd(OUT_TOP_RIGHT) != 0) {
+        } else if (topLeftPos.bitwiseAnd(OUT_TOP_RIGHT) == OUT_TOP_RIGHT
+            && bottomRightPos.bitwiseAnd(OUT_TOP_RIGHT) == OUT_TOP_RIGHT) {
             
             // Return distance between shape1.bottomLeft and shape2.topRight
             return computeSquaredDistance(
@@ -466,8 +466,8 @@ class CommentsExtractor {
                 bounds2.x + bounds2.width,
                 bounds2.y
             )
-        } else if (topLeftPos.bitwiseAnd(OUT_BOTTOM_RIGHT) != 0
-            && bottomRightPos.bitwiseAnd(OUT_BOTTOM_RIGHT) != 0) {
+        } else if (topLeftPos.bitwiseAnd(OUT_BOTTOM_RIGHT) == OUT_BOTTOM_RIGHT
+            && bottomRightPos.bitwiseAnd(OUT_BOTTOM_RIGHT) == OUT_BOTTOM_RIGHT) {
             
             // return distance between shape1.topLeft and shape2.bottomRight
             return computeSquaredDistance(
@@ -502,7 +502,7 @@ class CommentsExtractor {
             return distance * distance
         }
         
-        return 0
+        return maxAttachmentDistance + 1.0
     }
     
     /**
@@ -616,6 +616,56 @@ class CommentsExtractor {
                 bounds.height = estimatedSize.height
             } catch (NumberFormatException e) {
                 
+            }
+        }
+        
+        // The location defines where an actor's anchor point is. Where the anchor point is positioned
+        // in the actor is a completely different question and defaults to the actor's center, except
+        // for TextAttribute instances, which default to northwest.
+        val anchorDefault = if (node.markedAsComment) {
+            "northwest"
+        } else {
+            "center"
+        }
+        val anchorAnnotation = node.getAnnotation(ANNOTATION_ANCHOR)
+        val anchorString = anchorAnnotation?.value ?: anchorDefault
+        
+        switch (anchorString) {
+            case "north": {
+                bounds.x = bounds.x - bounds.width / 2
+            }
+            case "south": {
+                bounds.x = bounds.x - bounds.width / 2
+                bounds.y = bounds.y - bounds.height
+            }
+            case "west": {
+                bounds.y = bounds.y - bounds.height / 2
+            }
+            case "east": {
+                bounds.x = bounds.x - bounds.width
+                bounds.y = bounds.y - bounds.height / 2
+            }
+            case "northwest": {
+                // Nothing to do
+            }
+            case "northeast": {
+                bounds.x = bounds.x - bounds.width
+            }
+            case "southwest": {
+                bounds.y = bounds.y - bounds.height
+            }
+            case "sountheast": {
+                // Ptolemy has a typo here; we support this typo as well as the correct spelling
+                bounds.x = bounds.x - bounds.width
+                bounds.y = bounds.y - bounds.height
+            }
+            case "southeast": {
+                bounds.x = bounds.x - bounds.width
+                bounds.y = bounds.y - bounds.height
+            }
+            default: {
+                bounds.x = bounds.x - bounds.width / 2
+                bounds.y = bounds.y - bounds.height / 2
             }
         }
         

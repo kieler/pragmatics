@@ -153,6 +153,9 @@ public final class TransformationConstants {
     /** Name of the annotation that holds an element's location. */
     public static final String ANNOTATION_LOCATION = "_location";
     
+    /** Name of the annotation that holds the anchor whose position is defined by the location. */
+    public static final String ANNOTATION_ANCHOR = "anchor";
+    
     /** Name of the annotation that holds the name of a state's refinement. */
     public static final String ANNOTATION_REFINEMENT_NAME = "refinementName";
     
