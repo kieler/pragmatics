@@ -4,3 +4,8 @@ Bundle-Name: Libavoid Server
 Bundle-SymbolicName: org.adaptagrams.cola.libavoid
 Bundle-Version: 0.1.0.qualifier
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.ui
+Export-Package: org.adaptagrams.cola.libavoid
+Bundle-ActivationPolicy: lazy
+Bundle-Activator: org.adaptagrams.cola.libavoid.LibavoidPlugin

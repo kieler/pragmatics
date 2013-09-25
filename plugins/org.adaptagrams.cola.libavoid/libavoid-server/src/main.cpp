@@ -28,7 +28,7 @@ inline int toInt(std::string const& s) {
 
 void writeEdgeLayout(ostream& os, Avoid::ConnRef* conn) {
 
-	os << "EDGE " << conn->id() << " ";
+	os << "EDGE " << conn->id() << "=";
 
 	const Avoid::PolyLine route = conn->route();
 	for (size_t i = 0; i < route.ps.size(); ++i) {
@@ -111,13 +111,13 @@ int main(void) {
 	// write out graph
 	ostream& out = cout;
 
-	out << "LAYOUTEDGRAPH" << endl;
+	out << "LAYOUT" << endl;
 
 	for (std::vector<int>::size_type i = 0; i != cons.size(); i++) {
 		writeEdgeLayout(cout, cons[i]);
 	}
 
-	out << "LAYOUTEDGRAPHEND" << endl;
+	out << "DONE" << endl;
 
 
 	// cleanup

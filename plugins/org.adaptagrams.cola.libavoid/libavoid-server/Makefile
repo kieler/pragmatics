@@ -1,4 +1,4 @@
-LIBAVOID = ../cola
+LIBAVOID = /home/horn/adaptagrams/cola
 
 BIN = libavoid-server
 SRC_DIR = src
