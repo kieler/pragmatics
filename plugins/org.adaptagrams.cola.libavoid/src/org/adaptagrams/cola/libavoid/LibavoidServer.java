@@ -214,11 +214,12 @@ public class LibavoidServer {
         }
 
         if (process == null) {
+            System.out.println("Creating new Process!");
             try {
                 if (executable == null) {
                     executable = resolveExecutable().getPath();
                 }
-                process = Runtime.getRuntime().exec(new String[] { executable, inputFormat });
+                process = Runtime.getRuntime().exec(new String[] { executable });
             } catch (IOException exception) {
                 throw new LibavoidServerException("Failed to start ogdf server process.", exception);
             } finally {
@@ -291,7 +292,6 @@ public class LibavoidServer {
                 return null;
             }
             
-            System.out.println(line);
             switch (state) {
             case TYPE:
                 if (line.equals("LAYOUT")) {

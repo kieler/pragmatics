@@ -38,12 +38,17 @@ import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.EdgeRouting;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
  * @author uru
  */
 public class LibavoidServerCommunicator {
 
+    /** the separator used to separate chunks of data sent to the ogdf-server process. */
+    private static final String CHUNK_KEYWORD = "[CHUNK]\n";
+    
     private BiMap<Integer, KNode> nodeIdMap = HashBiMap.create();
     private BiMap<Integer, KEdge> edgeIdMap = HashBiMap.create();
 
@@ -129,7 +134,6 @@ public class LibavoidServerCommunicator {
                kpoint.setPos((float) v.x, (float) v.y);
                edgeLayout.getBendPoints().add(kpoint);
                
-               System.out.println("Bend: " + kpoint);
            }
            
         }
@@ -175,17 +179,43 @@ public class LibavoidServerCommunicator {
 
     private void writeTextGraph(KNode root, OutputStream stream) {
 
-        reset();
-
+        // first send the options
+        transformOptions(root);
+        
+        // transform the graph to a text format
         transformGraph(root);
-
+        
+        // finish with the chunk keyword
+        sb.append(CHUNK_KEYWORD);
+        
         try {
+            // write it to the stream
             stream.write(sb.toString().getBytes());
+            
             System.out.println(sb.toString());
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+    }
+    
+    private void transformOptions(KNode node ) {
+        
+        KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+        
+        // spacing
+        float spacing = nodeLayout.getProperty(LayoutOptions.SPACING);
+        addOption(LayoutOptions.SPACING.getId(), spacing);
+        
+        // edge routing
+        EdgeRouting edgeRouting = nodeLayout.getProperty(LayoutOptions.EDGE_ROUTING);
+        addOption(LayoutOptions.EDGE_ROUTING.getId(), edgeRouting);
+        
+    }
+    
+    private void addOption(String key, Object value) {
+        sb.append("OPTION " + key + " " + value.toString());
+        sb.append("\n");
     }
 
     private void transformGraph(KNode root) {

@@ -13,6 +13,14 @@
             id="de.cau.cs.kieler.kiml.libavoid.alg"
             name="Libavoid"
             parameter="LIBAVOID">
+         <knownOption
+               default="20.0"
+               option="de.cau.cs.kieler.spacing">
+         </knownOption>
+         <knownOption
+               default="POLYLINE"
+               option="de.cau.cs.kieler.edgeRouting">
+         </knownOption>
       </layoutAlgorithm>
    </extension>
 
