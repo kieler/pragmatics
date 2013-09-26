@@ -18,8 +18,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.osgi.framework.Bundle;
 
-
 /**
+ * Wraps the execution of the libavoid-server binary. Also employs an watchdog in case of errors.
  * 
  * @author uru
  */
@@ -36,7 +36,7 @@ public class LibavoidServer {
         /** stop the Libavoid process and the watcher thread. */
         STOP;
     }
-    
+
     /**
      * A helper enumeration for identifying the operating system.
      */
@@ -75,13 +75,13 @@ public class LibavoidServer {
         }
         return OS.UNKNOWN;
     }
-    
+
     /**
      * Constructor only has package visibility. Use {@link LibavoidServerPool} to create instances.
      */
     LibavoidServer() {
     }
-    
+
     /** the ogdf server executable. */
     private String executable;
     /** the ogdf server process. */
@@ -119,14 +119,16 @@ public class LibavoidServer {
 
     /** the size for file transfer buffers. */
     public static final int BUFFER_SIZE = 512;
-    
+
     /**
      * Resolve the Libavoid server executable.
      * 
-     * @param an executable file
+     * @param an
+     *            executable file
      * @throws IOException
      *             when the executable could not be located
      */
+    @SuppressWarnings("incomplete-switch")
     private File resolveExecutable() throws IOException {
         Bundle bundle = LibavoidPlugin.getDefault().getBundle();
         IPath path = null;
@@ -161,7 +163,7 @@ public class LibavoidServer {
             throw new LibavoidServerException("Libavoid binary could not be located.");
         }
         File execFile = new File(FileLocator.resolve(url).getFile());
-        
+
         // if the plug-in is in a jar archive, create a temporary file to execute
         if (!execFile.exists()) {
             execFile = File.createTempFile("libavoid-server", ".exe");
@@ -178,8 +180,9 @@ public class LibavoidServer {
             dest.close();
             tempFile = execFile;
         }
-        
+
         // set the file permissions if necessary
+
         switch (os) {
         case LINUX32:
         case LINUX64:
@@ -197,15 +200,12 @@ public class LibavoidServer {
         }
         return execFile;
     }
-    
+
     /**
-     * Initialize the Libavoid server instance by starting the Libavoid process and the
-     * watcher thread as necessary.
-     * 
-     * @param inputFormat
-     *            the graph input format for the ogdf server
+     * Initialize the Libavoid server instance by starting the Libavoid process and the watcher
+     * thread as necessary.
      */
-    public synchronized void initialize(final String inputFormat) {
+    public synchronized void initialize() {
         if (watchdog == null) {
             // start the watcher thread for timeout checking
             watchdog = new Watchdog();
@@ -241,7 +241,7 @@ public class LibavoidServer {
         }
         throw new IllegalStateException("Libavoid server has not been initialized.");
     }
-    
+
     /**
      * Return the stream for reading the output of the Libavoid process.
      * 
@@ -259,8 +259,7 @@ public class LibavoidServer {
         }
         throw new IllegalStateException("Libavoid server has not been initialized.");
     }
-    
-    
+
     /**
      * An enumeration for keeping track of the current parser state.
      */
@@ -279,7 +278,7 @@ public class LibavoidServer {
         ParseState state = ParseState.TYPE;
         boolean parseMore = true;
         StringBuilder error = null;
-        
+
         while (parseMore) {
             String line = null;
             try {
@@ -291,7 +290,7 @@ public class LibavoidServer {
                 // the stream is empty although more input is expected
                 return null;
             }
-            
+
             switch (state) {
             case TYPE:
                 if (line.equals("LAYOUT")) {
@@ -301,7 +300,7 @@ public class LibavoidServer {
                     error = new StringBuilder();
                 }
                 break;
-                
+
             case DATA:
                 if (line.equals("DONE")) {
                     parseMore = false;
@@ -312,7 +311,7 @@ public class LibavoidServer {
                     }
                 }
                 break;
-                
+
             case ERROR:
                 if (line.equals("DONE")) {
                     cleanup(Cleanup.STOP);
@@ -325,22 +324,21 @@ public class LibavoidServer {
                 }
                 break;
             }
-            
+
         }
         return data;
     }
-    
-    
-    
+
     /** maximal number of characters to read from error stream. */
     private static final int MAX_ERROR_OUTPUT = 512;
     /** time to wait before checking process errors. */
     private static final int PROC_ERROR_TIME = 500;
-    
+
     /**
      * Clean up, optionally preparing the tool for the next use.
      * 
-     * @param c the cleanup option
+     * @param c
+     *            the cleanup option
      */
     public synchronized void cleanup(final Cleanup c) {
         StringBuilder error = null;
@@ -374,7 +372,7 @@ public class LibavoidServer {
             } catch (Exception ex) {
                 // ignore exception
             }
-            
+
             // terminate the Libavoid process if requested
             if (c == Cleanup.ERROR || c == Cleanup.STOP) {
                 try {
@@ -385,14 +383,14 @@ public class LibavoidServer {
                 }
                 process.destroy();
                 process = null;
-                
+
                 if (tempFile != null) {
                     tempFile.delete();
                     tempFile = null;
                 }
             }
         }
-        
+
         synchronized (nextJob) {
             // reset the stream to indicate that the job is done
             ogdfStream = null;
@@ -406,29 +404,28 @@ public class LibavoidServer {
                 myWatchdog.interrupt();
             }
         }
-        
+
         if (error != null && error.length() > 0) {
             // an error output could be read from Libavoid, so display that to the user
             throw new LibavoidServerException("Libavoid error: " + error.toString());
         }
     }
-    
-    
+
     /** preference constant for timeout. */
     public static final String PREF_TIMEOUT = "libavoid.timeout";
     /** default timeout for waiting for the server to give some output. */
     public static final int PROCESS_DEF_TIMEOUT = 10000;
     /** minimal timeout for waiting for the server to give some output. */
     public static final int PROCESS_MIN_TIMEOUT = 200;
-    
+
     /** synchronization object between the main thread and the watcher thread. */
     private Object nextJob = new Object();
-    
+
     /**
      * A watcher thread that takes action when a timeout occurs.
      */
     private class Watchdog extends Thread {
-        
+
         /**
          * {@inheritDoc}
          */
@@ -449,22 +446,22 @@ public class LibavoidServer {
                         }
                     }
                 }
-                
+
                 // retrieve the current timeout value
                 IPreferenceStore preferenceStore = LibavoidPlugin.getDefault().getPreferenceStore();
                 int timeout = preferenceStore.getInt(PREF_TIMEOUT);
                 if (timeout < PROCESS_MIN_TIMEOUT) {
                     timeout = PROCESS_DEF_TIMEOUT;
                 }
-                
+
                 boolean interrupted = false;
                 try {
                     Thread.sleep(timeout);
-                }  catch (InterruptedException ex) {
+                } catch (InterruptedException ex) {
                     // this means the main thread has done a cleanup before the timeout occurred
                     interrupted = true;
                 }
-                
+
                 if (!interrupted) {
                     synchronized (nextJob) {
                         // timeout has occurred! kill the process so the main thread will wake
@@ -475,9 +472,9 @@ public class LibavoidServer {
                         }
                     }
                 }
-                
+
             } while (watchdog == this);
         }
-        
+
     }
 }

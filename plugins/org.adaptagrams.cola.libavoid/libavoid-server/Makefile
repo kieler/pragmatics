@@ -28,12 +28,36 @@ $(BIN_DIR)/%: $(OBJS)
 	mkdir -p $(@D)
 	$(CC) $(LOPTS) $(LIBS) -o $@ $(OBJS) $(LIBAVOID)/libavoid/.libs/libavoid.a
 
+
+# run this target on a MacOS machine
+osx32: CC = g++ -m32
+osx32: LOPTS = -static-libgcc -static-libstdc++ -mmacosx-version-min=10.5
+osx32: LIBS =
+osx32: $(BIN_DIR)/$$@/$(BIN) $?
+
+# run this target on a MacOS machine
+osx64: CC = g++ -m64
+osx64: LOPTS = -static-libgcc -static-libstdc++ -mmacosx-version-min=10.5
+osx64: LIBS =
+osx64: $(BIN_DIR)/$$@/$(BIN) $?
+
 # run this target on a Linux machine
 linux32: CC = g++ -m32
 linux32: LOPTS =
 linux32: LIBS = -lpthread
 linux32: $(BIN_DIR)/$$@/$(BIN) $?
 
+# run this target on a Linux machine
+linux64: CC = g++ -m64
+linux64: LOPTS =
+linux64: LIBS = -lpthread
+linux64: $(BIN_DIR)/$$@/$(BIN) $?
+
+# run this target on a SunOS machine
+solaris: CC = /opt/gnu/pkg/gcc-4.4.2/bin/g++
+solaris: LOPTS = -L/usr/ccs/lib/
+solaris: LIBS = -lmalloc
+solaris: $(BIN_DIR)/$$@/$(BIN) $?
 
 clean: 
 	rm -rf $(BIN_DIR)
