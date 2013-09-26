@@ -21,26 +21,28 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 
 /**
+ * A layout provider for KIML that performs layout using the Libavoid connector routing library. See
+ * http://www.adaptagrams.org/documentation/ for furhter information on the library.
+ * 
  * @author uru
- *
  */
 public class LibavoidLayoutProvider extends AbstractLayoutProvider {
 
     private LibavoidServerCommunicator comm = new LibavoidServerCommunicator();
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public void doLayout(KNode parentNode, IKielerProgressMonitor progressMonitor) {
-        
+
         // create an Libavoid server process instance or use an existing one
         LibavoidServer lvServer = LibavoidServerPool.INSTANCE.fetch();
         // send a layout request to the server process and apply the layout
         comm.requestLayout(parentNode, progressMonitor, lvServer);
         // if everything worked well, release the used process instance
         LibavoidServerPool.INSTANCE.release(lvServer);
-        
+
     }
 
 }
