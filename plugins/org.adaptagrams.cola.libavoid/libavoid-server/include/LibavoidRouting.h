@@ -21,6 +21,10 @@
  *
  * Definition of Libavoid's options and functions to setup the graph for
  * connector routing as well as to write the results back to an output stream.
+ *
+ * Protocol:
+ *  - All nodes are passed together with a continuously increasing id starting by 1. (1 2 3 4 ...) 
+ *  - The same goes for the edges. 
  */
 #include <iostream>
 #include <string>

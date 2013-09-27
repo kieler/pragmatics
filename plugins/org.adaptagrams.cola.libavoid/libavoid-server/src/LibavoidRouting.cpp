@@ -96,7 +96,7 @@ void addNode(vector<string> &tokens, vector<Avoid::ShapeRef*> &shapes, Avoid::Ro
     Avoid::ShapeRef *shapeRef = new Avoid::ShapeRef(router, rectangle, id);
 
     // remember in vector
-    shapes[id] = shapeRef;
+	shapes.push_back(shapeRef);
 
     // create four connection pins for the node
     Avoid::ShapeConnectionPin *pinLeft = new Avoid::ShapeConnectionPin(shapeRef, PIN_ARBITRARY,
@@ -119,9 +119,10 @@ void addEdge(vector<string> &tokens, Avoid::ConnType connectorType, vector<Avoid
     int srcId = toInt(tokens.at(2));
     int tgtId = toInt(tokens.at(3));
 
+
     // get the shapes for the src and tgt node
-    Avoid::ShapeRef *srcShape = shapes[srcId];
-    Avoid::ShapeRef *tgtShape = shapes[tgtId];
+    Avoid::ShapeRef *srcShape = shapes[srcId-1];
+    Avoid::ShapeRef *tgtShape = shapes[tgtId-1];
 
     // create endpoints
     Avoid::ConnEnd srcPt(srcShape, PIN_ARBITRARY);

@@ -68,7 +68,7 @@ int main(void) {
 
 void HandleRequest(chunk_istream& stream, ostream& out) {
 
-    vector<Avoid::ShapeRef *> shapes(20);
+    vector<Avoid::ShapeRef *> shapes;
     vector<Avoid::ConnRef *> cons;
 
     Avoid::Router *router = new Avoid::Router(Avoid::OrthogonalRouting | Avoid::PolyLineRouting);
@@ -126,7 +126,7 @@ void HandleRequest(chunk_istream& stream, ostream& out) {
             break;
         }
 
-        std::cout << line << std::endl;
+        //std::cout << line << std::endl;
     }
 
     // perform edge routing

@@ -45,6 +45,10 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  * Performs the actual communication with the libabvoid-server. The graph to layout is send to the
  * server using a textual format. The server then sends back the layouted information.
  * 
+ * Protocol:
+ *  - All nodes are passed together with a continuously increasing id starting by 1. (1 2 3 4 ...) 
+ *  - The same goes for the edges. 
+ *  
  * @author uru
  */
 public class LibavoidServerCommunicator {
@@ -57,8 +61,8 @@ public class LibavoidServerCommunicator {
     private BiMap<Integer, KEdge> edgeIdMap = HashBiMap.create();
 
     // Internal data.
-    private int nodeIdCounter = 0;
-    private int edgeIdCounter = 0;
+    private int nodeIdCounter = 1;
+    private int edgeIdCounter = 1;
     private static final int SUBTASK_WORK = 1;
     private static final int LAYOUT_WORK = SUBTASK_WORK + SUBTASK_WORK + SUBTASK_WORK
             + SUBTASK_WORK;
@@ -71,9 +75,9 @@ public class LibavoidServerCommunicator {
      * representation of the graph.
      */
     private void reset() {
-        nodeIdCounter = 0;
+        nodeIdCounter = 1;
         nodeIdMap.clear();
-        edgeIdCounter = 0;
+        edgeIdCounter = 1;
         edgeIdMap.clear();
         sb = new StringBuffer();
     }
@@ -153,6 +157,10 @@ public class LibavoidServerCommunicator {
             // get the corresponding edge
             int edgeId = Integer.valueOf(entry.getKey().split(" ")[1]);
             KEdge e = edgeIdMap.get(edgeId);
+            if(e == null) {
+                // FIXME
+                continue;
+            }
             KEdgeLayout edgeLayout = e.getData(KEdgeLayout.class);
             edgeLayout.getBendPoints().clear();
 
