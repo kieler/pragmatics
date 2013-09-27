@@ -460,7 +460,7 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
      * @see de.cau.cs.kieler.klay.layered.p2layers.ILayerer ILayerer
      */
     public void process(final LGraph theLayeredGraph, final IKielerProgressMonitor monitor) {
-        monitor.begin("Network-Simplex Layering", 1);
+        monitor.begin("Network simplex layering", 1);
 
         layeredGraph = theLayeredGraph;
         removedSelfLoops = new HashMap<LEdge, Pair<LPort, LPort>>();

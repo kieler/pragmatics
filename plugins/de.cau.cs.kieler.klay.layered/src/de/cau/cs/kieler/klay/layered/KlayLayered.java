@@ -141,13 +141,17 @@ public final class KlayLayered {
      * Does a layout on the given graph.
      * 
      * @param lgraph
-     *            the graph to layout.
-     * @param progressMonitor
-     *            a progress monitor to show progress information in.
-     * @return layered graph with layout applied.
+     *            the graph to layout
+     * @param monitor
+     *            a progress monitor to show progress information in, or {@code null}
+     * @return layered graph with layout applied
      */
-    public LGraph doLayout(final LGraph lgraph, final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Layered layout", 1);
+    public LGraph doLayout(final LGraph lgraph, final IKielerProgressMonitor monitor) {
+        IKielerProgressMonitor theMonitor = monitor;
+        if (theMonitor == null) {
+            theMonitor = new BasicProgressMonitor(0);
+        }
+        theMonitor.begin("Layered layout", 1);
 
         // set special properties for the layered graph
         setOptions(lgraph);
@@ -157,16 +161,22 @@ public final class KlayLayered {
 
         // split the input graph into components and perform layout on them
         List<LGraph> components = componentsProcessor.split(lgraph);
-        for (LGraph comp : components) {
-            layout(comp, progressMonitor.subTask(1.0f / components.size()));
+        if (components.size() == 1) {
+            // execute layout on the sole component using the top-level progress monitor
+            layout(components.get(0), theMonitor);
+        } else {
+            // execute layout on each component using a progress monitor subtask
+            float compWork = 1.0f / components.size();
+            for (LGraph comp : components) {
+                layout(comp, theMonitor.subTask(compWork));
+            }
         }
         LGraph result = componentsProcessor.combine(components);
         
         // resize the resulting graph, according to minimal size constraints and such
         resizeGraph(result);
 
-        progressMonitor.done();
-
+        theMonitor.done();
         return result;
     }
 
@@ -617,15 +627,15 @@ public final class KlayLayered {
      * 
      * @param graph
      *            the graph that is to be laid out
-     * @param themonitor
-     *            a progress monitor, or {@code null}
+     * @param monitor
+     *            a progress monitor
      */
-    private void layout(final LGraph graph, final IKielerProgressMonitor themonitor) {
-        IKielerProgressMonitor monitor = themonitor;
-        if (monitor == null) {
-            monitor = new BasicProgressMonitor();
+    private void layout(final LGraph graph, final IKielerProgressMonitor monitor) {
+        boolean monitorStarted = monitor.isRunning();
+        if (!monitorStarted) {
+            monitor.begin("Component Layout", 1);
         }
-        monitor.begin("Component Layout", algorithm.size());
+        float monitorProgress = 1.0f / algorithm.size();
 
         if (graph.getProperty(LayoutOptions.DEBUG_MODE)) {
             // Debug Mode!
@@ -651,7 +661,7 @@ public final class KlayLayered {
                     // Do nothing.
                 }
 
-                processor.process(graph, monitor.subTask(1));
+                processor.process(graph, monitor.subTask(monitorProgress));
             }
 
             // Graph debug output
@@ -666,11 +676,13 @@ public final class KlayLayered {
                 if (monitor.isCanceled()) {
                     return;
                 }
-                processor.process(graph, monitor.subTask(1));
+                processor.process(graph, monitor.subTask(monitorProgress));
             }
         }
 
-        monitor.done();
+        if (!monitorStarted) {
+            monitor.done();
+        }
     }
 
     /**
