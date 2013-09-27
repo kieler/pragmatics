@@ -21,7 +21,9 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement.HashCodeCounter;
 import de.cau.cs.kieler.klay.layered.importexport.CompoundKGraphImporter;
+import de.cau.cs.kieler.klay.layered.importexport.IGraphImporter;
 import de.cau.cs.kieler.klay.layered.importexport.KGraphImporter;
+import de.cau.cs.kieler.klay.layered.importexport.RecursiveCompoundKGraphHandler;
 
 /**
  * Layout provider to connect the layered layouter to the Eclipse based layout services.
@@ -54,25 +56,30 @@ public final class LayeredLayoutProvider extends AbstractLayoutProvider {
         // that all hash codes are unique, but predictable independently of the object instances.
         HashCodeCounter hashCodeCounter = new HashCodeCounter();
 
-        KShapeLayout sourceShapeLayout = kgraph.getData(KShapeLayout.class);
-        IGraphImporter<KNode> graphImporter;
+        KShapeLayout kgraphLayout = kgraph.getData(KShapeLayout.class);
         
-        // Check if hierarchy handling for a compound graph is requested, choose importer accordingly
-        boolean isCompound = sourceShapeLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY);
-        if (isCompound) {
-            graphImporter = new CompoundKGraphImporter(hashCodeCounter);
+        // Check if hierarchy handling for a compound graph is requested
+        boolean layoutHierarchy = kgraphLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY);
+        if (layoutHierarchy) {
+            // Layout for all hierarchy levels is requested;
+            // this is delegated to the compound graph handler
+            RecursiveCompoundKGraphHandler compoundGraphHandler = new RecursiveCompoundKGraphHandler(
+                    klayLayered, hashCodeCounter);
+            compoundGraphHandler.doLayoutHierarchy(kgraph, progressMonitor);
+            
         } else {
-            graphImporter = new KGraphImporter(hashCodeCounter);
+            // Only the top-level graph is processed
+            IGraphImporter<KNode> graphImporter = new KGraphImporter(hashCodeCounter);
+            
+            // Import the graph
+            LGraph layeredGraph = graphImporter.importGraph(kgraph);
+
+            // Perform layer-based layout
+            LGraph result = klayLayered.doLayout(layeredGraph, progressMonitor);
+
+            // Apply the layout results to the original graph
+            graphImporter.applyLayout(result);
         }
-
-        // import the graph
-        LGraph layeredGraph = graphImporter.importGraph(kgraph);
-
-        // apply layout
-        LGraph result = klayLayered.doLayout(layeredGraph, progressMonitor);
-
-        // apply the layout results to the original graph
-        graphImporter.applyLayout(result);
     }
 
 

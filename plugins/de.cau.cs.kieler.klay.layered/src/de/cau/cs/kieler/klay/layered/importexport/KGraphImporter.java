@@ -40,7 +40,6 @@ import de.cau.cs.kieler.kiml.options.PortLabelPlacement;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.SizeOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
-import de.cau.cs.kieler.klay.layered.Util;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
@@ -261,7 +260,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         }
         
         LNode dummy = createExternalPortDummy(
-                kport,
+                kportLayout,
                 portConstraints,
                 portSide,
                 inEdges - outEdges,
@@ -269,6 +268,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                 kportPosition,
                 new KVector(kportLayout.getWidth(), kportLayout.getHeight()),
                 direction);
+        dummy.setProperty(Properties.ORIGIN, kport);
         layeredNodes.add(dummy);
         elemMap.put(kport, dummy);
     }
@@ -490,7 +490,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             for (KEdge kedge : child.getOutgoingEdges()) {
                 // exclude edges that pass hierarchy bounds (except for those
                 // going into an external port)
-                if (kedge.getTarget().getParent() == child.getParent()) {
+                if (kedge.getTarget().getParent() == graph) {
                     transformEdge(kedge, graph, elemMap);
                 }
             }
@@ -586,11 +586,13 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
     
                 // create source and target ports if they do not exist yet
                 if (sourcePort == null) {
-                    sourcePort = createPort(sourceNode, edgeLayout.getSourcePoint(), PortType.OUTPUT);
+                    sourcePort = createPort(sourceNode, edgeLayout.getSourcePoint().createVector(),
+                            PortType.OUTPUT);
                 }
                 
                 if (targetPort == null) {
-                    targetPort = createPort(targetNode, edgeLayout.getTargetPoint(), PortType.INPUT);
+                    targetPort = createPort(targetNode, edgeLayout.getTargetPoint().createVector(),
+                            PortType.INPUT);
                 }
                 newEdge.setSource(sourcePort);
                 newEdge.setTarget(targetPort);
@@ -650,94 +652,6 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         if (isCompound) {
             // put edge to elementMap
             elemMap.put(kedge, newEdge);
-        }
-    }
-
-    /**
-     * Create a port for an edge that is not connected to a port. This is necessary because KLay
-     * Layered wants all edges to have a source port and a target port.
-     * 
-     * @param node
-     *            the node at which the edge is incident
-     * @param endPoint
-     *            the absolute point where the edge ends
-     * @param type
-     *            the port type
-     * @return a new port
-     */
-    private LPort createPort(final LNode node, final KPoint endPoint, final PortType type) {
-        LPort port;
-        Direction direction = layeredGraph.getProperty(LayoutOptions.DIRECTION);
-        boolean mergePorts = layeredGraph.getProperty(Properties.MERGE_PORTS);
-        
-        if ((mergePorts || node.getProperty(LayoutOptions.HYPERNODE))
-                && !node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()) {
-            
-            // Hypernodes have one output port and one input port
-            final PortSide defaultSide = PortSide.fromDirection(direction);
-            port = Util.provideCollectorPort(layeredGraph, node, type,
-                    type == PortType.OUTPUT ? defaultSide : defaultSide.opposed());
-        } else {
-            port = new LPort(layeredGraph);
-            port.setNode(node);
-            
-            KVector pos = port.getPosition();
-            pos.x = endPoint.getX() - node.getPosition().x;
-            pos.y = endPoint.getY() - node.getPosition().y;
-            
-            KVector resizeRatio = node.getProperty(Properties.RESIZE_RATIO);
-            if (resizeRatio != null) {
-                pos.scale(resizeRatio.x, resizeRatio.y);
-            }
-            pos.applyBounds(0, 0, node.getSize().x, node.getSize().y);
-            
-            PortSide portSide = calcPortSide(node, port);
-            port.setSide(portSide);
-            Set<GraphProperties> graphProperties = layeredGraph.getProperty(
-                    Properties.GRAPH_PROPERTIES);
-            switch (direction) {
-            case LEFT:
-            case RIGHT:
-                if (portSide == PortSide.NORTH || portSide == PortSide.SOUTH) {
-                    graphProperties.add(GraphProperties.NORTH_SOUTH_PORTS);
-                }
-                break;
-            case UP:
-            case DOWN:
-                if (portSide == PortSide.EAST || portSide == PortSide.WEST) {
-                    graphProperties.add(GraphProperties.NORTH_SOUTH_PORTS);
-                }
-                break;
-            }
-        }
-        
-        return port;
-    }
-
-    /**
-     * Calculate the port side from the relative position.
-     * 
-     * @param node
-     *            a node
-     * @param port
-     *            a port of that node
-     * @return the side of the node on which the port is situated
-     */
-    private static PortSide calcPortSide(final LNode node, final LPort port) {
-        double widthPercent = port.getPosition().x / node.getSize().x;
-        double heightPercent = port.getPosition().y / node.getSize().y;
-        if (widthPercent + heightPercent <= 1 && widthPercent - heightPercent <= 0) {
-            // port is on the left
-            return PortSide.WEST;
-        } else if (widthPercent + heightPercent >= 1 && widthPercent - heightPercent >= 0) {
-            // port is on the right
-            return PortSide.EAST;
-        } else if (heightPercent < 1.0f / 2) {
-            // port is on the top
-            return PortSide.NORTH;
-        } else {
-            // port is on the bottom
-            return PortSide.SOUTH;
         }
     }
 
