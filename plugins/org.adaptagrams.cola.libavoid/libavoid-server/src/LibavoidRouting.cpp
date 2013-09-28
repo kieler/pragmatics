@@ -92,14 +92,18 @@ void addNode(vector<string> &tokens, vector<Avoid::ShapeRef*> &shapes, Avoid::Ro
     // add the actual rectangle
     Avoid::Rectangle rectangle(Avoid::Point(topLeftX, topLeftY),
             Avoid::Point(bottomRightX, bottomRightY));
-
     Avoid::ShapeRef *shapeRef = new Avoid::ShapeRef(router, rectangle, id);
 
-    // remember in vector
+	// center pin
+	Avoid::ShapeConnectionPin *pinCenter = new Avoid::ShapeConnectionPin(shapeRef, PIN_ARBITRARY,
+		Avoid::ATTACH_POS_CENTRE, Avoid::ATTACH_POS_CENTRE, Avoid::ConnDirAll);
+    pinCenter->setExclusive(false);
+
+	 // remember in vector
 	shapes.push_back(shapeRef);
 
     // create four connection pins for the node
-    Avoid::ShapeConnectionPin *pinLeft = new Avoid::ShapeConnectionPin(shapeRef, PIN_ARBITRARY,
+    /*Avoid::ShapeConnectionPin *pinLeft = new Avoid::ShapeConnectionPin(shapeRef, PIN_ARBITRARY,
             Avoid::ATTACH_POS_LEFT, Avoid::ATTACH_POS_CENTRE, Avoid::ConnDirLeft);
     pinLeft->setExclusive(false);
     Avoid::ShapeConnectionPin *pinRight = new Avoid::ShapeConnectionPin(shapeRef, PIN_ARBITRARY,
@@ -110,7 +114,49 @@ void addNode(vector<string> &tokens, vector<Avoid::ShapeRef*> &shapes, Avoid::Ro
     pinTop->setExclusive(false);
     Avoid::ShapeConnectionPin *pinDown = new Avoid::ShapeConnectionPin(shapeRef, PIN_ARBITRARY,
             Avoid::ATTACH_POS_CENTRE, Avoid::ATTACH_POS_BOTTOM, Avoid::ConnDirDown);
-    pinDown->setExclusive(false);
+    pinDown->setExclusive(false);*/
+}
+
+void addPort(vector<string> &tokens, vector<Avoid::ShapeConnectionPin*> &pins, 
+				vector<Avoid::ShapeRef*> &shapes, Avoid::Router* router) {
+	// format: portId nodeId portSide centerX centerYs
+	unsigned int portId = toInt(tokens[1]);
+	unsigned int nodeId = toInt(tokens[2]);
+    string side = tokens[3];
+
+	// center positions of the ports
+	double centerX = toDouble(tokens[4]);
+    double centerY = toDouble(tokens[5]);
+
+	Avoid::ShapeRef* shapeRef = shapes[nodeId-1];
+	Avoid::ShapeConnectionPin *pin;
+	
+	// get the bounding box
+	Avoid::Box box = shapeRef->polygon().offsetBoundingBox(0);
+	// calculate width and height
+	double width = box.max.x - box.min.x;
+	double height = box.max.y - box.min.y;
+	// determine the pins positions relative on the respective side
+	double relX = centerX / width;
+	double relY = centerY / height;
+
+	// create the pin with proper setup
+	if (side == PORT_SIDE_NORTH) {
+		pin = new Avoid::ShapeConnectionPin(shapeRef, portId,
+             relX, Avoid::ATTACH_POS_TOP, Avoid::ConnDirUp);	
+	} else if (side == PORT_SIDE_EAST) {
+		pin = new Avoid::ShapeConnectionPin(shapeRef, portId,
+            Avoid::ATTACH_POS_RIGHT, relY, Avoid::ConnDirRight);
+	} else if (side == PORT_SIDE_SOUTH) {
+		pin = new Avoid::ShapeConnectionPin(shapeRef, portId,
+            relX, Avoid::ATTACH_POS_BOTTOM, Avoid::ConnDirDown);
+	} else { // (side == PORT_SIDE_WEST) {
+		pin = new Avoid::ShapeConnectionPin(shapeRef, portId,
+            Avoid::ATTACH_POS_LEFT, relY, Avoid::ConnDirLeft);
+	}
+
+	pin->setExclusive(false);
+	pins.push_back(pin);
 }
 
 void addEdge(vector<string> &tokens, Avoid::ConnType connectorType, vector<Avoid::ShapeRef*> &shapes,
@@ -124,9 +170,24 @@ void addEdge(vector<string> &tokens, Avoid::ConnType connectorType, vector<Avoid
     Avoid::ShapeRef *srcShape = shapes[srcId-1];
     Avoid::ShapeRef *tgtShape = shapes[tgtId-1];
 
+	// determine the pin locations for this edge
+	unsigned int srcPin = PIN_ARBITRARY;
+	unsigned int tgtPin = PIN_ARBITRARY;
+
+	// differenciate the edge types
+	if(tokens[0] == "PEDGEP" ) {
+		srcPin = toInt(tokens[4]);
+		tgtPin = toInt(tokens[5]);
+	} else if (tokens[0] == "PEDGE" ) {
+		srcPin = toInt(tokens[4]);
+	} else if (tokens[0] == "EDGEP") {
+		tgtPin = toInt(tokens[5]);
+	}
+
     // create endpoints
-    Avoid::ConnEnd srcPt(srcShape, PIN_ARBITRARY);
-    Avoid::ConnEnd tgtPt(tgtShape, PIN_ARBITRARY);
+    Avoid::ConnEnd srcPt(srcShape, srcPin);
+    Avoid::ConnEnd tgtPt(tgtShape, tgtPin);
+
     // create the connector
     Avoid::ConnRef *connRef = new Avoid::ConnRef(router, srcPt, tgtPt, edgeId);
     connRef->setRoutingType(connectorType);

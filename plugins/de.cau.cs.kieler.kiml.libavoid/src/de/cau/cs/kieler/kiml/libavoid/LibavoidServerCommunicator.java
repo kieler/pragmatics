@@ -32,6 +32,7 @@ import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
@@ -40,28 +41,33 @@ import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.PortConstraints;
+import de.cau.cs.kieler.kiml.options.PortSide;
 
 /**
  * Performs the actual communication with the libabvoid-server. The graph to layout is send to the
  * server using a textual format. The server then sends back the layouted information.
  * 
- * Protocol:
- *  - All nodes are passed together with a continuously increasing id starting by 1. (1 2 3 4 ...) 
- *  - The same goes for the edges. 
- *  
+ * Protocol: - All nodes are passed together with a continuously increasing id starting by 1. (1 2 3
+ * 4 ...) - The same goes for the edges.
+ * 
  * @author uru
  */
 public class LibavoidServerCommunicator {
+
+    private static final boolean DEBUG = false;
 
     /** the separator used to separate chunks of data sent to the libavoid-server process. */
     private static final String CHUNK_KEYWORD = "[CHUNK]\n";
 
     // Maps holding the nodes and edges of the current graph.
     private BiMap<Integer, KNode> nodeIdMap = HashBiMap.create();
+    private BiMap<Integer, KPort> portIdMap = HashBiMap.create();
     private BiMap<Integer, KEdge> edgeIdMap = HashBiMap.create();
 
     // Internal data.
     private int nodeIdCounter = 1;
+    private int portIdCounter = 1;
     private int edgeIdCounter = 1;
     private static final int SUBTASK_WORK = 1;
     private static final int LAYOUT_WORK = SUBTASK_WORK + SUBTASK_WORK + SUBTASK_WORK
@@ -77,6 +83,8 @@ public class LibavoidServerCommunicator {
     private void reset() {
         nodeIdCounter = 1;
         nodeIdMap.clear();
+        portIdCounter = 1;
+        portIdMap.clear();
         edgeIdCounter = 1;
         edgeIdMap.clear();
         sb = new StringBuffer();
@@ -157,7 +165,7 @@ public class LibavoidServerCommunicator {
             // get the corresponding edge
             int edgeId = Integer.valueOf(entry.getKey().split(" ")[1]);
             KEdge e = edgeIdMap.get(edgeId);
-            if(e == null) {
+            if (e == null) {
                 // FIXME
                 continue;
             }
@@ -226,6 +234,10 @@ public class LibavoidServerCommunicator {
 
         // finish with the chunk keyword
         sb.append(CHUNK_KEYWORD);
+
+        if (DEBUG) {
+            System.out.println(sb);
+        }
 
         try {
             // write it to the stream
@@ -351,6 +363,31 @@ public class LibavoidServerCommunicator {
                 + (shape.getYpos() + shape.getHeight()));
         sb.append("\n");
 
+        // transfer port constraints
+        PortConstraints pc = shape.getProperty(LayoutOptions.PORT_CONSTRAINTS);
+        sb.append("NODEOPTION " + nodeIdCounter + " " + pc);
+        sb.append("\n");
+
+        // transfer all ports
+        for (KPort port : node.getPorts()) {
+            portIdMap.put(portIdCounter, port);
+
+            // gather information
+            KShapeLayout portLayout = port.getData(KShapeLayout.class);
+            PortSide side = portLayout.getProperty(LayoutOptions.PORT_SIDE);
+
+            // get center point of port
+            float centerX = portLayout.getXpos() + portLayout.getWidth() / 2;
+            float centerY = portLayout.getYpos() + portLayout.getHeight() / 2;
+
+            // format: portId nodeId portSide centerX centerYs
+            sb.append("PORT " + portIdCounter + " " + nodeIdCounter + " " + side.toString() + " "
+                    + centerX + " " + centerY);
+            sb.append("\n");
+
+            portIdCounter++;
+        }
+
         nodeIdCounter++;
     }
 
@@ -362,8 +399,22 @@ public class LibavoidServerCommunicator {
         int srcId = nodeIdMap.inverse().get(edge.getSource());
         int tgtId = nodeIdMap.inverse().get(edge.getTarget());
 
-        // format: edgeId srcId tgtId
-        sb.append("EDGE " + edgeIdCounter + " " + srcId + " " + tgtId);
+        Integer srcPort = portIdMap.inverse().get(edge.getSourcePort());
+        Integer tgtPort = portIdMap.inverse().get(edge.getTargetPort());
+
+        // determine the type of the edge, ie, if it involves ports
+        String edgeType = "EDGE";
+        if (srcPort != null && tgtPort != null) {
+            edgeType = "PEDGEP";
+        } else if (srcPort != null) {
+            edgeType = "PEDGE";
+        } else if (tgtPort != null) {
+            edgeType = "EDGEP";
+        }
+
+        // format: edgeId srcId tgtId srcPort tgtPort
+        sb.append(edgeType + " " + edgeIdCounter + " " + srcId + " " + tgtId + " " + srcPort + " "
+                + tgtPort);
         sb.append("\n");
 
         edgeIdCounter++;

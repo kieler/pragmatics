@@ -69,6 +69,7 @@ int main(void) {
 void HandleRequest(chunk_istream& stream, ostream& out) {
 
     vector<Avoid::ShapeRef *> shapes;
+	vector<Avoid::ShapeConnectionPin *> pins;
     vector<Avoid::ConnRef *> cons;
 
     Avoid::Router *router = new Avoid::Router(Avoid::OrthogonalRouting | Avoid::PolyLineRouting);
@@ -114,9 +115,18 @@ void HandleRequest(chunk_istream& stream, ostream& out) {
 
             addNode(tokens, shapes, router);
 
-        } else if (tokens.at(0) == "EDGE") {
-            // format: edgeId srcId tgtId
-            if (tokens.size() != 4) {
+        } else if(tokens[0] == "PORT") {   
+			// format: portId nodeId portSide centerX centerYs
+            if (tokens.size() != 6) {
+                cerr << "ERROR: invalid port format" << endl;
+            }
+
+            addPort(tokens, pins, shapes, router);
+
+        } else if (tokens[0] == "EDGE" || tokens[0] == "PEDGEP" 
+					|| tokens[0] == "PEDGE" || tokens[0] == "EDGEP") {
+            // format: edgeId srcId tgtId srcPort tgtPort
+            if (tokens.size() != 6) {
                 cerr << "ERROR: invalid edge format" << endl;
             }
 
@@ -124,7 +134,9 @@ void HandleRequest(chunk_istream& stream, ostream& out) {
 
         } else if (tokens.at(0) == "GRAPHEND") {
             break;
-        }
+        } else {
+			// ignore it
+		}
 
         //std::cout << line << std::endl;
     }

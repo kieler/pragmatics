@@ -283,7 +283,7 @@ public class LibavoidServer {
             String line = null;
             try {
                 line = reader.readLine();
-                System.out.println(line);
+                // System.out.println(line);
             } catch (IOException exception) {
                 // most probably the stream was closed due to a timeout of the watchdog thread
             }

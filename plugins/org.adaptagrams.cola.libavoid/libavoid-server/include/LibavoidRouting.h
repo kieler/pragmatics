@@ -60,10 +60,18 @@
 #define NUDGE_ORTHOGONAL_COLINEAR_SEGMENTS	"de.cau.cs.kieler.kiml.libavoid.nudgeOrthogonalTouchingColinearSegments"
 
 /*
+ * Port Sides 
+ */
+#define PORT_SIDE_NORTH		"NORTH"
+#define PORT_SIDE_EAST		"EAST"
+#define PORT_SIDE_SOUTH		"SOUTH"
+#define PORT_SIDE_WEST		"WEST"
+
+/*
  * Pin Types
  */
-const unsigned int PIN_CENTRE = 1;
-const unsigned int PIN_ARBITRARY = 2;
+//const unsigned int PIN_CENTRE = 1;
+const unsigned int PIN_ARBITRARY = 0;
 
 /**
  * Assembling the graph
@@ -74,6 +82,9 @@ void setOption(std::string optionId, std::string token, Avoid::Router* router);
 
 void addNode(std::vector<std::string> &tokens, std::vector<Avoid::ShapeRef*> &shapes,
         Avoid::Router* router);
+
+void addPort(std::vector<std::string> &tokens, std::vector<Avoid::ShapeConnectionPin*> &pins, 
+		std::vector<Avoid::ShapeRef*> &shapes, Avoid::Router* router);
 
 void addEdge(std::vector<std::string> &tokens, Avoid::ConnType connectorType,
         std::vector<Avoid::ShapeRef*> &shapes, std::vector<Avoid::ConnRef*> &cons,

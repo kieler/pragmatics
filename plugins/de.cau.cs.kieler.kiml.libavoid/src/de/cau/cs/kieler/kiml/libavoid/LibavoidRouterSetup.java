@@ -49,7 +49,7 @@ public final class LibavoidRouterSetup {
             "de.cau.cs.kieler.kiml.libavoid.portDirectionPenalty", 100f, 0f);
 
     public static final IProperty<Float> SHAPE_BUFFER_DISTANCE = new Property<Float>(
-            "de.cau.cs.kieler.kiml.libavoid.shapeBufferDistance", 0f, 0f);
+            "de.cau.cs.kieler.kiml.libavoid.shapeBufferDistance", 20f, 0f);
 
     public static final IProperty<Float> IDEAL_NUDGING_DISTANCE = new Property<Float>(
             "de.cau.cs.kieler.kiml.libavoid.idealNudgingDistance", 4.0f, 0f);
