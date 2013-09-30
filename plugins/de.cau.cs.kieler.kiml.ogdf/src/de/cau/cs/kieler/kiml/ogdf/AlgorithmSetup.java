@@ -82,7 +82,10 @@ public final class AlgorithmSetup {
      *  phase (Planarization) is repeated. */
     public static final IProperty<Integer> RUNS = new Property<Integer>(
             "de.cau.cs.kieler.kiml.ogdf.option.runs", 0);
-
+    /** Whether ports should be moved to the point where edges cross the node's bounds. */
+    public static final IProperty<Boolean> ADAPT_PORT_POSITIONS = new Property<Boolean>(
+            "de.cau.cs.kieler.kiml.ogdf.option.adaptPortPositions", false);
+    
     // options for Sugiyama layouter
     
     /** Default value for the 'nodeDistance' option. */

@@ -34,6 +34,10 @@ public final class Attributes {
     /** Target aspect ratio (width of the layout divided by the height) of the graph drawing. */
     public static final String ASPECT = "aspect";
     
+    /** Whether ports should be moved to the point where edges cross the node's bounds. */
+    public static final IProperty<Boolean> ADAPT_PORT_POSITIONS = new Property<Boolean>(
+            "de.cau.cs.kieler.graphviz.adaptPortPositions", false);
+    
     /** Bounding box. */
     public static final String BOUNDINGBOX = "bb";
     
