@@ -90,7 +90,7 @@ public final class CompoundGraphLayerCrossingMinimizer {
         }
 
         // determine whether a compound graph is to be laid out
-        boolean isCompound = layeredGraph.getProperty(LayoutOptions.LAYOUT_HIERARCHY);
+        boolean isCompound = false; //layeredGraph.getProperty(LayoutOptions.LAYOUT_HIERARCHY); XXX
         
         if (!isCompound) {
             List<NodeGroup> nodeGroups = new LinkedList<NodeGroup>();

@@ -13,15 +13,20 @@
  */
 package de.cau.cs.kieler.klay.layered.importexport;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.KlayLayered;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement.HashCodeCounter;
+import de.cau.cs.kieler.klay.layered.graph.LPort;
+import de.cau.cs.kieler.klay.layered.properties.PortType;
 
 /**
  *
@@ -33,8 +38,8 @@ public class RecursiveCompoundKGraphHandler {
     private KlayLayered klayLayered;
     /** the hash code counter used to create graph elements. */
     private HashCodeCounter hashCodeCounter;
-    /** list of edges that cross hierarchy borders. */
-    private final List<KEdge> crossHierarchyEdges = new LinkedList<KEdge>();
+    /** map of edges that cross hierarchy borders. */
+    private final Map<KEdge, ExternalPort> crossHierarchyEdges = new HashMap<KEdge, ExternalPort>();
     
     public RecursiveCompoundKGraphHandler(final KlayLayered klayLayered,
             final HashCodeCounter hashCodeCounter) {
@@ -47,6 +52,13 @@ public class RecursiveCompoundKGraphHandler {
         recursiveLayout(kgraph, monitor);
         
         // TODO handle the cross-hierarchy edges
+    }
+    
+    private static class ExternalPort {
+        private KEdge kedge;
+        private KNode knode;
+        private LPort lport;
+        private PortType type = PortType.UNDEFINED;
     }
     
     private void recursiveLayout(final KNode parentNode, final IKielerProgressMonitor monitor) {
@@ -64,7 +76,29 @@ public class RecursiveCompoundKGraphHandler {
             for (KEdge edge : childNode.getOutgoingEdges()) {
                 KNode targetNode = edge.getTarget();
                 if (targetNode.getParent() != parentNode) {
-                    crossHierarchyEdges.add(edge);
+                    if (KimlUtil.isDescendant(targetNode, childNode)) {
+                        if (edge.getSourcePort() == null) {
+                            // the edge goes into the source node and has no source port
+                        }
+                    } else if (KimlUtil.isDescendant(targetNode, parentNode)) {
+                        // the edge goes into a sibling of its source node
+                    } else {
+                        // the edge goes out of the parent node
+                    }
+                }
+            }
+            for (KEdge edge : childNode.getIncomingEdges()) {
+                KNode sourceNode = edge.getSource();
+                if (sourceNode.getParent() != parentNode) {
+                    if (KimlUtil.isDescendant(sourceNode, childNode)) {
+                        if (edge.getTargetPort() == null) {
+                            // the edge comes from the inside of the target node and has no target port
+                        }
+                    } else if (KimlUtil.isDescendant(sourceNode, parentNode)) {
+                        // the edge comes from a sibling if its target node
+                    } else {
+                        // the edge comes from the outside of the parent node
+                    }
                 }
             }
         }
