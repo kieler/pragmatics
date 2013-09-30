@@ -419,10 +419,6 @@ public final class Properties {
     /** Whether feedback edges should be highlighted by routing around the nodes. */
     public static final IProperty<Boolean> FEEDBACK_EDGES = new Property<Boolean>(
             "de.cau.cs.kieler.klay.layered.feedBackEdges", false);
-    
-    /** Maximal number of iterations performed by the {@link NetworkSimplexLayerer}. */
-    public static final IProperty<Integer> NETWORK_SIMPLEX_MAX_ITERATIONS = new Property<Integer>(
-            "de.cau.cs.kieler.klay.layered.networkSimplexMaxIterations", 10000000, 1000);
 
 
     // /////////////////////////////////////////////////////////////////////////////
