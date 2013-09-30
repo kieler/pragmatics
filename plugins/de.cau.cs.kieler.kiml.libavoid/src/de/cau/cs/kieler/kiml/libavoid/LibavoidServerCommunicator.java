@@ -96,6 +96,7 @@ public class LibavoidServerCommunicator {
      * @param layoutNode
      *            the root node of the graph to layout.
      * @param progressMonitor
+     *            the monitor
      * @param lvServer
      *            an instance of the libavoid server.
      */
@@ -166,8 +167,8 @@ public class LibavoidServerCommunicator {
             int edgeId = Integer.valueOf(entry.getKey().split(" ")[1]);
             KEdge e = edgeIdMap.get(edgeId);
             if (e == null) {
-                // FIXME
-                continue;
+                throw new IllegalStateException("A problem within the edge mapping occured."
+                        + "Could not determine edge for id " + edgeId + ".");
             }
             KEdgeLayout edgeLayout = e.getData(KEdgeLayout.class);
             edgeLayout.getBendPoints().clear();
@@ -224,7 +225,7 @@ public class LibavoidServerCommunicator {
     /**
      * Transforms the passed graph to a textual format and writes it to the specified output stream.
      */
-    private void writeTextGraph(KNode root, OutputStream stream) {
+    private void writeTextGraph(final KNode root, final OutputStream stream) {
 
         // first send the options
         transformOptions(root);
@@ -248,7 +249,7 @@ public class LibavoidServerCommunicator {
         }
     }
 
-    private void transformOptions(KNode node) {
+    private void transformOptions(final KNode node) {
 
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
 
@@ -315,22 +316,22 @@ public class LibavoidServerCommunicator {
 
     }
 
-    private void addOption(String key, Object value) {
+    private void addOption(final String key, final Object value) {
         sb.append("OPTION " + key + " " + value.toString());
         sb.append("\n");
     }
 
-    private void addRoutingOption(String key, Object value) {
+    private void addRoutingOption(final String key, final Object value) {
         sb.append("ROUTINGOPTION " + key + " " + value.toString());
         sb.append("\n");
     }
 
-    private void addPenalty(String key, Object value) {
+    private void addPenalty(final String key, final Object value) {
         sb.append("PENALTY " + key + " " + value.toString());
         sb.append("\n");
     }
 
-    private void transformGraph(KNode root) {
+    private void transformGraph(final KNode root) {
 
         sb.append("GRAPH");
         sb.append("\n");
@@ -351,7 +352,7 @@ public class LibavoidServerCommunicator {
         sb.append("\n");
     }
 
-    private void transformNode(KNode node) {
+    private void transformNode(final KNode node) {
         // assign an id
         nodeIdMap.put(nodeIdCounter, node);
 
@@ -391,7 +392,7 @@ public class LibavoidServerCommunicator {
         nodeIdCounter++;
     }
 
-    private void transformEdge(KEdge edge) {
+    private void transformEdge(final KEdge edge) {
         // assign an id
         edgeIdMap.put(edgeIdCounter, edge);
 

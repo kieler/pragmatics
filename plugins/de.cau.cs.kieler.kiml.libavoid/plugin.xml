@@ -10,7 +10,7 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.libavoid.category"
             class="de.cau.cs.kieler.kiml.libavoid.LibavoidLayoutProvider"
-            id="de.cau.cs.kieler.kiml.libavoid.alg"
+            id="org.adaptagrams.cola.libavoid"
             name="Libavoid"
             parameter="LIBAVOID">
          <knownOption
@@ -166,6 +166,46 @@
             name="Nudge Orthogonal Colinear Segments"
             type="boolean">
       </layoutOption>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+         <toolbar
+               id="de.cau.cs.kieler.layout.libavoid.toolbar"
+               label="KIELER Layout">
+            <command
+                  commandId="de.cau.cs.kieler.kiml.libavoid.ui.command.layout"
+                  icon="icons/libavoid-arrange.gif"
+                  label="Libavoid Layout"
+                  style="push"
+                  tooltip="Libavoid Layout">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="activeEditor">
+                     <test
+                           property="de.cau.cs.kieler.kiml.ui.activeEditorIsSupported">
+                     </test>
+                  </with>
+               </visibleWhen>
+            </command>
+         </toolbar>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="de.cau.cs.kieler.layout"
+            defaultHandler="de.cau.cs.kieler.kiml.libavoid.ui.LibavoidLayoutHandler"
+            id="de.cau.cs.kieler.kiml.libavoid.ui.command.layout"
+            name="Libavoid Layout">
+         <commandParameter
+               id="de.cau.cs.kieler.kiml.ui.layoutScope"
+               name="Scope"
+               optional="true">
+         </commandParameter>
+      </command>
    </extension>
 
 </plugin>

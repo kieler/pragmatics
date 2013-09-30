@@ -23,6 +23,12 @@ import de.cau.cs.kieler.core.properties.Property;
  */
 public final class LibavoidRouterSetup {
 
+    private LibavoidRouterSetup() {
+    }
+
+    // CHECKSTYLEOFF javadoc
+    // for documentation on the properties see the libavoid documentation.
+
     /*
      * Routing Penalties
      */
