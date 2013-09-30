@@ -106,6 +106,9 @@
          <knownOption
                option="de.cau.cs.kieler.graphviz.layerSpacingFactor">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.graphviz.adaptPortPositions">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.graphviz"
@@ -195,6 +198,9 @@
                default="false"
                option="de.cau.cs.kieler.separateConnComp">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.graphviz.adaptPortPositions">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.graphviz"
@@ -275,6 +281,9 @@
                default="false"
                option="de.cau.cs.kieler.separateConnComp">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.graphviz.adaptPortPositions">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.graphviz"
@@ -332,6 +341,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.graphviz.overlapMode">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.graphviz.adaptPortPositions">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
@@ -395,6 +407,9 @@
          <knownOption
                default="false"
                option="de.cau.cs.kieler.separateConnComp">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.graphviz.adaptPortPositions">
          </knownOption>
       </layoutAlgorithm>
       <layoutOption
@@ -494,6 +509,15 @@
             type="float"
             upperBound="100.0"
             variance="0.5">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="false"
+            description="Whether ports should be moved to the point where edges cross the node&apos;s bounds."
+            id="de.cau.cs.kieler.graphviz.adaptPortPositions"
+            name="Adapt Port Positions"
+            type="boolean">
       </layoutOption>
    </extension>
 

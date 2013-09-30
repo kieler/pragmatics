@@ -98,6 +98,9 @@
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.crossMin">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.adaptPortPositions">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
@@ -182,6 +185,9 @@
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.embedder">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.adaptPortPositions">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
@@ -232,6 +238,9 @@
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.adaptPortPositions">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
@@ -281,6 +290,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.adaptPortPositions">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
@@ -342,6 +354,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.scaleFunctionFactor">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.adaptPortPositions">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
@@ -432,6 +447,9 @@
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.adaptPortPositions">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
@@ -488,6 +506,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.adaptPortPositions">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
@@ -546,6 +567,9 @@
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.adaptPortPositions">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
@@ -586,6 +610,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.placeLabels">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.adaptPortPositions">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
@@ -639,6 +666,9 @@
                default="1"
                option="de.cau.cs.kieler.randomSeed">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.adaptPortPositions">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
@@ -684,6 +714,9 @@
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.adaptPortPositions">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
@@ -719,6 +752,9 @@
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.adaptPortPositions">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
@@ -752,6 +788,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.adaptPortPositions">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
@@ -792,6 +831,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.adaptPortPositions">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
@@ -834,6 +876,9 @@
                default="1"
                option="de.cau.cs.kieler.randomSeed">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.adaptPortPositions">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
@@ -875,6 +920,9 @@
                default="1"
                option="de.cau.cs.kieler.randomSeed">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.adaptPortPositions">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
@@ -902,6 +950,9 @@
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.adaptPortPositions">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
@@ -928,6 +979,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.adaptPortPositions">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
@@ -964,6 +1018,9 @@
          <knownOption
                default="30"
                option="de.cau.cs.kieler.spacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.adaptPortPositions">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
@@ -1015,6 +1072,9 @@
                default="1.3"
                option="de.cau.cs.kieler.aspectRatio">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.adaptPortPositions">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
@@ -1051,6 +1111,9 @@
                default="30"
                option="de.cau.cs.kieler.spacing">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.adaptPortPositions">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
@@ -1079,6 +1142,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.adaptPortPositions">
          </knownOption>
       </layoutAlgorithm>
       <layoutOption
@@ -1548,6 +1614,15 @@
             id="de.cau.cs.kieler.kiml.ogdf.option.crossingBeautifier"
             name="Crossing Beautifier"
             type="enum">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="false"
+            description="Whether ports should be moved to the point where edges cross the node&apos;s bounds."
+            id="de.cau.cs.kieler.kiml.ogdf.option.adaptPortPositions"
+            name="Adapt Port Positions"
+            type="boolean">
       </layoutOption>
    </extension>
 
