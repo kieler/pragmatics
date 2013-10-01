@@ -52,6 +52,7 @@ import de.cau.cs.kieler.klay.layered.p3order.LayerSweepCrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer;
 import de.cau.cs.kieler.klay.layered.p4nodes.LinearSegmentsNodePlacer;
 import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
+import de.cau.cs.kieler.klay.layered.p4nodes.SimpleNodePlacer;
 import de.cau.cs.kieler.klay.layered.p5edges.OrthogonalEdgeRouter;
 import de.cau.cs.kieler.klay.layered.p5edges.PolylineEdgeRouter;
 import de.cau.cs.kieler.klay.layered.p5edges.SplineEdgeRouter;
@@ -407,7 +408,7 @@ public final class KlayLayered {
                 cycleBreaker = new InteractiveCycleBreaker();
             }
             break;
-        default:
+        default: // GREEDY
             if (!(cycleBreaker instanceof GreedyCycleBreaker)) {
                 cycleBreaker = new GreedyCycleBreaker();
             }
@@ -426,7 +427,7 @@ public final class KlayLayered {
                 layerer = new InteractiveLayerer();
             }
             break;
-        default:
+        default: // NETWORK_SIMPLEX
             if (!(layerer instanceof NetworkSimplexLayerer)) {
                 layerer = new NetworkSimplexLayerer();
             }
@@ -440,7 +441,7 @@ public final class KlayLayered {
                 crossingMinimizer = new InteractiveCrossingMinimizer();
             }
             break;
-        default:
+        default: // LAYER_SWEEP
             if (!(crossingMinimizer instanceof LayerSweepCrossingMinimizer)) {
                 crossingMinimizer = new LayerSweepCrossingMinimizer();
             }
@@ -449,19 +450,19 @@ public final class KlayLayered {
         // check which node placement strategy to use
         NodePlacementStrategy nodePlaceStrategy = graph.getProperty(Properties.NODE_PLACER);
         switch (nodePlaceStrategy) {
+        case SIMPLE:
+            if (!(nodePlacer instanceof SimpleNodePlacer)) {
+                nodePlacer = new SimpleNodePlacer();
+            }
+            break;
         case LINEAR_SEGMENTS:
             if (!(nodePlacer instanceof LinearSegmentsNodePlacer)) {
                 nodePlacer = new LinearSegmentsNodePlacer();
             }
             break;
-        case BRANDES_KOEPF:
+        default: // BRANDES_KOEPF
             if (!(nodePlacer instanceof BKNodePlacer)) {
                 nodePlacer = new BKNodePlacer();
-            }
-            break;
-        default:
-            if (!(nodePlacer instanceof LinearSegmentsNodePlacer)) {
-                nodePlacer = new LinearSegmentsNodePlacer();
             }
         }
 
@@ -478,7 +479,7 @@ public final class KlayLayered {
                 edgeRouter = new SplineEdgeRouter();
             }
             break;
-        default:
+        default: // POLYLINE
             if (!(edgeRouter instanceof PolylineEdgeRouter)) {
                 edgeRouter = new PolylineEdgeRouter();
             }

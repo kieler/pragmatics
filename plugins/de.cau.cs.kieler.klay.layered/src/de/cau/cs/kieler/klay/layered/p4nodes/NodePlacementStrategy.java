@@ -23,7 +23,11 @@ package de.cau.cs.kieler.klay.layered.p4nodes;
 public enum NodePlacementStrategy {
     
     /**
-     * Node placement implementation that aligns long edges using linear segments.
+     * Very simple and very fast node placement that centers all nodes vertically.
+     */
+    SIMPLE,
+    /**
+     * Node placement algorithm that aligns long edges using linear segments.
      * Nodes are aligned according to the <em>pendulum</em> method, which is similar to
      * the barycenter method for node ordering.
      */
