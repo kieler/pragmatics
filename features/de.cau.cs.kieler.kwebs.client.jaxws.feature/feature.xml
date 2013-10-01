@@ -112,8 +112,8 @@ This Agreement is governed by the laws of the State of New York and the intellec
       <import plugin="de.cau.cs.kieler.core"/>
       <import plugin="de.cau.cs.kieler.kiml"/>
       <import plugin="de.cau.cs.kieler.kiml.service"/>
-      <import feature="com.google.guava.runtime.feature" version="10.0.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.emf" version="2.7.0" match="greaterOrEqual"/>
+      <import plugin="com.google.guava"/>
    </requires>
 
    <plugin

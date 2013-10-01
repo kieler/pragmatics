@@ -127,7 +127,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
                 return ((DiagramEditor) object).getEditingDomain();
             } else if (object instanceof IPictogramElementEditPart) {
                 return ((IPictogramElementEditPart) object).getConfigurationProvider()
-                        .getDiagramEditor().getEditingDomain();
+                        .getDiagramContainer().getEditDomain();
             }
         }
         if (object instanceof IAdaptable) {

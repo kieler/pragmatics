@@ -90,14 +90,6 @@ IWorkbenchContribution {
     private IEvaluationService evaluationService;
     
     /**
-     * The MenuService gives access to some menu management functionality. Here it is used to
-     * register the enablement expressions for menu-entries. The MenuService gives access to some
-     * menu management functionality. Here it is used to register the enablement expressions for
-     * menu-entries.
-     */
-    private WorkbenchMenuService menuService;
-    
-    /**
      * The HandlerService to activate the handlers.
      */
     private IHandlerService handlerService;
@@ -121,7 +113,6 @@ IWorkbenchContribution {
     public void initialize(final IServiceLocator newServiceLocator) {
         this.serviceLocator = newServiceLocator;
         this.commandService = (ICommandService) serviceLocator.getService(ICommandService.class);
-        this.menuService = (WorkbenchMenuService) serviceLocator.getService(IMenuService.class);
         this.evaluationService = (IEvaluationService) serviceLocator
                 .getService(IEvaluationService.class);
         this.handlerService = (IHandlerService) serviceLocator.getService(IHandlerService.class);
@@ -193,7 +184,7 @@ IWorkbenchContribution {
             
             Expression visibilityExpression = getVisibilityExpression(config);
             if (visibilityExpression != null) {
-                menuService.registerVisibleWhen(item, visibilityExpression, null, null);
+                //menuService.registerVisibleWhen(item, visibilityExpression, null, null);
                 
                 ContributionItemUpdater listener = new ContributionItemUpdater(item);
                 evaluationService.addEvaluationListener(

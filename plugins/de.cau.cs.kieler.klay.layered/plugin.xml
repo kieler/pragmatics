@@ -132,7 +132,7 @@
                option="de.cau.cs.kieler.klay.layered.feedBackEdges">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.klay.layered.networkSimplexMaxIterations">
+               option="de.cau.cs.kieler.klay.layered.verticalSpacingFactor">
          </knownOption>
       </layoutAlgorithm>
       <layoutOption
@@ -295,16 +295,13 @@
       <layoutOption
             advanced="true"
             appliesTo="parents"
-            default="10000000"
-            description="Bounds the number of DFS iterations of the network simplex layering strategy."
-            id="de.cau.cs.kieler.klay.layered.networkSimplexMaxIterations"
-            name="Layering Max. Iterations"
-            type="int">
-         <dependency
-               option="de.cau.cs.kieler.klay.layered.nodeLayering"
-               value="NETWORK_SIMPLEX">
-         </dependency>
+            default="1"
+            description="Factor by which the usual spacing is multiplied to determine the vertical spacing between objects."
+            id="de.cau.cs.kieler.klay.layered.verticalSpacingFactor"
+            lowerBound="0.01"
+            name="Vertical Spacing Factor"
+            type="float"
+            upperBound="100">
       </layoutOption>
    </extension>
-
 </plugin>

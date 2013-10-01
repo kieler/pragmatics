@@ -2,8 +2,9 @@
 <feature
       id="de.cau.cs.kieler.klighd.feature"
       label="KIELER Lightweight Diagrams Infrastructure"
-      version="0.2.0.qualifier"
-      provider-name="Christian-Albrechts-Universität zu Kiel">
+      version="0.2.1.qualifier"
+      provider-name="Christian-Albrechts-Universität zu Kiel"
+      plugin="de.cau.cs.kieler.klighd">
 
    <description url="http://www.informatik.uni-kiel.de/rtsys/kieler">
       The KLighD project contributes infrastructure for easy and fast synthesis of graphical model representations in form of node-link-diagrams.
@@ -217,9 +218,9 @@ litigation.
    </url>
 
    <requires>
-      <import feature="com.google.guava.runtime.feature" version="10.0.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.platform" version="3.8.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.xtext.xbase.lib" version="2.3.0" match="greaterOrEqual"/>
+      <import plugin="com.google.guava"/>
    </requires>
 
    <plugin
@@ -342,13 +343,6 @@ litigation.
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.klighd.incremental"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.cau.cs.kieler.core.kgraph"
          download-size="0"
          install-size="0"
@@ -357,6 +351,13 @@ litigation.
 
    <plugin
          id="de.cau.cs.kieler.klay.tree"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.klighd.piccolo.svg"
          download-size="0"
          install-size="0"
          version="0.0.0"

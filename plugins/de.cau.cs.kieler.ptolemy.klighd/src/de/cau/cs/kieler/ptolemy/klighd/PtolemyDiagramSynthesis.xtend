@@ -18,6 +18,7 @@ import com.google.inject.Inject
 import de.cau.cs.kieler.core.util.Pair
 import de.cau.cs.kieler.klighd.TransformationOption
 import de.cau.cs.kieler.klighd.transformations.AbstractDiagramSynthesis
+import de.cau.cs.kieler.ptolemy.klighd.transformation.CommentsExtractor
 import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphOptimization
 import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphTransformation
 import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphVisualization
@@ -44,13 +45,24 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
     @Inject Ptolemy2KGraphTransformation transformation
     @Inject Ptolemy2KGraphOptimization optimization
     @Inject Ptolemy2KGraphVisualization visualization
+    @Inject CommentsExtractor commentsExtractor
     
     
     override transform(DocumentRoot model) {
+        // Transform, optimize, and visualize
         val kgraph = transformation.transform(model)
-        optimization.optimize(kgraph, SHOW_COMMENTS.optionBooleanValue,
-            !SHOW_RELATIONS.optionBooleanValue, FLATTEN.optionBooleanValue)
+        optimization.optimize(kgraph,
+            !SHOW_RELATIONS.optionBooleanValue,
+            FLATTEN.optionBooleanValue,
+            if (SHOW_COMMENTS.optionBooleanValue) commentsExtractor else null
+        )
         visualization.visualize(kgraph, COMPOUND_NODE_ALPHA.optionValue as Integer)
+        
+        // If comments should be shown, we want them to be attached properly. Do that now, because we
+        // know the node sizes only after the visualization
+        if (SHOW_COMMENTS.optionBooleanValue) {
+            commentsExtractor.attachComments()
+        }
         
         return kgraph
     }

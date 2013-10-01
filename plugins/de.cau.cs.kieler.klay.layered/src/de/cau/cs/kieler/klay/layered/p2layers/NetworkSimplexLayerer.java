@@ -208,12 +208,6 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
      */
     private Map<LEdge, Pair<LPort, LPort>> removedSelfLoops;
 
-    /** Maximum number of dfs calls during the initial layering. */
-    private int maximalDFSIterations = 0;
-    
-    /** Number of dfs calls done so far during the initial layering. */
-    private int currentDFSIterations = 0;
-
     // =============================== Initialization Methods =====================================
 
     /**
@@ -460,14 +454,11 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
      * @see de.cau.cs.kieler.klay.layered.p2layers.ILayerer ILayerer
      */
     public void process(final LGraph theLayeredGraph, final IKielerProgressMonitor monitor) {
-        monitor.begin("Network-Simplex Layering", 1);
+        monitor.begin("Network simplex layering", 1);
 
         layeredGraph = theLayeredGraph;
         removedSelfLoops = new HashMap<LEdge, Pair<LPort, LPort>>();
         int thoroughness = theLayeredGraph.getProperty(Properties.THOROUGHNESS) * ITER_LIMIT_FACTOR;
-
-        maximalDFSIterations =
-                theLayeredGraph.getProperty(Properties.NETWORK_SIMPLEX_MAX_ITERATIONS);
 
         Collection<LNode> theNodes = layeredGraph.getLayerlessNodes();
         if (theNodes.size() < 1) {
@@ -537,8 +528,7 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
             while (tightTreeDFS(nodes.iterator().next()) < nodes.size()) {
                 // some nodes are still not part of the tree
                 LEdge e = minimalSlack();
-                int slack =
-                        layer[e.getTarget().getNode().id] - layer[e.getSource().getNode().id]
+                int slack = layer[e.getTarget().getNode().id] - layer[e.getSource().getNode().id]
                                 - minSpan[e.id];
                 if (treeNode[e.getTarget().getNode().id]) {
                     slack = -slack;
@@ -567,40 +557,32 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
      * of the graph (i.e. sink and source nodes) will be assigned to a layer as close to their
      * adjacent nodes as possible.
      * 
-     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#layeringDFS(LNode, boolean)
-     *      layeringDFS()
      * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#layer layer
      * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#minSpan minSpan
      */
     private void initLayering() {
-
-        currentDFSIterations = 0;
-
         // determine initial layering
-        for (LNode node : sources) {
-            layeringDFS(node, false);
-        }
+        layeringTopologicalNumbering(sources, false);
         // determine second (reverse) layering
-        for (LNode node : sinks) {
-            layeringDFS(node, true);
-        }
+        layeringTopologicalNumbering(sinks, true);
+        
         // normalize revLayer
         int min = Integer.MAX_VALUE;
-        for (LNode node : nodes) {
-            if (min > revLayer[node.id]) {
+        for (LNode node : sources) {
+            if (revLayer[node.id] < min) {
                 min = revLayer[node.id];
             }
         }
         for (LNode node : nodes) {
             revLayer[node.id] -= min;
         }
+        
         // determine minimal length of each edge
         for (LEdge edge : edges) {
             if (layer[edge.getTarget().getNode().id] <= revLayer[edge.getSource().getNode().id]) {
                 minSpan[edge.id] = 1;
             } else {
-                minSpan[edge.id] =
-                        Math.min(layer[edge.getTarget().getNode().id]
+                minSpan[edge.id] = Math.min(layer[edge.getTarget().getNode().id]
                                 - layer[edge.getSource().getNode().id], Math.min(revLayer[edge
                                 .getTarget().getNode().id]
                                 - revLayer[edge.getSource().getNode().id], layer[edge.getTarget()
@@ -611,49 +593,64 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
 
     /**
      * Helper method for the network simplex layerer. It determines an (initial) feasible layering
-     * for the graph by traversing it by a modified depth-first-search arranging the nodes to the
-     * layer representing their height in a DFS-tree with the input node as its root. Dependently of
+     * for the graph by traversing it by a minimal topological numbering. Dependently of
      * the chosen mode indicated by {@code reverse}, this method traverses incoming edges (if
      * {@code reverse = true}), or outgoing edges, if {@code reverse = false}, only. Therefore, this
      * method should only be called with source nodes as argument in the first-mentioned case and
      * only with sink nodes in the latter case.
      * 
-     * @param node
-     *            the root of the DFS-subtree
+     * @param initialRootNodes
+     *            the roots of the topological numbering (sources or sinks, depending on the direction)
      * @param reverse
-     *            the traversal direction of the depth-first-search. If {@code reverse = true}),
+     *            the traversal direction of the topological numbering. If {@code reverse = true}),
      *            this method only traverses incoming edges. Otherwise, if {@code reverse = false},
      *            only outgoing edges will be traversed
      * 
      * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#layer layer
      * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#revLayer revLayer
      */
-    private void layeringDFS(final LNode node, final boolean reverse) {
-
-        if (currentDFSIterations++ > maximalDFSIterations) {
-            throw new RuntimeException(
-                    "The maximal number of iterations of the NETWORK_SIMPLEX layering strategy has"
-                            + " been exceeded. This might be due to the nature of the passed graph,"
-                            + " e.g. many highly connected nodes.\nEither try another layering"
-                            + " strategy, or increase the value of the \"Layering Max. Iterations\""
-                            + " option.");
-        }
-
-        LNode target = null;
-        if (reverse) {
-            for (LPort port : node.getPorts()) {
-                for (LEdge edge : port.getIncomingEdges()) {
-                    target = edge.getSource().getNode();
-                    revLayer[target.id] = Math.min(revLayer[target.id], revLayer[node.id] - 1);
-                    layeringDFS(target, true);
+    private void layeringTopologicalNumbering(final Collection<LNode> initialRootNodes,
+            final boolean reverse) {
+        // initialize the number of incident edges for each node
+        int[] incident = new int[nodes.size()];
+        for (LNode node : nodes) {
+            if (reverse) {
+                for (LPort port : node.getPorts()) {
+                    incident[node.id] += port.getOutgoingEdges().size();
+                }
+            } else {
+                for (LPort port : node.getPorts()) {
+                    incident[node.id] += port.getIncomingEdges().size();
                 }
             }
-        } else {
-            for (LPort port : node.getPorts()) {
-                for (LEdge edge : port.getOutgoingEdges()) {
-                    target = edge.getTarget().getNode();
-                    layer[target.id] = Math.max(layer[target.id], layer[node.id] + 1);
-                    layeringDFS(target, false);
+        }
+        
+        LinkedList<LNode> roots = new LinkedList<LNode>(initialRootNodes);
+        
+        while (!roots.isEmpty()) {
+            LNode node = roots.removeFirst();
+            
+            if (reverse) {
+                for (LPort port : node.getPorts()) {
+                    for (LEdge edge : port.getIncomingEdges()) {
+                        LNode source = edge.getSource().getNode();
+                        revLayer[source.id] = Math.min(revLayer[source.id], revLayer[node.id] - 1);
+                        incident[source.id]--;
+                        if (incident[source.id] == 0) {
+                            roots.addLast(source);
+                        }
+                    }
+                }
+            } else {
+                for (LPort port : node.getPorts()) {
+                    for (LEdge edge : port.getOutgoingEdges()) {
+                        LNode target = edge.getTarget().getNode();
+                        layer[target.id] = Math.max(layer[target.id], layer[node.id] + 1);
+                        incident[target.id]--;
+                        if (incident[target.id] == 0) {
+                            roots.addLast(target);
+                        }
+                    }
                 }
             }
         }
@@ -661,11 +658,10 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
 
     /**
      * Helper method for the network simplex layerer. It determines the length of the currently
-     * shortest incoming respectively outgoing edge of the input node.
+     * shortest incoming or outgoing edge of the input node.
      * 
      * @param node
-     *            the node to determine the length of its shortest incident incoming and outgoing
-     *            edge
+     *            the node to determine the length of its shortest incoming or outgoing edge
      * @return a pair containing the length of the shortest incoming (first element) and outgoing
      *         edge (second element) incident to the input node or {@code -1} as the length, if no
      *         such edge is incident
@@ -673,7 +669,6 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
      * @see de.cau.cs.kieler.core.util.Pair Pair
      */
     private Pair<Integer, Integer> minimalSpan(final LNode node) {
-
         int minSpanOut = Integer.MAX_VALUE;
         int minSpanIn = Integer.MAX_VALUE;
         int currentSpan;
@@ -713,7 +708,6 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
      * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#treeNode treeNode
      */
     private int tightTreeDFS(final LNode node) {
-
         int nodeCount = 1;
         treeNode[node.id] = true;
         LNode opposite = null;
@@ -749,7 +743,6 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
      *         if no such edge exists
      */
     private LEdge minimalSlack() {
-
         int minSlack = Integer.MAX_VALUE;
         LEdge minSlackEdge = null;
         int curSlack;
@@ -784,7 +777,6 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
      * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#postOrder postOrder
      */
     private int postorderTraversal(final LNode node) {
-
         int lowest = Integer.MAX_VALUE;
         for (LPort port : node.getPorts()) {
             for (LEdge edge : port.getConnectedEdges()) {
@@ -817,7 +809,6 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
      *         the tail component of the edge
      */
     private boolean isInHead(final LNode node, final LEdge edge) {
-
         LNode source = edge.getSource().getNode();
         LNode target = edge.getTarget().getNode();
 
@@ -848,7 +839,6 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
      * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#cutvalue cutvalue
      */
     private void cutvalues() {
-
         // determine incident tree edges for each node
         LinkedList<LNode> leafs = new LinkedList<LNode>();
         int treeEdgeCount;
@@ -931,7 +921,6 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
      * @return a tree edge with negative cut value or {@code null}, if no such edge exists
      */
     private LEdge leaveEdge() {
-
         for (LEdge edge : edges) {
             if (treeEdge[edge.id] && cutvalue[edge.id] < 0) {
                 return edge;
@@ -953,7 +942,6 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
      *             if the input edge is not a tree edge
      */
     private LEdge enterEdge(final LEdge leave) {
-
         if (!treeEdge[leave.id]) {
             throw new IllegalArgumentException("The input edge is not a tree edge.");
         }
@@ -994,7 +982,6 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
      * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#leaveEdge() leaveEdge()
      */
     private void exchange(final LEdge leave, final LEdge enter) {
-
         if (!treeEdge[leave.id]) {
             throw new IllegalArgumentException("Given leave edge is no tree edge.");
         }
@@ -1034,7 +1021,6 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
      * @return an integer array indicating how many nodes are assigned to which layer
      */
     private int[] normalize() {
-
         // determine lowest assigned layer and layer count
         int highest = Integer.MIN_VALUE;
         int lowest = Integer.MAX_VALUE;
@@ -1076,7 +1062,6 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
      *            an integer array indicating how many nodes are currently assigned to each layer
      */
     private void balance(final int[] filling) {
-
         // determine possible layers
         int newLayer;
         Pair<Integer, Integer> range = null;
@@ -1115,7 +1100,6 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
      * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#layer layer
      */
     private void putNode(final LNode node) {
-
         List<Layer> layers = layeredGraph.getLayers();
         // add additional layers to match required amount
         while (layers.size() <= layer[node.id]) {
@@ -1138,7 +1122,6 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
      *             if the input edge is not connected to the input port
      */
     private LPort getOpposite(final LPort port, final LEdge edge) {
-
         if (edge.getSource().equals(port)) {
             return edge.getTarget();
         } else if (edge.getTarget().equals(port)) {

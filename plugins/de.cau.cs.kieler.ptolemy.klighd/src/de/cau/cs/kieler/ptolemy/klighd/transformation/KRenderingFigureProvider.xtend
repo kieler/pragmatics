@@ -28,9 +28,14 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
 import de.cau.cs.kieler.kiml.options.LayoutOptions
 import de.cau.cs.kieler.kiml.options.PortSide
 import de.cau.cs.kieler.klighd.KlighdConstants
+import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExtensions
+import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.LabelExtensions
+import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MarkerExtensions
+import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MiscellaneousExtensions
+import de.cau.cs.kieler.ptolemy.klighd.transformation.util.GraphicsUtils
 
 import static de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties.*
-import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConstants.*
+import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
 
 /**
  * Creates concrete KRendering information for Ptolemy diagram elements.

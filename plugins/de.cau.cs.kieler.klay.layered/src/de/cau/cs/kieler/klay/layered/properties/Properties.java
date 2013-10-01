@@ -333,6 +333,14 @@ public final class Properties {
     /** minimal spacing between objects. */
     public static final Property<Float> OBJ_SPACING = new Property<Float>(LayoutOptions.SPACING,
             20.0f, 0.0f);
+    
+    /**
+     * the factor by which the vertical spacing between objects differs from the horizontal
+     * {@link Properties#OBJ_SPACING}.
+     */
+    public static final IProperty<Float> OBJ_SPACING_VERTICAL_FACTOR = new Property<Float>(
+            "de.cau.cs.kieler.klay.layered.verticalSpacingFactor", 1.0f, 0f);
+    
     /** spacing to the border of the drawing. */
     public static final Property<Float> BORDER_SPACING = new Property<Float>(
             LayoutOptions.BORDER_SPACING, 20.0f, 0.0f);
@@ -411,10 +419,6 @@ public final class Properties {
     /** Whether feedback edges should be highlighted by routing around the nodes. */
     public static final IProperty<Boolean> FEEDBACK_EDGES = new Property<Boolean>(
             "de.cau.cs.kieler.klay.layered.feedBackEdges", false);
-    
-    /** Maximal number of iterations performed by the {@link NetworkSimplexLayerer}. */
-    public static final IProperty<Integer> NETWORK_SIMPLEX_MAX_ITERATIONS = new Property<Integer>(
-            "de.cau.cs.kieler.klay.layered.networkSimplexMaxIterations", 10000000, 1000);
 
 
     // /////////////////////////////////////////////////////////////////////////////
@@ -425,5 +429,4 @@ public final class Properties {
      */
     private Properties() {
     }
-
 }

@@ -4,12 +4,11 @@
          containing the file and make sure the following environment variables are
          set correctly:
          
-            PRODUCT  Directory that contains the directory structure of a compiled
-                     and packaged KIELER installation. You can get at one by running
-                     Maven on the KIELER parent pom file. The product can then be
-                     found in one of the subdirectories of:
-
-                       build/de.cau.cs.kieler.repository/target/products/de.cau.cs.kieler.product
+            TARGET_PLATFORM  Directory that contains the target platform used to build
+                             KIELER. This is a p2 repository available online. Its URL
+                             can be found by looking at the ../pom.xml file.
+                             
+            KIELER_REPOSITORY  A p2 repository of a KIELER Pragmatics build.
          
          This build file provides the following targets:
          
@@ -31,14 +30,15 @@
     
     <!-- Retrieve our system property. -->
     <property environment="system"/>
-    <property name="productFolder" location="${system.PRODUCT}" />
+    <property name="targetPlatformFolder" location="${system.TARGET_PLATFORM}" />
+    <property name="kielerRepositoryFolder" location="${system.KIELER_REPOSITORY}" />
     
     <!-- Some more properties that configure the behaviour of the build. -->
     <property name="outputFolder" location="target" />
     <property name="outputFolder.temp" location="${outputFolder}/temp" />
     <property name="outputFile.withoutdeps" location="${outputFolder}/klay_nightly_${timestamp}.jar" />
     <property name="outputFile.withdeps" location="${outputFolder}/klay-emf_nightly_${timestamp}.jar" />
-    <property name="licenseFile" location="${productFolder}/epl-v10.html" />
+    <property name="licenseFile" location="epl-v10.html" />
     
     
     <!-- TARGET -setupTempFolder (internal) -->
@@ -52,12 +52,13 @@
         
         <!-- Unjar everything from the KLay jar files into the temporary folder. -->
         <unjar dest="${outputFolder.temp}" overwrite="true">
-            <fileset dir="${productFolder}/plugins">
+            <fileset dir="${kielerRepositoryFolder}/plugins">
                 <include name="de.cau.cs.kieler.core_*.jar"/>
                 <include name="de.cau.cs.kieler.core.kgraph_*.jar"/>
                 <include name="de.cau.cs.kieler.kiml_*.jar"/>
                 <include name="de.cau.cs.kieler.klay.layered_*.jar"/>
                 <include name="de.cau.cs.kieler.klay.force_*.jar"/>
+                <include name="de.cau.cs.kieler.klay.tree_*.jar"/>
             </fileset>
             <patternset>
                 <exclude name="META-INF/*"/>
@@ -112,7 +113,7 @@
         
         <!-- Add the dependencies to the temporary folder. -->
         <unjar dest="${outputFolder.temp}" overwrite="true">
-            <fileset dir="${productFolder}/plugins">
+            <fileset dir="${targetPlatformFolder}/plugins">
                 <include name="org.eclipse.emf.common_*.jar"/>
                 <include name="org.eclipse.emf.ecore_*.jar"/>
                 <include name="org.eclipse.emf.ecore.xmi_*.jar"/>

@@ -2,8 +2,9 @@
 <feature
       id="de.cau.cs.kieler.ptview.feature"
       label="KIELER Ptolemy Viewer"
-      version="0.1.0.qualifier"
-      provider-name="Christian-Albrechts-Universität zu Kiel">
+      version="0.1.1.qualifier"
+      provider-name="Christian-Albrechts-Universität zu Kiel"
+      plugin="de.cau.cs.kieler.ptolemy.klighd">
 
    <description url="http://www.informatik.uni-kiel.de/rtsys/kieler">
       Adds a KLighD-based editor for viewing Ptolemy models in Eclipse.
@@ -219,10 +220,10 @@ litigation.
    <requires>
       <import plugin="org.antlr.runtime"/>
       <import plugin="org.apache.log4j"/>
-      <import feature="com.google.guava.runtime.feature" version="10.0.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.emf" version="2.6.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.xtext.sdk" version="2.3.1" match="greaterOrEqual"/>
       <import feature="org.ptolemy.feature" version="8.1.0" match="greaterOrEqual"/>
+      <import plugin="com.google.guava"/>
    </requires>
 
    <plugin
@@ -325,13 +326,6 @@ litigation.
 
    <plugin
          id="de.cau.cs.kieler.core.kgraph.text.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.klighd.incremental"
          download-size="0"
          install-size="0"
          version="0.0.0"

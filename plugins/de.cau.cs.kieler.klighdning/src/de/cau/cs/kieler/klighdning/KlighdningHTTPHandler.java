@@ -17,6 +17,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Map;
+import java.util.zip.Adler32;
+import java.util.zip.Checksum;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +36,7 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.io.CharStreams;
+import com.google.common.io.Files;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.klighd.LightDiagramServices;
@@ -49,6 +52,8 @@ public class KlighdningHTTPHandler extends AbstractHandler {
     private SVGBrowsingViewer getViewer;
 
     private HtmlGenerator gen = new HtmlGenerator();
+    
+    private Checksum checksum = new Adler32();
 
     /**
      * @param docRoot
@@ -99,11 +104,13 @@ public class KlighdningHTTPHandler extends AbstractHandler {
             // rs.getResourceFactoryRegistry().getExtensionToFactoryMap()
             // .put("xml", new MomlResourceFactoryImpl());
 
+            File file = new File(docRoot, path);
             System.out.println("Loading resource: " + path);
             final Resource r =
-                    rs.getResource(URI.createFileURI(new File(docRoot, path).getAbsolutePath()),
+                    rs.getResource(URI.createFileURI(file.getAbsolutePath()),
                             true);
 
+            boolean hasChanged = false;
             try {
                 // translate and set the model
                 KNode model = LightDiagramServices.translateModel(r.getContents().get(0), null);
@@ -117,7 +124,13 @@ public class KlighdningHTTPHandler extends AbstractHandler {
                 if (transformArr != null && transformArr.length > 0) {
                     transform = transformArr[0];
                 }
-
+                
+                // get timestamp
+                String cs = request.getParameterMap().get("cs")[0];
+                if (Long.valueOf(cs) != Files.getChecksum(file, checksum)) {
+                    hasChanged = true;
+                }
+                
                 // apply perma link
                 getViewer.applyPermalink(perma, transform);
 
@@ -139,7 +152,7 @@ public class KlighdningHTTPHandler extends AbstractHandler {
 
             // pass the svg
             String svg = SVGLayoutProvider.getInstance().layout(getViewer, false);
-            response.getWriter().println(gen.permaLinkPage(svg));
+            response.getWriter().println(gen.permaLinkPage(svg, hasChanged      ));
 
         } else if (target.startsWith("/refreshGit")) {
             /*----------------------------------------------------------------------------

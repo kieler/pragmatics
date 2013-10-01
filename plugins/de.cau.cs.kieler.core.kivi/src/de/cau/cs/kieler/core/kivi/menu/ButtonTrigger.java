@@ -16,7 +16,10 @@ package de.cau.cs.kieler.core.kivi.menu;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.core.kivi.AbstractTrigger;
@@ -97,9 +100,12 @@ public class ButtonTrigger extends AbstractTrigger {
          * @return the active editor
          */
         public IEditorPart getEditor() {
-            if (editor == null) {              
-                editor = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-                        .getActivePage().getActiveEditor();
+            if (editor == null) { 
+                Display.getDefault().syncExec(new Runnable() {
+					public void run() {
+		            	editor = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+					}
+				});
             }
             return editor;
         }

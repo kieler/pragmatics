@@ -518,7 +518,8 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
      *            the layered graph to create an unbalanced placement for.
      */
     private void createUnbalancedPlacement(final LGraph layeredGraph) {
-        float normalSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
+        float normalSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING)
+                * layeredGraph.getProperty(Properties.OBJ_SPACING_VERTICAL_FACTOR);
         float smallSpacing = normalSpacing
                 * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
 
@@ -598,7 +599,8 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
      * @param layeredGraph a layered graph
      */
     private void balancePlacement(final LGraph layeredGraph) {
-        float spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
+        float spacing = layeredGraph.getProperty(Properties.OBJ_SPACING)
+                * layeredGraph.getProperty(Properties.OBJ_SPACING_VERTICAL_FACTOR);
         float smallSpacing = spacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
         
         // Determine a suitable number of pendulum iterations
@@ -816,7 +818,8 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
      *            the layered graph
      */
     private void postProcess(final LGraph layeredGraph) {
-        float normalSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
+        float normalSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING)
+                * layeredGraph.getProperty(Properties.OBJ_SPACING_VERTICAL_FACTOR);
         float smallSpacing = normalSpacing
                 * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
 
@@ -961,5 +964,4 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
         String debugFileName = Util.getDebugOutputFileBaseName(layeredGraph) + "linseg-dep";
         return new FileWriter(new File(path + File.separator + debugFileName + ".dot"));
     }
-
 }

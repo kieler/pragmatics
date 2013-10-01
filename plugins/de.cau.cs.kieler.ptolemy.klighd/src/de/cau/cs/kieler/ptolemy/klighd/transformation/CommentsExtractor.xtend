@@ -17,7 +17,11 @@ import com.google.inject.Inject
 import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.core.util.Pair
 import de.cau.cs.kieler.kiml.util.KimlUtil
-import java.awt.geom.Point2D
+import de.cau.cs.kieler.klighd.microlayout.PlacementUtil
+import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExtensions
+import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.LabelExtensions
+import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MarkerExtensions
+import java.awt.geom.Rectangle2D
 import java.util.List
 import org.eclipse.emf.ecore.util.FeatureMap
 import org.eclipse.emf.ecore.xmi.XMLResource
@@ -25,7 +29,7 @@ import org.eclipse.emf.ecore.xml.type.AnyType
 import org.ptolemy.moml.PropertyType
 
 import static de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties.*
-import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConstants.*
+import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
 
 /**
  * Extracts comments from the model and turns them into special comment nodes. Also tries to find the
@@ -136,7 +140,7 @@ import static de.cau.cs.kieler.ptolemy.klighd.transformation.TransformationConst
  * </ol>
  * 
  * <p>This is still kind of experimental. It does work, but the heuristic is quite
- * simpllistic and doesn't always give correct results.</p>
+ * simplistic and doesn't always give correct results.</p>
  * 
  * @author cds
  */
@@ -148,8 +152,8 @@ class CommentsExtractor {
     @Inject extension LabelExtensions
     /** Marking nodes. */
     @Inject extension MarkerExtensions
-    /** Miscellaneous stuff to make my life easier. */
-    @Inject extension MiscellaneousExtensions
+    /** Utility class for attaching the correct rendering to comment edges. */
+    @Inject extension KRenderingFigureProvider
     
     /** If true, the attachment heuristics are disabled once explicitly attached comments are found. */
     val boolean heuristicsOverride = false
@@ -157,25 +161,20 @@ class CommentsExtractor {
      * The maximum distance between a comment node and a regular node for them to be considered to be
      * attached by the comment attachment heuristic.
      */
-    val double maxAttachmentDistance = 10000.0
+    val double maxAttachmentDistance = 1500.0
     
     /** List of comment nodes created in the process. */
-    var List<KNode> createdCommentNodes
+    val List<KNode> createdCommentNodes = newLinkedList()
     /** List of explicit attachments from comment nodes to other nodes. */
-    var List<Pair<KNode, KNode>> explicitAttachments
+    val List<Pair<KNode, KNode>> explicitAttachments = newLinkedList()
     /** List of heuristically found attachments from comment nodes to other nodes. */
-    var List<Pair<KNode, KNode>> heuristicAttachments
+    val List<Pair<KNode, KNode>> heuristicAttachments = newLinkedList()
     
     
     /**
      * Finds comments and comment attachments in the tree rooted at the given node.
      */
     def void extractAndAttachComments(KNode root) {
-        // Initialize lists
-        createdCommentNodes = newLinkedList()
-        explicitAttachments = newLinkedList()
-        heuristicAttachments = newLinkedList()
-        
         extractComments(root)
         attachComments()
     }
@@ -190,7 +189,7 @@ class CommentsExtractor {
      * 
      * @param root the root node.
      */
-    def private void extractComments(KNode root) {
+    def void extractComments(KNode root) {
         // Iterate through the node's annotations looking for comments
         for (annotation : root.annotations) {
             if ((annotation.class_ ?: "").equals(ANNOTATION_TYPE_TEXT_ATTRIBUTE)) {
@@ -283,7 +282,7 @@ class CommentsExtractor {
      * initially attached to. The attachment can have been either explicit (by the model designer) or
      * implicit, by a distance-based heuristic.
      */
-    def private void attachComments() {
+    def void attachComments() {
         // Iterate over the created comment nodes and try attaching them
         for (commentNode : createdCommentNodes) {
             // Check if the comment was explicitly attached to a node
@@ -295,8 +294,13 @@ class CommentsExtractor {
                 // Run our heuristic to find an implicit attachment
                 val heuristicAttachment = findNearestNonCommentSibling(commentNode)
                 
-                if (heuristicAttachment != null) {
-                    heuristicAttachments += new Pair(commentNode, heuristicAttachment)
+                if (heuristicAttachment != null) { 
+                	// CARE xtend's "+=" allows to have iterables on both sides, due to the 
+                	// fact that Pair implements Iterable and no generics are specified during
+                	// the creation of the pair, xtend thinks of the pair as an iterable and 
+                	// adds both elements of the to the list. Not, as intended, the pair itself
+                	// heuristicAttachments += new Pair(commentNode, heuristicAttachment)
+                    heuristicAttachments.add(new Pair(commentNode, heuristicAttachment))
                 }
             }
         }
@@ -351,15 +355,15 @@ class CommentsExtractor {
      * @return the nearest sibling or {@code null} if none could be found within the maximum distance.
      */
     def private KNode findNearestNonCommentSibling(KNode commentNode) {
-        // Find the comment node's position in the original diagram
-        val commentLocation = getPtolemyLocation(commentNode)
+        // Find the comment node's position in the original diagram and its size in our diagram
+        val commentBounds = getPtolemyBounds(commentNode)
         
         var currentNearestDistance = maxAttachmentDistance + 1
         var KNode currentNearestSibling = null
         
         for (sibling : commentNode.parent.children) {
             if (!sibling.markedAsComment) {
-                val distance = computeDistance(commentLocation, getPtolemyLocation(sibling))
+                val distance = computeSquaredDistance(commentBounds, getPtolemyBounds(sibling))
                 
                 if (distance < currentNearestDistance && distance <= maxAttachmentDistance) {
                     currentNearestDistance = distance
@@ -371,17 +375,114 @@ class CommentsExtractor {
         return currentNearestSibling
     }
     
+    private val OUT_TOP_LEFT = Rectangle2D::OUT_TOP.bitwiseOr(Rectangle2D::OUT_LEFT)
+    private val OUT_BOTTOM_LEFT = Rectangle2D::OUT_BOTTOM.bitwiseOr(Rectangle2D::OUT_LEFT)
+    private val OUT_TOP_RIGHT = Rectangle2D::OUT_TOP.bitwiseOr(Rectangle2D::OUT_RIGHT)
+    private val OUT_BOTTOM_RIGHT = Rectangle2D::OUT_BOTTOM.bitwiseOr(Rectangle2D::OUT_RIGHT)
+    
     /**
-     * Compute a measure of distance between the two given locations. The current implementation simply
-     * returns the square of the euclidean distance, which is perfectly fine.
+     * Compute the squared distance between the two shapes defined by the given bounds. If the two
+     * shapes intersect, a distance of zero is returned.
      * 
-     * @param location1 one location.
-     * @param location2 the other location.
-     * @return a measure of distance between the two locations.
+     * <p>The current implementation simply returns the square of the euclidean distance, which is
+     * perfectly fine.</p>
+     * 
+     * @param bounds1 the first shape.
+     * @param bounds2 the second shape.
+     * @return the squared distance between the two shapes.
      */
-    def private double computeDistance(Point2D$Double location1, Point2D$Double location2) {
-        val deltaX = location2.x - location1.x
-        val deltaY = location2.y - location1.y
+    def private double computeSquaredDistance(Rectangle2D.Double bounds1, Rectangle2D.Double bounds2) {
+        // Check if the two shapes intersect
+        if (bounds1.intersects(bounds2)) {
+            return 0
+        }
+        
+        // Check where the top left and bottom right corners of shape 1 lie with respect to shape 2
+        val topLeftPos = bounds2.outcode(bounds1.x, bounds1.y)
+        val bottomRightPos = bounds2.outcode(bounds1.x + bounds1.width, bounds1.y + bounds1.height)
+        
+        // What we use to compute the distances depends entirely on where the two corners are
+        if (topLeftPos.bitwiseAnd(OUT_TOP_LEFT) == OUT_TOP_LEFT
+            && bottomRightPos.bitwiseAnd(OUT_TOP_LEFT) == OUT_TOP_LEFT) {
+            
+            // Return distance between shape1.bottomRight and shape2.topLeft
+            return computeSquaredDistance(
+                bounds1.x + bounds1.width,
+                bounds1.y + bounds1.height,
+                bounds2.x,
+                bounds2.y
+            )
+        } else if (topLeftPos.bitwiseAnd(OUT_BOTTOM_LEFT) == OUT_BOTTOM_LEFT
+            && bottomRightPos.bitwiseAnd(OUT_BOTTOM_LEFT) == OUT_BOTTOM_LEFT) {
+            
+            // Return distance between shape1.topRight and shape2.bottomLeft
+            return computeSquaredDistance(
+                bounds1.x + bounds1.width,
+                bounds1.y,
+                bounds2.x,
+                bounds2.y + bounds2.height
+            )
+        } else if (topLeftPos.bitwiseAnd(OUT_TOP_RIGHT) == OUT_TOP_RIGHT
+            && bottomRightPos.bitwiseAnd(OUT_TOP_RIGHT) == OUT_TOP_RIGHT) {
+            
+            // Return distance between shape1.bottomLeft and shape2.topRight
+            return computeSquaredDistance(
+                bounds1.x,
+                bounds1.y + bounds1.height,
+                bounds2.x + bounds2.width,
+                bounds2.y
+            )
+        } else if (topLeftPos.bitwiseAnd(OUT_BOTTOM_RIGHT) == OUT_BOTTOM_RIGHT
+            && bottomRightPos.bitwiseAnd(OUT_BOTTOM_RIGHT) == OUT_BOTTOM_RIGHT) {
+            
+            // return distance between shape1.topLeft and shape2.bottomRight
+            return computeSquaredDistance(
+                bounds1.x,
+                bounds1.y,
+                bounds2.x + bounds2.width,
+                bounds2.y + bounds2.height
+            )
+        } else if (topLeftPos.bitwiseAnd(Rectangle2D::OUT_LEFT) != 0
+            && bottomRightPos.bitwiseAnd(Rectangle2D::OUT_LEFT) != 0) {
+            
+            // return distance between shape1.right and shape2.left
+            val distance = bounds1.x + bounds1.width - bounds2.x
+            return distance * distance
+        } else if (topLeftPos.bitwiseAnd(Rectangle2D::OUT_RIGHT) != 0
+            && bottomRightPos.bitwiseAnd(Rectangle2D::OUT_RIGHT) != 0) {
+            
+            // return distance between shape1.left and shape2.right
+            val distance = bounds1.x - bounds2.x - bounds2.width
+            return distance * distance
+        } else if (topLeftPos.bitwiseAnd(Rectangle2D::OUT_TOP) != 0
+            && bottomRightPos.bitwiseAnd(Rectangle2D::OUT_TOP) != 0) {
+            
+            // return distance between shape1.bottom and shape2.top
+            val distance = bounds1.y + bounds1.height - bounds2.y
+            return distance * distance
+        } else if (topLeftPos.bitwiseAnd(Rectangle2D::OUT_BOTTOM) != 0
+            && bottomRightPos.bitwiseAnd(Rectangle2D::OUT_BOTTOM) != 0) {
+            
+            // return distance between shape1.top and shape2.bottom
+            val distance = bounds1.y - bounds2.y - bounds2.height
+            return distance * distance
+        }
+        
+        return maxAttachmentDistance + 1.0
+    }
+    
+    /**
+     * Returns the square of the distance between the two points defined by the given coordinates.
+     * 
+     * @param x1 x coordinate of the first point.
+     * @param y1 y coordinate of the first point.
+     * @param x2 x coordinate of the second point.
+     * @param y2 y coordinate of the second point.
+     * @return the squared distance between the two points.
+     */
+    def private double computeSquaredDistance(double x1, double y1, double x2, double y2) {
+        val deltaX = x2 - x1
+        val deltaY = y2 - y1
         
         return deltaX * deltaX + deltaY * deltaY
     }
@@ -417,6 +518,9 @@ class CommentsExtractor {
      */
     def private void attachCommentNode(KNode commentNode, KNode attachedNode) {
         val edge = KimlUtil::createInitializedEdge()
+        val edgeRendering = createCommentEdgeRendering(edge)
+        edge.data += edgeRendering
+        
         edge.source = commentNode
         edge.target = attachedNode
     }
@@ -441,17 +545,19 @@ class CommentsExtractor {
     }
     
     /**
-     * Retrieves the position of the given node in the original Ptolemy diagram, if any. This method
-     * is a create method because the positions don't change and we like Xtend to cache already
+     * Retrieves the position of the given node in the original Ptolemy diagram, if any, as well as
+     * its size as given by the node's shape layout. The shape layout's size fields are expected to
+     * have been correctly set during the visualization step of the diagram synthesis. This method
+     * is a create method because the bounds don't change and we like Xtend to cache already
      * calculated positions for us.
      * 
      * @param node the node whose location to retrieve.
-     * @return the location or some point way out if there was a problem.
+     * @return the bounds or some bounds way out if there was a problem.
      */
-    def private create location : new Point2D$Double() getPtolemyLocation(KNode node) {
+    def private create bounds : new Rectangle2D.Double() getPtolemyBounds(KNode node) {
         // Initialize point with ridiculous values
-        location.x = 2e20
-        location.y = 2e20
+        bounds.x = 2e20
+        bounds.y = 2e20
         
         // Get location annotation
         val locationAnnotation = node.getAnnotation(ANNOTATION_LOCATION)
@@ -467,10 +573,65 @@ class CommentsExtractor {
         
         if (locationArray.size == 2) {
             try {
-                location.x = Double::valueOf(locationArray.get(0))
-                location.y = Double::valueOf(locationArray.get(1))
+                bounds.x = Double::valueOf(locationArray.get(0))
+                bounds.y = Double::valueOf(locationArray.get(1))
+                
+                // Save the node's size in the bounds as well
+                val estimatedSize = PlacementUtil::estimateSize(node)
+                bounds.width = estimatedSize.width
+                bounds.height = estimatedSize.height
             } catch (NumberFormatException e) {
                 
+            }
+        }
+        
+        // The location defines where an actor's anchor point is. Where the anchor point is positioned
+        // in the actor is a completely different question and defaults to the actor's center, except
+        // for TextAttribute instances, which default to northwest.
+        val anchorDefault = if (node.markedAsComment) {
+            "northwest"
+        } else {
+            "center"
+        }
+        val anchorAnnotation = node.getAnnotation(ANNOTATION_ANCHOR)
+        val anchorString = anchorAnnotation?.value ?: anchorDefault
+        
+        switch (anchorString) {
+            case "north": {
+                bounds.x = bounds.x - bounds.width / 2
+            }
+            case "south": {
+                bounds.x = bounds.x - bounds.width / 2
+                bounds.y = bounds.y - bounds.height
+            }
+            case "west": {
+                bounds.y = bounds.y - bounds.height / 2
+            }
+            case "east": {
+                bounds.x = bounds.x - bounds.width
+                bounds.y = bounds.y - bounds.height / 2
+            }
+            case "northwest": {
+                // Nothing to do
+            }
+            case "northeast": {
+                bounds.x = bounds.x - bounds.width
+            }
+            case "southwest": {
+                bounds.y = bounds.y - bounds.height
+            }
+            case "sountheast": {
+                // Ptolemy has a typo here; we support this typo as well as the correct spelling
+                bounds.x = bounds.x - bounds.width
+                bounds.y = bounds.y - bounds.height
+            }
+            case "southeast": {
+                bounds.x = bounds.x - bounds.width
+                bounds.y = bounds.y - bounds.height
+            }
+            default: {
+                bounds.x = bounds.x - bounds.width / 2
+                bounds.y = bounds.y - bounds.height / 2
             }
         }
     }
