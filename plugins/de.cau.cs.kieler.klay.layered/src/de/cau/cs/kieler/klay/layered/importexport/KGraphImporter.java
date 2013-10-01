@@ -632,8 +632,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         }
         
         // copy the bend points of the edge if they are needed by anyone
-        if (layeredGraph.getProperty(Properties.CROSS_MIN)
-                == CrossingMinimizationStrategy.INTERACTIVE
+        if (layeredGraph.getProperty(Properties.CROSS_MIN) == CrossingMinimizationStrategy.INTERACTIVE
                 && !edgeLayout.getBendPoints().isEmpty()) {
             KVectorChain bendpoints = new KVectorChain();
             for (KPoint point : edgeLayout.getBendPoints()) {
@@ -769,13 +768,13 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
         // iterate through all edges
         for (LEdge ledge : edgeList) {
+            KEdge kedge = (KEdge) ledge.getProperty(Properties.ORIGIN);
             // Self-loops are currently left untouched unless the edge router is set to
             // the orthogonal router
-            if (ledge.isSelfLoop() && !orthogonalRouting) {
+            if (kedge == null || ledge.isSelfLoop() && !orthogonalRouting) {
                 continue;
             }
             
-            KEdge kedge = (KEdge) ledge.getProperty(Properties.ORIGIN);
             KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
             KVectorChain bendPoints = ledge.getBendPoints();
 
