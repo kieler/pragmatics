@@ -462,6 +462,7 @@ public class OgmlServerCommunicator {
         
         // apply edge layout
         boolean processLabels = parentNodeLayout.getProperty(AlgorithmSetup.PLACE_LABELS);
+        boolean adaptPortPositions = parentNodeLayout.getProperty(AlgorithmSetup.ADAPT_PORT_POSITIONS); 
         for (Map.Entry<String, KEdge> entry : id2EdgeMap.entrySet()) {
             KEdge kedge = entry.getValue();
             KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
@@ -476,7 +477,7 @@ public class OgmlServerCommunicator {
                 KPoint sourcePoint =
                         toKPoint((float) sourceBend.x, (float) sourceBend.y, offsetX, offsetY);
                 edgeLayout.setSourcePoint(sourcePoint);
-                if (kedge.getSourcePort() != null) {
+                if (adaptPortPositions && kedge.getSourcePort() != null) {
                     KShapeLayout portLayout = kedge.getSourcePort().getData(KShapeLayout.class);
                     KShapeLayout sourceLayout = kedge.getSource().getData(KShapeLayout.class);
                     portLayout.setXpos(sourcePoint.getX() - sourceLayout.getXpos()
@@ -504,7 +505,7 @@ public class OgmlServerCommunicator {
                 KPoint targetPoint =
                         toKPoint((float) lastBend.x, (float) lastBend.y, offsetX, offsetY);
                 edgeLayout.setTargetPoint(targetPoint);
-                if (kedge.getTargetPort() != null) {
+                if (adaptPortPositions && kedge.getTargetPort() != null) {
                     KShapeLayout portLayout = kedge.getTargetPort().getData(KShapeLayout.class);
                     KShapeLayout targetLayout = kedge.getTarget().getData(KShapeLayout.class);
                     portLayout.setXpos(targetPoint.getX() - targetLayout.getXpos()

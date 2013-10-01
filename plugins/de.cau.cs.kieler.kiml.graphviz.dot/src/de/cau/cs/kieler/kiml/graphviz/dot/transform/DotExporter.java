@@ -961,7 +961,9 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
             edgeLayout.getTargetPoint().applyVector(targetPoint);
             
             // set source and target port positions accordingly
-            if (kedge.getSourcePort() != null || kedge.getTargetPort() != null) {
+            boolean adaptPortPositions = transData.getSourceGraph().getData(KShapeLayout.class)
+                    .getProperty(Attributes.ADAPT_PORT_POSITIONS);
+            if (adaptPortPositions && (kedge.getSourcePort() != null || kedge.getTargetPort() != null)) {
                 referenceNode = kedge.getSource();
                 if (!KimlUtil.isDescendant(kedge.getTarget(), referenceNode)) {
                     referenceNode = referenceNode.getParent();

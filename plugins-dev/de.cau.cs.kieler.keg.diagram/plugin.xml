@@ -619,7 +619,7 @@
          
          <command
             commandId="de.cau.cs.kieler.keg.ui.reinitDiagram"
-            label="%reinitDiagramCommand.name"
+            label="%initDiagramActionLabel"
             style="push"
             tooltip="%reinitDiagramCommand.tooltip">
             
