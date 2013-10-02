@@ -22,6 +22,7 @@ import org.osgi.framework.Bundle;
  * Wraps the execution of the libavoid-server binary. Also employs an watchdog in case of errors.
  * 
  * @author uru
+ * @author msp
  */
 public class LibavoidServer {
 
