@@ -53,6 +53,7 @@
     <module>de.cau.cs.kieler.klighd.piccolo.draw2d</module>
     <module>de.cau.cs.kieler.klighd.piccolo.svg</module>
     <module>de.cau.cs.kieler.klighd.xtext</module>
+    <module>de.cau.cs.kieler.klighd.ui</module>
     <module>de.cau.cs.kieler.ksbase</module>
     <module>de.cau.cs.kieler.ksbase.ui</module>
     <module>de.cau.cs.kieler.kwebs</module>
