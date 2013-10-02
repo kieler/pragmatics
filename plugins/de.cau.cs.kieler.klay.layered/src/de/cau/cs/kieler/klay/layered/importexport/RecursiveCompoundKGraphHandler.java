@@ -13,20 +13,28 @@
  */
 package de.cau.cs.kieler.klay.layered.importexport;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
+import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
@@ -39,6 +47,7 @@ import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement.HashCodeCounter;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
+import de.cau.cs.kieler.klay.layered.p5edges.OrthogonalRoutingGenerator;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -52,10 +61,10 @@ public class RecursiveCompoundKGraphHandler {
     private KlayLayered klayLayered;
     /** the hash code counter used to create graph elements. */
     private HashCodeCounter hashCodeCounter;
-    /** map of edges that cross hierarchy borders. */
-    private final Map<KEdge, ExternalPort> crossHierarchyEdges = new HashMap<KEdge, ExternalPort>();
     /** property holder for external port dummies. */
     private final IPropertyHolder externalPortDummyProperties = new MapPropertyHolder();
+    /** map of cross-hierarchy edges. */
+    private final Multimap<KEdge, CrossHierarchyEdge> crossHierarchyMap = HashMultimap.create();
     
     public RecursiveCompoundKGraphHandler(final KlayLayered klayLayered,
             final HashCodeCounter hashCodeCounter) {
@@ -68,7 +77,8 @@ public class RecursiveCompoundKGraphHandler {
         // perform the standard flat layout on each hierarchy level
         recursiveLayout(kgraph, monitor);
         
-        // TODO handle the cross-hierarchy edges
+        // apply layout to the cross-hierarchy edges
+        applyCrossHierarchyLayout(kgraph);
     }
     
     private static class ExternalPort {
@@ -84,6 +94,20 @@ public class RecursiveCompoundKGraphHandler {
             this.lgraph = lgraph;
             this.lnode = lnode;
             this.type = portType;
+        }
+    }
+    
+    private static class CrossHierarchyEdge {
+        private LEdge ledge;
+        private LGraph lgraph;
+        private KNode parentNode;
+        private PortType type;
+        CrossHierarchyEdge(final LEdge ledge, final LGraph lgraph, final KNode parentNode,
+                final PortType type) {
+            this.ledge = ledge;
+            this.lgraph = lgraph;
+            this.parentNode = parentNode;
+            this.type = type;
         }
     }
     
@@ -138,6 +162,8 @@ public class RecursiveCompoundKGraphHandler {
                     LEdge newEdge = new LEdge(layeredGraph);
                     KEdgeLayout kedgeLayout = kedge.getData(KEdgeLayout.class);
                     newEdge.copyProperties(kedgeLayout);
+                    crossHierarchyMap.put(kedge, new CrossHierarchyEdge(newEdge, layeredGraph,
+                            parentNode, PortType.OUTPUT));
                     LPort sourcePort;
                     if (kedge.getSourcePort() == null) {
                         sourcePort = graphImporter.createPort(lnode,
@@ -165,6 +191,8 @@ public class RecursiveCompoundKGraphHandler {
                     LEdge newEdge = new LEdge(layeredGraph);
                     KEdgeLayout kedgeLayout = kedge.getData(KEdgeLayout.class);
                     newEdge.copyProperties(kedgeLayout);
+                    crossHierarchyMap.put(kedge, new CrossHierarchyEdge(newEdge, layeredGraph,
+                            parentNode, PortType.INPUT));
                     LPort targetPort;
                     if (kedge.getTargetPort() == null) {
                         targetPort = graphImporter.createPort(lnode,
@@ -263,19 +291,10 @@ public class RecursiveCompoundKGraphHandler {
                                         PortType.OUTPUT);
                             }
                         } else {
-                            // the edge comes from the inside of another sibling node
-                            ExternalPort sourceExtenalPort = null;
-                            for (ExternalPort externalPort2 : containedExternalPorts) {
-                                if (externalPort2 != externalPort
-                                        && externalPort2.kedge == externalPort.kedge) {
-                                    sourceExtenalPort = externalPort2;
-                                    break;
-                                }
-                            }
-                            LNode sourceLNode = (LNode) elementMap.get(sourceExtenalPort.knode);
-                            sourceLPort = graphImporter.createPort(sourceLNode,
-                                    graphImporter.getExternalPortPosition(sourceExtenalPort.lgraph,
-                                            sourceExtenalPort.lnode, 0, 0), PortType.OUTPUT);
+                            // the edge comes from the inside of another sibling node,
+                            // hence it is processed as outgoing edge above
+                            newEdge.setTarget(null);
+                            sourceLPort = null;
                         }
                     } else {
                         // the edge comes from the outside of the parent node
@@ -290,8 +309,107 @@ public class RecursiveCompoundKGraphHandler {
                     }
                     newEdge.setSource(sourceLPort);
                 }
+                
+                if (newEdge.getSource() != null && newEdge.getTarget() != null) {
+                    crossHierarchyMap.put(externalPort.kedge, new CrossHierarchyEdge(newEdge,
+                            layeredGraph, parentNode, externalPort.type));
+                }
             }
         }
+    }
+    
+    private void applyCrossHierarchyLayout(final KNode kgraph) {
+        for (KEdge kedge : crossHierarchyMap.keySet()) {
+            List<CrossHierarchyEdge> crossHierarchyEdges = new ArrayList<CrossHierarchyEdge>(
+                    crossHierarchyMap.get(kedge));
+            // put the cross-hierarchy edges in proper order from source to target
+            Collections.sort(crossHierarchyEdges, new Comparator<CrossHierarchyEdge>() {
+                public int compare(final CrossHierarchyEdge edge1, final CrossHierarchyEdge edge2) {
+                    if (edge1.type == PortType.OUTPUT && edge2.type == PortType.INPUT) {
+                        return -1;
+                    } else if (edge1.type == PortType.INPUT && edge2.type == PortType.OUTPUT) {
+                        return 1;
+                    }
+                    int level1 = hierarchyLevel(edge1.parentNode, kgraph);
+                    int level2 = hierarchyLevel(edge2.parentNode, kgraph);
+                    if (edge1.type == PortType.OUTPUT) {
+                        // from deeper level to higher level
+                        return level2 - level1;
+                    } else {
+                        // from higher level to deeper level
+                        return level1 - level2;
+                    }
+                }
+            });
+            
+            // determine the reference node for all bend points
+            KNode referenceNode = kedge.getSource();
+            if (!KimlUtil.isDescendant(kedge.getTarget(), referenceNode)) {
+                referenceNode = referenceNode.getParent();
+            }
+
+            // apply the computed layouts to the cross-hierarchy edge
+            KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
+            edgeLayout.getBendPoints().clear();
+            KVector lastPoint = null;
+            for (CrossHierarchyEdge chEdge : crossHierarchyEdges) {
+                float borderSpacing = chEdge.lgraph.getProperty(Properties.BORDER_SPACING);
+                KVector offset = new KVector(borderSpacing + chEdge.lgraph.getOffset().x,
+                        borderSpacing + chEdge.lgraph.getOffset().y);
+                KimlUtil.toAbsolute(offset, chEdge.parentNode);
+                KimlUtil.toRelative(offset, referenceNode);
+                KVectorChain bendPoints = chEdge.ledge.getBendPoints().translate(offset);
+                KVector sourcePoint = chEdge.ledge.getSource().getAbsoluteAnchor().add(offset);
+                KVector targetPoint = chEdge.ledge.getTarget().getAbsoluteAnchor().add(offset);
+
+                if (chEdge.ledge.getSource().getNode().getProperty(Properties.ORIGIN)
+                        == kedge.getSource()) {
+                    edgeLayout.getSourcePoint().applyVector(sourcePoint);
+                } else if (lastPoint != null) {
+                    KVector nextPoint = targetPoint;
+                    if (!bendPoints.isEmpty()) {
+                        nextPoint = bendPoints.getFirst();
+                    }
+                    if (Math.abs(lastPoint.x - nextPoint.x) > OrthogonalRoutingGenerator.TOLERANCE
+                        && Math.abs(lastPoint.y - nextPoint.y) > OrthogonalRoutingGenerator.TOLERANCE) {
+                        // add the source point as bend point to properly connect the hierarchy levels
+                        KPoint bendPoint = KLayoutDataFactory.eINSTANCE.createKPoint();
+                        bendPoint.applyVector(sourcePoint);
+                        edgeLayout.getBendPoints().add(bendPoint);
+                    }
+                }
+                
+                for (KVector point : bendPoints) {
+                    KPoint bendPoint = KLayoutDataFactory.eINSTANCE.createKPoint();
+                    bendPoint.applyVector(point);
+                    edgeLayout.getBendPoints().add(bendPoint);
+                }
+                
+                if (chEdge.ledge.getTarget().getNode().getProperty(Properties.ORIGIN)
+                        == kedge.getTarget()) {
+                    edgeLayout.getTargetPoint().applyVector(targetPoint);
+                }
+                if (bendPoints.isEmpty()) {
+                    lastPoint = sourcePoint;
+                } else {
+                    lastPoint = bendPoints.getLast();
+                }
+            }
+        }
+    }
+    
+    private static int hierarchyLevel(final KNode node, final KNode kgraph) {
+        KNode current = node;
+        int level = 0;
+        while (current != null) {
+            if (current == kgraph) {
+                return level;
+            }
+            current = current.getParent();
+            level++;
+        }
+        // the given node is not an ancestor of the graph node
+        throw new IllegalArgumentException();
     }
 
 }
