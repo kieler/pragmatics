@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
+import com.google.common.collect.Iterables;
+
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
@@ -305,17 +307,23 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
             slotsCount = routingGenerator.routeEdges(layeredGraph, leftLayerNodes, leftLayerIndex,
                     rightLayerNodes, xpos + edgeSpacing);
             
-            if (slotsCount > 0) {
-                // The space between each pair of edge segments, and between nodes and edges
-                double increment = (slotsCount + 1) * edgeSpacing;
-                // If  we are between two layers, make sure their minimal spacing is preserved
-                if (increment < nodeSpacing && leftLayer != null && rightLayer != null) {
-                    increment = nodeSpacing;
+            if (leftLayer != null && rightLayer != null) {
+                boolean externalLeftLayer = Iterables.all(leftLayerNodes,
+                        PolylineEdgeRouter.PRED_EXTERNAL_PORT);
+                boolean externalRightLayer = Iterables.all(rightLayerNodes,
+                        PolylineEdgeRouter.PRED_EXTERNAL_PORT);
+                if (slotsCount > 0) {
+                    // The space between each pair of edge segments, and between nodes and edges
+                    double increment = (slotsCount + 1) * edgeSpacing;
+                    // If  we are between two layers, make sure their minimal spacing is preserved
+                    if (increment < nodeSpacing && !externalLeftLayer && !externalRightLayer) {
+                        increment = nodeSpacing;
+                    }
+                    xpos += increment;
+                } else if (!externalLeftLayer && !externalRightLayer){
+                    // If we are between two layers, but all edges are straight, take default spacing
+                    xpos += nodeSpacing;
                 }
-                xpos += increment;
-            } else if (leftLayer != null && rightLayer != null) {
-                // If we are between two layers, but all edges are straight, take the default spacing
-                xpos += nodeSpacing;
             }
             
             leftLayer = rightLayer;

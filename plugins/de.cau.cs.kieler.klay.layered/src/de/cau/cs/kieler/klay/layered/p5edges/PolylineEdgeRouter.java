@@ -16,6 +16,9 @@ package de.cau.cs.kieler.klay.layered.p5edges;
 import java.util.EnumSet;
 import java.util.Set;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KielerMath;
@@ -51,6 +54,15 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.rating proposed yellow by msp
  */
 public final class PolylineEdgeRouter implements ILayoutPhase {
+    
+    /**
+     * Predicate that checks whether nodes represent external ports
+     */
+    public static final Predicate<LNode> PRED_EXTERNAL_PORT = new Predicate<LNode>() {
+        public boolean apply(final LNode node) {
+            return node.getProperty(Properties.NODE_TYPE) == NodeType.EXTERNAL_PORT;
+        }
+    };
     
     /* The basic processing strategy for this phase is empty. Depending on the graph features,
      * dependencies on intermediate processors are added dynamically as follows:
@@ -212,6 +224,12 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
         
         // Iterate over the layers
         for (Layer layer : layeredGraph) {
+            boolean externalLayer = Iterables.all(layer, PRED_EXTERNAL_PORT);
+            // the rightmost layer is not given any node spacing
+            if (externalLayer && xpos > 0) {
+                xpos -= spacing;
+            }
+            
             // set horizontal coordinates for all nodes of the layer
             layer.placeNodes(xpos);
             
@@ -258,7 +276,10 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
             // Determine placement of next layer based on the maximal vertical difference (as the
             // maximum vertical difference edges span grows, the layer grows wider to allow enough
             // space for such sloped edges to avoid too harsh angles)
-            layerSpacing = spacing + LAYER_SPACE_FAC * edgeSpaceFac * maxVertDiff;
+            layerSpacing = LAYER_SPACE_FAC * edgeSpaceFac * maxVertDiff;
+            if (!externalLayer) {
+                layerSpacing += spacing;
+            }
             xpos += layer.getSize().x + layerSpacing;
         }
         

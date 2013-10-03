@@ -343,7 +343,7 @@ public final class Properties {
     
     /** spacing to the border of the drawing. */
     public static final Property<Float> BORDER_SPACING = new Property<Float>(
-            LayoutOptions.BORDER_SPACING, 20.0f, 0.0f);
+            LayoutOptions.BORDER_SPACING, 12.0f, 0.0f);
 
     /** factor for minimal spacing between edges. */
     public static final Property<Float> EDGE_SPACING_FACTOR = new Property<Float>(
