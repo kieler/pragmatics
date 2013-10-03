@@ -113,6 +113,13 @@ public class RecursiveCompoundKGraphHandler {
             this.parentNode = parentNode;
             this.type = type;
         }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public String toString() {
+            return type.toString() + ":" + ledge.toString();
+        }
     }
     
     private Collection<ExternalPort> recursiveLayout(final KNode parentNode,
