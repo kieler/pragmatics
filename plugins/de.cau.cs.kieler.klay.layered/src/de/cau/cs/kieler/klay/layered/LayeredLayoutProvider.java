@@ -60,7 +60,7 @@ public final class LayeredLayoutProvider extends AbstractLayoutProvider {
         
         // Check if hierarchy handling for a compound graph is requested
         boolean layoutHierarchy = kgraphLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY);
-        if (layoutHierarchy) {
+        if (layoutHierarchy && RecursiveCompoundKGraphHandler.USE_NEW_APPROACH) {
             // Layout for all hierarchy levels is requested;
             // this is delegated to the compound graph handler
             RecursiveCompoundKGraphHandler compoundGraphHandler = new RecursiveCompoundKGraphHandler(
@@ -69,7 +69,12 @@ public final class LayeredLayoutProvider extends AbstractLayoutProvider {
             
         } else {
             // Only the top-level graph is processed
-            IGraphImporter<KNode> graphImporter = new KGraphImporter(hashCodeCounter);
+            IGraphImporter<KNode> graphImporter;
+            if (layoutHierarchy) {
+                graphImporter = new CompoundKGraphImporter(hashCodeCounter);
+            } else {
+                graphImporter = new KGraphImporter(hashCodeCounter);
+            }
             
             // Import the graph
             LGraph layeredGraph = graphImporter.importGraph(kgraph);

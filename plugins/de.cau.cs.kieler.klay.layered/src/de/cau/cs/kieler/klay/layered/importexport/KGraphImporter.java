@@ -131,7 +131,8 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
         // method will be called from the subclass CompoundKGraphImporter. The following part is not
         // to be executed in this case.
-        boolean isCompound = false; //sourceShapeLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY); XXX
+        boolean isCompound = sourceShapeLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY)
+                && !RecursiveCompoundKGraphHandler.USE_NEW_APPROACH;
         if (!isCompound) {
             // transform everything
             transformNodesAndPorts(kgraph, elemMap);
@@ -535,8 +536,8 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
     protected void transformEdge(final KEdge kedge, final KNode graph,
             final Map<KGraphElement, LGraphElement> elemMap) {
         KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
-        boolean isCompound = false; //graph.getData(KShapeLayout.class).getProperty(
-//                LayoutOptions.LAYOUT_HIERARCHY); XXX
+        boolean isCompound = graph.getData(KShapeLayout.class).getProperty(
+                LayoutOptions.LAYOUT_HIERARCHY) && !RecursiveCompoundKGraphHandler.USE_NEW_APPROACH;
 
         // create a layered edge
         LEdge newEdge = new LEdge(layeredGraph);

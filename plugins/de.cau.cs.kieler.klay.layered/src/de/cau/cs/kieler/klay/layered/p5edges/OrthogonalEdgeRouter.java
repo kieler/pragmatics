@@ -320,7 +320,7 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
                         increment = nodeSpacing;
                     }
                     xpos += increment;
-                } else if (!externalLeftLayer && !externalRightLayer){
+                } else if (!externalLeftLayer && !externalRightLayer) {
                     // If we are between two layers, but all edges are straight, take default spacing
                     xpos += nodeSpacing;
                 }

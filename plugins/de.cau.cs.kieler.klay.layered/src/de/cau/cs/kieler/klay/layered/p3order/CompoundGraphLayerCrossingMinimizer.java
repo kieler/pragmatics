@@ -24,6 +24,7 @@ import de.cau.cs.kieler.klay.layered.Util;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.importexport.RecursiveCompoundKGraphHandler;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -90,7 +91,8 @@ public final class CompoundGraphLayerCrossingMinimizer {
         }
 
         // determine whether a compound graph is to be laid out
-        boolean isCompound = false; //layeredGraph.getProperty(LayoutOptions.LAYOUT_HIERARCHY); XXX
+        boolean isCompound = layeredGraph.getProperty(LayoutOptions.LAYOUT_HIERARCHY)
+                && !RecursiveCompoundKGraphHandler.USE_NEW_APPROACH;
         
         if (!isCompound) {
             List<NodeGroup> nodeGroups = new LinkedList<NodeGroup>();

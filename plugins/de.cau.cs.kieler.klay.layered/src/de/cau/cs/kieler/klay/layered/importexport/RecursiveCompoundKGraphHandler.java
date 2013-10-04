@@ -63,10 +63,16 @@ import de.cau.cs.kieler.klay.layered.properties.PortType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
+ * A handler for compound graphs that uses the standard layer-based algorithm as module that is
+ * executed once on each hierarchy level. Cross-hierarchy edges are pre-processed by splitting
+ * them with external ports.
  *
  * @author msp
  */
 public class RecursiveCompoundKGraphHandler {
+    
+    /** @deprecated this should be removed once we have decided which approach to use. */
+    public static final boolean USE_NEW_APPROACH = true;
     
     /** the layout algorithm used for regular layout runs. */
     private KlayLayered klayLayered;
@@ -76,15 +82,27 @@ public class RecursiveCompoundKGraphHandler {
     private final Multimap<KEdge, CrossHierarchyEdge> crossHierarchyMap = HashMultimap.create();
     /** map of input layered graphs to output layered graphs of the layer-based algorithm. */
     private final Map<LGraph, LGraph> layeredGraphMap = Maps.newHashMap();
-    /** */
+    /** set of external ports that have already been positioned. */
     private final Set<KPort> positionedPorts = Sets.newHashSet();
-    
+
+    /**
+     * Create a recursive compound KGraph handler.
+     * 
+     * @param klayLayered the layer-based algorithm executed on each hierarchy level
+     * @param hashCodeCounter the hash code counter for creating new graph elements
+     */
     public RecursiveCompoundKGraphHandler(final KlayLayered klayLayered,
             final HashCodeCounter hashCodeCounter) {
         this.klayLayered = klayLayered;
         this.hashCodeCounter = hashCodeCounter;
     }
 
+    /**
+     * Layout the whole hierarchy of the given graph.
+     * 
+     * @param kgraph a graph
+     * @param monitor a progress monitor
+     */
     public void doLayoutHierarchy(final KNode kgraph, final IKielerProgressMonitor monitor) {
         // perform the standard flat layout on each hierarchy level
         recursiveLayout(kgraph, monitor);
@@ -93,12 +111,33 @@ public class RecursiveCompoundKGraphHandler {
         applyCrossHierarchyLayout(kgraph);
     }
     
+    /**
+     * An internal representation for external ports. This class is used to pass information
+     * gathered on one hierarchy level to the containing hierarchy level. Instances are created
+     * whenever a cross-hierarchy edge crosses the hierarchy bounds of a parent node; the instance
+     * represents the split point of the edge.
+     */
     private static class ExternalPort {
+        /** the original edge for which the port is created. */
         private KEdge kedge;
+        /** the node whose outer bounds are crossed by the edge. */
         private KNode knode;
+        /** the layered graph corresponding to the content of the compound node. */
         private LGraph lgraph;
+        /** the dummy node used by the algorithm as representative for the external port. */
         private LNode lnode;
+        /** the flow direction: input or output. */
         private PortType type = PortType.UNDEFINED;
+        
+        /**
+         * Create an external port.
+         * 
+         * @param kedge the original edge for which the port is created
+         * @param knode the node whose outer bounds are crossed by the edge
+         * @param lgraph the layered graph corresponding to the content of the compound node
+         * @param lnode the dummy node used by the algorithm as representative for the external port
+         * @param portType the flow direction: input or output
+         */
         ExternalPort(final KEdge kedge, final KNode knode, final LGraph lgraph, final LNode lnode,
                 final PortType portType) {
             this.kedge = kedge;
@@ -109,11 +148,27 @@ public class RecursiveCompoundKGraphHandler {
         }
     }
     
+    /**
+     * A segment of a cross-hierarchy edge split at the boundary of a compound node.
+     */
     private static class CrossHierarchyEdge {
+        /** the edge used in the layered graph to compute a layout. */
         private LEdge ledge;
+        /** the layered graph in which the layout was computed. */
         private LGraph lgraph;
+        /** the corresponding compound node. */
         private KNode parentNode;
+        /** the flow direction: input or output. */
         private PortType type;
+        
+        /**
+         * Create a cross-hierarchy edge segment.
+         * 
+         * @param ledge the edge used in the layered graph to compute a layout
+         * @param lgraph the layered graph in which the layout is computed
+         * @param parentNode the corresponding compound node
+         * @param type the flow direction: input or output
+         */
         CrossHierarchyEdge(final LEdge ledge, final LGraph lgraph, final KNode parentNode,
                 final PortType type) {
             this.ledge = ledge;
@@ -130,10 +185,18 @@ public class RecursiveCompoundKGraphHandler {
         }
     }
     
+    /**
+     * Perform automatic layout recursively in the given graph.
+     * 
+     * @param parentNode the parent node of the graph
+     * @param monitor a progress monitor
+     * @return the external ports created to split edges that cross the boundary of the parent node
+     */
     private Collection<ExternalPort> recursiveLayout(final KNode parentNode,
             final IKielerProgressMonitor monitor) {
         monitor.begin("Recursive compound graph layout", parentNode.getChildren().size() + 1);
         
+        // perform layout in all children and gather their external ports
         List<ExternalPort> containedExternalPorts = new LinkedList<ExternalPort>();
         for (KNode childNode : parentNode.getChildren()) {
             if (childNode.getChildren().isEmpty()) {
@@ -206,6 +269,16 @@ public class RecursiveCompoundKGraphHandler {
         return exportedExternalPorts;
     }
     
+    /**
+     * Process edges incident to a node in the given graph and crossing its boundary. These
+     * edges are split with instances of {@link ExternalPort}. The resulting edge segments are
+     * stored as instances of {@link CrossHierarchyEdge} in the {@link #crossHierarchyMap}.
+     * 
+     * @param parentNode the parent node of the graph
+     * @param layeredGraph the corresponding layered graph
+     * @param graphImporter the importer used to create the layered graph
+     * @param exportedExternalPorts list into which new external ports are put
+     */
     private void processOutsideEdges(final KNode parentNode, final LGraph layeredGraph,
             final KGraphImporter graphImporter, final List<ExternalPort> exportedExternalPorts) {
         Direction layoutDirection = layeredGraph.getProperty(LayoutOptions.DIRECTION);
@@ -243,6 +316,7 @@ public class RecursiveCompoundKGraphHandler {
                     ExternalPort externalPort = new ExternalPort(kedge, parentNode, layeredGraph,
                             dummyNode, PortType.OUTPUT);
                     exportedExternalPorts.add(externalPort);
+                    
                 } else if (lnode.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()
                         && kedge.getSourcePort() == null) {
                     LEdge ledge = (LEdge) elementMap.get(kedge);
@@ -287,6 +361,7 @@ public class RecursiveCompoundKGraphHandler {
                     ExternalPort externalPort = new ExternalPort(kedge, parentNode, layeredGraph,
                             dummyNode, PortType.INPUT);
                     exportedExternalPorts.add(externalPort);
+                    
                 } else if (lnode.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()
                         && kedge.getTargetPort() == null) {
                     LEdge ledge = (LEdge) elementMap.get(kedge);
@@ -303,6 +378,15 @@ public class RecursiveCompoundKGraphHandler {
         }
     }
     
+    /**
+     * Process edges connected to the inside of compound nodes contained in the given graph.
+     * 
+     * @param parentNode the parent node of the graph
+     * @param layeredGraph the corresponding layered graph
+     * @param graphImporter the importer used to create the layered graph
+     * @param exportedExternalPorts list into which new external ports are put
+     * @param containedExternalPorts external ports gathered during the recursive layout of children
+     */
     private void processInsideEdges(final KNode parentNode, final LGraph layeredGraph,
             final KGraphImporter graphImporter, final List<ExternalPort> exportedExternalPorts,
             final List<ExternalPort> containedExternalPorts) {
@@ -453,6 +537,15 @@ public class RecursiveCompoundKGraphHandler {
         }
     }
     
+    /**
+     * Create a port with fixed position.
+     * 
+     * @param node the node to which the port is added
+     * @param position the fixed port position
+     * @param type the port type: input or output
+     * @param layeredGraph the layered graph in which the port is created
+     * @return the new port
+     */
     private LPort createFixedPort(final LNode node, final KVector position, final PortType type,
             final LGraph layeredGraph) {
         LPort port = new LPort(layeredGraph);
@@ -474,6 +567,16 @@ public class RecursiveCompoundKGraphHandler {
         return port;
     }
     
+    /**
+     * Create a port with free position.
+     * 
+     * @param node the node to which the port is added
+     * @param type the port type: input or output
+     * @param edgePoint the point where the edge touches the node
+     *          (used only if port constraints are free)
+     * @param layeredGraph the layered graph in which the port is created
+     * @return the new port
+     */
     private LPort createFreePort(final LNode node, final PortType type, final KVector edgePoint,
             final LGraph layeredGraph) {
         LPort port = new LPort(layeredGraph);
@@ -502,6 +605,14 @@ public class RecursiveCompoundKGraphHandler {
         return port;
     }
     
+    /**
+     * Determine a suitable position for a new port.
+     * 
+     * @param node the node for which the port position is requested
+     * @param side the side of the node to put the port in
+     * @param kport the original port, or {@code null}
+     * @return a suitable position
+     */
     private KVector calcPortPos(final LNode node, final PortSide side, final KPort kport) {
         LPort[] ports = Iterables.toArray(node.getPorts(side), LPort.class);
         Arrays.sort(ports, new PortListSorter.PortComparator());
@@ -550,6 +661,11 @@ public class RecursiveCompoundKGraphHandler {
         return result;
     }
     
+    /**
+     * Apply the computed layout to all cross-hierarchy edges.
+     * 
+     * @param kgraph a graph
+     */
     private void applyCrossHierarchyLayout(final KNode kgraph) {
         for (KEdge kedge : crossHierarchyMap.keySet()) {
             List<CrossHierarchyEdge> crossHierarchyEdges = new ArrayList<CrossHierarchyEdge>(
@@ -634,6 +750,13 @@ public class RecursiveCompoundKGraphHandler {
         }
     }
     
+    /**
+     * Compute the hierarchy level of the given node.
+     * 
+     * @param node a node
+     * @param kgraph the containing hierarchical graph
+     * @return the hierarchy level (higher number means the node is nested deeper)
+     */
     private static int hierarchyLevel(final KNode node, final KNode kgraph) {
         KNode current = node;
         int level = 0;
@@ -648,6 +771,13 @@ public class RecursiveCompoundKGraphHandler {
         throw new IllegalArgumentException();
     }
     
+    /**
+     * Create suitable port properties for dummy external ports.
+     * 
+     * @param node the node for which the dummy external port is created
+     * @param edge the edge that is split with the external port
+     * @return properties to apply to the dummy port
+     */
     private static IPropertyHolder getExternalPortProperties(final KNode node, final KEdge edge) {
         KShapeLayout parentLayout = node.getParent().getData(KShapeLayout.class);
         IPropertyHolder propertyHolder = new MapPropertyHolder();
