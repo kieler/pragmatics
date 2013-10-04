@@ -48,7 +48,7 @@
                option="de.cau.cs.kieler.klay.layered.edgeSpacingFactor">
          </knownOption>
          <knownOption
-               default="20"
+               default="12"
                option="de.cau.cs.kieler.borderSpacing">
          </knownOption>
          <knownOption
