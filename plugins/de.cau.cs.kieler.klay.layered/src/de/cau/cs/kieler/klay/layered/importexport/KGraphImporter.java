@@ -541,6 +541,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         // create a layered edge
         LEdge newEdge = new LEdge(layeredGraph);
         newEdge.setProperty(Properties.ORIGIN, kedge);
+        elemMap.put(kedge, newEdge);
 
         // the following is not needed in case of compound graph handling, as source and target will
         // be set by calling function.

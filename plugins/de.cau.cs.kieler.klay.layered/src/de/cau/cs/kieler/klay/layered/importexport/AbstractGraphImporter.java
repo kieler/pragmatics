@@ -307,7 +307,7 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
         KVector portPosition = new KVector(portDummy.getPosition());
         portPosition.x += portDummy.getSize().x / 2.0;
         portPosition.y += portDummy.getSize().y / 2.0;
-        float portOffset = portDummy.getProperty(LayoutOptions.OFFSET);
+        float portOffset = portDummy.getProperty(Properties.OFFSET);
         
         // Get some properties of the graph
         KVector graphSize = graph.getSize();
@@ -354,7 +354,8 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
 
     /**
      * Create a port for an edge that is not connected to a port. This is necessary because KLay
-     * Layered wants all edges to have a source port and a target port.
+     * Layered wants all edges to have a source port and a target port. The port side is computed
+     * from the given absolute end point position of the edge.
      * 
      * @param node
      *            the node at which the edge is incident

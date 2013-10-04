@@ -72,7 +72,7 @@ public class EdgeCrossingsAnalysis implements IAnalysis {
             final KVector q1, final KVector q2) {
         double s = (q2.y - q1.y) * (p2.x - p1.x) - (q2.x - q1.x) * (p2.y - p1.y);
         // are the line segments parallel?
-        if (s < TOLERANCE) {
+        if (Math.abs(s) < TOLERANCE) {
             return false;
         }
         double a1 = (q2.x - q1.x) * (p1.y - q1.y) - (q2.y - q1.y) * (p1.x - q1.x);
