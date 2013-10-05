@@ -519,7 +519,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
      */
     private void createUnbalancedPlacement(final LGraph layeredGraph) {
         float normalSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING)
-                * layeredGraph.getProperty(Properties.OBJ_SPACING_VERTICAL_FACTOR);
+                * layeredGraph.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
         float smallSpacing = normalSpacing
                 * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
 
@@ -600,7 +600,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
      */
     private void balancePlacement(final LGraph layeredGraph) {
         float spacing = layeredGraph.getProperty(Properties.OBJ_SPACING)
-                * layeredGraph.getProperty(Properties.OBJ_SPACING_VERTICAL_FACTOR);
+                * layeredGraph.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
         float smallSpacing = spacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
         
         // Determine a suitable number of pendulum iterations
@@ -819,7 +819,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
      */
     private void postProcess(final LGraph layeredGraph) {
         float normalSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING)
-                * layeredGraph.getProperty(Properties.OBJ_SPACING_VERTICAL_FACTOR);
+                * layeredGraph.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
         float smallSpacing = normalSpacing
                 * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
 
