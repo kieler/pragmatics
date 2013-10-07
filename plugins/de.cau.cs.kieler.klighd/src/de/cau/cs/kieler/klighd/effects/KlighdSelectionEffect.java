@@ -15,15 +15,14 @@ package de.cau.cs.kieler.klighd.effects;
 
 import java.util.List;
 
-import org.eclipse.emf.ecore.EObject;
-
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
+import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
 import de.cau.cs.kieler.klighd.util.Iterables2;
-import de.cau.cs.kieler.klighd.views.DiagramViewPart;
 import de.cau.cs.kieler.klighd.views.DiagramViewManager;
+import de.cau.cs.kieler.klighd.views.DiagramViewPart;
 
 /**
  * A view management effect to select a number of diagram elements in a view.
@@ -81,13 +80,13 @@ public class KlighdSelectionEffect extends AbstractEffect {
         DiagramViewPart view = DiagramViewManager.getInstance().getView(viewId);
         if (view != null) {
             // get the diagram elements
-            Iterable<EObject> theElements;
+            Iterable<KGraphElement> theElements;
             if (areDiagramElements) {
-                theElements = Iterables.filter(elements, EObject.class);
+                theElements = Iterables.filter(elements, KGraphElement.class);
             } else {
-                List<EObject> temp = Lists.newLinkedList();
+                List<KGraphElement> temp = Lists.newLinkedList();
                 for (Object modelElement : elements) {
-                    EObject diagramElement = (EObject)
+                    KGraphElement diagramElement = (KGraphElement)
                             view.getContextViewer().getCurrentViewContext()
                                     .getTargetElement(modelElement);
                     if (diagramElement != null) {
