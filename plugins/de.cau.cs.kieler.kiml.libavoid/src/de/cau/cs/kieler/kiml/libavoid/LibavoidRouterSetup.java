@@ -26,6 +26,12 @@ public final class LibavoidRouterSetup {
     private LibavoidRouterSetup() {
     }
 
+    
+    /*
+     * General Properties
+     */
+    
+    
     // CHECKSTYLEOFF javadoc
     // for documentation on the properties see the libavoid documentation.
 

@@ -53,6 +53,9 @@
          <knownOption
                option="de.cau.cs.kieler.kiml.libavoid.nudgeOrthogonalTouchingColinearSegments">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.direction">
+         </knownOption>
       </layoutAlgorithm>
       <layoutOption
             advanced="false"

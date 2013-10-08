@@ -24,8 +24,10 @@ import org.adaptagrams.cola.libavoid.LibavoidServer;
 import org.adaptagrams.cola.libavoid.LibavoidServer.Cleanup;
 import org.adaptagrams.cola.libavoid.LibavoidServerException;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.WrappedException;
@@ -39,6 +41,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
@@ -48,8 +51,14 @@ import de.cau.cs.kieler.kiml.options.PortSide;
  * Performs the actual communication with the libabvoid-server. The graph to layout is send to the
  * server using a textual format. The server then sends back the layouted information.
  * 
- * Protocol: - All nodes are passed together with a continuously increasing id starting by 1. (1 2 3
- * 4 ...) - The same goes for the edges.
+ * Protocol: 
+ *    - All nodes are passed together with a continuously increasing id starting by 1. 
+ *      (1 2 3 4 ...) 
+ *    - The same goes for the edges.
+ *    - Port's ids start at 5, leaving the ids [1,..,4] as special cases for internal 
+ *      handling of libavoid  
+ * 
+ * 
  * 
  * @author uru
  */
@@ -67,7 +76,7 @@ public class LibavoidServerCommunicator {
 
     // Internal data.
     private int nodeIdCounter = 1;
-    private int portIdCounter = 1;
+    private int portIdCounter = 5;
     private int edgeIdCounter = 1;
     private static final int SUBTASK_WORK = 1;
     private static final int LAYOUT_WORK = SUBTASK_WORK + SUBTASK_WORK + SUBTASK_WORK
@@ -83,7 +92,7 @@ public class LibavoidServerCommunicator {
     private void reset() {
         nodeIdCounter = 1;
         nodeIdMap.clear();
-        portIdCounter = 1;
+        portIdCounter = 5;
         portIdMap.clear();
         edgeIdCounter = 1;
         edgeIdMap.clear();
@@ -252,6 +261,15 @@ public class LibavoidServerCommunicator {
     private void transformOptions(final KNode node) {
 
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+        
+        /*
+         * General Properties 
+         */
+        Direction direction = nodeLayout.getProperty(LayoutOptions.DIRECTION);
+        addOption(LayoutOptions.DIRECTION.getId(), direction);
+        
+        EdgeRouting edgeRouting = nodeLayout.getProperty(LayoutOptions.EDGE_ROUTING);
+        addOption(LayoutOptions.EDGE_ROUTING.getId(), edgeRouting);
 
         /*
          * Penalties
@@ -308,12 +326,6 @@ public class LibavoidServerCommunicator {
         addRoutingOption(LibavoidRouterSetup.NUDGE_ORTHOGONAL_COLINEAR_SEGMENTS.getId(),
                 nudgeOrthogonalTouchingColinearSegments);
 
-        /*
-         * General options
-         */
-        EdgeRouting edgeRouting = nodeLayout.getProperty(LayoutOptions.EDGE_ROUTING);
-        addOption(LayoutOptions.EDGE_ROUTING.getId(), edgeRouting);
-
     }
 
     private void addOption(final String key, final Object value) {
@@ -355,14 +367,31 @@ public class LibavoidServerCommunicator {
     private void transformNode(final KNode node) {
         // assign an id
         nodeIdMap.put(nodeIdCounter, node);
+        
+        // get information about port-less incoming and outgoing edges
+		int portLessIncomingEdges = Iterables.size(Iterables.filter(
+				node.getIncomingEdges(), new Predicate<KEdge>() {
+					public boolean apply(final KEdge edge) {
+						return edge.getTargetPort() == null;
+					}
+				}));
+		int portLessOutgoingEdges = Iterables.size(Iterables.filter(
+				node.getOutgoingEdges(), new Predicate<KEdge>() {
+					public boolean apply(final KEdge edge) {
+						return edge.getSourcePort() == null;
+					}
+				}));
+		
 
         // convert the bounds
         KShapeLayout shape = node.getData(KShapeLayout.class);
-        // format: id topleft bottomright
-        sb.append("NODE " + nodeIdCounter + " " + shape.getXpos() + " " + shape.getYpos() + " "
-                + (shape.getXpos() + shape.getWidth()) + " "
-                + (shape.getYpos() + shape.getHeight()));
-        sb.append("\n");
+		// format:
+		// id topleft bottomright portLessIncomingEdges portLessOutgoingEdges
+		sb.append("NODE " + nodeIdCounter + " " + shape.getXpos() + " "
+				+ shape.getYpos() + " " + (shape.getXpos() + shape.getWidth())
+				+ " " + (shape.getYpos() + shape.getHeight()) + " "
+				+ portLessIncomingEdges + " " + portLessOutgoingEdges);
+		sb.append("\n");
 
         // transfer port constraints
         PortConstraints pc = shape.getProperty(LayoutOptions.PORT_CONSTRAINTS);
