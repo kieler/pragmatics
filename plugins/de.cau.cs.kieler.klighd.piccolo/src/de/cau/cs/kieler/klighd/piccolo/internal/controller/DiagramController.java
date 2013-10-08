@@ -55,6 +55,7 @@ import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
@@ -69,6 +70,7 @@ import de.cau.cs.kieler.klighd.piccolo.internal.activities.ApplySmartBoundsActiv
 import de.cau.cs.kieler.klighd.piccolo.internal.activities.FadeEdgeInActivity;
 import de.cau.cs.kieler.klighd.piccolo.internal.activities.FadeNodeInActivity;
 import de.cau.cs.kieler.klighd.piccolo.internal.activities.IStartingAndFinishingActivity;
+import de.cau.cs.kieler.klighd.piccolo.internal.nodes.IGraphElement;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.ILabeledGraphElement;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.INode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KChildAreaNode;
@@ -104,7 +106,7 @@ public class DiagramController {
 
     /**
      * Property name of edge layout listeners updating the edge node. Listeners are attached to edge
-     * nodes via this name allowing to detach the from the edge layout if the edge is removed from
+     * nodes via this name allowing to detach them from the edge layout if the edge is removed from
      * the KGraph.
      * 
      * @author chsch
@@ -112,8 +114,21 @@ public class DiagramController {
     private static final String K_EDGE_LAYOUT_LISTENER = "KEdgeLayoutListener";
 
     /** the property for the Piccolo representation of a node. */
-    public static final IProperty<PNode> REP = new Property<PNode>("klighd.piccolo.prepresentation");
+    private static final IProperty<INode> REP = new Property<INode>(
+            "klighd.piccolo.representation");
     
+    /** the property for the Piccolo representation of an edge. */
+    private static final IProperty<KEdgeNode> EDGE_REP = new Property<KEdgeNode>(
+            "klighd.piccolo.representation");
+
+    /** the property for the Piccolo representation of a port. */
+    private static final IProperty<KPortNode> PORT_REP = new Property<KPortNode>(
+            "klighd.piccolo.representation");
+    
+    /** the property for the Piccolo representation of a label. */
+    private static final IProperty<KLabelNode> LABEL_REP = new Property<KLabelNode>(
+            "klighd.piccolo.representation");
+
     /** the property for remembering the edge sync adapter on a node. */
     private static final IProperty<AdapterImpl> CHILDREN_SYNC_ADAPTER = new Property<AdapterImpl>(
             "klighd.childrenSyncAdapter");
@@ -124,6 +139,7 @@ public class DiagramController {
 
     /** the attribute key for the edge offset listeners. */
     private static final Object EDGE_OFFSET_LISTENER_KEY = new Object();
+
     /** the attribute key for the nodes listed by edge offset listeners. */
     private static final Object EDGE_OFFSET_LISTENED_KEY = new Object();
 
@@ -158,7 +174,7 @@ public class DiagramController {
     public DiagramController(final KNode graph, final PNode parent, final boolean sync) {
         resetGraphElement(graph);
         this.topNode = new KNodeTopNode(graph);
-        RenderingContextData.get(graph).setProperty(INode.NODE_REP, topNode);
+        RenderingContextData.get(graph).setProperty(REP, topNode);
         parent.addChild(topNode);
         this.sync = sync;
     }
@@ -231,7 +247,7 @@ public class DiagramController {
      *            the node
      */
     public void collapse(final KNode node) {
-        INode nodeRep = RenderingContextData.get(node).getProperty(INode.NODE_REP);
+        INode nodeRep = RenderingContextData.get(node).getProperty(REP);
         if (nodeRep != null) {
             // set the child area to be collapsed
             nodeRep.getChildArea().setExpanded(false);
@@ -245,7 +261,7 @@ public class DiagramController {
      *            the node
      */
     public void expand(final KNode node) {
-        INode nodeRep = RenderingContextData.get(node).getProperty(INode.NODE_REP);
+        INode nodeRep = RenderingContextData.get(node).getProperty(REP);
         if (nodeRep != null) {
             // set the child area to be expanded
             nodeRep.getChildArea().setExpanded(true);
@@ -258,7 +274,7 @@ public class DiagramController {
      * @return true if this node is expanded.
      */
     public boolean isExpanded(final KNode node) {
-        INode nodeRep = RenderingContextData.get(node).getProperty(INode.NODE_REP);
+        INode nodeRep = RenderingContextData.get(node).getProperty(REP);
         if (nodeRep != null) {
             return nodeRep.getChildArea().isExpanded();
         }
@@ -272,13 +288,48 @@ public class DiagramController {
      *            the node
      */
     public void toggleExpansion(final KNode node) {
-        INode nodeRep = RenderingContextData.get(node).getProperty(INode.NODE_REP);
+        INode nodeRep = RenderingContextData.get(node).getProperty(REP);
         if (nodeRep != null) {
-            // set the child area to expanded
-            nodeRep.getChildArea().setExpanded(!nodeRep.getChildArea().isExpanded());
+            nodeRep.getChildArea().toggleExpansion();
         }
     }
 
+    /**
+     * Hides the given {@link KGraphElement} from the diagram by removing the related
+     * {@link IGraphElement} from the network of {@link PNode PNodes}. In combination with
+     * {@link #show(KGraphElement)} this method can be used for changing the diagram's amount of
+     * detail without changing the view model.
+     * 
+     * @param diagramElement
+     *            the {@link KGraphElement} to hide from the diagram
+     */
+    public void hide(final KGraphElement diagramElement) {
+        KGraphElement parent = (KGraphElement) diagramElement.eContainer();
+        if (parent == null) {
+            return;
+        }
+
+        remove(diagramElement);
+    }
+    
+    /**
+     * Shows the given {@link KGraphElement} from the diagram by (re-) adding a related
+     * {@link IGraphElement} to the network of {@link PNode PNodes}. In combination with
+     * {@link #hide(KGraphElement)} this method can be used for changing the diagram's amount of
+     * detail without changing the view model.
+     * 
+     * @param diagramElement
+     *            the {@link KGraphElement} to (re-) show in the diagram
+     */
+    public void show(final KGraphElement diagramElement) {
+        KGraphElement parent = (KGraphElement) diagramElement.eContainer();
+        if (parent == null) {
+            return;
+        }
+
+        add(diagramElement);
+    }
+    
     /**
      * 
      * @param duration
@@ -295,6 +346,17 @@ public class DiagramController {
                     topNodeLayout.getWidth(), topNodeLayout.getHeight());
             camera.animateViewToCenterBounds(newBounds, true, duration);
         }
+    }
+    
+    /**
+     * Returns the Piccolo representation for the given diagram element.
+     * 
+     * @param diagramElement
+     *            the diagram element
+     * @return the Piccolo representation
+     */
+    public IGraphElement<?> getRepresentation(final KGraphElement diagramElement) {
+        return RenderingContextData.get(diagramElement).getProperty(DiagramController.REP);
     }
 
     /* --------------------------------------------- */
@@ -338,6 +400,73 @@ public class DiagramController {
     }
 
     /**
+     * Internal convenience method for adding representations of {@link KGraphElement
+     * KGraphElements}. The addition requires the existence of a representation of the
+     * <code>element</code>'s container {@link KGraphElement}.
+     * 
+     * @param element
+     *            the {@link KGraphElement} to be represented
+     */
+    private void add(final KGraphElement element) {
+        if (element.eContainer() == null) {
+            return;
+        }
+        
+        final IGraphElement<?> parentRep = RenderingContextData.get(
+                (KGraphElement) element.eContainer()).getProperty(REP);
+        
+        switch (element.eClass().getClassifierID()) {
+        case KGraphPackage.KNODE:
+            if (parentRep != null) {
+                addNode((KNodeNode) parentRep, (KNode) element);
+            }
+            break;
+        case KGraphPackage.KPORT:
+            if (parentRep != null) {
+                addPort((KNodeNode) parentRep, (KPort) element);
+            }
+            break;
+        case KGraphPackage.KLABEL:
+            if (parentRep != null) {
+                addLabel((ILabeledGraphElement<?>) parentRep, (KLabel) element);
+            }
+            break;
+        case KGraphPackage.KEDGE:
+            addEdge((KEdge) element);
+            break;
+        }
+    }
+    
+    /**
+     * Internal convenience method for removing representations of {@link KGraphElement
+     * KGraphElements}.
+     * 
+     * @param element
+     *            the {@link KGraphElement} to be removed from the diagram
+     */
+    private void remove(final KGraphElement element) {
+        if (element.eContainer() == null) {
+            return;
+        }
+        
+        switch (element.eClass().getClassifierID()) {
+        case KGraphPackage.KNODE:
+            removeNode((KNode) element);
+            break;
+        case KGraphPackage.KPORT:
+            removePort((KPort) element);
+            break;
+        case KGraphPackage.KEDGE:
+            removeEdge((KEdge) element);
+            break;
+        case KGraphPackage.KLABEL:
+            removeLabel((KLabel) element);
+            break;
+        }
+    }
+
+
+    /**
      * Handles the children of the parent node.
      * 
      * @param parentNode
@@ -350,7 +479,7 @@ public class DiagramController {
             // Look whether a URI is attached to the node's shape layout
             //  this currently indicates externalized child elements that
             //  are to be loaded and translated lazily, which has to be done now!
-            URI uri = parent.getData(KShapeLayout.class)
+            URI uri = parent.getData(KLayoutData.class)
                     .getProperty(KlighdProperties.CHILD_URI);
             
             KNode result = null;
@@ -396,7 +525,7 @@ public class DiagramController {
      * @return the created node representation
      */
     private KNodeNode addNode(final INode parent, final KNode node) {
-        INode nodeRep = RenderingContextData.get(node).getProperty(INode.NODE_REP);
+        INode nodeRep = RenderingContextData.get(node).getProperty(REP);
 
         KNodeNode nodeNode;
         if (nodeRep instanceof KNodeTopNode) {
@@ -414,7 +543,7 @@ public class DiagramController {
             // if there is no Piccolo representation for the node create it
             if (nodeNode == null) {
                 nodeNode = new KNodeNode(node, parent);
-                RenderingContextData.get(node).setProperty(INode.NODE_REP, nodeNode);
+                RenderingContextData.get(node).setProperty(REP, nodeNode);
                 if (record && isAutomaticallyArranged(node)) {
                     // this avoids flickering and denotes the application of fade-in,
                     //  see #handleRecordedChanges()
@@ -430,7 +559,7 @@ public class DiagramController {
                 parent.getChildArea().addNode(nodeNode);
                 RenderingContextData.get(node).setProperty(KlighdInternalProperties.ACTIVE, true);
 
-                KGraphData data = node.getData(KLayoutDataPackage.eINSTANCE.getKShapeLayout());
+                KGraphData data = node.getData(KLayoutDataPackage.eINSTANCE.getKLayoutData());
                 boolean expand = data == null || data.getProperty(KlighdProperties.EXPAND);
                 // in case the EXPAND property is not set the default value 'true' is returned
                 nodeNode.getChildArea().setExpanded(expand);
@@ -483,8 +612,6 @@ public class DiagramController {
         }
     }
 
-    
-    
     /**
      * Removes the representation for <code>node</code> from its parent.<br>
      * <code>node</code> is not marked collapsed, this way the memory of the expand-collapse-state
@@ -494,7 +621,7 @@ public class DiagramController {
      *            the node
      */
     private void removeNode(final KNode node) {
-        INode nodeRep = RenderingContextData.get(node).getProperty(INode.NODE_REP);
+        INode nodeRep = RenderingContextData.get(node).getProperty(REP);
         if (nodeRep != null) {
             KNodeNode nodeNode;
             if (nodeRep instanceof KNodeTopNode) {
@@ -504,6 +631,11 @@ public class DiagramController {
                 nodeNode = (KNodeNode) nodeRep;
             }
 
+            if (nodeNode.getParent() == null) {
+                // nodeNode is not contained in the PNode tree since, e.g., it has been removed already
+                return;
+            }
+                
             if (sync) {
                 uninstallEdgeSyncAdapter(node);
             }
@@ -537,49 +669,56 @@ public class DiagramController {
      *            the edge
      */
     private void addEdge(final KEdge edge) {
-        KEdgeNode edgeRep = RenderingContextData.get(edge).getProperty(KEdgeNode.EDGE_REP);
+        KEdgeNode edgeNode = RenderingContextData.get(edge).getProperty(EDGE_REP);
         // only add the representation if it is not added already
-        if (edgeRep == null) {
-            KNode source = edge.getSource();
-            KNode target = edge.getTarget();
-            if (source != null && target != null
-                    && RenderingContextData.get(source).getProperty(KlighdInternalProperties.ACTIVE)
-                    && RenderingContextData.get(target).getProperty(KlighdInternalProperties.ACTIVE)) {
-                // if there is no Piccolo representation for the edge create it
-                if (edgeRep == null) {
-                    edgeRep = new KEdgeNode(edge);
-                    if (record && isAutomaticallyArranged(edge)) {
-                        // this avoids flickering and denotes the application of fade-in,
-                        //  see #handleRecordedChanges()
-                        edgeRep.setVisible(false);
+        if (edgeNode == null || edgeNode.getParent() == null) {
+            if (edgeNode == null) {
+                KNode source = edge.getSource();
+                KNode target = edge.getTarget();
+                if (source != null
+                        && target != null
+                        && RenderingContextData.get(source).getProperty(
+                                KlighdInternalProperties.ACTIVE)
+                        && RenderingContextData.get(target).getProperty(
+                                KlighdInternalProperties.ACTIVE)) {
+                    // if there is no Piccolo representation for the edge create it
+                    if (edgeNode == null) {
+                        edgeNode = new KEdgeNode(edge);
+                        RenderingContextData.get(edge).setProperty(EDGE_REP, edgeNode);
+                        if (record && isAutomaticallyArranged(edge)) {
+                            // this avoids flickering and denotes the application of fade-in,
+                            //  see #handleRecordedChanges()
+                            edgeNode.setVisible(false);
+                        }
+                        updateLayout(edgeNode);
+                        updateRendering(edgeNode);
+                        handleLabels(edgeNode, edge);
                     }
-                    updateLayout(edgeRep);
-                    updateRendering(edgeRep);
-                    handleLabels(edgeRep, edge);
+
+                    // the following is needed in case of interlevel edges:
+                    //  edges ending in an outer child area will be clipped by the inner childArea;
+                    //  the clipping is generally intended and is realized by KChildAreaNode
+
+                    // find and set the parent for the edge
+                    updateEdgeParent(edgeNode);
+                    RenderingContextData.get(edge).setProperty(KlighdInternalProperties.ACTIVE,
+                            true);
+
+                    // update the offset of the edge layout to the containing child area
+                    updateEdgeOffset(edgeNode);
+                }
+            } else {
+                if (record && isAutomaticallyArranged(edge)) {
+                    edgeNode.setVisible(false);
                 }
 
-                // the following is needed in case of interlevel edges:
-                // edges ending in an outer child area will be clipped
-                // by the inner childArea;
-                // the clipping is generally intended and is realized by
-                // KChildAreaNode
-
+                // see comments above
                 // find and set the parent for the edge
-                updateEdgeParent(edgeRep);
+                updateEdgeParent(edgeNode);
+                RenderingContextData.get(edge).setProperty(KlighdInternalProperties.ACTIVE, true);
 
                 // update the offset of the edge layout to the containing child area
-                updateEdgeOffset(edgeRep);
-            }            
-        } else {
-            
-            // find and set the parent for the edge
-            updateEdgeParent(edgeRep);
-
-            // update the offset of the edge layout to the containing child area
-            updateEdgeOffset(edgeRep);
-
-            if (record && isAutomaticallyArranged(edge)) {
-                edgeRep.setVisible(false);
+                updateEdgeOffset(edgeNode);
             }
         }
     }
@@ -591,7 +730,7 @@ public class DiagramController {
      *            the edge
      */
     private void removeEdge(final KEdge edge) {
-        KEdgeNode edgeNode = RenderingContextData.get(edge).getProperty(KEdgeNode.EDGE_REP);
+        KEdgeNode edgeNode = RenderingContextData.get(edge).getProperty(EDGE_REP);
         if (edgeNode != null) {
             // remove the edge offset listeners
             removeEdgeOffsetListener(edgeNode);
@@ -607,6 +746,7 @@ public class DiagramController {
 
             // remove the edge representation from the containing child area
             edgeNode.removeFromParent();
+            RenderingContextData.get(edge).setProperty(KlighdInternalProperties.ACTIVE, false);
             
             // due to #deactivateSubgraph() this method will be performed multiple times so: 
             if (edgeNode.getRenderingController() != null) {
@@ -617,6 +757,7 @@ public class DiagramController {
             }
         }
     }
+
 
     /**
      * Adds representations for the ports attached to the node to the node's representation.
@@ -645,23 +786,29 @@ public class DiagramController {
      *            the port
      */
     private void addPort(final KNodeNode parent, final KPort port) {
-        KPortNode portNode = RenderingContextData.get(port).getProperty(KPortNode.PORT_REP);
+        KPortNode portNode = RenderingContextData.get(port).getProperty(PORT_REP);
 
         // if there is no Piccolo representation for the port create it
-        if (portNode == null) {
-            portNode = new KPortNode(port);
+        if (portNode == null || portNode.getParent() == null) {
+            if (portNode == null) {
+                portNode = new KPortNode(port);
+                RenderingContextData.get(port).setProperty(PORT_REP, portNode);
+                
+                updateLayout(portNode);
+                updateRendering(portNode);
+                handleLabels(portNode, port);
+            }
+
             if (record && isAutomaticallyArranged(port)) {
                 // this avoids flickering and denotes the application of fade-in,
                 //  see #handleRecordedChanges()
                 portNode.setVisible(false);
             }
-            updateLayout(portNode);
-            updateRendering(portNode);
-            handleLabels(portNode, port);
-        }
 
-        // add the port
-        parent.addPort(portNode);
+            // add the port
+            parent.addPort(portNode);
+            RenderingContextData.get(port).setProperty(KlighdInternalProperties.ACTIVE, true);
+        }
     }
 
     /**
@@ -671,16 +818,21 @@ public class DiagramController {
      *            the port
      */
     private void removePort(final KPort port) {
-        KPortNode portNode = RenderingContextData.get(port).getProperty(KPortNode.PORT_REP);
+        KPortNode portNode = RenderingContextData.get(port).getProperty(PORT_REP);
         if (portNode != null) {
             // remove the port representation from the containing node
             portNode.removeFromParent();
-            // release the objects kept in mind
-            portNode.getRenderingController().removeAllPNodeControllers();
-            // release the node rendering controller
-            portNode.setRenderingController(null);
+            RenderingContextData.get(port).setProperty(KlighdInternalProperties.ACTIVE, false);
+
+            if (portNode.getRenderingController() != null) {
+                // release the objects kept in mind
+                portNode.getRenderingController().removeAllPNodeControllers();
+                // release the node rendering controller
+                portNode.setRenderingController(null);
+            }
         }
     }
+
 
     /**
      * Adds representations for the labels attached to the labeled element to the labeled node.
@@ -710,27 +862,33 @@ public class DiagramController {
      *            the label
      */
     private void addLabel(final ILabeledGraphElement<?> labeledNode, final KLabel label) {
-        KLabelNode labelNode = RenderingContextData.get(label).getProperty(KLabelNode.LABEL_REP);
+        KLabelNode labelNode = RenderingContextData.get(label).getProperty(LABEL_REP);
 
         // if there is no Piccolo representation for the label create it
-        if (labelNode == null) {
-            labelNode = new KLabelNode(label);
-            if (record) {
+        if (labelNode == null || labelNode.getParent() == null) {
+            if (labelNode == null) {
+                labelNode = new KLabelNode(label);
+                RenderingContextData.get(label).setProperty(LABEL_REP, labelNode);
+                
+                labelNode.setText(label.getText());
+                updateLayout(labelNode);
+                updateRendering(labelNode);
+
+                if (sync) {
+                    installTextSyncAdapter(labelNode);
+                }
+            }
+
+            if (record && isAutomaticallyArranged(label)) {
                 // this avoids flickering and denotes the application of fade-in,
                 //  see #handleRecordedChanges()
                 labelNode.setVisible(false);
             }
-            labelNode.setText(label.getText());
-            updateLayout(labelNode);
-            updateRendering(labelNode);
-
-            if (sync) {
-                installTextSyncAdapter(labelNode);
-            }
+            
+            // add the label
+            labeledNode.addLabel(labelNode);
+            RenderingContextData.get(label).setProperty(KlighdInternalProperties.ACTIVE, true);
         }
-
-        // add the label
-        labeledNode.addLabel(labelNode);
     }
 
     /**
@@ -740,10 +898,12 @@ public class DiagramController {
      *            the label
      */
     private void removeLabel(final KLabel label) {
-        KLabelNode labelNode = RenderingContextData.get(label).getProperty(KLabelNode.LABEL_REP);
+        KLabelNode labelNode = RenderingContextData.get(label).getProperty(LABEL_REP);
         if (labelNode != null) {
             // remove the label representation from the containing node
             labelNode.removeFromParent();
+            RenderingContextData.get(label).setProperty(KlighdInternalProperties.ACTIVE, false);
+
             if (labelNode.getRenderingController() != null) {
                 // TODO (chsch) Why may the rendering controller be 'null' here? 
                 // release the objects kept in mind
@@ -769,8 +929,7 @@ public class DiagramController {
         }
 
         // create activities to apply all recorded changes
-        for (Map.Entry<PNode, Object> recordedChange : recordedChanges
-                .entrySet()) {
+        for (Map.Entry<PNode, Object> recordedChange : recordedChanges.entrySet()) {
             // create the activity to apply the change
             PInterpolatingActivity activity;
             final PNode shapeNode;
@@ -1074,7 +1233,7 @@ public class DiagramController {
                 return;
             }
             
-            KShapeLayout shL = null;
+            final KShapeLayout shL;
             if (notification.getNotifier() instanceof KNode
                     && notification.getNewValue() instanceof KShapeLayout) {
                 shL = (KShapeLayout) notification.getNewValue();
@@ -1568,8 +1727,7 @@ public class DiagramController {
         KNode target = edge.getTarget();
         if (source != null && target != null) {
             KNode commonParent = findLowestCommonAncestor(source, target);
-            INode commonParentNode = RenderingContextData.get(commonParent).getProperty(
-                    INode.NODE_REP);
+            INode commonParentNode = RenderingContextData.get(commonParent).getProperty(REP);
             if (commonParentNode != null) {
                 KChildAreaNode childAreaNode = commonParentNode.getChildArea();
                 childAreaNode.addEdge(edgeRep);
@@ -1595,16 +1753,16 @@ public class DiagramController {
             // see page
             // http://rtsys.informatik.uni-kiel.de/confluence/display/KIELER/KLayoutData+Meta+Model
             INode sourceParentNode = RenderingContextData.get(determineReferenceNodeOf(edge))
-                    .getProperty(INode.NODE_REP);
+                    .getProperty(REP);
             final KChildAreaNode relativeChildArea = sourceParentNode.getChildArea();
 
             // chsch: The following listener updates the offset of the edge depending the parent
             // nodes.
             // It is attached to all parent nodes that are part of the containment hierarchy,
-            // i.e. PSWTAdvancedPaths, KChildAreas, KNodeNodes, ...!
+            //  i.e. PSWTAdvancedPaths, KChildAreas, KNodeNodes, ...!
             // The listener is sensitive to changes to the 'transform' of those elements.
             // It is important, in case of the change of a parent KNode's rendering,
-            // that its related KChildAreaNode is contained in any other PNode!
+            //  that its related KChildAreaNode is contained in any other PNode!
             PropertyChangeListener listener = new PropertyChangeListener() {
 
                 // assumption: KChildAreaNodes in the containment hierarchy do not have an empty

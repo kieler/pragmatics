@@ -1618,7 +1618,7 @@
       <layoutOption
             advanced="true"
             appliesTo="parents"
-            default="false"
+            default="true"
             description="Whether ports should be moved to the point where edges cross the node&apos;s bounds."
             id="de.cau.cs.kieler.kiml.ogdf.option.adaptPortPositions"
             name="Adapt Port Positions"

@@ -356,7 +356,7 @@ class KRenderingExtensions {
         rendering.styles.removeAll(rendering.styles.filter(typeof(KBackground)).toList);
         return rendering => [
             it.styles += renderingFactory.createKBackground => [
-                it.color = color;
+                it.color = color.copy;
             ];
         ];
     }
@@ -437,7 +437,7 @@ class KRenderingExtensions {
         rendering.styles.removeAll(rendering.styles.filter(typeof(KForeground)).toList);
         return rendering => [
             it.styles += renderingFactory.createKForeground() => [
-                it.color = color;
+                it.color = color.copy;
             ];
         ];
     }
@@ -504,11 +504,11 @@ class KRenderingExtensions {
     }
 
     def <T extends KRendering> T setShadow(T rendering, KColor color) {
-    	setShadow(rendering, color, defaultShadowSize)
+        setShadow(rendering, color, defaultShadowSize)
     }
     
     def <T extends KRendering> T setShadow(T rendering, KColor color, float size) {
-    	setShadow(rendering, color, size, size)	
+        setShadow(rendering, color, size, size)
     }
 
     def <T extends KRendering> T setShadow(T rendering, KColor color, float xOffset, float yOffset) {

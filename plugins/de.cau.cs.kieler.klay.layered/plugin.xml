@@ -48,7 +48,7 @@
                option="de.cau.cs.kieler.klay.layered.edgeSpacingFactor">
          </knownOption>
          <knownOption
-               default="20"
+               default="12"
                option="de.cau.cs.kieler.borderSpacing">
          </knownOption>
          <knownOption
@@ -130,9 +130,6 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.klay.layered.feedBackEdges">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.klay.layered.networkSimplexMaxIterations">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.klay.layered.verticalSpacingFactor">
@@ -293,19 +290,6 @@
          <dependency
                option="de.cau.cs.kieler.edgeRouting"
                value="ORTHOGONAL">
-         </dependency>
-      </layoutOption>
-      <layoutOption
-            advanced="true"
-            appliesTo="parents"
-            default="10000000"
-            description="Bounds the number of DFS iterations of the network simplex layering strategy."
-            id="de.cau.cs.kieler.klay.layered.networkSimplexMaxIterations"
-            name="Layering Max. Iterations"
-            type="int">
-         <dependency
-               option="de.cau.cs.kieler.klay.layered.nodeLayering"
-               value="NETWORK_SIMPLEX">
          </dependency>
       </layoutOption>
       <layoutOption

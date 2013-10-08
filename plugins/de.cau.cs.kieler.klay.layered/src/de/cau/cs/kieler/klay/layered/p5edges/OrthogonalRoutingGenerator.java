@@ -460,7 +460,8 @@ public final class OrthogonalRoutingGenerator {
     // Constants and Variables
 
     /** differences below this tolerance value are treated as zero. */
-    private static final double TOLERANCE = 1e-3;
+    public static final double TOLERANCE = 1e-3;
+    
     /** factor for edge spacing used to determine the conflict threshold. */
     private static final double CONFL_THRESH_FACTOR = 0.2;
     /** weight penalty for conflicts of horizontal line segments. */

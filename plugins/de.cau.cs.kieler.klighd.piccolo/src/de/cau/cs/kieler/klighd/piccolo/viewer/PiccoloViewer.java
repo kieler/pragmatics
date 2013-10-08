@@ -19,9 +19,12 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 import com.google.common.base.Function;
@@ -30,7 +33,9 @@ import com.google.common.collect.Iterables;
 
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.klighd.piccolo.Messages;
+import de.cau.cs.kieler.klighd.piccolo.internal.KlighdSWTGraphicsImpl;
 import de.cau.cs.kieler.klighd.piccolo.internal.activities.ZoomActivity;
 import de.cau.cs.kieler.klighd.piccolo.internal.controller.DiagramController;
 import de.cau.cs.kieler.klighd.piccolo.internal.events.KlighdActionEventHandler;
@@ -40,14 +45,17 @@ import de.cau.cs.kieler.klighd.piccolo.internal.nodes.ITracingElement;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdCanvas;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.PEmptyNode;
 import de.cau.cs.kieler.klighd.piccolo.ui.SaveAsImageAction;
-import de.cau.cs.kieler.klighd.util.RenderingContextData;
 import de.cau.cs.kieler.klighd.viewers.AbstractViewer;
 import de.cau.cs.kieler.klighd.viewers.ContextViewer;
+import de.cau.cs.kieler.klighd.views.DiagramViewPart;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
+import edu.umd.cs.piccolo.POffscreenCanvas;
 import edu.umd.cs.piccolo.PRoot;
 import edu.umd.cs.piccolo.event.PInputEventFilter;
+import edu.umd.cs.piccolo.util.PBounds;
+import edu.umd.cs.piccolo.util.PPaintContext;
 
 /**
  * A viewer for Piccolo diagram contexts.
@@ -111,9 +119,21 @@ public class PiccoloViewer extends AbstractViewer<KNode> implements INodeSelecti
         canvas.addInputEventListener(new PMouseWheelZoomEventHandler());
         // add a context menu
         addContextMenu(canvas);
-        
+
         // add a tooltip element
         new PiccoloTooltip(parent.getDisplay(), canvas.getCamera());
+
+        // register a print action with the global action bars
+        if (getContextViewer().getWorkbenchPart() instanceof DiagramViewPart) {
+            DiagramViewPart viewPart = (DiagramViewPart) getContextViewer().getWorkbenchPart();
+
+            // register print action
+            viewPart.getViewSite()
+                    .getActionBars()
+                    .setGlobalActionHandler(ActionFactory.PRINT.getId(),
+                            new PrintAction(this, viewPart));
+        }
+
     }
 
     /**
@@ -258,7 +278,7 @@ public class PiccoloViewer extends AbstractViewer<KNode> implements INodeSelecti
      * {@inheritDoc}
      */
     @Override
-    public void setSelection(final Iterable<EObject> diagramElements) {
+    public void setSelection(final Iterable<KGraphElement> diagramElements) {
         if (selectionHandler != null) {
             selectionHandler.unselectAll();
             select(diagramElements);
@@ -279,9 +299,9 @@ public class PiccoloViewer extends AbstractViewer<KNode> implements INodeSelecti
      * {@inheritDoc}
      */
     @Override
-    public void select(final Iterable<EObject> diagramElements) {
+    public void select(final Iterable<KGraphElement> diagramElements) {
         if (selectionHandler != null) {
-            for (Object diagramElement : diagramElements) {
+            for (KGraphElement diagramElement : diagramElements) {
                 PNode node = getRepresentation(diagramElement);
                 if (node != null) {
                     selectionHandler.select(node);
@@ -294,9 +314,9 @@ public class PiccoloViewer extends AbstractViewer<KNode> implements INodeSelecti
      * {@inheritDoc}
      */
     @Override
-    public void unselect(final Iterable<EObject> diagramElements) {
+    public void unselect(final Iterable<KGraphElement> diagramElements) {
         if (selectionHandler != null) {
-            for (Object diagramElement : diagramElements) {
+            for (KGraphElement diagramElement : diagramElements) {
                 PNode node = getRepresentation(diagramElement);
                 if (node != null) {
                     selectionHandler.unselect(node);
@@ -330,7 +350,7 @@ public class PiccoloViewer extends AbstractViewer<KNode> implements INodeSelecti
      * {@inheritDoc}
      */
     @Override
-    public void reveal(final EObject diagramElement, final int duration) {
+    public void reveal(final KGraphElement diagramElement, final int duration) {
         PNode node = getRepresentation(diagramElement);
         if (node != null) {
             // move the camera so it includes the bounds of the node
@@ -343,7 +363,7 @@ public class PiccoloViewer extends AbstractViewer<KNode> implements INodeSelecti
      * {@inheritDoc}
      */
     @Override
-    public void centerOn(final EObject diagramElement, final int duration) {
+    public void centerOn(final KGraphElement diagramElement, final int duration) {
         PNode node = getRepresentation(diagramElement);
         if (node != null) {
             // center the camera on the node
@@ -355,6 +375,7 @@ public class PiccoloViewer extends AbstractViewer<KNode> implements INodeSelecti
     /**
      * {@inheritDoc}
      */
+    @Override
     public void expand(final KNode diagramElement) {
         controller.expand(diagramElement);
     }
@@ -362,8 +383,25 @@ public class PiccoloViewer extends AbstractViewer<KNode> implements INodeSelecti
     /**
      * {@inheritDoc}
      */
+    @Override
     public void toggleExpansion(final KNode diagramElement) {
         controller.toggleExpansion(diagramElement);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void hide(final KGraphElement diagramElement) {
+        controller.hide(diagramElement);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void show(final KGraphElement diagramElement) {
+        controller.show(diagramElement);
     }
     
     /**
@@ -373,13 +411,10 @@ public class PiccoloViewer extends AbstractViewer<KNode> implements INodeSelecti
      *            the diagram element
      * @return the Piccolo representation
      */
-    private PNode getRepresentation(final Object diagramElement) {
-        if (diagramElement instanceof KGraphElement) {
-            KGraphElement element = (KGraphElement) diagramElement;
-            PNode node = RenderingContextData.get(element).getProperty(DiagramController.REP);
-            if (node != null && node.getRoot() == canvas.getRoot()) {
-                return node;
-            }
+    private PNode getRepresentation(final KGraphElement diagramElement) {
+        PNode node = (PNode) controller.getRepresentation(diagramElement);
+        if (node != null && node.getRoot() == canvas.getRoot()) {
+            return node;
         }
         return null;
     }
@@ -440,4 +475,40 @@ public class PiccoloViewer extends AbstractViewer<KNode> implements INodeSelecti
         notifyListenersSelection(Iterables.filter(elements, Predicates.notNull()));
     }
 
+    /**
+     * Renders this viewer's contents to the passed gc with the targeted bounds.
+     * 
+     * @param gc
+     *            where to draw to.
+     * @param bounds
+     *            the bounds of the target we are printing to.
+     */
+    public void renderOffscreen(final GC gc, final Rectangle bounds) {
+
+        // create a wrapping graphics object
+        KlighdSWTGraphicsImpl g2 = new KlighdSWTGraphicsImpl(gc, gc.getDevice());
+
+        // create an offscreen canvas and fetch its camera
+        POffscreenCanvas offCanvas = new POffscreenCanvas(bounds.width, bounds.height);
+        PCamera camera = offCanvas.getCamera();
+
+        // let the camera view the original canvas's first layer
+        camera.addLayer(canvas.getLayer());
+
+        // fit the overall diagram into the passed bounds
+        // (copied from #zoomToFit(0))
+        if (controller.getNode().getParent() instanceof PLayer) {
+            KShapeLayout topNodeLayout =
+                    controller.getNode().getGraphElement().getData(KShapeLayout.class);
+            PBounds newBounds =
+                    new PBounds(topNodeLayout.getXpos(), topNodeLayout.getYpos(),
+                            topNodeLayout.getWidth(), topNodeLayout.getHeight());
+            camera.animateViewToCenterBounds(newBounds, true, 0);
+        }
+
+        // set up a new paint context and paint the camera
+        final PPaintContext paintContext = new PPaintContext(g2);
+        paintContext.setRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
+        camera.fullPaint(paintContext);
+    }
 }

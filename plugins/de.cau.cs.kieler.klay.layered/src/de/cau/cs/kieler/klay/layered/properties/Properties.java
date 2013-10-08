@@ -343,7 +343,7 @@ public final class Properties {
     
     /** spacing to the border of the drawing. */
     public static final Property<Float> BORDER_SPACING = new Property<Float>(
-            LayoutOptions.BORDER_SPACING, 20.0f, 0.0f);
+            LayoutOptions.BORDER_SPACING, 12.0f, 0.0f);
 
     /** factor for minimal spacing between edges. */
     public static final Property<Float> EDGE_SPACING_FACTOR = new Property<Float>(
@@ -419,10 +419,6 @@ public final class Properties {
     /** Whether feedback edges should be highlighted by routing around the nodes. */
     public static final IProperty<Boolean> FEEDBACK_EDGES = new Property<Boolean>(
             "de.cau.cs.kieler.klay.layered.feedBackEdges", false);
-    
-    /** Maximal number of iterations performed by the {@link NetworkSimplexLayerer}. */
-    public static final IProperty<Integer> NETWORK_SIMPLEX_MAX_ITERATIONS = new Property<Integer>(
-            "de.cau.cs.kieler.klay.layered.networkSimplexMaxIterations", 10000000, 1000);
 
 
     // /////////////////////////////////////////////////////////////////////////////
