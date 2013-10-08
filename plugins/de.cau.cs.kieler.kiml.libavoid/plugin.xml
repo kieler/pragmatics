@@ -10,6 +10,7 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.libavoid.category"
             class="de.cau.cs.kieler.kiml.libavoid.LibavoidLayoutProvider"
+            description="libavoid is a cross-platform C++ library providing fast, object-avoiding orthogonal and polyline connector routing for use in interactive diagram editors."
             id="org.adaptagrams.cola.libavoid"
             name="Libavoid"
             parameter="LIBAVOID">
@@ -172,7 +173,7 @@
    </extension>
    <extension
          point="org.eclipse.ui.menus">
-      <menuContribution
+      <!--menuContribution
             locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
          <toolbar
                id="de.cau.cs.kieler.layout.libavoid.toolbar"
@@ -194,6 +195,25 @@
                </visibleWhen>
             </command>
          </toolbar>
+      </menuContribution-->
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:de.cau.cs.kieler.kiml.ui.command.layout">
+         <command
+               commandId="de.cau.cs.kieler.kiml.libavoid.ui.command.layout"
+               label="Libavoid Layout"
+               style="push"
+               tooltip="Performs libavoid connector routing after original layout.">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeEditor">
+                  <test
+                        property="de.cau.cs.kieler.kiml.ui.activeEditorIsSupported">
+                  </test>
+               </with>
+            </visibleWhen>
+         </command>
       </menuContribution>
    </extension>
    <extension
