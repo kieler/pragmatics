@@ -76,6 +76,7 @@ void HandleRequest(chunk_istream& stream, ostream& out) {
 
     // options
     Avoid::ConnType connectorType = Avoid::ConnType_PolyLine;
+    std::string direction = DIRECTION_UNDEFINED;
 
     // read graph from stdin
     for (std::string line; std::getline(std::cin, line);) {
@@ -105,15 +106,19 @@ void HandleRequest(chunk_istream& stream, ostream& out) {
                     // default polyline
                     connectorType = Avoid::ConnType_PolyLine;
                 }
+            } else if (tokens[1] == DIRECTION) {
+                // layout direction
+                direction = tokens[1];
             }
 
         } else if (tokens.at(0) == "NODE") {
-            // format: id topleft bottomright
-            if (tokens.size() != 6) {
+            // format:
+            // id topleft bottomright portLessIncomingEdges portLessOutgoingEdges
+            if (tokens.size() != 8) {
                 cerr << "ERROR: invalid node format" << endl;
             }
 
-            addNode(tokens, shapes, router);
+            addNode(tokens, shapes, router, direction);
 
         } else if(tokens[0] == "PORT") {   
 			// format: portId nodeId portSide centerX centerYs
@@ -130,7 +135,7 @@ void HandleRequest(chunk_istream& stream, ostream& out) {
                 cerr << "ERROR: invalid edge format" << endl;
             }
 
-            addEdge(tokens, connectorType, shapes, cons, router);
+            addEdge(tokens, connectorType, shapes, cons, router, direction);
 
         } else if (tokens.at(0) == "GRAPHEND") {
             break;
