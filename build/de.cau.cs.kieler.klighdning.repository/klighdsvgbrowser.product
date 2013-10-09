@@ -7,9 +7,7 @@
    </configIni>
 
    <launcherArgs>
-      <programArgs>-consoleLog 
--rootFolder
-e:/Uni/ma/models</programArgs>
+      <programArgs>-consoleLog</programArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
 
@@ -25,9 +23,6 @@ e:/Uni/ma/models</programArgs>
 
    <features>
       <feature id="de.cau.cs.kieler.klighdning.feature"/>
-      <feature id="de.cau.cs.kieler.kgraph.feature"/>
-      <feature id="de.cau.cs.kieler.klighd.examples.feature"/>
-      <feature id="de.cau.cs.kieler.ptview.feature"/>
    </features>
 
    <configurations>
