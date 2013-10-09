@@ -108,7 +108,7 @@ void addNode(vector<string> &tokens, vector<Avoid::ShapeRef*> &shapes, Avoid::Ro
         if (totalPins > 0) {
             double spacing = 1 / (double) (totalPins + 1);
 
-            int connDir[] = { Avoid::ConnDirUp, Avoid::ConnDirRight, Avoid::ConnDirDown,
+            Avoid::ConnDirFlag connDir[] = { Avoid::ConnDirUp, Avoid::ConnDirRight, Avoid::ConnDirDown,
                     Avoid::ConnDirLeft };
             int xPos[] = { 1, 0, 1, 0 };
             int xOffset[] = { 0, 1, 0, 0 };
@@ -120,7 +120,7 @@ void addNode(vector<string> &tokens, vector<Avoid::ShapeRef*> &shapes, Avoid::Ro
                 for (int j = 0; j < totalPins; j++) {
                     Avoid::ShapeConnectionPin *pin = new Avoid::ShapeConnectionPin(shapeRef,
                             PIN_ARBITRARY, xPos[i] * ((j + 1) * spacing) + xOffset[i],
-                            yPos[i] * ((j + 1) * spacing) + yOffset[i], connDir[i]);
+                            yPos[i] * ((j + 1) * spacing) + yOffset[i], 0.0, connDir[i]);
                     pin->setExclusive(true);
 
                     /*cout << "Pin at " << xPos[i] * ((j+1) * spacing) + xOffset[i] << " " <<
@@ -173,7 +173,7 @@ void addNode(vector<string> &tokens, vector<Avoid::ShapeRef*> &shapes, Avoid::Ro
             for (int i = 0; i < portLessIncomingEdges; i++) {
                 Avoid::ShapeConnectionPin *pin = new Avoid::ShapeConnectionPin(shapeRef,
                         PIN_INCOMING, vertical * ((i + 1) * incSpacing) + right,
-                        horizontal * ((i + 1) * incSpacing) + down, connDirIncoming);
+                        horizontal * ((i + 1) * incSpacing) + down, 0, connDirIncoming);
                 pin->setExclusive(true);
             }
         }
@@ -184,18 +184,11 @@ void addNode(vector<string> &tokens, vector<Avoid::ShapeRef*> &shapes, Avoid::Ro
             for (int i = 0; i < portLessOutgoingEdges; i++) {
                 Avoid::ShapeConnectionPin *pin = new Avoid::ShapeConnectionPin(shapeRef,
                         PIN_OUTGOING, vertical * ((i + 1) * outSpacing) + left,
-                        horizontal * ((i + 1) * outSpacing) + up, connDirOutgoing);
+                        horizontal * ((i + 1) * outSpacing) + up, 0, connDirOutgoing);
                 pin->setExclusive(true);
             }
         }
     }
-
-    // center pin
-    /*Avoid::ShapeConnectionPin *pinCenter = new Avoid::ShapeConnectionPin(
-     shapeRef, PIN_ARBITRARY, Avoid::ATTACH_POS_CENTRE,
-     Avoid::ATTACH_POS_CENTRE, Avoid::ConnDirAll);
-     pinCenter->setExclusive(false);*/
-
 }
 
 void addPort(vector<string> &tokens, vector<Avoid::ShapeConnectionPin*> &pins,
@@ -212,12 +205,12 @@ void addPort(vector<string> &tokens, vector<Avoid::ShapeConnectionPin*> &pins,
     Avoid::ShapeRef* shapeRef = shapes[nodeId - 1];
     Avoid::ShapeConnectionPin *pin;
 
-    // get the bounding box
+    // get the bounding box of the node
     Avoid::Box box = shapeRef->polygon().offsetBoundingBox(0);
     // calculate width and height
     double width = box.max.x - box.min.x;
     double height = box.max.y - box.min.y;
-    // determine the pins positions relative on the respective side
+    // determine the pin's positions relative on the respective side
     double relX = centerX / width;
     double relY = centerY / height;
 
