@@ -40,12 +40,12 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public final class Util {
+public final class LayeredUtil {
 
     /**
      * Private constructor to avoid instantiation.
      */
-    private Util() {
+    private LayeredUtil() {
         // This method intentionally left blank
     }
 

@@ -24,7 +24,7 @@ import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.klay.layered.Util;
+import de.cau.cs.kieler.klay.layered.LayeredUtil;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement.HashCodeCounter;
 import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -375,7 +375,7 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
             
             // Hypernodes have one output port and one input port
             final PortSide defaultSide = PortSide.fromDirection(direction);
-            port = Util.provideCollectorPort(layeredGraph, node, type,
+            port = LayeredUtil.provideCollectorPort(layeredGraph, node, type,
                     type == PortType.OUTPUT ? defaultSide : defaultSide.opposed());
         } else {
             port = new LPort(layeredGraph);
