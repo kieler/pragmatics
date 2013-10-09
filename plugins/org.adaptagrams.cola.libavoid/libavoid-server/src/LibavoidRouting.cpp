@@ -36,8 +36,8 @@ using namespace std;
 
 void tokenize(std::string text, std::vector<string>& tokens) {
     istringstream iss(text);
-    copy(istream_iterator<string>(iss), istream_iterator<string>(),
-            back_inserter<vector<string> >(tokens));
+    copy(istream_iterator < string > (iss), istream_iterator<string>(),
+            back_inserter < vector<string> > (tokens));
 }
 
 void setPenalty(string optionId, string token, Avoid::Router* router) {
@@ -70,24 +70,20 @@ void setOption(string optionId, string token, Avoid::Router* router) {
     bool value = toBool(token);
 
     if (optionId == NUDGE_ORTHOGONAL_SEGMENTS) {
-        router->setRoutingOption(
-                Avoid::nudgeOrthogonalSegmentsConnectedToShapes, value);
+        router->setRoutingOption(Avoid::nudgeOrthogonalSegmentsConnectedToShapes, value);
     } else if (optionId == IMPROVE_HYPEREDGES) {
-        router->setRoutingOption(Avoid::improveHyperedgeRoutesMovingJunctions,
-                value);
+        router->setRoutingOption(Avoid::improveHyperedgeRoutesMovingJunctions, value);
     } else if (optionId == PENALISE_ORTH_SHATE_PATHS) {
-        router->setRoutingOption(Avoid::penaliseOrthogonalSharedPathsAtConnEnds,
-                value);
+        router->setRoutingOption(Avoid::penaliseOrthogonalSharedPathsAtConnEnds, value);
     } else if (optionId == NUDGE_ORTHOGONAL_COLINEAR_SEGMENTS) {
-        router->setRoutingOption(
-                Avoid::nudgeOrthogonalSegmentsConnectedToShapes, value);
+        router->setRoutingOption(Avoid::nudgeOrthogonalSegmentsConnectedToShapes, value);
     } else {
         cerr << "ERROR: unknown option " << optionId << "." << endl;
     }
 }
 
-void addNode(vector<string> &tokens, vector<Avoid::ShapeRef*> &shapes,
-        Avoid::Router* router, string direction) {
+void addNode(vector<string> &tokens, vector<Avoid::ShapeRef*> &shapes, Avoid::Router* router,
+        string direction) {
     int id = toInt(tokens.at(1));
     double topLeftX = toDouble(tokens.at(2));
     double topLeftY = toDouble(tokens.at(3));
@@ -109,25 +105,28 @@ void addNode(vector<string> &tokens, vector<Avoid::ShapeRef*> &shapes,
 
         // create incoming+outgoing pins on each side of the node
         int totalPins = portLessIncomingEdges + portLessOutgoingEdges;
-        double spacing = 1 / totalPins;
+        if (totalPins > 0) {
+            double spacing = 1 / (double) (totalPins + 1);
 
-        int connDir[] = { Avoid::ConnDirUp, Avoid::ConnDirRight,
-                Avoid::ConnDirDown, Avoid::ConnDirLeft };
-        int xPos[] = { 1, 0, 1, 0 };
-        int xOffset[] = { 0, 1, 0, 0 };
-        int yPos[] = { 0, 1, 0, 1 };
-        int yOffset[] = { 0, 0, 1, 0 };
+            int connDir[] = { Avoid::ConnDirUp, Avoid::ConnDirRight, Avoid::ConnDirDown,
+                    Avoid::ConnDirLeft };
+            int xPos[] = { 1, 0, 1, 0 };
+            int xOffset[] = { 0, 1, 0, 0 };
+            int yPos[] = { 0, 1, 0, 1 };
+            int yOffset[] = { 0, 0, 1, 0 };
 
-        // create the pins on each side
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < totalPins; j++) {
-                Avoid::ShapeConnectionPin *pin = new Avoid::ShapeConnectionPin(
-                        shapeRef,
-                        PIN_ARBITRARY,
-                        xPos[i] * (j * spacing) + xOffset[i],
-                        yPos[i] * (j * spacing) + yOffset[i],
-                        connDir[i]);
-                pin->setExclusive(true);
+            // create the pins on each side
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < totalPins; j++) {
+                    Avoid::ShapeConnectionPin *pin = new Avoid::ShapeConnectionPin(shapeRef,
+                            PIN_ARBITRARY, xPos[i] * ((j + 1) * spacing) + xOffset[i],
+                            yPos[i] * ((j + 1) * spacing) + yOffset[i], connDir[i]);
+                    pin->setExclusive(true);
+
+                    /*cout << "Pin at " << xPos[i] * ((j+1) * spacing) + xOffset[i] << " " <<
+                     yPos[i] * ((j+1) * spacing) + yOffset[i] << " " <<
+                     connDir[i] << endl;*/
+                }
             }
         }
     } else {
@@ -169,36 +168,33 @@ void addNode(vector<string> &tokens, vector<Avoid::ShapeRef*> &shapes,
 
         // create the pins
         // incoming
-        double incSpacing = 1 / portLessIncomingEdges;
-        for (int i = 0; i < portLessIncomingEdges; i++) {
-            Avoid::ShapeConnectionPin *pin = new Avoid::ShapeConnectionPin(
-                    shapeRef,
-                    PIN_INCOMING,
-                    vertical * (i * incSpacing) + right,
-                    horizontal * (i * incSpacing) + down,
-                    connDirIncoming);
-            pin->setExclusive(true);
+        if (portLessIncomingEdges > 0) {
+            double incSpacing = 1 / (double) (portLessIncomingEdges + 1);
+            for (int i = 0; i < portLessIncomingEdges; i++) {
+                Avoid::ShapeConnectionPin *pin = new Avoid::ShapeConnectionPin(shapeRef,
+                        PIN_INCOMING, vertical * ((i + 1) * incSpacing) + right,
+                        horizontal * ((i + 1) * incSpacing) + down, connDirIncoming);
+                pin->setExclusive(true);
+            }
         }
 
         // outgoing
-        double outSpacing = 1 / portLessOutgoingEdges;
-        for (int i = 0; i < portLessOutgoingEdges; i++) {
-            Avoid::ShapeConnectionPin *pin = new Avoid::ShapeConnectionPin(
-                    shapeRef,
-                    PIN_OUTGOING,
-                    vertical * (i * outSpacing) + left,
-                    horizontal * (i * outSpacing) + up,
-                    connDirOutgoing);
-            pin->setExclusive(true);
+        if (portLessOutgoingEdges > 0) {
+            double outSpacing = 1 / (double) (portLessOutgoingEdges + 1);
+            for (int i = 0; i < portLessOutgoingEdges; i++) {
+                Avoid::ShapeConnectionPin *pin = new Avoid::ShapeConnectionPin(shapeRef,
+                        PIN_OUTGOING, vertical * ((i + 1) * outSpacing) + left,
+                        horizontal * ((i + 1) * outSpacing) + up, connDirOutgoing);
+                pin->setExclusive(true);
+            }
         }
-
     }
 
     // center pin
     /*Avoid::ShapeConnectionPin *pinCenter = new Avoid::ShapeConnectionPin(
-            shapeRef, PIN_ARBITRARY, Avoid::ATTACH_POS_CENTRE,
-            Avoid::ATTACH_POS_CENTRE, Avoid::ConnDirAll);
-    pinCenter->setExclusive(false);*/
+     shapeRef, PIN_ARBITRARY, Avoid::ATTACH_POS_CENTRE,
+     Avoid::ATTACH_POS_CENTRE, Avoid::ConnDirAll);
+     pinCenter->setExclusive(false);*/
 
 }
 
@@ -227,26 +223,25 @@ void addPort(vector<string> &tokens, vector<Avoid::ShapeConnectionPin*> &pins,
 
     // create the pin with proper setup
     if (side == PORT_SIDE_NORTH) {
-        pin = new Avoid::ShapeConnectionPin(shapeRef, portId, relX,
-                Avoid::ATTACH_POS_TOP, Avoid::ConnDirUp);
+        pin = new Avoid::ShapeConnectionPin(shapeRef, portId, relX, Avoid::ATTACH_POS_TOP,
+                Avoid::ConnDirUp);
     } else if (side == PORT_SIDE_EAST) {
-        pin = new Avoid::ShapeConnectionPin(shapeRef, portId,
-                Avoid::ATTACH_POS_RIGHT, relY, Avoid::ConnDirRight);
+        pin = new Avoid::ShapeConnectionPin(shapeRef, portId, Avoid::ATTACH_POS_RIGHT, relY,
+                Avoid::ConnDirRight);
     } else if (side == PORT_SIDE_SOUTH) {
-        pin = new Avoid::ShapeConnectionPin(shapeRef, portId, relX,
-                Avoid::ATTACH_POS_BOTTOM, Avoid::ConnDirDown);
+        pin = new Avoid::ShapeConnectionPin(shapeRef, portId, relX, Avoid::ATTACH_POS_BOTTOM,
+                Avoid::ConnDirDown);
     } else { // (side == PORT_SIDE_WEST) {
-        pin = new Avoid::ShapeConnectionPin(shapeRef, portId,
-                Avoid::ATTACH_POS_LEFT, relY, Avoid::ConnDirLeft);
+        pin = new Avoid::ShapeConnectionPin(shapeRef, portId, Avoid::ATTACH_POS_LEFT, relY,
+                Avoid::ConnDirLeft);
     }
 
     pin->setExclusive(false);
     pins.push_back(pin);
 }
 
-void addEdge(vector<string> &tokens, Avoid::ConnType connectorType,
-        vector<Avoid::ShapeRef*> &shapes, vector<Avoid::ConnRef*> &cons,
-        Avoid::Router* router, string direction) {
+void addEdge(vector<string> &tokens, Avoid::ConnType connectorType, vector<Avoid::ShapeRef*> &shapes,
+        vector<Avoid::ConnRef*> &cons, Avoid::Router* router, string direction) {
     int edgeId = toInt(tokens.at(1));
     int srcId = toInt(tokens.at(2));
     int tgtId = toInt(tokens.at(3));

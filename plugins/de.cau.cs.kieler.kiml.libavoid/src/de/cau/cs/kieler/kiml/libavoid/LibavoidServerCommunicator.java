@@ -75,8 +75,9 @@ public class LibavoidServerCommunicator {
     private BiMap<Integer, KEdge> edgeIdMap = HashBiMap.create();
 
     // Internal data.
+    private static final int PORT_ID_START = 5;
     private int nodeIdCounter = 1;
-    private int portIdCounter = 5;
+    private int portIdCounter = PORT_ID_START;
     private int edgeIdCounter = 1;
     private static final int SUBTASK_WORK = 1;
     private static final int LAYOUT_WORK = SUBTASK_WORK + SUBTASK_WORK + SUBTASK_WORK
@@ -92,7 +93,7 @@ public class LibavoidServerCommunicator {
     private void reset() {
         nodeIdCounter = 1;
         nodeIdMap.clear();
-        portIdCounter = 5;
+        portIdCounter = PORT_ID_START;
         portIdMap.clear();
         edgeIdCounter = 1;
         edgeIdMap.clear();
@@ -369,29 +370,28 @@ public class LibavoidServerCommunicator {
         nodeIdMap.put(nodeIdCounter, node);
         
         // get information about port-less incoming and outgoing edges
-		int portLessIncomingEdges = Iterables.size(Iterables.filter(
-				node.getIncomingEdges(), new Predicate<KEdge>() {
-					public boolean apply(final KEdge edge) {
-						return edge.getTargetPort() == null;
-					}
-				}));
-		int portLessOutgoingEdges = Iterables.size(Iterables.filter(
-				node.getOutgoingEdges(), new Predicate<KEdge>() {
-					public boolean apply(final KEdge edge) {
-						return edge.getSourcePort() == null;
-					}
-				}));
-		
+        int portLessIncomingEdges =
+                Iterables.size(Iterables.filter(node.getIncomingEdges(), new Predicate<KEdge>() {
+                    public boolean apply(final KEdge edge) {
+                        return edge.getTargetPort() == null;
+                    }
+                }));
+        int portLessOutgoingEdges =
+                Iterables.size(Iterables.filter(node.getOutgoingEdges(), new Predicate<KEdge>() {
+                    public boolean apply(final KEdge edge) {
+                        return edge.getSourcePort() == null;
+                    }
+                }));
 
         // convert the bounds
         KShapeLayout shape = node.getData(KShapeLayout.class);
-		// format:
-		// id topleft bottomright portLessIncomingEdges portLessOutgoingEdges
-		sb.append("NODE " + nodeIdCounter + " " + shape.getXpos() + " "
-				+ shape.getYpos() + " " + (shape.getXpos() + shape.getWidth())
-				+ " " + (shape.getYpos() + shape.getHeight()) + " "
-				+ portLessIncomingEdges + " " + portLessOutgoingEdges);
-		sb.append("\n");
+        // format:
+        // id topleft bottomright portLessIncomingEdges portLessOutgoingEdges
+        sb.append("NODE " + nodeIdCounter + " " + shape.getXpos() + " " + shape.getYpos() + " "
+                + (shape.getXpos() + shape.getWidth()) + " "
+                + (shape.getYpos() + shape.getHeight()) + " " + portLessIncomingEdges + " "
+                + portLessOutgoingEdges);
+        sb.append("\n");
 
         // transfer port constraints
         PortConstraints pc = shape.getProperty(LayoutOptions.PORT_CONSTRAINTS);
