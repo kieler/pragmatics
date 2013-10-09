@@ -146,8 +146,23 @@ void HandleRequest(chunk_istream& stream, ostream& out) {
         //std::cout << line << std::endl;
     }
 
+#ifdef DEBUG_EXEC_TIME
+    // measure execution time of the routing process
+    LARGE_INTEGER frequency;
+    LARGE_INTEGER t1, t2;
+    QueryPerformanceFrequency(&frequency); // ticks per second
+    QueryPerformanceCounter(&t1); // first timestamp
+#endif
+
     // perform edge routing
     router->processTransaction();
+
+#ifdef DEBUG_EXEC_TIME
+    QueryPerformanceCounter(&t2);
+    // compute and print the elapsed time in millisec
+    double elapsedTime = (t2.QuadPart - t1.QuadPart) * 1000.0 / frequency.QuadPart;
+    cout << "DEBUG Execution time edge routing: " << elapsedTime << "ms." << endl;
+#endif
 
     // write the layout to std out
     writeLayout(cout, cons);

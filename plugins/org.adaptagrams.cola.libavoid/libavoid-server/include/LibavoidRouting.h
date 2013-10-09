@@ -33,6 +33,11 @@
 #include "libavoid/libavoid.h"
 
 /*
+ * Debug
+ */
+//#define DEBUG_EXEC_TIME
+
+/*
  * Edge Routing
  */
 #define EDGE_ROUTING                "de.cau.cs.kieler.edgeRouting"
