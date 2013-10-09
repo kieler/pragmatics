@@ -4,7 +4,12 @@ echo ""
 
 help="\nusage: install_kieler_features [kgraph|ptolemy|klighd.examples|featureId]"
 
-if [[ -z "$1" || -z "$2" ]]; then echo "Error: Provide a comma separated list with kieler features you would like to install."; echo -e "${help}"; exit 1; fi
+if [[ -z "$1" ]];
+then 
+	echo "Error: Provide a comma separated list with kieler features you would like to install."
+	echo -e "${help}"
+	exit 1
+fi
 
 # use our default repositories
 rep_platform=http://rtsys.informatik.uni-kiel.de/~kieler/repository/kepler43/
@@ -37,7 +42,7 @@ do
 	features[$i]="de.cau.cs.kieler.klighd.examples.feature.feature.group"; 
   fi
 
-  echo "Found ${features[$i]} ..."
+  #echo "Found ${features[$i]} ..."
 done
 
 # join the features again
