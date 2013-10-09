@@ -57,8 +57,9 @@ import de.cau.cs.kieler.kiml.options.PortSide;
  *    - The same goes for the edges.
  *    - Port's ids start at 5, leaving the ids [1,..,4] as special cases for internal 
  *      handling of libavoid  
- * 
- * 
+ *    - The edge routing option has to be passed first!
+ *      The information is required to initialize the libavoid router properly 
+ *      before the router can be configured with additional options.
  * 
  * @author uru
  */
@@ -266,11 +267,14 @@ public class LibavoidServerCommunicator {
         /*
          * General Properties 
          */
-        Direction direction = nodeLayout.getProperty(LayoutOptions.DIRECTION);
-        addOption(LayoutOptions.DIRECTION.getId(), direction);
-        
+        // IMPORTANT: the edge routing option has to be passed first!
+        // The information is required to initialize the libavoid router properly 
+        // before the router can be configured with additional options
         EdgeRouting edgeRouting = nodeLayout.getProperty(LayoutOptions.EDGE_ROUTING);
         addOption(LayoutOptions.EDGE_ROUTING.getId(), edgeRouting);
+        
+        Direction direction = nodeLayout.getProperty(LayoutOptions.DIRECTION);
+        addOption(LayoutOptions.DIRECTION.getId(), direction);
 
         /*
          * Penalties

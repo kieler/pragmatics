@@ -72,7 +72,8 @@ void HandleRequest(chunk_istream& stream, ostream& out) {
     vector<Avoid::ShapeConnectionPin *> pins;
     vector<Avoid::ConnRef *> cons;
 
-    Avoid::Router *router = new Avoid::Router(Avoid::OrthogonalRouting | Avoid::PolyLineRouting);
+	// router is initialized upon receiption of the edge routing option
+    Avoid::Router *router = 0;
 
     // options
     Avoid::ConnType connectorType = Avoid::ConnType_PolyLine;
@@ -99,11 +100,17 @@ void HandleRequest(chunk_istream& stream, ostream& out) {
 
             /* General options */
             if (tokens[1] == EDGE_ROUTING) {
+				if (router) {
+					// possibly delete an old router
+					delete router;
+				}
                 // edge routing
                 if (tokens[2] == EDGE_ROUTING_ORTHOGONAL) {
+					router = new Avoid::Router(Avoid::OrthogonalRouting);
                     connectorType = Avoid::ConnType_Orthogonal;
                 } else {
                     // default polyline
+					router = new Avoid::Router(Avoid::PolyLineRouting);
                     connectorType = Avoid::ConnType_PolyLine;
                 }
             } else if (tokens[1] == DIRECTION) {
