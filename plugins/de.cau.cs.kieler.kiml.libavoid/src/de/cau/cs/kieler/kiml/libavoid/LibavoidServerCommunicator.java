@@ -326,6 +326,16 @@ public class LibavoidServerCommunicator {
                 nodeLayout.getProperty(LibavoidRouterSetup.NUDGE_ORTHOGONAL_COLINEAR_SEGMENTS);
         addRoutingOption(LibavoidRouterSetup.NUDGE_ORTHOGONAL_COLINEAR_SEGMENTS.getId(),
                 nudgeOrthogonalTouchingColinearSegments);
+        
+        boolean performUnifyingNudgingPreprocessingStep =
+                nodeLayout.getProperty(LibavoidRouterSetup.NUDGE_PREPROCESSING);
+        addRoutingOption(LibavoidRouterSetup.NUDGE_PREPROCESSING.getId(),
+                performUnifyingNudgingPreprocessingStep);
+
+        boolean improveHyperedgeRoutesMovingAddingAndDeletingJunctions =
+                nodeLayout.getProperty(LibavoidRouterSetup.IMPROVE_HYPEREDGES_ADD_DELETE);
+        addRoutingOption(LibavoidRouterSetup.IMPROVE_HYPEREDGES_ADD_DELETE.getId(),
+                improveHyperedgeRoutesMovingAddingAndDeletingJunctions);
 
     }
 

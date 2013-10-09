@@ -57,6 +57,12 @@
          <knownOption
                option="de.cau.cs.kieler.direction">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.libavoid.performUnifyingNudgingPreprocessingStep">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.libavoid.improveHyperedgeRoutesMovingAddingAndDeletingJunctions">
+         </knownOption>
       </layoutAlgorithm>
       <layoutOption
             advanced="false"
@@ -168,6 +174,24 @@
             description="This option can be used to control whether colinear line segments that touch just at their ends will be nudged apart. The overlap will usually be resolved in the other dimension, so this is not usually required and is not set by default. "
             id="de.cau.cs.kieler.kiml.libavoid.nudgeOrthogonalTouchingColinearSegments"
             name="Nudge Orthogonal Colinear Segments"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="true"
+            description="This option can be used to control whether the router performs a preprocessing step before orthogonal nudging where is tries to unify segments and centre them in free space. This generally results in better quality ordering and nudging."
+            id="de.cau.cs.kieler.kiml.libavoid.performUnifyingNudgingPreprocessingStep"
+            name="Nudging Preprocessing"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="false"
+            description="This option causes hyperedge routes to be locally improved fixing obviously bad paths."
+            id="de.cau.cs.kieler.kiml.libavoid.improveHyperedgeRoutesMovingAddingAndDeletingJunctions"
+            name="Improve Hyperedge Routes Add Delete"
             type="boolean">
       </layoutOption>
    </extension>

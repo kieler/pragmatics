@@ -65,6 +65,8 @@
 #define IMPROVE_HYPEREDGES					"de.cau.cs.kieler.kiml.libavoid.improveHyperedgeRoutesMovingJunctions"
 #define PENALISE_ORTH_SHATE_PATHS			"de.cau.cs.kieler.kiml.libavoid.penaliseOrthogonalSharedPathsAtConnEnds"
 #define NUDGE_ORTHOGONAL_COLINEAR_SEGMENTS	"de.cau.cs.kieler.kiml.libavoid.nudgeOrthogonalTouchingColinearSegments"
+#define NUDGE_PREPROCESSING					"de.cau.cs.kieler.kiml.libavoid.performUnifyingNudgingPreprocessingStep"
+#define IMPROVE_HYPEREDGES_ADD_DELETE       "de.cau.cs.kieler.kiml.libavoid.improveHyperedgeRoutesMovingAddingAndDeletingJunctions"
 
 /*
  * Port Sides 
@@ -97,8 +99,8 @@ void setOption(std::string optionId, std::string token, Avoid::Router* router);
 void addNode(std::vector<std::string> &tokens, std::vector<Avoid::ShapeRef*> &shapes,
         Avoid::Router* router, std::string direction);
 
-void addPort(std::vector<std::string> &tokens, std::vector<Avoid::ShapeConnectionPin*> &pins, 
-		std::vector<Avoid::ShapeRef*> &shapes, Avoid::Router* router);
+void addPort(std::vector<std::string> &tokens, std::vector<Avoid::ShapeConnectionPin*> &pins,
+        std::vector<Avoid::ShapeRef*> &shapes, Avoid::Router* router);
 
 void addEdge(std::vector<std::string> &tokens, Avoid::ConnType connectorType,
         std::vector<Avoid::ShapeRef*> &shapes, std::vector<Avoid::ConnRef*> &cons,

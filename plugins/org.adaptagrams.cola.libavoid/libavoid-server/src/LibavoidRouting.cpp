@@ -77,6 +77,11 @@ void setOption(string optionId, string token, Avoid::Router* router) {
         router->setRoutingOption(Avoid::penaliseOrthogonalSharedPathsAtConnEnds, value);
     } else if (optionId == NUDGE_ORTHOGONAL_COLINEAR_SEGMENTS) {
         router->setRoutingOption(Avoid::nudgeOrthogonalSegmentsConnectedToShapes, value);
+    } else if (optionId == NUDGE_PREPROCESSING) {
+        router->setRoutingOption(Avoid::performUnifyingNudgingPreprocessingStep, value);
+    } else if (optionId == IMPROVE_HYPEREDGES_ADD_DELETE) {
+        router->setRoutingOption(Avoid::improveHyperedgeRoutesMovingAddingAndDeletingJunctions,
+                value);
     } else {
         cerr << "ERROR: unknown option " << optionId << "." << endl;
     }

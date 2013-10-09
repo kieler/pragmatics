@@ -83,4 +83,11 @@ public final class LibavoidRouterSetup {
             new Property<Boolean>(
                     "de.cau.cs.kieler.kiml.libavoid.nudgeOrthogonalTouchingColinearSegments", false);
 
+    public static final IProperty<Boolean> NUDGE_PREPROCESSING = new Property<Boolean>(
+            "de.cau.cs.kieler.kiml.libavoid.performUnifyingNudgingPreprocessingStep", true);
+
+    public static final IProperty<Boolean> IMPROVE_HYPEREDGES_ADD_DELETE = new Property<Boolean>(
+            "de.cau.cs.kieler.kiml.libavoid."
+                    + "improveHyperedgeRoutesMovingAddingAndDeletingJunctions", true);
+    
 }
