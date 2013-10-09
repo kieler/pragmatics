@@ -25,7 +25,7 @@ import java.util.Set;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
-import de.cau.cs.kieler.klay.layered.Util;
+import de.cau.cs.kieler.klay.layered.LayeredUtil;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -125,7 +125,7 @@ public final class SubgraphOrderingProcessor implements ILayoutProcessor {
             for (int i = 0; i < (layerNodes.size() - 1); i++) {
 
                 LNode currentNode = layerNodes.get(i);
-                LNode relatedCompoundCurrent = Util.getRelatedCompoundNode(currentNode,
+                LNode relatedCompoundCurrent = LayeredUtil.getRelatedCompoundNode(currentNode,
                         layeredGraph);
                 // Store the currentNode in layerCompoundContents under the key
                 // of relatedCompoundCurrent.
@@ -137,7 +137,7 @@ public final class SubgraphOrderingProcessor implements ILayoutProcessor {
                 LNode nextNode = layerNodes.get(i + 1);
                 // Store the currentNode in layerCompoundContents under the key
                 // of relatedCompoundCurrent.
-                LNode relatedCompoundNext = Util.getRelatedCompoundNode(nextNode, layeredGraph);
+                LNode relatedCompoundNext = LayeredUtil.getRelatedCompoundNode(nextNode, layeredGraph);
                 insertRelatedCompound(layerCompoundContents, nextNode, relatedCompoundNext,
                         graphKey);
                 // fill in the insertions in the layerCompoundContents up the
@@ -155,7 +155,7 @@ public final class SubgraphOrderingProcessor implements ILayoutProcessor {
                     LinkedList<LNode> leftRightList = new LinkedList<LNode>();
                     leftRightList.add(currentNode);
                     leftRightList.add(nextNode);
-                    Util.propagatePair(leftRightList, elemMap);
+                    LayeredUtil.propagatePair(leftRightList, elemMap);
                     LNode propCompoundCurrent = leftRightList.getFirst();
                     LNode propCompoundNext = leftRightList.getLast();
                     // Do not insert self-loops into the
