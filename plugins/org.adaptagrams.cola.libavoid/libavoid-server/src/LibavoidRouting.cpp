@@ -111,12 +111,12 @@ void addNode(vector<string> &tokens, vector<Avoid::ShapeRef*> &shapes,
         int totalPins = portLessIncomingEdges + portLessOutgoingEdges;
         double spacing = 1 / totalPins;
 
-        int connDir[] = new int[] { Avoid::ConnDirUp, Avoid::ConnDirRight,
+        int connDir[] = { Avoid::ConnDirUp, Avoid::ConnDirRight,
                 Avoid::ConnDirDown, Avoid::ConnDirLeft };
-        int xPos[] = new int[] { 1, 0, 1, 0 };
-        int xOffset = new int[] { 0, 1, 0, 0 };
-        int yPos[] = new int[] { 0, 1, 0, 1 };
-        int yOffset = new int[] { 0, 0, 1, 0 };
+        int xPos[] = { 1, 0, 1, 0 };
+        int xOffset[] = { 0, 1, 0, 0 };
+        int yPos[] = { 0, 1, 0, 1 };
+        int yOffset[] = { 0, 0, 1, 0 };
 
         // create the pins on each side
         for (int i = 0; i < 4; i++) {
