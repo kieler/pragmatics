@@ -294,7 +294,10 @@ void writeLayout(ostream& out, vector<Avoid::ConnRef*> cons) {
 
         out << "EDGE " << cons[i]->id() << "=";
 
-        const Avoid::PolyLine route = cons[i]->route();
+		// Be sure to use #displayRoute() here and not route(), as the 
+		// second method only contains the "raw" route, eg, without any
+		// nudging done.
+        const Avoid::PolyLine route = cons[i]->displayRoute();
         for (size_t i = 0; i < route.ps.size(); ++i) {
             out << route.ps[i].x << " " << route.ps[i].y << " ";
         }
