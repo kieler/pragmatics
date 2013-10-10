@@ -2,4 +2,4 @@
 
 if [[ -z "$1" ]]; then echo -e "\nusage: start.sh [models-folder]"; exit 1; fi
 
-./KlighDning -rootFolder $1 &
+nohup ./KlighDning -rootFolder $1 </dev/null &
