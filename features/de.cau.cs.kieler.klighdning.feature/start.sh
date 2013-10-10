@@ -1,5 +1,5 @@
 #!/bin/bash
 
-if [[ -z "$1" ]]; then echo -e "\nusage: start [models-folder]"; exit 1; fi
+if [[ -z "$1" ]]; then echo -e "\nusage: start.sh [models-folder]"; exit 1; fi
 
-./KlighDning.exe -rootFolder $1
+./KlighDning -rootFolder $1 &
