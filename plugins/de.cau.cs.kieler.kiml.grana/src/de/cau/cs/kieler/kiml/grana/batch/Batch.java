@@ -70,7 +70,7 @@ public class Batch {
                 BatchJobResult<?> batchJobResult =
                         batchJob.execute(analyses, monitor.subTask(1));
                 batchResult.appendJobResult(batchJobResult);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 batchResult.appendFailedJob(batchJob, e);
             }
         }
