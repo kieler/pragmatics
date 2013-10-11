@@ -15,7 +15,7 @@ package de.cau.cs.kieler.klighdning.viewer;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KNodeNode;
-import de.cau.cs.kieler.klighd.piccolo.svg.KlighdSimpleSVGGraphicsImpl;
+import de.cau.cs.kieler.klighd.piccolo.svg.KlighdAbstractSVGGraphics;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.util.PPaintContext;
 
@@ -54,9 +54,13 @@ public class WrappedKNodeNode extends PNode {
     @Override
     public void fullPaint(final PPaintContext paintContext) {
 
-        if (paintContext.getGraphics() instanceof KlighdSimpleSVGGraphicsImpl) {
-            KlighdSimpleSVGGraphicsImpl g =
-                    (KlighdSimpleSVGGraphicsImpl) paintContext.getGraphics();
+        // if (paintContext.getGraphics() instanceof KlighdSimpleSVGGraphicsImpl {
+        if (paintContext.getGraphics() instanceof KlighdAbstractSVGGraphics) {
+//            KlighdSimpleSVGGraphicsImpl g =
+//                    (KlighdSimpleSVGGraphicsImpl) paintContext.getGraphics();
+            
+            KlighdAbstractSVGGraphics g =
+                    (KlighdAbstractSVGGraphics) paintContext.getGraphics();
 
             // draw invisible text
             int oldAlpha = g.getAlpha();
