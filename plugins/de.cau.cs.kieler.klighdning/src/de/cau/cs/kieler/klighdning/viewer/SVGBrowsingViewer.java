@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klighdning.viewer;
 
+import java.awt.geom.Rectangle2D;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -48,12 +49,14 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.klighd.piccolo.internal.controller.DiagramController;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KNodeNode;
 import de.cau.cs.kieler.klighd.piccolo.svg.KlighdSVGCanvas;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
+import edu.umd.cs.piccolo.util.PBounds;
 
 /**
  * This is an offscreen Klighd Viewer, hence no display is required.
@@ -97,6 +100,9 @@ public class SVGBrowsingViewer {
             recursivelyWrapKNodeNodes(controller.getNode());
         }
 
+        // FIXME
+        controller.zoomToFit(0);
+        
         // render
         String rendered = canvas.render();
 

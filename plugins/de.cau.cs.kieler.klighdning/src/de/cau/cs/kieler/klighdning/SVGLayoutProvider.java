@@ -93,7 +93,7 @@ public final class SVGLayoutProvider {
         int viewBox = sb.indexOf("viewBox=");
         if (viewBox != -1) {
             // CHECKSTYLEOFF MagicNumber
-            sb.replace(viewBox, sb.indexOf("\"", viewBox + 9), "");
+            sb.replace(viewBox, sb.indexOf("\"", viewBox + 9) + 1, "");
         }
 
         // insert an id for the first group element
