@@ -24,7 +24,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
-import de.cau.cs.kieler.klay.layered.Util;
+import de.cau.cs.kieler.klay.layered.LayeredUtil;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -253,13 +253,13 @@ public final class CompoundSideProcessor implements ILayoutProcessor {
                 LNode targetNode = lnode.getProperty(Properties.LONG_EDGE_TARGET).getNode();
                 if (sourceNode.getProperty(Properties.PARENT) == targetNode
                         .getProperty(Properties.PARENT)) {
-                    if ((Util.isDescendant(sourceNode, upperBorder))
-                            || (Util.isDescendant(targetNode, upperBorder))) {
+                    if ((LayeredUtil.isDescendant(sourceNode, upperBorder))
+                            || (LayeredUtil.isDescendant(targetNode, upperBorder))) {
                         ret = compareIndex(lnode, ret, lowerSide);
                     }
                 } else {
-                    if ((Util.isDescendant(targetNode, upperBorder)) 
-                            || (Util.isDescendant(sourceNode, upperBorder))) {
+                    if ((LayeredUtil.isDescendant(targetNode, upperBorder)) 
+                            || (LayeredUtil.isDescendant(sourceNode, upperBorder))) {
                         ret = compareIndex(lnode, ret, lowerSide);
                     }
                 }

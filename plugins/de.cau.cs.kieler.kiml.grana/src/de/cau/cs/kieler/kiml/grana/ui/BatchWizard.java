@@ -20,6 +20,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
+import de.cau.cs.kieler.kiml.grana.ui.LayoutConfigurationPage.BatchLayoutConfig;
 import de.cau.cs.kieler.kiml.grana.util.GranaUtil;
 import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 
@@ -37,8 +38,9 @@ public class BatchWizard extends Wizard {
     private static final String TITLE = "Initialize a batch graph analysis";
 
     /** the preference store key for the selected analyses. */
-    private static final String PREFERENCE_SELECTED_ANALYSES =
-            "grana.batch.selectedAnalyses";
+    private static final String PREFERENCE_SELECTED_ANALYSES = "grana.batch.selectedAnalyses";
+    /** the preference store key for the layout configuration. */
+    private static final String PREFERENCE_LAYOUT_CONFIG = "grana.batch.layoutConfig";
 
     /** the initial selection. */
     private IStructuredSelection selection = null;
@@ -91,7 +93,8 @@ public class BatchWizard extends Wizard {
         resultFilePage = new BatchResultFilePage();
         selectedAnalyses = GranaUtil.getAnalysesSelection(PREFERENCE_SELECTED_ANALYSES);
         analysisSelectionPage = new BatchAnalysisSelectionPage(selectedAnalyses);
-        layoutConfigurationPage = new LayoutConfigurationPage();
+        layoutConfigurationPage = new LayoutConfigurationPage(GranaUtil.getConfiguration(
+                PREFERENCE_LAYOUT_CONFIG));
         addPage(fileSelectionPage);
         addPage(resultFilePage);
         addPage(analysisSelectionPage);
@@ -109,9 +112,10 @@ public class BatchWizard extends Wizard {
         layoutBeforeAnalysis = fileSelectionPage.getLayoutBeforeAnalysis();
         resultFile = resultFilePage.getResultFile();
         selectedAnalyses = analysisSelectionPage.getAnalyses();
-        layoutConfig = layoutConfigurationPage.getConfig();
-        GranaUtil.setAnalysesSelection(PREFERENCE_SELECTED_ANALYSES,
-                selectedAnalyses);
+        GranaUtil.setAnalysesSelection(PREFERENCE_SELECTED_ANALYSES, selectedAnalyses);
+        BatchLayoutConfig batchLayoutConfig = layoutConfigurationPage.getConfig();
+        layoutConfig = batchLayoutConfig;
+        GranaUtil.setConfiguration(PREFERENCE_LAYOUT_CONFIG, batchLayoutConfig.getEntries());
         return true;
     }
 
