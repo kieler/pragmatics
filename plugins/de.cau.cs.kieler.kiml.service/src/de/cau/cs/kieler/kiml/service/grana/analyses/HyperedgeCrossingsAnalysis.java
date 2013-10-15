@@ -15,14 +15,15 @@ package de.cau.cs.kieler.kiml.service.grana.analyses;
 
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
@@ -63,11 +64,9 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Hyperedge crossings analysis", 1);
         
-        // Collect all edge segments, merge them and count crossings
-        Map<KVectorChain, Hyperedge> chain2HyperedgeMap = collectHyperedges(parentNode);
+        // Collect all hyperedge segments, merge them and count crossings
+        Hyperedge[] hyperedges = collectHyperedges(parentNode);
         
-        Hyperedge[] hyperedges = new HashSet<Hyperedge>(chain2HyperedgeMap.values())
-                .toArray(new Hyperedge[0]);
         for (Hyperedge he : hyperedges) {
             collectEdgeSegments(he);
             mergeEdgeSegments(he);
@@ -76,7 +75,7 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
         int crossings = countCrossings(hyperedges);
         
         progressMonitor.done();
-        return crossings;
+        return new Object[] { crossings, hyperedges.length };
     }
     
     ///////////////////////////////////////////////////////////////////////////////
@@ -86,16 +85,16 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
      * Collect all hyperedges of the given graph.
      * 
      * @param parentNode the parent node of the graph
-     * @return a map of vector chains to hyperedges
+     * @return the collected hyperedges
      */
-    private Map<KVectorChain, Hyperedge> collectHyperedges(final KNode parentNode) {
+    private Hyperedge[] collectHyperedges(final KNode parentNode) {
         boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
                 AnalysisOptions.ANALYZE_HIERARCHY);
         
         // collect all edges and translate their coordinates to absolute
         LinkedList<KNode> nodeQueue = new LinkedList<KNode>();
         List<KVectorChain> chains = new ArrayList<KVectorChain>();
-        Map<KVectorChain, Hyperedge> chain2HyperedgeMap = Maps.newHashMap();
+        Set<Hyperedge> hyperedges = Sets.newHashSet();
         Map<KPort, Hyperedge> port2HyperedgeMap = Maps.newHashMap();
         nodeQueue.addAll(parentNode.getChildren());
         while (!nodeQueue.isEmpty()) {
@@ -132,30 +131,24 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
                 if (sourceHE == null && targetHE == null) {
                     Hyperedge hyperedge = new Hyperedge();
                     hyperedge.chains.add(chain);
-                    chain2HyperedgeMap.put(chain, hyperedge);
+                    hyperedges.add(hyperedge);
                     hyperedge.ports.add(sourcePort);
                     port2HyperedgeMap.put(sourcePort, hyperedge);
                     hyperedge.ports.add(targetPort);
                     port2HyperedgeMap.put(targetPort, hyperedge);
                 } else if (sourceHE == null) {
                     targetHE.chains.add(chain);
-                    chain2HyperedgeMap.put(chain, targetHE);
                     targetHE.ports.add(sourcePort);
                     port2HyperedgeMap.put(sourcePort, targetHE);
                 } else if (targetHE == null) {
                     sourceHE.chains.add(chain);
-                    chain2HyperedgeMap.put(chain, sourceHE);
                     sourceHE.ports.add(targetPort);
                     port2HyperedgeMap.put(targetPort, sourceHE);
                 } else if (sourceHE == targetHE) {
                     sourceHE.chains.add(chain);
-                    chain2HyperedgeMap.put(chain, sourceHE);
                 } else {
                     sourceHE.chains.add(chain);
-                    chain2HyperedgeMap.put(chain, sourceHE);
-                    for (KVectorChain c : targetHE.chains) {
-                        chain2HyperedgeMap.put(c, sourceHE);
-                    }
+                    hyperedges.remove(targetHE);
                     for (KPort p : targetHE.ports) {
                         port2HyperedgeMap.put(p, sourceHE);
                     }
@@ -169,7 +162,7 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
                 nodeQueue.addAll(node.getChildren());
             }
         }
-        return chain2HyperedgeMap;
+        return hyperedges.toArray(new Hyperedge[hyperedges.size()]);
     }
     
     /**

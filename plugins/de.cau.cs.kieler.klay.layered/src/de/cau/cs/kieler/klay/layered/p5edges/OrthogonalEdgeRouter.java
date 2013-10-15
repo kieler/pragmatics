@@ -305,25 +305,26 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
             
             // Route edges between the two layers
             slotsCount = routingGenerator.routeEdges(layeredGraph, leftLayerNodes, leftLayerIndex,
-                    rightLayerNodes, xpos + edgeSpacing);
+                    rightLayerNodes, leftLayer == null ? xpos : xpos + edgeSpacing);
             
-            if (leftLayer != null && rightLayer != null) {
-                boolean externalLeftLayer = Iterables.all(leftLayerNodes,
-                        PolylineEdgeRouter.PRED_EXTERNAL_PORT);
-                boolean externalRightLayer = Iterables.all(rightLayerNodes,
-                        PolylineEdgeRouter.PRED_EXTERNAL_PORT);
-                if (slotsCount > 0) {
-                    // The space between each pair of edge segments, and between nodes and edges
-                    double increment = (slotsCount + 1) * edgeSpacing;
-                    // If  we are between two layers, make sure their minimal spacing is preserved
-                    if (increment < nodeSpacing && !externalLeftLayer && !externalRightLayer) {
-                        increment = nodeSpacing;
-                    }
-                    xpos += increment;
-                } else if (!externalLeftLayer && !externalRightLayer) {
-                    // If we are between two layers, but all edges are straight, take default spacing
-                    xpos += nodeSpacing;
+            boolean externalLeftLayer = leftLayer == null || Iterables.all(leftLayerNodes,
+                    PolylineEdgeRouter.PRED_EXTERNAL_PORT);
+            boolean externalRightLayer = rightLayer == null || Iterables.all(rightLayerNodes,
+                    PolylineEdgeRouter.PRED_EXTERNAL_PORT);
+            if (slotsCount > 0) {
+                // The space between each pair of edge segments, and between nodes and edges
+                double increment = slotsCount * edgeSpacing;
+                if (rightLayer != null) {
+                    increment += edgeSpacing;
                 }
+                // If  we are between two layers, make sure their minimal spacing is preserved
+                if (increment < nodeSpacing && !externalLeftLayer && !externalRightLayer) {
+                    increment = nodeSpacing;
+                }
+                xpos += increment;
+            } else if (!externalLeftLayer && !externalRightLayer) {
+                // If we are between two layers, but all edges are straight, take default spacing
+                xpos += nodeSpacing;
             }
             
             leftLayer = rightLayer;
