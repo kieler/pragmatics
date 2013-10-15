@@ -51,11 +51,12 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
     
     override transform(DocumentRoot model) {
         // Transform, optimize, and visualize
-        val kgraph = transformation.transform(model)
+        val kgraph = transformation.transform(model, this)
         optimization.optimize(kgraph,
             !SHOW_RELATIONS.optionBooleanValue,
             FLATTEN.optionBooleanValue,
-            if (SHOW_COMMENTS.optionBooleanValue) commentsExtractor else null
+            if (SHOW_COMMENTS.optionBooleanValue) commentsExtractor else null,
+            this
         )
         visualization.visualize(kgraph, (COMPOUND_NODE_ALPHA.optionValue as Float).intValue)
         

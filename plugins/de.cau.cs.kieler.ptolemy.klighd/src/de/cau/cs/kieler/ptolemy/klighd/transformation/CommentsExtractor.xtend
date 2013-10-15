@@ -30,6 +30,7 @@ import org.ptolemy.moml.PropertyType
 
 import static de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties.*
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
+import de.cau.cs.kieler.klighd.transformations.AbstractDiagramSynthesis
 
 /**
  * Extracts comments from the model and turns them into special comment nodes. Also tries to find the
@@ -173,9 +174,13 @@ class CommentsExtractor {
     
     /**
      * Finds comments and comment attachments in the tree rooted at the given node.
+     * 
+     * @param root the root node.
+     * @param diagramSynthesis the diagram synthesis that uses this class; used to map Ptolemy model
+     *                         objects to the nodes created for them.
      */
-    def void extractAndAttachComments(KNode root) {
-        extractComments(root)
+    def void extractAndAttachComments(KNode root, AbstractDiagramSynthesis<?> diagramSynthesis) {
+        extractComments(root, diagramSynthesis)
         attachComments()
     }
     
@@ -188,8 +193,10 @@ class CommentsExtractor {
      * nodes that are children of the given node.
      * 
      * @param root the root node.
+     * @param diagramSynthesis the diagram synthesis that uses this class; used to map Ptolemy model
+     *                         objects to the nodes created for them.
      */
-    def void extractComments(KNode root) {
+    def void extractComments(KNode root, AbstractDiagramSynthesis<?> diagramSynthesis) {
         // Iterate through the node's annotations looking for comments
         for (annotation : root.annotations) {
             if ((annotation.class_ ?: "").equals(ANNOTATION_TYPE_TEXT_ATTRIBUTE)) {
@@ -197,6 +204,7 @@ class CommentsExtractor {
                 val commentNode = addCommentNode(root,
                     annotation.getAnnotationValue(ANNOTATION_COMMENT_TEXT) ?: "")
                 commentNode.annotations += annotation.annotations
+                diagramSynthesis.putToLookUpWith(commentNode, annotation)
             } else if ((annotation.class_ ?: "").equals(ANNOTATION_TYPE_ATTRIBUTE)) {
                 // Check if there is an _iconDescription attribute
                 val iconDescription = annotation.getAnnotation("_iconDescription")
@@ -209,6 +217,7 @@ class CommentsExtractor {
                         // We were successful; add a comment node
                         val commentNode = addCommentNode(root, text)
                         commentNode.annotations += annotation.annotations
+                        diagramSynthesis.putToLookUpWith(commentNode, annotation)
                     }
                 }
             }
@@ -217,7 +226,7 @@ class CommentsExtractor {
         // Recurse into child compound nodes
         for (child : root.children) {
             if (!child.children.empty) {
-                extractComments(child)
+                extractComments(child, diagramSynthesis)
             }
         }
     }
