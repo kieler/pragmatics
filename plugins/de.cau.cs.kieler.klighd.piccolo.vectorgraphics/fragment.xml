@@ -28,5 +28,11 @@
             id="de.cau.cs.kieler.klighd.piccolo.svg.exporter.freeHEP"
             subFormat="de.cau.cs.kieler.klighd.piccolo.svg.freeHEP">
       </exporter>
+      <exporter
+            class="de.cau.cs.kieler.klighd.piccolo.pdf.impl.VectorGraphicsPDFGraphics"
+            description="VectorGraphics2D"
+            extension="pdf"
+            id="de.cau.cs.kieler.klighd.piccolo.pdf.vectorGraphics">
+      </exporter>
    </extension>
 </fragment>
