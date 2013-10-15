@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: KIELER Additional SVG Generators
-Bundle-SymbolicName: de.cau.cs.kieler.klighd.piccolo.svg.gens;singleton:=true
+Bundle-SymbolicName: de.cau.cs.kieler.klighd.piccolo.vectorgraphics;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Fragment-Host: de.cau.cs.kieler.klighd.piccolo.svg;bundle-version="0.1.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

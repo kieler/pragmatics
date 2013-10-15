@@ -12,4 +12,21 @@
             id="de.cau.cs.kieler.klighd.piccolo.svg.vectorGraphics2D">
       </svgGenerator>
    </extension>
+   <extension
+         point="de.cau.cs.kieler.klighd.piccolo.exporters">
+      <exporter
+            class="de.cau.cs.kieler.klighd.piccolo.svg.export.SVGExporter"
+            description="VectorGraphics2D"
+            extension="svg"
+            id="de.cau.cs.kieler.klighd.piccolo.svg.exporter.vectorGraphics2D"
+            subFormat="de.cau.cs.kieler.klighd.piccolo.svg.vectorGraphics2D">
+      </exporter>
+      <exporter
+            class="de.cau.cs.kieler.klighd.piccolo.svg.export.SVGExporter"
+            description="FreeHEP"
+            extension="svg"
+            id="de.cau.cs.kieler.klighd.piccolo.svg.exporter.freeHEP"
+            subFormat="de.cau.cs.kieler.klighd.piccolo.svg.freeHEP">
+      </exporter>
+   </extension>
 </fragment>
