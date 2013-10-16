@@ -33,11 +33,23 @@
 #include "libavoid/libavoid.h"
 
 /*
+ * Debug
+ */
+//#define DEBUG_EXEC_TIME
+
+/*
  * Edge Routing
  */
 #define EDGE_ROUTING                "de.cau.cs.kieler.edgeRouting"
 #define EDGE_ROUTING_POLYLINE       "POLYLINE"
 #define EDGE_ROUTING_ORTHOGONAL     "ORTHOGONAL"
+
+#define DIRECTION                   "de.cau.cs.kieler.direction"
+#define DIRECTION_UNDEFINED         "UNDEFINED"
+#define DIRECTION_UP                "UP"
+#define DIRECTION_RIGHT             "RIGHT"
+#define DIRECTION_DOWN              "DOWN"
+#define DIRECTION_LEFT              "LEFT"
 
 /*
  * Routing Penalties
@@ -58,6 +70,8 @@
 #define IMPROVE_HYPEREDGES					"de.cau.cs.kieler.kiml.libavoid.improveHyperedgeRoutesMovingJunctions"
 #define PENALISE_ORTH_SHATE_PATHS			"de.cau.cs.kieler.kiml.libavoid.penaliseOrthogonalSharedPathsAtConnEnds"
 #define NUDGE_ORTHOGONAL_COLINEAR_SEGMENTS	"de.cau.cs.kieler.kiml.libavoid.nudgeOrthogonalTouchingColinearSegments"
+#define NUDGE_PREPROCESSING					"de.cau.cs.kieler.kiml.libavoid.performUnifyingNudgingPreprocessingStep"
+#define IMPROVE_HYPEREDGES_ADD_DELETE       "de.cau.cs.kieler.kiml.libavoid.improveHyperedgeRoutesMovingAddingAndDeletingJunctions"
 
 /*
  * Port Sides 
@@ -69,9 +83,16 @@
 
 /*
  * Pin Types
+ *
+ * Per definition the ids of passed ports start at 5. Thus, [1..4] are free for
+ * arbitrary definition.
  */
-//const unsigned int PIN_CENTRE = 1;
+/** Indicates pins that can be used by an arbitrary endpoint of an edge. */
 const unsigned int PIN_ARBITRARY = 0;
+/** Indicates pins reserved for incoming edges. */
+const unsigned int PIN_INCOMING = 1;
+/** Indicates pins reserved for outgoing edges. */
+const unsigned int PIN_OUTGOING = 2;
 
 /**
  * Assembling the graph
@@ -81,14 +102,14 @@ void setPenalty(std::string optionId, std::string token, Avoid::Router* router);
 void setOption(std::string optionId, std::string token, Avoid::Router* router);
 
 void addNode(std::vector<std::string> &tokens, std::vector<Avoid::ShapeRef*> &shapes,
-        Avoid::Router* router);
+        Avoid::Router* router, std::string direction);
 
-void addPort(std::vector<std::string> &tokens, std::vector<Avoid::ShapeConnectionPin*> &pins, 
-		std::vector<Avoid::ShapeRef*> &shapes, Avoid::Router* router);
+void addPort(std::vector<std::string> &tokens, std::vector<Avoid::ShapeConnectionPin*> &pins,
+        std::vector<Avoid::ShapeRef*> &shapes, Avoid::Router* router);
 
 void addEdge(std::vector<std::string> &tokens, Avoid::ConnType connectorType,
         std::vector<Avoid::ShapeRef*> &shapes, std::vector<Avoid::ConnRef*> &cons,
-        Avoid::Router* router);
+        Avoid::Router* router, std::string direction);
 
 /**
  * Writing the graph to the output stream

@@ -292,6 +292,12 @@ public class LibavoidServer {
                 // the stream is empty although more input is expected
                 return null;
             }
+            
+            // capture debug output
+            if (line.startsWith("DEBUG")){
+                System.out.println(line);
+                continue;
+            } 
 
             switch (state) {
             case TYPE:

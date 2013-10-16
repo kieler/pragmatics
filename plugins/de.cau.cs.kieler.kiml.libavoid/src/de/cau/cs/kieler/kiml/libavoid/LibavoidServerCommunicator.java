@@ -24,8 +24,10 @@ import org.adaptagrams.cola.libavoid.LibavoidServer;
 import org.adaptagrams.cola.libavoid.LibavoidServer.Cleanup;
 import org.adaptagrams.cola.libavoid.LibavoidServerException;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.WrappedException;
@@ -39,6 +41,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
@@ -48,8 +51,15 @@ import de.cau.cs.kieler.kiml.options.PortSide;
  * Performs the actual communication with the libabvoid-server. The graph to layout is send to the
  * server using a textual format. The server then sends back the layouted information.
  * 
- * Protocol: - All nodes are passed together with a continuously increasing id starting by 1. (1 2 3
- * 4 ...) - The same goes for the edges.
+ * Protocol: 
+ *    - All nodes are passed together with a continuously increasing id starting by 1. 
+ *      (1 2 3 4 ...) 
+ *    - The same goes for the edges.
+ *    - Port's ids start at 5, leaving the ids [1,..,4] as special cases for internal 
+ *      handling of libavoid  
+ *    - The edge routing option has to be passed first!
+ *      The information is required to initialize the libavoid router properly 
+ *      before the router can be configured with additional options.
  * 
  * @author uru
  */
@@ -66,8 +76,9 @@ public class LibavoidServerCommunicator {
     private BiMap<Integer, KEdge> edgeIdMap = HashBiMap.create();
 
     // Internal data.
+    private static final int PORT_ID_START = 5;
     private int nodeIdCounter = 1;
-    private int portIdCounter = 1;
+    private int portIdCounter = PORT_ID_START;
     private int edgeIdCounter = 1;
     private static final int SUBTASK_WORK = 1;
     private static final int LAYOUT_WORK = SUBTASK_WORK + SUBTASK_WORK + SUBTASK_WORK
@@ -83,7 +94,7 @@ public class LibavoidServerCommunicator {
     private void reset() {
         nodeIdCounter = 1;
         nodeIdMap.clear();
-        portIdCounter = 1;
+        portIdCounter = PORT_ID_START;
         portIdMap.clear();
         edgeIdCounter = 1;
         edgeIdMap.clear();
@@ -252,6 +263,18 @@ public class LibavoidServerCommunicator {
     private void transformOptions(final KNode node) {
 
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+        
+        /*
+         * General Properties 
+         */
+        // IMPORTANT: the edge routing option has to be passed first!
+        // The information is required to initialize the libavoid router properly 
+        // before the router can be configured with additional options
+        EdgeRouting edgeRouting = nodeLayout.getProperty(LayoutOptions.EDGE_ROUTING);
+        addOption(LayoutOptions.EDGE_ROUTING.getId(), edgeRouting);
+        
+        Direction direction = nodeLayout.getProperty(LayoutOptions.DIRECTION);
+        addOption(LayoutOptions.DIRECTION.getId(), direction);
 
         /*
          * Penalties
@@ -307,12 +330,16 @@ public class LibavoidServerCommunicator {
                 nodeLayout.getProperty(LibavoidRouterSetup.NUDGE_ORTHOGONAL_COLINEAR_SEGMENTS);
         addRoutingOption(LibavoidRouterSetup.NUDGE_ORTHOGONAL_COLINEAR_SEGMENTS.getId(),
                 nudgeOrthogonalTouchingColinearSegments);
+        
+        boolean performUnifyingNudgingPreprocessingStep =
+                nodeLayout.getProperty(LibavoidRouterSetup.NUDGE_PREPROCESSING);
+        addRoutingOption(LibavoidRouterSetup.NUDGE_PREPROCESSING.getId(),
+                performUnifyingNudgingPreprocessingStep);
 
-        /*
-         * General options
-         */
-        EdgeRouting edgeRouting = nodeLayout.getProperty(LayoutOptions.EDGE_ROUTING);
-        addOption(LayoutOptions.EDGE_ROUTING.getId(), edgeRouting);
+        boolean improveHyperedgeRoutesMovingAddingAndDeletingJunctions =
+                nodeLayout.getProperty(LibavoidRouterSetup.IMPROVE_HYPEREDGES_ADD_DELETE);
+        addRoutingOption(LibavoidRouterSetup.IMPROVE_HYPEREDGES_ADD_DELETE.getId(),
+                improveHyperedgeRoutesMovingAddingAndDeletingJunctions);
 
     }
 
@@ -355,13 +382,29 @@ public class LibavoidServerCommunicator {
     private void transformNode(final KNode node) {
         // assign an id
         nodeIdMap.put(nodeIdCounter, node);
+        
+        // get information about port-less incoming and outgoing edges
+        int portLessIncomingEdges =
+                Iterables.size(Iterables.filter(node.getIncomingEdges(), new Predicate<KEdge>() {
+                    public boolean apply(final KEdge edge) {
+                        return edge.getTargetPort() == null;
+                    }
+                }));
+        int portLessOutgoingEdges =
+                Iterables.size(Iterables.filter(node.getOutgoingEdges(), new Predicate<KEdge>() {
+                    public boolean apply(final KEdge edge) {
+                        return edge.getSourcePort() == null;
+                    }
+                }));
 
         // convert the bounds
         KShapeLayout shape = node.getData(KShapeLayout.class);
-        // format: id topleft bottomright
+        // format:
+        // id topleft bottomright portLessIncomingEdges portLessOutgoingEdges
         sb.append("NODE " + nodeIdCounter + " " + shape.getXpos() + " " + shape.getYpos() + " "
                 + (shape.getXpos() + shape.getWidth()) + " "
-                + (shape.getYpos() + shape.getHeight()));
+                + (shape.getYpos() + shape.getHeight()) + " " + portLessIncomingEdges + " "
+                + portLessOutgoingEdges);
         sb.append("\n");
 
         // transfer port constraints
