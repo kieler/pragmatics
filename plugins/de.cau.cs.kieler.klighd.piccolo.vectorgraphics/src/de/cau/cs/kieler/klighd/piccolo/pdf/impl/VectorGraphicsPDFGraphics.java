@@ -31,6 +31,8 @@ import edu.umd.cs.piccolo.util.PPaintContext;
  * 
  * FIXME generalize the abstract svg graphics ...
  * 
+ * This is still a proof of concept, major cleanup required!
+ * 
  * @author uru
  */
 public class VectorGraphicsPDFGraphics extends KlighdAbstractSVGGraphics implements IViewExporter {

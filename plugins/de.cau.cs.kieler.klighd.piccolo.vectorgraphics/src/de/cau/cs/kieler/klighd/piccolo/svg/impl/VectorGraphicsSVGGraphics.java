@@ -20,6 +20,8 @@ import de.erichseifert.vectorgraphics2d.SVGGraphics2D;
 import de.erichseifert.vectorgraphics2d.VectorGraphics2D.FontRendering;
 
 /**
+ * Wrapper for the VectorGraphics2D {@link SVGGraphics2D} class.
+ * 
  * @author uru
  * 
  * @see <a href="http://trac.erichseifert.de/vectorgraphics2d/">

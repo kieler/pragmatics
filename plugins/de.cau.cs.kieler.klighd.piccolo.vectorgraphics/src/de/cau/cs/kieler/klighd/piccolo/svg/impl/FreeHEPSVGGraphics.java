@@ -24,7 +24,7 @@ import org.freehep.util.UserProperties;
 import de.cau.cs.kieler.klighd.piccolo.svg.KlighdAbstractSVGGraphics;
 
 /**
- * 
+ * Wrapper for the FreeHEP {@link SVGGraphics2D} class.
  * 
  * @author uru
  * 
