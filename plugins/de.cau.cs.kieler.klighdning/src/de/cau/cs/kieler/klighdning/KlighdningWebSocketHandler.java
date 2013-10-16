@@ -283,6 +283,8 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
                  * RESOURCE -------------------------------------------------------------------
                  */
                 final String path = (String) json.get("path");
+                final String viewport = (String) json.get("viewport");
+                final String expand = (String) json.get("expand");
 
                 ResourceSet rs = new ResourceSetImpl();
 
@@ -309,7 +311,7 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
 
                 SVGBrowsingViewer viewer = getCurrentViewer();
                 viewer.setSvgTransform(null);
-
+                
                 // translate and set the model
                 try {
                     KNode currentModel =
@@ -317,9 +319,12 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
                     viewer.setModel(currentModel, true);
                     viewer.setResourcePath(path);
                     viewer.setResourceChecksum(Files.getChecksum(file, checksum) + "");
-                    // applyLayout();
+                    
+                    // if we have initial permalink information, apply them!
+                    viewer.applyPermalink(expand, viewport);
 
                     layoutBroadcastSVG(Broadcast.All, true);
+                                        
                     broadcastPermaLink();
 
                 } catch (Exception e) {

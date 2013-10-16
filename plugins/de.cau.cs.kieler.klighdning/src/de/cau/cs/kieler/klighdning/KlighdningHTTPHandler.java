@@ -16,7 +16,9 @@ package de.cau.cs.kieler.klighdning;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URLEncoder;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.zip.Adler32;
 import java.util.zip.Checksum;
 
@@ -117,6 +119,7 @@ public class KlighdningHTTPHandler extends AbstractHandler {
                 getViewer.setModel(model, true);
 
                 // retrieve the perma link infos
+                // perma is the information about expanded elements
                 String perma = request.getParameterMap().get("perma")[0];
                 // transform
                 String transform = "";
@@ -152,7 +155,16 @@ public class KlighdningHTTPHandler extends AbstractHandler {
 
             // pass the svg
             String svg = SVGLayoutProvider.getInstance().layout(getViewer, false);
-            response.getWriter().println(gen.permaLinkPage(svg, hasChanged      ));
+            // assemble parameter string for switch to interactive mode
+            String params = "?path=" + path;
+            for (Entry<String, String[]> entry : request.getParameterMap().entrySet()) {
+                if (entry.getValue() != null && entry.getValue().length > 0) {
+                    params +=
+                            "&" + entry.getKey() + "="
+                                    + URLEncoder.encode(entry.getValue()[0], "utf8");
+                }
+            }
+            response.getWriter().println(gen.permaLinkPage(svg, hasChanged, params));
 
         } else if (target.startsWith("/refreshGit")) {
             /*----------------------------------------------------------------------------

@@ -71,9 +71,11 @@ public final class SVGLayoutProvider {
         mng.applyLayout(mapping, true, 0);
 
         // zoom to fit
-        // TODO currently always
+        // FIXME currently always
         // if(zoomToFit) {
-        viewer.zoomToFit();
+//        if (viewer.getSvgTransform() == null) {
+            viewer.zoomToFit();
+//        }
         // }
 
         // redraw

@@ -22,7 +22,6 @@ function sendJson(obj) {
   }
 }
 
-
 // register busy indicator for all ajax calls
 $.ajaxSetup({
   beforeSend : function() {
@@ -32,6 +31,31 @@ $.ajaxSetup({
     $("#busy").hide();
   }
 });
+
+// collect any url parameters
+var QueryString = function() {
+  // This function is anonymous, is executed immediately and
+  // the return value is assigned to QueryString!
+  var query_string = {};
+  var query = window.location.search.substring(1);
+  var vars = query.split("&");
+  for (var i = 0; i < vars.length; i++) {
+    var pair = vars[i].split("=");
+    console.log(pair);
+    // If first entry with this name
+    if (typeof query_string[pair[0]] === "undefined") {
+      query_string[pair[0]] = pair[1];
+      // If second entry with this name
+    } else if (typeof query_string[pair[0]] === "string") {
+      var arr = [ query_string[pair[0]], pair[1] ];
+      query_string[pair[0]] = arr;
+      // If third or later entry with this name
+    } else {
+      query_string[pair[0]].push(pair[1]);
+    }
+  }
+  return query_string;
+}();
 
 /**
  * Call this when the websocket is disconnected or the page is reloaded.
@@ -94,6 +118,22 @@ var webSocketConnect = function() {
   // -- Open
   connection.onopen = function() {
     // currently nothing to do
+    
+    // if a path and optional perma link is passed, open it
+    if(QueryString.path) {
+      console.log("LOAD THE BAD BOY");
+      console.log(QueryString);
+      //top.location.href = "index.html";
+      
+      connection.send(JSON.stringify({
+        type : 'RESOURCE',
+        path : QueryString.path,
+        viewport: QueryString.transform,
+        expand: QueryString.perma
+      }));
+      
+    }
+    
   };
 
   // -- Log errors
@@ -128,7 +168,7 @@ var webSocketConnect = function() {
         if (hashcode) {
           // indicate busy
           $("#busy").show();
-          
+
           // send expand toggle command
           sendJson({
             type : 'EXPAND',
@@ -165,7 +205,7 @@ var webSocketConnect = function() {
     } else if (json.type === "ERROR") {
       error(json.data);
     }
-    
+
     // not busy anymore
     $("#busy").hide();
   };
@@ -261,7 +301,7 @@ function loadRepository() {
 
         // set busy
         $("#busy").show();
-        
+
         connection.send(JSON.stringify({
           type : 'RESOURCE',
           path : path
