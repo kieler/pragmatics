@@ -788,11 +788,11 @@ public final class KlayLayered {
      *             if anything goes wrong.
      */
     private Writer createWriter(final LGraph graph, final int slotIndex) throws IOException {
-        String path = Util.getDebugOutputPath();
+        String path = LayeredUtil.getDebugOutputPath();
         new File(path).mkdirs();
 
         String debugFileName =
-                Util.getDebugOutputFileBaseName(graph) + "fulldebug-slot"
+                LayeredUtil.getDebugOutputFileBaseName(graph) + "fulldebug-slot"
                         + String.format("%1$02d", slotIndex);
         return new FileWriter(new File(path + File.separator + debugFileName + ".dot"));
     }

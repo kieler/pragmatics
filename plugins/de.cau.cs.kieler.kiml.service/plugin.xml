@@ -220,6 +220,14 @@
             description="The number of hyperedge crossings."
             id="de.cau.cs.kieler.kiml.grana.hyperedgeCrossings"
             name="Hyperedge Crossings">
+         <component
+               abbreviation="Crossings"
+               name="Crossings">
+         </component>
+         <component
+               abbreviation="Hyperedges"
+               name="Hyperedges">
+         </component>
       </analysis>
       <analysis
             category="de.cau.cs.kieler.kiml.grana.drawing"

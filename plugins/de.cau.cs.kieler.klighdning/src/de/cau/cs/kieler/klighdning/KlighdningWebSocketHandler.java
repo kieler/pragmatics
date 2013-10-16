@@ -323,19 +323,9 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
                     broadcastPermaLink();
 
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    // TODO pass the exception to the outside
-                    // catch any error
-                    // response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                    // try {
-                    // response.getWriter().println(
-                    // "ERROR: Unable to handle the selected model.");
-                    // } catch (IOException e1) {
-                    // e1.printStackTrace();
-                    // }
+                    // tell the user!
+                    sendError("ERROR: " + e.getLocalizedMessage());
                 }
-                // }
-                // });
 
             } else if (type.equals("EXPAND")) {
                 /*

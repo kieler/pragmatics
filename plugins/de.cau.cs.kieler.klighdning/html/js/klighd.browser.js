@@ -11,7 +11,7 @@ function error(error) {
 }
 
 function hideErrors() {
-  $('errors').hide();
+  $('#errors').hide();
 }
 
 function sendJson(obj) {
@@ -109,6 +109,9 @@ var webSocketConnect = function() {
     var json = JSON.parse(e.data);
 
     if (json.type === "SVG") {
+      // hide old errors
+      hideErrors();
+      
       // set the svg
       $('#viewport').html("");
       $('#viewport').html(json.data);

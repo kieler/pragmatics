@@ -32,7 +32,7 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.klay.layered.Util;
+import de.cau.cs.kieler.klay.layered.LayeredUtil;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -1037,10 +1037,10 @@ public final class OrthogonalRoutingGenerator {
     private Writer createWriter(final LGraph layeredGraph, final int layerIndex,
             final String label) throws IOException {
         
-        String path = Util.getDebugOutputPath();
+        String path = LayeredUtil.getDebugOutputPath();
         new File(path).mkdirs();
         
-        String debugFileName = Util.getDebugOutputFileBaseName(layeredGraph)
+        String debugFileName = LayeredUtil.getDebugOutputFileBaseName(layeredGraph)
                 + debugPrefix + "-l" + layerIndex + "-" + label;
         return new FileWriter(new File(path + File.separator + debugFileName + ".dot"));
     }

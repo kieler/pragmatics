@@ -22,6 +22,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.URIConverter;
@@ -37,6 +38,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.grana.GranaPlugin;
 import de.cau.cs.kieler.kiml.grana.batch.Batch;
 import de.cau.cs.kieler.kiml.grana.batch.BatchJob;
@@ -72,6 +74,7 @@ public class BatchHandler extends AbstractHandler {
         // get current selection
         ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
                 .getSelectionService().getSelection();
+        
         // launch wizard
         final BatchWizard wizard;
         if (selection instanceof IStructuredSelection) {
@@ -81,6 +84,7 @@ public class BatchHandler extends AbstractHandler {
         }
         WizardDialog dialog = new WizardDialog(shell, wizard);
         dialog.create();
+        
         // on successful wizard completion start the batch
         int code = dialog.open();
         if (code == Dialog.OK) {
@@ -92,6 +96,7 @@ public class BatchHandler extends AbstractHandler {
                         try {
                             // create the batch
                             Batch batch = new Batch(wizard.getAnalyses());
+                            
                             // create a batch job for every selected file
                             for (IPath file : wizard.getSelectedFiles()) {
                                 FileKGraphProvider provider = new FileKGraphProvider();
@@ -101,11 +106,13 @@ public class BatchHandler extends AbstractHandler {
                                 batch.appendJob(batchJob);
                             }
                             monitor.worked(WORK_BATCH);
+                            
                             // execute the batch
                             BatchResult result = batch.execute(monitor.subTask(WORK_EXECUTE));
                             if (monitor.isCanceled()) {
                                 return;
                             }
+                            
                             // serialize the batch result
                             URI fileURI = URI.createPlatformResourceURI(wizard.getResultFile()
                                     .toOSString(), true);
@@ -115,10 +122,26 @@ public class BatchHandler extends AbstractHandler {
                             serializer.serialize(outputStream, result,
                                     monitor.subTask(WORK_SERIALIZE));
                             outputStream.close();
+                            
+                            // display problems
+                            if (!result.getFailedJobs().isEmpty()) {
+                                IStatus[] stati = new IStatus[result.getFailedJobs().size()];
+                                int i = 0;
+                                for (Pair<BatchJob<?>, Throwable> entry : result.getFailedJobs()) {
+                                    stati[i++] = new Status(IStatus.ERROR, GranaPlugin.PLUGIN_ID,
+                                            "Failed analysis of " + entry.getFirst().getParameter(),
+                                            entry.getSecond());
+                                }
+                                StatusManager.getManager().handle(new MultiStatus(GranaPlugin.PLUGIN_ID,
+                                        0, stati, MESSAGE_BATCH_FAILED, null),
+                                        StatusManager.SHOW | StatusManager.LOG);
+                            }
+                            
                         } catch (Exception e) {
                             IStatus status = new Status(IStatus.ERROR, GranaPlugin.PLUGIN_ID, 0,
                                     MESSAGE_BATCH_FAILED, e);
-                            StatusManager.getManager().handle(status, StatusManager.SHOW);
+                            StatusManager.getManager().handle(status,
+                                    StatusManager.SHOW | StatusManager.LOG);
                         } finally {
                             monitor.done();
                         }
@@ -127,12 +150,10 @@ public class BatchHandler extends AbstractHandler {
                 PlatformUI.getWorkbench().getProgressService().run(true, true, runnable);
             } catch (InvocationTargetException e) {
                 IStatus status = new Status(IStatus.ERROR, GranaPlugin.PLUGIN_ID, 0,
-                        MESSAGE_BATCH_FAILED, e);
-                StatusManager.getManager().handle(status, StatusManager.SHOW);
+                        MESSAGE_BATCH_FAILED, e.getCause());
+                StatusManager.getManager().handle(status, StatusManager.SHOW | StatusManager.LOG);
             } catch (InterruptedException e) {
-                IStatus status = new Status(IStatus.ERROR, GranaPlugin.PLUGIN_ID, 0,
-                        MESSAGE_BATCH_FAILED, e);
-                StatusManager.getManager().handle(status, StatusManager.SHOW);
+                // ignore the exception
             }
         }
 
