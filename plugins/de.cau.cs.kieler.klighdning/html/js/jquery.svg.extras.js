@@ -21,9 +21,30 @@
     this._group = document.getElementById(this.viewport);
     this._element = ele;
 
-    // reset is currently required due to prototype
-    // FIXME extract the state information from the prototype
-    this.reset();
+    // apply a possibly existing transform
+    var transform = this._group.getAttribute('transform');
+
+    if (transform && transform.indexOf("matrix") != -1) {
+      // however, currently only the matrix transform is supported
+      var outerChunks = transform.split(/\(|\)/g);
+      var innerChunks = outerChunks[1].split(" ");
+      // make sure we work with floats
+      innerChunks = $.map(innerChunks, function(e, i) {
+        return parseFloat(e);
+      });
+      this.setMatrix({
+        a : innerChunks[0],
+        b : innerChunks[1],
+        c : innerChunks[2],
+        d : innerChunks[3],
+        e : innerChunks[4],
+        f : innerChunks[5],
+      });
+    } else {
+      // reset is currently required due to prototype
+      // FIXME extract the state information from the prototype
+      this.reset();
+    }
 
     // me myself and I
     var zm = this;
@@ -104,7 +125,8 @@
       // transform
       point = point.matrixTransform(zm._group.getCTM().inverse());
       // adjust the translation to the new zoom level
-      var adjustMatrix = zm._svgr.createSVGMatrix().translate(point.x, point.y).scale(z).translate(-point.x, -point.y);
+      var adjustMatrix = zm._svgr.createSVGMatrix().translate(point.x, point.y).scale(z).translate(
+          -point.x, -point.y);
       var newCTM = zm._group.getCTM().multiply(adjustMatrix);
 
       // set the new matrix
@@ -190,13 +212,14 @@
     },
 
     reset : function() {
-      this._ctm.a = 1, this._ctm.b = 0, this._ctm.c = 0, this._ctm.d = 1, this._ctm.e = 0, this._ctm.f = 0;
+      this._ctm.a = 1, this._ctm.b = 0, this._ctm.c = 0, this._ctm.d = 1, this._ctm.e = 0,
+          this._ctm.f = 0;
       this.setMatrix();
     },
 
     joinMatrix : function() {
-      return "matrix(" + this._ctm.a + " " + this._ctm.b + " " + this._ctm.c + " " + this._ctm.d + " " + this._ctm.e
-          + " " + this._ctm.f + ")";
+      return "matrix(" + this._ctm.a + " " + this._ctm.b + " " + this._ctm.c + " " + this._ctm.d
+          + " " + this._ctm.e + " " + this._ctm.f + ")";
     },
 
     setMatrix : function(matrix) {

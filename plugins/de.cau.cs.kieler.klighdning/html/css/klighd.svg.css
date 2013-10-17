@@ -85,7 +85,7 @@ g.expandable {
 }
 
 #permaLink > a, #permaLink > a:focus, #permaLink > a:hover {
-    font-color: #000000;
+    color: #0088cc
     text-decoration: none;
 }
 

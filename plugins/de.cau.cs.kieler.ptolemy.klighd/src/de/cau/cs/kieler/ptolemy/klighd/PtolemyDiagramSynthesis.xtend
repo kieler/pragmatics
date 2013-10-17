@@ -15,7 +15,6 @@ package de.cau.cs.kieler.ptolemy.klighd
 
 import com.google.common.collect.ImmutableSet
 import com.google.inject.Inject
-import de.cau.cs.kieler.core.util.Pair
 import de.cau.cs.kieler.klighd.TransformationOption
 import de.cau.cs.kieler.klighd.transformations.AbstractDiagramSynthesis
 import de.cau.cs.kieler.ptolemy.klighd.transformation.CommentsExtractor
@@ -60,7 +59,7 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
             if (SHOW_COMMENTS.optionBooleanValue) commentsExtractor else null,
             this
         )
-        visualization.visualize(kgraph, (COMPOUND_NODE_ALPHA.optionValue as Float).intValue)
+        visualization.visualize(kgraph, (COMPOUND_NODE_ALPHA.optionIntValue))
         
         // If comments should be shown, we want them to be attached properly. Do that now, because we
         // know the node sizes only after the visualization
