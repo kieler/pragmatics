@@ -178,10 +178,15 @@ class CommentsExtractor {
      * @param root the root node.
      * @param diagramSynthesis the diagram synthesis that uses this class; used to map Ptolemy model
      *                         objects to the nodes created for them.
+     * @param enableAttachmentHeuristic {@code true} if the distance-based heuristic should be used to
+     *                                  try and find the actors comments should be attached to. If
+     *                                  this is {@code false}, only explicit attachments are extracted.
      */
-    def void extractAndAttachComments(KNode root, AbstractDiagramSynthesis<?> diagramSynthesis) {
+    def void extractAndAttachComments(KNode root, AbstractDiagramSynthesis<?> diagramSynthesis,
+        boolean enableAttachmentHeuristic) {
+        
         extractComments(root, diagramSynthesis)
-        attachComments()
+        attachComments(enableAttachmentHeuristic)
     }
     
     
@@ -289,9 +294,12 @@ class CommentsExtractor {
     /**
      * Iterates through the generated comment nodes and tries to attach them to the elements they were
      * initially attached to. The attachment can have been either explicit (by the model designer) or
-     * implicit, by a distance-based heuristic.
+     * implicit, by a distance-based heuristic, if it is enabled through the given parameter.
+     * 
+     * @param enableHeuristic {@code true} if the distance-based attachment heuristic should be
+     *                        enabled.
      */
-    def void attachComments() {
+    def void attachComments(boolean enableHeuristic) {
         // Iterate over the created comment nodes and try attaching them
         for (commentNode : createdCommentNodes) {
             // Check if the comment was explicitly attached to a node
@@ -299,7 +307,7 @@ class CommentsExtractor {
             
             if (explicitAttachment != null) {
                 explicitAttachments += new Pair(commentNode, explicitAttachment)
-            } else if (explicitAttachments.empty || !heuristicsOverride) {
+            } else if (enableHeuristic && (explicitAttachments.empty || !heuristicsOverride)) {
                 // Run our heuristic to find an implicit attachment
                 val heuristicAttachment = findNearestNonCommentSibling(commentNode)
                 
@@ -321,7 +329,7 @@ class CommentsExtractor {
         
         // Attach the heuristic attachments only if there are no explicit attachments or if the
         // heuristics override is turned off
-        if (!heuristicsOverride || explicitAttachments.empty) {
+        if (enableHeuristic && (!heuristicsOverride || explicitAttachments.empty)) {
             for (attachment : heuristicAttachments) {
                 attachCommentNode(attachment.first, attachment.second)
             }
