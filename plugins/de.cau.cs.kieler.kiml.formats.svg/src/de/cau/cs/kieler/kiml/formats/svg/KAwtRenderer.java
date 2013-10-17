@@ -1077,12 +1077,10 @@ public class KAwtRenderer {
             if (placeData instanceof KGridPlacementData) {
                 KGridPlacementData gridPlaceData = (KGridPlacementData) placeData;
                 // chsch: TODO hot fix is most likely not correct
-                colWidth[i % colCount] = Math.min(Math.max(colWidth[i % colCount],
-                        scale * gridPlaceData.getMinCellWidth()),
-                        scale * gridPlaceData.getMaxCellWidth());
-                rowHeight[i / colCount] = Math.min(Math.max(rowHeight[i / colCount],
-                        scale * gridPlaceData.getMinCellHeight()),
-                        scale * gridPlaceData.getMaxCellHeight());
+                colWidth[i % colCount] = Math.max(colWidth[i % colCount],
+                        scale * gridPlaceData.getMinCellWidth());
+                rowHeight[i / colCount] = Math.max(rowHeight[i / colCount],
+                        scale * gridPlaceData.getMinCellHeight());
             }
         }
         
