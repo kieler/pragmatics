@@ -1,10 +1,7 @@
 package de.cau.cs.kieler.klighdning
 
-import org.eclipse.core.resources.IContainer
-import org.eclipse.core.resources.IFile
-import org.eclipse.core.resources.IResource
+import java.io.File
 import org.eclipse.core.resources.IWorkspaceRoot
-import java.io.File 
 
 class HtmlGenerator {
     
@@ -40,52 +37,13 @@ class HtmlGenerator {
     	
     }
     
-        
-//    def String toHtmlRoot(IWorkspaceRoot root) {
-//        this.root = root
-//        
-//        val html = root.projects.map [ project |
-//            toHtml(project) 
-//        ].join("\n")
-//         
-//        "<ul id='tree'>" + html + "</ul>"
-//    }
-    
-    
-//    /**
-//     * IProject is a container
-//     */
-//    def dispatch String toHtml(IContainer container) {
-//            
-//        var String html = "<li><a href='#' class='folder' data-path='"+ container.fullPath + "'>" + container.name + "</a>" 
-//           
-//        html = html + "<ul>" + container.members.map [ cont |
-//            toHtml(cont)
-//        ].join("\n")
-//        html = html + "</ul></li>";
-//
-//        html
-//    }
-//    
-//    def dispatch String toHtml(IFile file) {
-//        
-//        val html = "<li><a href='#' class='file' data-path='"+ file.fullPath + "'>" + file.name + "</a></li>"
-//              
-//        html
-//    }
-//    
-//    def dispatch String toHtml(IResource r) {
-//        println("tt " + r.getClass())
-//    }
-//    
-    
     def String relative(File child) {
     	child.absolutePath.replace(rootFile.absolutePath, "").replace(File::separator, "/")
     }
     
     
     
-    def String permaLinkPage(String svgData, boolean mightDiffer) {
+    def String permaLinkPage(String svgData, boolean mightDiffer, String permaString) {
 	'''
 	<html encoding='UTF8'>
 		<head>
@@ -96,7 +54,26 @@ class HtmlGenerator {
 			<script src="/js/jquery.svg.extras.js"></script>
 			<script src="/js/jquery.event.drag-2.2.js"></script>
 			<style type='text/css'> 
-				svg { width:100%; height:100%; } body { width:100%; height:100%; } 
+				svg { width:100%; height:100%; } body { width:100%; height:100%; }
+				.interactive { position: fixed; top: 10px; left: 10px; padding: 5px; color: #0088cc; }
+				.interactive > a, .interactive > a:focus, .interactive > a:hover { text-decoration: underline; color: #0088cc;}
+				.interactive > a { text-decoration: none; color: #0088cc;}
+				.ctrlBox {
+				    margin:auto;
+				    margin-bottom: 5px;
+				    background-color: #eeeeee;
+				    border-radius: 6px 6px 6px 6px;
+				    border-width: 1px;
+				    border-color: #CCCCCC;
+				    border-style: solid;
+				    border-color: #CCCCCC;
+				    border-style: solid;
+				    border-style: solid;
+				    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.067);
+				}
+				.ctrlBox:hover {
+				    background-color: #dddddd;
+				}
 			</style>
 		</head>
 		<body>
@@ -106,11 +83,9 @@ class HtmlGenerator {
 			<div id="data">
 				«svgData»
 			</div>
-			<script>
-				$('#data').svg();
-				$('#data').addScalability();
-				$('#data').addDraggable();
-			</script>
+			<div class="interactive ctrlBox">
+				<a href="/KlighDning.html«permaString»">Switch to interactive mode.</a>
+			</div>
 		</body>
 	</html>
 	'''
