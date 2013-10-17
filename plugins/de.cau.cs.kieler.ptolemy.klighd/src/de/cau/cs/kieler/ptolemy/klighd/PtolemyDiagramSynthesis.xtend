@@ -39,9 +39,8 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
         TransformationOption::createCheckOption("Comment attachment heuristic", true)
     public static val TransformationOption FLATTEN = TransformationOption::createCheckOption(
         "Flatten Composite Actors", false)
-    // FIXME changed arguments to floats due to KIPRA-1317
     public static val TransformationOption COMPOUND_NODE_ALPHA = TransformationOption::createRangeOption(
-        "Nested model darkness", new Pair(0f, 255f), 10f)
+        "Nested model darkness", 0f, 255f, 10f)
     
     // The parts of our transformation
     @Inject Ptolemy2KGraphTransformation transformation
