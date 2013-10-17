@@ -38,6 +38,8 @@ import de.cau.cs.kieler.ptolemy.klighd.transformation.util.GraphicsUtils
 
 import static de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties.*
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
+import de.cau.cs.kieler.core.krendering.HorizontalAlignment
+import de.cau.cs.kieler.core.krendering.VerticalAlignment
 
 /**
  * Creates concrete KRendering information for Ptolemy diagram elements.
@@ -193,11 +195,11 @@ class KRenderingFigureProvider {
         }
         
         return addToLibrary(renderingFactory.createKPolygon() => [poly |
-            poly.points += createKPosition(5, 0)
-            poly.points += createKPosition(10, 5)
-            poly.points += createKPosition(5, 10)
-            poly.points += createKPosition(0, 5)
-            poly.points += createKPosition(5, 0)
+            poly.points += createKPosition(4, 0)
+            poly.points += createKPosition(8, 4)
+            poly.points += createKPosition(4, 8)
+            poly.points += createKPosition(0, 4)
+            poly.points += createKPosition(4, 0)
             poly.setBackgroundColor(0, 0, 0)
         ], "ren_relation", library)
     }
@@ -607,20 +609,28 @@ class KRenderingFigureProvider {
         var junction = getFromLibrary("ren_junction", library)
         if (junction == null) {
             junction = addToLibrary(renderingFactory.createKPolygon() => [poly |
-                poly.points += createKPosition(3, 0)
-                poly.points += createKPosition(6, 3)
-                poly.points += createKPosition(3, 6)
-                poly.points += createKPosition(0, 3)
-                poly.points += createKPosition(3, 0)
+                poly.points += createKPosition(4, 0)
+                poly.points += createKPosition(8, 4)
+                poly.points += createKPosition(4, 8)
+                poly.points += createKPosition(0, 4)
+                poly.points += createKPosition(4, 0)
                 poly.setBackgroundColor(0, 0, 0)
             ], "ren_junction", library)
         }
+        
+        val ppd = renderingFactory.createKPointPlacementData()
+        ppd.setHorizontalAlignment(HorizontalAlignment.CENTER)
+        ppd.setVerticalAlignment(VerticalAlignment.CENTER)
+        ppd.setMinWidth(8)
+        ppd.setMinHeight(8)
+        junction.placementData = ppd
         
         val rendering = renderingFactory.createKRoundedBendsPolyline() => [ polyLine |
             polyLine.bendRadius = 5f
             polyLine.lineWidth = 2f
         ]
-        rendering.jointPointRendering = junction
+        rendering.junctionPointRendering = junction
+        
         return rendering
     }
     
