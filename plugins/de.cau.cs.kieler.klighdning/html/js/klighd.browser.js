@@ -141,6 +141,7 @@ var webSocketConnect = function() {
     initState();
     error('WebSocket Error ' + error);
   };
+  
 
   // -- Received message from server
   connection.onmessage = function(e) {
@@ -151,10 +152,16 @@ var webSocketConnect = function() {
     if (json.type === "SVG") {
       // hide old errors
       hideErrors();
+      //console.log("unzipping " + json.data);
+      
+      // we have to unzip the data (gzip)
+      var decrompressedSvg = $klighdning.decompress(json.data);
+      
+      //console.log(byteArrayToString(plain));
       
       // set the svg
       $('#viewport').html("");
-      $('#viewport').html(json.data);
+      $('#viewport').html(decrompressedSvg);
 
       // attach zoom pan functionality
       zoomPanManager = $('#viewport').zoomPan();
