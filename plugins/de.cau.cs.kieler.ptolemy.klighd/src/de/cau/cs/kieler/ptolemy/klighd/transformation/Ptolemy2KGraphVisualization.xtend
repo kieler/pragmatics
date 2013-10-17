@@ -23,7 +23,6 @@ import de.cau.cs.kieler.core.krendering.KAreaPlacementData
 import de.cau.cs.kieler.core.krendering.KRendering
 import de.cau.cs.kieler.core.krendering.KRenderingFactory
 import de.cau.cs.kieler.core.krendering.Trigger
-import de.cau.cs.kieler.core.krendering.extensions.KEdgeExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.core.krendering.extensions.ViewSynthesisShared
 import de.cau.cs.kieler.core.math.KVector
@@ -68,8 +67,6 @@ class Ptolemy2KGraphVisualization {
     @Inject extension MarkerExtensions
     /** Extensions used during the transformation. To make things easier. And stuff. */
     @Inject extension MiscellaneousExtensions
-    /** Extensions for creating edge renderings. */
-    @Inject extension KEdgeExtensions
     /** Utility class that provides renderings. */
     @Inject extension KRenderingExtensions
     /** Utility class that provides renderings. */
@@ -499,7 +496,7 @@ class Ptolemy2KGraphVisualization {
             edge.data += rendering
         } else {
             // We have a regular edge
-            edge.addRoundedBendsPolyline(5f, 2f)
+            edge.data += createDataFlowRendering(edge);
         }
     }
     
