@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.cau.cs.kieler.klighd.examples.feature"
-      label="KIELER Lightweight Diagrams Demo Examples"
-      version="0.2.1.qualifier"
+      id="de.cau.cs.kieler.klighd.sdk.feature"
+      label="KIELER Lightweight Diagrams - Developer Resources &amp; Examples"
+      version="0.3.0.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel"
       plugin="de.cau.cs.kieler.klighd.examples">
 
@@ -221,10 +221,20 @@ litigation.
       <import feature="de.cau.cs.kieler.klighd.feature" version="0.1.0" match="compatible"/>
       <import feature="org.eclipse.uml2" version="4.0.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.emf.ecoretools" version="1.1.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.jdt" version="3.8.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.xtext.runtime" version="2.3.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.xtext.ui" version="2.3.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
          id="de.cau.cs.kieler.klighd.examples"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.klighd.ui.wizard"
          download-size="0"
          install-size="0"
          version="0.0.0"
