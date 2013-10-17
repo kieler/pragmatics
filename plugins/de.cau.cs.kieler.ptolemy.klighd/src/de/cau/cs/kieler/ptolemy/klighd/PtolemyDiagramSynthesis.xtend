@@ -15,7 +15,6 @@ package de.cau.cs.kieler.ptolemy.klighd
 
 import com.google.common.collect.ImmutableSet
 import com.google.inject.Inject
-import de.cau.cs.kieler.core.util.Pair
 import de.cau.cs.kieler.klighd.TransformationOption
 import de.cau.cs.kieler.klighd.transformations.AbstractDiagramSynthesis
 import de.cau.cs.kieler.ptolemy.klighd.transformation.CommentsExtractor
@@ -40,7 +39,7 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
         "Flatten Composite Actors", false);
     // FIXME changed arguments to floats due to KIPRA-1317
     static val TransformationOption COMPOUND_NODE_ALPHA = TransformationOption::createRangeOption(
-        "Nested model darkness", new Pair(0f, 255f), 10f)
+        "Nested model darkness", 0, 255, 10)
     
     // The parts of our transformation
     @Inject Ptolemy2KGraphTransformation transformation
@@ -57,7 +56,7 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
             FLATTEN.optionBooleanValue,
             if (SHOW_COMMENTS.optionBooleanValue) commentsExtractor else null
         )
-        visualization.visualize(kgraph, (COMPOUND_NODE_ALPHA.optionValue as Float).intValue)
+        visualization.visualize(kgraph, (COMPOUND_NODE_ALPHA.optionIntValue))
         
         // If comments should be shown, we want them to be attached properly. Do that now, because we
         // know the node sizes only after the visualization
