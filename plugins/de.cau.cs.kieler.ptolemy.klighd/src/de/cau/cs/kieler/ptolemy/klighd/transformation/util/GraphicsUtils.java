@@ -140,7 +140,7 @@ public final class GraphicsUtils {
      * 
      * @param editorIcon the editor icon to repair.
      */
-    public static synchronized void repairEditorIcon(final EditorIcon editorIcon, final Figure figure) {
+    public static void repairEditorIcon(final EditorIcon editorIcon, final Figure figure) {
         // We can stop immediately if the figure is not a CompositeFigure
         if (!(figure instanceof CompositeFigure)) {
             return;
@@ -177,14 +177,14 @@ public final class GraphicsUtils {
             
             // We're interested in ImageFigures
             if (figObj instanceof ImageFigure) {
+                // Retrieve the figure's image
                 ImageFigure imgFig = (ImageFigure) figObj;
-                
-                // Check if the figure's image is unusually large (both dimensions > 150 pixels, perhaps)
                 Image figImg = imgFig.getImage();
                 if (figImg == null) {
                     continue;
                 }
-                
+
+                // Check if the figure's image is unusually large (both dimensions > 150 pixels, perhaps)
                 double width = figImg.getWidth(null);
                 double height = figImg.getHeight(null);
                 

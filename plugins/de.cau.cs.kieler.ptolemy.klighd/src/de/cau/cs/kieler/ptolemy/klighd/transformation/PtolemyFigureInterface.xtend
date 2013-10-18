@@ -23,9 +23,10 @@ import diva.canvas.Figure
 import diva.canvas.toolbox.ImageFigure
 import java.awt.AlphaComposite
 import java.awt.Color
+import java.awt.EventQueue
 import java.awt.Image
 import java.awt.RenderingHints
-import java.awt.geom.Rectangle2D$Double
+import java.awt.geom.Rectangle2D
 import java.awt.image.BufferedImage
 import java.util.List
 import org.w3c.dom.Document
@@ -41,16 +42,12 @@ import ptolemy.vergil.icon.EditorIcon
  * @author ckru
  * @author cds
  */
-class PtolemyFigureInterface {
+final class PtolemyFigureInterface {
     
     /** Instantiating Ptolemy entities. */
     @Inject extension PtolemyInterface
-    /** KRendering utility methods. */
-    @Inject extension KRenderingExtensions
-    
-    /** Factory used to instantiate KRendering classes. */
-    val renderingFactory = KRenderingFactory::eINSTANCE
-    
+    /** The object that does the image loading in another thread. */
+    @Inject ImageLoadWorker imageLoadWorker
     
     /**
      * Tries to return a KRendering of actors with the given class name.
@@ -67,15 +64,64 @@ class PtolemyFigureInterface {
             return null;
         }
         
+        imageLoadWorker.setEntity(entity)
+        EventQueue.invokeAndWait(imageLoadWorker)
+        return imageLoadWorker.getResult()
+    }
+}
+
+
+/**
+ * Loads Ptolemy stuff. Set the Ptolemy entity to load icons for, run it in the AWT event queue thread,
+ * and retrieve the result.
+ */
+final class ImageLoadWorker implements Runnable {
+    
+    /** KRendering utility methods. */
+    @Inject extension KRenderingExtensions
+    
+    /** Factory used to instantiate KRendering classes. */
+    val renderingFactory = KRenderingFactory::eINSTANCE
+    
+    /** The entity whose icon to load. */
+    private Entity entity = null;
+    
+    /** The rendering resulting from the loading operations. */
+    private KRendering result = null;
+    
+    
+    /**
+     * Sets the entity that this worker object is to load icons for.
+     * 
+     * @param newEntity the entity to load icons for.
+     */
+    def void setEntity(Entity newEntity) {
+        entity = newEntity
+    }
+    
+    /**
+     * Returns the KRendering representation of the loaded entity icon.
+     * 
+     * @return the resulting KRednering representation.
+     */
+    def KRendering getResult() {
+        return result
+    }
+    
+    
+    /**
+     * Loads icons for the entity set previously. Must be executed in the AWT event queue thread.
+     */
+    override run() {
         // Try to load all icons for this element
         val List<EditorIcon> icons = loadIconsForEntity(entity)
         if (icons.empty) {
             // We couldn't load any icons; try to load SVG description and turn it into a KRendering
             val Document svgDocument = loadSvgForEntity(entity)
             val figure = GraphicsUtils::createFigureFromSvg(svgDocument)
-            return figure
+            result = figure
         } else {
-            return createRenderingFromIcon(icons.get(0))
+            result = createRenderingFromIcon(icons.get(0))
         }
     }
     
@@ -190,7 +236,7 @@ class PtolemyFigureInterface {
             // It's not an ImageFigure, so try to get some SWT graphics stuff and turn that into
             // an image
             val bounds = figure.bounds
-            val size = new Rectangle2D$Double(0, 0, bounds.width, bounds.height)
+            val size = new Rectangle2D.Double(0, 0, bounds.width, bounds.height)
             val transform = CanvasUtilities::computeFitTransform(bounds, size)
             figure.transform(transform)
             
@@ -208,4 +254,5 @@ class PtolemyFigureInterface {
             return image
         }
     }
+    
 }
