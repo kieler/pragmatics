@@ -105,13 +105,13 @@ void HandleRequest(chunk_istream& stream, ostream& out) {
 					delete router;
 				}
                 // edge routing
-                if (tokens[2] == EDGE_ROUTING_ORTHOGONAL) {
-					router = new Avoid::Router(Avoid::OrthogonalRouting);
-                    connectorType = Avoid::ConnType_Orthogonal;
-                } else {
-                    // default polyline
+                if (tokens[2] == EDGE_ROUTING_POLYLINE) {
 					router = new Avoid::Router(Avoid::PolyLineRouting);
                     connectorType = Avoid::ConnType_PolyLine;
+                } else {
+                    // default orthogonal
+					router = new Avoid::Router(Avoid::OrthogonalRouting);
+                    connectorType = Avoid::ConnType_Orthogonal;
                 }
             } else if (tokens[1] == DIRECTION) {
                 // layout direction

@@ -29,7 +29,6 @@
       var outerChunks = transform.split(/\(|\)/g);
       var innerChunks = outerChunks[1].split(" ");
       // make sure we work with floats
-      console.log(innerChunks);
       innerChunks = $.map(innerChunks, function(e, i) {
         return parseFloat(e);
       });
@@ -41,7 +40,6 @@
         e : innerChunks[4],
         f : innerChunks[5],
       });
-      this.dumpCTM();
     } else {
       // reset is currently required due to prototype
       // FIXME extract the state information from the prototype

@@ -53,6 +53,10 @@ public final class LayerConstraintProcessor implements ILayoutProcessor {
         monitor.begin("Layer constraint application", 1);
         
         List<Layer> layers = layeredGraph.getLayers();
+        if (layers.isEmpty()) {
+            monitor.done();
+            return;
+        }
         
         // Retrieve the current first and last layers
         Layer firstLayer = layers.get(0);

@@ -160,9 +160,8 @@ public final class Properties {
     /**
      * Flags indicating the properties of a graph.
      */
-    public static final IProperty<Set<GraphProperties>> GRAPH_PROPERTIES 
-    = new Property<Set<GraphProperties>>(
-            "graphProperties", EnumSet.allOf(GraphProperties.class));
+    public static final IProperty<Set<GraphProperties>> GRAPH_PROPERTIES =
+            new Property<Set<GraphProperties>>("graphProperties", EnumSet.noneOf(GraphProperties.class));
 
     /**
      * The side of an external port a dummy node was created for.

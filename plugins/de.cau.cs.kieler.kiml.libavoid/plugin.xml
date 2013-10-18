@@ -15,7 +15,7 @@
             name="Libavoid"
             parameter="LIBAVOID">
          <knownOption
-               default="POLYLINE"
+               default="ORTHOGONAL"
                option="de.cau.cs.kieler.edgeRouting">
          </knownOption>
          <knownOption
@@ -124,7 +124,7 @@
       <layoutOption
             advanced="false"
             appliesTo="parents"
-            default="20"
+            default="4"
             description="This parameter defines the spacing distance that will be added to the sides of each shape when determining obstacle sizes for routing. This controls how closely connectors pass shapes, and can be used to prevent connectors overlapping with shape boundaries. By default, this distance is set to a value of 0. "
             id="de.cau.cs.kieler.kiml.libavoid.shapeBufferDistance"
             name="Shape Buffer Distance"
