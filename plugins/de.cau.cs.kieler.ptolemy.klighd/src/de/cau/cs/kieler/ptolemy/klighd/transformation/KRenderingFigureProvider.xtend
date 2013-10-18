@@ -615,15 +615,14 @@ class KRenderingFigureProvider {
                 poly.points += createKPosition(0, 4)
                 poly.points += createKPosition(4, 0)
                 poly.setBackgroundColor(0, 0, 0)
+                poly.placementData = renderingFactory.createKPointPlacementData() => [ ppd |
+                    ppd.horizontalAlignment = HorizontalAlignment.CENTER
+                    ppd.verticalAlignment = VerticalAlignment.CENTER
+                    ppd.minWidth = 8
+                    ppd.minHeight = 8
+                ]
             ], "ren_junction", library)
         }
-        
-        val ppd = renderingFactory.createKPointPlacementData()
-        ppd.setHorizontalAlignment(HorizontalAlignment.CENTER)
-        ppd.setVerticalAlignment(VerticalAlignment.CENTER)
-        ppd.setMinWidth(8)
-        ppd.setMinHeight(8)
-        junction.placementData = ppd
         
         val rendering = renderingFactory.createKRoundedBendsPolyline() => [ polyLine |
             polyLine.bendRadius = 5f
