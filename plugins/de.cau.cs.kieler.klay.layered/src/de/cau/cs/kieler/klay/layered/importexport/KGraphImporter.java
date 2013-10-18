@@ -27,6 +27,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
+import de.cau.cs.kieler.kiml.UnsupportedGraphException;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
@@ -556,26 +557,46 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
             // check if the edge source is an external port
             if (kedge.getSource() == graph && kedge.getSourcePort() != null) {
-                sourceNode = (LNode) elemMap.get(kedge.getSourcePort());
-                // the port could be missing in the element map if kedge is not in the port's edge list
-                if (sourceNode != null) {
-                    sourcePort = sourceNode.getPorts().get(0);
+                LGraphElement elem = elemMap.get(kedge.getSourcePort());
+                if (elem instanceof LNode) {
+                    sourceNode = (LNode) elem;
+                    // the port could be missing in the map if kedge is not in the port's edge list
+                    if (sourceNode != null) {
+                        sourcePort = sourceNode.getPorts().get(0);
+                    }
+                } else if (elem != null) {
+                    throw new UnsupportedGraphException("Inconsistent source port reference found.");
                 }
             } else {
                 sourceNode = (LNode) elemMap.get(kedge.getSource());
-                sourcePort = (LPort) elemMap.get(kedge.getSourcePort());
+                LGraphElement elem = elemMap.get(kedge.getSourcePort());
+                if (elem instanceof LPort) {
+                    sourcePort = (LPort) elem;
+                } else if (elem != null) {
+                    throw new UnsupportedGraphException("Inconsistent source port reference found.");
+                }
             }
 
             // check if the edge target is an external port
             if (kedge.getTarget() == graph && kedge.getTargetPort() != null) {
-                targetNode = (LNode) elemMap.get(kedge.getTargetPort());
-                // the port could be missing in the element map if kedge is not in the port's edge list
-                if (targetNode != null) {
-                    targetPort = targetNode.getPorts().get(0);
+                LGraphElement elem = elemMap.get(kedge.getTargetPort());
+                if (elem instanceof LNode) {
+                    targetNode = (LNode) elem;
+                    // the port could be missing in the map if kedge is not in the port's edge list
+                    if (targetNode != null) {
+                        targetPort = targetNode.getPorts().get(0);
+                    }
+                } else if (elem != null) {
+                    throw new UnsupportedGraphException("Inconsistent target port reference found.");
                 }
             } else {
                 targetNode = (LNode) elemMap.get(kedge.getTarget());
-                targetPort = (LPort) elemMap.get(kedge.getTargetPort());
+                LGraphElement elem = elemMap.get(kedge.getTargetPort());
+                if (elem instanceof LPort) {
+                    targetPort = (LPort) elem;
+                } else if (elem != null) {
+                    throw new UnsupportedGraphException("Inconsistent target port reference found.");
+                }
             }
             
             if (sourceNode != null && targetNode != null) {
@@ -590,12 +611,17 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                 if (sourcePort == null) {
                     sourcePort = createPort(sourceNode, edgeLayout.getSourcePoint().createVector(),
                             PortType.OUTPUT);
+                } else if (kedge.getSourcePort().getNode() != kedge.getSource()) {
+                    throw new UnsupportedGraphException("Inconsistent source port reference found.");
                 }
                 
                 if (targetPort == null) {
                     targetPort = createPort(targetNode, edgeLayout.getTargetPoint().createVector(),
                             PortType.INPUT);
+                } else if (kedge.getTargetPort().getNode() != kedge.getTarget()) {
+                    throw new UnsupportedGraphException("Inconsistent target port reference found.");
                 }
+                
                 newEdge.setSource(sourcePort);
                 newEdge.setTarget(targetPort);
             }
