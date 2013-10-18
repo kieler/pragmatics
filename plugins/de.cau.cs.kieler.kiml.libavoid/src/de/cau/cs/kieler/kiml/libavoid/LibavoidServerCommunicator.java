@@ -46,6 +46,7 @@ import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * Performs the actual communication with the libabvoid-server. The graph to layout is send to the
@@ -77,7 +78,16 @@ public class LibavoidServerCommunicator {
 
     // Internal data.
     private static final int PORT_ID_START = 5;
-    private int nodeIdCounter = 1;
+    private static final int NODE_ID_START = 5;
+    // reserved for compound node's boundaries
+    private static final int NODE_COMPOUND_NORTH = 1;
+    private static final int NODE_COMPOUND_EAST = 2;
+    private static final int NODE_COMPOUND_SOUTH = 3;
+    private static final int NODE_COMPOUND_WEST = 4;
+    /** size, either width or height, of the surrounding rectangles of compound nodes. */
+    private static final int SURROUNDING_RECT_SIZE = 10;
+
+    private int nodeIdCounter = NODE_ID_START;
     private int portIdCounter = PORT_ID_START;
     private int edgeIdCounter = 1;
     private static final int SUBTASK_WORK = 1;
@@ -87,12 +97,15 @@ public class LibavoidServerCommunicator {
     /** String buffer holding the textual graph. */
     private StringBuffer sb = new StringBuffer();
 
+    /** The direction of the current drawing. */
+    private Direction currentDirection = Direction.UNDEFINED;
+
     /**
      * Resets the communicator, i.e., clearing the maps to remember current nodes and the textual
      * representation of the graph.
      */
     private void reset() {
-        nodeIdCounter = 1;
+        nodeIdCounter = NODE_ID_START;
         nodeIdMap.clear();
         portIdCounter = PORT_ID_START;
         portIdMap.clear();
@@ -134,6 +147,7 @@ public class LibavoidServerCommunicator {
             // read the layout information
             Map<String, KVectorChain> layoutInformation =
                     readLayoutInformation(lvServer, progressMonitor.subTask(1));
+
             // apply the layout back to the KGraph
             applyLayout(layoutNode, layoutInformation, progressMonitor.subTask(1));
             // clean up the Libavoid server process
@@ -263,17 +277,18 @@ public class LibavoidServerCommunicator {
     private void transformOptions(final KNode node) {
 
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-        
+
         /*
-         * General Properties 
+         * General Properties
          */
         // IMPORTANT: the edge routing option has to be passed first!
-        // The information is required to initialize the libavoid router properly 
+        // The information is required to initialize the libavoid router properly
         // before the router can be configured with additional options
         EdgeRouting edgeRouting = nodeLayout.getProperty(LayoutOptions.EDGE_ROUTING);
         addOption(LayoutOptions.EDGE_ROUTING.getId(), edgeRouting);
-        
+
         Direction direction = nodeLayout.getProperty(LayoutOptions.DIRECTION);
+        currentDirection = direction;
         addOption(LayoutOptions.DIRECTION.getId(), direction);
 
         /*
@@ -330,7 +345,7 @@ public class LibavoidServerCommunicator {
                 nodeLayout.getProperty(LibavoidRouterSetup.NUDGE_ORTHOGONAL_COLINEAR_SEGMENTS);
         addRoutingOption(LibavoidRouterSetup.NUDGE_ORTHOGONAL_COLINEAR_SEGMENTS.getId(),
                 nudgeOrthogonalTouchingColinearSegments);
-        
+
         boolean performUnifyingNudgingPreprocessingStep =
                 nodeLayout.getProperty(LibavoidRouterSetup.NUDGE_PREPROCESSING);
         addRoutingOption(LibavoidRouterSetup.NUDGE_PREPROCESSING.getId(),
@@ -358,10 +373,25 @@ public class LibavoidServerCommunicator {
         sb.append("\n");
     }
 
+    /**
+     * Transform the actual graph.
+     * 
+     * @param root
+     *            of the current graph.
+     */
     private void transformGraph(final KNode root) {
 
         sb.append("GRAPH");
         sb.append("\n");
+
+        // add boundaries if this node is a compound node
+        if (root.getParent() != null) {
+            transformHierarchicalParent(root);
+        } else {
+            // create 4 dummy nodes, as the libavoid process expects gap-less node
+            // ids starting from 1.
+            transformHierarchicalParentDummy(root);
+        }
 
         // nodes
         for (KNode node : root.getChildren()) {
@@ -370,8 +400,22 @@ public class LibavoidServerCommunicator {
 
         // edges
         for (KNode node : root.getChildren()) {
+            // all edges between nodes within the root node
             for (KEdge edge : node.getOutgoingEdges()) {
-                transformEdge(edge);
+                if (edge.getSource().getParent().equals(edge.getTarget().getParent())) {
+                    transformEdge(edge);
+                }
+            }
+        }
+        // AND, in case of an compound node,
+        // all edges between hierarchical ports and nodes within the root node
+        for (KPort p : root.getPorts()) {
+            for (KEdge e : p.getEdges()) {
+                KNode srcParent = e.getSource().getParent();
+                KNode tgtParent = e.getTarget().getParent();
+                if ((srcParent.equals(root) || tgtParent.equals(root))) {
+                    transformEdge(e);
+                }
             }
         }
 
@@ -379,10 +423,88 @@ public class LibavoidServerCommunicator {
         sb.append("\n");
     }
 
+    /**
+     * Create 4 nodes that "surround", hence restrict, the child area. This way it is guaranteed
+     * that no edge is routed outsite its compound node.
+     */
+    private void transformHierarchicalParent(final KNode parent) {
+
+        KShapeLayout shape = parent.getData(KShapeLayout.class);
+
+        // offset each side by the shape buffer distance to let edges route properly
+        float bufferDistance = shape.getProperty(LibavoidRouterSetup.SHAPE_BUFFER_DISTANCE);
+        // top
+        libavoidNode(parent, NODE_COMPOUND_NORTH, 0, 0 - SURROUNDING_RECT_SIZE - bufferDistance,
+                shape.getWidth(), SURROUNDING_RECT_SIZE, 0, 0);
+        // right
+        libavoidNode(parent, NODE_COMPOUND_EAST, 0 + shape.getWidth() + bufferDistance, 0,
+                SURROUNDING_RECT_SIZE, shape.getHeight(), 0, 0);
+        // bottom
+        libavoidNode(parent, NODE_COMPOUND_SOUTH, 0, 0 + shape.getHeight() + bufferDistance,
+                shape.getWidth(), SURROUNDING_RECT_SIZE, 0, 0);
+        // left
+        libavoidNode(parent, NODE_COMPOUND_WEST, 0 - bufferDistance - SURROUNDING_RECT_SIZE, 0,
+                SURROUNDING_RECT_SIZE, shape.getHeight(), 0, 0);
+
+        // convert the ports of the compound node itself
+        for (KPort port : parent.getPorts()) {
+            int nodeId = determineHierarchicalNodeId(port);
+            libavoidPort(port, portIdCounter, nodeId, parent);
+            portIdCounter++;
+        }
+    }
+
+    private void transformHierarchicalParentDummy(final KNode root) {
+        // 4 dummies
+        libavoidNode(root, NODE_COMPOUND_NORTH, 0, 0, 0, 0, 0, 0);
+        libavoidNode(root, NODE_COMPOUND_EAST, 0, 0, 0, 0, 0, 0);
+        libavoidNode(root, NODE_COMPOUND_SOUTH, 0, 0, 0, 0, 0, 0);
+        libavoidNode(root, NODE_COMPOUND_WEST, 0, 0, 0, 0, 0, 0);
+    }
+
+    private void libavoidNode(final KNode node, final int id, final float xPos, final float yPos,
+            final float width, final float height, final int portLessIncomingEdges,
+            final int portLessOutgoingEdges) {
+
+        // put to map
+        if (id >= NODE_ID_START) {
+            nodeIdMap.put(id, node);
+        }
+
+        // format:
+        // id topleft bottomright portLessIncomingEdges portLessOutgoingEdges
+        sb.append("NODE " + id + " " + xPos + " " + yPos + " " + (xPos + width) + " "
+                + (yPos + height) + " " + portLessIncomingEdges + " " + portLessOutgoingEdges);
+        sb.append("\n");
+    }
+
+    private void libavoidPort(final KPort port, final int portId, final int nodeId,
+            final KNode compoundNode) {
+
+        // put to map
+        portIdMap.put(portId, port);
+
+        // gather information
+        KShapeLayout portLayout = port.getData(KShapeLayout.class);
+        PortSide side = KimlUtil.calcPortSide(port, currentDirection);
+
+        // get center point of port
+        float centerX = portLayout.getXpos() + portLayout.getWidth() / 2;
+        float centerY = portLayout.getYpos() + portLayout.getHeight() / 2;
+
+        // for compound nodes we have to mirror the port sides
+        if (compoundNode != null) {
+            side = side.opposed();
+        }
+
+        // format: portId nodeId portSide centerX centerYs
+        sb.append("PORT " + portId + " " + nodeId + " " + side.toString() + " " + centerX + " "
+                + centerY);
+        sb.append("\n");
+
+    }
+
     private void transformNode(final KNode node) {
-        // assign an id
-        nodeIdMap.put(nodeIdCounter, node);
-        
         // get information about port-less incoming and outgoing edges
         int portLessIncomingEdges =
                 Iterables.size(Iterables.filter(node.getIncomingEdges(), new Predicate<KEdge>() {
@@ -399,13 +521,9 @@ public class LibavoidServerCommunicator {
 
         // convert the bounds
         KShapeLayout shape = node.getData(KShapeLayout.class);
-        // format:
-        // id topleft bottomright portLessIncomingEdges portLessOutgoingEdges
-        sb.append("NODE " + nodeIdCounter + " " + shape.getXpos() + " " + shape.getYpos() + " "
-                + (shape.getXpos() + shape.getWidth()) + " "
-                + (shape.getYpos() + shape.getHeight()) + " " + portLessIncomingEdges + " "
-                + portLessOutgoingEdges);
-        sb.append("\n");
+
+        libavoidNode(node, nodeIdCounter, shape.getXpos(), shape.getYpos(), shape.getWidth(),
+                shape.getHeight(), portLessIncomingEdges, portLessOutgoingEdges);
 
         // transfer port constraints
         PortConstraints pc = shape.getProperty(LayoutOptions.PORT_CONSTRAINTS);
@@ -414,21 +532,7 @@ public class LibavoidServerCommunicator {
 
         // transfer all ports
         for (KPort port : node.getPorts()) {
-            portIdMap.put(portIdCounter, port);
-
-            // gather information
-            KShapeLayout portLayout = port.getData(KShapeLayout.class);
-            PortSide side = portLayout.getProperty(LayoutOptions.PORT_SIDE);
-
-            // get center point of port
-            float centerX = portLayout.getXpos() + portLayout.getWidth() / 2;
-            float centerY = portLayout.getYpos() + portLayout.getHeight() / 2;
-
-            // format: portId nodeId portSide centerX centerYs
-            sb.append("PORT " + portIdCounter + " " + nodeIdCounter + " " + side.toString() + " "
-                    + centerX + " " + centerY);
-            sb.append("\n");
-
+            libavoidPort(port, portIdCounter, nodeIdCounter, null);
             portIdCounter++;
         }
 
@@ -440,11 +544,19 @@ public class LibavoidServerCommunicator {
         edgeIdMap.put(edgeIdCounter, edge);
 
         // convert the edge
-        int srcId = nodeIdMap.inverse().get(edge.getSource());
-        int tgtId = nodeIdMap.inverse().get(edge.getTarget());
+        Integer srcId = nodeIdMap.inverse().get(edge.getSource());
+        Integer tgtId = nodeIdMap.inverse().get(edge.getTarget());
 
         Integer srcPort = portIdMap.inverse().get(edge.getSourcePort());
         Integer tgtPort = portIdMap.inverse().get(edge.getTargetPort());
+
+        // hierarchical port's libavoid nodes are not stored in the mapping
+        if (srcPort != null && srcId == null) {
+            srcId = determineHierarchicalNodeId(edge.getSourcePort());
+        }
+        if (tgtPort != null && tgtId == null) {
+            tgtId = determineHierarchicalNodeId(edge.getTargetPort());
+        }
 
         // determine the type of the edge, ie, if it involves ports
         String edgeType = "EDGE";
@@ -488,5 +600,25 @@ public class LibavoidServerCommunicator {
             // the vector chain could not be parsed - return NaN
             return Double.NaN;
         }
+    }
+
+    private int determineHierarchicalNodeId(final KPort port) {
+        PortSide ps = KimlUtil.calcPortSide(port, currentDirection);
+        int nodeId = 0;
+        switch (ps) {
+        case NORTH:
+            nodeId = NODE_COMPOUND_NORTH;
+            break;
+        case EAST:
+            nodeId = NODE_COMPOUND_EAST;
+            break;
+        case SOUTH:
+            nodeId = NODE_COMPOUND_SOUTH;
+            break;
+        default: // WEST
+            nodeId = NODE_COMPOUND_WEST;
+            break;
+        }
+        return nodeId;
     }
 }
