@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
@@ -39,6 +40,7 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
+import de.cau.cs.kieler.kiml.UnsupportedGraphException;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
@@ -294,14 +296,15 @@ public class RecursiveCompoundKGraphHandler {
                     LEdge newEdge = new LEdge(layeredGraph);
                     KEdgeLayout kedgeLayout = kedge.getData(KEdgeLayout.class);
                     newEdge.copyProperties(kedgeLayout);
+                    newEdge.setProperty(LayoutOptions.JUNCTION_POINTS, null);
                     crossHierarchyMap.put(kedge, new CrossHierarchyEdge(newEdge, layeredGraph,
                             parentNode, PortType.OUTPUT));
-                    LPort sourcePort;
-                    if (kedge.getSourcePort() == null) {
+                    LPort sourcePort = (LPort) elementMap.get(kedge.getSourcePort());
+                    if (sourcePort == null) {
                         sourcePort = createFreePort(lnode, PortType.OUTPUT,
                                 kedgeLayout.getSourcePoint().createVector(), layeredGraph);
-                    } else {
-                        sourcePort = (LPort) elementMap.get(kedge.getSourcePort());
+                    } else if (kedge.getSourcePort().getNode() != childNode) {
+                        throw new UnsupportedGraphException("Inconsistent source port reference found.");
                     }
                     newEdge.setSource(sourcePort);
                     LNode dummyNode = graphImporter.createExternalPortDummy(
@@ -339,14 +342,15 @@ public class RecursiveCompoundKGraphHandler {
                     LEdge newEdge = new LEdge(layeredGraph);
                     KEdgeLayout kedgeLayout = kedge.getData(KEdgeLayout.class);
                     newEdge.copyProperties(kedgeLayout);
+                    newEdge.setProperty(LayoutOptions.JUNCTION_POINTS, null);
                     crossHierarchyMap.put(kedge, new CrossHierarchyEdge(newEdge, layeredGraph,
                             parentNode, PortType.INPUT));
-                    LPort targetPort;
-                    if (kedge.getTargetPort() == null) {
+                    LPort targetPort = (LPort) elementMap.get(kedge.getTargetPort());
+                    if (targetPort == null) {
                         targetPort = createFreePort(lnode, PortType.INPUT,
                                 kedgeLayout.getTargetPoint().createVector(), layeredGraph);
-                    } else {
-                        targetPort = (LPort) elementMap.get(kedge.getTargetPort());
+                    } else if (kedge.getTargetPort().getNode() != childNode) {
+                        throw new UnsupportedGraphException("Inconsistent target port reference found.");
                     }
                     newEdge.setTarget(targetPort);
                     LNode dummyNode = graphImporter.createExternalPortDummy(
@@ -412,6 +416,7 @@ public class RecursiveCompoundKGraphHandler {
                 LEdge newEdge = new LEdge(layeredGraph);
                 KEdgeLayout kedgeLayout = externalPort.kedge.getData(KEdgeLayout.class);
                 newEdge.copyProperties(kedgeLayout);
+                newEdge.setProperty(LayoutOptions.JUNCTION_POINTS, null);
                 crossHierarchyMap.put(externalPort.kedge, new CrossHierarchyEdge(newEdge,
                         layeredGraph, parentNode, externalPort.type));
                 
@@ -420,12 +425,13 @@ public class RecursiveCompoundKGraphHandler {
                     LPort targetLPort = null;
                     if (targetKNode.getParent() == parentNode) {
                         // the edge goes to a direct child of the parent node
-                        if (externalPort.kedge.getTargetPort() != null) {
-                            targetLPort = (LPort) elementMap.get(
-                                    externalPort.kedge.getTargetPort());
-                        } else {
+                        targetLPort = (LPort) elementMap.get(externalPort.kedge.getTargetPort());
+                        if (targetLPort == null) {
                             LNode targetLNode = (LNode) elementMap.get(targetKNode);
                             needTargetPort.put(newEdge, targetLNode);
+                        } else if (externalPort.kedge.getTargetPort().getNode() != targetKNode) {
+                            throw new UnsupportedGraphException(
+                                    "Inconsistent target port reference found.");
                         }
                     } else if (KimlUtil.isDescendant(targetKNode, parentNode)) {
                         // the edge goes to the inside of another sibling node
@@ -482,12 +488,13 @@ public class RecursiveCompoundKGraphHandler {
                     LPort sourceLPort = null;
                     if (sourceKNode.getParent() == parentNode) {
                         // the edge comes from a direct child of the parent node
-                        if (externalPort.kedge.getSourcePort() != null) {
-                            sourceLPort = (LPort) elementMap.get(
-                                    externalPort.kedge.getSourcePort());
-                        } else {
+                        sourceLPort = (LPort) elementMap.get(externalPort.kedge.getSourcePort());
+                        if (sourceLPort == null) {
                             LNode sourceLNode = (LNode) elementMap.get(sourceKNode);
                             needSourcePort.put(newEdge, sourceLNode);
+                        } else if (externalPort.kedge.getSourcePort().getNode() != sourceKNode) {
+                            throw new UnsupportedGraphException(
+                                    "Inconsistent source port reference found.");
                         }
                     } else if (sourceKNode == parentNode
                             && externalPort.kedge.getSourcePort() != null) {
@@ -696,9 +703,27 @@ public class RecursiveCompoundKGraphHandler {
                 referenceNode = referenceNode.getParent();
             }
 
-            // apply the computed layouts to the cross-hierarchy edge
+            // check whether there are any junction points
             KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
             edgeLayout.getBendPoints().clear();
+            KVectorChain junctionPoints = edgeLayout.getProperty(LayoutOptions.JUNCTION_POINTS);
+            if (Iterables.any(crossHierarchyEdges, new Predicate<CrossHierarchyEdge>() {
+                public boolean apply(final CrossHierarchyEdge chEdge) {
+                    KVectorChain ledgeJPs = chEdge.ledge.getProperty(LayoutOptions.JUNCTION_POINTS);
+                    return ledgeJPs != null && !ledgeJPs.isEmpty();
+                }
+            })) {
+                if (junctionPoints == null) {
+                    junctionPoints = new KVectorChain();
+                    edgeLayout.setProperty(LayoutOptions.JUNCTION_POINTS, junctionPoints);
+                } else {
+                    junctionPoints.clear();
+                }
+            } else if (junctionPoints != null) {
+                edgeLayout.setProperty(LayoutOptions.JUNCTION_POINTS, null);
+            }
+            
+            // apply the computed layouts to the cross-hierarchy edge
             KVector lastPoint = null;
             for (CrossHierarchyEdge chEdge : crossHierarchyEdges) {
                 LGraph layeredGraph = layeredGraphMap.get(chEdge.lgraph);
@@ -745,6 +770,12 @@ public class RecursiveCompoundKGraphHandler {
                     lastPoint = sourcePoint;
                 } else {
                     lastPoint = bendPoints.getLast();
+                }
+                
+                // copy junction points
+                KVectorChain ledgeJPs = chEdge.ledge.getProperty(LayoutOptions.JUNCTION_POINTS);
+                if (ledgeJPs != null) {
+                    junctionPoints.addAll(ledgeJPs.translate(offset));
                 }
             }
         }

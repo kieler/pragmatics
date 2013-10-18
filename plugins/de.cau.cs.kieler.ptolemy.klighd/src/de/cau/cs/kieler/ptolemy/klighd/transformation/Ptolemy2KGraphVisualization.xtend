@@ -23,7 +23,6 @@ import de.cau.cs.kieler.core.krendering.KAreaPlacementData
 import de.cau.cs.kieler.core.krendering.KRendering
 import de.cau.cs.kieler.core.krendering.KRenderingFactory
 import de.cau.cs.kieler.core.krendering.Trigger
-import de.cau.cs.kieler.core.krendering.extensions.KEdgeExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.core.krendering.extensions.ViewSynthesisShared
 import de.cau.cs.kieler.core.math.KVector
@@ -50,6 +49,7 @@ import java.util.EnumSet
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
 
 import static extension com.google.common.base.Strings.*
+import de.cau.cs.kieler.core.krendering.KRenderingRef
 
 /**
  * Enriches a KGraph model freshly transformed from a Ptolemy2 model with the KRendering information
@@ -68,8 +68,6 @@ class Ptolemy2KGraphVisualization {
     @Inject extension MarkerExtensions
     /** Extensions used during the transformation. To make things easier. And stuff. */
     @Inject extension MiscellaneousExtensions
-    /** Extensions for creating edge renderings. */
-    @Inject extension KEdgeExtensions
     /** Utility class that provides renderings. */
     @Inject extension KRenderingExtensions
     /** Utility class that provides renderings. */
@@ -499,7 +497,7 @@ class Ptolemy2KGraphVisualization {
             edge.data += rendering
         } else {
             // We have a regular edge
-            edge.addRoundedBendsPolyline(5f, 2f)
+            edge.data += createDataFlowRendering(edge);
         }
     }
     
@@ -600,16 +598,20 @@ class Ptolemy2KGraphVisualization {
      */
     def private void setLayoutSize(KShapeLayout layout, KRendering rendering) {
         // TODO Provide proper size information for every actor
-        
-        if (rendering == null) {
+        var actualRendering = rendering
+        while (actualRendering instanceof KRenderingRef) {
+            actualRendering = (actualRendering as KRenderingRef).rendering
+        }
+                
+        if (actualRendering == null) {
             // If we have no rendering in the first place, fix the size
             layout.height = 50
             layout.width = 50
-        } else if (rendering.placementData != null
-            && rendering.placementData instanceof KAreaPlacementData) {
+        } else if (actualRendering.placementData != null
+            && actualRendering.placementData instanceof KAreaPlacementData) {
             
             // We have concrete placement data to infer the size from
-            val placementData = rendering.placementData as KAreaPlacementData
+            val placementData = actualRendering.placementData as KAreaPlacementData
             
             layout.height = placementData.bottomRight.y.absolute
             layout.width = placementData.bottomRight.x.absolute
