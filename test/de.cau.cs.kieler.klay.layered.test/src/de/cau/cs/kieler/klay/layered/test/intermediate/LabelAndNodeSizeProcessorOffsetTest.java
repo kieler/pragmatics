@@ -39,7 +39,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * @author cds
  */
-public class NodeAndLayerSizeProcessorOffsetTest {
+public class LabelAndNodeSizeProcessorOffsetTest {
     
     /**
      * Runs the test.
@@ -50,7 +50,6 @@ public class NodeAndLayerSizeProcessorOffsetTest {
         
         KlayLayered algorithm = new KlayLayered();
         algorithm.prepareLayoutTest(graph);
-        System.out.println(algorithm.getLayoutTestConfiguration());
         algorithm.runLayoutTestUntil(LabelAndNodeSizeProcessor.class);
         
         for (LGraph resultGraph : algorithm.getLayoutTestGraphs()) {
