@@ -822,6 +822,8 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             if (junctionPoints != null) {
                 junctionPoints.translate(offset);
                 edgeLayout.setProperty(LayoutOptions.JUNCTION_POINTS, junctionPoints);
+            } else {
+                edgeLayout.setProperty(LayoutOptions.JUNCTION_POINTS, null);
             }
 
             // set spline option
