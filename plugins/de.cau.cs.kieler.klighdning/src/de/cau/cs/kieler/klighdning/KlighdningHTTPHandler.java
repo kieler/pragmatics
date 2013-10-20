@@ -64,6 +64,7 @@ public class KlighdningHTTPHandler extends AbstractHandler {
     public KlighdningHTTPHandler(final File docRoot) {
         this.docRoot = docRoot;
         this.getViewer = new SVGBrowsingViewer();
+        gen.setRoot(docRoot);
     }
 
     /**
@@ -74,17 +75,22 @@ public class KlighdningHTTPHandler extends AbstractHandler {
             throws IOException, ServletException {
 
         // decide depending on the http target
-        if (target.startsWith("/content")) {
-            /*----------------------------------------------------------------------------
-             *  Return the a tree view of the root folder's content
-             */
-            String html = gen.toHtmlRoot(docRoot);
-
-            response.setContentType("text/html;charset=utf8");
+        if (target.startsWith("/json/content")) {
+            
+            String json = "";
+            
+            if (target.equals("/json/content/")) {
+                json =  gen.toJson(docRoot);
+            } else {
+                String path = target.replace("/json/content/", "");
+                json = gen.toJson(new File(docRoot, path));
+            }
+            
+            response.setContentType("application/json;charset=utf8");
             response.setStatus(HttpServletResponse.SC_OK);
             baseRequest.setHandled(true);
-            response.getWriter().println(html);
-
+            response.getWriter().println(json);
+            
         } else if (target.startsWith("/resource")) {
             /*----------------------------------------------------------------------------
              *  Return a specific resource as SVG this is mainly called by perma links.

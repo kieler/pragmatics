@@ -32,31 +32,6 @@ $.ajaxSetup({
   }
 });
 
-// collect any url parameters
-var QueryString = function() {
-  // This function is anonymous, is executed immediately and
-  // the return value is assigned to QueryString!
-  var query_string = {};
-  var query = window.location.search.substring(1);
-  var vars = query.split("&");
-  for (var i = 0; i < vars.length; i++) {
-    var pair = vars[i].split("=");
-    console.log(pair);
-    // If first entry with this name
-    if (typeof query_string[pair[0]] === "undefined") {
-      query_string[pair[0]] = pair[1];
-      // If second entry with this name
-    } else if (typeof query_string[pair[0]] === "string") {
-      var arr = [ query_string[pair[0]], pair[1] ];
-      query_string[pair[0]] = arr;
-      // If third or later entry with this name
-    } else {
-      query_string[pair[0]].push(pair[1]);
-    }
-  }
-  return query_string;
-}();
-
 /**
  * Call this when the websocket is disconnected or the page is reloaded.
  */
@@ -117,23 +92,18 @@ var webSocketConnect = function() {
 
   // -- Open
   connection.onopen = function() {
-    // currently nothing to do
-    
+
     // if a path and optional perma link is passed, open it
-    if(QueryString.path) {
-      console.log("LOAD THE BAD BOY");
-      console.log(QueryString);
-      //top.location.href = "index.html";
-      
+    var queryString = $klighdning.queryString;
+    if (queryString.path) {
+
       connection.send(JSON.stringify({
         type : 'RESOURCE',
-        path : QueryString.path,
-        viewport: QueryString.transform,
-        expand: QueryString.perma
+        path : queryString.path,
+        viewport : queryString.transform,
+        expand : queryString.perma
       }));
-      
     }
-    
   };
 
   // -- Log errors
@@ -141,7 +111,6 @@ var webSocketConnect = function() {
     initState();
     error('WebSocket Error ' + error);
   };
-  
 
   // -- Received message from server
   connection.onmessage = function(e) {
@@ -152,13 +121,13 @@ var webSocketConnect = function() {
     if (json.type === "SVG") {
       // hide old errors
       hideErrors();
-      //console.log("unzipping " + json.data);
-      
+      // console.log("unzipping " + json.data);
+
       // we have to unzip the data (gzip)
       var decrompressedSvg = $klighdning.decompress(json.data);
-      
-      //console.log(byteArrayToString(plain));
-      
+
+      // console.log(byteArrayToString(plain));
+
       // set the svg
       $('#viewport').html("");
       $('#viewport').html(decrompressedSvg);
@@ -295,51 +264,54 @@ $('#leave').click(function() {
  */
 
 function loadRepository() {
-  $.ajax({
-    type : 'GET',
-    url : 'content/',
-    success : function(res) {
-      $('#data').html(res);
 
-      // register listener if a file is clicked
-      $('.file').click(function(e) {
-        e.preventDefault();
-        var path = $(this).attr("data-path");
-
-        // set busy
-        $("#busy").show();
-
-        connection.send(JSON.stringify({
-          type : 'RESOURCE',
-          path : path
-        }));
-
-        // clear old diagram
-        $('#viewport').html("");
-
-        // clear the current transform
-        if (zoomPanManager) {
-          zoomPanManager.each(function(k, m) {
-            m.zpm.reset();
-          });
-        }
-      });
-
-      // init tree
-      $("#tree").tree();
-      $("#tree_icons").tree(
-          {
-            toggle : function(evt, ui) {
-              var expanded = (ui.nodes.attr("aria-expanded") == "true");
-              ui.nodes.children("a").children("span.ui-icon").removeClass(
-                  "ui-icon-folder-" + (expanded ? "collapsed" : "open")).addClass(
-                  "ui-icon-folder-" + (expanded ? "open" : "collapsed"));
-            }
-          });
+  // create the tree
+  $("#tree").dynatree({
+    // animation
+    fx : {
+      height : "toggle",
+      duration : 200
     },
-    error : function(e) {
-      $('#errors').html(e);
-    }
+    // Set focus to first child, when expanding or lazy-loading.
+    autoFocus : false,
+    // Init top level
+    initAjax : {
+      url : "/json/content/"
+    },
+    // load the diagram
+    onActivate : function(node) {
+      // ignore folders
+      if (node.data.isFolder) {
+        return;
+      }
+
+      // set busy
+      $("#busy").show();
+
+      // tell the websocket we need a new resource
+      connection.send(JSON.stringify({
+        type : 'RESOURCE',
+        path : node.data.path
+      }));
+
+      // clear old diagram
+      $('#viewport').html("");
+
+      // clear the current transform
+      if (zoomPanManager) {
+        zoomPanManager.each(function(k, m) {
+          m.zpm.reset();
+        });
+      }
+    },
+    // async load of the children
+    onLazyRead : function(node) {
+      node.appendAjax({
+        url : "/json/content" + node.data.path
+      });
+    },
+    // no debug output
+    debugLevel : 0
   });
 }
 
