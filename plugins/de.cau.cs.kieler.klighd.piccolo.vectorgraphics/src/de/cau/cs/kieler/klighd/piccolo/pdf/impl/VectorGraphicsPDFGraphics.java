@@ -94,7 +94,7 @@ public class VectorGraphicsPDFGraphics extends KlighdAbstractSVGGraphics impleme
      * {@inheritDoc}
      */
     public void export(OutputStream stream, KlighdCanvas canvas, boolean viewPort, int scale,
-            String subFormatId) {
+            final boolean textAsShapes, String subFormatId) {
 
         // FIXME ... dont do this again, improve the KlighdAbstractSVGGraphics ... remove the "svg"
         PCamera camera = canvas.getCamera();
@@ -114,7 +114,7 @@ public class VectorGraphicsPDFGraphics extends KlighdAbstractSVGGraphics impleme
                         bounds.getHeight());
 
         // set text handling
-        if (1 == 1) {
+        if (textAsShapes) {
             graphics.setFontRendering(FontRendering.VECTORS);
         } else {
             graphics.setFontRendering(FontRendering.TEXT);
