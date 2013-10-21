@@ -10,11 +10,12 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.libavoid.category"
             class="de.cau.cs.kieler.kiml.libavoid.LibavoidLayoutProvider"
+            description="libavoid is a cross-platform C++ library providing fast, object-avoiding orthogonal and polyline connector routing for use in interactive diagram editors."
             id="org.adaptagrams.cola.libavoid"
             name="Libavoid"
             parameter="LIBAVOID">
          <knownOption
-               default="POLYLINE"
+               default="ORTHOGONAL"
                option="de.cau.cs.kieler.edgeRouting">
          </knownOption>
          <knownOption
@@ -52,6 +53,15 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.kiml.libavoid.nudgeOrthogonalTouchingColinearSegments">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.direction">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.libavoid.performUnifyingNudgingPreprocessingStep">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.libavoid.improveHyperedgeRoutesMovingAddingAndDeletingJunctions">
          </knownOption>
       </layoutAlgorithm>
       <layoutOption
@@ -114,7 +124,7 @@
       <layoutOption
             advanced="false"
             appliesTo="parents"
-            default="20"
+            default="4"
             description="This parameter defines the spacing distance that will be added to the sides of each shape when determining obstacle sizes for routing. This controls how closely connectors pass shapes, and can be used to prevent connectors overlapping with shape boundaries. By default, this distance is set to a value of 0. "
             id="de.cau.cs.kieler.kiml.libavoid.shapeBufferDistance"
             name="Shape Buffer Distance"
@@ -166,10 +176,28 @@
             name="Nudge Orthogonal Colinear Segments"
             type="boolean">
       </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="true"
+            description="This option can be used to control whether the router performs a preprocessing step before orthogonal nudging where is tries to unify segments and centre them in free space. This generally results in better quality ordering and nudging."
+            id="de.cau.cs.kieler.kiml.libavoid.performUnifyingNudgingPreprocessingStep"
+            name="Nudging Preprocessing"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="false"
+            description="This option causes hyperedge routes to be locally improved fixing obviously bad paths."
+            id="de.cau.cs.kieler.kiml.libavoid.improveHyperedgeRoutesMovingAddingAndDeletingJunctions"
+            name="Improve Hyperedge Routes Add Delete"
+            type="boolean">
+      </layoutOption>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
-      <menuContribution
+      <!--menuContribution
             locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
          <toolbar
                id="de.cau.cs.kieler.layout.libavoid.toolbar"
@@ -191,6 +219,25 @@
                </visibleWhen>
             </command>
          </toolbar>
+      </menuContribution-->
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:de.cau.cs.kieler.kiml.ui.command.layout">
+         <command
+               commandId="de.cau.cs.kieler.kiml.libavoid.ui.command.layout"
+               label="Libavoid Layout"
+               style="push"
+               tooltip="Performs libavoid connector routing after original layout.">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeEditor">
+                  <test
+                        property="de.cau.cs.kieler.kiml.ui.activeEditorIsSupported">
+                  </test>
+               </with>
+            </visibleWhen>
+         </command>
       </menuContribution>
    </extension>
    <extension

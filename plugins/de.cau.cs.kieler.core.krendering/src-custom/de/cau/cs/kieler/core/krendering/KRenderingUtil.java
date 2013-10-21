@@ -14,17 +14,98 @@
 package de.cau.cs.kieler.core.krendering;
 
 /**
- * Collection of KRendering related convenience methods.
+ * Collection of KRendering related convenience methods and singleton fields.
  * 
  * @author chsch
  */
 public final class KRenderingUtil {
 
     private static final KRenderingFactory FACTORY = KRenderingFactory.eINSTANCE;
+    private static final KRenderingPackage PACKAGE = KRenderingPackage.eINSTANCE;
     
     private KRenderingUtil() {
     }
     
+    /**
+     * Helper method providing the {@link KPlacementData} of a {@link KRendering}. Handles the
+     * "inheritance" of {@link KPlacementData} in case of {@link KRenderingRef KRenderingRefs}.
+     * 
+     * @param rendering
+     *            the rendering to provide the {@link KPlacementData} for
+     * @return the requested {@link KPlacementData}
+     */
+    public static KPlacementData getPlacementData(final KRendering rendering) {
+        if (rendering.getPlacementData() != null) {
+            return rendering.getPlacementData();
+        } else if (PACKAGE.getKRenderingRef().isInstance(rendering)) {
+            // ... and the ref doen't contain explicit placement data
+            final KRenderingRef ref = (KRenderingRef) rendering;
+            if (ref.getRendering() == null) {
+                return null;
+            } else {
+                return ((KRenderingRef) rendering).getRendering().getPlacementData();
+            }
+        } else {
+            return null;
+        }
+    }
+    
+    /**
+     * Casts the given {@link KPlacementData} to {@link KAreaPlacementData}.
+     * 
+     * @param data
+     *            the {@link KPlacement}
+     * @return the {@link KAreaPlacementData} or <code>null</code> otherwise
+     */
+    public static KAreaPlacementData asAreaPlacementData(final KPlacementData data) {
+        if (data instanceof KAreaPlacementData) {
+            return (KAreaPlacementData) data;
+        }
+        return null;
+    }
+
+    /**
+     * Casts the given {@link KPlacementData} to {@link KPointPlacementData}.
+     * 
+     * @param data
+     *            the {@link KPlacement}
+     * @return the {@link KPointPlacementData} or <code>null</code> otherwise
+     */
+    public static KPointPlacementData asPointPlacementData(final KPlacementData data) {
+        if (data instanceof KPointPlacementData) {
+            return (KPointPlacementData) data;
+        }
+        return null;
+    }
+
+    /**
+     * Casts the given {@link KPlacementData} to {@link KGridPlacementData}.
+     * 
+     * @param data
+     *            the {@link KPlacement}
+     * @return the {@link KGridPlacementData} or <code>null</code> otherwise
+     */
+    public static KGridPlacementData asGridPlacementData(final KPlacementData data) {
+        if (data instanceof KGridPlacementData) {
+            return (KGridPlacementData) data;
+        }
+        return null;
+    }
+
+    /**
+     * Returns the given {@link KPlacement} as {@link KGridPlacement}.
+     * 
+     * @param placement
+     *            the {@link KPlacement}
+     * @return the {@link KGridPlacement} or <code>null</code> otherwise
+     */
+    public static KGridPlacement asGridPlacement(final KPlacement placement) {
+        if (placement instanceof KGridPlacement) {
+            return (KGridPlacement) placement;
+        }
+        return null;
+    }
+
     /**
      * Singleton {@link KPosition} instance containing {@link KLeftPosition KLeft-} &
      * {@link KTopPosition} components.
@@ -39,7 +120,8 @@ public final class KRenderingUtil {
     
 
     /**
-     * Factory method creating a {@link KPosition} containing a {@link KLeftPosition} and {@link KTopPosition}.
+     * Factory method creating a {@link KPosition} containing a {@link KLeftPosition} and
+     * {@link KTopPosition}.
      * 
      * @return the created {@link KPosition}
      */
@@ -51,7 +133,8 @@ public final class KRenderingUtil {
     }
     
     /**
-     * Factory method creating a {@link KPosition} containing a {@link KRightPosition} and {@link KBottomPosition}.
+     * Factory method creating a {@link KPosition} containing a {@link KRightPosition} and
+     * {@link KBottomPosition}.
      * 
      * @return the created {@link KPosition}
      */
@@ -90,7 +173,8 @@ public final class KRenderingUtil {
      * 
      * @param position
      *            the {@link KXPosition} to be evaluated
-     * @return the provided {@link KXPosition} if non-<code>null</code> or {@link #LEFT_TOP_POS}'s X component.
+     * @return the provided {@link KXPosition} if non-<code>null</code> or {@link #LEFT_TOP_POS}'s X
+     *         component.
      */
     public static KXPosition toNonNullLeftPosition(final KXPosition position) {
         return position != null ? position : LEFT_TOP_POS.getX();
@@ -101,7 +185,8 @@ public final class KRenderingUtil {
      * 
      * @param position
      *            the {@link KXPosition} to be evaluated
-     * @return the provided {@link KXPosition} if non-<code>null</code> or {@link #RIGHT_BOTTOM_POS}'s X component.
+     * @return the provided {@link KXPosition} if non-<code>null</code> or {@link #RIGHT_BOTTOM_POS}
+     *         's X component.
      */
     public static KXPosition toNonNullRightPosition(final KXPosition position) {
         return position != null ? position : RIGHT_BOTTOM_POS.getX();
@@ -112,7 +197,8 @@ public final class KRenderingUtil {
      * 
      * @param position
      *            the {@link KYPosition} to be evaluated
-     * @return the provided {@link KYPosition} if non-<code>null</code> or {@link #LEFT_TOP_POS}'s Y component.
+     * @return the provided {@link KYPosition} if non-<code>null</code> or {@link #LEFT_TOP_POS}'s Y
+     *         component.
      */
     public static KYPosition toNonNullTopPosition(final KYPosition position) {
         return position != null ? position : LEFT_TOP_POS.getY();
@@ -123,7 +209,8 @@ public final class KRenderingUtil {
      * 
      * @param position
      *            the {@link KYPosition} to be evaluated
-     * @return the provided {@link KYPosition} if non-<code>null</code> or {@link #RIGHT_BOTTOM_POS}'s Y component.
+     * @return the provided {@link KYPosition} if non-<code>null</code> or {@link #RIGHT_BOTTOM_POS}
+     *         's Y component.
      */
     public static KYPosition toNonNullBottomPosition(final KYPosition position) {
         return position != null ? position : RIGHT_BOTTOM_POS.getY();
@@ -139,7 +226,7 @@ public final class KRenderingUtil {
      *            second operand
      * @return <code>true</code> if both operands are deeply equal, <code>false</code> otherwise.
      */
-    public static boolean equals(KPosition it, Object other) {
+    public static boolean equals(final KPosition it, final Object other) {
         return (it == other)
                 || (it != null && other instanceof KPosition
                         && equals(it.getX(), ((KPosition) other).getX())
@@ -155,7 +242,7 @@ public final class KRenderingUtil {
      *            second operand
      * @return <code>true</code> if both operands are deeply equal, <code>false</code> otherwise.
      */
-    public static boolean equals(KXPosition it, Object other) {
+    public static boolean equals(final KXPosition it, final Object other) {
         return (it == other)
                 || (it != null && other instanceof KXPosition
                     && it.getClass() == other.getClass()
@@ -172,7 +259,7 @@ public final class KRenderingUtil {
      *            second operand
      * @return <code>true</code> if both operands are deeply equal, <code>false</code> otherwise.
      */
-    public static boolean equals(KYPosition it, Object other) {
+    public static boolean equals(final KYPosition it, final Object other) {
         return (it == other)
                 || (it != null && other instanceof KYPosition
                     && it.getClass() == other.getClass()

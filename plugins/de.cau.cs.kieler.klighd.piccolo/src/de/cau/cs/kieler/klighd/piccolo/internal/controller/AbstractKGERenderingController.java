@@ -47,12 +47,14 @@ import de.cau.cs.kieler.core.krendering.KPointPlacementData;
 import de.cau.cs.kieler.core.krendering.KRendering;
 import de.cau.cs.kieler.core.krendering.KRenderingPackage;
 import de.cau.cs.kieler.core.krendering.KRenderingRef;
+import de.cau.cs.kieler.core.krendering.KRenderingUtil;
 import de.cau.cs.kieler.core.krendering.KStyle;
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
-import de.cau.cs.kieler.klighd.KlighdDataManager;
 import de.cau.cs.kieler.klighd.IStyleModifier.StyleModificationContext;
+import de.cau.cs.kieler.klighd.KlighdDataManager;
 import de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties;
 import de.cau.cs.kieler.klighd.microlayout.Bounds;
 import de.cau.cs.kieler.klighd.microlayout.GridPlacementUtil;
@@ -633,7 +635,8 @@ public abstract class AbstractKGERenderingController
     }
 
     /**
-     * Creates the Piccolo node for a rendering inside a parent Piccolo node using direct placement.
+     * Creates the Piccolo node for a rendering inside a parent Piccolo node using point- or
+     * area-based child placement.
      * 
      * @param rendering
      *            the rendering
@@ -647,21 +650,23 @@ public abstract class AbstractKGERenderingController
             final List<KStyle> styles, final PNode parent) {
         final KPlacementData pcd = rendering.getPlacementData();
         final Bounds bounds;
-        if (pcd instanceof KPointPlacementData) {
+        final boolean pointPlacement = pcd instanceof KPointPlacementData;
+
+        if (pointPlacement) {
             bounds = PlacementUtil.evaluatePointPlacement((KPointPlacementData) pcd,
                     PlacementUtil.estimateSize(rendering, new Bounds(0.0f, 0.0f)),
                     parent.getBoundsReference());
         } else {
             // determine the initial bounds
             bounds = PlacementUtil.evaluateAreaPlacement(
-                    PlacementUtil.asAreaPlacementData(rendering.getPlacementData()),
+                    KRenderingUtil.asAreaPlacementData(rendering.getPlacementData()),
                     parent.getBoundsReference());
         }
         // create the rendering and receive its controller
         final PNodeController<?> controller = createRendering(rendering, styles, parent, bounds);
 
         // add a listener on the parent's bounds
-        if (pcd instanceof KPointPlacementData) {
+        if (pointPlacement) {
             addListener(PNode.PROPERTY_BOUNDS, parent, controller.getNode(),
                     new PropertyChangeListener() {
                         public void propertyChange(final PropertyChangeEvent e) {
@@ -681,7 +686,7 @@ public abstract class AbstractKGERenderingController
                             Bounds bounds = null;
                             // calculate the new bounds of the rendering
                             bounds = PlacementUtil.evaluateAreaPlacement(
-                                    PlacementUtil.asAreaPlacementData(rendering.getPlacementData()),
+                                    KRenderingUtil.asAreaPlacementData(rendering.getPlacementData()),
                                     parent.getBoundsReference());
                             // use the controller to apply the new bounds
                             controller.setBounds(bounds);
@@ -692,6 +697,71 @@ public abstract class AbstractKGERenderingController
         return controller.getNode();
     }
 
+    /**
+     * Creates the Piccolo node for a rendering inside a parent Piccolo node using a given direct
+     * position.
+     * 
+     * @param rendering
+     *            the rendering
+     * @param position
+     *            the direct position
+     * @param styles
+     *            the styles propagated to the children
+     * @param parent
+     *            the parent Piccolo node
+     * @return the Piccolo node representing the rendering
+     */
+    protected PNode handleDirectPlacementRendering(final KRendering rendering, final KVector position,
+            final List<KStyle> styles, final PNode parent) {
+        Bounds preferredSize = PlacementUtil.estimateSize(rendering, new Bounds(0.0f, 0.0f));
+        float x = (float) position.x;
+        float y = (float) position.y;
+        float width = preferredSize.getWidth();
+        float height = preferredSize.getHeight();
+
+        KPlacementData pcd = rendering.getPlacementData();
+        if (pcd == null && rendering instanceof KRenderingRef) {
+            KRendering ref = ((KRenderingRef) rendering).getRendering();
+            if (ref != null) {
+                pcd = ref.getPlacementData();
+            }
+        }
+        
+        if (pcd instanceof KPointPlacementData) {
+            KPointPlacementData ppd = (KPointPlacementData) pcd;
+            width = Math.max(preferredSize.getWidth(), ppd.getMinWidth());
+            height = Math.max(preferredSize.getHeight(), ppd.getMinHeight());
+
+            switch (ppd.getHorizontalAlignment()) {
+            case CENTER:
+                x -= width / 2;
+                break;
+            case RIGHT:
+                x -= width;
+                break;
+            default:
+                // leave the position at left alignment
+            }
+            
+            switch (ppd.getVerticalAlignment()) {
+            case BOTTOM:
+                y -= height;
+                break;
+            case CENTER:
+                y -= height / 2;
+                break;
+            default:
+                // leave the position at top alignment
+            }
+        }
+        
+        // create the rendering and receive its controller
+        final PNodeController<?> controller = createRendering(rendering, styles, parent,
+                Bounds.of(x, y, width, height));
+
+        return controller.getNode();
+    }
+    
     /**
      * Creates the Piccolo nodes for a list of renderings inside a parent Piccolo node using grid
      * placement.
@@ -712,11 +782,9 @@ public abstract class AbstractKGERenderingController
         }
 
         // calculate the bounds
-        final GridPlacementUtil.GridPlacer gridPlacer = GridPlacementUtil.getGridPlacementObject(
-                gridPlacement, renderings);
-
         final Bounds parentBounds = new Bounds(parent.getBoundsReference());
-        final Bounds[] elementBounds = gridPlacer.evaluate(parentBounds);
+        final Bounds[] elementBounds = GridPlacementUtil.evaluateGridPlacement(gridPlacement,
+                renderings, parentBounds);
 
         // create the renderings and collect the controllers
         final PNodeController<?>[] controllers = new PNodeController<?>[renderings.size()];
@@ -731,14 +799,18 @@ public abstract class AbstractKGERenderingController
                     public void propertyChange(final PropertyChangeEvent e) {
                         // calculate the new bounds of the rendering
                         final Bounds parentBounds = Bounds.of(parent.getBoundsReference());
-                        final Bounds[] bounds = gridPlacer.evaluate(parentBounds);
+                        final Bounds[] bounds = GridPlacementUtil.evaluateGridPlacement(
+                                gridPlacement, renderings, parentBounds);
 
                         // use the controllers to apply the new bounds
                         int i = 0;
-                        Bounds currentBounds;
                         for (PNodeController<?> controller : controllers) {
-                            currentBounds = bounds[i++];
-                            controller.setBounds(Bounds.min(currentBounds, parentBounds));
+                            if (bounds[i] != null) {
+                                controller.setBounds(bounds[i++]);
+                                controller.getNode().setVisible(true);
+                            } else {
+                                controller.getNode().setVisible(false);
+                            }
                         }
                     }
                 });
@@ -1016,7 +1088,7 @@ public abstract class AbstractKGERenderingController
      * @param key
      *            the key
      */
-    private <R> void removePNodeController(final KRendering key) {
+    protected void removePNodeController(final KRendering key) {
         this.pnodeControllers.remove(key);
     }
     

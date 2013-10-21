@@ -13,12 +13,14 @@
  */
 package de.cau.cs.kieler.klighdning;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.Adler32;
 import java.util.zip.Checksum;
+import java.util.zip.GZIPOutputStream;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -48,6 +50,8 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
 
     private boolean debug = false;
 
+    private boolean compress = true;
+
     // FIXME remove the statics
     // room mappings
     private static Map<String, SVGBrowsingViewer> roomViewerMap = Maps.newConcurrentMap();
@@ -59,7 +63,7 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
 
     private String currentRoom = null;
     private Connection connection;
-    
+
     private Checksum checksum = new Adler32();
 
     /**
@@ -149,6 +153,11 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
 
         // get the new SVG
         String svg = SVGLayoutProvider.getInstance().layout(viewer, zoomToFit);
+
+        // compress the svg if desired
+        if (isCompress()) {
+            svg = compressSvg(svg);
+        }
 
         // send the new svg to all corresponding connections
         broadcastJson(broadcastType, "type", "SVG", "data", svg);
@@ -283,6 +292,8 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
                  * RESOURCE -------------------------------------------------------------------
                  */
                 final String path = (String) json.get("path");
+                final String viewport = (String) json.get("viewport");
+                final String expand = (String) json.get("expand");
 
                 ResourceSet rs = new ResourceSetImpl();
 
@@ -301,9 +312,7 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
                 // .put("xml", new MomlResourceFactoryImpl());
 
                 File file = new File(docRoot, path);
-                final Resource r =
-                        rs.getResource(
-                                URI.createFileURI(file.getAbsolutePath()), true);
+                final Resource r = rs.getResource(URI.createFileURI(file.getAbsolutePath()), true);
 
                 System.out.println("Loading resource (WS): " + r);
 
@@ -317,9 +326,12 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
                     viewer.setModel(currentModel, true);
                     viewer.setResourcePath(path);
                     viewer.setResourceChecksum(Files.getChecksum(file, checksum) + "");
-                    // applyLayout();
+
+                    // if we have initial permalink information, apply them!
+                    viewer.applyPermalink(expand, viewport);
 
                     layoutBroadcastSVG(Broadcast.All, true);
+
                     broadcastPermaLink();
 
                 } catch (Exception e) {
@@ -372,4 +384,55 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
         }
     }
 
+    private static String compressSvg(final String svg) {
+        try {
+            // CHECKSTYLEOFF MagicNumber
+            System.out.println("SVG size: " + (svg.getBytes().length / 1024) + "kb");
+
+            // create a compressing string
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            GZIPOutputStream gzipOut = new GZIPOutputStream(baos);
+
+            // write the svg to the stream
+            gzipOut.write(svg.getBytes("utf-8"));
+
+            // close the stream
+            gzipOut.flush();
+            gzipOut.close();
+
+            System.out.println("SVG compressed size: " + (baos.toByteArray().length / 1024) + "kb");
+
+            // convert the bytes to chars, where each char represents one byte
+            char[] chars = new char[baos.toByteArray().length];
+            int i = 0;
+            for (byte b : baos.toByteArray()) {
+                chars[i++] = (char) (0xff & b);
+            }
+            // CHECKSTYLEON MagicNumber
+
+            // return a string
+            String compressedString = new String(chars);
+            return compressedString;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return "";
+    }
+
+    /**
+     * @param compress
+     *            the compress to set
+     */
+    public void setCompress(final boolean compress) {
+        this.compress = compress;
+    }
+
+    /**
+     * @return the compress
+     */
+    public boolean isCompress() {
+        return compress;
+    }
 }

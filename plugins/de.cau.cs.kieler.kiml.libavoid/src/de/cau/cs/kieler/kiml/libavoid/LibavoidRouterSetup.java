@@ -26,6 +26,12 @@ public final class LibavoidRouterSetup {
     private LibavoidRouterSetup() {
     }
 
+    
+    /*
+     * General Properties
+     */
+    
+    
     // CHECKSTYLEOFF javadoc
     // for documentation on the properties see the libavoid documentation.
 
@@ -55,7 +61,7 @@ public final class LibavoidRouterSetup {
             "de.cau.cs.kieler.kiml.libavoid.portDirectionPenalty", 100f, 0f);
 
     public static final IProperty<Float> SHAPE_BUFFER_DISTANCE = new Property<Float>(
-            "de.cau.cs.kieler.kiml.libavoid.shapeBufferDistance", 20f, 0f);
+            "de.cau.cs.kieler.kiml.libavoid.shapeBufferDistance", 4.0f, 0f);
 
     public static final IProperty<Float> IDEAL_NUDGING_DISTANCE = new Property<Float>(
             "de.cau.cs.kieler.kiml.libavoid.idealNudgingDistance", 4.0f, 0f);
@@ -77,4 +83,11 @@ public final class LibavoidRouterSetup {
             new Property<Boolean>(
                     "de.cau.cs.kieler.kiml.libavoid.nudgeOrthogonalTouchingColinearSegments", false);
 
+    public static final IProperty<Boolean> NUDGE_PREPROCESSING = new Property<Boolean>(
+            "de.cau.cs.kieler.kiml.libavoid.performUnifyingNudgingPreprocessingStep", true);
+
+    public static final IProperty<Boolean> IMPROVE_HYPEREDGES_ADD_DELETE = new Property<Boolean>(
+            "de.cau.cs.kieler.kiml.libavoid."
+                    + "improveHyperedgeRoutesMovingAddingAndDeletingJunctions", true);
+    
 }

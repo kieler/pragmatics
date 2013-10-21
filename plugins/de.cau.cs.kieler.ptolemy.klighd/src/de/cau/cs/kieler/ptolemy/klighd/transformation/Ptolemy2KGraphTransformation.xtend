@@ -19,6 +19,7 @@ import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.core.kgraph.KPort
 import de.cau.cs.kieler.kiml.options.LayoutOptions
 import de.cau.cs.kieler.kiml.util.KimlUtil
+import de.cau.cs.kieler.klighd.transformations.AbstractDiagramSynthesis
 import de.cau.cs.kieler.ptolemy.klighd.PluginConstants
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.LabelExtensions
@@ -95,6 +96,12 @@ class Ptolemy2KGraphTransformation {
      */
     ArrayList<IStatus> warnings = new ArrayList<IStatus>()
     
+    /**
+     * The diagram synthesis from which this transformation is called. Used to save the mapping from
+     * Ptolemy objects to view model objects.
+     */
+    AbstractDiagramSynthesis<?> diagramSynthesis = null
+    
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Transformations
@@ -104,13 +111,17 @@ class Ptolemy2KGraphTransformation {
      * root element and returns a KGraph node representing the converted model.
      * 
      * @param ptDocumentRoot the Ptolemy MOML document's root element.
+     * @param synthesis the diagram synthesis calling this transformation. Used to map Ptolemy model
+     *                  objects to KGraph model objects.
      * @return the transformed KGraph node.
      * @throws IllegalStateException if this class's instance has already been used.
      */
-    def KNode transform(DocumentRoot ptDocumentRoot) {
+    def KNode transform(DocumentRoot ptDocumentRoot, AbstractDiagramSynthesis<?> synthesis) {
         if (alreadyUsed) {
             throw new IllegalStateException("Transformations cannot be reused.")
         }
+        
+        diagramSynthesis = synthesis
         
         // A Ptolemy document can contain an entity or a class, so transform those and add the
         // transformed objects as the KGraph's children
@@ -134,6 +145,7 @@ class Ptolemy2KGraphTransformation {
      * @return the KGraph node.
      */
     def private create kNode : KimlUtil::createInitializedNode() transform(EntityType ptEntity) {
+        diagramSynthesis.putToLookUpWith(kNode, ptEntity)
         kNode.name = ptEntity.name
         
         // Add annotations identifying this node as having been created from a Ptolemy entity
@@ -215,6 +227,7 @@ class Ptolemy2KGraphTransformation {
      * @return the KGraph node.
      */
     def private create kNode : KimlUtil::createInitializedNode() transform(ClassType ptClass) {
+        diagramSynthesis.putToLookUpWith(kNode, ptClass)
         kNode.name = ptClass.name
         
         // Add annotations identifying this node as having been created from a Ptolemy entity
@@ -292,6 +305,7 @@ class Ptolemy2KGraphTransformation {
      * @return the KGraph node.
      */
     def private create kNode : KimlUtil::createInitializedNode() transform(RelationType ptRelation) {
+        diagramSynthesis.putToLookUpWith(kNode, ptRelation)
         kNode.name = ptRelation.name
         
         // Add annotation identifying this relation as having been created from a Ptolemy relation

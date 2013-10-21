@@ -160,9 +160,8 @@ public final class Properties {
     /**
      * Flags indicating the properties of a graph.
      */
-    public static final IProperty<Set<GraphProperties>> GRAPH_PROPERTIES 
-    = new Property<Set<GraphProperties>>(
-            "graphProperties", EnumSet.allOf(GraphProperties.class));
+    public static final IProperty<Set<GraphProperties>> GRAPH_PROPERTIES =
+            new Property<Set<GraphProperties>>("graphProperties", EnumSet.noneOf(GraphProperties.class));
 
     /**
      * The side of an external port a dummy node was created for.
@@ -335,11 +334,11 @@ public final class Properties {
             20.0f, 0.0f);
     
     /**
-     * the factor by which the vertical spacing between objects differs from the horizontal
+     * the factor by which the in-layer spacing between objects differs from the inter-layer
      * {@link Properties#OBJ_SPACING}.
      */
-    public static final IProperty<Float> OBJ_SPACING_VERTICAL_FACTOR = new Property<Float>(
-            "de.cau.cs.kieler.klay.layered.verticalSpacingFactor", 1.0f, 0f);
+    public static final IProperty<Float> OBJ_SPACING_IN_LAYER_FACTOR = new Property<Float>(
+            "de.cau.cs.kieler.klay.layered.inLayerSpacingFactor", 1.0f, 0f);
     
     /** spacing to the border of the drawing. */
     public static final Property<Float> BORDER_SPACING = new Property<Float>(

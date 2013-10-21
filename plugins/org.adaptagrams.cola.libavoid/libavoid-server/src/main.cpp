@@ -69,19 +69,21 @@ int main(void) {
 void HandleRequest(chunk_istream& stream, ostream& out) {
 
     vector<Avoid::ShapeRef *> shapes;
-	vector<Avoid::ShapeConnectionPin *> pins;
+    vector<Avoid::ShapeConnectionPin *> pins;
     vector<Avoid::ConnRef *> cons;
 
-    Avoid::Router *router = new Avoid::Router(Avoid::OrthogonalRouting | Avoid::PolyLineRouting);
+	// router is initialized upon receiption of the edge routing option
+    Avoid::Router *router = 0;
 
     // options
     Avoid::ConnType connectorType = Avoid::ConnType_PolyLine;
+    std::string direction = DIRECTION_UNDEFINED;
 
     // read graph from stdin
     for (std::string line; std::getline(std::cin, line);) {
 
         // split the line into its parts
-        vector<string> tokens;
+        vector < string > tokens;
         tokenize(line, tokens);
 
         if (tokens[0] == "PENALTY") {
@@ -98,51 +100,76 @@ void HandleRequest(chunk_istream& stream, ostream& out) {
 
             /* General options */
             if (tokens[1] == EDGE_ROUTING) {
+				if (router) {
+					// possibly delete an old router
+					delete router;
+				}
                 // edge routing
-                if (tokens[2] == EDGE_ROUTING_ORTHOGONAL) {
-                    connectorType = Avoid::ConnType_Orthogonal;
-                } else {
-                    // default polyline
+                if (tokens[2] == EDGE_ROUTING_POLYLINE) {
+					router = new Avoid::Router(Avoid::PolyLineRouting);
                     connectorType = Avoid::ConnType_PolyLine;
+                } else {
+                    // default orthogonal
+					router = new Avoid::Router(Avoid::OrthogonalRouting);
+                    connectorType = Avoid::ConnType_Orthogonal;
                 }
+            } else if (tokens[1] == DIRECTION) {
+                // layout direction
+                direction = tokens[2];
             }
 
         } else if (tokens.at(0) == "NODE") {
-            // format: id topleft bottomright
-            if (tokens.size() != 6) {
+            // format:
+            // id topleft bottomright portLessIncomingEdges portLessOutgoingEdges
+            if (tokens.size() != 8) {
                 cerr << "ERROR: invalid node format" << endl;
             }
 
-            addNode(tokens, shapes, router);
+            addNode(tokens, shapes, router, direction);
 
-        } else if(tokens[0] == "PORT") {   
-			// format: portId nodeId portSide centerX centerYs
+        } else if (tokens[0] == "PORT") {
+            // format: portId nodeId portSide centerX centerYs
             if (tokens.size() != 6) {
                 cerr << "ERROR: invalid port format" << endl;
             }
 
             addPort(tokens, pins, shapes, router);
 
-        } else if (tokens[0] == "EDGE" || tokens[0] == "PEDGEP" 
-					|| tokens[0] == "PEDGE" || tokens[0] == "EDGEP") {
+        } else if (tokens[0] == "EDGE" || tokens[0] == "PEDGEP" || tokens[0] == "PEDGE"
+                || tokens[0] == "EDGEP") {
             // format: edgeId srcId tgtId srcPort tgtPort
             if (tokens.size() != 6) {
                 cerr << "ERROR: invalid edge format" << endl;
             }
 
-            addEdge(tokens, connectorType, shapes, cons, router);
+            addEdge(tokens, connectorType, shapes, cons, router, direction);
 
         } else if (tokens.at(0) == "GRAPHEND") {
             break;
         } else {
-			// ignore it
-		}
+            // ignore it
+        }
 
         //std::cout << line << std::endl;
     }
 
+#ifdef DEBUG_EXEC_TIME
+    // measure execution time of the routing process
+    LARGE_INTEGER frequency;
+    LARGE_INTEGER t1, t2;
+    QueryPerformanceFrequency(&frequency); // ticks per second
+    QueryPerformanceCounter(&t1); // first timestamp
+#endif
+
     // perform edge routing
     router->processTransaction();
+
+#ifdef DEBUG_EXEC_TIME
+    QueryPerformanceCounter(&t2);
+    // compute and print the elapsed time in millisec
+    double elapsedTime = (t2.QuadPart - t1.QuadPart) * 1000.0 / frequency.QuadPart;
+    cout << "DEBUG Execution time edge routing: " << elapsedTime << "ms." << endl;
+#endif
 
     // write the layout to std out
     writeLayout(cout, cons);

@@ -736,14 +736,10 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
         
         if (portConstraints == PortConstraints.FIXED_POS) {
             // Fixed Position
-            if (!originalNodeSize.equals(node.getSize())) {
-                placeFixedPosNodePorts(node);
-            }
+            placeFixedPosNodePorts(node);
         } else if (portConstraints == PortConstraints.FIXED_RATIO) {
             // Fixed Ratio
-            if (!originalNodeSize.equals(node.getSize())) {
-                placeFixedRatioNodePorts(node);
-            }
+            placeFixedRatioNodePorts(node);
         } else {
             // Free, Fixed Side, Fixed Order
             if (node.getProperty(LayoutOptions.HYPERNODE)
@@ -769,8 +765,14 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
             float portOffset = port.getProperty(Properties.OFFSET);
             
             switch (port.getSide()) {
+            case WEST:
+                port.getPosition().x = -port.getSize().x - portOffset;
+                break;
             case EAST:
                 port.getPosition().x = nodeSize.x + portOffset;
+                break;
+            case NORTH:
+                port.getPosition().y = -port.getSize().y - portOffset;
                 break;
             case SOUTH:
                 port.getPosition().y = nodeSize.y + portOffset;
@@ -796,6 +798,7 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
             switch (port.getSide()) {
             case WEST:
                 port.getPosition().y = nodeSize.y * port.getProperty(Properties.PORT_RATIO_OR_POSITION);
+                port.getPosition().x = -port.getSize().x - portOffset;
                 break;
             case EAST:
                 port.getPosition().y = nodeSize.y * port.getProperty(Properties.PORT_RATIO_OR_POSITION);
@@ -803,6 +806,7 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
                 break;
             case NORTH:
                 port.getPosition().x = nodeSize.x * port.getProperty(Properties.PORT_RATIO_OR_POSITION);
+                port.getPosition().y = -port.getSize().y - portOffset;
                 break;
             case SOUTH:
                 port.getPosition().x = nodeSize.x * port.getProperty(Properties.PORT_RATIO_OR_POSITION);
