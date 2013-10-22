@@ -13,14 +13,21 @@
  */
 package de.cau.cs.kieler.ptolemy.klighd
 
+import com.google.common.collect.ImmutableList
+import com.google.common.collect.ImmutableMap
 import com.google.common.collect.ImmutableSet
 import com.google.inject.Inject
+import de.cau.cs.kieler.core.properties.IProperty
+import de.cau.cs.kieler.kiml.options.LayoutOptions
+import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy
+import de.cau.cs.kieler.klay.layered.properties.Properties
 import de.cau.cs.kieler.klighd.TransformationOption
 import de.cau.cs.kieler.klighd.transformations.AbstractDiagramSynthesis
 import de.cau.cs.kieler.ptolemy.klighd.transformation.CommentsExtractor
 import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphOptimization
 import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphTransformation
 import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphVisualization
+import java.util.Collection
 import org.ptolemy.moml.DocumentRoot
 
 /**
@@ -69,6 +76,9 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
         return kgraph
     }
     
+    /**
+     * Diagram options.
+     */
     override getTransformationOptions() {
         return ImmutableSet::of(
             SHOW_COMMENTS,
@@ -77,5 +87,15 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
             FLATTEN,
             COMPOUND_NODE_ALPHA)
     }
+    
+    /**
+	 * Layout options.
+	 */
+	override getRecommendedLayoutOptions() {
+		return ImmutableMap::<IProperty<?>, Collection<?>>of(
+			Properties::NODE_PLACER, ImmutableList::copyOf(NodePlacementStrategy::values),
+			LayoutOptions::SPACING,	ImmutableList::of(0, 255)
+		)
+	}
     
 }
