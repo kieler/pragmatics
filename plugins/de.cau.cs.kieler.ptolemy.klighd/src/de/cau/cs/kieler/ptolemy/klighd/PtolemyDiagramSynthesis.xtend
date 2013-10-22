@@ -40,7 +40,7 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
     public static val TransformationOption FLATTEN = TransformationOption::createCheckOption(
         "Flatten Composite Actors", false)
     public static val TransformationOption COMPOUND_NODE_ALPHA = TransformationOption::createRangeOption(
-        "Nested model darkness", 0f, 255f, 10f)
+        "Nested model darkness", 0f, 255f, 30f)
     
     // The parts of our transformation
     @Inject Ptolemy2KGraphTransformation transformation
