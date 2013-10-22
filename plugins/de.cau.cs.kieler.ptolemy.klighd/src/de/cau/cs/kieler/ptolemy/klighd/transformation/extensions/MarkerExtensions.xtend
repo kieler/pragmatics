@@ -23,6 +23,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
 
 import static extension com.google.common.base.Strings.*
+import de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants
 
 /**
  * Utility methods used to mark elements by the Ptolemy to KGraph transformation.
@@ -253,15 +254,14 @@ class MarkerExtensions {
     }
     
     /**
-     * Checks if the given node is a Ptolemy Const actor.
+     * Checks if the given node is a value displaying actor, for instance a Const actor.
      * 
      * @param node the node to check.
-     * @return {@code true} if the node represents a Const actor.
+     * @return {@code true} if the node represents a value displaying actor.
      */
-    def boolean isMarkedAsConstActor(KNode node) {
+    def boolean isMarkedAsValueDisplayingActor(KNode node) {
         val propertyValue = node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS).nullToEmpty()
-        return propertyValue.equals(ENTITY_CLASS_CONST)
-            || propertyValue.equals(ENTITY_CLASS_STRING_CONST)
+        return TransformationConstants.VALUE_DISPLAY_MAP.keySet().contains(propertyValue)
     }
     
     /**
