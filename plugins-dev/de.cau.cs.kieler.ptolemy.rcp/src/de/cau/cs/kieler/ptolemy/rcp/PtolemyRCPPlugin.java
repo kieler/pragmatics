@@ -35,7 +35,8 @@ public class PtolemyRCPPlugin extends AbstractUIPlugin implements IStartup {
 
     /** a list with all accepted menu contributions. */
     final ImmutableSet<String> acceptedMenuContribs = ImmutableSet.of(OPEN_FILE, "quit",
-            "reopenEditors", "mru", "null", "quit", "fileEnd", "org.eclipse.ui.file.exit");
+            "reopenEditors", "mru", "null", "quit", "fileEnd", "org.eclipse.ui.file.exit",
+            "de.cau.cs.kieler.ptolemy.rcp.view", "de.cau.cs.kieler.ptolemy.rcp.zoomToFit");
 
     /**
      * The constructor

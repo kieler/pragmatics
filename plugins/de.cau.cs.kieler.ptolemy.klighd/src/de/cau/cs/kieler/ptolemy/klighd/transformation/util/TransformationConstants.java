@@ -104,6 +104,9 @@ public final class TransformationConstants {
     /** Class of an entity that is a Sample Delay actor. */
     public static final String ENTITY_CLASS_SAMPLE_DELAY = "ptolemy.domains.sdf.lib.SampleDelay";
     
+    /** Class of an entity that is a Non-Strict Delay actor. */
+    public static final String ENTITY_CLASS_NONSTRICT_DELAY = "ptolemy.domains.sr.lib.NonStrictDelay";
+    
     /** Class of an entity that is a Logic Function actor. */
     public static final String ENTITY_CLASS_LOGIC_FUNTION = "ptolemy.actor.lib.logic.LogicFunction";
 
@@ -214,6 +217,7 @@ public final class TransformationConstants {
         VALUE_DISPLAY_MAP.put(ENTITY_CLASS_STRING_CONST, "value");
         VALUE_DISPLAY_MAP.put(ENTITY_CLASS_EXPRESSION, "expression");
         VALUE_DISPLAY_MAP.put(ENTITY_CLASS_SAMPLE_DELAY, "initialOutputs");
+        VALUE_DISPLAY_MAP.put(ENTITY_CLASS_NONSTRICT_DELAY, "initialValue");
         VALUE_DISPLAY_MAP.put(ENTITY_CLASS_LOGIC_FUNTION, "function");
         VALUE_DISPLAY_MAP.put(ENTITY_CLASS_TRIG_FUNTION, "function");
         VALUE_DISPLAY_MAP.put(ENTITY_CLASS_UNARY_MATH_FUNTION, "function");
