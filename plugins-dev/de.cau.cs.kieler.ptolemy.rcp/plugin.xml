@@ -309,5 +309,34 @@
             type="xml">
       </parser>
    </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:org.eclipse.ui.main.menu">
+         <menu
+               id="de.cau.cs.kieler.ptolemy.rcp.view"
+               label="View">
+            <command
+                  commandId="de.cau.cs.kieler.ptolemy.rcp.zoomToFitCommand"
+                  id="de.cau.cs.kieler.ptolemy.rcp.zoomToFit"
+                  label="ZoomToFit"
+                  style="toggle">
+            </command>
+         </menu>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="de.cau.cs.kieler.ptolemy.rcp.ZoomToFitHandler"
+            id="de.cau.cs.kieler.ptolemy.rcp.zoomToFitCommand"
+            name="ZoomToFit">
+         <state
+               class="org.eclipse.ui.handlers.RegistryToggleState:true"
+               id="org.eclipse.ui.commands.toggleState">
+         </state>
+      </command>
+   </extension>
 
 </plugin>
