@@ -37,6 +37,7 @@
     <module>de.cau.cs.kieler.kiml.graphviz.layouter</module>
     <module>de.cau.cs.kieler.kiml.kivi</module>
     <module>de.cau.cs.kieler.kiml.ogdf</module>
+    <module>de.cau.cs.kieler.kiml.libavoid</module>
     <module>de.cau.cs.kieler.kiml.service</module>
     <module>de.cau.cs.kieler.kiml.ui</module>
     <module>de.cau.cs.kieler.klay.force</module>
@@ -53,6 +54,8 @@
     <module>de.cau.cs.kieler.klighd.piccolo.draw2d</module>
     <module>de.cau.cs.kieler.klighd.piccolo.svg</module>
     <module>de.cau.cs.kieler.klighd.xtext</module>
+    <module>de.cau.cs.kieler.klighd.ui</module>
+    <module>de.cau.cs.kieler.klighd.ui.wizard</module>
     <module>de.cau.cs.kieler.ksbase</module>
     <module>de.cau.cs.kieler.ksbase.ui</module>
     <module>de.cau.cs.kieler.kwebs</module>
@@ -62,6 +65,7 @@
     <module>edu.umd.cs.piccolo</module>
     <module>net.ogdf.bin</module>
     <module>net.ogdf.ogml</module>
+    <module>org.adaptagrams.cola.libavoid</module>
     <module>org.graphdrawing.graphml</module>
   </modules>
 

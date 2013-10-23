@@ -48,7 +48,7 @@
                option="de.cau.cs.kieler.klay.layered.edgeSpacingFactor">
          </knownOption>
          <knownOption
-               default="20"
+               default="12"
                option="de.cau.cs.kieler.borderSpacing">
          </knownOption>
          <knownOption
@@ -132,7 +132,7 @@
                option="de.cau.cs.kieler.klay.layered.feedBackEdges">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.klay.layered.verticalSpacingFactor">
+               option="de.cau.cs.kieler.klay.layered.inLayerSpacingFactor">
          </knownOption>
       </layoutAlgorithm>
       <layoutOption
@@ -296,10 +296,10 @@
             advanced="true"
             appliesTo="parents"
             default="1"
-            description="Factor by which the usual spacing is multiplied to determine the vertical spacing between objects."
-            id="de.cau.cs.kieler.klay.layered.verticalSpacingFactor"
+            description="Factor by which the usual spacing is multiplied to determine the in-layer spacing between objects."
+            id="de.cau.cs.kieler.klay.layered.inLayerSpacingFactor"
             lowerBound="0.01"
-            name="Vertical Spacing Factor"
+            name="In-layer Spacing Factor"
             type="float"
             upperBound="100">
       </layoutOption>

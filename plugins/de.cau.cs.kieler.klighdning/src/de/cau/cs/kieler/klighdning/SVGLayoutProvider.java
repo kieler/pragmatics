@@ -71,9 +71,11 @@ public final class SVGLayoutProvider {
         mng.applyLayout(mapping, true, 0);
 
         // zoom to fit
-        // TODO currently always
+        // FIXME currently always
         // if(zoomToFit) {
-        viewer.zoomToFit();
+//        if (viewer.getSvgTransform() == null) {
+            viewer.zoomToFit();
+//        }
         // }
 
         // redraw
@@ -83,11 +85,20 @@ public final class SVGLayoutProvider {
 
     private String processSVG(final SVGBrowsingViewer viewer, final String svg) {
 
+        StringBuffer sb = new StringBuffer(svg);
+
         // remove the xml declaration so that we can embed the svg
-        String res3 = svg.substring(svg.indexOf("<svg"), svg.length());
+        // = sb.substring(sb.indexOf("<svg"), sb.length());
+        sb.replace(0, sb.indexOf("<svg"), "");
+
+        // remove a viewBox element, we dont like it
+        int viewBox = sb.indexOf("viewBox=");
+        if (viewBox != -1) {
+            // CHECKSTYLEOFF MagicNumber
+            sb.replace(viewBox, sb.indexOf("\"", viewBox + 9) + 1, "");
+        }
 
         // insert an id for the first group element
-        StringBuffer sb = new StringBuffer(res3);
         sb.insert(sb.indexOf("<g") + 2, " id=\"group\"");
 
         // add an initial transform

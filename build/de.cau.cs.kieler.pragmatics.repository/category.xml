@@ -59,6 +59,7 @@
       <category name="kieler-sources"/>
    </feature>
 
+   <!-- OGDF -->
    <feature url="features/de.cau.cs.kieler.kiml.ogdf_0.6.0.qualifier.jar" id="de.cau.cs.kieler.kiml.ogdf.feature" version="0.6.0.qualifier">
       <category name="kieler-layout"/>
    </feature>
@@ -68,6 +69,18 @@
    <feature url="features/net.ogdf.bin_2.0.1.qualifier.jar" id="net.ogdf.bin.feature" version="2.0.1.qualifier" os="linux,macosx,solaris,win32" arch="sparc,x86,x86_64">
       <category name="kieler-layout"/>
    </feature>
+   
+   <!-- Libavoid -->
+   <feature url="features/de.cau.cs.kieler.kiml.libavoid_0.1.0.qualifier.jar" id="de.cau.cs.kieler.kiml.libavoid.feature" version="0.1.0.qualifier">
+      <category name="kieler-layout"/>
+   </feature>
+   <feature url="features/de.cau.cs.kieler.kiml.libavoid.source_0.1.0.qualifier.jar" id="de.cau.cs.kieler.kiml.libavoid.feature.source" version="0.1.0.qualifier">
+      <category name="kieler-sources"/>
+   </feature>
+   <feature url="features/org.adaptagrams.cola.libavoid_0.1.0.qualifier.jar" id="org.adaptagrams.cola.libavoid.feature" version="0.1.0.qualifier" os="linux,macosx,solaris,win32" arch="sparc,x86,x86_64">
+      <category name="kieler-layout"/>
+   </feature>
+   
 
    <feature url="features/de.cau.cs.kieler.kwebs.client.jaxws_0.2.0.qualifier.jar" id="de.cau.cs.kieler.kwebs.client.jaxws.feature" version="0.2.0.qualifier">
       <category name="kieler-layout"/>
@@ -86,10 +99,10 @@
       <category name="kieler-sources"/>
    </feature>
 
-   <feature url="features/de.cau.cs.kieler.klighd.examples.feature_0.2.1.qualifier.jar" id="de.cau.cs.kieler.klighd.examples.feature" version="0.2.1.qualifier">
+   <feature url="features/de.cau.cs.kieler.klighd.sdk.feature_0.2.1.qualifier.jar" id="de.cau.cs.kieler.klighd.sdk.feature" version="0.3.0.qualifier">
       <category name="kieler-klighd"/>
    </feature>
-   <feature url="features/de.cau.cs.kieler.klighd.examples.feature.source_0.2.1.qualifier.jar" id="de.cau.cs.kieler.klighd.examples.feature.source" version="0.2.1.qualifier">
+   <feature url="features/de.cau.cs.kieler.klighd.sdk.feature.source_0.2.1.qualifier.jar" id="de.cau.cs.kieler.klighd.sdk.feature.source" version="0.3.0.qualifier">
       <category name="kieler-sources"/>
    </feature>
    

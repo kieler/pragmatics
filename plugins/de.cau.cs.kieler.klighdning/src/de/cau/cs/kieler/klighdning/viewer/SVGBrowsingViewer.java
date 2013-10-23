@@ -18,6 +18,7 @@ import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -96,6 +97,9 @@ public class SVGBrowsingViewer {
             currentHashCodeMapping.clear();
             recursivelyWrapKNodeNodes(controller.getNode());
         }
+
+        // FIXME
+        controller.zoomToFit(0);
 
         // render
         String rendered = canvas.render();
@@ -201,14 +205,15 @@ public class SVGBrowsingViewer {
     public String getSvgTransform() {
         return svgTransform;
     }
-    
+
     /**
-     * @param resourceLastModified the resourceLastModified to set
+     * @param resourceLastModified
+     *            the resourceLastModified to set
      */
     public void setResourceChecksum(final String resourceLastModified) {
         this.resourceChecksum = resourceLastModified;
     }
-    
+
     /*------------------------------------
      * Internal functionality.
      */
@@ -277,7 +282,7 @@ public class SVGBrowsingViewer {
             if (svgTransform != null) {
                 permaLink += "&transform=" + URLEncoder.encode(svgTransform, "utf8");
             }
-            
+
             // add checksum
             permaLink += "&cs=" + resourceChecksum;
 
@@ -301,13 +306,13 @@ public class SVGBrowsingViewer {
     }
 
     /**
-     * Applies a perma link.
+     * Applies a perma link. Either of the parameters may be {@code null}, in that case the
+     * corresponding parameter is ignored.
      * 
      * @param expanded
      *            a $ separated string containing references to the expanded elements.
      * @param transform
      *            the specified transform for the SVG.
-     * 
      * 
      * @return true if all specified elements were expanded
      */
@@ -315,13 +320,27 @@ public class SVGBrowsingViewer {
 
         // transform (it will be added automatically to the SVG during post processing in the
         // SVGLayoutProvider).
-        setSvgTransform(transform);
+        if (transform != null) {
+            try {
+                setSvgTransform(URLDecoder.decode(transform, "utf8"));
+            } catch (UnsupportedEncodingException e) {
+                // silent
+            }
+        }
 
-        // expand
-        Set<String> fragments = Sets.newHashSet(Splitter.on("$").split(expanded));
-        applyPermalink(getModel(), fragments);
+        if (expanded != null) {
+            try {
+                // decode
+                String decoded = URLDecoder.decode(expanded, "utf8");
+                // expand
+                Set<String> fragments = Sets.newHashSet(Splitter.on("$").split(decoded));
+                applyPermalink(getModel(), fragments);
+            } catch (UnsupportedEncodingException e) {
+                // silent
+            }
+        }
 
-        return expanded.isEmpty();
+        return expanded != null && expanded.isEmpty();
     }
 
     private void applyPermalink(final KNode parent, final Set<String> expanded) {

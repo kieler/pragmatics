@@ -27,6 +27,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
+import de.cau.cs.kieler.kiml.UnsupportedGraphException;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
@@ -40,7 +41,6 @@ import de.cau.cs.kieler.kiml.options.PortLabelPlacement;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.SizeOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
-import de.cau.cs.kieler.klay.layered.Util;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
@@ -132,7 +132,8 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
         // method will be called from the subclass CompoundKGraphImporter. The following part is not
         // to be executed in this case.
-        boolean isCompound = sourceShapeLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY);
+        boolean isCompound = sourceShapeLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY)
+                && !RecursiveCompoundKGraphHandler.USE_NEW_APPROACH;
         if (!isCompound) {
             // transform everything
             transformNodesAndPorts(kgraph, elemMap);
@@ -261,7 +262,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         }
         
         LNode dummy = createExternalPortDummy(
-                kport,
+                kportLayout,
                 portConstraints,
                 portSide,
                 inEdges - outEdges,
@@ -269,6 +270,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                 kportPosition,
                 new KVector(kportLayout.getWidth(), kportLayout.getHeight()),
                 direction);
+        dummy.setProperty(Properties.ORIGIN, kport);
         layeredNodes.add(dummy);
         elemMap.put(kport, dummy);
     }
@@ -490,7 +492,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             for (KEdge kedge : child.getOutgoingEdges()) {
                 // exclude edges that pass hierarchy bounds (except for those
                 // going into an external port)
-                if (kedge.getTarget().getParent() == child.getParent()) {
+                if (kedge.getTarget().getParent() == graph) {
                     transformEdge(kedge, graph, elemMap);
                 }
             }
@@ -536,11 +538,12 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             final Map<KGraphElement, LGraphElement> elemMap) {
         KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
         boolean isCompound = graph.getData(KShapeLayout.class).getProperty(
-                LayoutOptions.LAYOUT_HIERARCHY);
+                LayoutOptions.LAYOUT_HIERARCHY) && !RecursiveCompoundKGraphHandler.USE_NEW_APPROACH;
 
         // create a layered edge
         LEdge newEdge = new LEdge(layeredGraph);
         newEdge.setProperty(Properties.ORIGIN, kedge);
+        elemMap.put(kedge, newEdge);
 
         // the following is not needed in case of compound graph handling, as source and target will
         // be set by calling function.
@@ -554,26 +557,46 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
             // check if the edge source is an external port
             if (kedge.getSource() == graph && kedge.getSourcePort() != null) {
-                sourceNode = (LNode) elemMap.get(kedge.getSourcePort());
-                // the port could be missing in the element map if kedge is not in the port's edge list
-                if (sourceNode != null) {
-                    sourcePort = sourceNode.getPorts().get(0);
+                LGraphElement elem = elemMap.get(kedge.getSourcePort());
+                if (elem instanceof LNode) {
+                    sourceNode = (LNode) elem;
+                    // the port could be missing in the map if kedge is not in the port's edge list
+                    if (sourceNode != null) {
+                        sourcePort = sourceNode.getPorts().get(0);
+                    }
+                } else if (elem != null) {
+                    throw new UnsupportedGraphException("Inconsistent source port reference found.");
                 }
             } else {
                 sourceNode = (LNode) elemMap.get(kedge.getSource());
-                sourcePort = (LPort) elemMap.get(kedge.getSourcePort());
+                LGraphElement elem = elemMap.get(kedge.getSourcePort());
+                if (elem instanceof LPort) {
+                    sourcePort = (LPort) elem;
+                } else if (elem != null) {
+                    throw new UnsupportedGraphException("Inconsistent source port reference found.");
+                }
             }
 
             // check if the edge target is an external port
             if (kedge.getTarget() == graph && kedge.getTargetPort() != null) {
-                targetNode = (LNode) elemMap.get(kedge.getTargetPort());
-                // the port could be missing in the element map if kedge is not in the port's edge list
-                if (targetNode != null) {
-                    targetPort = targetNode.getPorts().get(0);
+                LGraphElement elem = elemMap.get(kedge.getTargetPort());
+                if (elem instanceof LNode) {
+                    targetNode = (LNode) elem;
+                    // the port could be missing in the map if kedge is not in the port's edge list
+                    if (targetNode != null) {
+                        targetPort = targetNode.getPorts().get(0);
+                    }
+                } else if (elem != null) {
+                    throw new UnsupportedGraphException("Inconsistent target port reference found.");
                 }
             } else {
                 targetNode = (LNode) elemMap.get(kedge.getTarget());
-                targetPort = (LPort) elemMap.get(kedge.getTargetPort());
+                LGraphElement elem = elemMap.get(kedge.getTargetPort());
+                if (elem instanceof LPort) {
+                    targetPort = (LPort) elem;
+                } else if (elem != null) {
+                    throw new UnsupportedGraphException("Inconsistent target port reference found.");
+                }
             }
             
             if (sourceNode != null && targetNode != null) {
@@ -586,12 +609,19 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
     
                 // create source and target ports if they do not exist yet
                 if (sourcePort == null) {
-                    sourcePort = createPort(sourceNode, edgeLayout.getSourcePoint(), PortType.OUTPUT);
+                    sourcePort = createPort(sourceNode, edgeLayout.getSourcePoint().createVector(),
+                            PortType.OUTPUT);
+                } else if (kedge.getSourcePort().getNode() != kedge.getSource()) {
+                    throw new UnsupportedGraphException("Inconsistent source port reference found.");
                 }
                 
                 if (targetPort == null) {
-                    targetPort = createPort(targetNode, edgeLayout.getTargetPoint(), PortType.INPUT);
+                    targetPort = createPort(targetNode, edgeLayout.getTargetPoint().createVector(),
+                            PortType.INPUT);
+                } else if (kedge.getTargetPort().getNode() != kedge.getTarget()) {
+                    throw new UnsupportedGraphException("Inconsistent target port reference found.");
                 }
+                
                 newEdge.setSource(sourcePort);
                 newEdge.setTarget(targetPort);
             }
@@ -630,8 +660,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         }
         
         // copy the bend points of the edge if they are needed by anyone
-        if (layeredGraph.getProperty(Properties.CROSS_MIN)
-                == CrossingMinimizationStrategy.INTERACTIVE
+        if (layeredGraph.getProperty(Properties.CROSS_MIN) == CrossingMinimizationStrategy.INTERACTIVE
                 && !edgeLayout.getBendPoints().isEmpty()) {
             KVectorChain bendpoints = new KVectorChain();
             for (KPoint point : edgeLayout.getBendPoints()) {
@@ -650,94 +679,6 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         if (isCompound) {
             // put edge to elementMap
             elemMap.put(kedge, newEdge);
-        }
-    }
-
-    /**
-     * Create a port for an edge that is not connected to a port. This is necessary because KLay
-     * Layered wants all edges to have a source port and a target port.
-     * 
-     * @param node
-     *            the node at which the edge is incident
-     * @param endPoint
-     *            the absolute point where the edge ends
-     * @param type
-     *            the port type
-     * @return a new port
-     */
-    private LPort createPort(final LNode node, final KPoint endPoint, final PortType type) {
-        LPort port;
-        Direction direction = layeredGraph.getProperty(LayoutOptions.DIRECTION);
-        boolean mergePorts = layeredGraph.getProperty(Properties.MERGE_PORTS);
-        
-        if ((mergePorts || node.getProperty(LayoutOptions.HYPERNODE))
-                && !node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()) {
-            
-            // Hypernodes have one output port and one input port
-            final PortSide defaultSide = PortSide.fromDirection(direction);
-            port = Util.provideCollectorPort(layeredGraph, node, type,
-                    type == PortType.OUTPUT ? defaultSide : defaultSide.opposed());
-        } else {
-            port = new LPort(layeredGraph);
-            port.setNode(node);
-            
-            KVector pos = port.getPosition();
-            pos.x = endPoint.getX() - node.getPosition().x;
-            pos.y = endPoint.getY() - node.getPosition().y;
-            
-            KVector resizeRatio = node.getProperty(Properties.RESIZE_RATIO);
-            if (resizeRatio != null) {
-                pos.scale(resizeRatio.x, resizeRatio.y);
-            }
-            pos.applyBounds(0, 0, node.getSize().x, node.getSize().y);
-            
-            PortSide portSide = calcPortSide(node, port);
-            port.setSide(portSide);
-            Set<GraphProperties> graphProperties = layeredGraph.getProperty(
-                    Properties.GRAPH_PROPERTIES);
-            switch (direction) {
-            case LEFT:
-            case RIGHT:
-                if (portSide == PortSide.NORTH || portSide == PortSide.SOUTH) {
-                    graphProperties.add(GraphProperties.NORTH_SOUTH_PORTS);
-                }
-                break;
-            case UP:
-            case DOWN:
-                if (portSide == PortSide.EAST || portSide == PortSide.WEST) {
-                    graphProperties.add(GraphProperties.NORTH_SOUTH_PORTS);
-                }
-                break;
-            }
-        }
-        
-        return port;
-    }
-
-    /**
-     * Calculate the port side from the relative position.
-     * 
-     * @param node
-     *            a node
-     * @param port
-     *            a port of that node
-     * @return the side of the node on which the port is situated
-     */
-    private static PortSide calcPortSide(final LNode node, final LPort port) {
-        double widthPercent = port.getPosition().x / node.getSize().x;
-        double heightPercent = port.getPosition().y / node.getSize().y;
-        if (widthPercent + heightPercent <= 1 && widthPercent - heightPercent <= 0) {
-            // port is on the left
-            return PortSide.WEST;
-        } else if (widthPercent + heightPercent >= 1 && widthPercent - heightPercent >= 0) {
-            // port is on the right
-            return PortSide.EAST;
-        } else if (heightPercent < 1.0f / 2) {
-            // port is on the top
-            return PortSide.NORTH;
-        } else {
-            // port is on the bottom
-            return PortSide.SOUTH;
         }
     }
 
@@ -784,17 +725,13 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                 }
 
                 // set port positions
-                if (!nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS).isPosFixed()
-                        || !nodeLayout.getProperty(LayoutOptions.SIZE_CONSTRAINT).isEmpty()) {
-                    
-                    for (LPort lport : lnode.getPorts()) {
-                        origin = lport.getProperty(Properties.ORIGIN);
-                        if (origin instanceof KPort) {
-                            KPort kport = (KPort) origin;
-                            KShapeLayout portLayout = kport.getData(KShapeLayout.class);
-                            portLayout.applyVector(lport.getPosition());
-                            portLayout.setProperty(LayoutOptions.PORT_SIDE, lport.getSide());
-                        }
+                for (LPort lport : lnode.getPorts()) {
+                    origin = lport.getProperty(Properties.ORIGIN);
+                    if (origin instanceof KPort) {
+                        KPort kport = (KPort) origin;
+                        KShapeLayout portLayout = kport.getData(KShapeLayout.class);
+                        portLayout.applyVector(lport.getPosition());
+                        portLayout.setProperty(LayoutOptions.PORT_SIDE, lport.getSide());
                     }
                 }
                 
@@ -855,13 +792,13 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
         // iterate through all edges
         for (LEdge ledge : edgeList) {
+            KEdge kedge = (KEdge) ledge.getProperty(Properties.ORIGIN);
             // Self-loops are currently left untouched unless the edge router is set to
             // the orthogonal router
-            if (ledge.isSelfLoop() && !orthogonalRouting) {
+            if (kedge == null || ledge.isSelfLoop() && !orthogonalRouting) {
                 continue;
             }
             
-            KEdge kedge = (KEdge) ledge.getProperty(Properties.ORIGIN);
             KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
             KVectorChain bendPoints = ledge.getBendPoints();
 
@@ -885,6 +822,8 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             if (junctionPoints != null) {
                 junctionPoints.translate(offset);
                 edgeLayout.setProperty(LayoutOptions.JUNCTION_POINTS, junctionPoints);
+            } else {
+                edgeLayout.setProperty(LayoutOptions.JUNCTION_POINTS, null);
             }
 
             // set spline option

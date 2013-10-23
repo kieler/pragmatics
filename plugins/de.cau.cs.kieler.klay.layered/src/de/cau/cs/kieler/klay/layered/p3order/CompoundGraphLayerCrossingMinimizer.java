@@ -20,10 +20,11 @@ import java.util.List;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.klay.layered.Util;
+import de.cau.cs.kieler.klay.layered.LayeredUtil;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.importexport.RecursiveCompoundKGraphHandler;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -90,7 +91,8 @@ public final class CompoundGraphLayerCrossingMinimizer {
         }
 
         // determine whether a compound graph is to be laid out
-        boolean isCompound = layeredGraph.getProperty(LayoutOptions.LAYOUT_HIERARCHY);
+        boolean isCompound = layeredGraph.getProperty(LayoutOptions.LAYOUT_HIERARCHY)
+                && !RecursiveCompoundKGraphHandler.USE_NEW_APPROACH;
         
         if (!isCompound) {
             List<NodeGroup> nodeGroups = new LinkedList<NodeGroup>();
@@ -121,7 +123,7 @@ public final class CompoundGraphLayerCrossingMinimizer {
             
             for (NodeGroup nodeGroup : layer) {
                 // The correlation node/compoundNode is the same as in the SubGraphOrderingProcessor
-                LNode key = Util.getRelatedCompoundNode(nodeGroup.getNode(), layeredGraph);
+                LNode key = LayeredUtil.getRelatedCompoundNode(nodeGroup.getNode(), layeredGraph);
                 // If node is contained by the layeredGraph directly, getRelatedCompoundNode has
                 // returned null. Use the graphkey in this case.
                 if (key == null) {

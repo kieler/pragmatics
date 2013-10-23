@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: KIELER Additional SVG Generators
+Bundle-SymbolicName: de.cau.cs.kieler.klighd.piccolo.vectorgraphics;singleton:=true
+Bundle-Version: 0.1.0.qualifier
+Fragment-Host: de.cau.cs.kieler.klighd.piccolo.svg;bundle-version="0.1.0"
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ClassPath: lib/freehep-graphics2d-2.1.1.jar,
+ lib/freehep-graphicsio-2.1.1.jar,
+ lib/freehep-graphicsio-svg-2.1.1.jar,
+ lib/freehep-io-2.0.2.jar,
+ lib/freehep-util-2.0.2.jar,
+ lib/freehep-xml-2.1.1.jar,
+ lib/VectorGraphics2D-0.9.1.jar,
+ .
+Export-Package: de.cau.cs.kieler.klighd.piccolo.svg.impl
+Bundle-Vendor: Christian-Albrechts-Universität zu Kiel

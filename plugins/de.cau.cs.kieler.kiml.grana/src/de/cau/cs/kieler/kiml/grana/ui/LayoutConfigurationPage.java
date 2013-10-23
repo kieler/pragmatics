@@ -85,9 +85,12 @@ public class LayoutConfigurationPage extends WizardPage {
     
     /**
      * Constructs a LayoutConfigurationPage.
+     * 
+     * @param initialEntries the initial layout configuration
      */
-    public LayoutConfigurationPage() {
+    public LayoutConfigurationPage(final List<Pair<LayoutOptionData<?>, Object>> initialEntries) {
         super(PAGE_NAME);
+        optionEntries.addAll(initialEntries);
     }
     
     /**
@@ -107,6 +110,7 @@ public class LayoutConfigurationPage extends WizardPage {
         final TableViewer tableViewer = new TableViewer(table);
         tableViewer.setContentProvider(ArrayContentProvider.getInstance());
         tableViewer.setLabelProvider(new OptionsLabelProvider());
+        tableViewer.setInput(optionEntries);
         column1.pack();
         column2.pack();
         GridData tableLayoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -244,8 +248,8 @@ public class LayoutConfigurationPage extends WizardPage {
      * 
      * @return a layout configurator
      */
-    public ILayoutConfig getConfig() {
-        return new BatchLayoutConfig();
+    public BatchLayoutConfig getConfig() {
+        return new BatchLayoutConfig(optionEntries);
     }
     
     /**
@@ -396,10 +400,31 @@ public class LayoutConfigurationPage extends WizardPage {
     /**
      * Layout configurator that uses the selected layout options.
      */
-    private class BatchLayoutConfig implements ILayoutConfig {
+    public static class BatchLayoutConfig implements ILayoutConfig {
 
         /** the fixed priority of the light layout configurator. */
         public static final int PRIORITY = 50;
+        
+        /** list of layout option entries. */
+        private final List<Pair<LayoutOptionData<?>, Object>> optionEntries;
+        
+        /**
+         * Create a batch layout config.
+         * 
+         * @param optionEntries the layout option entries
+         */
+        public BatchLayoutConfig(final List<Pair<LayoutOptionData<?>, Object>> optionEntries) {
+            this.optionEntries = optionEntries;
+        }
+        
+        /**
+         * Returns the layout option entries.
+         * 
+         * @return the option entries
+         */
+        public List<Pair<LayoutOptionData<?>, Object>> getEntries() {
+            return optionEntries;
+        }
         
         /**
          * {@inheritDoc}
