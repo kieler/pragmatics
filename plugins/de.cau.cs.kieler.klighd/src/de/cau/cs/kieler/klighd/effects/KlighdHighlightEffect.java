@@ -43,7 +43,7 @@ import de.cau.cs.kieler.core.krendering.KStyle;
 public class KlighdHighlightEffect extends AbstractEffect {
 
     /** KRenderingFactory to generate KRenderings. */
-    KRenderingFactory factory = KRenderingFactory.eINSTANCE;
+    private KRenderingFactory factory = KRenderingFactory.eINSTANCE;
 
     /** the element to be highlighted. */
     private KGraphElement targetNode;
