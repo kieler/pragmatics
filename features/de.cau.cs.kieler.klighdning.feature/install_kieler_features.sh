@@ -2,7 +2,7 @@
 
 echo ""
 
-help="\nusage: install_kieler_features [kgraph|ptolemy|klighd.examples|featureId]"
+help="\nusage: install_kieler_features [kgraph|ptolemy|klighd.sdk|featureId]"
 
 if [[ -z "$1" ]];
 then 
@@ -38,9 +38,9 @@ do
   fi
   
   # several klighd examples (e.g., ecore class diagrams)
-  if [ ${features[$i]} == "klighd.examples" ]; 
+  if [ ${features[$i]} == "klighd.sdk" ]; 
   then 
-	features[$i]="de.cau.cs.kieler.klighd.examples.feature.feature.group"; 
+	features[$i]="de.cau.cs.kieler.klighd.sdk.feature.feature.group"; 
   fi
   
   # sccharts

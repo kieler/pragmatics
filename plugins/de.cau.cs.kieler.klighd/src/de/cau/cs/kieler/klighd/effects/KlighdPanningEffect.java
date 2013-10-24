@@ -32,19 +32,19 @@ public class KlighdPanningEffect extends AbstractEffect {
     /**
      * The context viewer of the klighd view in which to scroll.
      */
-    ContextViewer viewer;
+    private ContextViewer viewer;
     /**
      * The element to scroll to.
      */
-    Object element;
+    private Object element;
     /**
      * The duration to execute the scrolling animation.
      */
-    int animationDuration = 0;
+    private int animationDuration = 0;
     /**
      * The zoomlevel to be applied after scrolling.
      */
-    float zoomLevel = 0;
+    private float zoomLevel = 0;
 
     /**
      * Constructor for the panning effect.

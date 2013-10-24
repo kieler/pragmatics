@@ -14,6 +14,8 @@
 package de.cau.cs.kieler.klighd.microlayout;
 
 import static de.cau.cs.kieler.core.krendering.KRenderingUtil.asAreaPlacementData;
+import static de.cau.cs.kieler.core.krendering.KRenderingUtil.asPointPlacementData;
+import static de.cau.cs.kieler.core.krendering.KRenderingUtil.getPlacementData;
 import static de.cau.cs.kieler.core.krendering.KRenderingUtil.toNonNullBottomPosition;
 import static de.cau.cs.kieler.core.krendering.KRenderingUtil.toNonNullLeftPosition;
 import static de.cau.cs.kieler.core.krendering.KRenderingUtil.toNonNullRightPosition;
@@ -35,8 +37,10 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Display;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -60,7 +64,7 @@ import de.cau.cs.kieler.core.krendering.KPosition;
 import de.cau.cs.kieler.core.krendering.KRendering;
 import de.cau.cs.kieler.core.krendering.KRenderingPackage;
 import de.cau.cs.kieler.core.krendering.KRenderingRef;
-import de.cau.cs.kieler.core.krendering.KRenderingUtil;
+import de.cau.cs.kieler.core.krendering.KStyle;
 import de.cau.cs.kieler.core.krendering.KText;
 import de.cau.cs.kieler.core.krendering.KTopPosition;
 import de.cau.cs.kieler.core.krendering.KXPosition;
@@ -72,6 +76,8 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.klighd.KlighdConstants;
 import de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties;
 import de.cau.cs.kieler.klighd.krendering.KTextUtil;
+import de.cau.cs.kieler.klighd.util.Iterables2;
+import de.cau.cs.kieler.klighd.util.ModelingUtil;
 
 /**
  * A utility class for evaluating the micro layout of KRenderings.
@@ -94,7 +100,7 @@ public final class PlacementUtil {
      * 
      * @author mri, chsch
      */
-    static class Point {
+    public static class Point {
 
         /** the x-coordinate. */
         float x;
@@ -477,11 +483,11 @@ public final class PlacementUtil {
             // calculate the size of the referenced Rendering instead
             return estimateSize(((KRenderingRef) rendering).getRendering(), givenBounds);
         case KRenderingPackage.KCONTAINER_RENDERING:
-            KContainerRendering container = (KContainerRendering) rendering;
 
-            int placementId =
-                    container.getChildPlacement() != null ? container.getChildPlacement().eClass()
-                            .getClassifierID() : -1;
+            final KContainerRendering container = (KContainerRendering) rendering;
+            final int placementId = container.getChildPlacement() != null
+                    ? container.getChildPlacement().eClass().getClassifierID() : -1;
+
             switch (placementId) {
             case KRenderingPackage.KGRID_PLACEMENT:
                 // in case of a GridPlacement calculate the number of columns and rows of the grid
@@ -493,10 +499,14 @@ public final class PlacementUtil {
                 // find the biggest rendering in width and height
                 Bounds maxSize = new Bounds(givenBounds);
                 for (KRendering child : container.getChildren()) {
-                    if (child.getPlacementData() instanceof KPointPlacementData) {
-                        Bounds.max(maxSize, estimatePointPlacedChildSize(child));
-                    } else if (child.getPlacementData() instanceof KAreaPlacementData) {
-                        Bounds.max(maxSize, estimateAreaPlacedChildSize(child, givenBounds));
+                    final KPlacementData pd = getPlacementData(child); 
+                    if (pd instanceof KPointPlacementData) {
+                        Bounds.max(maxSize,
+                                estimatePointPlacedChildSize(child, (KPointPlacementData) pd));
+                    } else if (pd instanceof KAreaPlacementData) {
+                        Bounds.max(maxSize,
+                                estimateAreaPlacedChildSize(child, (KAreaPlacementData) pd,
+                                        givenBounds));
                     } else {
                         // in case no valid placement data are given we assume the size of the
                         // parent by the size of the child
@@ -512,7 +522,7 @@ public final class PlacementUtil {
             return givenBounds;
         }
     }
-
+    
     /**
      * Returns the minimal bounds for a KText.
      * 
@@ -536,6 +546,12 @@ public final class PlacementUtil {
         return estimateTextSize(kLabel.getData(KText.class), kLabel.getText());
     }
 
+    private static final Predicate<KStyle> FILTER = new Predicate<KStyle>() {
+        public boolean apply(final KStyle style) {
+            return style.isPropagateToChildren();
+        }
+    };
+    
     /**
      * Returns the minimal bounds for a string based on configurations of a {@link KText}. The
      * string is handed over separately in order to allow the text size estimation for
@@ -553,7 +569,7 @@ public final class PlacementUtil {
         KFontSize kFontSize = null;
         KFontBold kFontBold = null;
         KFontItalic kFontItalic = null;
-
+        
         if (kText != null) {
             PersistentEntry testHeight =
                     Iterables.find(kText.getPersistentEntries(),
@@ -572,27 +588,34 @@ public final class PlacementUtil {
                     return new Bounds(width, height);
                 }
             }
-            kFontName =
-                    Iterables.getFirst(Iterables.filter(kText.getStyles(), KFontName.class), null);
-            kFontSize =
-                    Iterables.getFirst(Iterables.filter(kText.getStyles(), KFontSize.class), null);
-            kFontBold =
-                    Iterables.getFirst(Iterables.filter(kText.getStyles(), KFontBold.class), null);
-            kFontItalic =
-                    Iterables
-                            .getFirst(Iterables.filter(kText.getStyles(), KFontItalic.class), null);
+            
+            // the following lines look for font styles propagated from parents
+            //  TODO also make allowance of styles propagated via KRenderingRefs
+            final List<KStyle> styles = Lists.newLinkedList(kText.getStyles());            
+            for (KRendering k : Iterables2.toIterable(Iterators.filter(
+                    ModelingUtil.eAllContainers(kText), KRendering.class))) {
+                Iterables.addAll(styles, Iterables.filter(k.getStyles(), FILTER));
+            }
+            
+            kFontName = Iterables.getLast(Iterables.filter(styles, KFontName.class), null);
+            kFontSize = Iterables.getLast(Iterables.filter(styles, KFontSize.class), null);
+            kFontBold = Iterables.getLast(Iterables.filter(styles, KFontBold.class), null);
+            kFontItalic = Iterables.getLast(Iterables.filter(styles, KFontItalic.class), null);
         }
 
-        String fontName =
-                kFontName != null ? kFontName.getName() : KlighdConstants.DEFAULT_FONT_NAME;
+        final String fontName = kFontName != null
+                ? kFontName.getName() : KlighdConstants.DEFAULT_FONT_NAME;
 
-        int fontSize = kFontSize != null ? kFontSize.getSize() : KlighdConstants.DEFAULT_FONT_SIZE;
+        final int fontSize = kFontSize != null
+                ? kFontSize.getSize() : KlighdConstants.DEFAULT_FONT_SIZE;
 
         int fontStyle =
-                kFontBold != null && kFontBold.isBold() ? KlighdConstants.DEFAULT_FONT_STYLE_SWT
+                kFontBold != null && kFontBold.isBold()
+                ? KlighdConstants.DEFAULT_FONT_STYLE_SWT
                         | SWT.BOLD : KlighdConstants.DEFAULT_FONT_STYLE_SWT;
-        fontStyle =
-                kFontItalic != null && kFontItalic.isItalic() ? fontStyle | SWT.ITALIC : fontStyle;
+
+        fontStyle = kFontItalic != null && kFontItalic.isItalic()
+                ? fontStyle | SWT.ITALIC : fontStyle;
 
         return estimateTextSize(new FontData(fontName, fontSize, fontStyle), text);
     }
@@ -688,14 +711,14 @@ public final class PlacementUtil {
      * Returns the required minimal size of a {@link KRendering} width attached
      * {@link KPointPlacementData}.
      * 
-     * @param container
+     * @param rendering
      *            the {@link KRendering} to be evaluated
+     * @param ppd the {@link KPointPlacementData} to be applied
      * 
      * @return the minimal required size
      */
-    private static Bounds estimatePointPlacedChildSize(final KRendering rendering) {
-        KPointPlacementData ppd = (KPointPlacementData) rendering.getPlacementData();
-
+    public static Bounds estimatePointPlacedChildSize(final KRendering rendering,
+            final KPointPlacementData ppd) {
         // determine minimal needed size of the child
         // for point-based placement the parent size does not matter for the size!
         final Bounds minimalSize = Bounds.of(ppd.getMinWidth(), ppd.getMinHeight());
@@ -791,14 +814,15 @@ public final class PlacementUtil {
      * 
      * @param container
      *            the {@link KRendering} to be evaluated
+     * @param apd
+     *            the {@link KAreaPlacementData} to be applied
      * @param givenBounds
      *            the size that is currently assigned to <code>rendering</code>'s container.
      * 
      * @return the minimal required size
      */
     private static Bounds estimateAreaPlacedChildSize(final KRendering rendering,
-            final Bounds initialSize) {
-        final KAreaPlacementData apd = (KAreaPlacementData) rendering.getPlacementData();
+            final KAreaPlacementData apd, final Bounds initialSize) {
 
         final Bounds cSize = evaluateAreaPlacement(apd, initialSize);
         // determine minimal needed size of the child
@@ -1130,14 +1154,13 @@ public final class PlacementUtil {
             final List<KRendering> children, final KRendering child) {
         Bounds bounds = null;
         if (placement == null) {
-            final KPlacementData pd = KRenderingUtil.getPlacementData(child);
-            final KPointPlacementData ppd = KRenderingUtil.asPointPlacementData(pd);
+            final KPlacementData pd = getPlacementData(child);
+            final KPointPlacementData ppd = asPointPlacementData(pd);
             if (ppd != null) {
                 bounds = evaluatePointPlacement(ppd,
                         PlacementUtil.estimateSize(child, new Bounds(0.0f, 0.0f)), parentBounds);
             } else {
-                bounds = evaluateAreaPlacement(asAreaPlacementData(child.getPlacementData()),
-                        parentBounds);
+                bounds = evaluateAreaPlacement(asAreaPlacementData(pd), parentBounds);
             }
         } else {
             bounds = new KRenderingSwitch<Bounds>() {

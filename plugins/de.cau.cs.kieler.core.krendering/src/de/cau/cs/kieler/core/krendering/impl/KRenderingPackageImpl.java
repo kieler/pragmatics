@@ -994,6 +994,15 @@ public class KRenderingPackageImpl extends EPackageImpl implements KRenderingPac
      * <!-- end-user-doc -->
      * @generated
      */
+    public EAttribute getKText_CursorSelectable() {
+        return (EAttribute)kTextEClass.getEStructuralFeatures().get(1);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public EClass getKPlacement() {
         return kPlacementEClass;
     }
@@ -2040,6 +2049,7 @@ public class KRenderingPackageImpl extends EPackageImpl implements KRenderingPac
 
         kTextEClass = createEClass(KTEXT);
         createEAttribute(kTextEClass, KTEXT__TEXT);
+        createEAttribute(kTextEClass, KTEXT__CURSOR_SELECTABLE);
 
         kPlacementEClass = createEClass(KPLACEMENT);
 
@@ -2329,6 +2339,7 @@ public class KRenderingPackageImpl extends EPackageImpl implements KRenderingPac
 
         initEClass(kTextEClass, KText.class, "KText", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getKText_Text(), ecorePackage.getEString(), "text", null, 0, 1, KText.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getKText_CursorSelectable(), ecorePackage.getEBoolean(), "cursorSelectable", "false", 0, 1, KText.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(kPlacementEClass, KPlacement.class, "KPlacement", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
@@ -2342,8 +2353,8 @@ public class KRenderingPackageImpl extends EPackageImpl implements KRenderingPac
         initEClass(kGridPlacementDataEClass, KGridPlacementData.class, "KGridPlacementData", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getKGridPlacementData_MinCellWidth(), ecorePackage.getEFloat(), "minCellWidth", "0", 0, 1, KGridPlacementData.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getKGridPlacementData_MinCellHeight(), ecorePackage.getEFloat(), "minCellHeight", "0", 0, 1, KGridPlacementData.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEAttribute(getKGridPlacementData_FlexibleWidth(), ecorePackage.getEBooleanObject(), "flexibleWidth", "false", 0, 1, KGridPlacementData.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEAttribute(getKGridPlacementData_FlexibleHeight(), ecorePackage.getEBooleanObject(), "flexibleHeight", "false", 0, 1, KGridPlacementData.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getKGridPlacementData_FlexibleWidth(), ecorePackage.getEBooleanObject(), "flexibleWidth", "true", 0, 1, KGridPlacementData.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getKGridPlacementData_FlexibleHeight(), ecorePackage.getEBooleanObject(), "flexibleHeight", "true", 0, 1, KGridPlacementData.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(kAreaPlacementDataEClass, KAreaPlacementData.class, "KAreaPlacementData", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEReference(getKAreaPlacementData_TopLeft(), this.getKPosition(), null, "topLeft", null, 0, 1, KAreaPlacementData.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

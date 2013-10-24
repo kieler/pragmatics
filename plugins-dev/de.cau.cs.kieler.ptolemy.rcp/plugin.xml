@@ -2,17 +2,6 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="org.eclipse.ui.editors">
-      <editor
-            class="de.cau.cs.kieler.ptolemy.klighd.PtolemyEditorPart"
-            default="true"
-            extensions="moml, xml"
-            id="de.cau.cs.kieler.ptolemy.rcp.editor"
-            icon="icons/PtolemyII16x16.png"
-            name="Ptolemy Viewer">
-      </editor>
-   </extension>
-   <extension
          point="org.eclipse.ui.perspectives">
       <perspective
             class="de.cau.cs.kieler.ptolemy.rcp.PtolemyPerspective"
@@ -251,14 +240,14 @@
          point="org.eclipse.core.runtime.products">
       <product
             application="org.eclipse.ui.ide.workbench"
-            name="KIELER Ptolemy Product">
+            name="KIELER Ptolemy Browser">
          <property
                name="windowImages"
                value="icons/PtolemyII256x256.png,icons/PtolemyII256x256.png,icons/PtolemyII256x256.png,icons/PtolemyII256x256.png,icons/PtolemyII256x256.png">
          </property>
          <property
                name="appName"
-               value="KIELER Ptolemy Product">
+               value="KIELER Ptolemy Browser">
          </property>
          <property
                name="preferenceCustomization"
@@ -288,6 +277,14 @@
                 name="startupMessageRect"
                 value="7,252,0,0">
           </property>
+          <property
+                name="aboutImage"
+                value="icons/about.png">
+          </property>
+          <property
+                name="aboutText"
+                value="KIELER - Kiel Integrated Environment for Layout (Eclipse Rich Client)&#x0D;&#x0A;A research project on enhancing the model-based design of complex systems&#x0D;&#x0A;&#x0D;&#x0A;&#x0D;&#x0A;For more information, visit our website:&#x0D;&#x0A;http://www.informatik.uni-kiel.de/rtsys/kieler/&#x0D;&#x0A;&#x0D;&#x0A;Copyright 2013 by Christian-Albrechts-University of Kiel, Department of Computer Science, Real-Time and Embedded Systems Group">
+          </property>
       </product>
    </extension>
    <extension
@@ -311,6 +308,35 @@
             class="org.ptolemy.moml.util.MomlResourceFactoryImpl"
             type="xml">
       </parser>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:org.eclipse.ui.main.menu">
+         <menu
+               id="de.cau.cs.kieler.ptolemy.rcp.view"
+               label="View">
+            <command
+                  commandId="de.cau.cs.kieler.ptolemy.rcp.zoomToFitCommand"
+                  id="de.cau.cs.kieler.ptolemy.rcp.zoomToFit"
+                  label="ZoomToFit"
+                  style="toggle">
+            </command>
+         </menu>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="de.cau.cs.kieler.ptolemy.rcp.ZoomToFitHandler"
+            id="de.cau.cs.kieler.ptolemy.rcp.zoomToFitCommand"
+            name="ZoomToFit">
+         <state
+               class="org.eclipse.ui.handlers.RegistryToggleState:true"
+               id="org.eclipse.ui.commands.toggleState">
+         </state>
+      </command>
    </extension>
 
 </plugin>

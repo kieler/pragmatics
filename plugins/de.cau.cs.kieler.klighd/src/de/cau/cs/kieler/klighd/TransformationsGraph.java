@@ -330,9 +330,14 @@ public class TransformationsGraph {
         
         Predicate<Path> pathFilter = new Predicate<Path>() {
             public boolean apply(final Path path) {
+                if (path.edges.isEmpty()) {
+                    return true;
+                }
+                
                 // this line already assume that we have
                 //  only 1 transformation on the path to the view model
                 final TransformationEdge edge = path.edges.get(0);
+                
                 @SuppressWarnings("unchecked")
                 final ITransformation<Object, ?> traFo =
                         (ITransformation<Object, ?>) edge.transformation;
@@ -341,7 +346,7 @@ public class TransformationsGraph {
         };
         
         // get the shortest path
-        Path path = getShortestPath(paths, pathFilter);
+        Path path = getShortestPath(Iterables.filter(paths, pathFilter));
         if (path != null) {
             // keep the current input business model in the view context
             // this allows to update the visual representation e.g. in case of a transformation
@@ -608,7 +613,7 @@ public class TransformationsGraph {
     }
 
     /**
-     * Combines a path with a given listsof paths by concatenating the paths.
+     * Combines a path with a given list of paths by concatenating the paths.
      * 
      * @param prePath
      *            the prefix path
@@ -630,16 +635,15 @@ public class TransformationsGraph {
      * Returns the shortest path from a list of paths, that is the path with the fewest edges.
      * 
      * @param listOfPaths
-     *            the list of paths
-     * @param filter
-     *            the filter
+     *            the {@link Iterable} containing the possible paths
      */
-    private static Path getShortestPath(final List<Path> listOfPaths, final Predicate<Path> filter) {
-        if (listOfPaths.size() == 0) {
+    private static Path getShortestPath(final Iterable<Path> listOfPaths) {
+        if (!listOfPaths.iterator().hasNext()) {
             return null;
         }
-        Path shortestPath = listOfPaths.get(0);
-        for (Path path : Iterables.filter(listOfPaths, filter)) {
+        
+        Path shortestPath = Iterables.getFirst(listOfPaths, null);
+        for (Path path : listOfPaths) {
             if (path.edges.size() < shortestPath.edges.size()) {
                 shortestPath = path;
             }

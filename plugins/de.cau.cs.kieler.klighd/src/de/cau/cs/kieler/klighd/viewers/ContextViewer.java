@@ -162,7 +162,7 @@ public class ContextViewer extends AbstractViewer<Object> implements IViewerEven
         // introduce a new Composite that accommodates the visualized content
         this.diagramComposite = new Composite(parent, SWT.NONE);
         this.diagramComposite.setLayout(new FillLayout());
-
+        
         // create the options pane
         createOptionsContainer(this.diagramComposite);
 
@@ -759,6 +759,25 @@ public class ContextViewer extends AbstractViewer<Object> implements IViewerEven
         currentViewer.setZoomToFit(zoomToFit);
     }
     
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isExpanded(final Object semanticElement) {
+        Object diagramNode = getCurrentViewContext().getTargetElement(semanticElement);
+        if (diagramNode instanceof KNode) {
+            return currentViewer.isExpanded((KNode) diagramNode);
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isExpanded(final KNode diagramElement) {
+        return currentViewer.isExpanded(diagramElement);
+    }
+
     /**
      * {@inheritDoc}
      */
