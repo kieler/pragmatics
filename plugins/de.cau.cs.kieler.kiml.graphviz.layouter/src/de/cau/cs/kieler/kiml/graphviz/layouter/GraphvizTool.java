@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -68,9 +69,11 @@ public class GraphvizTool {
     private static final String ARG_NOWARNINGS = "-q";
     /** argument to invert the Y axis to conform with SWT. */
     private static final String ARG_INVERTYAXIS = "-y";
-    /** default locations of the dot executable. */
-    private static final String[] DEFAULT_LOCS = { "/opt/local/bin/",
-            "/usr/local/bin/", "/usr/bin/", "/bin/" };
+    /**
+     * Default locations of the dot executable. Each entry ends with the path separator, so that the
+     * dot executable's file name can be directly appended.
+     */
+    private static final List<String> DEFAULT_LOCS = new ArrayList<String>();
 
     /** the process instance that is used for multiple layout runs. */
     private Process process;
@@ -80,6 +83,35 @@ public class GraphvizTool {
     private Watchdog watchdog;
     /** the input stream given by the Graphviz process. */
     private InputStream graphvizStream;
+    
+    
+    static {
+        // Add all paths from the system PATH variable to the list of paths we will look for dot in
+        // to our list of default locations
+        String envPath = System.getenv("PATH");
+        if (envPath != null) {
+            String[] envPaths = envPath.split(File.pathSeparator);
+            
+            for (int i = 0; i < envPaths.length; i++) {
+                if (envPaths[i].trim().length() > 0) {
+                    if (envPaths[i].endsWith(File.separator)) {
+                        DEFAULT_LOCS.add(envPaths[i]);
+                    } else {
+                        DEFAULT_LOCS.add(envPaths[i] + File.separator);
+                    }
+                }
+            }
+        }
+        
+        if (DEFAULT_LOCS.isEmpty()) {
+            // Fallback list of default locations
+            DEFAULT_LOCS.add("/opt/local/bin/");
+            DEFAULT_LOCS.add("/usr/local/bin/");
+            DEFAULT_LOCS.add("/usr/bin/");
+            DEFAULT_LOCS.add("/bin/");
+        }
+    }
+    
     
     /**
      * Create a Graphviz tool instance for the given command.
@@ -142,28 +174,61 @@ public class GraphvizTool {
     }
 
     /**
-     * Returns the dot executable path.
+     * Returns the dot executable path. If it is not found, the user is asked to provide it. Calling
+     * this method is equivalent to calling {@code GraphvizTool.getDotExecutable(true)}.
      * 
      * @return path to the dot executable.
      */
     public static String getDotExecutable() {
-        // get a string to the dot executable
-        IPreferenceStore preferenceStore =
-                GraphvizLayouterPlugin.getDefault().getPreferenceStore();
+        return getDotExecutable(true);
+    }
+
+    /**
+     * Returns the dot executable path.
+     * 
+     * @param promptUser if the dot executable is not found and this parameter is {@code true}, the user
+     *                   is asked to provide the path to the executable. If it is not found and this
+     *                   parameter is {@code false}, this method returns {@code null}.
+     * @return path to the dot executable or {@code null} if none could be found and the user was not
+     *         asked to provide one.
+     */
+    public static String getDotExecutable(final boolean promptUser) {
+        // load the graphviz path from the preferences, if any
+        IPreferenceStore preferenceStore = GraphvizLayouterPlugin.getDefault().getPreferenceStore();
         String dotExecutable = preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);
-        if (!new File(dotExecutable).exists()) {
+        File dotFile = new File(dotExecutable);
+        
+        // check if the executable exists
+        if (!dotFile.exists() || !dotFile.canExecute()) {
             boolean foundExec = false;
+            
+            // look in a selection of default locations where it might be installed
             for (String location : DEFAULT_LOCS) {
+                // Linux
                 dotExecutable = location + "dot";
-                if (new File(dotExecutable).exists()) {
+                dotFile = new File(dotExecutable);
+                if (dotFile.exists() && dotFile.canExecute()) {
+                    foundExec = true;
+                    break;
+                }
+                
+                // Windows
+                dotExecutable = location + "dot.exe";
+                dotFile = new File(dotExecutable);
+                if (dotFile.exists() && dotFile.canExecute()) {
                     foundExec = true;
                     break;
                 }
             }
+            
             if (!foundExec) {
-                handleExecPath();
-                // fetch the executable string again after the user has entered a new path
-                dotExecutable = preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);
+                if (promptUser) {
+                    handleExecPath();
+                    // fetch the executable string again after the user has entered a new path
+                    dotExecutable = preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);
+                } else {
+                    return null;
+                }
             }
         }
         
