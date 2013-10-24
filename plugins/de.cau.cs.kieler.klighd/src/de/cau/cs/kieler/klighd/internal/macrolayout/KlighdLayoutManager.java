@@ -300,7 +300,7 @@ public class KlighdLayoutManager implements IDiagramLayoutManager<KGraphElement>
         // furthermore, all nodes that have the LAYOUT_IGNORE property set are ignored
         for (KNode node : Iterables.filter(parent.getChildren(), Predicates.and(
                 RenderingContextData.IS_ACTIVE,
-                KlighdPredicates.propertyPredicate(KlighdProperties.LAYOUT_IGNORE, false, true)))) {
+                KlighdPredicates.propertyPredicate(LayoutOptions.NO_LAYOUT, false, true)))) {
             createNode(mapping, node, layoutParent);
         }
     }
@@ -413,7 +413,7 @@ public class KlighdLayoutManager implements IDiagramLayoutManager<KGraphElement>
         List<KEdge> edges = mapping.getProperty(EDGES);
         Iterables.addAll(edges,
                 Iterables.filter(node.getOutgoingEdges(), RenderingContextData.IS_ACTIVE));
-    }
+        }
 
     /**
      * Creates a layout port for the port attached to the given layout node.
@@ -511,6 +511,11 @@ public class KlighdLayoutManager implements IDiagramLayoutManager<KGraphElement>
         if (edgeLayout != null) {
             transferEdgeLayout(edgeLayout, layoutLayout, true);
         }
+        
+        // make sure to clear old junction points
+        // the new layouter might not calculate any and we don't want
+        // any floating junction points in the diagram
+        edgeLayout.setProperty(LayoutOptions.JUNCTION_POINTS, null);
 
         layoutEdge.setSource(layoutSource);
         layoutEdge.setTarget(layoutTarget);
@@ -672,7 +677,7 @@ public class KlighdLayoutManager implements IDiagramLayoutManager<KGraphElement>
         if (excludedEdges != null) {
             for (KEdge edge : excludedEdges) {
                 handleExcludedEdge(edge);
-            }
+    }
         }
     }
 
