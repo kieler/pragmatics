@@ -385,10 +385,6 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
             pos.x = endPoint.x - node.getPosition().x;
             pos.y = endPoint.y - node.getPosition().y;
             
-            KVector resizeRatio = node.getProperty(Properties.RESIZE_RATIO);
-            if (resizeRatio != null) {
-                pos.scale(resizeRatio.x, resizeRatio.y);
-            }
             pos.applyBounds(0, 0, node.getSize().x, node.getSize().y);
             
             PortSide portSide = calcPortSide(node, port);
