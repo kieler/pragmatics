@@ -33,8 +33,6 @@ public enum LayoutProcessorStrategy {
     
     // Before Phase 1
     
-    /** Handles cyclic dependencies of compound nodes. */
-    COMPOUND_CYCLE_PROCESSOR,
     /** Mirrors the graph to perform a right-to-left drawing. */
     LEFT_DIR_PREPROCESSOR,
     /** Transposes the graph to perform a top-bottom drawing. */
@@ -59,8 +57,6 @@ public enum LayoutProcessorStrategy {
     LAYER_CONSTRAINT_PROCESSOR,
     /** Handles northern and southern hierarchical ports. */
     HIERARCHICAL_PORT_CONSTRAINT_PROCESSOR,
-    /** Removes layering constraint dummy edges from compound graphs. */
-    COMPOUND_DUMMY_EDGE_REMOVER,
     /** Takes a layered graph and turns it into a properly layered graph. */
     LONG_EDGE_SPLITTER,
     /** Makes sure nodes have at least fixed port sides. */
@@ -79,8 +75,6 @@ public enum LayoutProcessorStrategy {
     
     // Before Phase 4
     
-    /** Makes sure that subgraphs are in same relative order on all levels.*/
-    SUBGRAPH_ORDERING_PROCESSOR,
     /** Makes sure that in-layer constraints are handled. */
     IN_LAYER_CONSTRAINT_PROCESSOR,
     /** Merges long edge dummy nodes belonging to the same hyperedge. */
@@ -91,8 +85,6 @@ public enum LayoutProcessorStrategy {
     LABEL_AND_NODE_SIZE_PROCESSOR,
     /** Calculates the margins of nodes according to the sizes of ports and labels. */
     NODE_MARGIN_CALCULATOR,
-    /** Inserts dummy nodes and edges to achieve free drawing space for compound node borders. */
-    COMPOUND_SIDE_PROCESSOR,
     
     // Before Phase 5
 
@@ -119,8 +111,6 @@ public enum LayoutProcessorStrategy {
     LABEL_DUMMY_REMOVER,
     /** Takes the reversed edges of a graph and restores their original direction. */
     REVERSED_EDGE_RESTORER,
-    /** Removes dummy nodes and -edges from compound graph representation, positions compound nodes. */
-    COMPOUND_GRAPH_RESTORER,
     /** Mirrors the graph to perform a right-to-left drawing. */
     LEFT_DIR_POSTPROCESSOR,
     /** Transposes the graph to perform a top-bottom drawing. */
@@ -146,18 +136,6 @@ public enum LayoutProcessorStrategy {
             
         case COMMENT_PREPROCESSOR:
             return new CommentPreprocessor();
-            
-        case COMPOUND_CYCLE_PROCESSOR:
-            return new CompoundCycleProcessor();
-            
-        case COMPOUND_DUMMY_EDGE_REMOVER:
-            return new CompoundDummyEdgeRemover();
-            
-        case COMPOUND_GRAPH_RESTORER:
-            return new CompoundGraphRestorer();
-            
-        case COMPOUND_SIDE_PROCESSOR:
-            return new CompoundSideProcessor();
             
         case DOWN_DIR_POSTPROCESSOR:
         case DOWN_DIR_PREPROCESSOR:
@@ -244,9 +222,6 @@ public enum LayoutProcessorStrategy {
         
         case SELF_LOOP_PROCESSOR:
             return new SelfLoopProcessor();
-            
-        case SUBGRAPH_ORDERING_PROCESSOR:
-            return new SubgraphOrderingProcessor();
             
         case UP_DIR_POSTPROCESSOR:
         case UP_DIR_PREPROCESSOR:
