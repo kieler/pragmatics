@@ -13,15 +13,21 @@
  */
 package de.cau.cs.kieler.ptolemy.klighd
 
+import com.google.common.collect.ImmutableList
+import com.google.common.collect.ImmutableMap
 import com.google.common.collect.ImmutableSet
 import com.google.inject.Inject
-import de.cau.cs.kieler.core.util.Pair
+import de.cau.cs.kieler.core.properties.IProperty
+import de.cau.cs.kieler.kiml.options.LayoutOptions
+import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy
+import de.cau.cs.kieler.klay.layered.properties.Properties
 import de.cau.cs.kieler.klighd.TransformationOption
 import de.cau.cs.kieler.klighd.transformations.AbstractDiagramSynthesis
 import de.cau.cs.kieler.ptolemy.klighd.transformation.CommentsExtractor
 import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphOptimization
 import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphTransformation
 import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphVisualization
+import java.util.Collection
 import org.ptolemy.moml.DocumentRoot
 
 /**
@@ -32,14 +38,16 @@ import org.ptolemy.moml.DocumentRoot
 public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRoot> {
     
     // Our transformation options
-    static val TransformationOption SHOW_COMMENTS = TransformationOption::createCheckOption(
+    public static val TransformationOption SHOW_COMMENTS = TransformationOption::createCheckOption(
         "Comments", true)
-    static val TransformationOption SHOW_RELATIONS = TransformationOption::createCheckOption(
+    public static val TransformationOption SHOW_RELATIONS = TransformationOption::createCheckOption(
         "Relations", false)
-    static val TransformationOption FLATTEN = TransformationOption::createCheckOption(
-        "Flatten Composite Actors", false);
-    static val TransformationOption COMPOUND_NODE_ALPHA = TransformationOption::createRangeOption(
-        "Nested model darkness", new Pair(0, 255), 10)
+    public static val TransformationOption COMMENT_ATTACHMENT_HEURISTIC =
+        TransformationOption::createCheckOption("Comment attachment heuristic", true)
+    public static val TransformationOption FLATTEN = TransformationOption::createCheckOption(
+        "Flatten Composite Actors", false)
+    public static val TransformationOption COMPOUND_NODE_ALPHA = TransformationOption::createRangeOption(
+        "Nested model darkness", 0f, 255f, 30f)
     
     // The parts of our transformation
     @Inject Ptolemy2KGraphTransformation transformation
@@ -50,25 +58,44 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
     
     override transform(DocumentRoot model) {
         // Transform, optimize, and visualize
-        val kgraph = transformation.transform(model)
+        val kgraph = transformation.transform(model, this)
         optimization.optimize(kgraph,
             !SHOW_RELATIONS.optionBooleanValue,
             FLATTEN.optionBooleanValue,
-            if (SHOW_COMMENTS.optionBooleanValue) commentsExtractor else null
+            if (SHOW_COMMENTS.optionBooleanValue) commentsExtractor else null,
+            this
         )
-        visualization.visualize(kgraph, COMPOUND_NODE_ALPHA.optionValue as Integer)
+        visualization.visualize(kgraph, (COMPOUND_NODE_ALPHA.optionIntValue))
         
         // If comments should be shown, we want them to be attached properly. Do that now, because we
         // know the node sizes only after the visualization
         if (SHOW_COMMENTS.optionBooleanValue) {
-            commentsExtractor.attachComments()
+            commentsExtractor.attachComments(COMMENT_ATTACHMENT_HEURISTIC.optionBooleanValue)
         }
         
         return kgraph
     }
     
+    /**
+     * Diagram options.
+     */
     override getTransformationOptions() {
-        return ImmutableSet::of(SHOW_COMMENTS, SHOW_RELATIONS, FLATTEN, COMPOUND_NODE_ALPHA)
+        return ImmutableSet::of(
+            SHOW_COMMENTS,
+            SHOW_RELATIONS,
+            COMMENT_ATTACHMENT_HEURISTIC,
+            FLATTEN,
+            COMPOUND_NODE_ALPHA)
     }
+    
+    /**
+	 * Layout options.
+	 */
+	override getRecommendedLayoutOptions() {
+		return ImmutableMap::<IProperty<?>, Collection<?>>of(
+			Properties::NODE_PLACER, ImmutableList::copyOf(NodePlacementStrategy::values),
+			LayoutOptions::SPACING,	ImmutableList::of(0, 255)
+		)
+	}
     
 }

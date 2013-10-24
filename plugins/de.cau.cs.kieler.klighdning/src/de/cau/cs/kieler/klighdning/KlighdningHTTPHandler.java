@@ -16,7 +16,9 @@ package de.cau.cs.kieler.klighdning;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URLEncoder;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.zip.Adler32;
 import java.util.zip.Checksum;
 
@@ -62,6 +64,7 @@ public class KlighdningHTTPHandler extends AbstractHandler {
     public KlighdningHTTPHandler(final File docRoot) {
         this.docRoot = docRoot;
         this.getViewer = new SVGBrowsingViewer();
+        gen.setRoot(docRoot);
     }
 
     /**
@@ -72,17 +75,22 @@ public class KlighdningHTTPHandler extends AbstractHandler {
             throws IOException, ServletException {
 
         // decide depending on the http target
-        if (target.startsWith("/content")) {
-            /*----------------------------------------------------------------------------
-             *  Return the a tree view of the root folder's content
-             */
-            String html = gen.toHtmlRoot(docRoot);
-
-            response.setContentType("text/html;charset=utf8");
+        if (target.startsWith("/json/content")) {
+            
+            String json = "";
+            
+            if (target.equals("/json/content/")) {
+                json =  gen.toJson(docRoot);
+            } else {
+                String path = target.replace("/json/content/", "");
+                json = gen.toJson(new File(docRoot, path));
+            }
+            
+            response.setContentType("application/json;charset=utf8");
             response.setStatus(HttpServletResponse.SC_OK);
             baseRequest.setHandled(true);
-            response.getWriter().println(html);
-
+            response.getWriter().println(json);
+            
         } else if (target.startsWith("/resource")) {
             /*----------------------------------------------------------------------------
              *  Return a specific resource as SVG this is mainly called by perma links.
@@ -117,6 +125,7 @@ public class KlighdningHTTPHandler extends AbstractHandler {
                 getViewer.setModel(model, true);
 
                 // retrieve the perma link infos
+                // perma is the information about expanded elements
                 String perma = request.getParameterMap().get("perma")[0];
                 // transform
                 String transform = "";
@@ -152,7 +161,16 @@ public class KlighdningHTTPHandler extends AbstractHandler {
 
             // pass the svg
             String svg = SVGLayoutProvider.getInstance().layout(getViewer, false);
-            response.getWriter().println(gen.permaLinkPage(svg, hasChanged      ));
+            // assemble parameter string for switch to interactive mode
+            String params = "?path=" + path;
+            for (Entry<String, String[]> entry : request.getParameterMap().entrySet()) {
+                if (entry.getValue() != null && entry.getValue().length > 0) {
+                    params +=
+                            "&" + entry.getKey() + "="
+                                    + URLEncoder.encode(entry.getValue()[0], "utf8");
+                }
+            }
+            response.getWriter().println(gen.permaLinkPage(svg, hasChanged, params));
 
         } else if (target.startsWith("/refreshGit")) {
             /*----------------------------------------------------------------------------

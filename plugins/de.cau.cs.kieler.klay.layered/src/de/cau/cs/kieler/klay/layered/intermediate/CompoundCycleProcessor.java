@@ -20,7 +20,7 @@ import java.util.List;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
-import de.cau.cs.kieler.klay.layered.Util;
+import de.cau.cs.kieler.klay.layered.LayeredUtil;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -87,13 +87,13 @@ public final class CompoundCycleProcessor implements ILayoutProcessor {
                     LNode sourceNode = edge.getSource().getNode();
                     LNode targetNode = edge.getTarget().getNode();
 
-                    if ((Util.isDescendant(sourceNode, targetNode))
-                            || (Util.isDescendant(targetNode, sourceNode))) {
+                    if ((LayeredUtil.isDescendant(sourceNode, targetNode))
+                            || (LayeredUtil.isDescendant(targetNode, sourceNode))) {
                         isDescendantEdge = true;
                     }
 
-                    LGraphElement sourceParent = Util.getParent(sourceNode);
-                    LGraphElement targetParent = Util.getParent(targetNode);
+                    LGraphElement sourceParent = LayeredUtil.getParent(sourceNode);
+                    LGraphElement targetParent = LayeredUtil.getParent(targetNode);
                     LNode currentSource = sourceNode;
                     LNode currentTarget = targetNode;
                     LGraphElement currentSourceAncestor = sourceParent;
@@ -106,13 +106,13 @@ public final class CompoundCycleProcessor implements ILayoutProcessor {
                     NodeType sourceNType = sourceNode.getProperty(Properties.NODE_TYPE);
                     if ((sourceNType == NodeType.LOWER_COMPOUND_PORT)
                             || sourceNType == NodeType.UPPER_COMPOUND_PORT) {
-                        if (Util.isDescendant(targetNode,
+                        if (LayeredUtil.isDescendant(targetNode,
                                 sourceNode.getProperty(Properties.COMPOUND_NODE))) {
                             List<LEdge> portIncomingEdges = edge.getSource().getIncomingEdges();
                             if (!portIncomingEdges.isEmpty()) {
                                 boolean descendantIncoming = false;
                                 for (LEdge ledge : portIncomingEdges) {
-                                    if (Util.isDescendant(
+                                    if (LayeredUtil.isDescendant(
                                             ledge.getSource().getNode(),
                                             ledge.getTarget().getNode()
                                                     .getProperty(Properties.COMPOUND_NODE))) {
@@ -129,10 +129,10 @@ public final class CompoundCycleProcessor implements ILayoutProcessor {
 
                     // Establishes the edge an adjacency of two compound nodes (source and target
                     // are one of the compound nodes or any of it's descendants)?
-                    LinkedList<LNode> sourceChildren = Util.getChildren(sourceNode);
-                    LinkedList<LNode> targetChildren = Util.getChildren(targetNode);
+                    LinkedList<LNode> sourceChildren = LayeredUtil.getChildren(sourceNode);
+                    LinkedList<LNode> targetChildren = LayeredUtil.getChildren(targetNode);
                     if ((currentSourceAncestor != currentTargetAncestor)
-                            || ((!Util.getChildren(sourceNode).isEmpty()) && (!Util.getChildren(
+                            || ((!LayeredUtil.getChildren(sourceNode).isEmpty()) && (!LayeredUtil.getChildren(
                                     targetNode).isEmpty()))
                             || (sourceChildren.isEmpty() && !targetChildren.isEmpty())
                             || (!sourceChildren.isEmpty() && targetChildren.isEmpty())) {
@@ -144,14 +144,14 @@ public final class CompoundCycleProcessor implements ILayoutProcessor {
                         // nesting tree on the deep side to reach even depth level
                         if (depthSource != depthTarget) {
                             for (int i = depthSource; i > depthTarget; i--) {
-                                LGraphElement sourceNextParent = Util.getParent(currentSource);
+                                LGraphElement sourceNextParent = LayeredUtil.getParent(currentSource);
                                 // This should stop at the latest, when a node of depth 1 is
                                 // reached;
                                 assert (sourceNextParent instanceof LNode);
                                 currentSource = (LNode) sourceNextParent;
                             }
                             for (int j = depthTarget; j > depthSource; j--) {
-                                LGraphElement targetNextParent = Util.getParent(currentTarget);
+                                LGraphElement targetNextParent = LayeredUtil.getParent(currentTarget);
                                 // This should stop at the latest, when a node of depth 1 is
                                 // reached;
                                 assert (targetNextParent instanceof LNode);
@@ -162,8 +162,8 @@ public final class CompoundCycleProcessor implements ILayoutProcessor {
                         if (currentSource != currentTarget) {
                             // Walk up the nesting tree from both sides, until nodes have the same
                             // parent.
-                            currentSourceAncestor = Util.getParent(currentSource);
-                            currentTargetAncestor = Util.getParent(currentTarget);
+                            currentSourceAncestor = LayeredUtil.getParent(currentSource);
+                            currentTargetAncestor = LayeredUtil.getParent(currentTarget);
                             while (currentSourceAncestor != currentTargetAncestor) {
                                 // The loop should stop at the latest, when Nodes of depth 1 are
                                 // reached, whose parent is the layeredGraph
@@ -171,8 +171,8 @@ public final class CompoundCycleProcessor implements ILayoutProcessor {
                                 assert (currentTargetAncestor instanceof LNode);
                                 currentSource = (LNode) currentSourceAncestor;
                                 currentTarget = (LNode) currentTargetAncestor;
-                                currentSourceAncestor = Util.getParent(currentSource);
-                                currentTargetAncestor = Util.getParent(currentTarget);
+                                currentSourceAncestor = LayeredUtil.getParent(currentSource);
+                                currentTargetAncestor = LayeredUtil.getParent(currentTarget);
                             }
 
                             NodeType sourceNodeType = currentSource
@@ -463,7 +463,7 @@ public final class CompoundCycleProcessor implements ILayoutProcessor {
             dummyConnectionPort.setSide(PortSide.WEST);
             dummyConnectionPort.setNode(newLowerCompoundPort);
             // Connect it with compound dummy edges to the direct children of the compound node
-            for (LNode child : Util.getChildren(node)) {
+            for (LNode child : LayeredUtil.getChildren(node)) {
                 LEdge dummyEdge = new LEdge(layeredGraph);
                 dummyEdge.setProperty(Properties.EDGE_TYPE, EdgeType.COMPOUND_DUMMY);
                 LPort startPort = child.getPorts(PortSide.WEST).iterator().next();
@@ -489,7 +489,7 @@ public final class CompoundCycleProcessor implements ILayoutProcessor {
             dummyConnector.setSide(PortSide.EAST);
             dummyConnector.setNode(newUpperCompoundPort);
             // Connect it with compound dummy edges to the direct children of the compound node
-            for (LNode child : Util.getChildren(node)) {
+            for (LNode child : LayeredUtil.getChildren(node)) {
                 LEdge dummyEdge = new LEdge(layeredGraph);
                 dummyEdge.setProperty(Properties.EDGE_TYPE, EdgeType.COMPOUND_DUMMY);
                 LPort endPort = child.getPorts(PortSide.EAST).iterator().next();

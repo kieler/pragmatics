@@ -23,7 +23,6 @@ import de.cau.cs.kieler.core.krendering.KAreaPlacementData
 import de.cau.cs.kieler.core.krendering.KRendering
 import de.cau.cs.kieler.core.krendering.KRenderingFactory
 import de.cau.cs.kieler.core.krendering.Trigger
-import de.cau.cs.kieler.core.krendering.extensions.KEdgeExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.core.krendering.extensions.ViewSynthesisShared
 import de.cau.cs.kieler.core.math.KVector
@@ -50,6 +49,8 @@ import java.util.EnumSet
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
 
 import static extension com.google.common.base.Strings.*
+import de.cau.cs.kieler.core.krendering.KRenderingRef
+import de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants
 
 /**
  * Enriches a KGraph model freshly transformed from a Ptolemy2 model with the KRendering information
@@ -68,8 +69,6 @@ class Ptolemy2KGraphVisualization {
     @Inject extension MarkerExtensions
     /** Extensions used during the transformation. To make things easier. And stuff. */
     @Inject extension MiscellaneousExtensions
-    /** Extensions for creating edge renderings. */
-    @Inject extension KEdgeExtensions
     /** Utility class that provides renderings. */
     @Inject extension KRenderingExtensions
     /** Utility class that provides renderings. */
@@ -130,9 +129,9 @@ class Ptolemy2KGraphVisualization {
             } else if (child.markedAsParameterNode) {
                 // We have a parameter node that displays model parameters
                 child.addParameterNodeRendering()
-            } else if (child.markedAsConstActor) {
-                // We have a const actor whose rendering is a bit special
-                child.addConstNodeRendering()
+            } else if (child.markedAsValueDisplayingActor) {
+                // We have a value displaying actor whose rendering is a bit special
+                child.addValueDisplayingNodeRendering()
             } else if (child.markedAsModalModelPort) {
                 // We have a modal model port
                 child.addModalModelPortRendering()
@@ -299,11 +298,11 @@ class Ptolemy2KGraphVisualization {
     }
     
     /**
-     * Renders the given node as a Const node, with the constant displayed in it.
+     * Renders the given node displaying a specific value, for instance a Const actor.
      * 
      * @param node the node to attach the rendering information to.
      */
-    def private void addConstNodeRendering(KNode node) {
+    def private void addValueDisplayingNodeRendering(KNode node) {
         val layout = node.layout as KShapeLayout
         layout.setProperty(LayoutOptions::NODE_LABEL_PLACEMENT, EnumSet::of(
             NodeLabelPlacement::OUTSIDE, NodeLabelPlacement::H_LEFT, NodeLabelPlacement::V_TOP))
@@ -311,8 +310,9 @@ class Ptolemy2KGraphVisualization {
         layout.setProperty(LayoutOptions::PORT_CONSTRAINTS, PortConstraints::FIXED_ORDER)
         
         // Create the rendering
-        val rendering = createValueDisplayingNodeRendering(node,
-            node.getAnnotationValue("value") ?: "")
+        val className = node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS).nullToEmpty()
+        val value = node.getAnnotationValue(TransformationConstants.VALUE_DISPLAY_MAP.get(className))
+        val rendering = createValueDisplayingNodeRendering(node, value ?: "")
         node.data += rendering
     }
     
@@ -499,7 +499,7 @@ class Ptolemy2KGraphVisualization {
             edge.data += rendering
         } else {
             // We have a regular edge
-            edge.addRoundedBendsPolyline(5f, 2f)
+            edge.data += createDataFlowRendering(edge);
         }
     }
     
@@ -600,16 +600,20 @@ class Ptolemy2KGraphVisualization {
      */
     def private void setLayoutSize(KShapeLayout layout, KRendering rendering) {
         // TODO Provide proper size information for every actor
-        
-        if (rendering == null) {
+        var actualRendering = rendering
+        while (actualRendering instanceof KRenderingRef) {
+            actualRendering = (actualRendering as KRenderingRef).rendering
+        }
+                
+        if (actualRendering == null) {
             // If we have no rendering in the first place, fix the size
             layout.height = 50
             layout.width = 50
-        } else if (rendering.placementData != null
-            && rendering.placementData instanceof KAreaPlacementData) {
+        } else if (actualRendering.placementData != null
+            && actualRendering.placementData instanceof KAreaPlacementData) {
             
             // We have concrete placement data to infer the size from
-            val placementData = rendering.placementData as KAreaPlacementData
+            val placementData = actualRendering.placementData as KAreaPlacementData
             
             layout.height = placementData.bottomRight.y.absolute
             layout.width = placementData.bottomRight.x.absolute

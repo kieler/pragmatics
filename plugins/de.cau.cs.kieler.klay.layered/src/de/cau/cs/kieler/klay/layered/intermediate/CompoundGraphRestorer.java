@@ -21,7 +21,7 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
-import de.cau.cs.kieler.klay.layered.Util;
+import de.cau.cs.kieler.klay.layered.LayeredUtil;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -164,7 +164,7 @@ public final class CompoundGraphRestorer implements ILayoutProcessor {
                 case UPPER_COMPOUND_BORDER:
                     // Keep an eye on edges to descendant nodes: Their port coordinates have to be
                     // updated.
-                    if (Util.isDescendant(targetNode, sourceNode)) {
+                    if (LayeredUtil.isDescendant(targetNode, sourceNode)) {
                         LPort newPort3 = transferPort(layeredGraph, sourcePort, compoundNodeSource);
                         ledge.setSource(newPort3);
                     }

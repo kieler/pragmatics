@@ -13,11 +13,10 @@
  */
 package de.cau.cs.kieler.klighd.effects;
 
-import org.eclipse.emf.ecore.EObject;
-
+import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
-import de.cau.cs.kieler.klighd.views.DiagramViewPart;
 import de.cau.cs.kieler.klighd.views.DiagramViewManager;
+import de.cau.cs.kieler.klighd.views.DiagramViewPart;
 
 /**
  * A view management effect for revealing a diagram element in a view.
@@ -62,11 +61,11 @@ public class KlighdRevealEffect extends AbstractEffect {
         DiagramViewPart view = DiagramViewManager.getInstance().getView(viewId);
         if (view != null) {
             // get the diagram element
-            EObject theElement;
+            KGraphElement theElement;
             if (isDiagramElement) { // implies element instanceof EObject
-                theElement = (EObject) element;
+                theElement = (KGraphElement) element;
             } else {
-                theElement = (EObject) view.getContextViewer().getCurrentViewContext()
+                theElement = (KGraphElement) view.getContextViewer().getCurrentViewContext()
                         .getTargetElement(element);
             }
             // reveal the element

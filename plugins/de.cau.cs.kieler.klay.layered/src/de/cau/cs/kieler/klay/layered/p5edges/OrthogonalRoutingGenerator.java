@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,7 +33,7 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.klay.layered.Util;
+import de.cau.cs.kieler.klay.layered.LayeredUtil;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -82,6 +83,19 @@ public final class OrthogonalRoutingGenerator {
      * @author cds
      */
     public interface IRoutingDirectionStrategy {
+        
+        /**
+         * Enumeration of available strategies.
+         */
+        public enum Strategy {
+            /** west to east routing strategy. */
+            WEST_TO_EAST,
+            /** north to south routing strategy. */
+            NORTH_TO_SOUTH,
+            /** south to north routing strategy. */
+            SOUTH_TO_NORTH;
+        }
+        
         /**
          * Returns the port's position on a hyper edge axis. In the west-to-east routing
          * case, this would be the port's exact y coordinate.
@@ -117,10 +131,8 @@ public final class OrthogonalRoutingGenerator {
          * @param startPos the position of the trunk of the first hyper edge between the
          *                 layers. This position, together with the current hyper node's
          *                 rank allows the calculation of the hyper node's trunk's position.
-         * @param edgeSpacing the space between two edges.
          */
-        void calculateBendPoints(final HyperNode hyperNode, final double startPos,
-                final double edgeSpacing);
+        void calculateBendPoints(final HyperNode hyperNode, final double startPos);
     }
     
     /**
@@ -128,7 +140,7 @@ public final class OrthogonalRoutingGenerator {
      * 
      * @author cds
      */
-    public static class WestToEastRoutingStrategy implements IRoutingDirectionStrategy {
+    public class WestToEastRoutingStrategy implements IRoutingDirectionStrategy {
 
         /**
          * {@inheritDoc}
@@ -154,8 +166,7 @@ public final class OrthogonalRoutingGenerator {
         /**
          * {@inheritDoc}
          */
-        public void calculateBendPoints(final HyperNode hyperNode, final double startPos,
-                final double edgeSpacing) {
+        public void calculateBendPoints(final HyperNode hyperNode, final double startPos) {
             
             // Calculate coordinates for each port's bend points
             double x = startPos + hyperNode.rank * edgeSpacing;
@@ -186,7 +197,7 @@ public final class OrthogonalRoutingGenerator {
      * 
      * @author cds
      */
-    public static class NorthToSouthRoutingStrategy implements IRoutingDirectionStrategy {
+    public class NorthToSouthRoutingStrategy implements IRoutingDirectionStrategy {
 
         /**
          * {@inheritDoc}
@@ -212,8 +223,7 @@ public final class OrthogonalRoutingGenerator {
         /**
          * {@inheritDoc}
          */
-        public void calculateBendPoints(final HyperNode hyperNode, final double startPos,
-                final double edgeSpacing) {
+        public void calculateBendPoints(final HyperNode hyperNode, final double startPos) {
             
             // Calculate coordinates for each port's bend points
             double y = startPos + hyperNode.rank * edgeSpacing;
@@ -244,7 +254,7 @@ public final class OrthogonalRoutingGenerator {
      * 
      * @author cds
      */
-    public static class SouthToNorthRoutingStrategy implements IRoutingDirectionStrategy {
+    public class SouthToNorthRoutingStrategy implements IRoutingDirectionStrategy {
 
         /**
          * {@inheritDoc}
@@ -270,8 +280,7 @@ public final class OrthogonalRoutingGenerator {
         /**
          * {@inheritDoc}
          */
-        public void calculateBendPoints(final HyperNode hyperNode, final double startPos,
-                final double edgeSpacing) {
+        public void calculateBendPoints(final HyperNode hyperNode, final double startPos) {
             
             // Calculate coordinates for each port's bend points
             double y = startPos - hyperNode.rank * edgeSpacing;
@@ -468,13 +477,15 @@ public final class OrthogonalRoutingGenerator {
     private static final int CONFLICT_PENALTY = 16;
     
     /** routing direction strategy. */
-    private IRoutingDirectionStrategy routingStrategy;
+    private final IRoutingDirectionStrategy routingStrategy;
     /** spacing between edges. */
-    private double edgeSpacing;
+    private final double edgeSpacing;
     /** threshold at which conflicts of horizontal line segments are detected. */
-    private double conflictThreshold;
+    private final double conflictThreshold;
+    /** set of already created junction points, to avoid multiple points at the same position. */
+    private final Set<KVector> createdJunctionPoints = new HashSet<KVector>();
     
-    private String debugPrefix;
+    private final String debugPrefix;
     
     
     ///////////////////////////////////////////////////////////////////////////////
@@ -483,16 +494,26 @@ public final class OrthogonalRoutingGenerator {
     /**
      * Constructs a new instance.
      * 
-     * @param routingStrategy the routing strategy to use. This will usually be one of the strategies
-     *                        defined by this class.
+     * @param strategy the routing strategy to use.
      * @param edgeSpacing the space between edges.
      * @param debugPrefix prefix of debug output files, or {@code null} if no debug output should
      *                    be generated.
      */
-    public OrthogonalRoutingGenerator(final IRoutingDirectionStrategy routingStrategy,
+    public OrthogonalRoutingGenerator(final IRoutingDirectionStrategy.Strategy strategy,
             final double edgeSpacing, final String debugPrefix) {
-        
-        this.routingStrategy = routingStrategy;
+        switch (strategy) {
+        case WEST_TO_EAST:
+            this.routingStrategy = new WestToEastRoutingStrategy();
+            break;
+        case NORTH_TO_SOUTH:
+            this.routingStrategy = new NorthToSouthRoutingStrategy();
+            break;
+        case SOUTH_TO_NORTH:
+            this.routingStrategy = new SouthToNorthRoutingStrategy();
+            break;
+        default:
+            throw new IllegalArgumentException();
+        }
         this.edgeSpacing = edgeSpacing;
         this.conflictThreshold = CONFL_THRESH_FACTOR * edgeSpacing;
         this.debugPrefix = debugPrefix;
@@ -564,9 +585,11 @@ public final class OrthogonalRoutingGenerator {
             
             rankCount = Math.max(rankCount, node.rank);
             
-            routingStrategy.calculateBendPoints(node, startPos, edgeSpacing);
+            routingStrategy.calculateBendPoints(node, startPos);
         }
         
+        // release the created resources
+        createdJunctionPoints.clear();
         return rankCount + 1;
     }
     
@@ -960,7 +983,7 @@ public final class OrthogonalRoutingGenerator {
      * @param vertical {@code true} if the connecting segment is vertical, {@code false} if it
      *          is horizontal
      */
-    private static void addJunctionPointIfNecessary(final LEdge edge, final HyperNode hyperNode,
+    private void addJunctionPointIfNecessary(final LEdge edge, final HyperNode hyperNode,
             final KVector pos, final boolean vertical) {
         
         double p = vertical ? pos.y : pos.x;
@@ -975,13 +998,20 @@ public final class OrthogonalRoutingGenerator {
                     || Math.abs(p - hyperNode.sourcePosis.getLast()) < TOLERANCE
                     && Math.abs(p - hyperNode.targetPosis.getLast()) < TOLERANCE)) {
             
-            // it is, so create a new junction point for the edge at the bend point's position
-            KVectorChain junctionPoints = edge.getProperty(LayoutOptions.JUNCTION_POINTS);
-            if (junctionPoints == null) {
-                junctionPoints = new KVectorChain();
-                edge.setProperty(LayoutOptions.JUNCTION_POINTS, junctionPoints);
+            // check whether there is already a junction point at the same position
+            if (!createdJunctionPoints.contains(pos)) {
+                
+                // create a new junction point for the edge at the bend point's position
+                KVectorChain junctionPoints = edge.getProperty(LayoutOptions.JUNCTION_POINTS);
+                if (junctionPoints == null) {
+                    junctionPoints = new KVectorChain();
+                    edge.setProperty(LayoutOptions.JUNCTION_POINTS, junctionPoints);
+                }
+                
+                KVector jpoint = new KVector(pos);
+                junctionPoints.add(jpoint);
+                createdJunctionPoints.add(jpoint);
             }
-            junctionPoints.add(new KVector(pos));
         }
     }
     
@@ -1037,10 +1067,10 @@ public final class OrthogonalRoutingGenerator {
     private Writer createWriter(final LGraph layeredGraph, final int layerIndex,
             final String label) throws IOException {
         
-        String path = Util.getDebugOutputPath();
+        String path = LayeredUtil.getDebugOutputPath();
         new File(path).mkdirs();
         
-        String debugFileName = Util.getDebugOutputFileBaseName(layeredGraph)
+        String debugFileName = LayeredUtil.getDebugOutputFileBaseName(layeredGraph)
                 + debugPrefix + "-l" + layerIndex + "-" + label;
         return new FileWriter(new File(path + File.separator + debugFileName + ".dot"));
     }

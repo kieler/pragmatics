@@ -28,7 +28,7 @@ import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
-import de.cau.cs.kieler.klay.layered.Util;
+import de.cau.cs.kieler.klay.layered.LayeredUtil;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -958,10 +958,10 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
      *             if creating the output file fails.
      */
     private static Writer createWriter(final LGraph layeredGraph) throws IOException {
-        String path = Util.getDebugOutputPath();
+        String path = LayeredUtil.getDebugOutputPath();
         new File(path).mkdirs();
 
-        String debugFileName = Util.getDebugOutputFileBaseName(layeredGraph) + "linseg-dep";
+        String debugFileName = LayeredUtil.getDebugOutputFileBaseName(layeredGraph) + "linseg-dep";
         return new FileWriter(new File(path + File.separator + debugFileName + ".dot"));
     }
 }

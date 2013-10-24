@@ -23,6 +23,10 @@ body {
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.067);
 }
 
+ul.dynatree-container {
+	font-size: 8pt;
+}
+
 svg {
     width: 100%;
     height: 100%;
@@ -85,7 +89,7 @@ g.expandable {
 }
 
 #permaLink > a, #permaLink > a:focus, #permaLink > a:hover {
-    font-color: #000000;
+    color: #0088cc
     text-decoration: none;
 }
 

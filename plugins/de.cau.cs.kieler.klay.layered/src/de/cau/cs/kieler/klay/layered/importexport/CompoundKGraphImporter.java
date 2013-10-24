@@ -43,7 +43,7 @@ import de.cau.cs.kieler.kiml.options.PortLabelPlacement;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.SizeOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
-import de.cau.cs.kieler.klay.layered.Util;
+import de.cau.cs.kieler.klay.layered.LayeredUtil;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LInsets;
@@ -196,7 +196,7 @@ public final class CompoundKGraphImporter extends KGraphImporter {
         // Set flat position (position in relation to layout node) coordinates to support
         // interactive mode
         KVector flatPosVec = new KVector(0, 0);
-        Util.getFlatPosition(node, kgraph, flatPosVec);
+        LayeredUtil.getFlatPosition(node, kgraph, flatPosVec);
         newNode.getPosition().x = flatPosVec.x;
         newNode.getPosition().y = flatPosVec.y;
 
@@ -633,7 +633,7 @@ public final class CompoundKGraphImporter extends KGraphImporter {
         // Prepare initial positioning of dummy node for interactive mode
         KNode refNode = (KNode) elemMap.get(layeredGraph);
         KVector flatPosVec = new KVector(0, 0);
-        Util.getFlatPosition(node, refNode, flatPosVec);
+        LayeredUtil.getFlatPosition(node, refNode, flatPosVec);
 
         LNode dummyNode = null;
         if ((nodeType == NodeType.LOWER_COMPOUND_BORDER)) {
