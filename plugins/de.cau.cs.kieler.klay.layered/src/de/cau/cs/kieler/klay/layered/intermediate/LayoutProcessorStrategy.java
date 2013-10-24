@@ -75,8 +75,6 @@ public enum LayoutProcessorStrategy {
     
     // Before Phase 4
     
-    /** Makes sure that subgraphs are in same relative order on all levels.*/
-    SUBGRAPH_ORDERING_PROCESSOR,
     /** Makes sure that in-layer constraints are handled. */
     IN_LAYER_CONSTRAINT_PROCESSOR,
     /** Merges long edge dummy nodes belonging to the same hyperedge. */
@@ -224,9 +222,6 @@ public enum LayoutProcessorStrategy {
         
         case SELF_LOOP_PROCESSOR:
             return new SelfLoopProcessor();
-            
-        case SUBGRAPH_ORDERING_PROCESSOR:
-            return new SubgraphOrderingProcessor();
             
         case UP_DIR_POSTPROCESSOR:
         case UP_DIR_PREPROCESSOR:
