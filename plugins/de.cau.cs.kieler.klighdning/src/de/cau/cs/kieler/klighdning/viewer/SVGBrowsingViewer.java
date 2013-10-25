@@ -49,6 +49,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.klighd.ZoomStyle;
 import de.cau.cs.kieler.klighd.piccolo.internal.controller.DiagramController;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KNodeNode;
 import de.cau.cs.kieler.klighd.piccolo.svg.KlighdSVGCanvas;
@@ -132,7 +133,7 @@ public class SVGBrowsingViewer {
         // create a controller for the graph
         controller = new DiagramController(model, camera.getLayer(0), sync);
         controller.initialize();
-        controller.setRecording(false);
+        controller.stopRecording(ZoomStyle.NONE, 0);
     }
 
     /**
