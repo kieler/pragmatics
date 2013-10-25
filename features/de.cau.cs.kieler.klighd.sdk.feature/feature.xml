@@ -217,12 +217,9 @@ litigation.
       <update label="KIELER Nightly Builds" url="http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/"/>
    </url>
 
-   <includes
-         id="de.cau.cs.kieler.klighd.feature.source"
-         version="0.0.0"/>
-
    <requires>
-      <import feature="de.cau.cs.kieler.klighd.feature" version="0.1.0" match="compatible"/>
+      <import feature="de.cau.cs.kieler.klighd.feature" version="0.2.0" match="compatible"/>
+      <import feature="de.cau.cs.kieler.klighd.feature.source" version="0.2.0" match="compatible"/>
       <import feature="org.eclipse.uml2" version="4.0.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.emf.ecoretools" version="1.1.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.jdt" version="3.8.0" match="greaterOrEqual"/>
