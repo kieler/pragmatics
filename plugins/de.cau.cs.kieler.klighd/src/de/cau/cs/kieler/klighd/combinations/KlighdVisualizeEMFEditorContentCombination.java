@@ -22,10 +22,12 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 import org.eclipse.ui.part.FileEditorInput;
 
+import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.core.kivi.triggers.PartTrigger;
 import de.cau.cs.kieler.core.kivi.triggers.PartTrigger.EditorState;
 import de.cau.cs.kieler.core.kivi.triggers.SelectionTrigger.SelectionState;
+import de.cau.cs.kieler.core.krendering.KText;
 import de.cau.cs.kieler.klighd.effects.KlighdCloseDiagramEffect;
 import de.cau.cs.kieler.klighd.effects.KlighdDiagramEffect;
 import de.cau.cs.kieler.klighd.effects.KlighdUpdateDiagramEffect;
@@ -92,11 +94,18 @@ public class KlighdVisualizeEMFEditorContentCombination extends AbstractCombinat
             }
         } else {
             // otherwise the selection is examined ...            
-            if (!ss.getSelection().isEmpty()
-                    && (ss.getSelection().get(0) instanceof Resource || ss
-                            .getSelection().get(0) instanceof EObject)) {
-
-                Object selected = ss.getSelection().get(0);
+            if (!ss.getSelection().isEmpty()) {
+                final Object selected = ss.getSelection().get(0);
+                
+                // don't react on non-EMF element selections
+                //  as well as on KGraphElement/KText selections,
+                //   the latter will cause ClassCastExceptions later on
+                if (!(selected instanceof Resource || selected instanceof EObject)
+                        || selected instanceof KGraphElement
+                        || selected instanceof KText) {
+                    return;
+                }
+                
                 if (selected instanceof Resource && !((Resource) selected).getContents().isEmpty()) {
                     this.schedule(new KlighdDiagramEffect(id, editorInputPath.lastSegment(),
                             ((Resource) selected).getContents().get(0), es.getEditorPart()));
