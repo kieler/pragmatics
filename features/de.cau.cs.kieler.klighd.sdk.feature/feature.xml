@@ -226,7 +226,7 @@ litigation.
       <import feature="org.eclipse.jdt" version="3.8.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.xtext.runtime" version="2.3.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.xtext.ui" version="2.3.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.xtend.sdk" version="2.4.3" match="greaterOrEqual"/>
+      <import feature="org.eclipse.xtend.sdk" version="2.4.2" match="greaterOrEqual"/>
    </requires>
 
    <plugin
