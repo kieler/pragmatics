@@ -31,6 +31,9 @@
             <goals>
               <goal>source-feature</goal>
             </goals>
+            <configuration>
+              <labelSuffix>${sourceFeatureLabelSuffix}</labelSuffix>
+            </configuration>
           </execution>
         </executions>
       </plugin>
