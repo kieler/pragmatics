@@ -56,7 +56,8 @@ public class KlighdVisualizeEMFEditorContentCombination extends AbstractCombinat
         }
         
         IPath editorInputPath = null;
-        if (es.getEditorPart().getEditorInput() instanceof FileEditorInput) {
+        if (es != null && es.getEditorPart() != null
+                && es.getEditorPart().getEditorInput() instanceof FileEditorInput) {
             FileEditorInput fileEditorInput = (FileEditorInput) es.getEditorPart().getEditorInput();
             if (fileEditorInput.getFile() != null
                     && fileEditorInput.getFile().getLocationURI() != null) {
