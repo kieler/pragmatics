@@ -97,7 +97,8 @@ public final class InvertedPortProcessor implements ILayoutProcessor {
             // Iterate through the layer's nodes
             for (LNode node : currentLayer) {
                 // Skip dummy nodes
-                if (!node.getProperty(Properties.NODE_TYPE).equals(NodeType.NORMAL)) {
+                if (!node.getProperty(Properties.NODE_TYPE).equals(NodeType.NORMAL)
+                        || node.getProperty(Properties.NODE_TYPE).equals(NodeType.BIG_NODE)) {
                     continue;
                 }
                 

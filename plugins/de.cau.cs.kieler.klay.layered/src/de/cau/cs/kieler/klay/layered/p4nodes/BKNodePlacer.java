@@ -868,6 +868,13 @@ public final class BKNodePlacer implements ILayoutPhase {
      * @return True if the node is part of a long edge between the layers, false else
      */
     private boolean incidentToInnerSegment(final LNode node, final int layer1, final int layer2) {
+        
+        // consider that big nodes include their respective start and end node.
+        if (node.getProperty(Properties.NODE_TYPE) == NodeType.BIG_NODE) {
+            // all nodes should be placed straightly
+            return true;
+        }
+        
         if (node.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE
                 || node.getProperty(Properties.NODE_TYPE) == NodeType.COMPOUND_SIDE) {
             
