@@ -616,6 +616,12 @@ public final class KlayLayered {
             configuration.addLayoutProcessor(IntermediateProcessingConfiguration.AFTER_PHASE_5,
                     LayoutProcessorStrategy.COMMENT_POSTPROCESSOR);
         }
+        
+        // possibly revert additional edges before the layering phase to increase compactness
+        if (graph.getProperty(Properties.ALLOW_ADDITIONAL_EDGE_REVERSALS)) {
+            configuration.addLayoutProcessor(IntermediateProcessingConfiguration.BEFORE_PHASE_2,
+                    LayoutProcessorStrategy.ADDITIONAL_EDGE_REVERSER);
+        }
 
         return configuration;
     }

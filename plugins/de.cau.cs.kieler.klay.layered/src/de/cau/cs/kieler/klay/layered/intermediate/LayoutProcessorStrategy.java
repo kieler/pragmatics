@@ -45,7 +45,8 @@ public enum LayoutProcessorStrategy {
     EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER,
     
     // Before Phase 2
-    
+    /** Reverses additional edges to improve the compactness of the final drawing. */
+    ADDITIONAL_EDGE_REVERSER,
     /** Splits big nodes into multiple layers to distribute them better and reduce whitespace. */
     BIG_NODES_PROCESSOR,
     /** Adds dummy nodes in edges where center labels are present. */
@@ -128,6 +129,10 @@ public enum LayoutProcessorStrategy {
      */
     public ILayoutProcessor create() {
         switch (this) {
+        
+        case ADDITIONAL_EDGE_REVERSER:
+            return new AdditionalEdgeReverser();
+        
         case BIG_NODES_PROCESSOR:
             return new BigNodesProcessor();
             

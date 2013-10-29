@@ -347,6 +347,9 @@ public final class Properties {
     public static final IProperty<Boolean> FEEDBACK_EDGES = new Property<Boolean>(
             "de.cau.cs.kieler.klay.layered.feedBackEdges", false);
 
+    /** allow to revert additional edges after the cycle breaking phase. */
+    public static final IProperty<Boolean> ALLOW_ADDITIONAL_EDGE_REVERSALS = new Property<Boolean>(
+            "de.cau.cs.kieler.klay.layered.additionalEdgeReversals", false);
 
     // /////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR

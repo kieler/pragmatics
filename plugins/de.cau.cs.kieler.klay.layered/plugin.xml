@@ -134,6 +134,9 @@
          <knownOption
                option="de.cau.cs.kieler.klay.layered.inLayerSpacingFactor">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.additionalEdgeReversals">
+         </knownOption>
       </layoutAlgorithm>
       <layoutOption
             appliesTo="parents"
@@ -302,6 +305,15 @@
             name="In-layer Spacing Factor"
             type="float"
             upperBound="100">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="false"
+            description="Might improve the compactness of the drawing."
+            id="de.cau.cs.kieler.klay.layered.additionalEdgeReversals"
+            name="Allow Additional Edge Reversals"
+            type="boolean">
       </layoutOption>
    </extension>
 </plugin>
