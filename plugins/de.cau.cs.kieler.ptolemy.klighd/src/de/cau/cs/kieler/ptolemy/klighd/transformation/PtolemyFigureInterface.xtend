@@ -64,8 +64,10 @@ final class PtolemyFigureInterface {
             return null;
         }
         
-        imageLoadWorker.setEntity(entity)
-        EventQueue.invokeAndWait(imageLoadWorker)
+        imageLoadWorker.reset(entity)
+        while (imageLoadWorker.getResult() == null) {
+            EventQueue.invokeAndWait(imageLoadWorker)
+        }
         return imageLoadWorker.getResult()
     }
 }
@@ -86,6 +88,8 @@ final class ImageLoadWorker implements Runnable {
     /** The entity whose icon to load. */
     private Entity entity = null;
     
+    private List<EditorIcon> loadedIcons = null;
+    
     /** The rendering resulting from the loading operations. */
     private KRendering result = null;
     
@@ -95,7 +99,7 @@ final class ImageLoadWorker implements Runnable {
      * 
      * @param newEntity the entity to load icons for.
      */
-    def void setEntity(Entity newEntity) {
+    def void reset(Entity newEntity) {
         entity = newEntity
     }
     
@@ -113,15 +117,21 @@ final class ImageLoadWorker implements Runnable {
      * Loads icons for the entity set previously. Must be executed in the AWT event queue thread.
      */
     override run() {
-        // Try to load all icons for this element
-        val List<EditorIcon> icons = loadIconsForEntity(entity)
-        if (icons.empty) {
-            // We couldn't load any icons; try to load SVG description and turn it into a KRendering
-            val Document svgDocument = loadSvgForEntity(entity)
-            val figure = GraphicsUtils::createFigureFromSvg(svgDocument)
-            result = figure
+        // Check if we have already tried to load our icons
+        if (loadedIcons == null) {
+            // We have not -- load them
+            loadedIcons = loadIconsForEntity(entity)
+            if (loadedIcons.empty) {
+                // We couldn't load any icons; try to load SVG description and turn it into a KRendering
+                val Document svgDocument = loadSvgForEntity(entity)
+                val figure = GraphicsUtils::createFigureFromSvg(svgDocument)
+                result = figure
+            } else {
+                // We have loaded the icons; give Ptolemy a chance now to prepare the scaled images
+                // by terminating and letting createPtolemyFigureRendering create us again
+            }
         } else {
-            result = createRenderingFromIcon(icons.get(0))
+            result = createRenderingFromIcon(loadedIcons.get(0))
         }
     }
     
@@ -132,6 +142,7 @@ final class ImageLoadWorker implements Runnable {
      * @return the KRendering representation of the icon.
      */
     def private KRendering createRenderingFromIcon(EditorIcon icon) {
+        GraphicsUtils::waitForImages(icon);
         val ptFigure = icon.createBackgroundFigure()
         GraphicsUtils::repairEditorIcon(icon, ptFigure)
         
