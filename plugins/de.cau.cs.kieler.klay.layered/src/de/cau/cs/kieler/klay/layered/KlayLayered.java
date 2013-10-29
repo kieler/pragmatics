@@ -169,6 +169,9 @@ public final class KlayLayered {
             // execute layout on each component using a progress monitor subtask
             float compWork = 1.0f / components.size();
             for (LGraph comp : components) {
+                if (monitor.isCanceled()) {
+                    return lgraph;
+                }
                 layout(comp, theMonitor.subTask(compWork));
             }
         }

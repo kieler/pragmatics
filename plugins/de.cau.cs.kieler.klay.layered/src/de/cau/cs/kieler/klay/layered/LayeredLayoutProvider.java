@@ -76,8 +76,10 @@ public final class LayeredLayoutProvider extends AbstractLayoutProvider {
             // Perform layer-based layout
             LGraph result = klayLayered.doLayout(layeredGraph, progressMonitor);
 
-            // Apply the layout results to the original graph
-            graphImporter.applyLayout(result);
+            if (!progressMonitor.isCanceled()) {
+                // Apply the layout results to the original graph
+                graphImporter.applyLayout(result);
+            }
         }
     }
 

@@ -18,8 +18,9 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.URI;
@@ -29,6 +30,9 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.statushandlers.StatusManager;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
@@ -36,6 +40,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Maybe;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
@@ -48,7 +53,6 @@ import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 import de.cau.cs.kieler.kiml.ui.service.LayoutOptionManager;
 import de.cau.cs.kieler.kiml.ui.util.MonitoredOperation;
-import de.cau.cs.kieler.kiml.ui.util.ProgressMonitorAdapter;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
@@ -77,6 +81,18 @@ public class DiagramLayoutEngine {
             = new Property<IDiagramLayoutManager<?>>("layoutEngine.diagramLayoutManager");
     /** preference identifier for debug graph output. */
     public static final String PREF_DEBUG_OUTPUT = "kiml.debug.graph";
+    
+    
+    /** the layout options manager for configuration of layout graphs. */
+    private final LayoutOptionManager layoutOptionManager = new LayoutOptionManager();
+    
+    /** the executor service used to perform layout operations. */
+    private final ExecutorService executorService = Executors.newCachedThreadPool();
+    
+    /** map of currently running layout operations. */
+    private final Multimap<Pair<IWorkbenchPart, Object>, MonitoredOperation> runningOperations
+            = HashMultimap.create();
+    
     
     /**
      * Perform layout on the given workbench part.
@@ -149,9 +165,6 @@ public class DiagramLayoutEngine {
         }
     }
 
-    /** maximal number of recursion levels for which progress is displayed. */
-    private static final int MAX_PROGRESS_LEVELS = 3;
-
     /**
      * Perform layout on the given workbench part using the given layout manager. If zero or one
      * layout configurator is passed, the layout engine is executed exactly once. If multiple
@@ -185,8 +198,9 @@ public class DiagramLayoutEngine {
             final boolean animate, final boolean progressBar, final boolean layoutAncestors,
             final boolean zoom, final List<ILayoutConfig> extraLayoutConfigs) {
         final Maybe<LayoutMapping<T>> layoutMapping = Maybe.create();
+        final Pair<IWorkbenchPart, Object> target = Pair.of(workbenchPart, diagramPart);
         
-        final MonitoredOperation monitoredOperation = new MonitoredOperation() {
+        final MonitoredOperation monitoredOperation = new MonitoredOperation(executorService) {
             // first phase: build the layout graph
             @Override
             protected void preUIexec() {
@@ -196,14 +210,7 @@ public class DiagramLayoutEngine {
 
             // second phase: execute layout algorithms
             @Override
-            protected IStatus execute(final IProgressMonitor monitor) {
-                IKielerProgressMonitor kielerMonitor;
-                if (monitor == null) {
-                    kielerMonitor = new BasicProgressMonitor(0);
-                } else {
-                    kielerMonitor = new ProgressMonitorAdapter(monitor, MAX_PROGRESS_LEVELS);
-                }
-                
+            protected IStatus execute(final IKielerProgressMonitor monitor) {
                 LayoutMapping<T> mapping = layoutMapping.get();
                 IStatus status;
                 if (mapping != null && mapping.getLayoutGraph() != null) {
@@ -220,14 +227,19 @@ public class DiagramLayoutEngine {
                     }
                     
                     // perform the actual layout
-                    status = layout(mapping, transDiagPart, kielerMonitor, extraLayoutConfigs,
+                    status = layout(mapping, transDiagPart, monitor, extraLayoutConfigs,
                             layoutAncestors);
+                    
+                    // stop earlier layout operations that are still running
+                    if (!monitor.isCanceled()) {
+                        stopEarlierOperations(target, getTimestamp());
+                    }
                 } else {
                     status = new Status(Status.WARNING, KimlUiPlugin.PLUGIN_ID,
                             Messages.getString("kiml.ui.62"));
                 }
                 
-                kielerMonitor.done();
+                monitor.done();
                 return status;
             }
 
@@ -243,13 +255,23 @@ public class DiagramLayoutEngine {
                 }
             }
         };
+        
+        synchronized (runningOperations) {
+            runningOperations.put(target, monitoredOperation);
+        }
 
-        if (progressBar) {
-            // perform layout with a progress bar
-            monitoredOperation.runMonitored();
-        } else {
-            // perform layout without a progress bar
-            monitoredOperation.runUnmonitored();
+        try {
+            if (progressBar) {
+                // perform layout with a progress bar
+                monitoredOperation.runMonitored();
+            } else {
+                // perform layout without a progress bar
+                monitoredOperation.runUnmonitored();
+            }
+        } finally {
+            synchronized (runningOperations) {
+                runningOperations.remove(target, monitoredOperation);
+            }
         }
         
         return layoutMapping.get();
@@ -291,6 +313,22 @@ public class DiagramLayoutEngine {
             count += countNodes(child) + 1;
         }
         return count;
+    }
+    
+    /**
+     * Stop all running operations whose timestamp is earlier than the given one.
+     * 
+     * @param target the layout target
+     * @param time operations with a timestamp that is less than this are stopped
+     */
+    private void stopEarlierOperations(final Pair<IWorkbenchPart, Object> target, final long time) {
+        synchronized (runningOperations) {
+            for (MonitoredOperation operation : runningOperations.get(target)) {
+                if (operation.getTimestamp() < time) {
+                    operation.cancel();
+                }
+            }
+        }
     }
     
     /**
@@ -377,9 +415,6 @@ public class DiagramLayoutEngine {
         monitor.done();
         return status;
     }
-
-    /** the layout options manager for configuration of layout graphs. */
-    private LayoutOptionManager layoutOptionManager = new LayoutOptionManager();
     
     /**
      * Returns the currently used layout option manager.

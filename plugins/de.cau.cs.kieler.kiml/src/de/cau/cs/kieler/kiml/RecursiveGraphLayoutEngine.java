@@ -57,6 +57,9 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
      */
     private void layoutRecursively(final KNode layoutNode,
             final IKielerProgressMonitor progressMonitor) {
+        if (progressMonitor.isCanceled()) {
+            return;
+        }
         
         KShapeLayout layoutNodeShapeLayout = layoutNode.getData(KShapeLayout.class);
         
@@ -85,10 +88,11 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                 nodeCount = layoutNode.getChildren().size();
                 for (KNode child : layoutNode.getChildren()) {
                     layoutRecursively(child, progressMonitor);
-                    if (progressMonitor.isCanceled()) {
-                        return;
-                    }
                 }
+            }
+
+            if (progressMonitor.isCanceled()) {
+                return;
             }
 
             // perform layout on the current hierarchy level
