@@ -29,6 +29,7 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
+import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -323,8 +324,17 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
                 }
                 xpos += increment;
             } else if (!externalLeftLayer && !externalRightLayer) {
-                // If we are between two layers, but all edges are straight, take default spacing
-                xpos += nodeSpacing;
+                // If we are between two layers, but all edges are straight, and at least one NORMAL
+                // nodes exists, take the default spacing
+                if (!layersContainOnlyDummies(rightLayer)) {
+                    xpos += nodeSpacing;
+                }
+                
+                // if the left _and_ right layer contain only dummies, consider the left layer to be
+                // of width 0.
+                if (layersContainOnlyDummies(leftLayer, rightLayer)) {
+                    xpos -= leftLayer.getSize().x;
+                }
             }
             
             leftLayer = rightLayer;
@@ -335,6 +345,18 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
         layeredGraph.getSize().x = xpos;
         
         monitor.done();
+    }
+    
+    
+    private boolean layersContainOnlyDummies(final Layer... layers) {
+        for (Layer l : layers) {
+            for (LNode n : l.getNodes()) {
+                if (n.getProperty(Properties.NODE_TYPE) == NodeType.NORMAL) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
     
 }
