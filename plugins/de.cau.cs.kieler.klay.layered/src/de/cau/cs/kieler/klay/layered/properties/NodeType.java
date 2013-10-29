@@ -53,7 +53,9 @@ public enum NodeType {
      */
     COMPOUND_SIDE,
     /** a dummy node to represent a mid-label on an edge. */
-    LABEL;
+    LABEL,
+    /** a dummy node originating from a node spanning multiple layers. */
+    BIG_NODE;
     
     /**
      * Return the color used when writing debug output graphs. The colors are given as strings of
@@ -63,6 +65,7 @@ public enum NodeType {
      */
     public String getColor() {
         switch (this) {
+        case BIG_NODE: return "#cccccc";
         case COMPOUND_SIDE: return "#808080";
         case EXTERNAL_PORT: return "#cc99cc";
         case LONG_EDGE: return "#eaed00";
