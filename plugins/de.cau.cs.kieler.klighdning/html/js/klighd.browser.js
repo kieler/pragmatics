@@ -178,6 +178,24 @@ var webSocketConnect = function() {
         $('#permaLink > a').prop("href", "#");
       }
 
+    } else if (json.type === "MOUSEPOS") {
+      // only applicable if we are in a room
+      if (inRoom) {
+        // we need to add the offset to the viewport
+        var offset = $('#viewport').offset();
+        var posX = parseInt(json.posX) + offset.left;
+        var posY = parseInt(json.posY) + offset.top;
+        
+        // move the cursor element
+        $('.foreignCursor').css("top", posY + "px").css("left", posX + "px");
+      }
+      
+    } else if (json.type === "MOUSEENTER") {
+      $('.foreignCursor').show();
+      
+    } else if (json.type === "MOUSELEAVE") {
+      $('.foreignCursor').hide();
+       
     } else if (json.type === "ERROR") {
       error(json.data);
     }
@@ -198,6 +216,34 @@ var webSocketConnect = function() {
     }
   }, 500);
 
+  
+  $("#viewport").on('mousemove', function(e) {
+    // calculate relative position
+    var parentOffset = $(this).offset(); 
+    var posX = e.pageX - parentOffset.left;
+    var posY = e.pageY - parentOffset.top;
+    
+    sendJson({
+      type : 'MOUSEPOS',
+      posX : posX + "",
+      posY : posY + ""
+    });
+  });
+  
+  $("#viewport").on('mouseleave', function(e) {
+    sendJson({  
+      type : 'MOUSELEAVE'
+    });
+  });
+    
+  $("#viewport").on('mouseenter', function(e) {
+    sendJson({  
+      type : 'MOUSEENTER'
+    });
+  });
+  
+  $("body").append('<div class="foreignCursor" style="display:none;">+</div>')
+  
 };
 
 /**
@@ -224,15 +270,19 @@ $('#gitRefresh').click(function() {
  * ----------------------------------------------------------------------------------------------------------
  * Rooms
  */
+var inRoom = false;
+
 function joined(name) {
   $('#currentRoom').html("You are in room " + name + ".");
   $('#joinDiv').hide();
   $('#leaveDiv').show();
+  inRoom = true;
 }
 
 function left() {
   $('#joinDiv').show();
   $('#leaveDiv').hide();
+  inRoom = false;
 }
 
 $('#join').click(function() {
