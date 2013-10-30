@@ -604,10 +604,14 @@ class KRenderingFigureProvider {
         val library = getLibrary(edge.source)
         var junction = getFromLibrary("ren_junction", library)
         if (junction == null) {
-            junction = addToLibrary(renderingFactory.createKRectangle() => [
-                it.setRotation(45f);
-                it.setBackgroundColor(0, 0, 0)
-                it.placementData = renderingFactory.createKPointPlacementData() => [ ppd |
+            junction = addToLibrary(renderingFactory.createKPolygon() => [poly |
+                poly.points += createKPosition(4, 0)
+                poly.points += createKPosition(8, 4)
+                poly.points += createKPosition(4, 8)
+                poly.points += createKPosition(0, 4)
+                poly.points += createKPosition(4, 0)
+                poly.setBackgroundColor(0, 0, 0)
+                poly.placementData = renderingFactory.createKPointPlacementData() => [ ppd |
                     ppd.horizontalAlignment = HorizontalAlignment.CENTER
                     ppd.verticalAlignment = VerticalAlignment.CENTER
                     ppd.minWidth = 8
