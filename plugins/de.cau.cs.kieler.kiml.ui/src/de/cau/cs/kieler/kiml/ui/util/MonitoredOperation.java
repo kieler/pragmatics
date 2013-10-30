@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.kiml.ui.util;
 
 import java.util.LinkedList;
+import java.util.concurrent.ExecutorService;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -24,6 +25,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
 
+import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 
@@ -39,88 +42,35 @@ import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
  */
 public abstract class MonitoredOperation {
 
-    /** Wrapper class for progress monitors. */
-    private static class ProgressMonitorWrapper implements IProgressMonitor {
-
-        /** Enumeration of command types. */
-        enum CommandType {
-            BEGIN_TASK, SET_TASK_NAME, SUB_TASK, WORKED, INTERNAL_WORKED, DONE
+    /** maximal number of recursion levels for which progress is displayed. */
+    private static final int MAX_PROGRESS_LEVELS = 4;
+    
+    /** The executor service used to perform operations. */
+    private final ExecutorService executorService;
+    /** Timestamp of the operation's starting time. */
+    private long timestamp;
+    /** Whether the operation has been canceled. */
+    private boolean isCanceled;
+    
+    /**
+     * Create a monitored operation with the given executor service.
+     * 
+     * @param service an executor service for performing operations
+     */
+    public MonitoredOperation(final ExecutorService service) {
+        if (service == null) {
+            throw new NullPointerException();
         }
-        
-        /** Data type for progress monitor commands. */
-        static final class Command {
-            private CommandType type;
-            private String name;
-            private int work;
-            
-            private Command(final CommandType thetype, final String thename, final int thework) {
-                this.type = thetype;
-                this.name = thename;
-                this.work = thework;
-            }
-        }
-        
-        private LinkedList<Command> commands = new LinkedList<Command>();
-        private boolean canceled = false;
-        private Display display;
-        
-        public ProgressMonitorWrapper(final Display thedisplay) {
-            this.display = thedisplay;
-        }
-        
-        public void beginTask(final String name, final int totalWork) {
-            synchronized (commands) {
-                commands.addLast(new Command(CommandType.BEGIN_TASK, name, totalWork));
-            }
-            display.wake();
-        }
-        public void done() {
-            synchronized (commands) {
-                commands.addLast(new Command(CommandType.DONE, null, 0));
-            }
-            display.wake();
-        }
-        public void internalWorked(final double work) {
-            synchronized (commands) {
-                commands.addLast(new Command(CommandType.INTERNAL_WORKED, null, (int) work));
-            }
-            display.wake();
-        }
-        public void setTaskName(final String name) {
-            synchronized (commands) {
-                commands.addLast(new Command(CommandType.SET_TASK_NAME, name, 0));
-            }
-            display.wake();
-        }
-        public void subTask(final String name) {
-            synchronized (commands) {
-                commands.addLast(new Command(CommandType.SUB_TASK, name, 0));
-            }
-            display.wake();
-        }
-        public void worked(final int work) {
-            synchronized (commands) {
-                commands.addLast(new Command(CommandType.WORKED, null, work));
-            }
-            display.wake();
-        }
-        public boolean isCanceled() {
-            return canceled;
-        }
-        public void setCanceled(final boolean value) {
-            canceled = value;
-        }
-        
+        this.executorService = service;
     }
     
     /**
      * Execute the monitored operation.
      * 
-     * @param monitor the progress monitor for the operation, or {@code null} if the operation
-     *     is not run in monitored mode
+     * @param monitor the progress monitor for the operation
      * @return a status indicating success or failure
      */
-    protected abstract IStatus execute(IProgressMonitor monitor);
+    protected abstract IStatus execute(IKielerProgressMonitor monitor);
     
     /**
      * Executed in the UI thread before the operation starts. The default
@@ -144,6 +94,7 @@ public abstract class MonitoredOperation {
      * the operation is done.
      */
     public final void runMonitored() {
+        timestamp = System.currentTimeMillis();
         Display display = Display.getCurrent();
         if (display == null) {
             display = PlatformUI.getWorkbench().getDisplay();
@@ -162,6 +113,7 @@ public abstract class MonitoredOperation {
      * 
      */
     public final void runUnmonitored() {
+        timestamp = System.currentTimeMillis();
         Display display = Display.getCurrent();
         if (display == null) {
             display = PlatformUI.getWorkbench().getDisplay();
@@ -169,6 +121,24 @@ public abstract class MonitoredOperation {
         } else {
             runUnmonitored(display, true);
         }
+    }
+    
+    /**
+     * Return the timestamp of the operation's start, or 0 if it has not started yet.
+     * 
+     * @return the timestamp
+     */
+    public long getTimestamp() {
+        return timestamp;
+    }
+    
+    /**
+     * Cancel the operation. This flag can be queried with the
+     * {@link IKielerProgressMonitor#isCanceled()} method of the progress monitor passed in
+     * {@link #execute(IKielerProgressMonitor)}.
+     */
+    public void cancel() {
+        isCanceled = true;
     }
     
     /**
@@ -186,15 +156,16 @@ public abstract class MonitoredOperation {
                 preUIexec();
 
                 // execute the actual operation without progress monitor
-                Thread thread = new Thread("Monitored Operation") { //$NON-NLS-1$
-                    public void run() {
-                        status.set(execute(null));
-                        assert status.get() != null;
-                    }
-                };
-                thread.start();
+                synchronized (executorService) {
+                    executorService.execute(new Runnable() {
+                        public void run() {
+                            status.set(execute(new CancelableProgressMonitor()));
+                            assert status.get() != null;
+                        }
+                    });
+                }
                 
-                while (status.get() == null) {
+                while (status.get() == null && !isCanceled) {
                     boolean hasMoreToDispatch;
                     do {
                         hasMoreToDispatch = display.readAndDispatch();
@@ -204,7 +175,7 @@ public abstract class MonitoredOperation {
                     }
                 }
                 
-                if (status.get().getSeverity() == IStatus.OK) {
+                if (status.get().getSeverity() == IStatus.OK && !isCanceled) {
                     // execute UI code after the actual operation
                     postUIexec();
                 }
@@ -225,11 +196,11 @@ public abstract class MonitoredOperation {
                 }
             });
             
-            if (status.get() == null) {
+            if (status.get() == null && !isCanceled) {
                 // execute the actual operation without progress monitor
-                status.set(execute(null));
+                status.set(execute(new CancelableProgressMonitor()));
                 
-                if (status.get().getSeverity() == IStatus.OK) {
+                if (status.get().getSeverity() == IStatus.OK && !isCanceled) {
                     // execute UI code after the actual operation
                     display.syncExec(new Runnable() {
                         public void run() {
@@ -260,12 +231,13 @@ public abstract class MonitoredOperation {
         
         if (isUiThread) {
             // execute the operation in a new thread and the UI code in the current thread
-            Thread thread = new Thread("Monitored Operation") { //$NON-NLS-1$
-                public void run() {
-                    runOperation(display, monitor, status);
-                }
-            };
-            thread.start();
+            synchronized (executorService) {
+                executorService.execute(new Runnable() {
+                    public void run() {
+                        runOperation(display, monitor, status);
+                    }
+                });
+            }
             runUiHandler(display, monitor, status);
         } else {
             // execute the operation in the current thread and the UI code in the UI thread
@@ -312,7 +284,7 @@ public abstract class MonitoredOperation {
             final Maybe<IStatus> status) {
         try {
             synchronized (monitor) {
-                while (monitor.get() == null) {
+                while (monitor.get() == null && !isCanceled) {
                     try {
                         monitor.wait();
                     } catch (InterruptedException exception) {
@@ -320,8 +292,8 @@ public abstract class MonitoredOperation {
                     }
                 }
             }
-            if (status.get() == null) {
-                status.set(execute(monitor.get()));
+            if (status.get() == null && !isCanceled) {
+                status.set(execute(new ProgressMonitorAdapter(monitor.get(), MAX_PROGRESS_LEVELS)));
                 assert status.get() != null;
             }
         } finally {
@@ -357,17 +329,18 @@ public abstract class MonitoredOperation {
                         monitor.set(monitorWrapper);
                         monitor.notify();
                     }
-                    while (status.get() == null) {
+                    while (status.get() == null && !isCanceled) {
                         boolean hasMoreToDispatch = false;
                         do {
                             hasMoreToDispatch = display.readAndDispatch();
-                            monitorWrapper.canceled = uiMonitor.isCanceled();
+                            isCanceled = uiMonitor.isCanceled();
                         } while (hasMoreToDispatch && status.get() == null);
-                        if (status.get() == null) {
+                        if (status.get() == null && monitorWrapper.commands.isEmpty() && !isCanceled) {
                             display.sleep();
                         }
-                        while (!monitorWrapper.commands.isEmpty() && status.get() == null) {
-                            ProgressMonitorWrapper.Command command;
+                        while (!monitorWrapper.commands.isEmpty() && status.get() == null
+                                && !isCanceled) {
+                            WrapperCommand command;
                             synchronized (monitorWrapper.commands) {
                                 command = monitorWrapper.commands.removeFirst();
                             }
@@ -394,7 +367,7 @@ public abstract class MonitoredOperation {
                     }
                 }
             });
-            while (status.get() == null) {
+            while (status.get() == null && !isCanceled) {
                 boolean hasMoreToDispatch;
                 do {
                     hasMoreToDispatch = display.readAndDispatch();
@@ -405,7 +378,7 @@ public abstract class MonitoredOperation {
             }
             
             // execute UI code after the actual operation
-            if (status.get().getSeverity() == IStatus.OK) {
+            if (status.get().getSeverity() == IStatus.OK && !isCanceled) {
                 postUIexec();
             }
             
@@ -425,29 +398,161 @@ public abstract class MonitoredOperation {
             }
         }
     }
+    
+    
+    /**
+     * Data type for progress monitor wrapper commands.
+     */
+    private static final class WrapperCommand {
+        
+        /**
+         * Enumeration of progress monitor wrapper command types.
+         */
+        static enum Type {
+            BEGIN_TASK, SET_TASK_NAME, SUB_TASK, WORKED, INTERNAL_WORKED, DONE
+        }
+        
+        /** the command type. */
+        private Type type;
+        /** the task name for new subtasks. */
+        private String name;
+        /** the amount of work for progress reports. */
+        private int work;
+        
+        /**
+         * Create a progress monitor wrapper command.
+         * 
+         * @param thetype the command type
+         * @param thename the task name for new subtasks
+         * @param thework the amount of work for progress reports
+         */
+        private WrapperCommand(final Type thetype, final String thename, final int thework) {
+            this.type = thetype;
+            this.name = thename;
+            this.work = thework;
+        }
+        
+    }
 
     /**
-     * Execute the given runnable in the UI thread. If the current thread is the
-     * UI thread, the runnable is simply run. Otherwise it is executed either
-     * synchronously or asynchronously in the UI thread.
-     * 
-     * @param runnable a runnable
-     * @param synch if true or if the current thread is the UI thread, the method returns
-     *     only after execution of the runnable, else it returns immediately
-     * @deprecated use {@link Display#syncExec(Runnable)} or {@link Display#asyncExec(Runnable)} instead
+     * Wrapper class for Eclipse progress monitors.
      */
-    public static final void runInUI(final Runnable runnable, final boolean synch) {
-        Display display = Display.getCurrent();
-        if (display == null) {
-            display = PlatformUI.getWorkbench().getDisplay();
-            if (synch) {
-                display.syncExec(runnable);
-            } else {
-                display.asyncExec(runnable);
+    private class ProgressMonitorWrapper implements IProgressMonitor {
+        
+        /** queue of commands that have to be delegated to the wrapped Eclipse progress monitor. */
+        private final LinkedList<WrapperCommand> commands = new LinkedList<WrapperCommand>();
+        /** the display that is woken after each incoming command. */
+        private final Display display;
+        
+        /**
+         * Create a progress monitor wrapper.
+         * 
+         * @param thedisplay the display that is woken after each incoming monitor command
+         */
+        public ProgressMonitorWrapper(final Display thedisplay) {
+            this.display = thedisplay;
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public void beginTask(final String name, final int totalWork) {
+            synchronized (commands) {
+                commands.addLast(new WrapperCommand(WrapperCommand.Type.BEGIN_TASK, name, totalWork));
             }
-        } else {
-            runnable.run();
-        }   
+            display.wake();
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public void done() {
+            synchronized (commands) {
+                commands.addLast(new WrapperCommand(WrapperCommand.Type.DONE, null, 0));
+            }
+            display.wake();
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public void internalWorked(final double work) {
+            synchronized (commands) {
+                commands.addLast(new WrapperCommand(WrapperCommand.Type.INTERNAL_WORKED, null,
+                        (int) work));
+            }
+            display.wake();
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public void setTaskName(final String name) {
+            synchronized (commands) {
+                commands.addLast(new WrapperCommand(WrapperCommand.Type.SET_TASK_NAME, name, 0));
+            }
+            display.wake();
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public void subTask(final String name) {
+            synchronized (commands) {
+                commands.addLast(new WrapperCommand(WrapperCommand.Type.SUB_TASK, name, 0));
+            }
+            display.wake();
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public void worked(final int work) {
+            synchronized (commands) {
+                commands.addLast(new WrapperCommand(WrapperCommand.Type.WORKED, null, work));
+            }
+            display.wake();
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public boolean isCanceled() {
+            return isCanceled;
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public void setCanceled(final boolean value) {
+            isCanceled = true;
+        }
+        
+    }
+    
+    
+    /**
+     * A progress monitor that can be canceled with the operation's {@link #cancel()} method.
+     */
+    private class CancelableProgressMonitor extends BasicProgressMonitor {
+        
+        /**
+         * Create a cancelable progress monitor.
+         */
+        CancelableProgressMonitor() {
+            super(0);
+        }
+        
+        /**
+         * Return whether the operation has been canceled.
+         * 
+         * @return true if the operation has been canceled
+         */
+        @Override
+        public boolean isCanceled() {
+            return isCanceled;
+        }
+        
     }
     
 }
