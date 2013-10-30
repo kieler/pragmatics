@@ -208,6 +208,8 @@ public final class GraphicsUtils {
     public static void waitForImages(final EditorIcon editorIcon) {
         ImageReadynessNotifier notifier = new ImageReadynessNotifier();
         
+        System.out.println("waitForImages");
+        
         // Iterate over the complete hierarchy of the editor icon
         Queue<EditorIcon> icons = Lists.newLinkedList();
         icons.add(editorIcon);
@@ -232,6 +234,8 @@ public final class GraphicsUtils {
         
         // Wait for the images to finish loading
         notifier.waitForAllImages();
+        
+        System.out.println("done waiting");
     }
     
     /**

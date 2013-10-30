@@ -101,6 +101,8 @@ final class ImageLoadWorker implements Runnable {
      */
     def void reset(Entity newEntity) {
         entity = newEntity
+        loadedIcons = null
+        result = null
     }
     
     /**
@@ -144,7 +146,7 @@ final class ImageLoadWorker implements Runnable {
     def private KRendering createRenderingFromIcon(EditorIcon icon) {
         GraphicsUtils::waitForImages(icon);
         val ptFigure = icon.createBackgroundFigure()
-        GraphicsUtils::repairEditorIcon(icon, ptFigure)
+//        GraphicsUtils::repairEditorIcon(icon, ptFigure)
         
         val figureImage = ptFigure.toImage()
         val width = figureImage.getWidth(null)
