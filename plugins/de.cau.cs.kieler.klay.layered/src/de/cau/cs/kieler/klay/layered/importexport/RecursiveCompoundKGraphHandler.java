@@ -73,9 +73,6 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  */
 public class RecursiveCompoundKGraphHandler {
     
-    /** @deprecated this should be removed once we have decided which approach to use. */
-    public static final boolean USE_NEW_APPROACH = true;
-    
     /** the layout algorithm used for regular layout runs. */
     private KlayLayered klayLayered;
     /** the hash code counter used to create graph elements. */

@@ -169,6 +169,9 @@ public final class KlayLayered {
             // execute layout on each component using a progress monitor subtask
             float compWork = 1.0f / components.size();
             for (LGraph comp : components) {
+                if (monitor.isCanceled()) {
+                    return lgraph;
+                }
                 layout(comp, theMonitor.subTask(compWork));
             }
         }
@@ -607,9 +610,6 @@ public final class KlayLayered {
         }
 
         // Additional dependencies
-        if (graphProperties.contains(GraphProperties.FLAT_HIERARCHICAL)) {
-            configuration.addAll(FLATTENED_HIERARCHY_PROCESSING_ADDITIONS);
-        }
         if (graphProperties.contains(GraphProperties.COMMENTS)) {
             configuration.addLayoutProcessor(IntermediateProcessingConfiguration.BEFORE_PHASE_1,
                     LayoutProcessorStrategy.COMMENT_PREPROCESSOR);
@@ -812,27 +812,5 @@ public final class KlayLayered {
                     EnumSet.of(LayoutProcessorStrategy.LAYER_SIZE_AND_GRAPH_HEIGHT_CALCULATOR),
 
                     null);
-
-    /** additional processor dependencies for flattened hierarchical graphs. */
-    private static final IntermediateProcessingConfiguration FLATTENED_HIERARCHY_PROCESSING_ADDITIONS =
-            new IntermediateProcessingConfiguration(
-
-            // Before Phase 1
-                    EnumSet.of(LayoutProcessorStrategy.COMPOUND_CYCLE_PROCESSOR),
-
-                    // Before Phase 2
-                    null,
-
-                    // Before Phase 3
-                    EnumSet.of(LayoutProcessorStrategy.COMPOUND_DUMMY_EDGE_REMOVER),
-
-                    // Before Phase 4
-                    EnumSet.of(LayoutProcessorStrategy.SUBGRAPH_ORDERING_PROCESSOR,
-                            LayoutProcessorStrategy.COMPOUND_SIDE_PROCESSOR),
-
-                    null,
-
-                    // After Phase 5
-                    EnumSet.of(LayoutProcessorStrategy.COMPOUND_GRAPH_RESTORER));
 
 }

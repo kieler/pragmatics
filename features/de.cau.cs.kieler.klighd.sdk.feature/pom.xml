@@ -9,7 +9,7 @@
   </parent>
   <groupId>de.cau.cs.kieler</groupId>
   <artifactId>de.cau.cs.kieler.klighd.sdk.feature</artifactId>
-  <version>0.3.0-SNAPSHOT</version>
+  <version>0.2.0-SNAPSHOT</version>
   <packaging>eclipse-feature</packaging>
   <build>
     <plugins>
@@ -24,6 +24,9 @@
             <goals>
               <goal>source-feature</goal>
             </goals>
+            <configuration>
+              <labelSuffix>${sourceFeatureLabelSuffix}</labelSuffix>
+            </configuration>
           </execution>
         </executions>
       </plugin>

@@ -62,6 +62,8 @@ public interface IDiagramLayoutManager<T> extends IAdapterFactory {
      * with according layout configurators.
      * <p/>
      * At least one of the two parameters must be non-null.
+     * <p/>
+     * This method is usually called from the UI thread.
      * 
      * @param workbenchPart
      *            the workbench part for which layout is performed, or {@code null} if there
@@ -77,6 +79,8 @@ public interface IDiagramLayoutManager<T> extends IAdapterFactory {
     /**
      * Apply the computed layout back to the diagram. Graph elements whose modification flag
      * was not set during layout should be ignored.
+     * <p/>
+     * This method is usually called from the UI thread.
      * 
      * @param mapping a layout mapping that was created by this layout manager
      * @param zoomToFit whether the diagram should zoom to fit

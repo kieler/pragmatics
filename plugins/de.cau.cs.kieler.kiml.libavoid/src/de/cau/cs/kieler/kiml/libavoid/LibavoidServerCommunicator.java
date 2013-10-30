@@ -38,6 +38,7 @@ import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
@@ -150,6 +151,8 @@ public class LibavoidServerCommunicator {
 
             // apply the layout back to the KGraph
             applyLayout(layoutNode, layoutInformation, progressMonitor.subTask(1));
+            // calculate junction points
+            calculateJunctionPoints(layoutNode);
             // clean up the Libavoid server process
             lvServer.cleanup(Cleanup.NORMAL);
 
@@ -209,6 +212,22 @@ public class LibavoidServerCommunicator {
         }
 
         progressMonitor.done();
+    }
+    
+    /**
+     * Calculates and sets the junction points for each edge of the graph.
+     * 
+     * @param graph
+     *            the graph.
+     */
+    private void calculateJunctionPoints(final KNode graph) {
+        for (KNode n : graph.getChildren()) {
+            for (KEdge edge : n.getOutgoingEdges()) {
+                KVectorChain junctionPoints = KimlUtil.determineJunctionPoints(edge);
+                edge.getData(KLayoutData.class).setProperty(LayoutOptions.JUNCTION_POINTS,
+                        junctionPoints);
+            }
+        }
     }
 
     /**

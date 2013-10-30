@@ -99,10 +99,10 @@
       <category name="kieler-sources"/>
    </feature>
 
-   <feature url="features/de.cau.cs.kieler.klighd.sdk.feature_0.2.1.qualifier.jar" id="de.cau.cs.kieler.klighd.sdk.feature" version="0.3.0.qualifier">
+   <feature url="features/de.cau.cs.kieler.klighd.sdk.feature_0.2.0.qualifier.jar" id="de.cau.cs.kieler.klighd.sdk.feature" version="0.2.0.qualifier">
       <category name="kieler-klighd"/>
    </feature>
-   <feature url="features/de.cau.cs.kieler.klighd.sdk.feature.source_0.2.1.qualifier.jar" id="de.cau.cs.kieler.klighd.sdk.feature.source" version="0.3.0.qualifier">
+   <feature url="features/de.cau.cs.kieler.klighd.sdk.feature.source_0.2.0.qualifier.jar" id="de.cau.cs.kieler.klighd.sdk.feature.source" version="0.2.0.qualifier">
       <category name="kieler-sources"/>
    </feature>
    

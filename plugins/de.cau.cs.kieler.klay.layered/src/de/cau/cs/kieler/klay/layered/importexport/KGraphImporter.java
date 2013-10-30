@@ -130,15 +130,9 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         EnumSet<GraphProperties> graphProperties = EnumSet.noneOf(GraphProperties.class);
         layeredGraph.setProperty(Properties.GRAPH_PROPERTIES, graphProperties);
 
-        // method will be called from the subclass CompoundKGraphImporter. The following part is not
-        // to be executed in this case.
-        boolean isCompound = sourceShapeLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY)
-                && !RecursiveCompoundKGraphHandler.USE_NEW_APPROACH;
-        if (!isCompound) {
-            // transform everything
-            transformNodesAndPorts(kgraph, elemMap);
-            transformEdges(kgraph, elemMap);
-        }
+        // transform everything
+        transformNodesAndPorts(kgraph, elemMap);
+        transformEdges(kgraph, elemMap);
 
         layeredGraph.setProperty(Properties.ELEMENT_MAP, elemMap);
         return layeredGraph;
@@ -298,6 +292,8 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         // add a new node to the layered graph, copying its position
         LNode newNode = new LNode(layeredGraph);
         newNode.setProperty(Properties.ORIGIN, node);
+        newNode.getSize().x = nodeLayout.getWidth();
+        newNode.getSize().y = nodeLayout.getHeight();
         newNode.getPosition().x = nodeLayout.getXpos();
         newNode.getPosition().y = nodeLayout.getYpos();
 
@@ -436,15 +432,6 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             }
         }
 
-        // set the size of the new node AFTER ports have been created, since the original size
-        // is required for port side and offset calculation
-//        KVector ratio = KimlUtil.resizeNode(node);
-//        if (ratio != null && (ratio.x != 1 || ratio.y != 1)) {
-//            newNode.setProperty(Properties.RESIZE_RATIO, ratio);
-//        }
-        newNode.getSize().x = nodeLayout.getWidth();
-        newNode.getSize().y = nodeLayout.getHeight();
-
         // add the node's labels
         for (KLabel klabel : node.getLabels()) {
             KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
@@ -537,8 +524,6 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
     protected void transformEdge(final KEdge kedge, final KNode graph,
             final Map<KGraphElement, LGraphElement> elemMap) {
         KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
-        boolean isCompound = graph.getData(KShapeLayout.class).getProperty(
-                LayoutOptions.LAYOUT_HIERARCHY) && !RecursiveCompoundKGraphHandler.USE_NEW_APPROACH;
 
         // create a layered edge
         LEdge newEdge = new LEdge(layeredGraph);
@@ -548,83 +533,81 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         // the following is not needed in case of compound graph handling, as source and target will
         // be set by calling function.
 
-        if (!isCompound) {
-            // retrieve source and target
-            LNode sourceNode = null;
-            LPort sourcePort = null;
-            LNode targetNode = null;
-            LPort targetPort = null;
+        // retrieve source and target
+        LNode sourceNode = null;
+        LPort sourcePort = null;
+        LNode targetNode = null;
+        LPort targetPort = null;
 
-            // check if the edge source is an external port
-            if (kedge.getSource() == graph && kedge.getSourcePort() != null) {
-                LGraphElement elem = elemMap.get(kedge.getSourcePort());
-                if (elem instanceof LNode) {
-                    sourceNode = (LNode) elem;
-                    // the port could be missing in the map if kedge is not in the port's edge list
-                    if (sourceNode != null) {
-                        sourcePort = sourceNode.getPorts().get(0);
-                    }
-                } else if (elem != null) {
-                    throw new UnsupportedGraphException("Inconsistent source port reference found.");
+        // check if the edge source is an external port
+        if (kedge.getSource() == graph && kedge.getSourcePort() != null) {
+            LGraphElement elem = elemMap.get(kedge.getSourcePort());
+            if (elem instanceof LNode) {
+                sourceNode = (LNode) elem;
+                // the port could be missing in the map if kedge is not in the port's edge list
+                if (sourceNode != null) {
+                    sourcePort = sourceNode.getPorts().get(0);
                 }
-            } else {
-                sourceNode = (LNode) elemMap.get(kedge.getSource());
-                LGraphElement elem = elemMap.get(kedge.getSourcePort());
-                if (elem instanceof LPort) {
-                    sourcePort = (LPort) elem;
-                } else if (elem != null) {
-                    throw new UnsupportedGraphException("Inconsistent source port reference found.");
+            } else if (elem != null) {
+                throw new UnsupportedGraphException("Inconsistent source port reference found.");
+            }
+        } else {
+            sourceNode = (LNode) elemMap.get(kedge.getSource());
+            LGraphElement elem = elemMap.get(kedge.getSourcePort());
+            if (elem instanceof LPort) {
+                sourcePort = (LPort) elem;
+            } else if (elem != null) {
+                throw new UnsupportedGraphException("Inconsistent source port reference found.");
+            }
+        }
+
+        // check if the edge target is an external port
+        if (kedge.getTarget() == graph && kedge.getTargetPort() != null) {
+            LGraphElement elem = elemMap.get(kedge.getTargetPort());
+            if (elem instanceof LNode) {
+                targetNode = (LNode) elem;
+                // the port could be missing in the map if kedge is not in the port's edge list
+                if (targetNode != null) {
+                    targetPort = targetNode.getPorts().get(0);
                 }
+            } else if (elem != null) {
+                throw new UnsupportedGraphException("Inconsistent target port reference found.");
+            }
+        } else {
+            targetNode = (LNode) elemMap.get(kedge.getTarget());
+            LGraphElement elem = elemMap.get(kedge.getTargetPort());
+            if (elem instanceof LPort) {
+                targetPort = (LPort) elem;
+            } else if (elem != null) {
+                throw new UnsupportedGraphException("Inconsistent target port reference found.");
+            }
+        }
+        
+        if (sourceNode != null && targetNode != null) {
+            // if we have a self-loop, set the appropriate graph property
+            if (sourceNode == targetNode) {
+                Set<GraphProperties> graphProperties = layeredGraph.getProperty(
+                        Properties.GRAPH_PROPERTIES);
+                graphProperties.add(GraphProperties.SELF_LOOPS);
             }
 
-            // check if the edge target is an external port
-            if (kedge.getTarget() == graph && kedge.getTargetPort() != null) {
-                LGraphElement elem = elemMap.get(kedge.getTargetPort());
-                if (elem instanceof LNode) {
-                    targetNode = (LNode) elem;
-                    // the port could be missing in the map if kedge is not in the port's edge list
-                    if (targetNode != null) {
-                        targetPort = targetNode.getPorts().get(0);
-                    }
-                } else if (elem != null) {
-                    throw new UnsupportedGraphException("Inconsistent target port reference found.");
-                }
-            } else {
-                targetNode = (LNode) elemMap.get(kedge.getTarget());
-                LGraphElement elem = elemMap.get(kedge.getTargetPort());
-                if (elem instanceof LPort) {
-                    targetPort = (LPort) elem;
-                } else if (elem != null) {
-                    throw new UnsupportedGraphException("Inconsistent target port reference found.");
-                }
+            // create source and target ports if they do not exist yet
+            if (sourcePort == null) {
+                sourcePort = createPort(sourceNode, edgeLayout.getSourcePoint().createVector(),
+                        PortType.OUTPUT);
+            } else if (kedge.getSourcePort().getNode() != kedge.getSource()) {
+                throw new UnsupportedGraphException("Inconsistent source port reference found.");
             }
             
-            if (sourceNode != null && targetNode != null) {
-                // if we have a self-loop, set the appropriate graph property
-                if (sourceNode == targetNode) {
-                    Set<GraphProperties> graphProperties = layeredGraph.getProperty(
-                            Properties.GRAPH_PROPERTIES);
-                    graphProperties.add(GraphProperties.SELF_LOOPS);
-                }
-    
-                // create source and target ports if they do not exist yet
-                if (sourcePort == null) {
-                    sourcePort = createPort(sourceNode, edgeLayout.getSourcePoint().createVector(),
-                            PortType.OUTPUT);
-                } else if (kedge.getSourcePort().getNode() != kedge.getSource()) {
-                    throw new UnsupportedGraphException("Inconsistent source port reference found.");
-                }
-                
-                if (targetPort == null) {
-                    targetPort = createPort(targetNode, edgeLayout.getTargetPoint().createVector(),
-                            PortType.INPUT);
-                } else if (kedge.getTargetPort().getNode() != kedge.getTarget()) {
-                    throw new UnsupportedGraphException("Inconsistent target port reference found.");
-                }
-                
-                newEdge.setSource(sourcePort);
-                newEdge.setTarget(targetPort);
+            if (targetPort == null) {
+                targetPort = createPort(targetNode, edgeLayout.getTargetPoint().createVector(),
+                        PortType.INPUT);
+            } else if (kedge.getTargetPort().getNode() != kedge.getTarget()) {
+                throw new UnsupportedGraphException("Inconsistent target port reference found.");
             }
+            
+            newEdge.setSource(sourcePort);
+            newEdge.setTarget(targetPort);
         }
 
         // transform the edge's labels
@@ -673,13 +656,6 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         newEdge.copyProperties(edgeLayout);
         // clear junction points, since they are recalculated from scratch
         newEdge.setProperty(LayoutOptions.JUNCTION_POINTS, null);
-        
-        // method will be called from the subclass CompoundKGraphImporter. The following part is
-        // to be executed in this case.
-        if (isCompound) {
-            // put edge to elementMap
-            elemMap.put(kedge, newEdge);
-        }
     }
 
     // //////////////////////////////////////////////////////////////////////////////

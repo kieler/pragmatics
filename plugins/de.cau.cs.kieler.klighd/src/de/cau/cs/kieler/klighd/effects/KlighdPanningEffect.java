@@ -106,7 +106,7 @@ public class KlighdPanningEffect extends AbstractEffect {
             viewer.centerOn(element, animationDuration);
         }
         if (zoomLevel != 0) {
-            viewer.zoom(zoomLevel, animationDuration);
+            viewer.zoomToLevel(zoomLevel, animationDuration);
         }
     }
 

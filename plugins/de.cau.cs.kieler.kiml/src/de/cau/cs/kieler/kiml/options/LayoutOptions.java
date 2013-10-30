@@ -109,6 +109,11 @@ public final class LayoutOptions {
      * No layout is done for the associated element. This is used to mark parts of a diagram to
      * avoid their inclusion in the layout graph, or to mark parts of the layout graph to prevent
      * layout engines from processing them. [programmatically set]
+     * 
+     * If you wish to exclude the contents of a compound node from automatic layout, while the node
+     * itself is still considered on its own layer, set
+     * {@link de.cau.cs.kieler.kiml.util.FixedLayoutProvider FixedLayoutProvider#ID} as
+     * {@link LayoutOptions#ALGORITHM} for this node.
      */
     public static final IProperty<Boolean> NO_LAYOUT = new Property<Boolean>(
             "de.cau.cs.kieler.noLayout", false);

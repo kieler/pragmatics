@@ -51,6 +51,7 @@ import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.Transformation
 import static extension com.google.common.base.Strings.*
 import de.cau.cs.kieler.core.krendering.KRenderingRef
 import de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants
+import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizTool
 
 /**
  * Enriches a KGraph model freshly transformed from a Ptolemy2 model with the KRendering information
@@ -76,6 +77,8 @@ class Ptolemy2KGraphVisualization {
     
     /** Rendering factory used to create stuff. */
     val renderingFactory = KRenderingFactory::eINSTANCE
+    /** Whether Graphviz is available to be used or not. */
+    val isGraphvizAvailable = GraphvizTool::getDotExecutable(false) != null
     /** alpha value of the background of expanded compound nodes. */
     var compoundNodeAlpha = 10
     
@@ -632,7 +635,7 @@ class Ptolemy2KGraphVisualization {
     def private void setLayoutAlgorithm(KNode node) {
         val layout = node.layout
         // Check if this is a state machine
-        if (node.markedAsStateMachineContainer) {
+        if (node.markedAsStateMachineContainer && isGraphvizAvailable) {
             layout.setProperty(LayoutOptions::ALGORITHM, "de.cau.cs.kieler.graphviz.dot")
             layout.setProperty(LayoutOptions::DIRECTION, Direction::RIGHT)
         } else {
