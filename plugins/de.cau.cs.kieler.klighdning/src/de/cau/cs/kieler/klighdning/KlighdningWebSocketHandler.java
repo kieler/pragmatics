@@ -359,6 +359,19 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
 
                 broadcastJson(Broadcast.AllButThis, "type", "TRANSFORM", "transform", transform);
                 broadcastPermaLink();
+                
+            } else if (type.equals("MOUSEPOS")) {
+                String posX = (String) json.get("posX");
+                String posY = (String) json.get("posY");
+                
+                broadcastJson(Broadcast.AllButThis, "type", "MOUSEPOS", "posX", posX, "posY", posY);
+            
+            } else if (type.equals("MOUSEENTER")) {
+                broadcastJson(Broadcast.AllButThis, "type", "MOUSEENTER");
+                
+            } else if (type.equals("MOUSELEAVE")) {
+                broadcastJson(Broadcast.AllButThis, "type", "MOUSELEAVE");
+                
             }
 
         } catch (Exception e) {

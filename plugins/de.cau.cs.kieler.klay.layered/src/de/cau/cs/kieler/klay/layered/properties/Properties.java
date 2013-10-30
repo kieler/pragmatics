@@ -254,6 +254,14 @@ public final class Properties {
      */
     public static final IProperty<KVector> PORT_ANCHOR = new Property<KVector>(
             "de.cau.cs.kieler.klay.layered.portAnchor");
+    
+    /** Determines the original size of a big node. */
+    public static final Property<Float> BIG_NODE_ORIGINAL_SIZE = new Property<Float>(
+            "de.cau.cs.kieler.klay.layered.bigNodeOriginalSize", 0f);
+
+    /** Specifies if the corresponding node is the first node in a big node chain. */
+    public static final Property<Boolean> BIG_NODE_INITIAL = new Property<Boolean>(
+            "de.cau.cs.kieler.klay.layered.bigNodeInitial", false);
 
     // /////////////////////////////////////////////////////////////////////////////
     // USER INTERFACE OPTIONS
