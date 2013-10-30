@@ -24,7 +24,6 @@ import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -38,13 +37,13 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.google.common.collect.Lists;
-
 import ptolemy.data.expr.XMLParser;
 import ptolemy.kernel.util.Attribute;
 import ptolemy.vergil.icon.EditorIcon;
 import ptolemy.vergil.icon.ImageIcon;
-import ptolemy.vergil.kernel.attributes.ImageAttribute;
+
+import com.google.common.collect.Lists;
+
 import de.cau.cs.kieler.core.krendering.KAreaPlacementData;
 import de.cau.cs.kieler.core.krendering.KBackground;
 import de.cau.cs.kieler.core.krendering.KColor;
@@ -63,9 +62,6 @@ import de.cau.cs.kieler.core.krendering.KRenderingFactory;
 import de.cau.cs.kieler.core.krendering.KText;
 import de.cau.cs.kieler.core.krendering.KXPosition;
 import de.cau.cs.kieler.core.krendering.KYPosition;
-import diva.canvas.CompositeFigure;
-import diva.canvas.Figure;
-import diva.canvas.toolbox.ImageFigure;
 
 /**
  * Contains utility methods for handling SVG output from Ptolemy and graphics-related stuff.
@@ -138,77 +134,20 @@ public final class GraphicsUtils {
     
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // EditorIcon Repair
+    // EditorIcon Loading
+    
     
     /**
-     * Tries to repair editor icons that have images in them with a scaling percentage. The scaling
-     * percentage isn't always applied by Ptolemy, which is what this method tries to repair.
+     * Try to wait for the images or for the scaled images contained in the icon hierarchy rooted at the
+     * given {@code EditorIcon} to finish loading. This method has to be called from the AWT event queue.
+     * Also, it has to be called twice from separate {@link Runnable}s, once with {@code firstCall} set
+     * to {@code true}, once with it set to {@code false}.
      * 
-     * @param editorIcon the editor icon to repair.
+     * @param editorIcon the editor icon to load.
+     * @param firstCall whether this is the first call to this method or the second.
      */
-    public static void repairEditorIcon(final EditorIcon editorIcon, final Figure figure) {
-//        // We can stop immediately if the figure is not a CompositeFigure
-//        if (!(figure instanceof CompositeFigure)) {
-//            return;
-//        }
-//        CompositeFigure compFig = (CompositeFigure) figure;
-//        
-//        double scalingPercentage = 0.0;
-//        
-//        // Look for ImageAttributes
-//        for (Object attr : editorIcon.attributeList()) {
-//            if (attr instanceof ImageAttribute) {
-//                // Retrieve the scaling percentage from the image
-//                ImageAttribute imgAttr = (ImageAttribute) attr;
-//                if (imgAttr.scale != null) {
-//                    try {
-//                        scalingPercentage = Double.parseDouble(imgAttr.scale.getExpression());
-//                    } catch (NumberFormatException e) {
-//                        // Simply continue to the next attribute
-//                        continue;
-//                    }
-//                }
-//            }
-//        }
-//        
-//        // If the scaling percentage is <= 0 or >= 100, we don't do anything
-//        if (scalingPercentage <= 0.0 || scalingPercentage >= 100.0) {
-//            return;
-//        }
-//        
-//        // Look for an ImageFigure in the composite figure; we might need to scale it.
-//        Iterator<?> figureIterator = compFig.figures();
-//        while (figureIterator.hasNext()) {
-//            Object figObj = figureIterator.next();
-//            
-//            // We're interested in ImageFigures
-//            if (figObj instanceof ImageFigure) {
-//                // Retrieve the figure's image
-//                ImageFigure imgFig = (ImageFigure) figObj;
-//                Image figImg = imgFig.getImage();
-//                if (figImg == null) {
-//                    continue;
-//                }
-//
-//                // Check if the figure's image is unusually large (both dimensions > 150 pixels, perhaps)
-//                double width = figImg.getWidth(null);
-//                double height = figImg.getHeight(null);
-//                
-//                if (width > 150 && height > 150) {
-//                    Image scaledImage = figImg.getScaledInstance(
-//                            (int) (width * scalingPercentage / 100.0), -1, Image.SCALE_SMOOTH);
-//                    ImageReadynessNotifier notifier = new ImageReadynessNotifier();
-//                    notifier.waitForImage(scaledImage);
-//                    imgFig.setImage(scaledImage);
-//                }
-//            }
-//        }
-    }
-    
-    public static void waitForImages(final EditorIcon editorIcon) {
+    public static void waitForImages(final EditorIcon editorIcon, final boolean firstCall) {
         ImageReadynessNotifier notifier = new ImageReadynessNotifier();
-        
-        System.out.println("waitForImages");
         
         // Iterate over the complete hierarchy of the editor icon
         Queue<EditorIcon> icons = Lists.newLinkedList();
@@ -219,7 +158,7 @@ public final class GraphicsUtils {
             
             // If we have an ImageIcon, we need to wait for its images to load
             if (currentIcon instanceof ImageIcon) {
-                notifier.addImageIcon((ImageIcon) currentIcon);
+                notifier.addImageIcon((ImageIcon) currentIcon, !firstCall);
             }
             
             // Check for sub-icons that are drawn; these need to be traversed as well
@@ -234,12 +173,11 @@ public final class GraphicsUtils {
         
         // Wait for the images to finish loading
         notifier.waitForAllImages();
-        
-        System.out.println("done waiting");
     }
     
     /**
-     * Helper class that waits for an image to be ready to be drawn.
+     * Helper class that provides the means to wait for a number of {@code ImageIcon} instances to
+     * finish loading their images or scaled images.
      * 
      * @author cds
      */
@@ -256,10 +194,10 @@ public final class GraphicsUtils {
          * 
          * @param imageIcon the new ImageIcon to wait for.
          */
-        public void addImageIcon(final ImageIcon imageIcon) {
+        public void addImageIcon(final ImageIcon imageIcon, final boolean scaled) {
             synchronized (monitor) {
                 // We need to find the imageIcon's private _scaledImage
-                Image scaledImage = retrieveImage(imageIcon, true);
+                Image scaledImage = retrieveImage(imageIcon, scaled);
                 if (scaledImage != null) {
                     // Wait for it to be fully prepared
                     Toolkit tk = Toolkit.getDefaultToolkit();
@@ -299,11 +237,12 @@ public final class GraphicsUtils {
             String fieldName = scaled ? "_scaledImage" : "_image";
             
             try {
-                Field imageField = ImageIcon.class.getField(fieldName);
+                Field imageField = ImageIcon.class.getDeclaredField(fieldName);
                 imageField.setAccessible(true);
                 return (Image) imageField.get(imageIcon);
             } catch (Exception e) {
                 // We can't get at the image
+                System.out.println(e);
                 return null;
             }
         }
@@ -318,7 +257,6 @@ public final class GraphicsUtils {
                     if (images.isEmpty()) {
                         monitor.notify();
                     }
-                    
                     return false;
                 } else {
                     return true;

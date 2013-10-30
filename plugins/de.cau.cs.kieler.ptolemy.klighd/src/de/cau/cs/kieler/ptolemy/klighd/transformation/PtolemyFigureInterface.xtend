@@ -64,6 +64,19 @@ final class PtolemyFigureInterface {
             return null;
         }
         
+        /* The following stuff is a bit complicated and perhaps a tiny bit ugly, but it works... We're
+         * resetting our image load worker to make it ready for another go at preparing the KRendering
+         * representation of our entity. To avoid exceptions, this has to be done in the AWT event queue.
+         * When we ask Ptolemy to load the entity's editor icons (and if it has found some), there might
+         * be ImageIcons involved. Those wait for their image to finish loading, which the load worker
+         * then does as well. Once they've finished loading, though, the image might have to be scaled
+         * as well -- which the ImageIcon does through a runnable in the AWT event queue. Thus, our
+         * load worker stops executing, with its result still being null. Then, we start it again. This
+         * time, all images have finished loading and all scaling operations have started. All it does
+         * now is wait for the scaled images to become available. It then constructs images for the
+         * entities, turns them into a KRendering, and terminates.
+         */
+        
         imageLoadWorker.reset(entity)
         while (imageLoadWorker.getResult() == null) {
             EventQueue.invokeAndWait(imageLoadWorker)
@@ -87,9 +100,13 @@ final class ImageLoadWorker implements Runnable {
     
     /** The entity whose icon to load. */
     private Entity entity = null;
-    
+    /** EditorIcons we have loaded for the entity. */
     private List<EditorIcon> loadedIcons = null;
-    
+    /**
+     * Whether we have already waited for the unscaled images to finish loading. If so, we only need
+     * to wait for the scaled images to finish loading the next time around.
+     */
+    private boolean unscaledImagesLoaded = false;
     /** The rendering resulting from the loading operations. */
     private KRendering result = null;
     
@@ -103,6 +120,7 @@ final class ImageLoadWorker implements Runnable {
         entity = newEntity
         loadedIcons = null
         result = null
+        unscaledImagesLoaded = false;
     }
     
     /**
@@ -133,7 +151,17 @@ final class ImageLoadWorker implements Runnable {
                 // by terminating and letting createPtolemyFigureRendering create us again
             }
         } else {
-            result = createRenderingFromIcon(loadedIcons.get(0))
+            // Icons have been loaded -- we'll use the first one. We will now be waiting for the regular
+            // images, then return, and on the next attempt wait for the scaled images
+            if (unscaledImagesLoaded) {
+                GraphicsUtils::waitForImages(loadedIcons.get(0), false);
+                
+                // We should now have all scaled images; create the rendering!
+                result = createRenderingFromIcon(loadedIcons.get(0))
+            } else {
+                GraphicsUtils::waitForImages(loadedIcons.get(0), true);
+                unscaledImagesLoaded = true;
+            }
         }
     }
     
@@ -144,9 +172,7 @@ final class ImageLoadWorker implements Runnable {
      * @return the KRendering representation of the icon.
      */
     def private KRendering createRenderingFromIcon(EditorIcon icon) {
-        GraphicsUtils::waitForImages(icon);
         val ptFigure = icon.createBackgroundFigure()
-//        GraphicsUtils::repairEditorIcon(icon, ptFigure)
         
         val figureImage = ptFigure.toImage()
         val width = figureImage.getWidth(null)
