@@ -17,7 +17,6 @@ import com.google.inject.Inject
 import de.cau.cs.kieler.core.kgraph.KEdge
 import de.cau.cs.kieler.core.kgraph.KGraphElement
 import de.cau.cs.kieler.core.kgraph.KNode
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
 import de.cau.cs.kieler.kiml.options.LayoutOptions
 
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
@@ -149,8 +148,7 @@ class MarkerExtensions {
      * @param node the node to be marked.
      */
     def void markAsHypernode(KNode node) {
-        val shapeLayout = node.getData(typeof(KShapeLayout))
-        shapeLayout.setProperty(LayoutOptions::HYPERNODE, true)
+        node.safeLayout.setProperty(LayoutOptions::HYPERNODE, true)
     }
     
     /**
@@ -160,8 +158,7 @@ class MarkerExtensions {
      * @return {@code true} if the node is marked as being a hypernode, {@code false} otherwise.
      */
     def boolean isMarkedAsHypernode(KNode node) {
-        val shapeLayout = node.getData(typeof(KShapeLayout))
-        return shapeLayout.getProperty(LayoutOptions::HYPERNODE)
+        return node.safeLayout.getProperty(LayoutOptions::HYPERNODE)
     }
     
     /**
@@ -170,8 +167,7 @@ class MarkerExtensions {
      * @param node the node to be marked.
      */
     def void markAsComment(KNode node) {
-        val shapeLayout = node.getData(typeof(KShapeLayout))
-        shapeLayout.setProperty(LayoutOptions::COMMENT_BOX, true)
+        node.safeLayout.setProperty(LayoutOptions::COMMENT_BOX, true)
     }
     
     /**
@@ -181,8 +177,7 @@ class MarkerExtensions {
      * @return {@code true} if the node is marked as being a comment node, {@code false} otherwise.
      */
     def boolean isMarkedAsComment(KNode node) {
-        val shapeLayout = node.getData(typeof(KShapeLayout))
-        return shapeLayout.getProperty(LayoutOptions::COMMENT_BOX)
+        return node.safeLayout.getProperty(LayoutOptions::COMMENT_BOX)
     }
     
     /**

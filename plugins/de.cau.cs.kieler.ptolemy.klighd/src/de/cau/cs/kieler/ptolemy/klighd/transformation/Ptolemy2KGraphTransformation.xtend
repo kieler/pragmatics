@@ -141,7 +141,7 @@ class Ptolemy2KGraphTransformation {
             return kClassNode
         }
         
-        return null
+        return KimlUtil::createInitializedNode
     }
     
     /**
