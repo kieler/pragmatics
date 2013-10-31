@@ -88,7 +88,7 @@ public class KlighdSelectionEffect extends AbstractEffect {
                 for (Object modelElement : elements) {
                     KGraphElement diagramElement = (KGraphElement)
                             view.getContextViewer().getCurrentViewContext()
-                                    .getTargetElement(modelElement);
+                                    .getTargetElement(modelElement, KGraphElement.class);
                     if (diagramElement != null) {
                         temp.add(diagramElement);
                     }
