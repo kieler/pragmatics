@@ -51,6 +51,13 @@ public final class Properties {
      * The original object from which a graph element was created.
      */
     public static final IProperty<Object> ORIGIN = new Property<Object>("origin");
+    
+    /**
+     * Whether the original node an LNode was created from was a compound node or not. This might
+     * influence certain layout decisions, such as where to place inside port labels so that they don't
+     * overlap edges.
+     */
+    public static final IProperty<Boolean> COMPOUND_NODE = new Property<Boolean>("compoundNode", false);
 
     /**
      * Node type.
