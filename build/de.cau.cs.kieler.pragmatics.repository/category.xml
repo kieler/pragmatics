@@ -69,16 +69,6 @@
       <category name="kieler-layout"/>
    </feature>
    
-   <feature url="features/de.cau.cs.kieler.kiml.libavoid_0.1.0.qualifier.jar" id="de.cau.cs.kieler.kiml.libavoid.feature" version="0.1.0.qualifier">
-      <category name="kieler-layout"/>
-   </feature>
-   <feature url="features/de.cau.cs.kieler.kiml.libavoid.source_0.1.0.qualifier.jar" id="de.cau.cs.kieler.kiml.libavoid.feature.source" version="0.1.0.qualifier">
-      <category name="kieler-sources"/>
-   </feature>
-   <feature url="features/org.adaptagrams.cola.libavoid_0.1.0.qualifier.jar" id="org.adaptagrams.cola.libavoid.feature" version="0.1.0.qualifier" os="linux,macosx,solaris,win32" arch="sparc,x86,x86_64">
-      <category name="kieler-layout"/>
-   </feature>
-
    <feature url="features/de.cau.cs.kieler.kwebs.client.jaxws_0.2.1.qualifier.jar" id="de.cau.cs.kieler.kwebs.client.jaxws.feature" version="0.2.1.qualifier">
       <category name="kieler-layout"/>
    </feature>
