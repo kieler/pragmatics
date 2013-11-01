@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.klighd.xtext.transformations
 
 import com.google.common.collect.ImmutableList
-import com.google.common.collect.ImmutableMap
 import com.google.inject.Inject
 import de.cau.cs.kieler.core.kgraph.KEdge
 import de.cau.cs.kieler.core.kgraph.KGraphElement
@@ -24,11 +23,9 @@ import de.cau.cs.kieler.core.krendering.KRendering
 import de.cau.cs.kieler.core.krendering.KRenderingFactory
 import de.cau.cs.kieler.core.krendering.extensions.KEdgeExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KPolylineExtensions
-import de.cau.cs.kieler.core.properties.IProperty
 import de.cau.cs.kieler.kiml.options.LayoutOptions
 import de.cau.cs.kieler.kiml.options.PortConstraints
 import de.cau.cs.kieler.klighd.transformations.AbstractDiagramSynthesis
-import java.util.Collection
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.util.EcoreUtil$Copier
 
@@ -63,10 +60,10 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
     @Inject
     extension KPolylineExtensions
     
-    override getRecommendedLayoutOptions() {
-        return ImmutableMap::<IProperty<?>, Collection<?>>of(
-            LayoutOptions::PORT_CONSTRAINTS, ImmutableList::copyOf(PortConstraints::values),
-            LayoutOptions::SPACING, ImmutableList::of(0, 255)
+    override getDisplayedLayoutOptions() {
+        return ImmutableList::of(
+            specifyLayoutOption(LayoutOptions::PORT_CONSTRAINTS, ImmutableList::copyOf(PortConstraints::values)),
+            specifyLayoutOption(LayoutOptions::SPACING, ImmutableList::of(0, 255))
         );
     }
     
