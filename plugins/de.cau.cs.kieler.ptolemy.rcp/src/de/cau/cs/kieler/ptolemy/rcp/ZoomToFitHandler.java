@@ -16,7 +16,6 @@ package de.cau.cs.kieler.ptolemy.rcp;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.MenuItem;
@@ -25,6 +24,7 @@ import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.klighd.KlighdPlugin;
+import de.cau.cs.kieler.klighd.ZoomStyle;
 import de.cau.cs.kieler.klighd.internal.preferences.KlighdPreferences;
 import de.cau.cs.kieler.ptolemy.klighd.PtolemyEditorPart;
 
@@ -51,7 +51,8 @@ public class ZoomToFitHandler extends AbstractHandler {
         boolean selection = item.getSelection();
 
         // set the preference value
-        preferenceStore.setValue(KlighdPreferences.ZOOM_TO_FIT, selection);
+        preferenceStore.setValue(KlighdPreferences.ZOOM_STYLE, (selection ? ZoomStyle.ZOOM_TO_FIT
+                : ZoomStyle.NONE).name());
 
         try {
             for (IEditorReference ref : PlatformUI.getWorkbench().getActiveWorkbenchWindow()
@@ -60,7 +61,7 @@ public class ZoomToFitHandler extends AbstractHandler {
                 if (editor instanceof PtolemyEditorPart) {
                     PtolemyEditorPart ptolemyEditor = (PtolemyEditorPart) editor;
                     ptolemyEditor.getContextViewer().getCurrentViewContext()
-                            .setZoomToFit(selection);
+                            .setZoomStyle(selection ? ZoomStyle.ZOOM_TO_FIT : ZoomStyle.NONE);
                 }
             }
         } catch (Exception e) {

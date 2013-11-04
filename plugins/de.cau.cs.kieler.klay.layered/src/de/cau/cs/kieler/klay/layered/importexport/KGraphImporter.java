@@ -149,6 +149,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
      */
     private void transformNodesAndPorts(final KNode graph,
             final Map<KGraphElement, LGraphElement> elemMap) {
+        
         Set<GraphProperties> graphProperties = layeredGraph.getProperty(Properties.GRAPH_PROPERTIES);
         List<LNode> layeredNodes = layeredGraph.getLayerlessNodes();
 
@@ -216,6 +217,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             final Map<KGraphElement, LGraphElement> elemMap, final Direction direction) {
 
         KShapeLayout graphLayout = graph.getData(KShapeLayout.class);
+        KShapeLayout knodeLayout = kport.getNode().getData(KShapeLayout.class);
         KShapeLayout kportLayout = kport.getData(KShapeLayout.class);
 
         // Calculate the position of the port's center
@@ -265,6 +267,25 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
                 new KVector(kportLayout.getWidth(), kportLayout.getHeight()),
                 direction);
         dummy.setProperty(Properties.ORIGIN, kport);
+        
+        // If the compound node wants to have its port labels placed on the inside, we need to leave
+        // enough space for them by creating an LLabel for the KLabels
+        if (knodeLayout.getProperty(LayoutOptions.PORT_LABEL_PLACEMENT) == PortLabelPlacement.INSIDE) {
+            LPort dummyPort = dummy.getPorts().get(0);
+            dummy.setProperty(LayoutOptions.PORT_LABEL_PLACEMENT, PortLabelPlacement.OUTSIDE);
+            for (KLabel klabel : kport.getLabels()) {
+                KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
+
+                LLabel newLabel = new LLabel(layeredGraph, klabel.getText());
+                newLabel.setProperty(Properties.ORIGIN, klabel);
+                newLabel.getSize().x = labelLayout.getWidth();
+                newLabel.getSize().y = labelLayout.getHeight();
+                newLabel.getPosition().x = labelLayout.getXpos();
+                newLabel.getPosition().y = labelLayout.getYpos();
+                dummyPort.getLabels().add(newLabel);
+            }
+        }
+        
         layeredNodes.add(dummy);
         elemMap.put(kport, dummy);
     }
@@ -287,6 +308,7 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
     protected void transformNode(final KNode node, final List<LNode> layeredNodes,
             final Map<KGraphElement, LGraphElement> elemMap,
             final Set<GraphProperties> graphProperties, final Direction direction) {
+        
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
 
         // add a new node to the layered graph, copying its position
@@ -296,9 +318,14 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         newNode.getSize().y = nodeLayout.getHeight();
         newNode.getPosition().x = nodeLayout.getXpos();
         newNode.getPosition().y = nodeLayout.getYpos();
-
+        
         layeredNodes.add(newNode);
         elemMap.put(node, newNode);
+        
+        // check if the node is a compound node in the original graph
+        if (!node.getChildren().isEmpty()) {
+            newNode.setProperty(Properties.COMPOUND_NODE, true);
+        }
 
         // port constraints and sides cannot be undefined
         PortConstraints portConstraints = nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS);

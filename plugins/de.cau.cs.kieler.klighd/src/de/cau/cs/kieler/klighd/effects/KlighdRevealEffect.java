@@ -66,7 +66,7 @@ public class KlighdRevealEffect extends AbstractEffect {
                 theElement = (KGraphElement) element;
             } else {
                 theElement = (KGraphElement) view.getContextViewer().getCurrentViewContext()
-                        .getTargetElement(element);
+                        .getTargetElement(element, KGraphElement.class);
             }
             // reveal the element
             if (theElement != null) {

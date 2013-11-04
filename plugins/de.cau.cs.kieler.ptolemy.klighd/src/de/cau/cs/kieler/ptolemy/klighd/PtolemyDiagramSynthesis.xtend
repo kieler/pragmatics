@@ -81,9 +81,10 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
      */
     override getTransformationOptions() {
         return ImmutableSet::of(
-            SHOW_COMMENTS,
             SHOW_RELATIONS,
+            SHOW_COMMENTS,
             COMMENT_ATTACHMENT_HEURISTIC,
+            TransformationOption.createSeparator("Hierarchy"),
             FLATTEN,
             COMPOUND_NODE_ALPHA)
     }

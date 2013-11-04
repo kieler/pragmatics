@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="KIELER Ptolemy Browser" uid="de.cau.cs.kieler.ptolemy.rcp.product" id="de.cau.cs.kieler.ptolemy.rcp.product" application="org.eclipse.ui.ide.workbench" version="0.0.1.qualifier" useFeatures="false" includeLaunchers="true">
+<product name="KIELER Ptolemy Browser" uid="de.cau.cs.kieler.ptolemy.rcp.product" id="de.cau.cs.kieler.ptolemy.rcp.product" application="org.eclipse.ui.ide.workbench" version="0.2.0.qualifier" useFeatures="false" includeLaunchers="true">
 
    <aboutInfo>
       <image path="/de.cau.cs.kieler.ptolemy.rcp/icons/about.png"/>
@@ -31,13 +31,12 @@ Copyright 2013 by Christian-Albrechts-University of Kiel, Department of Computer
       startupProgressRect="19,301,207,15"
       startupMessageRect="7,252,0,0"
       startupForegroundColor="000000" />
-   <launcher name="KielerPtolemyViewer">
+   <launcher name="KielerPtolemyBrowser">
       <solaris/>
       <win useIco="false">
          <bmp/>
       </win>
    </launcher>
-
 
    <vm>
    </vm>

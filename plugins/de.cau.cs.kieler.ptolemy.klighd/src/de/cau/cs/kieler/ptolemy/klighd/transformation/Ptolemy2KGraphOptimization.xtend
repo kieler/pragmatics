@@ -187,7 +187,7 @@ public class Ptolemy2KGraphOptimization {
     def private void gatherModelElements(KNode root, List<KPort> knownPorts, List<KPort> unknownPorts,
         List<KEdge> unknownEdges, List<KNode> unknownRelations) {
         
-        // Chceck if this node is a relation node
+        // Check if this node is a relation node
         if (root.markedAsHypernode) {
             unknownRelations.add(root)
         }
@@ -696,7 +696,7 @@ public class Ptolemy2KGraphOptimization {
                 
                 // Add the new node to the root element
                 root.children += directorNode
-            } else if (annotation.class_ != null && annotation.class_.equals(ANNOTATION_TYPE_PARAMETER)) {
+            } else if (annotation.class_ == ANNOTATION_TYPE_PARAMETER && !annotation.value.nullOrEmpty) {
                 parameterList.add(annotation)
             }
         }
