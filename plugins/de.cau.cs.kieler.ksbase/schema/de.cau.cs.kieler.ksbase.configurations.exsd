@@ -57,7 +57,6 @@
          <sequence>
             <element ref="transformations"/>
             <element ref="commandHandler" minOccurs="0" maxOccurs="1"/>
-            <element ref="transformationFactory" minOccurs="0" maxOccurs="1"/>
             <element ref="package" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="Xtend2TransformationClass" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
@@ -258,21 +257,6 @@ Make sure that the transformation is short and fast, it is not recommended to ca
                </documentation>
                <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.core.commands.AbstractHandler:"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="transformationFactory">
-      <complexType>
-         <attribute name="class" type="string" use="required">
-            <annotation>
-               <documentation>
-                  Used to add an alternate transformation framework for this editor. The given class needs to implement the de.cau.cs.kieler.core.model.transformation.ITransformationFramework interface.
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="java" basedOn=":de.cau.cs.kieler.core.model.transformation.ITransformationFramework"/>
                </appinfo>
             </annotation>
          </attribute>
