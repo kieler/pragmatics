@@ -131,7 +131,7 @@
       </repositories>
       
       <modules>
-        <module>../plugins-dev/de.cau.cs.kieler.ptolemy.rcp</module>
+        <module>../plugins/de.cau.cs.kieler.ptolemy.rcp</module>
         <module>de.cau.cs.kieler.ptolemy.rcp.repository</module>
       </modules>
     </profile>
@@ -247,6 +247,7 @@
           </docletArtifact>
           <useStandardDocletOptions>false</useStandardDocletOptions>
           <additionalJOption>-p pragmatics</additionalJOption>
+          <excludedocfilessubdir>xtend-gen</excludedocfilessubdir>
         </configuration>
 
 <!--
