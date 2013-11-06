@@ -29,6 +29,8 @@ import de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstan
  * 
  * @author cds
  * @kieler.rating yellow 2012-07-10 KI-15 cmot, grh
+ * 
+ * @containsExtensions ptolemy
  */
 class MarkerExtensions {
     /** We make use of annotations to mark stuff. */
