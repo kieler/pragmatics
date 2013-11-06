@@ -247,6 +247,7 @@
           </docletArtifact>
           <useStandardDocletOptions>false</useStandardDocletOptions>
           <additionalJOption>-p pragmatics</additionalJOption>
+          <excludedocfilessubdir>xtend-gen</excludedocfilessubdir>
         </configuration>
 
 <!--
