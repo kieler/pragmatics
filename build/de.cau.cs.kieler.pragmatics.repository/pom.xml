@@ -42,9 +42,14 @@
             </goals>
             <configuration>
               <associateSites>
+                <!-- Google Guava -->
                 <associateSite>http://guava-osgi.googlecode.com/svn/trunk/repository/</associateSite>
+                <!-- Graphiti -->
                 <associateSite>http://download.eclipse.org/graphiti/updates/0.8.1</associateSite>
+                <!-- Our Ptolemy library -->
                 <associateSite>http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/ptolemy</associateSite>
+                <!-- Eclipse Orbit for Apache Batik -->
+                <associateSite>http://download.eclipse.org/tools/orbit/downloads/drops/R20130827064939/repository/</associateSite>
               </associateSites>
               <siteTemplateFolder>siteTemplate</siteTemplateFolder>
               <symbols>
