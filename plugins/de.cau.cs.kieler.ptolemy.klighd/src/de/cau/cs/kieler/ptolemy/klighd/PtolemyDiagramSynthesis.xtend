@@ -18,13 +18,13 @@ import com.google.inject.Inject
 import de.cau.cs.kieler.kiml.options.LayoutOptions
 import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy
 import de.cau.cs.kieler.klay.layered.properties.Properties
-
-import de.cau.cs.kieler.klighd.transformations.AbstractDiagramSynthesis
+import de.cau.cs.kieler.klighd.SynthesisOption
+import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
 import de.cau.cs.kieler.ptolemy.klighd.transformation.CommentsExtractor
 import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphOptimization
 import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphTransformation
 import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphVisualization
-import org.ptolemy.moml.DocumentRootimport de.cau.cs.kieler.klighd.SynthesisOption
+import org.ptolemy.moml.DocumentRoot
 
 /**
  * Synthesis for turning Ptolemy models into KGraphs.
