@@ -6,43 +6,51 @@ import java.util.List;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.xtext.ui.editor.XtextEditor;
 
 import de.cau.cs.kieler.core.kivi.triggers.SelectionTrigger.SelectionState;
 import de.cau.cs.kieler.klighd.viewers.ContextViewer;
+import de.cau.cs.kieler.klighd.views.DiagramEditorPart;
 import de.cau.cs.kieler.klighd.views.DiagramViewPart;
 import de.cau.cs.kieler.ksbase.ui.kivi.IKSBasEHandler;
 
 public class KlighdKSBasEHandler implements IKSBasEHandler {
 
     
-    DiagramViewPart lastViewPart = null;
+    private ContextViewer lastContextViewer = null;
+    
+    private IWorkbenchPart partCache = null;
     
     public boolean canHandle(IEvaluationContext context) {
-        if (context.getVariable("org.eclipse.ui.active_activePart") instanceof DiagramViewPart) {
+        ContextViewer activeContextViewer = this.getDiagramViewPart(context);
+        if (activeContextViewer != null) {
             return true;
         }
         return false;
     }
 
     public List<EObject> getSelection(IEvaluationContext context) {
-        DiagramViewPart activePart = (DiagramViewPart) context
-                .getVariable("org.eclipse.ui.active_activePart");
-        lastViewPart = activePart;
-        ContextViewer contextViewer = activePart.getContextViewer();
-        Object defaultVar = context.getDefaultVariable();
-        
-        List<EObject> eObjects = new ArrayList<EObject>(/*((List<?>) defaultVar).size()*/);
-        try {
-            for (Object o : (Iterable<?>) defaultVar) {
-                eObjects.add((EObject) contextViewer.getCurrentViewContext().getSourceElement(((EObject) o)));
+        ContextViewer activeContextViewer = this.getDiagramViewPart(context);
+        if (activeContextViewer != null) {
+            lastContextViewer = activeContextViewer;
+            Object defaultVar = context.getDefaultVariable();
+            
+            List<EObject> eObjects = new ArrayList<EObject>(/*((List<?>) defaultVar).size()*/);
+            try {
+                for (Object o : (Iterable<?>) defaultVar) {
+                    eObjects.add((EObject) activeContextViewer.getCurrentViewContext().getSourceElement(((EObject) o)));
+                }
+                return eObjects;
+            } catch (ClassCastException e) {
+                // ignore exception
             }
-            return eObjects;
-        } catch (ClassCastException e) {
-            // ignore exception
         }
-
         return null;
     }
 
@@ -54,14 +62,13 @@ public class KlighdKSBasEHandler implements IKSBasEHandler {
     }
 
     public List<EObject> getSelection(IWorkbenchPart workbenchPart, SelectionState selection) {
-        DiagramViewPart activePart = lastViewPart;
-        ContextViewer contextViewer = activePart.getContextViewer();
+        ContextViewer activeContextViewer = lastContextViewer;
         Object defaultVar = selection.getSelection();
 
         List<EObject> eObjects = new ArrayList<EObject>(((List<?>) defaultVar).size());
         try {
             for (Object o : (List<?>) defaultVar) {
-                eObjects.add((EObject) contextViewer.getCurrentViewContext().getSourceElement(((EObject) o)));
+                eObjects.add((EObject) activeContextViewer.getCurrentViewContext().getSourceElement(((EObject) o)));
             }
             return eObjects;
         } catch (ClassCastException e) {
@@ -95,6 +102,33 @@ public class KlighdKSBasEHandler implements IKSBasEHandler {
             Object result, EObject select) {
         // TODO Auto-generated method stub
 
+    }
+    
+    private ContextViewer getDiagramViewPart(IEvaluationContext context) {
+        
+        Object activePart = context.getVariable("org.eclipse.ui.active_activePart");
+        if (activePart instanceof DiagramViewPart) {
+            return ((DiagramViewPart) activePart).getContextViewer();
+        }
+        Display.getDefault().syncExec(new Runnable() {
+            public void run() {
+                IWorkbench wb = PlatformUI.getWorkbench();
+                IWorkbenchWindow wbw = wb.getActiveWorkbenchWindow();
+                IWorkbenchPage ap = wbw.getActivePage();
+                partCache = ap.getActivePart();
+                        
+                                
+            }
+        });
+        
+        if (partCache != null && partCache instanceof DiagramViewPart) {
+            return ((DiagramViewPart) partCache).getContextViewer();
+        }
+        
+        if (partCache != null && partCache instanceof DiagramEditorPart) {
+            return ((DiagramEditorPart) partCache).getContextViewer();
+        }
+        return null;
     }
 
 }

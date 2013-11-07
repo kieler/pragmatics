@@ -39,6 +39,7 @@ import org.eclipse.xtext.ui.editor.XtextEditor;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
+import de.cau.cs.kieler.core.kivi.KiVi;
 import de.cau.cs.kieler.core.kivi.menu.ButtonTrigger.ButtonState;
 import de.cau.cs.kieler.core.kivi.triggers.SelectionTrigger.SelectionState;
 import de.cau.cs.kieler.kiml.kivi.LayoutEffect;
@@ -70,6 +71,7 @@ public class KSBasECombination extends AbstractCombination implements ITransform
      *            the KSBasE editor settings used as a context for the transformation.
      */
     public KSBasECombination(final EditorTransformationSettings editorSettings) {
+        KiVi.getInstance().setActive(true);
         this.setActive(true);
         TransformationObserver.getInstance().register(this);
     }
