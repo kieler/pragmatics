@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2013 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.ksbase.klighd;
 
 import java.util.ArrayList;
@@ -20,13 +33,29 @@ import de.cau.cs.kieler.klighd.views.DiagramEditorPart;
 import de.cau.cs.kieler.klighd.views.DiagramViewPart;
 import de.cau.cs.kieler.ksbase.ui.kivi.IKSBasEHandler;
 
+/**
+ * 
+ * Checks whether the current active part is part of the klighd framework and can be
+ * handled by this class. Also provides a method to get the current selection.
+ * 
+ * @author ckru
+ *
+ */
 public class KlighdKSBasEHandler implements IKSBasEHandler {
 
-    
+    /**
+     * Saves the last found context viewer.
+     */
     private ContextViewer lastContextViewer = null;
     
+    /**
+     * Cache to get workbench part from different thread.
+     */
     private IWorkbenchPart partCache = null;
     
+    /**
+     * {@inheritDoc}
+     */
     public boolean canHandle(IEvaluationContext context) {
         ContextViewer activeContextViewer = this.getDiagramViewPart(context);
         if (activeContextViewer != null) {
@@ -35,6 +64,9 @@ public class KlighdKSBasEHandler implements IKSBasEHandler {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public List<EObject> getSelection(IEvaluationContext context) {
         ContextViewer activeContextViewer = this.getDiagramViewPart(context);
         if (activeContextViewer != null) {
@@ -54,6 +86,9 @@ public class KlighdKSBasEHandler implements IKSBasEHandler {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean canHandle(IWorkbenchPart workbenchPart, SelectionState selection) {
         if (workbenchPart instanceof XtextEditor) {
             return true;
@@ -61,6 +96,9 @@ public class KlighdKSBasEHandler implements IKSBasEHandler {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public List<EObject> getSelection(IWorkbenchPart workbenchPart, SelectionState selection) {
         ContextViewer activeContextViewer = lastContextViewer;
         Object defaultVar = selection.getSelection();
@@ -78,32 +116,49 @@ public class KlighdKSBasEHandler implements IKSBasEHandler {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void performPostProcessing() {
-        // TODO Auto-generated method stub
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean isPerformLayout() {
-        // TODO Auto-generated method stub
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public EObject getLayoutRoot() {
-        // TODO Auto-generated method stub
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public TransactionalEditingDomain getEditingDomain() {
-        // TODO Auto-generated method stub
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void transformationExecuted(String transformationName, Object[] parameters,
             Object result, EObject select) {
-        // TODO Auto-generated method stub
 
     }
     
+    /**
+     * Gets a ContextViewer from currently active WorkbenchPart if possible. The ContextViewer is later used
+     * to get the current selection.
+     * @param context the evaluation context given by eclipse.
+     * @return the ContextViewer linked to the active WorkbenchPart. Null if active part has no
+     *          ContextViewer
+     */
     private ContextViewer getDiagramViewPart(IEvaluationContext context) {
         
         Object activePart = context.getVariable("org.eclipse.ui.active_activePart");
