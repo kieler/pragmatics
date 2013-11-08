@@ -169,13 +169,13 @@ public abstract class MonitoredOperation {
                     boolean hasMoreToDispatch;
                     do {
                         hasMoreToDispatch = display.readAndDispatch();
-                    } while (hasMoreToDispatch && status.get() == null);
-                    if (status.get() == null) {
+                    } while (hasMoreToDispatch && status.get() == null && !isCanceled);
+                    if (status.get() == null && !isCanceled) {
                         display.sleep();
                     }
                 }
                 
-                if (status.get().getSeverity() == IStatus.OK && !isCanceled) {
+                if (status.get() != null && status.get().getSeverity() == IStatus.OK && !isCanceled) {
                     // execute UI code after the actual operation
                     postUIexec();
                 }
@@ -334,7 +334,7 @@ public abstract class MonitoredOperation {
                         do {
                             hasMoreToDispatch = display.readAndDispatch();
                             isCanceled = uiMonitor.isCanceled();
-                        } while (hasMoreToDispatch && status.get() == null);
+                        } while (hasMoreToDispatch && status.get() == null && !isCanceled);
                         if (status.get() == null && monitorWrapper.commands.isEmpty() && !isCanceled) {
                             display.sleep();
                         }
@@ -371,14 +371,14 @@ public abstract class MonitoredOperation {
                 boolean hasMoreToDispatch;
                 do {
                     hasMoreToDispatch = display.readAndDispatch();
-                } while (hasMoreToDispatch && status.get() == null);
-                if (status.get() == null) {
+                } while (hasMoreToDispatch && status.get() == null && !isCanceled);
+                if (status.get() == null && !isCanceled) {
                     display.sleep();
                 }
             }
             
             // execute UI code after the actual operation
-            if (status.get().getSeverity() == IStatus.OK && !isCanceled) {
+            if (status.get() != null && status.get().getSeverity() == IStatus.OK && !isCanceled) {
                 postUIexec();
             }
             
