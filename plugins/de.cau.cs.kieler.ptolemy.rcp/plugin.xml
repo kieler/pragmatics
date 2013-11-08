@@ -320,7 +320,7 @@
             <command
                   commandId="de.cau.cs.kieler.ptolemy.rcp.zoomToFitCommand"
                   id="de.cau.cs.kieler.ptolemy.rcp.zoomToFit"
-                  label="ZoomToFit"
+                  label="Zoom to Fit"
                   style="toggle">
             </command>
          </menu>
