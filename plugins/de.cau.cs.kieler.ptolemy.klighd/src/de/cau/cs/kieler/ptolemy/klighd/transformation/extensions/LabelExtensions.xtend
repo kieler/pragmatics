@@ -22,7 +22,7 @@ import de.cau.cs.kieler.kiml.util.KimlUtil
  * @author cds
  * @kieler.rating yellow 2012-07-10 KI-15 cmot, grh
  * 
- * @containsExtensions 
+ * @containsExtensions ptolemy
  */
 class LabelExtensions {
     /**
