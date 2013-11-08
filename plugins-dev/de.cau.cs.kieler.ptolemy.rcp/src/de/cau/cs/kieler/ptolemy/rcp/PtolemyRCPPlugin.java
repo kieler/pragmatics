@@ -7,11 +7,13 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IStartup;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ActionSetContributionItem;
 import org.eclipse.ui.internal.PluginActionContributionItem;
 import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.internal.ide.actions.OpenLocalFileAction;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -132,6 +134,31 @@ public class PtolemyRCPPlugin extends AbstractUIPlugin implements IStartup {
                 }
             }
         });
+
+        // check if no editor is opened, if it is the case, open a file dialog
+        boolean openEditor = false;
+        for (IWorkbenchWindow window : PlatformUI.getWorkbench().getWorkbenchWindows()) {
+            for (IWorkbenchPage page : window.getPages()) {
+                openEditor |= page.getEditorReferences().length != 0;
+            }
+        }
+
+        if (!openEditor) {
+            Display.getDefault().asyncExec(new Runnable() {
+
+                public void run() {
+                    try {
+                        OpenLocalFileAction act = new OpenLocalFileAction();
+                        IWorkbenchWindow activeWW =
+                                PlatformUI.getWorkbench().getWorkbenchWindows()[0];
+                        act.init(activeWW);
+                        act.run();
+                    } catch (Exception e) {
+                        // silent fail ...
+                    }
+                }
+            });
+        }
     }
 
     private void specialTreatment(final IContributionItem item) {
