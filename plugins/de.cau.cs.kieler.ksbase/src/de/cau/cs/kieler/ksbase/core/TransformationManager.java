@@ -39,7 +39,6 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 import de.cau.cs.kieler.ksbase.KSBasEPlugin;
-import de.cau.cs.kieler.ksbase.m2m.ITransformationFramework;
 
 /**
  * The main storage and management class. Contains a list of currently registered editors. Handles
@@ -159,9 +158,6 @@ public final class TransformationManager {
                 KSBasEPlugin.getDefault().logInfo("Unable to add the same editor twice.");
 
             } else {
-                // We are using the default framework here
-                editor.setFramework(TransformationFrameworkFactory
-                        .getDefaultTransformationFramework());
                 activeUserEditors.put(editor.getEditorId(), editor);
             }
         }
@@ -460,23 +456,7 @@ public final class TransformationManager {
                 // set empty value, so the default handler will be used
                 editor.setCommandHandler("");
             }
-            IConfigurationElement[] tFactory = settings.getChildren("transformationFactory");
-            if (tFactory != null && tFactory.length == 1
-                    && tFactory[0].getAttribute("class") != null) {
-                try {
-                    editor.setFramework((ITransformationFramework) tFactory[0]
-                            .createExecutableExtension("class"));
-                } catch (CoreException ce) {
-                    KSBasEPlugin.getDefault().logError(
-                            "Invalid transformation framework specified\t Configuration : "
-                                    + editor.getEditorId() + " Framework : "
-                                    + tFactory[0].getAttribute("class"));
-                }
-            } else {
-                // If no framework has been set, use the default framework
-                editor.setFramework(TransformationFrameworkFactory
-                        .getDefaultTransformationFramework());
-            }
+            
 
             // read xtend2 files from extensionpoint
 
@@ -560,8 +540,6 @@ public final class TransformationManager {
                             IPath path = ResourcesPlugin.getPlugin().getStateLocation();
                             // Transformation file name:
                             path = path.append(editor.getEditorId());
-                            // Add extension:
-                            path = path.addFileExtension(editor.getFramework().getFileExtension());
 
                             File file = new File(path.toOSString());
                             if (file != null) {

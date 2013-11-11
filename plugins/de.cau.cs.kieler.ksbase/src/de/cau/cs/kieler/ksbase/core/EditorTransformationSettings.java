@@ -30,7 +30,6 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.ksbase.KSBasEPlugin;
 import de.cau.cs.kieler.ksbase.m2m.AbstractTransformation;
-import de.cau.cs.kieler.ksbase.m2m.ITransformationFramework;
 
 /**
  * Stores the KSBasE settings for one specific editor. This class is used by the
@@ -65,8 +64,6 @@ public class EditorTransformationSettings implements Serializable {
     private HashMap<String, AbstractTransformation> outplaceTransformations;
     /** List of menu contributions. **/
     private LinkedList<KSBasEMenuContribution> menuContributions;
-    /** Transformation Framework to use. **/
-    private transient ITransformationFramework framework;
     /** Check visibility expressions? **/
     private boolean checkVisibility;
     /**
@@ -371,25 +368,6 @@ public class EditorTransformationSettings implements Serializable {
     }
 
     /**
-     * Gets the transformation framework for this editor.
-     * 
-     * @return an implementation of ITransformationFramework
-     */
-    public ITransformationFramework getFramework() {
-        return framework;
-    }
-
-    /**
-     * Sets the transformation framework for this editor.
-     * 
-     * @param theFramework
-     *            an implementation of ITransformationFramework
-     */
-    public void setFramework(final ITransformationFramework theFramework) {
-        this.framework = theFramework;
-    }
-
-    /**
      * Visibility checks enabled?
      * 
      * @return true if checks are enabled
@@ -418,47 +396,11 @@ public class EditorTransformationSettings implements Serializable {
      *            a valid URL to an transformation file.
      */
     public final void parseTransformations(final boolean createTransformations, final URL fileURL) {
-        if (framework != null) {
-            List<AbstractTransformation> parseTransformations = null;
-            if (fileURL != null) {
-                // Parse transformations with the framework
-                parseTransformations = framework.parseTransformations(fileURL, true);
-                if (parseTransformations == null) {
-                    KSBasEPlugin.getDefault().logError(
-                            "Could not parse extensions for editor " + editorId
-                                    + ". Developer hint: make sure that the .ext file's containing"
-                                    + "folder is part of the binary build (build.properties)");
-                    return;
-                }
-            } else {
-                parseTransformations = new LinkedList<AbstractTransformation>();
-            }
             // If we have any invalid transformations, i.e.
             // the transformation defined here has no transformation
             // match in the transformation file, we want to remove them.
             LinkedList<KSBasETransformation> cachedTransformations =
                     new LinkedList<KSBasETransformation>();
-
-            for (AbstractTransformation t : parseTransformations) {
-                KSBasETransformation transformation = getTransformationByName(t.getTransformation());
-                if (transformation != null) {
-                    // Clone it, so we don't remove the transformation
-                    // when clearing the transformations list
-                    for (List<String> p : t.getParameterList()) {
-                        transformation.addParameters(p);
-                    }
-                    cachedTransformations.add(transformation.clone());
-                } else if (createTransformations) {
-                    // Create new transformation:
-                    transformation = new KSBasETransformation(t.getTransformation(),
-                            t.getTransformation());
-                    // set parameters
-                    transformation.setParameters(t.getParameterList());
-                    // Create a default transformation id
-                    transformation.setTransformationId(editorId + "." + t.getTransformation());
-                    cachedTransformations.add(transformation);
-                }
-            }
 
             for (Object transformationClass : this.transformationClasses) {
                 for (KSBasETransformation t : inplaceTransformations.values()) {
@@ -495,19 +437,6 @@ public class EditorTransformationSettings implements Serializable {
             // We do not care if they already exist in the list, 'cause
             // they're used for validation only
             outplaceTransformations.clear();
-            List<AbstractTransformation> outplace = framework.parseTransformations(fileURL, false);
-            if (outplace != null) {
-                for (AbstractTransformation oT : outplace) {
-                    outplaceTransformations.put(oT.getTransformation(), oT);
-                }
-
-            }
-
-        } else {
-            KSBasEPlugin.getDefault().logError(
-                    "Unable to parse transformation file: "
-                            + "No TransformationFramework has been set."); //$NON-NLS-1$
-        }
     }
 
     /**
