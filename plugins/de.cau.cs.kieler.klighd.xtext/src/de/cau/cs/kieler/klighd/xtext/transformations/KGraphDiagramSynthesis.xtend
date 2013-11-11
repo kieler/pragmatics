@@ -22,7 +22,6 @@ import de.cau.cs.kieler.core.kgraph.KLabel
 import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.core.krendering.KRendering
 import de.cau.cs.kieler.core.krendering.KRenderingFactory
-import de.cau.cs.kieler.core.krendering.extensions.KEdgeExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KPolylineExtensions
 import de.cau.cs.kieler.core.properties.IProperty
 import de.cau.cs.kieler.kiml.options.LayoutOptions
@@ -31,6 +30,7 @@ import de.cau.cs.kieler.klighd.transformations.AbstractDiagramSynthesis
 import java.util.Collection
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.util.EcoreUtil$Copier
+import de.cau.cs.kieler.core.krendering.KRenderingLibrary
 
 /**
  * Synthesizes a copy of the given {@code KNode} and enriches it with a selection of default renderings
@@ -58,9 +58,6 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
     static KRenderingFactory renderingFactory = KRenderingFactory::eINSTANCE
     
     @Inject
-    extension KEdgeExtensions
-    
-    @Inject
     extension KPolylineExtensions
     
     override getRecommendedLayoutOptions() {
@@ -69,6 +66,8 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
             LayoutOptions::SPACING, ImmutableList::of(0, 255)
         );
     }
+    
+    private var KRendering polylineRendering;
     
     /**
      * Transforms the given graph into an equivalent graph that may be enriched with additional
@@ -82,6 +81,19 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         val copier = new Copier()
         val KNode result = copier.copy(graph) as KNode
         copier.copyReferences()
+        
+        // Create a rendering library for reuse of renderings
+        var library = result.getData(typeof(KRenderingLibrary))
+        if (library == null) {
+            library = renderingFactory.createKRenderingLibrary
+            result.data += library
+        }
+        polylineRendering = renderingFactory.createKPolyline() => [
+            it.id = "DefaultEdgeRendering"
+            it.addArrowDecorator
+            it.addJunctionPointDecorator
+        ];
+        library.renderings += polylineRendering
         
         // Associate original objects with transformed objects and provide default renderings
         for (entry : copier.entrySet()) {
@@ -123,7 +135,9 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
      */
     def private dispatch void enrichRendering(KEdge edge) {
         if (!edge.hasRendering) {
-            edge.addPolyline.addArrowDecorator
+            edge.data += renderingFactory.createKRenderingRef => [
+                it.setRendering(polylineRendering)
+            ]
         }
     }
     
