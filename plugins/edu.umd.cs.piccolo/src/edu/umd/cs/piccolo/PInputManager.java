@@ -374,7 +374,7 @@ public class PInputManager extends PBasicInputEventHandler implements PRoot.Inpu
      * @param type type of event to dispatch
      * @param listener target of dispatch
      */
-    private void dispatchEventToListener(final PInputEvent event, final int type, final PInputEventListener listener) {
+    protected void dispatchEventToListener(final PInputEvent event, final int type, final PInputEventListener listener) {
         if (listener != null) {
             // clear the handled bit since the same event object is used to send
             // multiple events such as mouseEntered/mouseExited and mouseMove.
