@@ -14,21 +14,17 @@
 package de.cau.cs.kieler.ptolemy.klighd
 
 import com.google.common.collect.ImmutableList
-import com.google.common.collect.ImmutableMap
-import com.google.common.collect.ImmutableSet
 import com.google.inject.Inject
-import de.cau.cs.kieler.core.properties.IProperty
 import de.cau.cs.kieler.kiml.options.LayoutOptions
 import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy
 import de.cau.cs.kieler.klay.layered.properties.Properties
-import de.cau.cs.kieler.klighd.TransformationOption
+
 import de.cau.cs.kieler.klighd.transformations.AbstractDiagramSynthesis
 import de.cau.cs.kieler.ptolemy.klighd.transformation.CommentsExtractor
 import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphOptimization
 import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphTransformation
 import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphVisualization
-import java.util.Collection
-import org.ptolemy.moml.DocumentRoot
+import org.ptolemy.moml.DocumentRootimport de.cau.cs.kieler.klighd.SynthesisOption
 
 /**
  * Synthesis for turning Ptolemy models into KGraphs.
@@ -38,15 +34,15 @@ import org.ptolemy.moml.DocumentRoot
 public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRoot> {
     
     // Our transformation options
-    public static val TransformationOption SHOW_COMMENTS = TransformationOption::createCheckOption(
+    public static val SynthesisOption SHOW_COMMENTS = SynthesisOption::createCheckOption(
         "Comments", true)
-    public static val TransformationOption SHOW_RELATIONS = TransformationOption::createCheckOption(
+    public static val SynthesisOption SHOW_RELATIONS = SynthesisOption::createCheckOption(
         "Relations", false)
-    public static val TransformationOption COMMENT_ATTACHMENT_HEURISTIC =
-        TransformationOption::createCheckOption("Comment attachment heuristic", true)
-    public static val TransformationOption FLATTEN = TransformationOption::createCheckOption(
+    public static val SynthesisOption COMMENT_ATTACHMENT_HEURISTIC =
+        SynthesisOption::createCheckOption("Comment attachment heuristic", true)
+    public static val SynthesisOption FLATTEN = SynthesisOption::createCheckOption(
         "Flatten Composite Actors", false)
-    public static val TransformationOption COMPOUND_NODE_ALPHA = TransformationOption::createRangeOption(
+    public static val SynthesisOption COMPOUND_NODE_ALPHA = SynthesisOption::createRangeOption(
         "Nested model darkness", 0f, 255f, 30f)
     
     // The parts of our transformation
@@ -60,17 +56,17 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
         // Transform, optimize, and visualize
         val kgraph = transformation.transform(model, this)
         optimization.optimize(kgraph,
-            !SHOW_RELATIONS.optionBooleanValue,
-            FLATTEN.optionBooleanValue,
-            if (SHOW_COMMENTS.optionBooleanValue) commentsExtractor else null,
+            !SHOW_RELATIONS.booleanValue,
+            FLATTEN.booleanValue,
+            if (SHOW_COMMENTS.booleanValue) commentsExtractor else null,
             this
         )
-        visualization.visualize(kgraph, (COMPOUND_NODE_ALPHA.optionIntValue))
+        visualization.visualize(kgraph, (COMPOUND_NODE_ALPHA.intValue))
         
         // If comments should be shown, we want them to be attached properly. Do that now, because we
         // know the node sizes only after the visualization
-        if (SHOW_COMMENTS.optionBooleanValue) {
-            commentsExtractor.attachComments(COMMENT_ATTACHMENT_HEURISTIC.optionBooleanValue)
+        if (SHOW_COMMENTS.booleanValue) {
+            commentsExtractor.attachComments(COMMENT_ATTACHMENT_HEURISTIC.booleanValue)
         }
         
         return kgraph
@@ -79,12 +75,12 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
     /**
      * Diagram options.
      */
-    override getTransformationOptions() {
-        return ImmutableSet::of(
-            SHOW_RELATIONS,
+    override getDisplayedSynthesisOptions() {
+        return ImmutableList::of(
             SHOW_COMMENTS,
+            SHOW_RELATIONS,
             COMMENT_ATTACHMENT_HEURISTIC,
-            TransformationOption.createSeparator("Hierarchy"),
+            SynthesisOption.createSeparator("Hierarchy"),
             FLATTEN,
             COMPOUND_NODE_ALPHA)
     }
@@ -92,10 +88,10 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
     /**
 	 * Layout options.
 	 */
-	override getRecommendedLayoutOptions() {
-		return ImmutableMap::<IProperty<?>, Collection<?>>of(
-			Properties::NODE_PLACER, ImmutableList::copyOf(NodePlacementStrategy::values),
-			LayoutOptions::SPACING,	ImmutableList::of(0, 255)
+	override getDisplayedLayoutOptions() {
+		return ImmutableList::of(
+			specifyLayoutOption(Properties::NODE_PLACER, ImmutableList::copyOf(NodePlacementStrategy::values)),
+			specifyLayoutOption(LayoutOptions::SPACING,	ImmutableList::of(0, 255))
 		)
 	}
     
