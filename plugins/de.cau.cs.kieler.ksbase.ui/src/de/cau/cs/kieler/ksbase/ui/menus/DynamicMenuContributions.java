@@ -18,7 +18,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -39,13 +38,10 @@ import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.KSBasEMenuContribution;
 import de.cau.cs.kieler.ksbase.core.KSBasETransformation;
-import de.cau.cs.kieler.ksbase.core.TransformationFrameworkFactory;
 import de.cau.cs.kieler.ksbase.core.TransformationManager;
-import de.cau.cs.kieler.ksbase.m2m.TransformationDescriptor;
 import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
 import de.cau.cs.kieler.ksbase.ui.kivi.IKSBasEHandler;
 import de.cau.cs.kieler.ksbase.ui.kivi.KSBasECombination;
-import de.cau.cs.kieler.ksbase.ui.m2m.XtendTransformationContext;
 
 /**
  * Creates menus for all registered editor transformation settings and contributes them when
@@ -81,20 +77,9 @@ public final class DynamicMenuContributions {
         private KSBasETransformation transformation;
 
         /**
-         * The editor settings the transformation belongs to.
-         */
-        private EditorTransformationSettings editorSettings;
-
-        /**
          * The transactional editing domain used to execute the validation.
          */
         // private TransactionalEditingDomain transDomain = null;
-
-        /**
-         * A cache of already evaluated validations for better performance. All
-         * KsbaseVisibilityExpression share an instance of this.
-         */
-        private HashMap<String, HashMap<List<Object>, Boolean>> validationCache = null;
 
         private IKSBasEHandler activeHandler = null;
 
@@ -113,74 +98,6 @@ public final class DynamicMenuContributions {
                 final EditorTransformationSettings editorSettings,
                 final HashMap<String, HashMap<List<Object>, Boolean>> validationCache) {
             this.transformation = transformation;
-            this.editorSettings = editorSettings;
-            this.validationCache = validationCache;
-        }
-
-        /**
-         * This method will evaluate the validation method belonging to the transformation of this
-         * expression.
-         * 
-         * @param selectionMapping
-         *            a mapping of the current selection. Hopefully fits the parameters of the
-         *            validation method.
-         * @return true if validation evaluated positive false if negative or an error occured.
-         */
-        private boolean evaluateValidation(final List<Object> selectionMapping) {
-            if (transformation.getValidation() != null) {
-                // there might be a number of validations separated by ","
-                String[] validations = transformation.getValidation().split(",");
-                boolean result = true;
-                for (String val : validations) {
-                    // if validation has been evaluated under the same circumstances so don't do it
-                    // again
-                    HashMap<List<Object>, Boolean> cache = validationCache.get(val);
-                    if (cache != null) {
-                        Boolean cachedResult = cache.get(selectionMapping);
-                        if (cachedResult != null) {
-                            if (!cachedResult) {
-                                return false;
-                            } else {
-                                // we have true cached so don't evaluate again and try the
-                                // next validation instead
-                                continue;
-                            }
-                        }
-                    } else {
-                        validationCache.put(val, new HashMap<List<Object>, Boolean>());
-                    }
-                    // execute the validation
-                    if ((val != null)
-                            && (!val.isEmpty())
-                            && (activeHandler != null && (activeHandler.getEditingDomain() != null))) {
-                        TransformationDescriptor descriptor =
-                                new TransformationDescriptor(val, selectionMapping.toArray());
-                        XtendTransformationContext context =
-                                new XtendTransformationContext(
-                                        editorSettings.getTransformationFile(), editorSettings
-                                                .getModelPackages().toArray(
-                                                        new String[editorSettings
-                                                                .getModelPackages().size()]), null,
-                                        activeHandler.getEditingDomain());
-                        context.execute(descriptor);
-                        Object valResult = descriptor.getResult();
-                        if (valResult instanceof Boolean) {
-                            cache = validationCache.get(val);
-                            cache.put(selectionMapping, (Boolean) valResult);
-                            if (!(Boolean) result) {
-                                return false;
-                            }
-                        } else {
-                            return false;
-                        }
-                    } else {
-                        return false;
-                    }
-                }
-                return result;
-            }
-            // transformation has no validation so return true
-            return true;
         }
 
         /**
@@ -397,25 +314,6 @@ public final class DynamicMenuContributions {
 
                     if (method != null && validationResult) {
                         return EvaluationResult.TRUE;
-                    }
-                    // this is an xtend1 transformation
-                } else {
-                    List<Object> selectionMapping = null;
-                    for (List<String> parameters : transformation.getParameterList()) {
-                        selectionMapping =
-                                TransformationFrameworkFactory.getDefaultTransformationFramework()
-                                        .createParameterMapping(selection,
-                                                parameters.toArray(new String[parameters.size()]));
-                    }
-                    if (selectionMapping == null) {
-                        return EvaluationResult.FALSE;
-                    } else {
-                        boolean validation = this.evaluateValidation(selectionMapping);
-                        if (validation) {
-                            return EvaluationResult.TRUE;
-                        } else {
-                            return EvaluationResult.FALSE;
-                        }
                     }
                 }
             }

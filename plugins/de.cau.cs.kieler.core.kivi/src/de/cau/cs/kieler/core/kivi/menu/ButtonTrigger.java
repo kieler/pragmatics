@@ -100,18 +100,20 @@ public class ButtonTrigger extends AbstractTrigger {
          * @return the active editor
          */
         public IEditorPart getEditor() {
-            if (editor == null) { 
+            if (editor == null) {
                 Display.getDefault().syncExec(new Runnable() {
-					public void run() {
-		            	editor = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
-					}
-				});
+                    public void run() {
+                        editor =
+                                PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                                        .getActivePage().getActiveEditor();
+                    }
+                });
             }
             return editor;
         }
 
         /**
-         * Get the id for the last button pressed. 
+         * Get the id for the last button pressed.
          * 
          * @return the id
          */
@@ -129,8 +131,7 @@ public class ButtonTrigger extends AbstractTrigger {
         }
 
         /**
-         * Check if a toggle button is pushed in or not. Gives the state of the last button
-         * pressed.
+         * Check if a toggle button is pushed in or not. Gives the state of the last button pressed.
          * 
          * @return true if pushed in
          */
@@ -149,7 +150,8 @@ public class ButtonTrigger extends AbstractTrigger {
          * Get the map of button IDs to the state of the button. Returns false if the button Id is
          * not registered.
          * 
-         * @param thebuttonId the button identifier
+         * @param thebuttonId
+         *            the button identifier
          * @return the map of button IDs to the state of the button.
          */
         public boolean isPushedIn(final String thebuttonId) {
@@ -164,15 +166,17 @@ public class ButtonTrigger extends AbstractTrigger {
          */
         @Override
         public void merge(final ITriggerState previous) {
-            /* a button even creates only information about this specific button, therefore
-             * this information has to be merged with the previous state to get the settings
-             * for the other buttons. Therefore only entries that are not set in this state are
-             * older and may be safely overriden.
+            /*
+             * a button even creates only information about this specific button, therefore this
+             * information has to be merged with the previous state to get the settings for the
+             * other buttons. Therefore only entries that are not set in this state are older and
+             * may be safely overriden.
              */
             if (previous instanceof ButtonState) {
                 for (String id : ((ButtonState) previous).buttonStatusMap.keySet()) {
                     if (!this.buttonStatusMap.containsKey(id)) {
-                        this.buttonStatusMap.put(id, ((ButtonState) previous).buttonStatusMap.get(id));
+                        this.buttonStatusMap.put(id,
+                                ((ButtonState) previous).buttonStatusMap.get(id));
                     }
                 }
             }

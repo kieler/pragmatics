@@ -31,7 +31,7 @@ Copyright 2013 by Christian-Albrechts-University of Kiel, Department of Computer
       startupProgressRect="19,301,207,15"
       startupMessageRect="7,252,0,0"
       startupForegroundColor="000000" />
-   <launcher name="KielerPtolemyViewer">
+   <launcher name="KielerPtolemyBrowser">
       <solaris/>
       <win useIco="false">
          <bmp/>

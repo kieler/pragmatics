@@ -875,13 +875,9 @@ public final class BKNodePlacer implements ILayoutPhase {
             return true;
         }
         
-        if (node.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE
-                || node.getProperty(Properties.NODE_TYPE) == NodeType.COMPOUND_SIDE) {
-            
+        if (node.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE) {
             for (LEdge edge : node.getIncomingEdges()) {
-                if ((edge.getSource().getNode().getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE
-                        || edge.getSource().getNode().getProperty(Properties.NODE_TYPE)
-                                                             == NodeType.COMPOUND_SIDE)
+                if (edge.getSource().getNode().getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE
                         && edge.getSource().getNode().getLayer().getIndex() == layer2
                         && node.getLayer().getIndex() == layer1) {
                     
