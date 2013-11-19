@@ -24,6 +24,13 @@
             id="net.ogdf.ogml"
             name="OGML">
       </handler>
+      <handler
+            class="de.cau.cs.kieler.kiml.formats.json.JsonHandler"
+            description="The JavaScript Object Notation."
+            extensions="json"
+            id="org.json"
+            name="JSON">
+      </handler>
    </extension>
 
 </plugin>
