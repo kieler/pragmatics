@@ -41,6 +41,7 @@ import de.cau.cs.kieler.kwebs.server.service.LiveLayoutService;
 public class LiveLayoutHandler implements HttpHandler {
 
     private static final int HTTP_OK = 200;
+    private static final int HTTP_NO_CONTENT = 204;
     private static final int HTTP_ERROR = 500; // internal server error
 
     /**
@@ -48,6 +49,19 @@ public class LiveLayoutHandler implements HttpHandler {
      */
     public void handle(final HttpExchange http) throws IOException {
 
+        if (http.getRequestMethod().toUpperCase().equals("OPTIONS")) {
+            // CORS preflight
+            handleOptionsRequest(http);
+        } else if (http.getRequestMethod().toUpperCase().equals("GET")) {
+            // layout request
+            handleLayoutRequest(http);
+        }
+    }
+
+    /**
+     * Perform layout on the passed data.
+     */
+    private void handleLayoutRequest(final HttpExchange http) throws IOException {
         // retrieve the query parameters
         String decoded = URLDecoder.decode(http.getRequestURI().getQuery(), "UTF-8");
         Map<String, String> params = getParams(decoded);
@@ -95,12 +109,32 @@ public class LiveLayoutHandler implements HttpHandler {
             outGraph = "<pre class='pre-scrollable prettyprint'>" + fixXML(outGraph) + "</pre>";
         }
 
+        http.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+        http.getResponseHeaders().add("content-type", "text/plain");
+
         // send the result graph
         http.sendResponseHeaders(HTTP_OK, outGraph.length());
         OutputStream os = http.getResponseBody();
         os.write(outGraph.getBytes());
         os.close();
+    }
 
+    /**
+     * Handling a CORS preflight package. Allowing cross-site GET requests.
+     */
+    private void handleOptionsRequest(final HttpExchange http) throws IOException {
+
+        // allow the same origin
+        http.getResponseHeaders().add("access-control-allow-origin",
+                http.getRequestHeaders().getFirst("origin").toString());
+        // only allow GET and OPTIONS
+        http.getResponseHeaders().add("access-control-allow-methods", "GET OPTIONS");
+        http.getResponseHeaders().add("access-control-allow-headers", "content-type, accept");
+        // package no older than 10 seconds
+        http.getResponseHeaders().add("access-control-max-age", "10");
+
+        http.sendResponseHeaders(HTTP_NO_CONTENT, 0);
+        http.getResponseBody().close();
     }
 
     private void sendError(final HttpExchange http, final String text, final Throwable t)
@@ -148,4 +182,5 @@ public class LiveLayoutHandler implements HttpHandler {
     private String fixXML(final String graph) {
         return graph.replace(">", "&gt;").replace("<", "&lt;");
     }
+
 }
