@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.formats.json
 
-import com.google.common.collect.Iterators
 import com.google.common.collect.Maps
 import de.cau.cs.kieler.core.kgraph.KEdge
 import de.cau.cs.kieler.core.kgraph.KLabeledGraphElement
@@ -27,61 +26,20 @@ import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer
 import de.cau.cs.kieler.kiml.service.formats.TransformationData
 import de.cau.cs.kieler.kiml.service.formats.TransformationException
 import de.cau.cs.kieler.kiml.util.KimlUtil
-import java.util.Iterator
 import java.util.Map
 import org.json.JSONArray
 import org.json.JSONObject
 
 /**
- * Importer for graphs in the json format. 
+ * Importer for graphs in the json format.
  * 
- * Expects a the json format to be as follows:
- * 
- * <h2>
- * 
- * {
- *   id: "ID",
- *   x: xpos,
- *   y: ypos,
- *   width: 10,
- *   height: 10,
- *   labels: [ ..array with labels .. ],
- *   properties: { ..object with key value pairs.. }
- * }
- * 
- * 
- * <h2>Node</h2>
- * {
- *   ... 
- *   ports: [ ..array with ports.. ],
- *   children: [ ..array with child nodes.. ],
- *   edges: [ ..array with edges between this nodes children.. ]
- * }
- * 
- * 
- * <h2>Port</h2>
- * {
- *   ...
- * }
- * 
- * <h2>Edge</h2>
- * {
- *   ..
- *   source: nodeId,
- *   sourcePort: sourcePort,
- *   target: nodeId,
- *   targetPort: targetPort,
- *   sourcePoint: {x,y},
- *   targetPoint: {x,y},
- *   bendPoints: [ .. {x,y} pairs .. ]
- * }
- * 
- * 
- * 
- * 
+ * @see {@link JsonHandler} for more information. 
+ *  
  * @author uru
  */
 class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
+
+    extension JsonExtensions = new JsonExtensions
 
     private val Map<String, KNode> nodeIdMap = Maps.newHashMap
     private val Map<String, KPort> portIdMap = Maps.newHashMap
@@ -205,31 +163,31 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
     }
 
     private def transformEdgeLayout(JSONObject jsonObj, KEdgeLayout edgeLayout) {
-        
+
         // src
         jsonObj.optJSONObject("sourcePoint") => [ srcPnt |
             if (srcPnt != null) {
-                 srcPnt.optDouble("x") => [ edgeLayout.sourcePoint.x = it.floatValueValid ]
-                 srcPnt.optDouble("y") => [ edgeLayout.sourcePoint.y = it.floatValueValid ]
-             }
+                srcPnt.optDouble("x") => [edgeLayout.sourcePoint.x = it.floatValueValid]
+                srcPnt.optDouble("y") => [edgeLayout.sourcePoint.y = it.floatValueValid]
+            }
         ]
-        
+
         // tgt
         jsonObj.optJSONObject("targetPoint") => [ tgtPnt |
             if (tgtPnt != null) {
-                 tgtPnt.optDouble("x") => [ edgeLayout.targetPoint.x = it.floatValueValid ]
-                 tgtPnt.optDouble("y") => [ edgeLayout.targetPoint.y = it.floatValueValid ]
-             }
+                tgtPnt.optDouble("x") => [edgeLayout.targetPoint.x = it.floatValueValid]
+                tgtPnt.optDouble("y") => [edgeLayout.targetPoint.y = it.floatValueValid]
+            }
         ]
-        
+
         // bend points
-        jsonObj.optJSONArray("bendPoints") => [ bends | 
+        jsonObj.optJSONArray("bendPoints") => [ bends |
             if (bends != null) {
                 for (i : 0 .. bends.length) {
                     val jsonBend = bends.optJSONObject(i)
                     val bend = KLayoutDataFactory.eINSTANCE.createKPoint
-                    jsonBend.optDouble("x") => [ bend.x = it.floatValueValid ]
-                    jsonBend.optDouble("y") => [ bend.y = it.floatValueValid ]
+                    jsonBend.optDouble("x") => [bend.x = it.floatValueValid]
+                    jsonBend.optDouble("y") => [bend.y = it.floatValueValid]
                     edgeLayout.bendPoints += bend
                 }
             }
@@ -292,6 +250,7 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
       * output format is json as well.
       */
     override transferLayout(TransformationData<JSONObject, KNode> data) {
+
         // for each resulting graph run through all elements of the root
         data.targetGraphs.forEach [ graph |
             graph.eAllContents.forEach [ element |
@@ -328,20 +287,20 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
         sourcePoint.put("x", edge.layout.sourcePoint.x)
         sourcePoint.put("y", edge.layout.sourcePoint.y)
         jsonObj?.put("sourcePoint", sourcePoint)
-    
+
         // target        
         val targetPoint = new JSONObject
         targetPoint.put("x", edge.layout.targetPoint.x)
         targetPoint.put("y", edge.layout.targetPoint.y)
         jsonObj?.put("targetPoint", targetPoint)
-        
+
         // bend points
         val bends = new JSONArray
         edge.layout.bendPoints.forEach [ pnt |
             val jsonPnt = new JSONObject
             jsonPnt.put("x", pnt.x)
             jsonPnt.put("y", pnt.y)
-            bends.put(jsonPnt)            
+            bends.put(jsonPnt)
         ]
         jsonObj?.put("bendPoints", bends)
     }
@@ -353,7 +312,6 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
     /* ---------------------------------------------------------------------------
      *   Convenience methods
      */
-     
     def KNode register(KNode node, JSONObject obj) {
         val id = obj.optString("id")
         if (id == null) {
@@ -391,36 +349,5 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
         edgeJsonMap.put(edge, obj)
 
         return edge
-    }
-
-    def layout(KNode node) {
-        return node.getData(typeof(KShapeLayout))
-    }
-
-    def layout(KPort port) {
-        return port.getData(typeof(KShapeLayout))
-    }
-
-    def layout(KEdge edge) {
-        return edge.getData(typeof(KEdgeLayout))
-    }
-
-    /**
-     * Maps infinite or NaN values to 0f.
-     */
-    def float floatValueValid(Double d) {
-        if (d == null || d.infinite || d.naN) {
-            return 0f
-        } else {
-            return d.floatValue
-        }
-    }
-
-    def <T> Iterator<T> emptyIfNull(Iterator<T> iterator) {
-        if (iterator == null) {
-            return Iterators.emptyIterator
-        } else {
-            iterator
-        }
     }
 }
