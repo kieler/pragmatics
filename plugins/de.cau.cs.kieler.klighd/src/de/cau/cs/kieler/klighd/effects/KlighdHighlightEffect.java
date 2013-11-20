@@ -18,6 +18,8 @@ import java.util.List;
 
 import org.eclipse.swt.graphics.Color;
 
+import com.google.common.collect.Iterables;
+
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
@@ -34,11 +36,11 @@ import de.cau.cs.kieler.core.krendering.KRenderingFactory;
 import de.cau.cs.kieler.core.krendering.KStyle;
 
 /**
- * Effect to Highlight a given KGraph element as well as optionally its label and ports in case of a
- * KEdge.
+ * Effect highlight a given {@link KGraphElement} as well as optionally its {@link KLabel} and ports
+ * in case of a {@link KEdge}.
  * 
  * @author ckru
- * 
+ * @author chsch
  */
 public class KlighdHighlightEffect extends AbstractEffect {
 
@@ -218,6 +220,7 @@ public class KlighdHighlightEffect extends AbstractEffect {
      *            background color to highlight the target edges ports with. Set to null to not
      *            highlight.
      */
+    // SUPPRESS CHECKSTYLE NEXT Parameter
     public KlighdHighlightEffect(final KEdge target, final Color color, final Color background,
             final float lineWidth, final KLineStyle lineStyle, final Color labelForegroundColor,
             final Color labelBackgroundColor, final Color portForegroundColor,
@@ -227,100 +230,114 @@ public class KlighdHighlightEffect extends AbstractEffect {
         this.portBackgroundColor = portBackgroundColor;
         this.portForegroundColor = portForegroundColor;
     }
+    
+    /**
+     * Reveals the {@link KRendering KRenderings} to equipped with highlighting styles for
+     * highlighting {@link KGraphElement KGraphElements}.<br>
+     * <br>
+     * This method is intended to be overridden by subclasses!
+     * 
+     * @return an {@link Iterable} containing the {@link KRendering} data elements of the
+     *         {@link KGraphElement} to be highlighted
+     */
+    protected Iterable<KRendering> getKRenderingsToBeHightlighted() {
+        // since KNodes may contain KRendering for both the collapsed figure and the expanded figure
+        //  return all of the attached KRenderings
+        return Iterables.filter(targetNode.getData(), KRendering.class);
+    }
 
     /**
      * {@inheritDoc}
      */
     public void execute() {
-        KRendering obj = targetNode.getData(KRendering.class);
-
-        // set foreground color of target element
-        if (foregroundColor != null) {
-            KStyle fg = this.getKForeground(foregroundColor);
-            obj.getStyles().add(fg);
-            this.styles.add(fg);
-        }
-
-        // set line style of target element
-        if (lineStyle != null) {
-            obj.getStyles().add(lineStyle);
-            this.styles.add(lineStyle);
-        }
-
-        // set background color of target element
-        if (backgroundColor != null) {
-            KStyle bg = this.getKBackground(backgroundColor);
-            obj.getStyles().add(bg);
-            this.styles.add(bg);
-        }
-
-        // set line width of target element
-        if (lineWidth != 0) {
-            KStyle lw = this.getLineWidth(lineWidth);
-            obj.getStyles().add(lw);
-            this.styles.add(lw);
-        }
-
-        // highlight labels
-        if (targetNode instanceof KLabeledGraphElement) {
-            for (KLabel l : ((KLabeledGraphElement) targetNode).getLabels()) {
-                KRendering labelRendering = l.getData(KRendering.class);
-                // set foreground color of target elements label
-                if (labelForegroundColor != null) {
-                    KStyle lfg = this.getKForeground(labelForegroundColor);
-                    labelRendering.getStyles().add(lfg);
-                    this.styles.add(lfg);
-                }
-
-                // set background color of target elements label
-                if (labelBackgroundColor != null) {
-                    KStyle lbg = this.getKBackground(labelBackgroundColor);
-                    labelRendering.getStyles().add(lbg);
-                    this.styles.add(lbg);
+        for (KRendering rendering : getKRenderingsToBeHightlighted()) {
+            // set foreground color of target element
+            if (foregroundColor != null) {
+                KStyle fg = this.getKForeground(foregroundColor);
+                rendering.getStyles().add(fg);
+                this.styles.add(fg);
+            }
+    
+            // set line style of target element
+            if (lineStyle != null) {
+                rendering.getStyles().add(lineStyle);
+                this.styles.add(lineStyle);
+            }
+    
+            // set background color of target element
+            if (backgroundColor != null) {
+                KStyle bg = this.getKBackground(backgroundColor);
+                rendering.getStyles().add(bg);
+                this.styles.add(bg);
+            }
+    
+            // set line width of target element
+            if (lineWidth != 0) {
+                KStyle lw = this.getLineWidth(lineWidth);
+                rendering.getStyles().add(lw);
+                this.styles.add(lw);
+            }
+    
+            // highlight labels
+            if (targetNode instanceof KLabeledGraphElement) {
+                for (KLabel l : ((KLabeledGraphElement) targetNode).getLabels()) {
+                    KRendering labelRendering = l.getData(KRendering.class);
+                    // set foreground color of target elements label
+                    if (labelForegroundColor != null) {
+                        KStyle lfg = this.getKForeground(labelForegroundColor);
+                        labelRendering.getStyles().add(lfg);
+                        this.styles.add(lfg);
+                    }
+    
+                    // set background color of target elements label
+                    if (labelBackgroundColor != null) {
+                        KStyle lbg = this.getKBackground(labelBackgroundColor);
+                        labelRendering.getStyles().add(lbg);
+                        this.styles.add(lbg);
+                    }
                 }
             }
-        }
-
-        // highlight ports
-        if (targetNode instanceof KEdge) {
-            KPort sourcePort = ((KEdge) targetNode).getSourcePort();
-            KPort targetPort = ((KEdge) targetNode).getTargetPort();
-            // set foreground color of target elements ports
-            if (portForegroundColor != null) {
-                // highlight source port
-                if (sourcePort != null) {
-                    KRendering portRendering = sourcePort.getData(KRendering.class);
-                    KStyle pfg = this.getKForeground(portForegroundColor);
-                    portRendering.getStyles().add(pfg);
-                    this.styles.add(pfg);
+    
+            // highlight ports
+            if (targetNode instanceof KEdge) {
+                KPort sourcePort = ((KEdge) targetNode).getSourcePort();
+                KPort targetPort = ((KEdge) targetNode).getTargetPort();
+                // set foreground color of target elements ports
+                if (portForegroundColor != null) {
+                    // highlight source port
+                    if (sourcePort != null) {
+                        KRendering portRendering = sourcePort.getData(KRendering.class);
+                        KStyle pfg = this.getKForeground(portForegroundColor);
+                        portRendering.getStyles().add(pfg);
+                        this.styles.add(pfg);
+                    }
+                    // highlight target port
+                    if (targetPort != null) {
+                        KRendering portRendering = targetPort.getData(KRendering.class);
+                        KStyle pfg = this.getKForeground(portForegroundColor);
+                        portRendering.getStyles().add(pfg);
+                        this.styles.add(pfg);
+                    }
                 }
-                // highlight target port
-                if (targetPort != null) {
-                    KRendering portRendering = targetPort.getData(KRendering.class);
-                    KStyle pfg = this.getKForeground(portForegroundColor);
-                    portRendering.getStyles().add(pfg);
-                    this.styles.add(pfg);
+    
+                // set background color of target elements ports
+                if (portBackgroundColor != null) {
+                    // highlight source port
+                    if (sourcePort != null) {
+                        KRendering portRendering = sourcePort.getData(KRendering.class);
+                        KStyle pfg = this.getKBackground(portBackgroundColor);
+                        portRendering.getStyles().add(pfg);
+                        this.styles.add(pfg);
+                    }
+                    // highlight target port
+                    if (targetPort != null) {
+                        KRendering portRendering = targetPort.getData(KRendering.class);
+                        KStyle pfg = this.getKBackground(portBackgroundColor);
+                        portRendering.getStyles().add(pfg);
+                        this.styles.add(pfg);
+                    }
                 }
             }
-
-            // set background color of target elements ports
-            if (portBackgroundColor != null) {
-                // highlight source port
-                if (sourcePort != null) {
-                    KRendering portRendering = sourcePort.getData(KRendering.class);
-                    KStyle pfg = this.getKBackground(portBackgroundColor);
-                    portRendering.getStyles().add(pfg);
-                    this.styles.add(pfg);
-                }
-                // highlight target port
-                if (targetPort != null) {
-                    KRendering portRendering = targetPort.getData(KRendering.class);
-                    KStyle pfg = this.getKBackground(portBackgroundColor);
-                    portRendering.getStyles().add(pfg);
-                    this.styles.add(pfg);
-                }
-            }
-
         }
 
     }
