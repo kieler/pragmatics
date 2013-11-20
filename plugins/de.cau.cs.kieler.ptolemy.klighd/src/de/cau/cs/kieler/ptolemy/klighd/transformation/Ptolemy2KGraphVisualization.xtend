@@ -52,6 +52,9 @@ import static extension com.google.common.base.Strings.*
 import de.cau.cs.kieler.core.krendering.KRenderingRef
 import de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants
 import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizTool
+import de.cau.cs.kieler.core.krendering.extensions.KContainerRenderingExtensions
+import de.cau.cs.kieler.core.krendering.LineStyle
+import de.cau.cs.kieler.core.krendering.extensions.KLabelExtensions
 
 /**
  * Enriches a KGraph model freshly transformed from a Ptolemy2 model with the KRendering information
@@ -71,7 +74,11 @@ class Ptolemy2KGraphVisualization {
     /** Extensions used during the transformation. To make things easier. And stuff. */
     @Inject extension MiscellaneousExtensions
     /** Utility class that provides renderings. */
+    @Inject extension KLabelExtensions
+    /** Utility class that provides renderings. */
     @Inject extension KRenderingExtensions
+    /** Utility class that provides renderings. */
+    @Inject extension KContainerRenderingExtensions
     /** Utility class that provides renderings. */
     @Inject extension KRenderingFigureProvider
     
@@ -185,17 +192,27 @@ class Ptolemy2KGraphVisualization {
         
         // Create the rendering for the expanded version of this node
         val expandedRendering = createExpandedCompoundNodeRendering(node, compoundNodeAlpha)
-        expandedRendering.setProperty(KlighdProperties::EXPANDED_RENDERING, true)
-        expandedRendering.addAction(Trigger::DOUBLECLICK, KlighdConstants::ACTION_COLLAPSE_EXPAND)
-        node.data += expandedRendering
+//        expandedRendering.setProperty(KlighdProperties::EXPANDED_RENDERING, true)
+//        expandedRendering.addAction(Trigger::DOUBLECLICK, KlighdConstants::ACTION_COLLAPSE_EXPAND)
+//        node.data += expandedRendering
+        node.addRenderingWithSelectionWrapper(expandedRendering) => [
+            it.setProperty(KlighdProperties::EXPANDED_RENDERING, true)
+            it.addAction(Trigger::DOUBLECLICK, KlighdConstants::ACTION_COLLAPSE_EXPAND)
+        ];
+
         
         // Add a rendering for the collapsed version of this node
         val collapsedRendering = createRegularNodeRendering(node)
-        collapsedRendering.setProperty(KlighdProperties::COLLAPSED_RENDERING, true)
-        collapsedRendering.addAction(Trigger::DOUBLECLICK, KlighdConstants::ACTION_COLLAPSE_EXPAND)
-        node.data += collapsedRendering
+//        collapsedRendering.setProperty(KlighdProperties::COLLAPSED_RENDERING, true)
+//        collapsedRendering.addAction(Trigger::DOUBLECLICK, KlighdConstants::ACTION_COLLAPSE_EXPAND)
+//        node.data += collapsedRendering
         
         layout.setLayoutSize(collapsedRendering)
+        
+        node.addRenderingWithSelectionWrapper(collapsedRendering) => [
+            it.setProperty(KlighdProperties::COLLAPSED_RENDERING, true)
+            it.addAction(Trigger::DOUBLECLICK, KlighdConstants::ACTION_COLLAPSE_EXPAND)
+        ];
     }
     
     /**
@@ -353,14 +370,16 @@ class Ptolemy2KGraphVisualization {
         layout.setProperty(LayoutOptions::PORT_CONSTRAINTS, PortConstraints::FIXED_ORDER)
         
         // Some kinds of nodes require special treatment
-        var KRendering rendering = switch node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS) {
+        val KRendering rendering = switch node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS) {
             case "ptolemy.actor.lib.Accumulator" : createAccumulatorNodeRendering(node)
             default : createRegularNodeRendering(node)
-        }
-        node.data += rendering
+        }        
+        //node.data += rendering
+        node.addRenderingWithSelectionWrapper(rendering);
         
         // Calculate layout size.
         layout.setLayoutSize(rendering)
+
     }
     
     
@@ -518,8 +537,11 @@ class Ptolemy2KGraphVisualization {
     def private void addLabelRendering(KLabeledGraphElement element) {
         for (label : element.labels) {
             // Add empty text rendering
-            val ktext = renderingFactory.createKText()
-            label.data += ktext
+//            val ktext = label.addInvisibleContainerRendering.setSelectionInvisible(false).addText("")
+            val ktext = label.addRenderingWithSelectionWrapper.addText("")
+//            ktext.cursorSelectable = true
+//            val ktext = renderingFactory.createKText()
+//            label.data += ktext
             
             // If we have a modal model port, we need to determine a fixed placement for the label at
             // this point

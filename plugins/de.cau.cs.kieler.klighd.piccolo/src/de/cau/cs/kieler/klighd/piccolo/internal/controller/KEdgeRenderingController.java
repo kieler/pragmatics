@@ -16,8 +16,6 @@ package de.cau.cs.kieler.klighd.piccolo.internal.controller;
 import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
@@ -28,7 +26,6 @@ import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.krendering.KCustomRendering;
-import de.cau.cs.kieler.core.krendering.KForeground;
 import de.cau.cs.kieler.core.krendering.KPolyline;
 import de.cau.cs.kieler.core.krendering.KRendering;
 import de.cau.cs.kieler.core.krendering.KRenderingFactory;
@@ -80,14 +77,16 @@ public class KEdgeRenderingController extends AbstractKGERenderingController<KEd
      */
     @Override
     protected PNode internalUpdateRendering() {
-        PNode repNode = getRepresentation();
+        final KEdgeNode repNode = getRepresentation();
 
         // evaluate the rendering data
-        KRendering currentRendering = getCurrentRendering();
+        final KRendering currentRendering = getCurrentRendering();
+        
         if (currentRendering == null) {
-            return handleEdgeRendering(createDefaultEdgeRendering(), (KEdgeNode) repNode);
+            return handleEdgeRendering(createDefaultRendering(), (KEdgeNode) repNode);
         } 
-        PNode renderingNode;
+        
+        final PNode renderingNode;
         
         // the rendering of an edge has to be a KPolyline or a sub type of KPolyline except KPolygon,
         //  or a KCustomRendering providing a KCustomConnectionFigureNode
@@ -122,7 +121,7 @@ public class KEdgeRenderingController extends AbstractKGERenderingController<KEd
             // TODO this is only a preliminary support of references for edge renderings
             final KRenderingRef renderingRef = (KRenderingRef) currentRendering;
             if (renderingRef.getRendering() == null) {
-                return handleEdgeRendering(createDefaultEdgeRendering(), (KEdgeNode) repNode);
+                return handleEdgeRendering(createDefaultRendering(), (KEdgeNode) repNode);
             } else if (renderingRef.getRendering() instanceof KPolyline) {
                 renderingNode = handleEdgeRendering((KPolyline) renderingRef.getRendering(),
                         (KEdgeNode) repNode);
@@ -157,7 +156,8 @@ public class KEdgeRenderingController extends AbstractKGERenderingController<KEd
         // create the rendering
         @SuppressWarnings("unchecked")
         final PNodeController<KlighdPath> controller = (PNodeController<KlighdPath>) createRendering(
-                rendering, new ArrayList<KStyle>(0), parent, new Bounds(1, 1));
+                rendering, parent, new Bounds(1, 1));
+        
         if (rendering instanceof KSpline) {
             controller.getNode().setPathToSpline(parent.getBendPoints());
         } else if (rendering instanceof KRoundedBendsPolyline) {
@@ -310,8 +310,8 @@ public class KEdgeRenderingController extends AbstractKGERenderingController<KEd
         // create the rendering
         @SuppressWarnings("unchecked")
         final PNodeController<KCustomConnectionFigureNode> controller =
-                (PNodeController<KCustomConnectionFigureNode>) createRendering(rendering,
-                        Collections.<KStyle>emptyList(), parent, new Bounds(1, 1));
+                (PNodeController<KCustomConnectionFigureNode>) createRendering(
+                        rendering, parent, new Bounds(1, 1));
         controller.getNode().setPoints(parent.getBendPoints());
 
         parent.setRepresentationNode(controller.getNode());
@@ -332,16 +332,8 @@ public class KEdgeRenderingController extends AbstractKGERenderingController<KEd
      * 
      * @return the rendering
      */
-    private static KPolyline createDefaultEdgeRendering() {
+    protected KPolyline createDefaultRendering() {
         // create the default rendering model
-        KRenderingFactory factory = KRenderingFactory.eINSTANCE;
-        KPolyline polyline = factory.createKPolyline();
-
-        KForeground foreground = factory.createKForeground();
-        foreground.setColor(factory.createKColor());
-        
-        polyline.getStyles().add(foreground);
-        return polyline;
+        return KRenderingFactory.eINSTANCE.createKPolyline();
     }
-    
 }

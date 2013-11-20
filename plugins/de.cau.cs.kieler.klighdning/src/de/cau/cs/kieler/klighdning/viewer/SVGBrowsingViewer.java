@@ -131,8 +131,8 @@ public class SVGBrowsingViewer {
         }
 
         // create a controller for the graph
-        controller = new DiagramController(model, camera.getLayer(0), sync);
-        controller.initialize();
+        controller = new DiagramController(model, camera, sync);
+//        controller.initialize();
         controller.stopRecording(ZoomStyle.NONE, 0);
     }
 

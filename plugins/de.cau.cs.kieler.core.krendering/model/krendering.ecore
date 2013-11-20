@@ -8,24 +8,50 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Used to set an absolute Position of a single point by defining x and y coordinates of this point relative to the parent. The position can be set with absolute values or relative to the parent dimensions"/>
     </eAnnotations>
-    <eOperations name="equals" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBooleanObject">
+    <eOperations name="equals" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="body" value="return de.cau.cs.kieler.core.krendering.KRenderingUtil.equals(this,other);"/>
-        <details key="documentation" value="Determines whether two KPosition objects have the same x and y values.&#xD;&#xA;Hint: This does not however mean they have the &#xD;&#xA;same position as they could have different parents"/>
+        <details key="documentation" value="Checks the equalilty of the &lt;code>x&lt;/code> and &lt;code>y&lt;/code> components of &lt;code>this&lt;/code> KPostion instance and the provided &lt;code>other&lt;/code> one.&#xA;Returns false if &lt;code>other&lt;/code> is not a KPosition.&lt;br>&#xA;{@link de.cau.cs.kieler.core.krendering.KRenderingUtil#equals(KPosition, Object) KRenderingUtil.equals(KPosition, Object)}.&lt;br>&#xA;&lt;br>&#xA;Hint: Equal KPositions, however, do not imply indentical points in the figure as they may have different parents!&#xA;&#xA;@return &lt;code>true&lt;/code> if &lt;code>other&lt;/code> is a KPosition and its &lt;code>x&lt;/code> and &lt;code>y&lt;/code> components are equal to those of &lt;code>this&lt;/code> instance, &lt;code>false&lt;/code> otherwise&#xA;"/>
       </eAnnotations>
-      <eParameters name="other" eType="#//KPosition"/>
+      <eParameters name="other" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
     </eOperations>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="x" lowerBound="1" eType="#//KXPosition"
-        containment="true">
+    <eOperations name="setPositions" eType="#//KPosition">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="body" value="return de.cau.cs.kieler.core.krendering.KRenderingUtil.setPositions(this, x, y);"/>
+        <details key="documentation" value="Convenience setter for configuring &lt;code>this&lt;/code> KPosition instance.&lt;br>&#xA;Redirects to {@link de.cau.cs.kieler.core.krendering.KRenderingUtil#setPositions(KPosition, KXPosition, KYPosition) KRenderingUtil.setPositions(KPosition, KXPosition, KYPosition)}."/>
+      </eAnnotations>
+      <eParameters name="x">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="the horizontal position component"/>
+        </eAnnotations>
+        <eGenericType eClassifier="#//KXPosition">
+          <eTypeArguments/>
+        </eGenericType>
+      </eParameters>
+      <eParameters name="y">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="the vertical position component"/>
+        </eAnnotations>
+        <eGenericType eClassifier="#//KYPosition">
+          <eTypeArguments/>
+        </eGenericType>
+      </eParameters>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="x" lowerBound="1" containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="the x-position relative to the parent based on absolute coordinates or relative parent width"/>
       </eAnnotations>
+      <eGenericType eClassifier="#//KXPosition">
+        <eTypeArguments/>
+      </eGenericType>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="y" lowerBound="1" eType="#//KYPosition"
-        containment="true">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="y" lowerBound="1" containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="the y-position relative to the parent based on absolute coordinates or relative parent height"/>
       </eAnnotations>
+      <eGenericType eClassifier="#//KYPosition">
+        <eTypeArguments/>
+      </eGenericType>
     </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="KRendering" abstract="true" eSuperTypes="../../de.cau.cs.kieler.core.kgraph/model/kgraph.ecore#//KGraphData #//KStyleHolder">
@@ -223,6 +249,8 @@
         <details key="documentation" value="id of the function that should be called when layout is finished to change this style"/>
       </eAnnotations>
     </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="selection" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+        defaultValueLiteral="false"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="KRenderingLibrary" eSuperTypes="../../de.cau.cs.kieler.core.kgraph/model/kgraph.ecore#//KGraphData">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -356,6 +384,34 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Specifies an RGB color. "/>
     </eAnnotations>
+    <eOperations name="setColor" eType="#//KColor">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="body" value="return de.cau.cs.kieler.core.krendering.KRenderingUtil.setColor(this, red, green, blue);"/>
+        <details key="documentation" value="Convenience setter for configuring&lt;code>this&lt;/code> KColor instance.&lt;br>&#xA;Redirects to {@link de.cau.cs.kieler.core.krendering.KRenderingUtil#setColor(KColor, int, int, int) KRenderingUtil.setColor(KColor, int, int, int)}."/>
+      </eAnnotations>
+      <eParameters name="red" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="the red component of the desired color in range of 0 to 255"/>
+        </eAnnotations>
+      </eParameters>
+      <eParameters name="green" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="the green component of the desired color in range of 0 to 255"/>
+        </eAnnotations>
+      </eParameters>
+      <eParameters name="blue" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="the blue component of the desired color in range of 0 to 255"/>
+        </eAnnotations>
+      </eParameters>
+    </eOperations>
+    <eOperations name="equals" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="body" value="return de.cau.cs.kieler.core.krendering.KRenderingUtil.equals(this,other);"/>
+        <details key="documentation" value="Checks the equalilty of the RGB components of &lt;code>this&lt;/code> KColor instance and the provided &lt;code>other&lt;/code> KColor.&#xA;Returns false if &lt;code>other&lt;/code> is not a KColor.&lt;br>&#xA;{@link de.cau.cs.kieler.core.krendering.KRenderingUtil#equals(KColor, Object) KRenderingUtil.equals(KColor, Object)}.&#xA;&#xA;@return &lt;code>true&lt;/code> if &lt;code>other&lt;/code> is a KColor its RGB components are equal to those of &lt;code>this&lt;/code> instance, &lt;code>false&lt;/code> otherwise"/>
+      </eAnnotations>
+      <eParameters name="other" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
+    </eOperations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="red" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
         defaultValueLiteral="0">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -429,11 +485,34 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="define an x-position by setting absolute and relative position respective to a parent rendering.&#xA;Both parameters are always included in the calculation of the resulting position. See Subtypes for formula. &#xA;Can overlap the parent by setting negative values.&#xA;"/>
     </eAnnotations>
+    <eTypeParameters name="T">
+      <eBounds eClassifier="#//KXPosition">
+        <eTypeArguments eTypeParameter="#//KXPosition/T"/>
+      </eBounds>
+    </eTypeParameters>
     <eOperations name="equals" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="body" value="return de.cau.cs.kieler.core.krendering.KRenderingUtil.equals(this,other);"/>
+        <details key="documentation" value="Checks the equalilty of the &lt;code>absolute&lt;/code> and &lt;code>relative&lt;/code> components of &lt;code>this&lt;/code> KXPostion instance and the provided &lt;code>other&lt;/code> one.&#xA;Returns false if &lt;code>other&lt;/code> is not a KXPosition.&lt;br>&#xA;{@link de.cau.cs.kieler.core.krendering.KRenderingUtil#equals(KXPosition, Object) KRenderingUtil.equals(KXPosition, Object)}.&lt;br>&#xA;&lt;br>&#xA;Hint: Equal KXPositions, however, do not imply indentical points in the figure as they may have different parents!&#xA;&#xA;@return &lt;code>true&lt;/code> if &lt;code>other&lt;/code> is a KXPosition and its &lt;code>absolute&lt;/code> and &lt;code>relative&lt;/code> components are equal to those of &lt;code>this&lt;/code> instance, &lt;code>false&lt;/code> otherwise&#xA;"/>
       </eAnnotations>
       <eParameters name="other" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
+    </eOperations>
+    <eOperations name="setPosition">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="body" value="@SuppressWarnings(&quot;unchecked&quot;)&#xA;final T it = (T) this;&#xA;return de.cau.cs.kieler.core.krendering.KRenderingUtil.setPosition(it, absolute, relative);"/>
+        <details key="documentation" value="Convenience setter for configuring&lt;code>this&lt;/code> KXPosition instance.&lt;br>&#xA;Redirects to {@link de.cau.cs.kieler.core.krendering.KRenderingUtil#setPosition(KXPosition, float, float) KRenderingUtil.setPosition(KXPosition, float, float)}."/>
+      </eAnnotations>
+      <eGenericType eTypeParameter="#//KXPosition/T"/>
+      <eParameters name="absolute" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="define absolute position in pixels"/>
+        </eAnnotations>
+      </eParameters>
+      <eParameters name="relative" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="define relative position based on parent size in range of 0 to 1"/>
+        </eAnnotations>
+      </eParameters>
     </eOperations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="absolute" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -442,7 +521,7 @@
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="relative" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="define relative position based on parent size"/>
+        <details key="documentation" value="define relative position based on parent size in range of 0 to 1"/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
@@ -450,11 +529,34 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="define an y-position by setting absolute and relative position respective to a parent rendering.&#xA;Both parameters are always included in the calculation of the resulting position. See Subtypes for formula. &#xA;Can overlap the parent by setting negative values."/>
     </eAnnotations>
+    <eTypeParameters name="T">
+      <eBounds eClassifier="#//KYPosition">
+        <eTypeArguments eTypeParameter="#//KYPosition/T"/>
+      </eBounds>
+    </eTypeParameters>
     <eOperations name="equals" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="body" value="return de.cau.cs.kieler.core.krendering.KRenderingUtil.equals(this,other);"/>
+        <details key="documentation" value="Checks the equalilty of the &lt;code>absolute&lt;/code> and &lt;code>relative&lt;/code> components of &lt;code>this&lt;/code> KXPostion instance and the provided &lt;code>other&lt;/code> one.&#xA;Returns false if &lt;code>other&lt;/code> is not a KXPosition.&lt;br>&#xA;{@link de.cau.cs.kieler.core.krendering.KRenderingUtil#equals(KXPosition, Object) KRenderingUtil.equals(KXPosition, Object)}.&lt;br>&#xA;&lt;br>&#xA;Hint: Equal KXPositions, however, do not imply indentical points in the figure as they may have different parents!&#xA;&#xA;@return &lt;code>true&lt;/code> if &lt;code>other&lt;/code> is a KXPosition and its &lt;code>absolute&lt;/code> and &lt;code>relative&lt;/code> components are equal to those of &lt;code>this&lt;/code> instance, &lt;code>false&lt;/code> otherwise&#xA;"/>
       </eAnnotations>
       <eParameters name="other" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
+    </eOperations>
+    <eOperations name="setPosition">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="body" value="@SuppressWarnings(&quot;unchecked&quot;)&#xA;final T it = (T) this;&#xA;return de.cau.cs.kieler.core.krendering.KRenderingUtil.setPosition(it, absolute, relative);"/>
+        <details key="documentation" value="Convenience setter for configuring&lt;code>this&lt;/code> KYPosition instance.&lt;br>&#xA;Redirects to {@link de.cau.cs.kieler.core.krendering.KRenderingUtil#setPosition(KYPosition, float, float) KRenderingUtil.setPosition(KYPosition, float, float)}."/>
+      </eAnnotations>
+      <eGenericType eTypeParameter="#//KYPosition/T"/>
+      <eParameters name="absolute" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="define absolute position in pixels"/>
+        </eAnnotations>
+      </eParameters>
+      <eParameters name="relative" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="define relative position based on parent size in range of 0 to 1"/>
+        </eAnnotations>
+      </eParameters>
     </eOperations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="absolute" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -467,40 +569,165 @@
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="KLeftPosition" eSuperTypes="#//KXPosition">
+  <eClassifiers xsi:type="ecore:EClass" name="KLeftPosition">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="defines a position starting at the leftmost point of the parent rendering.&#xD;&#xA;pos = (L+absolute) + (R-L)*relative = (R-absolute) - widthOfParent*relative"/>
     </eAnnotations>
+    <eGenericSuperTypes eClassifier="#//KXPosition">
+      <eTypeArguments eClassifier="#//KLeftPosition"/>
+    </eGenericSuperTypes>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="KRightPosition" eSuperTypes="#//KXPosition">
+  <eClassifiers xsi:type="ecore:EClass" name="KRightPosition">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="defines a position starting at the rightmost point R of the parent rendering.&#xA;pos = (R-absolute) - (R-L)*relative = (R-absolute) - widthOfParent*relative&#xA;"/>
     </eAnnotations>
+    <eGenericSuperTypes eClassifier="#//KXPosition">
+      <eTypeArguments eClassifier="#//KRightPosition"/>
+    </eGenericSuperTypes>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="KTopPosition" eSuperTypes="#//KYPosition">
+  <eClassifiers xsi:type="ecore:EClass" name="KTopPosition">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="defines a position starting at the highest point H of the parent rendering. &#xA;pos = (H+absolute) + (B-H)*relative&#xA;pos = (H+absolute) + heightOfParent*relative"/>
     </eAnnotations>
+    <eGenericSuperTypes eClassifier="#//KYPosition">
+      <eTypeArguments eClassifier="#//KTopPosition"/>
+    </eGenericSuperTypes>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="KBottomPosition" eSuperTypes="#//KYPosition">
+  <eClassifiers xsi:type="ecore:EClass" name="KBottomPosition">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="defines a position starting at the bottom point B of the parent rendering. &#xA;pos = (B-absolute) - (B-H-absolute)*relative&#xA;pos = (B-absolute) - heightOfParent*relative"/>
     </eAnnotations>
+    <eGenericSuperTypes eClassifier="#//KYPosition">
+      <eTypeArguments eClassifier="#//KBottomPosition"/>
+    </eGenericSuperTypes>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="KSpline" eSuperTypes="#//KPolyline">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="creates a rounded edge"/>
     </eAnnotations>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="KForeground" eSuperTypes="#//KColoring">
+  <eClassifiers xsi:type="ecore:EClass" name="KForeground">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Defines the Foregroundcolor and its alphaChannel of a Rendering"/>
     </eAnnotations>
+    <eGenericSuperTypes eClassifier="#//KColoring">
+      <eTypeArguments eClassifier="#//KForeground"/>
+    </eGenericSuperTypes>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="KColoring" abstract="true" eSuperTypes="#//KStyle">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Defines the alphaChannel and Color of an Object"/>
     </eAnnotations>
+    <eTypeParameters name="T">
+      <eBounds eClassifier="#//KColoring">
+        <eTypeArguments eTypeParameter="#//KColoring/T"/>
+      </eBounds>
+    </eTypeParameters>
+    <eOperations name="setColor">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="body" value="@SuppressWarnings(&quot;unchecked&quot;)&#xA;final T it = (T) this;&#xA;return de.cau.cs.kieler.core.krendering.KRenderingUtil.setColor(it, red, green, blue);"/>
+        <details key="documentation" value="Convenience setter for configuring the color or gradient source color of &lt;code>this&lt;/code> KColoring instance.&lt;br>&#xA;Redirects to {@link de.cau.cs.kieler.core.krendering.KRenderingUtil#setColor(KColoring, int, int, int) KRenderingUtil.setColor(KColoring, int, int, int)}."/>
+      </eAnnotations>
+      <eGenericType eTypeParameter="#//KColoring/T"/>
+      <eParameters name="red" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="the red component of the desired color in range of 0 to 255"/>
+        </eAnnotations>
+      </eParameters>
+      <eParameters name="green" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="the green component of the desired color in range of 0 to 255"/>
+        </eAnnotations>
+      </eParameters>
+      <eParameters name="blue" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="the blue component of the desired color in range of 0 to 255"/>
+        </eAnnotations>
+      </eParameters>
+    </eOperations>
+    <eOperations name="setColor">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="body" value="@SuppressWarnings(&quot;unchecked&quot;)&#xA;final T it = (T) this;&#xA;return de.cau.cs.kieler.core.krendering.KRenderingUtil.setColor(it, red, green, blue, alpha);"/>
+        <details key="documentation" value="Convenience setter for configuring the color &amp; alpha or gradient source color &amp; source alpha of &lt;code>this&lt;/code> KColoring instance.&lt;br>&#xA;Redirects to {@link de.cau.cs.kieler.core.krendering.KRenderingUtil#setColor(KColoring, int, int, int, int) KRenderingUtil.setColor(KColoring, int, int, int, int)}."/>
+      </eAnnotations>
+      <eGenericType eTypeParameter="#//KColoring/T"/>
+      <eParameters name="red" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="the red component of the desired color in range of 0 to 255"/>
+        </eAnnotations>
+      </eParameters>
+      <eParameters name="green" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="the green component of the desired color in range of 0 to 255"/>
+        </eAnnotations>
+      </eParameters>
+      <eParameters name="blue" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="the blue component of the desired color in range of 0 to 255"/>
+        </eAnnotations>
+      </eParameters>
+      <eParameters name="alpha" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="the alpha component of the desired color in range of 0 to 255"/>
+        </eAnnotations>
+      </eParameters>
+    </eOperations>
+    <eOperations name="setTargetColor">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="body" value="@SuppressWarnings(&quot;unchecked&quot;)&#xA;final T it = (T) this;&#xA;return de.cau.cs.kieler.core.krendering.KRenderingUtil.setTargetColor(it, red, green, blue);"/>
+        <details key="documentation" value="Convenience setter for configuring the gradient target color of &lt;code>this&lt;/code> KColoring instance.&lt;br>&#xA;Redirects to {@link de.cau.cs.kieler.core.krendering.KRenderingUtil#setTargetColor(KColoring, int, int, int) KRenderingUtil.setTargetColor(KColoring, int, int, int)}."/>
+      </eAnnotations>
+      <eGenericType eTypeParameter="#//KColoring/T"/>
+      <eParameters name="red" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="the red component of the desired color in range of 0 to 255"/>
+        </eAnnotations>
+      </eParameters>
+      <eParameters name="green" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="the green component of the desired color in range of 0 to 255"/>
+        </eAnnotations>
+      </eParameters>
+      <eParameters name="blue" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="the blue component of the desired color in range of 0 to 255"/>
+        </eAnnotations>
+      </eParameters>
+    </eOperations>
+    <eOperations name="setTargetColor">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="body" value="@SuppressWarnings(&quot;unchecked&quot;)&#xA;final T it = (T) this;&#xA;return de.cau.cs.kieler.core.krendering.KRenderingUtil.setTargetColor(it, red, green, blue, alpha);"/>
+        <details key="documentation" value="Convenience setter for configuring the gradient target color &amp; target alpha of &lt;code>this&lt;/code> KColoring instance.&lt;br>&#xA;Redirects to {@link de.cau.cs.kieler.core.krendering.KRenderingUtil#setTargetColor(KColoring, int, int, int, int) KRenderingUtil.setTargetColor(KColoring, int, int, int, int)}."/>
+      </eAnnotations>
+      <eGenericType eTypeParameter="#//KColoring/T"/>
+      <eParameters name="red" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="the red component of the desired color in range of 0 to 255"/>
+        </eAnnotations>
+      </eParameters>
+      <eParameters name="green" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="the green component of the desired color in range of 0 to 255"/>
+        </eAnnotations>
+      </eParameters>
+      <eParameters name="blue" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="the blue component of the desired color in range of 0 to 255"/>
+        </eAnnotations>
+      </eParameters>
+      <eParameters name="alpha" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="the alpha component of the desired color in range of 0 to 255"/>
+        </eAnnotations>
+      </eParameters>
+    </eOperations>
+    <eOperations name="equals" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="body" value="return de.cau.cs.kieler.core.krendering.KRenderingUtil.equals(this,other);"/>
+        <details key="documentation" value="Checks the equalilty of the RGB components of &lt;code>this&lt;/code> KColor instance and the provided &lt;code>other&lt;/code> KColor.&#xA;Returns false if &lt;code>other&lt;/code> is not a KColor.&lt;br>&#xA;{@link de.cau.cs.kieler.core.krendering.KRenderingUtil#equals(KColor, Object) KRenderingUtil.equals(KColor, Object)}.&#xA;&#xA;@return &lt;code>true&lt;/code> if &lt;code>other&lt;/code> is a KColor its RGB components are equal to those of &lt;code>this&lt;/code> instance, &lt;code>false&lt;/code> otherwise"/>
+      </eAnnotations>
+      <eParameters name="other" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
+    </eOperations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="alpha" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
         defaultValueLiteral="255">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -532,10 +759,13 @@
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="KBackground" eSuperTypes="#//KColoring">
+  <eClassifiers xsi:type="ecore:EClass" name="KBackground">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Defines the Backgroundcolor and its alphaChannel of a rendering"/>
     </eAnnotations>
+    <eGenericSuperTypes eClassifier="#//KColoring">
+      <eTypeArguments eClassifier="#//KBackground"/>
+    </eGenericSuperTypes>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="KFontBold" eSuperTypes="#//KStyle">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">

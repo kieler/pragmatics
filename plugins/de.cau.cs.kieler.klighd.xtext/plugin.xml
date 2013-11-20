@@ -24,7 +24,7 @@
    <extension
          point="de.cau.cs.kieler.klighd.diagramSyntheses">
       <diagramSynthesis
-            class="de.cau.cs.kieler.klighd.transformations.GuiceBasedTransformationFactory:de.cau.cs.kieler.klighd.xtext.transformations.KGraphDiagramSynthesis"
+            class="de.cau.cs.kieler.klighd.syntheses.GuiceBasedSynthesisFactory:de.cau.cs.kieler.klighd.xtext.transformations.KGraphDiagramSynthesis"
             id="de.cau.cs.kieler.klighd.xtext.transformations.KGraphDiagramSynthesis">
       </diagramSynthesis>
    </extension>

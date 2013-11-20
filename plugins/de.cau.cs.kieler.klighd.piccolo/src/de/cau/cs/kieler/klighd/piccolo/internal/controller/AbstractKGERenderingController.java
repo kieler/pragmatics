@@ -15,9 +15,9 @@ package de.cau.cs.kieler.klighd.piccolo.internal.controller;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +33,7 @@ import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 
@@ -41,18 +42,23 @@ import de.cau.cs.kieler.core.kgraph.KGraphPackage;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.impl.IPropertyToObjectMapImpl;
 import de.cau.cs.kieler.core.krendering.KAreaPlacementData;
+import de.cau.cs.kieler.core.krendering.KBackground;
 import de.cau.cs.kieler.core.krendering.KColor;
 import de.cau.cs.kieler.core.krendering.KContainerRendering;
 import de.cau.cs.kieler.core.krendering.KGridPlacement;
+import de.cau.cs.kieler.core.krendering.KLineStyle;
 import de.cau.cs.kieler.core.krendering.KPlacement;
 import de.cau.cs.kieler.core.krendering.KPlacementData;
 import de.cau.cs.kieler.core.krendering.KPointPlacementData;
 import de.cau.cs.kieler.core.krendering.KPolyline;
 import de.cau.cs.kieler.core.krendering.KRendering;
+import de.cau.cs.kieler.core.krendering.KRenderingFactory;
 import de.cau.cs.kieler.core.krendering.KRenderingPackage;
 import de.cau.cs.kieler.core.krendering.KRenderingRef;
 import de.cau.cs.kieler.core.krendering.KRenderingUtil;
 import de.cau.cs.kieler.core.krendering.KStyle;
+import de.cau.cs.kieler.core.krendering.KText;
+import de.cau.cs.kieler.core.krendering.LineStyle;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
@@ -64,12 +70,12 @@ import de.cau.cs.kieler.klighd.microlayout.GridPlacementUtil;
 import de.cau.cs.kieler.klighd.microlayout.PlacementUtil;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.IGraphElement;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KDecoratorNode;
-import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KNodeNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdPath;
 import de.cau.cs.kieler.klighd.piccolo.internal.util.PiccoloPlacementUtil;
 import de.cau.cs.kieler.klighd.piccolo.internal.util.PiccoloPlacementUtil.Decoration;
 import de.cau.cs.kieler.klighd.piccolo.internal.util.Styles;
 import de.cau.cs.kieler.klighd.util.CrossDocumentContentAdapter;
+import de.cau.cs.kieler.klighd.util.KlighdPredicates;
 import de.cau.cs.kieler.klighd.util.KlighdProperties;
 import de.cau.cs.kieler.klighd.util.ModelingUtil;
 import de.cau.cs.kieler.klighd.util.RenderingContextData;
@@ -109,7 +115,7 @@ public abstract class AbstractKGERenderingController
      */
     public static final Object ATTR_KRENDERING = new Object();
 
-    /** the graph element which rendering is controlled by this controller. */
+    /** the graph element whose rendering is controlled by this controller. */
     private S element;
     
     /** the rendering currently in use by this controller. */
@@ -181,19 +187,20 @@ public abstract class AbstractKGERenderingController
         if (this.element instanceof KNode) {
             Iterable<KRendering> renderings = Iterables.filter(element.getData(), KRendering.class);
             
-            // in case the node to be depicted has no children (yet - might be added lazily)
-            // look for a rendering marked as 'collapsed' one,
-            //  and if none exists simply take the first one
-            if (((KNodeNode) repNode).getGraphElement().getChildren().isEmpty()) {   
-                currentRendering = Iterables.getFirst(
-                        Iterables.filter(renderings, IS_COLLAPSED_RENDERING),
-                        Iterables.getFirst(renderings, null));
+//            // in case the node to be depicted has no children (yet - might be added lazily)
+//            // look for a rendering marked as 'collapsed' one,
+//            //  and if none exists simply take the first one
+//            if (((KNode) element).getChildren().isEmpty()) {   
+//                currentRendering = Iterables.getFirst(
+//                        Iterables.filter(renderings, IS_COLLAPSED_RENDERING),
+//                        Iterables.getFirst(renderings, null));
+//            } else
                 
             // in case the node to be depicted has children and is populated,
             //  i.e. children are depicted in the diagram
             // look for a rendering marked as 'expanded' one,
             //  and if none exists take the first one that is not marked as 'collapsed' one
-            } else if (RenderingContextData.get(this.element).getProperty(
+            if (RenderingContextData.get(this.element).getProperty(
                     KlighdInternalProperties.POPULATED)) {
                 currentRendering = Iterables.getFirst(
                         Iterables.filter(renderings, IS_EXPANDED_RENDERING),
@@ -214,6 +221,11 @@ public abstract class AbstractKGERenderingController
         } else {
             currentRendering = element.getData(KRendering.class);
         }
+        
+        if (currentRendering == null) {
+            currentRendering = createDefaultRendering();
+        }
+        
         return currentRendering;
     }
 
@@ -229,6 +241,18 @@ public abstract class AbstractKGERenderingController
         // do the initial update of the rendering
         updateRendering();
     }
+    
+    
+    /**
+     * Getter.
+     * 
+     * @return the selection state of the current root rendering
+     */
+    protected boolean isSelected() {
+        return currentRendering == null
+                ? false : currentRendering.getProperty(KlighdInternalProperties.SELECTED);
+    }
+    
     
     /**
      * Fires a run of the {@link de.cau.cs.kieler.klighd.IStyleModifier IStyleModifiers} referenced
@@ -310,11 +334,56 @@ public abstract class AbstractKGERenderingController
     }
 
     /**
+     * Creates default rendering corresponding to the type of {@link #element}.
+     * 
+     * @return a default {@link KRendering}
+     */
+    protected abstract KRendering createDefaultRendering();
+    
+    /**
      * Performs the actual update of the rendering.
      * 
-     * @return the Piccolo node representing the current rendering
+     * @return the Piccolo2D node representing the current rendering
      */
     protected abstract PNode internalUpdateRendering();
+
+    /**
+     * Registers an adapter on the graph element to react on changes in its graph data feature.
+     * This on is sensitive to additions, exchanges, and removals of {@link KRendering} data.
+     */
+    private void registerElementAdapter() {
+        elementAdapter = new AdapterImpl() {
+            public void notifyChanged(final Notification msg) {
+                if (msg.getFeatureID(KGraphElement.class) == KGraphPackage.KGRAPH_ELEMENT__DATA) {
+                    switch (msg.getEventType()) {
+                    case Notification.ADD:
+                    case Notification.ADD_MANY:
+                    case Notification.REMOVE:
+                    case Notification.REMOVE_MANY:
+                        final KRendering rendering = element.getData(KRendering.class);
+                        if (rendering != currentRendering) {
+                            // a rendering has been added or removed
+                            updateRenderingInUi();
+                        }
+                        break;
+                    default:
+                        break;
+                    }
+                }
+            }
+        };
+        element.eAdapters().add(elementAdapter);
+    }
+
+    /**
+     * Unregisters the adapter currently installed on the element.
+     */
+    private void unregisterElementAdapter() {
+        if (elementAdapter != null) {
+            element.eAdapters().remove(elementAdapter);
+            elementAdapter = null;
+        }
+    }
 
     /**
      * Registers an adapter on the current rendering to react on changes.
@@ -326,6 +395,7 @@ public abstract class AbstractKGERenderingController
             protected boolean shouldAdapt(final EStructuralFeature feature) {
                 // follow the rendering feature of the KRenderingRef
                 return feature.getFeatureID() == KRenderingPackage.KRENDERING_REF__RENDERING;
+//                        || feature.getFeatureID() == KRenderingPackage.KSTYLE_REF__STYLE_HOLDER;
             }
 
             public void notifyChanged(final Notification msg) {
@@ -338,6 +408,19 @@ public abstract class AbstractKGERenderingController
                         || msg.getOldValue() instanceof IProperty<?>
                         || msg.getNewValue() instanceof Map.Entry<?, ?>
                         || msg.getOldValue() instanceof Map.Entry<?, ?>) {
+                    final Map.Entry<?, ?> entry;
+                    if (msg.getNotifier() instanceof IPropertyToObjectMapImpl) {
+                        entry = (Map.Entry<?, ?>) msg.getNotifier();
+                    } else if (msg.getNewValue() instanceof Map.Entry<?, ?>) {
+                        entry = (Map.Entry<?, ?>) msg.getNewValue();
+                    } else if (msg.getOldValue() instanceof Map.Entry<?, ?>) {
+                        entry = (Map.Entry<?, ?>) msg.getOldValue();
+                    } else {
+                        entry = null;
+                    }
+                    if (entry != null && entry.getKey() == KlighdInternalProperties.SELECTED) {
+                        updateStylesInUi();
+                    }
                     return;
                 }
                 
@@ -426,44 +509,6 @@ public abstract class AbstractKGERenderingController
     }
 
     /**
-     * Registers an adapter on the graph element to react on changes in its graph data feature.
-     * This on is sensitive to additions, exchanges, and removals of {@link KRendering} data.
-     */
-    private void registerElementAdapter() {
-        elementAdapter = new AdapterImpl() {
-            public void notifyChanged(final Notification msg) {
-                if (msg.getFeatureID(KGraphElement.class) == KGraphPackage.KGRAPH_ELEMENT__DATA) {
-                    switch (msg.getEventType()) {
-                    case Notification.ADD:
-                    case Notification.ADD_MANY:
-                    case Notification.REMOVE:
-                    case Notification.REMOVE_MANY:
-                        final KRendering rendering = element.getData(KRendering.class);
-                        if (rendering != currentRendering) {
-                            // a rendering has been added or removed
-                            updateRenderingInUi();
-                        }
-                        break;
-                    default:
-                        break;
-                    }
-                }
-            }
-        };
-        element.eAdapters().add(elementAdapter);
-    }
-
-    /**
-     * Unregisters the adapter currently installed on the element.
-     */
-    private void unregisterElementAdapter() {
-        if (elementAdapter != null) {
-            element.eAdapters().remove(elementAdapter);
-            elementAdapter = null;
-        }
-    }
-
-    /**
      * A little helper reducing the 'syncExec' calls if possible.
      * 
      * @param r
@@ -515,9 +560,30 @@ public abstract class AbstractKGERenderingController
     private void updateStyles() {
         // reset that flag as potentially available styles with a modifier might be removed now
         modifiableStylesPresent = false;
+        
+        final boolean isSelected = this.isSelected();
+        final List<KStyle> selectionStyles;
+        if (!isSelected) {
+            selectionStyles = Collections.<KStyle>emptyList();
+        } else {
+            final Iterator<KRendering> renderings = Iterators.filter(
+                    KRenderingUtil.selfAndAllChildren(this.currentRendering),
+                    KlighdPredicates.notInstanceOf(KText.class));
+            final Iterator<KStyle> styles = Iterators.concat(Iterators.transform(renderings,
+                    new Function<KRendering, Iterator<KStyle>>() {
+                        public Iterator<KStyle> apply(final KRendering rendering) {
+                            return rendering.getStyles().iterator();
+                        }
+                    }));
+            if (Iterators.any(styles, KlighdPredicates.isSelection())) {
+                selectionStyles = Collections.<KStyle>emptyList();
+            } else {
+                selectionStyles = getDefaultNonTextSelectionStyles();
+            }
+        }
 
         // update using the recursive method
-        updateStyles(currentRendering, new Styles(), new ArrayList<KStyle>(0));
+        updateStyles(currentRendering, isSelected, selectionStyles);
 
         // in case styles of a detached KRendering are modified, e.g. if selection highlighting
         //  is removed from renderings that are not part of the diagram in the meantime
@@ -533,11 +599,13 @@ public abstract class AbstractKGERenderingController
     /**
      * Recursively updates the styles of the {@link PNode PNodes} representing <code>rendering</code>.
      */
-    private void updateStyles(final KRendering rendering, final Styles styles,
+    private void updateStyles(final KRendering rendering, final boolean isSelected,
             final List<KStyle> propagatedStyles) {
 
         final Collection<PNodeController<?>> controllers = getPNodeController(rendering);
         if (controllers == null || controllers.isEmpty()) {
+            // in case 'rendering' is not represented by any node and, thus, no pnodeController exists,
+            //  stop here
             return;
         }
 
@@ -549,16 +617,20 @@ public abstract class AbstractKGERenderingController
             KRendering referencedRendering = renderingRef.getRendering();
 
             // proceed recursively with the referenced rendering
-            updateStyles(referencedRendering, styles,
+            updateStyles(referencedRendering, isSelected,
                     Lists.newLinkedList(Iterables.concat(rendering.getStyles(), propagatedStyles)));
+            
+            return;
         }
         
-        List<KStyle> renderingStyles = rendering.getStyles();
+        final List<KStyle> renderingStyles = rendering.getStyles();
         
         processModifiableStyles(renderingStyles);
         
         // determine the styles for this rendering
-        styles.deriveStyles(determineRenderingStyles(renderingStyles, propagatedStyles));
+        final Styles styles = new Styles().deriveStyles(
+                determineRenderingStyles(renderingStyles, propagatedStyles),
+                isSelected);
         
         // apply the styles to the rendering
         for (PNodeController<?> controller : controllers) {
@@ -577,7 +649,7 @@ public abstract class AbstractKGERenderingController
 
                 // propagate to all children
                 for (KRendering child : container.getChildren()) {
-                    updateStyles(child, new Styles(), childPropagatedStyles);
+                    updateStyles(child, isSelected, childPropagatedStyles);
                 }
             }
             
@@ -592,7 +664,7 @@ public abstract class AbstractKGERenderingController
                                 renderingStyles, propagatedStyles);
                     }
                     
-                    updateStyles(jpr, new Styles(), childPropagatedStyles);
+                    updateStyles(jpr, isSelected, childPropagatedStyles);
                 }
             }
         }
@@ -630,7 +702,29 @@ public abstract class AbstractKGERenderingController
             s.eSetDeliver(deliver);
         }
     }
+
+    private List<KStyle> defaultNonTextSelectionStyles = null;
     
+    private List<KStyle> getDefaultNonTextSelectionStyles() {
+        if (this.defaultNonTextSelectionStyles != null) {
+            return this.defaultNonTextSelectionStyles;
+        }
+
+        this.defaultNonTextSelectionStyles = Lists.newArrayList();
+        
+        // the color values of 'DimGray' // SUPPRESS CHECKSTYLE NEXT MagicNumber
+        final KBackground bg = KRenderingFactory.eINSTANCE.createKBackground().setColor(190, 190, 190);
+        
+        this.defaultNonTextSelectionStyles.add(bg);
+
+        final KLineStyle lineStyle = KRenderingFactory.eINSTANCE.createKLineStyle();
+        lineStyle.setLineStyle(LineStyle.DASH);
+        this.defaultNonTextSelectionStyles.add(lineStyle);
+        
+        return this.defaultNonTextSelectionStyles;
+    }
+
+
     /**
      * Creates the Piccolo nodes for a list of renderings inside a parent Piccolo node for the given
      * placement.
@@ -655,6 +749,21 @@ public abstract class AbstractKGERenderingController
                 handleAreaAndPointPlacementRendering(rendering, styles, parent);
             }
         }
+    }
+
+    /**
+     * Creates the Piccolo node for a rendering inside a parent Piccolo node using point- or
+     * area-based child placement.
+     * 
+     * @param rendering
+     *            the rendering
+     * @param parent
+     *            the parent Piccolo node
+     * @return the Piccolo node representing the rendering
+     */
+    protected PNode handleAreaAndPointPlacementRendering(final KRendering rendering,
+            final PNode parent) {
+        return handleAreaAndPointPlacementRendering(rendering, Collections.<KStyle>emptyList(), parent);
     }
 
     /**
@@ -837,6 +946,23 @@ public abstract class AbstractKGERenderingController
      * 
      * @param rendering
      *            the rendering
+     * @param parent
+     *            the parent Piccolo node
+     * @param initialBounds
+     *            the initial bounds
+     * @return the controller for the created Piccolo node
+     */
+    protected PNodeController<?> createRendering(final KRendering rendering, final PNode parent,
+            final Bounds initialBounds) {
+        return this.createRendering(rendering, Collections.<KStyle>emptyList(), parent, initialBounds);
+    }
+
+    /**
+     * Creates the Piccolo node representing the rendering inside the given parent with initial
+     * bounds.
+     * 
+     * @param rendering
+     *            the rendering
      * @param propagatedStyles
      *            the styles propagated to the rendering
      * @param parent
@@ -845,9 +971,10 @@ public abstract class AbstractKGERenderingController
      *            the initial bounds
      * @return the controller for the created Piccolo node
      */
-    protected PNodeController<?> createRendering(final KRendering rendering, 
+    protected PNodeController<?> createRendering(final KRendering rendering,
             final List<KStyle> propagatedStyles, final PNode parent, final Bounds initialBounds) {
-        return this.createRendering(rendering, propagatedStyles, parent, initialBounds, new Styles());
+        return this.createRendering(rendering, propagatedStyles, parent, initialBounds,
+                new Styles());
     }
 
     private PNodeConstructionKRenderingSwitch kSwitch = new PNodeConstructionKRenderingSwitch(this);
@@ -868,7 +995,7 @@ public abstract class AbstractKGERenderingController
      *            the styles for the rendering
      * @return the controller for the created Piccolo node
      */
-    protected PNodeController<?> createRendering(final KRendering rendering,
+    private PNodeController<?> createRendering(final KRendering rendering,
             final List<KStyle> propagatedStyles, final PNode parent, final Bounds initialBounds,
             final Styles styles) {
         final List<KStyle> renderingStyles = rendering.getStyles();
@@ -884,7 +1011,8 @@ public abstract class AbstractKGERenderingController
         final PNodeController<?> controller = kSwitch.doSwitch(rendering);
         
         // determine the styles for this rendering
-        styles.deriveStyles(determineRenderingStyles(renderingStyles, propagatedStyles));
+        styles.deriveStyles(determineRenderingStyles(renderingStyles, propagatedStyles),
+                this.isSelected());
 
         // set the styles for the created rendering node using the controller
         controller.applyChanges(styles);
@@ -1007,8 +1135,8 @@ public abstract class AbstractKGERenderingController
     protected List<KStyle> determinePropagationStyles(final List<KStyle> renderingStyles,
             final List<KStyle> propagatedStyles) {
         List<KStyle> propagationStyles = Lists.newLinkedList();
-        propagationStyles.addAll(propagatedStyles);
-        for (KStyle style : renderingStyles) {
+//        propagationStyles.addAll(propagatedStyles);
+        for (KStyle style : Iterables.concat(propagatedStyles, renderingStyles)) {
             if (style.isPropagateToChildren()) {
                 propagationStyles.add(style);
             }

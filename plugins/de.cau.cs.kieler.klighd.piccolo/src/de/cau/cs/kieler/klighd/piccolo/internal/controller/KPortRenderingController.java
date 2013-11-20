@@ -13,15 +13,12 @@
  */
 package de.cau.cs.kieler.klighd.piccolo.internal.controller;
 
-import java.util.Collections;
-
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.krendering.KBackground;
 import de.cau.cs.kieler.core.krendering.KForeground;
 import de.cau.cs.kieler.core.krendering.KRectangle;
 import de.cau.cs.kieler.core.krendering.KRendering;
 import de.cau.cs.kieler.core.krendering.KRenderingFactory;
-import de.cau.cs.kieler.core.krendering.KStyle;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KPortNode;
 import edu.umd.cs.piccolo.PNode;
 
@@ -45,17 +42,16 @@ public class KPortRenderingController extends AbstractKGERenderingController<KPo
      */
     @Override
     protected PNode internalUpdateRendering() {
-        PNode repNode = getRepresentation();
+        final KPortNode repNode = getRepresentation();
 
         // evaluate the rendering data
-        KRendering currentRendering = getCurrentRendering();
-        PNode renderingNode;
+        final KRendering currentRendering = getCurrentRendering();
+
+        final PNode renderingNode;
         if (currentRendering != null) {
-            renderingNode = handleAreaAndPointPlacementRendering(currentRendering,
-                    Collections.<KStyle>emptyList(), repNode);
+            renderingNode = handleAreaAndPointPlacementRendering(currentRendering, repNode);
         } else {
-            renderingNode = handleAreaAndPointPlacementRendering(createDefaultPortRendering(),
-                    Collections.<KStyle>emptyList(), repNode);
+            renderingNode = handleAreaAndPointPlacementRendering(createDefaultRendering(), repNode);
         }
         
         return renderingNode;
@@ -66,15 +62,13 @@ public class KPortRenderingController extends AbstractKGERenderingController<KPo
      * 
      * @return the rendering
      */
-    private static KRendering createDefaultPortRendering() {
+    protected KRendering createDefaultRendering() {
         // create the default rendering model
-        KRenderingFactory factory = KRenderingFactory.eINSTANCE;
-        KRectangle rect = factory.createKRectangle();
+        final KRenderingFactory factory = KRenderingFactory.eINSTANCE;
+        final KRectangle rect = factory.createKRectangle();
         
-        KForeground foreground = factory.createKForeground();
-        foreground.setColor(factory.createKColor());
-        KBackground background = factory.createKBackground();
-        background.setColor(factory.createKColor());
+        final KForeground foreground = factory.createKForeground().setColor(0, 0, 0);
+        final KBackground background = factory.createKBackground().setColor(0, 0, 0);
 
         rect.getStyles().add(foreground);
         rect.getStyles().add(background);

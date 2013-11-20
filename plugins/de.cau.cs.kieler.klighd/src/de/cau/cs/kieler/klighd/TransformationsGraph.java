@@ -23,7 +23,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -31,9 +34,10 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.klighd.transformations.DuplicatingTransformation;
+import de.cau.cs.kieler.klighd.syntheses.DuplicatingDiagramSynthesis;
 
 /**
  * A graph structure to express the relations between instances of {@code ITransformation} and
@@ -328,7 +332,7 @@ public class TransformationsGraph {
             final Object model, final IUpdateStrategy<KNode> updateStrategy) {
         viewContext.reset();
         
-        Predicate<Path> pathFilter = new Predicate<Path>() {
+        final Predicate<Path> pathFilter = new Predicate<Path>() {
             public boolean apply(final Path path) {
                 if (path.edges.isEmpty()) {
                     return true;
@@ -341,7 +345,15 @@ public class TransformationsGraph {
                 @SuppressWarnings("unchecked")
                 final ITransformation<Object, ?> traFo =
                         (ITransformation<Object, ?>) edge.transformation;
-                return traFo.supports(model);
+
+                try {
+                    return traFo.supports(model);
+                } catch (WrappedException e) {
+                    StatusManager.getManager().handle(
+                            new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID, e.getMessage(), e
+                                    .getCause()), StatusManager.LOG);
+                    return false;
+                }
             }
         };
         
@@ -370,7 +382,7 @@ public class TransformationsGraph {
                 //  potentially performed by an update strategy.
                 TransformationContext<?, ?> transformationContext = TransformationContext
                         // .create(new IdentityTransformation());
-                        .create(new DuplicatingTransformation<EObject>());
+                        .create(new DuplicatingDiagramSynthesis<EObject>());
                 viewContext.addTransformationContext(transformationContext);
                 // set the target node
                 targetNode = path.sourceNode;

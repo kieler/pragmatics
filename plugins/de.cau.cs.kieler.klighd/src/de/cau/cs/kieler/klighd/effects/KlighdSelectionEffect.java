@@ -13,28 +13,27 @@
  */
 package de.cau.cs.kieler.klighd.effects;
 
-import java.util.List;
+import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 
-import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
 import de.cau.cs.kieler.klighd.util.Iterables2;
 import de.cau.cs.kieler.klighd.views.DiagramViewManager;
-import de.cau.cs.kieler.klighd.views.DiagramViewPart;
+import de.cau.cs.kieler.klighd.views.IDiagramWorkbenchPart;
 
 /**
  * A view management effect to select a number of diagram elements in a view.
  * 
  * @author mri
+ * @author chsch
  */
 public class KlighdSelectionEffect extends AbstractEffect {
 
     /** the view identifier. */
     private String viewId;
     /** the elements. */
-    private Iterable<Object> elements;
+    private Iterable<? extends Object> elements;
     /** whether the elements are diagram elements or a model elements. */
     private boolean areDiagramElements;
 
@@ -77,30 +76,15 @@ public class KlighdSelectionEffect extends AbstractEffect {
      * {@inheritDoc}
      */
     public void execute() {
-        DiagramViewPart view = DiagramViewManager.getInstance().getView(viewId);
-        if (view != null) {
+        IDiagramWorkbenchPart part = DiagramViewManager.getInstance().getDiagramWorkbenchPart(viewId);
+        if (part != null) {
             // get the diagram elements
-            Iterable<KGraphElement> theElements;
             if (areDiagramElements) {
-                theElements = Iterables.filter(elements, KGraphElement.class);
+                part.getContextViewer().resetSelectionToDiagramElements(
+                        Iterables.filter(this.elements, EObject.class));
             } else {
-                List<KGraphElement> temp = Lists.newLinkedList();
-                for (Object modelElement : elements) {
-                    KGraphElement diagramElement = (KGraphElement)
-                            view.getContextViewer().getCurrentViewContext()
-                                    .getTargetElement(modelElement, KGraphElement.class);
-                    if (diagramElement != null) {
-                        temp.add(diagramElement);
-                    }
-                }
-                theElements = temp;
+                part.getContextViewer().resetSelectionToSemanticElements(this.elements);
             }
-
-            // select the elements
-            // if (theElements.iterator().hasNext()) {
-                view.getContextViewer().setSelection(theElements);
-            // }
         }
     }
-
 }
