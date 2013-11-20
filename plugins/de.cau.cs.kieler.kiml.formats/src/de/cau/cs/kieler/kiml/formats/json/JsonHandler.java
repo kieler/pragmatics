@@ -36,7 +36,8 @@ public class JsonHandler implements ITransformationHandler<JSONObject> {
             JSONObject obj = new JSONObject(serializedGraph);
             transData.setSourceGraph(obj);
         } catch (JSONException e) {
-            throw new TransformationException("Cannot parse the passed json. (" + e.getMessage() + ")", e);
+            throw new TransformationException("Cannot parse the passed "
+                    + "json. (" + e.getMessage() + ")", e);
         }
     }
 
@@ -65,8 +66,7 @@ public class JsonHandler implements ITransformationHandler<JSONObject> {
      * {@inheritDoc}
      */
     public IGraphTransformer<KNode, JSONObject> getExporter() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Json export not yet supported.");
     }
 
 }

@@ -55,6 +55,8 @@ public class LiveLayoutHandler implements HttpHandler {
         } else if (http.getRequestMethod().toUpperCase().equals("GET")) {
             // layout request
             handleLayoutRequest(http);
+        } else {
+            sendError(http, "Unsupported request method: " + http.getRequestMethod(), null);
         }
     }
 
@@ -79,8 +81,10 @@ public class LiveLayoutHandler implements HttpHandler {
 
         try {
             JSONObject obj = new JSONObject(config);
-            for (String key : JSONObject.getNames(obj)) {
-                opts.add(new GraphLayoutOption(key, obj.getString(key)));
+            if (obj.length() > 0) {
+                for (String key : JSONObject.getNames(obj)) {
+                    opts.add(new GraphLayoutOption(key, obj.getString(key)));
+                }
             }
         } catch (JSONException e) {
             // e.printStackTrace();
@@ -133,7 +137,7 @@ public class LiveLayoutHandler implements HttpHandler {
         // package no older than 10 seconds
         http.getResponseHeaders().add("access-control-max-age", "10");
 
-        http.sendResponseHeaders(HTTP_NO_CONTENT, 0);
+        http.sendResponseHeaders(HTTP_NO_CONTENT, -1);
         http.getResponseBody().close();
     }
 
