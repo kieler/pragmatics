@@ -406,6 +406,7 @@ public final class GraphTransformer implements ILayoutProcessor {
             transpose(node.getPosition());
             transpose(node.getSize());
             transposeNodeLabelPlacement(node);
+            transposeProperties(node);
             
             // Transpose ports
             for (LPort port : node.getPorts()) {
@@ -585,6 +586,23 @@ public final class GraphTransformer implements ILayoutProcessor {
             node.setProperty(Properties.LAYER_CONSTRAINT, LayerConstraint.LAST_SEPARATE);
             node.setProperty(Properties.IN_LAYER_CONSTRAINT, InLayerConstraint.NONE);
         }
+    }
+    
+    /**
+     * Checks a node's properties for ones that need to be transposed. Currently, the following
+     * properties are transposed:
+     * <ul>
+     *   <li>{@link LayoutOptions#MIN_HEIGHT} and {@link LayoutOptions#MIN_WIDTH}.</li>
+     * </ul>
+     * 
+     * @param node the node whose properties are to be transposed.
+     */
+    private void transposeProperties(final LNode node) {
+        // Transpose MIN_HEIGHT and MIN_WIDTH
+        float minHeight = node.getProperty(LayoutOptions.MIN_HEIGHT);
+        float minWidth = node.getProperty(LayoutOptions.MIN_WIDTH);
+        node.setProperty(LayoutOptions.MIN_WIDTH, minHeight);
+        node.setProperty(LayoutOptions.MIN_HEIGHT, minWidth);
     }
 
 }
