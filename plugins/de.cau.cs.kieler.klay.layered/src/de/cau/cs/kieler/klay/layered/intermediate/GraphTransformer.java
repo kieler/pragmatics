@@ -82,7 +82,7 @@ public final class GraphTransformer implements ILayoutProcessor {
         
         switch(mode) {
         case MIRROR_X:
-            mirrorX(nodes);
+            mirrorX(nodes, layeredGraph.getOffset());
             break;
         case TRANSPOSE:
             transpose(nodes);
@@ -90,8 +90,8 @@ public final class GraphTransformer implements ILayoutProcessor {
             transpose(layeredGraph.getSize());
             break;
         case MIRROR_AND_TRANSPOSE:
-            mirrorX(nodes);
-            mirrorY(nodes);
+            mirrorX(nodes, layeredGraph.getOffset());
+            mirrorY(nodes, layeredGraph.getOffset());
             transpose(nodes);
             transpose(layeredGraph.getOffset());
             transpose(layeredGraph.getSize());
@@ -108,17 +108,19 @@ public final class GraphTransformer implements ILayoutProcessor {
      * Mirror the x coordinates of the given graph.
      * 
      * @param nodes the nodes of the graph to transpose
+     * @param graphOffset the offset in the graph
      */
-    private void mirrorX(final List<LNode> nodes) {
+    private void mirrorX(final List<LNode> nodes, final KVector graphOffset) {
         // determine the greatest x coordinate
-        double maxx = 0;
+        double offset = 0;
         for (LNode node : nodes) {
-            maxx = Math.max(maxx, node.getPosition().x + node.getSize().x);
+            offset = Math.max(offset, node.getPosition().x + node.getSize().x);
         }
+        offset -= graphOffset.x;
         
         // mirror all nodes, ports, edges, and labels
         for (LNode node : nodes) {
-            mirrorX(node.getPosition(), maxx - node.getSize().x);
+            mirrorX(node.getPosition(), offset - node.getSize().x);
             mirrorNodeLabelPlacementX(node);
             
             KVector nodeSize = node.getSize();
@@ -129,20 +131,20 @@ public final class GraphTransformer implements ILayoutProcessor {
                 for (LEdge edge : port.getOutgoingEdges()) {
                     // Mirror bend points
                     for (KVector bendPoint : edge.getBendPoints()) {
-                        mirrorX(bendPoint, maxx);
+                        mirrorX(bendPoint, offset);
                     }
                     
                     // Mirror junction points
                     KVectorChain junctionPoints = edge.getProperty(LayoutOptions.JUNCTION_POINTS);
                     if (junctionPoints != null) {
                         for (KVector jp : junctionPoints) {
-                            mirrorX(jp, maxx);
+                            mirrorX(jp, offset);
                         }
                     }
                     
                     // Mirror edge label positions
                     for (LLabel label : edge.getLabels()) {
-                        mirrorX(label.getPosition(), maxx - label.getSize().x);
+                        mirrorX(label.getPosition(), offset - label.getSize().x);
                     }
                 }
                 
@@ -267,17 +269,19 @@ public final class GraphTransformer implements ILayoutProcessor {
      * Mirror the y coordinates of the given graph.
      * 
      * @param nodes the nodes of the graph to transpose
+     * @param graphOffset the offset in the graph
      */
-    private void mirrorY(final List<LNode> nodes) {
+    private void mirrorY(final List<LNode> nodes, final KVector graphOffset) {
         // determine the greatest y coordinate
-        double maxy = 0;
+        double offset = 0;
         for (LNode node : nodes) {
-            maxy = Math.max(maxy, node.getPosition().y + node.getSize().y);
+            offset = Math.max(offset, node.getPosition().y + node.getSize().y);
         }
+        offset -= graphOffset.y;
         
         // mirror all nodes, ports, edges, and labels
         for (LNode node : nodes) {
-            mirrorY(node.getPosition(), maxy - node.getSize().y);
+            mirrorY(node.getPosition(), offset - node.getSize().y);
             mirrorNodeLabelPlacementY(node);
             
             KVector nodeSize = node.getSize();
@@ -288,20 +292,20 @@ public final class GraphTransformer implements ILayoutProcessor {
                 for (LEdge edge : port.getOutgoingEdges()) {
                     // Mirror bend points
                     for (KVector bendPoint : edge.getBendPoints()) {
-                        mirrorY(bendPoint, maxy);
+                        mirrorY(bendPoint, offset);
                     }
                     
                     // Mirror junction points
                     KVectorChain junctionPoints = edge.getProperty(LayoutOptions.JUNCTION_POINTS);
                     if (junctionPoints != null) {
                         for (KVector jp : junctionPoints) {
-                            mirrorY(jp, maxy);
+                            mirrorY(jp, offset);
                         }
                     }
                     
                     // Mirror edge label positions
                     for (LLabel label : edge.getLabels()) {
-                        mirrorY(label.getPosition(), maxy - label.getSize().y);
+                        mirrorY(label.getPosition(), offset - label.getSize().y);
                     }
                 }
                 
@@ -406,6 +410,7 @@ public final class GraphTransformer implements ILayoutProcessor {
             transpose(node.getPosition());
             transpose(node.getSize());
             transposeNodeLabelPlacement(node);
+            transposeProperties(node);
             
             // Transpose ports
             for (LPort port : node.getPorts()) {
@@ -585,6 +590,23 @@ public final class GraphTransformer implements ILayoutProcessor {
             node.setProperty(Properties.LAYER_CONSTRAINT, LayerConstraint.LAST_SEPARATE);
             node.setProperty(Properties.IN_LAYER_CONSTRAINT, InLayerConstraint.NONE);
         }
+    }
+    
+    /**
+     * Checks a node's properties for ones that need to be transposed. Currently, the following
+     * properties are transposed:
+     * <ul>
+     *   <li>{@link LayoutOptions#MIN_HEIGHT} and {@link LayoutOptions#MIN_WIDTH}.</li>
+     * </ul>
+     * 
+     * @param node the node whose properties are to be transposed.
+     */
+    private void transposeProperties(final LNode node) {
+        // Transpose MIN_HEIGHT and MIN_WIDTH
+        float minHeight = node.getProperty(LayoutOptions.MIN_HEIGHT);
+        float minWidth = node.getProperty(LayoutOptions.MIN_WIDTH);
+        node.setProperty(LayoutOptions.MIN_WIDTH, minHeight);
+        node.setProperty(LayoutOptions.MIN_HEIGHT, minWidth);
     }
 
 }
