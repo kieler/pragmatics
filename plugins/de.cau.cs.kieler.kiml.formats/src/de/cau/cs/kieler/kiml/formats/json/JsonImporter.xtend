@@ -21,6 +21,7 @@ import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.core.kgraph.KPort
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
 import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer
 import de.cau.cs.kieler.kiml.service.formats.TransformationData
@@ -28,6 +29,7 @@ import de.cau.cs.kieler.kiml.service.formats.TransformationException
 import de.cau.cs.kieler.kiml.util.KimlUtil
 import java.util.Iterator
 import java.util.Map
+import org.json.JSONArray
 import org.json.JSONObject
 
 /**
@@ -69,7 +71,9 @@ import org.json.JSONObject
  *   sourcePort: sourcePort,
  *   target: nodeId,
  *   targetPort: targetPort,
- *   bendpoints: [ ..array of {x:1,y:1} objects (including source and target point.. ]
+ *   sourcePoint: {x,y},
+ *   targetPoint: {x,y},
+ *   bendPoints: [ .. {x,y} pairs .. ]
  * }
  * 
  * 
@@ -201,7 +205,35 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
     }
 
     private def transformEdgeLayout(JSONObject jsonObj, KEdgeLayout edgeLayout) {
-        // TODO !
+        
+        // src
+        jsonObj.optJSONObject("sourcePoint") => [ srcPnt |
+            if (srcPnt != null) {
+                 srcPnt.optDouble("x") => [ edgeLayout.sourcePoint.x = it.floatValueValid ]
+                 srcPnt.optDouble("y") => [ edgeLayout.sourcePoint.y = it.floatValueValid ]
+             }
+        ]
+        
+        // tgt
+        jsonObj.optJSONObject("targetPoint") => [ tgtPnt |
+            if (tgtPnt != null) {
+                 tgtPnt.optDouble("x") => [ edgeLayout.targetPoint.x = it.floatValueValid ]
+                 tgtPnt.optDouble("y") => [ edgeLayout.targetPoint.y = it.floatValueValid ]
+             }
+        ]
+        
+        // bend points
+        jsonObj.optJSONArray("bendPoints") => [ bends | 
+            if (bends != null) {
+                for (i : 0 .. bends.length) {
+                    val jsonBend = bends.optJSONObject(i)
+                    val bend = KLayoutDataFactory.eINSTANCE.createKPoint
+                    jsonBend.optDouble("x") => [ bend.x = it.floatValueValid ]
+                    jsonBend.optDouble("y") => [ bend.y = it.floatValueValid ]
+                    edgeLayout.bendPoints += bend
+                }
+            }
+        ]
     }
 
     private def transformProperties(JSONObject jsonObject, KLayoutData layoutData) {
@@ -291,8 +323,27 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
     private def dispatch transferLayoutInt(KEdge edge) {
         val jsonObj = edgeJsonMap.get(edge)
 
-        // TODO
-        return ""
+        // source
+        val sourcePoint = new JSONObject
+        sourcePoint.put("x", edge.layout.sourcePoint.x)
+        sourcePoint.put("y", edge.layout.sourcePoint.y)
+        jsonObj?.put("sourcePoint", sourcePoint)
+    
+        // target        
+        val targetPoint = new JSONObject
+        targetPoint.put("x", edge.layout.targetPoint.x)
+        targetPoint.put("y", edge.layout.targetPoint.y)
+        jsonObj?.put("targetPoint", targetPoint)
+        
+        // bend points
+        val bends = new JSONArray
+        edge.layout.bendPoints.forEach [ pnt |
+            val jsonPnt = new JSONObject
+            jsonPnt.put("x", pnt.x)
+            jsonPnt.put("y", pnt.y)
+            bends.put(jsonPnt)            
+        ]
+        jsonObj?.put("bendPoints", bends)
     }
 
     private def dispatch transferLayoutInt(Object obj) {
@@ -358,7 +409,7 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
      * Maps infinite or NaN values to 0f.
      */
     def float floatValueValid(Double d) {
-        if (d.infinite || d.naN) {
+        if (d == null || d.infinite || d.naN) {
             return 0f
         } else {
             return d.floatValue
