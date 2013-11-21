@@ -82,7 +82,7 @@ public final class GraphTransformer implements ILayoutProcessor {
         
         switch(mode) {
         case MIRROR_X:
-            mirrorX(nodes, layeredGraph.getOffset());
+            mirrorX(nodes, layeredGraph);
             break;
         case TRANSPOSE:
             transpose(nodes);
@@ -90,8 +90,8 @@ public final class GraphTransformer implements ILayoutProcessor {
             transpose(layeredGraph.getSize());
             break;
         case MIRROR_AND_TRANSPOSE:
-            mirrorX(nodes, layeredGraph.getOffset());
-            mirrorY(nodes, layeredGraph.getOffset());
+            mirrorX(nodes, layeredGraph);
+            mirrorY(nodes, layeredGraph);
             transpose(nodes);
             transpose(layeredGraph.getOffset());
             transpose(layeredGraph.getSize());
@@ -108,15 +108,27 @@ public final class GraphTransformer implements ILayoutProcessor {
      * Mirror the x coordinates of the given graph.
      * 
      * @param nodes the nodes of the graph to transpose
-     * @param graphOffset the offset in the graph
+     * @param graph the graph the nodes are part of
      */
-    private void mirrorX(final List<LNode> nodes, final KVector graphOffset) {
-        // determine the greatest x coordinate
+    private void mirrorX(final List<LNode> nodes, final LGraph graph) {
+        /* If this method is called at the end of the algorithm, the graph size tells us exactly how
+         * large the graph is -- thus, we'll take that as the basis for calculating the y coordinate of
+         * the line we'll mirror at. If this method is called at the beginning of the algorithm, the
+         * graph size is (0,0) and we'll try to calculate a rough estimate based on node coordinates. 
+         */
+        
+        // determine the greatest y coordinate of nodes, edges, and edge labels
         double offset = 0;
-        for (LNode node : nodes) {
-            offset = Math.max(offset, node.getPosition().x + node.getSize().x);
+        if (graph.getSize().x == 0) {
+            for (LNode node : nodes) {
+                offset = Math.max(
+                        offset,
+                        node.getPosition().x + node.getSize().x + node.getMargin().right);
+            }
+        } else {
+            offset = graph.getSize().x - graph.getOffset().x;
         }
-        offset -= graphOffset.x;
+        offset -= graph.getOffset().x;
         
         // mirror all nodes, ports, edges, and labels
         for (LNode node : nodes) {
@@ -269,15 +281,27 @@ public final class GraphTransformer implements ILayoutProcessor {
      * Mirror the y coordinates of the given graph.
      * 
      * @param nodes the nodes of the graph to transpose
-     * @param graphOffset the offset in the graph
+     * @param graph the graph the nodes are part of
      */
-    private void mirrorY(final List<LNode> nodes, final KVector graphOffset) {
-        // determine the greatest y coordinate
+    private void mirrorY(final List<LNode> nodes, final LGraph graph) {
+        /* If this method is called at the end of the algorithm, the graph size tells us exactly how
+         * large the graph is -- thus, we'll take that as the basis for calculating the y coordinate of
+         * the line we'll mirror at. If this method is called at the beginning of the algorithm, the
+         * graph size is (0,0) and we'll try to calculate a rough estimate based on node coordinates. 
+         */
+        
+        // determine the greatest y coordinate of nodes, edges, and edge labels
         double offset = 0;
-        for (LNode node : nodes) {
-            offset = Math.max(offset, node.getPosition().y + node.getSize().y);
+        if (graph.getSize().y == 0) {
+            for (LNode node : nodes) {
+                offset = Math.max(
+                        offset,
+                        node.getPosition().y + node.getSize().y + node.getMargin().bottom);
+            }
+        } else {
+            offset = graph.getSize().y - graph.getOffset().y;
         }
-        offset -= graphOffset.y;
+        offset -= graph.getOffset().y;
         
         // mirror all nodes, ports, edges, and labels
         for (LNode node : nodes) {
