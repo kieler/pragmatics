@@ -109,8 +109,6 @@ public class LiveLayoutHandler implements HttpHandler {
         // fixes for an svg
         if (outformat.equals("org.w3.svg")) {
             outGraph = fixSvg(outGraph);
-        } else {
-            outGraph = "<pre class='pre-scrollable prettyprint'>" + fixXML(outGraph) + "</pre>";
         }
 
         http.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
@@ -182,9 +180,4 @@ public class LiveLayoutHandler implements HttpHandler {
 
         return sb.toString();
     }
-
-    private String fixXML(final String graph) {
-        return graph.replace(">", "&gt;").replace("<", "&lt;");
-    }
-
 }

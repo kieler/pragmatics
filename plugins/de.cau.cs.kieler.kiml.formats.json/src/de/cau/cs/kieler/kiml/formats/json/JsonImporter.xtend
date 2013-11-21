@@ -22,6 +22,8 @@ import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
+import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement
+import de.cau.cs.kieler.kiml.options.LayoutOptions
 import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer
 import de.cau.cs.kieler.kiml.service.formats.TransformationData
 import de.cau.cs.kieler.kiml.service.formats.TransformationException
@@ -86,7 +88,7 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
     private def transformChildNodes(JSONObject jsonNode, KNode parent) {
         jsonNode.optJSONArray("children") => [ children |
             if (children != null) {
-                for (i : 0 .. children.length) {
+                for (i : 0 ..< children.length) {
                     children.optJSONObject(i)?.transformNode(parent)
                 }
             }
@@ -129,7 +131,7 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
         // transform edges of the current hierarchy level
         jsonObj.optJSONArray("edges") => [ edges |
             if (edges != null) {
-                for (i : 0 .. edges.length) {
+                for (i : 0 ..< edges.length) {
                     edges.optJSONObject(i)?.transformEdge
                 }
             }
@@ -138,7 +140,7 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
         // transform the edges of all child nodes
         jsonObj.optJSONArray("children") => [ children |
             if (children != null) {
-                for (i : 0 .. children.length) {
+                for (i : 0 ..< children.length) {
                     children.optJSONObject(i)?.transformEdges
                 }
             }
@@ -157,6 +159,15 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
         // targets
         edge.target = nodeIdMap.get(jsonObj.optString("target"))
         edge.targetPort = portIdMap.get(jsonObj.optString("targetPort"))
+        
+        // check if ok
+        if(edge.source == null || edge.target == null) {
+            throw new TransformationException("Invalid JSON graph format, the target" 
+                + " and source of a node may not be null (edge " + jsonObj.optString("id") + ").")
+        }
+        
+        // labels
+        jsonObj.transformLabels(edge)
 
         // bend points
         jsonObj.transformEdgeLayout(edge.layout)
@@ -183,7 +194,7 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
         // bend points
         jsonObj.optJSONArray("bendPoints") => [ bends |
             if (bends != null) {
-                for (i : 0 .. bends.length) {
+                for (i : 0 ..< bends.length) {
                     val jsonBend = bends.optJSONObject(i)
                     val bend = KLayoutDataFactory.eINSTANCE.createKPoint
                     jsonBend.optDouble("x") => [bend.x = it.floatValueValid]
@@ -206,9 +217,11 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
     private def transformLabels(JSONObject jsonObj, KLabeledGraphElement element) {
         jsonObj.optJSONArray("labels") => [ labels |
             if (labels != null) {
-                for (i : 0 .. labels.length) {
+                for (i : 0 ..< labels.length) {
                     val label = KimlUtil.createInitializedLabel(element)
                     label.text = labels.optString(i)
+                    label.layout.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
+                            EdgeLabelPlacement.CENTER)
                 }
             }
         ]
@@ -217,7 +230,7 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
     private def transformPorts(JSONObject jsonObj, KNode parent) {
         jsonObj.optJSONArray("ports") => [ ports |
             if (ports != null) {
-                for (i : 0 .. ports.length) {
+                for (i : 0 ..< ports.length) {
                     ports.optJSONObject(i)?.transformPort(parent)
                 }
             }

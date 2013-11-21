@@ -129,11 +129,13 @@ public class JsonHandler implements ITransformationHandler<JSONObject> {
         return importer;
     }
 
+    private JsonExporter exporter = new JsonExporter();
+    
     /**
      * {@inheritDoc}
      */
     public IGraphTransformer<KNode, JSONObject> getExporter() {
-        throw new UnsupportedOperationException("Json export not yet supported.");
+        return exporter;
     }
 
 }

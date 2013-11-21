@@ -36,6 +36,10 @@ class JsonExporter implements IGraphTransformer<KNode, JSONObject> {
     private val Map<KNode, String> nodeIdMap = Maps.newHashMap
     private val Map<KPort, String> portIdMap = Maps.newHashMap
     private val Map<KEdge, String> edgeIdMap = Maps.newHashMap
+        
+    private val Map<KNode, JSONObject> nodeJsonMap = Maps.newHashMap
+    private val Map<KPort, JSONObject> portJsonMap = Maps.newHashMap
+    private val Map<KEdge, JSONObject> edgeJsonMap = Maps.newHashMap
     
     private var nodeIdCounter = 0
     private var portIdCounter = 0
@@ -52,6 +56,10 @@ class JsonExporter implements IGraphTransformer<KNode, JSONObject> {
         val jsonArray = new JSONArray
         // transform the root node
         data.sourceGraph.transformNode(jsonArray)
+        
+        // edges (important that all nodes are already transformed!)
+        data.sourceGraph.transformEdges
+        
         // retrieve the result from the tmp array
         data.targetGraphs += jsonArray.get(0) as JSONObject
     }
@@ -60,6 +68,9 @@ class JsonExporter implements IGraphTransformer<KNode, JSONObject> {
         nodeIdMap.clear
         portIdMap.clear
         edgeIdMap.clear
+        nodeJsonMap.clear
+        portJsonMap.clear
+        edgeJsonMap.clear
         nodeIdCounter = 0
         portIdCounter = 0
         edgeIdCounter = 0
@@ -96,11 +107,6 @@ class JsonExporter implements IGraphTransformer<KNode, JSONObject> {
         // properties
         node.layout.transformProperties(jsonObj)
         
-        // edges (important that all nodes are already transformed!)
-        val edges = new JSONArray
-        jsonObj.put("edges", edges)
-        node.outgoingEdges.forEach [ it.transformEdge(edges)]
-        
     }
     
     
@@ -121,6 +127,16 @@ class JsonExporter implements IGraphTransformer<KNode, JSONObject> {
         jsonObj.put("y", port.layout.ypos)
         jsonObj.put("width", port.layout.width)
         jsonObj.put("height", port.layout.height)
+    }
+
+    private def void transformEdges(KNode node) {
+        val jsonObj = nodeJsonMap.get(node)        
+        val edges = new JSONArray
+        jsonObj.put("edges", edges)
+        node.outgoingEdges.forEach [ it.transformEdge(edges)]
+        
+        // children
+        node.children.forEach [ it.transformEdges ]
     }
 
     private def void transformEdge(KEdge edge, JSONArray array) {
@@ -192,6 +208,7 @@ class JsonExporter implements IGraphTransformer<KNode, JSONObject> {
         nodeIdCounter = nodeIdCounter + 1
         
         nodeIdMap.put(node, id)
+        nodeJsonMap.put(node, obj)
 
         return obj
     }
@@ -204,6 +221,7 @@ class JsonExporter implements IGraphTransformer<KNode, JSONObject> {
         portIdCounter = portIdCounter + 1
     
         portIdMap.put(port, id)
+        portJsonMap.put(port, obj)
 
         return obj
     }
@@ -216,6 +234,7 @@ class JsonExporter implements IGraphTransformer<KNode, JSONObject> {
         edgeIdCounter = edgeIdCounter + 1
 
         edgeIdMap.put(edge, id)
+        edgeJsonMap.put(edge, obj)
 
 
         return obj

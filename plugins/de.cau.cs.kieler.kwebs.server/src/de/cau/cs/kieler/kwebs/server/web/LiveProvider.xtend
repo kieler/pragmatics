@@ -166,7 +166,17 @@ class LiveProvider extends AbstractProvider {
 							oFormat: oFormat
 						}, 
 						success: function(svggraph) {
+							
+							// if not svg, surround with pretty print
+							if (oFormat != "org.w3.svg") {
+							  // replace xml markup for displaying
+			                  svggraph = svggraph.replace(/>/g, '&gt;').replace(/</g, '&lt;');
+			                  // make it look nice 
+			                  svggraph = "<pre class='pre-scrollable prettyprint'>" + svggraph + "</pre>";
+							}
+							
 							svg.html(svggraph);
+							
 							// show graph section and hide errorDiv
 							$('#resGraph').show();
 							$('#errorDiv').hide();

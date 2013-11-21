@@ -9,7 +9,7 @@
             description="Handler for the graphs in the form of JavaScript Object Notation."
             extensions="json"
             id="org.json"
-            name="JSON Graph Format">
+            name="JSON">
       </handler>
    </extension>
 </plugin>
