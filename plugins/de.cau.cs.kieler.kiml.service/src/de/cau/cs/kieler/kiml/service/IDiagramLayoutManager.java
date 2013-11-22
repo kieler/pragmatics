@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.ui.diagram;
+package de.cau.cs.kieler.kiml.service;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.ui.IWorkbenchPart;
@@ -57,7 +57,7 @@ public interface IDiagramLayoutManager<T> extends IAdapterFactory {
      * <p/>
      * Layout options should not be directly set for any graph elements, since they would be
      * cleared later by the
-     * {@link de.cau.cs.kieler.kiml.ui.service.LayoutOptionManager LayoutOptionManager}.
+     * {@link de.cau.cs.kieler.kiml.service.LayoutOptionManager LayoutOptionManager}.
      * Instead the {@link LayoutMapping#getLayoutConfigs()} list should be augmented
      * with according layout configurators.
      * <p/>

@@ -27,7 +27,7 @@
       </menuContribution>
    </extension>
    <extension
-         point="de.cau.cs.kieler.kiml.ui.layoutManagers">
+         point="de.cau.cs.kieler.kiml.service.layoutManagers">
       <engine
             class="de.cau.cs.kieler.kwebs.client.layout.RemoteGraphLayoutEngine"
             priority="5">

@@ -40,7 +40,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.grana.GranaPlugin;
-import de.cau.cs.kieler.kiml.ui.util.ProgressMonitorAdapter;
+import de.cau.cs.kieler.kiml.service.util.ProgressMonitorAdapter;
 
 /**
  * The handler which is responsible for setting up an analysis batch run by launching the

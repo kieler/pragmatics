@@ -37,10 +37,10 @@ import de.cau.cs.kieler.kiml.formats.GraphFormatData;
 import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.formats.ITransformationHandler;
 import de.cau.cs.kieler.kiml.formats.TransformationData;
-import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
-import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
-import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
-import de.cau.cs.kieler.kiml.ui.service.LayoutOptionManager;
+import de.cau.cs.kieler.kiml.service.EclipseLayoutInfoService;
+import de.cau.cs.kieler.kiml.service.IDiagramLayoutManager;
+import de.cau.cs.kieler.kiml.service.LayoutMapping;
+import de.cau.cs.kieler.kiml.service.LayoutOptionManager;
 
 /**
  *  This class is responsible for transforming and exporting graphs from graphical diagrams.

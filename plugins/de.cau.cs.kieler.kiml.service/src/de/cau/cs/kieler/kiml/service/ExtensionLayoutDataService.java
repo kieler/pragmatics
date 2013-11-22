@@ -361,7 +361,7 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
     }
     
     /** Plug-in id of the KIML plug-in. */
-    private static final String PLUGIN_ID = "de.cau.cs.kieler.kiml";
+    private static final String KIML_PLUGIN_ID = "de.cau.cs.kieler.kiml";
     
     /**
      * Load a layout option from a configuration element.
@@ -389,7 +389,8 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
                 String implementation = element.getAttribute(ATTRIBUTE_IMPLEMENTATION);
                 if (implementation != null) {
                     try {
-                        Class<?> enumClass = Platform.getBundle(PLUGIN_ID).loadClass(implementation);
+                        Class<?> enumClass = Platform.getBundle(KIML_PLUGIN_ID).loadClass(
+                                implementation);
                         optionData.setType(LayoutOptionData.Type.ENUM);
                         optionData.setOptionClass(enumClass);
                     } catch (Exception e) {
@@ -407,7 +408,8 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
                 String implementation = element.getAttribute(ATTRIBUTE_IMPLEMENTATION);
                 if (implementation != null) {
                     try {
-                        Class<?> enumClass = Platform.getBundle(PLUGIN_ID).loadClass(implementation);
+                        Class<?> enumClass = Platform.getBundle(KIML_PLUGIN_ID).loadClass(
+                                implementation);
                         optionData.setType(LayoutOptionData.Type.ENUMSET);
                         optionData.setOptionClass(enumClass);
                     } catch (Exception e) {

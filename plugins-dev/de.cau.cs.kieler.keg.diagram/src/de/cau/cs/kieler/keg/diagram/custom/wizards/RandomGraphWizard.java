@@ -62,7 +62,7 @@ import de.cau.cs.kieler.keg.diagram.custom.random.RandomGraphGenerator;
 import de.cau.cs.kieler.keg.diagram.edit.parts.NodeEditPart;
 import de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditorPlugin;
 import de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditorUtil;
-import de.cau.cs.kieler.kiml.ui.util.ProgressMonitorAdapter;
+import de.cau.cs.kieler.kiml.service.util.ProgressMonitorAdapter;
 
 /**
  * The new-wizard for creating random KEG graphs.

@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.ui.service;
+package de.cau.cs.kieler.kiml.service;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,8 +35,6 @@ import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
-import de.cau.cs.kieler.kiml.service.LayoutInfoService;
-import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 
 /**
  * The main class for configuration of KGraph instances. Configuration means the annotation of

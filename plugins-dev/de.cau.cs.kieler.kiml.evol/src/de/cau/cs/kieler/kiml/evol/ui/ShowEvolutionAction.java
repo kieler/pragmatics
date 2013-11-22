@@ -29,13 +29,13 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.kiml.evol.EvolLayoutConfig;
 import de.cau.cs.kieler.kiml.evol.EvolPlugin;
+import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
+import de.cau.cs.kieler.kiml.service.EclipseLayoutInfoService;
+import de.cau.cs.kieler.kiml.service.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.service.LayoutInfoService;
+import de.cau.cs.kieler.kiml.service.LayoutMapping;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
-import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
-import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
-import de.cau.cs.kieler.kiml.ui.diagram.LayoutHandler;
-import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
-import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
+import de.cau.cs.kieler.kiml.ui.LayoutHandler;
 import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
 
 /**

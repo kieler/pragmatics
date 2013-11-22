@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.ui.service;
+package de.cau.cs.kieler.kiml.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,9 +45,6 @@ import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.service.LayoutInfoService;
-import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
-import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
 
 /**
  * An extension of the layout info service for diagram layout managers and preference handling.
@@ -59,7 +56,7 @@ import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
 public final class EclipseLayoutInfoService extends LayoutInfoService implements IAdapterFactory {
     
     /** identifier of the extension point for layout managers. */
-    public static final String EXTP_ID_LAYOUT_MANAGERS = "de.cau.cs.kieler.kiml.ui.layoutManagers";
+    public static final String EXTP_ID_LAYOUT_MANAGERS = "de.cau.cs.kieler.kiml.service.layoutManagers";
     /** name of the 'manager' element in the 'layout managers' extension point. */
     public static final String ELEMENT_MANAGER = "manager";
     /** name of the 'engine' element in the 'layout managers' extension point. */
@@ -123,7 +120,8 @@ public final class EclipseLayoutInfoService extends LayoutInfoService implements
             message = "Extension point " + extensionPoint
                     + ": An error occured while loading extensions.";
         }
-        IStatus status = new Status(IStatus.WARNING, KimlUiPlugin.PLUGIN_ID, 0, message, exception);
+        IStatus status = new Status(IStatus.WARNING, KimlServicePlugin.PLUGIN_ID,
+                0, message, exception);
         StatusManager.getManager().handle(status);
     }
     
@@ -132,7 +130,7 @@ public final class EclipseLayoutInfoService extends LayoutInfoService implements
      */
     @Override
     protected void reportError(final CoreException exception) {
-        StatusManager.getManager().handle(exception, KimlUiPlugin.PLUGIN_ID);
+        StatusManager.getManager().handle(exception, KimlServicePlugin.PLUGIN_ID);
     }
     
     /**
@@ -273,7 +271,7 @@ public final class EclipseLayoutInfoService extends LayoutInfoService implements
         Object value = optionData.parseValue(valueString);
         if (value != null) {
             addOptionValue(diagramType, optionData.getId(), value);
-            IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
+            IPreferenceStore preferenceStore = KimlServicePlugin.getDefault().getPreferenceStore();
             preferenceStore.setValue(getPreferenceName(diagramType, optionData.getId()), valueString);
         }
     }
@@ -302,7 +300,7 @@ public final class EclipseLayoutInfoService extends LayoutInfoService implements
             if (clazzName != null) {
                 addOptionValue(clazzName, optionData.getId(), value);
                 registeredElements.add(clazzName);
-                IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
+                IPreferenceStore preferenceStore = KimlServicePlugin.getDefault().getPreferenceStore();
                 preferenceStore.setValue(getPreferenceName(clazzName, optionData.getId()), valueString);
             }
         }
@@ -350,7 +348,7 @@ public final class EclipseLayoutInfoService extends LayoutInfoService implements
                     }
                 }
             } catch (CoreException exception) {
-                StatusManager.getManager().handle(exception, KimlUiPlugin.PLUGIN_ID);
+                StatusManager.getManager().handle(exception, KimlServicePlugin.PLUGIN_ID);
             }
         }
     }
@@ -379,7 +377,7 @@ public final class EclipseLayoutInfoService extends LayoutInfoService implements
      * Loads preferences for KIML.
      */
     private void loadPreferences() {
-        IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
+        IPreferenceStore preferenceStore = KimlServicePlugin.getDefault().getPreferenceStore();
         LayoutDataService layoutDataService = LayoutDataService.getInstance();
         
         // load default options for diagram types
@@ -420,7 +418,7 @@ public final class EclipseLayoutInfoService extends LayoutInfoService implements
      * Stores preferences for KIML.
      */
     public void storePreferences() {
-        IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
+        IPreferenceStore preferenceStore = KimlServicePlugin.getDefault().getPreferenceStore();
 
         // store set of registered diagram elements
         StringBuilder elementsString = new StringBuilder();

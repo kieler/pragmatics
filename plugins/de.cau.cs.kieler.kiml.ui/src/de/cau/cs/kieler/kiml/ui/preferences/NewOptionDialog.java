@@ -39,11 +39,11 @@ import org.eclipse.ui.dialogs.ListDialog;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.service.EclipseLayoutDataService;
+import de.cau.cs.kieler.kiml.service.EclipseLayoutInfoService;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.preferences.OptionsTableProvider.DataEntry;
-import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutDataService;
-import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 
 /**
  * A dialog to add new default layout options in the preference page.

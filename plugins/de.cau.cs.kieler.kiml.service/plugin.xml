@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+  <extension-point id="layoutManagers" name="Layout Managers" schema="schema/layoutManagers.exsd"/>
 
+  <extension
+       point="de.cau.cs.kieler.kiml.service.layoutManagers">
+    <engine
+          class="de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine">
+    </engine>
+ </extension>
+ 
+ <extension
+       point="de.cau.cs.kieler.kiml.layoutInfo">
+    <config
+          activation="de.cau.cs.kieler.kiml.eclipse"
+          class="de.cau.cs.kieler.kiml.service.EclipseLayoutConfig"
+          default="true">
+    </config>
+ </extension>
 
 </plugin>

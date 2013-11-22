@@ -16,8 +16,11 @@ package de.cau.cs.kieler.kiml.kivi;
 import java.util.Collections;
 import java.util.Map;
 
+import org.eclipse.emf.common.command.AbstractCommand;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.emf.transaction.RecordingCommand;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
@@ -26,10 +29,8 @@ import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
-import de.cau.cs.kieler.kiml.ui.Messages;
-import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
-import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
-import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
+import de.cau.cs.kieler.kiml.service.EclipseLayoutInfoService;
+import de.cau.cs.kieler.kiml.service.IDiagramLayoutManager;
 
 /**
  * An effect that sets layout options for a specific element.
@@ -97,7 +98,7 @@ public class SetOptionsEffect extends AbstractEffect {
                     // get an editing domain and execute the command
                     EditingDomain editingDomain = (EditingDomain) manager.getAdapter(diagramPart,
                             EditingDomain.class);
-                    KimlUiUtil.runModelChange(new Runnable() {
+                    runModelChange(new Runnable() {
                         public void run() {
                             for (Map.Entry<String, Object> entry : optionMap.entrySet()) {
                                 LayoutOptionData<?> optionData = LayoutDataService.getInstance()
@@ -107,9 +108,48 @@ public class SetOptionsEffect extends AbstractEffect {
                                 }
                             }
                         }
-                    }, editingDomain, Messages.getString("kiml.ui.40"));
+                    }, editingDomain, "Set Layout Options");
                 }
             }
+        }
+    }
+    
+    /**
+     * Performs the model changes specified in the given runnable in a safe context.
+     * If the given editing domain is a {@link TransactionalEditingDomain}, the changes done in
+     * the runnable are recorded, otherwise the operation is not undoable.
+     * 
+     * @param runnable a runnable that performs model changes
+     * @param editingDomain the editing domain for the changes, or {@code null}
+     * @param label a user friendly label shown for the undo action, or {@code null}
+     */
+    private static void runModelChange(final Runnable runnable,
+            final EditingDomain editingDomain, final String label) {
+        if (editingDomain instanceof TransactionalEditingDomain) {
+            // execute with a transactional editing domain
+            editingDomain.getCommandStack().execute(new RecordingCommand(
+                    (TransactionalEditingDomain) editingDomain, label) {
+                protected void doExecute() {
+                    runnable.run();
+                }
+            });
+        } else if (editingDomain != null) {
+            // execute with an arbitrary editing domain
+            editingDomain.getCommandStack().execute(new AbstractCommand(label) {
+                public void execute() {
+                    runnable.run();
+                }
+                @Override
+                public boolean canUndo() {
+                    return false;
+                }
+                public void redo() {
+                    execute();
+                }
+            });
+        } else {
+            // execute without an editing domain
+            runnable.run();
         }
     }
 

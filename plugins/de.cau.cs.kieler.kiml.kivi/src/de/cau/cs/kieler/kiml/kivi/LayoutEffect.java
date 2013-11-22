@@ -31,10 +31,10 @@ import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
-import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
-import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
-import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
-import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
+import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
+import de.cau.cs.kieler.kiml.service.EclipseLayoutInfoService;
+import de.cau.cs.kieler.kiml.service.IDiagramLayoutManager;
+import de.cau.cs.kieler.kiml.service.LayoutMapping;
 
 /**
  * Performs automatic layout on a diagram editor for a given selection. The layout
@@ -103,8 +103,6 @@ public class LayoutEffect extends AbstractEffect {
      *            the workbench part containing the diagram to layout
      * @param object
      *            the top-level domain model object to layout, or {@code null}
-     * @throws de.cau.cs.kieler.core.ui.UnsupportedPartException
-     *            if layout is not supported for the given workbench part
      */
     public LayoutEffect(final IWorkbenchPart workbenchPart, final EObject object) {
         this.diagramEditor = workbenchPart;
@@ -121,8 +119,6 @@ public class LayoutEffect extends AbstractEffect {
      *            the top-level domain model object to layout, or {@code null}
      * @param zoomToFit
      *            whether zoom to fit shall be performed
-     * @throws de.cau.cs.kieler.core.ui.UnsupportedPartException
-     *            if layout is not supported for the given workbench part
      */
     public LayoutEffect(final IWorkbenchPart workbenchPart, final EObject object,
             final boolean zoomToFit) {
@@ -142,8 +138,6 @@ public class LayoutEffect extends AbstractEffect {
      *            whether zoom to fit shall be performed
      * @param progressBar
      *            whether a progress bar shall be displayed
-     * @throws de.cau.cs.kieler.core.ui.UnsupportedPartException
-     *            if layout is not supported for the given workbench part
      */
     public LayoutEffect(final IWorkbenchPart workbenchPart, final EObject object,
             final boolean zoomToFit, final boolean progressBar) {
@@ -166,8 +160,6 @@ public class LayoutEffect extends AbstractEffect {
      *            whether a progress bar shall be displayed
      * @param ancestors
      *            whether to include the ancestors in the layout process
-     * @throws de.cau.cs.kieler.core.ui.UnsupportedPartException
-     *            if layout is not supported for the given workbench part
      */
     public LayoutEffect(final IWorkbenchPart workbenchPart, final EObject object,
             final boolean zoomToFit, final boolean progressBar,
@@ -194,8 +186,6 @@ public class LayoutEffect extends AbstractEffect {
      *            whether to include the ancestors in the layout process
      * @param animation
      *            whether the layout shall be animated
-     * @throws de.cau.cs.kieler.core.ui.UnsupportedPartException
-     *            if layout is not supported for the given workbench part
      */
     public LayoutEffect(final IWorkbenchPart workbenchPart, final EObject object,
             final boolean zoomToFit, final boolean progressBar, final boolean ancestors,

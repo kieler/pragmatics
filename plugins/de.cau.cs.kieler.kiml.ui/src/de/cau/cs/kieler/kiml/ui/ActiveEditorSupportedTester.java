@@ -16,7 +16,7 @@ package de.cau.cs.kieler.kiml.ui;
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.ui.IWorkbenchPart;
 
-import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
+import de.cau.cs.kieler.kiml.service.EclipseLayoutInfoService;
 
 /**
  * Tester class for checking whether the active editor is supported by KIML.

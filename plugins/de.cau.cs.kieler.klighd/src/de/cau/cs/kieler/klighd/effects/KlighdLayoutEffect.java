@@ -16,7 +16,7 @@ package de.cau.cs.kieler.klighd.effects;
 import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
-import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
+import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
 import de.cau.cs.kieler.klighd.views.DiagramViewManager;
 
 /**

@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.draw2d.ConnectionAnchor;
 import org.eclipse.draw2d.ConnectionLocator;
 import org.eclipse.draw2d.IFigure;
@@ -45,7 +46,6 @@ import org.eclipse.gmf.runtime.gef.ui.figures.SlidableAnchor;
 import org.eclipse.gmf.runtime.notation.Edge;
 import org.eclipse.gmf.runtime.notation.NotationPackage;
 import org.eclipse.gmf.runtime.notation.View;
-import org.eclipse.jface.preference.IPreferenceStore;
 
 import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.kgraph.KEdge;
@@ -65,9 +65,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
-import de.cau.cs.kieler.kiml.ui.Messages;
-import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
+import de.cau.cs.kieler.kiml.service.EclipseLayoutInfoService;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
@@ -104,8 +102,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                 ApplyLayoutRequest layoutRequest = (ApplyLayoutRequest) request;
                 IGraphicalEditPart hostEditPart = (IGraphicalEditPart) getHost();
                 GmfLayoutCommand command = new GmfLayoutCommand(hostEditPart.getEditingDomain(),
-                        Messages.getString("kiml.ui.5"), //$NON-NLS-1$
-                        new EObjectAdapter((View) hostEditPart.getModel()));
+                        "Automatic Layout", new EObjectAdapter((View) hostEditPart.getModel()));
                 float scale = layoutRequest.getScale();
 
                 // retrieve layout data from the request and compute layout data for the command
@@ -127,9 +124,10 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                 }
 
                 // set further options
-                IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
-                command.setObliqueRouting(preferenceStore
-                        .getBoolean(EclipseLayoutInfoService.PREF_OBLIQUE_ROUTE));
+                boolean obliqueRouting = Platform.getPreferencesService().getBoolean(
+                        "de.cau.cs.kieler.kiml.ui",
+                        EclipseLayoutInfoService.PREF_OBLIQUE_ROUTE, true, null);
+                command.setObliqueRouting(obliqueRouting);
 
                 pointListMap.clear();
                 return new ICommandProxy(command);

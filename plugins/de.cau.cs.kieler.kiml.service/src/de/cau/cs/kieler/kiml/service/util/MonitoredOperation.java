@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.ui.util;
+package de.cau.cs.kieler.kiml.service.util;
 
 import java.util.LinkedList;
 import java.util.concurrent.ExecutorService;
@@ -28,7 +28,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.util.Maybe;
-import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
+import de.cau.cs.kieler.kiml.service.KimlServicePlugin;
 
 /**
  * An operation that can be tracked with a progress bar. This operation can be called
@@ -180,7 +180,7 @@ public abstract class MonitoredOperation {
                     postUIexec();
                 }
             } catch (Throwable throwable) {
-                status.set(new Status(IStatus.ERROR, KimlUiPlugin.PLUGIN_ID,
+                status.set(new Status(IStatus.ERROR, KimlServicePlugin.PLUGIN_ID,
                         "Error in monitored operation", throwable));
             }
         } else {
@@ -190,7 +190,7 @@ public abstract class MonitoredOperation {
                     try {
                         preUIexec();
                     } catch (Throwable throwable) {
-                        status.set(new Status(IStatus.ERROR, KimlUiPlugin.PLUGIN_ID,
+                        status.set(new Status(IStatus.ERROR, KimlServicePlugin.PLUGIN_ID,
                                 "Error in monitored operation", throwable));
                     }
                 }
@@ -207,7 +207,8 @@ public abstract class MonitoredOperation {
                             try {
                                 postUIexec();
                             } catch (Throwable throwable) {
-                                status.set(new Status(IStatus.ERROR, KimlUiPlugin.PLUGIN_ID,
+                                status.set(new Status(IStatus.ERROR,
+                                        KimlServicePlugin.PLUGIN_ID,
                                         "Error in monitored operation", throwable));
                             }
                         }
@@ -391,7 +392,7 @@ public abstract class MonitoredOperation {
             }
             synchronized (status) {
                 if (status.get() == null || status.get().getSeverity() == IStatus.OK) {
-                    status.set(new Status(IStatus.ERROR, KimlUiPlugin.PLUGIN_ID,
+                    status.set(new Status(IStatus.ERROR, KimlServicePlugin.PLUGIN_ID,
                             "Error in monitored operation", throwable));
                     handleStatus(status);
                 }

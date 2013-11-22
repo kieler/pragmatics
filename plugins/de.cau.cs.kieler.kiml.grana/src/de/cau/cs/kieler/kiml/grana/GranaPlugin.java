@@ -25,7 +25,7 @@ import de.cau.cs.kieler.core.kivi.KiVi;
 import de.cau.cs.kieler.kiml.grana.ui.AnalysisEffect;
 import de.cau.cs.kieler.kiml.grana.ui.visualization.VisualizationService;
 import de.cau.cs.kieler.kiml.grana.util.GranaUtil;
-import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
+import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
 
 /**
  * The activator class controls the plug-in life cycle.

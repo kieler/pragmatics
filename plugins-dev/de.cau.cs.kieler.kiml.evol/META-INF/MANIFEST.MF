@@ -10,6 +10,7 @@ Require-Bundle: com.google.guava;bundle-version="10.0.0",
  de.cau.cs.kieler.core,
  de.cau.cs.kieler.core.kgraph,
  de.cau.cs.kieler.kiml,
+ de.cau.cs.kieler.kiml.service,
  de.cau.cs.kieler.kiml.ui,
  de.cau.cs.kieler.kiml.grana
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

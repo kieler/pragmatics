@@ -834,14 +834,14 @@ public class KAwtRenderer {
         KVectorChain points = new KVectorChain();
         for (KPosition position : polyline.getPoints()) {
             KVector point = new KVector();
-            KXPosition xpos = position.getX();
+            KXPosition<?> xpos = position.getX();
             if (xpos instanceof KLeftPosition) {
                 point.x = xpos.getRelative() * parentSize.x + scale * xpos.getAbsolute();
             } else if (xpos instanceof KRightPosition) {
                 point.x = parentSize.x
                         - (xpos.getRelative() * parentSize.x + scale * xpos.getAbsolute());
             }
-            KYPosition ypos = position.getY();
+            KYPosition<?> ypos = position.getY();
             if (ypos instanceof KTopPosition) {
                 point.y = ypos.getRelative() * parentSize.y + scale * ypos.getAbsolute();
             } else if (ypos instanceof KBottomPosition) {
@@ -954,11 +954,11 @@ public class KAwtRenderer {
             if (directPlaceData.getTopLeft() != null) {
                 KPosition topLeft = directPlaceData.getTopLeft();
                 if (topLeft.getX() != null) {
-                    KXPosition xpos = topLeft.getX();
+                    KXPosition<?> xpos = topLeft.getX();
                     x = xpos.getRelative() * parentSize.x + scale * xpos.getAbsolute();
                 }
                 if (topLeft.getY() != null) {
-                    KYPosition ypos = topLeft.getY();
+                    KYPosition<?> ypos = topLeft.getY();
                     y = ypos.getRelative() * parentSize.y + scale * ypos.getAbsolute();
                 }
             }
@@ -967,14 +967,14 @@ public class KAwtRenderer {
             childSize.translate(-x, -y);
             if (directPlaceData.getBottomRight() != null) {
                 KPosition bottomRight = directPlaceData.getBottomRight();
-                KXPosition xpos = bottomRight.getX();
+                KXPosition<?> xpos = bottomRight.getX();
                 if (xpos instanceof KLeftPosition) {
                     childSize.x = xpos.getRelative() * parentSize.x + scale * xpos.getAbsolute() - x;
                 } else if (xpos instanceof KRightPosition) {
                     childSize.x = (1 - xpos.getRelative()) * parentSize.x - scale
                             * xpos.getAbsolute() - x;
                 }
-                KYPosition ypos = bottomRight.getY();
+                KYPosition<?> ypos = bottomRight.getY();
                 if (ypos instanceof KTopPosition) {
                     childSize.y = ypos.getRelative() * parentSize.y + scale * ypos.getAbsolute() - y;
                 }

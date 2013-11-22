@@ -49,7 +49,7 @@ public class LayoutDataService {
 
     /** Mode constant for local data service instance. */
     public static final String ECLIPSE_DATA_SERVICE
-            = "de.cau.cs.kieler.kiml.ui.service.EclipseLayoutDataService"; //$NON-NLS-1$
+            = "de.cau.cs.kieler.kiml.service.EclipseLayoutDataService"; //$NON-NLS-1$
 
     /** the instance of the registry class. */
     private Registry registry;

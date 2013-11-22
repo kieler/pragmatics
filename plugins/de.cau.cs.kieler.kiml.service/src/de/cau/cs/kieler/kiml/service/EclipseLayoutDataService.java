@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.ui.service;
+package de.cau.cs.kieler.kiml.service;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,8 +26,6 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
-import de.cau.cs.kieler.kiml.service.ExtensionLayoutDataService;
-import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 
 /**
  * A special layout data service for use in an Eclipse instance.
@@ -65,7 +63,8 @@ public class EclipseLayoutDataService extends ExtensionLayoutDataService {
             message = "Extension point " + extensionPoint
                     + ": An error occured while loading extensions.";
         }
-        IStatus status = new Status(IStatus.WARNING, KimlUiPlugin.PLUGIN_ID, 0, message, exception);
+        IStatus status = new Status(IStatus.WARNING, KimlServicePlugin.PLUGIN_ID,
+                0, message, exception);
         StatusManager.getManager().handle(status);
     }
     
@@ -74,7 +73,7 @@ public class EclipseLayoutDataService extends ExtensionLayoutDataService {
      */
     @Override
     protected void reportError(final CoreException exception) {
-        StatusManager.getManager().handle(exception, KimlUiPlugin.PLUGIN_ID);
+        StatusManager.getManager().handle(exception, KimlServicePlugin.PLUGIN_ID);
     }
 
     /**

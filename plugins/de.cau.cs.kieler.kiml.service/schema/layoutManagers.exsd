@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="de.cau.cs.kieler.kiml.ui" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="de.cau.cs.kieler.kiml.service" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="de.cau.cs.kieler.kiml.ui" id="layoutManagers" name="Layout Managers"/>
+         <meta.schema plugin="de.cau.cs.kieler.kiml.service" id="layoutManagers" name="Layout Managers"/>
       </appinfo>
       <documentation>
          This extension point can be used to connect graphical diagram editors to the KIML functionality. A diagram layout manager has responsibility to translate the graph structure of a specific diagram editor into the internally used KGraph structure, which is used to execute algorithms for automatic layout.
@@ -61,7 +61,7 @@
                   Qualified name of a diagram layout manager class.
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager"/>
+                  <meta.attribute kind="java" basedOn=":de.cau.cs.kieler.kiml.service.IDiagramLayoutManager"/>
                </appinfo>
             </annotation>
          </attribute>

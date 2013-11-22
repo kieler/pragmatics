@@ -39,7 +39,7 @@ import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo.GeneType;
 import de.cau.cs.kieler.kiml.grana.AnalysisService;
-import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
+import de.cau.cs.kieler.kiml.service.LayoutMapping;
 
 /**
  * The main class for access to evolutionary meta layout.

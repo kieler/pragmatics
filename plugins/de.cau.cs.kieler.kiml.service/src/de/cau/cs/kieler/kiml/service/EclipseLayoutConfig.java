@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.ui.service;
+package de.cau.cs.kieler.kiml.service;
 
 import java.util.Map.Entry;
 import java.util.EnumSet;
@@ -32,7 +32,6 @@ import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.SizeConstraint;
-import de.cau.cs.kieler.kiml.service.LayoutInfoService;
 
 /**
  * A layout configuration for extension point configurations and user preferences.
