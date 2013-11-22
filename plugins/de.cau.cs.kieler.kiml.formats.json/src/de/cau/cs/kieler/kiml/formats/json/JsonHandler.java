@@ -41,11 +41,16 @@ import de.cau.cs.kieler.kiml.service.formats.TransformationException;
  *   y: ypos,
  *   width: 10,
  *   height: 10,
- *   labels: [ ..array with labels .. ],
+ *   labels: [ ..array with labels objects .. ],
  *   properties: { ..object with key value pairs.. }
  * }
  * </pre>
  * 
+ * <h2>Label</h2>
+ * {
+ *   text: "TEXT",
+ *   properties: { object with key value pairs}
+ * }
  * 
  * <h2>Node</h2>
  * 
