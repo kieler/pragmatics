@@ -243,17 +243,19 @@ public final class LayoutEvolutionModel extends AbstractEvolutionaryAlgorithm {
             double rating = 0;
             double totalWeight = 0;
             Map<String, Float> metricsResult = genome.getProperty(EvaluationOperation.METRIC_RESULT);
-            for (Map.Entry<String, Float> resultEntry : metricsResult.entrySet()) {
-                Double weight = metricWeights.get(resultEntry.getKey());
-                if (weight == null) {
-                    rating += resultEntry.getValue();
-                    totalWeight += 1;
-                } else {
-                    rating += weight * resultEntry.getValue();
-                    totalWeight += weight;
-                }
+            if (metricsResult != null) {
+            	for (Map.Entry<String, Float> resultEntry : metricsResult.entrySet()) {
+                    Double weight = metricWeights.get(resultEntry.getKey());
+                    if (weight == null) {
+                        rating += resultEntry.getValue();
+                        totalWeight += 1;
+                    } else {
+                        rating += weight * resultEntry.getValue();
+                        totalWeight += weight;
+                    }
+                }	
             }
-            
+           
             double fitness;
             if (totalWeight == 0) {
                 fitness = 0;
