@@ -13,18 +13,19 @@
  */
 package de.cau.cs.kieler.kwebs.server.web
 
+import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService
+
 /**
  * Presents a HTML page with input elements for a textual graph element and a config area.
  * Upon pressing a 'layout' button, the layouted graph is presented as an svg.
  * 
  * @author uru
  */
-import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService
-
 class LiveProvider extends AbstractProvider {
 
-	val DEFAULT_INPUT_FORMAT = "org.graphviz.dot"
-	val DEFAULT_OUTPUT_FORMAT = "org.w3.svg"
+    // default formats
+	private val DEFAULT_INPUT_FORMAT = "org.json"
+	private val DEFAULT_OUTPUT_FORMAT = "org.w3.svg"
 
 	/**
 	 * 
@@ -197,9 +198,9 @@ class LiveProvider extends AbstractProvider {
 				});
 				
 				// add initial example data
-				var exGraph ="digraph finite_state_machine {\n  rankdir=LR;\n  size=\"8,5\"\n  LR_0 LR_3 LR_4 LR_8;\n  LR_0 -> LR_2 [ label =\"SS(B)\" ];\n  LR_0 -> LR_1 [ label = \"SS(S)\" ];\n  LR_1 -> LR_3 [ label = \"S($end)\" ];\n  LR_2 -> LR_6 [ label =\"SS(b)\" ];\n  LR_2 -> LR_5 [ label = \"SS(a)\" ];\n  LR_2 -> LR_4 [ label = \"S(A)\" ];\n  LR_5 -> LR_7 [ label = \"S(b)\"];\n  LR_5 -> LR_5 [ label = \"S(a)\" ];\n  LR_6 -> LR_6 [ label = \"S(b)\" ];\n  LR_6 -> LR_5 [ label = \"S(a)\" ];\n  LR_7 -> LR_8 [ label = \"S(b)\" ];\n  LR_7 -> LR_5 [ label = \"S(a)\" ];\n  LR_8 -> LR_6 [ label = \"S(b)\" ];\n  LR_8-> LR_5 [ label = \"S(a)\" ];\n}";
+				var exGraph = "{\n  id: \"root\",  \n   children: [{\n      id: \"n1\",  \n     labels: [ { text: \"n1\" } ],\n     width: 100, \n      height: 100\n   },{\n       id: \"n2\", \n      labels: [ { text: \"n2\" } ],\n     width: 100,\n       height: 50,\n       ports: [{\n         id: \"n2_p1\",\n            width: 10,\n            height: 10\n        }],\n       children: [{  \n            id: \"n3\",  \n         labels: [ { text: \"n3\" } ],\n         width: 20,\n            height: 20\n        },{\n           id: \"n4\", \n          labels: [ { text: \"n4\" } ],\n         width: 20,\n            height: 20}\n       ],\n        edges: [{\n         id: \"e4\",  \n         source: \"n3\",\n           target: \"n4\"\n        }]\n    },{\n       id: \"n5\",\n       labels: [ { text: \"n5\" } ],\n     width: 100,\n       height: 50\n    }],\n   edges: [{\n     id: \"e1\",  \n     labels: [ { text: \"e1\" } ],\n     source: \"n1\",\n       target: \"n2\",\n       targetPort: \"n2_p1\"\n },{\n       id: \"e2\",  \n     labels: [ { text: \"e2\" } ],\n     source: \"n1\",\n       target: \"n5\"\n    }]\n}";
 				$('#srcArea').val(exGraph);
-				var exConfig = "spacing: 100,\nalgorithm: de.cau.cs.kieler.klay.layered";
+				var exConfig = "spacing: 100,\nalgorithm: de.cau.cs.kieler.klay.layered,\nedgeRouting: ORTHOGONAL";
 				$('#configArea').val(exConfig);
 			});
 			</script>
