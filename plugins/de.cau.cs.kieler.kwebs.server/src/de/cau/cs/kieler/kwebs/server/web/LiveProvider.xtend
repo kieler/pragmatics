@@ -31,11 +31,11 @@ class LiveProvider extends AbstractProvider {
 	 */
 	override getHeaders(ResourceProcessingExchange processingExchange) {
 		'''
-		<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+		<link href="styles/bootstrap-3.0.2.min.css" rel="stylesheet">
 		<link href="styles/prettify.css" type="text/css" rel="stylesheet" />
 		
-		<script	src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
-		<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+		<script	src="scripts/jquery-1.10.2.min.js"></script>
+		<script src="scripts/bootstrap-3.0.2.min.js"></script>
 		<script src="scripts/jquery.event.drag.js"></script>
 		<script src="scripts/jquery.mousewheel.js"></script>
 		<script src="scripts/jquery.svg.js"></script>
@@ -66,18 +66,14 @@ class LiveProvider extends AbstractProvider {
 				height: 500px;
 			}
 			
-			.row-fluid {
-				min-width: 10px;
+			.row {
+			    margin-bottom: 5px;  
 			}
 			
 			svg {
 				width: 100%;
 				height: 100%;
 			}
-			
-			td.body {
-				padding-left: 10px;
-			} 
 
 			textarea {
 				resize: none;
@@ -102,42 +98,48 @@ class LiveProvider extends AbstractProvider {
 		
 		'''
 			<div class="container">
-				<div class="row-fluid span12">
-					<div id="srcGraph" class="span8">
+				<div class="row">
+					<div id="srcGraph" class="col-md-8">
 						<h4>Input Graph</h4>
-			<textarea id="srcArea">
-			</textarea>
+			            <textarea id="srcArea">
+			            </textarea>
 					</div>
-					<div id="config" class="span4">
+					<div id="config" class="col-md-4">
 						<h4>Config</h4>
-			<textarea id="configArea">
-			</textarea>
+			            <textarea id="configArea">
+			            </textarea>
 					</div>
 				</div>
-				<div class="row-fluid span12">
-					<div class="input-prepend">
-						<span class="add-on">Input Format</span>
-						<select id="inputFormat" class="span6">
+				<div class="row">
+				    <div class="col-md-12">
+					<div class="col-md-3 input-group">
+						<span class="input-group-addon">Input Format</span>
+						<select id="inputFormat" class="form-control">
 							«formats.map(f |
 								'''<option «if(f.id == DEFAULT_INPUT_FORMAT) '''selected="selected"'''» value="«f.id»">«f.name»</option>'''
 							).join»
 						</select>
 					</div>
-					<div class="input-prepend">
-						<span class="add-on">Output Format</span>
-						<select id="outputFormat" class="span6">
+					<div class=" col-md-3 input-group">
+						<span class="input-group-addon">Output Format</span>
+						<select id="outputFormat" class="form-control">
 							«formats.map(f |
 								'''<option «if(f.id == DEFAULT_OUTPUT_FORMAT) '''selected="selected"'''» value="«f.id»">«f.name»</option>'''
 							).join»
 						</select>
 					</div>
 					<button id="layout" class="btn pull-right" style="margin-right: 10px">Layout</button><span id="working"></span>
+					</div>
 				</div>
 			
-				<div class="row-fluid span12">
-					<div id="errorDiv" class="alert alert-error" style="display: none;"></div>
+				<div class="row">
+				    <div class="col-md-12">
+					   <div id="errorDiv" class="alert alert-error" style="display: none;"></div>
+					</div>
 				</div>
-				<div id="resGraph" class="row-fluid span12"></div>
+				<div class="row">
+				    <div id="resGraph" class="col-md-12"></div>
+				</div>
 			 
 			 </div>
 			<script>
