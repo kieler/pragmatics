@@ -87,9 +87,6 @@ import de.cau.cs.kieler.kiml.service.formats.TransformationException;
  * }
  * </pre>
  * 
- * TODO
- *  - I guess the labels should be objects as they can hold properties
- * 
  * @author uru
  */
 public class JsonHandler implements ITransformationHandler<JSONObject> {
@@ -100,7 +97,12 @@ public class JsonHandler implements ITransformationHandler<JSONObject> {
     public void deserialize(final String serializedGraph,
             final TransformationData<JSONObject, KNode> transData) {
         try {
-            JSONObject obj = new JSONObject(serializedGraph);
+            // remove single line comments
+            String commentFree = serializedGraph
+                    .replaceAll("//.*?\n", "\n") // single line
+                    .replaceAll("(?s)/\\*.*?\\*/", ""); // multi line 
+            // parse the json
+            JSONObject obj = new JSONObject(commentFree);
             transData.setSourceGraph(obj);
         } catch (JSONException e) {
             throw new TransformationException("Cannot parse the passed " + "json. ("
