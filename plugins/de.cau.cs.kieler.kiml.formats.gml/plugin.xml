@@ -17,7 +17,7 @@
       </parser>
   </extension>
   <extension
-        point="de.cau.cs.kieler.kiml.service.graphTransformers">
+        point="de.cau.cs.kieler.kiml.formats.graphTransformers">
      <handler
            class="de.cau.cs.kieler.kiml.formats.gml.GmlExecutableExtensionFactory:de.cau.cs.kieler.kiml.formats.gml.GmlHandler"
            description="The Graph Modelling Language. See http://www.fim.uni-passau.de/en/fim/faculty/chairs/theoretische-informatik/projects.html"

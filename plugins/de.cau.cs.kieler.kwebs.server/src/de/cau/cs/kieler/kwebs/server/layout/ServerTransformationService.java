@@ -16,7 +16,7 @@ package de.cau.cs.kieler.kwebs.server.layout;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 
-import de.cau.cs.kieler.kiml.service.TransformationService;
+import de.cau.cs.kieler.kiml.formats.TransformationService;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 
@@ -45,6 +45,7 @@ public final class ServerTransformationService extends TransformationService {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected void reportError(final String extensionPoint,
         final IConfigurationElement element, final String attribute,
         final Throwable exception) {
@@ -61,6 +62,7 @@ public final class ServerTransformationService extends TransformationService {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected void reportError(final CoreException exception) {
         reportError(null, null, null, exception);
     }

@@ -38,7 +38,7 @@ import de.cau.cs.kieler.kiml.evol.genetic.Gene;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo.GeneType;
-import de.cau.cs.kieler.kiml.service.AnalysisService;
+import de.cau.cs.kieler.kiml.grana.AnalysisService;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 
 /**

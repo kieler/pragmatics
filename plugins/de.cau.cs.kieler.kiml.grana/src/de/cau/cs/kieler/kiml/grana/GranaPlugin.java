@@ -22,10 +22,9 @@ import org.osgi.framework.BundleContext;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kivi.KiVi;
-import de.cau.cs.kieler.kiml.grana.handlers.AnalysisEffect;
+import de.cau.cs.kieler.kiml.grana.ui.AnalysisEffect;
+import de.cau.cs.kieler.kiml.grana.ui.visualization.VisualizationService;
 import de.cau.cs.kieler.kiml.grana.util.GranaUtil;
-import de.cau.cs.kieler.kiml.grana.visualization.VisualizationService;
-import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
 
 /**
@@ -56,6 +55,8 @@ public class GranaPlugin extends AbstractUIPlugin {
         super.start(context);
         plugin = this;
         
+        AnalysisService.create();
+        
         // Register a listener for analysis after layout
         DiagramLayoutEngine.INSTANCE.addListener(new DiagramLayoutEngine.IListener() {
             public void layoutDone(final KNode layoutGraph, final IKielerProgressMonitor monitor) {
@@ -65,9 +66,6 @@ public class GranaPlugin extends AbstractUIPlugin {
                 }
             }
         });
-        
-        // TODO: Register a listener for analysis after editor switch
-        
     }
 
     /**

@@ -30,6 +30,10 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.ForkedOutputStream;
 import de.cau.cs.kieler.core.util.ForwardingInputStream;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
+import de.cau.cs.kieler.kiml.formats.GraphFormatData;
+import de.cau.cs.kieler.kiml.formats.ITransformationHandler;
+import de.cau.cs.kieler.kiml.formats.TransformationData;
+import de.cau.cs.kieler.kiml.formats.TransformationService;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.GraphvizModel;
 import de.cau.cs.kieler.kiml.graphviz.dot.transform.Command;
 import de.cau.cs.kieler.kiml.graphviz.dot.transform.DotExporter;
@@ -37,9 +41,6 @@ import de.cau.cs.kieler.kiml.graphviz.dot.transform.DotHandler;
 import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizTool.Cleanup;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.service.TransformationService;
-import de.cau.cs.kieler.kiml.service.formats.ITransformationHandler;
-import de.cau.cs.kieler.kiml.service.formats.TransformationData;
 
 /**
  * Layout provider for the Graphviz layout tool.
@@ -72,8 +73,11 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
         command = Command.valueOf(parameter);
         graphvizTool = new GraphvizTool(command);
         // the dot format handler is indirectly fetched in order to ensure proper injection
-        ITransformationHandler<?> handler = TransformationService.getInstance()
-                .getFormatData(DotHandler.ID).getHandler();
+        ITransformationHandler<?> handler = null;
+        GraphFormatData formatData = TransformationService.getInstance().getFormatData(DotHandler.ID);
+        if (formatData != null) {
+            handler = formatData.getHandler();
+        }
         if (handler instanceof DotHandler) {
             dotHandler = (DotHandler) handler;
         } else {

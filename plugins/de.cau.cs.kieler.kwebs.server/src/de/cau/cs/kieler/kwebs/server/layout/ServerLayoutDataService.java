@@ -24,8 +24,7 @@ import org.eclipse.core.runtime.Platform;
 
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.service.ExtensionLayoutDataService;
-import de.cau.cs.kieler.kiml.service.formats.GraphFormatData;
+import de.cau.cs.kieler.kiml.formats.GraphFormatData;
 import de.cau.cs.kieler.kwebs.server.Application;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;

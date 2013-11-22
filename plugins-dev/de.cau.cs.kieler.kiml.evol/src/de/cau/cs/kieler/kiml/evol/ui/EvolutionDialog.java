@@ -66,10 +66,10 @@ import de.cau.cs.kieler.kiml.evol.LayoutEvolutionModel;
 import de.cau.cs.kieler.kiml.evol.alg.EvaluationOperation;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
+import de.cau.cs.kieler.kiml.grana.AnalysisCategory;
+import de.cau.cs.kieler.kiml.grana.AnalysisData;
+import de.cau.cs.kieler.kiml.grana.AnalysisService;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.service.AnalysisService;
-import de.cau.cs.kieler.kiml.service.grana.AnalysisCategory;
-import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
 import de.cau.cs.kieler.kiml.ui.util.KGraphRenderer;
 

@@ -15,9 +15,9 @@ import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
-import de.cau.cs.kieler.kiml.service.grana.analyses.BendsAnalysis;
-import de.cau.cs.kieler.kiml.service.grana.analyses.EdgeCountAnalysis;
+import de.cau.cs.kieler.kiml.grana.IAnalysis;
+import de.cau.cs.kieler.kiml.grana.analyses.BendsAnalysis;
+import de.cau.cs.kieler.kiml.grana.analyses.EdgeCountAnalysis;
 
 /**
  * Calculates a metric for the number of bends in the graph. This depends on the

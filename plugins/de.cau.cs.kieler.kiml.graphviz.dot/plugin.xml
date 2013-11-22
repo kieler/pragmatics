@@ -17,7 +17,7 @@
       </parser>
   </extension>
   <extension
-        point="de.cau.cs.kieler.kiml.service.graphTransformers">
+        point="de.cau.cs.kieler.kiml.formats.graphTransformers">
      <handler
            class="de.cau.cs.kieler.kiml.graphviz.dot.GraphvizDotExecutableExtensionFactory:de.cau.cs.kieler.kiml.graphviz.dot.transform.DotHandler"
            description="The Graphviz Dot format. See http://www.graphviz.org/"

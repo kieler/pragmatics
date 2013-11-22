@@ -22,10 +22,10 @@ import java.util.StringTokenizer;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
-import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer;
-import de.cau.cs.kieler.kiml.service.formats.ITransformationHandler;
-import de.cau.cs.kieler.kiml.service.formats.TransformationData;
-import de.cau.cs.kieler.kiml.service.formats.TransformationException;
+import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
+import de.cau.cs.kieler.kiml.formats.ITransformationHandler;
+import de.cau.cs.kieler.kiml.formats.TransformationData;
+import de.cau.cs.kieler.kiml.formats.TransformationException;
 
 /**
  * A handler for matrices as defined by Matrix Market.

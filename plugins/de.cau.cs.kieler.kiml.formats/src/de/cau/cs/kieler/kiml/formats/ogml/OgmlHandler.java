@@ -22,12 +22,11 @@ import net.ogdf.ogml.OgmlFactory;
 import net.ogdf.ogml.OgmlPackage;
 import net.ogdf.ogml.PointType;
 import net.ogdf.ogml.util.OgmlResourceFactoryImpl;
-
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.kiml.formats.AbstractEmfHandler;
+import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
-import de.cau.cs.kieler.kiml.service.formats.AbstractEmfHandler;
-import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer;
 
 /**
  * Transformer for OGML.

@@ -18,9 +18,9 @@ import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.grana.AnalysisOptions;
+import de.cau.cs.kieler.kiml.grana.IAnalysis;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
-import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 
 /**
  * Metric for node separation. Checks whether the distance of each pair of nodes exceeds a

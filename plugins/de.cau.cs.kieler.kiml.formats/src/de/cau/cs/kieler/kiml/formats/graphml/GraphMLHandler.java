@@ -21,8 +21,8 @@ import org.graphdrawing.graphml.GraphMLPackage;
 import org.graphdrawing.graphml.util.GraphMLResourceFactoryImpl;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.service.formats.AbstractEmfHandler;
-import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer;
+import de.cau.cs.kieler.kiml.formats.AbstractEmfHandler;
+import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
 
 /**
  * A transformer for GraphML.

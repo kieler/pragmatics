@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+   <extension-point id="graphTransformers" name="Graph Transformers" schema="schema/graphTransformers.exsd"/>
+
    <extension
-         point="de.cau.cs.kieler.kiml.service.graphTransformers">
+         point="de.cau.cs.kieler.kiml.formats.graphTransformers">
+      <handler
+            class="de.cau.cs.kieler.kiml.formats.KGraphHandler"
+            description="Internally used graph format of the KIELER project. See http://rtsys.informatik.uni-kiel.de/confluence/x/U4EN"
+            extensions="kgraph,kgx,xmi"
+            id="de.cau.cs.kieler.kgraph"
+            name="KGraph">
+      </handler>
       <handler
             class="de.cau.cs.kieler.kiml.formats.graphml.GraphMLHandler"
             description="The Graph Markup Language. See http://graphml.graphdrawing.org/"

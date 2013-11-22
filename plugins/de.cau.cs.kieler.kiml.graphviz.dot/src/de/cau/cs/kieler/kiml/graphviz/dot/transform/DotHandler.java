@@ -20,9 +20,9 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.formats.AbstractEmfHandler;
+import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.GraphvizModel;
-import de.cau.cs.kieler.kiml.service.formats.AbstractEmfHandler;
-import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer;
 
 /**
  * A transformer for Graphviz Dot.

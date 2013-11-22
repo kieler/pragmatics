@@ -32,16 +32,16 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
+import de.cau.cs.kieler.kiml.grana.AnalysisOptions;
+import de.cau.cs.kieler.kiml.grana.analyses.CompoundEdgeAnalysis;
+import de.cau.cs.kieler.kiml.grana.analyses.EdgeLabelCountAnalysis;
+import de.cau.cs.kieler.kiml.grana.analyses.MultiEdgeCountAnalysis;
+import de.cau.cs.kieler.kiml.grana.analyses.PortCountAnalysis;
+import de.cau.cs.kieler.kiml.grana.analyses.SelfLoopAnalysis;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.GraphFeature;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
-import de.cau.cs.kieler.kiml.service.grana.analyses.CompoundEdgeAnalysis;
-import de.cau.cs.kieler.kiml.service.grana.analyses.EdgeLabelCountAnalysis;
-import de.cau.cs.kieler.kiml.service.grana.analyses.MultiEdgeCountAnalysis;
-import de.cau.cs.kieler.kiml.service.grana.analyses.PortCountAnalysis;
-import de.cau.cs.kieler.kiml.service.grana.analyses.SelfLoopAnalysis;
 import de.cau.cs.kieler.kiml.smart.SmartLayoutService.SmartRuleData;
 
 /**

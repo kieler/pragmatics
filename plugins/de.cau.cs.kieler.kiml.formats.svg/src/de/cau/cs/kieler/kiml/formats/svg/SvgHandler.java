@@ -21,10 +21,10 @@ import org.apache.batik.svggen.SVGGraphics2DIOException;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer;
-import de.cau.cs.kieler.kiml.service.formats.ITransformationHandler;
-import de.cau.cs.kieler.kiml.service.formats.TransformationData;
-import de.cau.cs.kieler.kiml.service.formats.TransformationException;
+import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
+import de.cau.cs.kieler.kiml.formats.ITransformationHandler;
+import de.cau.cs.kieler.kiml.formats.TransformationData;
+import de.cau.cs.kieler.kiml.formats.TransformationException;
 
 /**
  * Transformation handler for SVG format. The handler supports two options:

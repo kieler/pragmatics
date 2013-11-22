@@ -21,9 +21,9 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
+import de.cau.cs.kieler.kiml.grana.AnalysisData;
+import de.cau.cs.kieler.kiml.grana.AnalysisService;
 import de.cau.cs.kieler.kiml.grana.GranaPlugin;
-import de.cau.cs.kieler.kiml.service.AnalysisService;
-import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 
 /**
  * A utility class for grana handlers.

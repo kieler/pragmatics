@@ -19,10 +19,8 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.ui.service.EclipseAnalysisService;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutDataService;
 import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
-import de.cau.cs.kieler.kiml.ui.service.EclipseTransformationService;
 
 /**
  * The activator class controls the plug-in life cycle.
@@ -166,8 +164,6 @@ public class KimlUiPlugin extends AbstractUIPlugin {
         // start with local layouter initially.
         LayoutDataService.setMode(LayoutDataService.ECLIPSE_DATA_SERVICE);
         EclipseLayoutInfoService.create();
-        EclipseTransformationService.create();
-        EclipseAnalysisService.create();
     }
 
     /**
