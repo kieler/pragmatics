@@ -1,28 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+   <!-- extensions related to the UML Use Case example -->
    <extension
-         point="de.cau.cs.kieler.core.kivi.combinations">
-      <combination
-            active="true"
-            class="de.cau.cs.kieler.klighd.examples.ecore.EcoreDiagramSynthesisCombination"
-            name="Visualize chosen Ecore classes">
-      </combination>
+         point="de.cau.cs.kieler.klighd.diagramSyntheses">
+      <diagramSynthesis
+            class="de.cau.cs.kieler.klighd.syntheses.GuiceBasedSynthesisFactory:de.cau.cs.kieler.klighd.examples.uml2.UML2UseCaseDiagramSynthesis"
+            id="de.cau.cs.kieler.klighd.examples.uml2.UML2UseCaseDiagramSynthesis">
+      </diagramSynthesis>
    </extension>
+
+   
+   <!-- extensions related to the circuit example -->
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated circuit -->
+      <package
+            uri="http://kieler.cs.cau.de/KLighD/circuit"
+            class="de.cau.cs.kieler.klighd.examples.circuit.CircuitPackage"
+            genModel="src/de/cau/cs/kieler/klighd/examples/circuit/circuit.genmodel"/>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.klighd.diagramSyntheses">
+      <diagramSynthesis
+            class="de.cau.cs.kieler.klighd.syntheses.GuiceBasedSynthesisFactory:de.cau.cs.kieler.klighd.examples.circuit.CircuitDiagramSynthesis"
+            id="de.cau.cs.kieler.klighd.examples.circuit.CircuitDiagramSynthesis">
+      </diagramSynthesis>
+   </extension>
+
+
+   <!-- extensions related to the Ecore example -->
    <extension
          point="de.cau.cs.kieler.klighd.diagramSyntheses">
       <diagramSynthesis
             class="de.cau.cs.kieler.klighd.syntheses.GuiceBasedSynthesisFactory:de.cau.cs.kieler.klighd.examples.ecore.EcoreDiagramSynthesis"
             id="de.cau.cs.kieler.klighd.examples.ecore.EcoreDiagramSynthesis">
       </diagramSynthesis>
-      <!-- diagramSynthesis
-            class="de.cau.cs.kieler.klighd.syntheses.GuiceBasedSynthesisFactory:de.cau.cs.kieler.klighd.examples.uml2.UML2UseCaseDiagramSynthesis"
-            id="de.cau.cs.kieler.klighd.examples.uml2.UML2UseCaseDiagramSynthesis">
-      </diagramSynthesis -->
       <diagramSynthesis
             class="de.cau.cs.kieler.klighd.syntheses.GuiceBasedSynthesisFactory:de.cau.cs.kieler.klighd.examples.ecore.EcoreFileDiagramSynthesis"
             id="de.cau.cs.kieler.klighd.examples.EcoreFileDiagramSynthesis">
       </diagramSynthesis>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="de.cau.cs.kieler.klighd.examples.ecore.RemoveNodeHandler"
+            id="de.cau.cs.kieler.klighd.examples.removeCommand"
+            name="Remove class from diagram">
+      </command>
    </extension>
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
@@ -35,31 +59,12 @@
       </propertyTester>
    </extension>
    <extension
-         point="org.eclipse.ui.commands">
-      <command
-            defaultHandler="de.cau.cs.kieler.klighd.examples.ecore.RemoveNodeHandler"
-            id="de.cau.cs.kieler.klighd.examples.removeCommand"
-            name="Remove class from diagram">
-      </command>
+         point="de.cau.cs.kieler.core.kivi.combinations">
+      <combination
+            active="true"
+            class="de.cau.cs.kieler.klighd.examples.ecore.EcoreDiagramSynthesisCombination"
+            name="Visualize chosen Ecore classes">
+      </combination>
    </extension>
-   <extension
-         point="org.eclipse.ui.menus">
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
-         <command
-               commandId="de.cau.cs.kieler.klighd.examples.removeCommand"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <with variable="selection">
-                  <test
-                        property="de.cau.cs.kieler.klighd.examples.AllAreEClassifiers">
-                  </test>
-               </with>
-            </visibleWhen>
-         </command>
-      </menuContribution>
-   </extension>
-
+   
 </plugin>
