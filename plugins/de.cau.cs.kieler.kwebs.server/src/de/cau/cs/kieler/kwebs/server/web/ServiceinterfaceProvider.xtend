@@ -110,9 +110,10 @@ class ServiceinterfaceProvider
                 null
                 
         '''
-        <p class='title'>
+        <div class="col-md-8 col-md-offset-2">
+        <h2>
             Service Interface
-        </p>
+        </h2>
         <p>
             Since KWebS uses a SOAP web service, you need the interface definition in order to use its features.
             The server provides it in form of a document based on the Web Service Description Language (WSDL).
@@ -181,7 +182,7 @@ class ServiceinterfaceProvider
                     <div class='small' align='center'>
                         Thanks to the guys from software maniacs for their great syntax highlighting that can be found <a class='small' href='http://softwaremaniacs.org/soft/highlight/en/'>here</a>.
                     </div>
-                </p>'''
+                </p></div>'''
             }
         »'''
     }

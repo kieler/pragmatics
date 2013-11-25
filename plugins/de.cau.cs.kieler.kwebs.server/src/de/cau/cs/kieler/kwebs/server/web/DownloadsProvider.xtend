@@ -107,15 +107,16 @@ class DownloadsProvider
         val String        urlTS  = config.getConfigProperty(Configuration::SUPPORTINGSERVER_PUBLIC_ADDRESS) + "/" + TRUSTSTORE_SUFFIX
         return 
             '''
-            <p class='title'>
+            <div class="col-md-8 col-md-offset-2">
+            <h2>
                 Downloads
-            </p>
+            </h2>
             <p>
                 This page provides some useful downloads regarding service based layout with KWebs.
             </p>
             «if (config.getConfigPropertyAsBoolean(Configuration::FRONTEND_HTTPS_EXPOSE_TRUSTSTORE, false)) {
                 '''
-                <p class='title'>Secure Access</p>
+                <h3>Secure Access</h3>
                 <p>
                     In order to use the layout service secured by HTTPS, you need to download the <a href='«urlTS»'>trust store</a>.
                     Furthermore, you will need the password to access the key that is stored in it and that is necessary
@@ -126,7 +127,7 @@ class DownloadsProvider
                     service in the KIELER modeling environment.</span>
                 </p>
                 <div id='confdescr' style='display:none; visibility:hidden;'>
-                    <p class='title'>How to set up and use a secured service</p>
+                    <h4>How to set up and use a secured service</h4>
                     <p>
                         The following illustration demonstrates how you can configure an HTTPS based service in the KIELER modeling
                         environment. After you downloaded the trust store, e.g. to <i>C:\kwebs\</i>, you create a server configuration that
@@ -184,11 +185,12 @@ class DownloadsProvider
                 </div>
                 '''    
             }»
-            <p class='title'>Layout on the Command Line</p>
+            <h3>Layout on the Command Line</h3>
             <p>
                 There is also a Java-based command line tool that can do layout and format translations.
                 You can download it from <a href='http://www.informatik.uni-kiel.de/rtsys/kieler/downloads/tools-libraries/'>the KIELER downloads page</a>.
             </p>
+            </div>
             '''
     }
     

@@ -49,67 +49,60 @@ abstract class AbstractProvider
                     <head>
                         <title>KIELER Web Service For Layout</title>
                         <meta http-equiv='content-type' content='text/html; charset=utf-8'>
-                        <link rel='stylesheet' type='text/css' href='styles/styles.css'/>
+                        ««««<link rel='stylesheet' type='text/css' href='styles/styles.css'/>
+                         <link href="styles/bootstrap-3.0.2.min.css" rel="stylesheet">
+                         <link href="styles/prettify.css" type="text/css" rel="stylesheet" />
+                         <script src="scripts/jquery-1.10.2.min.js"></script>
+                         <script src="scripts/bootstrap-3.0.2.min.js"></script>
+                         <script src="scripts/prettify.js"></script>
                         «getHeaders(processingExchange)»
+                        <style>
+                            body {
+                                padding-top: 70px;
+                            } 
+                        </style>
+                        <script>
+                          $(function() {
+                              prettyPrint();
+                          });
+                        </script>
                     </head>
                     <body>
-                        <div class='layout' align='center'>
-                            <table class='document' align='center'>
-                                <tr class='header'>
-                                    <td>
-                                    </td>
-                                </tr>
-                                <tr class='menu'>
-                                    <td>
-                                        <table class='menu'>
-                                            <tr>
-                                                <td class='spacer'>&nbsp;&nbsp;</td>
-                                                <td class='button'>
-                                                    <a href='Index.html'>About</a>
-                                                </td>
-                                                <td class='spacer'>&nbsp;|&nbsp;</td>
-                                                <td class='button'>
-                                                    <a href='Providedlayout.html'>Provided Layout</a>
-                                                </td>
-                                                <td class='spacer'>&nbsp;|&nbsp;</td>
-                                                <td class='button'>
-                                                    <a href='Serviceinterface.html'>Service Interface</a>
-                                                </td>
-                                                <td class='spacer'>&nbsp;|&nbsp;</td>
-                                                <td class='button'>
-                                                    <a href='Downloads.html'>Downloads</a>
-                                                </td>
-                                                <td class='spacer'>&nbsp;|&nbsp;</td>
-                                                <td class='button'>
-                                                    <a href='Contact.html'>Contact</a>
-                                                </td>
-                                                <td class='spacer'>&nbsp;|&nbsp;</td>
-                                                <td class='button'>
-                                                    <a href='Live.html'>Live</a>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </td>
-                                </tr>
-                                <tr class='content'>
-                                    <td class='body'>
-                                        <div align='left'>
-                                            <p>
-                                                «getBody(processingExchange)»
-                                            </p>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class='empty' height='100%'>
-                                    <td>
-                                    </td>
-                                </tr>
-                                <tr class='footer' height='30px'>
-                                    <td>
-                                    </td>
-                                </tr>
-                            </table>
+
+                        <header class="navbar navbar-inverse navbar-fixed-top">
+                          <div class="container">
+                              <div class="navbar-header">
+                                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse">
+                                  <span class="sr-only">Toggle navigation</span>
+                                  <span class="icon-bar"></span>
+                                  <span class="icon-bar"></span>
+                                  <span class="icon-bar"></span>
+                                </button>
+                                <a class="navbar-brand" href="Index.html">KIELER</a>
+                              </div>
+                            <nav class="nav navbar-nav" role="navigation">
+                              <div class="collapse navbar-collapse" id="navbar-collapse">
+                                <ul class="nav navbar-nav">
+                                  <li><a href='Providedlayout.html'>Provided Layout</a></li>
+                                  <li><a href='Serviceinterface.html'>Service Interface</a></li>
+                                  <li><a href='Example.html'>Examples</a></li>
+                                  <li><a href='Downloads.html'>Downloads</a></li>
+                                  <li><a href='Contact.html'>Contact</a></li>
+                                  <li><a href='Live.html'>Live</a></li>
+                                </ul>
+                              </div>
+                            </nav>
+                          </div>
+                        </header>
+                                            
+                        <div class="container">
+                          <div class="row">
+                            <div class="col-md-12">
+                                «getBody(processingExchange)»
+                            </div>
+                          </div>
                         </div>
+                        
                     </body>
                 </html>
                 '''.toString.getBytes("UTF-8")
