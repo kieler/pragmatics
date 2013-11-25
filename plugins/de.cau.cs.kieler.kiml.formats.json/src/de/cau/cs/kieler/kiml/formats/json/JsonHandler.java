@@ -26,10 +26,15 @@ import de.cau.cs.kieler.kiml.service.formats.TransformationException;
 /**
  * Handler for a JSON graph format.
  * 
- * There are 3 elements to this graph format. <em>Nodes</em> which have a dimension and position
- * and can contain nodes themselves. <em>Ports</em> that are attachment points of nodes where
- * possibly multiple edges can be connected to. <em>Edges</em> connect nodes or ports of nodes.
- * 
+ * The json graph format comprises of four basic elements - Nodes, Ports, Labels, and Edges. 
+ * - Each element has an 'id' that identifies it uniquely. 
+ * - The first three elements can hold a position and dimension. 
+ * - Edges on the contrary can hold bend points specifying where the edge changes direction.
+ * - Nodes can contain child nodes and hold ports that specify attachment points of edges.
+ * - Multiple edges can be attached to the same port, the port can be attached to the node itself.
+ * - All elements can hold labels (despite the label itself).
+ * - All elements can hold properties which represent additional information to the layout algorithm.
+ *  
  * The following fields are supported for each element, a trailing * marks required fields.
  * 
  * <h2>Common properties of nodes and ports.
