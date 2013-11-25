@@ -111,14 +111,21 @@ public final class GraphTransformer implements ILayoutProcessor {
      * @param graph the graph the nodes are part of
      */
     private void mirrorX(final List<LNode> nodes, final LGraph graph) {
-        /* If this method is called at the end of the algorithm, the graph size tells us exactly how
-         * large the graph is -- thus, we'll take that as the basis for calculating the y coordinate of
-         * the line we'll mirror at. If this method is called at the beginning of the algorithm, the
-         * graph size is (0,0) and we'll try to calculate a rough estimate based on node coordinates. 
+        /* Assuming that no nodes extend into negative x coordinates, mirroring a node means that the
+         * space left to its left border equals the space right to its right border when mirrored. In
+         * mathematical terms:
+         *     oldPosition.x = graphWidth - newPosition.x - nodeWidth
+         * We use the offset variable to store graphWidth, since that's the constant offset against which
+         * we calculate the new node positions.
+         * This, however, stops to work once nodes are allowed to extend into negative coordinates. Then,
+         * we have to subtract from the graphWidth the amount of space the graph extends into negative
+         * coordinates. This amount is saved in the graph's graphOffset. Thus, our offset here becomes:
+         *     offset = graphWidth - graphOffset.x 
          */
-        
-        // determine the greatest y coordinate of nodes, edges, and edge labels
         double offset = 0;
+        
+        // If the graph already had its size calculated, use that; if not, find its width by iterating
+        // over its nodes
         if (graph.getSize().x == 0) {
             for (LNode node : nodes) {
                 offset = Math.max(
@@ -284,13 +291,7 @@ public final class GraphTransformer implements ILayoutProcessor {
      * @param graph the graph the nodes are part of
      */
     private void mirrorY(final List<LNode> nodes, final LGraph graph) {
-        /* If this method is called at the end of the algorithm, the graph size tells us exactly how
-         * large the graph is -- thus, we'll take that as the basis for calculating the y coordinate of
-         * the line we'll mirror at. If this method is called at the beginning of the algorithm, the
-         * graph size is (0,0) and we'll try to calculate a rough estimate based on node coordinates. 
-         */
-        
-        // determine the greatest y coordinate of nodes, edges, and edge labels
+        // See mirrorX for an explanation of how the offset is calculated
         double offset = 0;
         if (graph.getSize().y == 0) {
             for (LNode node : nodes) {
