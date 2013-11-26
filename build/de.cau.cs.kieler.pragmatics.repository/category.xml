@@ -79,14 +79,6 @@
       <category name="kieler-layout"/>
    </feature>
 
-   <feature url="features/de.cau.cs.kieler.kwebs.client.jaxws_0.2.1.qualifier.jar" id="de.cau.cs.kieler.kwebs.client.jaxws.feature" version="0.2.1.qualifier">
-      <category name="kieler-layout"/>
-   </feature>
-   <feature url="features/de.cau.cs.kieler.kwebs.client.jaxws.source_0.2.1.qualifier.jar" id="de.cau.cs.kieler.kwebs.client.jaxws.feature.source" version="0.2.1.qualifier">
-      <category name="kieler-sources"/>
-   </feature> 
-
-
    <!-- LIGHTWEIGHT DIAGRAMS -->
 
    <feature url="features/de.cau.cs.kieler.klighd.feature_0.3.0.qualifier.jar" id="de.cau.cs.kieler.klighd.feature" version="0.3.0.qualifier">
