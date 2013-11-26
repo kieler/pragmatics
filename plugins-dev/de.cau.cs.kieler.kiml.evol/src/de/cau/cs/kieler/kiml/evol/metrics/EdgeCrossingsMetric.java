@@ -40,7 +40,7 @@ public class EdgeCrossingsMetric implements IAnalysis {
      */
     public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Edge crossings metric analysis", 1);
+        progressMonitor.begin("Edge crossings metric", 1);
         
         // EdgeCrossingsAnalysis result is Object[] {min, avg, max, sum}
         Object[] crossingsResult = (Object[]) results.get(EdgeCrossingsAnalysis.ID);
