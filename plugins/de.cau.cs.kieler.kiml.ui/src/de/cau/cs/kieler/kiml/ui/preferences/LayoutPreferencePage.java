@@ -434,10 +434,8 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
                 if (dialog.open() == InputDialog.OK) {
                     String result = dialog.getValue().trim();
                     switch (optionData.getType()) {
-                    case REMOTE_ENUM:
                     case ENUM:
                     case ENUMSET:
-                    case REMOTE_ENUMSET:
                         entry.setValue(optionData.parseValue(result.toUpperCase()));
                         break;
                     default:

@@ -322,8 +322,6 @@ public class NewOptionDialog extends Dialog {
                         return images.getPropText();
                     case BOOLEAN:
                         return images.getPropTrue();
-                    case REMOTE_ENUM:
-                    case REMOTE_ENUMSET:
                     case ENUM:
                     case ENUMSET:
                         return images.getPropChoice();

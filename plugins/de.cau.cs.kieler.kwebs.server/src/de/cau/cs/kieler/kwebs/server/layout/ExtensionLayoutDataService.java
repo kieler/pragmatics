@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.RegistryFactory;
 import org.osgi.framework.Bundle;
 
 import de.cau.cs.kieler.core.WrappedException;
@@ -42,61 +43,70 @@ import de.cau.cs.kieler.kiml.options.GraphFeature;
 public abstract class ExtensionLayoutDataService extends LayoutDataService {
     
     /** identifier of the extension point for layout providers. */
-    public static final String EXTP_ID_LAYOUT_PROVIDERS = "de.cau.cs.kieler.kiml.layoutProviders";
+    protected static final String EXTP_ID_LAYOUT_PROVIDERS = "de.cau.cs.kieler.kiml.layoutProviders";
     /** name of the 'layout algorithm' element in the 'layout providers' extension point. */
-    public static final String ELEMENT_LAYOUT_ALGORITHM = "layoutAlgorithm";
+    protected static final String ELEMENT_LAYOUT_ALGORITHM = "layoutAlgorithm";
     /** name of the 'layout type' element in the 'layout providers' extension point. */
-    public static final String ELEMENT_LAYOUT_TYPE = "layoutType";
+    protected static final String ELEMENT_LAYOUT_TYPE = "layoutType";
     /** name of the 'category' element in the 'layout providers' extension point. */
-    public static final String ELEMENT_CATEGORY = "category";
+    protected static final String ELEMENT_CATEGORY = "category";
     /** name of the 'dependency' element in the 'layout providers' extension point. */
-    public static final String ELEMENT_DEPENDENCY = "dependency";
+    protected static final String ELEMENT_DEPENDENCY = "dependency";
     /** name of the 'known option' element in the 'layout providers' extension point. */
-    public static final String ELEMENT_KNOWN_OPTION = "knownOption";
+    protected static final String ELEMENT_KNOWN_OPTION = "knownOption";
     /** name of the 'layout  option' element in the 'layout providers' extension point. */
-    public static final String ELEMENT_LAYOUT_OPTION = "layoutOption";
+    protected static final String ELEMENT_LAYOUT_OPTION = "layoutOption";
     /** name of the 'supported diagram' element in the 'layout providers' extension point. */
-    public static final String ELEMENT_SUPPORTED_DIAGRAM = "supportedDiagram";
+    protected static final String ELEMENT_SUPPORTED_DIAGRAM = "supportedDiagram";
     /** name of the 'supported feature' element in the 'layout providers' extension point. */
-    public static final String ELEMENT_SUPPORTED_FEATURE = "supportedFeature";
+    protected static final String ELEMENT_SUPPORTED_FEATURE = "supportedFeature";
     /** name of the 'advanced' attribute in the extension points. */
-    public static final String ATTRIBUTE_ADVANCED = "advanced";
+    protected static final String ATTRIBUTE_ADVANCED = "advanced";
     /** name of the 'appliesTo' attribute in the extension points. */
-    public static final String ATTRIBUTE_APPLIESTO = "appliesTo";
+    protected static final String ATTRIBUTE_APPLIESTO = "appliesTo";
     /** name of the 'category' attribute in the extension points. */
-    public static final String ATTRIBUTE_CATEGORY = "category";
+    protected static final String ATTRIBUTE_CATEGORY = "category";
     /** name of the 'class' attribute in the extension points. */
-    public static final String ATTRIBUTE_CLASS = "class";
+    protected static final String ATTRIBUTE_CLASS = "class";
     /** name of the 'default' attribute in the extension points. */
-    public static final String ATTRIBUTE_DEFAULT = "default";
+    protected static final String ATTRIBUTE_DEFAULT = "default";
     /** name of the 'description' attribute in the extension points. */
-    public static final String ATTRIBUTE_DESCRIPTION = "description";
+    protected static final String ATTRIBUTE_DESCRIPTION = "description";
     /** name of the 'enumValues' attribute used in doing remote layout. */
-    public static final String ATTRIBUTE_ENUMVALUES = "enumValues";
+    protected static final String ATTRIBUTE_ENUMVALUES = "enumValues";
     /** name of the 'feature' attribute in the extension points. */
-    public static final String ATTRIBUTE_FEATURE = "feature";
+    protected static final String ATTRIBUTE_FEATURE = "feature";
     /** name of the 'id' attribute in the extension points. */
-    public static final String ATTRIBUTE_ID = "id";
+    protected static final String ATTRIBUTE_ID = "id";
     /** name of the 'implementation' attribute of a layout option of type 'remoteenum'. */
-    public static final String ATTRIBUTE_IMPLEMENTATION = "implementation";
+    protected static final String ATTRIBUTE_IMPLEMENTATION = "implementation";
     /** name of the 'lowerBound' attribute in the extension points. */
-    public static final String ATTRIBUTE_LOWER_BOUND = "lowerBound";
+    protected static final String ATTRIBUTE_LOWER_BOUND = "lowerBound";
     /** name of the 'name' attribute in the extension points. */
-    public static final String ATTRIBUTE_NAME = "name";
+    protected static final String ATTRIBUTE_NAME = "name";
     /** name of the 'option' attribute in the extension points. */
-    public static final String ATTRIBUTE_OPTION = "option";
+    protected static final String ATTRIBUTE_OPTION = "option";
     /** name of the 'parameter' attribute in the extension points. */
-    public static final String ATTRIBUTE_PARAMETER = "parameter";
+    protected static final String ATTRIBUTE_PARAMETER = "parameter";
+    /** name of the 'preview' attribute in the extension points. */
+    protected static final String ATTRIBUTE_PREVIEW = "preview";
     /** name of the 'priority' attribute in the extension points. */
-    public static final String ATTRIBUTE_PRIORITY = "priority";
+    protected static final String ATTRIBUTE_PRIORITY = "priority";
     /** name of the 'type' attribute in the extension points. */
-    public static final String ATTRIBUTE_TYPE = "type";
+    protected static final String ATTRIBUTE_TYPE = "type";
     /** name of the 'upperBound' attribute in the extension points. */
-    public static final String ATTRIBUTE_UPPER_BOUND = "upperBound";
+    protected static final String ATTRIBUTE_UPPER_BOUND = "upperBound";
     /** name of the 'value' attribute in the extension points. */
-    public static final String ATTRIBUTE_VALUE = "value";
+    protected static final String ATTRIBUTE_VALUE = "value";
     /** name of the 'variance' attribute in the extension points. */
-    public static final String ATTRIBUTE_VARIANCE = "variance";
+    protected static final String ATTRIBUTE_VARIANCE = "variance";
+
+    /**
+     * Load all registered extensions for the layout providers extension point.
+     */
+    public ExtensionLayoutDataService() {
+        loadLayoutProviderExtensions();
+    }
     
     /**
      * Report an error that occurred while reading extensions.
@@ -127,7 +137,7 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
         IConfigurationElement[] result = null;
         IExtensionRegistry registry = null;
         try {
-            registry = Platform.getExtensionRegistry();
+            registry = RegistryFactory.getRegistry();
         } catch (Exception e) {
             // Ignore since an exception here means that this instance
             // is not being run in an eclipse environment
@@ -141,7 +151,7 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
     /**
      * Loads and registers all layout provider extensions from the extension point.
      */
-    protected final void loadLayoutProviderExtensions() {    
+    private void loadLayoutProviderExtensions() {    
         List<String[]> knownOptions = new LinkedList<String[]>();
         List<String[]> dependencies = new LinkedList<String[]>();
         
@@ -215,14 +225,12 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
     
     /**
      * Create a layout algorithm data instance and configure it with platform-specific extensions.
-     * Subclasses can override this to create more detailed information.
      * 
      * @param element a configuration element to use for configuration
      * @return a new layout algorithm data instance
      */
-    protected LayoutAlgorithmData createLayoutAlgorithmData(final IConfigurationElement element) {
-        return new LayoutAlgorithmData();
-    }
+    protected abstract LayoutAlgorithmData createLayoutAlgorithmData(
+            IConfigurationElement element);
     
     /**
      * Create a layout provider factory from a configuration element.
@@ -360,9 +368,6 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
         }
     }
     
-    /** Plug-in id of the KIML plug-in. */
-    private static final String PLUGIN_ID = "de.cau.cs.kieler.kiml";
-    
     /**
      * Load a layout option from a configuration element.
      * 
@@ -382,46 +387,8 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
         // get option type
         String optionType = element.getAttribute(ATTRIBUTE_TYPE);        
         try {
-            if (optionType.equals(LayoutOptionData.REMOTEENUM_LITERAL)) {
-                // Compatibility fix. KIML needs the concrete enumeration instances.
-                // If the implementation is not from the main KIML plug-in, fall back
-                // to standard remote enumeration.
-                String implementation = element.getAttribute(ATTRIBUTE_IMPLEMENTATION);
-                if (implementation != null) {
-                    try {
-                        Class<?> enumClass = Platform.getBundle(PLUGIN_ID).loadClass(implementation);
-                        optionData.setType(LayoutOptionData.Type.ENUM);
-                        optionData.setOptionClass(enumClass);
-                    } catch (Exception e) {
-                        optionData.setType(LayoutOptionData.Type.UNDEFINED);
-                    }
-                }
-                if (optionData.getType().equals(LayoutOptionData.Type.UNDEFINED)) {
-                    optionData.setType(LayoutOptionData.Type.REMOTE_ENUM);
-                    optionData.parseRemoteEnumValues(element.getAttribute(ATTRIBUTE_ENUMVALUES));
-                }
-            } else if (optionType.equals(LayoutOptionData.REMOTEENUMSET_LITERAL)) {
-                // Compatibility fix. KIML needs the concrete enumeration instances.
-                // If the implementation is not from the main KIML plug-in, fall back
-                // to standard remote enumeration.
-                String implementation = element.getAttribute(ATTRIBUTE_IMPLEMENTATION);
-                if (implementation != null) {
-                    try {
-                        Class<?> enumClass = Platform.getBundle(PLUGIN_ID).loadClass(implementation);
-                        optionData.setType(LayoutOptionData.Type.ENUMSET);
-                        optionData.setOptionClass(enumClass);
-                    } catch (Exception e) {
-                        optionData.setType(LayoutOptionData.Type.UNDEFINED);
-                    }
-                }
-                if (optionData.getType().equals(LayoutOptionData.Type.UNDEFINED)) {
-                    optionData.setType(LayoutOptionData.Type.REMOTE_ENUMSET);
-                    optionData.parseRemoteEnumValues(element.getAttribute(ATTRIBUTE_ENUMVALUES));
-                }
-            } else {
-                optionData.setType(optionType);
-                optionData.setOptionClass(loadClass(element));
-            }
+            optionData.setType(optionType);
+            optionData.setOptionClass(loadClass(element));
         } catch (IllegalArgumentException exception) {
             reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_TYPE, exception);
             return;

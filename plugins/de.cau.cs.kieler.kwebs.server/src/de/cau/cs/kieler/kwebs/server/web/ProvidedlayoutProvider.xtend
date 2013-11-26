@@ -14,7 +14,6 @@
 
 package de.cau.cs.kieler.kwebs.server.web
 
-import de.cau.cs.kieler.kiml.LayoutOptionData
 import de.cau.cs.kieler.kiml.options.LayoutOptions
 import de.cau.cs.kieler.kwebs.server.Application
 import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService
@@ -194,13 +193,7 @@ class ProvidedlayoutProvider
                                 option.option.id
                             »";'>
                                 <td>«option.option.name»</td>
-                                <td>«
-                                    if (option.option.type.equals(LayoutOptionData::REMOTEENUM_LITERAL))
-                                        LayoutOptionData::ENUM_LITERAL
-                                    else if (option.option.type.equals(LayoutOptionData::REMOTEENUMSET_LITERAL))
-                                        LayoutOptionData::ENUMSET_LITERAL
-                                    else option.option.type
-                                »</td>
+                                <td>«option.option.type»</td>
                                 <td>«option.option.id»</td>
                                 <td>«if (option.^default == null) {
                                     option.option.^default
@@ -361,14 +354,9 @@ class ProvidedlayoutProvider
         «if (!rawAppend) '''<p class='title'>Layout Option Details</p>'''»
         <p>Name: «option.name»<br/></p>
         <p>Identifier: «option.id»<br/></p>
-        <p>Type: 
-        «if (type.equals(LayoutOptionData::REMOTEENUM_LITERAL))
-            "enumeration"
-        else if (type.equals(LayoutOptionData::REMOTEENUMSET_LITERAL))
-            "enumeration set"
-        else type»<br/></p>
-        «if (type.equals(LayoutOptionData::REMOTEENUM_LITERAL)
-            || type.equals(LayoutOptionData::REMOTEENUMSET_LITERAL)) {
+        <p>Type:«type»<br/></p>
+        «if (type.equals("remoteenum")
+            || type.equals("remoteenumset")) {
             '''
             <p>Possible Values: «option.remoteEnum.values.join(", ")»<br/></p>
             '''

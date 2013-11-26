@@ -397,9 +397,6 @@ public class ExtensionLayoutDataService extends LayoutDataService {
         }
     }
     
-    /** Plug-in id of the KIML plug-in. */
-    private static final String KIML_PLUGIN_ID = "de.cau.cs.kieler.kiml";
-    
     /**
      * Load a layout option from a configuration element.
      * 
@@ -419,48 +416,8 @@ public class ExtensionLayoutDataService extends LayoutDataService {
         // get option type
         String optionType = element.getAttribute(ATTRIBUTE_TYPE);        
         try {
-            if (optionType.equals(LayoutOptionData.REMOTEENUM_LITERAL)) {
-                // Compatibility fix. KIML needs the concrete enumeration instances.
-                // If the implementation is not from the main KIML plug-in, fall back
-                // to standard remote enumeration.
-                String implementation = element.getAttribute(ATTRIBUTE_IMPLEMENTATION);
-                if (implementation != null) {
-                    try {
-                        Class<?> enumClass = Platform.getBundle(KIML_PLUGIN_ID).loadClass(
-                                implementation);
-                        optionData.setType(LayoutOptionData.Type.ENUM);
-                        optionData.setOptionClass(enumClass);
-                    } catch (Exception e) {
-                        optionData.setType(LayoutOptionData.Type.UNDEFINED);
-                    }
-                }
-                if (optionData.getType().equals(LayoutOptionData.Type.UNDEFINED)) {
-                    optionData.setType(LayoutOptionData.Type.REMOTE_ENUM);
-                    optionData.parseRemoteEnumValues(element.getAttribute(ATTRIBUTE_ENUMVALUES));
-                }
-            } else if (optionType.equals(LayoutOptionData.REMOTEENUMSET_LITERAL)) {
-                // Compatibility fix. KIML needs the concrete enumeration instances.
-                // If the implementation is not from the main KIML plug-in, fall back
-                // to standard remote enumeration.
-                String implementation = element.getAttribute(ATTRIBUTE_IMPLEMENTATION);
-                if (implementation != null) {
-                    try {
-                        Class<?> enumClass = Platform.getBundle(KIML_PLUGIN_ID).loadClass(
-                                implementation);
-                        optionData.setType(LayoutOptionData.Type.ENUMSET);
-                        optionData.setOptionClass(enumClass);
-                    } catch (Exception e) {
-                        optionData.setType(LayoutOptionData.Type.UNDEFINED);
-                    }
-                }
-                if (optionData.getType().equals(LayoutOptionData.Type.UNDEFINED)) {
-                    optionData.setType(LayoutOptionData.Type.REMOTE_ENUMSET);
-                    optionData.parseRemoteEnumValues(element.getAttribute(ATTRIBUTE_ENUMVALUES));
-                }
-            } else {
-                optionData.setType(optionType);
-                optionData.setOptionClass(loadClass(element));
-            }
+            optionData.setType(optionType);
+            optionData.setOptionClass(loadClass(element));
         } catch (IllegalArgumentException exception) {
             reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_TYPE, exception);
             return;

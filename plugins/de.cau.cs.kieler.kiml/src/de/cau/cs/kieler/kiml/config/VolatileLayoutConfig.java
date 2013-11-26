@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.Set;
 
 import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 

@@ -51,10 +51,10 @@ import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
+import de.cau.cs.kieler.kiml.config.LayoutContext;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.AlgorithmSelectionDialog;
@@ -278,10 +278,8 @@ public class LayoutConfigurationPage extends WizardPage {
             if (dialog.open() == InputDialog.OK) {
                 String result = dialog.getValue().trim();
                 switch (optionData.getType()) {
-                case REMOTE_ENUM:
                 case ENUM:
                 case ENUMSET:
-                case REMOTE_ENUMSET:
                     entry.setSecond(optionData.parseValue(result.toUpperCase()));
                     break;
                 default:
@@ -355,8 +353,6 @@ public class LayoutConfigurationPage extends WizardPage {
                     } else {
                         return images.getPropFalse();
                     }
-                case REMOTE_ENUM:
-                case REMOTE_ENUMSET:
                 case ENUM:
                 case ENUMSET:
                     return images.getPropChoice();

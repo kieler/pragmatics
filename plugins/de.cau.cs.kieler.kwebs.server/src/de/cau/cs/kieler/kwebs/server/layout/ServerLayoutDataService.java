@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 
+import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.formats.GraphFormatData;
@@ -47,7 +48,7 @@ import de.cau.cs.kieler.kwebs.server.util.Resources;
  * This singleton class provides all extension based registered layout information at runtime 
  * and also the client side needed meta data about supported layout capabilities.
  *
- * @author  swe
+ * @author swe
  */
 public final class ServerLayoutDataService extends ExtensionLayoutDataService {
 
@@ -117,6 +118,14 @@ public final class ServerLayoutDataService extends ExtensionLayoutDataService {
      */
     public byte[] getPreviewImage(final String previewImage) {
         return previewImages.get(previewImage);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected LayoutAlgorithmData createLayoutAlgorithmData(final IConfigurationElement element) {
+        return new LayoutAlgorithmData();
     }
 
     /**
@@ -202,9 +211,9 @@ public final class ServerLayoutDataService extends ExtensionLayoutDataService {
                 if (type.equals(LayoutOptionData.ENUM_LITERAL)
                         || type.equals(LayoutOptionData.ENUMSET_LITERAL)) {
                     if (type.equals(LayoutOptionData.ENUM_LITERAL)) {
-                        option.setType(LayoutOptionData.REMOTEENUM_LITERAL);
+                        option.setType("remoteenum");
                     } else {
-                        option.setType(LayoutOptionData.REMOTEENUMSET_LITERAL);
+                        option.setType("remoteenumset");
                     }
                     try {
                         String className = element.getAttribute(ATTRIBUTE_CLASS);

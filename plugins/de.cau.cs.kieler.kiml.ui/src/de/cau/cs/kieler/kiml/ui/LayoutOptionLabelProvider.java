@@ -68,8 +68,6 @@ public class LayoutOptionLabelProvider extends LabelProvider {
             } else {
                 return images.getPropFalse();
             }
-        case REMOTE_ENUM:
-        case REMOTE_ENUMSET:
         case ENUM:
         case ENUMSET:
             return images.getPropChoice();
@@ -109,13 +107,11 @@ public class LayoutOptionLabelProvider extends LabelProvider {
                 return ((Boolean) element).toString();
             }
             // fall through so the same method as for enums is applied
-        case REMOTE_ENUM:
         case ENUM:
             if (element instanceof Integer) {
                 return optionData.getChoices()[(Integer) element];
             }
             break;
-        case REMOTE_ENUMSET:
         case ENUMSET:
             if (element instanceof String) {
                 return (String) element;

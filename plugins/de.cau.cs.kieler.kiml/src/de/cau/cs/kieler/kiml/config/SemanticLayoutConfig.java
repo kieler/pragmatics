@@ -16,7 +16,6 @@ package de.cau.cs.kieler.kiml.config;
 import org.eclipse.emf.ecore.EObject;
 
 import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
