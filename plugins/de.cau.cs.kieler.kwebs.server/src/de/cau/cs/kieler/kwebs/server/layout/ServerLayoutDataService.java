@@ -28,19 +28,19 @@ import de.cau.cs.kieler.kiml.formats.GraphFormatData;
 import de.cau.cs.kieler.kwebs.server.Application;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
-import de.cau.cs.kieler.kwebs.servicedata.Category;
-import de.cau.cs.kieler.kwebs.servicedata.KnownOption;
-import de.cau.cs.kieler.kwebs.servicedata.LayoutAlgorithm;
-import de.cau.cs.kieler.kwebs.servicedata.LayoutOption;
-import de.cau.cs.kieler.kwebs.servicedata.LayoutType;
-import de.cau.cs.kieler.kwebs.servicedata.RemoteEnum;
-import de.cau.cs.kieler.kwebs.servicedata.ServiceData;
-import de.cau.cs.kieler.kwebs.servicedata.ServiceDataFactory;
-import de.cau.cs.kieler.kwebs.servicedata.SupportedDiagram;
-import de.cau.cs.kieler.kwebs.servicedata.SupportedFormat;
-import de.cau.cs.kieler.kwebs.servicedata.impl.ServiceDataFactoryImpl;
-import de.cau.cs.kieler.kwebs.servicedata.transformation.ServiceDataXmiTransformer;
-import de.cau.cs.kieler.kwebs.util.Resources;
+import de.cau.cs.kieler.kwebs.server.servicedata.Category;
+import de.cau.cs.kieler.kwebs.server.servicedata.KnownOption;
+import de.cau.cs.kieler.kwebs.server.servicedata.LayoutAlgorithm;
+import de.cau.cs.kieler.kwebs.server.servicedata.LayoutOption;
+import de.cau.cs.kieler.kwebs.server.servicedata.LayoutType;
+import de.cau.cs.kieler.kwebs.server.servicedata.RemoteEnum;
+import de.cau.cs.kieler.kwebs.server.servicedata.ServiceData;
+import de.cau.cs.kieler.kwebs.server.servicedata.ServiceDataFactory;
+import de.cau.cs.kieler.kwebs.server.servicedata.SupportedDiagram;
+import de.cau.cs.kieler.kwebs.server.servicedata.SupportedFormat;
+import de.cau.cs.kieler.kwebs.server.servicedata.impl.ServiceDataFactoryImpl;
+import de.cau.cs.kieler.kwebs.server.servicedata.util.ServiceDataXmiTransformer;
+import de.cau.cs.kieler.kwebs.server.util.Resources;
 
 /**
  * This singleton class provides all extension based registered layout information at runtime 

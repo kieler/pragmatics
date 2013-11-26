@@ -48,16 +48,15 @@ import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier;
 import de.cau.cs.kieler.kiml.klayoutdata.impl.KLayoutDataFactoryImpl;
 import de.cau.cs.kieler.kiml.klayoutdata.impl.KLayoutDataPackageImpl;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kwebs.GraphLayoutOption;
-import de.cau.cs.kieler.kwebs.RemoteServiceException;
-import de.cau.cs.kieler.kwebs.Statistics;
+import de.cau.cs.kieler.kwebs.server.RemoteServiceException;
+import de.cau.cs.kieler.kwebs.server.layout.GraphLayoutOption;
 import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 import de.cau.cs.kieler.kwebs.server.service.filter.LayoutFilter;
 import de.cau.cs.kieler.kwebs.server.service.filter.LayoutFilterData;
 import de.cau.cs.kieler.kwebs.server.service.filter.LayoutFilters;
-import de.cau.cs.kieler.kwebs.util.Graphs;
+import de.cau.cs.kieler.kwebs.server.util.Graphs;
 
 /**
  * This abstract base class provides the implementation of the layout functionality. Web service
