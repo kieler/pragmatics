@@ -40,7 +40,7 @@ public class AspectRatioMetric implements IAnalysis {
      */
     public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Flatness metric analysis", 1);
+        progressMonitor.begin("Flatness metric", 1);
 
         float result;
         Object[] dimsResult = (Object[]) results.get(AreaAnalysis.ID);

@@ -85,6 +85,26 @@
       </analysis>
       <analysis
             category="de.cau.cs.kieler.kiml.evol.metricCategory"
+            class="de.cau.cs.kieler.kiml.evol.metrics.EdgeOrthogonalityMetric"
+            description="The edge orthogonality of the graph."
+            id="de.cau.cs.kieler.kiml.evol.edgeOrthogonalityMetric"
+            name="Edge Orthogonality">
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.grana.edgeCount">
+         </dependency>
+      </analysis>
+      <analysis
+            category="de.cau.cs.kieler.kiml.evol.metricCategory"
+            class="de.cau.cs.kieler.kiml.evol.metrics.EdgeLengthMetric"
+            description="The edge lengths of the graph."
+            id="de.cau.cs.kieler.kiml.evol.edgeLengthMetric"
+            name="Edge Length">
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.grana.edgeCount">
+         </dependency>
+      </analysis>
+      <analysis
+            category="de.cau.cs.kieler.kiml.evol.metricCategory"
             class="de.cau.cs.kieler.kiml.evol.metrics.UpwardnessMetric$UpMetric"
             description="The fraction of edges that point up."
             id="de.cau.cs.kieler.kiml.evol.upwardnessMetric"

@@ -27,26 +27,25 @@ import de.cau.cs.kieler.kiml.service.grana.analyses.EdgeCountAnalysis;
 import de.cau.cs.kieler.kiml.service.grana.analyses.EdgeLengthAnalysis;
 
 /**
- * A layout metric that computes the edge length uniformity of the graph layout.
+ * A layout metric that computes the edge lengths of the graph layout.
  * The returned Object is a float value within the range of 0.0 to 1.0, where a
- * higher value means more edge length uniformity.
+ * higher value means better edge lengths (close to "optimal" values).
  *
- * @author bdu
  * @author msp
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class EdgeUniformityMetric implements IAnalysis {
+public class EdgeLengthMetric implements IAnalysis {
     
-    /** the result returned if the standard deviation equals the average. */
-    private static final float RESULT_BASE = 0.2f;
-
+    /** the ideal length for which the metric will give 100%. */
+    private static final float IDEAL_LENGTH = 60;
+    
     /**
      * {@inheritDoc}
      */
     public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Edge length uniformity metric", 1);
+        progressMonitor.begin("Edge length metric", 1);
         float result;
 
         int numberOfEdges = (Integer) results.get(EdgeCountAnalysis.ID);
@@ -55,9 +54,7 @@ public class EdgeUniformityMetric implements IAnalysis {
                     AnalysisOptions.ANALYZE_HIERARCHY);
 
             // determine all individual edge lengths and their sum
-            float[] individualLengths = new float[numberOfEdges];
-            int index = 0;
-            float average = 0;
+            float lengthSum = 0;
             List<KNode> nodeQueue = new LinkedList<KNode>();
             nodeQueue.addAll(parentNode.getChildren());
             while (nodeQueue.size() > 0) {
@@ -70,31 +67,21 @@ public class EdgeUniformityMetric implements IAnalysis {
                         continue;
                     }
                     float edgeLength = EdgeLengthAnalysis.computeEdgeLength(edge);
-                    average += edgeLength;
-                    individualLengths[index++] = edgeLength;
+                    lengthSum += edgeLength;
                 }
                 
                 if (hierarchy) {
                     nodeQueue.addAll(node.getChildren());
                 }
             }
-            average = average / numberOfEdges;
+            float average = lengthSum / numberOfEdges;
             
-            // compute standard deviation of edge length
-            double deviation = 0;
-            for (int i = 0; i < index; i++) {
-                double diff = individualLengths[i] - average;
-                deviation += diff * diff;
-            }
-            deviation = Math.sqrt(deviation / numberOfEdges);
-            
-            // the higher the standard deviation, the more the result goes to zero
-            if (deviation >= average) {
-                result = RESULT_BASE * (float) (average / deviation);
+            if (average <= IDEAL_LENGTH) {
+                result = (float) Math.sqrt(average / IDEAL_LENGTH);
             } else {
-                result = 1 - (float) (deviation / average) * (1 - RESULT_BASE);
+                result = (float) IDEAL_LENGTH / average;
             }
-
+            
             assert result >= 0 && result <= 1;
         } else {
             result = 1.0f;
@@ -103,4 +90,5 @@ public class EdgeUniformityMetric implements IAnalysis {
         progressMonitor.done();
         return result;
     }
+    
 }

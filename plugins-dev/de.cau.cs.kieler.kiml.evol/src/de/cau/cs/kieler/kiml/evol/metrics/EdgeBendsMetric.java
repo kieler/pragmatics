@@ -35,7 +35,7 @@ public class EdgeBendsMetric implements IAnalysis {
      */
     public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Bend metric analysis", 1);
+        progressMonitor.begin("Bend metric", 1);
         // load numbers from analyses
         Object edgesResult = results.get(EdgeCountAnalysis.ID);
         Object[] bendsResult = (Object[]) results.get(BendsAnalysis.ID);
