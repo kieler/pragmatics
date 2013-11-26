@@ -54,20 +54,21 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
  * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public final class EclipseLayoutInfoService extends LayoutInfoService implements IAdapterFactory {
-    
-    /** identifier of the extension point for layout managers. */
-    public static final String EXTP_ID_LAYOUT_MANAGERS = "de.cau.cs.kieler.kiml.service.layoutManagers";
-    /** name of the 'manager' element in the 'layout managers' extension point. */
-    public static final String ELEMENT_MANAGER = "manager";
-    /** name of the 'engine' element in the 'layout managers' extension point. */
-    public static final String ELEMENT_ENGINE = "engine";
-    /** name of the 'priority' attribute in the extension points. */
-    public static final String ATTRIBUTE_PRIORITY = "priority";
 
     /** preference identifier for the list of registered diagram elements. */
     public static final String PREF_REG_ELEMENTS = "kiml.reg.elements";
     /** preference identifier for oblique edge routing. */
     public static final String PREF_OBLIQUE_ROUTE = "kiml.oblique.route";
+    
+    /** identifier of the extension point for layout managers. */
+    protected static final String EXTP_ID_LAYOUT_MANAGERS
+            = "de.cau.cs.kieler.kiml.service.layoutManagers";
+    /** name of the 'manager' element in the 'layout managers' extension point. */
+    protected static final String ELEMENT_MANAGER = "manager";
+    /** name of the 'engine' element in the 'layout managers' extension point. */
+    protected static final String ELEMENT_ENGINE = "engine";
+    /** name of the 'priority' attribute in the extension points. */
+    protected static final String ATTRIBUTE_PRIORITY = "priority";
     
     /** list of registered diagram layout managers. */
     private final List<Pair<Integer, IDiagramLayoutManager<?>>> managers
