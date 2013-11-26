@@ -19,7 +19,12 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.RegistryFactory;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.Bundle;
 
 import de.cau.cs.kieler.core.WrappedException;
@@ -39,7 +44,7 @@ import de.cau.cs.kieler.kiml.options.GraphFeature;
  * @kieler.design proposed by msp
  * @kieler.rating yellow 2012-10-10 review KI-25 by chsch, bdu
  */
-public abstract class ExtensionLayoutDataService extends LayoutDataService {
+public class ExtensionLayoutDataService extends LayoutDataService {
     
     /** identifier of the extension point for layout providers. */
     public static final String EXTP_ID_LAYOUT_PROVIDERS = "de.cau.cs.kieler.kiml.layoutProviders";
@@ -87,6 +92,8 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
     public static final String ATTRIBUTE_OPTION = "option";
     /** name of the 'parameter' attribute in the extension points. */
     public static final String ATTRIBUTE_PARAMETER = "parameter";
+    /** name of the 'preview' attribute in the extension points. */
+    public static final String ATTRIBUTE_PREVIEW = "preview";
     /** name of the 'priority' attribute in the extension points. */
     public static final String ATTRIBUTE_PRIORITY = "priority";
     /** name of the 'type' attribute in the extension points. */
@@ -97,24 +104,48 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
     public static final String ATTRIBUTE_VALUE = "value";
     /** name of the 'variance' attribute in the extension points. */
     public static final String ATTRIBUTE_VARIANCE = "variance";
+
+    /**
+     * Load all registered extensions for the layout providers extension point.
+     */
+    public ExtensionLayoutDataService() {
+        loadLayoutProviderExtensions();
+    }
     
     /**
-     * Report an error that occurred while reading extensions.
+     * Report an error that occurred while reading extensions. May be overridden by subclasses
+     * in order to report errors in a different way.
      * 
      * @param extensionPoint the identifier of the extension point
      * @param element the configuration element
      * @param attribute the attribute that contains an invalid entry
      * @param exception an optional exception that was caused by the invalid entry
      */
-    protected abstract void reportError(String extensionPoint, IConfigurationElement element,
-            String attribute, Throwable exception);
+    protected void reportError(final String extensionPoint, final IConfigurationElement element,
+            final String attribute, final Throwable exception) {
+        String message;
+        if (element != null && attribute != null) {
+            message = "Extension point " + extensionPoint + ": Invalid entry in attribute '"
+                    + attribute + "' of element " + element.getName() + ", contributed by "
+                    + element.getContributor().getName();
+        } else {
+            message = "Extension point " + extensionPoint
+                    + ": An error occured while loading extensions.";
+        }
+        IStatus status = new Status(IStatus.WARNING, KimlServicePlugin.PLUGIN_ID,
+                0, message, exception);
+        StatusManager.getManager().handle(status);
+    }
 
     /**
-     * Report an error that occurred while reading extensions.
+     * Report an error that occurred while reading extensions. May be overridden by subclasses
+     * in order to report errors in a different way.
      * 
      * @param exception a core exception holding a status with further information
      */
-    protected abstract void reportError(CoreException exception);
+    protected void reportError(final CoreException exception) {
+        StatusManager.getManager().handle(exception, KimlServicePlugin.PLUGIN_ID);
+    }
     
     /**
      * Returns the extensions responsible for providing layout meta data. This method
@@ -127,7 +158,7 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
         IConfigurationElement[] result = null;
         IExtensionRegistry registry = null;
         try {
-            registry = Platform.getExtensionRegistry();
+            registry = RegistryFactory.getRegistry();
         } catch (Exception e) {
             // Ignore since an exception here means that this instance
             // is not being run in an eclipse environment
@@ -141,7 +172,7 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
     /**
      * Loads and registers all layout provider extensions from the extension point.
      */
-    protected final void loadLayoutProviderExtensions() {    
+    private void loadLayoutProviderExtensions() {    
         List<String[]> knownOptions = new LinkedList<String[]>();
         List<String[]> dependencies = new LinkedList<String[]>();
         
@@ -215,13 +246,19 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
     
     /**
      * Create a layout algorithm data instance and configure it with platform-specific extensions.
-     * Subclasses can override this to create more detailed information.
+     * Subclasses can override this to fetch the data in a different way.
      * 
      * @param element a configuration element to use for configuration
      * @return a new layout algorithm data instance
      */
     protected LayoutAlgorithmData createLayoutAlgorithmData(final IConfigurationElement element) {
-        return new LayoutAlgorithmData();
+        LayoutAlgorithmData algoData = new LayoutAlgorithmData();
+        String previewPath = element.getAttribute(ATTRIBUTE_PREVIEW);
+        if (previewPath != null) {
+            algoData.setPreviewImage(AbstractUIPlugin.imageDescriptorFromPlugin(
+                    element.getContributor().getName(), previewPath));
+        }
+        return algoData;
     }
     
     /**

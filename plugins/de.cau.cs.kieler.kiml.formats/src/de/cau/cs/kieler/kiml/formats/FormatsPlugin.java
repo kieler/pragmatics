@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.formats;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;
 
@@ -39,13 +38,6 @@ public class FormatsPlugin extends Plugin {
     public void start(final BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
-        
-        // The transformation service is only created here if the UI plugin is present.
-        // If not, the service is expected to be created in a subclass provided by a component
-        // that does not require UI, e.g. a server.
-        if (Platform.getBundle("org.eclipse.ui") != null) {
-            TransformationService.create();
-        }
     }
 
     /**

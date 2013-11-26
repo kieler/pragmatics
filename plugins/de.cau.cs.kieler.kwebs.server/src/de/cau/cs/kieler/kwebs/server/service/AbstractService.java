@@ -14,7 +14,6 @@
 
 package de.cau.cs.kieler.kwebs.server.service;
 
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -26,6 +25,7 @@ import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EClass;
 
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
+import de.cau.cs.kieler.core.alg.DefaultFactory;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphData;
@@ -51,6 +51,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kwebs.server.RemoteServiceException;
 import de.cau.cs.kieler.kwebs.server.layout.GraphLayoutOption;
 import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService;
+import de.cau.cs.kieler.kwebs.server.layout.ServerTransformationService;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 import de.cau.cs.kieler.kwebs.server.service.filter.LayoutFilter;
@@ -87,14 +88,14 @@ public abstract class AbstractService {
     //////////
     
     /**
-     * Protected constructor. Initialized the layout data services.
+     * Protected constructor. Initializes the layout data services.
      */
     protected AbstractService() {
-        
-        ServerLayoutDataService.create();
-        LayoutDataService.setMode(ServerLayoutDataService.class.getCanonicalName());
+        LayoutDataService.setInstanceFactory(new DefaultFactory<LayoutDataService>(
+                ServerLayoutDataService.class));
+        TransformationService.setInstanceFactory(new DefaultFactory<TransformationService>(
+                ServerTransformationService.class));
         initFilters();
-        
     }
 
     /** */
@@ -192,11 +193,11 @@ public abstract class AbstractService {
             
         }
         
-        final Comparator<LayoutFilter> comparator = new Comparator<LayoutFilter>() {
-            public int compare(final LayoutFilter filter1, final LayoutFilter filter2) {
-                return filter1.getPriority() - filter2.getPriority();
-            }
-        };
+//        final Comparator<LayoutFilter> comparator = new Comparator<LayoutFilter>() {
+//            public int compare(final LayoutFilter filter1, final LayoutFilter filter2) {
+//                return filter1.getPriority() - filter2.getPriority();
+//            }
+//        };
         
 //        preFilters.sortSegments(comparator);
 //        postFilters.sortSegments(comparator);

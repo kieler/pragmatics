@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.Platform;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.formats.GraphFormatData;
+import de.cau.cs.kieler.kiml.formats.TransformationService;
 import de.cau.cs.kieler.kwebs.server.Application;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
@@ -60,29 +61,16 @@ public final class ServerLayoutDataService extends ExtensionLayoutDataService {
      *  The cached preview images of the layout algorithms. The index is derived from the plug-in
      *  name of the defining plug-in and the path to the preview image.
      */
-    private Map<String, byte[]> previewImages
-        = new HashMap<String, byte[]>();
+    private Map<String, byte[]> previewImages = new HashMap<String, byte[]>();
     
     /**
-     * Private constructor.
+     * Create the server layout data service.
      */
-    private ServerLayoutDataService() {
-        // Create the transformation service instance; needed for building the meta data model
-        ServerTransformationService.create();
+    public ServerLayoutDataService() {
+        // Read extensions for the extension point
+        super();
         // Build the meta data model
         createServiceData();
-    }
-
-    /**
-     * Initialize the singleton instance from the extension points.
-     */
-    public static void create() {
-        if (LayoutDataService.getInstanceOf(
-                    ServerLayoutDataService.class.getCanonicalName()) == null) {
-            ServerLayoutDataService lds = new ServerLayoutDataService();
-            LayoutDataService.addService(lds);
-            lds.loadLayoutProviderExtensions();
-        }
     }
     
     /**
@@ -92,7 +80,11 @@ public final class ServerLayoutDataService extends ExtensionLayoutDataService {
      *         has not been registered yet
      */
     public static ServerLayoutDataService getInstance() {
-        return LayoutDataService.getInstanceOf(ServerLayoutDataService.class.getCanonicalName());
+        LayoutDataService service = LayoutDataService.getInstance();
+        if (service instanceof ServerLayoutDataService) {
+            return (ServerLayoutDataService) service;
+        }
+        return null;
     }
 
     /**
@@ -143,7 +135,7 @@ public final class ServerLayoutDataService extends ExtensionLayoutDataService {
         readExtensionLayoutOptions(factory, extensions);
         readExtensionLayoutAlgorithms(factory, extensions);
         // Add transformation to the service meta data
-        for (GraphFormatData data : ServerTransformationService.getInstance().getFormatData()) {
+        for (GraphFormatData data : TransformationService.getInstance().getFormatData()) {
             SupportedFormat format = factory.createSupportedFormat();
             format.setId(data.getId());
             format.setDescription(data.getDescription());

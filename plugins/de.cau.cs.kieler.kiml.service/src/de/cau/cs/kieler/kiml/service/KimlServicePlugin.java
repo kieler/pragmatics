@@ -13,12 +13,14 @@
  */
 package de.cau.cs.kieler.kiml.service;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.osgi.framework.BundleContext;
 
+import de.cau.cs.kieler.core.alg.DefaultFactory;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 
@@ -48,8 +50,13 @@ public class KimlServicePlugin extends Plugin {
         super.start(context);
         plugin = this;
         
-        EclipseLayoutDataService.create();
-        LayoutDataService.setMode(LayoutDataService.ECLIPSE_DATA_SERVICE);
+        // The layout services are only created here if the UI plugin is present.
+        // If not, the services are expected to be created in another component
+        // that does not require UI, e.g. a server.
+        if (Platform.getBundle("org.eclipse.ui") != null) {
+            LayoutDataService.setInstanceFactory(new DefaultFactory<LayoutDataService>(
+                    ExtensionLayoutDataService.class));
+        }
         EclipseLayoutInfoService.create();
     }
 

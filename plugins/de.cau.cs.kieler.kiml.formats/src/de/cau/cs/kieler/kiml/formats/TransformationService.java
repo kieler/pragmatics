@@ -27,6 +27,9 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.statushandlers.StatusManager;
 
+import de.cau.cs.kieler.core.alg.DefaultFactory;
+import de.cau.cs.kieler.core.alg.IFactory;
+
 /**
  * Service class for graph transformations.
  *
@@ -54,6 +57,9 @@ public class TransformationService {
     
     /** the singleton instance of the transformation service. */
     private static TransformationService instance;
+    /** the factory for creation of service instances. */
+    private static IFactory<? extends TransformationService> instanceFactory
+            = new DefaultFactory<TransformationService>(TransformationService.class);
     
     /**
      * Returns the singleton instance of the transformation service.
@@ -61,24 +67,31 @@ public class TransformationService {
      * @return the singleton instance
      */
     public static TransformationService getInstance() {
+        synchronized (TransformationService.class) {
+            if (instance == null) {
+                instance = instanceFactory.create();
+            }
+        }
         return instance;
     }
     
     /**
-     * Create the transformation service and load extension points.
+     * Set the factory for creating instances. If an instance is already created, it is cleared
+     * so the next call to {@link #getInstance()} uses the new factory.
+     * 
+     * @param factory an instance factory
      */
-    public static synchronized void create() {
-        // creating an instance stores this instance as the singleton instance
-        new TransformationService();
-        instance.loadGraphTransExtensions();
+    public static void setInstanceFactory(final IFactory<? extends TransformationService> factory) {
+        instanceFactory = factory;
+        instance = null;
     }
+    
 
     /**
-     * Protected constructor to enforce instantiation in this or subclass.
+     * Load all registered extensions for the graph formats extension point.
      */
-    protected TransformationService() {
-        // the transformation service is supposed to exist exactly once
-        instance = this;
+    public TransformationService() {
+        loadGraphTransExtensions();
     }
     
     /** mapping of graph format identifiers to their meta-data instances. */
@@ -89,7 +102,8 @@ public class TransformationService {
             = new HashMap<String, GraphFormatData>();
 
     /**
-     * Report an error that occurred while reading extensions.
+     * Report an error that occurred while reading extensions. May be overridden by subclasses
+     * in order to report errors in a different way.
      * 
      * @param extensionPoint the identifier of the extension point
      * @param element the configuration element
@@ -112,7 +126,8 @@ public class TransformationService {
     }
 
     /**
-     * Report an error that occurred while reading extensions.
+     * Report an error that occurred while reading extensions. May be overridden by subclasses
+     * in order to report errors in a different way.
      * 
      * @param exception a core exception holding a status with further information
      */
@@ -123,7 +138,7 @@ public class TransformationService {
     /**
      * Loads and registers all graph transformer extensions from the extension point.
      */
-    protected final void loadGraphTransExtensions() {
+    private void loadGraphTransExtensions() {
         IConfigurationElement[] extensions = Platform.getExtensionRegistry()
                 .getConfigurationElementsFor(EXTP_ID_GRAPH_TRANS);
 

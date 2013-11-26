@@ -52,11 +52,11 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.LayoutContext;
+import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.service.EclipseLayoutDataService;
 import de.cau.cs.kieler.kiml.ui.AlgorithmSelectionDialog;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.LayoutOptionValidator;
@@ -301,8 +301,7 @@ public class LayoutConfigurationPage extends WizardPage {
         dialog.setTitle("Select Layout Option");
         dialog.setContentProvider(ArrayContentProvider.getInstance());
         dialog.setLabelProvider(new OptionsLabelProvider());
-        Collection<LayoutOptionData<?>> data = EclipseLayoutDataService
-                .getInstance().getOptionData();
+        Collection<LayoutOptionData<?>> data = LayoutDataService.getInstance().getOptionData();
         ArrayList<LayoutOptionData<?>> inputList = new ArrayList<LayoutOptionData<?>>(data.size());      
         for (LayoutOptionData<?> optionData : data) {
             // layout options without target definition are not shown to the user

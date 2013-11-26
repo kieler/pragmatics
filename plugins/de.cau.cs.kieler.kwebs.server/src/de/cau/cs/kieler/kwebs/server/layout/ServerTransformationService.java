@@ -28,18 +28,10 @@ import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 public final class ServerTransformationService extends TransformationService {
 
     /**
-     * Hidden constructor to avoid instantiation from outside this class.
+     * Create the server transformation service.
      */
-    private ServerTransformationService() {
+    public ServerTransformationService() {
         super();
-    }
-    
-    /**
-     * Initialize the singleton instance from the extension points.
-     */
-    public static void create() {
-        ServerTransformationService instance = new ServerTransformationService();
-        instance.loadGraphTransExtensions();
     }
 
     /**
