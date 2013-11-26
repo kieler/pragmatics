@@ -33,16 +33,16 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 public class NodeSeparationMetric implements IAnalysis {
     
     /** the minimal distance between nodes. */
-    private static final float MIN_DISTANCE = 7;
+    private static final float MIN_DISTANCE = 15;
     /** the separation for nodes that touch each other. */
-    private static final float TOUCH_SEP = 0.4f;
+    private static final float TOUCH_SEP = 0.3f;
 
     /**
      * {@inheritDoc}
      */
     public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Node separation metric analysis", 1);
+        progressMonitor.begin("Node separation metric", 1);
 
         boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
                 AnalysisOptions.ANALYZE_HIERARCHY);

@@ -31,6 +31,7 @@ import de.cau.cs.kieler.kiml.util.KimlUtil
 import java.util.Map
 import org.json.JSONArray
 import org.json.JSONObject
+import de.cau.cs.kieler.core.kgraph.KLabel
 
 /**
  * Importer for graphs in the json format.
@@ -50,6 +51,7 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
     private val Map<KNode, JSONObject> nodeJsonMap = Maps.newHashMap
     private val Map<KPort, JSONObject> portJsonMap = Maps.newHashMap
     private val Map<KEdge, JSONObject> edgeJsonMap = Maps.newHashMap
+    private val Map<KLabel, JSONObject> labelJsonMap = Maps.newHashMap
 
     /* ---------------------------------------------------------------------------
      *   JSON --> KGraph 
@@ -218,10 +220,22 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
         jsonObj.optJSONArray("labels") => [ labels |
             if (labels != null) {
                 for (i : 0 ..< labels.length) {
-                    val label = KimlUtil.createInitializedLabel(element)
-                    label.text = labels.optString(i)
-                    label.layout.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
-                            EdgeLabelPlacement.CENTER)
+                    val jsonLabel = labels.optJSONObject(i)
+                    if (jsonLabel != null) {
+                        val label = KimlUtil.createInitializedLabel(element)
+                        labelJsonMap.put(label, jsonLabel) 
+                        
+                        label.text = jsonLabel.optString("text")
+                        
+                        jsonLabel.transformProperties(label.layout)
+                        
+                        // by default center the label
+                        if (label.layout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT) 
+                                == EdgeLabelPlacement.UNDEFINED) {
+                            label.layout.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
+                                    EdgeLabelPlacement.CENTER)
+                        }
+                    }
                 }
             }
         ]
@@ -241,6 +255,7 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
 
         // create KPort
         val port = KimlUtil.createInitializedPort.register(jsonPort)
+        parent.ports += port
 
         // position and dimension
         jsonPort.optDouble("x") => [port.layout.xpos = it.floatValueValid]
@@ -318,6 +333,16 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
         jsonObj?.put("bendPoints", bends)
     }
 
+    private def dispatch transferLayoutInt(KLabel label) {
+        val jsonObj = labelJsonMap.get(label)
+
+        // transfer positions and dimension
+        jsonObj?.put("x", label.layout.xpos)
+        jsonObj?.put("y", label.layout.ypos)
+        jsonObj?.put("width", label.layout.width)
+        jsonObj?.put("height", label.layout.height)
+    }
+    
     private def dispatch transferLayoutInt(Object obj) {
         // don't care about the rest
     }

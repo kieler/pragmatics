@@ -35,7 +35,7 @@ public class EdgeOverlapsMetric implements IAnalysis {
      */
     public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Area metric analysis", 1);
+        progressMonitor.begin("Edge overlaps metric", 1);
 
         int edgeCount = (Integer) results.get(EdgeCountAnalysis.ID);
         int overlaps = (Integer) results.get(NodeEdgeOverlapsAnalysis.ID);

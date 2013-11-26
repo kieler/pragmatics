@@ -23,6 +23,7 @@ import de.cau.cs.kieler.kiml.service.formats.TransformationData
 import java.util.Map
 import org.json.JSONArray
 import org.json.JSONObject
+import de.cau.cs.kieler.core.kgraph.KLabel
 
 /**
  * Exporter from KNode to json.
@@ -86,7 +87,7 @@ class JsonExporter implements IGraphTransformer<KNode, JSONObject> {
         // labels
         val labels = new JSONArray
         jsonObj.put("labels", labels)
-        node.labels.forEach [ labels.put(it.text) ]
+        node.labels.forEach [ it.transformLabel(labels) ]
 
         // transfer positions and dimension
         jsonObj.put("x", node.layout.xpos)
@@ -117,7 +118,7 @@ class JsonExporter implements IGraphTransformer<KNode, JSONObject> {
         // labels
         val labels = new JSONArray
         jsonObj.put("labels", labels)
-        port.labels.forEach [ labels.put(it.text) ]
+        port.labels.forEach [ it.transformLabel(labels) ]
         
          // properties
         port.layout.transformProperties(jsonObj)
@@ -146,7 +147,7 @@ class JsonExporter implements IGraphTransformer<KNode, JSONObject> {
         // labels
         val labels = new JSONArray
         jsonObj.put("labels", labels)
-        edge.labels.forEach [ labels.put(it.text) ]
+        edge.labels.forEach [ it.transformLabel(labels) ]
 
         // properties        
         edge.layout.transformProperties(jsonObj)
@@ -179,6 +180,17 @@ class JsonExporter implements IGraphTransformer<KNode, JSONObject> {
             bends.put(jsonPnt)
         ]
         jsonObj?.put("bendPoints", bends)
+    }
+    
+
+    private def void transformLabel(KLabel label, JSONArray array) {
+            val jsonLabel = new JSONObject
+            jsonLabel.put("text", label.text)
+            label.layout.transformProperties(jsonLabel)
+            
+            // position
+            jsonLabel.put("x", label.layout.xpos)
+            jsonLabel.put("y", label.layout.ypos)
     }
 
     private def void transformProperties(KLayoutData holder, JSONObject parent) {
