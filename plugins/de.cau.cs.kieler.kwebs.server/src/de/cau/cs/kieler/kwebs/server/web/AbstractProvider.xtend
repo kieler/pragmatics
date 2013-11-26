@@ -49,7 +49,6 @@ abstract class AbstractProvider
                     <head>
                         <title>KIELER Web Service For Layout</title>
                         <meta http-equiv='content-type' content='text/html; charset=utf-8'>
-                        ««««<link rel='stylesheet' type='text/css' href='styles/styles.css'/>
                          <link href="styles/bootstrap-3.0.2.min.css" rel="stylesheet">
                          <link href="styles/prettify.css" type="text/css" rel="stylesheet" />
                          <script src="scripts/jquery-1.10.2.min.js"></script>
@@ -60,9 +59,33 @@ abstract class AbstractProvider
                             body {
                                 padding-top: 70px;
                             } 
+                            pre.prettyprint {
+                                padding: 9px;
+                            }
                         </style>
                         <script>
                           $(function() {
+                              // remove leading whitespace from each code element 
+                              $('.prettyprint').each(function() {
+                               var code = $(this);
+                               var text = code.html();
+                               if (text) {
+                                  var lines = text.split("\n");
+                                  if (lines.length > 0) {
+                                      var match = /^\s+(.+)$/.exec(lines[0]);
+                                      if (match && match.length > 1) {
+                                        var length = match[0].length - match[1].length;         
+                                        var strippedLines = $.map(lines, function(e, i) {
+                                            var woWhitespaces = e.substring(length);
+                                            return woWhitespaces;
+                                        });
+                                      }
+                                      // replace with the whitespace free code
+                                      code.html(strippedLines.join("\n"));
+                                  }
+                               }
+                              });
+                              
                               prettyPrint();
                           });
                         </script>
