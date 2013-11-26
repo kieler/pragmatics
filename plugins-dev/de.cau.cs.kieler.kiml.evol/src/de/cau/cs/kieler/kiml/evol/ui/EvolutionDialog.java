@@ -47,8 +47,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
+import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Slider;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -111,7 +111,7 @@ public class EvolutionDialog extends Dialog {
     /** the progress bar for displaying progress of operations. */
     private ProgressBar progressBar;
     /** the labels for displaying metrics results and the sliders for setting weights. */
-    private Map<String, Pair<Label, Slider>> metricControls = Maps.newHashMap();
+    private Map<String, Pair<Label, Scale>> metricControls = Maps.newHashMap();
     /** the label for the total fitness value. */
     private Label fitnessLabel;
     /** the label for the generation number. */
@@ -220,7 +220,7 @@ public class EvolutionDialog extends Dialog {
         all0Button.setText("All to 0%");
         all0Button.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(final SelectionEvent event) {
-                for (Pair<Label, Slider> metricControl : metricControls.values()) {
+                for (Pair<Label, Scale> metricControl : metricControls.values()) {
                     metricControl.getSecond().setSelection(0);
                 }
             }
@@ -229,7 +229,7 @@ public class EvolutionDialog extends Dialog {
         all100Button.setText("All to 100%");
         all100Button.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(final SelectionEvent event) {
-                for (Pair<Label, Slider> metricControl : metricControls.values()) {
+                for (Pair<Label, Scale> metricControl : metricControls.values()) {
                     metricControl.getSecond().setSelection(SLIDER_MAX);
                 }
             }
@@ -411,28 +411,28 @@ public class EvolutionDialog extends Dialog {
         resultLabel.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
         
         // create slider for the weight
-        final Slider slider = new Slider(parent, SWT.HORIZONTAL);
-        slider.setMinimum(0);
-        slider.setMaximum(SLIDER_MAX + slider.getThumb());
+        final Scale scale = new Scale(parent, SWT.HORIZONTAL);
+        scale.setMinimum(0);
+        scale.setMaximum(SLIDER_MAX);
         GridData gridData = new GridData(SWT.FILL, SWT.TOP, false, false);
         gridData.horizontalIndent = 20;
         gridData.horizontalSpan = 2;
-        slider.setLayoutData(gridData);
-        slider.addSelectionListener(new SelectionAdapter() {
+        scale.setLayoutData(gridData);
+        scale.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(final SelectionEvent e) {
-                resultLabel.setText((100 * slider.getSelection() / SLIDER_MAX) + "%");
+                resultLabel.setText((100 * scale.getSelection() / SLIDER_MAX) + "%");
             }
         });
-        slider.addMouseListener(new MouseAdapter() {
+        scale.addMouseListener(new MouseAdapter() {
             public void mouseDown(final MouseEvent e) {
-                resultLabel.setText((100 * slider.getSelection() / SLIDER_MAX) + "%");
+                resultLabel.setText((100 * scale.getSelection() / SLIDER_MAX) + "%");
                 resultLabel.setVisible(true);
             }
             public void mouseUp(final MouseEvent e) {
                 resultLabel.setVisible(false);
             }
         });
-        metricControls.put(data.getId(), new Pair<Label, Slider>(resultLabel, slider));
+        metricControls.put(data.getId(), new Pair<Label, Scale>(resultLabel, scale));
         
         // set the initial value for the slider
         int value = SLIDER_MAX;
@@ -444,7 +444,7 @@ public class EvolutionDialog extends Dialog {
                 value = (int) (weight * SLIDER_MAX);
             }
         }
-        slider.setSelection(value);
+        scale.setSelection(value);
     }
     
     /**
@@ -478,11 +478,11 @@ public class EvolutionDialog extends Dialog {
         }
         
         boolean weightsChanged = false;
-        for (Map.Entry<String, Pair<Label, Slider>> entry : metricControls.entrySet()) {
+        for (Map.Entry<String, Pair<Label, Scale>> entry : metricControls.entrySet()) {
             String id = entry.getKey();
-            Slider slider = entry.getValue().getSecond();
+            Scale scale = entry.getValue().getSecond();
             Double oldWeight = metricWeights.get(id);
-            double newWeight = (double) slider.getSelection() / SLIDER_MAX;
+            double newWeight = (double) scale.getSelection() / SLIDER_MAX;
             metricWeights.put(id, newWeight);
             if (oldWeight != null && Math.abs(newWeight - oldWeight) > MAX_WEIGHT_DIFF) {
                 weightsChanged = true;
@@ -607,7 +607,7 @@ public class EvolutionDialog extends Dialog {
         }
         
         // set values for all metric results
-        for (Map.Entry<String, Pair<Label, Slider>> entry : metricControls.entrySet()) {
+        for (Map.Entry<String, Pair<Label, Scale>> entry : metricControls.entrySet()) {
             String metricId = entry.getKey();
             Label label = entry.getValue().getFirst();
             Float result = metricsResult.get(metricId);
@@ -655,12 +655,12 @@ public class EvolutionDialog extends Dialog {
             Map<String, Double> metricWeights = population.getProperty(
                     EvaluationOperation.METRIC_WEIGHT);
             if (metricWeights != null) {
-                for (Map.Entry<String, Pair<Label, Slider>> entry : metricControls.entrySet()) {
+                for (Map.Entry<String, Pair<Label, Scale>> entry : metricControls.entrySet()) {
                     String id = entry.getKey();
                     Double weight = metricWeights.get(id);
                     if (weight != null) {
-                        Slider slider = entry.getValue().getSecond();
-                        slider.setSelection((int) Math.round(weight * SLIDER_MAX));
+                        Scale scale = entry.getValue().getSecond();
+                        scale.setSelection((int) Math.round(weight * SLIDER_MAX));
                     }
                 }
             }

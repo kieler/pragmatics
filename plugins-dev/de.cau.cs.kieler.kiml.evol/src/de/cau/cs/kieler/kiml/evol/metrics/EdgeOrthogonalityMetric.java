@@ -15,38 +15,37 @@ package de.cau.cs.kieler.kiml.evol.metrics;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KVectorChain;
+import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 import de.cau.cs.kieler.kiml.service.grana.analyses.EdgeCountAnalysis;
-import de.cau.cs.kieler.kiml.service.grana.analyses.EdgeLengthAnalysis;
 
 /**
- * A layout metric that computes the edge length uniformity of the graph layout.
+ * A layout metric that computes the edge orthogonality of the graph layout.
  * The returned Object is a float value within the range of 0.0 to 1.0, where a
- * higher value means more edge length uniformity.
+ * higher value means more edge orthogonality.
  *
- * @author bdu
  * @author msp
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class EdgeUniformityMetric implements IAnalysis {
+public class EdgeOrthogonalityMetric implements IAnalysis {
     
-    /** the result returned if the standard deviation equals the average. */
-    private static final float RESULT_BASE = 0.2f;
-
     /**
      * {@inheritDoc}
      */
     public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Edge length uniformity metric", 1);
+        progressMonitor.begin("Edge orthogonality analysis", 1);
         float result;
 
         int numberOfEdges = (Integer) results.get(EdgeCountAnalysis.ID);
@@ -54,47 +53,30 @@ public class EdgeUniformityMetric implements IAnalysis {
             boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
                     AnalysisOptions.ANALYZE_HIERARCHY);
 
-            // determine all individual edge lengths and their sum
-            float[] individualLengths = new float[numberOfEdges];
-            int index = 0;
-            float average = 0;
+            // determine all individual edge orthogonalities and their sum
+            float orthoSum = 0;
             List<KNode> nodeQueue = new LinkedList<KNode>();
             nodeQueue.addAll(parentNode.getChildren());
             while (nodeQueue.size() > 0) {
                 // pop first element
                 KNode node = nodeQueue.remove(0);
                 
-                // compute edge length for all outgoing edges
+                // compute edge orthogonality for all outgoing edges
                 for (KEdge edge : node.getOutgoingEdges()) {
                     if (!hierarchy && edge.getTarget().getParent() != parentNode) {
                         continue;
                     }
-                    float edgeLength = EdgeLengthAnalysis.computeEdgeLength(edge);
-                    average += edgeLength;
-                    individualLengths[index++] = edgeLength;
+                    float edgeOrtho = computeOrthogonality(edge);
+                    orthoSum += edgeOrtho;
                 }
                 
                 if (hierarchy) {
                     nodeQueue.addAll(node.getChildren());
                 }
             }
-            average = average / numberOfEdges;
+            float average = orthoSum / numberOfEdges;
             
-            // compute standard deviation of edge length
-            double deviation = 0;
-            for (int i = 0; i < index; i++) {
-                double diff = individualLengths[i] - average;
-                deviation += diff * diff;
-            }
-            deviation = Math.sqrt(deviation / numberOfEdges);
-            
-            // the higher the standard deviation, the more the result goes to zero
-            if (deviation >= average) {
-                result = RESULT_BASE * (float) (average / deviation);
-            } else {
-                result = 1 - (float) (deviation / average) * (1 - RESULT_BASE);
-            }
-
+            result = average * average;
             assert result >= 0 && result <= 1;
         } else {
             result = 1.0f;
@@ -103,4 +85,29 @@ public class EdgeUniformityMetric implements IAnalysis {
         progressMonitor.done();
         return result;
     }
+    
+    private static final double THRESHOLD = 0.01;
+    
+    /**
+     * Compute the orthogonality of the given edge.
+     * 
+     * @param edge an edge
+     * @return the orthogonality value
+     */
+    private static float computeOrthogonality(final KEdge edge) {
+        KVectorChain chain = edge.getData(KEdgeLayout.class).createVectorChain();
+        int orthoCount = 0;
+        KVector point1 = chain.getFirst();
+        ListIterator<KVector> iter = chain.listIterator(1);
+        while (iter.hasNext()) {
+            KVector point2 = iter.next();
+            if (Math.abs(point2.x - point1.x) < THRESHOLD
+                    || Math.abs(point2.y - point1.y) < THRESHOLD) {
+                orthoCount++;
+            }
+            point1 = point2;
+        }
+        return (float) orthoCount / (chain.size() - 1);
+    }
+    
 }

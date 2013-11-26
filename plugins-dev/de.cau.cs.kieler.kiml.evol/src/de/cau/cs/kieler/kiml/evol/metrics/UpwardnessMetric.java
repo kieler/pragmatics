@@ -61,7 +61,7 @@ public abstract class UpwardnessMetric implements IAnalysis {
      */
     public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Upwardness metric analysis", 1);
+        progressMonitor.begin("Upwardness metric", 1);
         Float result;
 
         // load numbers from analyses
