@@ -3,10 +3,10 @@
 <schema targetNamespace="de.cau.cs.kieler.kiml.formats" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="de.cau.cs.kieler.kiml.formats" id="graphTransformers" name="Graph Transformers"/>
+         <meta.schema plugin="de.cau.cs.kieler.kiml.formats" id="graphFormats" name="Graph Formats"/>
       </appinfo>
       <documentation>
-         Extension point for graph transformations. Support for different graph file formats is given by offering transformations from and to the KGraph format, which is the main intermediate format.
+         Extension point for graph formats. Support for different graph file formats is given by offering transformations from and to the KGraph format, which is the main intermediate format.
       </documentation>
    </annotation>
 
@@ -50,7 +50,7 @@
    <element name="handler">
       <annotation>
          <documentation>
-            A transformation handler is used to provide serialization and deserialization of a graph format as well as importing and exporting implementations for the KGraph format.
+            A graph format handler is used to provide serialization and deserialization of a graph format as well as importing and exporting transformations for the KGraph format.
          </documentation>
       </annotation>
       <complexType>
@@ -74,10 +74,10 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  The transformation handler class.
+                  The graph format handler class.
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":de.cau.cs.kieler.kiml.service.formats.ITransformationHandler"/>
+                  <meta.attribute kind="java" basedOn=":de.cau.cs.kieler.kiml.formats.IGraphFormatHandler"/>
                </appinfo>
             </annotation>
          </attribute>

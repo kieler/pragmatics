@@ -276,11 +276,13 @@ public class GmlImporter implements IGraphTransformer<GmlModel, KNode> {
                         }
                     }
                     // create new points
-                    graphics.getElements().add(GmlHandler.createPoint(kedgeLayout.getSourcePoint()));
+                    graphics.getElements().add(
+                            GmlFormatHandler.createPoint(kedgeLayout.getSourcePoint()));
                     for (KPoint point : kedgeLayout.getBendPoints()) {
-                        graphics.getElements().add(GmlHandler.createPoint(point));
+                        graphics.getElements().add(GmlFormatHandler.createPoint(point));
                     }
-                    graphics.getElements().add(GmlHandler.createPoint(kedgeLayout.getTargetPoint()));
+                    graphics.getElements().add(
+                            GmlFormatHandler.createPoint(kedgeLayout.getTargetPoint()));
                 }
             }
             

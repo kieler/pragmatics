@@ -31,17 +31,20 @@ import de.cau.cs.kieler.core.alg.DefaultFactory;
 import de.cau.cs.kieler.core.alg.IFactory;
 
 /**
- * Service class for graph transformations.
+ * Service class for graph formats.
  *
  * @author msp
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow 2012-07-10 msp
  */
-public class TransformationService {
+public class GraphFormatsService {
+
+    /** the plug-in ID. */
+    public static final String PLUGIN_ID = "de.cau.cs.kieler.kiml.formats";
     
     /** identifier of the extension point for layout info. */
     protected static final String EXTP_ID_GRAPH_TRANS
-            = "de.cau.cs.kieler.kiml.formats.graphTransformers";
+            = "de.cau.cs.kieler.kiml.formats.graphFormats";
     /** name of the 'handler' element in the 'graph transformer' extension point. */
     protected static final String ELEMENT_HANDLER = "handler";
     /** name of the 'class' attribute in the extension points. */
@@ -56,18 +59,18 @@ public class TransformationService {
     protected static final String ATTRIBUTE_NAME = "name";
     
     /** the singleton instance of the transformation service. */
-    private static TransformationService instance;
+    private static GraphFormatsService instance;
     /** the factory for creation of service instances. */
-    private static IFactory<? extends TransformationService> instanceFactory
-            = new DefaultFactory<TransformationService>(TransformationService.class);
+    private static IFactory<? extends GraphFormatsService> instanceFactory
+            = new DefaultFactory<GraphFormatsService>(GraphFormatsService.class);
     
     /**
      * Returns the singleton instance of the transformation service.
      * 
      * @return the singleton instance
      */
-    public static TransformationService getInstance() {
-        synchronized (TransformationService.class) {
+    public static GraphFormatsService getInstance() {
+        synchronized (GraphFormatsService.class) {
             if (instance == null) {
                 instance = instanceFactory.create();
             }
@@ -81,7 +84,7 @@ public class TransformationService {
      * 
      * @param factory an instance factory
      */
-    public static void setInstanceFactory(final IFactory<? extends TransformationService> factory) {
+    public static void setInstanceFactory(final IFactory<? extends GraphFormatsService> factory) {
         instanceFactory = factory;
         instance = null;
     }
@@ -90,7 +93,7 @@ public class TransformationService {
     /**
      * Load all registered extensions for the graph formats extension point.
      */
-    public TransformationService() {
+    public GraphFormatsService() {
         loadGraphTransExtensions();
     }
     
@@ -121,7 +124,7 @@ public class TransformationService {
             message = "Extension point " + extensionPoint
                     + ": An error occured while loading extensions.";
         }
-        IStatus status = new Status(IStatus.WARNING, FormatsPlugin.PLUGIN_ID, 0, message, exception);
+        IStatus status = new Status(IStatus.WARNING, PLUGIN_ID, 0, message, exception);
         StatusManager.getManager().handle(status);
     }
 
@@ -132,7 +135,7 @@ public class TransformationService {
      * @param exception a core exception holding a status with further information
      */
     protected void reportError(final CoreException exception) {
-        StatusManager.getManager().handle(exception, FormatsPlugin.PLUGIN_ID);
+        StatusManager.getManager().handle(exception, PLUGIN_ID);
     }
     
     /**
@@ -146,7 +149,7 @@ public class TransformationService {
             if (ELEMENT_HANDLER.equals(element.getName())) {
                 // register a transformation handler from the extension
                 try {
-                    ITransformationHandler<?> handler = (ITransformationHandler<?>)
+                    IGraphFormatHandler<?> handler = (IGraphFormatHandler<?>)
                             element.createExecutableExtension(ATTRIBUTE_CLASS);
                     String id = element.getAttribute(ATTRIBUTE_ID);
                     String name = element.getAttribute(ATTRIBUTE_NAME);

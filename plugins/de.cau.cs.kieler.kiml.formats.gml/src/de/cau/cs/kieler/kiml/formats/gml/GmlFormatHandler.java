@@ -35,7 +35,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class GmlHandler extends AbstractEmfHandler<GmlModel> {
+public class GmlFormatHandler extends AbstractEmfHandler<GmlModel> {
     
     /** Identifier of the GML format. */
     public static final String ID = "de.uni-passau.fim.gml";

@@ -31,7 +31,7 @@ public class GraphFormatData implements ILayoutData {
     /** a user friendly description. */
     private String description;
     /** the graph transformation handler used for this format. */
-    private ITransformationHandler<?> handler;
+    private IGraphFormatHandler<?> handler;
     /** the file extensions. */
     private String[] extensions = new String[0];
     
@@ -78,11 +78,11 @@ public class GraphFormatData implements ILayoutData {
     }
     
     /**
-     * Returns the graph transformation handler for this graph format.
+     * Returns the graph format handler for this graph format.
      * 
      * @return the graph transformation handler
      */
-    public ITransformationHandler<?> getHandler() {
+    public IGraphFormatHandler<?> getHandler() {
         return handler;
     }
     
@@ -91,7 +91,7 @@ public class GraphFormatData implements ILayoutData {
      * 
      * @param thehandler the graph transformation handler
      */
-    public void setHandler(final ITransformationHandler<?> thehandler) {
+    public void setHandler(final IGraphFormatHandler<?> thehandler) {
         this.handler = thehandler;
     }
     

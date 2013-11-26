@@ -41,9 +41,9 @@ import de.cau.cs.kieler.kiml.LayoutOptionData.Target;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.formats.GraphFormatData;
-import de.cau.cs.kieler.kiml.formats.ITransformationHandler;
+import de.cau.cs.kieler.kiml.formats.IGraphFormatHandler;
 import de.cau.cs.kieler.kiml.formats.TransformationData;
-import de.cau.cs.kieler.kiml.formats.TransformationService;
+import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
 import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier;
 import de.cau.cs.kieler.kiml.klayoutdata.impl.KLayoutDataFactoryImpl;
 import de.cau.cs.kieler.kiml.klayoutdata.impl.KLayoutDataPackageImpl;
@@ -51,7 +51,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kwebs.server.RemoteServiceException;
 import de.cau.cs.kieler.kwebs.server.layout.GraphLayoutOption;
 import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService;
-import de.cau.cs.kieler.kwebs.server.layout.ServerTransformationService;
+import de.cau.cs.kieler.kwebs.server.layout.ServerGraphFormatsService;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 import de.cau.cs.kieler.kwebs.server.service.filter.LayoutFilter;
@@ -93,8 +93,8 @@ public abstract class AbstractService {
     protected AbstractService() {
         LayoutDataService.setInstanceFactory(new DefaultFactory<LayoutDataService>(
                 ServerLayoutDataService.class));
-        TransformationService.setInstanceFactory(new DefaultFactory<TransformationService>(
-                ServerTransformationService.class));
+        GraphFormatsService.setInstanceFactory(new DefaultFactory<GraphFormatsService>(
+                ServerGraphFormatsService.class));
         initFilters();
     }
 
@@ -230,7 +230,7 @@ public abstract class AbstractService {
         }
 
         Logger.log(Severity.DEBUG, "Starting layout");
-        GraphFormatData informatData = TransformationService.getInstance()
+        GraphFormatData informatData = GraphFormatsService.getInstance()
                 .getFormatDataBySuffix(informat);
         if (informatData == null) {
             throw new IllegalArgumentException("Graph format \"" + informat + "\" is unknown.");
@@ -239,7 +239,7 @@ public abstract class AbstractService {
         if (outformat == null || outformat.equals(informat)) {
             serializedResult = layout(serializedGraph, informatData.getHandler(), null, options);
         } else {
-            GraphFormatData outformatData = TransformationService.getInstance()
+            GraphFormatData outformatData = GraphFormatsService.getInstance()
                     .getFormatDataBySuffix(outformat);
             if (outformatData == null) {
                 throw new IllegalArgumentException("Graph format \"" + outformat + "\" is unknown.");
@@ -273,7 +273,7 @@ public abstract class AbstractService {
      * @return the graph on which the layout was done in the same format as used for the source graph
      */
     private <I, O> String layout(final String serializedGraph,
-            final ITransformationHandler<I> inhandler, final ITransformationHandler<O> outhandler,
+            final IGraphFormatHandler<I> inhandler, final IGraphFormatHandler<O> outhandler,
             final List<GraphLayoutOption> options) {
         
         // Start measuring the total time of the operation

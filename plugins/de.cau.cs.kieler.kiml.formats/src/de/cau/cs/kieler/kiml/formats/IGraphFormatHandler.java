@@ -24,7 +24,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow 2012-07-10 msp
  */
-public interface ITransformationHandler<T> {
+public interface IGraphFormatHandler<T> {
 
     /**
      * Create a graph instance from a serial representation. The created object is stored as

@@ -88,7 +88,7 @@ public class GmlExporter implements IGraphTransformer<KNode, GmlModel> {
             id.setValue(nodeId);
             nodeElement.getElements().add(id);
             for (KLabel klabel : knode.getLabels()) {
-                nodeElement.getElements().add(GmlHandler.createLabel(klabel));
+                nodeElement.getElements().add(GmlFormatHandler.createLabel(klabel));
             }
             transform(nodeLayout, nodeElement);
             graphElement.getElements().add(nodeElement);
@@ -104,7 +104,7 @@ public class GmlExporter implements IGraphTransformer<KNode, GmlModel> {
                 id.setValue(portId);
                 portElement.getElements().add(id);
                 for (KLabel klabel : kport.getLabels()) {
-                    portElement.getElements().add(GmlHandler.createLabel(klabel));
+                    portElement.getElements().add(GmlFormatHandler.createLabel(klabel));
                 }
                 transform(portLayout, portElement);
                 nodeElement.getElements().add(portElement);
@@ -150,7 +150,7 @@ public class GmlExporter implements IGraphTransformer<KNode, GmlModel> {
                 }
                 for (KLabel klabel : kedge.getLabels()) {
                     if (klabel.getText().length() > 0) {
-                        edgeElement.getElements().add(GmlHandler.createLabel(klabel));
+                        edgeElement.getElements().add(GmlFormatHandler.createLabel(klabel));
                     }
                 }
                 KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
@@ -211,11 +211,11 @@ public class GmlExporter implements IGraphTransformer<KNode, GmlModel> {
                 || targetPoint.getX() != 0 || targetPoint.getY() != 0)) {
             Element graphics = GmlFactory.eINSTANCE.createElement();
             graphics.setKey("graphics");
-            graphics.getElements().add(GmlHandler.createPoint(edgeLayout.getSourcePoint()));
+            graphics.getElements().add(GmlFormatHandler.createPoint(edgeLayout.getSourcePoint()));
             for (KPoint point : edgeLayout.getBendPoints()) {
-                graphics.getElements().add(GmlHandler.createPoint(point));
+                graphics.getElements().add(GmlFormatHandler.createPoint(point));
             }
-            graphics.getElements().add(GmlHandler.createPoint(edgeLayout.getTargetPoint()));
+            graphics.getElements().add(GmlFormatHandler.createPoint(edgeLayout.getTargetPoint()));
             parentElement.getElements().add(graphics);
         }
     }

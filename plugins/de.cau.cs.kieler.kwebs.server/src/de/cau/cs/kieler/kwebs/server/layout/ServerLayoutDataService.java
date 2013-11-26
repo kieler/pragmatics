@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.Platform;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.formats.GraphFormatData;
-import de.cau.cs.kieler.kiml.formats.TransformationService;
+import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
 import de.cau.cs.kieler.kwebs.server.Application;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
@@ -135,7 +135,7 @@ public final class ServerLayoutDataService extends ExtensionLayoutDataService {
         readExtensionLayoutOptions(factory, extensions);
         readExtensionLayoutAlgorithms(factory, extensions);
         // Add transformation to the service meta data
-        for (GraphFormatData data : TransformationService.getInstance().getFormatData()) {
+        for (GraphFormatData data : GraphFormatsService.getInstance().getFormatData()) {
             SupportedFormat format = factory.createSupportedFormat();
             format.setId(data.getId());
             format.setDescription(data.getDescription());

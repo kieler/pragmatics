@@ -15,6 +15,5 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.9.0",
  de.cau.cs.kieler.kiml,
  de.cau.cs.kieler.kiml.service
 Export-Package: de.cau.cs.kieler.kiml.formats
-Bundle-Activator: de.cau.cs.kieler.kiml.formats.FormatsPlugin
 Bundle-ActivationPolicy: lazy
 

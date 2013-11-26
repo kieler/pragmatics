@@ -35,7 +35,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.formats.GraphFormatData;
 import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
-import de.cau.cs.kieler.kiml.formats.ITransformationHandler;
+import de.cau.cs.kieler.kiml.formats.IGraphFormatHandler;
 import de.cau.cs.kieler.kiml.formats.TransformationData;
 import de.cau.cs.kieler.kiml.service.EclipseLayoutInfoService;
 import de.cau.cs.kieler.kiml.service.IDiagramLayoutManager;
@@ -59,7 +59,7 @@ public class GraphFileHandler {
      * @return the exported graph
      */
     private static <T> String performExport(final KNode kgraph,
-            final ITransformationHandler<T> transHandler) {
+            final IGraphFormatHandler<T> transHandler) {
         TransformationData<KNode, T> transData = new TransformationData<KNode, T>();
         transData.setSourceGraph(kgraph);
         IGraphTransformer<KNode, T> transformer = transHandler.getExporter();

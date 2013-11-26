@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension-point id="graphTransformers" name="Graph Transformers" schema="schema/graphTransformers.exsd"/>
+   <extension-point id="graphFormats" name="Graph Formats" schema="schema/graphFormats.exsd"/>
 
    <extension
-         point="de.cau.cs.kieler.kiml.formats.graphTransformers">
+         point="de.cau.cs.kieler.kiml.formats.graphFormats">
       <handler
             class="de.cau.cs.kieler.kiml.formats.KGraphHandler"
             description="Internally used graph format of the KIELER project. See http://rtsys.informatik.uni-kiel.de/confluence/x/U4EN"
@@ -13,21 +13,21 @@
             name="KGraph">
       </handler>
       <handler
-            class="de.cau.cs.kieler.kiml.formats.graphml.GraphMLHandler"
+            class="de.cau.cs.kieler.kiml.formats.graphml.GraphMLFormatHandler"
             description="The Graph Markup Language. See http://graphml.graphdrawing.org/"
             extensions="graphml"
             id="org.graphdrawing.graphml"
             name="GraphML">
       </handler>
       <handler
-            class="de.cau.cs.kieler.kiml.formats.matrix.MatrixHandler"
+            class="de.cau.cs.kieler.kiml.formats.matrix.MatrixFormatHandler"
             description="The Matrix Market format. See http://math.nist.gov/MatrixMarket/"
             extensions="mtx,matrix"
             id="gov.nist.math.matrix"
             name="Matrix">
       </handler>
       <handler
-            class="de.cau.cs.kieler.kiml.formats.ogml.OgmlHandler"
+            class="de.cau.cs.kieler.kiml.formats.ogml.OgmlFormatHandler"
             description="The Open Graph Markup Language."
             extensions="ogml"
             id="net.ogdf.ogml"

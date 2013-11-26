@@ -25,13 +25,13 @@ import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.GraphvizModel;
 
 /**
- * A transformer for Graphviz Dot.
+ * A graph format handler for Graphviz Dot.
  *
  * @author msp
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class DotHandler extends AbstractEmfHandler<GraphvizModel> {
+public class DotFormatHandler extends AbstractEmfHandler<GraphvizModel> {
     
     /** The graph format identifier for Graphviz Dot. */
     public static final String ID = "org.graphviz.dot";

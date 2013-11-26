@@ -2,7 +2,7 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="de.cau.cs.kieler.kiml.formats.graphTransformers">
+         point="de.cau.cs.kieler.kiml.formats.graphFormats">
       <handler
             class="de.cau.cs.kieler.kiml.formats.svg.SvgHandler"
             description="Scalable Vector Graphics (for export only)"

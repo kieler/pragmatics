@@ -199,11 +199,14 @@ public class OgmlExporter implements IGraphTransformer<KNode, DocumentRoot> {
                         || targetPoint.getY() != 0 || targetPoint.getY() != 0)) {
                     EdgeLayoutType ogmlEdgeLayout = OgmlFactory.eINSTANCE.createEdgeLayoutType();
                     ogmlEdgeLayout.setIdRef(edgeId);
-                    ogmlEdgeLayout.getPoint().add(OgmlHandler.createPoint(sourcePoint, edgeOffset));
+                    ogmlEdgeLayout.getPoint().add(
+                            OgmlFormatHandler.createPoint(sourcePoint, edgeOffset));
                     for (KPoint bendPoint : kedgeLayout.getBendPoints()) {
-                        ogmlEdgeLayout.getPoint().add(OgmlHandler.createPoint(bendPoint, edgeOffset));
+                        ogmlEdgeLayout.getPoint().add(
+                                OgmlFormatHandler.createPoint(bendPoint, edgeOffset));
                     }
-                    ogmlEdgeLayout.getPoint().add(OgmlHandler.createPoint(targetPoint, edgeOffset));
+                    ogmlEdgeLayout.getPoint().add(
+                            OgmlFormatHandler.createPoint(targetPoint, edgeOffset));
                     styles.getEdgeStyle().add(ogmlEdgeLayout);
                 }
                 

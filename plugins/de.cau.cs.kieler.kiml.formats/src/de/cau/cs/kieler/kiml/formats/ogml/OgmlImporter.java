@@ -411,12 +411,12 @@ public class OgmlImporter implements IGraphTransformer<DocumentRoot, KNode> {
                 }
                 ogmlEdgeLayout.getPoint().clear();
                 ogmlEdgeLayout.getPoint().add(
-                        OgmlHandler.createPoint(kedgeLayout.getSourcePoint(), edgeOffset));
+                        OgmlFormatHandler.createPoint(kedgeLayout.getSourcePoint(), edgeOffset));
                 for (KPoint bendPoint : kedgeLayout.getBendPoints()) {
-                    ogmlEdgeLayout.getPoint().add(OgmlHandler.createPoint(bendPoint, edgeOffset));
+                    ogmlEdgeLayout.getPoint().add(OgmlFormatHandler.createPoint(bendPoint, edgeOffset));
                 }
                 ogmlEdgeLayout.getPoint().add(
-                        OgmlHandler.createPoint(kedgeLayout.getTargetPoint(), edgeOffset));
+                        OgmlFormatHandler.createPoint(kedgeLayout.getTargetPoint(), edgeOffset));
 
                 for (KLabel klabel : kedge.getLabels()) {
                     KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
