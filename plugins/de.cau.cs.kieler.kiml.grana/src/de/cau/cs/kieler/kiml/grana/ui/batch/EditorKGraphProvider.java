@@ -32,7 +32,7 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
-import de.cau.cs.kieler.kiml.service.EclipseLayoutInfoService;
+import de.cau.cs.kieler.kiml.service.LayoutManagersService;
 import de.cau.cs.kieler.kiml.service.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.service.LayoutMapping;
 
@@ -101,7 +101,7 @@ public class EditorKGraphProvider implements IKGraphProvider<IPath> {
                 
                 // get the layout manager for the editor
                 IDiagramLayoutManager<?> layoutManager =
-                        EclipseLayoutInfoService.getInstance().getManager(
+                        LayoutManagersService.getInstance().getManager(
                                 editorPart, null);
                 if (layoutManager == null) {
                     if (!initialEditors.contains(editorPart)) {

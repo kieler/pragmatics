@@ -29,7 +29,7 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.config.LayoutContext;
-import de.cau.cs.kieler.kiml.service.EclipseLayoutInfoService;
+import de.cau.cs.kieler.kiml.service.LayoutManagersService;
 import de.cau.cs.kieler.kiml.service.IDiagramLayoutManager;
 
 /**
@@ -83,7 +83,7 @@ public class SetOptionsEffect extends AbstractEffect {
     public void execute() {
         Object diagramPart = LayoutEffect.findDiagramPart(workbenchPart, modelElement);
         if (diagramPart != null) {
-            IDiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance().getManager(
+            IDiagramLayoutManager<?> manager = LayoutManagersService.getInstance().getManager(
                     workbenchPart, diagramPart);
             if (manager != null) {
                 final IMutableLayoutConfig layoutConfig = (IMutableLayoutConfig) manager.getAdapter(

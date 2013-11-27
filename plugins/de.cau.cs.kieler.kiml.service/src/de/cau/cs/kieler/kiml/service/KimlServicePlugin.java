@@ -22,6 +22,7 @@ import org.osgi.framework.BundleContext;
 
 import de.cau.cs.kieler.core.alg.DefaultFactory;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
+import de.cau.cs.kieler.kiml.LayoutConfigService;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 
 /**
@@ -56,8 +57,9 @@ public class KimlServicePlugin extends Plugin {
         if (Platform.getBundle("org.eclipse.ui") != null) {
             LayoutDataService.setInstanceFactory(new DefaultFactory<LayoutDataService>(
                     ExtensionLayoutDataService.class));
+            LayoutConfigService.setInstanceFactory(new DefaultFactory<LayoutConfigService>(
+                    ExtensionLayoutConfigService.class));
         }
-        EclipseLayoutInfoService.create();
     }
 
     /**
@@ -65,9 +67,9 @@ public class KimlServicePlugin extends Plugin {
      */
     @Override
     public void stop(final BundleContext context) throws Exception {
-        EclipseLayoutInfoService layoutInfoService = EclipseLayoutInfoService.getInstance();
-        if (layoutInfoService != null) {
-            layoutInfoService.storePreferences();
+        LayoutConfigService layoutConfigService = LayoutConfigService.getInstance();
+        if (layoutConfigService instanceof ExtensionLayoutConfigService) {
+            ((ExtensionLayoutConfigService) layoutConfigService).storePreferences();
         }
         
         LayoutDataService layoutDataService = LayoutDataService.getInstance();

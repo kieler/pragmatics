@@ -2,14 +2,14 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="de.cau.cs.kieler.kiml.layoutInfo">
-      <config
+         point="de.cau.cs.kieler.kiml.layoutConfigs">
+      <customConfig
             activation="de.cau.cs.kieler.kiml.evol"
             activationAction="de.cau.cs.kieler.kiml.evol.ui.ShowEvolutionAction$Activator"
             activationText="Activate Evolutionary Layout"
             class="de.cau.cs.kieler.kiml.evol.EvolLayoutConfig"
             default="false">
-      </config>
+      </customConfig>
    </extension>
    <extension
          point="de.cau.cs.kieler.kiml.grana.analysisProviders">

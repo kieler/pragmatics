@@ -2,7 +2,8 @@
 <?eclipse version="3.2"?>
 <plugin>
    <extension-point id="layoutProviders" name="Layout Providers" schema="schema/layoutProviders.exsd"/>
-   <extension-point id="layoutInfo" name="Layout Info" schema="schema/layoutInfo.exsd"/>
+   <extension-point id="layoutConfigs" name="Layout Configurations" schema="schema/layoutConfigs.exsd"/>
+   
    <extension
          point="org.eclipse.emf.ecore.generated_package">
       <package
@@ -440,7 +441,7 @@
      </layoutOption>
    </extension>
    <extension
-         point="de.cau.cs.kieler.kiml.layoutInfo">
+         point="de.cau.cs.kieler.kiml.layoutConfigs">
       <diagramType
             id="de.cau.cs.kieler.layout.diagrams.general"
             name="General">
@@ -465,26 +466,26 @@
             id="de.cau.cs.kieler.layout.diagrams.boxes"
             name="Unconnected Boxes">
       </diagramType>
-      <option
+      <staticConfig
             class="org.eclipse.emf.ecore.EPackage"
             option="de.cau.cs.kieler.diagramType"
             value="de.cau.cs.kieler.layout.diagrams.classDiagram">
-      </option>
-      <option
+      </staticConfig>
+      <staticConfig
             class="org.eclipse.emf.ecore.EPackage"
             option="de.cau.cs.kieler.spacing"
             value="40">
-      </option>
-      <option
+      </staticConfig>
+      <staticConfig
             class="org.eclipse.emf.ecore.EReference"
             option="de.cau.cs.kieler.edgeType"
             value="ASSOCIATION">
-      </option>
-      <option
+      </staticConfig>
+      <staticConfig
             class="de.cau.cs.kieler.layout.diagrams.dataFlow"
             option="de.cau.cs.kieler.edgeRouting"
             value="ORTHOGONAL">
-      </option>
+      </staticConfig>
    </extension>
 
 </plugin>

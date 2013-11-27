@@ -143,7 +143,7 @@ public class DiagramLayoutEngine {
     public LayoutMapping<?> layout(final IWorkbenchPart workbenchPart, final Object diagramPart,
             final boolean animate, final boolean progressBar, final boolean layoutAncestors,
             final boolean zoom, final List<ILayoutConfig> extraLayoutConfigs) {
-        IDiagramLayoutManager<?> layoutManager = EclipseLayoutInfoService.getInstance().getManager(
+        IDiagramLayoutManager<?> layoutManager = LayoutManagersService.getInstance().getManager(
                 workbenchPart, diagramPart);
         if (layoutManager != null) {
             LayoutMapping<?> mapping = layout(layoutManager, workbenchPart, diagramPart, animate,
@@ -343,7 +343,7 @@ public class DiagramLayoutEngine {
      */
     public IStatus layout(final IWorkbenchPart workbenchPart, final Object diagramPart,
             final IKielerProgressMonitor progressMonitor) {
-        IDiagramLayoutManager<?> layoutManager = EclipseLayoutInfoService.getInstance().getManager(
+        IDiagramLayoutManager<?> layoutManager = LayoutManagersService.getInstance().getManager(
                 workbenchPart, diagramPart);
         if (layoutManager != null) {
             return layout(layoutManager, workbenchPart, diagramPart, progressMonitor);
@@ -532,7 +532,7 @@ public class DiagramLayoutEngine {
         }
         
         // Fetch the active graph layout engine to be used
-        IGraphLayoutEngine layoutEngine = EclipseLayoutInfoService.getInstance().getLayoutEngine();
+        IGraphLayoutEngine layoutEngine = LayoutManagersService.getInstance().getLayoutEngine();
         try {
             // configure the layout graph using a layout option manager
             layoutOptionManager.configure(mapping, progressMonitor.subTask(CONFIGURE_WORK));

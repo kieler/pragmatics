@@ -364,10 +364,10 @@ Apart from a set of default layout types offered by KIML, new layout providers a
          <attribute name="type" type="string" use="required">
             <annotation>
                <documentation>
-                  Identifier of a diagram type, which can be defined using the &lt;code&gt;diagramType&lt;/code&gt; element of the &lt;code&gt;layoutInfo&lt;/code&gt; extension point. Diagram types are used to classify diagrams with respect to their layout.
+                  Identifier of a diagram type, which can be defined using the &lt;code&gt;diagramType&lt;/code&gt; element of the &lt;code&gt;layoutConfigs&lt;/code&gt; extension point. Diagram types are used to classify diagrams with respect to their layout.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.layoutInfo/diagramType/@id"/>
+                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.layoutConfigs/diagramType/@id"/>
                </appInfo>
             </annotation>
          </attribute>

@@ -45,7 +45,7 @@ import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.config.LayoutContext;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
-import de.cau.cs.kieler.kiml.service.EclipseLayoutInfoService;
+import de.cau.cs.kieler.kiml.service.LayoutManagersService;
 import de.cau.cs.kieler.kiml.service.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.service.LayoutMapping;
 
@@ -163,7 +163,7 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
         monitor.worked(1);
         
         // retrieve a kgraph representation of the diagram
-        IDiagramLayoutManager<?> layoutManager = EclipseLayoutInfoService.getInstance()
+        IDiagramLayoutManager<?> layoutManager = LayoutManagersService.getInstance()
                 .getManager(null, editPart.get());
         if (layoutManager == null) {
             throw new RuntimeException("No layout manager could be retrieved for the selected file.");

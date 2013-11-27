@@ -8,22 +8,22 @@
     </manager>
  </extension>
  <extension
-       point="de.cau.cs.kieler.kiml.layoutInfo">
-      <option
+       point="de.cau.cs.kieler.kiml.layoutConfigs">
+      <staticConfig
             class="org.eclipse.emf.ecoretools.diagram.edit.parts.EClassESuperTypesEditPart"
             option="de.cau.cs.kieler.edgeType"
             value="GENERALIZATION">
-      </option>
-      <option
+      </staticConfig>
+      <staticConfig
             class="org.eclipse.gmf.ecore.edit.parts.EClassESuperTypesEditPart"
             option="de.cau.cs.kieler.edgeType"
             value="GENERALIZATION">
-      </option>
-      <option
+      </staticConfig>
+      <staticConfig
             class="org.eclipse.gmf.runtime.diagram.ui.editparts.NoteEditPart"
             option="de.cau.cs.kieler.commentBox"
             value="true">
-      </option>
+      </staticConfig>
  </extension>
   <extension
        point="org.eclipse.gmf.runtime.diagram.ui.editpolicyProviders">

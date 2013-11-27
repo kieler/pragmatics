@@ -45,11 +45,13 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.kiml.LayoutConfigService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
-import de.cau.cs.kieler.kiml.service.EclipseLayoutInfoService;
+import de.cau.cs.kieler.kiml.service.ExtensionLayoutConfigService;
+import de.cau.cs.kieler.kiml.service.LayoutManagersService;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.LayoutHandler;
 import de.cau.cs.kieler.kiml.ui.LayoutOptionValidator;
@@ -148,7 +150,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         obliqueCheckBox.setText(Messages.getString("kiml.ui.36")); //$NON-NLS-1$
         obliqueCheckBox.setToolTipText(Messages.getString("kiml.ui.70")); //$NON-NLS-1$
         obliqueCheckBox.setSelection(getPreferenceStore().getBoolean(
-                EclipseLayoutInfoService.PREF_OBLIQUE_ROUTE));
+                LayoutManagersService.PREF_OBLIQUE_ROUTE));
         
         // add checkbox for debug graph output
         debugCheckBox = new Button(generalGroup, SWT.CHECK | SWT.LEFT);
@@ -182,10 +184,12 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         optionEntries = new LinkedList<OptionsTableProvider.DataEntry>();
 
         // add options for edit parts and domain model elements
-        Set<String> elements = EclipseLayoutInfoService.getInstance().getRegisteredElements();
+        Set<String> elements = ((ExtensionLayoutConfigService) LayoutConfigService.getInstance())
+                .getRegisteredElements();
         for (String element : elements) {
             for (LayoutOptionData<?> data : layoutOptionData) {
-                String preference = EclipseLayoutInfoService.getPreferenceName(element, data.getId());
+                String preference = ExtensionLayoutConfigService.getPreferenceName(
+                        element, data.getId());
                 if (preferenceStore.contains(preference)) {
                     Object value = data.parseValue(preferenceStore.getString(preference));
                     if (value != null) {
@@ -204,11 +208,11 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         }
         
         // add options for diagram types
-        List<Pair<String, String>> diagramTypeList = EclipseLayoutInfoService.getInstance()
+        List<Pair<String, String>> diagramTypeList = LayoutConfigService.getInstance()
                 .getDiagramTypes();
         for (Pair<String, String> diagramType : diagramTypeList) {
             for (LayoutOptionData<?> data : layoutOptionData) {
-                String preference = EclipseLayoutInfoService.getPreferenceName(
+                String preference = ExtensionLayoutConfigService.getPreferenceName(
                         diagramType.getFirst(), data.getId());
                 if (preferenceStore.contains(preference)) {
                     Object value = data.parseValue(preferenceStore.getString(preference));
@@ -504,7 +508,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         zoomCheckBox.setSelection(preferenceStore.getDefaultBoolean(LayoutHandler.PREF_ZOOM));
         progressCheckBox.setSelection(preferenceStore.getDefaultBoolean(LayoutHandler.PREF_PROGRESS));
         obliqueCheckBox.setSelection(preferenceStore.getDefaultBoolean(
-                EclipseLayoutInfoService.PREF_OBLIQUE_ROUTE));
+                LayoutManagersService.PREF_OBLIQUE_ROUTE));
         debugCheckBox.setSelection(preferenceStore.getDefaultBoolean(
                 DiagramLayoutEngine.PREF_DEBUG_OUTPUT));
         
@@ -520,37 +524,39 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
      */
     @Override
     public boolean performOk() {
-        EclipseLayoutInfoService infoService = EclipseLayoutInfoService.getInstance();
+        LayoutConfigService configService = LayoutConfigService.getInstance();
         IPreferenceStore preferenceStore = getPreferenceStore();
         
         // set new values for the general options
         preferenceStore.setValue(LayoutHandler.PREF_ANIMATION, animationCheckBox.getSelection());
         preferenceStore.setValue(LayoutHandler.PREF_ZOOM, zoomCheckBox.getSelection());
         preferenceStore.setValue(LayoutHandler.PREF_PROGRESS, progressCheckBox.getSelection());
-        preferenceStore.setValue(EclipseLayoutInfoService.PREF_OBLIQUE_ROUTE,
+        preferenceStore.setValue(LayoutManagersService.PREF_OBLIQUE_ROUTE,
                 obliqueCheckBox.getSelection());
         preferenceStore.setValue(DiagramLayoutEngine.PREF_DEBUG_OUTPUT, debugCheckBox.getSelection());
         
         // store data for the diagram element and diagram type options
         for (OptionsTableProvider.DataEntry entry : optionEntries) {
-            Object oldValue = infoService.getOptionValue(entry.getElementId(),
+            Object oldValue = configService.getOptionValue(entry.getElementId(),
                     entry.getOptionData().getId());
             Object newValue = entry.getValue();
             if (oldValue == null && newValue != null
                     || oldValue != null && !oldValue.equals(newValue)) {
-                String preference = EclipseLayoutInfoService.getPreferenceName(
+                String preference = ExtensionLayoutConfigService.getPreferenceName(
                         entry.getElementId(), entry.getOptionData().getId());
                 if (newValue == null) {
-                    infoService.removeOptionValue(entry.getElementId(),
+                    configService.removeOptionValue(entry.getElementId(),
                             entry.getOptionData().getId());
                     preferenceStore.setToDefault(preference);
-                    infoService.getRegisteredElements().remove(entry.getElementId());
+                    ((ExtensionLayoutConfigService) configService).getRegisteredElements().remove(
+                            entry.getElementId());
                 } else {
-                    infoService.addOptionValue(entry.getElementId(),
+                    configService.addOptionValue(entry.getElementId(),
                             entry.getOptionData().getId(), newValue);
                     preferenceStore.setValue(preference, newValue.toString());
                     if (entry.getType() != ElementType.DIAG_TYPE) {
-                        infoService.getRegisteredElements().add(entry.getElementId());
+                        ((ExtensionLayoutConfigService) configService).getRegisteredElements().add(
+                                entry.getElementId());
                     }
                 }
             }

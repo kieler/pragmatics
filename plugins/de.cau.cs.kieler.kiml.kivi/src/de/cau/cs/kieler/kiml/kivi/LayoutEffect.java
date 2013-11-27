@@ -32,7 +32,7 @@ import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.config.LayoutContext;
 import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
 import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
-import de.cau.cs.kieler.kiml.service.EclipseLayoutInfoService;
+import de.cau.cs.kieler.kiml.service.LayoutManagersService;
 import de.cau.cs.kieler.kiml.service.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.service.LayoutMapping;
 
@@ -58,9 +58,9 @@ public class LayoutEffect extends AbstractEffect {
     @SuppressWarnings("rawtypes")
     static Object findDiagramPart(final IWorkbenchPart workbenchPart, final EObject object) {
         if (workbenchPart == null) {
-            return EclipseLayoutInfoService.getInstance().getAdapter(object, null);
+            return LayoutManagersService.getInstance().getAdapter(object, null);
         } else {
-            IDiagramLayoutManager<?> layoutManager = EclipseLayoutInfoService.getInstance().getManager(
+            IDiagramLayoutManager<?> layoutManager = LayoutManagersService.getInstance().getManager(
                     workbenchPart, null);
             if (layoutManager != null) {
                 Class[] adapterList = layoutManager.getAdapterList();

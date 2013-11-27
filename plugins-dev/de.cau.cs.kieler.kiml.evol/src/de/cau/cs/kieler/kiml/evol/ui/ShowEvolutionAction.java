@@ -30,9 +30,9 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import de.cau.cs.kieler.kiml.evol.EvolLayoutConfig;
 import de.cau.cs.kieler.kiml.evol.EvolPlugin;
 import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
-import de.cau.cs.kieler.kiml.service.EclipseLayoutInfoService;
+import de.cau.cs.kieler.kiml.service.LayoutManagersService;
 import de.cau.cs.kieler.kiml.service.IDiagramLayoutManager;
-import de.cau.cs.kieler.kiml.service.LayoutInfoService;
+import de.cau.cs.kieler.kiml.service.ExtensionLayoutConfigService;
 import de.cau.cs.kieler.kiml.service.LayoutMapping;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.LayoutHandler;
@@ -59,7 +59,7 @@ public class ShowEvolutionAction extends Action {
             if (layoutView != null) {
                 IToolBarManager toolbarManager = layoutView.getViewSite().getActionBars()
                         .getToolBarManager();
-                boolean active = LayoutInfoService.getInstance().getConfigProperties()
+                boolean active = ExtensionLayoutConfigService.getInstance().getConfigProperties()
                         .getProperty(EvolLayoutConfig.ACTIVATION);
                 if (active) {
                     toolbarManager.add(new ShowEvolutionAction());
@@ -96,7 +96,7 @@ public class ShowEvolutionAction extends Action {
             IWorkbenchPage activePage = window.getActivePage();
             if (activePage != null) {
                 IEditorPart editorPart = activePage.getActiveEditor();
-                IDiagramLayoutManager<?> layoutManager = EclipseLayoutInfoService.getInstance()
+                IDiagramLayoutManager<?> layoutManager = LayoutManagersService.getInstance()
                         .getManager(editorPart, null);
                 if (layoutManager != null) {
                     LayoutMapping<?> layoutMapping = layoutManager.buildLayoutGraph(editorPart, null);

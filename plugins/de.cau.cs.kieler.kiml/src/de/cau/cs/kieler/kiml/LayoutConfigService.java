@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.service;
+package de.cau.cs.kieler.kiml;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -20,9 +20,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.ecore.EClass;
 
 import com.google.common.collect.HashMultimap;
@@ -30,63 +27,28 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
+import de.cau.cs.kieler.core.alg.DefaultFactory;
+import de.cau.cs.kieler.core.alg.IFactory;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.core.properties.IPropertyValueProxy;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
-import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.LayoutDataService;
-import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.config.SemanticLayoutConfig;
-import de.cau.cs.kieler.kiml.util.LayoutOptionProxy;
 
 /**
- * Service class for layout information such as registered diagram types and
- * pre-configured layout option values.
+ * Service class for layout configuration. This class is used globally to retrieve layout option
+ * configuration data, which is given through the {@code layoutConfigs} extension point.
  *
  * @author msp
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow 2012-07-10 msp
  */
-public abstract class LayoutInfoService {
-    
-    /** identifier of the extension point for layout info. */
-    protected static final String EXTP_ID_LAYOUT_INFO = "de.cau.cs.kieler.kiml.layoutInfo";
-    /** name of the 'binding' element in the 'layout info' extension point. */
-    protected static final String ELEMENT_BINDING = "binding";
-    /** name of the 'diagram type' element in the 'layout info' extension point. */
-    protected static final String ELEMENT_DIAGRAM_TYPE = "diagramType";
-    /** name of the 'option' element in the 'layout info' extension point. */
-    protected static final String ELEMENT_OPTION = "option";
-    /** name of the 'semantic option' element in the 'layout info' extension point. */
-    protected static final String ELEMENT_SEMANTIC_OPTION = "semanticOption";
-    /** name of the 'config' element in the 'layout info' extension point. */
-    protected static final String ELEMENT_CONFIG = "config";
-    /** name of the 'activation' attribute in the extension points. */
-    protected static final String ATTRIBUTE_ACTIVATION = "activation";
-    /** name of the 'activationAction' attribute in the extension points. */
-    protected static final String ATTRIBUTE_ACTIVATION_ACTION = "activationAction";
-    /** name of the 'activationText' attribute in the extension points. */
-    protected static final String ATTRIBUTE_ACTIVATION_TEXT = "activationText";
-    /** name of the 'class' attribute in the extension points. */
-    protected static final String ATTRIBUTE_CLASS = "class";
-    /** name of the 'config' attribute in the extension points. */
-    protected static final String ATTRIBUTE_CONFIG = "config";
-    /** name of the 'default' attribute in the extension points. */
-    protected static final String ATTRIBUTE_DEFAULT = "default";
-    /** name of the 'id' attribute in the extension points. */
-    protected static final String ATTRIBUTE_ID = "id";
-    /** name of the 'name' attribute in the extension points. */
-    protected static final String ATTRIBUTE_NAME = "name";
-    /** name of the 'option' attribute in the extension points. */
-    protected static final String ATTRIBUTE_OPTION = "option";
-    /** name of the 'value' attribute in the extension points. */
-    protected static final String ATTRIBUTE_VALUE = "value";
+public class LayoutConfigService {
     
     /**
-     * Data element for general layout configurators.
+     * Data element for custom layout configurators.
      */
     public static class ConfigData {
         /** the layout configurator implementation. */
@@ -108,12 +70,30 @@ public abstract class LayoutInfoService {
         }
         
         /**
+         * Sets the layout configurator implementation.
+         * 
+         * @param config the layout configurator
+         */
+        public void setConfig(final ILayoutConfig config) {
+            this.config = config;
+        }
+        
+        /**
          * Returns the activation property.
          * 
          * @return the activation property
          */
         public IProperty<Boolean> getActivationProperty() {
             return activation;
+        }
+        
+        /**
+         * Sets the activation property.
+         * 
+         * @param prop the activation property
+         */
+        public void setActivationProperty(final IProperty<Boolean> prop) {
+            this.activation = prop;
         }
         
         /**
@@ -126,6 +106,15 @@ public abstract class LayoutInfoService {
         }
         
         /**
+         * Sets the activation menu entry text.
+         * 
+         * @param text the activation menu entry text
+         */
+        public void setActivationText(final String text) {
+            this.activationText = text;
+        }
+        
+        /**
          * Returns the activation action that is executed when the configurator is enabled or
          * disabled.
          * 
@@ -133,6 +122,15 @@ public abstract class LayoutInfoService {
          */
         public Runnable getActivationAction() {
             return activationAction;
+        }
+        
+        /**
+         * Sets the activation action that is executed when the configurator is enabled or disabled.
+         * 
+         * @param action the activation action
+         */
+        public void setActivationAction(final Runnable action) {
+            this.activationAction = action;
         }
         
         /**
@@ -147,25 +145,39 @@ public abstract class LayoutInfoService {
         }
     }
     
-    /** the singleton instance of the layout info service. */
-    private static LayoutInfoService instance;
     
-    /**
-     * Returns the singleton instance of the layout info service.
-     * 
-     * @return the singleton instance
-     */
-    public static LayoutInfoService getInstance() {
-        return instance;
-    }
+    /** the layout configuration service instance, which is created lazily. */
+    private static LayoutConfigService instance;
+    /** the factory for creation of service instances. */
+    private static IFactory<? extends LayoutConfigService> instanceFactory
+            = new DefaultFactory<LayoutConfigService>(LayoutConfigService.class);
 
     /**
-     * Protected constructor to enforce instantiation in subclasses.
+     * Returns the layout configuration service instance. If no instance is created yet, create one
+     * using the configured factory.
+     * 
+     * @return the layout configuration service instance
      */
-    protected LayoutInfoService() {
-        // the layout info service is supposed to exist exactly once
-        instance = this;
+    public static LayoutConfigService getInstance() {
+        synchronized (LayoutConfigService.class) {
+            if (instance == null) {
+                instance = instanceFactory.create();
+            }
+        }
+        return instance;
     }
+    
+    /**
+     * Set the factory for creating instances. If an instance is already created, it is cleared
+     * so the next call to {@link #getInstance()} uses the new factory.
+     * 
+     * @param factory an instance factory
+     */
+    public static void setInstanceFactory(final IFactory<? extends LayoutConfigService> factory) {
+        instanceFactory = factory;
+        instance = null;
+    }
+    
     
     /** mapping of diagram type identifiers to their names. */
     private final Map<String, String> diagramTypeMap = Maps.newLinkedHashMap();
@@ -186,112 +198,6 @@ public abstract class LayoutInfoService {
     public IPropertyHolder getConfigProperties() {
         return configProperties;
     }
-    
-    /**
-     * Report an error that occurred while reading extensions.
-     * 
-     * @param extensionPoint the identifier of the extension point
-     * @param element the configuration element
-     * @param attribute the attribute that contains an invalid entry
-     * @param exception an optional exception that was caused by the invalid entry
-     */
-    protected abstract void reportError(String extensionPoint, IConfigurationElement element,
-            String attribute, Throwable exception);
-
-    /**
-     * Report an error that occurred while reading extensions.
-     * 
-     * @param exception a core exception holding a status with further information
-     */
-    protected abstract void reportError(CoreException exception);
-
-    /**
-     * Loads and registers all layout info extensions from the extension point.
-     */
-    protected void loadLayoutInfoExtensions() {
-        IConfigurationElement[] extensions = Platform.getExtensionRegistry()
-                .getConfigurationElementsFor(EXTP_ID_LAYOUT_INFO);
-        LayoutDataService layoutDataService = LayoutDataService.getInstance();
-        assert layoutDataService != null;
-
-        for (IConfigurationElement element : extensions) {
-            if (ELEMENT_DIAGRAM_TYPE.equals(element.getName())) {
-                // register a diagram type from the extension
-                String id = element.getAttribute(ATTRIBUTE_ID);
-                String name = element.getAttribute(ATTRIBUTE_NAME);
-                if (id == null || id.length() == 0) {
-                    reportError(EXTP_ID_LAYOUT_INFO, element, ATTRIBUTE_ID, null);
-                } else if (name == null) {
-                    reportError(EXTP_ID_LAYOUT_INFO, element, ATTRIBUTE_NAME, null);
-                } else {
-                    addDiagramType(id, name);
-                }
-            } else if (ELEMENT_OPTION.equals(element.getName())) {
-                // register a layout option from the extension
-                String classId = element.getAttribute(ATTRIBUTE_CLASS);
-                String optionId = element.getAttribute(ATTRIBUTE_OPTION);
-                String valueString = element.getAttribute(ATTRIBUTE_VALUE);
-                if (classId == null || classId.length() == 0) {
-                    reportError(EXTP_ID_LAYOUT_INFO, element, ATTRIBUTE_CLASS, null);
-                } else if (optionId == null || optionId.length() == 0) {
-                    reportError(EXTP_ID_LAYOUT_INFO, element, ATTRIBUTE_OPTION, null);
-                } else {
-                    LayoutOptionData<?> optionData = layoutDataService.getOptionData(optionId);
-                    if (optionData != null) {
-                        try {
-                            Object value = optionData.parseValue(valueString);
-                            if (value != null) {
-                                addOptionValue(classId, optionId, value);
-                            }
-                        } catch (IllegalStateException exception) {
-                            reportError(EXTP_ID_LAYOUT_INFO, element, ATTRIBUTE_VALUE, exception);
-                        }
-                    } else if (valueString != null) {
-                        // the layout option could not be resolved, so create a proxy
-                        addOptionValue(classId, optionId, new LayoutOptionProxy(valueString));
-                    }
-
-                }
-            } else if (ELEMENT_SEMANTIC_OPTION.equals(element.getName())) {
-                // register a semantic layout configuration from the extension
-                try {
-                    SemanticLayoutConfig config = (SemanticLayoutConfig)
-                            element.createExecutableExtension(ATTRIBUTE_CONFIG);
-                    String clazz = element.getAttribute(ATTRIBUTE_CLASS);
-                    if (clazz == null || clazz.length() == 0) {
-                        reportError(EXTP_ID_LAYOUT_INFO, element, ATTRIBUTE_CLASS, null);
-                    } else {
-                        addSemanticConfig(clazz, config);
-                    }
-                } catch (CoreException exception) {
-                    reportError(exception);
-                }
-            } else if (ELEMENT_CONFIG.equals(element.getName())) {
-                // register a general layout configuration from the extension
-                try {
-                    ConfigData data = new ConfigData();
-                    data.config = (ILayoutConfig) element.createExecutableExtension(ATTRIBUTE_CLASS);
-                    String activationId = element.getAttribute(ATTRIBUTE_ACTIVATION);
-                    if (activationId != null) {
-                        String def = element.getAttribute(ATTRIBUTE_DEFAULT);
-                        Boolean defaultActivation = def == null ? Boolean.FALSE : Boolean.valueOf(def);
-                        data.activation = new Property<Boolean>(activationId, defaultActivation);
-                    }
-                    String text = element.getAttribute(ATTRIBUTE_ACTIVATION_TEXT);
-                    data.activationText = text;
-                    if (element.getAttribute(ATTRIBUTE_ACTIVATION_ACTION) != null) {
-                        Runnable action = (Runnable) element.createExecutableExtension(
-                                ATTRIBUTE_ACTIVATION_ACTION);
-                        data.activationAction = action;
-                    }
-                    configData.add(data);
-                } catch (CoreException exception) {
-                    reportError(exception);
-                }
-            }
-        }
-    }
-
     
     /**
      * Registers the given diagram type.
@@ -545,12 +451,21 @@ public abstract class LayoutInfoService {
     }
     
     /**
-     * Returns all general layout configuration data.
+     * Returns all custom layout configurator data.
      * 
-     * @return the registered layout configurations
+     * @return the registered custom layout configurators
      */
     public final List<ConfigData> getConfigData() {
-        return configData;
+        return Collections.unmodifiableList(configData);
+    }
+    
+    /**
+     * Registers the given custom configurator.
+     * 
+     * @param data meta data for a custom configurator
+     */
+    protected final void addCustomConfig(final ConfigData data) {
+        configData.add(data);
     }
 
 }

@@ -37,7 +37,7 @@ import org.eclipse.ui.views.properties.IPropertySheetEntry;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
-import de.cau.cs.kieler.kiml.service.EclipseLayoutInfoService;
+import de.cau.cs.kieler.kiml.service.LayoutManagersService;
 import de.cau.cs.kieler.kiml.service.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
@@ -174,7 +174,7 @@ public class SelectionInfoAction extends Action {
         if (diagramPart != null) {
             builder.append("<b>Diagram part class</b><ul><li>"
                     + diagramPart.getClass().getName() + "</li></ul>");
-            IDiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance().getManager(
+            IDiagramLayoutManager<?> manager = LayoutManagersService.getInstance().getManager(
                     null, diagramPart);
             EObject model = (EObject) manager.getAdapter(diagramPart, EObject.class);
             if (model != null) {

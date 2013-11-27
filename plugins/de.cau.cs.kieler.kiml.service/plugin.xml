@@ -11,12 +11,12 @@
  </extension>
  
  <extension
-       point="de.cau.cs.kieler.kiml.layoutInfo">
-    <config
+       point="de.cau.cs.kieler.kiml.layoutConfigs">
+    <customConfig
           activation="de.cau.cs.kieler.kiml.eclipse"
           class="de.cau.cs.kieler.kiml.service.EclipseLayoutConfig"
           default="true">
-    </config>
+    </customConfig>
  </extension>
 
 </plugin>

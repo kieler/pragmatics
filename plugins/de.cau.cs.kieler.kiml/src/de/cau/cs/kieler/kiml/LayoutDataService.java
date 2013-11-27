@@ -26,18 +26,10 @@ import de.cau.cs.kieler.core.alg.IFactory;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
- * Singleton class for access to the KIML layout data. This class is used globally to retrieve data
- * for automatic layout through KIML. The class can only be instantiated by subclasses.
- * The subclass is then responsible to add appropriate data to the nested registry instance.
- * Multiple instances of subclasses can register themselves by calling
- * {@link #addService(LayoutDataService)}, where the argument is the
- * instance of the subclass, but only one instance per subclass is allowed.
- * The different instances are identified by class name,
- * and the currently used instance can be determined by calling {@link #getMode()}.
- * You can switch between the different instances by calling {@link setMode(final String mode)},
- * where {@code mode} the fully qualified class name of the respective subclass.
- * {@link #ECLIPSE_DATA_SERVICE} is the default mode for use in Eclipse clients, since it reads
- * the locally defined extensions of the 'layoutProviders' and 'layoutInfo' extension points.
+ * Singleton class for access to the KIML layout meta data. This class is used globally to retrieve
+ * meta data for automatic layout through KIML, which is given through the {@code layoutProviders}
+ * extension point.
+ * The meta data are provided by a subclass through the nested registry instance.
  * 
  * @kieler.design 2011-03-14 reviewed by cmot, cds
  * @kieler.rating yellow 2012-10-09 review KI-25 by chsch, bdu
@@ -106,7 +98,7 @@ public class LayoutDataService {
      * Class used to register the layout services. The access methods are not thread-safe, so use
      * only a single thread to register layout meta-data.
      */
-    public final class Registry {
+    protected final class Registry {
 
         /**
          * The default constructor is hidden to prevent others from instantiating this class.

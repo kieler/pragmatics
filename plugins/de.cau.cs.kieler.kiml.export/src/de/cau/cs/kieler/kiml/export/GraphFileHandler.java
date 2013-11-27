@@ -37,7 +37,7 @@ import de.cau.cs.kieler.kiml.formats.GraphFormatData;
 import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.formats.IGraphFormatHandler;
 import de.cau.cs.kieler.kiml.formats.TransformationData;
-import de.cau.cs.kieler.kiml.service.EclipseLayoutInfoService;
+import de.cau.cs.kieler.kiml.service.LayoutManagersService;
 import de.cau.cs.kieler.kiml.service.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.service.LayoutMapping;
 import de.cau.cs.kieler.kiml.service.LayoutOptionManager;
@@ -95,7 +95,7 @@ public class GraphFileHandler {
         }
 
         // retrieve a kgraph representation of the diagram
-        IDiagramLayoutManager<?> layoutManager = EclipseLayoutInfoService.getInstance()
+        IDiagramLayoutManager<?> layoutManager = LayoutManagersService.getInstance()
                 .getManager(null, editPart.get());
         if (layoutManager == null) {
             throw new RuntimeException("No layout manager could be retrieved for the selected file.");

@@ -29,7 +29,7 @@ import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.config.LayoutContext;
 import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.service.EclipseLayoutConfig;
-import de.cau.cs.kieler.kiml.service.EclipseLayoutInfoService;
+import de.cau.cs.kieler.kiml.service.LayoutManagersService;
 import de.cau.cs.kieler.kiml.service.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.service.LayoutOptionManager;
 
@@ -69,13 +69,13 @@ public class LayoutPropertySourceProvider implements IPropertySourceProvider {
     /**
      * {@inheritDoc}
      * A property source is only created if a valid diagram layout manager is found for the given
-     * object in the {@link EclipseLayoutInfoService}.
+     * object in the {@link LayoutManagersService}.
      */
     public IPropertySource getPropertySource(final Object object) {
         if (propertySources.containsKey(object)) {
             return propertySources.get(object);
         }
-        IDiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance().getManager(
+        IDiagramLayoutManager<?> manager = LayoutManagersService.getInstance().getManager(
                 workbenchPart, object);
         if (manager != null && manager.getAdapterList().length > 0) {
             Object diagramPart = manager.getAdapter(object, manager.getAdapterList()[0]);

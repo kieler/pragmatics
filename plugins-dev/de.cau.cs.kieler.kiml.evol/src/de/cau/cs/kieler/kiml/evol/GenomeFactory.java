@@ -42,7 +42,7 @@ import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo.GeneType;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.service.EclipseLayoutConfig;
-import de.cau.cs.kieler.kiml.service.LayoutInfoService;
+import de.cau.cs.kieler.kiml.service.ExtensionLayoutConfigService;
 import de.cau.cs.kieler.kiml.service.LayoutMapping;
 
 /**
@@ -244,7 +244,7 @@ public final class GenomeFactory {
     public static ILayoutConfig createConfig(final LayoutMapping<?> layoutMapping) {
         CompoundLayoutConfig clc = new CompoundLayoutConfig();
         clc.add(new DefaultLayoutConfig());
-        for (ILayoutConfig config : LayoutInfoService.getInstance().getActiveConfigs()) {
+        for (ILayoutConfig config : ExtensionLayoutConfigService.getInstance().getActiveConfigs()) {
             if (!(config instanceof EvolLayoutConfig)) {
                 clc.add(config);
             }

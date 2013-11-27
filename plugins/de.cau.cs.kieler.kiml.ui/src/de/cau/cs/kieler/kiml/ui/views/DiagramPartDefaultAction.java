@@ -17,9 +17,10 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.views.properties.IPropertySheetEntry;
 
+import de.cau.cs.kieler.kiml.LayoutConfigService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.service.EclipseLayoutInfoService;
+import de.cau.cs.kieler.kiml.service.ExtensionLayoutConfigService;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 
@@ -92,8 +93,8 @@ public class DiagramPartDefaultAction extends Action {
             if (optionData.equals(LayoutOptions.ALGORITHM)) {
                 valueString = LayoutPropertySource.getLayoutHint(valueString);
             }
-            EclipseLayoutInfoService.getInstance().storeOption(diagramPart, optionData,
-                    valueString, forDomainModel);
+            ((ExtensionLayoutConfigService) LayoutConfigService.getInstance()).storeOption(
+                    diagramPart, optionData, valueString, forDomainModel);
         }
     }
     

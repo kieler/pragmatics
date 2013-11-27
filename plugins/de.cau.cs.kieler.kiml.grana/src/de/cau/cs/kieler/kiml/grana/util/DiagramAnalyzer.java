@@ -32,7 +32,7 @@ import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.grana.AnalysisData;
 import de.cau.cs.kieler.kiml.grana.AnalysisService;
 import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
-import de.cau.cs.kieler.kiml.service.EclipseLayoutInfoService;
+import de.cau.cs.kieler.kiml.service.LayoutManagersService;
 import de.cau.cs.kieler.kiml.service.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.service.LayoutMapping;
 import de.cau.cs.kieler.kiml.service.util.MonitoredOperation;
@@ -96,7 +96,7 @@ public final class DiagramAnalyzer {
     public static Map<String, Object> analyze(final IEditorPart editorPart,
             final EditPart editPart, final List<AnalysisData> analyses,
             final boolean progressBar) {
-        final IDiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance().getManager(
+        final IDiagramLayoutManager<?> manager = LayoutManagersService.getInstance().getManager(
                 editorPart, editPart);
         if (manager == null) {
             return Collections.emptyMap();

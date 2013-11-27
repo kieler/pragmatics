@@ -14,13 +14,9 @@
 package de.cau.cs.kieler.kiml.service;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Set;
-import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterFactory;
@@ -28,35 +24,23 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.jface.action.ContributionItem;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.alg.DefaultFactory;
+import de.cau.cs.kieler.core.alg.IFactory;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
-import de.cau.cs.kieler.kiml.LayoutDataService;
-import de.cau.cs.kieler.kiml.LayoutOptionData;
 
 /**
- * An extension of the layout info service for diagram layout managers and preference handling.
+ * A service class for layout managers, which are registered through the extension point.
  *
  * @author msp
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow 2012-07-10 msp
  */
-public final class EclipseLayoutInfoService extends LayoutInfoService implements IAdapterFactory {
+public class LayoutManagersService implements IAdapterFactory {
 
-    /** preference identifier for the list of registered diagram elements. */
-    public static final String PREF_REG_ELEMENTS = "kiml.reg.elements";
     /** preference identifier for oblique edge routing. */
     public static final String PREF_OBLIQUE_ROUTE = "kiml.oblique.route";
     
@@ -67,8 +51,42 @@ public final class EclipseLayoutInfoService extends LayoutInfoService implements
     protected static final String ELEMENT_MANAGER = "manager";
     /** name of the 'engine' element in the 'layout managers' extension point. */
     protected static final String ELEMENT_ENGINE = "engine";
+    /** name of the 'class' attribute in the extension points. */
+    protected static final String ATTRIBUTE_CLASS = "class";
     /** name of the 'priority' attribute in the extension points. */
     protected static final String ATTRIBUTE_PRIORITY = "priority";
+    
+    /** the singleton instance of the managers service. */
+    private static LayoutManagersService instance;
+    /** the factory for creation of service instances. */
+    private static IFactory<? extends LayoutManagersService> instanceFactory
+            = new DefaultFactory<LayoutManagersService>(LayoutManagersService.class);
+    
+    /**
+     * Returns the singleton instance of the managers service.
+     * 
+     * @return the singleton instance
+     */
+    public static LayoutManagersService getInstance() {
+        synchronized (LayoutManagersService.class) {
+            if (instance == null) {
+                instance = instanceFactory.create();
+            }
+        }
+        return instance;
+    }
+    
+    /**
+     * Set the factory for creating instances. If an instance is already created, it is cleared
+     * so the next call to {@link #getInstance()} uses the new factory.
+     * 
+     * @param factory an instance factory
+     */
+    public static void setInstanceFactory(final IFactory<? extends LayoutManagersService> factory) {
+        instanceFactory = factory;
+        instance = null;
+    }
+
     
     /** list of registered diagram layout managers. */
     private final List<Pair<Integer, IDiagramLayoutManager<?>>> managers
@@ -76,42 +94,25 @@ public final class EclipseLayoutInfoService extends LayoutInfoService implements
     /** list of registered graph layout engines. */
     private final List<Pair<Integer, IGraphLayoutEngine>> layoutEngines
             = new LinkedList<Pair<Integer, IGraphLayoutEngine>>();
-    /** set of registered diagram elements. */
-    private final Set<String> registeredElements = new HashSet<String>();
-    
+
     /**
-     * Returns the singleton instance of the layout info service.
+     * Load all registered extensions for the layout managers extension point.
+     */
+    public LayoutManagersService() {
+        loadLayoutManagerExtensions();
+    }
+
+    /**
+     * Report an error that occurred while reading extensions. May be overridden by subclasses
+     * in order to report errors in a different way.
      * 
-     * @return the singleton instance
+     * @param extensionPoint the identifier of the extension point
+     * @param element the configuration element
+     * @param attribute the attribute that contains an invalid entry
+     * @param exception an optional exception that was caused by the invalid entry
      */
-    public static EclipseLayoutInfoService getInstance() {
-        return (EclipseLayoutInfoService) LayoutInfoService.getInstance();
-    }
-
-    /**
-     * Hidden default constructor to prevent instantiation from outside this class.
-     */
-    private EclipseLayoutInfoService() {
-        super();
-    }
-    
-    /**
-     * Create the layout info service and load extension points.
-     */
-    public static synchronized void create() {
-        // creating an instance stores this instance as the singleton instance
-        EclipseLayoutInfoService instance = new EclipseLayoutInfoService();
-        instance.loadLayoutInfoExtensions();
-        instance.loadLayoutManagerExtensions();
-        instance.loadPreferences();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void reportError(final String extensionPoint,
-            final IConfigurationElement element, final String attribute, final Throwable exception) {
+    protected void reportError(final String extensionPoint, final IConfigurationElement element,
+            final String attribute, final Throwable exception) {
         String message;
         if (element != null && attribute != null) {
             message = "Extension point " + extensionPoint + ": Invalid entry in attribute '"
@@ -125,11 +126,13 @@ public final class EclipseLayoutInfoService extends LayoutInfoService implements
                 0, message, exception);
         StatusManager.getManager().handle(status);
     }
-    
+
     /**
-     * {@inheritDoc}
+     * Report an error that occurred while reading extensions. May be overridden by subclasses
+     * in order to report errors in a different way.
+     * 
+     * @param exception a core exception holding a status with further information
      */
-    @Override
     protected void reportError(final CoreException exception) {
         StatusManager.getManager().handle(exception, KimlServicePlugin.PLUGIN_ID);
     }
@@ -143,7 +146,7 @@ public final class EclipseLayoutInfoService extends LayoutInfoService implements
      *     fetched, or {@code null}
      * @return the most suitable diagram layout manager
      */
-    public IDiagramLayoutManager<?> getManager(final IWorkbenchPart workbenchPart,
+    public final IDiagramLayoutManager<?> getManager(final IWorkbenchPart workbenchPart,
             final Object diagramPart) {
         for (Pair<Integer, IDiagramLayoutManager<?>> entry : managers) {
             IDiagramLayoutManager<?> manager = entry.getSecond();
@@ -239,7 +242,7 @@ public final class EclipseLayoutInfoService extends LayoutInfoService implements
      * 
      * @return the active graph layout engine with highest priority
      */
-    public IGraphLayoutEngine getLayoutEngine() {
+    public final IGraphLayoutEngine getLayoutEngine() {
         for (Pair<Integer, IGraphLayoutEngine> entry : layoutEngines) {
             IGraphLayoutEngine engine = entry.getSecond();
             if (engine.isActive()) {
@@ -247,64 +250,6 @@ public final class EclipseLayoutInfoService extends LayoutInfoService implements
             }
         }
         return null;
-    }
-
-    /**
-     * Returns the preference name associated with the two identifiers.
-     * 
-     * @param id1 first identifier
-     * @param id2 second identifier
-     * @return a preference name for the combination of both identifiers
-     */
-    public static String getPreferenceName(final String id1, final String id2) {
-        return id1 + "-" + id2; //$NON-NLS-1$
-    }
-    
-    /**
-     * Stores the layout option with given value for the diagram type.
-     * 
-     * @param diagramType a diagram type identifier
-     * @param optionData a layout option data
-     * @param valueString the value to store for the diagram type and option
-     */
-    public void storeOption(final String diagramType, final LayoutOptionData<?> optionData,
-            final String valueString) {
-        Object value = optionData.parseValue(valueString);
-        if (value != null) {
-            addOptionValue(diagramType, optionData.getId(), value);
-            IPreferenceStore preferenceStore = KimlServicePlugin.getDefault().getPreferenceStore();
-            preferenceStore.setValue(getPreferenceName(diagramType, optionData.getId()), valueString);
-        }
-    }
-    
-    /**
-     * Stores the layout option with given value for the edit part.
-     * 
-     * @param diagramPart a diagram part
-     * @param optionData a layout option data
-     * @param valueString the value to store for the edit part and option
-     * @param storeDomainModel if true, the option is stored for the domain model element
-     *     associated with the edit part, else for the edit part itself
-     */
-    public void storeOption(final Object diagramPart, final LayoutOptionData<?> optionData,
-            final String valueString, final boolean storeDomainModel) {
-        Object value = optionData.parseValue(valueString);
-        if (value != null) {
-            String clazzName;
-            if (storeDomainModel) {
-                EObject model = (EObject) getAdapter(diagramPart, EObject.class);
-                clazzName = model == null ? null : model.eClass().getInstanceTypeName();
-            } else {
-                Object relevantPart = getAdapter(diagramPart, null);
-                clazzName = relevantPart == null ? null : relevantPart.getClass().getName();
-            }
-            if (clazzName != null) {
-                addOptionValue(clazzName, optionData.getId(), value);
-                registeredElements.add(clazzName);
-                IPreferenceStore preferenceStore = KimlServicePlugin.getDefault().getPreferenceStore();
-                preferenceStore.setValue(getPreferenceName(clazzName, optionData.getId()), valueString);
-            }
-        }
     }
 
     /**
@@ -372,107 +317,6 @@ public final class EclipseLayoutInfoService extends LayoutInfoService implements
             }
         }
         iter.add(new Pair<Integer, T>(priority, object));
-    }
-
-    /**
-     * Loads preferences for KIML.
-     */
-    private void loadPreferences() {
-        IPreferenceStore preferenceStore = KimlServicePlugin.getDefault().getPreferenceStore();
-        LayoutDataService layoutDataService = LayoutDataService.getInstance();
-        
-        // load default options for diagram types
-        List<Pair<String, String>> diagramTypes = getDiagramTypes();
-        Collection<LayoutOptionData<?>> layoutOptionData = layoutDataService.getOptionData();
-        for (Pair<String, String> diagramType : diagramTypes) {
-            for (LayoutOptionData<?> data : layoutOptionData) {
-                String preference = getPreferenceName(diagramType.getFirst(), data.getId());
-                if (preferenceStore.contains(preference)) {
-                    Object value = data.parseValue(preferenceStore.getString(preference));
-                    if (value != null) {
-                        addOptionValue(diagramType.getFirst(), data.getId(), value);
-                    }
-                }
-            }
-        }
-        
-        // load default options for diagram elements
-        StringTokenizer editPartsTokenizer = new StringTokenizer(
-                preferenceStore.getString(PREF_REG_ELEMENTS), ";");
-        while (editPartsTokenizer.hasMoreTokens()) {
-            registeredElements.add(editPartsTokenizer.nextToken());
-        }
-        for (String elementName : registeredElements) {
-            for (LayoutOptionData<?> data : layoutOptionData) {
-                String preference = getPreferenceName(elementName, data.getId());
-                if (preferenceStore.contains(preference)) {
-                    Object value = data.parseValue(preferenceStore.getString(preference));
-                    if (value != null) {
-                        addOptionValue(elementName, data.getId(), value);
-                    }
-                }
-            }
-        }
-    }
-    
-    /**
-     * Stores preferences for KIML.
-     */
-    public void storePreferences() {
-        IPreferenceStore preferenceStore = KimlServicePlugin.getDefault().getPreferenceStore();
-
-        // store set of registered diagram elements
-        StringBuilder elementsString = new StringBuilder();
-        for (String elementName : registeredElements) {
-            elementsString.append(elementName + ";");
-        }
-        preferenceStore.setValue(PREF_REG_ELEMENTS, elementsString.toString());
-    }
-
-    /**
-     * Returns the set of registered diagram elements.
-     * 
-     * @return the set of registered diagram elements
-     */
-    public Set<String> getRegisteredElements() {
-        return registeredElements;
-    }
-    
-    /**
-     * Fill the given menu manager with contribution items for layout configurations.
-     * 
-     * @param menuManager a menu manager
-     */
-    public void fillConfigMenu(final IMenuManager menuManager) {
-        for (ConfigData data : getConfigData()) {
-            if (data.getActivationText() != null && data.getActivationText().length() > 0
-                    && data.getActivationProperty() != null) {
-                final String text = data.getActivationText();
-                final IProperty<Boolean> activation = data.getActivationProperty();
-                final Runnable activationAction = data.getActivationAction();
-                menuManager.add(new ContributionItem() {
-                    public void fill(final Menu parent, final int index) {
-                        final MenuItem menuItem = new MenuItem(parent, SWT.CHECK, index);
-                        menuItem.setText(text);
-                        menuItem.setSelection(getConfigProperties().getProperty(activation));
-                        menuItem.addSelectionListener(new SelectionListener() {
-                            public void widgetSelected(final SelectionEvent e) {
-                                getConfigProperties().setProperty(activation, menuItem.getSelection());
-                                if (activationAction != null) {
-                                    activationAction.run();
-                                }
-                            }
-                            public void widgetDefaultSelected(final SelectionEvent e) {
-                            }
-                        });
-                        // execute the activation action initially
-                        if (activationAction != null) {
-                            activationAction.run();
-                        }
-                    }
-                });
-            }
-        }
     }
 
 }

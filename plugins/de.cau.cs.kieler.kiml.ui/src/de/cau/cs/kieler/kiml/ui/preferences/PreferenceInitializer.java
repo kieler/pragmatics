@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
-import de.cau.cs.kieler.kiml.service.EclipseLayoutInfoService;
+import de.cau.cs.kieler.kiml.service.LayoutManagersService;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.LayoutHandler;
 import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
@@ -41,7 +41,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         preferenceStore.setDefault(LayoutHandler.PREF_ANIMATION, true);
         preferenceStore.setDefault(LayoutHandler.PREF_ZOOM, false);
         preferenceStore.setDefault(LayoutHandler.PREF_PROGRESS, false);
-        preferenceStore.setDefault(EclipseLayoutInfoService.PREF_OBLIQUE_ROUTE, true);
+        preferenceStore.setDefault(LayoutManagersService.PREF_OBLIQUE_ROUTE, true);
         preferenceStore.setDefault(LayoutViewPart.PREF_CATEGORIES, true);
         preferenceStore.setDefault(LayoutViewPart.PREF_ADVANCED, false);
         preferenceStore.setDefault(DiagramLayoutEngine.PREF_DEBUG_OUTPUT, false);

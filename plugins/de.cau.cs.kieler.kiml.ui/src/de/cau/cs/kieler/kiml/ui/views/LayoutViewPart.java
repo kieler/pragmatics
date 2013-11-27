@@ -55,6 +55,7 @@ import org.eclipse.ui.views.properties.PropertySheetPage;
 
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
+import de.cau.cs.kieler.kiml.LayoutConfigService;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
@@ -62,7 +63,8 @@ import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.config.LayoutContext;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
-import de.cau.cs.kieler.kiml.service.EclipseLayoutInfoService;
+import de.cau.cs.kieler.kiml.service.ExtensionLayoutConfigService;
+import de.cau.cs.kieler.kiml.service.LayoutManagersService;
 import de.cau.cs.kieler.kiml.service.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
@@ -203,7 +205,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
         addPopupActions(page.getControl().getMenu());
         IMenuManager menuManager = actionBars.getMenuManager();
         menuManager.add(new RemoveOptionsAction(this, Messages.getString("kiml.ui.30")));
-        EclipseLayoutInfoService.getInstance().fillConfigMenu(menuManager);
+        ExtensionLayoutConfigService.fillConfigMenu(menuManager);
         IToolBarManager toolBarManager = actionBars.getToolBarManager();
         toolBarManager.add(new SelectionInfoAction(this, Messages.getString("kiml.ui.37")));
         
@@ -302,7 +304,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
      * {@inheritDoc}
      */
     public void selectionChanged(final IWorkbenchPart part, final ISelection selection) {
-        IDiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance().getManager(part, null);
+        IDiagramLayoutManager<?> manager = LayoutManagersService.getInstance().getManager(part, null);
         if (manager != null) {
             propSourceProvider.resetContext(part);
             page.selectionChanged(part, selection);
@@ -429,7 +431,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
                 ILayoutConfig config = DiagramLayoutEngine.INSTANCE.getOptionManager().createConfig(
                         context.getProperty(LayoutContext.DOMAIN_MODEL));
                 String diagramType = (String) config.getValue(diagramTypeOption, context);
-                String diagramTypeName = EclipseLayoutInfoService.getInstance()
+                String diagramTypeName = LayoutConfigService.getInstance()
                         .getDiagramTypeName(diagramType);
                 if (diagramTypeName != null) {
                     // make the diagram type name plural, if it does not already end with "s"

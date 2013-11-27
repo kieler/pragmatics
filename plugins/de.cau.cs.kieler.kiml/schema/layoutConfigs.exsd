@@ -3,10 +3,10 @@
 <schema targetNamespace="de.cau.cs.kieler.kiml" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
-         <meta.schema plugin="de.cau.cs.kieler.kiml" id="layoutInfo" name="Layout Info"/>
+         <meta.schema plugin="de.cau.cs.kieler.kiml" id="layoutConfigs" name="Layout Configurations"/>
       </appInfo>
       <documentation>
-         The layout info extension point allows to specify the properties of a specific diagram editor with regard to automatic layout. Layout options can be configured for specific model elements or edit parts.
+         The layout configurations extension point allows to specify the properties of a specific diagram editor with regard to automatic layout. Layout options can be configured for specific model elements or edit parts.
       </documentation>
    </annotation>
 
@@ -19,9 +19,9 @@
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
             <element ref="diagramType"/>
-            <element ref="option"/>
-            <element ref="semanticOption"/>
-            <element ref="config"/>
+            <element ref="staticConfig"/>
+            <element ref="semanticConfig"/>
+            <element ref="customConfig"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -53,9 +53,7 @@
    <element name="diagramType">
       <annotation>
          <documentation>
-            A diagram type, used to classify diagrams with respect to layout. Specific edit parts of a graphical editor can be mapped to diagram types using the &lt;code&gt;option&lt;/code&gt; element. Each layout provider may specify which diagram types it supports. There are two special diagram types which are predefined by KIML:
-&lt;ul&gt;&lt;li&gt;&lt;code&gt;de.cau.cs.kieler.layout.info.types.general&lt;/code&gt; applies to &lt;b&gt;all&lt;/b&gt; diagrams
-&lt;li&gt;&lt;code&gt;de.cau.cs.kieler.layout.info.types.nolayout&lt;/code&gt; declares that no automatic layout should be applied to such parts of the diagram&lt;/ul&gt;
+            A diagram type, used to classify diagrams with respect to layout. Specific edit parts of a graphical editor can be mapped to diagram types using the &lt;code&gt;staticConfig&lt;/code&gt; element. Each layout algorithm may specify which diagram types it supports. The &lt;code&gt;de.cau.cs.kieler.layout.diagrams.general&lt;/code&gt; diagram type, predefined by KIML, applies to &lt;i&gt;all&lt;/i&gt; diagrams.
          </documentation>
       </annotation>
       <complexType>
@@ -79,10 +77,10 @@
       </complexType>
    </element>
 
-   <element name="option">
+   <element name="staticConfig">
       <annotation>
          <documentation>
-            A layout option configuration for a specific model element or edit part. This can be used to specify default layout option values.
+            A layout option configuration for a specific model element or edit part. This can be used to statically specify default layout option values.
          </documentation>
       </annotation>
       <complexType>
@@ -113,7 +111,7 @@
       </complexType>
    </element>
 
-   <element name="semanticOption">
+   <element name="semanticConfig">
       <annotation>
          <documentation>
             A layout option configuration for semantic model elements, which can determine specific layout option values dynamically depending on a given model element.
@@ -143,10 +141,10 @@
       </complexType>
    </element>
 
-   <element name="config">
+   <element name="customConfig">
       <annotation>
          <documentation>
-            A general layout option configurator, which can calculate its values in arbitrary manner.
+            A custom layout option configurator, which can calculate its values in arbitrary manner. This is recommended to be used only by experts.
          </documentation>
       </annotation>
       <complexType>

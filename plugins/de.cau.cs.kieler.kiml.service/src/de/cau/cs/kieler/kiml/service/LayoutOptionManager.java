@@ -29,6 +29,7 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
+import de.cau.cs.kieler.kiml.LayoutConfigService;
 import de.cau.cs.kieler.kiml.config.CompoundLayoutConfig;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
@@ -71,7 +72,7 @@ public class LayoutOptionManager {
         // create basic layout configuration
         CompoundLayoutConfig clc = new CompoundLayoutConfig();
         clc.add(defaultLayoutConfig);
-        clc.addAll(LayoutInfoService.getInstance().getActiveConfigs());
+        clc.addAll(ExtensionLayoutConfigService.getInstance().getActiveConfigs());
         clc.addAll(layoutMapping.getLayoutConfigs());
 
         // configure the layout graph recursively
@@ -94,7 +95,7 @@ public class LayoutOptionManager {
             final ILayoutConfig... extraConfigs) {
         CompoundLayoutConfig clc = new CompoundLayoutConfig();
         clc.add(defaultLayoutConfig);
-        clc.addAll(LayoutInfoService.getInstance().getActiveConfigs());
+        clc.addAll(ExtensionLayoutConfigService.getInstance().getActiveConfigs());
         clc.addAll(getSemanticConfigs(domainElement));
         for (ILayoutConfig conf : extraConfigs) {
             clc.add(conf);
@@ -199,7 +200,7 @@ public class LayoutOptionManager {
         EClass modelClass = modelElement.eClass();
         List<ILayoutConfig> configs = semanticConfigMap.get(modelClass);
         if (configs == null) {
-            configs = EclipseLayoutInfoService.getInstance().getSemanticConfigs(modelClass);
+            configs = LayoutConfigService.getInstance().getSemanticConfigs(modelClass);
             semanticConfigMap.put(modelClass, configs);
         }
         return configs;
