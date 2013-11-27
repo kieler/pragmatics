@@ -6,7 +6,7 @@
          point="de.cau.cs.kieler.kiml.service.graphTransformers">
       <handler
             class="de.cau.cs.kieler.kiml.formats.json.JsonHandler"
-            description="Handler for the graphs in the form of JavaScript Object Notation."
+            description="Graph format based on the JavaScript Object Notation. We recommend this format in conjunction with our HTTP based layout service. See http://rtsys.informatik.uni-kiel.de/confluence/x/CAKE for further information."
             extensions="json"
             id="org.json"
             name="JSON">

@@ -170,7 +170,8 @@ class ProvidedlayoutProvider
         val List<KnownOption> options = algorithm.knownOptions.sortBy[it.option.name]
         
         '''
-        <p class='title'>«algorithm.category?.name» - «algorithm.name»</p>
+        <div class="col-md-8 col-md-offset-2">
+        <h3>«algorithm.category?.name» - «algorithm.name»</h3>
         <p>Type: «algorithm.type?.name»<br/></p>
         <p>Identifier: «algorithm.id»<br/></p>
         «if (algorithm.description != null) {
@@ -181,7 +182,7 @@ class ProvidedlayoutProvider
                 <img src='/ProvidedLayout.html?previewimage=«algorithm.previewImagePath»'/>
             </div>
         </p>
-        <p class='title'>Supported Layout Options</p>
+        <h3>Supported Layout Options</h3>
         <p>
             <div align='center'>
                 <table cellspacing='0' cellpadding='5' class='listing'>
@@ -216,6 +217,7 @@ class ProvidedlayoutProvider
             </div>
         </p>
         «generateBackButton(processingExchange)»
+        </div>
         '''
     }
 
@@ -234,7 +236,8 @@ class ProvidedlayoutProvider
         val List<SupportedFormat> formats     = serviceData.supportedFormats
         
         '''
-        <p class='title'>Provided Layout</p>
+        <div class="col-md-8 col-md-offset-2">
+        <h2>Provided Layout</h2>
         <p>
             This page offers details on the configuration options of the layout service.
             The most important option is the choice which layout algorithm to execute on the input graph.
@@ -244,9 +247,10 @@ class ProvidedlayoutProvider
             You can either send and receive the graph in the same format, or use different formats
             for input and output.
         </p>
-        <p class='title'>Service Details</p>
+        <h3>Service Details</h3>
         <p>Currently running version: «serviceData.version»<br/></p>
-        <p class='title'>Supported Algorithms</p>
+        <h3>Supported Algorithms</h3>
+        <a id="algorithms"></a>
         <p>
             The following option can be used to select a specific layout algorithm:
         </p>
@@ -299,7 +303,8 @@ class ProvidedlayoutProvider
                 </table>
             </div>
         </p>    
-        <p class='title'>Supported Formats</p>
+        <h3>Supported Formats</h3>
+        <a id="formats"></a>
         <p>
             The following formats can be used to transfer graphs to the layout service:
         </p>
@@ -322,7 +327,8 @@ class ProvidedlayoutProvider
                     </tbody>
                 </table>
             </div>
-        </p>'''            
+        </p>
+        </div>'''            
     }
 
     /**
@@ -359,7 +365,8 @@ class ProvidedlayoutProvider
             else "&lt;NONE&gt;"
  
         '''
-        «if (!rawAppend) '''<p class='title'>Layout Option Details</p>'''»
+        <div class="col-md-8 col-md-offset-2">
+        «if (!rawAppend) '''<h3>Layout Option Details</h3>'''»
         <p>Name: «option.name»<br/></p>
         <p>Identifier: «option.id»<br/></p>
         <p>Type: 
@@ -380,13 +387,15 @@ class ProvidedlayoutProvider
         }»
         «if (option.description != null) {
             '''
-        <p class='title'>Description</p>
+        <h4>Description</h4>
         <p>
             «generateHypertext(option.description)»
         </p>
             '''
         }»
-        «if (!rawAppend) generateBackButton(processingExchange)»'''
+        «if (!rawAppend) generateBackButton(processingExchange)»
+        </div>
+        '''
     }
     
     /**
@@ -409,17 +418,20 @@ class ProvidedlayoutProvider
             return ''''''
         }
         '''
-        <p class='title'>Format Details</p>
+        <div class="col-md-8 col-md-offset-2">
+        <h3>Format Details</h3>
         <p>Name: «format.name»<br/></p>
         <p>Identifier: «format.id»<br/></p>
         «if (format.description!= null) {
             '''
-            <p class='title'>Description</p>
+            <h3>Description</h3>
             <p>
                 «generateHypertext(format.description)»
             </p>'''
         }»
-        «generateBackButton(processingExchange)»'''
+        «generateBackButton(processingExchange)»
+        </div>
+        '''
     }
     
     /** Path to the image which is shown when a preview image is not given by a plug in. */

@@ -41,7 +41,6 @@ import de.cau.cs.kieler.kwebs.server.service.LiveLayoutService;
 public class LiveLayoutHandler implements HttpHandler {
 
     private static final int HTTP_OK = 200;
-    private static final int HTTP_NO_CONTENT = 204;
     private static final int HTTP_ERROR = 500; // internal server error
 
     /**
@@ -127,15 +126,17 @@ public class LiveLayoutHandler implements HttpHandler {
     private void handleOptionsRequest(final HttpExchange http) throws IOException {
 
         // allow the same origin
-        http.getResponseHeaders().add("access-control-allow-origin",
+        http.getResponseHeaders().add("Access-Control-Allow-Origin",
                 http.getRequestHeaders().getFirst("origin").toString());
-        // only allow GET and OPTIONS
-        http.getResponseHeaders().add("access-control-allow-methods", "GET OPTIONS");
-        http.getResponseHeaders().add("access-control-allow-headers", "content-type, accept");
+        // only allow GET and OPTIONS (comma separated list!)
+        http.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, OPTIONS");
+        // just echo
+        http.getResponseHeaders().add("Access-Control-Allow-Headers",
+                http.getRequestHeaders().getFirst("Access-Control-Request-Headers"));
         // package no older than 10 seconds
         http.getResponseHeaders().add("access-control-max-age", "10");
-
-        http.sendResponseHeaders(HTTP_NO_CONTENT, -1);
+        // OK
+        http.sendResponseHeaders(HTTP_OK, -1);
         http.getResponseBody().close();
     }
 
