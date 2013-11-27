@@ -14,10 +14,7 @@
 package de.cau.cs.kieler.kiml.service;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Plugin;
-import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.ui.preferences.ScopedPreferenceStore;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import de.cau.cs.kieler.core.alg.DefaultFactory;
@@ -32,7 +29,7 @@ import de.cau.cs.kieler.kiml.LayoutDataService;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class KimlServicePlugin extends Plugin {
+public class KimlServicePlugin extends AbstractUIPlugin {
 
     /** the plug-in ID. */
     public static final String PLUGIN_ID = "de.cau.cs.kieler.kiml.service";
@@ -40,9 +37,6 @@ public class KimlServicePlugin extends Plugin {
     /** the shared instance. */
     private static KimlServicePlugin plugin;
     
-    /** the preference store for the service plugin. */
-    private IPreferenceStore preferenceStore;
-
     /**
      * {@inheritDoc}
      */
@@ -88,19 +82,6 @@ public class KimlServicePlugin extends Plugin {
      */
     public static KimlServicePlugin getDefault() {
         return plugin;
-    }
-    
-    /**
-     * Returns the preference store for the service plugin.
-     * 
-     * @return the preference store
-     */
-    public IPreferenceStore getPreferenceStore() {
-        // Create the preference store lazily.
-        if (preferenceStore == null) {
-            preferenceStore = new ScopedPreferenceStore(InstanceScope.INSTANCE, PLUGIN_ID);
-        }
-        return preferenceStore;
     }
     
 }

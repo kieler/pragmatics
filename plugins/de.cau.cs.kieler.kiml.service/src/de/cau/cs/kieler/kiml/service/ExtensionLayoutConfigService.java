@@ -57,18 +57,16 @@ public class ExtensionLayoutConfigService extends LayoutConfigService {
     /** preference identifier for the list of registered diagram elements. */
     public static final String PREF_REG_ELEMENTS = "kiml.reg.elements";
     
-    /** identifier of the extension point for layout info. */
-    protected static final String EXTP_ID_LAYOUT_INFO = "de.cau.cs.kieler.kiml.layoutConfigs";
-    /** name of the 'binding' element in the 'layout info' extension point. */
-    protected static final String ELEMENT_BINDING = "binding";
-    /** name of the 'diagram type' element in the 'layout info' extension point. */
+    /** identifier of the extension point for layout configuration. */
+    protected static final String EXTP_ID_LAYOUT_CONFIGS = "de.cau.cs.kieler.kiml.layoutConfigs";
+    /** name of the 'diagram type' element in the 'layout configs' extension point. */
     protected static final String ELEMENT_DIAGRAM_TYPE = "diagramType";
-    /** name of the 'option' element in the 'layout info' extension point. */
-    protected static final String ELEMENT_OPTION = "option";
-    /** name of the 'semantic option' element in the 'layout info' extension point. */
-    protected static final String ELEMENT_SEMANTIC_OPTION = "semanticOption";
-    /** name of the 'config' element in the 'layout info' extension point. */
-    protected static final String ELEMENT_CONFIG = "config";
+    /** name of the 'static config' element in the 'layout configs' extension point. */
+    protected static final String ELEMENT_STATIC_CONFIG = "staticConfig";
+    /** name of the 'semantic config' element in the 'layout configs' extension point. */
+    protected static final String ELEMENT_SEMANTIC_CONFIG = "semanticConfig";
+    /** name of the 'custom config' element in the 'layout configs' extension point. */
+    protected static final String ELEMENT_CUSTOM_CONFIG = "customConfig";
     /** name of the 'activation' attribute in the extension points. */
     protected static final String ATTRIBUTE_ACTIVATION = "activation";
     /** name of the 'activationAction' attribute in the extension points. */
@@ -141,7 +139,7 @@ public class ExtensionLayoutConfigService extends LayoutConfigService {
      */
     private void loadLayoutConfigsExtensions() {
         IConfigurationElement[] extensions = Platform.getExtensionRegistry()
-                .getConfigurationElementsFor(EXTP_ID_LAYOUT_INFO);
+                .getConfigurationElementsFor(EXTP_ID_LAYOUT_CONFIGS);
         LayoutDataService layoutDataService = LayoutDataService.getInstance();
         assert layoutDataService != null;
 
@@ -151,21 +149,21 @@ public class ExtensionLayoutConfigService extends LayoutConfigService {
                 String id = element.getAttribute(ATTRIBUTE_ID);
                 String name = element.getAttribute(ATTRIBUTE_NAME);
                 if (id == null || id.length() == 0) {
-                    reportError(EXTP_ID_LAYOUT_INFO, element, ATTRIBUTE_ID, null);
+                    reportError(EXTP_ID_LAYOUT_CONFIGS, element, ATTRIBUTE_ID, null);
                 } else if (name == null) {
-                    reportError(EXTP_ID_LAYOUT_INFO, element, ATTRIBUTE_NAME, null);
+                    reportError(EXTP_ID_LAYOUT_CONFIGS, element, ATTRIBUTE_NAME, null);
                 } else {
                     addDiagramType(id, name);
                 }
-            } else if (ELEMENT_OPTION.equals(element.getName())) {
+            } else if (ELEMENT_STATIC_CONFIG.equals(element.getName())) {
                 // register a layout option from the extension
                 String classId = element.getAttribute(ATTRIBUTE_CLASS);
                 String optionId = element.getAttribute(ATTRIBUTE_OPTION);
                 String valueString = element.getAttribute(ATTRIBUTE_VALUE);
                 if (classId == null || classId.length() == 0) {
-                    reportError(EXTP_ID_LAYOUT_INFO, element, ATTRIBUTE_CLASS, null);
+                    reportError(EXTP_ID_LAYOUT_CONFIGS, element, ATTRIBUTE_CLASS, null);
                 } else if (optionId == null || optionId.length() == 0) {
-                    reportError(EXTP_ID_LAYOUT_INFO, element, ATTRIBUTE_OPTION, null);
+                    reportError(EXTP_ID_LAYOUT_CONFIGS, element, ATTRIBUTE_OPTION, null);
                 } else {
                     LayoutOptionData<?> optionData = layoutDataService.getOptionData(optionId);
                     if (optionData != null) {
@@ -175,7 +173,7 @@ public class ExtensionLayoutConfigService extends LayoutConfigService {
                                 addOptionValue(classId, optionId, value);
                             }
                         } catch (IllegalStateException exception) {
-                            reportError(EXTP_ID_LAYOUT_INFO, element, ATTRIBUTE_VALUE, exception);
+                            reportError(EXTP_ID_LAYOUT_CONFIGS, element, ATTRIBUTE_VALUE, exception);
                         }
                     } else if (valueString != null) {
                         // the layout option could not be resolved, so create a proxy
@@ -183,21 +181,21 @@ public class ExtensionLayoutConfigService extends LayoutConfigService {
                     }
 
                 }
-            } else if (ELEMENT_SEMANTIC_OPTION.equals(element.getName())) {
+            } else if (ELEMENT_SEMANTIC_CONFIG.equals(element.getName())) {
                 // register a semantic layout configuration from the extension
                 try {
                     SemanticLayoutConfig config = (SemanticLayoutConfig)
                             element.createExecutableExtension(ATTRIBUTE_CONFIG);
                     String clazz = element.getAttribute(ATTRIBUTE_CLASS);
                     if (clazz == null || clazz.length() == 0) {
-                        reportError(EXTP_ID_LAYOUT_INFO, element, ATTRIBUTE_CLASS, null);
+                        reportError(EXTP_ID_LAYOUT_CONFIGS, element, ATTRIBUTE_CLASS, null);
                     } else {
                         addSemanticConfig(clazz, config);
                     }
                 } catch (CoreException exception) {
                     reportError(exception);
                 }
-            } else if (ELEMENT_CONFIG.equals(element.getName())) {
+            } else if (ELEMENT_CUSTOM_CONFIG.equals(element.getName())) {
                 // register a general layout configuration from the extension
                 try {
                     ConfigData data = new ConfigData();

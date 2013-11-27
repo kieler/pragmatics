@@ -43,6 +43,7 @@ import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
+import de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.config.LayoutContext;
 import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
@@ -79,6 +80,9 @@ public class DiagramLayoutEngine {
     /** preference identifier for debug graph output. */
     public static final String PREF_DEBUG_OUTPUT = "kiml.debug.graph";
     
+    
+    /** the graph layout engine for executing layout algorithms on the hierarchy levels of a graph. */
+    private final IGraphLayoutEngine graphLayoutEngine = new RecursiveGraphLayoutEngine();
     
     /** the layout options manager for configuration of layout graphs. */
     private final LayoutOptionManager layoutOptionManager = new LayoutOptionManager();
@@ -532,7 +536,6 @@ public class DiagramLayoutEngine {
         }
         
         // Fetch the active graph layout engine to be used
-        IGraphLayoutEngine layoutEngine = LayoutManagersService.getInstance().getLayoutEngine();
         try {
             // configure the layout graph using a layout option manager
             layoutOptionManager.configure(mapping, progressMonitor.subTask(CONFIGURE_WORK));
@@ -544,7 +547,7 @@ public class DiagramLayoutEngine {
             }
 
             // perform layout on the layout graph
-            layoutEngine.layout(mapping.getLayoutGraph(), progressMonitor.subTask(LAYOUT_WORK));
+            graphLayoutEngine.layout(mapping.getLayoutGraph(), progressMonitor.subTask(LAYOUT_WORK));
             
             if (newTask) {
                 progressMonitor.done();

@@ -30,7 +30,6 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import de.cau.cs.kieler.core.alg.DefaultFactory;
 import de.cau.cs.kieler.core.alg.IFactory;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
 
 /**
  * A service class for layout managers, which are registered through the extension point.
@@ -49,8 +48,6 @@ public class LayoutManagersService implements IAdapterFactory {
             = "de.cau.cs.kieler.kiml.service.layoutManagers";
     /** name of the 'manager' element in the 'layout managers' extension point. */
     protected static final String ELEMENT_MANAGER = "manager";
-    /** name of the 'engine' element in the 'layout managers' extension point. */
-    protected static final String ELEMENT_ENGINE = "engine";
     /** name of the 'class' attribute in the extension points. */
     protected static final String ATTRIBUTE_CLASS = "class";
     /** name of the 'priority' attribute in the extension points. */
@@ -91,9 +88,6 @@ public class LayoutManagersService implements IAdapterFactory {
     /** list of registered diagram layout managers. */
     private final List<Pair<Integer, IDiagramLayoutManager<?>>> managers
             = new LinkedList<Pair<Integer, IDiagramLayoutManager<?>>>();
-    /** list of registered graph layout engines. */
-    private final List<Pair<Integer, IGraphLayoutEngine>> layoutEngines
-            = new LinkedList<Pair<Integer, IGraphLayoutEngine>>();
 
     /**
      * Load all registered extensions for the layout managers extension point.
@@ -236,21 +230,6 @@ public class LayoutManagersService implements IAdapterFactory {
         }
         return resultList.toArray(new Class<?>[resultList.size()]);
     }
-    
-    /**
-     * Returns the active graph layout engine with highest priority.
-     * 
-     * @return the active graph layout engine with highest priority
-     */
-    public final IGraphLayoutEngine getLayoutEngine() {
-        for (Pair<Integer, IGraphLayoutEngine> entry : layoutEngines) {
-            IGraphLayoutEngine engine = entry.getSecond();
-            if (engine.isActive()) {
-                return engine;
-            }
-        }
-        return null;
-    }
 
     /**
      * Loads all diagram layout manager extensions from the extension point.
@@ -277,21 +256,6 @@ public class LayoutManagersService implements IAdapterFactory {
                         insertSorted(manager, priority, managers);
                     }
                     
-                } else if (ELEMENT_ENGINE.equals(element.getName())) {
-                    IGraphLayoutEngine engine = (IGraphLayoutEngine)
-                            element.createExecutableExtension(ATTRIBUTE_CLASS);
-                    if (engine != null) {
-                        int priority = 0;
-                        String prioEntry = element.getAttribute(ATTRIBUTE_PRIORITY);
-                        if (prioEntry != null) {
-                            try {
-                                priority = Integer.parseInt(prioEntry);
-                            } catch (NumberFormatException exception) {
-                                // ignore exception
-                            }
-                        }
-                        insertSorted(engine, priority, layoutEngines);
-                    }
                 }
             } catch (CoreException exception) {
                 StatusManager.getManager().handle(exception, KimlServicePlugin.PLUGIN_ID);
