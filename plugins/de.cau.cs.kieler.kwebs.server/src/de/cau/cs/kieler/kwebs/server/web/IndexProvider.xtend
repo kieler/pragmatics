@@ -59,10 +59,10 @@ class IndexProvider extends AbstractProvider {
                 
                 <ul class="list-unstyled">
                   <li>
-                    1. Either <a href="#">setup</a> your own server or use <a href="#">ours</a>.
+                    1. Either <a href="http://rtsys.informatik.uni-kiel.de/confluence/x/nQEF">setup</a> your own server or use <a href="http://layout.rtsys.informatik.uni-kiel.de:9444">ours</a>.
                   </li>
                   <li>
-                    2. Get the your favourite language's <a href="#">binding</a>.
+                    2. Get the your favourite language's <a href="http://rtsys.informatik.uni-kiel.de/confluence/x/FgKE">binding</a>.
                   </li>
                   <li>
                     3. Choose a <a href="ProvidedLayout.html#formats">graph format</a>.

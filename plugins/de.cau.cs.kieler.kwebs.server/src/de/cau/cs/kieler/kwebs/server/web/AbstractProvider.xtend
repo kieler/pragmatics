@@ -108,7 +108,6 @@ abstract class AbstractProvider
                                 <ul class="nav navbar-nav">
                                   <li><a href='Providedlayout.html'>Provided Layout</a></li>
                                   <li><a href='Serviceinterface.html'>Service Interface</a></li>
-                                  <li><a href='Example.html'>Examples</a></li>
                                   <li><a href='Downloads.html'>Downloads</a></li>
                                   <li><a href='Contact.html'>Contact</a></li>
                                   <li><a href='Live.html'>Live</a></li>
