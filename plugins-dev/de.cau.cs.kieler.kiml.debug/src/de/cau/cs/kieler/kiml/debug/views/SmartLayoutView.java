@@ -20,8 +20,8 @@ import org.eclipse.ui.part.ViewPart;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
-import de.cau.cs.kieler.kiml.service.LayoutInfoService;
-import de.cau.cs.kieler.kiml.service.LayoutInfoService.ConfigData;
+import de.cau.cs.kieler.kiml.LayoutConfigService;
+import de.cau.cs.kieler.kiml.LayoutConfigService.ConfigData;
 import de.cau.cs.kieler.kiml.smart.MetaLayout;
 import de.cau.cs.kieler.kiml.smart.SmartLayoutConfig;
 
@@ -64,7 +64,7 @@ public class SmartLayoutView extends ViewPart {
      * Update the content of the smart layout view.
      */
     public void updateContent() {
-        for (ConfigData data : LayoutInfoService.getInstance().getConfigData()) {
+        for (ConfigData data : LayoutConfigService.getInstance().getConfigData()) {
             if (data.getConfig() instanceof SmartLayoutConfig) {
                 SmartLayoutConfig config = (SmartLayoutConfig) data.getConfig();
                 metaLayoutMap.clear();
