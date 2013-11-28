@@ -169,8 +169,11 @@ public class KlighdKSBasEHandler implements IKSBasEHandler {
             public void run() {
                 IWorkbench wb = PlatformUI.getWorkbench();
                 IWorkbenchWindow wbw = wb.getActiveWorkbenchWindow();
-                IWorkbenchPage ap = wbw.getActivePage();
-                partCache = ap.getActivePart();
+                if (wbw != null) {
+                    IWorkbenchPage ap = wbw.getActivePage();
+                    partCache = ap.getActivePart();
+                }
+                
                         
                                 
             }
