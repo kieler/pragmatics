@@ -32,6 +32,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.WrappedException;
+import de.cau.cs.kieler.core.alg.DefaultFactory;
 import de.cau.cs.kieler.core.alg.IFactory;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -82,34 +83,36 @@ public final class AnalysisService {
     /** id of the default category. */
     public static final String DEFAULT_CATEGORY_ID = "de.cau.cs.kieler.kiml.grana.defaultCategory";
 
-    /** the singleton instance. */
+    /** the graph analysis service instance, which is created lazily. */
     private static AnalysisService instance;
+    /** the factory for creation of service instances. */
+    private static IFactory<? extends AnalysisService> instanceFactory
+            = new DefaultFactory<AnalysisService>(AnalysisService.class);
 
     /**
-     * Returns the singleton instance.
+     * Returns the graph analysis service instance. If no instance is created yet, create one
+     * using the configured factory.
      * 
-     * @return the singleton
+     * @return the graph analysis service instance
      */
-    public static AnalysisService getInstance() {
+    public static synchronized AnalysisService getInstance() {
+        if (instance == null) {
+            instance = instanceFactory.create();
+        }
         return instance;
     }
     
     /**
-     * Private constructor to avoid instantiation from outside this class.
+     * Set the factory for creating instances. If an instance is already created, it is cleared
+     * so the next call to {@link #getInstance()} uses the new factory.
+     * 
+     * @param factory an instance factory
      */
-    private AnalysisService() {
-        // the analysis service is supposed to exist exactly once
-        instance = this;
+    public static void setInstanceFactory(final IFactory<? extends AnalysisService> factory) {
+        instanceFactory = factory;
+        instance = null;
     }
     
-    /**
-     * Create the analysis service and load extension points.
-     */
-    public static synchronized void create() {
-        // creating an instance stores this instance as the singleton instance
-        new AnalysisService();
-        instance.loadAnalysisProviderExtension();
-    }
     
     /** the analysis dependency graph. */
     private final DependencyGraph<String, AnalysisData> dependencyGraph
@@ -123,6 +126,13 @@ public final class AnalysisService {
     private final Map<String, AnalysisData> analysisIdMapping = new HashMap<String, AnalysisData>();
     /** the default category. */
     private AnalysisCategory defaultCategory;
+    
+    /**
+     * Create the analysis service and load all registered extensions.
+     */
+    public AnalysisService() {
+        loadAnalysisProviderExtension();
+    }
 
     /**
      * Report an error that occurred while reading extensions.
@@ -169,7 +179,7 @@ public final class AnalysisService {
     /**
      * Loads and registers all graph analyses and categories from the extension point.
      */
-    protected void loadAnalysisProviderExtension() {
+    private void loadAnalysisProviderExtension() {
         IConfigurationElement[] extensions = Platform.getExtensionRegistry()
                 .getConfigurationElementsFor(EXTP_ID_ANALYSIS_PROVIDERS);
 

@@ -158,11 +158,9 @@ public class LayoutConfigService {
      * 
      * @return the layout configuration service instance
      */
-    public static LayoutConfigService getInstance() {
-        synchronized (LayoutConfigService.class) {
-            if (instance == null) {
-                instance = instanceFactory.create();
-            }
+    public static synchronized LayoutConfigService getInstance() {
+        if (instance == null) {
+            instance = instanceFactory.create();
         }
         return instance;
     }

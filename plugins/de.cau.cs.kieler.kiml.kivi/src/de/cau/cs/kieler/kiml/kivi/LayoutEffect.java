@@ -216,8 +216,9 @@ public class LayoutEffect extends AbstractEffect {
      *            LayoutOptions})
      * @param value
      *            the value for the layout option
+     * @param <T> the type of the layout option
      */
-    public void setOption(final Object object, final IProperty<?> option, final Object value) {
+    public <T> void setOption(final Object object, final IProperty<? super T> option, final T value) {
         if (layoutConfigs.isEmpty()) {
             addLayoutConfig();
         }

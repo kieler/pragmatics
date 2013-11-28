@@ -69,11 +69,9 @@ public class GraphFormatsService {
      * 
      * @return the singleton instance
      */
-    public static GraphFormatsService getInstance() {
-        synchronized (GraphFormatsService.class) {
-            if (instance == null) {
-                instance = instanceFactory.create();
-            }
+    public static synchronized GraphFormatsService getInstance() {
+        if (instance == null) {
+            instance = instanceFactory.create();
         }
         return instance;
     }

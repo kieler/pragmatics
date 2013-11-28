@@ -29,9 +29,51 @@ import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
  * @kieler.rating yellow 2012-07-05 review KI-18 by cmot, sgu
  */
 public class CompoundLayoutConfig implements IMutableLayoutConfig {
+    
+    /**
+     * Create a compound layout configurator from the given configurators.
+     * 
+     * @param confs one or more configurators to include in the new compound configurator
+     * @return a new compound configurator
+     */
+    public static CompoundLayoutConfig of(final ILayoutConfig... confs) {
+        CompoundLayoutConfig instance = new CompoundLayoutConfig();
+        for (ILayoutConfig conf : confs) {
+            instance.add(conf);
+        }
+        return instance;
+    }
 
     /** the contained layout configurations. */
     private final LinkedList<ILayoutConfig> configs = new LinkedList<ILayoutConfig>();
+    
+    /**
+     * Create an empty compound layout configurator.
+     */
+    public CompoundLayoutConfig() {
+    }
+    
+    /**
+     * Create a compound layout configurator based on the given configurators.
+     * 
+     * @param confs a collection of configurators
+     */
+    public CompoundLayoutConfig(final Collection<ILayoutConfig> confs) {
+        for (ILayoutConfig conf : confs) {
+            add(conf);
+        }
+    }
+    
+    /**
+     * Create a compound layout configurator with the same content as the given one.
+     * 
+     * @param compConf a compound configurator to copy
+     */
+    public CompoundLayoutConfig(final CompoundLayoutConfig compConf) {
+        for (ILayoutConfig conf : compConf.configs) {
+            add(conf);
+        }
+    }
     
     /**
      * Insert the given layout configuration into this compound configuration according

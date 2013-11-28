@@ -64,11 +64,9 @@ public class LayoutManagersService implements IAdapterFactory {
      * 
      * @return the singleton instance
      */
-    public static LayoutManagersService getInstance() {
-        synchronized (LayoutManagersService.class) {
-            if (instance == null) {
-                instance = instanceFactory.create();
-            }
+    public static synchronized LayoutManagersService getInstance() {
+        if (instance == null) {
+            instance = instanceFactory.create();
         }
         return instance;
     }

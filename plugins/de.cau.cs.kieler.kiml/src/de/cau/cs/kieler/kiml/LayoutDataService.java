@@ -53,11 +53,9 @@ public class LayoutDataService {
      * 
      * @return the layout data service instance
      */
-    public static LayoutDataService getInstance() {
-        synchronized (LayoutDataService.class) {
-            if (instance == null) {
-                instance = instanceFactory.create();
-            }
+    public static synchronized LayoutDataService getInstance() {
+        if (instance == null) {
+            instance = instanceFactory.create();
         }
         return instance;
     }
