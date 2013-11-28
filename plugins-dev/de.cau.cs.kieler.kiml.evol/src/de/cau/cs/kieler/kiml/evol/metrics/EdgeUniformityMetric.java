@@ -46,7 +46,7 @@ public class EdgeUniformityMetric implements IAnalysis {
      */
     public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Edge length uniformity analysis", 1);
+        progressMonitor.begin("Edge length uniformity metric", 1);
         float result;
 
         int numberOfEdges = (Integer) results.get(EdgeCountAnalysis.ID);

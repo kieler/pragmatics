@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.kwebs.server.web;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URLDecoder;
 import java.util.List;
@@ -25,6 +26,7 @@ import org.json.JSONObject;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.io.CharStreams;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -41,7 +43,6 @@ import de.cau.cs.kieler.kwebs.server.service.LiveLayoutService;
 public class LiveLayoutHandler implements HttpHandler {
 
     private static final int HTTP_OK = 200;
-    private static final int HTTP_NO_CONTENT = 204;
     private static final int HTTP_ERROR = 500; // internal server error
 
     /**
@@ -52,7 +53,8 @@ public class LiveLayoutHandler implements HttpHandler {
         if (http.getRequestMethod().toUpperCase().equals("OPTIONS")) {
             // CORS preflight
             handleOptionsRequest(http);
-        } else if (http.getRequestMethod().toUpperCase().equals("GET")) {
+        } else if (http.getRequestMethod().toUpperCase().equals("POST")
+                || http.getRequestMethod().toUpperCase().equals("GET")) {
             // layout request
             handleLayoutRequest(http);
         } else {
@@ -64,8 +66,23 @@ public class LiveLayoutHandler implements HttpHandler {
      * Perform layout on the passed data.
      */
     private void handleLayoutRequest(final HttpExchange http) throws IOException {
-        // retrieve the query parameters
-        String decoded = URLDecoder.decode(http.getRequestURI().getQuery(), "UTF-8");
+
+        String decoded = "";
+
+        try {
+            if (http.getRequestMethod().toUpperCase().equals("GET")) {
+                // for get the parameters are in the url
+                decoded = URLDecoder.decode(http.getRequestURI().getQuery(), "UTF-8");
+            } else if (http.getRequestMethod().toUpperCase().equals("POST")) {
+                // port post we have to look into the body
+                String input = CharStreams.toString(new InputStreamReader(http.getRequestBody()));
+                decoded = URLDecoder.decode(input, "UTF-8");
+            }
+        } catch (IOException e) {
+            sendError(http, "Could not decode the passed data.", e);
+            return;
+        }
+
         Map<String, String> params = getParams(decoded);
 
         // the graph
@@ -112,6 +129,7 @@ public class LiveLayoutHandler implements HttpHandler {
         }
 
         http.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+             //   http.getRequestHeaders().getFirst("origin"));
         http.getResponseHeaders().add("content-type", "text/plain");
 
         // send the result graph
@@ -127,15 +145,17 @@ public class LiveLayoutHandler implements HttpHandler {
     private void handleOptionsRequest(final HttpExchange http) throws IOException {
 
         // allow the same origin
-        http.getResponseHeaders().add("access-control-allow-origin",
-                http.getRequestHeaders().getFirst("origin").toString());
-        // only allow GET and OPTIONS
-        http.getResponseHeaders().add("access-control-allow-methods", "GET OPTIONS");
-        http.getResponseHeaders().add("access-control-allow-headers", "content-type, accept");
+        http.getResponseHeaders().add("Access-Control-Allow-Origin",
+                http.getRequestHeaders().getFirst("origin"));
+        // only allow GET and OPTIONS (comma separated list!)
+        http.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, OPTIONS");
+        // just echo
+        http.getResponseHeaders().add("Access-Control-Allow-Headers",
+                http.getRequestHeaders().getFirst("Access-Control-Request-Headers"));
         // package no older than 10 seconds
         http.getResponseHeaders().add("access-control-max-age", "10");
-
-        http.sendResponseHeaders(HTTP_NO_CONTENT, -1);
+        // OK
+        http.sendResponseHeaders(HTTP_OK, -1);
         http.getResponseBody().close();
     }
 

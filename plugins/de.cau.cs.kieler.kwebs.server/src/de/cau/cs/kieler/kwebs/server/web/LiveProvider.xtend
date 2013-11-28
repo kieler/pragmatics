@@ -32,11 +32,11 @@ class LiveProvider extends AbstractProvider {
 	 */
 	override getHeaders(ResourceProcessingExchange processingExchange) {
 		'''
-		<link href="styles/bootstrap-3.0.2.min.css" rel="stylesheet">
+		««««<link href="styles/bootstrap-3.0.2.min.css" rel="stylesheet">
 		<link href="styles/prettify.css" type="text/css" rel="stylesheet" />
 		
-		<script	src="scripts/jquery-1.10.2.min.js"></script>
-		<script src="scripts/bootstrap-3.0.2.min.js"></script>
+		««««<script	src="scripts/jquery-1.10.2.min.js"></script>
+		««««<script src="scripts/bootstrap-3.0.2.min.js"></script>
 		<script src="scripts/jquery.event.drag.js"></script>
 		<script src="scripts/jquery.mousewheel.js"></script>
 		<script src="scripts/jquery.svg.js"></script>
@@ -45,7 +45,7 @@ class LiveProvider extends AbstractProvider {
 		
 		<style>
 			body {
-				background-color: #5781BB;
+				««««background-color: #5781BB;
 			}
 			
 			.alert-error {
