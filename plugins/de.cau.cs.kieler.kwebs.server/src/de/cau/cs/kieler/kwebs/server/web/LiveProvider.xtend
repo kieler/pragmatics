@@ -24,8 +24,8 @@ import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService
 class LiveProvider extends AbstractProvider {
 
     // default formats
-	private val DEFAULT_INPUT_FORMAT = "org.json"
-	private val DEFAULT_OUTPUT_FORMAT = "org.w3.svg"
+	private val String DEFAULT_INPUT_FORMAT = "org.json"
+	private val String DEFAULT_OUTPUT_FORMAT = "org.w3.svg"
 
 	/**
 	 * 
@@ -101,12 +101,12 @@ class LiveProvider extends AbstractProvider {
 			<div class="container">
 				<div class="row">
 					<div id="srcGraph" class="col-md-8">
-						<h4>Input Graph</h4>
+						<h4>Input Graph <small><a href="Providedlayout.html#formats">See Formats</a></small></h4>
 			            <textarea id="srcArea">
 			            </textarea>
 					</div>
 					<div id="config" class="col-md-4">
-						<h4>Config</h4>
+						<h4>Config <small><a href="Providedlayout.html#algorithms">See Layout Options</a></small></h4>
 			            <textarea id="configArea">
 			            </textarea>
 					</div>

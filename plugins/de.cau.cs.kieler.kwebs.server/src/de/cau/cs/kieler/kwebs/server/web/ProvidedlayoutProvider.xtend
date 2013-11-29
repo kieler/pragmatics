@@ -254,19 +254,12 @@ class ProvidedlayoutProvider
         <p>
             The following option can be used to select a specific layout algorithm:
         </p>
+        <div class="alert alert-info">
+            «generateForOption(processingExchange, LayoutOptions::ALGORITHM.id, true)»
+        </div>
         <p>
-            <div align='center'>
-                <table class='advertisement'>
-                    <tr>
-                        <td align='left'>
-                            «generateForOption(processingExchange, LayoutOptions::ALGORITHM.id, true)»
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </p>
-        <p>
-            The following layout algorithms are currently supported by this service:
+            The following layout algorithms are currently supported by this service. Click any 
+            algorithm to receive further information on it's supported layout options.
         </p>
         <p>
             <div align='center'>
@@ -365,36 +358,45 @@ class ProvidedlayoutProvider
             else "&lt;NONE&gt;"
  
         '''
-        <div class="col-md-8 col-md-offset-2">
-        «if (!rawAppend) '''<h3>Layout Option Details</h3>'''»
-        <p>Name: «option.name»<br/></p>
-        <p>Identifier: «option.id»<br/></p>
-        <p>Type: 
-        «if (type.equals(LayoutOptionData::REMOTEENUM_LITERAL))
-            "enumeration"
-        else if (type.equals(LayoutOptionData::REMOTEENUMSET_LITERAL))
-            "enumeration set"
-        else type»<br/></p>
-        «if (type.equals(LayoutOptionData::REMOTEENUM_LITERAL)
-            || type.equals(LayoutOptionData::REMOTEENUMSET_LITERAL)) {
+        
+            «if (!rawAppend) '''<div class="col-md-8 col-md-offset-2"><h3>Layout Option Details</h3>'''»
+            <dl class="dl-horizontal">
+                <dt>Name:</dt><dd>«option.name»</dd>
+                <dt>Identifier:</dt><dd>«option.id»</dd>
+                <dt>Type:</dt><dd>
+                «if (type.equals(LayoutOptionData::REMOTEENUM_LITERAL))
+                    "enumeration"
+                else if (type.equals(LayoutOptionData::REMOTEENUMSET_LITERAL))
+                    "enumeration set"
+                else type»</dd>
+                «if (type.equals(LayoutOptionData::REMOTEENUM_LITERAL)
+                    || type.equals(LayoutOptionData::REMOTEENUMSET_LITERAL)) {
+                    '''
+                    <dt>Possible Values:</dt><dd>«option.remoteEnum.values.join(", ")»</dd>
+                    '''
+                }»
+                <dt>Default Value:</dt><dd>«defaultValue»</dd>
+                «if (option.appliesTo != null) {
+                    '''<dt>Applies To:</dt><dd>«option.appliesTo»</dd>'''
+            }»
+            </dl>
+            «if (option.description != null) {
             '''
-            <p>Possible Values: «option.remoteEnum.values.join(", ")»<br/></p>
+            <h4>Description</h4>
+            <p>
+                «generateHypertext(option.description)»
+            </p>
+                '''
+            }»
+            «if (type.equals(LayoutOptionData::REMOTEENUMSET_LITERAL)) 
             '''
-        }»
-        <p>Default Value: «defaultValue»<br/></p>
-        «if (option.appliesTo != null) {
-            '''<p>Applies To: «option.appliesTo»<br/></p>'''
-        }»
-        «if (option.description != null) {
-            '''
-        <h4>Description</h4>
-        <p>
-            «generateHypertext(option.description)»
-        </p>
-            '''
-        }»
-        «if (!rawAppend) generateBackButton(processingExchange)»
-        </div>
+            <div class="alert alert-info">
+             To textually specify enumsets pass a string with the desired values separated by a whitespace.  
+             <code> de.cau.cs.kieler.enumProp: "VAL_A VAL_B VAL_C"</code>
+            </div>
+            '''»
+            ««««if (!rawAppend) generateBackButton(processingExchange)»
+        «if (!rawAppend)'''</div>''' »
         '''
     }
     
