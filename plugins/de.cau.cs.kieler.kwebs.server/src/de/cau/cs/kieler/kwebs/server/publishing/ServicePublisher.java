@@ -132,7 +132,9 @@ public final class ServicePublisher {
             }
             // Publish the support server
             if (publishSUPP) {
-                Logger.log("Publishing support server");
+                String addressStr = 
+                        Configuration.INSTANCE.getConfigProperty(Configuration.SUPPORTINGSERVER_ADDRESS);
+                Logger.log("Publishing http layout service on " + addressStr);
                 supportManager.publish(null);
             }
         } catch (Exception e) {

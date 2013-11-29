@@ -33,7 +33,6 @@ class ServiceinterfaceProvider
     {
         '''
         <script type='text/javascript' src='scripts/ajax.js'></script>
-        <script type='text/javascript' src='scripts/highlight.js'></script>
         <script type='text/javascript'>
             function escape(xml) {
                 return xml
@@ -45,30 +44,6 @@ class ServiceinterfaceProvider
         </script>
         <link rel="stylesheet" href="scripts/styles/gc.css">
         <style type='text/css'>
-            code, pre {
-                margin           : 0;
-                padding          : 0;
-                border           : 0;
-                font-size        : 8pt;
-                vertical-align   : baseline;
-                background       : transparent;
-                font-family      : Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;
-                background-color : #eeeeee;
-                text-align:left;
-            }
-            pre {
-                width              : 650px;
-                max-height         : 600px;
-                padding            : 5px;
-                padding-bottom     : 20px;
-                margin-bottom      : 40px;
-                overflow           : auto;
-                -moz-border-radius : 5px;
-                border-radius      : 5px;
-                -moz-box-shadow    : 5px 5px grey;
-                -webkit-box-shadow : 5px 5px grey;
-                box-shadow         : 5px 5px grey;
-            }
             .small {
                 font-size         : 8pt;
                 font-family     : Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;
@@ -110,9 +85,16 @@ class ServiceinterfaceProvider
                 null
                 
         '''
-        <p class='title'>
-            Service Interface
+        <h2>
+            Service Interfaces
+        </h2>
+        <p>
+            We provide a HTTP-based and a SOAP-based interface. The SOAP interface is explained in further detail
+            below. For the HTTP interface have a look at our 
+            <a href="http://rtsys.informatik.uni-kiel.de/confluence/x/FgKE">Wiki</a>.
         </p>
+        
+        <h3>SOAP</h3>
         <p>
             Since KWebS uses a SOAP web service, you need the interface definition in order to use its features.
             The server provides it in form of a document based on the Web Service Description Language (WSDL).
@@ -135,11 +117,7 @@ class ServiceinterfaceProvider
                     The following listing gives you a first impression of the functionality KWebS provides:
                     <br/>
                     <br/>
-                    <div align='center'>
-                        <pre>
-                            <code id='interface'>
-                            </code>
-                        </pre>
+                    <div id='interface'>
                     </div>
                 </p>
                 <script type='text/javascript'>
@@ -152,9 +130,11 @@ class ServiceinterfaceProvider
                                 function(r){
                                     var elem = document.getElementById('interface');
                                     if (elem != null) {
+                                        
+                                        
                                         ««« This fixes the problem that JAX-WS generates a comment in the WSDL that
                                         ««« is not correctly indended
-                                        var lines   = hljs.highlight("xml", r.responseText.replace(/<!-- Published by JAX-WS RI.*-->/, "\n\n")).value.split("\n");
+                                        var lines   = escape(r.responseText.replace(/<!-- Published by JAX-WS RI.*-->/, "\n\n")).split("\n");
                                         var content = "";
                                         var leads   = (lines.length + "").length;
                                         var pad     = " ";
@@ -162,11 +142,10 @@ class ServiceinterfaceProvider
                                             pad += " ";
                                         }
                                         for (var i = 0; i < lines.length; i++) {
-                                            content += //"<span style='margin:0px;padding:0px;background-color:"
-                                                     //+ (i % 2 == 0 ? "#fafafa" : "#c0ffc0" )
-                                                     /*+ ";'>" +*/ (pad + i).slice(-leads) + ".    " + lines[i]/* + "</span>*/ + "\n";
+                                            content +=  lines[i] + "\n"; «««(pad + i).slice(-leads) + ".    " +
                                         }
-                                        elem.innerHTML = content;
+                                        elem.innerHTML = "<pre class=\"prettyprint linenums lang-xml\">" + content + "</pre>";
+                                        prettyPrint();
                                     } else {
                                         throw "DOM element for displaying the interface definition not found.";
                                     }
@@ -177,11 +156,7 @@ class ServiceinterfaceProvider
                         alert("An error occured while trying to display the interface definition:\n\n" + e);
                     }
                 </script>
-                <p>
-                    <div class='small' align='center'>
-                        Thanks to the guys from software maniacs for their great syntax highlighting that can be found <a class='small' href='http://softwaremaniacs.org/soft/highlight/en/'>here</a>.
-                    </div>
-                </p>'''
+                '''
             }
         »'''
     }
