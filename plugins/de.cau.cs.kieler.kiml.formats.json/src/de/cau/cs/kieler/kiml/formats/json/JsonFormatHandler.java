@@ -18,10 +18,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer;
-import de.cau.cs.kieler.kiml.service.formats.ITransformationHandler;
-import de.cau.cs.kieler.kiml.service.formats.TransformationData;
-import de.cau.cs.kieler.kiml.service.formats.TransformationException;
+import de.cau.cs.kieler.kiml.formats.IGraphFormatHandler;
+import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
+import de.cau.cs.kieler.kiml.formats.TransformationData;
+import de.cau.cs.kieler.kiml.formats.TransformationException;
 
 /**
  * Handler for a JSON graph format.
@@ -87,7 +87,7 @@ import de.cau.cs.kieler.kiml.service.formats.TransformationException;
  * 
  * @author uru
  */
-public class JsonHandler implements ITransformationHandler<JSONObject> {
+public class JsonFormatHandler implements IGraphFormatHandler<JSONObject> {
 
     /**
      * {@inheritDoc}

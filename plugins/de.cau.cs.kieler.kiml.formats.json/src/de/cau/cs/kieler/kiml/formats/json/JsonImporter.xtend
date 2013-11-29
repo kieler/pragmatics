@@ -24,13 +24,13 @@ import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement
 import de.cau.cs.kieler.kiml.options.LayoutOptions
-import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer
-import de.cau.cs.kieler.kiml.service.formats.TransformationData
-import de.cau.cs.kieler.kiml.service.formats.TransformationException
 import de.cau.cs.kieler.kiml.util.KimlUtil
 import java.util.Map
 import org.json.JSONArray
 import org.json.JSONObject
+import de.cau.cs.kieler.kiml.formats.IGraphTransformer
+import de.cau.cs.kieler.kiml.formats.TransformationException
+import de.cau.cs.kieler.kiml.formats.TransformationData
 
 /**
  * Importer for graphs in the json format.

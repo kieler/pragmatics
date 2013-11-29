@@ -3,9 +3,9 @@
 
 <plugin>
    <extension
-         point="de.cau.cs.kieler.kiml.service.graphTransformers">
+         point="de.cau.cs.kieler.kiml.formats.graphFormats">
       <handler
-            class="de.cau.cs.kieler.kiml.formats.json.JsonHandler"
+            class="de.cau.cs.kieler.kiml.formats.json.JsonFormatHandler"
             description="Handler for the graphs in the form of JavaScript Object Notation."
             extensions="json"
             id="org.json"
