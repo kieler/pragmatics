@@ -1,17 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.cau.cs.kieler.kiml.graphviz.feature"
-      label="KIELER Layout - Graphviz Support (optional)"
-      version="0.7.3.qualifier"
+      id="de.cau.cs.kieler.kiml.feature"
+      label="KIELER Layout API"
+      version="0.13.0.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel"
-      plugin="de.cau.cs.kieler.kiml.graphviz.layouter">
+      plugin="de.cau.cs.kieler.kiml">
 
    <description url="http://rtsys.informatik.uni-kiel.de/confluence/x/jgEF">
-      Connector for Graphviz layouts; the Graphviz tool is not shipped with this feature and has to be installed separately from www.graphviz.org. For Windows platforms and non-standard Unix installations the path to the &quot;dot&quot; executable must be configured in the preferences.
+      The KIELER Infrastructure for Meta Layout provides automatic
+layout for graph-based diagrams. It is able to manage a set of included layout
+algorithms as well as new algorithms which can be contributed
+though an extension point. Furthermore, it offers numerous ways
+to customize the layout using layout options.
    </description>
 
    <copyright>
-      Copyright 2013 by Real-Time and Embedded Systems Group, Department of Computer Science, Christian-Albrechts-University of Kiel
+      Copyright 2013 by Real-Time and Embedded Systems Group, Department
+of Computer Science, Christian-Albrechts-University of Kiel
    </copyright>
 
    <license url="http://www.eclipse.org/legal/epl-v10.html">
@@ -218,27 +223,54 @@ litigation.
    </url>
 
    <requires>
+      <import plugin="com.google.guava" version="10.0.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.emf" version="2.7.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.xtext.runtime" version="2.1.0" match="greaterOrEqual"/>
-      <import feature="de.cau.cs.kieler.kiml.feature"/>
    </requires>
 
    <plugin
-         id="de.cau.cs.kieler.kiml.graphviz.dot"
+         id="de.cau.cs.kieler.core"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.kiml.graphviz.layouter"
+         id="de.cau.cs.kieler.core.kgraph"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.kiml.formats"
+         id="de.cau.cs.kieler.kiml"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.kiml.service"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.klay.layered"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.klay.force"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.klay.tree"
          download-size="0"
          install-size="0"
          version="0.0.0"
