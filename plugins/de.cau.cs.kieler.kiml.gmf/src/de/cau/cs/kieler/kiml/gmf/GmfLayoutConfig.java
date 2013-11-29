@@ -395,14 +395,15 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
      */
     private void transferValues(final KLayoutData graphData, final String prefix,
             final View view) {
-        LayoutDataService layoutServices = LayoutDataService.getInstance();
+        LayoutDataService layoutService = LayoutDataService.getInstance();
         for (Object obj : view.getStyles()) {
             if (obj instanceof StringValueStyle) {
                 StringValueStyle style = (StringValueStyle) obj;
                 String key = style.getName();
                 if (key != null && key.startsWith(prefix)) {
-                    LayoutOptionData<?> optionData = layoutServices.getOptionData(
-                            key.substring(prefix.length()));
+                    @SuppressWarnings("unchecked")
+                    LayoutOptionData<Object> optionData = (LayoutOptionData<Object>)
+                            layoutService.getOptionData(key.substring(prefix.length()));
                     if (optionData != null) {
                         Object value = optionData.parseValue(style.getStringValue());
                         if (value != null) {

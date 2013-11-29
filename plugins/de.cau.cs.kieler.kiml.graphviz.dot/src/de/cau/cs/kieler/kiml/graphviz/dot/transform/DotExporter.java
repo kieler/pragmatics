@@ -122,7 +122,8 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
      * @param transData the transformation data instance
      */
     public void transform(final TransformationData<KNode, GraphvizModel> transData) {
-        transData.setProperty(GRAPH_ELEMS, HashBiMap.create());
+        BiMap<String, KGraphElement> graphElems = HashBiMap.create();
+        transData.setProperty(GRAPH_ELEMS, graphElems);
         KNode kgraph = transData.getSourceGraph();
         GraphvizModel graphvizModel = DotFactory.eINSTANCE.createGraphvizModel();
         Graph graph = DotFactory.eINSTANCE.createGraph();

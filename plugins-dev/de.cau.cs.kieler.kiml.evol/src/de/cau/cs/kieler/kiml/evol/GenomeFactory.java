@@ -383,8 +383,9 @@ public final class GenomeFactory {
                 // then transfer values from the given genome, overriding values of the configurator
                 for (Gene<?> gene : genome.getGenes(context)) {
                     if (gene.getValue() != null) {
-                        LayoutOptionData<?> optionData = dataService.getOptionData(
-                                gene.getTypeInfo().getId());
+                        @SuppressWarnings("unchecked")
+                        LayoutOptionData<Object> optionData = (LayoutOptionData<Object>)
+                                dataService.getOptionData(gene.getTypeInfo().getId());
                         if (optionData != null) {
                             nodeLayout.setProperty(optionData, translateFromGene(gene));
                         }

@@ -135,6 +135,7 @@ public abstract class SemanticLayoutConfig implements IMutableLayoutConfig {
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public final void transferValues(final KLayoutData graphData, final LayoutContext context) {
         EObject element = context.getProperty(LayoutContext.DOMAIN_MODEL);
         if (element != null) {
@@ -151,7 +152,7 @@ public abstract class SemanticLayoutConfig implements IMutableLayoutConfig {
                     
                     if (optionData != null) {
                         Object value = getSemanticValue(element, optionData);
-                        graphData.setProperty(property, value);
+                        graphData.setProperty((IProperty<Object>) property, value);
                     }
                 }
             }

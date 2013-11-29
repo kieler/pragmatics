@@ -19,9 +19,10 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
+import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
 import de.cau.cs.kieler.kiml.grana.AnalysisData;
-import de.cau.cs.kieler.kiml.grana.ui.batch.LayoutConfigurationPage.BatchLayoutConfig;
 import de.cau.cs.kieler.kiml.grana.util.GranaUtil;
 
 /**
@@ -113,9 +114,10 @@ public class BatchWizard extends Wizard {
         resultFile = resultFilePage.getResultFile();
         selectedAnalyses = analysisSelectionPage.getAnalyses();
         GranaUtil.setAnalysesSelection(PREFERENCE_SELECTED_ANALYSES, selectedAnalyses);
-        BatchLayoutConfig batchLayoutConfig = layoutConfigurationPage.getConfig();
+        VolatileLayoutConfig batchLayoutConfig = layoutConfigurationPage.getConfig();
         layoutConfig = batchLayoutConfig;
-        GranaUtil.setConfiguration(PREFERENCE_LAYOUT_CONFIG, batchLayoutConfig.getEntries());
+        GranaUtil.setConfiguration(PREFERENCE_LAYOUT_CONFIG,
+                Pair.fromMap(batchLayoutConfig.getGlobalValues()));
         return true;
     }
 

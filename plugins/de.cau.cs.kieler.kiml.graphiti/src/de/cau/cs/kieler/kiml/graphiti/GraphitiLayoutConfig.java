@@ -342,8 +342,9 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
         for (Property prop : pe.getProperties()) {
             String key = prop.getKey();
             if (key != null && key.startsWith(prefix)) {
-                LayoutOptionData<?> optionData = layoutServices.getOptionData(
-                        key.substring(prefix.length()));
+                @SuppressWarnings("unchecked")
+                LayoutOptionData<Object> optionData = (LayoutOptionData<Object>)
+                        layoutServices.getOptionData(key.substring(prefix.length()));
                 if (optionData != null) {
                     Object value = optionData.parseValue(prop.getValue());
                     if (value != null) {

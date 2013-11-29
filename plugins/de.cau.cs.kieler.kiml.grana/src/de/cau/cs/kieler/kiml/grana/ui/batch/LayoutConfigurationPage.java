@@ -18,7 +18,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.layout.LayoutConstants;
@@ -45,17 +44,10 @@ import org.eclipse.ui.dialogs.ListDialog;
 
 import com.google.common.collect.Lists;
 
-import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KGraphElement;
-import de.cau.cs.kieler.core.kgraph.KLabel;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.config.ILayoutConfig;
-import de.cau.cs.kieler.kiml.config.LayoutContext;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
+import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.AlgorithmSelectionDialog;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
@@ -81,14 +73,14 @@ public class LayoutConfigurationPage extends WizardPage {
     private static final int COL_VALUE = 1;
     
     /** list of layout option entries. */
-    private final List<Pair<LayoutOptionData<?>, Object>> optionEntries = Lists.newLinkedList();
+    private final List<Pair<LayoutOptionData<Object>, Object>> optionEntries = Lists.newLinkedList();
     
     /**
      * Constructs a LayoutConfigurationPage.
      * 
      * @param initialEntries the initial layout configuration
      */
-    public LayoutConfigurationPage(final List<Pair<LayoutOptionData<?>, Object>> initialEntries) {
+    public LayoutConfigurationPage(final List<Pair<LayoutOptionData<Object>, Object>> initialEntries) {
         super(PAGE_NAME);
         optionEntries.addAll(initialEntries);
     }
@@ -127,7 +119,8 @@ public class LayoutConfigurationPage extends WizardPage {
         editButton.setEnabled(false);
         editButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(final SelectionEvent event) {
-                Pair<LayoutOptionData<?>, Object> entry = optionEntries.get(table.getSelectionIndex());
+                Pair<LayoutOptionData<Object>, Object> entry = optionEntries.get(
+                        table.getSelectionIndex());
                 if (entry != null) {
                     showEditDialog(parent.getShell(), entry);
                     tableViewer.refresh();
@@ -168,7 +161,8 @@ public class LayoutConfigurationPage extends WizardPage {
             @Override
             public void widgetDefaultSelected(final SelectionEvent e) {
                 // Duplicate code from edit button handler
-                Pair<LayoutOptionData<?>, Object> entry = optionEntries.get(table.getSelectionIndex());
+                Pair<LayoutOptionData<Object>, Object> entry = optionEntries.get(
+                        table.getSelectionIndex());
                 if (entry != null) {
                     showEditDialog(parent.getShell(), entry);
                     tableViewer.refresh();
@@ -191,11 +185,11 @@ public class LayoutConfigurationPage extends WizardPage {
         });
         newButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(final SelectionEvent event) {
-                LayoutOptionData<?> optionData = showBrowseOptionDialog();
+                LayoutOptionData<Object> optionData = showBrowseOptionDialog();
                 if (optionData != null) {
                     // look for an existing entry with the same option
-                    Pair<LayoutOptionData<?>, Object> entry = null;
-                    for (Pair<LayoutOptionData<?>, Object> oe : optionEntries) {
+                    Pair<LayoutOptionData<Object>, Object> entry = null;
+                    for (Pair<LayoutOptionData<Object>, Object> oe : optionEntries) {
                         if (optionData.equals(oe.getFirst())) {
                             entry = oe;
                             break;
@@ -210,7 +204,7 @@ public class LayoutConfigurationPage extends WizardPage {
                             }
                         }
                         if (value != null) {
-                            entry = new Pair<LayoutOptionData<?>, Object>(optionData, value);
+                            entry = new Pair<LayoutOptionData<Object>, Object>(optionData, value);
                             optionEntries.add(entry);
                             tableViewer.setInput(optionEntries);
                             column1.pack();
@@ -248,8 +242,12 @@ public class LayoutConfigurationPage extends WizardPage {
      * 
      * @return a layout configurator
      */
-    public BatchLayoutConfig getConfig() {
-        return new BatchLayoutConfig(optionEntries);
+    public VolatileLayoutConfig getConfig() {
+        VolatileLayoutConfig config = new VolatileLayoutConfig();
+        for (Pair<LayoutOptionData<Object>, Object> pair : optionEntries) {
+            config.setValue(pair.getFirst(), pair.getSecond());
+        }
+        return config;
     }
     
     /**
@@ -258,7 +256,7 @@ public class LayoutConfigurationPage extends WizardPage {
      * @param shell the current shell
      * @param entry an option table entry
      */
-    private void showEditDialog(final Shell shell, final Pair<LayoutOptionData<?>, Object> entry) {
+    private void showEditDialog(final Shell shell, final Pair<LayoutOptionData<Object>, Object> entry) {
         LayoutOptionData<?> optionData = entry.getFirst();
         if (optionData.equals(LayoutOptions.ALGORITHM)) {
             // show a selection dialog for a layouter hint
@@ -294,7 +292,8 @@ public class LayoutConfigurationPage extends WizardPage {
      * 
      * @return the selected layout option
      */
-    private LayoutOptionData<?> showBrowseOptionDialog() {
+    @SuppressWarnings("unchecked")
+    private LayoutOptionData<Object> showBrowseOptionDialog() {
         ListDialog dialog = new ListDialog(this.getShell());
         dialog.setTitle("Select Layout Option");
         dialog.setContentProvider(ArrayContentProvider.getInstance());
@@ -316,7 +315,7 @@ public class LayoutConfigurationPage extends WizardPage {
         if (dialog.open() == ListDialog.OK) {
             Object[] result = dialog.getResult();
             if (result != null && result.length > 0) {
-                return (LayoutOptionData<?>) result[0];
+                return (LayoutOptionData<Object>) result[0];
             }
         }
         return null;
@@ -390,107 +389,6 @@ public class LayoutConfigurationPage extends WizardPage {
             return null;
         }
         
-    }
-    
-    /**
-     * Layout configurator that uses the selected layout options.
-     */
-    public static class BatchLayoutConfig implements ILayoutConfig {
-
-        /** the fixed priority of the light layout configurator. */
-        public static final int PRIORITY = 50;
-        
-        /** list of layout option entries. */
-        private final List<Pair<LayoutOptionData<?>, Object>> optionEntries;
-        
-        /**
-         * Create a batch layout config.
-         * 
-         * @param optionEntries the layout option entries
-         */
-        public BatchLayoutConfig(final List<Pair<LayoutOptionData<?>, Object>> optionEntries) {
-            this.optionEntries = optionEntries;
-        }
-        
-        /**
-         * Returns the layout option entries.
-         * 
-         * @return the option entries
-         */
-        public List<Pair<LayoutOptionData<?>, Object>> getEntries() {
-            return optionEntries;
-        }
-        
-        /**
-         * {@inheritDoc}
-         */
-        public int getPriority() {
-            return PRIORITY;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public void enrich(final LayoutContext context) {
-            // nothing to enrich
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public Object getValue(final LayoutOptionData<?> optionData, final LayoutContext context) {
-            for (Pair<LayoutOptionData<?>, Object> entry : optionEntries) {
-                if (optionData.equals(entry.getFirst())) {
-                    return entry.getSecond();
-                }
-            }
-            return null;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public void transferValues(final KLayoutData graphData, final LayoutContext context) {
-            KGraphElement graphElement = context.getProperty(LayoutContext.GRAPH_ELEM);
-            for (Pair<LayoutOptionData<?>, Object> entry : optionEntries) {
-                if (matchesTargetType(entry.getFirst(), graphElement)) {
-                    graphData.setProperty(entry.getFirst(), entry.getSecond());
-                }
-            }
-        }
-        
-        /**
-         * Check whether the given diagram part matches the target type of the layout option.
-         * 
-         * @param optionData a layout option data instance
-         * @param graphElement a graph element
-         * @return true if the layout option can be applied to the graph element
-         */
-        private boolean matchesTargetType(final LayoutOptionData<?> optionData,
-                final KGraphElement graphElement) {
-            Set<LayoutOptionData.Target> optionTargets = optionData.getTargets();
-            if (graphElement instanceof KNode) {
-                if (optionTargets.contains(LayoutOptionData.Target.NODES)
-                        || !((KNode) graphElement).getChildren().isEmpty()
-                        && optionTargets.contains(LayoutOptionData.Target.PARENTS)) {
-                    return true;
-                }
-            } else if (graphElement instanceof KEdge) {
-                if (optionTargets.contains(LayoutOptionData.Target.EDGES)) {
-                    return true;
-                }
-            } else if (graphElement instanceof KPort) {
-                if (optionTargets.contains(LayoutOptionData.Target.PORTS)) {
-                    return true;
-                }
-            } else if (graphElement instanceof KLabel) {
-                if (optionTargets.contains(LayoutOptionData.Target.LABELS)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
     }
     
 }

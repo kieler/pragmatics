@@ -189,11 +189,12 @@ public class SmartLayoutConfig implements ILayoutConfig {
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public void transferValues(final KLayoutData graphData, final LayoutContext context) {
         MetaLayout metaLayout = provideMetaLayout(context);
         if (metaLayout != null) {
             for (Map.Entry<IProperty<?>, Object> entry : metaLayout.getConfig().entrySet()) {
-                graphData.setProperty(entry.getKey(), entry.getValue());
+                graphData.setProperty((IProperty<Object>) entry.getKey(), entry.getValue());
             }
         }
     }

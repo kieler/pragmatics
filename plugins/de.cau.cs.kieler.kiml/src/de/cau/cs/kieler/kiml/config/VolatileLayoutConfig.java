@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.config;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -46,12 +47,12 @@ public class VolatileLayoutConfig implements ILayoutConfig {
     public static final int DEFAULT_PRIORITY = 100;
 
     /** map of focus objects and property identifiers to their values. */
-    private final Map<Object, Map<IProperty<?>, Object>> focusOptionMap = Maps.newHashMap();
+    private final Map<Object, Map<IProperty<Object>, Object>> focusOptionMap = Maps.newHashMap();
     /** the layout context keys managed by this configurator. */
     private final Set<IProperty<?>> contextKeys = new HashSet<IProperty<?>>();
     
     /** the map of layout options set for this configurator. */
-    private final Map<LayoutOptionData<?>, Object> globalOptionMap = Maps.newHashMap();
+    private final Map<LayoutOptionData<Object>, Object> globalOptionMap = Maps.newHashMap();
     
     /** the priority of this configurator. */
     private int priority;
@@ -115,6 +116,15 @@ public class VolatileLayoutConfig implements ILayoutConfig {
     public Object getGlobalValue(final IProperty<?> option) {
         return globalOptionMap.get(option);
     }
+    
+    /**
+     * Returns an unmodifiable view on the globally configured values.
+     * 
+     * @return a map of global values
+     */
+    public Map<LayoutOptionData<Object>, Object> getGlobalValues() {
+        return Collections.unmodifiableMap(globalOptionMap);
+    }
 
     /**
      * {@inheritDoc}
@@ -131,7 +141,7 @@ public class VolatileLayoutConfig implements ILayoutConfig {
             // retrieve the object stored under this key from the context
             Object object = context.getProperty(contextKey);
             // retrieve the map of options that have been set for that object
-            Map<IProperty<?>, Object> contextOptions = focusOptionMap.get(object);
+            Map<IProperty<Object>, Object> contextOptions = focusOptionMap.get(object);
             if (contextOptions != null) {
                 // get the value set for the given layout option, if any
                 Object value = contextOptions.get(optionData);
@@ -165,19 +175,20 @@ public class VolatileLayoutConfig implements ILayoutConfig {
      * @return the instance on which the method was called, for chaining multiple method calls
      * @param <T> the type of the layout option
      */
+    @SuppressWarnings("unchecked")
     public <T> VolatileLayoutConfig setValue(final IProperty<? super T> option, final Object contextObj,
             final IProperty<?> contextKey, final T value) {
         contextKeys.add(contextKey);
         
-        Map<IProperty<?>, Object> contextOptions = focusOptionMap.get(contextObj);
+        Map<IProperty<Object>, Object> contextOptions = focusOptionMap.get(contextObj);
         if (contextOptions == null) {
-            contextOptions = new HashMap<IProperty<?>, Object>();
+            contextOptions = new HashMap<IProperty<Object>, Object>();
             focusOptionMap.put(contextObj, contextOptions);
         }
         if (value == null) {
             contextOptions.remove(option);
         } else {
-            contextOptions.put(option, value);
+            contextOptions.put((IProperty<Object>) option, value);
         }
         return this;
     }
@@ -191,12 +202,13 @@ public class VolatileLayoutConfig implements ILayoutConfig {
      * @return the instance on which the method was called, for chaining multiple method calls
      * @param <T> the type of the layout option
      */
+    @SuppressWarnings("unchecked")
     public <T> VolatileLayoutConfig setValue(final IProperty<? super T> option, final T value) {
         if (option instanceof LayoutOptionData<?>) {
-            globalOptionMap.put((LayoutOptionData<?>) option, value);
+            globalOptionMap.put((LayoutOptionData<Object>) option, value);
         } else {
-            LayoutOptionData<?> optionData = LayoutDataService.getInstance().getOptionData(
-                    option.getId());
+            LayoutOptionData<Object> optionData = (LayoutOptionData<Object>) LayoutDataService
+                    .getInstance().getOptionData(option.getId());
             if (optionData != null) {
                 globalOptionMap.put(optionData, value);
             } else {
@@ -214,7 +226,7 @@ public class VolatileLayoutConfig implements ILayoutConfig {
         // transfer globally defined options
         KGraphElement graphElem = context.getProperty(LayoutContext.GRAPH_ELEM);
         boolean isGlobal = context.getProperty(LayoutContext.GLOBAL);
-        for (Map.Entry<LayoutOptionData<?>, Object> entry : globalOptionMap.entrySet()) {
+        for (Map.Entry<LayoutOptionData<Object>, Object> entry : globalOptionMap.entrySet()) {
             if (isGlobal || matchesTargetType(entry.getKey(), graphElem)) {
                 graphData.setProperty(entry.getKey(), entry.getValue());
             }
@@ -223,9 +235,9 @@ public class VolatileLayoutConfig implements ILayoutConfig {
         // transfer options for the focus object
         for (IProperty<?> contextKey : contextKeys) {
             Object object = context.getProperty(contextKey);
-            Map<IProperty<?>, Object> contextOptions = focusOptionMap.get(object);
+            Map<IProperty<Object>, Object> contextOptions = focusOptionMap.get(object);
             if (contextOptions != null) {
-                for (Map.Entry<IProperty<?>, Object> option : contextOptions.entrySet()) {
+                for (Map.Entry<IProperty<Object>, Object> option : contextOptions.entrySet()) {
                     graphData.setProperty(option.getKey(), option.getValue());
                 }
             }

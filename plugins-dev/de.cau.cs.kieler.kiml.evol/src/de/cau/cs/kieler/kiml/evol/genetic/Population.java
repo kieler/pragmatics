@@ -55,10 +55,11 @@ public class Population extends ArrayList<Genome> {
     /**
      * Sets a property value using the nested property holder.
      * 
+     * @param <T> type of property
      * @param property the property to set
      * @param value the new value
      */
-    public void setProperty(final IProperty<?> property, final Object value) {
+    public <T> void setProperty(final IProperty<? super T> property, final T value) {
         propertyHolder.setProperty(property, value);
     }
     

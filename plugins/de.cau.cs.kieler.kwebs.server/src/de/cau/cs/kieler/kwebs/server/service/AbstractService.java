@@ -432,6 +432,7 @@ public abstract class AbstractService {
      * @param transData a transformation data instance
      * @param options a list of layout options
      */
+    @SuppressWarnings("unchecked")
     private void annotateTransData(final TransformationData<?, ?> transData,
             final List<GraphLayoutOption> options) {
         LayoutDataService dataService = LayoutDataService.getInstance();
@@ -440,7 +441,7 @@ public abstract class AbstractService {
             if (optionData != null) {
                 Object optionValue = optionData.parseValue(option.getValue());
                 if (optionValue != null) {
-                    transData.setProperty(optionData, optionValue);
+                    transData.setProperty((LayoutOptionData<Object>) optionData, optionValue);
                 }
             }
         }
@@ -543,6 +544,7 @@ public abstract class AbstractService {
      * @param layoutOptionValue
      *            the value of the option
      */
+    @SuppressWarnings("unchecked")
     private void annotateGraphElement(final KGraphElement element,
         final EClass type, final IProperty<?> layoutOption,
         final Object layoutOptionValue) {
@@ -559,7 +561,7 @@ public abstract class AbstractService {
         // Do not overwrite element specific option if already set
         EMap<IProperty<?>, Object> properties = layout.getProperties();
         if (!properties.containsKey(layoutOption)) {
-            layout.setProperty(layoutOption, layoutOptionValue);
+            layout.setProperty((LayoutOptionData<Object>) layoutOption, layoutOptionValue);
         }
     }
 

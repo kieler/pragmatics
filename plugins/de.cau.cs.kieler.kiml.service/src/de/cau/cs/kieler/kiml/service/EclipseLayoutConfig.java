@@ -261,20 +261,19 @@ public class EclipseLayoutConfig implements ILayoutConfig {
     public void transferValues(final KLayoutData graphData, final LayoutContext context) {
         LayoutConfigService configService = LayoutConfigService.getInstance();
         LayoutDataService dataService = LayoutDataService.getInstance();
-        Object value;
         
         // get dynamic values for specific options
-        value = getSizeConstraintValue(context);
-        if (value != null) {
-            graphData.setProperty(LayoutOptions.SIZE_CONSTRAINT, value);
+        EnumSet<SizeConstraint> scValue = getSizeConstraintValue(context);
+        if (scValue != null) {
+            graphData.setProperty(LayoutOptions.SIZE_CONSTRAINT, scValue);
         }
-        value = getPortConstraintsValue(context);
-        if (value != null) {
-            graphData.setProperty(LayoutOptions.PORT_CONSTRAINTS, value);
+        PortConstraints pcValue = getPortConstraintsValue(context);
+        if (pcValue != null) {
+            graphData.setProperty(LayoutOptions.PORT_CONSTRAINTS, pcValue);
         }
-        value = getAspectRatioValue(context);
-        if (value != null) {
-            graphData.setProperty(LayoutOptions.ASPECT_RATIO, value);
+        Float arValue = getAspectRatioValue(context);
+        if (arValue != null) {
+            graphData.setProperty(LayoutOptions.ASPECT_RATIO, arValue);
         }
 
         Object diagPart = context.getProperty(LayoutContext.DIAGRAM_PART);
@@ -285,7 +284,9 @@ public class EclipseLayoutConfig implements ILayoutConfig {
         if (diagramType != null) {
             for (Entry<String, Object> entry : configService.getOptionValues(diagramType).entrySet()) {
                 if (entry.getValue() != null) {
-                    LayoutOptionData<?> optionData = dataService.getOptionData(entry.getKey());
+                    @SuppressWarnings("unchecked")
+                    LayoutOptionData<Object> optionData = (LayoutOptionData<Object>)
+                            dataService.getOptionData(entry.getKey());
                     if (optionData != null) {
                         graphData.setProperty(optionData, entry.getValue());
                     }
@@ -298,7 +299,9 @@ public class EclipseLayoutConfig implements ILayoutConfig {
             for (Entry<String, Object> entry : configService.getOptionValues(
                     modelElement.eClass()).entrySet()) {
                 if (entry.getValue() != null) {
-                    LayoutOptionData<?> optionData = dataService.getOptionData(entry.getKey());
+                    @SuppressWarnings("unchecked")
+                    LayoutOptionData<Object> optionData = (LayoutOptionData<Object>)
+                            dataService.getOptionData(entry.getKey());
                     if (optionData != null) {
                         graphData.setProperty(optionData, entry.getValue());
                     }
@@ -311,7 +314,9 @@ public class EclipseLayoutConfig implements ILayoutConfig {
             String clazzName = diagPart.getClass().getName();
             for (Entry<String, Object> entry : configService.getOptionValues(clazzName).entrySet()) {
                 if (entry.getValue() != null) {
-                    LayoutOptionData<?> optionData = dataService.getOptionData(entry.getKey());
+                    @SuppressWarnings("unchecked")
+                    LayoutOptionData<Object> optionData = (LayoutOptionData<Object>)
+                            dataService.getOptionData(entry.getKey());
                     if (optionData != null) {
                         graphData.setProperty(optionData, entry.getValue());
                     }
