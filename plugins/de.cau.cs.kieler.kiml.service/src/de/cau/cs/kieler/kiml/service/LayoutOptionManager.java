@@ -29,7 +29,10 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
+import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.LayoutConfigService;
+import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.config.CompoundLayoutConfig;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
@@ -101,6 +104,29 @@ public class LayoutOptionManager {
             clc.add(conf);
         }
         return clc;
+    }
+    
+    /**
+     * Retrieve a global option value from the given configurator.
+     * 
+     * @param option a property that defines a layout option
+     * @param config the layout configurator for getting the option value
+     * @return the global option value stored in the configurator, or the default value
+     * @param <T> the type of the given option
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T getGlobalValue(final IProperty<T> option, final ILayoutConfig config) {
+        if (config != null) {
+            LayoutOptionData<?> optionData = LayoutDataService.getInstance().getOptionData(
+                    option.getId());
+            if (optionData != null) {
+                Object value = config.getValue(optionData, LayoutContext.global());
+                if (value != null) {
+                    return (T) value;
+                }
+            }
+        }
+        return option.getDefault();
     }
 
     /**

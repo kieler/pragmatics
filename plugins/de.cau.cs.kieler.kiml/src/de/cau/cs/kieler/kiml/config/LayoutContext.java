@@ -38,8 +38,22 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
  */
 public class LayoutContext extends MapPropertyHolder {
     
+    /**
+     * Creates and returns a global context.
+     * 
+     * @return a global context
+     */
+    public static LayoutContext global() {
+        LayoutContext globalContext = new LayoutContext();
+        globalContext.setProperty(GLOBAL, true);
+        return globalContext;
+    }
+    
     /** the serial version UID. */
     private static final long serialVersionUID = -7544617305602906672L;
+    
+    /** whether the context is global, that means it affects options for the whole layout process. */
+    public static final IProperty<Boolean> GLOBAL = new Property<Boolean>("context.global", false);
 
     /** the graph element in the current context. */
     public static final IProperty<KGraphElement> GRAPH_ELEM = new Property<KGraphElement>(

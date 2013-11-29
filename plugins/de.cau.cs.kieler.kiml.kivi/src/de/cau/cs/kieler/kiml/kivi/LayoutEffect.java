@@ -31,6 +31,7 @@ import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.config.LayoutContext;
 import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.service.LayoutManagersService;
 import de.cau.cs.kieler.kiml.service.IDiagramLayoutManager;
@@ -91,7 +92,7 @@ public class LayoutEffect extends AbstractEffect {
     /** the layout mapping that has been used for layout. */
     private LayoutMapping<?> layoutMapping;
     /** additional layout options configurations. */
-    private LinkedList<ILayoutConfig> layoutConfigs = new LinkedList<ILayoutConfig>();
+    private LinkedList<VolatileLayoutConfig> layoutConfigs = new LinkedList<VolatileLayoutConfig>();
     /** whether the effect should be merged with other layout effects. */
     private boolean doMerge = true;
 
@@ -222,7 +223,7 @@ public class LayoutEffect extends AbstractEffect {
         if (layoutConfigs.isEmpty()) {
             addLayoutConfig();
         }
-        VolatileLayoutConfig config = (VolatileLayoutConfig) layoutConfigs.getLast();
+        VolatileLayoutConfig config = layoutConfigs.getLast();
         if (object instanceof EObject) {
             config.setValue(option, object, LayoutContext.DOMAIN_MODEL, value);
         } else {
@@ -246,9 +247,22 @@ public class LayoutEffect extends AbstractEffect {
      * {@inheritDoc}
      */
     public void execute() {
+        ILayoutConfig[] confs;
+        if (layoutConfigs == null || layoutConfigs.isEmpty()) {
+            confs = new ILayoutConfig[] { new VolatileLayoutConfig()
+                    .setValue(LayoutOptions.ANIMATE, doAnimate)
+                    .setValue(LayoutOptions.PROGRESS_BAR, progressBar)
+                    .setValue(LayoutOptions.LAYOUT_ANCESTORS, layoutAncestors)
+                    .setValue(LayoutOptions.ZOOM_TO_FIT, doZoom) };
+        } else {
+            confs = layoutConfigs.toArray(new ILayoutConfig[layoutConfigs.size()]);
+            ((VolatileLayoutConfig) confs[0]).setValue(LayoutOptions.ANIMATE, doAnimate)
+                    .setValue(LayoutOptions.PROGRESS_BAR, progressBar)
+                    .setValue(LayoutOptions.LAYOUT_ANCESTORS, layoutAncestors)
+                    .setValue(LayoutOptions.ZOOM_TO_FIT, doZoom);
+        }
         DiagramLayoutEngine layoutEngine = DiagramLayoutEngine.INSTANCE;
-        layoutMapping = layoutEngine.layout(diagramEditor, diagramPart, doAnimate, progressBar,
-                layoutAncestors, doZoom, layoutConfigs);
+        layoutMapping = layoutEngine.layout(diagramEditor, diagramPart, confs);
     }
 
     /**
@@ -312,7 +326,7 @@ public class LayoutEffect extends AbstractEffect {
                 this.doZoom |= other.doZoom;
                 this.doAnimate |= other.doAnimate;
                 this.progressBar |= other.progressBar;
-                ListIterator<ILayoutConfig> configIter = other.layoutConfigs.listIterator(
+                ListIterator<VolatileLayoutConfig> configIter = other.layoutConfigs.listIterator(
                         other.layoutConfigs.size());
                 while (configIter.hasPrevious()) {
                     this.layoutConfigs.addFirst(configIter.previous());

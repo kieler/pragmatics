@@ -20,11 +20,9 @@ import java.util.Set;
 
 import com.google.common.collect.Maps;
 
-import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
-import de.cau.cs.kieler.core.kgraph.KLabel;
+import de.cau.cs.kieler.core.kgraph.KGraphPackage;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
@@ -147,7 +145,8 @@ public class VolatileLayoutConfig implements ILayoutConfig {
         Object value = globalOptionMap.get(optionData);
         if (value != null) {
             KGraphElement graphElem = context.getProperty(LayoutContext.GRAPH_ELEM);
-            if (matchesTargetType(optionData, graphElem)) {
+            boolean isGlobal = context.getProperty(LayoutContext.GLOBAL);
+            if (isGlobal || matchesTargetType(optionData, graphElem)) {
                 return value;
             }
         }
@@ -214,8 +213,9 @@ public class VolatileLayoutConfig implements ILayoutConfig {
     public void transferValues(final KLayoutData graphData, final LayoutContext context) {
         // transfer globally defined options
         KGraphElement graphElem = context.getProperty(LayoutContext.GRAPH_ELEM);
+        boolean isGlobal = context.getProperty(LayoutContext.GLOBAL);
         for (Map.Entry<LayoutOptionData<?>, Object> entry : globalOptionMap.entrySet()) {
-            if (matchesTargetType(entry.getKey(), graphElem)) {
+            if (isGlobal || matchesTargetType(entry.getKey(), graphElem)) {
                 graphData.setProperty(entry.getKey(), entry.getValue());
             }
         }
@@ -242,24 +242,29 @@ public class VolatileLayoutConfig implements ILayoutConfig {
     private boolean matchesTargetType(final LayoutOptionData<?> optionData,
             final KGraphElement graphElem) {
         Set<LayoutOptionData.Target> optionTargets = optionData.getTargets();
-        if (graphElem instanceof KNode) {
+        switch (graphElem.eClass().getClassifierID()) {
+        case KGraphPackage.KNODE:
             if (optionTargets.contains(LayoutOptionData.Target.NODES)
                     || !((KNode) graphElem).getChildren().isEmpty()
                     && optionTargets.contains(LayoutOptionData.Target.PARENTS)) {
                 return true;
             }
-        } else if (graphElem instanceof KEdge) {
+            break;
+        case KGraphPackage.KEDGE:
             if (optionTargets.contains(LayoutOptionData.Target.EDGES)) {
                 return true;
             }
-        } else if (graphElem instanceof KPort) {
+            break;
+        case KGraphPackage.KPORT:
             if (optionTargets.contains(LayoutOptionData.Target.PORTS)) {
                 return true;
             }
-        } else if (graphElem instanceof KLabel) {
+            break;
+        case KGraphPackage.KLABEL:
             if (optionTargets.contains(LayoutOptionData.Target.LABELS)) {
                 return true;
             }
+            break;
         }
         return false;
     }

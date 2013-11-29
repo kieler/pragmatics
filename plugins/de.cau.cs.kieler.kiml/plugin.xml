@@ -306,30 +306,78 @@
             upperBound="1000"
             variance="7.0">
       </layoutOption>
+   
+   <!-- Programmatic Layout Options -->
      <layoutOption
+           appliesTo="parents"
            advanced="true"
-           default="false"
-           description="Whether the node should be regarded as a comment box instead of a regular node."
-           id="de.cau.cs.kieler.commentBox"
-           name="Comment Box (programmatic)"
+           default="true"
+           description="Whether the shift from the old layout to the new computed layout shall be animated"
+           id="de.cau.cs.kieler.animate"
+           name="Animate"
            type="boolean"
            variance="0">
      </layoutOption>
      <layoutOption
+           appliesTo="parents"
+           advanced="true"
+           default="400"
+           description="The minimal time for animations, in milliseconds"
+           id="de.cau.cs.kieler.minAnimTim"
+           lowerBound="0"
+           name="Minimal Animation Time"
+           type="int"
+           variance="0">
+     </layoutOption>
+     <layoutOption
+           appliesTo="parents"
+           advanced="true"
+           default="4000"
+           description="The maximal time for animations, in milliseconds"
+           id="de.cau.cs.kieler.maxAnimTim"
+           lowerBound="0"
+           name="Maximal Animation Time"
+           type="int"
+           variance="0">
+     </layoutOption>
+     <layoutOption
+           appliesTo="parents"
+           advanced="true"
+           default="100"
+           description="Factor for calculation of animation time"
+           id="de.cau.cs.kieler.animTimeFactor"
+           lowerBound="0"
+           name="Animation Time Factor"
+           type="int"
+           variance="0">
+     </layoutOption>
+     <layoutOption
+           appliesTo="nodes"
+           advanced="true"
+           default="false"
+           description="Whether the node should be regarded as a comment box instead of a regular node"
+           id="de.cau.cs.kieler.commentBox"
+           name="Comment Box"
+           type="boolean"
+           variance="0">
+     </layoutOption>
+     <layoutOption
+           appliesTo="parents"
            advanced="true"
            description="Identifier of a diagram type that is associated with the children of the respective node"
            id="de.cau.cs.kieler.diagramType"
-           name="Diagram Type (programmatic)"
+           name="Diagram Type"
            type="string"
            variance="0">
      </layoutOption>
      <layoutOption
+           appliesTo="labels"
            advanced="true"
            class="de.cau.cs.kieler.kiml.options.EdgeLabelPlacement"
            default="UNDEFINED"
            description="Gives a hint on where to put edge labels"
            id="de.cau.cs.kieler.edgeLabelPlacement"
-           name="Edge Label Placement (programmatic)"
+           name="Edge Label Placement"
            type="enum"
            variance="0">
      </layoutOption>
@@ -354,92 +402,133 @@
      </layoutOption>
      <layoutOption
            advanced="true"
+           appliesTo="edges"
            class="de.cau.cs.kieler.kiml.options.EdgeType"
            default="NONE"
            description="The type of the edge."
            id="de.cau.cs.kieler.edgeType"
-           name="Edge Type (programmatic)"
+           name="Edge Type"
            type="enum"
            variance="0">
      </layoutOption>
      <layoutOption
            advanced="true"
+           appliesTo="labels"
            description="Font name used for a label"
            id="de.cau.cs.kieler.fontName"
-           name="Font Name (programmatic)"
+           name="Font Name"
            type="string"
            variance="0">
      </layoutOption>
      <layoutOption
            advanced="true"
+           appliesTo="labels"
            description="Font size used for a label"
            id="de.cau.cs.kieler.fontSize"
-           name="Font Size (programmatic)"
+           name="Font Size"
            type="int"
            variance="0">
      </layoutOption>
      <layoutOption
            advanced="true"
            default="false"
+           appliesTo="nodes"
            description="Whether the node should be handled as a hypernode"
            id="de.cau.cs.kieler.hypernode"
-           name="Hypernode (programmatic)"
+           name="Hypernode"
            type="boolean"
            variance="0">
      </layoutOption>
      <layoutOption
            advanced="true"
+           appliesTo="parents"
+           default="false"
+           description="Whether the hierarchy levels on the path from the selected element to the root of the diagram shall be included in the layout process"
+           id="de.cau.cs.kieler.layoutAncestors"
+           name="Layout Ancestors"
+           type="boolean"
+           variance="0">
+     </layoutOption>
+     <layoutOption
+           advanced="true"
+           appliesTo="nodes"
            default="0"
            description="The minimal height to which a node can be reduced"
            id="de.cau.cs.kieler.minHeight"
-           name="Minimal Height (programmatic)"
+           name="Minimal Height"
            type="float"
            variance="0">
      </layoutOption>
      <layoutOption
            advanced="true"
+           appliesTo="nodes"
            default="0"
            description="The minimal width to which a node can be reduced"
            id="de.cau.cs.kieler.minWidth"
-           name="Minimal Width (programmatic)"
+           name="Minimal Width"
            type="float"
            variance="0">
      </layoutOption>
      <layoutOption
            advanced="true"
+           appliesTo="parents,nodes,edges,ports,labels"
            default="false"
            description="Indicates that no layout should be done for the diagram part"
            id="de.cau.cs.kieler.noLayout"
-           name="No Layout (programmatic)"
+           name="No Layout"
            type="boolean">
      </layoutOption>
      <layoutOption
            advanced="true"
+           appliesTo="ports"
            description="The offset of ports on the node border"
            id="de.cau.cs.kieler.offset"
-           name="Port Offset (programmatic)"
+           name="Port Offset"
            type="float"
            variance="0">
      </layoutOption>
      <layoutOption
            advanced="true"
+           appliesTo="ports"
            class="de.cau.cs.kieler.kiml.options.PortSide"
            default="UNDEFINED"
            description="The side of a node on which a port is situated"
            id="de.cau.cs.kieler.portSide"
-           name="Port Side (programmatic)"
+           name="Port Side"
            type="enum"
            variance="0">
      </layoutOption>
      <layoutOption
            advanced="true"
+           appliesTo="ports"
            description="The index of a port in the clockwise fixed order around a node"
            id="de.cau.cs.kieler.portIndex"
-           name="Port Index (programmatic)"
+           name="Port Index"
            type="int"
            variance="0">
      </layoutOption>
+     <layoutOption
+           advanced="true"
+           appliesTo="parents"
+           default="false"
+           description="Whether a progress bar shall be displayed during layout computations"
+           id="de.cau.cs.kieler.progressBar"
+           name="Progress Bar"
+           type="boolean"
+           variance="0">
+     </layoutOption>
+     <layoutOption
+           advanced="true"
+           appliesTo="parents"
+           default="false"
+           description="Whether the zoom level shall be set to view the whole diagram after layout"
+           id="de.cau.cs.kieler.zoomToFit"
+           name="Zoom to Fit"
+           type="boolean"
+           variance="0">
+     </layoutOption>
    </extension>
+   
    <extension
          point="de.cau.cs.kieler.kiml.layoutConfigs">
       <diagramType

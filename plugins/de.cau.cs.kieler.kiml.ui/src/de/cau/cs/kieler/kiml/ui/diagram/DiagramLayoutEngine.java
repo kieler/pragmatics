@@ -19,7 +19,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.kiml.config.CompoundLayoutConfig;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
+import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine.IListener;
 import de.cau.cs.kieler.kiml.service.LayoutMapping;
 import de.cau.cs.kieler.kiml.service.LayoutOptionManager;
@@ -96,9 +99,23 @@ public class DiagramLayoutEngine {
     public LayoutMapping<?> layout(final IWorkbenchPart workbenchPart, final Object diagramPart,
             final boolean animate, final boolean progressBar, final boolean layoutAncestors,
             final boolean zoom, final List<ILayoutConfig> extraLayoutConfigs) {
+        VolatileLayoutConfig parameters = new VolatileLayoutConfig()
+                .setValue(LayoutOptions.ANIMATE, animate)
+                .setValue(LayoutOptions.PROGRESS_BAR, progressBar)
+                .setValue(LayoutOptions.LAYOUT_ANCESTORS, layoutAncestors)
+                .setValue(LayoutOptions.ZOOM_TO_FIT, zoom);
+        ILayoutConfig[] confs;
+        if (extraLayoutConfigs == null || extraLayoutConfigs.isEmpty()) {
+            confs = new ILayoutConfig[] { parameters };
+        } else if (extraLayoutConfigs.get(0) instanceof CompoundLayoutConfig) {
+            ((CompoundLayoutConfig) extraLayoutConfigs.get(0)).add(parameters);
+            confs = extraLayoutConfigs.toArray(new ILayoutConfig[extraLayoutConfigs.size()]);
+        } else {
+            confs = extraLayoutConfigs.toArray(new ILayoutConfig[extraLayoutConfigs.size()]);
+            confs[0] = CompoundLayoutConfig.of(parameters, confs[0]);
+        }
         return de.cau.cs.kieler.kiml.service.DiagramLayoutEngine.INSTANCE.layout(
-                workbenchPart, diagramPart, animate, progressBar, layoutAncestors, zoom,
-                extraLayoutConfigs);
+                workbenchPart, diagramPart, confs);
     }
 
     /**

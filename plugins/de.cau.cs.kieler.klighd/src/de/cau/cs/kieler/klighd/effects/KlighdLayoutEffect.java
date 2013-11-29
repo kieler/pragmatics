@@ -256,7 +256,7 @@ public class KlighdLayoutEffect extends AbstractEffect {
         try {
             DiagramLayoutEngine layoutEngine = DiagramLayoutEngine.INSTANCE;
             layoutEngine.layout(workbenchPart, diagramPart, doAnimate, progressBar,
-                    layoutAncestors, doZoom, null);
+                    layoutAncestors, doZoom);
         } catch (UnsupportedOperationException e) {
             // ignore
         }
