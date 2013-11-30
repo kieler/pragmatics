@@ -232,7 +232,7 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
         
         // transfer the options from the layout configuration
         KLayoutData layoutData = graphElement.getData(KLayoutData.class);
-        config.transferValues(layoutData, context);
+        DiagramLayoutEngine.INSTANCE.getOptionManager().transferValues(layoutData, config, context);
     }
 
 }

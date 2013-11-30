@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.kiml.smart;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Map;
 
@@ -38,7 +39,6 @@ import de.cau.cs.kieler.kiml.grana.analyses.EdgeLabelCountAnalysis;
 import de.cau.cs.kieler.kiml.grana.analyses.MultiEdgeCountAnalysis;
 import de.cau.cs.kieler.kiml.grana.analyses.PortCountAnalysis;
 import de.cau.cs.kieler.kiml.grana.analyses.SelfLoopAnalysis;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.GraphFeature;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -189,14 +189,12 @@ public class SmartLayoutConfig implements ILayoutConfig {
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
-    public void transferValues(final KLayoutData graphData, final LayoutContext context) {
+    public Collection<IProperty<?>> getAffectedOptions(final LayoutContext context) {
         MetaLayout metaLayout = provideMetaLayout(context);
         if (metaLayout != null) {
-            for (Map.Entry<IProperty<?>, Object> entry : metaLayout.getConfig().entrySet()) {
-                graphData.setProperty((IProperty<Object>) entry.getKey(), entry.getValue());
-            }
+            return metaLayout.getConfig().keySet();
         }
+        return Collections.emptyList();
     }
     
     /**

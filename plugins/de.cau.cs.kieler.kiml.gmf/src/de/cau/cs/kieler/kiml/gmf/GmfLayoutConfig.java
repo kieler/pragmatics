@@ -13,8 +13,11 @@
  */
 package de.cau.cs.kieler.kiml.gmf;
 
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
@@ -43,7 +46,6 @@ import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.config.LayoutContext;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.service.EclipseLayoutConfig;
 
@@ -366,34 +368,36 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public void transferValues(final KLayoutData graphData, final LayoutContext context) {
+    public Collection<IProperty<?>> getAffectedOptions(final LayoutContext context) {
         Object editPart = context.getProperty(LayoutContext.DIAGRAM_PART);
+        List<IProperty<?>> options = new LinkedList<IProperty<?>>();
         if (editPart instanceof IGraphicalEditPart) {
             // add user defined global layout options
             DiagramEditPart diagramEditPart = GmfDiagramLayoutManager.getDiagramEditPart(
                     (EditPart) editPart);
             if (diagramEditPart != null) {
-                transferValues(graphData, DEF_PREFIX, diagramEditPart.getNotationView());
+                getAffectedOptions(options, DEF_PREFIX, diagramEditPart.getNotationView());
             }
             // add user defined local layout options
-            transferValues(graphData, PREFIX, ((IGraphicalEditPart) editPart).getNotationView());
+            getAffectedOptions(options, PREFIX, ((IGraphicalEditPart) editPart).getNotationView());
         } else {
             View view = context.getProperty(NOTATION_VIEW);
             if (view != null) {
-                transferValues(graphData, PREFIX, view);
+                getAffectedOptions(options, PREFIX, view);
             }
         }
+        return options;
     }
 
     /**
-     * Add the options from the list of properties to the options map. Only properties whose key
+     * Add the options from the list of properties to the given list. Only properties whose key
      * starts with the given prefix are considered.
      * 
-     * @param graphData a graph data instance that can hold layout options
+     * @param options list to which options are added
      * @param prefix the expected prefix of the property keys
      * @param view a notation view
      */
-    private void transferValues(final KLayoutData graphData, final String prefix,
+    private void getAffectedOptions(final List<IProperty<?>> options, final String prefix,
             final View view) {
         LayoutDataService layoutService = LayoutDataService.getInstance();
         for (Object obj : view.getStyles()) {
@@ -405,10 +409,7 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
                     LayoutOptionData<Object> optionData = (LayoutOptionData<Object>)
                             layoutService.getOptionData(key.substring(prefix.length()));
                     if (optionData != null) {
-                        Object value = optionData.parseValue(style.getStringValue());
-                        if (value != null) {
-                            graphData.setProperty(optionData, value);
-                        }
+                        options.add(optionData);
                     }
                 }
             }

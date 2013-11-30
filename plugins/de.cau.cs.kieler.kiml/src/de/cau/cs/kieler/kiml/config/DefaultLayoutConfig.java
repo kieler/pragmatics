@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.config;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.LinkedList;
@@ -30,7 +31,6 @@ import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 
 /**
  * Default implementation of the layout configuration interface. This configuration handles the
@@ -347,8 +347,8 @@ public class DefaultLayoutConfig implements ILayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public void transferValues(final KLayoutData graphData, final LayoutContext context) {
-        // nothing to do
+    public Collection<IProperty<?>> getAffectedOptions(final LayoutContext context) {
+        return Collections.emptyList();
     }
 
 }

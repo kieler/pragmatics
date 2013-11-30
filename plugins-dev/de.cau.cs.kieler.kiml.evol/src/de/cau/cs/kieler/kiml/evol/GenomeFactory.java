@@ -41,9 +41,11 @@ import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo;
 import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo.GeneType;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.service.EclipseLayoutConfig;
 import de.cau.cs.kieler.kiml.service.ExtensionLayoutConfigService;
 import de.cau.cs.kieler.kiml.service.LayoutMapping;
+import de.cau.cs.kieler.kiml.service.LayoutOptionManager;
 
 /**
  * A factory for genes and genomes.
@@ -373,12 +375,13 @@ public final class GenomeFactory {
     public static void configureGraph(final Genome genome, final ILayoutConfig config,
             final Map<EObject, EObject> graphMap) {
         LayoutDataService dataService = LayoutDataService.getInstance();
+        LayoutOptionManager optionManager = DiagramLayoutEngine.INSTANCE.getOptionManager();
         for (LayoutContext context : genome.getContexts()) {
             EObject element = graphMap.get(context.getProperty(LayoutContext.GRAPH_ELEM));
             if (element instanceof KNode) {
                 KShapeLayout nodeLayout = ((KNode) element).getData(KShapeLayout.class);
                 // first transfer values from the layout configurator
-                config.transferValues(nodeLayout, context);
+                optionManager.transferValues(nodeLayout, config, context);
                 
                 // then transfer values from the given genome, overriding values of the configurator
                 for (Gene<?> gene : genome.getGenes(context)) {

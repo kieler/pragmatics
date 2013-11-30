@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.service;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -204,10 +205,38 @@ public class LayoutOptionManager {
         layoutData.getProperties().clear();
         
         // transfer the options from the layout configuration
-        config.transferValues(layoutData, context);
+        transferValues(layoutData, config, context);
 
         // remove the semantic layout configurations again
         config.removeAll(semanticConfigs);
+    }
+    
+    /**
+     * Transfer all layout options affected by the given configurator to the layout data instance.
+     * 
+     * @param layoutData a layout data instance of a graph element
+     * @param config a layout configurator
+     * @param context the context under which to fetch the options
+     */
+    @SuppressWarnings("unchecked")
+    public void transferValues(final KLayoutData layoutData, final ILayoutConfig config,
+            final LayoutContext context) {
+        LayoutDataService dataService = LayoutDataService.getInstance();
+        Collection<IProperty<?>> options = config.getAffectedOptions(context);
+        for (IProperty<?> option : options) {
+            Object value = null;
+            if (option instanceof LayoutOptionData<?>) {
+                value = config.getValue((LayoutOptionData<?>) option, context);
+            } else {
+                LayoutOptionData<?> optionData = dataService.getOptionData(option.getId());
+                if (optionData != null) {
+                    value = config.getValue(optionData, context);
+                }
+            }
+            if (value != null) {
+                layoutData.setProperty((IProperty<Object>) option, value);
+            }
+        }
     }
 
     /**

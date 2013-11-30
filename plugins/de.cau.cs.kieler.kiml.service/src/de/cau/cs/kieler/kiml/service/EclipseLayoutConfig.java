@@ -13,7 +13,10 @@
  */
 package de.cau.cs.kieler.kiml.service;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map.Entry;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -29,7 +32,6 @@ import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.config.LayoutContext;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.SizeConstraint;
@@ -210,7 +212,7 @@ public class EclipseLayoutConfig implements ILayoutConfig {
         Set<LayoutOptionData.Target> targets = context.getProperty(LayoutContext.OPT_TARGETS);
         if (targets != null && targets.contains(LayoutOptionData.Target.NODES)) {
             if (!targets.contains(LayoutOptionData.Target.PARENTS)) {
-                return null; // default value: SizeConstraint.fixed()
+                return SizeConstraint.fixed();
             }
             Boolean hasPorts = context.getProperty(DefaultLayoutConfig.HAS_PORTS);
             if (hasPorts != null && hasPorts) {
@@ -258,24 +260,25 @@ public class EclipseLayoutConfig implements ILayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public void transferValues(final KLayoutData graphData, final LayoutContext context) {
-        LayoutConfigService configService = LayoutConfigService.getInstance();
-        LayoutDataService dataService = LayoutDataService.getInstance();
+    public Collection<IProperty<?>> getAffectedOptions(final LayoutContext context) {
+        List<IProperty<?>> options = new LinkedList<IProperty<?>>();
         
-        // get dynamic values for specific options
-        EnumSet<SizeConstraint> scValue = getSizeConstraintValue(context);
-        if (scValue != null) {
-            graphData.setProperty(LayoutOptions.SIZE_CONSTRAINT, scValue);
+        // specific options with dynamic values
+        Set<LayoutOptionData.Target> targets = context.getProperty(LayoutContext.OPT_TARGETS);
+        if (targets != null && targets.contains(LayoutOptionData.Target.NODES)) {
+            options.add(LayoutOptions.SIZE_CONSTRAINT);
+            Boolean hasPorts = context.getProperty(DefaultLayoutConfig.HAS_PORTS);
+            if (hasPorts != null) {
+                options.add(LayoutOptions.PORT_CONSTRAINTS);
+            }
         }
-        PortConstraints pcValue = getPortConstraintsValue(context);
-        if (pcValue != null) {
-            graphData.setProperty(LayoutOptions.PORT_CONSTRAINTS, pcValue);
-        }
-        Float arValue = getAspectRatioValue(context);
-        if (arValue != null) {
-            graphData.setProperty(LayoutOptions.ASPECT_RATIO, arValue);
+        Float aspectRatio = context.getProperty(ASPECT_RATIO);
+        if (aspectRatio != null && aspectRatio > 0) {
+            options.add(LayoutOptions.ASPECT_RATIO);
         }
 
+        LayoutConfigService configService = LayoutConfigService.getInstance();
+        LayoutDataService dataService = LayoutDataService.getInstance();
         Object diagPart = context.getProperty(LayoutContext.DIAGRAM_PART);
         EObject modelElement = context.getProperty(LayoutContext.DOMAIN_MODEL);
 
@@ -288,7 +291,7 @@ public class EclipseLayoutConfig implements ILayoutConfig {
                     LayoutOptionData<Object> optionData = (LayoutOptionData<Object>)
                             dataService.getOptionData(entry.getKey());
                     if (optionData != null) {
-                        graphData.setProperty(optionData, entry.getValue());
+                        options.add(optionData);
                     }
                 }
             }
@@ -303,7 +306,7 @@ public class EclipseLayoutConfig implements ILayoutConfig {
                     LayoutOptionData<Object> optionData = (LayoutOptionData<Object>)
                             dataService.getOptionData(entry.getKey());
                     if (optionData != null) {
-                        graphData.setProperty(optionData, entry.getValue());
+                        options.add(optionData);
                     }
                 }
             }
@@ -318,11 +321,12 @@ public class EclipseLayoutConfig implements ILayoutConfig {
                     LayoutOptionData<Object> optionData = (LayoutOptionData<Object>)
                             dataService.getOptionData(entry.getKey());
                     if (optionData != null) {
-                        graphData.setProperty(optionData, entry.getValue());
+                        options.add(optionData);
                     }
                 }
             }
         }
+        return options;
     }
     
 }

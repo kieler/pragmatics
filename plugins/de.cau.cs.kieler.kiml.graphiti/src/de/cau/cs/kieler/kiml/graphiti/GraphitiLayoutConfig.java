@@ -13,8 +13,11 @@
  */
 package de.cau.cs.kieler.kiml.graphiti;
 
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.gef.EditPart;
@@ -43,7 +46,6 @@ import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.config.LayoutContext;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.service.EclipseLayoutConfig;
 
@@ -315,28 +317,30 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public void transferValues(final KLayoutData graphData, final LayoutContext context) {
+    public Collection<IProperty<?>> getAffectedOptions(final LayoutContext context) {
         PictogramElement pe = context.getProperty(PICTO_ELEM);
+        List<IProperty<?>> options = new LinkedList<IProperty<?>>();
         if (pe != null) {
             // add user defined global layout options
             PictogramElement parent = pe;
             while (parent.eContainer() instanceof PictogramElement) {
                 parent = (PictogramElement) parent.eContainer();
             }
-            transferValues(graphData, DEF_PREFIX, parent);
+            transferValues(options, DEF_PREFIX, parent);
             // add user defined local layout options
-            transferValues(graphData, PREFIX, pe);
+            transferValues(options, PREFIX, pe);
         }
+        return options;
     }
 
     /**
-     * Add the options from the list of properties to the options map.
+     * Add the options from the list of properties to the given list.
      * 
-     * @param graphData a graph data instance that can hold layout options
+     * @param options list to which options are added
      * @param prefix the prefix for the property key
      * @param pe a pictogram element
      */
-    private void transferValues(final KLayoutData graphData, final String prefix,
+    private void transferValues(final List<IProperty<?>> options, final String prefix,
             final PictogramElement pe) {
         LayoutDataService layoutServices = LayoutDataService.getInstance();
         for (Property prop : pe.getProperties()) {
@@ -346,10 +350,7 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
                 LayoutOptionData<Object> optionData = (LayoutOptionData<Object>)
                         layoutServices.getOptionData(key.substring(prefix.length()));
                 if (optionData != null) {
-                    Object value = optionData.parseValue(prop.getValue());
-                    if (value != null) {
-                        graphData.setProperty(optionData, value);
-                    }
+                    options.add(optionData);
                 }
             }
         }

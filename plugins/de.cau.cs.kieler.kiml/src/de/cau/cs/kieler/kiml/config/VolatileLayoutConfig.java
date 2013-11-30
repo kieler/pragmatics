@@ -13,11 +13,16 @@
  */
 package de.cau.cs.kieler.kiml.config;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.collect.Maps;
 
@@ -27,7 +32,6 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 
 /**
  * A layout configurator that can be used to generate on-the-fly layout options.
@@ -41,7 +45,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
  * @kieler.design proposed by msp
  * @kieler.rating yellow 2013-07-01 review KI-38 by cds, uru
  */
-public class VolatileLayoutConfig implements ILayoutConfig {
+public class VolatileLayoutConfig implements IMutableLayoutConfig {
     
     /** the default priority for volatile layout configurators. */
     public static final int DEFAULT_PRIORITY = 100;
@@ -87,15 +91,7 @@ public class VolatileLayoutConfig implements ILayoutConfig {
     public int getPriority() {
         return priority;
     }
-    
-    /**
-     * Clear all stored values.
-     */
-    public void clear() {
-        focusOptionMap.clear();
-        globalOptionMap.clear();
-    }
-    
+        
     /**
      * Copy all values from the given layout configurator into this one.
      * 
@@ -222,26 +218,27 @@ public class VolatileLayoutConfig implements ILayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public void transferValues(final KLayoutData graphData, final LayoutContext context) {
-        // transfer globally defined options
+    public Collection<IProperty<?>> getAffectedOptions(final LayoutContext context) {
+        List<IProperty<?>> options = new LinkedList<IProperty<?>>();
+        
+        // get globally defined options
         KGraphElement graphElem = context.getProperty(LayoutContext.GRAPH_ELEM);
         boolean isGlobal = context.getProperty(LayoutContext.GLOBAL);
-        for (Map.Entry<LayoutOptionData<Object>, Object> entry : globalOptionMap.entrySet()) {
-            if (isGlobal || matchesTargetType(entry.getKey(), graphElem)) {
-                graphData.setProperty(entry.getKey(), entry.getValue());
+        for (LayoutOptionData<Object> option : globalOptionMap.keySet()) {
+            if (isGlobal || matchesTargetType(option, graphElem)) {
+                options.add(option);
             }
         }
         
-        // transfer options for the focus object
+        // get options for the focus object
         for (IProperty<?> contextKey : contextKeys) {
             Object object = context.getProperty(contextKey);
             Map<IProperty<Object>, Object> contextOptions = focusOptionMap.get(object);
             if (contextOptions != null) {
-                for (Map.Entry<IProperty<Object>, Object> option : contextOptions.entrySet()) {
-                    graphData.setProperty(option.getKey(), option.getValue());
-                }
+                options.addAll(contextOptions.keySet());
             }
         }
+        return options;
     }
     
     /**
@@ -253,6 +250,9 @@ public class VolatileLayoutConfig implements ILayoutConfig {
      */
     private boolean matchesTargetType(final LayoutOptionData<?> optionData,
             final KGraphElement graphElem) {
+        if (graphElem == null) {
+            return false;
+        }
         Set<LayoutOptionData.Target> optionTargets = optionData.getTargets();
         switch (graphElem.eClass().getClassifierID()) {
         case KGraphPackage.KNODE:
@@ -279,6 +279,54 @@ public class VolatileLayoutConfig implements ILayoutConfig {
             break;
         }
         return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    public void setValue(final LayoutOptionData<?> optionData, final LayoutContext context,
+            final Object value) {
+        KGraphElement graphElem = context.getProperty(LayoutContext.GRAPH_ELEM);
+        if (context.getProperty(LayoutContext.GLOBAL)) {
+            if (matchesTargetType(optionData, graphElem)) {
+                globalOptionMap.put((LayoutOptionData<Object>) optionData, value);
+            }
+        } else {
+            Object diagramPart = context.getProperty(LayoutContext.DIAGRAM_PART);
+            EObject domainModel = context.getProperty(LayoutContext.DOMAIN_MODEL);
+            if (diagramPart != null) {
+                setValue((LayoutOptionData<Object>) optionData, diagramPart,
+                        LayoutContext.DIAGRAM_PART, value);
+            } else if (domainModel != null) {
+                setValue((LayoutOptionData<Object>) optionData, domainModel,
+                        LayoutContext.DOMAIN_MODEL, value);
+            } else if (graphElem != null) {
+                setValue((LayoutOptionData<Object>) optionData, graphElem,
+                        LayoutContext.GRAPH_ELEM, value);
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void clearValues(final LayoutContext context) {
+        if (context.getProperty(LayoutContext.GLOBAL)) {
+            globalOptionMap.clear();
+        } else {
+            for (IProperty<?> contextKey : contextKeys) {
+                Object object = context.getProperty(contextKey);
+                focusOptionMap.remove(object);
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isSet(final LayoutOptionData<?> optionData, final LayoutContext context) {
+        return getValue(optionData, context) != null;
     }
 
 }

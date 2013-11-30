@@ -13,12 +13,15 @@
  */
 package de.cau.cs.kieler.kiml.config;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+
 import org.eclipse.emf.ecore.EObject;
 
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
@@ -135,28 +138,15 @@ public abstract class SemanticLayoutConfig implements IMutableLayoutConfig {
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
-    public final void transferValues(final KLayoutData graphData, final LayoutContext context) {
+    public Collection<IProperty<?>> getAffectedOptions(final LayoutContext context) {
         EObject element = context.getProperty(LayoutContext.DOMAIN_MODEL);
         if (element != null) {
-            LayoutDataService layoutDataService = LayoutDataService.getInstance();
             IProperty<?>[] affectedOptions = getAffectedOptions(element);
             if (affectedOptions != null) {
-                for (IProperty<?> property : affectedOptions) {
-                    LayoutOptionData<?> optionData;
-                    if (property instanceof LayoutOptionData<?>) {
-                        optionData = (LayoutOptionData<?>) property;
-                    } else {
-                        optionData = layoutDataService.getOptionData(property.getId());
-                    }
-                    
-                    if (optionData != null) {
-                        Object value = getSemanticValue(element, optionData);
-                        graphData.setProperty((IProperty<Object>) property, value);
-                    }
-                }
+                return Arrays.asList(affectedOptions);
             }
         }
+        return Collections.emptyList();
     }
 
     /**

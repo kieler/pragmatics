@@ -14,11 +14,14 @@
 package de.cau.cs.kieler.kiml.config;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.ListIterator;
+import java.util.Set;
 
+import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 
 /**
  * A layout configurator that is composed of multiple other configurators.
@@ -157,15 +160,18 @@ public class CompoundLayoutConfig implements IMutableLayoutConfig {
 
     /**
      * {@inheritDoc}
-     * The contained layout configurators are called in reversed order so those with higher priorities
-     * overwrite options set by those with lower priority.
      */
-    public void transferValues(final KLayoutData graphData, final LayoutContext context) {
-        ListIterator<ILayoutConfig> configIter = configs.listIterator(configs.size());
-        while (configIter.hasPrevious()) {
-            ILayoutConfig conf = configIter.previous();
-            conf.transferValues(graphData, context);
+    public Collection<IProperty<?>> getAffectedOptions(final LayoutContext context) {
+        if (configs.size() == 1) {
+            return configs.getFirst().getAffectedOptions(context);
+        } else if (configs.size() > 1) {
+            Set<IProperty<?>> collectedOptions = new HashSet<IProperty<?>>();
+            for (ILayoutConfig conf : configs) {
+                collectedOptions.addAll(conf.getAffectedOptions(context));
+            }
+            return collectedOptions;
         }
+        return Collections.emptyList();
     }
 
     /**
@@ -189,7 +195,6 @@ public class CompoundLayoutConfig implements IMutableLayoutConfig {
             if (conf instanceof IMutableLayoutConfig) {
                 IMutableLayoutConfig mlc = (IMutableLayoutConfig) conf;
                 mlc.setValue(optionData, context, value);
-                return;
             }
         }
     }

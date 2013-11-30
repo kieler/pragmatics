@@ -13,8 +13,10 @@
  */
 package de.cau.cs.kieler.kiml.config;
 
+import java.util.Collection;
+
+import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 
 /**
  * Layout option configurator interface. Implementations are used to determine the
@@ -59,12 +61,13 @@ public interface ILayoutConfig {
     Object getValue(LayoutOptionData<?> optionData, LayoutContext context);
     
     /**
-     * Transfer all non-default layout option values that are managed by this layout configurator
-     * to the given layout data instance.
+     * Determine the layout options that are affected by this layout configurator. For all returned
+     * options, the {@link #getValue(LayoutOptionData, LayoutContext)} method must not return
+     * {@code null} when called with the same context.
      * 
-     * @param layoutData a layout data instance that can hold layout options
      * @param context a context for layout configuration
+     * @return a collection of options affected by this configurator
      */
-    void transferValues(KLayoutData layoutData, LayoutContext context);
+    Collection<IProperty<?>> getAffectedOptions(LayoutContext context);
 
 }
