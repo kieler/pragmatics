@@ -14,4 +14,4 @@ Require-Bundle: org.apache.batik.svggen;bundle-version="1.6.0",
  de.cau.cs.kieler.core.kgraph,
  de.cau.cs.kieler.core.krendering,
  de.cau.cs.kieler.kiml,
- de.cau.cs.kieler.kiml.service
+ de.cau.cs.kieler.kiml.formats

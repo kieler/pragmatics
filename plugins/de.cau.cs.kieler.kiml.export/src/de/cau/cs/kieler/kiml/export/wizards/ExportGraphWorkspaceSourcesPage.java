@@ -35,8 +35,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 import de.cau.cs.kieler.core.ui.wizards.WorkspaceResourcesPage;
-import de.cau.cs.kieler.kiml.service.formats.GraphFormatData;
-import de.cau.cs.kieler.kiml.ui.service.EclipseTransformationService;
+import de.cau.cs.kieler.kiml.formats.GraphFormatData;
+import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
 
 /**
  * The Export graph wizard page which lets the user select the source files from the workspace and
@@ -102,7 +102,7 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
         fileFormatCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
         // fill the Combo with all possible export formats
-        Collection<GraphFormatData> formatDataCollection = EclipseTransformationService.getInstance()
+        Collection<GraphFormatData> formatDataCollection = GraphFormatsService.getInstance()
                 .getFormatData();
         graphFormatData = new GraphFormatData[formatDataCollection.size()];
         String[] formatNames = new String[formatDataCollection.size()];

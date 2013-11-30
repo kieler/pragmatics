@@ -25,7 +25,7 @@ import com.google.common.collect.Iterables;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
+import de.cau.cs.kieler.kiml.grana.IAnalysis;
 
 /**
  * An analysis on the density of the biconnected components.

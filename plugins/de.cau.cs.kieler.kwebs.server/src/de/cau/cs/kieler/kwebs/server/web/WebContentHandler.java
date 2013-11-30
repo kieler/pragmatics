@@ -34,7 +34,7 @@ import de.cau.cs.kieler.kwebs.server.Application;
 import de.cau.cs.kieler.kwebs.server.configuration.Configuration;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
-import de.cau.cs.kieler.kwebs.util.Resources;
+import de.cau.cs.kieler.kwebs.server.util.Resources;
 
 /**
  * HTTP Handler for handling the servers web interface.

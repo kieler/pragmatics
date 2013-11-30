@@ -22,32 +22,33 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 
+import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.service.ExtensionLayoutDataService;
-import de.cau.cs.kieler.kiml.service.formats.GraphFormatData;
+import de.cau.cs.kieler.kiml.formats.GraphFormatData;
+import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
 import de.cau.cs.kieler.kwebs.server.Application;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
-import de.cau.cs.kieler.kwebs.servicedata.Category;
-import de.cau.cs.kieler.kwebs.servicedata.KnownOption;
-import de.cau.cs.kieler.kwebs.servicedata.LayoutAlgorithm;
-import de.cau.cs.kieler.kwebs.servicedata.LayoutOption;
-import de.cau.cs.kieler.kwebs.servicedata.LayoutType;
-import de.cau.cs.kieler.kwebs.servicedata.RemoteEnum;
-import de.cau.cs.kieler.kwebs.servicedata.ServiceData;
-import de.cau.cs.kieler.kwebs.servicedata.ServiceDataFactory;
-import de.cau.cs.kieler.kwebs.servicedata.SupportedDiagram;
-import de.cau.cs.kieler.kwebs.servicedata.SupportedFormat;
-import de.cau.cs.kieler.kwebs.servicedata.impl.ServiceDataFactoryImpl;
-import de.cau.cs.kieler.kwebs.servicedata.transformation.ServiceDataXmiTransformer;
-import de.cau.cs.kieler.kwebs.util.Resources;
+import de.cau.cs.kieler.kwebs.server.servicedata.Category;
+import de.cau.cs.kieler.kwebs.server.servicedata.KnownOption;
+import de.cau.cs.kieler.kwebs.server.servicedata.LayoutAlgorithm;
+import de.cau.cs.kieler.kwebs.server.servicedata.LayoutOption;
+import de.cau.cs.kieler.kwebs.server.servicedata.LayoutType;
+import de.cau.cs.kieler.kwebs.server.servicedata.RemoteEnum;
+import de.cau.cs.kieler.kwebs.server.servicedata.ServiceData;
+import de.cau.cs.kieler.kwebs.server.servicedata.ServiceDataFactory;
+import de.cau.cs.kieler.kwebs.server.servicedata.SupportedDiagram;
+import de.cau.cs.kieler.kwebs.server.servicedata.SupportedFormat;
+import de.cau.cs.kieler.kwebs.server.servicedata.impl.ServiceDataFactoryImpl;
+import de.cau.cs.kieler.kwebs.server.servicedata.util.ServiceDataXmiTransformer;
+import de.cau.cs.kieler.kwebs.server.util.Resources;
 
 /**
  * This singleton class provides all extension based registered layout information at runtime 
  * and also the client side needed meta data about supported layout capabilities.
  *
- * @author  swe
+ * @author swe
  */
 public final class ServerLayoutDataService extends ExtensionLayoutDataService {
 
@@ -61,29 +62,16 @@ public final class ServerLayoutDataService extends ExtensionLayoutDataService {
      *  The cached preview images of the layout algorithms. The index is derived from the plug-in
      *  name of the defining plug-in and the path to the preview image.
      */
-    private Map<String, byte[]> previewImages
-        = new HashMap<String, byte[]>();
+    private Map<String, byte[]> previewImages = new HashMap<String, byte[]>();
     
     /**
-     * Private constructor.
+     * Create the server layout data service.
      */
-    private ServerLayoutDataService() {
-        // Create the transformation service instance; needed for building the meta data model
-        ServerTransformationService.create();
+    public ServerLayoutDataService() {
+        // Read extensions for the extension point
+        super();
         // Build the meta data model
         createServiceData();
-    }
-
-    /**
-     * Initialize the singleton instance from the extension points.
-     */
-    public static void create() {
-        if (LayoutDataService.getInstanceOf(
-                    ServerLayoutDataService.class.getCanonicalName()) == null) {
-            ServerLayoutDataService lds = new ServerLayoutDataService();
-            LayoutDataService.addService(lds);
-            lds.loadLayoutProviderExtensions();
-        }
     }
     
     /**
@@ -93,7 +81,11 @@ public final class ServerLayoutDataService extends ExtensionLayoutDataService {
      *         has not been registered yet
      */
     public static ServerLayoutDataService getInstance() {
-        return LayoutDataService.getInstanceOf(ServerLayoutDataService.class.getCanonicalName());
+        LayoutDataService service = LayoutDataService.getInstance();
+        if (service instanceof ServerLayoutDataService) {
+            return (ServerLayoutDataService) service;
+        }
+        return null;
     }
 
     /**
@@ -129,6 +121,14 @@ public final class ServerLayoutDataService extends ExtensionLayoutDataService {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected LayoutAlgorithmData createLayoutAlgorithmData(final IConfigurationElement element) {
+        return new LayoutAlgorithmData();
+    }
+
+    /**
      * Creates the model instance and the XMI representation of the services meta data.
      */
     private void createServiceData() {
@@ -144,7 +144,7 @@ public final class ServerLayoutDataService extends ExtensionLayoutDataService {
         readExtensionLayoutOptions(factory, extensions);
         readExtensionLayoutAlgorithms(factory, extensions);
         // Add transformation to the service meta data
-        for (GraphFormatData data : ServerTransformationService.getInstance().getFormatData()) {
+        for (GraphFormatData data : GraphFormatsService.getInstance().getFormatData()) {
             SupportedFormat format = factory.createSupportedFormat();
             format.setId(data.getId());
             format.setDescription(data.getDescription());
@@ -211,9 +211,9 @@ public final class ServerLayoutDataService extends ExtensionLayoutDataService {
                 if (type.equals(LayoutOptionData.ENUM_LITERAL)
                         || type.equals(LayoutOptionData.ENUMSET_LITERAL)) {
                     if (type.equals(LayoutOptionData.ENUM_LITERAL)) {
-                        option.setType(LayoutOptionData.REMOTEENUM_LITERAL);
+                        option.setType("remoteenum");
                     } else {
-                        option.setType(LayoutOptionData.REMOTEENUMSET_LITERAL);
+                        option.setType("remoteenumset");
                     }
                     try {
                         String className = element.getAttribute(ATTRIBUTE_CLASS);

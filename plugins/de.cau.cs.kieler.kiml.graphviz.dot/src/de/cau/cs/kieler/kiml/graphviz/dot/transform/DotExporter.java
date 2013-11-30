@@ -34,6 +34,8 @@ import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
+import de.cau.cs.kieler.kiml.formats.TransformationData;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.Attribute;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.AttributeStatement;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.AttributeType;
@@ -57,8 +59,6 @@ import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.SizeConstraint;
-import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer;
-import de.cau.cs.kieler.kiml.service.formats.TransformationData;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
@@ -122,7 +122,8 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
      * @param transData the transformation data instance
      */
     public void transform(final TransformationData<KNode, GraphvizModel> transData) {
-        transData.setProperty(GRAPH_ELEMS, HashBiMap.create());
+        BiMap<String, KGraphElement> graphElems = HashBiMap.create();
+        transData.setProperty(GRAPH_ELEMS, graphElems);
         KNode kgraph = transData.getSourceGraph();
         GraphvizModel graphvizModel = DotFactory.eINSTANCE.createGraphvizModel();
         Graph graph = DotFactory.eINSTANCE.createGraph();

@@ -17,7 +17,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
-import de.cau.cs.kieler.kiml.ui.diagram.LayoutHandler;
+import de.cau.cs.kieler.kiml.ui.LayoutHandler;
 import de.cau.cs.kieler.klighd.effects.KlighdLayoutEffect;
 import de.cau.cs.kieler.klighd.triggers.KlighdStatusTrigger.KlighdStatusState;
 import de.cau.cs.kieler.klighd.triggers.KlighdStatusTrigger.KlighdStatusState.Status;
