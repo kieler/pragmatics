@@ -32,8 +32,36 @@ import de.cau.cs.kieler.core.properties.Property;
  */
 public final class LayoutOptions {
     
+    
     ///////   PROGRAMMATIC LAYOUT OPTIONS   ///////
 
+    /**
+     * Whether the shift from the old layout to the new computed layout shall be animated.
+     * [programmatically set]
+     */
+    public static final IProperty<Boolean> ANIMATE = new Property<Boolean>(
+            "de.cau.cs.kieler.animate", true);
+    
+    /**
+     * The minimal time for animations, in milliseconds. [programmatically set]
+     */
+    public static final IProperty<Integer> MIN_ANIMATION_TIME = new Property<Integer>(
+            "de.cau.cs.kieler.minAnimTime", 400);
+    
+    /**
+     * The maximal time for animations, in milliseconds. [programmatically set]
+     */
+    public static final IProperty<Integer> MAX_ANIMATION_TIME = new Property<Integer>(
+            "de.cau.cs.kieler.maxAnimTime", 4000);
+    
+    /**
+     * Factor for calculation of animation time. The higher the value, the longer the animation
+     * time. If the value is 0, the resulting time is always equal to the minimum defined
+     * by {@link #MIN_ANIMATION_TIME}. [programmatically set]
+     */
+    public static final IProperty<Integer> ANIMATION_TIME_FACTOR = new Property<Integer>(
+            "de.cau.cs.kieler.animTimeFactor", 100);
+    
     /**
      * Whether the associated node is to be interpreted as a comment box. In that case its placement
      * should be similar to how labels are handled. Any edges incident to a comment box specify to
@@ -89,9 +117,17 @@ public final class LayoutOptions {
      * be drawn in order to represent hyperedges with orthogonal routing.
      * Whether such points are computed depends on the chosen layout algorithm and
      * edge routing style. The points are put into the vector chain with no specific order.
+     * [programmatically set]
      */
     public static final IProperty<KVectorChain> JUNCTION_POINTS
             = new Property<KVectorChain>("de.cau.cs.kieler.junctionPoints");
+    
+    /**
+     * Whether the hierarchy levels on the path from the selected element to the root
+     * of the diagram shall be included in the layout process. [programmatically set]
+     */
+    public static final IProperty<Boolean> LAYOUT_ANCESTORS = new Property<Boolean>(
+            "de.cau.cs.kieler.layoutAncestors", false);
     
     /**
      * The minimal height of a node. [programmatically set]
@@ -150,12 +186,21 @@ public final class LayoutOptions {
      */
     public static final IProperty<PortSide> PORT_SIDE = new Property<PortSide>(
             "de.cau.cs.kieler.portSide", PortSide.UNDEFINED);
-
-    /** Specifies whether the given attribute is a tooltip.
-     *  FIXME is this used anywhere? and is it a layout option? consider moving or removing it. */
-    public static final IProperty<String> TOOLTIP = new Property<String>(
-            "de.cau.cs.kieler.tooltip", null);
     
+    /**
+     * Whether a progress bar shall be displayed during layout computations. [programmatically set]
+     */
+    public static final IProperty<Boolean> PROGRESS_BAR = new Property<Boolean>(
+            "de.cau.cs.kieler.progressBar", false);
+    
+    /**
+     * Whether the zoom level shall be set to view the whole diagram after layout.
+     * [programmatically set]
+     */
+    public static final IProperty<Boolean> ZOOM_TO_FIT = new Property<Boolean>(
+            "de.cau.cs.kieler.zoomToFit", false);
+
+
     ///////  USER INTERFACE LAYOUT OPTIONS  ///////
 
     /**
@@ -304,7 +349,7 @@ public final class LayoutOptions {
                     "de.cau.cs.kieler.sizeConstraint", SizeConstraint.fixed());
 
     /**
-     * Options modifying the behaviour of the size constraints set on a node. Each member of the set
+     * Options modifying the behavior of the size constraints set on a node. Each member of the set
      * specifies something that should be taken into account when calculating node sizes. The empty
      * set corresponds to no further modifications.
      */

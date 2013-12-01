@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.gmf.runtime.common.core.service.AbstractProvider;
 import org.eclipse.gmf.runtime.common.core.service.IOperation;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderItemEditPart;
@@ -29,14 +30,11 @@ import org.eclipse.gmf.runtime.diagram.ui.services.layout.ILayoutNode;
 import org.eclipse.gmf.runtime.diagram.ui.services.layout.ILayoutNodeOperation;
 import org.eclipse.gmf.runtime.diagram.ui.services.layout.ILayoutNodeProvider;
 import org.eclipse.gmf.runtime.notation.Node;
-import org.eclipse.jface.preference.IPreferenceStore;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
-import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
-import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
-import de.cau.cs.kieler.kiml.ui.diagram.LayoutHandler;
+import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
 
 /**
  * GMF layout provider that executes KIELER layout. This enables the execution of KIELER layout
@@ -106,9 +104,12 @@ public class KielerLayoutProvider extends AbstractProvider implements ILayoutNod
     public Runnable layoutLayoutNodes(final List layoutNodes, final boolean offsetFromBoundingBox,
             final IAdaptable layoutHint) {
         // fetch general settings from preferences
-        IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
-        final boolean zoomToFit = preferenceStore.getBoolean(LayoutHandler.PREF_ZOOM);
-        final boolean progressDialog = preferenceStore.getBoolean(LayoutHandler.PREF_PROGRESS);
+        final boolean zoomToFit = Platform.getPreferencesService().getBoolean(
+                "de.cau.cs.kieler.kiml.ui",
+                "de.cau.cs.kieler.kiml.zoomToFit", false, null);
+        final boolean progressDialog = Platform.getPreferencesService().getBoolean(
+                "de.cau.cs.kieler.kiml.ui",
+                "de.cau.cs.kieler.kiml.progressDialog", false, null);
         
         // determine the elements to process
         final Object diagramPart;
