@@ -33,14 +33,14 @@ import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.Maybe;
-import de.cau.cs.kieler.kiml.service.formats.GraphFormatData;
-import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer;
-import de.cau.cs.kieler.kiml.service.formats.ITransformationHandler;
-import de.cau.cs.kieler.kiml.service.formats.TransformationData;
-import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
-import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
-import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
-import de.cau.cs.kieler.kiml.ui.service.LayoutOptionManager;
+import de.cau.cs.kieler.kiml.formats.GraphFormatData;
+import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
+import de.cau.cs.kieler.kiml.formats.IGraphFormatHandler;
+import de.cau.cs.kieler.kiml.formats.TransformationData;
+import de.cau.cs.kieler.kiml.service.LayoutManagersService;
+import de.cau.cs.kieler.kiml.service.IDiagramLayoutManager;
+import de.cau.cs.kieler.kiml.service.LayoutMapping;
+import de.cau.cs.kieler.kiml.service.LayoutOptionManager;
 
 /**
  *  This class is responsible for transforming and exporting graphs from graphical diagrams.
@@ -59,7 +59,7 @@ public class GraphFileHandler {
      * @return the exported graph
      */
     private static <T> String performExport(final KNode kgraph,
-            final ITransformationHandler<T> transHandler) {
+            final IGraphFormatHandler<T> transHandler) {
         TransformationData<KNode, T> transData = new TransformationData<KNode, T>();
         transData.setSourceGraph(kgraph);
         IGraphTransformer<KNode, T> transformer = transHandler.getExporter();
@@ -95,7 +95,7 @@ public class GraphFileHandler {
         }
 
         // retrieve a kgraph representation of the diagram
-        IDiagramLayoutManager<?> layoutManager = EclipseLayoutInfoService.getInstance()
+        IDiagramLayoutManager<?> layoutManager = LayoutManagersService.getInstance()
                 .getManager(null, editPart.get());
         if (layoutManager == null) {
             throw new RuntimeException("No layout manager could be retrieved for the selected file.");

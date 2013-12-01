@@ -15,8 +15,8 @@ package de.cau.cs.kieler.klay.layered.properties;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -218,8 +218,8 @@ public final class Properties {
     /**
      * Map between KGraph nodes/ports/edges and LGraph nodes/ports/edges.
      */
-    public static final IProperty<HashMap<KGraphElement, LGraphElement>> ELEMENT_MAP 
-        = new Property<HashMap<KGraphElement, LGraphElement>>("ElementMap");
+    public static final IProperty<Map<KGraphElement, LGraphElement>> ELEMENT_MAP 
+        = new Property<Map<KGraphElement, LGraphElement>>("ElementMap");
 
     /**
      * List of comment boxes that are placed on top of a node.

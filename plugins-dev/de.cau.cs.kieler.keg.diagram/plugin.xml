@@ -578,11 +578,11 @@
 
 <!-- manually created extensions  -->
    <extension
-         point="de.cau.cs.kieler.kiml.layoutInfo">
-      <semanticOption
+         point="de.cau.cs.kieler.kiml.layoutConfigs">
+      <semanticConfig
             class="de.cau.cs.kieler.keg.Node"
             config="de.cau.cs.kieler.keg.diagram.custom.HypernodeLayoutConfig">
-      </semanticOption>
+      </semanticConfig>
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">

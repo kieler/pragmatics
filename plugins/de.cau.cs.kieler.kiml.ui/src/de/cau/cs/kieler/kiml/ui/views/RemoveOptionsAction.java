@@ -18,11 +18,11 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IWorkbenchPart;
 
-import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
+import de.cau.cs.kieler.kiml.config.LayoutContext;
+import de.cau.cs.kieler.kiml.service.LayoutManagersService;
+import de.cau.cs.kieler.kiml.service.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.Messages;
-import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
-import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 
 /**
@@ -54,7 +54,7 @@ public class RemoveOptionsAction extends Action {
     @Override
     public void run() {
         IWorkbenchPart workbenchPart = layoutView.getCurrentWorkbenchPart();
-        IDiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance()
+        IDiagramLayoutManager<?> manager = LayoutManagersService.getInstance()
                 .getManager(workbenchPart, null);
         if (manager != null && manager.getAdapterList().length > 0) {
             Object diagramPart = manager.getAdapter(workbenchPart, manager.getAdapterList()[0]);

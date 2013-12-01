@@ -218,12 +218,30 @@ Apart from a set of default layout types offered by KIML, new layout providers a
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="type" type="string" use="required">
+         <attribute name="type" use="required">
             <annotation>
                <documentation>
                   Defines the data type of this option; must be either &lt;code&gt;boolean&lt;/code&gt;, &lt;code&gt;string&lt;/code&gt;, &lt;code&gt;int&lt;/code&gt;, &lt;code&gt;float&lt;/code&gt;, &lt;code&gt;enum&lt;/code&gt;, &lt;code&gt;enumset&lt;/code&gt;, or &lt;code&gt;object&lt;/code&gt;. The types &lt;code&gt;enum&lt;/code&gt;, &lt;code&gt;enumset&lt;/code&gt;, and &lt;code&gt;object&lt;/code&gt; require the &lt;code&gt;class&lt;/code&gt; attribute to be set.
                </documentation>
             </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="boolean">
+                  </enumeration>
+                  <enumeration value="string">
+                  </enumeration>
+                  <enumeration value="int">
+                  </enumeration>
+                  <enumeration value="float">
+                  </enumeration>
+                  <enumeration value="enum">
+                  </enumeration>
+                  <enumeration value="enumset">
+                  </enumeration>
+                  <enumeration value="object">
+                  </enumeration>
+               </restriction>
+            </simpleType>
          </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
@@ -248,7 +266,7 @@ Apart from a set of default layout types offered by KIML, new layout providers a
          <attribute name="appliesTo" type="string">
             <annotation>
                <documentation>
-                  A comma separated list of targets on which the layout option can be applied; a target can be either &lt;code&gt;parents&lt;/code&gt;, &lt;code&gt;nodes&lt;/code&gt;, &lt;code&gt;edges&lt;/code&gt;, &lt;code&gt;ports&lt;/code&gt;, or &lt;code&gt;labels&lt;/code&gt;. If omitted, the layout option is not shown to the user.
+                  A comma separated list of targets on which the layout option can be applied; a target can be either &lt;code&gt;parents&lt;/code&gt;, &lt;code&gt;nodes&lt;/code&gt;, &lt;code&gt;edges&lt;/code&gt;, &lt;code&gt;ports&lt;/code&gt;, or &lt;code&gt;labels&lt;/code&gt;.
                </documentation>
             </annotation>
          </attribute>
@@ -330,7 +348,7 @@ Apart from a set of default layout types offered by KIML, new layout providers a
    <element name="knownOption">
       <annotation>
          <documentation>
-            Declares that the layout algorithm knows the option referenced by an identifier. Only the known options of a layout provider can be modified by the user.
+            Declares that the layout algorithm knows the option referenced by an identifier. Only the known options of a layout provider can be modified by the user. Not all options that are processed by the algorithm need to be listed here; only those options that shall be accessible by the user should be listed.
          </documentation>
       </annotation>
       <complexType>
@@ -364,10 +382,10 @@ Apart from a set of default layout types offered by KIML, new layout providers a
          <attribute name="type" type="string" use="required">
             <annotation>
                <documentation>
-                  Identifier of a diagram type, which can be defined using the &lt;code&gt;diagramType&lt;/code&gt; element of the &lt;code&gt;layoutInfo&lt;/code&gt; extension point. Diagram types are used to classify diagrams with respect to their layout.
+                  Identifier of a diagram type, which can be defined using the &lt;code&gt;diagramType&lt;/code&gt; element of the &lt;code&gt;layoutConfigs&lt;/code&gt; extension point. Diagram types are used to classify diagrams with respect to their layout.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.layoutInfo/diagramType/@id"/>
+                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.layoutConfigs/diagramType/@id"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -388,12 +406,28 @@ Apart from a set of default layout types offered by KIML, new layout providers a
          </documentation>
       </annotation>
       <complexType>
-         <attribute name="feature" type="string" use="required">
+         <attribute name="feature" use="required">
             <annotation>
                <documentation>
                   The supported feature: SELF_LOOPS, MULTI_EDGES, EDGE_LABELS, PORTS, COMPOUND, or CLUSTERS
                </documentation>
             </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="SELF_LOOPS">
+                  </enumeration>
+                  <enumeration value="MULTI_EDGES">
+                  </enumeration>
+                  <enumeration value="EDGE_LABELS">
+                  </enumeration>
+                  <enumeration value="PORTS">
+                  </enumeration>
+                  <enumeration value="COMPOUND">
+                  </enumeration>
+                  <enumeration value="CLUSTERS">
+                  </enumeration>
+               </restriction>
+            </simpleType>
          </attribute>
          <attribute name="priority" type="string">
             <annotation>

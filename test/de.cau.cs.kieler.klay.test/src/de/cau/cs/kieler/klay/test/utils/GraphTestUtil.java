@@ -31,7 +31,8 @@ import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.text.KGraphStandaloneSetup;
-import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
+import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
+import de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine;
 
 /**
  * Class to load graphs from a given folder and its subfolders (optional).
@@ -103,7 +104,7 @@ public final class GraphTestUtil {
      */
     public static List<GraphTestObject> loadKGraphs(final String folder, final boolean subfolder,
             final boolean doLayout) {
-
+        IGraphLayoutEngine layoutEngine = new RecursiveGraphLayoutEngine();
         File rootFolder = new File(SOURCE_GRAPHS_DIRECTORY, folder);
 
         // test if the root folder is readable by the application
@@ -132,8 +133,7 @@ public final class GraphTestUtil {
 
                 // apply layout when applyLayout = true
                 if (doLayout) {
-                    EclipseLayoutInfoService.getInstance().getLayoutEngine()
-                            .layout(graph, new BasicProgressMonitor());
+                    layoutEngine.layout(graph, new BasicProgressMonitor());
                 }
 
                 // add the KNode to the list

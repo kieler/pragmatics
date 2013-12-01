@@ -15,7 +15,7 @@ package de.cau.cs.kieler.kwebs.server.service;
 
 import java.util.List;
 
-import de.cau.cs.kieler.kwebs.GraphLayoutOption;
+import de.cau.cs.kieler.kwebs.server.layout.GraphLayoutOption;
 
 /**
  * Dummy implementation that just forwards the layout request to the {@link AbstractService} class.

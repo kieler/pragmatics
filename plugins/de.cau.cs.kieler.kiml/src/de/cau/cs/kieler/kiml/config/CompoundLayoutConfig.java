@@ -14,12 +14,14 @@
 package de.cau.cs.kieler.kiml.config;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.ListIterator;
+import java.util.Set;
 
-import de.cau.cs.kieler.kiml.LayoutContext;
+import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 
 /**
  * A layout configurator that is composed of multiple other configurators.
@@ -30,9 +32,51 @@ import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
  * @kieler.rating yellow 2012-07-05 review KI-18 by cmot, sgu
  */
 public class CompoundLayoutConfig implements IMutableLayoutConfig {
+    
+    /**
+     * Create a compound layout configurator from the given configurators.
+     * 
+     * @param confs one or more configurators to include in the new compound configurator
+     * @return a new compound configurator
+     */
+    public static CompoundLayoutConfig of(final ILayoutConfig... confs) {
+        CompoundLayoutConfig instance = new CompoundLayoutConfig();
+        for (ILayoutConfig conf : confs) {
+            instance.add(conf);
+        }
+        return instance;
+    }
 
     /** the contained layout configurations. */
     private final LinkedList<ILayoutConfig> configs = new LinkedList<ILayoutConfig>();
+    
+    /**
+     * Create an empty compound layout configurator.
+     */
+    public CompoundLayoutConfig() {
+    }
+    
+    /**
+     * Create a compound layout configurator based on the given configurators.
+     * 
+     * @param confs a collection of configurators
+     */
+    public CompoundLayoutConfig(final Collection<ILayoutConfig> confs) {
+        for (ILayoutConfig conf : confs) {
+            add(conf);
+        }
+    }
+    
+    /**
+     * Create a compound layout configurator with the same content as the given one.
+     * 
+     * @param compConf a compound configurator to copy
+     */
+    public CompoundLayoutConfig(final CompoundLayoutConfig compConf) {
+        for (ILayoutConfig conf : compConf.configs) {
+            add(conf);
+        }
+    }
     
     /**
      * Insert the given layout configuration into this compound configuration according
@@ -116,15 +160,18 @@ public class CompoundLayoutConfig implements IMutableLayoutConfig {
 
     /**
      * {@inheritDoc}
-     * The contained layout configurators are called in reversed order so those with higher priorities
-     * overwrite options set by those with lower priority.
      */
-    public void transferValues(final KLayoutData graphData, final LayoutContext context) {
-        ListIterator<ILayoutConfig> configIter = configs.listIterator(configs.size());
-        while (configIter.hasPrevious()) {
-            ILayoutConfig conf = configIter.previous();
-            conf.transferValues(graphData, context);
+    public Collection<IProperty<?>> getAffectedOptions(final LayoutContext context) {
+        if (configs.size() == 1) {
+            return configs.getFirst().getAffectedOptions(context);
+        } else if (configs.size() > 1) {
+            Set<IProperty<?>> collectedOptions = new HashSet<IProperty<?>>();
+            for (ILayoutConfig conf : configs) {
+                collectedOptions.addAll(conf.getAffectedOptions(context));
+            }
+            return collectedOptions;
         }
+        return Collections.emptyList();
     }
 
     /**
@@ -148,7 +195,6 @@ public class CompoundLayoutConfig implements IMutableLayoutConfig {
             if (conf instanceof IMutableLayoutConfig) {
                 IMutableLayoutConfig mlc = (IMutableLayoutConfig) conf;
                 mlc.setValue(optionData, context, value);
-                return;
             }
         }
     }

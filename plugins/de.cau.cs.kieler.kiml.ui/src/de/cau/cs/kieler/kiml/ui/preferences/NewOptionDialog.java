@@ -37,13 +37,12 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ListDialog;
 
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.kiml.LayoutConfigService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.preferences.OptionsTableProvider.DataEntry;
-import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutDataService;
-import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 
 /**
  * A dialog to add new default layout options in the preference page.
@@ -285,7 +284,7 @@ public class NewOptionDialog extends Dialog {
         dialog.setTitle(Messages.getString("kiml.ui.57")); //$NON-NLS-1$
         dialog.setContentProvider(ArrayContentProvider.getInstance());
         dialog.setLabelProvider(new LabelProvider());
-        List<Pair<String, String>> diagramTypes = EclipseLayoutInfoService
+        List<Pair<String, String>> diagramTypes = LayoutConfigService
                 .getInstance().getDiagramTypes();
         SelectionData[] input = new SelectionData[diagramTypes.size()];
         int i = 0;
@@ -323,8 +322,6 @@ public class NewOptionDialog extends Dialog {
                         return images.getPropText();
                     case BOOLEAN:
                         return images.getPropTrue();
-                    case REMOTE_ENUM:
-                    case REMOTE_ENUMSET:
                     case ENUM:
                     case ENUMSET:
                         return images.getPropChoice();
@@ -337,8 +334,7 @@ public class NewOptionDialog extends Dialog {
                 return null;
             }
         });
-        Collection<LayoutOptionData<?>> data = EclipseLayoutDataService
-                .getInstance().getOptionData();
+        Collection<LayoutOptionData<?>> data = LayoutDataService.getInstance().getOptionData();
         ArrayList<SelectionData> inputList = new ArrayList<SelectionData>(data.size());      
         for (LayoutOptionData<?> optionData : data) {
             // layout options without target definition are now shown to the user
@@ -367,7 +363,7 @@ public class NewOptionDialog extends Dialog {
         if (elementValue != null && optionValue != null) {
             String name;
             if (elementType == ElementType.DIAG_TYPE) {
-                name = EclipseLayoutInfoService.getInstance().getDiagramTypeName(elementValue);
+                name = LayoutConfigService.getInstance().getDiagramTypeName(elementValue);
             } else {
                 int dotIndex = elementValue.lastIndexOf('.');
                 name = elementValue.substring(dotIndex + 1);

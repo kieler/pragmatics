@@ -15,6 +15,7 @@ package de.cau.cs.kieler.kiml.gmf;
 
 import java.io.IOException;
 import java.util.Collections;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -39,8 +40,8 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.util.Maybe;
-import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
-import de.cau.cs.kieler.kiml.ui.util.ProgressMonitorAdapter;
+import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
+import de.cau.cs.kieler.kiml.service.util.ProgressMonitorAdapter;
 
 /**
  * Command handler for applying layout directly to GMF diagram files.
