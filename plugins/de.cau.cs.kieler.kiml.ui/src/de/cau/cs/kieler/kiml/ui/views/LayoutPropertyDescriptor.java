@@ -95,10 +95,8 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
             });
             return floatEditor;
         case BOOLEAN:
-        case REMOTE_ENUM:
         case ENUM:
             return new ComboBoxCellEditor(parent, optionData.getChoices(), SWT.READ_ONLY);
-        case REMOTE_ENUMSET:
         case ENUMSET:
             return new MultipleOptionsCellEditor(parent, optionData.getChoices());
         case OBJECT:

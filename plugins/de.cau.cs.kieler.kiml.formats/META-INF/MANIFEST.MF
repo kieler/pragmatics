@@ -5,11 +5,14 @@ Bundle-SymbolicName: de.cau.cs.kieler.kiml.formats;singleton:=true
 Bundle-Version: 0.2.0.qualifier
 Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Require-Bundle: com.google.guava;bundle-version="10.0.0",
- org.graphdrawing.graphml;bundle-version="1.0.0",
- net.ogdf.ogml;bundle-version="1.0.0",
+Require-Bundle: org.eclipse.core.runtime;bundle-version="3.9.0",
+ org.eclipse.ui;bundle-version="3.5.0";resolution:=optional,
+ org.eclipse.emf.ecore.xmi;bundle-version="2.7.0",
+ com.google.guava;bundle-version="10.0.0",
  de.cau.cs.kieler.core,
  de.cau.cs.kieler.core.kgraph,
  de.cau.cs.kieler.kiml,
  de.cau.cs.kieler.kiml.service
+Export-Package: de.cau.cs.kieler.kiml.formats
+Bundle-ActivationPolicy: lazy
 

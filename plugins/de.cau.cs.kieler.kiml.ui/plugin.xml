@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.5"?>
 <plugin>
-   <extension-point id="layoutManagers" name="Layout Managers" schema="schema/layoutManagers.exsd"/>
  <extension
        point="org.eclipse.core.expressions.propertyTesters">
     <propertyTester
@@ -20,7 +19,6 @@
     </initializer>
  </extension>
    
-
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
@@ -39,7 +37,7 @@
       </category>
       <command
             categoryId="de.cau.cs.kieler.layout"
-            defaultHandler="de.cau.cs.kieler.kiml.ui.diagram.LayoutHandler"
+            defaultHandler="de.cau.cs.kieler.kiml.ui.LayoutHandler"
             id="de.cau.cs.kieler.kiml.ui.command.layout"
             name="%command.name.0">
          <commandParameter
@@ -122,6 +120,7 @@ point="org.eclipse.ui.menus">
    </command>
 </menuContribution>
 </extension>
+
    <extension
          point="org.eclipse.ui.bindings">
       <key
@@ -130,6 +129,7 @@ point="org.eclipse.ui.menus">
             sequence="M1+R L">
       </key>
    </extension>
+   
  <extension
        point="org.eclipse.ui.views">
     <category
@@ -145,20 +145,6 @@ point="org.eclipse.ui.menus">
           name="%view.name.0"
           restorable="true">
     </view>
- </extension>
- <extension
-       point="de.cau.cs.kieler.kiml.ui.layoutManagers">
-    <engine
-          class="de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine">
-    </engine>
- </extension>
- <extension
-       point="de.cau.cs.kieler.kiml.layoutInfo">
-    <config
-          activation="de.cau.cs.kieler.kiml.eclipse"
-          class="de.cau.cs.kieler.kiml.ui.service.EclipseLayoutConfig"
-          default="true">
-    </config>
  </extension>
    
 </plugin>

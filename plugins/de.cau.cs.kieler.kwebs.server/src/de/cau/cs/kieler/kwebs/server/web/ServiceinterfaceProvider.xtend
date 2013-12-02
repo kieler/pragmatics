@@ -86,8 +86,15 @@ class ServiceinterfaceProvider
                 
         '''
         <h2>
-            Service Interface
+            Service Interfaces
         </h2>
+        <p>
+            We provide a HTTP-based and a SOAP-based interface. The SOAP interface is explained in further detail
+            below. For the HTTP interface have a look at our 
+            <a href="http://rtsys.informatik.uni-kiel.de/confluence/x/FgKE">Wiki</a>.
+        </p>
+        
+        <h3>SOAP</h3>
         <p>
             Since KWebS uses a SOAP web service, you need the interface definition in order to use its features.
             The server provides it in form of a document based on the Web Service Description Language (WSDL).

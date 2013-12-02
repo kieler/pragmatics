@@ -16,8 +16,8 @@ package de.cau.cs.kieler.kwebs.server.publishing;
 
 import java.net.URI;
 
-import de.cau.cs.kieler.kwebs.jaxws.LayoutServicePort;
 import de.cau.cs.kieler.kwebs.server.configuration.Configuration;
+import de.cau.cs.kieler.kwebs.server.jaxws.LayoutServicePort;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 import de.cau.cs.kieler.kwebs.server.service.JaxWsService;
@@ -132,7 +132,9 @@ public final class ServicePublisher {
             }
             // Publish the support server
             if (publishSUPP) {
-                Logger.log("Publishing support server");
+                String addressStr = 
+                        Configuration.INSTANCE.getConfigProperty(Configuration.SUPPORTINGSERVER_ADDRESS);
+                Logger.log("Publishing http layout service on " + addressStr);
                 supportManager.publish(null);
             }
         } catch (Exception e) {

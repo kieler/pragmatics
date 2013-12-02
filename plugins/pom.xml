@@ -29,7 +29,9 @@
     <module>de.cau.cs.kieler.kiml.export</module>
     <module>de.cau.cs.kieler.kiml.formats</module>
     <module>de.cau.cs.kieler.kiml.formats.gml</module>
+    <module>de.cau.cs.kieler.kiml.formats.graphml</module>
     <module>de.cau.cs.kieler.kiml.formats.json</module>
+    <module>de.cau.cs.kieler.kiml.formats.ogml</module>
     <module>de.cau.cs.kieler.kiml.formats.svg</module>
     <module>de.cau.cs.kieler.kiml.gmf</module>
     <module>de.cau.cs.kieler.kiml.grana</module>
@@ -59,8 +61,6 @@
     <module>de.cau.cs.kieler.klighd.ui.wizard</module>
     <module>de.cau.cs.kieler.ksbase</module>
     <module>de.cau.cs.kieler.ksbase.ui</module>
-    <module>de.cau.cs.kieler.kwebs</module>
-    <module>de.cau.cs.kieler.kwebs.client</module>
     <module>de.cau.cs.kieler.kwebs.server</module>
     <module>de.cau.cs.kieler.ptolemy.klighd</module>
     <module>edu.umd.cs.piccolo</module>

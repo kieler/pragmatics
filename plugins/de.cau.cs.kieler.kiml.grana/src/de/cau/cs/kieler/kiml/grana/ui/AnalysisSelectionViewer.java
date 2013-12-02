@@ -32,8 +32,8 @@ import org.eclipse.swt.widgets.Composite;
 
 import de.cau.cs.kieler.core.ui.util.TreeViewerCheckStateHandler;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.service.grana.AnalysisCategory;
-import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
+import de.cau.cs.kieler.kiml.grana.AnalysisCategory;
+import de.cau.cs.kieler.kiml.grana.AnalysisData;
 
 /**
  * A component which displays analysis categories in a given collection and lets the user select any

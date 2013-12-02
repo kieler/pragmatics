@@ -23,11 +23,11 @@ import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
+import de.cau.cs.kieler.kiml.grana.AnalysisOptions;
+import de.cau.cs.kieler.kiml.grana.IAnalysis;
+import de.cau.cs.kieler.kiml.grana.analyses.EdgeCountAnalysis;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
-import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
-import de.cau.cs.kieler.kiml.service.grana.analyses.EdgeCountAnalysis;
 
 /**
  * A layout metric that computes the edge orthogonality of the graph layout.

@@ -19,7 +19,7 @@ import org.osgi.framework.BundleContext;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kivi.KiVi;
-import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
+import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
 
 /**
  * The activator class controls the plug-in life cycle.

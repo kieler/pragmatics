@@ -3,7 +3,7 @@
 <schema targetNamespace="de.cau.cs.kieler.kiml.grana" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="de.cau.cs.kieler.kiml.grana" id="resultVisualizers" name="ResultVisualizers"/>
+         <meta.schema plugin="de.cau.cs.kieler.kiml.grana" id="resultVisualizers" name="Result Visualizers"/>
       </appinfo>
       <documentation>
          Extension point for graph analysis result visualization. Visualization methods can be defined to display the results of a graph analysis in some way.
@@ -89,7 +89,7 @@
                   The implementation class of the result visualizer.
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":de.cau.cs.kieler.kiml.grana.visualization.IVisualizer"/>
+                  <meta.attribute kind="java" basedOn=":de.cau.cs.kieler.kiml.grana.ui.visualization.IVisualizer"/>
                </appinfo>
             </annotation>
          </attribute>
@@ -126,7 +126,7 @@
                   The implementing class of the visualization method.
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":de.cau.cs.kieler.kiml.grana.visualization.IVisualizationMethod"/>
+                  <meta.attribute kind="java" basedOn=":de.cau.cs.kieler.kiml.grana.ui.visualization.IVisualizationMethod"/>
                </appinfo>
             </annotation>
          </attribute>
