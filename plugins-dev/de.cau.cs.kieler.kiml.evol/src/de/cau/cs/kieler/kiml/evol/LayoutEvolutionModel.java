@@ -19,6 +19,8 @@ import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.eclipse.swt.graphics.Device;
+
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -138,15 +140,20 @@ public final class LayoutEvolutionModel extends AbstractEvolutionaryAlgorithm {
      * 
      * @param layoutMapping a layout mapping from which to derive an initial configuration
      * @param options the list of layout options that are considered in meta layout
+     * @param device the device in which preview images will be shown, or {@code null}
      * @param progressMonitor a progress monitor
      */
     public void initializePopulation(final LayoutMapping<?> layoutMapping,
-            final List<LayoutOptionData<?>> options, final IKielerProgressMonitor progressMonitor) {
+            final List<LayoutOptionData<?>> options, final Device device,
+            final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Initialize population", 3); // SUPPRESS CHECKSTYLE MagicNumber
         this.layoutOptions = options;
         
         Population population = new Population(2 * INITIAL_POPULATION);
         KNode graph = layoutMapping.getLayoutGraph();
+        if (device != null) {
+            GenomeFactory.checkLabels(graph, device);
+        }
         population.setProperty(Population.EVALUATION_GRAPH, graph);
         
         // create an initial gene, the patriarch

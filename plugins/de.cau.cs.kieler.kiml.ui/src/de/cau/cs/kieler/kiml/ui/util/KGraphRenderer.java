@@ -108,7 +108,7 @@ public class KGraphRenderer {
         this.baseOffset = thebaseOffset;
 
         nodeBorderColor = new Color(display, 2, 15, 3);
-        nodeFillColor = new Color(display, 87, 197, 133);
+        nodeFillColor = new Color(display, 168, 220, 190);
         int nodeFontSize = Math.max((int) Math.round(NODE_FONT_SIZE * thescale), 2);
         nodeFont = new Font(display, "sans", nodeFontSize, SWT.NORMAL);
         portColor = new Color(display, 2, 9, 40);

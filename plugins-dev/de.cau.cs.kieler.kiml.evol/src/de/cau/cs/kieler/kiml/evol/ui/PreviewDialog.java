@@ -125,6 +125,7 @@ public class PreviewDialog extends PopupDialog {
                 previewImage = new Image(getShell().getDisplay(), area.width, area.height);
                 KGraphRenderer renderer = new KGraphRenderer(getShell().getDisplay());
                 renderer.render(graph, new GC(previewImage), area);
+                renderer.dispose();
                 
                 Label label = new Label(composite, SWT.NONE);
                 label.setImage(previewImage);

@@ -20,12 +20,20 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Random;
+import java.util.StringTokenizer;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.swt.graphics.Device;
+import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
+import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.ILayoutData;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
@@ -425,6 +433,75 @@ public final class GenomeFactory {
                 }
             }
         }
+    }
+    
+    /**
+     * Check the size of all node labels and ensure that the nodes are large enough to include
+     * their labels.
+     * 
+     * @param parentNode the parent node of the graph
+     * @param device the device used to generate preview images
+     */
+    public static void checkLabels(final KNode parentNode, final Device device) {
+        GC gc = new GC(new Image(device, 1, 1));
+        LinkedList<KNode> nodeQueue = new LinkedList<KNode>();
+        nodeQueue.add(parentNode);
+        do {
+            KNode node = nodeQueue.removeFirst();
+            
+            float maxX = 0, maxY = 0;
+            for (KLabel label : node.getLabels()) {
+                if (label.getText() != null && label.getText().length() > 0) {
+                    KVector bounds = calculateTextBounds(label.getText(), gc);
+                    KShapeLayout labelLayout = label.getData(KShapeLayout.class);
+                    if (labelLayout.getWidth() < bounds.x) {
+                        labelLayout.setWidth((float) bounds.x);
+                    }
+                    if (labelLayout.getHeight() < bounds.y) {
+                        labelLayout.setHeight((float) bounds.y);
+                    }
+                    maxX = Math.max(maxX, labelLayout.getXpos() + labelLayout.getWidth());
+                    maxY = Math.max(maxY, labelLayout.getYpos() + labelLayout.getHeight());
+                }
+            }
+            KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+            if (nodeLayout.getWidth() < maxX) {
+                nodeLayout.setWidth(maxX);
+            }
+            if (nodeLayout.getHeight() < maxY) {
+                nodeLayout.setHeight(maxY);
+            }
+            
+            nodeQueue.addAll(node.getChildren());
+        } while (!nodeQueue.isEmpty());
+    }
+    
+    /**
+     * Calculates the bounds of the text in the box as measured by the given
+     * graphics context and font metrics.
+     * 
+     * @param gc graphics context from which the measurements are done
+     * @return point representing the dimensions of the text's bounds
+     */
+    private static KVector calculateTextBounds(final String text, final GC gc) {
+        FontMetrics fm = gc.getFontMetrics();
+        KVector textBounds = new KVector(0, 0);
+
+        StringTokenizer tokenizer = new StringTokenizer(text, "\n\r");
+        boolean firstLine = true;
+        while (tokenizer.hasMoreTokens()) {
+            String line = tokenizer.nextToken();
+            Point lineBounds = gc.stringExtent(line);
+            if (firstLine) {
+                textBounds.x = lineBounds.x;
+                textBounds.y = fm.getAscent() + fm.getDescent() + fm.getLeading();
+                firstLine = false;
+            } else {
+                textBounds.x = Math.max(lineBounds.x, textBounds.x);
+                textBounds.y += fm.getHeight();
+            }
+        }
+        return textBounds;
     }
 
 }

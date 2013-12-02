@@ -394,6 +394,7 @@ public class EvolutionDialog extends Dialog {
             KGraphRenderer renderer = new KGraphRenderer(getShell().getDisplay(), scale, offset);
             renderer.render(graph, new GC(previewImage), area);
             genome.setProperty(PREVIEW_IMAGE, previewImage);
+            renderer.dispose();
         }
         return previewImage;
     }
@@ -557,7 +558,7 @@ public class EvolutionDialog extends Dialog {
                         synchronized (evolutionModel) {
                             // reinitialize the population
                             evolutionModel.initializePopulation(layoutMapping, selectedOptions,
-                                    new ProgressBarMonitor(progressBar));                        
+                                    getShell().getDisplay(), new ProgressBarMonitor(progressBar));
                         }
                     }
                 });
