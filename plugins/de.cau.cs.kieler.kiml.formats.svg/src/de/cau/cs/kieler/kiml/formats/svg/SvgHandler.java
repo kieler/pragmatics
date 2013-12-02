@@ -21,10 +21,10 @@ import org.apache.batik.svggen.SVGGraphics2DIOException;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer;
-import de.cau.cs.kieler.kiml.service.formats.ITransformationHandler;
-import de.cau.cs.kieler.kiml.service.formats.TransformationData;
-import de.cau.cs.kieler.kiml.service.formats.TransformationException;
+import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
+import de.cau.cs.kieler.kiml.formats.IGraphFormatHandler;
+import de.cau.cs.kieler.kiml.formats.TransformationData;
+import de.cau.cs.kieler.kiml.formats.TransformationException;
 
 /**
  * Transformation handler for SVG format. The handler supports two options:
@@ -39,7 +39,7 @@ import de.cau.cs.kieler.kiml.service.formats.TransformationException;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class SvgHandler implements ITransformationHandler<SVGGraphics2D> {
+public class SvgHandler implements IGraphFormatHandler<SVGGraphics2D> {
     
     /** the identifier of the SVG format. */
     public static final String ID = "org.w3.svg";

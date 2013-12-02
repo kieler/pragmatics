@@ -31,10 +31,10 @@
 
    <!-- LAYOUT -->
 
-   <feature url="features/de.cau.cs.kieler.kgraph_0.2.0.qualifier.jar" id="de.cau.cs.kieler.kgraph.feature" version="0.2.0.qualifier">
+   <feature url="features/de.cau.cs.kieler.kiml_0.13.0.qualifier.jar" id="de.cau.cs.kieler.kiml.feature" version="0.13.0.qualifier">
       <category name="kieler-layout"/>
    </feature>
-   <feature url="features/de.cau.cs.kieler.kgraph.source_0.2.0.qualifier.jar" id="de.cau.cs.kieler.kgraph.feature.source" version="0.2.0.qualifier">
+   <feature url="features/de.cau.cs.kieler.kiml.source_0.13.0.qualifier.jar" id="de.cau.cs.kieler.kiml.feature.source" version="0.13.0.qualifier">
       <category name="kieler-sources"/>
    </feature>
 
@@ -79,13 +79,12 @@
       <category name="kieler-layout"/>
    </feature>
 
-   <feature url="features/de.cau.cs.kieler.kwebs.client.jaxws_0.2.1.qualifier.jar" id="de.cau.cs.kieler.kwebs.client.jaxws.feature" version="0.2.1.qualifier">
+   <feature url="features/de.cau.cs.kieler.kgraph_0.2.0.qualifier.jar" id="de.cau.cs.kieler.kgraph.feature" version="0.2.0.qualifier">
       <category name="kieler-layout"/>
    </feature>
-   <feature url="features/de.cau.cs.kieler.kwebs.client.jaxws.source_0.2.1.qualifier.jar" id="de.cau.cs.kieler.kwebs.client.jaxws.feature.source" version="0.2.1.qualifier">
+   <feature url="features/de.cau.cs.kieler.kgraph.source_0.2.0.qualifier.jar" id="de.cau.cs.kieler.kgraph.feature.source" version="0.2.0.qualifier">
       <category name="kieler-sources"/>
-   </feature> 
-
+   </feature>
 
    <!-- LIGHTWEIGHT DIAGRAMS -->
 

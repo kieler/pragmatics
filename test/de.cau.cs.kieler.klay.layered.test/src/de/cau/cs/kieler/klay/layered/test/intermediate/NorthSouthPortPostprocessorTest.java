@@ -18,6 +18,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
@@ -39,6 +40,7 @@ import de.cau.cs.kieler.klay.test.utils.TestPath;
  * 
  * @author uru
  */
+@Ignore
 public class NorthSouthPortPostprocessorTest extends AbstractLayeredProcessorTest {
 
     private int noOverallNodes = 0;

@@ -19,16 +19,18 @@ import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.eclipse.swt.graphics.Device;
+
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
+import de.cau.cs.kieler.kiml.config.LayoutContext;
 import de.cau.cs.kieler.kiml.evol.alg.AbstractEvolutionaryAlgorithm;
 import de.cau.cs.kieler.kiml.evol.alg.CrossoverOperation;
 import de.cau.cs.kieler.kiml.evol.alg.EvaluationOperation;
@@ -38,8 +40,9 @@ import de.cau.cs.kieler.kiml.evol.genetic.Gene;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo.GeneType;
-import de.cau.cs.kieler.kiml.service.AnalysisService;
-import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
+import de.cau.cs.kieler.kiml.grana.AnalysisService;
+import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
+import de.cau.cs.kieler.kiml.service.LayoutMapping;
 
 /**
  * The main class for access to evolutionary meta layout.
@@ -138,15 +141,24 @@ public final class LayoutEvolutionModel extends AbstractEvolutionaryAlgorithm {
      * 
      * @param layoutMapping a layout mapping from which to derive an initial configuration
      * @param options the list of layout options that are considered in meta layout
+     * @param device the device in which preview images will be shown, or {@code null}
      * @param progressMonitor a progress monitor
      */
     public void initializePopulation(final LayoutMapping<?> layoutMapping,
-            final List<LayoutOptionData<?>> options, final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Initialize population", 3); // SUPPRESS CHECKSTYLE MagicNumber
+            final List<LayoutOptionData<?>> options, final Device device,
+            final IKielerProgressMonitor progressMonitor) {
+        progressMonitor.begin("Initialize population", 4); // SUPPRESS CHECKSTYLE MagicNumber
         this.layoutOptions = options;
+        this.selectedIndividual = null;
         
+        // initialize the evaluation graph
         Population population = new Population(2 * INITIAL_POPULATION);
         KNode graph = layoutMapping.getLayoutGraph();
+        if (device != null) {
+            GenomeFactory.checkLabels(graph, device);
+        }
+        DiagramLayoutEngine.INSTANCE.getOptionManager().configure(layoutMapping,
+                progressMonitor.subTask(1));
         population.setProperty(Population.EVALUATION_GRAPH, graph);
         
         // create an initial gene, the patriarch

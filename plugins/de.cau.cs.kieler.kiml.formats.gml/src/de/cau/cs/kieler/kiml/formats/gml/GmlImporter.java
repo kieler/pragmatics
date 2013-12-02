@@ -23,6 +23,8 @@ import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
+import de.cau.cs.kieler.kiml.formats.TransformationData;
 import de.cau.cs.kieler.kiml.formats.gml.gml.Element;
 import de.cau.cs.kieler.kiml.formats.gml.gml.GmlFactory;
 import de.cau.cs.kieler.kiml.formats.gml.gml.GmlModel;
@@ -31,8 +33,6 @@ import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
-import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer;
-import de.cau.cs.kieler.kiml.service.formats.TransformationData;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
@@ -276,11 +276,13 @@ public class GmlImporter implements IGraphTransformer<GmlModel, KNode> {
                         }
                     }
                     // create new points
-                    graphics.getElements().add(GmlHandler.createPoint(kedgeLayout.getSourcePoint()));
+                    graphics.getElements().add(
+                            GmlFormatHandler.createPoint(kedgeLayout.getSourcePoint()));
                     for (KPoint point : kedgeLayout.getBendPoints()) {
-                        graphics.getElements().add(GmlHandler.createPoint(point));
+                        graphics.getElements().add(GmlFormatHandler.createPoint(point));
                     }
-                    graphics.getElements().add(GmlHandler.createPoint(kedgeLayout.getTargetPoint()));
+                    graphics.getElements().add(
+                            GmlFormatHandler.createPoint(kedgeLayout.getTargetPoint()));
                 }
             }
             

@@ -15,7 +15,7 @@ package de.cau.cs.kieler.kiml.grana.ui;
 
 import java.util.List;
 
-import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
+import de.cau.cs.kieler.kiml.grana.AnalysisData;
 
 /**
  * The interface for listeners on the selection of an {AnalysisSelectionViewer}.

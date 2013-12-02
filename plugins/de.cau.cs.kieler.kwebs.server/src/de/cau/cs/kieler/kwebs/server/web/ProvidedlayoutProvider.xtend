@@ -14,19 +14,18 @@
 
 package de.cau.cs.kieler.kwebs.server.web
 
-import de.cau.cs.kieler.kiml.LayoutOptionData
 import de.cau.cs.kieler.kiml.options.LayoutOptions
 import de.cau.cs.kieler.kwebs.server.Application
 import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService
 import de.cau.cs.kieler.kwebs.server.logging.Logger
-import de.cau.cs.kieler.kwebs.servicedata.KnownOption
-import de.cau.cs.kieler.kwebs.servicedata.LayoutAlgorithm
-import de.cau.cs.kieler.kwebs.servicedata.LayoutOption
-import de.cau.cs.kieler.kwebs.servicedata.ServiceData
-import de.cau.cs.kieler.kwebs.servicedata.SupportedFormat
-import de.cau.cs.kieler.kwebs.util.Resources
+import de.cau.cs.kieler.kwebs.server.util.Resources
 import java.util.Map
-import java.util.List
+import java.util.Listimport de.cau.cs.kieler.kwebs.server.servicedata.ServiceData
+import de.cau.cs.kieler.kwebs.server.servicedata.LayoutAlgorithm
+import de.cau.cs.kieler.kwebs.server.servicedata.KnownOption
+import de.cau.cs.kieler.kwebs.server.servicedata.SupportedFormat
+import de.cau.cs.kieler.kwebs.server.servicedata.LayoutOption
+import de.cau.cs.kieler.kiml.LayoutOptionData
 
 /**
  * This class implements a web content provider for displaying the service meta data in HTML format.
@@ -196,13 +195,7 @@ class ProvidedlayoutProvider
                                 option.option.id
                             »";'>
                                 <td>«option.option.name»</td>
-                                <td>«
-                                    if (option.option.type.equals(LayoutOptionData::REMOTEENUM_LITERAL))
-                                        LayoutOptionData::ENUM_LITERAL
-                                    else if (option.option.type.equals(LayoutOptionData::REMOTEENUMSET_LITERAL))
-                                        LayoutOptionData::ENUMSET_LITERAL
-                                    else option.option.type
-                                »</td>
+                                <td>«option.option.type»</td>
                                 <td>«option.option.id»</td>
                                 <td>«if (option.^default == null) {
                                     option.option.^default
@@ -363,14 +356,9 @@ class ProvidedlayoutProvider
             <dl class="dl-horizontal">
                 <dt>Name:</dt><dd>«option.name»</dd>
                 <dt>Identifier:</dt><dd>«option.id»</dd>
-                <dt>Type:</dt><dd>
-                «if (type.equals(LayoutOptionData::REMOTEENUM_LITERAL))
-                    "enumeration"
-                else if (type.equals(LayoutOptionData::REMOTEENUMSET_LITERAL))
-                    "enumeration set"
-                else type»</dd>
-                «if (type.equals(LayoutOptionData::REMOTEENUM_LITERAL)
-                    || type.equals(LayoutOptionData::REMOTEENUMSET_LITERAL)) {
+                <dt>Type:</dt><dd>«type»</dd>
+                «if (type.equals(LayoutOptionData::ENUM_LITERAL)
+                    || type.equals(LayoutOptionData::ENUMSET_LITERAL)) {
                     '''
                     <dt>Possible Values:</dt><dd>«option.remoteEnum.values.join(", ")»</dd>
                     '''
@@ -386,9 +374,9 @@ class ProvidedlayoutProvider
             <p>
                 «generateHypertext(option.description)»
             </p>
-                '''
+            '''
             }»
-            «if (type.equals(LayoutOptionData::REMOTEENUMSET_LITERAL)) 
+            «if (type.equals(LayoutOptionData::ENUMSET_LITERAL)) 
             '''
             <div class="alert alert-info">
              To textually specify enumsets pass a string with the desired values separated by a whitespace.  

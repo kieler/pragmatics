@@ -28,7 +28,7 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.kiml.LayoutContext;
+import de.cau.cs.kieler.kiml.config.LayoutContext;
 
 /**
  * A genome contains lists of Gene objects associated with graphs. It can be used as an individual in
