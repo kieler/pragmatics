@@ -41,6 +41,7 @@ import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo.GeneType;
 import de.cau.cs.kieler.kiml.grana.AnalysisService;
+import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.service.LayoutMapping;
 
 /**
@@ -146,14 +147,18 @@ public final class LayoutEvolutionModel extends AbstractEvolutionaryAlgorithm {
     public void initializePopulation(final LayoutMapping<?> layoutMapping,
             final List<LayoutOptionData<?>> options, final Device device,
             final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Initialize population", 3); // SUPPRESS CHECKSTYLE MagicNumber
+        progressMonitor.begin("Initialize population", 4); // SUPPRESS CHECKSTYLE MagicNumber
         this.layoutOptions = options;
+        this.selectedIndividual = null;
         
+        // initialize the evaluation graph
         Population population = new Population(2 * INITIAL_POPULATION);
         KNode graph = layoutMapping.getLayoutGraph();
         if (device != null) {
             GenomeFactory.checkLabels(graph, device);
         }
+        DiagramLayoutEngine.INSTANCE.getOptionManager().configure(layoutMapping,
+                progressMonitor.subTask(1));
         population.setProperty(Population.EVALUATION_GRAPH, graph);
         
         // create an initial gene, the patriarch

@@ -42,7 +42,6 @@ import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine;
-import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.evol.EvolPlugin;
 import de.cau.cs.kieler.kiml.evol.GenomeFactory;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
@@ -202,7 +201,6 @@ public class EvaluationOperation implements IEvolutionaryOperation {
         progressMonitor.begin("Evaluation", 2);
 
         KNode evaluationGraph = population.getProperty(Population.EVALUATION_GRAPH);
-        ILayoutConfig layoutConfig = population.getProperty(Population.DEFAULT_CONFIG);
         
         // create a copy of the evaluation graph
         EcoreUtil.Copier copier = new EcoreUtil.Copier();
@@ -212,7 +210,7 @@ public class EvaluationOperation implements IEvolutionaryOperation {
         // perform layout on the evaluation graph
         double executionTime;
         try {
-            GenomeFactory.configureGraph(genome, layoutConfig, copier);
+            GenomeFactory.configureGraph(genome, copier);
             IKielerProgressMonitor layoutMonitor = progressMonitor.subTask(1);
             graphLayoutEngine.layout(graph, layoutMonitor);
             executionTime = layoutMonitor.getExecutionTime();
