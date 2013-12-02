@@ -39,6 +39,7 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
@@ -79,7 +80,7 @@ public class EvaluationOperation implements IEvolutionaryOperation {
     /** the execution time result for the time base. */
     private static final float EXECTIME_RESULT = 0.5f;
     /** time in milliseconds after which evaluations are aborted. */
-    private static final long EVAL_TIMEOUT = 3000;
+    private static final long EVAL_TIMEOUT = 7000;
 
     /** the graph layout engine used for executing configured layout on the evaluation graph. */
     private final IGraphLayoutEngine graphLayoutEngine = new RecursiveGraphLayoutEngine();
@@ -140,12 +141,15 @@ public class EvaluationOperation implements IEvolutionaryOperation {
         } else {
             // multi-threaded execution: submit tasks to the executor service
             LinkedList<Future<?>> futures = new LinkedList<Future<?>>();
+            final Maybe<Boolean> aborted = new Maybe<Boolean>(false);
             for (final Genome genome : population) {
                 if (genome.getProperty(Genome.FITNESS) == null) {
                     Future<?> future = executorService.submit(new Runnable() {
                         public void run() {
                             double fitness = autoRate(genome, population, new BasicProgressMonitor(0));
-                            genome.setProperty(Genome.FITNESS, fitness);
+                            if (!aborted.get()) {
+                                genome.setProperty(Genome.FITNESS, fitness);
+                            }
                         }
                     });
                     futures.addLast(future);
@@ -172,6 +176,7 @@ public class EvaluationOperation implements IEvolutionaryOperation {
                     }
                     throw new WrappedException(exception);
                 } catch (TimeoutException exception) {
+                    aborted.set(true);
                     future.cancel(true);
                 }
             }
