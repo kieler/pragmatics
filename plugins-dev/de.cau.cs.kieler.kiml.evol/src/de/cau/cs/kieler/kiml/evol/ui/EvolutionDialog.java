@@ -241,11 +241,13 @@ public class EvolutionDialog extends Dialog {
         for (AnalysisData data : category.getAnalyses()) {
             createMetricArea(metricsPane, data, population);
         }
-        AnalysisData executionTimeData = new AnalysisData();
-        executionTimeData.setId(EvaluationOperation.EXEC_TIME_METRIC);
-        executionTimeData.setName("Execution Time");
-        executionTimeData.setDescription("The measured execution time for layout computation.");
-        createMetricArea(metricsPane, executionTimeData, population);
+        if (population.getProperty(EvaluationOperation.USE_EXEC_TIME)) {
+            AnalysisData executionTimeData = new AnalysisData();
+            executionTimeData.setId(EvaluationOperation.EXEC_TIME_METRIC);
+            executionTimeData.setName("Execution Time");
+            executionTimeData.setDescription("The measured execution time for layout computation.");
+            createMetricArea(metricsPane, executionTimeData, population);
+        }
         
         // create label for fitness value
         GridData gridData = new GridData(SWT.FILL, SWT.LEFT, true, false);
@@ -422,6 +424,7 @@ public class EvolutionDialog extends Dialog {
         final Scale scale = new Scale(parent, SWT.HORIZONTAL);
         scale.setMinimum(0);
         scale.setMaximum(SLIDER_MAX);
+        scale.setToolTipText(data.getDescription());
         GridData gridData = new GridData(SWT.FILL, SWT.TOP, false, false);
         gridData.horizontalIndent = 20;
         gridData.horizontalSpan = 2;
