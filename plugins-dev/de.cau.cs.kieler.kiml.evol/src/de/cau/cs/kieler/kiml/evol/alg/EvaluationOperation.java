@@ -70,6 +70,9 @@ public class EvaluationOperation implements IEvolutionaryOperation {
     public static final IProperty<Map<String, Float>> METRIC_RESULT
             = new Property<Map<String, Float>>("evol.metricResult");
 
+    /** population property that determines whether the execution time is measured. */
+    public static final IProperty<Boolean> USE_EXEC_TIME = new Property<Boolean>(
+            "evol.useExecTime", false);
     /** population property for the weights of layout metrics. */
     public static final IProperty<Map<String, Double>> METRIC_WEIGHT
             = new Property<Map<String, Double>>("evol.metricWeight");
@@ -255,21 +258,23 @@ public class EvaluationOperation implements IEvolutionaryOperation {
         }
         
         // consider the execution time as special metric
-        float execTimeResult;
-        if (executionTime >= EXECTIME_TIMEBASE) {
-            execTimeResult = EXECTIME_RESULT * EXECTIME_TIMEBASE / (float) executionTime;
-        } else {
-            execTimeResult = 1 - (float) executionTime / EXECTIME_TIMEBASE * (1 - EXECTIME_RESULT);
+        if (population.getProperty(USE_EXEC_TIME)) {
+            float execTimeResult;
+            if (executionTime >= EXECTIME_TIMEBASE) {
+                execTimeResult = EXECTIME_RESULT * EXECTIME_TIMEBASE / (float) executionTime;
+            } else {
+                execTimeResult = 1 - (float) executionTime / EXECTIME_TIMEBASE * (1 - EXECTIME_RESULT);
+            }
+            Double weight = metricWeights.get(EXEC_TIME_METRIC);
+            if (weight == null) {
+                rating += execTimeResult;
+                totalWeight += 1;
+            } else {
+                rating += weight * execTimeResult;
+                totalWeight += weight;
+            }
+            metricResults.put(EXEC_TIME_METRIC, execTimeResult);
         }
-        Double weight = metricWeights.get(EXEC_TIME_METRIC);
-        if (weight == null) {
-            rating += execTimeResult;
-            totalWeight += 1;
-        } else {
-            rating += weight * execTimeResult;
-            totalWeight += weight;
-        }
-        metricResults.put(EXEC_TIME_METRIC, execTimeResult);
         
         double result;
         if (totalWeight == 0) {
