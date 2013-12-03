@@ -22,13 +22,21 @@ import org.eclipse.swt.widgets.Composite;
 import de.cau.cs.kieler.klighd.piccolo.internal.Constants;
 import de.cau.cs.kieler.klighd.piccolo.internal.KlighdSWTGraphicsEx;
 import de.cau.cs.kieler.klighd.piccolo.internal.KlighdSWTGraphicsImpl;
+import de.cau.cs.kieler.klighd.piccolo.internal.events.KlighdFocusEventListener;
+import de.cau.cs.kieler.klighd.piccolo.internal.events.KlighdInputManager;
 import de.cau.cs.kieler.klighd.piccolo.internal.events.KlighdKeyEventListener;
 import de.cau.cs.kieler.klighd.piccolo.internal.events.KlighdMouseEventListener;
+import edu.umd.cs.piccolo.PCamera;
+import edu.umd.cs.piccolo.PInputManager;
+import edu.umd.cs.piccolo.PRoot;
+import edu.umd.cs.piccolo.event.PPanEventHandler;
+import edu.umd.cs.piccolo.event.PZoomEventHandler;
 import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolox.swt.PSWTCanvas;
+import edu.umd.cs.piccolox.swt.PSWTRoot;
 
 /**
- * A specialized version of {@link PSWTCanvas} with KLighD-specific customizations.
+ * A specialized version of {@link PSWTCanvas} with lots of KLighD-specific customizations.
  *
  * @author chsch
  */
@@ -51,6 +59,12 @@ public class KlighdCanvas extends PSWTCanvas {
     public KlighdCanvas(final Composite parent, final int style) {
         super(parent, style);
 
+        // remove the original event handlers as they require AWT event type codes
+        //  instances of this class are augment with SWT-based event handlers
+        //  e.g. in PiccoloViewer or PiccoloOutlinePage
+        this.removeInputEventListener(super.getZoomEventHandler());
+        this.removeInputEventListener(super.getPanEventHandler());
+        
         this.graphics = new KlighdSWTGraphicsImpl(null, parent.getDisplay());
         this.getRoot().addAttribute(Constants.DEVICE, parent.getDisplay());
         this.getRoot().addAttribute(Constants.MAIN_CAMERA, this.getCamera());
@@ -58,7 +72,42 @@ public class KlighdCanvas extends PSWTCanvas {
         // this reduces flickering drastically
         this.setDoubleBuffered(true);
 
-    }    
+    }
+
+    /**
+     * {@inheritDoc}<br>
+     * <br>
+     * This customization is required for injecting the specialized root node providing the
+     * KLighD-specific {@link KlighdInputManager}. This input manager replaces the event evaluation
+     * based on AWT's event type codes by one based on SWT's event type codes.<br>
+     * <br>
+     * Besides, no initial instance of {@link edu.umd.cs.piccolo.PLayer PLayer} is added - our
+     * {@link KNodeTopNode} takes that part; see
+     * {@link de.cau.cs.kieler.klighd.piccolo.internal.controller.DiagramController#DiagramController(
+     * de.cau.cs.kieler.core.kgraph.KNode, PCamera, boolean)
+     * DiagramController.DiagramController(KNode, PCamera, boolean)}.
+     */
+    @Override // SUPPRESS CHECKSTYLE Javadoc, see http://sourceforge.net/p/checkstyle/bugs/592/
+    public PCamera createBasicSceneGraph() {
+        final PRoot r = new PSWTRoot(this) {
+            private static final long serialVersionUID = -4737922663028304522L;
+
+            private PInputManager inputManager = null;
+            
+            @Override
+            public PInputManager getDefaultInputManager() {
+                if (inputManager == null) {
+                    inputManager = new KlighdInputManager();
+                    addInputSource(inputManager);
+                }
+                return inputManager;
+            }
+        };
+        
+        final PCamera c = new KlighdMainCamera();
+        r.addChild(c);
+        return c;
+    }
 
     @Override
     protected Graphics2D getGraphics2D(final GC gc, final Device device) {
@@ -68,25 +117,53 @@ public class KlighdCanvas extends PSWTCanvas {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public KlighdMainCamera getCamera() {
+        return (KlighdMainCamera) super.getCamera();
+    }
+
+    /**
      * With this specialized implementation I register customized event listeners that do not
-     * translate SWT events into AWT ones.
+     * translate SWT events into AWT ones. The original event listeners are omitted.
      */
     @Override
     protected void installInputSources() {
-        // TODO for the moment we need the original ones, too, as long as the the 
-        //  PSWTSimpleSelectionEventHandler is not migrated to the custom listeners
-        super.installInputSources();
-        
+
+        this.addFocusListener(new KlighdFocusEventListener(this));
         this.addKeyListener(new KlighdKeyEventListener(this));
-        KlighdMouseEventListener mouseListener = new KlighdMouseEventListener(this);
+        
+        final KlighdMouseEventListener mouseListener = new KlighdMouseEventListener(this);
         this.addMouseListener(mouseListener);
         this.addMouseMoveListener(mouseListener);
         this.addMouseTrackListener(mouseListener);
         this.addMouseWheelListener(mouseListener);
+        this.addGestureListener(mouseListener);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public PPanEventHandler getPanEventHandler() {
+        final String msg = "KLighD Piccolo viewer: "
+                + "Method is not supported as a different pan event handler is deployed.";
+        throw new UnsupportedOperationException(msg);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public PZoomEventHandler getZoomEventHandler() {
+        final String msg = "KLighD Piccolo viewer: "
+                + "Method is not supported as a different zoom event handler is deployed.";
+        throw new UnsupportedOperationException(msg);
     }
 
     /**
-     * {@inheritDoc}.<br>
+     * {@inheritDoc}<br>
      * <br>
      * This specialized method checks the validity of the canvas
      * before something is painted in order to avoid the 'Widget is disposed' errors.
@@ -96,7 +173,7 @@ public class KlighdCanvas extends PSWTCanvas {
             super.repaint(bounds);
         }
     }
-    
+
     @Override
     public void dispose() {
         super.dispose();

@@ -60,10 +60,14 @@ import de.cau.cs.kieler.core.krendering.Underline
 import de.cau.cs.kieler.core.krendering.VerticalAlignment
 
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
+import de.cau.cs.kieler.core.kgraph.KLabel
+import de.cau.cs.kieler.core.krendering.KContainerRendering
 
 /**
  * This utility class contains various methods that are convenient while composing KRendering data.
  * It does not claim to be complete ;-).
+ * 
+ * @containsExtensions
  */
 class KRenderingExtensions {
 
@@ -80,56 +84,118 @@ class KRenderingExtensions {
         return kge.getData(typeof(KRendering));
     }
 
-    def KEllipse addEllipse(KNode node){
-        return renderingFactory.createKEllipse() => [
-            node.data.add(it)
-        ];
-    }
-
-    def KEllipse addEllipse(KPort port){
-        return renderingFactory.createKEllipse() => [
-            port.data.add(it)
-        ];
-    }
-
-    def KPolygon addPolygon(KNode node){
-        return renderingFactory.createKPolygon() => [
-            node.data.add(it)
-        ];
-    }
-
-    def KPolygon addPolygon(KPort port){
-        return renderingFactory.createKPolygon() => [
-            port.data.add(it)
-        ];
-    }
-
-    def KRectangle addRectangle(KNode node){
+    def dispatch KContainerRendering addInvisibleContainerRendering(KNode node){
         return renderingFactory.createKRectangle() => [
-            node.data.add(it)
+            it.invisible = true;
+            node.data += it
         ];
     }
 
-    def KRectangle addRectangle(KPort port){
+    def dispatch KContainerRendering addInvisibleContainerRendering(KPort port){
         return renderingFactory.createKRectangle() => [
-            port.data.add(it)
+            it.invisible = true;
+            port.data += it
         ];
     }
 
-    def KRoundedRectangle addRoundedRectangle(KNode node, float cWidth, float cHeight) {
+    def dispatch KContainerRendering addInvisibleContainerRendering(KLabel label){
+        return renderingFactory.createKRectangle() => [
+            it.invisible = true;
+            label.data += it
+        ];
+    }
+
+    def dispatch KEllipse addEllipse(KNode node){
+        return renderingFactory.createKEllipse() => [
+            node.data += it
+        ];
+    }
+
+    def dispatch KEllipse addEllipse(KPort port){
+        return renderingFactory.createKEllipse() => [
+            port.data += it
+        ];
+    }
+
+    def dispatch KEllipse addEllipse(KLabel label){
+        return renderingFactory.createKEllipse() => [
+            label.data += it
+        ];
+    }
+
+    def dispatch KPolygon addPolygon(KNode node){
+        return renderingFactory.createKPolygon() => [
+            node.data += it
+        ];
+    }
+
+    def dispatch KPolygon addPolygon(KPort port){
+        return renderingFactory.createKPolygon() => [
+            port.data += it
+        ];
+    }
+
+    /**
+     * Adds a rectangle to the node.
+     * @example
+     * node.addRectangle => [
+     *   it.background = "green".color
+     * ]
+     * 
+     * @extensionCategory composition  
+     */
+    def dispatch KRectangle addRectangle(KNode node){
+        return renderingFactory.createKRectangle() => [
+            node.data += it
+        ];
+    }
+
+    def dispatch KRectangle addRectangle(KPort port){
+        return renderingFactory.createKRectangle() => [
+            port.data += it
+        ];
+    }
+
+    def dispatch KRectangle addRectangle(KLabel label){
+        return renderingFactory.createKRectangle() => [
+            label.data += it
+        ];
+    }
+
+    /**
+     * @extensionCategory composition  
+     */
+    def dispatch KRoundedRectangle addRoundedRectangle(KNode node, float cWidth, float cHeight) {
         return renderingFactory.createKRoundedRectangle => [
             it.cornerWidth = cWidth;
             it.cornerHeight = cHeight;
-            node.data.add(it)
+            node.data += it
         ];
     }
     
-    def KRoundedRectangle addRoundedRectangle(KNode node, float cWidth, float cHeight, float lineWidth) {
+    def dispatch KRoundedRectangle addRoundedRectangle(KLabel label, float cWidth, float cHeight) {
+        return renderingFactory.createKRoundedRectangle => [
+            it.cornerWidth = cWidth;
+            it.cornerHeight = cHeight;
+            label.data += it
+        ];
+    }
+    
+    def dispatch KRoundedRectangle addRoundedRectangle(KNode node, float cWidth, float cHeight, float lineWidth) {
         return renderingFactory.createKRoundedRectangle => [
             it.cornerWidth = cWidth;
             it.cornerHeight = cHeight;
             it.setLineWidth(lineWidth);
-            node.data.add(it)
+            node.data += it
+        ];
+    }
+    
+    def dispatch KRoundedRectangle addRoundedRectangle(KLabel label, float cWidth, float cHeight, float lineWidth) {
+        return renderingFactory.createKRoundedRectangle => [
+            it.cornerWidth = cWidth;
+            it.cornerHeight = cHeight;
+            it.setLineWidth(lineWidth);
+            label.data += it
         ];
     }
     
@@ -142,7 +208,7 @@ class KRenderingExtensions {
 
     def KText addText(KNode node, String text){
         return renderingFactory.createKText() => [
-            node.data.add(it)
+            node.data += it
             it.text = text;
         ];
     }
@@ -151,13 +217,40 @@ class KRenderingExtensions {
         return rendering => [
             it.actions += renderingFactory.createKAction() => [
                 it.trigger = trigger;
-                it.id = actionId;
+                it.actionId = actionId;
             ];
         ];
     }
     
+    def <T extends KRendering> T addAction(T rendering, Trigger trigger, String actionId,
+            boolean altPressed, boolean ctrlCmdPressed, boolean shiftPressed) {
+        return rendering => [
+            it.actions += renderingFactory.createKAction() => [
+                it.trigger = trigger;
+                it.actionId = actionId;
+                it.altPressed = altPressed;
+                it.ctrlCmdPressed = ctrlCmdPressed;
+                it.shiftPressed = shiftPressed;
+            ];
+        ];
+    }
+    
+    def <T extends KRendering> T addSingleClickAction(T rendering, String actionId) {
+        return rendering.addAction(Trigger::SINGLECLICK, actionId);
+    }
+
+    def <T extends KRendering> T addSingleClickAction(T rendering, String actionId,
+            boolean altPressed, boolean ctrlCmdPressed, boolean shiftPressed) {
+        return rendering.addAction(Trigger::SINGLECLICK, actionId, altPressed, ctrlCmdPressed, shiftPressed);
+    }
+
     def <T extends KRendering> T addDoubleClickAction(T rendering, String actionId) {
         return rendering.addAction(Trigger::DOUBLECLICK, actionId);
+    }
+
+    def <T extends KRendering> T addDoubleClickAction(T rendering, String actionId,
+            boolean altPressed, boolean ctrlCmdPressed, boolean shiftPressed) {
+        return rendering.addAction(Trigger::DOUBLECLICK, actionId, altPressed, ctrlCmdPressed, shiftPressed);
     }
 
 
@@ -179,6 +272,10 @@ class KRenderingExtensions {
         ];
     }
     
+    private static final (KStyle) => boolean IS_SELECTION = [
+        it.selection
+    ];
+    
     // how might a getStyleRef look like?
     //  In case we allow multiple that may refine each other the getter returns an iterator?
     
@@ -186,6 +283,16 @@ class KRenderingExtensions {
         rendering.styles.removeAll(rendering.styles.filter(typeof(KStyleRef)).toList);
         return rendering => [
             it.styles += renderingFactory.createKStyleRef() => [
+                it.styleHolder = styleHolder;
+            ];
+        ];
+    }
+ 
+    def <T extends KRendering> T setSelectionStyleRef(T rendering, KStyleHolder styleHolder) {
+        rendering.styles.removeAll(rendering.styles.filter(IS_SELECTION).filter(typeof(KStyleRef)).toList);
+        return rendering => [
+            it.styles += renderingFactory.createKStyleRef() => [
+                it.selection = true;
                 it.styleHolder = styleHolder;
             ];
         ];
@@ -199,11 +306,20 @@ class KRenderingExtensions {
         ];
     }
  
+    def <T extends KRendering> T addSelectionStyleRef(T rendering, KStyleHolder styleHolder) {
+        return rendering => [
+            it.styles += renderingFactory.createKStyleRef() => [
+                it.selection = true;
+                it.styleHolder = styleHolder;
+            ];
+        ];
+    }
+ 
     def KInvisibility getInvisible(KRendering rendering) {
         return rendering.styles.filter(typeof(KInvisibility)).last?:(renderingFactory.createKInvisibility());
     }
  
-    def boolean getBooleanInvisible(KRendering rendering) {
+    def boolean getInvisibleValue(KRendering rendering) {
         return (
             rendering.styles.filter(typeof(KInvisibility)).last?:(renderingFactory.createKInvisibility())
         ).invisible;
@@ -213,6 +329,16 @@ class KRenderingExtensions {
         rendering.styles.removeAll(rendering.styles.filter(typeof(KInvisibility)).toList);
         return rendering => [
             it.styles += renderingFactory.createKInvisibility() => [
+                it.setInvisible(invisible);
+            ]
+        ];
+    }
+    
+    def <T extends KRendering> T setSelectionInvisible(T rendering, boolean invisible) {
+        rendering.styles.removeAll(rendering.styles.filter(IS_SELECTION).filter(typeof(KInvisibility)).toList);
+        return rendering => [
+            it.styles += renderingFactory.createKInvisibility() => [
+                it.selection = true;
                 it.setInvisible(invisible);
             ]
         ];
@@ -230,6 +356,9 @@ class KRenderingExtensions {
         ])).lineWidth;
     }
  
+    /**
+     * @extensionCategory style  
+     */
     def <T extends KRendering> T setLineWidth(T rendering, float width) {
         rendering.styles.removeAll(rendering.styles.filter(typeof(KLineWidth)).toList);
         return rendering => [
@@ -239,6 +368,19 @@ class KRenderingExtensions {
         ];
     }
     
+    def <T extends KRendering> T setSelectionLineWidth(T rendering, float width) {
+        rendering.styles.removeAll(rendering.styles.filter(IS_SELECTION).filter(typeof(KLineWidth)).toList);
+        return rendering => [
+            it.styles += renderingFactory.createKLineWidth() => [
+                it.selection = true;
+                it.setLineWidth(width);
+            ]
+        ];
+    }
+    
+    /**
+     * @extensionCategory style  
+     */
     def KLineStyle getLineStyle(KRendering rendering) {
         return rendering.styles.filter(typeof(KLineStyle)).last?:(renderingFactory.createKLineStyle => [
             lineStyle = LineStyle::SOLID;
@@ -255,6 +397,16 @@ class KRenderingExtensions {
         rendering.styles.removeAll(rendering.styles.filter(typeof(KLineStyle)).toList);
         return rendering => [
             it.styles += renderingFactory.createKLineStyle => [
+                it.setLineStyle(style);
+            ];
+        ];
+    }
+    
+    def <T extends KRendering> T setSelectionLineStyle(T rendering, LineStyle style) {
+        rendering.styles.removeAll(rendering.styles.filter(IS_SELECTION).filter(typeof(KLineStyle)).toList);
+        return rendering => [
+            it.styles += renderingFactory.createKLineStyle => [
+                it.selection = true;
                 it.setLineStyle(style);
             ];
         ];
@@ -281,6 +433,16 @@ class KRenderingExtensions {
         ];
     }
     
+    def <T extends KRendering> T setSelectionLineCap(T rendering, LineCap style) {
+        rendering.styles.removeAll(rendering.styles.filter(IS_SELECTION).filter(typeof(KLineCap)).toList);
+        return rendering => [
+            it.styles += renderingFactory.createKLineCap => [
+                it.selection = true;
+                it.lineCap = style;
+            ];
+        ];
+    }
+    
     def KLineJoin getLineJoin(KRendering rendering) {
         return rendering.styles.filter(typeof(KLineJoin)).last?:(renderingFactory.createKLineJoin => [
             lineJoin = LineJoin::JOIN_MITER;
@@ -302,6 +464,16 @@ class KRenderingExtensions {
         ];
     }
     
+    def <T extends KRendering> T setSelectionLineJoin(T rendering, LineJoin style) {
+        rendering.styles.removeAll(rendering.styles.filter(IS_SELECTION).filter(typeof(KLineJoin)).toList);
+        return rendering => [
+            it.styles += renderingFactory.createKLineJoin => [
+                it.selection = true;
+                it.lineJoin = style;
+            ];
+        ];
+    }
+    
     def <T extends KRendering> T setLineJoin(T rendering, LineJoin style, float miterLimit) {
         rendering.styles.removeAll(rendering.styles.filter(typeof(KLineJoin)).toList);
         return rendering => [
@@ -312,11 +484,22 @@ class KRenderingExtensions {
         ];
     }
     
+    def <T extends KRendering> T setSelectionLineJoin(T rendering, LineJoin style, float miterLimit) {
+        rendering.styles.removeAll(rendering.styles.filter(IS_SELECTION).filter(typeof(KLineJoin)).toList);
+        return rendering => [
+            it.styles += renderingFactory.createKLineJoin => [
+                it.selection = true;
+                it.lineJoin = style;
+                it.miterLimit = miterLimit;
+            ];
+        ];
+    }
+    
     def KRotation getRotation(KRendering rendering) {
         return rendering.styles.filter(typeof(KRotation)).last?:renderingFactory.createKRotation;
     }
  
-    def float getFloatRotation(KRendering rendering) {
+    def float getRotationValue(KRendering rendering) {
         return (
             rendering.styles.filter(typeof(KRotation)).last?:renderingFactory.createKRotation
         ).rotation;
@@ -331,13 +514,23 @@ class KRenderingExtensions {
         ];
     }
     
+    def <T extends KRendering> T setSelectionRotation(T rendering, Float rotation) {
+        rendering.styles.removeAll(rendering.styles.filter(IS_SELECTION).filter(typeof(KRotation)).toList);
+        return rendering => [
+            it.styles += renderingFactory.createKRotation => [
+                it.selection = true;
+                it.setRotation(rotation);
+            ];
+        ];
+    }
+    
     def KBackground getBackground(KRendering rendering){
         return rendering.styles?.filter(typeof(KBackground)).last?:(renderingFactory.createKBackground() => [
             it.color = renderingFactory.createKColor();
         ]);
     }
     
-    def <T extends KRendering> T setBackground(T rendering, KColoring coloring){
+    def <T extends KRendering> T setBackground(T rendering, KColoring<?> coloring) {
         rendering.styles.removeAll(rendering.styles.filter(typeof(KBackground)).toList);
         return rendering => [
             it.styles += renderingFactory.createKBackground => [
@@ -352,11 +545,35 @@ class KRenderingExtensions {
         ];
     }
     
-    def <T extends KRendering> T setBackground(T rendering, KColor color){
+    def <T extends KRendering> T setSelectionBackground(T rendering, KColoring<?> coloring) {
+        return rendering => [
+            it.styles += renderingFactory.createKBackground => [
+                it.alpha = coloring.alpha;
+                it.color = coloring.color.copy;
+                it.targetAlpha = coloring.targetAlpha;
+                it.targetColor = coloring.targetColor.copy;
+                it.gradientAngle = coloring.gradientAngle;
+                it.modifierId = coloring.modifierId;
+                it.propagateToChildren = coloring.propagateToChildren;
+                it.selection = true;
+            ];
+        ];
+    }
+    
+    def <T extends KRendering> T setBackground(T rendering, KColor color) {
         rendering.styles.removeAll(rendering.styles.filter(typeof(KBackground)).toList);
         return rendering => [
             it.styles += renderingFactory.createKBackground => [
                 it.color = color.copy;
+            ];
+        ];
+    }
+
+    def <T extends KRendering> T setSelectionBackground(T rendering, KColor color) {
+        return rendering => [
+            it.styles += renderingFactory.createKBackground => [
+                it.color = color.copy;
+                it.selection = true;
             ];
         ];
     }
@@ -374,6 +591,47 @@ class KRenderingExtensions {
         ];
     }
     
+    def <T extends KRendering> T setSelectionBackgroundColor(T rendering, int red, int green, int blue){
+        return rendering => [
+            it.styles += renderingFactory.createKBackground => [
+                it.color = renderingFactory.createKColor => [
+                    it.red = red;
+                    it.green = green;
+                    it.blue = blue;
+                ];
+                it.selection = true;
+            ];
+        ];
+    }
+    
+    def <T extends KRendering> T setBackgroundColor(T rendering, int red, int green, int blue, int alpha){
+        rendering.styles.removeAll(rendering.styles.filter(typeof(KBackground)).toList);
+        return rendering => [
+            it.styles += renderingFactory.createKBackground => [
+                it.alpha = alpha;
+                it.color = renderingFactory.createKColor => [
+                    it.red = red;
+                    it.green = green;
+                    it.blue = blue;
+                ];
+            ];
+        ];
+    }
+    
+    def <T extends KRendering> T setSelectionBackgroundColor(T rendering, int red, int green, int blue, int alpha){
+        return rendering => [
+            it.styles += renderingFactory.createKBackground => [
+                it.alpha = alpha;
+                it.color = renderingFactory.createKColor => [
+                    it.red = red;
+                    it.green = green;
+                    it.blue = blue;
+                ];
+                it.selection = true;
+            ];
+        ];
+    }
+    
     def <T extends KRendering> T setBackgroundGradient(T rendering, KColor color1, KColor color2, int angle) {
         rendering.styles.removeAll(rendering.styles.filter(typeof(KBackground)).toList);
         return rendering => [
@@ -385,9 +643,19 @@ class KRenderingExtensions {
         ];
     }
     
-    def <T extends KRendering> T setBackgroundGradient(T rendering, KColor color1, int alpha1,
-        KColor color2, int alpha2, int angle
-    ) {
+    def <T extends KRendering> T setSelectionBackgroundGradient(T rendering, KColor color1, KColor color2, int angle) {
+        return rendering => [
+            it.styles += renderingFactory.createKBackground => [
+                it.color = color1;                
+                it.targetColor = color2;
+                it.gradientAngle = angle;
+                it.selection = true;
+            ];
+        ];
+    }
+    
+    def <T extends KRendering> T setBackgroundGradient(T rendering,
+            KColor color1, int alpha1, KColor color2, int alpha2, int angle) {
         rendering.styles.removeAll(rendering.styles.filter(typeof(KBackground)).toList);
         return rendering => [
             it.styles += renderingFactory.createKBackground => [
@@ -396,6 +664,20 @@ class KRenderingExtensions {
                 it.targetColor = color2;
                 it.targetAlpha = alpha2;
                 it.gradientAngle = angle;
+            ];
+        ];
+    }
+    
+    def <T extends KRendering> T setSelectionBackgroundGradient(T rendering,
+            KColor color1, int alpha1, KColor color2, int alpha2, int angle) {
+        return rendering => [
+            it.styles += renderingFactory.createKBackground => [
+                it.color = color1;
+                it.alpha = alpha1;                
+                it.targetColor = color2;
+                it.targetAlpha = alpha2;
+                it.gradientAngle = angle;
+                it.selection = true
             ];
         ];
     }
@@ -418,7 +700,7 @@ class KRenderingExtensions {
         ]);
     }
 
-    def <T extends KRendering>  T setForeground(T rendering, KColoring coloring){
+    def <T extends KRendering>  T setForeground(T rendering, KColoring<?> coloring){
         rendering.styles.removeAll(rendering.styles.filter(typeof(KForeground)).toList);
         return rendering => [
             it.styles += renderingFactory.createKForeground => [
@@ -446,6 +728,20 @@ class KRenderingExtensions {
         rendering.styles.removeAll(rendering.styles.filter(typeof(KForeground)).toList);
         return rendering => [
             it.styles += renderingFactory.createKForeground() => [
+                it.color = renderingFactory.createKColor() => [
+                    it.red = red;
+                    it.green = green;
+                    it.blue = blue;
+                ];
+            ];
+        ];
+    }
+    
+    def <T extends KRendering>  T setForegroundColor(T rendering, int red, int green, int blue, int alpha){
+        rendering.styles.removeAll(rendering.styles.filter(typeof(KForeground)).toList);
+        return rendering => [
+            it.styles += renderingFactory.createKForeground() => [
+                it.alpha = alpha;
                 it.color = renderingFactory.createKColor() => [
                     it.red = red;
                     it.green = green;
@@ -583,7 +879,17 @@ class KRenderingExtensions {
         ];        
     }
     
-    def KFontItalic geFontItalic(KRendering rendering) {
+    def <T extends KRendering> T setSelectionFontBold(T rendering, boolean bold) {
+        rendering.styles.removeAll(rendering.styles.filter(IS_SELECTION).filter(typeof(KFontBold)).toList);
+        return rendering => [
+            it.styles += renderingFactory.createKFontBold() => [
+                it.selection = true;
+                it.setBold(bold);
+            ];
+        ];        
+    }
+    
+    def KFontItalic getFontItalic(KRendering rendering) {
         return rendering.styles.filter(typeof(KFontItalic)).last?:(renderingFactory.createKFontItalic);
     }
  
@@ -621,9 +927,28 @@ class KRenderingExtensions {
         ];
     }
     
+    def <T extends KRendering> T setSelectionTextUnderline(T rendering, Underline underline) {
+        rendering.styles.removeAll(rendering.styles.filter(IS_SELECTION).filter(typeof(KTextUnderline)).toList);
+        return rendering => [
+            it.styles += renderingFactory.createKTextUnderline() => [
+                it.selection = true;
+                it.underline = underline;
+            ];
+        ];
+    }
+    
     def <T extends KRendering> T setTextUnderlineColor(T rendering, KColor color) {
         return rendering => [
             (rendering.styles.filter(typeof(KTextUnderline)).last?:renderingFactory.createKTextUnderline()) => [
+                it.color = color;
+            ];
+        ];
+    }
+    
+    def <T extends KRendering> T setSelectionTextUnderlineColor(T rendering, KColor color) {
+        return rendering => [
+            (rendering.styles.filter(IS_SELECTION).filter(typeof(KTextUnderline)).last?:renderingFactory.createKTextUnderline()) => [
+                it.selection = true;
                 it.color = color;
             ];
         ];
@@ -650,9 +975,27 @@ class KRenderingExtensions {
         ];
     }
     
+    def <T extends KRendering> T setSelectionTextStrikeout(T rendering, boolean struckOut) {
+        rendering.styles.removeAll(rendering.styles.filter(IS_SELECTION).filter(typeof(KTextStrikeout)).toList);
+        return rendering => [
+            it.styles += renderingFactory.createKTextStrikeout() => [
+                it.selection = true;
+                it.struckOut = struckOut;
+            ];
+        ];
+    }
+    
     def <T extends KRendering> T setTextStrikeoutColor(T rendering, KColor color) {
         return rendering => [
             (rendering.styles.filter(typeof(KTextStrikeout)).last?:renderingFactory.createKTextStrikeout()) => [
+                it.color = color;
+            ];
+        ];
+    }
+
+    def <T extends KRendering> T setSelectionTextStrikeoutColor(T rendering, KColor color) {
+        return rendering => [
+            (rendering.styles.filter(IS_SELECTION).filter(typeof(KTextStrikeout)).last?:renderingFactory.createKTextStrikeout()) => [
                 it.color = color;
             ];
         ];
@@ -770,6 +1113,10 @@ class KRenderingExtensions {
         );
     }
 
+    /**
+     * Adds a grid placement to the rendering element with the specified spacing. 
+     *  
+     */
     def KGridPlacementData setGridPlacementData(KRendering rendering, float minCellWidth,
             float minCellHeight, KPosition topLeft, KPosition bottomRight) {
         return renderingFactory.createKGridPlacementData() => [
@@ -781,6 +1128,9 @@ class KRenderingExtensions {
         ];
     }
 
+/**
+     * Adds a grid placement to the rendering element with the specified spacing. 
+     */
     def KGridPlacementData setGridPlacementData(KRendering rendering, float minCellWidth,
             float minCellHeight) {
         return renderingFactory.createKGridPlacementData() => [
@@ -825,6 +1175,16 @@ class KRenderingExtensions {
         );
     }
 
+    /**
+     * Adds a grid placement to the rendering element with the specified spacing. 
+     *  
+     * @example
+     * rectangle.setGridPlacementData => [ cell |
+     *  cell.from(LEFT, padding, 0, TOP, padding - 2, 0).to(RIGHT, padding, 0, BOTTOM, 0, 0)
+     *  cell.minCellHeight = propBarHeight
+     *  cell.flexibleHeight = false
+     * ]
+     */
     def KGridPlacementData setGridPlacementData(KRendering rendering) {
         return renderingFactory.createKGridPlacementData() => [
             rendering.placementData = it;

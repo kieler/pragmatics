@@ -14,19 +14,18 @@
 
 package de.cau.cs.kieler.kwebs.server.web
 
-import de.cau.cs.kieler.kiml.LayoutOptionData
 import de.cau.cs.kieler.kiml.options.LayoutOptions
 import de.cau.cs.kieler.kwebs.server.Application
 import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService
 import de.cau.cs.kieler.kwebs.server.logging.Logger
-import de.cau.cs.kieler.kwebs.servicedata.KnownOption
-import de.cau.cs.kieler.kwebs.servicedata.LayoutAlgorithm
-import de.cau.cs.kieler.kwebs.servicedata.LayoutOption
-import de.cau.cs.kieler.kwebs.servicedata.ServiceData
-import de.cau.cs.kieler.kwebs.servicedata.SupportedFormat
-import de.cau.cs.kieler.kwebs.util.Resources
+import de.cau.cs.kieler.kwebs.server.util.Resources
 import java.util.Map
-import java.util.List
+import java.util.Listimport de.cau.cs.kieler.kwebs.server.servicedata.ServiceData
+import de.cau.cs.kieler.kwebs.server.servicedata.LayoutAlgorithm
+import de.cau.cs.kieler.kwebs.server.servicedata.KnownOption
+import de.cau.cs.kieler.kwebs.server.servicedata.SupportedFormat
+import de.cau.cs.kieler.kwebs.server.servicedata.LayoutOption
+import de.cau.cs.kieler.kiml.LayoutOptionData
 
 /**
  * This class implements a web content provider for displaying the service meta data in HTML format.
@@ -170,7 +169,8 @@ class ProvidedlayoutProvider
         val List<KnownOption> options = algorithm.knownOptions.sortBy[it.option.name]
         
         '''
-        <p class='title'>«algorithm.category?.name» - «algorithm.name»</p>
+        <div class="col-md-8 col-md-offset-2">
+        <h3>«algorithm.category?.name» - «algorithm.name»</h3>
         <p>Type: «algorithm.type?.name»<br/></p>
         <p>Identifier: «algorithm.id»<br/></p>
         «if (algorithm.description != null) {
@@ -181,7 +181,7 @@ class ProvidedlayoutProvider
                 <img src='/ProvidedLayout.html?previewimage=«algorithm.previewImagePath»'/>
             </div>
         </p>
-        <p class='title'>Supported Layout Options</p>
+        <h3>Supported Layout Options</h3>
         <p>
             <div align='center'>
                 <table cellspacing='0' cellpadding='5' class='listing'>
@@ -195,13 +195,7 @@ class ProvidedlayoutProvider
                                 option.option.id
                             »";'>
                                 <td>«option.option.name»</td>
-                                <td>«
-                                    if (option.option.type.equals(LayoutOptionData::REMOTEENUM_LITERAL))
-                                        LayoutOptionData::ENUM_LITERAL
-                                    else if (option.option.type.equals(LayoutOptionData::REMOTEENUMSET_LITERAL))
-                                        LayoutOptionData::ENUMSET_LITERAL
-                                    else option.option.type
-                                »</td>
+                                <td>«option.option.type»</td>
                                 <td>«option.option.id»</td>
                                 <td>«if (option.^default == null) {
                                     option.option.^default
@@ -216,6 +210,7 @@ class ProvidedlayoutProvider
             </div>
         </p>
         «generateBackButton(processingExchange)»
+        </div>
         '''
     }
 
@@ -234,7 +229,8 @@ class ProvidedlayoutProvider
         val List<SupportedFormat> formats     = serviceData.supportedFormats
         
         '''
-        <p class='title'>Provided Layout</p>
+        <div class="col-md-8 col-md-offset-2">
+        <h2>Provided Layout</h2>
         <p>
             This page offers details on the configuration options of the layout service.
             The most important option is the choice which layout algorithm to execute on the input graph.
@@ -244,25 +240,19 @@ class ProvidedlayoutProvider
             You can either send and receive the graph in the same format, or use different formats
             for input and output.
         </p>
-        <p class='title'>Service Details</p>
+        <h3>Service Details</h3>
         <p>Currently running version: «serviceData.version»<br/></p>
-        <p class='title'>Supported Algorithms</p>
+        <h3>Supported Algorithms</h3>
+        <a id="algorithms"></a>
         <p>
             The following option can be used to select a specific layout algorithm:
         </p>
+        <div class="alert alert-info">
+            «generateForOption(processingExchange, LayoutOptions::ALGORITHM.id, true)»
+        </div>
         <p>
-            <div align='center'>
-                <table class='advertisement'>
-                    <tr>
-                        <td align='left'>
-                            «generateForOption(processingExchange, LayoutOptions::ALGORITHM.id, true)»
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </p>
-        <p>
-            The following layout algorithms are currently supported by this service:
+            The following layout algorithms are currently supported by this service. Click any 
+            algorithm to receive further information on it's supported layout options.
         </p>
         <p>
             <div align='center'>
@@ -299,7 +289,8 @@ class ProvidedlayoutProvider
                 </table>
             </div>
         </p>    
-        <p class='title'>Supported Formats</p>
+        <h3>Supported Formats</h3>
+        <a id="formats"></a>
         <p>
             The following formats can be used to transfer graphs to the layout service:
         </p>
@@ -322,7 +313,8 @@ class ProvidedlayoutProvider
                     </tbody>
                 </table>
             </div>
-        </p>'''            
+        </p>
+        </div>'''            
     }
 
     /**
@@ -359,34 +351,41 @@ class ProvidedlayoutProvider
             else "&lt;NONE&gt;"
  
         '''
-        «if (!rawAppend) '''<p class='title'>Layout Option Details</p>'''»
-        <p>Name: «option.name»<br/></p>
-        <p>Identifier: «option.id»<br/></p>
-        <p>Type: 
-        «if (type.equals(LayoutOptionData::REMOTEENUM_LITERAL))
-            "enumeration"
-        else if (type.equals(LayoutOptionData::REMOTEENUMSET_LITERAL))
-            "enumeration set"
-        else type»<br/></p>
-        «if (type.equals(LayoutOptionData::REMOTEENUM_LITERAL)
-            || type.equals(LayoutOptionData::REMOTEENUMSET_LITERAL)) {
+        
+            «if (!rawAppend) '''<div class="col-md-8 col-md-offset-2"><h3>Layout Option Details</h3>'''»
+            <dl class="dl-horizontal">
+                <dt>Name:</dt><dd>«option.name»</dd>
+                <dt>Identifier:</dt><dd>«option.id»</dd>
+                <dt>Type:</dt><dd>«type»</dd>
+                «if (type.equals(LayoutOptionData::ENUM_LITERAL)
+                    || type.equals(LayoutOptionData::ENUMSET_LITERAL)) {
+                    '''
+                    <dt>Possible Values:</dt><dd>«option.remoteEnum.values.join(", ")»</dd>
+                    '''
+                }»
+                <dt>Default Value:</dt><dd>«defaultValue»</dd>
+                «if (option.appliesTo != null) {
+                    '''<dt>Applies To:</dt><dd>«option.appliesTo»</dd>'''
+            }»
+            </dl>
+            «if (option.description != null) {
             '''
-            <p>Possible Values: «option.remoteEnum.values.join(", ")»<br/></p>
+            <h4>Description</h4>
+            <p>
+                «generateHypertext(option.description)»
+            </p>
             '''
-        }»
-        <p>Default Value: «defaultValue»<br/></p>
-        «if (option.appliesTo != null) {
-            '''<p>Applies To: «option.appliesTo»<br/></p>'''
-        }»
-        «if (option.description != null) {
+            }»
+            «if (type.equals(LayoutOptionData::ENUMSET_LITERAL)) 
             '''
-        <p class='title'>Description</p>
-        <p>
-            «generateHypertext(option.description)»
-        </p>
-            '''
-        }»
-        «if (!rawAppend) generateBackButton(processingExchange)»'''
+            <div class="alert alert-info">
+             To textually specify enumsets pass a string with the desired values separated by a whitespace.  
+             <code> de.cau.cs.kieler.enumProp: "VAL_A VAL_B VAL_C"</code>
+            </div>
+            '''»
+            ««««if (!rawAppend) generateBackButton(processingExchange)»
+        «if (!rawAppend)'''</div>''' »
+        '''
     }
     
     /**
@@ -409,17 +408,20 @@ class ProvidedlayoutProvider
             return ''''''
         }
         '''
-        <p class='title'>Format Details</p>
+        <div class="col-md-8 col-md-offset-2">
+        <h3>Format Details</h3>
         <p>Name: «format.name»<br/></p>
         <p>Identifier: «format.id»<br/></p>
         «if (format.description!= null) {
             '''
-            <p class='title'>Description</p>
+            <h3>Description</h3>
             <p>
                 «generateHypertext(format.description)»
             </p>'''
         }»
-        «generateBackButton(processingExchange)»'''
+        «generateBackButton(processingExchange)»
+        </div>
+        '''
     }
     
     /** Path to the image which is shown when a preview image is not given by a plug in. */

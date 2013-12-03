@@ -16,6 +16,7 @@ package de.cau.cs.kieler.klighd.internal.options;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -24,12 +25,14 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Scale;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import de.cau.cs.kieler.klighd.TransformationContext;
-import de.cau.cs.kieler.klighd.TransformationOption;
+import de.cau.cs.kieler.klighd.SynthesisOption;
 import de.cau.cs.kieler.klighd.views.DiagramViewManager;
 
 /**
@@ -52,8 +55,11 @@ public class SynthesisOptionControlFactory {
     private static final int MAJOR_VERTICAL_SPACING = 6;
     /** the vertical space between different option value controls, e.g. 2 radio buttons. */
     private static final int MINOR_VERTICAL_SPACING = 3;
+    /** the vertical space above a group separator (separator with a label). */
+    private static final int GROUP_SEPARATOR_SPACING = 10;
     /** the horizontal indentation option value controls, e.g. radio buttons. */
     private static final int MINOR_HORIZONTAL_MARGIN = 10;
+    
     
     /**
      * Constructor.
@@ -82,14 +88,27 @@ public class SynthesisOptionControlFactory {
     }
     
     /**
-     * Factory method for creating a horizontal spacer.
+     * Factory method for creating a horizontal spacer with an optional label.
+     * 
+     * @param labelText the label text of the separator. If {@code null} or empty, the separator won't
+     *                  have a label.
      */
-    public void createSeparator() {
-        Label separator = formToolkit.createSeparator(parent, SWT.HORIZONTAL);
-        controls.add(separator);
-        
-        final GridData gridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
-        separator.setLayoutData(gridData);
+    public void createSeparator(final String labelText) {
+        // Check if the separator is supposed to have a label
+        if (labelText == null || labelText.isEmpty()) {
+            Label separator = formToolkit.createSeparator(parent, SWT.HORIZONTAL);
+            controls.add(separator);
+            GridDataFactory.fillDefaults().grab(true, false).applyTo(separator);
+        } else {
+            Label label = formToolkit.createLabel(parent, labelText);
+            controls.add(label);
+            label.setForeground(formToolkit.getColors().getColor(IFormColors.TITLE));
+            GridDataFactory.fillDefaults()
+                .grab(true, false)
+                .indent(0, GROUP_SEPARATOR_SPACING)
+                .applyTo(label);
+        }
+
     }
     
     /**
@@ -99,7 +118,7 @@ public class SynthesisOptionControlFactory {
      * @param context the related {@link TransformationContext} the option is declared in
      * @param viewId the id of the current view, is required used for invoking the diagram update. 
      */
-    public void createCheckOptionControl(final TransformationOption option,
+    public void createCheckOptionControl(final SynthesisOption option,
             final TransformationContext<?, ?> context, final String viewId) {
 
         final Button checkButton = formToolkit.createButton(parent, option.getName(), SWT.CHECK);
@@ -116,7 +135,13 @@ public class SynthesisOptionControlFactory {
             public void widgetSelected(final SelectionEvent event) {
                 // set the new option value and trigger the diagram update
                 context.configureOption(option, ((Button) event.widget).getSelection());
-                DiagramViewManager.getInstance().updateView(viewId);
+                
+                // trigger the diagram update
+                Display.getCurrent().asyncExec(new Runnable() {
+                    public void run() {
+                        DiagramViewManager.getInstance().updateView(viewId);
+                    }
+                });
             }
         });
     }
@@ -128,7 +153,7 @@ public class SynthesisOptionControlFactory {
      * @param context the related {@link TransformationContext} the option is declared in
      * @param viewId the id of the current view, is required used for invoking the diagram update. 
      */
-    public void createChoiceOptionControl(final TransformationOption option,
+    public void createChoiceOptionControl(final SynthesisOption option,
             final TransformationContext<?, ?> context, final String viewId) {
         
         final GridLayout gl = new GridLayout();
@@ -164,7 +189,13 @@ public class SynthesisOptionControlFactory {
                     if (((Button) event.widget).getSelection()) {
                         // set the new option value and trigger the diagram update
                         context.configureOption(option, value);
-                        DiagramViewManager.getInstance().updateView(viewId);
+                        
+                        // trigger the diagram update
+                        Display.getCurrent().asyncExec(new Runnable() {
+                            public void run() {
+                                DiagramViewManager.getInstance().updateView(viewId);
+                            }
+                        });
                     }
                 }
             });
@@ -181,7 +212,7 @@ public class SynthesisOptionControlFactory {
      * @param context the related {@link TransformationContext} the option is declared in
      * @param viewId the id of the current view, is required used for invoking the diagram update. 
      */
-    public void createRangeOptionControl(final TransformationOption option,
+    public void createRangeOptionControl(final SynthesisOption option,
             final TransformationContext<?, ?> context, final String viewId) {
         
         final GridLayout gl = new GridLayout();
@@ -274,7 +305,11 @@ public class SynthesisOptionControlFactory {
                 container.layout(true);
                 
                 // trigger the diagram update
-                DiagramViewManager.getInstance().updateView(viewId);
+                Display.getCurrent().asyncExec(new Runnable() {
+                    public void run() {
+                        DiagramViewManager.getInstance().updateView(viewId);
+                    }
+                });
             }
         });
     }

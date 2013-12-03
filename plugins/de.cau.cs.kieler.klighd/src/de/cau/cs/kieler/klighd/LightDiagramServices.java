@@ -23,17 +23,23 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.statushandlers.StatusManager;
 
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
+
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.config.CompoundLayoutConfig;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
+import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
-import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
-import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
+import de.cau.cs.kieler.kiml.service.KimlServicePlugin;
 import de.cau.cs.kieler.klighd.internal.preferences.KlighdPreferences;
-import de.cau.cs.kieler.klighd.transformations.ReinitializingTransformationProxy;
+import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis;
+import de.cau.cs.kieler.klighd.syntheses.ReinitializingDiagramSynthesisProxy;
 import de.cau.cs.kieler.klighd.viewers.ContextViewer;
 import de.cau.cs.kieler.klighd.views.DiagramViewManager;
 import de.cau.cs.kieler.klighd.views.DiagramViewPart;
@@ -57,23 +63,11 @@ public final class LightDiagramServices {
     public static final IProperty<String> REQUESTED_UPDATE_STRATEGY = new Property<String>(
             "klighd.updateStrategy");
 
-    /** the singleton instance. */
-    private static LightDiagramServices instance = new LightDiagramServices();
-
     /**
      * A private constructor to prevent instantiation.
      */
     private LightDiagramServices() {
         // do nothing
-    }
-
-    /**
-     * Returns the singleton instance.
-     * 
-     * @return the singleton
-     */
-    public static LightDiagramServices getInstance() {
-        return instance;
     }
 
     /**
@@ -84,7 +78,7 @@ public final class LightDiagramServices {
      * @return the view context or null if the model and all possible transformations are
      *         unsupported by all viewer providers
      */
-    public ViewContext createViewContext(final Object model) {
+    public static ViewContext createViewContext(final Object model) {
         ViewContext viewContext = new ViewContext();
         if (KlighdDataManager.getInstance().getTransformationsGraph()
                 .configureViewContext(viewContext, model, null)) {
@@ -105,7 +99,7 @@ public final class LightDiagramServices {
      * @return the view context or null if the model and all possible transformations are
      *         unsupported by all viewer providers
      */
-    public ViewContext createViewContext(final Object model,
+    public static ViewContext createViewContext(final Object model,
             final IPropertyHolder... propertyHolders) {
         KlighdDataManager dataManager = KlighdDataManager.getInstance();
         TransformationsGraph transformationsGraph = dataManager.getTransformationsGraph();
@@ -164,6 +158,14 @@ public final class LightDiagramServices {
         if (success) {
             return viewContext;
         } else {
+            final String msg = "KLighD: Couldn't find any matching diagram synthesis & viewer "
+                    + "configuration for visualizing the model " + model.toString()
+                    + ". Is de.cau.cs.kieler.klighd.piccolo and the plug-in contributing "
+                    + "your diagram synthesis part of your product or run configuration?";
+            
+            StatusManager.getManager().handle(
+                    new Status(IStatus.WARNING, KlighdPlugin.PLUGIN_ID, msg), StatusManager.LOG);
+            
             return null;
         }
     }
@@ -180,7 +182,7 @@ public final class LightDiagramServices {
      *            the property holders
      * @return true if the view context has been updated successfully; false else
      */
-    public boolean updateViewContext(final ViewContext viewContext, final Object model,
+    public static boolean updateViewContext(final ViewContext viewContext, final Object model,
             final IPropertyHolder... propertyHolders) {
         // copy the properties to the view context
         for (IPropertyHolder propertyHolder : propertyHolders) {
@@ -248,8 +250,8 @@ public final class LightDiagramServices {
      *            the parent composite
      * @return the created viewer or null on failure
      */
-    public IViewer<?> createViewer(final ContextViewer parentViewer, final ViewContext viewContext,
-            final Composite parent) {
+    public static IViewer<?> createViewer(final ContextViewer parentViewer,
+            final ViewContext viewContext, final Composite parent) {
         IViewerProvider<KNode> viewerProvider = viewContext.getViewerProvider();
         if (viewerProvider != null) {
             // create a new viewer
@@ -273,7 +275,7 @@ public final class LightDiagramServices {
      *            the list of transformation ids
      * @return the array of transformations or null if a transformation could not be resolved
      */
-    private ITransformation<?, ?>[] getTransformationsById(final List<String> transformationIds) {
+    private static ITransformation<?, ?>[] getTransformationsById(final List<String> transformationIds) {
         LinkedList<ITransformation<?, ?>> transformations = new LinkedList<ITransformation<?, ?>>();
         if (transformationIds.size() > 0) {
             for (String transformationId : transformationIds) {
@@ -298,36 +300,38 @@ public final class LightDiagramServices {
      *            the source model
      * @return the target model
      */
-    private Object performTransformations(final ViewContext viewContext, final Object model) {
+    @SuppressWarnings("unchecked")
+    private static Object performTransformations(final ViewContext viewContext, final Object model) {
         Object currentModel = model;
-        for (TransformationContext<?, ?> transformationContext : viewContext
-                .getTransformationContexts()) {
-            @SuppressWarnings("unchecked")
-            TransformationContext<Object, Object> objTransformationContext =
-                    (TransformationContext<Object, Object>) transformationContext;
-            ITransformation<Object, Object> transformation = objTransformationContext
-                    .getTransformation();
+        
+        // TODO check if this works, the transformation 'chaining' will be removed eventually
+        if (!viewContext.getTransformationContexts().isEmpty()) {
+            TransformationContext<Object, KNode> objTransformationContext =
+                    (TransformationContext<Object, KNode>) viewContext.getTransformationContexts()
+                            .get(0);
+            AbstractDiagramSynthesis<Object> transformation =
+                    (AbstractDiagramSynthesis<Object>) objTransformationContext.getTransformation();
+
             try {
                 currentModel = transformation.transform(currentModel, objTransformationContext);
             } catch (Exception e) {
-                if (transformation instanceof ReinitializingTransformationProxy<?, ?>) {
-                    transformation = ((ReinitializingTransformationProxy<Object, Object>) transformation)
-                            .getDelegate();
+                if (transformation instanceof ReinitializingDiagramSynthesisProxy<?>) {
+                    transformation =
+                            ((ReinitializingDiagramSynthesisProxy<Object>) transformation)
+                                    .getDelegate();
                 }
-                StatusManager
-                        .getManager()
-                        .handle(new Status(
-                                IStatus.ERROR,
-                                KlighdPlugin.PLUGIN_ID,
-                                "KLighD: LightDiagramService failed to update a view context:\n"
-                                        + e.getClass().getSimpleName()
-                                        + " occured while performing the transformation "
-                                        + transformation.getClass().getSimpleName()
-                                        + ":\n"
-                                        + e.getMessage()
-                                        + "\n Please perform a 'Clean' operation on your project"
-                                        + " and re-try.",
-                                e), StatusManager.LOG);
+                final String nl = KlighdDataManager.NEW_LINE;
+                final String msg =
+                        "KLighD: LightDiagramService failed to update a view context:" + nl
+                                + e.getClass().getSimpleName()
+                                + " occured while performing the transformation "
+                                + transformation.getClass().getSimpleName() + ":" + nl
+                                + "Developer hint: " + e.getMessage() + nl + "User hint: "
+                                + "Please perform a 'Clean' operation on your project and re-try.";
+                
+                StatusManager.getManager().handle(
+                        new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID, msg, e),
+                        StatusManager.LOG);
                 return null;
             }
         }
@@ -625,18 +629,17 @@ public final class LightDiagramServices {
         final ViewContext vc = contextViewer.getCurrentViewContext(); 
         
         if (layoutData != null) {
-            final List<ILayoutConfig> extendedOptions;
-            if (options == null || options.isEmpty()) {
-                extendedOptions = Collections.<ILayoutConfig>singletonList(
-                        contextViewer.getLightLayoutConfig());
-            } else {
-                CompoundLayoutConfig compound = new CompoundLayoutConfig();
-                compound.addAll(options);
-                compound.add(contextViewer.getLightLayoutConfig());
-                extendedOptions = Collections.<ILayoutConfig>singletonList(compound);
+            // Activate the KIML Service plugin so all layout options are loaded
+            KimlServicePlugin.getDefault();
+            final CompoundLayoutConfig extendedOptions = new CompoundLayoutConfig();
+            extendedOptions.add(new VolatileLayoutConfig()
+                    .setValue(LayoutOptions.ANIMATE, animate)
+                    .setValue(LayoutOptions.ZOOM_TO_FIT, zoomToFit));
+            extendedOptions.add(contextViewer.getLightLayoutConfig());
+            if (options != null && !options.isEmpty()) {
+                extendedOptions.addAll(Collections2.filter(options, Predicates.notNull()));
             }
-            DiagramLayoutEngine.INSTANCE.layout(viewPart, diagramViewer, animate, false, false,
-                    zoomToFit, extendedOptions);
+            DiagramLayoutEngine.INSTANCE.layout(viewPart, diagramViewer, extendedOptions);
         } else {
             ZoomStyle zoomStyle = ZoomStyle.create(zoomToFit, vc.isZoomToFocus());
             diagramViewer.stopRecording(zoomStyle, 0);
@@ -661,14 +664,14 @@ public final class LightDiagramServices {
      */
     public static <T> T translateModel(final Object model, final ViewContext otherVC,
             final IPropertyHolder... propertyHolders) {
-        ViewContext vc = LightDiagramServices.getInstance().createViewContext(model, propertyHolders);
+        ViewContext vc = createViewContext(model, propertyHolders);
         
         if (vc == null) {
             throw new IllegalStateException("Could not create a View Context for the model "
                     + ". This might be due to a missing transformation.");
         }
 
-        LightDiagramServices.getInstance().updateViewContext(vc, model);
+        updateViewContext(vc, model);
         @SuppressWarnings("unchecked")
         T result = (T) vc.getViewModel();
         if (otherVC != null) {

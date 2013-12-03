@@ -20,10 +20,10 @@ import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.grana.IAnalysis;
+import de.cau.cs.kieler.kiml.grana.analyses.EdgeCountAnalysis;
+import de.cau.cs.kieler.kiml.grana.analyses.EdgeDirectionAnalysis;
 import de.cau.cs.kieler.kiml.options.Direction;
-import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
-import de.cau.cs.kieler.kiml.service.grana.analyses.EdgeCountAnalysis;
-import de.cau.cs.kieler.kiml.service.grana.analyses.EdgeDirectionAnalysis;
 
 /**
  * Measures the fraction of upward edges in the given KGraph. Returns a Float
@@ -61,7 +61,7 @@ public abstract class UpwardnessMetric implements IAnalysis {
      */
     public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Upwardness metric analysis", 1);
+        progressMonitor.begin("Upwardness metric", 1);
         Float result;
 
         // load numbers from analyses

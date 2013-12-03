@@ -47,7 +47,7 @@
       </layoutOption>
    </extension>
    <extension
-         point="de.cau.cs.kieler.kiml.service.analysisProviders">
+         point="de.cau.cs.kieler.kiml.grana.analysisProviders">
       <analysis
             category="de.cau.cs.kieler.kiml.grana.basic"
             class="de.cau.cs.kieler.klay.planar.PlanarityAnalysis"

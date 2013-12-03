@@ -15,8 +15,8 @@ package de.cau.cs.kieler.klay.layered.properties;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -51,6 +51,13 @@ public final class Properties {
      * The original object from which a graph element was created.
      */
     public static final IProperty<Object> ORIGIN = new Property<Object>("origin");
+    
+    /**
+     * Whether the original node an LNode was created from was a compound node or not. This might
+     * influence certain layout decisions, such as where to place inside port labels so that they don't
+     * overlap edges.
+     */
+    public static final IProperty<Boolean> COMPOUND_NODE = new Property<Boolean>("compoundNode", false);
 
     /**
      * Node type.
@@ -211,8 +218,8 @@ public final class Properties {
     /**
      * Map between KGraph nodes/ports/edges and LGraph nodes/ports/edges.
      */
-    public static final IProperty<HashMap<KGraphElement, LGraphElement>> ELEMENT_MAP 
-        = new Property<HashMap<KGraphElement, LGraphElement>>("ElementMap");
+    public static final IProperty<Map<KGraphElement, LGraphElement>> ELEMENT_MAP 
+        = new Property<Map<KGraphElement, LGraphElement>>("ElementMap");
 
     /**
      * List of comment boxes that are placed on top of a node.
@@ -254,6 +261,14 @@ public final class Properties {
      */
     public static final IProperty<KVector> PORT_ANCHOR = new Property<KVector>(
             "de.cau.cs.kieler.klay.layered.portAnchor");
+    
+    /** Determines the original size of a big node. */
+    public static final Property<Float> BIG_NODE_ORIGINAL_SIZE = new Property<Float>(
+            "de.cau.cs.kieler.klay.layered.bigNodeOriginalSize", 0f);
+
+    /** Specifies if the corresponding node is the first node in a big node chain. */
+    public static final Property<Boolean> BIG_NODE_INITIAL = new Property<Boolean>(
+            "de.cau.cs.kieler.klay.layered.bigNodeInitial", false);
 
     // /////////////////////////////////////////////////////////////////////////////
     // USER INTERFACE OPTIONS

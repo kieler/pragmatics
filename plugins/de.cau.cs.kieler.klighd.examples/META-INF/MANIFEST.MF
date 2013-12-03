@@ -1,11 +1,12 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: KLighD Visualization Examples
+Bundle-Name: KIELER Light-Weight Diagrams Visualization Examples
 Bundle-SymbolicName: de.cau.cs.kieler.klighd.examples;singleton:=true
-Bundle-Version: 0.2.1.qualifier
+Bundle-Version: 0.2.2.qualifier
 Bundle-Activator: de.cau.cs.kieler.klighd.examples.KLighDExamplesPlugin
-Bundle-Vendor: Christian-Albrechts-Universtät zu Kiel
+Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
 Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.emf.ecore;visibility:=reexport,
  javax.inject;bundle-version="1.0.0",
  com.google.inject;bundle-version="3.0.0",
  com.google.guava;bundle-version="10.0.0",
@@ -14,7 +15,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecoretools.diagram;bundle-version="1.0.0",
  org.eclipse.ui.workbench;bundle-version="3.7.0",
  org.eclipse.ui.ide;bundle-version="3.8.0",
- org.eclipse.uml2.uml;bundle-version="4.0.0";resolution:=optional,
+ org.eclipse.uml2.uml;resolution:=optional;bundle-version="4.0.0",
  de.cau.cs.kieler.core.kivi,
  de.cau.cs.kieler.core.krendering,
  de.cau.cs.kieler.core.krendering.extensions,
@@ -25,5 +26,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.commands,
  org.eclipse.jface
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Export-Package: de.cau.cs.kieler.klighd.examples.circuit,
+ de.cau.cs.kieler.klighd.examples.circuit.impl,
+ de.cau.cs.kieler.klighd.examples.circuit.util
 Bundle-ActivationPolicy: lazy
-

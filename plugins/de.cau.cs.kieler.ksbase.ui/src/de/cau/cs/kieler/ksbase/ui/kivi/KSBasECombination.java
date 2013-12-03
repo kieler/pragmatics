@@ -39,18 +39,15 @@ import org.eclipse.xtext.ui.editor.XtextEditor;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
+import de.cau.cs.kieler.core.kivi.KiVi;
 import de.cau.cs.kieler.core.kivi.menu.ButtonTrigger.ButtonState;
 import de.cau.cs.kieler.core.kivi.triggers.SelectionTrigger.SelectionState;
 import de.cau.cs.kieler.kiml.kivi.LayoutEffect;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.KSBasETransformation;
-import de.cau.cs.kieler.ksbase.core.TransformationFrameworkFactory;
 import de.cau.cs.kieler.ksbase.m2m.ITransformationListener;
-import de.cau.cs.kieler.ksbase.m2m.TransformationDescriptor;
 import de.cau.cs.kieler.ksbase.m2m.TransformationObserver;
 import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
-import de.cau.cs.kieler.ksbase.ui.m2m.XtendTransformationContext;
-import de.cau.cs.kieler.ksbase.ui.m2m.XtendTransformationEffect;
 
 /**
  * A Combination triggering the KSBasE transformations from kivi menu contributions.
@@ -60,7 +57,6 @@ import de.cau.cs.kieler.ksbase.ui.m2m.XtendTransformationEffect;
  */
 public class KSBasECombination extends AbstractCombination implements ITransformationListener {
 
-    private EditorTransformationSettings editorSettings;
 
     private HashMap<String, KSBasETransformation> transformations =
             new HashMap<String, KSBasETransformation>();
@@ -75,7 +71,7 @@ public class KSBasECombination extends AbstractCombination implements ITransform
      *            the KSBasE editor settings used as a context for the transformation.
      */
     public KSBasECombination(final EditorTransformationSettings editorSettings) {
-        this.editorSettings = editorSettings;
+        KiVi.getInstance().setActive(true);
         this.setActive(true);
         TransformationObserver.getInstance().register(this);
     }
@@ -129,22 +125,6 @@ public class KSBasECombination extends AbstractCombination implements ITransform
             // do xtend2 stuff
             if (transformation.getTransformationClass() != null) {
                 evokeXtend2(transformation, selectionList, editor);
-
-                // do xtend1 stuff
-            } else {
-                // map the selection to the parameters of this transformation
-                List<Object> selectionMapping = null;
-                for (List<String> parameters : transformation.getParameterList()) {
-                    selectionMapping =
-                            TransformationFrameworkFactory.getDefaultTransformationFramework()
-                                    .createParameterMapping(selectionList,
-                                            parameters.toArray(new String[parameters.size()]));
-                }
-                // execute xtend transformation
-                if (selectionMapping != null) {
-                    evokeXtend(transformation, selectionMapping);
-                    // refreshEditPolicy(diagramEditor);
-                }
             }
 
             // arbitrary post processing, eg, refreshing editing policies
@@ -341,30 +321,6 @@ public class KSBasECombination extends AbstractCombination implements ITransform
             }
         }
         return false;
-    }
-
-    /**
-     * Method to execute a given Xtend1 transformation.
-     * 
-     * @param transformation
-     *            the transformation to execute
-     * @param selectionMapping
-     *            the current selection
-     * @param diagramEditor
-     *            the current diagram editor
-     */
-    private void evokeXtend(final KSBasETransformation transformation,
-            final List<Object> selectionMapping) {
-        TransformationDescriptor descriptor =
-                new TransformationDescriptor(transformation.getTransformation(),
-                        selectionMapping.toArray());
-        XtendTransformationContext context =
-                new XtendTransformationContext(editorSettings.getTransformationFile(),
-                        editorSettings.getModelPackages().toArray(
-                                new String[editorSettings.getModelPackages().size()]), null,
-                        activeHandler.getEditingDomain());
-        XtendTransformationEffect effect = new XtendTransformationEffect(context, descriptor);
-        effect.schedule();
     }
 
     /**

@@ -15,35 +15,41 @@ package de.cau.cs.kieler.klighd.piccolo.internal.nodes;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.controller.AbstractKGERenderingController;
+import edu.umd.cs.piccolo.PLayer;
+import edu.umd.cs.piccolo.util.PPickPath;
 
 /**
- * The Piccolo node for representing the top-level {@code KNode}.
+ * The dedicated root node of our Piccolo2D-powered KLighD diagrams.
+ * Nodes of this type represent the top-level {@link KNode} of KGraph+KRendering view models.
  * 
  * @author mri
+ * @author chsch
  */
-public class KNodeTopNode extends PEmptyNode implements INode {
+public class KNodeTopNode extends PLayer implements INode {
 
     private static final long serialVersionUID = 8395163186723344696L;
 
     /** the encapsulated {@code KNode}. */
     private transient KNode node;
 
-    /** the Piccolo node representing the child area. */
+    /** the Piccolo2D node representing the child area. */
     private KChildAreaNode childArea;
 
     /**
-     * Constructs a Piccolo node for representing the top-level {@code KNode}.
+     * Constructs a Piccolo2D node for representing the top-level {@link KNode}.
      * 
      * @param node
      *            the KNode
      */
     public KNodeTopNode(final KNode node) {
+        this.setPickable(true);        
         this.node = node;
+        
         childArea = new KChildAreaNode(this);
-        childArea.setPickable(false);
+        childArea.setPickable(true);
         childArea.setClip(false);
-        addChild(childArea);
-        setPickable(true);
+        
+        this.addChild(childArea);
     }
 
     /**
@@ -78,5 +84,35 @@ public class KNodeTopNode extends PEmptyNode implements INode {
     public KChildAreaNode getChildArea() {
         return childArea;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public INode getParentNode() {
+        return null;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean fullPick(final PPickPath pickPath) {
+        final boolean fullPick = super.fullPick(pickPath);
+        
+        if (!fullPick && pickAfterChildren(pickPath)) {
+            pickPath.pushNode(this);
+            pickPath.pushTransform(getTransform());
+            
+            return true;
+        }
+        return fullPick;
+    }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected boolean pickAfterChildren(final PPickPath pickPath) {
+        return true;
+    }
 }

@@ -28,9 +28,12 @@ import de.cau.cs.kieler.core.krendering.KText
 import de.cau.cs.kieler.kiml.options.NodeLabelPlacement
 import de.cau.cs.kieler.kiml.options.PortLabelPlacement
 import java.util.List
+import de.cau.cs.kieler.core.kgraph.KPort
 
 /**
  * @author chsch
+ * 
+ * @containsExtensions
  */
 @ViewSynthesisShared
 class KLabelExtensions {
@@ -93,6 +96,168 @@ class KLabelExtensions {
         return newArrayList(o1, o2).getLabel(labeledElement)
     }
     
+    
+    def KLabel setLabelSize(KLabel label, float width, float height) {
+        return label => [
+            getData(typeof(KShapeLayout)).setSize(width, height)
+        ];
+    }
+    
+    def KLabel setLabelPos(KLabel label, float x, float y) {
+        return label => [
+            getData(typeof(KShapeLayout)).setPos(x, y)
+        ];
+    }
+    
+    def <T> KLabel addLayoutParam(KLabel node, IProperty<? super T> property, T value) {
+        return node => [
+            it.getData(typeof(KShapeLayout)).setProperty(property, value)
+        ];
+    }
+
+
+    /* --------------------------------- */
+    /*  node label configurators/adders  */
+    /* --------------------------------- */
+    
+    /**
+     * Configures a central inside top node label!
+     */
+    def KLabel configureInsideCentralTopNodeLabel(KLabel label, String labelText, int fontSize, String fontName) {
+        return label => [
+            it.basicConfigureLabel(labelText, fontSize, fontName);
+            val node = it.parent;
+            switch(node) {
+                KNode: node.addLayoutParam(LayoutOptions::NODE_LABEL_PLACEMENT, NodeLabelPlacement::insideTopCenter)
+            }
+        ];
+    }
+
+    /**
+     * Adds a central node label to KNode 'node'!
+     */
+    def KLabel addInsideCentralTopNodeLabel(KNode node, String labelText, int fontSize, String fontName) {
+        return node.createLabel().configureInsideCentralTopNodeLabel(labelText, fontSize, fontName);
+    }
+    
+    /**
+     * Configures a central node label!
+     */
+    def KLabel configureOutsideCentralBottomNodeLabel(KLabel label, String labelText, int fontSize, String fontName) {
+        return label => [
+            it.basicConfigureLabel(labelText, fontSize, fontName);
+            val node = it.parent;
+            switch(node) {
+                KNode: node.addLayoutParam(LayoutOptions::NODE_LABEL_PLACEMENT, NodeLabelPlacement::outsideBottomCenter)
+            }
+        ];
+    }
+
+    /**
+     * Adds a central node label to KNode 'node'!
+     */
+    def KLabel addOutsideCentralBottomNodeLabel(KNode node, String labelText, int fontSize, String fontName) {
+        return node.createLabel().configureOutsideCentralBottomNodeLabel(labelText, fontSize, fontName);
+    }
+    
+    /**
+     * Configures a left-aligned node label!
+     */
+    def KLabel configureOutsideBottomLeftNodeLabel(KLabel label, String labelText, int fontSize, String fontName) {
+        return label => [
+            it.basicConfigureLabel(labelText, fontSize, fontName);
+            val node = it.parent;
+            switch(node) {
+                KNode: node.addLayoutParam(LayoutOptions::NODE_LABEL_PLACEMENT, NodeLabelPlacement::outsideBottomLeft)
+            }
+        ];
+    }
+    
+     /**
+     * Adds a left-aligned node label to KNode 'node'!
+     */
+    def KLabel addOutsideBottomLeftNodeLabel(KNode node, String labelText, int fontSize, String fontName) {
+        return node.createLabel().configureOutsideBottomLeftNodeLabel(labelText, fontSize, fontName);
+    }
+
+    /**
+     * Configures a central node label!
+     */
+    def KLabel configureOutsideBottomRightNodeLabel(KLabel label, String labelText, int fontSize, String fontName) {
+        return label => [
+            it.basicConfigureLabel(labelText, fontSize, fontName);
+            val node = it.parent;
+            switch(node) {
+                KNode: node.addLayoutParam(LayoutOptions::NODE_LABEL_PLACEMENT, NodeLabelPlacement::outsideBottomRight)
+            }
+        ];
+    }
+    
+    /**
+     * Adds a central node label to KNode 'node'!
+     */
+    def KLabel addOutsideBottomRightNodeLabel(KNode node, String labelText, int fontSize, String fontName) {
+        return node.createLabel().configureOutsideBottomRightNodeLabel(labelText, fontSize, fontName);
+    }
+
+
+    /* --------------------------------- */
+    /*  port label configurators/adders  */
+    /* --------------------------------- */
+
+    /**
+     * Configures an inside port label!<br>
+     * Note that <code>label</code> must be already contained in a {@link KPort} that in turn is contained
+     * in a {@link KNode} in order to let the configuration be performed properly.
+     */
+    def KLabel configureInsidePortLabel(KLabel label, String labelText, int fontSize, String fontName) {
+        return label => [
+            it.basicConfigureLabel(labelText, fontSize, fontName);
+            val node = it.parent?.eContainer;
+            switch(node) {
+                KNode: node.addLayoutParam(LayoutOptions::PORT_LABEL_PLACEMENT, PortLabelPlacement::INSIDE)
+            }
+        ];
+    }
+
+    /**
+     * Adds an inside label to {@link KPort} <code>port</code>!<br>
+     * Note that <code>port</code> must be already contained in a {@link KNode} in order to let the
+     * configuration be performed properly.
+     */
+    def KLabel addInsidePortLabel(KPort port, String labelText, int fontSize, String fontName) {
+        return port.createLabel().configureInsidePortLabel(labelText, fontSize, fontName);
+    }
+
+    /**
+     * Configures a outside port label!<br>
+     * Note that <code>label</code> must be already contained in a {@link KPort} that in turn is contained
+     * in a {@link KNode} in order to let the configuration be performed properly.
+     */
+    def KLabel configureOutsidePortLabel(KLabel label, String labelText, int fontSize, String fontName) {
+        return label => [
+            it.basicConfigureLabel(labelText, fontSize, fontName);
+            val node = it.parent?.eContainer;
+            switch(node) {
+                KNode: node.addLayoutParam(LayoutOptions::PORT_LABEL_PLACEMENT, PortLabelPlacement::OUTSIDE)
+            }
+        ];
+    }
+
+    /**
+     * Adds an outside label to {@link KPort} <code>port</code>!<br>
+     * Note that <code>port</code> must be already contained in a {@link KNode} in order to let the
+     * configuration be performed properly.
+     */
+    def KLabel addOutsidePortLabel(KPort port, String labelText, int fontSize, String fontName) {
+        return port.createLabel().configureOutsidePortLabel(labelText, fontSize, fontName);
+    }
+
+
+    /* --------------------------------- */
+    /*  edge label configurators/adders  */
+    /* --------------------------------- */
+
     /**
      * Configures a central (main) edge label, e.g. a state transition guard/effect label!
      * 
@@ -107,11 +272,8 @@ class KLabelExtensions {
      */
     def KLabel configureCenteralEdgeLabel(KLabel label, String labelText, int fontSize, String fontName) {
         return label => [
-            it.text = labelText;
-            it.data += renderingFactory.createKText().setFontName(fontName).setFontSize(fontSize);
+            it.basicConfigureLabel(labelText, fontSize, fontName);
             it.addLayoutParam(LayoutOptions::EDGE_LABEL_PLACEMENT, EdgeLabelPlacement::CENTER);
-            it.addLayoutParam(LayoutOptions::FONT_NAME, fontName);
-            it.addLayoutParam(LayoutOptions::FONT_SIZE, fontSize-5);
         ];
     }
     
@@ -129,11 +291,8 @@ class KLabelExtensions {
      */
     def KLabel configureHeadEdgeLabel(KLabel label, String labelText, int fontSize, String fontName) {
         return label => [
-            it.text = labelText;
-            it.data += renderingFactory.createKText().setFontName(fontName).setFontSize(fontSize);
+            it.basicConfigureLabel(labelText, fontSize, fontName);
             it.addLayoutParam(LayoutOptions::EDGE_LABEL_PLACEMENT, EdgeLabelPlacement::HEAD);
-            it.addLayoutParam(LayoutOptions::FONT_NAME, fontName);
-            it.addLayoutParam(LayoutOptions::FONT_SIZE, fontSize);
         ];
     }
     
@@ -151,105 +310,32 @@ class KLabelExtensions {
      */
     def KLabel configureTailEdgeLabel(KLabel label, String labelText, int fontSize, String fontName) {
         return label => [
-            it.text = labelText;
-            it.data += renderingFactory.createKText().setFontName(fontName).setFontSize(fontSize);
+            it.basicConfigureLabel(labelText, fontSize, fontName);
             it.addLayoutParam(LayoutOptions::EDGE_LABEL_PLACEMENT, EdgeLabelPlacement::TAIL);
-            it.addLayoutParam(LayoutOptions::FONT_NAME, fontName);
-            it.addLayoutParam(LayoutOptions::FONT_SIZE, fontSize);
         ];
     }
     
-    /**
-     * Configures a central node label!
-     */
-    def KLabel configureOutsideCentralBottomNodeLabel(KLabel label, String labelText, int fontSize, String fontName) {
-        return label => [
-            it.text = labelText;
-            it.data += renderingFactory.createKText().setFontName(fontName).setFontSize(fontSize);
-            it.addLayoutParam(LayoutOptions::FONT_NAME, fontName);
-            it.addLayoutParam(LayoutOptions::FONT_SIZE, fontSize);
-            (it.parent as KNode).addLayoutParam(LayoutOptions::NODE_LABEL_PLACEMENT,
-                        NodeLabelPlacement::outsideBottomCenter);
-        ];
-    }
+
+    /* ----------------- */
+    /*   other helpers   */
+    /* ----------------- */
 
     /**
-     * Adds a central node label to KNode 'node'!
+     * The least common denominator of all the 'configure...Label' methods.<br>
+     * Is private as it's to be used internally only!
      */
-    def KLabel addOutsideCentralBottomNodeLabel(KNode node, String labelText, int fontSize, String fontName) {
-        return node.createLabel().configureOutsideCentralBottomNodeLabel(labelText, fontSize, fontName);
-    }
-    
-    /**
-     * Configures a central node label!
-     */
-    def KLabel configureOutsideBottomRightNodeLabel(KLabel label, String labelText, int fontSize, String fontName) {
-        return label => [
-            it.text = labelText;
-            it.data += renderingFactory.createKText().setFontName(fontName).setFontSize(fontSize);
-            it.addLayoutParam(LayoutOptions::FONT_NAME, fontName);
-            it.addLayoutParam(LayoutOptions::FONT_SIZE, fontSize);
-            (it.parent as KNode).addLayoutParam(LayoutOptions::NODE_LABEL_PLACEMENT,
-                        NodeLabelPlacement::outsideBottomRight);
-        ];
-    }
-    
-     /**
-     * Adds a central node label to KNode 'node'!
-     */
-    def KLabel addOutsideBottomRightNodeLabel(KNode node, String labelText, int fontSize, String fontName) {
-        return node.createLabel().configureOutsideBottomRightNodeLabel(labelText, fontSize, fontName);
-    }
-
-    /**
-     * Configures an inside port label!
-     */
-    def KLabel configureInsidePortLabel(KLabel label, String labelText, int fontSize, String fontName) {
-        return label => [
-            it.text = labelText;
-            it.data += renderingFactory.createKText().setFontName(fontName).setFontSize(fontSize);
-            it.addLayoutParam(LayoutOptions::PORT_LABEL_PLACEMENT, PortLabelPlacement::INSIDE);
-            it.addLayoutParam(LayoutOptions::FONT_NAME, fontName);
-            it.addLayoutParam(LayoutOptions::FONT_SIZE, fontSize);
-        ];
-    }
-
-    /**
-     * Configures a outside port label!
-     */
-    def KLabel configureOutsidePortLabel(KLabel label, String labelText, int fontSize, String fontName) {
-        return label => [
-            it.text = labelText;
-            it.data += renderingFactory.createKText().setFontName(fontName).setFontSize(fontSize);
-            it.addLayoutParam(LayoutOptions::PORT_LABEL_PLACEMENT, PortLabelPlacement::OUTSIDE);
-            it.addLayoutParam(LayoutOptions::FONT_NAME, fontName);
-            it.addLayoutParam(LayoutOptions::FONT_SIZE, fontSize);
-        ];
-    }
-
-    def KLabel setLabelSize(KLabel label, float width, float height) {
-        return label => [
-            getData(typeof(KShapeLayout)).setSize(width, height)
-        ];
-    }
-    
-    def KLabel setLabelPos(KLabel label, float x, float y) {
-        return label => [
-            getData(typeof(KShapeLayout)).setPos(x, y)
-        ];
-    }
-    
-    def KLabel addLayoutParam(KLabel node, IProperty<?> property, Object value) {
-        return node => [
-            it.getData(typeof(KShapeLayout)).setProperty(property, value)
-        ];
+    def private void basicConfigureLabel(KLabel label, String labelText, int fontSize, String fontName) {
+        label.text = labelText;
+        label.data += renderingFactory.createKText().setFontName(fontName).setFontSize(fontSize);
+        label.addLayoutParam(LayoutOptions::FONT_NAME, fontName);
+        label.addLayoutParam(LayoutOptions::FONT_SIZE, fontSize);
     }
     
     /**
      * Reveals the first KText element of a label KRendering, which is assumed to be the label text configuration.
      * This is useful for additionally linking it with the business element represented by the label.
      * 
-     * Note: KLabelNodes of the Piccolo binding are configured to ignore the KText element while selecting them.
+     * Note: KLabelNodes of the Piccolo2D binding are configured to ignore the KText element while selecting them.
      * Thus, only the KLabel needs to be linked to the source element. 
      */
     def KText getFirstText(KLabel label) {

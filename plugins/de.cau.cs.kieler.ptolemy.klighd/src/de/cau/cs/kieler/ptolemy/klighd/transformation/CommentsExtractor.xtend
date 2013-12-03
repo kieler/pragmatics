@@ -18,6 +18,7 @@ import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.core.util.Pair
 import de.cau.cs.kieler.kiml.util.KimlUtil
 import de.cau.cs.kieler.klighd.microlayout.PlacementUtil
+import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.LabelExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MarkerExtensions
@@ -30,7 +31,6 @@ import org.ptolemy.moml.PropertyType
 
 import static de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties.*
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
-import de.cau.cs.kieler.klighd.transformations.AbstractDiagramSynthesis
 
 /**
  * Extracts comments from the model and turns them into special comment nodes. Also tries to find the

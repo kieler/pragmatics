@@ -99,3 +99,8 @@ g.expandable {
     left: 50%;
     z-index: 20;
 }
+
+.foreignCursor {
+    position: fixed;
+    z-index: 15;
+}

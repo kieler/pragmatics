@@ -30,6 +30,7 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.WrappedException;
+import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.graphviz.dot.transform.Command;
 import de.cau.cs.kieler.kiml.graphviz.layouter.preferences.GraphvizPreferencePage;
 
@@ -103,12 +104,11 @@ public class GraphvizTool {
             }
         }
         
-        if (DEFAULT_LOCS.isEmpty()) {
-            // Fallback list of default locations
+        // Fallback list of default locations for Unix-like environments
+        if (File.separator.equals("/")) {
             DEFAULT_LOCS.add("/opt/local/bin/");
             DEFAULT_LOCS.add("/usr/local/bin/");
             DEFAULT_LOCS.add("/usr/bin/");
-            DEFAULT_LOCS.add("/bin/");
         }
     }
     
@@ -165,7 +165,7 @@ public class GraphvizTool {
             
             // create the process
             try {
-                process = Runtime.getRuntime().exec(args.toArray(new String[0]));
+                process = Runtime.getRuntime().exec(args.toArray(new String[args.size()]));
             } catch (IOException exception) {
                 throw new WrappedException(exception, "Failed to start Graphviz process."
                         + " Please check your Graphviz installation.");
@@ -180,7 +180,12 @@ public class GraphvizTool {
      * @return path to the dot executable.
      */
     public static String getDotExecutable() {
-        return getDotExecutable(true);
+        String executable = getDotExecutable(true);
+        if (executable == null) {
+            throw new RuntimeException("The Dot executable was not found in default paths."
+                    + " Please check your Graphviz installation.");
+        }
+        return executable;
     }
 
     /**
@@ -189,67 +194,67 @@ public class GraphvizTool {
      * @param promptUser if the dot executable is not found and this parameter is {@code true}, the user
      *                   is asked to provide the path to the executable. If it is not found and this
      *                   parameter is {@code false}, this method returns {@code null}.
-     * @return path to the dot executable or {@code null} if none could be found and the user was not
-     *         asked to provide one.
+     * @return path to the dot executable, or {@code null} if the executable was not found
      */
     public static String getDotExecutable(final boolean promptUser) {
         // load the graphviz path from the preferences, if any
         IPreferenceStore preferenceStore = GraphvizLayouterPlugin.getDefault().getPreferenceStore();
         String dotExecutable = preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);
         File dotFile = new File(dotExecutable);
+        if (dotFile.exists() && dotFile.canExecute()) {
+            return dotExecutable;
+        }
         
-        // check if the executable exists
-        if (!dotFile.exists() || !dotFile.canExecute()) {
-            boolean foundExec = false;
-            
-            // look in a selection of default locations where it might be installed
-            for (String location : DEFAULT_LOCS) {
-                // Linux
-                dotExecutable = location + "dot";
-                dotFile = new File(dotExecutable);
-                if (dotFile.exists() && dotFile.canExecute()) {
-                    foundExec = true;
-                    break;
-                }
-                
-                // Windows
-                dotExecutable = location + "dot.exe";
-                dotFile = new File(dotExecutable);
-                if (dotFile.exists() && dotFile.canExecute()) {
-                    foundExec = true;
-                    break;
-                }
+        // look in a selection of default locations where it might be installed
+        for (String location : DEFAULT_LOCS) {
+            // Linux
+            dotExecutable = location + "dot";
+            dotFile = new File(dotExecutable);
+            if (dotFile.exists() && dotFile.canExecute()) {
+                return dotExecutable;
             }
             
-            if (!foundExec) {
-                if (promptUser) {
-                    handleExecPath();
-                    // fetch the executable string again after the user has entered a new path
-                    dotExecutable = preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);
-                } else {
-                    return null;
+            // Windows
+            dotExecutable = location + "dot.exe";
+            dotFile = new File(dotExecutable);
+            if (dotFile.exists() && dotFile.canExecute()) {
+                return dotExecutable;
+            }
+        }
+        
+        if (promptUser) {
+            if (handleExecPath()) {
+                // fetch the executable string again after the user has entered a new path
+                dotExecutable = preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);
+                dotFile = new File(dotExecutable);
+                if (dotFile.exists() && dotFile.canExecute()) {
+                    return dotExecutable;
                 }
             }
         }
         
-        return dotExecutable;
+        return null;
     }
 
     /**
      * Handle missing path to the dot executable. The Graphviz preference page
      * is opened so the user can enter the correct path. The method returns
      * after the preference page has been closed.
+     * 
+     * @return true if the user has selected "Ok" in the shown dialog, false otherwise
      */
-    private static void handleExecPath() {
+    private static boolean handleExecPath() {
         final Display display = PlatformUI.getWorkbench().getDisplay();
+        final Maybe<Integer> dialogResult = Maybe.create();
         display.syncExec(new Runnable() {
             public void run() {
                 PreferenceDialog preferenceDialog =
                         PreferencesUtil.createPreferenceDialogOn(display.getActiveShell(),
                                 GraphvizPreferencePage.ID, new String[] {}, null);
-                preferenceDialog.open();
+                dialogResult.set(preferenceDialog.open());
             }
         });
+        return dialogResult.get() == PreferenceDialog.OK;
     }
 
     /**
@@ -313,7 +318,7 @@ public class GraphvizTool {
                         // no error message -- check for exit value
                         int exitValue = process.exitValue();
                         if (exitValue != 0) {
-                            error.append("Process terminated with exit value " + exitValue + ".");
+                            exitValueError(exitValue, error);
                         }
                     }
                 }
@@ -354,6 +359,50 @@ public class GraphvizTool {
             // an error output could be read from Graphviz, so display that to the user
             throw new GraphvizException("Graphviz error: " + error.toString());
         }
+    }
+    
+    /**
+     * Generate an error message for the given exit value.
+     * 
+     * @param exitValue an exit value
+     * @param error a string builder for error messages
+     */
+    private void exitValueError(final int exitValue, final StringBuilder error) {
+        error.append("Process terminated with exit value ").append(exitValue);
+        // CHECKSTYLEOFF MagicNumber
+        if (exitValue > 128) {
+            switch (exitValue - 128) {
+            case 2: // SIGINT
+                error.append(" (interrupted)");
+                break;
+            case 3: // SIGQUIT
+                error.append(" (quit)");
+                break;
+            case 4: // SIGILL
+                error.append(" (illegal instruction)");
+                break;
+            case 6: // SIGABRT
+                error.append(" (aborted)");
+                break;
+            case 8: // SIGFPE
+                error.append(" (floating point error)");
+                break;
+            case 9: // SIGKILL
+                error.append(" (killed)");
+                break;
+            case 11: // SIGSEGV
+                error.append(" (segmentation fault)");
+                break;
+            case 13: // SIGPIPE
+                error.append(" (broken pipe)");
+                break;
+            case 15: // SIGTERM
+                error.append(" (terminated)");
+                break;
+            }
+        }
+        // CHECKSTYLEON MagicNumber
+        error.append('.');
     }
 
     /**

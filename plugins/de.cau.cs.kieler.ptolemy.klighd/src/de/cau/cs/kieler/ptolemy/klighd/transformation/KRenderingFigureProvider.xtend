@@ -40,6 +40,8 @@ import static de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties.*
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
 import de.cau.cs.kieler.core.krendering.HorizontalAlignment
 import de.cau.cs.kieler.core.krendering.VerticalAlignment
+import de.cau.cs.kieler.core.krendering.extensions.KContainerRenderingExtensions
+import de.cau.cs.kieler.core.kgraph.KGraphElement
 
 /**
  * Creates concrete KRendering information for Ptolemy diagram elements.
@@ -63,6 +65,8 @@ class KRenderingFigureProvider {
     @Inject extension KColorExtensions
     /** Rendering stuff. */
     @Inject extension KRenderingExtensions
+    /** Rendering stuff. */
+    @Inject extension KContainerRenderingExtensions
     /** Rendering stuff. */
     @Inject extension KPolylineExtensions
     
@@ -572,6 +576,33 @@ class KRenderingFigureProvider {
                 "ren_accumulator", library)
     }
     
+    /**
+     * Builds up and adds helper renderings forming the selection to given node,
+     * attaches the provided rendering to the selection helpers.  
+     */
+    def KContainerRendering addRenderingWithSelectionWrapper(KGraphElement kge, KRendering rendering) {
+        return kge.addRenderingWithSelectionWrapper => [
+            it.children += rendering;
+        ];
+    }
+    
+    /**
+     * Builds up and adds helper renderings forming the selection to given node,
+     * attaches the provided rendering to the selection helpers.  
+     */
+    def KContainerRendering addRenderingWithSelectionWrapper(KGraphElement kge) {
+        kge.addRectangle => [
+            it.invisible = true;
+            it.addRoundedRectangle(10, 10f, 1) => [
+                it.setSurroundingSpace(-10, 0);
+                it.invisible = true;
+                it.setBackgroundColor(56, 117, 215);
+                it.lineStyle = LineStyle.DASH;
+                it.selectionInvisible = false;
+            ]
+        ]
+    }
+    
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Edge Renderings
@@ -604,10 +635,14 @@ class KRenderingFigureProvider {
         val library = getLibrary(edge.source)
         var junction = getFromLibrary("ren_junction", library)
         if (junction == null) {
-            junction = addToLibrary(renderingFactory.createKRectangle() => [
-                it.setRotation(45f);
-                it.setBackgroundColor(0, 0, 0)
-                it.placementData = renderingFactory.createKPointPlacementData() => [ ppd |
+            junction = addToLibrary(renderingFactory.createKPolygon() => [poly |
+                poly.points += createKPosition(4, 0)
+                poly.points += createKPosition(8, 4)
+                poly.points += createKPosition(4, 8)
+                poly.points += createKPosition(0, 4)
+                poly.points += createKPosition(4, 0)
+                poly.setBackgroundColor(0, 0, 0)
+                poly.placementData = renderingFactory.createKPointPlacementData() => [ ppd |
                     ppd.horizontalAlignment = HorizontalAlignment.CENTER
                     ppd.verticalAlignment = VerticalAlignment.CENTER
                     ppd.minWidth = 8

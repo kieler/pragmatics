@@ -16,10 +16,10 @@ package de.cau.cs.kieler.klighd;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -37,6 +37,7 @@ import de.cau.cs.kieler.core.kgraph.KGraphPackage;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.core.util.RunnableWithResult;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.klighd.internal.preferences.KlighdPreferences;
@@ -381,31 +382,48 @@ public final class ViewContext extends MapPropertyHolder {
     private Multimap<Object, Object> additionalSourceTargetElementMap = null;
 
     /**
-     * Returns the element in the context's model that derives from the given element in the source
-     * model by using the transformations invoked to obtain the context's model.
+     * Returns the element in the context's view model that derives from the given element in the
+     * source model by using the transformations invoked to obtain the context's view model.<br>
+     * Since multiple view elements can be associated with a source model element, there are most
+     * likely multiple target elements. Thus the method returns the first one, or the first one of
+     * type <code>ofType</code> if that parameter is non-<code>null</code>, or <code>null</code> if
+     * there isn't any corresponding element (of type <code>ofType</code>).
      * 
+     * @param <T>
+     *            the type of denoted by <code>type</code>
      * @param element
      *            the element in the source model
-     * @return the element in the context's model or null if the link could not be made
+     * @param ofType
+     *            the type of the requested view model element, maybe <code>null</code>
+     * @return <code>element</code>'s representation in the context's view model or
+     *         <code>null</code> if <code>element</code> is <code>null</code> of none exists
      */
-    public Collection<?> getTargetElement(final Object element) {
+    public <T extends EObject> T getTargetElement(final Object element, final Class<T> ofType) {
+        if (element == null) {
+            return null;
+        }
+        Collection<?> targetCollection = null;
+        
         if (additionalSourceTargetElementMap != null) {
-            Collection<?> target = additionalSourceTargetElementMap.get(element);
-            if (target != null) {
-                return target;
-            }
+            targetCollection = additionalSourceTargetElementMap.get(element);
         }
         
-        Object target = element;
-        for (TransformationContext<?, ?> transformationContext : transformationContexts) {
-            if (target == null) {
-                return null;
-            }
-            target = transformationContext.getTargetElement(element);
+        if (!transformationContexts.isEmpty()
+                && (targetCollection == null || targetCollection.isEmpty())) {
+            targetCollection = transformationContexts.get(0).getTargetElement(element);
         }
-        // the following cast a hot fix, the above loops we be removed soon due to the planned
-        //  abolishment of the transformation chain feature
-        return (Collection<?>) target;
+        
+        if (targetCollection == null || targetCollection.isEmpty()) {
+            return null;
+        } else {
+            if (ofType == null) {
+                @SuppressWarnings("unchecked")
+                final T res = (T) (EObject) Iterables.getFirst(targetCollection, null);
+                return res; 
+            } else {
+                return Iterables.getFirst(Iterables.filter(targetCollection, ofType), null);
+            }
+        }
     }
 
     /**
@@ -471,23 +489,23 @@ public final class ViewContext extends MapPropertyHolder {
     // ---------------------------------------------------------------------------------- //
     //  Transformation option handling    
 
-    private Map<TransformationContext<?, ?>, Set<TransformationOption>> options = null;
+    private Map<TransformationContext<?, ?>, List<SynthesisOption>> options = null;
     
     /**
-     * Returns the set of {@link TransformationOption TransformationOptions} declared by the
+     * Returns the set of {@link SynthesisOption TransformationOptions} declared by the
      * transformation and forward to the users in the UI in order to allow them to influence the
      * transformation result.
      * 
-     * @return the set of {@link TransformationOption TransformationOptions}
+     * @return the set of {@link SynthesisOption TransformationOptions}
      * 
      * @author chsch
      */
-    public Map<TransformationContext<?, ?>, Set<TransformationOption>> getTransformationOptions() {
+    public Map<TransformationContext<?, ?>, List<SynthesisOption>> getDisplayedSynthesisOptions() {
         if (this.options == null) {
-            Map<TransformationContext<?, ?>, Set<TransformationOption>> map = Maps
+            Map<TransformationContext<?, ?>, List<SynthesisOption>> map = Maps
                     .newLinkedHashMap();
             for (TransformationContext<?, ?> c : this.transformationContexts) {
-                map.put(c, c.getTransformationOptions());
+                map.put(c, c.getDisplayedSynthesisOptions());
             }        
             this.options = ImmutableMap.copyOf(map);
         }
@@ -505,8 +523,8 @@ public final class ViewContext extends MapPropertyHolder {
      * 
      * @return a map of options (map keys) and related values (map values)
      */
-    public Map<IProperty<?>, Collection<?>> getRecommendedLayoutOptions() {
+    public List<Pair<IProperty<?>, List<?>>> getDisplayedLayoutOptions() {
         return Iterables.getFirst(this.transformationContextsRev, null)
-                .getRecommendedLayoutOptions();
+                .getDisplayedLayoutOptions();
     }
 }

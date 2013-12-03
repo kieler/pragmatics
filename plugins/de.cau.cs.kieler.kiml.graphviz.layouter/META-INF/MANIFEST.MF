@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: KIELER Bridge for Graphviz Layout
 Bundle-SymbolicName: de.cau.cs.kieler.kiml.graphviz.layouter;singleton:=true
-Bundle-Version: 0.6.3.qualifier
+Bundle-Version: 0.6.4.qualifier
 Bundle-Activator: de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayouterPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -12,7 +12,7 @@ Require-Bundle: org.eclipse.ui,
  de.cau.cs.kieler.core.kgraph,
  de.cau.cs.kieler.kiml,
  de.cau.cs.kieler.kiml.graphviz.dot,
- de.cau.cs.kieler.kiml.service
+ de.cau.cs.kieler.kiml.formats
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

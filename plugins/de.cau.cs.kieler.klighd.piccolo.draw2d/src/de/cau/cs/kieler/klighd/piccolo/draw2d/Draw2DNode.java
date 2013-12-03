@@ -20,49 +20,68 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.draw2d.DeferredUpdateManager;
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.Graphics;
+import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.Shape;
 import org.eclipse.draw2d.StackLayout;
 import org.eclipse.draw2d.UpdateManager;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.ui.statushandlers.StatusManager;
 
+import de.cau.cs.kieler.core.krendering.KColor;
 import de.cau.cs.kieler.klighd.KlighdPlugin;
 import de.cau.cs.kieler.klighd.piccolo.internal.KlighdSWTGraphicsEx;
+import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KCustomFigureNode;
+import de.cau.cs.kieler.klighd.piccolo.internal.util.Styles;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.util.PPaintContext;
 
 /**
  * A Piccolo2D node implementation wrapping a Draw2d figure.
- *
+ * 
  * @author msp
  * @author chsch
  * @kieler.design proposed by chsch
  * @kieler.rating proposed yellow by chsch
  */
-public class Draw2DNode extends PNode {
+public class Draw2DNode extends KCustomFigureNode {
 
     /** The serial version UID. */
     private static final long serialVersionUID = -1948310925725969628L;
-    
+
     /** The figure that is displayed by this node. */
     private Figure figure;
-    
+
     /**
      * This update manager is in charge of propagating repaint requests the Piccolo2D nodes if
      * necessary.
      */
     private UpdateManager updateManager;
-    
+
     /** The required GraphicsAdapter providing the necessary "drawing" API. */
     private GraphicsAdapter graphics;
-    
+
+    // some private fields for tracking the figure's original attributes
+    //  in case those attributes are changed for highlighting purposes!
+    private Color initialForeground = null;
+    private Color initialBackground = null;
+    private Float initialLineWidth = null;
+    private Integer initialLineStyle = null;
+
     /**
      * Create a Draw2D node with the given figure.
      * 
-     * @param theFigure a Draw2D figure
+     * @param theFigure
+     *            a Draw2D figure
      */
     public Draw2DNode(final Figure theFigure) {
+        if (theFigure == null) {
+            final String msg = "KLighD draw2d binding: Constructor of Draw2DNode has "
+                            + "been called with argument of null. This is not allowed!";
+            throw new IllegalArgumentException(msg);
+        }
         this.graphics = new GraphicsAdapter();
-        this.updateManager = new WrappingUpdateManager(this);   
+        this.updateManager = new WrappingUpdateManager(this);
         this.figure = new Figure() {
 
             @Override
@@ -82,19 +101,27 @@ public class Draw2DNode extends PNode {
                 super.paintFigure(theGraphics);
             }
         };
-        
+
         this.figure.add(theFigure);
         this.figure.setLayoutManager(new StackLayout());
+        
+        this.initialBackground = theFigure.getBackgroundColor();
+        this.initialForeground = theFigure.getForegroundColor();
+        
+        if (theFigure instanceof Shape) {
+            this.initialLineWidth = ((Shape) theFigure).getLineWidthFloat();
+            this.initialLineStyle = ((Shape) theFigure).getLineStyle();
+        }
     }
-    
+
     private final Rectangle2D singletonRectDouble = new Rectangle2D.Double();
     private final Rectangle singletonRectDraw2d = new Rectangle();
-    
+
     /**
      * {@inheritDoc}<br>
      * <br>
-     * This implementation adapts the bounds of the draw2d figure and delegates to the
-     * super implementation as required.
+     * This implementation adapts the bounds of the draw2d figure and delegates to the super
+     * implementation as required.
      */
     public boolean setBounds(final double x, final double y, final double width, final double height) {
         // convert the bounds to integer-based ones by means of the smart method
@@ -102,12 +129,91 @@ public class Draw2DNode extends PNode {
         this.singletonRectDouble.setRect(x, y, width, height);
         final java.awt.Rectangle intRect = this.singletonRectDouble.getBounds();
         this.singletonRectDraw2d.setBounds(intRect.x, intRect.y, intRect.width, intRect.height);
-        
+
         // now put them into the custom Draw2d figure and re-validate it
         this.figure.setBounds(this.singletonRectDraw2d);
         this.figure.revalidate();
-        
+
         return super.setBounds(x, y, width, height);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void applyStyles(final Styles styles) {
+        IFigure drawnFigure = (IFigure) figure.getChildren().get(0);
+        
+        //apply background color
+        if (styles.background != null) {
+            if (drawnFigure.getBackgroundColor() != null
+                    && drawnFigure.getBackgroundColor() != this.initialBackground) {
+                drawnFigure.getBackgroundColor().dispose();
+            }
+            
+            final KColor bgColor = styles.background.getColor();
+            drawnFigure.setBackgroundColor(
+                    new Color(null, bgColor.getRed(), bgColor.getGreen(), bgColor.getBlue()));
+        } else {
+            if (drawnFigure.getBackgroundColor() != null
+                    && drawnFigure.getBackgroundColor() != this.initialBackground) {
+                drawnFigure.getBackgroundColor().dispose();
+            }
+            drawnFigure.setBackgroundColor(this.initialBackground);
+        }
+        
+        //apply foreground color
+        if (styles.foreground != null) {
+            if (drawnFigure.getForegroundColor() != null
+                    && drawnFigure.getForegroundColor() != this.initialForeground) {
+                drawnFigure.getForegroundColor().dispose();
+            }
+            
+            final KColor fgColor = styles.foreground.getColor();
+            drawnFigure.setForegroundColor(
+                    new Color(null, fgColor.getRed(), fgColor.getGreen(), fgColor.getBlue()));
+        } else {
+            if (drawnFigure.getForegroundColor() != null
+                    && drawnFigure.getForegroundColor() != this.initialForeground) {
+                drawnFigure.getForegroundColor().dispose();
+            }
+            drawnFigure.setForegroundColor(this.initialForeground);
+        }
+        
+        //if figure is a shape we can configure more attributes
+        if (drawnFigure instanceof Shape) {
+            final Shape drawnShape = (Shape) drawnFigure;
+            
+            //set line style
+            if (styles.lineWidth != null) {
+                if (this.initialLineWidth == null) {
+                    this.initialLineWidth = drawnShape.getLineWidthFloat();
+                }
+                
+                drawnShape.setLineWidthFloat(styles.lineWidth.getLineWidth());
+                
+            } else {
+                if (this.initialLineWidth != null
+                        && this.initialLineWidth != drawnShape.getLineWidthFloat()) {
+                    drawnShape.setLineWidthFloat(this.initialLineWidth);
+                }
+            }
+            
+            //set line style
+            if (styles.lineStyle != null) {
+                if (this.initialLineStyle == null) {
+                    this.initialLineStyle = drawnShape.getLineStyle();
+                }
+                
+                drawnShape.setLineStyle(styles.lineStyle.getLineStyle().getValue());
+                
+            } else {
+                if (this.initialLineStyle != null
+                        && this.initialLineStyle != drawnShape.getLineStyle()) {
+                    drawnShape.setLineStyle(this.initialLineStyle);
+                }
+            }
+        }
     }
     
     /**
@@ -116,18 +222,19 @@ public class Draw2DNode extends PNode {
     @Override
     protected void paint(final PPaintContext paintContext) {
         // paintContext.pushClip(getBounds());
-        
+
         this.graphics.setKlighdSWTGraphics((KlighdSWTGraphicsEx) paintContext.getGraphics());
         try {
             figure.paint(this.graphics);
         } catch (Throwable throwable) {
-            final String msg = "KLighD: Error occurred while drawing the diagram figure "
-                    + this.figure.getClass().getName();
+            final String msg =
+                    "KLighD: Error occurred while drawing the diagram figure "
+                            + this.figure.getClass().getName();
             StatusManager.getManager().handle(
                     new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID, msg, throwable),
                     StatusManager.LOG);
         }
-        
+
         // paintContext.popClip(null);
     }
 
@@ -138,30 +245,30 @@ public class Draw2DNode extends PNode {
      * @author chsch
      */
     static final class WrappingUpdateManager extends DeferredUpdateManager {
-        
+
         @SuppressWarnings("unused")
         private PNode wrappingPNode;
-        
+
         WrappingUpdateManager(final PNode wrapper) {
             super();
             this.wrappingPNode = wrapper;
         }
-        
+
         @Override
         public void queueWork() {
             // the construction with this fake update manager appear to do not work correctly
-            //  in combination with the queuing of the 'validate bounds' tasks
-            //  (bounds have not been correctly propagated to children)
+            // in combination with the queuing of the 'validate bounds' tasks
+            // (bounds have not been correctly propagated to children)
             // bridging the decoupling, and thus validating the compound figure at once, works
-            //  as desired
+            // as desired
             super.performUpdate();
         }
-        
+
         @Override
         protected Graphics getGraphics(final Rectangle region) {
             // We do not allow the update manager to directly access the
-            //  graphics object, redraw requests shall be somehow escalated
-            //  to the Piccolo2D node in future if necessary (TODO).
+            // graphics object, redraw requests shall be somehow escalated
+            // to the Piccolo2D node in future if necessary (TODO).
             return null;
         }
     }

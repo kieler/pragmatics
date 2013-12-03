@@ -31,7 +31,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
@@ -41,6 +40,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
@@ -67,7 +67,6 @@ import de.cau.cs.kieler.klighd.ViewContext;
 import de.cau.cs.kieler.klighd.ZoomStyle;
 import de.cau.cs.kieler.klighd.internal.preferences.KlighdPreferences;
 import de.cau.cs.kieler.klighd.krendering.SimpleUpdateStrategy;
-import de.cau.cs.kieler.klighd.util.Iterables2;
 import de.cau.cs.kieler.klighd.viewers.ContextViewer;
 
 /**
@@ -135,23 +134,37 @@ public class DiagramEditorPart extends EditorPart implements IDiagramWorkbenchPa
         }
         
         // create a view context for the viewer
-        ViewContext viewContext = LightDiagramServices.getInstance().createViewContext(
-                model, configureKlighdProperties());
+        final ViewContext viewContext = LightDiagramServices.createViewContext(model,
+                configureKlighdProperties());
+        
         if (viewContext != null) {
             viewer.setModel(viewContext);
             // do an initial update of the view context
-            LightDiagramServices.getInstance().updateViewContext(viewContext, model);
+            LightDiagramServices.updateViewContext(viewContext, model);
             
             DiagramViewManager.getInstance().registerView(this);
             
             if (requiresInitialLayout(viewContext)) {
-                LightDiagramServices.layoutDiagram(viewContext, false, false);
+                viewer.getControl().setVisible(false);
+                
+                // it is important to wait with the layout call until the #createPartControl
+                // method has finished and the widget toolkit has applied proper bounds
+                // to the parent composite via a Composite#layout call. 
+                // Otherwise a possible zoomToFit after the layout will fail since the
+                // view bounds are empty and no 'view area' to which to zoom can be
+                // determined. The async call here hopefully assures this.
+                Display.getCurrent().asyncExec(new Runnable() {
+                    public void run() {
+                        LightDiagramServices.layoutDiagram(viewContext, false, false);
+                        viewer.getControl().setVisible(true);
+                    }
+                });
             }
             viewer.updateOptions(false);
 
             // since no initial selection is set in the view context/context viewer implementation,
-            // define some here by selection the root of the view model representing the diagram canvas!
-            viewer.selection(null, Iterables2.singletonIterable((EObject) viewContext.getViewModel()));
+            //  define some here by selection the root of the view model representing the diagram canvas!
+            viewer.resetSelectionTo(viewContext.getViewModel());
         } else {
             viewer.setModel("The selected file does not contain any supported model.", false);
         }
@@ -373,7 +386,7 @@ public class DiagramEditorPart extends EditorPart implements IDiagramWorkbenchPa
                 model = resource.getContents().get(0);
                 
                 ViewContext viewContext = viewer.getCurrentViewContext();
-                LightDiagramServices.getInstance().updateViewContext(viewContext, model);
+                LightDiagramServices.updateViewContext(viewContext, model);
             } catch (IOException exception) {
                 IStatus status = new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID,
                         "Failed to update " + resource.getURI().toString(), exception);
@@ -522,7 +535,7 @@ public class DiagramEditorPart extends EditorPart implements IDiagramWorkbenchPa
         zoomToFocusItem = new ActionContributionItem(zoomToFocusAction);
         
         // zoom to one ...
-        Action zoomToOne = new Action("Scale to Original Size", IAction.AS_PUSH_BUTTON) {
+        Action zoomToOne = new Action("Zoom to Original Size", IAction.AS_PUSH_BUTTON) {
             {
                 setImageDescriptor(KlighdPlugin
                         .getImageDescriptor("icons/kieler-zoomtoone.gif"));

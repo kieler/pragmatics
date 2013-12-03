@@ -15,9 +15,9 @@ import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
-import de.cau.cs.kieler.kiml.service.grana.analyses.BendsAnalysis;
-import de.cau.cs.kieler.kiml.service.grana.analyses.EdgeCountAnalysis;
+import de.cau.cs.kieler.kiml.grana.IAnalysis;
+import de.cau.cs.kieler.kiml.grana.analyses.BendsAnalysis;
+import de.cau.cs.kieler.kiml.grana.analyses.EdgeCountAnalysis;
 
 /**
  * Calculates a metric for the number of bends in the graph. This depends on the
@@ -35,7 +35,7 @@ public class EdgeBendsMetric implements IAnalysis {
      */
     public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Bend metric analysis", 1);
+        progressMonitor.begin("Bend metric", 1);
         // load numbers from analyses
         Object edgesResult = results.get(EdgeCountAnalysis.ID);
         Object[] bendsResult = (Object[]) results.get(BendsAnalysis.ID);

@@ -13,14 +13,18 @@
  */
 package de.cau.cs.kieler.kiml.evol;
 
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+
+import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
+import de.cau.cs.kieler.kiml.config.LayoutContext;
 import de.cau.cs.kieler.kiml.evol.genetic.Gene;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
@@ -97,24 +101,27 @@ public class EvolLayoutConfig implements ILayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public void transferValues(final KLayoutData graphData, final LayoutContext inputContext) {
+    public Collection<IProperty<?>> getAffectedOptions(final LayoutContext inputContext) {
         LayoutEvolutionModel model = inputContext.getProperty(EVOL_MODEL);
         Object diagramPart = inputContext.getProperty(LayoutContext.DIAGRAM_PART);
+        List<IProperty<?>> options = new LinkedList<IProperty<?>>();
         if (model != null && diagramPart != null) {
             LayoutContext keyContext = model.getSelected().findContext(diagramPart);
             if (keyContext != null) {
                 LayoutDataService dataService = LayoutDataService.getInstance();
                 for (Gene<?> gene : model.getSelected().getGenes(keyContext)) {
                     if (gene.getValue() != null) {
-                        LayoutOptionData<?> optionData = dataService.getOptionData(
-                                gene.getTypeInfo().getId());
+                        @SuppressWarnings("unchecked")
+                        LayoutOptionData<Object> optionData = (LayoutOptionData<Object>)
+                                dataService.getOptionData(gene.getTypeInfo().getId());
                         if (optionData != null) {
-                            graphData.setProperty(optionData, GenomeFactory.translateFromGene(gene));
+                            options.add(optionData);
                         }
                     }
                 }
             }
         }
+        return options;
     }
 
 }

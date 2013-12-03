@@ -2,17 +2,17 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="de.cau.cs.kieler.kiml.layoutInfo">
-      <config
+         point="de.cau.cs.kieler.kiml.layoutConfigs">
+      <customConfig
             activation="de.cau.cs.kieler.kiml.evol"
             activationAction="de.cau.cs.kieler.kiml.evol.ui.ShowEvolutionAction$Activator"
             activationText="Activate Evolutionary Layout"
             class="de.cau.cs.kieler.kiml.evol.EvolLayoutConfig"
             default="false">
-      </config>
+      </customConfig>
    </extension>
    <extension
-         point="de.cau.cs.kieler.kiml.service.analysisProviders">
+         point="de.cau.cs.kieler.kiml.grana.analysisProviders">
       <category
             description="Analysis providers that yield a value between 0.0 and 1.0"
             id="de.cau.cs.kieler.kiml.evol.metricCategory"
@@ -79,6 +79,26 @@
             description="The edge length uniformity of the graph."
             id="de.cau.cs.kieler.kiml.evol.edgeUniformityMetric"
             name="Edge Uniformity">
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.grana.edgeCount">
+         </dependency>
+      </analysis>
+      <analysis
+            category="de.cau.cs.kieler.kiml.evol.metricCategory"
+            class="de.cau.cs.kieler.kiml.evol.metrics.EdgeOrthogonalityMetric"
+            description="The edge orthogonality of the graph."
+            id="de.cau.cs.kieler.kiml.evol.edgeOrthogonalityMetric"
+            name="Edge Orthogonality">
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.grana.edgeCount">
+         </dependency>
+      </analysis>
+      <analysis
+            category="de.cau.cs.kieler.kiml.evol.metricCategory"
+            class="de.cau.cs.kieler.kiml.evol.metrics.EdgeLengthMetric"
+            description="The edge lengths of the graph."
+            id="de.cau.cs.kieler.kiml.evol.edgeLengthMetric"
+            name="Edge Length">
          <dependency
                analysis="de.cau.cs.kieler.kiml.grana.edgeCount">
          </dependency>

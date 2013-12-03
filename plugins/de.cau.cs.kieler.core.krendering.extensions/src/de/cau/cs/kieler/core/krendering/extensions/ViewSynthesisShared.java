@@ -25,11 +25,11 @@ import com.google.inject.ScopeAnnotation;
  * This annotation is intended to be attached to transformation implementations that make use of
  * dependency injection by means of Google Guice and that are made accessible to KLighD via its
  * related extension port. The attachment of this annotation indicates a special treatment while
- * injecting instances of helper transformations into "other" transformations, e.g. the main one.
- * <br><br>
+ * injecting instances of helper transformations into diagram synthesis implementations. <br>
+ * <br>
  * For more details see
- * {@link de.cau.cs.kieler.klighd.transformations.ReinitializingTransformationProxy.ViewSynthesisScope}
- * <br><br>
+ * {@link de.cau.cs.kieler.klighd.syntheses.ReinitializingDiagramSynthesisProxy.ViewSynthesisScope} <br>
+ * <br>
  * It is defined at this place as I need to use it within the KNode/KPort/KLabel/KEdgeExtensions.
  * 
  * @author chsch

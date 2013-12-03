@@ -48,7 +48,7 @@ public enum LayoutProcessorStrategy {
     /** Reverses additional edges to improve the compactness of the final drawing. */
     ADDITIONAL_EDGE_REVERSER,
     /** Splits big nodes into multiple layers to distribute them better and reduce whitespace. */
-    BIG_NODES_PROCESSOR,
+    BIG_NODES_PREPROCESSOR,
     /** Adds dummy nodes in edges where center labels are present. */
     LABEL_DUMMY_INSERTER,
     
@@ -58,6 +58,8 @@ public enum LayoutProcessorStrategy {
     LAYER_CONSTRAINT_PROCESSOR,
     /** Handles northern and southern hierarchical ports. */
     HIERARCHICAL_PORT_CONSTRAINT_PROCESSOR,
+    /** Process layered big nodes, such that they are not interrupted by long edge nodes. */
+    BIG_NODES_INTERMEDIATEPROCESSOR,
     /** Takes a layered graph and turns it into a properly layered graph. */
     LONG_EDGE_SPLITTER,
     /** Makes sure nodes have at least fixed port sides. */
@@ -95,6 +97,8 @@ public enum LayoutProcessorStrategy {
     HIERARCHICAL_PORT_POSITION_PROCESSOR,
     /** Calculate the size of layers. */
     LAYER_SIZE_AND_GRAPH_HEIGHT_CALCULATOR,
+    /** Merges dummy nodes originating from big nodes. */
+    BIG_NODES_POSTPROCESSOR,
     
     // After Phase 5
     
@@ -129,12 +133,17 @@ public enum LayoutProcessorStrategy {
      */
     public ILayoutProcessor create() {
         switch (this) {
-        
-        case ADDITIONAL_EDGE_REVERSER:
-            return new AdditionalEdgeReverser();
-        
-        case BIG_NODES_PROCESSOR:
             return new BigNodesProcessor();
+        case ADDITIONAL_EDGE_REVERSER:
+            return new AdditionalEdgeReverser();            
+        case BIG_NODES_INTERMEDIATEPROCESSOR:
+            return new BigNodesIntermediateProcessor();
+            
+        case BIG_NODES_POSTPROCESSOR: 
+            return new BigNodesPostProcessor();
+            
+        case BIG_NODES_PREPROCESSOR:
+            return new BigNodesPreProcessor();
             
         case COMMENT_POSTPROCESSOR:
             return new CommentPostprocessor();

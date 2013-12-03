@@ -44,7 +44,8 @@ class ContactProvider
     {
         val Configuration config = Configuration::INSTANCE
         '''
-        <p class='title'>Contact</p>
+        <div class="col-md-8 col-md-offset-2">
+        <h2>Contact</h2>
         «if (config.hasConfigProperty(Configuration::CONTACT_INFORMATION)) {
             val String provider = config.getConfigProperty(Configuration::CONTACT_INFORMATION).escapeHtml                 
             '''
@@ -66,6 +67,7 @@ class ContactProvider
             </p>
             '''
         }»
+        </div>
         '''
     }
     

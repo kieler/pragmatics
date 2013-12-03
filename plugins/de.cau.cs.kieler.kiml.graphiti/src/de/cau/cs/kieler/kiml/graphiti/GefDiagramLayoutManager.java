@@ -26,8 +26,8 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
-import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
+import de.cau.cs.kieler.kiml.service.IDiagramLayoutManager;
+import de.cau.cs.kieler.kiml.service.LayoutMapping;
 
 /**
  * An abstract diagram layout manager for GEF-based implementations.
@@ -55,7 +55,7 @@ public abstract class GefDiagramLayoutManager<T> implements IDiagramLayoutManage
         if (zoomToFit && layoutGraphObj instanceof EditPart) {
             // determine pre- or post-layout zoom
             GraphicalViewer viewer = ((IPictogramElementEditPart) layoutGraphObj)
-                    .getConfigurationProvider().getDiagramEditor().getGraphicalViewer();
+                    .getConfigurationProvider().getDiagramContainer().getGraphicalViewer();
             ZoomManager zoomManager = ((ScalableRootEditPartAnimated) viewer.getRootEditPart())
                     .getZoomManager();
             KNode parentNode = mapping.getLayoutGraph();

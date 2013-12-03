@@ -190,6 +190,7 @@ public abstract class AbstractGraphImporter<T> implements IGraphImporter<T> {
             final PortConstraints portConstraints, final PortSide portSide, final int netFlow,
             final KVector portNodeSize, final KVector portPosition, final KVector portSize,
             final Direction layoutDirection) {
+        
         PortSide finalExternalPortSide = portSide;
         
         // Create the dummy with one port

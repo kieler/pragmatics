@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.kwebs.server.web;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URLDecoder;
 import java.util.List;
@@ -25,10 +26,11 @@ import org.json.JSONObject;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.io.CharStreams;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
-import de.cau.cs.kieler.kwebs.GraphLayoutOption;
+import de.cau.cs.kieler.kwebs.server.layout.GraphLayoutOption;
 import de.cau.cs.kieler.kwebs.server.service.LiveLayoutService;
 
 /**
@@ -48,8 +50,39 @@ public class LiveLayoutHandler implements HttpHandler {
      */
     public void handle(final HttpExchange http) throws IOException {
 
-        // retrieve the query parameters
-        String decoded = URLDecoder.decode(http.getRequestURI().getQuery(), "UTF-8");
+        if (http.getRequestMethod().toUpperCase().equals("OPTIONS")) {
+            // CORS preflight
+            handleOptionsRequest(http);
+        } else if (http.getRequestMethod().toUpperCase().equals("POST")
+                || http.getRequestMethod().toUpperCase().equals("GET")) {
+            // layout request
+            handleLayoutRequest(http);
+        } else {
+            sendError(http, "Unsupported request method: " + http.getRequestMethod(), null);
+        }
+    }
+
+    /**
+     * Perform layout on the passed data.
+     */
+    private void handleLayoutRequest(final HttpExchange http) throws IOException {
+
+        String decoded = "";
+
+        try {
+            if (http.getRequestMethod().toUpperCase().equals("GET")) {
+                // for get the parameters are in the url
+                decoded = URLDecoder.decode(http.getRequestURI().getQuery(), "UTF-8");
+            } else if (http.getRequestMethod().toUpperCase().equals("POST")) {
+                // port post we have to look into the body
+                String input = CharStreams.toString(new InputStreamReader(http.getRequestBody()));
+                decoded = URLDecoder.decode(input, "UTF-8");
+            }
+        } catch (IOException e) {
+            sendError(http, "Could not decode the passed data.", e);
+            return;
+        }
+
         Map<String, String> params = getParams(decoded);
 
         // the graph
@@ -65,8 +98,10 @@ public class LiveLayoutHandler implements HttpHandler {
 
         try {
             JSONObject obj = new JSONObject(config);
-            for (String key : JSONObject.getNames(obj)) {
-                opts.add(new GraphLayoutOption(key, obj.getString(key)));
+            if (obj.length() > 0) {
+                for (String key : JSONObject.getNames(obj)) {
+                    opts.add(new GraphLayoutOption(key, obj.getString(key)));
+                }
             }
         } catch (JSONException e) {
             // e.printStackTrace();
@@ -91,16 +126,37 @@ public class LiveLayoutHandler implements HttpHandler {
         // fixes for an svg
         if (outformat.equals("org.w3.svg")) {
             outGraph = fixSvg(outGraph);
-        } else {
-            outGraph = "<pre class='pre-scrollable prettyprint'>" + fixXML(outGraph) + "</pre>";
         }
+
+        http.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+             //   http.getRequestHeaders().getFirst("origin"));
+        http.getResponseHeaders().add("content-type", "text/plain");
 
         // send the result graph
         http.sendResponseHeaders(HTTP_OK, outGraph.length());
         OutputStream os = http.getResponseBody();
         os.write(outGraph.getBytes());
         os.close();
+    }
 
+    /**
+     * Handling a CORS preflight package. Allowing cross-site GET requests.
+     */
+    private void handleOptionsRequest(final HttpExchange http) throws IOException {
+
+        // allow the same origin
+        http.getResponseHeaders().add("Access-Control-Allow-Origin",
+                http.getRequestHeaders().getFirst("origin"));
+        // only allow GET and OPTIONS (comma separated list!)
+        http.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, OPTIONS");
+        // just echo
+        http.getResponseHeaders().add("Access-Control-Allow-Headers",
+                http.getRequestHeaders().getFirst("Access-Control-Request-Headers"));
+        // package no older than 10 seconds
+        http.getResponseHeaders().add("access-control-max-age", "10");
+        // OK
+        http.sendResponseHeaders(HTTP_OK, -1);
+        http.getResponseBody().close();
     }
 
     private void sendError(final HttpExchange http, final String text, final Throwable t)
@@ -143,9 +199,5 @@ public class LiveLayoutHandler implements HttpHandler {
         sb.insert(sb.indexOf("<g") + 2, " id=\"group\"");
 
         return sb.toString();
-    }
-
-    private String fixXML(final String graph) {
-        return graph.replace(">", "&gt;").replace("<", "&lt;");
     }
 }
