@@ -23,6 +23,7 @@ import java.awt.Stroke;
 import java.awt.geom.Path2D;
 import java.io.File;
 import java.net.URL;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -91,6 +92,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.NodeLabelPlacement;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
@@ -306,7 +308,33 @@ public class KAwtRenderer {
             // paint the text string
             graphics.setColor(Color.BLACK);
             graphics.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, Math.round(scale * fontSize)));
-            renderText(label.getText(), size, HorizontalAlignment.LEFT, VerticalAlignment.CENTER);
+            
+            // retrieve the alignment
+            HorizontalAlignment hAlign = HorizontalAlignment.LEFT;
+            VerticalAlignment vAlign = VerticalAlignment.CENTER;
+            EnumSet<NodeLabelPlacement> placement = labelLayout.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT); 
+            if(placement != null) {
+                // horizontal
+                if (placement.contains(NodeLabelPlacement.H_LEFT)) {
+                    hAlign = HorizontalAlignment.LEFT;
+                } else if (placement.contains(NodeLabelPlacement.H_RIGHT)) {
+                    hAlign = HorizontalAlignment.RIGHT;
+                } else if (placement.contains(NodeLabelPlacement.H_CENTER)) {
+                    hAlign = HorizontalAlignment.CENTER;
+                }
+
+                // vertical
+                if (placement.contains(NodeLabelPlacement.V_TOP)) {
+                    vAlign = VerticalAlignment.TOP;
+                } else if (placement.contains(NodeLabelPlacement.V_BOTTOM)) {
+                    vAlign = VerticalAlignment.BOTTOM;
+                } else if (placement.contains(NodeLabelPlacement.V_CENTER)) {
+                    vAlign = VerticalAlignment.CENTER;
+                }
+            }
+            
+            
+            renderText(label.getText(), size, hAlign, vAlign);
         } else {
             // paint the given rendering
             render(labelRendering, size, label.getText());
