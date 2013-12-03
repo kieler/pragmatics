@@ -38,7 +38,7 @@ import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 // The attributes are necessary because otherwise JAX-WS would use package and class name for
 // the definition of the service and port name and the namespace.
 @WebService(
-    endpointInterface = "de.cau.cs.kieler.kwebs.jaxws.LayoutServicePort",
+    endpointInterface = "de.cau.cs.kieler.kwebs.server.jaxws.LayoutServicePort",
     name = "LayoutServicePort",
     portName = "LayoutServicePort",
     serviceName = "LayoutService",

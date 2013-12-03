@@ -12,7 +12,7 @@ import de.cau.cs.kieler.kwebs.server.layout.GraphLayoutOption;
 /**
  * This object contains factory methods for each 
  * Java content interface and Java element interface 
- * generated in the de.cau.cs.kieler.kwebs.jaxws package. 
+ * generated in the de.cau.cs.kieler.kwebs.server.jaxws package. 
  * <p>An ObjectFactory allows you to programatically 
  * construct new instances of the Java representation 
  * for XML content. The Java representation of XML 
@@ -35,7 +35,7 @@ public class ObjectFactory {
     private final static QName _GetPreviewImageResponse_QNAME = new QName("http://layout.rtsys.informatik.uni-kiel.de/layout", "getPreviewImageResponse");
 
     /**
-     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: de.cau.cs.kieler.kwebs.jaxws
+     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: de.cau.cs.kieler.kwebs.server.jaxws
      * 
      */
     public ObjectFactory() {

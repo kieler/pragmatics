@@ -50,29 +50,29 @@ public final class Configuration extends Properties {
 
     /** Shall JAXWS service be published via HTTP? */
     public static final String JAXWS_PUBLISH_HTTP
-        = PREFIX + "jaxws.publishHttp";
+        = PREFIX + "server.jaxws.publishHttp";
 
     /** JAXWS HTTP service address. */
     public static final String JAXWS_HTTP_ADDRESS
-        = PREFIX + "jaxws.httpAddress";
+        = PREFIX + "server.jaxws.httpAddress";
 
     /** JAXWS HTTP service address from outside. */
     public static final String JAXWS_HTTP_PUBLIC_ADDRESS
-        = PREFIX + "jaxws.publicHttpAddress";
+        = PREFIX + "server.jaxws.publicHttpAddress";
 
     // Preferences for HTTPS based publishing of the JAXWS service
 
     /** Shall JAXWS service be published via HTTPS? */
     public static final String JAXWS_PUBLISH_HTTPS
-        = PREFIX + "jaxws.publishHttps";
+        = PREFIX + "server.jaxws.publishHttps";
 
     /** JAXWS HTTPS service address. */
     public static final String JAXWS_HTTPS_ADDRESS
-        = PREFIX + "jaxws.httpsAddress";
+        = PREFIX + "server.jaxws.httpsAddress";
 
     /** JAXWS HTTPS service address from outside. */
     public static final String JAXWS_HTTPS_PUBLIC_ADDRESS
-        = PREFIX + "jaxws.publicHttpsAddress";
+        = PREFIX + "server.jaxws.publicHttpsAddress";
 
     // Properties for HTTP based publishing of the REST service
 
