@@ -409,7 +409,7 @@ Apart from a set of default layout types offered by KIML, new layout providers a
          <attribute name="feature" use="required">
             <annotation>
                <documentation>
-                  The supported feature: SELF_LOOPS, MULTI_EDGES, EDGE_LABELS, PORTS, COMPOUND, or CLUSTERS
+                  The supported feature: SELF_LOOPS, MULTI_EDGES, EDGE_LABELS, PORTS, COMPOUND, CLUSTERS, or DISCONNECTED
                </documentation>
             </annotation>
             <simpleType>
@@ -425,6 +425,8 @@ Apart from a set of default layout types offered by KIML, new layout providers a
                   <enumeration value="COMPOUND">
                   </enumeration>
                   <enumeration value="CLUSTERS">
+                  </enumeration>
+                  <enumeration value="DISCONNECTED">
                   </enumeration>
                </restriction>
             </simpleType>
