@@ -190,28 +190,20 @@ class Ptolemy2KGraphVisualization {
         
         node.setLayoutAlgorithm()
         
-        // Create the rendering for the expanded version of this node
-        val expandedRendering = createExpandedCompoundNodeRendering(node, compoundNodeAlpha)
-//        expandedRendering.setProperty(KlighdProperties::EXPANDED_RENDERING, true)
-//        expandedRendering.addAction(Trigger::DOUBLECLICK, KlighdConstants::ACTION_COLLAPSE_EXPAND)
-//        node.data += expandedRendering
-        node.addRenderingWithSelectionWrapper(expandedRendering) => [
-            it.setProperty(KlighdProperties::EXPANDED_RENDERING, true)
-            it.addAction(Trigger::DOUBLECLICK, KlighdConstants::ACTION_COLLAPSE_EXPAND)
-        ];
-
-        
         // Add a rendering for the collapsed version of this node
         val collapsedRendering = createRegularNodeRendering(node)
-//        collapsedRendering.setProperty(KlighdProperties::COLLAPSED_RENDERING, true)
-//        collapsedRendering.addAction(Trigger::DOUBLECLICK, KlighdConstants::ACTION_COLLAPSE_EXPAND)
-//        node.data += collapsedRendering
-        
-        layout.setLayoutSize(collapsedRendering)
-        
         node.addRenderingWithSelectionWrapper(collapsedRendering) => [
             it.setProperty(KlighdProperties::COLLAPSED_RENDERING, true)
-            it.addAction(Trigger::DOUBLECLICK, KlighdConstants::ACTION_COLLAPSE_EXPAND)
+            it.addDoubleClickAction(KlighdConstants::ACTION_COLLAPSE_EXPAND)
+        ];
+        
+        //layout.setLayoutSize(collapsedRendering)
+        
+        // Create the rendering for the expanded version of this node
+        val expandedRendering = createExpandedCompoundNodeRendering(node, compoundNodeAlpha)
+        node.addRenderingWithSelectionWrapper(expandedRendering) => [
+            it.setProperty(KlighdProperties::EXPANDED_RENDERING, true)
+            it.addDoubleClickAction(KlighdConstants::ACTION_COLLAPSE_EXPAND)
         ];
     }
     
@@ -280,7 +272,7 @@ class Ptolemy2KGraphVisualization {
         node.data += rendering
         
         // Set size
-        layout.setLayoutSize(rendering)
+        // layout.setLayoutSize(rendering)
     }
     
     /**
@@ -378,7 +370,7 @@ class Ptolemy2KGraphVisualization {
         node.addRenderingWithSelectionWrapper(rendering);
         
         // Calculate layout size.
-        layout.setLayoutSize(rendering)
+        // layout.setLayoutSize(rendering)
 
     }
     

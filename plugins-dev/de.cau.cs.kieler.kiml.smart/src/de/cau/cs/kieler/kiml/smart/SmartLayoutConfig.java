@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.kiml.smart;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Map;
 
@@ -26,22 +27,21 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
+import de.cau.cs.kieler.kiml.config.LayoutContext;
+import de.cau.cs.kieler.kiml.grana.AnalysisOptions;
+import de.cau.cs.kieler.kiml.grana.analyses.CompoundEdgeAnalysis;
+import de.cau.cs.kieler.kiml.grana.analyses.EdgeLabelCountAnalysis;
+import de.cau.cs.kieler.kiml.grana.analyses.MultiEdgeCountAnalysis;
+import de.cau.cs.kieler.kiml.grana.analyses.PortCountAnalysis;
+import de.cau.cs.kieler.kiml.grana.analyses.SelfLoopAnalysis;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.GraphFeature;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
-import de.cau.cs.kieler.kiml.service.grana.analyses.CompoundEdgeAnalysis;
-import de.cau.cs.kieler.kiml.service.grana.analyses.EdgeLabelCountAnalysis;
-import de.cau.cs.kieler.kiml.service.grana.analyses.MultiEdgeCountAnalysis;
-import de.cau.cs.kieler.kiml.service.grana.analyses.PortCountAnalysis;
-import de.cau.cs.kieler.kiml.service.grana.analyses.SelfLoopAnalysis;
 import de.cau.cs.kieler.kiml.smart.SmartLayoutService.SmartRuleData;
 
 /**
@@ -189,13 +189,12 @@ public class SmartLayoutConfig implements ILayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public void transferValues(final KLayoutData graphData, final LayoutContext context) {
+    public Collection<IProperty<?>> getAffectedOptions(final LayoutContext context) {
         MetaLayout metaLayout = provideMetaLayout(context);
         if (metaLayout != null) {
-            for (Map.Entry<IProperty<?>, Object> entry : metaLayout.getConfig().entrySet()) {
-                graphData.setProperty(entry.getKey(), entry.getValue());
-            }
+            return metaLayout.getConfig().keySet();
         }
+        return Collections.emptyList();
     }
     
     /**

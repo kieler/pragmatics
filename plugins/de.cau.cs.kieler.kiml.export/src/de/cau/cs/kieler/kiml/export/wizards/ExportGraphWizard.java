@@ -42,7 +42,7 @@ import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.export.ExportPlugin;
 import de.cau.cs.kieler.kiml.export.GraphFileHandler;
-import de.cau.cs.kieler.kiml.service.formats.GraphFormatData;
+import de.cau.cs.kieler.kiml.formats.GraphFormatData;
 
 /**
  * A wizard for exporting graphs from workspace.

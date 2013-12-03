@@ -28,13 +28,14 @@ import de.cau.cs.kieler.core.kivi.AbstractEffect;
 import de.cau.cs.kieler.core.kivi.IEffect;
 import de.cau.cs.kieler.core.kivi.UndoEffect;
 import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
+import de.cau.cs.kieler.kiml.config.LayoutContext;
 import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
-import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
-import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
-import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
-import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
+import de.cau.cs.kieler.kiml.service.LayoutManagersService;
+import de.cau.cs.kieler.kiml.service.IDiagramLayoutManager;
+import de.cau.cs.kieler.kiml.service.LayoutMapping;
 
 /**
  * Performs automatic layout on a diagram editor for a given selection. The layout
@@ -58,9 +59,9 @@ public class LayoutEffect extends AbstractEffect {
     @SuppressWarnings("rawtypes")
     static Object findDiagramPart(final IWorkbenchPart workbenchPart, final EObject object) {
         if (workbenchPart == null) {
-            return EclipseLayoutInfoService.getInstance().getAdapter(object, null);
+            return LayoutManagersService.getInstance().getAdapter(object, null);
         } else {
-            IDiagramLayoutManager<?> layoutManager = EclipseLayoutInfoService.getInstance().getManager(
+            IDiagramLayoutManager<?> layoutManager = LayoutManagersService.getInstance().getManager(
                     workbenchPart, null);
             if (layoutManager != null) {
                 Class[] adapterList = layoutManager.getAdapterList();
@@ -91,7 +92,7 @@ public class LayoutEffect extends AbstractEffect {
     /** the layout mapping that has been used for layout. */
     private LayoutMapping<?> layoutMapping;
     /** additional layout options configurations. */
-    private LinkedList<ILayoutConfig> layoutConfigs = new LinkedList<ILayoutConfig>();
+    private LinkedList<VolatileLayoutConfig> layoutConfigs = new LinkedList<VolatileLayoutConfig>();
     /** whether the effect should be merged with other layout effects. */
     private boolean doMerge = true;
 
@@ -103,8 +104,6 @@ public class LayoutEffect extends AbstractEffect {
      *            the workbench part containing the diagram to layout
      * @param object
      *            the top-level domain model object to layout, or {@code null}
-     * @throws de.cau.cs.kieler.core.ui.UnsupportedPartException
-     *            if layout is not supported for the given workbench part
      */
     public LayoutEffect(final IWorkbenchPart workbenchPart, final EObject object) {
         this.diagramEditor = workbenchPart;
@@ -121,8 +120,6 @@ public class LayoutEffect extends AbstractEffect {
      *            the top-level domain model object to layout, or {@code null}
      * @param zoomToFit
      *            whether zoom to fit shall be performed
-     * @throws de.cau.cs.kieler.core.ui.UnsupportedPartException
-     *            if layout is not supported for the given workbench part
      */
     public LayoutEffect(final IWorkbenchPart workbenchPart, final EObject object,
             final boolean zoomToFit) {
@@ -142,8 +139,6 @@ public class LayoutEffect extends AbstractEffect {
      *            whether zoom to fit shall be performed
      * @param progressBar
      *            whether a progress bar shall be displayed
-     * @throws de.cau.cs.kieler.core.ui.UnsupportedPartException
-     *            if layout is not supported for the given workbench part
      */
     public LayoutEffect(final IWorkbenchPart workbenchPart, final EObject object,
             final boolean zoomToFit, final boolean progressBar) {
@@ -166,8 +161,6 @@ public class LayoutEffect extends AbstractEffect {
      *            whether a progress bar shall be displayed
      * @param ancestors
      *            whether to include the ancestors in the layout process
-     * @throws de.cau.cs.kieler.core.ui.UnsupportedPartException
-     *            if layout is not supported for the given workbench part
      */
     public LayoutEffect(final IWorkbenchPart workbenchPart, final EObject object,
             final boolean zoomToFit, final boolean progressBar,
@@ -194,8 +187,6 @@ public class LayoutEffect extends AbstractEffect {
      *            whether to include the ancestors in the layout process
      * @param animation
      *            whether the layout shall be animated
-     * @throws de.cau.cs.kieler.core.ui.UnsupportedPartException
-     *            if layout is not supported for the given workbench part
      */
     public LayoutEffect(final IWorkbenchPart workbenchPart, final EObject object,
             final boolean zoomToFit, final boolean progressBar, final boolean ancestors,
@@ -226,12 +217,13 @@ public class LayoutEffect extends AbstractEffect {
      *            LayoutOptions})
      * @param value
      *            the value for the layout option
+     * @param <T> the type of the layout option
      */
-    public void setOption(final Object object, final IProperty<?> option, final Object value) {
+    public <T> void setOption(final Object object, final IProperty<? super T> option, final T value) {
         if (layoutConfigs.isEmpty()) {
             addLayoutConfig();
         }
-        VolatileLayoutConfig config = (VolatileLayoutConfig) layoutConfigs.getLast();
+        VolatileLayoutConfig config = layoutConfigs.getLast();
         if (object instanceof EObject) {
             config.setValue(option, object, LayoutContext.DOMAIN_MODEL, value);
         } else {
@@ -255,9 +247,22 @@ public class LayoutEffect extends AbstractEffect {
      * {@inheritDoc}
      */
     public void execute() {
+        ILayoutConfig[] confs;
+        if (layoutConfigs == null || layoutConfigs.isEmpty()) {
+            confs = new ILayoutConfig[] { new VolatileLayoutConfig()
+                    .setValue(LayoutOptions.ANIMATE, doAnimate)
+                    .setValue(LayoutOptions.PROGRESS_BAR, progressBar)
+                    .setValue(LayoutOptions.LAYOUT_ANCESTORS, layoutAncestors)
+                    .setValue(LayoutOptions.ZOOM_TO_FIT, doZoom) };
+        } else {
+            confs = layoutConfigs.toArray(new ILayoutConfig[layoutConfigs.size()]);
+            ((VolatileLayoutConfig) confs[0]).setValue(LayoutOptions.ANIMATE, doAnimate)
+                    .setValue(LayoutOptions.PROGRESS_BAR, progressBar)
+                    .setValue(LayoutOptions.LAYOUT_ANCESTORS, layoutAncestors)
+                    .setValue(LayoutOptions.ZOOM_TO_FIT, doZoom);
+        }
         DiagramLayoutEngine layoutEngine = DiagramLayoutEngine.INSTANCE;
-        layoutMapping = layoutEngine.layout(diagramEditor, diagramPart, doAnimate, progressBar,
-                layoutAncestors, doZoom, layoutConfigs);
+        layoutMapping = layoutEngine.layout(diagramEditor, diagramPart, confs);
     }
 
     /**
@@ -321,7 +326,7 @@ public class LayoutEffect extends AbstractEffect {
                 this.doZoom |= other.doZoom;
                 this.doAnimate |= other.doAnimate;
                 this.progressBar |= other.progressBar;
-                ListIterator<ILayoutConfig> configIter = other.layoutConfigs.listIterator(
+                ListIterator<VolatileLayoutConfig> configIter = other.layoutConfigs.listIterator(
                         other.layoutConfigs.size());
                 while (configIter.hasPrevious()) {
                     this.layoutConfigs.addFirst(configIter.previous());

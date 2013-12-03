@@ -16,7 +16,7 @@ package de.cau.cs.kieler.klighd.effects;
 import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
-import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
+import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
 import de.cau.cs.kieler.klighd.views.DiagramViewManager;
 
 /**
@@ -256,7 +256,7 @@ public class KlighdLayoutEffect extends AbstractEffect {
         try {
             DiagramLayoutEngine layoutEngine = DiagramLayoutEngine.INSTANCE;
             layoutEngine.layout(workbenchPart, diagramPart, doAnimate, progressBar,
-                    layoutAncestors, doZoom, null);
+                    layoutAncestors, doZoom);
         } catch (UnsupportedOperationException e) {
             // ignore
         }

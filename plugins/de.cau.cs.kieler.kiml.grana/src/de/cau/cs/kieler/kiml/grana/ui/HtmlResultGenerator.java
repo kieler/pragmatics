@@ -20,8 +20,8 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 
-import de.cau.cs.kieler.kiml.grana.visualization.BoundVisualization;
-import de.cau.cs.kieler.kiml.service.AnalysisService;
+import de.cau.cs.kieler.kiml.grana.AnalysisService;
+import de.cau.cs.kieler.kiml.grana.ui.visualization.BoundVisualization;
 
 /**
  * A utility class for generating html from a set of analysis results.

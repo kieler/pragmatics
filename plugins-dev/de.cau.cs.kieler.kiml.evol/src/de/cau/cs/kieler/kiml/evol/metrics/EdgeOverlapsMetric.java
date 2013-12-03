@@ -17,9 +17,9 @@ import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
-import de.cau.cs.kieler.kiml.service.grana.analyses.EdgeCountAnalysis;
-import de.cau.cs.kieler.kiml.service.grana.analyses.NodeEdgeOverlapsAnalysis;
+import de.cau.cs.kieler.kiml.grana.IAnalysis;
+import de.cau.cs.kieler.kiml.grana.analyses.EdgeCountAnalysis;
+import de.cau.cs.kieler.kiml.grana.analyses.NodeEdgeOverlapsAnalysis;
 
 /**
  * Metric for the number of node-edge overlaps.
@@ -35,7 +35,7 @@ public class EdgeOverlapsMetric implements IAnalysis {
      */
     public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Area metric analysis", 1);
+        progressMonitor.begin("Edge overlaps metric", 1);
 
         int edgeCount = (Integer) results.get(EdgeCountAnalysis.ID);
         int overlaps = (Integer) results.get(NodeEdgeOverlapsAnalysis.ID);

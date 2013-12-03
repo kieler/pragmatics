@@ -24,13 +24,13 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
+import de.cau.cs.kieler.kiml.config.LayoutContext;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
@@ -180,7 +180,6 @@ public class LayoutPropertySource implements IPropertySource {
             } else {
                 return value;
             }
-        case REMOTE_ENUM:
         case ENUM:            // ComboBoxCellEditor
             if (value instanceof Enum<?>) {
                 return ((Enum<?>) value).ordinal();
@@ -194,8 +193,7 @@ public class LayoutPropertySource implements IPropertySource {
                 return 0;
             }
             return value;
-        case ENUMSET:
-        case REMOTE_ENUMSET:  // MultipleOptionsCellEditor
+        case ENUMSET:         // MultipleOptionsCellEditor
             Set set = (Set) value;
             String[] result = new String[set.size()];
             
@@ -237,11 +235,7 @@ public class LayoutPropertySource implements IPropertySource {
                     case ENUM:
                         value = optionData.getEnumValue((Integer) value);
                         break;
-                    case REMOTE_ENUM:
-                        value = optionData.getChoices()[(Integer) value];
-                        break;
                     case ENUMSET:
-                    case REMOTE_ENUMSET:
                         // The returned value is a string array that we will turn into a string
                         // of elements separated by whitespace. We can then use LayoutOptionData
                         // to obtain a proper set

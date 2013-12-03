@@ -28,7 +28,7 @@ import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
  */
 public class SimplePhaseLayoutConfigurator implements ILayoutConfigurator {
 
-    private IProperty<?> phase;
+    private IProperty<Object> phase;
     private Object strategy;
     private Class<? extends ILayoutProcessor> strategyImpl;
     private Function<KNode, KNode>[] modifiers;
@@ -56,7 +56,7 @@ public class SimplePhaseLayoutConfigurator implements ILayoutConfigurator {
     public SimplePhaseLayoutConfigurator(final IProperty<?> phase, final Object strategy,
             final Class<? extends ILayoutProcessor> strategyImpl, final Function... modifierFuns) {
         super();
-        this.phase = phase;
+        this.phase = (IProperty<Object>) phase;
         this.strategy = strategy;
         this.strategyImpl = strategyImpl;
         modifiers = modifierFuns;

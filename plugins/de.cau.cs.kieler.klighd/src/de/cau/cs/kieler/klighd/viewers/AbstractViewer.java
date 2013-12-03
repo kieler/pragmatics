@@ -16,17 +16,19 @@ package de.cau.cs.kieler.klighd.viewers;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
-import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.krendering.KText;
 import de.cau.cs.kieler.klighd.IViewer;
 import de.cau.cs.kieler.klighd.ZoomStyle;
-import de.cau.cs.kieler.klighd.viewers.ContextViewer.KlighdTreeSelection;
 
 /**
- * An abstract base class for viewers which provides an implementation for the handling of listeners
- * and an empty implementation for advanced functionality.
+ * An abstract base class for concrete KGraph/KRendering viewers. It provides implementations of
+ * those methods concrete viewers are not in charge of implementing, e.g. the source model related
+ * ones ({@link Object}-based) and the selection related ones. The view model related methods (
+ * {@link KGraphElement}/{@link de.cau.cs.kieler.core.kgraph.KNode KNode}/{@link KText}-based ones)
+ * must be implemented by concrete viewers.
  * 
  * @author mri
  * @author chsch
@@ -40,39 +42,43 @@ public abstract class AbstractViewer<T> implements IViewer<T> {
      * {@inheritDoc}
      */
     public void setModel(final T model) {
-        setModel(model, false);
+        this.setModel(model, false);
     }
 
     /**
      * {@inheritDoc}
-     * @deprecated use {@link #zoomToLevel(float, int)}
      */
-    public void zoom(final float zoomLevel, final int duration) {
-        zoomToLevel(zoomLevel, duration);
+    public IContentOutlinePage getOutlinePage() {
+        return null;
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
+    public void startRecording() {
+        // do nothing
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void stopRecording(final ZoomStyle zoomStyle, final int animationTime) {
+        // do nothing
+    }
+
     /**
      * {@inheritDoc}
      */
     public void zoomToLevel(final float zoomLevel, final int duration) {
-        // do nothing
+        getContextViewer().zoomToLevel(zoomLevel, duration);
     }
 
     /**
      * {@inheritDoc}
-     * @deprecated use {@link #zoom(ZoomStyle, int)}
-     */
-    public void zoomToFit(final int duration) {
-        zoom(ZoomStyle.ZOOM_TO_FIT, duration);
-    }
-    
-    /**
-     * {@inheritDoc}
      */
     public void zoom(final ZoomStyle style, final int duration) {
-        // do nothing
+        getContextViewer().zoom(style, duration);
     }
-    
 
 
     /* ----------------------------- */
@@ -83,16 +89,9 @@ public abstract class AbstractViewer<T> implements IViewer<T> {
      * {@inheritDoc}
      */
     public boolean isExpanded(final Object semanticElement) {
-        return false;
+        return getContextViewer().isExpanded(semanticElement);
     }
     
-    /**
-     * {@inheritDoc}
-     */
-    public boolean isExpanded(final KNode diagramElement) {
-        return false;
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -103,22 +102,8 @@ public abstract class AbstractViewer<T> implements IViewer<T> {
     /**
      * {@inheritDoc}
      */
-    public void collapse(final KNode diagramElement) {
-        // do nothing
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public void expand(final Object semanticElement) {
         getContextViewer().expand(semanticElement);
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public void expand(final KNode diagramElement) {
-        // do nothing
     }
     
     /**
@@ -131,22 +116,8 @@ public abstract class AbstractViewer<T> implements IViewer<T> {
     /**
      * {@inheritDoc}
      */
-    public void toggleExpansion(final KNode diagramElement) {
-        // do nothing
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public void hide(final Object semanticElement) {
         getContextViewer().hide(semanticElement);
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public void hide(final KGraphElement diagramElement) {
-        // do nothing
     }
     
     /**
@@ -159,9 +130,10 @@ public abstract class AbstractViewer<T> implements IViewer<T> {
     /**
      * {@inheritDoc}
      */
-    public void show(final KGraphElement diagramElement) {
-        // do nothing
+    public void clip(final Object semanticElement) {
+        getContextViewer().clip(semanticElement);
     }
+
 
     /**
      * {@inheritDoc}
@@ -173,28 +145,16 @@ public abstract class AbstractViewer<T> implements IViewer<T> {
     /**
      * {@inheritDoc}
      */
-    public void reveal(final KGraphElement diagramElement, final int duration) {
-        // do nothing
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public void centerOn(final Object semanticElement, final int duration) {
         getContextViewer().centerOn(semanticElement, duration);
     }
     
-    /**
-     * {@inheritDoc}
-     */
-    public void centerOn(final KGraphElement diagramElement, final int duration) {
-        // do nothing
-    }
-    
 
-    /* ----------------------------- */
-    /*   the selection setting API   */
-    /* ----------------------------- */
+    /* ---------------------------------------------------------- */
+    /*   the selection setting API                                */
+    /*    it is completely implemented by the ContextViewer,      */
+    /*    no implementations of this class need to implement it!  */
+    /* ---------------------------------------------------------- */
 
     /**
      * {@inheritDoc}
@@ -272,6 +232,5 @@ public abstract class AbstractViewer<T> implements IViewer<T> {
     public void resetSelectionToDiagramElements(final Iterable<? extends EObject> diagramElements) {
         getContextViewer().resetSelectionToDiagramElements(diagramElements);
     }
-    
 }
 

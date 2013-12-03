@@ -18,7 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.math.KVectorChain;
-import de.cau.cs.kieler.kiml.service.formats.TransformationException;
+import de.cau.cs.kieler.kiml.formats.TransformationException;
 
 /**
  * Internal data structure for matrices.

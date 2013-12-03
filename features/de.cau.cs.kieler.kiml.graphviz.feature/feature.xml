@@ -218,12 +218,9 @@ litigation.
    </url>
 
    <requires>
-      <import plugin="de.cau.cs.kieler.core.kgraph"/>
-      <import plugin="de.cau.cs.kieler.core"/>
-      <import plugin="de.cau.cs.kieler.kiml"/>
-      <import plugin="de.cau.cs.kieler.kiml.service"/>
       <import feature="org.eclipse.emf" version="2.7.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.xtext.runtime" version="2.1.0" match="greaterOrEqual"/>
+      <import feature="de.cau.cs.kieler.kiml.feature"/>
    </requires>
 
    <plugin
@@ -235,6 +232,13 @@ litigation.
 
    <plugin
          id="de.cau.cs.kieler.kiml.graphviz.layouter"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.kiml.formats"
          download-size="0"
          install-size="0"
          version="0.0.0"

@@ -8,7 +8,6 @@ Bundle-Vendor: %Bundle-Vendor.0
 Bundle-Localization: plugin
 Export-Package: de.cau.cs.kieler.kiml.ui,
  de.cau.cs.kieler.kiml.ui.diagram,
- de.cau.cs.kieler.kiml.ui.service,
  de.cau.cs.kieler.kiml.ui.util,
  de.cau.cs.kieler.kiml.ui.views
 Require-Bundle: org.eclipse.ui;bundle-version="3.4.0",
@@ -19,7 +18,7 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.4.0",
  com.google.guava;bundle-version="10.0.0",
  de.cau.cs.kieler.core,
  de.cau.cs.kieler.core.kgraph,
- de.cau.cs.kieler.kiml;visibility:=reexport,
- de.cau.cs.kieler.kiml.service;visibility:=reexport
+ de.cau.cs.kieler.kiml,
+ de.cau.cs.kieler.kiml.service
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy

@@ -37,7 +37,7 @@ import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 import de.cau.cs.kieler.kwebs.server.management.ManagementService;
 import de.cau.cs.kieler.kwebs.server.publishing.ServicePublisher;
 import de.cau.cs.kieler.kwebs.server.util.Arguments;
-import de.cau.cs.kieler.kwebs.util.Resources;
+import de.cau.cs.kieler.kwebs.server.util.Resources;
 
 /**
  * The main server application.

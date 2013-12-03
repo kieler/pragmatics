@@ -17,10 +17,10 @@ import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
-import de.cau.cs.kieler.kiml.service.grana.analyses.EdgeCountAnalysis;
-import de.cau.cs.kieler.kiml.service.grana.analyses.EdgeCrossingsAnalysis;
-import de.cau.cs.kieler.kiml.service.grana.analyses.NodeCountAnalysis;
+import de.cau.cs.kieler.kiml.grana.IAnalysis;
+import de.cau.cs.kieler.kiml.grana.analyses.EdgeCountAnalysis;
+import de.cau.cs.kieler.kiml.grana.analyses.EdgeCrossingsAnalysis;
+import de.cau.cs.kieler.kiml.grana.analyses.NodeCountAnalysis;
 
 /**
  * Calculates a normalized "crosslessness" metric, based upon the number of crossings.
@@ -40,7 +40,7 @@ public class EdgeCrossingsMetric implements IAnalysis {
      */
     public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Edge crossings metric analysis", 1);
+        progressMonitor.begin("Edge crossings metric", 1);
         
         // EdgeCrossingsAnalysis result is Object[] {min, avg, max, sum}
         Object[] crossingsResult = (Object[]) results.get(EdgeCrossingsAnalysis.ID);
