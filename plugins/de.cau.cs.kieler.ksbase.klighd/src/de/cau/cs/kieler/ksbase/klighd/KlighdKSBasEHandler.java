@@ -76,7 +76,7 @@ public class KlighdKSBasEHandler implements IKSBasEHandler {
             List<EObject> eObjects = new ArrayList<EObject>(/*((List<?>) defaultVar).size()*/);
             try {
                 for (Object o : (Iterable<?>) defaultVar) {
-                    eObjects.add((EObject) activeContextViewer.getCurrentViewContext().getSourceElement(((EObject) o)));
+                    eObjects.add((EObject) activeContextViewer.getCurrentViewContext().getSourceElement(o));
                 }
                 return eObjects;
             } catch (ClassCastException e) {
