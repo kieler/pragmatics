@@ -29,6 +29,8 @@ import de.cau.cs.kieler.core.properties.Property;
  * @kieler.design 2011-03-14 reviewed by cmot, cds
  * @kieler.rating yellow 2013-01-09 review KI-32 by ckru, chsch
  * @author msp
+ * 
+ * @containsLayoutOptions
  */
 public final class LayoutOptions {
     

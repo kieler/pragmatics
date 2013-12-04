@@ -27,7 +27,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
-import de.cau.cs.kieler.core.alg.DefaultFactory;
 import de.cau.cs.kieler.core.alg.IFactory;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
@@ -45,7 +44,7 @@ import de.cau.cs.kieler.kiml.config.SemanticLayoutConfig;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow 2012-07-10 msp
  */
-public class LayoutConfigService {
+public abstract class LayoutConfigService {
     
     /**
      * Data element for custom layout configurators.
@@ -149,17 +148,31 @@ public class LayoutConfigService {
     /** the layout configuration service instance, which is created lazily. */
     private static LayoutConfigService instance;
     /** the factory for creation of service instances. */
-    private static IFactory<? extends LayoutConfigService> instanceFactory
-            = new DefaultFactory<LayoutConfigService>(LayoutConfigService.class);
+    private static IFactory<? extends LayoutConfigService> instanceFactory;
 
     /**
      * Returns the layout configuration service instance. If no instance is created yet, create one
      * using the configured factory.
+     * Note that the instance may change if the instance factory is reset. However, in usual
+     * applications that should not happen.
      * 
      * @return the layout configuration service instance
      */
     public static synchronized LayoutConfigService getInstance() {
         if (instance == null) {
+            if (instanceFactory == null) {
+                try {
+                    // Try to load the subclass that loads the content of the layoutConfigs
+                    // extension point; the subclass is accessible through the 'buddy policy'
+                    // declared in the plugin manifest. By loading the class, the containing
+                    // plugin is activated and the instance factory is set.
+                    Class.forName("de.cau.cs.kieler.kiml.service.ExtensionLayoutConfigService");
+                } catch (ClassNotFoundException exception) {
+                    throw new IllegalStateException("The layout config service is not initialized yet."
+                            + " Load the plugin 'de.cau.cs.kieler.kiml.service' in order to initialize"
+                            + " this service with Eclipse extensions.");
+                }
+            }
             instance = instanceFactory.create();
         }
         return instance;

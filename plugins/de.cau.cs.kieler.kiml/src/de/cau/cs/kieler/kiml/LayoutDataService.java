@@ -21,7 +21,6 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
-import de.cau.cs.kieler.core.alg.DefaultFactory;
 import de.cau.cs.kieler.core.alg.IFactory;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
@@ -35,7 +34,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  * @kieler.rating yellow 2012-10-09 review KI-25 by chsch, bdu
  * @author msp
  */
-public class LayoutDataService {
+public abstract class LayoutDataService {
 
     /** identifier of the 'general' diagram type, which applies to all diagrams. */
     public static final String DIAGRAM_TYPE_GENERAL = "de.cau.cs.kieler.layout.diagrams.general";
@@ -44,17 +43,31 @@ public class LayoutDataService {
     /** the layout data service instance, which is created lazily. */
     private static LayoutDataService instance;
     /** the factory for creation of service instances. */
-    private static IFactory<? extends LayoutDataService> instanceFactory
-            = new DefaultFactory<LayoutDataService>(LayoutDataService.class);
+    private static IFactory<? extends LayoutDataService> instanceFactory;
 
     /**
      * Returns the layout data service instance. If no instance is created yet, create one
      * using the configured factory.
+     * Note that the instance may change if the instance factory is reset. However, in usual
+     * applications that should not happen.
      * 
      * @return the layout data service instance
      */
     public static synchronized LayoutDataService getInstance() {
         if (instance == null) {
+            if (instanceFactory == null) {
+                try {
+                    // Try to load the subclass that loads the content of the layoutProviders
+                    // extension point; the subclass is accessible through the 'buddy policy'
+                    // declared in the plugin manifest. By loading the class, the containing
+                    // plugin is activated and the instance factory is set.
+                    Class.forName("de.cau.cs.kieler.kiml.service.ExtensionLayoutDataService");
+                } catch (ClassNotFoundException exception) {
+                    throw new IllegalStateException("The layout data service is not initialized yet."
+                            + " Load the plugin 'de.cau.cs.kieler.kiml.service' in order to initialize"
+                            + " this service with Eclipse extensions.");
+                }
+            }
             instance = instanceFactory.create();
         }
         return instance;

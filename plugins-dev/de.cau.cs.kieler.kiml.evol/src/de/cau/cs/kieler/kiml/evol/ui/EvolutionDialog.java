@@ -241,11 +241,13 @@ public class EvolutionDialog extends Dialog {
         for (AnalysisData data : category.getAnalyses()) {
             createMetricArea(metricsPane, data, population);
         }
-        AnalysisData executionTimeData = new AnalysisData();
-        executionTimeData.setId(EvaluationOperation.EXEC_TIME_METRIC);
-        executionTimeData.setName("Execution Time");
-        executionTimeData.setDescription("The measured execution time for layout computation.");
-        createMetricArea(metricsPane, executionTimeData, population);
+        if (population.getProperty(EvaluationOperation.USE_EXEC_TIME)) {
+            AnalysisData executionTimeData = new AnalysisData();
+            executionTimeData.setId(EvaluationOperation.EXEC_TIME_METRIC);
+            executionTimeData.setName("Execution Time");
+            executionTimeData.setDescription("The measured execution time for layout computation.");
+            createMetricArea(metricsPane, executionTimeData, population);
+        }
         
         // create label for fitness value
         GridData gridData = new GridData(SWT.FILL, SWT.LEFT, true, false);
@@ -349,6 +351,13 @@ public class EvolutionDialog extends Dialog {
                 refreshMetrics(-1);
             }
         });
+        previewLabel.addMouseListener(new MouseAdapter() {
+            public void mouseUp(final MouseEvent e) {
+                if (index < LayoutEvolutionModel.getInstance().getPopulation().size()) {
+                    new PreviewDialog(getShell(), index).open();
+                }
+            }
+        });
         
         Button selButton = new Button(composite, SWT.CHECK);
         selButton.setImage(thumbsupImage);
@@ -387,6 +396,7 @@ public class EvolutionDialog extends Dialog {
             KGraphRenderer renderer = new KGraphRenderer(getShell().getDisplay(), scale, offset);
             renderer.render(graph, new GC(previewImage), area);
             genome.setProperty(PREVIEW_IMAGE, previewImage);
+            renderer.dispose();
         }
         return previewImage;
     }
@@ -414,6 +424,7 @@ public class EvolutionDialog extends Dialog {
         final Scale scale = new Scale(parent, SWT.HORIZONTAL);
         scale.setMinimum(0);
         scale.setMaximum(SLIDER_MAX);
+        scale.setToolTipText(data.getDescription());
         GridData gridData = new GridData(SWT.FILL, SWT.TOP, false, false);
         gridData.horizontalIndent = 20;
         gridData.horizontalSpan = 2;
@@ -550,7 +561,7 @@ public class EvolutionDialog extends Dialog {
                         synchronized (evolutionModel) {
                             // reinitialize the population
                             evolutionModel.initializePopulation(layoutMapping, selectedOptions,
-                                    new ProgressBarMonitor(progressBar));                        
+                                    getShell().getDisplay(), new ProgressBarMonitor(progressBar));
                         }
                     }
                 });

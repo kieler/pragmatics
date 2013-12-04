@@ -21,7 +21,7 @@
   IF NOT EXIST "..\src" MD "..\src"
   IF NOT EXIST "..\bin" MD "..\bin"
 
-  "%JAVA_HOME%\bin\java.exe" -jar "%JAXWS_HOME%\lib\jaxws-tools.jar" %* -Xendorsed -keep -s "..\src" -d "..\bin" -p de.cau.cs.kieler.kwebs.jaxws layout.wsdl
+  "%JAVA_HOME%\bin\java.exe" -jar "%JAXWS_HOME%\lib\jaxws-tools.jar" %* -Xendorsed -keep -s "..\src" -d "..\bin" -p de.cau.cs.kieler.kwebs.server.jaxws layout.wsdl
 
   GOTO :end
 

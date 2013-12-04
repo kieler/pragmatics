@@ -583,6 +583,46 @@
             class="de.cau.cs.kieler.keg.Node"
             config="de.cau.cs.kieler.keg.diagram.custom.HypernodeLayoutConfig">
       </semanticConfig>
+      <staticConfig
+            class="de.cau.cs.kieler.keg.diagram.edit.parts.EdgeEditPart"
+            option="de.cau.cs.kieler.edgeType"
+            value="DIRECTED">
+      </staticConfig>
+      <staticConfig
+            class="de.cau.cs.kieler.keg.diagram.edit.parts.Edge2EditPart"
+            option="de.cau.cs.kieler.edgeType"
+            value="UNDIRECTED">
+      </staticConfig>
+      <staticConfig
+            class="de.cau.cs.kieler.keg.diagram.edit.parts.Edge3EditPart"
+            option="de.cau.cs.kieler.edgeType"
+            value="DIRECTED">
+      </staticConfig>
+      <staticConfig
+            class="de.cau.cs.kieler.keg.diagram.edit.parts.Edge4EditPart"
+            option="de.cau.cs.kieler.edgeType"
+            value="UNDIRECTED">
+      </staticConfig>
+      <staticConfig
+            class="de.cau.cs.kieler.keg.diagram.edit.parts.Edge5EditPart"
+            option="de.cau.cs.kieler.edgeType"
+            value="DIRECTED">
+      </staticConfig>
+      <staticConfig
+            class="de.cau.cs.kieler.keg.diagram.edit.parts.Edge6EditPart"
+            option="de.cau.cs.kieler.edgeType"
+            value="UNDIRECTED">
+      </staticConfig>
+      <staticConfig
+            class="de.cau.cs.kieler.keg.diagram.edit.parts.Edge7EditPart"
+            option="de.cau.cs.kieler.edgeType"
+            value="DIRECTED">
+      </staticConfig>
+      <staticConfig
+            class="de.cau.cs.kieler.keg.diagram.edit.parts.Edge8EditPart"
+            option="de.cau.cs.kieler.edgeType"
+            value="UNDIRECTED">
+      </staticConfig>
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">

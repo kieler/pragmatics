@@ -39,8 +39,8 @@ public interface LayoutServicePort {
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "graphLayout", targetNamespace = "http://layout.rtsys.informatik.uni-kiel.de/layout", className = "de.cau.cs.kieler.kwebs.jaxws.GraphLayout")
-    @ResponseWrapper(localName = "graphLayoutResponse", targetNamespace = "http://layout.rtsys.informatik.uni-kiel.de/layout", className = "de.cau.cs.kieler.kwebs.jaxws.GraphLayoutResponse")
+    @RequestWrapper(localName = "graphLayout", targetNamespace = "http://layout.rtsys.informatik.uni-kiel.de/layout", className = "de.cau.cs.kieler.kwebs.server.jaxws.GraphLayout")
+    @ResponseWrapper(localName = "graphLayoutResponse", targetNamespace = "http://layout.rtsys.informatik.uni-kiel.de/layout", className = "de.cau.cs.kieler.kwebs.server.jaxws.GraphLayoutResponse")
     public String graphLayout(
         @WebParam(name = "serializedGraph", targetNamespace = "")
         String serializedGraph,
@@ -61,8 +61,8 @@ public interface LayoutServicePort {
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getServiceData", targetNamespace = "http://layout.rtsys.informatik.uni-kiel.de/layout", className = "de.cau.cs.kieler.kwebs.jaxws.GetServiceData")
-    @ResponseWrapper(localName = "getServiceDataResponse", targetNamespace = "http://layout.rtsys.informatik.uni-kiel.de/layout", className = "de.cau.cs.kieler.kwebs.jaxws.GetServiceDataResponse")
+    @RequestWrapper(localName = "getServiceData", targetNamespace = "http://layout.rtsys.informatik.uni-kiel.de/layout", className = "de.cau.cs.kieler.kwebs.server.jaxws.GetServiceData")
+    @ResponseWrapper(localName = "getServiceDataResponse", targetNamespace = "http://layout.rtsys.informatik.uni-kiel.de/layout", className = "de.cau.cs.kieler.kwebs.server.jaxws.GetServiceDataResponse")
     public String getServiceData()
         throws ServiceFault_Exception
     ;
@@ -76,8 +76,8 @@ public interface LayoutServicePort {
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getPreviewImage", targetNamespace = "http://layout.rtsys.informatik.uni-kiel.de/layout", className = "de.cau.cs.kieler.kwebs.jaxws.GetPreviewImage")
-    @ResponseWrapper(localName = "getPreviewImageResponse", targetNamespace = "http://layout.rtsys.informatik.uni-kiel.de/layout", className = "de.cau.cs.kieler.kwebs.jaxws.GetPreviewImageResponse")
+    @RequestWrapper(localName = "getPreviewImage", targetNamespace = "http://layout.rtsys.informatik.uni-kiel.de/layout", className = "de.cau.cs.kieler.kwebs.server.jaxws.GetPreviewImage")
+    @ResponseWrapper(localName = "getPreviewImageResponse", targetNamespace = "http://layout.rtsys.informatik.uni-kiel.de/layout", className = "de.cau.cs.kieler.kwebs.server.jaxws.GetPreviewImageResponse")
     public byte[] getPreviewImage(
         @WebParam(name = "previewImage", targetNamespace = "")
         String previewImage)

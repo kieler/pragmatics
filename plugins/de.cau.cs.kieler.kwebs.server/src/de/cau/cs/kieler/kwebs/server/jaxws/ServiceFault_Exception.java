@@ -47,7 +47,7 @@ public class ServiceFault_Exception
     /**
      * 
      * @return
-     *     returns fault bean: de.cau.cs.kieler.kwebs.jaxws.ServiceFault
+     *     returns fault bean: de.cau.cs.kieler.kwebs.server.jaxws.ServiceFault
      */
     public ServiceFault getFaultInfo() {
         return faultInfo;

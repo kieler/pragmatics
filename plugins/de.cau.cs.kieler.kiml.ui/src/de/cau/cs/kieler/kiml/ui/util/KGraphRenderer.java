@@ -37,6 +37,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
+import de.cau.cs.kieler.kiml.options.EdgeType;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
@@ -108,7 +109,7 @@ public class KGraphRenderer {
         this.baseOffset = thebaseOffset;
 
         nodeBorderColor = new Color(display, 2, 15, 3);
-        nodeFillColor = new Color(display, 87, 197, 133);
+        nodeFillColor = new Color(display, 168, 220, 190);
         int nodeFontSize = Math.max((int) Math.round(NODE_FONT_SIZE * thescale), 2);
         nodeFont = new Font(display, "sans", nodeFontSize, SWT.NORMAL);
         portColor = new Color(display, 2, 9, 40);
@@ -419,10 +420,12 @@ public class KGraphRenderer {
                         (int) Math.round(point2.x), (int) Math.round(point2.y));
                 point1 = point2;
             }
-            // draw an arrow at the last segment of the connection
-            int[] arrowPoly = makeArrow(bendPoints.get(bendPoints.size() - 2), bendPoints.getLast());
-            if (arrowPoly != null) {
-                graphics.fillPolygon(arrowPoly);
+            if (edgeLayout.getProperty(LayoutOptions.EDGE_TYPE) != EdgeType.UNDIRECTED) {
+                // draw an arrow at the last segment of the connection
+                int[] arrowPoly = makeArrow(bendPoints.get(bendPoints.size() - 2), bendPoints.getLast());
+                if (arrowPoly != null) {
+                    graphics.fillPolygon(arrowPoly);
+                }
             }
             rect.painted = true;
         }
