@@ -75,17 +75,17 @@ public final class GenomeFactory {
     public static final String LAYOUT_TYPE_ID = "de.cau.cs.kieler.kiml.evol.layoutType";
 
     /** probability for mutation of layout type genes. */
-    private static final double P_LAYOUT_TYPE_MUTATION = 0.07;
+    private static final double P_LAYOUT_TYPE_MUTATION = 0.12;
     /** probability for mutation of layout algorithm genes. */
-    private static final double P_LAYOUT_ALGO_MUTATION = 0.12;
+    private static final double P_LAYOUT_ALGO_MUTATION = 0.18;
     /** probability for mutation of boolean type genes. */
-    private static final double P_BOOLEAN_MUTATION = 0.15;
+    private static final double P_BOOLEAN_MUTATION = 0.25;
     /** probability for mutation of enumeration type genes. */
-    private static final double P_ENUM_MUTATION = 0.20;
+    private static final double P_ENUM_MUTATION = 0.30;
     /** probability for mutation of integer type genes. */
-    private static final double P_INT_MUTATION = 0.35;
+    private static final double P_INT_MUTATION = 0.45;
     /** probability for mutation of floating point type genes. */
-    private static final double P_FLOAT_MUTATION = 0.40;
+    private static final double P_FLOAT_MUTATION = 0.50;
     
     /**
      * Create a genome with default values from the given layout mapping.
