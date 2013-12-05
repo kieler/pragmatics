@@ -133,9 +133,10 @@ public enum LayoutProcessorStrategy {
      */
     public ILayoutProcessor create() {
         switch (this) {
-            return new BigNodesProcessor();
+            
         case ADDITIONAL_EDGE_REVERSER:
-            return new AdditionalEdgeReverser();            
+            return new AdditionalEdgeReverser();
+            
         case BIG_NODES_INTERMEDIATEPROCESSOR:
             return new BigNodesIntermediateProcessor();
             
