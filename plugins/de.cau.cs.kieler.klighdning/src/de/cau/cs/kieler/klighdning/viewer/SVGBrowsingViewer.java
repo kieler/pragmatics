@@ -52,8 +52,8 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.klighd.ZoomStyle;
 import de.cau.cs.kieler.klighd.piccolo.internal.controller.DiagramController;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KNodeNode;
+import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdMainCamera;
 import de.cau.cs.kieler.klighd.piccolo.svg.KlighdSVGCanvas;
-import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
 
@@ -121,7 +121,7 @@ public class SVGBrowsingViewer {
      */
     public void setModel(final KNode model, final boolean sync) {
         // prepare the camera
-        PCamera camera = canvas.getCamera();
+        KlighdMainCamera camera = canvas.getCamera();
 
         // remove the old nodes from the camera
         @SuppressWarnings("unchecked")

@@ -31,11 +31,9 @@ public class KlighdMainCamera extends PCamera {
     private static final long serialVersionUID = -1769999483311436492L;
     
     /**
-     * Constructor.<br>
-     * It is flagged 'package protected' as this class is not supposed to be instantiated outside
-     * it's package.
+     * Constructor.
      */
-    KlighdMainCamera() {
+    public KlighdMainCamera() {
         super();
     }
 
@@ -63,6 +61,10 @@ public class KlighdMainCamera extends PCamera {
     public void setDisplayedNode(final INode node) {
         if (node instanceof PLayer) {
             this.setDisplayedNode((PLayer) node);
+        }
+        if (node instanceof KNodeTopNode) {
+            // this is only for initialization, has no effect later on
+            ((KNodeTopNode) node).setDiagramMainCamera(this);
         }
     }
     
@@ -105,15 +107,12 @@ public class KlighdMainCamera extends PCamera {
         
         this.removeLayer(0);
 
-        final INode prevINode = (INode) prevNode;
-        final INode iNode = (INode) node;
-
         final AffineTransform t;
 
         if (prevNode.isAncestorOf(node)) {
-            t = NodeUtil.localToParent((PNode) iNode.getParentNode(), prevNode);
+            t = NodeUtil.localToParent(node.getParent(), prevNode);
         } else if (node.isAncestorOf(prevNode)) {
-            t = NodeUtil.inverse(NodeUtil.localToParent((PNode) prevINode.getParentNode(), node));
+            t = NodeUtil.inverse(NodeUtil.localToParent(prevNode.getParent(), node));
         } else {
             // TODO this case should be implemented some day
             t = new AffineTransform();

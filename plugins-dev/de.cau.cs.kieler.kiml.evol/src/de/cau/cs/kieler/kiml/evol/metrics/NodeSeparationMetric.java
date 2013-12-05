@@ -33,9 +33,9 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 public class NodeSeparationMetric implements IAnalysis {
     
     /** the minimal distance between nodes. */
-    private static final float MIN_DISTANCE = 15;
+    private static final float MIN_DISTANCE = 20;
     /** the separation for nodes that touch each other. */
-    private static final float TOUCH_SEP = 0.3f;
+    private static final float TOUCH_SEP = 0.2f;
 
     /**
      * {@inheritDoc}
