@@ -57,20 +57,23 @@ class IndexProvider extends AbstractProvider {
             <div class="col-md-8 col-md-offset-2" style="text-align: center;">
                 <h2>Start using KIELER Layout today!</h2>
                 
-                <ul class="list-unstyled">
-                  <li>
-                    1. Either <a href="http://rtsys.informatik.uni-kiel.de/confluence/x/nQEF">setup</a> your own server or use <a href="http://layout.rtsys.informatik.uni-kiel.de:9444">ours</a>.
-                  </li>
-                  <li>
-                    2. Get the your favourite language's <a href="http://rtsys.informatik.uni-kiel.de/confluence/x/FgKE">binding</a>.
-                  </li>
-                  <li>
-                    3. Choose a <a href="ProvidedLayout.html#formats">graph format</a>.
-                  </li>
-                  <li>
-                    4. Start layouting as shown below.
-                  </li>
-                </ul>
+                <dl class="dl-horizontal">
+                  <dt>1.</dt><dd>
+                    Either <a href="http://rtsys.informatik.uni-kiel.de/confluence/x/nQEF">setup</a> your own server or use <a href="http://layout.rtsys.informatik.uni-kiel.de:9444">ours</a>.
+                  </dd>
+                  <dt>2.</dt><dd>
+                    Get the your favourite language's <a href="http://rtsys.informatik.uni-kiel.de/confluence/x/FgKE">binding</a>.
+                  </dd>
+                  <dt>3.</dt><dd>
+                    Choose a <a href="ProvidedLayout.html#formats">graph format</a>.
+                  </dd>
+                  <dt>4.</dt><dd>
+                    Start layouting as shown below.
+                  </dd>
+                  <dt>5.</dt><dd>
+                    Get further information in our <a href="http://rtsys.informatik.uni-kiel.de/confluence/x/nQEF">Wiki</a>.
+                  </dd>
+                </dl>
            
             
                 <h3>jQuery</h3>
