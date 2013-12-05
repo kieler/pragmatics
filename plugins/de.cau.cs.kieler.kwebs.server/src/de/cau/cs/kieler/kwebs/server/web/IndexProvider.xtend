@@ -57,7 +57,7 @@ class IndexProvider extends AbstractProvider {
             <div class="col-md-8 col-md-offset-2" style="text-align: center;">
                 <h2>Start using KIELER Layout today!</h2>
                 
-                <dl class="dl-horizontal">
+                <dl class="dl-horizontal" style="text-align: left;">
                   <dt>1.</dt><dd>
                     Either <a href="http://rtsys.informatik.uni-kiel.de/confluence/x/nQEF">setup</a> your own server or use <a href="http://layout.rtsys.informatik.uni-kiel.de:9444">ours</a>.
                   </dd>
