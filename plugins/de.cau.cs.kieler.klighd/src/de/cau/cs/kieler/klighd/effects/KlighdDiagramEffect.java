@@ -16,14 +16,12 @@ package de.cau.cs.kieler.klighd.effects;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 
-import com.google.common.collect.Lists;
-
 import de.cau.cs.kieler.core.kivi.IEffect;
 import de.cau.cs.kieler.core.kivi.KiVi;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.klighd.IViewer;
-import de.cau.cs.kieler.klighd.LightDiagramServices;
+import de.cau.cs.kieler.klighd.util.KlighdSynthesisProperties;
 import de.cau.cs.kieler.klighd.views.DiagramViewManager;
 import de.cau.cs.kieler.klighd.views.IDiagramWorkbenchPart;
 
@@ -219,20 +217,19 @@ public class KlighdDiagramEffect extends MapPropertyHolder implements IEffect {
      * @return this effect for chaining method calls
      */
     public KlighdDiagramEffect usingViewer(final String viewerProviderId) {
-        setProperty(LightDiagramServices.REQUESTED_VIEWER_PROVIDER, viewerProviderId);
+        setProperty(KlighdSynthesisProperties.REQUESTED_VIEWER_PROVIDER, viewerProviderId);
         return this;
     }
 
     /**
      * Sets the request for a number of transformations by identifier.
      * 
-     * @param transformationIds
-     *            the transformations identifiers
+     * @param synthesisId
+     *            the diagram synthesis' identifier
      * @return this effect for chaining method calls
      */
-    public KlighdDiagramEffect usingTransformations(final String... transformationIds) {
-        setProperty(LightDiagramServices.REQUESTED_TRANSFORMATIONS,
-                Lists.newArrayList(transformationIds));
+    public KlighdDiagramEffect usingTransformations(final String synthesisId) {
+        setProperty(KlighdSynthesisProperties.REQUESTED_DIAGRAM_SYNTHESIS, synthesisId);
         return this;
     }
 
@@ -244,7 +241,7 @@ public class KlighdDiagramEffect extends MapPropertyHolder implements IEffect {
      * @return this effect for chaining method calls
      */
     public KlighdDiagramEffect usingUpdateStrategy(final String updateStrategyId) {
-        setProperty(LightDiagramServices.REQUESTED_UPDATE_STRATEGY, updateStrategyId);
+        setProperty(KlighdSynthesisProperties.REQUESTED_UPDATE_STRATEGY, updateStrategyId);
         return this;
     }
 

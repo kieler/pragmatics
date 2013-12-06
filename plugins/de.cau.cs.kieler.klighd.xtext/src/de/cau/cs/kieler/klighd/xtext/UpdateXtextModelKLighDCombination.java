@@ -13,8 +13,6 @@
  */
 package de.cau.cs.kieler.klighd.xtext;
 
-import java.util.List;
-
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.XtextEditor;
@@ -24,11 +22,11 @@ import org.eclipse.xtext.xbase.lib.IterableExtensions;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.core.util.RunnableWithResult;
-import de.cau.cs.kieler.klighd.LightDiagramServices;
 import de.cau.cs.kieler.klighd.effects.KlighdCloseDiagramEffect;
 import de.cau.cs.kieler.klighd.effects.KlighdUpdateDiagramEffect;
 import de.cau.cs.kieler.klighd.krendering.SimpleUpdateStrategy;
 import de.cau.cs.kieler.klighd.util.KlighdProperties;
+import de.cau.cs.kieler.klighd.util.KlighdSynthesisProperties;
 import de.cau.cs.kieler.klighd.xtext.triggers.XtextBasedEditorActivationChangeTrigger.XtextModelChangeState;
 import de.cau.cs.kieler.klighd.xtext.triggers.XtextBasedEditorActivationChangeTrigger.XtextModelChangeState.EventType;
 // SUPPRESS CHECKSTYLE PREVIOUS 2 LineLength
@@ -71,7 +69,7 @@ public class UpdateXtextModelKLighDCombination extends AbstractCombination {
                     state.getEditorInputPath().lastSegment(),
                     resource.getContents().get(0),
                     state.getEditor());
-            effect.setProperty(LightDiagramServices.REQUESTED_UPDATE_STRATEGY,
+            effect.setProperty(KlighdSynthesisProperties.REQUESTED_UPDATE_STRATEGY,
                     getRequestedUpdateStrategy(state));
             effect.setProperty(KlighdProperties.MODEL_ACCESS, new RunnableWithResult<EObject>() {
 
@@ -103,10 +101,9 @@ public class UpdateXtextModelKLighDCombination extends AbstractCombination {
             
             // Subclasses may specify IDs of transformations that must explicitly be used to display
             // the model in the KLighD view
-            List<String> requestedTransformations = getRequestedTransformations(state);
+            String requestedTransformations = getRequestedDiagramSynthesis(state);
             if (requestedTransformations != null) {
-                effect.setProperty(
-                        LightDiagramServices.REQUESTED_TRANSFORMATIONS,
+                effect.setProperty(KlighdSynthesisProperties.REQUESTED_DIAGRAM_SYNTHESIS,
                         requestedTransformations);
             }
             
@@ -116,14 +113,14 @@ public class UpdateXtextModelKLighDCombination extends AbstractCombination {
     }
     
     /**
-     * Returns a list of transformations to be used when visualizing a given model. Default
+     * Returns diagram synthesis to be used when visualizing a given model. Default
      * implementation returns {@code null}. May be overridden by subclasses.
      * 
      * @param state a {@link de.cau.cs.kieler.core.kivi.ITriggerState} carrying the necessary
      *              information.
-     * @return list of transformation IDs or {@code null}.
+     * @return diagram synthesis id or {@code null}.
      */
-    protected List<String> getRequestedTransformations(final XtextModelChangeState state) {
+    protected String getRequestedDiagramSynthesis(final XtextModelChangeState state) {
         return null;
     }
     

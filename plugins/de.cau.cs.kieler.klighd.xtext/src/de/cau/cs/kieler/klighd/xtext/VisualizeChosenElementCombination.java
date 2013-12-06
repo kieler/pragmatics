@@ -32,13 +32,14 @@ import org.eclipse.xtext.ui.editor.XtextEditor;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
-import de.cau.cs.kieler.core.kivi.menu.KiviMenuContributionService;
 import de.cau.cs.kieler.core.kivi.menu.ButtonTrigger.ButtonState;
+import de.cau.cs.kieler.core.kivi.menu.KiviMenuContributionService;
 import de.cau.cs.kieler.core.kivi.menu.KiviMenuContributionService.LocationScheme;
 import de.cau.cs.kieler.core.util.RunnableWithResult;
-import de.cau.cs.kieler.klighd.LightDiagramServices;
 import de.cau.cs.kieler.klighd.effects.KlighdDiagramEffect;
+import de.cau.cs.kieler.klighd.krendering.SimpleUpdateStrategy;
 import de.cau.cs.kieler.klighd.util.KlighdProperties;
+import de.cau.cs.kieler.klighd.util.KlighdSynthesisProperties;
 
 /**
  * An abstract {@link de.cau.cs.kieler.core.kivi.ICombination} for visualizing a chosen element in
@@ -131,8 +132,8 @@ public abstract class VisualizeChosenElementCombination extends AbstractCombinat
                 // means of an IProperty as well.
                 effect.setProperty(KlighdProperties.MODEL_ACCESS,
                         (RunnableWithResult<?>) buttonState.getParameters().get("modelAccess"));
-                effect.setProperty(LightDiagramServices.REQUESTED_UPDATE_STRATEGY,
-                        "de.cau.cs.kieler.klighd.krendering.SimpleUpdateStrategy");
+                effect.setProperty(KlighdSynthesisProperties.REQUESTED_UPDATE_STRATEGY,
+                        SimpleUpdateStrategy.ID);
                 this.schedule(effect);
             }
         }
