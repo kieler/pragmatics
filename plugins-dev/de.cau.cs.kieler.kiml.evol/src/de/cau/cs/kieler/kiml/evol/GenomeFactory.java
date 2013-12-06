@@ -15,35 +15,46 @@ package de.cau.cs.kieler.kiml.evol;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Random;
+import java.util.StringTokenizer;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.swt.graphics.Device;
+import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
+import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.ILayoutData;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.config.CompoundLayoutConfig;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
+import de.cau.cs.kieler.kiml.config.LayoutContext;
 import de.cau.cs.kieler.kiml.evol.genetic.Gene;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo;
 import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo.GeneType;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.service.LayoutInfoService;
-import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
-import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutConfig;
+import de.cau.cs.kieler.kiml.service.EclipseLayoutConfig;
+import de.cau.cs.kieler.kiml.service.ExtensionLayoutConfigService;
+import de.cau.cs.kieler.kiml.service.LayoutMapping;
+import de.cau.cs.kieler.kiml.util.BoxLayoutProvider;
+import de.cau.cs.kieler.kiml.util.FixedLayoutProvider;
 
 /**
  * A factory for genes and genomes.
@@ -64,17 +75,17 @@ public final class GenomeFactory {
     public static final String LAYOUT_TYPE_ID = "de.cau.cs.kieler.kiml.evol.layoutType";
 
     /** probability for mutation of layout type genes. */
-    private static final double P_LAYOUT_TYPE_MUTATION = 0.07;
+    private static final double P_LAYOUT_TYPE_MUTATION = 0.12;
     /** probability for mutation of layout algorithm genes. */
-    private static final double P_LAYOUT_ALGO_MUTATION = 0.12;
+    private static final double P_LAYOUT_ALGO_MUTATION = 0.18;
     /** probability for mutation of boolean type genes. */
-    private static final double P_BOOLEAN_MUTATION = 0.15;
+    private static final double P_BOOLEAN_MUTATION = 0.25;
     /** probability for mutation of enumeration type genes. */
-    private static final double P_ENUM_MUTATION = 0.20;
+    private static final double P_ENUM_MUTATION = 0.30;
     /** probability for mutation of integer type genes. */
-    private static final double P_INT_MUTATION = 0.35;
+    private static final double P_INT_MUTATION = 0.45;
     /** probability for mutation of floating point type genes. */
-    private static final double P_FLOAT_MUTATION = 0.40;
+    private static final double P_FLOAT_MUTATION = 0.50;
     
     /**
      * Create a genome with default values from the given layout mapping.
@@ -176,7 +187,7 @@ public final class GenomeFactory {
      */
     public static Gene<Integer> createAlgorithmGene(final LayoutTypeData layoutType,
             final LayoutAlgorithmData algoData) {
-        List<LayoutAlgorithmData> algoList = layoutType.getLayouters();
+        List<LayoutAlgorithmData> algoList = getAlgoList(layoutType);
         int index = algoList.indexOf(algoData);
         TypeInfo<Integer> typeInfo = new TypeInfo<Integer>(LayoutOptions.ALGORITHM.getId(),
                 GeneType.LAYOUT_ALGO, 0, algoList.size() - 1, algoList, P_LAYOUT_ALGO_MUTATION, 1);
@@ -192,7 +203,7 @@ public final class GenomeFactory {
      */
     public static Gene<Integer> createAlgorithmGene(final LayoutTypeData layoutType,
             final Random random) {
-        List<LayoutAlgorithmData> algoList = layoutType.getLayouters(); 
+        List<LayoutAlgorithmData> algoList = getAlgoList(layoutType);
         TypeInfo<Integer> typeInfo = new TypeInfo<Integer>(LayoutOptions.ALGORITHM.getId(),
                 GeneType.LAYOUT_ALGO, 0, algoList.size() - 1, algoList, P_LAYOUT_ALGO_MUTATION, 1);
         if (algoList.isEmpty()) {
@@ -200,6 +211,30 @@ public final class GenomeFactory {
         }
         int randomAlgoIndex = random.nextInt(algoList.size());
         return Gene.create(randomAlgoIndex, typeInfo, true);
+    }
+    
+    /**
+     * Return a filtered list of layout algorithms for the given layout type. Algorithms that
+     * are not suitable for use in evolutionary layout are removed.
+     * 
+     * @param layoutType a layout type
+     * @return filtered algorithms
+     */
+    private static List<LayoutAlgorithmData> getAlgoList(final LayoutTypeData layoutType) {
+        List<LayoutAlgorithmData> algoList = layoutType.getLayouters();
+        if (layoutType.getId().length() == 0) {
+            // This is the 'Other' layout type
+            algoList = new ArrayList<LayoutAlgorithmData>(algoList);
+            Iterator<LayoutAlgorithmData> iterator = algoList.iterator();
+            while (iterator.hasNext()) {
+                LayoutAlgorithmData data = iterator.next();
+                if (FixedLayoutProvider.ID.equals(data.getId())
+                        || BoxLayoutProvider.ID.equals(data.getId())) {
+                    iterator.remove();
+                }
+            }
+        }
+        return algoList;
     }
     
     /**
@@ -244,7 +279,7 @@ public final class GenomeFactory {
     public static ILayoutConfig createConfig(final LayoutMapping<?> layoutMapping) {
         CompoundLayoutConfig clc = new CompoundLayoutConfig();
         clc.add(new DefaultLayoutConfig());
-        for (ILayoutConfig config : LayoutInfoService.getInstance().getActiveConfigs()) {
+        for (ILayoutConfig config : ExtensionLayoutConfigService.getInstance().getActiveConfigs()) {
             if (!(config instanceof EvolLayoutConfig)) {
                 clc.add(config);
             }
@@ -367,24 +402,19 @@ public final class GenomeFactory {
      * Configure a graph using a given genome.
      * 
      * @param genome the genome holding layout option values
-     * @param config a layout configurator for obtaining default values
      * @param graphMap map of context graph elements to elements of the test graph that is configured
      */
-    public static void configureGraph(final Genome genome, final ILayoutConfig config,
-            final Map<EObject, EObject> graphMap) {
+    public static void configureGraph(final Genome genome, final Map<EObject, EObject> graphMap) {
         LayoutDataService dataService = LayoutDataService.getInstance();
         for (LayoutContext context : genome.getContexts()) {
             EObject element = graphMap.get(context.getProperty(LayoutContext.GRAPH_ELEM));
             if (element instanceof KNode) {
                 KShapeLayout nodeLayout = ((KNode) element).getData(KShapeLayout.class);
-                // first transfer values from the layout configurator
-                config.transferValues(nodeLayout, context);
-                
-                // then transfer values from the given genome, overriding values of the configurator
                 for (Gene<?> gene : genome.getGenes(context)) {
                     if (gene.getValue() != null) {
-                        LayoutOptionData<?> optionData = dataService.getOptionData(
-                                gene.getTypeInfo().getId());
+                        @SuppressWarnings("unchecked")
+                        LayoutOptionData<Object> optionData = (LayoutOptionData<Object>)
+                                dataService.getOptionData(gene.getTypeInfo().getId());
                         if (optionData != null) {
                             nodeLayout.setProperty(optionData, translateFromGene(gene));
                         }
@@ -421,6 +451,75 @@ public final class GenomeFactory {
                 }
             }
         }
+    }
+    
+    /**
+     * Check the size of all node labels and ensure that the nodes are large enough to include
+     * their labels.
+     * 
+     * @param parentNode the parent node of the graph
+     * @param device the device used to generate preview images
+     */
+    public static void checkLabels(final KNode parentNode, final Device device) {
+        GC gc = new GC(new Image(device, 1, 1));
+        LinkedList<KNode> nodeQueue = new LinkedList<KNode>();
+        nodeQueue.add(parentNode);
+        do {
+            KNode node = nodeQueue.removeFirst();
+            
+            float maxX = 0, maxY = 0;
+            for (KLabel label : node.getLabels()) {
+                if (label.getText() != null && label.getText().length() > 0) {
+                    KVector bounds = calculateTextBounds(label.getText(), gc);
+                    KShapeLayout labelLayout = label.getData(KShapeLayout.class);
+                    if (labelLayout.getWidth() < bounds.x) {
+                        labelLayout.setWidth((float) bounds.x);
+                    }
+                    if (labelLayout.getHeight() < bounds.y) {
+                        labelLayout.setHeight((float) bounds.y);
+                    }
+                    maxX = Math.max(maxX, labelLayout.getXpos() + labelLayout.getWidth());
+                    maxY = Math.max(maxY, labelLayout.getYpos() + labelLayout.getHeight());
+                }
+            }
+            KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+            if (nodeLayout.getWidth() < maxX) {
+                nodeLayout.setWidth(maxX);
+            }
+            if (nodeLayout.getHeight() < maxY) {
+                nodeLayout.setHeight(maxY);
+            }
+            
+            nodeQueue.addAll(node.getChildren());
+        } while (!nodeQueue.isEmpty());
+    }
+    
+    /**
+     * Calculates the bounds of the text in the box as measured by the given
+     * graphics context and font metrics.
+     * 
+     * @param gc graphics context from which the measurements are done
+     * @return point representing the dimensions of the text's bounds
+     */
+    private static KVector calculateTextBounds(final String text, final GC gc) {
+        FontMetrics fm = gc.getFontMetrics();
+        KVector textBounds = new KVector(0, 0);
+
+        StringTokenizer tokenizer = new StringTokenizer(text, "\n\r");
+        boolean firstLine = true;
+        while (tokenizer.hasMoreTokens()) {
+            String line = tokenizer.nextToken();
+            Point lineBounds = gc.stringExtent(line);
+            if (firstLine) {
+                textBounds.x = lineBounds.x;
+                textBounds.y = fm.getAscent() + fm.getDescent() + fm.getLeading();
+                firstLine = false;
+            } else {
+                textBounds.x = Math.max(lineBounds.x, textBounds.x);
+                textBounds.y += fm.getHeight();
+            }
+        }
+        return textBounds;
     }
 
 }

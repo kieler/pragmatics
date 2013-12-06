@@ -13,8 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.libavoid.ui;
 
-import java.util.List;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -24,13 +22,11 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import com.google.common.collect.Lists;
-
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
-import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
 
 /**
  * Handler for execution of libavoid layout triggered by menu, toolbar, or keyboard command. First a
@@ -56,16 +52,16 @@ public class LibavoidLayoutHandler extends AbstractHandler {
     public static final String VAL_SELECTION = "selection";
 
     /** a list holding the required layout configs. */
-    private final List<ILayoutConfig> layoutConfigs;
+    private final ILayoutConfig[] layoutConfigs;
 
     /**
      * Initializes the handler with the appropriate layout configs.
      */
     public LibavoidLayoutHandler() {
-        LightLayoutConfig libavoidConfig = new LightLayoutConfig();
-        libavoidConfig.setOption(LayoutOptions.ALGORITHM, "org.adaptagrams.cola.libavoid");
+        VolatileLayoutConfig libavoidConfig = new VolatileLayoutConfig();
+        libavoidConfig.setValue(LayoutOptions.ALGORITHM, "org.adaptagrams.cola.libavoid");
 
-        layoutConfigs = Lists.newArrayList(new VolatileLayoutConfig(), libavoidConfig);
+        layoutConfigs = new ILayoutConfig[] { new VolatileLayoutConfig(), libavoidConfig };
     }
 
     /**
@@ -85,6 +81,10 @@ public class LibavoidLayoutHandler extends AbstractHandler {
         boolean animation = preferenceStore.getBoolean(PREF_ANIMATION);
         boolean zoomToFit = preferenceStore.getBoolean(PREF_ZOOM);
         boolean progressDialog = preferenceStore.getBoolean(PREF_PROGRESS);
+        ((VolatileLayoutConfig) layoutConfigs[0])
+                .setValue(LayoutOptions.ANIMATE, animation)
+                .setValue(LayoutOptions.PROGRESS_BAR, progressDialog)
+                .setValue(LayoutOptions.ZOOM_TO_FIT, zoomToFit);
 
         // get the active editor, which is expected to contain the diagram for applying layout
         IEditorPart editorPart = HandlerUtil.getActiveEditor(event);
@@ -97,12 +97,10 @@ public class LibavoidLayoutHandler extends AbstractHandler {
             } else {
                 diagramPart = structuredSelection.toList();
             }
-            DiagramLayoutEngine.INSTANCE.layout(editorPart, diagramPart, animation, progressDialog,
-                    false, zoomToFit, layoutConfigs);
+            DiagramLayoutEngine.INSTANCE.layout(editorPart, diagramPart, layoutConfigs);
         } else {
             // perform layout on the whole diagram
-            DiagramLayoutEngine.INSTANCE.layout(editorPart, null, animation, progressDialog, false,
-                    zoomToFit, layoutConfigs);
+            DiagramLayoutEngine.INSTANCE.layout(editorPart, null, layoutConfigs);
         }
         return null;
     }

@@ -155,6 +155,7 @@ public class ComponentsProcessor {
      *            a list of components
      * @return a single graph that contains all components
      */
+    @SuppressWarnings("unchecked")
     public TGraph pack(final List<TGraph> components) {
         if (components.size() == 1) {
             return components.get(0);
@@ -246,7 +247,7 @@ public class ComponentsProcessor {
                                     + entry.getKey().getId() + " in components.");
                         } else {
                             propMerge.put(entry.getKey(), entry.getValue());
-                            result.setProperty(entry.getKey(), entry.getValue());
+                            result.setProperty((IProperty<Object>) entry.getKey(), entry.getValue());
                             if (debugMode) {
                                 debug.put(entry.getKey(), entry.getValue());
                             }
@@ -254,7 +255,7 @@ public class ComponentsProcessor {
                     }
                 } else {
                     propMerge.put(entry.getKey(), entry.getValue());
-                    result.setProperty(entry.getKey(), entry.getValue());
+                    result.setProperty((IProperty<Object>) entry.getKey(), entry.getValue());
                 }
             }
         }

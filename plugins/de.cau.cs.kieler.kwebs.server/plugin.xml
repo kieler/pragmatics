@@ -54,10 +54,6 @@
       </defaultLogLevel>
       <classLogLevel
             logLevel="WARNING"
-            qualifiedName="de.unido.ls5.eti">
-      </classLogLevel>
-      <classLogLevel
-            logLevel="WARNING"
             qualifiedName="org.apache.log4j">
       </classLogLevel>
       <classLogLevel
@@ -66,4 +62,18 @@
       </classLogLevel>
    </extension>
 
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated ServiceData -->
+      <package
+            uri="http://kieler.cs.cau.de/2011-07-25/ServiceData/1.0"
+            class="de.cau.cs.kieler.kwebs.server.servicedata.ServiceDataPackage"
+            genModel="model/ServiceData.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.extension_parser">
+      <!-- @generated ServiceData -->
+      <parser
+            type="servicedata"
+            class="de.cau.cs.kieler.kwebs.server.servicedata.util.ServiceDataResourceFactoryImpl"/>
+   </extension>
 </plugin>

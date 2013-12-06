@@ -17,7 +17,7 @@ package de.cau.cs.kieler.kwebs.server.web
 import com.sun.net.httpserver.Headers
 import de.cau.cs.kieler.kwebs.server.configuration.Configuration
 import de.cau.cs.kieler.kwebs.server.logging.Logger
-import de.cau.cs.kieler.kwebs.util.Resources
+import de.cau.cs.kieler.kwebs.server.util.Resources
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream

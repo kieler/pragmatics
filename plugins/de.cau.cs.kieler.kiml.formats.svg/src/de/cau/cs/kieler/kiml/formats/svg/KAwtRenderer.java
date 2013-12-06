@@ -23,6 +23,7 @@ import java.awt.Stroke;
 import java.awt.geom.Path2D;
 import java.io.File;
 import java.net.URL;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -85,12 +86,13 @@ import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.kiml.formats.TransformationData;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.service.formats.TransformationData;
+import de.cau.cs.kieler.kiml.options.NodeLabelPlacement;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
@@ -306,7 +308,33 @@ public class KAwtRenderer {
             // paint the text string
             graphics.setColor(Color.BLACK);
             graphics.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, Math.round(scale * fontSize)));
-            renderText(label.getText(), size, HorizontalAlignment.LEFT, VerticalAlignment.CENTER);
+            
+            // retrieve the alignment
+            HorizontalAlignment hAlign = HorizontalAlignment.LEFT;
+            VerticalAlignment vAlign = VerticalAlignment.CENTER;
+            EnumSet<NodeLabelPlacement> placement = labelLayout.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT); 
+            if(placement != null) {
+                // horizontal
+                if (placement.contains(NodeLabelPlacement.H_LEFT)) {
+                    hAlign = HorizontalAlignment.LEFT;
+                } else if (placement.contains(NodeLabelPlacement.H_RIGHT)) {
+                    hAlign = HorizontalAlignment.RIGHT;
+                } else if (placement.contains(NodeLabelPlacement.H_CENTER)) {
+                    hAlign = HorizontalAlignment.CENTER;
+                }
+
+                // vertical
+                if (placement.contains(NodeLabelPlacement.V_TOP)) {
+                    vAlign = VerticalAlignment.TOP;
+                } else if (placement.contains(NodeLabelPlacement.V_BOTTOM)) {
+                    vAlign = VerticalAlignment.BOTTOM;
+                } else if (placement.contains(NodeLabelPlacement.V_CENTER)) {
+                    vAlign = VerticalAlignment.CENTER;
+                }
+            }
+            
+            
+            renderText(label.getText(), size, hAlign, vAlign);
         } else {
             // paint the given rendering
             render(labelRendering, size, label.getText());
@@ -834,14 +862,14 @@ public class KAwtRenderer {
         KVectorChain points = new KVectorChain();
         for (KPosition position : polyline.getPoints()) {
             KVector point = new KVector();
-            KXPosition xpos = position.getX();
+            KXPosition<?> xpos = position.getX();
             if (xpos instanceof KLeftPosition) {
                 point.x = xpos.getRelative() * parentSize.x + scale * xpos.getAbsolute();
             } else if (xpos instanceof KRightPosition) {
                 point.x = parentSize.x
                         - (xpos.getRelative() * parentSize.x + scale * xpos.getAbsolute());
             }
-            KYPosition ypos = position.getY();
+            KYPosition<?> ypos = position.getY();
             if (ypos instanceof KTopPosition) {
                 point.y = ypos.getRelative() * parentSize.y + scale * ypos.getAbsolute();
             } else if (ypos instanceof KBottomPosition) {
@@ -954,11 +982,11 @@ public class KAwtRenderer {
             if (directPlaceData.getTopLeft() != null) {
                 KPosition topLeft = directPlaceData.getTopLeft();
                 if (topLeft.getX() != null) {
-                    KXPosition xpos = topLeft.getX();
+                    KXPosition<?> xpos = topLeft.getX();
                     x = xpos.getRelative() * parentSize.x + scale * xpos.getAbsolute();
                 }
                 if (topLeft.getY() != null) {
-                    KYPosition ypos = topLeft.getY();
+                    KYPosition<?> ypos = topLeft.getY();
                     y = ypos.getRelative() * parentSize.y + scale * ypos.getAbsolute();
                 }
             }
@@ -967,14 +995,14 @@ public class KAwtRenderer {
             childSize.translate(-x, -y);
             if (directPlaceData.getBottomRight() != null) {
                 KPosition bottomRight = directPlaceData.getBottomRight();
-                KXPosition xpos = bottomRight.getX();
+                KXPosition<?> xpos = bottomRight.getX();
                 if (xpos instanceof KLeftPosition) {
                     childSize.x = xpos.getRelative() * parentSize.x + scale * xpos.getAbsolute() - x;
                 } else if (xpos instanceof KRightPosition) {
                     childSize.x = (1 - xpos.getRelative()) * parentSize.x - scale
                             * xpos.getAbsolute() - x;
                 }
-                KYPosition ypos = bottomRight.getY();
+                KYPosition<?> ypos = bottomRight.getY();
                 if (ypos instanceof KTopPosition) {
                     childSize.y = ypos.getRelative() * parentSize.y + scale * ypos.getAbsolute() - y;
                 }

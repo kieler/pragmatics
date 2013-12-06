@@ -16,13 +16,15 @@ package de.cau.cs.kieler.kwebs.server.service;
 
 import java.util.List;
 
+
+
 //import javax.jws.HandlerChain;
 import javax.jws.WebService;
 
-import de.cau.cs.kieler.kwebs.GraphLayoutOption;
-import de.cau.cs.kieler.kwebs.jaxws.LayoutServicePort;
-import de.cau.cs.kieler.kwebs.jaxws.ServiceFault;
-import de.cau.cs.kieler.kwebs.jaxws.ServiceFault_Exception;
+import de.cau.cs.kieler.kwebs.server.jaxws.LayoutServicePort;
+import de.cau.cs.kieler.kwebs.server.jaxws.ServiceFault;
+import de.cau.cs.kieler.kwebs.server.jaxws.ServiceFault_Exception;
+import de.cau.cs.kieler.kwebs.server.layout.GraphLayoutOption;
 import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
@@ -36,7 +38,7 @@ import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 // The attributes are necessary because otherwise JAX-WS would use package and class name for
 // the definition of the service and port name and the namespace.
 @WebService(
-    endpointInterface = "de.cau.cs.kieler.kwebs.jaxws.LayoutServicePort",
+    endpointInterface = "de.cau.cs.kieler.kwebs.server.jaxws.LayoutServicePort",
     name = "LayoutServicePort",
     portName = "LayoutServicePort",
     serviceName = "LayoutService",

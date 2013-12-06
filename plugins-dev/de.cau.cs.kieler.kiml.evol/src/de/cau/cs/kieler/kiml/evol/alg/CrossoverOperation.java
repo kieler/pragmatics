@@ -22,8 +22,8 @@ import java.util.Random;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
+import de.cau.cs.kieler.kiml.config.LayoutContext;
 import de.cau.cs.kieler.kiml.evol.GenomeFactory;
 import de.cau.cs.kieler.kiml.evol.genetic.Gene;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
@@ -90,11 +90,13 @@ public class CrossoverOperation implements IEvolutionaryOperation {
                 MIN_CROSS_OVERS, MAX_CROSS_OVERS);
 
         for (int i = 0; i < crossoverCount; i++) {
-            Genome parent1 = population.get(random.nextInt(selectCount));
-            Genome parent2;
-            do {
-                parent2 = population.get(random.nextInt(selectCount));
-            } while (parent1 == parent2);
+            int index1 = random.nextInt(selectCount);
+            Genome parent1 = population.get(index1);
+            int index2 = random.nextInt(selectCount - 1);
+            if (index2 >= index1) {
+                index2++;
+            }
+            Genome parent2 = population.get(index2);
 
             Genome offspring = recombine(parent1, parent2);
             GenomeFactory.checkGenome(offspring);

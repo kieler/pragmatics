@@ -15,7 +15,7 @@ package de.cau.cs.kieler.ksbase.ui.m2m;
 
 import org.eclipse.emf.mwe.core.monitor.ProgressMonitor;
 
-import de.cau.cs.kieler.kiml.ui.util.ProgressMonitorAdapter;
+import de.cau.cs.kieler.kiml.service.util.ProgressMonitorAdapter;
 
 /**
  * 

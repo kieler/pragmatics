@@ -18,9 +18,9 @@ import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.grana.AnalysisOptions;
+import de.cau.cs.kieler.kiml.grana.IAnalysis;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
-import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 
 /**
  * Metric for node separation. Checks whether the distance of each pair of nodes exceeds a
@@ -33,9 +33,9 @@ import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
 public class NodeSeparationMetric implements IAnalysis {
     
     /** the minimal distance between nodes. */
-    private static final float MIN_DISTANCE = 15;
+    private static final float MIN_DISTANCE = 20;
     /** the separation for nodes that touch each other. */
-    private static final float TOUCH_SEP = 0.3f;
+    private static final float TOUCH_SEP = 0.2f;
 
     /**
      * {@inheritDoc}

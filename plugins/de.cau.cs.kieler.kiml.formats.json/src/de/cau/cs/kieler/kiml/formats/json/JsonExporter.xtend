@@ -18,12 +18,12 @@ import de.cau.cs.kieler.core.kgraph.KEdge
 import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.core.kgraph.KPort
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData
-import de.cau.cs.kieler.kiml.service.formats.IGraphTransformer
-import de.cau.cs.kieler.kiml.service.formats.TransformationData
 import java.util.Map
 import org.json.JSONArray
 import org.json.JSONObject
 import de.cau.cs.kieler.core.kgraph.KLabel
+import de.cau.cs.kieler.kiml.formats.IGraphTransformer
+import de.cau.cs.kieler.kiml.formats.TransformationData
 
 /**
  * Exporter from KNode to json.

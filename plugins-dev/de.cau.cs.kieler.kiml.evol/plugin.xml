@@ -2,17 +2,17 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="de.cau.cs.kieler.kiml.layoutInfo">
-      <config
+         point="de.cau.cs.kieler.kiml.layoutConfigs">
+      <customConfig
             activation="de.cau.cs.kieler.kiml.evol"
             activationAction="de.cau.cs.kieler.kiml.evol.ui.ShowEvolutionAction$Activator"
             activationText="Activate Evolutionary Layout"
             class="de.cau.cs.kieler.kiml.evol.EvolLayoutConfig"
             default="false">
-      </config>
+      </customConfig>
    </extension>
    <extension
-         point="de.cau.cs.kieler.kiml.service.analysisProviders">
+         point="de.cau.cs.kieler.kiml.grana.analysisProviders">
       <category
             description="Analysis providers that yield a value between 0.0 and 1.0"
             id="de.cau.cs.kieler.kiml.evol.metricCategory"
@@ -23,7 +23,7 @@
             class="de.cau.cs.kieler.kiml.evol.metrics.AreaMetric"
             description="The area extent of the graph."
             id="de.cau.cs.kieler.kiml.evol.areaMetric"
-            name="Area">
+            name="08 Small Area">
          <dependency
                analysis="de.cau.cs.kieler.kiml.grana.area">
          </dependency>
@@ -39,7 +39,7 @@
             class="de.cau.cs.kieler.kiml.evol.metrics.EdgeBendsMetric"
             description="The number of edge bends in the graph."
             id="de.cau.cs.kieler.kiml.evol.bendsMetric"
-            name="Edge Bends">
+            name="02 Edge Bends">
          <dependency
                analysis="de.cau.cs.kieler.kiml.grana.bendpointCount">
          </dependency>
@@ -52,7 +52,7 @@
             class="de.cau.cs.kieler.kiml.evol.metrics.AspectRatioMetric"
             description="The aspect ratio of the graph, that is its width divided by its height."
             id="de.cau.cs.kieler.kiml.evol.aspectRatioMetric"
-            name="Aspect Ratio">
+            name="09 Aspect Ratio">
          <dependency
                analysis="de.cau.cs.kieler.kiml.grana.area">
          </dependency>
@@ -62,7 +62,7 @@
             class="de.cau.cs.kieler.kiml.evol.metrics.EdgeCrossingsMetric"
             description="The number of edge crossings in the graph."
             id="de.cau.cs.kieler.kiml.evol.edgeCrossingsMetric"
-            name="Edge Crossings">
+            name="01 Edge Crossings">
          <dependency
                analysis="de.cau.cs.kieler.kiml.grana.nodeCount">
          </dependency>
@@ -78,7 +78,7 @@
             class="de.cau.cs.kieler.kiml.evol.metrics.EdgeUniformityMetric"
             description="The edge length uniformity of the graph."
             id="de.cau.cs.kieler.kiml.evol.edgeUniformityMetric"
-            name="Edge Uniformity">
+            name="04 Edge Uniformity">
          <dependency
                analysis="de.cau.cs.kieler.kiml.grana.edgeCount">
          </dependency>
@@ -88,7 +88,7 @@
             class="de.cau.cs.kieler.kiml.evol.metrics.EdgeOrthogonalityMetric"
             description="The edge orthogonality of the graph."
             id="de.cau.cs.kieler.kiml.evol.edgeOrthogonalityMetric"
-            name="Edge Orthogonality">
+            name="03 Edge Orthogonality">
          <dependency
                analysis="de.cau.cs.kieler.kiml.grana.edgeCount">
          </dependency>
@@ -98,7 +98,7 @@
             class="de.cau.cs.kieler.kiml.evol.metrics.EdgeLengthMetric"
             description="The edge lengths of the graph."
             id="de.cau.cs.kieler.kiml.evol.edgeLengthMetric"
-            name="Edge Length">
+            name="05 Edge Length">
          <dependency
                analysis="de.cau.cs.kieler.kiml.grana.edgeCount">
          </dependency>
@@ -108,7 +108,7 @@
             class="de.cau.cs.kieler.kiml.evol.metrics.UpwardnessMetric$UpMetric"
             description="The fraction of edges that point up."
             id="de.cau.cs.kieler.kiml.evol.upwardnessMetric"
-            name="Upwardness">
+            name="10 Upwardness">
          <dependency
                analysis="de.cau.cs.kieler.kiml.grana.edgeCount">
          </dependency>
@@ -121,7 +121,7 @@
             class="de.cau.cs.kieler.kiml.evol.metrics.UpwardnessMetric$DownMetric"
             description="The fraction of edges that point down."
             id="de.cau.cs.kieler.kiml.evol.downwardnessMetric"
-            name="Downwardness">
+            name="11 Downwardness">
          <dependency
                analysis="de.cau.cs.kieler.kiml.grana.edgeCount">
          </dependency>
@@ -134,7 +134,7 @@
             class="de.cau.cs.kieler.kiml.evol.metrics.UpwardnessMetric$LeftMetric"
             description="The fraction of edges that point left."
             id="de.cau.cs.kieler.kiml.evol.leftwardnessMetric"
-            name="Leftwardness">
+            name="12 Leftwardness">
          <dependency
                analysis="de.cau.cs.kieler.kiml.grana.edgeCount">
          </dependency>
@@ -147,7 +147,7 @@
             class="de.cau.cs.kieler.kiml.evol.metrics.UpwardnessMetric$RightMetric"
             description="The fraction of edges that point right."
             id="de.cau.cs.kieler.kiml.evol.rightwardnessMetric"
-            name="Rightwardness">
+            name="13 Rightwardness">
          <dependency
                analysis="de.cau.cs.kieler.kiml.grana.edgeCount">
          </dependency>
@@ -160,14 +160,14 @@
             class="de.cau.cs.kieler.kiml.evol.metrics.NodeSeparationMetric"
             description="Check whether the nodes have a minimal distance from each other."
             id="de.cau.cs.kieler.kiml.evol.nodeSeparationMetric"
-            name="Node Separation">
+            name="07 Node Separation">
       </analysis>
       <analysis
             category="de.cau.cs.kieler.kiml.evol.metricCategory"
             class="de.cau.cs.kieler.kiml.evol.metrics.EdgeOverlapsMetric"
             description="The number of node-edge overlaps in the graph."
             id="de.cau.cs.kieler.kiml.evol.edgeOverlapMetric"
-            name="Edge Overlaps">
+            name="06 Edge Overlaps">
          <dependency
                analysis="de.cau.cs.kieler.kiml.grana.edgeCount">
          </dependency>

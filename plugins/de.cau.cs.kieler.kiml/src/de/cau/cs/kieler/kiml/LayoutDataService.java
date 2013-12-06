@@ -21,38 +21,72 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
+import de.cau.cs.kieler.core.alg.IFactory;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
- * Singleton class for access to the KIML layout data. This class is used globally to retrieve data
- * for automatic layout through KIML. The class can only be instantiated by subclasses.
- * The subclass is then responsible to add appropriate data to the nested registry instance.
- * Multiple instances of subclasses can register themselves by calling
- * {@link #addService(LayoutDataService)}, where the argument is the
- * instance of the subclass, but only one instance per subclass is allowed.
- * The different instances are identified by class name,
- * and the currently used instance can be determined by calling {@link #getMode()}.
- * You can switch between the different instances by calling {@link setMode(final String mode)},
- * where {@code mode} the fully qualified class name of the respective subclass.
- * {@link #ECLIPSE_DATA_SERVICE} is the default mode for use in Eclipse clients, since it reads
- * the locally defined extensions of the 'layoutProviders' and 'layoutInfo' extension points.
+ * Singleton class for access to the KIML layout meta data. This class is used globally to retrieve
+ * meta data for automatic layout through KIML, which is given through the {@code layoutProviders}
+ * extension point.
+ * The meta data are provided by a subclass through the nested registry instance.
  * 
  * @kieler.design 2011-03-14 reviewed by cmot, cds
  * @kieler.rating yellow 2012-10-09 review KI-25 by chsch, bdu
  * @author msp
- * @author swe
  */
-public class LayoutDataService {
+public abstract class LayoutDataService {
 
     /** identifier of the 'general' diagram type, which applies to all diagrams. */
     public static final String DIAGRAM_TYPE_GENERAL = "de.cau.cs.kieler.layout.diagrams.general";
 
-    /** Mode constant for local data service instance. */
-    public static final String ECLIPSE_DATA_SERVICE
-            = "de.cau.cs.kieler.kiml.ui.service.EclipseLayoutDataService"; //$NON-NLS-1$
+   
+    /** the layout data service instance, which is created lazily. */
+    private static LayoutDataService instance;
+    /** the factory for creation of service instances. */
+    private static IFactory<? extends LayoutDataService> instanceFactory;
+
+    /**
+     * Returns the layout data service instance. If no instance is created yet, create one
+     * using the configured factory.
+     * Note that the instance may change if the instance factory is reset. However, in usual
+     * applications that should not happen.
+     * 
+     * @return the layout data service instance
+     */
+    public static synchronized LayoutDataService getInstance() {
+        if (instance == null) {
+            if (instanceFactory == null) {
+                try {
+                    // Try to load the subclass that loads the content of the layoutProviders
+                    // extension point; the subclass is accessible through the 'buddy policy'
+                    // declared in the plugin manifest. By loading the class, the containing
+                    // plugin is activated and the instance factory is set.
+                    Class.forName("de.cau.cs.kieler.kiml.service.ExtensionLayoutDataService");
+                } catch (ClassNotFoundException exception) {
+                    throw new IllegalStateException("The layout data service is not initialized yet."
+                            + " Load the plugin 'de.cau.cs.kieler.kiml.service' in order to initialize"
+                            + " this service with Eclipse extensions.");
+                }
+            }
+            instance = instanceFactory.create();
+        }
+        return instance;
+    }
+    
+    /**
+     * Set the factory for creating instances. If an instance is already created, it is cleared
+     * so the next call to {@link #getInstance()} uses the new factory.
+     * 
+     * @param factory an instance factory
+     */
+    public static void setInstanceFactory(final IFactory<? extends LayoutDataService> factory) {
+        instanceFactory = factory;
+        instance = null;
+    }
+    
 
     /** the instance of the registry class. */
-    private Registry registry;
+    private final Registry registry = new Registry();
     
     /** mapping of layout provider identifiers to their data instances. */
     private final Map<String, LayoutAlgorithmData> layoutAlgorithmMap = Maps.newLinkedHashMap();
@@ -69,119 +103,13 @@ public class LayoutDataService {
     private final Map<String, LayoutOptionData<?>> optionSuffixMap = Maps.newHashMap();
     /** additional map of layout type suffixes to data instances. */
     private final Map<String, LayoutTypeData> typeSuffixMap = Maps.newHashMap();
-
-    /** map of registered data services indexed by class name. */
-    private static final Map<String, LayoutDataService> INSTANCES = Maps.newHashMap();
     
-    /** the the currently used layout data service. */
-    private static LayoutDataService current = new LayoutDataService();
-
-    /**
-     * The default constructor is shown only to subclasses.
-     */
-    protected LayoutDataService() {
-    }
-
-    /**
-     * Registers a layout data service instance created by a specific subclass and assigns it an
-     * instance of the registry.
-     * 
-     * @param subInstance
-     *            an instance created by a subclass
-     */
-    protected static synchronized void addService(final LayoutDataService subInstance) {
-        String type = subInstance.getClass().getCanonicalName();
-        if (INSTANCES.containsKey(type)) {
-            throw new IllegalArgumentException("The layout data service class is already registered."
-                    + " Remove the old instance first before adding a new instance.");
-        }
-        subInstance.registry = subInstance.new Registry();
-        INSTANCES.put(type, subInstance);
-    }
-
-    /**
-     * Removes a layout data service instance. The instance belonging to the currently selected mode
-     * cannot be removed.
-     * 
-     * @param subInstance
-     *            the sub instance to be removed
-     * @throws IllegalArgumentException
-     *             if the instance belonging to the currently selected mode is to be removed or the
-     *             sub instance is not supported
-     */
-    protected static synchronized void removeService(final LayoutDataService subInstance) {
-        String type = subInstance.getClass().getCanonicalName();
-        if (subInstance == current) {
-            throw new IllegalArgumentException(
-                    "The currently active layout data service cannot be removed.");
-        }
-        INSTANCES.remove(type);
-    }
-
-    /**
-     * Returns the current operation mode of the layout data service. The returned mode is
-     * identified by the fully qualified class name of the respective service subclass,
-     * or {@code null} if no layout data service has been registered yet. The default
-     * mode for use in Eclipse is {@link #ECLIPSE_DATA_SERVICE}.
-     * 
-     * @return the name of the currently active data service class, or {@code null}
-     */
-    public static synchronized String getMode() {
-        String mode = current.getClass().getCanonicalName();
-        if (INSTANCES.containsKey(mode)) {
-            return mode;
-        }
-        return null;
-    }
-
-    /**
-     * Sets the current operation mode of the layout data service. The mode is identified by
-     * the fully qualified class name of the respective service subclass. The default
-     * mode for use in Eclipse is {@link #ECLIPSE_DATA_SERVICE}.
-     * 
-     * @param mode the name of the data service class to be activated
-     * @throws IllegalArgumentException
-     *             if the according layout data service class has not been registered yet
-     */
-    public static synchronized void setMode(final String mode) {
-        LayoutDataService modeInstance = INSTANCES.get(mode);
-        if (modeInstance == null) {
-            throw new IllegalArgumentException("Mode " + mode
-                    + " not supported or layout data service was not registered before.");
-        }
-        current = modeInstance;
-    }
-
-    /**
-     * Returns the layout data service instance according to the currently selected mode.
-     * 
-     * @return the current layout data service instance, or {@code null} if none has
-     *          been registered yet
-     */
-    public static LayoutDataService getInstance() {
-        return current;
-    }
-
-    /**
-     * Returns the instance of a layout data service specified by its fully qualified class name.
-     * 
-     * @param <T> type of the returned instance
-     * @param type fully qualified class name of the data service instance
-     * @return the data service instance, or {@code null} if no such instance has been registered
-     */
-    @SuppressWarnings("unchecked")
-    public static <T extends LayoutDataService> T getInstanceOf(final String type) {
-        if (INSTANCES.containsKey(type)) {
-            return (T) INSTANCES.get(type);
-        }
-        return null;
-    }
 
     /**
      * Class used to register the layout services. The access methods are not thread-safe, so use
      * only a single thread to register layout meta-data.
      */
-    public final class Registry {
+    protected final class Registry {
 
         /**
          * The default constructor is hidden to prevent others from instantiating this class.

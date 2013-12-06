@@ -65,7 +65,7 @@ public class KlighdRevealEffect extends AbstractEffect {
             if (isDiagramElement) { // implies element instanceof EObject
                 theElement = (KGraphElement) element;
             } else {
-                theElement = (KGraphElement) view.getContextViewer().getCurrentViewContext()
+                theElement = (KGraphElement) view.getContextViewer().getViewContext()
                         .getTargetElement(element, KGraphElement.class);
             }
             // reveal the element

@@ -318,7 +318,7 @@ public class KlighdDiagramEffect extends MapPropertyHolder implements IEffect {
      */
     protected void setSourceWorkbenchPart() {
         if (this.view != null && this.view.getContextViewer() != null) {
-            this.view.getContextViewer().getCurrentViewContext()
+            this.view.getContextViewer().getViewContext()
                     .setSourceWorkbenchPart(this.sourceWorkbenchPart);
         }
     }

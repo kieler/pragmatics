@@ -3,16 +3,16 @@
 <plugin>
    <extension-point id="layoutRules" name="Smart Layout Rules" schema="schema/layoutRules.exsd"/>
    <extension
-         point="de.cau.cs.kieler.kiml.layoutInfo">
-      <config
+         point="de.cau.cs.kieler.kiml.layoutConfigs">
+      <customConfig
             activation="de.cau.cs.kieler.kiml.smart"
             activationText="Activate Smart Layout"
             class="de.cau.cs.kieler.kiml.smart.SmartLayoutConfig"
             default="false">
-      </config>
+      </customConfig>
    </extension>
    <extension
-         point="de.cau.cs.kieler.kiml.service.analysisProviders">
+         point="de.cau.cs.kieler.kiml.grana.analysisProviders">
       <analysis
             category="de.cau.cs.kieler.kiml.grana.basic"
             class="de.cau.cs.kieler.kiml.smart.rules.TreeAnalysis"

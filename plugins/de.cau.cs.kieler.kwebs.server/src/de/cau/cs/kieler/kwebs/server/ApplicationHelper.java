@@ -31,13 +31,6 @@ public final class ApplicationHelper {
         "of Computer Science, Christian-Albrechts-University of Kiel",
         "Published under the EPL v1.0 (see http://www.eclipse.org/legal/epl-v10.html)",
         "",
-        "This software makes use of jETI platform",
-        "",
-        "Java Electronic Tool Integration - jETI",
-        "Copyright (C) 2004-2011 Chair for Programming Systems, TU Dortmund",
-        "licensed under the GNU Lesser General Public License v3 or any later version.",
-        "http://www.gnu.org/licenses/lgpl-3.0.html",
-        "http://www.gnu.org/licenses/gpl-3.0-standalone.html"
     };
 
     /** */
@@ -58,8 +51,6 @@ public final class ApplicationHelper {
         "server/cmd/csr.conf",
         "server/cmd/sign.conf",
         "server/java/config/logging/logging.properties",
-        "server/jeti/config/log4j/log4j.properties",
-        "server/jeti/config/tools/tools.xml",
         "server/kwebs/security/keystores/server.jks",
         "server/kwebs/security/keystores/mserver.jks",
         "server/kwebs/config/kwebs.properties",
