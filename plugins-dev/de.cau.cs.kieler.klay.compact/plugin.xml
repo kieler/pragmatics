@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.cau.cs.kieler.core.kivi.combinations">
+      <combination
+            active="true"
+            class="de.cau.cs.kieler.klay.compact.RevertEdgesCombination"
+            name="de.cau.cs.kieler.klay.eval.combination1">
+      </combination>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.kiml.layoutProviders">
+      <layoutOption
+            advanced="true"
+            appliesTo="edges"
+            default="false"
+            id="de.cau.cs.kieler.klay.compact.reversal"
+            name="Reverse Edges"
+            type="boolean">
+      </layoutOption>
+   </extension>
+
+</plugin>
