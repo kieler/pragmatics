@@ -101,7 +101,7 @@ public class KlighdKSBasEHandler implements IKSBasEHandler {
      */
     public List<EObject> getSelection(IWorkbenchPart workbenchPart, SelectionState selection) {
         ContextViewer activeContextViewer = lastContextViewer;
-        Object defaultVar = selection.getSelection();
+        Object defaultVar = selection.getSelectionElements();
 
         List<EObject> eObjects = new ArrayList<EObject>(((List<?>) defaultVar).size());
         try {

@@ -94,8 +94,8 @@ public class KlighdVisualizeEMFEditorContentCombination extends AbstractCombinat
             }
         } else {
             // otherwise the selection is examined ...            
-            if (!ss.getSelection().isEmpty()) {
-                final Object selected = ss.getSelection().get(0);
+            if (!ss.getSelectionElements().isEmpty()) {
+                final Object selected = ss.getSelectionElements().get(0);
                 
                 // don't react on non-EMF element selections
                 //  as well as on KGraphElement/KText selections,
