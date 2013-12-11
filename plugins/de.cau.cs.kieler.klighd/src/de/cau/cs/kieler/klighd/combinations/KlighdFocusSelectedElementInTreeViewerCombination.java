@@ -13,12 +13,15 @@
  */
 package de.cau.cs.kieler.klighd.combinations;
 
-import org.eclipse.emf.ecore.EObject;
+import java.util.Iterator;
+
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
+import de.cau.cs.kieler.core.kivi.triggers.SelectionTrigger.SelectionState;
 import de.cau.cs.kieler.klighd.effects.KlighdFocusInTreeViewerEffect;
-import de.cau.cs.kieler.klighd.triggers.KlighdSelectionTrigger.KlighdSelectionState;
+import de.cau.cs.kieler.klighd.viewers.KlighdTreeSelection;
 
 /**
  * A combination that realizes the focus of elements selected in KLighD views in related tree viewers.
@@ -30,24 +33,32 @@ public class KlighdFocusSelectedElementInTreeViewerCombination extends AbstractC
     /**
      * THE execute method!
      * 
-     * 
      * @param state the trigger state the combination is sensitive to
      */
-    public void execute(final KlighdSelectionState state) {
-        TreeViewer viewer = null;
-        if (state.getViewContext().getSourceWorkbenchPartViewer() instanceof TreeViewer) {
-            viewer = (TreeViewer) state.getViewContext().getSourceWorkbenchPartViewer();
+    public void execute(final SelectionState state) {
+        final KlighdTreeSelection selection = state.getSelection(KlighdTreeSelection.class);
+        
+        if (selection == null) {
+            return;
+        }
+        
+        final Viewer sourceViewer = selection.getViewContext().getSourceWorkbenchPartViewer();
+
+        final TreeViewer treeViewer;
+        if (sourceViewer instanceof TreeViewer) {
+            treeViewer = (TreeViewer) sourceViewer;
         } else {
             // in this case there is nothing to show the selected element in
             return;
         }
-        if (state.getSelectedEModelElements().hasNext()) {
-            // take just the 1st element for the moment - should be improved sometimes...
-            EObject me = state.getSelectedEModelElements().next();
-            if (me != null) {
-                this.schedule(new KlighdFocusInTreeViewerEffect(me, viewer));
+
+        final Iterator<?> it = selection.sourceElementIterator();
+        if (it.hasNext()) {
+            final Object o = it.next();
+            if (o != null) {
+                // take just the 1st element for the moment - should be improved sometimes...
+                this.schedule(new KlighdFocusInTreeViewerEffect(o, treeViewer));
             }
         }
     }
-
 }
