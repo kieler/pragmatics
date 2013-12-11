@@ -15,8 +15,8 @@ package de.cau.cs.kieler.klighd.kivi.effects;
 
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
-import de.cau.cs.kieler.klighd.views.DiagramViewManager;
-import de.cau.cs.kieler.klighd.views.DiagramViewPart;
+import de.cau.cs.kieler.klighd.ui.views.DiagramViewManager;
+import de.cau.cs.kieler.klighd.ui.views.DiagramViewPart;
 
 /**
  * A view management effect for revealing a diagram element in a view.

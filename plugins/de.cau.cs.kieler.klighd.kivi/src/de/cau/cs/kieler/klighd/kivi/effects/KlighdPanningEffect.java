@@ -17,8 +17,8 @@ import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
+import de.cau.cs.kieler.klighd.IDiagramWorkbenchPart;
 import de.cau.cs.kieler.klighd.viewers.ContextViewer;
-import de.cau.cs.kieler.klighd.views.IDiagramWorkbenchPart;
 
 
 /**

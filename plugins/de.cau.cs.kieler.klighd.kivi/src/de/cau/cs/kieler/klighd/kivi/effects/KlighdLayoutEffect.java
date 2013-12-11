@@ -17,7 +17,7 @@ import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
 import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
-import de.cau.cs.kieler.klighd.views.DiagramViewManager;
+import de.cau.cs.kieler.klighd.ui.views.DiagramViewManager;
 
 /**
  * A layout effect for KlighD views. It is basically a stripped down version of the original layout

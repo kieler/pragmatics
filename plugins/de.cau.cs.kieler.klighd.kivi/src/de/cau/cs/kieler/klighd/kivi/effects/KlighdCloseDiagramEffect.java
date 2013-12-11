@@ -16,7 +16,7 @@ package de.cau.cs.kieler.klighd.kivi.effects;
 import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
-import de.cau.cs.kieler.klighd.views.DiagramViewManager;
+import de.cau.cs.kieler.klighd.ui.views.DiagramViewManager;
 
 /**
  * A view management effect for closing KLighD views.

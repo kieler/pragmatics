@@ -20,10 +20,10 @@ import de.cau.cs.kieler.core.kivi.IEffect;
 import de.cau.cs.kieler.core.kivi.KiVi;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
+import de.cau.cs.kieler.klighd.IDiagramWorkbenchPart;
 import de.cau.cs.kieler.klighd.IViewer;
+import de.cau.cs.kieler.klighd.ui.views.DiagramViewManager;
 import de.cau.cs.kieler.klighd.util.KlighdSynthesisProperties;
-import de.cau.cs.kieler.klighd.views.DiagramViewManager;
-import de.cau.cs.kieler.klighd.views.IDiagramWorkbenchPart;
 
 /**
  * A view management effect for showing models in a KLighD view.
