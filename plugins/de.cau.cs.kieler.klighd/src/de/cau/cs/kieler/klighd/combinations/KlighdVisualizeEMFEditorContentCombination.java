@@ -29,7 +29,6 @@ import de.cau.cs.kieler.core.kivi.triggers.PartTrigger.EditorState;
 import de.cau.cs.kieler.core.kivi.triggers.SelectionTrigger.SelectionState;
 import de.cau.cs.kieler.core.krendering.KText;
 import de.cau.cs.kieler.klighd.effects.KlighdCloseDiagramEffect;
-import de.cau.cs.kieler.klighd.effects.KlighdDiagramEffect;
 import de.cau.cs.kieler.klighd.effects.KlighdUpdateDiagramEffect;
 import de.cau.cs.kieler.klighd.viewers.KlighdTreeSelection;
 
@@ -112,7 +111,7 @@ public class KlighdVisualizeEMFEditorContentCombination extends AbstractCombinat
                 }
                 
                 if (selected instanceof Resource && !((Resource) selected).getContents().isEmpty()) {
-                    this.schedule(new KlighdDiagramEffect(id, editorInputPath.lastSegment(),
+                    this.schedule(new KlighdUpdateDiagramEffect(id, editorInputPath.lastSegment(),
                             ((Resource) selected).getContents().get(0), es.getEditorPart()));
                     return;
                 }
