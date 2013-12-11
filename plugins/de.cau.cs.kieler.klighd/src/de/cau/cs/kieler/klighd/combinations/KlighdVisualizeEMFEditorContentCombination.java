@@ -31,6 +31,7 @@ import de.cau.cs.kieler.core.krendering.KText;
 import de.cau.cs.kieler.klighd.effects.KlighdCloseDiagramEffect;
 import de.cau.cs.kieler.klighd.effects.KlighdDiagramEffect;
 import de.cau.cs.kieler.klighd.effects.KlighdUpdateDiagramEffect;
+import de.cau.cs.kieler.klighd.viewers.KlighdTreeSelection;
 
 /**
  * This combination in is charge of visualizing EMF tree editors' content graphically.
@@ -53,6 +54,10 @@ public class KlighdVisualizeEMFEditorContentCombination extends AbstractCombinat
      *            A {@link SelectionState} carrying information on the last selection change.
      */
     public void execute(final EditorState es, final SelectionState ss) {
+        if (ss.getSelection(KlighdTreeSelection.class) != null) {
+            return;
+        }
+        
         if (es.getPart() == null || !(es.getPart() instanceof IEditingDomainProvider)) { 
             return;
         }
@@ -121,5 +126,4 @@ public class KlighdVisualizeEMFEditorContentCombination extends AbstractCombinat
             }
         }
     }
-
 }
