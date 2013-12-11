@@ -22,8 +22,8 @@ import org.eclipse.xtext.xbase.lib.IterableExtensions;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.core.util.RunnableWithResult;
-import de.cau.cs.kieler.klighd.effects.KlighdCloseDiagramEffect;
-import de.cau.cs.kieler.klighd.effects.KlighdUpdateDiagramEffect;
+import de.cau.cs.kieler.klighd.kivi.effects.KlighdCloseDiagramEffect;
+import de.cau.cs.kieler.klighd.kivi.effects.KlighdUpdateDiagramEffect;
 import de.cau.cs.kieler.klighd.krendering.SimpleUpdateStrategy;
 import de.cau.cs.kieler.klighd.util.KlighdProperties;
 import de.cau.cs.kieler.klighd.util.KlighdSynthesisProperties;

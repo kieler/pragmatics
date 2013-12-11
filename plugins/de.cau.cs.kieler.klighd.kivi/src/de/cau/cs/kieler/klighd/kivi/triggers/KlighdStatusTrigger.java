@@ -11,11 +11,12 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klighd.triggers;
+package de.cau.cs.kieler.klighd.kivi.triggers;
 
 import de.cau.cs.kieler.core.kivi.AbstractTrigger;
 import de.cau.cs.kieler.core.kivi.ITrigger;
 import de.cau.cs.kieler.klighd.IViewer;
+import de.cau.cs.kieler.klighd.internal.IKlighdTrigger.Status;
 import de.cau.cs.kieler.klighd.ViewContext;
 
 /**
@@ -63,20 +64,6 @@ public class KlighdStatusTrigger extends AbstractTrigger {
      * KLighD visualization in a KLighD view.
      */
     public static class KlighdStatusState extends AbstractKlighdTriggerState {
-
-        /** the possible statuses. */
-        public enum Status {
-            /** visualization created successfully. */
-            CREATE_SUCCESS,
-            /** failed to create visualization. */
-            CREATE_FAILURE,
-            /** visualization updated. */
-            UPDATE,
-            /** visualization closed. */
-            CLOSE,
-            /** nothing special. */
-            NOTHING
-        }
 
         /** the status. */
         private Status status;

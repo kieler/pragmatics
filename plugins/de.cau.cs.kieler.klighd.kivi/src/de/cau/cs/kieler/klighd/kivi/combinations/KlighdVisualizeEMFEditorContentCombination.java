@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klighd.combinations;
+package de.cau.cs.kieler.klighd.kivi.combinations;
 
 import java.util.List;
 
@@ -28,8 +28,8 @@ import de.cau.cs.kieler.core.kivi.triggers.PartTrigger;
 import de.cau.cs.kieler.core.kivi.triggers.PartTrigger.EditorState;
 import de.cau.cs.kieler.core.kivi.triggers.SelectionTrigger.SelectionState;
 import de.cau.cs.kieler.core.krendering.KText;
-import de.cau.cs.kieler.klighd.effects.KlighdCloseDiagramEffect;
-import de.cau.cs.kieler.klighd.effects.KlighdUpdateDiagramEffect;
+import de.cau.cs.kieler.klighd.kivi.effects.KlighdCloseDiagramEffect;
+import de.cau.cs.kieler.klighd.kivi.effects.KlighdUpdateDiagramEffect;
 import de.cau.cs.kieler.klighd.viewers.KlighdTreeSelection;
 
 /**

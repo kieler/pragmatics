@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klighd.combinations;
+package de.cau.cs.kieler.klighd.kivi.combinations;
 
 import java.io.IOException;
 
@@ -23,8 +23,8 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
-import de.cau.cs.kieler.klighd.effects.KlighdDiagramEffect;
-import de.cau.cs.kieler.klighd.triggers.KlighdResourceDropTrigger.KlighdResourceDropState;
+import de.cau.cs.kieler.klighd.kivi.effects.KlighdDiagramEffect;
+import de.cau.cs.kieler.klighd.kivi.triggers.KlighdResourceDropTrigger.KlighdResourceDropState;
 
 /**
  * A view management combination which loads EMF resources which have been dropped on KLighD views
