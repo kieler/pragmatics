@@ -38,7 +38,7 @@ public class KlighdFocusSelectedElementInTreeViewerCombination extends AbstractC
     public void execute(final SelectionState state) {
         final KlighdTreeSelection selection = state.getSelection(KlighdTreeSelection.class);
         
-        if (selection == null) {
+        if (selection == null || selection.getViewContext() == null) {
             return;
         }
         
