@@ -28,8 +28,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.xtext.ui.editor.XtextEditor;
 
 import de.cau.cs.kieler.core.kivi.triggers.SelectionTrigger.SelectionState;
-import de.cau.cs.kieler.klighd.ui.views.DiagramEditorPart;
-import de.cau.cs.kieler.klighd.ui.views.DiagramViewPart;
+import de.cau.cs.kieler.klighd.ui.parts.DiagramEditorPart;
+import de.cau.cs.kieler.klighd.ui.parts.DiagramViewPart;
 import de.cau.cs.kieler.klighd.viewers.ContextViewer;
 import de.cau.cs.kieler.ksbase.ui.kivi.IKSBasEHandler;
 
