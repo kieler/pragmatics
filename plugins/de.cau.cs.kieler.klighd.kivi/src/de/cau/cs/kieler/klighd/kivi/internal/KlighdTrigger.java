@@ -15,6 +15,7 @@ package de.cau.cs.kieler.klighd.kivi.internal;
 
 import org.eclipse.core.resources.IResource;
 
+import de.cau.cs.kieler.klighd.IDiagramWorkbenchPart;
 import de.cau.cs.kieler.klighd.ViewContext;
 import de.cau.cs.kieler.klighd.internal.IKlighdTrigger;
 import de.cau.cs.kieler.klighd.kivi.triggers.KlighdResourceDropTrigger;
@@ -38,9 +39,12 @@ public final class KlighdTrigger implements IKlighdTrigger {
     /**
      * {@inheritDoc}
      */
-    public void triggerStatus(final Status status, final String viewId, final ViewContext viewContext) {
+    public void triggerStatus(final Status status, final ViewContext viewContext) {
         if (KlighdStatusTrigger.getInstance() != null) {
-            final KlighdStatusState state = new KlighdStatusState(status, viewId, viewContext, null);
+            final IDiagramWorkbenchPart part = viewContext.getDiagramWorkbenchPart();
+            final KlighdStatusState state =
+                    new KlighdStatusState(status, part == null ? null : part.getPartId(),
+                            viewContext, null);
             KlighdStatusTrigger.getInstance().trigger(state);
         }
     }
