@@ -19,7 +19,7 @@ import com.google.common.collect.Iterables;
 
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
 import de.cau.cs.kieler.klighd.IDiagramWorkbenchPart;
-import de.cau.cs.kieler.klighd.ui.views.DiagramViewManager;
+import de.cau.cs.kieler.klighd.ui.DiagramViewManager;
 import de.cau.cs.kieler.klighd.util.Iterables2;
 
 /**

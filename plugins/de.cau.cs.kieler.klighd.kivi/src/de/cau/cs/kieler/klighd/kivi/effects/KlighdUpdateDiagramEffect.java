@@ -18,7 +18,7 @@ import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.klighd.IDiagramWorkbenchPart;
-import de.cau.cs.kieler.klighd.ui.views.DiagramViewManager;
+import de.cau.cs.kieler.klighd.ui.DiagramViewManager;
 
 /**
  * A view management effect for updating a KLighD view. When performing a model update, the new
