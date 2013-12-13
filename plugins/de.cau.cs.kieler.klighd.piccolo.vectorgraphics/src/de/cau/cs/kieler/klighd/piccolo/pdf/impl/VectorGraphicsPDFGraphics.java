@@ -18,7 +18,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
-import de.cau.cs.kieler.klighd.piccolo.export.IViewExporter;
+import org.eclipse.swt.widgets.Control;
+
+import de.cau.cs.kieler.klighd.IDiagramExporter;
+import de.cau.cs.kieler.klighd.piccolo.export.KlighdCanvasExporter;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdCanvas;
 import de.cau.cs.kieler.klighd.piccolo.svg.KlighdAbstractSVGGraphics;
 import de.erichseifert.vectorgraphics2d.PDFGraphics2D;
@@ -35,18 +38,21 @@ import edu.umd.cs.piccolo.util.PPaintContext;
  * 
  * @author uru
  */
-public class VectorGraphicsPDFGraphics extends KlighdAbstractSVGGraphics implements IViewExporter {
+public class VectorGraphicsPDFGraphics extends KlighdAbstractSVGGraphics implements IDiagramExporter {
 
-    private Rectangle2D bounds;
-    private boolean textAsShapes;
-
-    /**
-     * @param bounds
-     *            the bounds will be set as viewport values for the resulting root <svg ..> tag.
-     * @param textAsShapes
-     *            whether text should be rendered as shapes
-     */
+//    private Rectangle2D bounds;
+//    private boolean textAsShapes;
+//
+//    /**
+//     * @param bounds
+//     *            the bounds will be set as viewport values for the resulting root <svg ..> tag.
+//     * @param textAsShapes
+//     *            whether text should be rendered as shapes
+//     */
 //    public VectorGraphicsPDFGraphics(final Rectangle2D bounds, final Boolean textAsShapes) {
+    /**
+     * Constructor.
+     */
     public VectorGraphicsPDFGraphics() {
         super(null);
 //        this.bounds = bounds;
@@ -89,12 +95,33 @@ public class VectorGraphicsPDFGraphics extends KlighdAbstractSVGGraphics impleme
     public void clear() {
         init();
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void export(final OutputStream stream, final Control control,
+            final boolean cameraViewport, final int scale, final boolean textAsShapes,
+            final String subFormatId) {
+        this.delegate.export(stream, control, cameraViewport, scale, textAsShapes, subFormatId);
+    }
+
+    private KlighdCanvasExporter delegate = new KlighdCanvasExporter() {
+        
+        @Override
+        public void export(final OutputStream stream, final KlighdCanvas canvas,
+                final boolean cameraViewport, final int scale, final boolean textAsShapes,
+                final String subFormatId) {
+            VectorGraphicsPDFGraphics.this.export(stream, canvas, cameraViewport, scale,
+                    textAsShapes, subFormatId);
+        }
+    };
 
     /**
      * {@inheritDoc}
      */
-    public void export(OutputStream stream, KlighdCanvas canvas, boolean viewPort, int scale,
-            final boolean textAsShapes, String subFormatId) {
+    public void export(final OutputStream stream, final KlighdCanvas canvas,
+            final boolean viewPort, final int scale, final boolean textAsShapes,
+            final String subFormatId) {
 
         // FIXME ... dont do this again, improve the KlighdAbstractSVGGraphics ... remove the "svg"
         PCamera camera = canvas.getCamera();
