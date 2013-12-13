@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: KIELER Structure Based Editing UI Infrastructure (GMF)
+Bundle-Name: KIELER Structure Based Editing UI Infrastructure
 Bundle-SymbolicName: de.cau.cs.kieler.ksbase.ui;singleton:=true
 Bundle-Version: 0.8.1.qualifier
 Bundle-Activator: de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin
