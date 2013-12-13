@@ -23,7 +23,7 @@ import com.google.common.collect.Iterators;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.core.kivi.triggers.SelectionTrigger.SelectionState;
-import de.cau.cs.kieler.klighd.viewers.KlighdTreeSelection;
+import de.cau.cs.kieler.klighd.KlighdTreeSelection;
 import de.cau.cs.kieler.klighd.xtext.effects.XtextEditorHighlightEffect;
 
 /**
