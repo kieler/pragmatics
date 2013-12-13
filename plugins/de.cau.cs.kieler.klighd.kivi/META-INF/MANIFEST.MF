@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: KIVi-based extensions of KLighD
+Bundle-Name: KIELER Light-Weight Diagrams support for KIELER Infrastructure for View management
 Bundle-SymbolicName: de.cau.cs.kieler.klighd.kivi;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
