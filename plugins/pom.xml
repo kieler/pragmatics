@@ -61,6 +61,7 @@
     <module>de.cau.cs.kieler.klighd.ui</module>
     <module>de.cau.cs.kieler.klighd.ui.wizard</module>
     <module>de.cau.cs.kieler.ksbase</module>
+    <module>de.cau.cs.kieler.ksbase.klighd</module>
     <module>de.cau.cs.kieler.ksbase.ui</module>
     <module>de.cau.cs.kieler.kwebs.server</module>
     <module>de.cau.cs.kieler.ptolemy.klighd</module>
