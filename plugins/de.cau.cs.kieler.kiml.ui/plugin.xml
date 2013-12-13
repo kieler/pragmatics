@@ -65,7 +65,7 @@ point="org.eclipse.ui.menus">
             commandId="de.cau.cs.kieler.kiml.ui.command.layout"
             icon="icons/menu16/kieler-arrange.gif"
             label="%command.label.0"
-            style="pulldown"
+            style="push"
             tooltip="%command.tooltip.0">
          <visibleWhen
                checkEnabled="false">
