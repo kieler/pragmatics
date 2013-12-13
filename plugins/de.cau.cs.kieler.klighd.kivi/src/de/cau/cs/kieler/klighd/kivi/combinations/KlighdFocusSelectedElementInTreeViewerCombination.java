@@ -21,7 +21,7 @@ import org.eclipse.jface.viewers.Viewer;
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.core.kivi.triggers.SelectionTrigger.SelectionState;
 import de.cau.cs.kieler.klighd.kivi.effects.KlighdFocusInTreeViewerEffect;
-import de.cau.cs.kieler.klighd.viewers.KlighdTreeSelection;
+import de.cau.cs.kieler.klighd.KlighdTreeSelection;
 
 /**
  * A combination that realizes the focus of elements selected in KLighD views in related tree viewers.

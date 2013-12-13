@@ -30,7 +30,7 @@ import de.cau.cs.kieler.core.kivi.triggers.SelectionTrigger.SelectionState;
 import de.cau.cs.kieler.core.krendering.KText;
 import de.cau.cs.kieler.klighd.kivi.effects.KlighdCloseDiagramEffect;
 import de.cau.cs.kieler.klighd.kivi.effects.KlighdUpdateDiagramEffect;
-import de.cau.cs.kieler.klighd.viewers.KlighdTreeSelection;
+import de.cau.cs.kieler.klighd.KlighdTreeSelection;
 
 /**
  * This combination in is charge of visualizing EMF tree editors' content graphically.
