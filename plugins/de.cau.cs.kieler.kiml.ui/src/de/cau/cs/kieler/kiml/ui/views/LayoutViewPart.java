@@ -473,9 +473,15 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
         }
         
         LayoutContext context = propSourceProvider.getContext();
-        EObject model = context.getProperty(LayoutContext.DOMAIN_MODEL);
+        Object model = context.getProperty(LayoutContext.DOMAIN_MODEL);
         Object diagramPart = context.getProperty(LayoutContext.DIAGRAM_PART);
-        String clazzName = model == null ? null : model.eClass().getInstanceTypeName();
+        String clazzName = null;
+        if (model instanceof EObject) {
+            clazzName = ((EObject) model).eClass().getInstanceTypeName();
+        } else if (model != null) {
+            clazzName = model.getClass().getName();
+        }
+        
         if (clazzName == null) {
             if (plural || diagramPart == null) {
                 return null;
@@ -565,7 +571,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
             if (name != null) {
                 textBuffer.append(name);
             }
-            EObject model = propSourceProvider.getContext().getProperty(LayoutContext.DOMAIN_MODEL);
+            Object model = propSourceProvider.getContext().getProperty(LayoutContext.DOMAIN_MODEL);
             if (model != null) {
                 String modelName = getProperty(model, "Name");
                 if (modelName == null) {
