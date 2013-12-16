@@ -424,6 +424,36 @@ public abstract class LayoutConfigService {
     /**
      * Return the semantic layout configurators that are associated with the given domain model
      * class. This involves configurators that are set for any superclass of the given one.
+     * The superclasses are determined through Java reflection.
+     * 
+     * @param clazz
+     *            a domain model class
+     * @return the semantic layout configurators for the class or a superclass
+     */
+    public final List<ILayoutConfig> getSemanticConfigs(final Class<?> clazz) {
+        if (clazz != null) {
+            List<ILayoutConfig> configs = new LinkedList<ILayoutConfig>();
+            LinkedList<Class<?>> classes = new LinkedList<Class<?>>();
+            classes.add(clazz);
+            do {
+                Class<?> c = classes.removeFirst();
+                if (semanticConfigMap.containsKey(c.getName())) {
+                    configs.addAll(semanticConfigMap.get(c.getName()));
+                }
+                classes.add(c.getSuperclass());
+                for (Class<?> i : c.getInterfaces()) {
+                    classes.add(i);
+                }
+            } while (!classes.isEmpty());
+            return configs;
+        }
+        return Collections.emptyList();
+    }
+
+    /**
+     * Return the semantic layout configurators that are associated with the given domain model
+     * class. This involves configurators that are set for any superclass of the given one.
+     * The superclasses are determined through EMF reflection.
      * 
      * @param clazz
      *            a domain model class

@@ -15,8 +15,6 @@ package de.cau.cs.kieler.kiml.config;
 
 import java.util.Set;
 
-import org.eclipse.emf.ecore.EObject;
-
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
@@ -60,11 +58,11 @@ public class LayoutContext extends MapPropertyHolder {
             "context.graphElement");
     
     /** the main domain model element in the current context. */
-    public static final IProperty<EObject> DOMAIN_MODEL = new Property<EObject>(
+    public static final IProperty<Object> DOMAIN_MODEL = new Property<Object>(
             "context.domainModelElement");
     
     /** the domain model element of the container of the current graph element. */
-    public static final IProperty<EObject> CONTAINER_DOMAIN_MODEL = new Property<EObject>(
+    public static final IProperty<Object> CONTAINER_DOMAIN_MODEL = new Property<Object>(
             "context.containerDomainModelElement");
     
     /** the main diagram part in the current context. */
