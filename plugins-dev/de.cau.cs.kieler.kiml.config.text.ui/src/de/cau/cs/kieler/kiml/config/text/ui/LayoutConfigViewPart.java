@@ -22,7 +22,10 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocumentListener;
@@ -40,6 +43,7 @@ import org.eclipse.xtext.ui.editor.embedded.EmbeddedEditor;
 import org.eclipse.xtext.ui.editor.embedded.EmbeddedEditorFactory;
 import org.eclipse.xtext.ui.editor.embedded.EmbeddedEditorModelAccess;
 import org.eclipse.xtext.ui.editor.embedded.IEditedResourceProvider;
+import org.eclipse.xtext.xbase.lib.Pair;
 
 import com.google.common.base.Predicate;
 import com.google.inject.Injector;
@@ -55,6 +59,11 @@ import de.cau.cs.kieler.kiml.service.LayoutManagersService;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 
 /**
+ * A view that allows to specify (top level or global) layout options textually.
+ * This can for instance be used to chain layout runs, executing klay and libavoid.
+ * 
+ * Via a dropdown menu several templates are available.
+ * 
  * @author uru
  */
 @SuppressWarnings("restriction")
@@ -204,6 +213,7 @@ public class LayoutConfigViewPart extends ViewPart {
     private void createButtons() {
         final IToolBarManager toolBar = getViewSite().getActionBars().getToolBarManager();
 
+        // add a button that allows to perform the specified layout
         toolBar.add(new Action("Layout", KimlUiPlugin
                 .getImageDescriptor("icons/menu16/kieler-arrange.gif")) {
             public void run() {
@@ -216,6 +226,38 @@ public class LayoutConfigViewPart extends ViewPart {
                 }
             }
         });
+        
+        // TODO implement this
+//        final IPreferenceStore store = LayoutConfigActivator.getInstance().getPreferenceStore();
+        // add a menu for storing/loading templates
+        // reset the layout options set over the side pane
+        final IMenuManager menu = getViewSite().getActionBars().getMenuManager();
+//        IAction saveTemplate = new Action("Save as ..") {
+//            @Override
+//            public void run() {
+//            }
+//        };
+//        menu.add(saveTemplate);
+//       
+//        IAction loadTemplate = new Action("Load ..") {
+//            @Override
+//            public void run() {
+//            }
+//        };
+//        menu.add(loadTemplate);
+        
+        menu.add(new Separator());
+       
+        // add the known default templates
+        for(final Pair<String, String> pair : DefaultTemplates.defaultTemplates) {
+            IAction defaultTemp = new Action(pair.getKey()) {
+                @Override
+                public void run() {
+                    partialEditor.updateModel("", pair.getValue(), "");                    
+                }
+            };
+            menu.add(defaultTemp);
+        }
     }
 
     private IWorkbenchPart scanForOpenEditor() {
