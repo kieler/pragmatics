@@ -37,7 +37,8 @@ public class LayoutConfigParser extends AbstractContentAssistParser {
 			nameMappings = new HashMap<AbstractElement, String>() {
 				private static final long serialVersionUID = 1L;
 				{
-					put(grammarAccess.getEStringAccess().getAlternatives(), "rule__EString__Alternatives");
+					put(grammarAccess.getPropertyValueAccess().getAlternatives(), "rule__PropertyValue__Alternatives");
+					put(grammarAccess.getFloatAccess().getAlternatives(), "rule__Float__Alternatives");
 					put(grammarAccess.getKGraphElementAccess().getGroup(), "rule__KGraphElement__Group__0");
 					put(grammarAccess.getKIdentifierAccess().getGroup(), "rule__KIdentifier__Group__0");
 					put(grammarAccess.getKIdentifierAccess().getGroup_3(), "rule__KIdentifier__Group_3__0");

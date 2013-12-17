@@ -22,20 +22,21 @@ import java.util.ArrayList;
 @SuppressWarnings("all")
 public class InternalLayoutConfigParser extends AbstractInternalContentAssistParser {
     public static final String[] tokenNames = new String[] {
-        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_STRING", "RULE_ID", "RULE_INT", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER", "'{'", "'}'", "':'", "'.'"
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_BOOLEAN", "RULE_STRING", "RULE_TFLOAT", "RULE_NATURAL", "RULE_ID", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "'{'", "'}'", "':'", "'.'"
     };
-    public static final int RULE_ID=5;
-    public static final int RULE_STRING=4;
+    public static final int RULE_BOOLEAN=4;
+    public static final int RULE_ID=8;
+    public static final int RULE_STRING=5;
+    public static final int T__15=15;
     public static final int T__12=12;
-    public static final int T__11=11;
     public static final int T__14=14;
     public static final int T__13=13;
-    public static final int RULE_ANY_OTHER=10;
-    public static final int RULE_INT=6;
-    public static final int RULE_WS=9;
-    public static final int RULE_SL_COMMENT=8;
+    public static final int RULE_NATURAL=7;
+    public static final int RULE_WS=11;
+    public static final int RULE_SL_COMMENT=10;
     public static final int EOF=-1;
-    public static final int RULE_ML_COMMENT=7;
+    public static final int RULE_ML_COMMENT=9;
+    public static final int RULE_TFLOAT=6;
 
     // delegates
     // delegators
@@ -305,21 +306,21 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
     // $ANTLR end "rulePersistentEntry"
 
 
-    // $ANTLR start "entryRuleEString"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:144:1: entryRuleEString : ruleEString EOF ;
-    public final void entryRuleEString() throws RecognitionException {
+    // $ANTLR start "entryRulePropertyValue"
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:144:1: entryRulePropertyValue : rulePropertyValue EOF ;
+    public final void entryRulePropertyValue() throws RecognitionException {
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:145:1: ( ruleEString EOF )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:146:1: ruleEString EOF
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:145:1: ( rulePropertyValue EOF )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:146:1: rulePropertyValue EOF
             {
-             before(grammarAccess.getEStringRule()); 
-            pushFollow(FollowSets000.FOLLOW_ruleEString_in_entryRuleEString241);
-            ruleEString();
+             before(grammarAccess.getPropertyValueRule()); 
+            pushFollow(FollowSets000.FOLLOW_rulePropertyValue_in_entryRulePropertyValue241);
+            rulePropertyValue();
 
             state._fsp--;
 
-             after(grammarAccess.getEStringRule()); 
-            match(input,EOF,FollowSets000.FOLLOW_EOF_in_entryRuleEString248); 
+             after(grammarAccess.getPropertyValueRule()); 
+            match(input,EOF,FollowSets000.FOLLOW_EOF_in_entryRulePropertyValue248); 
 
             }
 
@@ -332,35 +333,35 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
         }
         return ;
     }
-    // $ANTLR end "entryRuleEString"
+    // $ANTLR end "entryRulePropertyValue"
 
 
-    // $ANTLR start "ruleEString"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:153:1: ruleEString : ( ( rule__EString__Alternatives ) ) ;
-    public final void ruleEString() throws RecognitionException {
+    // $ANTLR start "rulePropertyValue"
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:153:1: rulePropertyValue : ( ( rule__PropertyValue__Alternatives ) ) ;
+    public final void rulePropertyValue() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:157:2: ( ( ( rule__EString__Alternatives ) ) )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:158:1: ( ( rule__EString__Alternatives ) )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:157:2: ( ( ( rule__PropertyValue__Alternatives ) ) )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:158:1: ( ( rule__PropertyValue__Alternatives ) )
             {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:158:1: ( ( rule__EString__Alternatives ) )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:159:1: ( rule__EString__Alternatives )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:158:1: ( ( rule__PropertyValue__Alternatives ) )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:159:1: ( rule__PropertyValue__Alternatives )
             {
-             before(grammarAccess.getEStringAccess().getAlternatives()); 
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:160:1: ( rule__EString__Alternatives )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:160:2: rule__EString__Alternatives
+             before(grammarAccess.getPropertyValueAccess().getAlternatives()); 
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:160:1: ( rule__PropertyValue__Alternatives )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:160:2: rule__PropertyValue__Alternatives
             {
-            pushFollow(FollowSets000.FOLLOW_rule__EString__Alternatives_in_ruleEString274);
-            rule__EString__Alternatives();
+            pushFollow(FollowSets000.FOLLOW_rule__PropertyValue__Alternatives_in_rulePropertyValue274);
+            rule__PropertyValue__Alternatives();
 
             state._fsp--;
 
 
             }
 
-             after(grammarAccess.getEStringAccess().getAlternatives()); 
+             after(grammarAccess.getPropertyValueAccess().getAlternatives()); 
 
             }
 
@@ -379,7 +380,7 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
         }
         return ;
     }
-    // $ANTLR end "ruleEString"
+    // $ANTLR end "rulePropertyValue"
 
 
     // $ANTLR start "entryRuleQualifiedID"
@@ -459,39 +460,131 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
     // $ANTLR end "ruleQualifiedID"
 
 
-    // $ANTLR start "rule__EString__Alternatives"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:200:1: rule__EString__Alternatives : ( ( RULE_STRING ) | ( RULE_ID ) );
-    public final void rule__EString__Alternatives() throws RecognitionException {
+    // $ANTLR start "entryRuleFloat"
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:200:1: entryRuleFloat : ruleFloat EOF ;
+    public final void entryRuleFloat() throws RecognitionException {
+        try {
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:201:1: ( ruleFloat EOF )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:202:1: ruleFloat EOF
+            {
+             before(grammarAccess.getFloatRule()); 
+            pushFollow(FollowSets000.FOLLOW_ruleFloat_in_entryRuleFloat361);
+            ruleFloat();
+
+            state._fsp--;
+
+             after(grammarAccess.getFloatRule()); 
+            match(input,EOF,FollowSets000.FOLLOW_EOF_in_entryRuleFloat368); 
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+        }
+        return ;
+    }
+    // $ANTLR end "entryRuleFloat"
+
+
+    // $ANTLR start "ruleFloat"
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:209:1: ruleFloat : ( ( rule__Float__Alternatives ) ) ;
+    public final void ruleFloat() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:204:1: ( ( RULE_STRING ) | ( RULE_ID ) )
-            int alt1=2;
-            int LA1_0 = input.LA(1);
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:213:2: ( ( ( rule__Float__Alternatives ) ) )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:214:1: ( ( rule__Float__Alternatives ) )
+            {
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:214:1: ( ( rule__Float__Alternatives ) )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:215:1: ( rule__Float__Alternatives )
+            {
+             before(grammarAccess.getFloatAccess().getAlternatives()); 
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:216:1: ( rule__Float__Alternatives )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:216:2: rule__Float__Alternatives
+            {
+            pushFollow(FollowSets000.FOLLOW_rule__Float__Alternatives_in_ruleFloat394);
+            rule__Float__Alternatives();
 
-            if ( (LA1_0==RULE_STRING) ) {
+            state._fsp--;
+
+
+            }
+
+             after(grammarAccess.getFloatAccess().getAlternatives()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "ruleFloat"
+
+
+    // $ANTLR start "rule__PropertyValue__Alternatives"
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:228:1: rule__PropertyValue__Alternatives : ( ( RULE_BOOLEAN ) | ( RULE_STRING ) | ( ruleFloat ) | ( ruleQualifiedID ) );
+    public final void rule__PropertyValue__Alternatives() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+            
+        try {
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:232:1: ( ( RULE_BOOLEAN ) | ( RULE_STRING ) | ( ruleFloat ) | ( ruleQualifiedID ) )
+            int alt1=4;
+            switch ( input.LA(1) ) {
+            case RULE_BOOLEAN:
+                {
                 alt1=1;
-            }
-            else if ( (LA1_0==RULE_ID) ) {
+                }
+                break;
+            case RULE_STRING:
+                {
                 alt1=2;
-            }
-            else {
+                }
+                break;
+            case RULE_TFLOAT:
+            case RULE_NATURAL:
+                {
+                alt1=3;
+                }
+                break;
+            case RULE_ID:
+                {
+                alt1=4;
+                }
+                break;
+            default:
                 NoViableAltException nvae =
                     new NoViableAltException("", 1, 0, input);
 
                 throw nvae;
             }
+
             switch (alt1) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:205:1: ( RULE_STRING )
+                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:233:1: ( RULE_BOOLEAN )
                     {
-                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:205:1: ( RULE_STRING )
-                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:206:1: RULE_STRING
+                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:233:1: ( RULE_BOOLEAN )
+                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:234:1: RULE_BOOLEAN
                     {
-                     before(grammarAccess.getEStringAccess().getSTRINGTerminalRuleCall_0()); 
-                    match(input,RULE_STRING,FollowSets000.FOLLOW_RULE_STRING_in_rule__EString__Alternatives370); 
-                     after(grammarAccess.getEStringAccess().getSTRINGTerminalRuleCall_0()); 
+                     before(grammarAccess.getPropertyValueAccess().getBOOLEANTerminalRuleCall_0()); 
+                    match(input,RULE_BOOLEAN,FollowSets000.FOLLOW_RULE_BOOLEAN_in_rule__PropertyValue__Alternatives430); 
+                     after(grammarAccess.getPropertyValueAccess().getBOOLEANTerminalRuleCall_0()); 
 
                     }
 
@@ -499,14 +592,52 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
                     }
                     break;
                 case 2 :
-                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:211:6: ( RULE_ID )
+                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:239:6: ( RULE_STRING )
                     {
-                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:211:6: ( RULE_ID )
-                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:212:1: RULE_ID
+                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:239:6: ( RULE_STRING )
+                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:240:1: RULE_STRING
                     {
-                     before(grammarAccess.getEStringAccess().getIDTerminalRuleCall_1()); 
-                    match(input,RULE_ID,FollowSets000.FOLLOW_RULE_ID_in_rule__EString__Alternatives387); 
-                     after(grammarAccess.getEStringAccess().getIDTerminalRuleCall_1()); 
+                     before(grammarAccess.getPropertyValueAccess().getSTRINGTerminalRuleCall_1()); 
+                    match(input,RULE_STRING,FollowSets000.FOLLOW_RULE_STRING_in_rule__PropertyValue__Alternatives447); 
+                     after(grammarAccess.getPropertyValueAccess().getSTRINGTerminalRuleCall_1()); 
+
+                    }
+
+
+                    }
+                    break;
+                case 3 :
+                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:245:6: ( ruleFloat )
+                    {
+                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:245:6: ( ruleFloat )
+                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:246:1: ruleFloat
+                    {
+                     before(grammarAccess.getPropertyValueAccess().getFloatParserRuleCall_2()); 
+                    pushFollow(FollowSets000.FOLLOW_ruleFloat_in_rule__PropertyValue__Alternatives464);
+                    ruleFloat();
+
+                    state._fsp--;
+
+                     after(grammarAccess.getPropertyValueAccess().getFloatParserRuleCall_2()); 
+
+                    }
+
+
+                    }
+                    break;
+                case 4 :
+                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:251:6: ( ruleQualifiedID )
+                    {
+                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:251:6: ( ruleQualifiedID )
+                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:252:1: ruleQualifiedID
+                    {
+                     before(grammarAccess.getPropertyValueAccess().getQualifiedIDParserRuleCall_3()); 
+                    pushFollow(FollowSets000.FOLLOW_ruleQualifiedID_in_rule__PropertyValue__Alternatives481);
+                    ruleQualifiedID();
+
+                    state._fsp--;
+
+                     after(grammarAccess.getPropertyValueAccess().getQualifiedIDParserRuleCall_3()); 
 
                     }
 
@@ -527,25 +658,96 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
         }
         return ;
     }
-    // $ANTLR end "rule__EString__Alternatives"
+    // $ANTLR end "rule__PropertyValue__Alternatives"
+
+
+    // $ANTLR start "rule__Float__Alternatives"
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:262:1: rule__Float__Alternatives : ( ( RULE_TFLOAT ) | ( RULE_NATURAL ) );
+    public final void rule__Float__Alternatives() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+            
+        try {
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:266:1: ( ( RULE_TFLOAT ) | ( RULE_NATURAL ) )
+            int alt2=2;
+            int LA2_0 = input.LA(1);
+
+            if ( (LA2_0==RULE_TFLOAT) ) {
+                alt2=1;
+            }
+            else if ( (LA2_0==RULE_NATURAL) ) {
+                alt2=2;
+            }
+            else {
+                NoViableAltException nvae =
+                    new NoViableAltException("", 2, 0, input);
+
+                throw nvae;
+            }
+            switch (alt2) {
+                case 1 :
+                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:267:1: ( RULE_TFLOAT )
+                    {
+                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:267:1: ( RULE_TFLOAT )
+                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:268:1: RULE_TFLOAT
+                    {
+                     before(grammarAccess.getFloatAccess().getTFLOATTerminalRuleCall_0()); 
+                    match(input,RULE_TFLOAT,FollowSets000.FOLLOW_RULE_TFLOAT_in_rule__Float__Alternatives513); 
+                     after(grammarAccess.getFloatAccess().getTFLOATTerminalRuleCall_0()); 
+
+                    }
+
+
+                    }
+                    break;
+                case 2 :
+                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:273:6: ( RULE_NATURAL )
+                    {
+                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:273:6: ( RULE_NATURAL )
+                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:274:1: RULE_NATURAL
+                    {
+                     before(grammarAccess.getFloatAccess().getNATURALTerminalRuleCall_1()); 
+                    match(input,RULE_NATURAL,FollowSets000.FOLLOW_RULE_NATURAL_in_rule__Float__Alternatives530); 
+                     after(grammarAccess.getFloatAccess().getNATURALTerminalRuleCall_1()); 
+
+                    }
+
+
+                    }
+                    break;
+
+            }
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__Float__Alternatives"
 
 
     // $ANTLR start "rule__KGraphElement__Group__0"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:224:1: rule__KGraphElement__Group__0 : rule__KGraphElement__Group__0__Impl rule__KGraphElement__Group__1 ;
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:286:1: rule__KGraphElement__Group__0 : rule__KGraphElement__Group__0__Impl rule__KGraphElement__Group__1 ;
     public final void rule__KGraphElement__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:228:1: ( rule__KGraphElement__Group__0__Impl rule__KGraphElement__Group__1 )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:229:2: rule__KGraphElement__Group__0__Impl rule__KGraphElement__Group__1
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:290:1: ( rule__KGraphElement__Group__0__Impl rule__KGraphElement__Group__1 )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:291:2: rule__KGraphElement__Group__0__Impl rule__KGraphElement__Group__1
             {
-            pushFollow(FollowSets000.FOLLOW_rule__KGraphElement__Group__0__Impl_in_rule__KGraphElement__Group__0417);
+            pushFollow(FollowSets000.FOLLOW_rule__KGraphElement__Group__0__Impl_in_rule__KGraphElement__Group__0560);
             rule__KGraphElement__Group__0__Impl();
 
             state._fsp--;
 
-            pushFollow(FollowSets000.FOLLOW_rule__KGraphElement__Group__1_in_rule__KGraphElement__Group__0420);
+            pushFollow(FollowSets000.FOLLOW_rule__KGraphElement__Group__1_in_rule__KGraphElement__Group__0563);
             rule__KGraphElement__Group__1();
 
             state._fsp--;
@@ -569,21 +771,21 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
 
 
     // $ANTLR start "rule__KGraphElement__Group__0__Impl"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:236:1: rule__KGraphElement__Group__0__Impl : ( () ) ;
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:298:1: rule__KGraphElement__Group__0__Impl : ( () ) ;
     public final void rule__KGraphElement__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:240:1: ( ( () ) )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:241:1: ( () )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:302:1: ( ( () ) )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:303:1: ( () )
             {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:241:1: ( () )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:242:1: ()
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:303:1: ( () )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:304:1: ()
             {
              before(grammarAccess.getKGraphElementAccess().getKNodeAction_0()); 
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:243:1: ()
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:245:1: 
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:305:1: ()
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:307:1: 
             {
             }
 
@@ -606,16 +808,16 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
 
 
     // $ANTLR start "rule__KGraphElement__Group__1"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:255:1: rule__KGraphElement__Group__1 : rule__KGraphElement__Group__1__Impl ;
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:317:1: rule__KGraphElement__Group__1 : rule__KGraphElement__Group__1__Impl ;
     public final void rule__KGraphElement__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:259:1: ( rule__KGraphElement__Group__1__Impl )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:260:2: rule__KGraphElement__Group__1__Impl
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:321:1: ( rule__KGraphElement__Group__1__Impl )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:322:2: rule__KGraphElement__Group__1__Impl
             {
-            pushFollow(FollowSets000.FOLLOW_rule__KGraphElement__Group__1__Impl_in_rule__KGraphElement__Group__1478);
+            pushFollow(FollowSets000.FOLLOW_rule__KGraphElement__Group__1__Impl_in_rule__KGraphElement__Group__1621);
             rule__KGraphElement__Group__1__Impl();
 
             state._fsp--;
@@ -639,35 +841,35 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
 
 
     // $ANTLR start "rule__KGraphElement__Group__1__Impl"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:266:1: rule__KGraphElement__Group__1__Impl : ( ( rule__KGraphElement__DataAssignment_1 )* ) ;
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:328:1: rule__KGraphElement__Group__1__Impl : ( ( rule__KGraphElement__DataAssignment_1 )* ) ;
     public final void rule__KGraphElement__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:270:1: ( ( ( rule__KGraphElement__DataAssignment_1 )* ) )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:271:1: ( ( rule__KGraphElement__DataAssignment_1 )* )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:332:1: ( ( ( rule__KGraphElement__DataAssignment_1 )* ) )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:333:1: ( ( rule__KGraphElement__DataAssignment_1 )* )
             {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:271:1: ( ( rule__KGraphElement__DataAssignment_1 )* )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:272:1: ( rule__KGraphElement__DataAssignment_1 )*
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:333:1: ( ( rule__KGraphElement__DataAssignment_1 )* )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:334:1: ( rule__KGraphElement__DataAssignment_1 )*
             {
              before(grammarAccess.getKGraphElementAccess().getDataAssignment_1()); 
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:273:1: ( rule__KGraphElement__DataAssignment_1 )*
-            loop2:
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:335:1: ( rule__KGraphElement__DataAssignment_1 )*
+            loop3:
             do {
-                int alt2=2;
-                int LA2_0 = input.LA(1);
+                int alt3=2;
+                int LA3_0 = input.LA(1);
 
-                if ( ((LA2_0>=RULE_STRING && LA2_0<=RULE_ID)) ) {
-                    alt2=1;
+                if ( (LA3_0==RULE_ID) ) {
+                    alt3=1;
                 }
 
 
-                switch (alt2) {
+                switch (alt3) {
             	case 1 :
-            	    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:273:2: rule__KGraphElement__DataAssignment_1
+            	    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:335:2: rule__KGraphElement__DataAssignment_1
             	    {
-            	    pushFollow(FollowSets000.FOLLOW_rule__KGraphElement__DataAssignment_1_in_rule__KGraphElement__Group__1__Impl505);
+            	    pushFollow(FollowSets000.FOLLOW_rule__KGraphElement__DataAssignment_1_in_rule__KGraphElement__Group__1__Impl648);
             	    rule__KGraphElement__DataAssignment_1();
 
             	    state._fsp--;
@@ -677,7 +879,7 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
             	    break;
 
             	default :
-            	    break loop2;
+            	    break loop3;
                 }
             } while (true);
 
@@ -704,21 +906,21 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
 
 
     // $ANTLR start "rule__KIdentifier__Group__0"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:287:1: rule__KIdentifier__Group__0 : rule__KIdentifier__Group__0__Impl rule__KIdentifier__Group__1 ;
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:349:1: rule__KIdentifier__Group__0 : rule__KIdentifier__Group__0__Impl rule__KIdentifier__Group__1 ;
     public final void rule__KIdentifier__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:291:1: ( rule__KIdentifier__Group__0__Impl rule__KIdentifier__Group__1 )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:292:2: rule__KIdentifier__Group__0__Impl rule__KIdentifier__Group__1
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:353:1: ( rule__KIdentifier__Group__0__Impl rule__KIdentifier__Group__1 )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:354:2: rule__KIdentifier__Group__0__Impl rule__KIdentifier__Group__1
             {
-            pushFollow(FollowSets000.FOLLOW_rule__KIdentifier__Group__0__Impl_in_rule__KIdentifier__Group__0540);
+            pushFollow(FollowSets000.FOLLOW_rule__KIdentifier__Group__0__Impl_in_rule__KIdentifier__Group__0683);
             rule__KIdentifier__Group__0__Impl();
 
             state._fsp--;
 
-            pushFollow(FollowSets000.FOLLOW_rule__KIdentifier__Group__1_in_rule__KIdentifier__Group__0543);
+            pushFollow(FollowSets000.FOLLOW_rule__KIdentifier__Group__1_in_rule__KIdentifier__Group__0686);
             rule__KIdentifier__Group__1();
 
             state._fsp--;
@@ -742,21 +944,21 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
 
 
     // $ANTLR start "rule__KIdentifier__Group__0__Impl"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:299:1: rule__KIdentifier__Group__0__Impl : ( () ) ;
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:361:1: rule__KIdentifier__Group__0__Impl : ( () ) ;
     public final void rule__KIdentifier__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:303:1: ( ( () ) )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:304:1: ( () )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:365:1: ( ( () ) )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:366:1: ( () )
             {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:304:1: ( () )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:305:1: ()
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:366:1: ( () )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:367:1: ()
             {
              before(grammarAccess.getKIdentifierAccess().getKIdentifierAction_0()); 
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:306:1: ()
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:308:1: 
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:368:1: ()
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:370:1: 
             {
             }
 
@@ -779,21 +981,21 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
 
 
     // $ANTLR start "rule__KIdentifier__Group__1"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:318:1: rule__KIdentifier__Group__1 : rule__KIdentifier__Group__1__Impl rule__KIdentifier__Group__2 ;
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:380:1: rule__KIdentifier__Group__1 : rule__KIdentifier__Group__1__Impl rule__KIdentifier__Group__2 ;
     public final void rule__KIdentifier__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:322:1: ( rule__KIdentifier__Group__1__Impl rule__KIdentifier__Group__2 )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:323:2: rule__KIdentifier__Group__1__Impl rule__KIdentifier__Group__2
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:384:1: ( rule__KIdentifier__Group__1__Impl rule__KIdentifier__Group__2 )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:385:2: rule__KIdentifier__Group__1__Impl rule__KIdentifier__Group__2
             {
-            pushFollow(FollowSets000.FOLLOW_rule__KIdentifier__Group__1__Impl_in_rule__KIdentifier__Group__1601);
+            pushFollow(FollowSets000.FOLLOW_rule__KIdentifier__Group__1__Impl_in_rule__KIdentifier__Group__1744);
             rule__KIdentifier__Group__1__Impl();
 
             state._fsp--;
 
-            pushFollow(FollowSets000.FOLLOW_rule__KIdentifier__Group__2_in_rule__KIdentifier__Group__1604);
+            pushFollow(FollowSets000.FOLLOW_rule__KIdentifier__Group__2_in_rule__KIdentifier__Group__1747);
             rule__KIdentifier__Group__2();
 
             state._fsp--;
@@ -817,23 +1019,23 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
 
 
     // $ANTLR start "rule__KIdentifier__Group__1__Impl"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:330:1: rule__KIdentifier__Group__1__Impl : ( ( rule__KIdentifier__IdAssignment_1 ) ) ;
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:392:1: rule__KIdentifier__Group__1__Impl : ( ( rule__KIdentifier__IdAssignment_1 ) ) ;
     public final void rule__KIdentifier__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:334:1: ( ( ( rule__KIdentifier__IdAssignment_1 ) ) )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:335:1: ( ( rule__KIdentifier__IdAssignment_1 ) )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:396:1: ( ( ( rule__KIdentifier__IdAssignment_1 ) ) )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:397:1: ( ( rule__KIdentifier__IdAssignment_1 ) )
             {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:335:1: ( ( rule__KIdentifier__IdAssignment_1 ) )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:336:1: ( rule__KIdentifier__IdAssignment_1 )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:397:1: ( ( rule__KIdentifier__IdAssignment_1 ) )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:398:1: ( rule__KIdentifier__IdAssignment_1 )
             {
              before(grammarAccess.getKIdentifierAccess().getIdAssignment_1()); 
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:337:1: ( rule__KIdentifier__IdAssignment_1 )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:337:2: rule__KIdentifier__IdAssignment_1
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:399:1: ( rule__KIdentifier__IdAssignment_1 )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:399:2: rule__KIdentifier__IdAssignment_1
             {
-            pushFollow(FollowSets000.FOLLOW_rule__KIdentifier__IdAssignment_1_in_rule__KIdentifier__Group__1__Impl631);
+            pushFollow(FollowSets000.FOLLOW_rule__KIdentifier__IdAssignment_1_in_rule__KIdentifier__Group__1__Impl774);
             rule__KIdentifier__IdAssignment_1();
 
             state._fsp--;
@@ -864,21 +1066,21 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
 
 
     // $ANTLR start "rule__KIdentifier__Group__2"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:347:1: rule__KIdentifier__Group__2 : rule__KIdentifier__Group__2__Impl rule__KIdentifier__Group__3 ;
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:409:1: rule__KIdentifier__Group__2 : rule__KIdentifier__Group__2__Impl rule__KIdentifier__Group__3 ;
     public final void rule__KIdentifier__Group__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:351:1: ( rule__KIdentifier__Group__2__Impl rule__KIdentifier__Group__3 )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:352:2: rule__KIdentifier__Group__2__Impl rule__KIdentifier__Group__3
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:413:1: ( rule__KIdentifier__Group__2__Impl rule__KIdentifier__Group__3 )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:414:2: rule__KIdentifier__Group__2__Impl rule__KIdentifier__Group__3
             {
-            pushFollow(FollowSets000.FOLLOW_rule__KIdentifier__Group__2__Impl_in_rule__KIdentifier__Group__2661);
+            pushFollow(FollowSets000.FOLLOW_rule__KIdentifier__Group__2__Impl_in_rule__KIdentifier__Group__2804);
             rule__KIdentifier__Group__2__Impl();
 
             state._fsp--;
 
-            pushFollow(FollowSets000.FOLLOW_rule__KIdentifier__Group__3_in_rule__KIdentifier__Group__2664);
+            pushFollow(FollowSets000.FOLLOW_rule__KIdentifier__Group__3_in_rule__KIdentifier__Group__2807);
             rule__KIdentifier__Group__3();
 
             state._fsp--;
@@ -902,20 +1104,20 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
 
 
     // $ANTLR start "rule__KIdentifier__Group__2__Impl"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:359:1: rule__KIdentifier__Group__2__Impl : ( '{' ) ;
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:421:1: rule__KIdentifier__Group__2__Impl : ( '{' ) ;
     public final void rule__KIdentifier__Group__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:363:1: ( ( '{' ) )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:364:1: ( '{' )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:425:1: ( ( '{' ) )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:426:1: ( '{' )
             {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:364:1: ( '{' )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:365:1: '{'
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:426:1: ( '{' )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:427:1: '{'
             {
              before(grammarAccess.getKIdentifierAccess().getLeftCurlyBracketKeyword_2()); 
-            match(input,11,FollowSets000.FOLLOW_11_in_rule__KIdentifier__Group__2__Impl692); 
+            match(input,12,FollowSets000.FOLLOW_12_in_rule__KIdentifier__Group__2__Impl835); 
              after(grammarAccess.getKIdentifierAccess().getLeftCurlyBracketKeyword_2()); 
 
             }
@@ -939,21 +1141,21 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
 
 
     // $ANTLR start "rule__KIdentifier__Group__3"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:378:1: rule__KIdentifier__Group__3 : rule__KIdentifier__Group__3__Impl rule__KIdentifier__Group__4 ;
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:440:1: rule__KIdentifier__Group__3 : rule__KIdentifier__Group__3__Impl rule__KIdentifier__Group__4 ;
     public final void rule__KIdentifier__Group__3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:382:1: ( rule__KIdentifier__Group__3__Impl rule__KIdentifier__Group__4 )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:383:2: rule__KIdentifier__Group__3__Impl rule__KIdentifier__Group__4
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:444:1: ( rule__KIdentifier__Group__3__Impl rule__KIdentifier__Group__4 )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:445:2: rule__KIdentifier__Group__3__Impl rule__KIdentifier__Group__4
             {
-            pushFollow(FollowSets000.FOLLOW_rule__KIdentifier__Group__3__Impl_in_rule__KIdentifier__Group__3723);
+            pushFollow(FollowSets000.FOLLOW_rule__KIdentifier__Group__3__Impl_in_rule__KIdentifier__Group__3866);
             rule__KIdentifier__Group__3__Impl();
 
             state._fsp--;
 
-            pushFollow(FollowSets000.FOLLOW_rule__KIdentifier__Group__4_in_rule__KIdentifier__Group__3726);
+            pushFollow(FollowSets000.FOLLOW_rule__KIdentifier__Group__4_in_rule__KIdentifier__Group__3869);
             rule__KIdentifier__Group__4();
 
             state._fsp--;
@@ -977,31 +1179,31 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
 
 
     // $ANTLR start "rule__KIdentifier__Group__3__Impl"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:390:1: rule__KIdentifier__Group__3__Impl : ( ( rule__KIdentifier__Group_3__0 )? ) ;
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:452:1: rule__KIdentifier__Group__3__Impl : ( ( rule__KIdentifier__Group_3__0 )? ) ;
     public final void rule__KIdentifier__Group__3__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:394:1: ( ( ( rule__KIdentifier__Group_3__0 )? ) )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:395:1: ( ( rule__KIdentifier__Group_3__0 )? )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:456:1: ( ( ( rule__KIdentifier__Group_3__0 )? ) )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:457:1: ( ( rule__KIdentifier__Group_3__0 )? )
             {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:395:1: ( ( rule__KIdentifier__Group_3__0 )? )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:396:1: ( rule__KIdentifier__Group_3__0 )?
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:457:1: ( ( rule__KIdentifier__Group_3__0 )? )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:458:1: ( rule__KIdentifier__Group_3__0 )?
             {
              before(grammarAccess.getKIdentifierAccess().getGroup_3()); 
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:397:1: ( rule__KIdentifier__Group_3__0 )?
-            int alt3=2;
-            int LA3_0 = input.LA(1);
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:459:1: ( rule__KIdentifier__Group_3__0 )?
+            int alt4=2;
+            int LA4_0 = input.LA(1);
 
-            if ( (LA3_0==RULE_ID) ) {
-                alt3=1;
+            if ( (LA4_0==RULE_ID) ) {
+                alt4=1;
             }
-            switch (alt3) {
+            switch (alt4) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:397:2: rule__KIdentifier__Group_3__0
+                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:459:2: rule__KIdentifier__Group_3__0
                     {
-                    pushFollow(FollowSets000.FOLLOW_rule__KIdentifier__Group_3__0_in_rule__KIdentifier__Group__3__Impl753);
+                    pushFollow(FollowSets000.FOLLOW_rule__KIdentifier__Group_3__0_in_rule__KIdentifier__Group__3__Impl896);
                     rule__KIdentifier__Group_3__0();
 
                     state._fsp--;
@@ -1035,16 +1237,16 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
 
 
     // $ANTLR start "rule__KIdentifier__Group__4"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:407:1: rule__KIdentifier__Group__4 : rule__KIdentifier__Group__4__Impl ;
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:469:1: rule__KIdentifier__Group__4 : rule__KIdentifier__Group__4__Impl ;
     public final void rule__KIdentifier__Group__4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:411:1: ( rule__KIdentifier__Group__4__Impl )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:412:2: rule__KIdentifier__Group__4__Impl
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:473:1: ( rule__KIdentifier__Group__4__Impl )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:474:2: rule__KIdentifier__Group__4__Impl
             {
-            pushFollow(FollowSets000.FOLLOW_rule__KIdentifier__Group__4__Impl_in_rule__KIdentifier__Group__4784);
+            pushFollow(FollowSets000.FOLLOW_rule__KIdentifier__Group__4__Impl_in_rule__KIdentifier__Group__4927);
             rule__KIdentifier__Group__4__Impl();
 
             state._fsp--;
@@ -1068,20 +1270,20 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
 
 
     // $ANTLR start "rule__KIdentifier__Group__4__Impl"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:418:1: rule__KIdentifier__Group__4__Impl : ( '}' ) ;
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:480:1: rule__KIdentifier__Group__4__Impl : ( '}' ) ;
     public final void rule__KIdentifier__Group__4__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:422:1: ( ( '}' ) )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:423:1: ( '}' )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:484:1: ( ( '}' ) )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:485:1: ( '}' )
             {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:423:1: ( '}' )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:424:1: '}'
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:485:1: ( '}' )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:486:1: '}'
             {
              before(grammarAccess.getKIdentifierAccess().getRightCurlyBracketKeyword_4()); 
-            match(input,12,FollowSets000.FOLLOW_12_in_rule__KIdentifier__Group__4__Impl812); 
+            match(input,13,FollowSets000.FOLLOW_13_in_rule__KIdentifier__Group__4__Impl955); 
              after(grammarAccess.getKIdentifierAccess().getRightCurlyBracketKeyword_4()); 
 
             }
@@ -1105,21 +1307,21 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
 
 
     // $ANTLR start "rule__KIdentifier__Group_3__0"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:447:1: rule__KIdentifier__Group_3__0 : rule__KIdentifier__Group_3__0__Impl rule__KIdentifier__Group_3__1 ;
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:509:1: rule__KIdentifier__Group_3__0 : rule__KIdentifier__Group_3__0__Impl rule__KIdentifier__Group_3__1 ;
     public final void rule__KIdentifier__Group_3__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:451:1: ( rule__KIdentifier__Group_3__0__Impl rule__KIdentifier__Group_3__1 )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:452:2: rule__KIdentifier__Group_3__0__Impl rule__KIdentifier__Group_3__1
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:513:1: ( rule__KIdentifier__Group_3__0__Impl rule__KIdentifier__Group_3__1 )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:514:2: rule__KIdentifier__Group_3__0__Impl rule__KIdentifier__Group_3__1
             {
-            pushFollow(FollowSets000.FOLLOW_rule__KIdentifier__Group_3__0__Impl_in_rule__KIdentifier__Group_3__0853);
+            pushFollow(FollowSets000.FOLLOW_rule__KIdentifier__Group_3__0__Impl_in_rule__KIdentifier__Group_3__0996);
             rule__KIdentifier__Group_3__0__Impl();
 
             state._fsp--;
 
-            pushFollow(FollowSets000.FOLLOW_rule__KIdentifier__Group_3__1_in_rule__KIdentifier__Group_3__0856);
+            pushFollow(FollowSets000.FOLLOW_rule__KIdentifier__Group_3__1_in_rule__KIdentifier__Group_3__0999);
             rule__KIdentifier__Group_3__1();
 
             state._fsp--;
@@ -1143,23 +1345,23 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
 
 
     // $ANTLR start "rule__KIdentifier__Group_3__0__Impl"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:459:1: rule__KIdentifier__Group_3__0__Impl : ( ( rule__KIdentifier__PersistentEntriesAssignment_3_0 ) ) ;
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:521:1: rule__KIdentifier__Group_3__0__Impl : ( ( rule__KIdentifier__PersistentEntriesAssignment_3_0 ) ) ;
     public final void rule__KIdentifier__Group_3__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:463:1: ( ( ( rule__KIdentifier__PersistentEntriesAssignment_3_0 ) ) )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:464:1: ( ( rule__KIdentifier__PersistentEntriesAssignment_3_0 ) )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:525:1: ( ( ( rule__KIdentifier__PersistentEntriesAssignment_3_0 ) ) )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:526:1: ( ( rule__KIdentifier__PersistentEntriesAssignment_3_0 ) )
             {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:464:1: ( ( rule__KIdentifier__PersistentEntriesAssignment_3_0 ) )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:465:1: ( rule__KIdentifier__PersistentEntriesAssignment_3_0 )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:526:1: ( ( rule__KIdentifier__PersistentEntriesAssignment_3_0 ) )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:527:1: ( rule__KIdentifier__PersistentEntriesAssignment_3_0 )
             {
              before(grammarAccess.getKIdentifierAccess().getPersistentEntriesAssignment_3_0()); 
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:466:1: ( rule__KIdentifier__PersistentEntriesAssignment_3_0 )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:466:2: rule__KIdentifier__PersistentEntriesAssignment_3_0
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:528:1: ( rule__KIdentifier__PersistentEntriesAssignment_3_0 )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:528:2: rule__KIdentifier__PersistentEntriesAssignment_3_0
             {
-            pushFollow(FollowSets000.FOLLOW_rule__KIdentifier__PersistentEntriesAssignment_3_0_in_rule__KIdentifier__Group_3__0__Impl883);
+            pushFollow(FollowSets000.FOLLOW_rule__KIdentifier__PersistentEntriesAssignment_3_0_in_rule__KIdentifier__Group_3__0__Impl1026);
             rule__KIdentifier__PersistentEntriesAssignment_3_0();
 
             state._fsp--;
@@ -1190,16 +1392,16 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
 
 
     // $ANTLR start "rule__KIdentifier__Group_3__1"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:476:1: rule__KIdentifier__Group_3__1 : rule__KIdentifier__Group_3__1__Impl ;
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:538:1: rule__KIdentifier__Group_3__1 : rule__KIdentifier__Group_3__1__Impl ;
     public final void rule__KIdentifier__Group_3__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:480:1: ( rule__KIdentifier__Group_3__1__Impl )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:481:2: rule__KIdentifier__Group_3__1__Impl
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:542:1: ( rule__KIdentifier__Group_3__1__Impl )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:543:2: rule__KIdentifier__Group_3__1__Impl
             {
-            pushFollow(FollowSets000.FOLLOW_rule__KIdentifier__Group_3__1__Impl_in_rule__KIdentifier__Group_3__1913);
+            pushFollow(FollowSets000.FOLLOW_rule__KIdentifier__Group_3__1__Impl_in_rule__KIdentifier__Group_3__11056);
             rule__KIdentifier__Group_3__1__Impl();
 
             state._fsp--;
@@ -1223,35 +1425,35 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
 
 
     // $ANTLR start "rule__KIdentifier__Group_3__1__Impl"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:487:1: rule__KIdentifier__Group_3__1__Impl : ( ( rule__KIdentifier__PersistentEntriesAssignment_3_1 )* ) ;
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:549:1: rule__KIdentifier__Group_3__1__Impl : ( ( rule__KIdentifier__PersistentEntriesAssignment_3_1 )* ) ;
     public final void rule__KIdentifier__Group_3__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:491:1: ( ( ( rule__KIdentifier__PersistentEntriesAssignment_3_1 )* ) )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:492:1: ( ( rule__KIdentifier__PersistentEntriesAssignment_3_1 )* )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:553:1: ( ( ( rule__KIdentifier__PersistentEntriesAssignment_3_1 )* ) )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:554:1: ( ( rule__KIdentifier__PersistentEntriesAssignment_3_1 )* )
             {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:492:1: ( ( rule__KIdentifier__PersistentEntriesAssignment_3_1 )* )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:493:1: ( rule__KIdentifier__PersistentEntriesAssignment_3_1 )*
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:554:1: ( ( rule__KIdentifier__PersistentEntriesAssignment_3_1 )* )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:555:1: ( rule__KIdentifier__PersistentEntriesAssignment_3_1 )*
             {
              before(grammarAccess.getKIdentifierAccess().getPersistentEntriesAssignment_3_1()); 
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:494:1: ( rule__KIdentifier__PersistentEntriesAssignment_3_1 )*
-            loop4:
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:556:1: ( rule__KIdentifier__PersistentEntriesAssignment_3_1 )*
+            loop5:
             do {
-                int alt4=2;
-                int LA4_0 = input.LA(1);
+                int alt5=2;
+                int LA5_0 = input.LA(1);
 
-                if ( (LA4_0==RULE_ID) ) {
-                    alt4=1;
+                if ( (LA5_0==RULE_ID) ) {
+                    alt5=1;
                 }
 
 
-                switch (alt4) {
+                switch (alt5) {
             	case 1 :
-            	    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:494:2: rule__KIdentifier__PersistentEntriesAssignment_3_1
+            	    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:556:2: rule__KIdentifier__PersistentEntriesAssignment_3_1
             	    {
-            	    pushFollow(FollowSets000.FOLLOW_rule__KIdentifier__PersistentEntriesAssignment_3_1_in_rule__KIdentifier__Group_3__1__Impl940);
+            	    pushFollow(FollowSets000.FOLLOW_rule__KIdentifier__PersistentEntriesAssignment_3_1_in_rule__KIdentifier__Group_3__1__Impl1083);
             	    rule__KIdentifier__PersistentEntriesAssignment_3_1();
 
             	    state._fsp--;
@@ -1261,7 +1463,7 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
             	    break;
 
             	default :
-            	    break loop4;
+            	    break loop5;
                 }
             } while (true);
 
@@ -1288,21 +1490,21 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
 
 
     // $ANTLR start "rule__PersistentEntry__Group__0"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:508:1: rule__PersistentEntry__Group__0 : rule__PersistentEntry__Group__0__Impl rule__PersistentEntry__Group__1 ;
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:570:1: rule__PersistentEntry__Group__0 : rule__PersistentEntry__Group__0__Impl rule__PersistentEntry__Group__1 ;
     public final void rule__PersistentEntry__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:512:1: ( rule__PersistentEntry__Group__0__Impl rule__PersistentEntry__Group__1 )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:513:2: rule__PersistentEntry__Group__0__Impl rule__PersistentEntry__Group__1
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:574:1: ( rule__PersistentEntry__Group__0__Impl rule__PersistentEntry__Group__1 )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:575:2: rule__PersistentEntry__Group__0__Impl rule__PersistentEntry__Group__1
             {
-            pushFollow(FollowSets000.FOLLOW_rule__PersistentEntry__Group__0__Impl_in_rule__PersistentEntry__Group__0975);
+            pushFollow(FollowSets000.FOLLOW_rule__PersistentEntry__Group__0__Impl_in_rule__PersistentEntry__Group__01118);
             rule__PersistentEntry__Group__0__Impl();
 
             state._fsp--;
 
-            pushFollow(FollowSets000.FOLLOW_rule__PersistentEntry__Group__1_in_rule__PersistentEntry__Group__0978);
+            pushFollow(FollowSets000.FOLLOW_rule__PersistentEntry__Group__1_in_rule__PersistentEntry__Group__01121);
             rule__PersistentEntry__Group__1();
 
             state._fsp--;
@@ -1326,23 +1528,23 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
 
 
     // $ANTLR start "rule__PersistentEntry__Group__0__Impl"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:520:1: rule__PersistentEntry__Group__0__Impl : ( ( rule__PersistentEntry__KeyAssignment_0 ) ) ;
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:582:1: rule__PersistentEntry__Group__0__Impl : ( ( rule__PersistentEntry__KeyAssignment_0 ) ) ;
     public final void rule__PersistentEntry__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:524:1: ( ( ( rule__PersistentEntry__KeyAssignment_0 ) ) )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:525:1: ( ( rule__PersistentEntry__KeyAssignment_0 ) )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:586:1: ( ( ( rule__PersistentEntry__KeyAssignment_0 ) ) )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:587:1: ( ( rule__PersistentEntry__KeyAssignment_0 ) )
             {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:525:1: ( ( rule__PersistentEntry__KeyAssignment_0 ) )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:526:1: ( rule__PersistentEntry__KeyAssignment_0 )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:587:1: ( ( rule__PersistentEntry__KeyAssignment_0 ) )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:588:1: ( rule__PersistentEntry__KeyAssignment_0 )
             {
              before(grammarAccess.getPersistentEntryAccess().getKeyAssignment_0()); 
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:527:1: ( rule__PersistentEntry__KeyAssignment_0 )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:527:2: rule__PersistentEntry__KeyAssignment_0
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:589:1: ( rule__PersistentEntry__KeyAssignment_0 )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:589:2: rule__PersistentEntry__KeyAssignment_0
             {
-            pushFollow(FollowSets000.FOLLOW_rule__PersistentEntry__KeyAssignment_0_in_rule__PersistentEntry__Group__0__Impl1005);
+            pushFollow(FollowSets000.FOLLOW_rule__PersistentEntry__KeyAssignment_0_in_rule__PersistentEntry__Group__0__Impl1148);
             rule__PersistentEntry__KeyAssignment_0();
 
             state._fsp--;
@@ -1373,21 +1575,21 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
 
 
     // $ANTLR start "rule__PersistentEntry__Group__1"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:537:1: rule__PersistentEntry__Group__1 : rule__PersistentEntry__Group__1__Impl rule__PersistentEntry__Group__2 ;
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:599:1: rule__PersistentEntry__Group__1 : rule__PersistentEntry__Group__1__Impl rule__PersistentEntry__Group__2 ;
     public final void rule__PersistentEntry__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:541:1: ( rule__PersistentEntry__Group__1__Impl rule__PersistentEntry__Group__2 )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:542:2: rule__PersistentEntry__Group__1__Impl rule__PersistentEntry__Group__2
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:603:1: ( rule__PersistentEntry__Group__1__Impl rule__PersistentEntry__Group__2 )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:604:2: rule__PersistentEntry__Group__1__Impl rule__PersistentEntry__Group__2
             {
-            pushFollow(FollowSets000.FOLLOW_rule__PersistentEntry__Group__1__Impl_in_rule__PersistentEntry__Group__11035);
+            pushFollow(FollowSets000.FOLLOW_rule__PersistentEntry__Group__1__Impl_in_rule__PersistentEntry__Group__11178);
             rule__PersistentEntry__Group__1__Impl();
 
             state._fsp--;
 
-            pushFollow(FollowSets000.FOLLOW_rule__PersistentEntry__Group__2_in_rule__PersistentEntry__Group__11038);
+            pushFollow(FollowSets000.FOLLOW_rule__PersistentEntry__Group__2_in_rule__PersistentEntry__Group__11181);
             rule__PersistentEntry__Group__2();
 
             state._fsp--;
@@ -1411,20 +1613,20 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
 
 
     // $ANTLR start "rule__PersistentEntry__Group__1__Impl"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:549:1: rule__PersistentEntry__Group__1__Impl : ( ':' ) ;
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:611:1: rule__PersistentEntry__Group__1__Impl : ( ':' ) ;
     public final void rule__PersistentEntry__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:553:1: ( ( ':' ) )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:554:1: ( ':' )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:615:1: ( ( ':' ) )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:616:1: ( ':' )
             {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:554:1: ( ':' )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:555:1: ':'
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:616:1: ( ':' )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:617:1: ':'
             {
              before(grammarAccess.getPersistentEntryAccess().getColonKeyword_1()); 
-            match(input,13,FollowSets000.FOLLOW_13_in_rule__PersistentEntry__Group__1__Impl1066); 
+            match(input,14,FollowSets000.FOLLOW_14_in_rule__PersistentEntry__Group__1__Impl1209); 
              after(grammarAccess.getPersistentEntryAccess().getColonKeyword_1()); 
 
             }
@@ -1448,16 +1650,16 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
 
 
     // $ANTLR start "rule__PersistentEntry__Group__2"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:568:1: rule__PersistentEntry__Group__2 : rule__PersistentEntry__Group__2__Impl ;
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:630:1: rule__PersistentEntry__Group__2 : rule__PersistentEntry__Group__2__Impl ;
     public final void rule__PersistentEntry__Group__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:572:1: ( rule__PersistentEntry__Group__2__Impl )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:573:2: rule__PersistentEntry__Group__2__Impl
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:634:1: ( rule__PersistentEntry__Group__2__Impl )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:635:2: rule__PersistentEntry__Group__2__Impl
             {
-            pushFollow(FollowSets000.FOLLOW_rule__PersistentEntry__Group__2__Impl_in_rule__PersistentEntry__Group__21097);
+            pushFollow(FollowSets000.FOLLOW_rule__PersistentEntry__Group__2__Impl_in_rule__PersistentEntry__Group__21240);
             rule__PersistentEntry__Group__2__Impl();
 
             state._fsp--;
@@ -1481,23 +1683,23 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
 
 
     // $ANTLR start "rule__PersistentEntry__Group__2__Impl"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:579:1: rule__PersistentEntry__Group__2__Impl : ( ( rule__PersistentEntry__ValueAssignment_2 ) ) ;
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:641:1: rule__PersistentEntry__Group__2__Impl : ( ( rule__PersistentEntry__ValueAssignment_2 ) ) ;
     public final void rule__PersistentEntry__Group__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:583:1: ( ( ( rule__PersistentEntry__ValueAssignment_2 ) ) )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:584:1: ( ( rule__PersistentEntry__ValueAssignment_2 ) )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:645:1: ( ( ( rule__PersistentEntry__ValueAssignment_2 ) ) )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:646:1: ( ( rule__PersistentEntry__ValueAssignment_2 ) )
             {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:584:1: ( ( rule__PersistentEntry__ValueAssignment_2 ) )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:585:1: ( rule__PersistentEntry__ValueAssignment_2 )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:646:1: ( ( rule__PersistentEntry__ValueAssignment_2 ) )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:647:1: ( rule__PersistentEntry__ValueAssignment_2 )
             {
              before(grammarAccess.getPersistentEntryAccess().getValueAssignment_2()); 
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:586:1: ( rule__PersistentEntry__ValueAssignment_2 )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:586:2: rule__PersistentEntry__ValueAssignment_2
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:648:1: ( rule__PersistentEntry__ValueAssignment_2 )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:648:2: rule__PersistentEntry__ValueAssignment_2
             {
-            pushFollow(FollowSets000.FOLLOW_rule__PersistentEntry__ValueAssignment_2_in_rule__PersistentEntry__Group__2__Impl1124);
+            pushFollow(FollowSets000.FOLLOW_rule__PersistentEntry__ValueAssignment_2_in_rule__PersistentEntry__Group__2__Impl1267);
             rule__PersistentEntry__ValueAssignment_2();
 
             state._fsp--;
@@ -1528,21 +1730,21 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
 
 
     // $ANTLR start "rule__QualifiedID__Group__0"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:602:1: rule__QualifiedID__Group__0 : rule__QualifiedID__Group__0__Impl rule__QualifiedID__Group__1 ;
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:664:1: rule__QualifiedID__Group__0 : rule__QualifiedID__Group__0__Impl rule__QualifiedID__Group__1 ;
     public final void rule__QualifiedID__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:606:1: ( rule__QualifiedID__Group__0__Impl rule__QualifiedID__Group__1 )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:607:2: rule__QualifiedID__Group__0__Impl rule__QualifiedID__Group__1
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:668:1: ( rule__QualifiedID__Group__0__Impl rule__QualifiedID__Group__1 )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:669:2: rule__QualifiedID__Group__0__Impl rule__QualifiedID__Group__1
             {
-            pushFollow(FollowSets000.FOLLOW_rule__QualifiedID__Group__0__Impl_in_rule__QualifiedID__Group__01160);
+            pushFollow(FollowSets000.FOLLOW_rule__QualifiedID__Group__0__Impl_in_rule__QualifiedID__Group__01303);
             rule__QualifiedID__Group__0__Impl();
 
             state._fsp--;
 
-            pushFollow(FollowSets000.FOLLOW_rule__QualifiedID__Group__1_in_rule__QualifiedID__Group__01163);
+            pushFollow(FollowSets000.FOLLOW_rule__QualifiedID__Group__1_in_rule__QualifiedID__Group__01306);
             rule__QualifiedID__Group__1();
 
             state._fsp--;
@@ -1566,20 +1768,20 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
 
 
     // $ANTLR start "rule__QualifiedID__Group__0__Impl"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:614:1: rule__QualifiedID__Group__0__Impl : ( RULE_ID ) ;
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:676:1: rule__QualifiedID__Group__0__Impl : ( RULE_ID ) ;
     public final void rule__QualifiedID__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:618:1: ( ( RULE_ID ) )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:619:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:680:1: ( ( RULE_ID ) )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:681:1: ( RULE_ID )
             {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:619:1: ( RULE_ID )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:620:1: RULE_ID
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:681:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:682:1: RULE_ID
             {
              before(grammarAccess.getQualifiedIDAccess().getIDTerminalRuleCall_0()); 
-            match(input,RULE_ID,FollowSets000.FOLLOW_RULE_ID_in_rule__QualifiedID__Group__0__Impl1190); 
+            match(input,RULE_ID,FollowSets000.FOLLOW_RULE_ID_in_rule__QualifiedID__Group__0__Impl1333); 
              after(grammarAccess.getQualifiedIDAccess().getIDTerminalRuleCall_0()); 
 
             }
@@ -1603,16 +1805,16 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
 
 
     // $ANTLR start "rule__QualifiedID__Group__1"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:631:1: rule__QualifiedID__Group__1 : rule__QualifiedID__Group__1__Impl ;
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:693:1: rule__QualifiedID__Group__1 : rule__QualifiedID__Group__1__Impl ;
     public final void rule__QualifiedID__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:635:1: ( rule__QualifiedID__Group__1__Impl )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:636:2: rule__QualifiedID__Group__1__Impl
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:697:1: ( rule__QualifiedID__Group__1__Impl )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:698:2: rule__QualifiedID__Group__1__Impl
             {
-            pushFollow(FollowSets000.FOLLOW_rule__QualifiedID__Group__1__Impl_in_rule__QualifiedID__Group__11219);
+            pushFollow(FollowSets000.FOLLOW_rule__QualifiedID__Group__1__Impl_in_rule__QualifiedID__Group__11362);
             rule__QualifiedID__Group__1__Impl();
 
             state._fsp--;
@@ -1636,35 +1838,35 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
 
 
     // $ANTLR start "rule__QualifiedID__Group__1__Impl"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:642:1: rule__QualifiedID__Group__1__Impl : ( ( rule__QualifiedID__Group_1__0 )* ) ;
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:704:1: rule__QualifiedID__Group__1__Impl : ( ( rule__QualifiedID__Group_1__0 )* ) ;
     public final void rule__QualifiedID__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:646:1: ( ( ( rule__QualifiedID__Group_1__0 )* ) )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:647:1: ( ( rule__QualifiedID__Group_1__0 )* )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:708:1: ( ( ( rule__QualifiedID__Group_1__0 )* ) )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:709:1: ( ( rule__QualifiedID__Group_1__0 )* )
             {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:647:1: ( ( rule__QualifiedID__Group_1__0 )* )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:648:1: ( rule__QualifiedID__Group_1__0 )*
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:709:1: ( ( rule__QualifiedID__Group_1__0 )* )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:710:1: ( rule__QualifiedID__Group_1__0 )*
             {
              before(grammarAccess.getQualifiedIDAccess().getGroup_1()); 
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:649:1: ( rule__QualifiedID__Group_1__0 )*
-            loop5:
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:711:1: ( rule__QualifiedID__Group_1__0 )*
+            loop6:
             do {
-                int alt5=2;
-                int LA5_0 = input.LA(1);
+                int alt6=2;
+                int LA6_0 = input.LA(1);
 
-                if ( (LA5_0==14) ) {
-                    alt5=1;
+                if ( (LA6_0==15) ) {
+                    alt6=1;
                 }
 
 
-                switch (alt5) {
+                switch (alt6) {
             	case 1 :
-            	    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:649:2: rule__QualifiedID__Group_1__0
+            	    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:711:2: rule__QualifiedID__Group_1__0
             	    {
-            	    pushFollow(FollowSets000.FOLLOW_rule__QualifiedID__Group_1__0_in_rule__QualifiedID__Group__1__Impl1246);
+            	    pushFollow(FollowSets000.FOLLOW_rule__QualifiedID__Group_1__0_in_rule__QualifiedID__Group__1__Impl1389);
             	    rule__QualifiedID__Group_1__0();
 
             	    state._fsp--;
@@ -1674,7 +1876,7 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
             	    break;
 
             	default :
-            	    break loop5;
+            	    break loop6;
                 }
             } while (true);
 
@@ -1701,21 +1903,21 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
 
 
     // $ANTLR start "rule__QualifiedID__Group_1__0"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:663:1: rule__QualifiedID__Group_1__0 : rule__QualifiedID__Group_1__0__Impl rule__QualifiedID__Group_1__1 ;
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:725:1: rule__QualifiedID__Group_1__0 : rule__QualifiedID__Group_1__0__Impl rule__QualifiedID__Group_1__1 ;
     public final void rule__QualifiedID__Group_1__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:667:1: ( rule__QualifiedID__Group_1__0__Impl rule__QualifiedID__Group_1__1 )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:668:2: rule__QualifiedID__Group_1__0__Impl rule__QualifiedID__Group_1__1
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:729:1: ( rule__QualifiedID__Group_1__0__Impl rule__QualifiedID__Group_1__1 )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:730:2: rule__QualifiedID__Group_1__0__Impl rule__QualifiedID__Group_1__1
             {
-            pushFollow(FollowSets000.FOLLOW_rule__QualifiedID__Group_1__0__Impl_in_rule__QualifiedID__Group_1__01281);
+            pushFollow(FollowSets000.FOLLOW_rule__QualifiedID__Group_1__0__Impl_in_rule__QualifiedID__Group_1__01424);
             rule__QualifiedID__Group_1__0__Impl();
 
             state._fsp--;
 
-            pushFollow(FollowSets000.FOLLOW_rule__QualifiedID__Group_1__1_in_rule__QualifiedID__Group_1__01284);
+            pushFollow(FollowSets000.FOLLOW_rule__QualifiedID__Group_1__1_in_rule__QualifiedID__Group_1__01427);
             rule__QualifiedID__Group_1__1();
 
             state._fsp--;
@@ -1739,20 +1941,20 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
 
 
     // $ANTLR start "rule__QualifiedID__Group_1__0__Impl"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:675:1: rule__QualifiedID__Group_1__0__Impl : ( '.' ) ;
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:737:1: rule__QualifiedID__Group_1__0__Impl : ( '.' ) ;
     public final void rule__QualifiedID__Group_1__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:679:1: ( ( '.' ) )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:680:1: ( '.' )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:741:1: ( ( '.' ) )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:742:1: ( '.' )
             {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:680:1: ( '.' )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:681:1: '.'
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:742:1: ( '.' )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:743:1: '.'
             {
              before(grammarAccess.getQualifiedIDAccess().getFullStopKeyword_1_0()); 
-            match(input,14,FollowSets000.FOLLOW_14_in_rule__QualifiedID__Group_1__0__Impl1312); 
+            match(input,15,FollowSets000.FOLLOW_15_in_rule__QualifiedID__Group_1__0__Impl1455); 
              after(grammarAccess.getQualifiedIDAccess().getFullStopKeyword_1_0()); 
 
             }
@@ -1776,16 +1978,16 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
 
 
     // $ANTLR start "rule__QualifiedID__Group_1__1"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:694:1: rule__QualifiedID__Group_1__1 : rule__QualifiedID__Group_1__1__Impl ;
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:756:1: rule__QualifiedID__Group_1__1 : rule__QualifiedID__Group_1__1__Impl ;
     public final void rule__QualifiedID__Group_1__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:698:1: ( rule__QualifiedID__Group_1__1__Impl )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:699:2: rule__QualifiedID__Group_1__1__Impl
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:760:1: ( rule__QualifiedID__Group_1__1__Impl )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:761:2: rule__QualifiedID__Group_1__1__Impl
             {
-            pushFollow(FollowSets000.FOLLOW_rule__QualifiedID__Group_1__1__Impl_in_rule__QualifiedID__Group_1__11343);
+            pushFollow(FollowSets000.FOLLOW_rule__QualifiedID__Group_1__1__Impl_in_rule__QualifiedID__Group_1__11486);
             rule__QualifiedID__Group_1__1__Impl();
 
             state._fsp--;
@@ -1809,20 +2011,20 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
 
 
     // $ANTLR start "rule__QualifiedID__Group_1__1__Impl"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:705:1: rule__QualifiedID__Group_1__1__Impl : ( RULE_ID ) ;
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:767:1: rule__QualifiedID__Group_1__1__Impl : ( RULE_ID ) ;
     public final void rule__QualifiedID__Group_1__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:709:1: ( ( RULE_ID ) )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:710:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:771:1: ( ( RULE_ID ) )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:772:1: ( RULE_ID )
             {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:710:1: ( RULE_ID )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:711:1: RULE_ID
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:772:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:773:1: RULE_ID
             {
              before(grammarAccess.getQualifiedIDAccess().getIDTerminalRuleCall_1_1()); 
-            match(input,RULE_ID,FollowSets000.FOLLOW_RULE_ID_in_rule__QualifiedID__Group_1__1__Impl1370); 
+            match(input,RULE_ID,FollowSets000.FOLLOW_RULE_ID_in_rule__QualifiedID__Group_1__1__Impl1513); 
              after(grammarAccess.getQualifiedIDAccess().getIDTerminalRuleCall_1_1()); 
 
             }
@@ -1846,20 +2048,20 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
 
 
     // $ANTLR start "rule__KGraphElement__DataAssignment_1"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:727:1: rule__KGraphElement__DataAssignment_1 : ( ruleKIdentifier ) ;
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:789:1: rule__KGraphElement__DataAssignment_1 : ( ruleKIdentifier ) ;
     public final void rule__KGraphElement__DataAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:731:1: ( ( ruleKIdentifier ) )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:732:1: ( ruleKIdentifier )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:793:1: ( ( ruleKIdentifier ) )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:794:1: ( ruleKIdentifier )
             {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:732:1: ( ruleKIdentifier )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:733:1: ruleKIdentifier
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:794:1: ( ruleKIdentifier )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:795:1: ruleKIdentifier
             {
              before(grammarAccess.getKGraphElementAccess().getDataKIdentifierParserRuleCall_1_0()); 
-            pushFollow(FollowSets000.FOLLOW_ruleKIdentifier_in_rule__KGraphElement__DataAssignment_11408);
+            pushFollow(FollowSets000.FOLLOW_ruleKIdentifier_in_rule__KGraphElement__DataAssignment_11551);
             ruleKIdentifier();
 
             state._fsp--;
@@ -1887,25 +2089,21 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
 
 
     // $ANTLR start "rule__KIdentifier__IdAssignment_1"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:742:1: rule__KIdentifier__IdAssignment_1 : ( ruleEString ) ;
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:804:1: rule__KIdentifier__IdAssignment_1 : ( RULE_ID ) ;
     public final void rule__KIdentifier__IdAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:746:1: ( ( ruleEString ) )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:747:1: ( ruleEString )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:808:1: ( ( RULE_ID ) )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:809:1: ( RULE_ID )
             {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:747:1: ( ruleEString )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:748:1: ruleEString
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:809:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:810:1: RULE_ID
             {
-             before(grammarAccess.getKIdentifierAccess().getIdEStringParserRuleCall_1_0()); 
-            pushFollow(FollowSets000.FOLLOW_ruleEString_in_rule__KIdentifier__IdAssignment_11439);
-            ruleEString();
-
-            state._fsp--;
-
-             after(grammarAccess.getKIdentifierAccess().getIdEStringParserRuleCall_1_0()); 
+             before(grammarAccess.getKIdentifierAccess().getIdIDTerminalRuleCall_1_0()); 
+            match(input,RULE_ID,FollowSets000.FOLLOW_RULE_ID_in_rule__KIdentifier__IdAssignment_11582); 
+             after(grammarAccess.getKIdentifierAccess().getIdIDTerminalRuleCall_1_0()); 
 
             }
 
@@ -1928,20 +2126,20 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
 
 
     // $ANTLR start "rule__KIdentifier__PersistentEntriesAssignment_3_0"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:757:1: rule__KIdentifier__PersistentEntriesAssignment_3_0 : ( rulePersistentEntry ) ;
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:819:1: rule__KIdentifier__PersistentEntriesAssignment_3_0 : ( rulePersistentEntry ) ;
     public final void rule__KIdentifier__PersistentEntriesAssignment_3_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:761:1: ( ( rulePersistentEntry ) )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:762:1: ( rulePersistentEntry )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:823:1: ( ( rulePersistentEntry ) )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:824:1: ( rulePersistentEntry )
             {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:762:1: ( rulePersistentEntry )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:763:1: rulePersistentEntry
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:824:1: ( rulePersistentEntry )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:825:1: rulePersistentEntry
             {
              before(grammarAccess.getKIdentifierAccess().getPersistentEntriesPersistentEntryParserRuleCall_3_0_0()); 
-            pushFollow(FollowSets000.FOLLOW_rulePersistentEntry_in_rule__KIdentifier__PersistentEntriesAssignment_3_01470);
+            pushFollow(FollowSets000.FOLLOW_rulePersistentEntry_in_rule__KIdentifier__PersistentEntriesAssignment_3_01613);
             rulePersistentEntry();
 
             state._fsp--;
@@ -1969,20 +2167,20 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
 
 
     // $ANTLR start "rule__KIdentifier__PersistentEntriesAssignment_3_1"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:772:1: rule__KIdentifier__PersistentEntriesAssignment_3_1 : ( rulePersistentEntry ) ;
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:834:1: rule__KIdentifier__PersistentEntriesAssignment_3_1 : ( rulePersistentEntry ) ;
     public final void rule__KIdentifier__PersistentEntriesAssignment_3_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:776:1: ( ( rulePersistentEntry ) )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:777:1: ( rulePersistentEntry )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:838:1: ( ( rulePersistentEntry ) )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:839:1: ( rulePersistentEntry )
             {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:777:1: ( rulePersistentEntry )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:778:1: rulePersistentEntry
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:839:1: ( rulePersistentEntry )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:840:1: rulePersistentEntry
             {
              before(grammarAccess.getKIdentifierAccess().getPersistentEntriesPersistentEntryParserRuleCall_3_1_0()); 
-            pushFollow(FollowSets000.FOLLOW_rulePersistentEntry_in_rule__KIdentifier__PersistentEntriesAssignment_3_11501);
+            pushFollow(FollowSets000.FOLLOW_rulePersistentEntry_in_rule__KIdentifier__PersistentEntriesAssignment_3_11644);
             rulePersistentEntry();
 
             state._fsp--;
@@ -2010,20 +2208,20 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
 
 
     // $ANTLR start "rule__PersistentEntry__KeyAssignment_0"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:787:1: rule__PersistentEntry__KeyAssignment_0 : ( ruleQualifiedID ) ;
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:849:1: rule__PersistentEntry__KeyAssignment_0 : ( ruleQualifiedID ) ;
     public final void rule__PersistentEntry__KeyAssignment_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:791:1: ( ( ruleQualifiedID ) )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:792:1: ( ruleQualifiedID )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:853:1: ( ( ruleQualifiedID ) )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:854:1: ( ruleQualifiedID )
             {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:792:1: ( ruleQualifiedID )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:793:1: ruleQualifiedID
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:854:1: ( ruleQualifiedID )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:855:1: ruleQualifiedID
             {
              before(grammarAccess.getPersistentEntryAccess().getKeyQualifiedIDParserRuleCall_0_0()); 
-            pushFollow(FollowSets000.FOLLOW_ruleQualifiedID_in_rule__PersistentEntry__KeyAssignment_01532);
+            pushFollow(FollowSets000.FOLLOW_ruleQualifiedID_in_rule__PersistentEntry__KeyAssignment_01675);
             ruleQualifiedID();
 
             state._fsp--;
@@ -2051,25 +2249,25 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
 
 
     // $ANTLR start "rule__PersistentEntry__ValueAssignment_2"
-    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:802:1: rule__PersistentEntry__ValueAssignment_2 : ( ruleQualifiedID ) ;
+    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:864:1: rule__PersistentEntry__ValueAssignment_2 : ( rulePropertyValue ) ;
     public final void rule__PersistentEntry__ValueAssignment_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:806:1: ( ( ruleQualifiedID ) )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:807:1: ( ruleQualifiedID )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:868:1: ( ( rulePropertyValue ) )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:869:1: ( rulePropertyValue )
             {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:807:1: ( ruleQualifiedID )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:808:1: ruleQualifiedID
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:869:1: ( rulePropertyValue )
+            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:870:1: rulePropertyValue
             {
-             before(grammarAccess.getPersistentEntryAccess().getValueQualifiedIDParserRuleCall_2_0()); 
-            pushFollow(FollowSets000.FOLLOW_ruleQualifiedID_in_rule__PersistentEntry__ValueAssignment_21563);
-            ruleQualifiedID();
+             before(grammarAccess.getPersistentEntryAccess().getValuePropertyValueParserRuleCall_2_0()); 
+            pushFollow(FollowSets000.FOLLOW_rulePropertyValue_in_rule__PersistentEntry__ValueAssignment_21706);
+            rulePropertyValue();
 
             state._fsp--;
 
-             after(grammarAccess.getPersistentEntryAccess().getValueQualifiedIDParserRuleCall_2_0()); 
+             after(grammarAccess.getPersistentEntryAccess().getValuePropertyValueParserRuleCall_2_0()); 
 
             }
 
@@ -2106,60 +2304,67 @@ public class InternalLayoutConfigParser extends AbstractInternalContentAssistPar
         public static final BitSet FOLLOW_rulePersistentEntry_in_entryRulePersistentEntry181 = new BitSet(new long[]{0x0000000000000000L});
         public static final BitSet FOLLOW_EOF_in_entryRulePersistentEntry188 = new BitSet(new long[]{0x0000000000000002L});
         public static final BitSet FOLLOW_rule__PersistentEntry__Group__0_in_rulePersistentEntry214 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_ruleEString_in_entryRuleEString241 = new BitSet(new long[]{0x0000000000000000L});
-        public static final BitSet FOLLOW_EOF_in_entryRuleEString248 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_rule__EString__Alternatives_in_ruleEString274 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_rulePropertyValue_in_entryRulePropertyValue241 = new BitSet(new long[]{0x0000000000000000L});
+        public static final BitSet FOLLOW_EOF_in_entryRulePropertyValue248 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_rule__PropertyValue__Alternatives_in_rulePropertyValue274 = new BitSet(new long[]{0x0000000000000002L});
         public static final BitSet FOLLOW_ruleQualifiedID_in_entryRuleQualifiedID301 = new BitSet(new long[]{0x0000000000000000L});
         public static final BitSet FOLLOW_EOF_in_entryRuleQualifiedID308 = new BitSet(new long[]{0x0000000000000002L});
         public static final BitSet FOLLOW_rule__QualifiedID__Group__0_in_ruleQualifiedID334 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_RULE_STRING_in_rule__EString__Alternatives370 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_RULE_ID_in_rule__EString__Alternatives387 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_rule__KGraphElement__Group__0__Impl_in_rule__KGraphElement__Group__0417 = new BitSet(new long[]{0x0000000000000030L});
-        public static final BitSet FOLLOW_rule__KGraphElement__Group__1_in_rule__KGraphElement__Group__0420 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_rule__KGraphElement__Group__1__Impl_in_rule__KGraphElement__Group__1478 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_rule__KGraphElement__DataAssignment_1_in_rule__KGraphElement__Group__1__Impl505 = new BitSet(new long[]{0x0000000000000032L});
-        public static final BitSet FOLLOW_rule__KIdentifier__Group__0__Impl_in_rule__KIdentifier__Group__0540 = new BitSet(new long[]{0x0000000000000030L});
-        public static final BitSet FOLLOW_rule__KIdentifier__Group__1_in_rule__KIdentifier__Group__0543 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_rule__KIdentifier__Group__1__Impl_in_rule__KIdentifier__Group__1601 = new BitSet(new long[]{0x0000000000000800L});
-        public static final BitSet FOLLOW_rule__KIdentifier__Group__2_in_rule__KIdentifier__Group__1604 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_rule__KIdentifier__IdAssignment_1_in_rule__KIdentifier__Group__1__Impl631 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_rule__KIdentifier__Group__2__Impl_in_rule__KIdentifier__Group__2661 = new BitSet(new long[]{0x0000000000001020L});
-        public static final BitSet FOLLOW_rule__KIdentifier__Group__3_in_rule__KIdentifier__Group__2664 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_11_in_rule__KIdentifier__Group__2__Impl692 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_rule__KIdentifier__Group__3__Impl_in_rule__KIdentifier__Group__3723 = new BitSet(new long[]{0x0000000000001020L});
-        public static final BitSet FOLLOW_rule__KIdentifier__Group__4_in_rule__KIdentifier__Group__3726 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_rule__KIdentifier__Group_3__0_in_rule__KIdentifier__Group__3__Impl753 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_rule__KIdentifier__Group__4__Impl_in_rule__KIdentifier__Group__4784 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_12_in_rule__KIdentifier__Group__4__Impl812 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_rule__KIdentifier__Group_3__0__Impl_in_rule__KIdentifier__Group_3__0853 = new BitSet(new long[]{0x0000000000000020L});
-        public static final BitSet FOLLOW_rule__KIdentifier__Group_3__1_in_rule__KIdentifier__Group_3__0856 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_rule__KIdentifier__PersistentEntriesAssignment_3_0_in_rule__KIdentifier__Group_3__0__Impl883 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_rule__KIdentifier__Group_3__1__Impl_in_rule__KIdentifier__Group_3__1913 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_rule__KIdentifier__PersistentEntriesAssignment_3_1_in_rule__KIdentifier__Group_3__1__Impl940 = new BitSet(new long[]{0x0000000000000022L});
-        public static final BitSet FOLLOW_rule__PersistentEntry__Group__0__Impl_in_rule__PersistentEntry__Group__0975 = new BitSet(new long[]{0x0000000000002000L});
-        public static final BitSet FOLLOW_rule__PersistentEntry__Group__1_in_rule__PersistentEntry__Group__0978 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_rule__PersistentEntry__KeyAssignment_0_in_rule__PersistentEntry__Group__0__Impl1005 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_rule__PersistentEntry__Group__1__Impl_in_rule__PersistentEntry__Group__11035 = new BitSet(new long[]{0x0000000000000020L});
-        public static final BitSet FOLLOW_rule__PersistentEntry__Group__2_in_rule__PersistentEntry__Group__11038 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_13_in_rule__PersistentEntry__Group__1__Impl1066 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_rule__PersistentEntry__Group__2__Impl_in_rule__PersistentEntry__Group__21097 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_rule__PersistentEntry__ValueAssignment_2_in_rule__PersistentEntry__Group__2__Impl1124 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_rule__QualifiedID__Group__0__Impl_in_rule__QualifiedID__Group__01160 = new BitSet(new long[]{0x0000000000004000L});
-        public static final BitSet FOLLOW_rule__QualifiedID__Group__1_in_rule__QualifiedID__Group__01163 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_RULE_ID_in_rule__QualifiedID__Group__0__Impl1190 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_rule__QualifiedID__Group__1__Impl_in_rule__QualifiedID__Group__11219 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_rule__QualifiedID__Group_1__0_in_rule__QualifiedID__Group__1__Impl1246 = new BitSet(new long[]{0x0000000000004002L});
-        public static final BitSet FOLLOW_rule__QualifiedID__Group_1__0__Impl_in_rule__QualifiedID__Group_1__01281 = new BitSet(new long[]{0x0000000000000020L});
-        public static final BitSet FOLLOW_rule__QualifiedID__Group_1__1_in_rule__QualifiedID__Group_1__01284 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_14_in_rule__QualifiedID__Group_1__0__Impl1312 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_rule__QualifiedID__Group_1__1__Impl_in_rule__QualifiedID__Group_1__11343 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_RULE_ID_in_rule__QualifiedID__Group_1__1__Impl1370 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_ruleKIdentifier_in_rule__KGraphElement__DataAssignment_11408 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_ruleEString_in_rule__KIdentifier__IdAssignment_11439 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_rulePersistentEntry_in_rule__KIdentifier__PersistentEntriesAssignment_3_01470 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_rulePersistentEntry_in_rule__KIdentifier__PersistentEntriesAssignment_3_11501 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_ruleQualifiedID_in_rule__PersistentEntry__KeyAssignment_01532 = new BitSet(new long[]{0x0000000000000002L});
-        public static final BitSet FOLLOW_ruleQualifiedID_in_rule__PersistentEntry__ValueAssignment_21563 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_ruleFloat_in_entryRuleFloat361 = new BitSet(new long[]{0x0000000000000000L});
+        public static final BitSet FOLLOW_EOF_in_entryRuleFloat368 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_rule__Float__Alternatives_in_ruleFloat394 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_RULE_BOOLEAN_in_rule__PropertyValue__Alternatives430 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_RULE_STRING_in_rule__PropertyValue__Alternatives447 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_ruleFloat_in_rule__PropertyValue__Alternatives464 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_ruleQualifiedID_in_rule__PropertyValue__Alternatives481 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_RULE_TFLOAT_in_rule__Float__Alternatives513 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_RULE_NATURAL_in_rule__Float__Alternatives530 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_rule__KGraphElement__Group__0__Impl_in_rule__KGraphElement__Group__0560 = new BitSet(new long[]{0x0000000000000100L});
+        public static final BitSet FOLLOW_rule__KGraphElement__Group__1_in_rule__KGraphElement__Group__0563 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_rule__KGraphElement__Group__1__Impl_in_rule__KGraphElement__Group__1621 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_rule__KGraphElement__DataAssignment_1_in_rule__KGraphElement__Group__1__Impl648 = new BitSet(new long[]{0x0000000000000102L});
+        public static final BitSet FOLLOW_rule__KIdentifier__Group__0__Impl_in_rule__KIdentifier__Group__0683 = new BitSet(new long[]{0x0000000000000100L});
+        public static final BitSet FOLLOW_rule__KIdentifier__Group__1_in_rule__KIdentifier__Group__0686 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_rule__KIdentifier__Group__1__Impl_in_rule__KIdentifier__Group__1744 = new BitSet(new long[]{0x0000000000001000L});
+        public static final BitSet FOLLOW_rule__KIdentifier__Group__2_in_rule__KIdentifier__Group__1747 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_rule__KIdentifier__IdAssignment_1_in_rule__KIdentifier__Group__1__Impl774 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_rule__KIdentifier__Group__2__Impl_in_rule__KIdentifier__Group__2804 = new BitSet(new long[]{0x0000000000002100L});
+        public static final BitSet FOLLOW_rule__KIdentifier__Group__3_in_rule__KIdentifier__Group__2807 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_12_in_rule__KIdentifier__Group__2__Impl835 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_rule__KIdentifier__Group__3__Impl_in_rule__KIdentifier__Group__3866 = new BitSet(new long[]{0x0000000000002100L});
+        public static final BitSet FOLLOW_rule__KIdentifier__Group__4_in_rule__KIdentifier__Group__3869 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_rule__KIdentifier__Group_3__0_in_rule__KIdentifier__Group__3__Impl896 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_rule__KIdentifier__Group__4__Impl_in_rule__KIdentifier__Group__4927 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_13_in_rule__KIdentifier__Group__4__Impl955 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_rule__KIdentifier__Group_3__0__Impl_in_rule__KIdentifier__Group_3__0996 = new BitSet(new long[]{0x0000000000000100L});
+        public static final BitSet FOLLOW_rule__KIdentifier__Group_3__1_in_rule__KIdentifier__Group_3__0999 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_rule__KIdentifier__PersistentEntriesAssignment_3_0_in_rule__KIdentifier__Group_3__0__Impl1026 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_rule__KIdentifier__Group_3__1__Impl_in_rule__KIdentifier__Group_3__11056 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_rule__KIdentifier__PersistentEntriesAssignment_3_1_in_rule__KIdentifier__Group_3__1__Impl1083 = new BitSet(new long[]{0x0000000000000102L});
+        public static final BitSet FOLLOW_rule__PersistentEntry__Group__0__Impl_in_rule__PersistentEntry__Group__01118 = new BitSet(new long[]{0x0000000000004000L});
+        public static final BitSet FOLLOW_rule__PersistentEntry__Group__1_in_rule__PersistentEntry__Group__01121 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_rule__PersistentEntry__KeyAssignment_0_in_rule__PersistentEntry__Group__0__Impl1148 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_rule__PersistentEntry__Group__1__Impl_in_rule__PersistentEntry__Group__11178 = new BitSet(new long[]{0x00000000000001F0L});
+        public static final BitSet FOLLOW_rule__PersistentEntry__Group__2_in_rule__PersistentEntry__Group__11181 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_14_in_rule__PersistentEntry__Group__1__Impl1209 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_rule__PersistentEntry__Group__2__Impl_in_rule__PersistentEntry__Group__21240 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_rule__PersistentEntry__ValueAssignment_2_in_rule__PersistentEntry__Group__2__Impl1267 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_rule__QualifiedID__Group__0__Impl_in_rule__QualifiedID__Group__01303 = new BitSet(new long[]{0x0000000000008000L});
+        public static final BitSet FOLLOW_rule__QualifiedID__Group__1_in_rule__QualifiedID__Group__01306 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_RULE_ID_in_rule__QualifiedID__Group__0__Impl1333 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_rule__QualifiedID__Group__1__Impl_in_rule__QualifiedID__Group__11362 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_rule__QualifiedID__Group_1__0_in_rule__QualifiedID__Group__1__Impl1389 = new BitSet(new long[]{0x0000000000008002L});
+        public static final BitSet FOLLOW_rule__QualifiedID__Group_1__0__Impl_in_rule__QualifiedID__Group_1__01424 = new BitSet(new long[]{0x0000000000000100L});
+        public static final BitSet FOLLOW_rule__QualifiedID__Group_1__1_in_rule__QualifiedID__Group_1__01427 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_15_in_rule__QualifiedID__Group_1__0__Impl1455 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_rule__QualifiedID__Group_1__1__Impl_in_rule__QualifiedID__Group_1__11486 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_RULE_ID_in_rule__QualifiedID__Group_1__1__Impl1513 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_ruleKIdentifier_in_rule__KGraphElement__DataAssignment_11551 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_RULE_ID_in_rule__KIdentifier__IdAssignment_11582 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_rulePersistentEntry_in_rule__KIdentifier__PersistentEntriesAssignment_3_01613 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_rulePersistentEntry_in_rule__KIdentifier__PersistentEntriesAssignment_3_11644 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_ruleQualifiedID_in_rule__PersistentEntry__KeyAssignment_01675 = new BitSet(new long[]{0x0000000000000002L});
+        public static final BitSet FOLLOW_rulePropertyValue_in_rule__PersistentEntry__ValueAssignment_21706 = new BitSet(new long[]{0x0000000000000002L});
     }
 
 
