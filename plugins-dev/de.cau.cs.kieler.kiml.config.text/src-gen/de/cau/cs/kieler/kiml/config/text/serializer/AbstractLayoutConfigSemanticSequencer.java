@@ -63,7 +63,7 @@ public abstract class AbstractLayoutConfigSemanticSequencer extends AbstractDele
 	
 	/**
 	 * Constraint:
-	 *     (id=EString (persistentEntries+=PersistentEntry persistentEntries+=PersistentEntry*)?)
+	 *     (id=ID (persistentEntries+=PersistentEntry persistentEntries+=PersistentEntry*)?)
 	 */
 	protected void sequence_KIdentifier(EObject context, KIdentifier semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -72,7 +72,7 @@ public abstract class AbstractLayoutConfigSemanticSequencer extends AbstractDele
 	
 	/**
 	 * Constraint:
-	 *     (key=QualifiedID value=QualifiedID)
+	 *     (key=QualifiedID value=PropertyValue)
 	 */
 	protected void sequence_PersistentEntry(EObject context, PersistentEntry semanticObject) {
 		if(errorAcceptor != null) {
@@ -84,7 +84,7 @@ public abstract class AbstractLayoutConfigSemanticSequencer extends AbstractDele
 		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
 		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
 		feeder.accept(grammarAccess.getPersistentEntryAccess().getKeyQualifiedIDParserRuleCall_0_0(), semanticObject.getKey());
-		feeder.accept(grammarAccess.getPersistentEntryAccess().getValueQualifiedIDParserRuleCall_2_0(), semanticObject.getValue());
+		feeder.accept(grammarAccess.getPersistentEntryAccess().getValuePropertyValueParserRuleCall_2_0(), semanticObject.getValue());
 		feeder.finish();
 	}
 }

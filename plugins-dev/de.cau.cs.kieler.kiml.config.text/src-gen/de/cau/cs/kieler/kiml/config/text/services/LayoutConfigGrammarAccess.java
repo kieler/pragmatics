@@ -12,7 +12,6 @@ import org.eclipse.xtext.*;
 import org.eclipse.xtext.service.GrammarProvider;
 import org.eclipse.xtext.service.AbstractElementFinder.*;
 
-import org.eclipse.xtext.common.services.TerminalsGrammarAccess;
 
 @Singleton
 public class LayoutConfigGrammarAccess extends AbstractGrammarElementFinder {
@@ -48,7 +47,7 @@ public class LayoutConfigGrammarAccess extends AbstractGrammarElementFinder {
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Action cKIdentifierAction_0 = (Action)cGroup.eContents().get(0);
 		private final Assignment cIdAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cIdEStringParserRuleCall_1_0 = (RuleCall)cIdAssignment_1.eContents().get(0);
+		private final RuleCall cIdIDTerminalRuleCall_1_0 = (RuleCall)cIdAssignment_1.eContents().get(0);
 		private final Keyword cLeftCurlyBracketKeyword_2 = (Keyword)cGroup.eContents().get(2);
 		private final Group cGroup_3 = (Group)cGroup.eContents().get(3);
 		private final Assignment cPersistentEntriesAssignment_3_0 = (Assignment)cGroup_3.eContents().get(0);
@@ -59,20 +58,20 @@ public class LayoutConfigGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//KIdentifier:
 		//
-		//	{KIdentifier} id=EString "{" (persistentEntries+=PersistentEntry persistentEntries+=PersistentEntry*)? "}";
+		//	{KIdentifier} id=ID "{" (persistentEntries+=PersistentEntry persistentEntries+=PersistentEntry*)? "}";
 		public ParserRule getRule() { return rule; }
 
-		//{KIdentifier} id=EString "{" (persistentEntries+=PersistentEntry persistentEntries+=PersistentEntry*)? "}"
+		//{KIdentifier} id=ID "{" (persistentEntries+=PersistentEntry persistentEntries+=PersistentEntry*)? "}"
 		public Group getGroup() { return cGroup; }
 
 		//{KIdentifier}
 		public Action getKIdentifierAction_0() { return cKIdentifierAction_0; }
 
-		//id=EString
+		//id=ID
 		public Assignment getIdAssignment_1() { return cIdAssignment_1; }
 
-		//EString
-		public RuleCall getIdEStringParserRuleCall_1_0() { return cIdEStringParserRuleCall_1_0; }
+		//ID
+		public RuleCall getIdIDTerminalRuleCall_1_0() { return cIdIDTerminalRuleCall_1_0; }
 
 		//"{"
 		public Keyword getLeftCurlyBracketKeyword_2() { return cLeftCurlyBracketKeyword_2; }
@@ -103,14 +102,14 @@ public class LayoutConfigGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cKeyQualifiedIDParserRuleCall_0_0 = (RuleCall)cKeyAssignment_0.eContents().get(0);
 		private final Keyword cColonKeyword_1 = (Keyword)cGroup.eContents().get(1);
 		private final Assignment cValueAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cValueQualifiedIDParserRuleCall_2_0 = (RuleCall)cValueAssignment_2.eContents().get(0);
+		private final RuleCall cValuePropertyValueParserRuleCall_2_0 = (RuleCall)cValueAssignment_2.eContents().get(0);
 		
 		//PersistentEntry:
 		//
-		//	key=QualifiedID ":" value=QualifiedID;
+		//	key=QualifiedID ":" value=PropertyValue;
 		public ParserRule getRule() { return rule; }
 
-		//key=QualifiedID ":" value=QualifiedID
+		//key=QualifiedID ":" value=PropertyValue
 		public Group getGroup() { return cGroup; }
 
 		//key=QualifiedID
@@ -122,32 +121,40 @@ public class LayoutConfigGrammarAccess extends AbstractGrammarElementFinder {
 		//":"
 		public Keyword getColonKeyword_1() { return cColonKeyword_1; }
 
-		//value=QualifiedID
+		//value=PropertyValue
 		public Assignment getValueAssignment_2() { return cValueAssignment_2; }
 
-		//QualifiedID
-		public RuleCall getValueQualifiedIDParserRuleCall_2_0() { return cValueQualifiedIDParserRuleCall_2_0; }
+		//PropertyValue
+		public RuleCall getValuePropertyValueParserRuleCall_2_0() { return cValuePropertyValueParserRuleCall_2_0; }
 	}
 
-	public class EStringElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "EString");
+	public class PropertyValueElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "PropertyValue");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final RuleCall cSTRINGTerminalRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
-		private final RuleCall cIDTerminalRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
+		private final RuleCall cBOOLEANTerminalRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
+		private final RuleCall cSTRINGTerminalRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
+		private final RuleCall cFloatParserRuleCall_2 = (RuleCall)cAlternatives.eContents().get(2);
+		private final RuleCall cQualifiedIDParserRuleCall_3 = (RuleCall)cAlternatives.eContents().get(3);
 		
-		//EString returns ecore::EString:
+		//PropertyValue returns ecore::EString:
 		//
-		//	STRING | ID;
+		//	BOOLEAN | STRING | Float | QualifiedID;
 		public ParserRule getRule() { return rule; }
 
-		//STRING | ID
+		//BOOLEAN | STRING | Float | QualifiedID
 		public Alternatives getAlternatives() { return cAlternatives; }
 
-		//STRING
-		public RuleCall getSTRINGTerminalRuleCall_0() { return cSTRINGTerminalRuleCall_0; }
+		//BOOLEAN
+		public RuleCall getBOOLEANTerminalRuleCall_0() { return cBOOLEANTerminalRuleCall_0; }
 
-		//ID
-		public RuleCall getIDTerminalRuleCall_1() { return cIDTerminalRuleCall_1; }
+		//STRING
+		public RuleCall getSTRINGTerminalRuleCall_1() { return cSTRINGTerminalRuleCall_1; }
+
+		//Float
+		public RuleCall getFloatParserRuleCall_2() { return cFloatParserRuleCall_2; }
+
+		//QualifiedID
+		public RuleCall getQualifiedIDParserRuleCall_3() { return cQualifiedIDParserRuleCall_3; }
 	}
 
 	public class QualifiedIDElements extends AbstractParserRuleElementFinder {
@@ -178,23 +185,49 @@ public class LayoutConfigGrammarAccess extends AbstractGrammarElementFinder {
 		//ID
 		public RuleCall getIDTerminalRuleCall_1_1() { return cIDTerminalRuleCall_1_1; }
 	}
+
+	public class FloatElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "Float");
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final RuleCall cTFLOATTerminalRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
+		private final RuleCall cNATURALTerminalRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
+		
+		//Float returns ecore::EFloat:
+		//
+		//	TFLOAT | NATURAL;
+		public ParserRule getRule() { return rule; }
+
+		//TFLOAT | NATURAL
+		public Alternatives getAlternatives() { return cAlternatives; }
+
+		//TFLOAT
+		public RuleCall getTFLOATTerminalRuleCall_0() { return cTFLOATTerminalRuleCall_0; }
+
+		//NATURAL
+		public RuleCall getNATURALTerminalRuleCall_1() { return cNATURALTerminalRuleCall_1; }
+	}
 	
 	
 	private KGraphElementElements pKGraphElement;
 	private KIdentifierElements pKIdentifier;
 	private PersistentEntryElements pPersistentEntry;
-	private EStringElements pEString;
+	private PropertyValueElements pPropertyValue;
 	private QualifiedIDElements pQualifiedID;
+	private FloatElements pFloat;
+	private TerminalRule tTFLOAT;
+	private TerminalRule tNATURAL;
+	private TerminalRule tBOOLEAN;
+	private TerminalRule tSTRING;
+	private TerminalRule tID;
+	private TerminalRule tML_COMMENT;
+	private TerminalRule tSL_COMMENT;
+	private TerminalRule tWS;
 	
 	private final Grammar grammar;
 
-	private TerminalsGrammarAccess gaTerminals;
-
 	@Inject
-	public LayoutConfigGrammarAccess(GrammarProvider grammarProvider,
-		TerminalsGrammarAccess gaTerminals) {
+	public LayoutConfigGrammarAccess(GrammarProvider grammarProvider) {
 		this.grammar = internalFindGrammar(grammarProvider);
-		this.gaTerminals = gaTerminals;
 	}
 	
 	protected Grammar internalFindGrammar(GrammarProvider grammarProvider) {
@@ -219,10 +252,6 @@ public class LayoutConfigGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 
-	public TerminalsGrammarAccess getTerminalsGrammarAccess() {
-		return gaTerminals;
-	}
-
 	
 	//KGraphElement:
 	//
@@ -237,7 +266,7 @@ public class LayoutConfigGrammarAccess extends AbstractGrammarElementFinder {
 
 	//KIdentifier:
 	//
-	//	{KIdentifier} id=EString "{" (persistentEntries+=PersistentEntry persistentEntries+=PersistentEntry*)? "}";
+	//	{KIdentifier} id=ID "{" (persistentEntries+=PersistentEntry persistentEntries+=PersistentEntry*)? "}";
 	public KIdentifierElements getKIdentifierAccess() {
 		return (pKIdentifier != null) ? pKIdentifier : (pKIdentifier = new KIdentifierElements());
 	}
@@ -248,7 +277,7 @@ public class LayoutConfigGrammarAccess extends AbstractGrammarElementFinder {
 
 	//PersistentEntry:
 	//
-	//	key=QualifiedID ":" value=QualifiedID;
+	//	key=QualifiedID ":" value=PropertyValue;
 	public PersistentEntryElements getPersistentEntryAccess() {
 		return (pPersistentEntry != null) ? pPersistentEntry : (pPersistentEntry = new PersistentEntryElements());
 	}
@@ -257,15 +286,15 @@ public class LayoutConfigGrammarAccess extends AbstractGrammarElementFinder {
 		return getPersistentEntryAccess().getRule();
 	}
 
-	//EString returns ecore::EString:
+	//PropertyValue returns ecore::EString:
 	//
-	//	STRING | ID;
-	public EStringElements getEStringAccess() {
-		return (pEString != null) ? pEString : (pEString = new EStringElements());
+	//	BOOLEAN | STRING | Float | QualifiedID;
+	public PropertyValueElements getPropertyValueAccess() {
+		return (pPropertyValue != null) ? pPropertyValue : (pPropertyValue = new PropertyValueElements());
 	}
 	
-	public ParserRule getEStringRule() {
-		return getEStringAccess().getRule();
+	public ParserRule getPropertyValueRule() {
+		return getPropertyValueAccess().getRule();
 	}
 
 	//QualifiedID returns ecore::EString:
@@ -279,54 +308,74 @@ public class LayoutConfigGrammarAccess extends AbstractGrammarElementFinder {
 		return getQualifiedIDAccess().getRule();
 	}
 
-	//terminal ID:
+	//Float returns ecore::EFloat:
+	//
+	//	TFLOAT | NATURAL;
+	public FloatElements getFloatAccess() {
+		return (pFloat != null) ? pFloat : (pFloat = new FloatElements());
+	}
+	
+	public ParserRule getFloatRule() {
+		return getFloatAccess().getRule();
+	}
+
+	/// * Terminals * / terminal TFLOAT returns ecore::EFloat:
+	//
+	//	("+" | "-") ("0".."9"+ ("." "0".."9"*)? (("e" | "E") ("+" | "-")? "0".."9"+)? | "." "0".."9"+ (("e" | "E") ("+" |
+	//
+	//	"-")? "0".."9"+)?) | "0".."9"+ "." "0".."9"* (("e" | "E") ("+" | "-")? "0".."9"+)? | "." "0".."9"+ (("e" | "E") ("+"
+	//
+	//	| "-")? "0".."9"+)? | "0".."9"+ ("e" | "E") ("+" | "-")? "0".."9"+;
+	public TerminalRule getTFLOATRule() {
+		return (tTFLOAT != null) ? tTFLOAT : (tTFLOAT = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "TFLOAT"));
+	} 
+
+	//terminal NATURAL returns ecore::EInt:
+	//
+	//	"0".."9"+;
+	public TerminalRule getNATURALRule() {
+		return (tNATURAL != null) ? tNATURAL : (tNATURAL = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "NATURAL"));
+	} 
+
+	//terminal BOOLEAN returns ecore::EBoolean:
+	//
+	//	"true" | "false";
+	public TerminalRule getBOOLEANRule() {
+		return (tBOOLEAN != null) ? tBOOLEAN : (tBOOLEAN = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "BOOLEAN"));
+	} 
+
+	//terminal STRING: // chsch: added '\'' alternative! 
+	//
+	//	"\"" ("\\" ("b" | "t" | "n" | "f" | "r" | "u" | "\"" | "\'" | "\\") | !("\\" | "\""))* "\"";
+	public TerminalRule getSTRINGRule() {
+		return (tSTRING != null) ? tSTRING : (tSTRING = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "STRING"));
+	} 
+
+	//terminal ID: // chsch: the optional leading '^' is the implicit keyword escape character
 	//
 	//	"^"? ("a".."z" | "A".."Z" | "_") ("a".."z" | "A".."Z" | "_" | "0".."9")*;
 	public TerminalRule getIDRule() {
-		return gaTerminals.getIDRule();
-	} 
-
-	//terminal INT returns ecore::EInt:
-	//
-	//	"0".."9"+;
-	public TerminalRule getINTRule() {
-		return gaTerminals.getINTRule();
-	} 
-
-	//terminal STRING:
-	//
-	//	"\"" ("\\" ("b" | "t" | "n" | "f" | "r" | "u" | "\"" | "\'" | "\\") | !("\\" | "\""))* "\"" | "\'" ("\\" ("b" | "t" |
-	//
-	//	"n" | "f" | "r" | "u" | "\"" | "\'" | "\\") | !("\\" | "\'"))* "\'";
-	public TerminalRule getSTRINGRule() {
-		return gaTerminals.getSTRINGRule();
+		return (tID != null) ? tID : (tID = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "ID"));
 	} 
 
 	//terminal ML_COMMENT:
 	//
 	//	"/ *"->"* /";
 	public TerminalRule getML_COMMENTRule() {
-		return gaTerminals.getML_COMMENTRule();
+		return (tML_COMMENT != null) ? tML_COMMENT : (tML_COMMENT = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "ML_COMMENT"));
 	} 
 
 	//terminal SL_COMMENT:
 	//
 	//	"//" !("\n" | "\r")* ("\r"? "\n")?;
 	public TerminalRule getSL_COMMENTRule() {
-		return gaTerminals.getSL_COMMENTRule();
+		return (tSL_COMMENT != null) ? tSL_COMMENT : (tSL_COMMENT = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "SL_COMMENT"));
 	} 
 
 	//terminal WS:
 	//
 	//	(" " | "\t" | "\r" | "\n")+;
 	public TerminalRule getWSRule() {
-		return gaTerminals.getWSRule();
-	} 
-
-	//terminal ANY_OTHER:
-	//
-	//	.;
-	public TerminalRule getANY_OTHERRule() {
-		return gaTerminals.getANY_OTHERRule();
+		return (tWS != null) ? tWS : (tWS = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "WS"));
 	} 
 }
