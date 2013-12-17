@@ -21,13 +21,15 @@ import de.cau.cs.kieler.core.kgraph.KLabel
 import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.core.krendering.KRendering
 import de.cau.cs.kieler.core.krendering.KRenderingFactory
+import de.cau.cs.kieler.core.krendering.KRenderingLibrary
 import de.cau.cs.kieler.core.krendering.extensions.KPolylineExtensions
+import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement
 import de.cau.cs.kieler.kiml.options.LayoutOptions
 import de.cau.cs.kieler.kiml.options.PortConstraints
 import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
 import org.eclipse.emf.ecore.EObject
-import org.eclipse.emf.ecore.util.EcoreUtil$Copier
-import de.cau.cs.kieler.core.krendering.KRenderingLibrary
+import org.eclipse.emf.ecore.util.EcoreUtil.Copier
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData
 
 /**
  * Synthesizes a copy of the given {@code KNode} and enriches it with a selection of default renderings
@@ -38,6 +40,8 @@ import de.cau.cs.kieler.core.krendering.KRenderingLibrary
  *       an arrowhead at the end. (the default would be a simple polyline without arrowhead)</li>
  *   <li>Labels without attached {@code KRendering}s are provided with a default {@code KText}
  *       rendering that ensures that label sizes will be calculated correctly.</li>
+ *   <li>Edge labels without edge label placement get a shiny new {@link EdgeLabelPlacement#CENTER}
+ *       placement.</li>
  * </ul>
  * 
  * @author cds
@@ -57,9 +61,11 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
     @Inject
     extension KPolylineExtensions
     
+    
     override getDisplayedLayoutOptions() {
         return ImmutableList::of(
-            specifyLayoutOption(LayoutOptions::PORT_CONSTRAINTS, ImmutableList::copyOf(PortConstraints::values)),
+            specifyLayoutOption(LayoutOptions::PORT_CONSTRAINTS,
+                ImmutableList::copyOf(PortConstraints::values)),
             specifyLayoutOption(LayoutOptions::SPACING, ImmutableList::of(0, 255))
         );
     }
@@ -106,17 +112,6 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
     // ENRICHING RENDERINGS
     
     /**
-     * Checks if the given graph element already has a rendering attached.
-     * 
-     * @param e the element to check.
-     * @return {@code true} if the element already has a rendering attached, {@code false} otherwise.
-     */
-    def private boolean hasRendering(KGraphElement e) {
-        e.data.exists[it instanceof KRendering]
-    }
-    
-    
-    /**
      * Fallback metchod that does not add any rendering information to the given object.
      * 
      * @param o an EMF object.
@@ -140,7 +135,8 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
     
     /**
      * Possibly adds a proper rendering to the given label. If no rendering is associated with the label
-     * yet, a default text rendering with a predefined font size is added to it.
+     * yet, a default text rendering with a predefined font size is added to it. Also, makes sure that
+     * an edge label placement is set on the label if it belongs to an edge.
      * 
      * @param edge the edge whose rendering to enrich.
      */
@@ -150,6 +146,28 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
                 label.data += it
             ]
         }
+        
+        // Make sure that edge labels have an edge label placement
+        if (label.eContainer instanceof KEdge) {
+            val layoutData = label.getData(typeof(KLayoutData))
+            if (layoutData != null) {
+                val edgeLabelPlacement = layoutData.getProperty(LayoutOptions::EDGE_LABEL_PLACEMENT)
+                if (edgeLabelPlacement == EdgeLabelPlacement::UNDEFINED) {
+                    layoutData.setProperty(
+                        LayoutOptions::EDGE_LABEL_PLACEMENT, EdgeLabelPlacement::CENTER)
+                }
+            }
+        }
+    }
+    
+    /**
+     * Checks if the given graph element already has a rendering attached.
+     * 
+     * @param e the element to check.
+     * @return {@code true} if the element already has a rendering attached, {@code false} otherwise.
+     */
+    def private boolean hasRendering(KGraphElement e) {
+        e.data.exists[it instanceof KRendering]
     }
     
 }

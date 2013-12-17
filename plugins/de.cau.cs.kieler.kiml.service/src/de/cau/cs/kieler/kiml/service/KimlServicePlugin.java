@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.service;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -31,10 +30,10 @@ import de.cau.cs.kieler.kiml.LayoutDataService;
  */
 public class KimlServicePlugin extends AbstractUIPlugin {
 
-    /** the plug-in ID. */
+    /** The plug-in ID. */
     public static final String PLUGIN_ID = "de.cau.cs.kieler.kiml.service";
 
-    /** the shared instance. */
+    /** The shared instance. */
     private static KimlServicePlugin plugin;
     
     /**
@@ -45,15 +44,12 @@ public class KimlServicePlugin extends AbstractUIPlugin {
         super.start(context);
         plugin = this;
         
-        // The layout services are only created here if the UI plugin is present.
-        // If not, the services are expected to be created in another component
-        // that does not require UI, e.g. a server.
-        if (Platform.getBundle("org.eclipse.ui") != null) {
-            LayoutDataService.setInstanceFactory(new DefaultFactory<LayoutDataService>(
-                    ExtensionLayoutDataService.class));
-            LayoutConfigService.setInstanceFactory(new DefaultFactory<LayoutConfigService>(
-                    ExtensionLayoutConfigService.class));
-        }
+        // Initialize the layout meta data service (see LayoutDataService.getInstance())
+        LayoutDataService.setInstanceFactory(new DefaultFactory<LayoutDataService>(
+                ExtensionLayoutDataService.class));
+        // Initialize the layout configuration service (see LayoutConfigService.getInstance())
+        LayoutConfigService.setInstanceFactory(new DefaultFactory<LayoutConfigService>(
+                ExtensionLayoutConfigService.class));
     }
 
     /**

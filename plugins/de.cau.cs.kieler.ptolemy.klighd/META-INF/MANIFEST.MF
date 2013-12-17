@@ -22,5 +22,6 @@ Require-Bundle: com.google.guava;bundle-version="10.0.0",
  de.cau.cs.kieler.klay.layered,
  de.cau.cs.kieler.klighd,
  org.ptolemy,
- org.ptolemy.moml
+ org.ptolemy.moml,
+ de.cau.cs.kieler.klighd.ui;bundle-version="0.3.0";resolution:=optional
 Export-Package: de.cau.cs.kieler.ptolemy.klighd

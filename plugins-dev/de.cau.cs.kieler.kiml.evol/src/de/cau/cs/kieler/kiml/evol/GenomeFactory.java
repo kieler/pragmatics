@@ -15,6 +15,7 @@ package de.cau.cs.kieler.kiml.evol;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -52,6 +53,8 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.service.EclipseLayoutConfig;
 import de.cau.cs.kieler.kiml.service.ExtensionLayoutConfigService;
 import de.cau.cs.kieler.kiml.service.LayoutMapping;
+import de.cau.cs.kieler.kiml.util.BoxLayoutProvider;
+import de.cau.cs.kieler.kiml.util.FixedLayoutProvider;
 
 /**
  * A factory for genes and genomes.
@@ -72,17 +75,17 @@ public final class GenomeFactory {
     public static final String LAYOUT_TYPE_ID = "de.cau.cs.kieler.kiml.evol.layoutType";
 
     /** probability for mutation of layout type genes. */
-    private static final double P_LAYOUT_TYPE_MUTATION = 0.07;
+    private static final double P_LAYOUT_TYPE_MUTATION = 0.12;
     /** probability for mutation of layout algorithm genes. */
-    private static final double P_LAYOUT_ALGO_MUTATION = 0.12;
+    private static final double P_LAYOUT_ALGO_MUTATION = 0.18;
     /** probability for mutation of boolean type genes. */
-    private static final double P_BOOLEAN_MUTATION = 0.15;
+    private static final double P_BOOLEAN_MUTATION = 0.25;
     /** probability for mutation of enumeration type genes. */
-    private static final double P_ENUM_MUTATION = 0.20;
+    private static final double P_ENUM_MUTATION = 0.30;
     /** probability for mutation of integer type genes. */
-    private static final double P_INT_MUTATION = 0.35;
+    private static final double P_INT_MUTATION = 0.45;
     /** probability for mutation of floating point type genes. */
-    private static final double P_FLOAT_MUTATION = 0.40;
+    private static final double P_FLOAT_MUTATION = 0.50;
     
     /**
      * Create a genome with default values from the given layout mapping.
@@ -184,7 +187,7 @@ public final class GenomeFactory {
      */
     public static Gene<Integer> createAlgorithmGene(final LayoutTypeData layoutType,
             final LayoutAlgorithmData algoData) {
-        List<LayoutAlgorithmData> algoList = layoutType.getLayouters();
+        List<LayoutAlgorithmData> algoList = getAlgoList(layoutType);
         int index = algoList.indexOf(algoData);
         TypeInfo<Integer> typeInfo = new TypeInfo<Integer>(LayoutOptions.ALGORITHM.getId(),
                 GeneType.LAYOUT_ALGO, 0, algoList.size() - 1, algoList, P_LAYOUT_ALGO_MUTATION, 1);
@@ -200,7 +203,7 @@ public final class GenomeFactory {
      */
     public static Gene<Integer> createAlgorithmGene(final LayoutTypeData layoutType,
             final Random random) {
-        List<LayoutAlgorithmData> algoList = layoutType.getLayouters(); 
+        List<LayoutAlgorithmData> algoList = getAlgoList(layoutType);
         TypeInfo<Integer> typeInfo = new TypeInfo<Integer>(LayoutOptions.ALGORITHM.getId(),
                 GeneType.LAYOUT_ALGO, 0, algoList.size() - 1, algoList, P_LAYOUT_ALGO_MUTATION, 1);
         if (algoList.isEmpty()) {
@@ -208,6 +211,30 @@ public final class GenomeFactory {
         }
         int randomAlgoIndex = random.nextInt(algoList.size());
         return Gene.create(randomAlgoIndex, typeInfo, true);
+    }
+    
+    /**
+     * Return a filtered list of layout algorithms for the given layout type. Algorithms that
+     * are not suitable for use in evolutionary layout are removed.
+     * 
+     * @param layoutType a layout type
+     * @return filtered algorithms
+     */
+    private static List<LayoutAlgorithmData> getAlgoList(final LayoutTypeData layoutType) {
+        List<LayoutAlgorithmData> algoList = layoutType.getLayouters();
+        if (layoutType.getId().length() == 0) {
+            // This is the 'Other' layout type
+            algoList = new ArrayList<LayoutAlgorithmData>(algoList);
+            Iterator<LayoutAlgorithmData> iterator = algoList.iterator();
+            while (iterator.hasNext()) {
+                LayoutAlgorithmData data = iterator.next();
+                if (FixedLayoutProvider.ID.equals(data.getId())
+                        || BoxLayoutProvider.ID.equals(data.getId())) {
+                    iterator.remove();
+                }
+            }
+        }
+        return algoList;
     }
     
     /**

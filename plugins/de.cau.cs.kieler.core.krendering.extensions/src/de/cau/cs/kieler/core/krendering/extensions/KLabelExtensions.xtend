@@ -29,9 +29,11 @@ import de.cau.cs.kieler.kiml.options.NodeLabelPlacement
 import de.cau.cs.kieler.kiml.options.PortLabelPlacement
 import java.util.List
 import de.cau.cs.kieler.core.kgraph.KPort
+import de.cau.cs.kieler.core.krendering.KColor
 
 /**
  * @author chsch
+ * @author ssm
  * 
  * @containsExtensions
  */
@@ -109,8 +111,8 @@ class KLabelExtensions {
         ];
     }
     
-    def <T> KLabel addLayoutParam(KLabel node, IProperty<? super T> property, T value) {
-        return node => [
+    def <T> KLabel addLayoutParam(KLabel label, IProperty<? super T> property, T value) {
+        return label => [
             it.getData(typeof(KShapeLayout)).setProperty(property, value)
         ];
     }
@@ -120,10 +122,75 @@ class KLabelExtensions {
     /*  node label configurators/adders  */
     /* --------------------------------- */
     
+    // inside configurators/adder
+
     /**
-     * Configures a central inside top node label!
+     * Configures an inside bottom centrally-aligned node label!
      */
-    def KLabel configureInsideCentralTopNodeLabel(KLabel label, String labelText, int fontSize, String fontName) {
+    def KLabel configureInsideBottomCenteredNodeLabel(KLabel label, String labelText, int fontSize, String fontName) {
+        return label => [
+            it.basicConfigureLabel(labelText, fontSize, fontName);
+            val node = it.parent;
+            switch(node) {
+                KNode: node.addLayoutParam(LayoutOptions::NODE_LABEL_PLACEMENT, NodeLabelPlacement::insideBottomCenter)
+            }
+        ];
+    }
+
+    /**
+     * Adds an inside bottom centrally-aligned node label!
+     */
+    def KLabel addInsideBottomCenteredNodeLabel(KNode node, String labelText, int fontSize, String fontName) {
+        return node.createLabel().configureInsideBottomCenteredNodeLabel(labelText, fontSize, fontName);
+    }
+    
+    /**
+     * Configures an inside bottom left-aligned node label!
+     */
+    def KLabel configureInsideBottomLeftNodeLabel(KLabel label, String labelText, int fontSize, String fontName) {
+        return label => [
+            it.basicConfigureLabel(labelText, fontSize, fontName);
+            val node = it.parent;
+            switch(node) {
+                KNode: node.addLayoutParam(LayoutOptions::NODE_LABEL_PLACEMENT, NodeLabelPlacement::insideBottomLeft)
+            }
+        ];
+    }
+
+    /**
+     * Adds an inside bottom left-aligned node label!
+     */
+    def KLabel addInsideBottomLeftNodeLabel(KNode node, String labelText, int fontSize, String fontName) {
+        return node.createLabel().configureInsideBottomLeftNodeLabel(labelText, fontSize, fontName);
+    }
+    
+    
+    /**
+     * Configures an inside bottom right-aligned node label!
+     */
+    def KLabel configureInsideBottomRightNodeLabel(KLabel label, String labelText, int fontSize, String fontName) {
+        return label => [
+            it.basicConfigureLabel(labelText, fontSize, fontName);
+            val node = it.parent;
+            switch(node) {
+                KNode: node.addLayoutParam(LayoutOptions::NODE_LABEL_PLACEMENT, NodeLabelPlacement::insideBottomRight)
+            }
+        ];
+    }
+
+    /**
+     * Adds an inside bottom right-aligned node label!
+     */
+    def KLabel addInsideBottomRightNodeLabel(KNode node, String labelText, int fontSize, String fontName) {
+        return node.createLabel().configureInsideBottomRightNodeLabel(labelText, fontSize, fontName);
+    }
+
+
+    
+    /**
+     * Configures an inside top centrally-aligned node label!
+     */
+    def KLabel configureInsideTopCenteredNodeLabel(KLabel label, String labelText, int fontSize, String fontName) {
         return label => [
             it.basicConfigureLabel(labelText, fontSize, fontName);
             val node = it.parent;
@@ -134,16 +201,59 @@ class KLabelExtensions {
     }
 
     /**
-     * Adds a central node label to KNode 'node'!
+     * Adds an inside top centrally-aligned node label!
      */
-    def KLabel addInsideCentralTopNodeLabel(KNode node, String labelText, int fontSize, String fontName) {
-        return node.createLabel().configureInsideCentralTopNodeLabel(labelText, fontSize, fontName);
+    def KLabel addInsideTopCenteredNodeLabel(KNode node, String labelText, int fontSize, String fontName) {
+        return node.createLabel().configureInsideTopCenteredNodeLabel(labelText, fontSize, fontName);
     }
-    
+
     /**
-     * Configures a central node label!
+     * Configures an inside top left-aligned node label!
      */
-    def KLabel configureOutsideCentralBottomNodeLabel(KLabel label, String labelText, int fontSize, String fontName) {
+    def KLabel configureInsideTopLeftNodeLabel(KLabel label, String labelText, int fontSize, String fontName) {
+        return label => [
+            it.basicConfigureLabel(labelText, fontSize, fontName);
+            val node = it.parent;
+            switch(node) {
+                KNode: node.addLayoutParam(LayoutOptions::NODE_LABEL_PLACEMENT, NodeLabelPlacement::insideTopLeft)
+            }
+        ];
+    }
+
+    /**
+     * Adds an inside top left-aligned node label!
+     */
+    def KLabel addInsideTopLeftNodeLabel(KNode node, String labelText, int fontSize, String fontName) {
+        return node.createLabel().configureInsideTopLeftNodeLabel(labelText, fontSize, fontName);
+    }
+
+    /**
+     * Configures an inside top right-aligned node label!
+     */
+    def KLabel configureInsideTopRightNodeLabel(KLabel label, String labelText, int fontSize, String fontName) {
+        return label => [
+            it.basicConfigureLabel(labelText, fontSize, fontName);
+            val node = it.parent;
+            switch(node) {
+                KNode: node.addLayoutParam(LayoutOptions::NODE_LABEL_PLACEMENT, NodeLabelPlacement::insideTopRight)
+            }
+        ];
+    }
+
+    /**
+     * Adds an inside top right-aligned node label!
+     */
+    def KLabel addInsideTopRightNodeLabel(KNode node, String labelText, int fontSize, String fontName) {
+        return node.createLabel().configureInsideTopRightNodeLabel(labelText, fontSize, fontName);
+    }
+
+
+    // outside configurators/adder
+
+    /**
+     * Configures an outside bottom centrally-aligned node label!
+     */
+    def KLabel configureOutsideBottomCenteredNodeLabel(KLabel label, String labelText, int fontSize, String fontName) {
         return label => [
             it.basicConfigureLabel(labelText, fontSize, fontName);
             val node = it.parent;
@@ -154,14 +264,14 @@ class KLabelExtensions {
     }
 
     /**
-     * Adds a central node label to KNode 'node'!
+     * Adds an outside bottom centrally-aligned node label!
      */
-    def KLabel addOutsideCentralBottomNodeLabel(KNode node, String labelText, int fontSize, String fontName) {
-        return node.createLabel().configureOutsideCentralBottomNodeLabel(labelText, fontSize, fontName);
+    def KLabel addOutsideBottomCenteredNodeLabel(KNode node, String labelText, int fontSize, String fontName) {
+        return node.createLabel().configureOutsideBottomCenteredNodeLabel(labelText, fontSize, fontName);
     }
-    
+
     /**
-     * Configures a left-aligned node label!
+     * Configures an outside bottom left-aligned node label!
      */
     def KLabel configureOutsideBottomLeftNodeLabel(KLabel label, String labelText, int fontSize, String fontName) {
         return label => [
@@ -172,16 +282,16 @@ class KLabelExtensions {
             }
         ];
     }
-    
-     /**
-     * Adds a left-aligned node label to KNode 'node'!
+
+    /**
+     * Adds an outside bottom left-aligned node label!
      */
     def KLabel addOutsideBottomLeftNodeLabel(KNode node, String labelText, int fontSize, String fontName) {
         return node.createLabel().configureOutsideBottomLeftNodeLabel(labelText, fontSize, fontName);
     }
 
     /**
-     * Configures a central node label!
+     * Configures an outside bottom right-aligned node label!
      */
     def KLabel configureOutsideBottomRightNodeLabel(KLabel label, String labelText, int fontSize, String fontName) {
         return label => [
@@ -192,13 +302,73 @@ class KLabelExtensions {
             }
         ];
     }
-    
+
     /**
-     * Adds a central node label to KNode 'node'!
+     * Adds an outside bottom right-aligned node label!
      */
     def KLabel addOutsideBottomRightNodeLabel(KNode node, String labelText, int fontSize, String fontName) {
         return node.createLabel().configureOutsideBottomRightNodeLabel(labelText, fontSize, fontName);
     }
+
+    /**
+     * Configures an outside top centrally-aligned node label!
+     */
+    def KLabel configureOutsideTopCenteredNodeLabel(KLabel label, String labelText, int fontSize, String fontName) {
+        return label => [
+            it.basicConfigureLabel(labelText, fontSize, fontName);
+            val node = it.parent;
+            switch(node) {
+                KNode: node.addLayoutParam(LayoutOptions::NODE_LABEL_PLACEMENT, NodeLabelPlacement::outsideTopCenter)
+            }
+        ];
+    }
+
+    /**
+     * Adds an outside top centrally-aligned node label!
+     */
+    def KLabel addOutsideTopCenteredNodeLabel(KNode node, String labelText, int fontSize, String fontName) {
+        return node.createLabel().configureOutsideBottomCenteredNodeLabel(labelText, fontSize, fontName);
+    }
+
+    /**
+     * Configures an outside top left-aligned node label!
+     */
+    def KLabel configureOutsideTopLeftNodeLabel(KLabel label, String labelText, int fontSize, String fontName) {
+        return label => [
+            it.basicConfigureLabel(labelText, fontSize, fontName);
+            val node = it.parent;
+            switch(node) {
+                KNode: node.addLayoutParam(LayoutOptions::NODE_LABEL_PLACEMENT, NodeLabelPlacement::outsideTopLeft)
+            }
+        ];
+    }
+
+    /**
+     * Adds an outside top left-aligned node label!
+     */
+    def KLabel addOutsideTopLeftNodeLabel(KNode node, String labelText, int fontSize, String fontName) {
+        return node.createLabel().configureOutsideTopLeftNodeLabel(labelText, fontSize, fontName);
+    }    
+
+    /**
+     * Configures an outside top right-aligned node label!
+     */
+    def KLabel configureOutsideTopRightNodeLabel(KLabel label, String labelText, int fontSize, String fontName) {
+        return label => [
+            it.basicConfigureLabel(labelText, fontSize, fontName);
+            val node = it.parent;
+            switch(node) {
+                KNode: node.addLayoutParam(LayoutOptions::NODE_LABEL_PLACEMENT, NodeLabelPlacement::outsideTopRight)
+            }
+        ];
+    }
+
+    /**
+     * Adds an outside top right-aligned node label!
+     */
+    def KLabel addOutsideTopRightNodeLabel(KNode node, String labelText, int fontSize, String fontName) {
+        return node.createLabel().configureOutsideTopRightNodeLabel(labelText, fontSize, fontName);
+    }    
 
 
     /* --------------------------------- */
@@ -324,7 +494,7 @@ class KLabelExtensions {
      * The least common denominator of all the 'configure...Label' methods.<br>
      * Is private as it's to be used internally only!
      */
-    def private void basicConfigureLabel(KLabel label, String labelText, int fontSize, String fontName) {
+    def void basicConfigureLabel(KLabel label, String labelText, int fontSize, String fontName) {
         label.text = labelText;
         label.data += renderingFactory.createKText().setFontName(fontName).setFontSize(fontSize);
         label.addLayoutParam(LayoutOptions::FONT_NAME, fontName);
@@ -342,5 +512,18 @@ class KLabelExtensions {
         return label?.getData(typeof(KText))?:(label?.getData(typeof(KRendering))?.eAllContents?.filter(typeof(KText))?.head);
     }
 
+    /**
+     * Shortcut for setting the label's foreground color directly.
+     */
+    def KLabel foreground(KLabel label, KColor color) {
+        label => [it.KRendering.foreground = color]
+    } 
+
+    /**
+     * Shortcut for setting the label's background color directly.
+     */
+    def KLabel background(KLabel label, KColor color) {
+        label => [it.KRendering.background = color]
+    } 
     
 }

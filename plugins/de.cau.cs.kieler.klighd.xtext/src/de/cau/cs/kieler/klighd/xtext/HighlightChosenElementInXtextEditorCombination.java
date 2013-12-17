@@ -13,37 +13,55 @@
  */
 package de.cau.cs.kieler.klighd.xtext;
 
+import java.util.Iterator;
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.XtextEditor;
 
+import com.google.common.collect.Iterators;
+
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
-import de.cau.cs.kieler.klighd.triggers.KlighdSelectionTrigger.KlighdSelectionState;
+import de.cau.cs.kieler.core.kivi.triggers.SelectionTrigger.SelectionState;
+import de.cau.cs.kieler.klighd.KlighdTreeSelection;
 import de.cau.cs.kieler.klighd.xtext.effects.XtextEditorHighlightEffect;
 
 /**
+ * Combination that listens to {@link KlighdTreeSelection KlighdTreeSelections} and try's highlight
+ * the definition of the model element selected in the diagram in the corresponding Xtext editor. If
+ * the definition of the model element is aggregated from another model (file), a corresponding is
+ * searched and put in front. If none is available a new one is opened.
+ * 
  * @author chsch
  */
 public class HighlightChosenElementInXtextEditorCombination extends AbstractCombination {
 
     /**
+     * THE 'execute' method identified and invoked by KIVi via reflection.  
+     * 
      * @param state triggerState
      */
-    public void execute(final KlighdSelectionState state) {
-        if (!state.getSelectedEModelElements().hasNext()
-                || !(state.getSelectedEModelElements().next().eResource() instanceof XtextResource)) {
+    public void execute(final SelectionState state) {
+
+        final KlighdTreeSelection selection = state.getSelection(KlighdTreeSelection.class);
+        if (selection == null) {
             return;
         }
-        XtextEditor editor = null;
-        if (!(state.getViewContext().getSourceWorkbenchPart() instanceof XtextEditor)) {
-            editor = (XtextEditor) state.getViewContext().getSourceWorkbenchPart();
+        
+        final Iterator<EObject> it = Iterators.filter(selection.sourceElementIterator(), EObject.class);
+        final EObject head = Iterators.getNext(it, null);
+        
+        if (head == null || !(head.eResource() instanceof XtextResource)) {
+            return;
+        }
+        
+        final XtextEditor editor;
+        if (selection.getViewContext().getSourceWorkbenchPart() instanceof XtextEditor) {
+            editor = (XtextEditor) selection.getViewContext().getSourceWorkbenchPart();
+        } else {
+            return;
         }
 
-        if (!state.getSelections().isEmpty()) {
-            Object me = state.getSelectedEModelElements().next();
-            if (me instanceof EObject) {
-                this.schedule(new XtextEditorHighlightEffect((EObject) me, editor));
-            }
-        }
+        this.schedule(new XtextEditorHighlightEffect(head, editor));
     }
 }

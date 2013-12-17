@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EClass;
@@ -70,7 +71,7 @@ public class EclipseLayoutConfig implements ILayoutConfig {
      * @return the current value for the given option, or {@code null}
      */
     public static Object getValue(final IProperty<?> property, final Object diagramPart,
-            final EObject modelElement) {
+            final Object modelElement) {
         LayoutConfigService configService = LayoutConfigService.getInstance();
         String id = property.getId();
         if (diagramPart != null) {
@@ -81,10 +82,17 @@ public class EclipseLayoutConfig implements ILayoutConfig {
                 return value;
             }
         }
-        if (modelElement != null) {
-            // get option for the domain model element class
-            EClass eclazz = modelElement.eClass();
+        if (modelElement instanceof EObject) {
+            // get option for the domain model element as EMF class
+            EClass eclazz = ((EObject) modelElement).eClass();
             Object value = configService.getOptionValue(eclazz, id);
+            if (value != null) {
+                return value;
+            }
+        } else if (modelElement != null) {
+            // get option for the domain model element as other class
+            String clazzName = modelElement.getClass().getName();
+            Object value = configService.getOptionValue(clazzName, id);
             if (value != null) {
                 return value;
             }
@@ -105,7 +113,7 @@ public class EclipseLayoutConfig implements ILayoutConfig {
     public void enrich(final LayoutContext context) {
         // get main edit part and domain model element
         Object diagPart = context.getProperty(LayoutContext.DIAGRAM_PART);
-        EObject domainElem = context.getProperty(LayoutContext.DOMAIN_MODEL);
+        Object domainElem = context.getProperty(LayoutContext.DOMAIN_MODEL);
 
         // set diagram type for the content of the main edit part
         String diagramType = context.getProperty(DefaultLayoutConfig.CONTENT_DIAGT);
@@ -128,7 +136,7 @@ public class EclipseLayoutConfig implements ILayoutConfig {
             
             // get container edit part and domain model element
             Object containerDiagPart = context.getProperty(LayoutContext.CONTAINER_DIAGRAM_PART);
-            EObject containerDomainElem = context.getProperty(LayoutContext.CONTAINER_DOMAIN_MODEL);
+            Object containerDomainElem = context.getProperty(LayoutContext.CONTAINER_DOMAIN_MODEL);
             if (containerDomainElem == null && containerDiagPart != null) {
                 containerDomainElem = (EObject) LayoutManagersService.getInstance().getAdapter(
                         containerDiagPart, EObject.class);
@@ -280,7 +288,7 @@ public class EclipseLayoutConfig implements ILayoutConfig {
         LayoutConfigService configService = LayoutConfigService.getInstance();
         LayoutDataService dataService = LayoutDataService.getInstance();
         Object diagPart = context.getProperty(LayoutContext.DIAGRAM_PART);
-        EObject modelElement = context.getProperty(LayoutContext.DOMAIN_MODEL);
+        Object modelElement = context.getProperty(LayoutContext.DOMAIN_MODEL);
 
         // get default layout options for the diagram type
         String diagramType = context.getProperty(DefaultLayoutConfig.CONTENT_DIAGT);
@@ -299,8 +307,13 @@ public class EclipseLayoutConfig implements ILayoutConfig {
         
         // get default layout options for the domain model element
         if (modelElement != null) {
-            for (Entry<String, Object> entry : configService.getOptionValues(
-                    modelElement.eClass()).entrySet()) {
+            Map<String, Object> domainOptionsMap;
+            if (modelElement instanceof EObject) {
+                domainOptionsMap = configService.getOptionValues(((EObject) modelElement).eClass());
+            } else {
+                domainOptionsMap = configService.getOptionValues(modelElement.getClass().getName());
+            }
+            for (Entry<String, Object> entry : domainOptionsMap.entrySet()) {
                 if (entry.getValue() != null) {
                     @SuppressWarnings("unchecked")
                     LayoutOptionData<Object> optionData = (LayoutOptionData<Object>)

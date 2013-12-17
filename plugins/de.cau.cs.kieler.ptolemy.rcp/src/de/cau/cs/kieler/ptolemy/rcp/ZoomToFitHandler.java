@@ -24,15 +24,14 @@ import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.klighd.KlighdPlugin;
+import de.cau.cs.kieler.klighd.KlighdPreferences;
 import de.cau.cs.kieler.klighd.ZoomStyle;
-import de.cau.cs.kieler.klighd.internal.preferences.KlighdPreferences;
 import de.cau.cs.kieler.ptolemy.klighd.PtolemyEditorPart;
 
 /**
  * @author uru
  * 
  */
-@SuppressWarnings("restriction")
 public class ZoomToFitHandler extends AbstractHandler {
 
     /**
@@ -60,7 +59,7 @@ public class ZoomToFitHandler extends AbstractHandler {
                 IEditorPart editor = ref.getEditor(false);
                 if (editor instanceof PtolemyEditorPart) {
                     PtolemyEditorPart ptolemyEditor = (PtolemyEditorPart) editor;
-                    ptolemyEditor.getContextViewer().getCurrentViewContext()
+                    ptolemyEditor.getContextViewer().getViewContext()
                             .setZoomStyle(selection ? ZoomStyle.ZOOM_TO_FIT : ZoomStyle.NONE);
                 }
             }

@@ -24,7 +24,6 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.krendering.KRendering;
 import de.cau.cs.kieler.core.krendering.Trigger;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
-import de.cau.cs.kieler.klighd.internal.preferences.KlighdPreferences;
 import de.cau.cs.kieler.klighd.util.ModelingUtil;
 import de.cau.cs.kieler.klighd.viewers.ContextViewer;
 
@@ -102,7 +101,7 @@ public interface IAction {
          * @return the view context related to the current diagram
          */
         public ViewContext getViewContext() {
-            return viewer.getContextViewer().getCurrentViewContext();
+            return viewer.getViewContext();
         }
 
         /**
@@ -149,8 +148,7 @@ public interface IAction {
          */
         @SuppressWarnings("unchecked")
         public <T> T getDomainElement(final KNode viewElement) {
-            return (T) this.viewer.getContextViewer().getCurrentViewContext()
-                    .getSourceElement(viewElement);
+            return (T) this.viewer.getViewContext().getSourceElement(viewElement);
         }
     }
 
