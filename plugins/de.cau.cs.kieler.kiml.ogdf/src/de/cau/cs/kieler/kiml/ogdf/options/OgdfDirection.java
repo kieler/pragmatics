@@ -24,10 +24,10 @@ import de.cau.cs.kieler.kiml.options.Direction;
  */
 public enum OgdfDirection {
 
-    /** the 'north' direction. */
-    NORTH,
     /** the 'south' direction. */
     SOUTH,
+    /** the 'north' direction. */
+    NORTH,
     /** the 'west' direction. */
     WEST,
     /** the 'east' direction. */
@@ -41,7 +41,7 @@ public enum OgdfDirection {
      */
     public static OgdfDirection fromKielerDirection(final Direction direction) {
         switch (direction) {
-        case UP:
+        case DOWN:
             return SOUTH;
         case LEFT:
             return WEST;
