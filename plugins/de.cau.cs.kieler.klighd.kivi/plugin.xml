@@ -3,12 +3,12 @@
 <plugin>
    <extension
          point="de.cau.cs.kieler.core.kivi.combinations">
-      <combination
+      <!-- combination
             active="true"
             class="de.cau.cs.kieler.klighd.kivi.combinations.KlighdVisualizeDroppedEMFModelCombination"
             description="Enables the visualization of EMF models in resources dropped on KLighD views."
             name="Visualize dropped EMF Resources in KLighD Views (KLighD)">
-      </combination>
+      </combination -->
       <combination
             active="false"
             class="de.cau.cs.kieler.klighd.kivi.combinations.KlighdVisualizeEMFEditorContentCombination"
