@@ -22,10 +22,13 @@ import de.cau.cs.kieler.core.kgraph.KPort
 import de.cau.cs.kieler.core.krendering.KAreaPlacementData
 import de.cau.cs.kieler.core.krendering.KRendering
 import de.cau.cs.kieler.core.krendering.KRenderingFactory
+import de.cau.cs.kieler.core.krendering.KRenderingRef
 import de.cau.cs.kieler.core.krendering.Trigger
+import de.cau.cs.kieler.core.krendering.extensions.KContainerRenderingExtensions
+import de.cau.cs.kieler.core.krendering.extensions.KLabelExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KRenderingExtensions
-import de.cau.cs.kieler.core.krendering.extensions.ViewSynthesisShared
 import de.cau.cs.kieler.core.math.KVector
+import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizTool
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
 import de.cau.cs.kieler.kiml.options.Direction
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement
@@ -44,17 +47,12 @@ import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExten
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.LabelExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MarkerExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MiscellaneousExtensions
+import de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants
 import java.util.EnumSet
 
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
 
 import static extension com.google.common.base.Strings.*
-import de.cau.cs.kieler.core.krendering.KRenderingRef
-import de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants
-import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizTool
-import de.cau.cs.kieler.core.krendering.extensions.KContainerRenderingExtensions
-import de.cau.cs.kieler.core.krendering.LineStyle
-import de.cau.cs.kieler.core.krendering.extensions.KLabelExtensions
 
 /**
  * Enriches a KGraph model freshly transformed from a Ptolemy2 model with the KRendering information
@@ -62,7 +60,6 @@ import de.cau.cs.kieler.core.krendering.extensions.KLabelExtensions
  * 
  * @author cds
  */
-@ViewSynthesisShared
 class Ptolemy2KGraphVisualization {
     
     /** Access to annotations. */
