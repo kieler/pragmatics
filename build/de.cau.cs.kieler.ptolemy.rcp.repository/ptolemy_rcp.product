@@ -145,11 +145,16 @@ This Agreement is governed by the laws of the State of New York and the intellec
       <plugin id="de.cau.cs.kieler.core.krendering.extensions"/>
       <plugin id="de.cau.cs.kieler.core.ui"/>
       <plugin id="de.cau.cs.kieler.kiml"/>
+      <plugin id="de.cau.cs.kieler.kiml.formats"/>
+      <plugin id="de.cau.cs.kieler.kiml.graphviz.dot"/>
+      <plugin id="de.cau.cs.kieler.kiml.graphviz.layouter"/>
       <plugin id="de.cau.cs.kieler.kiml.service"/>
       <plugin id="de.cau.cs.kieler.kiml.ui"/>
       <plugin id="de.cau.cs.kieler.klay.layered"/>
       <plugin id="de.cau.cs.kieler.klighd"/>
       <plugin id="de.cau.cs.kieler.klighd.piccolo"/>
+      <plugin id="de.cau.cs.kieler.klighd.piccolo.draw2d" fragment="true"/>
+      <plugin id="de.cau.cs.kieler.klighd.ui"/>
       <plugin id="de.cau.cs.kieler.ptolemy.klighd"/>
       <plugin id="de.cau.cs.kieler.ptolemy.rcp"/>
       <plugin id="edu.umd.cs.piccolo"/>
@@ -157,9 +162,11 @@ This Agreement is governed by the laws of the State of New York and the intellec
       <plugin id="javax.inject"/>
       <plugin id="javax.transaction" fragment="true"/>
       <plugin id="javax.xml"/>
+      <plugin id="org.antlr.runtime"/>
       <plugin id="org.apache.batik.css"/>
       <plugin id="org.apache.batik.util"/>
       <plugin id="org.apache.batik.util.gui"/>
+      <plugin id="org.apache.log4j"/>
       <plugin id="org.eclipse.core.commands"/>
       <plugin id="org.eclipse.core.contenttype"/>
       <plugin id="org.eclipse.core.databinding"/>
@@ -204,6 +211,7 @@ This Agreement is governed by the laws of the State of New York and the intellec
       <plugin id="org.eclipse.e4.ui.workbench.swt"/>
       <plugin id="org.eclipse.e4.ui.workbench3"/>
       <plugin id="org.eclipse.emf"/>
+      <plugin id="org.eclipse.emf.cdo.ecore.retrofit" fragment="true"/>
       <plugin id="org.eclipse.emf.common"/>
       <plugin id="org.eclipse.emf.ecore"/>
       <plugin id="org.eclipse.emf.ecore.change"/>
@@ -212,6 +220,7 @@ This Agreement is governed by the laws of the State of New York and the intellec
       <plugin id="org.eclipse.emf.transaction"/>
       <plugin id="org.eclipse.emf.validation"/>
       <plugin id="org.eclipse.equinox.app"/>
+      <plugin id="org.eclipse.equinox.bidi"/>
       <plugin id="org.eclipse.equinox.common"/>
       <plugin id="org.eclipse.equinox.ds"/>
       <plugin id="org.eclipse.equinox.event"/>
@@ -249,6 +258,9 @@ This Agreement is governed by the laws of the State of New York and the intellec
       <plugin id="org.eclipse.ui.win32" fragment="true"/>
       <plugin id="org.eclipse.ui.workbench"/>
       <plugin id="org.eclipse.xtend.lib"/>
+      <plugin id="org.eclipse.xtext"/>
+      <plugin id="org.eclipse.xtext.logging" fragment="true"/>
+      <plugin id="org.eclipse.xtext.util"/>
       <plugin id="org.eclipse.xtext.xbase.lib"/>
       <plugin id="org.ptolemy"/>
       <plugin id="org.ptolemy.moml"/>
