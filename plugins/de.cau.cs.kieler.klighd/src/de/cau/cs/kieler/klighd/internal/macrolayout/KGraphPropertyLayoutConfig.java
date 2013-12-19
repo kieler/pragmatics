@@ -45,15 +45,14 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.service.EclipseLayoutConfig;
+import de.cau.cs.kieler.klighd.IDiagramWorkbenchPart;
 import de.cau.cs.kieler.klighd.LightDiagramServices;
 import de.cau.cs.kieler.klighd.ViewContext;
 import de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties;
 import de.cau.cs.kieler.klighd.util.ExpansionAwareLayoutOption;
-import de.cau.cs.kieler.klighd.util.RenderingContextData;
 import de.cau.cs.kieler.klighd.util.ExpansionAwareLayoutOption.ExpansionAwareLayoutOptionData;
+import de.cau.cs.kieler.klighd.util.RenderingContextData;
 import de.cau.cs.kieler.klighd.viewers.ContextViewer;
-import de.cau.cs.kieler.klighd.views.DiagramEditorPart;
-import de.cau.cs.kieler.klighd.views.IDiagramWorkbenchPart;
 //SUPPRESS CHECKSTYLE PREVIOUS 6 LineLength
 
 /**
@@ -126,7 +125,7 @@ public class KGraphPropertyLayoutConfig implements IMutableLayoutConfig {
             // determine the domain model element
             if (context.getProperty(LayoutContext.DOMAIN_MODEL) == null) {
                 if (contextViewer != null) {
-                    ViewContext viewContext = contextViewer.getCurrentViewContext();
+                    ViewContext viewContext = contextViewer.getViewContext();
                     if (viewContext != null) {
                         Object sourceElement = viewContext.getSourceElement(element);
                         if (sourceElement instanceof EObject) {
@@ -188,7 +187,7 @@ public class KGraphPropertyLayoutConfig implements IMutableLayoutConfig {
                     }
                     context.setProperty(LayoutContext.CONTAINER_DIAGRAM_PART, parentNode);
                     if (contextViewer != null) {
-                        ViewContext viewContext = contextViewer.getCurrentViewContext();
+                        ViewContext viewContext = contextViewer.getViewContext();
                         if (viewContext != null) {
                             Object sourceElement = viewContext.getSourceElement(parentNode);
                             if (sourceElement instanceof EObject) {
@@ -289,7 +288,7 @@ public class KGraphPropertyLayoutConfig implements IMutableLayoutConfig {
      * @return the graph element that shall be modified in the given context, or {@code null}
      */
     private KGraphElement getModificationModel(final LayoutContext context) {
-        EObject domainElement = context.getProperty(LayoutContext.DOMAIN_MODEL);
+        Object domainElement = context.getProperty(LayoutContext.DOMAIN_MODEL);
         if (domainElement instanceof KGraphElement) {
             return (KGraphElement) domainElement;
         }
@@ -310,30 +309,35 @@ public class KGraphPropertyLayoutConfig implements IMutableLayoutConfig {
      */
     private void refreshModel(final KGraphElement element, final LayoutContext layoutContext) {
         if (element == layoutContext.getProperty(LayoutContext.DOMAIN_MODEL)) {
-            ContextViewer contextViewer = layoutContext.getProperty(CONTEXT_VIEWER);
-            if (contextViewer != null) {
-                final ViewContext viewContext = contextViewer.getCurrentViewContext();
-                if (viewContext != null) {
-                    // update the view context in order to re-apply the view synthesis
-                    LightDiagramServices.updateViewContext(viewContext, viewContext.getInputModel());
-                    Display.getDefault().asyncExec(new Runnable() {
-                        public void run() {
-                            IWorkbenchPart workbenchPart = layoutContext.getProperty(
-                                    EclipseLayoutConfig.WORKBENCH_PART);
-                            if (workbenchPart != null) {
-                                // re-apply auto-layout with the new configuration
-                                DiagramLayoutEngine.INSTANCE.layout(workbenchPart, null,
-                                        true, false, false, false);
-                                if (workbenchPart instanceof DiagramEditorPart) {
-                                    DiagramEditorPart dep = (DiagramEditorPart) workbenchPart;
-                                    // mark the editor as dirty
-                                    dep.setDirty(true);
-                                }
-                            }
-                        }
-                    });
-                }
+            final ContextViewer contextViewer = layoutContext.getProperty(CONTEXT_VIEWER);
+            if (contextViewer == null) {
+                return;
             }
+            
+            final ViewContext viewContext = contextViewer.getViewContext();
+            if (viewContext == null) {
+                return;
+            }
+
+            // update the view context in order to re-apply the view synthesis
+            LightDiagramServices.updateViewContext(viewContext, viewContext.getInputModel());
+            Display.getDefault().asyncExec(new Runnable() {
+                public void run() {
+                    IWorkbenchPart workbenchPart = layoutContext.getProperty(
+                            EclipseLayoutConfig.WORKBENCH_PART);
+                    if (workbenchPart != null) {
+                        // re-apply auto-layout with the new configuration
+                        DiagramLayoutEngine.INSTANCE.layout(workbenchPart, null,
+                                true, false, false, false);
+                        
+                        if (workbenchPart instanceof IDiagramWorkbenchPart.IDiagramEditorPart) {
+                            // mark the editor as dirty
+                            ((IDiagramWorkbenchPart.IDiagramEditorPart) workbenchPart)
+                                    .setDirty(true);
+                        }
+                    }
+                }
+            });
         }
     }
 

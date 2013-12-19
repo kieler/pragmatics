@@ -18,7 +18,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -58,7 +57,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 public class LayoutOptionManager {
 
     /** internal cache of semantic layout configurations. */
-    private final Map<EClass, List<ILayoutConfig>> semanticConfigMap = Maps.newHashMap();
+    private final Map<Class<?>, List<ILayoutConfig>> semanticConfigMap = Maps.newHashMap();
     
     /** the default layout configuration. */
     private final DefaultLayoutConfig defaultLayoutConfig = new DefaultLayoutConfig();
@@ -95,7 +94,7 @@ public class LayoutOptionManager {
      *            optional additional layout configurations to include
      * @return a complete layout configuration
      */
-    public IMutableLayoutConfig createConfig(final EObject domainElement,
+    public IMutableLayoutConfig createConfig(final Object domainElement,
             final ILayoutConfig... extraConfigs) {
         CompoundLayoutConfig clc = new CompoundLayoutConfig();
         clc.add(defaultLayoutConfig);
@@ -248,15 +247,20 @@ public class LayoutOptionManager {
      * @return the list of semantic layout configurations, or an empty list if the model element
      *          is {@code null}
      */
-    private List<ILayoutConfig> getSemanticConfigs(final EObject modelElement) {
+    private List<ILayoutConfig> getSemanticConfigs(final Object modelElement) {
         if (modelElement == null) {
             return Collections.emptyList();
         }
-        EClass modelClass = modelElement.eClass();
-        List<ILayoutConfig> configs = semanticConfigMap.get(modelClass);
+        Class<?> clazz = modelElement.getClass();
+        List<ILayoutConfig> configs = semanticConfigMap.get(clazz);
         if (configs == null) {
-            configs = LayoutConfigService.getInstance().getSemanticConfigs(modelClass);
-            semanticConfigMap.put(modelClass, configs);
+            if (modelElement instanceof EObject) {
+                configs = LayoutConfigService.getInstance().getSemanticConfigs(
+                        ((EObject) modelElement).eClass());
+            } else {
+                configs = LayoutConfigService.getInstance().getSemanticConfigs(clazz);
+            }
+            semanticConfigMap.put(clazz, configs);
         }
         return configs;
     }

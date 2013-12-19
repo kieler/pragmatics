@@ -22,8 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.emf.ecore.EObject;
-
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
@@ -294,7 +292,7 @@ public class VolatileLayoutConfig implements IMutableLayoutConfig {
             }
         } else {
             Object diagramPart = context.getProperty(LayoutContext.DIAGRAM_PART);
-            EObject domainModel = context.getProperty(LayoutContext.DOMAIN_MODEL);
+            Object domainModel = context.getProperty(LayoutContext.DOMAIN_MODEL);
             if (diagramPart != null) {
                 setValue((LayoutOptionData<Object>) optionData, diagramPart,
                         LayoutContext.DIAGRAM_PART, value);

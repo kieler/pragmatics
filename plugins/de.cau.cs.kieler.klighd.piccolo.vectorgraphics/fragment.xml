@@ -13,7 +13,7 @@
       </svgGenerator>
    </extension>
    <extension
-         point="de.cau.cs.kieler.klighd.piccolo.exporters">
+         point="de.cau.cs.kieler.klighd.extensions">
       <exporter
             class="de.cau.cs.kieler.klighd.piccolo.svg.export.SVGExporter"
             description="VectorGraphics2D"

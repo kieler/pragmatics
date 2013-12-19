@@ -54,10 +54,11 @@ import de.cau.cs.kieler.kiml.service.EclipseLayoutConfig;
 import de.cau.cs.kieler.kiml.service.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.service.LayoutMapping;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
+import de.cau.cs.kieler.klighd.IDiagramWorkbenchPart;
 import de.cau.cs.kieler.klighd.IViewer;
 import de.cau.cs.kieler.klighd.KlighdConstants;
 import de.cau.cs.kieler.klighd.ViewContext;
-import de.cau.cs.kieler.klighd.ZoomStyle;
+import de.cau.cs.kieler.klighd.internal.ILayoutRecorder;
 import de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties;
 import de.cau.cs.kieler.klighd.microlayout.Bounds;
 import de.cau.cs.kieler.klighd.microlayout.PlacementUtil;
@@ -65,8 +66,6 @@ import de.cau.cs.kieler.klighd.util.KlighdPredicates;
 import de.cau.cs.kieler.klighd.util.KlighdProperties;
 import de.cau.cs.kieler.klighd.util.RenderingContextData;
 import de.cau.cs.kieler.klighd.viewers.ContextViewer;
-import de.cau.cs.kieler.klighd.viewers.KlighdViewer;
-import de.cau.cs.kieler.klighd.views.IDiagramWorkbenchPart;
 
 /**
  * A diagram layout manager for KLighD viewers that supports instances of {@code KNode}, as well as
@@ -110,23 +109,23 @@ public class KlighdLayoutManager implements IDiagramLayoutManager<KGraphElement>
         if (object instanceof KGraphElement) {
             return true;
         }
+
         // KGraph viewer are supported
-        ViewContext viewContext = null;
+        final ViewContext viewContext;
         if (object instanceof IDiagramWorkbenchPart) {
             IDiagramWorkbenchPart view = (IDiagramWorkbenchPart) object;
-            viewContext = view.getContextViewer().getCurrentViewContext();
+            viewContext = view.getContextViewer().getViewContext();
         } else if (object instanceof ContextViewer) {
             ContextViewer contextViewer = (ContextViewer) object;
-            viewContext = contextViewer.getCurrentViewContext();
-        } else if (object instanceof KlighdViewer) {
-            KlighdViewer klighdViewer = (KlighdViewer) object;
-            viewContext = klighdViewer.getContextViewer().getCurrentViewContext();
+            viewContext = contextViewer.getViewContext();
+        } else {
+            viewContext = null;
         }
+
         if (viewContext != null) {
-            return viewContext.getViewerProvider().getModelClass().equals(KNode.class);
+            return true;
         } else if (object instanceof IViewer<?>) {
-            IViewer<?> viewer = (IViewer<?>) object;
-            Object model = viewer.getModel();
+            final Object model = ((IViewer<?>) object).getModel();
             return model instanceof KNode;
         }
         return false;
@@ -157,7 +156,7 @@ public class KlighdLayoutManager implements IDiagramLayoutManager<KGraphElement>
             }
             
             if (contextViewer != null) {
-                ViewContext viewContext = contextViewer.getCurrentViewContext();
+                ViewContext viewContext = contextViewer.getViewContext();
                 if (viewContext != null) {
                     Object model = viewContext.getInputModel();
                     if (adapterType.isInstance(model)) {
@@ -201,8 +200,9 @@ public class KlighdLayoutManager implements IDiagramLayoutManager<KGraphElement>
     public LayoutMapping<KGraphElement> buildLayoutGraph(final IWorkbenchPart workbenchPart,
             final Object diagramPart) {
         KNode graph = null;
-        IViewer<?> viewer = null;
         IDiagramWorkbenchPart diagramWorkbenchPart = null;
+        IViewer<?> viewer = null;
+        ILayoutRecorder recorder = null;
 
         // search for the root node
         if (diagramPart instanceof KNode) {
@@ -214,9 +214,6 @@ public class KlighdLayoutManager implements IDiagramLayoutManager<KGraphElement>
             } else if (diagramPart instanceof ContextViewer) {
                 ContextViewer contextViewer = (ContextViewer) diagramPart;
                 viewer = contextViewer.getActiveViewer();
-            } else if (diagramPart instanceof KlighdViewer) {
-                KlighdViewer klighdViewer = (KlighdViewer) diagramPart;
-                viewer = klighdViewer.getContextViewer().getActiveViewer();
             } else if (diagramPart instanceof IViewer<?>) {
                 viewer = (IViewer<?>) diagramPart;
             }
@@ -224,6 +221,9 @@ public class KlighdLayoutManager implements IDiagramLayoutManager<KGraphElement>
                 Object model = viewer.getModel();
                 if (model instanceof KNode) {
                     graph = (KNode) model;
+                }
+                if (viewer instanceof ILayoutRecorder) {
+                    recorder = (ILayoutRecorder) viewer;
                 }
             }
         }
@@ -242,7 +242,7 @@ public class KlighdLayoutManager implements IDiagramLayoutManager<KGraphElement>
 
         // remember the viewer if any
         if (viewer != null) {
-            mapping.setProperty(KlighdInternalProperties.VIEWER, viewer);
+            mapping.setProperty(KlighdInternalProperties.RECORDER, recorder);
         }
 
         return mapping;
@@ -517,6 +517,11 @@ public class KlighdLayoutManager implements IDiagramLayoutManager<KGraphElement>
         // the new layouter might not calculate any and we don't want
         // any floating junction points in the diagram
         edgeLayout.setProperty(LayoutOptions.JUNCTION_POINTS, null);
+        
+        // delete the old EDGE_ROUTING return value
+        // this is allowed as the EDGE_ROUTING directive to the layouter
+        //  must be set on the parent of the KNode with the outgoing edge
+        edgeLayout.setProperty(LayoutOptions.EDGE_ROUTING, null);
 
         layoutEdge.setSource(layoutSource);
         layoutEdge.setTarget(layoutTarget);
@@ -595,21 +600,15 @@ public class KlighdLayoutManager implements IDiagramLayoutManager<KGraphElement>
      */
     public void applyLayout(final LayoutMapping<KGraphElement> mapping, final boolean zoomToFit,
             final int animationTime) {
-        // get the visualizing viewer if any
-        IViewer<?> viewer = mapping.getProperty(KlighdInternalProperties.VIEWER);
+        // get the animation recorder if anyone has been attached above ...
+        final ILayoutRecorder recorder = mapping.getProperty(KlighdInternalProperties.RECORDER);
 
-        // apply the layout
-        if (viewer != null) {
-            viewer.startRecording();
+        // ... and apply the layout
+        if (recorder != null) {
+            recorder.startRecording();
             applyLayout(mapping);
+            recorder.stopRecording(animationTime);
             
-            // get the zoomStyle
-            ZoomStyle zoomStyle = ZoomStyle.NONE;
-            if (viewer.getContextViewer().getCurrentViewContext() != null) {
-                zoomStyle = viewer.getContextViewer().getCurrentViewContext().getZoomStyle();
-            }
-            
-            viewer.stopRecording(zoomStyle, animationTime);
         } else {
             applyLayout(mapping);
         }
@@ -644,8 +643,6 @@ public class KlighdLayoutManager implements IDiagramLayoutManager<KGraphElement>
                     KEdgeLayout layoutLayout = layoutEdge.getData(KEdgeLayout.class);
                     KEdgeLayout edgeLayout = element.getData(KEdgeLayout.class);
                     if (edgeLayout != null) {
-                        edgeLayout.setProperty(LayoutOptions.JUNCTION_POINTS,
-                                layoutLayout.getProperty(LayoutOptions.JUNCTION_POINTS));
                         transferEdgeLayout(edgeLayout, layoutLayout, false);
                     }
                     return true;
@@ -732,6 +729,9 @@ public class KlighdLayoutManager implements IDiagramLayoutManager<KGraphElement>
         final boolean deliver = viewModelEdgeLayout.eDeliver();
         viewModelEdgeLayout.eSetDeliver(false);
 
+        // copy all properties from the layoutEdgeLayout to the viewModelEdgeLayout,
+        //  esp. the concrete EDGE_ROUTING and the JUNCTION_POINTS
+        // the viewModel2LayoutGraph case this statement will have no effect
         viewModelEdgeLayout.copyProperties(layoutEdgeLayout);
 
         if (viewModelEdgeLayout.getSourcePoint() == null) {

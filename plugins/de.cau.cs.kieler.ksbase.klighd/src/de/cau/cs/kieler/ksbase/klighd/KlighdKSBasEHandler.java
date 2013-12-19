@@ -28,9 +28,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.xtext.ui.editor.XtextEditor;
 
 import de.cau.cs.kieler.core.kivi.triggers.SelectionTrigger.SelectionState;
+import de.cau.cs.kieler.klighd.ui.parts.DiagramEditorPart;
+import de.cau.cs.kieler.klighd.ui.parts.DiagramViewPart;
 import de.cau.cs.kieler.klighd.viewers.ContextViewer;
-import de.cau.cs.kieler.klighd.views.DiagramEditorPart;
-import de.cau.cs.kieler.klighd.views.DiagramViewPart;
 import de.cau.cs.kieler.ksbase.ui.kivi.IKSBasEHandler;
 
 /**
@@ -76,7 +76,7 @@ public class KlighdKSBasEHandler implements IKSBasEHandler {
             List<EObject> eObjects = new ArrayList<EObject>(/*((List<?>) defaultVar).size()*/);
             try {
                 for (Object o : (Iterable<?>) defaultVar) {
-                    eObjects.add((EObject) activeContextViewer.getCurrentViewContext().getSourceElement(((EObject) o)));
+                    eObjects.add((EObject) activeContextViewer.getViewContext().getSourceElement(((EObject) o)));
                 }
                 return eObjects;
             } catch (ClassCastException e) {
@@ -101,12 +101,12 @@ public class KlighdKSBasEHandler implements IKSBasEHandler {
      */
     public List<EObject> getSelection(IWorkbenchPart workbenchPart, SelectionState selection) {
         ContextViewer activeContextViewer = lastContextViewer;
-        Object defaultVar = selection.getSelection();
+        Object defaultVar = selection.getSelectionElements();
 
         List<EObject> eObjects = new ArrayList<EObject>(((List<?>) defaultVar).size());
         try {
             for (Object o : (List<?>) defaultVar) {
-                eObjects.add((EObject) activeContextViewer.getCurrentViewContext().getSourceElement(((EObject) o)));
+                eObjects.add((EObject) activeContextViewer.getViewContext().getSourceElement(((EObject) o)));
             }
             return eObjects;
         } catch (ClassCastException e) {

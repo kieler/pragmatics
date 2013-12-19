@@ -13,12 +13,12 @@
  */
 package de.cau.cs.kieler.core.kivi.triggers;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchPart;
@@ -34,6 +34,7 @@ import de.cau.cs.kieler.core.kivi.ITrigger;
  * 
  * @author mmu
  * @author msp
+ * @author chsch
  */
 public class SelectionTrigger extends AbstractTrigger implements ISelectionListener {
 
@@ -41,7 +42,7 @@ public class SelectionTrigger extends AbstractTrigger implements ISelectionListe
      * Remember old selection to avoid triggering KiVi every time the user clicks on the same
      * element.
      */
-    private List<?> oldSelection;
+    private ISelection oldSelection;
 
     /**
      * {@inheritDoc}
@@ -86,34 +87,39 @@ public class SelectionTrigger extends AbstractTrigger implements ISelectionListe
      * {@inheritDoc}
      */
     public void selectionChanged(final IWorkbenchPart p, final ISelection s) {
-        if (s instanceof IStructuredSelection) {
-            IStructuredSelection selection = (IStructuredSelection) s;
-            List<?> newSelection = selection.toList();
-
-            // make sure to trigger only if selection has changed
-            if (!newSelection.equals(oldSelection)) {
-                oldSelection = newSelection;
-                trigger(new SelectionState(new ArrayList<Object>(newSelection), p));
-            }
+        if (!s.equals(oldSelection)) {
+            trigger(new SelectionState(s, p));
         }
+// chsch: old implementation:
+//        if (s instanceof IStructuredSelection) {
+//            IStructuredSelection selection = (IStructuredSelection) s;
+//            List<?> newSelection = selection.toList();
+//
+//            // make sure to trigger only if selection has changed
+//            if (!newSelection.equals(oldSelection)) {
+//                oldSelection = newSelection;
+//                trigger(new SelectionState(new ArrayList<Object>(newSelection), p));
+//            }
+//        }
     }
-    
+
     /**
      * The selection trigger state.
      */
     public static final class SelectionState extends AbstractTriggerState {
 
         /** The editor or view in which a selection has been done. */
-        private IWorkbenchPart workbenchPart;
+        private final IWorkbenchPart workbenchPart;
 
-        /** The list of selected objects. */
-        private List<Object> objects;
+        /** The selection to be kept. */
+        private final ISelection selection;
         
         /**
          * Default constructor.
          */
         public SelectionState() {
-            objects = Collections.emptyList();
+            selection = null;
+            workbenchPart = null;
         }
 
         /**
@@ -124,8 +130,8 @@ public class SelectionTrigger extends AbstractTrigger implements ISelectionListe
          * @param e
          *            the diagram editor
          */
-        private SelectionState(final List<Object> list, final IWorkbenchPart e) {
-            objects = list;
+        private SelectionState(final ISelection s, final IWorkbenchPart e) {
+            selection = s;
             workbenchPart = e;
         }
 
@@ -135,14 +141,62 @@ public class SelectionTrigger extends AbstractTrigger implements ISelectionListe
         public Class<? extends ITrigger> getTriggerClass() {
             return SelectionTrigger.class;
         }
-        
+
         /**
-         * Get the selected EObjects.
+         * Provides the current {@link ISelection}.
          * 
-         * @return the EObjects
+         * @return the current {@link ISelection}
          */
-        public List<Object> getSelection() {
-            return objects;
+        public ISelection getSelection() {
+            return selection;
+        }
+
+        /**
+         * Provides the current selection if it is an {@link IStructuredSelection}.
+         * 
+         * @return the current {@link IStructuredSelection} or {@link StructuredSelection#EMPTY} if
+         *         the current selection is not an {@link IStructuredSelection}
+         */
+        public IStructuredSelection getStructuredSelection() {
+            if (selection instanceof IStructuredSelection) {
+                return (IStructuredSelection) selection;
+            } else {
+                return StructuredSelection.EMPTY;
+            }
+        }
+
+        /**
+         * Get the selected Objects.
+         * 
+         * @return a list of the selected objects or {@link Collections#emptyList()} if the current
+         *         selection is not an {@link IStructuredSelection}
+         */
+        public List<?> getSelectionElements() {
+            if (selection instanceof IStructuredSelection) {
+                return ((IStructuredSelection) selection).toList();
+            } else {
+                return Collections.emptyList();
+            }
+        }
+
+        /**
+         * Provides the current selection.
+         * 
+         * @param <T>
+         *            the type of the expected selection
+         * @param type
+         *            the type of the expected selection
+         * @return the desired selection of type T or <code>null</code> if the current selection is
+         *         not of type T
+         */
+        public <T extends ISelection> T getSelection(final Class<T> type) {
+            if (type.isInstance(selection)) {
+                @SuppressWarnings("unchecked")
+                final T result = (T) selection;
+                return result; 
+            } else {
+                return null;
+            }
         }
 
         /**
@@ -154,5 +208,4 @@ public class SelectionTrigger extends AbstractTrigger implements ISelectionListe
             return workbenchPart;
         }
     }
-
 }

@@ -23,19 +23,18 @@ import java.beans.PropertyChangeListener;
 
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.klighd.internal.IDiagramOutlinePage;
 import de.cau.cs.kieler.klighd.piccolo.internal.events.KlighdBasicInputEventHandler;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KNodeTopNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdCanvas;
@@ -52,19 +51,22 @@ import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolox.swt.SWTTimer;
 
 /**
- * A content outline page for the Piccolo viewer.
+ * A content outline page for the Piccolo2D viewer.
  * 
  * @author msp
  * @author uru
  */
-public class PiccoloOutlinePage implements IContentOutlinePage {
+public class PiccoloOutlinePage implements IDiagramOutlinePage {
 
     /** the canvas used for drawing. */
     private KlighdCanvas outlineCanvas;
+
     /** the graph layer to display. */
     private KNodeTopNode topNode;
+
     /** the observed knode. */
     private KNode rootNode;
+
     /** the adapter listening to layout changes. */
     private Adapter nodeLayoutAdapter;
 
@@ -110,7 +112,11 @@ public class PiccoloOutlinePage implements IContentOutlinePage {
      * {@inheritDoc}
      */
     public void createControl(final Composite parent) {
-        outlineCanvas = new KlighdCanvas(parent, SWT.NONE);
+        final Composite container = new Composite(parent, SWT.NONE);
+        container.setLayout(new FillLayout());
+        
+        outlineCanvas = new KlighdCanvas(container, SWT.NONE);
+        outlineCanvas.setVisible(false);
 
         // add a handler to the outline canvas to allow dragging
         outlineCanvas.addInputEventListener(new KlighdBasicInputEventHandler(new OutlineDragHandler()));
@@ -135,7 +141,11 @@ public class PiccoloOutlinePage implements IContentOutlinePage {
      * {@inheritDoc}
      */
     public Control getControl() {
-        return outlineCanvas;
+        if (outlineCanvas == null || outlineCanvas.isDisposed()) {
+            return null;
+        } else {
+            return outlineCanvas.getParent();
+        }
     }
 
     /**
@@ -143,6 +153,22 @@ public class PiccoloOutlinePage implements IContentOutlinePage {
      */
     public void setFocus() {
         outlineCanvas.setFocus();
+    }
+
+    /** A flag for tracking the visibility state until the {@link #outlineCanvas} is created. */
+    private boolean visible = false; 
+
+    /**
+     * Sets the visibility property of the employed {@link KlighdCanvas}.
+     * 
+     * @param isVisible the visibility state
+     */
+    public void setVisible(final boolean isVisible) {
+        visible = isVisible;
+        if (outlineCanvas != null) {
+            adjustOutlineRect();
+            outlineCanvas.setVisible(isVisible);
+        }
     }
 
     /**
@@ -188,7 +214,8 @@ public class PiccoloOutlinePage implements IContentOutlinePage {
         camera.addLayer(overlayLayer);
         
         // initialize & configure the outline rectangle
-        //  the concrete path data are set later on in #adjustCamera();
+        //  the concrete path data are set later on in #adjustOutlineRect()
+        //  when the timer expires the first time (it's started in constructor)
         outlineRect = new KlighdPath();
         outlineRect.setPaint(OUTLINE_EDGE_COLOR);
         outlineRect.setPaintAlpha(OUTLINE_EDGE_OPACITY);
@@ -223,6 +250,9 @@ public class PiccoloOutlinePage implements IContentOutlinePage {
         outlineCanvas.addControlListener(canvasResizeListener);
         
         adjustCamera();
+        adjustOutlineRect();
+        
+        outlineCanvas.setVisible(visible);
     }
 
     /** the control listener reacting to canvas resizing. */
@@ -253,7 +283,7 @@ public class PiccoloOutlinePage implements IContentOutlinePage {
     private void adjustCamera() {
         // always reveal the current shape layout - it may be exchanged over the diagram's life time
         final KShapeLayout layoutData = rootNode.getData(KShapeLayout.class);
-        
+
         float width = Math.max(layoutData.getWidth(), MIN_SIZE);
         float height = Math.max(layoutData.getHeight(), MIN_SIZE);
         outlineCanvas.getCamera().setViewBounds(
@@ -282,6 +312,21 @@ public class PiccoloOutlinePage implements IContentOutlinePage {
 
         // schedule a repaint
         outlineCanvas.getCamera().invalidatePaint();
+//
+//        if (!this.outlineCanvas.isVisible() && bounds.width != 0) {
+//            new Job("") {
+//                @Override
+//                protected IStatus run(final IProgressMonitor monitor) {
+//                    PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+//                        
+//                        public void run() {
+//                            PiccoloOutlinePage.this.outlineCanvas.setVisible(true);
+//                        }
+//                    });
+//                    return Status.OK_STATUS;
+//                }
+//            } .schedule(100);
+//        }
     }
 
 
@@ -335,34 +380,6 @@ public class PiccoloOutlinePage implements IContentOutlinePage {
         // no action to register
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void addSelectionChangedListener(final ISelectionChangedListener listener) {
-        // selection is not supported by this outline page
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void removeSelectionChangedListener(final ISelectionChangedListener listener) {
-        // selection is not supported by this outline page
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public ISelection getSelection() {
-        // selection is not supported by this outline page
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setSelection(final ISelection selection) {
-        // selection is not supported by this outline page
-    }
 
 
     /**

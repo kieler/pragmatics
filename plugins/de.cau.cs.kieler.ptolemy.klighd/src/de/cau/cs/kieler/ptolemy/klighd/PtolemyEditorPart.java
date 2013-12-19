@@ -22,7 +22,7 @@ import org.ptolemy.moml.util.MomlResourceFactoryImpl;
 
 import com.google.common.collect.Maps;
 
-import de.cau.cs.kieler.klighd.views.DiagramEditorPart;
+import de.cau.cs.kieler.klighd.ui.parts.DiagramEditorPart;
 
 /**
  * Editor part for displaying Ptolemy models in a KLighD viewer. The editor part disables certain EMF
