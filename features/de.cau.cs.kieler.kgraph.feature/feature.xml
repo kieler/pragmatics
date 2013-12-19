@@ -397,4 +397,18 @@ litigation.
          version="0.0.0"
          unpack="false"/>
 
+   <plugin
+         id="de.cau.cs.kieler.klighd.kivi"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.klighd.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
 </feature>
