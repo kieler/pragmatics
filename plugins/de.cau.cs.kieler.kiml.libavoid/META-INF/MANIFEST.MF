@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: KIELER Libavoid Bridge
+Bundle-Name: KIELER Bridge for Libavoid Layout
 Bundle-SymbolicName: de.cau.cs.kieler.kiml.libavoid;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

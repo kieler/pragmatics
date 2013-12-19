@@ -309,30 +309,35 @@ public class KGraphPropertyLayoutConfig implements IMutableLayoutConfig {
      */
     private void refreshModel(final KGraphElement element, final LayoutContext layoutContext) {
         if (element == layoutContext.getProperty(LayoutContext.DOMAIN_MODEL)) {
-            ContextViewer contextViewer = layoutContext.getProperty(CONTEXT_VIEWER);
-            if (contextViewer != null) {
-                final ViewContext viewContext = contextViewer.getViewContext();
-                if (viewContext != null) {
-                    // update the view context in order to re-apply the view synthesis
-                    LightDiagramServices.updateViewContext(viewContext, viewContext.getInputModel());
-                    Display.getDefault().asyncExec(new Runnable() {
-                        public void run() {
-                            IWorkbenchPart workbenchPart = layoutContext.getProperty(
-                                    EclipseLayoutConfig.WORKBENCH_PART);
-                            if (workbenchPart != null) {
-                                // re-apply auto-layout with the new configuration
-                                DiagramLayoutEngine.INSTANCE.layout(workbenchPart, null,
-                                        true, false, false, false);
-//                                if (workbenchPart instanceof DiagramEditorPart) {
-//                                    DiagramEditorPart dep = (DiagramEditorPart) workbenchPart;
-//                                    // mark the editor as dirty
-//                                    dep.setDirty(true);
-//                                }
-                            }
-                        }
-                    });
-                }
+            final ContextViewer contextViewer = layoutContext.getProperty(CONTEXT_VIEWER);
+            if (contextViewer == null) {
+                return;
             }
+            
+            final ViewContext viewContext = contextViewer.getViewContext();
+            if (viewContext == null) {
+                return;
+            }
+
+            // update the view context in order to re-apply the view synthesis
+            LightDiagramServices.updateViewContext(viewContext, viewContext.getInputModel());
+            Display.getDefault().asyncExec(new Runnable() {
+                public void run() {
+                    IWorkbenchPart workbenchPart = layoutContext.getProperty(
+                            EclipseLayoutConfig.WORKBENCH_PART);
+                    if (workbenchPart != null) {
+                        // re-apply auto-layout with the new configuration
+                        DiagramLayoutEngine.INSTANCE.layout(workbenchPart, null,
+                                true, false, false, false);
+                        
+                        if (workbenchPart instanceof IDiagramWorkbenchPart.IDiagramEditorPart) {
+                            // mark the editor as dirty
+                            ((IDiagramWorkbenchPart.IDiagramEditorPart) workbenchPart)
+                                    .setDirty(true);
+                        }
+                    }
+                }
+            });
         }
     }
 
