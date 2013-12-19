@@ -80,10 +80,10 @@ public class KlighdSelectionEffect extends AbstractEffect {
         if (part != null) {
             // get the diagram elements
             if (areDiagramElements) {
-                part.getContextViewer().resetSelectionToDiagramElements(
+                part.getViewer().resetSelectionToDiagramElements(
                         Iterables.filter(this.elements, EObject.class));
             } else {
-                part.getContextViewer().resetSelectionToSemanticElements(this.elements);
+                part.getViewer().resetSelectionToSemanticElements(this.elements);
             }
         }
     }
