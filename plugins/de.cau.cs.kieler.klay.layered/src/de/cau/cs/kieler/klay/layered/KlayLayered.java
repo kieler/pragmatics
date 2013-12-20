@@ -42,6 +42,7 @@ import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
 import de.cau.cs.kieler.klay.layered.p1cycles.InteractiveCycleBreaker;
+import de.cau.cs.kieler.klay.layered.p2layers.ForceBasedLayerer;
 import de.cau.cs.kieler.klay.layered.p2layers.InteractiveLayerer;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
 import de.cau.cs.kieler.klay.layered.p2layers.LongestPathLayerer;
@@ -428,6 +429,11 @@ public final class KlayLayered {
         case INTERACTIVE:
             if (!(layerer instanceof InteractiveLayerer)) {
                 layerer = new InteractiveLayerer();
+            }
+            break;
+        case FORCE_BASED:
+            if (!(layerer instanceof ForceBasedLayerer)) {
+                layerer = new ForceBasedLayerer();
             }
             break;
         default: // NETWORK_SIMPLEX

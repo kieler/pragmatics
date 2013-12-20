@@ -35,6 +35,11 @@ public enum LayeringStrategy {
      * as given in the input diagram are considered here. This means that if the user moves
      * a node, that movement is reflected in the layering of the graph.
      */
-    INTERACTIVE;
+    INTERACTIVE,
+    /**
+     * Nodes are first placed by a force-based layouter. The positions are used to derive a
+     * layering.
+     */
+    FORCE_BASED;
 
 }
