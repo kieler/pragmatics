@@ -42,6 +42,7 @@ import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
 import de.cau.cs.kieler.klay.layered.p1cycles.InteractiveCycleBreaker;
+import de.cau.cs.kieler.klay.layered.p2layers.CompactingLayerer;
 import de.cau.cs.kieler.klay.layered.p2layers.ForceBasedLayerer;
 import de.cau.cs.kieler.klay.layered.p2layers.InteractiveLayerer;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
@@ -434,6 +435,11 @@ public final class KlayLayered {
         case FORCE_BASED:
             if (!(layerer instanceof ForceBasedLayerer)) {
                 layerer = new ForceBasedLayerer();
+            }
+            break;
+        case COMPACTING:
+            if (!(layerer instanceof CompactingLayerer)) {
+                layerer = new CompactingLayerer();
             }
             break;
         default: // NETWORK_SIMPLEX

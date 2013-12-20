@@ -40,6 +40,10 @@ public enum LayeringStrategy {
      * Nodes are first placed by a force-based layouter. The positions are used to derive a
      * layering.
      */
-    FORCE_BASED;
+    FORCE_BASED,
+    /**
+     * Iteratively performs layering until a certain compactness criteria is met.
+     */
+    COMPACTING;
 
 }
