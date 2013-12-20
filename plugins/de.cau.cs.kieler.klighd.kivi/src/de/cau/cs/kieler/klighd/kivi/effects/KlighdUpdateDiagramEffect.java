@@ -120,7 +120,7 @@ public class KlighdUpdateDiagramEffect extends KlighdDiagramEffect {
 
                 setView(view);
                 if (view != null) {
-                    setViewer(view.getContextViewer().getActiveViewer());
+                    setViewer(view.getViewer().getContextViewer().getActiveViewer());
                     setSourceWorkbenchPart();
                 }
             }

@@ -53,7 +53,7 @@ public class KlighdPanningEffect extends AbstractEffect {
      */
     public KlighdPanningEffect(final IWorkbenchPart part, final Object element) {
         if (part instanceof IDiagramWorkbenchPart) {
-            viewer = ((IDiagramWorkbenchPart) part).getContextViewer();
+            viewer = ((IDiagramWorkbenchPart) part).getViewer().getContextViewer();
         }
         this.element = element;
     }
