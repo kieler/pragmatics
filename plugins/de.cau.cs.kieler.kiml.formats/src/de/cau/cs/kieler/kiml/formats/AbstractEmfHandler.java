@@ -31,6 +31,8 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.XMLResource;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.Property;
 
 /**
  * An abstract superclass for EMF-based transformers.
@@ -42,6 +44,9 @@ import de.cau.cs.kieler.core.kgraph.KNode;
  */
 public abstract class AbstractEmfHandler<T extends EObject> implements IGraphFormatHandler<T> {
     
+    /** the character set to use for serialization and deserialization. */
+    public static final IProperty<String> CHARSET = new Property<String>("emfHandler.charset");
+    
     /** the file extension for loading and saving resources. */
     private String fileExtension;
     
@@ -51,9 +56,15 @@ public abstract class AbstractEmfHandler<T extends EObject> implements IGraphFor
     public void deserialize(final String serializedGraph,
             final TransformationData<T, KNode> transData) {
         try {
-            ByteArrayInputStream source = new ByteArrayInputStream(serializedGraph.getBytes("UTF-8"));
+            String charset = transData.getProperty(CHARSET);
+            byte[] bytes;
+            if (charset != null) {
+                bytes = serializedGraph.getBytes(charset);
+            } else {
+                bytes = serializedGraph.getBytes();
+            }
+            ByteArrayInputStream source = new ByteArrayInputStream(bytes);
             T result = deserializeBinary(source, null);
-            source.close();
             transData.setSourceGraph(result);
         } catch (UnsupportedEncodingException e) {
             throw new TransformationException(e);
@@ -69,9 +80,14 @@ public abstract class AbstractEmfHandler<T extends EObject> implements IGraphFor
         try {
             ByteArrayOutputStream target = new ByteArrayOutputStream();
             for (T graph : transData.getTargetGraphs()) {
-                serializeBinary(graph, target, null);                
+                serializeBinary(graph, target, null);
             }
-            return target.toString("UTF-8");
+            String charset = transData.getProperty(CHARSET);
+            if (charset != null) {
+                return target.toString(charset);
+            } else {
+                return target.toString();
+            }
         } catch (IOException e) {
             throw new TransformationException(e);
         }

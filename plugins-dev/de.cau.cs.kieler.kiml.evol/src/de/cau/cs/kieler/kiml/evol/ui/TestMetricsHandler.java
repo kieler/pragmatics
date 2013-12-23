@@ -13,6 +13,10 @@
  */
 package de.cau.cs.kieler.kiml.evol.ui;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -29,11 +33,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -58,6 +57,7 @@ import de.cau.cs.kieler.kiml.evol.alg.MutationOperation;
 import de.cau.cs.kieler.kiml.evol.genetic.Gene;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo;
+import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
 import de.cau.cs.kieler.kiml.grana.AnalysisData;
 import de.cau.cs.kieler.kiml.grana.AnalysisService;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -74,6 +74,9 @@ public class TestMetricsHandler extends AbstractHandler {
     private static final int I_DIFFSUM = 2;
     private static final int I_MIN = 3;
     private static final int I_MAX = 4;
+    private static final String[] COL_HEADERS = new String[] {
+        "Number", "Sum", "Dev. Sum", "Min.", "Max."
+    };
     
     /** the graph layout metrics used for evaluation. */
     private List<AnalysisData> metrics;
@@ -95,14 +98,47 @@ public class TestMetricsHandler extends AbstractHandler {
                 protected IStatus run(final IProgressMonitor monitor) {
                     monitor.beginTask("Test Layout Metrics", elements.length);
                     Random random = new Random();
-                    for (Object object : elements) {
-                        if (monitor.isCanceled()) {
-                            break;
+                    try {
+                        Writer writer = new FileWriter(System.getProperty("user.home")
+                                + File.separator + "layout-metrics.csv");
+                        writer.write("File,");
+                        for (AnalysisData metric : metrics) {
+                            for (int j = 0; j <= I_MAX; j++) {
+                                writer.write(metric.getName());
+                                writer.write(" ");
+                                writer.write(COL_HEADERS[j]);
+                                writer.write(",");
+                            }
                         }
-                        if (object instanceof IFile) {
-                            testFile((IFile) object, random);
+                        writer.write('\n');
+                        
+                        for (Object object : elements) {
+                            if (monitor.isCanceled()) {
+                                break;
+                            }
+                            if (object instanceof IFile) {
+                                IFile inputFile = (IFile) object;
+                                
+                                float[][] result = testFile(inputFile, random);
+                                
+                                writer.write(inputFile.getName());
+                                writer.write(",");
+                                for (int i = 0; i < result.length; i++) {
+                                    for (int j = 0; j < result[i].length; j++) {
+                                        writer.write(Float.toString(result[i][j]));
+                                        writer.write(",");
+                                    }
+                                }
+                                writer.write('\n');
+                            }
+                            monitor.worked(1);
                         }
-                        monitor.worked(1);
+                        writer.close();
+                    } catch (IOException exception) {
+                        IStatus status = new Status(IStatus.ERROR, EvolPlugin.PLUGIN_ID,
+                                "Error while writing the output file.", exception);
+                        StatusManager.getManager().handle(status,
+                                StatusManager.SHOW | StatusManager.LOG);
                     }
                     monitor.done();
                     return Status.OK_STATUS;
@@ -114,7 +150,10 @@ public class TestMetricsHandler extends AbstractHandler {
         }
         return null;
     }
-    
+        
+    /**
+     * Initialize the testing process.
+     */
     private void initialize() {
         // determine the sequence of graph layout analyses to evaluate
         AnalysisService analysisService = AnalysisService.getInstance();
@@ -157,29 +196,42 @@ public class TestMetricsHandler extends AbstractHandler {
      * Process a source file.
      * 
      * @param file a source file
+     * @param random the random number generator
+     * @return test result matrix: rows correspond to layout metrics, columns are the values
      */
-    private void testFile(final IFile file, final Random random) {
+    private float[][] testFile(final IFile file, final Random random) {
+        float[][] result = new float[metrics.size()][I_MAX + 1];
+        for (int j = 0; j < metrics.size(); j++) {
+            result[j][I_MIN] = 1;
+        }
         try {
-            // Create a resource set.
-            ResourceSet resourceSet = new ResourceSetImpl();
-            // Demand load the resource for this file.
-            Resource resource = resourceSet.getResource(URI.createPlatformResourceURI(
-                    file.getFullPath().toString(), false), true);
-            if (!resource.getContents().isEmpty()) {
-                EObject content = resource.getContents().get(0);
-                if (content instanceof KNode) {
-                    testGraph((KNode) content, random);
+            System.out.print("Testing " + file.getName() + "... ");
+            long startTime = System.nanoTime();
+            
+            KNode[] graphs = GraphFormatsService.getInstance().loadKGraph(file);
+            for (KNode graph : graphs) {
+                float[][] graphResult = testGraph(graph, random);
+                for (int j = 0; j < metrics.size(); j++) {
+                    result[j][I_NUMBER] += graphResult[j][I_NUMBER];
+                    result[j][I_SUM] += graphResult[j][I_SUM];
+                    result[j][I_DIFFSUM] += graphResult[j][I_DIFFSUM];
+                    result[j][I_MIN] = Math.min(result[j][I_MIN], graphResult[j][I_MIN]);
+                    result[j][I_MAX] = Math.max(result[j][I_MAX], graphResult[j][I_MAX]);
                 }
             }
+            
+            // SUPPRESS CHECKSTYLE NEXT MagicNumber
+            System.out.println((System.nanoTime() - startTime) * 1e-9 + " s");
         } catch (Exception exception) {
             IStatus status = new Status(IStatus.ERROR, EvolPlugin.PLUGIN_ID,
-                    "Error while converting the selected graph.", exception);
+                    "Error while loading the graph file " + file.getName(), exception);
             StatusManager.getManager().handle(status, StatusManager.SHOW | StatusManager.LOG);
         }
+        return result;
     }
     
     /** the number of layouts to perform for each graph. */
-    private static final int NUMBER_OF_LAYOUTS = 1000;
+    private static final int NUMBER_OF_LAYOUTS = 50;
     
     /**
      * Perform tests on the given graph.
@@ -240,6 +292,8 @@ public class TestMetricsHandler extends AbstractHandler {
     /**
      * Create a genome with random values.
      * 
+     * @param graph the graph for which to create the genome
+     * @param random a random number generator
      * @return a genome filled with genes
      */
     private Genome createRandomGenome(final KNode graph, final Random random) {
@@ -288,7 +342,7 @@ public class TestMetricsHandler extends AbstractHandler {
      * Returns a random element of the given collection.
      * 
      * @param collection a collection
-     * @param random the random number generator
+     * @param random a random number generator
      * @return a random element
      */
     private static <T> T getRandomElem(final Collection<? extends T> collection, final Random random) {

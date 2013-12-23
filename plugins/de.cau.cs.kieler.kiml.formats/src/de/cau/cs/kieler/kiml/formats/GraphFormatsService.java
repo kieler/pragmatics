@@ -13,6 +13,9 @@
  */
 package de.cau.cs.kieler.kiml.formats;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -20,6 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
@@ -29,6 +33,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.alg.DefaultFactory;
 import de.cau.cs.kieler.core.alg.IFactory;
+import de.cau.cs.kieler.core.kgraph.KNode;
 
 /**
  * Service class for graph formats.
@@ -165,7 +170,7 @@ public class GraphFormatsService {
                         formatData.setHandler(handler);
                         String extElem = element.getAttribute(ATTRIBUTE_EXTENSIONS);
                         if (extElem != null) {
-                            StringTokenizer tokenizer = new StringTokenizer(extElem, ",");
+                            StringTokenizer tokenizer = new StringTokenizer(extElem, ", \t");
                             String[] extArray = new String[tokenizer.countTokens()];
                             for (int i = 0; i < extArray.length; i++) {
                                 extArray[i] = tokenizer.nextToken();
@@ -240,6 +245,60 @@ public class GraphFormatsService {
             }
         }
         return data;
+    }
+    
+    /**
+     * Load the given file and transform it to the KGraph format.
+     * 
+     * @param file a file
+     * @return the contained graphs as KGraph instances
+     * @throws IOException if reading the file fails
+     * @throws CoreException if accessing the file fails
+     */
+    public KNode[] loadKGraph(final IFile file) throws IOException, CoreException {
+        String extension = file.getFileExtension();
+        for (GraphFormatData formatData : graphFormatMap.values()) {
+            for (String fe : formatData.getExtensions()) {
+                if (fe.equalsIgnoreCase(extension)) {
+                    // a matching extension was found -- try to load the file
+                    InputStream inputStream = file.getContents();
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    int c = inputStream.read();
+                    while (c >= 0) {
+                        baos.write(c);
+                        c = inputStream.read();
+                    }
+                    inputStream.close();
+                    try {
+                        return loadKGraph(baos.toString(), formatData.getHandler());
+                    } catch (TransformationException exception) {
+                        if (exception.getCause() instanceof IOException) {
+                            throw (IOException) exception.getCause();
+                        } else if (exception.getCause() instanceof CoreException) {
+                            throw (CoreException) exception.getCause();
+                        } else {
+                            throw new IOException(exception);
+                        }
+                    }
+                }
+            }
+        }
+        throw new IOException("The extension of the given file is unknown.");
+    }
+
+    /**
+     * Load KGraph instances from the given serialized graph.
+     * 
+     * @param serializedGraph a serialized graph
+     * @param handler the graph handler
+     * @return an array of contained graphs
+     */
+    private static <T> KNode[] loadKGraph(final String serializedGraph,
+            final IGraphFormatHandler<T> handler) {
+        TransformationData<T, KNode> transData = new TransformationData<T, KNode>();
+        handler.deserialize(serializedGraph, transData);
+        handler.getImporter().transform(transData);
+        return transData.getTargetGraphs().toArray(new KNode[transData.getTargetGraphs().size()]);
     }
 
 }

@@ -201,19 +201,20 @@
                         type="org.eclipse.core.resources.IResource">
                      <or>
                         <test
-                              forcePluginActivation="false"
                               property="org.eclipse.core.resources.extension"
                               value="kgx">
                         </test>
                         <test
-                              forcePluginActivation="false"
                               property="org.eclipse.core.resources.extension"
                               value="kgraph">
                         </test>
                         <test
-                              forcePluginActivation="false"
                               property="org.eclipse.core.resources.extension"
                               value="kgt">
+                        </test>
+                        <test
+                              property="org.eclipse.core.resources.extension"
+                              value="graphml">
                         </test>
                      </or>
                   </adapt>
