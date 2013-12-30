@@ -80,19 +80,23 @@ public class EdgeUniformityMetric implements IAnalysis {
             }
             average = average / numberOfEdges;
             
-            // compute standard deviation of edge length
-            double deviation = 0;
-            for (int i = 0; i < index; i++) {
-                double diff = individualLengths[i] - average;
-                deviation += diff * diff;
-            }
-            deviation = Math.sqrt(deviation / numberOfEdges);
-            
-            // the higher the standard deviation, the more the result goes to zero
-            if (deviation >= average) {
-                result = RESULT_BASE * (float) (average / deviation);
+            if (average > 0) {
+                // compute standard deviation of edge length
+                double deviation = 0;
+                for (int i = 0; i < index; i++) {
+                    double diff = individualLengths[i] - average;
+                    deviation += diff * diff;
+                }
+                deviation = Math.sqrt(deviation / numberOfEdges);
+                
+                // the higher the standard deviation, the more the result goes to zero
+                if (deviation >= average) {
+                    result = RESULT_BASE * (float) (average / deviation);
+                } else {
+                    result = 1 - (float) (deviation / average) * (1 - RESULT_BASE);
+                }
             } else {
-                result = 1 - (float) (deviation / average) * (1 - RESULT_BASE);
+                result = 1.0f;
             }
 
             assert result >= 0 && result <= 1;

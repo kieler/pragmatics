@@ -24,6 +24,10 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -60,6 +64,7 @@ import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo;
 import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
 import de.cau.cs.kieler.kiml.grana.AnalysisData;
 import de.cau.cs.kieler.kiml.grana.AnalysisService;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
@@ -84,6 +89,8 @@ public class TestMetricsHandler extends AbstractHandler {
     private List<AnalysisData> analysisSequence;
     /** the layout options to consider for creating genomes. */
     private Collection<LayoutOptionData<?>> options;
+    /** the executor service for running layout algorithms. */
+    private ExecutorService executorService;
     
     /**
      * {@inheritDoc}
@@ -105,7 +112,7 @@ public class TestMetricsHandler extends AbstractHandler {
                         for (AnalysisData metric : metrics) {
                             for (int j = 0; j <= I_MAX; j++) {
                                 writer.write(metric.getName());
-                                writer.write(" ");
+                                writer.write(": ");
                                 writer.write(COL_HEADERS[j]);
                                 writer.write(",");
                             }
@@ -139,6 +146,8 @@ public class TestMetricsHandler extends AbstractHandler {
                                 "Error while writing the output file.", exception);
                         StatusManager.getManager().handle(status,
                                 StatusManager.SHOW | StatusManager.LOG);
+                    } finally {
+                        executorService.shutdown();
                     }
                     monitor.done();
                     return Status.OK_STATUS;
@@ -148,6 +157,7 @@ public class TestMetricsHandler extends AbstractHandler {
             job.setUser(true);
             job.schedule();
         }
+        
         return null;
     }
         
@@ -172,6 +182,9 @@ public class TestMetricsHandler extends AbstractHandler {
                 optionIter.remove();
             }
         }
+        
+        // create the executor service
+        executorService = Executors.newSingleThreadExecutor();
     }
     
     /**
@@ -205,7 +218,7 @@ public class TestMetricsHandler extends AbstractHandler {
             result[j][I_MIN] = 1;
         }
         try {
-            System.out.print("Testing " + file.getName() + "... ");
+            System.out.print("Testing " + file.getName());
             long startTime = System.nanoTime();
             
             KNode[] graphs = GraphFormatsService.getInstance().loadKGraph(file);
@@ -221,7 +234,7 @@ public class TestMetricsHandler extends AbstractHandler {
             }
             
             // SUPPRESS CHECKSTYLE NEXT MagicNumber
-            System.out.println((System.nanoTime() - startTime) * 1e-9 + " s");
+            System.out.println("\n  " + (System.nanoTime() - startTime) * 1e-9 + " s");
         } catch (Exception exception) {
             IStatus status = new Status(IStatus.ERROR, EvolPlugin.PLUGIN_ID,
                     "Error while loading the graph file " + file.getName(), exception);
@@ -231,7 +244,13 @@ public class TestMetricsHandler extends AbstractHandler {
     }
     
     /** the number of layouts to perform for each graph. */
-    private static final int NUMBER_OF_LAYOUTS = 50;
+    private static final int NUMBER_OF_LAYOUTS = 100;
+    
+    /** the maximal number of milliseconds to wait for a layout. */
+    private static final long LAYOUT_TIMEOUT = 10000;
+    
+    /** the maximal number of attempts to layout a graph. */
+    private static final int MAX_ATTEMPTS = 5;
     
     /**
      * Perform tests on the given graph.
@@ -241,29 +260,49 @@ public class TestMetricsHandler extends AbstractHandler {
      * @return test result matrix: rows correspond to layout metrics, columns are the values
      */
     private float[][] testGraph(final KNode originalGraph, final Random random) {
-        IGraphLayoutEngine graphLayoutEngine = new RecursiveGraphLayoutEngine();
+        // set minimal sizes for all nodes of the graph
+        setGraphMetrics(originalGraph);
+        
+        final IGraphLayoutEngine graphLayoutEngine = new RecursiveGraphLayoutEngine();
         float[][] result = new float[metrics.size()][I_MAX + 1];
         for (int j = 0; j < metrics.size(); j++) {
             result[j][I_MIN] = 1;
         }
         
         for (int i = 0; i < NUMBER_OF_LAYOUTS; i++) {
-            // create a random genome
-            Genome genome = createRandomGenome(originalGraph, random);
-            
-            // create a copy of the evaluation graph
-            EcoreUtil.Copier copier = new EcoreUtil.Copier();
-            KNode graph = (KNode) copier.copy(originalGraph);
-            copier.copyReferences();
-    
-            try {
-                // perform layout on the evaluation graph
+            System.out.print(".");
+            KNode layoutGraph = null;
+            int attemptNo = 0;
+            do {
+                // create a random genome
+                Genome genome = createRandomGenome(originalGraph, random);
+                
+                // create a copy of the evaluation graph
+                EcoreUtil.Copier copier = new EcoreUtil.Copier();
+                final KNode graph = (KNode) copier.copy(originalGraph);
+                copier.copyReferences();
                 GenomeFactory.configureGraph(genome, copier);
-                graphLayoutEngine.layout(graph, new BasicProgressMonitor(0));
+        
+                try {
+                    // perform layout on the evaluation graph
+                    Future<?> future = executorService.submit(new Runnable() {
+                        public void run() {
+                            graphLayoutEngine.layout(graph, new BasicProgressMonitor(0));
+                        }
+                    });
+                    future.get(LAYOUT_TIMEOUT, TimeUnit.MILLISECONDS);
+                    layoutGraph = graph;
+                } catch (Throwable throwable) {
+                    // automatic layout led to an error or timed out -- try again
+                    attemptNo++;
+                    System.out.print("x");
+                }
+            } while (layoutGraph == null && attemptNo < MAX_ATTEMPTS);
             
+            if (layoutGraph != null) {
                 // perform analysis on the evaluation graph
                 Map<String, Object> analysisResults = AnalysisService.getInstance().analyzePresorted(
-                        graph, analysisSequence, new BasicProgressMonitor(0));
+                        layoutGraph, analysisSequence, new BasicProgressMonitor(0));
                 ListIterator<AnalysisData> metricIter = metrics.listIterator();
                 while (metricIter.hasNext()) {
                     int metricIndex = metricIter.nextIndex();
@@ -271,6 +310,9 @@ public class TestMetricsHandler extends AbstractHandler {
                     Object value = analysisResults.get(metric.getId());
                     if (value instanceof Float) {
                         float x = (Float) value;
+                        if (Float.isNaN(x)) {
+                            System.out.print(metric.getName() + " => NaN / ");
+                        }
                         result[metricIndex][I_NUMBER]++;
                         result[metricIndex][I_SUM] += x;
                         // SUPPRESS CHECKSTYLE NEXT MagicNumber
@@ -279,12 +321,32 @@ public class TestMetricsHandler extends AbstractHandler {
                         result[metricIndex][I_MAX] = Math.max(result[metricIndex][I_MAX], x);
                     }
                 }
-            } catch (Throwable throwable) {
-                // automatic layout led to an error -- try again
-                i--;
             }
         }
         return result;
+    }
+    
+    /** the minimal node size. */
+    private static final float MIN_NODE_SIZE = 20;
+    
+    /**
+     * Set minimal sizes for all nodes of the given graph.
+     * 
+     * @param graph a graph
+     */
+    private void setGraphMetrics(final KNode graph) {
+        for (KNode node : graph.getChildren()) {
+            KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+            if (nodeLayout.getWidth() < MIN_NODE_SIZE) {
+                nodeLayout.setWidth(MIN_NODE_SIZE);
+            }
+            if (nodeLayout.getHeight() < MIN_NODE_SIZE) {
+                nodeLayout.setHeight(MIN_NODE_SIZE);
+            }
+            if (!node.getChildren().isEmpty()) {
+                setGraphMetrics(node);
+            }
+        }
     }
     
     private static final float MUTATION_PROB = 0.7f;
