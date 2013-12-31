@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -43,13 +42,16 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
+
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
@@ -65,7 +67,8 @@ import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
 import de.cau.cs.kieler.kiml.grana.AnalysisData;
 import de.cau.cs.kieler.kiml.grana.AnalysisService;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.util.BoxLayoutProvider;
+import de.cau.cs.kieler.kiml.util.FixedLayoutProvider;
 
 /**
  * A command handler that tests the available layout metrics.
@@ -88,7 +91,9 @@ public class TestMetricsHandler extends AbstractHandler {
     /** the sequence of analyses to execute for evaluating graph layout metrics. */
     private List<AnalysisData> analysisSequence;
     /** the layout options to consider for creating genomes. */
-    private Collection<LayoutOptionData<?>> options;
+    private Collection<LayoutOptionData<?>> layoutOptions;
+    /** the layout algorithms to consider for creating genomes. */
+    private Collection<LayoutAlgorithmData> layoutAlgorithms;
     /** the executor service for running layout algorithms. */
     private ExecutorService executorService;
     
@@ -105,8 +110,9 @@ public class TestMetricsHandler extends AbstractHandler {
                 protected IStatus run(final IProgressMonitor monitor) {
                     monitor.beginTask("Test Layout Metrics", elements.length);
                     Random random = new Random();
+                    Writer writer = null;
                     try {
-                        Writer writer = new FileWriter(System.getProperty("user.home")
+                        writer = new FileWriter(System.getProperty("user.home")
                                 + File.separator + "layout-metrics.csv");
                         writer.write("File,");
                         for (AnalysisData metric : metrics) {
@@ -140,13 +146,19 @@ public class TestMetricsHandler extends AbstractHandler {
                             }
                             monitor.worked(1);
                         }
-                        writer.close();
                     } catch (IOException exception) {
                         IStatus status = new Status(IStatus.ERROR, EvolPlugin.PLUGIN_ID,
                                 "Error while writing the output file.", exception);
                         StatusManager.getManager().handle(status,
                                 StatusManager.SHOW | StatusManager.LOG);
                     } finally {
+                        if (writer != null) {
+                            try {
+                                writer.close();
+                            } catch (IOException exception) {
+                                // ignore this exception
+                            }
+                        }
                         executorService.shutdown();
                     }
                     monitor.done();
@@ -160,6 +172,11 @@ public class TestMetricsHandler extends AbstractHandler {
         
         return null;
     }
+    
+    /** list of layout algorithms that are excluded from the process. */
+    private static final List<String> EXCLUDED_ALGOS = Lists.newArrayList(
+            FixedLayoutProvider.ID, BoxLayoutProvider.ID,
+            "de.cau.cs.kieler.kiml.ogdf.tree", "de.cau.cs.kieler.kiml.ogdf.radialTree");
         
     /**
      * Initialize the testing process.
@@ -171,20 +188,24 @@ public class TestMetricsHandler extends AbstractHandler {
         analysisSequence = analysisService.getExecutionOrder(metrics);
         
         // gather the layout options
-        options = new LinkedList<LayoutOptionData<?>>(LayoutDataService.getInstance().getOptionData());
-        Iterator<LayoutOptionData<?>> optionIter = options.iterator();
-        while (optionIter.hasNext()) {
-            LayoutOptionData<?> optionData = optionIter.next();
-            boolean accept = LayoutOptions.ALGORITHM.equals(optionData)
-                        || (optionData.getTargets().contains(LayoutOptionData.Target.PARENTS)
-                        && optionData.getVariance() > 0 && typeSupported(optionData.getType()));
-            if (!accept) {
-                optionIter.remove();
-            }
-        }
+        layoutOptions = Collections2.filter(LayoutDataService.getInstance().getOptionData(),
+                new Predicate<LayoutOptionData<?>>() {
+                    public boolean apply(final LayoutOptionData<?> data) {
+                        return data.getTargets().contains(LayoutOptionData.Target.PARENTS)
+                                && data.getVariance() > 0 && typeSupported(data.getType());
+                    }
+                });
+        
+        // gather the layout algorithms
+        layoutAlgorithms = Collections2.filter(LayoutDataService.getInstance().getAlgorithmData(),
+                new Predicate<LayoutAlgorithmData>() {
+                    public boolean apply(final LayoutAlgorithmData data) {
+                        return !EXCLUDED_ALGOS.contains(data.getId());
+                    }
+            });
         
         // create the executor service
-        executorService = Executors.newSingleThreadExecutor();
+        executorService = Executors.newCachedThreadPool();
     }
     
     /**
@@ -244,10 +265,10 @@ public class TestMetricsHandler extends AbstractHandler {
     }
     
     /** the number of layouts to perform for each graph. */
-    private static final int NUMBER_OF_LAYOUTS = 100;
+    private static final int NUMBER_OF_LAYOUTS = 40;
     
     /** the maximal number of milliseconds to wait for a layout. */
-    private static final long LAYOUT_TIMEOUT = 10000;
+    private static final long LAYOUT_TIMEOUT = 8000;
     
     /** the maximal number of attempts to layout a graph. */
     private static final int MAX_ATTEMPTS = 5;
@@ -283,19 +304,21 @@ public class TestMetricsHandler extends AbstractHandler {
                 copier.copyReferences();
                 GenomeFactory.configureGraph(genome, copier);
         
+                Future<?> future = null;
                 try {
                     // perform layout on the evaluation graph
-                    Future<?> future = executorService.submit(new Runnable() {
+                    future = executorService.submit(new Runnable() {
                         public void run() {
                             graphLayoutEngine.layout(graph, new BasicProgressMonitor(0));
                         }
                     });
                     future.get(LAYOUT_TIMEOUT, TimeUnit.MILLISECONDS);
                     layoutGraph = graph;
-                } catch (Throwable throwable) {
+                } catch (Exception exception) {
                     // automatic layout led to an error or timed out -- try again
                     attemptNo++;
                     System.out.print("x");
+                    future.cancel(true);
                 }
             } while (layoutGraph == null && attemptNo < MAX_ATTEMPTS);
             
@@ -310,15 +333,14 @@ public class TestMetricsHandler extends AbstractHandler {
                     Object value = analysisResults.get(metric.getId());
                     if (value instanceof Float) {
                         float x = (Float) value;
-                        if (Float.isNaN(x)) {
-                            System.out.print(metric.getName() + " => NaN / ");
+                        if (!Float.isNaN(x)) {
+                            result[metricIndex][I_NUMBER]++;
+                            result[metricIndex][I_SUM] += x;
+                            // SUPPRESS CHECKSTYLE NEXT MagicNumber
+                            result[metricIndex][I_DIFFSUM] += (x - 0.5) * (x - 0.5);
+                            result[metricIndex][I_MIN] = Math.min(result[metricIndex][I_MIN], x);
+                            result[metricIndex][I_MAX] = Math.max(result[metricIndex][I_MAX], x);
                         }
-                        result[metricIndex][I_NUMBER]++;
-                        result[metricIndex][I_SUM] += x;
-                        // SUPPRESS CHECKSTYLE NEXT MagicNumber
-                        result[metricIndex][I_DIFFSUM] += (x - 0.5) * (x - 0.5);
-                        result[metricIndex][I_MIN] = Math.min(result[metricIndex][I_MIN], x);
-                        result[metricIndex][I_MAX] = Math.max(result[metricIndex][I_MAX], x);
                     }
                 }
             }
@@ -349,6 +371,7 @@ public class TestMetricsHandler extends AbstractHandler {
         }
     }
     
+    /** mutation probability for layout options. */
     private static final float MUTATION_PROB = 0.7f;
     
     /**
@@ -369,18 +392,15 @@ public class TestMetricsHandler extends AbstractHandler {
         ILayoutConfig config = new DefaultLayoutConfig();
         LayoutContext context = GenomeFactory.createContext(graph, null, config);
         genome.addContext(context, dataService.getOptionData().size() + 1);
-        LayoutTypeData typeData = getRandomElem(dataService.getTypeData(), random);
-        LayoutAlgorithmData algorithmData = getRandomElem(GenomeFactory.getAlgoList(typeData), random);
+        LayoutAlgorithmData algorithmData = getRandomElem(layoutAlgorithms, random);
         context.setProperty(DefaultLayoutConfig.CONTENT_ALGO, algorithmData);
 
-        if (options.contains(dataService.getOptionData(LayoutOptions.ALGORITHM.getId()))) {
-            // create genes for the layout type and algorithm
-            genome.getGenes(context).add(GenomeFactory.createLayoutTypeGene(typeData));
-            genome.getGenes(context).add(GenomeFactory.createAlgorithmGene(typeData, algorithmData));
-        }
+        // create gene for the layout algorithm
+        genome.getGenes(context).add(GenomeFactory.createAlgorithmGene(
+                dataService.getTypeData(algorithmData.getType()), algorithmData));
         
         // create genes for the other layout options
-        for (LayoutOptionData<?> optionData : options) {
+        for (LayoutOptionData<?> optionData : layoutOptions) {
             TypeInfo<?> typeInfo = GenomeFactory.createTypeInfo(optionData);
             if (typeInfo != null) {
                 Gene<?> gene;

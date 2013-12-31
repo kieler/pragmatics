@@ -246,11 +246,13 @@
       </layoutOption>
       <layoutOption
             advanced="true"
+            appliesTo="ports"
             class="de.cau.cs.kieler.core.math.KVector"
             description="The offset to the port position where connections shall be attached (programmatically set)."
             id="de.cau.cs.kieler.klay.layered.portAnchor"
             name="Port Anchor Offset"
-            type="object">
+            type="object"
+            variance="0">
       </layoutOption>
       <layoutOption
             advanced="true"
@@ -301,7 +303,8 @@
             lowerBound="0.01"
             name="In-layer Spacing Factor"
             type="float"
-            upperBound="100">
+            upperBound="100"
+            variance="0.2">
       </layoutOption>
    </extension>
 </plugin>

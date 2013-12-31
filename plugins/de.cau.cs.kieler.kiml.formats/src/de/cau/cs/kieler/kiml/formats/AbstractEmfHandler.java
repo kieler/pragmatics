@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
@@ -29,6 +29,8 @@ import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.XMLResource;
+
+import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
@@ -46,6 +48,9 @@ public abstract class AbstractEmfHandler<T extends EObject> implements IGraphFor
     
     /** the character set to use for serialization and deserialization. */
     public static final IProperty<String> CHARSET = new Property<String>("emfHandler.charset");
+    /** the XML options for loading and saving files. */
+    public static final IProperty<Map<Object, Object>> XML_OPTIONS = new Property<Map<Object, Object>>(
+            "emfHandler.xmlOptions");
     
     /** the file extension for loading and saving resources. */
     private String fileExtension;
@@ -64,7 +69,7 @@ public abstract class AbstractEmfHandler<T extends EObject> implements IGraphFor
                 bytes = serializedGraph.getBytes();
             }
             ByteArrayInputStream source = new ByteArrayInputStream(bytes);
-            T result = deserializeBinary(source, null);
+            T result = deserializeBinary(source, transData.getProperty(XML_OPTIONS));
             transData.setSourceGraph(result);
         } catch (UnsupportedEncodingException e) {
             throw new TransformationException(e);
@@ -79,10 +84,15 @@ public abstract class AbstractEmfHandler<T extends EObject> implements IGraphFor
     public String serialize(final TransformationData<KNode, T> transData) {
         try {
             ByteArrayOutputStream target = new ByteArrayOutputStream();
-            for (T graph : transData.getTargetGraphs()) {
-                serializeBinary(graph, target, null);
-            }
+            Map<Object, Object> xmlOptions = transData.getProperty(XML_OPTIONS);
             String charset = transData.getProperty(CHARSET);
+            if (xmlOptions == null && charset != null) {
+                xmlOptions = Maps.newHashMap();
+                xmlOptions.put(XMLResource.OPTION_ENCODING, charset);
+            }
+            for (T graph : transData.getTargetGraphs()) {
+                serializeBinary(graph, target, xmlOptions);
+            }
             if (charset != null) {
                 return target.toString(charset);
             } else {
@@ -128,12 +138,7 @@ public abstract class AbstractEmfHandler<T extends EObject> implements IGraphFor
         URI uri = URI.createURI("temp." + getFileExtension());
         ResourceSet resourceSet = createResourceSet();
         Resource resource = resourceSet.createResource(uri);   
-        Map<Object, Object> optMap = new HashMap<Object, Object>();
-        optMap.put(XMLResource.OPTION_RECORD_UNKNOWN_FEATURE, true);
-        if (options != null) {
-            optMap.putAll(options);
-        }
-        resource.load(source, optMap);
+        resource.load(source, options == null ? Collections.emptyMap() : options);
         if (!resource.getErrors().isEmpty()) {
             StringBuilder message = new StringBuilder("The given input could not be parsed.");
             for (Diagnostic diagnostic : resource.getErrors()) {
@@ -180,12 +185,7 @@ public abstract class AbstractEmfHandler<T extends EObject> implements IGraphFor
         ResourceSet resourceSet = createResourceSet();
         Resource resource = resourceSet.createResource(uri);
         resource.getContents().add(graph);
-        Map<Object, Object> optMap = new HashMap<Object, Object>();
-        optMap.put(XMLResource.OPTION_ENCODING, "UTF-8");
-        if (options != null) {
-            optMap.putAll(options);
-        }
-        resource.save(target, optMap);
+        resource.save(target, options == null ? Collections.emptyMap() : options);
     }
     
     /**

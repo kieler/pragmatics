@@ -29,7 +29,10 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.ui.statushandlers.StatusManager;
+
+import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.alg.DefaultFactory;
 import de.cau.cs.kieler.core.alg.IFactory;
@@ -295,7 +298,21 @@ public class GraphFormatsService {
      */
     private static <T> KNode[] loadKGraph(final String serializedGraph,
             final IGraphFormatHandler<T> handler) {
+        Map<String, Boolean> parserFeatures = Maps.newHashMap();
+        parserFeatures.put(
+                "http://xml.org/sax/features/validation", //$NON-NLS-1$
+                Boolean.FALSE);
+        parserFeatures.put(
+                "http://apache.org/xml/features/nonvalidating/load-dtd-grammar", //$NON-NLS-1$
+                Boolean.FALSE);
+        parserFeatures.put(
+                "http://apache.org/xml/features/nonvalidating/load-external-dtd", //$NON-NLS-1$
+                Boolean.FALSE);
+        Map<Object, Object> xmlOptions = Maps.newHashMap();
+        xmlOptions.put(XMLResource.OPTION_PARSER_FEATURES, parserFeatures);
         TransformationData<T, KNode> transData = new TransformationData<T, KNode>();
+        transData.setProperty(AbstractEmfHandler.XML_OPTIONS, xmlOptions);
+        
         handler.deserialize(serializedGraph, transData);
         handler.getImporter().transform(transData);
         return transData.getTargetGraphs().toArray(new KNode[transData.getTargetGraphs().size()]);
