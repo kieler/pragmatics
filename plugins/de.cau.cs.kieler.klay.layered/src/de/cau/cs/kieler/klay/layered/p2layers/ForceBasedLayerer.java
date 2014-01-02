@@ -28,6 +28,7 @@ import com.google.common.collect.Sets;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
@@ -224,7 +225,8 @@ public class ForceBasedLayerer implements ILayoutPhase {
 
 //        String algo = "de.cau.cs.kieler.kiml.ogdf.FruchtermanReingold";
 //        String algo = "de.cau.cs.kieler.kiml.ogdf.kamadaKawai";
-        String algo = "org.adaptagrams.cola.webcola.constraintLayout";
+//        String algo = "org.adaptagrams.cola.webcola.constraintLayout";
+        String algo = "de.cau.cs.kieler.kiml.cola.force";
         
         LayoutAlgorithmData algorithmData =
                 DefaultLayoutConfig.getLayouterData(algo, 
@@ -237,6 +239,10 @@ public class ForceBasedLayerer implements ILayoutPhase {
         AbstractLayoutProvider layoutProvider = algorithmData.getInstancePool().fetch();
         // aux graph
         KNode auxGraph = createAuxiliaryGraph(layeredGraph);
+        
+        KShapeLayout lay = auxGraph.getData(KShapeLayout.class);
+        lay.setProperty(new Property<Boolean>("de.cau.cs.kieler.kiml.cola.port"), false);
+//        lay.setProperty(new Property<Boolean>("de.cau.cs.kieler.kiml.cola.direction"), false);
 
         layoutProvider.doLayout(auxGraph, progressMonitor);
         
