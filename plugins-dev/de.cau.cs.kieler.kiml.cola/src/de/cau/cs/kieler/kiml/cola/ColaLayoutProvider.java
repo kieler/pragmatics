@@ -29,11 +29,13 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
@@ -81,7 +83,9 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
             addDirectionConstraints(parentNode);
         }
         if (rootLayout.getProperty(ColaProperties.PORT_CONSTRAINTS)) {
-            addPortConstraints(parentNode);
+            // addPortConstraints(parentNode);
+            constraintsFixedSide(parentNode);
+//            constraintsFixedOrder(parentNode);
         }
 
         // execute layout algorithm
@@ -228,16 +232,16 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         }
     }
 
-    private void addPortConstraints(final KNode root) {
+    private void constraintsFixedOrder(final KNode root) {
 
         for (KNode n : root.getChildren()) {
             List<KPort> ports = n.getPorts();
 
-            Iterable<KPort> westPorts =
-                    Iterables.filter(ports, new PortSidePredicate(PortSide.WEST));
+            Iterable<KPort> eastPorts =
+                    Iterables.filter(ports, new PortSidePredicate(PortSide.EAST));
 
             // System.out.println(westPorts);
-            Iterator<KPort> it = westPorts.iterator();
+            Iterator<KPort> it = eastPorts.iterator();
             KPort prev = null;
             while (it.hasNext()) {
                 KPort curr = it.next();
@@ -279,6 +283,109 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
                 prev = curr;
             }
         }
+    }
+
+    /**
+     * TODO only valid for LEFT to RIGHT layout.
+     * 
+     * TODO it should be ok if one side has no port or no port constraints!
+     */
+    private void constraintsFixedSide(final KNode root) {
+
+        System.out.println("applying ports " + System.currentTimeMillis());
+
+        for (KNode n : root.getChildren()) {
+            for (KEdge e : n.getOutgoingEdges()) {
+
+                if (e.getSourcePort() == null || e.getTargetPort() == null) {
+                    // if one end doesnt have a port we do not handle it
+                    continue;
+                }
+
+                KNode src = e.getSource();
+                PortSide srcSide =
+                        e.getSourcePort().getData(KLayoutData.class)
+                                .getProperty(LayoutOptions.PORT_SIDE);
+                KShapeLayout srcLayout = src.getData(KShapeLayout.class);
+
+                KNode tgt = e.getTarget();
+                PortSide tgtSide =
+                        e.getTargetPort().getData(KLayoutData.class)
+                                .getProperty(LayoutOptions.PORT_SIDE);
+                KShapeLayout tgtLayout = tgt.getData(KShapeLayout.class);
+
+                // if one of the two nodes has fixed side we add a separation constraint
+                if (srcLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()
+                        || tgtLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()) {
+
+                    // handled cases:
+                    // WEST - EAST
+                    // NOTH - SOUTH
+
+                    boolean validCase = true;
+                    boolean swap = false;
+                    int separationDim = Dim.XDIM;
+                    float separation = spacing;
+
+                    if (srcSide == PortSide.EAST && tgtSide == PortSide.WEST) {
+                        System.out.println("Case 1");
+                        separationDim = Dim.XDIM;
+                        separation += srcLayout.getWidth();
+                    } else if (srcSide == PortSide.WEST && tgtSide == PortSide.EAST) {
+                        System.out.println("Case 2");
+                        // inverted port situation
+                        separationDim = Dim.XDIM;
+                        separation += srcLayout.getWidth() + tgtLayout.getWidth();
+                    } else if (srcSide == PortSide.SOUTH && tgtSide == PortSide.NORTH) {
+                        System.out.println("Case 3");
+                        separationDim = Dim.YDIM;
+                        separation += srcLayout.getHeight();
+                    } else if (srcSide == PortSide.NORTH && tgtSide == PortSide.SOUTH) {
+                        System.out.println("Case 4");
+                        separationDim = Dim.YDIM;
+                        separation += tgtLayout.getHeight();
+                        swap = true;
+                    } else {
+                        validCase = false;
+                    }
+
+                    if (validCase) {
+                        long n1 = nodeIndexMap.get(src);
+                        long n2 = nodeIndexMap.get(tgt);
+                        if (swap) {
+                            long tmp = n1;
+                            n1 = n2;
+                            n2 = tmp;
+                        }
+                        SeparationConstraint sc =
+                                new SeparationConstraint(separationDim, n1, n2, separation, false);
+                        constraints.add(sc);
+                    }
+
+                }
+
+            }
+        }
+
+    }
+
+    private List<Pair<KNode, KNode>> createPairsOfNodes(final KNode root) {
+
+        // create appropriate data structures
+        List<KNode> children = Lists.newArrayList(root.getChildren());
+        List<Pair<KNode, KNode>> pairs = Lists.newLinkedList();
+
+        // create all pairs of nodes -> (n ncr 2) elements
+        for (int i = 0; i < children.size(); i++) {
+            KNode fst = children.get(i);
+            for (int j = i + 1; j < children.size(); j++) {
+                KNode snd = children.get(j);
+                Pair<KNode, KNode> nodePair = Pair.of(fst, snd);
+                pairs.add(nodePair);
+            }
+        }
+
+        return pairs;
     }
 
     /**
