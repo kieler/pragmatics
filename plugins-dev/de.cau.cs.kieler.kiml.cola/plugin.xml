@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.cau.cs.kieler.kiml.layoutProviders">
+      <layoutAlgorithm
+            class="de.cau.cs.kieler.kiml.cola.ColaLayoutProvider"
+            id="de.cau.cs.kieler.kiml.cola.force"
+            name="CoLa Layout">
+         <knownOption
+               default="20"
+               option="de.cau.cs.kieler.spacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.cola.port">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.cola.direction">
+         </knownOption>
+      </layoutAlgorithm>
+      <layoutOption
+            appliesTo="parents"
+            default="true"
+            id="de.cau.cs.kieler.kiml.cola.direction"
+            name="Direction Constraints"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            id="de.cau.cs.kieler.kiml.cola.port"
+            name="Port Constraints"
+            type="boolean">
+      </layoutOption>
+   </extension>
+
+</plugin>
