@@ -17,7 +17,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -32,6 +35,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -45,6 +49,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -63,10 +68,12 @@ import de.cau.cs.kieler.kiml.evol.alg.MutationOperation;
 import de.cau.cs.kieler.kiml.evol.genetic.Gene;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo;
+import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo.GeneType;
 import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
 import de.cau.cs.kieler.kiml.grana.AnalysisData;
 import de.cau.cs.kieler.kiml.grana.AnalysisService;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.BoxLayoutProvider;
 import de.cau.cs.kieler.kiml.util.FixedLayoutProvider;
 
@@ -77,15 +84,6 @@ import de.cau.cs.kieler.kiml.util.FixedLayoutProvider;
  */
 public class TestMetricsHandler extends AbstractHandler {
     
-    private static final int I_NUMBER = 0;
-    private static final int I_SUM = 1;
-    private static final int I_DIFFSUM = 2;
-    private static final int I_MIN = 3;
-    private static final int I_MAX = 4;
-    private static final String[] COL_HEADERS = new String[] {
-        "Number", "Sum", "Dev. Sum", "Min.", "Max."
-    };
-    
     /** the graph layout metrics used for evaluation. */
     private List<AnalysisData> metrics;
     /** the sequence of analyses to execute for evaluating graph layout metrics. */
@@ -93,7 +91,7 @@ public class TestMetricsHandler extends AbstractHandler {
     /** the layout options to consider for creating genomes. */
     private Collection<LayoutOptionData<?>> layoutOptions;
     /** the layout algorithms to consider for creating genomes. */
-    private Collection<LayoutAlgorithmData> layoutAlgorithms;
+    private List<LayoutAlgorithmData> layoutAlgorithms;
     /** the executor service for running layout algorithms. */
     private ExecutorService executorService;
     
@@ -110,21 +108,25 @@ public class TestMetricsHandler extends AbstractHandler {
                 protected IStatus run(final IProgressMonitor monitor) {
                     monitor.beginTask("Test Layout Metrics", elements.length);
                     Random random = new Random();
-                    Writer writer = null;
+                    Writer[] writers = new Writer[metrics.size()];
                     try {
-                        writer = new FileWriter(System.getProperty("user.home")
-                                + File.separator + "layout-metrics.csv");
-                        writer.write("File,");
-                        for (AnalysisData metric : metrics) {
-                            for (int j = 0; j <= I_MAX; j++) {
-                                writer.write(metric.getName());
-                                writer.write(": ");
-                                writer.write(COL_HEADERS[j]);
-                                writer.write(",");
+                        // create the output files
+                        ListIterator<AnalysisData> metricIter = metrics.listIterator();
+                        while (metricIter.hasNext()) {
+                            int metricIndex = metricIter.nextIndex();
+                            AnalysisData metric = metricIter.next();
+                            int lastDotIndex = metric.getId().lastIndexOf('.');
+                            String metricId;
+                            if (lastDotIndex < 0 && lastDotIndex < metric.getId().length() - 1) {
+                                metricId = metric.getId();
+                            } else {
+                                metricId = metric.getId().substring(lastDotIndex + 1);
                             }
+                            writers[metricIndex] = new FileWriter(System.getProperty("user.home")
+                                    + File.separator + metricId + ".csv");
                         }
-                        writer.write('\n');
                         
+                        // process the input files
                         for (Object object : elements) {
                             if (monitor.isCanceled()) {
                                 break;
@@ -132,31 +134,36 @@ public class TestMetricsHandler extends AbstractHandler {
                             if (object instanceof IFile) {
                                 IFile inputFile = (IFile) object;
                                 
+                                // perform tests on the current input file
                                 float[][] result = testFile(inputFile, random);
                                 
-                                writer.write(inputFile.getName());
-                                writer.write(",");
-                                for (int i = 0; i < result.length; i++) {
+                                // write the test results to the output files
+                                for (int i = 0; i < writers.length; i++) {
+                                    writers[i].write(inputFile.getName());
+                                    writers[i].write(",");
                                     for (int j = 0; j < result[i].length; j++) {
-                                        writer.write(Float.toString(result[i][j]));
-                                        writer.write(",");
+                                        writers[i].write(Float.toString(result[i][j]));
+                                        writers[i].write(",");
                                     }
+                                    writers[i].write('\n');
                                 }
-                                writer.write('\n');
                             }
                             monitor.worked(1);
                         }
                     } catch (IOException exception) {
                         IStatus status = new Status(IStatus.ERROR, EvolPlugin.PLUGIN_ID,
-                                "Error while writing the output file.", exception);
+                                "Error while writing an output file.", exception);
                         StatusManager.getManager().handle(status,
                                 StatusManager.SHOW | StatusManager.LOG);
                     } finally {
-                        if (writer != null) {
-                            try {
-                                writer.close();
-                            } catch (IOException exception) {
-                                // ignore this exception
+                        // close the output files
+                        for (int i = 0; i < writers.length; i++) {
+                            if (writers[i] != null) {
+                                try {
+                                    writers[i].close();
+                                } catch (IOException exception) {
+                                    // ignore this exception
+                                }
                             }
                         }
                         executorService.shutdown();
@@ -176,7 +183,8 @@ public class TestMetricsHandler extends AbstractHandler {
     /** list of layout algorithms that are excluded from the process. */
     private static final List<String> EXCLUDED_ALGOS = Lists.newArrayList(
             FixedLayoutProvider.ID, BoxLayoutProvider.ID,
-            "de.cau.cs.kieler.kiml.ogdf.tree", "de.cau.cs.kieler.kiml.ogdf.radialTree");
+            "de.cau.cs.kieler.kiml.ogdf.tree", "de.cau.cs.kieler.kiml.ogdf.radialTree",
+            "de.cau.cs.kieler.kiml.ogdf.gem", "de.cau.cs.kieler.kiml.ogdf.stressMajorization");
         
     /**
      * Initialize the testing process.
@@ -197,12 +205,13 @@ public class TestMetricsHandler extends AbstractHandler {
                 });
         
         // gather the layout algorithms
-        layoutAlgorithms = Collections2.filter(LayoutDataService.getInstance().getAlgorithmData(),
+        layoutAlgorithms = new ArrayList<LayoutAlgorithmData>(
+                Collections2.filter(LayoutDataService.getInstance().getAlgorithmData(),
                 new Predicate<LayoutAlgorithmData>() {
                     public boolean apply(final LayoutAlgorithmData data) {
                         return !EXCLUDED_ALGOS.contains(data.getId());
                     }
-            });
+            }));
         
         // create the executor service
         executorService = Executors.newCachedThreadPool();
@@ -231,32 +240,22 @@ public class TestMetricsHandler extends AbstractHandler {
      * 
      * @param file a source file
      * @param random the random number generator
-     * @return test result matrix: rows correspond to layout metrics, columns are the values
+     * @return test result matrix: rows correspond to layout metrics, columns to algorithm executions
      */
     private float[][] testFile(final IFile file, final Random random) {
-        float[][] result = new float[metrics.size()][I_MAX + 1];
-        for (int j = 0; j < metrics.size(); j++) {
-            result[j][I_MIN] = 1;
-        }
+        float[][] result = null;
         try {
             System.out.print("Testing " + file.getName());
             long startTime = System.nanoTime();
             
             KNode[] graphs = GraphFormatsService.getInstance().loadKGraph(file);
-            for (KNode graph : graphs) {
-                float[][] graphResult = testGraph(graph, random);
-                for (int j = 0; j < metrics.size(); j++) {
-                    result[j][I_NUMBER] += graphResult[j][I_NUMBER];
-                    result[j][I_SUM] += graphResult[j][I_SUM];
-                    result[j][I_DIFFSUM] += graphResult[j][I_DIFFSUM];
-                    result[j][I_MIN] = Math.min(result[j][I_MIN], graphResult[j][I_MIN]);
-                    result[j][I_MAX] = Math.max(result[j][I_MAX], graphResult[j][I_MAX]);
-                }
-            }
+            result = testGraph(graphs[0], random);
             
             // SUPPRESS CHECKSTYLE NEXT MagicNumber
             System.out.println("\n  " + (System.nanoTime() - startTime) * 1e-9 + " s");
-        } catch (Exception exception) {
+        } catch (CoreException exception) {
+            StatusManager.getManager().handle(exception, EvolPlugin.PLUGIN_ID);
+        } catch (IOException exception) {
             IStatus status = new Status(IStatus.ERROR, EvolPlugin.PLUGIN_ID,
                     "Error while loading the graph file " + file.getName(), exception);
             StatusManager.getManager().handle(status, StatusManager.SHOW | StatusManager.LOG);
@@ -265,7 +264,7 @@ public class TestMetricsHandler extends AbstractHandler {
     }
     
     /** the number of layouts to perform for each graph. */
-    private static final int NUMBER_OF_LAYOUTS = 40;
+    private static final int NUMBER_OF_LAYOUTS = 100;
     
     /** the maximal number of milliseconds to wait for a layout. */
     private static final long LAYOUT_TIMEOUT = 8000;
@@ -278,25 +277,25 @@ public class TestMetricsHandler extends AbstractHandler {
      * 
      * @param originalGraph a graph
      * @param random a random number generator
-     * @return test result matrix: rows correspond to layout metrics, columns are the values
+     * @return test result matrix: rows correspond to layout metrics, columns to algorithm executions
      */
     private float[][] testGraph(final KNode originalGraph, final Random random) {
         // set minimal sizes for all nodes of the graph
-        setGraphMetrics(originalGraph);
+        setGraphMetrics(originalGraph, random);
         
         final IGraphLayoutEngine graphLayoutEngine = new RecursiveGraphLayoutEngine();
-        float[][] result = new float[metrics.size()][I_MAX + 1];
-        for (int j = 0; j < metrics.size(); j++) {
-            result[j][I_MIN] = 1;
+        float[][] result = new float[metrics.size()][NUMBER_OF_LAYOUTS];
+        for (int i = 0; i < metrics.size(); i++) {
+            Arrays.fill(result[i], -1);
         }
         
-        for (int i = 0; i < NUMBER_OF_LAYOUTS; i++) {
-            System.out.print(".");
+        for (int j = 0; j < NUMBER_OF_LAYOUTS; j++) {
             KNode layoutGraph = null;
             int attemptNo = 0;
+            Genome genome;
             do {
                 // create a random genome
-                Genome genome = createRandomGenome(originalGraph, random);
+                genome = createRandomGenome(originalGraph, random);
                 
                 // create a copy of the evaluation graph
                 EcoreUtil.Copier copier = new EcoreUtil.Copier();
@@ -313,7 +312,13 @@ public class TestMetricsHandler extends AbstractHandler {
                         }
                     });
                     future.get(LAYOUT_TIMEOUT, TimeUnit.MILLISECONDS);
-                    layoutGraph = graph;
+                    if (checkLayout(graph)) {
+                        // the layout algorithm was successful
+                        layoutGraph = graph;
+                    } else {
+                        attemptNo++;
+                        System.out.print("x");
+                    }
                 } catch (Exception exception) {
                     // automatic layout led to an error or timed out -- try again
                     attemptNo++;
@@ -333,16 +338,12 @@ public class TestMetricsHandler extends AbstractHandler {
                     Object value = analysisResults.get(metric.getId());
                     if (value instanceof Float) {
                         float x = (Float) value;
-                        if (!Float.isNaN(x)) {
-                            result[metricIndex][I_NUMBER]++;
-                            result[metricIndex][I_SUM] += x;
-                            // SUPPRESS CHECKSTYLE NEXT MagicNumber
-                            result[metricIndex][I_DIFFSUM] += (x - 0.5) * (x - 0.5);
-                            result[metricIndex][I_MIN] = Math.min(result[metricIndex][I_MIN], x);
-                            result[metricIndex][I_MAX] = Math.max(result[metricIndex][I_MAX], x);
+                        if (!Float.isNaN(x) && x >= 0 && x <= 1) {
+                            result[metricIndex][j] = x;
                         }
                     }
                 }
+                System.out.print(".");
             }
         }
         return result;
@@ -355,8 +356,9 @@ public class TestMetricsHandler extends AbstractHandler {
      * Set minimal sizes for all nodes of the given graph.
      * 
      * @param graph a graph
+     * @param random
      */
-    private void setGraphMetrics(final KNode graph) {
+    private void setGraphMetrics(final KNode graph, final Random random) {
         for (KNode node : graph.getChildren()) {
             KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
             if (nodeLayout.getWidth() < MIN_NODE_SIZE) {
@@ -365,10 +367,42 @@ public class TestMetricsHandler extends AbstractHandler {
             if (nodeLayout.getHeight() < MIN_NODE_SIZE) {
                 nodeLayout.setHeight(MIN_NODE_SIZE);
             }
+            // assign a random position in order to satisfy preconditions of some layouters
+            nodeLayout.setXpos(random.nextFloat());
+            nodeLayout.setYpos(random.nextFloat());
             if (!node.getChildren().isEmpty()) {
-                setGraphMetrics(node);
+                setGraphMetrics(node, random);
             }
         }
+    }
+    
+    /** minimal number of nodes with different positions. */
+    private static final int MIN_DIFF_NODES = 3;
+    
+    /**
+     * Check the layout of the given graph.
+     * 
+     * @param graph a graph
+     * @return true if the layout is ok, false otherwise
+     */
+    private boolean checkLayout(final KNode graph) {
+        KShapeLayout parentLayout = graph.getData(KShapeLayout.class);
+        if (parentLayout.getWidth() <= 0 || parentLayout.getHeight() <= 0) {
+            return false;
+        }
+        // nodes must have different positions
+        int n = graph.getChildren().size();
+        HashSet<Float> horPositions = Sets.newHashSetWithExpectedSize(n);
+        HashSet<Float> verPositions = Sets.newHashSetWithExpectedSize(n);
+        for (KNode node : graph.getChildren()) {
+            KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+            horPositions.add(nodeLayout.getXpos());
+            verPositions.add(nodeLayout.getYpos());
+            if (horPositions.size() >= MIN_DIFF_NODES && verPositions.size() >= MIN_DIFF_NODES) {
+                return true;
+            }
+        }
+        return false;
     }
     
     /** mutation probability for layout options. */
@@ -396,8 +430,11 @@ public class TestMetricsHandler extends AbstractHandler {
         context.setProperty(DefaultLayoutConfig.CONTENT_ALGO, algorithmData);
 
         // create gene for the layout algorithm
-        genome.getGenes(context).add(GenomeFactory.createAlgorithmGene(
-                dataService.getTypeData(algorithmData.getType()), algorithmData));
+        TypeInfo<Integer> algoTypeInfo = new TypeInfo<Integer>(LayoutOptions.ALGORITHM.getId(),
+                GeneType.LAYOUT_ALGO, 0, layoutAlgorithms.size() - 1, layoutAlgorithms, 1, 1);
+        Gene<Integer> algorithmGene = Gene.create(layoutAlgorithms.indexOf(algorithmData),
+                algoTypeInfo, true);
+        genome.getGenes(context).add(algorithmGene);
         
         // create genes for the other layout options
         for (LayoutOptionData<?> optionData : layoutOptions) {
