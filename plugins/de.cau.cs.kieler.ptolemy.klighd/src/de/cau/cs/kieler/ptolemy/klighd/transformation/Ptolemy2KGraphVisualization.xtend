@@ -21,11 +21,9 @@ import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.core.kgraph.KPort
 import de.cau.cs.kieler.core.krendering.KAreaPlacementData
 import de.cau.cs.kieler.core.krendering.KRendering
-import de.cau.cs.kieler.core.krendering.KRenderingFactory
 import de.cau.cs.kieler.core.krendering.KRenderingRef
 import de.cau.cs.kieler.core.krendering.Trigger
 import de.cau.cs.kieler.core.krendering.extensions.KContainerRenderingExtensions
-import de.cau.cs.kieler.core.krendering.extensions.KLabelExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.core.math.KVector
 import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizTool
@@ -70,8 +68,8 @@ class Ptolemy2KGraphVisualization {
     @Inject extension MarkerExtensions
     /** Extensions used during the transformation. To make things easier. And stuff. */
     @Inject extension MiscellaneousExtensions
-    /** Utility class that provides renderings. */
-    @Inject extension KLabelExtensions
+    // /** Utility class that provides renderings. */
+    // @Inject extension KLabelExtensions
     /** Utility class that provides renderings. */
     @Inject extension KRenderingExtensions
     /** Utility class that provides renderings. */
@@ -79,8 +77,6 @@ class Ptolemy2KGraphVisualization {
     /** Utility class that provides renderings. */
     @Inject extension KRenderingFigureProvider
     
-    /** Rendering factory used to create stuff. */
-    val renderingFactory = KRenderingFactory::eINSTANCE
     /** Whether Graphviz is available to be used or not. */
     val isGraphvizAvailable = GraphvizTool::getDotExecutable(false) != null
     /** alpha value of the background of expanded compound nodes. */
@@ -269,7 +265,7 @@ class Ptolemy2KGraphVisualization {
         node.data += rendering
         
         // Set size
-        // layout.setLayoutSize(rendering)
+        layout.setLayoutSize(rendering)
     }
     
     /**
@@ -367,7 +363,7 @@ class Ptolemy2KGraphVisualization {
         node.addRenderingWithSelectionWrapper(rendering);
         
         // Calculate layout size.
-        // layout.setLayoutSize(rendering)
+        layout.setLayoutSize(rendering)
 
     }
     

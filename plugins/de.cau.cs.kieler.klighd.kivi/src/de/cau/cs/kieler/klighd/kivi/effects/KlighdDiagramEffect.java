@@ -155,7 +155,7 @@ public class KlighdDiagramEffect extends MapPropertyHolder implements IEffect {
                 view = DiagramViewManager.getInstance().createView(
                         id, name, model, propertyHolder);
                 if (view != null) {
-                    setViewer(view.getContextViewer().getActiveViewer());
+                    setViewer(view.getViewer().getContextViewer().getActiveViewer());
                     setSourceWorkbenchPart();
                 }
             }
@@ -314,9 +314,8 @@ public class KlighdDiagramEffect extends MapPropertyHolder implements IEffect {
      * if existent.
      */
     protected void setSourceWorkbenchPart() {
-        if (this.view != null && this.view.getContextViewer() != null) {
-            this.view.getContextViewer().getViewContext()
-                    .setSourceWorkbenchPart(this.sourceWorkbenchPart);
+        if (this.view != null && this.view.getViewer() != null) {
+            this.view.getViewer().getViewContext().setSourceWorkbenchPart(this.sourceWorkbenchPart);
         }
     }
 
