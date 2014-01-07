@@ -31,6 +31,9 @@ import org.eclipse.jetty.websocket.WebSocket;
 import org.eclipse.jetty.websocket.WebSocketHandler;
 import org.osgi.framework.Bundle;
 
+import de.cau.cs.kieler.klighdning.handler.KlighdningHTTPHandler;
+import de.cau.cs.kieler.klighdning.handler.KlighdningWebSocketHandler;
+
 /**
  * The server allows to browse a model repository and render all models for which a transformation
  * is known.

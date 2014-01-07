@@ -11,9 +11,8 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klighdning;
+package de.cau.cs.kieler.klighdning.handler;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -28,10 +27,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.plugin.EcorePlugin;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.Resource.Factory.Registry;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -50,6 +46,7 @@ import com.google.common.io.Files;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.klighd.LightDiagramServices;
 import de.cau.cs.kieler.klighdning.viewer.SVGBrowsingViewer;
+import de.cau.cs.kieler.klighdning.viewer.SVGLayoutProvider;
 
 /**
  * @author uru
@@ -105,7 +102,7 @@ public class KlighdningHTTPHandler extends AbstractHandler {
             baseRequest.setHandled(true);
             response.getWriter().println(json);
             
-        } else if (target.startsWith("/resource")) {
+        } else if (target.startsWith(TARGET_RESOURCE)) {
             /*----------------------------------------------------------------------------
              *  Return a specific resource as SVG this is mainly called by perma links.
              */
@@ -113,7 +110,6 @@ public class KlighdningHTTPHandler extends AbstractHandler {
 
             ResourceSet rs = new ResourceSetImpl();
 
-            // MOML
             Map<String, Boolean> parserFeatures = Maps.newHashMap();
             parserFeatures.put("http://xml.org/sax/features/validation", Boolean.FALSE);
             parserFeatures.put("http://apache.org/xml/features/nonvalidating/load-dtd-grammar",
@@ -123,8 +119,6 @@ public class KlighdningHTTPHandler extends AbstractHandler {
 
             rs.getLoadOptions().put(XMIResource.OPTION_RECORD_UNKNOWN_FEATURE, true);
             rs.getLoadOptions().put(XMLResource.OPTION_PARSER_FEATURES, parserFeatures);
-            // rs.getResourceFactoryRegistry().getExtensionToFactoryMap()
-            // .put("xml", new MomlResourceFactoryImpl());
 
             File file = new File(docRoot, path);
             System.out.println("Loading resource: " + path);
@@ -233,60 +227,6 @@ public class KlighdningHTTPHandler extends AbstractHandler {
             response.setContentType("application/json;charset=utf8");
             response.setStatus(HttpServletResponse.SC_OK);
             baseRequest.setHandled(true);
-            
-            
-        } else if (target.startsWith("/textualModel")) {
-            /*----------------------------------------------------------------------------
-             *  Creates the visualization for a textual representation
-             */
-            String serializedModel = request.getParameterMap().get("model")[0];
-
-            System.out.println(serializedModel);
-            
-//            serializedModel = "\nknode ff { size: width = 40 height = 40 }";
-            
-            
-            
-            // put it in a resource and try to load it
-            ResourceSet rs = new ResourceSetImpl();
-            Map<String, Boolean> parserFeatures = Maps.newHashMap();
-            parserFeatures.put("http://xml.org/sax/features/validation", Boolean.FALSE);
-            parserFeatures.put("http://apache.org/xml/features/nonvalidating/load-dtd-grammar",
-                    Boolean.FALSE);
-            parserFeatures.put("http://apache.org/xml/features/nonvalidating/load-external-dtd",
-                    Boolean.FALSE);
-
-            rs.getLoadOptions().put(XMIResource.OPTION_RECORD_UNKNOWN_FEATURE, true);
-            rs.getLoadOptions().put(XMLResource.OPTION_PARSER_FEATURES, parserFeatures);
-            
-            
-            
-            try {
-                Resource r = rs.createResource(URI.createFileURI("dummy.kgt"));
-                ByteArrayInputStream bais = new ByteArrayInputStream(serializedModel.getBytes());
-                r.load(bais, rs.getLoadOptions());
-                
-//                Object o = r.getContents().get(0);
-//                System.out.println(o);
-                
-                KNode model = LightDiagramServices.translateModel(r.getContents().get(0), null);
-                getViewer.setModel(model, true);
-                
-                String svg = SVGLayoutProvider.getInstance().layout(getViewer, false);
-                
-                response.setContentType("text/html;charset=utf8");
-                response.setCharacterEncoding("utf8");
-                response.setStatus(HttpServletResponse.SC_OK);
-                baseRequest.setHandled(true);
-//                System.out.println(svg);
-                response.getWriter().write(svg);
-                
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            
         }
-        
-
     }
 }

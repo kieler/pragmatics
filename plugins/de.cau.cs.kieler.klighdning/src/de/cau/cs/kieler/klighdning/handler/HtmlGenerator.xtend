@@ -1,4 +1,4 @@
-package de.cau.cs.kieler.klighdning
+package de.cau.cs.kieler.klighdning.handler
 
 import java.io.File
 

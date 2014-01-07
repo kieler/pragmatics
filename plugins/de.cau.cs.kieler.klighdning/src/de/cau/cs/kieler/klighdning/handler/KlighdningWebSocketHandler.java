@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klighdning;
+package de.cau.cs.kieler.klighdning.handler;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -22,8 +22,6 @@ import java.util.Map;
 import java.util.zip.Adler32;
 import java.util.zip.Checksum;
 import java.util.zip.GZIPOutputStream;
-
-import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -41,6 +39,7 @@ import com.google.common.io.Files;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.klighd.LightDiagramServices;
 import de.cau.cs.kieler.klighdning.viewer.SVGBrowsingViewer;
+import de.cau.cs.kieler.klighdning.viewer.SVGLayoutProvider;
 
 /**
  * @author uru
@@ -69,6 +68,14 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
 
     private Checksum checksum = new Adler32();
 
+    /** Commonly used resource set. */
+    private ResourceSet rs;
+
+    // CHECKSTYLEOFF MagicNumber
+    private static final int WS_MAX_TEXT_SIZE = 1024 * 1024 * 1024 / 8;
+
+    // CHECKSTYLEON MagicNumber
+
     /**
      * Determines to which clients a message is broadcasted.
      */
@@ -82,6 +89,18 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
      */
     public KlighdningWebSocketHandler(final File docRoot) {
         this.docRoot = docRoot;
+
+        this.rs = new ResourceSetImpl();
+
+        // turn off validation and loading of certain xml stuff
+        Map<String, Boolean> parserFeatures = Maps.newHashMap();
+        parserFeatures.put("http://xml.org/sax/features/validation", Boolean.FALSE);
+        parserFeatures.put("http://apache.org/xml/features/nonvalidating/load-dtd-grammar",
+                Boolean.FALSE);
+        parserFeatures.put("http://apache.org/xml/features/nonvalidating/load-external-dtd",
+                Boolean.FALSE);
+        rs.getLoadOptions().put(XMIResource.OPTION_RECORD_UNKNOWN_FEATURE, true);
+        rs.getLoadOptions().put(XMLResource.OPTION_PARSER_FEATURES, parserFeatures);
     }
 
     /**
@@ -137,6 +156,10 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
             return individualConnectionMap.get(connection);
         }
     }
+
+    /*----------------------------------------------------------------------------------------------
+     * Layout and Broadcast methods
+     */
 
     @SuppressWarnings("unused")
     private void layoutBroadcastSVG() {
@@ -237,6 +260,10 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
         return new SVGBrowsingViewer();
     }
 
+    /*----------------------------------------------------------------------------------------------
+     * WebSocket OPEN/CLOSE
+     */
+
     /**
      * {@inheritDoc}
      */
@@ -245,13 +272,33 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
         if (debug) {
             System.err.printf("%s#onOpen %s\n", this.getClass().getSimpleName(), theConnection);
         }
-        theConnection.setMaxTextMessageSize(1024*1024*1024/8);
+        theConnection.setMaxTextMessageSize(WS_MAX_TEXT_SIZE);
         this.connection = theConnection;
-        
 
         // initially add to the individual list
         individualConnectionMap.put(theConnection, createViewer());
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void onClose(final int code, final String message) {
+        if (debug) {
+            System.err.printf("%s#onDisonnect %d %s\n", this.getClass().getSimpleName(), code,
+                    message);
+        }
+
+        // remove either from the room list, or from individual list
+        if (currentRoom != null) {
+            leaveCurrentRoom(false);
+        } else {
+            leaveIndividualConnections();
+        }
+    }
+
+    /*----------------------------------------------------------------------------------------------
+     * WebSocket MESSAGE
+     */
 
     /**
      * {@inheritDoc}
@@ -297,100 +344,13 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
                  * RESOURCE -------------------------------------------------------------------
                  */
                 final String path = (String) json.get("path");
-                final String viewport = (String) json.get("viewport");
-                final String expand = (String) json.get("expand");
-                
-                final String text = (String) json.get("text");
-                final String textFormat = (String) json.get("textFormat");
-
-                ResourceSet rs = new ResourceSetImpl();
 
                 // model file or textual ?
                 if (path != null) {
-                 
-                    // MOML
-                    Map<String, Boolean> parserFeatures = Maps.newHashMap();
-                    parserFeatures.put("http://xml.org/sax/features/validation", Boolean.FALSE);
-                    parserFeatures.put("http://apache.org/xml/features/nonvalidating/load-dtd-grammar",
-                            Boolean.FALSE);
-                    parserFeatures.put(
-                            "http://apache.org/xml/features/nonvalidating/load-external-dtd",
-                            Boolean.FALSE);
-
-                    rs.getLoadOptions().put(XMIResource.OPTION_RECORD_UNKNOWN_FEATURE, true);
-                    rs.getLoadOptions().put(XMLResource.OPTION_PARSER_FEATURES, parserFeatures);
-                    // rs.getResourceFactoryRegistry().getExtensionToFactoryMap()
-                    // .put("xml", new MomlResourceFactoryImpl());
-
-                    File file = new File(docRoot, path);
-                    final Resource r = rs.getResource(URI.createFileURI(file.getAbsolutePath()), true);
-
-                    System.out.println("Loading resource (WS): " + r);
-
-                    SVGBrowsingViewer viewer = getCurrentViewer();
-                    viewer.setSvgTransform(null);
-
-                    // translate and set the model
-                    try {
-                        KNode currentModel =
-                                LightDiagramServices.translateModel(r.getContents().get(0), null);
-                        viewer.setModel(currentModel, true);
-                        viewer.setResourcePath(path);
-                        viewer.setResourceChecksum(Files.getChecksum(file, checksum) + "");
-
-                        // if we have initial permalink information, apply them!
-                        viewer.applyPermalink(expand, viewport);
-
-                        layoutBroadcastSVG(Broadcast.All, true);
-
-                        broadcastPermaLink();
-
-                    } catch (Exception e) {
-                        // tell the user!
-                        sendError("ERROR: " + e.getLocalizedMessage());
-                    }
+                    handleFileResource(json);
                 } else {
-                    
-                    // put it in a resource and try to load it
-                    Map<String, Boolean> parserFeatures = Maps.newHashMap();
-                    parserFeatures.put("http://xml.org/sax/features/validation", Boolean.FALSE);
-                    parserFeatures.put("http://apache.org/xml/features/nonvalidating/load-dtd-grammar",
-                            Boolean.FALSE);
-                    parserFeatures.put("http://apache.org/xml/features/nonvalidating/load-external-dtd",
-                            Boolean.FALSE);
-
-                    rs.getLoadOptions().put(XMIResource.OPTION_RECORD_UNKNOWN_FEATURE, true);
-                    rs.getLoadOptions().put(XMLResource.OPTION_PARSER_FEATURES, parserFeatures);
-                    
-                    
-                    
-                    try {
-                        Resource r = rs.createResource(URI.createFileURI("dummy." + textFormat));
-                        ByteArrayInputStream bais = new ByteArrayInputStream(text.getBytes());
-                        r.load(bais, rs.getLoadOptions());
-                        
-                        SVGBrowsingViewer viewer = getCurrentViewer();
-                        viewer.setSvgTransform(null);
-                        
-                        KNode model = LightDiagramServices.translateModel(r.getContents().get(0), null);
-                        viewer.setModel(model, true);
-                        
-                        layoutBroadcastSVG(Broadcast.All, true);
-                        
-//                        response.setContentType("text/html;charset=utf8");
-//                        response.setCharacterEncoding("utf8");
-//                        response.setStatus(HttpServletResponse.SC_OK);
-//                        baseRequest.setHandled(true);
-////                        System.out.println(svg);
-//                        response.getWriter().write(svg);
-                        
-                    } catch (Exception e) {
-                        sendError("ERROR: " + e.getLocalizedMessage());
-                    }
-                    
+                    handleTextualResource(json);
                 }
-                
-                
 
             } else if (type.equals("EXPAND")) {
                 /*
@@ -412,19 +372,19 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
 
                 broadcastJson(Broadcast.AllButThis, "type", "TRANSFORM", "transform", transform);
                 broadcastPermaLink();
-                
+
             } else if (type.equals("MOUSEPOS")) {
                 String posX = (String) json.get("posX");
                 String posY = (String) json.get("posY");
-                
+
                 broadcastJson(Broadcast.AllButThis, "type", "MOUSEPOS", "posX", posX, "posY", posY);
-            
+
             } else if (type.equals("MOUSEENTER")) {
                 broadcastJson(Broadcast.AllButThis, "type", "MOUSEENTER");
-                
+
             } else if (type.equals("MOUSELEAVE")) {
                 broadcastJson(Broadcast.AllButThis, "type", "MOUSELEAVE");
-                
+
             }
 
         } catch (Exception e) {
@@ -433,22 +393,9 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
         }
     }
 
-    /**
-     * {@inheritDoc}
+    /*----------------------------------------------------------------------------------------------
+     * Compression
      */
-    public void onClose(final int code, final String message) {
-        if (debug) {
-            System.err.printf("%s#onDisonnect %d %s\n", this.getClass().getSimpleName(), code,
-                    message);
-        }
-
-        // remove either from the room list, or from individual list
-        if (currentRoom != null) {
-            leaveCurrentRoom(false);
-        } else {
-            leaveIndividualConnections();
-        }
-    }
 
     private static String compressSvg(final String svg) {
         try {
@@ -500,5 +447,80 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
      */
     public boolean isCompress() {
         return compress;
+    }
+
+    /*----------------------------------------------------------------------------------------------
+     * Internal message handling
+     */
+
+    private void handleFileResource(final Map<String, Object> json) {
+
+        // parse the json
+        final String path = (String) json.get("path");
+        final String viewport = (String) json.get("viewport");
+        final String expand = (String) json.get("expand");
+
+        // translate and set the model
+        try {
+            // load the resource
+            File file = new File(docRoot, path);
+            final Resource r = rs.getResource(URI.createFileURI(file.getAbsolutePath()), true);
+
+            System.out.println("Loading resource (WS): " + r);
+
+            SVGBrowsingViewer viewer = getCurrentViewer();
+            viewer.setSvgTransform(null);
+
+            if (r.getContents().isEmpty()) {
+                sendError("ERROR: Could not load model at " + path + ".");
+                return;
+            }
+
+            KNode currentModel = LightDiagramServices.translateModel(r.getContents().get(0), null);
+            viewer.setModel(currentModel, true);
+            viewer.setResourcePath(path);
+            viewer.setResourceChecksum(Files.getChecksum(file, checksum) + "");
+
+            // if we have initial permalink information, apply them!
+            viewer.applyPermalink(expand, viewport);
+
+            layoutBroadcastSVG(Broadcast.All, true);
+
+            broadcastPermaLink();
+
+        } catch (Exception e) {
+            // tell the user!
+            sendError("ERROR: " + e.getLocalizedMessage());
+        }
+    }
+
+    private void handleTextualResource(final Map<String, Object> json) {
+
+        final String text = (String) json.get("text");
+        final String textFormat = (String) json.get("textFormat");
+
+        try {
+            Resource r = rs.createResource(URI.createFileURI("dummy." + textFormat));
+            ByteArrayInputStream bais = new ByteArrayInputStream(text.getBytes());
+            r.load(bais, rs.getLoadOptions());
+
+            if (r.getContents().isEmpty()) {
+                sendError("ERROR: Could not load model with format " + textFormat
+                        + ". Please check that the specified format is "
+                        + "correct and the passed model wellformed and valid.");
+                return;
+            }
+
+            SVGBrowsingViewer viewer = getCurrentViewer();
+            viewer.setSvgTransform(null);
+
+            KNode model = LightDiagramServices.translateModel(r.getContents().get(0), null);
+            viewer.setModel(model, true);
+
+            layoutBroadcastSVG(Broadcast.All, true);
+
+        } catch (Exception e) {
+            sendError("ERROR: " + e.getLocalizedMessage());
+        }
     }
 }
