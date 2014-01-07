@@ -2,7 +2,7 @@
 <feature
       id="de.cau.cs.kieler.ptview.feature"
       label="KIELER Ptolemy Viewer"
-      version="0.2.0.qualifier"
+      version="0.3.0.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel"
       plugin="de.cau.cs.kieler.ptolemy.klighd">
 
@@ -218,10 +218,8 @@ litigation.
    </url>
 
    <requires>
-      <import plugin="org.antlr.runtime"/>
       <import plugin="org.apache.log4j"/>
       <import feature="org.eclipse.emf" version="2.6.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.xtext.sdk" version="2.3.1" match="greaterOrEqual"/>
       <import feature="org.ptolemy.feature" version="8.1.0" match="greaterOrEqual"/>
       <import plugin="com.google.guava"/>
    </requires>
@@ -256,13 +254,6 @@ litigation.
 
    <plugin
          id="de.cau.cs.kieler.klighd.piccolo"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.klighd.xtext"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -318,20 +309,6 @@ litigation.
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.core.kgraph.text"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.core.kgraph.text.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.cau.cs.kieler.ptolemy.klighd"
          download-size="0"
          install-size="0"
@@ -347,6 +324,13 @@ litigation.
 
    <plugin
          id="de.cau.cs.kieler.kiml.graphviz.layouter"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.klighd.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"

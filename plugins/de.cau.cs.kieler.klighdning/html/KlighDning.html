@@ -37,7 +37,7 @@
 <body>
     <div class="container-fluid">
         <div class="row-fluid">
-            <div class="span2 navi">
+            <div class="span2">
                 <!-- Button group with the controls -->
                 <div class="btn-group">
                     <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"> Control <span class="caret"></span>
@@ -60,11 +60,24 @@
                 </div>
 
                 <!-- Message Area -->
-                <div id="messages">Unconnected</div>
-                <div id="errors" class="alert alert-error" style="display: none;"></div>
+                <div id="messages" class="navi">Unconnected</div>
+                <div id="errors" class="navi alert alert-error" style="display: none;"></div>
                 <div id="data">
-                	<!-- Here goes the tree navigation -->
-                	<div id="tree"></div>
+                    <ul class="nav nav-tabs">
+                        <li><a href="#tree" data-toggle="tab">Tree</a></li>
+                        <li><a href="#textual" data-toggle="tab">Textual</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <!-- Here goes the tree navigation -->
+                        <div id="tree" class="navi tab-pane active"></div>
+                        <!-- Here goes the textual text area input -->
+                        <div id="textual" class="tab-pane" >
+                            <textarea id="textualInput"></textarea>
+                            <select id="textualFormats"></select>
+                            <a href="#" id="textualConvert" class="btn">Convert</a>
+                        </div>
+                    </div>
+                	
                 </div>
             </div>
 

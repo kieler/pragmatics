@@ -548,17 +548,17 @@ public final class GraphicsUtils {
         // IFigure rootFigure = new Panel();
         KAreaPlacementData placement = factory.createKAreaPlacementData();
         KPosition topleft = factory.createKPosition();
-        KXPosition left = factory.createKLeftPosition();
+        KXPosition<?> left = factory.createKLeftPosition();
         left.setAbsolute(0);
         topleft.setX(left);
-        KYPosition top = factory.createKTopPosition();
+        KYPosition<?> top = factory.createKTopPosition();
         top.setAbsolute(0);
         topleft.setY(top);
         KPosition bottomright = factory.createKPosition();
-        KXPosition right = factory.createKLeftPosition();
+        KXPosition<?> right = factory.createKLeftPosition();
         right.setAbsolute(Float.parseFloat(svgElement.getAttribute("width")));
         bottomright.setX(right);
-        KYPosition bottom = factory.createKTopPosition();
+        KYPosition<?> bottom = factory.createKTopPosition();
         bottom.setAbsolute(Float.parseFloat(svgElement.getAttribute("height")));
         bottomright.setY(bottom);
         placement.setTopLeft(topleft);
@@ -593,17 +593,17 @@ public final class GraphicsUtils {
                 // make a RectangleFigure from a rectangle element
                 if (tag.equals("rect")) {
                     KRectangle figure = factory.createKRectangle();
-                    KXPosition left = factory.createKLeftPosition();
+                    KXPosition<?> left = factory.createKLeftPosition();
                     left.setAbsolute(Float.parseFloat(childElement.getAttribute("x")));
 
-                    KYPosition top = factory.createKTopPosition();
+                    KYPosition<?> top = factory.createKTopPosition();
                     top.setAbsolute(Float.parseFloat(childElement.getAttribute("y")));
 
-                    KXPosition right = factory.createKLeftPosition();
+                    KXPosition<?> right = factory.createKLeftPosition();
                     right.setAbsolute(left.getAbsolute()
                             + Float.parseFloat(childElement.getAttribute("width")));
 
-                    KYPosition bottom = factory.createKTopPosition();
+                    KYPosition<?> bottom = factory.createKTopPosition();
                     bottom.setAbsolute(top.getAbsolute()
                             + Float.parseFloat(childElement.getAttribute("height")));
 
@@ -633,17 +633,17 @@ public final class GraphicsUtils {
 
                     float radius = Float.parseFloat(childElement.getAttribute("r"));
                     
-                    KXPosition left = factory.createKLeftPosition();
+                    KXPosition<?> left = factory.createKLeftPosition();
                     left.setAbsolute((Float.parseFloat(childElement.getAttribute("cx")) - radius));
 
-                    KYPosition top = factory.createKTopPosition();
+                    KYPosition<?> top = factory.createKTopPosition();
                     top.setAbsolute((Float.parseFloat(childElement.getAttribute("cy")) - radius));
 
-                    KXPosition right = factory.createKLeftPosition();
+                    KXPosition<?> right = factory.createKLeftPosition();
                     right.setAbsolute(left.getAbsolute()
                             + (radius * 2));
 
-                    KYPosition bottom = factory.createKTopPosition();
+                    KYPosition<?> bottom = factory.createKTopPosition();
                     bottom.setAbsolute(top.getAbsolute()
                             + (radius * 2));
 
@@ -674,17 +674,17 @@ public final class GraphicsUtils {
                     float xradius = Float.parseFloat(childElement.getAttribute("rx"));
                     float yradius = Float.parseFloat(childElement.getAttribute("ry"));
                     
-                    KXPosition left = factory.createKLeftPosition();
+                    KXPosition<?> left = factory.createKLeftPosition();
                     left.setAbsolute(Float.parseFloat(childElement.getAttribute("cx")) - xradius);
 
-                    KYPosition top = factory.createKTopPosition();
+                    KYPosition<?> top = factory.createKTopPosition();
                     top.setAbsolute(Float.parseFloat(childElement.getAttribute("cy")) - yradius);
 
-                    KXPosition right = factory.createKLeftPosition();
+                    KXPosition<?> right = factory.createKLeftPosition();
                     right.setAbsolute(left.getAbsolute()
                             + (xradius * 2));
 
-                    KYPosition bottom = factory.createKTopPosition();
+                    KYPosition<?> bottom = factory.createKTopPosition();
                     bottom.setAbsolute(top.getAbsolute()
                             + (yradius * 2));
 
@@ -710,16 +710,16 @@ public final class GraphicsUtils {
 
                     KPolyline figure = factory.createKPolyline();
 
-                    KXPosition x1 = factory.createKLeftPosition();
+                    KXPosition<?> x1 = factory.createKLeftPosition();
                     x1.setAbsolute(Float.parseFloat(childElement.getAttribute("x1")));
 
-                    KYPosition y1 = factory.createKTopPosition();
+                    KYPosition<?> y1 = factory.createKTopPosition();
                     y1.setAbsolute(Float.parseFloat(childElement.getAttribute("y1")));
 
-                    KXPosition x2 = factory.createKLeftPosition();
+                    KXPosition<?> x2 = factory.createKLeftPosition();
                     x2.setAbsolute(Float.parseFloat(childElement.getAttribute("x2")));
 
-                    KYPosition y2 = factory.createKTopPosition();
+                    KYPosition<?> y2 = factory.createKTopPosition();
                     y2.setAbsolute(Float.parseFloat(childElement.getAttribute("y2")));
 
                     String style = (String) childElement.getAttribute("style");
@@ -754,10 +754,10 @@ public final class GraphicsUtils {
                     for (String coords : pointsarray) {
                         String[] coordsarray = coords.split(",");
 
-                        KXPosition x = factory.createKLeftPosition();
+                        KXPosition<?> x = factory.createKLeftPosition();
                         x.setAbsolute(Float.parseFloat(coordsarray[0]));
 
-                        KYPosition y = factory.createKTopPosition();
+                        KYPosition<?> y = factory.createKTopPosition();
                         y.setAbsolute(Float.parseFloat(coordsarray[1]));
 
                         KPosition p = factory.createKPosition();
@@ -784,10 +784,10 @@ public final class GraphicsUtils {
                     for (String coords : pointsarray) {
                         String[] coordsarray = coords.split(",");
 
-                        KXPosition x = factory.createKLeftPosition();
+                        KXPosition<?> x = factory.createKLeftPosition();
                         x.setAbsolute(Float.parseFloat(coordsarray[0]));
 
-                        KYPosition y = factory.createKTopPosition();
+                        KYPosition<?> y = factory.createKTopPosition();
                         y.setAbsolute(Float.parseFloat(coordsarray[1]));
 
                         KPosition p = factory.createKPosition();
@@ -806,10 +806,10 @@ public final class GraphicsUtils {
                     // make a Label from a text element
                     // TODO weird behavior of y value
                 } else if (tag.equals("text")) {
-                    KXPosition x = factory.createKLeftPosition();
+                    KXPosition<?> x = factory.createKLeftPosition();
                     x.setAbsolute(Float.parseFloat(childElement.getAttribute("x")));
 
-                    KYPosition y = factory.createKTopPosition();
+                    KYPosition<?> y = factory.createKTopPosition();
                     y.setAbsolute(Float.parseFloat(childElement.getAttribute("y")));
 
                     String style = (String) childElement.getAttribute("style");
@@ -844,17 +844,17 @@ public final class GraphicsUtils {
                     parentFigure.getChildren().add(figure);
                     // make an ImageFigureEx out of an image element
                 } else if (tag.equals("image")) {
-                    KXPosition left = factory.createKLeftPosition();
+                    KXPosition<?> left = factory.createKLeftPosition();
                     left.setAbsolute(Float.parseFloat(childElement.getAttribute("x")));
 
-                    KYPosition top = factory.createKTopPosition();
+                    KYPosition<?> top = factory.createKTopPosition();
                     top.setAbsolute(Float.parseFloat(childElement.getAttribute("y")));
 
-                    KXPosition right = factory.createKLeftPosition();
+                    KXPosition<?> right = factory.createKLeftPosition();
                     right.setAbsolute(left.getAbsolute()
                             + Float.parseFloat(childElement.getAttribute("width")));
 
-                    KYPosition bottom = factory.createKTopPosition();
+                    KYPosition<?> bottom = factory.createKTopPosition();
                     bottom.setAbsolute(top.getAbsolute()
                             + Float.parseFloat(childElement.getAttribute("height")));
 

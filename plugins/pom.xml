@@ -49,6 +49,7 @@
     <module>de.cau.cs.kieler.klay.tree</module>
     <module>de.cau.cs.kieler.klighd</module>
     <module>de.cau.cs.kieler.klighd.examples</module>
+    <module>de.cau.cs.kieler.klighd.kivi</module>
 <!--
     KLighD Incremental is disabled as long as it doesn't work with the Kepler version of EMF Compare.
     <module>de.cau.cs.kieler.klighd.incremental</module>
@@ -60,6 +61,7 @@
     <module>de.cau.cs.kieler.klighd.ui</module>
     <module>de.cau.cs.kieler.klighd.ui.wizard</module>
     <module>de.cau.cs.kieler.ksbase</module>
+    <module>de.cau.cs.kieler.ksbase.klighd</module>
     <module>de.cau.cs.kieler.ksbase.ui</module>
     <module>de.cau.cs.kieler.kwebs.server</module>
     <module>de.cau.cs.kieler.ptolemy.klighd</module>
