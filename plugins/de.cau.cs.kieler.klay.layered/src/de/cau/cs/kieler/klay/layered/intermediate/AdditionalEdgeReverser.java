@@ -77,11 +77,14 @@ public class AdditionalEdgeReverser implements ILayoutProcessor {
 
         // get configuration
         // TODO
-//        pathLengthThresh = layeredGraph.getProperty(Properties.MAXIMAL_PATH_LENGTH);
-//        pathLengthDelta = layeredGraph.getProperty(Properties.MAXIMAL_PATH_LENGTH_DELTA);
+        // pathLengthThresh = layeredGraph.getProperty(Properties.MAXIMAL_PATH_LENGTH);
+        // pathLengthDelta = layeredGraph.getProperty(Properties.MAXIMAL_PATH_LENGTH_DELTA);
 
         // calculate the long paths
         List<List<LEdge>> longPaths = getLongestPath(layeredGraph);
+
+        // remember edges that we already reverted
+        Set<LEdge> alreadyReverted = Sets.newHashSet();
 
         // handle edge long path
         for (List<LEdge> longestPath : longPaths) {
@@ -118,7 +121,26 @@ public class AdditionalEdgeReverser implements ILayoutProcessor {
                     }
 
                     for (LEdge e : toReverse) {
-                        e.reverse(layeredGraph, true);
+
+                        // check if the edge is a direct neighbour of an edge
+                        // that we already reverted
+                        boolean isNeighbour = true;
+                        for (LEdge before : alreadyReverted) {
+                            // as we reverted the 'before' edge already
+                            // we have to check source-source and target-target of the edges
+                            if (e.getSource().getNode().equals(before.getSource().getNode())
+                                    || before.getTarget().getNode().equals(e.getTarget().getNode())) {
+                                isNeighbour = false;
+                            }
+                        }
+
+                        // don't revert edges that are neighbours
+                        // don't revert edges that we already reverted
+                        if (isNeighbour && !alreadyReverted.contains(e)) {
+                            e.reverse(layeredGraph, true);
+                            alreadyReverted.add(e);
+                        }
+
                     }
                 }
             }
