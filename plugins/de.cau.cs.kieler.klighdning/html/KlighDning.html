@@ -10,6 +10,7 @@
 <link rel="stylesheet" href="css/jquery-ui.min.css" />
 <link rel="stylesheet" href="css/ui.dynatree.css" />
 <link rel="stylesheet" href="css/klighd.svg.css" />
+<link rel="stylesheet" href="css/codemirror.css" />
 
 <!-- Js -->
 <script src="js/yepnope.1.5.4-min.js"></script>
@@ -22,6 +23,7 @@
 <script src="js/bootstrap.min.js"></script>
 <script src="js/gunzip.min.js"></script>
 <script src="js/klighd.util.js"></script>
+<script src="js/codemirror.js"></script>
 
 <script>
   yepnope({
@@ -35,9 +37,9 @@
 
 <!-- The content area -->
 <body>
-    <div class="container-fluid">
-        <div class="row-fluid">
-            <div class="span2">
+    <div class="">
+        <div class="">
+            <div id="navport">
                 <!-- Button group with the controls -->
                 <div class="btn-group">
                     <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"> Control <span class="caret"></span>
@@ -65,14 +67,14 @@
                 <div id="data">
                     <ul class="nav nav-tabs">
                         <li><a href="#tree" data-toggle="tab">Tree</a></li>
-                        <li><a href="#textual" data-toggle="tab">Textual</a></li>
+                        <li><a href="#textual" id="textualTab" data-toggle="tab">Textual</a></li>
                     </ul>
                     <div class="tab-content">
                         <!-- Here goes the tree navigation -->
                         <div id="tree" class="navi tab-pane active"></div>
                         <!-- Here goes the textual text area input -->
                         <div id="textual" class="tab-pane" >
-                            <textarea id="textualInput"></textarea>
+                            <textarea id="textualInput" class="code"></textarea>
                             <select id="textualFormats"></select>
                             <a href="#" id="textualConvert" class="btn">Convert</a>
                         </div>
@@ -81,7 +83,7 @@
                 </div>
             </div>
 
-            <div class="span10">
+            <div class="">
                 <div id="busy"><img src="/images/busy.gif" style="display: hidden;"></img></div>
                 <div data-spy="affix" data-offset-top="0" id="viewport"></div>
             </div>

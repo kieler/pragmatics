@@ -364,7 +364,35 @@ function loadRepository() {
     debugLevel : 0
   });
   
+  // initial textual example
+  $('#textualInput').html('knode n1 { \nsize: width = 100 height = 200\n }\nknode n2 {\n   size: width = 40 height = 20  \n klabel "hello" {  } \n kedge ( -> n1 )\n} ');
+  // init editor
+  var codeArea = CodeMirror.fromTextArea($('#textualInput')[0], {
+    lineNumbers: true
+  });
   
+  // hack to show the editor
+  // this is required as the editor's parent (the tab) is initially invisible
+  $('#textualTab').click(function() {
+    setTimeout(function() {codeArea.refresh(); }, 100);
+  });
+  
+  var refreshModel = function() {
+    connection.send(JSON.stringify({
+      type: 'RESOURCE',
+      text: codeArea.getValue(),
+      textFormat: $('select#textualFormats').val()
+    }));
+  };
+  
+  // create a timer
+  var timeout = 1000;
+  var timer = {};
+  
+  codeArea.on("change", function(inst, obj) {
+    window.clearTimeout(timer);
+    timer = setTimeout(refreshModel, timeout);
+  });
 
   // init the textual fields
   $.ajax({
@@ -380,7 +408,7 @@ function loadRepository() {
       $('#textualConvert').click(function() {
         connection.send(JSON.stringify({
           type: 'RESOURCE',
-          text: $('#textualInput').val(),
+          text: codeArea.getValue(),
           textFormat: $('select#textualFormats').val()
         }));
       })
@@ -391,9 +419,6 @@ function loadRepository() {
       error(res.responseText);
     }
   });
-  
-  // initial example
-  $('#textualInput').html('knode n1 { \nsize: width = 100 height = 200\n }\nknode n2 {\n   size: width = 40 height = 20  \n klabel "hello" {  } \n kedge ( -> n1 )\n} ');
 }
 
 // executed
@@ -401,7 +426,7 @@ $(function() {
 
   // get the initial content
   loadRepository();
-
+  
   // try to connect automatically
   webSocketConnect();
 

@@ -11,10 +11,18 @@ body {
 .nav {
     margin-bottom: 0px;
 }
+#navport {
+    width: 18%;
+    float: left;
+    margin-left: 5px;
+}
 
 #viewport {
-    width: 100%;
-    height: 100%;
+    width: 78%;
+    height: 95%;
+    min-height: 500px;
+    float: right;
+    position: relative;
     background-color: #ffffff;
     border-radius: 6px 6px 6px 6px;
     border-width: 1px;
