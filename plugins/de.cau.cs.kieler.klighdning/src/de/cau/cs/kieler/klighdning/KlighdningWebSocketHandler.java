@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klighdning;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +22,8 @@ import java.util.Map;
 import java.util.zip.Adler32;
 import java.util.zip.Checksum;
 import java.util.zip.GZIPOutputStream;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -242,7 +245,9 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
         if (debug) {
             System.err.printf("%s#onOpen %s\n", this.getClass().getSimpleName(), theConnection);
         }
+        theConnection.setMaxTextMessageSize(1024*1024*1024/8);
         this.connection = theConnection;
+        
 
         // initially add to the individual list
         individualConnectionMap.put(theConnection, createViewer());
@@ -294,50 +299,98 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
                 final String path = (String) json.get("path");
                 final String viewport = (String) json.get("viewport");
                 final String expand = (String) json.get("expand");
+                
+                final String text = (String) json.get("text");
+                final String textFormat = (String) json.get("textFormat");
 
                 ResourceSet rs = new ResourceSetImpl();
 
-                // MOML
-                Map<String, Boolean> parserFeatures = Maps.newHashMap();
-                parserFeatures.put("http://xml.org/sax/features/validation", Boolean.FALSE);
-                parserFeatures.put("http://apache.org/xml/features/nonvalidating/load-dtd-grammar",
-                        Boolean.FALSE);
-                parserFeatures.put(
-                        "http://apache.org/xml/features/nonvalidating/load-external-dtd",
-                        Boolean.FALSE);
+                // model file or textual ?
+                if (path != null) {
+                 
+                    // MOML
+                    Map<String, Boolean> parserFeatures = Maps.newHashMap();
+                    parserFeatures.put("http://xml.org/sax/features/validation", Boolean.FALSE);
+                    parserFeatures.put("http://apache.org/xml/features/nonvalidating/load-dtd-grammar",
+                            Boolean.FALSE);
+                    parserFeatures.put(
+                            "http://apache.org/xml/features/nonvalidating/load-external-dtd",
+                            Boolean.FALSE);
 
-                rs.getLoadOptions().put(XMIResource.OPTION_RECORD_UNKNOWN_FEATURE, true);
-                rs.getLoadOptions().put(XMLResource.OPTION_PARSER_FEATURES, parserFeatures);
-                // rs.getResourceFactoryRegistry().getExtensionToFactoryMap()
-                // .put("xml", new MomlResourceFactoryImpl());
+                    rs.getLoadOptions().put(XMIResource.OPTION_RECORD_UNKNOWN_FEATURE, true);
+                    rs.getLoadOptions().put(XMLResource.OPTION_PARSER_FEATURES, parserFeatures);
+                    // rs.getResourceFactoryRegistry().getExtensionToFactoryMap()
+                    // .put("xml", new MomlResourceFactoryImpl());
 
-                File file = new File(docRoot, path);
-                final Resource r = rs.getResource(URI.createFileURI(file.getAbsolutePath()), true);
+                    File file = new File(docRoot, path);
+                    final Resource r = rs.getResource(URI.createFileURI(file.getAbsolutePath()), true);
 
-                System.out.println("Loading resource (WS): " + r);
+                    System.out.println("Loading resource (WS): " + r);
 
-                SVGBrowsingViewer viewer = getCurrentViewer();
-                viewer.setSvgTransform(null);
+                    SVGBrowsingViewer viewer = getCurrentViewer();
+                    viewer.setSvgTransform(null);
 
-                // translate and set the model
-                try {
-                    KNode currentModel =
-                            LightDiagramServices.translateModel(r.getContents().get(0), null);
-                    viewer.setModel(currentModel, true);
-                    viewer.setResourcePath(path);
-                    viewer.setResourceChecksum(Files.getChecksum(file, checksum) + "");
+                    // translate and set the model
+                    try {
+                        KNode currentModel =
+                                LightDiagramServices.translateModel(r.getContents().get(0), null);
+                        viewer.setModel(currentModel, true);
+                        viewer.setResourcePath(path);
+                        viewer.setResourceChecksum(Files.getChecksum(file, checksum) + "");
 
-                    // if we have initial permalink information, apply them!
-                    viewer.applyPermalink(expand, viewport);
+                        // if we have initial permalink information, apply them!
+                        viewer.applyPermalink(expand, viewport);
 
-                    layoutBroadcastSVG(Broadcast.All, true);
+                        layoutBroadcastSVG(Broadcast.All, true);
 
-                    broadcastPermaLink();
+                        broadcastPermaLink();
 
-                } catch (Exception e) {
-                    // tell the user!
-                    sendError("ERROR: " + e.getLocalizedMessage());
+                    } catch (Exception e) {
+                        // tell the user!
+                        sendError("ERROR: " + e.getLocalizedMessage());
+                    }
+                } else {
+                    
+                    // put it in a resource and try to load it
+                    Map<String, Boolean> parserFeatures = Maps.newHashMap();
+                    parserFeatures.put("http://xml.org/sax/features/validation", Boolean.FALSE);
+                    parserFeatures.put("http://apache.org/xml/features/nonvalidating/load-dtd-grammar",
+                            Boolean.FALSE);
+                    parserFeatures.put("http://apache.org/xml/features/nonvalidating/load-external-dtd",
+                            Boolean.FALSE);
+
+                    rs.getLoadOptions().put(XMIResource.OPTION_RECORD_UNKNOWN_FEATURE, true);
+                    rs.getLoadOptions().put(XMLResource.OPTION_PARSER_FEATURES, parserFeatures);
+                    
+                    
+                    
+                    try {
+                        Resource r = rs.createResource(URI.createFileURI("dummy." + textFormat));
+                        ByteArrayInputStream bais = new ByteArrayInputStream(text.getBytes());
+                        r.load(bais, rs.getLoadOptions());
+                        
+                        SVGBrowsingViewer viewer = getCurrentViewer();
+                        viewer.setSvgTransform(null);
+                        
+                        KNode model = LightDiagramServices.translateModel(r.getContents().get(0), null);
+                        viewer.setModel(model, true);
+                        
+                        layoutBroadcastSVG(Broadcast.All, true);
+                        
+//                        response.setContentType("text/html;charset=utf8");
+//                        response.setCharacterEncoding("utf8");
+//                        response.setStatus(HttpServletResponse.SC_OK);
+//                        baseRequest.setHandled(true);
+////                        System.out.println(svg);
+//                        response.getWriter().write(svg);
+                        
+                    } catch (Exception e) {
+                        sendError("ERROR: " + e.getLocalizedMessage());
+                    }
+                    
                 }
+                
+                
 
             } else if (type.equals("EXPAND")) {
                 /*

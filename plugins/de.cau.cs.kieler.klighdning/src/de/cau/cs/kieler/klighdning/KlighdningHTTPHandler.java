@@ -20,6 +20,7 @@ import java.io.InputStreamReader;
 import java.net.URLEncoder;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.zip.Adler32;
 import java.util.zip.Checksum;
 
@@ -27,8 +28,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.plugin.EcorePlugin;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.Resource.Factory.Registry;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.XMIResource;
@@ -36,6 +41,7 @@ import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.io.CharStreams;
@@ -57,6 +63,11 @@ public class KlighdningHTTPHandler extends AbstractHandler {
     private HtmlGenerator gen = new HtmlGenerator();
     
     private Checksum checksum = new Adler32();
+    
+    private static final String TARGET_TREE_NAVIGATION = "/json/content";
+    private static final String TARGET_TEXT_FORMATS = "/textualFormats";
+    private static final String TARGET_RESOURCE = "/resource";
+    private static final String TARGET_GIT_REFRESH = "/refreshGit";
 
     /**
      * @param docRoot
@@ -76,8 +87,10 @@ public class KlighdningHTTPHandler extends AbstractHandler {
             throws IOException, ServletException {
 
         // decide depending on the http target
-        if (target.startsWith("/json/content")) {
-            
+        if (target.startsWith(TARGET_TREE_NAVIGATION)) {
+            /*----------------------------------------------------------------------------
+             *  Return the navigation for tree based browsing.
+             */
             String json = "";
             
             if (target.equals("/json/content/")) {
@@ -173,7 +186,7 @@ public class KlighdningHTTPHandler extends AbstractHandler {
             }
             response.getWriter().println(gen.permaLinkPage(svg, hasChanged, params));
 
-        } else if (target.startsWith("/refreshGit")) {
+        } else if (target.startsWith(TARGET_GIT_REFRESH)) {
             /*----------------------------------------------------------------------------
              *  Tries to refresh the root directory if it is a git repository.
              */
@@ -207,6 +220,21 @@ public class KlighdningHTTPHandler extends AbstractHandler {
             response.setContentType("text/html;charset=utf8");
             response.setCharacterEncoding("utf8");
             baseRequest.setHandled(true);
+            
+        } else if (target.startsWith(TARGET_TEXT_FORMATS)) {
+            
+            // get the registered formats
+            Registry r = Resource.Factory.Registry.INSTANCE;
+            Set<String> formats = r.getExtensionToFactoryMap().keySet();
+           
+            String json = "[\"" + Joiner.on("\", \"").join(formats) + "\"]";
+            
+            response.getWriter().println(json);
+            response.setContentType("application/json;charset=utf8");
+            response.setStatus(HttpServletResponse.SC_OK);
+            baseRequest.setHandled(true);
+            
+            
         } else if (target.startsWith("/textualModel")) {
             /*----------------------------------------------------------------------------
              *  Creates the visualization for a textual representation

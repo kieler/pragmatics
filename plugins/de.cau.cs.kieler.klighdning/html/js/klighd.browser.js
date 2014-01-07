@@ -363,6 +363,37 @@ function loadRepository() {
     // no debug output
     debugLevel : 0
   });
+  
+  
+
+  // init the textual fields
+  $.ajax({
+    type : 'GET',
+    url : '/textualFormats',
+    success : function(res) {
+      // add the received formats as possibilities
+      $.each(res, function(i, format) {
+        $('#textualFormats').append('<option value=' + format + '>' + format + '</option>');
+      });
+      
+      // add action upon convert click
+      $('#textualConvert').click(function() {
+        connection.send(JSON.stringify({
+          type: 'RESOURCE',
+          text: $('#textualInput').val(),
+          textFormat: $('select#textualFormats').val()
+        }));
+      })
+    },
+    error : function(res) {
+      console.log("Error: " + res.responseText);
+      console.log(res);
+      error(res.responseText);
+    }
+  });
+  
+  // initial example
+  $('#textualInput').html('knode n1 { \nsize: width = 100 height = 200\n }\nknode n2 {\n   size: width = 40 height = 20  \n klabel "hello" {  } \n kedge ( -> n1 )\n} ');
 }
 
 // executed
