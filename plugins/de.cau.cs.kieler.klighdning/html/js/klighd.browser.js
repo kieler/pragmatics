@@ -368,13 +368,17 @@ function loadRepository() {
   $('#textualInput').html('knode n1 { \nsize: width = 100 height = 200\n }\nknode n2 {\n   size: width = 40 height = 20  \n klabel "hello" {  } \n kedge ( -> n1 )\n} ');
   // init editor
   var codeArea = CodeMirror.fromTextArea($('#textualInput')[0], {
-    lineNumbers: true
+    lineNumbers: true,
+    viewportMargin: Infinity
   });
   
   // hack to show the editor
   // this is required as the editor's parent (the tab) is initially invisible
   $('#textualTab').click(function() {
-    setTimeout(function() {codeArea.refresh(); }, 100);
+    setTimeout(function() {
+      codeArea.setSize($('.CodeMirror').width(), $('.CodeMirror').height());
+      codeArea.refresh();
+    }, 100);
   });
   
   var refreshModel = function() {
@@ -401,7 +405,11 @@ function loadRepository() {
     success : function(res) {
       // add the received formats as possibilities
       $.each(res, function(i, format) {
-        $('#textualFormats').append('<option value=' + format + '>' + format + '</option>');
+        if (format == "kgt") {
+          $('#textualFormats').append('<option selected=selected value=' + format + '>' + format + '</option>');
+        } else {
+          $('#textualFormats').append('<option value=' + format + '>' + format + '</option>');          
+        }
       });
       
       // add action upon convert click
@@ -423,10 +431,18 @@ function loadRepository() {
 
 // executed
 $(function() {
+  
+  // init the splitter
+  $('#main-splitter').splitter({
+    anchorToWindow : true,
+    minLeft : 100,
+    sizeLeft : 250,
+    minRight : 100,
+  });
 
   // get the initial content
   loadRepository();
-  
+
   // try to connect automatically
   webSocketConnect();
 
