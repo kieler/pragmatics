@@ -220,7 +220,7 @@ public final class GenomeFactory {
      * @param layoutType a layout type
      * @return filtered algorithms
      */
-    private static List<LayoutAlgorithmData> getAlgoList(final LayoutTypeData layoutType) {
+    public static List<LayoutAlgorithmData> getAlgoList(final LayoutTypeData layoutType) {
         List<LayoutAlgorithmData> algoList = layoutType.getLayouters();
         if (layoutType.getId().length() == 0) {
             // This is the 'Other' layout type
@@ -292,7 +292,7 @@ public final class GenomeFactory {
      * Create a layout context for a graph element.
      * 
      * @param graphElement the graph element for which to create the context
-     * @param layoutMapping the layout mapping
+     * @param layoutMapping the layout mapping, or {@code null}
      * @param layoutConfig the layout configurator
      * @return a layout context
      */
@@ -301,13 +301,15 @@ public final class GenomeFactory {
         // create a layout context for the given layout graph
         LayoutContext context = new LayoutContext();
         context.setProperty(LayoutContext.GRAPH_ELEM, graphElement);
-        Object diagramPart = layoutMapping.getGraphMap().get(graphElement);
-        context.setProperty(LayoutContext.DIAGRAM_PART, diagramPart);
-        EObject modelElement = (EObject) layoutMapping.getAdapterFactory().getAdapter(
-                diagramPart, EObject.class);
-        context.setProperty(LayoutContext.DOMAIN_MODEL, modelElement);
-        IWorkbenchPart workbenchPart = layoutMapping.getProperty(IWorkbenchPart.class);
-        context.setProperty(EclipseLayoutConfig.WORKBENCH_PART, workbenchPart);
+        if (layoutMapping != null) {
+            Object diagramPart = layoutMapping.getGraphMap().get(graphElement);
+            context.setProperty(LayoutContext.DIAGRAM_PART, diagramPart);
+            EObject modelElement = (EObject) layoutMapping.getAdapterFactory().getAdapter(
+                    diagramPart, EObject.class);
+            context.setProperty(LayoutContext.DOMAIN_MODEL, modelElement);
+            IWorkbenchPart workbenchPart = layoutMapping.getProperty(IWorkbenchPart.class);
+            context.setProperty(EclipseLayoutConfig.WORKBENCH_PART, workbenchPart);
+        }
         context.setProperty(DefaultLayoutConfig.OPT_MAKE_OPTIONS, true);
 
         // enrich the layout context using the given configurator
