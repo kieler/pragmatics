@@ -196,7 +196,8 @@
         $('.foreignCursor').hide();
          
       } else if (json.type === "ERROR") {
-        error(json.data);
+        var htmlified = json.data.replace(/\n/g, '<br />');
+        error(htmlified);
       }
   
       // not busy anymore
@@ -397,7 +398,7 @@
     };
     
     // create a timer
-    var timeout = 1000;
+    var timeout = 700;
     var timer = {};
     
     codeArea.on("change", function(inst, obj) {

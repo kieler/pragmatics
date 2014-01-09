@@ -1,6 +1,9 @@
 package de.cau.cs.kieler.klighdning.handler
 
+import com.google.common.collect.HashMultimap
+import com.google.common.collect.Multimap
 import java.io.File
+import org.eclipse.xtext.xbase.lib.Functions.Function1
 
 class HtmlGenerator {
 
@@ -13,7 +16,11 @@ class HtmlGenerator {
 	def String toJson(File path) {
 		var json = "["
 
-		json = json + path.listFiles.sortBy[it.name].map [ f |
+        val dirs = path.listFiles.filter[directory].sortBy[name]
+        val files = path.listFiles.filter[!directory].sortBy[name]
+        val dirAndFiles = #[dirs, files].flatten
+
+		json = json + dirAndFiles.map [ f |
 			'''
 			{
 				"title": "«f.name»",
