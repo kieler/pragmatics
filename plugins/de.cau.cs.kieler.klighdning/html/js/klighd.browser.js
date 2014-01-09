@@ -204,6 +204,7 @@
     };
   
     // -- Try to connect
+    var wsTimeout = 1000;
     $('#messages').html("Connecting ...");
     setTimeout(function() {
       if (connection.readyState === WebSocket.OPEN) {
@@ -212,8 +213,10 @@
       } else {
         $('#messages').html("Could not connect to web socket.");
         connection = null;
+        // increase timeout for next try
+        wsTimeout = wsTimeout * 2;
       }
-    }, 500);
+    }, wsTimeout);
   
     
     $("#viewport").on('mousemove', function(e) {
