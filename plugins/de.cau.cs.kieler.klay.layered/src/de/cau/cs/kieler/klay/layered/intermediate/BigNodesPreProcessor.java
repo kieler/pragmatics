@@ -19,15 +19,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.google.common.base.Function;
-import com.google.common.base.Functions;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.kgraph.KLabel;
-import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.NodeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
@@ -310,67 +305,70 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
             List<LLabel> cpyLabel = Lists.newLinkedList(node.getLabels());
             for (final LLabel l : cpyLabel) {
 
+                // is the label too wide for the parent node?
+                // (also subject to label placement, checked later)
                 boolean labelTooWide = false;
-                List<String> labelChunks = Lists.newArrayList();
-                double labelChunkWidth = l.getSize().x / chunks;
-
-                // do we have to split the label?
                 labelTooWide = l.getSize().x > (minWidth - 2 * labelSpacing);
-                labelChunks.clear();
-
-                // split the label if it is too wide
-                if (labelTooWide) {
-                    // split into equal sized chunks
-                    int length = l.getText().length();
-                    int labelChunkSize = (int) Math.ceil(length / chunks);
-
-                    String text = l.getText();
-                    int lPos = 0, rPos = labelChunkSize - 1;
-
-                    for (int i = 0; i < chunks; ++i) {
-                        String subLabel = text.substring(lPos, Math.max(0, Math.min(rPos, length) - 1));
-                        labelChunks.add(subLabel);
-                        lPos = rPos;
-                        rPos += labelChunkSize;
-                    }
-                }
 
                 // assign the labels (chunks) to dummy nodes
                 EnumSet<NodeLabelPlacement> placement =
                         node.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT);
 
+                // CHECKSTYLEOFF EmptyBlock
                 if (placement.contains(NodeLabelPlacement.OUTSIDE)) {
                     /*
                      * OUTSIDE
                      */
                     if (placement.contains(NodeLabelPlacement.H_LEFT)) {
                         // H_LEFT
-                        // leave the label unsplit on the left most node
-                        // spacing will be introduced on the left side of 
-                        // the first big node dummy
+                        if (placement.contains(NodeLabelPlacement.V_TOP) 
+                                || placement.contains(NodeLabelPlacement.V_BOTTOM)) {
+                            // V_TOP || V_BOTTOM
+                            // split and evenly distribute to the dummy nodes
+                            if (labelTooWide) {
+                              splitAndDistributeLabel(l);
+                              // FIXME, still results top left of parent node
+                            }
+                        } else {
+                            // V_CENTER
+                            // leave the label unsplit on the left most node
+                            // spacing will be introduced on the left side of 
+                            // the first big node dummy
+                        }
+                        
                     } else if (placement.contains(NodeLabelPlacement.H_RIGHT)) {
                         // H_RIGHT
-                        // assign to last node
-                        // spacing will be introduced on the right side of 
-                        // the last dummy node
-                        LNode lastDummy = dummies.get(dummies.size() - 1);
-                        lastDummy.getLabels().add(l);
-                        node.getLabels().remove(l);
-                        
-                        // however, the label's position is calculated relatively to the 
-                        // last dummy, thus we have to add an offset afterwards
-                        Function<Void, Void> postProcess = new Function<Void, Void>() {
-
-                            public Void apply(final Void v) {
-                                l.getPosition().x += (minWidth * (chunks - 1));
-                                return null;
+                        if (placement.contains(NodeLabelPlacement.V_TOP) 
+                                || placement.contains(NodeLabelPlacement.V_BOTTOM)) {
+                            // V_TOP || V_BOTTOM
+                            if (labelTooWide) {
+                                splitAndDistributeLabel(l);
+                                // FIXME, still results top left of parent node
                             }
-                        };
-                        node.setProperty(Properties.BIGNODES_POST_PROCESS, postProcess);
+                        } else {
+                            // V_CENTER
+                            // assign to last node
+                            // spacing will be introduced on the right side of 
+                            // the last dummy node
+                            LNode lastDummy = dummies.get(dummies.size() - 1);
+                            lastDummy.getLabels().add(l);
+                            node.getLabels().remove(l);
+                            
+                            // however, the label's position is calculated relatively to the 
+                            // last dummy, thus we have to add an offset afterwards
+                            Function<Void, Void> postProcess = new Function<Void, Void>() {
+    
+                                public Void apply(final Void v) {
+                                    l.getPosition().x += (minWidth * (chunks - 1));
+                                    return null;
+                                }
+                            };
+                            node.setProperty(Properties.BIGNODES_POST_PROCESS, postProcess);
+                        }
                         
                     } else if (placement.contains(NodeLabelPlacement.H_CENTER)) {
                         // H_CENTER
-                        // split ??
+                        // TODO not supported yet
                     }
                 } else if (placement.contains(NodeLabelPlacement.INSIDE)) {
                     /*
@@ -378,48 +376,75 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
                      */
                     if (placement.contains(NodeLabelPlacement.H_LEFT)) {
                         // H_LEFT
-                        // split it and evently assign to the dummies
+                        // split it and evenly assign to the dummies
                         if (labelTooWide) {
-                            final List<LLabel> dumLabs = Lists.newLinkedList();
-                            for (int i = 0; i < chunks; ++i) {
-                                LNode dummy = dummies.get(i);
-                                String labelChunk = labelChunks.get(i);
-                                LLabel lab = new LLabel(layeredGraph, labelChunk);
-                                lab.getSize().x = labelChunkWidth;
-                                lab.getSize().y = l.getSize().y;
-                                dumLabs.add(lab);
-                                
-                                dummy.getLabels().add(lab);
-                            }
-                            node.getLabels().remove(l);
-                            
-                            Function<Void, Void> postProcess = new Function<Void, Void>() {
-
-                                public Void apply(final Void v) {
-                                    for (LNode dummy : Iterables.skip(dummies, 0)) {
-
-                                        for (LLabel l : Lists.newLinkedList(dummy.getLabels())) {
-                                            if (l.getProperty(Properties.ORIGIN) == null) {
-                                                dummy.getLabels().remove(l);
-                                            }
-                                        }
-
-                                    }
-                                    return null;
-                                }
-                            };
-                            node.setProperty(Properties.BIGNODES_POST_PROCESS, postProcess);
+                           splitAndDistributeLabel(l);
                         }
+                        // FIXME, always placed top left of node, why?
                     } else if (placement.contains(NodeLabelPlacement.H_RIGHT)) {
                         // H_RIGHT
+                        if (labelTooWide) {
+                            splitAndDistributeLabel(l);
+                         }
                     } else if (placement.contains(NodeLabelPlacement.H_CENTER)) {
                         // H_CENTER
-                        // split ??
+                        // TODO not supported yet
                     }
                 }
 
             }
         }
+        
+        
+        private void splitAndDistributeLabel(final LLabel lab) {
+            
+            List<String> labelChunks = Lists.newArrayList();
+            double labelChunkWidth = lab.getSize().x / chunks;
+            
+            // split into equal sized chunks
+            int length = lab.getText().length();
+            int labelChunkSize = (int) Math.ceil(length / chunks);
 
+            String text = lab.getText();
+            int lPos = 0, rPos = labelChunkSize - 1;
+
+            for (int i = 0; i < chunks; ++i) {
+                String subLabel = text.substring(lPos, Math.max(0, Math.min(rPos, length) - 1));
+                labelChunks.add(subLabel);
+                lPos = rPos;
+                rPos += labelChunkSize;
+            }
+            
+            final List<LLabel> dumLabs = Lists.newLinkedList();
+            for (int i = 0; i < chunks; ++i) {
+                LNode dummy = dummies.get(i);
+                String labelChunk = labelChunks.get(i);
+                LLabel dumLab = new LLabel(layeredGraph, labelChunk);
+                dumLab.getSize().x = labelChunkWidth;
+                dumLab.getSize().y = lab.getSize().y;
+                dumLabs.add(dumLab);
+                
+                dummy.getLabels().add(dumLab);
+            }
+            node.getLabels().remove(lab);
+            
+            Function<Void, Void> postProcess = new Function<Void, Void>() {
+
+                public Void apply(final Void v) {
+                    for (LNode dummy : Iterables.skip(dummies, 0)) {
+
+                        for (LLabel l : Lists.newLinkedList(dummy.getLabels())) {
+                            if (l.getProperty(Properties.ORIGIN) == null) {
+                                dummy.getLabels().remove(l);
+                            }
+                        }
+
+                    }
+                    return null;
+                }
+            };
+            node.setProperty(Properties.BIGNODES_POST_PROCESS, postProcess);
+        }
+        
     }
 }
