@@ -278,7 +278,7 @@ public final class Properties {
     public static final IProperty<List<LLabel>> BIGNODES_ORIG_LABELS = new Property<List<LLabel>>(
             "de.cau.cs.kieler.klay.layered.bigNodeLabels", new LinkedList<LLabel>());
     
-    /** A postprocessing function that is called during big nodes post processing. */
+    /** A post processing function that is called during big nodes post processing. */
     public static final IProperty<Function<Void, Void>> BIGNODES_POST_PROCESS =
             new Property<Function<Void, Void>>("de.cau.cs.kieler.klay.layered.postProcess", null);
 

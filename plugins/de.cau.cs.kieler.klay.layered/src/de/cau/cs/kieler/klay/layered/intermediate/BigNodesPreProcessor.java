@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.google.common.base.Function;
+import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -174,10 +175,12 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
         private double minWidth;
 
         private ArrayList<LNode> dummies = Lists.newArrayList();
-        private List<LLabel> dumLabs = Lists.newArrayList();
+        private LinkedListMultimap<LLabel, LLabel> dumLabs = LinkedListMultimap.create();
+        
+        private List<Function<Void, Void>> postProcs = Lists.newLinkedList();
 
         /**
-         * 
+         * Creates a new big node.
          */
         public BigNode(final LNode node, final int chunks, final double minWidth) {
             this.node = node;
@@ -241,7 +244,6 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
 
         /**
          * Creates a new dummy node of the specified width.
-         * 
          */
         private LNode introduceDummyNode(final LNode src, final double width) {
             // create new dummy node
@@ -294,29 +296,37 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
          */
         private void handleLabels() {
 
+            // remember the original labels, they will be restored during post processing
+            // otherwise the graph exporter is not able to write back the new label positions 
             node.setProperty(Properties.BIGNODES_ORIG_LABELS, Lists.newLinkedList(node.getLabels()));
+
+           
             
-            // split the nodes labels
+            // handle every label of the node
             for (final LLabel l : Lists.newLinkedList(node.getLabels())) {
 
-                // is the label too wide for the parent node?
-                // (also subject to node label placement, checked later)
+                // is the label too wide for the first parent node (with reduced size)
+                //  (also subject to node label placement, checked later)
                 boolean labelTooWide = false;
                 labelTooWide = l.getSize().x > minWidth;
 
-                // assign the labels (chunks) to dummy nodes
+                
                 EnumSet<NodeLabelPlacement> placement =
                         node.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT);
-
-                System.out.println(placement);
                 
+                if (placement.isEmpty()) {
+                    splitAndDistributeLabel(l);
+                }
+
                 // CHECKSTYLEOFF EmptyBlock
                 if (placement.contains(NodeLabelPlacement.OUTSIDE)) {
                     /*
                      * OUTSIDE
                      */
                     if (placement.contains(NodeLabelPlacement.H_LEFT)) {
-                        // H_LEFT
+                        /*
+                         * H_LEFT
+                         */
                         if (placement.contains(NodeLabelPlacement.V_TOP)
                                 || placement.contains(NodeLabelPlacement.V_BOTTOM)) {
                             // V_TOP || V_BOTTOM
@@ -332,13 +342,15 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
                         }
 
                     } else if (placement.contains(NodeLabelPlacement.H_RIGHT)) {
-                        // H_RIGHT
+                        /*
+                         * H_RIGHT
+                         */
                         if (placement.contains(NodeLabelPlacement.V_TOP)
                                 || placement.contains(NodeLabelPlacement.V_BOTTOM)) {
                             // V_TOP || V_BOTTOM
-                            if (labelTooWide) {
+//                            if (labelTooWide) {
                                 splitAndDistributeLabel(l);
-                            }
+//                            }
                         } else {
                             // V_CENTER
                             // assign to last node
@@ -401,14 +413,21 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
                 }
 
             }
+            
+            // assign postprosessing
+            postProcs.add(funRemoveLabelDummies);
+            node.setProperty(Properties.BIGNODES_POST_PROCESS, CompoundFunction.of(postProcs));
         }
         
-        
-        @SuppressWarnings("unchecked")
+        /**
+         * Splits the label in consecutive chunks while the number of chunks corresponds to the
+         * number of dummy nodes (including the first node).
+         * 
+         */
         private void splitAndDistributeLabel(final LLabel lab) {
             
             List<String> labelChunks = Lists.newArrayList();
-            double labelChunkWidth = lab.getSize().x / chunks;
+            // double labelChunkWidth = lab.getSize().x / chunks;
             
             // split into equal sized chunks
             int length = lab.getText().length();
@@ -420,6 +439,7 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
             for (int i = 0; i < chunks; ++i) {
                 String subLabel = text.substring(Math.max(0, lPos), 
                         Math.max(0, Math.min(rPos, length) - 1));
+                System.out.println(subLabel);
                 labelChunks.add(subLabel);
                 lPos = rPos;
                 rPos += labelChunkSize;
@@ -429,34 +449,37 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
                 LNode dummy = dummies.get(i);
                 String labelChunk = labelChunks.get(i);
                 LLabel dumLab = new LLabel(layeredGraph, labelChunk);
-                dumLab.getSize().x = labelChunkWidth;
+                // TODO as soon as SizeConstraints are to be supported this should be used
+                // dumLab.getSize().x = labelChunkWidth;
                 dumLab.getSize().y = lab.getSize().y;
-                dumLabs.add(dumLab);
+                dumLabs.put(lab, dumLab);
                 
                 dummy.getLabels().add(dumLab);
             }
             node.getLabels().remove(lab);
             
-            // assign postprosessing
-            node.setProperty(Properties.BIGNODES_POST_PROCESS,
-                    CompoundFunction.of(getPostProcFunctionForLabel(lab), funRemoveLabelDummies));
+            postProcs.add(getPostProcFunctionForLabel(lab));
         }
         
         
         private Function<Void, Void> getPostProcFunctionForLabel(final LLabel label) {
-
+            
             Function<Void, Void> fun = new Function<Void, Void>() {
 
                 public Void apply(final Void v) {
-
+                    System.out.println(label);
                     // assign the labels (chunks) to dummy nodes
                     EnumSet<NodeLabelPlacement> placement =
                             node.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT);
 
-                    if (placement.containsAll(EnumSet.of(NodeLabelPlacement.H_LEFT))) {
+                    if (placement.equals(NodeLabelPlacement.fixed())) {
+                        // FIXED label positions
+                        // leave as they are
+                        
+                    } else if (placement.containsAll(EnumSet.of(NodeLabelPlacement.H_LEFT))) {
                         // INSIDE || OUTSIDE
                         // H_LEFT
-                        LLabel dumLab = dumLabs.get(0);
+                        LLabel dumLab = dumLabs.get(label).get(0);
                         label.getPosition().x = dumLab.getPosition().x;
                         label.getPosition().y = dumLab.getPosition().y;
 
@@ -464,8 +487,10 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
                         // INSIDE || OUTSIDE
                         // H_RIGHT
                         LNode rightMostDum = dummies.get(dummies.size() - 1);
-                        LLabel rightMostLab = dumLabs.get(dumLabs.size() - 1);
+                        LLabel rightMostLab = dumLabs.get(label).get(
+                                dumLabs.get(label).size() - 1);
 
+                        
                         // get offset on the right side
                         double rightOffset =
                                 (rightMostDum.getSize().x)
@@ -480,7 +505,7 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
                         // V_CENTER && H_CENTER
 
                         // use any calculated y pos, center manually for x
-                        LLabel dumLab = dumLabs.get(0);
+                        LLabel dumLab = dumLabs.get(label).get(0);
 
                         // now get the offset on the left side and use it as the label's position
                         label.getPosition().x = (node.getSize().x - label.getSize().x) / 2f;
@@ -488,12 +513,12 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
                         
                     } else if (placement.containsAll(EnumSet.of(NodeLabelPlacement.V_CENTER))) {
                         
-                        LLabel dumLab = dumLabs.get(0);
+                        LLabel dumLab = dumLabs.get(label).get(0);
                         label.getPosition().y = dumLab.getPosition().y;
                         
                     } else if (placement.containsAll(EnumSet.of(NodeLabelPlacement.H_CENTER))) {
 
-                        LLabel dumLab = dumLabs.get(0);
+                        LLabel dumLab = dumLabs.get(label).get(0);
                         label.getPosition().x = (node.getSize().x - label.getSize().x) / 2f;
                         label.getPosition().y = dumLab.getPosition().y;
                     }
@@ -505,8 +530,9 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
             return fun;
         }
         
-        /*
-         * Postprocessing Functions
+        /**
+         * Post processing function removing all created label dummies, i.e labels that do not have
+         * an {@link Properties#ORIGIN}.
          */
         private Function<Void, Void> funRemoveLabelDummies = new Function<Void, Void>() {
 
@@ -524,19 +550,20 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
         };
         
 
+        private boolean isNodePlacement(EnumSet<NodeLabelPlacement> placement, NodeLabelPlacement... placements) {
+            return placement.containsAll(EnumSet.of(placements[0], placements));
+        }
         
     }
     
     /**
-     * .
+     * Class to combine and execution multiple {@link Function} instances.
+     * 
      * @author uru
      */
     private static final class CompoundFunction implements Function<Void, Void> {
         private Function<Void, Void>[] funs;
 
-        /**
-      * 
-      */
         private CompoundFunction(final Function<Void, Void>... funs) {
             this.funs = funs;
         }
@@ -544,10 +571,17 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
         public static CompoundFunction of(final Function<Void, Void>... funs) {
             return new CompoundFunction(funs);
         }
+        
+        public static CompoundFunction of(final List<Function<Void, Void>> funs) {
+            @SuppressWarnings("unchecked")
+            Function<Void, Void>[] funsArr = new Function[funs.size()];
+            int i = 0;
+            for (Function<Void, Void> f : funs) {
+                funsArr[i++] = f;
+            }
+            return new CompoundFunction(funsArr);
+        }
 
-        /**
-         * {@inheritDoc}
-         */
         public Void apply(final Void v) {
             for (Function<Void, Void> f : funs) {
                 f.apply(null);
