@@ -15,10 +15,13 @@ package de.cau.cs.kieler.klay.layered.properties;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+
+import com.google.common.base.Function;
 
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.math.KVector;
@@ -28,6 +31,7 @@ import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
+import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
@@ -269,6 +273,14 @@ public final class Properties {
     /** Specifies if the corresponding node is the first node in a big node chain. */
     public static final Property<Boolean> BIG_NODE_INITIAL = new Property<Boolean>(
             "de.cau.cs.kieler.klay.layered.bigNodeInitial", false);
+    
+    /** Original labels of a big node. */
+    public static final IProperty<List<LLabel>> BIGNODES_ORIG_LABELS = new Property<List<LLabel>>(
+            "de.cau.cs.kieler.klay.layered.bigNodeLabels", new LinkedList<LLabel>());
+    
+    /** A postprocessing function that is called during big nodes post processing. */
+    public static final IProperty<Function<Void, Void>> BIGNODES_POST_PROCESS =
+            new Property<Function<Void, Void>>("de.cau.cs.kieler.klay.layered.postProcess", null);
 
     // /////////////////////////////////////////////////////////////////////////////
     // USER INTERFACE OPTIONS

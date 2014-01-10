@@ -15,6 +15,7 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 
 import java.util.List;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -24,6 +25,7 @@ import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
@@ -104,6 +106,14 @@ public class BigNodesPostProcessor implements ILayoutProcessor {
                     layeredGraph.getSize().x = node.getPosition().x + node.getSize().x;
                 }
 
+                // reassign labels
+                List<LLabel> labels = node.getProperty(Properties.BIGNODES_ORIG_LABELS);
+                node.getLabels().addAll(labels);
+                
+                Function<Void, Void> f = node.getProperty(Properties.BIGNODES_POST_PROCESS);
+                if (f != null) {
+                    f.apply(null);
+                }
             }
 
         }
