@@ -1,88 +1,108 @@
 <!doctype html>
-<html encoding="UTF8">
-<head>
-<meta charset="utf-8">
+<html encoding="utf-8">
+    <head>
+        <meta charset="utf-8">
+        
+        <title>KlighDning Model Browser</title>
+        
+        <!-- Stylesheets -->
+        <!--link rel="stylesheet" href="css/jquery-ui.min.css" /-->
+        <link rel="stylesheet" href="css/bootstrap.min.css" />
+        <link rel="stylesheet" href="css/ui.dynatree.css" />
+        <link rel="stylesheet" href="css/codemirror.css" />
+        <link rel="stylesheet" href="css/klighd.svg.css" />
+        
+        <!-- Js -->
+        <script src="js/yepnope.1.5.4-min.js"></script>
+        <script src="js/jquery.min.js"></script>
+        <script src="js/jquery-ui.min.js"></script>
+        <script src="js/jquery.dynatree.min.js"></script>
+        <script src="js/jquery.mousewheel.js"></script>
+        <script src="js/jquery.svg.extras.js"></script>
+        <script src="js/jquery.event.drag-2.2.js"></script>
+        <script src="js/jquery.browser.js"></script>
+        <script src="js/jquery.splitter.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/gunzip.min.js"></script>
+        <script src="js/klighd.util.js"></script>
+        <script src="js/codemirror.js"></script>
+        
+        <script>
+          yepnope({
+            test : /iphone|ipad|ipod|android|blackberry|mini|windows\sce|palm/i.test(navigator.userAgent.toLowerCase()),
+            yep : [ 'http://code.jquery.com/mobile/1.3.1/jquery.mobile-1.3.1.min.js',
+                'http://code.jquery.com/mobile/1.3.1/jquery.mobile-1.3.1.min.css' ]
+          });
+        </script>
+    
+    </head>
 
-<title>KlighD Model Browser</title>
-
-<!-- Stylesheets -->
-<link rel="stylesheet" href="css/bootstrap.min.css" />
-<link rel="stylesheet" href="css/jquery-ui.min.css" />
-<link rel="stylesheet" href="css/ui.dynatree.css" />
-<link rel="stylesheet" href="css/klighd.svg.css" />
-
-<!-- Js -->
-<script src="js/yepnope.1.5.4-min.js"></script>
-<script src="js/jquery.min.js"></script>
-<script src="js/jquery-ui.min.js"></script>
-<script src="js/jquery.dynatree.min.js"></script>
-<script src="js/jquery.mousewheel.js"></script>
-<script src="js/jquery.svg.extras.js"></script>
-<script src="js/jquery.event.drag-2.2.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script src="js/gunzip.min.js"></script>
-<script src="js/klighd.util.js"></script>
-
-<script>
-  yepnope({
-    test : /iphone|ipad|ipod|android|blackberry|mini|windows\sce|palm/i.test(navigator.userAgent.toLowerCase()),
-    yep : [ 'http://code.jquery.com/mobile/1.3.1/jquery.mobile-1.3.1.min.js',
-        'http://code.jquery.com/mobile/1.3.1/jquery.mobile-1.3.1.min.css' ]
-  });
-</script>
-
-</head>
-
-<!-- The content area -->
-<body>
-    <div class="container-fluid">
-        <div class="row-fluid">
-            <div class="span2 navi">
-                <!-- Button group with the controls -->
-                <div class="btn-group">
-                    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"> Control <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#" id="connect">Reconnect </a></li>
-                        <li><a href="#" id="gitRefresh">Git Refresh</a></li>
-                    </ul>
-                </div>
-                <!-- Rooms -->
-                <div class="row-fluid">
-                    <div id="joinDiv" class="input-append">
-                        <input id="room" class="input-small" type="text" placeholder="Room">
-                        <button id="join" class="btn" type="button">Join</button>
+    <!-- The content area -->
+    <body>
+        <div class="">
+            <div id="main-splitter">
+                <div id="navport">
+                    <div id="navport-inner">
+                        <!-- Button group with the controls -->
+                        <div class="btn-group">
+                            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">Control <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#" id="connect">Reconnect </a></li>
+                                <li><a href="#" id="gitRefresh">Git Refresh</a></li>
+                            </ul>
+                        </div>
+                        <!-- Rooms -->
+                        <div class="row-fluid">
+                            <div id="joinDiv" class="input-append">
+                                <input id="room" class="input-small" type="text" placeholder="Room">
+                                <button id="join" class="btn" type="button">Join</button>
+                            </div>
+                            <div id="leaveDiv" style="display: none;">
+                                <div id="currentRoom"></div>
+                                <button id="leave" class="btn" type="button">Leave</button>
+                            </div>
+                        </div>
+        
+                        <!-- Message Area -->
+                        <div id="messages" class="navi">Unconnected</div>
+                        <div id="errors" class="navi alert alert-error" style="display: none;"></div>
+                        <div id="data">
+                            <ul class="nav nav-tabs">
+                                <li><a href="#tree" data-toggle="tab">Tree</a></li>
+                                <li><a href="#textual" id="textualTab" data-toggle="tab">Textual</a></li>
+                            </ul>
+                            <div class="tab-content">
+                                <!-- Here goes the tree navigation -->
+                                <div id="tree" class="navi tab-pane active"></div>
+                                <!-- Here goes the textual text area input -->
+                                <div id="textual" class="tab-pane" >
+                                    <div class="input-append">
+                                        <select id="textualFormats"></select>
+                                        <a href="#" id="textualConvert" class="btn">Convert</a>
+                                    </div>
+                                    <textarea id="textualInput" class="code"></textarea>
+                                </div>
+                            </div>
+                        	
+                        </div>
                     </div>
-                    <div id="leaveDiv" style="display: none;">
-                        <div id="currentRoom"></div>
-                        <button id="leave" class="btn" type="button">Leave</button>
-                    </div>
                 </div>
-
-                <!-- Message Area -->
-                <div id="messages">Unconnected</div>
-                <div id="errors" class="alert alert-error" style="display: none;"></div>
-                <div id="data">
-                	<!-- Here goes the tree navigation -->
-                	<div id="tree"></div>
+                <div id="content">
+                    <div id="busy"><img src="/images/busy.gif" style="display: hidden;"></img></div>
+                    <div id="viewport"></div>
                 </div>
-            </div>
-
-            <div class="span10">
-                <div id="busy"><img src="/images/busy.gif" style="display: hidden;"></img></div>
-                <div data-spy="affix" data-offset-top="0" id="viewport"></div>
             </div>
         </div>
-        <div id="control" data-spy="affix" data-offset-top="0">
+        <div id="control">
             <div id="permaLink" class="ctrlBox">
                 <a href="" target="_blank">PermaLink</a>
             </div>
             <div id="zoomIn" class="ctrlBox"><i class="icon-plus"></i></div>
             <div id="zoomOut" class="ctrlBox"><i class="icon-minus"></i></div>
         </div>
-    </div>
-</body>
-
-<script src="js/klighd.browser.js"></script>
+    </body>
+    
+    <script src="js/klighd.browser.js"></script>
 
 </html>

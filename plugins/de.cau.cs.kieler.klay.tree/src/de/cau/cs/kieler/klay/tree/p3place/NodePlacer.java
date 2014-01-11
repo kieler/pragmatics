@@ -101,11 +101,12 @@ public class NodePlacer implements ILayoutPhase {
         TNode root = roots.getFirst();
 
         /** Do the preliminary positioning with a postorder walk. */
-        firstWalk(root, 0, progressMonitor.subTask(1));
+        firstWalk(root, 0);
+        progressMonitor.worked(1);
 
         /** Do the final positioning with a preorder walk. */
-        secondWalk(root, root.getProperty(Properties.LEVELHEIGHT) + yTopAdjustment, xTopAdjustment,
-                progressMonitor.subTask(1));
+        secondWalk(root, root.getProperty(Properties.LEVELHEIGHT) + yTopAdjustment, xTopAdjustment);
+        progressMonitor.worked(1);
 
         progressMonitor.done();
     }
@@ -119,11 +120,8 @@ public class NodePlacer implements ILayoutPhase {
      *            the root level of the tree
      * @param level
      *            the index of the passed level
-     * @param progressMonitor
-     *            the current progress monitor
      */
-    private void firstWalk(final TNode cN, final int level,
-            final IKielerProgressMonitor progressMonitor) {
+    private void firstWalk(final TNode cN, final int level) {
         cN.setProperty(Properties.MODIFIER, 0d);
         TNode lS = cN.getProperty(Properties.LEFTSIBLING);
 
@@ -146,7 +144,7 @@ public class NodePlacer implements ILayoutPhase {
              * offspring.
              */
             for (TNode child : cN.getChildren()) {
-                firstWalk(child, level + 1, progressMonitor.subTask(1f));
+                firstWalk(child, level + 1);
             }
 
             /**
@@ -296,12 +294,8 @@ public class NodePlacer implements ILayoutPhase {
      *            the y coordinate of previous level
      * @param modsum
      *            the modifiers of all the node's ancestors
-     * @param progressMonitor
-     *            the current progress monitor
      */
-    private void secondWalk(final TNode tNode, final double yCoor, final double modsum,
-            final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Processor place nodes - second walk", 1f);
+    private void secondWalk(final TNode tNode, final double yCoor, final double modsum) {
         if (tNode != null) {
             /**
              * The x-position of the node is the sum of its prev x-coordinate and the modifiers of
@@ -323,19 +317,16 @@ public class NodePlacer implements ILayoutPhase {
             if (!tNode.isLeaf()) {
                 /** This node got offsprings so we will step a level down and take care of them. */
                 secondWalk(Iterables.getFirst(tNode.getChildren(), null), yTemp,
-                        modsum + tNode.getProperty(Properties.MODIFIER),
-                        progressMonitor.subTask(1f));
+                        modsum + tNode.getProperty(Properties.MODIFIER));
             }
             /**
              * Go ahead with the sibling to the right. This is a dfs so we just layout the current
              * subtree.
              */
             if (tNode.getProperty(Properties.RIGHTSIBLING) != null) {
-                secondWalk(tNode.getProperty(Properties.RIGHTSIBLING), yCoor, modsum,
-                        progressMonitor.subTask(1f));
+                secondWalk(tNode.getProperty(Properties.RIGHTSIBLING), yCoor, modsum);
             }
         }
-        progressMonitor.done();
     }
     
 }
