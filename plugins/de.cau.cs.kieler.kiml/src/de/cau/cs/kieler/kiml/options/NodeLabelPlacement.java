@@ -133,6 +133,16 @@ public enum NodeLabelPlacement {
     }
     
     /**
+     * Returns a node label placement to place the node label inside the node, vertically and 
+     * horizontally centered.
+     * 
+     * @return node label placement for inside center center placement.
+     */
+    public static EnumSet<NodeLabelPlacement> insideCenterCenter() {
+        return EnumSet.of(INSIDE, V_CENTER, H_CENTER);
+    }
+    
+    /**
      * Returns a node label placement to place the node label inside the node, right-aligned on top.
      * 
      * @return node label placement for inside top right placement.

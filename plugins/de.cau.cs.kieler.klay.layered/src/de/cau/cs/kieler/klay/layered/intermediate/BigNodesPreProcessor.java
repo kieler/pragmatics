@@ -174,9 +174,17 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
         private int chunks;
         private double minWidth;
 
+        /** The dummy nodes created for this big node (include the node itself at index 0). */
         private ArrayList<LNode> dummies = Lists.newArrayList();
+        /** Last dummy node, stored for quick access. */
+        private LNode lastDummy = null;
+        
+        /** A multimap holding the dummies created for a label. It is important to use a 
+         * LinkedListMultimap in order to retain the order of the dummies.
+         */
         private LinkedListMultimap<LLabel, LLabel> dumLabs = LinkedListMultimap.create();
         
+        /** A list of post processing functions to be applied during {@link BigNodesPostProcessor}. */ 
         private List<Function<Void, Void>> postProcs = Lists.newLinkedList();
 
         /**
@@ -231,7 +239,10 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
                 tmpChunks--;
                 originalWidth -= minWidth;
             }
-
+            
+            // remember the dummy created last
+            lastDummy = start;
+            
             // handle labels
             handleLabels();
 
@@ -300,123 +311,60 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
             // otherwise the graph exporter is not able to write back the new label positions 
             node.setProperty(Properties.BIGNODES_ORIG_LABELS, Lists.newLinkedList(node.getLabels()));
 
-           
+            // assign V_CENTER, H_CENTER node placement to all middle dummy node
+            // this is necessary to avoid unnecessary spacing to be introduced due to 
+            // outside label placement
+            for (int i = 1; i < dummies.size() - 1; ++i) {
+                dummies.get(i).setProperty(LayoutOptions.NODE_LABEL_PLACEMENT,
+                        NodeLabelPlacement.insideCenterCenter());
+            }
             
             // handle every label of the node
             for (final LLabel l : Lists.newLinkedList(node.getLabels())) {
 
-                // is the label too wide for the first parent node (with reduced size)
-                //  (also subject to node label placement, checked later)
-                boolean labelTooWide = false;
-                labelTooWide = l.getSize().x > minWidth;
-
-                
                 EnumSet<NodeLabelPlacement> placement =
                         node.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT);
                 
-                if (placement.isEmpty()) {
-                    splitAndDistributeLabel(l);
-                }
+                // we handle two cases differently where labels are placed outside, horizontally
+                // left or right and vertically centered
+                // apart from that split the label and distribute it among the dummy nodes
 
                 // CHECKSTYLEOFF EmptyBlock
-                if (placement.contains(NodeLabelPlacement.OUTSIDE)) {
-                    /*
-                     * OUTSIDE
-                     */
-                    if (placement.contains(NodeLabelPlacement.H_LEFT)) {
-                        /*
-                         * H_LEFT
-                         */
-                        if (placement.contains(NodeLabelPlacement.V_TOP)
-                                || placement.contains(NodeLabelPlacement.V_BOTTOM)) {
-                            // V_TOP || V_BOTTOM
-                            // split and evenly distribute to the dummy nodes
-                            if (labelTooWide) {
-                                splitAndDistributeLabel(l);
-                            }
-                        } else {
-                            // V_CENTER
-                            // leave the label unsplit on the left most node
-                            // spacing will be introduced on the left side of
-                            // the first big node dummy
-                        }
+                if (placement.containsAll(EnumSet.of(NodeLabelPlacement.OUTSIDE,
+                        NodeLabelPlacement.H_LEFT, NodeLabelPlacement.V_CENTER))) {
+                    // leave the label unsplit on the left most node
+                    // spacing will be introduced on the left side of
+                    // the first big node dummy
+                    
+                } else if (placement.containsAll(EnumSet.of(NodeLabelPlacement.OUTSIDE,
+                        NodeLabelPlacement.H_RIGHT, NodeLabelPlacement.V_CENTER))) {
 
-                    } else if (placement.contains(NodeLabelPlacement.H_RIGHT)) {
-                        /*
-                         * H_RIGHT
-                         */
-                        if (placement.contains(NodeLabelPlacement.V_TOP)
-                                || placement.contains(NodeLabelPlacement.V_BOTTOM)) {
-                            // V_TOP || V_BOTTOM
-//                            if (labelTooWide) {
-                                splitAndDistributeLabel(l);
-//                            }
-                        } else {
-                            // V_CENTER
-                            // assign to last node
-                            // spacing will be introduced on the right side of
-                            // the last dummy node
-                            LNode lastDummy = dummies.get(dummies.size() - 1);
-                            lastDummy.getLabels().add(l);
-                            node.getLabels().remove(l);
+                    // assign to last node
+                    // spacing will be introduced on the right side of
+                    // the last dummy node
+                    lastDummy.getLabels().add(l);
+                    node.getLabels().remove(l);
 
-                            // however, the label's position is calculated relatively to the
-                            // last dummy, thus we have to add an offset afterwards
-                            Function<Void, Void> postProcess = new Function<Void, Void>() {
+                    // however, the label's position is calculated relatively to the
+                    // last dummy, thus we have to add an offset afterwards
+                    Function<Void, Void> postProcess = new Function<Void, Void>() {
+                        public Void apply(final Void v) {
+                            l.getPosition().x += (minWidth * (chunks - 1));
+                            return null;
+                        }
+                    };
+                    node.setProperty(Properties.BIGNODES_POST_PROCESS, postProcess);
 
-                                public Void apply(final Void v) {
-                                    l.getPosition().x += (minWidth * (chunks - 1));
-                                    return null;
-                                }
-                            };
-                            node.setProperty(Properties.BIGNODES_POST_PROCESS, postProcess);
-                        }
+                } else {
+                    // this case includes NO placement data at all
 
-                    } else if (placement.contains(NodeLabelPlacement.H_CENTER)) {
-                        // H_CENTER
-                        
-                        // split to achieve a sufficient node width, the x position
-                        // is adapted via post processing
-                        
-                        // it's ok to also use this for labels that are not too wide
-                        splitAndDistributeLabel(l);
-                    }
-                } else if (placement.contains(NodeLabelPlacement.INSIDE)) {
-                    /*
-                     * INSIDE
-                     */
-                    if (placement.contains(NodeLabelPlacement.H_LEFT)) {
-                        // H_LEFT
-                        // if the label fits into the first dummy node, we don't have
-                        // to do anything
-                        
-                        // otherwise split it and evenly assign to the dummies
-                        if (labelTooWide) {
-                            splitAndDistributeLabel(l);
-                        }
-                        
-                    } else if (placement.contains(NodeLabelPlacement.H_RIGHT)) {
-                        // H_RIGHT
-                        if (labelTooWide) {
-                            splitAndDistributeLabel(l);
-                        }
-                        
-                    } else if (placement.contains(NodeLabelPlacement.H_CENTER)) {
-                        // H_CENTER
-                        
-                        // split to achieve a sufficient node width, the x position
-                        // is adapted via post processing
-                        
-                        // it's ok to also use this for labels that are not too wide
-                        splitAndDistributeLabel(l);
-                    }
+                    splitAndDistributeLabel(l);
+                    
+                    // post processing is generated within the method above
+                    postProcs.add(funRemoveLabelDummies);
+                    node.setProperty(Properties.BIGNODES_POST_PROCESS, CompoundFunction.of(postProcs));
                 }
-
             }
-            
-            // assign postprosessing
-            postProcs.add(funRemoveLabelDummies);
-            node.setProperty(Properties.BIGNODES_POST_PROCESS, CompoundFunction.of(postProcs));
         }
         
         /**
@@ -426,29 +374,23 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
          */
         private void splitAndDistributeLabel(final LLabel lab) {
             
-            List<String> labelChunks = Lists.newArrayList();
             // double labelChunkWidth = lab.getSize().x / chunks;
             
             // split into equal sized chunks
             int length = lab.getText().length();
-            int labelChunkSize = (int) Math.ceil(length / chunks);
+            int labelChunkSize = (int) Math.ceil(length / (double) chunks);
 
             String text = lab.getText();
-            int lPos = 0, rPos = labelChunkSize - 1;
+            int lPos = 0, rPos = labelChunkSize;
 
             for (int i = 0; i < chunks; ++i) {
-                String subLabel = text.substring(Math.max(0, lPos), 
-                        Math.max(0, Math.min(rPos, length) - 1));
-                System.out.println(subLabel);
-                labelChunks.add(subLabel);
+                String subLabel = text.substring(Math.min(Math.max(0, lPos), length), 
+                        Math.max(0, Math.min(rPos, length)));
                 lPos = rPos;
                 rPos += labelChunkSize;
-            }
-            
-            for (int i = 0; i < chunks; ++i) {
+                
                 LNode dummy = dummies.get(i);
-                String labelChunk = labelChunks.get(i);
-                LLabel dumLab = new LLabel(layeredGraph, labelChunk);
+                LLabel dumLab = new LLabel(layeredGraph, subLabel);
                 // TODO as soon as SizeConstraints are to be supported this should be used
                 // dumLab.getSize().x = labelChunkWidth;
                 dumLab.getSize().y = lab.getSize().y;
@@ -456,22 +398,27 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
                 
                 dummy.getLabels().add(dumLab);
             }
+            // remove original label
             node.getLabels().remove(lab);
             
             postProcs.add(getPostProcFunctionForLabel(lab));
         }
         
-        
+        /**
+         * Creates a function that will be executed during the {@link BigNodesPostProcessor}.
+         * 
+         * The position of the split label has to be adapted depending on the 
+         * specified node label placement.
+         */
         private Function<Void, Void> getPostProcFunctionForLabel(final LLabel label) {
             
             Function<Void, Void> fun = new Function<Void, Void>() {
 
                 public Void apply(final Void v) {
-                    System.out.println(label);
-                    // assign the labels (chunks) to dummy nodes
                     EnumSet<NodeLabelPlacement> placement =
                             node.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT);
 
+                    // CHECKSTYLEOFF EmptyBlock
                     if (placement.equals(NodeLabelPlacement.fixed())) {
                         // FIXED label positions
                         // leave as they are
@@ -549,11 +496,6 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
             }
         };
         
-
-        private boolean isNodePlacement(EnumSet<NodeLabelPlacement> placement, NodeLabelPlacement... placements) {
-            return placement.containsAll(EnumSet.of(placements[0], placements));
-        }
-        
     }
     
     /**
@@ -568,10 +510,6 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
             this.funs = funs;
         }
 
-        public static CompoundFunction of(final Function<Void, Void>... funs) {
-            return new CompoundFunction(funs);
-        }
-        
         public static CompoundFunction of(final List<Function<Void, Void>> funs) {
             @SuppressWarnings("unchecked")
             Function<Void, Void>[] funsArr = new Function[funs.size()];
