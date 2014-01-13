@@ -134,8 +134,12 @@
          <knownOption
                option="de.cau.cs.kieler.klay.layered.inLayerSpacingFactor">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.distributeNodes">
+         </knownOption>
       </layoutAlgorithm>
       <layoutOption
+            advanced="true"
             appliesTo="parents"
             default="false"
             description="Whether wide nodes should be distributed to several layers."

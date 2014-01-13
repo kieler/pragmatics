@@ -861,6 +861,7 @@ public final class BKNodePlacer implements ILayoutPhase {
 
     /**
      * Checks whether the given node is part of a long edge between the two given layers.
+     * At this 'layer2' is left, or before, 'layer1'.
      * 
      * @param node Possible long edge node
      * @param layer1 The first layer, the layer of the node
@@ -872,7 +873,16 @@ public final class BKNodePlacer implements ILayoutPhase {
         // consider that big nodes include their respective start and end node.
         if (node.getProperty(Properties.NODE_TYPE) == NodeType.BIG_NODE) {
             // all nodes should be placed straightly
-            return true;
+            for (LEdge edge : node.getIncomingEdges()) {
+                LNode source = edge.getSource().getNode();
+                if ((source.getProperty(Properties.NODE_TYPE) == NodeType.BIG_NODE 
+                        || source.getProperty(Properties.BIG_NODE_INITIAL))
+                        && edge.getSource().getNode().getLayer().getIndex() == layer2
+                        && node.getLayer().getIndex() == layer1) {
+
+                    return true;
+                }
+            }
         }
         
         if (node.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE) {

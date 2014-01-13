@@ -479,13 +479,17 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
         }
 
         NodeType nodeType = node.getProperty(Properties.NODE_TYPE);
-        if (nodeType == NodeType.LONG_EDGE || nodeType == NodeType.NORTH_SOUTH_PORT
-                || nodeType == NodeType.BIG_NODE) {
+        if (nodeType == NodeType.LONG_EDGE 
+                || nodeType == NodeType.NORTH_SOUTH_PORT
+                || nodeType == NodeType.BIG_NODE
+                || node.getProperty(Properties.BIG_NODE_INITIAL)) {
             
             // This is a LONG_EDGE, COMPOUND_SIDE or NORTH_SOUTH_PORT dummy; check if any of its
             // successors are of one of these types too. If so, we can form a linear segment with one
             // of them. (not with more than one, though) Note: we must take care not to make
             // a segment out of nodes that are in the same layer
+            // for BIG_NODEs also the first BIG_NODE_INITIAL which is no actual dummy node has
+            // to be considered here
             for (LPort sourcePort : node.getPorts()) {
                 for (LPort targetPort : sourcePort.getSuccessorPorts()) {
                     LNode targetNode = targetPort.getNode();
