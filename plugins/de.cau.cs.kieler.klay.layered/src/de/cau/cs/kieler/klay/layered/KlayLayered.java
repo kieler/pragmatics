@@ -50,6 +50,7 @@ import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
 import de.cau.cs.kieler.klay.layered.p3order.InteractiveCrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.p3order.LayerSweepCrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer;
+import de.cau.cs.kieler.klay.layered.p4nodes.BJLNodePlacer;
 import de.cau.cs.kieler.klay.layered.p4nodes.LinearSegmentsNodePlacer;
 import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
 import de.cau.cs.kieler.klay.layered.p4nodes.SimpleNodePlacer;
@@ -460,6 +461,12 @@ public final class KlayLayered {
                 nodePlacer = new LinearSegmentsNodePlacer();
             }
             break;
+        case BUCHHEIM_JUENGER_LEIPERT:
+            if (!(nodePlacer instanceof BJLNodePlacer)) {
+                nodePlacer = new BJLNodePlacer();
+            }
+            break;
+            
         default: // BRANDES_KOEPF
             if (!(nodePlacer instanceof BKNodePlacer)) {
                 nodePlacer = new BKNodePlacer();
