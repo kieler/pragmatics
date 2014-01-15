@@ -18,6 +18,7 @@ import java.util.List;
 
 
 
+
 //import javax.jws.HandlerChain;
 import javax.jws.WebService;
 
@@ -48,6 +49,9 @@ import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 //@HandlerChain(file = "handlerchain/handlerchain.xml")
 public final class JaxWsService extends AbstractService implements LayoutServicePort {
 
+    private static final String STATS_JAXWS_TRY = "kwebs.jaxws.try";
+    private static final String STATS_JAXWS_SUCC = "kwebs.jaxws.success";
+    
     /**
      * Creates a new instance of the JAX-WS based layout service.
      */
@@ -74,9 +78,11 @@ public final class JaxWsService extends AbstractService implements LayoutService
             final String outformat, final List<GraphLayoutOption> options)
             throws ServiceFault_Exception {
         Logger.log(Severity.DEBUG, "Handling layout request");
+        Logger.INSTANCE.getUsageStats().incIntegerCounter(Logger.STATS_KWEBS, STATS_JAXWS_TRY);
         try {
             String result = layout(serializedGraph, informat, outformat, options);
             Logger.log(Severity.DEBUG, "Handling layout request succeeded");
+            Logger.INSTANCE.getUsageStats().incIntegerCounter(Logger.STATS_KWEBS, STATS_JAXWS_SUCC);
             return result;
         } catch (Exception e) {
             Logger.log(Severity.WARNING, 

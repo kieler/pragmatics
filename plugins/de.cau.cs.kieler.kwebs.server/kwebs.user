@@ -81,3 +81,10 @@
 
 #de.cau.cs.kieler.kwebs.frontend.contact.information.email.person=<Persons name> 
 #de.cau.cs.kieler.kwebs.frontend.contact.information.email.address=<Persons email address>
+
+#
+# Statistics server
+#
+#de.cau.cs.kieler.kwebs.statistics.record=false
+#de.cau.cs.kieler.kwebs.statistics.host=localhost
+#de.cau.cs.kieler.kwebs.statistics.port=27017
