@@ -101,7 +101,7 @@ public class WebContentHandler implements HttpHandler {
             if (processingExchange.getResource() == null 
                     || processingExchange.getResource().length() == 0) {
             
-                Logger.log(Severity.INFO, "Forwarding request to index page");
+                Logger.log(Severity.DEBUG, "Forwarding request to index page");
                 
                 forward(exchange, "index.html");
                 
