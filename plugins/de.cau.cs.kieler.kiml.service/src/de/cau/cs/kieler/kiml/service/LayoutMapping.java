@@ -57,7 +57,21 @@ public class LayoutMapping<T> extends MapPropertyHolder {
      * @param adapterFactory the adapter factory for accessing elements
      */
     public LayoutMapping(final IAdapterFactory adapterFactory) {
-        this.adapterFactory = adapterFactory;
+        if (adapterFactory != null) {
+            this.adapterFactory = adapterFactory;
+        } else {
+            this.adapterFactory = new IAdapterFactory() {
+                @SuppressWarnings("rawtypes")
+                public Class[] getAdapterList() {
+                    return new Class[0];
+                }
+                @SuppressWarnings("rawtypes")
+                public Object getAdapter(final Object adaptableObject,
+                        final Class adapterType) {
+                    return null;
+                }
+            };
+        }
     }
     
     /**

@@ -14,6 +14,10 @@
 package de.cau.cs.kieler.kiml.evol.ui;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -29,9 +33,23 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
 
+import com.google.common.collect.Maps;
+
+import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.evol.EvolPlugin;
+import de.cau.cs.kieler.kiml.evol.LayoutEvolutionModel;
+import de.cau.cs.kieler.kiml.evol.alg.EvaluationOperation;
+import de.cau.cs.kieler.kiml.evol.genetic.Population;
 import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
+import de.cau.cs.kieler.kiml.grana.AnalysisCategory;
+import de.cau.cs.kieler.kiml.grana.AnalysisData;
+import de.cau.cs.kieler.kiml.grana.AnalysisService;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.service.LayoutMapping;
 
 /**
  * A command handler that measures the execution time of evolutionary layout.
@@ -39,6 +57,20 @@ import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
  * @author msp
  */
 public class ExecutionTimeHandler extends AbstractHandler {
+    
+    // CHECKSTYLEOFF VisibilityModifier
+    
+    /** the time for executing layout algorithms. */
+    public static double algorithmTime;
+    /** the time for executing graph analyses. */
+    public static double analysisTime;
+    /** the number of layout evaluations. */
+    public static int evaluations;
+    
+    /** the list of considered layout options. */
+    private List<LayoutOptionData<?>> layoutOptions;
+    /** the random number generator. */
+    private Random random;
     
     /**
      * {@inheritDoc}
@@ -48,9 +80,10 @@ public class ExecutionTimeHandler extends AbstractHandler {
         if (selection instanceof IStructuredSelection) {
             
             final Object[] elements = ((IStructuredSelection) selection).toArray();
-            Job job = new Job("Test Layout Metrics") {
+            Job job = new Job("Measure Execution Time") {
                 protected IStatus run(final IProgressMonitor monitor) {
-                    monitor.beginTask("Test Layout Metrics", elements.length);
+                    monitor.beginTask("Measure Execution Time", elements.length);
+                    initialize();
                     for (Object object : elements) {
                         if (monitor.isCanceled()) {
                             break;
@@ -74,6 +107,42 @@ public class ExecutionTimeHandler extends AbstractHandler {
         return null;
     }
     
+    private void initialize() {
+        layoutOptions = new ArrayList<LayoutOptionData<?>>(
+                LayoutDataService.getInstance().getOptionData().size());
+        for (LayoutOptionData<?> data : LayoutDataService.getInstance().getOptionData()) {
+            if (LayoutOptions.ALGORITHM.equals(data)
+                    || (data.getTargets().contains(LayoutOptionData.Target.PARENTS)
+                    && data.getVariance() > 0 && typeSupported(data.getType()))) {
+                layoutOptions.add(data);
+            }
+        }
+        random = new Random();
+    }
+    
+    /**
+     * Determine whether the given layout option type is supported by evolutionary layout.
+     * 
+     * @param type a layout option type
+     * @return true if the type is supported
+     */
+    private boolean typeSupported(final LayoutOptionData.Type type) {
+        switch (type) {
+        case BOOLEAN:
+        case ENUM:
+        case INT:
+        case FLOAT:
+            return true;
+        default:
+            return false;
+        }
+    }
+    
+    /**
+     * Measure execution time for the given file.
+     * 
+     * @param file a graph file
+     */
     private void measureFile(final IFile file) {
         try {
             System.out.print(file.getName() + ", ");
@@ -91,8 +160,46 @@ public class ExecutionTimeHandler extends AbstractHandler {
         }
     }
     
+    /** the number of evolution steps to perform for each graph.*/
+    private static final int STEPS = 5;
+    
+    /**
+     * Measure execution time for the given graph.
+     * 
+     * @param graph a graph
+     */
     private void measureGraph(final KNode graph) {
+        LayoutMapping<?> layoutMapping = new LayoutMapping<Object>(null);
+        layoutMapping.setLayoutGraph(graph);
+        LayoutEvolutionModel evolutionModel = LayoutEvolutionModel.getInstance();
+        // assign random weights
+        Population population = evolutionModel.getPopulation();
+        Map<String, Double> metricWeights = population.getProperty(EvaluationOperation.METRIC_WEIGHT);
+        if (metricWeights == null) {
+            metricWeights = Maps.newHashMap();
+            population.setProperty(EvaluationOperation.METRIC_WEIGHT, metricWeights);
+        }
+        AnalysisCategory category = AnalysisService.getInstance().getCategory(
+                EvaluationOperation.METRIC_CATEGORY);
+        for (AnalysisData analysisData : category.getAnalyses()) {
+            metricWeights.put(analysisData.getId(), random.nextDouble());
+        }
+        // initialize the population
+        evolutionModel.initializePopulation(layoutMapping, layoutOptions,
+                null, new BasicProgressMonitor(0));
         
+        // perform measurements
+        double totalTime = 0;
+        algorithmTime = 0;
+        analysisTime = 0;
+        evaluations = 0;
+        for (int i = 0; i < STEPS; i++) {
+            IKielerProgressMonitor progressMonitor = new BasicProgressMonitor();
+            evolutionModel.step(progressMonitor);
+            totalTime += progressMonitor.getExecutionTime();
+        }
+        System.out.println((totalTime / STEPS) + ", " + (algorithmTime / STEPS)
+                + ", " + (analysisTime / STEPS) + ", " + ((double) evaluations / STEPS));
     }
    
 }
