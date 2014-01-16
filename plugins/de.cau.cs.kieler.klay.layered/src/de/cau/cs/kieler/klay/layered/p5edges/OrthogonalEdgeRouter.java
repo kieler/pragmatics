@@ -318,22 +318,16 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
                 if (rightLayer != null) {
                     increment += edgeSpacing;
                 }
-                // If  we are between two layers, make sure their minimal spacing is preserved
+                // If we are between two layers, make sure their minimal spacing is preserved
                 if (increment < nodeSpacing && !externalLeftLayer && !externalRightLayer) {
                     increment = nodeSpacing;
                 }
                 xpos += increment;
             } else if (!externalLeftLayer && !externalRightLayer) {
-                // If we are between two layers, but all edges are straight, and at least one NORMAL
-                // nodes exists, take the default spacing
-                if (!layersContainOnlyDummies(rightLayer)) {
+                // If all edges are straight, use the usual spacing 
+                //   (except when we are between two layers where both only contains dummy nodes)
+                if (!layersContainOnlyDummies(leftLayer, rightLayer)) {
                     xpos += nodeSpacing;
-                }
-                
-                // if the left _and_ right layer contain only dummies, consider the left layer to be
-                // of width 0.
-                if (layersContainOnlyDummies(leftLayer, rightLayer)) {
-                    xpos -= leftLayer.getSize().x;
                 }
             }
             
@@ -347,11 +341,17 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
         monitor.done();
     }
     
-    
+    /**
+     * Check if the layer only contains non {@link NodeType#NORMAL} nodes.
+     * 
+     * Here we allow the initial big node (which is marked as normal node) 
+     * as we want to avoid additional spacing for this node as well.
+     */
     private boolean layersContainOnlyDummies(final Layer... layers) {
         for (Layer l : layers) {
             for (LNode n : l.getNodes()) {
-                if (n.getProperty(Properties.NODE_TYPE) == NodeType.NORMAL) {
+                if (n.getProperty(Properties.NODE_TYPE) == NodeType.NORMAL
+                       && !n.getProperty(Properties.BIG_NODE_INITIAL)) {
                     return false;
                 }
             }

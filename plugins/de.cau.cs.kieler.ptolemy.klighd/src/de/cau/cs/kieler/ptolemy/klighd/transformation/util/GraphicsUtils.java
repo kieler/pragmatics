@@ -567,6 +567,10 @@ public final class GraphicsUtils {
         //placement.setWidthHint(Float.parseFloat(svgElement.getAttribute("width")));
         rootFigure.setPlacementData(placement);
         //rootFigure.setChildPlacement(factory.createKStackPlacement());
+        
+        // suppress the visibility of the root rectangle
+        //  the 'invisible' flag of the KInvisibility is initially 'true'
+        rootFigure.getStyles().add(factory.createKInvisibility());
         rootFigure = buildFigure(svgElement, rootFigure);
         return rootFigure;
     }

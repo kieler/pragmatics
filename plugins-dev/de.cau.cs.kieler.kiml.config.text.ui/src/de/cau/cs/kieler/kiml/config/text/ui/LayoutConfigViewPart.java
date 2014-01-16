@@ -13,6 +13,9 @@
  */
 package de.cau.cs.kieler.kiml.config.text.ui;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
@@ -26,16 +29,21 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.xtext.resource.XtextResource;
@@ -45,7 +53,9 @@ import org.eclipse.xtext.ui.editor.embedded.EmbeddedEditorModelAccess;
 import org.eclipse.xtext.ui.editor.embedded.IEditedResourceProvider;
 import org.eclipse.xtext.xbase.lib.Pair;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
+import com.google.common.io.Files;
 import com.google.inject.Injector;
 
 import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
@@ -69,9 +79,15 @@ import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 @SuppressWarnings("restriction")
 public class LayoutConfigViewPart extends ViewPart {
     
+    public static final String PLUGIN_ID = "de.cau.ca.kieler.kiml.config.text.ui";
+    
     /** Id to store the config text in the preference store. */
     private static final String CURRENT_CONFIG_TEXT = "de.cau.cs.kieler.kiml.config.text.currentConfigText";
-
+    /** Id to store the last used filename to store a layout config. */
+    private static final String LAST_FILE_NAME = "de.cau.cs.kieler.kiml.config.text.lastFileName";
+    
+    private static final String CFGS_SUBFOLDER = ".kiml" + File.separator + "laycfgs";
+    
     // Embedded Xtext Editor
     private Resource resource;
     private EmbeddedEditorModelAccess partialEditor;
@@ -79,7 +95,9 @@ public class LayoutConfigViewPart extends ViewPart {
 
     /** Last active editor that is layoutable. */
     private IWorkbenchPart lastActiveEditor;
-
+    
+    private Shell shell;
+    
     /** Predicate that tests if the contents of the passed {@link IWorkbenchPart} can be layouted. */
     private Predicate<IWorkbenchPart> isLayoutableEditor = new Predicate<IWorkbenchPart>() {
 
@@ -158,6 +176,8 @@ public class LayoutConfigViewPart extends ViewPart {
     @Override
     public void createPartControl(final Composite parent) {
 
+        this.shell = parent.getShell();
+        
         // create the xtext editor within this view
         setupXtextEditor(parent);
 
@@ -227,24 +247,95 @@ public class LayoutConfigViewPart extends ViewPart {
             }
         });
         
-        // TODO implement this
-//        final IPreferenceStore store = LayoutConfigActivator.getInstance().getPreferenceStore();
+        final IPreferenceStore store = LayoutConfigActivator.getInstance().getPreferenceStore();
         // add a menu for storing/loading templates
         // reset the layout options set over the side pane
         final IMenuManager menu = getViewSite().getActionBars().getMenuManager();
-//        IAction saveTemplate = new Action("Save as ..") {
-//            @Override
-//            public void run() {
-//            }
-//        };
-//        menu.add(saveTemplate);
-//       
-//        IAction loadTemplate = new Action("Load ..") {
-//            @Override
-//            public void run() {
-//            }
-//        };
-//        menu.add(loadTemplate);
+        IAction saveTemplate = new Action("Save as ..") {
+            @Override
+            public void run() {
+                
+                // query for a filename
+                InputDialog inputDialog =
+                        new InputDialog(shell, "Layout Configuration Name", "File Name",
+                                store.getString(LAST_FILE_NAME), null);
+
+                if (inputDialog.open() == InputDialog.OK) {
+                    // retrieve the filename and remember it
+                    String fileName = inputDialog.getValue();
+                    store.setValue(LAST_FILE_NAME, fileName);
+
+                    // assemble a file
+                    File file = new File(getCfgFolder(), fileName);
+
+                    try {
+                        // create folders in case they do not yet exist
+                        getCfgFolder().mkdirs();
+                        // write the current config to the file
+                        String currentText = partialEditor.getSerializedModel();
+                        Files.write(currentText.getBytes(), file);
+                    } catch (IOException e) {
+                        StatusManager.getManager().handle(
+                                new Status(Status.ERROR, PLUGIN_ID,
+                                        "Could not write layout config to file " + file, e),
+                                StatusManager.SHOW);
+                    }
+                }
+            }
+        };
+        menu.add(saveTemplate);
+       
+        IAction loadTemplate = new Action("Load ..") {
+            @Override
+            public void run() {
+                ElementListSelectionDialog elsd = new ElementListSelectionDialog(shell, new LabelProvider(){
+                    @Override
+                    public String getText(Object element) {
+                        if (element instanceof File) {
+                           return ((File) element).getName(); 
+                        }
+                        return super.getText(element);
+                    }
+                });
+                elsd.setTitle("Select Configuration File");
+                elsd.setMessage("Select a Configuration (* = any string, ? = any char):");
+
+                // get possible files
+                File cfgFolder = getCfgFolder();
+                elsd.setElements(cfgFolder.listFiles());
+                
+                String lastName = store.getString(LAST_FILE_NAME);
+                for(File f : cfgFolder.listFiles()) {
+                    if(f.getName().equals(lastName)) {
+                        elsd.setInitialSelections(new File[]{f});
+                        break;
+                    }
+                }
+                
+                // let the user decide!
+                if(elsd.open() == Dialog.OK) {
+                    
+                    // get the selection and remember
+                    File selected = (File) elsd.getFirstResult();
+                    store.setValue(LAST_FILE_NAME, selected.getName());
+                    
+                    try {
+                        List<String> lines = Files.readLines(selected, Charset.forName("utf8"));
+                        String joined = Joiner.on("\n").join(lines);
+                        
+                        partialEditor.updateModel("", joined, "");
+                        
+                    } catch (IOException e) {
+                        StatusManager.getManager().handle(
+                                new Status(Status.ERROR, PLUGIN_ID,
+                                        "Could not load layout config from file " + selected, e),
+                                StatusManager.SHOW);
+                    }
+                }
+                
+            }
+        };
+        menu.add(loadTemplate);
         
         menu.add(new Separator());
        
@@ -283,6 +374,11 @@ public class LayoutConfigViewPart extends ViewPart {
     @Override
     public void setFocus() {
         // nothing?
+    }
+    
+    private File getCfgFolder() {
+        String usrPath = System.getProperty("user.home");
+        return new File(usrPath + File.separator + CFGS_SUBFOLDER);
     }
     
     /** preference identifier for animation of layout. */

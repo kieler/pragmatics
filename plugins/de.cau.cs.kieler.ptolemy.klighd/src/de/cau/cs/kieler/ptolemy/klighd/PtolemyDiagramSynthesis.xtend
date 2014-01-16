@@ -86,13 +86,15 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
     }
     
     /**
-	 * Layout options.
-	 */
-	override getDisplayedLayoutOptions() {
-		return ImmutableList::of(
-			specifyLayoutOption(Properties::NODE_PLACER, ImmutableList::copyOf(NodePlacementStrategy::values)),
-			specifyLayoutOption(LayoutOptions::SPACING,	ImmutableList::of(0, 255))
-		)
-	}
+     * Layout options.
+     */
+    override getDisplayedLayoutOptions() {
+        return ImmutableList::of(
+            specifyLayoutOption(Properties::NODE_PLACER,
+                ImmutableList::copyOf(NodePlacementStrategy::values)),
+            specifyLayoutOption(LayoutOptions::SPACING,
+                ImmutableList::of(0, 255))
+        )
+    }
     
 }

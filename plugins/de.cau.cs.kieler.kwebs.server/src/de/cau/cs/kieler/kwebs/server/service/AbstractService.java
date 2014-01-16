@@ -162,7 +162,7 @@ public abstract class AbstractService {
                         if (element.getName().equals(ELEMENT_PREFILTERS)) {
                             
                             Logger.log(
-                                Severity.INFO, 
+                                Severity.DEBUG, 
                                 "Added pre processing filter '" 
                                 + instance.getClass().getSimpleName() 
                                 + "'."
@@ -173,7 +173,7 @@ public abstract class AbstractService {
                         } else {
 
                             Logger.log(
-                                Severity.INFO, 
+                                Severity.DEBUG, 
                                 "Added post processing filter '" 
                                 + instance.getClass().getSimpleName() 
                                 + "'."

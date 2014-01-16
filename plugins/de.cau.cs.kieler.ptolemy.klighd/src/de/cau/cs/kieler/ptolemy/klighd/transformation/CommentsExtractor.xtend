@@ -306,17 +306,18 @@ class CommentsExtractor {
             val explicitAttachment = findExplicitAttachment(commentNode)
             
             if (explicitAttachment != null) {
-                explicitAttachments += new Pair(commentNode, explicitAttachment)
+                // CARE xtend's "+=" allows to have iterables on both sides, due to the 
+                // fact that Pair implements Iterable and no generics are specified during
+                // the creation of the pair, xtend thinks of the pair as an iterable and 
+                // adds both elements of the to the list. Not, as intended, the pair itself
+                // heuristicAttachments += new Pair(commentNode, heuristicAttachment)
+                explicitAttachments.add(new Pair(commentNode, explicitAttachment))
             } else if (enableHeuristic && (explicitAttachments.empty || !heuristicsOverride)) {
                 // Run our heuristic to find an implicit attachment
                 val heuristicAttachment = findNearestNonCommentSibling(commentNode)
                 
-                if (heuristicAttachment != null) { 
-                	// CARE xtend's "+=" allows to have iterables on both sides, due to the 
-                	// fact that Pair implements Iterable and no generics are specified during
-                	// the creation of the pair, xtend thinks of the pair as an iterable and 
-                	// adds both elements of the to the list. Not, as intended, the pair itself
-                	// heuristicAttachments += new Pair(commentNode, heuristicAttachment)
+                if (heuristicAttachment != null) {
+                    // CARE see above.
                     heuristicAttachments.add(new Pair(commentNode, heuristicAttachment))
                 }
             }
