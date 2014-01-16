@@ -83,6 +83,8 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
         private int weight;
         /** The reference segment, if this has been unified with another. */
         private LinearSegment refSegment;
+        /** The nodetype contained in this linear segment. */
+        private NodeType nodeType;
         
         /**
          * Determine the reference segment for the region to which this segment is associated.
@@ -469,21 +471,31 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
      *         added to the given segment.
      */
     private boolean fillSegment(final LNode node, final LinearSegment segment) {
+        NodeType nodeType = node.getProperty(Properties.NODE_TYPE);
+        
+        // handle initial big nodes as big node type
+        if (node.getProperty(Properties.BIG_NODE_INITIAL)) {
+            nodeType = NodeType.BIG_NODE;
+        }
+        
         if (node.id >= 0) {
             // The node is already part of another linear segment
+            return false;
+        } else if (segment.nodeType != null && nodeType != segment.nodeType) {
+            // Only one type of dummy node is allowed per linear segment
             return false;
         } else {
             // Add the node to the given linear segment
             node.id = segment.id;
             segment.nodes.add(node);
         }
-
-        NodeType nodeType = node.getProperty(Properties.NODE_TYPE);
+        segment.nodeType = nodeType;
+        
         if (nodeType == NodeType.LONG_EDGE 
                 || nodeType == NodeType.NORTH_SOUTH_PORT
-                || nodeType == NodeType.BIG_NODE
-                || node.getProperty(Properties.BIG_NODE_INITIAL)) {
+                || nodeType == NodeType.BIG_NODE) {
             
+            // TODO update the comment
             // This is a LONG_EDGE, COMPOUND_SIDE or NORTH_SOUTH_PORT dummy; check if any of its
             // successors are of one of these types too. If so, we can form a linear segment with one
             // of them. (not with more than one, though) Note: we must take care not to make
@@ -496,9 +508,10 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
                     NodeType targetNodeType = targetNode.getProperty(Properties.NODE_TYPE);
 
                     if (node.getLayer() != targetNode.getLayer()
-                            && (targetNodeType == NodeType.LONG_EDGE
-                                    || targetNodeType == NodeType.NORTH_SOUTH_PORT 
-                                    || targetNodeType == NodeType.BIG_NODE)) {
+                            && targetNodeType == nodeType) {
+//                            && (targetNodeType == NodeType.LONG_EDGE
+//                                    || targetNodeType == NodeType.NORTH_SOUTH_PORT 
+//                                    || targetNodeType == NodeType.BIG_NODE)) {
 
                         if (fillSegment(targetNode, segment)) {
                             // We just added another node to this node's linear segment.
