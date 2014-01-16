@@ -13,13 +13,19 @@
  */
 package de.cau.cs.kieler.klay.layered.p3order;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Random;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+
+import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
+import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -75,6 +81,9 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
             fillInUnknownBarycenters(layer, preOrdered);
         }
     
+        // adjust barycenter values to avoid edge/node crossings in presence of big nodes 
+        adjustBigNodeBarycenters(layer, forward);
+        
         if (layer.size() > 1) {
             // Sort the vertices according to their barycenters
             Collections.sort(layer);
@@ -82,6 +91,115 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
             // Resolve ordering constraints
             constraintResolver.processConstraints(layer, layerIndex);
         }
+    }
+    
+    /**
+     * 
+     * TODO 
+     *  - can bignodes be in node groups with other nodes?
+     *  - consider the initial bignode properly
+     * 
+     * @param nodeGroups
+     * @param forward
+     */
+    private void adjustBigNodeBarycenters(final List<NodeGroup> nodeGroups, final boolean forward) {
+
+        // sort the list temporarily so that we can easily access a 
+        // big nodes predecessor (in terms of barycenter value)
+        ArrayList<NodeGroup> tmpNodeGroups = Lists.newArrayList(nodeGroups);
+        Collections.sort(tmpNodeGroups);
+        
+        // treat all bignodes of the current layer
+        for (int i = 0; i < tmpNodeGroups.size(); i++) {
+            NodeGroup nodeGroup = tmpNodeGroups.get(i);
+            
+            if (nodeGroup.getNodes().length == 1
+                    && (nodeGroup.getNode().getProperty(Properties.NODE_TYPE) == NodeType.BIG_NODE)) {
+
+                LNode bigNode = nodeGroup.getNode();
+
+                // get the opposite element of the big node chain
+                Iterable<LEdge> bigNodeEdges =
+                        forward ? bigNode.getIncomingEdges() : bigNode.getOutgoingEdges();
+                if (Iterables.isEmpty(bigNodeEdges)) {
+                    continue;
+                }
+                LEdge bigNodeEdge = Iterables.get(bigNodeEdges, 0);
+
+                // the two node groups of the big node
+                NodeGroup bigNodeLayerGroup = nodeGroup;
+                NodeGroup bigNodePreGroup =
+                        (forward ? bigNodeEdge.getSource().getNode() : bigNodeEdge.getTarget()
+                                .getNode()).getProperty(Properties.NODE_GROUP);
+
+                
+                // now compare all edges with the big node edge for interleaving
+                for (NodeGroup innerGroup : nodeGroups) {
+                    if (nodeGroup.equals(innerGroup)) {
+                        continue; // not with ourself
+                    }
+
+                    LNode layerNode = innerGroup.getNode();
+                    NodeGroup layerGroup = innerGroup;
+
+                    // get all edges for the current node of the current layer
+                    Iterable<LEdge> layerEdges =
+                            forward ? layerNode.getIncomingEdges() : layerNode.getOutgoingEdges();
+                    for (LEdge layerEdge : layerEdges) {
+
+                        // the edge's attached node group on the other layer
+                        NodeGroup preLayerGroup =
+                                (forward ? layerEdge.getSource().getNode() : layerEdge.getTarget()
+                                        .getNode()).getProperty(Properties.NODE_GROUP);
+
+                        // interleaving?
+                        if ((bigNodeLayerGroup.barycenter > layerGroup.barycenter 
+                                && bigNodePreGroup.barycenter < preLayerGroup.barycenter)) {
+                            // CASE 1. big node's barycenter is higher
+
+                            // barycenter value diff of n_i and n_i+1
+                            float dp = 2f; // a default diff in case this is the layer's first node
+                            if (tmpNodeGroups.size() > i + 1) {
+                                dp = 1 + tmpNodeGroups.get(i + 1).barycenter
+                                        - bigNodeLayerGroup.barycenter;
+                            }
+                            float di = 1 + bigNodeLayerGroup.barycenter - layerGroup.barycenter;
+
+                            // add to big node's barycenter
+                            layerGroup.barycenter = bigNodeLayerGroup.barycenter + (dp / di);
+
+                            // layerGroup.barycenter +=
+                            // Math.abs(layerGroup.barycenter - bigNodeLayerGroup.barycenter) +
+                            // 0.02f;
+
+                        } else if (bigNodeLayerGroup.barycenter < layerGroup.barycenter
+                                && bigNodePreGroup.barycenter > preLayerGroup.barycenter) {
+                            // CASE 2. big node's barycenter is smaller
+
+                            float dp = 2f; // a default diff in case this is the layer's last node
+                            if (i > 0) {
+                                dp = 1 + bigNodeLayerGroup.barycenter 
+                                        - tmpNodeGroups.get(i - 1).barycenter;
+                            }
+                            float di = 1 + layerGroup.barycenter - bigNodeLayerGroup.barycenter;
+
+                            // subtract from big node's barycenter
+                            layerGroup.barycenter = bigNodeLayerGroup.barycenter - (dp / di);
+
+                            // layerGroup.barycenter -=
+                            // Math.abs(layerGroup.barycenter - bigNodeLayerGroup.barycenter) -
+                            // 0.02f;
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
     }
 
     /**
