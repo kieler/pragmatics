@@ -108,13 +108,21 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
         // big nodes predecessor (in terms of barycenter value)
         ArrayList<NodeGroup> tmpNodeGroups = Lists.newArrayList(nodeGroups);
         Collections.sort(tmpNodeGroups);
-        
+        // System.out.println("New Layer (" + (forward ? "forward" : "backward") + ") " +
+        // tmpNodeGroups);
+  
         // treat all bignodes of the current layer
         for (int i = 0; i < tmpNodeGroups.size(); i++) {
             NodeGroup nodeGroup = tmpNodeGroups.get(i);
-            
+
+            boolean isBignode =
+                    (nodeGroup.getNode().getProperty(Properties.NODE_TYPE) == NodeType.BIG_NODE);
+            boolean isInitialBignode = nodeGroup.getNode().getProperty(Properties.BIG_NODE_INITIAL);
+
+            // all bignode groups will contain only one node
             if (nodeGroup.getNodes().length == 1
-                    && (nodeGroup.getNode().getProperty(Properties.NODE_TYPE) == NodeType.BIG_NODE)) {
+            // during backward sweep also consider the initial big node
+                    && (isBignode || (isInitialBignode && !forward))) {
 
                 LNode bigNode = nodeGroup.getNode();
 
@@ -132,7 +140,6 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
                         (forward ? bigNodeEdge.getSource().getNode() : bigNodeEdge.getTarget()
                                 .getNode()).getProperty(Properties.NODE_GROUP);
 
-                
                 // now compare all edges with the big node edge for interleaving
                 for (NodeGroup innerGroup : nodeGroups) {
                     if (nodeGroup.equals(innerGroup)) {
@@ -142,10 +149,18 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
                     LNode layerNode = innerGroup.getNode();
                     NodeGroup layerGroup = innerGroup;
 
+                    // TODO i have to get all edges of all nodes contained in the node group here
                     // get all edges for the current node of the current layer
                     Iterable<LEdge> layerEdges =
                             forward ? layerNode.getIncomingEdges() : layerNode.getOutgoingEdges();
+
                     for (LEdge layerEdge : layerEdges) {
+
+                        // ignore in-layer edges
+                        if (layerEdge.getSource().getNode().getLayer().getIndex() == layerEdge
+                                .getTarget().getNode().getLayer().getIndex()) {
+                            continue;
+                        }
 
                         // the edge's attached node group on the other layer
                         NodeGroup preLayerGroup =
@@ -160,17 +175,29 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
                             // barycenter value diff of n_i and n_i+1
                             float dp = 2f; // a default diff in case this is the layer's first node
                             if (tmpNodeGroups.size() > i + 1) {
-                                dp = 1 + tmpNodeGroups.get(i + 1).barycenter
-                                        - bigNodeLayerGroup.barycenter;
+                                dp =
+                                        1 + tmpNodeGroups.get(i + 1).barycenter
+                                                - bigNodeLayerGroup.barycenter;
                             }
                             float di = 1 + bigNodeLayerGroup.barycenter - layerGroup.barycenter;
+
+                            // simple test
+                            // layerGroup.barycenter +=
+                            // Math.abs(layerGroup.barycenter - bigNodeLayerGroup.barycenter) +
+                            // 0.02f;
 
                             // add to big node's barycenter
                             layerGroup.barycenter = bigNodeLayerGroup.barycenter + (dp / di);
 
-                            // layerGroup.barycenter +=
-                            // Math.abs(layerGroup.barycenter - bigNodeLayerGroup.barycenter) +
-                            // 0.02f;
+                            // System.out.println("Adapting1: " + bigNode + " " + layerNode + " " +
+                            // bigNodeLayerGroup.barycenter + " " + layerGroup.barycenter);
+                            // System.out.println("\t\tComparing: PreLayer (" +
+                            // bigNodePreGroup.getNode() + ", " + preLayerGroup.getNode() +
+                            // ") Values " + bigNodePreGroup.barycenter + " " +
+                            // preLayerGroup.barycenter);
+                            // System.out.println("\t\tRelevant Edges " + layerEdge + " " +
+                            // layerEdge.getSource().getNode().getLayer().id+ " " +
+                            // layerEdge.getTarget().getNode().getLayer().id);
 
                         } else if (bigNodeLayerGroup.barycenter < layerGroup.barycenter
                                 && bigNodePreGroup.barycenter > preLayerGroup.barycenter) {
@@ -178,19 +205,24 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
 
                             float dp = 2f; // a default diff in case this is the layer's last node
                             if (i > 0) {
-                                dp = 1 + bigNodeLayerGroup.barycenter 
-                                        - tmpNodeGroups.get(i - 1).barycenter;
+                                dp =
+                                        1 + bigNodeLayerGroup.barycenter
+                                                - tmpNodeGroups.get(i - 1).barycenter;
                             }
                             float di = 1 + layerGroup.barycenter - bigNodeLayerGroup.barycenter;
 
-                            // subtract from big node's barycenter
-                            layerGroup.barycenter = bigNodeLayerGroup.barycenter - (dp / di);
-
+                            // simple test
                             // layerGroup.barycenter -=
                             // Math.abs(layerGroup.barycenter - bigNodeLayerGroup.barycenter) -
                             // 0.02f;
 
+                            // subtract from big node's barycenter
+                            layerGroup.barycenter = bigNodeLayerGroup.barycenter - (dp / di);
+
+                            // System.out.println("Adapting2: " + bigNode + " " + layerNode + " " +
+                            // layerGroup.barycenter);
                         }
+                        // }
 
                     }
 
