@@ -31,6 +31,10 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
  * that the edge bend points describe polylines (splines are not supported).<br/>
  * The algorithm used is based on the Cohen-Sutherland algorithm.
  * 
+ * Hierarchy spanning edges are ignored. Such edges are, for instance, used 
+ * for hierarchy ports in ptolemy diagrams where an edge's source and target
+ * node have different parents.
+ * 
  * @author mri
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow 2012-07-10 msp
@@ -216,6 +220,12 @@ public class NodeEdgeOverlapsAnalysis implements IAnalysis {
     private int computeNumberOfOverlaps(final KNode node1, final KNode node2) {
         int overlaps = 0;
         edgeLoop: for (KEdge edge : node1.getOutgoingEdges()) {
+            
+            // only check for overlaps of nodes and edges on the same hierarchical level
+            if (!edge.getSource().getParent().equals(edge.getTarget().getParent())) {
+                continue edgeLoop;
+            }
+            
             KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
             KPoint p1 = edgeLayout.getSourcePoint();
             for (KPoint p2 : edgeLayout.getBendPoints()) {
