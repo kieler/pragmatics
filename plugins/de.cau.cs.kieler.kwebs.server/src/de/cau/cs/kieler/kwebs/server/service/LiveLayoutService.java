@@ -17,6 +17,7 @@ import java.util.List;
 
 import de.cau.cs.kieler.kwebs.server.layout.GraphLayoutOption;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
+import de.cau.cs.kieler.statistics.KIELERStatistics.Granularity;
 
 /**
  * Dummy implementation that just forwards the layout request to the {@link AbstractService} class.
@@ -40,11 +41,13 @@ public class LiveLayoutService extends AbstractService {
     public String doLayout(final String serializedGraph, final String informat,
             final String outformat, final List<GraphLayoutOption> options) {
         // log the layout attempt
-        Logger.INSTANCE.getUsageStats().incIntegerCounter(Logger.STATS_KWEBS, STATS_LIVE_LAYOUT_TRY);
+        Logger.INSTANCE.getUsageStats().incCounter(Logger.STATS_KWEBS, STATS_LIVE_LAYOUT_TRY, 
+                Granularity.DAY | Granularity.MONTH);
         // perform the actual layout
         String result =  layout(serializedGraph, informat, outformat, options);
         // log the success
-        Logger.INSTANCE.getUsageStats().incIntegerCounter(Logger.STATS_KWEBS, STATS_LIVE_LAYOUT_SUCC);
+        Logger.INSTANCE.getUsageStats().incCounter(Logger.STATS_KWEBS, STATS_LIVE_LAYOUT_SUCC, 
+                Granularity.DAY | Granularity.MONTH);
         
         return result;
     }

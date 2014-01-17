@@ -15,4 +15,7 @@ Export-Package: com.mongodb,
  com.mongodb.util.management,
  com.mongodb.util.management.jmx,
  de.cau.cs.kieler.statistics
-Require-Bundle: com.google.guava
+Require-Bundle: com.google.guava,
+ de.cau.cs.kieler.core,
+ de.cau.cs.kieler.core.kgraph,
+ de.cau.cs.kieler.kiml

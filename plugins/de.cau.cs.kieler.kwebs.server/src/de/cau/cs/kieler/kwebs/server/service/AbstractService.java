@@ -45,6 +45,7 @@ import de.cau.cs.kieler.kiml.formats.IGraphFormatHandler;
 import de.cau.cs.kieler.kiml.formats.TransformationData;
 import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
 import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.impl.KLayoutDataFactoryImpl;
 import de.cau.cs.kieler.kiml.klayoutdata.impl.KLayoutDataPackageImpl;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -58,6 +59,8 @@ import de.cau.cs.kieler.kwebs.server.service.filter.LayoutFilter;
 import de.cau.cs.kieler.kwebs.server.service.filter.LayoutFilterData;
 import de.cau.cs.kieler.kwebs.server.service.filter.LayoutFilters;
 import de.cau.cs.kieler.kwebs.server.util.Graphs;
+import de.cau.cs.kieler.statistics.KIELERStatistics;
+import de.cau.cs.kieler.statistics.KIELERStatistics.Granularity;
 
 /**
  * This abstract base class provides the implementation of the layout functionality. Web service
@@ -126,6 +129,14 @@ public abstract class AbstractService {
     private static final String ATTRIBUTE_IMPLEMENTATION
         = "implementation";
 
+    /*
+     * Some constants to collect usage information.
+     */
+    private static final String STATS_OPTION = "kwebs.layout.specifiedoption";
+    private static final String STATS_ALG = "kwebs.layout.algorithm";
+    private static final String STATS_EXECTIME = "kwebs.layout.exectime";
+    private static final String STATS_GRAPH_SIZE = "kwebs.layout.graphsize";
+    
     /**
      * 
      */
@@ -325,6 +336,10 @@ public abstract class AbstractService {
                 layoutTime += layoutMonitor.getExecutionTime() * NANO_FACT;
             }
         }
+        
+        // Record usage statistics
+        collectUsageStatistics(inTransData.getTargetGraphs(), options, 
+                serializedGraph.length(), layoutTime);
 
         // Calculate statistical values and annotate graph if it is a KGraph instance.
         // The serialization process can not be included.
@@ -424,7 +439,41 @@ public abstract class AbstractService {
         }
         identifier.setProperty(Statistics.STATISTICS, statistics.toString());
     }
+    
+    /**
+     * Create statistics for the layout process and logs them to a database.
+     *
+     * @param sourceGraph the source graph to annotate
+     * @param serializedSize the size of the serialized graph
+     * @param layoutTime the time taken for layout
+     */
+    private void collectUsageStatistics(final List<KNode> layoutGraphs,
+            final List<GraphLayoutOption> options, final int serializedSize,
+            final double layoutTime) {
 
+        KIELERStatistics stats = Logger.INSTANCE.getUsageStats();
+
+        // we log all user specified layout options
+        for (GraphLayoutOption opt : options) {
+            stats.incCounter(Logger.STATS_KWEBS, STATS_OPTION,
+                    opt.getId(), opt.getValue(), Granularity.DAY);
+        }
+        
+        // we wanna know which algorithm is used
+        for (KNode graph : layoutGraphs) {
+            KLayoutData data = graph.getData(KLayoutData.class);
+            String alg = data.getProperty(LayoutOptions.ALGORITHM);
+            stats.incCounter(Logger.STATS_KWEBS, STATS_ALG, "algorithm", alg, Granularity.DAY);
+        
+            // if its klay we wanna know even more :) Just to make everything better!
+            stats.recordKlayLayeredStats(graph);
+        }
+                
+        // and log some times
+        stats.recordValue(Logger.STATS_KWEBS, STATS_EXECTIME, layoutTime);
+        stats.recordValue(Logger.STATS_KWEBS, STATS_GRAPH_SIZE, layoutTime);
+    }
+    
     /**
      * Annotate transformation data with the given layout options. This is done so the user
      * can control how graphs are imported and exported.
