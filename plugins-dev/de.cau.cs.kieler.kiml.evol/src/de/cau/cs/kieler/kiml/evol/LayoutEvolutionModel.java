@@ -95,7 +95,7 @@ public final class LayoutEvolutionModel extends AbstractEvolutionaryAlgorithm {
     /** the layout options that are considered in meta layout. */
     private List<LayoutOptionData<?>> layoutOptions;
     /** the executor service used for multi-threaded execution. */
-    private ExecutorService executorService;
+    private final ExecutorService executorService;
     
     /**
      * Initialize the layout evolution model by creating the required evolutionary operations.
