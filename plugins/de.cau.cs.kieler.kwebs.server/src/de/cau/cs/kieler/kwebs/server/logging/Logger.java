@@ -14,6 +14,7 @@
 
 package de.cau.cs.kieler.kwebs.server.logging;
 
+import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -25,6 +26,10 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+
+import de.cau.cs.kieler.kwebs.server.configuration.Configuration;
+import de.cau.cs.kieler.statistics.AuthenticationException;
+import de.cau.cs.kieler.statistics.KIELERStatistics;
 
 /**
  * Logger for the KWebS project.
@@ -105,6 +110,12 @@ public final class Logger {
     private Vector<ILoggerListener> listeners
         = new Vector<ILoggerListener>();
 
+    /** Usage statistics. */
+    private KIELERStatistics usageStats;
+    
+    /** Identifier for the statistics collection of kwebs. */
+    public static final String STATS_KWEBS = "de.cau.cs.kieler.kwebs";
+    
     /**
      * Private constructor.
      */
@@ -327,6 +338,34 @@ public final class Logger {
         );
     }
 
+    /**
+     * @return the usageStats
+     */
+    public KIELERStatistics getUsageStats() {
+        // create lazily
+        if (usageStats == null) {
+            // try to connect to usage statistics server
+            if (Configuration.INSTANCE.getConfigPropertyAsBoolean(Configuration.STATS_RECORDING,
+                    false)) {
+                try {
+                    String server =
+                            Configuration.INSTANCE
+                                    .getConfigProperty(Configuration.STATS_SERVER_HOST);
+                    usageStats = KIELERStatistics.forServer(server);
+                    Logger.log(Severity.INFO, "Connected to usage statistics server at " + server);
+                } catch (AuthenticationException ae) {
+                    Logger.log(Severity.WARNING,
+                            "Authentification with usage statistics server failed.", ae);
+                } catch (UnknownHostException uh) {
+                    Logger.log(Severity.WARNING, "Unable to connect to usage statistics sever.", uh);
+                }
+            } else {
+                usageStats = KIELERStatistics.getDummy();
+            }
+        }
+        return usageStats;
+    }
+    
     /** The used date formatter. */
     private static final SimpleDateFormat DATE_FORMATTER
         = new SimpleDateFormat("yyyy-dd-MM HH:mm:ss Z");

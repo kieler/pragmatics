@@ -48,6 +48,7 @@ import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.service.LayoutManagersService;
 import de.cau.cs.kieler.kiml.service.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.service.LayoutMapping;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * The KGraph provider that derives a graph from a file. It uses GMF services to open a
@@ -89,6 +90,8 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
         EObject content = resource.getContents().get(0);
         if (content instanceof KNode) {
             KNode graph = (KNode) content;
+            // assure that properties, stored in the model file, are loaded properly 
+            KimlUtil.loadDataElements(graph);
             
             if (layoutBeforeAnalysis) {
                 if (configurator != null) {

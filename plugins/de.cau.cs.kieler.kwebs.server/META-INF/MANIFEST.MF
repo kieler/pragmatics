@@ -13,7 +13,8 @@ Require-Bundle: org.eclipse.core.runtime,
  de.cau.cs.kieler.core,
  de.cau.cs.kieler.core.kgraph,
  de.cau.cs.kieler.kiml,
- de.cau.cs.kieler.kiml.formats
+ de.cau.cs.kieler.kiml.formats,
+ de.cau.cs.kieler.web.statistics
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: de.cau.cs.kieler.kwebs.server,
  de.cau.cs.kieler.kwebs.server.configuration,
