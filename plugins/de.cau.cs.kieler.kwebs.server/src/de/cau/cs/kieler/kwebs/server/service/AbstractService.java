@@ -136,6 +136,10 @@ public abstract class AbstractService {
     private static final String STATS_ALG = "kwebs.layout.algorithm";
     private static final String STATS_EXECTIME = "kwebs.layout.exectime";
     private static final String STATS_GRAPH_SIZE = "kwebs.layout.graphsize";
+    private static final String STATS_GRAPH_NODES = "kwebs.layout.nodes";
+    private static final String STATS_GRAPH_EDGES = "kwebs.layout.edges";
+    private static final String STATS_GRAPH_PORTS = "kwebs.layout.ports";
+    private static final String STATS_GRAPH_LABELS = "kwebs.layout.labels";
     
     /**
      * 
@@ -451,29 +455,66 @@ public abstract class AbstractService {
             final List<GraphLayoutOption> options, final int serializedSize,
             final double layoutTime) {
 
-        KIELERStatistics stats = Logger.INSTANCE.getUsageStats();
+        // do this in its own thread to not let it influence response time too much
+        new Thread("RecordStats") {
+            @Override
+            public void run() {
 
-        // we log all user specified layout options
-        for (GraphLayoutOption opt : options) {
-            String fullId = LayoutDataService.getInstance().getOptionDataBySuffix(opt.getId()).getId();
-            stats.incCounter(Logger.STATS_KWEBS, STATS_OPTION,
-                    fullId, opt.getValue(), Granularity.DAY);
-        }
-        
-        // we wanna know which algorithm is used
-        for (KNode graph : layoutGraphs) {
-            KLayoutData data = graph.getData(KLayoutData.class);
-            String alg = data.getProperty(LayoutOptions.ALGORITHM);
-            stats.incCounter(Logger.STATS_KWEBS, STATS_ALG, LayoutOptions.ALGORITHM.getId(), 
-                    alg, Granularity.DAY);
-        
-            // if its klay we wanna know even more :) Just to make everything better!
-            stats.recordKlayLayeredStats(graph);
-        }
+                KIELERStatistics stats = Logger.INSTANCE.getUsageStats();
+
+                // we log all user specified layout options
+                for (GraphLayoutOption opt : options) {
+                    String fullId =
+                            LayoutDataService.getInstance().getOptionDataBySuffix(opt.getId())
+                                    .getId();
+                    stats.incCounter(Logger.STATS_KWEBS, STATS_OPTION, fullId, opt.getValue(),
+                            Granularity.DAY);
+                }
+
+                int nodes = 0;
+                int ports = 0;
+                int labels = 0;
+                int edges = 0;
                 
-        // and log some times
-        stats.recordValue(Logger.STATS_KWEBS, STATS_EXECTIME, layoutTime);
-        stats.recordValue(Logger.STATS_KWEBS, STATS_GRAPH_SIZE, layoutTime);
+                // we wanna know which algorithm is used
+                for (KNode graph : layoutGraphs) {
+                    KLayoutData data = graph.getData(KLayoutData.class);
+                    String alg = data.getProperty(LayoutOptions.ALGORITHM);
+                    stats.incCounter(Logger.STATS_KWEBS, STATS_ALG,
+                            LayoutOptions.ALGORITHM.getId(), alg, Granularity.DAY);
+
+                    // if its klay we wanna know even more :) Just to make everything better!
+                    stats.recordKlayLayeredStats(graph);
+                    
+                    // graph information
+                    for (KNode layout : layoutGraphs) {
+                        for (KGraphElement element 
+                                : Graphs.getAllElementsOfType(layout, KGraphElement.class)) {
+                            if (element instanceof KNode) {
+                                nodes++;
+                            } else if (element instanceof KPort) {
+                                ports++;
+                            } else if (element instanceof KLabel) {
+                                labels++;
+                            } else if (element instanceof KEdge) {
+                                edges++;
+                            }
+                        }
+                    }
+                }
+                
+                // number of elements
+                stats.recordValue(Logger.STATS_KWEBS, STATS_GRAPH_NODES, nodes);
+                stats.recordValue(Logger.STATS_KWEBS, STATS_GRAPH_EDGES, edges);
+                stats.recordValue(Logger.STATS_KWEBS, STATS_GRAPH_PORTS, ports);
+                stats.recordValue(Logger.STATS_KWEBS, STATS_GRAPH_LABELS, labels);
+
+                // and log some times
+                stats.recordValue(Logger.STATS_KWEBS, STATS_EXECTIME, layoutTime);
+                stats.recordValue(Logger.STATS_KWEBS, STATS_GRAPH_SIZE, layoutTime);
+
+            };
+        } .start();
     }
     
     /**
