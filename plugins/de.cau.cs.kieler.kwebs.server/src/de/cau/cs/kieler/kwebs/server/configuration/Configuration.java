@@ -259,8 +259,8 @@ public final class Configuration extends Properties {
         = PREFIX + "statistics.host";
     
     /** Port of the statistics server. */
-    public static final String STATS_SERVER_PORT
-        = PREFIX + "statistics.port";
+    public static final String STATS_SERVER_HTTP
+        = PREFIX + "statistics.http";
     
     /**
      * This is a container class for configuration identifiers so no

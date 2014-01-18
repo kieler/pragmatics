@@ -41,9 +41,9 @@ import de.cau.cs.kieler.kiml.LayoutOptionData.Target;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.formats.GraphFormatData;
+import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
 import de.cau.cs.kieler.kiml.formats.IGraphFormatHandler;
 import de.cau.cs.kieler.kiml.formats.TransformationData;
-import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
 import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.impl.KLayoutDataFactoryImpl;
@@ -51,8 +51,8 @@ import de.cau.cs.kieler.kiml.klayoutdata.impl.KLayoutDataPackageImpl;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kwebs.server.RemoteServiceException;
 import de.cau.cs.kieler.kwebs.server.layout.GraphLayoutOption;
-import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService;
 import de.cau.cs.kieler.kwebs.server.layout.ServerGraphFormatsService;
+import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 import de.cau.cs.kieler.kwebs.server.service.filter.LayoutFilter;
@@ -455,15 +455,17 @@ public abstract class AbstractService {
 
         // we log all user specified layout options
         for (GraphLayoutOption opt : options) {
+            String fullId = LayoutDataService.getInstance().getOptionDataBySuffix(opt.getId()).getId();
             stats.incCounter(Logger.STATS_KWEBS, STATS_OPTION,
-                    opt.getId(), opt.getValue(), Granularity.DAY);
+                    fullId, opt.getValue(), Granularity.DAY);
         }
         
         // we wanna know which algorithm is used
         for (KNode graph : layoutGraphs) {
             KLayoutData data = graph.getData(KLayoutData.class);
             String alg = data.getProperty(LayoutOptions.ALGORITHM);
-            stats.incCounter(Logger.STATS_KWEBS, STATS_ALG, "algorithm", alg, Granularity.DAY);
+            stats.incCounter(Logger.STATS_KWEBS, STATS_ALG, LayoutOptions.ALGORITHM.getId(), 
+                    alg, Granularity.DAY);
         
             // if its klay we wanna know even more :) Just to make everything better!
             stats.recordKlayLayeredStats(graph);

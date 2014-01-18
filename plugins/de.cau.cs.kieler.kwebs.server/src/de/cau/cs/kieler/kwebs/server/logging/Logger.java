@@ -350,10 +350,7 @@ public final class Logger {
                 try {
                     String server =
                             Configuration.INSTANCE
-                                    .getConfigProperty(Configuration.STATS_SERVER_HOST)
-                                    + ":"
-                                    + Configuration.INSTANCE
-                                            .getConfigProperty(Configuration.STATS_SERVER_PORT);
+                                    .getConfigProperty(Configuration.STATS_SERVER_HOST);
                     usageStats = KIELERStatistics.forServer(server);
                     Logger.log(Severity.INFO, "Connected to usage statistics server at " + server);
                 } catch (AuthenticationException ae) {
