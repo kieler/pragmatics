@@ -190,7 +190,9 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
 
         // Now transform the node's children
         for (KNode child : graph.getChildren()) {
-            transformNode(child, layeredNodes, elemMap, graphProperties, direction);
+            if (!child.getData(KShapeLayout.class).getProperty(LayoutOptions.NO_LAYOUT)) {
+                transformNode(child, layeredNodes, elemMap, graphProperties, direction);
+            }
         }
 
     }
@@ -339,7 +341,10 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         // transform the ports
         for (KPort kport : node.getPorts()) {
             KShapeLayout portLayout = kport.getData(KShapeLayout.class);
-
+            if (portLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
+                continue;
+            }
+            
             // find out if there are hyperedges, that is a set of edges connected to the same port
             if (kport.getEdges().size() > 1) {
                 graphProperties.add(GraphProperties.HYPEREDGES);
@@ -433,14 +438,15 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             // create the port's labels
             for (KLabel klabel : kport.getLabels()) {
                 KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
-
-                LLabel newLabel = new LLabel(layeredGraph, klabel.getText());
-                newLabel.setProperty(Properties.ORIGIN, klabel);
-                newLabel.getSize().x = labelLayout.getWidth();
-                newLabel.getSize().y = labelLayout.getHeight();
-                newLabel.getPosition().x = labelLayout.getXpos();
-                newLabel.getPosition().y = labelLayout.getYpos();
-                newPort.getLabels().add(newLabel);
+                if (!labelLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
+                    LLabel newLabel = new LLabel(layeredGraph, klabel.getText());
+                    newLabel.setProperty(Properties.ORIGIN, klabel);
+                    newLabel.getSize().x = labelLayout.getWidth();
+                    newLabel.getSize().y = labelLayout.getHeight();
+                    newLabel.getPosition().x = labelLayout.getXpos();
+                    newLabel.getPosition().y = labelLayout.getYpos();
+                    newPort.getLabels().add(newLabel);
+                }
             }
 
             switch (direction) {
@@ -462,13 +468,15 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         // add the node's labels
         for (KLabel klabel : node.getLabels()) {
             KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
-            LLabel newLabel = new LLabel(layeredGraph, klabel.getText());
-            newLabel.setProperty(Properties.ORIGIN, klabel);
-            newLabel.getSize().x = labelLayout.getWidth();
-            newLabel.getSize().y = labelLayout.getHeight();
-            newLabel.getPosition().x = labelLayout.getXpos();
-            newLabel.getPosition().y = labelLayout.getYpos();
-            newNode.getLabels().add(newLabel);
+            if (!labelLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
+                LLabel newLabel = new LLabel(layeredGraph, klabel.getText());
+                newLabel.setProperty(Properties.ORIGIN, klabel);
+                newLabel.getSize().x = labelLayout.getWidth();
+                newLabel.getSize().y = labelLayout.getHeight();
+                newLabel.getPosition().x = labelLayout.getXpos();
+                newLabel.getPosition().y = labelLayout.getYpos();
+                newNode.getLabels().add(newLabel);
+            }
         }
 
         // set properties of the new node
@@ -506,7 +514,8 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
             for (KEdge kedge : child.getOutgoingEdges()) {
                 // exclude edges that pass hierarchy bounds (except for those
                 // going into an external port)
-                if (kedge.getTarget().getParent() == graph) {
+                if (kedge.getTarget().getParent() == graph
+                        && !kedge.getData(KEdgeLayout.class).getProperty(LayoutOptions.NO_LAYOUT)) {
                     transformEdge(kedge, graph, elemMap);
                 }
             }
@@ -530,7 +539,8 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         for (KEdge kedge : edges) {
             // Only transform edges going into the layout node's direct children
             // (self-loops of the layout node will be processed on level higher)
-            if (kedge.getSource().getParent() == graph || kedge.getTarget().getParent() == graph) {
+            if (kedge.getSource().getParent() == graph || kedge.getTarget().getParent() == graph
+                    && !kedge.getData(KEdgeLayout.class).getProperty(LayoutOptions.NO_LAYOUT)) {
 
                 transformEdge(kedge, graph, elemMap);
             }
@@ -640,32 +650,34 @@ public class KGraphImporter extends AbstractGraphImporter<KNode> {
         // transform the edge's labels
         for (KLabel klabel : kedge.getLabels()) {
             KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
-            LLabel newLabel = new LLabel(layeredGraph, klabel.getText());
-            newLabel.getPosition().x = labelLayout.getXpos();
-            newLabel.getPosition().y = labelLayout.getYpos();
-            newLabel.getSize().x = labelLayout.getWidth();
-            newLabel.getSize().y = labelLayout.getHeight();
-            newLabel.setProperty(Properties.ORIGIN, klabel);
-            newLabel.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
-                    labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT));
-            newEdge.getLabels().add(newLabel);
-            if (labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
-                    == EdgeLabelPlacement.CENTER) {
-                // Add annotation if graph contains labels which shall be placed
-                // in the middle of an edge
-                Set<GraphProperties> graphProperties = layeredGraph.getProperty(
-                        Properties.GRAPH_PROPERTIES);
-                graphProperties.add(GraphProperties.CENTER_LABELS);
-            }
-            if (labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
-                    == EdgeLabelPlacement.HEAD
-                || labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
-                    == EdgeLabelPlacement.TAIL) {
-                // Add annotation if graph contains labels which shall be placed
-                // in the middle of an edge
-                Set<GraphProperties> graphProperties = layeredGraph.getProperty(
-                        Properties.GRAPH_PROPERTIES);
-                graphProperties.add(GraphProperties.END_LABELS);
+            if (!labelLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
+                LLabel newLabel = new LLabel(layeredGraph, klabel.getText());
+                newLabel.getPosition().x = labelLayout.getXpos();
+                newLabel.getPosition().y = labelLayout.getYpos();
+                newLabel.getSize().x = labelLayout.getWidth();
+                newLabel.getSize().y = labelLayout.getHeight();
+                newLabel.setProperty(Properties.ORIGIN, klabel);
+                newLabel.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
+                        labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT));
+                newEdge.getLabels().add(newLabel);
+                if (labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
+                        == EdgeLabelPlacement.CENTER) {
+                    // Add annotation if graph contains labels which shall be placed
+                    // in the middle of an edge
+                    Set<GraphProperties> graphProperties = layeredGraph.getProperty(
+                            Properties.GRAPH_PROPERTIES);
+                    graphProperties.add(GraphProperties.CENTER_LABELS);
+                }
+                if (labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
+                        == EdgeLabelPlacement.HEAD
+                    || labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
+                        == EdgeLabelPlacement.TAIL) {
+                    // Add annotation if graph contains labels which shall be placed
+                    // in the middle of an edge
+                    Set<GraphProperties> graphProperties = layeredGraph.getProperty(
+                            Properties.GRAPH_PROPERTIES);
+                    graphProperties.add(GraphProperties.END_LABELS);
+                }
             }
         }
         
