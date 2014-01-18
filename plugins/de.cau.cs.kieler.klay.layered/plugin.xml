@@ -45,6 +45,9 @@
                option="de.cau.cs.kieler.spacing">
          </knownOption>
          <knownOption
+               option="de.cau.cs.kieler.noLayout">
+         </knownOption>
+         <knownOption
                option="de.cau.cs.kieler.klay.layered.edgeSpacingFactor">
          </knownOption>
          <knownOption

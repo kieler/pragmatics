@@ -81,3 +81,13 @@
 
 #de.cau.cs.kieler.kwebs.frontend.contact.information.email.person=<Persons name> 
 #de.cau.cs.kieler.kwebs.frontend.contact.information.email.address=<Persons email address>
+
+#
+# Statistics server
+#
+# Whether to record usage statistics
+#de.cau.cs.kieler.kwebs.statistics.record=false
+# Address of the server to store the data
+#de.cau.cs.kieler.kwebs.statistics.host=localhost:27017
+# Address of the http interface to retrieve statistics from client side javascript
+#de.cau.cs.kieler.kwebs.statistics.http=localhost:1337
