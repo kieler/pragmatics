@@ -40,6 +40,14 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  * <b>Important</b> Methods should be fail silent, i.e. if no connection to the server was made, all
  * calls to convenience methods fail silently.
  * 
+ * Statistics are divided into collections and documents. A collection might be called
+ * 'de.cau.cs.kieler.kwebs' and contain different types of statistics related to kwebs. Different
+ * statistics are to be stored in different documents. A document may hold the daily usage of
+ * successful live layout requests ('kwebs.livelayout.succ').
+ * 
+ * There are documents that hold counters for with an optional key as further identifier as well as
+ * documents that hold hold key/value pairs with a timestamp.
+ * 
  * @author uru
  */
 public final class KIELERStatistics {
@@ -117,90 +125,43 @@ public final class KIELERStatistics {
         return null;
     }
 
-//    /**
-//     * @see #incIntegerCounter(String, String, int)
-//     * 
-//     * @param collection
-//     *            .
-//     * @param documentName
-//     *            .
-//     */
-//    public void incIntegerCounter(final String collection, final String documentName) {
-//        incIntegerCounter(collection, documentName, 1);
-//    }
-//
-//    /**
-//     * Increases the counter of the specified document within the specified collection by the amount
-//     * of 'inc'. If either of the two elements do not exist, they will be created.
-//     * 
-//     * @param collection
-//     *            .
-//     * @param documentName
-//     *            .
-//     * @param inc
-//     *            .
-//     */
-//    public void incIntegerCounter(final String collection, final String documentName, final int inc) {
-//        // fail silent
-//        if (client == null || db == null) {
-//            return;
-//        }
-//
-//        try {
-//            // get or create the collection
-//            DBCollection coll = db.getCollection(collection);
-//
-//            // this finds the correct document
-//            BasicDBObject queryDocMonth =
-//                    new BasicDBObject("name", documentName).append("month", getCurrentMonth());
-//
-//            BasicDBObject queryDocDay =
-//                    new BasicDBObject("name", documentName).append("day", getCurrentDay());
-//
-//            // this increases the count value
-//            BasicDBObject incObj = new BasicDBObject("$inc", new BasicDBObject("count", inc));
-//
-//            WriteResult resultMonth = coll.update(queryDocMonth, incObj, true, false);
-//            WriteResult resultDay = coll.update(queryDocDay, incObj, true, false);
-//
-//            if ((resultMonth != null && resultMonth.getError() != null)
-//                    || (resultDay != null && resultDay.getError() != null)) {
-//                System.out.println("Couldn't log stats");
-//            }
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-
+    /**
+     * Specifies the granularity with which stats are recorded.
+     */
     public static class Granularity {
 
+        /** Exact timestamp (ms) is stored. */
         public static final int EXACT = 1;
+        /** The day. */
         public static final int DAY = 2;
+        /** The month. */
         public static final int MONTH = 4;
+        /** The year. */
         public static final int YEAR = 8;
 
     }
-    
+
     private static final String ID_KLAY_LAYERED = "de.cau.cs.kieler.klay.layered";
 
-    private static Set<Class<?>> SUPPORTED_TYPES;
+    private static Set<Class<?>> supportedTypes;
     static {
-        SUPPORTED_TYPES = new HashSet<Class<?>>();
-        SUPPORTED_TYPES.add(String.class);
-        SUPPORTED_TYPES.add(Character.class);
-        SUPPORTED_TYPES.add(Boolean.class);
-        SUPPORTED_TYPES.add(Byte.class);
-        SUPPORTED_TYPES.add(Short.class);
-        SUPPORTED_TYPES.add(Long.class);
-        SUPPORTED_TYPES.add(Integer.class);
-        SUPPORTED_TYPES.add(Float.class);
-        SUPPORTED_TYPES.add(Double.class);
+        supportedTypes = new HashSet<Class<?>>();
+        supportedTypes.add(String.class);
+        supportedTypes.add(Character.class);
+        supportedTypes.add(Boolean.class);
+        supportedTypes.add(Byte.class);
+        supportedTypes.add(Short.class);
+        supportedTypes.add(Long.class);
+        supportedTypes.add(Integer.class);
+        supportedTypes.add(Float.class);
+        supportedTypes.add(Double.class);
     }
-    
+
     /**
-     * Only inspects the top level graph element, hence does not look into hierarchical nodes. 
-     * @param graph .
+     * Only inspects the top level graph element, hence does not look into hierarchical nodes.
+     * 
+     * @param graph
+     *            the graph to inspect.
      */
     public void recordKlayLayeredStats(final KNode graph) {
 
@@ -211,13 +172,26 @@ public final class KIELERStatistics {
         // get the exact property list
         if (alg.equals(ID_KLAY_LAYERED)) {
             for (Entry<IProperty<?>, Object> entry : data.getProperties()) {
-                if (SUPPORTED_TYPES.contains(entry.getValue().getClass())) {
+                if (supportedTypes.contains(entry.getValue().getClass())) {
                     recordValue(ID_KLAY_LAYERED, entry.getKey().getId(), entry.getValue());
                 }
             }
         }
     }
-    
+
+    /**
+     * Stores a certain value for the document along a timestamp.
+     * 
+     * Can be used to record the usage of a value of a layout option at a certain point in time. In
+     * this case the 'documentName' is the layout option and the 'value' is the used value.
+     * 
+     * @param collection
+     *            name of the collection
+     * @param documentName
+     *            name of the document
+     * @param value
+     *            a value to store in the document
+     */
     public void recordValue(final String collection, final String documentName, final Object value) {
         // fail silent
         if (client == null || db == null) {
@@ -242,34 +216,66 @@ public final class KIELERStatistics {
             e.printStackTrace();
         }
     }
-    
+
+    // CHECKSTYLEOFF Javadoc convenient methods
+    /**
+     * @see #incCounter(String, String, String, String, int)
+     */
     public void incCounter(final String collection, final String documentName, final int gran) {
         Map<String, Object> queryMap = Maps.newHashMap();
         queryMap.put("name", documentName);
         incCounter(collection, queryMap, gran, 1);
     }
 
-    public void incCounter(final String collection, final String documentName, final String value, final int gran) {
+    /**
+     * @see #incCounter(String, String, String, String, int)
+     */
+    public void incCounter(final String collection, final String documentName, final String value,
+            final int gran) {
         Map<String, Object> queryMap = Maps.newHashMap();
         queryMap.put("name", documentName);
         queryMap.put("value", value);
         incCounter(collection, queryMap, gran, 1);
     }
-    
-    public void incCounter(final String collection, final String documentName, final String key, final String value, final int gran) {
+
+    /**
+     * @see #incCounter(String, String, String, String, int)
+     */
+    public void incCounter(final String collection, final String documentName, final String key,
+            final String value, final int gran) {
         Map<String, Object> queryMap = Maps.newHashMap();
         queryMap.put("name", documentName);
         queryMap.put("key", key);
         queryMap.put("value", value);
         incCounter(collection, queryMap, gran, 1);
     }
-    
+
+    /**
+     * @see #incCounter(String, String, String, String, int)
+     */
     public void incCounter(final String collection, final Map<String, Object> match,
             final int granularity, final int inc) {
         Map<String, Object> vals = Collections.emptyMap();
         incCounter(collection, match, vals, granularity, inc);
     }
 
+    // CHECKSTYLEON Javadoc
+
+    /**
+     * Increases a counter for the specified document.
+     * 
+     * @param collection
+     *            in which the document should be stored.
+     * @param match
+     *            a map holding key value pairs that are used to match existing documents in the
+     *            database.
+     * @param values
+     *            values that will be set for the found document.
+     * @param granularity
+     *            with which granularity the stat should be recorded, see {@link Granularity}.
+     * @param inc
+     *            number by which to increase the counter.
+     */
     public void incCounter(final String collection, final Map<String, Object> match,
             final Map<String, Object> values, final int granularity, final int inc) {
         if ((granularity & Granularity.EXACT) != 0) {
@@ -304,7 +310,7 @@ public final class KIELERStatistics {
                 queryDoc.append(entry.getKey(), entry.getValue());
             }
 
-         // add the granularity
+            // add the granularity
             if (Integer.bitCount(granularity) != 1) {
                 throw new RuntimeException("Cannot add multiple timestamps to one db object.");
             }
@@ -315,12 +321,12 @@ public final class KIELERStatistics {
                 queryDoc.append("day", getCurrentDay());
             }
             if ((granularity & Granularity.MONTH) != 0) {
-                queryDoc.append("month", getCurrentDay());
+                queryDoc.append("month", getCurrentMonth());
             }
             if ((granularity & Granularity.YEAR) != 0) {
-                queryDoc.append("year", getCurrentDay());
+                queryDoc.append("year", getCurrentYear());
             }
-            
+
             // this increases the count value
             BasicDBObject valueObj = new BasicDBObject();
             for (Entry<String, Object> entry : values.entrySet()) {
@@ -342,6 +348,10 @@ public final class KIELERStatistics {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private String getCurrentYear() {
+        return new SimpleDateFormat("yyyy").format(new Date());
     }
 
     private String getCurrentMonth() {
