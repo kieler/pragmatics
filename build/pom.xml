@@ -45,6 +45,7 @@
       </repositories>
       
       <modules>
+        <module>../plugins/de.cau.cs.kieler.web.statistics</module>
         <module>../plugins/de.cau.cs.kieler.kwebs.server</module>
         <module>../features/de.cau.cs.kieler.kwebs.server.feature</module>
         <module>de.cau.cs.kieler.kwebs.repository</module>
@@ -74,6 +75,7 @@
       </repositories>
       
       <modules>
+        <module>../plugins/de.cau.cs.kieler.web.statistics</module>
         <module>../plugins/de.cau.cs.kieler.klighdning</module>
         <module>../features/de.cau.cs.kieler.klighdning.feature</module>
         <module>de.cau.cs.kieler.klighdning.repository</module>

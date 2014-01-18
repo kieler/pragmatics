@@ -119,7 +119,7 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
         for (LNode node : nodes) {
             if ((node.getProperty(Properties.NODE_TYPE) == NodeType.NORMAL)
                     && (node.getSize().x > threshold)) {
-                Double parts = Math.ceil(node.getSize().x / threshold);
+                Double parts = Math.ceil(node.getSize().x / minWidth);
                 width[node.id] = parts.intValue();
                 bigNodes.add(node);
             }
@@ -139,6 +139,9 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
                     eastPorts.add(port);
                 }
             }
+            
+            // remember original width for later step
+            double originalWidth = node.getSize().x; 
 
             // shrink the big node and mark it
             node.setProperty(Properties.BIG_NODE_ORIGINAL_SIZE, (float) node.getSize().x);
@@ -147,13 +150,17 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
 
             // introduce dummy nodes
             LNode start = node;
+            // the original node represents 1*minWidth
+            originalWidth -= minWidth;
+            
             while (width[node.id] > 1) {
-
                 // create it and add dummy to the graph
-                start = introduceDummyNode(start);
+                double dummyWidth = Math.min(originalWidth, minWidth);
+                start = introduceDummyNode(start, dummyWidth);
                 layeredGraph.getLayerlessNodes().add(start);
 
                 width[node.id]--;
+                originalWidth -= minWidth;
             }
 
             // add the east ports to the final dummy
@@ -187,7 +194,7 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
         return true;
     }
 
-    private LNode introduceDummyNode(final LNode src) {
+    private LNode introduceDummyNode(final LNode src, final double width) {
         // create new dummy node
         LNode dummy = new LNode(layeredGraph);
         dummy.setProperty(Properties.NODE_TYPE, NodeType.BIG_NODE);
@@ -197,11 +204,11 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
 
         // set same height as original
         dummy.getSize().y = src.getSize().y;
-        // the dummies have no extent
-        // TODO 
-        // determine whether 0 size to save spacing is superior
-        // currently the size is required to route incoming edges on east ports correctly
-        dummy.getSize().x = src.getSize().x;
+        // the first n-1 nodes (initial+dummies) are assigned a width of 'minWidth'
+        // while the last node (right most) is assigned the remaining
+        // width of the bignode, i.e.
+        //      overallWidth - (n-1) * minWidth
+        dummy.getSize().x = width;
 
         // add ports to connect it with the previous node
         LPort outPort = new LPort(layeredGraph);

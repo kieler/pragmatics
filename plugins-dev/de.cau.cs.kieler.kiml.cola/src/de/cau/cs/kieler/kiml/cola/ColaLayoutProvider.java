@@ -13,27 +13,40 @@
  */
 package de.cau.cs.kieler.kiml.cola;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
+import org.adaptagrams.Cluster;
 import org.adaptagrams.ColaEdge;
 import org.adaptagrams.ColaEdges;
 import org.adaptagrams.CompoundConstraintPtrs;
 import org.adaptagrams.ConstrainedFDLayout;
+import org.adaptagrams.ConvexCluster;
 import org.adaptagrams.Dim;
 import org.adaptagrams.Rectangle;
 import org.adaptagrams.RectanglePtrs;
+import org.adaptagrams.RootCluster;
+import org.adaptagrams.SWIGTYPE_p_double;
 import org.adaptagrams.SeparationConstraint;
+import org.adaptagrams.adaptagrams;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
@@ -49,6 +62,7 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
 
     // DO NOT map the class instances, as the cpp side might return new instances ..
     private BiMap<KNode, Long> nodeIndexMap = HashBiMap.create();
+    private BiMap<KEdge, Long> edgeIndexMap = HashBiMap.create();
 
     private RectanglePtrs nodes;
     private ColaEdges edges;
@@ -81,13 +95,32 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
             addDirectionConstraints(parentNode);
         }
         if (rootLayout.getProperty(ColaProperties.PORT_CONSTRAINTS)) {
-            addPortConstraints(parentNode);
+            // addPortConstraints(parentNode);
+            constraintsFixedSide(parentNode);
+            // constraintsFixedOrder(parentNode);
         }
 
+        double idealEdgeLength = rootLayout.getProperty(ColaProperties.IDEAL_EDGE_LENGTHS);
+        double[] nonUniformEdgeLengths = nonUniformLinks(parentNode, (float) idealEdgeLength);
+        System.out.println(Arrays.toString(nonUniformEdgeLengths));
+
+        SWIGTYPE_p_double arr = adaptagrams.newDoubleArray(nonUniformEdgeLengths.length);
+        for (int i = 0; i < nonUniformEdgeLengths.length; ++i) {
+            adaptagrams.doubleArraySet(arr, i, nonUniformEdgeLengths[i]);
+            // adaptagrams.doubleArraySet(arr, i, 100);
+        }
+
+        // FIXME not able to pass a array of edge lengths here due to swig type ..
         // execute layout algorithm
-        ConstrainedFDLayout algo = new ConstrainedFDLayout(nodes, edges, 100, true);
+        ConstrainedFDLayout algo = new ConstrainedFDLayout(nodes, edges, 1, true, arr);
 
         algo.setConstraints(constraints);
+
+        // set clusters
+        RootCluster rc = new RootCluster();
+        for (Cluster c : separateUnconnectedComponents(parentNode)) {
+            rc.addChildCluster(c);
+        }
 
         algo.makeFeasible();
 
@@ -105,6 +138,7 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
 
     private void transformGraph(final KNode root) {
         nodeIndexMap.clear();
+        edgeIndexMap.clear();
 
         /*
          * Nodes
@@ -132,13 +166,15 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
          */
         // edges are index pairs to the rectangle array
         edges = new ColaEdges();
+        index = 0;
         for (KNode n : root.getChildren()) {
             for (KEdge e : n.getOutgoingEdges()) {
                 long src = nodeIndexMap.get(e.getSource());
                 long tgt = nodeIndexMap.get(e.getTarget());
                 ColaEdge cE = new ColaEdge(src, tgt);
-                edges.add(cE);
 
+                edges.add(cE);
+                edgeIndexMap.put(e, index++);
             }
         }
     }
@@ -228,57 +264,264 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         }
     }
 
-    private void addPortConstraints(final KNode root) {
+    private void constraintsFixedOrder(final KNode root) {
 
         for (KNode n : root.getChildren()) {
             List<KPort> ports = n.getPorts();
 
-            Iterable<KPort> westPorts =
-                    Iterables.filter(ports, new PortSidePredicate(PortSide.WEST));
+            for (PortSide ps : PortSide.values()) {
+                if (ps == PortSide.UNDEFINED) {
+                    continue;
+                }
 
-            // System.out.println(westPorts);
-            Iterator<KPort> it = westPorts.iterator();
-            KPort prev = null;
-            while (it.hasNext()) {
-                KPort curr = it.next();
-                if (prev != null) {
+                int dim = (ps == PortSide.EAST || ps == PortSide.WEST) ? Dim.YDIM : Dim.XDIM;
+                int separation = 20;
 
-                    int separation = 0;
-                    if (prev.getData(KShapeLayout.class).getYpos() < curr.getData(
-                            KShapeLayout.class).getYpos()) {
-                        // prev should be above curr
-                        separation = 20;
-                    } else {
-                        separation = -20;
-                    }
+                Iterable<KPort> sidePorts = Iterables.filter(ports, new PortSidePredicate(ps));
 
-                    for (KEdge prevEdge : prev.getEdges()) {
-                        KNode prevNode = prevEdge.getSource();
-                        if (prevNode.equals(prev.getNode())) {
-                            prevNode = prevEdge.getTarget();
+                // System.out.println(westPorts);
+                Iterator<KPort> it = sidePorts.iterator();
+                KPort prev = null;
+                while (it.hasNext()) {
+                    KPort curr = it.next();
+                    if (prev != null) {
+
+                        boolean swap = false;
+                        if (ps == PortSide.EAST || ps == PortSide.WEST) {
+                            if (prev.getData(KShapeLayout.class).getYpos() < curr.getData(
+                                    KShapeLayout.class).getYpos()) {
+                                // prev should be above curr
+                                separation +=
+                                        prev.getNode().getData(KShapeLayout.class).getHeight();
+                            } else {
+                                swap = true;
+                                separation +=
+                                        curr.getNode().getData(KShapeLayout.class).getHeight();
+                            }
+                        } else {
+                            if (prev.getData(KShapeLayout.class).getXpos() < curr.getData(
+                                    KShapeLayout.class).getXpos()) {
+                                // prev should be above curr
+                            } else {
+                                swap = true;
+                            }
                         }
 
-                        for (KEdge curEdge : curr.getEdges()) {
-                            KNode curNode = curEdge.getSource();
-                            if (curNode.equals(curr.getNode())) {
-                                curNode = curEdge.getTarget();
+                        for (KEdge prevEdge : prev.getEdges()) {
+                            KNode prevNode = prevEdge.getSource();
+                            if (prevNode.equals(prev.getNode())) {
+                                prevNode = prevEdge.getTarget();
                             }
 
-                            System.out.println(prevNode + " " + curNode);
+                            for (KEdge curEdge : curr.getEdges()) {
+                                KNode curNode = curEdge.getSource();
+                                if (curNode.equals(curr.getNode())) {
+                                    curNode = curEdge.getTarget();
+                                }
 
-                            long n1 = nodeIndexMap.get(prevNode);
-                            long n2 = nodeIndexMap.get(curNode);
-                            SeparationConstraint sc =
-                                    new SeparationConstraint(Dim.YDIM, n1, n2, separation, false);
-                            constraints.add(sc);
+                                System.out.println(prevNode + " " + curNode);
 
+                                long n1 = nodeIndexMap.get(prevNode);
+                                long n2 = nodeIndexMap.get(curNode);
+
+                                if (swap) {
+                                    long tmp = n1;
+                                    n1 = n2;
+                                    n2 = tmp;
+                                }
+
+                                SeparationConstraint sc =
+                                        new SeparationConstraint(dim, n1, n2, separation, false);
+                                constraints.add(sc);
+
+                            }
                         }
+
+                    }
+                    prev = curr;
+                }
+            }
+        }
+    }
+
+    /**
+     * TODO only valid for LEFT to RIGHT layout.
+     * 
+     * TODO it should be ok if one side has no port or no port constraints!
+     */
+    private void constraintsFixedSide(final KNode root) {
+
+        System.out.println("applying ports " + System.currentTimeMillis());
+
+        for (KNode n : root.getChildren()) {
+            for (KEdge e : n.getOutgoingEdges()) {
+
+                if (e.getSourcePort() == null || e.getTargetPort() == null) {
+                    // if one end doesnt have a port we do not handle it
+                    continue;
+                }
+
+                KNode src = e.getSource();
+                PortSide srcSide =
+                        e.getSourcePort().getData(KLayoutData.class)
+                                .getProperty(LayoutOptions.PORT_SIDE);
+                KShapeLayout srcLayout = src.getData(KShapeLayout.class);
+
+                KNode tgt = e.getTarget();
+                PortSide tgtSide =
+                        e.getTargetPort().getData(KLayoutData.class)
+                                .getProperty(LayoutOptions.PORT_SIDE);
+                KShapeLayout tgtLayout = tgt.getData(KShapeLayout.class);
+
+                // if one of the two nodes has fixed side we add a separation constraint
+                if (srcLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()
+                        || tgtLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()) {
+
+                    // handled cases:
+                    // WEST - EAST
+                    // NOTH - SOUTH
+
+                    boolean validCase = true;
+                    boolean swap = false;
+                    int separationDim = Dim.XDIM;
+
+                    // TODO do this properly, 2*20 is for ports on both sides
+                    float separation = spacing + 2 * 40;
+
+                    if (srcSide == PortSide.EAST && tgtSide == PortSide.WEST) {
+//                        System.out.println(src + " " + tgt + " " + srcLayout.getWidth() + " "
+//                                + srcLayout.getInsets());
+//                        System.out.println("Case 1");
+                        separationDim = Dim.XDIM;
+                        separation += srcLayout.getWidth();
+                    } else if (srcSide == PortSide.WEST && tgtSide == PortSide.EAST) {
+//                        System.out.println("Case 2");
+                        // inverted port situation
+                        separationDim = Dim.XDIM;
+                        separation += srcLayout.getWidth() + tgtLayout.getWidth();
+                    } else if (srcSide == PortSide.SOUTH && tgtSide == PortSide.NORTH) {
+//                        System.out.println("Case 3");
+                        separationDim = Dim.YDIM;
+                        separation += srcLayout.getHeight();
+                    } else if (srcSide == PortSide.NORTH && tgtSide == PortSide.SOUTH) {
+//                        System.out.println("Case 4");
+                        separationDim = Dim.YDIM;
+                        separation += tgtLayout.getHeight();
+                        swap = true;
+                    }
+
+                    else if (tgtSide == PortSide.SOUTH && srcSide == PortSide.EAST) {
+                        // TODO
+                        System.out.println("Case 5");
+                        separationDim = Dim.YDIM;
+                        separation += srcLayout.getHeight();
+                        swap = true;
+                    }
+
+                    else {
+                        validCase = false;
+                    }
+
+                    if (validCase) {
+                        long n1 = nodeIndexMap.get(src);
+                        long n2 = nodeIndexMap.get(tgt);
+                        if (swap) {
+                            long tmp = n1;
+                            n1 = n2;
+                            n2 = tmp;
+                        }
+                        SeparationConstraint sc =
+                                new SeparationConstraint(separationDim, n1, n2, separation, false);
+                        constraints.add(sc);
                     }
 
                 }
-                prev = curr;
+
             }
         }
+
+    }
+
+    private List<Pair<KNode, KNode>> createPairsOfNodes(final KNode root) {
+
+        // create appropriate data structures
+        List<KNode> children = Lists.newArrayList(root.getChildren());
+        List<Pair<KNode, KNode>> pairs = Lists.newLinkedList();
+
+        // create all pairs of nodes -> (n ncr 2) elements
+        for (int i = 0; i < children.size(); i++) {
+            KNode fst = children.get(i);
+            for (int j = i + 1; j < children.size(); j++) {
+                KNode snd = children.get(j);
+                Pair<KNode, KNode> nodePair = Pair.of(fst, snd);
+                pairs.add(nodePair);
+            }
+        }
+
+        return pairs;
+    }
+
+    private List<Cluster> separateUnconnectedComponents(final KNode root) {
+
+        Cluster connected = new ConvexCluster();
+        Cluster unconnected = new ConvexCluster();
+
+        for (KNode n : root.getChildren()) {
+            long id = nodeIndexMap.get(n);
+            if (Iterables.isEmpty(n.getIncomingEdges()) && Iterables.isEmpty(n.getOutgoingEdges())) {
+                // unconnected
+                unconnected.addChildNode(id);
+            } else {
+                // connected
+                connected.addChildNode(id);
+            }
+        }
+
+        return Lists.newArrayList(connected, unconnected);
+    }
+
+    private double[] nonUniformLinks(final KNode root, final float w) {
+
+        double[] edgeLengths = new double[edgeIndexMap.size()];
+
+        // collect neighbour sets for each node
+        Map<KNode, Set<KNode>> neighbours = Maps.newHashMap();
+        for (KNode node : root.getChildren()) {
+            Set<KNode> neighbourSet = Sets.newHashSet();
+            for (KEdge e : node.getOutgoingEdges()) {
+                neighbourSet.add(e.getTarget());
+            }
+            for (KEdge e : node.getIncomingEdges()) {
+                neighbourSet.add(e.getSource());
+            }
+            neighbours.put(node, neighbourSet);
+        }
+
+        // calc link sizes for each edge
+        for (Entry<KEdge, Long> entry : edgeIndexMap.entrySet()) {
+            KEdge e = entry.getKey();
+            Set<KNode> srcSet = neighbours.get(e.getSource());
+            Set<KNode> tgtSet = neighbours.get(e.getTarget());
+
+            // calc link lengths
+            int union = Sets.union(srcSet, tgtSet).size();
+            int intersection = Sets.intersection(srcSet, tgtSet).size();
+
+            // symmdifflinks
+            double sqrt = Math.sqrt((double) (union - intersection));
+
+            // jaccard
+            double jaccard = 1;
+            if (union > 1 && intersection > 1) {
+                jaccard = 1 / (intersection / (double) union);
+            }
+
+            int index = entry.getValue().intValue();
+             edgeLengths[index] = 1 + w * sqrt;
+//            edgeLengths[index] = 1 + w * jaccard;
+        }
+
+        return edgeLengths;
     }
 
     /**
@@ -296,4 +539,5 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
             return layout.getProperty(LayoutOptions.PORT_SIDE) == side;
         }
     }
+
 }

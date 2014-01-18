@@ -27,7 +27,7 @@ public final class ApplicationHelper {
     {
         "KWebS - KIELER Layout Web Service (v$VERSION$)\n",
         "",
-        "Copyright 2011 by Real-Time and Embedded Systems Group, Department",
+        "Copyright 2014 by Real-Time and Embedded Systems Group, Department",
         "of Computer Science, Christian-Albrechts-University of Kiel",
         "Published under the EPL v1.0 (see http://www.eclipse.org/legal/epl-v10.html)",
         "",

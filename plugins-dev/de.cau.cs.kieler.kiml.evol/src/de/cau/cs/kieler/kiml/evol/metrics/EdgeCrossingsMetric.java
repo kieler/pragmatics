@@ -33,7 +33,7 @@ import de.cau.cs.kieler.kiml.grana.analyses.NodeCountAnalysis;
 public class EdgeCrossingsMetric implements IAnalysis {
 
     /** split value for the two linear regions of the result metric. */
-    private static final double SCALE_SPLIT = 0.2;
+    private static final double SCALE_SPLIT = 0.1;
 
     /**
      * {@inheritDoc}

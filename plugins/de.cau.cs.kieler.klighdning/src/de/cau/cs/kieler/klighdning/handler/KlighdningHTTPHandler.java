@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klighdning;
+package de.cau.cs.kieler.klighdning.handler;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +19,7 @@ import java.io.InputStreamReader;
 import java.net.URLEncoder;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.zip.Adler32;
 import java.util.zip.Checksum;
 
@@ -28,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.Resource.Factory.Registry;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.XMIResource;
@@ -35,6 +37,7 @@ import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.io.CharStreams;
@@ -43,6 +46,7 @@ import com.google.common.io.Files;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.klighd.LightDiagramServices;
 import de.cau.cs.kieler.klighdning.viewer.SVGBrowsingViewer;
+import de.cau.cs.kieler.klighdning.viewer.SVGLayoutProvider;
 
 /**
  * @author uru
@@ -56,6 +60,11 @@ public class KlighdningHTTPHandler extends AbstractHandler {
     private HtmlGenerator gen = new HtmlGenerator();
     
     private Checksum checksum = new Adler32();
+    
+    private static final String TARGET_TREE_NAVIGATION = "/json/content";
+    private static final String TARGET_TEXT_FORMATS = "/textualFormats";
+    private static final String TARGET_RESOURCE = "/resource";
+    private static final String TARGET_GIT_REFRESH = "/refreshGit";
 
     /**
      * @param docRoot
@@ -75,8 +84,10 @@ public class KlighdningHTTPHandler extends AbstractHandler {
             throws IOException, ServletException {
 
         // decide depending on the http target
-        if (target.startsWith("/json/content")) {
-            
+        if (target.startsWith(TARGET_TREE_NAVIGATION)) {
+            /*----------------------------------------------------------------------------
+             *  Return the navigation for tree based browsing.
+             */
             String json = "";
             
             if (target.equals("/json/content/")) {
@@ -91,7 +102,7 @@ public class KlighdningHTTPHandler extends AbstractHandler {
             baseRequest.setHandled(true);
             response.getWriter().println(json);
             
-        } else if (target.startsWith("/resource")) {
+        } else if (target.startsWith(TARGET_RESOURCE)) {
             /*----------------------------------------------------------------------------
              *  Return a specific resource as SVG this is mainly called by perma links.
              */
@@ -99,7 +110,6 @@ public class KlighdningHTTPHandler extends AbstractHandler {
 
             ResourceSet rs = new ResourceSetImpl();
 
-            // MOML
             Map<String, Boolean> parserFeatures = Maps.newHashMap();
             parserFeatures.put("http://xml.org/sax/features/validation", Boolean.FALSE);
             parserFeatures.put("http://apache.org/xml/features/nonvalidating/load-dtd-grammar",
@@ -109,8 +119,6 @@ public class KlighdningHTTPHandler extends AbstractHandler {
 
             rs.getLoadOptions().put(XMIResource.OPTION_RECORD_UNKNOWN_FEATURE, true);
             rs.getLoadOptions().put(XMLResource.OPTION_PARSER_FEATURES, parserFeatures);
-            // rs.getResourceFactoryRegistry().getExtensionToFactoryMap()
-            // .put("xml", new MomlResourceFactoryImpl());
 
             File file = new File(docRoot, path);
             System.out.println("Loading resource: " + path);
@@ -172,7 +180,7 @@ public class KlighdningHTTPHandler extends AbstractHandler {
             }
             response.getWriter().println(gen.permaLinkPage(svg, hasChanged, params));
 
-        } else if (target.startsWith("/refreshGit")) {
+        } else if (target.startsWith(TARGET_GIT_REFRESH)) {
             /*----------------------------------------------------------------------------
              *  Tries to refresh the root directory if it is a git repository.
              */
@@ -206,7 +214,19 @@ public class KlighdningHTTPHandler extends AbstractHandler {
             response.setContentType("text/html;charset=utf8");
             response.setCharacterEncoding("utf8");
             baseRequest.setHandled(true);
+            
+        } else if (target.startsWith(TARGET_TEXT_FORMATS)) {
+            
+            // get the registered formats
+            Registry r = Resource.Factory.Registry.INSTANCE;
+            Set<String> formats = r.getExtensionToFactoryMap().keySet();
+           
+            String json = "[\"" + Joiner.on("\", \"").join(formats) + "\"]";
+            
+            response.getWriter().println(json);
+            response.setContentType("application/json;charset=utf8");
+            response.setStatus(HttpServletResponse.SC_OK);
+            baseRequest.setHandled(true);
         }
-
     }
 }

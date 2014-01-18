@@ -508,6 +508,10 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
      *         no active targets
      */
     public String getTargetsDescription() {
+        if (targets.size() == Target.values().length) {
+            return "All";
+        }
+        
         StringBuilder descriptionBuf = new StringBuilder();
         int count = targets.size(), index = 0;
         for (Target target : targets) {
