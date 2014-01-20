@@ -77,6 +77,9 @@ public class LiveLayoutHandler implements HttpHandler {
                 // port post we have to look into the body
                 String input = CharStreams.toString(new InputStreamReader(http.getRequestBody()));
                 decoded = URLDecoder.decode(input, "UTF-8");
+            } else {
+                sendError(http, "Could not handle method " + http.getRequestMethod() + ".", null);
+                return;
             }
         } catch (IOException e) {
             sendError(http, "Could not decode the passed data.", e);

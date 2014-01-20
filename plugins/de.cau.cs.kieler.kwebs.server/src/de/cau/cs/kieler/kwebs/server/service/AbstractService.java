@@ -140,6 +140,9 @@ public abstract class AbstractService {
     private static final String STATS_GRAPH_EDGES = "kwebs.layout.edges";
     private static final String STATS_GRAPH_PORTS = "kwebs.layout.ports";
     private static final String STATS_GRAPH_LABELS = "kwebs.layout.labels";
+    private static final String STATS_INFORMAT = "kwebs.layout.informat";
+    private static final String STATS_OUTFORMAT = "kwebs.layout.outformat";
+    
     
     /**
      * 
@@ -262,6 +265,11 @@ public abstract class AbstractService {
             serializedResult = layout(serializedGraph, informatData.getHandler(),
                     outformatData.getHandler(), options);
         }
+        
+        Logger.INSTANCE.getUsageStats().incCounter(Logger.STATS_KWEBS, STATS_INFORMAT, informat,
+                Granularity.MONTH);
+        Logger.INSTANCE.getUsageStats().incCounter(Logger.STATS_KWEBS, STATS_OUTFORMAT, outformat,
+                Granularity.MONTH);
 
         Logger.log(Severity.DEBUG, "Finished layout");
         return serializedResult;
