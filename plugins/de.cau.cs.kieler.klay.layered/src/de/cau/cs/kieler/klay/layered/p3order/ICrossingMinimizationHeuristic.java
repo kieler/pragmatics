@@ -44,8 +44,11 @@ public interface ICrossingMinimizationHeuristic {
      *            {@code 0}.
      * @param forward
      *            whether the free layer is after the fixed layer.
+     * @return whether the calculated ordering is valid. There are rare cases where it might be
+     *         invalid, e.g. during big nodes processing, where no ordering (between two layers)
+     *         free of bignode/edge crossings can be found.
      */
-    void minimizeCrossings(List<NodeGroup> layer, int layerIndex, boolean preOrdered, boolean randomize,
-            boolean forward);
+    boolean minimizeCrossings(List<NodeGroup> layer, int layerIndex, boolean preOrdered,
+            boolean randomize, boolean forward);
 
 }

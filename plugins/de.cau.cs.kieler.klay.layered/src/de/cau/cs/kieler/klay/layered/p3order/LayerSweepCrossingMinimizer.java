@@ -274,11 +274,12 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                     ? nodeRelativePortDistributor : layerTotalPortDistributor;
 
             // The fixed layer is randomized
-            minimizeCrossings(fixedLayer, fixedLayerIndex, forward, false, true);
+            boolean valid = minimizeCrossings(fixedLayer, fixedLayerIndex, forward, false, true);
 
             // Reset last and current run crossing counters
             int curSweepCrossings = Integer.MAX_VALUE;
             int prevSweepCrossings = Integer.MAX_VALUE;
+            boolean prevValid = true;
 
             // Do alternating forward and backward sweeps as long as the number of crossings
             // decreases with respect to the previous sweep.
@@ -288,6 +289,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                 copySweep(curSweep, prevSweep);
                 prevSweepCrossings = curSweepCrossings;
                 curSweepCrossings = 0;
+                prevValid = valid;
                 
                 if (inLayerEdgeCount[fixedLayerIndex] > 0) {
                     curSweepCrossings += countInLayerEdgeCrossings(fixedLayer);
@@ -299,7 +301,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                         NodeGroup[] freeLayer = curSweep[layerIndex];
 
                         portDistributor.calculatePortRanks(fixedLayer, PortType.OUTPUT);
-                        minimizeCrossings(freeLayer, layerIndex, true, !firstSweep, false);
+                        valid = minimizeCrossings(freeLayer, layerIndex, true, !firstSweep, false);
                         curSweepCrossings += countCrossings(fixedLayer, freeLayer);
                         if (inLayerEdgeCount[layerIndex] > 0) {
                             curSweepCrossings += countInLayerEdgeCrossings(freeLayer);
@@ -317,7 +319,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                         NodeGroup[] freeLayer = curSweep[layerIndex];
 
                         portDistributor.calculatePortRanks(fixedLayer, PortType.INPUT);
-                        minimizeCrossings(freeLayer, layerIndex, false, !firstSweep, false);
+                        valid = minimizeCrossings(freeLayer, layerIndex, false, !firstSweep, false);
                         curSweepCrossings += countCrossings(freeLayer, fixedLayer);
                         if (inLayerEdgeCount[layerIndex] > 0) {
                             curSweepCrossings += countInLayerEdgeCrossings(freeLayer);
@@ -335,14 +337,20 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                 firstSweep = false;
                 forward = !forward;
             } while (curSweepCrossings < prevSweepCrossings && curSweepCrossings > 0);
-
+            
+            // Note: if the last sweep did not find a valid ordering, we don't use it
+            // however, if everything fails, use the last result
+            if (run == runCount - 1) {
+                valid = true;
+            }
+            
             // Compare the current result with the best one
             if (curSweepCrossings < bestSweepCrossings || prevSweepCrossings < bestSweepCrossings) {
                 // Restore the previous sweep's ordering if it has become worse
-                if (curSweepCrossings <= prevSweepCrossings) {
+                if (valid && (curSweepCrossings <= prevSweepCrossings)) {
                     copySweep(curSweep, bestSweep);
                     bestSweepCrossings = curSweepCrossings;
-                } else {
+                } else if (prevValid) {
                     copySweep(prevSweep, bestSweep);
                     bestSweepCrossings = prevSweepCrossings;
                 }
@@ -379,8 +387,10 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
      *          layer is taken
      * @param preOrdered whether the nodes of the given layer are already ordered
      * @param randomize whether to randomize all node positions
+     * 
+     * @return true if the underlying heuristic returned true  
      */
-    private void minimizeCrossings(final NodeGroup[] layer, final int layerIndex,
+    private boolean minimizeCrossings(final NodeGroup[] layer, final int layerIndex,
             final boolean forward, final boolean preOrdered, final boolean randomize) {
         List<NodeGroup> nodeGroups = new LinkedList<NodeGroup>();
         for (NodeGroup ng : layer) {
@@ -388,7 +398,8 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
         }
         
         // minimize crossings in the given layer
-        crossminHeuristic.minimizeCrossings(nodeGroups, layerIndex, preOrdered, randomize, forward);
+        boolean valid = crossminHeuristic
+                .minimizeCrossings(nodeGroups, layerIndex, preOrdered, randomize, forward);
         
         // apply the new ordering
         int index = 0;
@@ -397,6 +408,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                 layer[index++] = node.getProperty(Properties.NODE_GROUP);
             }
         }
+        return valid;
     }
 
     // /////////////////////////////////////////////////////////////////////////////
