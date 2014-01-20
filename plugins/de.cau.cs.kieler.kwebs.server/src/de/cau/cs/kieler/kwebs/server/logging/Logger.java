@@ -359,7 +359,9 @@ public final class Logger {
                 } catch (UnknownHostException uh) {
                     Logger.log(Severity.WARNING, "Unable to connect to usage statistics sever.", uh);
                 }
-            } else {
+            } 
+            // if we couldn't create one use the dummy
+            if (usageStats == null) {
                 usageStats = KIELERStatistics.getDummy();
             }
         }
