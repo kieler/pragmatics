@@ -15,8 +15,12 @@ package de.cau.cs.kieler.kwebs.server.service;
 
 import java.util.List;
 
+import de.cau.cs.kieler.kwebs.server.jaxws.ServiceFault_Exception;
 import de.cau.cs.kieler.kwebs.server.layout.GraphLayoutOption;
+import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
+import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
+import de.cau.cs.kieler.kwebs.server.servicedata.ServiceData;
 import de.cau.cs.kieler.statistics.KIELERStatistics.Granularity;
 
 /**
@@ -50,5 +54,36 @@ public class LiveLayoutService extends AbstractService {
                 Granularity.DAY | Granularity.MONTH);
         
         return result;
+    }
+    
+    /**
+     * Returns the layout services meta data as XMI.
+     *  
+     * @return the layout services meta data as XMI.
+     */
+    public ServiceData getServiceData() {
+        return ServerLayoutDataService.getInstance().getServiceDataModel();
+    }
+    
+    /**
+     * Returns the preview image associated with a remotely available layout
+     * algorithm.
+     *  
+     * @param previewImage
+     *            the identifier of the preview image as defined in the servers meta data
+     * @return the preview image as byte array
+     */
+    public byte[] getPreviewImage(final String previewImage) {
+        Logger.log(Severity.DEBUG, "Handling preview image request");
+        try {
+            byte[] result = ServerLayoutDataService.getInstance().getPreviewImage(previewImage);
+            Logger.log(Severity.DEBUG, "Handling preview image request succeeded");
+            return result;
+        } catch (Exception e) {
+            Logger.log(Severity.WARNING, 
+                "Handling preview image request failed: " + e.getMessage(), e
+            );
+        }
+        return null;
     }
 };
