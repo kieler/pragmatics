@@ -13,12 +13,20 @@
  */
 package de.cau.cs.kieler.kwebs.server.web
 
+import com.google.common.collect.Lists
+import com.google.common.collect.Maps
+import com.google.common.io.CharStreams
 import com.sun.net.httpserver.HttpExchange
 import com.sun.net.httpserver.HttpHandler
+import de.cau.cs.kieler.kwebs.server.layout.GraphLayoutOption
 import de.cau.cs.kieler.kwebs.server.service.LiveLayoutService
 import java.io.IOException
+import java.io.InputStreamReader
 import java.net.URLDecoder
+import java.util.Map
+import org.json.JSONException
 import org.json.JSONObject
+
 import sun.misc.BASE64Encoder
 
 /**
@@ -26,16 +34,17 @@ import sun.misc.BASE64Encoder
  * parameters of the query string ('graph' and 'config'). The config parameter should be JSON with
  * available layout options as key value pairs.
  * 
- * 
  * @author uru
  */
 class HTTPLayoutHandler implements HttpHandler {
     
-    val HTTP_OK = 200
-    val HTTP_ERROR = 500 // internal server error
+    private val HTTP_OK = 200
+    private val HTTP_ERROR = 500 // internal server error
     
-    val service = new LiveLayoutService()
+    /** layout service used to call the underlying layout facilities. */
+    private val service = new LiveLayoutService()
     
+    /** cache the jsonized service data. */ 
     private var String cachedServiceData
     
     /**
@@ -48,7 +57,7 @@ class HTTPLayoutHandler implements HttpHandler {
             switch method {
                 case 'OPTION':
                     http.handleCORS
-                case 'GET':
+                case #['GET', 'POST'].contains(method):
                     http.handleGetOrPost
                 default: 
                     http.handleError("Unsupported request method: " 
@@ -78,21 +87,95 @@ class HTTPLayoutHandler implements HttpHandler {
         http.responseBody.close();
     }
 
+    /**
+     * Handle the requests we support.
+     */
     def handleGetOrPost(HttpExchange http) {
-        println("get or post " + http.requestURI)
         val uri = http.requestURI.toString
         switch uri {
-            case '/layout':
-                println("live")
-            case '/layout/serviceData':
+            case uri.startsWith('/layout/serviceData'):
                 http.handleServiceData
             case uri.startsWith('/layout/previewImage'):
                 http.handlePreviewImage
+            case uri.startsWith('/layout'):
+                http.handleLayout
         }
         
         // for any request allow CORS
         http.responseHeaders.add("Access-Control-Allow-Origin", "*")
     }
+    
+    /**
+     * Answer with a layouted graph of the input format.
+     */
+     def handleLayout(HttpExchange http) {
+        
+        var decoded = "";
+        try {
+          decoded = switch http.requestMethod.toUpperCase {
+              case 'GET': 
+                  URLDecoder.decode(http.requestURI.query, "UTF-8")
+              case 'POST': {
+                  val input = CharStreams.toString(new InputStreamReader(http.requestBody));
+                  URLDecoder.decode(input, "UTF-8");
+              }
+          }
+        } catch (IOException e) {
+            http.handleError("Could not decode the passed options data.")
+            return
+        }
+        
+        val params = decoded.getParams
+
+        // the graph
+        val graph = params.get("graph")
+
+        // formats
+        val informat = params.get("iFormat")
+        val outformat = params.get("oFormat")
+
+        // config
+        val config = params.get("config")
+        val opts = Lists.newLinkedList()
+
+        try {
+            val obj = new JSONObject(config)
+            if (obj.length() > 0) {
+                for (String key : JSONObject.getNames(obj)) {
+                    opts.add(new GraphLayoutOption(key, obj.getString(key)))
+                }
+            }
+        } catch (JSONException e) {
+            // e.printStackTrace();
+            http.handleError("The passed configuration data is invalid. It has to be a "
+                    + "comma-seperated list of valid layout options, see "
+                    + "<a href='ProvidedLayout.html'>here</a> for further information on "
+                    + "these options.", e)
+            return
+        }
+
+        // perform the layout
+        var outGraph = ""
+        try {
+            outGraph = service.doLayout(graph, informat, outformat, opts)
+        } catch (Throwable t) {
+            http.handleError("Could not process the input graph, make sure that the "
+                    + "correct input format is selected and the input itself is well-formed.", t)
+            return;
+        }
+
+        // fixes for an svg
+        if (outformat.equals("org.w3.svg")) {
+            outGraph = fixSvg(outGraph)
+        }
+
+        // send the result graph
+        http.responseHeaders.add("Content-Type", "text/plain")
+        http.sendResponseHeaders(HTTP_OK, outGraph.length)
+        val os = http.responseBody
+        os.write(outGraph.bytes)
+        os.close()
+     }
     
     /**
      * Answer with the internal service data, specifying supported layout etc.
@@ -148,17 +231,22 @@ class HTTPLayoutHandler implements HttpHandler {
         os.close()
     }
     
-    
+    /**
+     * @see #handleError(HttpExchange, String, Throwable)
+     */
     def void handleError(HttpExchange http, String text) {
          http.handleError(text, null)
     }
     
+    /**
+     * Returns an error to the requesting client.
+     */
     def void handleError(HttpExchange http, String text, Throwable t) {
        
         val error = '''
           {
-            message: «text.quote»,
-            throwable: «t?.message?.quote ?: "undefined"»
+            "message": «text.quote»,
+            "throwable": «t?.message?.quote ?: "undefined"»
           }'''
 
         // send the response
@@ -173,6 +261,9 @@ class HTTPLayoutHandler implements HttpHandler {
      *  Internal methods
      */
     
+    /**
+     * Transform the internal service data to a json format.
+     */
     private def getServiceDataJson() {
         val data = service.serviceData
         '''
@@ -256,6 +347,36 @@ class HTTPLayoutHandler implements HttpHandler {
      */
     private def quote(String s) {
         JSONObject.quote(s)
+    }
+    
+    /**
+     * Retrieves key/value pairs from the passed query string
+     */
+    private def Map<String, String> getParams(String query) {
+        val Map<String, String> params = Maps.newHashMap();
+
+        query.split("&").forEach [ param |
+            val kv = param.split("=", 2)
+            params.put(kv.get(0), kv.get(1))
+        ]
+
+        return params;
+    }
+
+    /**
+     * FIXME remove this at some point ...
+     * 
+     * The used jquery scripts for dragging and zooming require that the id of the outermost g
+     * element is 'group'.
+     */
+    private def String fixSvg(String graph) {
+        val res3 = graph.substring(graph.indexOf("<svg") - 1, graph.length())
+        val res4 = res3.replaceFirst("width=", "w=")
+        val res5 = res4.replaceFirst("height=", "w=")
+        val sb = new StringBuffer(res5)
+        sb.insert(sb.indexOf("<g") + 2, " id=\"group\"")
+
+        return sb.toString()
     }
 
 }

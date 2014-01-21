@@ -160,8 +160,8 @@ class LiveProvider extends AbstractProvider {
 					var oFormat = $('#outputFormat > option:selected').val();
 					
 					$.ajax({
-						type: 'GET',
-						url: '/live', 
+						type: 'POST',
+						url: '/layout', 
 						data: {
 							graph: graph,
 							config: config,
@@ -191,7 +191,12 @@ class LiveProvider extends AbstractProvider {
 							// hide the graph section
 							$('#resGraph').hide();
 							// show errorDiv
-							$('#errorDiv').html(error.responseText);
+							var errorJson = JSON.parse(error.responseText);
+							var errorPre = "<h4>Error:</h4> " + errorJson.message;
+							if (errorJson.throwable) {
+							    errorPre += "<br /><br /><pre>" + errorJson.throwable + "</pre>";    
+							}
+							$('#errorDiv').html(errorPre);
 							$('#errorDiv').show();	
 						}
 					});

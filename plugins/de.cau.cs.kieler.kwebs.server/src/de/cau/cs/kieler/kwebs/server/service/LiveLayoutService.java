@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
- * Copyright 2013 by
+ * Copyright 2014 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -15,7 +15,6 @@ package de.cau.cs.kieler.kwebs.server.service;
 
 import java.util.List;
 
-import de.cau.cs.kieler.kwebs.server.jaxws.ServiceFault_Exception;
 import de.cau.cs.kieler.kwebs.server.layout.GraphLayoutOption;
 import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
@@ -36,11 +35,17 @@ public class LiveLayoutService extends AbstractService {
     /**
      * @see AbstractService#layout(String, String, String, List)
      * 
+     * Does remote layout on a given graph in serialized form.
+     *  
      * @param serializedGraph
+     *            the serialized graph model
      * @param informat
+     *            identifier for the input graphs meta model and form of serialization {@see Formats}
      * @param outformat
+     *            optional identifier for the output graphs meta model and form of serialization
      * @param options
-     * @return
+     *            an optional list of layout options
+     * @return the graph which was layout done on in the same serialization as the given graph
      */
     public String doLayout(final String serializedGraph, final String informat,
             final String outformat, final List<GraphLayoutOption> options) {
