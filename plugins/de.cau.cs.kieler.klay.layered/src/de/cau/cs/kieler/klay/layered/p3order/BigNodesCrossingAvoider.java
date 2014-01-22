@@ -40,13 +40,63 @@ public class BigNodesCrossingAvoider {
 
     // CHECKSTYLEOFF MethodLength
     /**
-     * TODO document
-     * 
      * Precondition: Layer is sorted according to barycenter values.
      * 
      * Postcondition: If true is returned, the layer is sorted according to the possibly altered
      * barycenter values.
      * 
+     * <h2>Problem Description</h2>
+     * The problem with splitting big nodes is that this allows edges to be routed vertically
+     * between the created dummy nodes. When merging the dummies again, such routings yield
+     * node/edge overlaps. As shown by Friedrich and Schreiber
+     * "Flexible layering in hierarchical drawings with nodes of arbitrary size" (2004) it is not
+     * always possible to avoid such node/edge overlaps. However, we try our best to avoid them as
+     * much as possible.
+     * 
+     * <h2>Method</h2>
+     * The idea of this method is to use an ordering of the layer's nodes, produced by the barycenter 
+     * heuristic for 2-layer crossing minimization and adjust the barycenter values as few as possible 
+     * to remove existing overlaps. 
+     * 
+     * For this, we compare every big node edge 'e1' (an edge connecting two big node dummies, including
+     * the initial big node element) between two layers and check if it intersects another edge 'e2'.
+     * If such an edge is found, we move the node of 'e2' that is located on the non-fixed layer to
+     * the side (above or below) of the big node edge on which the fixed node of 'e2' is located.
+     * As possibly multiple edges have to be moved, we care to retain their order. To illustrate, 
+     * consider the following figure where i would be the fixed layer during a backward sweep. 
+     * 'x' indicates big node dummies, all other letters stand for arbitrary nodes. Both edges 
+     * (a-c) and (b-d) have to be adjusted, thus c and d are pulled above x. While doing so it is 
+     * guaranteed that c remains above of d. Otherwise unnecessary edge crossings might be introduced.   
+     * 
+     * <pre>
+     * i      j         i      j 
+     * a---.            a---.
+     * y---|--y         y---|--y
+     * b--.|            b--.°--c
+     *    ||               °---d
+     * x--||--x         x------x
+     *    ||
+     *    |°--c
+     *    °---d
+     * </pre>
+     *  
+     *  
+     * <h2>Unavoidable crossings</h2>
+     * An adjustment of the barycenter values, as descriped above, is not always possible.
+     * As an example consider the following scenario, where 'o' indicates usual nodes and 'x' indicates 
+     * big node dummies. During a 'forward' sweep layer j would be fixed and the bottom left node can  
+     * be moved above the big node dummy. However, during a 'backward' sweep layer i is fixed and the 
+     * top right node cannot be moved to a position avoiding a crossing. In such an case the method
+     * returns false.
+     *  
+     * <pre>
+     *  i     j
+     *  o--.--o
+     *     |
+     *  x--|--x
+     *     |
+     *  o--i
+     * </pre>
      * 
      * @param layer
      *            the current layer's node groups.
@@ -216,6 +266,24 @@ public class BigNodesCrossingAvoider {
     /**
      * Precondition: The layer has to be sorted according to the barycenter values.
      * 
+     * <h2>Problem Description</h2>
+     * We allow in-layer edges, e.g to handle inverted ports. Such edges usually connect 'regular'
+     * nodes with one ore more dummy nodes within the same layer. During an edge routing step the
+     * space occupied by these dummy nodes allows to properly route the edge 'around' the node.
+     * However, the 'regular' and its dummy nodes are not forced to be adjacent within the layer
+     * as this might reduce the number of crossings. In the presence of big node dummies this
+     * can be a problem as soon as a big node dummy is located 'between' a 'regular' node 
+     * and one of its dummies. In such a scenario an edge will cross the later on merged big node.
+     * 
+     * 
+     * <h2>Method</h2> 
+     * We solve this issue by introducing in-layer ordering constraints. To leave as much freedom
+     * as possible to the barycenter heuristic, we apply the heuristic first and then check for 
+     * violations in the resulting ordering. A violation is every big node located as described above.
+     * If a violation is found, an in-layer constraint is created involving the big node dummy,
+     * the regular node, and its (inverted) dummy.   
+     * 
+     * 
      * This method iterates through all nodes of the layer top-down. In-layer edges are recorded as
      * soon as they 'open'. As soon as a part of a big node is reached (big node dummy or first big
      * node element) the 'open' edges are checked. For each open edge, two constraints are
@@ -223,7 +291,7 @@ public class BigNodesCrossingAvoider {
      * big node within the layer. The decision of where to place them is based on the current
      * position of the 'normal' node (one node of an in-layer edge is always a dummy node).
      * 
-     * Remark: Special care has to be taken for the following: 
+     * Remark: Special care has to be taken for the following cases: 
      *  - The big node itself is part of the in-layer edge. 
      *  - In-layer edges 'around' the first or last part of a big node might not
      *    require constraints (WEST OUT, first; EAST IN, last).
