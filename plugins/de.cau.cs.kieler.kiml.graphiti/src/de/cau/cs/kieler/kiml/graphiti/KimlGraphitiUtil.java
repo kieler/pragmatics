@@ -44,8 +44,6 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.kiml.config.LayoutContext;
-import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
@@ -88,12 +86,6 @@ public final class KimlGraphitiUtil {
     /** the offset to add for all coordinates. */
     public static final IProperty<KVector> COORDINATE_OFFSET = new Property<KVector>(
             "graphiti.coordinateOffset");
-
-    /**
-     * the volatile layout configurator for static properties such as minimal node sizes.
-     */
-    public static final IProperty<VolatileLayoutConfig> STATIC_CONFIG
-            = new Property<VolatileLayoutConfig>("graphiti.staticLayoutConfig");
 
     /**
      * Set up a label for a node or a port.
@@ -249,7 +241,6 @@ public final class KimlGraphitiUtil {
         graphMap.put(edge, connection);
 
         // find labels for the connection
-        VolatileLayoutConfig staticConfig = mapping.getProperty(STATIC_CONFIG);
         for (ConnectionDecorator decorator : connection.getConnectionDecorators()) {
             GraphicsAlgorithm ga = decorator.getGraphicsAlgorithm();
             if (ga instanceof AbstractText) {
@@ -269,8 +260,7 @@ public final class KimlGraphitiUtil {
                         placement = EdgeLabelPlacement.TAIL;
                     }
                 }
-                staticConfig.setValue(LayoutOptions.EDGE_LABEL_PLACEMENT, label,
-                        LayoutContext.GRAPH_ELEM, placement);
+                labelLayout.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT, placement);
 
                 // set label position
                 KVector labelPos;

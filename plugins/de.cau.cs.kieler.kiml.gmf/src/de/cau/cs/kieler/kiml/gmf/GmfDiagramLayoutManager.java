@@ -79,7 +79,6 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Maybe;
-import de.cau.cs.kieler.kiml.config.LayoutContext;
 import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
@@ -130,10 +129,6 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
     /** the offset to add for all coordinates. */
     public static final IProperty<KVector> COORDINATE_OFFSET = new Property<KVector>(
             "gmf.coordinateOffset");
-    
-    /** the volatile layout config for static properties such as minimal node sizes. */
-    public static final IProperty<VolatileLayoutConfig> STATIC_CONFIG
-            = new Property<VolatileLayoutConfig>("gmf.staticLayoutConfig");
     
     /**
      * Calculates the absolute bounds of the given figure.
@@ -441,8 +436,10 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
             mapping.setProperty(DIAGRAM_EDITOR, diagramEditor);
         }
         
-        // create a layout configuration
-        mapping.getLayoutConfigs().add(mapping.getProperty(STATIC_CONFIG));
+        // create a layout configurator from the properties that were set while building
+        mapping.getLayoutConfigs().add(VolatileLayoutConfig.fromProperties(mapping.getLayoutGraph(),
+                GmfLayoutConfig.PRIORITY - 1));
+        // add the layout configurator that reads the styles attached to the notation model
         mapping.getLayoutConfigs().add(layoutConfig);
 
         return mapping;
@@ -501,7 +498,6 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
             final IGraphicalEditPart layoutRootPart, final List<ShapeNodeEditPart> selection) {
         LayoutMapping<IGraphicalEditPart> mapping = new LayoutMapping<IGraphicalEditPart>(this);
         mapping.setProperty(CONNECTIONS, new LinkedList<ConnectionEditPart>());
-        mapping.setProperty(STATIC_CONFIG, new VolatileLayoutConfig(GmfLayoutConfig.PRIORITY - 1));
         mapping.setParentElement(layoutRootPart);
 
         // find the diagram edit part
@@ -762,11 +758,8 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
         // determine minimal size of the node
         try {
             Dimension minSize = nodeFigure.getMinimumSize();
-            VolatileLayoutConfig staticConfig = mapping.getProperty(STATIC_CONFIG);
-            staticConfig.setValue(LayoutOptions.MIN_WIDTH, childLayoutNode, LayoutContext.GRAPH_ELEM,
-                    (float) minSize.width);
-            staticConfig.setValue(LayoutOptions.MIN_HEIGHT, childLayoutNode, LayoutContext.GRAPH_ELEM,
-                    (float) minSize.height);
+            nodeLayout.setProperty(LayoutOptions.MIN_WIDTH, (float) minSize.width);
+            nodeLayout.setProperty(LayoutOptions.MIN_HEIGHT, (float) minSize.height);
         } catch (SWTException exception) {
             // getMinimumSize() can cause this exception when fonts are disposed for some reason;
             // ignore exception and leave the default minimal size
@@ -903,11 +896,8 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                 Dimension size = labelFigure.getPreferredSize();
                 labelLayout.setSize(size.width, size.height);
                 if (font != null && !font.isDisposed()) {
-                    VolatileLayoutConfig staticConfig = mapping.getProperty(STATIC_CONFIG);
-                    staticConfig.setValue(LayoutOptions.FONT_NAME, label, LayoutContext.GRAPH_ELEM,
-                            font.getFontData()[0].getName());
-                    staticConfig.setValue(LayoutOptions.FONT_SIZE, label, LayoutContext.GRAPH_ELEM,
-                            font.getFontData()[0].getHeight());
+                    labelLayout.setProperty(LayoutOptions.FONT_NAME, font.getFontData()[0].getName());
+                    labelLayout.setProperty(LayoutOptions.FONT_SIZE, font.getFontData()[0].getHeight());
                 }
             } catch (SWTException exception) {
                 // ignore exception and leave the label size to (0, 0)
@@ -1104,7 +1094,6 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
     protected void processEdgeLabels(final LayoutMapping<IGraphicalEditPart> mapping,
             final ConnectionEditPart connection, final KEdge edge,
             final EdgeLabelPlacement placement, final KVector offset) {
-        VolatileLayoutConfig staticConfig = mapping.getProperty(STATIC_CONFIG);
         /*
          * ars: source and target is exchanged when defining it in the gmfgen file. So if Emma sets
          * a label to be placed as target on a connection, then the label will show up next to the
@@ -1154,27 +1143,27 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                     if (placement == EdgeLabelPlacement.UNDEFINED) {
                         switch (labelEditPart.getKeyPoint()) {
                         case ConnectionLocator.SOURCE:
-                            staticConfig.setValue(LayoutOptions.EDGE_LABEL_PLACEMENT, label,
-                                    LayoutContext.GRAPH_ELEM, EdgeLabelPlacement.HEAD);
+                            labelLayout.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
+                                    EdgeLabelPlacement.HEAD);
                             break;
                         case ConnectionLocator.MIDDLE:
-                            staticConfig.setValue(LayoutOptions.EDGE_LABEL_PLACEMENT, label,
-                                    LayoutContext.GRAPH_ELEM, EdgeLabelPlacement.CENTER);
+                            labelLayout.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
+                                    EdgeLabelPlacement.CENTER);
                             break;
                         case ConnectionLocator.TARGET:
-                            staticConfig.setValue(LayoutOptions.EDGE_LABEL_PLACEMENT, label,
-                                    LayoutContext.GRAPH_ELEM, EdgeLabelPlacement.TAIL);
+                            labelLayout.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
+                                    EdgeLabelPlacement.TAIL);
                             break;
                         }
                     } else {
-                        staticConfig.setValue(LayoutOptions.EDGE_LABEL_PLACEMENT, label,
-                                LayoutContext.GRAPH_ELEM, placement);
+                        labelLayout.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
+                                placement);
                     }
                     Font font = labelFigure.getFont();
                     if (font != null && !font.isDisposed()) {
-                        staticConfig.setValue(LayoutOptions.FONT_NAME, label, LayoutContext.GRAPH_ELEM,
+                        labelLayout.setProperty(LayoutOptions.FONT_NAME,
                                 font.getFontData()[0].getName());
-                        staticConfig.setValue(LayoutOptions.FONT_SIZE, label, LayoutContext.GRAPH_ELEM,
+                        labelLayout.setProperty(LayoutOptions.FONT_SIZE,
                                 font.getFontData()[0].getHeight());
                     }
                     labelLayout.setXpos(labelBounds.x - (float) offset.x);

@@ -17,11 +17,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
@@ -30,6 +32,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 
 /**
  * A layout configurator that can be used to generate on-the-fly layout options.
@@ -47,6 +50,33 @@ public class VolatileLayoutConfig implements IMutableLayoutConfig {
     
     /** the default priority for volatile layout configurators. */
     public static final int DEFAULT_PRIORITY = 100;
+    
+    /**
+     * Create a volatile layout configurator from the properties attached to the given graph.
+     * 
+     * @param graph a graph
+     * @param priority the priority
+     * @return a layout configurator that reflects the current properties of the graph
+     */
+    @SuppressWarnings("unchecked")
+    public static VolatileLayoutConfig fromProperties(final KNode graph, final int priority) {
+        VolatileLayoutConfig config = new VolatileLayoutConfig(priority);
+        Iterator<KGraphElement> elementIter = Iterators.filter(graph.eAllContents(),
+                KGraphElement.class);
+        while (elementIter.hasNext()) {
+            KGraphElement element = elementIter.next();
+            KLayoutData layoutData = element.getData(KLayoutData.class);
+            if (layoutData != null) {
+                for (Map.Entry<IProperty<?>, Object> entry : layoutData.getProperties()) {
+                    if (entry.getKey() != null && entry.getValue() != null) {
+                        config.setValue((IProperty<Object>) entry.getKey(), element,
+                                LayoutContext.GRAPH_ELEM, entry.getValue());
+                    }
+                }
+            }
+        }
+        return config;
+    }
 
     /** map of focus objects and property identifiers to their values. */
     private final Map<Object, Map<IProperty<Object>, Object>> focusOptionMap = Maps.newHashMap();
@@ -168,10 +198,11 @@ public class VolatileLayoutConfig implements IMutableLayoutConfig {
      * @param value the new layout option value
      * @return the instance on which the method was called, for chaining multiple method calls
      * @param <T> the type of the layout option
+     * @param <C> the type of the layout context key
      */
     @SuppressWarnings("unchecked")
-    public <T> VolatileLayoutConfig setValue(final IProperty<? super T> option, final Object contextObj,
-            final IProperty<?> contextKey, final T value) {
+    public <T, C> VolatileLayoutConfig setValue(final IProperty<? super T> option, final C contextObj,
+            final IProperty<? super C> contextKey, final T value) {
         contextKeys.add(contextKey);
         
         Map<IProperty<Object>, Object> contextOptions = focusOptionMap.get(contextObj);
