@@ -339,13 +339,15 @@ public final class KimlGraphitiUtil {
      * @return a visible graphics algorithm
      */
     public static GraphicsAlgorithm findVisibleGa(final GraphicsAlgorithm graphicsAlgorithm) {
-        if (graphicsAlgorithm.getLineVisible() || graphicsAlgorithm.getFilled()) {
-            return graphicsAlgorithm;
-        }
-        for (GraphicsAlgorithm ga : graphicsAlgorithm.getGraphicsAlgorithmChildren()) {
-            GraphicsAlgorithm result = findVisibleGa(ga);
-            if (result != null) {
-                return result;
+        if (graphicsAlgorithm != null) {
+            if (graphicsAlgorithm.getLineVisible() || graphicsAlgorithm.getFilled()) {
+                return graphicsAlgorithm;
+            }
+            for (GraphicsAlgorithm ga : graphicsAlgorithm.getGraphicsAlgorithmChildren()) {
+                GraphicsAlgorithm result = findVisibleGa(ga);
+                if (result != null) {
+                    return result;
+                }
             }
         }
         return null;
@@ -364,7 +366,7 @@ public final class KimlGraphitiUtil {
         int top = 0;
         int right = 0;
         int bottom = 0;
-        while (visibleGa != graphicsAlgorithm) {
+        while (visibleGa != null && visibleGa != graphicsAlgorithm) {
             left += visibleGa.getX();
             top += visibleGa.getY();
             GraphicsAlgorithm parentGa = visibleGa.getParentGraphicsAlgorithm();
