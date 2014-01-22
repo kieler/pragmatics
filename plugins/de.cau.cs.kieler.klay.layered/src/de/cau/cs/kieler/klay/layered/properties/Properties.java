@@ -281,6 +281,16 @@ public final class Properties {
     /** A post processing function that is called during big nodes post processing. */
     public static final IProperty<Function<Void, Void>> BIGNODES_POST_PROCESS =
             new Property<Function<Void, Void>>("de.cau.cs.kieler.klay.layered.postProcess", null);
+    
+    /**
+     * Indicates that a node {@code x} may only appear inside a layer before the node {@code y} the
+     * property is set to. That is, having {@code x} appear after {@code y} would violate this
+     * constraint. This property only makes sense for nodes.
+     */
+    public static final IProperty<List<LNode>> BIG_NODE_IN_LAYER_SUCCESSOR_CONSTRAINTS =
+            new Property<List<LNode>>(
+                    "de.cau.cs.kieler.klay.layered.bigNodeInLayerSuccessorConstraint",
+                    new ArrayList<LNode>());
 
     // /////////////////////////////////////////////////////////////////////////////
     // USER INTERFACE OPTIONS

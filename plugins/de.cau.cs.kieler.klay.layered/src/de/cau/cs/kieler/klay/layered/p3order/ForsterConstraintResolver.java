@@ -17,10 +17,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
 
 import de.cau.cs.kieler.core.util.Pair;
-
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
@@ -92,7 +92,10 @@ public final class ForsterConstraintResolver implements IConstraintResolver {
             LNode node = nodeGroup.getNode();
 
             // Add the constraints given by the vertex's node
-            for (LNode successor : node.getProperty(Properties.IN_LAYER_SUCCESSOR_CONSTRAINTS)) {
+            Iterable<LNode> successorConstraints = Iterables.concat(
+                    node.getProperty(Properties.IN_LAYER_SUCCESSOR_CONSTRAINTS), 
+                    node.getProperty(Properties.BIG_NODE_IN_LAYER_SUCCESSOR_CONSTRAINTS));
+            for (LNode successor : successorConstraints) {
                 NodeGroup successorNodeGroup = successor.getProperty(Properties.NODE_GROUP);
                 nodeGroup.getOutgoingConstraints().add(successorNodeGroup);
                 successorNodeGroup.incomingConstraintsCount++;

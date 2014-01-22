@@ -13,19 +13,13 @@
  */
 package de.cau.cs.kieler.klay.layered.p3order;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Random;
 
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-
-import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
-import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -47,6 +41,8 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
     private Random random;
     /** the constraint resolver for ordering constraints. */
     private IConstraintResolver constraintResolver;
+    /** avoids node/edge crossings for bignodes. */
+    private BigNodesCrossingAvoider bignodeCrossingAvoider = new BigNodesCrossingAvoider();
 
     /**
      * Constructs a Barycenter heuristic for crossing minimization between two layers.
@@ -80,17 +76,28 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
             calculateBarycenters(layer, forward);
             fillInUnknownBarycenters(layer, preOrdered);
         }
-    
-        // adjust barycenter values to avoid edge/node crossings in presence of big nodes 
-        boolean valid = adjustBigNodeBarycenters(layer, forward);
-        if (!valid) {
-            return false; 
-        }
         
         if (layer.size() > 1) {
             // Sort the vertices according to their barycenters
             Collections.sort(layer);
-    
+
+            // ## Bignode addition
+            
+            // adjust barycenter values to avoid edge/node crossings in presence of big nodes
+            boolean valid = bignodeCrossingAvoider.adjustBigNodeBarycenters(layer, forward);
+            if (!valid) {
+                return false;
+            }
+            Collections.sort(layer);
+            
+            // Generate in-layer successor constraints to avoid node/edge crossings of 
+            // big nodes and in-layer edges
+            // We do this as the LAST thing, as we want to give as much freedom as possible
+            // to the two layer cross reduction!
+            bignodeCrossingAvoider.generateInLayerConstraints(layer);
+            
+            // ## Bignode addition END
+
             // Resolve ordering constraints
             constraintResolver.processConstraints(layer, layerIndex);
         }
@@ -98,174 +105,7 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
         return true;
     }
     
-    /**
-     * 
-     * TODO 
-     *  - can bignodes be in node groups with other nodes?
-     *  - consider the initial bignode properly
-     * 
-     * @param nodeGroups
-     * @param forward
-     */
-    private boolean adjustBigNodeBarycenters(final List<NodeGroup> nodeGroups, final boolean forward) {
-
-        // sort the list temporarily so that we can easily access a
-        // big nodes predecessor (in terms of barycenter value)
-        ArrayList<NodeGroup> tmpNodeGroups = Lists.newArrayList(nodeGroups);
-        Collections.sort(tmpNodeGroups);
-        // System.out.println("New Layer (" + (forward ? "forward" : "backward") + ") " +
-        // tmpNodeGroups);
-
-        // treat all bignodes of the current layer
-        for (int i = 0; i < tmpNodeGroups.size(); i++) {
-            NodeGroup nodeGroup = tmpNodeGroups.get(i);
-
-            boolean isBignode =
-                    (nodeGroup.getNode().getProperty(Properties.NODE_TYPE) == NodeType.BIG_NODE);
-            boolean isInitialBignode = nodeGroup.getNode().getProperty(Properties.BIG_NODE_INITIAL);
-
-            // all bignode groups will contain only one node
-            if (nodeGroup.getNodes().length == 1
-                    // during backward sweep also consider the initial big node
-                    && (isBignode || (isInitialBignode && !forward))) {
-
-                LNode bigNode = nodeGroup.getNode();
-
-                // get the opposite element of the big node chain
-                Iterable<LEdge> bigNodeEdges =
-                        forward ? bigNode.getIncomingEdges() : bigNode.getOutgoingEdges();
-                if (Iterables.isEmpty(bigNodeEdges)) {
-                    continue;
-                }
-                LEdge bigNodeEdge = Iterables.get(bigNodeEdges, 0);
-
-                // the two node groups of the big node
-                NodeGroup bigNodeLayerGroup = nodeGroup;
-                NodeGroup bigNodePreGroup =
-                        (forward ? bigNodeEdge.getSource().getNode() : bigNodeEdge.getTarget()
-                                .getNode()).getProperty(Properties.NODE_GROUP);
-
-                // during a backward sweep, don't treat the last node  
-                if (!forward && bigNodePreGroup.getNode().getProperty(Properties.NODE_TYPE) 
-                        != NodeType.BIG_NODE) {
-                    continue;
-                }
-                
-                // now compare all edges with the big node edge for interleaving
-                for (NodeGroup innerGroup : nodeGroups) {
-                    if (nodeGroup.equals(innerGroup)) {
-                        continue; // not with ourself
-                    }
-
-                    LNode layerNode = innerGroup.getNode();
-                    NodeGroup layerGroup = innerGroup;
-
-                    // TODO i have to get all edges of all nodes contained in the node group here
-                    // get all edges for the current node of the current layer
-                    Iterable<LEdge> layerEdges =
-                            forward ? layerNode.getIncomingEdges() : layerNode.getOutgoingEdges();
-
-                    double delta = 0;
-
-                    for (LEdge layerEdge : layerEdges) {
-
-                        // ignore in-layer edges
-                        if (layerEdge.getSource().getNode().getLayer().getIndex() == layerEdge
-                                .getTarget().getNode().getLayer().getIndex()) {
-                            continue;
-                        }
-
-                        // the edge's attached node group on the other layer
-                        NodeGroup preLayerGroup =
-                                (forward ? layerEdge.getSource().getNode() : layerEdge.getTarget()
-                                        .getNode()).getProperty(Properties.NODE_GROUP);
-
-                        // interleaving?
-                        if ((bigNodeLayerGroup.barycenter > layerGroup.barycenter 
-                                && bigNodePreGroup.barycenter < preLayerGroup.barycenter)) {
-                            // CASE 1. big node's barycenter is higher
-
-                            // barycenter value diff of n_i and n_i+1
-                            float dp = 2f; // a default diff in case this is the layer's first node
-                            if (tmpNodeGroups.size() > i + 1) {
-                                dp =
-                                        1 + tmpNodeGroups.get(i + 1).barycenter
-                                                - bigNodeLayerGroup.barycenter;
-                            }
-                            float di = 1 + bigNodeLayerGroup.barycenter - layerGroup.barycenter;
-
-                            // simple test
-                            // layerGroup.barycenter +=
-                            // Math.abs(layerGroup.barycenter - bigNodeLayerGroup.barycenter) +
-                            // 0.02f;
-
-                            // add to big node's barycenter
-                            // double old = layerGroup.barycenter;
-                            layerGroup.barycenter = bigNodeLayerGroup.barycenter + (dp / di);
-
-                            if (bigNodeLayerGroup.barycenter - layerGroup.barycenter > delta) {
-                                // couldn't find a valid alteration for this node
-                                return false;
-                            }
-
-                            // System.out.println("Adapting1: " + bigNode + " " + layerNode + " "
-                            // + bigNodeLayerGroup.barycenter + " " + layerGroup.barycenter +
-                            // " old(" + old + ")");
-                            // System.out.println("\t\tComparing: PreLayer ("
-                            // + bigNodePreGroup.getNode() + ", " + preLayerGroup.getNode()
-                            // + ") Values " + bigNodePreGroup.barycenter + " "
-                            // + preLayerGroup.barycenter);
-                            // System.out.println("\t\tRelevant Edges " + layerEdge + " "
-                            // + layerEdge.getSource().getNode().getLayer().id + " "
-                            // + layerEdge.getTarget().getNode().getLayer().id);
-
-                            // remember the delta between the big node and the new node position
-                            delta += bigNodeLayerGroup.barycenter - layerGroup.barycenter;
-
-                        } else if (bigNodeLayerGroup.barycenter < layerGroup.barycenter
-                                && bigNodePreGroup.barycenter > preLayerGroup.barycenter) {
-                            // CASE 2. big node's barycenter is smaller
-
-                            float dp = 2f; // a default diff in case this is the layer's last node
-                            if (i > 0) {
-                                dp =
-                                        1 + bigNodeLayerGroup.barycenter
-                                                - tmpNodeGroups.get(i - 1).barycenter;
-                            }
-                            float di = 1 + layerGroup.barycenter - bigNodeLayerGroup.barycenter;
-
-                            // simple test
-                            // layerGroup.barycenter -=
-                            // Math.abs(layerGroup.barycenter - bigNodeLayerGroup.barycenter) -
-                            // 0.02f;
-
-                            // subtract from big node's barycenter
-                            layerGroup.barycenter = bigNodeLayerGroup.barycenter - (dp / di);
-
-                            if (bigNodeLayerGroup.barycenter - layerGroup.barycenter < delta) {
-                                // couldn't find a valid alteration for this node
-                                return false;
-                            }
-
-                            // System.out.println("Adapting2: " + bigNode + " " + layerNode + " " +
-                            // layerGroup.barycenter);
-
-                            // remember the delta between the big node and the new node position
-                            delta -= bigNodeLayerGroup.barycenter - layerGroup.barycenter;
-                        }
-                        // }
-
-                        // System.out.println("DELTA " +delta);
-
-                    }
-
-                }
-
-            }
-        }
-
-        return true;
-    }
+   
 
     /**
      * Randomize the order of nodes for the given layer.

@@ -279,7 +279,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
             // Reset last and current run crossing counters
             int curSweepCrossings = Integer.MAX_VALUE;
             int prevSweepCrossings = Integer.MAX_VALUE;
-            boolean prevValid = true;
+            boolean prevValid = false;
 
             // Do alternating forward and backward sweeps as long as the number of crossings
             // decreases with respect to the previous sweep.
@@ -289,7 +289,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                 copySweep(curSweep, prevSweep);
                 prevSweepCrossings = curSweepCrossings;
                 curSweepCrossings = 0;
-                prevValid = valid;
+                prevValid = run > 0 && valid;
                 
                 if (inLayerEdgeCount[fixedLayerIndex] > 0) {
                     curSweepCrossings += countInLayerEdgeCrossings(fixedLayer);
@@ -301,7 +301,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                         NodeGroup[] freeLayer = curSweep[layerIndex];
 
                         portDistributor.calculatePortRanks(fixedLayer, PortType.OUTPUT);
-                        valid = minimizeCrossings(freeLayer, layerIndex, true, !firstSweep, false);
+                        valid &= minimizeCrossings(freeLayer, layerIndex, true, !firstSweep, false);
                         curSweepCrossings += countCrossings(fixedLayer, freeLayer);
                         if (inLayerEdgeCount[layerIndex] > 0) {
                             curSweepCrossings += countInLayerEdgeCrossings(freeLayer);
@@ -319,7 +319,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                         NodeGroup[] freeLayer = curSweep[layerIndex];
 
                         portDistributor.calculatePortRanks(fixedLayer, PortType.INPUT);
-                        valid = minimizeCrossings(freeLayer, layerIndex, false, !firstSweep, false);
+                        valid &= minimizeCrossings(freeLayer, layerIndex, false, !firstSweep, false);
                         curSweepCrossings += countCrossings(freeLayer, fixedLayer);
                         if (inLayerEdgeCount[layerIndex] > 0) {
                             curSweepCrossings += countInLayerEdgeCrossings(freeLayer);
@@ -342,6 +342,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
             // however, if everything fails, use the last result
             if (run == runCount - 1) {
                 valid = true;
+                prevValid = true;
             }
             
             // Compare the current result with the best one
