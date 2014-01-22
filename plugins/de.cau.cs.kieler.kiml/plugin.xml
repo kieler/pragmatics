@@ -521,6 +521,17 @@
      </layoutOption>
      <layoutOption
            advanced="true"
+           appliesTo="nodes"
+           default="1f"
+           description="The scaling factor to be applied to the corresponding node in recursive layout."
+           id="de.cau.cs.kieler.scaleFactor"
+           lowerBound="0.1f"
+           name="Scale Factor"
+           type="float"
+           upperBound="10f">
+     </layoutOption>
+     <layoutOption
+           advanced="true"
            appliesTo="parents"
            default="false"
            description="Whether the zoom level shall be set to view the whole diagram after layout"

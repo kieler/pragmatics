@@ -13,9 +13,13 @@
  */
 package de.cau.cs.kieler.kiml;
 
+import com.google.common.collect.Iterables;
+
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.GraphFeature;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -87,6 +91,25 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                 nodeCount = layoutNode.getChildren().size();
                 for (KNode child : layoutNode.getChildren()) {
                     layoutRecursively(child, progressMonitor);
+
+                    final float scalingFactor =
+                            child.getData(KLayoutData.class).getProperty(LayoutOptions.SCALE_FACTOR);
+                    if (scalingFactor == 1.0) {
+                        continue;
+                    }
+
+                    final KShapeLayout shapeLayout = child.getData(KShapeLayout.class);
+                    shapeLayout.setSize(scalingFactor * shapeLayout.getWidth(),
+                            scalingFactor * shapeLayout.getHeight());
+
+                    for (KGraphElement kge : Iterables.concat(child.getPorts(), child.getLabels())) {
+                        final KShapeLayout kgeLayout = kge.getData(KShapeLayout.class);
+                        kgeLayout.setPos(scalingFactor * kgeLayout.getXpos(),
+                                scalingFactor * kgeLayout.getYpos());
+
+                        kgeLayout.setSize(scalingFactor * kgeLayout.getWidth(),
+                                scalingFactor * kgeLayout.getHeight());
+                    }
                 }
             }
 
