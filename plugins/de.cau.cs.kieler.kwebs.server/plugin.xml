@@ -46,6 +46,10 @@
             implementation="de.cau.cs.kieler.kwebs.server.web.LiveLayoutHandler"
             path="/live">
       </supportHandler>
+      <supportHandler
+            implementation="de.cau.cs.kieler.kwebs.server.web.HTTPLayoutHandler"
+            path="/layout">
+      </supportHandler>
    </extension>
    <extension
          point="de.cau.cs.kieler.kwebs.server.logging">

@@ -13,6 +13,17 @@
       </package>
    </extension>
    <extension
+         point="org.eclipse.emf.ecore.extension_parser">
+      <parser
+            class="de.cau.cs.kieler.kiml.util.KGraphResourceFactory"
+            type="kgx">
+      </parser>
+      <parser
+            class="de.cau.cs.kieler.kiml.util.KGraphResourceFactory"
+            type="kgraph">
+      </parser>
+   </extension>
+   <extension
          point="de.cau.cs.kieler.kiml.layoutProviders">
       <category
             id="de.cau.cs.kieler"
@@ -472,7 +483,7 @@
      </layoutOption>
      <layoutOption
            advanced="true"
-           appliesTo="parents,nodes,edges,ports,labels"
+           appliesTo="nodes,edges,ports,labels"
            default="false"
            description="Indicates that no layout should be done for the diagram part"
            id="de.cau.cs.kieler.noLayout"

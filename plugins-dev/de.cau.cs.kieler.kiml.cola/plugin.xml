@@ -60,6 +60,9 @@
          <knownOption
                option="de.cau.cs.kieler.kiml.cola.idealEdgeLengths">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.cola.considerPrevious">
+         </knownOption>
       </layoutAlgorithm>
       <category
             id="de.cau.cs.kieler.kiml.categories.cola"
@@ -96,6 +99,14 @@
             id="de.cau.cs.kieler.type.cola"
             name="Constrained">
       </layoutType>
+      <layoutOption
+            appliesTo="parents"
+            default="false"
+            description="If activated, prior node positons are considered during the layout."
+            id="de.cau.cs.kieler.kiml.cola.considerPrevious"
+            name="Previous Node Positions"
+            type="boolean">
+      </layoutOption>
    </extension>
 
 </plugin>
