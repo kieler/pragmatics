@@ -22,6 +22,7 @@ import java.util.Set;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -511,6 +512,40 @@ public final class KimlUtil {
         nodeLayout.setProperty(LayoutOptions.SIZE_CONSTRAINT, SizeConstraint.fixed());
         
         return new KVector(widthRatio, heightRatio);
+    }
+
+    /**
+     * Applies the scaling factor to <code>node</code>'s size data if
+     * {@link LayoutOptions#SCALE_FACTOR} is set, and updates the layout data of <code>node</code>'s
+     * ports and labels correspondingly.<br>
+     * <b>Note:</b> The scaled layout data won't be reverted during the layout process, see
+     * {@link LayoutOptions#SCALE_FACTOR}.
+     * 
+     * @author chsch
+     * 
+     * @param node
+     *            the {@link KNode} to be scaled
+     */
+    public static void scaleNode(final KNode node) {
+        final KShapeLayout shapeLayout = node.getData(KShapeLayout.class);
+
+        if (!shapeLayout.getProperties().containsKey(LayoutOptions.SCALE_FACTOR)) {
+            return;
+        }
+
+        final float scalingFactor = shapeLayout.getProperty(LayoutOptions.SCALE_FACTOR);
+
+        shapeLayout.setSize(scalingFactor * shapeLayout.getWidth(),
+                scalingFactor * shapeLayout.getHeight());
+
+        for (KGraphElement kge : Iterables.concat(node.getPorts(), node.getLabels())) {
+            final KShapeLayout kgeLayout = kge.getData(KShapeLayout.class);
+
+            kgeLayout.setPos(scalingFactor * kgeLayout.getXpos(),
+                    scalingFactor * kgeLayout.getYpos());
+            kgeLayout.setSize(scalingFactor * kgeLayout.getWidth(),
+                    scalingFactor * kgeLayout.getHeight());
+        }
     }
 
     /**
