@@ -86,6 +86,8 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
     private LGraph layeredGraph;
     /** Used to assign ids to newly created dummy nodes. */
     private int dummyID = 0;
+    /** Currently used node spacing. */
+    private double spacing = 0;
 
     /**
      * {@inheritDoc}
@@ -102,7 +104,7 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
         }
 
         // the object spacing in the drawn graph
-        double minSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
+        spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
         // the ID for the most recently created dummy node
         dummyID = nodes.size();
 
@@ -121,13 +123,22 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
 
         // collect all nodes that are considered "big"
         List<BigNode> bigNodes = Lists.newLinkedList();
-        double threshold = (minWidth + minSpacing);
+        double threshold = (minWidth + spacing);
         for (LNode node : nodes) {
             if ((node.getProperty(Properties.NODE_TYPE) == NodeType.NORMAL)
                     && (node.getSize().x > threshold)) {
-                Double parts = Math.ceil(node.getSize().x / minWidth);
+                // when splitting, consider that we can use the spacing area
+                // we try to find a node width that considers the spacing
+                // for every dummy node to be created despite the last one
+                int parts = 1;
+                double chunkWidth = node.getSize().x;
+                while (chunkWidth > minWidth) {
+                    parts++;
+                    chunkWidth = (node.getSize().x - (parts - 1) * spacing) / (double) parts;
+                }
+                
                 // new
-                bigNodes.add(new BigNode(node, parts.intValue(), minWidth));
+                bigNodes.add(new BigNode(node, parts, chunkWidth));
             }
         }
 
@@ -237,7 +248,8 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
                 layeredGraph.getLayerlessNodes().add(start);
 
                 tmpChunks--;
-                originalWidth -= minWidth;
+                // each chunk implicitly covers one spacing as well
+                originalWidth -= minWidth + spacing;
             }
             
             // remember the dummy created last
