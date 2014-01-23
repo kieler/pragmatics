@@ -24,12 +24,11 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
-import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -325,10 +324,7 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
                 xpos += increment;
             } else if (!externalLeftLayer && !externalRightLayer) {
                 // If all edges are straight, use the usual spacing 
-                //   (except when we are between two layers where both only contains dummy nodes)
-                if (!layersContainOnlyDummies(leftLayer, rightLayer)) {
-                    xpos += nodeSpacing;
-                }
+                xpos += nodeSpacing;
             }
             
             leftLayer = rightLayer;
@@ -340,23 +336,4 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
         
         monitor.done();
     }
-    
-    /**
-     * Check if the layer only contains non {@link NodeType#NORMAL} nodes.
-     * 
-     * Here we allow the initial big node (which is marked as normal node) 
-     * as we want to avoid additional spacing for this node as well.
-     */
-    private boolean layersContainOnlyDummies(final Layer... layers) {
-        for (Layer l : layers) {
-            for (LNode n : l.getNodes()) {
-                if (n.getProperty(Properties.NODE_TYPE) == NodeType.NORMAL
-                       && !n.getProperty(Properties.BIG_NODE_INITIAL)) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-    
 }
