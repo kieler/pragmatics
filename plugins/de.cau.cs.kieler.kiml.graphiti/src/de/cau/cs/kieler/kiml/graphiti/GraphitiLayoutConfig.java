@@ -326,9 +326,9 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
             while (parent.eContainer() instanceof PictogramElement) {
                 parent = (PictogramElement) parent.eContainer();
             }
-            transferValues(options, DEF_PREFIX, parent);
+            addAffectedOptions(options, DEF_PREFIX, parent);
             // add user defined local layout options
-            transferValues(options, PREFIX, pe);
+            addAffectedOptions(options, PREFIX, pe);
         }
         return options;
     }
@@ -340,7 +340,7 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
      * @param prefix the prefix for the property key
      * @param pe a pictogram element
      */
-    private void transferValues(final List<IProperty<?>> options, final String prefix,
+    private void addAffectedOptions(final List<IProperty<?>> options, final String prefix,
             final PictogramElement pe) {
         LayoutDataService layoutServices = LayoutDataService.getInstance();
         for (Property prop : pe.getProperties()) {
