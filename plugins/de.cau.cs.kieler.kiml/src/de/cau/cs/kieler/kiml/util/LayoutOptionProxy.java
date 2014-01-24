@@ -58,9 +58,9 @@ public final class LayoutOptionProxy implements IPropertyValueProxy {
      */
     @SuppressWarnings("unchecked")
     public <T> T resolveValue(final IProperty<T> property) {
-        LayoutOptionData<?> optionData;
-        if (property instanceof LayoutOptionData<?>) {
-            optionData = (LayoutOptionData<?>) property;
+        LayoutOptionData optionData;
+        if (property instanceof LayoutOptionData) {
+            optionData = (LayoutOptionData) property;
         } else {
             optionData = LayoutDataService.getInstance().getOptionData(property.getId());
         }

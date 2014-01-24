@@ -57,7 +57,7 @@ public class LayoutAlgorithmData implements ILayoutData {
     private Object imageData;
     
     /** Map of known layout options. Keys are option data, values are the default values. */
-    private final Map<LayoutOptionData<?>, Object> knownOptions = Maps.newHashMap();
+    private final Map<LayoutOptionData, Object> knownOptions = Maps.newHashMap();
     /** map of supported diagrams. */
     private final Map<String, Integer> supportedDiagrams = Maps.newHashMap();
     /** map of supported graph features. */
@@ -103,7 +103,7 @@ public class LayoutAlgorithmData implements ILayoutData {
      * @param optionData layout option data
      * @param defaultValue the default value, or {@code null} if none is specified
      */
-    public void setOption(final LayoutOptionData<?> optionData, final Object defaultValue) {
+    public void setOption(final LayoutOptionData optionData, final Object defaultValue) {
         if (optionData != null) {
             knownOptions.put(optionData, defaultValue);
         }
@@ -115,7 +115,7 @@ public class LayoutAlgorithmData implements ILayoutData {
      * @param optionData layout option data
      * @return true if the associated layout algorithm knows the option
      */
-    public boolean knowsOption(final LayoutOptionData<?> optionData) {
+    public boolean knowsOption(final LayoutOptionData optionData) {
         return knownOptions.containsKey(optionData);
     }
     
@@ -123,12 +123,10 @@ public class LayoutAlgorithmData implements ILayoutData {
      * Returns the layout algorithm's default value for the given option.
      * 
      * @param optionData layout option data
-     * @param <T> the layout option type
      * @return the associated default value, or {@code null} if there is none
      */
-    @SuppressWarnings("unchecked")
-    public <T> T getDefaultValue(final LayoutOptionData<T> optionData) {
-        return (T) knownOptions.get(optionData);
+    public Object getDefaultValue(final LayoutOptionData optionData) {
+        return knownOptions.get(optionData);
     }
     
     /**

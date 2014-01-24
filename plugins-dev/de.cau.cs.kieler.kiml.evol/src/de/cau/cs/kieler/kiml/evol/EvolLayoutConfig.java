@@ -86,7 +86,7 @@ public class EvolLayoutConfig implements ILayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public Object getValue(final LayoutOptionData<?> optionData, final LayoutContext context) {
+    public Object getValue(final LayoutOptionData optionData, final LayoutContext context) {
         LayoutEvolutionModel model = context.getProperty(EVOL_MODEL);
         Object diagramPart = context.getProperty(LayoutContext.DIAGRAM_PART);
         if (model != null && diagramPart != null) {
@@ -111,9 +111,8 @@ public class EvolLayoutConfig implements ILayoutConfig {
                 LayoutDataService dataService = LayoutDataService.getInstance();
                 for (Gene<?> gene : model.getSelected().getGenes(keyContext)) {
                     if (gene.getValue() != null) {
-                        @SuppressWarnings("unchecked")
-                        LayoutOptionData<Object> optionData = (LayoutOptionData<Object>)
-                                dataService.getOptionData(gene.getTypeInfo().getId());
+                        LayoutOptionData optionData = dataService.getOptionData(
+                                gene.getTypeInfo().getId());
                         if (optionData != null) {
                             options.add(optionData);
                         }

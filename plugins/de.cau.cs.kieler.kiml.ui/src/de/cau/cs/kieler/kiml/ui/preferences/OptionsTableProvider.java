@@ -45,7 +45,7 @@ public class OptionsTableProvider extends LabelProvider implements ITableLabelPr
         /** type of element (diagram type / model element / edit part). */
         private ElementType type;
         /** layout option data. */
-        private LayoutOptionData<?> optionData;
+        private LayoutOptionData optionData;
         /** the current value. */
         private Object value;
         
@@ -59,7 +59,7 @@ public class OptionsTableProvider extends LabelProvider implements ITableLabelPr
          * @param thevalue the current value
          */
         public DataEntry(final String name, final String id, final ElementType thetype,
-                final LayoutOptionData<?> theoptionData, final Object thevalue) {
+                final LayoutOptionData theoptionData, final Object thevalue) {
             this.elementName = name;
             this.elementId = id;
             this.type = thetype;
@@ -99,7 +99,7 @@ public class OptionsTableProvider extends LabelProvider implements ITableLabelPr
          *
          * @return the option data
          */
-        public LayoutOptionData<?> getOptionData() {
+        public LayoutOptionData getOptionData() {
             return optionData;
         }
 

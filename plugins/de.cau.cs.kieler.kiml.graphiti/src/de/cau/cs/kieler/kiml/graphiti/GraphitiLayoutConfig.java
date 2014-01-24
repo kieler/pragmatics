@@ -168,15 +168,16 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
                     }
                 }
                 
-                @SuppressWarnings("unchecked")
-                LayoutOptionData<String> algorithmOptionData = (LayoutOptionData<String>)
-                        LayoutDataService.getInstance().getOptionData(LayoutOptions.ALGORITHM.getId());
+                LayoutOptionData algorithmOptionData = LayoutDataService.getInstance()
+                        .getOptionData(LayoutOptions.ALGORITHM.getId());
                 if (context.getProperty(DefaultLayoutConfig.CONTENT_HINT) == null
                         && algorithmOptionData != null) {
                     // get a layout hint for the content of the focused pictogram element
-                    String contentLayoutHint = getValue(algorithmOptionData, PREFIX, pictogramElem);
+                    String contentLayoutHint = (String) getValue(algorithmOptionData, PREFIX,
+                            pictogramElem);
                     if (contentLayoutHint == null && diagram != null) {
-                        contentLayoutHint = getValue(algorithmOptionData, DEF_PREFIX, diagram);
+                        contentLayoutHint = (String) getValue(algorithmOptionData, DEF_PREFIX,
+                                diagram);
                     }
                     if (contentLayoutHint != null) {
                         context.setProperty(DefaultLayoutConfig.CONTENT_HINT, contentLayoutHint);
@@ -187,10 +188,11 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
                     if (context.getProperty(DefaultLayoutConfig.CONTAINER_HINT) == null
                             && algorithmOptionData != null) {
                         // get a layout hint for the container edit part
-                        String containerLayoutHint = getValue(algorithmOptionData, PREFIX,
+                        String containerLayoutHint = (String) getValue(algorithmOptionData, PREFIX,
                                 containerPe.get());
                         if (containerLayoutHint == null && diagram != null) {
-                            containerLayoutHint = getValue(algorithmOptionData, DEF_PREFIX, diagram);
+                            containerLayoutHint = (String) getValue(algorithmOptionData, DEF_PREFIX,
+                                    diagram);
                         }
                         if (containerLayoutHint != null) {
                             context.setProperty(DefaultLayoutConfig.CONTAINER_HINT,
@@ -269,7 +271,7 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public Object getValue(final LayoutOptionData<?> optionData, final LayoutContext context) {
+    public Object getValue(final LayoutOptionData optionData, final LayoutContext context) {
         PictogramElement pe = context.getProperty(PICTO_ELEM);
         if (pe != null) {
             Object result = getValue(optionData, PREFIX, pe);
@@ -300,12 +302,12 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
      *            a pictogram element
      * @return the value of the option, or {@code null}
      */
-    private <T> T getValue(final LayoutOptionData<T> optionData, final String prefix,
+    private Object getValue(final LayoutOptionData optionData, final String prefix,
             final PictogramElement pictogramElement) {
         String optionKey = prefix + optionData.getId();
         for (Property p : pictogramElement.getProperties()) {
             if (optionKey.equals(p.getKey())) {
-                T result = optionData.parseValue(p.getValue());
+                Object result = optionData.parseValue(p.getValue());
                 if (result != null) {
                     return result;
                 }
@@ -346,9 +348,8 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
         for (Property prop : pe.getProperties()) {
             String key = prop.getKey();
             if (key != null && key.startsWith(prefix)) {
-                @SuppressWarnings("unchecked")
-                LayoutOptionData<Object> optionData = (LayoutOptionData<Object>)
-                        layoutServices.getOptionData(key.substring(prefix.length()));
+                LayoutOptionData optionData = layoutServices.getOptionData(
+                        key.substring(prefix.length()));
                 if (optionData != null) {
                     options.add(optionData);
                 }
@@ -359,7 +360,7 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public void setValue(final LayoutOptionData<?> optionData, final LayoutContext context,
+    public void setValue(final LayoutOptionData optionData, final LayoutContext context,
             final Object value) {
         PictogramElement pe = context.getProperty(PICTO_ELEM);
         if (pe != null) {
@@ -383,7 +384,7 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
      * @param prefix the prefix for the property key
      * @param pictogramElement the pictogram element
      */
-    private void setValue(final LayoutOptionData<?> optionData, final Object value,
+    private void setValue(final LayoutOptionData optionData, final Object value,
             final String prefix, final PictogramElement pictogramElement) {
         if (value == null) {
             removeValue(optionData, prefix, pictogramElement, false);
@@ -411,7 +412,7 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
      * @param pictogramElement the pictogram element
      * @param recursive whether options should also be removed from children
      */
-    private void removeValue(final LayoutOptionData<?> optionData, final String prefix,
+    private void removeValue(final LayoutOptionData optionData, final String prefix,
             final PictogramElement pictogramElement, final boolean recursive) {
         Iterator<Property> iter = pictogramElement.getProperties().iterator();
         String optionKey = prefix + optionData.getId();
@@ -489,7 +490,7 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public boolean isSet(final LayoutOptionData<?> optionData, final LayoutContext context) {
+    public boolean isSet(final LayoutOptionData optionData, final LayoutContext context) {
         PictogramElement pe = context.getProperty(PICTO_ELEM);
         if (pe != null) {
             Object result = getValue(optionData, PREFIX, pe);

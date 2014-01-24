@@ -84,7 +84,7 @@ public class VolatileLayoutConfig implements IMutableLayoutConfig {
     private final Set<IProperty<?>> contextKeys = new HashSet<IProperty<?>>();
     
     /** the map of layout options set for this configurator. */
-    private final Map<LayoutOptionData<Object>, Object> globalOptionMap = Maps.newHashMap();
+    private final Map<LayoutOptionData, Object> globalOptionMap = Maps.newHashMap();
     
     /** the priority of this configurator. */
     private int priority;
@@ -146,7 +146,7 @@ public class VolatileLayoutConfig implements IMutableLayoutConfig {
      * 
      * @return a map of global values
      */
-    public Map<LayoutOptionData<Object>, Object> getGlobalValues() {
+    public Map<LayoutOptionData, Object> getGlobalValues() {
         return Collections.unmodifiableMap(globalOptionMap);
     }
 
@@ -160,7 +160,7 @@ public class VolatileLayoutConfig implements IMutableLayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public Object getValue(final LayoutOptionData<?> optionData, final LayoutContext context) {
+    public Object getValue(final LayoutOptionData optionData, final LayoutContext context) {
         for (IProperty<?> contextKey : contextKeys) {
             // retrieve the object stored under this key from the context
             Object object = context.getProperty(contextKey);
@@ -227,13 +227,11 @@ public class VolatileLayoutConfig implements IMutableLayoutConfig {
      * @return the instance on which the method was called, for chaining multiple method calls
      * @param <T> the type of the layout option
      */
-    @SuppressWarnings("unchecked")
     public <T> VolatileLayoutConfig setValue(final IProperty<? super T> option, final T value) {
-        if (option instanceof LayoutOptionData<?>) {
-            globalOptionMap.put((LayoutOptionData<Object>) option, value);
+        if (option instanceof LayoutOptionData) {
+            globalOptionMap.put((LayoutOptionData) option, value);
         } else {
-            LayoutOptionData<Object> optionData = (LayoutOptionData<Object>) LayoutDataService
-                    .getInstance().getOptionData(option.getId());
+            LayoutOptionData optionData = LayoutDataService.getInstance().getOptionData(option.getId());
             if (optionData != null) {
                 globalOptionMap.put(optionData, value);
             } else {
@@ -253,7 +251,7 @@ public class VolatileLayoutConfig implements IMutableLayoutConfig {
         // get globally defined options
         KGraphElement graphElem = context.getProperty(LayoutContext.GRAPH_ELEM);
         boolean isGlobal = context.getProperty(LayoutContext.GLOBAL);
-        for (LayoutOptionData<Object> option : globalOptionMap.keySet()) {
+        for (LayoutOptionData option : globalOptionMap.keySet()) {
             if (isGlobal || matchesTargetType(option, graphElem)) {
                 options.add(option);
             }
@@ -277,7 +275,7 @@ public class VolatileLayoutConfig implements IMutableLayoutConfig {
      * @param graphElem a graph element
      * @return true if the layout option can be applied to the graph element
      */
-    private boolean matchesTargetType(final LayoutOptionData<?> optionData,
+    private boolean matchesTargetType(final LayoutOptionData optionData,
             final KGraphElement graphElem) {
         if (graphElem == null) {
             return false;
@@ -313,25 +311,24 @@ public class VolatileLayoutConfig implements IMutableLayoutConfig {
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
-    public void setValue(final LayoutOptionData<?> optionData, final LayoutContext context,
+    public void setValue(final LayoutOptionData optionData, final LayoutContext context,
             final Object value) {
         KGraphElement graphElem = context.getProperty(LayoutContext.GRAPH_ELEM);
         if (context.getProperty(LayoutContext.GLOBAL)) {
             if (matchesTargetType(optionData, graphElem)) {
-                globalOptionMap.put((LayoutOptionData<Object>) optionData, value);
+                globalOptionMap.put(optionData, value);
             }
         } else {
             Object diagramPart = context.getProperty(LayoutContext.DIAGRAM_PART);
             Object domainModel = context.getProperty(LayoutContext.DOMAIN_MODEL);
             if (diagramPart != null) {
-                setValue((LayoutOptionData<Object>) optionData, diagramPart,
+                setValue(optionData, diagramPart,
                         LayoutContext.DIAGRAM_PART, value);
             } else if (domainModel != null) {
-                setValue((LayoutOptionData<Object>) optionData, domainModel,
+                setValue(optionData, domainModel,
                         LayoutContext.DOMAIN_MODEL, value);
             } else if (graphElem != null) {
-                setValue((LayoutOptionData<Object>) optionData, graphElem,
+                setValue(optionData, graphElem,
                         LayoutContext.GRAPH_ELEM, value);
             }
         }
@@ -354,7 +351,7 @@ public class VolatileLayoutConfig implements IMutableLayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public boolean isSet(final LayoutOptionData<?> optionData, final LayoutContext context) {
+    public boolean isSet(final LayoutOptionData optionData, final LayoutContext context) {
         return getValue(optionData, context) != null;
     }
 
