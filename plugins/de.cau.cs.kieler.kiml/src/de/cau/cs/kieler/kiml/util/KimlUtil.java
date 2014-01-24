@@ -114,8 +114,9 @@ public final class KimlUtil {
      */
     public static KPort createInitializedPort() {
         KPort port = KGraphFactory.eINSTANCE.createKPort();
-        KShapeLayout labelLayout = KLayoutDataFactory.eINSTANCE.createKShapeLayout();
-        port.getData().add(labelLayout);
+        KShapeLayout portLayout = KLayoutDataFactory.eINSTANCE.createKShapeLayout();
+        portLayout.setInsets(KLayoutDataFactory.eINSTANCE.createKInsets());
+        port.getData().add(portLayout);
         return port;
     }
 

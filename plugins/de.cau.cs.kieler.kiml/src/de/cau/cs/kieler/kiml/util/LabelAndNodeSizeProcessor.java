@@ -15,36 +15,47 @@ package de.cau.cs.kieler.kiml.util;
 
 import java.awt.geom.Rectangle2D;
 import java.util.EnumSet;
-import java.util.List;
 
-import com.google.common.collect.Lists;
-
-import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.kgraph.KGraphElement;
-import de.cau.cs.kieler.core.kgraph.KLabel;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.NodeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortLabelPlacement;
-import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.SizeConstraint;
 import de.cau.cs.kieler.kiml.options.SizeOptions;
+import de.cau.cs.kieler.kiml.util.GraphAdapterFactory.GraphAdapter;
+import de.cau.cs.kieler.kiml.util.GraphAdapterFactory.LabelAdapter;
+import de.cau.cs.kieler.kiml.util.GraphAdapterFactory.NodeAdapter;
+import de.cau.cs.kieler.kiml.util.GraphAdapterFactory.PortAdapter;
 
 /**
+ * Calculates node sizes, places ports, and places node and port labels.
  * 
- * TODO check all write actions ... !!!
+ * <p><i>Note:</i> Regarding port placement, this processor now does what the old
+ * {@code PortPositionProcessor} did and thus replaces it.</p>
  * 
+ * <dl>
+ *   <dt>Precondition:</dt>
+ *     <dd>The graph is layered.</dd>
+ *     <dd>Crossing minimization is finished.</dd>
+ *     <dd>Port constraints are at least at {@code FIXED_ORDER}.</dd>
+ *     <dd>Port lists are properly sorted going clockwise, starting at the leftmost northern port.</dd>
+ *   <dt>Postcondition:</dt>
+ *     <dd>Port positions are fixed.</dd>
+ *     <dd>Port labels are placed.</dd>
+ *     <dd>Node labels are placed.</dd>
+ *     <dd>Node sizes are set.</dd>
+ *   <dt>Slots:</dt>
+ *     <dd>Before phase 4.</dd>
+ *   <dt>Same-slot dependencies:</dt>
+ *     <dd>{@link LabelSideSelector}</dd>
+ * </dl>
+ * 
+ * @see LabelSideSelector
+ * @author cds
  * @author uru
- * 
  */
-public class NodeSizeCalculation {
+public class LabelAndNodeSizeProcessor {
 
     /*
      * The following variables provide context information for the different phases of the
@@ -153,33 +164,14 @@ public class NodeSizeCalculation {
         southPortsWidth = 0.0;
     }
        
-    
-    /**
-     * TODO this is an example ...
-     * 
-     * @param graph
-     * @param fac
-     */
-    public <T> void calculateNodeSizes(T graph, SizeCalculationAdapterFactory<T> fac) {
-        GraphAdapter<?> graphAdapter = fac.getGraphAdapter(graph);
-        
-        process(graphAdapter, new BasicProgressMonitor());
-    }
-    
-    public <T> void calculateNodeSizes(final KNode root) {
-        GraphAdapter<?> graphAdapter = new KGraphSizeCalculationAdapterFactory().getGraphAdapter(root);
-        
-        process(graphAdapter, new BasicProgressMonitor());
-    }
-    
     /*
      * Entry point
      */
     /**
      * {@inheritDoc}
      */
-    public void process(final GraphAdapter<?> layeredGraph, final IKielerProgressMonitor monitor) {
-        monitor.begin("Node and Port Label Placement and Node Sizing", 1);
+    public void process(final GraphAdapter<?> layeredGraph) {
+//        monitor.begin("Node and Port Label Placement and Node Sizing", 1);
         
         // FIXME 
         //double objectSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
@@ -187,80 +179,80 @@ public class NodeSizeCalculation {
         double labelSpacing = layeredGraph.getProperty(LayoutOptions.LABEL_SPACING);
 
         // Iterate over all the graph's nodes
-            for (NodeAdapter<?> node : layeredGraph.getNodes()) {
-                /* Note that, upon Miro's request, each phase of the algorithm was given a code name. */
-                
-                /* PREPARATIONS
-                 * Reset stuff, fill the port information fields, and remember the node's old size.
-                 */
-                resetContext();
-                calculatePortInformation(node, node.getProperty(LayoutOptions.SIZE_CONSTRAINT).contains(
-                        SizeConstraint.PORT_LABELS));
-                KVector originalNodeSize = new KVector(node.getSize());
-                
-                
-                /* PHASE 1 (SAD DUCK): PLACE PORT LABELS
-                 * Port labels are placed and port margins are calculated. We currently only support
-                 * one label per port.
-                 */
-                PortLabelPlacement labelPlacement = node.getProperty(LayoutOptions.PORT_LABEL_PLACEMENT);
-                
-                // FIXME 
-                //boolean compoundNodeMode = node.getProperty(Properties.COMPOUND_NODE);
-                boolean compoundNodeMode = false;
-                
-                // Place port labels and calculate the margins
-                for (PortAdapter<?> port : node.getPorts()) {
-                    placePortLabels(port, labelPlacement, compoundNodeMode, labelSpacing);
-                    calculateAndSetPortMargins(port);
-                }
-                
-                
-                /* PHASE 2 (DYNAMIC DONALD): CALCULATE INSETS
-                 * We know the sides the ports will be placed at and we know where node labels are to
-                 * be placed. Calculate the node's insets accordingly. Also compute the amount of space
-                 * the node labels will need if stacked vertically. Note that we don't have to know the
-                 * final port or label positions to calculate all this stuff.
-                 */
-                calculateRequiredPortLabelSpace(node);
-                calculateRequiredNodeLabelSpace(node, labelSpacing);
-                
-                
-                /* PHASE 3 (DANGEROUS DUCKLING): RESIZE NODE
-                 * If the node has labels, the node insets might have to be adjusted to reserve space
-                 * for them, which is what this phase does.
-                 */
-                resizeNode(node, objectSpacing, labelSpacing);
-                
-                
-                /* PHASE 4 (DUCK AND COVER): PLACE PORTS
-                 * The node is resized, taking all node size constraints into account. The port spacing
-                 * is not required for port placement since the placement will be based on the node's
-                 * size (if it is not fixed anyway).
-                 */
-                placePorts(node, originalNodeSize);
-                
-                
-                /* PHASE 5 (HAPPY DUCK): PLACE NODE LABELS
-                 * With space reserved for the node labels, the labels are placed.
-                 */
-                placeNodeLabels(node, labelSpacing);
-                
-                
-                /* CLEANUP (THANKSGIVING): SET NODE INSETS
-                 * Set the node insets to include space required for port and node labels. If the labels
-                 * were not taken into account when calculating the node's size, this may result in
-                 * insets that, taken together, are larger than the node's actual size.
-                 */
-                // LInsets nodeInsets = node.getInsets();
-                Rectangle2D.Double nodeInsets = new Rectangle2D.Double();
-                nodeInsets.x = requiredNodeLabelSpace.x + requiredPortLabelSpace.x;
-                nodeInsets.width = requiredNodeLabelSpace.width + requiredPortLabelSpace.width;
-                nodeInsets.y = requiredNodeLabelSpace.y + requiredPortLabelSpace.y;
-                nodeInsets.height = requiredNodeLabelSpace.height + requiredPortLabelSpace.height;
-                node.setInsets(nodeInsets);
+        for (NodeAdapter<?> node : layeredGraph.getNodes()) {
+            /* Note that, upon Miro's request, each phase of the algorithm was given a code name. */
+            
+            /* PREPARATIONS
+             * Reset stuff, fill the port information fields, and remember the node's old size.
+             */
+            resetContext();
+            calculatePortInformation(node, node.getProperty(LayoutOptions.SIZE_CONSTRAINT).contains(
+                    SizeConstraint.PORT_LABELS));
+            KVector originalNodeSize = new KVector(node.getSize());
+            
+            
+            /* PHASE 1 (SAD DUCK): PLACE PORT LABELS
+             * Port labels are placed and port margins are calculated. We currently only support
+             * one label per port.
+             */
+            PortLabelPlacement labelPlacement = node.getProperty(LayoutOptions.PORT_LABEL_PLACEMENT);
+            
+            // FIXME 
+            //boolean compoundNodeMode = node.getProperty(Properties.COMPOUND_NODE);
+            boolean compoundNodeMode = false;
+            
+            // Place port labels and calculate the margins
+            for (PortAdapter<?> port : node.getPorts()) {
+                placePortLabels(port, labelPlacement, compoundNodeMode, labelSpacing);
+                calculateAndSetPortMargins(port);
             }
+            
+            
+            /* PHASE 2 (DYNAMIC DONALD): CALCULATE INSETS
+             * We know the sides the ports will be placed at and we know where node labels are to
+             * be placed. Calculate the node's insets accordingly. Also compute the amount of space
+             * the node labels will need if stacked vertically. Note that we don't have to know the
+             * final port or label positions to calculate all this stuff.
+             */
+            calculateRequiredPortLabelSpace(node);
+            calculateRequiredNodeLabelSpace(node, labelSpacing);
+            
+            
+            /* PHASE 3 (DANGEROUS DUCKLING): RESIZE NODE
+             * If the node has labels, the node insets might have to be adjusted to reserve space
+             * for them, which is what this phase does.
+             */
+            resizeNode(node, objectSpacing, labelSpacing);
+            
+            
+            /* PHASE 4 (DUCK AND COVER): PLACE PORTS
+             * The node is resized, taking all node size constraints into account. The port spacing
+             * is not required for port placement since the placement will be based on the node's
+             * size (if it is not fixed anyway).
+             */
+            placePorts(node, originalNodeSize);
+            
+            
+            /* PHASE 5 (HAPPY DUCK): PLACE NODE LABELS
+             * With space reserved for the node labels, the labels are placed.
+             */
+            placeNodeLabels(node, labelSpacing);
+            
+            
+            /* CLEANUP (THANKSGIVING): SET NODE INSETS
+             * Set the node insets to include space required for port and node labels. If the labels
+             * were not taken into account when calculating the node's size, this may result in
+             * insets that, taken together, are larger than the node's actual size.
+             */
+            // LInsets nodeInsets = node.getInsets();
+            Rectangle2D.Double nodeInsets = new Rectangle2D.Double();
+            nodeInsets.x = requiredNodeLabelSpace.x + requiredPortLabelSpace.x;
+            nodeInsets.width = requiredNodeLabelSpace.width + requiredPortLabelSpace.width;
+            nodeInsets.y = requiredNodeLabelSpace.y + requiredPortLabelSpace.y;
+            nodeInsets.height = requiredNodeLabelSpace.height + requiredPortLabelSpace.height;
+            node.setInsets(nodeInsets);
         }
+    }
         
     
     /*
@@ -1141,290 +1133,5 @@ public class NodeSizeCalculation {
             // Update y position
             currentY += label.getSize().y + labelSpacing;
         }
-    }
-
-    /*
-     * Interfaces
-     */
-
-    public interface SizeCalculationAdapterFactory<G> {
-        
-        GraphAdapter<G> getGraphAdapter(G graph);
-        
-    }
-    
-    
-    /**
-     * .
-     */
-    public interface GraphElementAdapter<T> {
-
-        KVector getSize();
-        
-        void setSize(final KVector size);
-
-        KVector getPosition();
-        
-        void setPosition(final KVector pos);
-        
-        <P> P getProperty(final IProperty<P> prop);
-    }
-    
-    /**
-     * .
-     */
-    public interface GraphAdapter<T> extends GraphElementAdapter<T>{
-        
-        List<NodeAdapter<?>> getNodes();
-        
-    }
-
-    /**
-     * .
-     */
-    public interface NodeAdapter<T> extends GraphElementAdapter<T> {
-
-        List<LabelAdapter<?>> getLabels();
-
-        List<PortAdapter<?>> getPorts();
-        
-        void setInsets(final Rectangle2D.Double insets);
-    }
-
-    /**
-     * .
-     */
-    public interface PortAdapter<T> extends GraphElementAdapter<T> {
-
-        PortSide getSide();
-
-        Rectangle2D.Double getMargin();
-        
-        void setMargin(final Rectangle2D.Double margin);
-
-        List<LabelAdapter<?>> getLabels();
-    }
-
-    /**
-     * .
-     */
-    public interface LabelAdapter<T> extends GraphElementAdapter<T> {
-
-    }
-    
-    
-    /*
-     * KGraph adapters
-     */
-    
-    public class KGraphSizeCalculationAdapterFactory implements SizeCalculationAdapterFactory<KNode> {
-
-        /**
-         * {@inheritDoc}
-         */
-        public GraphAdapter<KNode> getGraphAdapter(final KNode graph) {
-            return new KGraphAdapter(graph);
-        }
-
-    }
-
-    /**
-     * .
-     */
-    public abstract static class AbstractKGraphElementAdapter<T extends KGraphElement> implements
-            GraphElementAdapter<T> {
-
-        // CHECKSTYLEOFF 
-        protected T element;
-        protected KShapeLayout layout;
-
-        /**
-         * @param element
-         *  .
-         */
-        public AbstractKGraphElementAdapter(final T element) {
-            this.element = element;
-            try {
-                layout = element.getData(KShapeLayout.class);
-            } catch (ClassCastException cce) {
-                throw new RuntimeException(
-                        "Graph adapters are only supported for shape-full types.");
-            }
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public <P> P getProperty(final IProperty<P> prop) {
-            return layout.getProperty(prop);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public KVector getPosition() {
-            return new KVector(layout.getXpos(), layout.getYpos());
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public KVector getSize() {
-            return new KVector(layout.getWidth(), layout.getHeight());
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public void setSize(final KVector size) {
-            layout.setWidth((float) size.x);
-            layout.setHeight((float) size.y);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public void setPosition(final KVector pos) {
-            layout.setXpos((float) pos.x);
-            layout.setYpos((float) pos.y);
-        }
-    }
-
-    public class KGraphAdapter extends AbstractKGraphElementAdapter<KNode> implements GraphAdapter<KNode> {
-        /**
-         * @param node
-         *  .
-         */
-        public KGraphAdapter(final KNode node) {
-            super(node);
-        }
-        
-        /**
-         * {@inheritDoc}
-         */
-        public List<NodeAdapter<?>> getNodes() {
-            List<NodeAdapter<?>> children = Lists.newLinkedList();
-            for(KNode n : element.getChildren()) {
-                children.add(new KNodeAdapter(n));
-            }
-            return children;
-        }
-    }
-    
-    /**
-     * .
-     */
-    public static class KNodeAdapter extends AbstractKGraphElementAdapter<KNode> implements
-            NodeAdapter<KNode> {
-
-        /**
-         * @param node
-         *  .
-         */
-        public KNodeAdapter(final KNode node) {
-            super(node);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public List<LabelAdapter<?>> getLabels() {
-            List<LabelAdapter<?>> labelAdapters = Lists.newLinkedList();
-            for (KLabel l : element.getLabels()) {
-                labelAdapters.add(new KLabelAdapter(l));
-            }
-            return labelAdapters;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public List<PortAdapter<?>> getPorts() {
-            List<PortAdapter<?>> portAdapters = Lists.newLinkedList();
-            for (KPort p : element.getPorts()) {
-                portAdapters.add(new KPortAdapter(p));
-            }
-            return portAdapters;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public void setInsets(final Rectangle2D.Double insets) {
-            layout.getInsets().setLeft((float) insets.x);
-            layout.getInsets().setTop((float) insets.y);
-            layout.getInsets().setRight((float) insets.width);
-            layout.getInsets().setBottom((float) insets.height);
-        }
-
-    }
-
-    /**
-     * .
-     */
-    private static class KLabelAdapter extends AbstractKGraphElementAdapter<KLabel> implements
-            LabelAdapter<KLabel> {
-
-        /**
-         * 
-         */
-        public KLabelAdapter(final KLabel label) {
-            super(label);
-        }
-    }
-
-    /**
-     * .
-     */
-    private static class KPortAdapter extends AbstractKGraphElementAdapter<KPort> implements
-            PortAdapter<KPort> {
-
-        /**
-         * 
-         */
-        public KPortAdapter(final KPort port) {
-            super(port);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public PortSide getSide() {
-            return layout.getProperty(LayoutOptions.PORT_SIDE); 
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public Rectangle2D.Double getMargin() {
-            // FIXME is this the same as insets??
-            KInsets insets = layout.getInsets();
-            return new Rectangle2D.Double(insets.getLeft(), insets.getTop(), 
-                    insets.getRight(), insets.getBottom());
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public void setMargin(final Rectangle2D.Double margin) {
-            // FIXME as above
-            KInsets insets = layout.getInsets();
-            insets.setLeft((float) margin.x);
-            insets.setTop((float) margin.y);
-            insets.setRight((float) margin.width);
-            insets.setBottom((float) margin.height);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public List<LabelAdapter<?>> getLabels() {
-            List<LabelAdapter<?>> labelAdapters = Lists.newLinkedList();
-            for (KLabel l : element.getLabels()) {
-                labelAdapters.add(new KLabelAdapter(l));
-            }
-            return labelAdapters;
-        }
-
     }
 }
