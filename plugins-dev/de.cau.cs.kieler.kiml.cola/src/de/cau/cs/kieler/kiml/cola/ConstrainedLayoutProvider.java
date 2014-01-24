@@ -36,6 +36,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.util.KimlNodeDimensionCalculation;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
@@ -91,6 +92,9 @@ public class ConstrainedLayoutProvider extends AbstractLayoutProvider {
         double idealEdgeLength = rootLayout.getProperty(ColaProperties.IDEAL_EDGE_LENGTHS);
         boolean avoidOverlaps = rootLayout.getProperty(ColaProperties.AVOID_OVERLAPS);
         borderSpacing = rootLayout.getProperty(LayoutOptions.BORDER_SPACING);
+        
+        KimlNodeDimensionCalculation.calculateLabelAndNodeSizes(parentNode);
+        KimlNodeDimensionCalculation.calculateNodeMargins(parentNode);
 
         // transform to cola representation
         transformGraph(parentNode);
@@ -131,17 +135,23 @@ public class ConstrainedLayoutProvider extends AbstractLayoutProvider {
         long index = 0;
         for (KNode n : root.getChildren()) {
             KShapeLayout layout = n.getData(KShapeLayout.class);
-
+            KInsets insets = layout.getInsets();
+            
             // x X y Y meaning x width y height
             Rectangle r = null;
             if (considerPrevious) {
-                r = new Rectangle(layout.getXpos(), layout.getXpos() + layout.getWidth(), 
-                        layout.getYpos(), layout.getYpos() + layout.getHeight());
+                r = new Rectangle(layout.getXpos() - insets.getLeft(), 
+                        layout.getXpos() + layout.getWidth() + insets.getRight() + insets.getLeft(), 
+                        layout.getYpos() - insets.getTop(), 
+                        layout.getYpos() + layout.getHeight() + insets.getBottom() + insets.getTop());
             } else {
                 // constrained layout considers previous positions, to make it independent from
                 // any weird layout stuff used before we run it, use 0 as initial positions for all
                 // rects
-                r = new Rectangle(0, 0 + layout.getWidth(), 0, 0 + layout.getHeight());
+                r = new Rectangle(0 - insets.getLeft(), 
+                        0 + layout.getWidth() + insets.getRight() + insets.getLeft(), 
+                        0 - insets.getTop(), 
+                        0 + layout.getHeight() + insets.getBottom() + insets.getTop());
             }
 
             nodes.add(r);

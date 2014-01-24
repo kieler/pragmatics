@@ -19,6 +19,7 @@ import org.adaptagrams.cola.libavoid.LibavoidServerPool;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
+import de.cau.cs.kieler.kiml.util.KimlNodeDimensionCalculation;
 
 /**
  * A layout provider for KIML that performs layout using the Libavoid connector routing library. See
@@ -36,6 +37,10 @@ public class LibavoidLayoutProvider extends AbstractLayoutProvider {
     @Override
     public void doLayout(final KNode parentNode, final IKielerProgressMonitor progressMonitor) {
 
+        KimlNodeDimensionCalculation.calculateLabelAndNodeSizes(parentNode);
+        // FIXME question: why are insets 0 btw? why are they not retained?
+        KimlNodeDimensionCalculation.calculateNodeMargins(parentNode);
+        
         // create an Libavoid server process instance or use an existing one
         LibavoidServer lvServer = LibavoidServerPool.INSTANCE.fetch();
         // send a layout request to the server process and apply the layout
