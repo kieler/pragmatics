@@ -91,7 +91,7 @@ public abstract class LayoutDataService {
     /** mapping of layout provider identifiers to their data instances. */
     private final Map<String, LayoutAlgorithmData> layoutAlgorithmMap = Maps.newLinkedHashMap();
     /** mapping of layout option identifiers to their data instances. */
-    private final Map<String, LayoutOptionData<?>> layoutOptionMap = Maps.newLinkedHashMap();
+    private final Map<String, LayoutOptionData> layoutOptionMap = Maps.newLinkedHashMap();
     /** mapping of layout type identifiers to their data instances. */
     private final Map<String, LayoutTypeData> layoutTypeMap = Maps.newLinkedHashMap();
     /** mapping of category identifiers to their names. */
@@ -100,7 +100,7 @@ public abstract class LayoutDataService {
     /** additional map of layout algorithm suffixes to data instances. */
     private final Map<String, LayoutAlgorithmData> algorithmSuffixMap = Maps.newHashMap();
     /** additional map of layout option suffixes to data instances. */
-    private final Map<String, LayoutOptionData<?>> optionSuffixMap = Maps.newHashMap();
+    private final Map<String, LayoutOptionData> optionSuffixMap = Maps.newHashMap();
     /** additional map of layout type suffixes to data instances. */
     private final Map<String, LayoutTypeData> typeSuffixMap = Maps.newHashMap();
     
@@ -138,7 +138,7 @@ public abstract class LayoutDataService {
          * @param optionData
          *            data instance of the layout option to register
          */
-        public void addLayoutOption(final LayoutOptionData<?> optionData) {
+        public void addLayoutOption(final LayoutOptionData optionData) {
             if (layoutOptionMap.containsKey(optionData.getId())) {
                 layoutOptionMap.remove(optionData.getId());
             }
@@ -241,7 +241,7 @@ public abstract class LayoutDataService {
      * @return the corresponding layout option data, or {@code null} if there is no option with the
      *         given identifier
      */
-    public final LayoutOptionData<?> getOptionData(final String id) {
+    public final LayoutOptionData getOptionData(final String id) {
         return layoutOptionMap.get(id);
     }
 
@@ -250,7 +250,7 @@ public abstract class LayoutDataService {
      * 
      * @return collection of registered layout options
      */
-    public final Collection<LayoutOptionData<?>> getOptionData() {
+    public final Collection<LayoutOptionData> getOptionData() {
         return Collections.unmodifiableCollection(layoutOptionMap.values());
     }
     
@@ -262,12 +262,12 @@ public abstract class LayoutDataService {
      * @return the first layout option data that has the given suffix, or {@code null} if
      *          no option has that suffix
      */
-    public final LayoutOptionData<?> getOptionDataBySuffix(final String suffix) {
-        LayoutOptionData<?> data = layoutOptionMap.get(suffix);
+    public final LayoutOptionData getOptionDataBySuffix(final String suffix) {
+        LayoutOptionData data = layoutOptionMap.get(suffix);
         if (data == null) {
             data = optionSuffixMap.get(suffix);
             if (data == null) {
-                for (LayoutOptionData<?> d : layoutOptionMap.values()) {
+                for (LayoutOptionData d : layoutOptionMap.values()) {
                     String id = d.getId();
                     if (id.endsWith(suffix) && (suffix.length() == id.length()
                             || id.charAt(id.length() - suffix.length() - 1) == '.')) {
@@ -291,10 +291,10 @@ public abstract class LayoutDataService {
      *            type of layout option target
      * @return list of suitable layout options
      */
-    public final List<LayoutOptionData<?>> getOptionData(final LayoutAlgorithmData algorithmData,
+    public final List<LayoutOptionData> getOptionData(final LayoutAlgorithmData algorithmData,
             final LayoutOptionData.Target targetType) {
-        List<LayoutOptionData<?>> optionDataList = new LinkedList<LayoutOptionData<?>>();
-        for (LayoutOptionData<?> optionData : layoutOptionMap.values()) {
+        List<LayoutOptionData> optionDataList = new LinkedList<LayoutOptionData>();
+        for (LayoutOptionData optionData : layoutOptionMap.values()) {
             if (algorithmData.knowsOption(optionData)
                     || LayoutOptions.ALGORITHM.equals(optionData)) {
                 if (optionData.getTargets().contains(targetType)) {

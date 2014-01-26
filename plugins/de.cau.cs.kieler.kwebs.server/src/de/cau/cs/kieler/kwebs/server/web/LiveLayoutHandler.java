@@ -39,6 +39,8 @@ import de.cau.cs.kieler.kwebs.server.service.LiveLayoutService;
  * available layout options as key value pairs.
  * 
  * @author uru
+ * 
+ * @deprecated replaced by {@link HTTPLayoutHandler}
  */
 public class LiveLayoutHandler implements HttpHandler {
 
@@ -164,11 +166,17 @@ public class LiveLayoutHandler implements HttpHandler {
 
     private void sendError(final HttpExchange http, final String text, final Throwable t)
             throws IOException {
-
-        // add the exception within a pre environment to the error string
-        String error = "<h4>Error:</h4> " + text;
-        if (t != null) {
-            error += "<br /><br /><pre>" + t.getMessage() + "</pre>";
+        String error = "";
+        try {
+            JSONObject obj = new JSONObject();
+            obj.put("message", text);
+            if (t != null) {
+                obj.put("throwable", t.getMessage());
+            }
+            error = obj.toString(2);
+        } catch (JSONException ex) {
+            ex.printStackTrace();
+            error = ex.getMessage();
         }
 
         // send the response

@@ -472,7 +472,7 @@
      </layoutOption>
      <layoutOption
            advanced="true"
-           appliesTo="parents,nodes,edges,ports,labels"
+           appliesTo="nodes,edges,ports,labels"
            default="false"
            description="Indicates that no layout should be done for the diagram part"
            id="de.cau.cs.kieler.noLayout"

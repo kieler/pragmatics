@@ -50,8 +50,8 @@ public class DefaultLayoutConfig implements ILayoutConfig {
             "context.makeOptions", false);
     
     /** the layout options that are supported by the active layout algorithm. */
-    public static final IProperty<List<LayoutOptionData<?>>> OPTIONS
-            = new Property<List<LayoutOptionData<?>>>("context.options");
+    public static final IProperty<List<LayoutOptionData>> OPTIONS
+            = new Property<List<LayoutOptionData>>("context.options");
     
     /** the layout algorithm or type identifier for the content of the current graph element. */
     public static final IProperty<String> CONTENT_HINT = new Property<String>(
@@ -147,7 +147,7 @@ public class DefaultLayoutConfig implements ILayoutConfig {
                 optionTargets = Collections.emptySet();
             }
             LayoutDataService layoutDataService = LayoutDataService.getInstance();
-            List<LayoutOptionData<?>> optionData = new LinkedList<LayoutOptionData<?>>();
+            List<LayoutOptionData> optionData = new LinkedList<LayoutOptionData>();
     
             for (LayoutOptionData.Target target : optionTargets) {
                 LayoutAlgorithmData algoData;
@@ -175,7 +175,7 @@ public class DefaultLayoutConfig implements ILayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public Object getValue(final LayoutOptionData<?> optionData, final LayoutContext context) {
+    public Object getValue(final LayoutOptionData optionData, final LayoutContext context) {
         Object result = null;
         
         // check default value of the content layout algorithm

@@ -183,14 +183,14 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         Group elementGroup = new Group(parent, SWT.NONE);
         elementGroup.setText(Messages.getString("kiml.ui.28")); //$NON-NLS-1$
         LayoutDataService dataService = LayoutDataService.getInstance();
-        Collection<LayoutOptionData<?>> layoutOptionData = dataService.getOptionData();
+        Collection<LayoutOptionData> layoutOptionData = dataService.getOptionData();
         optionEntries = new LinkedList<OptionsTableProvider.DataEntry>();
 
         // add options for edit parts and domain model elements
         Set<String> elements = ((ExtensionLayoutConfigService) LayoutConfigService.getInstance())
                 .getRegisteredElements();
         for (String element : elements) {
-            for (LayoutOptionData<?> data : layoutOptionData) {
+            for (LayoutOptionData data : layoutOptionData) {
                 String preference = ExtensionLayoutConfigService.getPreferenceName(
                         element, data.getId());
                 if (servicePrefStore.contains(preference)) {
@@ -214,7 +214,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         List<Pair<String, String>> diagramTypeList = LayoutConfigService.getInstance()
                 .getDiagramTypes();
         for (Pair<String, String> diagramType : diagramTypeList) {
-            for (LayoutOptionData<?> data : layoutOptionData) {
+            for (LayoutOptionData data : layoutOptionData) {
                 String preference = ExtensionLayoutConfigService.getPreferenceName(
                         diagramType.getFirst(), data.getId());
                 if (servicePrefStore.contains(preference)) {
@@ -422,7 +422,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
      * @param entry an option table entry
      */
     private void showEditDialog(final Shell shell, final OptionsTableProvider.DataEntry entry) {
-        LayoutOptionData<?> optionData = entry.getOptionData();
+        LayoutOptionData optionData = entry.getOptionData();
         if (entry.getValue() != null) {
             if (optionData.equals(LayoutOptions.ALGORITHM)) {
                 // show a selection dialog for a layouter hint

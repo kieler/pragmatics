@@ -77,12 +77,21 @@ public class LayoutPropertySourceProvider implements IPropertySourceProvider {
         }
         IDiagramLayoutManager<?> manager = LayoutManagersService.getInstance().getManager(
                 workbenchPart, object);
-        if (manager != null && manager.getAdapterList().length > 0) {
-            Object diagramPart = manager.getAdapter(object, manager.getAdapterList()[0]);
+        if (manager != null) {
+            Object diagramPart = object;
+            if (manager.getAdapterList().length > 0) {
+                Object adapter = manager.getAdapter(object, manager.getAdapterList()[0]);
+                if (adapter == null) {
+                    adapter = manager.getAdapter(workbenchPart, manager.getAdapterList()[0]);
+                }
+                if (adapter != null) {
+                    diagramPart = adapter;
+                }
+            }
             if (diagramPart != null) {
                 ILayoutConfig managerLayoutConfig = (ILayoutConfig) manager.getAdapter(workbenchPart,
                         ILayoutConfig.class);
-                EObject domainElement = (EObject) manager.getAdapter(object, EObject.class);
+                EObject domainElement = (EObject) manager.getAdapter(diagramPart, EObject.class);
                 
                 // create a compound layout configurator using the layout option manager
                 LayoutOptionManager optionManager = DiagramLayoutEngine.INSTANCE.getOptionManager();
@@ -94,7 +103,7 @@ public class LayoutPropertySourceProvider implements IPropertySourceProvider {
                 }
                 
                 // obtain an editing domain from the selected object or from the workbench part
-                EditingDomain editingDomain = (EditingDomain) manager.getAdapter(object,
+                EditingDomain editingDomain = (EditingDomain) manager.getAdapter(diagramPart,
                         EditingDomain.class);
                 if (editingDomain == null) {
                     editingDomain = (EditingDomain) manager.getAdapter(workbenchPart,
