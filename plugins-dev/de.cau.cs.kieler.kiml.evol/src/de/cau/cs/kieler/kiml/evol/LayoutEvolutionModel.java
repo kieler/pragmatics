@@ -93,9 +93,9 @@ public final class LayoutEvolutionModel extends AbstractEvolutionaryAlgorithm {
     /** the individual that was selected for meta layout. */
     private Genome selectedIndividual;
     /** the layout options that are considered in meta layout. */
-    private List<LayoutOptionData<?>> layoutOptions;
+    private List<LayoutOptionData> layoutOptions;
     /** the executor service used for multi-threaded execution. */
-    private ExecutorService executorService;
+    private final ExecutorService executorService;
     
     /**
      * Initialize the layout evolution model by creating the required evolutionary operations.
@@ -132,7 +132,7 @@ public final class LayoutEvolutionModel extends AbstractEvolutionaryAlgorithm {
      * 
      * @return the considered options
      */
-    public List<LayoutOptionData<?>> getLayoutOptions() {
+    public List<LayoutOptionData> getLayoutOptions() {
         return layoutOptions;
     }
     
@@ -145,7 +145,7 @@ public final class LayoutEvolutionModel extends AbstractEvolutionaryAlgorithm {
      * @param progressMonitor a progress monitor
      */
     public void initializePopulation(final LayoutMapping<?> layoutMapping,
-            final List<LayoutOptionData<?>> options, final Device device,
+            final List<LayoutOptionData> options, final Device device,
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Initialize population", 4); // SUPPRESS CHECKSTYLE MagicNumber
         this.layoutOptions = options;

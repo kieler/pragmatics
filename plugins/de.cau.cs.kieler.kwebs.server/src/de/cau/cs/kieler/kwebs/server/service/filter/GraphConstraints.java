@@ -68,7 +68,6 @@ public class GraphConstraints extends LayoutFilter {
      * {@inheritDoc}
      */
     public boolean apply(final LayoutFilterData data, final List<Message> messages) {
-System.out.println(maxGraphs + " " + maxElements);
         if (testMaxGraphs && data.getGraphs().size() > maxGraphs) {
             messages.add(new Message(
                 this, 

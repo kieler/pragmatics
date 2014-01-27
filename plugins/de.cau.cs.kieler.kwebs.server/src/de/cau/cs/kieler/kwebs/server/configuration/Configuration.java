@@ -248,8 +248,20 @@ public final class Configuration extends Properties {
     public static final String CONTACT_EMAIL_ADDRESS
         = PREFIX + "frontend.contact.information.email.address";
 
-    //
-
+    // Usage Statistics
+    
+    /** Whether to record statistics at all. */
+    public static final String STATS_RECORDING
+        = PREFIX + "statistics.record";
+    
+    /** Host address of a statistics server. */
+    public static final String STATS_SERVER_HOST
+        = PREFIX + "statistics.host";
+    
+    /** Port of the statistics server. */
+    public static final String STATS_SERVER_HTTP
+        = PREFIX + "statistics.http";
+    
     /**
      * This is a container class for configuration identifiers so no
      * instantiation is required.

@@ -84,7 +84,7 @@ public final class AlgorithmSetup {
             "de.cau.cs.kieler.kiml.ogdf.option.runs", 0);
     /** Whether ports should be moved to the point where edges cross the node's bounds. */
     public static final IProperty<Boolean> ADAPT_PORT_POSITIONS = new Property<Boolean>(
-            "de.cau.cs.kieler.kiml.ogdf.option.adaptPortPositions", false);
+            "de.cau.cs.kieler.kiml.ogdf.option.adaptPortPositions", true);
     
     // options for Sugiyama layouter
     

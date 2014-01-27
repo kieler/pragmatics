@@ -15,15 +15,21 @@ package de.cau.cs.kieler.ptolemy.klighd.transformation
 
 import com.google.inject.Inject
 import de.cau.cs.kieler.core.kgraph.KEdge
+import de.cau.cs.kieler.core.kgraph.KGraphElement
 import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.core.kgraph.KPort
+import de.cau.cs.kieler.core.krendering.HorizontalAlignment
 import de.cau.cs.kieler.core.krendering.KContainerRendering
+import de.cau.cs.kieler.core.krendering.KDecoratorPlacementData
+import de.cau.cs.kieler.core.krendering.KPolyline
 import de.cau.cs.kieler.core.krendering.KRendering
 import de.cau.cs.kieler.core.krendering.KRenderingFactory
 import de.cau.cs.kieler.core.krendering.KRenderingLibrary
 import de.cau.cs.kieler.core.krendering.KRenderingRef
 import de.cau.cs.kieler.core.krendering.LineStyle
+import de.cau.cs.kieler.core.krendering.VerticalAlignment
 import de.cau.cs.kieler.core.krendering.extensions.KColorExtensions
+import de.cau.cs.kieler.core.krendering.extensions.KContainerRenderingExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KPolylineExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
@@ -38,10 +44,6 @@ import de.cau.cs.kieler.ptolemy.klighd.transformation.util.GraphicsUtils
 
 import static de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties.*
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
-import de.cau.cs.kieler.core.krendering.HorizontalAlignment
-import de.cau.cs.kieler.core.krendering.VerticalAlignment
-import de.cau.cs.kieler.core.krendering.extensions.KContainerRenderingExtensions
-import de.cau.cs.kieler.core.kgraph.KGraphElement
 
 /**
  * Creates concrete KRendering information for Ptolemy diagram elements.
@@ -161,7 +163,7 @@ class KRenderingFigureProvider {
         val rendering = renderingFactory.createKRoundedRectangle() => [rect |
             rect.cornerHeight = 15
             rect.cornerWidth = 15
-            rect.setLineWidth(0)
+            rect.setLineWidth(if (node.markedAsState) 1 else 0)
             rect.styles += renderingFactory.createKBackground() => [bg |
                 bg.alpha = alpha
                 bg.color = bgColor
@@ -611,7 +613,7 @@ class KRenderingFigureProvider {
      * Creates a rendering for an edge that represents a transition in a state machine.
      */
     def KRendering createTransitionRendering(KEdge edge) {
-        val rendering = renderingFactory.createKSpline() => [spline |
+        return renderingFactory.createKSpline() => [spline |
             spline.lineWidth = 1.6f
             
             // Special rendering options for transition types
@@ -622,11 +624,39 @@ class KRenderingFigureProvider {
             if (edge.getAnnotationBooleanValue(ANNOTATION_DEFAULT_TRANSITION)) {
                 spline.lineStyle = LineStyle::DASH
             }
+
+            spline.addHeadArrowDecorator() => [
+    
+                // in case the 'reset' flag of the transition is 'false' ...
+                if (!edge.getAnnotationBooleanValue(ANNOTATION_RESET_TRANSITION)) {
+
+                    // ... move the arrow decorator a bit towards the edge source,
+                    (it.placementData as KDecoratorPlacementData).absolute = -12
+
+                    // and add a history decorator
+                    spline.addHistoryDecorator()
+                }
+            ]
         ]
-        rendering.addArrowDecorator()
-        
-        return rendering
     }
+    
+    private def KRendering addHistoryDecorator(KPolyline line) {
+        return line.addEllipse() => [
+            it.lineWidth = 0.5f;
+            it.background = "gray".color
+            it.setDecoratorPlacementData(12, 12, -3, 1, false);
+            it.addPolyline(1) => [
+                it.points += createKPosition(LEFT, 3.5f, 0, TOP, 2.5f, 0);
+                it.points += createKPosition(LEFT, 3.5f, 0, BOTTOM, 2.5f, 0);
+                it.points += createKPosition(LEFT, 3.5f, 0, TOP, 0, 0.5f);
+                it.points += createKPosition(RIGHT, 3.5f, 0, TOP, 0, 0.5f);
+                it.points += createKPosition(RIGHT, 3.5f, 0, BOTTOM, 2.5f, 0);
+                it.points += createKPosition(RIGHT, 3.5f, 0, TOP, 2.5f, 0);
+            ]
+        ]
+    }
+
+    
     
     /**
      * Creates a rendering for an edge that represents a data flow buffer.

@@ -140,8 +140,12 @@ import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.Transformation
  *   within a certain threshold value.
  * </ol>
  * 
- * <p>This is still kind of experimental. It does work, but the heuristic is quite
- * simplistic and doesn't always give correct results.</p>
+ * <p>The heuristic can be applied in the first case as well. The explicit links will not
+ * be touched, then; only unlinked comments will be considered for attachment.</p>
+ * 
+ * <p>The attachment heuristic is based on the distance between comments and actors.
+ * Usually, the nearest actor will be chosen for attachment, up to a certain maximum
+ * distance. The maximum distance was carefully chosen after an experiment.</p>
  * 
  * @author cds
  */
@@ -160,9 +164,10 @@ class CommentsExtractor {
     val boolean heuristicsOverride = false
     /**
      * The maximum distance between a comment node and a regular node for them to be considered to be
-     * attached by the comment attachment heuristic.
+     * attached by the comment attachment heuristic. This value is a trade-off between generating false
+     * attachments and losing correct attachments.
      */
-    val double maxAttachmentDistance = 1500.0
+    val double maxAttachmentDistance = 500.0
     
     /** List of comment nodes created in the process. */
     val List<KNode> createdCommentNodes = newLinkedList()
@@ -306,17 +311,18 @@ class CommentsExtractor {
             val explicitAttachment = findExplicitAttachment(commentNode)
             
             if (explicitAttachment != null) {
-                explicitAttachments += new Pair(commentNode, explicitAttachment)
+                // CARE xtend's "+=" allows to have iterables on both sides, due to the 
+                // fact that Pair implements Iterable and no generics are specified during
+                // the creation of the pair, xtend thinks of the pair as an iterable and 
+                // adds both elements of the to the list. Not, as intended, the pair itself
+                // heuristicAttachments += new Pair(commentNode, heuristicAttachment)
+                explicitAttachments.add(new Pair(commentNode, explicitAttachment))
             } else if (enableHeuristic && (explicitAttachments.empty || !heuristicsOverride)) {
                 // Run our heuristic to find an implicit attachment
                 val heuristicAttachment = findNearestNonCommentSibling(commentNode)
                 
-                if (heuristicAttachment != null) { 
-                	// CARE xtend's "+=" allows to have iterables on both sides, due to the 
-                	// fact that Pair implements Iterable and no generics are specified during
-                	// the creation of the pair, xtend thinks of the pair as an iterable and 
-                	// adds both elements of the to the list. Not, as intended, the pair itself
-                	// heuristicAttachments += new Pair(commentNode, heuristicAttachment)
+                if (heuristicAttachment != null) {
+                    // CARE see above.
                     heuristicAttachments.add(new Pair(commentNode, heuristicAttachment))
                 }
             }

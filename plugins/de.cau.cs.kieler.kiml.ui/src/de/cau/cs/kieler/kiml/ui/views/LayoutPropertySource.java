@@ -86,16 +86,16 @@ public class LayoutPropertySource implements IPropertySource {
         if (propertyDescriptors == null) {
             layoutContext.setProperty(DefaultLayoutConfig.OPT_MAKE_OPTIONS, true);
             layoutConfig.enrich(layoutContext);
-            List<LayoutOptionData<?>> optionData = layoutContext.getProperty(
+            List<LayoutOptionData> optionData = layoutContext.getProperty(
                     DefaultLayoutConfig.OPTIONS);
             
             // filter the options hidden by option dependencies
             filterDependencies(optionData);
             
             propertyDescriptors = new IPropertyDescriptor[optionData.size()];
-            ListIterator<LayoutOptionData<?>> optionIter = optionData.listIterator();
+            ListIterator<LayoutOptionData> optionIter = optionData.listIterator();
             while (optionIter.hasNext()) {
-                LayoutOptionData<?> data = optionIter.next();
+                LayoutOptionData data = optionIter.next();
                 propertyDescriptors[optionIter.previousIndex()] = new LayoutPropertyDescriptor(data);
             }
         }
@@ -110,17 +110,17 @@ public class LayoutPropertySource implements IPropertySource {
      * 
      * @param optionData a list of option meta data
      */
-    private void filterDependencies(final List<LayoutOptionData<?>> optionData) {
+    private void filterDependencies(final List<LayoutOptionData> optionData) {
         // the layout algorithm option always affects other options
         dependencyOptions.add(LayoutOptions.ALGORITHM.getId());
         
-        ListIterator<LayoutOptionData<?>> optionIter = optionData.listIterator();
+        ListIterator<LayoutOptionData> optionIter = optionData.listIterator();
         while (optionIter.hasNext()) {
-            LayoutOptionData<?> option = optionIter.next();
+            LayoutOptionData option = optionIter.next();
             boolean visible = option.getDependencies().isEmpty();
-            for (Pair<LayoutOptionData<?>, Object> dependency : option.getDependencies()) {
+            for (Pair<LayoutOptionData, Object> dependency : option.getDependencies()) {
                 // if at least one dependency is met, the option is made visible
-                LayoutOptionData<?> targetOption = dependency.getFirst();
+                LayoutOptionData targetOption = dependency.getFirst();
                 dependencyOptions.add(targetOption.getId());
                 Object expectedValue = dependency.getSecond();
                 Object value = layoutConfig.getValue(targetOption, layoutContext);
@@ -142,7 +142,7 @@ public class LayoutPropertySource implements IPropertySource {
      */
     public Object getPropertyValue(final Object id) {
         LayoutDataService layoutServices = LayoutDataService.getInstance();
-        LayoutOptionData<?> optionData = layoutServices.getOptionData((String) id);
+        LayoutOptionData optionData = layoutServices.getOptionData((String) id);
         if (optionData != null) {
             Object value;
             if (LayoutOptions.ALGORITHM.getId().equals(id)) {
@@ -164,7 +164,7 @@ public class LayoutPropertySource implements IPropertySource {
      * @return a cell editor value
      */
     @SuppressWarnings("rawtypes")
-    private static Object translateValue(final Object value, final LayoutOptionData<?> optionData) {
+    private static Object translateValue(final Object value, final LayoutOptionData optionData) {
         if (value == null) {
             return "";
         }
@@ -220,7 +220,7 @@ public class LayoutPropertySource implements IPropertySource {
      * {@inheritDoc}
      */
     public void setPropertyValue(final Object id, final Object thevalue) {
-        final LayoutOptionData<?> optionData = LayoutDataService.getInstance()
+        final LayoutOptionData optionData = LayoutDataService.getInstance()
                 .getOptionData((String) id);
         if (optionData != null) {
             Runnable modelChange = new Runnable() {
@@ -275,7 +275,7 @@ public class LayoutPropertySource implements IPropertySource {
      * {@inheritDoc}
      */
     public boolean isPropertySet(final Object id) {
-        LayoutOptionData<?> optionData = LayoutDataService.getInstance().getOptionData((String) id);
+        LayoutOptionData optionData = LayoutDataService.getInstance().getOptionData((String) id);
         return layoutConfig.isSet(optionData, layoutContext);
     }
 
@@ -283,8 +283,7 @@ public class LayoutPropertySource implements IPropertySource {
      * {@inheritDoc}
      */
     public void resetPropertyValue(final Object id) {
-        final LayoutOptionData<?> optionData = LayoutDataService.getInstance()
-                .getOptionData((String) id);
+        final LayoutOptionData optionData = LayoutDataService.getInstance().getOptionData((String) id);
         if (optionData != null) {
             Runnable modelChange = new Runnable() {
                 public void run() {

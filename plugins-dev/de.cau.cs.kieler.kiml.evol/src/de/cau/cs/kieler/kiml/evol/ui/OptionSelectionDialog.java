@@ -47,7 +47,7 @@ public class OptionSelectionDialog extends Dialog {
     /** the table viewer for the layout options. */
     private TableViewer optionViewer;
     /** the list of selected options. */
-    private List<LayoutOptionData<?>> selectedOptions;
+    private List<LayoutOptionData> selectedOptions;
 
     /**
      * Creates an option selection dialog where all options are pre-selected.
@@ -65,7 +65,7 @@ public class OptionSelectionDialog extends Dialog {
      * @param selectedOptions the options to pre-select
      */
     public OptionSelectionDialog(final Shell parentShell,
-            final List<LayoutOptionData<?>> selectedOptions) {
+            final List<LayoutOptionData> selectedOptions) {
         super(parentShell);
         this.selectedOptions = selectedOptions;
     }
@@ -84,7 +84,7 @@ public class OptionSelectionDialog extends Dialog {
      * 
      * @return the selection of layout options
      */
-    public List<LayoutOptionData<?>> getSelection() {
+    public List<LayoutOptionData> getSelection() {
         return selectedOptions;
     }
     
@@ -148,10 +148,10 @@ public class OptionSelectionDialog extends Dialog {
      */
     @Override
     public boolean close() {
-        selectedOptions = new ArrayList<LayoutOptionData<?>>();
+        selectedOptions = new ArrayList<LayoutOptionData>();
         for (TableItem item : optionViewer.getTable().getItems()) {
             if (item.getChecked()) {
-                selectedOptions.add((LayoutOptionData<?>) item.getData());
+                selectedOptions.add((LayoutOptionData) item.getData());
             }
         }
         return super.close();
@@ -198,8 +198,8 @@ public class OptionSelectionDialog extends Dialog {
          */
         @Override
         public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
-            if (element instanceof LayoutOptionData<?>) {
-                LayoutOptionData<?> optionData = (LayoutOptionData<?>) element;
+            if (element instanceof LayoutOptionData) {
+                LayoutOptionData optionData = (LayoutOptionData) element;
                 return LayoutOptions.ALGORITHM.equals(optionData)
                         || (optionData.getTargets().contains(LayoutOptionData.Target.PARENTS)
                         && optionData.getVariance() > 0 && typeSupported(optionData.getType()));

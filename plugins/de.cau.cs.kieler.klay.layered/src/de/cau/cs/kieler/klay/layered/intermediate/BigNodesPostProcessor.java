@@ -31,9 +31,9 @@ import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
- * This class performs merges the series of big node dummy nodes introduced by the
+ * This class merges the series of big node dummy nodes introduced by the
  * {@link BigNodesPreProcessor} back into the original node. I.e., the original width is assigned to
- * first node of the series, all other dummies are dropped. Furthermore, the EAST ports that were
+ * the first node of the series, all other dummies are dropped. Furthermore, the EAST ports that were
  * moved to the last dummy node, are moved back to the original node. Here, the x coordinate of the
  * moved ports have to be adapted properly.
  * 

@@ -62,10 +62,10 @@ public class NodeSeparationMetric implements IAnalysis {
      * @return the separation metric
      */
     private float nodeSeparation(final KNode parentNode, final boolean hierarchy) {
-        if (parentNode.getChildren().size() <= 1) {
+        int nodeCount = parentNode.getChildren().size();
+        if (nodeCount <= 1) {
             return 1;
         }
-        int nodeCount = parentNode.getChildren().size();
 
         // calculate the distance between each pair of nodes
         float[][] distanceMatrix = new float[nodeCount][nodeCount];
@@ -166,7 +166,7 @@ public class NodeSeparationMetric implements IAnalysis {
                 
                 float distance = Math.abs((left2 + hwidth2) - (left1 + hwidth1))
                         + Math.abs((top2 + hheight2) - (top1 + hheight1));
-                return distance / (hwidth1 + hwidth2 + hheight1 + hheight2);
+                return distance / Math.max(hwidth1 + hwidth2 + hheight1 + hheight2, 1);
             }
         }
     }

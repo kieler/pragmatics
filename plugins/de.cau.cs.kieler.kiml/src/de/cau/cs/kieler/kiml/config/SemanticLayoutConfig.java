@@ -57,7 +57,7 @@ public abstract class SemanticLayoutConfig implements IMutableLayoutConfig {
      * @return the corresponding value, or {@code null} if no specific value is determined
      */
     protected abstract Object getSemanticValue(Object semanticElem,
-            LayoutOptionData<?> layoutOption);
+            LayoutOptionData layoutOption);
     
     /**
      * Set a layout option value for the semantic element. This feature is optional, so
@@ -69,16 +69,16 @@ public abstract class SemanticLayoutConfig implements IMutableLayoutConfig {
      *     value shall be deleted
      */
     protected abstract void setSemanticValue(Object semanticElem,
-            LayoutOptionData<?> layoutOption, Object value);
+            LayoutOptionData layoutOption, Object value);
 
     /**
      * {@inheritDoc}
      */
     public void enrich(final LayoutContext context) {
         LayoutDataService layoutDataService = LayoutDataService.getInstance();
-        LayoutOptionData<?> algorithmData = layoutDataService.getOptionData(
+        LayoutOptionData algorithmData = layoutDataService.getOptionData(
                 LayoutOptions.ALGORITHM.getId());
-        LayoutOptionData<?> diagTypeData = layoutDataService.getOptionData(
+        LayoutOptionData diagTypeData = layoutDataService.getOptionData(
                 LayoutOptions.DIAGRAM_TYPE.getId());
         
         Object element = context.getProperty(LayoutContext.DOMAIN_MODEL);
@@ -125,7 +125,7 @@ public abstract class SemanticLayoutConfig implements IMutableLayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public final Object getValue(final LayoutOptionData<?> optionData, final LayoutContext context) {
+    public final Object getValue(final LayoutOptionData optionData, final LayoutContext context) {
         Object element = context.getProperty(LayoutContext.DOMAIN_MODEL);
         if (element != null) {
             return getSemanticValue(element, optionData);
@@ -157,9 +157,9 @@ public abstract class SemanticLayoutConfig implements IMutableLayoutConfig {
             IProperty<?>[] affectedOptions = getAffectedOptions(element);
             if (affectedOptions != null) {
                 for (IProperty<?> property : affectedOptions) {
-                    LayoutOptionData<?> optionData;
-                    if (property instanceof LayoutOptionData<?>) {
-                        optionData = (LayoutOptionData<?>) property;
+                    LayoutOptionData optionData;
+                    if (property instanceof LayoutOptionData) {
+                        optionData = (LayoutOptionData) property;
                     } else {
                         optionData = layoutDataService.getOptionData(property.getId());
                     }
@@ -175,7 +175,7 @@ public abstract class SemanticLayoutConfig implements IMutableLayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public final void setValue(final LayoutOptionData<?> optionData, final LayoutContext context,
+    public final void setValue(final LayoutOptionData optionData, final LayoutContext context,
             final Object value) {
         Object element = context.getProperty(LayoutContext.DOMAIN_MODEL);
         if (element != null) {
@@ -186,7 +186,7 @@ public abstract class SemanticLayoutConfig implements IMutableLayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public final boolean isSet(final LayoutOptionData<?> optionData, final LayoutContext context) {
+    public final boolean isSet(final LayoutOptionData optionData, final LayoutContext context) {
         Object element = context.getProperty(LayoutContext.DOMAIN_MODEL);
         if (element != null) {
             return getSemanticValue(element, optionData) != null;

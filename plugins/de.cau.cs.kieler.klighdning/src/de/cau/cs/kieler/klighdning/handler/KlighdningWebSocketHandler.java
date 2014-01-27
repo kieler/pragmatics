@@ -17,6 +17,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.Adler32;
@@ -32,7 +33,10 @@ import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.jetty.util.MultiMap;
 import org.eclipse.jetty.util.ajax.JSON;
 import org.eclipse.jetty.websocket.WebSocket;
+import org.eclipse.xtext.xbase.lib.Functions.Function1;
+import org.eclipse.xtext.xbase.lib.IterableExtensions;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
 import com.google.common.io.Files;
 
@@ -500,14 +504,29 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
         final String textFormat = (String) json.get("textFormat");
 
         try {
+
+            // load
             Resource r = rs.createResource(URI.createFileURI("dummy." + textFormat));
             ByteArrayInputStream bais = new ByteArrayInputStream(text.getBytes());
-            r.load(bais, rs.getLoadOptions());
+            r.load(bais, Collections.emptyMap());
 
+            // now check for errors
+            
+            // nothing loaded at all
             if (r.getContents().isEmpty()) {
                 sendError("ERROR: Could not load model with format " + textFormat
                         + ". Please check that the specified format is "
                         + "correct and the passed model wellformed and valid.");
+                return;
+            }
+
+            // an error occured during loading
+            if (!r.getErrors().isEmpty()) {
+                String errorString =
+                        Joiner.on("\n").join(
+                                IterableExtensions.map(r.getErrors(), DIAGNOSTIC_TO_STRING));
+                sendError("ERROR: Following errors occured while loading the resource. "
+                        + "(Assure that the correct model format is selected.)\n\n" + errorString);
                 return;
             }
 
@@ -520,7 +539,17 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
             layoutBroadcastSVG(Broadcast.All, true);
 
         } catch (Exception e) {
+            e.printStackTrace();
             sendError("ERROR: " + e.getLocalizedMessage());
         }
     }
+    
+    // CHECKSTYLEOFF
+    private static final Function1<Resource.Diagnostic, String> DIAGNOSTIC_TO_STRING =
+            new Function1<Resource.Diagnostic, String>() {
+
+                public String apply(final Resource.Diagnostic p) {
+                    return p.getMessage();
+                }
+            };
 }

@@ -148,7 +148,7 @@ public class CompoundLayoutConfig implements IMutableLayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public Object getValue(final LayoutOptionData<?> optionData, final LayoutContext context) {
+    public Object getValue(final LayoutOptionData optionData, final LayoutContext context) {
         for (ILayoutConfig conf : configs) {
             Object value = conf.getValue(optionData, context);
             if (value != null) {
@@ -189,7 +189,7 @@ public class CompoundLayoutConfig implements IMutableLayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public void setValue(final LayoutOptionData<?> optionData, final LayoutContext context,
+    public void setValue(final LayoutOptionData optionData, final LayoutContext context,
             final Object value) {
         for (ILayoutConfig conf : configs) {
             if (conf instanceof IMutableLayoutConfig) {
@@ -202,7 +202,7 @@ public class CompoundLayoutConfig implements IMutableLayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public boolean isSet(final LayoutOptionData<?> optionData, final LayoutContext context) {
+    public boolean isSet(final LayoutOptionData optionData, final LayoutContext context) {
         for (ILayoutConfig conf : configs) {
             if (conf instanceof IMutableLayoutConfig) {
                 IMutableLayoutConfig mlc = (IMutableLayoutConfig) conf;

@@ -59,7 +59,7 @@ public class ZoomToFitHandler extends AbstractHandler {
                 IEditorPart editor = ref.getEditor(false);
                 if (editor instanceof PtolemyEditorPart) {
                     PtolemyEditorPart ptolemyEditor = (PtolemyEditorPart) editor;
-                    ptolemyEditor.getContextViewer().getViewContext()
+                    ptolemyEditor.getViewer().getViewContext()
                             .setZoomStyle(selection ? ZoomStyle.ZOOM_TO_FIT : ZoomStyle.NONE);
                 }
             }

@@ -382,14 +382,14 @@
            variance="0">
      </layoutOption>
      <layoutOption
-           appliesTo="nodes"
            advanced="true"
+           appliesTo="nodes"
            class="de.cau.cs.kieler.kiml.options.NodeLabelPlacement"
-           default=""
-           description="Hints for where node labels are to be placed; if empty, the node label's position is not modified."
+           description="Hints for where node labels are to be placed; if empty, the node label&apos;s position is not modified."
            id="de.cau.cs.kieler.nodeLabelPlacement"
            name="Node Label Placement"
-           type="enumset">
+           type="enumset"
+           variance="0">
      </layoutOption>
      <layoutOption
            appliesTo="nodes"
@@ -398,7 +398,8 @@
            description="Decides on a placement method for port labels."
            id="de.cau.cs.kieler.portLabelPlacement"
            name="Port Label Placement"
-           type="enum">
+           type="enum"
+           variance="0">
      </layoutOption>
      <layoutOption
            advanced="true"
@@ -471,12 +472,13 @@
      </layoutOption>
      <layoutOption
            advanced="true"
-           appliesTo="parents,nodes,edges,ports,labels"
+           appliesTo="nodes,edges,ports,labels"
            default="false"
            description="Indicates that no layout should be done for the diagram part"
            id="de.cau.cs.kieler.noLayout"
            name="No Layout"
-           type="boolean">
+           type="boolean"
+           variance="0">
      </layoutOption>
      <layoutOption
            advanced="true"

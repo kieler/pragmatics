@@ -69,7 +69,6 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
             // this node has children and is thus a compound node;
             // fetch the layout algorithm that should be used to compute a layout for its content
             LayoutAlgorithmData algorithmData = getAlgorithm(layoutNode);
-            AbstractLayoutProvider layoutProvider = algorithmData.getInstancePool().fetch();
             
             // if the layout provider supports hierarchy, it is expected to layout the node's compound
             // node children as well
@@ -95,9 +94,17 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                 return;
             }
 
-            // perform layout on the current hierarchy level
-            layoutProvider.doLayout(layoutNode, progressMonitor.subTask(nodeCount));
-            algorithmData.getInstancePool().release(layoutProvider);
+            // get an instance of the layout provider
+            AbstractLayoutProvider layoutProvider = algorithmData.getInstancePool().fetch();
+            try {
+                // perform layout on the current hierarchy level
+                layoutProvider.doLayout(layoutNode, progressMonitor.subTask(nodeCount));
+                algorithmData.getInstancePool().release(layoutProvider);
+            } catch (RuntimeException exception) {
+                // the layout provider has failed - destroy it
+                layoutProvider.dispose();
+                throw exception;
+            }
         }
     }
 

@@ -208,13 +208,9 @@ public final class ServerLayoutDataService extends ExtensionLayoutDataService {
                 option.setImplementation(element.getAttribute(ATTRIBUTE_CLASS));
                 option.setAdvanced(Boolean.parseBoolean(element.getAttribute(ATTRIBUTE_ADVANCED)));
                 String type = element.getAttribute(ATTRIBUTE_TYPE);
+                option.setType(type);
                 if (type.equals(LayoutOptionData.ENUM_LITERAL)
                         || type.equals(LayoutOptionData.ENUMSET_LITERAL)) {
-                    if (type.equals(LayoutOptionData.ENUM_LITERAL)) {
-                        option.setType("remoteenum");
-                    } else {
-                        option.setType("remoteenumset");
-                    }
                     try {
                         String className = element.getAttribute(ATTRIBUTE_CLASS);
                         if (className == null || className.length() == 0) {
@@ -233,8 +229,6 @@ public final class ServerLayoutDataService extends ExtensionLayoutDataService {
                     } catch (Exception exception) {
                         reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_CLASS, exception);
                     }
-                } else {
-                    option.setType(type);                    
                 }
                 serviceData.getLayoutOptions().add(option);
             }

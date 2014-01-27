@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: KIELER Web Statistics
+Bundle-SymbolicName: de.cau.cs.kieler.web.statistics
+Bundle-Version: 0.1.0.qualifier
+Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ClassPath: .,
+ lib/mongo-java-driver-2.11.3.jar
+Export-Package: com.mongodb,
+ com.mongodb.gridfs,
+ com.mongodb.io,
+ com.mongodb.tools,
+ com.mongodb.util,
+ com.mongodb.util.management,
+ com.mongodb.util.management.jmx,
+ de.cau.cs.kieler.statistics
+Require-Bundle: com.google.guava,
+ de.cau.cs.kieler.core,
+ de.cau.cs.kieler.core.kgraph,
+ de.cau.cs.kieler.kiml
