@@ -28,5 +28,11 @@
             id="de.cau.cs.kieler.klighd.xtext.transformations.KGraphDiagramSynthesis">
       </diagramSynthesis>
    </extension>
+   <extension
+         point="de.cau.cs.kieler.klighd.extensions">
+      <handler
+            class="de.cau.cs.kieler.klighd.xtext.ModifyXtextModelHandler">
+      </handler>
+   </extension>
 
 </plugin>

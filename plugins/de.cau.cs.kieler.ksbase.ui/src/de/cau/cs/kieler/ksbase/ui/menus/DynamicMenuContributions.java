@@ -33,14 +33,23 @@ import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.klighd.IModifyModelHandler;
+import de.cau.cs.kieler.klighd.ui.modifymodel.ModifyModelHandlerProvider;
+import de.cau.cs.kieler.klighd.ui.parts.DiagramViewPart;
+import de.cau.cs.kieler.klighd.viewers.ContextViewer;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.KSBasEMenuContribution;
 import de.cau.cs.kieler.ksbase.core.KSBasETransformation;
 import de.cau.cs.kieler.ksbase.core.TransformationManager;
 import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
-import de.cau.cs.kieler.ksbase.ui.kivi.IKSBasEHandler;
 import de.cau.cs.kieler.ksbase.ui.kivi.KSBasECombination;
 
 /**
@@ -81,8 +90,10 @@ public final class DynamicMenuContributions {
          */
         // private TransactionalEditingDomain transDomain = null;
 
-        private IKSBasEHandler activeHandler = null;
+        private IModifyModelHandler activeHandler = null;
 
+        private IWorkbenchPart partCache;
+        
         /**
          * Constructs a new expression evaluating the visibility of an transformation by matching
          * the current selection and evaluation a validation method.
@@ -113,15 +124,17 @@ public final class DynamicMenuContributions {
         private HashMap<Object, Object> getSelectionHash(final List<EObject> selection) {
             HashMap<Object, Object> selectionCache = new HashMap<Object, Object>();
             for (EObject obj : selection) {
-                Object cache = selectionCache.get(obj.getClass());
-                List<Object> listCache;
-                if (cache == null) {
-                    listCache = new LinkedList<Object>();
-                    selectionCache.put(obj.getClass(), listCache);
-                    listCache.add(obj);
-                } else if (cache instanceof List<?>) {
-                    listCache = (List<Object>) cache;
-                    listCache.add(obj);
+                if (obj != null) {
+                    Object cache = selectionCache.get(obj.getClass());
+                    List<Object> listCache;
+                    if (cache == null) {
+                        listCache = new LinkedList<Object>();
+                        selectionCache.put(obj.getClass(), listCache);
+                        listCache.add(obj);
+                    } else if (cache instanceof List<?>) {
+                        listCache = (List<Object>) cache;
+                        listCache.add(obj);
+                    }
                 }
             }
             return selectionCache;
@@ -135,13 +148,32 @@ public final class DynamicMenuContributions {
          * @return A list of the EObjects currently selected in the editor.
          */
         private List<EObject> getCurrentSelection(final IEvaluationContext context) {
-
             // get a fitting handler and the selection
-            activeHandler = KSBasEUIPlugin.getDefault().getFittingKSBasEHandler(context);
-            if (activeHandler != null) {
-                return activeHandler.getSelection(context);
+            Object wp = context.getVariable("org.eclipse.ui.active_activePart");
+            if (!(wp instanceof IWorkbenchPart)) {
+                Display.getDefault().syncExec(new Runnable() {
+                    public void run() {
+                        IWorkbench wb = PlatformUI.getWorkbench();
+                        IWorkbenchWindow wbw = wb.getActiveWorkbenchWindow();
+                        if (wbw != null) {
+                            IWorkbenchPage ap = wbw.getActivePage();
+                            partCache = ap.getActivePart();
+                        }
+
+                    }
+                });
+                wp = partCache;
             }
-            
+            if (wp instanceof DiagramViewPart) {
+                ContextViewer v = (ContextViewer) ((DiagramViewPart) wp).getViewer(); 
+                wp = v.getViewContext().getSourceWorkbenchPart();
+            }
+            if (wp instanceof IWorkbenchPart) {
+                activeHandler = ModifyModelHandlerProvider.getInstance().getFittingHandler((IWorkbenchPart) wp);
+                if (activeHandler != null) {
+                    return activeHandler.getSelection((IWorkbenchPart)wp, (List<?>)context.getDefaultVariable());
+                }
+            }
             return null;
         }
 
