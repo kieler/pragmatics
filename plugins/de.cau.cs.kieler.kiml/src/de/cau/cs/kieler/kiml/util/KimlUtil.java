@@ -653,8 +653,7 @@ public final class KimlUtil {
     public static void setOption(final KGraphData graphData, final String id,
             final String value) {
         LayoutDataService dataService = LayoutDataService.getInstance();
-        @SuppressWarnings("unchecked")
-        LayoutOptionData<Object> optionData = (LayoutOptionData<Object>) dataService.getOptionData(id);
+        LayoutOptionData optionData = dataService.getOptionData(id);
         if (optionData != null) {
             Object obj = optionData.parseValue(value);
             if (obj != null) {
@@ -688,7 +687,6 @@ public final class KimlUtil {
      * 
      * @param graph the root element of the graph to load elements of.
      */
-    @SuppressWarnings("unchecked")
     public static void loadDataElements(final KNode graph) {
         LayoutDataService dataService = LayoutDataService.getInstance();
         TreeIterator<EObject> iterator = graph.eAllContents();
@@ -700,11 +698,8 @@ public final class KimlUtil {
                     String key = persistentEntry.getKey();
                     String value = persistentEntry.getValue();
                     if (key != null && value != null) {
-                        LayoutOptionData<Object> layoutOptionData = null;
-                        
                         // try to get the layout option from the data service.
-                        layoutOptionData = (LayoutOptionData<Object>) dataService
-                                .getOptionDataBySuffix(key);
+                        LayoutOptionData layoutOptionData = dataService.getOptionDataBySuffix(key);
                         
                         // if we have a valid layout option, parse its value.
                         if (layoutOptionData != null) {

@@ -146,5 +146,16 @@ point="org.eclipse.ui.menus">
           restorable="true">
     </view>
  </extension>
+ <extension
+       point="org.eclipse.emf.ecore.extension_parser">
+    <parser
+          class="de.cau.cs.kieler.kiml.ui.util.KGraphResourceFactory"
+          type="kgx">
+    </parser>
+    <parser
+          class="de.cau.cs.kieler.kiml.ui.util.KGraphResourceFactory"
+          type="kgraph">
+    </parser>
+ </extension>
    
 </plugin>
