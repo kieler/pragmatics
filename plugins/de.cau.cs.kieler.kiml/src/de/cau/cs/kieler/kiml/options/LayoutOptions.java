@@ -196,6 +196,17 @@ public final class LayoutOptions {
             "de.cau.cs.kieler.progressBar", false);
     
     /**
+     * The scaling factor to be applied to the corresponding node in recursive layout.
+     * [programmatically set] It causes the corresponding node's size to be adjusted, and its ports
+     * & labels to be sized and placed accordingly after the layout of that node has been determined
+     * (and before the node itself and its siblings get arranged). The scaling is not reverted
+     * afterwards, so the resulting layout graph contains the adjusted size and position data. This
+     * option is currently not supported if {@link #LAYOUT_HIERARCHY} is set.
+     */
+    public static final IProperty<Float> SCALE_FACTOR = new Property<Float>(
+            "de.cau.cs.kieler.scaleFactor", 1f);
+    
+    /**
      * Whether the zoom level shall be set to view the whole diagram after layout.
      * [programmatically set]
      */

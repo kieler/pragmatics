@@ -19,6 +19,7 @@ import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.GraphFeature;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * Performs layout on a graph with hierarchy by executing a layout algorithm on each level of the
@@ -87,6 +88,9 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                 nodeCount = layoutNode.getChildren().size();
                 for (KNode child : layoutNode.getChildren()) {
                     layoutRecursively(child, progressMonitor);
+                    
+                    // apply the LayoutOptions.SCALE_FACTOR if present
+                    KimlUtil.applyConfiguredNodeScaling(child);
                 }
             }
 
