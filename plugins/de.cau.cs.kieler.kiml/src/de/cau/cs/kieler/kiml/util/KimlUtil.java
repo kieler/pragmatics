@@ -515,9 +515,9 @@ public final class KimlUtil {
     }
 
     /**
-     * Applies the scaling factor to <code>node</code>'s size data if
-     * {@link LayoutOptions#SCALE_FACTOR} is set, and updates the layout data of <code>node</code>'s
-     * ports and labels correspondingly.<br>
+     * Applies the scaling factor configured in terms of {@link LayoutOptions#SCALE_FACTOR} in its
+     * {@link KShapeLayout} to {@code node} 's size data, and updates the layout data of
+     * {@code node}'s ports and labels accordingly.<br>
      * <b>Note:</b> The scaled layout data won't be reverted during the layout process, see
      * {@link LayoutOptions#SCALE_FACTOR}.
      * 
@@ -526,14 +526,13 @@ public final class KimlUtil {
      * @param node
      *            the {@link KNode} to be scaled
      */
-    public static void scaleNode(final KNode node) {
+    public static void applyConfiguredNodeScaling(final KNode node) {
         final KShapeLayout shapeLayout = node.getData(KShapeLayout.class);
+        final float scalingFactor = shapeLayout.getProperty(LayoutOptions.SCALE_FACTOR);
 
-        if (!shapeLayout.getProperties().containsKey(LayoutOptions.SCALE_FACTOR)) {
+        if (scalingFactor == 1f) {
             return;
         }
-
-        final float scalingFactor = shapeLayout.getProperty(LayoutOptions.SCALE_FACTOR);
 
         shapeLayout.setSize(scalingFactor * shapeLayout.getWidth(),
                 scalingFactor * shapeLayout.getHeight());

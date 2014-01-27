@@ -525,10 +525,11 @@
            default="1f"
            description="The scaling factor to be applied to the corresponding node in recursive layout."
            id="de.cau.cs.kieler.scaleFactor"
-           lowerBound="0.1f"
+           lowerBound="0.01f"
            name="Scale Factor"
            type="float"
-           upperBound="10f">
+           upperBound="100f"
+           variance="0">
      </layoutOption>
      <layoutOption
            advanced="true"

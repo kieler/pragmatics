@@ -90,7 +90,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     layoutRecursively(child, progressMonitor);
                     
                     // apply the LayoutOptions.SCALE_FACTOR if present
-                    KimlUtil.scaleNode(child);
+                    KimlUtil.applyConfiguredNodeScaling(child);
                 }
             }
 
