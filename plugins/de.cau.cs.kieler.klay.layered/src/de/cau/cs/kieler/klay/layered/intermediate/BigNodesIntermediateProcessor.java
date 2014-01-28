@@ -109,8 +109,10 @@ public class BigNodesIntermediateProcessor implements ILayoutProcessor {
             LNode target = edge.getTarget().getNode();
 
             // only walk through intermediate big nodes
-            if ((target.getProperty(Properties.NODE_TYPE) == NodeType.BIG_NODE)
-                    && !isInitialBigNode(target)) {
+            // also ignore originally incoming WEST ports that are reverted
+            if (!isInitialBigNode(target)
+                    && (target.getProperty(Properties.NODE_TYPE) == NodeType.BIG_NODE)
+                    && !edge.getProperty(Properties.REVERSED)) {
 
                 // pull left
                 int gap = target.getLayer().getIndex() - start.getLayer().getIndex();
