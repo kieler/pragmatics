@@ -23,9 +23,11 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.LabelSide;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.GraphAdapter;
@@ -106,7 +108,7 @@ public class KGraphAdapters {
             layout.setXpos((float) pos.x);
             layout.setYpos((float) pos.y);
         }
-        
+
         /**
          * {@inheritDoc}
          */
@@ -127,7 +129,7 @@ public class KGraphAdapters {
             layout.getInsets().setRight((float) insets.right);
             layout.getInsets().setBottom((float) insets.bottom);
         }
-        
+
         /**
          * {@inheritDoc}
          */
@@ -145,7 +147,7 @@ public class KGraphAdapters {
          * {@inheritDoc}
          */
         public void setMargin(final Margins margin) {
-         // FIXME big problem :) there's no margin in the KGraph
+            // FIXME big problem :) there's no margin in the KGraph
             KInsets insets = layout.getInsets();
             insets.setLeft((float) margin.left);
             insets.setTop((float) margin.top);
@@ -222,11 +224,26 @@ public class KGraphAdapters {
     private static class KLabelAdapter extends AbstractKGraphElementAdapter<KLabel> implements
             LabelAdapter<KLabel> {
 
+        // FIXME move this to LayoutOptions as soon as the git issue is resolved.
+        /**
+         * On which side of its corresponding edge a label is situated. [programmatically set]
+         */
+        public static final IProperty<LabelSide> LABEL_SIDE = new Property<LabelSide>(
+                "de.cau.cs.kieler.labelSide", LabelSide.UNKNOWN);
+        
+        
         /**
          * 
          */
         public KLabelAdapter(final KLabel label) {
             super(label);
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public LabelSide getSide() {
+            return layout.getProperty(LABEL_SIDE);
         }
     }
 

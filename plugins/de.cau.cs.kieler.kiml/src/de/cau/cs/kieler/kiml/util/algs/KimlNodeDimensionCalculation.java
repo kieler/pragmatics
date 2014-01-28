@@ -27,26 +27,62 @@ import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters.KGraphAdapter;
 public final class KimlNodeDimensionCalculation {
 
     /**
-     * .
+     * Private constructor - utility class.
      */
     private KimlNodeDimensionCalculation() {
     }
 
+    /**
+     * Calculates label sizes and node sizes also considering ports.
+     * 
+     * @see LabelAndNodeSizeProcessor
+     * 
+     * @param graph
+     *            the graph for which to calculate the sizes.
+     * @param adapter
+     *            an instance of an adapter for the passed graph's type.
+     * @param <T>
+     *            the graphs type, e.g. {@link KNode}
+     */
     public static <T> void calculateLabelAndNodeSizes(final T graph, final GraphAdapter<T> adapter) {
         LabelAndNodeSizeProcessor processor = new LabelAndNodeSizeProcessor();
         processor.process(adapter);
     }
 
-    public static void calculateLabelAndNodeSizes(final KNode root) {
-        KGraphAdapter kga = new KGraphAdapter(root);
-        calculateLabelAndNodeSizes(root, kga);
+    /**
+     * Calculates label sizes and node sizes also considering ports for a KGraph.
+     * 
+     * @see LabelAndNodeSizeProcessor
+     * 
+     * @param graph
+     *            the graph for which to calculate the sizes.
+     */
+    public static void calculateLabelAndNodeSizes(final KNode graph) {
+        KGraphAdapter kga = new KGraphAdapter(graph);
+        calculateLabelAndNodeSizes(graph, kga);
     }
 
+    /**
+     * Calculates node margins for the nodes of the passed graph.
+     * 
+     * @param graph
+     *            the graph.
+     * @param adapter
+     *            an instance of an adapter for the passed graph's type.
+     * @param <T>
+     *            the graphs type, e.g. {@link KNode}
+     */
     public static <T> void calculateNodeMargins(final T graph, final GraphAdapter<T> adapter) {
         NodeMarginCalculator calcu = new NodeMarginCalculator();
         calcu.processNodeMargin(adapter);
     }
 
+    /**
+     * Calculates node margins for the nodes of the passed KGraph.
+     * 
+     * @param root
+     *            the graph.
+     */
     public static void calculateNodeMargins(final KNode root) {
         KGraphAdapter kga = new KGraphAdapter(root);
         calculateNodeMargins(root, kga);

@@ -19,6 +19,7 @@ import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.kiml.options.LabelSide;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.GraphAdapter;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.GraphElementAdapter;
@@ -273,6 +274,15 @@ public class LGraphAdapters {
          */
         public LLabelAdapter(LLabel element) {
             super(element);
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public LabelSide getSide() {
+            // FIXME when git issue resolved.
+            return null;
+           // return element.getSide();
         }
 
     }
