@@ -157,6 +157,8 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
      * Only handle nodes with {@link PortConstraints} <= {@link PortConstraints#FIXED_ORDER}, or for
      * greater port constraints we demand that the node has no NORTH and SOUTH ports.
      * 
+     * Also, we do not support self-loops at the moment.
+     * 
      * @param node
      * @return true if we can apply big nodes processing
      */
@@ -166,6 +168,12 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
                 || node.getProperty(LayoutOptions.PORT_CONSTRAINTS) == PortConstraints.FIXED_POS) {
             for (LPort port : node.getPorts()) {
                 if (port.getSide() == PortSide.NORTH || port.getSide() == PortSide.SOUTH) {
+                    return false;
+                }
+            }
+            // we don't support self-loops 
+            for (LEdge edge : node.getOutgoingEdges()) {
+                if (edge.getSource().getNode().equals(edge.getTarget().getNode())) {
                     return false;
                 }
             }
