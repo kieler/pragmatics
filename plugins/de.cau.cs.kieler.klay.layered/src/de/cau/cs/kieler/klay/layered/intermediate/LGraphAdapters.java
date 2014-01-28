@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.options.LabelSide;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.GraphAdapter;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.GraphElementAdapter;
@@ -35,6 +36,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LShape;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * @author uru
@@ -85,7 +87,15 @@ public class LGraphAdapters {
         /**
          * {@inheritDoc}
          */
+        @SuppressWarnings("unchecked")
         public <P> P getProperty(final IProperty<P> prop) {
+            
+            // handle some special cases
+            if (prop.equals(LayoutOptions.SPACING)) {
+                // cast is ok, as both properties are Floats
+                return (P) element.getProperty(Properties.OBJ_SPACING);
+            }
+            
             return element.getProperty(prop);
         }
 
