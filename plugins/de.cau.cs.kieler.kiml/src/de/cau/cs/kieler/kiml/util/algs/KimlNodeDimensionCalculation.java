@@ -11,10 +11,11 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.util;
+package de.cau.cs.kieler.kiml.util.algs;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.util.GraphAdapterFactory.GraphAdapter;
+import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.GraphAdapter;
+import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters.KGraphAdapter;
 
 /**
  * 
@@ -31,29 +32,24 @@ public final class KimlNodeDimensionCalculation {
     private KimlNodeDimensionCalculation() {
     }
 
-    public static <T> void calculateLabelAndNodeSizes(final T graph,
-            final GraphAdapterFactory<T> fac) {
-        GraphAdapter<?> graphAdapter = fac.getGraphAdapter(graph);
-
+    public static <T> void calculateLabelAndNodeSizes(final T graph, final GraphAdapter<T> adapter) {
         LabelAndNodeSizeProcessor processor = new LabelAndNodeSizeProcessor();
-        processor.process(graphAdapter);
+        processor.process(adapter);
     }
 
     public static void calculateLabelAndNodeSizes(final KNode root) {
-        KGraphAdapterFactory fac = new KGraphAdapterFactory();
-        calculateLabelAndNodeSizes(root, fac);
+        KGraphAdapter kga = new KGraphAdapter(root);
+        calculateLabelAndNodeSizes(root, kga);
     }
 
-    public static <T> void calculateNodeMargins(final T graph, final GraphAdapterFactory<T> fac) {
-        GraphAdapter<?> graphAdapter = fac.getGraphAdapter(graph);
-
+    public static <T> void calculateNodeMargins(final T graph, final GraphAdapter<T> adapter) {
         NodeMarginCalculator calcu = new NodeMarginCalculator();
-        calcu.processNodeMargin(graphAdapter);
+        calcu.processNodeMargin(adapter);
     }
 
     public static void calculateNodeMargins(final KNode root) {
-        KGraphAdapterFactory fac = new KGraphAdapterFactory();
-        calculateNodeMargins(root, fac);
+        KGraphAdapter kga = new KGraphAdapter(root);
+        calculateNodeMargins(root, kga);
     }
 
 }

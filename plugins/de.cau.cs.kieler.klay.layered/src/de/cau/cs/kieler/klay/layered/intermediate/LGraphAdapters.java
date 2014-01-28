@@ -22,12 +22,11 @@ import com.google.common.collect.Lists;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.kiml.util.GraphAdapterFactory;
-import de.cau.cs.kieler.kiml.util.GraphAdapterFactory.GraphAdapter;
-import de.cau.cs.kieler.kiml.util.GraphAdapterFactory.GraphElementAdapter;
-import de.cau.cs.kieler.kiml.util.GraphAdapterFactory.LabelAdapter;
-import de.cau.cs.kieler.kiml.util.GraphAdapterFactory.NodeAdapter;
-import de.cau.cs.kieler.kiml.util.GraphAdapterFactory.PortAdapter;
+import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.GraphAdapter;
+import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.GraphElementAdapter;
+import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.LabelAdapter;
+import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.NodeAdapter;
+import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.PortAdapter;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
@@ -39,14 +38,7 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
 /**
  * @author uru
  */
-public class LGraphAdapterFactory implements GraphAdapterFactory<LGraph> {
-
-    /**
-     * {@inheritDoc}
-     */
-    public GraphAdapter<LGraph> getGraphAdapter(final LGraph graph) {
-        return new LGraphAdapter(graph);
-    }
+public class LGraphAdapters {
 
     class AbstractLGraphAdapter<T extends LShape> implements GraphElementAdapter<T> {
 

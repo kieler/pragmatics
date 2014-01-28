@@ -11,16 +11,16 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.util;
+package de.cau.cs.kieler.kiml.util.algs;
 
 import java.awt.geom.Rectangle2D;
 
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortLabelPlacement;
-import de.cau.cs.kieler.kiml.util.GraphAdapterFactory.GraphAdapter;
-import de.cau.cs.kieler.kiml.util.GraphAdapterFactory.LabelAdapter;
-import de.cau.cs.kieler.kiml.util.GraphAdapterFactory.NodeAdapter;
-import de.cau.cs.kieler.kiml.util.GraphAdapterFactory.PortAdapter;
+import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.GraphAdapter;
+import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.LabelAdapter;
+import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.NodeAdapter;
+import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.PortAdapter;
 
 /**
  * Sets the node margins. Node margins are influenced by both port positions and sizes

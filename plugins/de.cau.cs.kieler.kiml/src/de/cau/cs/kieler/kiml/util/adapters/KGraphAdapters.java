@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.util;
+package de.cau.cs.kieler.kiml.util.adapters;
 
 import java.awt.geom.Rectangle2D;
 import java.util.List;
@@ -29,18 +29,16 @@ import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.GraphAdapter;
+import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.GraphElementAdapter;
+import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.LabelAdapter;
+import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.NodeAdapter;
+import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.PortAdapter;
 
 /**
  * @author uru
  */
-public class KGraphAdapterFactory implements GraphAdapterFactory<KNode> {
-
-    /**
-     * {@inheritDoc}
-     */
-    public GraphAdapter<KNode> getGraphAdapter(final KNode graph) {
-        return new KGraphAdapter(graph);
-    }
+public class KGraphAdapters {
 
     /**
      * .
@@ -107,7 +105,7 @@ public class KGraphAdapterFactory implements GraphAdapterFactory<KNode> {
     /**
      * .
      */
-    public class KGraphAdapter extends AbstractKGraphElementAdapter<KNode> implements
+    public static class KGraphAdapter extends AbstractKGraphElementAdapter<KNode> implements
             GraphAdapter<KNode> {
         /**
          * @param node

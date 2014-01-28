@@ -19,7 +19,7 @@ import org.adaptagrams.cola.libavoid.LibavoidServerPool;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
-import de.cau.cs.kieler.kiml.util.KimlNodeDimensionCalculation;
+import de.cau.cs.kieler.kiml.util.algs.KimlNodeDimensionCalculation;
 
 /**
  * A layout provider for KIML that performs layout using the Libavoid connector routing library. See
