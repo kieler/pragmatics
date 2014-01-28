@@ -13,10 +13,12 @@
  */
 package de.cau.cs.kieler.kiml.util.adapters;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -30,6 +32,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LabelSide;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.EdgeAdapter;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.GraphAdapter;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.GraphElementAdapter;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.LabelAdapter;
@@ -216,7 +219,7 @@ public class KGraphAdapters {
             }
             return portAdapters;
         }
-        
+
         /**
          * {@inheritDoc}
          */
@@ -237,15 +240,14 @@ public class KGraphAdapters {
          */
         public static final IProperty<LabelSide> LABEL_SIDE = new Property<LabelSide>(
                 "de.cau.cs.kieler.labelSide", LabelSide.UNKNOWN);
-        
-        
+
         /**
          * 
          */
         public KLabelAdapter(final KLabel label) {
             super(label);
         }
-        
+
         /**
          * {@inheritDoc}
          */
@@ -280,6 +282,58 @@ public class KGraphAdapters {
         public List<LabelAdapter<?>> getLabels() {
             List<LabelAdapter<?>> labelAdapters = Lists.newLinkedList();
             for (KLabel l : element.getLabels()) {
+                labelAdapters.add(new KLabelAdapter(l));
+            }
+            return labelAdapters;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public Collection<EdgeAdapter<?>> getIncomingEdges() {
+            List<EdgeAdapter<?>> edgeAdapters = Lists.newLinkedList();
+            for (KEdge e : element.getEdges()) {
+                if (e.getTarget().equals(element)) {
+                    edgeAdapters.add(new KEdgeAdapter(e));
+                }
+            }
+            return edgeAdapters;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public Collection<EdgeAdapter<?>> getOutgoingEdges() {
+            List<EdgeAdapter<?>> edgeAdapters = Lists.newLinkedList();
+            for (KEdge e : element.getEdges()) {
+                if (e.getSource().equals(element)) {
+                    edgeAdapters.add(new KEdgeAdapter(e));
+                }
+            }
+            return edgeAdapters;
+        }
+    }
+
+    /**
+     * .
+     */
+    private static class KEdgeAdapter implements EdgeAdapter<KEdge> {
+
+        private KEdge e;
+
+        /**
+         * .
+         */
+        public KEdgeAdapter(final KEdge e) {
+            this.e = e;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public Collection<LabelAdapter<?>> getLabels() {
+            List<LabelAdapter<?>> labelAdapters = Lists.newLinkedList();
+            for (KLabel l : e.getLabels()) {
                 labelAdapters.add(new KLabelAdapter(l));
             }
             return labelAdapters;

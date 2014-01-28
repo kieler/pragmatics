@@ -219,13 +219,13 @@ public abstract class Spacing {
          * Creates a new instance initialized with the given values.
          * 
          * @param top
-         *            the inset from the top.
+         *            the margin from the top.
          * @param left
-         *            the inset from the left.
+         *            the margin from the left.
          * @param bottom
-         *            the inset from the bottom.
+         *            the margin from the bottom.
          * @param right
-         *            the inset from the right.
+         *            the margin from the right.
          */
         public Margins(final double top, final double left, final double bottom, final double right) {
             super(top, left, bottom, right);

@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -22,6 +23,7 @@ import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.options.LabelSide;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.EdgeAdapter;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.GraphAdapter;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.GraphElementAdapter;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.LabelAdapter;
@@ -29,6 +31,7 @@ import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.NodeAdapter;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.PortAdapter;
 import de.cau.cs.kieler.kiml.util.algs.Spacing.Insets;
 import de.cau.cs.kieler.kiml.util.algs.Spacing.Margins;
+import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
@@ -43,10 +46,16 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  */
 public class LGraphAdapters {
 
+    /**
+     * .
+     */
     static class AbstractLGraphAdapter<T extends LShape> implements GraphElementAdapter<T> {
 
+        // CHECKSTYLEOFF VisibilityModifier
+        /** The internal element. */
         protected T element;
 
+        // CHECKSTYLEON VisibilityModifier
         /**
          * .
          */
@@ -89,7 +98,7 @@ public class LGraphAdapters {
          */
         @SuppressWarnings("unchecked")
         public <P> P getProperty(final IProperty<P> prop) {
-            
+
             // handle some special cases
             if (prop.equals(LayoutOptions.SPACING)) {
                 // cast is ok, as both properties are Floats
@@ -97,19 +106,27 @@ public class LGraphAdapters {
             } else if (prop.equals(LayoutOptions.OFFSET)) {
                 return (P) element.getProperty(Properties.OFFSET);
             }
-            
+
             return element.getProperty(prop);
         }
 
     }
 
+    /**
+     * .
+     */
     public static class LGraphAdapter implements GraphAdapter<LGraph> {
 
+        // CHECKSTYLEOFF VisibilityModifier
+        /** The internal element. */
         protected LGraph element;
 
+        // CHECKSTYLEON VisibilityModifier
+
         /**
-      * 
-      */
+         * @param element
+         *            .
+         */
         public LGraphAdapter(final LGraph element) {
             this.element = element;
         }
@@ -165,6 +182,9 @@ public class LGraphAdapters {
 
     }
 
+    /**
+     * .
+     */
     static class LNodeAdapter extends AbstractLGraphAdapter<LNode> implements NodeAdapter<LNode> {
 
         /**
@@ -202,7 +222,7 @@ public class LGraphAdapters {
         public boolean isCompoundNode() {
             return element.getProperty(Properties.COMPOUND_NODE);
         }
-        
+
         /**
          * {@inheritDoc}
          */
@@ -240,6 +260,9 @@ public class LGraphAdapters {
         }
     }
 
+    /**
+     * .
+     */
     static class LPortAdapter extends AbstractLGraphAdapter<LPort> implements PortAdapter<LPort> {
 
         /**
@@ -284,26 +307,75 @@ public class LGraphAdapters {
             element.getMargin().right = margin.right;
             element.getMargin().bottom = margin.bottom;
         }
+
+        /**
+         * {@inheritDoc}
+         */
+        public Collection<EdgeAdapter<?>> getIncomingEdges() {
+            List<EdgeAdapter<?>> edgeAdapters = Lists.newLinkedList();
+            for (LEdge e : element.getIncomingEdges()) {
+                edgeAdapters.add(new LEdgeAdapter(e));
+            }
+            return edgeAdapters;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public Collection<EdgeAdapter<?>> getOutgoingEdges() {
+            List<EdgeAdapter<?>> edgeAdapters = Lists.newLinkedList();
+            for (LEdge e : element.getOutgoingEdges()) {
+                edgeAdapters.add(new LEdgeAdapter(e));
+            }
+            return edgeAdapters;
+        }
     }
 
-    static class LLabelAdapter extends AbstractLGraphAdapter<LLabel> implements LabelAdapter<LLabel> {
+    /**
+     * .
+     */
+    static class LLabelAdapter extends AbstractLGraphAdapter<LLabel> implements
+            LabelAdapter<LLabel> {
 
         /**
          * @param element
          */
-        public LLabelAdapter(LLabel element) {
+        public LLabelAdapter(final LLabel element) {
             super(element);
         }
-        
+
         /**
          * {@inheritDoc}
          */
         public LabelSide getSide() {
             // FIXME when git issue resolved.
             return null;
-           // return element.getSide();
+            // return element.getSide();
         }
 
+    }
+
+    /**
+     * .
+     */
+    static class LEdgeAdapter implements EdgeAdapter<LEdge> {
+
+        private LEdge e;
+
+        public LEdgeAdapter(final LEdge edge) {
+            this.e = edge;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public Collection<LabelAdapter<?>> getLabels() {
+            List<LabelAdapter<?>> labelAdapters = Lists.newLinkedList();
+            for (LLabel l : e.getLabels()) {
+                labelAdapters.add(new LLabelAdapter(l));
+            }
+            return labelAdapters;
+        }
     }
 
 }

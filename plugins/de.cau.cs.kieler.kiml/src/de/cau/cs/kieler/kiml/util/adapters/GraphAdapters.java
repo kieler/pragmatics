@@ -170,6 +170,16 @@ public interface GraphAdapters {
          *            the new margin to be set.
          */
         void setMargin(final Margins margin);
+
+        /**
+         * @return a collection of the port's incoming edges wrapped in an adapter.
+         */
+        Collection<EdgeAdapter<?>> getIncomingEdges();
+
+        /**
+         * @return a collection of the port's outgoing edges wrapped in an adapter.
+         */
+        Collection<EdgeAdapter<?>> getOutgoingEdges();
     }
 
     /**
@@ -184,4 +194,15 @@ public interface GraphAdapters {
 
     }
 
+    /**
+     * Adapter for an edge.
+     */
+    public interface EdgeAdapter<T> {
+
+        /**
+         * @return the edge's labels wrapped in an adapter.
+         */
+        Collection<LabelAdapter<?>> getLabels();
+
+    }
 }
