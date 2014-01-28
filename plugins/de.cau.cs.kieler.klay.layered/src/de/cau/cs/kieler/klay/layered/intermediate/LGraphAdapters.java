@@ -43,7 +43,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  */
 public class LGraphAdapters {
 
-    class AbstractLGraphAdapter<T extends LShape> implements GraphElementAdapter<T> {
+    static class AbstractLGraphAdapter<T extends LShape> implements GraphElementAdapter<T> {
 
         protected T element;
 
@@ -94,6 +94,8 @@ public class LGraphAdapters {
             if (prop.equals(LayoutOptions.SPACING)) {
                 // cast is ok, as both properties are Floats
                 return (P) element.getProperty(Properties.OBJ_SPACING);
+            } else if (prop.equals(LayoutOptions.OFFSET)) {
+                return (P) element.getProperty(Properties.OFFSET);
             }
             
             return element.getProperty(prop);
@@ -101,7 +103,7 @@ public class LGraphAdapters {
 
     }
 
-    class LGraphAdapter implements GraphAdapter<LGraph> {
+    public static class LGraphAdapter implements GraphAdapter<LGraph> {
 
         protected LGraph element;
 
@@ -163,7 +165,7 @@ public class LGraphAdapters {
 
     }
 
-    class LNodeAdapter extends AbstractLGraphAdapter<LNode> implements NodeAdapter<LNode> {
+    static class LNodeAdapter extends AbstractLGraphAdapter<LNode> implements NodeAdapter<LNode> {
 
         /**
          * @param element
@@ -194,6 +196,13 @@ public class LGraphAdapters {
             return portAdapters;
         }
 
+        /**
+         * {@inheritDoc}
+         */
+        public boolean isCompoundNode() {
+            return element.getProperty(Properties.COMPOUND_NODE);
+        }
+        
         /**
          * {@inheritDoc}
          */
@@ -231,7 +240,7 @@ public class LGraphAdapters {
         }
     }
 
-    class LPortAdapter extends AbstractLGraphAdapter<LPort> implements PortAdapter<LPort> {
+    static class LPortAdapter extends AbstractLGraphAdapter<LPort> implements PortAdapter<LPort> {
 
         /**
          * @param element
@@ -277,7 +286,7 @@ public class LGraphAdapters {
         }
     }
 
-    class LLabelAdapter extends AbstractLGraphAdapter<LLabel> implements LabelAdapter<LLabel> {
+    static class LLabelAdapter extends AbstractLGraphAdapter<LLabel> implements LabelAdapter<LLabel> {
 
         /**
          * @param element

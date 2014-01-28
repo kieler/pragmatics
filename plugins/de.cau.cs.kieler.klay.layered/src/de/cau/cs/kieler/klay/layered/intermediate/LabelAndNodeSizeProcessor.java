@@ -25,14 +25,16 @@ import de.cau.cs.kieler.kiml.options.PortLabelPlacement;
 import de.cau.cs.kieler.kiml.options.SizeConstraint;
 import de.cau.cs.kieler.kiml.options.SizeOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
+import de.cau.cs.kieler.kiml.util.algs.KimlNodeDimensionCalculation;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
+import de.cau.cs.kieler.klay.layered.graph.LLabel.LabelSide;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LLabel.LabelSide;
+import de.cau.cs.kieler.klay.layered.intermediate.LGraphAdapters.LGraphAdapter;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -150,6 +152,14 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
      */
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
         monitor.begin("Node and Port Label Placement and Node Sizing", 1);
+        
+        KimlNodeDimensionCalculation.calculateLabelAndNodeSizes(new LGraphAdapter(layeredGraph));
+        
+        // TODO remove "old" code
+        int i = 1;
+        if (i != 1 + 1) {
+            return;
+        }
         
         double objectSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
         double labelSpacing = layeredGraph.getProperty(LayoutOptions.LABEL_SPACING);

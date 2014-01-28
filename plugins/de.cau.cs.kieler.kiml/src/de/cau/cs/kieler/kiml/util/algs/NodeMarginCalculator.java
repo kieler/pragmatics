@@ -53,20 +53,13 @@ public final class NodeMarginCalculator  {
      * {@inheritDoc}
      */
     public void processNodeMargin(final GraphAdapter<?> layeredGraph) {
-//        monitor.begin("Node margin calculation", 1);
         
-        //double spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
         double spacing = layeredGraph.getProperty(LayoutOptions.SPACING);
 
-        // Iterate through the layers
-//        for (Layer layer : layeredGraph) {
-            // Iterate through the layer's nodes
-            for (NodeAdapter<?> node : layeredGraph.getNodes()) {
-                processNode(node, spacing);
-            }
-//        }
-        
-//        monitor.done();
+        // Iterate through all nodes
+        for (NodeAdapter<?> node : layeredGraph.getNodes()) {
+            processNode(node, spacing);
+        }
     }
 
     /**
@@ -184,57 +177,5 @@ public final class NodeMarginCalculator  {
         margin.left = node.getPosition().x - boundingBox.x;
         margin.right = boundingBox.getMaxX() - (node.getPosition().x + node.getSize().x);
         node.setMargin(margin);
-        
-        // Process comments that are placed near the node
-        processComments(node, spacing);
     }
-    
-    /**
-     * Make some extra space for comment boxes that are placed near a node.
-     * 
-     * @param node a node
-     * @param spacing the overall spacing value
-     */
-    private void processComments(final NodeAdapter<?> node, final double spacing) {
-        // TODO
-//        LInsets margin = node.getMargin();
-//
-//        // Consider comment boxes that are put on top of the node
-//        List<LNode> topBoxes = node.getProperty(Properties.TOP_COMMENTS);
-//        double topWidth = 0;
-//        if (topBoxes != null) {
-//            double maxHeight = 0;
-//            for (LNode commentBox : topBoxes) {
-//                maxHeight = Math.max(maxHeight, commentBox.getSize().y);
-//                topWidth += commentBox.getSize().x;
-//            }
-//            topWidth += spacing / 2 * (topBoxes.size() - 1);
-//            margin.top += maxHeight + spacing;
-//        }
-//        
-//        // Consider comment boxes that are put in the bottom of the node
-//        List<LNode> bottomBoxes = node.getProperty(Properties.BOTTOM_COMMENTS);
-//        double bottomWidth = 0;
-//        if (bottomBoxes != null) {
-//            double maxHeight = 0;
-//            for (LNode commentBox : bottomBoxes) {
-//                maxHeight = Math.max(maxHeight, commentBox.getSize().y);
-//                bottomWidth += commentBox.getSize().x;
-//            }
-//            bottomWidth += spacing / 2 * (bottomBoxes.size() - 1);
-//            margin.bottom += maxHeight + spacing;
-//        }
-//        
-//        // Check if the maximum width of the comments is wider than the node itself, which the comments
-//        // are centered on
-//        double maxCommentWidth = Math.max(topWidth, bottomWidth);
-//        if (maxCommentWidth > node.getSize().x) {
-//            double protrusion = (maxCommentWidth - node.getSize().x) / 2;
-//            margin.left = Math.max(margin.left, protrusion);
-//            margin.right = Math.max(margin.right, protrusion);
-//        }
-    }
-    
-    
-    
 }

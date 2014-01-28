@@ -105,6 +105,15 @@ public interface GraphAdapters {
         Collection<PortAdapter<?>> getPorts();
 
         /**
+         * Whether the node an is a compound node or not, i.e if it has child nodes. This might
+         * influence certain layout decisions, such as where to place inside port labels so that
+         * they don't overlap edges.
+         * 
+         * @return {@code true} if it is a compound node.
+         */
+        boolean isCompoundNode();
+
+        /**
          * Returns the node's insets. The insets describe the area inside the node that is used by
          * ports, port labels, and node labels.
          * 
@@ -172,7 +181,7 @@ public interface GraphAdapters {
          * @return the side of the label.
          */
         LabelSide getSide();
-        
+
     }
 
 }

@@ -20,14 +20,16 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortLabelPlacement;
+import de.cau.cs.kieler.kiml.util.algs.KimlNodeDimensionCalculation;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.intermediate.LGraphAdapters.LGraphAdapter;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -61,7 +63,23 @@ public final class NodeMarginCalculator implements ILayoutProcessor {
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
         monitor.begin("Node margin calculation", 1);
         
+        // calculate the margins using KIML's utility methods
+        KimlNodeDimensionCalculation.calculateNodeMargins(new LGraphAdapter(layeredGraph));
+        
+        // Iterate through the layers to additionally handle comments
         double spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
+        for (Layer layer : layeredGraph) {
+            // Iterate through the layer's nodes
+            for (LNode node : layer) {
+                processComments(node, spacing);
+            }
+        }
+        
+        // TODO remove the "old" code
+        int i = 1;
+        if (i != 1 + 1) {
+            return;
+        }
 
         // Iterate through the layers
         for (Layer layer : layeredGraph) {

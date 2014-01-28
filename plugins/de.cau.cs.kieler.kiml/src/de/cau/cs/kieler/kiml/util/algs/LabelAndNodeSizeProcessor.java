@@ -17,6 +17,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.EnumSet;
 
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.kiml.options.LabelSide;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.NodeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
@@ -172,11 +173,8 @@ public class LabelAndNodeSizeProcessor {
      * {@inheritDoc}
      */
     public void process(final GraphAdapter<?> layeredGraph) {
-//        monitor.begin("Node and Port Label Placement and Node Sizing", 1);
         
-        // FIXME 
-        //double objectSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
-        double objectSpacing = 20;
+        double objectSpacing = layeredGraph.getProperty(LayoutOptions.SPACING);
         double labelSpacing = layeredGraph.getProperty(LayoutOptions.LABEL_SPACING);
 
         // Iterate over all the graph's nodes
@@ -198,9 +196,7 @@ public class LabelAndNodeSizeProcessor {
              */
             PortLabelPlacement labelPlacement = node.getProperty(LayoutOptions.PORT_LABEL_PLACEMENT);
             
-            // FIXME 
-            //boolean compoundNodeMode = node.getProperty(Properties.COMPOUND_NODE);
-            boolean compoundNodeMode = false;
+            boolean compoundNodeMode = node.isCompoundNode();
             
             // Place port labels and calculate the margins
             for (PortAdapter<?> port : node.getPorts()) {
@@ -375,9 +371,8 @@ public class LabelAndNodeSizeProcessor {
     private void placePortLabelsOutside(final PortAdapter<?> port, final LabelAdapter<?> label,
             final double labelSpacing) {
         
-        // TODO move label side to kiml ... 
         KVector position = new KVector(label.getPosition());
-//        if (label.getSide() == LabelSide.ABOVE) {
+        if (label.getSide() == LabelSide.ABOVE) {
             // Place label "above" edges
             switch (port.getSide()) {
             case WEST:
@@ -397,27 +392,27 @@ public class LabelAndNodeSizeProcessor {
                 position.y = port.getSize().y + labelSpacing;
                 break;
             }
-//        } else {
-//            // Place label "below" edges
-//            switch (port.getSide()) {
-//            case WEST:
-//                label.getPosition().x = -label.getSize().x - labelSpacing;
-//                label.getPosition().y = port.getSize().y + labelSpacing;
-//                break;
-//            case EAST:
-//                label.getPosition().x = port.getSize().x + labelSpacing;
-//                label.getPosition().y = port.getSize().y + labelSpacing;
-//                break;
-//            case NORTH:
-//                label.getPosition().x = port.getSize().x + labelSpacing;
-//                label.getPosition().y = -label.getSize().y - labelSpacing;
-//                break;
-//            case SOUTH:
-//                label.getPosition().x = port.getSize().x + labelSpacing;
-//                label.getPosition().y = port.getSize().y + labelSpacing;
-//                break;
-//            }
-//        }
+        } else {
+            // Place label "below" edges
+            switch (port.getSide()) {
+            case WEST:
+                label.getPosition().x = -label.getSize().x - labelSpacing;
+                label.getPosition().y = port.getSize().y + labelSpacing;
+                break;
+            case EAST:
+                label.getPosition().x = port.getSize().x + labelSpacing;
+                label.getPosition().y = port.getSize().y + labelSpacing;
+                break;
+            case NORTH:
+                label.getPosition().x = port.getSize().x + labelSpacing;
+                label.getPosition().y = -label.getSize().y - labelSpacing;
+                break;
+            case SOUTH:
+                label.getPosition().x = port.getSize().x + labelSpacing;
+                label.getPosition().y = port.getSize().y + labelSpacing;
+                break;
+            }
+        }
             label.setPosition(position);
     }
 
@@ -687,7 +682,6 @@ public class LabelAndNodeSizeProcessor {
                 }
             }
         }
-        // TODO new
         // apply the calculated node size back to the wrapped node
         node.setSize(nodeSize);
     }
@@ -834,11 +828,26 @@ public class LabelAndNodeSizeProcessor {
         // Adjust port positions depending on port side. Eastern ports have to have their x coordinate
         // set to the node's current width; the same goes for the y coordinate of southern ports
         for (PortAdapter<?> port : node.getPorts()) {
-            // FIXME as above
-//            float portOffset = port.getProperty(Properties.OFFSET);
-            float portOffset = 0;
-            
-            // FIXME property not available
+            float portOffset = port.getProperty(LayoutOptions.OFFSET);
+            // FIXME replace the 0s with the property value from below
+            switch (port.getSide()) {
+            case WEST:
+                port.getPosition().y = nodeSize.y * 0;
+                port.getPosition().x = -port.getSize().x - portOffset;
+                break;
+            case EAST:
+                port.getPosition().y = nodeSize.y * 0;
+                port.getPosition().x = nodeSize.x + portOffset;
+                break;
+            case NORTH:
+                port.getPosition().x = nodeSize.x * 0;
+                port.getPosition().y = -port.getSize().y - portOffset;
+                break;
+            case SOUTH:
+                port.getPosition().x = nodeSize.x * 0;
+                port.getPosition().y = nodeSize.y + portOffset;
+                break;
+            }
 //            switch (port.getSide()) {
 //            case WEST:
 //                port.getPosition().y = nodeSize.y * port.getProperty(Properties.PORT_RATIO_OR_POSITION);
@@ -886,9 +895,7 @@ public class LabelAndNodeSizeProcessor {
         
         // Arrange the ports
         for (PortAdapter<?> port : node.getPorts()) {
-            // FIXME as above
-            //float portOffset = port.getProperty(Properties.OFFSET);
-            float portOffset = 0;
+            float portOffset = port.getProperty(LayoutOptions.OFFSET);
             KVector portSize = port.getSize();
             Margins portMargins = port.getMargin();
             
@@ -923,7 +930,6 @@ public class LabelAndNodeSizeProcessor {
                         + (accountForLabels ? portMargins.left + portMargins.right : 0.0);
                 break;
             }
-            // TODO new
             port.setPosition(position);
         }
     }
@@ -954,7 +960,6 @@ public class LabelAndNodeSizeProcessor {
                 position.y = node.getSize().y;
                 break;
             }
-            // TODO new
             port.setPosition(position);
         }
     }
@@ -1126,7 +1131,6 @@ public class LabelAndNodeSizeProcessor {
                 position.x = startPosition.x + nodeLabelsBoundingBox.x - label.getSize().x;
             }
             
-            // TODO new
             label.setPosition(position);
             
             // Update y position

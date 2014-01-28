@@ -216,6 +216,13 @@ public class KGraphAdapters {
             }
             return portAdapters;
         }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public boolean isCompoundNode() {
+            return !element.getChildren().isEmpty();
+        }
     }
 
     /**
