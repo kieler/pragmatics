@@ -13,13 +13,14 @@
  */
 package de.cau.cs.kieler.kiml.util.adapters;
 
-import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 import java.util.List;
 
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.kiml.util.algs.Spacing.Insets;
+import de.cau.cs.kieler.kiml.util.algs.Spacing.Margins;
 
 /**
  * @author uru
@@ -103,12 +104,32 @@ public interface GraphAdapters {
         Collection<PortAdapter<?>> getPorts();
 
         /**
+         * Returns the node's insets. The insets describe the area inside the node that is used by
+         * ports, port labels, and node labels.
+         * 
+         * @return the node's insets.
+         */
+        Insets getInsets();
+
+        /**
          * @param insets
          *            sets the new insets of this node.
          */
-        void setInsets(final Rectangle2D.Double insets);
+        void setInsets(final Insets insets);
 
-        // TODO add insets
+        /**
+         * Returns the node's margin. The margin is the space around the node that is to be reserved
+         * for ports and labels.
+         * 
+         * @return the node's margin.
+         */
+        Margins getMargin();
+
+        /**
+         * @param margin
+         *            the new margin to be set.
+         */
+        void setMargin(final Margins margin);
     }
 
     /**
@@ -122,20 +143,23 @@ public interface GraphAdapters {
         PortSide getSide();
 
         /**
-         * @return the port's margin.
+         * @return the port's labels wrapped in adapters.
          */
-        Rectangle2D.Double getMargin();
+        List<LabelAdapter<?>> getLabels();
+
+        /**
+         * Returns the port's margin. The margin is the space around the node that is to be reserved
+         * for ports and labels.
+         * 
+         * @return the ports's margin.
+         */
+        Margins getMargin();
 
         /**
          * @param margin
          *            the new margin to be set.
          */
-        void setMargin(final Rectangle2D.Double margin);
-
-        /**
-         * @return the port's labels wrapped in adapters.
-         */
-        List<LabelAdapter<?>> getLabels();
+        void setMargin(final Margins margin);
     }
 
     /**

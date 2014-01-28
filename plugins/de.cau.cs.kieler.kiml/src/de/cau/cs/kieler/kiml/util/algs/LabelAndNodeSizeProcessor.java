@@ -28,6 +28,8 @@ import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.GraphAdapter;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.LabelAdapter;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.NodeAdapter;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.PortAdapter;
+import de.cau.cs.kieler.kiml.util.algs.Spacing.Insets;
+import de.cau.cs.kieler.kiml.util.algs.Spacing.Margins;
 
 /**
  * Calculates node sizes, places ports, and places node and port labels.
@@ -73,10 +75,8 @@ public class LabelAndNodeSizeProcessor {
      * <i>Note:</i> This is only valid for the currently processed node!
      * </p>
      */
-    private Rectangle2D.Double requiredPortLabelSpace = new Rectangle2D.Double();
+    private Insets requiredPortLabelSpace = new Insets();
 
-    // TODO exchange rectangle ... atm left=x top=y right=width bottom=height
-    
     /**
      * Node insets required by node labels placed inside the node. This is always set, but not
      * always taken into account to calculate the node size.
@@ -85,7 +85,7 @@ public class LabelAndNodeSizeProcessor {
      * <i>Note:</i> This is only valid for the currently processed node!
      * </p>
      */
-    private Rectangle2D.Double requiredNodeLabelSpace = new Rectangle2D.Double();
+    private Insets requiredNodeLabelSpace = new Insets();
 
     /**
      * Space required by the node labels if stacked vertically.
@@ -152,8 +152,8 @@ public class LabelAndNodeSizeProcessor {
      * Resets the fields providing context information to the algorithm.
      */
     private void resetContext() {
-        requiredPortLabelSpace.setRect(0.0, 0.0, 0.0, 0.0);
-        requiredNodeLabelSpace.setRect(0.0, 0.0, 0.0, 0.0);
+        requiredPortLabelSpace.set(0.0, 0.0, 0.0, 0.0);
+        requiredNodeLabelSpace.set(0.0, 0.0, 0.0, 0.0);
         
         westPortsCount = 0;
         westPortsHeight = 0.0;
@@ -245,12 +245,11 @@ public class LabelAndNodeSizeProcessor {
              * were not taken into account when calculating the node's size, this may result in
              * insets that, taken together, are larger than the node's actual size.
              */
-            // LInsets nodeInsets = node.getInsets();
-            Rectangle2D.Double nodeInsets = new Rectangle2D.Double();
-            nodeInsets.x = requiredNodeLabelSpace.x + requiredPortLabelSpace.x;
-            nodeInsets.width = requiredNodeLabelSpace.width + requiredPortLabelSpace.width;
-            nodeInsets.y = requiredNodeLabelSpace.y + requiredPortLabelSpace.y;
-            nodeInsets.height = requiredNodeLabelSpace.height + requiredPortLabelSpace.height;
+            Insets nodeInsets = new Insets(node.getInsets());
+            nodeInsets.left = requiredNodeLabelSpace.left + requiredPortLabelSpace.left;
+            nodeInsets.right = requiredNodeLabelSpace.right + requiredPortLabelSpace.right;
+            nodeInsets.top = requiredNodeLabelSpace.top + requiredPortLabelSpace.top;
+            nodeInsets.bottom = requiredNodeLabelSpace.bottom + requiredPortLabelSpace.bottom;
             node.setInsets(nodeInsets);
         }
     }
@@ -275,22 +274,22 @@ public class LabelAndNodeSizeProcessor {
             case WEST:
                 westPortsCount++;
                 westPortsHeight += port.getSize().y
-                    + (accountForLabels ? port.getMargin().height + port.getMargin().y : 0.0);
+                    + (accountForLabels ? port.getMargin().bottom + port.getMargin().top : 0.0);
                 break;
             case EAST:
                 eastPortsCount++;
                 eastPortsHeight += port.getSize().y
-                    + (accountForLabels ? port.getMargin().height + port.getMargin().y : 0.0);
+                    + (accountForLabels ? port.getMargin().bottom + port.getMargin().top : 0.0);
                 break;
             case NORTH:
                 northPortsCount++;
                 northPortsWidth += port.getSize().x
-                    + (accountForLabels ? port.getMargin().x + port.getMargin().width : 0.0);
+                    + (accountForLabels ? port.getMargin().left + port.getMargin().right : 0.0);
                 break;
             case SOUTH:
                 southPortsCount++;
                 southPortsWidth += port.getSize().x
-                    + (accountForLabels ? port.getMargin().x + port.getMargin().width : 0.0);
+                    + (accountForLabels ? port.getMargin().left + port.getMargin().right : 0.0);
                 break;
             }
         }
@@ -449,12 +448,11 @@ public class LabelAndNodeSizeProcessor {
             // Calculate the union of the two bounding boxes and calculate the margins
             Rectangle2D.union(portBox, labelBox, portBox);
 
-            // Rectangle2D.Double margin = port.getMargin();
-            Rectangle2D.Double margin = new Rectangle2D.Double();
-            margin.y = -portBox.y;
-            margin.height = portBox.getMaxY() - port.getSize().y;
-            margin.x = -portBox.x;
-            margin.width = portBox.getMaxX() - port.getSize().x;
+            Margins margin = new Margins(port.getMargin());
+            margin.top = -portBox.y;
+            margin.bottom = portBox.getMaxY() - port.getSize().y;
+            margin.left = -portBox.x;
+            margin.right = portBox.getMaxX() - port.getSize().x;
             port.setMargin(margin);
         }
     }
@@ -477,20 +475,20 @@ public class LabelAndNodeSizeProcessor {
         for (PortAdapter<?> port : node.getPorts()) {
             switch (port.getSide()) {
             case WEST:
-                requiredPortLabelSpace.x =
-                    Math.max(requiredPortLabelSpace.x, port.getMargin().width);
+                requiredPortLabelSpace.left =
+                    Math.max(requiredPortLabelSpace.left, port.getMargin().right);
                 break;
             case EAST:
-                requiredPortLabelSpace.width =
-                    Math.max(requiredPortLabelSpace.width, port.getMargin().x);
+                requiredPortLabelSpace.right =
+                    Math.max(requiredPortLabelSpace.right, port.getMargin().left);
                 break;
             case NORTH:
-                requiredPortLabelSpace.y =
-                    Math.max(requiredPortLabelSpace.y, port.getMargin().height);
+                requiredPortLabelSpace.top =
+                    Math.max(requiredPortLabelSpace.top, port.getMargin().bottom);
                 break;
             case SOUTH:
-                requiredPortLabelSpace.height =
-                    Math.max(requiredPortLabelSpace.height, port.getMargin().y);
+                requiredPortLabelSpace.bottom =
+                    Math.max(requiredPortLabelSpace.bottom, port.getMargin().top);
                 break;
             }
         }
@@ -534,15 +532,15 @@ public class LabelAndNodeSizeProcessor {
         if (nodeLabelPlacement.contains(NodeLabelPlacement.INSIDE)) {
             // The primary distinction criterion is the vertical placement
             if (nodeLabelPlacement.contains(NodeLabelPlacement.V_TOP)) {
-                requiredNodeLabelSpace.y = nodeLabelsBoundingBox.y + labelSpacing;
+                requiredNodeLabelSpace.top = nodeLabelsBoundingBox.y + labelSpacing;
             } else if (nodeLabelPlacement.contains(NodeLabelPlacement.V_BOTTOM)) {
-                requiredNodeLabelSpace.height = nodeLabelsBoundingBox.y + labelSpacing;
+                requiredNodeLabelSpace.bottom = nodeLabelsBoundingBox.y + labelSpacing;
             } else if (nodeLabelPlacement.contains(NodeLabelPlacement.V_CENTER)) {
                 // Check whether the label will be placed left or right
                 if (nodeLabelPlacement.contains(NodeLabelPlacement.H_LEFT)) {
-                    requiredNodeLabelSpace.x = nodeLabelsBoundingBox.x + labelSpacing;
+                    requiredNodeLabelSpace.left = nodeLabelsBoundingBox.x + labelSpacing;
                 } else if (nodeLabelPlacement.contains(NodeLabelPlacement.H_RIGHT)) {
-                    requiredNodeLabelSpace.width = nodeLabelsBoundingBox.x + labelSpacing;
+                    requiredNodeLabelSpace.right = nodeLabelsBoundingBox.x + labelSpacing;
                 }
             }
         }
@@ -612,9 +610,9 @@ public class LabelAndNodeSizeProcessor {
             // inside of the node
             if (accountForLabels) {
                 nodeSize.x = Math.max(nodeSize.x,
-                        requiredPortLabelSpace.x + requiredPortLabelSpace.width + portSpacing);
+                        requiredPortLabelSpace.left + requiredPortLabelSpace.right + portSpacing);
                 nodeSize.y = Math.max(nodeSize.y,
-                        requiredPortLabelSpace.y + requiredPortLabelSpace.height + portSpacing);
+                        requiredPortLabelSpace.top + requiredPortLabelSpace.bottom + portSpacing);
             }
         }
         
@@ -625,8 +623,8 @@ public class LabelAndNodeSizeProcessor {
             
             // Check if the label is to be placed inside or outside the node
             if (nodeLabelPlacement.contains(NodeLabelPlacement.INSIDE)) {
-                nodeSize.x += requiredNodeLabelSpace.x + requiredNodeLabelSpace.width;
-                nodeSize.y += requiredNodeLabelSpace.y + requiredNodeLabelSpace.height;
+                nodeSize.x += requiredNodeLabelSpace.left + requiredNodeLabelSpace.right;
+                nodeSize.y += requiredNodeLabelSpace.top + requiredNodeLabelSpace.bottom;
 
                 // For center placement, the insets don't cover everything
                 if (nodeLabelPlacement.contains(NodeLabelPlacement.V_CENTER)) {
@@ -669,15 +667,15 @@ public class LabelAndNodeSizeProcessor {
                 if (minWidth > 0) {
                     nodeSize.x = Math.max(nodeSize.x,
                             minWidth
-                            + requiredPortLabelSpace.x
-                            + requiredPortLabelSpace.width);
+                            + requiredPortLabelSpace.left
+                            + requiredPortLabelSpace.right);
                 }
                 
                 if (minHeight > 0) {
                     nodeSize.y = Math.max(nodeSize.y,
                             minHeight
-                            + requiredPortLabelSpace.y
-                            + requiredPortLabelSpace.height);
+                            + requiredPortLabelSpace.top
+                            + requiredPortLabelSpace.bottom);
                 }
             } else {
                 if (minWidth > 0) {
@@ -741,7 +739,7 @@ public class LabelAndNodeSizeProcessor {
                 result.y = Math.max(result.y,
                         port.getPosition().y
                         + port.getSize().y
-                        + (accountForLabels ? port.getMargin().height : 0.0));
+                        + (accountForLabels ? port.getMargin().bottom : 0.0));
                 break;
                 
             case NORTH:
@@ -749,7 +747,7 @@ public class LabelAndNodeSizeProcessor {
                 result.x = Math.max(result.x,
                         port.getPosition().x
                         + port.getSize().x
-                        + (accountForLabels ? port.getMargin().width : 0.0));
+                        + (accountForLabels ? port.getMargin().right : 0.0));
                 break;
             }
         }
@@ -892,37 +890,37 @@ public class LabelAndNodeSizeProcessor {
             //float portOffset = port.getProperty(Properties.OFFSET);
             float portOffset = 0;
             KVector portSize = port.getSize();
-            Rectangle2D.Double portMargins = port.getMargin();
+            Margins portMargins = port.getMargin();
             
             KVector position = new KVector(port.getPosition());
             switch (port.getSide()) {
             case WEST:
                 position.x = -portSize.x - portOffset;
                 position.y = westY - portSize.y
-                        - (accountForLabels ? portMargins.height : 0.0);
+                        - (accountForLabels ? portMargins.bottom : 0.0);
                 westY -= westDelta + portSize.y
-                        + (accountForLabels ? portMargins.y + portMargins.height : 0.0);
+                        + (accountForLabels ? portMargins.top + portMargins.bottom : 0.0);
                 break;
             case EAST:
                 position.x = nodeSize.x + portOffset;
                 position.y = eastY
-                        + (accountForLabels ? portMargins.y : 0.0);
+                        + (accountForLabels ? portMargins.top : 0.0);
                 eastY += eastDelta + portSize.y
-                        + (accountForLabels ? portMargins.y + portMargins.height : 0.0);
+                        + (accountForLabels ? portMargins.top + portMargins.bottom : 0.0);
                 break;
             case NORTH:
                 position.x = northX
-                        + (accountForLabels ? portMargins.x : 0.0);
+                        + (accountForLabels ? portMargins.left : 0.0);
                 position.y = -port.getSize().y - portOffset;
                 northX += northDelta + portSize.x
-                        + (accountForLabels ? portMargins.x + portMargins.width : 0.0);
+                        + (accountForLabels ? portMargins.left + portMargins.right : 0.0);
                 break;
             case SOUTH:
                 position.x = southX - portSize.x
-                        - (accountForLabels ? portMargins.width : 0.0);
+                        - (accountForLabels ? portMargins.right : 0.0);
                 position.y = nodeSize.y + portOffset;
                 southX -= southDelta + portSize.x
-                        + (accountForLabels ? portMargins.x + portMargins.width : 0.0);
+                        + (accountForLabels ? portMargins.left + portMargins.right : 0.0);
                 break;
             }
             // TODO new
@@ -988,21 +986,21 @@ public class LabelAndNodeSizeProcessor {
         if (nodeLabelPlacement.contains(NodeLabelPlacement.INSIDE)) {
             // Y coordinate
             if (nodeLabelPlacement.contains(NodeLabelPlacement.V_TOP)) {
-                labelGroupPos.y = requiredPortLabelSpace.y + labelSpacing;
+                labelGroupPos.y = requiredPortLabelSpace.top + labelSpacing;
             } else if (nodeLabelPlacement.contains(NodeLabelPlacement.V_CENTER)) {
                 labelGroupPos.y = (node.getSize().y - nodeLabelsBoundingBox.y) / 2.0;
             } else if (nodeLabelPlacement.contains(NodeLabelPlacement.V_BOTTOM)) {
-                labelGroupPos.y = node.getSize().y - requiredPortLabelSpace.height
+                labelGroupPos.y = node.getSize().y - requiredPortLabelSpace.bottom
                         - nodeLabelsBoundingBox.y - labelSpacing;
             }
             
             // X coordinate
             if (nodeLabelPlacement.contains(NodeLabelPlacement.H_LEFT)) {
-                labelGroupPos.x = requiredPortLabelSpace.x + labelSpacing;
+                labelGroupPos.x = requiredPortLabelSpace.left + labelSpacing;
             } else if (nodeLabelPlacement.contains(NodeLabelPlacement.H_CENTER)) {
                 labelGroupPos.x = (node.getSize().x - nodeLabelsBoundingBox.x) / 2.0;
             } else if (nodeLabelPlacement.contains(NodeLabelPlacement.H_RIGHT)) {
-                labelGroupPos.x = node.getSize().x - requiredPortLabelSpace.width
+                labelGroupPos.x = node.getSize().x - requiredPortLabelSpace.right
                         - nodeLabelsBoundingBox.x - labelSpacing;
             }
         } else if (nodeLabelPlacement.contains(NodeLabelPlacement.OUTSIDE)) {

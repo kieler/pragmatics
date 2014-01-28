@@ -21,6 +21,7 @@ import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.GraphAdapter;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.LabelAdapter;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.NodeAdapter;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.PortAdapter;
+import de.cau.cs.kieler.kiml.util.algs.Spacing.Margins;
 
 /**
  * Sets the node margins. Node margins are influenced by both port positions and sizes
@@ -129,7 +130,7 @@ public final class NodeMarginCalculator  {
             double maxPortLabelWidth = 0;
             double maxPortLabelHeight = 0;
             
-            //TODO: maybe leave space for manually placed ports 
+            // TODO: maybe leave space for manually placed ports 
             if (node.getProperty(LayoutOptions.PORT_LABEL_PLACEMENT) == PortLabelPlacement.OUTSIDE) {
                 for (LabelAdapter<?> label : port.getLabels()) {
                     if (maxPortLabelWidth < label.getSize().x) {
@@ -177,13 +178,12 @@ public final class NodeMarginCalculator  {
         }
         
         // Reset the margin
-//        LInsets margin = node.getMargin();
-        Rectangle2D.Double margin = new Rectangle2D.Double();
-        margin.y = node.getPosition().y - boundingBox.y;
-        margin.height = boundingBox.getMaxY() - (node.getPosition().y + node.getSize().y);
-        margin.x = node.getPosition().x - boundingBox.x;
-        margin.width = boundingBox.getMaxX() - (node.getPosition().x + node.getSize().x);
-        node.setInsets(margin);
+        Margins margin = new Margins(node.getMargin());
+        margin.top = node.getPosition().y - boundingBox.y;
+        margin.bottom = boundingBox.getMaxY() - (node.getPosition().y + node.getSize().y);
+        margin.left = node.getPosition().x - boundingBox.x;
+        margin.right = boundingBox.getMaxX() - (node.getPosition().x + node.getSize().x);
+        node.setMargin(margin);
         
         // Process comments that are placed near the node
         processComments(node, spacing);

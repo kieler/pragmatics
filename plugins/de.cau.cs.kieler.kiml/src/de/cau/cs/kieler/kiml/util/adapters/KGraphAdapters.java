@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.util.adapters;
 
-import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -34,25 +33,32 @@ import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.GraphElementAdapter;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.LabelAdapter;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.NodeAdapter;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.PortAdapter;
+import de.cau.cs.kieler.kiml.util.algs.Spacing.Insets;
+import de.cau.cs.kieler.kiml.util.algs.Spacing.Margins;
 
 /**
+ * Contains implementations of the {@link GraphAdapters} interfaces for the KGraph.
+ * 
  * @author uru
  */
 public class KGraphAdapters {
 
     /**
-     * .
+     * Implements basic adpater functionality for {@link KGraphElement}s.
      */
     public abstract static class AbstractKGraphElementAdapter<T extends KGraphElement> implements
             GraphElementAdapter<T> {
 
-        // CHECKSTYLEOFF
+        // let the elements be accessed by extending classes
+        // CHECKSTYLEOFF VisibilityModifier
+        /** The wrapped element. */
         protected T element;
+        /** The layout data of the wrapped element. */
         protected KShapeLayout layout;
 
         /**
          * @param element
-         *            .
+         *            the element that is wrapped in this adapter.
          */
         public AbstractKGraphElementAdapter(final T element) {
             this.element = element;
@@ -99,6 +105,52 @@ public class KGraphAdapters {
         public void setPosition(final KVector pos) {
             layout.setXpos((float) pos.x);
             layout.setYpos((float) pos.y);
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public Insets getInsets() {
+            KInsets kinsets = layout.getInsets();
+            Insets insets =
+                    new Insets(kinsets.getLeft(), kinsets.getTop(), kinsets.getRight(),
+                            kinsets.getBottom());
+            return insets;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public void setInsets(final Insets insets) {
+            layout.getInsets().setLeft((float) insets.left);
+            layout.getInsets().setTop((float) insets.top);
+            layout.getInsets().setRight((float) insets.right);
+            layout.getInsets().setBottom((float) insets.bottom);
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public Margins getMargin() {
+            // FIXME big problem :) there's no margin in the KGraph
+            KInsets insets = layout.getInsets();
+            if (insets == null) {
+                layout.setInsets(KLayoutDataFactory.eINSTANCE.createKInsets());
+            }
+            return new Margins(insets.getLeft(), insets.getTop(), insets.getRight(),
+                    insets.getBottom());
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public void setMargin(final Margins margin) {
+         // FIXME big problem :) there's no margin in the KGraph
+            KInsets insets = layout.getInsets();
+            insets.setLeft((float) margin.left);
+            insets.setTop((float) margin.top);
+            insets.setRight((float) margin.right);
+            insets.setBottom((float) margin.bottom);
         }
     }
 
@@ -162,17 +214,6 @@ public class KGraphAdapters {
             }
             return portAdapters;
         }
-
-        /**
-         * {@inheritDoc}
-         */
-        public void setInsets(final Rectangle2D.Double insets) {
-            layout.getInsets().setLeft((float) insets.x);
-            layout.getInsets().setTop((float) insets.y);
-            layout.getInsets().setRight((float) insets.width);
-            layout.getInsets().setBottom((float) insets.height);
-        }
-
     }
 
     /**
@@ -207,31 +248,6 @@ public class KGraphAdapters {
          */
         public PortSide getSide() {
             return layout.getProperty(LayoutOptions.PORT_SIDE);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public Rectangle2D.Double getMargin() {
-            // FIXME is this the same as insets??
-            KInsets insets = layout.getInsets();
-            if (insets == null) {
-                layout.setInsets(KLayoutDataFactory.eINSTANCE.createKInsets());
-            }
-            return new Rectangle2D.Double(insets.getLeft(), insets.getTop(), insets.getRight(),
-                    insets.getBottom());
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public void setMargin(final Rectangle2D.Double margin) {
-            // FIXME as above
-            KInsets insets = layout.getInsets();
-            insets.setLeft((float) margin.x);
-            insets.setTop((float) margin.y);
-            insets.setRight((float) margin.width);
-            insets.setBottom((float) margin.height);
         }
 
         /**

@@ -13,8 +13,6 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.Rectangle2D.Double;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -27,6 +25,8 @@ import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.GraphElementAdapter;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.LabelAdapter;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.NodeAdapter;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.PortAdapter;
+import de.cau.cs.kieler.kiml.util.algs.Spacing.Insets;
+import de.cau.cs.kieler.kiml.util.algs.Spacing.Margins;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
@@ -79,8 +79,6 @@ public class LGraphAdapters {
         public void setPosition(final KVector pos) {
             element.getPosition().x = pos.x;
             element.getPosition().y = pos.y;
-
-            System.out.println("Position of " + element + " " + pos + " " + element.getPosition());
         }
 
         /**
@@ -188,14 +186,38 @@ public class LGraphAdapters {
         /**
          * {@inheritDoc}
          */
-        public void setInsets(Rectangle2D.Double insets) {
-            element.getInsets().left = insets.x;
-            element.getMargin().top = insets.y;
-            element.getMargin().right = insets.width;
-            element.getMargin().bottom = insets.height;
-
+        public Insets getInsets() {
+            LInsets linsets = element.getInsets();
+            return new Insets(linsets.top, linsets.left, linsets.bottom, linsets.right);
         }
 
+        /**
+         * {@inheritDoc}
+         */
+        public void setInsets(final Insets insets) {
+            element.getInsets().left = insets.left;
+            element.getInsets().top = insets.top;
+            element.getInsets().right = insets.right;
+            element.getInsets().bottom = insets.bottom;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public Margins getMargin() {
+            LInsets lmargins = element.getMargin();
+            return new Margins(lmargins.top, lmargins.left, lmargins.bottom, lmargins.right);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public void setMargin(final Margins margin) {
+            element.getMargin().left = margin.left;
+            element.getMargin().top = margin.top;
+            element.getMargin().right = margin.right;
+            element.getMargin().bottom = margin.bottom;
+        }
     }
 
     class LPortAdapter extends AbstractLGraphAdapter<LPort> implements PortAdapter<LPort> {
@@ -217,24 +239,6 @@ public class LGraphAdapters {
         /**
          * {@inheritDoc}
          */
-        public Double getMargin() {
-            LInsets margin = element.getMargin();
-            return new Rectangle2D.Double(margin.left, margin.top, margin.right, margin.bottom);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public void setMargin(final Rectangle2D.Double margin) {
-            element.getMargin().left = margin.x;
-            element.getMargin().top = margin.y;
-            element.getMargin().right = margin.width;
-            element.getMargin().bottom = margin.height;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
         public List<LabelAdapter<?>> getLabels() {
             List<LabelAdapter<?>> labelAdapters = Lists.newLinkedList();
             for (LLabel l : element.getLabels()) {
@@ -243,6 +247,23 @@ public class LGraphAdapters {
             return labelAdapters;
         }
 
+        /**
+         * {@inheritDoc}
+         */
+        public Margins getMargin() {
+            LInsets lmargins = element.getMargin();
+            return new Margins(lmargins.top, lmargins.left, lmargins.bottom, lmargins.right);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public void setMargin(final Margins margin) {
+            element.getMargin().left = margin.left;
+            element.getMargin().top = margin.top;
+            element.getMargin().right = margin.right;
+            element.getMargin().bottom = margin.bottom;
+        }
     }
 
     class LLabelAdapter extends AbstractLGraphAdapter<LLabel> implements LabelAdapter<LLabel> {

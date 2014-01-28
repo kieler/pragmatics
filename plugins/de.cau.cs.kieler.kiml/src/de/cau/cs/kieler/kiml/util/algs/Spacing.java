@@ -138,12 +138,14 @@ public abstract class Spacing {
      * 
      * @param other
      *            another insets
+     * @return this instance.
      */
-    public void copy(final Spacing other) {
+    public Spacing copy(final Spacing other) {
         this.left = other.left;
         this.right = other.right;
         this.top = other.top;
         this.bottom = other.bottom;
+        return this;
     }
 
     /**
@@ -153,11 +155,22 @@ public abstract class Spacing {
      * @author uru
      */
     public static class Insets extends Spacing {
-        
+
         /**
          * Creates a new instance with all fields set to {@code 0.0}.
          */
-        protected Insets() {
+        public Insets() {
+            super();
+        }
+
+        /**
+         * Creates a new instance with all fields set to the value of {@code other}.
+         * 
+         * @param other
+         *            insets object from which to copy the values.
+         */
+        public Insets(final Insets other) {
+            super(other.left, other.top, other.right, other.bottom);
         }
 
         /**
@@ -172,12 +185,8 @@ public abstract class Spacing {
          * @param right
          *            the inset from the right.
          */
-        protected Insets(final double top, final double left, final double bottom,
-                final double right) {
-            this.top = top;
-            this.left = left;
-            this.bottom = bottom;
-            this.right = right;
+        public Insets(final double top, final double left, final double bottom, final double right) {
+            super(top, left, bottom, right);
         }
     }
 
@@ -188,11 +197,22 @@ public abstract class Spacing {
      * @author uru
      */
     public static class Margins extends Spacing {
-        
+
         /**
          * Creates a new instance with all fields set to {@code 0.0}.
          */
-        protected Margins() {
+        public Margins() {
+            super();
+        }
+
+        /**
+         * Creates a new instance with all fields set to the value of {@code other}.
+         * 
+         * @param other
+         *            margins object from which to copy the values.
+         */
+        public Margins(final Margins other) {
+            super(other.left, other.top, other.right, other.bottom);
         }
 
         /**
@@ -207,12 +227,8 @@ public abstract class Spacing {
          * @param right
          *            the inset from the right.
          */
-        protected Margins(final double top, final double left, final double bottom,
-                final double right) {
-            this.top = top;
-            this.left = left;
-            this.bottom = bottom;
-            this.right = right;
+        public Margins(final double top, final double left, final double bottom, final double right) {
+            super(top, left, bottom, right);
         }
     }
 
