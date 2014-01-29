@@ -63,7 +63,7 @@ public class LayoutConfigProposalProvider extends AbstractLayoutConfigProposalPr
         LayoutDataService layoutServices = LayoutDataService.getInstance();
 
         // create and register the completion proposal for every element in the list
-        for (LayoutOptionData<?> optionData : layoutServices.getOptionData()) {
+        for (LayoutOptionData optionData : layoutServices.getOptionData()) {
             StyledString displayString =
                     new StyledString(optionData.toString(),
                             (optionData.isAdvanced()) ? StyledString.COUNTER_STYLER : null);
@@ -117,7 +117,7 @@ public class LayoutConfigProposalProvider extends AbstractLayoutConfigProposalPr
                 LayoutDataService layoutServices = LayoutDataService.getInstance();
 
                 // find the specific option an display all possible values
-                LayoutOptionData<?> optionData = layoutServices.getOptionData(annotationName);
+                LayoutOptionData optionData = layoutServices.getOptionData(annotationName);
                 
                 // if option data is null, try to add the kieler prefix
                 if(optionData == null) {
