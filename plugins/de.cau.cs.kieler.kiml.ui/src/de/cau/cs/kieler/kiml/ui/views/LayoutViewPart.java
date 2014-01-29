@@ -425,7 +425,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
                 }
                 
                 // add the "set as default for diagram type" action
-                LayoutOptionData<?> diagramTypeOption = LayoutDataService.getInstance().getOptionData(
+                LayoutOptionData diagramTypeOption = LayoutDataService.getInstance().getOptionData(
                         LayoutOptions.DIAGRAM_TYPE.getId());
                 LayoutContext context = propSourceProvider.getContext();
                 ILayoutConfig config = DiagramLayoutEngine.INSTANCE.getOptionManager().createConfig(

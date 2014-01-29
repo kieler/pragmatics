@@ -58,7 +58,7 @@ public interface ILayoutConfig {
      * @param context a context for layout configuration
      * @return the layout option value, or {@code null} if the option has no value in this context
      */
-    Object getValue(LayoutOptionData<?> optionData, LayoutContext context);
+    Object getValue(LayoutOptionData optionData, LayoutContext context);
     
     /**
      * Determine the layout options that are affected by this layout configurator. For all returned

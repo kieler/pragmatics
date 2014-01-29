@@ -89,7 +89,7 @@ public class TestMetricsHandler extends AbstractHandler {
     /** the sequence of analyses to execute for evaluating graph layout metrics. */
     private List<AnalysisData> analysisSequence;
     /** the layout options to consider for creating genomes. */
-    private Collection<LayoutOptionData<?>> layoutOptions;
+    private Collection<LayoutOptionData> layoutOptions;
     /** the layout algorithms to consider for creating genomes. */
     private List<LayoutAlgorithmData> layoutAlgorithms;
     /** the executor service for running layout algorithms. */
@@ -197,8 +197,8 @@ public class TestMetricsHandler extends AbstractHandler {
         
         // gather the layout options
         layoutOptions = Collections2.filter(LayoutDataService.getInstance().getOptionData(),
-                new Predicate<LayoutOptionData<?>>() {
-                    public boolean apply(final LayoutOptionData<?> data) {
+                new Predicate<LayoutOptionData>() {
+                    public boolean apply(final LayoutOptionData data) {
                         return data.getTargets().contains(LayoutOptionData.Target.PARENTS)
                                 && data.getVariance() > 0 && typeSupported(data.getType());
                     }
@@ -437,7 +437,7 @@ public class TestMetricsHandler extends AbstractHandler {
         genome.getGenes(context).add(algorithmGene);
         
         // create genes for the other layout options
-        for (LayoutOptionData<?> optionData : layoutOptions) {
+        for (LayoutOptionData optionData : layoutOptions) {
             TypeInfo<?> typeInfo = GenomeFactory.createTypeInfo(optionData);
             if (typeInfo != null) {
                 Gene<?> gene;

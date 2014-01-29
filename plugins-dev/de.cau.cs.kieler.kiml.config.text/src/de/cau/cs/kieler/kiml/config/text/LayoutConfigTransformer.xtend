@@ -23,7 +23,7 @@ class LayoutConfigTransformer {
                 volatileConfigs += currentConfig
                
                 cfg.persistentEntries.forEach [ entry |
-                    val optData = dataService.getOptionDataBySuffix(entry.key) as LayoutOptionData<Object>
+                    val optData = dataService.getOptionDataBySuffix(entry.key) as LayoutOptionData
                     
                     // if valid, parse its value
                     if (optData != null) {

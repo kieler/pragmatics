@@ -13,17 +13,6 @@
       </package>
    </extension>
    <extension
-         point="org.eclipse.emf.ecore.extension_parser">
-      <parser
-            class="de.cau.cs.kieler.kiml.util.KGraphResourceFactory"
-            type="kgx">
-      </parser>
-      <parser
-            class="de.cau.cs.kieler.kiml.util.KGraphResourceFactory"
-            type="kgraph">
-      </parser>
-   </extension>
-   <extension
          point="de.cau.cs.kieler.kiml.layoutProviders">
       <category
             id="de.cau.cs.kieler"
@@ -528,6 +517,18 @@
            id="de.cau.cs.kieler.progressBar"
            name="Progress Bar"
            type="boolean"
+           variance="0">
+     </layoutOption>
+     <layoutOption
+           advanced="true"
+           appliesTo="nodes"
+           default="1f"
+           description="The scaling factor to be applied to the corresponding node in recursive layout."
+           id="de.cau.cs.kieler.scaleFactor"
+           lowerBound="0.01f"
+           name="Scale Factor"
+           type="float"
+           upperBound="100f"
            variance="0">
      </layoutOption>
      <layoutOption

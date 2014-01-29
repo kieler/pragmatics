@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.util;
+package de.cau.cs.kieler.kiml.ui.util;
 
 import java.io.IOException;
 import java.util.Map;
@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.resource.Resource.Factory;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * A custom resource factory that returns resources for KGraph xmi models, e.g. 

@@ -85,7 +85,7 @@ public class DiagramPartDefaultAction extends Action {
      * @param entry a property sheet entry
      */
     private void setDefault(final Object diagramPart, final IPropertySheetEntry entry) {
-        LayoutOptionData<?> optionData = KimlUiUtil.getOptionData(
+        LayoutOptionData optionData = KimlUiUtil.getOptionData(
                 layoutView.getCurrentLayouterData(), entry.getDisplayName());
 
         if (optionData != null) {

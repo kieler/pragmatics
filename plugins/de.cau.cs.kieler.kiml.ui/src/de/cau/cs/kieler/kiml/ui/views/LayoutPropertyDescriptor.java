@@ -44,7 +44,7 @@ import de.cau.cs.kieler.kiml.ui.Messages;
 public class LayoutPropertyDescriptor implements IPropertyDescriptor {
 
     /** the layout option data associated with this property descriptor. */
-    private LayoutOptionData<?> optionData;
+    private LayoutOptionData optionData;
     /** the label provider for this property descriptor. */
     private LayoutOptionLabelProvider labelProvider;
     
@@ -53,7 +53,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
      * 
      * @param theoptionData the layout option data
      */
-    public LayoutPropertyDescriptor(final LayoutOptionData<?> theoptionData) {
+    public LayoutPropertyDescriptor(final LayoutOptionData theoptionData) {
         this.optionData = theoptionData;
     }
     

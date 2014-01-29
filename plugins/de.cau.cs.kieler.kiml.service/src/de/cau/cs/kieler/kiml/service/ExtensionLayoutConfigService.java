@@ -165,7 +165,7 @@ public class ExtensionLayoutConfigService extends LayoutConfigService {
                 } else if (optionId == null || optionId.length() == 0) {
                     reportError(EXTP_ID_LAYOUT_CONFIGS, element, ATTRIBUTE_OPTION, null);
                 } else {
-                    LayoutOptionData<?> optionData = layoutDataService.getOptionData(optionId);
+                    LayoutOptionData optionData = layoutDataService.getOptionData(optionId);
                     if (optionData != null) {
                         try {
                             Object value = optionData.parseValue(valueString);
@@ -240,7 +240,7 @@ public class ExtensionLayoutConfigService extends LayoutConfigService {
      * @param optionData a layout option data
      * @param valueString the value to store for the diagram type and option
      */
-    public void storeOption(final String diagramType, final LayoutOptionData<?> optionData,
+    public void storeOption(final String diagramType, final LayoutOptionData optionData,
             final String valueString) {
         Object value = optionData.parseValue(valueString);
         if (value != null) {
@@ -259,7 +259,7 @@ public class ExtensionLayoutConfigService extends LayoutConfigService {
      * @param storeDomainModel if true, the option is stored for the domain model element
      *     associated with the edit part, else for the edit part itself
      */
-    public void storeOption(final Object diagramPart, final LayoutOptionData<?> optionData,
+    public void storeOption(final Object diagramPart, final LayoutOptionData optionData,
             final String valueString, final boolean storeDomainModel) {
         Object value = optionData.parseValue(valueString);
         if (value != null) {
@@ -290,9 +290,9 @@ public class ExtensionLayoutConfigService extends LayoutConfigService {
         
         // load default options for diagram types
         List<Pair<String, String>> diagramTypes = getDiagramTypes();
-        Collection<LayoutOptionData<?>> layoutOptionData = layoutDataService.getOptionData();
+        Collection<LayoutOptionData> layoutOptionData = layoutDataService.getOptionData();
         for (Pair<String, String> diagramType : diagramTypes) {
-            for (LayoutOptionData<?> data : layoutOptionData) {
+            for (LayoutOptionData data : layoutOptionData) {
                 String preference = getPreferenceName(diagramType.getFirst(), data.getId());
                 if (preferenceStore.contains(preference)) {
                     Object value = data.parseValue(preferenceStore.getString(preference));
@@ -310,7 +310,7 @@ public class ExtensionLayoutConfigService extends LayoutConfigService {
             registeredElements.add(editPartsTokenizer.nextToken());
         }
         for (String elementName : registeredElements) {
-            for (LayoutOptionData<?> data : layoutOptionData) {
+            for (LayoutOptionData data : layoutOptionData) {
                 String preference = getPreferenceName(elementName, data.getId());
                 if (preferenceStore.contains(preference)) {
                     Object value = data.parseValue(preferenceStore.getString(preference));

@@ -117,7 +117,7 @@ public class LayoutOptionManager {
     @SuppressWarnings("unchecked")
     public <T> T getGlobalValue(final IProperty<T> option, final ILayoutConfig config) {
         if (config != null) {
-            LayoutOptionData<?> optionData = LayoutDataService.getInstance().getOptionData(
+            LayoutOptionData optionData = LayoutDataService.getInstance().getOptionData(
                     option.getId());
             if (optionData != null) {
                 Object value = config.getValue(optionData, LayoutContext.global());
@@ -224,10 +224,10 @@ public class LayoutOptionManager {
         Collection<IProperty<?>> options = config.getAffectedOptions(context);
         for (IProperty<?> option : options) {
             Object value = null;
-            if (option instanceof LayoutOptionData<?>) {
-                value = config.getValue((LayoutOptionData<?>) option, context);
+            if (option instanceof LayoutOptionData) {
+                value = config.getValue((LayoutOptionData) option, context);
             } else {
-                LayoutOptionData<?> optionData = dataService.getOptionData(option.getId());
+                LayoutOptionData optionData = dataService.getOptionData(option.getId());
                 if (optionData != null) {
                     value = config.getValue(optionData, context);
                 }
