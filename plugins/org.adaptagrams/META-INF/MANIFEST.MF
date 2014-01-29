@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Adaptagrams CoLa Libraries
-Bundle-SymbolicName: org.adaptagrams.cola;singleton:=true
+Bundle-Name: Adaptagrams Libraries
+Bundle-SymbolicName: org.adaptagrams;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Bundle-Activator: org.adaptagrams.cola.ColaPlugin
 Require-Bundle: org.eclipse.core.runtime

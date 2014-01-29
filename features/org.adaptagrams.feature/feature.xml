@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.adaptagrams.cola.libavoid.feature"
-      label="Libavoid Server Binaries"
+      id="org.adaptagrams.feature"
+      label="Adaptagrams Libraries"
       version="0.1.0.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel"
       os="linux,macosx,solaris,win32"
       arch="sparc,x86,x86_64">
 
-   <description url="www.adaptagrams.org/documentation/libavoid.html">
+   <description url="www.adaptagrams.org/documentation/">
       Here be dragons.
    </description>
 

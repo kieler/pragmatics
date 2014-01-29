@@ -8,7 +8,7 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   <groupId>de.cau.cs.kieler</groupId>
-  <artifactId>org.adaptagrams.cola.libavoid.feature</artifactId>
+  <artifactId>org.adaptagrams.feature</artifactId>
   <version>0.1.0-SNAPSHOT</version>
   <packaging>eclipse-feature</packaging>
 
