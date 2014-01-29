@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: KIELER Brige for CoLa
+Bundle-Name: KIELER Bridge for CoLa
 Bundle-SymbolicName: de.cau.cs.kieler.kiml.cola;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
