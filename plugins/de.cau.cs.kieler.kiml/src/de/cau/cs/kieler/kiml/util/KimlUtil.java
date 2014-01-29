@@ -22,6 +22,7 @@ import java.util.Set;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -514,6 +515,39 @@ public final class KimlUtil {
     }
 
     /**
+     * Applies the scaling factor configured in terms of {@link LayoutOptions#SCALE_FACTOR} in its
+     * {@link KShapeLayout} to {@code node} 's size data, and updates the layout data of
+     * {@code node}'s ports and labels accordingly.<br>
+     * <b>Note:</b> The scaled layout data won't be reverted during the layout process, see
+     * {@link LayoutOptions#SCALE_FACTOR}.
+     * 
+     * @author chsch
+     * 
+     * @param node
+     *            the {@link KNode} to be scaled
+     */
+    public static void applyConfiguredNodeScaling(final KNode node) {
+        final KShapeLayout shapeLayout = node.getData(KShapeLayout.class);
+        final float scalingFactor = shapeLayout.getProperty(LayoutOptions.SCALE_FACTOR);
+
+        if (scalingFactor == 1f) {
+            return;
+        }
+
+        shapeLayout.setSize(scalingFactor * shapeLayout.getWidth(),
+                scalingFactor * shapeLayout.getHeight());
+
+        for (KGraphElement kge : Iterables.concat(node.getPorts(), node.getLabels())) {
+            final KShapeLayout kgeLayout = kge.getData(KShapeLayout.class);
+
+            kgeLayout.setPos(scalingFactor * kgeLayout.getXpos(),
+                    scalingFactor * kgeLayout.getYpos());
+            kgeLayout.setSize(scalingFactor * kgeLayout.getWidth(),
+                    scalingFactor * kgeLayout.getHeight());
+        }
+    }
+
+    /**
      * Determines whether the given child node is a descendant of the parent
      * node.
      * 
@@ -619,8 +653,7 @@ public final class KimlUtil {
     public static void setOption(final KGraphData graphData, final String id,
             final String value) {
         LayoutDataService dataService = LayoutDataService.getInstance();
-        @SuppressWarnings("unchecked")
-        LayoutOptionData<Object> optionData = (LayoutOptionData<Object>) dataService.getOptionData(id);
+        LayoutOptionData optionData = dataService.getOptionData(id);
         if (optionData != null) {
             Object obj = optionData.parseValue(value);
             if (obj != null) {
@@ -654,7 +687,6 @@ public final class KimlUtil {
      * 
      * @param graph the root element of the graph to load elements of.
      */
-    @SuppressWarnings("unchecked")
     public static void loadDataElements(final KNode graph) {
         LayoutDataService dataService = LayoutDataService.getInstance();
         TreeIterator<EObject> iterator = graph.eAllContents();
@@ -666,11 +698,8 @@ public final class KimlUtil {
                     String key = persistentEntry.getKey();
                     String value = persistentEntry.getValue();
                     if (key != null && value != null) {
-                        LayoutOptionData<Object> layoutOptionData = null;
-                        
                         // try to get the layout option from the data service.
-                        layoutOptionData = (LayoutOptionData<Object>) dataService
-                                .getOptionDataBySuffix(key);
+                        LayoutOptionData layoutOptionData = dataService.getOptionDataBySuffix(key);
                         
                         // if we have a valid layout option, parse its value.
                         if (layoutOptionData != null) {

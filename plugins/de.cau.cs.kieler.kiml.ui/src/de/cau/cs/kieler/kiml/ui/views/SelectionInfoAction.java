@@ -205,7 +205,7 @@ public class SelectionInfoAction extends Action {
         if (!selectedOptions.isEmpty()) {
             builder.append("<b>Selected options</b><ul>");
             for (IPropertySheetEntry entry : selectedOptions) {
-                final LayoutOptionData<?> optionData = KimlUiUtil.getOptionData(layouterData,
+                final LayoutOptionData optionData = KimlUiUtil.getOptionData(layouterData,
                         entry.getDisplayName());
                 if (optionData != null) {
                     builder.append("<li>" + optionData.getName() + " (" + optionData.getType().literal()

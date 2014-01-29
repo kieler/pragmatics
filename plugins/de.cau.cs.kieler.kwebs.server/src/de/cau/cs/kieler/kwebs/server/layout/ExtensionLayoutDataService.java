@@ -196,7 +196,7 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
         // load layout algorithm options
         for (String[] entry : knownOptions) {
             LayoutAlgorithmData algoData = getAlgorithmData(entry[0]);
-            LayoutOptionData<?> optionData = getOptionData(entry[1]);
+            LayoutOptionData optionData = getOptionData(entry[1]);
             if (algoData != null && optionData != null) {
                 try {
                     Object defaultValue = optionData.parseValue(entry[2]);
@@ -209,12 +209,12 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
         
         // load layout option dependencies
         for (String[] entry : dependencies) {
-            LayoutOptionData<?> sourceOption = getOptionData(entry[0]);
-            LayoutOptionData<?> targetOption = getOptionData(entry[1]);
+            LayoutOptionData sourceOption = getOptionData(entry[0]);
+            LayoutOptionData targetOption = getOptionData(entry[1]);
             if (sourceOption != null && targetOption != null) {
                 try {
                     Object value = targetOption.parseValue(entry[2]);
-                    sourceOption.getDependencies().add(new Pair<LayoutOptionData<?>, Object>(
+                    sourceOption.getDependencies().add(new Pair<LayoutOptionData, Object>(
                             targetOption, value));
                 } catch (IllegalStateException exception) {
                     reportError(EXTP_ID_LAYOUT_PROVIDERS, null, null, exception);
@@ -376,7 +376,7 @@ public abstract class ExtensionLayoutDataService extends LayoutDataService {
      */
     private void loadLayoutOption(final IConfigurationElement element,
             final List<String[]> dependencies) {
-        LayoutOptionData<Object> optionData = new LayoutOptionData<Object>();
+        LayoutOptionData optionData = new LayoutOptionData();
         // get option identifier
         String optionId = element.getAttribute(ATTRIBUTE_ID);
         if (optionId == null || optionId.length() == 0) {

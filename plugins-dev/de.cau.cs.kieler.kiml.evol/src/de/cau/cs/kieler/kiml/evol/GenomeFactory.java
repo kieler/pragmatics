@@ -96,11 +96,11 @@ public final class GenomeFactory {
      * @return a genome filled with genes
      */
     public static Genome createInitialGenome(final LayoutMapping<?> layoutMapping,
-            final ILayoutConfig config, final Collection<LayoutOptionData<?>> options) {
+            final ILayoutConfig config, final Collection<LayoutOptionData> options) {
         LayoutDataService dataService = LayoutDataService.getInstance();
-        LayoutOptionData<?> algoOptionData = dataService.getOptionData(
+        LayoutOptionData algoOptionData = dataService.getOptionData(
                 LayoutOptions.ALGORITHM.getId());
-        LayoutOptionData<?> diagTypeData = dataService.getOptionData(
+        LayoutOptionData diagTypeData = dataService.getOptionData(
                 LayoutOptions.DIAGRAM_TYPE.getId());
         
         Genome genome = new Genome();
@@ -128,7 +128,7 @@ public final class GenomeFactory {
             }
             
             // create genes for the other layout options (the algorithm option is excluded)
-            for (LayoutOptionData<?> optionData : options) {
+            for (LayoutOptionData optionData : options) {
                 TypeInfo<?> typeInfo = createTypeInfo(optionData);
                 if (typeInfo != null) {
                     Gene<?> gene;
@@ -243,8 +243,7 @@ public final class GenomeFactory {
      * @param optionData a layout option data
      * @return gene type information for the given option, or  {@code null} if the type is not supported
      */
-    @SuppressWarnings("unchecked")
-    public static TypeInfo<?> createTypeInfo(final LayoutOptionData<?> optionData) {
+    public static TypeInfo<?> createTypeInfo(final LayoutOptionData optionData) {
         switch (optionData.getType()) {
         case BOOLEAN:
             return new TypeInfo<Integer>(optionData.getId(), GeneType.BOOLEAN, 0,
@@ -256,13 +255,11 @@ public final class GenomeFactory {
                     enumConstCount > 2 ? P_ENUM_MUTATION : P_BOOLEAN_MUTATION, 1);
         case INT:
             return new TypeInfo<Integer>(optionData.getId(), GeneType.INTEGER,
-                    (Comparable<Integer>) optionData.getLowerBound(),
-                    (Comparable<Integer>) optionData.getUpperBound(),
+                    optionData.getLowerBound(), optionData.getUpperBound(),
                     optionData, P_INT_MUTATION, optionData.getVariance());
         case FLOAT:
             return new TypeInfo<Float>(optionData.getId(), GeneType.FLOAT,
-                    (Comparable<Float>) optionData.getLowerBound(),
-                    (Comparable<Float>) optionData.getUpperBound(),
+                    optionData.getLowerBound(), optionData.getUpperBound(),
                     optionData, P_FLOAT_MUTATION, optionData.getVariance());
         default:
             return null;
@@ -331,16 +328,16 @@ public final class GenomeFactory {
      */
     @SuppressWarnings("unchecked")
     public static <T extends Comparable<? super T>> Gene<T> createDefaultGene(
-            final LayoutAlgorithmData algoData, final LayoutOptionData<?> optionData,
+            final LayoutAlgorithmData algoData, final LayoutOptionData optionData,
             final TypeInfo<T> typeInfo, final ILayoutConfig config, final LayoutContext context) {
         context.setProperty(DefaultLayoutConfig.CONTENT_ALGO, algoData);
         T value = translateToGene(config.getValue(optionData, context), typeInfo);
         
-        Comparable<T> lowerBound = typeInfo.getLowerBound();
+        Comparable<? super T> lowerBound = typeInfo.getLowerBound();
         if (lowerBound.compareTo(value) > 0) {
             value = (T) lowerBound;
         } else {
-            Comparable<T> upperBound = typeInfo.getUpperBound();
+            Comparable<? super T> upperBound = typeInfo.getUpperBound();
             if (upperBound.compareTo(value) < 0) {
                 value = (T) upperBound;
             }
@@ -414,9 +411,8 @@ public final class GenomeFactory {
                 KShapeLayout nodeLayout = ((KNode) element).getData(KShapeLayout.class);
                 for (Gene<?> gene : genome.getGenes(context)) {
                     if (gene.getValue() != null) {
-                        @SuppressWarnings("unchecked")
-                        LayoutOptionData<Object> optionData = (LayoutOptionData<Object>)
-                                dataService.getOptionData(gene.getTypeInfo().getId());
+                        LayoutOptionData optionData = dataService.getOptionData(
+                                gene.getTypeInfo().getId());
                         if (optionData != null) {
                             nodeLayout.setProperty(optionData, translateFromGene(gene));
                         }
@@ -439,7 +435,7 @@ public final class GenomeFactory {
                 if (typeInfo.getGeneType() == TypeInfo.GeneType.LAYOUT_ALGO) {
                     algoData = (LayoutAlgorithmData) gene.listValue();
                 } else if (algoData != null) {
-                    LayoutOptionData<?> optionData = (LayoutOptionData<?>) typeInfo.getTypeParam();
+                    LayoutOptionData optionData = (LayoutOptionData) typeInfo.getTypeParam();
                     boolean knowsOption = algoData.knowsOption(optionData);
                     if (knowsOption && !gene.isActive()) {
                         throw new IllegalStateException("Gene " + gene

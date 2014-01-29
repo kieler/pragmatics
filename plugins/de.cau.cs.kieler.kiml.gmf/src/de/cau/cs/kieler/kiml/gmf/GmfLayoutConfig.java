@@ -157,15 +157,15 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
             if (context.getProperty(DefaultLayoutConfig.OPT_MAKE_OPTIONS)) {
                 DiagramEditPart diagramEditPart = GmfDiagramLayoutManager.getDiagramEditPart(
                         focusEditPart);
-                @SuppressWarnings("unchecked")
-                LayoutOptionData<String> algorithmOptionData = (LayoutOptionData<String>)
-                        LayoutDataService.getInstance().getOptionData(LayoutOptions.ALGORITHM.getId());
+                LayoutOptionData algorithmOptionData = LayoutDataService.getInstance()
+                        .getOptionData(LayoutOptions.ALGORITHM.getId());
                 if (context.getProperty(DefaultLayoutConfig.CONTENT_HINT) == null
                         && algorithmOptionData != null) {
                     // get a layout hint for the content of the focused edit part
-                    String contentLayoutHint = getValue(algorithmOptionData, PREFIX, notationView);
+                    String contentLayoutHint = (String) getValue(algorithmOptionData, PREFIX,
+                            notationView);
                     if (contentLayoutHint == null) {
-                        contentLayoutHint = getValue(algorithmOptionData, DEF_PREFIX,
+                        contentLayoutHint = (String) getValue(algorithmOptionData, DEF_PREFIX,
                                 diagramEditPart.getNotationView());
                     }
                     if (contentLayoutHint != null) {
@@ -176,10 +176,10 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
                 // get a layout hint for the container edit part
                 if (containerEditPart.get() != null) {
                     if (context.getProperty(DefaultLayoutConfig.CONTAINER_HINT) == null) {
-                        String containerLayoutHint = getValue(algorithmOptionData, PREFIX,
+                        String containerLayoutHint = (String) getValue(algorithmOptionData, PREFIX,
                                 containerEditPart.get().getNotationView());
                         if (containerLayoutHint == null) {
-                            containerLayoutHint = getValue(algorithmOptionData, DEF_PREFIX,
+                            containerLayoutHint = (String) getValue(algorithmOptionData, DEF_PREFIX,
                                     diagramEditPart.getNotationView());
                         }
                         if (containerLayoutHint != null) {
@@ -317,7 +317,7 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public Object getValue(final LayoutOptionData<?> optionData, final LayoutContext context) {
+    public Object getValue(final LayoutOptionData optionData, final LayoutContext context) {
         View view = context.getProperty(NOTATION_VIEW);
         if (view != null) {
             // check option value from notation model
@@ -348,14 +348,14 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
      * @param view the notation view
      * @return the value of the option, or {@code null}
      */
-    private <T> T getValue(final LayoutOptionData<T> optionData, final String prefix,
+    private Object getValue(final LayoutOptionData optionData, final String prefix,
             final View view) {
         String optionKey = prefix + optionData.getId();
         for (Object obj : view.getStyles()) {
             if (obj instanceof StringValueStyle) {
                 StringValueStyle style = (StringValueStyle) obj;
                 if (optionKey.equals(style.getName())) {
-                    T result = optionData.parseValue(style.getStringValue());
+                    Object result = optionData.parseValue(style.getStringValue());
                     if (result != null) {
                         return result;
                     }
@@ -405,9 +405,8 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
                 StringValueStyle style = (StringValueStyle) obj;
                 String key = style.getName();
                 if (key != null && key.startsWith(prefix)) {
-                    @SuppressWarnings("unchecked")
-                    LayoutOptionData<Object> optionData = (LayoutOptionData<Object>)
-                            layoutService.getOptionData(key.substring(prefix.length()));
+                    LayoutOptionData optionData = layoutService.getOptionData(
+                            key.substring(prefix.length()));
                     if (optionData != null) {
                         options.add(optionData);
                     }
@@ -419,7 +418,7 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public void setValue(final LayoutOptionData<?> optionData, final LayoutContext context,
+    public void setValue(final LayoutOptionData optionData, final LayoutContext context,
             final Object value) {
         View view = context.getProperty(NOTATION_VIEW);
         if (view != null) {
@@ -444,7 +443,7 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
      * @param view the notation view
      */
     @SuppressWarnings("unchecked")
-    private void setValue(final LayoutOptionData<?> optionData, final Object value,
+    private void setValue(final LayoutOptionData optionData, final Object value,
             final String prefix, final View view) {
         if (value == null) {
             removeValue(optionData, prefix, view, false);
@@ -475,7 +474,7 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
      * @param view the notation view
      * @param recursive whether options should also be removed from children
      */
-    private void removeValue(final LayoutOptionData<?> optionData, final String prefix,
+    private void removeValue(final LayoutOptionData optionData, final String prefix,
             final View view, final boolean recursive) {
         String optionKey = prefix + optionData.getId();
         Iterator<?> iter = view.getStyles().iterator();
@@ -544,7 +543,7 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public boolean isSet(final LayoutOptionData<?> optionData, final LayoutContext context) {
+    public boolean isSet(final LayoutOptionData optionData, final LayoutContext context) {
         View view = context.getProperty(NOTATION_VIEW);
         if (view != null) {
             // check option value from notation model

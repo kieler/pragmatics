@@ -116,9 +116,7 @@ public class LoadGraphAction extends Action {
             if (obj instanceof KGraphData) {
                 KGraphData graphData = (KGraphData) obj;
                 for (PersistentEntry entry : graphData.getPersistentEntries()) {
-                    @SuppressWarnings("unchecked")
-                    LayoutOptionData<Object> optionData = (LayoutOptionData<Object>)
-                            dataService.getOptionData(entry.getKey());
+                    LayoutOptionData optionData = dataService.getOptionData(entry.getKey());
                     
                     if (optionData != null) {
                         Object value = optionData.parseValue(entry.getValue());

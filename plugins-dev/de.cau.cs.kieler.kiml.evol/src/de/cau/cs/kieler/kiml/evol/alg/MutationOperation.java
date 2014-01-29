@@ -122,7 +122,7 @@ public class MutationOperation implements IEvolutionaryOperation {
             
             if (newLayoutAlgo != null) {
                 // update the active flag of the gene in order to match the new algorithm
-                LayoutOptionData<?> optionData = (LayoutOptionData<?>) typeInfo.getTypeParam();
+                LayoutOptionData optionData = (LayoutOptionData) typeInfo.getTypeParam();
                 if (newLayoutAlgo.knowsOption(optionData)) {
                     if (gene.getValue() == null) {
                         // the gene previously had no assigned value - generate one
