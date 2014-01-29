@@ -75,12 +75,20 @@ public final class KIELERStatistics {
         if (host != null) {
             client = new MongoClient(host);
             db = client.getDB(DB_NAME);
+            
             if (user != null && pass != null) {
                 boolean succ = db.authenticate(user, pass.toCharArray());
                 if (!succ) {
                     throw new AuthenticationException("Could not authenticate, "
                             + "make sure username and password are correct.");
                 }
+            }
+            
+            // check if we can access the database
+            try {
+                db.getCollectionNames();
+            } catch (Exception e) {
+                throw new UnknownHostException("Could not connect to database.");
             }
         }
 

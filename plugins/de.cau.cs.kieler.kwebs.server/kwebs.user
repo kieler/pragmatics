@@ -86,7 +86,7 @@
 # Statistics server
 #
 # Whether to record usage statistics
-#de.cau.cs.kieler.kwebs.statistics.record=false
+de.cau.cs.kieler.kwebs.statistics.record=false
 # Address of the server to store the data
 #de.cau.cs.kieler.kwebs.statistics.host=localhost:27017
 # Address of the http interface to retrieve statistics from client side javascript

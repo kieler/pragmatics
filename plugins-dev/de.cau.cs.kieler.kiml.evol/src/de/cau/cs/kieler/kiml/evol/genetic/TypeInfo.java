@@ -52,9 +52,9 @@ public class TypeInfo<T extends Comparable<? super T>> implements Serializable {
     /** The gene type. */
     private final GeneType geneType;
     /** The lower bound. */
-    private final Comparable<T> lowerBound;
+    private final Comparable<? super T> lowerBound;
     /** The upper bound. */
-    private final Comparable<T> upperBound;
+    private final Comparable<? super T> upperBound;
     /** Parameter to further specify the type. */
     private final Object typeParameter;
     /** The mutation application probability. */
@@ -81,8 +81,9 @@ public class TypeInfo<T extends Comparable<? super T>> implements Serializable {
      * @param var
      *            the variance (used for Gaussian distribution); must be >= 0.0
      */
-    public TypeInfo(final String theid, final GeneType theGeneType, final Comparable<T> theLowerBound,
-            final Comparable<T> theUpperBound, final Object theParam, final double prob,
+    public TypeInfo(final String theid, final GeneType theGeneType,
+            final Comparable<? super T> theLowerBound,
+            final Comparable<? super T> theUpperBound, final Object theParam, final double prob,
             final double var) {
         if (theid == null || theGeneType == null || theLowerBound == null || theUpperBound == null
                 || prob < 0.0 || prob > 1.0 || var < 0.0) {
@@ -121,7 +122,7 @@ public class TypeInfo<T extends Comparable<? super T>> implements Serializable {
      * 
      * @return the lower bound
      */
-    public Comparable<T> getLowerBound() {
+    public Comparable<? super T> getLowerBound() {
         return lowerBound;
     }
 
@@ -130,7 +131,7 @@ public class TypeInfo<T extends Comparable<? super T>> implements Serializable {
      * 
      * @return the upper bound
      */
-    public Comparable<T> getUpperBound() {
+    public Comparable<? super T> getUpperBound() {
         return upperBound;
     }
 

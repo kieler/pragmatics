@@ -22,24 +22,22 @@ import de.cau.cs.kieler.core.properties.Property;
  */
 public final class ColaProperties {
 
-    /**
-     * A scalar modifier of ideal edge lengths.
-     */
+    /** A scalar modifier of ideal edge lengths. */
     public static final IProperty<Float> IDEAL_EDGE_LENGTHS = new Property<Float>(
             "de.cau.cs.kieler.kiml.cola.idealEdgeLengths", 100f, 1f);
 
-    /**
-     * Direction of the desired layout.
-     */
+    /** Direction of the desired layout. */
     public static final IProperty<Boolean> AVOID_OVERLAPS = new Property<Boolean>(
             "de.cau.cs.kieler.kiml.cola.avoidOverlaps", true);
 
-    /**
-     * Whether to adapt port positions after a layout run.
-     */
+    /** Whether to adapt port positions after a layout run. */
     public static final IProperty<Boolean> ADAPT_PORT_POSITIONS = new Property<Boolean>(
             "de.cau.cs.kieler.kiml.cola.adaptPortPositions", false);
 
+    /** Whether to retain previous node positions during the layout run. */
+    public static final IProperty<Boolean> CONSIDER_PREVIOUS = new Property<Boolean>(
+            "de.cau.cs.kieler.kiml.cola.considerPrevious", false);
+    
     /*
      * Experimental
      */

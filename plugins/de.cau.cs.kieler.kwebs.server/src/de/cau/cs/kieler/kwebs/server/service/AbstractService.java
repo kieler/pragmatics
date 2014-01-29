@@ -140,6 +140,9 @@ public abstract class AbstractService {
     private static final String STATS_GRAPH_EDGES = "kwebs.layout.edges";
     private static final String STATS_GRAPH_PORTS = "kwebs.layout.ports";
     private static final String STATS_GRAPH_LABELS = "kwebs.layout.labels";
+    private static final String STATS_INFORMAT = "kwebs.layout.informat";
+    private static final String STATS_OUTFORMAT = "kwebs.layout.outformat";
+    
     
     /**
      * 
@@ -262,6 +265,11 @@ public abstract class AbstractService {
             serializedResult = layout(serializedGraph, informatData.getHandler(),
                     outformatData.getHandler(), options);
         }
+        
+        Logger.INSTANCE.getUsageStats().incCounter(Logger.STATS_KWEBS, STATS_INFORMAT, informat,
+                Granularity.MONTH);
+        Logger.INSTANCE.getUsageStats().incCounter(Logger.STATS_KWEBS, STATS_OUTFORMAT, outformat,
+                Granularity.MONTH);
 
         Logger.log(Severity.DEBUG, "Finished layout");
         return serializedResult;
@@ -524,16 +532,15 @@ public abstract class AbstractService {
      * @param transData a transformation data instance
      * @param options a list of layout options
      */
-    @SuppressWarnings("unchecked")
     private void annotateTransData(final TransformationData<?, ?> transData,
             final List<GraphLayoutOption> options) {
         LayoutDataService dataService = LayoutDataService.getInstance();
         for (GraphLayoutOption option : options) {
-            LayoutOptionData<?> optionData = dataService.getOptionDataBySuffix(option.getId());
+            LayoutOptionData optionData = dataService.getOptionDataBySuffix(option.getId());
             if (optionData != null) {
                 Object optionValue = optionData.parseValue(option.getValue());
                 if (optionValue != null) {
-                    transData.setProperty((LayoutOptionData<Object>) optionData, optionValue);
+                    transData.setProperty(optionData, optionValue);
                 }
             }
         }
@@ -548,7 +555,7 @@ public abstract class AbstractService {
     private void annotateGraph(final KNode graph, final List<GraphLayoutOption> options) {
         LayoutDataService dataService = LayoutDataService.getInstance();
         for (GraphLayoutOption option : options) {
-            LayoutOptionData<?> optionData = dataService.getOptionDataBySuffix(option.getId());
+            LayoutOptionData optionData = dataService.getOptionDataBySuffix(option.getId());
             // Fail silent on invalid option declarations
             if (optionData != null) {
                 Object optionValue = optionData.parseValue(option.getValue());
@@ -653,7 +660,7 @@ public abstract class AbstractService {
         // Do not overwrite element specific option if already set
         EMap<IProperty<?>, Object> properties = layout.getProperties();
         if (!properties.containsKey(layoutOption)) {
-            layout.setProperty((LayoutOptionData<Object>) layoutOption, layoutOptionValue);
+            layout.setProperty((IProperty<Object>) layoutOption, layoutOptionValue);
         }
     }
 

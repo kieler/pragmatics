@@ -65,12 +65,9 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
 
         clearMaps
 
-        // create a root
-        val root = KimlUtil.createInitializedNode
-
-        // transform all nodes
-        graph.transformChildNodes(root)
-
+        // transform the root node along with its children
+        val root = graph.transformNode(null)
+       
         // transform all edges
         graph.transformEdges
 
@@ -101,7 +98,10 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
 
         // create a KNode and add it to the parent
         val node = KimlUtil.createInitializedNode.register(jsonNode)
-        parent.children += node
+        
+        if (parent != null) {
+            parent.children += node
+        }
 
         // position and dimension
         jsonNode.transformShapeLayout(node.layout)
@@ -281,6 +281,9 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
 
         // for each resulting graph run through all elements of the root
         data.targetGraphs.forEach [ graph |
+            // transfer layout of root
+            graph.transferLayoutInt
+            // and of any child of any type
             graph.eAllContents.forEach [ element |
                 element.transferLayoutInt
             ]

@@ -472,7 +472,7 @@
      </layoutOption>
      <layoutOption
            advanced="true"
-           appliesTo="parents,nodes,edges,ports,labels"
+           appliesTo="nodes,edges,ports,labels"
            default="false"
            description="Indicates that no layout should be done for the diagram part"
            id="de.cau.cs.kieler.noLayout"
@@ -517,6 +517,18 @@
            id="de.cau.cs.kieler.progressBar"
            name="Progress Bar"
            type="boolean"
+           variance="0">
+     </layoutOption>
+     <layoutOption
+           advanced="true"
+           appliesTo="nodes"
+           default="1f"
+           description="The scaling factor to be applied to the corresponding node in recursive layout."
+           id="de.cau.cs.kieler.scaleFactor"
+           lowerBound="0.01f"
+           name="Scale Factor"
+           type="float"
+           upperBound="100f"
            variance="0">
      </layoutOption>
      <layoutOption
