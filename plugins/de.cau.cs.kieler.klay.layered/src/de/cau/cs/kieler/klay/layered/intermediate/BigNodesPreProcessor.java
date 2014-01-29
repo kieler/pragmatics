@@ -336,7 +336,7 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
             // outside label placement
             for (int i = 1; i < dummies.size() - 1; ++i) {
                 dummies.get(i).setProperty(LayoutOptions.NODE_LABEL_PLACEMENT,
-                        NodeLabelPlacement.insideCenterCenter());
+                        NodeLabelPlacement.insideCenter());
             }
             
             // handle every label of the node
