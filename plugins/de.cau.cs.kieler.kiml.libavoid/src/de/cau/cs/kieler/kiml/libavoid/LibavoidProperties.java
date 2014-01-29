@@ -21,16 +21,15 @@ import de.cau.cs.kieler.core.properties.Property;
  * 
  * @author uru
  */
-public final class LibavoidRouterSetup {
+public final class LibavoidProperties {
 
-    private LibavoidRouterSetup() {
+    private LibavoidProperties() {
     }
 
     
     /*
      * General Properties
      */
-    
     
     // CHECKSTYLEOFF javadoc
     // for documentation on the properties see the libavoid documentation.

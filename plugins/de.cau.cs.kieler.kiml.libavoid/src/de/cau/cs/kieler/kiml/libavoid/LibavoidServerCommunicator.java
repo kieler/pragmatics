@@ -313,66 +313,66 @@ public class LibavoidServerCommunicator {
         /*
          * Penalties
          */
-        float segmentPenalty = nodeLayout.getProperty(LibavoidRouterSetup.SEGMENT_PENALTY);
-        addPenalty(LibavoidRouterSetup.SEGMENT_PENALTY.getId(), segmentPenalty);
+        float segmentPenalty = nodeLayout.getProperty(LibavoidProperties.SEGMENT_PENALTY);
+        addPenalty(LibavoidProperties.SEGMENT_PENALTY.getId(), segmentPenalty);
 
-        float anglePenalty = nodeLayout.getProperty(LibavoidRouterSetup.ANGLE_PENALTY);
-        addPenalty(LibavoidRouterSetup.ANGLE_PENALTY.getId(), anglePenalty);
+        float anglePenalty = nodeLayout.getProperty(LibavoidProperties.ANGLE_PENALTY);
+        addPenalty(LibavoidProperties.ANGLE_PENALTY.getId(), anglePenalty);
 
-        float crossingPenalty = nodeLayout.getProperty(LibavoidRouterSetup.CROSSING_PENALTY);
-        addPenalty(LibavoidRouterSetup.CROSSING_PENALTY.getId(), crossingPenalty);
+        float crossingPenalty = nodeLayout.getProperty(LibavoidProperties.CROSSING_PENALTY);
+        addPenalty(LibavoidProperties.CROSSING_PENALTY.getId(), crossingPenalty);
 
         float clusterCrossingPenalty =
-                nodeLayout.getProperty(LibavoidRouterSetup.CLUSTER_CROSSING_PENALTY);
-        addPenalty(LibavoidRouterSetup.CLUSTER_CROSSING_PENALTY.getId(), clusterCrossingPenalty);
+                nodeLayout.getProperty(LibavoidProperties.CLUSTER_CROSSING_PENALTY);
+        addPenalty(LibavoidProperties.CLUSTER_CROSSING_PENALTY.getId(), clusterCrossingPenalty);
 
         float fixedSharedPathPenalty =
-                nodeLayout.getProperty(LibavoidRouterSetup.FIXED_SHARED_PATH_PENALTY);
-        addPenalty(LibavoidRouterSetup.FIXED_SHARED_PATH_PENALTY.getId(), fixedSharedPathPenalty);
+                nodeLayout.getProperty(LibavoidProperties.FIXED_SHARED_PATH_PENALTY);
+        addPenalty(LibavoidProperties.FIXED_SHARED_PATH_PENALTY.getId(), fixedSharedPathPenalty);
 
         float portDirectionPenalty =
-                nodeLayout.getProperty(LibavoidRouterSetup.PORT_DIRECTION_PENALTY);
-        addPenalty(LibavoidRouterSetup.PORT_DIRECTION_PENALTY.getId(), portDirectionPenalty);
+                nodeLayout.getProperty(LibavoidProperties.PORT_DIRECTION_PENALTY);
+        addPenalty(LibavoidProperties.PORT_DIRECTION_PENALTY.getId(), portDirectionPenalty);
 
         float shapeBufferDistance =
-                nodeLayout.getProperty(LibavoidRouterSetup.SHAPE_BUFFER_DISTANCE);
-        addPenalty(LibavoidRouterSetup.SHAPE_BUFFER_DISTANCE.getId(), shapeBufferDistance);
+                nodeLayout.getProperty(LibavoidProperties.SHAPE_BUFFER_DISTANCE);
+        addPenalty(LibavoidProperties.SHAPE_BUFFER_DISTANCE.getId(), shapeBufferDistance);
 
         float idealNudgingDistance =
-                nodeLayout.getProperty(LibavoidRouterSetup.IDEAL_NUDGING_DISTANCE);
-        addPenalty(LibavoidRouterSetup.IDEAL_NUDGING_DISTANCE.getId(), idealNudgingDistance);
+                nodeLayout.getProperty(LibavoidProperties.IDEAL_NUDGING_DISTANCE);
+        addPenalty(LibavoidProperties.IDEAL_NUDGING_DISTANCE.getId(), idealNudgingDistance);
 
         /*
          * Routing options
          */
         boolean nudgeOrthogonalSegmentsConnectedToShapes =
-                nodeLayout.getProperty(LibavoidRouterSetup.NUDGE_ORTHOGONAL_SEGMENTS);
-        addRoutingOption(LibavoidRouterSetup.NUDGE_ORTHOGONAL_SEGMENTS.getId(),
+                nodeLayout.getProperty(LibavoidProperties.NUDGE_ORTHOGONAL_SEGMENTS);
+        addRoutingOption(LibavoidProperties.NUDGE_ORTHOGONAL_SEGMENTS.getId(),
                 nudgeOrthogonalSegmentsConnectedToShapes);
 
         boolean improveHyperedgeRoutesMovingJunctions =
-                nodeLayout.getProperty(LibavoidRouterSetup.IMPROVE_HYPEREDGES);
-        addRoutingOption(LibavoidRouterSetup.IMPROVE_HYPEREDGES.getId(),
+                nodeLayout.getProperty(LibavoidProperties.IMPROVE_HYPEREDGES);
+        addRoutingOption(LibavoidProperties.IMPROVE_HYPEREDGES.getId(),
                 improveHyperedgeRoutesMovingJunctions);
 
         boolean penaliseOrthogonalSharedPathsAtConnEnds =
-                nodeLayout.getProperty(LibavoidRouterSetup.PENALISE_ORTH_SHATE_PATHS);
-        addRoutingOption(LibavoidRouterSetup.PENALISE_ORTH_SHATE_PATHS.getId(),
+                nodeLayout.getProperty(LibavoidProperties.PENALISE_ORTH_SHATE_PATHS);
+        addRoutingOption(LibavoidProperties.PENALISE_ORTH_SHATE_PATHS.getId(),
                 penaliseOrthogonalSharedPathsAtConnEnds);
 
         boolean nudgeOrthogonalTouchingColinearSegments =
-                nodeLayout.getProperty(LibavoidRouterSetup.NUDGE_ORTHOGONAL_COLINEAR_SEGMENTS);
-        addRoutingOption(LibavoidRouterSetup.NUDGE_ORTHOGONAL_COLINEAR_SEGMENTS.getId(),
+                nodeLayout.getProperty(LibavoidProperties.NUDGE_ORTHOGONAL_COLINEAR_SEGMENTS);
+        addRoutingOption(LibavoidProperties.NUDGE_ORTHOGONAL_COLINEAR_SEGMENTS.getId(),
                 nudgeOrthogonalTouchingColinearSegments);
 
         boolean performUnifyingNudgingPreprocessingStep =
-                nodeLayout.getProperty(LibavoidRouterSetup.NUDGE_PREPROCESSING);
-        addRoutingOption(LibavoidRouterSetup.NUDGE_PREPROCESSING.getId(),
+                nodeLayout.getProperty(LibavoidProperties.NUDGE_PREPROCESSING);
+        addRoutingOption(LibavoidProperties.NUDGE_PREPROCESSING.getId(),
                 performUnifyingNudgingPreprocessingStep);
 
         boolean improveHyperedgeRoutesMovingAddingAndDeletingJunctions =
-                nodeLayout.getProperty(LibavoidRouterSetup.IMPROVE_HYPEREDGES_ADD_DELETE);
-        addRoutingOption(LibavoidRouterSetup.IMPROVE_HYPEREDGES_ADD_DELETE.getId(),
+                nodeLayout.getProperty(LibavoidProperties.IMPROVE_HYPEREDGES_ADD_DELETE);
+        addRoutingOption(LibavoidProperties.IMPROVE_HYPEREDGES_ADD_DELETE.getId(),
                 improveHyperedgeRoutesMovingAddingAndDeletingJunctions);
 
     }
@@ -451,7 +451,7 @@ public class LibavoidServerCommunicator {
         KShapeLayout shape = parent.getData(KShapeLayout.class);
 
         // offset each side by the shape buffer distance to let edges route properly
-        float bufferDistance = shape.getProperty(LibavoidRouterSetup.SHAPE_BUFFER_DISTANCE);
+        float bufferDistance = shape.getProperty(LibavoidProperties.SHAPE_BUFFER_DISTANCE);
         // top
         libavoidNode(parent, NODE_COMPOUND_NORTH, 0, 0 - SURROUNDING_RECT_SIZE - bufferDistance,
                 shape.getWidth(), SURROUNDING_RECT_SIZE, 0, 0);

@@ -194,6 +194,63 @@
             name="Improve Hyperedge Routes Add Delete"
             type="boolean">
       </layoutOption>
+      <layoutAlgorithm
+            category="de.cau.cs.kieler.kiml.libavoid.category"
+            class="de.cau.cs.kieler.kiml.libavoid.LibavoidLayoutProviderLegacy"
+            description="libavoid is a cross-platform C++ library providing fast, object-avoiding orthogonal and polyline connector routing for use in interactive diagram editors."
+            id="org.adaptagrams.cola.libavoid_old"
+            name="Libavoid_OLD"
+            parameter="LIBAVOID">
+         <knownOption
+               default="ORTHOGONAL"
+               option="de.cau.cs.kieler.edgeRouting">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.libavoid.segmentPenalty">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.libavoid.anglePenalty">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.libavoid.crossingPenalty">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.libavoid.clusterCrossingPenalty">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.libavoid.fixedSharedPathPenalty">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.libavoid.portDirectionPenalty">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.libavoid.shapeBufferDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.libavoid.idealNudgingDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.libavoid.nudgeOrthogonalSegmentsConnectedToShapes">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.libavoid.improveHyperedgeRoutesMovingJunctions">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.libavoid.penaliseOrthogonalSharedPathsAtConnEnds">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.libavoid.nudgeOrthogonalTouchingColinearSegments">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.direction">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.libavoid.performUnifyingNudgingPreprocessingStep">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.libavoid.improveHyperedgeRoutesMovingAddingAndDeletingJunctions">
+         </knownOption>
+      </layoutAlgorithm>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
