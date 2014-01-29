@@ -12,6 +12,5 @@ Require-Bundle: com.google.guava,
  de.cau.cs.kieler.kiml.service,
  de.cau.cs.kieler.kiml.ui,
  org.adaptagrams,
- org.adaptagrams.cola.libavoid,
  org.eclipse.ui,
  org.eclipse.core.runtime

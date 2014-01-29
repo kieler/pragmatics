@@ -4,6 +4,7 @@
    <extension
          point="de.cau.cs.kieler.kiml.layoutProviders">
       <layoutAlgorithm
+            category="de.cau.cs.kieler.kiml.categories.adaptagrams"
             class="de.cau.cs.kieler.kiml.cola.ColaLayoutProvider"
             id="de.cau.cs.kieler.kiml.cola.force"
             name="Dataflow CoLa Layout">
@@ -36,7 +37,7 @@
             type="boolean">
       </layoutOption>
       <layoutAlgorithm
-            category="de.cau.cs.kieler.kiml.categories.cola"
+            category="de.cau.cs.kieler.kiml.categories.adaptagrams"
             class="de.cau.cs.kieler.kiml.cola.ConstrainedLayoutProvider"
             description="This method is based on a non-linear gradient projection technique. Conceptually it&apos;s similar to a force directed method like Fruchterman-Reingold—but using a more principled goal function and optimisation techniques. "
             id="org.adaptagrams.cola.constraintLayout"
@@ -65,7 +66,7 @@
          </knownOption>
       </layoutAlgorithm>
       <category
-            id="de.cau.cs.kieler.kiml.categories.cola"
+            id="de.cau.cs.kieler.kiml.categories.adaptagrams"
             name="Adaptagrams">
       </category>
       <layoutOption

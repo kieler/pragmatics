@@ -42,8 +42,10 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
+import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
@@ -123,7 +125,7 @@ public class LibavoidLayoutProvider extends AbstractLayoutProvider {
             return;
         }
 
-        // cleanup
+        // initialize
         nodeIdCounter = NODE_ID_START;
         nodeIdMap.clear();
         portIdCounter = PORT_ID_START;
@@ -160,6 +162,7 @@ public class LibavoidLayoutProvider extends AbstractLayoutProvider {
 
         // apply layout information back
         applyLayout(parentNode);
+        calculateJunctionPoints(parentNode);
 
         // destroy
         router.delete();
@@ -660,5 +663,21 @@ public class LibavoidLayoutProvider extends AbstractLayoutProvider {
         KPoint kpoint = KLayoutDataFactory.eINSTANCE.createKPoint();
         kpoint.setPos((float) p.getX(), (float) p.getY());
         return kpoint;
+    }
+    
+    /**
+     * Calculates and sets the junction points for each edge of the graph.
+     * 
+     * @param graph
+     *            the graph.
+     */
+    private void calculateJunctionPoints(final KNode graph) {
+        for (KNode n : graph.getChildren()) {
+            for (KEdge edge : n.getOutgoingEdges()) {
+                KVectorChain junctionPoints = KimlUtil.determineJunctionPoints(edge);
+                edge.getData(KLayoutData.class).setProperty(LayoutOptions.JUNCTION_POINTS,
+                        junctionPoints);
+            }
+        }
     }
 }
