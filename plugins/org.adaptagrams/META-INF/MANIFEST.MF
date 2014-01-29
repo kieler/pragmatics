@@ -3,11 +3,10 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Adaptagrams Libraries
 Bundle-SymbolicName: org.adaptagrams;singleton:=true
 Bundle-Version: 0.1.0.qualifier
-Bundle-Activator: org.adaptagrams.cola.ColaPlugin
+Bundle-Activator: org.adaptagrams.AdaptagramsPlugin
 Require-Bundle: org.eclipse.core.runtime
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.adaptagrams;version="0.1.0",
- org.adaptagrams.cola
+Export-Package: org.adaptagrams
 Bundle-ClassPath: .,
  lib/adaptagrams.jar
 Bundle-ActivationPolicy: lazy

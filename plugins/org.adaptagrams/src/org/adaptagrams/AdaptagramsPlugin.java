@@ -10,7 +10,7 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  */
-package org.adaptagrams.cola;
+package org.adaptagrams;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,7 +29,7 @@ import org.osgi.framework.BundleContext;
  * 
  * @author uru
  */
-public class ColaPlugin implements BundleActivator {
+public class AdaptagramsPlugin implements BundleActivator {
 
     private static BundleContext context;
 
@@ -45,7 +45,7 @@ public class ColaPlugin implements BundleActivator {
      * @throws Exception e
      */
     public void start(final BundleContext bundleContext) throws Exception {
-        ColaPlugin.context = bundleContext;
+        AdaptagramsPlugin.context = bundleContext;
 
         loadSharedAdaptagramsLibrary();
     }
@@ -58,7 +58,7 @@ public class ColaPlugin implements BundleActivator {
      * @throws Exception e
      */
     public void stop(final BundleContext bundleContext) throws Exception {
-        ColaPlugin.context = null;
+        AdaptagramsPlugin.context = null;
     }
 
     /*
@@ -126,7 +126,7 @@ public class ColaPlugin implements BundleActivator {
      *             when the library could not be located
      */
     private static File resolvelibrary() throws IOException {
-        Bundle bundle = ColaPlugin.getContext().getBundle();
+        Bundle bundle = AdaptagramsPlugin.getContext().getBundle();
         IPath path = null;
         OS os = detectOS();
         switch (os) {
