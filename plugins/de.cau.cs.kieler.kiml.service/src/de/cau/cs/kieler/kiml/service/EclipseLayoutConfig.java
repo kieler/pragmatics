@@ -168,7 +168,7 @@ public class EclipseLayoutConfig implements ILayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public Object getValue(final LayoutOptionData<?> optionData, final LayoutContext context) {
+    public Object getValue(final LayoutOptionData optionData, final LayoutContext context) {
         LayoutConfigService configService = LayoutConfigService.getInstance();
         Object result = null;
         
@@ -295,9 +295,7 @@ public class EclipseLayoutConfig implements ILayoutConfig {
         if (diagramType != null) {
             for (Entry<String, Object> entry : configService.getOptionValues(diagramType).entrySet()) {
                 if (entry.getValue() != null) {
-                    @SuppressWarnings("unchecked")
-                    LayoutOptionData<Object> optionData = (LayoutOptionData<Object>)
-                            dataService.getOptionData(entry.getKey());
+                    LayoutOptionData optionData = dataService.getOptionData(entry.getKey());
                     if (optionData != null) {
                         options.add(optionData);
                     }
@@ -315,9 +313,7 @@ public class EclipseLayoutConfig implements ILayoutConfig {
             }
             for (Entry<String, Object> entry : domainOptionsMap.entrySet()) {
                 if (entry.getValue() != null) {
-                    @SuppressWarnings("unchecked")
-                    LayoutOptionData<Object> optionData = (LayoutOptionData<Object>)
-                            dataService.getOptionData(entry.getKey());
+                    LayoutOptionData optionData = dataService.getOptionData(entry.getKey());
                     if (optionData != null) {
                         options.add(optionData);
                     }
@@ -330,9 +326,7 @@ public class EclipseLayoutConfig implements ILayoutConfig {
             String clazzName = diagPart.getClass().getName();
             for (Entry<String, Object> entry : configService.getOptionValues(clazzName).entrySet()) {
                 if (entry.getValue() != null) {
-                    @SuppressWarnings("unchecked")
-                    LayoutOptionData<Object> optionData = (LayoutOptionData<Object>)
-                            dataService.getOptionData(entry.getKey());
+                    LayoutOptionData optionData = dataService.getOptionData(entry.getKey());
                     if (optionData != null) {
                         options.add(optionData);
                     }

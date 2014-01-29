@@ -35,14 +35,14 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 public class LayoutOptionLabelProvider extends LabelProvider {
     
     /** the layout option data instance associated with this label provider. */
-    private final LayoutOptionData<?> optionData;
+    private final LayoutOptionData optionData;
 
     /**
      * Create a label provider for the given layout option.
      * 
      * @param optionData a layout option
      */
-    public LayoutOptionLabelProvider(final LayoutOptionData<?> optionData) {
+    public LayoutOptionLabelProvider(final LayoutOptionData optionData) {
         this.optionData = optionData;
     }
     

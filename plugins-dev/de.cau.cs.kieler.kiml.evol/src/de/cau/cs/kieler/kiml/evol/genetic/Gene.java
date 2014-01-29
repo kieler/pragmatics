@@ -194,7 +194,7 @@ public final class Gene<T extends Comparable<? super T>> implements Serializable
      */
     public Enum<?> enumValue() {
         if (value instanceof Integer) {
-            LayoutOptionData<?> optionData = (LayoutOptionData<?>) typeInfo.getTypeParam();
+            LayoutOptionData optionData = (LayoutOptionData) typeInfo.getTypeParam();
             return optionData.getEnumValue((Integer) value);
         }
         return null;

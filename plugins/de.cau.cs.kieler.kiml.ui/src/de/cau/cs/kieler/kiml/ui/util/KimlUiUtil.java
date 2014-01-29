@@ -85,9 +85,9 @@ public final class KimlUiUtil {
      * @param optionName user-friendly name of a layout option
      * @return the corresponding layout option data
      */
-    public static LayoutOptionData<?> getOptionData(final LayoutAlgorithmData providerData,
+    public static LayoutOptionData getOptionData(final LayoutAlgorithmData providerData,
             final String optionName) {
-        for (LayoutOptionData<?> data : LayoutDataService.getInstance().getOptionData()) {
+        for (LayoutOptionData data : LayoutDataService.getInstance().getOptionData()) {
             if (data.getName().equals(optionName) && providerData.knowsOption(data)) {
                 return data;
             }
@@ -103,10 +103,10 @@ public final class KimlUiUtil {
      * @param displayName display name of the layout option as seen by the user
      * @return the most suitable layout option data
      */
-    public static LayoutOptionData<?> getOptionData(final LayoutAlgorithmData[] providerDataArray,
+    public static LayoutOptionData getOptionData(final LayoutAlgorithmData[] providerDataArray,
             final String displayName) {
         for (LayoutAlgorithmData providerData : providerDataArray) {
-            LayoutOptionData<?> optionData = getOptionData(providerData, displayName);
+            LayoutOptionData optionData = getOptionData(providerData, displayName);
             if (optionData != null) {
                 return optionData;
             }

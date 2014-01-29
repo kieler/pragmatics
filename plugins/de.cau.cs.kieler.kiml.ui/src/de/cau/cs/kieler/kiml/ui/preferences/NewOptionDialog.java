@@ -216,7 +216,7 @@ public class NewOptionDialog extends Dialog {
          * 
          * @param optionData a layout option data
          */
-        private SelectionData(final LayoutOptionData<?> optionData) {
+        private SelectionData(final LayoutOptionData optionData) {
             this.id = optionData.getId();
             this.name = optionData.getName();
             this.type = optionData.getType();
@@ -334,9 +334,9 @@ public class NewOptionDialog extends Dialog {
                 return null;
             }
         });
-        Collection<LayoutOptionData<?>> data = LayoutDataService.getInstance().getOptionData();
+        Collection<LayoutOptionData> data = LayoutDataService.getInstance().getOptionData();
         ArrayList<SelectionData> inputList = new ArrayList<SelectionData>(data.size());      
-        for (LayoutOptionData<?> optionData : data) {
+        for (LayoutOptionData optionData : data) {
             // layout options without target definition are now shown to the user
             if (!optionData.getTargets().isEmpty()) {
                 inputList.add(new SelectionData(optionData));
@@ -368,8 +368,7 @@ public class NewOptionDialog extends Dialog {
                 int dotIndex = elementValue.lastIndexOf('.');
                 name = elementValue.substring(dotIndex + 1);
             }
-            LayoutOptionData<?> optionData = LayoutDataService.getInstance()
-                    .getOptionData(optionValue);
+            LayoutOptionData optionData = LayoutDataService.getInstance().getOptionData(optionValue);
             if (optionData != null) {
                 Object value = optionData.getDefault();
                 if (value == null) {

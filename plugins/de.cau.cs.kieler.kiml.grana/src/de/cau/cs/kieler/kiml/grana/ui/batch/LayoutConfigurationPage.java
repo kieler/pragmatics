@@ -73,14 +73,14 @@ public class LayoutConfigurationPage extends WizardPage {
     private static final int COL_VALUE = 1;
     
     /** list of layout option entries. */
-    private final List<Pair<LayoutOptionData<Object>, Object>> optionEntries = Lists.newLinkedList();
+    private final List<Pair<LayoutOptionData, Object>> optionEntries = Lists.newLinkedList();
     
     /**
      * Constructs a LayoutConfigurationPage.
      * 
      * @param initialEntries the initial layout configuration
      */
-    public LayoutConfigurationPage(final List<Pair<LayoutOptionData<Object>, Object>> initialEntries) {
+    public LayoutConfigurationPage(final List<Pair<LayoutOptionData, Object>> initialEntries) {
         super(PAGE_NAME);
         optionEntries.addAll(initialEntries);
     }
@@ -119,7 +119,7 @@ public class LayoutConfigurationPage extends WizardPage {
         editButton.setEnabled(false);
         editButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(final SelectionEvent event) {
-                Pair<LayoutOptionData<Object>, Object> entry = optionEntries.get(
+                Pair<LayoutOptionData, Object> entry = optionEntries.get(
                         table.getSelectionIndex());
                 if (entry != null) {
                     showEditDialog(parent.getShell(), entry);
@@ -161,7 +161,7 @@ public class LayoutConfigurationPage extends WizardPage {
             @Override
             public void widgetDefaultSelected(final SelectionEvent e) {
                 // Duplicate code from edit button handler
-                Pair<LayoutOptionData<Object>, Object> entry = optionEntries.get(
+                Pair<LayoutOptionData, Object> entry = optionEntries.get(
                         table.getSelectionIndex());
                 if (entry != null) {
                     showEditDialog(parent.getShell(), entry);
@@ -185,11 +185,11 @@ public class LayoutConfigurationPage extends WizardPage {
         });
         newButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(final SelectionEvent event) {
-                LayoutOptionData<Object> optionData = showBrowseOptionDialog();
+                LayoutOptionData optionData = showBrowseOptionDialog();
                 if (optionData != null) {
                     // look for an existing entry with the same option
-                    Pair<LayoutOptionData<Object>, Object> entry = null;
-                    for (Pair<LayoutOptionData<Object>, Object> oe : optionEntries) {
+                    Pair<LayoutOptionData, Object> entry = null;
+                    for (Pair<LayoutOptionData, Object> oe : optionEntries) {
                         if (optionData.equals(oe.getFirst())) {
                             entry = oe;
                             break;
@@ -204,7 +204,7 @@ public class LayoutConfigurationPage extends WizardPage {
                             }
                         }
                         if (value != null) {
-                            entry = new Pair<LayoutOptionData<Object>, Object>(optionData, value);
+                            entry = new Pair<LayoutOptionData, Object>(optionData, value);
                             optionEntries.add(entry);
                             tableViewer.setInput(optionEntries);
                             column1.pack();
@@ -244,7 +244,7 @@ public class LayoutConfigurationPage extends WizardPage {
      */
     public VolatileLayoutConfig getConfig() {
         VolatileLayoutConfig config = new VolatileLayoutConfig();
-        for (Pair<LayoutOptionData<Object>, Object> pair : optionEntries) {
+        for (Pair<LayoutOptionData, Object> pair : optionEntries) {
             config.setValue(pair.getFirst(), pair.getSecond());
         }
         return config;
@@ -256,8 +256,8 @@ public class LayoutConfigurationPage extends WizardPage {
      * @param shell the current shell
      * @param entry an option table entry
      */
-    private void showEditDialog(final Shell shell, final Pair<LayoutOptionData<Object>, Object> entry) {
-        LayoutOptionData<?> optionData = entry.getFirst();
+    private void showEditDialog(final Shell shell, final Pair<LayoutOptionData, Object> entry) {
+        LayoutOptionData optionData = entry.getFirst();
         if (optionData.equals(LayoutOptions.ALGORITHM)) {
             // show a selection dialog for a layouter hint
             AlgorithmSelectionDialog dialog = new AlgorithmSelectionDialog(shell, null);
@@ -292,22 +292,21 @@ public class LayoutConfigurationPage extends WizardPage {
      * 
      * @return the selected layout option
      */
-    @SuppressWarnings("unchecked")
-    private LayoutOptionData<Object> showBrowseOptionDialog() {
+    private LayoutOptionData showBrowseOptionDialog() {
         ListDialog dialog = new ListDialog(this.getShell());
         dialog.setTitle("Select Layout Option");
         dialog.setContentProvider(ArrayContentProvider.getInstance());
         dialog.setLabelProvider(new OptionsLabelProvider());
-        Collection<LayoutOptionData<?>> data = LayoutDataService.getInstance().getOptionData();
-        ArrayList<LayoutOptionData<?>> inputList = new ArrayList<LayoutOptionData<?>>(data.size());      
-        for (LayoutOptionData<?> optionData : data) {
+        Collection<LayoutOptionData> data = LayoutDataService.getInstance().getOptionData();
+        ArrayList<LayoutOptionData> inputList = new ArrayList<LayoutOptionData>(data.size());      
+        for (LayoutOptionData optionData : data) {
             // layout options without target definition are not shown to the user
             if (!optionData.getTargets().isEmpty()) {
                 inputList.add(optionData);
             }
         }
-        Collections.sort(inputList, new Comparator<LayoutOptionData<?>>() {
-            public int compare(final LayoutOptionData<?> lod1, final LayoutOptionData<?> lod2) {
+        Collections.sort(inputList, new Comparator<LayoutOptionData>() {
+            public int compare(final LayoutOptionData lod1, final LayoutOptionData lod2) {
                 return lod1.getName().compareTo(lod2.getName());
             }
         });
@@ -315,7 +314,7 @@ public class LayoutConfigurationPage extends WizardPage {
         if (dialog.open() == ListDialog.OK) {
             Object[] result = dialog.getResult();
             if (result != null && result.length > 0) {
-                return (LayoutOptionData<Object>) result[0];
+                return (LayoutOptionData) result[0];
             }
         }
         return null;
@@ -330,15 +329,15 @@ public class LayoutConfigurationPage extends WizardPage {
          * {@inheritDoc}
          */
         public Image getColumnImage(final Object element, final int columnIndex) {
-            LayoutOptionData<?> optionData = null;
+            LayoutOptionData optionData = null;
             Object value = null;
             if (element instanceof Pair && columnIndex == COL_VALUE) {
                 @SuppressWarnings("unchecked")
-                Pair<LayoutOptionData<?>, Object> entry = (Pair<LayoutOptionData<?>, Object>) element;
+                Pair<LayoutOptionData, Object> entry = (Pair<LayoutOptionData, Object>) element;
                 optionData = entry.getFirst();
                 value = entry.getSecond();
             } else if (element instanceof LayoutOptionData) {
-                optionData = (LayoutOptionData<?>) element;
+                optionData = (LayoutOptionData) element;
                 value = optionData.getDefaultDefault();
             }
             if (optionData != null) {
@@ -370,7 +369,7 @@ public class LayoutConfigurationPage extends WizardPage {
         public String getColumnText(final Object element, final int columnIndex) {
             if (element instanceof Pair) {
                 @SuppressWarnings("unchecked")
-                Pair<LayoutOptionData<?>, Object> entry = (Pair<LayoutOptionData<?>, Object>) element;
+                Pair<LayoutOptionData, Object> entry = (Pair<LayoutOptionData, Object>) element;
                 switch (columnIndex) {
                 case COL_OPTION:
                     return entry.getFirst().getName();
@@ -383,7 +382,7 @@ public class LayoutConfigurationPage extends WizardPage {
                     }
                 }
             } else if (element instanceof LayoutOptionData) {
-                LayoutOptionData<?> optionData = (LayoutOptionData<?>) element;
+                LayoutOptionData optionData = (LayoutOptionData) element;
                 return optionData.getName();
             }
             return null;

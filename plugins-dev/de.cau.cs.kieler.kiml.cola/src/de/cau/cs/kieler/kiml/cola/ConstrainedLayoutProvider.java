@@ -67,6 +67,7 @@ public class ConstrainedLayoutProvider extends AbstractLayoutProvider {
     private float spacing;
     private float borderSpacing;
     private Direction direction;
+    private boolean considerPrevious;
 
     /**
      * Main entry point of the layour provider.
@@ -77,6 +78,9 @@ public class ConstrainedLayoutProvider extends AbstractLayoutProvider {
 
         // handle some properties
         KLayoutData rootLayout = parentNode.getData(KLayoutData.class);
+        
+        // should we consider previous node positions?
+        considerPrevious = rootLayout.getProperty(ColaProperties.CONSIDER_PREVIOUS);
 
         // spacing
         spacing = rootLayout.getProperty(LayoutOptions.SPACING);
@@ -122,31 +126,29 @@ public class ConstrainedLayoutProvider extends AbstractLayoutProvider {
         nodeIndexMap.clear();
         edgeIndexMap.clear();
 
-        /*
-         * Nodes
-         */
+        // Nodes
         nodes = new RectanglePtrs();
         long index = 0;
         for (KNode n : root.getChildren()) {
             KShapeLayout layout = n.getData(KShapeLayout.class);
-            // x X y Y meaning x width y height
-            // Rectangle r =
-            // new Rectangle(layout.getXpos(), layout.getXpos() + layout.getWidth(),
-            // layout.getYpos(), layout.getYpos() + layout.getHeight());
 
-            // constrained layout considers previous positions, to make it independent from
-            // any weird layout stuff used before we run it, use 0 as initial positions for all
-            // rects
-            Rectangle r = new Rectangle(0, 0 + layout.getWidth(), 0, 0 + layout.getHeight());
+            // x X y Y meaning x width y height
+            Rectangle r = null;
+            if (considerPrevious) {
+                r = new Rectangle(layout.getXpos(), layout.getXpos() + layout.getWidth(), 
+                        layout.getYpos(), layout.getYpos() + layout.getHeight());
+            } else {
+                // constrained layout considers previous positions, to make it independent from
+                // any weird layout stuff used before we run it, use 0 as initial positions for all
+                // rects
+                r = new Rectangle(0, 0 + layout.getWidth(), 0, 0 + layout.getHeight());
+            }
 
             nodes.add(r);
             nodeIndexMap.put(n, index++);
         }
 
-        /*
-         * Edges
-         */
-        // edges are index pairs to the rectangle array
+        // Edges are index pairs to the rectangle array
         edges = new ColaEdges();
         index = 0;
         for (KNode n : root.getChildren()) {

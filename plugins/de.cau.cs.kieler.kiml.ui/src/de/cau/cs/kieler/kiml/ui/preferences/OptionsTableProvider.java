@@ -23,7 +23,10 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
 
+import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
+import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 
 /**
@@ -45,7 +48,7 @@ public class OptionsTableProvider extends LabelProvider implements ITableLabelPr
         /** type of element (diagram type / model element / edit part). */
         private ElementType type;
         /** layout option data. */
-        private LayoutOptionData<?> optionData;
+        private LayoutOptionData optionData;
         /** the current value. */
         private Object value;
         
@@ -59,7 +62,7 @@ public class OptionsTableProvider extends LabelProvider implements ITableLabelPr
          * @param thevalue the current value
          */
         public DataEntry(final String name, final String id, final ElementType thetype,
-                final LayoutOptionData<?> theoptionData, final Object thevalue) {
+                final LayoutOptionData theoptionData, final Object thevalue) {
             this.elementName = name;
             this.elementId = id;
             this.type = thetype;
@@ -99,7 +102,7 @@ public class OptionsTableProvider extends LabelProvider implements ITableLabelPr
          *
          * @return the option data
          */
-        public LayoutOptionData<?> getOptionData() {
+        public LayoutOptionData getOptionData() {
             return optionData;
         }
 
@@ -198,9 +201,14 @@ public class OptionsTableProvider extends LabelProvider implements ITableLabelPr
                 if (entry.optionData.getType() == LayoutOptionData.Type.ENUM
                         && entry.value instanceof Integer) {
                     return entry.optionData.getEnumValue((Integer) entry.value).toString();
-                } else {
-                    return entry.value.toString();
+                } else if (entry.optionData.equals(LayoutOptions.ALGORITHM)) {
+                    LayoutAlgorithmData algorithm = LayoutDataService.getInstance().getAlgorithmData(
+                            entry.value.toString());
+                    if (algorithm != null) {
+                        return algorithm.toString();
+                    }
                 }
+                return entry.value.toString();
             }
         }
         return null;

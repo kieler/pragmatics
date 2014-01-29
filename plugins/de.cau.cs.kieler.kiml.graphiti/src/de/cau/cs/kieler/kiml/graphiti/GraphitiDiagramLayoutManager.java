@@ -39,7 +39,6 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.kiml.config.LayoutContext;
 import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
@@ -150,7 +149,6 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
             final Object diagramPart) {
         LayoutMapping<PictogramElement> mapping = new LayoutMapping<PictogramElement>(this);
         mapping.setProperty(KimlGraphitiUtil.CONNECTIONS, new LinkedList<Connection>());
-        mapping.setProperty(KimlGraphitiUtil.STATIC_CONFIG, new VolatileLayoutConfig());
 
         if (workbenchPart instanceof DiagramEditor) {
             mapping.setProperty(KimlGraphitiUtil.DIAGRAM_EDITOR, (DiagramEditor) workbenchPart);
@@ -256,8 +254,10 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
             KimlGraphitiUtil.createEdge(mapping, entry);
         }
         
-        // create layout configurators for Graphiti
-        mapping.getLayoutConfigs().add(mapping.getProperty(KimlGraphitiUtil.STATIC_CONFIG));
+        // create a layout configurator from the properties that were set while building
+        mapping.getLayoutConfigs().add(VolatileLayoutConfig.fromProperties(mapping.getLayoutGraph(),
+                GraphitiLayoutConfig.PRIORITY - 1));
+        // add the layout configurator that reads the properties attached to the pictogram model
         mapping.getLayoutConfigs().add(layoutConfig);
 
         return mapping;
@@ -420,15 +420,12 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
             final KNode parentNode, final Shape shape) {
         KNode childNode = KimlUtil.createInitializedNode();
         childNode.setParent(parentNode);
-        VolatileLayoutConfig staticConfig = mapping.getProperty(KimlGraphitiUtil.STATIC_CONFIG);
 
         // set the node's layout
         KShapeLayout nodeLayout = childNode.getData(KShapeLayout.class);
         GraphicsAlgorithm nodeGa = shape.getGraphicsAlgorithm();
         KInsets nodeInsets = KimlGraphitiUtil.calcInsets(nodeGa);
         nodeLayout.setProperty(GraphitiLayoutCommand.INVIS_INSETS, nodeInsets);
-        staticConfig.setValue(GraphitiLayoutCommand.INVIS_INSETS, childNode, LayoutContext.GRAPH_ELEM,
-                nodeInsets);
         KInsets parentInsets = parentNode == null ? null : parentNode.getData(KShapeLayout.class)
                 .getProperty(GraphitiLayoutCommand.INVIS_INSETS);
         if (parentInsets == null) {
@@ -444,8 +441,8 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
         ((KShapeLayoutImpl) nodeLayout).resetModificationFlag();
 
         // this very minimal size configuration should be corrected in subclasses
-        staticConfig.setValue(LayoutOptions.MIN_WIDTH, childNode, LayoutContext.GRAPH_ELEM, MIN_SIZE);
-        staticConfig.setValue(LayoutOptions.MIN_HEIGHT, childNode, LayoutContext.GRAPH_ELEM, MIN_SIZE);
+        nodeLayout.setProperty(LayoutOptions.MIN_WIDTH, MIN_SIZE);
+        nodeLayout.setProperty(LayoutOptions.MIN_HEIGHT, MIN_SIZE);
 
         mapping.getGraphMap().put(childNode, shape);
 

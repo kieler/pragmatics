@@ -68,7 +68,7 @@ public class ExecutionTimeHandler extends AbstractHandler {
     public static int evaluations;
     
     /** the list of considered layout options. */
-    private List<LayoutOptionData<?>> layoutOptions;
+    private List<LayoutOptionData> layoutOptions;
     /** the random number generator. */
     private Random random;
     
@@ -108,9 +108,9 @@ public class ExecutionTimeHandler extends AbstractHandler {
     }
     
     private void initialize() {
-        layoutOptions = new ArrayList<LayoutOptionData<?>>(
+        layoutOptions = new ArrayList<LayoutOptionData>(
                 LayoutDataService.getInstance().getOptionData().size());
-        for (LayoutOptionData<?> data : LayoutDataService.getInstance().getOptionData()) {
+        for (LayoutOptionData data : LayoutDataService.getInstance().getOptionData()) {
             if (LayoutOptions.ALGORITHM.equals(data)
                     || (data.getTargets().contains(LayoutOptionData.Target.PARENTS)
                     && data.getVariance() > 0 && typeSupported(data.getType()))) {

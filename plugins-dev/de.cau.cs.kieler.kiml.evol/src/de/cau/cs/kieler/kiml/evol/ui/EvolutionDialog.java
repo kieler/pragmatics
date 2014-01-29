@@ -546,7 +546,7 @@ public class EvolutionDialog extends Dialog {
         OptionSelectionDialog optionSelectionDialog = new OptionSelectionDialog(getShell(),
                 LayoutEvolutionModel.getInstance().getLayoutOptions());
         if (optionSelectionDialog.open() == OptionSelectionDialog.OK) {
-            final List<LayoutOptionData<?>> selectedOptions = optionSelectionDialog.getSelection();
+            final List<LayoutOptionData> selectedOptions = optionSelectionDialog.getSelection();
             if (selectedOptions.isEmpty()) {
                 MessageDialog.openError(getShell(), "No Selected Options",
                         "The evolutionary process requires at least one selected option.");

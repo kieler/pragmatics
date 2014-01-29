@@ -43,7 +43,7 @@ public class HypernodeLayoutConfig extends SemanticLayoutConfig {
      */
     @Override
     protected Object getSemanticValue(final Object semanticElem,
-            final LayoutOptionData<?> layoutOption) {
+            final LayoutOptionData layoutOption) {
         if (semanticElem instanceof Node && layoutOption.equals(LayoutOptions.HYPERNODE)) {
             return ((Node) semanticElem).isHypernode();
         }
@@ -55,7 +55,7 @@ public class HypernodeLayoutConfig extends SemanticLayoutConfig {
      */
     @Override
     protected void setSemanticValue(final Object semanticElem,
-            final LayoutOptionData<?> layoutOption, final Object value) {
+            final LayoutOptionData layoutOption, final Object value) {
         // not supported by this layout configuration
     }
 
