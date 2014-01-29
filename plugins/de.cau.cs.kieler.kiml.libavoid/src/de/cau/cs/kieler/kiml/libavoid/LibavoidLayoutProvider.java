@@ -97,13 +97,14 @@ public class LibavoidLayoutProvider extends AbstractLayoutProvider {
      * 
      * Per definition the ids of passed ports start at 5. Thus, [1..4] are free for arbitrary
      * definition.
+     * Remark: the id has to be > 0! Otherwise a c++ assertion fails.
      */
     /** Indicates pins that can be used by an arbitrary endpoint of an edge. */
-    private static final int PIN_ARBITRARY = 0;
+    private static final int PIN_ARBITRARY = 1;
     /** Indicates pins reserved for incoming edges. */
-    private static final int PIN_INCOMING = 1;
+    private static final int PIN_INCOMING = 2;
     /** Indicates pins reserved for outgoing edges. */
-    private static final int PIN_OUTGOING = 2;
+    private static final int PIN_OUTGOING = 3;
 
     private int nodeIdCounter = NODE_ID_START;
     private int portIdCounter = PORT_ID_START;

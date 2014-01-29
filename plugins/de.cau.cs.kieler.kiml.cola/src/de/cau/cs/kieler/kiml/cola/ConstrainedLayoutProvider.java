@@ -78,7 +78,7 @@ public class ConstrainedLayoutProvider extends AbstractLayoutProvider {
 
         // handle some properties
         KLayoutData rootLayout = parentNode.getData(KLayoutData.class);
-        
+
         // should we consider previous node positions?
         considerPrevious = rootLayout.getProperty(ColaProperties.CONSIDER_PREVIOUS);
 
@@ -135,8 +135,9 @@ public class ConstrainedLayoutProvider extends AbstractLayoutProvider {
             // x X y Y meaning x width y height
             Rectangle r = null;
             if (considerPrevious) {
-                r = new Rectangle(layout.getXpos(), layout.getXpos() + layout.getWidth(), 
-                        layout.getYpos(), layout.getYpos() + layout.getHeight());
+                r =
+                        new Rectangle(layout.getXpos(), layout.getXpos() + layout.getWidth(),
+                                layout.getYpos(), layout.getYpos() + layout.getHeight());
             } else {
                 // constrained layout considers previous positions, to make it independent from
                 // any weird layout stuff used before we run it, use 0 as initial positions for all
@@ -155,7 +156,7 @@ public class ConstrainedLayoutProvider extends AbstractLayoutProvider {
             for (KEdge e : n.getOutgoingEdges()) {
 
                 // ignore cross-hierarchy edges and self-loops
-                if (e.getTarget().getParent() == root && e.getSource() != e.getTarget()) {
+                if (e.getTarget().getParent() == root && !e.getSource().equals(e.getTarget())) {
 
                     long src = nodeIndexMap.get(e.getSource());
                     long tgt = nodeIndexMap.get(e.getTarget());
@@ -200,10 +201,18 @@ public class ConstrainedLayoutProvider extends AbstractLayoutProvider {
         // Edges, no routing done -> clear the bend points
         for (KNode n : root.getChildren()) {
             for (KEdge kedge : n.getOutgoingEdges()) {
-
                 KEdgeLayout layout = kedge.getData(KEdgeLayout.class);
                 layout.getBendPoints().clear();
 
+                // TODO handle this more sophisticatedly
+                // set some positions for the edge
+                KShapeLayout srcLayout = n.getData(KShapeLayout.class);
+                KShapeLayout tgtLayout = kedge.getTarget().getData(KShapeLayout.class);
+
+                layout.getSourcePoint().setPos(srcLayout.getXpos() + srcLayout.getWidth() / 2,
+                        srcLayout.getYpos() + srcLayout.getHeight() / 2);
+                layout.getTargetPoint().setPos(tgtLayout.getXpos() + tgtLayout.getWidth() / 2,
+                        tgtLayout.getYpos() + tgtLayout.getHeight() / 2);
             }
         }
 
@@ -224,6 +233,11 @@ public class ConstrainedLayoutProvider extends AbstractLayoutProvider {
         for (KNode n : root.getChildren()) {
             for (KEdge e : n.getOutgoingEdges()) {
 
+                // only handle edges between nodes of the same parent
+                if (!e.getSource().getParent().equals(e.getTarget().getParent())) {
+                    continue;
+                }
+                
                 long src = nodeIndexMap.get(e.getSource());
                 long tgt = nodeIndexMap.get(e.getTarget());
 
