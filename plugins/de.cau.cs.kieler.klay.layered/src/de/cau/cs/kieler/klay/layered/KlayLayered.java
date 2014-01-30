@@ -25,6 +25,7 @@ import java.util.Set;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -370,6 +371,9 @@ public final class KlayLayered {
 
     // /////////////////////////////////////////////////////////////////////////////
     // Options and Modules Management
+    
+    /** the minimal spacing between edges, so edges won't overlap. */
+    private static final float MIN_EDGE_SPACING = 2.0f;
 
     /**
      * Set special layout options for the layered graph.
@@ -378,6 +382,22 @@ public final class KlayLayered {
      *            a new layered graph
      */
     private void setOptions(final LGraph layeredGraph) {
+        // check the bounds of some layout options
+        layeredGraph.checkProperties(Properties.OBJ_SPACING, Properties.BORDER_SPACING,
+                Properties.THOROUGHNESS, Properties.ASPECT_RATIO);
+        float spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
+        if (layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR) * spacing < MIN_EDGE_SPACING) {
+            // Edge spacing is determined by the product of object spacing and edge spacing factor.
+            // Make sure the resulting edge spacing is at least 2 in order to avoid overlapping edges.
+            layeredGraph.setProperty(Properties.EDGE_SPACING_FACTOR, MIN_EDGE_SPACING / spacing);
+        }
+        Direction direction = layeredGraph.getProperty(LayoutOptions.DIRECTION);
+        if (direction == Direction.UNDEFINED) {
+            // The default layout direction is right.
+            direction = Direction.RIGHT;
+            layeredGraph.setProperty(LayoutOptions.DIRECTION, direction);
+        }
+        
         // set the random number generator based on the random seed option
         Integer randomSeed = layeredGraph.getProperty(LayoutOptions.RANDOM_SEED);
         if (randomSeed != null) {
