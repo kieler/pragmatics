@@ -25,6 +25,7 @@ import de.cau.cs.kieler.kiml.grana.IAnalysis;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
  * A graph analysis that computes the number of edge-node overlaps. It assumes
@@ -264,7 +265,13 @@ public class NodeEdgeOverlapsAnalysis implements IAnalysis {
             KNode node = nodeQueue.remove(0);
             // compute intersections of all edge segments with all nodes on the same hierarchy
             for (KNode node1 : node.getChildren()) {
+                if (isHypernode(node1)) {
+                    continue;
+                }
                 for (KNode node2 : node.getChildren()) {
+                    if (isHypernode(node2)) {
+                        continue;
+                    }
                     // count overlaps between the second node and edges of the first node
                     overlaps += computeNumberOfOverlaps(node1, node2);
                 }
@@ -276,5 +283,9 @@ public class NodeEdgeOverlapsAnalysis implements IAnalysis {
 
         progressMonitor.done();
         return overlaps;
+    }
+    
+    private boolean isHypernode(final KNode n) {
+        return n.getData(KShapeLayout.class).getProperty(LayoutOptions.HYPERNODE);
     }
 }
