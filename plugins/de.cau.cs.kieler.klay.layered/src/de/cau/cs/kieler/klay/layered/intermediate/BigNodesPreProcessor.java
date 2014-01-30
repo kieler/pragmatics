@@ -23,6 +23,7 @@ import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.NodeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
@@ -88,7 +89,9 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
     private int dummyID = 0;
     /** Currently used node spacing. */
     private double spacing = 0;
-
+    /** Current layout direction. */
+    private Direction direction = Direction.UNDEFINED;
+    
     /**
      * {@inheritDoc}
      */
@@ -105,6 +108,7 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
 
         // the object spacing in the drawn graph
         spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
+        direction = layeredGraph.getProperty(LayoutOptions.DIRECTION);
         // the ID for the most recently created dummy node
         dummyID = nodes.size();
 
@@ -229,6 +233,15 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
             for (LPort port : node.getPorts()) {
                 if (port.getSide() == PortSide.EAST) {
                     eastPorts.add(port);
+                }
+            }
+            
+            // if ports are free to be moved on the sides, we have to move all outgoing edges as
+            // well as these will be assigned to the east side later
+            if (direction == Direction.RIGHT
+                    && !node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()) {
+                for (LEdge e : node.getOutgoingEdges()) {
+                    eastPorts.add(e.getSource());
                 }
             }
 
