@@ -18,10 +18,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -130,9 +132,21 @@ public class BigNodesCrossingAvoider {
                 // get the opposite element of the big node chain
                 Iterable<LEdge> bigNodeEdges =
                         forward ? bigNode.getIncomingEdges() : bigNode.getOutgoingEdges();
+                // we have to filter out inverted edges
+                // e.g., for a forward sweep ignore incoming edges on the EAST side
+                bigNodeEdges = Iterables.filter(bigNodeEdges, new Predicate<LEdge>() {
+                    public boolean apply(final LEdge e) {
+                        if (forward) {
+                            return e.getTarget().getSide() == PortSide.WEST;
+                        } else {
+                            return e.getSource().getSide() == PortSide.EAST;
+                        }
+                    }
+                });
                 if (Iterables.isEmpty(bigNodeEdges)) {
                     continue;
                 }
+
                 LEdge bigNodeEdge = Iterables.get(bigNodeEdges, 0);
 
                 // the two node groups of the big node
