@@ -21,6 +21,8 @@ import java.util.Map;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.ui.IWorkbenchPart;
 
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -189,7 +191,9 @@ public class LayoutOptionManager {
         EObject modelElement = (EObject) layoutMapping.getAdapterFactory().getAdapter(
                 diagramPart, EObject.class);
         context.setProperty(LayoutContext.DOMAIN_MODEL, modelElement);
-        IWorkbenchPart workbenchPart = layoutMapping.getProperty(IWorkbenchPart.class);
+        IWorkbenchPart workbenchPart = (IWorkbenchPart) Iterables.find(
+                layoutMapping.getAllProperties().values(),
+                Predicates.instanceOf(IWorkbenchPart.class), null);
         context.setProperty(EclipseLayoutConfig.WORKBENCH_PART, workbenchPart);
         
         // add semantic configurations from the extension point

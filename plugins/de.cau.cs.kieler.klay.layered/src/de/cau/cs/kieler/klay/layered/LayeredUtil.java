@@ -13,8 +13,6 @@
  */
 package de.cau.cs.kieler.klay.layered;
 
-import java.io.File;
-
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -121,39 +119,6 @@ public final class LayeredUtil {
             centerPoint(port.getPosition(), node.getSize(), side);
         }
         return port;
-    }
-
-    // /////////////////////////////////////////////////////////////////////////////
-    // Debug Files
-
-    /**
-     * Returns the path for debug output graphs.
-     * 
-     * @return the path for debug output graphs, without trailing separator.
-     */
-    public static String getDebugOutputPath() {
-        String path = System.getProperty("user.home");
-        if (path.endsWith(File.separator)) {
-            path += "tmp" + File.separator + "klay";
-        } else {
-            path += File.separator + "tmp" + File.separator + "klay";
-        }
-
-        return path;
-    }
-
-    /**
-     * Returns the beginning of the file name used for debug output graphs while layouting the given
-     * layered graph. This will look something like {@code "143293-"}.
-     * 
-     * @param graph
-     *            the graph to return the base debug file name for.
-     * @return the base debug file name for the given graph.
-     */
-    public static String getDebugOutputFileBaseName(final LGraph graph) {
-        return Integer.toString(graph.hashCode()
-                & ((1 << (Integer.SIZE / 2)) - 1))
-                + "-";
     }
     
 }

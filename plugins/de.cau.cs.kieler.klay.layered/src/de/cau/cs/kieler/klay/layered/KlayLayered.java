@@ -13,10 +13,6 @@
  */
 package de.cau.cs.kieler.klay.layered;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -656,22 +652,15 @@ public final class KlayLayered {
                     return;
                 }
                 // Graph debug output
-                try {
-                    graph.writeDotGraph(createWriter(graph, slotIndex++));
-                } catch (IOException e) {
-                    // Do nothing.
-                }
+                DebugUtil.writeDebugGraph(graph, slotIndex++);
 
                 processor.process(graph, monitor.subTask(monitorProgress));
             }
 
             // Graph debug output
-            try {
-                graph.writeDotGraph(createWriter(graph, slotIndex++));
-            } catch (IOException e) {
-                // Do nothing.
-            }
+            DebugUtil.writeDebugGraph(graph, slotIndex++);
         } else {
+            
             // invoke each layout processor
             for (ILayoutProcessor processor : algorithm) {
                 if (monitor.isCanceled()) {
@@ -770,31 +759,6 @@ public final class KlayLayered {
                 }
             }
         }
-    }
-
-    // /////////////////////////////////////////////////////////////////////////////
-    // Debug
-
-    /**
-     * Creates a writer for the given graph. The file name to be written to is assembled from the
-     * graph's hash code and the slot index.
-     * 
-     * @param graph
-     *            the graph to be written.
-     * @param slotIndex
-     *            the slot before whose execution the graph is written.
-     * @return file writer.
-     * @throws IOException
-     *             if anything goes wrong.
-     */
-    private Writer createWriter(final LGraph graph, final int slotIndex) throws IOException {
-        String path = LayeredUtil.getDebugOutputPath();
-        new File(path).mkdirs();
-
-        String debugFileName =
-                LayeredUtil.getDebugOutputFileBaseName(graph) + "fulldebug-slot"
-                        + String.format("%1$02d", slotIndex);
-        return new FileWriter(new File(path + File.separator + debugFileName + ".dot"));
     }
 
     // /////////////////////////////////////////////////////////////////////////////

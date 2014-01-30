@@ -13,10 +13,6 @@
  */
 package de.cau.cs.kieler.klay.layered.p5edges;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,7 +29,7 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.klay.layered.LayeredUtil;
+import de.cau.cs.kieler.klay.layered.DebugUtil;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -312,7 +308,7 @@ public final class OrthogonalRoutingGenerator {
     /**
      * A hypernode used for routing a hyperedge.
      */
-    private class HyperNode implements Comparable<HyperNode> {
+    public class HyperNode implements Comparable<HyperNode> {
         /** ports represented by this hypernode. */
         private List<LPort> ports = new LinkedList<LPort>();
         /** mark value used for cycle breaking. */
@@ -425,12 +421,22 @@ public final class OrthogonalRoutingGenerator {
             return mark;
         }
         
+        /**
+         * Return the outgoing dependencies.
+         * 
+         * @return the outgoing dependencies
+         */
+        public List<Dependency> getOutgoing() {
+            return outgoing;
+        }
+        
     }
 
     /**
      * A dependency between two hypernodes.
      */
-    private static final class Dependency {
+    public static final class Dependency {
+        
         /** the source hypernode of this dependency. */
         private HyperNode source;
         /** the target hypernode of this dependency. */
@@ -462,6 +468,34 @@ public final class OrthogonalRoutingGenerator {
         public String toString() {
             return source + "->" + target;
         }
+
+        /**
+         * Return the source node.
+         * 
+         * @return the source
+         */
+        public HyperNode getSource() {
+            return source;
+        }
+
+        /**
+         * Return the target node.
+         * 
+         * @return the target
+         */
+        public HyperNode getTarget() {
+            return target;
+        }
+        
+        /**
+         * Returns the weight of the hypernode dependency.
+         * 
+         * @return the weight
+         */
+        public int getWeight() {
+            return weight;
+        }
+        
     }
     
     
@@ -484,7 +518,7 @@ public final class OrthogonalRoutingGenerator {
     private final double conflictThreshold;
     /** set of already created junction points, to avoid multiple points at the same position. */
     private final Set<KVector> createdJunctionPoints = new HashSet<KVector>();
-    
+    /** prefix of debug output files. */
     private final String debugPrefix;
     
     
@@ -559,8 +593,8 @@ public final class OrthogonalRoutingGenerator {
         
         // write the full dependency graph to an output file
         if (debugPrefix != null) {
-            writeDebugGraph(layeredGraph, sourceLayerNodes == null ? 0 : sourceLayerIndex + 1,
-                    hyperNodes, "full");
+            DebugUtil.writeDebugGraph(layeredGraph, sourceLayerNodes == null ? 0 : sourceLayerIndex + 1,
+                    hyperNodes, debugPrefix, "full");
         }
         
         // break cycles
@@ -568,8 +602,8 @@ public final class OrthogonalRoutingGenerator {
 
         // write the acyclic dependency graph to an output file
         if (debugPrefix != null) {
-            writeDebugGraph(layeredGraph, sourceLayerNodes == null ? 0 : sourceLayerIndex + 1,
-                    hyperNodes, "acyclic");
+            DebugUtil.writeDebugGraph(layeredGraph, sourceLayerNodes == null ? 0 : sourceLayerIndex + 1,
+                    hyperNodes, debugPrefix, "acyclic");
         }
         
         // assign ranks to the hypernodes
@@ -1013,66 +1047,6 @@ public final class OrthogonalRoutingGenerator {
                 createdJunctionPoints.add(jpoint);
             }
         }
-    }
-    
-    
-    ///////////////////////////////////////////////////////////////////////////////
-    // Debugging
-    
-    /**
-     * Writes a debug graph for the given list of hypernodes.
-     * 
-     * @param layeredGraph the layered graph
-     * @param layerIndex the currently processed layer's index
-     * @param hypernodes a list of hypernodes
-     * @param label a label to append to the output files
-     */
-    private void writeDebugGraph(final LGraph layeredGraph, final int layerIndex,
-            final List<HyperNode> hypernodes, final String label) {
-        
-        try {
-            Writer writer = createWriter(layeredGraph, layerIndex, label);
-            writer.write("digraph {\n");
-            
-            // Write hypernode information
-            for (HyperNode hypernode : hypernodes) {
-                writer.write("  " + hypernode.hashCode() + "[label=\""
-                        + hypernode.toString() + "\"]\n");
-            }
-            
-            // Write dependency information
-            for (HyperNode hypernode : hypernodes) {
-                for (Dependency dependency : hypernode.outgoing) {
-                    writer.write("  " + hypernode.hashCode() + "->" + dependency.target.hashCode()
-                            + "[label=\"" + dependency.weight + "\"]\n");
-                }
-            }
-            
-            writer.write("}\n");
-            writer.close();
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
-    }
-    
-    /**
-     * Create a writer for debug output.
-     * 
-     * @param layeredGraph the layered graph
-     * @param layerIndex the currently processed layer's index
-     * @param label a label to append to the output files
-     * @return a file writer for debug output
-     * @throws IOException if creating the output file fails
-     */
-    private Writer createWriter(final LGraph layeredGraph, final int layerIndex,
-            final String label) throws IOException {
-        
-        String path = LayeredUtil.getDebugOutputPath();
-        new File(path).mkdirs();
-        
-        String debugFileName = LayeredUtil.getDebugOutputFileBaseName(layeredGraph)
-                + debugPrefix + "-l" + layerIndex + "-" + label;
-        return new FileWriter(new File(path + File.separator + debugFileName + ".dot"));
     }
 
 }
