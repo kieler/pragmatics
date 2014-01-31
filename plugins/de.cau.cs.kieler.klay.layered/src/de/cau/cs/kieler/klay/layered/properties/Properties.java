@@ -16,18 +16,15 @@ package de.cau.cs.kieler.klay.layered.properties;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
@@ -216,12 +213,6 @@ public final class Properties {
             "barycenterAssociates");
 
     /**
-     * Map between KGraph nodes/ports/edges and LGraph nodes/ports/edges.
-     */
-    public static final IProperty<Map<KGraphElement, LGraphElement>> ELEMENT_MAP 
-        = new Property<Map<KGraphElement, LGraphElement>>("ElementMap");
-
-    /**
      * List of comment boxes that are placed on top of a node.
      */
     public static final IProperty<List<LNode>> TOP_COMMENTS = new Property<List<LNode>>(
@@ -275,7 +266,7 @@ public final class Properties {
 
     /** minimal spacing between objects. */
     public static final Property<Float> OBJ_SPACING = new Property<Float>(LayoutOptions.SPACING,
-            20.0f, 0.0f);
+            20.0f, 1.0f);
     
     /**
      * the factor by which the in-layer spacing between objects differs from the inter-layer
