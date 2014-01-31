@@ -41,8 +41,13 @@
 	<property name="outputFile.withdeps" location="${outputFolder}/klay-emf_nightly_${timestamp}.jar" />
 	<property name="licenseFile" location="epl-v10.html" />
 
-
-
+	
+	<!-- Arguments to gwtc and devmode targets -->
+	<property name="gwt.args" value="-style PRETTY" />
+	<!-- Configure path to GWT SDK -->
+	<property name="gwt.sdk" location="${system.GWT_SDK}" />
+	
+	<!-- Macro to copy sources from the pragmatics repository. -->
 	<macrodef name="copyklaysources">
 		<attribute name="fromdir" />
 		<sequential>
@@ -68,6 +73,7 @@
 					<exclude name="**/*.pdf" />
 				</fileset>
 				<filterchain>
+					<!-- Remove code snippets that are incompativle with GWT -->
 					<replaceregex pattern="// GWTExcludeStart(.+?)GWTExcludeEnd" replace=""
 					    flags="gis" byline="false"/>
 				 </filterchain>
@@ -105,12 +111,6 @@
 
 
 	<!-- GWT TARGETS -->
-
-	<!-- Arguments to gwtc and devmode targets -->
-	<property name="gwt.args" value="" />
-
-	<!-- Configure path to GWT SDK -->
-	<property name="gwt.sdk" location="${system.GWT_SDK}" />
 
 	<path id="project.class.path">
 		<pathelement location="war/WEB-INF/classes" />
