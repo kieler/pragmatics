@@ -178,7 +178,7 @@ public final class KIELERStatistics {
         String alg = data.getProperty(LayoutOptions.ALGORITHM);
 
         // get the exact property list
-        if (alg.equals(ID_KLAY_LAYERED)) {
+        if (alg != null && alg.equals(ID_KLAY_LAYERED)) {
             for (Entry<IProperty<?>, Object> entry : data.getProperties()) {
                 if (supportedTypes.contains(entry.getValue().getClass())) {
                     recordValue(ID_KLAY_LAYERED, entry.getKey().getId(), entry.getValue());
