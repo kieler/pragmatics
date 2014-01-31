@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="org/eclipse/emf/emul/" kind="src" path="src"/>
+	<classpathentry kind="src" path="src-external/org/eclipse/emf/emul"/>
+	<classpathentry excluding="org/eclipse/emf/emul/|org/eclipse/emf/emul/|org/eclipse/emf/emul/" kind="src" path="src-external"/>
+	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/EMF4GWT.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/guava-gwt-15.0.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/guava-15.0.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="output" path="war/WEB-INF/classes"/>
+</classpath>

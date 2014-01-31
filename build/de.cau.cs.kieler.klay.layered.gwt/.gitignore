@@ -1,0 +1,12 @@
+/.gwt
+/.gwt-tmp
+/bin
+/dist
+/gwt-unitCache
+/reports
+/test-classes
+/tomcat
+/war/klaygwt
+/war/WEB-INF/deploy/klaygwt
+/war/WEB-INF/classes
+Thumbs.db
