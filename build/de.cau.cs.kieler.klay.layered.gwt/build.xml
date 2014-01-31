@@ -1,21 +1,17 @@
-<project name="build KLay" default="buildall">
+<project name="Build KLayLayered for GWT" default="buildall">
 	<!-- This is the build file that builds the KLay layout library to be used outside
          of an Eclipse context. To use this build file, run Ant from the directory
          containing the file and make sure the following environment variables are
          set correctly:
          
-            TARGET_PLATFORM  Directory that contains the target platform used to build
-                             KIELER. This is a p2 repository available online. Its URL
-                             can be found by looking at the ../pom.xml file.
-                             
+            GWT_SDK			   The system's path to the GWT SDK.
+            
             KIELER_REPOSITORY  A p2 repository of a KIELER Pragmatics build.
          
          This build file provides the following targets:
          
             clean        Deletes the target directory with all of its contents.
-            withdeps     Builds the KLay library with necessary dependencies already
-                         built in.
-            withoutdeps  Builds the KLay library without any dependencies built in.
+			dist 		 Compiles and bundles the klay layered alg as js.
          
          By default, these targets are run in just that order.
          
@@ -36,17 +32,16 @@
 
 	<!-- Some more properties that configure the behaviour of the build. -->
 	<property name="outputFolder" location="target" />
-	<property name="outputFolder.temp" location="${outputFolder}/temp" />
-	<property name="outputFile.withoutdeps" location="${outputFolder}/klay_nightly_${timestamp}.jar" />
-	<property name="outputFile.withdeps" location="${outputFolder}/klay-emf_nightly_${timestamp}.jar" />
+	<property name="outputFolder.tmp" location="${outputFolder}/tmp" />
+	<property name="outputFile.klaygwt" location="${outputFolder}/klay_layered_gwt_nightly_${timestamp}.zip" />
 	<property name="licenseFile" location="epl-v10.html" />
 
-	
-	<!-- Arguments to gwtc and devmode targets -->
-	<property name="gwt.args" value="-style PRETTY" />
+
+	<!-- Arguments to gwtc and devmode targets, e.g. -style PRETTY -->
+	<property name="gwt.args" value="" />
 	<!-- Configure path to GWT SDK -->
 	<property name="gwt.sdk" location="${system.GWT_SDK}" />
-	
+
 	<!-- Macro to copy sources from the pragmatics repository. -->
 	<macrodef name="copyklaysources">
 		<attribute name="fromdir" />
@@ -74,9 +69,8 @@
 				</fileset>
 				<filterchain>
 					<!-- Remove code snippets that are incompativle with GWT -->
-					<replaceregex pattern="// GWTExcludeStart(.+?)GWTExcludeEnd" replace=""
-					    flags="gis" byline="false"/>
-				 </filterchain>
+					<replaceregex pattern="// GWTExcludeStart(.+?)GWTExcludeEnd" replace="" flags="gis" byline="false" />
+				</filterchain>
 			</copy>
 		</sequential>
 	</macrodef>
@@ -84,10 +78,12 @@
 
 	<!-- TARGET clean -->
 	<target name="clean" description="Cleans this project.">
+		
 		<delete dir="${outputFolder}" />
 
 		<delete dir="war/WEB-INF/classes" failonerror="false" />
 		<delete dir="war/klaygwt" failonerror="false" />
+		<delete dir="gwt-unitCache" failonerror="false" />
 
 		<!-- Remove the klay layered sources which are copied from the original plugins -->
 		<delete failonerror="false">
@@ -111,7 +107,6 @@
 
 
 	<!-- GWT TARGETS -->
-
 	<path id="project.class.path">
 		<pathelement location="war/WEB-INF/classes" />
 		<pathelement location="${gwt.sdk}/gwt-user.jar" />
@@ -157,6 +152,8 @@
 				<pathelement location="src-external" />
 				<pathelement location="src-external/org/eclipse/emf/emul" />
 				<fileset dir="war/WEB-INF/lib" includes="**/*.jar" />
+				<pathelement location="${gwt.sdk}/validation-api-1.0.0.GA.jar" />
+				<pathelement location="${gwt.sdk}/validation-api-1.0.0.GA-sources.jar" />
 			</classpath>
 			<!-- add jvmarg -Xss16M or similar if you see a StackOverflowError    -Dgwt.jjs.permutationWorkerFactory=com.google.gwt.dev.ThreadedPermutationWorkerFactory -Dgwt.jjs.maxThreads=4  -->
 			<jvmarg value="-Xmx512m" />
@@ -168,15 +165,29 @@
 		</java>
 	</target>
 
-
-
-
-	<!-- TARGET -->
+	<!-- TARGET Compile -->
 	<target name="compile" depends="copySrc, gwtc" description="Combiles to js" />
+
+	<!-- TARGET Dist -->
+	<target name="dist" depends="compile" description="Copy the compiled js files to the target folder.">
+		<mkdir dir="${outputFolder}" />
+		<mkdir dir="${outputFolder.tmp}" />
+		
+		<copy todir="${outputFolder.tmp}" overwrite="true">
+			<fileset dir="war/klaygwt">
+				<exclude name="gwt/**" />
+				<exclude name="**/*.gif" />
+				<exclude name="hosted.html" />
+			</fileset>
+		</copy>
+		<zip destfile="${outputFile.klaygwt}" basedir="${outputFolder.tmp}" update="true" />
+		
+		<delete dir="${outputFolder.tmp}" failonerror="false" />
+	</target>
 
 
 	<!-- TARGET buidlall -->
-	<target name="buildall" depends="clean, compile" description="Builds all configurations of the KLay library." />
+	<target name="buildall" depends="clean, dist" description="Builds all configurations of the KLay library." />
 
 
 
