@@ -13,7 +13,13 @@
  */
 package de.cau.cs.kieler.core.properties;
 
-import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.TreeSet;
+
+import de.cau.cs.kieler.core.math.KVector;
 
 /**
  * A property that uses a string for identification.
@@ -169,25 +175,24 @@ public class Property<T> implements IProperty<T>, Comparable<IProperty<?>> {
      * 
      * @return the default value.
      */
+    @SuppressWarnings("unchecked")
     public T getDefault() {
         // Clone the default value if it's a Cloneable. We need to use reflection for this to work
         // properly (classes implementing Cloneable are not required to make their clone() method
         // public, so we need to check if they have such a method and invoke it via reflection, which
         // results in ugly and unchecked type casting)
-        if (defaultValue instanceof Cloneable) {
-            // GWTExcludeStart
-            try {
-                Method cloneMethod = defaultValue.getClass().getMethod("clone");
-                @SuppressWarnings("unchecked")
-                T clonedDefaultValue = (T) cloneMethod.invoke(defaultValue);
-                return clonedDefaultValue;
-            } catch (Exception e) {
-            // GWTExcludeEnd
-                // Give up cloning and return the default instance
-                return defaultValue;
-            // GWTExcludeStart
-            }
-            // GWTExcludeEnd
+        if (defaultValue instanceof KVector) {
+            return (T) ((KVector) defaultValue).clone();
+        } else if (defaultValue instanceof EnumSet<?>) {
+            return (T) ((EnumSet<?>) defaultValue).clone();
+        } else if (defaultValue instanceof HashSet<?>) {
+            return (T) ((HashSet<?>) defaultValue).clone();
+        } else if (defaultValue instanceof TreeSet<?>) {
+            return (T) ((TreeSet<?>) defaultValue).clone();
+        } else if (defaultValue instanceof ArrayList<?>) {
+            return (T) ((ArrayList<?>) defaultValue).clone();
+        } else if (defaultValue instanceof LinkedList<?>) {
+            return (T) ((LinkedList<?>) defaultValue).clone();
         } else {
             return defaultValue;
         }
