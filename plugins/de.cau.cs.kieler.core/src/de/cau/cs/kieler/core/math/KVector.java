@@ -95,7 +95,9 @@ public final class KVector implements IDataObject, Cloneable {
      * 
      * @return identical vector
      */
+    // GWTExcludeStart
     @Override
+    // GWTExcludeEnd
     public KVector clone() {
         return new KVector(x, y);
     }

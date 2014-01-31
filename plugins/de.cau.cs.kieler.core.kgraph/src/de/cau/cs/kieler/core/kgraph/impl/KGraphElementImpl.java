@@ -114,8 +114,13 @@ public abstract class KGraphElementImpl extends EObjectImpl implements KGraphEle
     public <T extends KGraphData> T getData(Class<T> type) {
         if (type != null) {
             for (KGraphData graphData : getData()) {
-                if (type.isInstance(graphData)) {
-                    return type.cast(graphData);
+                // if (type.isInstance(graphData)) {
+                // return type.cast(graphData);
+                // }
+                // FIXME how to solve this properly??
+                try {
+                    return (T) graphData;
+                } catch (ClassCastException e) {
                 }
             }
         }

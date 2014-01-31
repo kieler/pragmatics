@@ -60,6 +60,7 @@ public final class DebugUtil {
      * @param slotIndex the slot before whose execution the graph is written.
      */
     public static void writeDebugGraph(final LGraph lgraph, final int slotIndex) {
+        // GWTExcludeStart
         try {
             Writer writer = createWriter(lgraph, slotIndex);
                     
@@ -87,6 +88,7 @@ public final class DebugUtil {
         } catch (IOException exception) {
             // Ignore the exception
         }
+        // GWTExcludeEnd
     }
     
     /**
@@ -101,7 +103,7 @@ public final class DebugUtil {
      */
     public static void writeDebugGraph(final LGraph layeredGraph,
             final List<LinearSegment> segmentList, final List<List<LinearSegment>> outgoingList) {
-
+        // GWTExcludeStart
         try {
             Writer writer = createWriter(layeredGraph);
             writer.write("digraph {\n");
@@ -125,6 +127,7 @@ public final class DebugUtil {
         } catch (Exception exception) {
             exception.printStackTrace();
         }
+        // GWTExcludeEnd
     }
     
     /**
@@ -138,7 +141,7 @@ public final class DebugUtil {
      */
     public static void writeDebugGraph(final LGraph layeredGraph, final int layerIndex,
             final List<HyperNode> hypernodes, final String debugPrefix, final String label) {
-        
+        // GWTExcludeStart
         try {
             Writer writer = createWriter(layeredGraph, layerIndex, debugPrefix, label);
             writer.write("digraph {\n");
@@ -162,6 +165,7 @@ public final class DebugUtil {
         } catch (Exception exception) {
             exception.printStackTrace();
         }
+        // GWTExcludeEnd
     }
     
     /**
@@ -174,7 +178,7 @@ public final class DebugUtil {
      */
     private static void writeLayer(final Writer writer, final int layerNumber, final List<LNode> nodes)
             throws IOException {
-        
+        // GWTExcludeStart
         if (nodes.isEmpty()) {
             return;
         }
@@ -246,6 +250,7 @@ public final class DebugUtil {
                 }
             }
         }
+        // GWTExcludeEnd
     }
 
     /**
@@ -258,11 +263,12 @@ public final class DebugUtil {
      *             if creating the output file fails.
      */
     private static Writer createWriter(final LGraph layeredGraph) throws IOException {
-        String path = getDebugOutputPath();
-        new File(path).mkdirs();
-
-        String debugFileName = getDebugOutputFileBaseName(layeredGraph) + "linseg-dep";
-        return new FileWriter(new File(path + File.separator + debugFileName + ".dot"));
+//        String path = getDebugOutputPath();
+//        new File(path).mkdirs();
+//
+//        String debugFileName = getDebugOutputFileBaseName(layeredGraph) + "linseg-dep";
+//        return new FileWriter(new File(path + File.separator + debugFileName + ".dot"));
+        return null;
     }
     
     /**
@@ -278,12 +284,13 @@ public final class DebugUtil {
      *             if anything goes wrong.
      */
     private static Writer createWriter(final LGraph graph, final int slotIndex) throws IOException {
-        String path = getDebugOutputPath();
-        new File(path).mkdirs();
-
-        String debugFileName = getDebugOutputFileBaseName(graph) + "fulldebug-slot"
-                        + String.format("%1$02d", slotIndex);
-        return new FileWriter(new File(path + File.separator + debugFileName + ".dot"));
+//        String path = getDebugOutputPath();
+//        new File(path).mkdirs();
+//
+//        String debugFileName = getDebugOutputFileBaseName(graph) + "fulldebug-slot"
+//                        + String.format("%1$02d", slotIndex);
+//        return new FileWriter(new File(path + File.separator + debugFileName + ".dot"));
+        return null;
     }
     
     /**
@@ -298,12 +305,13 @@ public final class DebugUtil {
      */
     private static Writer createWriter(final LGraph layeredGraph, final int layerIndex,
             final String debugPrefix, final String label) throws IOException {
-        String path = getDebugOutputPath();
-        new File(path).mkdirs();
-        
-        String debugFileName = getDebugOutputFileBaseName(layeredGraph)
-                + debugPrefix + "-l" + layerIndex + "-" + label;
-        return new FileWriter(new File(path + File.separator + debugFileName + ".dot"));
+//        String path = getDebugOutputPath();
+//        new File(path).mkdirs();
+//        
+//        String debugFileName = getDebugOutputFileBaseName(layeredGraph)
+//                + debugPrefix + "-l" + layerIndex + "-" + label;
+//        return new FileWriter(new File(path + File.separator + debugFileName + ".dot"));
+        return null;
     }
 
     /**
@@ -312,14 +320,15 @@ public final class DebugUtil {
      * @return the path for debug output graphs, without trailing separator.
      */
     private static String getDebugOutputPath() {
-        String path = System.getProperty("user.home");
-        if (path.endsWith(File.separator)) {
-            path += "tmp" + File.separator + "klay";
-        } else {
-            path += File.separator + "tmp" + File.separator + "klay";
-        }
+        
+//        String path = System.getProperty("user.home");
+//        if (path.endsWith(File.separator)) {
+//            path += "tmp" + File.separator + "klay";
+//        } else {
+//            path += File.separator + "tmp" + File.separator + "klay";
+//        }
 
-        return path;
+        return "";
     }
 
     /**

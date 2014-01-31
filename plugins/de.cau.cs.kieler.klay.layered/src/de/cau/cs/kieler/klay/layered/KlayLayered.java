@@ -661,8 +661,10 @@ public final class KlayLayered {
 
             System.out.println("KLay Layered uses the following " + algorithm.size() + " modules:");
             for (int i = 0; i < algorithm.size(); i++) {
+                // GWTExcludeStart
                 System.out.println("   Slot " + String.format("%1$02d", i) + ": "
                         + algorithm.get(i).getClass().getName());
+                // GWTExcludeEnd
             }
 
             // invoke each layout processor

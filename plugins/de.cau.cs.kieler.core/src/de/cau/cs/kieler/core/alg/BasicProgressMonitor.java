@@ -85,7 +85,9 @@ public class BasicProgressMonitor implements IKielerProgressMonitor {
             this.taskName = name;
             this.totalWork = thetotalWork;
             doBegin(name, thetotalWork, parentMonitor == null, maxLevels);
+            // GWTExcludeStart
             startTime = System.nanoTime();
+            // GWTExcludeEnd
             return true;
         }
     }
@@ -122,7 +124,9 @@ public class BasicProgressMonitor implements IKielerProgressMonitor {
             throw new IllegalStateException("The task has not begun yet.");
         }
         if (!closed) {
+            // GWTExcludeStart
             totalTime = (System.nanoTime() - startTime) * NANO_FACT;
+            // GWTExcludeEnd
             if (completedWork < totalWork) {
                 internalWorked(totalWork - completedWork);
             }

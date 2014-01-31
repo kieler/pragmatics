@@ -27,6 +27,7 @@ import java.util.Set;
 import com.google.common.base.Predicate;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
@@ -624,7 +625,8 @@ public class RecursiveCompoundKGraphHandler {
      * @return a suitable position
      */
     private KVector calcPortPos(final LNode node, final PortSide side, final KPort kport) {
-        LPort[] ports = Iterables.toArray(node.getPorts(side), LPort.class);
+        ArrayList<LPort> al = Lists.newArrayList(node.getPorts(side));
+        LPort[] ports = al.toArray(new LPort[al.size()]);
         Arrays.sort(ports, new PortListSorter.PortComparator());
         if (side == PortSide.WEST || side == PortSide.SOUTH) {
             // reverse the array due to the clockwise order of ports

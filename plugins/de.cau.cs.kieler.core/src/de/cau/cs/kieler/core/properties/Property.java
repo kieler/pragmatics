@@ -175,15 +175,19 @@ public class Property<T> implements IProperty<T>, Comparable<IProperty<?>> {
         // public, so we need to check if they have such a method and invoke it via reflection, which
         // results in ugly and unchecked type casting)
         if (defaultValue instanceof Cloneable) {
+            // GWTExcludeStart
             try {
                 Method cloneMethod = defaultValue.getClass().getMethod("clone");
                 @SuppressWarnings("unchecked")
                 T clonedDefaultValue = (T) cloneMethod.invoke(defaultValue);
                 return clonedDefaultValue;
             } catch (Exception e) {
+            // GWTExcludeEnd
                 // Give up cloning and return the default instance
                 return defaultValue;
+            // GWTExcludeStart
             }
+            // GWTExcludeEnd
         } else {
             return defaultValue;
         }

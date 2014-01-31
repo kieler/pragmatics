@@ -141,6 +141,7 @@ public final class KimlUtil {
      * 
      * @param graph the parent node of a graph 
      */
+    // GWTExcludeStart
     public static void validate(final KNode graph) {
         KLayoutDataFactory layoutFactory = KLayoutDataFactory.eINSTANCE;
         
@@ -214,6 +215,7 @@ public final class KimlUtil {
             }
         }
     }
+    // GWTExcludeEnd
     
     /**
      * Create a unique identifier for the given graph element. Note that this identifier

@@ -107,6 +107,7 @@ public class MapPropertyHolder implements IPropertyHolder, Serializable {
                 Comparable<Object> lowbo = (Comparable<Object>) property.getLowerBound();
                 @SuppressWarnings("unchecked")
                 Comparable<Object> uppbo = (Comparable<Object>) property.getUpperBound();
+                // GWTExcludeStart
                 if (lowbo.compareTo(value) > 0) {
                     if (value.getClass().isAssignableFrom(lowbo.getClass())) {
                         propertyMap.put(property, lowbo);
@@ -120,6 +121,7 @@ public class MapPropertyHolder implements IPropertyHolder, Serializable {
                         propertyMap.remove(property);
                     }
                 }
+                // GWTExcludeEnd
             }
         }
     }
