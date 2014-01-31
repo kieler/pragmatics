@@ -747,9 +747,7 @@ public class RecursiveCompoundKGraphHandler {
             KVector lastPoint = null;
             for (CrossHierarchyEdge chEdge : crossHierarchyEdges) {
                 LGraph layeredGraph = layeredGraphMap.get(chEdge.lgraph);
-                float borderSpacing = layeredGraph.getProperty(Properties.BORDER_SPACING);
-                KVector offset = new KVector(borderSpacing + layeredGraph.getOffset().x,
-                        borderSpacing + layeredGraph.getOffset().y);
+                KVector offset = new KVector(layeredGraph.getOffset());
                 KimlUtil.toAbsolute(offset, chEdge.parentNode);
                 KimlUtil.toRelative(offset, referenceNode);
                 KVectorChain bendPoints = chEdge.ledge.getBendPoints().translate(offset);

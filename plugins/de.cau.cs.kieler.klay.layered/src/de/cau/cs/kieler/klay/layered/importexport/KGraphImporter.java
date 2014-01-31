@@ -41,6 +41,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortLabelPlacement;
 import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.kiml.options.SizeConstraint;
 import de.cau.cs.kieler.kiml.options.SizeOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -282,7 +283,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
     }
 
     /**
-     * Transforms the given node.
+     * Transforms the given node and its contained ports.
      * 
      * @param node
      *            the node to transform.
@@ -349,80 +350,30 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             portPos.x = portLayout.getXpos();
             portPos.y = portLayout.getYpos();
             newPort.setNode(newNode);
-
-            PortSide portSide = portLayout.getProperty(LayoutOptions.PORT_SIDE);
-            Float offset = portLayout.getProperty(LayoutOptions.OFFSET);
-            if (portSide == PortSide.UNDEFINED) {
-                // calculate the port side and offset from the port's current position
-                portSide = KimlUtil.calcPortSide(kport, direction);
-                portLayout.setProperty(LayoutOptions.PORT_SIDE, portSide);
-                
-                if (offset == null && portSide != PortSide.UNDEFINED) {
-                    // if port coordinates are (0,0), we default to port offset 0 to make the common case
-                    // frustration-free
-                    if (portLayout.getXpos() != 0.0f || portLayout.getYpos() != 0.0f) {
-                        offset = KimlUtil.calcPortOffset(kport, portSide);
-                    }
-                }
-            }
-
-            newPort.setSide(portSide);
-            // the offset can be null when the port side has been constrained, so probably we
-            // cannot derive the offset from the port's current position --> keep default value 0
-            if (offset != null) {
-                newPort.setProperty(Properties.OFFSET, offset);
-            }
-            newPort.setProperty(LayoutOptions.PORT_INDEX,
-                    portLayout.getProperty(LayoutOptions.PORT_INDEX));
             
-            // if the port anchor property is set, use it as anchor point
-            KVector anchorPos = portLayout.getProperty(Properties.PORT_ANCHOR);
-            if (anchorPos != null) {
-                newPort.getAnchor().x = anchorPos.x;
-                newPort.getAnchor().y = anchorPos.y;
-            } else if (portConstraints.isSideFixed() && portSide != PortSide.UNDEFINED) {
-                // set the anchor point according to the port side
-                switch (portSide) {
-                case NORTH:
-                    newPort.getAnchor().x = portSize.x / 2;
-                    break;
-                case EAST:
-                    newPort.getAnchor().x = portSize.x;
-                    newPort.getAnchor().y = portSize.y / 2;
-                    break;
-                case SOUTH:
-                    newPort.getAnchor().x = portSize.x / 2;
-                    newPort.getAnchor().y = portSize.y;
-                    break;
-                case WEST:
-                    newPort.getAnchor().y = portSize.y / 2;
-                    break;
-                }
-            } else {
-                // the port side will be decided later, so set the anchor to the center point
-                newPort.getAnchor().x = portSize.x / 2;
-                newPort.getAnchor().y = portSize.y / 2;
-            }
-            
-            // if the port constraints are set to fixed ratio, remember the current ratio
-            if (portConstraints.isRatioFixed()) {
-                double ratio = 0.0;
-                
-                switch (portSide) {
-                case NORTH:
-                case SOUTH:
-                    ratio = portPos.x / nodeLayout.getWidth();
-                    break;
-                case EAST:
-                case WEST:
-                    ratio = portPos.y / nodeLayout.getHeight();
-                    break;
-                }
-                
-                newPort.setProperty(Properties.PORT_RATIO_OR_POSITION, ratio);
-            }
+            newPort.copyProperties(portLayout);
+            newPort.setSide(portLayout.getProperty(LayoutOptions.PORT_SIDE));
 
+            // initialize the port's side, offset, and anchor point
+            ImportUtil.initializePort(newPort, portConstraints, direction,
+                    portLayout.getProperty(Properties.PORT_ANCHOR));
+            
             elemMap.put(kport, newPort);
+
+            switch (direction) {
+            case LEFT:
+            case RIGHT:
+                if (newPort.getSide() == PortSide.NORTH || newPort.getSide() == PortSide.SOUTH) {
+                    graphProperties.add(GraphProperties.NORTH_SOUTH_PORTS);
+                }
+                break;
+            case UP:
+            case DOWN:
+                if (newPort.getSide() == PortSide.EAST || newPort.getSide() == PortSide.WEST) {
+                    graphProperties.add(GraphProperties.NORTH_SOUTH_PORTS);
+                }
+                break;
+            }
 
             // create the port's labels
             for (KLabel klabel : kport.getLabels()) {
@@ -436,21 +387,6 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                     newLabel.getPosition().y = labelLayout.getYpos();
                     newPort.getLabels().add(newLabel);
                 }
-            }
-
-            switch (direction) {
-            case LEFT:
-            case RIGHT:
-                if (portSide == PortSide.NORTH || portSide == PortSide.SOUTH) {
-                    graphProperties.add(GraphProperties.NORTH_SOUTH_PORTS);
-                }
-                break;
-            case UP:
-            case DOWN:
-                if (portSide == PortSide.EAST || portSide == PortSide.WEST) {
-                    graphProperties.add(GraphProperties.NORTH_SOUTH_PORTS);
-                }
-                break;
             }
         }
 
@@ -680,7 +616,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
 
         // set properties of the new edge
         newEdge.copyProperties(edgeLayout);
-        // clear junction points, since they are recalculated from scratch
+        // clear junction points, since they are recomputed from scratch
         newEdge.setProperty(LayoutOptions.JUNCTION_POINTS, null);
     }
 
@@ -697,13 +633,8 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         }
         KNode parentNode = (KNode) target;
         
-        // determine the border spacing, which influences the offset
-        KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
-        float borderSpacing = lgraph.getProperty(Properties.BORDER_SPACING);
-
-        // calculate the offset
-        KVector offset = new KVector(borderSpacing + lgraph.getOffset().x, borderSpacing
-                + lgraph.getOffset().y);
+        // get the offset to be added to all coordinates
+        KVector offset = lgraph.getOffset();
 
         // along the way, we collect the list of edges to be processed later
         List<LEdge> edgeList = new LinkedList<LEdge>();
@@ -737,7 +668,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                     }
                 }
                 
-                // set label positions, if they were not fixed
+                // set node label positions, if they were not fixed
                 if (!lnode.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT).isEmpty()) {
                     for (LLabel llabel : lnode.getLabels()) {
                         KLabel klabel = (KLabel) llabel.getProperty(Properties.ORIGIN);
@@ -746,7 +677,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                     }
                 }
                 
-                // set port labels, if they were not fixed
+                // set port label positions, if they were not fixed
                 if (lnode.getProperty(LayoutOptions.PORT_LABEL_PLACEMENT) != PortLabelPlacement.FIXED) {
                     for (LPort lport : lnode.getPorts()) {
                         for (LLabel label : lport.getLabels()) {
@@ -785,6 +716,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         }
 
         // check if the edge routing uses splines
+        KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
         EdgeRouting routing = parentLayout.getProperty(LayoutOptions.EDGE_ROUTING);
         boolean splinesActive = routing == EdgeRouting.SPLINES;
         
@@ -836,6 +768,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
 
         // setup the parent node
         KVector actualGraphSize = lgraph.getActualSize();
+        parentLayout.setProperty(LayoutOptions.SIZE_CONSTRAINT, SizeConstraint.fixed());
         
         if (lgraph.getProperty(Properties.GRAPH_PROPERTIES).contains(
                 GraphProperties.EXTERNAL_PORTS)) {

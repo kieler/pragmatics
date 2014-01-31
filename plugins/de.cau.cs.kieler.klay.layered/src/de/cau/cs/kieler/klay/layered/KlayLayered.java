@@ -34,6 +34,7 @@ import de.cau.cs.kieler.kiml.options.SizeOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.components.ComponentsProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
@@ -136,13 +137,14 @@ public final class KlayLayered {
     // Regular Layout
 
     /**
-     * Does a layout on the given graph.
+     * Does a layout on the given graph. The returned graph may be a different instance than
+     * the one given as argument.
      * 
      * @param lgraph
      *            the graph to layout
      * @param monitor
      *            a progress monitor to show progress information in, or {@code null}
-     * @return layered graph with layout applied
+     * @return a layered graph with layout applied
      */
     public LGraph doLayout(final LGraph lgraph, final IKielerProgressMonitor monitor) {
         IKielerProgressMonitor theMonitor = monitor;
@@ -719,9 +721,12 @@ public final class KlayLayered {
     // Graph Resizing
     
     /**
-     * Sets the size of the given graph such that size constraints are adhered to. Major parts of this
-     * method are adapted from
-     * {@link KimlUtil#resizeNode(de.cau.cs.kieler.core.kgraph.KNode, float, float, boolean)}.
+     * Sets the size of the given graph such that size constraints are adhered to.
+     * Furthermore, the border spacing is added to the graph size and the graph offset.
+     * Afterwards, the border spacing property is reset to 0.
+     * 
+     * <p>Major parts of this method are adapted from
+     * {@link KimlUtil#resizeNode(de.cau.cs.kieler.core.kgraph.KNode, float, float, boolean)}.</p>
      * 
      * <p>Note: This method doesn't care about labels of compound nodes since those labels are not
      * attached to the graph.</p>
@@ -731,12 +736,23 @@ public final class KlayLayered {
     private void resizeGraph(final LGraph graph) {
         Set<SizeConstraint> sizeConstraint = graph.getProperty(LayoutOptions.SIZE_CONSTRAINT);
         Set<SizeOptions> sizeOptions = graph.getProperty(LayoutOptions.SIZE_OPTIONS);
+        float borderSpacing = graph.getProperty(Properties.BORDER_SPACING);
         
-        // remember the graph's old size
-        KVector oldSize = graph.getActualSize();
+        // add the border spacing to the graph size and graph offset
+        graph.getOffset().x += borderSpacing;
+        graph.getOffset().y += borderSpacing;
+        graph.getSize().x += 2 * borderSpacing;
+        graph.getSize().y += 2 * borderSpacing;
+        
+        // the graph size now contains the border spacing, so clear it in order to keep
+        // graph.getActualSize() working properly
+        graph.setProperty(Properties.BORDER_SPACING, 0f);
         
         // calculate the new size
         if (sizeConstraint.contains(SizeConstraint.MINIMUM_SIZE)) {
+            // remember the graph's old size (including border spacing and insets)
+            KVector oldSize = graph.getActualSize();
+            
             float minWidth = graph.getProperty(LayoutOptions.MIN_WIDTH);
             float minHeight = graph.getProperty(LayoutOptions.MIN_HEIGHT);
             
@@ -751,33 +767,30 @@ public final class KlayLayered {
                 }
             }
             
-            // apply new size
-            graph.applyActualSize(new KVector(
-                    Math.max(oldSize.x, minWidth),
-                    Math.max(oldSize.y, minHeight)));
-        }
-        
-        // get new size
-        KVector newSize = graph.getActualSize();
-        
-        // correct the position of eastern and southern hierarchical ports, if necessary
-        if (graph.getProperty(Properties.GRAPH_PROPERTIES).contains(GraphProperties.EXTERNAL_PORTS)
-                && (newSize.x > oldSize.x || newSize.y > oldSize.y)) {
+            // apply new size including border spacing
+            double newWidth = Math.max(oldSize.x, minWidth);
+            double newHeight = Math.max(oldSize.y, minHeight);
+            LInsets insets = graph.getInsets();
+            graph.getSize().x = newWidth - insets.left - insets.right;
+            graph.getSize().y = newHeight - insets.top - insets.bottom;
             
-            // iterate over the graph's nodes, looking for eastern / southern external ports (at this
-            // point, the graph's nodes are not divided into layers anymore)
-            for (LNode node : graph.getLayerlessNodes()) {
-                // we're only looking for external port dummies
-                if (node.getProperty(Properties.NODE_TYPE) != NodeType.EXTERNAL_PORT) {
-                    continue;
-                }
+            // correct the position of eastern and southern hierarchical ports, if necessary
+            if (graph.getProperty(Properties.GRAPH_PROPERTIES).contains(GraphProperties.EXTERNAL_PORTS)
+                    && (newWidth > oldSize.x || newHeight > oldSize.y)) {
                 
-                // check which side the external port is on
-                PortSide extPortSide = node.getProperty(Properties.EXT_PORT_SIDE);
-                if (extPortSide == PortSide.EAST) {
-                    node.getPosition().x += (newSize.x - oldSize.x);
-                } else  if (extPortSide == PortSide.SOUTH) {
-                    node.getPosition().y += (newSize.y - oldSize.y);
+                // iterate over the graph's nodes, looking for eastern / southern external ports
+                // (at this point, the graph's nodes are not divided into layers anymore)
+                for (LNode node : graph.getLayerlessNodes()) {
+                    // we're only looking for external port dummies
+                    if (node.getProperty(Properties.NODE_TYPE) == NodeType.EXTERNAL_PORT) {
+                        // check which side the external port is on
+                        PortSide extPortSide = node.getProperty(Properties.EXT_PORT_SIDE);
+                        if (extPortSide == PortSide.EAST) {
+                            node.getPosition().x += newWidth - oldSize.x;
+                        } else  if (extPortSide == PortSide.SOUTH) {
+                            node.getPosition().y += newHeight - oldSize.y;
+                        }
+                    }
                 }
             }
         }
