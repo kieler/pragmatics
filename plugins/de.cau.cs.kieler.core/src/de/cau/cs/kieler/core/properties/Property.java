@@ -16,6 +16,7 @@ package de.cau.cs.kieler.core.properties;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.TreeSet;
 
@@ -188,11 +189,25 @@ public class Property<T> implements IProperty<T>, Comparable<IProperty<?>> {
         } else if (defaultValue instanceof HashSet<?>) {
             return (T) ((HashSet<?>) defaultValue).clone();
         } else if (defaultValue instanceof TreeSet<?>) {
-            return (T) ((TreeSet<?>) defaultValue).clone();
+            // GWT's TreeSet does not support clone()
+            // As in Java everything is a subtype of Object and during runtime
+            // the type is not known anyway, this should be fine.
+            TreeSet<Object> clone = new TreeSet<Object>();
+            Iterator<Object> it = ((TreeSet<Object>) defaultValue).iterator();
+            while (it.hasNext()) {
+                clone.add(it.next());
+            }
+            return (T) clone;
         } else if (defaultValue instanceof ArrayList<?>) {
             return (T) ((ArrayList<?>) defaultValue).clone();
         } else if (defaultValue instanceof LinkedList<?>) {
-            return (T) ((LinkedList<?>) defaultValue).clone();
+            // GWT's LinkedList does not support clone()
+            LinkedList<Object> clone = new LinkedList<Object>();
+            Iterator<Object> it = ((LinkedList<Object>) defaultValue).iterator();
+            while (it.hasNext()) {
+                clone.add(it.next());
+            }
+            return (T) clone;
         } else {
             return defaultValue;
         }
