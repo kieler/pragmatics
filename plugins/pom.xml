@@ -26,6 +26,7 @@
     <module>de.cau.cs.kieler.core.krendering.extensions</module>
     <module>de.cau.cs.kieler.core.ui</module>
     <module>de.cau.cs.kieler.kiml</module>
+    <module>de.cau.cs.kieler.kiml.cola</module>
     <module>de.cau.cs.kieler.kiml.export</module>
     <module>de.cau.cs.kieler.kiml.formats</module>
     <module>de.cau.cs.kieler.kiml.formats.gml</module>
@@ -69,7 +70,7 @@
     <module>edu.umd.cs.piccolo</module>
     <module>net.ogdf.bin</module>
     <module>net.ogdf.ogml</module>
-    <module>org.adaptagrams.cola.libavoid</module>
+    <module>org.adaptagrams</module>
     <module>org.graphdrawing.graphml</module>
   </modules>
 

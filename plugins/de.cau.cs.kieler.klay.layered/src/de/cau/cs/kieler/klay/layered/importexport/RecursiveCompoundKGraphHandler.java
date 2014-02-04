@@ -220,7 +220,8 @@ public class RecursiveCompoundKGraphHandler {
         processOutsideEdges(parentNode, layeredGraph, graphImporter, exportedExternalPorts);
         
         // assign a position to all unpositioned ports of compound nodes
-        Map<KGraphElement, LGraphElement> elementMap = layeredGraph.getProperty(Properties.ELEMENT_MAP);
+        Map<KGraphElement, LGraphElement> elementMap = layeredGraph.getProperty(
+                KGraphImporter.ELEMENT_MAP);
         for (KNode childNode : parentNode.getChildren()) {
             if (!childNode.getChildren().isEmpty()
                     && childNode.getData(KShapeLayout.class).getProperty(LayoutOptions.PORT_CONSTRAINTS)
@@ -281,7 +282,8 @@ public class RecursiveCompoundKGraphHandler {
     private void processOutsideEdges(final KNode parentNode, final LGraph layeredGraph,
             final KGraphImporter graphImporter, final List<ExternalPort> exportedExternalPorts) {
         Direction layoutDirection = layeredGraph.getProperty(LayoutOptions.DIRECTION);
-        Map<KGraphElement, LGraphElement> elementMap = layeredGraph.getProperty(Properties.ELEMENT_MAP);
+        Map<KGraphElement, LGraphElement> elementMap = layeredGraph.getProperty(
+                KGraphImporter.ELEMENT_MAP);
         for (KNode childNode : parentNode.getChildren()) {
             LNode lnode = (LNode) elementMap.get(childNode);
             
@@ -305,10 +307,10 @@ public class RecursiveCompoundKGraphHandler {
                         throw new UnsupportedGraphException("Inconsistent source port reference found.");
                     }
                     newEdge.setSource(sourcePort);
-                    LNode dummyNode = graphImporter.createExternalPortDummy(
+                    LNode dummyNode = ImportUtil.createExternalPortDummy(
                             getExternalPortProperties(parentNode, kedge),
                             PortConstraints.FREE, PortSide.fromDirection(layoutDirection), 1,
-                            null, null, new KVector(), layoutDirection);
+                            null, null, new KVector(), layoutDirection, layeredGraph);
                     layeredGraph.getLayerlessNodes().add(dummyNode);
                     layeredGraph.getProperty(Properties.GRAPH_PROPERTIES).add(
                             GraphProperties.EXTERNAL_PORTS);
@@ -352,10 +354,10 @@ public class RecursiveCompoundKGraphHandler {
                         throw new UnsupportedGraphException("Inconsistent target port reference found.");
                     }
                     newEdge.setTarget(targetPort);
-                    LNode dummyNode = graphImporter.createExternalPortDummy(
+                    LNode dummyNode = ImportUtil.createExternalPortDummy(
                             getExternalPortProperties(parentNode, kedge),
                             PortConstraints.FREE, PortSide.fromDirection(layoutDirection).opposed(),
-                            -1, null, null, new KVector(), layoutDirection);
+                            -1, null, null, new KVector(), layoutDirection, layeredGraph);
                     layeredGraph.getLayerlessNodes().add(dummyNode);
                     layeredGraph.getProperty(Properties.GRAPH_PROPERTIES).add(
                             GraphProperties.EXTERNAL_PORTS);
@@ -394,7 +396,8 @@ public class RecursiveCompoundKGraphHandler {
             final KGraphImporter graphImporter, final List<ExternalPort> exportedExternalPorts,
             final List<ExternalPort> containedExternalPorts) {
         Direction layoutDirection = layeredGraph.getProperty(LayoutOptions.DIRECTION);
-        Map<KGraphElement, LGraphElement> elementMap = layeredGraph.getProperty(Properties.ELEMENT_MAP);
+        Map<KGraphElement, LGraphElement> elementMap = layeredGraph.getProperty(
+                KGraphImporter.ELEMENT_MAP);
         Map<LEdge, LNode> needSourcePort = new HashMap<LEdge, LNode>();
         Map<LEdge, LNode> needTargetPort = new HashMap<LEdge, LNode>();
         for (ExternalPort externalPort : containedExternalPorts) {
@@ -408,7 +411,7 @@ public class RecursiveCompoundKGraphHandler {
             }
             
             LNode lnode = (LNode) elementMap.get(externalPort.knode);
-            KVector lportPos = graphImporter.getExternalPortPosition(
+            KVector lportPos = ImportUtil.getExternalPortPosition(
                     layeredGraphMap.get(externalPort.lgraph), externalPort.lnode, 0, 0);
             LPort lport = createFixedPort(lnode, lportPos,
                     externalPort.lnode.getProperty(Properties.EXT_PORT_SIDE), layeredGraph);
@@ -444,7 +447,7 @@ public class RecursiveCompoundKGraphHandler {
                             }
                         }
                         LNode targetLNode = (LNode) elementMap.get(targetExtenalPort.knode);
-                        KVector targetLPortPos = graphImporter.getExternalPortPosition(
+                        KVector targetLPortPos = ImportUtil.getExternalPortPosition(
                                 layeredGraphMap.get(targetExtenalPort.lgraph),
                                 targetExtenalPort.lnode, 0, 0);
                         targetLPort = createFixedPort(targetLNode, targetLPortPos,
@@ -457,11 +460,11 @@ public class RecursiveCompoundKGraphHandler {
                         LNode dummyNode = (LNode) elementMap.get(targetKPort);
                         if (dummyNode == null) {
                             KShapeLayout kportLayout = targetKPort.getData(KShapeLayout.class);
-                            dummyNode = graphImporter.createExternalPortDummy(kportLayout,
+                            dummyNode = ImportUtil.createExternalPortDummy(kportLayout,
                                     PortConstraints.FIXED_SIDE, PortSide.fromDirection(layoutDirection),
                                     1, null, null,
                                     new KVector(kportLayout.getWidth(), kportLayout.getHeight()),
-                                    layoutDirection);
+                                    layoutDirection, layeredGraph);
                             dummyNode.setProperty(Properties.ORIGIN, targetKPort);
                             layeredGraph.getLayerlessNodes().add(dummyNode);
                             layeredGraph.getProperty(Properties.GRAPH_PROPERTIES).add(
@@ -471,10 +474,10 @@ public class RecursiveCompoundKGraphHandler {
                         targetLPort = dummyNode.getPorts().get(0);
                     } else {
                         // the edge goes to the outside of the parent node
-                        LNode dummyNode = graphImporter.createExternalPortDummy(
+                        LNode dummyNode = ImportUtil.createExternalPortDummy(
                                 getExternalPortProperties(parentNode, externalPort.kedge),
                                 PortConstraints.FIXED_SIDE, PortSide.fromDirection(layoutDirection),
-                                1, null, null, new KVector(), layoutDirection);
+                                1, null, null, new KVector(), layoutDirection, layeredGraph);
                         layeredGraph.getLayerlessNodes().add(dummyNode);
                         layeredGraph.getProperty(Properties.GRAPH_PROPERTIES).add(
                                 GraphProperties.EXTERNAL_PORTS);
@@ -505,11 +508,11 @@ public class RecursiveCompoundKGraphHandler {
                         LNode dummyNode = (LNode) elementMap.get(sourceKPort);
                         if (dummyNode == null) {
                             KShapeLayout kportLayout = sourceKPort.getData(KShapeLayout.class);
-                            dummyNode = graphImporter.createExternalPortDummy(kportLayout,
+                            dummyNode = ImportUtil.createExternalPortDummy(kportLayout,
                                     PortConstraints.FIXED_SIDE,
                                     PortSide.fromDirection(layoutDirection).opposed(), -1, null, null,
                                     new KVector(kportLayout.getWidth(), kportLayout.getHeight()),
-                                    layoutDirection);
+                                    layoutDirection, layeredGraph);
                             dummyNode.setProperty(Properties.ORIGIN, sourceKPort);
                             layeredGraph.getLayerlessNodes().add(dummyNode);
                             layeredGraph.getProperty(Properties.GRAPH_PROPERTIES).add(
@@ -519,11 +522,11 @@ public class RecursiveCompoundKGraphHandler {
                         sourceLPort = dummyNode.getPorts().get(0);
                     } else {
                         // the edge comes from the outside of the parent node
-                        LNode dummyNode = graphImporter.createExternalPortDummy(
+                        LNode dummyNode = ImportUtil.createExternalPortDummy(
                                 getExternalPortProperties(parentNode, externalPort.kedge),
                                 PortConstraints.FIXED_SIDE,
                                 PortSide.fromDirection(layoutDirection).opposed(), -1, null, null,
-                                new KVector(), layoutDirection);
+                                new KVector(), layoutDirection, layeredGraph);
                         layeredGraph.getLayerlessNodes().add(dummyNode);
                         layeredGraph.getProperty(Properties.GRAPH_PROPERTIES).add(
                                 GraphProperties.EXTERNAL_PORTS);
@@ -742,9 +745,7 @@ public class RecursiveCompoundKGraphHandler {
             KVector lastPoint = null;
             for (CrossHierarchyEdge chEdge : crossHierarchyEdges) {
                 LGraph layeredGraph = layeredGraphMap.get(chEdge.lgraph);
-                float borderSpacing = layeredGraph.getProperty(Properties.BORDER_SPACING);
-                KVector offset = new KVector(borderSpacing + layeredGraph.getOffset().x,
-                        borderSpacing + layeredGraph.getOffset().y);
+                KVector offset = new KVector(layeredGraph.getOffset());
                 KimlUtil.toAbsolute(offset, chEdge.parentNode);
                 KimlUtil.toRelative(offset, referenceNode);
                 KVectorChain bendPoints = chEdge.ledge.getBendPoints().translate(offset);

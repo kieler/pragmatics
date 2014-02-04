@@ -31,6 +31,9 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IWorkbenchPart;
 
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
+
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -304,7 +307,9 @@ public final class GenomeFactory {
             EObject modelElement = (EObject) layoutMapping.getAdapterFactory().getAdapter(
                     diagramPart, EObject.class);
             context.setProperty(LayoutContext.DOMAIN_MODEL, modelElement);
-            IWorkbenchPart workbenchPart = layoutMapping.getProperty(IWorkbenchPart.class);
+            IWorkbenchPart workbenchPart = (IWorkbenchPart) Iterables.find(
+                    layoutMapping.getAllProperties().values(),
+                    Predicates.instanceOf(IWorkbenchPart.class), null);
             context.setProperty(EclipseLayoutConfig.WORKBENCH_PART, workbenchPart);
         }
         context.setProperty(DefaultLayoutConfig.OPT_MAKE_OPTIONS, true);

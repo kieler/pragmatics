@@ -205,9 +205,7 @@ public class KSBasECombination extends AbstractCombination implements ITransform
         }
         // if you found a fitting method execute it
         if (method != null) {
-            
             activeHandler.execute(editor, method, transformation.getTransformationClass(), params);
-
         }
 
     }
