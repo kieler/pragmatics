@@ -24,7 +24,6 @@ import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.json.client.JSONValue;
-import com.google.gwt.user.client.Window;
 
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
@@ -57,7 +56,6 @@ public class JsonGraphImporter {
     private Map<String, LNode> nodeIdMap = Maps.newHashMap();
     private Map<String, LEdge> edgeIdMap = Maps.newHashMap();
     private Map<String, LPort> portIdMap = Maps.newHashMap();
-    private Map<String, LLabel> labelIdMap = Maps.newHashMap();
 
     private Map<LNode, JSONObject> nodeJsonMap = Maps.newHashMap();
     private Map<LEdge, JSONObject> edgeJsonMap = Maps.newHashMap();
@@ -69,14 +67,12 @@ public class JsonGraphImporter {
 
     public void layout(JSONObject json) {
 
+        // transform JSON -> LGraph
         LGraph graph = transform(json);
 
-        System.out.println(graph.getLayerlessNodes());
-        // Perform layer-based layout
+        // perform layer-based layout
         KlayLayered klayLayered = new KlayLayered();
         LGraph result = klayLayered.doLayout(graph, new BasicProgressMonitor());
-
-        System.out.println(result.getLayers());
 
         // transfer the layout information back to the json objects
         transferLayout(result, json);
@@ -88,7 +84,6 @@ public class JsonGraphImporter {
         nodeIdMap.clear();
         edgeIdMap.clear();
         portIdMap.clear();
-        labelIdMap.clear();
 
         nodeJsonMap.clear();
         edgeJsonMap.clear();
@@ -102,9 +97,6 @@ public class JsonGraphImporter {
 
     private LGraph transform(JSONObject json) {
 
-        if (json == null) {
-            Window.alert("JSON NULL");
-        }
         reset();
 
         // create a new graph instance
@@ -278,24 +270,27 @@ public class JsonGraphImporter {
         // elemMap.put(kport, dummy);
     }
 
-    private void transformNode(JSONObject jnode, LGraph graph) {
+    private void transformNode(JSONObject jNode, LGraph graph) {
 
-        checkForId(jnode);
+        checkForId(jNode);
 
         LNode node = new LNode(graph);
         graph.getLayerlessNodes().add(node);
 
         // id and register
-        JSONString id = (JSONString) jnode.get("id");
+        JSONString id = (JSONString) jNode.get("id");
         nodeIdMap.put(id.stringValue(), node);
-        nodeJsonMap.put(node, jnode);
+        nodeJsonMap.put(node, jNode);
 
         // dimensions
-        transformDimensions(jnode, node);
+        transformDimensions(jNode, node);
+
+        // properties
+        transformProperties(jNode, node);
 
         // ports
-        if (jnode.containsKey("ports")) {
-            JSONValue val = jnode.get("ports");
+        if (jNode.containsKey("ports")) {
+            JSONValue val = jNode.get("ports");
             if (val.isArray() == null) {
                 throw new UnsupportedGraphException(
                         "The 'ports' property of the node must be an array.");
@@ -309,8 +304,8 @@ public class JsonGraphImporter {
             }
         }
 
-        // properties
-        transformProperties(jnode, node);
+        // labels
+        transformLabels(jNode, node, graph);
 
         // KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
         //
@@ -326,7 +321,7 @@ public class JsonGraphImporter {
         // elemMap.put(node, newNode);
         //
         // check if the node is a compound node in the original graph
-        if (jnode.containsKey("children") && jnode.get("children").isArray().size() > 0) {
+        if (jNode.containsKey("children") && jNode.get("children").isArray().size() > 0) {
             node.setProperty(Properties.COMPOUND_NODE, true);
         }
 
@@ -371,14 +366,14 @@ public class JsonGraphImporter {
         }
     }
 
-    private void transformPort(final JSONObject jport, final LNode node, final LGraph graph) {
+    private void transformPort(final JSONObject jPort, final LNode node, final LGraph graph) {
 
-        checkForId(jport);
+        checkForId(jPort);
 
         // should we include this port into the layout?
         String noLayoutId = LayoutOptions.NO_LAYOUT.getId();
-        if (jport.containsKey(noLayoutId)
-                && jport.get(noLayoutId).isBoolean().booleanValue() == true) {
+        if (jPort.containsKey(noLayoutId)
+                && jPort.get(noLayoutId).isBoolean().booleanValue() == true) {
             return;
         }
 
@@ -386,15 +381,18 @@ public class JsonGraphImporter {
         port.setNode(node);
 
         // id and register
-        JSONString id = (JSONString) jport.get("id");
+        JSONString id = (JSONString) jPort.get("id");
         portIdMap.put(id.stringValue(), port);
-        portJsonMap.put(port, jport);
+        portJsonMap.put(port, jPort);
 
         // dimensions
-        transformDimensions(jport, port);
+        transformDimensions(jPort, port);
 
         // properties
-        transformProperties(jport, port);
+        transformProperties(jPort, port);
+
+        // labels
+        transformLabels(jPort, port, graph);
 
         // collect information on the structure of the graph
 
@@ -489,14 +487,14 @@ public class JsonGraphImporter {
         // }
     }
 
-    private void transformEdge(final JSONObject jedge, final LGraph graph) {
+    private void transformEdge(final JSONObject jEdge, final LGraph graph) {
 
-        checkForId(jedge);
+        checkForId(jEdge);
 
-        JSONValue jSourceNode = jedge.get("source");
-        JSONValue jSourcePort = jedge.get("sourcePort");
-        JSONValue jTargetNode = jedge.get("target");
-        JSONValue jTargetPort = jedge.get("targetPort");
+        JSONValue jSourceNode = jEdge.get("source");
+        JSONValue jSourcePort = jEdge.get("sourcePort");
+        JSONValue jTargetNode = jEdge.get("target");
+        JSONValue jTargetPort = jEdge.get("targetPort");
 
         // check for valid source
         if (jSourceNode == null) {
@@ -527,10 +525,17 @@ public class JsonGraphImporter {
         LEdge edge = new LEdge(graph);
 
         // id and register
-        JSONString id = (JSONString) jedge.get("id");
+        JSONString id = (JSONString) jEdge.get("id");
         edgeIdMap.put(id.stringValue(), edge);
-        edgeJsonMap.put(edge, jedge);
+        edgeJsonMap.put(edge, jEdge);
 
+        
+        // properties 
+        transformProperties(jEdge, edge);
+        
+        // labels
+        transformLabels(jEdge, edge, graph);
+        
         // the following is not needed in case of compound graph handling, as source and target will
         // be set by calling function.
 
@@ -679,8 +684,58 @@ public class JsonGraphImporter {
 
     }
 
-    private void transformLabel(final JSONObject jlabel, final LGraph graph) {
-        // TODO
+    private void transformLabels(final JSONObject jElement, final LGraphElement element,
+            final LGraph graph) {
+        if (jElement.containsKey("labels")) {
+            JSONValue val = jElement.get("labels");
+            if (val.isArray() == null) {
+                throw new UnsupportedGraphException(
+                        "The 'labels' property of a node must be an array.");
+            }
+            JSONArray labels = val.isArray();
+
+            for (int i = 0; i < labels.size(); ++i) {
+                if (labels.get(i) instanceof JSONObject) {
+                    transformLabel((JSONObject) labels.get(i), element, graph);
+                }
+            }
+        }
+    }
+
+    private void transformLabel(final JSONObject jLabel, final LGraphElement ele, final LGraph graph) {
+
+        // should we include this label into the layout process?
+        String noLayoutId = LayoutOptions.NO_LAYOUT.getId();
+        if (jLabel.containsKey(noLayoutId)
+                && jLabel.get(noLayoutId).isBoolean().booleanValue() == true) {
+            return;
+        }
+
+        // check for text property
+        JSONValue val = jLabel.get("text");
+        if (val == null) {
+            throw new UnsupportedGraphException("Labels must have a property 'text'.");
+        } else if (val.isString() == null) {
+            throw new UnsupportedGraphException("A label's 'text' property must be a string.");
+        }
+
+        // create a new label
+        String text = val.isString().stringValue();
+        LLabel label = new LLabel(graph, text);
+        labelJsonMap.put(label, jLabel);
+
+        // dimensions of the label
+        transformDimensions(jLabel, label);
+
+        // add label to the graph element
+        if (ele instanceof LNode) {
+            ((LNode) ele).getLabels().add(label);
+        } else if (ele instanceof LEdge) {
+            ((LEdge) ele).getLabels().add(label);
+        } else if (ele instanceof LPort) {
+            ((LPort) ele).getLabels().add(label);
+        }
+
     }
 
     private void transformDimensions(JSONObject jsonEle, LShape ele) {

@@ -69,7 +69,7 @@ public class KlayGWT implements EntryPoint {
             if (graph == null || success == null || graph.isObject() == null
                     || success.isObject() == null) {
                 throw new UnsupportedConfigurationException(
-                        "Mandatory parameters missing 'graph' and 'success'");
+                        "Mandatory parameters missing, 'graph' and 'success' must be specified");
             }
 
             // convert to lgraph and layout
