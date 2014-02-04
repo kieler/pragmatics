@@ -47,17 +47,31 @@
 
     <h1>Klay GWT Starter Project</h1>
 
-    <table align="center">
-      <tr>
-        <td id="sendButtonContainer"></td>
-      </tr>
-    </table>
   </body>
   
   <script>
-	   function myInit() {
-	    console.log("layout was called");
-		window.layout("hellp");
+	   function klayinit() {
+	   	try {
+		    console.log("layout was called");
+			window.layout({
+				"id": "root",
+				"children": [
+				{
+					"id": "n1",
+					"width": 40,
+					"height": 40
+				}, {
+					"id": "n2",
+					"width": 40,
+					"height": 40
+				}
+				]
+			}, function(layouted) {
+				console.log( layouted);
+			});
+	     } catch (e) {
+	       console.log("Exc: " + e);
+	     }
 	   }
 	</script>
 	

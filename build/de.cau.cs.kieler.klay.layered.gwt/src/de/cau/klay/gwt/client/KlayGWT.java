@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ *
+ * Copyright 2014 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ *
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.klay.gwt.client;
 
 import org.timepedia.exporter.client.Export;
@@ -5,53 +18,62 @@ import org.timepedia.exporter.client.Exportable;
 import org.timepedia.exporter.client.ExporterUtil;
 
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.json.client.JSONObject;
 
-import de.cau.klay.gwt.client.layout.KlayExampleLayouter;
+import de.cau.klay.gwt.client.layout.JsonGraphImporter;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
+ * 
+ * Have a look at http://code.google.com/p/gwt-exporter/
+ * 
+ * @author uru
  */
 public class KlayGWT implements EntryPoint {
-	/**
-	 * This is the entry point method.
-	 */
-	public void onModuleLoad() {
-		final Button layoutButton = new Button("Do Layout");
+    /**
+     * This is the entry point method.
+     */
+    public void onModuleLoad() {
 
-		// We can add style names to widgets
-		layoutButton.addStyleName("sendButton");
+        // Export all js methods
+        ExporterUtil.exportAll();
 
-		RootPanel.get("sendButtonContainer").add(layoutButton);
+        klayInit();
+    }
 
-		class MyHandler implements ClickHandler {
-			public void onClick(ClickEvent event) {
-				KlayExampleLayouter.layoutExample();
-			}
-		}
-		layoutButton.addClickHandler(new MyHandler());
+    private native void klayInit() /*-{
+        if ($wnd.klayinit) {
+            $wnd.klayinit();
+        }
+    }-*/;
+    
+    /**
+     * Class defines the interface methods that are supplied to the JS developer.
+     */
+    public static class KlayLayoutInterface implements Exportable {
+        
+        @Export("$wnd.layout")
+        public static void layout(final JavaScriptObject json, final JavaScriptObject callback) {
 
-		// for the gwt exporter
-		ExporterUtil.exportAll();
+            try {
+                // convert to lgraph and layout
+                JSONObject obj = new JSONObject(json);
+                new JsonGraphImporter().layout(obj);
 
-		onLoad();
-	}
+                // pass the layouted graph to the callback
+                JavaScriptObject result = obj.getJavaScriptObject();
+                execCallback(callback, result);
+                
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-	/*
-	 * Have a look at http://code.google.com/p/gwt-exporter/
-	 */
-	public static class Klay implements Exportable {
-		@Export("$wnd.layout")
-		public static void layout(String foo) {
-			Window.alert("Performed layout" + foo);
-		}
-	}
-
-	private native void onLoad() /*-{
-									if ($wnd.myInit) $wnd.myInit();
-									}-*/;
+        }
+            
+        public static native void execCallback(final JavaScriptObject callback, final JavaScriptObject json) /*-{
+            $entry(callback(json));
+        }-*/;
+        
+    }
 }
