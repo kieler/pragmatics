@@ -20,7 +20,10 @@ import org.timepedia.exporter.client.ExporterUtil;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
+import com.google.gwt.json.client.JSONValue;
 
+import de.cau.cs.kieler.kiml.UnsupportedConfigurationException;
 import de.cau.klay.gwt.client.layout.JsonGraphImporter;
 
 /**
@@ -54,24 +57,43 @@ public class KlayGWT implements EntryPoint {
     public static class KlayLayoutInterface implements Exportable {
         
         @Export("$wnd.layout")
-        public static void layout(final JavaScriptObject json, final JavaScriptObject callback) {
+        public static void layout(final JavaScriptObject params) {
 
+            // retrieve the passed parameters
+            JSONObject obj = new JSONObject(params);
+            
+            JSONValue graph = obj.get("graph");
+            JSONValue success = obj.get("success");
+            JSONValue error = obj.get("error");
+            
             try {
+                if (graph == null || success == null || graph.isObject() == null
+                        || success.isObject() == null) {
+                    throw new UnsupportedConfigurationException(
+                            "Mandatory parameters missing 'graph' and 'success'");
+                }
+
                 // convert to lgraph and layout
-                JSONObject obj = new JSONObject(json);
-                new JsonGraphImporter().layout(obj);
+                new JsonGraphImporter().layout(graph.isObject());
 
                 // pass the layouted graph to the callback
-                JavaScriptObject result = obj.getJavaScriptObject();
-                execCallback(callback, result);
-                
+                JavaScriptObject result = graph.isObject().getJavaScriptObject();
+                execCallback(success.isObject().getJavaScriptObject(), result);
+
             } catch (Exception e) {
+                if (error != null && error.isObject() != null) {
+                    JSONObject errObj = new JSONObject();
+                    errObj.put("text", new JSONString(e.getClass() + " " + e.getMessage()));
+                    execCallback(error.isObject().getJavaScriptObject(),
+                            errObj.getJavaScriptObject());
+                }
                 e.printStackTrace();
             }
 
         }
             
-        public static native void execCallback(final JavaScriptObject callback, final JavaScriptObject json) /*-{
+        public static native void execCallback(final JavaScriptObject callback, 
+                final JavaScriptObject json) /*-{
             $entry(callback(json));
         }-*/;
         

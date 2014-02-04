@@ -23,6 +23,7 @@ import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
+import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.user.client.Window;
 
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
@@ -512,16 +513,13 @@ public class JsonGraphImporter {
         edgeIdMap.put(id.stringValue(), edge);
         edgeJsonMap.put(edge, jedge);
 
-        // TODO src and tgt node and port
-        LNode srcNode = nodeIdMap.get(jedge.get("src").isNumber().doubleValue());
-
         // the following is not needed in case of compound graph handling, as source and target will
         // be set by calling function.
 
-        JSONString jSourceNode = jedge.get("source").isString();
-        JSONString jSourcePort = jedge.get("sourcePort").isString();
-        JSONString jTargetNode = jedge.get("target").isString();
-        JSONString jTargetPort = jedge.get("targetPort").isString();
+        JSONValue jSourceNode = jedge.get("source");
+        JSONValue jSourcePort = jedge.get("sourcePort");
+        JSONValue jTargetNode = jedge.get("target");
+        JSONValue jTargetPort = jedge.get("targetPort");
 
         // retrieve source and target
         LNode sourceNode = null;
@@ -543,9 +541,9 @@ public class JsonGraphImporter {
         // throw new UnsupportedGraphException("Inconsistent source port reference found.");
         // }
         // } else {
-        sourceNode = nodeIdMap.get(jSourceNode.stringValue());
-        if (jSourcePort.stringValue() != null) {
-            sourcePort = portIdMap.get(jSourcePort);
+        sourceNode = nodeIdMap.get(jSourceNode.isString().stringValue());
+        if (jSourcePort!= null && jSourcePort.isString() != null) {
+            sourcePort = portIdMap.get(jSourcePort.isString().stringValue());
         }
         // LGraphElement elem = elemMap.get(kedge.getSourcePort());
         // if (elem instanceof LPort) {
@@ -569,10 +567,10 @@ public class JsonGraphImporter {
         // throw new UnsupportedGraphException("Inconsistent target port reference found.");
         // }
         // } else {
-        targetNode = nodeIdMap.get(jTargetNode.stringValue());
+        targetNode = nodeIdMap.get(jTargetNode.isString().stringValue());
 
-        if (jTargetPort != null) {
-            targetPort = portIdMap.get(jTargetPort.stringValue());
+        if (jTargetPort != null && jTargetPort.isString() != null) {
+            targetPort = portIdMap.get(jTargetPort.isString().stringValue());
         }
         // LGraphElement elem = elemMap.get(kedge.getTargetPort());
         // if (elem instanceof LPort) {
