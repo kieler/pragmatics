@@ -13,10 +13,6 @@
  */
 package de.cau.klay.gwt.client;
 
-import org.timepedia.exporter.client.Export;
-import org.timepedia.exporter.client.Exportable;
-import org.timepedia.exporter.client.ExporterUtil;
-
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.json.client.JSONObject;
@@ -39,9 +35,10 @@ public class KlayGWT implements EntryPoint {
      */
     public void onModuleLoad() {
 
-        // Export all js methods
-        ExporterUtil.exportAll();
-
+        // export the layout method
+        exportKlayLayout();
+        
+        // offer an init function, after interface methods have been exported
         klayInit();
     }
 
@@ -51,51 +48,52 @@ public class KlayGWT implements EntryPoint {
         }
     }-*/;
     
+    private native void exportKlayLayout() /*-{
+        $wnd.$klay = {};
+        $wnd.$klay.layout = $entry(@de.cau.klay.gwt.client.KlayGWT::layout(Lcom/google/gwt/core/client/JavaScriptObject;));
+    }-*/;
+    
     /**
-     * Class defines the interface methods that are supplied to the JS developer.
+     * Entry point to perform layout.
      */
-    public static class KlayLayoutInterface implements Exportable {
+    public static void layout(final JavaScriptObject params) {
+
+        // retrieve the passed parameters
+        JSONObject obj = new JSONObject(params);
         
-        @Export("$wnd.layout")
-        public static void layout(final JavaScriptObject params) {
-
-            // retrieve the passed parameters
-            JSONObject obj = new JSONObject(params);
-            
-            JSONValue graph = obj.get("graph");
-            JSONValue success = obj.get("success");
-            JSONValue error = obj.get("error");
-            
-            try {
-                if (graph == null || success == null || graph.isObject() == null
-                        || success.isObject() == null) {
-                    throw new UnsupportedConfigurationException(
-                            "Mandatory parameters missing 'graph' and 'success'");
-                }
-
-                // convert to lgraph and layout
-                new JsonGraphImporter().layout(graph.isObject());
-
-                // pass the layouted graph to the callback
-                JavaScriptObject result = graph.isObject().getJavaScriptObject();
-                execCallback(success.isObject().getJavaScriptObject(), result);
-
-            } catch (Exception e) {
-                if (error != null && error.isObject() != null) {
-                    JSONObject errObj = new JSONObject();
-                    errObj.put("text", new JSONString(e.getClass() + " " + e.getMessage()));
-                    execCallback(error.isObject().getJavaScriptObject(),
-                            errObj.getJavaScriptObject());
-                }
-                e.printStackTrace();
+        JSONValue graph = obj.get("graph");
+        JSONValue success = obj.get("success");
+        JSONValue error = obj.get("error");
+        
+        try {
+            if (graph == null || success == null || graph.isObject() == null
+                    || success.isObject() == null) {
+                throw new UnsupportedConfigurationException(
+                        "Mandatory parameters missing 'graph' and 'success'");
             }
 
+            // convert to lgraph and layout
+            new JsonGraphImporter().layout(graph.isObject());
+
+            // pass the layouted graph to the callback
+            JavaScriptObject result = graph.isObject().getJavaScriptObject();
+            execCallback(success.isObject().getJavaScriptObject(), result);
+
+        } catch (Exception e) {
+            if (error != null && error.isObject() != null) {
+                JSONObject errObj = new JSONObject();
+                errObj.put("text", new JSONString(e.getClass() + " " + e.getMessage()));
+                execCallback(error.isObject().getJavaScriptObject(),
+                        errObj.getJavaScriptObject());
+            }
+            e.printStackTrace();
         }
-            
-        public static native void execCallback(final JavaScriptObject callback, 
-                final JavaScriptObject json) /*-{
-            $entry(callback(json));
-        }-*/;
-        
+
     }
+        
+    public static native void execCallback(final JavaScriptObject callback, 
+            final JavaScriptObject json) /*-{
+        $entry(callback(json));
+    }-*/;
+   
 }
