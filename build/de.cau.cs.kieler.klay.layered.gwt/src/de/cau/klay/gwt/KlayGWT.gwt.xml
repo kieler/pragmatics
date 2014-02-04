@@ -9,13 +9,10 @@
   <!-- Inherit the core Web Toolkit stuff.                        -->
   <inherits name='com.google.gwt.user.User'/>
 
-  <!-- Inherit the default GWT style sheet.  You can change       -->
-  <!-- the theme of your GWT application by uncommenting          -->
-  <!-- any one of the following lines.                            -->
-  <inherits name='com.google.gwt.user.theme.clean.Clean'/>
-  <!-- <inherits name='com.google.gwt.user.theme.standard.Standard'/> -->
-  <!-- <inherits name='com.google.gwt.user.theme.chrome.Chrome'/> -->
-  <!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/>     -->
+  <!-- Inherit the default GWT style sheet.                       -->
+  <!-- As we create a library without any visual elements we      -->
+  <!-- don't need any stylesheet.                                 -->
+  <!-- <inherits name='com.google.gwt.user.theme.clean.Clean'/>   -->
 
   <!-- Other module inherits                                      -->
   
@@ -23,7 +20,6 @@
   
   <inherits name='org.timepedia.exporter.Exporter'/>
   <set-property name="export" value="yes"/>
-	
 
   <!-- Specify the app entry point class.                         -->
   <entry-point class='de.cau.klay.gwt.client.KlayGWT'/>

@@ -65,20 +65,40 @@
 					"id": "n2",
 					"width": 40,
 					"height": 40
+				}, {
+					"id": "n3",
+					"width": 40,
+					"height": 40
 				}],
 				"edges": [
 				{
 					"id": "e1",
 					"source": "n1",
 					"target": "n2"
+				},
+				{
+					"id": "e2",
+					"source": "n1",
+					"target": "n3"
+				},
+				{
+					"id": "e3",
+					"source": "n2",
+					"target": "n3"
 				}
 				]
 			};
 		    
 			window.layout({
 				graph: graph,
-				success: function(layouted) { console.log(layouted); },
-				error: function(error) { console.log(error); }
+				success: function(layouted) { 
+					console.log(layouted);
+					document.body.innerHTML = "<pre>" + JSON.stringify(layouted, null, "  ") + "</pre>"; 
+				},
+				error: function(error) { 
+					console.log(error); 
+					document.body.innerHTML = "<pre>" + JSON.stringify(error, null, "  ") + "</pre>";
+				}
 			});
 	     } catch (e) {
 	       console.log("Exc: " + e);
