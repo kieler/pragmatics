@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module>
 	<inherits name="com.google.gwt.user.User" />
+	<!-- Seems to contain code for StringTokenizer and Rectangle2D etc. -->
 	<inherits name="org.eclipse.emf.ecore.Ecore" />
 	<inherits name="com.google.common.collect.Collect" />
 	<source path="core"/>

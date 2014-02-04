@@ -24,7 +24,6 @@ import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortLabelPlacement;
 import de.cau.cs.kieler.kiml.options.SizeConstraint;
 import de.cau.cs.kieler.kiml.options.SizeOptions;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LInsets;
@@ -634,11 +633,14 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
             // If we are to use default minima, check if the values are properly set
             if (sizeOptions.contains(SizeOptions.DEFAULT_MINIMUM_SIZE)) {
                 if (minWidth <= 0) {
-                    minWidth = KimlUtil.DEFAULT_MIN_WIDTH;
+                    // FIXME gwt fix
+                    // minWidth = KimlUtil.DEFAULT_MIN_WIDTH;
+                    minWidth = 20f;
                 }
                 
                 if (minHeight <= 0) {
-                    minHeight = KimlUtil.DEFAULT_MIN_HEIGHT;
+                    // minHeight = KimlUtil.DEFAULT_MIN_HEIGHT;
+                    minHeight = 20f;
                 }
             }
             

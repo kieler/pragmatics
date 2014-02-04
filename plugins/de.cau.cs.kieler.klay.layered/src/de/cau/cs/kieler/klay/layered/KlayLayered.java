@@ -31,7 +31,6 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.SizeConstraint;
 import de.cau.cs.kieler.kiml.options.SizeOptions;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.components.ComponentsProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LInsets;
@@ -759,11 +758,14 @@ public final class KlayLayered {
             // if minimum width or height are not set, maybe default to default values
             if (sizeOptions.contains(SizeOptions.DEFAULT_MINIMUM_SIZE)) {
                 if (minWidth <= 0) {
-                    minWidth = KimlUtil.DEFAULT_MIN_WIDTH;
+                    // FIXME gwt fix
+                    // minWidth = KimlUtil.DEFAULT_MIN_WIDTH;
+                    minWidth = 20f;
                 }
                 
                 if (minHeight <= 0) {
-                    minHeight = KimlUtil.DEFAULT_MIN_HEIGHT;
+                    // minHeight = KimlUtil.DEFAULT_MIN_HEIGHT;
+                    minHeight = 20f;
                 }
             }
             

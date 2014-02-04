@@ -66,6 +66,24 @@
 					<exclude name="**/*.png" />
 					<exclude name="**/*.gif" />
 					<exclude name="**/*.pdf" />
+
+					<!-- exclude KNode classes -->
+					<not>
+						<contains text="final KNode " />
+					</not>
+					<not>
+						<contains text="(KNode " />
+					</not>
+					<not>
+						<contains text=", KNode " />
+					</not>
+					<exclude name="de/cau/cs/kieler/kiml/klayoutdata/**" />
+					<exclude name="de/cau/cs/kieler/kiml/config/**" />
+					<exclude name="de/cau/cs/kieler/kiml/util/**" />
+					<exclude name="**/LayoutAlgorithmData.java" />
+					<exclude name="**/LayoutConfigService.java" />
+					<exclude name="**/LayoutDataService.java" />
+					<exclude name="**/LayoutTypeData.java" />
 				</fileset>
 				<filterchain>
 					<!-- Remove code snippets that are incompativle with GWT -->
@@ -78,7 +96,7 @@
 
 	<!-- TARGET clean -->
 	<target name="clean" description="Cleans this project.">
-		
+
 		<delete dir="${outputFolder}" />
 
 		<delete dir="war/WEB-INF/classes" failonerror="false" />
@@ -100,7 +118,7 @@
 	<target name="copySrc" description="">
 		<!-- Copy all relevant source files to the projects src-external folder. -->
 		<copyklaysources fromdir="de.cau.cs.kieler.core/src/" />
-		<copyklaysources fromdir="de.cau.cs.kieler.core.kgraph/src/" />
+		<!--copyklaysources fromdir="de.cau.cs.kieler.core.kgraph/src/" /-->
 		<copyklaysources fromdir="de.cau.cs.kieler.kiml/src/" />
 		<copyklaysources fromdir="de.cau.cs.kieler.klay.layered/src/" />
 	</target>
@@ -172,7 +190,7 @@
 	<target name="dist" depends="compile" description="Copy the compiled js files to the target folder.">
 		<mkdir dir="${outputFolder}" />
 		<mkdir dir="${outputFolder.tmp}" />
-		
+
 		<copy todir="${outputFolder.tmp}" overwrite="true">
 			<fileset dir="war/klaygwt">
 				<exclude name="gwt/**" />
@@ -181,7 +199,7 @@
 			</fileset>
 		</copy>
 		<zip destfile="${outputFile.klaygwt}" basedir="${outputFolder.tmp}" update="true" />
-		
+
 		<delete dir="${outputFolder.tmp}" failonerror="false" />
 	</target>
 
