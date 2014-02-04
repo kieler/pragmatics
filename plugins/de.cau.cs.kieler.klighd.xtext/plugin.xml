@@ -31,7 +31,7 @@
    <extension
          point="de.cau.cs.kieler.klighd.extensions">
       <handler
-            class="de.cau.cs.kieler.klighd.xtext.ModifyXtextModelHandler">
+            class="de.cau.cs.kieler.klighd.xtext.XtextModelModificationHandler">
       </handler>
    </extension>
 

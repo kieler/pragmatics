@@ -30,8 +30,8 @@ import de.cau.cs.kieler.core.kivi.KiVi;
 import de.cau.cs.kieler.core.kivi.menu.ButtonTrigger.ButtonState;
 import de.cau.cs.kieler.core.kivi.triggers.SelectionTrigger.SelectionState;
 import de.cau.cs.kieler.kiml.kivi.LayoutEffect;
-import de.cau.cs.kieler.klighd.IModifyModelHandler;
-import de.cau.cs.kieler.klighd.ui.modifymodel.ModifyModelHandlerProvider;
+import de.cau.cs.kieler.klighd.IModelModificationHandler;
+import de.cau.cs.kieler.klighd.ui.modifymodel.ModelModificationHandlerProvider;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.KSBasETransformation;
 import de.cau.cs.kieler.ksbase.m2m.ITransformationListener;
@@ -51,7 +51,7 @@ public class KSBasECombination extends AbstractCombination implements ITransform
             new HashMap<String, KSBasETransformation>();
 
     // private static DiagramDocumentEditor lastEditor = null;
-    private static IModifyModelHandler activeHandler = null;
+    private static IModelModificationHandler activeHandler = null;
 
     private static EObject select = null;
 
@@ -101,7 +101,7 @@ public class KSBasECombination extends AbstractCombination implements ITransform
         if (transformation != null) {
 
             // update the corresponding handler
-            activeHandler = ModifyModelHandlerProvider.getInstance().getFittingHandler(editor);
+            activeHandler = ModelModificationHandlerProvider.getInstance().getFittingHandler(editor);
             if (activeHandler == null) {
                 StatusManager.getManager().handle(
                         new Status(Status.WARNING, KSBasEUIPlugin.PLUGIN_ID,
@@ -120,7 +120,7 @@ public class KSBasECombination extends AbstractCombination implements ITransform
             activeHandler.performPostProcessing();
 
             // possibly execute layout
-            if (activeHandler.isPerformLayout()) {
+            if (activeHandler.isLayoutRequired()) {
                 EObject rootObject = activeHandler.getLayoutRoot();
                 evokeLayout(selectionList, rootObject, editor);
             }

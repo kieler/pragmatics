@@ -41,8 +41,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.klighd.IModifyModelHandler;
-import de.cau.cs.kieler.klighd.ui.modifymodel.ModifyModelHandlerProvider;
+import de.cau.cs.kieler.klighd.IModelModificationHandler;
+import de.cau.cs.kieler.klighd.ui.modifymodel.ModelModificationHandlerProvider;
 import de.cau.cs.kieler.klighd.ui.parts.DiagramViewPart;
 import de.cau.cs.kieler.klighd.viewers.ContextViewer;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
@@ -90,7 +90,7 @@ public final class DynamicMenuContributions {
          */
         // private TransactionalEditingDomain transDomain = null;
 
-        private IModifyModelHandler activeHandler = null;
+        private IModelModificationHandler activeHandler = null;
 
         private IWorkbenchPart partCache;
         
@@ -169,7 +169,7 @@ public final class DynamicMenuContributions {
                 wp = v.getViewContext().getSourceWorkbenchPart();
             }
             if (wp instanceof IWorkbenchPart) {
-                activeHandler = ModifyModelHandlerProvider.getInstance().getFittingHandler((IWorkbenchPart) wp);
+                activeHandler = ModelModificationHandlerProvider.getInstance().getFittingHandler((IWorkbenchPart) wp);
                 if (activeHandler != null) {
                     return activeHandler.getSelection((IWorkbenchPart)wp, (List<?>)context.getDefaultVariable());
                 }

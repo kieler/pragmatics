@@ -24,15 +24,14 @@ import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 
 import com.google.common.base.Function;
 
-import de.cau.cs.kieler.klighd.ui.modifymodel.KlighdModifyModelHandler;
+import de.cau.cs.kieler.klighd.ui.modifymodel.AbstractKlighdModelModificationHandler;
 
 /**
  * This class can handle the modification of xtext models.
  * 
  * @author ckru
- *
  */
-public class ModifyXtextModelHandler extends KlighdModifyModelHandler {
+public class XtextModelModificationHandler extends AbstractKlighdModelModificationHandler {
 
     /**
      * {@inheritDoc}
