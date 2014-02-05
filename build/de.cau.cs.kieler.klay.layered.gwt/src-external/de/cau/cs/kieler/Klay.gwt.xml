@@ -2,9 +2,13 @@
 <module>
 	<inherits name="com.google.gwt.user.User" />
 	<!-- Seems to contain code for StringTokenizer and Rectangle2D etc. -->
-	<inherits name="org.eclipse.emf.ecore.Ecore" />
+	<!-- <inherits name="org.eclipse.emf.ecore.Ecore" />-->
+	
 	<inherits name="com.google.common.collect.Collect" />
+	<inherits name="de.cau.cs.kieler.emul.Emulation" />
+	
 	<source path="core"/>
 	<source path="kiml"/>
 	<source path="klay"/>
+	
 </module>

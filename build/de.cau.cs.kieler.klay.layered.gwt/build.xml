@@ -109,7 +109,7 @@
 				<exclude name="**/*.txt" />
 				<!-- Retain the gwt xml file -->
 				<exclude name="**/Klay.gwt.xml" />
-				<exclude name="org/**" />
+				<exclude name="de/cau/cs/kieler/emul/**" />
 			</fileset>
 		</delete>
 	</target>
@@ -168,7 +168,7 @@
 				<fileset dir="${gwt.sdk}" includes="gwt-dev*.jar" />
 				<pathelement location="src" />
 				<pathelement location="src-external" />
-				<pathelement location="src-external/org/eclipse/emf/emul" />
+				<pathelement location="src-external/de/cau/cs/kieler/emul" />
 				<fileset dir="war/WEB-INF/lib" includes="**/*.jar" />
 				<pathelement location="${gwt.sdk}/validation-api-1.0.0.GA.jar" />
 				<pathelement location="${gwt.sdk}/validation-api-1.0.0.GA-sources.jar" />
