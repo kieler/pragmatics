@@ -18,7 +18,6 @@ import org.osgi.framework.BundleContext;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.kivi.KiVi;
 import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
 
 /**
@@ -50,7 +49,7 @@ public class KimlViewerPlugin extends AbstractUIPlugin {
         // register a listener for layout
         DiagramLayoutEngine.INSTANCE.addListener(new DiagramLayoutEngine.IListener() {
             public void layoutDone(final KNode layoutGraph, final IKielerProgressMonitor monitor) {
-                KiVi.getInstance().executeEffect(new UpdateViewerEffect(layoutGraph, monitor));
+                new UpdateViewerEffect(layoutGraph, monitor).execute();
             }
         });
     }
