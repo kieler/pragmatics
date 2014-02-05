@@ -92,6 +92,10 @@ import de.cau.cs.kieler.klay.layered.properties.LayerConstraint;
  */
 public class LayoutOptionResolver {
 
+
+    /** A set to assure that non-unique suffixes are only used once. */
+    private static final Set<String> suffixSet = Sets.newHashSet();
+    
     private static final Pair<Set<String>, Map<String, IProperty<?>>> STRING_TYPES = createTypesSet(
             ALGORITHM
             // klay
@@ -157,7 +161,7 @@ public class LayoutOptionResolver {
             POSITION
             // klay
             );
-
+    
     /**
      * Convenience method to create the id->type mappings of the layout options. 
      */
@@ -165,8 +169,19 @@ public class LayoutOptionResolver {
         Set<String> set = Sets.newHashSet();
         Map<String, IProperty<?>> map = Maps.newHashMap();
         for (IProperty<?> p : props) {
-            set.add(p.getId());
-            map.put(p.getId(), p);
+            String id = p.getId();
+            set.add(id);
+            map.put(id, p);
+            
+            // we also allow options to be selected by their suffix only
+            String suffix = id.substring(id.lastIndexOf(".") + 1, id.length());
+            if(!suffixSet.contains(suffix)) {
+                System.out.println(suffix);
+                set.add(suffix);
+                map.put(suffix, p);
+                // remember the suffix so that we don't use it twice
+                suffixSet.add(suffix);
+            }
         }
         
         Set<String> iset = ImmutableSet.copyOf(set);
@@ -262,38 +277,37 @@ public class LayoutOptionResolver {
             Enum<?> enumeration = null;
             
             try {
-                if (PORT_SIDE.getId().equals(id)) {
+                if (equalsIdOrSuffix(PORT_SIDE, id)) {
                     enumeration = PortSide.valueOf(enumValue);
-                } else if (ALIGNMENT.getId().equals(id)) {
+                } else if (equalsIdOrSuffix(ALIGNMENT, id)) {
                     enumeration = Alignment.valueOf(enumValue);
-                } else if (DIRECTION.getId().equals(id)) {
+                } else if (equalsIdOrSuffix(DIRECTION, id)) {
                     enumeration = Direction.valueOf(enumValue);
-                } else if (EDGE_ROUTING.getId().equals(id)) {
+                } else if (equalsIdOrSuffix(EDGE_ROUTING, id)) {
                     enumeration = EdgeRouting.valueOf(enumValue);
-                } else if (PORT_CONSTRAINTS.getId().equals(id)) {
+                } else if (equalsIdOrSuffix(PORT_CONSTRAINTS, id)) {
                     enumeration = PortConstraints.valueOf(enumValue);
-                } else if (PORT_LABEL_PLACEMENT.getId().equals(id)) {
+                } else if (equalsIdOrSuffix(PORT_LABEL_PLACEMENT, id)) {
                     enumeration = PortLabelPlacement.valueOf(enumValue);
                 }
                 // KLAY
-                else if (CYCLE_BREAKING.getId().equals(id)) {
+                else if (equalsIdOrSuffix(CYCLE_BREAKING, id)) {
                     enumeration = CycleBreakingStrategy.valueOf(enumValue);
-                } else if (NODE_LAYERING.getId().equals(id)) {
+                } else if (equalsIdOrSuffix(NODE_LAYERING, id)) {
                     enumeration = LayeringStrategy.valueOf(enumValue);
-                } else if (CROSS_MIN.getId().equals(id)) {
+                } else if (equalsIdOrSuffix(CROSS_MIN, id)) {
                     enumeration = CrossingMinimizationStrategy.valueOf(enumValue);
-                } else if (NODE_PLACER.getId().equals(id)) {
+                } else if (equalsIdOrSuffix(NODE_PLACER, id)) {
                     enumeration = NodePlacementStrategy.valueOf(enumValue);
-                } else if (FIXED_ALIGNMENT.getId().equals(id)) {
+                } else if (equalsIdOrSuffix(FIXED_ALIGNMENT, id)) {
                     enumeration = FixedAlignment.valueOf(enumValue);
-                } else if (EDGE_LABEL_SIDE.getId().equals(id)) {
+                } else if (equalsIdOrSuffix(EDGE_LABEL_SIDE, id)) {
                     enumeration = LabelSide.valueOf(enumValue);
-                } else if (LAYER_CONSTRAINT.getId().equals(id)) {
+                } else if (equalsIdOrSuffix(LAYER_CONSTRAINT, id)) {
                     enumeration = LayerConstraint.valueOf(enumValue);
                 }
                 
             } catch (Exception e) {
-                e.printStackTrace();
                 throw new UnsupportedGraphException("Invalid enum format for property '" + id
                         + "' (" + value + ").");
             }
@@ -328,19 +342,19 @@ public class LayoutOptionResolver {
                     continue;
                 }
                 
-                if (NODE_LABEL_PLACEMENT.getId().equals(id)) {
+                if (equalsIdOrSuffix(NODE_LABEL_PLACEMENT, id)) {
                     if(set == null) {
                         set = EnumSet.noneOf(NodeLabelPlacement.class);
                     }
                     set.add(NodeLabelPlacement.valueOf(component));
                     
-                } else if (SIZE_CONSTRAINT.getId().equals(id)) {
+                } else if (equalsIdOrSuffix(SIZE_CONSTRAINT, id)) {
                     if(set == null) {
                         set = EnumSet.noneOf(SizeConstraint.class);
                     }
                     set.add(NodeLabelPlacement.valueOf(component));
                     
-                } else if (SIZE_OPTIONS.getId().equals(id)) {
+                } else if (equalsIdOrSuffix(SIZE_OPTIONS, id)) {
                     if(set == null) {
                         set = EnumSet.noneOf(SizeOptions.class);
                     }
@@ -366,7 +380,7 @@ public class LayoutOptionResolver {
                         + "' (" + value + ").");
             }
 
-            if (POSITION.getId().equals(id)) {
+            if (equalsIdOrSuffix(POSITION, id)) {
 
                 try {
                     KVector v = new KVector();
@@ -384,6 +398,16 @@ public class LayoutOptionResolver {
         }
         
         throw new UnsupportedGraphException("Unsupported layout option '" + id + "' (" + value + ").");
+    }
+
+    /**
+     * @return true if the {@code prop}'s id or its suffix equal {@code idOrSuffix}.
+     */
+    private static boolean equalsIdOrSuffix(final IProperty<?> prop, final String idOrSuffix) {
+        return prop.getId().equals(idOrSuffix)
+                || (prop.getId().endsWith(idOrSuffix) && (idOrSuffix.length() == prop.getId()
+                        .length() || prop.getId().charAt(
+                        prop.getId().length() - idOrSuffix.length() - 1) == '.'));
     }
 
 }
