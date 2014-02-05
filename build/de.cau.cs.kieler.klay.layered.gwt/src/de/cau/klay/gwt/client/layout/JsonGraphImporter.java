@@ -529,13 +529,12 @@ public class JsonGraphImporter {
         edgeIdMap.put(id.stringValue(), edge);
         edgeJsonMap.put(edge, jEdge);
 
-        
-        // properties 
+        // properties
         transformProperties(jEdge, edge);
-        
+
         // labels
         transformLabels(jEdge, edge, graph);
-        
+
         // the following is not needed in case of compound graph handling, as source and target will
         // be set by calling function.
 
@@ -767,24 +766,13 @@ public class JsonGraphImporter {
             }
             JSONObject properties = val.isObject();
             for (String key : properties.keySet()) {
-                setOption(ele, key, properties.get(key).toString());
+                JSONValue theVal = properties.get(key);
+                // try to find the specified layout option and parse its value
+                LayoutOptionResolver.setOption(ele, key, theVal);
             }
         }
     }
 
-    /**
-     * Copied and adapted from {@link KimlUtil#setOption(KGraphData, String, String)}
-     */
-    public void setOption(final LGraphElement graphData, final String id, final String value) {
-        // LayoutDataService dataService = LayoutDataService.getInstance();
-        // LayoutOptionData optionData = dataService.getOptionData(id);
-        // if (optionData != null) {
-        // Object obj = optionData.parseValue(value);
-        // if (obj != null) {
-        // graphData.setProperty(optionData, obj);
-        // }
-        // }
-    }
 
     /*---------------------------------------------------------------------------------
      *                          Transfer the Layout back
