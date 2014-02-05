@@ -21,14 +21,6 @@
             name="Layout Time"
             restorable="true">
       </view>
-      <view
-            category="de.cau.cs.kieler.layout"
-            class="de.cau.cs.kieler.kiml.debug.views.SmartLayoutView"
-            icon="icons/smart.gif"
-            id="de.cau.cs.kieler.kiml.debug.smart"
-            name="Smart Layout"
-            restorable="true">
-      </view>
    </extension>
 
 </plugin>
