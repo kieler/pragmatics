@@ -176,7 +176,6 @@ public class LayoutOptionResolver {
             // we also allow options to be selected by their suffix only
             String suffix = id.substring(id.lastIndexOf(".") + 1, id.length());
             if(!suffixSet.contains(suffix)) {
-                System.out.println(suffix);
                 set.add(suffix);
                 map.put(suffix, p);
                 // remember the suffix so that we don't use it twice
