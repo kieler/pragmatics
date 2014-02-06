@@ -15,11 +15,8 @@ package de.cau.klay.gwt.client.layout;
 
 import java.util.EnumSet;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.gwt.json.client.JSONArray;
@@ -31,6 +28,8 @@ import com.google.gwt.json.client.JSONValue;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.UnsupportedGraphException;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
@@ -62,6 +61,8 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  */
 public class JsonGraphImporter {
 
+    private static final IProperty<JSONObject> JSON_OBJECT = new Property<JSONObject>("jsonObject");
+    
     private Map<String, LNode> nodeIdMap = Maps.newHashMap();
     private Map<String, LEdge> edgeIdMap = Maps.newHashMap();
     private Map<String, LPort> portIdMap = Maps.newHashMap();
@@ -76,12 +77,8 @@ public class JsonGraphImporter {
     // hence, after layout the mappings are invalid.
     
     /** Holds for each compound node the {@link LGraph} created for a json node. */
-    private BiMap<JSONObject, LGraph> jsonLGraphMap = HashBiMap.create();
-    /** Holds for an {@link LShape} the parent {@link LGraph}. */
-    private Map<LShape, LGraph> shapeParentGraphMap = Maps.newHashMap();
-    /** Holds for an {@link LEdge} the parent {@link LGraph}. */
-    private Map<LEdge, LGraph> edgeParengGraphMap = Maps.newHashMap();
-    
+    private Map<JSONObject, LGraph> jsonLGraphMap = Maps.newHashMap();
+
     /**
      * We will create multiple {@link LGraph} instances, hence we have to employ our own counter to
      * ensure unique hash codes.
@@ -112,8 +109,10 @@ public class JsonGraphImporter {
         
 
         // transfer the layout information back to the json objects
+        // root graph's dimensions
         transferLayout(result, json);
-        transferLayout();
+        // positions and dimension of all other elements
+        transferLayout(result, new KVector());
 
     }
     
@@ -122,15 +121,14 @@ public class JsonGraphImporter {
         for (LNode n : graph.getLayerlessNodes()) {
             LGraph childGraph = n.getProperty(Properties.CHILD_LGRAPH);
             if (childGraph != null) {
-                recLayout(layered, childGraph);
+                LGraph res = recLayout(layered, childGraph);
+                
+                n.getSize().x = res.getSize().x;
+                n.getSize().y = res.getSize().y;
             }
         }
         
         LGraph layouted = layered.doLayout(graph, new BasicProgressMonitor());
-        // apply new dimension to the json compound node
-        // Important to _not_ take the 'layouted' graph here, it has a different hashcode
-        // TODO why?
-        transferLayout(layouted, jsonLGraphMap.inverse().get(graph));
         
         return layouted;
     }
@@ -146,8 +144,6 @@ public class JsonGraphImporter {
         labelJsonMap.clear();
         
         jsonLGraphMap.clear();
-        shapeParentGraphMap.clear();
-        edgeParengGraphMap.clear();
         
         hashCodeCounter = new HashCodeCounter();
         globalOptions = null;
@@ -195,7 +191,7 @@ public class JsonGraphImporter {
 
         // create a new graph instance
         LGraph graph = new LGraph(hashCodeCounter);
-       
+        graph.setProperty(JSON_OBJECT, jparent);
         jsonLGraphMap.put(jparent, graph);
         
         if(parentNode != null) {
@@ -272,7 +268,6 @@ public class JsonGraphImporter {
         JSONString id = (JSONString) jNode.get("id");
         nodeIdMap.put(id.stringValue(), node);
         nodeJsonMap.put(node, jNode);
-        shapeParentGraphMap.put(node, graph);
 
         // dimensions
         transformDimensions(jNode, node);
@@ -353,7 +348,6 @@ public class JsonGraphImporter {
         JSONString id = (JSONString) jPort.get("id");
         portIdMap.put(id.stringValue(), port);
         portJsonMap.put(port, jPort);
-        shapeParentGraphMap.put(port, graph);
 
         // dimensions
         transformDimensions(jPort, port);
@@ -459,7 +453,6 @@ public class JsonGraphImporter {
         String text = val.isString().stringValue();
         LLabel label = new LLabel(graph, text);
         labelJsonMap.put(label, jLabel);
-        shapeParentGraphMap.put(label, graph);
 
         // properties
         transformProperties(jLabel, label);
@@ -596,7 +589,6 @@ public class JsonGraphImporter {
         JSONString id = (JSONString) jEdge.get("id");
         edgeIdMap.put(id.stringValue(), edge);
         edgeJsonMap.put(edge, jEdge);
-        edgeParengGraphMap.put(edge, graph);
         
         // properties
         transformProperties(jEdge, edge);
@@ -740,27 +732,54 @@ public class JsonGraphImporter {
      *                          Transfer the Layout back
      */
 
-    public void transferLayout() {
-        // nodes
-        for (Entry<LNode, JSONObject> e : nodeJsonMap.entrySet()) {
-            transferLayout(e.getKey(), e.getValue());
-        }
+    public void transferLayout(final LGraph parentGraph, KVector parentOffset) {
 
-        // edges
-        for (Entry<LEdge, JSONObject> e : edgeJsonMap.entrySet()) {
-            transferLayout(e.getKey(), e.getValue());
-        }
+        for (LNode n : parentGraph.getLayerlessNodes()) {
+            JSONObject jNode = nodeJsonMap.get(n);
+            KVector newOffset = KVector.sum(parentOffset, parentGraph.getOffset());
 
-        // ports
-        for (Entry<LPort, JSONObject> e : portJsonMap.entrySet()) {
-            transferLayout(e.getKey(), e.getValue());
-        }
+            transferLayout(n, jNode, newOffset);
 
-        // labels
-        for (Entry<LLabel, JSONObject> e : labelJsonMap.entrySet()) {
-            transferLayout(e.getKey(), e.getValue());
-        }
+            // ports
+            for (LPort p : n.getPorts()) {
+                JSONObject jPort = portJsonMap.get(p);
+                if (jPort != null) {
+                    // dummy ports for port-less edges are not contained in the map
+                    transferLayout(p, jPort, newOffset);
+                }
 
+                // labels
+                for (LLabel l : p.getLabels()) {
+                    JSONObject jLabel = labelJsonMap.get(l);
+                    transferLayout(l, jLabel, newOffset);
+                }
+            }
+
+            // labels
+            for (LLabel l : n.getLabels()) {
+                JSONObject jLabel = labelJsonMap.get(l);
+                transferLayout(l, jLabel, newOffset);
+            }
+
+            // edges
+            for (LEdge e : n.getOutgoingEdges()) {
+                JSONObject jEdge = edgeJsonMap.get(e);
+                transferLayout(e, jEdge, newOffset);
+
+                // labels
+                for (LLabel l : e.getLabels()) {
+                    JSONObject jLabel = labelJsonMap.get(l);
+                    transferLayout(l, jLabel, newOffset);
+                }
+
+            }
+
+            // recursively
+            LGraph childGraph = n.getProperty(Properties.CHILD_LGRAPH);
+            if (childGraph != null) {
+                transferLayout(childGraph, newOffset);
+            }
+        }
     }
 
     private void transferLayout(LGraph graph, JSONObject json) {
@@ -771,12 +790,12 @@ public class JsonGraphImporter {
         json.put("height", height);
     }
 
-    private void transferLayout(LShape shape, JSONObject json) {
-        KVector offset = shapeParentGraphMap.get(shape).getOffset();
-        
-        // no offset for ports
-        if (shape instanceof LPort){
-            offset = new KVector();
+    private void transferLayout(LShape shape, JSONObject json, final KVector parentOffset) {
+        KVector offset = new KVector();
+
+        // offset is only used for nodes
+        if (shape instanceof LNode){
+            offset = parentOffset;
         }
 
         JSONNumber x = new JSONNumber(shape.getPosition().x + offset.x);
@@ -792,9 +811,7 @@ public class JsonGraphImporter {
         json.put("height", height);
     }
 
-    private void transferLayout(final LEdge edge, final JSONObject json) {
-
-        KVector offset = edgeParengGraphMap.get(edge).getOffset();
+    private void transferLayout(final LEdge edge, final JSONObject json, KVector offset) {
 
         // Source Point
         KVector src = edge.getSource().getAbsoluteAnchor().translate(offset.x, offset.y);
