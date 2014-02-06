@@ -70,10 +70,13 @@ public class JsonGraphImporter {
     private Map<LEdge, JSONObject> edgeJsonMap = Maps.newHashMap();
     private Map<LPort, JSONObject> portJsonMap = Maps.newHashMap();
     private Map<LLabel, JSONObject> labelJsonMap = Maps.newHashMap();
+
+    // Remark: the following maps can only be used during the transformation
+    // process as new LGraphs may be created during the layout process,
+    // hence, after layout the mappings are invalid.
     
     /** Holds for each compound node the {@link LGraph} created for a json node. */
     private BiMap<JSONObject, LGraph> jsonLGraphMap = HashBiMap.create();
-    
     /** Holds for an {@link LShape} the parent {@link LGraph}. */
     private Map<LShape, LGraph> shapeParentGraphMap = Maps.newHashMap();
     /** Holds for an {@link LEdge} the parent {@link LGraph}. */
@@ -92,7 +95,7 @@ public class JsonGraphImporter {
 
         // perform layer-based layout
         KlayLayered klayLayered = new KlayLayered();
-        //LGraph result = klayLayered.doLayout(graph, new BasicProgressMonitor());
+        // LGraph result = klayLayered.doLayout(graph, new BasicProgressMonitor());
         LGraph result = recLayout(klayLayered, graph);
         
 
@@ -102,9 +105,9 @@ public class JsonGraphImporter {
 
     }
     
-    private LGraph recLayout(KlayLayered layered, LGraph graph) {
+    private LGraph recLayout(final KlayLayered layered, final LGraph graph) {
         
-        for(LNode n : graph.getLayerlessNodes()) {
+        for (LNode n : graph.getLayerlessNodes()) {
             LGraph childGraph = n.getProperty(Properties.CHILD_LGRAPH);
             if (childGraph != null) {
                 recLayout(layered, childGraph);
@@ -180,18 +183,17 @@ public class JsonGraphImporter {
         // create a new graph instance
         LGraph graph = new LGraph(hashCodeCounter);
        
-        System.out.println("Putting " + jparent + " " + graph);
         jsonLGraphMap.put(jparent, graph);
         
-        if(parentNode == null) {
-            // properties -> on root level the layout options
-            // if we are not on root level, the properties are already transformed
-            // for the node itself
-            transformProperties(jparent, graph);
-        } else {
+        if(parentNode != null) {
             // set this LGraph as child of the parent LNode
             parentNode.setProperty(Properties.CHILD_LGRAPH, graph);
         }
+        
+        // TODO have global layout options applied here 
+        
+        // properties on a certain node serve as layout options for this graph
+        transformProperties(jparent, graph);
 
         // the graph properties discovered during the transformations
         EnumSet<GraphProperties>  graphProperties = EnumSet.noneOf(GraphProperties.class);
@@ -750,6 +752,9 @@ public class JsonGraphImporter {
 
     private void transferLayout(LShape shape, JSONObject json) {
         KVector offset = shapeParentGraphMap.get(shape).getOffset();
+        
+        if(shape instanceof LPort)
+        offset=new KVector();
 
         JSONNumber x = new JSONNumber(shape.getPosition().x + offset.x);
         json.put("x", x);

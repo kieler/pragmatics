@@ -59,7 +59,8 @@
 			    id: "root", 
 			    properties: {
 			    	spacing: 100,
-			    	edgeRouting: "ORTHOGONAL"
+			    	edgeRouting: "ORTHOGONAL",
+			    	separateConnComp: false
 			    },
 			    children: [{
 			        id: "n1", 
@@ -71,6 +72,11 @@
 			        labels: [ { text: "n2" } ],
 			        width: 100,
 			        height: 50,
+			        properties: {
+				    	spacing: 100,
+				    	edgeRouting: "ORTHOGONAL",
+				    	separateConnComp: false
+			        },
 			        ports: [{
 			            id: "n2_p1",
 			            width: 10,
