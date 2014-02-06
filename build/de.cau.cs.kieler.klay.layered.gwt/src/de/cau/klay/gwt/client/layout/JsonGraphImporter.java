@@ -88,8 +88,20 @@ public class JsonGraphImporter {
      */
     private HashCodeCounter hashCodeCounter = new HashCodeCounter();
 
-    public void layout(JSONObject json) {
+    private JSONObject globalOptions = null;
+    
+    
+    /**
+     * 
+     * @param json
+     * @param options
+     *  can be null
+     */
+    public void layout(JSONObject json, JSONObject options) {
 
+        // global layout options
+        globalOptions = options;
+        
         // transform JSON -> LGraph
         LGraph graph = transform(json);
 
@@ -138,6 +150,7 @@ public class JsonGraphImporter {
         edgeParengGraphMap.clear();
         
         hashCodeCounter = new HashCodeCounter();
+        globalOptions = null;
     }
 
     /*---------------------------------------------------------------------------------
@@ -190,7 +203,10 @@ public class JsonGraphImporter {
             parentNode.setProperty(Properties.CHILD_LGRAPH, graph);
         }
         
-        // TODO have global layout options applied here 
+        // global layout options are applied first, hence possibly overwritten
+        if (globalOptions != null) {
+            transformPropertiesObj(globalOptions, graph);
+        }
         
         // properties on a certain node serve as layout options for this graph
         transformProperties(jparent, graph);
@@ -698,14 +714,19 @@ public class JsonGraphImporter {
      * Transforms the properties of an element, using the {@link LayoutOptionResolver} for the 
      * id->type mapping. 
      */
-    private void transformProperties(JSONObject jsonEle, LGraphElement ele) {
+    private void transformProperties(final JSONObject jsonEle, final LGraphElement ele) {
         if (jsonEle.containsKey("properties")) {
             JSONValue val = jsonEle.get("properties");
             if (val.isObject() == null) {
                 throw new UnsupportedGraphException(
                         "The 'properties' property of a graph element must be an object.");
             }
-            JSONObject properties = val.isObject();
+            transformPropertiesObj(val.isObject(), ele);
+        }
+    }
+    
+    private void transformPropertiesObj(JSONObject properties, LGraphElement ele) {
+        if (properties != null) {
             for (String key : properties.keySet()) {
                 JSONValue theVal = properties.get(key);
                 // try to find the specified layout option and parse its value
@@ -753,8 +774,10 @@ public class JsonGraphImporter {
     private void transferLayout(LShape shape, JSONObject json) {
         KVector offset = shapeParentGraphMap.get(shape).getOffset();
         
-        if(shape instanceof LPort)
-        offset=new KVector();
+        // no offset for ports
+        if (shape instanceof LPort){
+            offset = new KVector();
+        }
 
         JSONNumber x = new JSONNumber(shape.getPosition().x + offset.x);
         json.put("x", x);
@@ -797,7 +820,28 @@ public class JsonGraphImporter {
             jv.put("y", new JSONNumber(v.y));
             bends.set(index++, jv);
         }
-        json.put("bendPoints", bends);
+        if (!vc.isEmpty()) {
+            json.put("bendPoints", bends);
+        } else {
+            json.put("bendPoints", null);
+        }
+        
+        // Junction Points
+        KVectorChain junctionPoints = edge.getProperty(LayoutOptions.JUNCTION_POINTS);
+        index = 0;
+        if (junctionPoints != null) {
+            junctionPoints.translate(offset);
+            JSONArray junctions = new JSONArray();
+            for (KVector v : junctionPoints) {
+                JSONObject jv = new JSONObject();
+                jv.put("x", new JSONNumber(v.x));
+                jv.put("y", new JSONNumber(v.y));
+                junctions.set(index++, jv);
+            }
+            json.put("junctionPoints", junctions);
+        } else {
+            json.put("junctionPoints", null);
+        }
     }
 
     /*---------------------------------------------------------------------------------

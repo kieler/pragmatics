@@ -64,6 +64,7 @@ public class KlayGWT implements EntryPoint {
         JSONValue graph = obj.get("graph");
         JSONValue success = obj.get("success");
         JSONValue error = obj.get("error");
+        JSONValue opts = obj.get("options");
         
         try {
             if (graph == null || success == null || graph.isObject() == null
@@ -73,7 +74,7 @@ public class KlayGWT implements EntryPoint {
             }
 
             // convert to lgraph and layout
-            new JsonGraphImporter().layout(graph.isObject());
+            new JsonGraphImporter().layout(graph.isObject(), opts != null ? opts.isObject() : null);
 
             // pass the layouted graph to the callback
             JavaScriptObject result = graph.isObject().getJavaScriptObject();
