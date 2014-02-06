@@ -18,6 +18,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.gwt.json.client.JSONArray;
@@ -39,6 +41,7 @@ import de.cau.cs.kieler.klay.layered.KlayLayered;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
+import de.cau.cs.kieler.klay.layered.graph.LGraphElement.HashCodeCounter;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -69,12 +72,18 @@ public class JsonGraphImporter {
     private Map<LLabel, JSONObject> labelJsonMap = Maps.newHashMap();
     
     /** Holds for each compound node the {@link LGraph} created for a json node. */
-    private Map<JSONObject, LGraph> jsonLGraphMap = Maps.newHashMap();
+    private BiMap<JSONObject, LGraph> jsonLGraphMap = HashBiMap.create();
     
     /** Holds for an {@link LShape} the parent {@link LGraph}. */
     private Map<LShape, LGraph> shapeParentGraphMap = Maps.newHashMap();
     /** Holds for an {@link LEdge} the parent {@link LGraph}. */
     private Map<LEdge, LGraph> edgeParengGraphMap = Maps.newHashMap();
+    
+    /**
+     * We will create multiple {@link LGraph} instances, hence we have to employ our own counter to
+     * ensure unique hash codes.
+     */
+    private HashCodeCounter hashCodeCounter = new HashCodeCounter();
 
     public void layout(JSONObject json) {
 
@@ -83,12 +92,32 @@ public class JsonGraphImporter {
 
         // perform layer-based layout
         KlayLayered klayLayered = new KlayLayered();
-        LGraph result = klayLayered.doLayout(graph, new BasicProgressMonitor());
+        //LGraph result = klayLayered.doLayout(graph, new BasicProgressMonitor());
+        LGraph result = recLayout(klayLayered, graph);
+        
 
         // transfer the layout information back to the json objects
         transferLayout(result, json);
         transferLayout();
 
+    }
+    
+    private LGraph recLayout(KlayLayered layered, LGraph graph) {
+        
+        for(LNode n : graph.getLayerlessNodes()) {
+            LGraph childGraph = n.getProperty(Properties.CHILD_LGRAPH);
+            if (childGraph != null) {
+                recLayout(layered, childGraph);
+            }
+        }
+        
+        LGraph layouted = layered.doLayout(graph, new BasicProgressMonitor());
+        // apply new dimension to the json compound node
+        // Important to _not_ take the 'layouted' graph here, it has a different hashcode
+        // TODO why?
+        transferLayout(layouted, jsonLGraphMap.inverse().get(graph));
+        
+        return layouted;
     }
 
     private void reset() {
@@ -104,6 +133,8 @@ public class JsonGraphImporter {
         jsonLGraphMap.clear();
         shapeParentGraphMap.clear();
         edgeParengGraphMap.clear();
+        
+        hashCodeCounter = new HashCodeCounter();
     }
 
     /*---------------------------------------------------------------------------------
@@ -147,7 +178,9 @@ public class JsonGraphImporter {
     private LGraph transformNodes(JSONObject jparent, LNode parentNode) {
 
         // create a new graph instance
-        LGraph graph = new LGraph();
+        LGraph graph = new LGraph(hashCodeCounter);
+       
+        System.out.println("Putting " + jparent + " " + graph);
         jsonLGraphMap.put(jparent, graph);
         
         if(parentNode == null) {
@@ -192,7 +225,8 @@ public class JsonGraphImporter {
                 JSONObject jChild = children.get(i).isObject();
                 LNode childNode = childNodes[i];
                 // ignore the child's contents if NO_LAYOUT option is set
-                if (!childNode.getProperty(LayoutOptions.NO_LAYOUT)) {
+                if (jChild.containsKey("children") && 
+                        !childNode.getProperty(LayoutOptions.NO_LAYOUT)) {
                     transformNodes(jChild, childNode);
                 }
             }  
