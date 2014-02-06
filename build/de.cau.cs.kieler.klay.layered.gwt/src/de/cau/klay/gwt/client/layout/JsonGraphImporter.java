@@ -16,6 +16,7 @@ package de.cau.klay.gwt.client.layout;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
@@ -30,6 +31,7 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.UnsupportedGraphException;
 import de.cau.cs.kieler.kiml.options.Direction;
+import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -42,12 +44,16 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LShape;
 import de.cau.cs.kieler.klay.layered.importexport.ImportUtil;
+import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
- * Transforms our JSON Graph format into an LGraph.
+ * Transforms our JSON Graph format into an LGraph. The LGraph will contain hierarchy, i.e
+ * {@link Properties#CHILD_LGRAPH}s reference the child graphs of compound {@link LNode}s.
+ * Furthermore the graph can contain cross hierarchy edges, where the source {@link LNode} of an
+ * edge has a different parent than the target {@link LNode} of this edge.
  * 
  * @author uru
  */
@@ -61,9 +67,14 @@ public class JsonGraphImporter {
     private Map<LEdge, JSONObject> edgeJsonMap = Maps.newHashMap();
     private Map<LPort, JSONObject> portJsonMap = Maps.newHashMap();
     private Map<LLabel, JSONObject> labelJsonMap = Maps.newHashMap();
-
-    private LGraph graph;
-    private EnumSet<GraphProperties> graphProperties;
+    
+    /** Holds for each compound node the {@link LGraph} created for a json node. */
+    private Map<JSONObject, LGraph> jsonLGraphMap = Maps.newHashMap();
+    
+    /** Holds for an {@link LShape} the parent {@link LGraph}. */
+    private Map<LShape, LGraph> shapeParentGraphMap = Maps.newHashMap();
+    /** Holds for an {@link LEdge} the parent {@link LGraph}. */
+    private Map<LEdge, LGraph> edgeParengGraphMap = Maps.newHashMap();
 
     public void layout(JSONObject json) {
 
@@ -89,6 +100,10 @@ public class JsonGraphImporter {
         edgeJsonMap.clear();
         portJsonMap.clear();
         labelJsonMap.clear();
+        
+        jsonLGraphMap.clear();
+        shapeParentGraphMap.clear();
+        edgeParengGraphMap.clear();
     }
 
     /*---------------------------------------------------------------------------------
@@ -99,180 +114,104 @@ public class JsonGraphImporter {
 
         reset();
 
-        // create a new graph instance
-        graph = new LGraph();
+        // first we transform all nodes of all hierarchy levels
+        // this includes existing ports and labels
+        LGraph rootGraph = transformNodes(json, null);
 
-        // the graph properties discovered during the transformations
-        graphProperties = EnumSet.noneOf(GraphProperties.class);
-        graph.setProperty(Properties.GRAPH_PROPERTIES, graphProperties);
+        // then transform all edges
+        // we have to do this after the node transformations
+        // as cross hierarchy edges are possible and we have to assure that
+        // all source and target nodes already exist
+        // for port-less edges, new ports will be created
+        transformEdges(json, rootGraph);
+        
 
-        // properties -> on root level the layout options
-        transformProperties(json, graph);
-
-        // transform nodes
-        transformNodes(json, null, graph);
-
-        // transform edges
-        transformEdges(json, graph);
-
-        return graph;
+        return rootGraph;
     }
 
     /**
-     * We expect the parentNode to be transformed already
+     * Transforms the passed node in JSON format into an 'flat' {@link LGraph}. This is, for each
+     * json node in the 'children' array, an {@link LNode} will be added to the newly created
+     * {@link LGraph}. To support hierarchy, this method is called recursively after all json
+     * children have been transformed to {@link LNode}s with the respective {@link LNode} as
+     * {@code parentNode}. The {@link LGraph} that is created for the child node will be added to
+     * the {@code parentNode} via the {@link Properties#CHILD_LGRAPH} property.
      * 
+     * @param jparent
+     *            a node in JSON format
+     * @param parentNode
+     *            either {@code null} for the root level, or the corresponding {@link LNode} for the
+     *            {@code jparent}
+     * @return the {@link LGraph} created for the current hierarchy level.
      */
-    private void transformNodes(JSONObject parent, LNode parentNode, LGraph layeredGraph) {
+    private LGraph transformNodes(JSONObject jparent, LNode parentNode) {
 
-        // Set<GraphProperties> graphProperties =
-        // layeredGraph.getProperty(Properties.GRAPH_PROPERTIES);
-        // List<LNode> layeredNodes = layeredGraph.getLayerlessNodes();
-        //
-        // KVector layoutNodeSize = new KVector(parentNode.getSize().x,
-        // parentNode.getSize().y);
-        //
-        // // Find out whether there are external ports or ports with multiple incident
-        // // edges that need to be considered
-        // List<LPort> ports = parentNode.getPorts();
-        // for (LPort kport : ports) {
-        // int hierarchicalEdges = 0;
-        //
-        // for (LEdge kedge : kport.getConnectedEdges()) {
-        // if (parentNode.equals(kedge.getSource().getNode())
-        // || parentNode.equals(kedge.getTarget().getNode())) {
-        // hierarchicalEdges++;
-        // }
-        // }
-        //
-        // if (hierarchicalEdges > 0) {
-        // graphProperties.add(GraphProperties.EXTERNAL_PORTS);
-        // }
-        //
-        // if (hierarchicalEdges > 1) {
-        // graphProperties.add(GraphProperties.HYPEREDGES);
-        // }
-        // }
-        //
-        // // Transform the external ports
-        // Direction direction = layeredGraph.getProperty(LayoutOptions.DIRECTION);
-        // if (direction == Direction.UNDEFINED) {
-        // // The default direction is right
-        // direction = Direction.RIGHT;
-        // }
-        // if (graphProperties.contains(GraphProperties.EXTERNAL_PORTS)) {
-        // for (LPort kport : ports) {
-        // transformExternalPort(kport, layeredNodes, graph, layoutNodeSize,
-        // direction);
-        // }
-        // }
+        // create a new graph instance
+        LGraph graph = new LGraph();
+        jsonLGraphMap.put(jparent, graph);
+        
+        if(parentNode == null) {
+            // properties -> on root level the layout options
+            // if we are not on root level, the properties are already transformed
+            // for the node itself
+            transformProperties(jparent, graph);
+        } else {
+            // set this LGraph as child of the parent LNode
+            parentNode.setProperty(Properties.CHILD_LGRAPH, graph);
+        }
 
-        // Now transform the node's children
-        if (parent.containsKey("children")) {
-            JSONValue val = parent.get("children");
+        // the graph properties discovered during the transformations
+        EnumSet<GraphProperties>  graphProperties = EnumSet.noneOf(GraphProperties.class);
+        graph.setProperty(Properties.GRAPH_PROPERTIES, graphProperties);
+
+        // try to get the 'children' array from the json node
+        
+        if (jparent.containsKey("children")) {
+            JSONValue val = jparent.get("children");
             if (val.isArray() == null) {
                 throw new UnsupportedGraphException(
                         "The 'children' property of nodes must be an array.");
             }
-            JSONArray nodes = val.isArray();
-            for (int i = 0; i < nodes.size(); ++i) {
-                if (nodes.get(i) instanceof JSONObject) {
-                    transformNode((JSONObject) nodes.get(i), layeredGraph);
+            JSONArray children = val.isArray();
+            
+            // transform all child nodes
+            LNode[] childNodes = new LNode[children.size()];
+            for (int i = 0; i < children.size(); ++i) {
+                JSONValue childVal = children.get(i);
+                if (childVal.isObject() == null) {
+                    throw new UnsupportedGraphException(
+                            "A 'children' array contains a non-object node element.");
                 }
+                LNode child = transformNode(childVal.isObject(), graph);
+                childNodes[i] = child;
             }
+            
+            // after this graph layer has been processed, transform the children of this layer's children
+            for(int i = 0; i < children.size(); ++i) {
+                // we don't have to check the json here, was checked during previous for loop
+                JSONObject jChild = children.get(i).isObject();
+                LNode childNode = childNodes[i];
+                // ignore the child's contents if NO_LAYOUT option is set
+                if (!childNode.getProperty(LayoutOptions.NO_LAYOUT)) {
+                    transformNodes(jChild, childNode);
+                }
+            }  
         }
 
-        //
-        // for (KNode child : graph.getChildren()) {
-        // if (!child.getData(KShapeLayout.class).getProperty(LayoutOptions.NO_LAYOUT)) {
-        // transformNode(child, layeredNodes, elemMap, graphProperties, direction);
-        // }
-        // }
-
+        return graph;
     }
-
+    
     /**
-     * Transforms the given external port into a dummy node.
+     * Transforms a single node in JSON format to an {@link LNode} and adds it to 
+     * the layerless nodes of the {@link LGraph}. 
+     *
+     * This includes: dimensions, properties, ports, labels 
      */
-    private void transformExternalPort(final LPort lport, final LNode parentNode,
-            final LGraph graph, final KVector layoutNodeSize) {
-
-        // KShapeLayout graphLayout = graph.getData(KShapeLayout.class);
-        // KShapeLayout knodeLayout = kport.getNode().getData(KShapeLayout.class);
-        // KShapeLayout kportLayout = kport.getData(KShapeLayout.class);
-
-        // TODO
-
-        // Calculate the position of the port's center
-        // KVector kportPosition = new KVector(lport.getPosition().x + lport.getSize().x / 2.0,
-        // lport.getPosition().y + lport.getSize().y / 2.0);
-        //
-        // // Count the number of incoming and outgoing edges
-        // int inEdges = 0, outEdges = 0;
-        // for (LEdge edge : lport.getConnectedEdges()) {
-        // if (edge.getSourcePort() == kport && edge.getTarget().getParent() == graph) {
-        // outEdges++;
-        // }
-        // if (edge.getTargetPort() == kport && edge.getSource().getParent() == graph) {
-        // inEdges++;
-        // }
-        // }
-        //
-        // // Create dummy
-        // KShapeLayout portLayout = kport.getData(KShapeLayout.class);
-        // PortSide portSide = portLayout.getProperty(LayoutOptions.PORT_SIDE);
-        // Float offset = portLayout.getProperty(LayoutOptions.OFFSET);
-        // PortConstraints portConstraints =
-        // graphLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS);
-        //
-        // if (portSide == PortSide.UNDEFINED) {
-        // portSide = KimlUtil.calcPortSide(kport, direction);
-        // portLayout.setProperty(LayoutOptions.PORT_SIDE, portSide);
-        // }
-        //
-        // if (offset == null) {
-        // // if port coordinates are (0,0), we default to port offset 0 to make the common case
-        // // frustration-free
-        // if (portLayout.getXpos() == 0.0f && portLayout.getYpos() == 0.0f) {
-        // offset = 0.0f;
-        // } else {
-        // offset = KimlUtil.calcPortOffset(kport, portSide);
-        // }
-        // portLayout.setProperty(LayoutOptions.OFFSET, offset);
-        // }
-        //
-        // LNode dummy = ImportUtil.createExternalPortDummy(
-        // kportLayout, portConstraints, portSide, inEdges - outEdges, layoutNodeSize,
-        // kportPosition, new KVector(kportLayout.getWidth(), kportLayout.getHeight()),
-        // direction, layeredGraph);
-        // dummy.setProperty(Properties.ORIGIN, kport);
-        //
-        // // If the compound node wants to have its port labels placed on the inside, we need to
-        // leave
-        // // enough space for them by creating an LLabel for the KLabels
-        // if (knodeLayout.getProperty(LayoutOptions.PORT_LABEL_PLACEMENT) ==
-        // PortLabelPlacement.INSIDE) {
-        // LPort dummyPort = dummy.getPorts().get(0);
-        // dummy.setProperty(LayoutOptions.PORT_LABEL_PLACEMENT, PortLabelPlacement.OUTSIDE);
-        // for (KLabel klabel : kport.getLabels()) {
-        // KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
-        //
-        // LLabel newLabel = new LLabel(layeredGraph, klabel.getText());
-        // newLabel.setProperty(Properties.ORIGIN, klabel);
-        // newLabel.getSize().x = labelLayout.getWidth();
-        // newLabel.getSize().y = labelLayout.getHeight();
-        // newLabel.getPosition().x = labelLayout.getXpos();
-        // newLabel.getPosition().y = labelLayout.getYpos();
-        // dummyPort.getLabels().add(newLabel);
-        // }
-        // }
-        //
-        // layeredNodes.add(dummy);
-        // elemMap.put(kport, dummy);
-    }
-
-    private void transformNode(JSONObject jNode, LGraph graph) {
+    private LNode transformNode(JSONObject jNode, LGraph graph) {
 
         checkForId(jNode);
+        Set<GraphProperties> graphProperties = 
+                graph.getProperty(Properties.GRAPH_PROPERTIES);
 
         LNode node = new LNode(graph);
         graph.getLayerlessNodes().add(node);
@@ -281,6 +220,7 @@ public class JsonGraphImporter {
         JSONString id = (JSONString) jNode.get("id");
         nodeIdMap.put(id.stringValue(), node);
         nodeJsonMap.put(node, jNode);
+        shapeParentGraphMap.put(node, graph);
 
         // dimensions
         transformDimensions(jNode, node);
@@ -307,19 +247,6 @@ public class JsonGraphImporter {
         // labels
         transformLabels(jNode, node, graph);
 
-        // KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-        //
-        // // add a new node to the layered graph, copying its position
-        // LNode newNode = new LNode(layeredGraph);
-        // newNode.setProperty(Properties.ORIGIN, node);
-        // newNode.getSize().x = nodeLayout.getWidth();
-        // newNode.getSize().y = nodeLayout.getHeight();
-        // newNode.getPosition().x = nodeLayout.getXpos();
-        // newNode.getPosition().y = nodeLayout.getYpos();
-        //
-        // layeredNodes.add(newNode);
-        // elemMap.put(node, newNode);
-        //
         // check if the node is a compound node in the original graph
         if (jNode.containsKey("children") && jNode.get("children").isArray().size() > 0) {
             node.setProperty(Properties.COMPOUND_NODE, true);
@@ -334,26 +261,6 @@ public class JsonGraphImporter {
             graphProperties.add(GraphProperties.NON_FREE_PORTS);
         }
 
-        // transform the ports
-        for (LPort lport : node.getPorts()) {
-
-        }
-
-        // add the node's labels
-        // TODO
-        // for (KLabel klabel : node.getLabels()) {
-        // KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
-        // if (!labelLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
-        // LLabel newLabel = new LLabel(layeredGraph, klabel.getText());
-        // newLabel.setProperty(Properties.ORIGIN, klabel);
-        // newLabel.getSize().x = labelLayout.getWidth();
-        // newLabel.getSize().y = labelLayout.getHeight();
-        // newLabel.getPosition().x = labelLayout.getXpos();
-        // newLabel.getPosition().y = labelLayout.getYpos();
-        // newNode.getLabels().add(newLabel);
-        // }
-        // }
-
         if (node.getProperty(LayoutOptions.COMMENT_BOX)) {
             graphProperties.add(GraphProperties.COMMENTS);
         }
@@ -364,11 +271,21 @@ public class JsonGraphImporter {
             graphProperties.add(GraphProperties.HYPEREDGES);
             node.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FREE);
         }
+        
+        return node;
     }
 
+    /**
+     * Transforms a single port in JSON format to an {@link LPort} and adds it to the
+     * passed {@link LNode} {@code node}.
+     * 
+     * This includes: dimensions, properties, labels
+     */
     private void transformPort(final JSONObject jPort, final LNode node, final LGraph graph) {
 
         checkForId(jPort);
+        Set<GraphProperties> graphProperties = 
+                graph.getProperty(Properties.GRAPH_PROPERTIES);
 
         // should we include this port into the layout?
         String noLayoutId = LayoutOptions.NO_LAYOUT.getId();
@@ -384,6 +301,7 @@ public class JsonGraphImporter {
         JSONString id = (JSONString) jPort.get("id");
         portIdMap.put(id.stringValue(), port);
         portJsonMap.put(port, jPort);
+        shapeParentGraphMap.put(port, graph);
 
         // dimensions
         transformDimensions(jPort, port);
@@ -396,14 +314,9 @@ public class JsonGraphImporter {
 
         // collect information on the structure of the graph
 
-        // find out if there are hyperedges, that is a set of edges connected to the same port
-        if (Iterables.size(port.getConnectedEdges()) > 1) {
-            // FIXME edges are not converted yet
-            graphProperties.add(GraphProperties.HYPEREDGES);
-        }
-
         port.setSide(port.getProperty(LayoutOptions.PORT_SIDE));
 
+        // port constraints and sides cannot be undefined
         PortConstraints portConstraints = node.getProperty(LayoutOptions.PORT_CONSTRAINTS);
         if (portConstraints == PortConstraints.UNDEFINED) {
             portConstraints = PortConstraints.FREE;
@@ -431,28 +344,127 @@ public class JsonGraphImporter {
                 graphProperties.add(GraphProperties.NORTH_SOUTH_PORTS);
             }
             break;
+        default:
+            // shouldn't happen
+            break;
         }
 
-        // create the port's labels
-        // TODO labels
-        // for (KLabel klabel : port.getLabels()) {
-        // KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
-        // if (!labelLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
-        // LLabel newLabel = new LLabel(layeredGraph, klabel.getText());
-        // newLabel.setProperty(Properties.ORIGIN, klabel);
-        // newLabel.getSize().x = labelLayout.getWidth();
-        // newLabel.getSize().y = labelLayout.getHeight();
-        // newLabel.getPosition().x = labelLayout.getXpos();
-        // newLabel.getPosition().y = labelLayout.getYpos();
-        // newPort.getLabels().add(newLabel);
-        // }
-        // }
     }
 
+    /**
+     * Transforms the labels of the json element.     
+     */
+    private void transformLabels(final JSONObject jElement, final LGraphElement element,
+            final LGraph graph) {
+        if (jElement.containsKey("labels")) {
+            JSONValue val = jElement.get("labels");
+            if (val.isArray() == null) {
+                throw new UnsupportedGraphException(
+                        "The 'labels' property of a node must be an array.");
+            }
+            JSONArray labels = val.isArray();
+
+            for (int i = 0; i < labels.size(); ++i) {
+                if (labels.get(i) instanceof JSONObject) {
+                    transformLabel((JSONObject) labels.get(i), element, graph);
+                }
+            }
+        }
+    }
+
+    /**
+     * Transforms a single label in json format to an {@link LLabel} and adds it to the passed
+     * {@link LGraphElement}. The transformation includes the dimensions of the label.
+     */
+    private void transformLabel(final JSONObject jLabel, final LGraphElement ele, final LGraph graph) {
+
+        // should we include this label into the layout process?
+        String noLayoutId = LayoutOptions.NO_LAYOUT.getId();
+        if (jLabel.containsKey(noLayoutId)
+                && jLabel.get(noLayoutId).isBoolean().booleanValue() == true) {
+            return;
+        }
+
+        // for edges also check if the edge label placement is UNDEFINED
+        if (ele instanceof LEdge) {
+            String edgeLabPlace = LayoutOptions.EDGE_LABEL_PLACEMENT.getId();
+            if (jLabel.containsKey(edgeLabPlace)
+                    && jLabel.get(edgeLabPlace).isString().stringValue()
+                            .equals(EdgeLabelPlacement.UNDEFINED.name())) {
+                return;
+            }
+        }
+
+        // check for text property
+        JSONValue val = jLabel.get("text");
+        if (val == null) {
+            throw new UnsupportedGraphException("Labels must have a property 'text'.");
+        } else if (val.isString() == null) {
+            throw new UnsupportedGraphException("A label's 'text' property must be a string.");
+        }
+
+        // create a new label
+        String text = val.isString().stringValue();
+        LLabel label = new LLabel(graph, text);
+        labelJsonMap.put(label, jLabel);
+        shapeParentGraphMap.put(label, graph);
+
+        // properties
+        transformProperties(jLabel, label);
+
+        // add label to the graph element
+        if (ele instanceof LNode) {
+            ((LNode) ele).getLabels().add(label);
+        } else if (ele instanceof LEdge) {
+            ((LEdge) ele).getLabels().add(label);
+        } else if (ele instanceof LPort) {
+            ((LPort) ele).getLabels().add(label);
+        }
+
+        // additional handling for edge labels
+        if (ele instanceof LEdge) {
+            EdgeLabelPlacement labelPlacement =
+                    label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT);
+
+            if (labelPlacement != EdgeLabelPlacement.UNDEFINED) {
+                // dimensions of the label
+                transformDimensions(jLabel, label);
+                label.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT, labelPlacement);
+
+                Set<GraphProperties> graphProperties =
+                        graph.getProperty(Properties.GRAPH_PROPERTIES);
+                switch (labelPlacement) {
+                case CENTER:
+                    // Add annotation if graph contains labels which shall be placed
+                    // in the middle of an edge
+                    graphProperties.add(GraphProperties.CENTER_LABELS);
+                    break;
+                case HEAD:
+                case TAIL:
+                    // Add annotation if graph contains labels which shall be placed
+                    // in the middle of an edge
+                    graphProperties.add(GraphProperties.END_LABELS);
+                default:
+                    break;
+                }
+            }
+        }
+    }
+    
+
+    /**
+     * Transforms all edges specified on this hierarchy level.
+     * 
+     * Remark: make sure the WHOLE hierarchy of nodes is already transformed
+     * 
+     * @param parent
+     *            a compound node in json format.
+     * @param graph
+     *            the {@link LGraph} created for this compound node.
+     */
     private void transformEdges(final JSONObject parent, final LGraph graph) {
 
-        // TODO when introducing hierarchy, make sure the WHOLE hierarchy of nodes is transformed
-        // first
+        
         // then transform the edges (important that the nodes and ports are already known)
         if (parent.containsKey("edges")) {
             JSONValue val = parent.get("edges");
@@ -463,34 +475,47 @@ public class JsonGraphImporter {
             JSONArray edges = val.isArray();
 
             for (int i = 0; i < edges.size(); ++i) {
-                if (edges.get(i) instanceof JSONObject) {
-                    transformEdge((JSONObject) edges.get(i), graph);
+                JSONValue edgeVal = edges.get(i);
+                if(edgeVal.isObject() == null) {
+                    throw new UnsupportedGraphException("All elements of the 'edge' property must be objects.");
                 }
+                transformEdge(edgeVal.isObject(), graph);
             }
         }
-
-        // TODO
-        // // Transform external port edges
-        // transformExternalPortEdges(graph, graph.getIncomingEdges(), elemMap);
-        // transformExternalPortEdges(graph, graph.getOutgoingEdges(), elemMap);
-        //
-        // // Transform edges originating in the layout node's children
-        // for (KNode child : graph.getChildren()) {
-        // for (KEdge kedge : child.getOutgoingEdges()) {
-        // // exclude edges that pass hierarchy bounds (except for those
-        // // going into an external port)
-        // if (kedge.getTarget().getParent() == graph
-        // && !kedge.getData(KEdgeLayout.class).getProperty(LayoutOptions.NO_LAYOUT)) {
-        // transformEdge(kedge, graph, elemMap);
-        // }
-        // }
-        // }
+        
+        
+        // continue with edges of the children
+        if (parent.containsKey("children")) {
+           // the json should be proper, otherwise 'transformNodes' already threw an exception  
+           JSONArray children = parent.get("children").isArray();
+           for (int i = 0; i < children.size(); ++i) {
+               JSONObject child = children.get(i).isObject();
+               LGraph childGraph = jsonLGraphMap.get(child);
+               transformEdges(child, childGraph);
+           }
+        }
     }
 
+    /**
+     * Transforms a single edge in json format to an {@link LEdge}.
+     * 
+     * Finds the source and target {@link LNode}s, as well as the {@link LPort}s and 
+     * connects the edge to these. In case no ports are specified, new ones will be created.
+     * 
+     * @param jEdge
+     * @param graph
+     */
     private void transformEdge(final JSONObject jEdge, final LGraph graph) {
 
         checkForId(jEdge);
 
+        // should we include this edge into the layout?
+        String noLayoutId = LayoutOptions.NO_LAYOUT.getId();
+        if (jEdge.containsKey(noLayoutId)
+                && jEdge.get(noLayoutId).isBoolean().booleanValue() == true) {
+            return;
+        }
+        
         JSONValue jSourceNode = jEdge.get("source");
         JSONValue jSourcePort = jEdge.get("sourcePort");
         JSONValue jTargetNode = jEdge.get("target");
@@ -512,15 +537,6 @@ public class JsonGraphImporter {
                     "Invalid format of an edge's 'target' property. It must be a string.");
         }
 
-        // TODO
-        // // Only transform edges going into the layout node's direct children
-        // // (self-loops of the layout node will be processed on level higher)
-        // if (kedge.getSource().getParent() == graph || kedge.getTarget().getParent() == graph
-        // && !kedge.getData(KEdgeLayout.class).getProperty(LayoutOptions.NO_LAYOUT)) {
-        //
-        // transformEdge(kedge, graph, elemMap);
-        // }
-
         // create a layered edge
         LEdge edge = new LEdge(graph);
 
@@ -528,15 +544,13 @@ public class JsonGraphImporter {
         JSONString id = (JSONString) jEdge.get("id");
         edgeIdMap.put(id.stringValue(), edge);
         edgeJsonMap.put(edge, jEdge);
-
+        edgeParengGraphMap.put(edge, graph);
+        
         // properties
         transformProperties(jEdge, edge);
 
         // labels
         transformLabels(jEdge, edge, graph);
-
-        // the following is not needed in case of compound graph handling, as source and target will
-        // be set by calling function.
 
         // retrieve source and target
         LNode sourceNode = null;
@@ -544,199 +558,86 @@ public class JsonGraphImporter {
         LNode targetNode = null;
         LPort targetPort = null;
 
-        // check if the edge source is an external port
-        // TODO
-        // if (kedge.getSource() == graph && kedge.getSourcePort() != null) {
-        // LGraphElement elem = elemMap.get(kedge.getSourcePort());
-        // if (elem instanceof LNode) {
-        // sourceNode = (LNode) elem;
-        // // the port could be missing in the map if kedge is not in the port's edge list
-        // if (sourceNode != null) {
-        // sourcePort = sourceNode.getPorts().get(0);
-        // }
-        // } else if (elem != null) {
-        // throw new UnsupportedGraphException("Inconsistent source port reference found.");
-        // }
-        // } else {
-        sourceNode = nodeIdMap.get(jSourceNode.isString().stringValue());
-        if (jSourcePort != null && jSourcePort.isString() != null) {
-            sourcePort = portIdMap.get(jSourcePort.isString().stringValue());
+        // get the source node
+        try {
+            sourceNode = nodeIdMap.get(jSourceNode.isString().stringValue());
+            if (jSourcePort != null && jSourcePort.isString() != null) {
+                sourcePort = portIdMap.get(jSourcePort.isString().stringValue());
+            }
+    
+            // get the target node
+            targetNode = nodeIdMap.get(jTargetNode.isString().stringValue());
+            if (jTargetPort != null && jTargetPort.isString() != null) {
+                targetPort = portIdMap.get(jTargetPort.isString().stringValue());
+            }
+        } catch (NullPointerException npe) {
+            throw new UnsupportedGraphException("An edge's 'source', 'target', 'sourcePort', "
+                    + "and 'targetPort' properties have to be strings.");
         }
-        // LGraphElement elem = elemMap.get(kedge.getSourcePort());
-        // if (elem instanceof LPort) {
-        // sourcePort = (LPort) elem;
-        // } else if (elem != null) {
-        // throw new UnsupportedGraphException("Inconsistent source port reference found.");
-        // }
-        // }
+        
 
-        // check if the edge target is an external port
-        // TODO
-        // if (kedge.getTarget() == graph && kedge.getTargetPort() != null) {
-        // LGraphElement elem = elemMap.get(kedge.getTargetPort());
-        // if (elem instanceof LNode) {
-        // targetNode = (LNode) elem;
-        // // the port could be missing in the map if kedge is not in the port's edge list
-        // if (targetNode != null) {
-        // targetPort = targetNode.getPorts().get(0);
-        // }
-        // } else if (elem != null) {
-        // throw new UnsupportedGraphException("Inconsistent target port reference found.");
-        // }
-        // } else {
-        targetNode = nodeIdMap.get(jTargetNode.isString().stringValue());
-
-        if (jTargetPort != null && jTargetPort.isString() != null) {
-            targetPort = portIdMap.get(jTargetPort.isString().stringValue());
-        }
-        // LGraphElement elem = elemMap.get(kedge.getTargetPort());
-        // if (elem instanceof LPort) {
-        // targetPort = (LPort) elem;
-        // } else if (elem != null) {
-        // throw new UnsupportedGraphException("Inconsistent target port reference found.");
-        // }
-        // }
+        Set<GraphProperties> graphProperties = graph.getProperty(Properties.GRAPH_PROPERTIES);
 
         if (sourceNode != null && targetNode != null) {
             // if we have a self-loop, set the appropriate graph property
-            // TODO
-            // if (sourceNode == targetNode) {
-            // Set<GraphProperties> graphProperties = layeredGraph.getProperty(
-            // Properties.GRAPH_PROPERTIES);
-            // graphProperties.add(GraphProperties.SELF_LOOPS);
-            // }
+            if (sourceNode == targetNode) {
+                graphProperties.add(GraphProperties.SELF_LOOPS);
+            }
 
             // create source and target ports if they do not exist yet
             if (sourcePort == null) {
-                sourcePort = ImportUtil.createPort(sourceNode,
-                // TODO how to calculate the source point?
-                // edge.getSourcePoint().createVector(),
-                        new KVector(), PortType.OUTPUT, graph);
+                sourcePort =
+                        ImportUtil.createPort(sourceNode, new KVector(), PortType.OUTPUT, graph);
+            } else if (sourcePort.getNode() != sourceNode) {
+                throw new UnsupportedGraphException("Inconsistent source port reference found.");
             }
-            // else if (kedge.getSourcePort().getNode() != kedge.getSource()) {
-            // throw new UnsupportedGraphException("Inconsistent source port reference found.");
-            // }
 
             if (targetPort == null) {
-                targetPort = ImportUtil.createPort(targetNode,
-                // TODO how to calculate the source point=
-                // edgeLayout.getTargetPoint().createVector(),
-                        new KVector(), PortType.INPUT, graph);
+                targetPort =
+                        ImportUtil.createPort(targetNode, new KVector(), PortType.INPUT, graph);
+            } else if (targetPort.getNode() != targetNode) {
+                throw new UnsupportedGraphException("Inconsistent target port reference found.");
             }
-            // else if (kedge.getTargetPort().getNode() != kedge.getTarget()) {
-            // throw new UnsupportedGraphException("Inconsistent target port reference found.");
-            // }
 
             edge.setSource(sourcePort);
             edge.setTarget(targetPort);
         }
 
-        // TODO
-        // // transform the edge's labels
-        // for (KLabel klabel : kedge.getLabels()) {
-        // KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
-        // EdgeLabelPlacement labelPlacement = labelLayout.getProperty(
-        // LayoutOptions.EDGE_LABEL_PLACEMENT);
-        // if (!labelLayout.getProperty(LayoutOptions.NO_LAYOUT)
-        // && labelPlacement != EdgeLabelPlacement.UNDEFINED) {
-        // LLabel newLabel = new LLabel(layeredGraph, klabel.getText());
-        // newLabel.getPosition().x = labelLayout.getXpos();
-        // newLabel.getPosition().y = labelLayout.getYpos();
-        // newLabel.getSize().x = labelLayout.getWidth();
-        // newLabel.getSize().y = labelLayout.getHeight();
-        // newLabel.setProperty(Properties.ORIGIN, klabel);
-        // newLabel.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT, labelPlacement);
-        // newEdge.getLabels().add(newLabel);
-        // Set<GraphProperties> graphProperties = layeredGraph.getProperty(
-        // Properties.GRAPH_PROPERTIES);
-        // switch (labelPlacement) {
-        // case CENTER:
-        // // Add annotation if graph contains labels which shall be placed
-        // // in the middle of an edge
-        // graphProperties.add(GraphProperties.CENTER_LABELS);
-        // break;
-        // case HEAD:
-        // case TAIL:
-        // // Add annotation if graph contains labels which shall be placed
-        // // in the middle of an edge
-        // graphProperties.add(GraphProperties.END_LABELS);
-        // }
-        // }
-        // }
-        //
-        // // copy the bend points of the edge if they are needed by anyone
-        // if (layeredGraph.getProperty(Properties.CROSS_MIN) ==
-        // CrossingMinimizationStrategy.INTERACTIVE
-        // && !edgeLayout.getBendPoints().isEmpty()) {
-        // KVectorChain bendpoints = new KVectorChain();
-        // for (KPoint point : edgeLayout.getBendPoints()) {
-        // bendpoints.add(point.createVector());
-        // }
-        // newEdge.setProperty(Properties.ORIGINAL_BENDPOINTS, bendpoints);
-        // }
-        //
-        // // set properties of the new edge
-        // newEdge.copyProperties(edgeLayout);
+        // find out if there are hyperedges, that is a set of edges connected to the same port
+        if (Iterables.size(sourcePort.getConnectedEdges()) > 1
+                || Iterables.size(targetPort.getConnectedEdges()) > 1) {
+            graphProperties.add(GraphProperties.HYPEREDGES);
+        }
+
+        // copy the bend points of the edge if they are needed by anyone
+        if (graph.getProperty(Properties.CROSS_MIN) == CrossingMinimizationStrategy.INTERACTIVE
+                && !jEdge.containsKey("bendPoints")) {
+            KVectorChain bendpoints = new KVectorChain();
+
+            try {
+                JSONArray jBends = jEdge.get("bendPoints").isArray();
+                for (int i = 0; i < jBends.size(); ++i) {
+                    JSONObject jVector = jBends.get(i).isObject();
+                    KVector v =
+                            new KVector(jVector.get("x").isNumber().doubleValue(), jVector.get("y")
+                                    .isNumber().doubleValue());
+                    bendpoints.add(v);
+                }
+                edge.setProperty(Properties.ORIGINAL_BENDPOINTS, bendpoints);
+            } catch (Exception e) {
+                throw new UnsupportedGraphException(
+                        "Invalid format of an edges 'bendPoints' property.");
+            }
+        }
 
         // clear junction points, since they are recomputed from scratch
         edge.setProperty(LayoutOptions.JUNCTION_POINTS, null);
 
     }
 
-    private void transformLabels(final JSONObject jElement, final LGraphElement element,
-            final LGraph graph) {
-        if (jElement.containsKey("labels")) {
-            JSONValue val = jElement.get("labels");
-            if (val.isArray() == null) {
-                throw new UnsupportedGraphException(
-                        "The 'labels' property of a node must be an array.");
-            }
-            JSONArray labels = val.isArray();
-
-            for (int i = 0; i < labels.size(); ++i) {
-                if (labels.get(i) instanceof JSONObject) {
-                    transformLabel((JSONObject) labels.get(i), element, graph);
-                }
-            }
-        }
-    }
-
-    private void transformLabel(final JSONObject jLabel, final LGraphElement ele, final LGraph graph) {
-
-        // should we include this label into the layout process?
-        String noLayoutId = LayoutOptions.NO_LAYOUT.getId();
-        if (jLabel.containsKey(noLayoutId)
-                && jLabel.get(noLayoutId).isBoolean().booleanValue() == true) {
-            return;
-        }
-
-        // check for text property
-        JSONValue val = jLabel.get("text");
-        if (val == null) {
-            throw new UnsupportedGraphException("Labels must have a property 'text'.");
-        } else if (val.isString() == null) {
-            throw new UnsupportedGraphException("A label's 'text' property must be a string.");
-        }
-
-        // create a new label
-        String text = val.isString().stringValue();
-        LLabel label = new LLabel(graph, text);
-        labelJsonMap.put(label, jLabel);
-
-        // dimensions of the label
-        transformDimensions(jLabel, label);
-
-        // add label to the graph element
-        if (ele instanceof LNode) {
-            ((LNode) ele).getLabels().add(label);
-        } else if (ele instanceof LEdge) {
-            ((LEdge) ele).getLabels().add(label);
-        } else if (ele instanceof LPort) {
-            ((LPort) ele).getLabels().add(label);
-        }
-
-    }
-
+    /**
+     * Transforms the dimensions of a json element, this being x,y coordinates and width and height.
+     */
     private void transformDimensions(JSONObject jsonEle, LShape ele) {
         if (jsonEle.containsKey("x")) {
             JSONNumber x = (JSONNumber) jsonEle.get("x");
@@ -756,7 +657,11 @@ public class JsonGraphImporter {
         }
 
     }
-
+    
+    /**
+     * Transforms the properties of an element, using the {@link LayoutOptionResolver} for the 
+     * id->type mapping. 
+     */
     private void transformProperties(JSONObject jsonEle, LGraphElement ele) {
         if (jsonEle.containsKey("properties")) {
             JSONValue val = jsonEle.get("properties");
@@ -810,7 +715,7 @@ public class JsonGraphImporter {
     }
 
     private void transferLayout(LShape shape, JSONObject json) {
-        KVector offset = graph.getOffset();
+        KVector offset = shapeParentGraphMap.get(shape).getOffset();
 
         JSONNumber x = new JSONNumber(shape.getPosition().x + offset.x);
         json.put("x", x);
@@ -827,7 +732,7 @@ public class JsonGraphImporter {
 
     private void transferLayout(final LEdge edge, final JSONObject json) {
 
-        KVector offset = graph.getOffset();
+        KVector offset = edgeParengGraphMap.get(edge).getOffset();
 
         // Source Point
         KVector src = edge.getSource().getAbsoluteAnchor().translate(offset.x, offset.y);
