@@ -25,6 +25,7 @@ import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
@@ -56,6 +57,12 @@ public final class Properties {
      */
     public static final IProperty<Boolean> COMPOUND_NODE = new Property<Boolean>("compoundNode", false);
 
+    /**
+     * An LNode that represents a compound node can hold a reference to a child LGraph which
+     * represents the graph that is contained within the compound node.
+     */
+    public static final IProperty<LGraph> CHILD_LGRAPH = new Property<LGraph>("childLGraph");
+    
     /**
      * Node type.
      */
