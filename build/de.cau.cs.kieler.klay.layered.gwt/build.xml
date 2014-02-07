@@ -1,19 +1,17 @@
-<project name="Build KLayLayered for GWT" default="buildall">
-	<!-- This is the build file that builds the KLay layout library to be used outside
-         of an Eclipse context. To use this build file, run Ant from the directory
+<project name="Build KLay Layered for JavaScript" default="buildall">
+	<!-- This is the build file that builds the KLay layout library as a 
+		 JavaScript library. To use this build file, run Ant from the directory
          containing the file and make sure the following environment variables are
          set correctly:
          
             GWT_SDK			   The system's path to the GWT SDK.
-            
-            KIELER_REPOSITORY  A p2 repository of a KIELER Pragmatics build.
          
          This build file provides the following targets:
          
             clean        Deletes the target directory with all of its contents.
+            copySrc		 Copies klay's java sources from the main repository.
 			dist 		 Compiles and bundles the klay layered alg as js.
-         
-         By default, these targets are run in just that order.
+			buildall	 clean + dist
          
          The output produced by the build file will be placed in a folder called
          "target", which makes it somewhat similar to what the Maven builds do.
@@ -26,18 +24,17 @@
 
 	<!-- Retrieve our system property. -->
 	<property environment="system" />
-	<!--property name="targetPlatformFolder" location="${system.TARGET_PLATFORM}" /-->
-	<!--property name="kielerRepositoryFolder" location="${system.KIELER_REPOSITORY}" /-->
+	<!-- Usually this plugin is part of the main repository. -->
 	<property name="kielerRepositoryFolder" location="../.." />
 
 	<!-- Some more properties that configure the behaviour of the build. -->
 	<property name="outputFolder" location="target" />
 	<property name="outputFolder.tmp" location="${outputFolder}/tmp" />
-	<property name="outputFile.klaygwt" location="${outputFolder}/klay_layered_gwt_nightly_${timestamp}.zip" />
+	<property name="outputFile.klaygwt" location="${outputFolder}/klay_layered_js_nightly_${timestamp}.zip" />
 	<property name="licenseFile" location="epl-v10.html" />
 
 
-	<!-- Arguments to gwtc and devmode targets, e.g. -style PRETTY -->
+	<!-- Arguments to gwtc and devmode targets, e.g. -style PRETTY or -logLevel DEBUG -->
 	<property name="gwt.args" value="" />
 	<!-- Configure path to GWT SDK -->
 	<property name="gwt.sdk" location="${system.GWT_SDK}" />
@@ -109,6 +106,7 @@
 				<exclude name="**/*.txt" />
 				<!-- Retain the gwt xml file -->
 				<exclude name="**/Klay.gwt.xml" />
+				<!-- We emulate some classes, retain them too. -->
 				<exclude name="de/cau/cs/kieler/emul/**" />
 			</fileset>
 		</delete>
@@ -157,23 +155,18 @@
 
 	<target name="gwtc" depends="javac" description="GWT compile to JavaScript (production mode)">
 		<java failonerror="true" fork="true" classname="com.google.gwt.dev.Compiler">
-			<!--classpath>
-        <pathelement location="${outputFolder.temp}/src"/>
-        <path refid="project.class.path"/>
-        <pathelement location="${gwt.sdk}/validation-api-1.0.0.GA.jar" />
-        <pathelement location="${gwt.sdk}/validation-api-1.0.0.GA-sources.jar" />
-      </classpath-->
 			<classpath>
+				<!-- Several jar files. -->
 				<pathelement location="${gwt.sdk}/gwt-user.jar" />
 				<fileset dir="${gwt.sdk}" includes="gwt-dev*.jar" />
-				<pathelement location="src" />
-				<pathelement location="src-external" />
-				<pathelement location="src-external/de/cau/cs/kieler/emul" />
 				<fileset dir="war/WEB-INF/lib" includes="**/*.jar" />
 				<pathelement location="${gwt.sdk}/validation-api-1.0.0.GA.jar" />
 				<pathelement location="${gwt.sdk}/validation-api-1.0.0.GA-sources.jar" />
+				<!-- The sources. -->
+				<pathelement location="src" />
+				<pathelement location="src-external" />
+				<pathelement location="src-external/de/cau/cs/kieler/emul" />
 			</classpath>
-			<!-- add jvmarg -Xss16M or similar if you see a StackOverflowError    -Dgwt.jjs.permutationWorkerFactory=com.google.gwt.dev.ThreadedPermutationWorkerFactory -Dgwt.jjs.maxThreads=4  -->
 			<jvmarg value="-Xmx512m" />
 			<arg line="-war" />
 			<arg value="war" />
@@ -205,7 +198,7 @@
 
 
 	<!-- TARGET buidlall -->
-	<target name="buildall" depends="clean, dist" description="Builds all configurations of the KLay library." />
+	<target name="buildall" depends="clean, dist" description="Builds all configurations of the KLay js library." />
 
 
 
