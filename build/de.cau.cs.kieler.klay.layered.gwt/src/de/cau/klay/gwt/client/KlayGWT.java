@@ -20,7 +20,6 @@ import com.google.gwt.json.client.JSONString;
 import com.google.gwt.json.client.JSONValue;
 
 import de.cau.cs.kieler.kiml.UnsupportedConfigurationException;
-import de.cau.klay.gwt.client.layout.JsonGraphImporter;
 import de.cau.klay.gwt.client.layout.RecursiveLGraphLayout;
 
 /**
@@ -31,6 +30,7 @@ import de.cau.klay.gwt.client.layout.RecursiveLGraphLayout;
  * @author uru
  */
 public class KlayGWT implements EntryPoint {
+   
     /**
      * This is the entry point method.
      */
@@ -51,11 +51,15 @@ public class KlayGWT implements EntryPoint {
     
     private native void exportKlayLayout() /*-{
         $wnd.$klay = {};
-        $wnd.$klay.layout = $entry(@de.cau.klay.gwt.client.KlayGWT::layout(Lcom/google/gwt/core/client/JavaScriptObject;));
+        $wnd.$klay.layout = $entry(@de.cau.klay.gwt.client.KlayGWT::layout(
+            Lcom/google/gwt/core/client/JavaScriptObject;));
     }-*/;
     
     /**
      * Entry point to perform layout.
+     * 
+     * @param params
+     *            an js object containing the graph, options, and callback functions.
      */
     public static void layout(final JavaScriptObject params) {
 
@@ -94,7 +98,7 @@ public class KlayGWT implements EntryPoint {
 
     }
         
-    public static native void execCallback(final JavaScriptObject callback, 
+    private static native void execCallback(final JavaScriptObject callback, 
             final JavaScriptObject json) /*-{
         $entry(callback(json));
     }-*/;

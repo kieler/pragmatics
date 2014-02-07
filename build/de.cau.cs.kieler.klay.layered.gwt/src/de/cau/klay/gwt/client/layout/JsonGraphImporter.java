@@ -109,6 +109,9 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
      *                          Transform JSON to LGraph
      */
 
+    /**
+     * {@inheritDoc}
+     */
     public LGraph importGraph(final JSONObject json) {
         
         this.rootJson = json;
@@ -145,14 +148,14 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
      *            {@code jparent}
      * @return the {@link LGraph} created for the current hierarchy level.
      */
-    private LGraph transformNodes(JSONObject jparent, LNode parentNode) {
+    private LGraph transformNodes(final JSONObject jparent, final LNode parentNode) {
 
         // create a new graph instance
         LGraph graph = new LGraph(hashCodeCounter);
         graph.setProperty(JSON_OBJECT, jparent);
         jsonLGraphMap.put(jparent, graph);
         
-        if(parentNode != null) {
+        if (parentNode != null) {
             // set this LGraph as child of the parent LNode
             parentNode.setProperty(Properties.CHILD_LGRAPH, graph);
         }
@@ -192,13 +195,13 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
             }
             
             // after this graph layer has been processed, transform the children of this layer's children
-            for(int i = 0; i < children.size(); ++i) {
+            for (int i = 0; i < children.size(); ++i) {
                 // we don't have to check the json here, was checked during previous for loop
                 JSONObject jChild = children.get(i).isObject();
                 LNode childNode = childNodes[i];
                 // ignore the child's contents if NO_LAYOUT option is set
-                if (jChild.containsKey("children") && 
-                        !childNode.getProperty(LayoutOptions.NO_LAYOUT)) {
+                if (jChild.containsKey("children")
+                        && !childNode.getProperty(LayoutOptions.NO_LAYOUT)) {
                     transformNodes(jChild, childNode);
                 }
             }  
@@ -213,7 +216,7 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
      *
      * This includes: dimensions, properties, ports, labels 
      */
-    private LNode transformNode(JSONObject jNode, LGraph graph) {
+    private LNode transformNode(final JSONObject jNode, final LGraph graph) {
 
         checkForId(jNode);
         Set<GraphProperties> graphProperties = 
@@ -295,7 +298,7 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         // should we include this port into the layout?
         String noLayoutId = LayoutOptions.NO_LAYOUT.getId();
         if (jPort.containsKey(noLayoutId)
-                && jPort.get(noLayoutId).isBoolean().booleanValue() == true) {
+                && jPort.get(noLayoutId).isBoolean().booleanValue()) {
             return;
         }
 
@@ -385,7 +388,7 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         // should we include this label into the layout process?
         String noLayoutId = LayoutOptions.NO_LAYOUT.getId();
         if (jLabel.containsKey(noLayoutId)
-                && jLabel.get(noLayoutId).isBoolean().booleanValue() == true) {
+                && jLabel.get(noLayoutId).isBoolean().booleanValue()) {
             return;
         }
 
@@ -479,8 +482,9 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
 
             for (int i = 0; i < edges.size(); ++i) {
                 JSONValue edgeVal = edges.get(i);
-                if(edgeVal.isObject() == null) {
-                    throw new UnsupportedGraphException("All elements of the 'edge' property must be objects.");
+                if (edgeVal.isObject() == null) {
+                    throw new UnsupportedGraphException(
+                            "All elements of the 'edge' property must be objects.");
                 }
                 transformEdge(edgeVal.isObject(), graph);
             }
@@ -515,7 +519,7 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         // should we include this edge into the layout?
         String noLayoutId = LayoutOptions.NO_LAYOUT.getId();
         if (jEdge.containsKey(noLayoutId)
-                && jEdge.get(noLayoutId).isBoolean().booleanValue() == true) {
+                && jEdge.get(noLayoutId).isBoolean().booleanValue()) {
             return;
         }
         
@@ -640,7 +644,7 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
     /**
      * Transforms the dimensions of a json element, this being x,y coordinates and width and height.
      */
-    private void transformDimensions(JSONObject jsonEle, LShape ele) {
+    private void transformDimensions(final JSONObject jsonEle, final LShape ele) {
         if (jsonEle.containsKey("x")) {
             JSONNumber x = (JSONNumber) jsonEle.get("x");
             ele.getPosition().x = x.doubleValue();
@@ -675,7 +679,7 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         }
     }
     
-    private void transformPropertiesObj(JSONObject properties, LGraphElement ele) {
+    private void transformPropertiesObj(final JSONObject properties, final LGraphElement ele) {
         if (properties != null) {
             for (String key : properties.keySet()) {
                 JSONValue theVal = properties.get(key);
@@ -690,6 +694,9 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
      *                          Transfer the Layout back
      */
 
+    /**
+     * {@inheritDoc}
+     */
     public void applyLayout(final LGraph layeredGraph) {
         
         // transfer the layout information back to the json objects
@@ -700,7 +707,7 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
     }
 
     
-    public void transferLayout(final LGraph parentGraph, KVector parentOffset) {
+    private void transferLayout(final LGraph parentGraph, final KVector parentOffset) {
 
         for (LNode n : parentGraph.getLayerlessNodes()) {
             JSONObject jNode = nodeJsonMap.get(n);
@@ -750,7 +757,7 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         }
     }
 
-    private void transferLayout(LGraph graph, JSONObject json) {
+    private void transferLayout(final LGraph graph, final JSONObject json) {
         JSONNumber width = new JSONNumber(graph.getSize().x);
         json.put("width", width);
 
@@ -758,11 +765,11 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         json.put("height", height);
     }
 
-    private void transferLayout(LShape shape, JSONObject json, final KVector parentOffset) {
+    private void transferLayout(final LShape shape, final JSONObject json, final KVector parentOffset) {
         KVector offset = new KVector();
 
         // offset is only used for nodes
-        if (shape instanceof LNode){
+        if (shape instanceof LNode) {
             offset = parentOffset;
         }
 
@@ -779,7 +786,7 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         json.put("height", height);
     }
 
-    private void transferLayout(final LEdge edge, final JSONObject json, KVector offset) {
+    private void transferLayout(final LEdge edge, final JSONObject json, final KVector offset) {
 
         // Source Point
         KVector src = edge.getSource().getAbsoluteAnchor().translate(offset.x, offset.y);

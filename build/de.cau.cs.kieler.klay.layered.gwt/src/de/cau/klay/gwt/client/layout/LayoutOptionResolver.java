@@ -90,11 +90,11 @@ import de.cau.cs.kieler.klay.layered.properties.LayerConstraint;
  * 
  * @author uru
  */
-public class LayoutOptionResolver {
+public final class LayoutOptionResolver {
 
 
     /** A set to assure that non-unique suffixes are only used once. */
-    private static final Set<String> suffixSet = Sets.newHashSet();
+    private static final Set<String> SUFFIX_SET = Sets.newHashSet();
     
     private static final Pair<Set<String>, Map<String, IProperty<?>>> STRING_TYPES = createTypesSet(
             ALGORITHM
@@ -162,10 +162,14 @@ public class LayoutOptionResolver {
             // klay
             );
     
+    private LayoutOptionResolver() {
+    }
+    
     /**
      * Convenience method to create the id->type mappings of the layout options. 
      */
-    private static Pair<Set<String>, Map<String, IProperty<?>>> createTypesSet(final IProperty<?>... props) {
+    private static Pair<Set<String>, Map<String, IProperty<?>>> createTypesSet(
+            final IProperty<?>... props) {
         Set<String> set = Sets.newHashSet();
         Map<String, IProperty<?>> map = Maps.newHashMap();
         for (IProperty<?> p : props) {
@@ -175,11 +179,11 @@ public class LayoutOptionResolver {
             
             // we also allow options to be selected by their suffix only
             String suffix = id.substring(id.lastIndexOf(".") + 1, id.length());
-            if(!suffixSet.contains(suffix)) {
+            if (!SUFFIX_SET.contains(suffix)) {
                 set.add(suffix);
                 map.put(suffix, p);
                 // remember the suffix so that we don't use it twice
-                suffixSet.add(suffix);
+                SUFFIX_SET.add(suffix);
             }
         }
         
@@ -246,7 +250,7 @@ public class LayoutOptionResolver {
                         + "' (" + value + ").");
             }
             IProperty<Boolean> p = (IProperty<Boolean>) BOOLEAN_TYPES.getSecond().get(id);
-            Boolean val = new Boolean(value.isBoolean().booleanValue());
+            Boolean val = value.isBoolean().booleanValue();
             element.setProperty(p, val);
             return;
 
@@ -288,9 +292,8 @@ public class LayoutOptionResolver {
                     enumeration = PortConstraints.valueOf(enumValue);
                 } else if (equalsIdOrSuffix(PORT_LABEL_PLACEMENT, id)) {
                     enumeration = PortLabelPlacement.valueOf(enumValue);
-                }
-                // KLAY
-                else if (equalsIdOrSuffix(CYCLE_BREAKING, id)) {
+                } else if (equalsIdOrSuffix(CYCLE_BREAKING, id)) {
+                    // KLAY
                     enumeration = CycleBreakingStrategy.valueOf(enumValue);
                 } else if (equalsIdOrSuffix(NODE_LAYERING, id)) {
                     enumeration = LayeringStrategy.valueOf(enumValue);
@@ -342,23 +345,22 @@ public class LayoutOptionResolver {
                 }
                 
                 if (equalsIdOrSuffix(NODE_LABEL_PLACEMENT, id)) {
-                    if(set == null) {
+                    if (set == null) {
                         set = EnumSet.noneOf(NodeLabelPlacement.class);
                     }
                     set.add(NodeLabelPlacement.valueOf(component));
-                    
+
                 } else if (equalsIdOrSuffix(SIZE_CONSTRAINT, id)) {
-                    if(set == null) {
+                    if (set == null) {
                         set = EnumSet.noneOf(SizeConstraint.class);
                     }
                     set.add(NodeLabelPlacement.valueOf(component));
-                    
+
                 } else if (equalsIdOrSuffix(SIZE_OPTIONS, id)) {
-                    if(set == null) {
+                    if (set == null) {
                         set = EnumSet.noneOf(SizeOptions.class);
                     }
                     set.add(NodeLabelPlacement.valueOf(component));
-                    
                 }
             }
             

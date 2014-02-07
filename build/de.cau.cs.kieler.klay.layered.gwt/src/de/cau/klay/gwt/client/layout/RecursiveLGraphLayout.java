@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ *
+ * Copyright 2014 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ *
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.klay.gwt.client.layout;
 
 import com.google.gwt.json.client.JSONObject;
@@ -19,10 +32,11 @@ public class RecursiveLGraphLayout {
      * Layouts the passed hierarchical {@link LGraph}.
      * 
      * @param json
+     *            the graph in json format.
      * @param options
-     *            can be null
+     *            additional options that will be added to every 'flat' {@link LGraph}, can be null.
      */
-    public void layout(JSONObject json, JSONObject options) {
+    public void layout(final JSONObject json, final JSONObject options) {
 
         // the importer
         JsonGraphImporter importer = new JsonGraphImporter();
