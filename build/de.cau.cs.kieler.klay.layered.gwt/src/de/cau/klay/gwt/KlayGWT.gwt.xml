@@ -5,23 +5,16 @@
 -->
 <!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.5.1//EN"
   "http://google-web-toolkit.googlecode.com/svn/tags/2.5.1/distro-source/core/src/gwt-module.dtd">
-<module rename-to='klaygwt'>
+<module rename-to='klay'>
   <!-- Inherit the core Web Toolkit stuff.                        -->
   <inherits name='com.google.gwt.user.User'/>
 
-  <!-- Inherit the default GWT style sheet.                       -->
-  <!-- As we create a library without any visual elements we      -->
-  <!-- don't need any stylesheet.                                 -->
-  <!-- <inherits name='com.google.gwt.user.theme.clean.Clean'/>   -->
-
-  <!-- Other module inherits                                      -->
-  
+  <!-- Other module inherits                                      --> 
   <inherits name='com.google.gwt.json.JSON'/>
+  <inherits name='de.cau.cs.kieler.Klay'/>
   
   <!-- Specify the app entry point class.                         -->
   <entry-point class='de.cau.klay.gwt.client.KlayGWT'/>
-  
-  <inherits name='de.cau.cs.kieler.Klay'/>
 
   <!-- Specify the paths for translatable code                    -->
   <source path='client'/>

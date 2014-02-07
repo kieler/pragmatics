@@ -30,7 +30,7 @@
 	<!-- Some more properties that configure the behaviour of the build. -->
 	<property name="outputFolder" location="target" />
 	<property name="outputFolder.tmp" location="${outputFolder}/tmp" />
-	<property name="outputFile.klaygwt" location="${outputFolder}/klay_layered_js_nightly_${timestamp}.zip" />
+	<property name="outputFile.klay" location="${outputFolder}/klay_layered_js_nightly_${timestamp}.zip" />
 	<property name="licenseFile" location="epl-v10.html" />
 
 
@@ -97,7 +97,8 @@
 		<delete dir="${outputFolder}" />
 
 		<delete dir="war/WEB-INF/classes" failonerror="false" />
-		<delete dir="war/klaygwt" failonerror="false" />
+		<delete dir="war/WEB-INF/deploy" failonerror="false" />
+		<delete dir="war/klay" failonerror="false" />
 		<delete dir="gwt-unitCache" failonerror="false" />
 
 		<!-- Remove the klay layered sources which are copied from the original plugins -->
@@ -185,13 +186,13 @@
 		<mkdir dir="${outputFolder.tmp}" />
 
 		<copy todir="${outputFolder.tmp}" overwrite="true">
-			<fileset dir="war/klaygwt">
+			<fileset dir="war/klay">
 				<exclude name="gwt/**" />
 				<exclude name="**/*.gif" />
 				<exclude name="hosted.html" />
 			</fileset>
 		</copy>
-		<zip destfile="${outputFile.klaygwt}" basedir="${outputFolder.tmp}" update="true" />
+		<zip destfile="${outputFile.klay}" basedir="${outputFolder.tmp}" update="true" />
 
 		<delete dir="${outputFolder.tmp}" failonerror="false" />
 	</target>
