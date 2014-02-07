@@ -195,6 +195,10 @@ public class CompoundLayoutConfig implements IMutableLayoutConfig {
             if (conf instanceof IMutableLayoutConfig) {
                 IMutableLayoutConfig mlc = (IMutableLayoutConfig) conf;
                 mlc.setValue(optionData, context, value);
+                if (value != null && mlc.isSet(optionData, context)) {
+                    // the value has been set successfully on the configurator with highest priority
+                    return;
+                }
             }
         }
     }

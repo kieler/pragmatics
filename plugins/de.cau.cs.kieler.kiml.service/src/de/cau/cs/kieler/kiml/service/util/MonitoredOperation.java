@@ -31,11 +31,16 @@ import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.service.KimlServicePlugin;
 
 /**
- * An operation that can be tracked with a progress bar. This operation can be called
- * from any thread, UI or non-UI, and adds only very little overhead for progress
- * tracking compared to the usual synchronous tracking of the workbench progress service.
- * Just implement {@link #execute(IProgressMonitor)} and call {@link #runMonitored()}.
- *
+ * An operation that can be tracked with a progress bar. This operation can be called from any
+ * thread, UI or non-UI, and adds only very little overhead for progress tracking compared to the
+ * usual synchronous tracking of the workbench progress service. Just implement
+ * {@link #execute(IProgressMonitor)} and call {@link #runMonitored()}.
+ * 
+ * <p>
+ * In case no workbench is set up and, thus, the operation shall run off-screen call
+ * {@link #runUnmonitored()}.
+ * </p>
+ * 
  * @author msp
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
@@ -116,8 +121,11 @@ public abstract class MonitoredOperation {
         timestamp = System.currentTimeMillis();
         Display display = Display.getCurrent();
         if (display == null) {
-            display = PlatformUI.getWorkbench().getDisplay();
-            runUnmonitored(display, false);
+            if (PlatformUI.isWorkbenchRunning()) {
+                runUnmonitored(PlatformUI.getWorkbench().getDisplay(), false);
+            } else {
+                runOffscreen();
+            }
         } else {
             runUnmonitored(display, true);
         }
@@ -139,6 +147,42 @@ public abstract class MonitoredOperation {
      */
     public void cancel() {
         isCanceled = true;
+    }
+
+
+    /**
+     * Run the operation without switching to any other thread.
+     * 
+     * @author chsch
+     */
+    private void runOffscreen() {
+        final Maybe<IStatus> status = new Maybe<IStatus>();
+        
+        try {
+            // execute the preparation prior to the actual operation 
+            preUIexec();
+        } catch (Throwable throwable) {
+            status.set(new Status(IStatus.ERROR, KimlServicePlugin.PLUGIN_ID,
+                    "Error in monitored operation running offscreen during prepration", throwable));
+        }
+
+        if (status.get() == null && !isCanceled) {
+            // execute the actual operation without progress monitor
+            status.set(execute(new CancelableProgressMonitor()));
+        }
+
+        if (status.get() != null && status.get().getSeverity() == IStatus.OK && !isCanceled) {
+            // execute the post processing code after the actual operation
+            try {
+                postUIexec();
+            } catch (Throwable throwable) {
+                status.set(new Status(IStatus.ERROR, KimlServicePlugin.PLUGIN_ID,
+                        "Error in monitored operation running offscreen during post processing",
+                        throwable));
+            }
+        }
+
+        handleStatus(status);
     }
     
     /**

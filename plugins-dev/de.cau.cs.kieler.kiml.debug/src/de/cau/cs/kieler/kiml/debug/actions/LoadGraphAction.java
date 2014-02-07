@@ -33,7 +33,6 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.PersistentEntry;
-import de.cau.cs.kieler.core.kivi.KiVi;
 import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
@@ -138,7 +137,7 @@ public class LoadGraphAction extends Action {
         }
         
         // draw the resulting layout on the canvas
-        KiVi.getInstance().executeEffect(new UpdateViewerEffect(graph, monitor));
+        new UpdateViewerEffect(graph, monitor).execute();
     }
 
 }
