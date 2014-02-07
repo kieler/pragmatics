@@ -21,6 +21,7 @@ import com.google.gwt.json.client.JSONValue;
 
 import de.cau.cs.kieler.kiml.UnsupportedConfigurationException;
 import de.cau.klay.gwt.client.layout.JsonGraphImporter;
+import de.cau.klay.gwt.client.layout.RecursiveLGraphLayout;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -74,7 +75,8 @@ public class KlayGWT implements EntryPoint {
             }
 
             // convert to lgraph and layout
-            new JsonGraphImporter().layout(graph.isObject(), opts != null ? opts.isObject() : null);
+            //new JsonGraphImporter().layout(graph.isObject(), opts != null ? opts.isObject() : null);
+            new RecursiveLGraphLayout().layout(graph.isObject(), opts != null ? opts.isObject() : null);
 
             // pass the layouted graph to the callback
             JavaScriptObject result = graph.isObject().getJavaScriptObject();

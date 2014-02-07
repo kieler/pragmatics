@@ -25,7 +25,6 @@ import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.json.client.JSONValue;
 
-import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.properties.IProperty;
@@ -36,7 +35,6 @@ import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.klay.layered.KlayLayered;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
@@ -45,6 +43,7 @@ import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LShape;
+import de.cau.cs.kieler.klay.layered.importexport.IGraphImporter;
 import de.cau.cs.kieler.klay.layered.importexport.ImportUtil;
 import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
@@ -59,7 +58,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * @author uru
  */
-public class JsonGraphImporter {
+public class JsonGraphImporter implements IGraphImporter<JSONObject> {
 
     private static final IProperty<JSONObject> JSON_OBJECT = new Property<JSONObject>("jsonObject");
     
@@ -87,51 +86,8 @@ public class JsonGraphImporter {
 
     private JSONObject globalOptions = null;
     
-    
-    /**
-     * 
-     * @param json
-     * @param options
-     *  can be null
-     */
-    public void layout(JSONObject json, JSONObject options) {
-
-        // global layout options
-        globalOptions = options;
-        
-        // transform JSON -> LGraph
-        LGraph graph = transform(json);
-
-        // perform layer-based layout
-        KlayLayered klayLayered = new KlayLayered();
-        // LGraph result = klayLayered.doLayout(graph, new BasicProgressMonitor());
-        LGraph result = recLayout(klayLayered, graph);
-        
-
-        // transfer the layout information back to the json objects
-        // root graph's dimensions
-        transferLayout(result, json);
-        // positions and dimension of all other elements
-        transferLayout(result, new KVector());
-
-    }
-    
-    private LGraph recLayout(final KlayLayered layered, final LGraph graph) {
-        
-        for (LNode n : graph.getLayerlessNodes()) {
-            LGraph childGraph = n.getProperty(Properties.CHILD_LGRAPH);
-            if (childGraph != null) {
-                LGraph res = recLayout(layered, childGraph);
-                
-                n.getSize().x = res.getSize().x;
-                n.getSize().y = res.getSize().y;
-            }
-        }
-        
-        LGraph layouted = layered.doLayout(graph, new BasicProgressMonitor());
-        
-        return layouted;
-    }
+    /** The root json element of the graph passed to {@link #importGraph(JSONObject)}. */
+    private JSONObject rootJson = null;
 
     private void reset() {
         nodeIdMap.clear();
@@ -153,8 +109,10 @@ public class JsonGraphImporter {
      *                          Transform JSON to LGraph
      */
 
-    private LGraph transform(JSONObject json) {
-
+    public LGraph importGraph(final JSONObject json) {
+        
+        this.rootJson = json;
+        
         reset();
 
         // first we transform all nodes of all hierarchy levels
@@ -732,6 +690,16 @@ public class JsonGraphImporter {
      *                          Transfer the Layout back
      */
 
+    public void applyLayout(final LGraph layeredGraph) {
+        
+        // transfer the layout information back to the json objects
+        // root graph's dimensions
+        transferLayout(layeredGraph, rootJson);
+        // positions and dimension of all other elements
+        transferLayout(layeredGraph, new KVector());
+    }
+
+    
     public void transferLayout(final LGraph parentGraph, KVector parentOffset) {
 
         for (LNode n : parentGraph.getLayerlessNodes()) {
@@ -881,5 +849,4 @@ public class JsonGraphImporter {
                     + obj.get("id").getClass());
         }
     }
-
 }
