@@ -21,10 +21,8 @@ import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.kivi.AbstractEffect;
 import de.cau.cs.kieler.kiml.debug.views.ExecutionView;
 import de.cau.cs.kieler.kiml.debug.views.LayoutGraphView;
-import de.cau.cs.kieler.kiml.debug.views.SmartLayoutView;
 
 /**
  * Effect for updating the layout graph view.
@@ -32,7 +30,7 @@ import de.cau.cs.kieler.kiml.debug.views.SmartLayoutView;
  * @author soh
  * @author msp
  */
-public class UpdateViewerEffect extends AbstractEffect {
+public class UpdateViewerEffect {
 
     /** the layout graph that should be displayed. */
     private KNode layoutGraph;
@@ -72,8 +70,7 @@ public class UpdateViewerEffect extends AbstractEffect {
     }
 
     /**
-     * 
-     * {@inheritDoc}
+     * Trigger the update viewer effect asynchronously.
      */
     public void execute() {
         PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
@@ -86,9 +83,6 @@ public class UpdateViewerEffect extends AbstractEffect {
                 if (progressMonitor != null && executionView != null) {
                     executionView.addExecution(progressMonitor);
                 }
-                if (smartLayoutView != null) {
-                    smartLayoutView.updateContent();
-                }
             }
         });
     }
@@ -97,8 +91,6 @@ public class UpdateViewerEffect extends AbstractEffect {
     private LayoutGraphView layoutGraphView;
     /** the currently open execution view. */
     private ExecutionView executionView;
-    /** the currently open smart layout view. */
-    private SmartLayoutView smartLayoutView;
 
     /**
      * Tries to find the relevant currently open views.
@@ -106,7 +98,6 @@ public class UpdateViewerEffect extends AbstractEffect {
     private void findViews() {
         layoutGraphView = null;
         executionView = null;
-        smartLayoutView = null;
 
         IWorkbenchWindow activeWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
         if (activeWindow == null) {
@@ -131,11 +122,6 @@ public class UpdateViewerEffect extends AbstractEffect {
             if (viewPart instanceof ExecutionView) {
                 executionView = (ExecutionView) viewPart;
             }
-        }
-        // find smart layout view
-        IViewPart viewPart = activePage.findView(SmartLayoutView.VIEW_ID);
-        if (viewPart instanceof SmartLayoutView) {
-            smartLayoutView = (SmartLayoutView) viewPart;
         }
     }
     
