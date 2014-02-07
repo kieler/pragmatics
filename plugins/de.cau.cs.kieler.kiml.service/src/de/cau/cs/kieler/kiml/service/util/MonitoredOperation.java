@@ -119,15 +119,17 @@ public abstract class MonitoredOperation {
      */
     public final void runUnmonitored() {
         timestamp = System.currentTimeMillis();
-        Display display = Display.getCurrent();
-        if (display == null) {
-            if (PlatformUI.isWorkbenchRunning()) {
+
+        if (PlatformUI.isWorkbenchRunning()) {
+            final Display display = Display.getCurrent();
+
+            if (display == null) {
                 runUnmonitored(PlatformUI.getWorkbench().getDisplay(), false);
             } else {
-                runOffscreen();
+                runUnmonitored(display, true);
             }
         } else {
-            runUnmonitored(display, true);
+            runOffscreen();
         }
     }
     
