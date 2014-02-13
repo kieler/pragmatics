@@ -282,6 +282,9 @@ public class RecursiveCompoundKGraphHandler {
     private void processOutsideEdges(final KNode parentNode, final LGraph layeredGraph,
             final KGraphImporter graphImporter, final List<ExternalPort> exportedExternalPorts) {
         Direction layoutDirection = layeredGraph.getProperty(LayoutOptions.DIRECTION);
+        if (layoutDirection == Direction.UNDEFINED) {
+            layoutDirection = Direction.RIGHT;
+        }
         Map<KGraphElement, LGraphElement> elementMap = layeredGraph.getProperty(
                 KGraphImporter.ELEMENT_MAP);
         for (KNode childNode : parentNode.getChildren()) {
@@ -396,6 +399,9 @@ public class RecursiveCompoundKGraphHandler {
             final KGraphImporter graphImporter, final List<ExternalPort> exportedExternalPorts,
             final List<ExternalPort> containedExternalPorts) {
         Direction layoutDirection = layeredGraph.getProperty(LayoutOptions.DIRECTION);
+        if (layoutDirection == Direction.UNDEFINED) {
+            layoutDirection = Direction.RIGHT;
+        }
         Map<KGraphElement, LGraphElement> elementMap = layeredGraph.getProperty(
                 KGraphImporter.ELEMENT_MAP);
         Map<LEdge, LNode> needSourcePort = new HashMap<LEdge, LNode>();
