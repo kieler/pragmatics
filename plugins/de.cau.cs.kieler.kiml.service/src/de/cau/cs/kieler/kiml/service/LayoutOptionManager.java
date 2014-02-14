@@ -265,6 +265,8 @@ public class LayoutOptionManager {
         enrich(DefaultLayoutConfig.HAS_PORTS, context, config);
         // enrich the aspect ratio of the diagram viewer
         enrich(EclipseLayoutConfig.ASPECT_RATIO, context, config);
+        // enrich the diagram type for the selected element
+        enrich(DefaultLayoutConfig.CONTENT_DIAGT, context, config);
         
         if (makeOptionsList) {
             // enrich the container diagram part
@@ -275,8 +277,6 @@ public class LayoutOptionManager {
             enrich(DefaultLayoutConfig.CONTENT_HINT, context, config);
             // enrich the layout hint for the container element
             enrich(DefaultLayoutConfig.CONTAINER_HINT, context, config);
-            // enrich the diagram type for the selected element
-            enrich(DefaultLayoutConfig.CONTENT_DIAGT, context, config);
             // enrich the diagram type for the container element
             enrich(DefaultLayoutConfig.CONTAINER_DIAGT, context, config);
             // enrich the layout algorithm for the selected element

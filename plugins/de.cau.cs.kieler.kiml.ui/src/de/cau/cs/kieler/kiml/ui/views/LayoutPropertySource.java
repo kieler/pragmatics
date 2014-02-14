@@ -89,6 +89,8 @@ public class LayoutPropertySource implements IPropertySource {
             DiagramLayoutEngine.INSTANCE.getOptionManager().enrich(layoutContext, layoutConfig, true);
             List<LayoutOptionData> optionData = layoutContext.getProperty(
                     DefaultLayoutConfig.OPTIONS);
+            Set<LayoutOptionData.Target> elementTargets = layoutContext.getProperty(
+                    LayoutContext.OPT_TARGETS);
             
             // filter the options hidden by option dependencies
             filterDependencies(optionData);
@@ -97,7 +99,8 @@ public class LayoutPropertySource implements IPropertySource {
             ListIterator<LayoutOptionData> optionIter = optionData.listIterator();
             while (optionIter.hasNext()) {
                 LayoutOptionData data = optionIter.next();
-                propertyDescriptors[optionIter.previousIndex()] = new LayoutPropertyDescriptor(data);
+                propertyDescriptors[optionIter.previousIndex()] = new LayoutPropertyDescriptor(data,
+                        elementTargets);
             }
         }
         return propertyDescriptors;

@@ -26,6 +26,7 @@ import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
 import org.eclipse.graphiti.mm.pictograms.Connection;
+import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -213,13 +214,15 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
                 return EnumSet.of(LayoutOptionData.Target.PARENTS);
             }
             public Set<LayoutOptionData.Target> caseShape(final Shape shape) {
-                Set<LayoutOptionData.Target> targets = EnumSet.of(LayoutOptionData.Target.NODES);
-                if (pe instanceof ContainerShape) {
-                    // the same check for relevant children as in the layout manager must be made here
-                    for (Shape child : ((ContainerShape) pe).getChildren()) {
-                        if (layoutManager.isNodeShape(child)) {
-                            targets.add(LayoutOptionData.Target.PARENTS);
-                            break;
+                Set<LayoutOptionData.Target> targets = EnumSet.noneOf(LayoutOptionData.Target.class);
+                if (layoutManager.isNodeShape(shape)) {
+                    targets.add(LayoutOptionData.Target.NODES);
+                    if (pe instanceof ContainerShape) {
+                        for (Shape child : ((ContainerShape) pe).getChildren()) {
+                            if (layoutManager.isNodeShape(child)) {
+                                targets.add(LayoutOptionData.Target.PARENTS);
+                                break;
+                            }
                         }
                     }
                 }
@@ -234,10 +237,17 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
             }
             public Set<LayoutOptionData.Target> caseAnchor(final Anchor anchor) {
                 AnchorContainer ac = anchor.getParent();
-                if (ac instanceof Shape) {
+                if (ac instanceof Shape && layoutManager.isPortAnchor(anchor)) {
                     return EnumSet.of(LayoutOptionData.Target.PORTS);
                 }
                 return null;
+            }
+            public Set<LayoutOptionData.Target> caseConnectionDecorator(
+                    final ConnectionDecorator decorator) {
+                if (layoutManager.isEdgeLabel(decorator)) {
+                    return EnumSet.of(LayoutOptionData.Target.LABELS);
+                }
+                return EnumSet.noneOf(LayoutOptionData.Target.class);
             }
         };
         return pictogramsSwitch.doSwitch(pe);

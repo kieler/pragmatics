@@ -27,7 +27,7 @@ import java.util.List;
  * @kieler.rating yellow 2012-10-09 review KI-25 by chsch, bdu
  * @author msp
  */
-public class LayoutTypeData implements ILayoutData {
+public final class LayoutTypeData implements ILayoutData {
     
     /** default name for layout types for which no name is given. */
     public static final String DEFAULT_TYPE_NAME = "<Unnamed Type>";
