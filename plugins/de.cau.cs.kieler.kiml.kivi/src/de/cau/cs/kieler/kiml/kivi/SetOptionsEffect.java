@@ -29,6 +29,7 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.config.LayoutContext;
+import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.service.LayoutManagersService;
 import de.cau.cs.kieler.kiml.service.IDiagramLayoutManager;
 
@@ -93,7 +94,8 @@ public class SetOptionsEffect extends AbstractEffect {
                     final LayoutContext context = new LayoutContext();
                     context.setProperty(LayoutContext.DOMAIN_MODEL, modelElement);
                     context.setProperty(LayoutContext.DIAGRAM_PART, diagramPart);
-                    layoutConfig.enrich(context);
+                    DiagramLayoutEngine.INSTANCE.getOptionManager().enrich(context, layoutConfig,
+                            false);
                     
                     // get an editing domain and execute the command
                     EditingDomain editingDomain = (EditingDomain) manager.getAdapter(diagramPart,
@@ -104,7 +106,7 @@ public class SetOptionsEffect extends AbstractEffect {
                                 LayoutOptionData optionData = LayoutDataService.getInstance()
                                         .getOptionData(entry.getKey());
                                 if (optionData != null) {
-                                    layoutConfig.setValue(optionData, context, entry.getValue());
+                                    layoutConfig.setOptionValue(optionData, context, entry.getValue());
                                 }
                             }
                         }

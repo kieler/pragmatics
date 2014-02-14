@@ -46,7 +46,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
  * @kieler.design proposed by msp
  * @kieler.rating yellow 2013-07-01 review KI-38 by cds, uru
  */
-public class VolatileLayoutConfig implements IMutableLayoutConfig {
+public class VolatileLayoutConfig extends AbstractMutableLayoutConfig {
     
     /** the default priority for volatile layout configurators. */
     public static final int DEFAULT_PRIORITY = 100;
@@ -153,14 +153,7 @@ public class VolatileLayoutConfig implements IMutableLayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public void enrich(final LayoutContext context) {
-        // no properties to enrich for this layout configuration
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Object getValue(final LayoutOptionData optionData, final LayoutContext context) {
+    public Object getOptionValue(final LayoutOptionData optionData, final LayoutContext context) {
         for (IProperty<?> contextKey : contextKeys) {
             // retrieve the object stored under this key from the context
             Object object = context.getProperty(contextKey);
@@ -311,7 +304,7 @@ public class VolatileLayoutConfig implements IMutableLayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public void setValue(final LayoutOptionData optionData, final LayoutContext context,
+    public void setOptionValue(final LayoutOptionData optionData, final LayoutContext context,
             final Object value) {
         KGraphElement graphElem = context.getProperty(LayoutContext.GRAPH_ELEM);
         if (context.getProperty(LayoutContext.GLOBAL)) {
@@ -337,7 +330,8 @@ public class VolatileLayoutConfig implements IMutableLayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public void clearValues(final LayoutContext context) {
+    @Override
+    public void clearOptionValues(final LayoutContext context) {
         if (context.getProperty(LayoutContext.GLOBAL)) {
             globalOptionMap.clear();
         } else {
@@ -346,13 +340,6 @@ public class VolatileLayoutConfig implements IMutableLayoutConfig {
                 focusOptionMap.remove(object);
             }
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean isSet(final LayoutOptionData optionData, final LayoutContext context) {
-        return getValue(optionData, context) != null;
     }
 
 }

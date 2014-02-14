@@ -23,6 +23,7 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.config.LayoutContext;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.service.LayoutManagersService;
 import de.cau.cs.kieler.kiml.service.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
@@ -78,7 +79,7 @@ public class DiagramDefaultAction extends Action {
                 final LayoutContext context = new LayoutContext();
                 context.setProperty(LayoutContext.DIAGRAM_PART, diagramPart);
                 context.setProperty(IMutableLayoutConfig.OPT_RECURSIVE, true);
-                layoutConfig.enrich(context);
+                DiagramLayoutEngine.INSTANCE.getOptionManager().enrich(context, layoutConfig, false);
                 
                 for (IPropertySheetEntry entry : layoutView.getSelection()) {
                     applyOption(editingDomain, layoutConfig, context, entry);
@@ -114,7 +115,7 @@ public class DiagramDefaultAction extends Action {
         if (value != null) {
             Runnable modelChange = new Runnable() {
                 public void run() {
-                    config.setValue(optionData, context, value);
+                    config.setOptionValue(optionData, context, value);
                 }
             };
             KimlUiUtil.runModelChange(modelChange, editingDomain, Messages.getString("kiml.ui.13"));

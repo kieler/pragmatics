@@ -32,6 +32,7 @@ import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.config.LayoutContext;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 
@@ -84,8 +85,8 @@ public class LayoutPropertySource implements IPropertySource {
      */
     public IPropertyDescriptor[] getPropertyDescriptors() {
         if (propertyDescriptors == null) {
-            layoutContext.setProperty(DefaultLayoutConfig.OPT_MAKE_OPTIONS, true);
-            layoutConfig.enrich(layoutContext);
+            // enrich the layout context
+            DiagramLayoutEngine.INSTANCE.getOptionManager().enrich(layoutContext, layoutConfig, true);
             List<LayoutOptionData> optionData = layoutContext.getProperty(
                     DefaultLayoutConfig.OPTIONS);
             
@@ -123,7 +124,7 @@ public class LayoutPropertySource implements IPropertySource {
                 LayoutOptionData targetOption = dependency.getFirst();
                 dependencyOptions.add(targetOption.getId());
                 Object expectedValue = dependency.getSecond();
-                Object value = layoutConfig.getValue(targetOption, layoutContext);
+                Object value = layoutConfig.getOptionValue(targetOption, layoutContext);
                 if (expectedValue == null && value != null
                         || expectedValue != null && expectedValue.equals(value)) {
                     visible = true;
@@ -148,7 +149,7 @@ public class LayoutPropertySource implements IPropertySource {
             if (LayoutOptions.ALGORITHM.getId().equals(id)) {
                 value = layoutContext.getProperty(DefaultLayoutConfig.CONTENT_ALGO).getId();
             } else {
-                value = layoutConfig.getValue(optionData, layoutContext);
+                value = layoutConfig.getOptionValue(optionData, layoutContext);
             }
             return translateValue(value, optionData);
         }
@@ -248,7 +249,7 @@ public class LayoutPropertySource implements IPropertySource {
                     default:
                         value = optionData.parseValue((String) value);
                     }
-                    layoutConfig.setValue(optionData, layoutContext, value);
+                    layoutConfig.setOptionValue(optionData, layoutContext, value);
                 }
             };
             KimlUiUtil.runModelChange(modelChange, editingDomain, Messages.getString("kiml.ui.11"));
@@ -287,7 +288,7 @@ public class LayoutPropertySource implements IPropertySource {
         if (optionData != null) {
             Runnable modelChange = new Runnable() {
                 public void run() {
-                    layoutConfig.setValue(optionData, layoutContext, null);
+                    layoutConfig.setOptionValue(optionData, layoutContext, null);
                 }
             };
             KimlUiUtil.runModelChange(modelChange, editingDomain, Messages.getString("kiml.ui.12"));

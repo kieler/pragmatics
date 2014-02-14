@@ -40,7 +40,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
@@ -97,116 +96,147 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public void enrich(final LayoutContext context) {
-        Object diagramPart = context.getProperty(LayoutContext.DIAGRAM_PART);
-        PictogramElement pictogramElem = null;
-        Diagram diagram = null;
-        if (diagramPart instanceof IPictogramElementEditPart) {
-            IPictogramElementEditPart focusEditPart = (IPictogramElementEditPart) diagramPart;
-            pictogramElem = focusEditPart.getPictogramElement();
-            diagram = focusEditPart.getConfigurationProvider().getDiagram();
-        } else if (diagramPart instanceof PictogramElement) {
-            pictogramElem = (PictogramElement) diagramPart;
-        }
+    public Object getContextValue(final IProperty<?> property, final LayoutContext context) {
+        PictogramElement pictogramElem = getPictogramElement(context);
         if (pictogramElem != null) {
-            // add pictogram element and domain model element to the context
-            context.setProperty(PICTO_ELEM, pictogramElem);
-            if (context.getProperty(LayoutContext.DOMAIN_MODEL) == null
-                    && pictogramElem.getLink() != null
-                    && pictogramElem.getLink().getBusinessObjects().size() > 0) {
-                context.setProperty(LayoutContext.DOMAIN_MODEL,
-                        pictogramElem.getLink().getBusinessObjects().get(0));
-            }
-            
-            // determine the target type and container / containment edit parts
-            Maybe<PictogramElement> containerPe = Maybe.create();
-            Maybe<Boolean> hasPorts = Maybe.create();
-            Set<LayoutOptionData.Target> partTargets = findTarget(pictogramElem,
-                    containerPe, hasPorts);
-            if (partTargets != null) {
-                context.setProperty(LayoutContext.OPT_TARGETS, partTargets);
-            }
-            
-            // set whether the selected element is a node that contains ports
-            if (hasPorts.get() != null) {
-                context.setProperty(DefaultLayoutConfig.HAS_PORTS, hasPorts.get());
-            }
-            
-            // get aspect ratio for the current diagram
-            try {
-                Control control = null;
-                if (diagramPart instanceof EditPart) {
-                    control = ((EditPart) diagramPart).getViewer().getControl();
-                } else {
-                    IWorkbenchPart workbenchPart = context.getProperty(
-                            EclipseLayoutConfig.WORKBENCH_PART);
-                    if (workbenchPart instanceof DiagramEditor) {
-                        control = ((DiagramEditor) workbenchPart).getGraphicalViewer().getControl();
-                    }
+            if (property.equals(LayoutContext.DOMAIN_MODEL)) {
+                // add domain model element to the context
+                PictogramLink link = pictogramElem.getLink();
+                if (link != null && link.getBusinessObjects().size() > 0) {
+                    return link.getBusinessObjects().get(0);
                 }
-                if (control != null) {
-                    Point size = control.getSize();
-                    if (size.x > 0 && size.y > 0) {
-                        context.setProperty(EclipseLayoutConfig.ASPECT_RATIO,
-                                Math.round(ASPECT_RATIO_ROUND * (float) size.x / size.y)
-                                / ASPECT_RATIO_ROUND);
-                    }
-                }
-            } catch (SWTException exception) {
-                // ignore exception
-            }
-            
-            if (context.getProperty(DefaultLayoutConfig.OPT_MAKE_OPTIONS)) {
-                // find diagram pictogram element
-                if (diagram == null) {
-                    PictogramElement pe = pictogramElem;
-                    while (pe != null && !(pe instanceof Diagram)) {
-                        pe = (PictogramElement) pe.eContainer();
-                    }
-                    if (pe != null) {
-                        diagram = (Diagram) pe;
+                
+            } else if (property.equals(LayoutContext.CONTAINER_DOMAIN_MODEL)) {
+                // add domain model element of the container element to the context
+                PictogramElement containerPe = getContainer(pictogramElem);
+                if (containerPe != null) {
+                    PictogramLink link = containerPe.getLink();
+                    if (link != null && link.getBusinessObjects().size() > 0) {
+                        return link.getBusinessObjects().get(0);
                     }
                 }
                 
+            } else if (property.equals(LayoutContext.OPT_TARGETS)) {
+                return findTarget(pictogramElem);
+                
+            } else if (property.equals(DefaultLayoutConfig.HAS_PORTS)) {
+                // set whether the selected element is a node that contains ports
+                if (pictogramElem instanceof Shape) {
+                    // the same check for ports as in the layout manager must be made here
+                    for (Anchor anchor : ((Shape) pictogramElem).getAnchors()) {
+                        if (layoutManager.isPortAnchor(anchor)) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+                
+            } else if (property.equals(EclipseLayoutConfig.ASPECT_RATIO)) {
+                // get aspect ratio for the current diagram
+                try {
+                    Control control = null;
+                    Object diagramPart = context.getProperty(LayoutContext.DIAGRAM_PART);
+                    if (diagramPart instanceof EditPart) {
+                        control = ((EditPart) diagramPart).getViewer().getControl();
+                    } else {
+                        IWorkbenchPart workbenchPart = context.getProperty(
+                                EclipseLayoutConfig.WORKBENCH_PART);
+                        if (workbenchPart instanceof DiagramEditor) {
+                            control = ((DiagramEditor) workbenchPart).getGraphicalViewer().getControl();
+                        }
+                    }
+                    if (control != null) {
+                        Point size = control.getSize();
+                        if (size.x > 0 && size.y > 0) {
+                            return Math.round(ASPECT_RATIO_ROUND * (float) size.x / size.y)
+                                    / ASPECT_RATIO_ROUND;
+                        }
+                    }
+                } catch (SWTException exception) {
+                    // ignore exception
+                }
+                
+            } else if (property.equals(DefaultLayoutConfig.CONTENT_HINT)) {
+                // get a layout hint for the content of the focused pictogram element
                 LayoutOptionData algorithmOptionData = LayoutDataService.getInstance()
                         .getOptionData(LayoutOptions.ALGORITHM.getId());
-                if (context.getProperty(DefaultLayoutConfig.CONTENT_HINT) == null
-                        && algorithmOptionData != null) {
-                    // get a layout hint for the content of the focused pictogram element
+                if (algorithmOptionData != null) {
                     String contentLayoutHint = (String) getValue(algorithmOptionData, PREFIX,
                             pictogramElem);
-                    if (contentLayoutHint == null && diagram != null) {
-                        contentLayoutHint = (String) getValue(algorithmOptionData, DEF_PREFIX,
-                                diagram);
+                    if (contentLayoutHint == null) {
+                        Diagram diagram = getDiagram(context);
+                        if (diagram != null) {
+                            contentLayoutHint = (String) getValue(algorithmOptionData, DEF_PREFIX,
+                                    diagram);
+                        }
                     }
-                    if (contentLayoutHint != null) {
-                        context.setProperty(DefaultLayoutConfig.CONTENT_HINT, contentLayoutHint);
-                    }
+                    return contentLayoutHint;
                 }
                 
-                if (containerPe.get() != null) {
-                    if (context.getProperty(DefaultLayoutConfig.CONTAINER_HINT) == null
-                            && algorithmOptionData != null) {
-                        // get a layout hint for the container edit part
-                        String containerLayoutHint = (String) getValue(algorithmOptionData, PREFIX,
-                                containerPe.get());
-                        if (containerLayoutHint == null && diagram != null) {
+            } else if (property.equals(DefaultLayoutConfig.CONTAINER_HINT)) {
+                // get a layout hint for the container edit part
+                LayoutOptionData algorithmOptionData = LayoutDataService.getInstance()
+                        .getOptionData(LayoutOptions.ALGORITHM.getId());
+                PictogramElement containerPe = getContainer(pictogramElem);
+                if (algorithmOptionData != null && containerPe != null) {
+                    String containerLayoutHint = (String) getValue(algorithmOptionData, PREFIX,
+                            containerPe);
+                    if (containerLayoutHint == null) {
+                        Diagram diagram = getDiagram(context);
+                        if (diagram != null) {
                             containerLayoutHint = (String) getValue(algorithmOptionData, DEF_PREFIX,
                                     diagram);
                         }
-                        if (containerLayoutHint != null) {
-                            context.setProperty(DefaultLayoutConfig.CONTAINER_HINT,
-                                    containerLayoutHint);
+                    }
+                    return containerLayoutHint;
+                }
+                
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Determine the type of edit part target for layout options.
+     * 
+     * @param pe a pictogram element
+     * @return the layout option targets
+     */
+    private Set<LayoutOptionData.Target> findTarget(final PictogramElement pe) {
+        PictogramsSwitch<Set<LayoutOptionData.Target>> pictogramsSwitch
+                = new PictogramsSwitch<Set<LayoutOptionData.Target>>() {
+            public Set<LayoutOptionData.Target> caseDiagram(final Diagram diagram) {
+                return EnumSet.of(LayoutOptionData.Target.PARENTS);
+            }
+            public Set<LayoutOptionData.Target> caseShape(final Shape shape) {
+                Set<LayoutOptionData.Target> targets = EnumSet.of(LayoutOptionData.Target.NODES);
+                if (pe instanceof ContainerShape) {
+                    // the same check for relevant children as in the layout manager must be made here
+                    for (Shape child : ((ContainerShape) pe).getChildren()) {
+                        if (layoutManager.isNodeShape(child)) {
+                            targets.add(LayoutOptionData.Target.PARENTS);
+                            break;
                         }
                     }
-                    PictogramLink link = containerPe.get().getLink();
-                    if (link != null && link.getBusinessObjects().size() > 0) {
-                        context.setProperty(LayoutContext.CONTAINER_DOMAIN_MODEL,
-                                link.getBusinessObjects().get(0));
-                    }
                 }
+                return targets;
             }
-        }   
+            public Set<LayoutOptionData.Target> caseConnection(final Connection connection) {
+                AnchorContainer ac = connection.getStart().getParent();
+                if (ac instanceof Shape) {
+                    return EnumSet.of(LayoutOptionData.Target.EDGES);
+                }
+                return null;
+            }
+            public Set<LayoutOptionData.Target> caseAnchor(final Anchor anchor) {
+                AnchorContainer ac = anchor.getParent();
+                if (ac instanceof Shape) {
+                    return EnumSet.of(LayoutOptionData.Target.PORTS);
+                }
+                return null;
+            }
+        };
+        return pictogramsSwitch.doSwitch(pe);
     }
     
     /**
@@ -219,60 +249,83 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
      *          set to {@code true}
      * @return the layout option targets
      */
-    private Set<LayoutOptionData.Target> findTarget(final PictogramElement pe,
-            final Maybe<PictogramElement> containerPe, final Maybe<Boolean> hasPorts) {
-        PictogramsSwitch<Set<LayoutOptionData.Target>> pictogramsSwitch
-                = new PictogramsSwitch<Set<LayoutOptionData.Target>>() {
-            public Set<LayoutOptionData.Target> caseDiagram(final Diagram diagram) {
-                containerPe.set(diagram);
-                return EnumSet.of(LayoutOptionData.Target.PARENTS);
+    private PictogramElement getContainer(final PictogramElement pe) {
+        PictogramsSwitch<PictogramElement> pictogramsSwitch
+                = new PictogramsSwitch<PictogramElement>() {
+            public PictogramElement caseDiagram(final Diagram diagram) {
+                return diagram;
             }
-            public Set<LayoutOptionData.Target> caseShape(final Shape shape) {
-                containerPe.set(shape.getContainer());
-                Set<LayoutOptionData.Target> targets = EnumSet.of(LayoutOptionData.Target.NODES);
-                if (pe instanceof ContainerShape) {
-                    // the same check for relevant children as in the layout manager must be made here
-                    for (Shape child : ((ContainerShape) pe).getChildren()) {
-                        if (layoutManager.isNodeShape(child)) {
-                            targets.add(LayoutOptionData.Target.PARENTS);
-                            break;
-                        }
-                    }
-                }
-                // the same check for ports as in the layout manager must be made here
-                for (Anchor anchor : ((Shape) pe).getAnchors()) {
-                    if (layoutManager.isPortAnchor(anchor)) {
-                        hasPorts.set(Boolean.TRUE);
-                        break;
-                    }
-                }
-                return targets;
+            public PictogramElement caseShape(final Shape shape) {
+                return shape.getContainer();
             }
-            public Set<LayoutOptionData.Target> caseConnection(final Connection connection) {
+            public PictogramElement caseConnection(final Connection connection) {
                 AnchorContainer ac = connection.getStart().getParent();
                 if (ac instanceof Shape) {
-                    containerPe.set(((Shape) ac).getContainer());
-                    return EnumSet.of(LayoutOptionData.Target.EDGES);
+                    return ((Shape) ac).getContainer();
                 }
                 return null;
             }
-            public Set<LayoutOptionData.Target> caseAnchor(final Anchor anchor) {
+            public PictogramElement caseAnchor(final Anchor anchor) {
                 AnchorContainer ac = anchor.getParent();
                 if (ac instanceof Shape) {
-                    containerPe.set(((Shape) ac).getContainer());
-                    return EnumSet.of(LayoutOptionData.Target.PORTS);
+                    return ((Shape) ac).getContainer();
                 }
                 return null;
             }
         };
         return pictogramsSwitch.doSwitch(pe);
     }
+    
+    /**
+     * Determine the pictogram element from the given context.
+     * 
+     * @param context a layout context
+     * @return the corresponding pictogram element, or {@code null} if none can be determined
+     */
+    private PictogramElement getPictogramElement(final LayoutContext context) {
+        PictogramElement pictogramElem = context.getProperty(PICTO_ELEM);
+        if (pictogramElem == null) {
+            Object diagramPart = context.getProperty(LayoutContext.DIAGRAM_PART);
+            if (diagramPart instanceof PictogramElement) {
+                pictogramElem = (PictogramElement) diagramPart;
+            } else if (diagramPart instanceof IPictogramElementEditPart) {
+                IPictogramElementEditPart focusEditPart = (IPictogramElementEditPart) diagramPart;
+                pictogramElem = focusEditPart.getPictogramElement();
+            }
+            context.setProperty(PICTO_ELEM, pictogramElem);
+        }
+        return pictogramElem;
+    }
+    
+    /**
+     * Determine the diagram element from the given context.
+     * 
+     * @param context a layout context
+     * @return the corresponding diagram element, or {@code null} if none can be determined
+     */
+    private Diagram getDiagram(final LayoutContext context) {
+        Object diagramPart = context.getProperty(LayoutContext.DIAGRAM_PART);
+        if (diagramPart instanceof IPictogramElementEditPart) {
+            IPictogramElementEditPart focusEditPart = (IPictogramElementEditPart) diagramPart;
+            return focusEditPart.getConfigurationProvider().getDiagram();
+        }
+        PictogramElement pictogramElement = getPictogramElement(context);
+        if (pictogramElement != null) {
+            while (pictogramElement != null && !(pictogramElement instanceof Diagram)) {
+                pictogramElement = (PictogramElement) pictogramElement.eContainer();
+            }
+            if (pictogramElement != null) {
+                return (Diagram) pictogramElement;
+            }
+        }
+        return null;
+    }
 
     /**
      * {@inheritDoc}
      */
-    public Object getValue(final LayoutOptionData optionData, final LayoutContext context) {
-        PictogramElement pe = context.getProperty(PICTO_ELEM);
+    public Object getOptionValue(final LayoutOptionData optionData, final LayoutContext context) {
+        PictogramElement pe = getPictogramElement(context);
         if (pe != null) {
             Object result = getValue(optionData, PREFIX, pe);
             if (result != null) {
@@ -320,7 +373,7 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
      * {@inheritDoc}
      */
     public Collection<IProperty<?>> getAffectedOptions(final LayoutContext context) {
-        PictogramElement pe = context.getProperty(PICTO_ELEM);
+        PictogramElement pe = getPictogramElement(context);
         List<IProperty<?>> options = new LinkedList<IProperty<?>>();
         if (pe != null) {
             // add user defined global layout options
@@ -360,9 +413,9 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public void setValue(final LayoutOptionData optionData, final LayoutContext context,
+    public void setOptionValue(final LayoutOptionData optionData, final LayoutContext context,
             final Object value) {
-        PictogramElement pe = context.getProperty(PICTO_ELEM);
+        PictogramElement pe = getPictogramElement(context);
         if (pe != null) {
             if (context.getProperty(IMutableLayoutConfig.OPT_RECURSIVE)) {
                 if (value != null) {
@@ -444,8 +497,8 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public void clearValues(final LayoutContext context) {
-        PictogramElement pe = context.getProperty(PICTO_ELEM);
+    public void clearOptionValues(final LayoutContext context) {
+        PictogramElement pe = getPictogramElement(context);
         if (pe != null) {
             boolean recursive = context.getProperty(IMutableLayoutConfig.OPT_RECURSIVE);
             clearValues(pe, recursive);
@@ -491,7 +544,7 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
      * {@inheritDoc}
      */
     public boolean isSet(final LayoutOptionData optionData, final LayoutContext context) {
-        PictogramElement pe = context.getProperty(PICTO_ELEM);
+        PictogramElement pe = getPictogramElement(context);
         if (pe != null) {
             Object result = getValue(optionData, PREFIX, pe);
             return result != null;

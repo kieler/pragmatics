@@ -110,65 +110,61 @@ public class EclipseLayoutConfig implements ILayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public void enrich(final LayoutContext context) {
-        // get main edit part and domain model element
-        Object diagPart = context.getProperty(LayoutContext.DIAGRAM_PART);
-        Object domainElem = context.getProperty(LayoutContext.DOMAIN_MODEL);
-
-        // set diagram type for the content of the main edit part
-        String diagramType = context.getProperty(DefaultLayoutConfig.CONTENT_DIAGT);
-        if (diagramType == null) {
-            diagramType = (String) getValue(LayoutOptions.DIAGRAM_TYPE, diagPart, domainElem);
-            context.setProperty(DefaultLayoutConfig.CONTENT_DIAGT, diagramType);
-        }
-        
-        if (context.getProperty(DefaultLayoutConfig.OPT_MAKE_OPTIONS)) {            
-            // set layout algorithm or type identifier for the content
-            String layoutHint = context.getProperty(DefaultLayoutConfig.CONTENT_HINT);
-            if (layoutHint == null) {
-                layoutHint = (String) getValue(LayoutOptions.ALGORITHM, diagPart, domainElem);
-                if (layoutHint == null) {
-                    layoutHint = (String) ExtensionLayoutConfigService.getInstance().getOptionValue(
-                            diagramType, LayoutOptions.ALGORITHM.getId());
-                }
-                context.setProperty(DefaultLayoutConfig.CONTENT_HINT, layoutHint);
-            }
+    public Object getContextValue(final IProperty<?> property, final LayoutContext context) {
+        if (property.equals(DefaultLayoutConfig.CONTENT_DIAGT)) {
+            // set diagram type for the content of the main edit part
+            Object diagPart = context.getProperty(LayoutContext.DIAGRAM_PART);
+            Object domainElem = context.getProperty(LayoutContext.DOMAIN_MODEL);
+            return getValue(LayoutOptions.DIAGRAM_TYPE, diagPart, domainElem);
             
-            // get container edit part and domain model element
+        } else if (property.equals(DefaultLayoutConfig.CONTAINER_DIAGT)) {
             Object containerDiagPart = context.getProperty(LayoutContext.CONTAINER_DIAGRAM_PART);
             Object containerDomainElem = context.getProperty(LayoutContext.CONTAINER_DOMAIN_MODEL);
-            if (containerDomainElem == null && containerDiagPart != null) {
-                containerDomainElem = (EObject) LayoutManagersService.getInstance().getAdapter(
-                        containerDiagPart, EObject.class);
-                context.setProperty(LayoutContext.CONTAINER_DOMAIN_MODEL, containerDomainElem);
-            }
+            return getValue(LayoutOptions.DIAGRAM_TYPE, containerDiagPart, containerDomainElem);
             
-            // set diagram type for the container of the main edit part
-            String containerDiagramType = context.getProperty(DefaultLayoutConfig.CONTAINER_DIAGT);
-            if (containerDiagramType == null) {
-                containerDiagramType = (String) getValue(LayoutOptions.DIAGRAM_TYPE,
-                        containerDiagPart, containerDomainElem);
-                context.setProperty(DefaultLayoutConfig.CONTAINER_DIAGT, containerDiagramType);
+        } else if (property.equals(DefaultLayoutConfig.CONTENT_HINT)) {
+            // set layout algorithm or type identifier for the content
+            Object diagPart = context.getProperty(LayoutContext.DIAGRAM_PART);
+            Object domainElem = context.getProperty(LayoutContext.DOMAIN_MODEL);
+            String layoutHint = (String) getValue(LayoutOptions.ALGORITHM, diagPart, domainElem);
+            if (layoutHint == null) {
+                String diagramType = context.getProperty(DefaultLayoutConfig.CONTENT_DIAGT);
+                layoutHint = (String) ExtensionLayoutConfigService.getInstance().getOptionValue(
+                        diagramType, LayoutOptions.ALGORITHM.getId());
             }
+            return layoutHint;
             
-            // set layout algorithm or type identifier for the container
-            String containerLayoutHint = context.getProperty(DefaultLayoutConfig.CONTAINER_HINT);
+        } else if (property.equals(DefaultLayoutConfig.CONTAINER_HINT)) {
+            Object containerDiagPart = context.getProperty(LayoutContext.CONTAINER_DIAGRAM_PART);
+            Object containerDomainElem = context.getProperty(LayoutContext.CONTAINER_DOMAIN_MODEL);
+            String containerLayoutHint = (String) getValue(LayoutOptions.ALGORITHM,
+                    containerDiagPart, containerDomainElem);
             if (containerLayoutHint == null) {
-                containerLayoutHint = (String) getValue(LayoutOptions.ALGORITHM,
-                        containerDiagPart, containerDomainElem);
-                if (containerLayoutHint == null) {
-                    containerLayoutHint = (String) LayoutConfigService.getInstance().getOptionValue(
-                            containerDiagramType, LayoutOptions.ALGORITHM.getId());
-                }
-                context.setProperty(DefaultLayoutConfig.CONTAINER_HINT, containerLayoutHint);
+                String containerDiagramType = context.getProperty(DefaultLayoutConfig.CONTAINER_DIAGT);
+                containerLayoutHint = (String) LayoutConfigService.getInstance().getOptionValue(
+                        containerDiagramType, LayoutOptions.ALGORITHM.getId());
+            }
+            return containerLayoutHint;
+            
+        } else if (property.equals(LayoutContext.DOMAIN_MODEL)) {
+            Object diagPart = context.getProperty(LayoutContext.DIAGRAM_PART);
+            if (diagPart != null) {
+                return LayoutManagersService.getInstance().getAdapter(diagPart, EObject.class);
+            }
+            
+        } else if (property.equals(LayoutContext.CONTAINER_DOMAIN_MODEL)) {
+            Object containerDiagPart = context.getProperty(LayoutContext.CONTAINER_DIAGRAM_PART);
+            if (containerDiagPart != null) {
+                return LayoutManagersService.getInstance().getAdapter(containerDiagPart, EObject.class);
             }
         }
+        return null;
     }
-
+    
     /**
      * {@inheritDoc}
      */
-    public Object getValue(final LayoutOptionData optionData, final LayoutContext context) {
+    public Object getOptionValue(final LayoutOptionData optionData, final LayoutContext context) {
         LayoutConfigService configService = LayoutConfigService.getInstance();
         Object result = null;
         

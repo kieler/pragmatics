@@ -20,6 +20,7 @@ import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.config.LayoutContext;
+import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.service.LayoutManagersService;
 import de.cau.cs.kieler.kiml.service.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.Messages;
@@ -67,7 +68,7 @@ public class RemoveOptionsAction extends Action {
                 final LayoutContext context = new LayoutContext();
                 context.setProperty(LayoutContext.DIAGRAM_PART, diagramPart);
                 context.setProperty(IMutableLayoutConfig.OPT_RECURSIVE, true);
-                layoutConfig.enrich(context);
+                DiagramLayoutEngine.INSTANCE.getOptionManager().enrich(context, layoutConfig, false);
                 
                 removeOptions(workbenchPart.getTitle(), layoutConfig, context, editingDomain);
             }
@@ -91,7 +92,7 @@ public class RemoveOptionsAction extends Action {
         if (userResponse) {
             Runnable runnable = new Runnable() {
                 public void run() {
-                    layoutConfig.clearValues(context);
+                    layoutConfig.clearOptionValues(context);
                 }
             };
             KimlUiUtil.runModelChange(runnable, editingDomain, Messages.getString("kiml.ui.30"));

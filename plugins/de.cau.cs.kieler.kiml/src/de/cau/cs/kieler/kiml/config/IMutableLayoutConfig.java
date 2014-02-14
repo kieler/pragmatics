@@ -36,14 +36,14 @@ public interface IMutableLayoutConfig extends ILayoutConfig {
      * @param context a context for layout configuration
      * @param value the new layout option value, or {@code null} if the current value shall be removed
      */
-    void setValue(LayoutOptionData optionData, LayoutContext context, Object value);
+    void setOptionValue(LayoutOptionData optionData, LayoutContext context, Object value);
     
     /**
      * Clear all layout option values that have been set for the given context.
      * 
      * @param context a context for layout configuration
      */
-    void clearValues(LayoutContext context);
+    void clearOptionValues(LayoutContext context);
     
     /**
      * Determine whether the given layout option is set, not considering any default values.
