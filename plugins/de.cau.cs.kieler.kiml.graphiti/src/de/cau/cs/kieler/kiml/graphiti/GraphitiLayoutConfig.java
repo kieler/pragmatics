@@ -71,6 +71,10 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
     public static final IProperty<PictogramElement> PICTO_ELEM
             = new de.cau.cs.kieler.core.properties.Property<PictogramElement>(
                     "context.pictogramElement");
+    /** the diagram element of the pictogram model in the context. */
+    public static final IProperty<Diagram> DIAGRAM
+            = new de.cau.cs.kieler.core.properties.Property<Diagram>(
+                    "context.diagramPictogram");
     
     /** the layout manager for which this configurator was created. */
     private GraphitiDiagramLayoutManager layoutManager;
@@ -304,40 +308,42 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
      * @return the corresponding diagram element, or {@code null} if none can be determined
      */
     private Diagram getDiagram(final LayoutContext context) {
-        Object diagramPart = context.getProperty(LayoutContext.DIAGRAM_PART);
-        if (diagramPart instanceof IPictogramElementEditPart) {
-            IPictogramElementEditPart focusEditPart = (IPictogramElementEditPart) diagramPart;
-            return focusEditPart.getConfigurationProvider().getDiagram();
-        }
-        PictogramElement pictogramElement = getPictogramElement(context);
-        if (pictogramElement != null) {
-            while (pictogramElement != null && !(pictogramElement instanceof Diagram)) {
-                pictogramElement = (PictogramElement) pictogramElement.eContainer();
+        Diagram diagram = context.getProperty(DIAGRAM);
+        if (diagram == null) {
+            Object diagramPart = context.getProperty(LayoutContext.DIAGRAM_PART);
+            if (diagramPart instanceof IPictogramElementEditPart) {
+                IPictogramElementEditPart focusEditPart = (IPictogramElementEditPart) diagramPart;
+                diagram = focusEditPart.getConfigurationProvider().getDiagram();
+            } else if (diagramPart instanceof PictogramElement) {
+                PictogramElement pictogramElement = (PictogramElement) diagramPart;
+                while (pictogramElement != null && !(pictogramElement instanceof Diagram)) {
+                    pictogramElement = (PictogramElement) pictogramElement.eContainer();
+                }
+                if (pictogramElement != null) {
+                    diagram = (Diagram) pictogramElement;
+                }
             }
-            if (pictogramElement != null) {
-                return (Diagram) pictogramElement;
-            }
+            context.setProperty(DIAGRAM, diagram);
         }
-        return null;
+        return diagram;
     }
 
     /**
      * {@inheritDoc}
      */
     public Object getOptionValue(final LayoutOptionData optionData, final LayoutContext context) {
-        PictogramElement pe = getPictogramElement(context);
-        if (pe != null) {
-            Object result = getValue(optionData, PREFIX, pe);
+        PictogramElement pictogramElement = getPictogramElement(context);
+        if (pictogramElement != null) {
+            Object result = getValue(optionData, PREFIX, pictogramElement);
             if (result != null) {
                 return result;
             }
-            
-            // check default option of diagram
-            PictogramElement parent = pe;
-            while (parent.eContainer() instanceof PictogramElement) {
-                parent = (PictogramElement) parent.eContainer();
-            }
-            return getValue(optionData, DEF_PREFIX, parent);
+        }
+        
+        // check default option of diagram
+        Diagram diagram = getDiagram(context);
+        if (diagram != null) {
+            return getValue(optionData, DEF_PREFIX, diagram);
         }
         return null;
     }
@@ -373,17 +379,16 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
      * {@inheritDoc}
      */
     public Collection<IProperty<?>> getAffectedOptions(final LayoutContext context) {
-        PictogramElement pe = getPictogramElement(context);
         List<IProperty<?>> options = new LinkedList<IProperty<?>>();
-        if (pe != null) {
-            // add user defined global layout options
-            PictogramElement parent = pe;
-            while (parent.eContainer() instanceof PictogramElement) {
-                parent = (PictogramElement) parent.eContainer();
-            }
-            addAffectedOptions(options, DEF_PREFIX, parent);
-            // add user defined local layout options
-            addAffectedOptions(options, PREFIX, pe);
+        // add user defined global layout options
+        Diagram diagram = getDiagram(context);
+        if (diagram != null) {
+            addAffectedOptions(options, DEF_PREFIX, diagram);
+        }
+        // add user defined local layout options
+        PictogramElement pictogramElement = getPictogramElement(context);
+        if (pictogramElement != null) {
+            addAffectedOptions(options, PREFIX, pictogramElement);
         }
         return options;
     }
@@ -415,17 +420,20 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
      */
     public void setOptionValue(final LayoutOptionData optionData, final LayoutContext context,
             final Object value) {
-        PictogramElement pe = getPictogramElement(context);
-        if (pe != null) {
-            if (context.getProperty(IMutableLayoutConfig.OPT_RECURSIVE)) {
+        if (context.getProperty(LayoutContext.GLOBAL)) {
+            Diagram diagram = getDiagram(context);
+            if (diagram != null) {
                 if (value != null) {
-                    removeValue(optionData, PREFIX, pe, true);
+                    removeValue(optionData, PREFIX, diagram, true);
                 }
-                setValue(optionData, value, DEF_PREFIX, pe);
-            } else {
-                setValue(optionData, value, PREFIX, pe);
+                setValue(optionData, value, DEF_PREFIX, diagram);
             }
-        }  
+        } else {
+            PictogramElement pictogramElement = getPictogramElement(context);
+            if (pictogramElement != null) {
+                setValue(optionData, value, PREFIX, pictogramElement);
+            }
+        }
     }
 
     /**
@@ -500,7 +508,7 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
     public void clearOptionValues(final LayoutContext context) {
         PictogramElement pe = getPictogramElement(context);
         if (pe != null) {
-            boolean recursive = context.getProperty(IMutableLayoutConfig.OPT_RECURSIVE);
+            boolean recursive = context.getProperty(LayoutContext.GLOBAL);
             clearValues(pe, recursive);
         }
     }

@@ -69,6 +69,10 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
     /** the notation view for the graph element in focus. */
     public static final IProperty<View> NOTATION_VIEW = new Property<View>("context.notationView");
     
+    /** the notation view for the diagram element. */
+    public static final IProperty<View> DIAGRAM_NOTATION_VIEW = new Property<View>(
+            "context.diagramNotationView");
+    
     /**
      * Determines whether the given edit part should not be layouted.
      * 
@@ -167,11 +171,10 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
                 String contentLayoutHint = (String) getValue(algorithmOptionData, PREFIX,
                         focusEditPart.getNotationView());
                 if (algorithmOptionData != null && contentLayoutHint == null) {
-                    DiagramEditPart diagramEditPart = GmfDiagramLayoutManager.getDiagramEditPart(
-                            focusEditPart);
-                    if (diagramEditPart != null) {
+                    View diagramView = getDiagramNotationView(context);
+                    if (diagramView != null) {
                         contentLayoutHint = (String) getValue(algorithmOptionData, DEF_PREFIX,
-                                diagramEditPart.getNotationView());
+                                diagramView);
                     }
                 }
                 return contentLayoutHint;
@@ -184,11 +187,10 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
                     String containerLayoutHint = (String) getValue(algorithmOptionData, PREFIX,
                             ((IGraphicalEditPart) containerEditPart).getNotationView());
                     if (containerLayoutHint == null) {
-                        DiagramEditPart diagramEditPart = GmfDiagramLayoutManager.getDiagramEditPart(
-                                focusEditPart);
-                        if (diagramEditPart != null) {
+                        View diagramView = getDiagramNotationView(context);
+                        if (diagramView != null) {
                             containerLayoutHint = (String) getValue(algorithmOptionData, DEF_PREFIX,
-                                    diagramEditPart.getNotationView());
+                                    diagramView);
                         }
                     }
                     return containerLayoutHint;
@@ -338,6 +340,28 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
         }
         return notationView;
     }
+    
+    /**
+     * Retrieve the diagram notation view from the given context.
+     * 
+     * @param context a layout context
+     * @return the diagram notation view, or {@code null} if none can be determined
+     */
+    private View getDiagramNotationView(final LayoutContext context) {
+        View notationView = context.getProperty(DIAGRAM_NOTATION_VIEW);
+        if (notationView == null) {
+            Object editPart = context.getProperty(LayoutContext.DIAGRAM_PART);
+            if (editPart instanceof EditPart) {
+                DiagramEditPart diagramEditPart = GmfDiagramLayoutManager.getDiagramEditPart(
+                        (EditPart) editPart);
+                if (diagramEditPart != null) {
+                    notationView = diagramEditPart.getNotationView();
+                    context.setProperty(DIAGRAM_NOTATION_VIEW, notationView);
+                }
+            }
+        }
+        return notationView;
+    }
 
     /**
      * {@inheritDoc}
@@ -353,13 +377,9 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
         }
 
         // check default option of diagram edit part
-        Object editPart = context.getProperty(LayoutContext.DIAGRAM_PART);
-        if (editPart instanceof EditPart) {
-            IGraphicalEditPart diagramEditPart = GmfDiagramLayoutManager.getDiagramEditPart(
-                    (EditPart) editPart);
-            if (diagramEditPart != null) {
-                return getValue(optionData, DEF_PREFIX, diagramEditPart.getNotationView());
-            }
+        View diagramView = getDiagramNotationView(context);
+        if (diagramView != null) {
+            return getValue(optionData, DEF_PREFIX, diagramView);
         }
         
         return null;
@@ -394,22 +414,16 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
      * {@inheritDoc}
      */
     public Collection<IProperty<?>> getAffectedOptions(final LayoutContext context) {
-        Object editPart = context.getProperty(LayoutContext.DIAGRAM_PART);
         List<IProperty<?>> options = new LinkedList<IProperty<?>>();
-        if (editPart instanceof IGraphicalEditPart) {
-            // add user defined global layout options
-            DiagramEditPart diagramEditPart = GmfDiagramLayoutManager.getDiagramEditPart(
-                    (EditPart) editPart);
-            if (diagramEditPart != null) {
-                getAffectedOptions(options, DEF_PREFIX, diagramEditPart.getNotationView());
-            }
-            // add user defined local layout options
-            getAffectedOptions(options, PREFIX, ((IGraphicalEditPart) editPart).getNotationView());
-        } else {
-            View view = context.getProperty(NOTATION_VIEW);
-            if (view != null) {
-                getAffectedOptions(options, PREFIX, view);
-            }
+        // add user defined global layout options
+        View diagramView = getDiagramNotationView(context);
+        if (diagramView != null) {
+            getAffectedOptions(options, DEF_PREFIX, diagramView);
+        }
+        // add user defined local layout options
+        View elementView = getNotationView(context);
+        if (elementView != null) {
+            getAffectedOptions(options, PREFIX, elementView);
         }
         return options;
     }
@@ -445,14 +459,17 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
      */
     public void setOptionValue(final LayoutOptionData optionData, final LayoutContext context,
             final Object value) {
-        View view = getNotationView(context);
-        if (view != null) {
-            if (context.getProperty(IMutableLayoutConfig.OPT_RECURSIVE)) {
+        if (context.getProperty(LayoutContext.GLOBAL)) {
+            View view = getDiagramNotationView(context);
+            if (view != null) {
                 if (value != null) {
                     removeValue(optionData, PREFIX, view, true);
                 }
                 setValue(optionData, value, DEF_PREFIX, view);
-            } else {
+            }
+        } else  {
+            View view = getNotationView(context);
+            if (view != null) {
                 setValue(optionData, value, PREFIX, view);
             }
         }
@@ -529,7 +546,7 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
     public void clearOptionValues(final LayoutContext context) {
         View view = getNotationView(context);
         if (view != null) {
-            boolean recursive = context.getProperty(IMutableLayoutConfig.OPT_RECURSIVE);
+            boolean recursive = context.getProperty(LayoutContext.GLOBAL);
             clearValues(view, recursive);
         }
     }

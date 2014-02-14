@@ -57,17 +57,23 @@ public class RemoveOptionsAction extends Action {
         IWorkbenchPart workbenchPart = layoutView.getCurrentWorkbenchPart();
         IDiagramLayoutManager<?> manager = LayoutManagersService.getInstance()
                 .getManager(workbenchPart, null);
-        if (manager != null && manager.getAdapterList().length > 0) {
-            Object diagramPart = manager.getAdapter(workbenchPart, manager.getAdapterList()[0]);
+        if (manager != null) {
+            Object diagramPart = null;
+            if (manager.getAdapterList().length > 0) {
+                diagramPart = manager.getAdapter(workbenchPart, manager.getAdapterList()[0]);
+            }
+            if (diagramPart == null) {
+                diagramPart = layoutView.getCurrentDiagramPart();
+            }
             IMutableLayoutConfig layoutConfig = (IMutableLayoutConfig) manager.getAdapter(
-                    null, IMutableLayoutConfig.class);
+                    workbenchPart, IMutableLayoutConfig.class);
             EditingDomain editingDomain = (EditingDomain) manager.getAdapter(workbenchPart,
                     EditingDomain.class);
             if (diagramPart != null && layoutConfig != null) {
                 // build a layout context for setting the option
                 final LayoutContext context = new LayoutContext();
                 context.setProperty(LayoutContext.DIAGRAM_PART, diagramPart);
-                context.setProperty(IMutableLayoutConfig.OPT_RECURSIVE, true);
+                context.setProperty(LayoutContext.GLOBAL, true);
                 DiagramLayoutEngine.INSTANCE.getOptionManager().enrich(context, layoutConfig, false);
                 
                 removeOptions(workbenchPart.getTitle(), layoutConfig, context, editingDomain);

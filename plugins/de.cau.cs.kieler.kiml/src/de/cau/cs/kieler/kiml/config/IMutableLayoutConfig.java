@@ -13,8 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.config;
 
-import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 
 /**
@@ -25,9 +23,6 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
  * @kieler.rating yellow 2013-07-01 review KI-38 by cds, uru
  */
 public interface IMutableLayoutConfig extends ILayoutConfig {
-    
-    /** option for layout context: whether changes should be applied also for all child elements. */
-    IProperty<Boolean> OPT_RECURSIVE = new Property<Boolean>("context.recursive", false);
     
     /**
      * Set a new value for a layout option in the given context.
