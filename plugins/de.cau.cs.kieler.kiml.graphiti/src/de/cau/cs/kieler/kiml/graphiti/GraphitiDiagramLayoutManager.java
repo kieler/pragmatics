@@ -18,31 +18,52 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
+import org.eclipse.graphiti.datatypes.IDimension;
 import org.eclipse.graphiti.mm.algorithms.AbstractText;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
+import org.eclipse.graphiti.mm.algorithms.styles.Font;
+import org.eclipse.graphiti.mm.algorithms.styles.Point;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.BoxRelativeAnchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
+import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.FixPointAnchor;
+import org.eclipse.graphiti.mm.pictograms.FreeFormConnection;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
+import org.eclipse.graphiti.services.Graphiti;
+import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.graphiti.ui.internal.parts.IPictogramElementEditPart;
+import org.eclipse.graphiti.ui.services.GraphitiUi;
+import org.eclipse.swt.SWTException;
 import org.eclipse.ui.IWorkbenchPart;
 
+import com.google.common.collect.BiMap;
+
+import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
+import de.cau.cs.kieler.core.kgraph.KLabel;
+import de.cau.cs.kieler.core.kgraph.KLabeledGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KVectorChain;
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
+import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
+import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.klayoutdata.impl.KShapeLayoutImpl;
+import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.service.LayoutMapping;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
@@ -58,6 +79,22 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  */
 @SuppressWarnings("restriction")
 public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<PictogramElement> {
+
+    /** property for the diagram editor of the currently layouted diagram. */
+    public static final IProperty<DiagramEditor> DIAGRAM_EDITOR = new Property<DiagramEditor>(
+            "graphiti.diagramEditor");
+
+    /** property for the the command that is executed for applying automatic layout. */
+    public static final IProperty<Command> LAYOUT_COMMAND = new Property<Command>(
+            "graphiti.applyLayoutCommand");
+
+    /** property for the list of all connections in the diagram. */
+    public static final IProperty<List<Connection>> CONNECTIONS = new Property<List<Connection>>(
+            "graphiti.connections");
+    
+    /** property for the the offset to add for all coordinates. */
+    public static final IProperty<KVector> COORDINATE_OFFSET = new Property<KVector>(
+            "graphiti.coordinateOffset");
 
     /**
      * {@inheritDoc}
@@ -151,10 +188,10 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
     public LayoutMapping<PictogramElement> buildLayoutGraph(final IWorkbenchPart workbenchPart,
             final Object diagramPart) {
         LayoutMapping<PictogramElement> mapping = new LayoutMapping<PictogramElement>(this);
-        mapping.setProperty(KimlGraphitiUtil.CONNECTIONS, new LinkedList<Connection>());
+        mapping.setProperty(CONNECTIONS, new LinkedList<Connection>());
 
         if (workbenchPart instanceof DiagramEditor) {
-            mapping.setProperty(KimlGraphitiUtil.DIAGRAM_EDITOR, (DiagramEditor) workbenchPart);
+            mapping.setProperty(DIAGRAM_EDITOR, (DiagramEditor) workbenchPart);
         }
 
         Shape rootElement = null;
@@ -205,8 +242,8 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
                 }
             }
         }
-        if (rootElement == null && mapping.getProperty(KimlGraphitiUtil.DIAGRAM_EDITOR) != null) {
-            EditPart editorContent = mapping.getProperty(KimlGraphitiUtil.DIAGRAM_EDITOR)
+        if (rootElement == null && mapping.getProperty(DIAGRAM_EDITOR) != null) {
+            EditPart editorContent = mapping.getProperty(DIAGRAM_EDITOR)
                     .getGraphicalViewer().getContents();
             PictogramElement pe = ((IPictogramElementEditPart) editorContent).getPictogramElement();
             if (pe instanceof Shape) {
@@ -246,15 +283,15 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
                     buildLayoutGraphRecursively(mapping, (ContainerShape) shape, node);
                 }
             }
-            mapping.setProperty(KimlGraphitiUtil.COORDINATE_OFFSET, new KVector(minx, miny));
+            mapping.setProperty(COORDINATE_OFFSET, new KVector(minx, miny));
         } else if (rootElement instanceof ContainerShape) {
             // traverse all children of the layout root part
             buildLayoutGraphRecursively(mapping, (ContainerShape) rootElement, topNode);
         }
         
         // transform all connections in the selected area
-        for (Connection entry : mapping.getProperty(KimlGraphitiUtil.CONNECTIONS)) {
-            KimlGraphitiUtil.createEdge(mapping, entry);
+        for (Connection entry : mapping.getProperty(CONNECTIONS)) {
+            createEdge(mapping, entry);
         }
         
         // create a layout configurator from the properties that were set while building
@@ -312,16 +349,16 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
      */
     @Override
     protected void transferLayout(final LayoutMapping<PictogramElement> mapping) {
-        DiagramEditor diagramEditor = mapping.getProperty(KimlGraphitiUtil.DIAGRAM_EDITOR);
+        DiagramEditor diagramEditor = mapping.getProperty(DIAGRAM_EDITOR);
         GraphitiLayoutCommand command = new GraphitiLayoutCommand(diagramEditor.getEditingDomain(),
                 diagramEditor.getDiagramTypeProvider().getFeatureProvider());
         for (Entry<KGraphElement, PictogramElement> entry : mapping.getGraphMap().entrySet()) {
             command.add(entry.getKey(), entry.getValue());
         }
-        mapping.setProperty(KimlGraphitiUtil.LAYOUT_COMMAND, command);
+        mapping.setProperty(LAYOUT_COMMAND, command);
         
         // correct the layout by adding the offset determined from the selection
-        KVector offset = mapping.getProperty(KimlGraphitiUtil.COORDINATE_OFFSET);
+        KVector offset = mapping.getProperty(COORDINATE_OFFSET);
         if (offset != null) {
             addOffset(mapping.getLayoutGraph(), offset);
         }
@@ -353,9 +390,9 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
      */
     @Override
     protected void applyLayout(final LayoutMapping<PictogramElement> mapping) {
-        TransactionalEditingDomain editingDomain = mapping.getProperty(KimlGraphitiUtil.DIAGRAM_EDITOR)
+        TransactionalEditingDomain editingDomain = mapping.getProperty(DIAGRAM_EDITOR)
                 .getEditingDomain();
-        editingDomain.getCommandStack().execute(mapping.getProperty(KimlGraphitiUtil.LAYOUT_COMMAND));
+        editingDomain.getCommandStack().execute(mapping.getProperty(LAYOUT_COMMAND));
     }
 
     /** the fixed minimal size of shapes. */
@@ -385,15 +422,15 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
     /**
      * Determine whether the given shape shall be treated as a node in the layout graph.
      * 
-     * <p>This implementation always returns {@code true}. Subclasses may override this in order
-     * to implement some checks for excluding shapes that are not to be included in the layout
-     * graph.</p>
+     * <p>This implementation checks whether the shape has any anchors. Subclasses may override
+     * this in order to implement other checks for excluding shapes that are not to be included
+     * in the layout graph.</p>
      * 
      * @param shape a shape
      * @return whether the shape shall be treated a a node
      */
     protected boolean isNodeShape(final Shape shape) {
-        return true;
+        return !shape.getAnchors().isEmpty();
     }
     
     /**
@@ -426,11 +463,11 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
 
         // set the node's layout
         KShapeLayout nodeLayout = childNode.getData(KShapeLayout.class);
-        GraphicsAlgorithm nodeGa = shape.getGraphicsAlgorithm();
-        KInsets nodeInsets = KimlGraphitiUtil.calcInsets(nodeGa);
+        KInsets nodeInsets = getInsets(shape);
         nodeLayout.setProperty(GraphitiLayoutCommand.INVIS_INSETS, nodeInsets);
         KInsets parentInsets = parentNode == null ? null : parentNode.getData(KShapeLayout.class)
                 .getProperty(GraphitiLayoutCommand.INVIS_INSETS);
+        GraphicsAlgorithm nodeGa = shape.getGraphicsAlgorithm();
         if (parentInsets == null) {
             nodeLayout.setPos(nodeGa.getX() + nodeInsets.getLeft(),
                     nodeGa.getY() + nodeInsets.getTop());
@@ -441,7 +478,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
         nodeLayout.setSize(nodeGa.getWidth() - nodeInsets.getLeft() - nodeInsets.getRight(),
                 nodeGa.getHeight() - nodeInsets.getTop() - nodeInsets.getBottom());
         // the modification flag must initially be false
-        ((KShapeLayoutImpl) nodeLayout).resetModificationFlag();
+        nodeLayout.resetModificationFlag();
 
         // this very minimal size configuration should be corrected in subclasses
         nodeLayout.setProperty(LayoutOptions.MIN_WIDTH, MIN_SIZE);
@@ -452,10 +489,8 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
         if (shape instanceof ContainerShape) {
             // find a label for the container shape
             for (Shape child : ((ContainerShape) shape).getChildren()) {
-                GraphicsAlgorithm childGa = child.getGraphicsAlgorithm();
-                if (childGa instanceof AbstractText) {
-                    KimlGraphitiUtil.createLabel(childNode, (AbstractText) childGa,
-                            -nodeInsets.getLeft(), -nodeInsets.getTop());
+                if (isNodeLabel(child)) {
+                    createLabel(childNode, child, -nodeInsets.getLeft(), -nodeInsets.getTop());
                 }
             }
         }
@@ -470,17 +505,45 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
                 }
             }
             // gather all connections in the diagram
-            mapping.getProperty(KimlGraphitiUtil.CONNECTIONS).addAll(anchor.getOutgoingConnections());
+            mapping.getProperty(CONNECTIONS).addAll(anchor.getOutgoingConnections());
         }
         
         return childNode;
     }
 
+    /**
+     * Determine the insets of the given pictogram element. The default implementation
+     * calculates insets from an invisible rectangle to the first visible shape. Subclasses
+     * may override this behavior.
+     * 
+     * @param pictogramElement a pictogram element
+     * @return the insets
+     */
+    protected KInsets getInsets(final PictogramElement pictogramElement) {
+        GraphicsAlgorithm graphicsAlgorithm = pictogramElement.getGraphicsAlgorithm();
+        GraphicsAlgorithm visibleGa = KimlGraphitiUtil.findVisibleGa(graphicsAlgorithm);
+        int left = 0;
+        int top = 0;
+        int right = 0;
+        int bottom = 0;
+        while (visibleGa != null && visibleGa != graphicsAlgorithm) {
+            left += visibleGa.getX();
+            top += visibleGa.getY();
+            GraphicsAlgorithm parentGa = visibleGa.getParentGraphicsAlgorithm();
+            right += parentGa.getWidth() - visibleGa.getX() - visibleGa.getWidth();
+            bottom += parentGa.getHeight() - visibleGa.getY() - visibleGa.getHeight();
+            visibleGa = parentGa;
+        }
+        KInsets insets = KLayoutDataFactory.eINSTANCE.createKInsets();
+        insets.setLeft(left);
+        insets.setRight(right);
+        insets.setTop(top);
+        insets.setBottom(bottom);
+        return insets;
+    }
 
     /**
-     * Create a port for the layout graph using a box-relative anchor. The referenced graphics
-     * algorithm of the anchor is assumed to be the same as the one returned by
-     * {@link #findVisibleGa(GraphicsAlgorithm)}.
+     * Create a port for the layout graph using a box-relative anchor.
      * 
      * @param mapping the mapping of pictogram elements to graph elements
      * @param parentNode the parent node
@@ -515,7 +578,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
         }
         portLayout.setPos(xPos, yPos);
         // the modification flag must initially be false
-        ((KShapeLayoutImpl) portLayout).resetModificationFlag();
+        portLayout.resetModificationFlag();
         
         return port;
     }
@@ -546,9 +609,264 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
         }
         portLayout.setPos(xPos, yPos);
         // the modification flag must initially be false
-        ((KShapeLayoutImpl) portLayout).resetModificationFlag();
+        portLayout.resetModificationFlag();
         
         return port;
+    }
+
+    /**
+     * Determine whether the given shape shall be treated as a node label in the layout graph.
+     * This implementation checks whether the shape has a text as graphics algorithm.
+     * Subclasses may override this in order to implement specialized checks.
+     * 
+     * @param shape a shape
+     * @return whether the shape shall be treated as a node label
+     */
+    protected boolean isNodeLabel(final Shape shape) {
+        return shape.getGraphicsAlgorithm() instanceof AbstractText
+                && ((AbstractText) shape.getGraphicsAlgorithm()).getValue() != null;
+    }
+
+    /**
+     * Create a label for a node or a port.
+     * 
+     * @param element the graph element to which the label is added
+     * @param shape the pictogram shape of the label
+     * @param offsetx the x coordinate offset
+     * @param offsety the y coordinate offset
+     * @return a new label
+     */
+    protected KLabel createLabel(final KLabeledGraphElement element, final Shape shape,
+            final float offsetx, final float offsety) {
+        KLabel label = KimlUtil.createInitializedLabel(element);
+        KShapeLayout labelLayout = label.getData(KShapeLayout.class);
+        
+        GraphicsAlgorithm ga = shape.getGraphicsAlgorithm();
+        int xpos = ga.getX(), ypos = ga.getY();
+        int width = ga.getWidth(), height = ga.getHeight();
+
+        if (ga instanceof AbstractText) {
+            AbstractText abstractText = (AbstractText) ga;
+            String labelText = abstractText.getValue();
+            label.setText(labelText);
+            
+            IGaService gaService = Graphiti.getGaService();
+            Font font = gaService.getFont(abstractText, true);
+    
+            IDimension textSize = null;
+            try {
+                textSize = GraphitiUi.getUiLayoutService().calculateTextSize(labelText, font);
+            } catch (SWTException exception) {
+                // ignore exception
+            }
+            if (textSize != null) {
+                if (textSize.getWidth() < width) {
+                    int diff = width - textSize.getWidth();
+                    switch (gaService.getHorizontalAlignment(abstractText, true)) {
+                    case ALIGNMENT_CENTER:
+                        xpos += diff / 2;
+                        break;
+                    case ALIGNMENT_RIGHT:
+                        xpos += diff;
+                        break;
+                    default:
+                        break;
+                    }
+                    width -= diff;
+                }
+                if (textSize.getHeight() < height) {
+                    int diff = height - textSize.getHeight();
+                    switch (gaService.getVerticalAlignment(abstractText, true)) {
+                    case ALIGNMENT_MIDDLE:
+                        ypos += diff / 2;
+                        break;
+                    case ALIGNMENT_BOTTOM:
+                        ypos += diff;
+                        break;
+                    default:
+                        break;
+                    }
+                    height -= diff;
+                }
+            }
+        }
+        
+        labelLayout.setPos(xpos + offsetx, ypos + offsety);
+        labelLayout.setSize(width, height);
+        
+        // the modification flag must initially be false
+        labelLayout.resetModificationFlag();
+        return label;
+    }
+
+    /** minimal value for the relative location of head labels. */
+    private static final double HEAD_LOCATION = 0.7;
+    /** maximal value for the relative location of tail labels. */
+    private static final double TAIL_LOCATION = 0.3;
+
+    /**
+     * Create an edge for the layout graph. 
+     * 
+     * @param mapping
+     *            the mapping of pictogram elements to graph elements
+     * @param connection
+     *            a pictogram connection
+     */
+    protected void createEdge(final LayoutMapping<PictogramElement> mapping,
+            final Connection connection) {
+        BiMap<KGraphElement, PictogramElement> graphMap = mapping.getGraphMap();
+
+        // set target node and port
+        KNode targetNode;
+        Anchor targetAnchor = connection.getEnd();
+        KPort targetPort = (KPort) graphMap.inverse().get(targetAnchor);
+        if (targetPort != null) {
+            targetNode = targetPort.getNode();
+        } else {
+            targetNode = (KNode) graphMap.inverse().get(targetAnchor.getParent());
+        }
+        if (targetNode == null) {
+            return;
+        }
+
+        // set source node and port
+        KNode sourceNode;
+        Anchor sourceAnchor = connection.getStart();
+        KPort sourcePort = (KPort) graphMap.inverse().get(sourceAnchor);
+        if (sourcePort != null) {
+            sourceNode = sourcePort.getNode();
+        } else {
+            sourceNode = (KNode) graphMap.inverse().get(sourceAnchor.getParent());
+        }
+        if (sourceNode == null) {
+            return;
+        }
+        
+        KEdge edge = KimlUtil.createInitializedEdge();
+        edge.setTarget(targetNode);
+        edge.setTargetPort(targetPort);
+        edge.setSource(sourceNode);
+        edge.setSourcePort(sourcePort);
+
+        // calculate offset for bend points and labels
+        KNode referenceNode = sourceNode;
+        if (!KimlUtil.isDescendant(targetNode, sourceNode)) {
+            referenceNode = sourceNode.getParent();
+        }
+        KVector offset = new KVector();
+        KimlUtil.toAbsolute(offset, referenceNode);
+
+        // set source and target point
+        KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
+        KVector sourcePoint = KimlGraphitiUtil.calculateAnchorEnds(sourceNode, sourcePort,
+                referenceNode);
+        edgeLayout.getSourcePoint().applyVector(sourcePoint);
+        KVector targetPoint = KimlGraphitiUtil.calculateAnchorEnds(targetNode, targetPort,
+                referenceNode);
+        edgeLayout.getTargetPoint().applyVector(targetPoint);
+        // set bend points for the new edge
+        KVectorChain allPoints = new KVectorChain();
+        allPoints.add(sourcePoint);
+        if (connection instanceof FreeFormConnection) {
+            for (Point point : ((FreeFormConnection) connection).getBendpoints()) {
+                KVector v = new KVector(point.getX(), point.getY());
+                v.sub(offset);
+                allPoints.add(v);
+                KPoint kpoint = KLayoutDataFactory.eINSTANCE.createKPoint();
+                kpoint.applyVector(v);
+                edgeLayout.getBendPoints().add(kpoint);
+            }
+        }
+        allPoints.add(targetPoint);
+        // the modification flag must initially be false
+        edgeLayout.resetModificationFlag();
+
+        graphMap.put(edge, connection);
+
+        // find labels for the connection
+        for (ConnectionDecorator decorator : connection.getConnectionDecorators()) {
+            if (isEdgeLabel(decorator)) {
+                createEdgeLabel(mapping, edge, decorator, allPoints);
+            }
+        }
+    }
+
+    /**
+     * Determine whether the given decorator shall be treated as an edge label in the layout graph.
+     * This implementation checks whether the decorator has a text as graphics algorithm.
+     * Subclasses may override this in order to implement specialized checks.
+     * 
+     * @param decorator a decorator
+     * @return whether the decorator shall be treated as an edge label
+     */
+    protected boolean isEdgeLabel(final ConnectionDecorator decorator) {
+        return decorator.getGraphicsAlgorithm() instanceof AbstractText
+                && ((AbstractText) decorator.getGraphicsAlgorithm()).getValue() != null;
+    }
+    
+    /**
+     * Create an edge label for the layout graph.
+     * 
+     * @param mapping the mapping of pictogram elements to graph elements
+     * @param parentEdge the parent edge containing the label
+     * @param decorator the connection decorator
+     * @param allPoints the connection points, including end points and bend points
+     * @return the new label
+     */
+    protected KLabel createEdgeLabel(final LayoutMapping<PictogramElement> mapping,
+            final KEdge parentEdge, final ConnectionDecorator decorator, final KVectorChain allPoints) {
+        KLabel label = KimlUtil.createInitializedLabel(parentEdge);
+        mapping.getGraphMap().put(label, decorator);
+
+        // set label placement
+        KShapeLayout labelLayout = label.getData(KShapeLayout.class);
+        EdgeLabelPlacement placement = EdgeLabelPlacement.CENTER;
+        if (decorator.isLocationRelative()) {
+            if (decorator.getLocation() >= HEAD_LOCATION) {
+                placement = EdgeLabelPlacement.HEAD;
+            } else if (decorator.getLocation() <= TAIL_LOCATION) {
+                placement = EdgeLabelPlacement.TAIL;
+            }
+        }
+        labelLayout.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT, placement);
+
+        // set label position
+        KVector labelPos;
+        if (decorator.isLocationRelative()) {
+            labelPos = allPoints.getPointOnLine(decorator.getLocation()
+                    * allPoints.getLength());
+        } else {
+            labelPos = allPoints.getPointOnLine(decorator.getLocation());
+        }
+        GraphicsAlgorithm ga = decorator.getGraphicsAlgorithm();
+        labelPos.x += ga.getX();
+        labelPos.y += ga.getY();
+        labelLayout.applyVector(labelPos);
+
+        if (ga instanceof AbstractText) {
+            AbstractText text = (AbstractText) ga;
+            String labelText = text.getValue();
+            label.setText(labelText);
+
+            IGaService gaService = Graphiti.getGaService();
+            Font font = gaService.getFont(text, true);
+    
+            if (labelText != null) {
+                IDimension textSize = null;
+                try {
+                    textSize = GraphitiUi.getUiLayoutService().calculateTextSize(labelText, font);
+                } catch (SWTException exception) {
+                    // ignore exception
+                }
+                if (textSize != null) {
+                    labelLayout.setSize(textSize.getWidth(), textSize.getHeight());
+                }
+            }
+        }
+
+        // the modification flag must initially be false
+        labelLayout.resetModificationFlag();
+        return label;
     }
     
 }
