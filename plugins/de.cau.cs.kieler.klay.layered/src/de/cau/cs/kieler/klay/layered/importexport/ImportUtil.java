@@ -556,7 +556,7 @@ public final class ImportUtil {
         dummyPort.setNode(dummy);
         
         // If the port constraints are free, we need to determine where to put the dummy (and its port)
-        if (!portConstraints.isSideFixed()) {
+        if (!portConstraints.isSideFixed() && layoutDirection != Direction.UNDEFINED) {
             if (netFlow > 0) {
                 finalExternalPortSide = EXTERNAL_PORT_SIDE_MAP.get(PortType.OUTPUT).get(layoutDirection);
             } else {

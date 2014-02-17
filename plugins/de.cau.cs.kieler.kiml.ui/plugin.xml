@@ -84,6 +84,7 @@ point="org.eclipse.ui.menus">
    <command
          commandId="de.cau.cs.kieler.kiml.ui.command.layout"
          icon="icons/menu16/kieler-arrange.gif"
+         id="de.cau.cs.kieler.kiml.ui.command.layout.selection"
          label="%command.label.2"
          mnemonic="%command.mnemonic.0"
          style="push"

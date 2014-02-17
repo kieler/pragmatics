@@ -430,7 +430,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
                 LayoutContext context = propSourceProvider.getContext();
                 ILayoutConfig config = DiagramLayoutEngine.INSTANCE.getOptionManager().createConfig(
                         context.getProperty(LayoutContext.DOMAIN_MODEL));
-                String diagramType = (String) config.getValue(diagramTypeOption, context);
+                String diagramType = (String) config.getOptionValue(diagramTypeOption, context);
                 String diagramTypeName = LayoutConfigService.getInstance()
                         .getDiagramTypeName(diagramType);
                 if (diagramTypeName != null) {
