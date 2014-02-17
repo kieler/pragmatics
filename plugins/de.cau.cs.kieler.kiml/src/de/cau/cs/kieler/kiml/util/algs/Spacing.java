@@ -43,6 +43,8 @@ public abstract class Spacing {
      */
     public double right = 0.0;
 
+    // CHECKSTYLEON VisibilityModifier
+    
     /**
      * Creates a new instance with all fields set to {@code 0.0}.
      */

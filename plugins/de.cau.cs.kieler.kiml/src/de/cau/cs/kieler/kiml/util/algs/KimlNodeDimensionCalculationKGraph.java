@@ -13,22 +13,25 @@
  */
 package de.cau.cs.kieler.kiml.util.algs;
 
+import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.GraphAdapter;
+import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters.KGraphAdapter;
 
 /**
- * Entry points to apply several methods for node dimension calculation, including positioning of
- * labels, ports, etc.
+ * Counterpart to the generic {@link KimlNodeDimensionCalculation} class providing specialized 
+ * methods for KGraph. 
  * 
- * For convenience methods when using a KGraph, see {@link KimlNodeDimensionCalculationKGraph}.
+ * Remark: We use two separate classes to be able to remove all KGraph references in the
+ * build process of the gwt-export branch.
  * 
  * @author uru
  */
-public final class KimlNodeDimensionCalculation {
+public final class KimlNodeDimensionCalculationKGraph {
 
     /**
      * Private constructor - utility class.
      */
-    private KimlNodeDimensionCalculation() {
+    private KimlNodeDimensionCalculationKGraph() {
     }
 
     /**
@@ -39,11 +42,24 @@ public final class KimlNodeDimensionCalculation {
      * @param adapter
      *            an instance of an adapter for the passed graph's type.
      * @param <T>
-     *            the graphs type, e.g. a root KNode
+     *            the graphs type, e.g. {@link KNode}
      */
     public static <T> void calculateLabelAndNodeSizes(final GraphAdapter<T> adapter) {
         LabelAndNodeSizeProcessor processor = new LabelAndNodeSizeProcessor();
         processor.process(adapter);
+    }
+
+    /**
+     * Calculates label sizes and node sizes also considering ports for a KGraph.
+     * 
+     * @see LabelAndNodeSizeProcessor
+     * 
+     * @param graph
+     *            the graph for which to calculate the sizes.
+     */
+    public static void calculateLabelAndNodeSizes(final KNode graph) {
+        KGraphAdapter kga = new KGraphAdapter(graph);
+        calculateLabelAndNodeSizes(kga);
     }
 
     /**
@@ -52,11 +68,22 @@ public final class KimlNodeDimensionCalculation {
      * @param adapter
      *            an instance of an adapter for the passed graph's type.
      * @param <T>
-     *            the graphs type, e.g. a root KNode
+     *            the graphs type, e.g. {@link KNode}
      */
     public static <T> void calculateNodeMargins(final GraphAdapter<T> adapter) {
         NodeMarginCalculator calcu = new NodeMarginCalculator();
         calcu.processNodeMargin(adapter);
+    }
+
+    /**
+     * Calculates node margins for the nodes of the passed KGraph.
+     * 
+     * @param root
+     *            the graph.
+     */
+    public static void calculateNodeMargins(final KNode root) {
+        KGraphAdapter kga = new KGraphAdapter(root);
+        calculateNodeMargins(kga);
     }
 
 }
