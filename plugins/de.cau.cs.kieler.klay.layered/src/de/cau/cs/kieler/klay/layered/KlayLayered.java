@@ -16,11 +16,13 @@ package de.cau.cs.kieler.klay.layered;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -37,19 +39,15 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
-import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
 import de.cau.cs.kieler.klay.layered.p1cycles.InteractiveCycleBreaker;
 import de.cau.cs.kieler.klay.layered.p2layers.InteractiveLayerer;
-import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
 import de.cau.cs.kieler.klay.layered.p2layers.LongestPathLayerer;
 import de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer;
-import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
 import de.cau.cs.kieler.klay.layered.p3order.InteractiveCrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.p3order.LayerSweepCrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer;
 import de.cau.cs.kieler.klay.layered.p4nodes.LinearSegmentsNodePlacer;
-import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
 import de.cau.cs.kieler.klay.layered.p4nodes.SimpleNodePlacer;
 import de.cau.cs.kieler.klay.layered.p5edges.OrthogonalEdgeRouter;
 import de.cau.cs.kieler.klay.layered.p5edges.PolylineEdgeRouter;
@@ -106,28 +104,14 @@ public final class KlayLayered {
     // /////////////////////////////////////////////////////////////////////////////
     // Variables
 
-    /** phase 1: cycle breaking module. */
-    private ILayoutPhase cycleBreaker;
-    /** phase 2: layering module. */
-    private ILayoutPhase layerer;
-    /** phase 3: crossing minimization module. */
-    private ILayoutPhase crossingMinimizer;
-    /** phase 4: node placement module. */
-    private ILayoutPhase nodePlacer;
-    /** phase 5: Edge routing module. */
-    private ILayoutPhase edgeRouter;
-
     /** connected components processor. */
-    private ComponentsProcessor componentsProcessor = new ComponentsProcessor();
-    /** intermediate layout processor configuration. */
-    private IntermediateProcessingConfiguration intermediateProcessingConfiguration =
-            new IntermediateProcessingConfiguration();
-    /** collection of instantiated intermediate modules. */
-    private Map<LayoutProcessorStrategy, ILayoutProcessor> intermediateLayoutProcessorCache =
+    private final ComponentsProcessor componentsProcessor = new ComponentsProcessor();
+    /** cache of instantiated layout phases. */
+    private final Map<Class<? extends ILayoutPhase>, ILayoutPhase> phaseCache = Maps.newHashMap();
+    /** cache of instantiated intermediate modules. */
+    private final Map<LayoutProcessorStrategy, ILayoutProcessor> intermediateLayoutProcessorCache =
             new HashMap<LayoutProcessorStrategy, ILayoutProcessor>();
 
-    /** list of layout processors that compose the current algorithm. */
-    private List<ILayoutProcessor> algorithm = new LinkedList<ILayoutProcessor>();
     /** list of graphs that are currently being laid out. */
     private List<LGraph> currentLayoutTestGraphs = null;
     /** index of the processor that is to be executed next during a layout test. */
@@ -216,14 +200,18 @@ public final class KlayLayered {
     }
 
     /**
-     * Checks if the current test run still has processors to be executed for the algorithm to
-     * finish.
+     * Checks if the current test run still has processors to be executed for the algorithm to finish.
      * 
      * @return {@code true} if the current test run has not finished yet. If there is no current
      *         test run, the result is undefined.
      */
     public boolean isLayoutTestFinished() {
-        return currentLayoutTestGraphs == null || currentLayoutTestStep >= algorithm.size();
+        if (currentLayoutTestGraphs == null) {
+            return true;
+        }
+        LGraph graph = currentLayoutTestGraphs.get(0);
+        List<ILayoutProcessor> algorithm = graph.getProperty(Properties.PROCESSORS);
+        return algorithm != null && currentLayoutTestStep >= algorithm.size();
     }
 
     /**
@@ -251,6 +239,8 @@ public final class KlayLayered {
         if (currentLayoutTestGraphs == null) {
             throw new IllegalStateException("No active layout test run.");
         }
+        List<ILayoutProcessor> algorithm = currentLayoutTestGraphs.get(0).getProperty(
+                Properties.PROCESSORS);
 
         // check if the given phase exists in our current algorithm configuration
         boolean phaseExists = false;
@@ -313,6 +303,8 @@ public final class KlayLayered {
         }
 
         // perform the next layout step
+        List<ILayoutProcessor> algorithm = currentLayoutTestGraphs.get(0).getProperty(
+                Properties.PROCESSORS);
         layoutTest(currentLayoutTestGraphs, algorithm.get(currentLayoutTestStep));
         currentLayoutTestStep++;
 
@@ -349,7 +341,8 @@ public final class KlayLayered {
         if (currentLayoutTestGraphs == null) {
             throw new IllegalStateException("No active layout test run.");
         }
-
+        List<ILayoutProcessor> algorithm = currentLayoutTestGraphs.get(0).getProperty(
+                Properties.PROCESSORS);
         return algorithm;
     }
 
@@ -422,92 +415,120 @@ public final class KlayLayered {
      */
     private void updateModules(final LGraph graph) {
         // check which cycle breaking strategy to use
-        CycleBreakingStrategy cycleBreaking = graph.getProperty(Properties.CYCLE_BREAKING);
-        switch (cycleBreaking) {
+        ILayoutPhase cycleBreaker;
+        switch (graph.getProperty(Properties.CYCLE_BREAKING)) {
         case INTERACTIVE:
-            if (!(cycleBreaker instanceof InteractiveCycleBreaker)) {
+            cycleBreaker = phaseCache.get(InteractiveCycleBreaker.class);
+            if (cycleBreaker == null) {
                 cycleBreaker = new InteractiveCycleBreaker();
+                phaseCache.put(InteractiveCycleBreaker.class, cycleBreaker);
             }
             break;
         default: // GREEDY
-            if (!(cycleBreaker instanceof GreedyCycleBreaker)) {
+            cycleBreaker = phaseCache.get(GreedyCycleBreaker.class);
+            if (cycleBreaker == null) {
                 cycleBreaker = new GreedyCycleBreaker();
+                phaseCache.put(GreedyCycleBreaker.class, cycleBreaker);
             }
         }
-
+        
         // check which layering strategy to use
-        LayeringStrategy layering = graph.getProperty(Properties.NODE_LAYERING);
-        switch (layering) {
+        ILayoutPhase layerer;
+        switch (graph.getProperty(Properties.NODE_LAYERING)) {
         case LONGEST_PATH:
-            if (!(layerer instanceof LongestPathLayerer)) {
+            layerer = phaseCache.get(LongestPathLayerer.class);
+            if (layerer == null) {
                 layerer = new LongestPathLayerer();
+                phaseCache.put(LongestPathLayerer.class, layerer);
             }
             break;
         case INTERACTIVE:
-            if (!(layerer instanceof InteractiveLayerer)) {
+            layerer = phaseCache.get(InteractiveLayerer.class);
+            if (layerer == null) {
                 layerer = new InteractiveLayerer();
+                phaseCache.put(InteractiveLayerer.class, layerer);
             }
             break;
         default: // NETWORK_SIMPLEX
-            if (!(layerer instanceof NetworkSimplexLayerer)) {
+            layerer = phaseCache.get(NetworkSimplexLayerer.class);
+            if (layerer == null) {
                 layerer = new NetworkSimplexLayerer();
+                phaseCache.put(NetworkSimplexLayerer.class, layerer);
             }
         }
-
+        
         // check which crossing minimization strategy to use
-        CrossingMinimizationStrategy crossminStrategy = graph.getProperty(Properties.CROSS_MIN);
-        switch (crossminStrategy) {
+        ILayoutPhase crossingMinimizer;
+        switch (graph.getProperty(Properties.CROSS_MIN)) {
         case INTERACTIVE:
-            if (!(crossingMinimizer instanceof InteractiveCrossingMinimizer)) {
+            crossingMinimizer = phaseCache.get(InteractiveCrossingMinimizer.class);
+            if (crossingMinimizer == null) {
                 crossingMinimizer = new InteractiveCrossingMinimizer();
+                phaseCache.put(InteractiveCrossingMinimizer.class, crossingMinimizer);
             }
             break;
         default: // LAYER_SWEEP
-            if (!(crossingMinimizer instanceof LayerSweepCrossingMinimizer)) {
+            crossingMinimizer = phaseCache.get(LayerSweepCrossingMinimizer.class);
+            if (crossingMinimizer == null) {
                 crossingMinimizer = new LayerSweepCrossingMinimizer();
+                phaseCache.put(LayerSweepCrossingMinimizer.class, crossingMinimizer);
             }
         }
 
         // check which node placement strategy to use
-        NodePlacementStrategy nodePlaceStrategy = graph.getProperty(Properties.NODE_PLACER);
-        switch (nodePlaceStrategy) {
+        ILayoutPhase nodePlacer;
+        switch (graph.getProperty(Properties.NODE_PLACER)) {
         case SIMPLE:
-            if (!(nodePlacer instanceof SimpleNodePlacer)) {
+            nodePlacer = phaseCache.get(SimpleNodePlacer.class);
+            if (nodePlacer == null) {
                 nodePlacer = new SimpleNodePlacer();
+                phaseCache.put(SimpleNodePlacer.class, nodePlacer);
             }
             break;
         case LINEAR_SEGMENTS:
-            if (!(nodePlacer instanceof LinearSegmentsNodePlacer)) {
+            nodePlacer = phaseCache.get(LinearSegmentsNodePlacer.class);
+            if (nodePlacer == null) {
                 nodePlacer = new LinearSegmentsNodePlacer();
+                phaseCache.put(LinearSegmentsNodePlacer.class, nodePlacer);
             }
             break;
         default: // BRANDES_KOEPF
-            if (!(nodePlacer instanceof BKNodePlacer)) {
+            nodePlacer = phaseCache.get(BKNodePlacer.class);
+            if (nodePlacer == null) {
                 nodePlacer = new BKNodePlacer();
+                phaseCache.put(BKNodePlacer.class, nodePlacer);
             }
         }
 
         // check which edge router to use
-        EdgeRouting routing = graph.getProperty(LayoutOptions.EDGE_ROUTING);
-        switch (routing) {
+        ILayoutPhase edgeRouter;
+        switch (graph.getProperty(LayoutOptions.EDGE_ROUTING)) {
         case ORTHOGONAL:
-            if (!(edgeRouter instanceof OrthogonalEdgeRouter)) {
+            edgeRouter = phaseCache.get(OrthogonalEdgeRouter.class);
+            if (edgeRouter == null) {
                 edgeRouter = new OrthogonalEdgeRouter();
+                phaseCache.put(OrthogonalEdgeRouter.class, edgeRouter);
             }
             break;
         case SPLINES:
-            if (!(edgeRouter instanceof SplineEdgeRouter)) {
+            edgeRouter = phaseCache.get(SplineEdgeRouter.class);
+            if (edgeRouter == null) {
                 edgeRouter = new SplineEdgeRouter();
+                phaseCache.put(SplineEdgeRouter.class, edgeRouter);
             }
             break;
         default: // POLYLINE
-            if (!(edgeRouter instanceof PolylineEdgeRouter)) {
+            edgeRouter = phaseCache.get(PolylineEdgeRouter.class);
+            if (edgeRouter == null) {
                 edgeRouter = new PolylineEdgeRouter();
+                phaseCache.put(PolylineEdgeRouter.class, edgeRouter);
             }
         }
 
-        // update intermediate processor configuration
-        intermediateProcessingConfiguration.clear();
+        // determine intermediate processor configuration
+        IntermediateProcessingConfiguration intermediateProcessingConfiguration
+                = new IntermediateProcessingConfiguration();
+        graph.setProperty(Properties.CONFIGURATION, intermediateProcessingConfiguration);
         intermediateProcessingConfiguration
                 .addAll(cycleBreaker.getIntermediateProcessingConfiguration(graph))
                 .addAll(layerer.getIntermediateProcessingConfiguration(graph))
@@ -517,39 +538,41 @@ public final class KlayLayered {
                 .addAll(this.getIntermediateProcessingConfiguration(graph));
 
         // construct the list of processors that make up the algorithm
-        algorithm.clear();
-        algorithm.addAll(
-                getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_1));
+        List<ILayoutProcessor> algorithm = Lists.newLinkedList();
+        graph.setProperty(Properties.PROCESSORS, algorithm);
+        algorithm.addAll(getIntermediateProcessorList(intermediateProcessingConfiguration,
+                        IntermediateProcessingConfiguration.BEFORE_PHASE_1));
         algorithm.add(cycleBreaker);
-        algorithm.addAll(
-                getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_2));
+        algorithm.addAll(getIntermediateProcessorList(intermediateProcessingConfiguration,
+                        IntermediateProcessingConfiguration.BEFORE_PHASE_2));
         algorithm.add(layerer);
-        algorithm.addAll(
-                getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_3));
+        algorithm.addAll(getIntermediateProcessorList(intermediateProcessingConfiguration,
+                        IntermediateProcessingConfiguration.BEFORE_PHASE_3));
         algorithm.add(crossingMinimizer);
-        algorithm.addAll(
-                getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_4));
+        algorithm.addAll(getIntermediateProcessorList(intermediateProcessingConfiguration,
+                        IntermediateProcessingConfiguration.BEFORE_PHASE_4));
         algorithm.add(nodePlacer);
-        algorithm.addAll(
-                getIntermediateProcessorList(IntermediateProcessingConfiguration.BEFORE_PHASE_5));
+        algorithm.addAll(getIntermediateProcessorList(intermediateProcessingConfiguration,
+                        IntermediateProcessingConfiguration.BEFORE_PHASE_5));
         algorithm.add(edgeRouter);
-        algorithm.addAll(
-                getIntermediateProcessorList(IntermediateProcessingConfiguration.AFTER_PHASE_5));
+        algorithm.addAll(getIntermediateProcessorList(intermediateProcessingConfiguration,
+                        IntermediateProcessingConfiguration.AFTER_PHASE_5));
     }
 
     /**
-     * Returns a list of layout processor instances for the given intermediate layout processing
-     * slot.
+     * Returns a list of layout processor instances for the given intermediate layout processing slot.
      * 
+     * @param configuration
+     *            the intermediate processing configuration
      * @param slotIndex
      *            the slot index. One of the constants defined in
      *            {@link IntermediateProcessingConfiguration}.
      * @return list of layout processors.
      */
-    private List<ILayoutProcessor> getIntermediateProcessorList(final int slotIndex) {
+    private List<ILayoutProcessor> getIntermediateProcessorList(
+            final IntermediateProcessingConfiguration configuration, final int slotIndex) {
         // fetch the set of layout processors configured for the given slot
-        EnumSet<LayoutProcessorStrategy> processors =
-                intermediateProcessingConfiguration.getProcessors(slotIndex);
+        EnumSet<LayoutProcessorStrategy> processors = configuration.getProcessors(slotIndex);
         List<ILayoutProcessor> result = new ArrayList<ILayoutProcessor>(processors.size());
 
         // iterate through the layout processors and add them to the result list; the EnumSet
@@ -654,6 +677,7 @@ public final class KlayLayered {
         if (!monitorStarted) {
             monitor.begin("Component Layout", 1);
         }
+        List<ILayoutProcessor> algorithm = graph.getProperty(Properties.PROCESSORS);
         float monitorProgress = 1.0f / algorithm.size();
 
         if (graph.getProperty(LayoutOptions.DEBUG_MODE)) {

@@ -71,7 +71,7 @@ public final class ComponentsProcessor {
     /**
      * Graph placer to be used to combine the different components back into a single graph.
      */
-    private AbstractGraphPlacer graphPlacer = null;
+    private AbstractGraphPlacer graphPlacer;
     
 
     /**
@@ -126,17 +126,23 @@ public final class ComponentsProcessor {
             if (extPorts) {
                 // With external ports connections, we want to use the more complex components
                 // placement algorithm
-                graphPlacer = new ComponentGroupGraphPlacer();
+                if (!(graphPlacer instanceof ComponentGroupGraphPlacer)) {
+                    graphPlacer = new ComponentGroupGraphPlacer();
+                }
             } else {
                 // If there are no connections to external ports, default to the simpler components
                 // placement algorithm
-                graphPlacer = new SimpleRowGraphPlacer();
+                if (!(graphPlacer instanceof SimpleRowGraphPlacer)) {
+                    graphPlacer = new SimpleRowGraphPlacer();
+                }
             }
         } else {
             result = new ArrayList<LGraph>(1);
             result.add(graph);
             
-            graphPlacer = new SimpleRowGraphPlacer();
+            if (!(graphPlacer instanceof SimpleRowGraphPlacer)) {
+                graphPlacer = new SimpleRowGraphPlacer();
+            }
         }
         
         return result;

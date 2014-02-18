@@ -40,7 +40,7 @@ public final class LayeredLayoutProvider extends AbstractLayoutProvider {
     // Variables
 
     /** the layout algorithm used for regular layout runs. */
-    private KlayLayered klayLayered = new KlayLayered();
+    private final KlayLayered klayLayered = new KlayLayered();
 
 
     ///////////////////////////////////////////////////////////////////////////////

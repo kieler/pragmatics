@@ -25,6 +25,8 @@ import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
+import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -49,6 +51,18 @@ public final class Properties {
      * The original object from which a graph element was created.
      */
     public static final IProperty<Object> ORIGIN = new Property<Object>("origin");
+    
+    /**
+     * The intermediate processing configuration for an input graph.
+     */
+    public static final IProperty<IntermediateProcessingConfiguration> CONFIGURATION
+            = new Property<IntermediateProcessingConfiguration>("processingConfiguration");
+    
+    /**
+     * The list of layout processors executed for an input graph.
+     */
+    public static final IProperty<List<ILayoutProcessor>> PROCESSORS
+            = new Property<List<ILayoutProcessor>>("processors");
     
     /**
      * Whether the original node an LNode was created from was a compound node or not. This might
