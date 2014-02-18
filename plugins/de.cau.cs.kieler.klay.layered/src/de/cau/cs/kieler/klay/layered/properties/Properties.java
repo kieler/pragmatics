@@ -58,10 +58,15 @@ public final class Properties {
     public static final IProperty<Boolean> COMPOUND_NODE = new Property<Boolean>("compoundNode", false);
 
     /**
-     * An LNode that represents a compound node can hold a reference to a child LGraph which
+     * An LNode that represents a compound node can hold a reference to a nested LGraph which
      * represents the graph that is contained within the compound node.
      */
-    public static final IProperty<LGraph> CHILD_LGRAPH = new Property<LGraph>("childLGraph");
+    public static final IProperty<LGraph> NESTED_LGRAPH = new Property<LGraph>("nestedLGraph");
+    
+    /**
+     * A nested LGraph has a reference to the LNode that contains it.
+     */
+    public static final IProperty<LNode> PARENT_LNODE = new Property<LNode>("parentLNode");
     
     /**
      * Node type.

@@ -163,7 +163,7 @@ public final class ImportUtil {
                 && !node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()) {
             
             // Hypernodes have one output port and one input port
-            final PortSide defaultSide = PortSide.fromDirection(direction);
+            PortSide defaultSide = PortSide.fromDirection(direction);
             port = provideCollectorPort(layeredGraph, node, type,
                     type == PortType.OUTPUT ? defaultSide : defaultSide.opposed());
         } else {
@@ -175,12 +175,15 @@ public final class ImportUtil {
                 pos.x = endPoint.x - node.getPosition().x;
                 pos.y = endPoint.y - node.getPosition().y;
                 pos.applyBounds(0, 0, node.getSize().x, node.getSize().y);
+                port.setSide(calcPortSide(port, direction));
+            } else {
+                PortSide defaultSide = PortSide.fromDirection(direction);
+                port.setSide(type == PortType.OUTPUT ? defaultSide : defaultSide.opposed());
             }
             
-            PortSide portSide = calcPortSide(port, direction);
-            port.setSide(portSide);
             Set<GraphProperties> graphProperties = layeredGraph.getProperty(
                     Properties.GRAPH_PROPERTIES);
+            PortSide portSide = port.getSide();
             switch (direction) {
             case LEFT:
             case RIGHT:

@@ -220,8 +220,8 @@ public class RecursiveCompoundKGraphHandler {
         processOutsideEdges(parentNode, layeredGraph, graphImporter, exportedExternalPorts);
         
         // assign a position to all unpositioned ports of compound nodes
-        Map<KGraphElement, LGraphElement> elementMap = layeredGraph.getProperty(
-                KGraphImporter.ELEMENT_MAP);
+        Map<KGraphElement, LGraphElement> elementMap = Maps.newHashMap();
+        //layeredGraph.getProperty(KGraphImporter.ELEMENT_MAP);
         for (KNode childNode : parentNode.getChildren()) {
             if (!childNode.getChildren().isEmpty()
                     && childNode.getData(KShapeLayout.class).getProperty(LayoutOptions.PORT_CONSTRAINTS)
@@ -285,8 +285,8 @@ public class RecursiveCompoundKGraphHandler {
         if (layoutDirection == Direction.UNDEFINED) {
             layoutDirection = Direction.RIGHT;
         }
-        Map<KGraphElement, LGraphElement> elementMap = layeredGraph.getProperty(
-                KGraphImporter.ELEMENT_MAP);
+        Map<KGraphElement, LGraphElement> elementMap = Maps.newHashMap();
+        //layeredGraph.getProperty(KGraphImporter.ELEMENT_MAP);
         for (KNode childNode : parentNode.getChildren()) {
             LNode lnode = (LNode) elementMap.get(childNode);
             
@@ -402,8 +402,8 @@ public class RecursiveCompoundKGraphHandler {
         if (layoutDirection == Direction.UNDEFINED) {
             layoutDirection = Direction.RIGHT;
         }
-        Map<KGraphElement, LGraphElement> elementMap = layeredGraph.getProperty(
-                KGraphImporter.ELEMENT_MAP);
+        Map<KGraphElement, LGraphElement> elementMap = Maps.newHashMap();
+        //layeredGraph.getProperty(KGraphImporter.ELEMENT_MAP);
         Map<LEdge, LNode> needSourcePort = new HashMap<LEdge, LNode>();
         Map<LEdge, LNode> needTargetPort = new HashMap<LEdge, LNode>();
         for (ExternalPort externalPort : containedExternalPorts) {
