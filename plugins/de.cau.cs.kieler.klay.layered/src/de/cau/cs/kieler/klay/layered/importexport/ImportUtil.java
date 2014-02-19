@@ -24,6 +24,7 @@ import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.kiml.options.SizeConstraint;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LInsets;
@@ -49,7 +50,90 @@ public final class ImportUtil {
      * Hidden constructor to avoid instantiation.
      */
     private ImportUtil() { }
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Node Resizing
 
+    /**
+     * Resize a node to the given width and height, adjusting port and label positions if needed.
+     * 
+     * @param node a node
+     * @param newSize the new size for the node
+     * @param movePorts whether port positions should be adjusted
+     * @param moveLabels whether label positions should be adjusted
+     */
+    public static void resizeNode(final LNode node, final KVector newSize, final boolean movePorts,
+            final boolean moveLabels) {
+        KVector oldSize = new KVector(node.getSize());
+        
+        float widthRatio = (float) (newSize.x / oldSize.x);
+        float heightRatio = (float) (newSize.y / oldSize.y);
+        float widthDiff = (float) (newSize.x - oldSize.x);
+        float heightDiff = (float) (newSize.y - oldSize.y);
+
+        // Update port positions
+        if (movePorts) {
+            boolean fixedPorts =
+                    node.getProperty(LayoutOptions.PORT_CONSTRAINTS) == PortConstraints.FIXED_POS;
+            
+            for (LPort port : node.getPorts()) {
+                switch (port.getSide()) {
+                case NORTH:
+                    if (!fixedPorts) {
+                        port.getPosition().x *= widthRatio;
+                    }
+                    break;
+                case EAST:
+                    port.getPosition().x += widthDiff;
+                    if (!fixedPorts) {
+                        port.getPosition().y *= heightRatio;
+                    }
+                    break;
+                case SOUTH:
+                    if (!fixedPorts) {
+                        port.getPosition().x *= widthRatio;
+                    }
+                    port.getPosition().y += heightDiff;
+                    break;
+                case WEST:
+                    if (!fixedPorts) {
+                        port.getPosition().y *= heightRatio;
+                    }
+                    break;
+                }
+            }
+        }
+        
+        // Update label positions
+        if (moveLabels) {
+            for (LLabel label : node.getLabels()) {
+                double midx = label.getPosition().x + label.getSize().x / 2;
+                double midy = label.getPosition().y + label.getSize().y / 2;
+                double widthPercent = midx / oldSize.x;
+                double heightPercent = midy / oldSize.y;
+                
+                if (widthPercent + heightPercent >= 1) {
+                    if (widthPercent - heightPercent > 0 && midy >= 0) {
+                        // label is on the right
+                        label.getPosition().x += widthDiff;
+                        label.getPosition().y += heightDiff * heightPercent;
+                    } else if (widthPercent - heightPercent < 0 && midx >= 0) {
+                        // label is on the bottom
+                        label.getPosition().x += widthDiff * widthPercent;
+                        label.getPosition().y += heightDiff;
+                    }
+                }
+            }
+        }
+        
+        // Set the new node size
+        node.getSize().x = newSize.x;
+        node.getSize().y = newSize.y;
+        
+        // Set fixed size option for the node: now the size is assumed to stay as determined here
+        node.setProperty(LayoutOptions.SIZE_CONSTRAINT, SizeConstraint.fixed());
+    }
+    
     
     ///////////////////////////////////////////////////////////////////////////////
     // Graph Properties

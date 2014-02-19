@@ -15,7 +15,6 @@ package de.cau.cs.kieler.klay.layered;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -30,14 +29,20 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.SizeConstraint;
 import de.cau.cs.kieler.kiml.options.SizeOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.components.ComponentsProcessor;
+import de.cau.cs.kieler.klay.layered.compound.CompoundGraphPostprocessor;
+import de.cau.cs.kieler.klay.layered.compound.CompoundGraphPreprocessor;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LPort;
+import de.cau.cs.kieler.klay.layered.graph.Layer;
+import de.cau.cs.kieler.klay.layered.importexport.ImportUtil;
 import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
 import de.cau.cs.kieler.klay.layered.p1cycles.InteractiveCycleBreaker;
@@ -105,17 +110,21 @@ public final class KlayLayered {
     // Variables
 
     /** connected components processor. */
-    private final ComponentsProcessor componentsProcessor = new ComponentsProcessor();
+    private ComponentsProcessor componentsProcessor;
+    /** compound graph preprocessor. */
+    private CompoundGraphPreprocessor compoundGraphPreprocessor;
+    /** compound graph postprocessor. */
+    private CompoundGraphPostprocessor compoundGraphPostprocessor;
     /** cache of instantiated layout phases. */
     private final Map<Class<? extends ILayoutPhase>, ILayoutPhase> phaseCache = Maps.newHashMap();
     /** cache of instantiated intermediate modules. */
     private final Map<LayoutProcessorStrategy, ILayoutProcessor> intermediateLayoutProcessorCache =
-            new HashMap<LayoutProcessorStrategy, ILayoutProcessor>();
+            Maps.newHashMap();
 
     /** list of graphs that are currently being laid out. */
-    private List<LGraph> currentLayoutTestGraphs = null;
+    private List<LGraph> currentLayoutTestGraphs;
     /** index of the processor that is to be executed next during a layout test. */
-    private int currentLayoutTestStep = 0;
+    private int currentLayoutTestStep;
 
     // /////////////////////////////////////////////////////////////////////////////
     // Regular Layout
@@ -137,19 +146,22 @@ public final class KlayLayered {
         }
         theMonitor.begin("Layered layout", 1);
 
-        // set special properties for the layered graph
+        // Set special properties for the layered graph
         setOptions(lgraph);
 
-        // update the modules depending on user options
+        // Update the modules depending on user options
         updateModules(lgraph);
+        if (componentsProcessor == null) {
+            componentsProcessor = new ComponentsProcessor();
+        }
 
-        // split the input graph into components and perform layout on them
+        // Split the input graph into components and perform layout on them
         List<LGraph> components = componentsProcessor.split(lgraph);
         if (components.size() == 1) {
-            // execute layout on the sole component using the top-level progress monitor
+            // Execute layout on the sole component using the top-level progress monitor
             layout(components.get(0), theMonitor);
         } else {
-            // execute layout on each component using a progress monitor subtask
+            // Execute layout on each component using a progress monitor subtask
             float compWork = 1.0f / components.size();
             for (LGraph comp : components) {
                 if (monitor.isCanceled()) {
@@ -160,13 +172,85 @@ public final class KlayLayered {
         }
         LGraph result = componentsProcessor.combine(components);
         
-        // resize the resulting graph, according to minimal size constraints and such
+        // Resize the resulting graph, according to minimal size constraints and such
         resizeGraph(result);
 
         theMonitor.done();
         return result;
     }
 
+    // /////////////////////////////////////////////////////////////////////////////
+    // Compound Graph Layout
+
+    /**
+     * Does a layout on the given compound graph. Connected components processing is
+     * currently not supported.
+     * 
+     * @param lgraph the graph to layout
+     * @param monitor a progress monitor to show progress information in, or {@code null}
+     * @return a layered graph with layout applied
+     */
+    public LGraph doCompoundLayout(final LGraph lgraph, final IKielerProgressMonitor monitor) {
+        IKielerProgressMonitor theMonitor = monitor;
+        if (theMonitor == null) {
+            theMonitor = new BasicProgressMonitor(0);
+        }
+        theMonitor.begin("Layered layout", 3); // SUPPRESS CHECKSTYLE MagicNumber
+        
+        // Preprocess the compound graph by splitting cross-hierarchy edges
+        if (compoundGraphPreprocessor == null) {
+            compoundGraphPreprocessor = new CompoundGraphPreprocessor();
+        }
+        compoundGraphPreprocessor.process(lgraph, theMonitor.subTask(1));
+
+        // Apply the layout algorithm recursively
+        recursiveLayout(lgraph, theMonitor.subTask(1));
+        
+        // Postprocess the compound graph by combining split cross-hierarchy edges
+        if (compoundGraphPostprocessor == null) {
+            compoundGraphPostprocessor = new CompoundGraphPostprocessor();
+        }
+        compoundGraphPostprocessor.process(lgraph, theMonitor.subTask(1));
+
+        theMonitor.done();
+        return lgraph;
+    }
+    
+    /**
+     * Do a recursive compound graph layout.
+     * 
+     * @param graph the graph
+     * @param monitor a progress monitor to show progress information
+     */
+    private void recursiveLayout(final LGraph graph, final IKielerProgressMonitor monitor) {
+        monitor.begin("Recursive layout", 2);
+        if (!graph.getLayerlessNodes().isEmpty()) {
+            // Process all contained nested graphs recursively
+            float workPerSubgraph = 1.0f / graph.getLayerlessNodes().size();
+            for (LNode node : graph.getLayerlessNodes()) {
+                LGraph nestedGraph = node.getProperty(Properties.NESTED_LGRAPH);
+                if (nestedGraph != null) {
+                    recursiveLayout(nestedGraph, monitor.subTask(workPerSubgraph));
+                    graphLayoutToNode(node, nestedGraph);
+                }
+            }
+            
+            // Set special properties for the layered graph
+            setOptions(graph);
+    
+            // Update the modules depending on user options
+            updateModules(graph);
+    
+            // Perform the layout algorithm
+            layout(graph, monitor);
+        }
+        
+        // Resize the resulting graph, according to minimal size constraints and such
+        resizeGraph(graph);
+
+        monitor.done();
+    }
+    
     // /////////////////////////////////////////////////////////////////////////////
     // Layout Testing
 
@@ -682,7 +766,7 @@ public final class KlayLayered {
 
         if (graph.getProperty(LayoutOptions.DEBUG_MODE)) {
             // Debug Mode!
-            // Prints the algorithm configuration and outputs the whole graph to a file
+            // Print the algorithm configuration and output the whole graph to a file
             // before each slot execution
 
             System.out.println("KLay Layered uses the following " + algorithm.size() + " modules:");
@@ -691,7 +775,7 @@ public final class KlayLayered {
                         + algorithm.get(i).getClass().getName());
             }
 
-            // invoke each layout processor
+            // Invoke each layout processor
             int slotIndex = 0;
             for (ILayoutProcessor processor : algorithm) {
                 if (monitor.isCanceled()) {
@@ -707,7 +791,7 @@ public final class KlayLayered {
             DebugUtil.writeDebugGraph(graph, slotIndex++);
         } else {
             
-            // invoke each layout processor
+            // Invoke each layout processor
             for (ILayoutProcessor processor : algorithm) {
                 if (monitor.isCanceled()) {
                     return;
@@ -715,6 +799,12 @@ public final class KlayLayered {
                 processor.process(graph, monitor.subTask(monitorProgress));
             }
         }
+        
+        // Move all nodes away from the layers
+        for (Layer layer : graph) {
+            graph.getLayerlessNodes().addAll(layer.getNodes());
+        }
+        graph.getLayers().clear();
 
         if (!monitorStarted) {
             monitor.done();
@@ -740,7 +830,7 @@ public final class KlayLayered {
     }
 
     // /////////////////////////////////////////////////////////////////////////////
-    // Graph Resizing
+    // Graph Postprocessing (Size and External Ports)
     
     /**
      * Sets the size of the given graph such that size constraints are adhered to.
@@ -817,6 +907,38 @@ public final class KlayLayered {
             }
         }
     }
+    
+    /**
+     * Transfer the layout of the given graph to the given associated node.
+     * 
+     * @param node a compound node
+     * @param graph the graph nested in the compound node
+     */
+    private void graphLayoutToNode(final LNode node, final LGraph graph) {
+        // Process external ports
+        for (LNode childNode : graph.getLayerlessNodes()) {
+            Object origin = childNode.getProperty(Properties.ORIGIN);
+            if (origin instanceof LPort) {
+                LPort port = (LPort) origin;
+                KVector portPosition = ImportUtil.getExternalPortPosition(graph, childNode,
+                        port.getSize().x, port.getSize().y);
+                port.getPosition().x = portPosition.x;
+                port.getPosition().y = portPosition.y;
+            }
+        }
+        
+        // Setup the parent node
+        KVector actualGraphSize = graph.getActualSize();
+        if (graph.getProperty(Properties.GRAPH_PROPERTIES).contains(
+                GraphProperties.EXTERNAL_PORTS)) {
+            // Ports have positions assigned
+            node.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
+            ImportUtil.resizeNode(node, actualGraphSize, false, true);
+        } else {
+            // Ports have not been positioned yet - leave this for next layouter
+            ImportUtil.resizeNode(node, actualGraphSize, true, true);
+        }
+    }
 
     // /////////////////////////////////////////////////////////////////////////////
     // Processing Configuration Constants
@@ -825,7 +947,7 @@ public final class KlayLayered {
     private static final IntermediateProcessingConfiguration BASELINE_PROCESSING_CONFIGURATION =
             new IntermediateProcessingConfiguration(null, null, null,
 
-            // Before Phase 4
+                    // Before Phase 4
                     EnumSet.of(LayoutProcessorStrategy.NODE_MARGIN_CALCULATOR,
                             LayoutProcessorStrategy.LABEL_AND_NODE_SIZE_PROCESSOR),
 

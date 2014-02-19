@@ -19,7 +19,6 @@ import java.util.List;
 
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
-import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -43,13 +42,7 @@ final class SimpleRowGraphPlacer extends AbstractGraphPlacer {
      */
     public LGraph combine(final List<LGraph> components) {
         if (components.size() == 1) {
-            LGraph graph = components.get(0);
-            // move all nodes away from the layers
-            for (Layer layer : graph) {
-                graph.getLayerlessNodes().addAll(layer.getNodes());
-            }
-            graph.getLayers().clear();
-            return graph;
+            return components.get(0);
         } else if (components.isEmpty()) {
             return new LGraph();
         }
@@ -57,10 +50,8 @@ final class SimpleRowGraphPlacer extends AbstractGraphPlacer {
         // assign priorities
         for (LGraph graph : components) {
             int priority = 0;
-            for (Layer layer : graph) {
-                for (LNode node : layer) {
-                    priority += node.getProperty(Properties.PRIORITY);
-                }
+            for (LNode node : graph.getLayerlessNodes()) {
+                priority += node.getProperty(Properties.PRIORITY);
             }
             graph.id = priority;
         }
