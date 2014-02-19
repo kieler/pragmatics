@@ -177,6 +177,9 @@
 				error: function(error) { 
 					console.log(error); 
 					document.body.innerHTML = "<pre>" + JSON.stringify(error, null, "  ") + "</pre>";
+				},
+				options: {
+					spacing: 50
 				}
 			});
 	   }

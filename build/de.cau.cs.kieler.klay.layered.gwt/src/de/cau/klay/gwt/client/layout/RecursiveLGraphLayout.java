@@ -42,8 +42,7 @@ public class RecursiveLGraphLayout {
         JsonGraphImporter importer = new JsonGraphImporter();
 
         // global layout options
-        // TODO pass them to the importer ...
-        // globalOptions = options;
+        importer.setGlobalOptions(options);
 
         // transform JSON -> LGraph
         LGraph graph = importer.importGraph(json);

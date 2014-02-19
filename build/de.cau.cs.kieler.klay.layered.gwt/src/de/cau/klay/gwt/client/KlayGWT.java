@@ -43,6 +43,8 @@ public class KlayGWT implements EntryPoint {
         klayInit();
     }
 
+    // JSNI is not happy when some lines are wrapped
+    // CHECKSTYLEOFF LineLength
     private native void klayInit() /*-{
         if ($wnd.klayinit) {
             $wnd.klayinit();
@@ -51,9 +53,9 @@ public class KlayGWT implements EntryPoint {
     
     private native void exportKlayLayout() /*-{
         $wnd.$klay = {};
-        $wnd.$klay.layout = $entry(@de.cau.klay.gwt.client.KlayGWT::layout(
-            Lcom/google/gwt/core/client/JavaScriptObject;));
+        $wnd.$klay.layout = $entry(@de.cau.klay.gwt.client.KlayGWT::layout(Lcom/google/gwt/core/client/JavaScriptObject;));
     }-*/;
+    // CHECKSTYLEON LineLength
     
     /**
      * Entry point to perform layout.

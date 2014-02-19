@@ -102,7 +102,6 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         jsonLGraphMap.clear();
         
         hashCodeCounter = new HashCodeCounter();
-        globalOptions = null;
     }
 
     /*---------------------------------------------------------------------------------
@@ -131,6 +130,17 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         
 
         return rootGraph;
+    }
+
+    /**
+     * Sets the json object containing global layout options. The specified options will be added to
+     * every {@link LGraph} in the hierarchy during the import.
+     * 
+     * @param globalOptions
+     *            an {@link JSONObject} containing the desired global layout options.
+     */
+    public void setGlobalOptions(final JSONObject globalOptions) {
+        this.globalOptions = globalOptions;
     }
 
     /**
