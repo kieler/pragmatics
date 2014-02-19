@@ -29,7 +29,7 @@ import de.cau.cs.kieler.kiml.options.GraphFeature;
  * @kieler.rating yellow 2012-10-09 review KI-25 by chsch, bdu
  * @author msp
  */
-public class LayoutAlgorithmData implements ILayoutData {
+public final class LayoutAlgorithmData implements ILayoutData {
 
     /**
      * The minimal allowed priority value. Priorities less or equal to this value are treated

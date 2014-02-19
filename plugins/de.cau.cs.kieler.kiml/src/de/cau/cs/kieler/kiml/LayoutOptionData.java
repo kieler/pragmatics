@@ -35,7 +35,8 @@ import de.cau.cs.kieler.core.util.Pair;
  * @kieler.rating yellow 2012-10-09 review KI-25 by chsch, bdu
  * @author msp
  */
-public class LayoutOptionData implements ILayoutData, IProperty<Object>, Comparable<IProperty<?>> {
+public final class LayoutOptionData implements ILayoutData, IProperty<Object>,
+        Comparable<IProperty<?>> {
 
     /** literal value constant for booleans. */
     public static final String BOOLEAN_LITERAL = "boolean";
@@ -497,48 +498,6 @@ public class LayoutOptionData implements ILayoutData, IProperty<Object>, Compara
      */
     public Set<Target> getTargets() {
         return targets;
-    }
-
-    /**
-     * Returns a user friendly description of the active targets of this layout
-     * option.
-     * 
-     * @return a description of the active targets, or {@code null} if there are
-     *         no active targets
-     */
-    public String getTargetsDescription() {
-        if (targets.size() == Target.values().length) {
-            return "All";
-        }
-        
-        StringBuilder descriptionBuf = new StringBuilder();
-        int count = targets.size(), index = 0;
-        for (Target target : targets) {
-            switch (target) {
-            case PARENTS:
-                descriptionBuf.append("Parents");
-                break;
-            case NODES:
-                descriptionBuf.append("Nodes");
-                break;
-            case EDGES:
-                descriptionBuf.append("Edges");
-                break;
-            case PORTS:
-                descriptionBuf.append("Ports");
-                break;
-            case LABELS:
-                descriptionBuf.append("Labels");
-                break;
-            }
-            index++;
-            if (count - index >= 2) {
-                descriptionBuf.append(", ");
-            } else if (count - index == 1) {
-                descriptionBuf.append(" and ");
-            }
-        }
-        return descriptionBuf.toString();
     }
     
     /**
