@@ -222,6 +222,17 @@
             variance="1.0">
       </layoutOption>
       <layoutOption
+            appliesTo="nodes"
+            default="-1.0"
+            description="Spacing between ports of a given node."
+            id="de.cau.cs.kieler.portSpacing"
+            lowerBound="0"
+            name="Port Spacing"
+            type="float"
+            upperBound="1000"
+            variance="1.0">
+      </layoutOption>
+      <layoutOption
             appliesTo="parents"
             default="false"
             description="Whether the selected layouter should consider the full hierarchy"

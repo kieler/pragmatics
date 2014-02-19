@@ -139,18 +139,22 @@ public class CompoundLayoutConfig implements IMutableLayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public void enrich(final LayoutContext context) {
+    public Object getContextValue(final IProperty<?> property, final LayoutContext context) {
         for (ILayoutConfig conf : configs) {
-            conf.enrich(context);
+            Object value = conf.getContextValue(property, context);
+            if (value != null) {
+                return value;
+            }
         }
+        return null;
     }
 
     /**
      * {@inheritDoc}
      */
-    public Object getValue(final LayoutOptionData optionData, final LayoutContext context) {
+    public Object getOptionValue(final LayoutOptionData optionData, final LayoutContext context) {
         for (ILayoutConfig conf : configs) {
-            Object value = conf.getValue(optionData, context);
+            Object value = conf.getOptionValue(optionData, context);
             if (value != null) {
                 return value;
             }
@@ -177,11 +181,11 @@ public class CompoundLayoutConfig implements IMutableLayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public void clearValues(final LayoutContext context) {
+    public void clearOptionValues(final LayoutContext context) {
         for (ILayoutConfig conf : configs) {
             if (conf instanceof IMutableLayoutConfig) {
                 IMutableLayoutConfig mlc = (IMutableLayoutConfig) conf;
-                mlc.clearValues(context);
+                mlc.clearOptionValues(context);
             }
         }
     }
@@ -189,12 +193,16 @@ public class CompoundLayoutConfig implements IMutableLayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public void setValue(final LayoutOptionData optionData, final LayoutContext context,
+    public void setOptionValue(final LayoutOptionData optionData, final LayoutContext context,
             final Object value) {
         for (ILayoutConfig conf : configs) {
             if (conf instanceof IMutableLayoutConfig) {
                 IMutableLayoutConfig mlc = (IMutableLayoutConfig) conf;
-                mlc.setValue(optionData, context, value);
+                mlc.setOptionValue(optionData, context, value);
+                if (value != null && mlc.isSet(optionData, context)) {
+                    // the value has been set successfully on the configurator with highest priority
+                    return;
+                }
             }
         }
     }

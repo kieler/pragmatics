@@ -45,10 +45,6 @@ public class DefaultLayoutConfig implements ILayoutConfig {
     /** the priority for the default layout configuration. */
     public static final int PRIORITY = 0;
     
-    /** option for layout context: whether the {@link OPTIONS} list shall be created. */
-    public static final IProperty<Boolean> OPT_MAKE_OPTIONS = new Property<Boolean>(
-            "context.makeOptions", false);
-    
     /** the layout options that are supported by the active layout algorithm. */
     public static final IProperty<List<LayoutOptionData>> OPTIONS
             = new Property<List<LayoutOptionData>>("context.options");
@@ -128,54 +124,93 @@ public class DefaultLayoutConfig implements ILayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public void enrich(final LayoutContext context) {
-        // adapt ports information in the context
-        KGraphElement graphElement = context.getProperty(LayoutContext.GRAPH_ELEM);
-        if (context.getProperty(HAS_PORTS) == null && graphElement instanceof KNode) {
-            context.setProperty(HAS_PORTS, !((KNode) graphElement).getPorts().isEmpty());
-        }
-        
-        // add layout option target types
-        Set<LayoutOptionData.Target> optionTargets = context.getProperty(LayoutContext.OPT_TARGETS);
-        if (optionTargets == null && graphElement != null) {
-            optionTargets = kgraphSwitch.doSwitch(graphElement);
-            context.setProperty(LayoutContext.OPT_TARGETS, optionTargets);
-        }
-        
-        if (context.getProperty(OPT_MAKE_OPTIONS)) {
-            if (optionTargets == null) {
-                optionTargets = Collections.emptySet();
-            }
-            LayoutDataService layoutDataService = LayoutDataService.getInstance();
-            List<LayoutOptionData> optionData = new LinkedList<LayoutOptionData>();
-    
-            for (LayoutOptionData.Target target : optionTargets) {
-                LayoutAlgorithmData algoData;
-                switch (target) {
-                case PARENTS:
-                    // add algorithm data for the content of the current element
-                    algoData = getLayouterData(context.getProperty(CONTENT_HINT),
-                            context.getProperty(CONTENT_DIAGT));
-                    context.setProperty(CONTENT_ALGO, algoData);
-                    break;
-                default:
-                    // add algorithm data for the container of the current element
-                    algoData = getLayouterData(context.getProperty(CONTAINER_HINT),
-                            context.getProperty(CONTAINER_DIAGT));
-                    context.setProperty(CONTAINER_ALGO, algoData);
-                }
-                optionData.addAll(layoutDataService.getOptionData(algoData, target));
+    public Object getContextValue(final IProperty<?> property, final LayoutContext context) {
+        if (property.equals(HAS_PORTS)) {
+            // determine whether the node in the context has any ports
+            KGraphElement graphElement = context.getProperty(LayoutContext.GRAPH_ELEM);
+            if (graphElement instanceof KNode) {
+                return !((KNode) graphElement).getPorts().isEmpty();
             }
             
-            // add layout options that are available for the current element
-            context.setProperty(OPTIONS, optionData);
+        } else if (property.equals(LayoutContext.OPT_TARGETS)) {
+            // determine the layout option targets from the type of graph element
+            KGraphElement graphElement = context.getProperty(LayoutContext.GRAPH_ELEM);
+            if (graphElement != null) {
+                return kgraphSwitch.doSwitch(graphElement);
+            }
+            
+        } else if (property.equals(CONTENT_ALGO)) {
+            // determine the content layout algorithm from the layout hint and diagram type
+            if (isParentElement(context)) {
+                return getLayouterData(context.getProperty(CONTENT_HINT),
+                        context.getProperty(CONTENT_DIAGT));
+            }
+            
+        } else if (property.equals(CONTAINER_ALGO)) {
+            // determine the container layout algorithm from the layout hint and diagram type
+            if (isContainedElement(context)) {
+                return getLayouterData(context.getProperty(CONTAINER_HINT),
+                        context.getProperty(CONTAINER_DIAGT));
+            }
+            
+        } else if (property.equals(OPTIONS)) {
+            // build a list of layout options supported by the layout algorithms in the context
+            LayoutDataService layoutDataService = LayoutDataService.getInstance();
+            List<LayoutOptionData> optionData = new LinkedList<LayoutOptionData>();
+            LayoutAlgorithmData algoData;
+            algoData = context.getProperty(CONTENT_ALGO);
+            if (algoData != null) {
+                optionData.addAll(layoutDataService.getOptionData(algoData,
+                        LayoutOptionData.Target.PARENTS));
+            }
+            algoData = context.getProperty(CONTAINER_ALGO);
+            Set<LayoutOptionData.Target> optionTargets = context.getProperty(LayoutContext.OPT_TARGETS);
+            if (algoData != null && optionTargets != null) {
+                for (LayoutOptionData.Target target : optionTargets) {
+                    if (target != LayoutOptionData.Target.PARENTS) {
+                        optionData.addAll(layoutDataService.getOptionData(algoData, target));
+                    }
+                }
+            }
+            return optionData;
         }
+        
+        // ask the context - maybe the requested value is stored there
+        return context.getProperty(property);
+    }
+    
+    /**
+     * Determine whether the {@link LayoutContext#OPT_TARGETS} property of the given context
+     * contains the {@code PARENTS} target.
+     * 
+     * @param context a layout context
+     * @return true if the parent target is contained in the context
+     */
+    private static boolean isParentElement(final LayoutContext context) {
+        Set<LayoutOptionData.Target> optionTargets = context.getProperty(LayoutContext.OPT_TARGETS);
+        return optionTargets != null && optionTargets.contains(LayoutOptionData.Target.PARENTS);
     }
 
     /**
+     * Determine whether the {@link LayoutContext#OPT_TARGETS} property of the given context
+     * contains any target related to a graph element (other than {@code PARENTS}).
+     * 
+     * @param context a layout context
+     * @return true if a graph element target is contained in the context
+     */
+    private static boolean isContainedElement(final LayoutContext context) {
+        Set<LayoutOptionData.Target> optionTargets = context.getProperty(LayoutContext.OPT_TARGETS);
+        return optionTargets != null && (
+                optionTargets.contains(LayoutOptionData.Target.NODES)
+                || optionTargets.contains(LayoutOptionData.Target.EDGES)
+                || optionTargets.contains(LayoutOptionData.Target.PORTS)
+                || optionTargets.contains(LayoutOptionData.Target.LABELS));
+    }
+    
+    /**
      * {@inheritDoc}
      */
-    public Object getValue(final LayoutOptionData optionData, final LayoutContext context) {
+    public Object getOptionValue(final LayoutOptionData optionData, final LayoutContext context) {
         Object result = null;
         
         // check default value of the content layout algorithm

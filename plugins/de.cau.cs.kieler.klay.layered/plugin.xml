@@ -45,6 +45,10 @@
                option="de.cau.cs.kieler.spacing">
          </knownOption>
          <knownOption
+               default="10"
+               option="de.cau.cs.kieler.portSpacing">
+         </knownOption>
+         <knownOption
                option="de.cau.cs.kieler.noLayout">
          </knownOption>
          <knownOption

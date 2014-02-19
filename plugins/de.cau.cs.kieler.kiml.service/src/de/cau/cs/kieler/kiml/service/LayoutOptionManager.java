@@ -21,6 +21,8 @@ import java.util.Map;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.ui.IWorkbenchPart;
 
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -120,7 +122,7 @@ public class LayoutOptionManager {
             LayoutOptionData optionData = LayoutDataService.getInstance().getOptionData(
                     option.getId());
             if (optionData != null) {
-                Object value = config.getValue(optionData, LayoutContext.global());
+                Object value = config.getOptionValue(optionData, LayoutContext.global());
                 if (value != null) {
                     return (T) value;
                 }
@@ -181,23 +183,27 @@ public class LayoutOptionManager {
      */
     private void configure(final KGraphElement graphElement, final LayoutMapping<?> layoutMapping,
             final CompoundLayoutConfig config) {
-        // create a layout context for the current graph element
+        // create a layout context for the current graph element and initialize basic properties
         LayoutContext context = new LayoutContext();
         context.setProperty(LayoutContext.GRAPH_ELEM, graphElement);
         Object diagramPart = layoutMapping.getGraphMap().get(graphElement);
         context.setProperty(LayoutContext.DIAGRAM_PART, diagramPart);
-        EObject modelElement = (EObject) layoutMapping.getAdapterFactory().getAdapter(
-                diagramPart, EObject.class);
-        context.setProperty(LayoutContext.DOMAIN_MODEL, modelElement);
-        IWorkbenchPart workbenchPart = layoutMapping.getProperty(IWorkbenchPart.class);
+        IWorkbenchPart workbenchPart = (IWorkbenchPart) Iterables.find(
+                layoutMapping.getAllProperties().values(),
+                Predicates.instanceOf(IWorkbenchPart.class), null);
         context.setProperty(EclipseLayoutConfig.WORKBENCH_PART, workbenchPart);
+        Object modelElement = config.getContextValue(LayoutContext.DOMAIN_MODEL, context);
+        if (modelElement == null) {
+            modelElement = layoutMapping.getAdapterFactory().getAdapter(diagramPart, EObject.class);
+        }
+        context.setProperty(LayoutContext.DOMAIN_MODEL, modelElement);
         
         // add semantic configurations from the extension point
         List<ILayoutConfig> semanticConfigs = getSemanticConfigs(modelElement);
         config.addAll(semanticConfigs);
 
         // enrich the layout context using the basic configuration
-        config.enrich(context);
+        enrich(context, config, false);
 
         // clear the previous configuration
         KLayoutData layoutData = graphElement.getData(KLayoutData.class);
@@ -208,34 +214,6 @@ public class LayoutOptionManager {
 
         // remove the semantic layout configurations again
         config.removeAll(semanticConfigs);
-    }
-    
-    /**
-     * Transfer all layout options affected by the given configurator to the layout data instance.
-     * 
-     * @param layoutData a layout data instance of a graph element
-     * @param config a layout configurator
-     * @param context the context under which to fetch the options
-     */
-    @SuppressWarnings("unchecked")
-    public void transferValues(final KLayoutData layoutData, final ILayoutConfig config,
-            final LayoutContext context) {
-        LayoutDataService dataService = LayoutDataService.getInstance();
-        Collection<IProperty<?>> options = config.getAffectedOptions(context);
-        for (IProperty<?> option : options) {
-            Object value = null;
-            if (option instanceof LayoutOptionData) {
-                value = config.getValue((LayoutOptionData) option, context);
-            } else {
-                LayoutOptionData optionData = dataService.getOptionData(option.getId());
-                if (optionData != null) {
-                    value = config.getValue(optionData, context);
-                }
-            }
-            if (value != null) {
-                layoutData.setProperty((IProperty<Object>) option, value);
-            }
-        }
     }
 
     /**
@@ -263,6 +241,95 @@ public class LayoutOptionManager {
             semanticConfigMap.put(clazz, configs);
         }
         return configs;
+    }
+    
+    /**
+     * Enrich the given layout context by querying the given configurator for context properties.
+     * 
+     * @param context a layout context
+     * @param config a layout configurator
+     * @param makeOptionsList whether to create the {@link DefaultLayoutConfig#OPTIONS} list
+     */
+    public void enrich(final LayoutContext context, final ILayoutConfig config,
+            final boolean makeOptionsList) {
+        // check whether the configurator proposes a replacement for the diagram part
+        Object diagramPart = config.getContextValue(LayoutContext.DIAGRAM_PART, context);
+        if (diagramPart != null) {
+            context.setProperty(LayoutContext.DIAGRAM_PART, diagramPart);
+        }
+        // enrich the domain model element
+        enrich(LayoutContext.DOMAIN_MODEL, context, config);
+        // enrich the layout option targets
+        enrich(LayoutContext.OPT_TARGETS, context, config);
+        // enrich the property indicating whether the selected node has ports
+        enrich(DefaultLayoutConfig.HAS_PORTS, context, config);
+        // enrich the aspect ratio of the diagram viewer
+        enrich(EclipseLayoutConfig.ASPECT_RATIO, context, config);
+        // enrich the diagram type for the selected element
+        enrich(DefaultLayoutConfig.CONTENT_DIAGT, context, config);
+        
+        if (makeOptionsList) {
+            // enrich the container diagram part
+            enrich(LayoutContext.CONTAINER_DIAGRAM_PART, context, config);
+            // enrich the container domain model element
+            enrich(LayoutContext.CONTAINER_DOMAIN_MODEL, context, config);
+            // enrich the layout hint for the selected element
+            enrich(DefaultLayoutConfig.CONTENT_HINT, context, config);
+            // enrich the layout hint for the container element
+            enrich(DefaultLayoutConfig.CONTAINER_HINT, context, config);
+            // enrich the diagram type for the container element
+            enrich(DefaultLayoutConfig.CONTAINER_DIAGT, context, config);
+            // enrich the layout algorithm for the selected element
+            enrich(DefaultLayoutConfig.CONTENT_ALGO, context, defaultLayoutConfig);
+            // enrich the layout algorithm for the container element
+            enrich(DefaultLayoutConfig.CONTAINER_ALGO, context, defaultLayoutConfig);
+            // enrich the list of supported layout options
+            enrich(DefaultLayoutConfig.OPTIONS, context, defaultLayoutConfig);
+        }
+    }
+    
+    /**
+     * Enrich the given layout context with respect to the given property.
+     * 
+     * @param property a context property
+     * @param context a layout context
+     * @param config the configurator queried for the context property
+     */
+    @SuppressWarnings("unchecked")
+    private <T> void enrich(final IProperty<T> property, final LayoutContext context,
+            final ILayoutConfig config) {
+        if (context.getProperty(property) == null) {
+            // warning: evil configurators may return objects of the wrong type here
+            context.setProperty(property, (T) config.getContextValue(property, context));
+        }
+    }
+    
+    /**
+     * Transfer all layout options affected by the given configurator to the layout data instance.
+     * 
+     * @param layoutData a layout data instance of a graph element
+     * @param config a layout configurator
+     * @param context the context under which to fetch the options
+     */
+    @SuppressWarnings("unchecked")
+    public void transferValues(final KLayoutData layoutData, final ILayoutConfig config,
+            final LayoutContext context) {
+        LayoutDataService dataService = LayoutDataService.getInstance();
+        Collection<IProperty<?>> options = config.getAffectedOptions(context);
+        for (IProperty<?> option : options) {
+            Object value = null;
+            if (option instanceof LayoutOptionData) {
+                value = config.getOptionValue((LayoutOptionData) option, context);
+            } else {
+                LayoutOptionData optionData = dataService.getOptionData(option.getId());
+                if (optionData != null) {
+                    value = config.getOptionValue(optionData, context);
+                }
+            }
+            if (value != null) {
+                layoutData.setProperty((IProperty<Object>) option, value);
+            }
+        }
     }
 
 }

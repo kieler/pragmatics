@@ -402,18 +402,14 @@ public final class KimlUtil {
             final boolean movePorts, final boolean moveLabels) {
         
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-        if (nodeLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
-            // don't resize nodes that aren't laid out
-            return null;
-        }
         Set<SizeConstraint> sizeConstraint = nodeLayout.getProperty(LayoutOptions.SIZE_CONSTRAINT);
-        Set<SizeOptions> sizeOptions = nodeLayout.getProperty(LayoutOptions.SIZE_OPTIONS);
         
         KVector oldSize = new KVector(nodeLayout.getWidth(), nodeLayout.getHeight());
         KVector newSize;
         
         // Calculate the new size
         if (sizeConstraint.contains(SizeConstraint.MINIMUM_SIZE)) {
+            Set<SizeOptions> sizeOptions = nodeLayout.getProperty(LayoutOptions.SIZE_OPTIONS);
             float minWidth = nodeLayout.getProperty(LayoutOptions.MIN_WIDTH);
             float minHeight = nodeLayout.getProperty(LayoutOptions.MIN_HEIGHT);
             

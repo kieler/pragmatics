@@ -13,10 +13,6 @@
  */
 package de.cau.cs.kieler.klay.layered.p4nodes;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -26,9 +22,9 @@ import java.util.ListIterator;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.klay.layered.DebugUtil;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
-import de.cau.cs.kieler.klay.layered.LayeredUtil;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -67,7 +63,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
     /**
      * A linear segment contains a single regular node or all dummy nodes of a long edge.
      */
-    private static class LinearSegment implements Comparable<LinearSegment> {
+    public static class LinearSegment implements Comparable<LinearSegment> {
         /** Nodes of the linear segment. */
         private List<LNode> nodes = new LinkedList<LNode>();
         /** Identifier value, used as index in the segments array. */
@@ -456,7 +452,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
 
         // Write debug output graph
         if (layeredGraph.getProperty(LayoutOptions.DEBUG_MODE)) {
-            writeDebugGraph(layeredGraph, segmentList, outgoingList);
+            DebugUtil.writeDebugGraph(layeredGraph, segmentList, outgoingList);
         }
     }
 
@@ -935,62 +931,4 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
         }
     }
     
-
-    // /////////////////////////////////////////////////////////////////////////////
-    // Debug Output
-
-    /**
-     * Writes a debug graph for the given linear segments and their dependencies.
-     * 
-     * @param layeredGraph
-     *            the layered graph.
-     * @param segmentList
-     *            the list of linear segments.
-     * @param outgoingList
-     *            the list of successors for each linear segment.
-     */
-    private static void writeDebugGraph(final LGraph layeredGraph,
-            final List<LinearSegment> segmentList, final List<List<LinearSegment>> outgoingList) {
-
-        try {
-            Writer writer = createWriter(layeredGraph);
-            writer.write("digraph {\n");
-
-            Iterator<LinearSegment> segmentIterator = segmentList.iterator();
-            Iterator<List<LinearSegment>> successorsIterator = outgoingList.iterator();
-
-            while (segmentIterator.hasNext()) {
-                LinearSegment segment = segmentIterator.next();
-                List<LinearSegment> successors = successorsIterator.next();
-
-                writer.write("  " + segment.hashCode() + "[label=\"" + segment + "\"]\n");
-
-                for (LinearSegment successor : successors) {
-                    writer.write("  " + segment.hashCode() + "->" + successor.hashCode() + "\n");
-                }
-            }
-
-            writer.write("}\n");
-            writer.close();
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
-    }
-
-    /**
-     * Creates a writer for debug output.
-     * 
-     * @param layeredGraph
-     *            the layered graph.
-     * @return a file writer for debug output.
-     * @throws IOException
-     *             if creating the output file fails.
-     */
-    private static Writer createWriter(final LGraph layeredGraph) throws IOException {
-        String path = LayeredUtil.getDebugOutputPath();
-        new File(path).mkdirs();
-
-        String debugFileName = LayeredUtil.getDebugOutputFileBaseName(layeredGraph) + "linseg-dep";
-        return new FileWriter(new File(path + File.separator + debugFileName + ".dot"));
-    }
 }

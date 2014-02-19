@@ -31,6 +31,9 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IWorkbenchPart;
 
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
+
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -50,6 +53,7 @@ import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo;
 import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo.GeneType;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.service.EclipseLayoutConfig;
 import de.cau.cs.kieler.kiml.service.ExtensionLayoutConfigService;
 import de.cau.cs.kieler.kiml.service.LayoutMapping;
@@ -115,8 +119,8 @@ public final class GenomeFactory {
             // create layout context for the parent node
             LayoutContext context = createContext(parentNode, layoutMapping, config);
             genome.addContext(context, dataService.getOptionData().size() + 1);
-            String algorithmId = (String) config.getValue(algoOptionData, context);
-            String diagramType = (String) config.getValue(diagTypeData, context);
+            String algorithmId = (String) config.getOptionValue(algoOptionData, context);
+            String diagramType = (String) config.getOptionValue(diagTypeData, context);
             LayoutAlgorithmData algorithmData = DefaultLayoutConfig.getLayouterData(
                     algorithmId, diagramType);
 
@@ -304,13 +308,14 @@ public final class GenomeFactory {
             EObject modelElement = (EObject) layoutMapping.getAdapterFactory().getAdapter(
                     diagramPart, EObject.class);
             context.setProperty(LayoutContext.DOMAIN_MODEL, modelElement);
-            IWorkbenchPart workbenchPart = layoutMapping.getProperty(IWorkbenchPart.class);
+            IWorkbenchPart workbenchPart = (IWorkbenchPart) Iterables.find(
+                    layoutMapping.getAllProperties().values(),
+                    Predicates.instanceOf(IWorkbenchPart.class), null);
             context.setProperty(EclipseLayoutConfig.WORKBENCH_PART, workbenchPart);
         }
-        context.setProperty(DefaultLayoutConfig.OPT_MAKE_OPTIONS, true);
 
         // enrich the layout context using the given configurator
-        layoutConfig.enrich(context);
+        DiagramLayoutEngine.INSTANCE.getOptionManager().enrich(context, layoutConfig, true);
         
         return context;
     }
@@ -331,7 +336,7 @@ public final class GenomeFactory {
             final LayoutAlgorithmData algoData, final LayoutOptionData optionData,
             final TypeInfo<T> typeInfo, final ILayoutConfig config, final LayoutContext context) {
         context.setProperty(DefaultLayoutConfig.CONTENT_ALGO, algoData);
-        T value = translateToGene(config.getValue(optionData, context), typeInfo);
+        T value = translateToGene(config.getOptionValue(optionData, context), typeInfo);
         
         Comparable<? super T> lowerBound = typeInfo.getLowerBound();
         if (lowerBound.compareTo(value) > 0) {
