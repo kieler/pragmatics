@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.klay.gwt.client;
+package de.cau.cs.kieler.klay.gwt.client;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.JavaScriptObject;
@@ -20,7 +20,7 @@ import com.google.gwt.json.client.JSONString;
 import com.google.gwt.json.client.JSONValue;
 
 import de.cau.cs.kieler.kiml.UnsupportedConfigurationException;
-import de.cau.klay.gwt.client.layout.RecursiveLGraphLayout;
+import de.cau.cs.kieler.klay.gwt.client.layout.RecursiveLGraphLayout;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -53,7 +53,7 @@ public class KlayGWT implements EntryPoint {
     
     private native void exportKlayLayout() /*-{
         $wnd.$klay = {};
-        $wnd.$klay.layout = $entry(@de.cau.klay.gwt.client.KlayGWT::layout(Lcom/google/gwt/core/client/JavaScriptObject;));
+        $wnd.$klay.layout = $entry(@de.cau.cs.kieler.klay.gwt.client.KlayGWT::layout(Lcom/google/gwt/core/client/JavaScriptObject;));
     }-*/;
     // CHECKSTYLEON LineLength
     

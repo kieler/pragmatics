@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
-<listEntry value="/KlayGWT"/>
+<listEntry value="/de.cau.cs.kieler.klay.layered.gwt"/>
 </listAttribute>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
 <listEntry value="4"/>
@@ -15,7 +15,7 @@
 </listAttribute>
 <booleanAttribute key="org.eclipse.jdt.launching.DEFAULT_CLASSPATH" value="false"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="com.google.gwt.dev.DevMode"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-war war -startupUrl KlayJsExample.html de.cau.klay.gwt.KlayGWT"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="KlayGWT"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-war war -startupUrl KlayJsExample.html de.cau.cs.kieler.klay.gwt.KlayGWT"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="de.cau.cs.kieler.klay.layered.gwt"/>
 <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xmx512M"/>
 </launchConfiguration>

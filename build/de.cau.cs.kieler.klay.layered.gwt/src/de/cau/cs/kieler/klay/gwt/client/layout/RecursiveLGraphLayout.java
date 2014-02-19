@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.klay.gwt.client.layout;
+package de.cau.cs.kieler.klay.gwt.client.layout;
 
 import com.google.gwt.json.client.JSONObject;
 

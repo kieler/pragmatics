@@ -14,7 +14,7 @@
   <inherits name='de.cau.cs.kieler.Klay'/>
   
   <!-- Specify the app entry point class.                         -->
-  <entry-point class='de.cau.klay.gwt.client.KlayGWT'/>
+  <entry-point class='de.cau.cs.kieler.klay.gwt.client.KlayGWT'/>
 
   <!-- Specify the paths for translatable code                    -->
   <source path='client'/>

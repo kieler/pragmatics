@@ -173,7 +173,7 @@
 			<arg value="war" />
 			<!-- Additional arguments like -style PRETTY or -logLevel DEBUG -->
 			<arg line="${gwt.args}" />
-			<arg value="de.cau.klay.gwt.KlayGWT" />
+			<arg value="de.cau.cs.kieler.klay.gwt.KlayGWT" />
 		</java>
 	</target>
 
