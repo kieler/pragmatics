@@ -924,6 +924,7 @@ public final class KlayLayered {
                         port.getSize().x, port.getSize().y);
                 port.getPosition().x = portPosition.x;
                 port.getPosition().y = portPosition.y;
+                port.setSide(childNode.getProperty(Properties.EXT_PORT_SIDE));
             }
         }
         

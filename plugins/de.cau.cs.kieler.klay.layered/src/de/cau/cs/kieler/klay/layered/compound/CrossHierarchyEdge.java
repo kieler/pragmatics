@@ -15,10 +15,14 @@ package de.cau.cs.kieler.klay.layered.compound;
 
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
-import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
 
 /**
+ * A data holder used to pass information on hierarchy crossing edges from the
+ * {@link CompoundGraphPreprocessor} to the {@link CompoundGraphPostprocessor}.
+ * Instances of this class are held in a multimap attached to the top-level graph via the
+ * {@link de.cau.cs.kieler.klay.layered.properties.Properties#CROSS_HIERARCHY_MAP CROSS_HIERARCHY_MAP}
+ * property.
  *
  * @author msp
  */
@@ -28,8 +32,6 @@ public class CrossHierarchyEdge {
     private LEdge newEdge;
     /** the layered graph in which the layout was computed. */
     private LGraph graph;
-    /** the corresponding compound node. */
-    private LNode parentNode;
     /** the flow direction: input or output. */
     private PortType type;
     
@@ -38,14 +40,11 @@ public class CrossHierarchyEdge {
      * 
      * @param newEdge the edge used in the layered graph to compute a layout
      * @param graph the layered graph in which the layout is computed
-     * @param parentNode the corresponding compound node
      * @param type the flow direction: input or output
      */
-    CrossHierarchyEdge(final LEdge newEdge, final LGraph graph, final LNode parentNode,
-            final PortType type) {
+    CrossHierarchyEdge(final LEdge newEdge, final LGraph graph, final PortType type) {
         this.newEdge = newEdge;
         this.graph = graph;
-        this.parentNode = parentNode;
         this.type = type;
     }
     
@@ -70,14 +69,6 @@ public class CrossHierarchyEdge {
      */
     public LGraph getGraph() {
         return graph;
-    }
-
-    /**
-     * Return the parent node.
-     * @return the parent node
-     */
-    public LNode getParentNode() {
-        return parentNode;
     }
 
     /**

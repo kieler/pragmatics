@@ -75,8 +75,8 @@ public class CompoundGraphPostprocessor implements ILayoutProcessor {
                             && edge2.getType() == PortType.OUTPUT) {
                         return 1;
                     }
-                    int level1 = hierarchyLevel(edge1.getParentNode(), graph);
-                    int level2 = hierarchyLevel(edge2.getParentNode(), graph);
+                    int level1 = hierarchyLevel(edge1.getGraph(), graph);
+                    int level2 = hierarchyLevel(edge2.getGraph(), graph);
                     if (edge1.getType() == PortType.OUTPUT) {
                         // from deeper level to higher level
                         return level2 - level1;
@@ -129,7 +129,7 @@ public class CompoundGraphPostprocessor implements ILayoutProcessor {
                 KVector sourcePoint = ledge.getSource().getAbsoluteAnchor().add(offset);
                 KVector targetPoint = ledge.getTarget().getAbsoluteAnchor().add(offset);
 
-                if (ledge.getSource() != sourcePort && lastPoint != null) {
+                if (lastPoint != null) {
                     KVector nextPoint;
                     if (bendPoints.isEmpty()) {
                         nextPoint = targetPoint;
@@ -171,25 +171,27 @@ public class CompoundGraphPostprocessor implements ILayoutProcessor {
     }
     
     /**
-     * Compute the hierarchy level of the given node.
+     * Compute the hierarchy level of the given nested graph.
      * 
-     * @param node a node
-     * @param graph the containing hierarchical graph
+     * @param nestedGraph a nested graph
+     * @param topLevelGraph the top-level graph
      * @return the hierarchy level (higher number means the node is nested deeper)
      */
-    private static int hierarchyLevel(final LNode node, final LGraph graph) {
-        LNode current = node;
+    private static int hierarchyLevel(final LGraph nestedGraph, final LGraph topLevelGraph) {
+        LGraph currentGraph = nestedGraph;
         int level = 0;
-        while (current != null) {
-            LGraph currentGraph = current.getGraph();
-            if (currentGraph == graph) {
+        do {
+            if (currentGraph == topLevelGraph) {
                 return level;
             }
-            current = currentGraph.getProperty(Properties.PARENT_LNODE);
+            LNode currentNode = currentGraph.getProperty(Properties.PARENT_LNODE);
+            if (currentNode == null) {
+                // the given node is not an ancestor of the graph node
+                throw new IllegalArgumentException();
+            }
+            currentGraph = currentNode.getGraph();
             level++;
-        }
-        // the given node is not an ancestor of the graph node
-        throw new IllegalArgumentException();
+        } while (true);
     }
 
 }
