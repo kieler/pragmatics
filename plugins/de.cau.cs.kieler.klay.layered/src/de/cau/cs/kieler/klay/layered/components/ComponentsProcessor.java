@@ -56,7 +56,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * <p>Packing components
  * <dl>
- *   <dt>Precondition:</dt><dd>a list of graphs with complete layout and layer assignment.</dd>
+ *   <dt>Precondition:</dt><dd>a list of unlayered graphs with complete layout.</dd>
  *   <dt>Postcondition:</dt><dd>a single unlayered graph.</dd>
  * </dl>
  * </p>

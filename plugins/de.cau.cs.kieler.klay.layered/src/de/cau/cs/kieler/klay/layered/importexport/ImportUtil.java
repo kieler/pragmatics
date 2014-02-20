@@ -779,4 +779,61 @@ public final class ImportUtil {
         return portPosition;
     }
     
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Compound Graphs
+    
+    /**
+     * Determines whether the given child node is a descendant of the parent node.
+     * 
+     * @param child a child node
+     * @param parent a parent node
+     * @return true if {@code child} is a direct or indirect child of {@code parent}
+     */
+    public static boolean isDescendant(final LNode child, final LNode parent) {
+        LNode current = child;
+        LNode next = current.getGraph().getProperty(Properties.PARENT_LNODE);
+        while (next != null) {
+            current = next;
+            if (current == parent) {
+                return true;
+            }
+            next = current.getGraph().getProperty(Properties.PARENT_LNODE);
+        }
+        return false;
+    }
+    
+    /**
+     * Converts the given point from the coordinate system of {@code oldGraph} to that of
+     * {@code newGraph}. Insets and graph offset are included in the calculation.
+     * 
+     * @param point a relative point
+     * @param oldGraph the graph to which the point is relative to
+     * @param newGraph the graph to which the point is made relative to after applying this method
+     */
+    public static void changeCoordSystem(final KVector point, final LGraph oldGraph,
+            final LGraph newGraph) {
+        // transform to absolute coordinates
+        LGraph graph = oldGraph;
+        LNode node = oldGraph.getProperty(Properties.PARENT_LNODE);
+        while (node != null) {
+            point.add(graph.getOffset());
+            LInsets insets = graph.getInsets();
+            point.translate(node.getPosition().x + insets.left, node.getPosition().y + insets.top);
+            graph = node.getGraph();
+            node = graph.getProperty(Properties.PARENT_LNODE);
+        }
+        
+        // transform to relative coordinates (to newGraph)
+        graph = newGraph;
+        node = newGraph.getProperty(Properties.PARENT_LNODE);
+        while (node != null) {
+            point.sub(graph.getOffset());
+            LInsets insets = graph.getInsets();
+            point.translate(-node.getPosition().x - insets.left, -node.getPosition().y - insets.top);
+            graph = node.getGraph();
+            node = graph.getProperty(Properties.PARENT_LNODE);
+        }
+    }
+    
 }

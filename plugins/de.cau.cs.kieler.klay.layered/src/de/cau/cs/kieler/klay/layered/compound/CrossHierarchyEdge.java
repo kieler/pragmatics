@@ -25,9 +25,9 @@ import de.cau.cs.kieler.klay.layered.properties.PortType;
 public class CrossHierarchyEdge {
     
     /** the edge used in the layered graph to compute a layout. */
-    private LEdge ledge;
+    private LEdge newEdge;
     /** the layered graph in which the layout was computed. */
-    private LGraph lgraph;
+    private LGraph graph;
     /** the corresponding compound node. */
     private LNode parentNode;
     /** the flow direction: input or output. */
@@ -36,15 +36,15 @@ public class CrossHierarchyEdge {
     /**
      * Create a cross-hierarchy edge segment.
      * 
-     * @param ledge the edge used in the layered graph to compute a layout
-     * @param lgraph the layered graph in which the layout is computed
+     * @param newEdge the edge used in the layered graph to compute a layout
+     * @param graph the layered graph in which the layout is computed
      * @param parentNode the corresponding compound node
      * @param type the flow direction: input or output
      */
-    CrossHierarchyEdge(final LEdge ledge, final LGraph lgraph, final LNode parentNode,
+    CrossHierarchyEdge(final LEdge newEdge, final LGraph graph, final LNode parentNode,
             final PortType type) {
-        this.ledge = ledge;
-        this.lgraph = lgraph;
+        this.newEdge = newEdge;
+        this.graph = graph;
         this.parentNode = parentNode;
         this.type = type;
     }
@@ -53,7 +53,7 @@ public class CrossHierarchyEdge {
      * {@inheritDoc}
      */
     public String toString() {
-        return type.toString() + ":" + ledge.toString();
+        return type.toString() + ":" + newEdge.toString();
     }
 
     /**
@@ -61,7 +61,7 @@ public class CrossHierarchyEdge {
      * @return the edge
      */
     public LEdge getEdge() {
-        return ledge;
+        return newEdge;
     }
 
     /**
@@ -69,7 +69,7 @@ public class CrossHierarchyEdge {
      * @return the graph
      */
     public LGraph getGraph() {
-        return lgraph;
+        return graph;
     }
 
     /**
@@ -81,10 +81,10 @@ public class CrossHierarchyEdge {
     }
 
     /**
-     * Return the port type.
-     * @return the port type
+     * Return the type of cross-hierarchy edge.
+     * @return the type
      */
-    public PortType getPortType() {
+    public PortType getType() {
         return type;
     }
     

@@ -15,39 +15,26 @@ package de.cau.cs.kieler.klay.layered.compound;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KGraphElement;
-import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
-import de.cau.cs.kieler.kiml.UnsupportedGraphException;
-import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
-import de.cau.cs.kieler.klay.layered.KlayLayered;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
-import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.importexport.ImportUtil;
@@ -57,14 +44,22 @@ import de.cau.cs.kieler.klay.layered.properties.PortType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
+ * Preprocess a compound graph by splitting cross-hierarchy edges. The result is stored in
+ * {@link Properties#CROSS_HIERARCHY_MAP}, which is attached to the top-level graph.
  * 
+ * <dl>
+ *   <dt>Precondition:</dt>
+ *     <dd>a compound graph with no layers.</dd>
+ *   <dt>Postcondition:</dt>
+ *     <dd>a compound graph with no layers and no cross-hierarchy edges, but with external ports.</dd>
+ * </dl>
  *
  * @author msp
  */
 public class CompoundGraphPreprocessor implements ILayoutProcessor {
     
     /** map of generated cross-hierarchy edges. */
-    private final Multimap<LEdge, CrossHierarchyEdge> crossHierarchyMap = HashMultimap.create();
+    private Multimap<LEdge, CrossHierarchyEdge> crossHierarchyMap;
 
     /**
      * An internal representation for external ports. This class is used to pass information
@@ -75,6 +70,8 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
     private static class ExternalPort {
         /** the original edge for which the port is created. */
         private LEdge origEdge;
+        /** the new edge by which the original edge is replaced. */
+        private LEdge newEdge;
         /** the node whose outer bounds are crossed by the edge. */
         private LNode parentNode;
         /** the layered graph corresponding to the content of the compound node. */
@@ -87,28 +84,43 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
         /**
          * Create an external port.
          * 
-         * @param parentNode the original edge for which the port is created
+         * @param origEdge the original edge for which the port is created
+         * @param newEdge the new edge by which the original edge is replaced
          * @param parentNode the node whose outer bounds are crossed by the edge
          * @param lgraph the layered graph corresponding to the content of the compound node
          * @param dummyNode the dummy node used by the algorithm as representative for the external port
          * @param portType the flow direction: input or output
          */
-        ExternalPort(final LEdge origEdge, final LNode parentNode, final LGraph lgraph,
-                final LNode dummyNode, final PortType portType) {
+        ExternalPort(final LEdge origEdge, final LEdge newEdge, final LNode parentNode,
+                final LGraph lgraph, final LNode dummyNode, final PortType portType) {
             this.origEdge = origEdge;
+            this.newEdge = newEdge;
             this.parentNode = parentNode;
             this.lgraph = lgraph;
             this.dummyNode = dummyNode;
             this.type = portType;
         }
+
     }
     
     /**
      * {@inheritDoc}
      */
-    public void process(final LGraph lgraph, final IKielerProgressMonitor monitor) {
+    public void process(final LGraph graph, final IKielerProgressMonitor monitor) {
         monitor.begin("Compound graph preprocessor", 1);
-        transformHierarchyEdges(null, lgraph);
+        crossHierarchyMap = HashMultimap.create();
+        
+        // create new dummy edges at hierarchy bounds
+        transformHierarchyEdges(null, graph);
+        
+        // remove the original edges from the graph
+        for (LEdge origEdge : crossHierarchyMap.keySet()) {
+            origEdge.setSource(null);
+            origEdge.setTarget(null);
+        }
+        
+        graph.setProperty(Properties.CROSS_HIERARCHY_MAP, crossHierarchyMap);
+        crossHierarchyMap = null;
         monitor.done();
     }
     
@@ -134,7 +146,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
         
         // process the cross-hierarchy edges connected to the inside of the child nodes
         List<ExternalPort> exportedExternalPorts = new LinkedList<ExternalPort>();
-        processInsideEdges(graph, exportedExternalPorts, containedExternalPorts);
+        processInsideEdges(parentNode, graph, exportedExternalPorts, containedExternalPorts);
         
         // process the cross-hierarchy edges connected to the outside of the parent node
         processOutsideEdges(parentNode, graph, exportedExternalPorts);
@@ -145,170 +157,114 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
     /**
      * Process edges connected to the inside of compound nodes contained in the given graph.
      * 
-     * @param graph
+     * @param parentNode the parent node of the nested graph
+     * @param graph the processed graph
      * @param exportedExternalPorts list into which new external ports are put
      * @param containedExternalPorts external ports gathered during the recursive layout of children
      */
-    private void processInsideEdges(final LGraph graph, final List<ExternalPort> exportedExternalPorts,
+    private void processInsideEdges(final LNode parentNode, final LGraph graph,
+            final List<ExternalPort> exportedExternalPorts,
             final List<ExternalPort> containedExternalPorts) {
-        Direction layoutDirection = layeredGraph.getProperty(LayoutOptions.DIRECTION);
-        if (layoutDirection == Direction.UNDEFINED) {
-            layoutDirection = Direction.RIGHT;
-        }
-        Map<KGraphElement, LGraphElement> elementMap = Maps.newHashMap();
-        //layeredGraph.getProperty(KGraphImporter.ELEMENT_MAP);
-        Map<LEdge, LNode> needSourcePort = new HashMap<LEdge, LNode>();
-        Map<LEdge, LNode> needTargetPort = new HashMap<LEdge, LNode>();
+        Direction layoutDirection = graph.getProperty(LayoutOptions.DIRECTION);
         for (ExternalPort externalPort : containedExternalPorts) {
-            KNode sourceKNode = externalPort.kedge.getSource();
-            KNode targetKNode = externalPort.kedge.getTarget();
-            if (externalPort.type == PortType.INPUT && KimlUtil.isDescendant(sourceKNode, parentNode)
-                    && sourceKNode.getParent() != parentNode) {
+            LNode sourceNode = externalPort.origEdge.getSource().getNode();
+            LNode targetNode = externalPort.origEdge.getTarget().getNode();
+            if (externalPort.type == PortType.INPUT && ImportUtil.isDescendant(sourceNode, parentNode)
+                    && sourceNode.getGraph() != graph) {
                 // the edge comes from the inside of another sibling node,
                 // hence we want to process it only once, namely as outgoing edge
                 continue;
             }
             
-            LNode lnode = (LNode) elementMap.get(externalPort.knode);
-            KVector lportPos = ImportUtil.getExternalPortPosition(
-                    layeredGraphMap.get(externalPort.lgraph), externalPort.lnode, 0, 0);
-            LPort lport = createFixedPort(lnode, lportPos,
-                    externalPort.lnode.getProperty(Properties.EXT_PORT_SIDE), layeredGraph);
-            if (externalPort.knode != targetKNode && externalPort.knode != sourceKNode) {
-                LEdge newEdge = new LEdge(layeredGraph);
-                KEdgeLayout kedgeLayout = externalPort.kedge.getData(KEdgeLayout.class);
-                newEdge.copyProperties(kedgeLayout);
-                newEdge.setProperty(LayoutOptions.JUNCTION_POINTS, null);
-                crossHierarchyMap.put(externalPort.kedge, new CrossHierarchyEdge(newEdge,
-                        layeredGraph, parentNode, externalPort.type));
-                
-                if (externalPort.type == PortType.OUTPUT) {
-                    newEdge.setSource(lport);
-                    LPort targetLPort = null;
-                    if (targetKNode.getParent() == parentNode) {
-                        // the edge goes to a direct child of the parent node
-                        targetLPort = (LPort) elementMap.get(externalPort.kedge.getTargetPort());
-                        if (targetLPort == null) {
-                            LNode targetLNode = (LNode) elementMap.get(targetKNode);
-                            needTargetPort.put(newEdge, targetLNode);
-                        } else if (externalPort.kedge.getTargetPort().getNode() != targetKNode) {
-                            throw new UnsupportedGraphException(
-                                    "Inconsistent target port reference found.");
+            KVector newPortPos = ImportUtil.getExternalPortPosition(
+                    externalPort.lgraph, externalPort.dummyNode, 0, 0);
+            LPort newPort = createFixedPort(externalPort.parentNode, newPortPos,
+                    externalPort.dummyNode.getProperty(Properties.EXT_PORT_SIDE), graph);
+            externalPort.dummyNode.setProperty(Properties.ORIGIN, newPort);
+            LEdge newEdge = new LEdge(graph);
+            newEdge.copyProperties(externalPort.origEdge);
+            newEdge.setProperty(LayoutOptions.JUNCTION_POINTS, null);
+            crossHierarchyMap.put(externalPort.origEdge, new CrossHierarchyEdge(newEdge,
+                    graph, parentNode, externalPort.type));
+            
+            if (externalPort.type == PortType.OUTPUT) {
+                newEdge.setSource(newPort);
+                LPort targetPort = null;
+                if (targetNode.getGraph() == graph) {
+                    // the edge goes to a direct child of the parent node
+                    targetPort = externalPort.origEdge.getTarget();
+                } else if (ImportUtil.isDescendant(targetNode, parentNode)) {
+                    // the edge goes to the inside of another sibling node
+                    ExternalPort targetExtenalPort = null;
+                    for (ExternalPort externalPort2 : containedExternalPorts) {
+                        if (externalPort2 != externalPort
+                                && externalPort2.origEdge == externalPort.origEdge) {
+                            targetExtenalPort = externalPort2;
+                            break;
                         }
-                    } else if (KimlUtil.isDescendant(targetKNode, parentNode)) {
-                        // the edge goes to the inside of another sibling node
-                        ExternalPort targetExtenalPort = null;
-                        for (ExternalPort externalPort2 : containedExternalPorts) {
-                            if (externalPort2 != externalPort
-                                    && externalPort2.kedge == externalPort.kedge) {
-                                targetExtenalPort = externalPort2;
-                                break;
-                            }
-                        }
-                        LNode targetLNode = (LNode) elementMap.get(targetExtenalPort.knode);
-                        KVector targetLPortPos = ImportUtil.getExternalPortPosition(
-                                layeredGraphMap.get(targetExtenalPort.lgraph),
-                                targetExtenalPort.lnode, 0, 0);
-                        targetLPort = createFixedPort(targetLNode, targetLPortPos,
-                                targetExtenalPort.lnode.getProperty(Properties.EXT_PORT_SIDE),
-                                layeredGraph);
-                    } else if (targetKNode == parentNode
-                            && externalPort.kedge.getTargetPort() != null) {
-                        // the edge goes to an existing port of the parent node
-                        KPort targetKPort = externalPort.kedge.getTargetPort();
-                        LNode dummyNode = (LNode) elementMap.get(targetKPort);
-                        if (dummyNode == null) {
-                            KShapeLayout kportLayout = targetKPort.getData(KShapeLayout.class);
-                            dummyNode = ImportUtil.createExternalPortDummy(kportLayout,
-                                    PortConstraints.FIXED_SIDE, PortSide.fromDirection(layoutDirection),
-                                    1, null, null,
-                                    new KVector(kportLayout.getWidth(), kportLayout.getHeight()),
-                                    layoutDirection, layeredGraph);
-                            dummyNode.setProperty(Properties.ORIGIN, targetKPort);
-                            layeredGraph.getLayerlessNodes().add(dummyNode);
-                            layeredGraph.getProperty(Properties.GRAPH_PROPERTIES).add(
-                                    GraphProperties.EXTERNAL_PORTS);
-                            elementMap.put(targetKPort, dummyNode);
-                        }
-                        targetLPort = dummyNode.getPorts().get(0);
-                    } else {
-                        // the edge goes to the outside of the parent node
-                        LNode dummyNode = ImportUtil.createExternalPortDummy(
-                                getExternalPortProperties(parentNode, externalPort.kedge),
-                                PortConstraints.FIXED_SIDE, PortSide.fromDirection(layoutDirection),
-                                1, null, null, new KVector(), layoutDirection, layeredGraph);
-                        layeredGraph.getLayerlessNodes().add(dummyNode);
-                        layeredGraph.getProperty(Properties.GRAPH_PROPERTIES).add(
-                                GraphProperties.EXTERNAL_PORTS);
-                        targetLPort = dummyNode.getPorts().get(0);
-                        ExternalPort newExternalPort = new ExternalPort(externalPort.kedge, parentNode,
-                                layeredGraph, dummyNode, PortType.OUTPUT);
-                        exportedExternalPorts.add(newExternalPort);
                     }
-                    newEdge.setTarget(targetLPort);
-                    
-                } else if (externalPort.type == PortType.INPUT) {
-                    newEdge.setTarget(lport);
-                    LPort sourceLPort = null;
-                    if (sourceKNode.getParent() == parentNode) {
-                        // the edge comes from a direct child of the parent node
-                        sourceLPort = (LPort) elementMap.get(externalPort.kedge.getSourcePort());
-                        if (sourceLPort == null) {
-                            LNode sourceLNode = (LNode) elementMap.get(sourceKNode);
-                            needSourcePort.put(newEdge, sourceLNode);
-                        } else if (externalPort.kedge.getSourcePort().getNode() != sourceKNode) {
-                            throw new UnsupportedGraphException(
-                                    "Inconsistent source port reference found.");
-                        }
-                    } else if (sourceKNode == parentNode
-                            && externalPort.kedge.getSourcePort() != null) {
-                        // the edge comes from an existing port of the parent node
-                        KPort sourceKPort = externalPort.kedge.getSourcePort();
-                        LNode dummyNode = (LNode) elementMap.get(sourceKPort);
-                        if (dummyNode == null) {
-                            KShapeLayout kportLayout = sourceKPort.getData(KShapeLayout.class);
-                            dummyNode = ImportUtil.createExternalPortDummy(kportLayout,
-                                    PortConstraints.FIXED_SIDE,
-                                    PortSide.fromDirection(layoutDirection).opposed(), -1, null, null,
-                                    new KVector(kportLayout.getWidth(), kportLayout.getHeight()),
-                                    layoutDirection, layeredGraph);
-                            dummyNode.setProperty(Properties.ORIGIN, sourceKPort);
-                            layeredGraph.getLayerlessNodes().add(dummyNode);
-                            layeredGraph.getProperty(Properties.GRAPH_PROPERTIES).add(
-                                    GraphProperties.EXTERNAL_PORTS);
-                            elementMap.put(sourceKPort, dummyNode);
-                        }
-                        sourceLPort = dummyNode.getPorts().get(0);
-                    } else {
-                        // the edge comes from the outside of the parent node
-                        LNode dummyNode = ImportUtil.createExternalPortDummy(
-                                getExternalPortProperties(parentNode, externalPort.kedge),
-                                PortConstraints.FIXED_SIDE,
-                                PortSide.fromDirection(layoutDirection).opposed(), -1, null, null,
-                                new KVector(), layoutDirection, layeredGraph);
-                        layeredGraph.getLayerlessNodes().add(dummyNode);
-                        layeredGraph.getProperty(Properties.GRAPH_PROPERTIES).add(
-                                GraphProperties.EXTERNAL_PORTS);
-                        sourceLPort = dummyNode.getPorts().get(0);
-                        ExternalPort newExternalPort = new ExternalPort(externalPort.kedge, parentNode,
-                                layeredGraph, dummyNode, PortType.INPUT);
-                        exportedExternalPorts.add(newExternalPort);
-                    }
-                    newEdge.setSource(sourceLPort);
+                    KVector targetPortPos = ImportUtil.getExternalPortPosition(
+                            targetExtenalPort.lgraph, targetExtenalPort.dummyNode, 0, 0);
+                    targetPort = createFixedPort(targetExtenalPort.parentNode, targetPortPos,
+                            targetExtenalPort.dummyNode.getProperty(Properties.EXT_PORT_SIDE),
+                            graph);
+                    targetExtenalPort.dummyNode.setProperty(Properties.ORIGIN, targetPort);
+                } else if (targetNode == parentNode) {
+                    // the edge goes to a port of the parent node
+                    LPort edgeTarget = externalPort.origEdge.getTarget();
+                    LNode dummyNode = ImportUtil.createExternalPortDummy(edgeTarget,
+                            PortConstraints.FIXED_SIDE, PortSide.fromDirection(layoutDirection),
+                            1, null, null, edgeTarget.getSize(), layoutDirection, graph);
+                    dummyNode.setProperty(Properties.ORIGIN, edgeTarget);
+                    graph.getLayerlessNodes().add(dummyNode);
+                    graph.getProperty(Properties.GRAPH_PROPERTIES).add(GraphProperties.EXTERNAL_PORTS);
+                    targetPort = dummyNode.getPorts().get(0);
+                } else {
+                    // the edge goes to the outside of the parent node
+                    LNode dummyNode = ImportUtil.createExternalPortDummy(
+                            getExternalPortProperties(graph, externalPort.origEdge),
+                            PortConstraints.FIXED_SIDE, PortSide.fromDirection(layoutDirection),
+                            1, null, null, new KVector(), layoutDirection, graph);
+                    graph.getLayerlessNodes().add(dummyNode);
+                    graph.getProperty(Properties.GRAPH_PROPERTIES).add(GraphProperties.EXTERNAL_PORTS);
+                    targetPort = dummyNode.getPorts().get(0);
+                    exportedExternalPorts.add(new ExternalPort(externalPort.origEdge, newEdge,
+                            parentNode, graph, dummyNode, PortType.OUTPUT));
                 }
+                newEdge.setTarget(targetPort);
+                
+            } else if (externalPort.type == PortType.INPUT) {
+                newEdge.setTarget(newPort);
+                LPort sourcePort = null;
+                if (sourceNode.getGraph() == graph) {
+                    // the edge comes from a direct child of the parent node
+                    sourcePort = externalPort.origEdge.getSource();
+                } else if (sourceNode == parentNode) {
+                    // the edge comes from a port of the parent node
+                    LPort edgeSource = externalPort.origEdge.getSource();
+                    LNode dummyNode = ImportUtil.createExternalPortDummy(edgeSource,
+                            PortConstraints.FIXED_SIDE,
+                            PortSide.fromDirection(layoutDirection).opposed(), -1, null, null,
+                            edgeSource.getSize(), layoutDirection, graph);
+                    dummyNode.setProperty(Properties.ORIGIN, edgeSource);
+                    graph.getLayerlessNodes().add(dummyNode);
+                    graph.getProperty(Properties.GRAPH_PROPERTIES).add(GraphProperties.EXTERNAL_PORTS);
+                    sourcePort = dummyNode.getPorts().get(0);
+                } else {
+                    // the edge comes from the outside of the parent node
+                    LNode dummyNode = ImportUtil.createExternalPortDummy(
+                            getExternalPortProperties(graph, externalPort.origEdge),
+                            PortConstraints.FIXED_SIDE,
+                            PortSide.fromDirection(layoutDirection).opposed(), -1, null, null,
+                            new KVector(), layoutDirection, graph);
+                    graph.getLayerlessNodes().add(dummyNode);
+                    graph.getProperty(Properties.GRAPH_PROPERTIES).add(GraphProperties.EXTERNAL_PORTS);
+                    sourcePort = dummyNode.getPorts().get(0);
+                    exportedExternalPorts.add(new ExternalPort(externalPort.origEdge, newEdge,
+                            parentNode, graph, dummyNode, PortType.INPUT));
+                }
+                newEdge.setSource(sourcePort);
             }
-        }
-        
-        // create source and target ports where no predefined port position was given
-        for (Map.Entry<LEdge, LNode> entry : needTargetPort.entrySet()) {
-            LPort port = createFreePort(entry.getValue(), PortType.INPUT, new KVector(), layeredGraph,
-                    layoutDirection);
-            entry.getKey().setTarget(port);
-        }
-        for (Map.Entry<LEdge, LNode> entry : needSourcePort.entrySet()) {
-            LPort port = createFreePort(entry.getValue(), PortType.OUTPUT, new KVector(), layeredGraph,
-                    layoutDirection);
-            entry.getKey().setSource(port);
         }
     }
     
@@ -317,96 +273,76 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
      * edges are split with instances of {@link ExternalPort}. The resulting edge segments are
      * stored as instances of {@link CrossHierarchyEdge} in the {@link #crossHierarchyMap}.
      * 
+     * @param parentNode the parent node of the nested graph
      * @param graph the processed graph
      * @param exportedExternalPorts list into which new external ports are put
      */
     private void processOutsideEdges(final LNode parentNode, final LGraph graph,
             final List<ExternalPort> exportedExternalPorts) {
         Direction layoutDirection = graph.getProperty(LayoutOptions.DIRECTION);
-        List<LNode> newNodes = new LinkedList<LNode>();
+        List<ExternalPort> externalOutputPorts = new LinkedList<ExternalPort>();
+        List<ExternalPort> externalInputPorts = new LinkedList<ExternalPort>();
         for (LNode childNode : graph.getLayerlessNodes()) {
             for (LEdge origEdge : childNode.getOutgoingEdges()) {
-                LNode targetNode = origEdge.getTarget().getNode();
-                if (!isDescendant(targetNode, parentNode)) {
+                if (!ImportUtil.isDescendant(origEdge.getTarget().getNode(), parentNode)) {
                     // the edge goes to the outside of the parent node
                     LEdge newEdge = new LEdge(graph);
                     newEdge.copyProperties(origEdge);
                     newEdge.setProperty(LayoutOptions.JUNCTION_POINTS, null);
-                    crossHierarchyMap.put(origEdge, new CrossHierarchyEdge(newEdge, graph,
-                            parentNode, PortType.OUTPUT));
-                    newEdge.setSource(origEdge.getSource());
+                    crossHierarchyMap.put(origEdge, new CrossHierarchyEdge(newEdge, graph, parentNode,
+                            PortType.OUTPUT));
                     LNode dummyNode = ImportUtil.createExternalPortDummy(
                             getExternalPortProperties(graph, origEdge),
                             PortConstraints.FREE, PortSide.fromDirection(layoutDirection), 1,
                             null, null, new KVector(), layoutDirection, graph);
-                    newNodes.add(dummyNode);
-                    graph.getProperty(Properties.GRAPH_PROPERTIES).add(GraphProperties.EXTERNAL_PORTS);
-                    LPort targetPort = dummyNode.getPorts().get(0);
-                    newEdge.setTarget(targetPort);
-                    ExternalPort externalPort = new ExternalPort(origEdge, parentNode, graph,
-                            dummyNode, PortType.OUTPUT);
-                    exportedExternalPorts.add(externalPort);
-                    // disconnect the original edge from the graph
-                    origEdge.setSource(null);
-                    LPort originalTarget = origEdge.getTarget();
-                    if (originalTarget.getProperty(Properties.ORIGIN) == null
-                            && originalTarget.getIncomingEdges().size()
-                            + originalTarget.getOutgoingEdges().size() == 1) {
-                        originalTarget.setNode(null);
-                    } else {
-                        origEdge.setTarget(null);
-                    }
+                    newEdge.setTarget(dummyNode.getPorts().get(0));
+                    externalOutputPorts.add(new ExternalPort(origEdge, newEdge, parentNode, graph,
+                            dummyNode, PortType.OUTPUT));
                 }
             }
             
-            for (KEdge kedge : childNode.getIncomingEdges()) {
-                KNode sourceNode = kedge.getSource();
-                if (!KimlUtil.isDescendant(sourceNode, parentNode)
-                        && !(sourceNode == parentNode && kedge.getSourcePort() != null)) {
+            for (LEdge origEdge : childNode.getIncomingEdges()) {
+                if (!ImportUtil.isDescendant(origEdge.getSource().getNode(), parentNode)) {
                     // the edge comes from the outside of the parent node
-                    LEdge newEdge = new LEdge(layeredGraph);
-                    KEdgeLayout kedgeLayout = kedge.getData(KEdgeLayout.class);
-                    newEdge.copyProperties(kedgeLayout);
+                    LEdge newEdge = new LEdge(graph);
+                    newEdge.copyProperties(origEdge);
                     newEdge.setProperty(LayoutOptions.JUNCTION_POINTS, null);
-                    crossHierarchyMap.put(kedge, new CrossHierarchyEdge(newEdge, layeredGraph,
-                            parentNode, PortType.INPUT));
-                    LPort targetPort = (LPort) elementMap.get(kedge.getTargetPort());
-                    if (targetPort == null) {
-                        targetPort = createFreePort(lnode, PortType.INPUT,
-                                kedgeLayout.getTargetPoint().createVector(), layeredGraph,
-                                layoutDirection);
-                    } else if (kedge.getTargetPort().getNode() != childNode) {
-                        throw new UnsupportedGraphException("Inconsistent target port reference found.");
-                    }
-                    newEdge.setTarget(targetPort);
+                    crossHierarchyMap.put(origEdge, new CrossHierarchyEdge(newEdge,  graph, parentNode,
+                            PortType.INPUT));
                     LNode dummyNode = ImportUtil.createExternalPortDummy(
-                            getExternalPortProperties(parentNode, kedge),
+                            getExternalPortProperties(graph, origEdge),
                             PortConstraints.FREE, PortSide.fromDirection(layoutDirection).opposed(),
-                            -1, null, null, new KVector(), layoutDirection, layeredGraph);
-                    layeredGraph.getLayerlessNodes().add(dummyNode);
-                    layeredGraph.getProperty(Properties.GRAPH_PROPERTIES).add(
-                            GraphProperties.EXTERNAL_PORTS);
-                    LPort sourcePort = dummyNode.getPorts().get(0);
-                    newEdge.setSource(sourcePort);
-                    ExternalPort externalPort = new ExternalPort(kedge, parentNode, layeredGraph,
-                            dummyNode, PortType.INPUT);
-                    exportedExternalPorts.add(externalPort);
-                    
-                } else if (lnode.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()
-                        && kedge.getTargetPort() == null) {
-                    LEdge ledge = (LEdge) elementMap.get(kedge);
-                    if (ledge != null) {
-                        // correct the target position of the normal edge
-                        LPort targetPort = ledge.getTarget();
-                        targetPort.setSide(PortSide.fromDirection(layoutDirection).opposed());
-                        KVector portPos = calcPortPos(lnode, targetPort.getSide(), null);
-                        targetPort.getPosition().x = portPos.x;
-                        targetPort.getPosition().y = portPos.y;
-                    }
+                            -1, null, null, new KVector(), layoutDirection, graph);
+                    newEdge.setSource(dummyNode.getPorts().get(0));
+                    externalInputPorts.add(new ExternalPort(origEdge, newEdge, parentNode, graph,
+                            dummyNode, PortType.INPUT));
                 }
             }
         }
-        graph.getLayerlessNodes().addAll(newNodes);
+        
+        for (ExternalPort externalPort : externalOutputPorts) {
+            graph.getLayerlessNodes().add(externalPort.dummyNode);
+            externalPort.newEdge.setSource(externalPort.origEdge.getSource());
+            if (externalPort.origEdge.getTarget().getNode() == parentNode) {
+                externalPort.dummyNode.setProperty(Properties.ORIGIN,
+                        externalPort.origEdge.getTarget());
+            } else {
+                exportedExternalPorts.add(externalPort);
+            }
+        }
+        for (ExternalPort externalPort : externalInputPorts) {
+            graph.getLayerlessNodes().add(externalPort.dummyNode);
+            externalPort.newEdge.setTarget(externalPort.origEdge.getTarget());
+            if (externalPort.origEdge.getSource().getNode() == parentNode) {
+                externalPort.dummyNode.setProperty(Properties.ORIGIN,
+                        externalPort.origEdge.getSource());
+            } else {
+                exportedExternalPorts.add(externalPort);
+            }
+        }
+        if (externalOutputPorts.size() + externalInputPorts.size() > 0) {
+            graph.getProperty(Properties.GRAPH_PROPERTIES).add(GraphProperties.EXTERNAL_PORTS);
+        }
     }
     
     /**
@@ -559,26 +495,6 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
         }
         propertyHolder.setProperty(Properties.OFFSET, offset);
         return propertyHolder;
-    }
-    
-    /**
-     * Determines whether the given child node is a descendant of the parent node.
-     * 
-     * @param child a child node
-     * @param parent a parent node
-     * @return true if {@code child} is a direct or indirect child of {@code parent}
-     */
-    private static boolean isDescendant(final LNode child, final LNode parent) {
-        LNode current = child;
-        LNode next = current.getGraph().getProperty(Properties.PARENT_LNODE);
-        while (next != null) {
-            current = next;
-            if (current == parent) {
-                return true;
-            }
-            next = current.getGraph().getProperty(Properties.PARENT_LNODE);
-        }
-        return false;
     }
 
 }
