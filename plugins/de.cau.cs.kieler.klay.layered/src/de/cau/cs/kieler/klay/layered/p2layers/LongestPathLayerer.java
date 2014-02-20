@@ -85,6 +85,27 @@ public final class LongestPathLayerer implements ILayoutPhase {
 
                     // After Phase 5
                     EnumSet.of(LayoutProcessorStrategy.BIG_NODES_POSTPROCESSOR));
+    
+    /** additional processor dependencies for handling big nodes after cross min. */
+    private static final IntermediateProcessingConfiguration BIG_NODES_PROCESSING_AC_ADDITIONS =
+            new IntermediateProcessingConfiguration(
+                    // Before Phase 1
+                    null,
+
+                    // Before Phase 2
+                    null,
+                    
+                    // Before Phase 3
+                    null,
+                    
+                    // Before Phase 4
+                    EnumSet.of(LayoutProcessorStrategy.BIG_NODES_SPLITTER),
+
+                    // Before Phase 5
+                    null,
+
+                    // After Phase 5
+                    EnumSet.of(LayoutProcessorStrategy.BIG_NODES_POSTPROCESSOR));
 
     /** the layered graph to which layers are added. */
     private LGraph layeredGraph;
@@ -104,6 +125,8 @@ public final class LongestPathLayerer implements ILayoutPhase {
         // Additional dependencies
         if (graph.getProperty(Properties.DISTRIBUTE_NODES)) {
             strategy.addAll(BIG_NODES_PROCESSING_ADDITIONS);
+        } else if (graph.getProperty(Properties.DISTRIBUTE_NODES_AC)) {
+            strategy.addAll(BIG_NODES_PROCESSING_AC_ADDITIONS);
         }
         
         return strategy;

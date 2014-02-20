@@ -144,6 +144,9 @@
          <knownOption
                option="de.cau.cs.kieler.klay.layered.distributeNodes">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.distributeNodesAC">
+         </knownOption>
       </layoutAlgorithm>
       <layoutOption
             advanced="true"
@@ -152,6 +155,15 @@
             description="Whether wide nodes should be distributed to several layers."
             id="de.cau.cs.kieler.klay.layered.distributeNodes"
             name="Distribute Nodes"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="false"
+            description="Whether wide nodes should be distributed to several layers after crossing minimization."
+            id="de.cau.cs.kieler.klay.layered.distributeNodesAC"
+            name="Distribute Nodes After CrossMin"
             type="boolean">
       </layoutOption>
       <layoutOption

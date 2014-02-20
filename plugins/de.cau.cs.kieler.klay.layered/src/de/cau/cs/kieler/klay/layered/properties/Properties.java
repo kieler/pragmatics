@@ -323,6 +323,10 @@ public final class Properties {
     public static final IProperty<Boolean> DISTRIBUTE_NODES = new Property<Boolean>(
             "de.cau.cs.kieler.klay.layered.distributeNodes", false);
 
+    /** whether nodes shall be distributed (i.e. split) after crossing minimization. */
+    public static final IProperty<Boolean> DISTRIBUTE_NODES_AC = new Property<Boolean>(
+            "de.cau.cs.kieler.klay.layered.distributeNodesAC", false);
+    
     /** property to choose a cycle breaking strategy. */
     public static final IProperty<CycleBreakingStrategy> CYCLE_BREAKING 
         = new Property<CycleBreakingStrategy>(
