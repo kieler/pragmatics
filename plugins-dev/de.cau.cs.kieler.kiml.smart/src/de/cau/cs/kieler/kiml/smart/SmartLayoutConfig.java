@@ -148,37 +148,28 @@ public class SmartLayoutConfig implements ILayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public void enrich(final LayoutContext context) {
-        MetaLayout metaLayout = provideMetaLayout(context);
-        if (context.getProperty(DefaultLayoutConfig.OPT_MAKE_OPTIONS)) {
-            // provide content algorithm hint option
-            if (context.getProperty(DefaultLayoutConfig.CONTENT_HINT) == null && metaLayout != null) {
-                String algorithm = (String) metaLayout.getConfig().get(LayoutOptions.ALGORITHM);
-                if (algorithm != null) {
-                    context.setProperty(DefaultLayoutConfig.CONTENT_HINT, algorithm);
-                }
+    public Object getContextValue(final IProperty<?> property, final LayoutContext context) {
+        if (property.equals(DefaultLayoutConfig.CONTENT_HINT)) {
+            MetaLayout metaLayout = provideMetaLayout(context);
+            if (metaLayout != null) {
+                return metaLayout.getConfig().get(LayoutOptions.ALGORITHM);
             }
-            
-            // provide container algorithm hint option
+        } else if (property.equals(DefaultLayoutConfig.CONTAINER_HINT)) {
             Object containerDiagramPart = context.getProperty(LayoutContext.CONTAINER_DIAGRAM_PART);
-            if (context.getProperty(DefaultLayoutConfig.CONTAINER_HINT) == null
-                    && containerDiagramPart != null) {
+            if (containerDiagramPart != null) {
                 MetaLayout containerMetaLayout = metaLayoutCache.get(containerDiagramPart);
                 if (containerMetaLayout != null) {
-                    String containerAlgorithm = (String) containerMetaLayout.getConfig()
-                            .get(LayoutOptions.ALGORITHM);
-                    if (containerAlgorithm != null) {
-                        context.setProperty(DefaultLayoutConfig.CONTAINER_HINT, containerAlgorithm);
-                    }
+                    return containerMetaLayout.getConfig().get(LayoutOptions.ALGORITHM);
                 }
             }
         }
+        return null;
     }
 
     /**
      * {@inheritDoc}
      */
-    public Object getValue(final LayoutOptionData optionData, final LayoutContext context) {
+    public Object getOptionValue(final LayoutOptionData optionData, final LayoutContext context) {
         MetaLayout metaLayout = provideMetaLayout(context);
         if (metaLayout != null) {
             return metaLayout.getConfig().get(optionData);
