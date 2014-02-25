@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.layered.importexport;
+package de.cau.cs.kieler.klay.layered.graph;
 
 import java.util.Map;
 import java.util.Set;
@@ -20,17 +20,12 @@ import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
+import de.cau.cs.kieler.kiml.options.Alignment;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.SizeConstraint;
-import de.cau.cs.kieler.klay.layered.graph.LEdge;
-import de.cau.cs.kieler.klay.layered.graph.LGraph;
-import de.cau.cs.kieler.klay.layered.graph.LInsets;
-import de.cau.cs.kieler.klay.layered.graph.LLabel;
-import de.cau.cs.kieler.klay.layered.graph.LNode;
-import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.properties.EdgeConstraint;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.InLayerConstraint;
@@ -44,12 +39,12 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * @author msp
  */
-public final class ImportUtil {
+public final class LGraphUtil {
     
     /**
      * Hidden constructor to avoid instantiation.
      */
-    private ImportUtil() { }
+    private LGraphUtil() { }
     
     ///////////////////////////////////////////////////////////////////////////////
     // Node Resizing
@@ -132,6 +127,85 @@ public final class ImportUtil {
         
         // Set fixed size option for the node: now the size is assumed to stay as determined here
         node.setProperty(LayoutOptions.SIZE_CONSTRAINT, SizeConstraint.fixed());
+    }
+    
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Node Placement
+    
+    /**
+     * Determines a horizontal placement for all nodes of a layer. The size of the layer is assumed
+     * to be already set to the maximal width of the contained nodes (usually done during node
+     * placement).
+     * 
+     * @param layer the layer in which to place the nodes
+     * @param xoffset horizontal offset for layer placement
+     */
+    public static void placeNodes(final Layer layer, final double xoffset) {
+        // determine maximal left and right margin
+        double maxLeftMargin = 0, maxRightMargin = 0;
+        for (LNode node : layer.getNodes()) {
+            maxLeftMargin = Math.max(maxLeftMargin, node.getMargin().left);
+            maxRightMargin = Math.max(maxRightMargin, node.getMargin().right);
+        }
+
+        // CHECKSTYLEOFF MagicNumber
+        for (LNode node : layer.getNodes()) {
+            Alignment alignment = node.getProperty(LayoutOptions.ALIGNMENT);
+            double ratio;
+            switch (alignment) {
+            case LEFT:
+                ratio = 0.0;
+                break;
+            case RIGHT:
+                ratio = 1.0;
+                break;
+            case CENTER:
+                ratio = 0.5;
+                break;
+            default:
+                // determine the number of input and output ports for the node
+                int inports = 0, outports = 0;
+                for (LPort port : node.getPorts()) {
+                    if (!port.getIncomingEdges().isEmpty()) {
+                        inports++;
+                    }
+                    
+                    if (!port.getOutgoingEdges().isEmpty()) {
+                        outports++;
+                    }
+                }
+                
+                // calculate node placement based on the port numbers
+                if (inports + outports == 0) {
+                    ratio = 0.5;
+                } else {
+                    ratio = (double) outports / (inports + outports);
+                }
+            }
+            
+            // align nodes to the layer's maximal margin
+            KVector size = layer.getSize();
+            double nodeSize = node.getSize().x;
+            double xpos = (size.x - nodeSize) * ratio;
+            if (ratio > 0.5) {
+                xpos -= maxRightMargin * 2 * (ratio - 0.5);
+            } else if (ratio < 0.5) {
+                xpos += maxLeftMargin * 2 * (0.5 - ratio);
+            }
+            
+            // consider the node's individual margin
+            double leftMargin = node.getMargin().left;
+            if (xpos < leftMargin) {
+                xpos = leftMargin;
+            }
+            double rightMargin = node.getMargin().right;
+            if (xpos > size.x - rightMargin - nodeSize) {
+                xpos = size.x - rightMargin - nodeSize;
+            }
+            
+            node.getPosition().x = xoffset + xpos;
+        }
     }
     
     

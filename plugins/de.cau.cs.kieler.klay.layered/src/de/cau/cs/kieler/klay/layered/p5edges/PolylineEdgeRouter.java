@@ -26,6 +26,7 @@ import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
+import de.cau.cs.kieler.klay.layered.graph.LGraphUtil;
 import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -231,7 +232,7 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
             }
             
             // set horizontal coordinates for all nodes of the layer
-            layer.placeNodes(xpos);
+            LGraphUtil.placeNodes(layer, xpos);
             
             double maxVertDiff = 0.0;
             

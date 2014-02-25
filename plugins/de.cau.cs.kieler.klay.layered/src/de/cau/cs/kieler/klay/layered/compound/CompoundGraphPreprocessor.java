@@ -29,11 +29,11 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
+import de.cau.cs.kieler.klay.layered.graph.LGraphUtil;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
-import de.cau.cs.kieler.klay.layered.importexport.ImportUtil;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
@@ -164,7 +164,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
             LNode sourceNode = externalPort.origEdge.getSource().getNode();
             LNode targetNode = externalPort.origEdge.getTarget().getNode();
             if (externalPort.type == PortType.INPUT && sourceNode.getGraph() != graph
-                    && (parentNode == null || ImportUtil.isDescendant(sourceNode, parentNode))) {
+                    && (parentNode == null || LGraphUtil.isDescendant(sourceNode, parentNode))) {
                 // the edge comes from the inside of another sibling node,
                 // hence we want to process it only once, namely as outgoing edge
                 continue;
@@ -196,7 +196,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
                 if (targetNode.getGraph() == graph) {
                     // the edge goes to a direct child of the parent node
                     targetPort = externalPort.origEdge.getTarget();
-                } else if (parentNode == null || ImportUtil.isDescendant(targetNode, parentNode)) {
+                } else if (parentNode == null || LGraphUtil.isDescendant(targetNode, parentNode)) {
                     // the edge goes to the inside of another sibling node
                     ExternalPort targetExtenalPort = null;
                     for (ExternalPort externalPort2 : containedExternalPorts) {
@@ -214,7 +214,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
                 } else if (targetNode == parentNode) {
                     // the edge goes to a port of the parent node
                     LPort edgeTarget = externalPort.origEdge.getTarget();
-                    LNode dummyNode = ImportUtil.createExternalPortDummy(edgeTarget,
+                    LNode dummyNode = LGraphUtil.createExternalPortDummy(edgeTarget,
                             PortConstraints.FREE, PortSide.fromDirection(layoutDirection),
                             1, null, null, edgeTarget.getSize(), layoutDirection, graph);
                     dummyNode.setProperty(Properties.ORIGIN, edgeTarget);
@@ -223,7 +223,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
                     targetPort = dummyNode.getPorts().get(0);
                 } else {
                     // the edge goes to the outside of the parent node
-                    LNode dummyNode = ImportUtil.createExternalPortDummy(
+                    LNode dummyNode = LGraphUtil.createExternalPortDummy(
                             getExternalPortProperties(graph, externalPort.origEdge),
                             PortConstraints.FREE, PortSide.fromDirection(layoutDirection),
                             1, null, null, new KVector(), layoutDirection, graph);
@@ -244,7 +244,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
                 } else if (sourceNode == parentNode) {
                     // the edge comes from a port of the parent node
                     LPort edgeSource = externalPort.origEdge.getSource();
-                    LNode dummyNode = ImportUtil.createExternalPortDummy(edgeSource,
+                    LNode dummyNode = LGraphUtil.createExternalPortDummy(edgeSource,
                             PortConstraints.FREE, PortSide.fromDirection(layoutDirection).opposed(),
                             -1, null, null, edgeSource.getSize(), layoutDirection, graph);
                     dummyNode.setProperty(Properties.ORIGIN, edgeSource);
@@ -253,7 +253,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
                     sourcePort = dummyNode.getPorts().get(0);
                 } else {
                     // the edge comes from the outside of the parent node
-                    LNode dummyNode = ImportUtil.createExternalPortDummy(
+                    LNode dummyNode = LGraphUtil.createExternalPortDummy(
                             getExternalPortProperties(graph, externalPort.origEdge),
                             PortConstraints.FREE, PortSide.fromDirection(layoutDirection).opposed(),
                             -1, null, null, new KVector(), layoutDirection, graph);
@@ -286,7 +286,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
         for (LNode childNode : graph.getLayerlessNodes()) {
             for (LEdge origEdge : childNode.getOutgoingEdges()) {
                 LPort targetPort = origEdge.getTarget();
-                if (!ImportUtil.isDescendant(targetPort.getNode(), parentNode)) {
+                if (!LGraphUtil.isDescendant(targetPort.getNode(), parentNode)) {
                     // the edge goes to the outside of the parent node
                     LEdge newEdge = new LEdge(graph);
                     newEdge.copyProperties(origEdge);
@@ -295,12 +295,12 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
                             PortType.OUTPUT));
                     LNode dummyNode;
                     if (targetPort.getNode() == parentNode) {
-                        dummyNode = ImportUtil.createExternalPortDummy(targetPort,
+                        dummyNode = LGraphUtil.createExternalPortDummy(targetPort,
                                 PortConstraints.FREE, PortSide.fromDirection(layoutDirection), 1,
                                 null, null, targetPort.getSize(), layoutDirection, graph);
                         dummyNode.setProperty(Properties.ORIGIN, targetPort);
                     } else {
-                        dummyNode = ImportUtil.createExternalPortDummy(
+                        dummyNode = LGraphUtil.createExternalPortDummy(
                                 getExternalPortProperties(graph, origEdge),
                                 PortConstraints.FREE, PortSide.fromDirection(layoutDirection), 1,
                                 null, null, new KVector(), layoutDirection, graph);
@@ -313,7 +313,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
             
             for (LEdge origEdge : childNode.getIncomingEdges()) {
                 LPort sourcePort = origEdge.getSource();
-                if (!ImportUtil.isDescendant(sourcePort.getNode(), parentNode)) {
+                if (!LGraphUtil.isDescendant(sourcePort.getNode(), parentNode)) {
                     // the edge comes from the outside of the parent node
                     LEdge newEdge = new LEdge(graph);
                     newEdge.copyProperties(origEdge);
@@ -322,12 +322,12 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
                             PortType.INPUT));
                     LNode dummyNode;
                     if (sourcePort.getNode() == parentNode) {
-                        dummyNode = ImportUtil.createExternalPortDummy(sourcePort,
+                        dummyNode = LGraphUtil.createExternalPortDummy(sourcePort,
                                 PortConstraints.FREE, PortSide.fromDirection(layoutDirection).opposed(),
                                 -1, null, null, sourcePort.getSize(), layoutDirection, graph);
                         dummyNode.setProperty(Properties.ORIGIN, sourcePort);
                     } else {
-                        dummyNode = ImportUtil.createExternalPortDummy(
+                        dummyNode = LGraphUtil.createExternalPortDummy(
                                 getExternalPortProperties(graph, origEdge),
                                 PortConstraints.FREE, PortSide.fromDirection(layoutDirection).opposed(),
                                 -1, null, null, new KVector(), layoutDirection, graph);

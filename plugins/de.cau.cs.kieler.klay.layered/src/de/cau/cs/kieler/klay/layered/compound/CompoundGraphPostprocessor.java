@@ -27,11 +27,11 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
+import de.cau.cs.kieler.klay.layered.graph.LGraphUtil;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
-import de.cau.cs.kieler.klay.layered.importexport.ImportUtil;
 import de.cau.cs.kieler.klay.layered.p5edges.OrthogonalRoutingGenerator;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
@@ -94,7 +94,7 @@ public class CompoundGraphPostprocessor implements ILayoutProcessor {
             // determine the reference graph for all bend points
             LNode referenceNode = sourcePort.getNode();
             LGraph referenceGraph;
-            if (ImportUtil.isDescendant(origEdge.getTarget().getNode(), referenceNode)) {
+            if (LGraphUtil.isDescendant(origEdge.getTarget().getNode(), referenceNode)) {
                 referenceGraph = referenceNode.getProperty(Properties.NESTED_LGRAPH);
             } else {
                 referenceGraph = referenceNode.getGraph();
@@ -122,7 +122,7 @@ public class CompoundGraphPostprocessor implements ILayoutProcessor {
             KVector lastPoint = null;
             for (CrossHierarchyEdge chEdge : crossHierarchyEdges) {
                 KVector offset = new KVector();
-                ImportUtil.changeCoordSystem(offset, chEdge.getGraph(), referenceGraph);
+                LGraphUtil.changeCoordSystem(offset, chEdge.getGraph(), referenceGraph);
                 LEdge ledge = chEdge.getEdge();
                 KVectorChain bendPoints = ledge.getBendPoints().translate(offset);
                 // Note: if an NPE occurs here, that means KLay Layered has replaced the original edge

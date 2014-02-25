@@ -37,12 +37,12 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.components.ComponentsProcessor;
 import de.cau.cs.kieler.klay.layered.compound.CompoundGraphPostprocessor;
 import de.cau.cs.kieler.klay.layered.compound.CompoundGraphPreprocessor;
+import de.cau.cs.kieler.klay.layered.graph.LGraphUtil;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.importexport.ImportUtil;
 import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
 import de.cau.cs.kieler.klay.layered.p1cycles.InteractiveCycleBreaker;
@@ -920,7 +920,7 @@ public final class KlayLayered {
             Object origin = childNode.getProperty(Properties.ORIGIN);
             if (origin instanceof LPort) {
                 LPort port = (LPort) origin;
-                KVector portPosition = ImportUtil.getExternalPortPosition(graph, childNode,
+                KVector portPosition = LGraphUtil.getExternalPortPosition(graph, childNode,
                         port.getSize().x, port.getSize().y);
                 port.getPosition().x = portPosition.x;
                 port.getPosition().y = portPosition.y;
@@ -934,10 +934,10 @@ public final class KlayLayered {
                 GraphProperties.EXTERNAL_PORTS)) {
             // Ports have positions assigned
             node.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
-            ImportUtil.resizeNode(node, actualGraphSize, false, true);
+            LGraphUtil.resizeNode(node, actualGraphSize, false, true);
         } else {
             // Ports have not been positioned yet - leave this for next layouter
-            ImportUtil.resizeNode(node, actualGraphSize, true, true);
+            LGraphUtil.resizeNode(node, actualGraphSize, true, true);
         }
     }
 

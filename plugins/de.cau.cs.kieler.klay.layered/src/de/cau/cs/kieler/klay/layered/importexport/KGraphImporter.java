@@ -45,6 +45,7 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement.HashCodeCounter;
+import de.cau.cs.kieler.klay.layered.graph.LGraphUtil;
 import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -297,7 +298,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         KShapeLayout layoutNodeLayout = graph.getData(KShapeLayout.class);
         KVector layoutNodeSize = new KVector(layoutNodeLayout.getWidth(),
                 layoutNodeLayout.getHeight());
-        LNode dummy = ImportUtil.createExternalPortDummy(
+        LNode dummy = LGraphUtil.createExternalPortDummy(
                 kportLayout, portConstraints, portSide, inEdges - outEdges, layoutNodeSize,
                 kportPosition, new KVector(kportLayout.getWidth(), kportLayout.getHeight()),
                 direction, layeredGraph);
@@ -392,7 +393,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             newPort.setSide(portLayout.getProperty(LayoutOptions.PORT_SIDE));
 
             // initialize the port's side, offset, and anchor point
-            ImportUtil.initializePort(newPort, portConstraints, direction,
+            LGraphUtil.initializePort(newPort, portConstraints, direction,
                     portLayout.getProperty(Properties.PORT_ANCHOR));
             
             elemMap.put(kport, newPort);
@@ -523,7 +524,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                         sourcePoint.add(sourceNode.getPosition());
                     }
                 }
-                sourcePort = ImportUtil.createPort(sourceNode, sourcePoint, portType, layeredGraph);
+                sourcePort = LGraphUtil.createPort(sourceNode, sourcePoint, portType, layeredGraph);
             }
             if (targetPort == null) {
                 PortType portType = PortType.INPUT;
@@ -543,7 +544,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                         KimlUtil.toRelative(targetPoint, kedge.getTarget().getParent());
                     }
                 }
-                targetPort = ImportUtil.createPort(targetNode, targetPoint, portType, layeredGraph);
+                targetPort = LGraphUtil.createPort(targetNode, targetPoint, portType, layeredGraph);
             }
             
             newEdge.setSource(sourcePort);
@@ -685,7 +686,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                 // It's an external port. Set its position
                 KPort kport = (KPort) origin;
                 KShapeLayout portLayout = kport.getData(KShapeLayout.class);
-                KVector portPosition = ImportUtil.getExternalPortPosition(lgraph, lnode,
+                KVector portPosition = LGraphUtil.getExternalPortPosition(lgraph, lnode,
                         portLayout.getWidth(), portLayout.getHeight());
                 portLayout.applyVector(portPosition);
             }
