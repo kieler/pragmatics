@@ -31,6 +31,7 @@
 	<property name="outputFolder" location="target" />
 	<property name="outputFolder.tmp" location="${outputFolder}/tmp" />
 	<property name="outputFile.klay" location="${outputFolder}/klay_layered_js_nightly_${timestamp}.zip" />
+	<property name="outputFile.klay.latest" location="${outputFolder}/klay_layered_js_nightly_latest.zip" />
 	<property name="licenseFile" location="epl-v10.html" />
 
 
@@ -193,7 +194,7 @@
 			</fileset>
 		</copy>
 		<zip destfile="${outputFile.klay}" basedir="${outputFolder.tmp}" update="true" />
-
+		<symlink link="${outputFile.klay.latest}" resource="${outputFile.klay}"/>
 		<delete dir="${outputFolder.tmp}" failonerror="false" />
 	</target>
 
