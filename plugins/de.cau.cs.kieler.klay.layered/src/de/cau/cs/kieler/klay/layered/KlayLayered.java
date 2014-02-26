@@ -934,6 +934,8 @@ public final class KlayLayered {
                 GraphProperties.EXTERNAL_PORTS)) {
             // Ports have positions assigned
             node.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
+            node.getGraph().getProperty(Properties.GRAPH_PROPERTIES)
+                    .add(GraphProperties.NON_FREE_PORTS);
             LGraphUtil.resizeNode(node, actualGraphSize, false, true);
         } else {
             // Ports have not been positioned yet - leave this for next layouter

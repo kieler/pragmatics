@@ -86,15 +86,15 @@ public class CompoundGraphPostprocessor implements ILayoutProcessor {
                     }
                 }
             });
-            LPort sourcePort = crossHierarchyEdges.get(0).getEdge().getSource();
+            LPort sourcePort = crossHierarchyEdges.get(0).getActualSource();
             LPort targetPort = crossHierarchyEdges.get(crossHierarchyEdges.size() - 1)
-                    .getEdge().getTarget();
+                    .getActualTarget();
             origEdge.getBendPoints().clear();
             
             // determine the reference graph for all bend points
             LNode referenceNode = sourcePort.getNode();
             LGraph referenceGraph;
-            if (LGraphUtil.isDescendant(origEdge.getTarget().getNode(), referenceNode)) {
+            if (LGraphUtil.isDescendant(targetPort.getNode(), referenceNode)) {
                 referenceGraph = referenceNode.getProperty(Properties.NESTED_LGRAPH);
             } else {
                 referenceGraph = referenceNode.getGraph();
@@ -121,8 +121,11 @@ public class CompoundGraphPostprocessor implements ILayoutProcessor {
             // apply the computed layouts to the cross-hierarchy edge
             KVector lastPoint = null;
             for (CrossHierarchyEdge chEdge : crossHierarchyEdges) {
+                
+                // transform all coordinates from the graph of the dummy edge to the reference graph
                 KVector offset = new KVector();
                 LGraphUtil.changeCoordSystem(offset, chEdge.getGraph(), referenceGraph);
+                
                 LEdge ledge = chEdge.getEdge();
                 KVectorChain bendPoints = ledge.getBendPoints().translate(offset);
                 // Note: if an NPE occurs here, that means KLay Layered has replaced the original edge
@@ -155,6 +158,17 @@ public class CompoundGraphPostprocessor implements ILayoutProcessor {
                 KVectorChain ledgeJPs = ledge.getProperty(LayoutOptions.JUNCTION_POINTS);
                 if (ledgeJPs != null) {
                     junctionPoints.addAll(ledgeJPs.translate(offset));
+                }
+                
+                // add offset to target port with a special property
+                if (chEdge.getActualTarget() == targetPort) {
+                    if (targetPort.getNode().getGraph() != chEdge.getGraph()) {
+                        // the target port is in a different coordinate system -- recompute the offset
+                        offset = new KVector();
+                        LGraphUtil.changeCoordSystem(offset, targetPort.getNode().getGraph(),
+                                referenceGraph);
+                    }
+                    origEdge.setProperty(Properties.TARGET_OFFSET, offset);
                 }
                 
                 // remove the dummy edge from the graph (dummy ports and dummy nodes are retained)

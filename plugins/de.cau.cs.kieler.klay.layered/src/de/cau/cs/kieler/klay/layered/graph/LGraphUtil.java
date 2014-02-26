@@ -13,10 +13,7 @@
  */
 package de.cau.cs.kieler.klay.layered.graph;
 
-import java.util.Map;
 import java.util.Set;
-
-import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
@@ -611,30 +608,6 @@ public final class LGraphUtil {
     // External Ports  (Ports on the boundary of the parent node)
     
     /**
-     * For free port constraints, this map maps port types and layout directions to the port side we
-     * will use for an external port.
-     */
-    private static final Map<PortType, Map<Direction, PortSide>> EXTERNAL_PORT_SIDE_MAP =
-            Maps.newEnumMap(PortType.class);
-    
-    // Initialize the external port side map.
-    static {
-        Map<Direction, PortSide> inputPortMap = Maps.newEnumMap(Direction.class);
-        inputPortMap.put(Direction.RIGHT, PortSide.WEST);
-        inputPortMap.put(Direction.LEFT, PortSide.EAST);
-        inputPortMap.put(Direction.DOWN, PortSide.NORTH);
-        inputPortMap.put(Direction.UP, PortSide.SOUTH);
-        EXTERNAL_PORT_SIDE_MAP.put(PortType.INPUT, inputPortMap);
-        
-        Map<Direction, PortSide> outputPortMap = Maps.newEnumMap(Direction.class);
-        outputPortMap.put(Direction.RIGHT, PortSide.EAST);
-        outputPortMap.put(Direction.LEFT, PortSide.WEST);
-        outputPortMap.put(Direction.DOWN, PortSide.SOUTH);
-        outputPortMap.put(Direction.UP, PortSide.NORTH);
-        EXTERNAL_PORT_SIDE_MAP.put(PortType.OUTPUT, outputPortMap);
-    }
-    
-    /**
      * Creates a dummy for an external port. The dummy will have just one port. The port is on
      * the eastern side for western external ports, on the western side for eastern external ports,
      * on the southern side for northern external ports, and on the northern side for southern
@@ -719,9 +692,9 @@ public final class LGraphUtil {
         // If the port constraints are free, we need to determine where to put the dummy (and its port)
         if (!portConstraints.isSideFixed() && layoutDirection != Direction.UNDEFINED) {
             if (netFlow > 0) {
-                finalExternalPortSide = EXTERNAL_PORT_SIDE_MAP.get(PortType.OUTPUT).get(layoutDirection);
+                finalExternalPortSide = PortSide.fromDirection(layoutDirection);
             } else {
-                finalExternalPortSide = EXTERNAL_PORT_SIDE_MAP.get(PortType.INPUT).get(layoutDirection);
+                finalExternalPortSide = PortSide.fromDirection(layoutDirection).opposed();
             }
             propertyHolder.setProperty(LayoutOptions.PORT_SIDE, finalExternalPortSide);
         }
@@ -889,25 +862,30 @@ public final class LGraphUtil {
             final LGraph newGraph) {
         // transform to absolute coordinates
         LGraph graph = oldGraph;
-        LNode node = oldGraph.getProperty(Properties.PARENT_LNODE);
-        while (node != null) {
+        LNode node;
+        do {
             point.add(graph.getOffset());
-            LInsets insets = graph.getInsets();
-            point.translate(node.getPosition().x + insets.left, node.getPosition().y + insets.top);
-            graph = node.getGraph();
             node = graph.getProperty(Properties.PARENT_LNODE);
-        }
+            if (node != null) {
+                LInsets insets = graph.getInsets();
+                point.translate(insets.left, insets.top);
+                point.add(node.getPosition());
+                graph = node.getGraph();
+            }
+        } while (node != null);
         
         // transform to relative coordinates (to newGraph)
         graph = newGraph;
-        node = newGraph.getProperty(Properties.PARENT_LNODE);
-        while (node != null) {
+        do {
             point.sub(graph.getOffset());
-            LInsets insets = graph.getInsets();
-            point.translate(-node.getPosition().x - insets.left, -node.getPosition().y - insets.top);
-            graph = node.getGraph();
             node = graph.getProperty(Properties.PARENT_LNODE);
-        }
+            if (node != null) {
+                LInsets insets = graph.getInsets();
+                point.translate(-insets.left, -insets.top);
+                point.sub(node.getPosition());
+                graph = node.getGraph();
+            }
+        } while (node != null);
     }
     
 }

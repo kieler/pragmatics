@@ -295,6 +295,12 @@ public final class Properties {
      */
     public static final IProperty<Multimap<LEdge, CrossHierarchyEdge>> CROSS_HIERARCHY_MAP
             = new Property<Multimap<LEdge, CrossHierarchyEdge>>("crossHierarchyMap");
+    
+    /**
+     * Offset to be added to the target anchor point of an edge when the layout is applied
+     * back to the origin.
+     */
+    public static final IProperty<KVector> TARGET_OFFSET = new Property<KVector>("targetOffset");
 
     
     // /////////////////////////////////////////////////////////////////////////////

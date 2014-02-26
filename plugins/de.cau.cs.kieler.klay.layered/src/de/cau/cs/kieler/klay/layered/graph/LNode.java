@@ -111,17 +111,17 @@ public final class LNode extends LShape {
      * iterating through the nodes list of the old layer nor of the new layer,
      * since that could lead to {@link java.util.ConcurrentModificationException}s.
      * 
-     * @param layer the owner to set
+     * @param thelayer the owner to set
      */
-    public void setLayer(final Layer layer) {
-        if (layer != null) {
-            layer.getNodes().remove(this);
+    public void setLayer(final Layer thelayer) {
+        if (this.layer != null) {
+            this.layer.getNodes().remove(this);
         }
         
-        this.layer = layer;
+        this.layer = thelayer;
         
-        if (layer != null) {
-            layer.getNodes().add(this);
+        if (this.layer != null) {
+            this.layer.getNodes().add(this);
         }
     }
     

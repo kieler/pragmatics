@@ -717,26 +717,47 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             
             KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
             KVectorChain bendPoints = ledge.getBendPoints();
+            KVector edgeOffset = offset;
 
-            // Add the source port and target port positions to the vector chain
-            bendPoints.addFirst(ledge.getSource().getAbsoluteAnchor());
-            bendPoints.addLast(ledge.getTarget().getAbsoluteAnchor());
+            // Adapt the offset value and add the source port position to the vector chain
+            KVector sourcePoint;
+            if (KimlUtil.isDescendant(kedge.getTarget(), kedge.getSource())) {
+                LPort sourcePort = ledge.getSource();
+                sourcePoint = KVector.sum(sourcePort.getPosition(), sourcePort.getAnchor());
+                LInsets sourceInsets = sourcePort.getNode().getInsets();
+                sourcePoint.translate(-sourceInsets.left, -sourceInsets.top);
+                LGraph nestedGraph = sourcePort.getNode().getProperty(Properties.NESTED_LGRAPH);
+                if (nestedGraph != null) {
+                    edgeOffset = nestedGraph.getOffset();
+                }
+                sourcePoint.sub(edgeOffset);
+            } else {
+                sourcePoint = ledge.getSource().getAbsoluteAnchor();
+            }
+            bendPoints.addFirst(sourcePoint);
+            
+            // Add the target port position to the vector chain, including additional offset
+            KVector targetPoint = ledge.getTarget().getAbsoluteAnchor();
+            if (ledge.getProperty(Properties.TARGET_OFFSET) != null) {
+                targetPoint.add(ledge.getProperty(Properties.TARGET_OFFSET));
+            }
+            bendPoints.addLast(targetPoint);
 
             // Translate the bend points by the offset and apply the bend points
-            bendPoints.translate(offset);
+            bendPoints.translate(edgeOffset);
             edgeLayout.applyVectorChain(bendPoints);
 
             // Apply layout to labels
             for (LLabel label : ledge.getLabels()) {
                 KLabel klabel = (KLabel) label.getProperty(Properties.ORIGIN);
                 KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
-                klabelLayout.applyVector(label.getPosition().add(offset));
+                klabelLayout.applyVector(label.getPosition().add(edgeOffset));
             }
             
             // Copy junction points
             KVectorChain junctionPoints = ledge.getProperty(LayoutOptions.JUNCTION_POINTS);
             if (junctionPoints != null) {
-                junctionPoints.translate(offset);
+                junctionPoints.translate(edgeOffset);
                 edgeLayout.setProperty(LayoutOptions.JUNCTION_POINTS, junctionPoints);
             } else {
                 edgeLayout.setProperty(LayoutOptions.JUNCTION_POINTS, null);

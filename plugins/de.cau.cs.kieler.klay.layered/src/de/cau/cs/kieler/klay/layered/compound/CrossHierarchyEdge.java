@@ -15,7 +15,10 @@ package de.cau.cs.kieler.klay.layered.compound;
 
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.graph.LPort;
+import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * A data holder used to pass information on hierarchy crossing edges from the
@@ -56,27 +59,58 @@ public class CrossHierarchyEdge {
     }
 
     /**
-     * Return the edge.
-     * @return the edge
+     * Return the dummy edge used to compute a layout in one segment of the cross-hierarchy edge.
+     * 
+     * @return the dummy edge
      */
     public LEdge getEdge() {
         return newEdge;
     }
 
     /**
-     * Return the graph.
-     * @return the graph
+     * Return the graph in which the dummy edge {@link #getEdge()} is used.
+     * 
+     * @return the graph in which the dummy edge is used
      */
     public LGraph getGraph() {
         return graph;
     }
 
     /**
-     * Return the type of cross-hierarchy edge.
-     * @return the type
+     * Return the type of cross-hierarchy edge segment (input or output). An input segment is one
+     * that points to deeper hierarchy levels, while an output segment is one that points to
+     * shallower hierarchy levels.
+     * 
+     * @return the edge segment type
      */
     public PortType getType() {
         return type;
+    }
+    
+    /**
+     * Return the actual source port of the edge. In case the source port of the dummy edge is
+     * an external port, the corresponding port of the containing node is returned.
+     * 
+     * @return the actual source port
+     */
+    public LPort getActualSource() {
+        if (newEdge.getSource().getNode().getProperty(Properties.NODE_TYPE) == NodeType.EXTERNAL_PORT) {
+            return (LPort) newEdge.getSource().getNode().getProperty(Properties.ORIGIN);
+        }
+        return newEdge.getSource();
+    }
+    
+    /**
+     * Return the actual target port of the edge. In case the target port of the dummy edge is
+     * an external port, the corresponding port of the containing node is returned.
+     * 
+     * @return the actual target port
+     */
+    public LPort getActualTarget() {
+        if (newEdge.getTarget().getNode().getProperty(Properties.NODE_TYPE) == NodeType.EXTERNAL_PORT) {
+            return (LPort) newEdge.getTarget().getNode().getProperty(Properties.ORIGIN);
+        }
+        return newEdge.getTarget();
     }
     
 }
