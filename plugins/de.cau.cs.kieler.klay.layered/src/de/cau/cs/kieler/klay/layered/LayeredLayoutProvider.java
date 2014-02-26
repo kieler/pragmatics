@@ -20,8 +20,8 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement.HashCodeCounter;
-import de.cau.cs.kieler.klay.layered.importexport.IGraphImporter;
-import de.cau.cs.kieler.klay.layered.importexport.KGraphImporter;
+import de.cau.cs.kieler.klay.layered.graphimport.IGraphImporter;
+import de.cau.cs.kieler.klay.layered.graphimport.KGraphImporter;
 
 /**
  * Layout provider to connect the layered layouter to the Eclipse based layout services.
