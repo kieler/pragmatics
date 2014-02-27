@@ -74,7 +74,7 @@ public class NodePlacerTest extends AbstractLayeredProcessorTest {
      */
     @Before
     public void runUntil() {
-        lgraphs = layered.runLayoutTestUntil(getAndCheckSimpleConfig().getStrategyImpl());
+        layered.runLayoutTestUntil(getAndCheckSimpleConfig().getStrategyImpl(), state);
     }
 
     /**
@@ -82,7 +82,7 @@ public class NodePlacerTest extends AbstractLayeredProcessorTest {
      */
     @Test
     public void testStrictlyOrdered() {
-        for (LGraph g : lgraphs) {
+        for (LGraph g : state.getGraphs()) {
             for (Layer layer : g.getLayers()) {
                 Double lastY = null;
                 for (LNode n : layer.getNodes()) {
@@ -100,7 +100,7 @@ public class NodePlacerTest extends AbstractLayeredProcessorTest {
      */
     @Test
     public void testNonOverlapping() {
-        for (LGraph g : lgraphs) {
+        for (LGraph g : state.getGraphs()) {
             for (Layer layer : g.getLayers()) {
                 LNode last = null;
                 for (LNode n : layer.getNodes()) {

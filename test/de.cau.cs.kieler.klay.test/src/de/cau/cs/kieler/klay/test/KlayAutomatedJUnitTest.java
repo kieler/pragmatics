@@ -107,17 +107,6 @@ public abstract class KlayAutomatedJUnitTest {
         configurators = null;
     }
 
-    /**
-     * Important for scanning files is the Plugin ID.
-     * 
-     * FIXME Is this used anywhere?
-     * 
-     * @return the plugin id
-     */
-    protected String getPluginId() {
-        return "de.cau.cs.kieler.klay.test";
-    }
-
     // -------------------------------------------------------------------------
 
     /**

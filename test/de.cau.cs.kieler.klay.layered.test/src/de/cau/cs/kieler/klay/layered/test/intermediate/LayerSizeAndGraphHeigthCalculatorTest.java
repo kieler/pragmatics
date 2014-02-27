@@ -56,7 +56,7 @@ public class LayerSizeAndGraphHeigthCalculatorTest extends AbstractLayeredProces
      */
     @Before
     public void runUntil() {
-        lgraphs = layered.runLayoutTestUntil(LayerSizeAndGraphHeightCalculator.class);
+        layered.runLayoutTestUntil(LayerSizeAndGraphHeightCalculator.class, state);
     }
 
     /**
@@ -64,7 +64,7 @@ public class LayerSizeAndGraphHeigthCalculatorTest extends AbstractLayeredProces
      */
     @Test
     public void testAllNodesContained() {
-        for (LGraph g : lgraphs) {
+        for (LGraph g : state.getGraphs()) {
 
             double top = 0.0 - g.getOffset().y;
             double bottom = g.getSize().y - g.getOffset().y;

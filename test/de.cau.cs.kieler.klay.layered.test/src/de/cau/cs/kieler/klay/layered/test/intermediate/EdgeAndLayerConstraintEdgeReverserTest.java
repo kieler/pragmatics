@@ -70,7 +70,7 @@ public class EdgeAndLayerConstraintEdgeReverserTest extends AbstractLayeredProce
      */
     @Before
     public void runUntil() {
-        lgraphs = layered.runLayoutTestUntil(EdgeAndLayerConstraintEdgeReverser.class);
+        layered.runLayoutTestUntil(EdgeAndLayerConstraintEdgeReverser.class, state);
     }
 
     /**
@@ -79,7 +79,7 @@ public class EdgeAndLayerConstraintEdgeReverserTest extends AbstractLayeredProce
      */
     @Test
     public void testLayerConstraints() {
-        for (LGraph g : lgraphs) {
+        for (LGraph g : state.getGraphs()) {
             for (LNode node : g.getLayerlessNodes()) {
                 LayerConstraint constr = node.getProperty(Properties.LAYER_CONSTRAINT);
                 if (constr == LayerConstraint.FIRST || constr == LayerConstraint.FIRST_SEPARATE) {

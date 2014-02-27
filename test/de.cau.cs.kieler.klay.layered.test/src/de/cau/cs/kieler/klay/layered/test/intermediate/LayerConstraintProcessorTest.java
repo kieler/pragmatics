@@ -73,7 +73,7 @@ public class LayerConstraintProcessorTest extends AbstractLayeredProcessorTest {
      */
     @Before
     public void runUntil() {
-        lgraphs = layered.runLayoutTestUntil(LayerConstraintProcessor.class);
+        layered.runLayoutTestUntil(LayerConstraintProcessor.class, state);
     }
 
     /**
@@ -82,7 +82,7 @@ public class LayerConstraintProcessorTest extends AbstractLayeredProcessorTest {
      */
     @Test
     public void testLayerConstraints() {
-        for (LGraph g : lgraphs) {
+        for (LGraph g : state.getGraphs()) {
 
             Multimap<LayerConstraint, Integer> constraintMap = HashMultimap.create();
 

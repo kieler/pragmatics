@@ -60,10 +60,10 @@ public class LongEdgeJoinerTest extends AbstractLayeredProcessorTest {
      */
     @Before
     public void runUntil() {
-        lgraphs = layered.runLayoutTestUntil(LongEdgeJoiner.class, false);
+        layered.runLayoutTestUntil(LongEdgeJoiner.class, false, state);
 
         // count the number of overall nodes and of the tested type
-        for (LGraph g : lgraphs) {
+        for (LGraph g : state.getGraphs()) {
             for (Layer layer : g.getLayers()) {
                 for (LNode node : layer.getNodes()) {
                     noOverallNodes++;
@@ -74,7 +74,7 @@ public class LongEdgeJoinerTest extends AbstractLayeredProcessorTest {
             }
         }
 
-        lgraphs = layered.runLayoutTestUntil(LongEdgeJoiner.class, true);
+        layered.runLayoutTestUntil(LongEdgeJoiner.class, true, state);
 
     }
 
@@ -85,7 +85,7 @@ public class LongEdgeJoinerTest extends AbstractLayeredProcessorTest {
     @Test
     public void testRemovedNodes() {
         int noNodesAfter = 0;
-        for (LGraph g : lgraphs) {
+        for (LGraph g : state.getGraphs()) {
             for (Layer layer : g.getLayers()) {
                 for (LNode node : layer.getNodes()) {
                     assertTrue(node.getProperty(Properties.NODE_TYPE) != NodeType.LONG_EDGE);

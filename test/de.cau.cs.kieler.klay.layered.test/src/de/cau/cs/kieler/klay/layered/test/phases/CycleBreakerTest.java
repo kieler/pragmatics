@@ -105,7 +105,7 @@ public class CycleBreakerTest extends AbstractLayeredProcessorTest {
      */
     @Before
     public void runUntil() {
-        lgraphs = layered.runLayoutTestUntil(getAndCheckSimpleConfig().getStrategyImpl());
+        layered.runLayoutTestUntil(getAndCheckSimpleConfig().getStrategyImpl(), state);
     }
 
     /**
@@ -114,7 +114,7 @@ public class CycleBreakerTest extends AbstractLayeredProcessorTest {
     @Test
     public void testIsAcyclic() {
         // check every component
-        for (LGraph lg : lgraphs) {
+        for (LGraph lg : state.getGraphs()) {
             List<LNode> nodes = lg.getLayerlessNodes();
             assertTrue(recAcyclicCheck(nodes));
         }
