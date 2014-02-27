@@ -39,12 +39,12 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement.HashCodeCounter;
+import de.cau.cs.kieler.klay.layered.graph.LGraphUtil;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LShape;
-import de.cau.cs.kieler.klay.layered.importexport.IGraphImporter;
-import de.cau.cs.kieler.klay.layered.importexport.ImportUtil;
+import de.cau.cs.kieler.klay.layered.graphimport.IGraphImporter;
 import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
@@ -167,7 +167,7 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         
         if (parentNode != null) {
             // set this LGraph as child of the parent LNode
-            parentNode.setProperty(Properties.CHILD_LGRAPH, graph);
+            parentNode.setProperty(Properties.NESTED_LGRAPH, graph);
         }
         
         // global layout options are applied first, hence possibly overwritten
@@ -345,7 +345,7 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
             direction = Direction.RIGHT;
         }
         // initialize the port's side, offset, and anchor point
-        ImportUtil.initializePort(port, portConstraints, direction,
+        LGraphUtil.initializePort(port, portConstraints, direction,
                 port.getProperty(Properties.PORT_ANCHOR));
 
         switch (direction) {
@@ -603,14 +603,14 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
             // create source and target ports if they do not exist yet
             if (sourcePort == null) {
                 sourcePort =
-                        ImportUtil.createPort(sourceNode, new KVector(), PortType.OUTPUT, graph);
+                        LGraphUtil.createPort(sourceNode, new KVector(), PortType.OUTPUT, graph);
             } else if (sourcePort.getNode() != sourceNode) {
                 throw new UnsupportedGraphException("Inconsistent source port reference found.");
             }
 
             if (targetPort == null) {
                 targetPort =
-                        ImportUtil.createPort(targetNode, new KVector(), PortType.INPUT, graph);
+                        LGraphUtil.createPort(targetNode, new KVector(), PortType.INPUT, graph);
             } else if (targetPort.getNode() != targetNode) {
                 throw new UnsupportedGraphException("Inconsistent target port reference found.");
             }
@@ -760,7 +760,7 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
             }
 
             // recursively
-            LGraph childGraph = n.getProperty(Properties.CHILD_LGRAPH);
+            LGraph childGraph = n.getProperty(Properties.NESTED_LGRAPH);
             if (childGraph != null) {
                 transferLayout(childGraph, newOffset);
             }

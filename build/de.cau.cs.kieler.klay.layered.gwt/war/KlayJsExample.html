@@ -117,7 +117,8 @@
 			        edges: [{
 			            id: "e4", 
 			            source: "n3",
-			            target: "n4"
+			            target: "n11",
+			            targetPort: "n11_p1"
 			        }]
 			    }],
 			    edges: [{
@@ -169,7 +170,7 @@
 			};
 		    
 			$klay.layout({
-				graph: graph3,
+				graph: graph2,
 				success: function(layouted) {
 					console.log(layouted);
 					document.body.innerHTML = "<pre>" + JSON.stringify(layouted, null, "  ") + "</pre>"; 

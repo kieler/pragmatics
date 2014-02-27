@@ -16,6 +16,7 @@ package de.cau.cs.kieler.klay.gwt.client.layout;
 import com.google.gwt.json.client.JSONObject;
 
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.KlayLayered;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -49,17 +50,23 @@ public class RecursiveLGraphLayout {
 
         // perform layer-based layout
         KlayLayered klayLayered = new KlayLayered();
+        
+        if (graph.getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {
+            klayLayered.doCompoundLayout(graph, new BasicProgressMonitor());
+        } else {
+            klayLayered.doLayout(graph, new BasicProgressMonitor());
+        }
         // LGraph result = klayLayered.doLayout(graph, new BasicProgressMonitor());
-        LGraph result = recLayout(klayLayered, graph);
+        //LGraph result = recLayout(klayLayered, graph);
 
         // transfer the layout information back to the json objects
-        importer.applyLayout(result);
+        importer.applyLayout(graph);
     }
 
     private LGraph recLayout(final KlayLayered layered, final LGraph graph) {
 
         for (LNode n : graph.getLayerlessNodes()) {
-            LGraph childGraph = n.getProperty(Properties.CHILD_LGRAPH);
+            LGraph childGraph = n.getProperty(Properties.NESTED_LGRAPH);
             if (childGraph != null) {
                 LGraph res = recLayout(layered, childGraph);
 
@@ -70,9 +77,9 @@ public class RecursiveLGraphLayout {
             }
         }
 
-        LGraph layouted = layered.doLayout(graph, new BasicProgressMonitor());
+        layered.doLayout(graph, new BasicProgressMonitor());
 
-        return layouted;
+        return graph;
     }
 
 }
