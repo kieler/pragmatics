@@ -555,28 +555,28 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                 KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
                 EdgeLabelPlacement labelPlacement = labelLayout.getProperty(
                         LayoutOptions.EDGE_LABEL_PLACEMENT);
-                if (!labelLayout.getProperty(LayoutOptions.NO_LAYOUT)
-                        && labelPlacement != EdgeLabelPlacement.UNDEFINED) {
+                if (!labelLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
                     LLabel newLabel = new LLabel(layeredGraph, klabel.getText());
                     newLabel.getPosition().x = labelLayout.getXpos();
                     newLabel.getPosition().y = labelLayout.getYpos();
                     newLabel.getSize().x = labelLayout.getWidth();
                     newLabel.getSize().y = labelLayout.getHeight();
                     newLabel.setProperty(Properties.ORIGIN, klabel);
-                    newLabel.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT, labelPlacement);
                     newEdge.getLabels().add(newLabel);
                     switch (labelPlacement) {
-                    case CENTER:
-                        // Add annotation if the graph contains labels which shall be placed
-                        // in the middle of an edge
-                        graphProperties.add(GraphProperties.CENTER_LABELS);
-                        break;
                     case HEAD:
                     case TAIL:
                         // Add annotation if the graph contains labels which shall be placed
-                        // in the middle of an edge
+                        // at the ends of an edge
                         graphProperties.add(GraphProperties.END_LABELS);
+                        newLabel.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT, labelPlacement);
                         break;
+                    default:
+                        // Add annotation if the graph contains labels which shall be placed
+                        // in the middle of an edge
+                        graphProperties.add(GraphProperties.CENTER_LABELS);
+                        newLabel.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
+                                EdgeLabelPlacement.CENTER);
                     }
                 }
             }

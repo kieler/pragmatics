@@ -54,10 +54,14 @@ final class SimpleRowGraphPlacer extends AbstractGraphPlacer {
                 moveGraph(target, source, 0, 0);
                 target.copyProperties(source);
                 target.getInsets().copy(source.getInsets());
+                target.getSize().x = source.getSize().x;
+                target.getSize().y = source.getSize().y;
             }
             return;
         } else if (components.isEmpty()) {
             target.getLayerlessNodes().clear();
+            target.getSize().x = 0;
+            target.getSize().y = 0;
             return;
         }
         assert !components.contains(target);

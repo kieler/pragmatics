@@ -63,6 +63,8 @@ final class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
         
         // Check if there are any components to be placed
         if (components.isEmpty()) {
+            target.getSize().x = 0;
+            target.getSize().y = 0;
             return;
         }
         
