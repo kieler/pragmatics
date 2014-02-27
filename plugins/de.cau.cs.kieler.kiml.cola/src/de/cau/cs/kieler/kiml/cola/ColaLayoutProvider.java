@@ -48,6 +48,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
+import de.cau.cs.kieler.kiml.cola.util.ColaUtil;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
@@ -245,9 +246,24 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
      */
     private void addDirectionConstraints(final KNode root) {
 
+        Set<Set<KNode>> sccs = ColaUtil.findStronglyConnectedComponents(root);
+        Map<KNode, Set<KNode>> nodeSccMap = Maps.newHashMap();
+        for (Set<KNode> scc : sccs) {
+            for (KNode n : scc) {
+                nodeSccMap.put(n, scc);
+            }
+        }
+        
+        //System.out.println(sccs);
+        
         for (KNode n : root.getChildren()) {
             for (KEdge e : n.getOutgoingEdges()) {
 
+                // dont create constraints if the nodes are in the same scc
+                if (nodeSccMap.get(e.getSource()).contains(e.getTarget())) {
+                    continue;
+                }
+                
                 long src = nodeIndexMap.get(e.getSource());
                 long tgt = nodeIndexMap.get(e.getTarget());
 

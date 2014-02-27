@@ -49,14 +49,12 @@ public class LabelAndNodeSizeProcessorOffsetTest {
         LGraph graph = generateGraph();
         
         KlayLayered algorithm = new KlayLayered();
-        algorithm.prepareLayoutTest(graph);
-        algorithm.runLayoutTestUntil(LabelAndNodeSizeProcessor.class);
+        KlayLayered.TestExecutionState state = algorithm.prepareLayoutTest(graph);
+        algorithm.runLayoutTestUntil(LabelAndNodeSizeProcessor.class, state);
         
-        for (LGraph resultGraph : algorithm.getLayoutTestGraphs()) {
+        for (LGraph resultGraph : state.getGraphs()) {
             doTestPortPositions(resultGraph);
         }
-        
-        algorithm.finalizeLayoutTest();
     }
     
     

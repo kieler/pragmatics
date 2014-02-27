@@ -58,8 +58,7 @@ public class ReversedEdgeRestorerTest extends AbstractLayeredProcessorTest {
      */
     @Before
     public void runUntil() {
-        lgraphs = layered.runLayoutTestUntil(ReversedEdgeRestorer.class);
-
+        layered.runLayoutTestUntil(ReversedEdgeRestorer.class, state);
     }
 
     /**
@@ -67,7 +66,7 @@ public class ReversedEdgeRestorerTest extends AbstractLayeredProcessorTest {
      */
     @Test
     public void testRemovedNodes() {
-        for (LGraph g : lgraphs) {
+        for (LGraph g : state.getGraphs()) {
             for (Layer layer : g.getLayers()) {
                 for (LNode node : layer.getNodes()) {
                     for (LEdge edge : node.getOutgoingEdges()) {

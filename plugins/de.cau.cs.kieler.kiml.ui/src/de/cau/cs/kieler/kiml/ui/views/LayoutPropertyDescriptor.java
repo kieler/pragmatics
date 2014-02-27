@@ -128,15 +128,18 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
         if (targets.size() == 1) {
             switch (targets.iterator().next()) {
             case PARENTS:
+                if (elementTargets != null && elementTargets.contains(LayoutOptionData.Target.NODES)) {
+                    return Messages.getString("kiml.ui.74");
+                }
                 return Messages.getString("kiml.ui.73");
             case NODES:
-                return Messages.getString("kiml.ui.74");
-            case EDGES:
                 return Messages.getString("kiml.ui.75");
-            case PORTS:
+            case EDGES:
                 return Messages.getString("kiml.ui.76");
-            case LABELS:
+            case PORTS:
                 return Messages.getString("kiml.ui.77");
+            case LABELS:
+                return Messages.getString("kiml.ui.78");
             }
         }
         return null;
