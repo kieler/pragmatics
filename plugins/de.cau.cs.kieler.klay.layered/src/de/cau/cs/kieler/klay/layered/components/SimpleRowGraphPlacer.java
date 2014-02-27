@@ -30,22 +30,37 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * <p>This was the first algorithm implemented to place the different connected components of a graph,
  * and was formerly the implementation of the {@link ComponentsProcessor#combine(List)} method.</p>
  * 
+ * <p>The target graph must not be contained in the list of components, except if there is only
+ * one component.</p>
+ * 
  * @author msp
  * @author cds
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
 final class SimpleRowGraphPlacer extends AbstractGraphPlacer {
+    
+    /** Factor for spacing between components. */
+    private static final float SPACING_FACTOR = 1.6f;
 
     /**
      * {@inheritDoc}
      */
-    public LGraph combine(final List<LGraph> components) {
+    public void combine(final List<LGraph> components, final LGraph target) {
         if (components.size() == 1) {
-            return components.get(0);
+            LGraph source = components.get(0);
+            if (source != target) {
+                target.getLayerlessNodes().clear();
+                moveGraph(target, source, 0, 0);
+                target.copyProperties(source);
+                target.getInsets().copy(source.getInsets());
+            }
+            return;
         } else if (components.isEmpty()) {
-            return new LGraph();
+            target.getLayerlessNodes().clear();
+            return;
         }
+        assert !components.contains(target);
         
         // assign priorities
         for (LGraph graph : components) {
@@ -70,9 +85,8 @@ final class SimpleRowGraphPlacer extends AbstractGraphPlacer {
         });
         
         LGraph firstComponent = components.get(0);
-        LGraph result = new LGraph(firstComponent);
-        result.copyProperties(firstComponent);
-        result.getInsets().copy(firstComponent.getInsets());
+        target.getLayerlessNodes().clear();
+        target.copyProperties(firstComponent);
         
         // determine the maximal row width by the maximal box width and the total area
         double maxRowWidth = 0.0f;
@@ -83,8 +97,8 @@ final class SimpleRowGraphPlacer extends AbstractGraphPlacer {
             totalArea += size.x * size.y;
         }
         maxRowWidth = Math.max(maxRowWidth, (float) Math.sqrt(totalArea)
-                * result.getProperty(Properties.ASPECT_RATIO));
-        double spacing = 2 * result.getProperty(Properties.OBJ_SPACING);
+                * target.getProperty(Properties.ASPECT_RATIO));
+        double spacing = SPACING_FACTOR * target.getProperty(Properties.OBJ_SPACING);
 
         // place nodes iteratively into rows
         double xpos = 0, ypos = 0, highestBox = 0, broadestRow = spacing;
@@ -96,15 +110,14 @@ final class SimpleRowGraphPlacer extends AbstractGraphPlacer {
                 ypos += highestBox + spacing;
                 highestBox = 0;
             }
-            moveGraph(result, graph, xpos, ypos);
+            moveGraph(target, graph, xpos, ypos);
             broadestRow = Math.max(broadestRow, xpos + size.x);
             highestBox = Math.max(highestBox, size.y);
             xpos += size.x + spacing;
         }
         
-        result.getSize().x = broadestRow;
-        result.getSize().y = ypos + highestBox;
-        return result;
+        target.getSize().x = broadestRow;
+        target.getSize().y = ypos + highestBox;
     }
 
 }

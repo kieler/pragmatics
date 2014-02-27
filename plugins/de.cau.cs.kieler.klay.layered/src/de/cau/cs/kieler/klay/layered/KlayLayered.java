@@ -125,16 +125,14 @@ public final class KlayLayered {
     // Regular Layout
 
     /**
-     * Does a layout on the given graph. The returned graph may be a different instance than
-     * the one given as argument.
+     * Does a layout on the given graph.
      * 
      * @param lgraph
      *            the graph to layout
      * @param monitor
      *            a progress monitor to show progress information in, or {@code null}
-     * @return a layered graph with layout applied
      */
-    public LGraph doLayout(final LGraph lgraph, final IKielerProgressMonitor monitor) {
+    public void doLayout(final LGraph lgraph, final IKielerProgressMonitor monitor) {
         IKielerProgressMonitor theMonitor = monitor;
         if (theMonitor == null) {
             theMonitor = new BasicProgressMonitor(0);
@@ -160,18 +158,17 @@ public final class KlayLayered {
             float compWork = 1.0f / components.size();
             for (LGraph comp : components) {
                 if (monitor.isCanceled()) {
-                    return lgraph;
+                    return;
                 }
                 layout(comp, theMonitor.subTask(compWork));
             }
         }
-        LGraph result = componentsProcessor.combine(components);
+        componentsProcessor.combine(components, lgraph);
         
         // Resize the resulting graph, according to minimal size constraints and such
-        resizeGraph(result);
+        resizeGraph(lgraph);
 
         theMonitor.done();
-        return result;
     }
 
     // /////////////////////////////////////////////////////////////////////////////
@@ -183,9 +180,8 @@ public final class KlayLayered {
      * 
      * @param lgraph the graph to layout
      * @param monitor a progress monitor to show progress information in, or {@code null}
-     * @return a layered graph with layout applied
      */
-    public LGraph doCompoundLayout(final LGraph lgraph, final IKielerProgressMonitor monitor) {
+    public void doCompoundLayout(final LGraph lgraph, final IKielerProgressMonitor monitor) {
         IKielerProgressMonitor theMonitor = monitor;
         if (theMonitor == null) {
             theMonitor = new BasicProgressMonitor(0);
@@ -208,7 +204,6 @@ public final class KlayLayered {
         compoundGraphPostprocessor.process(lgraph, theMonitor.subTask(1));
 
         theMonitor.done();
-        return lgraph;
     }
     
     /**
@@ -757,6 +752,10 @@ public final class KlayLayered {
         // Move all nodes away from the layers
         for (Layer layer : graph) {
             graph.getLayerlessNodes().addAll(layer.getNodes());
+            layer.getNodes().clear();
+        }
+        for (LNode node : graph.getLayerlessNodes()) {
+            node.setLayer(null);
         }
         graph.getLayers().clear();
 

@@ -169,6 +169,8 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
 
             int layerIndex = layerIter.previousIndex();
             int layerNodeCount = layer.getNodes().size();
+            // Empty layers are not allowed!
+            assert layerNodeCount > 0;
 
             // Initialize this layer's node arrays in the different sweeps
             bestSweep[layerIndex] = new NodeGroup[layerNodeCount];
@@ -418,6 +420,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
     private int countCrossings(final NodeGroup[] leftLayer, final NodeGroup[] rightLayer) {
         // Assign index values to the ports of the right layer
         int targetCount = 0, edgeCount = 0;
+        Layer leftLayerRef = leftLayer[0].getNode().getLayer();
         for (NodeGroup nodeGroup : rightLayer) {
             LNode node = nodeGroup.getNode();
             if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
@@ -427,7 +430,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                 for (LPort port : node.getPorts()) {
                     if (port.getSide() == PortSide.NORTH) {
                         for (LEdge edge : port.getIncomingEdges()) {
-                            if (node.getLayer() != edge.getSource().getNode().getLayer()) {
+                            if (edge.getSource().getNode().getLayer() == leftLayerRef) {
                                 northInputPorts++;
                                 break;
                             }
@@ -443,7 +446,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                     LPort port = portIter.previous();
                     int portEdges = 0;
                     for (LEdge edge : port.getIncomingEdges()) {
-                        if (node.getLayer() != edge.getSource().getNode().getLayer()) {
+                        if (edge.getSource().getNode().getLayer() == leftLayerRef) {
                             portEdges++;
                         }
                     }
@@ -465,7 +468,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                 int nodeEdges = 0;
                 for (LPort port : node.getPorts()) {
                     for (LEdge edge : port.getIncomingEdges()) {
-                        if (node.getLayer() != edge.getSource().getNode().getLayer()) {
+                        if (edge.getSource().getNode().getLayer() == leftLayerRef) {
                             nodeEdges++;
                         }
                     }
@@ -481,6 +484,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
         // Determine the sequence of edge target positions sorted by source and target index
         int[] southSequence = new int[edgeCount];
         int i = 0;
+        Layer rightLayerRef = rightLayer[0].getNode().getLayer();
         for (NodeGroup nodeGroup : leftLayer) {
             LNode node = nodeGroup.getNode();
             if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
@@ -489,7 +493,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                     int start = i;
                     for (LEdge edge : port.getOutgoingEdges()) {
                         LPort target = edge.getTarget();
-                        if (node.getLayer() != target.getNode().getLayer()) {
+                        if (target.getNode().getLayer() == rightLayerRef) {
                             assert i < edgeCount;
                             // If the port has multiple output edges, sort them by target port index
                             insert(southSequence, start, i++, portPos[target.id]);
@@ -502,7 +506,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                 for (LPort port : node.getPorts()) {
                     for (LEdge edge : port.getOutgoingEdges()) {
                         LPort target = edge.getTarget();
-                        if (node.getLayer() != target.getNode().getLayer()) {
+                        if (target.getNode().getLayer() == rightLayerRef) {
                             assert i < edgeCount;
                             insert(southSequence, start, i++, portPos[target.id]);
                         }

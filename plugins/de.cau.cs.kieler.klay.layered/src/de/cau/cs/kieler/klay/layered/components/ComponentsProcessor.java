@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.klay.layered.components;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,8 +42,6 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * {@link de.cau.cs.kieler.kiml.options.PortConstraints#FIXED_SIDE FIXED_SIDE}. If the graph contains
  * external ports with port constraints other than these, connected components processing is disabled
  * even if requested by the user.</p>
- * 
- * <p>For each graph to be split and packed again, a separate instance of this class is required.</p>
  * 
  * <p>Splitting into components
  * <dl>
@@ -140,8 +138,7 @@ public final class ComponentsProcessor {
                 }
             }
         } else {
-            result = new ArrayList<LGraph>(1);
-            result.add(graph);
+            result = Arrays.asList(graph);
             
             if (!(graphPlacer instanceof SimpleRowGraphPlacer)) {
                 graphPlacer = new SimpleRowGraphPlacer();
@@ -204,12 +201,10 @@ public final class ComponentsProcessor {
      * placed next and beneath to each other instead of overlapping.
      * 
      * @param components a list of components
-     * @return a single graph that contains all components
+     * @param target the target graph into which the others shall be combined
      */
-    public LGraph combine(final List<LGraph> components) {
-        LGraph combinedGraph = graphPlacer.combine(components);
-        
-        return combinedGraph;
+    public void combine(final List<LGraph> components, final LGraph target) {
+        graphPlacer.combine(components, target);
     }
     
 }

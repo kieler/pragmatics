@@ -40,9 +40,9 @@ abstract class AbstractGraphPlacer {
      * Computes a proper placement for the given graphs and combines them into a single graph.
      * 
      * @param components the graphs to be combined.
-     * @return a single graph containing the components.
+     * @param target the target graph into which the others shall be combined
      */
-    public abstract LGraph combine(final List<LGraph> components);
+    public abstract void combine(final List<LGraph> components, final LGraph target);
     
 
     /**
@@ -73,7 +73,6 @@ abstract class AbstractGraphPlacer {
      */
     protected void moveGraph(final LGraph destGraph, final LGraph sourceGraph,
             final double offsetx, final double offsety) {
-        
         KVector graphOffset = sourceGraph.getOffset().translate(offsetx, offsety);
         
         for (LNode node : sourceGraph.getLayerlessNodes()) {

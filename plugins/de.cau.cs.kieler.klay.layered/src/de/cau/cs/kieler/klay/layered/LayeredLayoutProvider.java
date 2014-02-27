@@ -57,24 +57,23 @@ public final class LayeredLayoutProvider extends AbstractLayoutProvider {
         // Import the graph
         IGraphImporter<KNode> graphImporter = new KGraphImporter(hashCodeCounter);
         LGraph layeredGraph = graphImporter.importGraph(kgraph);
-        LGraph result;
 
         // Check if hierarchy handling for a compound graph is requested
         KShapeLayout kgraphLayout = kgraph.getData(KShapeLayout.class);
         if (kgraphLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {
 
             // Layout for all hierarchy levels is requested
-            result = klayLayered.doCompoundLayout(layeredGraph, progressMonitor);
+            klayLayered.doCompoundLayout(layeredGraph, progressMonitor);
             
         } else {
             
             // Only the top-level graph is processed
-            result = klayLayered.doLayout(layeredGraph, progressMonitor);
+            klayLayered.doLayout(layeredGraph, progressMonitor);
         }
         
         if (!progressMonitor.isCanceled()) {
             // Apply the layout results to the original graph
-            graphImporter.applyLayout(result);
+            graphImporter.applyLayout(layeredGraph);
         }
     }
 
