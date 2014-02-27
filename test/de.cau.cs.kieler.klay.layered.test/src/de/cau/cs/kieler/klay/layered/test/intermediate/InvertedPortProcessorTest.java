@@ -75,7 +75,7 @@ public class InvertedPortProcessorTest extends AbstractLayeredProcessorTest {
      */
     @Before
     public void runUntil() {
-        lgraphs = layered.runLayoutTestUntil(InvertedPortProcessor.class);
+        layered.runLayoutTestUntil(InvertedPortProcessor.class, state);
     }
 
     /**
@@ -84,7 +84,7 @@ public class InvertedPortProcessorTest extends AbstractLayeredProcessorTest {
      */
     @Test
     public void testSameLayerDummies() {
-        for (LGraph g : lgraphs) {
+        for (LGraph g : state.getGraphs()) {
             for (Layer layer : g.getLayers()) {
                 for (LNode node : layer.getNodes()) {
 

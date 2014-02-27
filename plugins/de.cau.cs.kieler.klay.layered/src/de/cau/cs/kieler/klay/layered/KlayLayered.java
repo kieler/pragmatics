@@ -87,13 +87,12 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * test run is executed as follows:
  * </p>
  * <ol>
- *   <li>Call {@link #prepareLayoutTest(LGraph, IKielerProgressMonitor)} to start a new run. The given
- *     graph might be split into its connected components.</li>
- *   <li>Call one of the actual test methods. {@link #runLayoutTestStep(IKielerProgressMonitor)} runs
- *     the next step of the algorithm. {@link #runLayoutTestUntil(IKielerProgressMonitor, Class)} runs
+ *   <li>Call {@link #prepareLayoutTest(LGraph)} to start a new run. The given graph might be
+ *     split into its connected components, which are put into the returned state object.</li>
+ *   <li>Call one of the actual test methods. {@link #runLayoutTestStep(TestExecutionState)} runs
+ *     the next step of the algorithm. {@link #runLayoutTestUntil(Class, TestExecutionState)} runs
  *     the algorithm until a given layout processor has finished executing. Both methods resume
  *     execution from where the algorithm has stopped previously.</li>
- *   <li>Once the test run has finished, call {@link #finalizeLayoutTest()}.</li>
  * </ol>
  * 
  * @see ILayoutPhase
@@ -120,11 +119,7 @@ public final class KlayLayered {
     /** cache of instantiated intermediate modules. */
     private final Map<LayoutProcessorStrategy, ILayoutProcessor> intermediateLayoutProcessorCache =
             Maps.newHashMap();
-
-    /** list of graphs that are currently being laid out. */
-    private List<LGraph> currentLayoutTestGraphs;
-    /** index of the processor that is to be executed next during a layout test. */
-    private int currentLayoutTestStep;
+    
 
     // /////////////////////////////////////////////////////////////////////////////
     // Regular Layout
@@ -253,25 +248,46 @@ public final class KlayLayered {
     
     // /////////////////////////////////////////////////////////////////////////////
     // Layout Testing
+    
+    /**
+     * The state of a test execution is held in an instance of this class.
+     */
+    public static class TestExecutionState {
+        /** list of graphs that are currently being laid out. */
+        private List<LGraph> graphs;
+        /** index of the processor that is to be executed next during a layout test. */
+        private int step;
+        
+        /**
+         * Return the list of graphs that are currently being laid out.
+         * 
+         * @return the graphs under test
+         */
+        public List<LGraph> getGraphs() {
+            return graphs;
+        }
+        
+        /**
+         * Return the index of the processor that is to be executed next during a layout test.
+         * 
+         * @return the index of the next step
+         */
+        public int getStep() {
+            return step;
+        }
+    }
 
     /**
      * Prepares a test run of the layout algorithm. If a previous test run is still active, an
      * exception is thrown. After this method has run, call {@link #layoutTestStep()} as often as
-     * there are layout processors. Once the test run is finished, call
-     * {@link #finalizeLayoutTest()}.
+     * there are layout processors.
      * 
-     * @param lgraph
-     *            the input graph to initialize the test run with.
-     * @throws IllegalStateException
-     *             if a previous layout test run is still active.
+     * @param lgraph the input graph to initialize the test run with.
+     * @return the test execution state
      */
-    public void prepareLayoutTest(final LGraph lgraph) {
-
-        // check if a previous layout test run is still active
-        if (currentLayoutTestGraphs != null || currentLayoutTestStep != 0) {
-            throw new IllegalStateException("Previous layout test run not finalized.");
-        }
-
+    public TestExecutionState prepareLayoutTest(final LGraph lgraph) {
+        TestExecutionState state = new TestExecutionState();
+        
         // set special properties for the layered graph
         setOptions(lgraph);
 
@@ -279,23 +295,25 @@ public final class KlayLayered {
         updateModules(lgraph);
 
         // split the input graph into components
-        currentLayoutTestGraphs = componentsProcessor.split(lgraph);
-        currentLayoutTestStep = 0;
+        if (componentsProcessor == null) {
+            componentsProcessor = new ComponentsProcessor();
+        }
+        state.graphs = componentsProcessor.split(lgraph);
+        
+        return state;
     }
 
     /**
      * Checks if the current test run still has processors to be executed for the algorithm to finish.
      * 
+     * @param state the current test execution state
      * @return {@code true} if the current test run has not finished yet. If there is no current
      *         test run, the result is undefined.
      */
-    public boolean isLayoutTestFinished() {
-        if (currentLayoutTestGraphs == null) {
-            return true;
-        }
-        LGraph graph = currentLayoutTestGraphs.get(0);
+    public boolean isLayoutTestFinished(final TestExecutionState state) {
+        LGraph graph = state.graphs.get(0);
         List<ILayoutProcessor> algorithm = graph.getProperty(Properties.PROCESSORS);
-        return algorithm != null && currentLayoutTestStep >= algorithm.size();
+        return algorithm != null && state.step >= algorithm.size();
     }
 
     /**
@@ -305,31 +323,21 @@ public final class KlayLayered {
      * processor is not among those processors that have not yet executed, an exception is thrown.
      * Also, if there is no current layout test run, an exception is thrown.
      * 
-     * @param phase
-     *            the phase or processor to stop after.
-     * @param inclusive
-     *            {@code true} if the specified phase should be executed as well
-     * @return list of connected components after the execution of the given phase.
-     * @throws IllegalStateException
-     *             if no layout test run is currently active.
+     * @param phase the phase or processor to stop after
+     * @param inclusive {@code true} if the specified phase should be executed as well
+     * @param state the current test execution state
      * @throws IllegalArgumentException
      *             if the given layout processor is not part of the processors that are still to be
      *             executed.
      */
-    public List<LGraph> runLayoutTestUntil(final Class<? extends ILayoutProcessor> phase,
-            final boolean inclusive) {
-
-        // check if a layout test run is active
-        if (currentLayoutTestGraphs == null) {
-            throw new IllegalStateException("No active layout test run.");
-        }
-        List<ILayoutProcessor> algorithm = currentLayoutTestGraphs.get(0).getProperty(
-                Properties.PROCESSORS);
+    public void runLayoutTestUntil(final Class<? extends ILayoutProcessor> phase,
+            final boolean inclusive, final TestExecutionState state) {
+        List<ILayoutProcessor> algorithm = state.graphs.get(0).getProperty(Properties.PROCESSORS);
 
         // check if the given phase exists in our current algorithm configuration
         boolean phaseExists = false;
         int phaseIndex;
-        for (phaseIndex = currentLayoutTestStep; phaseIndex < algorithm.size(); phaseIndex++) {
+        for (phaseIndex = state.step; phaseIndex < algorithm.size(); phaseIndex++) {
             if (algorithm.get(phaseIndex).getClass().equals(phase)) {
                 phaseExists = true;
                 if (inclusive) {
@@ -345,108 +353,54 @@ public final class KlayLayered {
         }
 
         // perform the layout up to and including that phase
-        for (; currentLayoutTestStep < phaseIndex; currentLayoutTestStep++) {
-            layoutTest(currentLayoutTestGraphs, algorithm.get(currentLayoutTestStep));
+        for (; state.step < phaseIndex; state.step++) {
+            layoutTest(state.graphs, algorithm.get(state.step));
         }
-
-        return currentLayoutTestGraphs;
     }
 
     /**
      * Performs the {@link #runLayoutTestUntil(Class, boolean)} methods with {@code inclusive} set
      * to {@code true}.
      * 
-     * @param phase
-     *            the phase or processor to stop after.
-     * 
-     * @return list of connected components after the execution of the given phase.
-     * 
+     * @param phase the phase or processor to stop after
+     * @param state the current test execution state
      * @see KlayLayered#runLayoutTestUntil(Class, boolean)
      */
-    public List<LGraph> runLayoutTestUntil(final Class<? extends ILayoutProcessor> phase) {
-        return runLayoutTestUntil(phase, true);
+    public void runLayoutTestUntil(final Class<? extends ILayoutProcessor> phase,
+            final TestExecutionState state) {
+        runLayoutTestUntil(phase, true, state);
     }
 
     /**
      * Runs the next step of the current layout test run. Throws exceptions if no layout test run is
      * currently active or if the current run has finished.
      * 
-     * @return list of connected components after the execution of the next step.
-     * @throws IllegalStateException
-     *             if no layout test run is currently active or if the current run has finished
-     *             executing.
+     * @param state the current test execution state
+     * @throws IllegalStateException if the given state has finished executing
      */
-    public List<LGraph> runLayoutTestStep() {
-        // check if a layout test run is active
-        if (currentLayoutTestGraphs == null) {
-            throw new IllegalStateException("No active layout test run.");
-        }
-
-        if (isLayoutTestFinished()) {
+    public void runLayoutTestStep(final TestExecutionState state) {
+        if (isLayoutTestFinished(state)) {
             throw new IllegalStateException("Current layout test run has finished.");
         }
 
         // perform the next layout step
-        List<ILayoutProcessor> algorithm = currentLayoutTestGraphs.get(0).getProperty(
+        List<ILayoutProcessor> algorithm = state.graphs.get(0).getProperty(
                 Properties.PROCESSORS);
-        layoutTest(currentLayoutTestGraphs, algorithm.get(currentLayoutTestStep));
-        currentLayoutTestStep++;
-
-        return currentLayoutTestGraphs;
-    }
-
-    /**
-     * Finalizes the current layout test run. After this method has been called, the next test run
-     * can be started by calling {@link #prepareLayoutTest(LGraph, IKielerProgressMonitor)}.
-     * 
-     * @throws IllegalStateException
-     *             if no layout test run is currently active.
-     */
-    public void finalizeLayoutTest() {
-        // check if a layout test run is active
-        if (currentLayoutTestGraphs == null) {
-            throw new IllegalStateException("No active layout test run.");
-        }
-
-        currentLayoutTestGraphs = null;
-        currentLayoutTestStep = 0;
+        layoutTest(state.graphs, algorithm.get(state.step));
+        state.step++;
     }
 
     /**
      * Returns the current list of layout processors that make up the algorithm. This list is only
      * valid and meaningful while a layout test is being run.
      * 
+     * @param state the current test execution state
      * @return the algorithm's current configuration.
-     * @throws IllegalStateException
-     *             if no layout test run is currently active.
      */
-    public List<ILayoutProcessor> getLayoutTestConfiguration() {
-        // check if a layout test run is active
-        if (currentLayoutTestGraphs == null) {
-            throw new IllegalStateException("No active layout test run.");
-        }
-        List<ILayoutProcessor> algorithm = currentLayoutTestGraphs.get(0).getProperty(
-                Properties.PROCESSORS);
-        return algorithm;
+    public List<ILayoutProcessor> getLayoutTestConfiguration(final TestExecutionState state) {
+        return state.graphs.get(0).getProperty(Properties.PROCESSORS);
     }
 
-    /**
-     * Returns the list of test graphs associated with the current layout test run. If connected
-     * components processing is active, the list will contain one {@link LGraph} instance for each
-     * connected component. Otherwise, the list will contain just one {@link LGraph}.
-     * 
-     * @return layout test graphs.
-     * @throws IllegalStateException
-     *             if no layout test run is currently active.
-     */
-    public List<LGraph> getLayoutTestGraphs() {
-        // check if a layout test run is active
-        if (currentLayoutTestGraphs == null) {
-            throw new IllegalStateException("No active layout test run.");
-        }
-
-        return currentLayoutTestGraphs;
-    }
 
     // /////////////////////////////////////////////////////////////////////////////
     // Options and Modules Management

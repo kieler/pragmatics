@@ -89,8 +89,7 @@ public class InLayerConstraintProcessorTest extends AbstractLayeredProcessorTest
      */
     @Before
     public void runUntil() {
-        lgraphs = layered.runLayoutTestUntil(InLayerConstraintProcessor.class);
-
+        layered.runLayoutTestUntil(InLayerConstraintProcessor.class, state);
     }
 
     /**
@@ -98,7 +97,7 @@ public class InLayerConstraintProcessorTest extends AbstractLayeredProcessorTest
      */
     @Test
     public void testNodeMargins() {
-        for (LGraph g : lgraphs) {
+        for (LGraph g : state.getGraphs()) {
             for (Layer layer : g.getLayers()) {
                 InLayerConstraint last = null;
                 for (LNode node : layer.getNodes()) {

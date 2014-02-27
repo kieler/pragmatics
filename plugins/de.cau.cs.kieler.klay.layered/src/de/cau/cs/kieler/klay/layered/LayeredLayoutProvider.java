@@ -83,18 +83,16 @@ public final class LayeredLayoutProvider extends AbstractLayoutProvider {
     // Layout Testing
     
     /**
-     * Imports the given {@link KGraph} and returns an instance of {@link KlayLayered} prepared for a
-     * test run with the resulting {@link LGraph}. The layout test run methods can immediately be called
-     * on the returned object. Once finished, {@link KlayLayered#finalizeLayoutTest()} should be called.
+     * Import the given KGraph and return a test execution state prepared for a test run with the
+     * resulting {@link LGraph}. The layout test run methods can immediately be called on the
+     * returned object.
      * 
-     * <p><strong>Note:</strong> This method does not apply the layout back to the original kgraph!</p>
+     * <p><strong>Note:</strong> This method does not apply the layout back to the original KGraph!</p>
      * 
-     * @param kgraph the {@link KGraph} to be used for the layout test run.
-     * @return an instance of {@link KlayLayered} with
-     *         {@link KlayLayered#prepareLayoutTest(LGraph, IKielerProgressMonitor)} already called.
+     * @param kgraph the KGraph to be used for the layout test run.
+     * @return an initialized test execution state
      */
-    public KlayLayered startLayoutTest(final KNode kgraph) {
-        
+    public KlayLayered.TestExecutionState startLayoutTest(final KNode kgraph) {
         // Create the hash code counter used to create all graph elements; this is used to ensure
         // that all hash codes are unique, but predictable independently of the object instances.
         HashCodeCounter hashCodeCounter = new HashCodeCounter();
@@ -103,11 +101,17 @@ public final class LayeredLayoutProvider extends AbstractLayoutProvider {
 
         LGraph layeredGraph = graphImporter.importGraph(kgraph);
         
-        // return a new instance of KLay Layered initialized with the given layout test data
-        KlayLayered algorithm = new KlayLayered();
-        algorithm.prepareLayoutTest(layeredGraph);
-        
-        return algorithm;
+        // Prepare a layout test and return the test execution state
+        return klayLayered.prepareLayoutTest(layeredGraph);
+    }
+    
+    /**
+     * Return the layered layout algorithm.
+     * 
+     * @return the layout algorithm
+     */
+    public KlayLayered getLayoutAlgorithm() {
+        return klayLayered;
     }
 
 }
