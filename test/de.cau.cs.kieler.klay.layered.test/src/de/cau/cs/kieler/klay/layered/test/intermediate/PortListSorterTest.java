@@ -127,7 +127,7 @@ public class PortListSorterTest extends AbstractLayeredProcessorTest {
     @Before
     public void runUntil() {
         // FIXME chose the phase in which the port positions are actually decided.
-        lgraphs = layered.runLayoutTestUntil(LongEdgeJoiner.class);
+        layered.runLayoutTestUntil(LongEdgeJoiner.class, state);
     }
 
     /**
@@ -135,7 +135,7 @@ public class PortListSorterTest extends AbstractLayeredProcessorTest {
      */
     @Test
     public void testNodeConstraints() {
-        for (LGraph g : lgraphs) {
+        for (LGraph g : state.getGraphs()) {
             for (Layer layer : g.getLayers()) {
                 for (LNode node : layer.getNodes()) {
                     Double lastPos = null;
@@ -178,7 +178,7 @@ public class PortListSorterTest extends AbstractLayeredProcessorTest {
      */
     @Test
     public void testPortSides() {
-        for (LGraph g : lgraphs) {
+        for (LGraph g : state.getGraphs()) {
             for (Layer layer : g.getLayers()) {
                 for (LNode node : layer.getNodes()) {
                     PortSide lastSide = null;

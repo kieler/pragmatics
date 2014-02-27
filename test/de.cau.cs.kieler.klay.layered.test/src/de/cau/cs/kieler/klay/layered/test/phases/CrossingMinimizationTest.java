@@ -38,7 +38,6 @@ import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
  * Basic crossing minimization tests.
  * 
  * @author uru
- * 
  */
 public class CrossingMinimizationTest extends AbstractLayeredProcessorTest {
 
@@ -76,10 +75,9 @@ public class CrossingMinimizationTest extends AbstractLayeredProcessorTest {
      */
     @Before
     public void runUntil() {
-
         // first run until layerer finished, remember a layer's nodes
-        lgraphs = layered.runLayoutTestUntil(getAndCheckSimpleConfig().getStrategyImpl(), false);
-        for (LGraph g : lgraphs) {
+        layered.runLayoutTestUntil(getAndCheckSimpleConfig().getStrategyImpl(), false, state);
+        for (LGraph g : state.getGraphs()) {
             for (Layer layer : g.getLayers()) {
                 for (LNode node : layer.getNodes()) {
                     layerNodesMap.put(layer, node);
@@ -87,7 +85,7 @@ public class CrossingMinimizationTest extends AbstractLayeredProcessorTest {
             }
         }
 
-        lgraphs = layered.runLayoutTestUntil(getAndCheckSimpleConfig().getStrategyImpl(), true);
+        layered.runLayoutTestUntil(getAndCheckSimpleConfig().getStrategyImpl(), true, state);
     }
 
     /**
@@ -95,7 +93,7 @@ public class CrossingMinimizationTest extends AbstractLayeredProcessorTest {
      */
     @Test
     public void testSameLayer() {
-        for (LGraph g : lgraphs) {
+        for (LGraph g : state.getGraphs()) {
             for (Layer layer : g.getLayers()) {
                 for (LNode node : layer.getNodes()) {
                     // node in the same layer?
