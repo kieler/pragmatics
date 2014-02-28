@@ -59,7 +59,8 @@
 			    id: "root", 
 			    properties: {
 			    	spacing: 100,
-			    	edgeRouting: "ORTHOGONAL"
+			    	edgeRouting: "ORTHOGONAL",
+			    	layoutHierarchy: true
 			    },
 			    children: [{
 			        id: "n1", 
@@ -104,6 +105,10 @@
 					            id: "n11_p1",
 					            width: 10,
 					            height: 10
+					        },{
+					            id: "n11_p2",
+					            width: 10,
+					            height: 10
 					        }]
 					    }],
 					     edges: [{
@@ -117,8 +122,9 @@
 			        edges: [{
 			            id: "e4", 
 			            source: "n3",
+			            //target: "n4"
 			            target: "n11",
-			            targetPort: "n11_p1"
+			            targetPort: "n11_p2"
 			        }]
 			    }],
 			    edges: [{
@@ -180,6 +186,8 @@
 					document.body.innerHTML = "<pre>" + JSON.stringify(error, null, "  ") + "</pre>";
 				},
 				options: {
+					direction: "RIGHT",
+					edgeRouting: "ORTHOGONAL",
 					spacing: 50
 				}
 			});

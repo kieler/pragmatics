@@ -41,6 +41,7 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement.HashCodeCounter;
 import de.cau.cs.kieler.klay.layered.graph.LGraphUtil;
+import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -170,6 +171,7 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
             // set this LGraph as child of the parent LNode
             parentNode.setProperty(Properties.NESTED_LGRAPH, graph);
         }
+        graph.setProperty(Properties.PARENT_LNODE, parentNode);
         
         // global layout options are applied first, hence possibly overwritten
         if (globalOptions != null) {
@@ -769,9 +771,8 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
     
                 }
             
-            
             } else {
-                // it's a external port dummy
+                // it's an external port dummy
                 // TODO
             }
         }
@@ -816,15 +817,37 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
 
     private void transferLayout(final LEdge edge, final JSONObject json, final KVector offset) {
 
+        KVector edgeOffset = offset;
+        
         // Source Point
-        KVector src = edge.getSource().getAbsoluteAnchor().translate(offset.x, offset.y);
+        KVector src;
+        if (LGraphUtil.isDescendant(edge.getTarget().getNode(), edge.getSource().getNode())) {
+            LPort sourcePort = edge.getSource();
+            src = KVector.sum(sourcePort.getPosition(), sourcePort.getAnchor());
+            LInsets sourceInsets = sourcePort.getNode().getInsets();
+            src.translate(-sourceInsets.left, -sourceInsets.top);
+            LGraph nestedGraph = sourcePort.getNode().getProperty(Properties.NESTED_LGRAPH);
+            if (nestedGraph != null) {
+                edgeOffset = nestedGraph.getOffset();
+            }
+            src.sub(edgeOffset);
+        } else {
+            src = edge.getSource().getAbsoluteAnchor();
+        }
+        
+        src.translate(offset.x, offset.y);
         JSONObject srcPnt = new JSONObject();
         srcPnt.put("x", new JSONNumber(src.x));
         srcPnt.put("y", new JSONNumber(src.y));
         json.put("sourcePoint", srcPnt);
 
         // Target Point
-        KVector tgt = edge.getTarget().getAbsoluteAnchor().translate(offset.x, offset.y);
+        KVector tgt = edge.getTarget().getAbsoluteAnchor();
+        if (edge.getProperty(Properties.TARGET_OFFSET) != null) {
+            tgt.add(edge.getProperty(Properties.TARGET_OFFSET));
+        }
+        
+        tgt.translate(offset.x, offset.y);
         JSONObject tgtPnt = new JSONObject();
         tgtPnt.put("x", new JSONNumber(tgt.x));
         tgtPnt.put("y", new JSONNumber(tgt.y));
@@ -832,7 +855,7 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
 
         // Bend Points
         JSONArray bends = new JSONArray();
-        KVectorChain vc = edge.getBendPoints().translate(offset);
+        KVectorChain vc = edge.getBendPoints().translate(edgeOffset);
         int index = 0;
         for (KVector v : vc) {
             JSONObject jv = new JSONObject();
