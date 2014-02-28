@@ -54,10 +54,8 @@ public class RecursiveLGraphLayout {
         if (graph.getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {
             klayLayered.doCompoundLayout(graph, new BasicProgressMonitor());
         } else {
-            klayLayered.doLayout(graph, new BasicProgressMonitor());
+            recLayout(klayLayered, graph);
         }
-        // LGraph result = klayLayered.doLayout(graph, new BasicProgressMonitor());
-        //LGraph result = recLayout(klayLayered, graph);
 
         // transfer the layout information back to the json objects
         importer.applyLayout(graph);

@@ -34,6 +34,7 @@ import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
+import de.cau.cs.kieler.kiml.options.PortLabelPlacement;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
@@ -713,56 +714,73 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         // root graph's dimensions
         transferLayout(layeredGraph, rootJson);
         // positions and dimension of all other elements
-        transferLayout(layeredGraph, new KVector());
+        transferLayout(layeredGraph);
     }
 
     
-    private void transferLayout(final LGraph parentGraph, final KVector parentOffset) {
-
+    private void transferLayout(final LGraph parentGraph) {
+        
         for (LNode n : parentGraph.getLayerlessNodes()) {
             JSONObject jNode = nodeJsonMap.get(n);
-            KVector newOffset = KVector.sum(parentOffset, parentGraph.getOffset());
 
-            transferLayout(n, jNode, newOffset);
-
-            // ports
-            for (LPort p : n.getPorts()) {
-                JSONObject jPort = portJsonMap.get(p);
-                if (jPort != null) {
-                    // dummy ports for port-less edges are not contained in the map
-                    transferLayout(p, jPort, newOffset);
+            KVector offset = parentGraph.getOffset();
+            
+            if (jNode != null) {
+                // it's a usual node
+                transferLayout(n, jNode, offset);
+    
+                // ports
+                for (LPort p : n.getPorts()) {
+                    JSONObject jPort = portJsonMap.get(p);
+                    if (jPort != null) {
+                        // dummy ports for port-less edges are not contained in the map
+                        transferLayout(p, jPort, new KVector());
+                        setJsProperty(jPort, LayoutOptions.PORT_SIDE, new JSONString(p
+                                .getSide().name()));
+                    }
+    
+                    // labels
+                    if (n.getProperty(LayoutOptions.PORT_LABEL_PLACEMENT) != PortLabelPlacement.FIXED) {
+                        for (LLabel l : p.getLabels()) {
+                            JSONObject jLabel = labelJsonMap.get(l);
+                            transferLayout(l, jLabel, offset);
+                        }
+                    }
                 }
-
+    
                 // labels
-                for (LLabel l : p.getLabels()) {
-                    JSONObject jLabel = labelJsonMap.get(l);
-                    transferLayout(l, jLabel, newOffset);
+                if (!n.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT).isEmpty()) {
+                    for (LLabel l : n.getLabels()) {
+                        JSONObject jLabel = labelJsonMap.get(l);
+                        transferLayout(l, jLabel, offset);
+                    }
                 }
-            }
-
-            // labels
-            for (LLabel l : n.getLabels()) {
-                JSONObject jLabel = labelJsonMap.get(l);
-                transferLayout(l, jLabel, newOffset);
-            }
-
-            // edges
-            for (LEdge e : n.getOutgoingEdges()) {
-                JSONObject jEdge = edgeJsonMap.get(e);
-                transferLayout(e, jEdge, newOffset);
-
-                // labels
-                for (LLabel l : e.getLabels()) {
-                    JSONObject jLabel = labelJsonMap.get(l);
-                    transferLayout(l, jLabel, newOffset);
+    
+                // edges
+                for (LEdge e : n.getOutgoingEdges()) {
+                    JSONObject jEdge = edgeJsonMap.get(e);
+                    transferLayout(e, jEdge, offset);
+    
+                    // labels
+                    for (LLabel l : e.getLabels()) {
+                        JSONObject jLabel = labelJsonMap.get(l);
+                        transferLayout(l, jLabel, offset);
+                    }
+    
                 }
-
+            
+            
+            } else {
+                // it's a external port dummy
+                // TODO
             }
+        }
 
-            // recursively
+        // Process nested subgraphs
+        for (LNode n : parentGraph.getLayerlessNodes()) {
             LGraph childGraph = n.getProperty(Properties.NESTED_LGRAPH);
             if (childGraph != null) {
-                transferLayout(childGraph, newOffset);
+                transferLayout(childGraph);
             }
         }
     }
@@ -865,5 +883,18 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
             throw new UnsupportedGraphException("Invalid format for 'id'. Must be a string, was "
                     + obj.get("id").getClass());
         }
+    }
+    
+    private void setJsProperty(final JSONObject obj, IProperty<?> prop, JSONValue value) {
+        setJsProperty(obj, prop.getId(), value);
+    }
+    
+    private void setJsProperty(final JSONObject obj, String name, JSONValue value) {
+        JSONValue props = obj.get("properties");
+        if (props == null) {
+            props = new JSONObject();
+            obj.put("properties", props);
+        }
+        props.isObject().put(name, value);
     }
 }
