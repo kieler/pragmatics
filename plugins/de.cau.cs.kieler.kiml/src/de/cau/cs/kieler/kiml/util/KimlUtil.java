@@ -570,8 +570,9 @@ public final class KimlUtil {
      * 
      * @param point a relative point
      * @param parent the parent node to which the point is relative to
+     * @return {@code point} for convenience
      */
-    public static void toAbsolute(final KVector point, final KNode parent) {
+    public static KVector toAbsolute(final KVector point, final KNode parent) {
         KNode node = parent;
         while (node != null) {
             KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
@@ -580,6 +581,7 @@ public final class KimlUtil {
                     nodeLayout.getYpos() + insets.getTop());
             node = node.getParent();
         }
+        return point;
     }
     
     /**
@@ -588,8 +590,9 @@ public final class KimlUtil {
      * 
      * @param point an absolute point
      * @param parent the parent node to which the point shall be made relative to
+     * @return {@code point} for convenience
      */
-    public static void toRelative(final KVector point, final KNode parent) {
+    public static KVector toRelative(final KVector point, final KNode parent) {
         KNode node = parent;
         while (node != null) {
             KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
@@ -598,6 +601,7 @@ public final class KimlUtil {
                         -nodeLayout.getYpos() - insets.getTop());
             node = node.getParent();
         }
+        return point;
     }
     
     /**
