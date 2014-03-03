@@ -38,6 +38,7 @@ import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.kgraph.PersistentEntry;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
+import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
@@ -689,26 +690,49 @@ public final class KimlUtil {
         while (iterator.hasNext()) {
             EObject eObject = iterator.next();
             if (eObject instanceof KLayoutData) {
-                KLayoutData kgraphData = (KLayoutData) eObject;
-                for (PersistentEntry persistentEntry : kgraphData.getPersistentEntries()) {
-                    String key = persistentEntry.getKey();
-                    String value = persistentEntry.getValue();
-                    if (key != null && value != null) {
-                        // try to get the layout option from the data service.
-                        LayoutOptionData layoutOptionData = dataService.getOptionDataBySuffix(key);
-                        
-                        // if we have a valid layout option, parse its value.
-                        if (layoutOptionData != null) {
-                            Object layoutOptionValue = layoutOptionData.parseValue(value);
-                            if (layoutOptionValue != null) {
-                                kgraphData.setProperty(layoutOptionData, layoutOptionValue);
-                            }
-                        } else {
-                            // the layout option could not be resolved, so create a proxy
-                            LayoutOptionProxy.setProxyValue(kgraphData, key, value);
-                        }
-                    }
+                final KLayoutData layoutData = (KLayoutData) eObject;
+                for (PersistentEntry persistentEntry : layoutData.getPersistentEntries()) {
+                    loadDataElement(dataService, layoutData, persistentEntry.getKey(),
+                            persistentEntry.getValue());
                 }
+            }
+        }
+    }
+
+    /**
+     * Configures the {@link de.cau.cs.kieler.core.properties.IProperty layout option} given by
+     * {@code key} and {@code value} in the given {@link IPropertyHolder}, if {@code key}
+     * denominates a registered Layout Option; configures a {@link LayoutOptionProxy} otherwise.<br>
+     * <br>
+     * Extracted that part into a dedicated method in order to be able to re-use it, e.g. in
+     * KLighD's ExpansionAwareLayoutOptionData.
+     * 
+     * @author chsch (extractor)
+     * 
+     * @param dataService
+     *            the current {@link LayoutDataService}
+     * @param propertyHolder
+     *            the {@link IPropertyHolder} to be configured
+     * @param id
+     *            the layout option's id
+     * @param value
+     *            the desired option value
+     */
+    public static void loadDataElement(final LayoutDataService dataService,
+            final IPropertyHolder propertyHolder, final String id, final String value) {
+        if (id != null && value != null) {
+            // try to get the layout option from the data service.
+            final LayoutOptionData layoutOptionData = dataService.getOptionDataBySuffix(id);
+            
+            // if we have a valid layout option, parse its value.
+            if (layoutOptionData != null) {
+                Object layoutOptionValue = layoutOptionData.parseValue(value);
+                if (layoutOptionValue != null) {
+                    propertyHolder.setProperty(layoutOptionData, layoutOptionValue);
+                }
+            } else {
+                // the layout option could not be resolved, so create a proxy
+                LayoutOptionProxy.setProxyValue(propertyHolder, id, value);
             }
         }
     }
