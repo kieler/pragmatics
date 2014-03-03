@@ -162,6 +162,10 @@ public final class LayoutOptionResolver {
             // klay
             );
     
+    private static final Pair<Set<String>, Map<String, IProperty<?>>> KLAY_JS = createTypesSet(
+            JsonGraphImporter.INT_COORDINATES
+            );
+    
     private LayoutOptionResolver() {
     }
     
@@ -396,6 +400,9 @@ public final class LayoutOptionResolver {
                 }
             }
 
+        } else if (KLAY_JS.getFirst().contains(id)) {
+            // ignore these, they are not supposed to be part of the internal LGraph
+            return;
         }
         
         throw new UnsupportedGraphException("Unsupported layout option '" + id + "' (" + value + ").");

@@ -62,6 +62,20 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  */
 public class JsonGraphImporter implements IGraphImporter<JSONObject> {
 
+    /*
+     * External Properties
+     */
+    /**
+     * When writing coordinates back to the json object, int values are written
+     * instead of double values. No rounding is involved, the decimal places 
+     * are just cut off.
+     */
+    public static final IProperty<Boolean> INT_COORDINATES = new Property<Boolean>(
+            "intCoordinates", false);
+
+    /*
+     * Internal Properties
+     */
     private static final IProperty<JSONObject> JSON_OBJECT = new Property<JSONObject>("jsonObject");
     
     private Map<String, LNode> nodeIdMap = Maps.newHashMap();
@@ -85,11 +99,15 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
      * ensure unique hash codes.
      */
     private HashCodeCounter hashCodeCounter = new HashCodeCounter();
-
-    private JSONObject globalOptions = null;
     
     /** The root json element of the graph passed to {@link #importGraph(JSONObject)}. */
     private JSONObject rootJson = null;
+    
+    /** Global options being applied to every compound graph. */
+    private JSONObject globalOptions = null;
+    
+    /** Whether to export coordinates as integers. */
+    private boolean exportIntegerCoordinates = false;
 
     private void reset() {
         nodeIdMap.clear();
@@ -118,6 +136,14 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         this.rootJson = json;
         
         reset();
+        
+        // retrieve some klay.js specific options
+        if (globalOptions != null) {
+            JSONValue val = globalOptions.get(INT_COORDINATES.getId());
+            if (val != null && val.isBoolean() != null) {
+                exportIntegerCoordinates = val.isBoolean().booleanValue();
+            } 
+        }
 
         // first we transform all nodes of all hierarchy levels
         // this includes existing ports and labels
@@ -702,7 +728,6 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         }
     }
 
-
     /*---------------------------------------------------------------------------------
      *                          Transfer the Layout back
      */
@@ -787,11 +812,8 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
     }
 
     private void transferLayout(final LGraph graph, final JSONObject json) {
-        JSONNumber width = new JSONNumber(graph.getSize().x);
-        json.put("width", width);
-
-        JSONNumber height = new JSONNumber(graph.getSize().y);
-        json.put("height", height);
+        setJsNumber(json, "width", graph.getSize().x);
+        setJsNumber(json, "height", graph.getSize().y);
     }
 
     private void transferLayout(final LShape shape, final JSONObject json, final KVector parentOffset) {
@@ -802,17 +824,11 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
             offset = parentOffset;
         }
 
-        JSONNumber x = new JSONNumber(shape.getPosition().x + offset.x);
-        json.put("x", x);
+        setJsNumber(json, "x", shape.getPosition().x + offset.x);
+        setJsNumber(json, "y", shape.getPosition().y + offset.y);
+        setJsNumber(json, "width", shape.getSize().x);
+        setJsNumber(json, "height", shape.getSize().y);
 
-        JSONNumber y = new JSONNumber(shape.getPosition().y + offset.y);
-        json.put("y", y);
-
-        JSONNumber width = new JSONNumber(shape.getSize().x);
-        json.put("width", width);
-
-        JSONNumber height = new JSONNumber(shape.getSize().y);
-        json.put("height", height);
     }
 
     private void transferLayout(final LEdge edge, final JSONObject json, final KVector offset) {
@@ -837,8 +853,8 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         
         src.translate(offset.x, offset.y);
         JSONObject srcPnt = new JSONObject();
-        srcPnt.put("x", new JSONNumber(src.x));
-        srcPnt.put("y", new JSONNumber(src.y));
+        setJsNumber(srcPnt, "x", src.x);
+        setJsNumber(srcPnt, "y", src.y);
         json.put("sourcePoint", srcPnt);
 
         // Target Point
@@ -849,8 +865,8 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         
         tgt.translate(offset.x, offset.y);
         JSONObject tgtPnt = new JSONObject();
-        tgtPnt.put("x", new JSONNumber(tgt.x));
-        tgtPnt.put("y", new JSONNumber(tgt.y));
+        setJsNumber(tgtPnt, "x", tgt.x);
+        setJsNumber(tgtPnt, "y", tgt.y);
         json.put("targetPoint", tgtPnt);
 
         // Bend Points
@@ -859,8 +875,8 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         int index = 0;
         for (KVector v : vc) {
             JSONObject jv = new JSONObject();
-            jv.put("x", new JSONNumber(v.x));
-            jv.put("y", new JSONNumber(v.y));
+            setJsNumber(jv, "x", v.x);
+            setJsNumber(jv, "y", v.y);
             bends.set(index++, jv);
         }
         if (!vc.isEmpty()) {
@@ -877,8 +893,8 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
             JSONArray junctions = new JSONArray();
             for (KVector v : junctionPoints) {
                 JSONObject jv = new JSONObject();
-                jv.put("x", new JSONNumber(v.x));
-                jv.put("y", new JSONNumber(v.y));
+                setJsNumber(jv, "x", v.x);
+                setJsNumber(jv, "y", v.y);
                 junctions.set(index++, jv);
             }
             json.put("junctionPoints", junctions);
@@ -908,16 +924,32 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         }
     }
     
-    private void setJsProperty(final JSONObject obj, IProperty<?> prop, JSONValue value) {
+    private void setJsProperty(final JSONObject obj, final IProperty<?> prop, final JSONValue value) {
         setJsProperty(obj, prop.getId(), value);
     }
     
-    private void setJsProperty(final JSONObject obj, String name, JSONValue value) {
+    private void setJsProperty(final JSONObject obj, final String name, final JSONValue value) {
         JSONValue props = obj.get("properties");
         if (props == null) {
             props = new JSONObject();
             obj.put("properties", props);
         }
         props.isObject().put(name, value);
+    }
+    
+    /**
+     * Sets the value of the passed key to be a {@link JSONNumber} of {@code value}.
+     * Obeys to the value of {@code exportIntegerCoordinates} and does a simple cast to
+     * int if the flag is set to true.
+     */
+    private void setJsNumber(final JSONObject obj, final String key, final double value) {
+        JSONNumber n;
+        if (!exportIntegerCoordinates) {
+            n = new JSONNumber(value);
+        } else {
+            n = new JSONNumber((int) value);
+        }
+        
+        obj.put(key, n);
     }
 }
