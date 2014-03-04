@@ -31,6 +31,8 @@ import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.PortSide;
 
 /**
  * @author uru
@@ -49,7 +51,6 @@ public class CGraph {
     public final CompoundConstraintPtrs constraints;
     public final double[] idealEdgeLengths;
 
-    
     protected int nodeIndex = 0;
     protected int edgeIndex = 0;
 
@@ -93,6 +94,18 @@ public class CGraph {
 
             // create ports
             for (KPort p : n.getPorts()) {
+
+                try {
+                    if (n.getLabels().get(0).getText().equals("DiscreteClock")) {
+                        if (p.getData(KShapeLayout.class).getProperty(LayoutOptions.PORT_SIDE) == PortSide.SOUTH) {
+//                            continue; 
+                        }
+                        if (p.getData(KShapeLayout.class).getProperty(LayoutOptions.PORT_SIDE) == PortSide.WEST) {
+//                            continue;
+                        }
+                    }
+                } catch (Exception e) {
+                }
 
                 CPort port = new CPort(this, p, cnode);
                 kportMap.put(p, port);
