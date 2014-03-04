@@ -46,8 +46,10 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
+import de.cau.cs.kieler.kiml.cola.util.ColaUtil;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
@@ -63,6 +65,7 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
     // DO NOT map the class instances, as the cpp side might return new instances ..
     private BiMap<KNode, Long> nodeIndexMap = HashBiMap.create();
     private BiMap<KEdge, Long> edgeIndexMap = HashBiMap.create();
+    private BiMap<KPort, Long> portDummyIndexMap = HashBiMap.create();
 
     private RectanglePtrs nodes;
     private ColaEdges edges;
@@ -70,9 +73,14 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
     private CompoundConstraintPtrs constraints;
 
     private float spacing;
+    
+    
+    private long edgeIndexOffset = 0;
+    
+    private double[] edgeLengths ;
 
     /**
-     * Main entry point of the layour provider.
+     * Main entry point of the layout provider.
      * 
      * {@inheritDoc}
      */
@@ -86,11 +94,12 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         Rectangle.setXBorder(spacing);
         Rectangle.setYBorder(spacing);
 
+        constraints = new CompoundConstraintPtrs();
+
         // transform to cola representation
         transformGraph(parentNode);
 
         // create constraints
-        constraints = new CompoundConstraintPtrs();
         if (rootLayout.getProperty(ColaProperties.DIRECTION_CONSTRAINTS)) {
             addDirectionConstraints(parentNode);
         }
@@ -101,30 +110,34 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         }
 
         double idealEdgeLength = rootLayout.getProperty(ColaProperties.IDEAL_EDGE_LENGTHS);
-        double[] nonUniformEdgeLengths = nonUniformLinks(parentNode, (float) idealEdgeLength);
-        System.out.println(Arrays.toString(nonUniformEdgeLengths));
-
-        SWIGTYPE_p_double arr = adaptagrams.newDoubleArray(nonUniformEdgeLengths.length);
-        for (int i = 0; i < nonUniformEdgeLengths.length; ++i) {
-            adaptagrams.doubleArraySet(arr, i, nonUniformEdgeLengths[i]);
-            // adaptagrams.doubleArraySet(arr, i, 100);
-        }
+         double[] nonUniformEdgeLengths = nonUniformLinks(parentNode, (float) idealEdgeLength);
+         System.out.println(Arrays.toString(nonUniformEdgeLengths));
+        
+         SWIGTYPE_p_double arr = adaptagrams.newDoubleArray(nonUniformEdgeLengths.length);
+         for (int i = 0; i < nonUniformEdgeLengths.length; ++i) {
+         adaptagrams.doubleArraySet(arr, i, nonUniformEdgeLengths[i]);
+         // adaptagrams.doubleArraySet(arr, i, 100);
+         }
 
         // FIXME not able to pass a array of edge lengths here due to swig type ..
         // execute layout algorithm
-        ConstrainedFDLayout algo = new ConstrainedFDLayout(nodes, edges, 1, true, arr);
+        ConstrainedFDLayout algo = new ConstrainedFDLayout(nodes, edges, 40, false, arr);
 
         algo.setConstraints(constraints);
 
         // set clusters
-        RootCluster rc = new RootCluster();
-        for (Cluster c : separateUnconnectedComponents(parentNode)) {
-            rc.addChildCluster(c);
-        }
+        // RootCluster rc = new RootCluster();
+        // for (Cluster c : separateUnconnectedComponents(parentNode)) {
+        // rc.addChildCluster(c);
+        // }
 
         algo.makeFeasible();
 
         algo.run();
+        algo.run();
+        // algo.run();
+
+        algo.outputInstanceToSVG();
 
         // apply the calculated layout back
         applyLayout(parentNode);
@@ -139,13 +152,41 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
     private void transformGraph(final KNode root) {
         nodeIndexMap.clear();
         edgeIndexMap.clear();
+        portDummyIndexMap.clear();
 
         /*
          * Nodes
          */
         nodes = new RectanglePtrs();
-        long index = 0;
+
+        // edges are index pairs to the rectangle array
+        edges = new ColaEdges();
+        
+        int edgeCount  = 0;
         for (KNode n : root.getChildren()) {
+            for (KEdge e : n.getOutgoingEdges()) {
+                edgeCount ++;
+            }
+        }
+        int portCount = 0;
+        for (KNode n : root.getChildren()) {
+            for (KPort p : n.getPorts()) {
+                portCount++;
+            }
+        }
+        edgeLengths = new double[portCount + edgeCount];
+
+        long edgeIndex = 0;
+        long index = 0;
+
+        for (KNode n : root.getChildren()) {
+            
+            // ignore unconnected nodes
+            if (n.getIncomingEdges().isEmpty() && n.getOutgoingEdges().isEmpty()) {
+                continue;
+            }
+            
+            
             KShapeLayout layout = n.getData(KShapeLayout.class);
             // x X y Y meaning x width y height
             // Rectangle r =
@@ -156,27 +197,90 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
             // any weird layout stuff used before we run it, use 0 as initial positions for all
             // rects
             Rectangle r = new Rectangle(0, 0 + layout.getWidth(), 0, 0 + layout.getHeight());
-
+            final long centerIndex = index;
             nodes.add(r);
             nodeIndexMap.put(n, index++);
-        }
 
+            // create ports
+            for (KPort p : n.getPorts()) {
+
+                KShapeLayout portLayout = p.getData(KShapeLayout.class);
+
+                try {
+                    if (n.getLabels().get(0).getText().equals("DiscreteClock")) {
+                        if (portLayout.getProperty(LayoutOptions.PORT_SIDE) != PortSide.EAST) {
+                            System.out.println("Ignore port");
+                            // continue;
+                        }
+
+                    }
+                } catch (Exception e) {
+
+                }
+
+                Rectangle pr =
+                        new Rectangle(0, 0 + portLayout.getWidth(), 0, 0 + portLayout.getHeight());
+                nodes.add(pr);
+                portDummyIndexMap.put(p, index++);
+
+                // connect by edge
+                ColaEdge dummyEdge = new ColaEdge(centerIndex, index - 1);
+                edges.add(dummyEdge);
+                edgeIndex++;
+
+                // constraints refer to the center of a node
+                double halfX = layout.getWidth() / 2f - portLayout.getWidth() / 2f;
+                double halfY = layout.getHeight() / 2f - portLayout.getHeight() / 2f;
+
+                // generate sep constrs
+                SeparationConstraint scX =
+                        new SeparationConstraint(Dim.XDIM, centerIndex, index - 1,
+                                portLayout.getXpos() - halfX, true);
+                constraints.add(scX);
+                SeparationConstraint scY =
+                        new SeparationConstraint(Dim.YDIM, centerIndex, index - 1,
+                                portLayout.getYpos() - halfY, true);
+                constraints.add(scY);
+                
+                // calculate the fixed distance of the dummy to the center
+                KVector center = new KVector(layout.getWidth()/ 2f, layout.getHeight() / 2f);
+                KVector portPos = new KVector(portLayout.getXpos() - halfX, portLayout.getYpos() - halfY);
+                
+                edgeLengths[(int)edgeIndex-1] = KVector.distance(center, portPos) + 5;
+                
+            }
+
+        }
+        
+edgeIndexOffset = edgeIndex;
+System.out.println("Finished dummie edges at " + edgeIndex);
         /*
          * Edges
          */
-        // edges are index pairs to the rectangle array
-        edges = new ColaEdges();
-        index = 0;
         for (KNode n : root.getChildren()) {
             for (KEdge e : n.getOutgoingEdges()) {
-                long src = nodeIndexMap.get(e.getSource());
-                long tgt = nodeIndexMap.get(e.getTarget());
+                long src;
+                if (e.getSourcePort() != null) {
+                    src = portDummyIndexMap.get(e.getSourcePort());
+                } else {
+                    src = nodeIndexMap.get(e.getSource());
+                }
+
+                long tgt;
+                if (e.getTargetPort() != null) {
+                    tgt = portDummyIndexMap.get(e.getTargetPort());
+                } else {
+                    tgt = nodeIndexMap.get(e.getTarget());
+                }
+
                 ColaEdge cE = new ColaEdge(src, tgt);
 
                 edges.add(cE);
-                edgeIndexMap.put(e, index++);
+                edgeIndexMap.put(e, edgeIndex++);
             }
         }
+        
+        System.out.println("Last edge created: " + edgeIndex);
     }
 
     private void applyLayout(final KNode root) {
@@ -187,6 +291,11 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         for (int i = 0; i < nodes.size(); i++) {
             Rectangle r = nodes.get(i);
             KNode n = nodeIndexMap.inverse().get((long) i);
+
+            if (n == null) {
+                // this is a dummy
+                continue;
+            }
 
             KShapeLayout layout = n.getData(KShapeLayout.class);
             layout.setXpos((float) r.getMinX());
@@ -245,20 +354,39 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
      */
     private void addDirectionConstraints(final KNode root) {
 
+        Set<Set<KNode>> sccs = ColaUtil.findStronglyConnectedComponents(root);
+        Map<KNode, Set<KNode>> nodeSccMap = Maps.newHashMap();
+        for (Set<KNode> scc : sccs) {
+            for (KNode n : scc) {
+                nodeSccMap.put(n, scc);
+            }
+        }
+
+        // TODO only left to right atm
         for (KNode n : root.getChildren()) {
             for (KEdge e : n.getOutgoingEdges()) {
+
+                // dont create constraints if the nodes are in the same scc
+                if (nodeSccMap.get(e.getSource()).contains(e.getTarget())) {
+                    continue;
+                }
 
                 long src = nodeIndexMap.get(e.getSource());
                 long tgt = nodeIndexMap.get(e.getTarget());
 
                 KShapeLayout srcLayout = e.getSource().getData(KShapeLayout.class);
+                KShapeLayout tgtLayout = e.getTarget().getData(KShapeLayout.class);
 
-                // TODO
-                // does it refer to the minX pos of each node?
-                // in that case we have to add the size of the node to the min separation
+                // separation has to go from mid to mid
+                // TODO consider margin etc
+                double widthSeparation =
+                        (srcLayout.getWidth() + srcLayout.getInsets().getLeft() + srcLayout
+                                .getInsets().getRight())
+                                / 2f
+                                + (tgtLayout.getWidth() + tgtLayout.getInsets().getLeft() + tgtLayout
+                                        .getInsets().getRight()) / 2f;
                 SeparationConstraint sc =
-                        new SeparationConstraint(Dim.XDIM, src, tgt, srcLayout.getWidth() + 10
-                                + spacing);
+                        new SeparationConstraint(Dim.XDIM, src, tgt, widthSeparation + spacing);
                 constraints.add(sc);
             }
         }
@@ -267,6 +395,7 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
     private void constraintsFixedOrder(final KNode root) {
 
         for (KNode n : root.getChildren()) {
+            
             List<KPort> ports = n.getPorts();
 
             for (PortSide ps : PortSide.values()) {
@@ -389,22 +518,22 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
                     float separation = spacing + 2 * 40;
 
                     if (srcSide == PortSide.EAST && tgtSide == PortSide.WEST) {
-//                        System.out.println(src + " " + tgt + " " + srcLayout.getWidth() + " "
-//                                + srcLayout.getInsets());
-//                        System.out.println("Case 1");
+                        // System.out.println(src + " " + tgt + " " + srcLayout.getWidth() + " "
+                        // + srcLayout.getInsets());
+                        // System.out.println("Case 1");
                         separationDim = Dim.XDIM;
                         separation += srcLayout.getWidth();
                     } else if (srcSide == PortSide.WEST && tgtSide == PortSide.EAST) {
-//                        System.out.println("Case 2");
+                        // System.out.println("Case 2");
                         // inverted port situation
                         separationDim = Dim.XDIM;
                         separation += srcLayout.getWidth() + tgtLayout.getWidth();
                     } else if (srcSide == PortSide.SOUTH && tgtSide == PortSide.NORTH) {
-//                        System.out.println("Case 3");
+                        // System.out.println("Case 3");
                         separationDim = Dim.YDIM;
                         separation += srcLayout.getHeight();
                     } else if (srcSide == PortSide.NORTH && tgtSide == PortSide.SOUTH) {
-//                        System.out.println("Case 4");
+                        // System.out.println("Case 4");
                         separationDim = Dim.YDIM;
                         separation += tgtLayout.getHeight();
                         swap = true;
@@ -482,8 +611,9 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
 
     private double[] nonUniformLinks(final KNode root, final float w) {
 
-        double[] edgeLengths = new double[edgeIndexMap.size()];
+//        double[] edgeLengths = new double[edgeIndexMap.size()];
 
+        
         // collect neighbour sets for each node
         Map<KNode, Set<KNode>> neighbours = Maps.newHashMap();
         for (KNode node : root.getChildren()) {
@@ -517,8 +647,8 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
             }
 
             int index = entry.getValue().intValue();
-             edgeLengths[index] = 1 + w * sqrt;
-//            edgeLengths[index] = 1 + w * jaccard;
+            edgeLengths[index] = 1 + w * sqrt;
+            // edgeLengths[index] = 1 + w * jaccard;
         }
 
         return edgeLengths;

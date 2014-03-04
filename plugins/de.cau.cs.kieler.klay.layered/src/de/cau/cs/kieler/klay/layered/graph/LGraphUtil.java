@@ -11,25 +11,18 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.layered.importexport;
+package de.cau.cs.kieler.klay.layered.graph;
 
-import java.util.Map;
 import java.util.Set;
-
-import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
+import de.cau.cs.kieler.kiml.options.Alignment;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.klay.layered.graph.LEdge;
-import de.cau.cs.kieler.klay.layered.graph.LGraph;
-import de.cau.cs.kieler.klay.layered.graph.LInsets;
-import de.cau.cs.kieler.klay.layered.graph.LLabel;
-import de.cau.cs.kieler.klay.layered.graph.LNode;
-import de.cau.cs.kieler.klay.layered.graph.LPort;
+import de.cau.cs.kieler.kiml.options.SizeConstraint;
 import de.cau.cs.kieler.klay.layered.properties.EdgeConstraint;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.InLayerConstraint;
@@ -43,13 +36,175 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * @author msp
  */
-public final class ImportUtil {
+public final class LGraphUtil {
     
     /**
      * Hidden constructor to avoid instantiation.
      */
-    private ImportUtil() { }
+    private LGraphUtil() { }
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Node Resizing
 
+    /**
+     * Resize a node to the given width and height, adjusting port and label positions if needed.
+     * 
+     * @param node a node
+     * @param newSize the new size for the node
+     * @param movePorts whether port positions should be adjusted
+     * @param moveLabels whether label positions should be adjusted
+     */
+    public static void resizeNode(final LNode node, final KVector newSize, final boolean movePorts,
+            final boolean moveLabels) {
+        KVector oldSize = new KVector(node.getSize());
+        
+        float widthRatio = (float) (newSize.x / oldSize.x);
+        float heightRatio = (float) (newSize.y / oldSize.y);
+        float widthDiff = (float) (newSize.x - oldSize.x);
+        float heightDiff = (float) (newSize.y - oldSize.y);
+
+        // Update port positions
+        if (movePorts) {
+            boolean fixedPorts =
+                    node.getProperty(LayoutOptions.PORT_CONSTRAINTS) == PortConstraints.FIXED_POS;
+            
+            for (LPort port : node.getPorts()) {
+                switch (port.getSide()) {
+                case NORTH:
+                    if (!fixedPorts) {
+                        port.getPosition().x *= widthRatio;
+                    }
+                    break;
+                case EAST:
+                    port.getPosition().x += widthDiff;
+                    if (!fixedPorts) {
+                        port.getPosition().y *= heightRatio;
+                    }
+                    break;
+                case SOUTH:
+                    if (!fixedPorts) {
+                        port.getPosition().x *= widthRatio;
+                    }
+                    port.getPosition().y += heightDiff;
+                    break;
+                case WEST:
+                    if (!fixedPorts) {
+                        port.getPosition().y *= heightRatio;
+                    }
+                    break;
+                }
+            }
+        }
+        
+        // Update label positions
+        if (moveLabels) {
+            for (LLabel label : node.getLabels()) {
+                double midx = label.getPosition().x + label.getSize().x / 2;
+                double midy = label.getPosition().y + label.getSize().y / 2;
+                double widthPercent = midx / oldSize.x;
+                double heightPercent = midy / oldSize.y;
+                
+                if (widthPercent + heightPercent >= 1) {
+                    if (widthPercent - heightPercent > 0 && midy >= 0) {
+                        // label is on the right
+                        label.getPosition().x += widthDiff;
+                        label.getPosition().y += heightDiff * heightPercent;
+                    } else if (widthPercent - heightPercent < 0 && midx >= 0) {
+                        // label is on the bottom
+                        label.getPosition().x += widthDiff * widthPercent;
+                        label.getPosition().y += heightDiff;
+                    }
+                }
+            }
+        }
+        
+        // Set the new node size
+        node.getSize().x = newSize.x;
+        node.getSize().y = newSize.y;
+        
+        // Set fixed size option for the node: now the size is assumed to stay as determined here
+        node.setProperty(LayoutOptions.SIZE_CONSTRAINT, SizeConstraint.fixed());
+    }
+    
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Node Placement
+    
+    /**
+     * Determines a horizontal placement for all nodes of a layer. The size of the layer is assumed
+     * to be already set to the maximal width of the contained nodes (usually done during node
+     * placement).
+     * 
+     * @param layer the layer in which to place the nodes
+     * @param xoffset horizontal offset for layer placement
+     */
+    public static void placeNodes(final Layer layer, final double xoffset) {
+        // determine maximal left and right margin
+        double maxLeftMargin = 0, maxRightMargin = 0;
+        for (LNode node : layer.getNodes()) {
+            maxLeftMargin = Math.max(maxLeftMargin, node.getMargin().left);
+            maxRightMargin = Math.max(maxRightMargin, node.getMargin().right);
+        }
+
+        // CHECKSTYLEOFF MagicNumber
+        for (LNode node : layer.getNodes()) {
+            Alignment alignment = node.getProperty(LayoutOptions.ALIGNMENT);
+            double ratio;
+            switch (alignment) {
+            case LEFT:
+                ratio = 0.0;
+                break;
+            case RIGHT:
+                ratio = 1.0;
+                break;
+            case CENTER:
+                ratio = 0.5;
+                break;
+            default:
+                // determine the number of input and output ports for the node
+                int inports = 0, outports = 0;
+                for (LPort port : node.getPorts()) {
+                    if (!port.getIncomingEdges().isEmpty()) {
+                        inports++;
+                    }
+                    
+                    if (!port.getOutgoingEdges().isEmpty()) {
+                        outports++;
+                    }
+                }
+                
+                // calculate node placement based on the port numbers
+                if (inports + outports == 0) {
+                    ratio = 0.5;
+                } else {
+                    ratio = (double) outports / (inports + outports);
+                }
+            }
+            
+            // align nodes to the layer's maximal margin
+            KVector size = layer.getSize();
+            double nodeSize = node.getSize().x;
+            double xpos = (size.x - nodeSize) * ratio;
+            if (ratio > 0.5) {
+                xpos -= maxRightMargin * 2 * (ratio - 0.5);
+            } else if (ratio < 0.5) {
+                xpos += maxLeftMargin * 2 * (0.5 - ratio);
+            }
+            
+            // consider the node's individual margin
+            double leftMargin = node.getMargin().left;
+            if (xpos < leftMargin) {
+                xpos = leftMargin;
+            }
+            double rightMargin = node.getMargin().right;
+            if (xpos > size.x - rightMargin - nodeSize) {
+                xpos = size.x - rightMargin - nodeSize;
+            }
+            
+            node.getPosition().x = xoffset + xpos;
+        }
+    }
+    
     
     ///////////////////////////////////////////////////////////////////////////////
     // Graph Properties
@@ -163,7 +318,7 @@ public final class ImportUtil {
                 && !node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()) {
             
             // Hypernodes have one output port and one input port
-            final PortSide defaultSide = PortSide.fromDirection(direction);
+            PortSide defaultSide = PortSide.fromDirection(direction);
             port = provideCollectorPort(layeredGraph, node, type,
                     type == PortType.OUTPUT ? defaultSide : defaultSide.opposed());
         } else {
@@ -175,12 +330,15 @@ public final class ImportUtil {
                 pos.x = endPoint.x - node.getPosition().x;
                 pos.y = endPoint.y - node.getPosition().y;
                 pos.applyBounds(0, 0, node.getSize().x, node.getSize().y);
+                port.setSide(calcPortSide(port, direction));
+            } else {
+                PortSide defaultSide = PortSide.fromDirection(direction);
+                port.setSide(type == PortType.OUTPUT ? defaultSide : defaultSide.opposed());
             }
             
-            PortSide portSide = calcPortSide(port, direction);
-            port.setSide(portSide);
             Set<GraphProperties> graphProperties = layeredGraph.getProperty(
                     Properties.GRAPH_PROPERTIES);
+            PortSide portSide = port.getSide();
             switch (direction) {
             case LEFT:
             case RIGHT:
@@ -450,30 +608,6 @@ public final class ImportUtil {
     // External Ports  (Ports on the boundary of the parent node)
     
     /**
-     * For free port constraints, this map maps port types and layout directions to the port side we
-     * will use for an external port.
-     */
-    private static final Map<PortType, Map<Direction, PortSide>> EXTERNAL_PORT_SIDE_MAP =
-            Maps.newEnumMap(PortType.class);
-    
-    // Initialize the external port side map.
-    static {
-        Map<Direction, PortSide> inputPortMap = Maps.newEnumMap(Direction.class);
-        inputPortMap.put(Direction.RIGHT, PortSide.WEST);
-        inputPortMap.put(Direction.LEFT, PortSide.EAST);
-        inputPortMap.put(Direction.DOWN, PortSide.NORTH);
-        inputPortMap.put(Direction.UP, PortSide.SOUTH);
-        EXTERNAL_PORT_SIDE_MAP.put(PortType.INPUT, inputPortMap);
-        
-        Map<Direction, PortSide> outputPortMap = Maps.newEnumMap(Direction.class);
-        outputPortMap.put(Direction.RIGHT, PortSide.EAST);
-        outputPortMap.put(Direction.LEFT, PortSide.WEST);
-        outputPortMap.put(Direction.DOWN, PortSide.SOUTH);
-        outputPortMap.put(Direction.UP, PortSide.NORTH);
-        EXTERNAL_PORT_SIDE_MAP.put(PortType.OUTPUT, outputPortMap);
-    }
-    
-    /**
      * Creates a dummy for an external port. The dummy will have just one port. The port is on
      * the eastern side for western external ports, on the western side for eastern external ports,
      * on the southern side for northern external ports, and on the northern side for southern
@@ -555,12 +689,16 @@ public final class ImportUtil {
         LPort dummyPort = new LPort(layeredGraph);
         dummyPort.setNode(dummy);
         
+        // we need some layout direction here, use RIGHT as default in case it is undefined
+        Direction actualDirection =
+                layoutDirection != Direction.UNDEFINED ? layoutDirection : Direction.RIGHT;
+
         // If the port constraints are free, we need to determine where to put the dummy (and its port)
-        if (!portConstraints.isSideFixed() && layoutDirection != Direction.UNDEFINED) {
+        if (!portConstraints.isSideFixed() && actualDirection != Direction.UNDEFINED) {
             if (netFlow > 0) {
-                finalExternalPortSide = EXTERNAL_PORT_SIDE_MAP.get(PortType.OUTPUT).get(layoutDirection);
+                finalExternalPortSide = PortSide.fromDirection(actualDirection);
             } else {
-                finalExternalPortSide = EXTERNAL_PORT_SIDE_MAP.get(PortType.INPUT).get(layoutDirection);
+                finalExternalPortSide = PortSide.fromDirection(actualDirection).opposed();
             }
             propertyHolder.setProperty(LayoutOptions.PORT_SIDE, finalExternalPortSide);
         }
@@ -690,6 +828,68 @@ public final class ImportUtil {
         }
         
         return portPosition;
+    }
+    
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Compound Graphs
+    
+    /**
+     * Determines whether the given child node is a descendant of the parent node.
+     * 
+     * @param child a child node
+     * @param parent a parent node
+     * @return true if {@code child} is a direct or indirect child of {@code parent}
+     */
+    public static boolean isDescendant(final LNode child, final LNode parent) {
+        LNode current = child;
+        LNode next = current.getGraph().getProperty(Properties.PARENT_LNODE);
+        while (next != null) {
+            current = next;
+            if (current == parent) {
+                return true;
+            }
+            next = current.getGraph().getProperty(Properties.PARENT_LNODE);
+        }
+        return false;
+    }
+    
+    /**
+     * Converts the given point from the coordinate system of {@code oldGraph} to that of
+     * {@code newGraph}. Insets and graph offset are included in the calculation.
+     * 
+     * @param point a relative point
+     * @param oldGraph the graph to which the point is relative to
+     * @param newGraph the graph to which the point is made relative to after applying this method
+     */
+    public static void changeCoordSystem(final KVector point, final LGraph oldGraph,
+            final LGraph newGraph) {
+        // transform to absolute coordinates
+        LGraph graph = oldGraph;
+        LNode node;
+        do {
+            point.add(graph.getOffset());
+            node = graph.getProperty(Properties.PARENT_LNODE);
+            if (node != null) {
+                LInsets insets = graph.getInsets();
+                point.translate(insets.left, insets.top);
+                point.add(node.getPosition());
+                graph = node.getGraph();
+            }
+        } while (node != null);
+        
+        // transform to relative coordinates (to newGraph)
+        graph = newGraph;
+        do {
+            point.sub(graph.getOffset());
+            node = graph.getProperty(Properties.PARENT_LNODE);
+            if (node != null) {
+                LInsets insets = graph.getInsets();
+                point.translate(-insets.left, -insets.top);
+                point.sub(node.getPosition());
+                graph = node.getGraph();
+            }
+        } while (node != null);
     }
     
 }
