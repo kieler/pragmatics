@@ -21,7 +21,7 @@ Export-Package: de.cau.cs.kieler.kiml,
    de.cau.cs.kieler.core.slimgraph,
    de.cau.cs.kieler.core.kgraph",
  de.cau.cs.kieler.kiml.util.adapters,
- de.cau.cs.kieler.kiml.util.algs
+ de.cau.cs.kieler.kiml.util.nodespacing
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy

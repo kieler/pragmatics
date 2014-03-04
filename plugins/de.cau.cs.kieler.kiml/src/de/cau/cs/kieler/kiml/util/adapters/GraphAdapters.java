@@ -20,8 +20,8 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.options.LabelSide;
 import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.kiml.util.algs.Spacing.Insets;
-import de.cau.cs.kieler.kiml.util.algs.Spacing.Margins;
+import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Insets;
+import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 
 /**
  * @author uru

@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.util.algs;
+package de.cau.cs.kieler.kiml.util.nodespacing;
 
 import java.awt.geom.Rectangle2D;
 import java.util.EnumSet;
@@ -29,8 +29,8 @@ import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.GraphAdapter;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.LabelAdapter;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.NodeAdapter;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.PortAdapter;
-import de.cau.cs.kieler.kiml.util.algs.Spacing.Insets;
-import de.cau.cs.kieler.kiml.util.algs.Spacing.Margins;
+import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Insets;
+import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 
 /**
  * Calculates node sizes, places ports, and places node and port labels.
@@ -824,48 +824,55 @@ public class LabelAndNodeSizeProcessor {
      */
     private void placeFixedRatioNodePorts(final NodeAdapter<?> node) {
         KVector nodeSize = node.getSize();
-        
+
         // Adjust port positions depending on port side. Eastern ports have to have their x coordinate
         // set to the node's current width; the same goes for the y coordinate of southern ports
         for (PortAdapter<?> port : node.getPorts()) {
             float portOffset = port.getProperty(LayoutOptions.OFFSET);
-            // FIXME replace the 0s with the property value from below
             switch (port.getSide()) {
             case WEST:
-                port.getPosition().y = nodeSize.y * 0;
+                port.getPosition().y =
+                        nodeSize.y * port.getProperty(LayoutOptions.PORT_RATIO_OR_POSITION);
                 port.getPosition().x = -port.getSize().x - portOffset;
                 break;
             case EAST:
-                port.getPosition().y = nodeSize.y * 0;
+                port.getPosition().y =
+                        nodeSize.y * port.getProperty(LayoutOptions.PORT_RATIO_OR_POSITION);
                 port.getPosition().x = nodeSize.x + portOffset;
                 break;
             case NORTH:
-                port.getPosition().x = nodeSize.x * 0;
+                port.getPosition().x =
+                        nodeSize.x * port.getProperty(LayoutOptions.PORT_RATIO_OR_POSITION);
                 port.getPosition().y = -port.getSize().y - portOffset;
                 break;
             case SOUTH:
-                port.getPosition().x = nodeSize.x * 0;
+                port.getPosition().x =
+                        nodeSize.x * port.getProperty(LayoutOptions.PORT_RATIO_OR_POSITION);
                 port.getPosition().y = nodeSize.y + portOffset;
                 break;
             }
-//            switch (port.getSide()) {
-//            case WEST:
-//                port.getPosition().y = nodeSize.y * port.getProperty(Properties.PORT_RATIO_OR_POSITION);
-//                port.getPosition().x = -port.getSize().x - portOffset;
-//                break;
-//            case EAST:
-//                port.getPosition().y = nodeSize.y * port.getProperty(Properties.PORT_RATIO_OR_POSITION);
-//                port.getPosition().x = nodeSize.x + portOffset;
-//                break;
-//            case NORTH:
-//                port.getPosition().x = nodeSize.x * port.getProperty(Properties.PORT_RATIO_OR_POSITION);
-//                port.getPosition().y = -port.getSize().y - portOffset;
-//                break;
-//            case SOUTH:
-//                port.getPosition().x = nodeSize.x * port.getProperty(Properties.PORT_RATIO_OR_POSITION);
-//                port.getPosition().y = nodeSize.y + portOffset;
-//                break;
-//            }
+            switch (port.getSide()) {
+            case WEST:
+                port.getPosition().y =
+                        nodeSize.y * port.getProperty(LayoutOptions.PORT_RATIO_OR_POSITION);
+                port.getPosition().x = -port.getSize().x - portOffset;
+                break;
+            case EAST:
+                port.getPosition().y =
+                        nodeSize.y * port.getProperty(LayoutOptions.PORT_RATIO_OR_POSITION);
+                port.getPosition().x = nodeSize.x + portOffset;
+                break;
+            case NORTH:
+                port.getPosition().x =
+                        nodeSize.x * port.getProperty(LayoutOptions.PORT_RATIO_OR_POSITION);
+                port.getPosition().y = -port.getSize().y - portOffset;
+                break;
+            case SOUTH:
+                port.getPosition().x =
+                        nodeSize.x * port.getProperty(LayoutOptions.PORT_RATIO_OR_POSITION);
+                port.getPosition().y = nodeSize.y + portOffset;
+                break;
+            }
         }
     }
     

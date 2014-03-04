@@ -25,9 +25,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LabelSide;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -38,8 +36,8 @@ import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.GraphElementAdapter;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.LabelAdapter;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.NodeAdapter;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.PortAdapter;
-import de.cau.cs.kieler.kiml.util.algs.Spacing.Insets;
-import de.cau.cs.kieler.kiml.util.algs.Spacing.Margins;
+import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Insets;
+import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 
 /**
  * Contains implementations of the {@link GraphAdapters} interfaces for the KGraph.
@@ -60,6 +58,7 @@ public class KGraphAdapters {
         protected T element;
         /** The layout data of the wrapped element. */
         protected KShapeLayout layout;
+        // CHECKSTYLEON VisibilityModifier
 
         /**
          * @param element
@@ -137,25 +136,20 @@ public class KGraphAdapters {
          * {@inheritDoc}
          */
         public Margins getMargin() {
-            // FIXME big problem :) there's no margin in the KGraph
-            KInsets insets = layout.getInsets();
-            if (insets == null) {
-                layout.setInsets(KLayoutDataFactory.eINSTANCE.createKInsets());
+            Margins margins = layout.getProperty(LayoutOptions.MARGINS);
+            if (margins == null) {
+                margins = new Margins();
             }
-            return new Margins(insets.getLeft(), insets.getTop(), insets.getRight(),
-                    insets.getBottom());
+            return margins;
         }
 
         /**
          * {@inheritDoc}
          */
         public void setMargin(final Margins margin) {
-            // FIXME big problem :) there's no margin in the KGraph
-            KInsets insets = layout.getInsets();
-            insets.setLeft((float) margin.left);
-            insets.setTop((float) margin.top);
-            insets.setRight((float) margin.right);
-            insets.setBottom((float) margin.bottom);
+            // analog to the insets case, we copy the margins object here
+            Margins newMargin = new Margins(margin); 
+            layout.setProperty(LayoutOptions.MARGINS, newMargin);
         }
     }
 
@@ -234,13 +228,6 @@ public class KGraphAdapters {
     private static class KLabelAdapter extends AbstractKGraphElementAdapter<KLabel> implements
             LabelAdapter<KLabel> {
 
-        // FIXME move this to LayoutOptions as soon as the git issue is resolved.
-        /**
-         * On which side of its corresponding edge a label is situated. [programmatically set]
-         */
-        public static final IProperty<LabelSide> LABEL_SIDE = new Property<LabelSide>(
-                "de.cau.cs.kieler.labelSide", LabelSide.UNKNOWN);
-
         /**
          * 
          */
@@ -252,7 +239,7 @@ public class KGraphAdapters {
          * {@inheritDoc}
          */
         public LabelSide getSide() {
-            return layout.getProperty(LABEL_SIDE);
+            return layout.getProperty(LayoutOptions.LABEL_SIDE);
         }
     }
 

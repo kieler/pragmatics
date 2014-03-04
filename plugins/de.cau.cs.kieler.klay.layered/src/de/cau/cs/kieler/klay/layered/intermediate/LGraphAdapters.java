@@ -29,8 +29,8 @@ import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.GraphElementAdapter;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.LabelAdapter;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.NodeAdapter;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.PortAdapter;
-import de.cau.cs.kieler.kiml.util.algs.Spacing.Insets;
-import de.cau.cs.kieler.kiml.util.algs.Spacing.Margins;
+import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Insets;
+import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LInsets;
@@ -54,8 +54,8 @@ public class LGraphAdapters {
         // CHECKSTYLEOFF VisibilityModifier
         /** The internal element. */
         protected T element;
-
         // CHECKSTYLEON VisibilityModifier
+        
         /**
          * .
          */
@@ -120,7 +120,6 @@ public class LGraphAdapters {
         // CHECKSTYLEOFF VisibilityModifier
         /** The internal element. */
         protected LGraph element;
-
         // CHECKSTYLEON VisibilityModifier
 
         /**
@@ -348,9 +347,7 @@ public class LGraphAdapters {
          * {@inheritDoc}
          */
         public LabelSide getSide() {
-            // FIXME when git issue resolved.
-            return null;
-            // return element.getSide();
+            return element.getProperty(LayoutOptions.LABEL_SIDE);
         }
 
     }
