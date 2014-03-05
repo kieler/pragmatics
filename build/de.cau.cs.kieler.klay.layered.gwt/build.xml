@@ -162,6 +162,7 @@
 				<pathelement location="${gwt.sdk}/gwt-user.jar" />
 				<fileset dir="${gwt.sdk}" includes="gwt-dev*.jar" />
 				<fileset dir="war/WEB-INF/lib" includes="**/*.jar" />
+				<pathelement location="war/WEB-INF/classes" />
 				<pathelement location="${gwt.sdk}/validation-api-1.0.0.GA.jar" />
 				<pathelement location="${gwt.sdk}/validation-api-1.0.0.GA-sources.jar" />
 				<!-- The sources. -->

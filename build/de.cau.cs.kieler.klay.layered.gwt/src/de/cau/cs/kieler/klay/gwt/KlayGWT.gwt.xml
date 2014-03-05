@@ -24,11 +24,14 @@
        However, this is a problem when using the library with a Chrome Packaged 
        App, as it violates a security policy. 
        
+       We extend the "com.google.gwt.core.linker.DirectInstallLinker" to 
+       solve another issue where 'document.open' would result in an exception.
+       
        Quote from the documentation: "A linker 
        that adds a script tag to the iframe rather than downloading the code as 
        a string and then installing it into the iframe." -->
   <define-linker name="dil"
-    class="com.google.gwt.core.linker.DirectInstallLinker" />
+    class="de.cau.cs.kieler.klay.gwt.linker.CustomLinker" />
   <add-linker name="dil" />
 
 </module>
