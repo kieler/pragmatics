@@ -189,8 +189,8 @@
 		<copy todir="${outputFolder.tmp}" overwrite="true">
 			<fileset dir="war/klay">
 				<exclude name="gwt/**" />
-				<exclude name="**/*.gif" />
-				<exclude name="hosted.html" />
+				<!--exclude name="**/*.gif" /-->
+				<!--exclude name="hosted.html" /-->
 			</fileset>
 		</copy>
 		<zip destfile="${outputFile.klay}" basedir="${outputFolder.tmp}" update="true" />
