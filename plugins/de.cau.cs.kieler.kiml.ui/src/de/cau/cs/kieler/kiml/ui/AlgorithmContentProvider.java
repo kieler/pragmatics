@@ -19,9 +19,9 @@ import java.util.Map;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-import de.cau.cs.kieler.kiml.ILayoutData;
+import de.cau.cs.kieler.kiml.ILayoutMetaData;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 
 /**
@@ -34,13 +34,13 @@ import de.cau.cs.kieler.kiml.LayoutTypeData;
 public class AlgorithmContentProvider implements ITreeContentProvider {
 
     /** the layout services used for this provider. */
-    private LayoutDataService layoutDataService;
+    private LayoutMetaDataService layoutDataService;
     /** the filter map that stores visibility information. */
     private final Map<Object, Boolean> filterMap = new HashMap<Object, Boolean>();
     /** the current filter value. */
     private String filterValue;
     /** the current best filter match. */
-    private ILayoutData bestFilterMatch;
+    private ILayoutMetaData bestFilterMatch;
     
     /**
      * {@inheritDoc}
@@ -52,8 +52,8 @@ public class AlgorithmContentProvider implements ITreeContentProvider {
      * {@inheritDoc}
      */
     public Object[] getElements(final Object inputElement) {
-        if (inputElement instanceof LayoutDataService) {
-            layoutDataService = (LayoutDataService) inputElement;
+        if (inputElement instanceof LayoutMetaDataService) {
+            layoutDataService = (LayoutMetaDataService) inputElement;
         }
         return layoutDataService.getTypeData().toArray();
     }
@@ -156,7 +156,7 @@ public class AlgorithmContentProvider implements ITreeContentProvider {
                             bestFilterMatch = layouterData;                            
                         }
                     } else {
-                        String category = LayoutDataService.getInstance().getCategoryName(
+                        String category = LayoutMetaDataService.getInstance().getCategoryName(
                                 layouterData.getCategory());
                         result = category != null && category.toLowerCase().contains(filterValue);
                     }
@@ -176,7 +176,7 @@ public class AlgorithmContentProvider implements ITreeContentProvider {
      * 
      * @return the best filter match
      */
-    public ILayoutData getBestFilterMatch() {
+    public ILayoutMetaData getBestFilterMatch() {
         return bestFilterMatch;
     }
 

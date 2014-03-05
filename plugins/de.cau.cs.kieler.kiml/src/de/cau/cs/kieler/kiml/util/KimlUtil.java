@@ -39,7 +39,7 @@ import de.cau.cs.kieler.core.kgraph.PersistentEntry;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier;
@@ -653,7 +653,7 @@ public final class KimlUtil {
      */
     public static void setOption(final KGraphData graphData, final String id,
             final String value) {
-        LayoutDataService dataService = LayoutDataService.getInstance();
+        LayoutMetaDataService dataService = LayoutMetaDataService.getInstance();
         LayoutOptionData optionData = dataService.getOptionData(id);
         if (optionData != null) {
             Object obj = optionData.parseValue(value);
@@ -682,14 +682,14 @@ public final class KimlUtil {
     /**
      * Loads all {@link de.cau.cs.kieler.core.properties.IProperty} of KGraphData elements of a
      * KGraph by deserializing {@link PersistentEntry} tuples.
-     * Values are parsed using layout option data obtained from the {@link LayoutDataService}.
+     * Values are parsed using layout option data obtained from the {@link LayoutMetaDataService}.
      * Options that cannot be resolved immediately (e.g. because the extension points have not
      * been read yet) are stored as {@link LayoutOptionProxy}.
      * 
      * @param graph the root element of the graph to load elements of.
      */
     public static void loadDataElements(final KNode graph) {
-        LayoutDataService dataService = LayoutDataService.getInstance();
+        LayoutMetaDataService dataService = LayoutMetaDataService.getInstance();
         TreeIterator<EObject> iterator = graph.eAllContents();
         while (iterator.hasNext()) {
             EObject eObject = iterator.next();
@@ -714,7 +714,7 @@ public final class KimlUtil {
      * @author chsch (extractor)
      * 
      * @param dataService
-     *            the current {@link LayoutDataService}
+     *            the current {@link LayoutMetaDataService}
      * @param propertyHolder
      *            the {@link IPropertyHolder} to be configured
      * @param id
@@ -722,7 +722,7 @@ public final class KimlUtil {
      * @param value
      *            the desired option value
      */
-    public static void loadDataElement(final LayoutDataService dataService,
+    public static void loadDataElement(final LayoutMetaDataService dataService,
             final IPropertyHolder propertyHolder, final String id, final String value) {
         if (id != null && value != null) {
             // try to get the layout option from the data service.

@@ -20,7 +20,7 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
@@ -87,7 +87,7 @@ public final class KimlUiUtil {
      */
     public static LayoutOptionData getOptionData(final LayoutAlgorithmData providerData,
             final String optionName) {
-        for (LayoutOptionData data : LayoutDataService.getInstance().getOptionData()) {
+        for (LayoutOptionData data : LayoutMetaDataService.getInstance().getOptionData()) {
             if (data.getName().equals(optionName) && providerData.knowsOption(data)) {
                 return data;
             }
@@ -112,7 +112,7 @@ public final class KimlUiUtil {
             }
         }
         // the only option data that is added without explicit support by layouters is layout hint
-        return LayoutDataService.getInstance().getOptionData(LayoutOptions.ALGORITHM.getId());
+        return LayoutMetaDataService.getInstance().getOptionData(LayoutOptions.ALGORITHM.getId());
     }
 
 }

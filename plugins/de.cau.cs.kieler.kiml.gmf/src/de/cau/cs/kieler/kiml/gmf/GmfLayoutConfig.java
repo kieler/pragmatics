@@ -42,7 +42,7 @@ import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.config.LayoutContext;
@@ -166,7 +166,7 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
                 
             } else if (property.equals(DefaultLayoutConfig.CONTENT_HINT)) {
                 // get a layout hint for the content of the focused edit part
-                LayoutOptionData algorithmOptionData = LayoutDataService.getInstance()
+                LayoutOptionData algorithmOptionData = LayoutMetaDataService.getInstance()
                         .getOptionData(LayoutOptions.ALGORITHM.getId());
                 String contentLayoutHint = (String) getValue(algorithmOptionData, PREFIX,
                         focusEditPart.getNotationView());
@@ -180,7 +180,7 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
                 return contentLayoutHint;
                 
             } else if (property.equals(DefaultLayoutConfig.CONTAINER_HINT)) {
-                LayoutOptionData algorithmOptionData = LayoutDataService.getInstance()
+                LayoutOptionData algorithmOptionData = LayoutMetaDataService.getInstance()
                         .getOptionData(LayoutOptions.ALGORITHM.getId());
                 Object containerEditPart = context.getProperty(LayoutContext.CONTAINER_DIAGRAM_PART);
                 if (algorithmOptionData != null && containerEditPart instanceof IGraphicalEditPart) {
@@ -438,7 +438,7 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
      */
     private void getAffectedOptions(final List<IProperty<?>> options, final String prefix,
             final View view) {
-        LayoutDataService layoutService = LayoutDataService.getInstance();
+        LayoutMetaDataService layoutService = LayoutMetaDataService.getInstance();
         for (Object obj : view.getStyles()) {
             if (obj instanceof StringValueStyle) {
                 StringValueStyle style = (StringValueStyle) obj;

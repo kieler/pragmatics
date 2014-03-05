@@ -29,7 +29,7 @@ import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.LayoutConfigService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.config.LayoutContext;
@@ -282,7 +282,7 @@ public class EclipseLayoutConfig implements ILayoutConfig {
         }
 
         LayoutConfigService configService = LayoutConfigService.getInstance();
-        LayoutDataService dataService = LayoutDataService.getInstance();
+        LayoutMetaDataService dataService = LayoutMetaDataService.getInstance();
         Object diagPart = context.getProperty(LayoutContext.DIAGRAM_PART);
         Object modelElement = context.getProperty(LayoutContext.DOMAIN_MODEL);
 
