@@ -77,6 +77,7 @@ public final class NodeMarginCalculator implements ILayoutProcessor {
         // TODO remove the "old" code
         int i = 1;
         if (i != 1 + 1) {
+            monitor.done();
             return;
         }
 

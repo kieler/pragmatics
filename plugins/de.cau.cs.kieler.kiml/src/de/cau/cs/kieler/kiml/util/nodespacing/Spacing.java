@@ -156,7 +156,7 @@ public abstract class Spacing {
      * 
      * @author uru
      */
-    public static class Insets extends Spacing {
+    public static final class Insets extends Spacing {
 
         /**
          * Creates a new instance with all fields set to {@code 0.0}.
@@ -198,7 +198,7 @@ public abstract class Spacing {
      * 
      * @author uru
      */
-    public static class Margins extends Spacing {
+    public static final class Margins extends Spacing {
 
         /**
          * Creates a new instance with all fields set to {@code 0.0}.

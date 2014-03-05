@@ -115,7 +115,7 @@ public class LGraphAdapters {
     /**
      * .
      */
-    public static class LGraphAdapter implements GraphAdapter<LGraph> {
+    public static final class LGraphAdapter implements GraphAdapter<LGraph> {
 
         // CHECKSTYLEOFF VisibilityModifier
         /** The internal element. */
@@ -184,7 +184,7 @@ public class LGraphAdapters {
     /**
      * .
      */
-    static class LNodeAdapter extends AbstractLGraphAdapter<LNode> implements NodeAdapter<LNode> {
+    static final class LNodeAdapter extends AbstractLGraphAdapter<LNode> implements NodeAdapter<LNode> {
 
         /**
          * @param element
@@ -262,7 +262,7 @@ public class LGraphAdapters {
     /**
      * .
      */
-    static class LPortAdapter extends AbstractLGraphAdapter<LPort> implements PortAdapter<LPort> {
+    static final class LPortAdapter extends AbstractLGraphAdapter<LPort> implements PortAdapter<LPort> {
 
         /**
          * @param element
@@ -333,7 +333,7 @@ public class LGraphAdapters {
     /**
      * .
      */
-    static class LLabelAdapter extends AbstractLGraphAdapter<LLabel> implements
+    static final class LLabelAdapter extends AbstractLGraphAdapter<LLabel> implements
             LabelAdapter<LLabel> {
 
         /**
@@ -355,7 +355,7 @@ public class LGraphAdapters {
     /**
      * .
      */
-    static class LEdgeAdapter implements EdgeAdapter<LEdge> {
+    static final class LEdgeAdapter implements EdgeAdapter<LEdge> {
 
         private LEdge e;
 
