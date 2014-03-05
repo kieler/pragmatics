@@ -795,7 +795,6 @@ public class LabelAndNodeSizeProcessor {
             //float portOffset = port.getProperty(Properties.OFFSET);
             float portOffset = 0;
             
-            System.out.println("Port pos: " + port.getPosition());
             KVector position = new KVector(port.getPosition());
             switch (port.getSide()) {
             case WEST:
@@ -811,7 +810,6 @@ public class LabelAndNodeSizeProcessor {
                 position.y = nodeSize.y + portOffset;
                 break;
             }
-            System.out.println("Port pos2: " + position);
             port.setPosition(position);
         }
     }
