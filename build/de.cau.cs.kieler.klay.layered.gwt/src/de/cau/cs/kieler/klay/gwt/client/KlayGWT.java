@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klay.gwt.client;
 
+import com.google.common.base.Joiner;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.json.client.JSONObject;
@@ -21,11 +22,10 @@ import com.google.gwt.json.client.JSONValue;
 
 import de.cau.cs.kieler.kiml.UnsupportedConfigurationException;
 import de.cau.cs.kieler.klay.gwt.client.layout.RecursiveLGraphLayout;
+import de.cau.cs.kieler.klay.gwt.client.layout.UnsupportedJsonGraphException;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
- * 
- * Have a look at http://code.google.com/p/gwt-exporter/
  * 
  * @author uru
  */
@@ -88,12 +88,18 @@ public class KlayGWT implements EntryPoint {
             JavaScriptObject result = graph.isObject().getJavaScriptObject();
             execCallback(success.isObject().getJavaScriptObject(), result);
 
+        } catch (UnsupportedJsonGraphException ujge) {
+            if (error != null && error.isObject() != null) {
+                execCallback(error.isObject().getJavaScriptObject(), ujge.toJson()
+                        .getJavaScriptObject());
+            }
         } catch (Exception e) {
             if (error != null && error.isObject() != null) {
                 JSONObject errObj = new JSONObject();
-                errObj.put("text", new JSONString(e.getClass() + " " + e.getMessage()));
-                execCallback(error.isObject().getJavaScriptObject(),
-                        errObj.getJavaScriptObject());
+                errObj.put("type", new JSONString(e.getClass().getName()));
+                errObj.put("text", new JSONString(e.getMessage()));
+                errObj.put("stacktrace", new JSONString(Joiner.on("\n").join(e.getStackTrace())));
+                execCallback(error.isObject().getJavaScriptObject(), errObj.getJavaScriptObject());
             }
             e.printStackTrace();
         }

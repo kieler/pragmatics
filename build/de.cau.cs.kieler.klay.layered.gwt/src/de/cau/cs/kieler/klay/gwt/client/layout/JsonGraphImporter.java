@@ -29,7 +29,6 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.kiml.UnsupportedGraphException;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -108,6 +107,8 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
     
     /** Whether to export coordinates as integers. */
     private boolean exportIntegerCoordinates = false;
+    
+    private Boolean layoutHierarchy = null;
 
     private void reset() {
         nodeIdMap.clear();
@@ -155,7 +156,6 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         // all source and target nodes already exist
         // for port-less edges, new ports will be created
         transformEdges(json, rootGraph);
-        
 
         return rootGraph;
     }
@@ -210,14 +210,18 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         // the graph properties discovered during the transformations
         EnumSet<GraphProperties>  graphProperties = EnumSet.noneOf(GraphProperties.class);
         graph.setProperty(Properties.GRAPH_PROPERTIES, graphProperties);
+        
+        // for the top level node check if we wanna layout hierarchy
+        if (layoutHierarchy == null) {
+            layoutHierarchy = graph.getProperty(LayoutOptions.LAYOUT_HIERARCHY);
+        }
 
         // try to get the 'children' array from the json node
-        
         if (jparent.containsKey("children")) {
             JSONValue val = jparent.get("children");
             if (val.isArray() == null) {
-                throw new UnsupportedGraphException(
-                        "The 'children' property of nodes must be an array.");
+                throw new UnsupportedJsonGraphException(
+                        "The 'children' property of nodes must be an array.", val, jparent);
             }
             JSONArray children = val.isArray();
             
@@ -226,8 +230,8 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
             for (int i = 0; i < children.size(); ++i) {
                 JSONValue childVal = children.get(i);
                 if (childVal.isObject() == null) {
-                    throw new UnsupportedGraphException(
-                            "A 'children' array contains a non-object node element.");
+                    throw new UnsupportedJsonGraphException(
+                            "A 'children' array contains a non-object node element.", childVal, jparent);
                 }
                 LNode child = transformNode(childVal.isObject(), graph);
                 childNodes[i] = child;
@@ -279,8 +283,8 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         if (jNode.containsKey("ports")) {
             JSONValue val = jNode.get("ports");
             if (val.isArray() == null) {
-                throw new UnsupportedGraphException(
-                        "The 'ports' property of the node must be an array.");
+                throw new UnsupportedJsonGraphException(
+                        "The 'ports' property of the node must be an array.", val, jNode);
             }
             JSONArray ports = val.isArray();
 
@@ -405,8 +409,8 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         if (jElement.containsKey("labels")) {
             JSONValue val = jElement.get("labels");
             if (val.isArray() == null) {
-                throw new UnsupportedGraphException(
-                        "The 'labels' property of a node must be an array.");
+                throw new UnsupportedJsonGraphException(
+                        "The 'labels' property of a node must be an array.", val, jElement);
             }
             JSONArray labels = val.isArray();
 
@@ -444,9 +448,11 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         // check for text property
         JSONValue val = jLabel.get("text");
         if (val == null) {
-            throw new UnsupportedGraphException("Labels must have a property 'text'.");
+            throw new UnsupportedJsonGraphException("Labels must have a property 'text'.", val,
+                    jLabel);
         } else if (val.isString() == null) {
-            throw new UnsupportedGraphException("A label's 'text' property must be a string.");
+            throw new UnsupportedJsonGraphException("A label's 'text' property must be a string.",
+                    val, jLabel);
         }
 
         // create a new label
@@ -514,16 +520,17 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         if (parent.containsKey("edges")) {
             JSONValue val = parent.get("edges");
             if (val.isArray() == null) {
-                throw new UnsupportedGraphException(
-                        "The 'edges' property of a node has to be an array.");
+                throw new UnsupportedJsonGraphException(
+                        "The 'edges' property of a node has to be an array.", val, parent);
             }
             JSONArray edges = val.isArray();
 
             for (int i = 0; i < edges.size(); ++i) {
                 JSONValue edgeVal = edges.get(i);
                 if (edgeVal.isObject() == null) {
-                    throw new UnsupportedGraphException(
-                            "All elements of the 'edge' property must be objects.");
+                    throw new UnsupportedJsonGraphException(
+                            "All elements of the 'edges' property must be objects.", edgeVal,
+                            parent);
                 }
                 transformEdge(edgeVal.isObject(), graph);
             }
@@ -569,20 +576,52 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
 
         // check for valid source
         if (jSourceNode == null) {
-            throw new UnsupportedGraphException("Edges must contain a 'source' property.");
+            throw new UnsupportedJsonGraphException("Edges must contain a 'source' property.",
+                    jSourceNode, jEdge);
         } else if (jSourceNode.isString() == null) {
-            throw new UnsupportedGraphException(
-                    "Invalid format of an edge's 'source' property. It must be a string.");
+            throw new UnsupportedJsonGraphException(
+                    "Invalid format of an edge's 'source' property. It must be a string.",
+                    jSourceNode, jEdge);
         }
 
         // check for valid target
         if (jTargetNode == null) {
-            throw new UnsupportedGraphException("Edges must contain a 'target' property.");
+            throw new UnsupportedJsonGraphException("Edges must contain a 'target' property.",
+                    jTargetNode, jEdge);
         } else if (jTargetNode.isString() == null) {
-            throw new UnsupportedGraphException(
-                    "Invalid format of an edge's 'target' property. It must be a string.");
+            throw new UnsupportedJsonGraphException(
+                    "Invalid format of an edge's 'target' property. It must be a string.",
+                    jTargetNode, jEdge);
         }
 
+        // retrieve source and target
+        LNode sourceNode = null;
+        LPort sourcePort = null;
+        LNode targetNode = null;
+        LPort targetPort = null;
+        
+        try {
+            // get the source node
+            sourceNode = nodeIdMap.get(jSourceNode.isString().stringValue());
+            if (jSourcePort != null && jSourcePort.isString() != null) {
+                sourcePort = portIdMap.get(jSourcePort.isString().stringValue());
+            }
+    
+            // get the target node
+            targetNode = nodeIdMap.get(jTargetNode.isString().stringValue());
+            if (jTargetPort != null && jTargetPort.isString() != null) {
+                targetPort = portIdMap.get(jTargetPort.isString().stringValue());
+            }
+        } catch (NullPointerException npe) {
+            throw new UnsupportedJsonGraphException("An edge's 'source', 'target', 'sourcePort', "
+                    + "and 'targetPort' properties have to be strings.", jEdge);
+        }
+        
+        // exclude edges that pass hierarchy bounds if layoutHierarchy is switched off
+        if (!layoutHierarchy && (sourceNode == null || targetNode == null)) {
+            return;
+        }
+        
         // create a layered edge
         LEdge edge = new LEdge(graph);
 
@@ -597,30 +636,6 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         // labels
         transformLabels(jEdge, edge, graph);
 
-        // retrieve source and target
-        LNode sourceNode = null;
-        LPort sourcePort = null;
-        LNode targetNode = null;
-        LPort targetPort = null;
-
-        // get the source node
-        try {
-            sourceNode = nodeIdMap.get(jSourceNode.isString().stringValue());
-            if (jSourcePort != null && jSourcePort.isString() != null) {
-                sourcePort = portIdMap.get(jSourcePort.isString().stringValue());
-            }
-    
-            // get the target node
-            targetNode = nodeIdMap.get(jTargetNode.isString().stringValue());
-            if (jTargetPort != null && jTargetPort.isString() != null) {
-                targetPort = portIdMap.get(jTargetPort.isString().stringValue());
-            }
-        } catch (NullPointerException npe) {
-            throw new UnsupportedGraphException("An edge's 'source', 'target', 'sourcePort', "
-                    + "and 'targetPort' properties have to be strings.");
-        }
-        
-
         Set<GraphProperties> graphProperties = graph.getProperty(Properties.GRAPH_PROPERTIES);
 
         if (sourceNode != null && targetNode != null) {
@@ -634,18 +649,21 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
                 sourcePort =
                         LGraphUtil.createPort(sourceNode, new KVector(), PortType.OUTPUT, graph);
             } else if (sourcePort.getNode() != sourceNode) {
-                throw new UnsupportedGraphException("Inconsistent source port reference found.");
+                throw new UnsupportedJsonGraphException("Inconsistent source port reference found.");
             }
 
             if (targetPort == null) {
                 targetPort =
                         LGraphUtil.createPort(targetNode, new KVector(), PortType.INPUT, graph);
             } else if (targetPort.getNode() != targetNode) {
-                throw new UnsupportedGraphException("Inconsistent target port reference found.");
+                throw new UnsupportedJsonGraphException("Inconsistent target port reference found.");
             }
 
             edge.setSource(sourcePort);
             edge.setTarget(targetPort);
+        } else {
+            throw new UnsupportedJsonGraphException("An edge's source or target "
+                    + "node could not be resolved.", jEdge);
         }
 
         // find out if there are hyperedges, that is a set of edges connected to the same port
@@ -670,8 +688,8 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
                 }
                 edge.setProperty(Properties.ORIGINAL_BENDPOINTS, bendpoints);
             } catch (Exception e) {
-                throw new UnsupportedGraphException(
-                        "Invalid format of an edges 'bendPoints' property.");
+                throw new UnsupportedJsonGraphException(
+                        "Invalid format of an edges 'bendPoints' property.", jEdge);
             }
         }
 
@@ -711,8 +729,8 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         if (jsonEle.containsKey("properties")) {
             JSONValue val = jsonEle.get("properties");
             if (val.isObject() == null) {
-                throw new UnsupportedGraphException(
-                        "The 'properties' property of a graph element must be an object.");
+                throw new UnsupportedJsonGraphException(
+                        "The 'properties' property of a graph element must be an object.", val, jsonEle);
             }
             transformPropertiesObj(val.isObject(), ele);
         }
@@ -915,12 +933,12 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
      */
     private void checkForId(final JSONObject obj) {
         if (!obj.containsKey("id")) {
-            throw new UnsupportedGraphException(
-                    "Every graph element must specify an 'id' property.");
+            throw new UnsupportedJsonGraphException(
+                    "Every graph element must specify an 'id' property.", obj);
         }
         if (obj.get("id").isString() == null) {
-            throw new UnsupportedGraphException("Invalid format for 'id'. Must be a string, was "
-                    + obj.get("id").getClass());
+            throw new UnsupportedJsonGraphException("Invalid format for 'id'. Must be a string, was "
+                    + obj.get("id").getClass(), obj);
         }
     }
     
