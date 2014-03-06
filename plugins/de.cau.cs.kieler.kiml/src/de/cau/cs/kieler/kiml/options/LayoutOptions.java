@@ -223,7 +223,7 @@ public final class LayoutOptions {
      * [programmatically set]
      */
     public static final IProperty<Margins> MARGINS = new Property<Margins>(
-            "de.cau.cs.kieler.margins");
+            "de.cau.cs.kieler.margins", new Margins());
     
     /**
      * On which side of its corresponding edge a label is situated. 

@@ -117,8 +117,8 @@ public class KGraphAdapters {
         public Insets getInsets() {
             KInsets kinsets = layout.getInsets();
             Insets insets =
-                    new Insets(kinsets.getLeft(), kinsets.getTop(), kinsets.getRight(),
-                            kinsets.getBottom());
+                    new Insets(kinsets.getTop(), kinsets.getLeft(), kinsets.getBottom(),
+                            kinsets.getRight());
             return insets;
         }
 
