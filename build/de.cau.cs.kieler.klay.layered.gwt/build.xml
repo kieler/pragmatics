@@ -77,10 +77,10 @@
 					</not>
 					<exclude name="de/cau/cs/kieler/kiml/klayoutdata/**" />
 					<exclude name="de/cau/cs/kieler/kiml/config/**" />
-					<exclude name="de/cau/cs/kieler/kiml/util/**" />
+					<exclude name="de/cau/cs/kieler/kiml/util/*" />
 					<exclude name="**/LayoutAlgorithmData.java" />
 					<exclude name="**/LayoutConfigService.java" />
-					<exclude name="**/LayoutDataService.java" />
+					<exclude name="**/LayoutMetaDataService.java" />
 					<exclude name="**/LayoutTypeData.java" />
 				</fileset>
 				<filterchain>
