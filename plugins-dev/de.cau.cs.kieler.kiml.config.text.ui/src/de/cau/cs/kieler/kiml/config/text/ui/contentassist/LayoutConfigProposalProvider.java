@@ -26,7 +26,7 @@ import com.google.inject.Inject;
 
 import de.cau.cs.kieler.core.kgraph.PersistentEntry;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutOptionData.Type;
 import de.cau.cs.kieler.kiml.config.text.services.LayoutConfigGrammarAccess;
@@ -60,7 +60,7 @@ public class LayoutConfigProposalProvider extends AbstractLayoutConfigProposalPr
         super.completePersistentEntry_Key(model, assignment, context, acceptor);
 
         // we
-        LayoutDataService layoutServices = LayoutDataService.getInstance();
+        LayoutMetaDataService layoutServices = LayoutMetaDataService.getInstance();
 
         // create and register the completion proposal for every element in the list
         for (LayoutOptionData optionData : layoutServices.getOptionData()) {
@@ -114,7 +114,7 @@ public class LayoutConfigProposalProvider extends AbstractLayoutConfigProposalPr
             if (!Strings.isEmpty(annotationName)) {
 
                 // get the option list
-                LayoutDataService layoutServices = LayoutDataService.getInstance();
+                LayoutMetaDataService layoutServices = LayoutMetaDataService.getInstance();
 
                 // find the specific option an display all possible values
                 LayoutOptionData optionData = layoutServices.getOptionData(annotationName);
