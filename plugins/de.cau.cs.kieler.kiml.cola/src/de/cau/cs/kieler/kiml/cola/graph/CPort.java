@@ -13,8 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.cola.graph;
 
-import java.util.Random;
-
 import org.adaptagrams.ColaEdge;
 import org.adaptagrams.Dim;
 import org.adaptagrams.Rectangle;
@@ -31,53 +29,41 @@ import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 
 /**
  * @author uru
- * 
  */
-public class CPort {
+public class CPort extends CShape<KPort> {
 
-    public final int cIndex;
+    // CHECKSTYLEOFF VisibilityModifier
+    // CHECKSTYLEOFF Javadoc
+
     public int cEdgeIndex;
     public final Rectangle rect;
-
     public double idealDummyEdgeLength;
-
-    private final CNode parentNode;
-    public final KPort origin;
-    private final CGraph graph;
 
     public PortSide side;
 
-    final Random r = new Random();
+    private final CNode parentNode;
 
     /**
      * 
      */
-    public CPort(final CGraph graph, final KPort p, CNode parentNode) {
+    public CPort(final CGraph graph, final KPort p, final CNode parentNode) {
+        super(graph, p);
+
         this.parentNode = parentNode;
-        this.origin = p;
-        this.graph = graph;
 
-        KShapeLayout portLayout = p.getData(KShapeLayout.class);
-
-        int rand = 0;// r.nextInt(50);
-        int randy = 0;// r.nextInt(200);
-        rect =
-                new Rectangle(rand, rand + portLayout.getWidth(), rand, rand
-                        + portLayout.getHeight());
+        rect = new Rectangle(0, 0 + this.getSize().x, 0, 0 + this.getSize().y);
         cIndex = graph.nodeIndex++;
 
         graph.nodes.add(rect);
 
+        side = KimlUtil.calcPortSide(origin, Direction.RIGHT); // TODO dir
     }
 
     public CPort asExternalDummy() {
 
         double borderSpacing = graph.getProperty(LayoutOptions.BORDER_SPACING);
 
-        PortSide ps = KimlUtil.calcPortSide(origin, Direction.RIGHT); // TODO dir
-        side = ps;
-
-        switch (ps) {
+        switch (side) {
         case EAST:
 
             // generate a separation constraint on the right side of all nodes
@@ -126,8 +112,8 @@ public class CPort {
 
         KShapeLayout portLayout = origin.getData(KShapeLayout.class);
         KShapeLayout layout = parentNode.origin.getData(KShapeLayout.class);
-        
-        //System.out.println(portLayout.getXpos() + " " + portLayout.getYpos());
+
+        // System.out.println(portLayout.getXpos() + " " + portLayout.getYpos());
 
         // get margins
         Margins margin =
@@ -175,7 +161,8 @@ public class CPort {
         KVector portPos =
                 new KVector(portLayout.getXpos() - portOffset.x, portLayout.getYpos()
                         - portOffset.y);
-        idealDummyEdgeLength = KVector.distance(marginCenter, portPos) + 10;
+        idealDummyEdgeLength =
+                KVector.distance(marginCenter, portPos) + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1;
 
         return this;
     }

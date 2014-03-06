@@ -21,22 +21,26 @@ import org.adaptagrams.SeparationConstraint;
 
 import com.google.common.collect.Maps;
 
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.cola.graph.CEdge;
 import de.cau.cs.kieler.kiml.cola.graph.CGraph;
 import de.cau.cs.kieler.kiml.cola.graph.CNode;
 import de.cau.cs.kieler.kiml.cola.util.ColaUtil;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 
 /**
- * @author uru
+ * Adds direction constraints to the graph.
  * 
+ * @author uru
  */
-public class DirectionConstraintProcessor {
+public class DirectionConstraintProcessor implements ILayoutProcessor {
 
-    public void process(final CGraph graph) {
+    /**
+     * {@inheritDoc}
+     */
+    public void process(final CGraph graph, final IKielerProgressMonitor progressMonitor) {
 
         float spacing = graph.getProperty(LayoutOptions.SPACING);
 
@@ -49,30 +53,25 @@ public class DirectionConstraintProcessor {
         }
 
         // TODO only left to right atm
-        // for (KNode n : root.getChildren()) {
-        // for (KEdge e : n.getOutgoingEdges()) {
         for (CNode n : graph.getChildren()) {
 
             for (CEdge e : n.getOutgoingEdges()) {
 
                 // dont create constraints if the nodes are in the same scc
-                if (nodeSccMap.get(e.getSrc().origin).contains(e.getTgt().origin)) {
+                if (nodeSccMap.get(e.getSource().origin).contains(e.getTarget().origin)) {
                     continue;
                 }
 
-                KShapeLayout srcLayout = e.getSrc().origin.getData(KShapeLayout.class);
-                KShapeLayout tgtLayout = e.getTgt().origin.getData(KShapeLayout.class);
-
-                Margins srcMargins = srcLayout.getProperty(LayoutOptions.MARGINS);
-                Margins tgtMargins = tgtLayout.getProperty(LayoutOptions.MARGINS);
+                Margins srcMargins = e.getSource().getProperty(LayoutOptions.MARGINS);
+                Margins tgtMargins = e.getTarget().getProperty(LayoutOptions.MARGINS);
 
                 // separation has to go from mid to mid
                 double widthSeparation =
-                        (srcLayout.getWidth() / 2f + srcMargins.right + srcMargins.left)
-                                + (tgtLayout.getWidth() / 2f + tgtMargins.left + tgtMargins.right);
+                        (e.getSource().getSize().x / 2f + srcMargins.right + srcMargins.left)
+                                + (e.getTarget().getSize().x / 2f + tgtMargins.left + tgtMargins.right);
                 SeparationConstraint sc =
-                        new SeparationConstraint(Dim.XDIM, e.getSrc().cIndex, e.getTgt().cIndex,
-                                widthSeparation + spacing);
+                        new SeparationConstraint(Dim.XDIM, e.getSource().cIndex,
+                                e.getTarget().cIndex, widthSeparation + spacing);
 
                 // System.out.println("Spacing: " + spacing);
 

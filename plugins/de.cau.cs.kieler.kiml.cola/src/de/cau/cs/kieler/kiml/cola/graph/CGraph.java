@@ -23,7 +23,6 @@ import org.adaptagrams.CompoundConstraintPtrs;
 import org.adaptagrams.Dim;
 import org.adaptagrams.RectanglePtrs;
 import org.adaptagrams.SWIGTYPE_p_double;
-import org.adaptagrams.SeparationConstraint;
 import org.adaptagrams.adaptagrams;
 
 import com.google.common.collect.Lists;
@@ -32,8 +31,6 @@ import com.google.common.collect.Maps;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
-import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -43,7 +40,10 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  * @author uru
  * 
  */
-public class CGraph {
+public class CGraph extends CGraphElement<KNode> {
+
+    // CHECKSTYLEOFF VisibilityModifier
+    // CHECKSTYLEOFF Javadoc
 
     private Map<KNode, CNode> knodeMap = Maps.newHashMap();
     private Map<KPort, CPort> kportMap = Maps.newHashMap();
@@ -68,6 +68,7 @@ public class CGraph {
      * 
      */
     public CGraph(final KNode graph) {
+        super(null, graph);
 
         origin = graph;
 
@@ -122,37 +123,37 @@ public class CGraph {
                 cnode.ports.add(port);
 
             }
-            
-         // keep the order!
-//            for (CPort p1 : cnode.getPorts()) {
-//                for (CPort p2 : cnode.getPorts()) {
-//
-//                    // not for the same port, not for ports on different sides
-//                    if (p1.equals(p2) || p1.side != p2.side) {
-//                        continue;
-//                    }
-//                    
-//                    System.out.println("SPATEN");
-//
-//                    int dim;
-//                    double sep;
-//                    if (p1.side == PortSide.NORTH || p1.side == PortSide.SOUTH) {
-//                        dim = Dim.XDIM;
-//                        sep =
-//                                p1.origin.getData(KShapeLayout.class).getXpos()
-//                                        - p2.origin.getData(KShapeLayout.class).getXpos();
-//                    } else {
-//                        dim = Dim.YDIM;
-//                        sep =
-//                                p1.origin.getData(KShapeLayout.class).getYpos()
-//                                        - p2.origin.getData(KShapeLayout.class).getYpos();
-//                    }
-//                    System.out.println(dim + " " + sep);
-//                    SeparationConstraint sc =
-//                            new SeparationConstraint(dim, p1.cIndex, p2.cIndex, -sep+20, false);
-//                    constraints.add(sc);
-//                }
-//            }
+
+            // keep the order!
+            // for (CPort p1 : cnode.getPorts()) {
+            // for (CPort p2 : cnode.getPorts()) {
+            //
+            // // not for the same port, not for ports on different sides
+            // if (p1.equals(p2) || p1.side != p2.side) {
+            // continue;
+            // }
+            //
+            // System.out.println("SPATEN");
+            //
+            // int dim;
+            // double sep;
+            // if (p1.side == PortSide.NORTH || p1.side == PortSide.SOUTH) {
+            // dim = Dim.XDIM;
+            // sep =
+            // p1.origin.getData(KShapeLayout.class).getXpos()
+            // - p2.origin.getData(KShapeLayout.class).getXpos();
+            // } else {
+            // dim = Dim.YDIM;
+            // sep =
+            // p1.origin.getData(KShapeLayout.class).getYpos()
+            // - p2.origin.getData(KShapeLayout.class).getYpos();
+            // }
+            // System.out.println(dim + " " + sep);
+            // SeparationConstraint sc =
+            // new SeparationConstraint(dim, p1.cIndex, p2.cIndex, -sep+20, false);
+            // constraints.add(sc);
+            // }
+            // }
 
         }
 
@@ -259,8 +260,4 @@ public class CGraph {
         return arr;
     }
 
-    public <T> T getProperty(final IProperty<T> prop) {
-        KLayoutData layout = origin.getData(KShapeLayout.class);
-        return layout.getProperty(prop);
-    }
 }

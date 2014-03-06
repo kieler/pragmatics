@@ -21,9 +21,10 @@ import de.cau.cs.kieler.core.kgraph.KEdge;
  * @author uru
  * 
  */
-public class CEdge {
+public class CEdge extends CGraphElement<KEdge> {
 
-    public final int cIndex;
+    // CHECKSTYLEOFF VisibilityModifier
+    // CHECKSTYLEOFF Javadoc
 
     public final CNode src;
     public final CNode tgt;
@@ -37,16 +38,17 @@ public class CEdge {
      */
     public CEdge(final CGraph graph, final KEdge origin, final CNode src, final CPort srcPort,
             final CNode tgt, final CPort tgtPort) {
+        super(graph, origin);
 
         this.src = src;
         this.tgt = tgt;
         this.srcPort = srcPort;
         this.tgtPort = tgtPort;
 
-        // external ports only have a dummy for the port, no parent nodes 
+        // external ports only have a dummy for the port, no parent nodes
         if (src == null) {
             assert srcPort != null;
-        } 
+        }
         if (tgt == null) {
             assert tgtPort != null;
         }
@@ -62,10 +64,6 @@ public class CEdge {
         if (tgtPort != null) {
             tgtIndex = tgtPort.cIndex;
         } else {
-            if (tgt == null) {
-                System.out.println(graph.origin);
-                System.out.println(origin);
-            }
             tgtIndex = tgt.cIndex;
         }
 
@@ -75,20 +73,20 @@ public class CEdge {
 
         // add to the graph
         graph.edges.add(edge);
-        
+
     }
-    
+
     /**
      * @return the src
      */
-    public CNode getSrc() {
+    public CNode getSource() {
         return src;
     }
-    
+
     /**
      * @return the tgt
      */
-    public CNode getTgt() {
+    public CNode getTarget() {
         return tgt;
     }
 
