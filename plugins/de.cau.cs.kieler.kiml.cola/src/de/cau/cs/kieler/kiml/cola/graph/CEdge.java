@@ -43,6 +43,14 @@ public class CEdge {
         this.srcPort = srcPort;
         this.tgtPort = tgtPort;
 
+        // external ports only have a dummy for the port, no parent nodes 
+        if (src == null) {
+            assert srcPort != null;
+        } 
+        if (tgt == null) {
+            assert tgtPort != null;
+        }
+
         int srcIndex;
         if (srcPort != null) {
             srcIndex = srcPort.cIndex;
@@ -54,6 +62,10 @@ public class CEdge {
         if (tgtPort != null) {
             tgtIndex = tgtPort.cIndex;
         } else {
+            if (tgt == null) {
+                System.out.println(graph.origin);
+                System.out.println(origin);
+            }
             tgtIndex = tgt.cIndex;
         }
 
@@ -63,6 +75,7 @@ public class CEdge {
 
         // add to the graph
         graph.edges.add(edge);
+        
     }
     
     /**

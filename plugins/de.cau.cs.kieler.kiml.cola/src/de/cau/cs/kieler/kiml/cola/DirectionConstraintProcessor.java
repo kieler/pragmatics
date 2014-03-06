@@ -73,6 +73,8 @@ public class DirectionConstraintProcessor {
                 SeparationConstraint sc =
                         new SeparationConstraint(Dim.XDIM, e.getSrc().cIndex, e.getTgt().cIndex,
                                 widthSeparation + spacing);
+                
+//                System.out.println("Spacing: " + spacing);
 
                 graph.constraints.add(sc);
             }

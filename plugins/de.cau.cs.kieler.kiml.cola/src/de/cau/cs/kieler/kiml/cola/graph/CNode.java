@@ -15,6 +15,7 @@ package de.cau.cs.kieler.kiml.cola.graph;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.adaptagrams.Rectangle;
 
@@ -37,6 +38,7 @@ public class CNode {
     final protected List<CEdge> incomingEdges;
     final protected List<CPort> ports;
     
+    final Random r = new Random();
     /**
      * .
      */
@@ -54,7 +56,9 @@ public class CNode {
         // constrained layout considers previous positions, to make it independent from
         // any weird layout stuff used before we run it, use 0 as initial positions for all
         // rects
-        rect = new Rectangle(0, 0 + layout.getWidth(), 0, 0 + layout.getHeight());
+        int rand = 0;//r.nextInt(200);
+        int randy = 0;//r.nextInt(200);
+        rect = new Rectangle(rand, rand + layout.getWidth(), rand, rand + layout.getHeight());
         cIndex = graph.nodeIndex++;
         
         // register in graph

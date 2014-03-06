@@ -22,6 +22,9 @@
                default="100"
                option="de.cau.cs.kieler.kiml.cola.idealEdgeLengths">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layoutHierarchy">
+         </knownOption>
       </layoutAlgorithm>
       <layoutOption
             appliesTo="parents"

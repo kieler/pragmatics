@@ -25,6 +25,7 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.cola.graph.CGraph;
 import de.cau.cs.kieler.kiml.cola.graph.CNode;
+import de.cau.cs.kieler.kiml.cola.graph.CPort;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
@@ -49,7 +50,9 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     public void doLayout(final KNode parentNode, final IKielerProgressMonitor progressMonitor) {
-
+        
+        System.out.println("Called layout " +parentNode.getData(KShapeLayout.class).getProperty(LayoutOptions.LAYOUT_HIERARCHY) );
+        
         // handle some properties
         KLayoutData rootLayout = parentNode.getData(KLayoutData.class);
 
@@ -77,28 +80,40 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         new DirectionConstraintProcessor().process(graph);
         new NonUniformEdgeLengthProcessor().process(graph);
 
+        System.out.println(parentNode);
         System.out.println(Arrays.toString(graph.idealEdgeLengths));
 
+        for(int i = 0; i < graph.idealEdgeLengths.length; ++i ) {
+            if(graph.idealEdgeLengths[i] == 0) {
+                graph.idealEdgeLengths[i] = borderSpacing;
+            }
+        }
+        
         ConstrainedFDLayout algo =
-                new ConstrainedFDLayout(graph.getNodes(), graph.getEdges(), 1, false,
+                new ConstrainedFDLayout(graph.getNodes(), graph.getEdges(), 50, false,
                         graph.getIdealEdgeLengths());
+        
+        
         algo.setConstraints(graph.getConstraints());
 
         // run some w/o overlap
         algo.makeFeasible();
+        
 
         for (int i = 0; i < 10; i++) {
             algo.runOnce();
 
             algo.outputInstanceToSVG("out" + i + ".svg");
 
-            System.out.println(i);
+            //System.out.println(i);
         }
 
         // do some with overlap
         algo =
                 new ConstrainedFDLayout(graph.getNodes(), graph.getEdges(), 1, true,
                         graph.getIdealEdgeLengths());
+        
+        
         algo.setConstraints(graph.getConstraints());
 
         algo.makeFeasible();
@@ -108,7 +123,7 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
 
             algo.outputInstanceToSVG("out99overlap" + i + ".svg");
 
-            System.out.println(i);
+//            System.out.println(i);
         }
 
         /*
@@ -120,6 +135,8 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
 
         // cleanup c++ objects
         algo.freeAssociatedObjects();
+        
+        
     }
 
     private void applyLayout(final KNode root) {
@@ -129,8 +146,8 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
                 Float.MIN_VALUE;
 
         // find the minimal and maximal positions of the contained nodes
-        for (int i = 0; i < graph.nodes.size(); i++) {
-            Rectangle r = graph.nodes.get(i);
+        for (CNode n : graph.getChildren()) {
+            Rectangle r = n.rect;
             minX = Math.min(minX, r.getMinX());
             minY = Math.min(minY, r.getMinY());
             maxX = Math.max(maxX, r.getMaxX());
@@ -145,6 +162,18 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
             Rectangle r = n.rect;
 
             KShapeLayout layout = n.origin.getData(KShapeLayout.class);
+            layout.setXpos((float) (r.getMinX() + offset.x));
+            layout.setYpos((float) (r.getMinY() + offset.y));
+        }
+        
+        
+        /*
+         * External Ports
+         */
+        for (CPort p : graph.getExternalPorts()) {
+            Rectangle r = p.rect;
+            
+            KShapeLayout layout = p.origin.getData(KShapeLayout.class);
             layout.setXpos((float) (r.getMinX() + offset.x));
             layout.setYpos((float) (r.getMinY() + offset.y));
         }

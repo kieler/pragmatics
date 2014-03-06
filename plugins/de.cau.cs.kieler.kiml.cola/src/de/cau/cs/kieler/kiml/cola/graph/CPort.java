@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.kiml.cola.graph;
 
+import java.util.Random;
+
 import org.adaptagrams.ColaEdge;
 import org.adaptagrams.Dim;
 import org.adaptagrams.Rectangle;
@@ -21,59 +23,127 @@ import org.adaptagrams.SeparationConstraint;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.Direction;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * @author uru
- *
+ * 
  */
 public class CPort {
 
     public final int cIndex;
-    public final int cEdgeIndex;
+    public int cEdgeIndex;
     public final Rectangle rect;
+
+    public double idealDummyEdgeLength;
+
+    private final CNode parentNode;
+    public final KPort origin;
+    private final CGraph graph;
+
+    public PortSide side ;
     
-    public final double idealDummyEdgeLength;
-    
+    final Random r = new Random();
     /**
      * 
      */
     public CPort(final CGraph graph, final KPort p, CNode parentNode) {
-        
+        this.parentNode = parentNode;
+        this.origin = p;
+        this.graph = graph;
+
         KShapeLayout portLayout = p.getData(KShapeLayout.class);
 
-        rect =
-                new Rectangle(0, 0 + portLayout.getWidth(), 0, 0 + portLayout.getHeight());
+        int rand = 0;//r.nextInt(50);
+        int randy = 0;//r.nextInt(200);
+        rect = new Rectangle(rand, rand + portLayout.getWidth(), rand, rand + portLayout.getHeight());
         cIndex = graph.nodeIndex++;
-        
+
         graph.nodes.add(rect);
+
+    }
+
+    public CPort asExternalDummy() {
+        
+        double borderSpacing = graph.getProperty(LayoutOptions.BORDER_SPACING);
+
+        PortSide ps = KimlUtil.calcPortSide(origin, Direction.RIGHT); // TODO dir
+        side = ps;
+        
+        switch (ps) {
+        case EAST:
+            
+         // generate a separation constraint on the right side of all nodes
+            for (CNode n : graph.getChildren()) {
+
+                KShapeLayout nodeLayout = n.origin.getData(KShapeLayout.class);
+                KShapeLayout portLayout = origin.getData(KShapeLayout.class);
+
+                SeparationConstraint scRight =
+                        new SeparationConstraint(Dim.XDIM, n.cIndex, cIndex, nodeLayout.getWidth()
+                                / 2f + portLayout.getWidth() / 2f + borderSpacing, false);
+                graph.constraints.add(scRight);
+
+            }
+            break;
+            
+        case WEST:
+            
+            // generate a separation constraint on the left side of all nodes
+            for (CNode n : graph.getChildren()) {
+
+                KShapeLayout nodeLayout = n.origin.getData(KShapeLayout.class);
+                KShapeLayout portLayout = origin.getData(KShapeLayout.class);
+
+                SeparationConstraint scRight =
+                        new SeparationConstraint(Dim.XDIM, cIndex, n.cIndex, nodeLayout.getWidth()
+                                / 2f + portLayout.getWidth() / 2f + borderSpacing, false);
+                graph.constraints.add(scRight);
+            }
+            
+            break;
+            
+            default:
+                
+        }
+
+        return this;
+    }
+
+    public CPort withCenterEdge() {
 
         // connect by edge
         ColaEdge dummyEdge = new ColaEdge(parentNode.cIndex, cIndex);
         cEdgeIndex = graph.edgeIndex++;
         graph.edges.add(dummyEdge);
 
+        KShapeLayout portLayout = origin.getData(KShapeLayout.class);
         KShapeLayout layout = parentNode.origin.getData(KShapeLayout.class);
-        
+
         // constraints refer to the center of a node
         double halfX = layout.getWidth() / 2f - portLayout.getWidth() / 2f;
         double halfY = layout.getHeight() / 2f - portLayout.getHeight() / 2f;
 
         // generate sep constrs
         SeparationConstraint scX =
-                new SeparationConstraint(Dim.XDIM, parentNode.cIndex, cIndex,
-                        portLayout.getXpos() - halfX, true);
+                new SeparationConstraint(Dim.XDIM, parentNode.cIndex, cIndex, portLayout.getXpos()
+                        - halfX, true);
         graph.constraints.add(scX);
         SeparationConstraint scY =
-                new SeparationConstraint(Dim.YDIM, parentNode.cIndex, cIndex,
-                        portLayout.getYpos() - halfY, true);
+                new SeparationConstraint(Dim.YDIM, parentNode.cIndex, cIndex, portLayout.getYpos()
+                        - halfY, true);
         graph.constraints.add(scY);
 
         // calculate the fixed distance of the dummy to the center
         KVector center = new KVector(layout.getWidth() / 2f, layout.getHeight() / 2f);
-        KVector portPos =
-                new KVector(portLayout.getXpos() - halfX, portLayout.getYpos() - halfY);
+        KVector portPos = new KVector(portLayout.getXpos() - halfX, portLayout.getYpos() - halfY);
 
         idealDummyEdgeLength = KVector.distance(center, portPos) + 10;
+
+        return this;
     }
-    
+
 }

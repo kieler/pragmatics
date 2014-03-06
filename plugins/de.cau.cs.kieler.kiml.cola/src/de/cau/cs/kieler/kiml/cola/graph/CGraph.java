@@ -17,12 +17,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.adaptagrams.AlignmentConstraint;
 import org.adaptagrams.ColaEdges;
 import org.adaptagrams.CompoundConstraintPtrs;
+import org.adaptagrams.Dim;
 import org.adaptagrams.RectanglePtrs;
 import org.adaptagrams.SWIGTYPE_p_double;
 import org.adaptagrams.adaptagrams;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
@@ -33,6 +36,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * @author uru
@@ -57,6 +61,7 @@ public class CGraph {
     public final KNode origin;
 
     private List<CNode> children;
+    private List<CPort> externalPorts;
 
     /**
      * 
@@ -73,6 +78,7 @@ public class CGraph {
         constraints = new CompoundConstraintPtrs();
 
         children = new ArrayList<CNode>(graph.getChildren().size());
+        externalPorts = Lists.newArrayList();
 
         transformGraph(graph);
 
@@ -81,6 +87,9 @@ public class CGraph {
 
     private void transformGraph(final KNode root) {
 
+        // put the root in the pool!
+        knodeMap.put(root, null);
+        
         for (KNode n : root.getChildren()) {
 
             // ignore unconnected nodes
@@ -107,19 +116,51 @@ public class CGraph {
                 } catch (Exception e) {
                 }
 
-                CPort port = new CPort(this, p, cnode);
+                CPort port = new CPort(this, p, cnode).withCenterEdge();
                 kportMap.put(p, port);
                 cnode.ports.add(port);
 
             }
 
         }
+        
+        
+        /*
+         *  external port dummies
+         */
+        for (KPort p : root.getPorts()) {
+            
+            CPort port = new CPort(this, p, null).asExternalDummy();
+            kportMap.put(p, port);
+//            externalPorts.add(port);
+        }
+
+        // align external ports
+        AlignmentConstraint acLeft = new AlignmentConstraint(Dim.XDIM);
+        constraints.add(acLeft);
+        AlignmentConstraint acRight = new AlignmentConstraint(Dim.XDIM);
+        constraints.add(acRight);
+        for (CPort p : externalPorts) {
+            if (p.side == PortSide.WEST) {
+                acLeft.addShape(p.cIndex, 0);
+            } else {
+                acRight.addShape(p.cIndex, 0);
+            }
+            
+        }
+        
 
         /*
          * Edges
          */
         for (KNode n : root.getChildren()) {
+            
             for (KEdge e : n.getOutgoingEdges()) {
+                
+                // ignore hierarchy edges
+                if (KimlUtil.isDescendant(e.getTarget(), e.getSource())) {
+                   continue;
+                }
 
                 CNode srcNode = knodeMap.get(e.getSource());
                 CNode tgtNode = knodeMap.get(e.getTarget());
@@ -128,12 +169,16 @@ public class CGraph {
 
                 CEdge edge = new CEdge(this, e, srcNode, srcPort, tgtNode, tgtPort);
 
-                srcNode.outgoingEdges.add(edge);
-                tgtNode.incomingEdges.add(edge);
+                // register the edge (if it is no edge to an external port dummy
+                if (e.getTarget().getParent() == e.getSource().getParent()) {
+                    srcNode.outgoingEdges.add(edge);
+                    tgtNode.incomingEdges.add(edge);    
+                 }
+                
             }
         }
 
-        System.out.println("Last edge created: " + edgeIndex);
+        //System.out.println("Last edge created: " + edgeIndex);
     }
 
     /**
@@ -141,6 +186,13 @@ public class CGraph {
      */
     public List<CNode> getChildren() {
         return children;
+    }
+    
+    /**
+     * @return the externalPorts
+     */
+    public List<CPort> getExternalPorts() {
+        return externalPorts;
     }
 
     /**

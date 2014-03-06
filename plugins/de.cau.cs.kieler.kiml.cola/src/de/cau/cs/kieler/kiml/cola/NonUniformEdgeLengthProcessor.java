@@ -33,12 +33,14 @@ public class NonUniformEdgeLengthProcessor {
     public void process(final CGraph graph) {
         
         double idealEdgeLength = graph.getProperty(ColaProperties.IDEAL_EDGE_LENGTHS);
+        
+        System.out.println("Ideal Edge: " + idealEdgeLength);
 
         // set the ideal edge lengths for the port dummy edges
         for (CNode n : graph.getChildren()) {
             for (CPort p : n.getPorts()) {
                 graph.idealEdgeLengths[p.cEdgeIndex] = p.idealDummyEdgeLength + 10;
-                System.out.println("Port: " +p.cEdgeIndex + " " + p.idealDummyEdgeLength);
+//                System.out.println("Port: " +p.cEdgeIndex + " " + p.idealDummyEdgeLength);
             }
         }
         
@@ -74,7 +76,7 @@ public class NonUniformEdgeLengthProcessor {
                     jaccard = 1 / (intersection / (double) union);
                 }
     
-                System.out.println("Edge: " + e.cIndex + " "   + (1 + idealEdgeLength * sqrt));
+//                System.out.println("Edge: " + e.cIndex + " "   + (1 + idealEdgeLength * sqrt));
                 graph.idealEdgeLengths[e.cIndex] = 1 + idealEdgeLength * sqrt;
                 // edgeLengths[index] = 1 + w * jaccard;
             }
