@@ -85,7 +85,6 @@ public abstract class Spacing {
      */
     public void set(final double newTop, final double newLeft, final double newBottom,
             final double newRight) {
-
         this.top = newTop;
         this.left = newLeft;
         this.bottom = newBottom;
@@ -172,7 +171,7 @@ public abstract class Spacing {
          *            insets object from which to copy the values.
          */
         public Insets(final Insets other) {
-            super(other.left, other.top, other.right, other.bottom);
+            super(other.top, other.left, other.bottom, other.right);
         }
 
         /**
@@ -214,7 +213,7 @@ public abstract class Spacing {
          *            margins object from which to copy the values.
          */
         public Margins(final Margins other) {
-            super(other.left, other.top, other.right, other.bottom);
+            super(other.top, other.left, other.bottom, other.right);
         }
 
         /**
