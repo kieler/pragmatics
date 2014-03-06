@@ -17,7 +17,7 @@ import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.core.properties.IPropertyValueProxy;
 import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 
 /**
@@ -62,7 +62,7 @@ public final class LayoutOptionProxy implements IPropertyValueProxy {
         if (property instanceof LayoutOptionData) {
             optionData = (LayoutOptionData) property;
         } else {
-            optionData = LayoutDataService.getInstance().getOptionData(property.getId());
+            optionData = LayoutMetaDataService.getInstance().getOptionData(property.getId());
         }
         if (optionData != null) {
             return (T) optionData.parseValue(value);

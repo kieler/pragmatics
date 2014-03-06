@@ -85,16 +85,26 @@ public class CompoundLayoutConfig implements IMutableLayoutConfig {
      * @param conf a layout configuration
      */
     public void add(final ILayoutConfig conf) {
-        ListIterator<ILayoutConfig> configIter = configs.listIterator();
-        int prio = conf.getPriority();
-        while (configIter.hasNext()) {
-            ILayoutConfig nextConf = configIter.next();
-            if (nextConf.getPriority() <= prio) {
-                configIter.previous();
-                break;
+        if (conf instanceof CompoundLayoutConfig) {
+            // add all contained configurators instead of the container itself
+            CompoundLayoutConfig compConf = (CompoundLayoutConfig) conf;
+            if (compConf != this) {
+                for (ILayoutConfig c : compConf.configs) {
+                    add(c);
+                }
             }
+        } else {
+            ListIterator<ILayoutConfig> configIter = this.configs.listIterator();
+            int prio = conf.getPriority();
+            while (configIter.hasNext()) {
+                ILayoutConfig nextConf = configIter.next();
+                if (nextConf.getPriority() <= prio) {
+                    configIter.previous();
+                    break;
+                }
+            }
+            configIter.add(conf);
         }
-        configIter.add(conf);
     }
     
     /**
@@ -114,7 +124,17 @@ public class CompoundLayoutConfig implements IMutableLayoutConfig {
      * @param conf a layout configuration
      */
     public void remove(final ILayoutConfig conf) {
-        configs.remove(conf);
+        if (conf instanceof CompoundLayoutConfig) {
+            CompoundLayoutConfig compConf = (CompoundLayoutConfig) conf;
+            if (compConf == this) {
+                this.configs.clear();
+            } else {
+                for (ILayoutConfig c : compConf.configs) {
+                    remove(c);
+                }
+            }
+        }
+        this.configs.remove(conf);
     }
     
     /**
@@ -123,7 +143,9 @@ public class CompoundLayoutConfig implements IMutableLayoutConfig {
      * @param confs a collection of layout configurations
      */
     public void removeAll(final Collection<ILayoutConfig> confs) {
-        configs.removeAll(confs);
+        for (ILayoutConfig conf : confs) {
+            remove(conf);
+        }
     }
     
     /**

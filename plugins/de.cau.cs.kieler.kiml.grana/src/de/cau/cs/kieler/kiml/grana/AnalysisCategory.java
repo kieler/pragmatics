@@ -16,7 +16,7 @@ package de.cau.cs.kieler.kiml.grana;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.kiml.ILayoutData;
+import de.cau.cs.kieler.kiml.ILayoutMetaData;
 
 /**
  * An analysis category. Objects of this class are defined through the
@@ -27,7 +27,7 @@ import de.cau.cs.kieler.kiml.ILayoutData;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow 2012-07-10 msp
  */
-public class AnalysisCategory implements ILayoutData {
+public class AnalysisCategory implements ILayoutMetaData {
 
     /** the categories id. */
     private String categoryId;

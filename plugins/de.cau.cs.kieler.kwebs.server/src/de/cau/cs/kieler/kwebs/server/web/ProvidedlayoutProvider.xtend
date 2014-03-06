@@ -16,7 +16,6 @@ package de.cau.cs.kieler.kwebs.server.web
 
 import de.cau.cs.kieler.kiml.options.LayoutOptions
 import de.cau.cs.kieler.kwebs.server.Application
-import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService
 import de.cau.cs.kieler.kwebs.server.logging.Logger
 import de.cau.cs.kieler.kwebs.server.util.Resources
 import java.util.Map
@@ -26,6 +25,7 @@ import de.cau.cs.kieler.kwebs.server.servicedata.KnownOption
 import de.cau.cs.kieler.kwebs.server.servicedata.SupportedFormat
 import de.cau.cs.kieler.kwebs.server.servicedata.LayoutOption
 import de.cau.cs.kieler.kiml.LayoutOptionData
+import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutMetaDataService
 
 /**
  * This class implements a web content provider for displaying the service meta data in HTML format.
@@ -54,7 +54,7 @@ class ProvidedlayoutProvider
 
     /** Caching the service data model. */
     private ServiceData serviceData 
-        = ServerLayoutDataService::getInstance().getServiceDataModel()
+        = ServerLayoutMetaDataService::getInstance().getServiceDataModel()
      
     /**
      * 
@@ -442,7 +442,7 @@ class ProvidedlayoutProvider
         if (id == null) {
             return ''''''
         }
-        var byte[] data = ServerLayoutDataService::getInstance().getPreviewImage(id)
+        var byte[] data = ServerLayoutMetaDataService::getInstance().getPreviewImage(id)
         if (data == null) {
             data = Resources::readFileOrPluginResourceAsByteArray(Application::PLUGIN_ID, PREVIEWIMAGE_UNAVAILABLE)
         }

@@ -35,7 +35,7 @@ import de.cau.cs.kieler.core.util.Pair;
  * @kieler.rating yellow 2012-10-09 review KI-25 by chsch, bdu
  * @author msp
  */
-public final class LayoutOptionData implements ILayoutData, IProperty<Object>,
+public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object>,
         Comparable<IProperty<?>> {
 
     /** literal value constant for booleans. */

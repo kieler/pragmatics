@@ -24,7 +24,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
 
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
@@ -202,7 +202,7 @@ public class OptionsTableProvider extends LabelProvider implements ITableLabelPr
                         && entry.value instanceof Integer) {
                     return entry.optionData.getEnumValue((Integer) entry.value).toString();
                 } else if (entry.optionData.equals(LayoutOptions.ALGORITHM)) {
-                    LayoutAlgorithmData algorithm = LayoutDataService.getInstance().getAlgorithmData(
+                    LayoutAlgorithmData algorithm = LayoutMetaDataService.getInstance().getAlgorithmData(
                             entry.value.toString());
                     if (algorithm != null) {
                         return algorithm.toString();

@@ -27,7 +27,7 @@ import de.cau.cs.kieler.kwebs.server.jaxws.LayoutServicePort;
 import de.cau.cs.kieler.kwebs.server.jaxws.ServiceFault;
 import de.cau.cs.kieler.kwebs.server.jaxws.ServiceFault_Exception;
 import de.cau.cs.kieler.kwebs.server.layout.GraphLayoutOption;
-import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService;
+import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutMetaDataService;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 import de.cau.cs.kieler.statistics.KIELERStatistics.Granularity;
@@ -105,7 +105,7 @@ public final class JaxWsService extends AbstractService implements LayoutService
      */
     public String getServiceData() throws ServiceFault_Exception {
         try {
-            return ServerLayoutDataService.getInstance().getServiceData();
+            return ServerLayoutMetaDataService.getInstance().getServiceData();
         } catch (Exception e) {
             throw createException(0, e);
         }
@@ -124,7 +124,7 @@ public final class JaxWsService extends AbstractService implements LayoutService
     public byte[] getPreviewImage(final String previewImage) throws ServiceFault_Exception {
         Logger.log(Severity.DEBUG, "Handling preview image request");
         try {
-            byte[] result = ServerLayoutDataService.getInstance().getPreviewImage(previewImage);
+            byte[] result = ServerLayoutMetaDataService.getInstance().getPreviewImage(previewImage);
             Logger.log(Severity.DEBUG, "Handling preview image request succeeded");
             return result;
         } catch (Exception e) {
