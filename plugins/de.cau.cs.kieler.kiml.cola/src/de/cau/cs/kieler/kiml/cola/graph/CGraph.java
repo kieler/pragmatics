@@ -23,6 +23,7 @@ import org.adaptagrams.CompoundConstraintPtrs;
 import org.adaptagrams.Dim;
 import org.adaptagrams.RectanglePtrs;
 import org.adaptagrams.SWIGTYPE_p_double;
+import org.adaptagrams.SeparationConstraint;
 import org.adaptagrams.adaptagrams;
 
 import com.google.common.collect.Lists;
@@ -89,7 +90,7 @@ public class CGraph {
 
         // put the root in the pool!
         knodeMap.put(root, null);
-        
+
         for (KNode n : root.getChildren()) {
 
             // ignore unconnected nodes
@@ -107,10 +108,10 @@ public class CGraph {
                 try {
                     if (n.getLabels().get(0).getText().equals("DiscreteClock")) {
                         if (p.getData(KShapeLayout.class).getProperty(LayoutOptions.PORT_SIDE) == PortSide.SOUTH) {
-//                            continue; 
+                            // continue;
                         }
                         if (p.getData(KShapeLayout.class).getProperty(LayoutOptions.PORT_SIDE) == PortSide.WEST) {
-//                            continue;
+                            // continue;
                         }
                     }
                 } catch (Exception e) {
@@ -121,18 +122,48 @@ public class CGraph {
                 cnode.ports.add(port);
 
             }
+            
+         // keep the order!
+//            for (CPort p1 : cnode.getPorts()) {
+//                for (CPort p2 : cnode.getPorts()) {
+//
+//                    // not for the same port, not for ports on different sides
+//                    if (p1.equals(p2) || p1.side != p2.side) {
+//                        continue;
+//                    }
+//                    
+//                    System.out.println("SPATEN");
+//
+//                    int dim;
+//                    double sep;
+//                    if (p1.side == PortSide.NORTH || p1.side == PortSide.SOUTH) {
+//                        dim = Dim.XDIM;
+//                        sep =
+//                                p1.origin.getData(KShapeLayout.class).getXpos()
+//                                        - p2.origin.getData(KShapeLayout.class).getXpos();
+//                    } else {
+//                        dim = Dim.YDIM;
+//                        sep =
+//                                p1.origin.getData(KShapeLayout.class).getYpos()
+//                                        - p2.origin.getData(KShapeLayout.class).getYpos();
+//                    }
+//                    System.out.println(dim + " " + sep);
+//                    SeparationConstraint sc =
+//                            new SeparationConstraint(dim, p1.cIndex, p2.cIndex, -sep+20, false);
+//                    constraints.add(sc);
+//                }
+//            }
 
         }
-        
-        
+
         /*
-         *  external port dummies
+         * external port dummies
          */
         for (KPort p : root.getPorts()) {
-            
+
             CPort port = new CPort(this, p, null).asExternalDummy();
             kportMap.put(p, port);
-//            externalPorts.add(port);
+            externalPorts.add(port);
         }
 
         // align external ports
@@ -146,20 +177,18 @@ public class CGraph {
             } else {
                 acRight.addShape(p.cIndex, 0);
             }
-            
         }
-        
 
         /*
          * Edges
          */
         for (KNode n : root.getChildren()) {
-            
+
             for (KEdge e : n.getOutgoingEdges()) {
-                
+
                 // ignore hierarchy edges
                 if (KimlUtil.isDescendant(e.getTarget(), e.getSource())) {
-                   continue;
+                    continue;
                 }
 
                 CNode srcNode = knodeMap.get(e.getSource());
@@ -172,13 +201,13 @@ public class CGraph {
                 // register the edge (if it is no edge to an external port dummy
                 if (e.getTarget().getParent() == e.getSource().getParent()) {
                     srcNode.outgoingEdges.add(edge);
-                    tgtNode.incomingEdges.add(edge);    
-                 }
-                
+                    tgtNode.incomingEdges.add(edge);
+                }
+
             }
         }
 
-        //System.out.println("Last edge created: " + edgeIndex);
+        // System.out.println("Last edge created: " + edgeIndex);
     }
 
     /**
@@ -187,7 +216,7 @@ public class CGraph {
     public List<CNode> getChildren() {
         return children;
     }
-    
+
     /**
      * @return the externalPorts
      */

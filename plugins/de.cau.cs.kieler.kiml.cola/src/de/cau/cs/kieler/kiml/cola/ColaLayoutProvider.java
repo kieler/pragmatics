@@ -21,6 +21,7 @@ import org.adaptagrams.Rectangle;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.kgraph.util.KGraphAdapterFactory;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.cola.graph.CGraph;
@@ -32,6 +33,9 @@ import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
+import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters;
+import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters.KGraphAdapter;
+import de.cau.cs.kieler.kiml.util.nodespacing.KimlNodeDimensionCalculation;
 
 /**
  * 
@@ -73,8 +77,12 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         // // constraintsFixedOrder(parentNode);
         // }
 
+        // calculate margins
+        KGraphAdapter adapter = new KGraphAdapter(parentNode);
+        KimlNodeDimensionCalculation.calculateLabelAndNodeSizes(adapter);
+        KimlNodeDimensionCalculation.calculateNodeMargins(adapter);
+        
         // execute layout algorithm
-
         graph = new CGraph(parentNode);
 
         new DirectionConstraintProcessor().process(graph);

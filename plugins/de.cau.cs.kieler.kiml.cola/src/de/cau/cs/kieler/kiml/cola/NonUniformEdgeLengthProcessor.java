@@ -39,7 +39,7 @@ public class NonUniformEdgeLengthProcessor {
         // set the ideal edge lengths for the port dummy edges
         for (CNode n : graph.getChildren()) {
             for (CPort p : n.getPorts()) {
-                graph.idealEdgeLengths[p.cEdgeIndex] = p.idealDummyEdgeLength + 10;
+                graph.idealEdgeLengths[p.cEdgeIndex] = p.idealDummyEdgeLength + 20;
 //                System.out.println("Port: " +p.cEdgeIndex + " " + p.idealDummyEdgeLength);
             }
         }
