@@ -45,7 +45,7 @@ import org.eclipse.ui.dialogs.ListDialog;
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -297,7 +297,7 @@ public class LayoutConfigurationPage extends WizardPage {
         dialog.setTitle("Select Layout Option");
         dialog.setContentProvider(ArrayContentProvider.getInstance());
         dialog.setLabelProvider(new OptionsLabelProvider());
-        Collection<LayoutOptionData> data = LayoutDataService.getInstance().getOptionData();
+        Collection<LayoutOptionData> data = LayoutMetaDataService.getInstance().getOptionData();
         ArrayList<LayoutOptionData> inputList = new ArrayList<LayoutOptionData>(data.size());      
         for (LayoutOptionData optionData : data) {
             // layout options without target definition are not shown to the user

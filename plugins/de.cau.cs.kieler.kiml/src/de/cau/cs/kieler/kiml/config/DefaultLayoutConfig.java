@@ -29,7 +29,7 @@ import de.cau.cs.kieler.core.kgraph.util.KGraphSwitch;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 
 /**
@@ -155,7 +155,7 @@ public class DefaultLayoutConfig implements ILayoutConfig {
             
         } else if (property.equals(OPTIONS)) {
             // build a list of layout options supported by the layout algorithms in the context
-            LayoutDataService layoutDataService = LayoutDataService.getInstance();
+            LayoutMetaDataService layoutDataService = LayoutMetaDataService.getInstance();
             List<LayoutOptionData> optionData = new LinkedList<LayoutOptionData>();
             LayoutAlgorithmData algoData;
             algoData = context.getProperty(CONTENT_ALGO);
@@ -254,8 +254,8 @@ public class DefaultLayoutConfig implements ILayoutConfig {
     public static LayoutAlgorithmData getLayouterData(final String theLayoutHint,
             final String diagramType) {
         String chDiagType = (diagramType == null || diagramType.length() == 0)
-                ? LayoutDataService.DIAGRAM_TYPE_GENERAL : diagramType;
-        LayoutDataService layoutServices = LayoutDataService.getInstance();
+                ? LayoutMetaDataService.DIAGRAM_TYPE_GENERAL : diagramType;
+        LayoutMetaDataService layoutServices = LayoutMetaDataService.getInstance();
         String layoutHint = theLayoutHint;
         
         // try to get a specific provider for the given hint
@@ -290,7 +290,7 @@ public class DefaultLayoutConfig implements ILayoutConfig {
                             matchesGeneralDiagram = false;
                         } else {
                             currentPrio = currentAlgo.getDiagramSupport(
-                                    LayoutDataService.DIAGRAM_TYPE_GENERAL);
+                                    LayoutMetaDataService.DIAGRAM_TYPE_GENERAL);
                             if (matchesGeneralDiagram) {
                                 if (currentPrio > bestPrio) {
                                     // the algorithm matches the layout type hint and has higher
@@ -325,7 +325,7 @@ public class DefaultLayoutConfig implements ILayoutConfig {
                     } else {
                         matchesDiagramType = false;
                         currentPrio = currentAlgo.getDiagramSupport(
-                                LayoutDataService.DIAGRAM_TYPE_GENERAL);
+                                LayoutMetaDataService.DIAGRAM_TYPE_GENERAL);
                         if (currentPrio > LayoutAlgorithmData.MIN_PRIORITY) {
                             // the algorithm does not support the given diagram type, but
                             // has a priority for general diagrams
@@ -352,7 +352,7 @@ public class DefaultLayoutConfig implements ILayoutConfig {
                             matchesGeneralDiagram = false;
                         } else {
                             currentPrio = currentAlgo.getDiagramSupport(
-                                    LayoutDataService.DIAGRAM_TYPE_GENERAL);
+                                    LayoutMetaDataService.DIAGRAM_TYPE_GENERAL);
                             if (matchesGeneralDiagram) {
                                 if (currentPrio > bestPrio) {
                                     // the algorithm has higher priority for general diagrams

@@ -721,7 +721,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
 
             // Adapt the offset value and add the source port position to the vector chain
             KVector sourcePoint;
-            if (KimlUtil.isDescendant(kedge.getTarget(), kedge.getSource())) {
+            if (LGraphUtil.isDescendant(ledge.getTarget().getNode(), ledge.getSource().getNode())) {
                 LPort sourcePort = ledge.getSource();
                 sourcePoint = KVector.sum(sourcePort.getPosition(), sourcePort.getAnchor());
                 LInsets sourceInsets = sourcePort.getNode().getInsets();

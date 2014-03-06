@@ -38,10 +38,10 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.kiml.ILayoutData;
+import de.cau.cs.kieler.kiml.ILayoutMetaData;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.config.CompoundLayoutConfig;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
@@ -101,7 +101,7 @@ public final class GenomeFactory {
      */
     public static Genome createInitialGenome(final LayoutMapping<?> layoutMapping,
             final ILayoutConfig config, final Collection<LayoutOptionData> options) {
-        LayoutDataService dataService = LayoutDataService.getInstance();
+        LayoutMetaDataService dataService = LayoutMetaDataService.getInstance();
         LayoutOptionData algoOptionData = dataService.getOptionData(
                 LayoutOptions.ALGORITHM.getId());
         LayoutOptionData diagTypeData = dataService.getOptionData(
@@ -163,7 +163,7 @@ public final class GenomeFactory {
      * @return a gene initialized to the given type
      */
     public static Gene<Integer> createLayoutTypeGene(final LayoutTypeData typeData) {
-        List<LayoutTypeData> typeList = new ArrayList<LayoutTypeData>(LayoutDataService.getInstance()
+        List<LayoutTypeData> typeList = new ArrayList<LayoutTypeData>(LayoutMetaDataService.getInstance()
                 .getTypeData());
         // remove layout types that have no registered algorithms
         ListIterator<LayoutTypeData> typeIter = typeList.listIterator();
@@ -363,12 +363,12 @@ public final class GenomeFactory {
             final TypeInfo<T> typeInfo) {
         switch (typeInfo.getGeneType()) {
         case LAYOUT_ALGO:
-            LayoutAlgorithmData algoData = LayoutDataService.getInstance().getAlgorithmData(
+            LayoutAlgorithmData algoData = LayoutMetaDataService.getInstance().getAlgorithmData(
                     (String) value);
             int algoIndex = ((List<?>) typeInfo.getTypeParam()).indexOf(algoData);
             return (T) Integer.valueOf(algoIndex);
         case LAYOUT_TYPE:
-            LayoutTypeData typeData = LayoutDataService.getInstance().getTypeData((String) value);
+            LayoutTypeData typeData = LayoutMetaDataService.getInstance().getTypeData((String) value);
             int typeIndex = ((List<?>) typeInfo.getTypeParam()).indexOf(typeData);
             return (T) Integer.valueOf(typeIndex);
         case BOOLEAN:
@@ -392,7 +392,7 @@ public final class GenomeFactory {
         switch (geneType) {
         case LAYOUT_ALGO:
         case LAYOUT_TYPE:
-            return ((ILayoutData) gene.listValue()).getId();
+            return ((ILayoutMetaData) gene.listValue()).getId();
         case BOOLEAN:
             return (Integer) gene.getValue() != 0;
         case ENUM:
@@ -409,7 +409,7 @@ public final class GenomeFactory {
      * @param graphMap map of context graph elements to elements of the test graph that is configured
      */
     public static void configureGraph(final Genome genome, final Map<EObject, EObject> graphMap) {
-        LayoutDataService dataService = LayoutDataService.getInstance();
+        LayoutMetaDataService dataService = LayoutMetaDataService.getInstance();
         for (LayoutContext context : genome.getContexts()) {
             EObject element = graphMap.get(context.getProperty(LayoutContext.GRAPH_ELEM));
             if (element instanceof KNode) {

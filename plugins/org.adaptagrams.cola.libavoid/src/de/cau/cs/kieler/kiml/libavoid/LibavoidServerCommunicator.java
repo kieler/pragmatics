@@ -38,6 +38,7 @@ import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
@@ -510,6 +511,11 @@ public class LibavoidServerCommunicator {
         // get center point of port
         float centerX = portLayout.getXpos() + portLayout.getWidth() / 2;
         float centerY = portLayout.getYpos() + portLayout.getHeight() / 2;
+        
+        // adjust according to parent's insets
+        KInsets nodeInsets = port.getNode().getData(KShapeLayout.class).getInsets();
+        centerX += nodeInsets.getLeft();
+        centerY += nodeInsets.getTop();
 
         // for compound nodes we have to mirror the port sides
         if (compoundNode != null) {
@@ -540,9 +546,14 @@ public class LibavoidServerCommunicator {
 
         // convert the bounds
         KShapeLayout shape = node.getData(KShapeLayout.class);
+        KInsets insets = shape.getInsets();
 
-        libavoidNode(node, nodeIdCounter, shape.getXpos(), shape.getYpos(), shape.getWidth(),
-                shape.getHeight(), portLessIncomingEdges, portLessOutgoingEdges);
+        libavoidNode(node, nodeIdCounter, 
+                shape.getXpos() - insets.getLeft(),
+                shape.getYpos() - insets.getTop(), 
+                shape.getWidth() + insets.getRight() + insets.getLeft(), 
+                shape.getHeight() + insets.getBottom() + insets.getTop(), 
+                portLessIncomingEdges, portLessOutgoingEdges);
 
         // transfer port constraints
         PortConstraints pc = shape.getProperty(LayoutOptions.PORT_CONSTRAINTS);

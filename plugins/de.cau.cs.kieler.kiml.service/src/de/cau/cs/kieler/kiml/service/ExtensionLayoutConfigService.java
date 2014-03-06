@@ -39,7 +39,7 @@ import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.LayoutConfigService;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.config.SemanticLayoutConfig;
@@ -140,7 +140,7 @@ public class ExtensionLayoutConfigService extends LayoutConfigService {
     private void loadLayoutConfigsExtensions() {
         IConfigurationElement[] extensions = Platform.getExtensionRegistry()
                 .getConfigurationElementsFor(EXTP_ID_LAYOUT_CONFIGS);
-        LayoutDataService layoutDataService = LayoutDataService.getInstance();
+        LayoutMetaDataService layoutDataService = LayoutMetaDataService.getInstance();
         assert layoutDataService != null;
 
         for (IConfigurationElement element : extensions) {
@@ -286,7 +286,7 @@ public class ExtensionLayoutConfigService extends LayoutConfigService {
      */
     private void loadPreferences() {
         IPreferenceStore preferenceStore = KimlServicePlugin.getDefault().getPreferenceStore();
-        LayoutDataService layoutDataService = LayoutDataService.getInstance();
+        LayoutMetaDataService layoutDataService = LayoutMetaDataService.getInstance();
         
         // load default options for diagram types
         List<Pair<String, String>> diagramTypes = getDiagramTypes();
