@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.ui.AlgorithmSelectionDialog;
 import de.cau.cs.kieler.kiml.ui.Messages;
@@ -86,7 +86,7 @@ public class AlgorithmCellEditor extends DialogCellEditor {
     protected void updateContents(final Object value) {
         if (value instanceof String) {
             String newText;
-            LayoutDataService layoutServices = LayoutDataService.getInstance();
+            LayoutMetaDataService layoutServices = LayoutMetaDataService.getInstance();
             LayoutTypeData layoutType = layoutServices.getTypeData((String) value);
             if (layoutType != null) {
                 newText = layoutType.toString();

@@ -47,7 +47,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.LayoutConfigService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.service.ExtensionLayoutConfigService;
@@ -182,7 +182,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         IPreferenceStore servicePrefStore = KimlServicePlugin.getDefault().getPreferenceStore();
         Group elementGroup = new Group(parent, SWT.NONE);
         elementGroup.setText(Messages.getString("kiml.ui.28")); //$NON-NLS-1$
-        LayoutDataService dataService = LayoutDataService.getInstance();
+        LayoutMetaDataService dataService = LayoutMetaDataService.getInstance();
         Collection<LayoutOptionData> layoutOptionData = dataService.getOptionData();
         optionEntries = new LinkedList<OptionsTableProvider.DataEntry>();
 

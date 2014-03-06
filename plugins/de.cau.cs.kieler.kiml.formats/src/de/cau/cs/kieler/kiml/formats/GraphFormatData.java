@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.formats;
 
-import de.cau.cs.kieler.kiml.ILayoutData;
+import de.cau.cs.kieler.kiml.ILayoutMetaData;
 
 /**
  * Data type used to store information for a graph format.
@@ -22,7 +22,7 @@ import de.cau.cs.kieler.kiml.ILayoutData;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow 2012-07-10 msp
  */
-public class GraphFormatData implements ILayoutData {
+public class GraphFormatData implements ILayoutMetaData {
 
     /** the identifier string. */
     private String id;

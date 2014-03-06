@@ -42,7 +42,7 @@ import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.config.LayoutContext;
@@ -163,7 +163,7 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
                 
             } else if (property.equals(DefaultLayoutConfig.CONTENT_HINT)) {
                 // get a layout hint for the content of the focused pictogram element
-                LayoutOptionData algorithmOptionData = LayoutDataService.getInstance()
+                LayoutOptionData algorithmOptionData = LayoutMetaDataService.getInstance()
                         .getOptionData(LayoutOptions.ALGORITHM.getId());
                 if (algorithmOptionData != null) {
                     String contentLayoutHint = (String) getValue(algorithmOptionData, PREFIX,
@@ -180,7 +180,7 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
                 
             } else if (property.equals(DefaultLayoutConfig.CONTAINER_HINT)) {
                 // get a layout hint for the container edit part
-                LayoutOptionData algorithmOptionData = LayoutDataService.getInstance()
+                LayoutOptionData algorithmOptionData = LayoutMetaDataService.getInstance()
                         .getOptionData(LayoutOptions.ALGORITHM.getId());
                 PictogramElement containerPe = getContainer(pictogramElem);
                 if (algorithmOptionData != null && containerPe != null) {
@@ -412,7 +412,7 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
      */
     private void addAffectedOptions(final List<IProperty<?>> options, final String prefix,
             final PictogramElement pe) {
-        LayoutDataService layoutServices = LayoutDataService.getInstance();
+        LayoutMetaDataService layoutServices = LayoutMetaDataService.getInstance();
         for (Property prop : pe.getProperties()) {
             String key = prop.getKey();
             if (key != null && key.startsWith(prefix)) {

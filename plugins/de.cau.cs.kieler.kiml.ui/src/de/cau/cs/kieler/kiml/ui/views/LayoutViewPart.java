@@ -56,7 +56,7 @@ import org.eclipse.ui.views.properties.PropertySheetPage;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutConfigService;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
@@ -425,7 +425,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
                 }
                 
                 // add the "set as default for diagram type" action
-                LayoutOptionData diagramTypeOption = LayoutDataService.getInstance().getOptionData(
+                LayoutOptionData diagramTypeOption = LayoutMetaDataService.getInstance().getOptionData(
                         LayoutOptions.DIAGRAM_TYPE.getId());
                 LayoutContext context = propSourceProvider.getContext();
                 ILayoutConfig config = DiagramLayoutEngine.INSTANCE.getOptionManager().createConfig(

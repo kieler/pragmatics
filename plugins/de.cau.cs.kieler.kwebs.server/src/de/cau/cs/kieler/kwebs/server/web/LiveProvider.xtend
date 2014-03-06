@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.kwebs.server.web
 
-import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService
+import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutMetaDataService
 
 /**
  * Presents a HTML page with input elements for a textual graph element and a config area.
@@ -95,7 +95,7 @@ class LiveProvider extends AbstractProvider {
 	 * 
 	 */
 	override getBody(ResourceProcessingExchange processingExchange) {
-		val formats = ServerLayoutDataService::instance.serviceDataModel.supportedFormats
+		val formats = ServerLayoutMetaDataService::getInstance.serviceDataModel.supportedFormats
 		
 		'''
 			<div class="container">

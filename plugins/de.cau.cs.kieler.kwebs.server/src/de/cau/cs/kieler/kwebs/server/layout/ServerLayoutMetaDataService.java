@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.formats.GraphFormatData;
 import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
@@ -50,7 +50,7 @@ import de.cau.cs.kieler.kwebs.server.util.Resources;
  *
  * @author swe
  */
-public final class ServerLayoutDataService extends ExtensionLayoutDataService {
+public final class ServerLayoutMetaDataService extends ExtensionLayoutMetaDataService {
 
     /** Caching the layout service meta data. */
     private static String serviceDataXMI;
@@ -67,7 +67,7 @@ public final class ServerLayoutDataService extends ExtensionLayoutDataService {
     /**
      * Create the server layout data service.
      */
-    public ServerLayoutDataService() {
+    public ServerLayoutMetaDataService() {
         // Read extensions for the extension point
         super();
         // Build the meta data model
@@ -80,10 +80,10 @@ public final class ServerLayoutDataService extends ExtensionLayoutDataService {
      * @return the singleton instance, or {@code null} if {@code ServerLayoutDataService}
      *         has not been registered yet
      */
-    public static ServerLayoutDataService getInstance() {
-        LayoutDataService service = LayoutDataService.getInstance();
-        if (service instanceof ServerLayoutDataService) {
-            return (ServerLayoutDataService) service;
+    public static ServerLayoutMetaDataService getInstance() {
+        LayoutMetaDataService service = LayoutMetaDataService.getInstance();
+        if (service instanceof ServerLayoutMetaDataService) {
+            return (ServerLayoutMetaDataService) service;
         }
         return null;
     }

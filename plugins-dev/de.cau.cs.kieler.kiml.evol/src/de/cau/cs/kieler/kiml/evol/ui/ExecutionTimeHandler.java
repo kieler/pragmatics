@@ -38,7 +38,7 @@ import com.google.common.collect.Maps;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.evol.EvolPlugin;
 import de.cau.cs.kieler.kiml.evol.LayoutEvolutionModel;
@@ -109,8 +109,8 @@ public class ExecutionTimeHandler extends AbstractHandler {
     
     private void initialize() {
         layoutOptions = new ArrayList<LayoutOptionData>(
-                LayoutDataService.getInstance().getOptionData().size());
-        for (LayoutOptionData data : LayoutDataService.getInstance().getOptionData()) {
+                LayoutMetaDataService.getInstance().getOptionData().size());
+        for (LayoutOptionData data : LayoutMetaDataService.getInstance().getOptionData()) {
             if (LayoutOptions.ALGORITHM.equals(data)
                     || (data.getTargets().contains(LayoutOptionData.Target.PARENTS)
                     && data.getVariance() > 0 && typeSupported(data.getType()))) {

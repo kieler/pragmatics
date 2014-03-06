@@ -21,7 +21,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayouterPlugin;
 import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizTool;
 
@@ -82,7 +82,7 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage implements
     @Override
     public boolean performOk() {
         // dispose all cached Graphviz instances to ensure creation of new processes
-        for (LayoutAlgorithmData data : LayoutDataService.getInstance().getAlgorithmData()) {
+        for (LayoutAlgorithmData data : LayoutMetaDataService.getInstance().getAlgorithmData()) {
             if ("de.cau.cs.kieler.kiml.categories.graphviz".equals(data.getCategory())) {
                 data.getInstancePool().clear();
             }

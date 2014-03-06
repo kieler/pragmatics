@@ -24,7 +24,7 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
@@ -103,7 +103,7 @@ public class SetOptionsEffect extends AbstractEffect {
                     runModelChange(new Runnable() {
                         public void run() {
                             for (Map.Entry<String, Object> entry : optionMap.entrySet()) {
-                                LayoutOptionData optionData = LayoutDataService.getInstance()
+                                LayoutOptionData optionData = LayoutMetaDataService.getInstance()
                                         .getOptionData(entry.getKey());
                                 if (optionData != null) {
                                     layoutConfig.setOptionValue(optionData, context, entry.getValue());
