@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
-import java.util.Collection;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -169,7 +168,7 @@ public class LGraphAdapters {
         /**
          * {@inheritDoc}
          */
-        public List<NodeAdapter<?>> getNodes() {
+        public Iterable<NodeAdapter<?>> getNodes() {
             List<NodeAdapter<?>> nodeAdapter = Lists.newLinkedList();
             for (Layer l : element.getLayers()) {
                 for (LNode n : l.getNodes()) {
@@ -196,7 +195,7 @@ public class LGraphAdapters {
         /**
          * {@inheritDoc}
          */
-        public List<LabelAdapter<?>> getLabels() {
+        public Iterable<LabelAdapter<?>> getLabels() {
             List<LabelAdapter<?>> labelAdapters = Lists.newLinkedList();
             for (LLabel l : element.getLabels()) {
                 labelAdapters.add(new LLabelAdapter(l));
@@ -207,12 +206,34 @@ public class LGraphAdapters {
         /**
          * {@inheritDoc}
          */
-        public List<PortAdapter<?>> getPorts() {
+        public Iterable<PortAdapter<?>> getPorts() {
             List<PortAdapter<?>> portAdapters = Lists.newLinkedList();
             for (LPort p : element.getPorts()) {
                 portAdapters.add(new LPortAdapter(p));
             }
             return portAdapters;
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public Iterable<EdgeAdapter<?>> getIncomingEdges() {
+            List<EdgeAdapter<?>> edgeAdapters = Lists.newLinkedList();
+            for (LEdge l : element.getIncomingEdges()) {
+                edgeAdapters.add(new LEdgeAdapter(l));
+            }
+            return edgeAdapters;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public Iterable<EdgeAdapter<?>> getOutgoingEdges() {
+            List<EdgeAdapter<?>> edgeAdapters = Lists.newLinkedList();
+            for (LEdge l : element.getOutgoingEdges()) {
+                edgeAdapters.add(new LEdgeAdapter(l));
+            }
+            return edgeAdapters;
         }
 
         /**
@@ -281,8 +302,9 @@ public class LGraphAdapters {
         /**
          * {@inheritDoc}
          */
-        public List<LabelAdapter<?>> getLabels() {
-            List<LabelAdapter<?>> labelAdapters = Lists.newLinkedList();
+        public Iterable<LabelAdapter<?>> getLabels() {
+            List<LabelAdapter<?>> labelAdapters =
+                    Lists.newArrayListWithExpectedSize(element.getLabels().size());
             for (LLabel l : element.getLabels()) {
                 labelAdapters.add(new LLabelAdapter(l));
             }
@@ -310,7 +332,7 @@ public class LGraphAdapters {
         /**
          * {@inheritDoc}
          */
-        public Collection<EdgeAdapter<?>> getIncomingEdges() {
+        public Iterable<EdgeAdapter<?>> getIncomingEdges() {
             List<EdgeAdapter<?>> edgeAdapters = Lists.newLinkedList();
             for (LEdge e : element.getIncomingEdges()) {
                 edgeAdapters.add(new LEdgeAdapter(e));
@@ -321,7 +343,7 @@ public class LGraphAdapters {
         /**
          * {@inheritDoc}
          */
-        public Collection<EdgeAdapter<?>> getOutgoingEdges() {
+        public Iterable<EdgeAdapter<?>> getOutgoingEdges() {
             List<EdgeAdapter<?>> edgeAdapters = Lists.newLinkedList();
             for (LEdge e : element.getOutgoingEdges()) {
                 edgeAdapters.add(new LEdgeAdapter(e));
@@ -366,8 +388,9 @@ public class LGraphAdapters {
         /**
          * {@inheritDoc}
          */
-        public Collection<LabelAdapter<?>> getLabels() {
-            List<LabelAdapter<?>> labelAdapters = Lists.newLinkedList();
+        public Iterable<LabelAdapter<?>> getLabels() {
+            List<LabelAdapter<?>> labelAdapters =
+                    Lists.newArrayListWithExpectedSize(e.getLabels().size());
             for (LLabel l : e.getLabels()) {
                 labelAdapters.add(new LLabelAdapter(l));
             }

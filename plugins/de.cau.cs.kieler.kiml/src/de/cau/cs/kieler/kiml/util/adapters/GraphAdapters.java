@@ -13,9 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.util.adapters;
 
-import java.util.Collection;
-import java.util.List;
-
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.options.LabelSide;
@@ -86,7 +83,7 @@ public interface GraphAdapters {
         /**
          * @return all child nodes of this graph wrapped in an {@link NodeAdapter}.
          */
-        Collection<NodeAdapter<?>> getNodes();
+        Iterable<NodeAdapter<?>> getNodes();
     }
 
     /**
@@ -97,13 +94,23 @@ public interface GraphAdapters {
         /**
          * @return the labels of the node wrapped in adapters.
          */
-        Collection<LabelAdapter<?>> getLabels();
+        Iterable<LabelAdapter<?>> getLabels();
 
         /**
          * @return the ports of the node wrapped in adapter.
          */
-        Collection<PortAdapter<?>> getPorts();
+        Iterable<PortAdapter<?>> getPorts();
+        
+        /**
+         * @return a collection of the port's incoming edges wrapped in an adapter.
+         */
+        Iterable<EdgeAdapter<?>> getIncomingEdges();
 
+        /**
+         * @return a collection of the port's outgoing edges wrapped in an adapter.
+         */
+        Iterable<EdgeAdapter<?>> getOutgoingEdges();
+ 
         /**
          * Whether the node an is a compound node or not, i.e if it has child nodes. This might
          * influence certain layout decisions, such as where to place inside port labels so that
@@ -155,7 +162,7 @@ public interface GraphAdapters {
         /**
          * @return the port's labels wrapped in adapters.
          */
-        List<LabelAdapter<?>> getLabels();
+        Iterable<LabelAdapter<?>> getLabels();
 
         /**
          * Returns the port's margin. The margin is the space around the node that is to be reserved
@@ -174,12 +181,12 @@ public interface GraphAdapters {
         /**
          * @return a collection of the port's incoming edges wrapped in an adapter.
          */
-        Collection<EdgeAdapter<?>> getIncomingEdges();
+        Iterable<EdgeAdapter<?>> getIncomingEdges();
 
         /**
          * @return a collection of the port's outgoing edges wrapped in an adapter.
          */
-        Collection<EdgeAdapter<?>> getOutgoingEdges();
+        Iterable<EdgeAdapter<?>> getOutgoingEdges();
     }
 
     /**
@@ -202,7 +209,7 @@ public interface GraphAdapters {
         /**
          * @return the edge's labels wrapped in an adapter.
          */
-        Collection<LabelAdapter<?>> getLabels();
+        Iterable<LabelAdapter<?>> getLabels();
 
     }
 }
