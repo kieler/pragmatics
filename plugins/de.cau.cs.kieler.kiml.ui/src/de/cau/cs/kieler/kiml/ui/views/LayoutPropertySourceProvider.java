@@ -16,15 +16,12 @@ package de.cau.cs.kieler.kiml.ui.views;
 import java.util.Collection;
 import java.util.Map;
 
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.IPropertySourceProvider;
 
 import com.google.common.collect.Maps;
 
-import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.config.LayoutContext;
 import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
@@ -78,44 +75,21 @@ public class LayoutPropertySourceProvider implements IPropertySourceProvider {
         IDiagramLayoutManager<?> manager = LayoutManagersService.getInstance().getManager(
                 workbenchPart, object);
         if (manager != null) {
-            Object diagramPart = object;
-            if (manager.getAdapterList().length > 0) {
-                Object adapter = manager.getAdapter(object, manager.getAdapterList()[0]);
-                if (adapter == null) {
-                    adapter = manager.getAdapter(workbenchPart, manager.getAdapterList()[0]);
-                }
-                if (adapter != null) {
-                    diagramPart = adapter;
-                }
-            }
-            if (diagramPart != null) {
-                ILayoutConfig managerLayoutConfig = (ILayoutConfig) manager.getAdapter(workbenchPart,
-                        ILayoutConfig.class);
-                EObject domainElement = (EObject) manager.getAdapter(diagramPart, EObject.class);
+            IMutableLayoutConfig diagramConfig = manager.getDiagramConfig();
+            if (diagramConfig != null) {
+                // create a layout context and enrich it with basic information
+                LayoutContext context = new LayoutContext();
+                context.setProperty(EclipseLayoutConfig.WORKBENCH_PART, workbenchPart);
+                context.setProperty(LayoutContext.DIAGRAM_PART, object);
                 
                 // create a compound layout configurator using the layout option manager
                 LayoutOptionManager optionManager = DiagramLayoutEngine.INSTANCE.getOptionManager();
-                IMutableLayoutConfig layoutConfig;
-                if (managerLayoutConfig == null) {
-                    layoutConfig = optionManager.createConfig(domainElement);
-                } else {
-                    layoutConfig = optionManager.createConfig(domainElement, managerLayoutConfig);
-                }
+                Object domainElement = diagramConfig.getContextValue(LayoutContext.DOMAIN_MODEL,
+                        context);
+                IMutableLayoutConfig compoundConfig = optionManager.createConfig(domainElement,
+                        diagramConfig);
                 
-                // obtain an editing domain from the selected object or from the workbench part
-                EditingDomain editingDomain = (EditingDomain) manager.getAdapter(diagramPart,
-                        EditingDomain.class);
-                if (editingDomain == null) {
-                    editingDomain = (EditingDomain) manager.getAdapter(workbenchPart,
-                            EditingDomain.class);
-                }
-                
-                LayoutContext context = new LayoutContext();
-                context.setProperty(EclipseLayoutConfig.WORKBENCH_PART, workbenchPart);
-                context.setProperty(LayoutContext.DOMAIN_MODEL, domainElement);
-                context.setProperty(LayoutContext.DIAGRAM_PART, diagramPart);
-                LayoutPropertySource propSource = new LayoutPropertySource(layoutConfig, context,
-                        editingDomain);
+                LayoutPropertySource propSource = new LayoutPropertySource(compoundConfig, context);
                 
                 propertySources.put(object, propSource);
                 return propSource;

@@ -305,9 +305,6 @@ public final class GenomeFactory {
         if (layoutMapping != null) {
             Object diagramPart = layoutMapping.getGraphMap().get(graphElement);
             context.setProperty(LayoutContext.DIAGRAM_PART, diagramPart);
-            EObject modelElement = (EObject) layoutMapping.getAdapterFactory().getAdapter(
-                    diagramPart, EObject.class);
-            context.setProperty(LayoutContext.DOMAIN_MODEL, modelElement);
             IWorkbenchPart workbenchPart = (IWorkbenchPart) Iterables.find(
                     layoutMapping.getAllProperties().values(),
                     Predicates.instanceOf(IWorkbenchPart.class), null);

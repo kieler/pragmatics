@@ -15,6 +15,7 @@ package de.cau.cs.kieler.kiml.util.nodespacing;
 
 import java.awt.geom.Rectangle2D;
 import java.util.EnumSet;
+import java.util.Iterator;
 
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.LabelSide;
@@ -311,13 +312,14 @@ public class LabelAndNodeSizeProcessor {
             final boolean compoundNodeMode, final double labelSpacing) {
         
         // Get the port's label, if any
-        if (!port.getLabels().isEmpty()) {
+        Iterator<LabelAdapter<?>> labelIter = port.getLabels().iterator();
+        if (labelIter.hasNext()) {
             // We use different implementations based on whether port labels are to be placed
             // inside or outside the node
             if (placement.equals(PortLabelPlacement.INSIDE)) {
-                placePortLabelsInside(port, port.getLabels().get(0), compoundNodeMode, labelSpacing);
+                placePortLabelsInside(port, labelIter.next(), compoundNodeMode, labelSpacing);
             } else if (placement.equals(PortLabelPlacement.OUTSIDE)) {
-                placePortLabelsOutside(port, port.getLabels().get(0), labelSpacing);
+                placePortLabelsOutside(port, labelIter.next(), labelSpacing);
             }
         }
     }
@@ -425,7 +427,8 @@ public class LabelAndNodeSizeProcessor {
      */
     private void calculateAndSetPortMargins(final PortAdapter<?> port) {
         // Get the port's label, if any
-        if (!port.getLabels().isEmpty()) {
+        Iterator<LabelAdapter<?>> labelIter = port.getLabels().iterator();
+        if (labelIter.hasNext()) {
             Rectangle2D.Double portBox = new Rectangle2D.Double(
                     0.0,
                     0.0,
@@ -433,7 +436,7 @@ public class LabelAndNodeSizeProcessor {
                     port.getSize().y);
             
             // We only support one label, so retrieve it
-            LabelAdapter<?> label = port.getLabels().get(0);
+            LabelAdapter<?> label = labelIter.next();
             Rectangle2D.Double labelBox = new Rectangle2D.Double(
                     label.getPosition().x,
                     label.getPosition().y,
@@ -505,7 +508,7 @@ public class LabelAndNodeSizeProcessor {
     private void calculateRequiredNodeLabelSpace(final NodeAdapter<?> node,
             final double labelSpacing) {
         // Check if there are any labels
-        if (node.getLabels().isEmpty()) {
+        if (!node.getLabels().iterator().hasNext()) {
             return;
         }
 
@@ -612,7 +615,8 @@ public class LabelAndNodeSizeProcessor {
         }
         
         // If the node label is to be accounted for, add its required space to the node size
-        if (sizeConstraint.contains(SizeConstraint.NODE_LABELS) && !node.getLabels().isEmpty()) {
+        if (sizeConstraint.contains(SizeConstraint.NODE_LABELS)
+                && node.getLabels().iterator().hasNext()) {
             EnumSet<NodeLabelPlacement> nodeLabelPlacement =
                     node.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT);
             
@@ -981,7 +985,7 @@ public class LabelAndNodeSizeProcessor {
      */
     private void placeNodeLabels(final NodeAdapter<?> node, final double labelSpacing) {
         // Retrieve the first node label, if any
-        if (node.getLabels().isEmpty()) {
+        if (!node.getLabels().iterator().hasNext()) {
             return;
         }
         

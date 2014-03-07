@@ -17,9 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.emf.common.command.Command;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.graphiti.datatypes.IDimension;
@@ -57,6 +55,7 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
@@ -113,73 +112,14 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
                 || object instanceof PictogramElement;
     }
     
-    /** the cached layout configuration for Graphiti. */
-    private GraphitiLayoutConfig layoutConfig = new GraphitiLayoutConfig(this);
+    /** the cached layout configurator for Graphiti. */
+    private final GraphitiLayoutConfig layoutConfig = new GraphitiLayoutConfig(this);
 
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    public Object getAdapter(final Object object, final Class adapterType) {
-        if (adapterType.isAssignableFrom(GraphitiLayoutConfig.class)) {
-            return layoutConfig;
-        } else if (adapterType.isAssignableFrom(IPictogramElementEditPart.class)) {
-            if (object instanceof IPictogramElementEditPart) {
-                return object;
-            } else if (object instanceof DiagramEditor) {
-                return ((DiagramEditor) object).getGraphicalViewer().getContents();
-            }
-        } else if (adapterType.isAssignableFrom(EObject.class)) {
-            if (object instanceof IPictogramElementEditPart) {
-                PictogramElement pe = ((IPictogramElementEditPart) object).getPictogramElement();
-                if (pe.getLink() != null) {
-                    List<EObject> businessObjects = pe.getLink().getBusinessObjects();
-                    if (!businessObjects.isEmpty()) {
-                        return businessObjects.get(0);
-                    }
-                }
-            } else if (object instanceof PictogramElement) {
-                PictogramElement pe = (PictogramElement) object;
-                if (pe.getLink() != null) {
-                    List<EObject> businessObjects = pe.getLink().getBusinessObjects();
-                    if (!businessObjects.isEmpty()) {
-                        return businessObjects.get(0);
-                    }
-                }
-            }
-        } else if (adapterType.isAssignableFrom(PictogramElement.class)) {
-            if (object instanceof PictogramElement) {
-                return object;
-            } else if (object instanceof IPictogramElementEditPart) {
-                return ((IPictogramElementEditPart) object).getPictogramElement();
-            } else if (object instanceof DiagramEditor) {
-                EditPart contents = ((DiagramEditor) object).getGraphicalViewer().getContents();
-                if (contents instanceof IPictogramElementEditPart) {
-                    return ((IPictogramElementEditPart) contents).getPictogramElement();
-                }
-            }
-        } else if (adapterType.isAssignableFrom(TransactionalEditingDomain.class)) {
-            if (object instanceof DiagramEditor) {
-                return ((DiagramEditor) object).getEditingDomain();
-            } else if (object instanceof IPictogramElementEditPart) {
-                IWorkbenchPart workbenchPart =  ((IPictogramElementEditPart) object)
-                        .getConfigurationProvider().getDiagramContainer().getWorkbenchPart();
-                if (workbenchPart instanceof DiagramEditor) {
-                    return ((DiagramEditor) workbenchPart).getEditingDomain();
-                }
-            }
-        }
-        if (object instanceof IAdaptable) {
-            return ((IAdaptable) object).getAdapter(adapterType);
-        }
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Class<?>[] getAdapterList() {
-        return new Class<?>[] { PictogramElement.class };
+    public IMutableLayoutConfig getDiagramConfig() {
+        return layoutConfig;
     }
 
     /**
@@ -187,7 +127,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
      */
     public LayoutMapping<PictogramElement> buildLayoutGraph(final IWorkbenchPart workbenchPart,
             final Object diagramPart) {
-        LayoutMapping<PictogramElement> mapping = new LayoutMapping<PictogramElement>(this);
+        LayoutMapping<PictogramElement> mapping = new LayoutMapping<PictogramElement>();
         mapping.setProperty(CONNECTIONS, new LinkedList<Connection>());
 
         if (workbenchPart instanceof DiagramEditor) {
@@ -297,8 +237,6 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
         // create a layout configurator from the properties that were set while building
         mapping.getLayoutConfigs().add(VolatileLayoutConfig.fromProperties(mapping.getLayoutGraph(),
                 GraphitiLayoutConfig.PRIORITY - 1));
-        // add the layout configurator that reads the properties attached to the pictogram model
-        mapping.getLayoutConfigs().add(layoutConfig);
 
         return mapping;
     }

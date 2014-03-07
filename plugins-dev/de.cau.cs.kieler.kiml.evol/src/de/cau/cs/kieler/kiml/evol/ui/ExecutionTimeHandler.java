@@ -169,7 +169,7 @@ public class ExecutionTimeHandler extends AbstractHandler {
      * @param graph a graph
      */
     private void measureGraph(final KNode graph) {
-        LayoutMapping<?> layoutMapping = new LayoutMapping<Object>(null);
+        LayoutMapping<?> layoutMapping = new LayoutMapping<Object>();
         layoutMapping.setLayoutGraph(graph);
         LayoutEvolutionModel evolutionModel = LayoutEvolutionModel.getInstance();
         // assign random weights
