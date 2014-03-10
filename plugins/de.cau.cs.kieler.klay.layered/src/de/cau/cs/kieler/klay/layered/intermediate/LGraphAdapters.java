@@ -43,12 +43,25 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
 /**
  * @author uru
  */
-public class LGraphAdapters {
+public final class LGraphAdapters {
 
+    private LGraphAdapters() {
+    }
+    
+    /**
+     * @param graph
+     *            the graph that should be wrapped in an adapter
+     * @return an {@link LGraphAdapter} for the passed graph.
+     */
+    public static LGraphAdapter adapt(final LGraph graph) {
+        return new LGraphAdapter(graph);
+    }
+    
     /**
      * .
      */
-    static class AbstractLGraphAdapter<T extends LShape> implements GraphElementAdapter<T> {
+    private abstract static class AbstractLGraphAdapter<T extends LShape> implements
+            GraphElementAdapter<T> {
 
         // CHECKSTYLEOFF VisibilityModifier
         /** The internal element. */
@@ -114,7 +127,7 @@ public class LGraphAdapters {
     /**
      * .
      */
-    public static final class LGraphAdapter implements GraphAdapter<LGraph> {
+    private static final class LGraphAdapter implements GraphAdapter<LGraph> {
 
         // CHECKSTYLEOFF VisibilityModifier
         /** The internal element. */

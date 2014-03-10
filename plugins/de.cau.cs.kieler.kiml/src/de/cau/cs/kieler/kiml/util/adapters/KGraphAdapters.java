@@ -43,12 +43,24 @@ import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
  * 
  * @author uru
  */
-public class KGraphAdapters {
+public final class KGraphAdapters {
 
+    private KGraphAdapters() {
+    }
+    
+    /**
+     * @param graph
+     *            the graph that should be wrapped in an adapter
+     * @return an {@link KGraphAdapter} for the passed graph.
+     */
+    public static KGraphAdapter adapt(final KNode graph) {
+        return new KGraphAdapter(graph);
+    }
+    
     /**
      * Implements basic adpater functionality for {@link KGraphElement}s.
      */
-    public abstract static class AbstractKGraphElementAdapter<T extends KGraphElement> implements
+    private abstract static class AbstractKGraphElementAdapter<T extends KGraphElement> implements
             GraphElementAdapter<T> {
 
         // let the elements be accessed by extending classes
@@ -155,7 +167,7 @@ public class KGraphAdapters {
     /**
      * .
      */
-    public static class KGraphAdapter extends AbstractKGraphElementAdapter<KNode> implements
+    private static class KGraphAdapter extends AbstractKGraphElementAdapter<KNode> implements
             GraphAdapter<KNode> {
         /**
          * @param node
