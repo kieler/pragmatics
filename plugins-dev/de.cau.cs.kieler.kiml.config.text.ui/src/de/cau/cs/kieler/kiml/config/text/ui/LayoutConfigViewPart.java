@@ -151,7 +151,7 @@ public class LayoutConfigViewPart extends ViewPart {
             // store the current text
             String text = partialEditor.getSerializedModel();
             IPreferenceStore store = LayoutConfigActivator.getInstance().getPreferenceStore();
-            store.setValue(CURRENT_CONFIG_TEXT, text);
+            store.setValue(CURRENT_CONFIG_TEXT + ":" + getViewSite().getSecondaryId(), text);
         }
 
         public void documentAboutToBeChanged(DocumentEvent event) {
@@ -197,7 +197,7 @@ public class LayoutConfigViewPart extends ViewPart {
         
         // if there was text stored, load it again
         IPreferenceStore store = LayoutConfigActivator.getInstance().getPreferenceStore();
-        String text = store.getString(CURRENT_CONFIG_TEXT);
+        String text = store.getString(CURRENT_CONFIG_TEXT + ":" + getViewSite().getSecondaryId());
         if(text != null) {
             partialEditor.updateModel("", text, "");
         }
