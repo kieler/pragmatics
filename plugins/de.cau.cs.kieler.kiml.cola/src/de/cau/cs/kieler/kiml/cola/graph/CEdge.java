@@ -23,6 +23,8 @@ import de.cau.cs.kieler.core.kgraph.KEdge;
  */
 public class CEdge extends CGraphElement<KEdge> {
 
+    private static final long serialVersionUID = 1120071695206100617L;
+
     // CHECKSTYLEOFF VisibilityModifier
     // CHECKSTYLEOFF Javadoc
 
@@ -89,14 +91,14 @@ public class CEdge extends CGraphElement<KEdge> {
     public CNode getTarget() {
         return tgt;
     }
-    
+
     /**
      * @return the srcPort
      */
     public CPort getSourcePort() {
         return srcPort;
     }
-    
+
     /**
      * @return the tgtPort
      */

@@ -20,7 +20,9 @@ import org.adaptagrams.Dim;
 import org.adaptagrams.Rectangle;
 import org.adaptagrams.SeparationConstraint;
 
-import de.cau.cs.kieler.core.kgraph.KEdge;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
@@ -35,6 +37,8 @@ import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
  */
 public class CPort extends CShape<KPort> {
 
+    private static final long serialVersionUID = -2142404691531934943L;
+
     // CHECKSTYLEOFF VisibilityModifier
     // CHECKSTYLEOFF Javadoc
 
@@ -45,6 +49,8 @@ public class CPort extends CShape<KPort> {
     public PortSide side;
 
     private final CNode parentNode;
+    protected List<CEdge> outgoingEdges = Lists.newLinkedList();
+    protected List<CEdge> incomingEdges = Lists.newLinkedList();
 
     /**
      * 
@@ -169,9 +175,25 @@ public class CPort extends CShape<KPort> {
 
         return this;
     }
-    
-    public List<KEdge> getIncidentEdges() {
-        return origin.getEdges();   
+
+    /**
+     * @return incoming and outgoing edges of this node.
+     */
+    public Iterable<CEdge> getConnectedEdges() {
+        return Iterables.concat(outgoingEdges, incomingEdges);
     }
 
+    /**
+     * @return the outgoingEdges
+     */
+    public List<CEdge> getOutgoingEdges() {
+        return outgoingEdges;
+    }
+
+    /**
+     * @return the incomingEdges
+     */
+    public List<CEdge> getIncomingEdges() {
+        return incomingEdges;
+    }
 }

@@ -31,8 +31,6 @@ import com.google.common.collect.Maps;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
@@ -42,9 +40,14 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  */
 public class CGraph extends CGraphElement<KNode> {
 
+    private static final long serialVersionUID = -5599764636700647978L;
+
     // CHECKSTYLEOFF VisibilityModifier
     // CHECKSTYLEOFF Javadoc
 
+    /**
+     * 
+     */
     private Map<KNode, CNode> knodeMap = Maps.newHashMap();
     private Map<KPort, CPort> kportMap = Maps.newHashMap();
 
@@ -105,18 +108,6 @@ public class CGraph extends CGraphElement<KNode> {
 
             // create ports
             for (KPort p : n.getPorts()) {
-
-                try {
-                    if (n.getLabels().get(0).getText().equals("DiscreteClock")) {
-                        if (p.getData(KShapeLayout.class).getProperty(LayoutOptions.PORT_SIDE) == PortSide.SOUTH) {
-                            // continue;
-                        }
-                        if (p.getData(KShapeLayout.class).getProperty(LayoutOptions.PORT_SIDE) == PortSide.WEST) {
-                            // continue;
-                        }
-                    }
-                } catch (Exception e) {
-                }
 
                 CPort port = new CPort(this, p, cnode).withCenterEdge();
                 kportMap.put(p, port);
@@ -202,13 +193,18 @@ public class CGraph extends CGraphElement<KNode> {
                 // register the edge (if it is no edge to an external port dummy
                 if (e.getTarget().getParent() == e.getSource().getParent()) {
                     srcNode.outgoingEdges.add(edge);
+                    if (srcPort != null) {
+                        srcPort.outgoingEdges.add(edge);
+                    }
                     tgtNode.incomingEdges.add(edge);
+                    if (tgtPort != null) {
+                        tgtPort.incomingEdges.add(edge);
+                    }
                 }
 
             }
         }
 
-        // System.out.println("Last edge created: " + edgeIndex);
     }
 
     /**

@@ -20,8 +20,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.cola.graph.CEdge;
 import de.cau.cs.kieler.kiml.cola.graph.CGraph;
 import de.cau.cs.kieler.kiml.cola.graph.CNode;
@@ -35,7 +33,7 @@ import de.cau.cs.kieler.kiml.options.PortSide;
  */
 public class NonUniformEdgeLengthProcessor implements ILayoutProcessor {
 
-    double idealEdgeLength;
+    private double idealEdgeLength = 0;
 
     /**
      * {@inheritDoc}
@@ -64,6 +62,7 @@ public class NonUniformEdgeLengthProcessor implements ILayoutProcessor {
             connectivity[n.cIndex][0] += getIncidentEdgeCount(n, PortSide.UNDEFINED);
             connectivity[n.cIndex][1] += getIncidentEdgeCount(n, PortSide.WEST);
             connectivity[n.cIndex][2] += getIncidentEdgeCount(n, PortSide.NORTH);
+            // SUPPRESS CHECKSTYLE NEXT 2 MagicNumber
             connectivity[n.cIndex][3] += getIncidentEdgeCount(n, PortSide.EAST);
             connectivity[n.cIndex][4] += getIncidentEdgeCount(n, PortSide.SOUTH);
 
@@ -118,28 +117,32 @@ public class NonUniformEdgeLengthProcessor implements ILayoutProcessor {
                     tgtWeight = connectivity[tgt.cIndex][4]; // SUPPRESS CHECKSTYLE MagicNumber
                     break;
                 }
-                
-//                System.out.println(e.origin + " " + srcWeight + " " + tgtWeight);
+
+                // System.out.println(e.origin + " " + srcWeight + " " + tgtWeight);
 
                 double cumWeight = Math.max(1, srcWeight + tgtWeight - 1); // subtract the
                                                                            // connection between the
                                                                            // two nodes itself
                 graph.idealEdgeLengths[e.cIndex] = idealEdgeLength * Math.sqrt(cumWeight);
 
-                System.out.println(Math.sqrt(cumWeight) + " " + graph.idealEdgeLengths[e.cIndex] + " "
-                        + e.origin);
+                System.out.println(Math.sqrt(cumWeight) + " " + graph.idealEdgeLengths[e.cIndex]
+                        + " " + e.origin);
             }
         }
     }
 
+    /**
+     * Counts the number of edges incident to a certain side of the passed node. If two edges
+     * connect the same pair of nodes, they are counted as one.
+     */
     private int getIncidentEdgeCount(final CNode n, final PortSide side) {
-        Set<KNode> knownTargets = Sets.newHashSet();
+        Set<CNode> knownTargets = Sets.newHashSet();
         int incidentEdges = 0;
         for (CPort p : n.getPorts(side)) {
             // we only count edges with different connected node
-            for (KEdge e : p.getIncidentEdges()) {
+            for (CEdge e : p.getConnectedEdges()) {
 
-                KNode other = null;
+                CNode other = null;
                 if (e.getTarget().equals(n.origin)) {
                     other = e.getSource();
                 } else {
@@ -156,17 +159,24 @@ public class NonUniformEdgeLengthProcessor implements ILayoutProcessor {
         return incidentEdges;
     }
 
+    /**
+     * Writes the ideal edge lengths of dummy port nodes to the graph's array.
+     */
     private void dummyPortEdgeLengths(final CGraph graph) {
         // set the ideal edge lengths for the port dummy edges
         for (CNode n : graph.getChildren()) {
             for (CPort p : n.getPorts()) {
+                // SUPPRESS CHECKSTYLE NEXT MagicNumber
                 graph.idealEdgeLengths[p.cEdgeIndex] = p.idealDummyEdgeLength + 20;
-                // System.out.println("Port: " +p.cEdgeIndex + " " + p.idealDummyEdgeLength);
             }
         }
     }
 
-    private void symmdifflengths(final CGraph graph) {
+    /**
+     * 
+     */
+    @SuppressWarnings("unused")
+    private void symmDiffLengths(final CGraph graph) {
 
         Map<CNode, Set<CNode>> neighbours = Maps.newHashMap();
         for (CNode node : graph.getChildren()) {

@@ -32,6 +32,8 @@ import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
  */
 public class CNode extends CShape<KNode> {
 
+    private static final long serialVersionUID = -8556727908262767615L;
+
     // CHECKSTYLEOFF VisibilityModifier
     // CHECKSTYLEOFF Javadoc
 
@@ -79,6 +81,13 @@ public class CNode extends CShape<KNode> {
     }
 
     /**
+     * @return the outgoing and incoming edges
+     */
+    public Iterable<CEdge> getConnectedEdges() {
+        return Iterables.concat(outgoingEdges, incomingEdges);
+    }
+
+    /**
      * @return the outgoingEdges
      */
     public List<CEdge> getOutgoingEdges() {
@@ -98,7 +107,7 @@ public class CNode extends CShape<KNode> {
     public List<CPort> getPorts() {
         return ports;
     }
-    
+
     /**
      * @return the ports
      */

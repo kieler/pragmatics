@@ -14,7 +14,7 @@
 package de.cau.cs.kieler.kiml.cola.graph;
 
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
-import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 
 /**
@@ -24,7 +24,12 @@ import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
  *            .
  * @author uru
  */
-public class CGraphElement<T extends KGraphElement> {
+public class CGraphElement<T extends KGraphElement> extends MapPropertyHolder {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8909829166918218344L;
 
     // CHECKSTYLEOFF VisibilityModifier
     // CHECKSTYLEOFF Javadoc
@@ -42,11 +47,12 @@ public class CGraphElement<T extends KGraphElement> {
     public CGraphElement(final CGraph graph, final T element) {
         this.graph = graph;
         this.origin = element;
-    }
 
-    public <S> S getProperty(final IProperty<S> prop) {
-        KLayoutData layout = origin.getData(KLayoutData.class);
-        return layout.getProperty(prop);
+        // copy the properties from the KGraph element to the CGraph element
+        KLayoutData layoutData = element.getData(KLayoutData.class);
+        if (layoutData != null) {
+            copyProperties(layoutData);
+        }
     }
 
 }

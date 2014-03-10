@@ -26,6 +26,8 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
  */
 public class CShape<T extends KGraphElement> extends CGraphElement<T> {
 
+    private static final long serialVersionUID = 7543591108386925637L;
+
     // CHECKSTYLEOFF VisibilityModifier
     // CHECKSTYLEOFF Javadoc
 
