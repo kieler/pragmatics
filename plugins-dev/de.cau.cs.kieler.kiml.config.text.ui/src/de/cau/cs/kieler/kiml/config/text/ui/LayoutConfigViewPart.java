@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.UUID;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -42,6 +43,7 @@ import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.part.ViewPart;
@@ -80,6 +82,8 @@ import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 public class LayoutConfigViewPart extends ViewPart {
     
     public static final String PLUGIN_ID = "de.cau.ca.kieler.kiml.config.text.ui";
+    
+    public static final String VIEW_ID = "de.cau.cs.kieler.kiml.config.text.ui.LayoutConfigEditor";
     
     /** Id to store the config text in the preference store. */
     private static final String CURRENT_CONFIG_TEXT = "de.cau.cs.kieler.kiml.config.text.currentConfigText";
@@ -337,6 +341,26 @@ public class LayoutConfigViewPart extends ViewPart {
         };
         menu.add(loadTemplate);
         
+        
+        final IAction newViewAction = new Action("Open New View") {
+            @Override
+            public void run() {
+                IWorkbenchPage page = LayoutConfigViewPart.this.getSite().getPage();
+                try {
+                    // when opening multiple views it has to be guaranteed that they differ in the
+                    // secondary id, we use a randomly generated uuid for this
+                    page.showView(VIEW_ID, UUID.randomUUID().toString(),
+                            IWorkbenchPage.VIEW_ACTIVATE);
+                } catch (PartInitException e) {
+                    StatusManager.getManager().handle(
+                            new Status(Status.ERROR, PLUGIN_ID,
+                                    "Could not open another Textual Layout View", e),
+                            StatusManager.SHOW);
+                }
+            }
+        };
+        menu.add(newViewAction);
+
         menu.add(new Separator());
        
         // add the known default templates
