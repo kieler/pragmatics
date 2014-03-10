@@ -13,11 +13,14 @@
  */
 package de.cau.cs.kieler.kiml.cola.graph;
 
+import java.util.List;
+
 import org.adaptagrams.ColaEdge;
 import org.adaptagrams.Dim;
 import org.adaptagrams.Rectangle;
 import org.adaptagrams.SeparationConstraint;
 
+import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
@@ -165,6 +168,10 @@ public class CPort extends CShape<KPort> {
                 KVector.distance(marginCenter, portPos) + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1;
 
         return this;
+    }
+    
+    public List<KEdge> getIncidentEdges() {
+        return origin.getEdges();   
     }
 
 }

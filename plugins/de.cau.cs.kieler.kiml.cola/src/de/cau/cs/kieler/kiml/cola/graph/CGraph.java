@@ -260,4 +260,7 @@ public class CGraph extends CGraphElement<KNode> {
         return arr;
     }
 
+    public int getLastNodeIndex() {
+        return nodeIndex;
+    }
 }

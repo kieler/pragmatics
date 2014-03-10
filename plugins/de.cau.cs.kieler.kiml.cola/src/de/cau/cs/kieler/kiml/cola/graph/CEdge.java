@@ -89,5 +89,19 @@ public class CEdge extends CGraphElement<KEdge> {
     public CNode getTarget() {
         return tgt;
     }
+    
+    /**
+     * @return the srcPort
+     */
+    public CPort getSourcePort() {
+        return srcPort;
+    }
+    
+    /**
+     * @return the tgtPort
+     */
+    public CPort getTargetPort() {
+        return tgtPort;
+    }
 
 }

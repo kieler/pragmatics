@@ -18,8 +18,12 @@ import java.util.List;
 
 import org.adaptagrams.Rectangle;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 
 /**
@@ -93,5 +97,17 @@ public class CNode extends CShape<KNode> {
      */
     public List<CPort> getPorts() {
         return ports;
+    }
+    
+    /**
+     * @return the ports
+     */
+    public Iterable<CPort> getPorts(final PortSide side) {
+        Iterable<CPort> filtered = Iterables.filter(ports, new Predicate<CPort>() {
+            public boolean apply(final CPort p) {
+                return p.side == side;
+            }
+        });
+        return filtered;
     }
 }

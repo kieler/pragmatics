@@ -20,10 +20,14 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.kgraph.KEdge;
+import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.cola.graph.CEdge;
 import de.cau.cs.kieler.kiml.cola.graph.CGraph;
 import de.cau.cs.kieler.kiml.cola.graph.CNode;
 import de.cau.cs.kieler.kiml.cola.graph.CPort;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.PortSide;
 
 /**
  * @author uru
@@ -31,15 +35,128 @@ import de.cau.cs.kieler.kiml.cola.graph.CPort;
  */
 public class NonUniformEdgeLengthProcessor implements ILayoutProcessor {
 
+    double idealEdgeLength;
+
     /**
      * {@inheritDoc}
      */
     public void process(final CGraph graph, final IKielerProgressMonitor progressMonitor) {
 
-        double idealEdgeLength = graph.getProperty(ColaProperties.IDEAL_EDGE_LENGTHS);
+        idealEdgeLength = graph.getProperty(ColaProperties.IDEAL_EDGE_LENGTHS);
 
-        System.out.println("Ideal Edge: " + idealEdgeLength);
+        dummyPortEdgeLengths(graph);
 
+        // symmdifflengths(graph);
+        connectivity(graph);
+    }
+
+    private void connectivity(final CGraph graph) {
+
+        int[][] connectivity = new int[graph.getLastNodeIndex()][];
+
+        // setup connectivity array
+        // for every node we record how many edges are incident to every side of the node
+        for (CNode n : graph.getChildren()) {
+
+            connectivity[n.cIndex] = new int[5]; // SUPPRESS CHECKSTYLE MagicNumber
+
+            // WEST
+            connectivity[n.cIndex][0] += getIncidentEdgeCount(n, PortSide.UNDEFINED);
+            connectivity[n.cIndex][1] += getIncidentEdgeCount(n, PortSide.WEST);
+            connectivity[n.cIndex][2] += getIncidentEdgeCount(n, PortSide.NORTH);
+            connectivity[n.cIndex][3] += getIncidentEdgeCount(n, PortSide.EAST);
+            connectivity[n.cIndex][4] += getIncidentEdgeCount(n, PortSide.SOUTH);
+
+        }
+
+        // now use this information to determine the edge lengths of all edges
+        for (CNode src : graph.getChildren()) {
+            for (CEdge e : src.getOutgoingEdges()) {
+
+                CPort srcPort = e.getSourcePort();
+                CNode tgt = e.getTarget();
+                CPort tgtPort = e.getTargetPort();
+
+                if (srcPort == null || tgtPort == null) {
+                    continue;
+                }
+
+                int srcWeight = 0;
+                switch (srcPort.getProperty(LayoutOptions.PORT_SIDE)) {
+                case UNDEFINED:
+                    srcWeight = connectivity[src.cIndex][0];
+                    break;
+                case WEST:
+                    srcWeight = connectivity[src.cIndex][1];
+                    break;
+                case NORTH:
+                    srcWeight = connectivity[src.cIndex][2];
+                    break;
+                case EAST:
+                    srcWeight = connectivity[src.cIndex][3]; // SUPPRESS CHECKSTYLE MagicNumber
+                    break;
+                case SOUTH:
+                    srcWeight = connectivity[src.cIndex][4]; // SUPPRESS CHECKSTYLE MagicNumber
+                    break;
+                }
+
+                int tgtWeight = 0;
+                switch (tgtPort.getProperty(LayoutOptions.PORT_SIDE)) {
+                case UNDEFINED:
+                    tgtWeight = connectivity[tgt.cIndex][0];
+                    break;
+                case WEST:
+                    tgtWeight = connectivity[tgt.cIndex][1];
+                    break;
+                case NORTH:
+                    tgtWeight = connectivity[tgt.cIndex][2];
+                    break;
+                case EAST:
+                    tgtWeight = connectivity[tgt.cIndex][3]; // SUPPRESS CHECKSTYLE MagicNumber
+                    break;
+                case SOUTH:
+                    tgtWeight = connectivity[tgt.cIndex][4]; // SUPPRESS CHECKSTYLE MagicNumber
+                    break;
+                }
+                
+//                System.out.println(e.origin + " " + srcWeight + " " + tgtWeight);
+
+                double cumWeight = Math.max(1, srcWeight + tgtWeight - 1); // subtract the
+                                                                           // connection between the
+                                                                           // two nodes itself
+                graph.idealEdgeLengths[e.cIndex] = idealEdgeLength * Math.sqrt(cumWeight);
+
+                System.out.println(Math.sqrt(cumWeight) + " " + graph.idealEdgeLengths[e.cIndex] + " "
+                        + e.origin);
+            }
+        }
+    }
+
+    private int getIncidentEdgeCount(final CNode n, final PortSide side) {
+        Set<KNode> knownTargets = Sets.newHashSet();
+        int incidentEdges = 0;
+        for (CPort p : n.getPorts(side)) {
+            // we only count edges with different connected node
+            for (KEdge e : p.getIncidentEdges()) {
+
+                KNode other = null;
+                if (e.getTarget().equals(n.origin)) {
+                    other = e.getSource();
+                } else {
+                    other = e.getTarget();
+                }
+
+                if (!knownTargets.contains(other)) {
+                    incidentEdges++;
+                }
+
+                knownTargets.add(other);
+            }
+        }
+        return incidentEdges;
+    }
+
+    private void dummyPortEdgeLengths(final CGraph graph) {
         // set the ideal edge lengths for the port dummy edges
         for (CNode n : graph.getChildren()) {
             for (CPort p : n.getPorts()) {
@@ -47,6 +164,9 @@ public class NonUniformEdgeLengthProcessor implements ILayoutProcessor {
                 // System.out.println("Port: " +p.cEdgeIndex + " " + p.idealDummyEdgeLength);
             }
         }
+    }
+
+    private void symmdifflengths(final CGraph graph) {
 
         Map<CNode, Set<CNode>> neighbours = Maps.newHashMap();
         for (CNode node : graph.getChildren()) {
@@ -85,5 +205,4 @@ public class NonUniformEdgeLengthProcessor implements ILayoutProcessor {
             }
         }
     }
-
 }
