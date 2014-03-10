@@ -796,8 +796,10 @@ public class LabelAndNodeSizeProcessor {
         KVector nodeSize = node.getSize();
 
         for (PortAdapter<?> port : node.getPorts()) {
-            //float portOffset = port.getProperty(Properties.OFFSET);
-            float portOffset = 0;
+            Float portOffset = port.getProperty(LayoutOptions.OFFSET);
+            if (portOffset == null) {
+                portOffset = 0f;
+            }
             
             KVector position = new KVector(port.getPosition());
             switch (port.getSide()) {
@@ -830,7 +832,11 @@ public class LabelAndNodeSizeProcessor {
         // Adjust port positions depending on port side. Eastern ports have to have their x coordinate
         // set to the node's current width; the same goes for the y coordinate of southern ports
         for (PortAdapter<?> port : node.getPorts()) {
-            float portOffset = port.getProperty(LayoutOptions.OFFSET);
+            Float portOffset = port.getProperty(LayoutOptions.OFFSET);
+            if (portOffset == null) {
+                portOffset = 0f;
+            }
+            
             switch (port.getSide()) {
             case WEST:
                 port.getPosition().y =
@@ -904,7 +910,10 @@ public class LabelAndNodeSizeProcessor {
         
         // Arrange the ports
         for (PortAdapter<?> port : node.getPorts()) {
-            float portOffset = port.getProperty(LayoutOptions.OFFSET);
+            Float portOffset = port.getProperty(LayoutOptions.OFFSET);
+            if (portOffset == null) {
+                portOffset = 0f;
+            }
             KVector portSize = port.getSize();
             Margins portMargins = port.getMargin();
             
