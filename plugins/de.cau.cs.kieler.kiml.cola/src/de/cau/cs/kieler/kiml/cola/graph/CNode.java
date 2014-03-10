@@ -71,8 +71,12 @@ public class CNode extends CShape<KNode> {
         // any weird layout stuff used before we run it, use 0 as initial positions for all
         // rects
         rect =
-                new Rectangle(0 - margin.left, 0 + this.getSize().x + margin.right, 0 - margin.top,
-                        0 + this.getSize().y + margin.bottom);
+                new Rectangle(0 - margin.left,
+                        // assure that the size is at least 1
+                        Math.max(1, 0 + this.getSize().x + margin.right), 
+                        0 - margin.top, 
+                        Math.max(1, 0 + this.getSize().y + margin.bottom) // same here
+                );
         cIndex = graph.nodeIndex++;
 
         // register in graph
@@ -118,5 +122,28 @@ public class CNode extends CShape<KNode> {
             }
         });
         return filtered;
+    }
+
+    /**
+     * Returns the name of the node. The name is derived from the text of the first label, if any.
+     * 
+     * @return the name, or {@code null}
+     */
+    public String getName() {
+        if (!origin.getLabels().isEmpty()) {
+            return origin.getLabels().get(0).getText();
+        }
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String toString() {
+        String name = getName();
+        if (name != null) {
+            return "n_" + getName();
+        }
+        return "n_" + cIndex;
     }
 }

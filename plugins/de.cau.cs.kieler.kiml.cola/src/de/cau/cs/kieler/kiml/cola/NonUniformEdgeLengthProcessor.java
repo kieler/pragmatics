@@ -118,15 +118,11 @@ public class NonUniformEdgeLengthProcessor implements ILayoutProcessor {
                     break;
                 }
 
-                // System.out.println(e.origin + " " + srcWeight + " " + tgtWeight);
-
                 double cumWeight = Math.max(1, srcWeight + tgtWeight - 1); // subtract the
                                                                            // connection between the
                                                                            // two nodes itself
                 graph.idealEdgeLengths[e.cIndex] = idealEdgeLength * Math.sqrt(cumWeight);
 
-                System.out.println(Math.sqrt(cumWeight) + " " + graph.idealEdgeLengths[e.cIndex]
-                        + " " + e.origin);
             }
         }
     }

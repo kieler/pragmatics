@@ -35,6 +35,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters.KGraphAdapter;
 import de.cau.cs.kieler.kiml.util.nodespacing.KimlNodeDimensionCalculation;
+import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 
 /**
  * 
@@ -80,6 +81,7 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
 
         // calculate margins
         KGraphAdapter adapter = new KGraphAdapter(parentNode);
+        KimlNodeDimensionCalculation.sortPortLists(adapter);
         KimlNodeDimensionCalculation.calculateLabelAndNodeSizes(adapter);
         KimlNodeDimensionCalculation.calculateNodeMargins(adapter);
 
@@ -88,6 +90,7 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
 
         BasicProgressMonitor bpm = new BasicProgressMonitor();
         new DirectionConstraintProcessor().process(graph, bpm);
+        new PortConstraintProcessor().process(graph, bpm);
         new NonUniformEdgeLengthProcessor().process(graph, bpm);
 
         System.out.println(parentNode);
@@ -109,7 +112,7 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         // run some w/o overlap
         algo.makeFeasible();
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 20; i++) {
             algo.runOnce();
 
             algo.outputInstanceToSVG("out" + i + ".svg");
@@ -168,9 +171,22 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         for (CNode n : graph.getChildren()) {
             Rectangle r = n.rect;
 
+            Margins margins = n.getProperty(LayoutOptions.MARGINS);
+
             KShapeLayout layout = n.origin.getData(KShapeLayout.class);
             layout.setXpos((float) (r.getMinX() + offset.x));
             layout.setYpos((float) (r.getMinY() + offset.y));
+
+            // ports
+            for (CPort p : n.getPorts()) {
+                if (p.cEdgeIndex != -1) {
+                    KShapeLayout portLayout = p.origin.getData(KShapeLayout.class);
+                    // ports are relative to the parent in KGraph
+                    portLayout.setXpos((float) p.getActualXPos());
+                    portLayout.setYpos((float) p.getActualYPos());
+                    // TODO need to consider margin etc
+                }
+            }
         }
 
         /*
@@ -204,242 +220,5 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
                 (float) (maxY - minY) + 2 * borderSpacing + insets.getTop() + insets.getBottom();
         KimlUtil.resizeNode(root, width, height, false, true);
     }
-
-    /*-------------------------------
-     * Old stuff
-     */
-
-    // private void constraintsFixedOrder(final KNode root) {
-    //
-    // for (KNode n : root.getChildren()) {
-    //
-    // List<KPort> ports = n.getPorts();
-    //
-    // for (PortSide ps : PortSide.values()) {
-    // if (ps == PortSide.UNDEFINED) {
-    // continue;
-    // }
-    //
-    // int dim = (ps == PortSide.EAST || ps == PortSide.WEST) ? Dim.YDIM : Dim.XDIM;
-    // int separation = 20;
-    //
-    // Iterable<KPort> sidePorts = Iterables.filter(ports, new PortSidePredicate(ps));
-    //
-    // // System.out.println(westPorts);
-    // Iterator<KPort> it = sidePorts.iterator();
-    // KPort prev = null;
-    // while (it.hasNext()) {
-    // KPort curr = it.next();
-    // if (prev != null) {
-    //
-    // boolean swap = false;
-    // if (ps == PortSide.EAST || ps == PortSide.WEST) {
-    // if (prev.getData(KShapeLayout.class).getYpos() < curr.getData(
-    // KShapeLayout.class).getYpos()) {
-    // // prev should be above curr
-    // separation +=
-    // prev.getNode().getData(KShapeLayout.class).getHeight();
-    // } else {
-    // swap = true;
-    // separation +=
-    // curr.getNode().getData(KShapeLayout.class).getHeight();
-    // }
-    // } else {
-    // if (prev.getData(KShapeLayout.class).getXpos() < curr.getData(
-    // KShapeLayout.class).getXpos()) {
-    // // prev should be above curr
-    // } else {
-    // swap = true;
-    // }
-    // }
-    //
-    // for (KEdge prevEdge : prev.getEdges()) {
-    // KNode prevNode = prevEdge.getSource();
-    // if (prevNode.equals(prev.getNode())) {
-    // prevNode = prevEdge.getTarget();
-    // }
-    //
-    // for (KEdge curEdge : curr.getEdges()) {
-    // KNode curNode = curEdge.getSource();
-    // if (curNode.equals(curr.getNode())) {
-    // curNode = curEdge.getTarget();
-    // }
-    //
-    // System.out.println(prevNode + " " + curNode);
-    //
-    // long n1 = nodeIndexMap.get(prevNode);
-    // long n2 = nodeIndexMap.get(curNode);
-    //
-    // if (swap) {
-    // long tmp = n1;
-    // n1 = n2;
-    // n2 = tmp;
-    // }
-    //
-    // SeparationConstraint sc =
-    // new SeparationConstraint(dim, n1, n2, separation, false);
-    // constraints.add(sc);
-    //
-    // }
-    // }
-    //
-    // }
-    // prev = curr;
-    // }
-    // }
-    // }
-    // }
-    //
-    // /**
-    // * TODO only valid for LEFT to RIGHT layout.
-    // *
-    // * TODO it should be ok if one side has no port or no port constraints!
-    // */
-    // private void constraintsFixedSide(final KNode root) {
-    //
-    // System.out.println("applying ports " + System.currentTimeMillis());
-    //
-    // for (KNode n : root.getChildren()) {
-    // for (KEdge e : n.getOutgoingEdges()) {
-    //
-    // if (e.getSourcePort() == null || e.getTargetPort() == null) {
-    // // if one end doesnt have a port we do not handle it
-    // continue;
-    // }
-    //
-    // KNode src = e.getSource();
-    // PortSide srcSide =
-    // e.getSourcePort().getData(KLayoutData.class)
-    // .getProperty(LayoutOptions.PORT_SIDE);
-    // KShapeLayout srcLayout = src.getData(KShapeLayout.class);
-    //
-    // KNode tgt = e.getTarget();
-    // PortSide tgtSide =
-    // e.getTargetPort().getData(KLayoutData.class)
-    // .getProperty(LayoutOptions.PORT_SIDE);
-    // KShapeLayout tgtLayout = tgt.getData(KShapeLayout.class);
-    //
-    // // if one of the two nodes has fixed side we add a separation constraint
-    // if (srcLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()
-    // || tgtLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()) {
-    //
-    // // handled cases:
-    // // WEST - EAST
-    // // NOTH - SOUTH
-    //
-    // boolean validCase = true;
-    // boolean swap = false;
-    // int separationDim = Dim.XDIM;
-    //
-    // // TODO do this properly, 2*20 is for ports on both sides
-    // float separation = spacing + 2 * 40;
-    //
-    // if (srcSide == PortSide.EAST && tgtSide == PortSide.WEST) {
-    // // System.out.println(src + " " + tgt + " " + srcLayout.getWidth() + " "
-    // // + srcLayout.getInsets());
-    // // System.out.println("Case 1");
-    // separationDim = Dim.XDIM;
-    // separation += srcLayout.getWidth();
-    // } else if (srcSide == PortSide.WEST && tgtSide == PortSide.EAST) {
-    // // System.out.println("Case 2");
-    // // inverted port situation
-    // separationDim = Dim.XDIM;
-    // separation += srcLayout.getWidth() + tgtLayout.getWidth();
-    // } else if (srcSide == PortSide.SOUTH && tgtSide == PortSide.NORTH) {
-    // // System.out.println("Case 3");
-    // separationDim = Dim.YDIM;
-    // separation += srcLayout.getHeight();
-    // } else if (srcSide == PortSide.NORTH && tgtSide == PortSide.SOUTH) {
-    // // System.out.println("Case 4");
-    // separationDim = Dim.YDIM;
-    // separation += tgtLayout.getHeight();
-    // swap = true;
-    // }
-    //
-    // else if (tgtSide == PortSide.SOUTH && srcSide == PortSide.EAST) {
-    // // TODO
-    // System.out.println("Case 5");
-    // separationDim = Dim.YDIM;
-    // separation += srcLayout.getHeight();
-    // swap = true;
-    // }
-    //
-    // else {
-    // validCase = false;
-    // }
-    //
-    // if (validCase) {
-    // long n1 = nodeIndexMap.get(src);
-    // long n2 = nodeIndexMap.get(tgt);
-    // if (swap) {
-    // long tmp = n1;
-    // n1 = n2;
-    // n2 = tmp;
-    // }
-    // SeparationConstraint sc =
-    // new SeparationConstraint(separationDim, n1, n2, separation, false);
-    // constraints.add(sc);
-    // }
-    //
-    // }
-    //
-    // }
-    // }
-    //
-    // }
-
-    // private List<Pair<KNode, KNode>> createPairsOfNodes(final KNode root) {
-    //
-    // // create appropriate data structures
-    // List<KNode> children = Lists.newArrayList(root.getChildren());
-    // List<Pair<KNode, KNode>> pairs = Lists.newLinkedList();
-    //
-    // // create all pairs of nodes -> (n ncr 2) elements
-    // for (int i = 0; i < children.size(); i++) {
-    // KNode fst = children.get(i);
-    // for (int j = i + 1; j < children.size(); j++) {
-    // KNode snd = children.get(j);
-    // Pair<KNode, KNode> nodePair = Pair.of(fst, snd);
-    // pairs.add(nodePair);
-    // }
-    // }
-    //
-    // return pairs;
-    // }
-
-    // private List<Cluster> separateUnconnectedComponents(final KNode root) {
-    //
-    // Cluster connected = new ConvexCluster();
-    // Cluster unconnected = new ConvexCluster();
-    //
-    // for (KNode n : root.getChildren()) {
-    // long id = nodeIndexMap.get(n);
-    // if (Iterables.isEmpty(n.getIncomingEdges()) && Iterables.isEmpty(n.getOutgoingEdges())) {
-    // // unconnected
-    // unconnected.addChildNode(id);
-    // } else {
-    // // connected
-    // connected.addChildNode(id);
-    // }
-    // }
-    //
-    // return Lists.newArrayList(connected, unconnected);
-    // }
-
-    /**
-     * .
-     */
-    // private static class PortSidePredicate implements Predicate<KPort> {
-    // private PortSide side;
-    //
-    // public PortSidePredicate(final PortSide side) {
-    // this.side = side;
-    // }
-    //
-    // public boolean apply(final KPort p) {
-    // KShapeLayout layout = p.getData(KShapeLayout.class);
-    // return layout.getProperty(LayoutOptions.PORT_SIDE) == side;
-    // }
-    // }
 
 }
