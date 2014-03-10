@@ -14,7 +14,10 @@
 package de.cau.cs.kieler.kiml.util.adapters;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
+
+import org.eclipse.emf.common.util.ECollections;
 
 import com.google.common.collect.Lists;
 
@@ -27,6 +30,7 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LabelSide;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -45,8 +49,11 @@ import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
  * 
  * @author uru
  */
-public class KGraphAdapters {
+public final class KGraphAdapters {
 
+    private KGraphAdapters() {
+    }
+    
     /**
      * Implements basic adpater functionality for {@link KGraphElement}s.
      */
@@ -228,6 +235,25 @@ public class KGraphAdapters {
         /**
          * {@inheritDoc}
          */
+        public void sortPortList() {
+            sortPortList(DEFAULT_PORTLIST_SORTER);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @SuppressWarnings("unchecked")
+        public void sortPortList(final Comparator<?> comparator) {
+            // Iterate through the nodes of all layers
+            KLayoutData layout = element.getData(KLayoutData.class);
+            if (layout.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+                ECollections.sort(element.getPorts(), (Comparator<KPort>) comparator);
+            }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
         public boolean isCompoundNode() {
             return !element.getChildren().isEmpty();
         }
@@ -337,5 +363,67 @@ public class KGraphAdapters {
             return labelAdapters;
         }
 
+    }
+    
+    /**
+     * The default comparator for ports. Ports are sorted by side (north, east, south, west) in
+     * clockwise order, beginning at the top left corner.
+     */
+    public static final PortComparator DEFAULT_PORTLIST_SORTER = new PortComparator();
+    
+    /**
+     * A comparer for ports. Ports are sorted by side (north, east, south, west) in clockwise order,
+     * beginning at the top left corner.
+     */
+    public static class PortComparator implements Comparator<KPort> {
+
+        /**
+         * {@inheritDoc}
+         */
+        public int compare(final KPort port1, final KPort port2) {
+            KShapeLayout layout1 = port1.getData(KShapeLayout.class);
+            KShapeLayout layout2 = port2.getData(KShapeLayout.class);
+            int ordinalDifference =
+                    layout1.getProperty(LayoutOptions.PORT_SIDE).ordinal()
+                            - layout2.getProperty(LayoutOptions.PORT_SIDE).ordinal();
+
+            // Sort by side first
+            if (ordinalDifference != 0) {
+                return ordinalDifference;
+            }
+
+            // In case of equal sides, sort by port index property
+            Integer index1 = layout1.getProperty(LayoutOptions.PORT_INDEX);
+            Integer index2 = layout2.getProperty(LayoutOptions.PORT_INDEX);
+            if (index1 != null && index2 != null) {
+                int indexDifference = index1 - index2;
+                if (indexDifference != 0) {
+                    return indexDifference;
+                }
+            }
+
+            // In case of equal index, sort by position
+            switch (layout1.getProperty(LayoutOptions.PORT_SIDE)) {
+            case NORTH:
+                // Compare x coordinates
+                return Double.compare(layout1.getXpos(), layout2.getXpos());
+
+            case EAST:
+                // Compare y coordinates
+                return Double.compare(layout1.getYpos(), layout2.getYpos());
+
+            case SOUTH:
+                // Compare x coordinates in reversed order
+                return Double.compare(layout2.getXpos(), layout1.getXpos());
+
+            case WEST:
+                // Compare y coordinates in reversed order
+                return Double.compare(layout2.getYpos(), layout1.getYpos());
+
+            default:
+                // Port sides should not be undefined
+                throw new IllegalStateException("Port side is undefined");
+            }
+        }
     }
 }
