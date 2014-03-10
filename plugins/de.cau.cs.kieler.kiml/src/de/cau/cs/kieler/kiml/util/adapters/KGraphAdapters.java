@@ -25,6 +25,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LabelSide;
@@ -59,6 +60,9 @@ public class KGraphAdapters {
         /** The layout data of the wrapped element. */
         protected KShapeLayout layout;
         // CHECKSTYLEON VisibilityModifier
+        
+        private static final IProperty<Float> OFFSET_PROXY = new Property<Float>(
+                LayoutOptions.OFFSET, 0.0f);
 
         /**
          * @param element
@@ -77,7 +81,14 @@ public class KGraphAdapters {
         /**
          * {@inheritDoc}
          */
+        @SuppressWarnings("unchecked")
         public <P> P getProperty(final IProperty<P> prop) {
+            
+            // the nodespacing implementation requires a default value for the offset property
+            if (prop.equals(LayoutOptions.OFFSET)) {
+                return (P) layout.getProperty(OFFSET_PROXY);
+            }
+            
             return layout.getProperty(prop);
         }
 
