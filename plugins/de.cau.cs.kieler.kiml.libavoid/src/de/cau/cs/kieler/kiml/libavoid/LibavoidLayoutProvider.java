@@ -162,6 +162,7 @@ public class LibavoidLayoutProvider extends AbstractLayoutProvider {
         // calculate node margins
         KGraphAdapter adapter = new KGraphAdapters.KGraphAdapter(parentNode);
         
+        KimlNodeDimensionCalculation.sortPortLists(adapter);
         KimlNodeDimensionCalculation.calculateLabelAndNodeSizes(adapter);
         KimlNodeDimensionCalculation.calculateNodeMargins(adapter);
 
