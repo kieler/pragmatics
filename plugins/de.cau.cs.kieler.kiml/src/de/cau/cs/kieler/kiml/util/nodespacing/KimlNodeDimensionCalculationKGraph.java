@@ -15,7 +15,7 @@ package de.cau.cs.kieler.kiml.util.nodespacing;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.GraphAdapter;
-import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters.KGraphAdapter;
+import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters;
 
 /**
  * Counterpart to the generic {@link KimlNodeDimensionCalculation} class providing specialized 
@@ -58,8 +58,7 @@ public final class KimlNodeDimensionCalculationKGraph {
      *            the graph for which to calculate the sizes.
      */
     public static void calculateLabelAndNodeSizes(final KNode graph) {
-        KGraphAdapter kga = new KGraphAdapter(graph);
-        calculateLabelAndNodeSizes(kga);
+        calculateLabelAndNodeSizes(KGraphAdapters.adapt(graph));
     }
 
     /**
@@ -82,8 +81,7 @@ public final class KimlNodeDimensionCalculationKGraph {
      *            the graph.
      */
     public static void calculateNodeMargins(final KNode root) {
-        KGraphAdapter kga = new KGraphAdapter(root);
-        calculateNodeMargins(kga);
+        calculateNodeMargins(KGraphAdapters.adapt(root));
     }
 
 }

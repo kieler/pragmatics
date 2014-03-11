@@ -54,6 +54,10 @@ import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
+import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters;
+import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters.KGraphAdapter;
+import de.cau.cs.kieler.kiml.util.nodespacing.KimlNodeDimensionCalculation;
+import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 
 /**
  * A layout provider for KIML that performs layout using the Libavoid connector routing library. See
@@ -154,6 +158,13 @@ public class LibavoidLayoutProvider extends AbstractLayoutProvider {
 
         // layout options
         transformOptions(parentNode);
+        
+        // calculate node margins
+        KGraphAdapter adapter = KGraphAdapters.adapt(parentNode);
+        
+        KimlNodeDimensionCalculation.sortPortLists(adapter);
+        KimlNodeDimensionCalculation.calculateLabelAndNodeSizes(adapter);
+        KimlNodeDimensionCalculation.calculateNodeMargins(adapter);
 
         // transform to libavoid object
         transformGraph(parentNode);
@@ -164,6 +175,8 @@ public class LibavoidLayoutProvider extends AbstractLayoutProvider {
         // apply layout information back
         applyLayout(parentNode);
         calculateJunctionPoints(parentNode);
+        
+        router.outputInstanceToSVG();
 
         // destroy
         router.delete();
@@ -284,7 +297,7 @@ public class LibavoidLayoutProvider extends AbstractLayoutProvider {
                 }
             }
         }
-        // AND, in case of an compound node,
+        // AND, in case of a compound node,
         // all edges between hierarchical ports and nodes within the root node
         for (KPort p : root.getPorts()) {
             for (KEdge e : p.getEdges()) {
@@ -300,7 +313,7 @@ public class LibavoidLayoutProvider extends AbstractLayoutProvider {
 
     /**
      * Create 4 nodes that "surround", hence restrict, the child area. This way it is guaranteed
-     * that no edge is routed outsite its compound node.
+     * that no edge is routed outside its compound node.
      */
     private void transformHierarchicalParent(final KNode parent) {
 
@@ -329,6 +342,9 @@ public class LibavoidLayoutProvider extends AbstractLayoutProvider {
         }
     }
 
+    /**
+     * For internal representation only, no semantic meaning. 
+     */
     private void transformHierarchicalParentDummy(final KNode root) {
         // 4 dummies
         libavoidNode(root, NODE_COMPOUND_NORTH, 0, 0, 0, 0, 0, 0);
@@ -341,10 +357,13 @@ public class LibavoidLayoutProvider extends AbstractLayoutProvider {
             final float width, final float height, final int portLessIncomingEdges,
             final int portLessOutgoingEdges) {
 
+        // get margins
+        Margins margin = node.getData(KShapeLayout.class).getProperty(LayoutOptions.MARGINS);
+        
         // defined by top left and bottom right coordinates
-
         AvoidRectangle rect =
-                new AvoidRectangle(new Point(xPos, yPos), new Point(xPos + width, yPos + height));
+                new AvoidRectangle(new Point(xPos - margin.left, yPos - margin.top), new Point(xPos
+                        + width + margin.right, yPos + height + margin.bottom));
         ShapeRef sr = new ShapeRef(router, rect, id);
 
         // put to map
@@ -459,11 +478,17 @@ public class LibavoidLayoutProvider extends AbstractLayoutProvider {
 
         // gather information
         KShapeLayout portLayout = port.getData(KShapeLayout.class);
-        PortSide side = KimlUtil.calcPortSide(port, direction);
+        PortSide side = portLayout.getProperty(LayoutOptions.PORT_SIDE);
+        if (side == null) {
+            side = KimlUtil.calcPortSide(port, direction);
+        }
+        
+        // parents margins
+        Margins margin = port.getNode().getData(KShapeLayout.class).getProperty(LayoutOptions.MARGINS);
 
         // get center point of port
-        float centerX = portLayout.getXpos() + portLayout.getWidth() / 2;
-        float centerY = portLayout.getYpos() + portLayout.getHeight() / 2;
+        double centerX = portLayout.getXpos() + portLayout.getWidth() / 2 + margin.left;
+        double centerY = portLayout.getYpos() + portLayout.getHeight() / 2 + margin.top;
 
         // for compound nodes we have to mirror the port sides
         if (compoundNode != null) {
