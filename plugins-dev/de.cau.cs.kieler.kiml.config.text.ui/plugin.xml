@@ -395,7 +395,7 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            allowMultiple="false"
+            allowMultiple="true"
             category="de.cau.cs.kieler.layout"
             class="de.cau.cs.kieler.kiml.config.text.ui.LayoutConfigViewPart"
             icon="icons/layout.gif"

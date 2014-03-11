@@ -3,26 +3,6 @@
 <plugin>
    <extension
          point="de.cau.cs.kieler.kiml.layoutProviders">
-      <layoutAlgorithm
-            category="de.cau.cs.kieler.kiml.categories.adaptagrams"
-            class="de.cau.cs.kieler.kiml.cola.ColaLayoutProvider"
-            id="de.cau.cs.kieler.kiml.cola.force"
-            name="Dataflow CoLa Layout">
-         <knownOption
-               default="20"
-               option="de.cau.cs.kieler.spacing">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.kiml.cola.port">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.kiml.cola.direction">
-         </knownOption>
-         <knownOption
-               default="100"
-               option="de.cau.cs.kieler.kiml.cola.idealEdgeLengths">
-         </knownOption>
-      </layoutAlgorithm>
       <layoutOption
             appliesTo="parents"
             default="true"
