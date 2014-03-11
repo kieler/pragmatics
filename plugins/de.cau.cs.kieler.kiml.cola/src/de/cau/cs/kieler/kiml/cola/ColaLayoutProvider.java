@@ -32,6 +32,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters.KGraphAdapter;
 import de.cau.cs.kieler.kiml.util.nodespacing.KimlNodeDimensionCalculation;
@@ -112,7 +113,9 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         // run some w/o overlap
         algo.makeFeasible();
 
-        for (int i = 0; i < 20; i++) {
+        int runs = 10;
+        
+        for (int i = 0; i < runs; i++) {
             algo.runOnce();
 
             algo.outputInstanceToSVG("out" + i + ".svg");
@@ -129,7 +132,7 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
 
         algo.makeFeasible();
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < runs; i++) {
             algo.runOnce();
 
             algo.outputInstanceToSVG("out99overlap" + i + ".svg");
@@ -171,8 +174,6 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         for (CNode n : graph.getChildren()) {
             Rectangle r = n.rect;
 
-            Margins margins = n.getProperty(LayoutOptions.MARGINS);
-
             KShapeLayout layout = n.origin.getData(KShapeLayout.class);
             layout.setXpos((float) (r.getMinX() + offset.x));
             layout.setYpos((float) (r.getMinY() + offset.y));
@@ -184,7 +185,6 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
                     // ports are relative to the parent in KGraph
                     portLayout.setXpos((float) p.getActualXPos());
                     portLayout.setYpos((float) p.getActualYPos());
-                    // TODO need to consider margin etc
                 }
             }
         }

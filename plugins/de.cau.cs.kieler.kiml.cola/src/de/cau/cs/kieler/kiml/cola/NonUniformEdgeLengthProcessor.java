@@ -44,7 +44,7 @@ public class NonUniformEdgeLengthProcessor implements ILayoutProcessor {
 
         dummyPortEdgeLengths(graph);
 
-        // symmdifflengths(graph);
+//         symmDiffLengths(graph);
         connectivity(graph);
     }
 
@@ -163,7 +163,7 @@ public class NonUniformEdgeLengthProcessor implements ILayoutProcessor {
         for (CNode n : graph.getChildren()) {
             for (CPort p : n.getPorts()) {
                 // SUPPRESS CHECKSTYLE NEXT MagicNumber
-                graph.idealEdgeLengths[p.cEdgeIndex] = p.idealDummyEdgeLength + 20;
+                graph.idealEdgeLengths[p.cEdgeIndex] = p.idealDummyEdgeLength + 30;
             }
         }
     }

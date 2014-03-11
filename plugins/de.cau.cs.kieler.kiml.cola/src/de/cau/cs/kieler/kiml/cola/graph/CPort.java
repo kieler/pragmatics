@@ -47,7 +47,7 @@ public class CPort extends CShape<KPort> {
 
     public PortSide side;
 
-    private final CNode parentNode;
+    public final CNode parentNode;
     protected List<CEdge> outgoingEdges = Lists.newLinkedList();
     protected List<CEdge> incomingEdges = Lists.newLinkedList();
 
@@ -234,7 +234,7 @@ public class CPort extends CShape<KPort> {
             
         case WEST:
         case EAST:
-            y -= margins.bottom;
+            //y -= margins.bottom;
             y -= getSize().y;
             break;
 
