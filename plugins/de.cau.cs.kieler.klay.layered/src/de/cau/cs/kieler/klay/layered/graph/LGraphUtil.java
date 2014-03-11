@@ -690,11 +690,14 @@ public final class LGraphUtil {
         dummyPort.setNode(dummy);
         
         // If the port constraints are free, we need to determine where to put the dummy (and its port)
-        if (!portConstraints.isSideFixed() && layoutDirection != Direction.UNDEFINED) {
+        if (!portConstraints.isSideFixed()) {
+            // we need some layout direction here, use RIGHT as default in case it is undefined
+            Direction actualDirection =
+                    layoutDirection != Direction.UNDEFINED ? layoutDirection : Direction.RIGHT;
             if (netFlow > 0) {
-                finalExternalPortSide = PortSide.fromDirection(layoutDirection);
+                finalExternalPortSide = PortSide.fromDirection(actualDirection);
             } else {
-                finalExternalPortSide = PortSide.fromDirection(layoutDirection).opposed();
+                finalExternalPortSide = PortSide.fromDirection(actualDirection).opposed();
             }
             propertyHolder.setProperty(LayoutOptions.PORT_SIDE, finalExternalPortSide);
         }

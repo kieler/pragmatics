@@ -23,13 +23,14 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.LayoutConfigService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.config.LayoutContext;
@@ -53,11 +54,15 @@ public class EclipseLayoutConfig implements ILayoutConfig {
     /** the priority for the Eclipse layout configuration. */
     public static final int PRIORITY = 10;
     
-    /** the currently tracked diagram editor. */
+    /** context property for the currently tracked diagram editor. */
     public static final IProperty<IWorkbenchPart> WORKBENCH_PART = new Property<IWorkbenchPart>(
             "context.workbenchPart");
     
-    /** the aspect ratio of the currently processed diagram viewer. */
+    /** context property for the editing domain of a diagram editor. */
+    public static final IProperty<EditingDomain> EDITING_DOMAIN = new Property<EditingDomain>(
+            "context.editingDomain");
+    
+    /** context property for the aspect ratio of the currently processed diagram viewer. */
     public static final IProperty<Float> ASPECT_RATIO = new Property<Float>(
             "context.aspectRatio");
     
@@ -146,17 +151,6 @@ public class EclipseLayoutConfig implements ILayoutConfig {
             }
             return containerLayoutHint;
             
-        } else if (property.equals(LayoutContext.DOMAIN_MODEL)) {
-            Object diagPart = context.getProperty(LayoutContext.DIAGRAM_PART);
-            if (diagPart != null) {
-                return LayoutManagersService.getInstance().getAdapter(diagPart, EObject.class);
-            }
-            
-        } else if (property.equals(LayoutContext.CONTAINER_DOMAIN_MODEL)) {
-            Object containerDiagPart = context.getProperty(LayoutContext.CONTAINER_DIAGRAM_PART);
-            if (containerDiagPart != null) {
-                return LayoutManagersService.getInstance().getAdapter(containerDiagPart, EObject.class);
-            }
         }
         return null;
     }
@@ -282,7 +276,7 @@ public class EclipseLayoutConfig implements ILayoutConfig {
         }
 
         LayoutConfigService configService = LayoutConfigService.getInstance();
-        LayoutDataService dataService = LayoutDataService.getInstance();
+        LayoutMetaDataService dataService = LayoutMetaDataService.getInstance();
         Object diagPart = context.getProperty(LayoutContext.DIAGRAM_PART);
         Object modelElement = context.getProperty(LayoutContext.DOMAIN_MODEL);
 

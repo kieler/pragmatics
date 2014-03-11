@@ -34,16 +34,16 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  * @kieler.rating yellow 2012-10-09 review KI-25 by chsch, bdu
  * @author msp
  */
-public abstract class LayoutDataService {
+public abstract class LayoutMetaDataService {
 
     /** identifier of the 'general' diagram type, which applies to all diagrams. */
     public static final String DIAGRAM_TYPE_GENERAL = "de.cau.cs.kieler.layout.diagrams.general";
 
    
     /** the layout data service instance, which is created lazily. */
-    private static LayoutDataService instance;
+    private static LayoutMetaDataService instance;
     /** the factory for creation of service instances. */
-    private static IFactory<? extends LayoutDataService> instanceFactory;
+    private static IFactory<? extends LayoutMetaDataService> instanceFactory;
 
     /**
      * Returns the layout data service instance. If no instance is created yet, create one
@@ -53,7 +53,7 @@ public abstract class LayoutDataService {
      * 
      * @return the layout data service instance
      */
-    public static synchronized LayoutDataService getInstance() {
+    public static synchronized LayoutMetaDataService getInstance() {
         if (instance == null) {
             if (instanceFactory == null) {
                 try {
@@ -61,7 +61,7 @@ public abstract class LayoutDataService {
                     // extension point; the subclass is accessible through the 'buddy policy'
                     // declared in the plugin manifest. By loading the class, the containing
                     // plugin is activated and the instance factory is set.
-                    Class.forName("de.cau.cs.kieler.kiml.service.ExtensionLayoutDataService");
+                    Class.forName("de.cau.cs.kieler.kiml.service.ExtensionLayoutMetaDataService");
                 } catch (ClassNotFoundException exception) {
                     throw new IllegalStateException("The layout data service is not initialized yet."
                             + " Load the plugin 'de.cau.cs.kieler.kiml.service' in order to initialize"
@@ -79,7 +79,7 @@ public abstract class LayoutDataService {
      * 
      * @param factory an instance factory
      */
-    public static void setInstanceFactory(final IFactory<? extends LayoutDataService> factory) {
+    public static void setInstanceFactory(final IFactory<? extends LayoutMetaDataService> factory) {
         instanceFactory = factory;
         instance = null;
     }

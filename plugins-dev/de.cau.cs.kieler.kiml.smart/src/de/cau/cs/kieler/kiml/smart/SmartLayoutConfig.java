@@ -27,7 +27,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
@@ -293,7 +293,7 @@ public class SmartLayoutConfig implements ILayoutConfig {
      * @return a penalty for the missing features
      */
     public static double missingFeaturesFromType(final MetaLayout metaLayout, final String typeId) {
-        LayoutTypeData typeData = LayoutDataService.getInstance().getTypeData(typeId);
+        LayoutTypeData typeData = LayoutMetaDataService.getInstance().getTypeData(typeId);
         EnumSet<GraphFeature> graphFeatures = metaLayout.getGraphFeatures();
         double penalty = GraphFeature.values().length;
         for (LayoutAlgorithmData algorithmData : typeData.getLayouters()) {
@@ -324,7 +324,7 @@ public class SmartLayoutConfig implements ILayoutConfig {
      */
     public static LayoutAlgorithmData mostFeasibleAlgorithm(final MetaLayout metaLayout,
             final String typeId) {
-        LayoutTypeData typeData = LayoutDataService.getInstance().getTypeData(typeId);
+        LayoutTypeData typeData = LayoutMetaDataService.getInstance().getTypeData(typeId);
         EnumSet<GraphFeature> graphFeatures = metaLayout.getGraphFeatures();
         int featureSupport = 0;
         LayoutAlgorithmData bestAlgo = null;
@@ -338,9 +338,9 @@ public class SmartLayoutConfig implements ILayoutConfig {
                 bestAlgo = algorithmData;
             } else if (s == featureSupport) {
                 int bestPrio = bestAlgo == null ? 0 : bestAlgo.getDiagramSupport(
-                        LayoutDataService.DIAGRAM_TYPE_GENERAL);
+                        LayoutMetaDataService.DIAGRAM_TYPE_GENERAL);
                 int currentPrio = algorithmData.getDiagramSupport(
-                        LayoutDataService.DIAGRAM_TYPE_GENERAL);
+                        LayoutMetaDataService.DIAGRAM_TYPE_GENERAL);
                 if (bestAlgo == null || currentPrio > bestPrio) {
                     bestAlgo = algorithmData;
                 }

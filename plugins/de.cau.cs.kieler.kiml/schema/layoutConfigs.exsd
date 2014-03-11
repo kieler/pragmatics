@@ -124,7 +124,7 @@
                   A domain model class for which to assign the layout configuration. This includes all subclasses of the given class.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.emf.ecore.EObject"/>
+                  <meta.attribute kind="java"/>
                </appInfo>
             </annotation>
          </attribute>

@@ -35,7 +35,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutOptionData.Target;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
@@ -52,7 +52,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kwebs.server.RemoteServiceException;
 import de.cau.cs.kieler.kwebs.server.layout.GraphLayoutOption;
 import de.cau.cs.kieler.kwebs.server.layout.ServerGraphFormatsService;
-import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService;
+import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutMetaDataService;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 import de.cau.cs.kieler.kwebs.server.service.filter.LayoutFilter;
@@ -94,8 +94,8 @@ public abstract class AbstractService {
      * Protected constructor. Initializes the layout data services.
      */
     protected AbstractService() {
-        LayoutDataService.setInstanceFactory(new DefaultFactory<LayoutDataService>(
-                ServerLayoutDataService.class));
+        LayoutMetaDataService.setInstanceFactory(new DefaultFactory<LayoutMetaDataService>(
+                ServerLayoutMetaDataService.class));
         GraphFormatsService.setInstanceFactory(new DefaultFactory<GraphFormatsService>(
                 ServerGraphFormatsService.class));
         initFilters();
@@ -473,7 +473,7 @@ public abstract class AbstractService {
                 // we log all user specified layout options
                 for (GraphLayoutOption opt : options) {
                     String fullId =
-                            LayoutDataService.getInstance().getOptionDataBySuffix(opt.getId())
+                            LayoutMetaDataService.getInstance().getOptionDataBySuffix(opt.getId())
                                     .getId();
                     stats.incCounter(Logger.STATS_KWEBS, STATS_OPTION, fullId, opt.getValue(),
                             Granularity.DAY);
@@ -534,7 +534,7 @@ public abstract class AbstractService {
      */
     private void annotateTransData(final TransformationData<?, ?> transData,
             final List<GraphLayoutOption> options) {
-        LayoutDataService dataService = LayoutDataService.getInstance();
+        LayoutMetaDataService dataService = LayoutMetaDataService.getInstance();
         for (GraphLayoutOption option : options) {
             LayoutOptionData optionData = dataService.getOptionDataBySuffix(option.getId());
             if (optionData != null) {
@@ -553,7 +553,7 @@ public abstract class AbstractService {
      * @param options a list of layout options
      */
     private void annotateGraph(final KNode graph, final List<GraphLayoutOption> options) {
-        LayoutDataService dataService = LayoutDataService.getInstance();
+        LayoutMetaDataService dataService = LayoutMetaDataService.getInstance();
         for (GraphLayoutOption option : options) {
             LayoutOptionData optionData = dataService.getOptionDataBySuffix(option.getId());
             // Fail silent on invalid option declarations

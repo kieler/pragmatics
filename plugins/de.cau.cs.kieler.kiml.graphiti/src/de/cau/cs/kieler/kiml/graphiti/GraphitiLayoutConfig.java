@@ -42,7 +42,7 @@ import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.config.LayoutContext;
@@ -102,9 +102,42 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
      * {@inheritDoc}
      */
     public Object getContextValue(final IProperty<?> property, final LayoutContext context) {
+        if (property.equals(EclipseLayoutConfig.ASPECT_RATIO)) {
+            // get aspect ratio for the current diagram
+            try {
+                IWorkbenchPart workbenchPart = context.getProperty(EclipseLayoutConfig.WORKBENCH_PART);
+                if (workbenchPart instanceof DiagramEditor) {
+                    Control control = ((DiagramEditor) workbenchPart).getGraphicalViewer().getControl();
+                    if (control != null) {
+                        Point size = control.getSize();
+                        if (size.x > 0 && size.y > 0) {
+                            return Math.round(ASPECT_RATIO_ROUND * (float) size.x / size.y)
+                                    / ASPECT_RATIO_ROUND;
+                        }
+                    }
+                }
+            } catch (SWTException exception) {
+                // ignore exception
+            }
+            return null;
+            
+        } else if (property.equals(EclipseLayoutConfig.EDITING_DOMAIN)) {
+            IWorkbenchPart workbenchPart = context.getProperty(EclipseLayoutConfig.WORKBENCH_PART);
+            if (workbenchPart instanceof DiagramEditor) {
+                return ((DiagramEditor) workbenchPart).getEditingDomain();
+            }
+            return null;
+        }
+        
         PictogramElement pictogramElem = getPictogramElement(context);
         if (pictogramElem != null) {
-            if (property.equals(LayoutContext.DOMAIN_MODEL)) {
+            if (property.equals(LayoutContext.DIAGRAM_PART)) {
+                return pictogramElem;
+                
+            } else if (property.equals(LayoutContext.CONTAINER_DIAGRAM_PART)) {
+                return getContainer(pictogramElem);
+                
+            } else if (property.equals(LayoutContext.DOMAIN_MODEL)) {
                 // add domain model element to the context
                 PictogramLink link = pictogramElem.getLink();
                 if (link != null && link.getBusinessObjects().size() > 0) {
@@ -136,34 +169,9 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
                 }
                 return false;
                 
-            } else if (property.equals(EclipseLayoutConfig.ASPECT_RATIO)) {
-                // get aspect ratio for the current diagram
-                try {
-                    Control control = null;
-                    Object diagramPart = context.getProperty(LayoutContext.DIAGRAM_PART);
-                    if (diagramPart instanceof EditPart) {
-                        control = ((EditPart) diagramPart).getViewer().getControl();
-                    } else {
-                        IWorkbenchPart workbenchPart = context.getProperty(
-                                EclipseLayoutConfig.WORKBENCH_PART);
-                        if (workbenchPart instanceof DiagramEditor) {
-                            control = ((DiagramEditor) workbenchPart).getGraphicalViewer().getControl();
-                        }
-                    }
-                    if (control != null) {
-                        Point size = control.getSize();
-                        if (size.x > 0 && size.y > 0) {
-                            return Math.round(ASPECT_RATIO_ROUND * (float) size.x / size.y)
-                                    / ASPECT_RATIO_ROUND;
-                        }
-                    }
-                } catch (SWTException exception) {
-                    // ignore exception
-                }
-                
             } else if (property.equals(DefaultLayoutConfig.CONTENT_HINT)) {
                 // get a layout hint for the content of the focused pictogram element
-                LayoutOptionData algorithmOptionData = LayoutDataService.getInstance()
+                LayoutOptionData algorithmOptionData = LayoutMetaDataService.getInstance()
                         .getOptionData(LayoutOptions.ALGORITHM.getId());
                 if (algorithmOptionData != null) {
                     String contentLayoutHint = (String) getValue(algorithmOptionData, PREFIX,
@@ -180,7 +188,7 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
                 
             } else if (property.equals(DefaultLayoutConfig.CONTAINER_HINT)) {
                 // get a layout hint for the container edit part
-                LayoutOptionData algorithmOptionData = LayoutDataService.getInstance()
+                LayoutOptionData algorithmOptionData = LayoutMetaDataService.getInstance()
                         .getOptionData(LayoutOptions.ALGORITHM.getId());
                 PictogramElement containerPe = getContainer(pictogramElem);
                 if (algorithmOptionData != null && containerPe != null) {
@@ -254,14 +262,10 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
     }
     
     /**
-     * Determine the type of edit part target for layout options.
+     * Determine the container element of the given pictogram element.
      * 
      * @param pe a pictogram element
-     * @param containerPe if a container pictogram element is found, this reference parameter
-     *         is set to that element
-     * @param hasPorts if contained ports are found, this reference parameter is
-     *          set to {@code true}
-     * @return the layout option targets
+     * @return the container element
      */
     private PictogramElement getContainer(final PictogramElement pe) {
         PictogramsSwitch<PictogramElement> pictogramsSwitch
@@ -305,6 +309,16 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
             } else if (diagramPart instanceof IPictogramElementEditPart) {
                 IPictogramElementEditPart focusEditPart = (IPictogramElementEditPart) diagramPart;
                 pictogramElem = focusEditPart.getPictogramElement();
+            } else {
+                IWorkbenchPart workbenchPart = context.getProperty(EclipseLayoutConfig.WORKBENCH_PART);
+                if (workbenchPart instanceof DiagramEditor) {
+                    EditPart contents = ((DiagramEditor) workbenchPart).getGraphicalViewer()
+                            .getContents();
+                    if (contents instanceof IPictogramElementEditPart) {
+                        IPictogramElementEditPart focusEditPart = (IPictogramElementEditPart) contents;
+                        pictogramElem = focusEditPart.getPictogramElement();
+                    }
+                }
             }
             context.setProperty(PICTO_ELEM, pictogramElem);
         }
@@ -412,7 +426,7 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
      */
     private void addAffectedOptions(final List<IProperty<?>> options, final String prefix,
             final PictogramElement pe) {
-        LayoutDataService layoutServices = LayoutDataService.getInstance();
+        LayoutMetaDataService layoutServices = LayoutMetaDataService.getInstance();
         for (Property prop : pe.getProperties()) {
             String key = prop.getKey();
             if (key != null && key.startsWith(prefix)) {

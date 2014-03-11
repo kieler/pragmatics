@@ -19,7 +19,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -88,7 +88,7 @@ public class LayoutOptionLabelProvider extends LabelProvider {
     public String getText(final Object element) {
         switch (optionData.getType()) {
         case STRING:
-            LayoutDataService layoutServices = LayoutDataService.getInstance();
+            LayoutMetaDataService layoutServices = LayoutMetaDataService.getInstance();
             if (LayoutOptions.ALGORITHM.equals(optionData)) {
                 String layoutHint = (String) element;
                 LayoutTypeData layoutType = layoutServices.getTypeData(layoutHint);

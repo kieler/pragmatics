@@ -18,7 +18,7 @@ import java.util.EnumSet;
 
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
@@ -73,7 +73,7 @@ public abstract class AbstractMutableLayoutConfig implements IMutableLayoutConfi
     public Object getContextValue(final IProperty<?> property, final LayoutContext context) {
         if (property.equals(DefaultLayoutConfig.CONTENT_HINT)) {
             // set layout algorithm hint for the content of the selected element
-            LayoutOptionData algorithmData = LayoutDataService.getInstance().getOptionData(
+            LayoutOptionData algorithmData = LayoutMetaDataService.getInstance().getOptionData(
                     LayoutOptions.ALGORITHM.getId());
             if (algorithmData != null) {
                 return getOptionValue(algorithmData, context);
@@ -81,7 +81,7 @@ public abstract class AbstractMutableLayoutConfig implements IMutableLayoutConfi
             
         } else if (property.equals(DefaultLayoutConfig.CONTENT_DIAGT)) {
             // set diagram type for the content of the selected element
-            LayoutOptionData diagTypeData = LayoutDataService.getInstance().getOptionData(
+            LayoutOptionData diagTypeData = LayoutMetaDataService.getInstance().getOptionData(
                     LayoutOptions.DIAGRAM_TYPE.getId());
             if (diagTypeData != null) {
                 return getOptionValue(diagTypeData, context);
@@ -89,7 +89,7 @@ public abstract class AbstractMutableLayoutConfig implements IMutableLayoutConfi
             
         } else if (property.equals(DefaultLayoutConfig.CONTAINER_HINT)) {
             // set layout algorithm hint for the container of the selected element
-            LayoutOptionData algorithmData = LayoutDataService.getInstance().getOptionData(
+            LayoutOptionData algorithmData = LayoutMetaDataService.getInstance().getOptionData(
                     LayoutOptions.ALGORITHM.getId());
             if (algorithmData != null) {
                 return getOptionValue(algorithmData, createContainerContext(context));
@@ -97,7 +97,7 @@ public abstract class AbstractMutableLayoutConfig implements IMutableLayoutConfi
             
         } else if (property.equals(DefaultLayoutConfig.CONTAINER_DIAGT)) {
             // set diagram type for the container of the selected element
-            LayoutOptionData diagTypeData = LayoutDataService.getInstance().getOptionData(
+            LayoutOptionData diagTypeData = LayoutMetaDataService.getInstance().getOptionData(
                     LayoutOptions.DIAGRAM_TYPE.getId());
             if (diagTypeData != null) {
                 return getOptionValue(diagTypeData, createContainerContext(context));
@@ -112,7 +112,7 @@ public abstract class AbstractMutableLayoutConfig implements IMutableLayoutConfi
      * {@inheritDoc}
      */
     public void clearOptionValues(final LayoutContext context) {
-        LayoutDataService layoutDataService = LayoutDataService.getInstance();
+        LayoutMetaDataService layoutDataService = LayoutMetaDataService.getInstance();
         Collection<IProperty<?>> affectedOptions = getAffectedOptions(context);
         if (affectedOptions != null) {
             for (IProperty<?> property : affectedOptions) {

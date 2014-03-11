@@ -33,7 +33,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.LayoutConfigService;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.config.CompoundLayoutConfig;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
@@ -119,7 +119,7 @@ public class LayoutOptionManager {
     @SuppressWarnings("unchecked")
     public <T> T getGlobalValue(final IProperty<T> option, final ILayoutConfig config) {
         if (config != null) {
-            LayoutOptionData optionData = LayoutDataService.getInstance().getOptionData(
+            LayoutOptionData optionData = LayoutMetaDataService.getInstance().getOptionData(
                     option.getId());
             if (optionData != null) {
                 Object value = config.getOptionValue(optionData, LayoutContext.global());
@@ -193,9 +193,6 @@ public class LayoutOptionManager {
                 Predicates.instanceOf(IWorkbenchPart.class), null);
         context.setProperty(EclipseLayoutConfig.WORKBENCH_PART, workbenchPart);
         Object modelElement = config.getContextValue(LayoutContext.DOMAIN_MODEL, context);
-        if (modelElement == null) {
-            modelElement = layoutMapping.getAdapterFactory().getAdapter(diagramPart, EObject.class);
-        }
         context.setProperty(LayoutContext.DOMAIN_MODEL, modelElement);
         
         // add semantic configurations from the extension point
@@ -279,6 +276,8 @@ public class LayoutOptionManager {
             enrich(DefaultLayoutConfig.CONTAINER_HINT, context, config);
             // enrich the diagram type for the container element
             enrich(DefaultLayoutConfig.CONTAINER_DIAGT, context, config);
+            // enrich the editing domain
+            enrich(EclipseLayoutConfig.EDITING_DOMAIN, context, config);
             // enrich the layout algorithm for the selected element
             enrich(DefaultLayoutConfig.CONTENT_ALGO, context, defaultLayoutConfig);
             // enrich the layout algorithm for the container element
@@ -314,7 +313,7 @@ public class LayoutOptionManager {
     @SuppressWarnings("unchecked")
     public void transferValues(final KLayoutData layoutData, final ILayoutConfig config,
             final LayoutContext context) {
-        LayoutDataService dataService = LayoutDataService.getInstance();
+        LayoutMetaDataService dataService = LayoutMetaDataService.getInstance();
         Collection<IProperty<?>> options = config.getAffectedOptions(context);
         for (IProperty<?> option : options) {
             Object value = null;

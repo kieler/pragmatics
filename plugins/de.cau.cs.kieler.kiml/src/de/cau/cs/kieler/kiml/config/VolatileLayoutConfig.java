@@ -30,7 +30,7 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KGraphPackage;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 
@@ -224,7 +224,8 @@ public class VolatileLayoutConfig extends AbstractMutableLayoutConfig {
         if (option instanceof LayoutOptionData) {
             globalOptionMap.put((LayoutOptionData) option, value);
         } else {
-            LayoutOptionData optionData = LayoutDataService.getInstance().getOptionData(option.getId());
+            LayoutOptionData optionData = LayoutMetaDataService.getInstance().getOptionData(
+                    option.getId());
             if (optionData != null) {
                 globalOptionMap.put(optionData, value);
             } else {

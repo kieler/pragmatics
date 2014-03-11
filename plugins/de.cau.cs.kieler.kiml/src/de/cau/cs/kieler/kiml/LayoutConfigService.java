@@ -301,7 +301,7 @@ public abstract class LayoutConfigService {
     public final Map<String, Object> getOptionValues(final String objectId) {
         Map<String, Object> optionsMap = id2OptionsMap.get(objectId);
         if (optionsMap != null) {
-            LayoutDataService dataService = LayoutDataService.getInstance();
+            LayoutMetaDataService dataService = LayoutMetaDataService.getInstance();
             for (Map.Entry<String, Object> entry : optionsMap.entrySet()) {
                 Object value = entry.getValue();
                 if (value instanceof IPropertyValueProxy) {
@@ -334,7 +334,7 @@ public abstract class LayoutConfigService {
             Object value = optionsMap.get(optionId);
             if (value instanceof IPropertyValueProxy) {
                 value = ((IPropertyValueProxy) value).resolveValue(
-                        LayoutDataService.getInstance().getOptionData(optionId));
+                        LayoutMetaDataService.getInstance().getOptionData(optionId));
                 if (value != null) {
                     optionsMap.put(optionId, value);
                 }
@@ -354,7 +354,7 @@ public abstract class LayoutConfigService {
      */
     public final Map<String, Object> getOptionValues(final EClass clazz) {
         if (clazz != null) {
-            LayoutDataService dataService = LayoutDataService.getInstance();
+            LayoutMetaDataService dataService = LayoutMetaDataService.getInstance();
             HashMap<String, Object> options = new HashMap<String, Object>();
             LinkedList<EClass> classes = new LinkedList<EClass>();
             classes.add(clazz);
@@ -396,7 +396,7 @@ public abstract class LayoutConfigService {
      */
     public final Object getOptionValue(final EClass clazz, final String optionId) {
         if (clazz != null) {
-            LayoutDataService dataService = LayoutDataService.getInstance();
+            LayoutMetaDataService dataService = LayoutMetaDataService.getInstance();
             LinkedList<EClass> classes = new LinkedList<EClass>();
             classes.add(clazz);
             do {

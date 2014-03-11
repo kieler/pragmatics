@@ -21,6 +21,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.config.LayoutContext;
 import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
+import de.cau.cs.kieler.kiml.service.EclipseLayoutConfig;
 import de.cau.cs.kieler.kiml.service.LayoutManagersService;
 import de.cau.cs.kieler.kiml.service.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.Messages;
@@ -58,25 +59,26 @@ public class RemoveOptionsAction extends Action {
         IDiagramLayoutManager<?> manager = LayoutManagersService.getInstance()
                 .getManager(workbenchPart, null);
         if (manager != null) {
-            Object diagramPart = null;
-            if (manager.getAdapterList().length > 0) {
-                diagramPart = manager.getAdapter(workbenchPart, manager.getAdapterList()[0]);
-            }
-            if (diagramPart == null) {
-                diagramPart = layoutView.getCurrentDiagramPart();
-            }
-            IMutableLayoutConfig layoutConfig = (IMutableLayoutConfig) manager.getAdapter(
-                    workbenchPart, IMutableLayoutConfig.class);
-            EditingDomain editingDomain = (EditingDomain) manager.getAdapter(workbenchPart,
-                    EditingDomain.class);
-            if (diagramPart != null && layoutConfig != null) {
+            IMutableLayoutConfig layoutConfig = manager.getDiagramConfig();
+            if (layoutConfig != null) {
                 // build a layout context for setting the option
-                final LayoutContext context = new LayoutContext();
-                context.setProperty(LayoutContext.DIAGRAM_PART, diagramPart);
-                context.setProperty(LayoutContext.GLOBAL, true);
-                DiagramLayoutEngine.INSTANCE.getOptionManager().enrich(context, layoutConfig, false);
+                LayoutContext context = new LayoutContext();
+                context.setProperty(EclipseLayoutConfig.WORKBENCH_PART, workbenchPart);
                 
-                removeOptions(workbenchPart.getTitle(), layoutConfig, context, editingDomain);
+                Object diagramPart = layoutConfig.getContextValue(LayoutContext.DIAGRAM_PART, context);
+                if (diagramPart == null) {
+                    diagramPart = layoutView.getCurrentDiagramPart();
+                }
+                if (diagramPart != null) {
+                    context.setProperty(LayoutContext.DIAGRAM_PART, diagramPart);
+                    context.setProperty(LayoutContext.GLOBAL, true);
+                    DiagramLayoutEngine.INSTANCE.getOptionManager().enrich(context, layoutConfig,
+                            false);
+
+                    EditingDomain editingDomain = (EditingDomain) layoutConfig.getContextValue(
+                            EclipseLayoutConfig.EDITING_DOMAIN, context);
+                    removeOptions(workbenchPart.getTitle(), layoutConfig, context, editingDomain);
+                }
             }
         }
     }

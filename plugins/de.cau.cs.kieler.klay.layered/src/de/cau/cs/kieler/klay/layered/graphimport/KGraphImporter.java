@@ -682,8 +682,8 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                     kInsets.setLeft((float) lInsets.left);
                     kInsets.setRight((float) lInsets.right);
                 }
-            } else if (origin instanceof KPort) {
-                // It's an external port. Set its position
+            } else if (origin instanceof KPort && lgraph.getProperty(Properties.PARENT_LNODE) == null) {
+                // It's an external port. Set its position if it hasn't already been done before
                 KPort kport = (KPort) origin;
                 KShapeLayout portLayout = kport.getData(KShapeLayout.class);
                 KVector portPosition = LGraphUtil.getExternalPortPosition(lgraph, lnode,
@@ -721,7 +721,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
 
             // Adapt the offset value and add the source port position to the vector chain
             KVector sourcePoint;
-            if (KimlUtil.isDescendant(kedge.getTarget(), kedge.getSource())) {
+            if (LGraphUtil.isDescendant(ledge.getTarget().getNode(), ledge.getSource().getNode())) {
                 LPort sourcePort = ledge.getSource();
                 sourcePoint = KVector.sum(sourcePort.getPosition(), sourcePort.getAnchor());
                 LInsets sourceInsets = sourcePort.getNode().getInsets();

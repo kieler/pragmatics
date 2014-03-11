@@ -45,12 +45,12 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.service.EclipseLayoutConfig;
 import de.cau.cs.kieler.klighd.IDiagramWorkbenchPart;
+import de.cau.cs.kieler.klighd.IViewer;
 import de.cau.cs.kieler.klighd.ViewContext;
 import de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties;
 import de.cau.cs.kieler.klighd.util.ExpansionAwareLayoutOption;
 import de.cau.cs.kieler.klighd.util.ExpansionAwareLayoutOption.ExpansionAwareLayoutOptionData;
 import de.cau.cs.kieler.klighd.util.RenderingContextData;
-import de.cau.cs.kieler.klighd.viewers.ContextViewer;
 
 /**
  * A layout configuration which derives layout options from properties attached to layout data of
@@ -62,7 +62,7 @@ import de.cau.cs.kieler.klighd.viewers.ContextViewer;
 public class KGraphPropertyLayoutConfig implements IMutableLayoutConfig {
 
     /** layout context property for the context viewer. */
-    public static final IProperty<ContextViewer> CONTEXT_VIEWER = new Property<ContextViewer>(
+    public static final IProperty<IViewer<?>> CONTEXT_VIEWER = new Property<IViewer<?>>(
             "klighd.contextViewer");
     /** the priority for the property layout layout configuration. */
     public static final int PRIORITY = 20;
@@ -107,18 +107,30 @@ public class KGraphPropertyLayoutConfig implements IMutableLayoutConfig {
      * {@inheritDoc}
      */
     public Object getContextValue(final IProperty<?> property, final LayoutContext context) {
+        KGraphElement element = null;
         Object diagramPart = context.getProperty(LayoutContext.DIAGRAM_PART);
         if (diagramPart instanceof KGraphElement) {
-            KGraphElement element = (KGraphElement) diagramPart;
+            element = (KGraphElement) diagramPart;
+        } else {
+            IViewer<?> contextViewer = getContextViewer(context);
+            if (contextViewer != null) {
+                element = contextViewer.getViewContext().getViewModel();
+            }
+        }
+        
+        if (element != null) {
             KLayoutData elementLayout = element.getData(KLayoutData.class);
 
-            if (property.equals(LayoutContext.CONTAINER_DIAGRAM_PART)) {
+            if (property.equals(LayoutContext.DIAGRAM_PART)) {
+                return element;
+                
+            } else if (property.equals(LayoutContext.CONTAINER_DIAGRAM_PART)) {
                 // find the parent node for the selected graph element
                 return getParentNode(element);
                 
             } else if (property.equals(LayoutContext.DOMAIN_MODEL)) {
                 // determine the domain model element
-                ContextViewer contextViewer = getContextViewer(context);
+                IViewer<?> contextViewer = getContextViewer(context);
                 if (contextViewer != null) {
                     ViewContext viewContext = contextViewer.getViewContext();
                     if (viewContext != null) {
@@ -129,7 +141,7 @@ public class KGraphPropertyLayoutConfig implements IMutableLayoutConfig {
             } else if (property.equals(LayoutContext.CONTAINER_DOMAIN_MODEL)) {
                 // determine the domain model element of the parent node
                 KNode parentNode = getParentNode(element);
-                ContextViewer contextViewer = getContextViewer(context);
+                IViewer<?> contextViewer = getContextViewer(context);
                 if (parentNode != null && contextViewer != null) {
                     ViewContext viewContext = contextViewer.getViewContext();
                     if (viewContext != null) {
@@ -150,7 +162,7 @@ public class KGraphPropertyLayoutConfig implements IMutableLayoutConfig {
             } else if (property.equals(EclipseLayoutConfig.ASPECT_RATIO)) {
                 // get aspect ratio for the current diagram
                 try {
-                    ContextViewer contextViewer = getContextViewer(context);
+                    IViewer<?> contextViewer = getContextViewer(context);
                     if (contextViewer != null) {
                         Control control = contextViewer.getControl();
                         if (control != null) {
@@ -191,8 +203,8 @@ public class KGraphPropertyLayoutConfig implements IMutableLayoutConfig {
      * @param context a layout context
      * @return the corresponding KLighD context viewer, or {@code null}
      */
-    private ContextViewer getContextViewer(final LayoutContext context) {
-        ContextViewer contextViewer = context.getProperty(CONTEXT_VIEWER);
+    private IViewer<?> getContextViewer(final LayoutContext context) {
+        IViewer<?> contextViewer = context.getProperty(CONTEXT_VIEWER);
         if (contextViewer == null) {
             IWorkbenchPart workbenchPart = context.getProperty(EclipseLayoutConfig.WORKBENCH_PART);
             if (workbenchPart instanceof IDiagramWorkbenchPart) {
@@ -311,7 +323,7 @@ public class KGraphPropertyLayoutConfig implements IMutableLayoutConfig {
      */
     private void refreshModel(final KGraphElement element, final LayoutContext layoutContext) {
         if (element == layoutContext.getProperty(LayoutContext.DOMAIN_MODEL)) {
-            final ContextViewer contextViewer = getContextViewer(layoutContext);
+            final IViewer<?> contextViewer = getContextViewer(layoutContext);
             if (contextViewer == null) {
                 return;
             }
@@ -392,5 +404,4 @@ public class KGraphPropertyLayoutConfig implements IMutableLayoutConfig {
             }
         }
     }
-    
 }

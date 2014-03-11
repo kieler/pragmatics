@@ -19,7 +19,7 @@ import java.util.List;
 
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
@@ -95,7 +95,7 @@ public class EvolLayoutConfig implements ILayoutConfig {
         if (model.getSelected() != null && diagramPart != null) {
             LayoutContext keyContext = model.getSelected().findContext(diagramPart);
             if (keyContext != null) {
-                LayoutDataService dataService = LayoutDataService.getInstance();
+                LayoutMetaDataService dataService = LayoutMetaDataService.getInstance();
                 for (Gene<?> gene : model.getSelected().getGenes(keyContext)) {
                     if (gene.getValue() != null) {
                         LayoutOptionData optionData = dataService.getOptionData(

@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.service;
+package de.cau.cs.kieler.kwebs.server.layout;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -19,12 +19,8 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.RegistryFactory;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.Bundle;
 
 import de.cau.cs.kieler.core.WrappedException;
@@ -32,7 +28,7 @@ import de.cau.cs.kieler.core.alg.IFactory;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.options.GraphFeature;
@@ -44,7 +40,7 @@ import de.cau.cs.kieler.kiml.options.GraphFeature;
  * @kieler.design proposed by msp
  * @kieler.rating yellow 2012-10-10 review KI-25 by chsch, bdu
  */
-public class ExtensionLayoutDataService extends LayoutDataService {
+public abstract class ExtensionLayoutMetaDataService extends LayoutMetaDataService {
     
     /** identifier of the extension point for layout providers. */
     protected static final String EXTP_ID_LAYOUT_PROVIDERS = "de.cau.cs.kieler.kiml.layoutProviders";
@@ -108,44 +104,27 @@ public class ExtensionLayoutDataService extends LayoutDataService {
     /**
      * Load all registered extensions for the layout providers extension point.
      */
-    public ExtensionLayoutDataService() {
+    public ExtensionLayoutMetaDataService() {
         loadLayoutProviderExtensions();
     }
     
     /**
-     * Report an error that occurred while reading extensions. May be overridden by subclasses
-     * in order to report errors in a different way.
+     * Report an error that occurred while reading extensions.
      * 
      * @param extensionPoint the identifier of the extension point
      * @param element the configuration element
      * @param attribute the attribute that contains an invalid entry
      * @param exception an optional exception that was caused by the invalid entry
      */
-    protected void reportError(final String extensionPoint, final IConfigurationElement element,
-            final String attribute, final Throwable exception) {
-        String message;
-        if (element != null && attribute != null) {
-            message = "Extension point " + extensionPoint + ": Invalid entry in attribute '"
-                    + attribute + "' of element " + element.getName() + ", contributed by "
-                    + element.getContributor().getName();
-        } else {
-            message = "Extension point " + extensionPoint
-                    + ": An error occured while loading extensions.";
-        }
-        IStatus status = new Status(IStatus.WARNING, KimlServicePlugin.PLUGIN_ID,
-                0, message, exception);
-        StatusManager.getManager().handle(status);
-    }
+    protected abstract void reportError(String extensionPoint, IConfigurationElement element,
+            String attribute, Throwable exception);
 
     /**
-     * Report an error that occurred while reading extensions. May be overridden by subclasses
-     * in order to report errors in a different way.
+     * Report an error that occurred while reading extensions.
      * 
      * @param exception a core exception holding a status with further information
      */
-    protected void reportError(final CoreException exception) {
-        StatusManager.getManager().handle(exception, KimlServicePlugin.PLUGIN_ID);
-    }
+    protected abstract void reportError(CoreException exception);
     
     /**
      * Returns the extensions responsible for providing layout meta data. This method
@@ -246,20 +225,12 @@ public class ExtensionLayoutDataService extends LayoutDataService {
     
     /**
      * Create a layout algorithm data instance and configure it with platform-specific extensions.
-     * Subclasses can override this to fetch the data in a different way.
      * 
      * @param element a configuration element to use for configuration
      * @return a new layout algorithm data instance
      */
-    protected LayoutAlgorithmData createLayoutAlgorithmData(final IConfigurationElement element) {
-        LayoutAlgorithmData algoData = new LayoutAlgorithmData();
-        String previewPath = element.getAttribute(ATTRIBUTE_PREVIEW);
-        if (previewPath != null) {
-            algoData.setPreviewImage(AbstractUIPlugin.imageDescriptorFromPlugin(
-                    element.getContributor().getName(), previewPath));
-        }
-        return algoData;
-    }
+    protected abstract LayoutAlgorithmData createLayoutAlgorithmData(
+            IConfigurationElement element);
     
     /**
      * Create a layout provider factory from a configuration element.

@@ -55,7 +55,7 @@ import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
@@ -196,7 +196,7 @@ public class TestMetricsHandler extends AbstractHandler {
         analysisSequence = analysisService.getExecutionOrder(metrics);
         
         // gather the layout options
-        layoutOptions = Collections2.filter(LayoutDataService.getInstance().getOptionData(),
+        layoutOptions = Collections2.filter(LayoutMetaDataService.getInstance().getOptionData(),
                 new Predicate<LayoutOptionData>() {
                     public boolean apply(final LayoutOptionData data) {
                         return data.getTargets().contains(LayoutOptionData.Target.PARENTS)
@@ -206,7 +206,7 @@ public class TestMetricsHandler extends AbstractHandler {
         
         // gather the layout algorithms
         layoutAlgorithms = new ArrayList<LayoutAlgorithmData>(
-                Collections2.filter(LayoutDataService.getInstance().getAlgorithmData(),
+                Collections2.filter(LayoutMetaDataService.getInstance().getAlgorithmData(),
                 new Predicate<LayoutAlgorithmData>() {
                     public boolean apply(final LayoutAlgorithmData data) {
                         return !EXCLUDED_ALGOS.contains(data.getId());
@@ -416,7 +416,7 @@ public class TestMetricsHandler extends AbstractHandler {
      * @return a genome filled with genes
      */
     private Genome createRandomGenome(final KNode graph, final Random random) {
-        LayoutDataService dataService = LayoutDataService.getInstance();
+        LayoutMetaDataService dataService = LayoutMetaDataService.getInstance();
         MutationOperation mutationOp = new MutationOperation();
         mutationOp.setRandom(random);
         

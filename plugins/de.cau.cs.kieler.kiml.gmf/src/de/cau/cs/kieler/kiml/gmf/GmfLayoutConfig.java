@@ -27,9 +27,11 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderItemEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.CompartmentEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramRootEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.LabelEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 import org.eclipse.gmf.runtime.notation.Diagram;
 import org.eclipse.gmf.runtime.notation.NotationFactory;
 import org.eclipse.gmf.runtime.notation.StringValueStyle;
@@ -37,12 +39,13 @@ import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.config.LayoutContext;
@@ -104,15 +107,25 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
      * {@inheritDoc}
      */
     public Object getContextValue(final IProperty<?> property, final LayoutContext context) {
-        Object editPart = context.getProperty(LayoutContext.DIAGRAM_PART);
-        if (editPart instanceof IGraphicalEditPart && !isNoLayout((EditPart) editPart)) {
-            IGraphicalEditPart focusEditPart = (IGraphicalEditPart) editPart;
-
+        IGraphicalEditPart focusEditPart = null;
+        Object diagramPart = context.getProperty(LayoutContext.DIAGRAM_PART);
+        if (diagramPart instanceof CompartmentEditPart) {
+            // if the selected object is a compartment, replace it by its parent element
+            focusEditPart = (IGraphicalEditPart) ((CompartmentEditPart) diagramPart).getParent();
+        } else if (diagramPart instanceof IGraphicalEditPart) {
+            focusEditPart = (IGraphicalEditPart) diagramPart;
+        } else if (diagramPart instanceof DiagramRootEditPart) {
+            focusEditPart = (IGraphicalEditPart) ((DiagramRootEditPart) diagramPart).getContents();
+        } else {
+            IWorkbenchPart workbenchPart = context.getProperty(EclipseLayoutConfig.WORKBENCH_PART);
+            if (workbenchPart instanceof DiagramEditor) {
+                focusEditPart = ((DiagramEditor) workbenchPart).getDiagramEditPart();
+            }
+        }
+            
+        if (focusEditPart != null) {
             if (property.equals(LayoutContext.DIAGRAM_PART)) {
-                if (focusEditPart instanceof CompartmentEditPart) {
-                    // if the selected object is a compartment, replace it by its parent element
-                    return focusEditPart.getParent();
-                }
+                return focusEditPart;
                 
             } else if (property.equals(LayoutContext.CONTAINER_DIAGRAM_PART)) {
                 return getContainer(focusEditPart);
@@ -140,11 +153,14 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
                 return findTarget(focusEditPart);
                 
             } else if (property.equals(DefaultLayoutConfig.HAS_PORTS)) {
-                if (editPart instanceof ShapeNodeEditPart) {
+                if (diagramPart instanceof ShapeNodeEditPart) {
                     Maybe<Boolean> hasPorts = Maybe.create();
                     findContainingEditPart(focusEditPart, hasPorts);
                     return hasPorts.get();
                 }
+                
+            } else if (property.equals(EclipseLayoutConfig.EDITING_DOMAIN)) {
+                return focusEditPart.getEditingDomain();
                 
             } else if (property.equals(EclipseLayoutConfig.ASPECT_RATIO)) {
                 // get aspect ratio for the current diagram
@@ -166,7 +182,7 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
                 
             } else if (property.equals(DefaultLayoutConfig.CONTENT_HINT)) {
                 // get a layout hint for the content of the focused edit part
-                LayoutOptionData algorithmOptionData = LayoutDataService.getInstance()
+                LayoutOptionData algorithmOptionData = LayoutMetaDataService.getInstance()
                         .getOptionData(LayoutOptions.ALGORITHM.getId());
                 String contentLayoutHint = (String) getValue(algorithmOptionData, PREFIX,
                         focusEditPart.getNotationView());
@@ -180,7 +196,7 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
                 return contentLayoutHint;
                 
             } else if (property.equals(DefaultLayoutConfig.CONTAINER_HINT)) {
-                LayoutOptionData algorithmOptionData = LayoutDataService.getInstance()
+                LayoutOptionData algorithmOptionData = LayoutMetaDataService.getInstance()
                         .getOptionData(LayoutOptions.ALGORITHM.getId());
                 Object containerEditPart = context.getProperty(LayoutContext.CONTAINER_DIAGRAM_PART);
                 if (algorithmOptionData != null && containerEditPart instanceof IGraphicalEditPart) {
@@ -335,8 +351,13 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
             Object editPart = context.getProperty(LayoutContext.DIAGRAM_PART);
             if (editPart instanceof IGraphicalEditPart) {
                 notationView = ((IGraphicalEditPart) editPart).getNotationView();
-                context.setProperty(NOTATION_VIEW, notationView);
+            } else {
+                IWorkbenchPart workbenchPart = context.getProperty(EclipseLayoutConfig.WORKBENCH_PART);
+                if (workbenchPart instanceof DiagramEditor) {
+                    notationView = ((DiagramEditor) workbenchPart).getDiagram();
+                }
             }
+            context.setProperty(NOTATION_VIEW, notationView);
         }
         return notationView;
     }
@@ -438,7 +459,7 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
      */
     private void getAffectedOptions(final List<IProperty<?>> options, final String prefix,
             final View view) {
-        LayoutDataService layoutService = LayoutDataService.getInstance();
+        LayoutMetaDataService layoutService = LayoutMetaDataService.getInstance();
         for (Object obj : view.getStyles()) {
             if (obj instanceof StringValueStyle) {
                 StringValueStyle style = (StringValueStyle) obj;

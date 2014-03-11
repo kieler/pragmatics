@@ -19,7 +19,7 @@ import java.util.List;
 import de.cau.cs.kieler.core.alg.IFactory;
 import de.cau.cs.kieler.core.alg.InstancePool;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.ILayoutData;
+import de.cau.cs.kieler.kiml.ILayoutMetaData;
 import de.cau.cs.kieler.kiml.grana.dependency.Dependency;
 import de.cau.cs.kieler.kiml.grana.dependency.IDepending;
 
@@ -32,7 +32,7 @@ import de.cau.cs.kieler.kiml.grana.dependency.IDepending;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow 2012-07-10 msp
  */
-public class AnalysisData implements ILayoutData, IDepending<String> {
+public class AnalysisData implements ILayoutMetaData, IDepending<String> {
 
     /** runtime instance of the analysis. */
     private InstancePool<IAnalysis> analysisPool;
