@@ -78,6 +78,4 @@ public final class KimlNodeDimensionCalculation {
         }
     }
 
-   
-
 }

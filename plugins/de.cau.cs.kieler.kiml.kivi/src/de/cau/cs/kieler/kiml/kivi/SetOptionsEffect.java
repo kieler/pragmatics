@@ -26,10 +26,10 @@ import org.eclipse.ui.IWorkbenchPart;
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
 import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.config.LayoutContext;
 import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
+import de.cau.cs.kieler.kiml.service.EclipseLayoutConfig;
 import de.cau.cs.kieler.kiml.service.LayoutManagersService;
 import de.cau.cs.kieler.kiml.service.IDiagramLayoutManager;
 
@@ -87,8 +87,7 @@ public class SetOptionsEffect extends AbstractEffect {
             IDiagramLayoutManager<?> manager = LayoutManagersService.getInstance().getManager(
                     workbenchPart, diagramPart);
             if (manager != null) {
-                final IMutableLayoutConfig layoutConfig = (IMutableLayoutConfig) manager.getAdapter(
-                        null, ILayoutConfig.class);
+                final IMutableLayoutConfig layoutConfig = manager.getDiagramConfig();
                 if (layoutConfig != null) {
                     // build a layout context for setting the option
                     final LayoutContext context = new LayoutContext();
@@ -98,8 +97,8 @@ public class SetOptionsEffect extends AbstractEffect {
                             false);
                     
                     // get an editing domain and execute the command
-                    EditingDomain editingDomain = (EditingDomain) manager.getAdapter(diagramPart,
-                            EditingDomain.class);
+                    EditingDomain editingDomain = (EditingDomain) layoutConfig.getContextValue(
+                            EclipseLayoutConfig.EDITING_DOMAIN, context);
                     runModelChange(new Runnable() {
                         public void run() {
                             for (Map.Entry<String, Object> entry : optionMap.entrySet()) {

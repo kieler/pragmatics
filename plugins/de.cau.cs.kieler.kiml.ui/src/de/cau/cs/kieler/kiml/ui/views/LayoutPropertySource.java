@@ -33,6 +33,7 @@ import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.config.LayoutContext;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
+import de.cau.cs.kieler.kiml.service.EclipseLayoutConfig;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 
@@ -61,14 +62,11 @@ public class LayoutPropertySource implements IPropertySource {
      * 
      * @param config a mutable layout configuration
      * @param context a layout context describing which element has been selected
-     * @param theeditingDomain the editing domain, or {@code null} if none is required
      */
     public LayoutPropertySource(final IMutableLayoutConfig config,
-            final LayoutContext context,
-            final EditingDomain theeditingDomain) {
+            final LayoutContext context) {
         this.layoutConfig = config;
         this.layoutContext = context;
-        this.editingDomain = theeditingDomain;
     }
     
     /**
@@ -91,6 +89,7 @@ public class LayoutPropertySource implements IPropertySource {
                     DefaultLayoutConfig.OPTIONS);
             Set<LayoutOptionData.Target> elementTargets = layoutContext.getProperty(
                     LayoutContext.OPT_TARGETS);
+            editingDomain = layoutContext.getProperty(EclipseLayoutConfig.EDITING_DOMAIN);
             
             // filter the options hidden by option dependencies
             filterDependencies(optionData);

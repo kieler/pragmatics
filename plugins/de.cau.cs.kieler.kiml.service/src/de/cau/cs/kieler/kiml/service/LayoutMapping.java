@@ -15,8 +15,6 @@ package de.cau.cs.kieler.kiml.service;
 
 import java.util.List;
 
-import org.eclipse.core.runtime.IAdapterFactory;
-
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Lists;
@@ -48,31 +46,6 @@ public class LayoutMapping<T> extends MapPropertyHolder {
     private KNode layoutGraph;
     /** the top-level diagram part. */
     private T parentElement;
-    /** the adapter factory for accessing elements. */
-    private IAdapterFactory adapterFactory;
-    
-    /**
-     * Create a layout mapping with given adapter factory.
-     * 
-     * @param adapterFactory the adapter factory for accessing elements
-     */
-    public LayoutMapping(final IAdapterFactory adapterFactory) {
-        if (adapterFactory != null) {
-            this.adapterFactory = adapterFactory;
-        } else {
-            this.adapterFactory = new IAdapterFactory() {
-                @SuppressWarnings("rawtypes")
-                public Class[] getAdapterList() {
-                    return new Class[0];
-                }
-                @SuppressWarnings("rawtypes")
-                public Object getAdapter(final Object adaptableObject,
-                        final Class adapterType) {
-                    return null;
-                }
-            };
-        }
-    }
     
     /**
      * Returns the bidirectional mapping of layout graph elements to diagram parts.
@@ -127,15 +100,6 @@ public class LayoutMapping<T> extends MapPropertyHolder {
      */
     public T getParentElement() {
         return parentElement;
-    }
-    
-    /**
-     * Returns the adapter factory for accessing elements.
-     * 
-     * @return the adapter factory
-     */
-    public IAdapterFactory getAdapterFactory() {
-        return adapterFactory;
     }
 
 }

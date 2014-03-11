@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.util.adapters;
 
-import java.util.Collection;
+
 import java.util.Comparator;
 import java.util.List;
 
@@ -53,11 +53,20 @@ public final class KGraphAdapters {
 
     private KGraphAdapters() {
     }
-    
+
+    /**
+     * @param graph
+     *            the graph that should be wrapped in an adapter
+     * @return an {@link KGraphAdapter} for the passed graph.
+     */
+    public static KGraphAdapter adapt(final KNode graph) {
+        return new KGraphAdapter(graph);
+    }
+
     /**
      * Implements basic adpater functionality for {@link KGraphElement}s.
      */
-    public abstract static class AbstractKGraphElementAdapter<T extends KGraphElement> implements
+    private abstract static class AbstractKGraphElementAdapter<T extends KGraphElement> implements
             GraphElementAdapter<T> {
 
         // let the elements be accessed by extending classes
@@ -174,7 +183,7 @@ public final class KGraphAdapters {
     /**
      * .
      */
-    public static class KGraphAdapter extends AbstractKGraphElementAdapter<KNode> implements
+    private static class KGraphAdapter extends AbstractKGraphElementAdapter<KNode> implements
             GraphAdapter<KNode> {
         /**
          * @param node
@@ -187,7 +196,7 @@ public final class KGraphAdapters {
         /**
          * {@inheritDoc}
          */
-        public List<NodeAdapter<?>> getNodes() {
+        public Iterable<NodeAdapter<?>> getNodes() {
             List<NodeAdapter<?>> children = Lists.newLinkedList();
             for (KNode n : element.getChildren()) {
                 children.add(new KNodeAdapter(n));
@@ -214,7 +223,8 @@ public final class KGraphAdapters {
          * {@inheritDoc}
          */
         public List<LabelAdapter<?>> getLabels() {
-            List<LabelAdapter<?>> labelAdapters = Lists.newLinkedList();
+            List<LabelAdapter<?>> labelAdapters =
+                    Lists.newArrayListWithExpectedSize(element.getLabels().size());
             for (KLabel l : element.getLabels()) {
                 labelAdapters.add(new KLabelAdapter(l));
             }
@@ -225,11 +235,36 @@ public final class KGraphAdapters {
          * {@inheritDoc}
          */
         public List<PortAdapter<?>> getPorts() {
-            List<PortAdapter<?>> portAdapters = Lists.newLinkedList();
+            List<PortAdapter<?>> portAdapters =
+                    Lists.newArrayListWithExpectedSize(element.getPorts().size());
             for (KPort p : element.getPorts()) {
                 portAdapters.add(new KPortAdapter(p));
             }
             return portAdapters;
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public Iterable<EdgeAdapter<?>> getIncomingEdges() {
+            List<EdgeAdapter<?>> edgeAdapter =
+                    Lists.newArrayListWithExpectedSize(element.getIncomingEdges().size());
+            for (KEdge e : element.getIncomingEdges()) {
+                edgeAdapter.add(new KEdgeAdapter(e));
+            }
+            return edgeAdapter;
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public Iterable<EdgeAdapter<?>> getOutgoingEdges() {
+            List<EdgeAdapter<?>> edgeAdapter =
+                    Lists.newArrayListWithExpectedSize(element.getOutgoingEdges().size());
+            for (KEdge e : element.getOutgoingEdges()) {
+                edgeAdapter.add(new KEdgeAdapter(e));
+            }
+            return edgeAdapter;
         }
 
         /**
@@ -303,8 +338,9 @@ public final class KGraphAdapters {
         /**
          * {@inheritDoc}
          */
-        public List<LabelAdapter<?>> getLabels() {
-            List<LabelAdapter<?>> labelAdapters = Lists.newLinkedList();
+        public Iterable<LabelAdapter<?>> getLabels() {
+            List<LabelAdapter<?>> labelAdapters =
+                    Lists.newArrayListWithExpectedSize(element.getLabels().size());
             for (KLabel l : element.getLabels()) {
                 labelAdapters.add(new KLabelAdapter(l));
             }
@@ -314,7 +350,7 @@ public final class KGraphAdapters {
         /**
          * {@inheritDoc}
          */
-        public Collection<EdgeAdapter<?>> getIncomingEdges() {
+        public Iterable<EdgeAdapter<?>> getIncomingEdges() {
             List<EdgeAdapter<?>> edgeAdapters = Lists.newLinkedList();
             for (KEdge e : element.getEdges()) {
                 if (e.getTarget().equals(element)) {
@@ -327,7 +363,7 @@ public final class KGraphAdapters {
         /**
          * {@inheritDoc}
          */
-        public Collection<EdgeAdapter<?>> getOutgoingEdges() {
+        public Iterable<EdgeAdapter<?>> getOutgoingEdges() {
             List<EdgeAdapter<?>> edgeAdapters = Lists.newLinkedList();
             for (KEdge e : element.getEdges()) {
                 if (e.getSource().equals(element)) {
@@ -343,21 +379,22 @@ public final class KGraphAdapters {
      */
     private static class KEdgeAdapter implements EdgeAdapter<KEdge> {
 
-        private KEdge e;
+        private KEdge element;
 
         /**
          * .
          */
         public KEdgeAdapter(final KEdge e) {
-            this.e = e;
+            this.element = e;
         }
 
         /**
          * {@inheritDoc}
          */
-        public Collection<LabelAdapter<?>> getLabels() {
-            List<LabelAdapter<?>> labelAdapters = Lists.newLinkedList();
-            for (KLabel l : e.getLabels()) {
+        public Iterable<LabelAdapter<?>> getLabels() {
+            List<LabelAdapter<?>> labelAdapters =
+                    Lists.newArrayListWithExpectedSize(element.getLabels().size());
+            for (KLabel l : element.getLabels()) {
                 labelAdapters.add(new KLabelAdapter(l));
             }
             return labelAdapters;
