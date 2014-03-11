@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.cola;
+package de.cau.cs.kieler.klay.cola.processors;
 
 import java.util.Map;
 import java.util.Set;
@@ -23,12 +23,12 @@ import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.cola.graph.CEdge;
-import de.cau.cs.kieler.kiml.cola.graph.CGraph;
-import de.cau.cs.kieler.kiml.cola.graph.CNode;
-import de.cau.cs.kieler.kiml.cola.util.ColaUtil;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
+import de.cau.cs.kieler.klay.cola.graph.CEdge;
+import de.cau.cs.kieler.klay.cola.graph.CGraph;
+import de.cau.cs.kieler.klay.cola.graph.CNode;
+import de.cau.cs.kieler.klay.cola.util.ColaUtil;
 
 /**
  * Adds direction constraints to the graph.

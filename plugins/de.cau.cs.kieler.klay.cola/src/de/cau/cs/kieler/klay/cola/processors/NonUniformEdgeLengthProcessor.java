@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.cola;
+package de.cau.cs.kieler.klay.cola.processors;
 
 import java.util.Map;
 import java.util.Set;
@@ -20,12 +20,13 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.kiml.cola.graph.CEdge;
-import de.cau.cs.kieler.kiml.cola.graph.CGraph;
-import de.cau.cs.kieler.kiml.cola.graph.CNode;
-import de.cau.cs.kieler.kiml.cola.graph.CPort;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.klay.cola.ColaProperties;
+import de.cau.cs.kieler.klay.cola.graph.CEdge;
+import de.cau.cs.kieler.klay.cola.graph.CGraph;
+import de.cau.cs.kieler.klay.cola.graph.CNode;
+import de.cau.cs.kieler.klay.cola.graph.CPort;
 
 /**
  * @author uru

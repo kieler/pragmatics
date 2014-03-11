@@ -11,10 +11,10 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.cola;
+package de.cau.cs.kieler.klay.cola.processors;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.kiml.cola.graph.CGraph;
+import de.cau.cs.kieler.klay.cola.graph.CGraph;
 
 /**
  * A layout processor processes a {@link CGraph}, performing layout related tasks on it.

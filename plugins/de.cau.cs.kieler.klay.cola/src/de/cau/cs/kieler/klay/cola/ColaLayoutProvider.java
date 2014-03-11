@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.cola;
+package de.cau.cs.kieler.klay.cola;
 
 import java.util.Arrays;
 
@@ -24,9 +24,6 @@ import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
-import de.cau.cs.kieler.kiml.cola.graph.CGraph;
-import de.cau.cs.kieler.kiml.cola.graph.CNode;
-import de.cau.cs.kieler.kiml.cola.graph.CPort;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
@@ -36,6 +33,12 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters;
 import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters.KGraphAdapter;
 import de.cau.cs.kieler.kiml.util.nodespacing.KimlNodeDimensionCalculation;
+import de.cau.cs.kieler.klay.cola.graph.CGraph;
+import de.cau.cs.kieler.klay.cola.graph.CNode;
+import de.cau.cs.kieler.klay.cola.graph.CPort;
+import de.cau.cs.kieler.klay.cola.processors.DirectionConstraintProcessor;
+import de.cau.cs.kieler.klay.cola.processors.NonUniformEdgeLengthProcessor;
+import de.cau.cs.kieler.klay.cola.processors.PortConstraintProcessor;
 
 /**
  * 
@@ -68,16 +71,6 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         Rectangle.setYBorder(spacing);
 
         borderSpacing = rootLayout.getProperty(LayoutOptions.BORDER_SPACING);
-
-        // create constraints
-        // if (rootLayout.getProperty(ColaProperties.DIRECTION_CONSTRAINTS)) {
-        // addDirectionConstraints(parentNode);
-        // }
-        // if (rootLayout.getProperty(ColaProperties.PORT_CONSTRAINTS)) {
-        // // addPortConstraints(parentNode);
-        // constraintsFixedSide(parentNode);
-        // // constraintsFixedOrder(parentNode);
-        // }
 
         // calculate margins
         KGraphAdapter adapter = KGraphAdapters.adapt(parentNode);
