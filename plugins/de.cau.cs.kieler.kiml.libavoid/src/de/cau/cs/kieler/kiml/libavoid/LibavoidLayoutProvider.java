@@ -297,7 +297,7 @@ public class LibavoidLayoutProvider extends AbstractLayoutProvider {
                 }
             }
         }
-        // AND, in case of an compound node,
+        // AND, in case of a compound node,
         // all edges between hierarchical ports and nodes within the root node
         for (KPort p : root.getPorts()) {
             for (KEdge e : p.getEdges()) {
@@ -313,7 +313,7 @@ public class LibavoidLayoutProvider extends AbstractLayoutProvider {
 
     /**
      * Create 4 nodes that "surround", hence restrict, the child area. This way it is guaranteed
-     * that no edge is routed outsite its compound node.
+     * that no edge is routed outside its compound node.
      */
     private void transformHierarchicalParent(final KNode parent) {
 
@@ -342,6 +342,9 @@ public class LibavoidLayoutProvider extends AbstractLayoutProvider {
         }
     }
 
+    /**
+     * For internal representation only, no semantic meaning. 
+     */
     private void transformHierarchicalParentDummy(final KNode root) {
         // 4 dummies
         libavoidNode(root, NODE_COMPOUND_NORTH, 0, 0, 0, 0, 0, 0);
@@ -475,7 +478,10 @@ public class LibavoidLayoutProvider extends AbstractLayoutProvider {
 
         // gather information
         KShapeLayout portLayout = port.getData(KShapeLayout.class);
-        PortSide side = KimlUtil.calcPortSide(port, direction);
+        PortSide side = portLayout.getProperty(LayoutOptions.PORT_SIDE);
+        if (side == null) {
+            side = KimlUtil.calcPortSide(port, direction);
+        }
         
         // parents margins
         Margins margin = port.getNode().getData(KShapeLayout.class).getProperty(LayoutOptions.MARGINS);
