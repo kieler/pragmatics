@@ -183,13 +183,13 @@ public final class KGraphAdapters {
     /**
      * .
      */
-    private static class KGraphAdapter extends AbstractKGraphElementAdapter<KNode> implements
+    public static final class KGraphAdapter extends AbstractKGraphElementAdapter<KNode> implements
             GraphAdapter<KNode> {
         /**
          * @param node
          *            .
          */
-        public KGraphAdapter(final KNode node) {
+        private KGraphAdapter(final KNode node) {
             super(node);
         }
 

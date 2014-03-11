@@ -129,7 +129,7 @@ public final class LGraphAdapters {
     /**
      * .
      */
-    private static final class LGraphAdapter implements GraphAdapter<LGraph> {
+    public static final class LGraphAdapter implements GraphAdapter<LGraph> {
 
         // CHECKSTYLEOFF VisibilityModifier
         /** The internal element. */
@@ -140,7 +140,7 @@ public final class LGraphAdapters {
          * @param element
          *            .
          */
-        public LGraphAdapter(final LGraph element) {
+        private LGraphAdapter(final LGraph element) {
             this.element = element;
         }
 

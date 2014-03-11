@@ -32,11 +32,10 @@ import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
+import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters;
 import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters.KGraphAdapter;
 import de.cau.cs.kieler.kiml.util.nodespacing.KimlNodeDimensionCalculation;
-import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 
 /**
  * 
@@ -81,7 +80,7 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         // }
 
         // calculate margins
-        KGraphAdapter adapter = new KGraphAdapter(parentNode);
+        KGraphAdapter adapter = KGraphAdapters.adapt(parentNode);
         KimlNodeDimensionCalculation.sortPortLists(adapter);
         KimlNodeDimensionCalculation.calculateLabelAndNodeSizes(adapter);
         KimlNodeDimensionCalculation.calculateNodeMargins(adapter);
