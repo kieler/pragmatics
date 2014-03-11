@@ -398,24 +398,24 @@ public class LabelAndNodeSizeProcessor {
             // Place label "below" edges
             switch (port.getSide()) {
             case WEST:
-                label.getPosition().x = -label.getSize().x - labelSpacing;
-                label.getPosition().y = port.getSize().y + labelSpacing;
+                position.x = -label.getSize().x - labelSpacing;
+                position.y = port.getSize().y + labelSpacing;
                 break;
             case EAST:
-                label.getPosition().x = port.getSize().x + labelSpacing;
-                label.getPosition().y = port.getSize().y + labelSpacing;
+                position.x = port.getSize().x + labelSpacing;
+                position.y = port.getSize().y + labelSpacing;
                 break;
             case NORTH:
-                label.getPosition().x = port.getSize().x + labelSpacing;
-                label.getPosition().y = -label.getSize().y - labelSpacing;
+                position.x = port.getSize().x + labelSpacing;
+                position.y = -label.getSize().y - labelSpacing;
                 break;
             case SOUTH:
-                label.getPosition().x = port.getSize().x + labelSpacing;
-                label.getPosition().y = port.getSize().y + labelSpacing;
+                position.x = port.getSize().x + labelSpacing;
+                position.y = port.getSize().y + labelSpacing;
                 break;
             }
         }
-            label.setPosition(position);
+        label.setPosition(position);
     }
 
     /**
