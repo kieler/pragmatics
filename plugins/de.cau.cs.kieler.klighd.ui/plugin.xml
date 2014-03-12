@@ -77,6 +77,14 @@
             name="Light-weight Diagram"
             restorable="true">
       </view>
+      <view
+            allowMultiple="false"
+            category="de.cau.cs.kieler.klighd"
+            class="de.cau.cs.kieler.klighd.ui.parts.KlighdTreeView"
+            id="de.cau.cs.kieler.klighd.ui.treeView"
+            name="KLighD Tree View"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.editors">
