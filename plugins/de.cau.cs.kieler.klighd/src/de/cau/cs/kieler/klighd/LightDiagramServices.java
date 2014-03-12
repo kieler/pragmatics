@@ -409,7 +409,7 @@ public final class LightDiagramServices {
         final boolean animate = preferenceStore.getBoolean(KlighdPreferences.ANIMATE_LAYOUT);
         final ViewContext viewContext = viewPart.getViewer().getViewContext();
 
-        if (viewContext.getZoomStyle() != ZoomStyle.NONE) {
+        if (viewContext != null && viewContext.getZoomStyle() != ZoomStyle.NONE) {
             viewContext.getViewer().zoom(viewContext.getZoomStyle(),
                     animate ? KlighdConstants.DEFAULT_ANIMATION_TIME : 0);
         }

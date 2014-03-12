@@ -378,6 +378,13 @@ public interface IViewer<T> {
      * @return the scale factor of the given diagram node 
      */
     float getScale(KNode diagramElement);
+    
+    /**
+     * Instructs the viewer to draw focused the given <code>diagramElement</code> with full alpha.
+     * 
+     * @param diagramElement a
+     */
+    void drawFocused(KGraphElement diagramElement);
 
 
     /* ----------------------------- */

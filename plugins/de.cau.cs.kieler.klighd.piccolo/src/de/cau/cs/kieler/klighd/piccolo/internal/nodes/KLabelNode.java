@@ -84,6 +84,12 @@ public class KLabelNode extends PEmptyNode implements IGraphElement<KLabel> {
     }
     
     /**
+     * {@inheritDoc}
+     */
+    public void setFocused(final boolean focussed) {
+    }
+    
+    /**
      * Sets the text for the label.
      * 
      * @param text

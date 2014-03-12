@@ -105,6 +105,12 @@ public class KNodeTopNode extends PLayer implements INode {
     /**
      * {@inheritDoc}
      */
+    public void setFocused(final boolean focussed) {
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
     public KChildAreaNode getChildAreaNode() {
         return childArea;
     }

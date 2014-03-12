@@ -277,6 +277,15 @@
                </with>
             </visibleWhen>
          </command>
+         <command
+               commandId="de.cau.cs.kieler.klighd.ui.actionExecution"
+               label="Set focus"
+               style="push">
+            <parameter
+                  name="de.cau.cs.kieler.klighd.ui.action"
+                  value="de.cau.cs.kieler.klighd.actions.DrawFocussedAction">
+            </parameter>
+         </command>
       </menuContribution>
    </extension>
    <extension

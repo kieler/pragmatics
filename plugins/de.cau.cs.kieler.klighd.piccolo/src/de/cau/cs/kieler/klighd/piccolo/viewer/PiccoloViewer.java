@@ -18,6 +18,7 @@ import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Set;
 
 import javax.swing.Timer;
 
@@ -28,6 +29,8 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+
+import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -47,6 +50,7 @@ import de.cau.cs.kieler.klighd.piccolo.internal.events.KlighdMouseWheelZoomEvent
 import de.cau.cs.kieler.klighd.piccolo.internal.events.KlighdPanEventHandler;
 import de.cau.cs.kieler.klighd.piccolo.internal.events.KlighdSelectionEventHandler;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdCanvas;
+import de.cau.cs.kieler.klighd.piccolo.internal.util.NodeUtil;
 import de.cau.cs.kieler.klighd.viewers.AbstractViewer;
 import de.cau.cs.kieler.klighd.viewers.ContextViewer;
 import edu.umd.cs.piccolo.PCamera;
@@ -412,6 +416,29 @@ public class PiccoloViewer extends AbstractViewer<KNode> implements ILayoutRecor
             return layoutData.getProperty(LayoutOptions.SCALE_FACTOR);
         } else {
             return 1f;
+        }
+    }
+    
+    private final Set<KGraphElement> focusedElements = Sets.newHashSet(); 
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void drawFocused(final KGraphElement diagramElement) {
+        final KNode root = getViewContext().getViewModel();
+        if (diagramElement == root) {
+            for (KGraphElement kge : focusedElements) {
+                NodeUtil.asIGraphElement(getRepresentation(kge)).setFocused(false);
+            }
+            focusedElements.clear();
+            getRepresentation(root).setTransparency(1.0f);
+        } else {
+            getRepresentation(root).setTransparency(0.33f); // SUPPRESS CHECKSTYLE MagicNumber
+            focusedElements.add(diagramElement);
+            
+            final PNode node = getRepresentation(diagramElement);            
+            NodeUtil.asIGraphElement(node).setFocused(true);
+            node.repaint();
         }
     }
 

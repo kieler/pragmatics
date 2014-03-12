@@ -535,6 +535,15 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
             currentViewer.centerOn(diagramElement, duration);
         }
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void drawFocused(final KGraphElement diagramElement) {
+        if (currentViewer != null) {
+            currentViewer.drawFocused(diagramElement);
+        }
+    }
 
 
     /* ----------------------------- */

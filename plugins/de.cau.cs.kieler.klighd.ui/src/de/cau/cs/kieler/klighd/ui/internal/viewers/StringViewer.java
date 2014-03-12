@@ -312,6 +312,12 @@ public class StringViewer implements IViewer<String> {
     public float getScale(final KNode diagramElement) {
         return 0;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void drawFocused(final KGraphElement diagramElement) {
+    }
 
     /**
      * {@inheritDoc}

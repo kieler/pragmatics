@@ -68,6 +68,19 @@ public class KChildAreaNode extends PLayer {
     }
 
     /**
+     * Constructs a child area for a given node.
+     * 
+     * @param containingNode
+     *            the node containing this child area
+     * @param clip
+     *            whether to clip along this node's bounds
+     */
+    public KChildAreaNode(final INode containingNode, final boolean clip) {
+        this(containingNode);
+        setClip(clip);
+    }
+
+    /**
      * Sets whether to clip nodes and edges at the child areas boundaries.
      * 
      * @param clip

@@ -94,6 +94,12 @@ public class KEdgeNode extends PChildRepresentedNode implements ILabeledGraphEle
     /**
      * {@inheritDoc}
      */
+    public void setFocused(final boolean focussed) {
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
     public void addLabel(final KLabelNode label) {
         addChild(label);
     }

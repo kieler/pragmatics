@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.klighd.piccolo.internal.nodes;
 
+import java.awt.AlphaComposite;
+import java.awt.Composite;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -89,7 +91,7 @@ public class KNodeNode extends PLayer implements INode, ILabeledGraphElement<KNo
         this.parent = parent;
         this.portLayer = new PLayer();
         this.labelLayer = new PLayer();
-        this.childArea = new KChildAreaNode(this);
+        this.childArea = new KChildAreaNode(this, true);
         
         this.childAreaCamera = new PCamera();
 
@@ -188,6 +190,15 @@ public class KNodeNode extends PLayer implements INode, ILabeledGraphElement<KNo
      */
     public KNodeRenderingController getRenderingController() {
         return this.renderingController;
+    }
+    
+    private boolean focussed = false;
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void setFocused(final boolean isfocussed) {
+        this.focussed = isfocussed;
     }
     
     /**
@@ -296,6 +307,16 @@ public class KNodeNode extends PLayer implements INode, ILabeledGraphElement<KNo
         if (getVisible() && fullIntersects(paintContext.getLocalClip())) {
             paintContext.pushTransform(getTransformReference(false));
             paintContext.pushTransparency(getTransparency());
+            
+            final Composite composite;
+            if (focussed) {
+                composite = paintContext.getGraphics().getComposite();
+                paintContext.getGraphics().setComposite(
+                        AlphaComposite.getInstance(AlphaComposite.SRC, 1.0f));
+            } else {
+                // this value is not used
+                composite = null;
+            }
 
             if (!getOccluded()) {
                 paint(paintContext);
@@ -321,6 +342,9 @@ public class KNodeNode extends PLayer implements INode, ILabeledGraphElement<KNo
 
             paintAfterChildren(paintContext);
 
+            if (focussed) {
+                paintContext.getGraphics().setComposite(composite);
+            }
             paintContext.popTransparency(getTransparency());
             paintContext.popTransform(getTransformReference(false));
         }

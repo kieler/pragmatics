@@ -79,6 +79,12 @@ public class KPortNode extends PEmptyNode implements ILabeledGraphElement<KPort>
     }
     
     /**
+     * {@inheritDoc}
+     */
+    public void setFocused(final boolean focussed) {
+    }
+    
+    /**
      * Adds the representation of a label to this port.
      * 
      * @param label

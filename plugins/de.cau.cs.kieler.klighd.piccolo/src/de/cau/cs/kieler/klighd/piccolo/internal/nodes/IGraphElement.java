@@ -56,4 +56,11 @@ public interface IGraphElement<T extends KGraphElement> extends ITracingElement<
      * @return the related rendering controller
      */
     AbstractKGERenderingController<T, ? extends IGraphElement<T>> getRenderingController();
+    
+    /**
+     * A.
+     * 
+     * @param focussed b
+     */
+    void setFocused(boolean focussed);
 }
