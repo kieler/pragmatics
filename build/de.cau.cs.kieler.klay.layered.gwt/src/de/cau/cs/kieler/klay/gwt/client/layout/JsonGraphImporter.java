@@ -618,8 +618,14 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         }
         
         // exclude edges that pass hierarchy bounds if layoutHierarchy is switched off
-        if (!layoutHierarchy && (sourceNode == null || targetNode == null)) {
-            return;
+        if (!layoutHierarchy) {
+            if (sourceNode == null || targetNode == null) {
+                // an endpoint node has not been transformed
+                return;
+            } else if (sourceNode.getGraph() != targetNode.getGraph()) {
+                // the edge's endpoint nodes have a different parent
+                return;
+            }
         }
         
         // create a layered edge

@@ -97,7 +97,11 @@ public class KlayGWT implements EntryPoint {
             if (error != null && error.isObject() != null) {
                 JSONObject errObj = new JSONObject();
                 errObj.put("type", new JSONString(e.getClass().getName()));
-                errObj.put("text", new JSONString(e.getMessage()));
+                if (e.getMessage() != null) {
+                    errObj.put("text", new JSONString(e.getMessage()));
+                } else {
+                    errObj.put("text", new JSONString("null (sic)"));
+                }
                 errObj.put("stacktrace", new JSONString(Joiner.on("\n").join(e.getStackTrace())));
                 execCallback(error.isObject().getJavaScriptObject(), errObj.getJavaScriptObject());
             }
