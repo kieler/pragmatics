@@ -266,6 +266,7 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
                 graph.getProperty(Properties.GRAPH_PROPERTIES);
 
         LNode node = new LNode(graph);
+        node.setProperty(Properties.ORIGIN, jNode);
         graph.getLayerlessNodes().add(node);
 
         // id and register
@@ -346,6 +347,7 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         }
 
         LPort port = new LPort(graph);
+        port.setProperty(Properties.ORIGIN, jPort);
         port.setNode(node);
 
         // id and register
@@ -458,6 +460,7 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         // create a new label
         String text = val.isString().stringValue();
         LLabel label = new LLabel(graph, text);
+        label.setProperty(Properties.ORIGIN, jLabel);
         labelJsonMap.put(label, jLabel);
 
         // properties
@@ -630,7 +633,8 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         
         // create a layered edge
         LEdge edge = new LEdge(graph);
-
+        edge.setProperty(Properties.ORIGIN, jEdge);
+        
         // id and register
         JSONString id = (JSONString) jEdge.get("id");
         edgeIdMap.put(id.stringValue(), edge);
