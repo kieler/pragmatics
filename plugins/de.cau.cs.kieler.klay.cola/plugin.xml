@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.cau.cs.kieler.kiml.layoutProviders">
+      <layoutOption
+            appliesTo="parents"
+            default="100"
+            description="The ideal length of the edges"
+            id="de.cau.cs.kieler.klay.cola.idealEdgeLengths"
+            lowerBound="0"
+            name="Ideal Edge Lengths"
+            type="float">
+      </layoutOption>
+      <layoutAlgorithm
+            category="de.cau.cs.kieler.kiml.categories.adaptagrams"
+            class="de.cau.cs.kieler.klay.cola.ColaLayoutProvider"
+            id="de.cau.cs.kieler.klay.cola.constrained"
+            name="Dataflow CoLa Layout">
+         <knownOption
+               default="20"
+               option="de.cau.cs.kieler.spacing">
+         </knownOption>
+         <knownOption
+               default="100"
+               option="de.cau.cs.kieler.kiml.cola.idealEdgeLengths">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layoutHierarchy">
+         </knownOption>
+      </layoutAlgorithm>
+   </extension>
+
+</plugin>
