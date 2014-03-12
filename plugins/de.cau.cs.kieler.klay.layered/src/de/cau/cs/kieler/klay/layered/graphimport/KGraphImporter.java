@@ -544,7 +544,8 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                         KimlUtil.toRelative(targetPoint, kedge.getTarget().getParent());
                     }
                 }
-                targetPort = LGraphUtil.createPort(targetNode, targetPoint, portType, layeredGraph);
+                targetPort = LGraphUtil.createPort(
+                        targetNode, targetPoint, portType, targetNode.getGraph());
             }
             
             newEdge.setSource(sourcePort);
