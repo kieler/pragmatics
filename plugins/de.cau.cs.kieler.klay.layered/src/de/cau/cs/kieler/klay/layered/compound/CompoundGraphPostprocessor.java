@@ -52,6 +52,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * </dl>
  *
  * @author msp
+ * @author cds
  */
 public class CompoundGraphPostprocessor implements ILayoutProcessor {
     
