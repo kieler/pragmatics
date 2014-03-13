@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.util.nodespacing;
 
-import java.awt.geom.Rectangle2D;
 import java.util.EnumSet;
 import java.util.Iterator;
 
@@ -442,7 +441,7 @@ public class LabelAndNodeSizeProcessor {
         // Get the port's label, if any
         Iterator<LabelAdapter<?>> labelIter = port.getLabels().iterator();
         if (labelIter.hasNext()) {
-            Rectangle2D.Double portBox = new Rectangle2D.Double(
+            Rectangle portBox = new Rectangle(
                     0.0,
                     0.0,
                     port.getSize().x,
@@ -450,20 +449,20 @@ public class LabelAndNodeSizeProcessor {
             
             // We only support one label, so retrieve it
             LabelAdapter<?> label = labelIter.next();
-            Rectangle2D.Double labelBox = new Rectangle2D.Double(
+            Rectangle labelBox = new Rectangle(
                     label.getPosition().x,
                     label.getPosition().y,
                     label.getSize().x,
                     label.getSize().y);
             
             // Calculate the union of the two bounding boxes and calculate the margins
-            Rectangle2D.union(portBox, labelBox, portBox);
+            portBox.union(labelBox);
 
             Margins margin = new Margins(port.getMargin());
             margin.top = -portBox.y;
-            margin.bottom = portBox.getMaxY() - port.getSize().y;
+            margin.bottom = portBox.y + portBox.height - port.getSize().y;
             margin.left = -portBox.x;
-            margin.right = portBox.getMaxX() - port.getSize().x;
+            margin.right = portBox.x + portBox.width - port.getSize().x;
             port.setMargin(margin);
         }
     }
