@@ -29,6 +29,18 @@
                option="de.cau.cs.kieler.layoutHierarchy">
          </knownOption>
       </layoutAlgorithm>
+      <layoutAlgorithm
+            class="de.cau.cs.kieler.klay.cola.ColaHierarchicalLayoutProvider"
+            id="de.cau.cs.kieler.klay.cola.hierarchy"
+            name="Cola Hierarchy">
+         <knownOption
+               option="de.cau.cs.kieler.klay.cola.idealEdgeLengths">
+         </knownOption>
+         <knownOption
+               default="true"
+               option="de.cau.cs.kieler.layoutHierarchy">
+         </knownOption>
+      </layoutAlgorithm>
    </extension>
 
 </plugin>

@@ -140,7 +140,7 @@ public class NonUniformEdgeLengthProcessor implements ILayoutProcessor {
             for (CEdge e : p.getConnectedEdges()) {
 
                 CNode other = null;
-                if (e.getTarget().equals(n.origin)) {
+                if (e.getTarget().equals(n)) {
                     other = e.getSource();
                 } else {
                     other = e.getTarget();

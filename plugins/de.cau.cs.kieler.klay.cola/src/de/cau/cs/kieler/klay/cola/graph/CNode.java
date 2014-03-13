@@ -21,7 +21,6 @@ import org.adaptagrams.Rectangle;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
-import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
@@ -30,7 +29,7 @@ import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
  * @author uru
  * 
  */
-public class CNode extends CShape<KNode> {
+public class CNode extends CShape {
 
     private static final long serialVersionUID = -8556727908262767615L;
 
@@ -38,25 +37,38 @@ public class CNode extends CShape<KNode> {
     // CHECKSTYLEOFF Javadoc
 
     /** The adaptagrams {@link Rectangle} representing this node. */
-    public final Rectangle rect;
+    public Rectangle rect;
 
     protected List<CNode> children;
     protected List<CEdge> outgoingEdges;
     protected List<CEdge> incomingEdges;
     protected List<CPort> ports;
 
+    protected CGraphElement parent = null;
+
     /**
      * .
      */
-    public CNode(final CGraph graph, final KNode node) {
-        super(graph, node);
+    public CNode(final CGraph graph) {
+        super(graph);
 
         // setup the internal lists
-        children = new ArrayList<CNode>(node.getChildren().size());
-        outgoingEdges = new ArrayList<CEdge>(node.getOutgoingEdges().size());
-        incomingEdges = new ArrayList<CEdge>(node.getIncomingEdges().size());
-        ports = new ArrayList<CPort>(node.getPorts().size());
+        // children = new ArrayList<CNode>(node.getChildren().size());
+        // outgoingEdges = new ArrayList<CEdge>(node.getOutgoingEdges().size());
+        // incomingEdges = new ArrayList<CEdge>(node.getIncomingEdges().size());
+        // ports = new ArrayList<CPort>(node.getPorts().size());
+        children = new ArrayList<CNode>();
+        outgoingEdges = new ArrayList<CEdge>();
+        incomingEdges = new ArrayList<CEdge>();
+        ports = new ArrayList<CPort>();
 
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void init() {
         // KShapeLayout layout = node.getData(KShapeLayout.class);
 
         // get margins
@@ -72,16 +84,30 @@ public class CNode extends CShape<KNode> {
         // rects
         rect =
                 new Rectangle(0 - margin.left,
-                        // assure that the size is at least 1
-                        Math.max(1, 0 + this.getSize().x + margin.right), 
-                        0 - margin.top, 
-                        Math.max(1, 0 + this.getSize().y + margin.bottom) // same here
+                // assure that the size is at least 1
+                        Math.max(1, 0 + this.getSize().x + margin.right), 0 - margin.top, Math.max(
+                                1, 0 + this.getSize().y + margin.bottom) // same here
                 );
         cIndex = graph.nodeIndex++;
 
         // register in graph
         graph.nodes.add(rect);
 
+    }
+
+    /**
+     * @param parent
+     *            the parent to set
+     */
+    public void setParent(CGraphElement parent) {
+        this.parent = parent;
+    }
+
+    /**
+     * @return the parent
+     */
+    public CGraphElement getParent() {
+        return parent;
     }
 
     /**
@@ -124,26 +150,26 @@ public class CNode extends CShape<KNode> {
         return filtered;
     }
 
-    /**
-     * Returns the name of the node. The name is derived from the text of the first label, if any.
-     * 
-     * @return the name, or {@code null}
-     */
-    public String getName() {
-        if (!origin.getLabels().isEmpty()) {
-            return origin.getLabels().get(0).getText();
-        }
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String toString() {
-        String name = getName();
-        if (name != null) {
-            return "n_" + getName();
-        }
-        return "n_" + cIndex;
-    }
+    // /**
+    // * Returns the name of the node. The name is derived from the text of the first label, if any.
+    // *
+    // * @return the name, or {@code null}
+    // */
+    // public String getName() {
+    // if (!origin.getLabels().isEmpty()) {
+    // return origin.getLabels().get(0).getText();
+    // }
+    // return null;
+    // }
+    //
+    // /**
+    // * {@inheritDoc}
+    // */
+    // public String toString() {
+    // String name = getName();
+    // if (name != null) {
+    // return "n_" + getName();
+    // }
+    // return "n_" + cIndex;
+    // }
 }

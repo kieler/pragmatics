@@ -13,37 +13,35 @@
  */
 package de.cau.cs.kieler.klay.cola.graph;
 
-import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 
 /**
  * .
  * 
- * @param <T>
- * 
  * @author uru
  */
-public class CShape<T extends KGraphElement> extends CGraphElement<T> {
+public abstract class CShape extends CGraphElement {
 
     private static final long serialVersionUID = 7543591108386925637L;
 
     // CHECKSTYLEOFF VisibilityModifier
     // CHECKSTYLEOFF Javadoc
 
-    protected KShapeLayout layout;
+    /** the current position of the element. */
+    private final KVector pos = new KVector();
+    /** the size of the element. */
+    private final KVector size = new KVector();
 
-    public CShape(final CGraph graph, final T element) {
-        super(graph, element);
-        layout = element.getData(KShapeLayout.class);
+    public CShape(final CGraph graph) {
+        super(graph);
     }
 
     public KVector getPos() {
-        return new KVector(layout.getXpos(), layout.getYpos());
+        return pos;
     }
 
     public KVector getSize() {
-        return new KVector(layout.getWidth(), layout.getHeight());
+        return size;
     }
 
 }

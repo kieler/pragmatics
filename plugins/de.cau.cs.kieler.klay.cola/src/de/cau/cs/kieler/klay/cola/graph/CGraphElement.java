@@ -13,18 +13,14 @@
  */
 package de.cau.cs.kieler.klay.cola.graph;
 
-import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 
 /**
  * .
  * 
- * @param <T>
- *            .
  * @author uru
  */
-public class CGraphElement<T extends KGraphElement> extends MapPropertyHolder {
+public abstract class CGraphElement extends MapPropertyHolder {
 
     /**
      * 
@@ -40,19 +36,16 @@ public class CGraphElement<T extends KGraphElement> extends MapPropertyHolder {
      */
     public int cIndex;
 
-    public final T origin;
-
     public final CGraph graph;
 
-    public CGraphElement(final CGraph graph, final T element) {
+    public CGraphElement(final CGraph graph) {
         this.graph = graph;
-        this.origin = element;
-
-        // copy the properties from the KGraph element to the CGraph element
-        KLayoutData layoutData = element.getData(KLayoutData.class);
-        if (layoutData != null) {
-            copyProperties(layoutData);
-        }
     }
+
+    /**
+     * Call this after the position, dimensions, and properties of an element are set. The method
+     * should then create the internal adaptagrams elements.
+     */
+    public abstract void init();
 
 }

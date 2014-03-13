@@ -22,7 +22,6 @@ import org.adaptagrams.SeparationConstraint;
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 import de.cau.cs.kieler.klay.cola.graph.CEdge;
@@ -44,10 +43,10 @@ public class DirectionConstraintProcessor implements ILayoutProcessor {
 
         float spacing = graph.getProperty(LayoutOptions.SPACING);
 
-        Set<Set<KNode>> sccs = ColaUtil.findStronglyConnectedComponents(graph.origin);
-        Map<KNode, Set<KNode>> nodeSccMap = Maps.newHashMap();
-        for (Set<KNode> scc : sccs) {
-            for (KNode n : scc) {
+        Set<Set<CNode>> sccs = ColaUtil.findStronglyConnectedComponents(graph);
+        Map<CNode, Set<CNode>> nodeSccMap = Maps.newHashMap();
+        for (Set<CNode> scc : sccs) {
+            for (CNode n : scc) {
                 nodeSccMap.put(n, scc);
             }
         }
@@ -58,7 +57,7 @@ public class DirectionConstraintProcessor implements ILayoutProcessor {
             for (CEdge e : n.getOutgoingEdges()) {
 
                 // dont create constraints if the nodes are in the same scc
-                if (nodeSccMap.get(e.getSource().origin).contains(e.getTarget().origin)) {
+                if (nodeSccMap.get(e.getSource()).contains(e.getTarget())) {
                     continue;
                 }
 

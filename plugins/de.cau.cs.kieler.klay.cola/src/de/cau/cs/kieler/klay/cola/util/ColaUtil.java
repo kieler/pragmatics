@@ -20,8 +20,9 @@ import java.util.Stack;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.klay.cola.graph.CEdge;
+import de.cau.cs.kieler.klay.cola.graph.CGraph;
+import de.cau.cs.kieler.klay.cola.graph.CNode;
 
 /**
  * @author uru
@@ -36,7 +37,7 @@ public final class ColaUtil {
      *            the graph for which to find the strongly connected components.
      * @return a set containing all strongly connected components of the graph.
      */
-    public static Set<Set<KNode>> findStronglyConnectedComponents(final KNode graph) {
+    public static Set<Set<CNode>> findStronglyConnectedComponents(final CGraph graph) {
         return new TarjanAlg(graph).getStronglyConnectedComponents();
     }
 
@@ -45,34 +46,34 @@ public final class ColaUtil {
      */
     private static class TarjanAlg {
 
-        private Map<KNode, Integer> indexMap = Maps.newHashMap();
-        private Map<KNode, Integer> lowlinkMap = Maps.newHashMap();
+        private Map<CNode, Integer> indexMap = Maps.newHashMap();
+        private Map<CNode, Integer> lowlinkMap = Maps.newHashMap();
         private int index = 0;
-        private Stack<KNode> stack = new Stack<KNode>();
-        private Set<Set<KNode>> sccs = Sets.newHashSet();
+        private Stack<CNode> stack = new Stack<CNode>();
+        private Set<Set<CNode>> sccs = Sets.newHashSet();
 
-        public TarjanAlg(final KNode graph) {
-            for (KNode n : graph.getChildren()) {
+        public TarjanAlg(final CGraph graph) {
+            for (CNode n : graph.getChildren()) {
                 if (!indexMap.containsKey(n)) {
                     strongConnect(n);
                 }
             }
         }
 
-        public Set<Set<KNode>> getStronglyConnectedComponents() {
+        public Set<Set<CNode>> getStronglyConnectedComponents() {
             return sccs;
         }
 
-        private void strongConnect(final KNode node) {
+        private void strongConnect(final CNode node) {
             indexMap.put(node, index);
             lowlinkMap.put(node, index);
             index++;
             stack.push(node);
 
             // successors of current node
-            for (KEdge e : node.getOutgoingEdges()) {
-                KNode target = e.getTarget();
-                
+            for (CEdge e : node.getOutgoingEdges()) {
+                CNode target = e.getTarget();
+
                 // ignore cross hierarchy edges
                 if (!node.getParent().equals(target.getParent())) {
                     continue;
@@ -90,8 +91,8 @@ public final class ColaUtil {
 
             // if current node is a root node, generate scc
             if (lowlinkMap.get(node) == indexMap.get(node)) {
-                Set<KNode> scc = Sets.newHashSet();
-                KNode sn = null;
+                Set<CNode> scc = Sets.newHashSet();
+                CNode sn = null;
                 do {
                     sn = stack.pop();
                     scc.add(sn);

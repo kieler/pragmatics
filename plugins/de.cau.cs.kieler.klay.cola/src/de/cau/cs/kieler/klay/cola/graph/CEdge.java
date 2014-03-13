@@ -21,7 +21,7 @@ import de.cau.cs.kieler.core.kgraph.KEdge;
  * @author uru
  * 
  */
-public class CEdge extends CGraphElement<KEdge> {
+public class CEdge extends CGraphElement {
 
     private static final long serialVersionUID = 1120071695206100617L;
 
@@ -33,19 +33,26 @@ public class CEdge extends CGraphElement<KEdge> {
     public final CPort srcPort;
     public final CPort tgtPort;
 
-    public final ColaEdge edge;
+    public ColaEdge edge;
 
     /**
      * 
      */
-    public CEdge(final CGraph graph, final KEdge origin, final CNode src, final CPort srcPort,
-            final CNode tgt, final CPort tgtPort) {
-        super(graph, origin);
+    public CEdge(final CGraph graph, final CNode src, final CPort srcPort, final CNode tgt,
+            final CPort tgtPort) {
+        super(graph);
 
         this.src = src;
         this.tgt = tgt;
         this.srcPort = srcPort;
         this.tgtPort = tgtPort;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void init() {
 
         // external ports only have a dummy for the port, no parent nodes
         if (src == null) {
@@ -68,7 +75,6 @@ public class CEdge extends CGraphElement<KEdge> {
         } else {
             tgtIndex = tgt.cIndex;
         }
-
         // create the cola representation
         edge = new ColaEdge(srcIndex, tgtIndex);
         cIndex = graph.edgeIndex++;
