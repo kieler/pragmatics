@@ -26,6 +26,7 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.LayerConstraint;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
@@ -113,8 +114,8 @@ public class BigNodesIntermediateProcessor implements ILayoutProcessor {
             // also ignore originally incoming WEST ports that are reverted
             // and outgoing edges targeting WEST ports (have to be part of another big node)
             if (!isInitialBigNode(target)
-                    && (target.getProperty(Properties.NODE_TYPE) == NodeType.BIG_NODE)
-                    && !edge.getProperty(Properties.REVERSED)
+                    && (target.getProperty(InternalProperties.NODE_TYPE) == NodeType.BIG_NODE)
+                    && !edge.getProperty(InternalProperties.REVERSED)
                     && edge.getTarget().getSide() == PortSide.WEST
                     ) {
 
@@ -149,7 +150,7 @@ public class BigNodesIntermediateProcessor implements ILayoutProcessor {
      *         {@link Properties#ORIGIN} is set.
      */
     private boolean isInitialBigNode(final LNode node) {
-        return (node.getProperty(Properties.BIG_NODE_INITIAL))
-                && (node.getProperty(Properties.ORIGIN) != null);
+        return (node.getProperty(InternalProperties.BIG_NODE_INITIAL))
+                && (node.getProperty(InternalProperties.ORIGIN) != null);
     }
 }

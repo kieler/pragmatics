@@ -33,6 +33,7 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -298,8 +299,8 @@ public class BigNodesSplitter implements ILayoutProcessor {
             }
 
             // remember original size to restore it later
-            node.setProperty(Properties.BIG_NODE_ORIGINAL_SIZE, (float) node.getSize().x);
-            node.setProperty(Properties.BIG_NODE_INITIAL, true);
+            node.setProperty(InternalProperties.BIG_NODE_ORIGINAL_SIZE, (float) node.getSize().x);
+            node.setProperty(InternalProperties.BIG_NODE_INITIAL, true);
 
             // we consider the first node as dummy as well, even though we do not mark it
             dummies.add(node);
@@ -369,8 +370,9 @@ public class BigNodesSplitter implements ILayoutProcessor {
             longEdgeDummy.setProperty(Properties.LONG_EDGE_SOURCE, null);
             longEdgeDummy.setProperty(Properties.LONG_EDGE_TARGET, null);
             
-            longEdgeDummy.setProperty(Properties.BIG_NODE_ORIGINAL_SIZE, (float) start.getSize().x);
-            longEdgeDummy.setProperty(Properties.BIG_NODE_INITIAL, true);
+            longEdgeDummy.setProperty(InternalProperties.BIG_NODE_ORIGINAL_SIZE,
+                    (float) start.getSize().x);
+            longEdgeDummy.setProperty(InternalProperties.BIG_NODE_INITIAL, true);
             longEdgeDummy.setProperty(Properties.NODE_TYPE, NodeType.NORMAL);
             longEdgeDummy.setProperty(Properties.ORIGIN, start.getProperty(Properties.ORIGIN));
             
@@ -424,7 +426,7 @@ public class BigNodesSplitter implements ILayoutProcessor {
             
             // the original big node becomes a dummy
             start.setProperty(Properties.ORIGIN, null);
-            start.setProperty(Properties.BIG_NODE_INITIAL, false);
+            start.setProperty(InternalProperties.BIG_NODE_INITIAL, false);
             start.setProperty(Properties.NODE_TYPE, NodeType.BIG_NODE);
             
             longEdgeDummy.setProperty(LayoutOptions.PORT_CONSTRAINTS,

@@ -27,6 +27,7 @@ import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -324,7 +325,7 @@ public class BigNodesCrossingAvoider {
         // within the layer to calculate the constraints
         for (NodeGroup group : layer) {
             for (LNode current : group.getNodes()) {
-                current.getProperty(Properties.BIG_NODE_IN_LAYER_SUCCESSOR_CONSTRAINTS).clear();
+                current.getProperty(InternalProperties.BIG_NODE_IN_LAYER_SUCCESSOR_CONSTRAINTS).clear();
             }
         }
 
@@ -444,11 +445,11 @@ public class BigNodesCrossingAvoider {
 
     private boolean isBigNode(final LNode node) {
         return (node.getProperty(Properties.NODE_TYPE) == NodeType.BIG_NODE)
-                || node.getProperty(Properties.BIG_NODE_INITIAL);
+                || node.getProperty(InternalProperties.BIG_NODE_INITIAL);
     }
 
     private boolean isFirstBigNode(final LNode node) {
-        return node.getProperty(Properties.BIG_NODE_INITIAL);
+        return node.getProperty(InternalProperties.BIG_NODE_INITIAL);
     }
 
     private boolean isLastBigNode(final LNode node) {
@@ -467,6 +468,6 @@ public class BigNodesCrossingAvoider {
     }
 
     private void addInLayerConstraint(final LNode above, final LNode below) {
-        above.getProperty(Properties.BIG_NODE_IN_LAYER_SUCCESSOR_CONSTRAINTS).add(below);
+        above.getProperty(InternalProperties.BIG_NODE_IN_LAYER_SUCCESSOR_CONSTRAINTS).add(below);
     }
 }

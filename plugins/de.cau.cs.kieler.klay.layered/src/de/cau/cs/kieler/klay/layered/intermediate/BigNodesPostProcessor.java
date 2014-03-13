@@ -29,8 +29,8 @@ import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
-import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * This class merges the series of big node dummy nodes introduced by the
@@ -78,7 +78,7 @@ public class BigNodesPostProcessor implements ILayoutProcessor {
 
             for (LNode node : bigNodes) {
                 // set the original size
-                Float originalSize = node.getProperty(Properties.BIG_NODE_ORIGINAL_SIZE);
+                Float originalSize = node.getProperty(InternalProperties.BIG_NODE_ORIGINAL_SIZE);
                 node.getSize().x = originalSize.doubleValue();
 
                 // remove the dummy nodes
@@ -107,10 +107,10 @@ public class BigNodesPostProcessor implements ILayoutProcessor {
                 }
 
                 // reassign labels
-                List<LLabel> labels = node.getProperty(Properties.BIGNODES_ORIG_LABELS);
+                List<LLabel> labels = node.getProperty(InternalProperties.BIGNODES_ORIG_LABELS);
                 node.getLabels().addAll(labels);
                 
-                Function<Void, Void> f = node.getProperty(Properties.BIGNODES_POST_PROCESS);
+                Function<Void, Void> f = node.getProperty(InternalProperties.BIGNODES_POST_PROCESS);
                 if (f != null) {
                     f.apply(null);
                 }
@@ -134,7 +134,7 @@ public class BigNodesPostProcessor implements ILayoutProcessor {
             LNode target = edge.getTarget().getNode();
 
             // only walk through intermediate big nodes
-            if ((target.getProperty(Properties.NODE_TYPE) == NodeType.BIG_NODE)
+            if ((target.getProperty(InternalProperties.NODE_TYPE) == NodeType.BIG_NODE)
                     && !isInitialBigNode(target)) {
                 // remove the current dummy and its incoming edge
                 target.getLayer().getNodes().remove(target);
@@ -160,7 +160,7 @@ public class BigNodesPostProcessor implements ILayoutProcessor {
      *         {@link Properties#ORIGIN} is set.
      */
     private boolean isInitialBigNode(final LNode node) {
-        return (node.getProperty(Properties.BIG_NODE_INITIAL))
-                && (node.getProperty(Properties.ORIGIN) != null);
+        return (node.getProperty(InternalProperties.BIG_NODE_INITIAL))
+                && (node.getProperty(InternalProperties.ORIGIN) != null);
     }
 }

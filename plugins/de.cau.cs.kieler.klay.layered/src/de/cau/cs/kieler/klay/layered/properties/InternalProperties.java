@@ -15,10 +15,12 @@ package de.cau.cs.kieler.klay.layered.properties;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Multimap;
 
 import de.cau.cs.kieler.core.math.KVector;
@@ -32,26 +34,21 @@ import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.compound.CrossHierarchyEdge;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
-import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
-import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
-import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
 import de.cau.cs.kieler.klay.layered.p3order.NodeGroup;
-import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
-
-
 
 /**
- * Container for public property definitions. These are layout options that can be set on graph
- * elements before the algorithm is invoked.
+ * Container for property definitions for internal use of the algorithm. These properties should
+ * not be accessed from outside.
  * 
  * @author msp
  * @author cds
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public final class Properties {
+public final class InternalProperties {
 
     /**
      * The original object from which a graph element was created.
@@ -278,7 +275,39 @@ public final class Properties {
      * cycle breaker has detected cycles and reverted edges.
      */
     public static final IProperty<Boolean> CYCLIC = new Property<Boolean>("cyclic", false);
+        
+    /**
+     * Determines the original size of a big node.
+     */
+    public static final IProperty<Float> BIG_NODE_ORIGINAL_SIZE = new Property<Float>(
+            "bigNodeOriginalSize", 0f);
 
+    /**
+     * Specifies if the corresponding node is the first node in a big node chain.
+     */
+    public static final IProperty<Boolean> BIG_NODE_INITIAL = new Property<Boolean>(
+            "bigNodeInitial", false);
+        
+    /** 
+     * Original labels of a big node. 
+     * */
+    public static final IProperty<List<LLabel>> BIGNODES_ORIG_LABELS = new Property<List<LLabel>>(
+            "de.cau.cs.kieler.klay.layered.bigNodeLabels", new LinkedList<LLabel>());
+    
+    /** A post processing function that is called during big nodes post processing. */
+    public static final IProperty<Function<Void, Void>> BIGNODES_POST_PROCESS =
+            new Property<Function<Void, Void>>("de.cau.cs.kieler.klay.layered.postProcess", null);
+    
+    /**
+     * Indicates that a node {@code x} may only appear inside a layer before the node {@code y} the
+     * property is set to. That is, having {@code x} appear after {@code y} would violate this
+     * constraint. This property only makes sense for nodes.
+     */
+    public static final IProperty<List<LNode>> BIG_NODE_IN_LAYER_SUCCESSOR_CONSTRAINTS =
+            new Property<List<LNode>>(
+                    "de.cau.cs.kieler.klay.layered.bigNodeInLayerSuccessorConstraint",
+                    new ArrayList<LNode>());
+    
     /**
      * Map of original hierarchy crossing edges to a set of dummy edges by which the original
      * edge has been replaced.
@@ -294,160 +323,11 @@ public final class Properties {
 
     
     // /////////////////////////////////////////////////////////////////////////////
-    // USER INTERFACE OPTIONS
-
-    /**
-     * Minimal spacing between objects.
-     */
-    public static final Property<Float> OBJ_SPACING = new Property<Float>(LayoutOptions.SPACING,
-            20.0f, 1.0f);
-    
-    /**
-     * The factor by which the in-layer spacing between objects differs from the inter-layer
-     * {@link Properties#OBJ_SPACING}.
-     */
-    public static final IProperty<Float> OBJ_SPACING_IN_LAYER_FACTOR = new Property<Float>(
-            "de.cau.cs.kieler.klay.layered.inLayerSpacingFactor", 1.0f, 0f);
-    
-    /**
-     * Spacing to the border of the drawing.
-     */
-    public static final Property<Float> BORDER_SPACING = new Property<Float>(
-            LayoutOptions.BORDER_SPACING, 12.0f, 0.0f);
-
-    /**
-     * Factor for minimal spacing between edges.
-     */
-    public static final Property<Float> EDGE_SPACING_FACTOR = new Property<Float>(
-            "de.cau.cs.kieler.klay.layered.edgeSpacingFactor", 0.5f);
-
-    /**
-     * Priority of elements. controls how much single edges are emphasized.
-     */
-    public static final Property<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY, 0);
-
-    /**
-     * The aspect ratio for packing connected components.
-     */
-    public static final Property<Float> ASPECT_RATIO = new Property<Float>(
-            LayoutOptions.ASPECT_RATIO, 1.6f, 0.0f);
-
-    /**
-     * Whether nodes shall be distributed during layer assignment.
-     */
-    public static final IProperty<Boolean> DISTRIBUTE_NODES = new Property<Boolean>(
-            "de.cau.cs.kieler.klay.layered.distributeNodes", false);
-
-    /** 
-     * Whether nodes shall be distributed (i.e. split) after crossing minimization. 
-     */
-    public static final IProperty<Boolean> DISTRIBUTE_NODES_AC = new Property<Boolean>(
-            "de.cau.cs.kieler.klay.layered.distributeNodesAC", false);
-    
-    /**
-     * Property to choose a cycle breaking strategy.
-     */
-    public static final IProperty<CycleBreakingStrategy> CYCLE_BREAKING 
-        = new Property<CycleBreakingStrategy>(
-            "de.cau.cs.kieler.klay.layered.cycleBreaking", CycleBreakingStrategy.GREEDY);
-
-    /**
-     * Property to choose a node layering strategy.
-     */
-    public static final IProperty<LayeringStrategy> NODE_LAYERING = new Property<LayeringStrategy>(
-            "de.cau.cs.kieler.klay.layered.nodeLayering", LayeringStrategy.NETWORK_SIMPLEX);
-
-    /**
-     * Property to choose a crossing minimization strategy.
-     */
-    public static final IProperty<CrossingMinimizationStrategy> CROSS_MIN 
-        = new Property<CrossingMinimizationStrategy>(
-            "de.cau.cs.kieler.klay.layered.crossMin", CrossingMinimizationStrategy.LAYER_SWEEP);
-
-    /**
-     * Property to choose a node placement strategy.
-     */
-    public static final IProperty<NodePlacementStrategy> NODE_PLACER
-            = new Property<NodePlacementStrategy>("de.cau.cs.kieler.klay.layered.nodePlace",
-                    NodePlacementStrategy.BRANDES_KOEPF);
-
-    /**
-     * Tells the BK node placer to use a certain alignment instead of taking the optimal result.
-     */
-    public static final IProperty<FixedAlignment> FIXED_ALIGNMENT = new Property<FixedAlignment>(
-            "de.cau.cs.kieler.klay.layered.fixedAlignment", FixedAlignment.NONE);
-    
-    /**
-     * Property to choose an edge label placement strategy.
-     */
-    public static final IProperty<EdgeLabelSideSelection> EDGE_LABEL_SIDE =
-            new Property<EdgeLabelSideSelection>("de.cau.cs.kieler.klay.layered.LabelSide",
-                                                         EdgeLabelSideSelection.SMART);
-
-    /**
-     * Property to switch debug mode on or off.
-     */
-    public static final IProperty<Boolean> DEBUG_MODE = new Property<Boolean>(
-            "de.cau.cs.kieler.debugMode", false);
-
-    /**
-     * Property that determines how much effort should be spent.
-     */
-    public static final IProperty<Integer> THOROUGHNESS = new Property<Integer>(
-            "de.cau.cs.kieler.klay.layered.thoroughness", 7, 1);
-
-    /**
-     * Property to set constraints on the node layering.
-     */
-    public static final IProperty<LayerConstraint> LAYER_CONSTRAINT = new Property<LayerConstraint>(
-            "de.cau.cs.kieler.klay.layered.layerConstraint", LayerConstraint.NONE);
-
-    /**
-     * Property to enable or disable port merging. Merging ports is only interesting for edges
-     * directly connected to nodes instead of ports. When this option is disabled, one port is
-     * created for each edge directly connected to a node. When it is enabled, all such incoming
-     * edges share an input port, and all outgoing edges share an output port.
-     */
-    public static final IProperty<Boolean> MERGE_PORTS = new Property<Boolean>(
-            "de.cau.cs.kieler.klay.layered.mergePorts", false);
-
-    /**
-     * Property to enable or disable hierarchical port merging. Merging hierarchical ports is only
-     * interesting for hierarchy-crossing edges. Those are broken by the algorithm, with hierarchical
-     * ports inserted as required. Usually, one such port is created for each edge at each hierarchy
-     * crossing point. With this option set to {@code true}, we try to create as few hierarchical ports
-     * as possible in the process. In particular, all edges that form a hyperedge can share a port.
-     */
-    public static final IProperty<Boolean> MERGE_HIERARCHICAL_PORTS = new Property<Boolean>(
-            "de.cau.cs.kieler.klay.layered.mergeHierarchyPorts", true);
-
-    /**
-     * Property that determines which point in a node determines the result of interactive phases.
-     */
-    public static final IProperty<InteractiveReferencePoint> INTERACTIVE_REFERENCE_POINT 
-        = new Property<InteractiveReferencePoint>(
-            "de.cau.cs.kieler.klay.layered.interactiveReferencePoint",
-            InteractiveReferencePoint.CENTER);
-    
-    /**
-     * Whether feedback edges should be highlighted by routing around the nodes.
-     */
-    public static final IProperty<Boolean> FEEDBACK_EDGES = new Property<Boolean>(
-            "de.cau.cs.kieler.klay.layered.feedBackEdges", false);
-
-    /**
-     * The offset to the port position where connections shall be attached.
-     */
-    public static final IProperty<KVector> PORT_ANCHOR = new Property<KVector>(
-            "de.cau.cs.kieler.klay.layered.portAnchor");
-
-
-    // /////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR
 
     /**
      * Hidden default constructor.
      */
-    private Properties() {
+    private InternalProperties() {
     }
 }

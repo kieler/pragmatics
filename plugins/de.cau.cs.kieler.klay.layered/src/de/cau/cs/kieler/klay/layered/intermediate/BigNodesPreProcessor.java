@@ -34,6 +34,7 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -116,7 +117,7 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
         double minWidth = Float.MAX_VALUE;
         for (LNode node : nodes) {
             // ignore all dummy nodes
-            if ((node.getProperty(Properties.NODE_TYPE) == NodeType.NORMAL)
+            if ((node.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORMAL)
                     && (node.getSize().x < minWidth)) {
                 minWidth = node.getSize().x;
             }
@@ -129,7 +130,7 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
         List<BigNode> bigNodes = Lists.newLinkedList();
         double threshold = (minWidth + spacing);
         for (LNode node : nodes) {
-            if ((node.getProperty(Properties.NODE_TYPE) == NodeType.NORMAL)
+            if ((node.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORMAL)
                     && (node.getSize().x > threshold)) {
                 // when splitting, consider that we can use the spacing area
                 // we try to find a node width that considers the spacing
@@ -249,9 +250,9 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
             double originalWidth = node.getSize().x;
 
             // shrink the big node and mark it
-            node.setProperty(Properties.BIG_NODE_ORIGINAL_SIZE, (float) node.getSize().x);
+            node.setProperty(InternalProperties.BIG_NODE_ORIGINAL_SIZE, (float) node.getSize().x);
             node.getSize().x = minWidth;
-            node.setProperty(Properties.BIG_NODE_INITIAL, true);
+            node.setProperty(InternalProperties.BIG_NODE_INITIAL, true);
 
             // we consider the first node as dummy as well, even though we do not mark it
             dummies.add(node);
@@ -342,7 +343,8 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
 
             // remember the original labels, they will be restored during post processing
             // otherwise the graph exporter is not able to write back the new label positions 
-            node.setProperty(Properties.BIGNODES_ORIG_LABELS, Lists.newLinkedList(node.getLabels()));
+            node.setProperty(InternalProperties.BIGNODES_ORIG_LABELS,
+                    Lists.newLinkedList(node.getLabels()));
 
             // assign V_CENTER, H_CENTER node placement to all middle dummy node
             // this is necessary to avoid unnecessary spacing to be introduced due to 
@@ -386,7 +388,7 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
                             return null;
                         }
                     };
-                    node.setProperty(Properties.BIGNODES_POST_PROCESS, postProcess);
+                    node.setProperty(InternalProperties.BIGNODES_POST_PROCESS, postProcess);
 
                 } else {
                     // this case includes NO placement data at all
@@ -395,7 +397,8 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
                     
                     // post processing is generated within the method above
                     postProcs.add(funRemoveLabelDummies);
-                    node.setProperty(Properties.BIGNODES_POST_PROCESS, CompoundFunction.of(postProcs));
+                    node.setProperty(InternalProperties.BIGNODES_POST_PROCESS,
+                            CompoundFunction.of(postProcs));
                 }
             }
         }
