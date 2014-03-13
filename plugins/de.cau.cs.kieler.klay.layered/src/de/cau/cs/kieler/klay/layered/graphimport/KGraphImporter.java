@@ -698,21 +698,15 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             }
         }
 
-        // Check if the edge routing uses splines
         KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
         EdgeRouting routing = parentLayout.getProperty(LayoutOptions.EDGE_ROUTING);
-        boolean splinesActive = routing == EdgeRouting.SPLINES;
         
-        // Check if the orthogonal edge router was used
-        boolean orthogonalRouting =
-                lgraph.getProperty(LayoutOptions.EDGE_ROUTING).equals(EdgeRouting.ORTHOGONAL);
-
         // Iterate through all edges
         for (LEdge ledge : edgeList) {
             KEdge kedge = (KEdge) ledge.getProperty(Properties.ORIGIN);
             // Self-loops are currently left untouched unless the edge router is set to
             // the orthogonal router
-            if (kedge == null || ledge.isSelfLoop() && !orthogonalRouting) {
+            if (kedge == null || ledge.isSelfLoop() && routing != EdgeRouting.ORTHOGONAL) {
                 continue;
             }
             
@@ -764,9 +758,13 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                 edgeLayout.setProperty(LayoutOptions.JUNCTION_POINTS, null);
             }
 
-            // Set spline option
-            if (splinesActive) {
+            // Mark the edge with information about its routing
+            if (routing == EdgeRouting.SPLINES) {
+                // SPLINES means that bend points shall be interpreted as control points for splines
                 edgeLayout.setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.SPLINES);
+            } else {
+                // null means that bend points shall be interpreted as bend points
+                edgeLayout.setProperty(LayoutOptions.EDGE_ROUTING, null);
             }
         }
 

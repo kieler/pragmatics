@@ -94,9 +94,10 @@ public final class LongEdgeSplitter implements ILayoutProcessor {
                             float thickness = edge.getProperty(LayoutOptions.THICKNESS);
                             if (thickness < 0) {
                                 thickness = 0;
+                                edge.setProperty(LayoutOptions.THICKNESS, thickness);
                             }
                             dummyNode.getSize().y = thickness;
-                            float portPos = (float) Math.floor(thickness / 2);
+                            double portPos = Math.floor(thickness / 2);
                             
                             // Create dummy input and output ports
                             LPort dummyInput = new LPort(layeredGraph);

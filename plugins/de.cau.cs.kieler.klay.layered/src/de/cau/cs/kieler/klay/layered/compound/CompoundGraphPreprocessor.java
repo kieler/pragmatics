@@ -527,6 +527,11 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
             // we use an existing external port, so simply add the original edge to its list of
             // original edges
             externalPort.origEdges.add(origEdge);
+            
+            // merge the properties of the original edges
+            float thickness = Math.max(externalPort.newEdge.getProperty(LayoutOptions.THICKNESS),
+                    origEdge.getProperty(LayoutOptions.THICKNESS));
+            externalPort.newEdge.setProperty(LayoutOptions.THICKNESS, thickness);
         }
 
         crossHierarchyMap.put(origEdge,

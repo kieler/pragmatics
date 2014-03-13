@@ -66,8 +66,10 @@ public final class LabelDummySwitcher implements ILayoutProcessor {
                         if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
                                 == EdgeLabelPlacement.CENTER
                                 && label.getSide() == LabelSide.ABOVE) {
+                            float thickness = originEdge.getProperty(LayoutOptions.THICKNESS);
+                            double portPos = node.getSize().y - Math.ceil(thickness / 2);
                             for (LPort port : node.getPorts()) {
-                                port.getPosition().y = node.getSize().y;
+                                port.getPosition().y = portPos;
                             }
                             break;
                         }

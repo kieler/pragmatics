@@ -85,9 +85,18 @@ public final class LabelDummyInserter implements ILayoutProcessor {
                                 PortConstraints.FIXED_POS);
                         dummyNode.setProperty(Properties.LONG_EDGE_SOURCE, edge.getSource());
                         dummyNode.setProperty(Properties.LONG_EDGE_TARGET, edge.getTarget());
+                        
+                        // Set thickness of the edge
+                        float thickness = edge.getProperty(LayoutOptions.THICKNESS);
+                        if (thickness < 0) {
+                            thickness = 0;
+                            edge.setProperty(LayoutOptions.THICKNESS, thickness);
+                        }
+                        KVector dummySize = dummyNode.getSize();
+                        dummySize.y = thickness;
+                        double portPos = Math.floor(thickness / 2);
 
                         // Determine label size
-                        KVector dummySize = dummyNode.getSize();
                         for (LLabel label : edge.getLabels()) {
                             if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
                                     == EdgeLabelPlacement.CENTER) {
@@ -101,11 +110,13 @@ public final class LabelDummyInserter implements ILayoutProcessor {
                         LPort dummyInput = new LPort(layeredGraph);
                         dummyInput.setSide(PortSide.WEST);
                         dummyInput.setNode(dummyNode);
+                        dummyInput.getPosition().y = portPos;
                         
                         LPort dummyOutput = new LPort(layeredGraph);
                         dummyOutput.setSide(PortSide.EAST);
                         dummyOutput.setNode(dummyNode);
                         dummyOutput.getPosition().x = dummySize.x;
+                        dummyOutput.getPosition().y = portPos;
                         
                         edge.setTarget(dummyInput);
                         
