@@ -34,8 +34,8 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
-import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Edge routing implementation that creates orthogonal bend points. Inspired by
@@ -598,7 +598,7 @@ public final class OrthogonalRoutingGenerator {
         }
         
         // break cycles
-        breakCycles(hyperNodes, layeredGraph.getProperty(Properties.RANDOM));
+        breakCycles(hyperNodes, layeredGraph.getProperty(InternalProperties.RANDOM));
 
         // write the acyclic dependency graph to an output file
         if (debugPrefix != null) {

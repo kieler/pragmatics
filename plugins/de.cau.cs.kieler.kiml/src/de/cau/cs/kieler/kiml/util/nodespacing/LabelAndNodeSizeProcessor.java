@@ -17,6 +17,8 @@ import java.util.EnumSet;
 import java.util.Iterator;
 
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.options.LabelSide;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.NodeLabelPlacement;
@@ -59,6 +61,17 @@ import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
  * @author uru
  */
 public class LabelAndNodeSizeProcessor {
+    
+    /**
+     * Copy of the
+     * {@link de.cau.cs.kieler.klay.layered.properties.InternalProperties#PORT_RATIO_OR_POSITION}
+     * option. For further information see the documentation found there. 
+     * We added this copy here to allow a generic treatment of spacing calculations for graph elements.
+     * See the {@link de.cau.cs.kieler.kiml.util.nodespacing} package.
+     * [programmatically set]
+     */
+    public static final IProperty<Double> PORT_RATIO_OR_POSITION = new Property<Double>(
+            "portRatioOrPosition", 0.0);
 
     /*
      * The following variables provide context information for the different phases of the
@@ -838,44 +851,44 @@ public class LabelAndNodeSizeProcessor {
             switch (port.getSide()) {
             case WEST:
                 port.getPosition().y =
-                        nodeSize.y * port.getProperty(LayoutOptions.PORT_RATIO_OR_POSITION);
+                        nodeSize.y * port.getProperty(PORT_RATIO_OR_POSITION);
                 port.getPosition().x = -port.getSize().x - portOffset;
                 break;
             case EAST:
                 port.getPosition().y =
-                        nodeSize.y * port.getProperty(LayoutOptions.PORT_RATIO_OR_POSITION);
+                        nodeSize.y * port.getProperty(PORT_RATIO_OR_POSITION);
                 port.getPosition().x = nodeSize.x + portOffset;
                 break;
             case NORTH:
                 port.getPosition().x =
-                        nodeSize.x * port.getProperty(LayoutOptions.PORT_RATIO_OR_POSITION);
+                        nodeSize.x * port.getProperty(PORT_RATIO_OR_POSITION);
                 port.getPosition().y = -port.getSize().y - portOffset;
                 break;
             case SOUTH:
                 port.getPosition().x =
-                        nodeSize.x * port.getProperty(LayoutOptions.PORT_RATIO_OR_POSITION);
+                        nodeSize.x * port.getProperty(PORT_RATIO_OR_POSITION);
                 port.getPosition().y = nodeSize.y + portOffset;
                 break;
             }
             switch (port.getSide()) {
             case WEST:
                 port.getPosition().y =
-                        nodeSize.y * port.getProperty(LayoutOptions.PORT_RATIO_OR_POSITION);
+                        nodeSize.y * port.getProperty(PORT_RATIO_OR_POSITION);
                 port.getPosition().x = -port.getSize().x - portOffset;
                 break;
             case EAST:
                 port.getPosition().y =
-                        nodeSize.y * port.getProperty(LayoutOptions.PORT_RATIO_OR_POSITION);
+                        nodeSize.y * port.getProperty(PORT_RATIO_OR_POSITION);
                 port.getPosition().x = nodeSize.x + portOffset;
                 break;
             case NORTH:
                 port.getPosition().x =
-                        nodeSize.x * port.getProperty(LayoutOptions.PORT_RATIO_OR_POSITION);
+                        nodeSize.x * port.getProperty(PORT_RATIO_OR_POSITION);
                 port.getPosition().y = -port.getSize().y - portOffset;
                 break;
             case SOUTH:
                 port.getPosition().x =
-                        nodeSize.x * port.getProperty(LayoutOptions.PORT_RATIO_OR_POSITION);
+                        nodeSize.x * port.getProperty(PORT_RATIO_OR_POSITION);
                 port.getPosition().y = nodeSize.y + portOffset;
                 break;
             }

@@ -57,6 +57,7 @@ import de.cau.cs.kieler.klay.layered.p5edges.OrthogonalEdgeRouter;
 import de.cau.cs.kieler.klay.layered.p5edges.PolylineEdgeRouter;
 import de.cau.cs.kieler.klay.layered.p5edges.SplineEdgeRouter;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -217,7 +218,7 @@ public final class KlayLayered {
             // Process all contained nested graphs recursively
             float workPerSubgraph = 1.0f / graph.getLayerlessNodes().size();
             for (LNode node : graph.getLayerlessNodes()) {
-                LGraph nestedGraph = node.getProperty(Properties.NESTED_LGRAPH);
+                LGraph nestedGraph = node.getProperty(InternalProperties.NESTED_LGRAPH);
                 if (nestedGraph != null) {
                     recursiveLayout(nestedGraph, monitor.subTask(workPerSubgraph));
                     graphLayoutToNode(node, nestedGraph);
@@ -306,7 +307,7 @@ public final class KlayLayered {
      */
     public boolean isLayoutTestFinished(final TestExecutionState state) {
         LGraph graph = state.graphs.get(0);
-        List<ILayoutProcessor> algorithm = graph.getProperty(Properties.PROCESSORS);
+        List<ILayoutProcessor> algorithm = graph.getProperty(InternalProperties.PROCESSORS);
         return algorithm != null && state.step >= algorithm.size();
     }
 
@@ -326,7 +327,8 @@ public final class KlayLayered {
      */
     public void runLayoutTestUntil(final Class<? extends ILayoutProcessor> phase,
             final boolean inclusive, final TestExecutionState state) {
-        List<ILayoutProcessor> algorithm = state.graphs.get(0).getProperty(Properties.PROCESSORS);
+        List<ILayoutProcessor> algorithm = state.graphs.get(0).getProperty(
+                InternalProperties.PROCESSORS);
 
         // check if the given phase exists in our current algorithm configuration
         boolean phaseExists = false;
@@ -379,7 +381,7 @@ public final class KlayLayered {
 
         // perform the next layout step
         List<ILayoutProcessor> algorithm = state.graphs.get(0).getProperty(
-                Properties.PROCESSORS);
+                InternalProperties.PROCESSORS);
         layoutTest(state.graphs, algorithm.get(state.step));
         state.step++;
     }
@@ -392,7 +394,7 @@ public final class KlayLayered {
      * @return the algorithm's current configuration.
      */
     public List<ILayoutProcessor> getLayoutTestConfiguration(final TestExecutionState state) {
-        return state.graphs.get(0).getProperty(Properties.PROCESSORS);
+        return state.graphs.get(0).getProperty(InternalProperties.PROCESSORS);
     }
 
 
@@ -430,12 +432,12 @@ public final class KlayLayered {
         if (randomSeed != null) {
             int val = randomSeed;
             if (val == 0) {
-                layeredGraph.setProperty(Properties.RANDOM, new Random());
+                layeredGraph.setProperty(InternalProperties.RANDOM, new Random());
             } else {
-                layeredGraph.setProperty(Properties.RANDOM, new Random(val));
+                layeredGraph.setProperty(InternalProperties.RANDOM, new Random(val));
             }
         } else {
-            layeredGraph.setProperty(Properties.RANDOM, new Random(1));
+            layeredGraph.setProperty(InternalProperties.RANDOM, new Random(1));
         }
     }
 
@@ -560,7 +562,7 @@ public final class KlayLayered {
         // determine intermediate processor configuration
         IntermediateProcessingConfiguration intermediateProcessingConfiguration
                 = new IntermediateProcessingConfiguration();
-        graph.setProperty(Properties.CONFIGURATION, intermediateProcessingConfiguration);
+        graph.setProperty(InternalProperties.CONFIGURATION, intermediateProcessingConfiguration);
         intermediateProcessingConfiguration
                 .addAll(cycleBreaker.getIntermediateProcessingConfiguration(graph))
                 .addAll(layerer.getIntermediateProcessingConfiguration(graph))
@@ -571,7 +573,7 @@ public final class KlayLayered {
 
         // construct the list of processors that make up the algorithm
         List<ILayoutProcessor> algorithm = Lists.newLinkedList();
-        graph.setProperty(Properties.PROCESSORS, algorithm);
+        graph.setProperty(InternalProperties.PROCESSORS, algorithm);
         algorithm.addAll(getIntermediateProcessorList(intermediateProcessingConfiguration,
                         IntermediateProcessingConfiguration.BEFORE_PHASE_1));
         algorithm.add(cycleBreaker);
@@ -639,7 +641,7 @@ public final class KlayLayered {
     private IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
             final LGraph graph) {
 
-        Set<GraphProperties> graphProperties = graph.getProperty(Properties.GRAPH_PROPERTIES);
+        Set<GraphProperties> graphProperties = graph.getProperty(InternalProperties.GRAPH_PROPERTIES);
 
         // Basic configuration
         IntermediateProcessingConfiguration configuration =
@@ -709,7 +711,7 @@ public final class KlayLayered {
         if (!monitorStarted) {
             monitor.begin("Component Layout", 1);
         }
-        List<ILayoutProcessor> algorithm = graph.getProperty(Properties.PROCESSORS);
+        List<ILayoutProcessor> algorithm = graph.getProperty(InternalProperties.PROCESSORS);
         float monitorProgress = 1.0f / algorithm.size();
 
         if (graph.getProperty(LayoutOptions.DEBUG_MODE)) {
@@ -844,16 +846,17 @@ public final class KlayLayered {
             graph.getSize().y = newHeight - insets.top - insets.bottom;
             
             // correct the position of eastern and southern hierarchical ports, if necessary
-            if (graph.getProperty(Properties.GRAPH_PROPERTIES).contains(GraphProperties.EXTERNAL_PORTS)
+            if (graph.getProperty(InternalProperties.GRAPH_PROPERTIES).contains(
+                    GraphProperties.EXTERNAL_PORTS)
                     && (newWidth > oldSize.x || newHeight > oldSize.y)) {
                 
                 // iterate over the graph's nodes, looking for eastern / southern external ports
                 // (at this point, the graph's nodes are not divided into layers anymore)
                 for (LNode node : graph.getLayerlessNodes()) {
                     // we're only looking for external port dummies
-                    if (node.getProperty(Properties.NODE_TYPE) == NodeType.EXTERNAL_PORT) {
+                    if (node.getProperty(InternalProperties.NODE_TYPE) == NodeType.EXTERNAL_PORT) {
                         // check which side the external port is on
-                        PortSide extPortSide = node.getProperty(Properties.EXT_PORT_SIDE);
+                        PortSide extPortSide = node.getProperty(InternalProperties.EXT_PORT_SIDE);
                         if (extPortSide == PortSide.EAST) {
                             node.getPosition().x += newWidth - oldSize.x;
                         } else  if (extPortSide == PortSide.SOUTH) {
@@ -874,24 +877,24 @@ public final class KlayLayered {
     private void graphLayoutToNode(final LNode node, final LGraph graph) {
         // Process external ports
         for (LNode childNode : graph.getLayerlessNodes()) {
-            Object origin = childNode.getProperty(Properties.ORIGIN);
+            Object origin = childNode.getProperty(InternalProperties.ORIGIN);
             if (origin instanceof LPort) {
                 LPort port = (LPort) origin;
                 KVector portPosition = LGraphUtil.getExternalPortPosition(graph, childNode,
                         port.getSize().x, port.getSize().y);
                 port.getPosition().x = portPosition.x;
                 port.getPosition().y = portPosition.y;
-                port.setSide(childNode.getProperty(Properties.EXT_PORT_SIDE));
+                port.setSide(childNode.getProperty(InternalProperties.EXT_PORT_SIDE));
             }
         }
         
         // Setup the parent node
         KVector actualGraphSize = graph.getActualSize();
-        if (graph.getProperty(Properties.GRAPH_PROPERTIES).contains(
+        if (graph.getProperty(InternalProperties.GRAPH_PROPERTIES).contains(
                 GraphProperties.EXTERNAL_PORTS)) {
             // Ports have positions assigned
             node.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
-            node.getGraph().getProperty(Properties.GRAPH_PROPERTIES)
+            node.getGraph().getProperty(InternalProperties.GRAPH_PROPERTIES)
                     .add(GraphProperties.NON_FREE_PORTS);
             LGraphUtil.resizeNode(node, actualGraphSize, false, true);
         } else {
