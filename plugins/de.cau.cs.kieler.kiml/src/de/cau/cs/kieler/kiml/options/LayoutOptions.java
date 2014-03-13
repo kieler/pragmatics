@@ -19,6 +19,7 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 
 /**
  * Definition of layout options. Layout options are divided into programmatic options,
@@ -207,13 +208,39 @@ public final class LayoutOptions {
             "de.cau.cs.kieler.scaleFactor", 1f);
     
     /**
+     * The thickness of an edge. [programmatically set] This is a hint on the line width used
+     * to draw an edge, possibly requiring more space to be reserved for it.
+     */
+    public static final IProperty<Float> THICKNESS = new Property<Float>(
+            "de.cau.cs.kieler.thickness", 1f);
+    
+    /**
      * Whether the zoom level shall be set to view the whole diagram after layout.
      * [programmatically set]
      */
     public static final IProperty<Boolean> ZOOM_TO_FIT = new Property<Boolean>(
             "de.cau.cs.kieler.zoomToFit", false);
 
+    /**
+     * Margins define additional space around the actual bounds of a graph element.
+     * For instance, ports or labels being placed on the outside of a node's border 
+     * might introduce such a margin. The margin is used to guarantee non-overlap
+     * of other graph elements with those ports or labels.
+     * FIXME is this the right place for this property?
+     * [programmatically set]
+     */
+    public static final IProperty<Margins> MARGINS = new Property<Margins>(
+            "de.cau.cs.kieler.margins", new Margins());
+    
+    /**
+     * On which side of its corresponding edge a label is situated.
+     * FIXME is this the right place for this property?
+     * [programmatically set]
+     */
+    public static final IProperty<LabelSide> LABEL_SIDE = new Property<LabelSide>(
+            "de.cau.cs.kieler.labelSide", LabelSide.UNKNOWN);
 
+    
     ///////  USER INTERFACE LAYOUT OPTIONS  ///////
 
     /**
@@ -290,7 +317,7 @@ public final class LayoutOptions {
             "de.cau.cs.kieler.interactive", false);
     
     /**
-     * Determines the amount of space to be left around the labels of the associated edge.
+     * Determines the amount of space to be left around labels.
      */
     public static final IProperty<Float> LABEL_SPACING = new Property<Float>(
             "de.cau.cs.kieler.labelSpacing", 3.0f, 0.0f);
@@ -314,15 +341,23 @@ public final class LayoutOptions {
                     NodeLabelPlacement.fixed());
 
     /**
-     * What constraints on port positions are given for the associated node.
+     * The constraints on port positions for the associated node.
      */
     public static final IProperty<PortConstraints> PORT_CONSTRAINTS = new Property<PortConstraints>(
             "de.cau.cs.kieler.portConstraints", PortConstraints.UNDEFINED);
     
-    /** property to choose a port label placement strategy. */
+    /**
+     * How port labels are placed.
+     */
     public static final IProperty<PortLabelPlacement> PORT_LABEL_PLACEMENT =
             new Property<PortLabelPlacement>("de.cau.cs.kieler.portLabelPlacement",
                     PortLabelPlacement.OUTSIDE);
+    
+    /**
+     * How much space to leave between ports if their positions are determined by the layout algorithm.
+     */
+    public static final IProperty<Float> PORT_SPACING = new Property<Float>(
+            "de.cau.cs.kieler.portSpacing", -1f, 0f);
     
     /**
      * The position of a node, port, or label. This is used by the

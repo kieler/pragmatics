@@ -75,22 +75,63 @@ public interface IViewer<T> {
     void setModel(T model, boolean sync);
 
     /**
-     * Returns the input model currently set for this viewer.
-     * 
-     * @deprecated Use {@link #getViewContext()}.{@link ViewContext#getInputModel() getInputModel()}
-     *             or {@link #getViewContext()}.{@link ViewContext#getViewModel() getViewModel()}.
-     * 
-     * @return the input model or <code>null</code> if no input model is set
-     */
-    T getModel();
-    
-    /**
      * Returns the {@link ViewContext} that is associated to <code>this</this> viewer.
      * 
      * @return the associated {@link ViewContext} or <code>null</code> if no input model is set
      */
     ViewContext getViewContext();
+
+    /**
+     * Registers the given {@link IViewChangeListener} to be notified of events of the given
+     * {@link ViewChangeType ViewChangeEventTypes}. The provided <code>listener</code> will be
+     * notified after all possible changes if no {@link ViewChangeType} is specified.
+     * 
+     * @param listener
+     *            the {@link IViewChangeListener} to be registered
+     * @param eventTypes
+     *            the {@link ViewChangeType} this listener is notified of
+     */
+    void addViewChangedListener(IViewChangeListener listener,
+            ViewChangeType... eventTypes);
+
+    /**
+     * Unregisters the given {@link IViewChangeListener}.
+     * 
+     * @param listener the {@link IViewChangeListener} to be removed from the listeners queue
+     */
+    void removeViewChangedEventListener(IViewChangeListener listener);
+
+
+    /* ----------------------------- */
+    /*   the view modification API   */
+    /* ----------------------------- */
     
+    /**
+     * Provides the visibility state of the given element's representation, assuming the parent of
+     * {@link Object}'s representative is visible. A recursive invisibility check along the
+     * containment hierarchy is omitted for performance reasons. Thus, given nested diagram nodes A
+     * contains B contains C with B collapsed this method may return <code>true</code> for C.
+     * 
+     * @param semanticElement
+     *            being visualized by a {@link KGraphElement}
+     * @return <code>true</code> if the {@link KGraphElement} related to
+     *         <code>semanticElement</code> is visible, <code>false</code> otherwise.
+     */
+    boolean isVisible(Object semanticElement);
+    
+    /**
+     * Provides the visibility state of the given diagram element, assuming the parent
+     * {@link KGraphElement} is visible. A recursive invisibility check along the containment
+     * hierarchy is omitted for performance reasons. Thus, given nested diagram nodes A contains B
+     * contains C with B collapsed this method may return <code>true</code> for C.
+     * 
+     * @param diagramElement
+     *            a {@link KGraphElement}
+     * @return <code>true</code> if the {@link KGraphElement} <code>diagramElement</code> is
+     *         visible, <code>false</code> otherwise.
+     */
+    boolean isVisible(KGraphElement diagramElement);
+     
     /**
      * Reveals the representation of the given semantic element over the specified duration.
      * 
@@ -145,19 +186,19 @@ public interface IViewer<T> {
      * Performs the specified zoom style over the specified duration.
      * 
      * @param style
-     *            the desired zoom stlye
+     *            the desired zoom style
      * @param duration
      *            the duration
      */
     void zoom(ZoomStyle style, int duration);
     
     /**
-     * Provides the expansion state of the given representation element.
+     * Provides the expansion state of the given element's representation.
      * 
      * @param semanticElement
      *            being visualized by a (hierarchic) {@link KNode}
-     * @return true if the {@link KNode} related to <code>semanticElement</code> is expanded, false
-     *         otherwise.
+     * @return <code>true</code> if the {@link KNode} related to <code>semanticElement</code> is
+     *         expanded, <code>false</code> otherwise.
      */
     boolean isExpanded(Object semanticElement);
     
@@ -166,7 +207,8 @@ public interface IViewer<T> {
      * 
      * @param diagramElement
      *            a (hierarchic) {@link KNode}
-     * @return true if the {@link KNode} <code>diagramElement</code> is expanded, false otherwise.
+     * @return <code>true</code> if the {@link KNode} <code>diagramElement</code> is expanded,
+     *         <code>true</code> otherwise.
      */
     boolean isExpanded(KNode diagramElement);
 

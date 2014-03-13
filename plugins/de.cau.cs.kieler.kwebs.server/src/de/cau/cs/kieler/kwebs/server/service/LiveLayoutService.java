@@ -16,7 +16,7 @@ package de.cau.cs.kieler.kwebs.server.service;
 import java.util.List;
 
 import de.cau.cs.kieler.kwebs.server.layout.GraphLayoutOption;
-import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService;
+import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutMetaDataService;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 import de.cau.cs.kieler.kwebs.server.servicedata.ServiceData;
@@ -67,7 +67,7 @@ public class LiveLayoutService extends AbstractService {
      * @return the layout services meta data as XMI.
      */
     public ServiceData getServiceData() {
-        return ServerLayoutDataService.getInstance().getServiceDataModel();
+        return ServerLayoutMetaDataService.getInstance().getServiceDataModel();
     }
     
     /**
@@ -81,7 +81,7 @@ public class LiveLayoutService extends AbstractService {
     public byte[] getPreviewImage(final String previewImage) {
         Logger.log(Severity.DEBUG, "Handling preview image request");
         try {
-            byte[] result = ServerLayoutDataService.getInstance().getPreviewImage(previewImage);
+            byte[] result = ServerLayoutMetaDataService.getInstance().getPreviewImage(previewImage);
             Logger.log(Severity.DEBUG, "Handling preview image request succeeded");
             return result;
         } catch (Exception e) {

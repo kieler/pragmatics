@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableItem;
 
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
@@ -122,7 +122,7 @@ public class OptionSelectionDialog extends Dialog {
         TableViewer tableViewer = new TableViewer(composite, SWT.CHECK);
         tableViewer.setContentProvider(new OptionsContentProvider());
         tableViewer.addFilter(new EvolOptionsFilter());
-        tableViewer.setInput(LayoutDataService.getInstance());
+        tableViewer.setInput(LayoutMetaDataService.getInstance());
         tableViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         tableViewer.setComparator(new ViewerComparator());
         optionViewer = tableViewer;
@@ -166,8 +166,8 @@ public class OptionSelectionDialog extends Dialog {
          * {@inheritDoc}
          */
         public Object[] getElements(final Object inputElement) {
-            if (inputElement instanceof LayoutDataService) {
-                return ((LayoutDataService) inputElement).getOptionData().toArray();
+            if (inputElement instanceof LayoutMetaDataService) {
+                return ((LayoutMetaDataService) inputElement).getOptionData().toArray();
             }
             return new Object[0];
         }

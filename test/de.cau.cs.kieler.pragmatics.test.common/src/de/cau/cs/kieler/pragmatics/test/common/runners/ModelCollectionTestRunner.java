@@ -51,6 +51,8 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
+import de.cau.cs.kieler.kiml.service.KimlServicePlugin;
+
 /**
  * This class defines a JUnit4TestRunner dedicated to run tests on model data bases. It provides
  * various Java annotations:
@@ -290,6 +292,9 @@ public class ModelCollectionTestRunner extends Suite {
     public ModelCollectionTestRunner(final Class<?> clazz) throws Throwable {
         super(clazz, Lists.<Runner>newLinkedList());
 
+        // make sure kiml.service is loaded
+        KimlServicePlugin.getDefault();
+        
         // try to obtain the test models by means of a method annotated with 'Models'
         List<?> models = Lists.newLinkedList(getModelsByModelsMethod());
 

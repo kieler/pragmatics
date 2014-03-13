@@ -48,9 +48,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import de.cau.cs.kieler.core.util.Maybe;
-import de.cau.cs.kieler.kiml.ILayoutData;
+import de.cau.cs.kieler.kiml.ILayoutMetaData;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 
 /**
@@ -73,7 +73,7 @@ public class AlgorithmSelectionDialog extends Dialog {
     /** the selection provider for layout algorithms and types. */
     private ISelectionProvider selectionProvider;
     /** the cached preview images. */
-    private final Map<ILayoutData, Image> imageCache = new HashMap<ILayoutData, Image>();
+    private final Map<ILayoutMetaData, Image> imageCache = new HashMap<ILayoutMetaData, Image>();
     /** the selection listeners that are added to the tree viewer when it is created. */
     private List<ISelectionChangedListener> selectionListeners
             = new LinkedList<ISelectionChangedListener>();
@@ -143,7 +143,7 @@ public class AlgorithmSelectionDialog extends Dialog {
      * 
      * @param layoutData the currently selected layout data
      */
-    private void updateValue(final ILayoutData layoutData) {
+    private void updateValue(final ILayoutMetaData layoutData) {
         layouterHint = layoutData.getId();
 
         String name = layoutData.getName();
@@ -184,8 +184,8 @@ public class AlgorithmSelectionDialog extends Dialog {
         
         // set the initial selection according to the current layouter hint
         if (layouterHint != null) {
-            LayoutDataService layoutServices = LayoutDataService.getInstance();
-            ILayoutData layoutData = layoutServices.getAlgorithmData(layouterHint);
+            LayoutMetaDataService layoutServices = LayoutMetaDataService.getInstance();
+            ILayoutMetaData layoutData = layoutServices.getAlgorithmData(layouterHint);
             if (layoutData == null) {
                 layoutData = layoutServices.getTypeData(layouterHint);
             }
@@ -230,7 +230,7 @@ public class AlgorithmSelectionDialog extends Dialog {
             }
         });
         treeViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        treeViewer.setInput(LayoutDataService.getInstance());
+        treeViewer.setInput(LayoutMetaDataService.getInstance());
         treeViewer.expandAll();
         treeViewer.addDoubleClickListener(new IDoubleClickListener() {
             public void doubleClick(final DoubleClickEvent event) {
@@ -254,7 +254,7 @@ public class AlgorithmSelectionDialog extends Dialog {
                     contentProvider.updateFilter(filterText.getText());
                     treeViewer.refresh();
                     treeViewer.expandAll();
-                    ILayoutData selected = contentProvider.getBestFilterMatch();
+                    ILayoutMetaData selected = contentProvider.getBestFilterMatch();
                     if (selected != null) {
                         treeViewer.setSelection(new StructuredSelection(selected));
                     }
@@ -285,8 +285,8 @@ public class AlgorithmSelectionDialog extends Dialog {
             public void selectionChanged(final SelectionChangedEvent event) {
                 IStructuredSelection selection = (IStructuredSelection) event.getSelection();
                 Object element = selection.getFirstElement();
-                if (element instanceof ILayoutData) {
-                    updateValue((ILayoutData) element);
+                if (element instanceof ILayoutMetaData) {
+                    updateValue((ILayoutMetaData) element);
                 }
             }
         });

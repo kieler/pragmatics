@@ -22,9 +22,12 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
  * Layout option configurator interface. Implementations are used to determine the
  * <em>abstract layout</em>, which consists of a mapping of layout options to specific values for
  * each graph element. The available layout configurators are managed by
- * {@link de.cau.cs.kieler.kiml.ui.service.LayoutOptionManager}. There the available configurators
- * are first used to <em>enrich</em> the context of a graph element with required information,
+ * {@link de.cau.cs.kieler.kiml.service.LayoutOptionManager}. There the available configurators
+ * are first used to enrich the context of a graph element with required information,
  * then the actual layout option values are transferred to the graph element data holder.
+ * Enrichment is done by querying context properties from
+ * {@link #getContextValue(IProperty, LayoutContext)}.
+ * A context property is a property assigned to the {@link LayoutContext}.
  *
  * @author msp
  * @kieler.design proposed by msp
@@ -37,36 +40,37 @@ public interface ILayoutConfig {
      * are applied. A greater number means higher priority.
      * 
      * @return the priority
+     * @see CompoundLayoutConfig
      */
     int getPriority();
     
     /**
-     * Enrich the given context with additional information that can be derived from what is already
-     * contained. This information can be specific to the configurator or it can be reused by other
-     * configurators to find out more about the current context. This method should be called once to
-     * prepare a context before any values are queried. The configurator can use the context
-     * object as a cache to store results of more elaborate computations.
+     * Get the current value for a context property. The class {@link LayoutContext} itself declares
+     * some standard properties that should be considered. Further properties are defined in
+     * {@link DefaultLayoutConfig}.
      * 
-     * @param context a context for layout configuration
+     * @param property a context property
+     * @param context the context from which basic information can be extracted
+     * @return the property value, or {@code null} if no value can be derived from the given context
      */
-    void enrich(LayoutContext context);
+    Object getContextValue(IProperty<?> property, LayoutContext context);
     
     /**
      * Get the current value for a layout option in the given context.
      * 
      * @param optionData a layout option descriptor
      * @param context a context for layout configuration
-     * @return the layout option value, or {@code null} if the option has no value in this context
+     * @return the layout option value, or {@code null} if no value can be derived from the context
      */
-    Object getValue(LayoutOptionData optionData, LayoutContext context);
+    Object getOptionValue(LayoutOptionData optionData, LayoutContext context);
     
     /**
      * Determine the layout options that are affected by this layout configurator. For all returned
-     * options, the {@link #getValue(LayoutOptionData, LayoutContext)} method must not return
+     * options, the {@link #getOptionValue(LayoutOptionData, LayoutContext)} method must not return
      * {@code null} when called with the same context.
      * 
      * @param context a context for layout configuration
-     * @return a collection of options affected by this configurator
+     * @return a collection of layout options affected by this configurator
      */
     Collection<IProperty<?>> getAffectedOptions(LayoutContext context);
 

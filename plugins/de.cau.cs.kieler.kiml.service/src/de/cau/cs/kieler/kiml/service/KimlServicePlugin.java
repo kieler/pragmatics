@@ -19,7 +19,7 @@ import org.osgi.framework.BundleContext;
 import de.cau.cs.kieler.core.alg.DefaultFactory;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutConfigService;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 
 /**
  * The activator class controls the plug-in life cycle.
@@ -45,8 +45,8 @@ public class KimlServicePlugin extends AbstractUIPlugin {
         plugin = this;
         
         // Initialize the layout meta data service (see LayoutDataService.getInstance())
-        LayoutDataService.setInstanceFactory(new DefaultFactory<LayoutDataService>(
-                ExtensionLayoutDataService.class));
+        LayoutMetaDataService.setInstanceFactory(new DefaultFactory<LayoutMetaDataService>(
+                ExtensionLayoutMetaDataService.class));
         // Initialize the layout configuration service (see LayoutConfigService.getInstance())
         LayoutConfigService.setInstanceFactory(new DefaultFactory<LayoutConfigService>(
                 ExtensionLayoutConfigService.class));
@@ -62,7 +62,7 @@ public class KimlServicePlugin extends AbstractUIPlugin {
             ((ExtensionLayoutConfigService) layoutConfigService).storePreferences();
         }
         
-        LayoutDataService layoutDataService = LayoutDataService.getInstance();
+        LayoutMetaDataService layoutDataService = LayoutMetaDataService.getInstance();
         for (LayoutAlgorithmData algoData : layoutDataService.getAlgorithmData()) {
             algoData.getInstancePool().clear();
         }

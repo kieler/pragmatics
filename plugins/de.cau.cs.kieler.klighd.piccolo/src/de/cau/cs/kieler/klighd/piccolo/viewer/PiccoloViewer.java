@@ -13,53 +13,45 @@
  */
 package de.cau.cs.kieler.klighd.piccolo.viewer;
 
-import java.awt.geom.Rectangle2D;
-import java.util.Iterator;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.geom.AffineTransform;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
+import javax.swing.Timer;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.VerifyEvent;
-import org.eclipse.swt.events.VerifyListener;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Text;
-
-import com.google.common.collect.Iterables;
 
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
-import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.krendering.KText;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.klighd.IViewer;
+import de.cau.cs.kieler.klighd.ViewChangeType;
 import de.cau.cs.kieler.klighd.ViewContext;
 import de.cau.cs.kieler.klighd.ZoomStyle;
 import de.cau.cs.kieler.klighd.internal.IDiagramOutlinePage;
 import de.cau.cs.kieler.klighd.internal.ILayoutRecorder;
 import de.cau.cs.kieler.klighd.piccolo.internal.KlighdSWTGraphicsImpl;
 import de.cau.cs.kieler.klighd.piccolo.internal.controller.DiagramController;
-import de.cau.cs.kieler.klighd.piccolo.internal.controller.PNodeController;
+import de.cau.cs.kieler.klighd.piccolo.internal.controller.DiagramZoomController;
 import de.cau.cs.kieler.klighd.piccolo.internal.events.KlighdActionEventHandler;
 import de.cau.cs.kieler.klighd.piccolo.internal.events.KlighdBasicInputEventHandler;
 import de.cau.cs.kieler.klighd.piccolo.internal.events.KlighdMouseWheelZoomEventHandler;
 import de.cau.cs.kieler.klighd.piccolo.internal.events.KlighdPanEventHandler;
 import de.cau.cs.kieler.klighd.piccolo.internal.events.KlighdSelectionEventHandler;
-import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KLabelNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdCanvas;
-import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdStyledText;
-import de.cau.cs.kieler.klighd.util.ModelingUtil;
 import de.cau.cs.kieler.klighd.viewers.AbstractViewer;
 import de.cau.cs.kieler.klighd.viewers.ContextViewer;
 import edu.umd.cs.piccolo.PCamera;
-import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.POffscreenCanvas;
-import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolo.util.PPaintContext;
 
@@ -72,19 +64,18 @@ import edu.umd.cs.piccolo.util.PPaintContext;
 public class PiccoloViewer extends AbstractViewer<KNode> implements ILayoutRecorder,
         IDiagramOutlinePage.Provider {
 
+    private static final int VIEW_PORT_CHANGE_NOTIFY_DELAY = 250; // ms
+
     /** the canvas used for drawing. */
     private KlighdCanvas canvas;
     /** the content outline page. */
     private PiccoloOutlinePage outlinePage;
-    
+
     /** the parent viewer. */
     private ContextViewer parentViewer;
     /** the graph controller. */
     private DiagramController controller;
 
-    private Text textinput;
-    private KlighdTextInputVerifyListener textinputlistener = new KlighdTextInputVerifyListener();
-    
     /**
      * Creates a Piccolo2D viewer with default style.
      * 
@@ -111,24 +102,19 @@ public class PiccoloViewer extends AbstractViewer<KNode> implements ILayoutRecor
             final int style) {
         if (parent.isDisposed()) {
             final String msg = "KLighD (piccolo): A 'PiccoloViewer' has been tried to attach to a"
-                    + "disposed 'Composite' widget.";
+                            + "disposed 'Composite' widget.";
             throw new IllegalArgumentException(msg);
         }
         this.parentViewer = theParentViewer;
         this.canvas = new KlighdCanvas(parent, style);
 
-        textinput = new Text(canvas, SWT.MULTI);
-        textinput.addVerifyListener(textinputlistener);
-        textinput.setEditable(false);
-        
         final PCamera camera = canvas.getCamera();
-        
+
         // install the required event handlers, they rely on SWT event type codes
         camera.addInputEventListener(new KlighdActionEventHandler(this));
-        camera.addInputEventListener(new KlighdTextInputHandler());
         camera.addInputEventListener(new KlighdMouseWheelZoomEventHandler());
         camera.addInputEventListener(new KlighdBasicInputEventHandler(new KlighdPanEventHandler()));
-        camera.addInputEventListener(new KlighdSelectionEventHandler((IViewer<?>) theParentViewer));
+        camera.addInputEventListener(new KlighdSelectionEventHandler(theParentViewer));
 
         // add a node for the rubber band selection marquee
         // final PEmptyNode marqueeParent = new PEmptyNode();
@@ -136,135 +122,47 @@ public class PiccoloViewer extends AbstractViewer<KNode> implements ILayoutRecor
 
         // add a tooltip element
         new PiccoloTooltip(parent.getDisplay(), canvas.getCamera());
-    }
 
-    
-    /**
-     * 
-     * Listens to committed text inputs.
-     * 
-     * @author ckru
-     *
-     */
-    private class KlighdTextInputVerifyListener implements VerifyListener {
+        
+        // A timer being in charge of buffering and thus aggregating a bunch of single
+        // view transform changes occurring closely after each other to a single view
+        // change notification. Once the time elapsed without restarting it in the
+        // meantime the provided {@link ActionListener#actionPerformed(ActionEvent)}
+        // method is called.
+        final Timer timer =
+                camera.getRoot().createTimer(VIEW_PORT_CHANGE_NOTIFY_DELAY, new ActionListener() {
 
-        /**
-         * node the committed text is linked to.
-         */
-        @SuppressWarnings("unused")
-        private KText node;
-        
-        /**
-         * {@inheritDoc}
-         */
-        public void verifyText(final VerifyEvent e) {
-            // TODO Auto-generated method stub
-        }
-        
-        /**
-         * Set node currently linked to the textinput.
-         * @param n node currently linked to the textinput.
-         */
-        public void setNode(final KText n) {
-            node = n;
-        }
-        
-    }
-    
-    /**
-     * 
-     * Handles mouseover on a text element and displays a text input dialog in that case.
-     * 
-     * @author ckru
-     *
-     */
-    private class KlighdTextInputHandler extends KlighdBasicInputEventHandler {
-        
-        public KlighdTextInputHandler() {
-            super();
-        }
-        
-        /**
-         * {@inheritDoc}
-         */
-        public void mouseMoved(final PInputEvent event) {
-            updateTextInput(event);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public void mouseDragged(final PInputEvent event) {
-            updateTextInput(event);
-        }
-        
-        /**
-         * Sets position, style and text of the textinput widget to the text element the mouse
-         * currently hovers over.
-         * 
-         * @param event
-         *            the event that triggered this update.
-         */
-        private void updateTextInput(final PInputEvent event) {
-            PNode n = event.getPickedNode();
-            
-            KText kText = null;
-            KlighdStyledText styledText = null;
-            
-            if (n instanceof KLabelNode) {
-                final KLabelNode labelNode = (KLabelNode) n;
-                KLabel kLabel = labelNode.getGraphElement();
-                kText = Iterables.getFirst(ModelingUtil.eAllContentsOfType(kLabel, KText.class), null);
-                
-                if (kText != null) {
-                    Iterator<PNodeController<?>> controllers 
-                            = labelNode.getRenderingController().getPNodeController(kText).iterator();
-                    if (controllers.hasNext()) {
-                        styledText = (KlighdStyledText) controllers.next().getNode();
-                    } else {
-                        kText = null;
+                    public void actionPerformed(final ActionEvent e) {
+                        PiccoloViewer.this.notifyViewChangeListeners(ViewChangeType.VIEW_PORT,
+                                null, camera.getViewBounds(), camera.getViewScale());
                     }
-                }
-                
-            } else if (n instanceof KlighdStyledText) {
-                styledText = (KlighdStyledText) n;
-                kText = styledText.getGraphElement();
-            }
-            
-            if (kText == null || !kText.isCursorSelectable()) {
-                    // set input widget invisible if mouse is not over a text element
-                    textinput.setVisible(false);
-                    return;
-            }
-                
-            String text = styledText.getText();
-            
-            //determine text value
-            textinput.setText(text);
-            
-            //determine global position of the text element
-            Rectangle2D bounds = n.getGlobalBounds();
-            canvas.getCamera().getViewTransformReference().transform(bounds, bounds);
-            textinput.setLocation((int) bounds.getX(), (int) bounds.getY());
-            
-            //determine font data (i.e. font size)
-            FontData fd = new FontData(styledText.getFontData().toString());
-            fd.setHeight((int) Math.round((styledText.getFontData().getHeight()
-                    * canvas.getCamera().getViewScale())));
-            textinput.setSize(textinput.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-            textinput.setFont(new Font(textinput.getDisplay(), fd));
-            
-            //determine text color
-            Color textColor = new Color(textinput.getDisplay(), styledText.getPenColor());
-            textinput.setForeground(textColor);
-            
-            // link this currently selected node to verify listener
-            textinputlistener.setNode(kText);
-            
-            textinput.setVisible(true);
-        }
-    }
+                });
+        timer.setRepeats(false);
 
+        // Install a listener sensitive to canvas size changes, i.e. view port changes,
+        //  being in charge of notifying the registered view change listeners of new view port bounds.
+        this.canvas.addControlListener(new ControlAdapter() {
+            
+            public void controlResized(final ControlEvent e) {
+                timer.restart();
+            }
+        });
+
+        // Install a listener sensitive to view transform changes, i.e. view port changes,
+        //  being in charge of notifying the registered view change listeners of new view port bounds.
+        camera.addPropertyChangeListener(PCamera.PROPERTY_VIEW_TRANSFORM,
+                new PropertyChangeListener() {
+
+                    /**
+                     * Called after each particular change of the camera's view transform.
+                     * (Re-)Starts the timer in order to aggregate subsequent notifications, which
+                     * occur during animations or manual zooming and panning.
+                     */
+                    public void propertyChange(final PropertyChangeEvent evt) {
+                        timer.restart();
+                    }
+                });
+    }
 
     /**
      * {@inheritDoc}
@@ -295,7 +193,7 @@ public class PiccoloViewer extends AbstractViewer<KNode> implements ILayoutRecor
     public Control getControl() {
         return canvas;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -330,16 +228,6 @@ public class PiccoloViewer extends AbstractViewer<KNode> implements ILayoutRecor
     /**
      * {@inheritDoc}
      */
-    public KNode getModel() {
-        if (controller != null) {
-            return controller.getNode().getGraphElement();
-        }
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public void startRecording() {
         controller.startRecording();
     }
@@ -363,9 +251,33 @@ public class PiccoloViewer extends AbstractViewer<KNode> implements ILayoutRecor
     /**
      * {@inheritDoc}
      */
-    public void stopRecording(final ZoomStyle zoomStyle,
-            final int animationTime) {
+    public void stopRecording(final ZoomStyle zoomStyle, final int animationTime) {
         controller.stopRecording(zoomStyle, animationTime);
+    }
+    
+    /**
+     * Convenience method simplifying the notification call.
+     * 
+     * @see #notifyViewChangeListeners(ViewChangeType, KGraphElement, java.awt.geom.Rectangle2D, float)
+     * 
+     * @param type
+     *            the corresponding {@link ViewChangeType}
+     * @param affectedElement
+     *            a potentially affect few element, e.g. a collapsed or expanded
+     *            {@link de.cau.cs.kieler.core.kgraph.KNode KNode}, may be <code>null</code>
+     */
+    protected void notifyViewChangeListeners(final ViewChangeType type,
+            final KGraphElement affectedElement) {
+        final PCamera camera = canvas.getCamera();
+        super.notifyViewChangeListeners(type, affectedElement, camera.getViewBounds(),
+                camera.getViewScale());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isVisible(final KGraphElement diagramElement) {
+        return controller.isVisible(diagramElement);
     }
 
     /**
@@ -373,7 +285,7 @@ public class PiccoloViewer extends AbstractViewer<KNode> implements ILayoutRecor
      */
     @Override
     public void zoomToLevel(final float zoomLevel, final int duration) {
-         controller.zoomToLevel(zoomLevel, duration);
+        controller.zoomToLevel(zoomLevel, duration);
     }
 
     /**
@@ -407,7 +319,7 @@ public class PiccoloViewer extends AbstractViewer<KNode> implements ILayoutRecor
             camera.animateViewToCenterBounds(node.getGlobalFullBounds(), false, duration);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -420,41 +332,52 @@ public class PiccoloViewer extends AbstractViewer<KNode> implements ILayoutRecor
      */
     public void collapse(final KNode diagramElement) {
         controller.collapse(diagramElement);
+        this.notifyViewChangeListeners(ViewChangeType.COLLAPSE, diagramElement);
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public void expand(final KNode diagramElement) {
         controller.expand(diagramElement);
+        this.notifyViewChangeListeners(ViewChangeType.EXPAND, diagramElement);
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public void toggleExpansion(final KNode diagramElement) {
         controller.toggleExpansion(diagramElement);
+
+        if (isExpanded(diagramElement)) {
+            this.notifyViewChangeListeners(ViewChangeType.EXPAND, diagramElement);
+        } else {
+            this.notifyViewChangeListeners(ViewChangeType.COLLAPSE, diagramElement);
+        }
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public void hide(final KGraphElement diagramElement) {
         controller.hide(diagramElement);
+        this.notifyViewChangeListeners(ViewChangeType.HIDE, diagramElement);
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public void show(final KGraphElement diagramElement) {
         controller.show(diagramElement);
+        this.notifyViewChangeListeners(ViewChangeType.SHOW, diagramElement);
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public void clip(final KNode diagramElement) {
         controller.clip(diagramElement);
+        this.notifyViewChangeListeners(ViewChangeType.CLIP, diagramElement);
     }
 
     /**
@@ -476,6 +399,8 @@ public class PiccoloViewer extends AbstractViewer<KNode> implements ILayoutRecor
         if (isExpanded(diagramElement)) {
             controller.getZoomController().setFocusNode(diagramElement);
         }
+        
+        this.notifyViewChangeListeners(ViewChangeType.SCALE, diagramElement);
     }
 
     /**
@@ -514,7 +439,6 @@ public class PiccoloViewer extends AbstractViewer<KNode> implements ILayoutRecor
         return canvas;
     }
 
-
     /**
      * Renders this viewer's contents to the passed gc with the targeted bounds.
      * 
@@ -526,25 +450,27 @@ public class PiccoloViewer extends AbstractViewer<KNode> implements ILayoutRecor
     public void renderOffscreen(final GC gc, final Rectangle bounds) {
 
         // create a wrapping graphics object
-        KlighdSWTGraphicsImpl g2 = new KlighdSWTGraphicsImpl(gc, gc.getDevice());
+        final KlighdSWTGraphicsImpl g2 = new KlighdSWTGraphicsImpl(gc, gc.getDevice());
+
+        final AffineTransform t = g2.getTransform();
+        t.translate(bounds.x, bounds.y);
+        g2.setTransform(t);
 
         // create an offscreen canvas and fetch its camera
-        POffscreenCanvas offCanvas = new POffscreenCanvas(bounds.width, bounds.height);
-        PCamera camera = offCanvas.getCamera();
+        final POffscreenCanvas offCanvas = new POffscreenCanvas(bounds.width, bounds.height);
+        final PCamera camera = offCanvas.getCamera();
+        camera.getLayersReference().clear();
 
         // let the camera view the original canvas's first layer
         camera.addLayer(canvas.getLayer());
 
-        // fit the overall diagram into the passed bounds
-        // (copied from #zoomToFit(0))
-        if (controller.getNode().getParent() instanceof PLayer) {
-            KShapeLayout topNodeLayout =
-                    controller.getNode().getGraphElement().getData(KShapeLayout.class);
-            PBounds newBounds =
-                    new PBounds(topNodeLayout.getXpos(), topNodeLayout.getYpos(),
-                            topNodeLayout.getWidth(), topNodeLayout.getHeight());
-            camera.animateViewToCenterBounds(newBounds, true, 0);
-        }
+        // fit the currently displayed diagram into the passed bounds
+        final KNode displayedNode =
+                controller.getMainCamera().getDisplayedINode().getGraphElement();
+
+        final PBounds newBounds =
+                DiagramZoomController.toPBoundsIncludingPortsAndLabels(displayedNode);
+        camera.animateViewToCenterBounds(newBounds, true, 0);
 
         // set up a new paint context and paint the camera
         final PPaintContext paintContext = new PPaintContext(g2);

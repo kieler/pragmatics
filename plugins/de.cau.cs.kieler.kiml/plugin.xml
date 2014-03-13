@@ -222,6 +222,17 @@
             variance="1.0">
       </layoutOption>
       <layoutOption
+            appliesTo="nodes"
+            default="-1.0"
+            description="Spacing between ports of a given node."
+            id="de.cau.cs.kieler.portSpacing"
+            lowerBound="0"
+            name="Port Spacing"
+            type="float"
+            upperBound="1000"
+            variance="1.0">
+      </layoutOption>
+      <layoutOption
             appliesTo="parents"
             default="false"
             description="Whether the selected layouter should consider the full hierarchy"
@@ -522,13 +533,25 @@
      <layoutOption
            advanced="true"
            appliesTo="nodes"
-           default="1f"
+           default="1"
            description="The scaling factor to be applied to the corresponding node in recursive layout."
            id="de.cau.cs.kieler.scaleFactor"
-           lowerBound="0.01f"
+           lowerBound="0.01"
            name="Scale Factor"
            type="float"
-           upperBound="100f"
+           upperBound="100"
+           variance="0">
+     </layoutOption>
+     <layoutOption
+           advanced="true"
+           appliesTo="edges"
+           default="1"
+           description="The thickness of an edge."
+           id="de.cau.cs.kieler.thickness"
+           lowerBound="0.001"
+           name="Thickness"
+           type="float"
+           upperBound="1000"
            variance="0">
      </layoutOption>
      <layoutOption

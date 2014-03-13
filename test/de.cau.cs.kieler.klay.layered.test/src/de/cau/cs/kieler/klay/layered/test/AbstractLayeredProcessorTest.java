@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.klay.layered.test;
 
-import java.util.List;
 import java.util.Random;
 
 import org.junit.After;
@@ -21,7 +20,6 @@ import org.junit.Before;
 
 import de.cau.cs.kieler.klay.layered.KlayLayered;
 import de.cau.cs.kieler.klay.layered.LayeredLayoutProvider;
-import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.test.phases.SimplePhaseLayoutConfigurator;
 import de.cau.cs.kieler.klay.test.KlayAutomatedJUnitTest;
 import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
@@ -37,25 +35,21 @@ public abstract class AbstractLayeredProcessorTest extends KlayAutomatedJUnitTes
 
     // CHECKSTYLEOFF Modifier - Members used in subclasses.
 
+    /** The layered layout provider that is used to perform the layout. */
+    protected final LayeredLayoutProvider layeredProvider = new LayeredLayoutProvider();
     /** The internal graph information, i.e., the file and the KNode. */
     protected GraphTestObject graphObject;
-    /** Holds the LGraphs resulting from a layout run. <b>Not</b> assigned by default! */
-    protected List<LGraph> lgraphs;
-    /** Holds the layered layout provider that is used to perform the layout. */
-    protected LayeredLayoutProvider layeredProvider = new LayeredLayoutProvider();
-    /** Holds the current layout configurator. */
+    /** The current layout configurator. */
     protected ILayoutConfigurator configurator;
-    /**
-     * Holds an instance of the layered algorithm with
-     * {@link LayeredLayoutProvider#startLayoutTest(de.cau.cs.kieler.core.kgraph.KNode)} already
-     * called with the root node.
-     */
+    /** The layout algorithm. */
     protected KlayLayered layered;
+    /** The test execution state of the {@link KlayLayered} layout algorithm. */
+    protected KlayLayered.TestExecutionState state;
 
     /** Chose a fixed seed to allow reproducibility of failing tests. */
     protected static final int SEED = 1337;
     /** random object if required. */
-    protected Random random = new Random(SEED);
+    protected final Random random = new Random(SEED);
 
     /** Epsilon value for double comparisons (equal). */
     private static final double COMPARE_EPSILON = 0.0001d;
@@ -83,8 +77,9 @@ public abstract class AbstractLayeredProcessorTest extends KlayAutomatedJUnitTes
         // apply the configurator
         configurator.applyConfiguration(graphObject.getKnode());
 
-        // get an instance of layered
-        this.layered = layeredProvider.startLayoutTest(graphObject.getKnode());
+        // start the test
+        state = layeredProvider.startLayoutTest(graphObject.getKnode());
+        layered = layeredProvider.getLayoutAlgorithm();
     }
 
     /**
@@ -93,8 +88,8 @@ public abstract class AbstractLayeredProcessorTest extends KlayAutomatedJUnitTes
     @After
     public void cleanup() {
         graphObject = null;
-        lgraphs = null;
         layered = null;
+        state = null;
     }
 
     /**

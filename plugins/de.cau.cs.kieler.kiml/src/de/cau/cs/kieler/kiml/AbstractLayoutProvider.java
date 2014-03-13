@@ -20,7 +20,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
  * A layout provider executes a layout algorithm to layout the child elements of a node.
  * <p>When used in Eclipse, layout providers must register through the {@code layoutProviders}
  * extension point. All layout providers published to Eclipse this way are collected in the
- * {@link LayoutDataService} singleton, provided the UI plugin is loaded.
+ * {@link LayoutMetaDataService} singleton, provided the UI plugin is loaded.
  * 
  * @kieler.design 2011-01-17 reviewed by haf, cmot, soh
  * @kieler.rating yellow 2012-08-10 review KI-23 by cds, sgu

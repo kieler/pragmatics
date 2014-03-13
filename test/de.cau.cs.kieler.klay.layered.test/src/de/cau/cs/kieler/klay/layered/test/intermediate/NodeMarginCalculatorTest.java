@@ -56,8 +56,7 @@ public class NodeMarginCalculatorTest extends AbstractLayeredProcessorTest {
      */
     @Before
     public void runUntil() {
-        lgraphs = layered.runLayoutTestUntil(NodeMarginCalculator.class);
-
+        layered.runLayoutTestUntil(NodeMarginCalculator.class, state);
     }
 
     /**
@@ -65,7 +64,7 @@ public class NodeMarginCalculatorTest extends AbstractLayeredProcessorTest {
      */
     @Test
     public void testNodeMargins() {
-        for (LGraph g : lgraphs) {
+        for (LGraph g : state.getGraphs()) {
             for (Layer layer : g.getLayers()) {
                 for (LNode node : layer.getNodes()) {
                     assertTrue(node.getMargin() != null);

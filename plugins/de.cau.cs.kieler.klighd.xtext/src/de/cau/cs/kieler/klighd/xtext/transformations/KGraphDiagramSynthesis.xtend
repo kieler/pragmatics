@@ -30,6 +30,8 @@ import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData
+import de.cau.cs.kieler.kiml.options.EdgeRouting
+import de.cau.cs.kieler.kiml.util.KimlUtil
 
 /**
  * Synthesizes a copy of the given {@code KNode} and enriches it with a selection of default renderings
@@ -71,6 +73,7 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
     }
     
     private var KRendering polylineRendering;
+    private var KRendering splineRendering;
     
     /**
      * Transforms the given graph into an equivalent graph that may be enriched with additional
@@ -91,12 +94,19 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
             library = renderingFactory.createKRenderingLibrary
             result.data += library
         }
+        
+        // Create a common rendering for polylines
         polylineRendering = renderingFactory.createKPolyline() => [
             it.id = "DefaultEdgeRendering"
             it.addArrowDecorator
             it.addJunctionPointDecorator
         ];
         library.renderings += polylineRendering
+        // Create a common rendering for splines
+        splineRendering = renderingFactory.createKSpline => [
+            it.id = "SplineEdgeRendering"
+            it.addArrowDecorator
+        ];
         
         // Associate original objects with transformed objects and provide default renderings
         for (entry : copier.entrySet()) {
@@ -127,8 +137,15 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
      */
     def private dispatch void enrichRendering(KEdge edge) {
         if (!edge.hasRendering) {
+            val parent = if (KimlUtil.isDescendant(edge.target, edge.source))
+                edge.source else edge.source?.parent
+            val routing = parent?.getData(typeof(KLayoutData))?.getProperty(LayoutOptions::EDGE_ROUTING)
             edge.data += renderingFactory.createKRenderingRef => [
-                it.setRendering(polylineRendering)
+                if (routing != null && routing == EdgeRouting::SPLINES) {
+                    it.rendering = splineRendering
+                } else {
+                    it.rendering = polylineRendering
+                }
             ]
         }
     }
