@@ -127,6 +127,7 @@ public class PortConstraintProcessor implements ILayoutProcessor {
     
                     default:
                         // TODO undefined?!
+                        System.err.println("Oh noooooo!!");
                         // shouldn't happen
                 }
 

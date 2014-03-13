@@ -15,8 +15,6 @@ package de.cau.cs.kieler.klay.cola.graph;
 
 import org.adaptagrams.ColaEdge;
 
-import de.cau.cs.kieler.core.kgraph.KEdge;
-
 /**
  * @author uru
  * 

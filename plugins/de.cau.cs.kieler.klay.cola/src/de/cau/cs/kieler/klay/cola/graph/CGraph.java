@@ -13,21 +13,18 @@
  */
 package de.cau.cs.kieler.klay.cola.graph;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.adaptagrams.ColaEdges;
 import org.adaptagrams.CompoundConstraintPtrs;
+import org.adaptagrams.Doubles;
 import org.adaptagrams.RectanglePtrs;
 import org.adaptagrams.RootCluster;
-import org.adaptagrams.SWIGTYPE_p_double;
-import org.adaptagrams.adaptagrams;
 
 import com.google.common.collect.Lists;
 
 /**
  * @author uru
- * 
  */
 public class CGraph extends CGraphElement {
 
@@ -45,9 +42,15 @@ public class CGraph extends CGraphElement {
     public double[] idealEdgeLengths;
     public final RootCluster rootCluster;
 
+    /*
+     * Index counters for the node and edge collections
+     */
     protected int nodeIndex = 0;
     protected int edgeIndex = 0;
 
+    /*
+     * CGraph collections for convenient use
+     */
     private List<CNode> children;
     private List<CPort> externalPorts;
 
@@ -63,13 +66,12 @@ public class CGraph extends CGraphElement {
         edges = new ColaEdges();
         // a list of constraints
         constraints = new CompoundConstraintPtrs();
-
+        // the clusters of the graph
         rootCluster = new RootCluster();
 
-        children = new ArrayList<CNode>();
+        // contained children and external ports
+        children = Lists.newArrayList();
         externalPorts = Lists.newArrayList();
-
-        
     }
 
     /**
@@ -77,8 +79,7 @@ public class CGraph extends CGraphElement {
      */
     @Override
     public void init() {
-        
-        // 
+        // after all edges have been added we can create the array of proper size
         idealEdgeLengths = new double[edgeIndex];
     }
 
@@ -95,6 +96,10 @@ public class CGraph extends CGraphElement {
     public List<CPort> getExternalPorts() {
         return externalPorts;
     }
+
+    // --------------------------------------------------------------------------------
+    // Adaptagrams Accessors
+    // --------------------------------------------------------------------------------
 
     /**
      * @return the nodes
@@ -120,17 +125,20 @@ public class CGraph extends CGraphElement {
     /**
      * @return the ideal edge lengths.
      */
-    public SWIGTYPE_p_double getIdealEdgeLengths() {
+    public Doubles getIdealEdgeLengths() {
 
         // copy the calculated values to a swig wrapper
-        SWIGTYPE_p_double arr = adaptagrams.newDoubleArray(idealEdgeLengths.length);
+        Doubles arr = new Doubles(idealEdgeLengths.length);
         for (int i = 0; i < idealEdgeLengths.length; ++i) {
-            adaptagrams.doubleArraySet(arr, i, idealEdgeLengths[i]);
+            arr.set(i, idealEdgeLengths[i]);
         }
 
         return arr;
     }
 
+    /**
+     * @return the last used node index
+     */
     public int getLastNodeIndex() {
         return nodeIndex;
     }

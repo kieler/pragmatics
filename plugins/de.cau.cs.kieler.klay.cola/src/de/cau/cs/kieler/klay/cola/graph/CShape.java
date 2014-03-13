@@ -24,22 +24,31 @@ public abstract class CShape extends CGraphElement {
 
     private static final long serialVersionUID = 7543591108386925637L;
 
-    // CHECKSTYLEOFF VisibilityModifier
-    // CHECKSTYLEOFF Javadoc
-
     /** the current position of the element. */
     private final KVector pos = new KVector();
     /** the size of the element. */
     private final KVector size = new KVector();
 
+    /**
+     * Constructs a new shaped element.
+     * 
+     * @param graph
+     *            the containing graph
+     */
     public CShape(final CGraph graph) {
         super(graph);
     }
 
+    /**
+     * @return the current position of this element.
+     */
     public KVector getPos() {
         return pos;
     }
 
+    /**
+     * @return the current size of this element.
+     */
     public KVector getSize() {
         return size;
     }

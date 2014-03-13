@@ -63,8 +63,6 @@ public class CPort extends CShape {
         rect = new Rectangle(0, 0 + this.getSize().x, 0, 0 + this.getSize().y);
         cIndex = graph.nodeIndex++;
         graph.nodes.add(rect);
-
-        // side = KimlUtil.calcPortSide(origin, Direction.RIGHT); // TODO dir
     }
 
     public CPort asExternalDummy() {
@@ -76,9 +74,6 @@ public class CPort extends CShape {
 
             // generate a separation constraint on the right side of all nodes
             for (CNode n : graph.getChildren()) {
-
-                // KShapeLayout nodeLayout = n.origin.getData(KShapeLayout.class);
-                // KShapeLayout portLayout = origin.getData(KShapeLayout.class);
 
                 SeparationConstraint scRight =
                         new SeparationConstraint(Dim.XDIM, n.cIndex, cIndex, n.getSize().x / 2f
@@ -92,9 +87,6 @@ public class CPort extends CShape {
 
             // generate a separation constraint on the left side of all nodes
             for (CNode n : graph.getChildren()) {
-
-                // KShapeLayout nodeLayout = n.origin.getData(KShapeLayout.class);
-                // KShapeLayout portLayout = origin.getData(KShapeLayout.class);
 
                 SeparationConstraint scRight =
                         new SeparationConstraint(Dim.XDIM, cIndex, n.cIndex, n.getSize().x / 2f
@@ -177,7 +169,7 @@ public class CPort extends CShape {
 
         case WEST:
         case EAST:
-            // y -= margins.bottom;
+            y -= margins.bottom;
             y -= getSize().y;
             break;
 

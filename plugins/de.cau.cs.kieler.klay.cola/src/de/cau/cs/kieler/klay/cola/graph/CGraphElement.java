@@ -28,7 +28,6 @@ public abstract class CGraphElement extends MapPropertyHolder {
     private static final long serialVersionUID = -8909829166918218344L;
 
     // CHECKSTYLEOFF VisibilityModifier
-    // CHECKSTYLEOFF Javadoc
 
     /**
      * Index of this element within an adaptagrams array. E.g., the index of a node in the nodes
@@ -36,8 +35,17 @@ public abstract class CGraphElement extends MapPropertyHolder {
      */
     public int cIndex;
 
+    /**
+     * The graph in which this element is contained.
+     */
     public final CGraph graph;
 
+    /**
+     * Creates a new element.
+     * 
+     * @param graph
+     *            the graph that holds this element.
+     */
     public CGraphElement(final CGraph graph) {
         this.graph = graph;
     }

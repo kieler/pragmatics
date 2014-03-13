@@ -27,7 +27,6 @@ import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 
 /**
  * @author uru
- * 
  */
 public class CNode extends CShape {
 
@@ -53,15 +52,10 @@ public class CNode extends CShape {
         super(graph);
 
         // setup the internal lists
-        // children = new ArrayList<CNode>(node.getChildren().size());
-        // outgoingEdges = new ArrayList<CEdge>(node.getOutgoingEdges().size());
-        // incomingEdges = new ArrayList<CEdge>(node.getIncomingEdges().size());
-        // ports = new ArrayList<CPort>(node.getPorts().size());
         children = new ArrayList<CNode>();
         outgoingEdges = new ArrayList<CEdge>();
         incomingEdges = new ArrayList<CEdge>();
         ports = new ArrayList<CPort>();
-
     }
 
     /**
@@ -99,7 +93,7 @@ public class CNode extends CShape {
      * @param parent
      *            the parent to set
      */
-    public void setParent(CGraphElement parent) {
+    public void setParent(final CGraphElement parent) {
         this.parent = parent;
     }
 
