@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.cola.util;
+package de.cau.cs.kieler.klay.cola.util;
 
 import java.util.Map;
 import java.util.Set;

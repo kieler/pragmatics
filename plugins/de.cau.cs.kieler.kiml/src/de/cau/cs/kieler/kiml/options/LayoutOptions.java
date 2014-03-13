@@ -208,6 +208,13 @@ public final class LayoutOptions {
             "de.cau.cs.kieler.scaleFactor", 1f);
     
     /**
+     * The thickness of an edge. [programmatically set] This is a hint on the line width used
+     * to draw an edge, possibly requiring more space to be reserved for it.
+     */
+    public static final IProperty<Float> THICKNESS = new Property<Float>(
+            "de.cau.cs.kieler.thickness", 1f);
+    
+    /**
      * Whether the zoom level shall be set to view the whole diagram after layout.
      * [programmatically set]
      */
@@ -242,6 +249,7 @@ public final class LayoutOptions {
     public static final IProperty<Double> PORT_RATIO_OR_POSITION = new Property<Double>(
             "portRatioOrPosition", 0.0);
 
+    
     ///////  USER INTERFACE LAYOUT OPTIONS  ///////
 
     /**

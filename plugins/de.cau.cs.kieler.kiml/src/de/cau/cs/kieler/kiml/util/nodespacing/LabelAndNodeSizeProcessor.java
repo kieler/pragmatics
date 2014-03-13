@@ -13,8 +13,8 @@
  */
 package de.cau.cs.kieler.kiml.util.nodespacing;
 
-import java.awt.geom.Rectangle2D;
 import java.util.EnumSet;
+import java.util.Iterator;
 
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.LabelSide;
@@ -310,13 +310,14 @@ public class LabelAndNodeSizeProcessor {
             final boolean compoundNodeMode, final double labelSpacing) {
         
         // Get the port's label, if any
-        if (!port.getLabels().isEmpty()) {
+        Iterator<LabelAdapter<?>> labelIter = port.getLabels().iterator();
+        if (labelIter.hasNext()) {
             // We use different implementations based on whether port labels are to be placed
             // inside or outside the node
             if (placement.equals(PortLabelPlacement.INSIDE)) {
-                placePortLabelsInside(port, port.getLabels().get(0), compoundNodeMode, labelSpacing);
+                placePortLabelsInside(port, labelIter.next(), compoundNodeMode, labelSpacing);
             } else if (placement.equals(PortLabelPlacement.OUTSIDE)) {
-                placePortLabelsOutside(port, port.getLabels().get(0), labelSpacing);
+                placePortLabelsOutside(port, labelIter.next(), labelSpacing);
             }
         }
     }
@@ -395,24 +396,24 @@ public class LabelAndNodeSizeProcessor {
             // Place label "below" edges
             switch (port.getSide()) {
             case WEST:
-                label.getPosition().x = -label.getSize().x - labelSpacing;
-                label.getPosition().y = port.getSize().y + labelSpacing;
+                position.x = -label.getSize().x - labelSpacing;
+                position.y = port.getSize().y + labelSpacing;
                 break;
             case EAST:
-                label.getPosition().x = port.getSize().x + labelSpacing;
-                label.getPosition().y = port.getSize().y + labelSpacing;
+                position.x = port.getSize().x + labelSpacing;
+                position.y = port.getSize().y + labelSpacing;
                 break;
             case NORTH:
-                label.getPosition().x = port.getSize().x + labelSpacing;
-                label.getPosition().y = -label.getSize().y - labelSpacing;
+                position.x = port.getSize().x + labelSpacing;
+                position.y = -label.getSize().y - labelSpacing;
                 break;
             case SOUTH:
-                label.getPosition().x = port.getSize().x + labelSpacing;
-                label.getPosition().y = port.getSize().y + labelSpacing;
+                position.x = port.getSize().x + labelSpacing;
+                position.y = port.getSize().y + labelSpacing;
                 break;
             }
         }
-            label.setPosition(position);
+        label.setPosition(position);
     }
 
     /**
@@ -424,29 +425,30 @@ public class LabelAndNodeSizeProcessor {
      */
     private void calculateAndSetPortMargins(final PortAdapter<?> port) {
         // Get the port's label, if any
-        if (!port.getLabels().isEmpty()) {
-            Rectangle2D.Double portBox = new Rectangle2D.Double(
+        Iterator<LabelAdapter<?>> labelIter = port.getLabels().iterator();
+        if (labelIter.hasNext()) {
+            Rectangle portBox = new Rectangle(
                     0.0,
                     0.0,
                     port.getSize().x,
                     port.getSize().y);
             
             // We only support one label, so retrieve it
-            LabelAdapter<?> label = port.getLabels().get(0);
-            Rectangle2D.Double labelBox = new Rectangle2D.Double(
+            LabelAdapter<?> label = labelIter.next();
+            Rectangle labelBox = new Rectangle(
                     label.getPosition().x,
                     label.getPosition().y,
                     label.getSize().x,
                     label.getSize().y);
             
             // Calculate the union of the two bounding boxes and calculate the margins
-            Rectangle2D.union(portBox, labelBox, portBox);
+            portBox.union(labelBox);
 
             Margins margin = new Margins(port.getMargin());
             margin.top = -portBox.y;
-            margin.bottom = portBox.getMaxY() - port.getSize().y;
+            margin.bottom = portBox.y + portBox.height - port.getSize().y;
             margin.left = -portBox.x;
-            margin.right = portBox.getMaxX() - port.getSize().x;
+            margin.right = portBox.x + portBox.width - port.getSize().x;
             port.setMargin(margin);
         }
     }
@@ -504,7 +506,7 @@ public class LabelAndNodeSizeProcessor {
     private void calculateRequiredNodeLabelSpace(final NodeAdapter<?> node,
             final double labelSpacing) {
         // Check if there are any labels
-        if (node.getLabels().isEmpty()) {
+        if (!node.getLabels().iterator().hasNext()) {
             return;
         }
 
@@ -611,7 +613,8 @@ public class LabelAndNodeSizeProcessor {
         }
         
         // If the node label is to be accounted for, add its required space to the node size
-        if (sizeConstraint.contains(SizeConstraint.NODE_LABELS) && !node.getLabels().isEmpty()) {
+        if (sizeConstraint.contains(SizeConstraint.NODE_LABELS)
+                && node.getLabels().iterator().hasNext()) {
             EnumSet<NodeLabelPlacement> nodeLabelPlacement =
                     node.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT);
             
@@ -791,8 +794,10 @@ public class LabelAndNodeSizeProcessor {
         KVector nodeSize = node.getSize();
 
         for (PortAdapter<?> port : node.getPorts()) {
-            //float portOffset = port.getProperty(Properties.OFFSET);
-            float portOffset = 0;
+            Float portOffset = port.getProperty(LayoutOptions.OFFSET);
+            if (portOffset == null) {
+                portOffset = 0f;
+            }
             
             KVector position = new KVector(port.getPosition());
             switch (port.getSide()) {
@@ -825,7 +830,11 @@ public class LabelAndNodeSizeProcessor {
         // Adjust port positions depending on port side. Eastern ports have to have their x coordinate
         // set to the node's current width; the same goes for the y coordinate of southern ports
         for (PortAdapter<?> port : node.getPorts()) {
-            float portOffset = port.getProperty(LayoutOptions.OFFSET);
+            Float portOffset = port.getProperty(LayoutOptions.OFFSET);
+            if (portOffset == null) {
+                portOffset = 0f;
+            }
+            
             switch (port.getSide()) {
             case WEST:
                 port.getPosition().y =
@@ -899,7 +908,10 @@ public class LabelAndNodeSizeProcessor {
         
         // Arrange the ports
         for (PortAdapter<?> port : node.getPorts()) {
-            float portOffset = port.getProperty(LayoutOptions.OFFSET);
+            Float portOffset = port.getProperty(LayoutOptions.OFFSET);
+            if (portOffset == null) {
+                portOffset = 0f;
+            }
             KVector portSize = port.getSize();
             Margins portMargins = port.getMargin();
             
@@ -980,7 +992,7 @@ public class LabelAndNodeSizeProcessor {
      */
     private void placeNodeLabels(final NodeAdapter<?> node, final double labelSpacing) {
         // Retrieve the first node label, if any
-        if (node.getLabels().isEmpty()) {
+        if (!node.getLabels().iterator().hasNext()) {
             return;
         }
         

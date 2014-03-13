@@ -29,10 +29,12 @@ import de.cau.cs.kieler.core.kivi.IEffect;
 import de.cau.cs.kieler.core.kivi.UndoEffect;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
+import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.config.LayoutContext;
 import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
+import de.cau.cs.kieler.kiml.service.EclipseLayoutConfig;
 import de.cau.cs.kieler.kiml.service.LayoutManagersService;
 import de.cau.cs.kieler.kiml.service.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.service.LayoutMapping;
@@ -52,25 +54,21 @@ public class LayoutEffect extends AbstractEffect {
     /**
      * Find a diagram part that belongs to the given workbench part and domain model object.
      * 
-     * @param workbenchPart a workbench part, or null
+     * @param workbenchPart a workbench part
      * @param object a domain model object, or null
      * @return the corresponding diagram part, or null
      */
-    @SuppressWarnings("rawtypes")
     static Object findDiagramPart(final IWorkbenchPart workbenchPart, final EObject object) {
-        if (workbenchPart == null) {
-            return LayoutManagersService.getInstance().getAdapter(object, null);
-        } else {
+        if (workbenchPart != null) {
             IDiagramLayoutManager<?> layoutManager = LayoutManagersService.getInstance().getManager(
                     workbenchPart, null);
             if (layoutManager != null) {
-                Class[] adapterList = layoutManager.getAdapterList();
-                if (adapterList != null && adapterList.length > 0 && adapterList[0] != null) {
-                    if (object == null) {
-                        return layoutManager.getAdapter(workbenchPart, adapterList[0]);
-                    } else {
-                        return layoutManager.getAdapter(object, adapterList[0]);
-                    }
+                IMutableLayoutConfig config = layoutManager.getDiagramConfig();
+                if (config != null) {
+                    LayoutContext context = new LayoutContext();
+                    context.setProperty(EclipseLayoutConfig.WORKBENCH_PART, workbenchPart);
+                    context.setProperty(LayoutContext.DOMAIN_MODEL, object);
+                    return config.getContextValue(LayoutContext.DIAGRAM_PART, context);
                 }
             }
         }
