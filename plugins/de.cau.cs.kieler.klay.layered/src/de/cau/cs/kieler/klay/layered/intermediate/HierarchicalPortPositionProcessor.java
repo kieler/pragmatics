@@ -35,7 +35,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * does.
  * 
  * <p>This processor is only necessary for node placers that do not respect the
- * {@link de.cau.cs.kieler.klay.layered.properties.Properties#PORT_RATIO_OR_POSITION}
+ * {@link de.cau.cs.kieler.klay.layered.properties.InternalProperties#PORT_RATIO_OR_POSITION}
  * property themselves.</p>
  * 
  * <dl>

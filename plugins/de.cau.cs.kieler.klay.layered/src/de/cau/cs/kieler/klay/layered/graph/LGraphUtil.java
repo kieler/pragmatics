@@ -616,24 +616,25 @@ public final class LGraphUtil {
      * 
      * <p>The returned dummy node is decorated with some properties:</p>
      * <ul>
-     *   <li>Its {@link Properties#NODE_TYPE} is set to {@link NodeType#EXTERNAL_PORT}.</li>
-     *   <li>Its {@link Properties#ORIGIN} is set to the external port object.</li>
+     *   <li>Its {@link InternalProperties#NODE_TYPE} is set to {@link NodeType#EXTERNAL_PORT}.</li>
+     *   <li>Its {@link InternalProperties#ORIGIN} is set to the external port object.</li>
      *   <li>The {@link LayoutOptions#PORT_CONSTRAINTS} are set to
      *     {@link PortConstraints#FIXED_POS}.</li>
      *   <li>For western and eastern port dummies, the {@link Properties#LAYER_CONSTRAINT} is set to
      *     {@link LayerConstraint#FIRST_SEPARATE} and {@link LayerConstraint#LAST_SEPARATE},
      *     respectively.</li>
-     *   <li>For northern and southern port dummies, the {@link Properties#IN_LAYER_CONSTRAINT} is set to
-     *     {@link InLayerConstraint#TOP} and {@link InLayerConstraint#BOTTOM}, respectively.</li>
-     *   <li>For eastern dummies, the {@link Properties#EDGE_CONSTRAINT} is set to
+     *   <li>For northern and southern port dummies, the {@link InternalProperties#IN_LAYER_CONSTRAINT}
+     *     is set to {@link InLayerConstraint#TOP} and {@link InLayerConstraint#BOTTOM},
+     *     respectively.</li>
+     *   <li>For eastern dummies, the {@link InternalProperties#EDGE_CONSTRAINT} is set to
      *     {@link EdgeConstraint#OUTGOING_ONLY}; for western dummies, it is set to
      *     {@link EdgeConstraint#INCOMING_ONLY}; for all other dummies, it is left unset.</li>
      *   <li>{@link Properties#EXT_PORT_SIDE} is set to the side of the external port represented.</li>
      *   <li>If the port constraints of the original port's node are set to
      *     {@link PortConstraints#FIXED_RATIO} or {@link PortConstraints#FIXED_POS}, the dummy node's
-     *     {@link Properties#PORT_RATIO_OR_POSITION} property is set to the port's original position,
-     *     defined relative to the original node's origin. (as opposed to relative to the node's content
-     *     area)</li>
+     *     {@link InternalProperties#PORT_RATIO_OR_POSITION} property is set to the port's original
+     *     position, defined relative to the original node's origin. (as opposed to relative to the
+     *     node's content area)</li>
      *   <li>The {@link Properties#EXT_PORT_SIZE} property is set to the size of the external port the
      *     the dummy represents, while the size of the dummy itself is set to {@code (0, 0)}.</li>
      * </ul>
