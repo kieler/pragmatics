@@ -31,8 +31,8 @@ import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
-import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Processor that inserts dummy nodes into edges that have center labels to reserve space for them.
@@ -79,12 +79,12 @@ public final class LabelDummyInserter implements ILayoutProcessor {
                         
                         // Create dummy node
                         LNode dummyNode = new LNode(layeredGraph);
-                        dummyNode.setProperty(Properties.ORIGIN, edge);
-                        dummyNode.setProperty(Properties.NODE_TYPE, NodeType.LABEL);
+                        dummyNode.setProperty(InternalProperties.ORIGIN, edge);
+                        dummyNode.setProperty(InternalProperties.NODE_TYPE, NodeType.LABEL);
                         dummyNode.setProperty(LayoutOptions.PORT_CONSTRAINTS,
                                 PortConstraints.FIXED_POS);
-                        dummyNode.setProperty(Properties.LONG_EDGE_SOURCE, edge.getSource());
-                        dummyNode.setProperty(Properties.LONG_EDGE_TARGET, edge.getTarget());
+                        dummyNode.setProperty(InternalProperties.LONG_EDGE_SOURCE, edge.getSource());
+                        dummyNode.setProperty(InternalProperties.LONG_EDGE_TARGET, edge.getTarget());
                         
                         // Set thickness of the edge
                         float thickness = edge.getProperty(LayoutOptions.THICKNESS);

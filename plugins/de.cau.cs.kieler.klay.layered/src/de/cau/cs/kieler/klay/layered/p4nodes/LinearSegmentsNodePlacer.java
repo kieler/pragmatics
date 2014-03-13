@@ -32,6 +32,7 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -171,7 +172,8 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
     public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
             final LGraph graph) {
         
-        if (graph.getProperty(Properties.GRAPH_PROPERTIES).contains(GraphProperties.EXTERNAL_PORTS)) {
+        if (graph.getProperty(InternalProperties.GRAPH_PROPERTIES)
+                .contains(GraphProperties.EXTERNAL_PORTS)) {
             return HIERARCHY_PROCESSING_ADDITIONS;
         } else {
             return null;
@@ -474,7 +476,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
             segment.nodes.add(node);
         }
 
-        NodeType nodeType = node.getProperty(Properties.NODE_TYPE);
+        NodeType nodeType = node.getProperty(InternalProperties.NODE_TYPE);
         if (nodeType == NodeType.LONG_EDGE || nodeType == NodeType.NORTH_SOUTH_PORT
                 || nodeType == NodeType.BIG_NODE) {
             
@@ -485,7 +487,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
             for (LPort sourcePort : node.getPorts()) {
                 for (LPort targetPort : sourcePort.getSuccessorPorts()) {
                     LNode targetNode = targetPort.getNode();
-                    NodeType targetNodeType = targetNode.getProperty(Properties.NODE_TYPE);
+                    NodeType targetNodeType = targetNode.getProperty(InternalProperties.NODE_TYPE);
 
                     if (node.getLayer() != targetNode.getLayer()
                             && (targetNodeType == NodeType.LONG_EDGE
@@ -539,7 +541,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
                 float space = 0.0f;
                 if (nodeCount[layerIndex] > 0) {
                     if (recentNodeNormal[layerIndex]
-                            && node.getProperty(Properties.NODE_TYPE) == NodeType.NORMAL) {
+                            && node.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORMAL) {
 
                         space = normalSpacing;
                     } else {
@@ -560,7 +562,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
                 layer.getSize().y = uppermostPlace + node.getMargin().top
                         + node.getSize().y + node.getMargin().bottom;
 
-                recentNodeNormal[layer.getIndex()] = node.getProperty(Properties.NODE_TYPE) 
+                recentNodeNormal[layer.getIndex()] = node.getProperty(InternalProperties.NODE_TYPE) 
                     == NodeType.NORMAL;
             }
         }
@@ -765,14 +767,15 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
             // Get the first node
             LNode node1 = nodeIter.next();
             LinearSegment region1 = linearSegments[node1.id].region();
-            boolean isNode1Normal = node1.getProperty(Properties.NODE_TYPE) == NodeType.NORMAL;
+            boolean isNode1Normal = node1.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORMAL;
 
             // While there are still nodes following the current node
             while (nodeIter.hasNext()) {
                 // Test whether nodes have different regions
                 LNode node2 = nodeIter.next();
                 LinearSegment region2 = linearSegments[node2.id].region();
-                boolean isNode2Normal = node2.getProperty(Properties.NODE_TYPE) == NodeType.NORMAL;
+                boolean isNode2Normal = node2.getProperty(InternalProperties.NODE_TYPE)
+                        == NodeType.NORMAL;
 
                 if (region1 != region2) {
                     // Calculate how much space is allowed between the nodes
@@ -827,12 +830,13 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
             for (LNode node : segment.nodes) {
                 double roomAbove, roomBelow;
                 int index = node.getIndex();
-                boolean isNodeNormal = node.getProperty(Properties.NODE_TYPE) == NodeType.NORMAL;
+                boolean isNodeNormal = node.getProperty(InternalProperties.NODE_TYPE)
+                        == NodeType.NORMAL;
 
                 // determine the amount by which the linear segment can be moved up without overlap
                 if (index > 0) {
                     LNode neighbor = node.getLayer().getNodes().get(index - 1);
-                    boolean isNeighborNormal = neighbor.getProperty(Properties.NODE_TYPE) 
+                    boolean isNeighborNormal = neighbor.getProperty(InternalProperties.NODE_TYPE) 
                         == NodeType.NORMAL;
                     float spacing = isNodeNormal && isNeighborNormal ? normalSpacing : smallSpacing;
                     roomAbove = node.getPosition().y - node.getMargin().top
@@ -847,7 +851,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
                 // overlap
                 if (index < node.getLayer().getNodes().size() - 1) {
                     LNode neighbor = node.getLayer().getNodes().get(index + 1);
-                    boolean isNeighborNormal = neighbor.getProperty(Properties.NODE_TYPE) 
+                    boolean isNeighborNormal = neighbor.getProperty(InternalProperties.NODE_TYPE) 
                         == NodeType.NORMAL;
                     float spacing = isNodeNormal && isNeighborNormal ? normalSpacing : smallSpacing;
                     roomBelow = neighbor.getPosition().y - neighbor.getMargin().top
