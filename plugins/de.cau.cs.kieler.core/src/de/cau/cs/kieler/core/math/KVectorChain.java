@@ -18,7 +18,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.StringTokenizer;
 
 import de.cau.cs.kieler.core.util.IDataObject;
 
@@ -83,13 +82,29 @@ public class KVectorChain extends LinkedList<KVector> implements IDataObject {
      * {@inheritDoc}
      */
     public void parse(final String string) {
-        StringTokenizer tokenizer = new StringTokenizer(string, ",;()[]{} \t\n");
+        String[] tokens = string.split(",|;|\\(|\\)|\\[|\\]|\\{|\\}| |\t|\n");
+        // String::split may contain empty strings whenever two delimiters follow each other
+        // e.g. ";]{" would result in an array of 3 empty strings.
+        // We ignore empty strings. 
         clear();
         try {
-            while (tokenizer.countTokens() >= 2) {
-                double x = Double.parseDouble(tokenizer.nextToken());
-                double y = Double.parseDouble(tokenizer.nextToken());
-                add(new KVector(x, y));
+            // an extra token is ignored
+            int i = 0;
+            int xy = 0;
+            double x = 0, y = 0;
+            while (i < tokens.length) {
+                if (tokens[i] != null && tokens[i].trim().length() > 0) {
+                    if (xy % 2 == 0) {
+                        x = Double.parseDouble(tokens[i]);
+                    } else {
+                        y = Double.parseDouble(tokens[i]);
+                    }
+                    if (xy > 0 && xy % 2 != 0) {
+                        add(new KVector(x, y));
+                    }
+                    xy++;
+                }
+                i++;
             }
         } catch (NumberFormatException exception) {
             throw new IllegalArgumentException(

@@ -88,10 +88,10 @@ public class LabelDummyRemoverTest extends AbstractLayeredProcessorTest {
      */
     @Before
     public void runUntil() {
-        lgraphs = layered.runLayoutTestUntil(LabelDummyRemover.class, false);
+        layered.runLayoutTestUntil(LabelDummyRemover.class, false, state);
 
         // count the number of overall nodes and of the tested type
-        for (LGraph g : lgraphs) {
+        for (LGraph g : state.getGraphs()) {
             for (Layer layer : g.getLayers()) {
                 for (LNode node : layer.getNodes()) {
                     noOverallNodes++;
@@ -102,7 +102,7 @@ public class LabelDummyRemoverTest extends AbstractLayeredProcessorTest {
             }
         }
 
-        lgraphs = layered.runLayoutTestUntil(LabelDummyRemover.class, true);
+        layered.runLayoutTestUntil(LabelDummyRemover.class, true, state);
 
     }
 
@@ -112,7 +112,7 @@ public class LabelDummyRemoverTest extends AbstractLayeredProcessorTest {
     @Test
     public void testRemovedNodes() {
         int noNodesAfter = 0;
-        for (LGraph g : lgraphs) {
+        for (LGraph g : state.getGraphs()) {
             for (Layer layer : g.getLayers()) {
                 for (LNode node : layer.getNodes()) {
                     assertTrue(node.getProperty(Properties.NODE_TYPE) != NodeType.LABEL);

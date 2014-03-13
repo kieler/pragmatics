@@ -25,8 +25,11 @@ import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ViewPart;
 
@@ -57,16 +60,13 @@ import de.cau.cs.kieler.klighd.viewers.ContextViewer;
 public class DiagramViewPart extends ViewPart implements IDiagramWorkbenchPart, ILayoutConfigProvider {
 
     /** The id this {@link ViewPart} is registered with in the extension point. */
-    public static final String VIEW_ID = "de.cau.cs.kieler.klighd.ui.lightDiagramView";
+    public static final String VIEW_ID = "de.cau.cs.kieler.klighd.ui.parts.DiagramViewPart";
 
     /** Action identifier for resetting the layout options in the side bar. */
-    public static final String ACTION_ID_RESET_LAYOUT_OPTIONS = "klighd.resetLayoutOptions";
+    public static final String ACTION_ID_RESET_LAYOUT_OPTIONS = VIEW_ID + ".resetLayoutOptions";
 
     /** the default name for this view. */
     public static final String DEFAULT_NAME = "Light Diagram";
-
-    /** the action identifier prefix for permanent menu contributions. */
-    public static final String PERMANENT_ACTION_PREFIX = "klighd.action";
 
     /** the viewer for this view part. */
     private ContextViewer viewer;
@@ -111,6 +111,12 @@ public class DiagramViewPart extends ViewPart implements IDiagramWorkbenchPart, 
 
         viewer.setModel("No model selected.", false);
         
+        // listen to any changes of the diagram area's size and re-zoom the diagram if  
+        // a zoom style is defined
+        // note that it is enough to register the listener on the composite containing the sidebar
+        // as this is resized simultaneously with the main window
+        diagramComposite.addControlListener(diagramAreaListener);
+        
         // the configuration of the context menu, selection provider,
         //  and UI (key binding) context activation is done in the UiContextViewer
     }
@@ -145,6 +151,10 @@ public class DiagramViewPart extends ViewPart implements IDiagramWorkbenchPart, 
     public void dispose() {
         super.dispose();
 
+        if (!diagramComposite.isDisposed()) {
+            diagramComposite.removeControlListener(diagramAreaListener);
+        }
+        
         if (this.sideBar != null) {
             this.sideBar.dispose();
         }
@@ -311,6 +321,13 @@ public class DiagramViewPart extends ViewPart implements IDiagramWorkbenchPart, 
     /**
      * {@inheritDoc}
      */
+    public String getPartId() {
+        return this.getViewSite().getSecondaryId();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
     public IViewer<?> getViewer() {
         return viewer;
     }
@@ -322,13 +339,6 @@ public class DiagramViewPart extends ViewPart implements IDiagramWorkbenchPart, 
      */
     public ContextViewer getContextViewer() {
         return viewer;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getPartId() {
-        return this.getViewSite().getSecondaryId();
     }
     
     /**
@@ -408,4 +418,26 @@ public class DiagramViewPart extends ViewPart implements IDiagramWorkbenchPart, 
 
         });
     }
+    
+    /**
+     * Listens to resize changes and triggers a re-layout of the diagram in case a zoom style is
+     * defined.
+     */
+    private ControlListener diagramAreaListener = new ControlListener() {
+
+        public void controlResized(final ControlEvent e) {
+            // assure that the composite's size is settled before we execute the layout
+            Display.getCurrent().asyncExec(new Runnable() {
+                public void run() {
+                    if (!DiagramViewPart.this.getViewer().getControl().isDisposed()
+                            && DiagramViewPart.this.getViewer().getControl().isVisible()) {
+                        LightDiagramServices.zoomDiagram(DiagramViewPart.this);
+                    }
+                }
+            });
+        }
+
+        public void controlMoved(final ControlEvent e) {
+        }
+    };
 }

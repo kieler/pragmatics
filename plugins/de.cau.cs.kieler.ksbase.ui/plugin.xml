@@ -26,14 +26,6 @@
       </command>
    </extension>
    <extension
-         point="de.cau.cs.kieler.core.kivi.combinations">
-      <combination
-            class="de.cau.cs.kieler.ksbase.ui.kivi.UpdateVisibilityCombination"
-            description="Structure-Based Editing needs to update its menus and toolbars when the user selection changes."
-            name="KSBasE Menu Updates">
-      </combination>
-   </extension>
-   <extension
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="true"

@@ -13,13 +13,11 @@
  */
 package de.cau.cs.kieler.kiml.service;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -29,7 +27,10 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.alg.DefaultFactory;
 import de.cau.cs.kieler.core.alg.IFactory;
+import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
+import de.cau.cs.kieler.kiml.config.LayoutContext;
 
 /**
  * A service class for layout managers, which are registered through the extension point.
@@ -38,7 +39,7 @@ import de.cau.cs.kieler.core.util.Pair;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow 2012-07-10 msp
  */
-public class LayoutManagersService implements IAdapterFactory {
+public class LayoutManagersService {
 
     /** preference identifier for oblique edge routing. */
     public static final String PREF_OBLIQUE_ROUTE = "kiml.oblique.route";
@@ -153,80 +154,29 @@ public class LayoutManagersService implements IAdapterFactory {
         }
         return null;
     }
-
+    
     /**
-     * Query the registered layout managers for an adapter of given type. The manager of highest
-     * priority that supports the given adaptable object is called. If the adapter type is
-     * {@code null}, the layout manager's default diagram part type is taken.
+     * Determines a context value by querying the diagram layout configurator of the most
+     * suitable layout manager for the given workbench and diagram part.
      * 
-     * @param adaptableObject an object that is supported by one of the layout managers,
-     *          typically a diagram part
-     * @param adapterType expected type of return value, or {@code null} if the default type
-     *          shall be used
-     * @return a object castable to the given adapter type, or {@code null}
+     * @param contextProperty a layout context property
+     * @param workbenchPart the workbench part of the context, or {@code null}
+     * @param diagramPart the diagram part of the context, or {@code null}
+     * @return a layout context value, or {@code null}
      */
-    @SuppressWarnings("rawtypes")
-    public Object getAdapter(final Object adaptableObject, final Class adapterType) {
-        IDiagramLayoutManager<?> manager = null;
-        for (Pair<Integer, IDiagramLayoutManager<?>> entry : managers) {
-            if (entry.getSecond().supports(adaptableObject)) {
-                manager = entry.getSecond();
-                break;
-            }
-        }
-        
+    public final Object getContextValue(final IProperty<?> contextProperty,
+            final IWorkbenchPart workbenchPart, final Object diagramPart) {
+        IDiagramLayoutManager<?> manager = getManager(workbenchPart, diagramPart);
         if (manager != null) {
-            if (adapterType == null) {
-                // Use the layout manager's diagram part type as adapter type
-                Class[] adapterList = manager.getAdapterList();
-                if (adapterList != null && adapterList.length > 0 && adapterList[0] != null) {
-                    return manager.getAdapter(adaptableObject, adapterList[0]);
-                }
-            } else {
-                // use the adapter type given as parameter
-                return manager.getAdapter(adaptableObject, adapterType);
-            }
-        } else {
-            
-            // Try to find a layout manager that is able to adapt to the given object even
-            // if it doesn't officially support it
-            for (Pair<Integer, IDiagramLayoutManager<?>> entry : managers) {
-                manager = entry.getSecond();
-                Object adapter = null;
-                if (adapterType == null) {
-                    // Use the layout manager's diagram part type as adapter type
-                    Class[] adapterList = manager.getAdapterList();
-                    if (adapterList != null && adapterList.length > 0 && adapterList[0] != null) {
-                        adapter = manager.getAdapter(adaptableObject, adapterList[0]);
-                    }
-                } else {
-                    // use the adapter type given as parameter
-                    adapter = manager.getAdapter(adaptableObject, adapterType);
-                }
-                if (adapter != null) {
-                    return adapter;
-                }
+            IMutableLayoutConfig config = manager.getDiagramConfig();
+            if (config != null) {
+                LayoutContext context = new LayoutContext();
+                context.setProperty(EclipseLayoutConfig.WORKBENCH_PART, workbenchPart);
+                context.setProperty(LayoutContext.DIAGRAM_PART, diagramPart);
+                return config.getContextValue(contextProperty, context);
             }
         }
         return null;
-    }
-
-    /**
-     * Compute an array of all adapter types supported by registered layout managers.
-     * These are typically the diagram part types that are used for mapping diagrams to
-     * layout graph elements.
-     * 
-     * @return adapter types supported by registered layout managers
-     */
-    public Class<?>[] getAdapterList() {
-        ArrayList<Class<?>> resultList = new ArrayList<Class<?>>();
-        for (Pair<Integer, IDiagramLayoutManager<?>> entry : managers) {
-            IDiagramLayoutManager<?> manager = entry.getSecond();
-            for (Class<?> adapterType : manager.getAdapterList()) {
-                resultList.add(adapterType);
-            }
-        }
-        return resultList.toArray(new Class<?>[resultList.size()]);
     }
 
     /**

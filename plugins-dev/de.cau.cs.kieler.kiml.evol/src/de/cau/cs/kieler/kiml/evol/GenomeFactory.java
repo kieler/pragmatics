@@ -31,14 +31,17 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IWorkbenchPart;
 
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
+
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.kiml.ILayoutData;
+import de.cau.cs.kieler.kiml.ILayoutMetaData;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.config.CompoundLayoutConfig;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
@@ -50,6 +53,7 @@ import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo;
 import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo.GeneType;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.service.EclipseLayoutConfig;
 import de.cau.cs.kieler.kiml.service.ExtensionLayoutConfigService;
 import de.cau.cs.kieler.kiml.service.LayoutMapping;
@@ -97,7 +101,7 @@ public final class GenomeFactory {
      */
     public static Genome createInitialGenome(final LayoutMapping<?> layoutMapping,
             final ILayoutConfig config, final Collection<LayoutOptionData> options) {
-        LayoutDataService dataService = LayoutDataService.getInstance();
+        LayoutMetaDataService dataService = LayoutMetaDataService.getInstance();
         LayoutOptionData algoOptionData = dataService.getOptionData(
                 LayoutOptions.ALGORITHM.getId());
         LayoutOptionData diagTypeData = dataService.getOptionData(
@@ -115,8 +119,8 @@ public final class GenomeFactory {
             // create layout context for the parent node
             LayoutContext context = createContext(parentNode, layoutMapping, config);
             genome.addContext(context, dataService.getOptionData().size() + 1);
-            String algorithmId = (String) config.getValue(algoOptionData, context);
-            String diagramType = (String) config.getValue(diagTypeData, context);
+            String algorithmId = (String) config.getOptionValue(algoOptionData, context);
+            String diagramType = (String) config.getOptionValue(diagTypeData, context);
             LayoutAlgorithmData algorithmData = DefaultLayoutConfig.getLayouterData(
                     algorithmId, diagramType);
 
@@ -159,7 +163,7 @@ public final class GenomeFactory {
      * @return a gene initialized to the given type
      */
     public static Gene<Integer> createLayoutTypeGene(final LayoutTypeData typeData) {
-        List<LayoutTypeData> typeList = new ArrayList<LayoutTypeData>(LayoutDataService.getInstance()
+        List<LayoutTypeData> typeList = new ArrayList<LayoutTypeData>(LayoutMetaDataService.getInstance()
                 .getTypeData());
         // remove layout types that have no registered algorithms
         ListIterator<LayoutTypeData> typeIter = typeList.listIterator();
@@ -301,16 +305,14 @@ public final class GenomeFactory {
         if (layoutMapping != null) {
             Object diagramPart = layoutMapping.getGraphMap().get(graphElement);
             context.setProperty(LayoutContext.DIAGRAM_PART, diagramPart);
-            EObject modelElement = (EObject) layoutMapping.getAdapterFactory().getAdapter(
-                    diagramPart, EObject.class);
-            context.setProperty(LayoutContext.DOMAIN_MODEL, modelElement);
-            IWorkbenchPart workbenchPart = layoutMapping.getProperty(IWorkbenchPart.class);
+            IWorkbenchPart workbenchPart = (IWorkbenchPart) Iterables.find(
+                    layoutMapping.getAllProperties().values(),
+                    Predicates.instanceOf(IWorkbenchPart.class), null);
             context.setProperty(EclipseLayoutConfig.WORKBENCH_PART, workbenchPart);
         }
-        context.setProperty(DefaultLayoutConfig.OPT_MAKE_OPTIONS, true);
 
         // enrich the layout context using the given configurator
-        layoutConfig.enrich(context);
+        DiagramLayoutEngine.INSTANCE.getOptionManager().enrich(context, layoutConfig, true);
         
         return context;
     }
@@ -331,7 +333,7 @@ public final class GenomeFactory {
             final LayoutAlgorithmData algoData, final LayoutOptionData optionData,
             final TypeInfo<T> typeInfo, final ILayoutConfig config, final LayoutContext context) {
         context.setProperty(DefaultLayoutConfig.CONTENT_ALGO, algoData);
-        T value = translateToGene(config.getValue(optionData, context), typeInfo);
+        T value = translateToGene(config.getOptionValue(optionData, context), typeInfo);
         
         Comparable<? super T> lowerBound = typeInfo.getLowerBound();
         if (lowerBound.compareTo(value) > 0) {
@@ -358,12 +360,12 @@ public final class GenomeFactory {
             final TypeInfo<T> typeInfo) {
         switch (typeInfo.getGeneType()) {
         case LAYOUT_ALGO:
-            LayoutAlgorithmData algoData = LayoutDataService.getInstance().getAlgorithmData(
+            LayoutAlgorithmData algoData = LayoutMetaDataService.getInstance().getAlgorithmData(
                     (String) value);
             int algoIndex = ((List<?>) typeInfo.getTypeParam()).indexOf(algoData);
             return (T) Integer.valueOf(algoIndex);
         case LAYOUT_TYPE:
-            LayoutTypeData typeData = LayoutDataService.getInstance().getTypeData((String) value);
+            LayoutTypeData typeData = LayoutMetaDataService.getInstance().getTypeData((String) value);
             int typeIndex = ((List<?>) typeInfo.getTypeParam()).indexOf(typeData);
             return (T) Integer.valueOf(typeIndex);
         case BOOLEAN:
@@ -387,7 +389,7 @@ public final class GenomeFactory {
         switch (geneType) {
         case LAYOUT_ALGO:
         case LAYOUT_TYPE:
-            return ((ILayoutData) gene.listValue()).getId();
+            return ((ILayoutMetaData) gene.listValue()).getId();
         case BOOLEAN:
             return (Integer) gene.getValue() != 0;
         case ENUM:
@@ -404,7 +406,7 @@ public final class GenomeFactory {
      * @param graphMap map of context graph elements to elements of the test graph that is configured
      */
     public static void configureGraph(final Genome genome, final Map<EObject, EObject> graphMap) {
-        LayoutDataService dataService = LayoutDataService.getInstance();
+        LayoutMetaDataService dataService = LayoutMetaDataService.getInstance();
         for (LayoutContext context : genome.getContexts()) {
             EObject element = graphMap.get(context.getProperty(LayoutContext.GRAPH_ELEM));
             if (element instanceof KNode) {

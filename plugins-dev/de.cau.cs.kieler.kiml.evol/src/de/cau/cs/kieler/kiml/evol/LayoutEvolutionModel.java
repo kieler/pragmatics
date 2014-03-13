@@ -26,7 +26,7 @@ import com.google.common.collect.Maps;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
@@ -285,7 +285,7 @@ public final class LayoutEvolutionModel extends AbstractEvolutionaryAlgorithm {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         AnalysisService analysisService = AnalysisService.getInstance();
-        LayoutDataService layoutDataService = LayoutDataService.getInstance();
+        LayoutMetaDataService layoutDataService = LayoutMetaDataService.getInstance();
         Population population = getPopulation();
         builder.append("Generation ").append(getGenerationNumber()).append('\n');
         

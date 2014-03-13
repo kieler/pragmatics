@@ -121,7 +121,7 @@ public class LayeringTest extends AbstractLayeredProcessorTest {
      */
     @Before
     public void runUntil() {
-        lgraphs = layered.runLayoutTestUntil(getAndCheckSimpleConfig().getStrategyImpl());
+        layered.runLayoutTestUntil(getAndCheckSimpleConfig().getStrategyImpl(), state);
     }
 
     /**
@@ -129,7 +129,7 @@ public class LayeringTest extends AbstractLayeredProcessorTest {
      */
     @Test
     public void testNoLayerlessNodes() {
-        for (LGraph g : lgraphs) {
+        for (LGraph g : state.getGraphs()) {
             assertTrue(g.getLayerlessNodes().isEmpty());
         }
     }
@@ -139,7 +139,7 @@ public class LayeringTest extends AbstractLayeredProcessorTest {
      */
     @Test
     public void testNoEmptyLayers() {
-        for (LGraph g : lgraphs) {
+        for (LGraph g : state.getGraphs()) {
             for (Layer layer : g.getLayers()) {
                 assertTrue(layer.getNodes() != null);
                 assertTrue(!layer.getNodes().isEmpty());
@@ -155,7 +155,7 @@ public class LayeringTest extends AbstractLayeredProcessorTest {
     public void testAllKNodesExist() {
 
         // find all labels and remove randomly generated ones from the set
-        for (LGraph g : lgraphs) {
+        for (LGraph g : state.getGraphs()) {
             for (Layer layer : g.getLayers()) {
                 for (LNode n : layer.getNodes()) {
                     for (LLabel label : n.getLabels()) {
@@ -178,7 +178,7 @@ public class LayeringTest extends AbstractLayeredProcessorTest {
      */
     @Test
     public void testEdgesIncreasing() {
-        for (LGraph g : lgraphs) {
+        for (LGraph g : state.getGraphs()) {
             for (Layer layer : g.getLayers()) {
                 for (LNode n : layer.getNodes()) {
                     for (LEdge e : n.getOutgoingEdges()) {

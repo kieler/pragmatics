@@ -23,6 +23,8 @@ import org.junit.runners.Parameterized.Parameters;
 
 import com.google.common.collect.Lists;
 
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
+import de.cau.cs.kieler.kiml.service.KimlServicePlugin;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.klay.test.config.DummyLayoutConfigurator;
 import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
@@ -59,6 +61,8 @@ public abstract class KlayAutomatedJUnitTest {
     public void graphAutomatedTestInitialization() {
         // make sure the ui plugin is loaded, as it holds required options.
         KimlUiPlugin.getDefault();
+        // as well as the kiml.service plugin
+        KimlServicePlugin.getDefault();
         
         graphsList = GraphTestUtil.loadGraphs(getBundleTestPath());
         configurators = getConfigurators();
@@ -105,17 +109,6 @@ public abstract class KlayAutomatedJUnitTest {
         // Clear all static fields
         graphsList = null;
         configurators = null;
-    }
-
-    /**
-     * Important for scanning files is the Plugin ID.
-     * 
-     * FIXME Is this used anywhere?
-     * 
-     * @return the plugin id
-     */
-    protected String getPluginId() {
-        return "de.cau.cs.kieler.klay.test";
     }
 
     // -------------------------------------------------------------------------

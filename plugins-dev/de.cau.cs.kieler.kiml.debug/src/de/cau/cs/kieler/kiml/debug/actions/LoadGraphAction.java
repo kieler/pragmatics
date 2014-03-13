@@ -33,9 +33,8 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.PersistentEntry;
-import de.cau.cs.kieler.core.kivi.KiVi;
 import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.debug.KimlViewerPlugin;
@@ -109,7 +108,7 @@ public class LoadGraphAction extends Action {
      */
     private void layout(final KNode graph) {
         // deserialize layout options
-        LayoutDataService dataService = LayoutDataService.getInstance();
+        LayoutMetaDataService dataService = LayoutMetaDataService.getInstance();
         Iterator<EObject> contentIter = graph.eAllContents();
         while (contentIter.hasNext()) {
             EObject obj = contentIter.next();
@@ -138,7 +137,7 @@ public class LoadGraphAction extends Action {
         }
         
         // draw the resulting layout on the canvas
-        KiVi.getInstance().executeEffect(new UpdateViewerEffect(graph, monitor));
+        new UpdateViewerEffect(graph, monitor).execute();
     }
 
 }

@@ -39,9 +39,10 @@ import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.LayoutConfigService;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
+import de.cau.cs.kieler.kiml.config.LayoutContext;
 import de.cau.cs.kieler.kiml.config.SemanticLayoutConfig;
 import de.cau.cs.kieler.kiml.util.LayoutOptionProxy;
 
@@ -140,7 +141,7 @@ public class ExtensionLayoutConfigService extends LayoutConfigService {
     private void loadLayoutConfigsExtensions() {
         IConfigurationElement[] extensions = Platform.getExtensionRegistry()
                 .getConfigurationElementsFor(EXTP_ID_LAYOUT_CONFIGS);
-        LayoutDataService layoutDataService = LayoutDataService.getInstance();
+        LayoutMetaDataService layoutDataService = LayoutMetaDataService.getInstance();
         assert layoutDataService != null;
 
         for (IConfigurationElement element : extensions) {
@@ -251,7 +252,7 @@ public class ExtensionLayoutConfigService extends LayoutConfigService {
     }
     
     /**
-     * Stores the layout option with given value for the edit part.
+     * Stores the layout option with given value for the diagram part.
      * 
      * @param diagramPart a diagram part
      * @param optionData a layout option data
@@ -263,16 +264,24 @@ public class ExtensionLayoutConfigService extends LayoutConfigService {
             final String valueString, final boolean storeDomainModel) {
         Object value = optionData.parseValue(valueString);
         if (value != null) {
-            String clazzName;
-            LayoutManagersService managersService = LayoutManagersService.getInstance();
+            Object object;
             if (storeDomainModel) {
-                EObject model = (EObject) managersService.getAdapter(diagramPart, EObject.class);
-                clazzName = model == null ? null : model.eClass().getInstanceTypeName();
+                object = LayoutManagersService.getInstance().getContextValue(
+                        LayoutContext.DOMAIN_MODEL, null, diagramPart);
             } else {
-                Object relevantPart = managersService.getAdapter(diagramPart, null);
-                clazzName = relevantPart == null ? null : relevantPart.getClass().getName();
+                object = LayoutManagersService.getInstance().getContextValue(
+                        LayoutContext.DIAGRAM_PART, null, diagramPart);
+                if (object == null) {
+                    object = diagramPart;
+                }
             }
-            if (clazzName != null) {
+            if (object != null) {
+                String clazzName;
+                if (object instanceof EObject) {
+                    clazzName = ((EObject) object).eClass().getInstanceTypeName();
+                } else {
+                    clazzName = object.getClass().getName();
+                }
                 addOptionValue(clazzName, optionData.getId(), value);
                 registeredElements.add(clazzName);
                 IPreferenceStore preferenceStore = KimlServicePlugin.getDefault().getPreferenceStore();
@@ -286,7 +295,7 @@ public class ExtensionLayoutConfigService extends LayoutConfigService {
      */
     private void loadPreferences() {
         IPreferenceStore preferenceStore = KimlServicePlugin.getDefault().getPreferenceStore();
-        LayoutDataService layoutDataService = LayoutDataService.getInstance();
+        LayoutMetaDataService layoutDataService = LayoutMetaDataService.getInstance();
         
         // load default options for diagram types
         List<Pair<String, String>> diagramTypes = getDiagramTypes();

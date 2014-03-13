@@ -39,7 +39,7 @@ import org.eclipse.ui.dialogs.ListDialog;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.LayoutConfigService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.preferences.OptionsTableProvider.DataEntry;
@@ -334,7 +334,7 @@ public class NewOptionDialog extends Dialog {
                 return null;
             }
         });
-        Collection<LayoutOptionData> data = LayoutDataService.getInstance().getOptionData();
+        Collection<LayoutOptionData> data = LayoutMetaDataService.getInstance().getOptionData();
         ArrayList<SelectionData> inputList = new ArrayList<SelectionData>(data.size());      
         for (LayoutOptionData optionData : data) {
             // layout options without target definition are now shown to the user
@@ -368,7 +368,7 @@ public class NewOptionDialog extends Dialog {
                 int dotIndex = elementValue.lastIndexOf('.');
                 name = elementValue.substring(dotIndex + 1);
             }
-            LayoutOptionData optionData = LayoutDataService.getInstance().getOptionData(optionValue);
+            LayoutOptionData optionData = LayoutMetaDataService.getInstance().getOptionData(optionValue);
             if (optionData != null) {
                 Object value = optionData.getDefault();
                 if (value == null) {

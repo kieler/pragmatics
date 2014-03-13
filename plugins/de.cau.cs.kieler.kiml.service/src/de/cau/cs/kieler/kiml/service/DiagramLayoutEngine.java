@@ -45,6 +45,7 @@ import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
+import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.config.LayoutContext;
 import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -223,16 +224,23 @@ public class DiagramLayoutEngine {
                 LayoutMapping<T> mapping = layoutMapping.get();
                 IStatus status;
                 if (mapping != null && mapping.getLayoutGraph() != null) {
-                    // the manager's adapter list is expected to return its diagram part type
-                    Class<?>[] adapterList = layoutManager.getAdapterList();
-                    assert adapterList.length > 0;
-                    
-                    // translate the diagram part into one that is understood by the layout manager
-                    Object transDiagPart;
-                    if (adapterList != null && adapterList.length > 0) {
-                        transDiagPart = layoutManager.getAdapter(diagramPart, adapterList[0]);
-                    } else {
-                        transDiagPart = diagramPart;
+                    Object transDiagPart = diagramPart;
+                    IMutableLayoutConfig diagramConfig = layoutManager.getDiagramConfig();
+                    if (diagramConfig != null) {
+                        if (!mapping.getLayoutConfigs().contains(diagramConfig)) {
+                            mapping.getLayoutConfigs().add(diagramConfig);
+                        }
+                        
+                        // translate the diagram part into one that is understood by the layout manager
+                        if (diagramPart != null) {
+                            LayoutContext context = new LayoutContext();
+                            context.setProperty(LayoutContext.DIAGRAM_PART, diagramPart);
+                            Object object = diagramConfig.getContextValue(LayoutContext.DIAGRAM_PART,
+                                    context);
+                            if (object != null) {
+                                transDiagPart = object;
+                            }
+                        }
                     }
                     
                     // perform the actual layout
@@ -415,12 +423,23 @@ public class DiagramLayoutEngine {
         
         IStatus status;
         if (mapping != null && mapping.getLayoutGraph() != null) {
-            // the manager's adapter list is expected to return its internally used diagram part type
-            Class<?>[] adapterList = layoutManager.getAdapterList();
-            assert adapterList.length > 0;
-                    
-            // translate the diagram part into one that is understood by the layout manager
-            Object transDiagPart = layoutManager.getAdapter(diagramPart, adapterList[0]);
+            Object transDiagPart = diagramPart;
+            IMutableLayoutConfig diagramConfig = layoutManager.getDiagramConfig();
+            if (diagramConfig != null) {
+                if (!mapping.getLayoutConfigs().contains(diagramConfig)) {
+                    mapping.getLayoutConfigs().add(diagramConfig);
+                }
+                
+                // translate the diagram part into one that is understood by the layout manager
+                if (diagramPart != null) {
+                    LayoutContext context = new LayoutContext();
+                    context.setProperty(LayoutContext.DIAGRAM_PART, diagramPart);
+                    Object object = diagramConfig.getContextValue(LayoutContext.DIAGRAM_PART, context);
+                    if (object != null) {
+                        transDiagPart = object;
+                    }
+                }
+            }
             submon1.done();
             
             // perform the actual layout

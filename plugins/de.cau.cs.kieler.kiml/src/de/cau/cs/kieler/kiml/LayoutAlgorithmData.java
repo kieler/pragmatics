@@ -23,13 +23,14 @@ import de.cau.cs.kieler.kiml.options.GraphFeature;
 
 /**
  * Data type used to store information for a layout algorithm. Instances are created using
- * data from the {@code layoutProviders} extension point and are managed by {@link LayoutDataService}.
+ * data from the {@code layoutProviders} extension point and are managed by
+ * {@link LayoutMetaDataService}.
  * 
  * @kieler.design 2011-02-01 reviewed by cmot, soh
  * @kieler.rating yellow 2012-10-09 review KI-25 by chsch, bdu
  * @author msp
  */
-public class LayoutAlgorithmData implements ILayoutData {
+public final class LayoutAlgorithmData implements ILayoutMetaData {
 
     /**
      * The minimal allowed priority value. Priorities less or equal to this value are treated
@@ -86,7 +87,7 @@ public class LayoutAlgorithmData implements ILayoutData {
     @Override
     public String toString() {
         if (name != null && name.length() > 0) {
-            String categoryName = LayoutDataService.getInstance().getCategoryName(category);
+            String categoryName = LayoutMetaDataService.getInstance().getCategoryName(category);
             if (categoryName == null) {
                 return name;
             } else {

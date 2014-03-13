@@ -79,7 +79,7 @@ public class EdgeRoutingTest extends AbstractLayeredProcessorTest {
      */
     @Before
     public void runUntil() {
-        lgraphs = layered.runLayoutTestUntil(getAndCheckSimpleConfig().getStrategyImpl());
+        layered.runLayoutTestUntil(getAndCheckSimpleConfig().getStrategyImpl(), state);
     }
 
     /**
@@ -93,7 +93,7 @@ public class EdgeRoutingTest extends AbstractLayeredProcessorTest {
                         OrthogonalEdgeRouter.class)) {
 
             // run through all edges
-            for (LGraph g : lgraphs) {
+            for (LGraph g : state.getGraphs()) {
                 for (Layer layer : g.getLayers()) {
                     for (LNode n : layer.getNodes()) {
 

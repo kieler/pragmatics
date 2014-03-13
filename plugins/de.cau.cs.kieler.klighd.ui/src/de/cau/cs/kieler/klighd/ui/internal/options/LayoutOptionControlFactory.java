@@ -39,8 +39,8 @@ import com.google.common.collect.Iterators;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KielerMath;
-import de.cau.cs.kieler.kiml.ILayoutData;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.ILayoutMetaData;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
@@ -121,7 +121,7 @@ public class LayoutOptionControlFactory {
      *            the viewContext belonging to the current diagram
      */
     public void initialize(final ViewContext theViewContext) {
-        lightLayoutConfig.clearValues(LayoutContext.global());
+        lightLayoutConfig.clearOptionValues(LayoutContext.global());
         
         this.viewContext = theViewContext;
         this.workbenchPart = viewContext.getDiagramWorkbenchPart();
@@ -148,10 +148,10 @@ public class LayoutOptionControlFactory {
         defaultLayoutContext.setProperty(EclipseLayoutConfig.WORKBENCH_PART, workbenchPart);
         defaultLayoutContext.setProperty(LayoutContext.DOMAIN_MODEL, inputModel);
         defaultLayoutContext.setProperty(LayoutContext.DIAGRAM_PART, viewModel);
-        defaultLayoutContext.setProperty(DefaultLayoutConfig.OPT_MAKE_OPTIONS, true);
         defaultLayoutContext.setProperty(LayoutContext.OPT_TARGETS,
                 EnumSet.of(LayoutOptionData.Target.PARENTS));
-        defaultLayoutConfig.enrich(defaultLayoutContext);
+        DiagramLayoutEngine.INSTANCE.getOptionManager().enrich(defaultLayoutContext,
+                defaultLayoutConfig, true);
     }
     
     /**
@@ -185,7 +185,7 @@ public class LayoutOptionControlFactory {
      * @param optionId a layout option identifier
      */
     public void createControl(final String optionId) {
-        LayoutOptionData optionData = LayoutDataService.getInstance().getOptionData(optionId);
+        LayoutOptionData optionData = LayoutMetaDataService.getInstance().getOptionData(optionId);
         if (optionData != null) {
             createControl(optionData, null, null, null);
         }
@@ -199,7 +199,7 @@ public class LayoutOptionControlFactory {
      * @param maxValue the maximal value for the option
      */
     public void createControl(final String optionId, final Float minValue, final Float maxValue) {
-        LayoutOptionData optionData = LayoutDataService.getInstance().getOptionData(optionId);
+        LayoutOptionData optionData = LayoutMetaDataService.getInstance().getOptionData(optionId);
         if (optionData != null) {
             createControl(optionData, minValue, maxValue, null);
         }
@@ -212,7 +212,7 @@ public class LayoutOptionControlFactory {
      * @param availableValues the set of values to offer
      */
     public void createControl(final String optionId, final Collection<?> availableValues) {
-        LayoutOptionData optionData = LayoutDataService.getInstance().getOptionData(optionId);
+        LayoutOptionData optionData = LayoutMetaDataService.getInstance().getOptionData(optionId);
         if (optionData != null) {
             createControl(optionData, null, null, availableValues);
         }
@@ -225,11 +225,11 @@ public class LayoutOptionControlFactory {
     public void resetToDefaults() {
         // temporarily disable auto-refresh to avoid multiple layout runs triggered by listeners
         autoRefreshLayout = false;
-        lightLayoutConfig.clearValues(LayoutContext.global());
+        lightLayoutConfig.clearOptionValues(LayoutContext.global());
         for (Control control : controls) {
             if (control.getData() instanceof LayoutOptionData) {
                 LayoutOptionData optionData = (LayoutOptionData) control.getData();
-                final Object defaultValue = defaultLayoutConfig.getValue(optionData,
+                final Object defaultValue = defaultLayoutConfig.getOptionValue(optionData,
                         defaultLayoutContext);
                 
                 switch (optionData.getType()) {
@@ -327,7 +327,7 @@ public class LayoutOptionControlFactory {
                 slider.setData(optionData);
                 controls.add(slider);
                 // set initial value for the slider
-                float initialValue = ((Number) defaultLayoutConfig.getValue(optionData,
+                float initialValue = ((Number) defaultLayoutConfig.getOptionValue(optionData,
                         defaultLayoutContext)).floatValue();
                 initialValue = KielerMath.limit(initialValue, sliderListener.minFloat,
                         sliderListener.maxFloat);
@@ -356,7 +356,7 @@ public class LayoutOptionControlFactory {
                 valuesContainer.setData(optionData);
                 controls.add(valuesContainer);
                 // set initial value for the radio buttons
-                if ((Boolean) defaultLayoutConfig.getValue(optionData, defaultLayoutContext)) {
+                if ((Boolean) defaultLayoutConfig.getOptionValue(optionData, defaultLayoutContext)) {
                     trueButton.setSelection(true);
                 } else {
                     falseButton.setSelection(true);
@@ -376,7 +376,8 @@ public class LayoutOptionControlFactory {
                 } else {
                     values = ((Class<Enum>) optionData.getOptionClass()).getEnumConstants();
                 }
-                Object initialValue = defaultLayoutConfig.getValue(optionData, defaultLayoutContext);
+                Object initialValue = defaultLayoutConfig.getOptionValue(optionData,
+                        defaultLayoutContext);
                 for (Object value : values) {
                     Button button = formToolkit.createButton(valuesContainer, getUserValue(value),
                             SWT.RADIO);
@@ -542,8 +543,8 @@ public class LayoutOptionControlFactory {
                 public void selectionChanged(final SelectionChangedEvent event) {
                     // instantly update the layout when an algorithm is selected
                     IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-                    if (!selection.isEmpty() && selection.getFirstElement() instanceof ILayoutData) {
-                        ILayoutData layoutData = (ILayoutData) selection.getFirstElement();
+                    if (!selection.isEmpty() && selection.getFirstElement() instanceof ILayoutMetaData) {
+                        ILayoutMetaData layoutData = (ILayoutMetaData) selection.getFirstElement();
                         lightLayoutConfig.setValue(LayoutOptions.ALGORITHM, layoutData.getId());
                         refreshLayout(true);
                     }

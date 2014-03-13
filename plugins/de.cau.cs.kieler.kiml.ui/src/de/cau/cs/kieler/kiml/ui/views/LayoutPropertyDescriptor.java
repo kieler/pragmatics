@@ -14,6 +14,9 @@
 package de.cau.cs.kieler.kiml.ui.views;
 
 
+import java.util.EnumSet;
+import java.util.Set;
+
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.ICellEditorValidator;
@@ -45,6 +48,8 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
 
     /** the layout option data associated with this property descriptor. */
     private LayoutOptionData optionData;
+    /** option targets applicable to the currently selected diagram element. */
+    private Set<LayoutOptionData.Target> elementTargets;
     /** the label provider for this property descriptor. */
     private LayoutOptionLabelProvider labelProvider;
     
@@ -52,9 +57,12 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
      * Creates a layout property descriptor based on a specific layout option.
      * 
      * @param theoptionData the layout option data
+     * @param theelementTargets option targets applicable to the currently selected diagram element
      */
-    public LayoutPropertyDescriptor(final LayoutOptionData theoptionData) {
+    public LayoutPropertyDescriptor(final LayoutOptionData theoptionData,
+            final Set<LayoutOptionData.Target> theelementTargets) {
         this.optionData = theoptionData;
+        this.elementTargets = theelementTargets;
     }
     
     /**
@@ -110,7 +118,31 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
      * {@inheritDoc}
      */
     public String getCategory() {
-        return optionData.getTargetsDescription();
+        // Compute the intersection of the targets registered for the layout option
+        // and those determined for the graph element currently in focus.
+        Set<LayoutOptionData.Target> targets = EnumSet.copyOf(optionData.getTargets());
+        if (elementTargets != null) {
+            targets.retainAll(elementTargets);
+        }
+        // In normal cases, the intersection should contain exactly one element.
+        if (targets.size() == 1) {
+            switch (targets.iterator().next()) {
+            case PARENTS:
+                if (elementTargets != null && elementTargets.contains(LayoutOptionData.Target.NODES)) {
+                    return Messages.getString("kiml.ui.74");
+                }
+                return Messages.getString("kiml.ui.73");
+            case NODES:
+                return Messages.getString("kiml.ui.75");
+            case EDGES:
+                return Messages.getString("kiml.ui.76");
+            case PORTS:
+                return Messages.getString("kiml.ui.77");
+            case LABELS:
+                return Messages.getString("kiml.ui.78");
+            }
+        }
+        return null;
     }
 
     /**

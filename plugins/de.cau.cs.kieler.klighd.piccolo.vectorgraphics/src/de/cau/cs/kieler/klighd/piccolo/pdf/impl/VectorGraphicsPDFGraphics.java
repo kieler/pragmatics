@@ -101,8 +101,9 @@ public class VectorGraphicsPDFGraphics extends KlighdAbstractSVGGraphics impleme
      */
     public void export(final OutputStream stream, final Control control,
             final boolean cameraViewport, final int scale, final boolean textAsShapes,
-            final String subFormatId) {
-        this.delegate.export(stream, control, cameraViewport, scale, textAsShapes, subFormatId);
+            final boolean embedFonts, final String subFormatId) {
+        this.delegate.export(stream, control, cameraViewport, scale, textAsShapes, embedFonts,
+                subFormatId);
     }
 
     private KlighdCanvasExporter delegate = new KlighdCanvasExporter() {
@@ -110,9 +111,9 @@ public class VectorGraphicsPDFGraphics extends KlighdAbstractSVGGraphics impleme
         @Override
         public void export(final OutputStream stream, final KlighdCanvas canvas,
                 final boolean cameraViewport, final int scale, final boolean textAsShapes,
-                final String subFormatId) {
+                final boolean embedFonts, final String subFormatId) {
             VectorGraphicsPDFGraphics.this.export(stream, canvas, cameraViewport, scale,
-                    textAsShapes, subFormatId);
+                    textAsShapes, embedFonts, subFormatId);
         }
     };
 
@@ -121,7 +122,7 @@ public class VectorGraphicsPDFGraphics extends KlighdAbstractSVGGraphics impleme
      */
     public void export(final OutputStream stream, final KlighdCanvas canvas,
             final boolean viewPort, final int scale, final boolean textAsShapes,
-            final String subFormatId) {
+            final boolean embedFonts, final String subFormatId) {
 
         // FIXME ... dont do this again, improve the KlighdAbstractSVGGraphics ... remove the "svg"
         PCamera camera = canvas.getCamera();
@@ -146,6 +147,8 @@ public class VectorGraphicsPDFGraphics extends KlighdAbstractSVGGraphics impleme
         } else {
             graphics.setFontRendering(FontRendering.TEXT);
         }
+        
+        // TODO: any way to configure the embedding of used fonts???
 
         setGraphicsDelegate(graphics);
 
@@ -178,6 +181,5 @@ public class VectorGraphicsPDFGraphics extends KlighdAbstractSVGGraphics impleme
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 }

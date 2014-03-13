@@ -100,7 +100,7 @@ public class LabelSideSelectorTest extends AbstractLayeredProcessorTest {
      */
     @Before
     public void runUntil() {
-        lgraphs = layered.runLayoutTestUntil(LabelSideSelector.class);
+        layered.runLayoutTestUntil(LabelSideSelector.class, state);
     }
 
     /**
@@ -108,7 +108,7 @@ public class LabelSideSelectorTest extends AbstractLayeredProcessorTest {
      */
     @Test
     public void testRemovedNodes() {
-        for (LGraph g : lgraphs) {
+        for (LGraph g : state.getGraphs()) {
             for (Layer layer : g.getLayers()) {
                 for (LNode node : layer.getNodes()) {
 

@@ -2,7 +2,7 @@ package de.cau.cs.kieler.kiml.config.text
 
 import com.google.common.collect.Lists
 import de.cau.cs.kieler.core.kgraph.KNode
-import de.cau.cs.kieler.kiml.LayoutDataService
+import de.cau.cs.kieler.kiml.LayoutMetaDataService
 import de.cau.cs.kieler.kiml.LayoutOptionData
 import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig
 import java.util.List
@@ -13,7 +13,7 @@ class LayoutConfigTransformer {
     public static def List<VolatileLayoutConfig> from(Resource resource) {
 
         val List<VolatileLayoutConfig> volatileConfigs = Lists.newLinkedList
-        val dataService = LayoutDataService.getInstance();
+        val dataService = LayoutMetaDataService.getInstance();
 
         resource.contents.filter(typeof(KNode)).forEach [ root |
             

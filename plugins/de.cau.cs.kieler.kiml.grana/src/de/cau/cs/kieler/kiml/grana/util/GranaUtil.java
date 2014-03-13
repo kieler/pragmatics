@@ -19,7 +19,7 @@ import java.util.List;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.grana.AnalysisData;
 import de.cau.cs.kieler.kiml.grana.AnalysisService;
@@ -92,7 +92,7 @@ public final class GranaUtil {
         for (String option : options) {
             String[] keyAndValue = option.split("=");
             if (keyAndValue.length == 2) {
-                LayoutOptionData optionData = LayoutDataService.getInstance()
+                LayoutOptionData optionData = LayoutMetaDataService.getInstance()
                 .getOptionData(keyAndValue[0]);
                 if (optionData != null) {
                     Object value = optionData.parseValue(keyAndValue[1]);

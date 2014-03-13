@@ -25,8 +25,8 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
-import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Splits the long edges of the layered graph to obtain a proper layering.
@@ -56,11 +56,17 @@ public final class LongEdgeSplitter implements ILayoutProcessor {
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
         monitor.begin("Edge splitting", 1);
         
+        if (layeredGraph.getLayers().size() <= 2) {
+            monitor.done();
+            return;
+        }
+        
         // Iterate through the layers
         ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
+        Layer nextLayer = layerIter.next();
         while (layerIter.hasNext()) {
-            Layer layer = layerIter.next();
-            int layerIndex = layerIter.previousIndex();
+            Layer layer = nextLayer;
+            nextLayer = layerIter.next();
             
             // Iterate through the nodes
             for (LNode node : layer) {
@@ -69,30 +75,40 @@ public final class LongEdgeSplitter implements ILayoutProcessor {
                     // Iterate through the edges
                     for (LEdge edge : port.getOutgoingEdges()) {
                         LPort targetPort = edge.getTarget();
-                        int targetIndex = targetPort.getNode().getLayer().getIndex();
+                        Layer targetLayer = targetPort.getNode().getLayer();
                         
                         // If the edge doesn't go to the current or next layer, split it
-                        assert targetIndex >= layerIndex;
-                        if (targetIndex > layerIndex + 1) {
-                            // Get the next layer
-                            Layer nextLayer = layerIter.next();
+                        if (targetLayer != layer && targetLayer != nextLayer) {
+                            // If there is no next layer, something is wrong
+                            assert layerIter.hasNext();
                             
                             // Create dummy node
                             LNode dummyNode = new LNode(layeredGraph);
-                            dummyNode.setProperty(Properties.ORIGIN, edge);
-                            dummyNode.setProperty(Properties.NODE_TYPE, NodeType.LONG_EDGE);
+                            dummyNode.setProperty(InternalProperties.ORIGIN, edge);
+                            dummyNode.setProperty(InternalProperties.NODE_TYPE, NodeType.LONG_EDGE);
                             dummyNode.setProperty(LayoutOptions.PORT_CONSTRAINTS,
                                     PortConstraints.FIXED_POS);
                             dummyNode.setLayer(nextLayer);
+                            
+                            // Set thickness of the edge
+                            float thickness = edge.getProperty(LayoutOptions.THICKNESS);
+                            if (thickness < 0) {
+                                thickness = 0;
+                                edge.setProperty(LayoutOptions.THICKNESS, thickness);
+                            }
+                            dummyNode.getSize().y = thickness;
+                            double portPos = Math.floor(thickness / 2);
                             
                             // Create dummy input and output ports
                             LPort dummyInput = new LPort(layeredGraph);
                             dummyInput.setSide(PortSide.WEST);
                             dummyInput.setNode(dummyNode);
+                            dummyInput.getPosition().y = portPos;
                             
                             LPort dummyOutput = new LPort(layeredGraph);
                             dummyOutput.setSide(PortSide.EAST);
                             dummyOutput.setNode(dummyNode);
+                            dummyOutput.getPosition().y = portPos;
                             
                             edge.setTarget(dummyInput);
                             
@@ -103,9 +119,6 @@ public final class LongEdgeSplitter implements ILayoutProcessor {
                             dummyEdge.setTarget(targetPort);
                             
                             setDummyProperties(dummyNode, edge, dummyEdge);
-                            
-                            // Reset the layer pointer
-                            layerIter.previous();
                         }
                     }
                 }
@@ -125,18 +138,18 @@ public final class LongEdgeSplitter implements ILayoutProcessor {
     private void setDummyProperties(final LNode dummy, final LEdge inEdge, final LEdge outEdge) {
         LNode inEdgeSourceNode = inEdge.getSource().getNode();
         
-        if (inEdgeSourceNode.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE) {
+        if (inEdgeSourceNode.getProperty(InternalProperties.NODE_TYPE) == NodeType.LONG_EDGE) {
             // The incoming edge originates from a long edge dummy node, so we can
             // just copy its properties
-            dummy.setProperty(Properties.LONG_EDGE_SOURCE,
-                    inEdgeSourceNode.getProperty(Properties.LONG_EDGE_SOURCE));
-            dummy.setProperty(Properties.LONG_EDGE_TARGET,
-                    inEdgeSourceNode.getProperty(Properties.LONG_EDGE_TARGET));
+            dummy.setProperty(InternalProperties.LONG_EDGE_SOURCE,
+                    inEdgeSourceNode.getProperty(InternalProperties.LONG_EDGE_SOURCE));
+            dummy.setProperty(InternalProperties.LONG_EDGE_TARGET,
+                    inEdgeSourceNode.getProperty(InternalProperties.LONG_EDGE_TARGET));
         } else {
             // The source is the input edge's source port, the target is the output
             // edge's target port
-            dummy.setProperty(Properties.LONG_EDGE_SOURCE, inEdge.getSource());
-            dummy.setProperty(Properties.LONG_EDGE_TARGET, outEdge.getTarget());
+            dummy.setProperty(InternalProperties.LONG_EDGE_SOURCE, inEdge.getSource());
+            dummy.setProperty(InternalProperties.LONG_EDGE_TARGET, outEdge.getTarget());
         }
     }
 
