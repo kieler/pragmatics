@@ -67,10 +67,7 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         borderSpacing = rootLayout.getProperty(LayoutOptions.BORDER_SPACING);
 
         // calculate margins
-        KGraphAdapter adapter = KGraphAdapters.adapt(parentNode);
-        KimlNodeDimensionCalculation.sortPortLists(adapter);
-        KimlNodeDimensionCalculation.calculateLabelAndNodeSizes(adapter);
-        KimlNodeDimensionCalculation.calculateNodeMargins(adapter);
+        calculateMarginsAndSizes(parentNode);
 
         // execute layout algorithm
         KGraphImporter importer = new KGraphImporter();
@@ -81,8 +78,8 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         new PortConstraintProcessor().process(graph, bpm);
         new NonUniformEdgeLengthProcessor().process(graph, bpm);
 
-        System.out.println(parentNode);
-        System.out.println(Arrays.toString(graph.idealEdgeLengths));
+        //System.out.println(parentNode);
+        //System.out.println(Arrays.toString(graph.idealEdgeLengths));
 
         // for the moment fix the issue where the edgelengths do not allow 0
         for (int i = 0; i < graph.idealEdgeLengths.length; ++i) {
@@ -96,6 +93,7 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
                         graph.getIdealEdgeLengths());
 
         algo.setConstraints(graph.getConstraints());
+        algo.setClusterHierarchy(graph.rootCluster);
 
         // run some w/o overlap
         algo.makeFeasible();
@@ -116,6 +114,7 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
                         graph.getIdealEdgeLengths());
 
         algo.setConstraints(graph.getConstraints());
+        algo.setClusterHierarchy(graph.rootCluster);
 
         algo.makeFeasible();
 
@@ -127,6 +126,9 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
             // System.out.println(i);
         }
 
+        
+        graph.rootCluster.computeBoundingRect(graph.nodes);
+        
         /*
          * End
          */
@@ -140,4 +142,17 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
     }
 
 
+    private void calculateMarginsAndSizes(final KNode parent) {
+        KGraphAdapter adapter = KGraphAdapters.adapt(parent);
+        KimlNodeDimensionCalculation.sortPortLists(adapter);
+        KimlNodeDimensionCalculation.calculateLabelAndNodeSizes(adapter);
+        KimlNodeDimensionCalculation.calculateNodeMargins(adapter);
+        
+        if(parent.getData(KLayoutData.class).getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {
+            for(KNode child : parent.getChildren()) {
+                calculateMarginsAndSizes(child);
+            }
+        }
+    }
+    
 }

@@ -13,13 +13,21 @@
  */
 package de.cau.cs.kieler.klay.cola.graphimport;
 
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.adaptagrams.AlignmentConstraint;
 import org.adaptagrams.Cluster;
 import org.adaptagrams.Dim;
 import org.adaptagrams.Rectangle;
+import org.adaptagrams.RectangularCluster;
+import org.eclipse.emf.ecore.EObject;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
@@ -59,7 +67,10 @@ public class KGraphImporter implements IGraphImporter<KNode> {
     private Map<KNode, CNode> knodeMap = Maps.newHashMap();
     private Map<KPort, CPort> kportMap = Maps.newHashMap();
 
-    private Map<KNode, Cluster> clusterMap = Maps.newHashMap();
+    private BiMap<KNode, Cluster> clusterMap = HashBiMap.create();
+    private Cluster graphCluster = null;
+
+    private boolean layoutHierarchy = false;
 
     /**
      * {@inheritDoc}
@@ -71,19 +82,77 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         graph.copyProperties(root.getData(KLayoutData.class));
         graph.setProperty(ORIGIN, root);
 
+        layoutHierarchy = graph.getProperty(LayoutOptions.LAYOUT_HIERARCHY);
+        
+        if (layoutHierarchy) {
+            graphCluster = new RectangularCluster();
+            graph.rootCluster.addChildCluster(graphCluster);
+        }
+
         // put the root in the pool!
         knodeMap.put(root, null);
 
         // iterate over all nodes of the root KNode
         for (KNode n : root.getChildren()) {
+            transformNode(n, graph, null);
+        }
 
-            // ignore unconnected nodes
-            if (n.getIncomingEdges().isEmpty() && n.getOutgoingEdges().isEmpty()) {
-                continue;
+        /*
+         * external port dummies
+         */
+        for (KPort p : root.getPorts()) {
+            CPort port = new CPort(graph, null);
+            setPosAndSize(port, p.getData(KShapeLayout.class));
+            port.copyProperties(p.getData(KLayoutData.class));
+            port.setProperty(ORIGIN, p);
+            kportMap.put(p, port);
+            graph.getExternalPorts().add(port);
+            port.init();
+            port.side = KimlUtil.calcPortSide(p, graph.getProperty(LayoutOptions.DIRECTION));
+            port.asExternalDummy();
+        }
+
+        // align external ports
+        AlignmentConstraint acLeft = new AlignmentConstraint(Dim.XDIM);
+        graph.constraints.add(acLeft);
+        AlignmentConstraint acRight = new AlignmentConstraint(Dim.XDIM);
+        graph.constraints.add(acRight);
+        for (CPort p : graph.getExternalPorts()) {
+            if (p.side == PortSide.WEST) {
+                acLeft.addShape(p.cIndex, 0);
+            } else {
+                acRight.addShape(p.cIndex, 0);
             }
+        }
+
+        /*
+         * Edges
+         */
+        for (KNode n : root.getChildren()) {
+            transformEdges(n, graph);
+        }
+
+        // after all graph elements were created we can initialize the cola elements of the graph
+        graph.init();
+
+        return graph;
+    }
+
+    private void transformNode(final KNode n, final CGraph graph, final KNode parent) {
+
+        // ignore unconnected nodes
+        if (n.getIncomingEdges().isEmpty() && n.getOutgoingEdges().isEmpty()) {
+            return;
+        }
+        
+        CNode cnode = null;
+        
+        // only create the cola node if we either do not layout hierarchy, or if the 
+        // node has no children
+        if (!layoutHierarchy || n.getChildren().isEmpty()) {
 
             // create the node
-            CNode cnode = new CNode(graph);
+            cnode = new CNode(graph);
             // dimensions
             setPosAndSize(cnode, n.getData(KShapeLayout.class));
             // properties
@@ -105,82 +174,114 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                 cnode.getPorts().add(port);
                 port.init();
                 port.side = KimlUtil.calcPortSide(p, 
-                        cnode.getProperty(LayoutOptions.DIRECTION)); // FIXME
+                        graph.getProperty(LayoutOptions.DIRECTION)); // FIXME
                 // add an edge from the port to the node's center
                 port.withCenterEdge();
             }
-
         }
 
-        /*
-         * external port dummies
-         */
-        for (KPort p : root.getPorts()) {
-            CPort port = new CPort(graph, null);
-            setPosAndSize(port, p.getData(KShapeLayout.class));
-            port.copyProperties(p.getData(KLayoutData.class));
-            port.setProperty(ORIGIN, p);
-            kportMap.put(p, port);
-            graph.getExternalPorts().add(port);
-            port.init();
-            port.asExternalDummy();
-        }
-
-        // align external ports
-        AlignmentConstraint acLeft = new AlignmentConstraint(Dim.XDIM);
-        graph.constraints.add(acLeft);
-        AlignmentConstraint acRight = new AlignmentConstraint(Dim.XDIM);
-        graph.constraints.add(acRight);
-        for (CPort p : graph.getExternalPorts()) {
-            if (p.side == PortSide.WEST) {
-                acLeft.addShape(p.cIndex, 0);
+        // when we layout hierarchy, add the current node or cluster 
+        if (layoutHierarchy) {
+            // if this node has a parent, add it to that parent's cluster
+            Cluster parentCluster = null;
+            if (parent != null) {
+                parentCluster = clusterMap.get(parent);
             } else {
-                acRight.addShape(p.cIndex, 0);
+                // do not add it to the graph cluster but to the top level cluster ...
+                // which is the same hierarchy level as the graph cluster
+                parentCluster = graphCluster;
+            }
+            
+            // create a cluster for nodes that have children
+            if (!n.getChildren().isEmpty()) {
+                Cluster cluster = new RectangularCluster();
+                clusterMap.put(n, cluster);
+                
+                // add the cluster to the parent cluster
+                if (parent != null) {
+                    parentCluster.addChildCluster(cluster);
+                } else {
+                    // add it on the same level as the "graph cluster"
+                    graph.rootCluster.addChildCluster(cluster);
+                }
+                
+            } else {
+                // add the node to the parent cluster
+                parentCluster.addChildNode(cnode.cIndex);
+                // and all the ports
+                for (CPort p : cnode.getPorts()) {
+                    parentCluster.addChildNode(p.cIndex);
+                }
+            }
+            
+            for (KNode child : n.getChildren()) {
+                transformNode(child, graph, n);
             }
         }
+    }
 
-        /*
-         * Edges
-         */
-        for (KNode n : root.getChildren()) {
+    private void transformEdges(final KNode n, final CGraph graph) {
 
-            for (KEdge e : n.getOutgoingEdges()) {
+        for (KEdge e : n.getOutgoingEdges()) {
 
-                // ignore hierarchy edges
-                if (KimlUtil.isDescendant(e.getTarget(), e.getSource())) {
+            // ignore hierarchy edges when not layouting hierarchy
+            if (!layoutHierarchy && KimlUtil.isDescendant(e.getTarget(), e.getSource())) {
+                continue;
+            }
+            
+            CNode srcNode = knodeMap.get(e.getSource());
+            CNode tgtNode = knodeMap.get(e.getTarget());
+            CPort srcPort = kportMap.get(e.getSourcePort());
+            CPort tgtPort = kportMap.get(e.getTargetPort());
+
+            // ignore hierarchical ports when layouting hierarchy
+            if (layoutHierarchy
+                    && ((srcNode == null && srcPort == null) || (tgtNode == null && tgtPort == null))) {
+                // TODO do this generically
+                if (tgtNode == null && e.getTargetPort() != null) {
+                   for (KEdge hEdge : e.getTargetPort().getEdges()) {
+                       if (!hEdge.equals(e)) {
+                           tgtNode = knodeMap.get(hEdge.getTarget());
+                           tgtPort = kportMap.get(hEdge.getTargetPort());
+                           break;
+                       }
+                   }
+                   if (tgtNode == null) {
+                       // exclude edges that "end" at a hierarchical port
+                       continue;
+                   }
+                } else {
                     continue;
                 }
-
-                CNode srcNode = knodeMap.get(e.getSource());
-                CNode tgtNode = knodeMap.get(e.getTarget());
-                CPort srcPort = kportMap.get(e.getSourcePort());
-                CPort tgtPort = kportMap.get(e.getTargetPort());
-
-                CEdge edge = new CEdge(graph, srcNode, srcPort, tgtNode, tgtPort);
-                edge.copyProperties(e.getData(KLayoutData.class));
-                edge.setProperty(ORIGIN, e);
-                edge.init();
-
-                // register the edge (if it is no edge to an external port dummy
-                if (e.getTarget().getParent() == e.getSource().getParent()) {
-                    srcNode.getOutgoingEdges().add(edge);
-                    if (srcPort != null) {
-                        srcPort.getOutgoingEdges().add(edge);
-                    }
-                    tgtNode.getIncomingEdges().add(edge);
-                    if (tgtPort != null) {
-                        tgtPort.getIncomingEdges().add(edge);
-                    }
-                }
-
+                
+                //continue;
             }
+
+            CEdge edge = new CEdge(graph, srcNode, srcPort, tgtNode, tgtPort);
+            edge.copyProperties(e.getData(KLayoutData.class));
+            edge.setProperty(ORIGIN, e);
+            edge.init();
+
+            // register the edge (if it is no edge to an external port dummy
+            if (e.getTarget().getParent() == e.getSource().getParent()) {
+                srcNode.getOutgoingEdges().add(edge);
+                if (srcPort != null) {
+                    srcPort.getOutgoingEdges().add(edge);
+                }
+                tgtNode.getIncomingEdges().add(edge);
+                if (tgtPort != null) {
+                    tgtPort.getIncomingEdges().add(edge);
+                }
+            }
+
         }
 
-        // after all graph elements were created we can initialize the cola elements of the graph
-        graph.init();
-
-        return graph;
-    };
+        if (layoutHierarchy) {
+            for (KNode child : n.getChildren()) {
+                transformEdges(child, graph);
+            }
+        }
+    }
 
     /**
      * {@inheritDoc}
@@ -203,15 +304,47 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         }
         KVector offset = new KVector(borderSpacing - minX, borderSpacing - minY);
 
+        
+        /*
+         * Clusters
+         */
+        for (Entry<KNode, Cluster> clusterEnty : clusterMap.entrySet()) {
+
+            KNode knode = clusterEnty.getKey();
+            KShapeLayout layout = knode.getData(KShapeLayout.class);
+            RectangularCluster c = (RectangularCluster) clusterEnty.getValue();
+            
+            // TODO clusters in clusters have to be offset as well
+            layout.setXpos((float) (c.getBounds().getMinX() + offset.x - 20));
+            layout.setYpos((float) (c.getBounds().getMinY() + offset.y - 20));
+            layout.setWidth((float) (c.getBounds().getMaxX() - 20 - c.getBounds().getMinX()));
+            layout.setHeight((float) (c.getBounds().getMaxY() - 20 - c.getBounds().getMinY()));
+
+        }
+
         /*
          * Nodes
          */
         for (CNode n : graph.getChildren()) {
             Rectangle r = n.rect;
-
             KShapeLayout layout = n.getProperty(ORIGIN).getData(KShapeLayout.class);
-            layout.setXpos((float) (r.getMinX() + offset.x));
-            layout.setYpos((float) (r.getMinY() + offset.y));
+
+            // if the node is contained in a cluster we have to offset it
+            KNode knode = (KNode) n.getProperty(ORIGIN);
+            Cluster c = clusterMap.get(knode.getParent());
+            if (c != null) {
+                // hierarchy = true
+                // hierarchical node's pos are relative to the parent
+                RectangularCluster rc = (RectangularCluster) c;
+                KVector localOffset = new KVector(r.getMinX(), r.getMinY());    
+                localOffset.sub(new KVector(rc.getBounds().getMinX(), rc.getBounds().getMinY()));
+                layout.setXpos((float) localOffset.x);
+                layout.setYpos((float) localOffset.y);
+
+            } else {
+                layout.setXpos((float) (r.getMinX() + offset.x));
+                layout.setYpos((float) (r.getMinY() + offset.y));
+            }
 
             // ports
             for (CPort p : n.getPorts()) {
@@ -239,13 +372,15 @@ public class KGraphImporter implements IGraphImporter<KNode> {
          * Edges, no routing done -> clear the bend points
          */
         KNode root = (KNode) graph.getProperty(ORIGIN);
-        for (KNode n : root.getChildren()) {
-            for (KEdge e : n.getOutgoingEdges()) {
-
-                KEdgeLayout layout = e.getData(KEdgeLayout.class);
-                layout.getBendPoints().clear();
-
-            }
+        Iterator<EObject> allEdges =
+                Iterators.filter(root.eAllContents(), new Predicate<EObject>() {
+                    public boolean apply(final EObject obj) {
+                        return obj instanceof KEdge;
+                    }
+                });
+        while (allEdges.hasNext()) {
+            KEdgeLayout layout = ((KEdge) allEdges.next()).getData(KEdgeLayout.class);
+            layout.getBendPoints().clear();
         }
 
         // resize the parent node
