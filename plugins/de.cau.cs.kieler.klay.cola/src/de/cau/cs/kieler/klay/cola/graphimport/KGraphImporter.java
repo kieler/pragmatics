@@ -62,6 +62,12 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             "kgraph.origin");
 
     /**
+     * Should ports be turned into dummie nodes?
+     */
+    public static final IProperty<Boolean> PORT_DUMMIES =
+            new Property<Boolean>("portDummies", true);
+
+    /**
      * 
      */
     private Map<KNode, CNode> knodeMap = Maps.newHashMap();
@@ -71,6 +77,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
     private Cluster graphCluster = null;
 
     private boolean layoutHierarchy = false;
+    private boolean portDummies = false;
 
     /**
      * {@inheritDoc}
@@ -83,7 +90,8 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         graph.setProperty(ORIGIN, root);
 
         layoutHierarchy = graph.getProperty(LayoutOptions.LAYOUT_HIERARCHY);
-        
+        portDummies = graph.getProperty(PORT_DUMMIES);
+
         if (layoutHierarchy) {
             graphCluster = new RectangularCluster();
             graph.rootCluster.addChildCluster(graphCluster);
@@ -144,10 +152,10 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         if (n.getIncomingEdges().isEmpty() && n.getOutgoingEdges().isEmpty()) {
             return;
         }
-        
+
         CNode cnode = null;
-        
-        // only create the cola node if we either do not layout hierarchy, or if the 
+
+        // only create the cola node if we either do not layout hierarchy, or if the
         // node has no children
         if (!layoutHierarchy || n.getChildren().isEmpty()) {
 
@@ -165,22 +173,25 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             cnode.init();
 
             // create ports
-            for (KPort p : n.getPorts()) {
-                CPort port = new CPort(graph, cnode);
-                setPosAndSize(port, p.getData(KShapeLayout.class));
-                port.copyProperties(p.getData(KLayoutData.class));
-                port.setProperty(ORIGIN, p);
-                kportMap.put(p, port);
-                cnode.getPorts().add(port);
-                port.init();
-                port.side = KimlUtil.calcPortSide(p, 
-                        graph.getProperty(LayoutOptions.DIRECTION)); // FIXME
-                // add an edge from the port to the node's center
-                port.withCenterEdge();
+            if (portDummies) {
+                for (KPort p : n.getPorts()) {
+                    CPort port = new CPort(graph, cnode);
+                    setPosAndSize(port, p.getData(KShapeLayout.class));
+                    port.copyProperties(p.getData(KLayoutData.class));
+                    port.setProperty(ORIGIN, p);
+                    kportMap.put(p, port);
+                    cnode.getPorts().add(port);
+                    port.init();
+                    port.side =
+                            KimlUtil.calcPortSide(p, 
+                                    graph.getProperty(LayoutOptions.DIRECTION)); // FIXME
+                    // add an edge from the port to the node's center
+                    port.withCenterEdge();
+                }
             }
         }
 
-        // when we layout hierarchy, add the current node or cluster 
+        // when we layout hierarchy, add the current node or cluster
         if (layoutHierarchy) {
             // if this node has a parent, add it to that parent's cluster
             Cluster parentCluster = null;
@@ -191,12 +202,12 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                 // which is the same hierarchy level as the graph cluster
                 parentCluster = graphCluster;
             }
-            
+
             // create a cluster for nodes that have children
             if (!n.getChildren().isEmpty()) {
                 Cluster cluster = new RectangularCluster();
                 clusterMap.put(n, cluster);
-                
+
                 // add the cluster to the parent cluster
                 if (parent != null) {
                     parentCluster.addChildCluster(cluster);
@@ -204,7 +215,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                     // add it on the same level as the "graph cluster"
                     graph.rootCluster.addChildCluster(cluster);
                 }
-                
+
             } else {
                 // add the node to the parent cluster
                 parentCluster.addChildNode(cnode.cIndex);
@@ -213,7 +224,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                     parentCluster.addChildNode(p.cIndex);
                 }
             }
-            
+
             for (KNode child : n.getChildren()) {
                 transformNode(child, graph, n);
             }
@@ -228,7 +239,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             if (!layoutHierarchy && KimlUtil.isDescendant(e.getTarget(), e.getSource())) {
                 continue;
             }
-            
+
             CNode srcNode = knodeMap.get(e.getSource());
             CNode tgtNode = knodeMap.get(e.getTarget());
             CPort srcPort = kportMap.get(e.getSourcePort());
@@ -239,22 +250,22 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                     && ((srcNode == null && srcPort == null) || (tgtNode == null && tgtPort == null))) {
                 // TODO do this generically
                 if (tgtNode == null && e.getTargetPort() != null) {
-                   for (KEdge hEdge : e.getTargetPort().getEdges()) {
-                       if (!hEdge.equals(e)) {
-                           tgtNode = knodeMap.get(hEdge.getTarget());
-                           tgtPort = kportMap.get(hEdge.getTargetPort());
-                           break;
-                       }
-                   }
-                   if (tgtNode == null) {
-                       // exclude edges that "end" at a hierarchical port
-                       continue;
-                   }
+                    for (KEdge hEdge : e.getTargetPort().getEdges()) {
+                        if (!hEdge.equals(e)) {
+                            tgtNode = knodeMap.get(hEdge.getTarget());
+                            tgtPort = kportMap.get(hEdge.getTargetPort());
+                            break;
+                        }
+                    }
+                    if (tgtNode == null) {
+                        // exclude edges that "end" at a hierarchical port
+                        continue;
+                    }
                 } else {
                     continue;
                 }
-                
-                //continue;
+
+                // continue;
             }
 
             CEdge edge = new CEdge(graph, srcNode, srcPort, tgtNode, tgtPort);
@@ -304,7 +315,6 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         }
         KVector offset = new KVector(borderSpacing - minX, borderSpacing - minY);
 
-        
         /*
          * Clusters
          */
@@ -313,7 +323,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             KNode knode = clusterEnty.getKey();
             KShapeLayout layout = knode.getData(KShapeLayout.class);
             RectangularCluster c = (RectangularCluster) clusterEnty.getValue();
-            
+
             // TODO clusters in clusters have to be offset as well
             layout.setXpos((float) (c.getBounds().getMinX() + offset.x - 20));
             layout.setYpos((float) (c.getBounds().getMinY() + offset.y - 20));
@@ -336,7 +346,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                 // hierarchy = true
                 // hierarchical node's pos are relative to the parent
                 RectangularCluster rc = (RectangularCluster) c;
-                KVector localOffset = new KVector(r.getMinX(), r.getMinY());    
+                KVector localOffset = new KVector(r.getMinX(), r.getMinY());
                 localOffset.sub(new KVector(rc.getBounds().getMinX(), rc.getBounds().getMinY()));
                 layout.setXpos((float) localOffset.x);
                 layout.setYpos((float) localOffset.y);

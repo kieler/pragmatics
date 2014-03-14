@@ -38,6 +38,11 @@
                feature="CLUSTERS">
          </supportedFeature>
       </layoutAlgorithm>
+      <layoutAlgorithm
+            class="de.cau.cs.kieler.klay.cola.CompactingLayoutProvider"
+            id="de.cau.cs.kieler.klay.cola.compaction"
+            name="Compacting Layout">
+      </layoutAlgorithm>
    </extension>
 
 </plugin>
