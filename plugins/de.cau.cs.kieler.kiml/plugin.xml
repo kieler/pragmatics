@@ -386,7 +386,7 @@
            advanced="true"
            class="de.cau.cs.kieler.kiml.options.EdgeLabelPlacement"
            default="UNDEFINED"
-           description="Gives a hint on where to put edge labels"
+           description="Gives a hint on where to put edge labels."
            id="de.cau.cs.kieler.edgeLabelPlacement"
            name="Edge Label Placement"
            type="enum"
