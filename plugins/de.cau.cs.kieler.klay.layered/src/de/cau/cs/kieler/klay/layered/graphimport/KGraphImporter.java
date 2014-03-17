@@ -398,7 +398,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
 
             // initialize the port's side, offset, and anchor point
             LGraphUtil.initializePort(newPort, portConstraints, direction,
-                    portLayout.getProperty(Properties.PORT_ANCHOR));
+                    portLayout.getProperty(LayoutOptions.PORT_ANCHOR));
             
             elemMap.put(kport, newPort);
 

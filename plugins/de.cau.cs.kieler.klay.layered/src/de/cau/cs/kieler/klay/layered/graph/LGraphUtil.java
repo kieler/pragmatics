@@ -682,11 +682,11 @@ public final class LGraphUtil {
         dummy.setProperty(InternalProperties.OFFSET, propertyHolder.getProperty(LayoutOptions.OFFSET));
         
         // set the anchor point
-        KVector anchor = propertyHolder.getProperty(Properties.PORT_ANCHOR);
+        KVector anchor = propertyHolder.getProperty(LayoutOptions.PORT_ANCHOR);
         if (anchor == null) {
             anchor = new KVector(portSize.x / 2, portSize.y / 2);
         }
-        dummy.setProperty(Properties.PORT_ANCHOR, anchor);
+        dummy.setProperty(LayoutOptions.PORT_ANCHOR, anchor);
         
         LPort dummyPort = new LPort(layeredGraph);
         dummyPort.setNode(dummy);
