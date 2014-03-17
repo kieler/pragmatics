@@ -11,3 +11,4 @@ Require-Bundle: com.google.guava,
  de.cau.cs.kieler.kiml,
  de.cau.cs.kieler.kiml.service,
  org.adaptagrams
+Export-Package: de.cau.cs.kieler.kiml.libavoid
