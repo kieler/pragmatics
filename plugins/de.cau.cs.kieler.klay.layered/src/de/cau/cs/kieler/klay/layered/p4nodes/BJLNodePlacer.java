@@ -13,11 +13,15 @@
  */
 package de.cau.cs.kieler.klay.layered.p4nodes;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+
+import javax.swing.DebugGraphics;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
@@ -25,6 +29,7 @@ import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
@@ -53,7 +58,7 @@ public final class BJLNodePlacer implements ILayoutPhase {
     /** list of all linear segments of the current graph. */
     private List<LinearSegment> linearSegments;
     /** Map from node IDs to siblings, segments, and classes. */
-    private static LNodeExtensions[] nodeExtensions;
+    private LNodeExtensions[] nodeExtensions;
     /** top classes computed by traversing the graph from left to right and each level downwards. */
     private List<List<LinearSegment>> topClasses;
     /** bottom classes computed by traversing the graph left to right and each level upwards. */
@@ -64,7 +69,7 @@ public final class BJLNodePlacer implements ILayoutPhase {
     private double[] nodePositionsBottom;
 
     /** original layout y-coordinates of each node computed by placeOriginal. */
-    private double[] nodePositions;
+    // private double[] nodePositions;
 
     /** distance between regular nodes. */
     private float normalSpacing;
@@ -112,6 +117,8 @@ public final class BJLNodePlacer implements ILayoutPhase {
         // start algorithm
         placeDummy();
         placeRegular();
+
+        postProcess();
 
         monitor.done();
     }
@@ -197,7 +204,7 @@ public final class BJLNodePlacer implements ILayoutPhase {
         minY = 0;
         for (Layer layer : layeredGraph) {
             for (LNode lNode : layer) {
-                if ((nodePositionsTop[lNode.id] + nodePositionsBottom[lNode.id]) / 2 < minY) {
+                if (((nodePositionsTop[lNode.id] + nodePositionsBottom[lNode.id]) / 2) < minY) {
                     minY = (nodePositionsTop[lNode.id] + nodePositionsBottom[lNode.id]) / 2;
                 }
             }
@@ -207,7 +214,8 @@ public final class BJLNodePlacer implements ILayoutPhase {
         for (Layer layer : layeredGraph) {
             for (LNode lNode : layer) {
                 lNode.getPosition().y =
-                        ((nodePositionsTop[lNode.id] + nodePositionsBottom[lNode.id]) / 2) - minY;
+                        ((nodePositionsTop[lNode.id] + nodePositionsBottom[lNode.id]) / 2)
+                                + Math.abs(minY);
             }
         }
     }
@@ -240,25 +248,6 @@ public final class BJLNodePlacer implements ILayoutPhase {
                 adjustBottomClass(classId);
             }
         }
-        // find the maximum y coordinate computed by computePositionTop to use it as the initial
-        // position
-//        minY = 0;
-//        for (int i = 0; i < nodePositionsBottom.length; i++) {
-//            if (nodePositionsBottom[i] < minY) {
-//                minY = nodePositionsBottom[i];
-//            }
-//        }
-
-        for (int i = 0; i < bottomClasses.size(); i++) {
-            if (!bottomClasses.get(i).isEmpty()) {
-                int classId = i;
-                for (LinearSegment seg : bottomClasses.get(classId)) {
-                    for (LNode node : seg.nodes) {
-                        nodePositionsBottom[node.id] = nodePositionsBottom[node.id];// - minY;
-                    }
-                }
-            }
-        }
     }
 
     /**
@@ -272,8 +261,6 @@ public final class BJLNodePlacer implements ILayoutPhase {
 
         double p = Double.POSITIVE_INFINITY;
 
-        // LinearSegment seg = linearSegments.get(nodeExtensions[lNode.id].segId);
-
         for (LNode node : linearSegments.get(nodeExtensions[lNode.id].segId).nodes) {
             // get the bottom sibling of the current node
             LNode bottomSibling = nodeExtensions[node.id].bottomSibling;
@@ -282,7 +269,6 @@ public final class BJLNodePlacer implements ILayoutPhase {
 
                 // if the bottom sibling wasn't placed yet
                 if (!nodeExtensions[bottomSibling.id].isPlaced) {
-
                     placeBottom(bottomSibling, classId);
                 }
                 // compute the minimum distance between the current node and his bottom sibling
@@ -319,7 +305,7 @@ public final class BJLNodePlacer implements ILayoutPhase {
      *            identifier value of the current class
      */
     private void adjustBottomClass(final int classId) {
-        double d = Double.NEGATIVE_INFINITY;
+        double d = Double.POSITIVE_INFINITY;
         double m;
 
         for (LinearSegment seg : bottomClasses.get(classId)) {
@@ -344,13 +330,14 @@ public final class BJLNodePlacer implements ILayoutPhase {
                     }
 
                     d =
-                            Math.max(d, nodePositionsBottom[node.id]
-                                    - (nodePositionsBottom[topSibling.id] + m));
+                            Math.min(
+                                    d,
+                                    ((nodePositionsBottom[node.id] - nodePositionsBottom[topSibling.id]) - m));
                 }
             }
         }
 
-        if (d == Double.NEGATIVE_INFINITY) {
+        if (d == Double.POSITIVE_INFINITY) {
             // list to save the difference between the y-coordinate of the current node
             // and the connected nodes in the previous layer for computing the median
             ArrayList<Double> distancesToNeighbors = new ArrayList<Double>();
@@ -360,11 +347,18 @@ public final class BJLNodePlacer implements ILayoutPhase {
                     for (LEdge edge : node.getIncomingEdges()) {
 
                         LNode neighbour = edge.getSource().getNode();
+
+                        LPort neighborPort = edge.getSource();
+                        LPort currentNodePort = edge.getTarget();
+
                         // check if the connected neighbor belongs to a lower class,
                         // which are always already placed at this moment
                         if (nodeExtensions[neighbour.id].classId < classId) {
-                            distancesToNeighbors.add(nodePositionsBottom[node.id]
-                                    - nodePositionsBottom[neighbour.id]);
+                            distancesToNeighbors
+                                    .add((nodePositionsBottom[node.id] - currentNodePort
+                                            .getPosition().y)
+                                            - (nodePositionsBottom[neighbour.id] - neighborPort
+                                                    .getPosition().y));
                         }
                     }
                 }
@@ -501,7 +495,7 @@ public final class BJLNodePlacer implements ILayoutPhase {
 
         }
 
-        // if there's no bottom sibling that belongs to a different class
+        // if there's no bottom sibling that belongs to another class
         if (d == Double.POSITIVE_INFINITY) {
 
             // list to save the positions of the connected nodes in the previous layer for computing
@@ -515,13 +509,21 @@ public final class BJLNodePlacer implements ILayoutPhase {
                     for (LEdge edge : node.getIncomingEdges()) {
 
                         LNode neighbour = edge.getSource().getNode();
-                        // check if the connected neighbor belongs to a higher class,
+
+                        LPort neighborPort = edge.getSource();
+                        LPort currentNodePort = edge.getTarget();
+
+                        // check if the connected neighbor belongs to a lower class,
                         // which are always already placed at this moment
                         // TODO > oder < ???
                         if (nodeExtensions[neighbour.id].classId < classId) {
-                            distancesToNeighbors.add(nodePositionsTop[neighbour.id]
-                                    - nodePositionsTop[node.id]);
+                            distancesToNeighbors
+                                    .add((nodePositionsTop[neighbour.id] - neighborPort
+                                            .getPosition().y)
+                                            - (nodePositionsTop[node.id] - currentNodePort
+                                                    .getPosition().y));
                         }
+
                     }
                 }
             }
@@ -533,6 +535,7 @@ public final class BJLNodePlacer implements ILayoutPhase {
             }
         }
         for (LinearSegment seg : topClasses.get(classId)) {
+
             for (LNode node2 : seg.nodes) {
                 nodePositionsTop[node2.id] = nodePositionsTop[node2.id] + d;
             }
@@ -545,7 +548,6 @@ public final class BJLNodePlacer implements ILayoutPhase {
      */
     private void computeLinearSegments() {
 
-        // Map<Integer, Boolean> visited = new HashMap<Integer, Boolean>(numberOfNodes);
         boolean[] visited = new boolean[numberOfNodes];
         // mark all nodes as unvisited
         for (Layer layer : layeredGraph) {
@@ -599,9 +601,21 @@ public final class BJLNodePlacer implements ILayoutPhase {
                     while (dummy) {
 
                         if (isDummy(succ)) {
-                            seg.addNode(succ);
-                            visited[succ.id] = true;
-                            succ = getFirstsuccessor(succ);
+
+                            if (getFirstsuccessor(succ) != null) {
+                                if (getFirstsuccessor(succ).getLayer().id == succ.getLayer().id + 1) {
+                                    seg.addNode(succ);
+                                    visited[succ.id] = true;
+                                    succ = getFirstsuccessor(succ);
+                                } else {
+                                    dummy = false;
+                                }
+                            } else {
+                                seg.addNode(succ);
+                                visited[succ.id] = true;
+                                succ = getFirstsuccessor(succ);
+                            }
+
                         } else {
                             dummy = false;
                         }
@@ -711,7 +725,7 @@ public final class BJLNodePlacer implements ILayoutPhase {
             int c = layer.id;
 
             // for computing the bottommost classes
-            // we have to iterating over the nodes in reverse order.
+            // we have to iterate over the nodes in reverse order.
             for (int i = layer.getNodes().size() - 1; i >= 0; i--) {
 
                 // is node already part of a class?
@@ -756,20 +770,11 @@ public final class BJLNodePlacer implements ILayoutPhase {
         List<LNode> sequenceOfRegulars = new ArrayList<LNode>();
         // saves the current direction of each node
         int[] directions = new int[numberOfNodes];
-        // saves for each node if it's placed
+        // saves for each node if it's already placed
         boolean[] placed = new boolean[numberOfNodes];
-        //current traversing direction, from left to right or right to left
-        boolean right = true;
-
-        // get y-coordinates of all nodes computed by placeVirtual
-        nodePositions = new double[numberOfNodes];
-        for (Layer layer : layeredGraph) {
-            for (LNode lNode : layer) {
-                nodePositions[lNode.id] = lNode.getPosition().y;
-                System.out.println("Position: " + nodePositions[lNode.id] + " von Knoten: "
-                        + lNode.id);
-            }
-        }
+        // current traversing direction, regularDirection true means from left to right and false
+        // right to left
+        boolean regularDirection = true;
 
         // list of all dummy nodes of the current graph
         for (Layer layer : layeredGraph) {
@@ -794,46 +799,40 @@ public final class BJLNodePlacer implements ILayoutPhase {
             }
         }
         // end of preparation/////////////////
-
         // at first the algorithm finds the regular sequences that can be regarded as placed.
         // It is the case if the distance between the surrounding virtual nodes is already the
         // minimum distance.
         for (int i = 0; i < dummies.size(); i++) {
+            // TODO eigentlich überflüssig
+            sequenceOfRegulars.clear();
+            //
             bMinus = dummies.get(i);
             bPlus = findNextVirtual(bMinus, sequenceOfRegulars);
-
             if (bPlus != null) {
                 directions[bMinus.id] = 0;
-                if (Math.abs((nodePositions[bPlus.id] - nodePositions[bMinus.id])
-                        - minimumDistance(bMinus, bPlus)) < 10) {
+                if (Math.abs((bPlus.getPosition().y - bMinus.getPosition().y)
+                        - minimumDistance(bMinus, bPlus)) < 5) {
                     placed[bMinus.id] = true;
                 } else {
                     placed[bMinus.id] = false;
                 }
             }
         }
-
         // traversing the graph from left to right
         for (Layer layer : layeredGraph) {
+            sequenceOfRegulars.clear();
             traverseByDirection(sequenceOfRegulars, directions, placed, 1, layer);
             if (layer.id < layeredGraph.getLayers().size() - 1) {
                 adjustDirections(layer, 1, directions, placed);
             }
         }
-
         // traversing the graph in the reversed order from right to left
         for (int j = layeredGraph.getLayers().size() - 1; j >= 0; j--) {
+            sequenceOfRegulars.clear();
             traverseByDirection(sequenceOfRegulars, directions, placed, -1, layeredGraph
                     .getLayers().get(j));
             if (layeredGraph.getLayers().get(j).id > 0) {
                 adjustDirections(layeredGraph.getLayers().get(j), -1, directions, placed);
-            }
-        }
-
-        // set y-coordinates of the original graph
-        for (Layer layer : layeredGraph) {
-            for (LNode lNode : layer) {
-                lNode.getPosition().y = nodePositions[lNode.id];
             }
         }
     }
@@ -862,60 +861,67 @@ public final class BJLNodePlacer implements ILayoutPhase {
         LNode bMinus = null;
 
         for (LNode node : layer) {
-
-            // find the topmost virtual node b-, and add all original nodes below to the current
-            // sequence
-            if (isDummy(node)) {
+            if (!isDummy(node)) {
+                sequence.add(node);
+            } else {
                 bMinus = node;
                 break;
-            } else {
-                sequence.add(node);
             }
         }
+
         placeSequence(null, bMinus, d, sequence);
-       //Debug
-        System.out.println("*********************");
-        System.out.println("Sequenz ganz oben: ");
-        System.out.println(sequence);
-        
-        // save computed positions as minimum distance
+
+        // save computed minimum distance
         for (LNode node : sequence) {
             LNode bottomSibling = nodeExtensions[node.id].bottomSibling;
             if (bottomSibling != null) {
                 nodeExtensions[node.id].minDistanceToBottomSibling =
-                        nodePositions[bottomSibling.id] - nodePositions[node.id];
+                        Math.max((bottomSibling.getPosition().y - node.getPosition().y),
+                                (bottomSibling.getMargin().top + normalSpacing
+                                        + node.getMargin().bottom + node.getSize().y));
             }
         }
-        // if (bMinus != null && !sequence.isEmpty()) {
-        // nodeExtensions.get(sequence.get(sequence.size() - 1).id).minDistanceToBottomSibling =
-        // nodePositions[bMinus.id] - nodePositions[sequence.get(sequence.size() - 1).id];
-        // }
+        if (bMinus != null && !sequence.isEmpty()) {
+            nodeExtensions[(sequence.get(sequence.size() - 1).id)].minDistanceToBottomSibling =
+                    // bMinus.getPosition().y - sequence.get(sequence.size() - 1).getPosition().y;
+                    Math.max(
+                            (bMinus.getPosition().y - sequence.get(sequence.size() - 1)
+                                    .getPosition().y),
+                            (bMinus.getMargin().top + normalSpacing
+                                    + sequence.get(sequence.size() - 1).getMargin().bottom + sequence
+                                    .get(sequence.size() - 1).getSize().y));
+        }
         while (bMinus != null) {
             // find the next virtual node in the current layer
+            // and save regular nodes in sequence
+            sequence.clear();
             bPlus = findNextVirtual(bMinus, sequence);
             if (bPlus == null) {
                 placeSequence(bMinus, null, d, sequence);
-              //Debug
-                System.out.println("*********************");
-                System.out.println("Sequenz ganz unten: ");
-                System.out.println(sequence);
-                
+                // set the distances computed by placeSequence as the new minimum distances from
+                // each node of the sequence to his bottom sibling
                 for (LNode node : sequence) {
                     LNode bottomSibling = nodeExtensions[node.id].bottomSibling;
                     if (bottomSibling != null) {
                         nodeExtensions[node.id].minDistanceToBottomSibling =
-                                nodePositions[bottomSibling.id] - nodePositions[node.id];
+                                Math.max(
+                                        (bottomSibling.getPosition().y - node.getPosition().y),
+                                        (bottomSibling.getMargin().top + normalSpacing
+                                                + node.getMargin().bottom + node.getSize().y));
+                        // bottomSibling.getPosition().y - node.getPosition().y;
                     }
                 }
-                if (bMinus != null && !sequence.isEmpty()) {
+                // bMinus != null &&
+                if (!sequence.isEmpty()) {
                     nodeExtensions[bMinus.id].minDistanceToBottomSibling =
-                            nodePositions[sequence.get(0).id] - nodePositions[bMinus.id];
+                            Math.max(
+                                    (sequence.get(0).getPosition().y - bMinus.getPosition().y),
+                                    (sequence.get(0).getMargin().top + normalSpacing
+                                            + bMinus.getMargin().bottom + bMinus.getSize().y));
+                    // sequence.get(0).getPosition().y - bMinus.getPosition().y;
                 }
             } else if ((bPlus != null) && (directions[bMinus.id] == d)) {
                 placeSequence(bMinus, bPlus, d, sequence);
-                System.out.println("*********************");
-                System.out.println("Sequenz in der Mitte: ");
-                System.out.println(sequence);
                 placed[bMinus.id] = true;
             }
             bMinus = bPlus;
@@ -938,21 +944,19 @@ public final class BJLNodePlacer implements ILayoutPhase {
      */
     private void adjustDirections(final Layer layer, final int d, final int[] directions,
             final boolean[] placed) {
-
         LNode vMinus = null;
         LNode wMinus = null;
         LNode vPlus = null;
         LNode wPlus = null;
-
         boolean p = false;
 
         Layer nextLayer = layeredGraph.getLayers().get(layer.id + d);
 
         for (LNode node : nextLayer) {
             if (isDummy(node)) {
-                // all virtual nodes in layer l+d
+                // all dummy nodes in layer l+d
                 vPlus = node;
-                // find all virtual neighbors w in layer l of virtual nodes v in layer l+d
+                // find all dummy neighbors w in layer l of dummy nodes v in layer l+d
                 for (LEdge edge : vPlus.getIncomingEdges()) {
 
                     if ((edge.getSource().getNode().getLayer().id == layer.id)
@@ -1028,32 +1032,48 @@ public final class BJLNodePlacer implements ILayoutPhase {
     private void placeSingle(final LNode bMinus, final LNode bPlus, final int d, final LNode node) {
 
         // all neighbors in the previous layer
-        List<Double> neighborPositions = new ArrayList<Double>();
-        LNode neighbour = null;
+        List<LNode> neighbors = new ArrayList<LNode>();
+
+        LNode neighbor = null;
 
         for (LEdge edge : node.getIncomingEdges()) {
-            neighbour = edge.getSource().getNode();
+            neighbor = edge.getSource().getNode();
 
-            if (neighbour.getLayer().id == node.getLayer().id - d) {
-                neighborPositions.add(nodePositions[neighbour.id]);
+            if (neighbor.getLayer().id == node.getLayer().id - d) {
+                neighbors.add(neighbor);
             }
         }
+        // compute the median of all neighbors and set the current node to this position
+        if (!neighbors.isEmpty()) {
+            // sorted list of neighbors
+            Collections.sort(neighbors, new NeighborComparator());
+            // median node
+            LNode neighbor2 = neighbors.get(neighbors.size() / 2);
+            double neighbor2Position;
 
-        if (!neighborPositions.isEmpty()) {
-            // compute the median of all neighbors and set the current node to this position
-            Collections.sort(neighborPositions);
-            nodePositions[node.id] = neighborPositions.get(neighborPositions.size() / 2);
-
+            for (LPort port : neighbor2.getPorts()) {
+                for (LPort port2 : port.getConnectedPorts()) {
+                    if (port2.getNode().equals(node)) {
+                        if (isDummy(neighbor2)) {
+                            node.getPosition().y =
+                                    neighbor2.getPosition().y - port2.getPosition().y;
+                        } else {
+                            neighbor2Position = neighbor2.getPosition().y - port.getPosition().y;
+                            node.getPosition().y = neighbor2Position + port2.getPosition().y;
+                        }
+                    }
+                }
+            }
             // attend to the minimum distances
             if (bMinus != null) {
-                nodePositions[node.id] =
-                        Math.max(nodePositions[node.id], nodePositions[bMinus.id]
-                                + minimumDistance(bMinus, node));
+                node.getPosition().y =
+                        Math.max(node.getPosition().y,
+                                bMinus.getPosition().y + minimumDistance(bMinus, node));
             }
             if (bPlus != null) {
-                nodePositions[node.id] =
-                        Math.min(nodePositions[node.id],
-                                nodePositions[bPlus.id] - minimumDistance(node, bPlus));
+                node.getPosition().y =
+                        Math.min(node.getPosition().y,
+                                bPlus.getPosition().y - minimumDistance(node, bPlus));
             }
         }
     }
@@ -1097,42 +1117,45 @@ public final class BJLNodePlacer implements ILayoutPhase {
         int rMinus = 0;
         int rPlus = 0;
 
-        double m = minimumDistance(vt1, vt2);
+        // double m = minimumDistance(vt1, vt2);
 
-        while ((nodePositions[vt2.id] - nodePositions[vt1.id]) < m) {
+        while ((vt2.getPosition().y - vt1.getPosition().y) < minimumDistance(vt1, vt2)) {
             if (rMinus < rPlus) {
                 if (minusResistance.isEmpty()) {
-                    nodePositions[vt1.id] = nodePositions[vt2.id] - m;
+                    vt1.getPosition().y = vt2.getPosition().y - minimumDistance(vt1, vt2);
                 } else {
-                    Resistance r = minusResistance.get(0);
+                    Resistance resitance = minusResistance.get(0);
+                    rMinus = rMinus + resitance.c;
+                    vt1.getPosition().y = resitance.position;
+                    vt1.getPosition().y =
+                            Math.max(vt1.getPosition().y,
+                                    vt2.getPosition().y - minimumDistance(vt1, vt2));
                     minusResistance.remove(0);
-                    rMinus = rMinus + r.c;
-                    nodePositions[vt1.id] = Math.max(r.position, nodePositions[vt2.id] - m);
-                    // Math.max(nodePositions[vt1.id], nodePositions[vt2.id] - m);
                 }
             } else {
                 if (plusResistance.isEmpty()) {
-                    nodePositions[vt2.id] = nodePositions[vt1.id] + m;
+                    vt2.getPosition().y = vt1.getPosition().y + minimumDistance(vt1, vt2);
                 } else {
-                    Resistance r = plusResistance.get(plusResistance.size() - 1);
+                    Resistance resistance = plusResistance.get(plusResistance.size() - 1);
+                    rPlus = rPlus + resistance.c;
+                    vt2.getPosition().y = resistance.position;
+                    vt2.getPosition().y =
+                            Math.min(vt2.getPosition().y,
+                                    vt1.getPosition().y + minimumDistance(vt1, vt2));
                     plusResistance.remove(plusResistance.size() - 1);
-                    rPlus = rPlus + r.c;
-                    nodePositions[vt2.id] = Math.min(r.position, nodePositions[vt1.id] + m);
-                    // Math.min(nodePositions[vt2.id], nodePositions[vt1.id] + m);
                 }
             }
         }
-
         for (int i = t - 1; i > 0; i--) {
             LNode vi = s1.get(i);
-            nodePositions[vi.id] =
-                    Math.min(nodePositions[vi.id], nodePositions[vt1.id] - minimumDistance(vi, vt1));
+            vi.getPosition().y =
+                    Math.min(vi.getPosition().y, (vt1.getPosition().y - minimumDistance(vi, vt1)));
         }
 
         for (int i = 1; i < s2.size(); i++) {
             LNode vi = s2.get(i);
-            nodePositions[vi.id] =
-                    Math.max(nodePositions[vi.id], nodePositions[vt2.id] + minimumDistance(vt2, vi));
+            vi.getPosition().y =
+                    Math.max(vi.getPosition().y, (vt2.getPosition().y + minimumDistance(vt2, vi)));
         }
     }
 
@@ -1178,21 +1201,19 @@ public final class BJLNodePlacer implements ILayoutPhase {
             }
 
             for (LNode nNode : neighbours) {
-                if (nodePositions[nNode.id] <= nodePositions[node.id]) {
+                if (nNode.getPosition().y <= node.getPosition().y) {
                     c++;
                 } else {
                     c--;
-
-                    plusResistance.add(new Resistance(2, nodePositions[nNode.id]
+                    plusResistance.add(new Resistance(2, nNode.getPosition().y
                             - minimumDistance(vt2, node)));
                 }
             }
-            plusResistance.add(new Resistance(c, nodePositions[node.id]
-                    - minimumDistance(vt2, node)));
+            plusResistance
+                    .add(new Resistance(c, node.getPosition().y - minimumDistance(vt2, node)));
         }
         if (bPlus != null) {
-
-            plusResistance.add(new Resistance(Integer.MAX_VALUE, nodePositions[bPlus.id]
+            plusResistance.add(new Resistance(Integer.MAX_VALUE, bPlus.getPosition().y
                     - minimumDistance(vt2, bPlus)));
         }
     }
@@ -1240,21 +1261,20 @@ public final class BJLNodePlacer implements ILayoutPhase {
             }
 
             for (LNode nNode : neighbors) {
-                if (nodePositions[nNode.id] >= nodePositions[node.id]) {
+                if (nNode.getPosition().y >= node.getPosition().y) {
                     c++;
                 } else {
                     c--;
-
-                    minusResistance.add(new Resistance(2, nodePositions[nNode.id]
+                    minusResistance.add(new Resistance(2, nNode.getPosition().y
                             + minimumDistance(node, vt1)));
                 }
             }
-            minusResistance.add(new Resistance(c, nodePositions[node.id]
-                    + minimumDistance(node, vt1)));
+            minusResistance
+                    .add(new Resistance(c, node.getPosition().y + minimumDistance(node, vt1)));
         }
         if (bMinus != null) {
 
-            minusResistance.add(new Resistance(Integer.MAX_VALUE, nodePositions[bMinus.id]
+            minusResistance.add(new Resistance(Integer.MAX_VALUE, bMinus.getPosition().y
                     + minimumDistance(bMinus, vt1)));
         }
     }
@@ -1287,17 +1307,30 @@ public final class BJLNodePlacer implements ILayoutPhase {
      * @return double
      */
     private double minimumDistance(final LNode node1, final LNode node2) {
-        double m = 0;
-        if (node1 != null && node2 != null) { // && (node1.getLayer().id == node2.getLayer().id)) {
-            if (node1.id < node2.id) {
-                for (int i = node1.id; i < node2.id; i++) {
+        assert node1.getLayer().id == node2.getLayer().id;
 
-                    m += nodeExtensions[i].minDistanceToBottomSibling;
+        double m = 0;
+        if (node1 != null && node2 != null) {
+            if (node1.id < node2.id) {
+                LNode node = node1;
+                for (int i = node1.id; i < node2.id; i++) {
+                    m +=
+                            Math.max(
+                                    (nodeExtensions[i].minDistanceToBottomSibling),
+                                    (node.getSize().y + node.getMargin().bottom + normalSpacing + nodeExtensions[i].bottomSibling
+                                            .getMargin().top));
+                    node = nodeExtensions[i].bottomSibling;
                 }
             } else {
+                LNode node = node2;
                 for (int i = node2.id; i < node1.id; i++) {
 
-                    m += nodeExtensions[i].minDistanceToBottomSibling;
+                    m +=
+                            Math.max(
+                                    (nodeExtensions[i].minDistanceToBottomSibling),
+                                    (node.getSize().y + node.getMargin().bottom + normalSpacing + nodeExtensions[i].bottomSibling
+                                            .getMargin().top));
+                    node = nodeExtensions[i].bottomSibling;
                 }
             }
         }
@@ -1349,7 +1382,7 @@ public final class BJLNodePlacer implements ILayoutPhase {
     /**
      * A linear segment contains a single regular node or all dummy nodes of a long edge.
      */
-    private static final class LinearSegment {
+    private final class LinearSegment {
         /** Identifier value, used as index in the segments array. */
         private int id;
         /** Identifier value of the layer of the first node in a linear segment. */
@@ -1439,6 +1472,118 @@ public final class BJLNodePlacer implements ILayoutPhase {
          */
         public int compareTo(final Resistance o) {
             return (int) (this.position - o.position);
+        }
+    }
+
+    /**
+     * Comparator which determines the order of nodes in a layer.
+     */
+    private static class NeighborComparator implements Comparator<LNode>, Serializable {
+
+        private static final long serialVersionUID = 8508550732869672955L;
+
+        /**
+         * {@inheritDoc}
+         */
+        public int compare(final LNode o1, final LNode o2) {
+            int result = 0;
+            if (o1.getIndex() < o2.getIndex()) {
+                result = -1;
+            } else if (o1.getIndex() > o2.getIndex()) {
+                result = 1;
+            }
+            return result;
+        }
+    }
+
+    // adjust the linear segments to minimize edge bends
+    private void postProcess() {
+
+        // traverse all linear segment independently
+        for (LinearSegment segment : linearSegments) {
+            double minSpaceAbove = Integer.MAX_VALUE, minSpaceBelow = Integer.MAX_VALUE;
+
+            for (LNode node : segment.nodes) {
+                double spaceAbove, spaceBelow;
+                int index = node.getIndex();
+
+                // compute the distance between the linear segment and all direct siblings above
+                LNode topSibling = nodeExtensions[node.id].topSibling;
+                if (topSibling != null) {
+                    float spacing =
+                            !isDummy(node) && !isDummy(topSibling) ? normalSpacing : smallSpacing;
+                    spaceAbove =
+                            node.getPosition().y
+                                    - node.getMargin().top
+                                    - (topSibling.getPosition().y + topSibling.getSize().y
+                                            + topSibling.getMargin().bottom + spacing);
+                } else {
+                    spaceAbove = node.getPosition().y - node.getMargin().top;
+                }
+                minSpaceAbove = Math.min(spaceAbove, minSpaceAbove);
+
+                // compute the distance between the linear segment and all direct siblings below
+                LNode bottomSibling = nodeExtensions[node.id].bottomSibling;
+                if (bottomSibling != null) {
+                    float spacing =
+                            !isDummy(node) && !isDummy(bottomSibling) ? normalSpacing
+                                    : smallSpacing;
+                    spaceBelow =
+                            bottomSibling.getPosition().y
+                                    - bottomSibling.getMargin().top
+                                    - (node.getPosition().y + node.getSize().y
+                                            + node.getMargin().bottom + spacing);
+                } else {
+                    spaceBelow = 2 * node.getPosition().y;
+                }
+                minSpaceBelow = Math.min(spaceBelow, minSpaceBelow);
+            }
+
+            double minDisplaceSegment = Integer.MAX_VALUE;
+            boolean foundPosition = false;
+
+            // determine the minimal displacement that would make one incoming edge straight
+            LNode firstNode = segment.nodes.get(0);
+            for (LPort target : firstNode.getPorts()) {
+                double pos =
+                        firstNode.getPosition().y + target.getPosition().y + target.getAnchor().y;
+                for (LEdge edge : target.getIncomingEdges()) {
+                    LPort source = edge.getSource();
+                    double d =
+                            source.getNode().getPosition().y + source.getPosition().y
+                                    + source.getAnchor().y - pos;
+                    if (Math.abs(d) < Math.abs(minDisplaceSegment)
+                            && Math.abs(d) < (d < 0 ? minSpaceAbove : minSpaceBelow)) {
+                        minDisplaceSegment = d;
+                        foundPosition = true;
+                    }
+                }
+            }
+
+            // determine the minimal displacement that would make one outgoing edge straight
+            LNode lastNode = segment.nodes.get(segment.nodes.size() - 1);
+            for (LPort source : lastNode.getPorts()) {
+                double pos =
+                        lastNode.getPosition().y + source.getPosition().y + source.getAnchor().y;
+                for (LEdge edge : source.getOutgoingEdges()) {
+                    LPort target = edge.getTarget();
+                    double d =
+                            target.getNode().getPosition().y + target.getPosition().y
+                                    + target.getAnchor().y - pos;
+                    if (Math.abs(d) < Math.abs(minDisplaceSegment)
+                            && Math.abs(d) < (d < 0 ? minSpaceAbove : minSpaceBelow)) {
+                        minDisplaceSegment = d;
+                        foundPosition = true;
+                    }
+                }
+            }
+
+            // if such a displacement could be found, apply it to the whole linear segment
+            if (foundPosition && minDisplaceSegment != 0) {
+                for (LNode node : segment.nodes) {
+                    node.getPosition().y += minDisplaceSegment;
+                }
+            }
         }
     }
 }
