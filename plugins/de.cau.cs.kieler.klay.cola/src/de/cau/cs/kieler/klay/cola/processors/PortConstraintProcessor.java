@@ -82,19 +82,21 @@ public class PortConstraintProcessor implements ILayoutProcessor {
             for (CPort p : n.getPorts()) {
 
                 // shift the port's offset into the correct direction
+                // Note: make sure the dummy nodes have some space to breathe (overlap removal)
+                float breathe = 3;
                 KVector portOffset = origCenter.clone();
                 switch (p.side) {
                     case WEST:
-                        portOffset.translate(-diff.x, 0);
+                        portOffset.translate(-(diff.x - breathe), 0);
                         break;
                     case EAST:
-                        portOffset.translate(diff.x, 0);
+                        portOffset.translate(diff.x - breathe, 0);
                         break;
                     case SOUTH:
-                        portOffset.translate(0, diff.y);
+                        portOffset.translate(0, diff.y - breathe);
                         break;
                     case NORTH:
-                        portOffset.translate(0, -diff.y);
+                        portOffset.translate(0, -(diff.y - breathe));
                         break;
                 }
 

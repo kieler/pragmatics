@@ -118,6 +118,15 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             port.init();
             port.side = KimlUtil.calcPortSide(p, graph.getProperty(LayoutOptions.DIRECTION));
             port.asExternalDummy();
+            
+            
+            // transform the edges from and to external ports
+            for (KEdge e : p.getEdges()) {
+                
+                if (e.getSource().getParent().equals(root) || e.getTarget().getParent().equals(root)) {
+                    transformEdge(e, graph);
+                }
+            }
         }
 
         // align external ports
@@ -234,57 +243,13 @@ public class KGraphImporter implements IGraphImporter<KNode> {
     private void transformEdges(final KNode n, final CGraph graph) {
 
         for (KEdge e : n.getOutgoingEdges()) {
-
-            // ignore hierarchy edges when not layouting hierarchy
-            if (!layoutHierarchy && KimlUtil.isDescendant(e.getTarget(), e.getSource())) {
+            
+            // ignore edges that point "into" the node
+            if (KimlUtil.isDescendant(e.getTarget(), e.getSource())) {
                 continue;
             }
-
-            CNode srcNode = knodeMap.get(e.getSource());
-            CNode tgtNode = knodeMap.get(e.getTarget());
-            CPort srcPort = kportMap.get(e.getSourcePort());
-            CPort tgtPort = kportMap.get(e.getTargetPort());
-
-            // ignore hierarchical ports when layouting hierarchy
-            if (layoutHierarchy
-                    && ((srcNode == null && srcPort == null) || (tgtNode == null && tgtPort == null))) {
-                // TODO do this generically
-                if (tgtNode == null && e.getTargetPort() != null) {
-                    for (KEdge hEdge : e.getTargetPort().getEdges()) {
-                        if (!hEdge.equals(e)) {
-                            tgtNode = knodeMap.get(hEdge.getTarget());
-                            tgtPort = kportMap.get(hEdge.getTargetPort());
-                            break;
-                        }
-                    }
-                    if (tgtNode == null) {
-                        // exclude edges that "end" at a hierarchical port
-                        continue;
-                    }
-                } else {
-                    continue;
-                }
-
-                // continue;
-            }
-
-            CEdge edge = new CEdge(graph, srcNode, srcPort, tgtNode, tgtPort);
-            edge.copyProperties(e.getData(KLayoutData.class));
-            edge.setProperty(ORIGIN, e);
-            edge.init();
-
-            // register the edge (if it is no edge to an external port dummy
-            if (e.getTarget().getParent() == e.getSource().getParent()) {
-                srcNode.getOutgoingEdges().add(edge);
-                if (srcPort != null) {
-                    srcPort.getOutgoingEdges().add(edge);
-                }
-                tgtNode.getIncomingEdges().add(edge);
-                if (tgtPort != null) {
-                    tgtPort.getIncomingEdges().add(edge);
-                }
-            }
-
+            
+            transformEdge(e, graph);
         }
 
         if (layoutHierarchy) {
@@ -294,6 +259,62 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         }
     }
 
+    private void transformEdge(final KEdge e, final CGraph graph) {
+        // ignore hierarchy edges when not layouting hierarchy
+//        if (!layoutHierarchy
+//                && (
+//                        //KimlUtil.isDescendant(e.getTarget(), e.getSource()) || 
+//                        //KimlUtil.isDescendant(e.getSource(), e.getTarget()))
+//                        true)) {
+//            return;
+//        }
+
+        CNode srcNode = knodeMap.get(e.getSource());
+        CNode tgtNode = knodeMap.get(e.getTarget());
+        CPort srcPort = kportMap.get(e.getSourcePort());
+        CPort tgtPort = kportMap.get(e.getTargetPort());
+
+        // ignore hierarchical ports when layouting hierarchy
+        if (layoutHierarchy
+                && ((srcNode == null && srcPort == null) || (tgtNode == null && tgtPort == null))) {
+            // TODO do this generically
+            if (tgtNode == null && e.getTargetPort() != null) {
+                for (KEdge hEdge : e.getTargetPort().getEdges()) {
+                    if (!hEdge.equals(e)) {
+                        tgtNode = knodeMap.get(hEdge.getTarget());
+                        tgtPort = kportMap.get(hEdge.getTargetPort());
+                        break;
+                    }
+                }
+                if (tgtNode == null) {
+                    // exclude edges that "end" at a hierarchical port
+                    return;
+                }
+            } else {
+                return;
+            }
+
+            // continue;
+        }
+
+        CEdge edge = new CEdge(graph, srcNode, srcPort, tgtNode, tgtPort);
+        edge.copyProperties(e.getData(KLayoutData.class));
+        edge.setProperty(ORIGIN, e);
+        edge.init();
+
+        // register the edge (if it is no edge to an external port dummy
+        if (e.getTarget().getParent() == e.getSource().getParent()) {
+            srcNode.getOutgoingEdges().add(edge);
+            if (srcPort != null) {
+                srcPort.getOutgoingEdges().add(edge);
+            }
+            tgtNode.getIncomingEdges().add(edge);
+            if (tgtPort != null) {
+                tgtPort.getIncomingEdges().add(edge);
+            }
+        }
+    }
+    
     /**
      * {@inheritDoc}
      */
