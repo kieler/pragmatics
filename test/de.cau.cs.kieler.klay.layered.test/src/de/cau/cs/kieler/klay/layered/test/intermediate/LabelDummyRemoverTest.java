@@ -33,8 +33,8 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.intermediate.LabelDummyRemover;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
-import de.cau.cs.kieler.klay.layered.properties.Properties;
 import de.cau.cs.kieler.klay.layered.test.AbstractLayeredProcessorTest;
 import de.cau.cs.kieler.klay.layered.test.config.OrthogonalEdgeRoutingLayoutConfigurator;
 import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
@@ -95,7 +95,7 @@ public class LabelDummyRemoverTest extends AbstractLayeredProcessorTest {
             for (Layer layer : g.getLayers()) {
                 for (LNode node : layer.getNodes()) {
                     noOverallNodes++;
-                    if (node.getProperty(Properties.NODE_TYPE) == NodeType.LABEL) {
+                    if (node.getProperty(InternalProperties.NODE_TYPE) == NodeType.LABEL) {
                         noTypeNodes++;
                     }
                 }
@@ -115,7 +115,7 @@ public class LabelDummyRemoverTest extends AbstractLayeredProcessorTest {
         for (LGraph g : state.getGraphs()) {
             for (Layer layer : g.getLayers()) {
                 for (LNode node : layer.getNodes()) {
-                    assertTrue(node.getProperty(Properties.NODE_TYPE) != NodeType.LABEL);
+                    assertTrue(node.getProperty(InternalProperties.NODE_TYPE) != NodeType.LABEL);
                     noNodesAfter++;
                 }
             }

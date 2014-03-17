@@ -16,12 +16,13 @@ package de.cau.cs.kieler.klay.layered.test;
 import java.util.Set;
 
 import static org.junit.Assert.*; // SUPPRESS CHECKSTYLE AvoidStarImport
+
 import org.junit.Test;
 
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.components.ComponentGroup;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
-import de.cau.cs.kieler.klay.layered.properties.Properties;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 
 /**
  * Tests the {@link de.cau.cs.kieler.klay.layered.components.ComponentGroup} class.
@@ -111,7 +112,7 @@ public class ComponentGroupTest {
      */
     private static LGraph generateGraph(final Set<PortSide> connections) {
         LGraph graph = new LGraph();
-        graph.setProperty(Properties.EXT_PORT_CONNECTIONS, connections);
+        graph.setProperty(InternalProperties.EXT_PORT_CONNECTIONS, connections);
         
         return graph;
     }
