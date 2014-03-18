@@ -66,7 +66,7 @@ public final class LabelSideSelector implements ILayoutProcessor {
      * {@inheritDoc}
      */
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
-        EdgeLabelSideSelection mode = layeredGraph.getProperty(Properties.EDGE_LABEL_SIDE);
+        EdgeLabelSideSelection mode = layeredGraph.getProperty(Properties.EDGE_LABEL_SIDE_SELECTION);
         monitor.begin("Label side selection (" + mode + ")", 1);
 
         Iterable<LNode> nodes = Iterables.concat(layeredGraph);

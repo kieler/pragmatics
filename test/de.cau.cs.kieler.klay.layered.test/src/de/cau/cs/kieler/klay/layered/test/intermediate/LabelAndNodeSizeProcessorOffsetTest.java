@@ -29,7 +29,7 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.intermediate.LabelAndNodeSizeProcessor;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
-import de.cau.cs.kieler.klay.layered.properties.Properties;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 
 /**
  * Tests whether the port offset is correctly applied to ports of all sides on nodes with all port
@@ -114,7 +114,7 @@ public class LabelAndNodeSizeProcessorOffsetTest {
     private LGraph generateGraph() {
         LGraph graph = new LGraph();
         
-        Set<GraphProperties> graphProperties = graph.getProperty(Properties.GRAPH_PROPERTIES);
+        Set<GraphProperties> graphProperties = graph.getProperty(InternalProperties.GRAPH_PROPERTIES);
         graphProperties.add(GraphProperties.NON_FREE_PORTS);
         graphProperties.add(GraphProperties.NORTH_SOUTH_PORTS);
         
