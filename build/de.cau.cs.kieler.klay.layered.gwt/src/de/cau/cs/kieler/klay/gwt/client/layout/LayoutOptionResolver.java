@@ -17,6 +17,7 @@ import static de.cau.cs.kieler.kiml.options.LayoutOptions.ALGORITHM;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.ALIGNMENT;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.DIRECTION;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.EDGE_ROUTING;
+import static de.cau.cs.kieler.kiml.options.LayoutOptions.THICKNESS;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.EXPAND_NODES;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.INTERACTIVE;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.LABEL_SPACING;
@@ -38,8 +39,8 @@ import static de.cau.cs.kieler.klay.layered.properties.Properties.CROSS_MIN;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.CYCLE_BREAKING;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.DEBUG_MODE;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.DISTRIBUTE_NODES;
-import static de.cau.cs.kieler.klay.layered.properties.Properties.EDGE_LABEL_SIDE;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.EDGE_SPACING_FACTOR;
+import static de.cau.cs.kieler.klay.layered.properties.Properties.EDGE_LABEL_SIDE_SELECTION;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.FEEDBACK_EDGES;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.FIXED_ALIGNMENT;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.LAYER_CONSTRAINT;
@@ -48,9 +49,10 @@ import static de.cau.cs.kieler.klay.layered.properties.Properties.NODE_LAYERING;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.NODE_PLACER;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.OBJ_SPACING;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.OBJ_SPACING_IN_LAYER_FACTOR;
-import static de.cau.cs.kieler.klay.layered.properties.Properties.OFFSET;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.PRIORITY;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.THOROUGHNESS;
+
+
 
 import java.util.EnumSet;
 import java.util.Map;
@@ -76,11 +78,11 @@ import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.SizeConstraint;
 import de.cau.cs.kieler.kiml.options.SizeOptions;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
-import de.cau.cs.kieler.klay.layered.graph.LLabel.LabelSide;
 import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
 import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
 import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
+import de.cau.cs.kieler.klay.layered.properties.EdgeLabelSideSelection;
 import de.cau.cs.kieler.klay.layered.properties.FixedAlignment;
 import de.cau.cs.kieler.klay.layered.properties.LayerConstraint;
 
@@ -124,9 +126,9 @@ public final class LayoutOptionResolver {
     
     private static final Pair<Set<String>, Map<String, IProperty<?>>> FLOAT_TYPES = createTypesSet(
             LABEL_SPACING,
+            THICKNESS,
             // klay
             BORDER_SPACING,
-            OFFSET,
             ASPECT_RATIO,
             OBJ_SPACING,
             OBJ_SPACING_IN_LAYER_FACTOR,
@@ -143,10 +145,10 @@ public final class LayoutOptionResolver {
             // klay
             CYCLE_BREAKING,
             NODE_LAYERING,
+            EDGE_LABEL_SIDE_SELECTION,
             CROSS_MIN,
             NODE_PLACER,
             FIXED_ALIGNMENT,
-            EDGE_LABEL_SIDE,
             LAYER_CONSTRAINT
             );
     
@@ -301,14 +303,14 @@ public final class LayoutOptionResolver {
                     enumeration = CycleBreakingStrategy.valueOf(enumValue);
                 } else if (equalsIdOrSuffix(NODE_LAYERING, id)) {
                     enumeration = LayeringStrategy.valueOf(enumValue);
+                } else if (equalsIdOrSuffix(EDGE_LABEL_SIDE_SELECTION, id)) {
+                    enumeration = EdgeLabelSideSelection.valueOf(enumValue);   
                 } else if (equalsIdOrSuffix(CROSS_MIN, id)) {
                     enumeration = CrossingMinimizationStrategy.valueOf(enumValue);
                 } else if (equalsIdOrSuffix(NODE_PLACER, id)) {
                     enumeration = NodePlacementStrategy.valueOf(enumValue);
                 } else if (equalsIdOrSuffix(FIXED_ALIGNMENT, id)) {
                     enumeration = FixedAlignment.valueOf(enumValue);
-                } else if (equalsIdOrSuffix(EDGE_LABEL_SIDE, id)) {
-                    enumeration = LabelSide.valueOf(enumValue);
                 } else if (equalsIdOrSuffix(LAYER_CONSTRAINT, id)) {
                     enumeration = LayerConstraint.valueOf(enumValue);
                 }

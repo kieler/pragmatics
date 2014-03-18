@@ -20,7 +20,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.KlayLayered;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
-import de.cau.cs.kieler.klay.layered.properties.Properties;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 
 /**
  * Recursively layouts an hierarchical {@link LGraph}.
@@ -64,7 +64,7 @@ public class RecursiveLGraphLayout {
     private LGraph recLayout(final KlayLayered layered, final LGraph graph) {
 
         for (LNode n : graph.getLayerlessNodes()) {
-            LGraph childGraph = n.getProperty(Properties.NESTED_LGRAPH);
+            LGraph childGraph = n.getProperty(InternalProperties.NESTED_LGRAPH);
             if (childGraph != null) {
                 LGraph res = recLayout(layered, childGraph);
 

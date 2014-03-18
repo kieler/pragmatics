@@ -48,6 +48,7 @@ import de.cau.cs.kieler.klay.layered.graph.LShape;
 import de.cau.cs.kieler.klay.layered.graphimport.IGraphImporter;
 import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -195,9 +196,9 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         
         if (parentNode != null) {
             // set this LGraph as child of the parent LNode
-            parentNode.setProperty(Properties.NESTED_LGRAPH, graph);
+            parentNode.setProperty(InternalProperties.NESTED_LGRAPH, graph);
         }
-        graph.setProperty(Properties.PARENT_LNODE, parentNode);
+        graph.setProperty(InternalProperties.PARENT_LNODE, parentNode);
         
         // global layout options are applied first, hence possibly overwritten
         if (globalOptions != null) {
@@ -209,7 +210,7 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
 
         // the graph properties discovered during the transformations
         EnumSet<GraphProperties>  graphProperties = EnumSet.noneOf(GraphProperties.class);
-        graph.setProperty(Properties.GRAPH_PROPERTIES, graphProperties);
+        graph.setProperty(InternalProperties.GRAPH_PROPERTIES, graphProperties);
         
         // for the top level node check if we wanna layout hierarchy
         if (layoutHierarchy == null) {
@@ -263,10 +264,10 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
 
         checkForId(jNode);
         Set<GraphProperties> graphProperties = 
-                graph.getProperty(Properties.GRAPH_PROPERTIES);
+                graph.getProperty(InternalProperties.GRAPH_PROPERTIES);
 
         LNode node = new LNode(graph);
-        node.setProperty(Properties.ORIGIN, jNode);
+        node.setProperty(InternalProperties.ORIGIN, jNode);
         graph.getLayerlessNodes().add(node);
 
         // id and register
@@ -301,7 +302,7 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
 
         // check if the node is a compound node in the original graph
         if (jNode.containsKey("children") && jNode.get("children").isArray().size() > 0) {
-            node.setProperty(Properties.COMPOUND_NODE, true);
+            node.setProperty(InternalProperties.COMPOUND_NODE, true);
         }
 
         // port constraints and sides cannot be undefined
@@ -337,7 +338,7 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
 
         checkForId(jPort);
         Set<GraphProperties> graphProperties = 
-                graph.getProperty(Properties.GRAPH_PROPERTIES);
+                graph.getProperty(InternalProperties.GRAPH_PROPERTIES);
 
         // should we include this port into the layout?
         String noLayoutId = LayoutOptions.NO_LAYOUT.getId();
@@ -347,7 +348,7 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         }
 
         LPort port = new LPort(graph);
-        port.setProperty(Properties.ORIGIN, jPort);
+        port.setProperty(InternalProperties.ORIGIN, jPort);
         port.setNode(node);
 
         // id and register
@@ -381,7 +382,7 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         }
         // initialize the port's side, offset, and anchor point
         LGraphUtil.initializePort(port, portConstraints, direction,
-                port.getProperty(Properties.PORT_ANCHOR));
+                port.getProperty(LayoutOptions.PORT_ANCHOR));
 
         switch (direction) {
         case LEFT:
@@ -460,7 +461,7 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         // create a new label
         String text = val.isString().stringValue();
         LLabel label = new LLabel(graph, text);
-        label.setProperty(Properties.ORIGIN, jLabel);
+        label.setProperty(InternalProperties.ORIGIN, jLabel);
         labelJsonMap.put(label, jLabel);
 
         // properties
@@ -486,7 +487,7 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
                 label.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT, labelPlacement);
 
                 Set<GraphProperties> graphProperties =
-                        graph.getProperty(Properties.GRAPH_PROPERTIES);
+                        graph.getProperty(InternalProperties.GRAPH_PROPERTIES);
                 switch (labelPlacement) {
                 case CENTER:
                     // Add annotation if graph contains labels which shall be placed
@@ -633,7 +634,7 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         
         // create a layered edge
         LEdge edge = new LEdge(graph);
-        edge.setProperty(Properties.ORIGIN, jEdge);
+        edge.setProperty(InternalProperties.ORIGIN, jEdge);
         
         // id and register
         JSONString id = (JSONString) jEdge.get("id");
@@ -646,7 +647,7 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         // labels
         transformLabels(jEdge, edge, graph);
 
-        Set<GraphProperties> graphProperties = graph.getProperty(Properties.GRAPH_PROPERTIES);
+        Set<GraphProperties> graphProperties = graph.getProperty(InternalProperties.GRAPH_PROPERTIES);
 
         if (sourceNode != null && targetNode != null) {
             // if we have a self-loop, set the appropriate graph property
@@ -696,7 +697,7 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
                                     .isNumber().doubleValue());
                     bendpoints.add(v);
                 }
-                edge.setProperty(Properties.ORIGINAL_BENDPOINTS, bendpoints);
+                edge.setProperty(InternalProperties.ORIGINAL_BENDPOINTS, bendpoints);
             } catch (Exception e) {
                 throw new UnsupportedJsonGraphException(
                         "Invalid format of an edges 'bendPoints' property.", jEdge);
@@ -832,7 +833,7 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
 
         // Process nested subgraphs
         for (LNode n : parentGraph.getLayerlessNodes()) {
-            LGraph childGraph = n.getProperty(Properties.NESTED_LGRAPH);
+            LGraph childGraph = n.getProperty(InternalProperties.NESTED_LGRAPH);
             if (childGraph != null) {
                 transferLayout(childGraph);
             }
@@ -870,7 +871,7 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
             src = KVector.sum(sourcePort.getPosition(), sourcePort.getAnchor());
             LInsets sourceInsets = sourcePort.getNode().getInsets();
             src.translate(-sourceInsets.left, -sourceInsets.top);
-            LGraph nestedGraph = sourcePort.getNode().getProperty(Properties.NESTED_LGRAPH);
+            LGraph nestedGraph = sourcePort.getNode().getProperty(InternalProperties.NESTED_LGRAPH);
             if (nestedGraph != null) {
                 edgeOffset = nestedGraph.getOffset();
             }
@@ -887,8 +888,8 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
 
         // Target Point
         KVector tgt = edge.getTarget().getAbsoluteAnchor();
-        if (edge.getProperty(Properties.TARGET_OFFSET) != null) {
-            tgt.add(edge.getProperty(Properties.TARGET_OFFSET));
+        if (edge.getProperty(InternalProperties.TARGET_OFFSET) != null) {
+            tgt.add(edge.getProperty(InternalProperties.TARGET_OFFSET));
         }
         
         tgt.translate(offset.x, offset.y);
