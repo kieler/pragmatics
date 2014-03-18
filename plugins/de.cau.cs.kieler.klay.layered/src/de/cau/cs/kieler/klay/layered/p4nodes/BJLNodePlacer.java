@@ -543,108 +543,101 @@ public final class BJLNodePlacer implements ILayoutPhase {
     }
 
     /**
-     * computes the linear segments of the layered graph. splits segments to avoid inner segment
-     * crossings.
+     * computes the linear segments of the layered graph.
+     * 
      */
     private void computeLinearSegments() {
-
-        boolean[] visited = new boolean[numberOfNodes];
-        // mark all nodes as unvisited
+        int maxSegId = computeSegmentIds();
+        // // initialize list of all linear segments
+        linearSegments = new ArrayList<LinearSegment>(maxSegId);
+        for (int i = 0; i < maxSegId; i++) {
+            linearSegments.add(new LinearSegment(i));
+        }
         for (Layer layer : layeredGraph) {
-            for (LNode node : layer.getNodes()) {
-                visited[node.id] = false;
+            for (LNode node : layer) {
+                linearSegments.get(nodeExtensions[node.id].segId).addNode(node);
             }
         }
 
-        // initialize list of all linear segments
-        linearSegments = new LinkedList<LinearSegment>();
+    }
+
+    /**
+     * computes the segmendId of each node returns the number of linear Segments.
+     * @return maximum segment id
+     */
+    private int computeSegmentIds() {
+        int segId = 0;
 
         // helper for inner segment crossings,
-        // lists of virtual node's segment identifier which successors are also virtual
-        // last layer
+        // list of dummy nodes of the last layer which has dummy successors in the current layer
         List<Integer> lastLayerSegments;
-        // current layer
+        // list of dummy node's segment identifier which successors are also dummy nodes
         List<Integer> currentLayerSegments = new LinkedList<Integer>();
 
-        int segCounter = 0;
-
         for (Layer layer : layeredGraph) {
-
             lastLayerSegments = currentLayerSegments;
             currentLayerSegments = new LinkedList<Integer>();
 
-            for (LNode lNode : layer) {
-                // if the current node is not visited yet
-                if (!visited[lNode.id]) {
-
-                    boolean dummy = false;
-
-                    // create a new linear segment
-                    LinearSegment seg = new LinearSegment(segCounter, layer.id);
-                    linearSegments.add(seg);
-                    segCounter++;
-
-                    seg.addNode(lNode);
-                    visited[lNode.id] = true;
-                    // check if the current node and his successor are dummies
-                    // and if they are in different layers
-                    if (isDummy(lNode) && isDummy(getFirstsuccessor(lNode))
-                            && (getFirstsuccessor(lNode).getLayer().id == lNode.getLayer().id + 1)) {
-
-                        currentLayerSegments.add(seg.id);
-                        dummy = true;
-                    }
-
-                    LNode succ = getFirstsuccessor(lNode);
-                    // while the successor is a dummy node insert the successor to the current
-                    // segment
-                    while (dummy) {
-
-                        if (isDummy(succ)) {
-
-                            if (getFirstsuccessor(succ) != null) {
-                                if (getFirstsuccessor(succ).getLayer().id == succ.getLayer().id + 1) {
-                                    seg.addNode(succ);
-                                    visited[succ.id] = true;
-                                    succ = getFirstsuccessor(succ);
-                                } else {
-                                    dummy = false;
-                                }
-                            } else {
-                                seg.addNode(succ);
-                                visited[succ.id] = true;
-                                succ = getFirstsuccessor(succ);
-                            }
-
-                        } else {
-                            dummy = false;
-                        }
-                    }
-                    // if the current node is already visited
+            for (LNode node : layer) {
+                if (!isDummy(node)) {
+                    nodeExtensions[node.id].segId = segId;
+                    segId++;
                 } else {
-                    if (isDummy(lNode)) {
+                    // predecessor in the last layer
+                    LNode pred = getFirstPredeccessor(node);
+                    // successor in the next layer
+                    LNode succ = getFirstsuccessor(node);
 
-                        if (nodeExtensions[lNode.id].segId != lastLayerSegments.get(0)) {
-                            // split segment
-                            LinearSegment seg2 =
-                                    linearSegments.get(nodeExtensions[lNode.id].segId).split(
-                                            segCounter, layer.id, lNode);
-                            linearSegments.add(seg2);
-                            segCounter++;
+                    // check wether the list of dummy nodes which has successors in the currentlayer
+                    // is emppty
+                    if (!lastLayerSegments.isEmpty()) {
+                        if (isDummy(pred) && (pred.getLayer().id < node.getLayer().id)) {
+                            if (nodeExtensions[pred.id].segId == lastLayerSegments.get(0)) {
+                                nodeExtensions[node.id].segId = nodeExtensions[pred.id].segId;
+                                lastLayerSegments.remove(0);
+                            } else {
+                                lastLayerSegments.remove(0);
+                                nodeExtensions[node.id].segId = segId;
+                                segId++;
+                            }
+                        } else {
+                            nodeExtensions[node.id].segId = segId;
+                            segId++;
                         }
-
-                        lastLayerSegments.remove(0);
-
-                        if (isDummy(getFirstsuccessor(lNode))) {
-                            currentLayerSegments.add(nodeExtensions[lNode.id].segId);
-                        }
+                    } else {
+                        nodeExtensions[node.id].segId = segId;
+                        segId++;
                     }
-
+                    if (isDummy(succ) && (succ.getLayer().id > node.getLayer().id)) {
+                        currentLayerSegments.add(nodeExtensions[node.id].segId);
+                    }
                 }
             }
         }
+        return segId;
     }
 
+    /**
+     * @param node
+     * @return the first predecessor in the previous layer
+     */
+    private LNode getFirstPredeccessor(LNode node) {
+        LNode predecessor = null;
+         for (LEdge edge : node.getIncomingEdges()) {
+         if (edge.getSource().getNode().getLayer().id < node.getLayer().id) {
+         predecessor = edge.getSource().getNode();
+         }
+//        for (LEdge edge : node.getConnectedEdges()) {
+//            if (edge.getSource().getNode().getLayer().id < node.getLayer().id) {
+//                predecessor = edge.getSource().getNode();
+//                break;
+//            } else if (edge.getSource().getNode().getLayer().id < node.getLayer().id) {
+//                predecessor = edge.getTarget().getNode();
+//                break;
+//            }
+        }
+        return predecessor;
+    }
     /**
      * 
      * @param node
@@ -653,7 +646,17 @@ public final class BJLNodePlacer implements ILayoutPhase {
     private LNode getFirstsuccessor(final LNode node) {
         LNode successor = null;
         for (LEdge edge : node.getOutgoingEdges()) {
-            successor = edge.getTarget().getNode();
+             if (edge.getTarget().getNode().getLayer().id == (node.getLayer().id + 1)) {
+             successor = edge.getTarget().getNode();
+             }
+
+//            if (edge.getTarget().getNode().getLayer().id > node.getLayer().id) {
+//                successor = edge.getSource().getNode();
+//                break;
+//            } else if (edge.getSource().getNode().getLayer().id > node.getLayer().id) {
+//                successor = edge.getTarget().getNode();
+//                break;
+//            }
         }
         return successor;
     }
@@ -1398,9 +1401,9 @@ public final class BJLNodePlacer implements ILayoutPhase {
          * @param layerId
          *            Identifier value of the layer of the first node in a linear segment.
          */
-        private LinearSegment(final int segId, final int layerId) {
+        private LinearSegment(final int segId) {// , final int layerId) {
             this.id = segId;
-            this.layerId = layerId;
+            // this.layerId = layerId;
             this.computedClassId = -1;
             this.nodes = new LinkedList<LNode>();
         }
@@ -1417,9 +1420,9 @@ public final class BJLNodePlacer implements ILayoutPhase {
          *            node to split the segment at
          * @return new computed linear segment
          */
-        public LinearSegment split(final int id2, final int layer, final LNode node) {
+        public LinearSegment split(final int id2, /* final int layer */final LNode node) {
             int nodeIndex = this.getIndexOf(node);
-            LinearSegment newSeg = new LinearSegment(id2, layer);
+            LinearSegment newSeg = new LinearSegment(id2);// , layer);
 
             ListIterator<LNode> iterator = nodes.listIterator(nodeIndex);
             while (iterator.hasNext()) {
