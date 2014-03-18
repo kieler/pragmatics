@@ -29,7 +29,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.intermediate.InLayerConstraintProcessor;
 import de.cau.cs.kieler.klay.layered.properties.InLayerConstraint;
-import de.cau.cs.kieler.klay.layered.properties.Properties;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.test.AbstractLayeredProcessorTest;
 import de.cau.cs.kieler.klay.test.config.BasicLayoutConfigurator;
 import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
@@ -68,13 +68,13 @@ public class InLayerConstraintProcessorTest extends AbstractLayeredProcessorTest
                         double r = random.nextDouble();
                         // CHECKSTYLEOFF Magic Numbers
                         if (r < 0.2) {
-                            layout.setProperty(Properties.IN_LAYER_CONSTRAINT,
+                            layout.setProperty(InternalProperties.IN_LAYER_CONSTRAINT,
                                     InLayerConstraint.TOP);
                         } else if (r < 0.8) {
-                            layout.setProperty(Properties.IN_LAYER_CONSTRAINT,
+                            layout.setProperty(InternalProperties.IN_LAYER_CONSTRAINT,
                                     InLayerConstraint.NONE);
                         } else {
-                            layout.setProperty(Properties.IN_LAYER_CONSTRAINT,
+                            layout.setProperty(InternalProperties.IN_LAYER_CONSTRAINT,
                                     InLayerConstraint.BOTTOM);
                         }
                     }
@@ -101,7 +101,8 @@ public class InLayerConstraintProcessorTest extends AbstractLayeredProcessorTest
             for (Layer layer : g.getLayers()) {
                 InLayerConstraint last = null;
                 for (LNode node : layer.getNodes()) {
-                    InLayerConstraint current = node.getProperty(Properties.IN_LAYER_CONSTRAINT);
+                    InLayerConstraint current = node.getProperty(
+                            InternalProperties.IN_LAYER_CONSTRAINT);
 
                     if (last == null) {
                         last = current;
