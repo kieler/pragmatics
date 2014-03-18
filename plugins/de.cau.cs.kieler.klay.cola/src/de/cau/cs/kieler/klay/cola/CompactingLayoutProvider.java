@@ -52,8 +52,8 @@ public class CompactingLayoutProvider extends AbstractLayoutProvider {
         KimlNodeDimensionCalculation.calculateLabelAndNodeSizes(adapter);
         KimlNodeDimensionCalculation.calculateNodeMargins(adapter);
 
-        parentNode.getData(KShapeLayout.class).setProperty(KGraphImporter.PORT_DUMMIES, false);
-        
+        parentNode.getData(KShapeLayout.class).setProperty(ColaProperties.PORT_DUMMIES, false);
+
         KGraphImporter importer = new KGraphImporter();
         CGraph graph = importer.importGraph(parentNode);
 

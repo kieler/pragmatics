@@ -16,6 +16,7 @@ package de.cau.cs.kieler.klay.cola.processors;
 import java.util.Map;
 import java.util.Set;
 
+import org.adaptagrams.AlignmentConstraint;
 import org.adaptagrams.Dim;
 import org.adaptagrams.SeparationConstraint;
 
@@ -49,6 +50,15 @@ public class DirectionConstraintProcessor implements ILayoutProcessor {
             for (CNode n : scc) {
                 nodeSccMap.put(n, scc);
             }
+        }
+        
+        // create alignment for for scc
+        for (Set<CNode> scc : sccs) {
+            AlignmentConstraint ac = new AlignmentConstraint(Dim.XDIM);
+            for (CNode cn : scc) {
+                ac.addShape(cn.cIndex, 0);
+            }
+            graph.constraints.add(ac);
         }
 
         // TODO only left to right atm

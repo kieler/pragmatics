@@ -4,6 +4,7 @@
    <extension
          point="de.cau.cs.kieler.kiml.layoutProviders">
       <layoutOption
+            advanced="true"
             appliesTo="parents"
             default="100"
             description="The ideal length of the edges"
@@ -37,12 +38,32 @@
          <supportedFeature
                feature="CLUSTERS">
          </supportedFeature>
+         <knownOption
+               default="false"
+               option="de.cau.cs.kieler.klay.cola.libtopology">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.cola.dummyPortNodes">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             class="de.cau.cs.kieler.klay.cola.CompactingLayoutProvider"
             id="de.cau.cs.kieler.klay.cola.compaction"
             name="Compacting Layout">
       </layoutAlgorithm>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            id="de.cau.cs.kieler.klay.cola.libtopology"
+            name="Topology Preserving Edge Straightening"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            id="de.cau.cs.kieler.klay.cola.dummyPortNodes"
+            name="Create Dummy Port Nodes"
+            type="boolean">
+      </layoutOption>
    </extension>
 
 </plugin>
