@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klay.cola.util;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
@@ -32,6 +33,10 @@ public final class ColaUtil {
     private ColaUtil() {
     }
 
+    public static Set<CEdge> findMinimalFAS(final List<CNode> nodes) {
+        return new MinimalFeedbackArcSetProcessor().process(nodes);
+    }
+    
     /**
      * @param graph
      *            the graph for which to find the strongly connected components.

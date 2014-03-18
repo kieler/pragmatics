@@ -64,6 +64,13 @@
             name="Create Dummy Port Nodes"
             type="boolean">
       </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            class="de.cau.cs.kieler.klay.cola.properties.CycleTreatment"
+            id="de.cau.cs.kieler.klay.cola.cycleTreatment"
+            name="Cycle Treatment"
+            type="enum">
+      </layoutOption>
    </extension>
 
 </plugin>

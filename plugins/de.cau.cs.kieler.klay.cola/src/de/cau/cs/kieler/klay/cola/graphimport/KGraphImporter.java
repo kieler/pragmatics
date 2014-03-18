@@ -41,12 +41,12 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
-import de.cau.cs.kieler.klay.cola.ColaProperties;
 import de.cau.cs.kieler.klay.cola.graph.CEdge;
 import de.cau.cs.kieler.klay.cola.graph.CGraph;
 import de.cau.cs.kieler.klay.cola.graph.CNode;
 import de.cau.cs.kieler.klay.cola.graph.CPort;
 import de.cau.cs.kieler.klay.cola.graph.CShape;
+import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
 
 /**
  * @author uru

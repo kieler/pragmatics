@@ -28,6 +28,9 @@ public abstract class CGraphElement extends MapPropertyHolder {
     private static final long serialVersionUID = -8909829166918218344L;
 
     // CHECKSTYLEOFF VisibilityModifier
+    
+    /** Identifier value, may be arbitrarily used by algorithms. */
+    public int id;
 
     /**
      * Index of this element within an adaptagrams array. E.g., the index of a node in the nodes

@@ -24,6 +24,7 @@ import com.google.common.collect.Iterables;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
+import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
 
 /**
  * @author uru
@@ -80,7 +81,7 @@ public class CNode extends CShape {
                 new Rectangle(0 - margin.left,
                 // assure that the size is at least 1
                         Math.max(1, 0 + this.getSize().x + margin.right), 0 - margin.top, Math.max(
-                                1, 0 + this.getSize().y + margin.bottom) // same here
+                                1, 0 + this.getSize().y + margin.bottom + 20) // same here
                 );
         cIndex = graph.nodeIndex++;
 
@@ -166,4 +167,16 @@ public class CNode extends CShape {
     // }
     // return "n_" + cIndex;
     // }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        Object origin = getProperty(ColaProperties.ORIGIN);
+        if (origin != null) {
+            return origin.toString();
+        }
+        return super.toString();
+    }
 }

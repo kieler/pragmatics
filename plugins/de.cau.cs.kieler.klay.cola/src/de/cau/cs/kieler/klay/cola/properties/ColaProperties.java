@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.cola;
+package de.cau.cs.kieler.klay.cola.properties;
 
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.properties.IProperty;
@@ -36,6 +36,12 @@ public final class ColaProperties {
      */
     public static final IProperty<Boolean> PORT_DUMMIES = new Property<Boolean>(
             "de.cau.cs.kieler.klay.cola.dummyPortNodes", true);
+
+    /**
+     * How to handle cycles in the graph.
+     */
+    public static final IProperty<CycleTreatment> CYCLE_TREATMENT = new Property<CycleTreatment>(
+            "de.cau.cs.kieler.klay.cola.cycleTreatment", CycleTreatment.NONE);
 
     /*--------------------------------------------------------------------------------------------
      *                          Internal Use only

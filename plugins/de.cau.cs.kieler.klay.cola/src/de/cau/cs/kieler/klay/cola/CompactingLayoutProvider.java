@@ -30,6 +30,7 @@ import de.cau.cs.kieler.klay.cola.graph.CEdge;
 import de.cau.cs.kieler.klay.cola.graph.CGraph;
 import de.cau.cs.kieler.klay.cola.graph.CNode;
 import de.cau.cs.kieler.klay.cola.graphimport.KGraphImporter;
+import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
 
 /**
  * @author uru

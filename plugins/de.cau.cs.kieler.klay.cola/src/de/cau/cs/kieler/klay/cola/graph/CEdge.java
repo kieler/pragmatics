@@ -15,6 +15,8 @@ package de.cau.cs.kieler.klay.cola.graph;
 
 import org.adaptagrams.ColaEdge;
 
+import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
+
 /**
  * @author uru
  * 
@@ -110,4 +112,16 @@ public class CEdge extends CGraphElement {
         return tgtPort;
     }
 
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        Object origin = getProperty(ColaProperties.ORIGIN);
+        if (origin != null) {
+            return origin.toString();
+        }
+        return super.toString();
+    }
 }

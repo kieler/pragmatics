@@ -26,9 +26,9 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.libavoid.LibavoidGraph;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.klay.cola.ColaProperties;
 import de.cau.cs.kieler.klay.cola.graph.CGraph;
 import de.cau.cs.kieler.klay.cola.graph.CNode;
+import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
 
 /**
  * @author uru

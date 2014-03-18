@@ -11,3 +11,6 @@ Require-Bundle: com.google.guava,
  de.cau.cs.kieler.kiml,
  de.cau.cs.kieler.kiml.libavoid,
  org.adaptagrams;bundle-version="0.1.0"
+Export-Package: de.cau.cs.kieler.klay.cola,
+ de.cau.cs.kieler.klay.cola.graph,
+ de.cau.cs.kieler.klay.cola.properties

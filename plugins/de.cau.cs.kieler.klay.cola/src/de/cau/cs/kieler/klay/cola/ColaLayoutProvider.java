@@ -33,6 +33,7 @@ import de.cau.cs.kieler.klay.cola.processors.DirectionConstraintProcessor;
 import de.cau.cs.kieler.klay.cola.processors.LibtopologyProcessor;
 import de.cau.cs.kieler.klay.cola.processors.NonUniformEdgeLengthProcessor;
 import de.cau.cs.kieler.klay.cola.processors.PortConstraintProcessor;
+import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
 
 /**
  * 
