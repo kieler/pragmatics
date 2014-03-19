@@ -42,12 +42,14 @@ import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.config.LayoutContext;
 import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.SizeConstraint;
@@ -574,7 +576,6 @@ public class DiagramLayoutEngine {
             mapping.setProperty(PROGRESS_MONITOR, progressMonitor);
         }
         
-        // Fetch the active graph layout engine to be used
         try {
             // configure the layout graph using a layout option manager
             layoutOptionManager.configure(mapping, progressMonitor.subTask(CONFIGURE_WORK));
@@ -587,6 +588,13 @@ public class DiagramLayoutEngine {
 
             // perform layout on the layout graph
             graphLayoutEngine.layout(mapping.getLayoutGraph(), progressMonitor.subTask(LAYOUT_WORK));
+            
+            // if an additional layout configurator is attached to the graph, consider it in the future
+            ILayoutConfig addConfig = mapping.getLayoutGraph().getData(KShapeLayout.class).getProperty(
+                    AbstractLayoutProvider.ADD_LAYOUT_CONFIG);
+            if (addConfig != null) {
+                mapping.getLayoutConfigs().add(addConfig);
+            }
             
             if (newTask) {
                 progressMonitor.done();

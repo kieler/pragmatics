@@ -80,7 +80,12 @@ class KRenderingFigureProvider {
     // Node Renderings
     
     /**
+     * Returns the rendering library associated with the given node. The associated rendering library is
+     * the library of the root ancestor of the node. If no library exists yet, one is created and
+     * attached to the root ancestor.
      * 
+     * @param node the node whose's rendering library to return.
+     * @return the rendering library associated with the given node.
      */
     def private KRenderingLibrary getLibrary(KNode node) {
         var parent = node
@@ -98,7 +103,12 @@ class KRenderingFigureProvider {
     }
     
     /**
+     * Returns a reference to rendering with the given ID in the given library.
      * 
+     * @param id identifier of the rendering to look up.
+     * @param library the rendering library to search for the rendering.
+     * @return new rendering reference to the rendering, or {@code null} if no rendering with the given
+     *         identifier exists in the library.
      */
     def private KRenderingRef getFromLibrary(String id, KRenderingLibrary library) {
         val rendering = library.renderings.findFirst[r | r.id == id] as KRendering
@@ -107,11 +117,17 @@ class KRenderingFigureProvider {
             val ref = renderingFactory.createKRenderingRef()
             ref.rendering = rendering
             return ref
+        } else {
+            return null
         }
     }
     
     /**
+     * Adds the given rendering to the given rendering library with the given id.
      * 
+     * @param rendering the rendering to add to the library.
+     * @param id the id that will identify the rendering in the library.
+     * @param library the library to add the rendering to.
      */
     def private KRenderingRef addToLibrary(KRendering rendering, String id, KRenderingLibrary library) {
         rendering.id = id
@@ -595,10 +611,10 @@ class KRenderingFigureProvider {
     def KContainerRendering addRenderingWithSelectionWrapper(KGraphElement kge) {
         kge.addRectangle => [
             it.invisible = true;
-            it.addRoundedRectangle(10, 10f, 1) => [
-                it.setSurroundingSpace(-10, 0);
+            it.addRoundedRectangle(3f, 3f, 1) => [
+            it.setSurroundingSpace(-3, 0);
                 it.invisible = true;
-                it.setBackgroundColor(56, 117, 215);
+                it.setBackgroundColor(181, 198, 226);
                 it.lineStyle = LineStyle.DASH;
                 it.selectionInvisible = false;
             ]
