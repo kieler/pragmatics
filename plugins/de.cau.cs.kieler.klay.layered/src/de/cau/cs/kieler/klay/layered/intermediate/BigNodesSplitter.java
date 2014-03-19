@@ -219,25 +219,27 @@ public class BigNodesSplitter implements ILayoutProcessor {
             }
         }
 
-        Iterable<LEdge> westEdges;
-        Iterable<LEdge> eastEdges;
+        // edges that are connected to the left side of the node
+        Iterable<LEdge> westwardEdges;
+        // likewise edges connected to the right side of the node
+        Iterable<LEdge> eastwardEdges;
 
         if (node.node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()) {
             List<Iterable<LEdge>> tmp = Lists.newArrayList();
             for (LPort p : node.node.getPorts(PortSide.WEST)) {
                 tmp.add(p.getConnectedEdges());
             }
-            westEdges = Iterables.concat(tmp);
+            westwardEdges = Iterables.concat(tmp);
 
-            tmp.clear();
+            tmp = Lists.newArrayList();
             for (LPort p : node.node.getPorts(PortSide.EAST)) {
                 tmp.add(p.getConnectedEdges());
             }
-            eastEdges = Iterables.concat(tmp);
+            eastwardEdges = Iterables.concat(tmp);
         } else {
             // ports are free, thus ports are moved to appropriate sides
-            westEdges = node.node.getIncomingEdges();
-            eastEdges = node.node.getOutgoingEdges();
+            westwardEdges = node.node.getIncomingEdges();
+            eastwardEdges = node.node.getOutgoingEdges();
         }
         
         // the node has to be connected
@@ -253,8 +255,8 @@ public class BigNodesSplitter implements ILayoutProcessor {
         }
 
         // either exactly one incoming edge that originates from a long edge dummy
-        if (Iterables.size(westEdges) == 1) {
-            LNode source = Iterables.get(westEdges, 0).getSource().getNode();
+        if (Iterables.size(westwardEdges) == 1) {
+            LNode source = Iterables.get(westwardEdges, 0).getSource().getNode();
             if (source.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE
             // and the long edge dummy does not represent a self loop
                     && !source.getProperty(InternalProperties.LONG_EDGE_SOURCE).getNode()
@@ -265,8 +267,8 @@ public class BigNodesSplitter implements ILayoutProcessor {
         }
 
         // on outgoing edge analog
-        if (Iterables.size(eastEdges) == 1) {
-            LNode target = Iterables.get(eastEdges, 0).getTarget().getNode();
+        if (Iterables.size(eastwardEdges) == 1) {
+            LNode target = Iterables.get(eastwardEdges, 0).getTarget().getNode();
             if (target.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE
                     && !target.getProperty(InternalProperties.LONG_EDGE_TARGET).getNode()
                             .equals(node.node)) {
@@ -541,9 +543,9 @@ public class BigNodesSplitter implements ILayoutProcessor {
 
             // if the big node has multiple EAST ports, reassemble this on the former long edge
             // dummy
-            if (Iterables.size(start.getPorts(PortSide.EAST)) > 1) {
+            if (!Iterables.isEmpty(start.getPorts(PortSide.EAST))) {
                 // the port list is sorted here!
-                for (LPort p : Lists.newLinkedList(start.getPorts(PortSide.EAST))) {
+                for (LPort p : Lists.newArrayList(start.getPorts(PortSide.EAST))) {
                     if (p.getOutgoingEdges().isEmpty()) {
 
                         LPort newPort = new LPort(layeredGraph);

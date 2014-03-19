@@ -253,8 +253,15 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
 
         // Initialize the compound graph layer crossing minimizer
         IConstraintResolver constraintResolver = new ForsterConstraintResolver(layoutUnits);
-        ICrossingMinimizationHeuristic crossminHeuristic = new BarycenterHeuristic(constraintResolver,
-                random, portRanks);
+        // Decide which barycenter heuristic to use
+        ICrossingMinimizationHeuristic crossminHeuristic;
+        boolean handleBignodes = layeredGraph.getProperty(Properties.DISTRIBUTE_NODES);
+        if (handleBignodes) {
+            crossminHeuristic =
+                    new BigNodesBarycenterHeuristic(constraintResolver, random, portRanks);
+        } else {
+            crossminHeuristic = new BarycenterHeuristic(constraintResolver, random, portRanks);
+        }
         
         // Create port distributors
         NodeRelativePortDistributor nodeRelativePortDistributor
@@ -342,7 +349,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
             } while (curSweepCrossings < prevSweepCrossings && curSweepCrossings > 0);
             
             // Note: if the last sweep did not find a valid ordering, we don't use it
-            // however, if everything fails, use the last result
+            // however, if every run fails, use the last result
             if (run == runCount - 1) {
                 valid = true;
                 prevValid = true;

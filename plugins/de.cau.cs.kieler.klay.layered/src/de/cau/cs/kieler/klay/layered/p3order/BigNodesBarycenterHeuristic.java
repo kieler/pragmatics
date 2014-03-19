@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
- * Copyright 2010 by
+ * Copyright 2014 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -23,17 +23,15 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 
 /**
- * Determines the node order of a given free layer. Uses heuristic methods to find an ordering that
- * minimizes edge crossings between the given free layer and a neighboring layer with fixed node
- * order. The barycenter heuristic is used here.
+ * Implements the barycenter heuristic for two-layer crossing minimization.
+ * The basic implementation is copied from {@link BarycenterHeuristic} and enriched with 
+ * additional functionality to handle big nodes.
  * 
- * @author msp
- * @author cds
- * @author ima
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
+ * @author uru
+ * 
+ * @see BigNodesCrossingAvoider
  */
-public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic {
+public final class BigNodesBarycenterHeuristic implements ICrossingMinimizationHeuristic {
 
     /** the array of port ranks. */
     private float[] portRanks;
@@ -41,6 +39,8 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
     private Random random;
     /** the constraint resolver for ordering constraints. */
     private IConstraintResolver constraintResolver;
+    /** avoids node/edge crossings for bignodes. */
+    private BigNodesCrossingAvoider bignodeCrossingAvoider = new BigNodesCrossingAvoider();
 
     /**
      * Constructs a Barycenter heuristic for crossing minimization between two layers.
@@ -52,8 +52,8 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
      * @param portRanks
      *            the array of port ranks
      */
-    public BarycenterHeuristic(final IConstraintResolver constraintResolver, final Random graphRandom,
-            final float[] portRanks) {
+    public BigNodesBarycenterHeuristic(final IConstraintResolver constraintResolver,
+            final Random graphRandom, final float[] portRanks) {
         this.constraintResolver = constraintResolver;
         this.random = graphRandom;
         this.portRanks = portRanks;
@@ -78,6 +78,23 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
         if (layer.size() > 1) {
             // Sort the vertices according to their barycenters
             Collections.sort(layer);
+
+            // ## Bignode addition
+            
+            // adjust barycenter values to avoid edge/node crossings in presence of big nodes
+            boolean valid = bignodeCrossingAvoider.adjustBigNodeBarycenters(layer, forward);
+            if (!valid) {
+                return false;
+            }
+            Collections.sort(layer);
+            
+            // Generate in-layer successor constraints to avoid node/edge crossings of 
+            // big nodes and in-layer edges
+            // We do this as the LAST thing, as we want to give as much freedom as possible
+            // to the two layer cross reduction!
+            bignodeCrossingAvoider.generateInLayerConstraints(layer);
+            
+            // ## Bignode addition END
 
             // Resolve ordering constraints
             constraintResolver.processConstraints(layer);
