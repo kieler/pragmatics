@@ -380,8 +380,8 @@ public final class Properties {
     /**
      * Property to choose an edge label placement strategy.
      */
-    public static final IProperty<EdgeLabelSideSelection> EDGE_LABEL_SIDE =
-            new Property<EdgeLabelSideSelection>("de.cau.cs.kieler.klay.layered.LabelSide",
+    public static final IProperty<EdgeLabelSideSelection> EDGE_LABEL_SIDE_SELECTION =
+            new Property<EdgeLabelSideSelection>("de.cau.cs.kieler.klay.layered.edgeLabelSideSelection",
                                                          EdgeLabelSideSelection.SMART);
 
     /**
@@ -434,12 +434,6 @@ public final class Properties {
      */
     public static final IProperty<Boolean> FEEDBACK_EDGES = new Property<Boolean>(
             "de.cau.cs.kieler.klay.layered.feedBackEdges", false);
-
-    /**
-     * The offset to the port position where connections shall be attached.
-     */
-    public static final IProperty<KVector> PORT_ANCHOR = new Property<KVector>(
-            "de.cau.cs.kieler.klay.layered.portAnchor");
 
 
     // /////////////////////////////////////////////////////////////////////////////

@@ -170,6 +170,13 @@ public final class LayoutOptions {
      * </ul>
      */
     public static final IProperty<Float> OFFSET = new Property<Float>("de.cau.cs.kieler.offset");
+
+    /**
+     * The offset to the port position where connections shall be attached. For compatibility reasons,
+     * the ID still starts with the KLay Layered ID.
+     */
+    public static final IProperty<KVector> PORT_ANCHOR = new Property<KVector>(
+            "de.cau.cs.kieler.klay.layered.portAnchor");
     
     /**
      * The index of a port in the fixed order of ports around its node. [programmatically set]
