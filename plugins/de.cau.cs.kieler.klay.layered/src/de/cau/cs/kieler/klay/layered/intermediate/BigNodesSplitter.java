@@ -593,8 +593,7 @@ public class BigNodesSplitter implements ILayoutProcessor {
                 Layer dummyLayer = layeredGraph.getLayers().get(currentLayer + 1);
 
                 int upperStrokeMax = inLayerPositions.get(i++);
-                // dummyLayer.getNodes().add(upperStrokeMax + 1, dummy);
-                dummy.setLayer(upperStrokeMax + 1, dummyLayer);
+                dummy.setLayer(Math.min(upperStrokeMax + 1, dummyLayer.getNodes().size()), dummyLayer);
 
                 if (start != null) {
                     chainOfNodes.add(start);
@@ -716,13 +715,21 @@ public class BigNodesSplitter implements ILayoutProcessor {
                 }
 
                 // TODO really true? cant it be that the upper is completely located below the lower
-                
+
                 // get layer
                 Layer dummyLayer = layeredGraph.getLayers().get(layerIndex);
-                
                 int upperStrokeMax = -1; // -1, to differ between '0 pos' and 'not found'
-                for (LNode n : upperStroke) {
-                    upperStrokeMax =  Math.max(upperStrokeMax, dummyLayer.getNodes().indexOf(n));
+                
+                // if we only have an upper set, place it at the bottom of the dummy layer
+                if (lower.isEmpty()) {
+                    upperStrokeMax = dummyLayer.getNodes().size();
+                   
+                } else {
+                
+                    // find the proper position
+                    for (LNode n : upperStroke) {
+                        upperStrokeMax =  Math.max(upperStrokeMax, dummyLayer.getNodes().indexOf(n));
+                    }
                 }
                 
                 // we also require
