@@ -184,6 +184,7 @@ public class BigNodesSplitter implements ILayoutProcessor {
         for (BigNode node : bigNodes) {
             // is this big node ok?
             if (isProcessorApplicable(node)) {
+                System.out.println("Applicable");
                 node.process();
             }
         }
@@ -218,9 +219,27 @@ public class BigNodesSplitter implements ILayoutProcessor {
             }
         }
 
-        Iterable<LEdge> incomingEdges = node.node.getIncomingEdges();
-        Iterable<LEdge> outgoingEdges = node.node.getOutgoingEdges();
+        Iterable<LEdge> westEdges;
+        Iterable<LEdge> eastEdges;
 
+        if (node.node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()) {
+            List<Iterable<LEdge>> tmp = Lists.newArrayList();
+            for (LPort p : node.node.getPorts(PortSide.WEST)) {
+                tmp.add(p.getConnectedEdges());
+            }
+            westEdges = Iterables.concat(tmp);
+
+            tmp.clear();
+            for (LPort p : node.node.getPorts(PortSide.EAST)) {
+                tmp.add(p.getConnectedEdges());
+            }
+            eastEdges = Iterables.concat(tmp);
+        } else {
+            // ports are free, thus ports are moved to appropriate sides
+            westEdges = node.node.getIncomingEdges();
+            eastEdges = node.node.getOutgoingEdges();
+        }
+        
         // the node has to be connected
         if (Iterables.isEmpty(node.node.getOutgoingEdges())
                 && Iterables.isEmpty(node.node.getIncomingEdges())) {
@@ -234,8 +253,8 @@ public class BigNodesSplitter implements ILayoutProcessor {
         }
 
         // either exactly one incoming edge that originates from a long edge dummy
-        if (Iterables.size(incomingEdges) == 1) {
-            LNode source = Iterables.get(incomingEdges, 0).getSource().getNode();
+        if (Iterables.size(westEdges) == 1) {
+            LNode source = Iterables.get(westEdges, 0).getSource().getNode();
             if (source.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE
             // and the long edge dummy does not represent a self loop
                     && !source.getProperty(InternalProperties.LONG_EDGE_SOURCE).getNode()
@@ -246,8 +265,8 @@ public class BigNodesSplitter implements ILayoutProcessor {
         }
 
         // on outgoing edge analog
-        if (Iterables.size(outgoingEdges) == 1) {
-            LNode target = Iterables.get(outgoingEdges, 0).getTarget().getNode();
+        if (Iterables.size(eastEdges) == 1) {
+            LNode target = Iterables.get(eastEdges, 0).getTarget().getNode();
             if (target.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE
                     && !target.getProperty(InternalProperties.LONG_EDGE_TARGET).getNode()
                             .equals(node.node)) {
