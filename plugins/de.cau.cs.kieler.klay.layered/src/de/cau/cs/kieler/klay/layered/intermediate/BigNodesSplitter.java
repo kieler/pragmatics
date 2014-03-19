@@ -209,11 +209,12 @@ public class BigNodesSplitter implements ILayoutProcessor {
                     return false;
                 }
             }
-            // we don't support self-loops
-            for (LEdge edge : node.node.getOutgoingEdges()) {
-                if (edge.getSource().getNode().equals(edge.getTarget().getNode())) {
-                    return false;
-                }
+        }
+        
+        // we don't support self-loops
+        for (LEdge edge : node.node.getOutgoingEdges()) {
+            if (edge.getSource().getNode().equals(edge.getTarget().getNode())) {
+                return false;
             }
         }
 
@@ -233,19 +234,26 @@ public class BigNodesSplitter implements ILayoutProcessor {
         }
 
         // either exactly one incoming edge that originates from a long edge dummy
-        if (Iterables.size(incomingEdges) == 1
-                && Iterables.get(incomingEdges, 0).getSource().getNode()
-                        .getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE) {
-            node.type = BigNodeType.INC_LONG_EDGE;
-            return true;
+        if (Iterables.size(incomingEdges) == 1) {
+            LNode source = Iterables.get(incomingEdges, 0).getSource().getNode();
+            if (source.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE
+            // and the long edge dummy does not represent a self loop
+                    && !source.getProperty(InternalProperties.LONG_EDGE_SOURCE).getNode()
+                            .equals(node.node)) {
+                node.type = BigNodeType.INC_LONG_EDGE;
+                return true;
+            }
         }
 
         // on outgoing edge analog
-        if (Iterables.size(outgoingEdges) == 1
-                && Iterables.get(outgoingEdges, 0).getTarget().getNode()
-                        .getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE) {
-            node.type = BigNodeType.OUT_LONG_EDGE;
-            return true;
+        if (Iterables.size(outgoingEdges) == 1) {
+            LNode target = Iterables.get(outgoingEdges, 0).getTarget().getNode();
+            if (target.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE
+                    && !target.getProperty(InternalProperties.LONG_EDGE_TARGET).getNode()
+                            .equals(node.node)) {
+                node.type = BigNodeType.OUT_LONG_EDGE;
+                return true;
+            }
         }
 
         return false;
