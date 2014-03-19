@@ -149,7 +149,9 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         KGraphAdapter adapter = KGraphAdapters.adapt(parent);
         KimlNodeDimensionCalculation.sortPortLists(adapter);
         KimlNodeDimensionCalculation.calculateLabelAndNodeSizes(adapter);
-        KimlNodeDimensionCalculation.calculateNodeMargins(adapter);
+        
+        
+        KimlNodeDimensionCalculation.getNodeMarginCalculator(adapter).excludePorts().process();
 
         if (parent.getData(KLayoutData.class).getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {
             for (KNode child : parent.getChildren()) {
