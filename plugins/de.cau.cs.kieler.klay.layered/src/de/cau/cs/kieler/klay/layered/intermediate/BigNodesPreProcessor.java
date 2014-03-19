@@ -176,14 +176,27 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
                     return false;
                 }
             }
-            // we don't support self-loops 
-            for (LEdge edge : node.getOutgoingEdges()) {
-                if (edge.getSource().getNode().equals(edge.getTarget().getNode())) {
+        }
+        
+        // we reject nodes with incoming edges on east ports 
+        // if port constraints are at least fixed side
+        // Reason: incoming edges on EAST ports introduce dummy nodes within the same layer.
+        // This would introduce trouble as the "last part" of a big node is a dummy itself.
+        if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()) {
+            for (LPort p : node.getPorts(PortSide.EAST)) {
+                if (!p.getIncomingEdges().isEmpty()) {
                     return false;
                 }
             }
         }
 
+        // we don't support self-loops 
+        for (LEdge edge : node.getOutgoingEdges()) {
+            if (edge.getSource().getNode().equals(edge.getTarget().getNode())) {
+                return false;
+            }
+        }
+        
         return true;
     }
 
