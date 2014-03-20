@@ -123,6 +123,8 @@ public class NonUniformEdgeLengthProcessor implements ILayoutProcessor {
                                                                            // connection between the
                                                                            // two nodes itself
                 graph.idealEdgeLengths[e.cIndex] = idealEdgeLength * Math.sqrt(cumWeight);
+                
+                System.out.println(e + " " + graph.idealEdgeLengths[e.cIndex]);
 
             }
         }
@@ -164,7 +166,7 @@ public class NonUniformEdgeLengthProcessor implements ILayoutProcessor {
         for (CNode n : graph.getChildren()) {
             for (CPort p : n.getPorts()) {
                 // SUPPRESS CHECKSTYLE NEXT MagicNumber
-                graph.idealEdgeLengths[p.cEdgeIndex] = p.idealDummyEdgeLength + 30;
+                graph.idealEdgeLengths[p.cEdgeIndex] = p.idealDummyEdgeLength;
             }
         }
     }

@@ -71,6 +71,20 @@
             name="Cycle Treatment"
             type="enum">
       </layoutOption>
+      <layoutAlgorithm
+            class="de.cau.cs.kieler.klay.cola.TIOLayoutProvider"
+            id="de.cau.cs.kieler.klay.cola.TIPLayout"
+            name="TIP Layout">
+         <knownOption
+               option="de.cau.cs.kieler.borderSpacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.cola.dummyPortNodes">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.spacing">
+         </knownOption>
+      </layoutAlgorithm>
    </extension>
 
 </plugin>

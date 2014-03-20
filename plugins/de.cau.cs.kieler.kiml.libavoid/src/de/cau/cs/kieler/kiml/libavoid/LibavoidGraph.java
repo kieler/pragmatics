@@ -181,6 +181,8 @@ public class LibavoidGraph {
 
         // destroy
         router.delete();
+        // make sure it is not used anymore, otherwise it will result in a jvm crash
+        router = null;
     }
     
     /**

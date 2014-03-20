@@ -151,7 +151,8 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         KimlNodeDimensionCalculation.calculateLabelAndNodeSizes(adapter);
         
         
-        KimlNodeDimensionCalculation.getNodeMarginCalculator(adapter).excludePorts().process();
+//        KimlNodeDimensionCalculation.getNodeMarginCalculator(adapter).excludePorts().process();
+        KimlNodeDimensionCalculation.getNodeMarginCalculator(adapter).process();
 
         if (parent.getData(KLayoutData.class).getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {
             for (KNode child : parent.getChildren()) {

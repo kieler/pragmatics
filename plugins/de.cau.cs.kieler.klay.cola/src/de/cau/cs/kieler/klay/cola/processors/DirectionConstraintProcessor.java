@@ -119,12 +119,14 @@ public class DirectionConstraintProcessor implements ILayoutProcessor {
 
                 // separation has to go from mid to mid
                 double widthSeparation =
-                        (e.getSource().getSize().x / 2f + srcMargins.right + srcMargins.left)
-                                + (e.getTarget().getSize().x / 2f + tgtMargins.left + tgtMargins.right);
+                        (e.getSource().getSize().x + srcMargins.right + srcMargins.left) / 2f
+                                + (e.getTarget().getSize().x + tgtMargins.left + tgtMargins.right) / 2f;
                 SeparationConstraint sc =
                         new SeparationConstraint(Dim.XDIM, e.getSource().cIndex,
                                 e.getTarget().cIndex, widthSeparation + spacing);
 
+                System.out.println("Separation: " + e + " " + (widthSeparation + spacing));
+                
                 // System.out.println("Spacing: " + spacing);
 
                 graph.constraints.add(sc);
