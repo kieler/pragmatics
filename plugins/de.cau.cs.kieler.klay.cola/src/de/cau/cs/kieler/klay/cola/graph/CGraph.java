@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klay.cola.graph;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.adaptagrams.ColaEdges;
@@ -141,5 +142,31 @@ public class CGraph extends CGraphElement {
      */
     public int getLastNodeIndex() {
         return nodeIndex;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("CGraph {");
+        if (nodes != null) {
+            sb.append("\n\tNodes: ").append(nodes);
+        }
+        if (edges != null) {
+            sb.append("\n\tEdges: ").append(edges);
+        }
+        if (constraints != null) {
+            sb.append("\n\tConstraints: ").append(constraints);
+        }
+        if (rootCluster != null) {
+            sb.append("\n\tClusters: ").append(rootCluster);
+        }
+        if (idealEdgeLengths != null) {
+            sb.append("\n\tIdealEdgeLengths: ").append(Arrays.toString(idealEdgeLengths));
+        }
+        sb.append("\n}");
+
+        return sb.toString();
     }
 }

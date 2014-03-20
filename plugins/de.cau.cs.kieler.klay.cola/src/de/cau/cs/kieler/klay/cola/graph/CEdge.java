@@ -77,6 +77,9 @@ public class CEdge extends CGraphElement {
         }
         // create the cola representation
         edge = new ColaEdge(srcIndex, tgtIndex);
+
+        System.out.println("Initialized " + edge);
+
         cIndex = graph.edgeIndex++;
 
         // add to the graph
@@ -112,16 +115,21 @@ public class CEdge extends CGraphElement {
         return tgtPort;
     }
 
-    
     /**
      * {@inheritDoc}
      */
     @Override
     public String toString() {
+        StringBuilder sb = new StringBuilder("CEdge { ");
         Object origin = getProperty(ColaProperties.ORIGIN);
         if (origin != null) {
-            return origin.toString();
+            sb.append(origin).append(" ");
         }
-        return super.toString();
+        if (edge != null) {
+            sb.append(edge).append(" ");
+        }
+
+        sb.append(" }");
+        return sb.toString();
     }
 }

@@ -83,11 +83,13 @@ public class CNode extends CShape {
                         Math.max(1, 0 + this.getSize().x + margin.right), 0 - margin.top, Math.max(
                                 1, 0 + this.getSize().y + margin.bottom + 20) // same here
                 );
+
         cIndex = graph.nodeIndex++;
 
         // register in graph
         graph.nodes.add(rect);
 
+        System.out.println("Initialized " + this);
     }
 
     /**
@@ -145,38 +147,22 @@ public class CNode extends CShape {
         return filtered;
     }
 
-    // /**
-    // * Returns the name of the node. The name is derived from the text of the first label, if any.
-    // *
-    // * @return the name, or {@code null}
-    // */
-    // public String getName() {
-    // if (!origin.getLabels().isEmpty()) {
-    // return origin.getLabels().get(0).getText();
-    // }
-    // return null;
-    // }
-    //
-    // /**
-    // * {@inheritDoc}
-    // */
-    // public String toString() {
-    // String name = getName();
-    // if (name != null) {
-    // return "n_" + getName();
-    // }
-    // return "n_" + cIndex;
-    // }
-    
     /**
      * {@inheritDoc}
      */
     @Override
     public String toString() {
+        StringBuilder sb = new StringBuilder("CNode { ");
         Object origin = getProperty(ColaProperties.ORIGIN);
         if (origin != null) {
-            return origin.toString();
+            sb.append(origin).append(" ");
         }
-        return super.toString();
+        if (rect != null) {
+            sb.append("cIndex=").append(cIndex).append(" ");
+            sb.append(rect).append(" ");
+        }
+
+        sb.append(" }");
+        return sb.toString();
     }
 }

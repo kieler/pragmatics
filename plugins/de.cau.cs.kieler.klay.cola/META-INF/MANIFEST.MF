@@ -14,3 +14,4 @@ Require-Bundle: com.google.guava,
 Export-Package: de.cau.cs.kieler.klay.cola,
  de.cau.cs.kieler.klay.cola.graph,
  de.cau.cs.kieler.klay.cola.properties
+Bundle-ActivationPolicy: lazy

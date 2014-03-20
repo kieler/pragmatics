@@ -26,7 +26,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.kiml.options.GraphFeature;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 import de.cau.cs.kieler.klay.cola.graph.CEdge;
@@ -47,6 +46,7 @@ public class DirectionConstraintProcessor implements ILayoutProcessor {
      * {@inheritDoc}
      */
     public void process(final CGraph graph, final IKielerProgressMonitor progressMonitor) {
+        progressMonitor.begin("Cola Direction Constraints", 1);
 
         float spacing = graph.getProperty(LayoutOptions.SPACING);
 
@@ -74,9 +74,13 @@ public class DirectionConstraintProcessor implements ILayoutProcessor {
             break;
 
         case ALIGN_SCC:
-            // create alignment for for scc
+            // create alignment for scc
             for (Set<CNode> scc : sccs) {
+                if (scc.size() == 1) {
+                    continue;
+                }
                 AlignmentConstraint ac = new AlignmentConstraint(Dim.XDIM);
+                System.out.println("Generated " + ac);
                 for (CNode cn : scc) {
                     ac.addShape(cn.cIndex, 0);
                 }
@@ -101,8 +105,8 @@ public class DirectionConstraintProcessor implements ILayoutProcessor {
                     if (nodeSccMap.get(e.getSource()).contains(e.getTarget())) {
                         continue;
                     }
-                } else if (EnumSet.of(CycleTreatment.MFAS_SCC, CycleTreatment.MFAS_GLOBAL).contains(
-                        cycleTreatment)) {
+                } else if (EnumSet.of(CycleTreatment.MFAS_SCC, CycleTreatment.MFAS_GLOBAL)
+                        .contains(cycleTreatment)) {
                     // don't create constraints for nodes in the FAS
                     if (fasEdges.contains(e)) {
                         System.out.println("Excluding: " + e.getProperty(ColaProperties.ORIGIN));
@@ -110,29 +114,25 @@ public class DirectionConstraintProcessor implements ILayoutProcessor {
                     }
                 }
 
-                // System.out.println("Generating constraint " +
-                // e.getSource().getProperty(ColaProperties.ORIGIN) +
-                // e.getTarget().getProperty(ColaProperties.ORIGIN));
-
                 Margins srcMargins = e.getSource().getProperty(LayoutOptions.MARGINS);
                 Margins tgtMargins = e.getTarget().getProperty(LayoutOptions.MARGINS);
 
                 // separation has to go from mid to mid
                 double widthSeparation =
                         (e.getSource().getSize().x + srcMargins.right + srcMargins.left) / 2f
-                                + (e.getTarget().getSize().x + tgtMargins.left + tgtMargins.right) / 2f;
+                                + (e.getTarget().getSize().x + tgtMargins.left + tgtMargins.right)
+                                / 2f;
                 SeparationConstraint sc =
                         new SeparationConstraint(Dim.XDIM, e.getSource().cIndex,
                                 e.getTarget().cIndex, widthSeparation + spacing);
 
-                System.out.println("Separation: " + e + " " + (widthSeparation + spacing));
-                
-                // System.out.println("Spacing: " + spacing);
+                System.out.println("Generated " + sc + " for " + e);
 
                 graph.constraints.add(sc);
             }
         }
 
+        progressMonitor.done();
     }
 
 }

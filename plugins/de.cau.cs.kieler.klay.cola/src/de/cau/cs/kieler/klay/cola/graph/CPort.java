@@ -26,6 +26,7 @@ import com.google.common.collect.Lists;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
+import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
 
 /**
  * @author uru
@@ -63,6 +64,8 @@ public class CPort extends CShape {
         rect = new Rectangle(0, 0 + this.getSize().x, 0, 0 + this.getSize().y);
         cIndex = graph.nodeIndex++;
         graph.nodes.add(rect);
+        
+        System.out.println("Initialized " + this);
     }
 
     public CPort asExternalDummy() {
@@ -202,28 +205,22 @@ public class CPort extends CShape {
         return incomingEdges;
     }
 
-    // /**
-    // * Returns the name of the port. The name is derived from the text of the first label, if any.
-    // *
-    // * @return the name, or {@code null}
-    // */
-    // public String getName() {
-    // if (!origin.getLabels().isEmpty()) {
-    // return origin.getLabels().get(0).getText();
-    // }
-    // return null;
-    // }
-    //
-    // /**
-    // * {@inheritDoc}
-    // */
-    // @Override
-    // public String toString() {
-    // String text = getName();
-    // if (text == null) {
-    // return "p_" + cIndex + (cEdgeIndex != -1 ? "_" + cEdgeIndex : "");
-    // } else {
-    // return "p_" + text;
-    // }
-    // }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("CPort { ");
+        Object origin = getProperty(ColaProperties.ORIGIN);
+        if (origin != null) {
+            sb.append(origin).append(" ");
+        }
+        if (rect != null) {
+            sb.append("cIndex=").append(cIndex).append(" ");
+            sb.append(rect).append(" ");
+        }
+
+        sb.append(" }");
+        return sb.toString();
+    }
 }
