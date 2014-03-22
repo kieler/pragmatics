@@ -36,8 +36,15 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPage;
@@ -182,8 +189,15 @@ public class LayoutConfigViewPart extends ViewPart {
 
         this.shell = parent.getShell();
         
+        Composite composite = new Composite(parent, SWT.NONE);
+        GridLayout layout = new GridLayout(1, true);
+        composite.setLayout(layout);
+        
         // create the xtext editor within this view
-        setupXtextEditor(parent);
+        setupXtextEditor(composite);
+
+        // a scaler to increase/decrease the value of an option
+        setupScale(composite);
 
         // create the buttons
         createButtons();
@@ -232,6 +246,46 @@ public class LayoutConfigViewPart extends ViewPart {
                     .withParent(parent);
         partialEditor = handle.createPartialEditor(true);
 
+    }
+    
+    private void setupScale(final Composite parent) {
+        
+        // new parent for the text field and scale
+        Composite scaleParent = new Composite(parent, SWT.NONE);
+        GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+        scaleParent.setLayoutData(gd);
+        GridLayout grid = new GridLayout(2, false);
+        scaleParent.setLayout(grid);
+        
+        // create textfield to specify the desired layout option
+        final Text tf = new Text(scaleParent, SWT.SINGLE | SWT.BORDER);
+        gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+        tf.setLayoutData(gd);
+        tf.setText("Layout Option Id");
+        
+        // a scale to specify the desired value 
+        final Scale scale = new Scale(scaleParent, SWT.NONE);
+        gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+        scale.setLayoutData(gd);
+        scale.setMinimum(0);
+        scale.setMaximum(100);
+        
+        // listen to value changes of the scale
+        scale.addSelectionListener(new SelectionListener() {
+
+            public void widgetSelected(SelectionEvent e) {
+                String option = tf.getText();
+                int value = scale.getSelection();
+
+                scaleAddition = Pair.of(option, (Number) value);
+
+                performLayout();
+            }
+
+            public void widgetDefaultSelected(SelectionEvent e) {
+                System.out.println(e);
+            }
+        });
     }
 
     private void createButtons() {
@@ -412,6 +466,9 @@ public class LayoutConfigViewPart extends ViewPart {
     /** preference identifier for progress dialog. */
     private static final String PREF_PROGRESS = "de.cau.cs.kieler.kiml.progressDialog";
 
+    /** an additional layout option that can be specified via a scaler below the textual view. */
+    private Pair<String, Number> scaleAddition = Pair.of("", (Number) 0);
+    
     private void performLayout() {
 
         if (lastActiveEditor == null) {
@@ -423,8 +480,9 @@ public class LayoutConfigViewPart extends ViewPart {
         boolean animation = preferenceStore.getBoolean(PREF_ANIMATION);
         boolean zoomToFit = preferenceStore.getBoolean(PREF_ZOOM);
         boolean progressDialog = preferenceStore.getBoolean(PREF_PROGRESS);
-
-        List<VolatileLayoutConfig> cfgs = LayoutConfigTransformer.from(resource);
+ 
+        @SuppressWarnings("unchecked")
+        List<VolatileLayoutConfig> cfgs = LayoutConfigTransformer.from(resource, scaleAddition);
         VolatileLayoutConfig[] layoutConfigs = cfgs.toArray(new VolatileLayoutConfig[cfgs.size()]);
 
         if (layoutConfigs.length == 0) {
