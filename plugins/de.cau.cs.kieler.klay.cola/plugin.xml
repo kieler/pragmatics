@@ -85,6 +85,15 @@
                option="de.cau.cs.kieler.spacing">
          </knownOption>
       </layoutAlgorithm>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="120"
+            description="The maximum length of a centre S-bend connector segments to attempt to improve (default 120.0)."
+            id="de.cau.cs.kieler.klay.cola.moveLimit"
+            name="Move Limit"
+            type="float">
+      </layoutOption>
    </extension>
 
 </plugin>

@@ -27,7 +27,6 @@ import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 import de.cau.cs.kieler.klay.cola.graph.CEdge;
 import de.cau.cs.kieler.klay.cola.graph.CGraph;
 import de.cau.cs.kieler.klay.cola.graph.CNode;
@@ -114,19 +113,22 @@ public class DirectionConstraintProcessor implements ILayoutProcessor {
                     }
                 }
 
-                Margins srcMargins = e.getSource().getProperty(LayoutOptions.MARGINS);
-                Margins tgtMargins = e.getTarget().getProperty(LayoutOptions.MARGINS);
-
+                CNode src = e.getSource();
+                CNode tgt = e.getTarget();
+                
                 // separation has to go from mid to mid
                 double widthSeparation =
-                        (e.getSource().getSize().x + srcMargins.right + srcMargins.left) / 2f
-                                + (e.getTarget().getSize().x + tgtMargins.left + tgtMargins.right)
+                        (src.getSize().x + src.getMargins().right + src.getMargins().left) / 2f
+                                + (tgt.getSize().x + tgt.getMargins().left + tgt.getMargins().right)
                                 / 2f;
+                
                 SeparationConstraint sc =
                         new SeparationConstraint(Dim.XDIM, e.getSource().cIndex,
-                                e.getTarget().cIndex, widthSeparation + spacing);
-
-                System.out.println("Generated " + sc + " for " + e);
+                                e.getTarget().cIndex, widthSeparation + spacing
+                                // FIXME the question is where to consider ports for spacing
+                                // we add dummy nodes, hence dont need them in the margin, 
+                                // however, during separation calculation we need them!
+                                + 16);
 
                 graph.constraints.add(sc);
             }

@@ -23,9 +23,10 @@ import org.adaptagrams.SeparationConstraint;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
+import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Insets;
 import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
 
 /**
@@ -44,16 +45,18 @@ public class CPort extends CShape {
 
     public PortSide side = PortSide.UNDEFINED;
 
-    public final CNode parentNode;
+    public final CNode owner;
     protected List<CEdge> outgoingEdges = Lists.newLinkedList();
     protected List<CEdge> incomingEdges = Lists.newLinkedList();
+
+    private boolean external = false;
 
     /**
      * 
      */
     public CPort(final CGraph graph, final CNode parentNode) {
         super(graph);
-        this.parentNode = parentNode;
+        this.owner = parentNode;
     }
 
     /**
@@ -64,7 +67,7 @@ public class CPort extends CShape {
         rect = new Rectangle(0, 0 + this.getSize().x, 0, 0 + this.getSize().y);
         cIndex = graph.nodeIndex++;
         graph.nodes.add(rect);
-        
+
         System.out.println("Initialized " + this);
     }
 
@@ -72,30 +75,74 @@ public class CPort extends CShape {
 
         double borderSpacing = graph.getProperty(LayoutOptions.BORDER_SPACING);
 
+        // FIXME this should really be done only once for all external ports
+        double leftMostX = Double.MAX_VALUE;
+        CNode leftMost = null;
+        double rightMostX = Double.MIN_VALUE;
+        CNode rightMost = null;
+
+        // find the leftmost node
+        for (CNode n : graph.getChildren()) {
+            double maxX = n.getPos().x + n.getSize().x + n.getMargins().right;
+            double minX = n.getPos().x - n.getMargins().left;
+            if (rightMost == null && leftMost == null) {
+                leftMostX = minX;
+                leftMost = n;
+                rightMostX = maxX;
+                rightMost = n;
+                continue;
+            }
+
+            if (maxX > rightMostX) {
+                rightMostX = maxX;
+                rightMost = n;
+            }
+
+            if (minX < leftMostX) {
+                leftMostX = minX;
+                leftMost = n;
+            }
+        }
+
         switch (side) {
         case EAST:
+            // generate a separation constraint to the right most node
+            double gRight =
+                    rightMost.getSize().x / 2f + this.getSize().x / 2f + borderSpacing
+                            + rightMost.getMargins().right;
+            SeparationConstraint scRight =
+                    new SeparationConstraint(Dim.XDIM, rightMost.cIndex, cIndex, gRight, false);
+            graph.constraints.add(scRight);
+            System.out.println("Generated External EAST port " + scRight);
+            System.out.println("RightMost node " + rightMost);
 
             // generate a separation constraint on the right side of all nodes
-            for (CNode n : graph.getChildren()) {
-
-                SeparationConstraint scRight =
-                        new SeparationConstraint(Dim.XDIM, n.cIndex, cIndex, n.getSize().x / 2f
-                                + this.getSize().x / 2f + borderSpacing, false);
-                graph.constraints.add(scRight);
-
-            }
+            // for (CNode n : graph.getChildren()) {
+            // SeparationConstraint scRight =
+            // new SeparationConstraint(Dim.XDIM, n.cIndex, cIndex, n.getSize().x / 2f
+            // + this.getSize().x / 2f + borderSpacing, false);
+            // graph.constraints.add(scRight);
+            // }
             break;
 
         case WEST:
-
             // generate a separation constraint on the left side of all nodes
-            for (CNode n : graph.getChildren()) {
+            double gLeft =
+                    leftMost.getSize().x / 2f + this.getSize().x / 2f + borderSpacing
+                            + leftMost.getMargins().left;
+            SeparationConstraint scLeft =
+                    new SeparationConstraint(Dim.XDIM, cIndex, leftMost.cIndex, gLeft, false);
+            graph.constraints.add(scLeft);
 
-                SeparationConstraint scRight =
-                        new SeparationConstraint(Dim.XDIM, cIndex, n.cIndex, n.getSize().x / 2f
-                                + this.getSize().x / 2f + borderSpacing, false);
-                graph.constraints.add(scRight);
-            }
+            System.out.println("Generated External WEST port " + scLeft);
+            System.out.println("LeftMost node " + leftMost);
+
+            // for (CNode n : graph.getChildren()) {
+            // SeparationConstraint scRight =
+            // new SeparationConstraint(Dim.XDIM, cIndex, n.cIndex, n.getSize().x / 2f
+            // + this.getSize().x / 2f + borderSpacing, false);
+            // graph.constraints.add(scRight);
+            // }
 
             break;
 
@@ -104,84 +151,75 @@ public class CPort extends CShape {
 
         }
 
+        external = true;
+
         return this;
     }
 
     public CPort withCenterEdge() {
 
         // connect by edge
-        ColaEdge dummyEdge = new ColaEdge(parentNode.cIndex, cIndex);
+        ColaEdge dummyEdge = new ColaEdge(owner.cIndex, cIndex);
         cEdgeIndex = graph.edgeIndex++;
         graph.edges.add(dummyEdge);
 
         return this;
     }
 
-    public double getActualXPos() {
+    public KVector getRelativePos() {
+        KVector pos = new KVector(rect.getMinX(), rect.getMinY());
 
-        double x = rect.getMinX();
+        CNode node = owner;
+        while (node != null) {
+            Insets insets = node.getInsets();
+            pos.translate(-node.rect.getMinX() - insets.left, -node.rect.getMinY() - insets.top);
+            if (node.getParent() instanceof CNode) {
+                node = (CNode) node.getParent();
+            } else {
+                node = null;
+            }
+        }
 
-        // offset relative to parent
-        x -= parentNode.rect.getMinX();
-
-        // subtract some stuff depending on position
-        Margins margins = parentNode.getProperty(LayoutOptions.MARGINS);
-
+        // FIXME turn this into an offset
+        float breathe = 3;
         switch (side) {
 
         case NORTH:
+            pos.x -= owner.getMargins().left;
+            pos.y += breathe;
+            break;
+
         case SOUTH:
-            x -= margins.right - getSize().x;
+            pos.x -= owner.getMargins().left;
+            pos.y -= owner.getMargins().top + owner.getMargins().bottom + breathe;
             break;
 
         case WEST:
-            x -= margins.left;
-            x += getSize().x;
+            pos.x += breathe;
+            pos.y -= owner.getMargins().top;
             break;
 
         case EAST:
-            x -= margins.right + margins.left;
+            pos.x -= owner.getMargins().left + owner.getMargins().right + breathe;
+            pos.y -= owner.getMargins().top;
             break;
 
         default:
             break;
         }
 
-        return x;
+        return pos;
     }
 
-    public double getActualYPos() {
+    /**
+     * @return the external
+     */
+    public boolean isExternal() {
+        return external;
+    }
 
-        double y = rect.getMinY();
-
-        // offset relative to parent
-        y -= parentNode.rect.getMinY();
-
-        // subtract some stuff depending on position
-        Margins margins = parentNode.getProperty(LayoutOptions.MARGINS);
-
-        switch (side) {
-
-        case NORTH:
-            y += margins.top;
-            break;
-
-        case SOUTH:
-            y -= margins.bottom + margins.top;
-            break;
-
-        case WEST:
-        case EAST:
-            y -= margins.bottom;
-            y -= getSize().y;
-            break;
-
-        default:
-            break;
-        }
-
-        return y;
-
+    public KVector getRectPos() {
+        return new KVector(rect.getMinX() + getMargins().left, rect.getMinY() + getMargins().top);
     }
 
     /**

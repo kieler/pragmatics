@@ -42,6 +42,13 @@ public final class ColaProperties {
      */
     public static final IProperty<CycleTreatment> CYCLE_TREATMENT = new Property<CycleTreatment>(
             "de.cau.cs.kieler.klay.cola.cycleTreatment", CycleTreatment.NONE);
+    
+    /**
+     * The maximum length of a centre S-bend connector segments to attempt to improve
+     * (default 120.0).
+     */
+    public static final IProperty<Float> MOVE_LIMIT = new Property<Float>(
+            "de.cau.cs.kieler.klay.cola.moveLimit", 120f, 10f);
 
     /*--------------------------------------------------------------------------------------------
      *                          Internal Use only

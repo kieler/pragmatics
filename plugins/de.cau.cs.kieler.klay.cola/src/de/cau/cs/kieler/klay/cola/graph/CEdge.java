@@ -15,6 +15,7 @@ package de.cau.cs.kieler.klay.cola.graph;
 
 import org.adaptagrams.ColaEdge;
 
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
 
 /**
@@ -78,7 +79,7 @@ public class CEdge extends CGraphElement {
         // create the cola representation
         edge = new ColaEdge(srcIndex, tgtIndex);
 
-        System.out.println("Initialized " + edge);
+        System.out.println("Initialized " + edge + " " + this);
 
         cIndex = graph.edgeIndex++;
 
@@ -113,6 +114,44 @@ public class CEdge extends CGraphElement {
      */
     public CPort getTargetPort() {
         return tgtPort;
+    }
+
+    /**
+     * Returns the docking point at the source node.
+     * 
+     * @return the source docking point
+     */
+    public KVector getSourcePoint() {
+        KVector v = src.getRectPos().clone();
+        if (srcPort != null) {
+            v.add(srcPort.getRelativePos());
+            // point to the port's center
+            v.add(srcPort.getSize().scale(0.5f)); // SUPPRESS CHECKSTYLE NEXT 40 MagicNumber
+        } else {
+            // point to the node's center
+            v.add(src.getSize().scale(0.5f));
+        }
+
+        return v;
+    }
+
+    /**
+     * Returns the docking point at the target node.
+     * 
+     * @return the target docking point
+     */
+    public KVector getTargetPoint() {
+        KVector v = tgt.getRectPos().clone();
+        if (tgtPort != null) {
+            v.add(tgtPort.getRelativePos());
+            // point to the port's center
+            v.add(tgtPort.getSize().scale(0.5f));
+        } else {
+            // point to the node's center
+            v.add(tgt.getSize().scale(0.5f));
+        }
+
+        return v;
     }
 
     /**

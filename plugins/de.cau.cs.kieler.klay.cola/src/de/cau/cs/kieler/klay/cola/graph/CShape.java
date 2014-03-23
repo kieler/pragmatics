@@ -14,6 +14,8 @@
 package de.cau.cs.kieler.klay.cola.graph;
 
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Insets;
+import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 
 /**
  * .
@@ -28,6 +30,11 @@ public abstract class CShape extends CGraphElement {
     private final KVector pos = new KVector();
     /** the size of the element. */
     private final KVector size = new KVector();
+
+    /** the margin area around this node. */
+    private final Margins margins = new Margins();
+    /** the insets inside this node, usually reserved for port and label placement. */
+    private final Insets insets = new Insets();
 
     /**
      * Constructs a new shaped element.
@@ -53,4 +60,17 @@ public abstract class CShape extends CGraphElement {
         return size;
     }
 
+    /**
+     * @return the margins
+     */
+    public Margins getMargins() {
+        return margins;
+    }
+
+    /**
+     * @return the insets
+     */
+    public Insets getInsets() {
+        return insets;
+    }
 }

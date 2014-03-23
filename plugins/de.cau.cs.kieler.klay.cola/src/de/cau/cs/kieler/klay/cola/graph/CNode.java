@@ -21,6 +21,7 @@ import org.adaptagrams.Rectangle;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
@@ -44,6 +45,9 @@ public class CNode extends CShape {
     protected List<CEdge> incomingEdges;
     protected List<CPort> ports;
 
+    /** Edges to external ports. */
+    protected List<CEdge> externalEdges;
+    
     protected CGraphElement parent = null;
 
     /**
@@ -56,6 +60,7 @@ public class CNode extends CShape {
         children = new ArrayList<CNode>();
         outgoingEdges = new ArrayList<CEdge>();
         incomingEdges = new ArrayList<CEdge>();
+        externalEdges = new ArrayList<CEdge>();
         ports = new ArrayList<CPort>();
     }
 
@@ -64,24 +69,23 @@ public class CNode extends CShape {
      */
     @Override
     public void init() {
-        // KShapeLayout layout = node.getData(KShapeLayout.class);
 
-        // get margins
-        Margins margin = this.getProperty(LayoutOptions.MARGINS);
+        // get spacing and margins
+        double spacing = graph.getProperty(LayoutOptions.SPACING);
+        Margins margin = getMargins();
 
+        // currently the adaptagrams rectangles do not support any border or margin,
+        // hence we add it to the top and bottom margin of the rectangle.
+        // Horizontal spacing will be considered during separation constraint generation
+        margin.top += spacing;
+        margin.bottom += spacing;
+        
         // x X y Y meaning x width y height
-        // Rectangle r =
-        // new Rectangle(layout.getXpos(), layout.getXpos() + layout.getWidth(),
-        // layout.getYpos(), layout.getYpos() + layout.getHeight());
-
-        // constrained layout considers previous positions, to make it independent from
-        // any weird layout stuff used before we run it, use 0 as initial positions for all
-        // rects
-        rect =
-                new Rectangle(0 - margin.left,
-                // assure that the size is at least 1
-                        Math.max(1, 0 + this.getSize().x + margin.right), 0 - margin.top, Math.max(
-                                1, 0 + this.getSize().y + margin.bottom + 20) // same here
+        // assure that the size is at least 1
+        rect = new Rectangle(0 - margin.left,
+                        Math.max(1, 0 + this.getSize().x + margin.right), 
+                        0 - margin.top , 
+                        Math.max(1, 0 + this.getSize().y + margin.bottom)
                 );
 
         cIndex = graph.nodeIndex++;
@@ -127,6 +131,13 @@ public class CNode extends CShape {
     public List<CEdge> getIncomingEdges() {
         return incomingEdges;
     }
+    
+    /**
+     * @return the externalEdges
+     */
+    public List<CEdge> getExternalEdges() {
+        return externalEdges;
+    }
 
     /**
      * @return the ports
@@ -145,6 +156,10 @@ public class CNode extends CShape {
             }
         });
         return filtered;
+    }
+    
+    public KVector getRectPos() {
+        return new KVector(rect.getMinX() + getMargins().left, rect.getMinY() + getMargins().top);
     }
 
     /**

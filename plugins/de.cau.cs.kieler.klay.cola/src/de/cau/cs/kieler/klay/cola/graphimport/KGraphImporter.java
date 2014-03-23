@@ -41,6 +41,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
+import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 import de.cau.cs.kieler.klay.cola.graph.CEdge;
 import de.cau.cs.kieler.klay.cola.graph.CGraph;
 import de.cau.cs.kieler.klay.cola.graph.CNode;
@@ -108,7 +109,6 @@ public class KGraphImporter implements IGraphImporter<KNode> {
 
             // transform the edges from and to external ports
             for (KEdge e : p.getEdges()) {
-
                 if (e.getSource().getParent().equals(root)
                         || e.getTarget().getParent().equals(root)) {
                     transformEdge(e, graph);
@@ -181,7 +181,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                     port.side =
                             KimlUtil.calcPortSide(p, 
                                     graph.getProperty(LayoutOptions.DIRECTION)); // FIXME
-                    
+
                     // add an edge from the port to the node's center
                     port.withCenterEdge();
                 }
@@ -257,7 +257,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         // ignore hierarchical ports when layouting hierarchy
         if (layoutHierarchy
                 && ((srcNode == null && srcPort == null) || (tgtNode == null && tgtPort == null))) {
-            
+
             // TODO do this generically
             if (tgtNode == null && e.getTargetPort() != null) {
                 for (KEdge hEdge : e.getTargetPort().getEdges()) {
@@ -292,6 +292,14 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             tgtNode.getIncomingEdges().add(edge);
             if (tgtPort != null) {
                 tgtPort.getIncomingEdges().add(edge);
+            }
+        } else {
+            // add to the list of external edges of the node that is on this graph layer,
+            // ie not the parent
+            if (srcNode != null) {
+                srcNode.getExternalEdges().add(edge);
+            } else {
+                tgtNode.getExternalEdges().add(edge);
             }
         }
     }
@@ -333,7 +341,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             layout.setHeight((float) (c.getBounds().getMaxY() - 20 - c.getBounds().getMinY()));
 
         }
-
+        
         /*
          * Nodes
          */
@@ -354,9 +362,16 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                 layout.setYpos((float) localOffset.y);
 
             } else {
-                layout.setXpos((float) (r.getMinX() + offset.x));
-                layout.setYpos((float) (r.getMinY() + offset.y));
+                layout.setXpos((float) (r.getMinX() + n.getMargins().left + offset.x));
+                layout.setYpos((float) (r.getMinY() + n.getMargins().top + offset.y));
             }
+
+            // write back insets
+            KInsets insets = layout.getInsets();
+            insets.setLeft((float) n.getInsets().left);
+            insets.setRight((float) n.getInsets().right);
+            insets.setTop((float) n.getInsets().top);
+            insets.setBottom((float) n.getInsets().bottom);
 
             // ports
             for (CPort p : n.getPorts()) {
@@ -364,8 +379,11 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                     KShapeLayout portLayout =
                             p.getProperty(ColaProperties.ORIGIN).getData(KShapeLayout.class);
                     // ports are relative to the parent in KGraph
-                    portLayout.setXpos((float) p.getActualXPos());
-                    portLayout.setYpos((float) p.getActualYPos());
+//                    portLayout.setXpos((float) p.getActualXPos());
+//                    portLayout.setYpos((float) p.getActualYPos());
+                    KVector relative = p.getRelativePos();
+                    portLayout.setXpos((float) relative.x);
+                    portLayout.setYpos((float) relative.y);
                 }
             }
         }
@@ -392,10 +410,23 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                     }
                 });
         while (allEdges.hasNext()) {
-            KEdgeLayout layout = ((KEdge) allEdges.next()).getData(KEdgeLayout.class);
+            KEdge edge = ((KEdge) allEdges.next());
+            KEdgeLayout layout = edge.getData(KEdgeLayout.class);
             layout.getBendPoints().clear();
+            layout.getSourcePoint().setPos(0, 0);
+            layout.getTargetPoint().setPos(0, 0);
         }
 
+        for (CNode n : graph.getChildren()) {
+            for (CEdge e : n.getOutgoingEdges()) {
+                KEdge edge = (KEdge) e.getProperty(ColaProperties.ORIGIN);
+                KEdgeLayout layout = edge.getData(KEdgeLayout.class);
+                layout.getSourcePoint().applyVector(e.getSourcePoint().sumCreate(offset));
+                layout.getTargetPoint().applyVector(e.getTargetPoint().sumCreate(offset));
+            }
+        }
+        
+        // FIXME atm this is too small! Why are we missing some of the overall size?
         // resize the parent node
         KInsets insets = root.getData(KShapeLayout.class).getInsets();
         double width = (maxX - minX) + 2 * borderSpacing + insets.getLeft() + insets.getRight();
@@ -412,6 +443,20 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         c.getPos().y = k.getYpos();
         c.getSize().x = k.getWidth();
         c.getSize().y = k.getHeight();
+
+        // insets
+        KInsets insets = k.getInsets();
+        c.getInsets().left = insets.getLeft();
+        c.getInsets().right = insets.getRight();
+        c.getInsets().top = insets.getTop();
+        c.getInsets().bottom = insets.getBottom();
+
+        // margins
+        Margins margins = k.getProperty(LayoutOptions.MARGINS);
+        c.getMargins().left = margins.left;
+        c.getMargins().right = margins.right;
+        c.getMargins().top = margins.top;
+        c.getMargins().bottom = margins.bottom;
     }
 
 }
