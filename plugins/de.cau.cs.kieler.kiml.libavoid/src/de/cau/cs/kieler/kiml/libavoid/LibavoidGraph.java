@@ -41,8 +41,10 @@ import com.google.common.collect.Maps;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
@@ -77,7 +79,7 @@ public class LibavoidGraph {
     private BiMap<Integer, ConnRef> idConnRefMap = HashBiMap.create();
 
     private Map<ConnRef, KEdge> connRefEdgeMap = Maps.newHashMap();
-
+    
     // Internal data.
     private static final int PORT_ID_START = 5;
     private static final int NODE_ID_START = 5;
@@ -170,6 +172,8 @@ public class LibavoidGraph {
      * Actually run the libavoid router and apply the layout back.
      */
     public void process() {
+        
+        router.outputInstanceToSVG("libavoid-preroute.svg");
         // perform the routing
         router.processTransaction();
 
@@ -326,12 +330,19 @@ public class LibavoidGraph {
     private void transformHierarchicalParent(final KNode parent) {
 
         KShapeLayout shape = parent.getData(KShapeLayout.class);
+        KInsets insets = shape.getInsets();
+        float borderSpacing = shape.getProperty(LayoutOptions.BORDER_SPACING); 
 
         // offset each side by the shape buffer distance to let edges route properly
         float bufferDistance = shape.getProperty(LibavoidProperties.SHAPE_BUFFER_DISTANCE);
         // top
-        libavoidNode(parent, NODE_COMPOUND_NORTH, 0, 0 - SURROUNDING_RECT_SIZE - bufferDistance,
-                shape.getWidth(), SURROUNDING_RECT_SIZE, 0, 0);
+        libavoidNode(parent, NODE_COMPOUND_NORTH, 
+                0, 
+                0 - SURROUNDING_RECT_SIZE - bufferDistance,
+                shape.getWidth(), 
+                SURROUNDING_RECT_SIZE, 
+                // edges
+                0, 0);
         // right
         libavoidNode(parent, NODE_COMPOUND_EAST, 0 + shape.getWidth() + bufferDistance, 0,
                 SURROUNDING_RECT_SIZE, shape.getHeight(), 0, 0);
@@ -339,8 +350,11 @@ public class LibavoidGraph {
         libavoidNode(parent, NODE_COMPOUND_SOUTH, 0, 0 + shape.getHeight() + bufferDistance,
                 shape.getWidth(), SURROUNDING_RECT_SIZE, 0, 0);
         // left
-        libavoidNode(parent, NODE_COMPOUND_WEST, 0 - bufferDistance - SURROUNDING_RECT_SIZE, 0,
-                SURROUNDING_RECT_SIZE, shape.getHeight(), 0, 0);
+        libavoidNode(parent, NODE_COMPOUND_WEST, 
+                0 - bufferDistance - SURROUNDING_RECT_SIZE, 
+                0,
+                SURROUNDING_RECT_SIZE + insets.getLeft() + borderSpacing, 
+                shape.getHeight(), 0, 0);
 
         // convert the ports of the compound node itself
         for (KPort port : parent.getPorts()) {
@@ -539,6 +553,13 @@ public class LibavoidGraph {
     }
 
     private void transformNode(final KNode node) {
+
+        // turn this into an option
+        // atm ignore unconnected components
+        if(node.getOutgoingEdges().isEmpty() && node.getIncomingEdges().isEmpty()) {
+            return;
+        }
+        
         // get information about port-less incoming and outgoing edges
         int portLessIncomingEdges =
                 Iterables.size(Iterables.filter(node.getIncomingEdges(), new Predicate<KEdge>() {
@@ -676,16 +697,23 @@ public class LibavoidGraph {
             KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
             // clear the old bend points
             edgeLayout.getBendPoints().clear();
-
+            
+            // determine some offsets
+            // in libavoid the pins are placed on the border of the rectangle
+            // which includes margins. Here, offsets are added to the endpoints
+            // that correlate to the port's specified side.
+            KVector srcOffset = calculatePortOffset(edge.getSourcePort());
+            KVector tgtOffset = calculatePortOffset(edge.getTargetPort());
+            
             AvoidPoints pts = route.getPs();
             // transfer libavoid's results to the edges
             for (int i = 0; i < pts.size(); ++i) {
                 if (i == 0) {
                     // first point is the source point
-                    edgeLayout.setSourcePoint(toKPoint(pts.get(i)));
+                    edgeLayout.setSourcePoint(toKPoint(pts.get(i), srcOffset));
                 } else if (i == pts.size() - 1) {
                     // last point is the target point
-                    edgeLayout.setTargetPoint(toKPoint(pts.get(i)));
+                    edgeLayout.setTargetPoint(toKPoint(pts.get(i), tgtOffset));
                 } else {
                     // rest are bend points
                     edgeLayout.getBendPoints().add(toKPoint(pts.get(i)));
@@ -693,11 +721,53 @@ public class LibavoidGraph {
             }
         }
     }
-
+    
     private KPoint toKPoint(final Point p) {
+        return toKPoint(p, null);
+    }
+ 
+    private KPoint toKPoint(final Point p, final KVector offset) {
         KPoint kpoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-        kpoint.setPos((float) p.getX(), (float) p.getY());
+        if (offset != null) {
+            kpoint.setPos((float) (p.getX() + offset.x), (float) (p.getY() + offset.y));
+        } else {
+            kpoint.setPos((float) p.getX(), (float) p.getY());
+        }
         return kpoint;
+    }
+    
+    /**
+     * 
+     * @param p
+     * @return
+     *  if {@code p} is null, a (0, 0) offset is returned.
+     */
+    private KVector calculatePortOffset(final KPort p) {
+        KVector offset = new KVector();
+        if (p != null) {
+            KShapeLayout portLayout = p.getData(KShapeLayout.class);
+            Margins margins =
+                    p.getNode().getData(KLayoutData.class).getProperty(LayoutOptions.MARGINS);
+            PortSide side = portLayout.getProperty(LayoutOptions.PORT_SIDE);
+
+            switch (side) {
+            case WEST:
+                offset.translate(margins.left, 0);
+                break;
+            case EAST:
+                offset.translate(-margins.right, 0);
+                break;
+            case NORTH:
+                offset.translate(0, margins.top);
+                break;
+            case SOUTH:
+                offset.translate(0, margins.bottom);
+                break;
+            default:
+                // leave it where it is
+            }
+        }
+        return offset;
     }
 
     /**
