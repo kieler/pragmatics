@@ -194,10 +194,6 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         graph.setProperty(JSON_OBJECT, jparent);
         jsonLGraphMap.put(jparent, graph);
         
-        if (parentNode != null) {
-            // set this LGraph as child of the parent LNode
-            parentNode.setProperty(InternalProperties.NESTED_LGRAPH, graph);
-        }
         graph.setProperty(InternalProperties.PARENT_LNODE, parentNode);
         
         // global layout options are applied first, hence possibly overwritten
@@ -225,30 +221,42 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
                         "The 'children' property of nodes must be an array.", val, jparent);
             }
             JSONArray children = val.isArray();
-            
-            // transform all child nodes
-            LNode[] childNodes = new LNode[children.size()];
-            for (int i = 0; i < children.size(); ++i) {
-                JSONValue childVal = children.get(i);
-                if (childVal.isObject() == null) {
-                    throw new UnsupportedJsonGraphException(
-                            "A 'children' array contains a non-object node element.", childVal, jparent);
+
+            // if there actually are children specified, transform them too
+            if (children.size() > 0) {
+                
+                // as there are children, this node is a compound node and will have a nested graph
+                if (parentNode != null) {
+                    // set this LGraph as child of the parent LNode
+                    parentNode.setProperty(InternalProperties.NESTED_LGRAPH, graph);
                 }
-                LNode child = transformNode(childVal.isObject(), graph);
-                childNodes[i] = child;
+
+                // transform all child nodes
+                LNode[] childNodes = new LNode[children.size()];
+                for (int i = 0; i < children.size(); ++i) {
+                    JSONValue childVal = children.get(i);
+                    if (childVal.isObject() == null) {
+                        throw new UnsupportedJsonGraphException(
+                                "A 'children' array contains a non-object node element.", childVal,
+                                jparent);
+                    }
+                    LNode child = transformNode(childVal.isObject(), graph);
+                    childNodes[i] = child;
+                }
+
+                // after this graph layer has been processed, transform the children of this layer's
+                // children
+                for (int i = 0; i < children.size(); ++i) {
+                    // we don't have to check the json here, was checked during previous for loop
+                    JSONObject jChild = children.get(i).isObject();
+                    LNode childNode = childNodes[i];
+                    // ignore the child's contents if NO_LAYOUT option is set
+                    if (jChild.containsKey("children")
+                            && !childNode.getProperty(LayoutOptions.NO_LAYOUT)) {
+                        transformNodes(jChild, childNode);
+                    }
+                }
             }
-            
-            // after this graph layer has been processed, transform the children of this layer's children
-            for (int i = 0; i < children.size(); ++i) {
-                // we don't have to check the json here, was checked during previous for loop
-                JSONObject jChild = children.get(i).isObject();
-                LNode childNode = childNodes[i];
-                // ignore the child's contents if NO_LAYOUT option is set
-                if (jChild.containsKey("children")
-                        && !childNode.getProperty(LayoutOptions.NO_LAYOUT)) {
-                    transformNodes(jChild, childNode);
-                }
-            }  
         }
 
         return graph;
