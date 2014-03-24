@@ -17,15 +17,20 @@ import java.util.Map.Entry;
 
 import org.adaptagrams.AvoidTopologyAddon;
 import org.adaptagrams.Box;
+import org.adaptagrams.FixedRelativeConstraint;
+import org.adaptagrams.Rectangle;
 import org.adaptagrams.ShapeRef;
+import org.adaptagrams.Unsigneds;
 import org.adaptagrams.VariableIDMap;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
+import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.libavoid.LibavoidGraph;
+import de.cau.cs.kieler.kiml.libavoid.LibavoidProperties;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters;
 import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters.KGraphAdapter;
@@ -62,6 +67,7 @@ public class TIOLayoutProvider extends AbstractLayoutProvider {
         KimlNodeDimensionCalculation.getNodeMarginCalculator(adapter).process();
         
         
+        
         final CGraph graph = new KGraphImporter().importGraph(parentNode);
         
         LibavoidGraph libGraph = new LibavoidGraph(parentNode) {
@@ -71,55 +77,35 @@ public class TIOLayoutProvider extends AbstractLayoutProvider {
             @Override
             protected void applyLayout(final KNode root) {
                 
-                
-                // dont apply edge bends
-                
-                // only move nodes
-                double borderSpacing = graph.getProperty(LayoutOptions.BORDER_SPACING);
+                KVector offset = new KVector();
 
-                // calculate the offset from border spacing and node distribution
-                double minX = Float.MAX_VALUE, minY = Float.MAX_VALUE, maxX = Float.MIN_VALUE, maxY =
-                        Float.MIN_VALUE;
-
-                // find the minimal and maximal positions of the contained nodes
-                for (ShapeRef sr : idShapeRefMap.values()) {
-                    Box r = sr.routingBox();
-                    minX = Math.min(minX, r.getMin().getX());
-                    minY = Math.min(minY, r.getMin().getY());
-                    maxX = Math.max(maxX, r.getMax().getX());
-                    maxY = Math.max(maxY, r.getMax().getY());
-                }
-
-                KVector offset = new KVector(borderSpacing - minX, borderSpacing - minY);
-                //offset = new KVector();
-
+                // move the nodes to their new positions
                 for (Entry<Integer, ShapeRef> entry : this.idShapeRefMap.entrySet()) {
-
-                    
                     if (entry.getKey() < FIRST_INDEX) {
                         continue;
                     }
 
                     KNode node = nodeIdMap.get(entry.getKey());
-                    Margins margins = node.getData(KShapeLayout.class).getProperty(LayoutOptions.MARGINS);
+                    Margins margins =
+                            node.getData(KShapeLayout.class).getProperty(LayoutOptions.MARGINS);
                     ShapeRef sr = entry.getValue();
-                    
-                    
-                    
+
                     System.out.println(entry + " " + node);
 
                     KShapeLayout layout = node.getData(KShapeLayout.class);
-                    layout.setXpos((float) (sr.routingBox().getMin().getX() + offset.x + margins.left));
-                    layout.setYpos((float) (sr.routingBox().getMin().getY() + offset.y + margins.top));
+                    // FIXME why add half the port size here?
+                    layout.setXpos((float) (sr.routingBox().getMin().getX() + offset.x + margins.left + 4));
+                    layout.setYpos((float) (sr.routingBox().getMin().getY() + offset.y + margins.top + 4));
 
                 }
                 
-                super.applyLayout(root);
+                //super.applyLayout(root);
                 
             }
         };
         libGraph.transformGraph();
         
+        // Map all cola rectangles to libavoid shapeidrefs
         VariableIDMap idmap = new VariableIDMap();
         for (CNode n : graph.getChildren()) {
             KNode origin = (KNode) n.getProperty(ColaProperties.ORIGIN);
@@ -127,9 +113,67 @@ public class TIOLayoutProvider extends AbstractLayoutProvider {
             idmap.addMappingForVariable(n.cIndex, libId);
             System.out.println("Mapping: " + libId + " " + origin + " ");
         }
+        
+        
+        // the topology stuff is not allowed to move the restricting nodes of a 
+        // compound node, hence we generate a FixedRelativeConstraint to keep this in position.
+        if (1== 2 && parentNode.getParent() != null) {
+            
+            // create copies of the four bounding nodes as cola rectangles
+            KShapeLayout shape = parentNode.getData(KShapeLayout.class);
+            KInsets insets = shape.getInsets();
+            float borderSpacing = shape.getProperty(LayoutOptions.BORDER_SPACING);
 
+            // offset each side by the shape buffer distance to let edges route properly
+            float bufferDistance = shape.getProperty(LibavoidProperties.SHAPE_BUFFER_DISTANCE);
+            // top
+            double y = 0 - LibavoidGraph.SURROUNDING_RECT_SIZE - bufferDistance;
+            Rectangle r =
+                    new Rectangle(0, shape.getWidth(), y, y + LibavoidGraph.SURROUNDING_RECT_SIZE);
+            graph.nodes.add(r);
+            idmap.addMappingForVariable(graph.getLastNodeIndex(),
+                    LibavoidGraph.NODE_COMPOUND_NORTH);
+
+            // right
+            double x = 0 + shape.getWidth() + bufferDistance;
+            Rectangle r2 =
+                    new Rectangle(x, x + LibavoidGraph.SURROUNDING_RECT_SIZE, 0, shape.getHeight());
+            graph.nodes.add(r2);
+            idmap.addMappingForVariable(graph.getLastNodeIndex() + 1,
+                    LibavoidGraph.NODE_COMPOUND_EAST);
+
+            // bottom
+            y = 0 + shape.getHeight() + bufferDistance;
+            Rectangle r3 =
+                    new Rectangle(0, shape.getWidth(), y, y + LibavoidGraph.SURROUNDING_RECT_SIZE);
+            graph.nodes.add(r3);
+            idmap.addMappingForVariable(graph.getLastNodeIndex() + 2,
+                    LibavoidGraph.NODE_COMPOUND_SOUTH);
+
+            // left
+            x  = 0 - bufferDistance - LibavoidGraph.SURROUNDING_RECT_SIZE;
+            Rectangle r4 =
+                    new Rectangle(x, x + LibavoidGraph.SURROUNDING_RECT_SIZE + insets.getLeft()
+                            + borderSpacing, 0, shape.getHeight());
+            graph.nodes.add(r4);
+            idmap.addMappingForVariable(graph.getLastNodeIndex() + 3,
+                    LibavoidGraph.NODE_COMPOUND_WEST);
+
+            Unsigneds surroundingRects = new Unsigneds();
+            surroundingRects.add(3);
+            surroundingRects.add(4);
+            //surroundingRects.add(graph.getLastNodeIndex() + 2);
+            //surroundingRects.add(graph.getLastNodeIndex() + 3);
+            FixedRelativeConstraint frc =
+                    new FixedRelativeConstraint(graph.nodes, surroundingRects, false);
+            graph.constraints.add(frc);
+        }
+        
+        
+        double moveLimit = graph.getProperty(ColaProperties.MOVE_LIMIT);
         AvoidTopologyAddon addon =
-                new AvoidTopologyAddon(graph.nodes, graph.constraints, graph.rootCluster, idmap);
+                new AvoidTopologyAddon(graph.nodes, graph.constraints, graph.rootCluster, idmap,
+                        moveLimit);
         libGraph.getRouter().setTopologyAddon(addon);
 
         libGraph.process();

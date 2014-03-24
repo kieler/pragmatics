@@ -84,12 +84,12 @@ public class LibavoidGraph {
     private static final int PORT_ID_START = 5;
     private static final int NODE_ID_START = 5;
     // reserved for compound node's boundaries
-    private static final int NODE_COMPOUND_NORTH = 1;
-    private static final int NODE_COMPOUND_EAST = 2;
-    private static final int NODE_COMPOUND_SOUTH = 3;
-    private static final int NODE_COMPOUND_WEST = 4;
+    public static final int NODE_COMPOUND_NORTH = 1;
+    public static final int NODE_COMPOUND_EAST = 2;
+    public static final int NODE_COMPOUND_SOUTH = 3;
+    public static final int NODE_COMPOUND_WEST = 4;
     /** size, either width or height, of the surrounding rectangles of compound nodes. */
-    private static final int SURROUNDING_RECT_SIZE = 10;
+    public static final int SURROUNDING_RECT_SIZE = 10;
 
     /*
      * Pin Types
@@ -167,7 +167,7 @@ public class LibavoidGraph {
     public Router getRouter() {
         return router;
     }
-
+    
     /**
      * Actually run the libavoid router and apply the layout back.
      */

@@ -138,7 +138,8 @@ public class CGraph extends CGraphElement {
     }
 
     /**
-     * @return the last used node index
+     * @return the last node index. Note that this index has not been used so far, ie
+     *         List(nodes).size == lastNodeIndex.
      */
     public int getLastNodeIndex() {
         return nodeIndex;
