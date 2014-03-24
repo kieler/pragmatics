@@ -35,13 +35,5 @@ public interface IGraphLayoutEngine {
      * @param progressMonitor monitor to which progress of the layout algorithms is reported
      */
     void layout(KNode layoutGraph, IKielerProgressMonitor progressMonitor);
-    
-    /**
-     * Determine whether the layout engine is active. Engines that delegate to remote services
-     * may be inactive depending on user configuration and availability.
-     * 
-     * @return true if the engine is active
-     */
-    boolean isActive();
 
 }

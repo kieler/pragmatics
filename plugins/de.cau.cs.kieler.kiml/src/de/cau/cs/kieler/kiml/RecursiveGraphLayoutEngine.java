@@ -156,11 +156,4 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
         return count;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public boolean isActive() {
-        return true;
-    }
-
 }
