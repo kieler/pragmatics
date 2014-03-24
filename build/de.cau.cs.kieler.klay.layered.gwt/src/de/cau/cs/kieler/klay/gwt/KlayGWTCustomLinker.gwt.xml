@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  When updating your version of GWT, you should also update this DTD reference,
+  so that your app can take advantage of the latest GWT module capabilities.
+-->
+<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.5.1//EN"
+  "http://google-web-toolkit.googlecode.com/svn/tags/2.5.1/distro-source/core/src/gwt-module.dtd">
+<module rename-to='klay'>
+
+  <!-- Inherit our default module.                       -->
+  <inherits name='de.cau.cs.kieler.klay.gwt.KlayGWT'/>
+
+  <!-- Using the default linker produces a 'document.write' call in javascript. 
+       However, this is a problem when using the library with a Chrome Packaged 
+       App, as it violates a security policy. 
+       
+       We extend the "com.google.gwt.core.linker.DirectInstallLinker" to 
+       solve another issue where 'document.open' would result in an exception.
+       
+       Quote from the documentation: "A linker 
+       that adds a script tag to the iframe rather than downloading the code as 
+       a string and then installing it into the iframe." -->
+  <define-linker name="dil"
+    class="de.cau.cs.kieler.klay.gwt.linker.CustomLinker" />
+  <add-linker name="dil" />
+
+</module>

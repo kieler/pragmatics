@@ -30,8 +30,6 @@
 	<!-- Some more properties that configure the behaviour of the build. -->
 	<property name="outputFolder" location="target" />
 	<property name="outputFolder.tmp" location="${outputFolder}/tmp" />
-	<property name="outputFile.klay" location="${outputFolder}/klay_layered_js_nightly_${timestamp}.zip" />
-	<property name="outputFile.klay.latest" location="${outputFolder}/klay_layered_js_nightly_latest.zip" />
 	<property name="licenseFile" location="epl-v10.html" />
 
 
@@ -175,7 +173,8 @@
 			<arg value="war" />
 			<!-- Additional arguments like -style PRETTY or -logLevel DEBUG -->
 			<arg line="${gwt.args}" />
-			<arg value="de.cau.cs.kieler.klay.gwt.KlayGWT" />
+			<!-- The actual module to compile -->
+			<arg value="${gwt.module}" />
 		</java>
 	</target>
 
@@ -194,16 +193,36 @@
 				<!--exclude name="hosted.html" /-->
 			</fileset>
 		</copy>
+
+		<property name="outputFile.klay" location="${outputFolder}/klay_layered_js${gwt.module.suffix}_nightly_${timestamp}.zip" />
+		<property name="outputFile.klay.latest" location="${outputFolder}/klay_layered_js${gwt.module.suffix}_nightly_latest.zip" />
+
 		<zip destfile="${outputFile.klay}" basedir="${outputFolder.tmp}" update="true" />
-		<symlink link="${outputFile.klay.latest}" resource="${outputFile.klay}"/>
+		<symlink link="${outputFile.klay.latest}" resource="${outputFile.klay}" />
 		<delete dir="${outputFolder.tmp}" failonerror="false" />
 	</target>
 
+	<!-- Builds the default version of klayjs using GWT's standard linker,
+		i.e the code will be loaded into an iframe. -->
+	<target name="stdlinker">
+		<antcall target="dist">
+			<param name="gwt.module" value="de.cau.cs.kieler.klay.gwt.KlayGWT" />
+			<param name="gwt.module.suffix" value="" />
+		</antcall>
+	</target>
 
-	<!-- TARGET buidlall -->
-	<target name="buildall" depends="clean, dist" description="Builds all configurations of the KLay js library." />
+	<!-- Uses a custom linker that uses a 'DirectInstallLinker' which adds an
+		script tag to the iframe. This allows the library to be used in more restrictive environments
+		such as Chrome Packaged Apps. However, the global namespace will be polluted with a lot of variables. -->
+	<target name="customlinker">
+		<antcall target="dist">
+			<param name="gwt.module" value="de.cau.cs.kieler.klay.gwt.KlayGWTCustomLinker" />
+			<param name="gwt.module.suffix" value="_customlinker" />
+		</antcall>
+	</target>
 
-
+	<!-- TARGET buildall -->
+	<target name="buildall" depends="clean, customlinker, stdlinker" description="Builds all configurations of the KLay js library." />
 
 </project>
 
