@@ -869,7 +869,9 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
     }
 
     private void transferLayout(final LEdge edge, final JSONObject json, final KVector offset) {
-
+        checkForNonNull(json, "The origin of an edge could not be determined, this might "
+                + "be due to an inconsistency within the internal element mappings.");
+        
         KVector edgeOffset = offset;
         
         // Source Point
@@ -958,6 +960,12 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         if (obj.get("id").isString() == null) {
             throw new UnsupportedJsonGraphException("Invalid format for 'id'. Must be a string, was "
                     + obj.get("id").getClass(), obj);
+        }
+    }
+    
+    private void checkForNonNull(final Object obj, final String additionalMsg) {
+        if (obj == null) {
+           throw new UnsupportedJsonGraphException("An element is null. " + additionalMsg); 
         }
     }
     
