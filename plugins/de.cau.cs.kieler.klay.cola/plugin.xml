@@ -94,6 +94,17 @@
             name="Move Limit"
             type="float">
       </layoutOption>
+      <layoutAlgorithm
+            class="de.cau.cs.kieler.klay.cola.ACALayoutProvider"
+            id="de.cau.cs.kieler.klay.cola.aca"
+            name="ACA Layout">
+         <knownOption
+               option="de.cau.cs.kieler.kiml.cola.idealEdgeLengths">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.cola.dummyPortNodes">
+         </knownOption>
+      </layoutAlgorithm>
    </extension>
 
 </plugin>
