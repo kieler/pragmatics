@@ -57,7 +57,13 @@ public class TIOLayoutProvider extends AbstractLayoutProvider {
         
         progressMonitor.begin("Improve Layout Topology Preserving", 1);
         
+        if (!(parentNode.getParent() == null || parentNode.getParent().getParent() == null)) {
+           return; 
+        }
         
+        if(parentNode.getLabels().size() > 0 && parentNode.getLabels().get(0).getText().equals("Car Model")) {
+            return;
+        }
         
         parentNode.getData(KShapeLayout.class).setProperty(ColaProperties.PORT_DUMMIES, false);
         
@@ -117,7 +123,7 @@ public class TIOLayoutProvider extends AbstractLayoutProvider {
         
         // the topology stuff is not allowed to move the restricting nodes of a 
         // compound node, hence we generate a FixedRelativeConstraint to keep this in position.
-        if (1== 2 && parentNode.getParent() != null) {
+        if (parentNode.getParent() != null) {
             
             // create copies of the four bounding nodes as cola rectangles
             KShapeLayout shape = parentNode.getData(KShapeLayout.class);
@@ -164,9 +170,10 @@ public class TIOLayoutProvider extends AbstractLayoutProvider {
             surroundingRects.add(4);
             //surroundingRects.add(graph.getLastNodeIndex() + 2);
             //surroundingRects.add(graph.getLastNodeIndex() + 3);
-            FixedRelativeConstraint frc =
-                    new FixedRelativeConstraint(graph.nodes, surroundingRects, false);
-            graph.constraints.add(frc);
+//            Sign
+//            FixedRelativeConstraint frc =
+//                    new FixedRelativeConstraint(graph.nodes, surroundingRects, false);
+//            graph.constraints.add(frc);
         }
         
         

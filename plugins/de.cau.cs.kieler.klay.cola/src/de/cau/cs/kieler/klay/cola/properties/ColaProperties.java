@@ -50,6 +50,17 @@ public final class ColaProperties {
     public static final IProperty<Float> MOVE_LIMIT = new Property<Float>(
             "de.cau.cs.kieler.klay.cola.moveLimit", 120f, 10f);
 
+    
+    /** Whether to consider previous node positions. */
+    public static final IProperty<Boolean> CONSIDER_PREVIOUS_POSITION = new Property<Boolean>(
+            "de.cau.cs.kieler.klay.cola.considerPreviousPositions", false);
+    
+    /** Whether to vertically align nodes wrt to their left bound. */
+    public static final IProperty<Boolean> LEFT_ALIGN_NODES = new Property<Boolean>(
+            "de.cau.cs.kieler.klay.cola.leftAlignNodes", false);
+
+
+    
     /*--------------------------------------------------------------------------------------------
      *                          Internal Use only
      */

@@ -50,12 +50,15 @@ public class CNode extends CShape {
     
     protected CGraphElement parent = null;
 
+    private boolean considerPreviousPositions = false; 
     /**
      * .
      */
     public CNode(final CGraph graph) {
         super(graph);
 
+        considerPreviousPositions = graph.getProperty(ColaProperties.CONSIDER_PREVIOUS_POSITION);
+        
         // setup the internal lists
         children = new ArrayList<CNode>();
         outgoingEdges = new ArrayList<CEdge>();
@@ -82,12 +85,19 @@ public class CNode extends CShape {
         
         // x X y Y meaning x width y height
         // assure that the size is at least 1
-        rect = new Rectangle(0 - margin.left,
-                        Math.max(1, 0 + this.getSize().x + margin.right), 
-                        0 - margin.top , 
-                        Math.max(1, 0 + this.getSize().y + margin.bottom)
-                );
-
+        if (considerPreviousPositions) {
+            rect =
+                    new Rectangle(getPos().x - margin.left, Math.max(1,
+                            0 + getPos().x + this.getSize().x + margin.right), getPos().y
+                            - margin.top, Math.max(1, 0 + getPos().y + this.getSize().y
+                            + margin.bottom));
+        } else {
+            // position them at 0,0
+            rect =
+                    new Rectangle(0 - margin.left,
+                            Math.max(1, 0 + this.getSize().x + margin.right), 0 - margin.top,
+                            Math.max(1, 0 + this.getSize().y + margin.bottom));
+        }
         cIndex = graph.nodeIndex++;
 
         // register in graph

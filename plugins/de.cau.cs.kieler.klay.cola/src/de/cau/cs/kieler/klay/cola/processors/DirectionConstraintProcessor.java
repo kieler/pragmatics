@@ -26,6 +26,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.cola.graph.CEdge;
 import de.cau.cs.kieler.klay.cola.graph.CGraph;
@@ -93,45 +94,87 @@ public class DirectionConstraintProcessor implements ILayoutProcessor {
 
         System.out.println("FAS: " + fasEdges);
 
-        // TODO only left to right atm
-        for (CNode n : graph.getChildren()) {
+        boolean centerCenter = !graph.getProperty(ColaProperties.LEFT_ALIGN_NODES);
+        
+        if (centerCenter) {
+        
+            // TODO only left to right atm
+            for (CNode n : graph.getChildren()) {
 
-            for (CEdge e : n.getOutgoingEdges()) {
-
-                if (EnumSet.of(CycleTreatment.NONE, CycleTreatment.ALIGN_SCC).contains(
-                        cycleTreatment)) {
-                    // don't create constraints if the nodes are in the same scc
-                    if (nodeSccMap.get(e.getSource()).contains(e.getTarget())) {
-                        continue;
+                for (CEdge e : n.getOutgoingEdges()) {
+    
+                    if (EnumSet.of(CycleTreatment.NONE, CycleTreatment.ALIGN_SCC).contains(
+                            cycleTreatment)) {
+                        // don't create constraints if the nodes are in the same scc
+                        if (nodeSccMap.get(e.getSource()).contains(e.getTarget())) {
+                            continue;
+                        }
+                    } else if (EnumSet.of(CycleTreatment.MFAS_SCC, CycleTreatment.MFAS_GLOBAL)
+                            .contains(cycleTreatment)) {
+                        // don't create constraints for nodes in the FAS
+                        if (fasEdges.contains(e)) {
+                            System.out.println("Excluding: " + e.getProperty(ColaProperties.ORIGIN));
+                            continue;
+                        }
                     }
-                } else if (EnumSet.of(CycleTreatment.MFAS_SCC, CycleTreatment.MFAS_GLOBAL)
-                        .contains(cycleTreatment)) {
-                    // don't create constraints for nodes in the FAS
-                    if (fasEdges.contains(e)) {
-                        System.out.println("Excluding: " + e.getProperty(ColaProperties.ORIGIN));
-                        continue;
+    
+                    CNode src = e.getSource();
+                    CNode tgt = e.getTarget();
+                    
+                    // separation has to go from mid to mid
+                    double widthSeparation =
+                            (src.getSize().x + src.getMargins().right + src.getMargins().left) / 2f
+                                    + (tgt.getSize().x + tgt.getMargins().left + tgt.getMargins().right)
+                                    / 2f;
+                    
+                    SeparationConstraint sc =
+                            new SeparationConstraint(Dim.XDIM, e.getSource().cIndex,
+                                    e.getTarget().cIndex, widthSeparation + spacing
+                                    // FIXME the question is where to consider ports for spacing
+                                    // we add dummy nodes, hence dont need them in the margin, 
+                                    // however, during separation calculation we need them!
+                                    + 16);
+    
+                    graph.constraints.add(sc);
+                }
+            }
+            
+        } else {
+            // align nodes on their left side
+
+            for (CNode n : graph.getChildren()) {
+
+                // for every node with incoming edges, find the widest of the incoming edges
+                CNode widest = null;
+                double maxWidth = Double.MIN_VALUE;
+                for (CEdge e : n.getIncomingEdges()) {
+                    if (maxWidth < e.getSource().rect.width()) {
+                        widest = e.getSource();
+                        maxWidth = e.getSource().rect.width();
                     }
                 }
-
-                CNode src = e.getSource();
-                CNode tgt = e.getTarget();
                 
-                // separation has to go from mid to mid
-                double widthSeparation =
-                        (src.getSize().x + src.getMargins().right + src.getMargins().left) / 2f
-                                + (tgt.getSize().x + tgt.getMargins().left + tgt.getMargins().right)
-                                / 2f;
+                // now create proper separation constraints
+                for (CEdge e : n.getIncomingEdges()) {
+                    
+                    CNode src = e.getSource();
+                    
+                    double d = n.rect.width() / 2f + spacing + maxWidth / 2f + (maxWidth / 2f - src.rect.width() / 2f);
+                    
+                    // FIXME ignore left spacing properly here!
+                    if (src.getIncomingEdges().isEmpty()) {
+                        d -= 8;
+                    }
+                    
+                    SeparationConstraint sc =
+                            new SeparationConstraint(Dim.XDIM, e.getSource().cIndex,
+                                    e.getTarget().cIndex, d);
+                    graph.constraints.add(sc);
+                }
                 
-                SeparationConstraint sc =
-                        new SeparationConstraint(Dim.XDIM, e.getSource().cIndex,
-                                e.getTarget().cIndex, widthSeparation + spacing
-                                // FIXME the question is where to consider ports for spacing
-                                // we add dummy nodes, hence dont need them in the margin, 
-                                // however, during separation calculation we need them!
-                                + 16);
-
-                graph.constraints.add(sc);
             }
+            
+            
         }
 
         progressMonitor.done();

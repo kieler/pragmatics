@@ -13,19 +13,30 @@
  */
 package de.cau.cs.kieler.klay.cola;
 
+import org.adaptagrams.ACAEdgeOffsets;
 import org.adaptagrams.ACALayout;
-import org.adaptagrams.PreIteration;
-import org.adaptagrams.TestConvergence;
+import org.adaptagrams.ACASepFlag;
+import org.adaptagrams.ACASepFlagsStruct;
+import org.adaptagrams.DoublePair;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.kgraph.KPort;
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters;
 import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters.KGraphAdapter;
 import de.cau.cs.kieler.kiml.util.nodespacing.KimlNodeDimensionCalculation;
+import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
+import de.cau.cs.kieler.klay.cola.graph.CEdge;
 import de.cau.cs.kieler.klay.cola.graph.CGraph;
+import de.cau.cs.kieler.klay.cola.graph.CNode;
+import de.cau.cs.kieler.klay.cola.graph.CPort;
 import de.cau.cs.kieler.klay.cola.graphimport.KGraphImporter;
+import de.cau.cs.kieler.klay.cola.processors.DirectionConstraintProcessor;
+import de.cau.cs.kieler.klay.cola.processors.NonUniformEdgeLengthProcessor;
 import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
 
 /**
@@ -50,20 +61,77 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
         KimlNodeDimensionCalculation.getNodeMarginCalculator(adapter).process();
 
         KGraphImporter importer = new KGraphImporter();
-        final CGraph graph = importer.importGraph(parentNode);
 
+        final CGraph graph = importer.importGraph(parentNode);
+        graph.init();
+        
+        new DirectionConstraintProcessor().process(graph, progressMonitor.subTask(1));
+        new NonUniformEdgeLengthProcessor().process(graph, progressMonitor.subTask(1));
+        
         // run ACA
-        ACALayout aca = new ACALayout(graph.nodes, graph.edges, graph.constraints, 40, true);
+        ACALayout aca = new ACALayout(graph.nodes, graph.edges, graph.constraints, 100, true);
+        //ACALayout aca = new ACALayout(graph.nodes, graph.edges, graph.constraints, 100, true, graph.getIdealEdgeLengths());
+
+        // add flags that restrict edges to being aligned horizontally
+        ACASepFlagsStruct struct = new ACASepFlagsStruct();
+        for (int i = 0; i < graph.edges.size(); ++i) {
+            struct.addFlag(ACASepFlag.ACAEAST);
+        }
+        aca.setAllowedSeparations(struct);
+
+        ACAEdgeOffsets edgeOffsets = new ACAEdgeOffsets(graph.edges.size());
+
+        for (CNode n : graph.getChildren()) {
+            for (CEdge e : n.getOutgoingEdges()) {
+
+                KEdge kedge = (KEdge) e.getProperty(ColaProperties.ORIGIN);
+                KPort srcPort = kedge.getSourcePort();
+                KPort tgtPort = kedge.getTargetPort();
+                
+//                CPort srcPort = e.getSourcePort();
+//                CPort tgtPort = e.getTargetPort();
+
+                DoublePair st = new DoublePair(0, 0);
+                if (srcPort != null) {
+                    st.setFirst(-calculatePortOffset(n, srcPort));
+                }
+                if (tgtPort != null) {
+                    st.setSecond(-calculatePortOffset(e.getTarget(), tgtPort));
+                }
+                System.out.println("DoublesPair " + st.getFirst() + " " + st.getSecond() + "\t\t" + e);
+                edgeOffsets.set(e.cIndex, st);
+
+            }
+        }
+        aca.setAlignmentOffsetsForCompassDirection(ACASepFlag.ACAEAST, edgeOffsets);
+        
 
         aca.createAlignments();
 
         aca.layout();
 
+        aca.getFDLayout().outputInstanceToSVG();
+
         System.out.println("Done");
-        
+
         importer.applyLayout(graph);
 
         progressMonitor.done();
     }
 
+    private double calculatePortOffset(final CNode n, final KPort p) {
+
+        Margins margins = n.getMargins();
+        double nodeHeight = n.rect.height();
+
+        System.out.println("\t" + margins.top + " " + nodeHeight + " " + n);
+        
+        KShapeLayout portLayout = p.getData(KShapeLayout.class);
+        // TODO not sure about the validity of selecting the port's pos and size
+        double dy =
+                -(nodeHeight / 2f) + margins.top + portLayout.getYpos()
+                        + (portLayout.getHeight() / 2);
+
+        return dy;
+    }
 }

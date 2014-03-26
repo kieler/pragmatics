@@ -45,6 +45,9 @@
          <knownOption
                option="de.cau.cs.kieler.klay.cola.dummyPortNodes">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.cola.leftAlignNodes">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             class="de.cau.cs.kieler.klay.cola.CompactingLayoutProvider"
@@ -104,7 +107,27 @@
          <knownOption
                option="de.cau.cs.kieler.klay.cola.dummyPortNodes">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.cola.considerPreviousPositions">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.cola.leftAlignNodes">
+         </knownOption>
       </layoutAlgorithm>
+      <layoutOption
+            appliesTo="parents"
+            default="false"
+            id="de.cau.cs.kieler.klay.cola.leftAlignNodes"
+            name="Left Align Nodes"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="false"
+            id="de.cau.cs.kieler.klay.cola.considerPreviousPositions"
+            name="Consider Previous Node Positions"
+            type="boolean">
+      </layoutOption>
    </extension>
 
 </plugin>
