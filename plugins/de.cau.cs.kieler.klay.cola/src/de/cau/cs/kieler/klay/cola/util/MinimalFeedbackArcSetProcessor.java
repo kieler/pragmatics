@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.klay.cola.util;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -23,9 +22,7 @@ import java.util.Set;
 import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.klay.cola.graph.CEdge;
-import de.cau.cs.kieler.klay.cola.graph.CGraph;
 import de.cau.cs.kieler.klay.cola.graph.CNode;
-import de.cau.cs.kieler.klay.cola.graph.CPort;
 
 /**
  * @author msp
@@ -52,7 +49,7 @@ public class MinimalFeedbackArcSetProcessor {
      */
     public Set<CEdge> process(final List<CNode> nodes) {
         
-        if(nodes.size() == 1) {
+        if (nodes.size() == 1) {
             return Sets.newHashSet();
         }
         
@@ -72,10 +69,11 @@ public class MinimalFeedbackArcSetProcessor {
         for (CNode node : nodes) {
             // the node id is used as index for the indeg, outdeg, and mark arrays
             node.id = index;
-            
-            for (CPort port : node.getPorts()) {
+
+            // the node's list of inc/out edges contains every port's edges as well
+            //for (CPort port : node.getPorts()) {
                 // calculate the sum of edge priorities
-                for (CEdge edge : port.getIncomingEdges()) {
+                for (CEdge edge : node.getIncomingEdges()) {
                     // ignore self-loops
                     if (edge.getSource().equals(node)) {
                         continue;
@@ -91,7 +89,7 @@ public class MinimalFeedbackArcSetProcessor {
                     indeg[index] += priority > 0 ? priority + 1 : 1;
                 }
                 
-                for (CEdge edge : port.getOutgoingEdges()) {
+                for (CEdge edge : node.getOutgoingEdges()) {
                     // ignore self-loops
                     if (edge.getTarget().equals(node)) {
                         continue;
@@ -106,7 +104,7 @@ public class MinimalFeedbackArcSetProcessor {
                     int priority = 0;
                     outdeg[index] += priority > 0 ? priority + 1 : 1;
                 }
-            }
+            //}
             
             // collect sources and sinks
             if (outdeg[index] == 0) {
@@ -185,13 +183,13 @@ public class MinimalFeedbackArcSetProcessor {
 
         // reverse edges that point left
         for (CNode node : nodes) {
-            CPort[] ports = node.getPorts().toArray(new CPort[node.getPorts().size()]);
-            for (CPort port : ports) {
-                CEdge[] outgoingEdges = port.getOutgoingEdges().toArray(
-                        new CEdge[port.getOutgoingEdges().size()]);
+//            CPort[] ports = node.getPorts().toArray(new CPort[node.getPorts().size()]);
+//            for (CPort port : ports) {
+//                CEdge[] outgoingEdges = port.getOutgoingEdges().toArray(
+//                        new CEdge[port.getOutgoingEdges().size()]);
                 
                 // look at the node's outgoing edges
-                for (CEdge edge : outgoingEdges) {
+                for (CEdge edge : node.getOutgoingEdges()) {
                     int targetIx = edge.getTarget().id;
                     if (mark[node.id] > mark[targetIx]) {
                         mfas.add(edge);
@@ -199,7 +197,7 @@ public class MinimalFeedbackArcSetProcessor {
                         //layeredGraph.setProperty(InternalProperties.CYCLIC, true);
                     }
                 }                
-            }
+//            }
         }
 
         dispose();
@@ -226,11 +224,11 @@ public class MinimalFeedbackArcSetProcessor {
      * @param node node for which neighbors are updated
      */
     private void updateNeighbors(final CNode node) {
-        for (CPort port : node.getPorts()) {
-            for (CEdge edge : port.getConnectedEdges()) {
+        //for (CPort port : node.getPorts()) {
+            for (CEdge edge : node.getConnectedEdges()) {
 //                CPort connectedPort = edge.getSource() == port ? edge.getTarget() : edge.getSource();
 //                CNode endpoint = connectedPort.getNode();
-                CNode endpoint = edge.getSourcePort().equals(port) ? edge.getTarget() : edge.getSource();
+                CNode endpoint = edge.getSource().equals(node) ? edge.getTarget() : edge.getSource();
                 
                 // exclude self-loops
                 if (node == endpoint) {
@@ -265,7 +263,7 @@ public class MinimalFeedbackArcSetProcessor {
                     }
                 }
             }
-        }
+//        }
     }
     
 }
