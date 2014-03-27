@@ -106,10 +106,12 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
         aca.setAlignmentOffsetsForCompassDirection(ACASepFlag.ACAEAST, edgeOffsets);
         
         int i = 0;
-        while (aca.createOneAlignment()) {
-            aca.getFDLayout().outputInstanceToSVG("aca_output_" + (i++));
-        }
+//        while (aca.createOneAlignment()) {
+//            aca.getFDLayout().outputInstanceToSVG("aca_output_" + (i++));
+//        }
         
+        aca.createAlignments();
+        //aca.layout();
 
         aca.getFDLayout().outputInstanceToSVG();
 

@@ -56,8 +56,8 @@ public final class ColaProperties {
             "de.cau.cs.kieler.klay.cola.considerPreviousPositions", false);
     
     /** Whether to vertically align nodes wrt to their left bound. */
-    public static final IProperty<Boolean> LEFT_ALIGN_NODES = new Property<Boolean>(
-            "de.cau.cs.kieler.klay.cola.leftAlignNodes", false);
+    public static final IProperty<HorizontalAlignment> ALIGN_NODES = new Property<HorizontalAlignment>(
+            "de.cau.cs.kieler.klay.cola.alignNodesHorizontal", HorizontalAlignment.LEFT);
 
 
     

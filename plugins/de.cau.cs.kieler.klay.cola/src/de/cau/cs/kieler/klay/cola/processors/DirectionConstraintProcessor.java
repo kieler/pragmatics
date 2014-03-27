@@ -26,13 +26,13 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.cola.graph.CEdge;
 import de.cau.cs.kieler.klay.cola.graph.CGraph;
 import de.cau.cs.kieler.klay.cola.graph.CNode;
 import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
 import de.cau.cs.kieler.klay.cola.properties.CycleTreatment;
+import de.cau.cs.kieler.klay.cola.properties.HorizontalAlignment;
 import de.cau.cs.kieler.klay.cola.util.ColaUtil;
 
 /**
@@ -42,6 +42,13 @@ import de.cau.cs.kieler.klay.cola.util.ColaUtil;
  */
 public class DirectionConstraintProcessor implements ILayoutProcessor {
 
+    private CycleTreatment cycleTreatment;
+
+    private Set<Set<CNode>> sccs;
+    private Map<CNode, Set<CNode>> nodeSccMap;
+
+    private Set<CEdge> fasEdges;
+
     /**
      * {@inheritDoc}
      */
@@ -49,19 +56,18 @@ public class DirectionConstraintProcessor implements ILayoutProcessor {
         progressMonitor.begin("Cola Direction Constraints", 1);
 
         float spacing = graph.getProperty(LayoutOptions.SPACING);
+        cycleTreatment = graph.getProperty(ColaProperties.CYCLE_TREATMENT);
 
-        Set<Set<CNode>> sccs = ColaUtil.findStronglyConnectedComponents(graph);
-        Map<CNode, Set<CNode>> nodeSccMap = Maps.newHashMap();
+        sccs = ColaUtil.findStronglyConnectedComponents(graph);
+        nodeSccMap = Maps.newHashMap();
         for (Set<CNode> scc : sccs) {
             for (CNode n : scc) {
                 nodeSccMap.put(n, scc);
             }
         }
 
-        CycleTreatment cycleTreatment = graph.getProperty(ColaProperties.CYCLE_TREATMENT);
-
         // calculate FAS edges
-        Set<CEdge> fasEdges = Sets.newHashSet();
+        fasEdges = Sets.newHashSet();
         switch (cycleTreatment) {
         case MFAS_SCC:
             for (Set<CNode> scc : sccs) {
@@ -94,90 +100,197 @@ public class DirectionConstraintProcessor implements ILayoutProcessor {
 
         System.out.println("FAS: " + fasEdges);
 
-        boolean centerCenter = !graph.getProperty(ColaProperties.LEFT_ALIGN_NODES);
-        
-        if (centerCenter) {
-        
-            // TODO only left to right atm
-            for (CNode n : graph.getChildren()) {
+        HorizontalAlignment vAlignment = graph.getProperty(ColaProperties.ALIGN_NODES);
 
-                for (CEdge e : n.getOutgoingEdges()) {
-    
-                    if (EnumSet.of(CycleTreatment.NONE, CycleTreatment.ALIGN_SCC).contains(
-                            cycleTreatment)) {
-                        // don't create constraints if the nodes are in the same scc
-                        if (nodeSccMap.get(e.getSource()).contains(e.getTarget())) {
-                            continue;
-                        }
-                    } else if (EnumSet.of(CycleTreatment.MFAS_SCC, CycleTreatment.MFAS_GLOBAL)
-                            .contains(cycleTreatment)) {
-                        // don't create constraints for nodes in the FAS
-                        if (fasEdges.contains(e)) {
-                            System.out.println("Excluding: " + e.getProperty(ColaProperties.ORIGIN));
-                            continue;
-                        }
-                    }
-    
-                    CNode src = e.getSource();
-                    CNode tgt = e.getTarget();
-                    
-                    // separation has to go from mid to mid
-                    double widthSeparation =
-                            (src.getSize().x + src.getMargins().right + src.getMargins().left) / 2f
-                                    + (tgt.getSize().x + tgt.getMargins().left + tgt.getMargins().right)
-                                    / 2f;
-                    
-                    SeparationConstraint sc =
-                            new SeparationConstraint(Dim.XDIM, e.getSource().cIndex,
-                                    e.getTarget().cIndex, widthSeparation + spacing
-                                    // FIXME the question is where to consider ports for spacing
-                                    // we add dummy nodes, hence dont need them in the margin, 
-                                    // however, during separation calculation we need them!
-                                    + 16);
-    
-                    graph.constraints.add(sc);
-                }
-            }
-            
-        } else {
-            // align nodes on their left side
+        switch (vAlignment) {
+
+        /*
+         * Align nodes wrt their left boundary.
+         * 
+         * The left margin of the target node is added to the spacing as it is not 
+         * considered for the alignment.
+         * 
+         */
+        case LEFT:
 
             for (CNode n : graph.getChildren()) {
 
                 // for every node with incoming edges, find the widest of the incoming edges
-                CNode widest = null;
                 double maxWidth = Double.MIN_VALUE;
                 for (CEdge e : n.getIncomingEdges()) {
                     if (maxWidth < e.getSource().rect.width()) {
-                        widest = e.getSource();
                         maxWidth = e.getSource().rect.width();
                     }
                 }
-                
+
                 // now create proper separation constraints
                 for (CEdge e : n.getIncomingEdges()) {
-                    
-                    CNode src = e.getSource();
-                    
-                    double d = n.rect.width() / 2f + spacing + maxWidth / 2f + (maxWidth / 2f - src.rect.width() / 2f);
-                    
-                    // FIXME ignore left spacing properly here!
-                    if (src.getIncomingEdges().isEmpty()) {
-                        d -= 8;
+
+                    if (excludeEdge(e)) {
+                        continue;
                     }
-                    
+
+                    CNode src = e.getSource();
+
+                    double d = n.rect.width() / 2f 
+                            + spacing
+                            + n.getMargins().left
+                            + maxWidth / 2f
+                            + (maxWidth / 2f - src.rect.width() / 2f);
+
+                    // consider left margin of the src node
+                    d += src.getMargins().left;
+
                     SeparationConstraint sc =
                             new SeparationConstraint(Dim.XDIM, e.getSource().cIndex,
                                     e.getTarget().cIndex, d);
                     graph.constraints.add(sc);
                 }
-                
             }
             
-            
+            break;
+
+        /*
+         * Align vertically stacked nodes wrt to their center point
+         * 
+         * TODO do we want to consider margins for alignment or not!?!
+         * 
+         */
+        case CENTER:
+
+            // TODO only left to right atm
+            for (CNode n : graph.getChildren()) {
+
+                // for every node with incoming edges, find the widest of the incoming edges
+                double maxWidth = Double.MIN_VALUE;
+                for (CEdge e : n.getIncomingEdges()) {
+                    if (maxWidth < e.getSource().rect.width()) {
+                        maxWidth = e.getSource().rect.width();
+                    }
+                }
+
+                // one pass for incoming edges
+                for (CEdge e : n.getIncomingEdges()) {
+
+                    if (excludeEdge(e)) {
+                        continue;
+                    }
+
+                    CNode src = e.getSource();
+                    CNode tgt = e.getTarget();
+
+                    // separation has to go from mid to mid
+                    double d = tgt.rect.width() / 2f + spacing + maxWidth / 2f;
+
+                    SeparationConstraint sc =
+                            new SeparationConstraint(Dim.XDIM, e.getSource().cIndex,
+                                    e.getTarget().cIndex, d);
+
+                    graph.constraints.add(sc);
+                }
+                
+                // for every node with incoming edges, find the widest of the outgoing edges
+                maxWidth = Double.MIN_VALUE;
+                for (CEdge e : n.getOutgoingEdges()) {
+                    if (maxWidth < e.getTarget().rect.width()) {
+                        maxWidth = e.getTarget().rect.width();
+                    }
+                }
+
+                // another pass for outgoing edges
+                for (CEdge e : n.getOutgoingEdges()) {
+
+                    if (excludeEdge(e)) {
+                        continue;
+                    }
+
+                    CNode src = e.getSource();
+                    CNode tgt = e.getTarget();
+
+                    // separation has to go from mid to mid
+                    double d = src.rect.width() / 2f + spacing + maxWidth / 2f;
+
+                    SeparationConstraint sc =
+                            new SeparationConstraint(Dim.XDIM, e.getSource().cIndex,
+                                    e.getTarget().cIndex, d);
+
+                    graph.constraints.add(sc);
+                }
+            }
+            break;
+
+        case RIGHT:
+
+            for (CNode n : graph.getChildren()) {
+
+                // for every node with incoming edges, find the widest of the incoming edges
+                double maxWidth = Double.MIN_VALUE;
+                for (CEdge e : n.getOutgoingEdges()) {
+                    if (maxWidth < e.getTarget().rect.width()) {
+                        maxWidth = e.getTarget().rect.width();
+                    }
+                }
+
+                for (CEdge e : n.getOutgoingEdges()) {
+
+                    if (excludeEdge(e)) {
+                        continue;
+                    }
+
+                    CNode src = e.getSource();
+                    CNode tgt = e.getTarget();
+
+                    // separation has to go from mid to mid
+                    double d = src.rect.width() / 2f 
+                            + spacing        
+                            + maxWidth / 2f
+                            - src.getMargins().right
+                            + (maxWidth / 2f - tgt.rect.width() / 2f);
+
+                    // consider right margin of the tgt node
+                    d += tgt.getMargins().right;
+                    
+                    SeparationConstraint sc =
+                            new SeparationConstraint(Dim.XDIM, e.getSource().cIndex,
+                                    e.getTarget().cIndex, d
+                            // FIXME the question is where to consider ports for spacing
+                            // we add dummy nodes, hence dont need them in the margin,
+                            // however, during separation calculation we need them!
+                            );
+
+                    graph.constraints.add(sc);
+                }
+            }
+                
+            break;
+
+        default:
+            // nada
+
         }
 
         progressMonitor.done();
+    }
+
+    /**
+     * @return true if no {@link SeparationConstraint} should be create for the passed edge.
+     */
+    private boolean excludeEdge(final CEdge e) {
+        if (EnumSet.of(CycleTreatment.NONE, CycleTreatment.ALIGN_SCC).contains(cycleTreatment)) {
+            // don't create constraints if the nodes are in the same scc
+            if (nodeSccMap.get(e.getSource()).contains(e.getTarget())) {
+                System.out.println("Ignoring edge scc " + e);
+                return true;
+            }
+        } else if (EnumSet.of(CycleTreatment.MFAS_SCC, CycleTreatment.MFAS_GLOBAL).contains(
+                cycleTreatment)) {
+            // don't create constraints for nodes in the FAS
+            if (fasEdges.contains(e)) {
+                System.out.println("Excluding: " + e.getProperty(ColaProperties.ORIGIN));
+                return true;
+            }
+        }
+        return false;
     }
 
 }

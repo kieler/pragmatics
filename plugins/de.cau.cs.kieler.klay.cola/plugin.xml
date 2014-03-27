@@ -46,7 +46,7 @@
                option="de.cau.cs.kieler.klay.cola.dummyPortNodes">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.klay.cola.leftAlignNodes">
+               option="de.cau.cs.kieler.klay.cola.alignNodes">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
@@ -111,15 +111,19 @@
                option="de.cau.cs.kieler.klay.cola.considerPreviousPositions">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.klay.cola.leftAlignNodes">
+               option="de.cau.cs.kieler.klay.cola.alignNodes">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.cola.cycleTreatment">
          </knownOption>
       </layoutAlgorithm>
       <layoutOption
             appliesTo="parents"
-            default="false"
-            id="de.cau.cs.kieler.klay.cola.leftAlignNodes"
-            name="Left Align Nodes"
-            type="boolean">
+            class="de.cau.cs.kieler.klay.cola.properties.HorizontalAlignment"
+            default="LEFT"
+            id="de.cau.cs.kieler.klay.cola.alignNodesHorizontal"
+            name="Horizontal Node Alignment"
+            type="enum">
       </layoutOption>
       <layoutOption
             appliesTo="parents"
