@@ -139,8 +139,8 @@ $.fn.addScalability = function() {
       } else {
         // zoom out
         g._scale -= 0.1;
-        if (g._scale <= 0.5) {
-          g._scale = 0.5;
+        if (g._scale <= 0.1) {
+          g._scale = 0.1;
         }
       }
 
