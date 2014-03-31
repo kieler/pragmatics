@@ -66,6 +66,7 @@ import com.google.gwt.json.client.JSONValue;
 
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.UnsupportedGraphException;
 import de.cau.cs.kieler.kiml.options.Alignment;
@@ -208,13 +209,23 @@ public final class LayoutOptionResolver {
      *            the id of the layout option
      * @param value
      *            the value to parse
+     * @param override
+     *            whether to override existing properties
      * @throws UnsupportedGraphException
      *             in case anything went wrong. This might be due to the id not being registered or
      *             the value being of an invalid format.
      */
     @SuppressWarnings("unchecked")
-    public static void setOption(final LGraphElement element, final String id, final JSONValue value) {
+    public static void setOption(final LGraphElement element, final String id,
+            final JSONValue value, final boolean override) {
 
+        if (!override) {
+            // do not override any existing property
+            if (element.getAllProperties().containsKey(new DummyProperty(id))) {
+                return;
+            }
+        }
+        
         if (STRING_TYPES.getFirst().contains(id)) {
             /*----------------------------------------------------------------
              *          STRING TYPE
@@ -418,6 +429,16 @@ public final class LayoutOptionResolver {
                 || (prop.getId().endsWith(idOrSuffix) && (idOrSuffix.length() == prop.getId()
                         .length() || prop.getId().charAt(
                         prop.getId().length() - idOrSuffix.length() - 1) == '.'));
+    }
+
+    /**
+     * A container property to check if a property id exists on a graph element without actually
+     * using it.
+     */
+    private static class DummyProperty extends Property<Object> {
+        public DummyProperty(final String theid) {
+            super(theid);
+        }
     }
 
 }

@@ -198,7 +198,8 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         
         // global layout options are applied first, hence possibly overwritten
         if (globalOptions != null) {
-            transformPropertiesObj(globalOptions, graph);
+            // do not override more specific options set on single graph elements
+            transformPropertiesObj(globalOptions, graph, false);
         }
         
         // properties on a certain node serve as layout options for this graph
@@ -755,12 +756,23 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         }
     }
     
+    /**
+     * Adds all properties of the passed json object to the graph element. This method overrides any
+     * existing properties. For the opposite case use
+     * {@link #transformPropertiesObj(JSONObject, LGraphElement, boolean)}
+     */
     private void transformPropertiesObj(final JSONObject properties, final LGraphElement ele) {
+        transformPropertiesObj(properties, ele, true);
+    }
+    
+    private void transformPropertiesObj(final JSONObject properties, final LGraphElement ele, 
+            final boolean override) {
         if (properties != null) {
             for (String key : properties.keySet()) {
                 JSONValue theVal = properties.get(key);
                 // try to find the specified layout option and parse its value
-                LayoutOptionResolver.setOption(ele, key, theVal);
+                // Note that we do not override user specified properties in the graph
+                LayoutOptionResolver.setOption(ele, key, theVal, override);
             }
         }
     }
