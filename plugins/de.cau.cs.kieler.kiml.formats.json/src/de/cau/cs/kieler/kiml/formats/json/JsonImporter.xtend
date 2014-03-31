@@ -32,6 +32,7 @@ import de.cau.cs.kieler.core.kgraph.KLabel
 import de.cau.cs.kieler.kiml.formats.IGraphTransformer
 import de.cau.cs.kieler.kiml.formats.TransformationException
 import de.cau.cs.kieler.kiml.formats.TransformationData
+import de.cau.cs.kieler.kiml.LayoutMetaDataService
 
 /**
  * Importer for graphs in the json format.
@@ -208,10 +209,12 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
     }
 
     private def transformProperties(JSONObject jsonObject, KLayoutData layoutData) {
+        val metaService = LayoutMetaDataService.getInstance()
+      
         jsonObject.optJSONObject("properties") => [ props |
             props?.keys.emptyIfNull.forEach [ key |
                 val value = props.optString(key)
-                KimlUtil.setOption(layoutData, key, value)
+                KimlUtil.loadDataElement(metaService, layoutData, key, value)
             ]
         ]
     }
