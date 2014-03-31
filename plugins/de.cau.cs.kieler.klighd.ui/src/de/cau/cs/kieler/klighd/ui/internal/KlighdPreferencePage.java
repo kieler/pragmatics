@@ -16,7 +16,8 @@ package de.cau.cs.kieler.klighd.ui.internal;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
@@ -24,6 +25,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -36,11 +39,19 @@ import de.cau.cs.kieler.klighd.internal.Messages;
  * Preference page for KLighD.
  * 
  * @author cds
+ * @author chsch
  */
 public final class KlighdPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
     /** checkbox for animation. */
     private Button animationCheckBox;
+    
+    /** checkbox for advanced panning. */
+    private Button advancedPanning;
+    
+    private static final String ADVANCED_PANNING_TOOLTIP =
+            "If enabled diagram panning continues when mouse pointer leaves the diagram area and stops,"
+            + " until it returns to diagram area or the mouse button is released.";
 
     /** group for zoom styles. */
     private Group zoomStyleGroup;
@@ -50,7 +61,15 @@ public final class KlighdPreferencePage extends PreferencePage implements IWorkb
     private Button zoomToFocus;
     /** radio button for no zoom. */
     private Button zoomNone;
+    
 
+    /** checkbox for setting the magnification lens enabled/disabled. */
+    private Button magLensEnabled;
+    
+    private Spinner magLensWidth;
+    private Spinner magLensHeight;
+    private Spinner magLensScale;
+    
     /**
      * Creates a new instance.
      */
@@ -70,12 +89,25 @@ public final class KlighdPreferencePage extends PreferencePage implements IWorkb
 
     @Override
     public boolean performOk() {
-        IPreferenceStore preferenceStore = getPreferenceStore();
+        final IPreferenceStore preferenceStore = getPreferenceStore();
 
-        preferenceStore
-                .setValue(KlighdPreferences.ANIMATE_LAYOUT, animationCheckBox.getSelection());
+        preferenceStore.setValue(KlighdPreferences.ANIMATE_LAYOUT,
+                animationCheckBox.getSelection());
+
+        preferenceStore.setValue(KlighdPreferences.ADVANCED_PANNING_MODE,
+                advancedPanning.getSelection());
+        
         ZoomStyle zoomStyle = getZoomStyleFromSelection();
         preferenceStore.setValue(KlighdPreferences.ZOOM_STYLE, zoomStyle.name());
+        
+        preferenceStore.setValue(KlighdPreferences.MAGNIFICATION_LENS_ENABLED,
+                magLensEnabled.getSelection());
+        preferenceStore.setValue(KlighdPreferences.MAGNIFICATION_LENS_WIDTH,
+                magLensWidth.getSelection());
+        preferenceStore.setValue(KlighdPreferences.MAGNIFICATION_LENS_HEIGHT,
+                magLensHeight.getSelection());
+        preferenceStore.setValue(KlighdPreferences.MAGNIFICATION_LENS_SCALE,
+                magLensScale.getSelection());
 
         return true;
     }
@@ -84,13 +116,27 @@ public final class KlighdPreferencePage extends PreferencePage implements IWorkb
     protected void performDefaults() {
         super.performDefaults();
 
-        IPreferenceStore preferenceStore = getPreferenceStore();
+        final IPreferenceStore preferenceStore = getPreferenceStore();
 
         // Set default values
         animationCheckBox.setSelection(preferenceStore
                 .getDefaultBoolean(KlighdPreferences.ANIMATE_LAYOUT));
+        
+        advancedPanning.setSelection(preferenceStore
+                .getDefaultBoolean(KlighdPreferences.ADVANCED_PANNING_MODE));
+        
         setZoomStyleSelection(ZoomStyle.valueOf(preferenceStore
                 .getDefaultString(KlighdPreferences.ZOOM_STYLE)));
+        
+        magLensEnabled.setSelection(preferenceStore
+                .getDefaultBoolean(KlighdPreferences.MAGNIFICATION_LENS_ENABLED));
+        magLensWidth.setSelection(preferenceStore
+                .getDefaultInt(KlighdPreferences.MAGNIFICATION_LENS_WIDTH));
+        magLensHeight.setSelection(preferenceStore
+                .getDefaultInt(KlighdPreferences.MAGNIFICATION_LENS_HEIGHT));
+        magLensScale.setSelection(preferenceStore
+                .getDefaultInt(KlighdPreferences.MAGNIFICATION_LENS_SCALE));
+
     }
 
     // /////////////////////////////////////////////////////////////////////////////////////////
@@ -117,6 +163,9 @@ public final class KlighdPreferencePage extends PreferencePage implements IWorkb
         Group zoomGroup = createZoomToFitGroup(composite);
         zoomGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
         
+        Group magnificationLensGroup = createMagnificationLensGroup(composite);
+        magnificationLensGroup.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        
         return composite;
     }
 
@@ -128,13 +177,9 @@ public final class KlighdPreferencePage extends PreferencePage implements IWorkb
      * @return the group control.
      */
     private Group createGeneralGroup(final Composite parent) {
-        Group generalGroup = new Group(parent, SWT.NONE);
+        final Group generalGroup = new Group(parent, SWT.NONE);
         generalGroup.setText(Messages.KlighdPreferencePage_generalOptions);
-
-        FillLayout groupLayout = new FillLayout(SWT.VERTICAL);
-        groupLayout.marginWidth = 10;
-        groupLayout.marginHeight = 5;
-        generalGroup.setLayout(groupLayout);
+        generalGroup.setLayout(new RowLayout(SWT.VERTICAL));
 
         // Layout Animation
         animationCheckBox = new Button(generalGroup, SWT.CHECK | SWT.LEFT);
@@ -142,6 +187,12 @@ public final class KlighdPreferencePage extends PreferencePage implements IWorkb
         animationCheckBox.setToolTipText(Messages.KlighdPreferencePage_animateLayout_tooltip);
         animationCheckBox.setSelection(getPreferenceStore().getBoolean(
                 KlighdPreferences.ANIMATE_LAYOUT));
+        
+        advancedPanning = new Button(generalGroup, SWT.CHECK | SWT.LEFT);
+        advancedPanning.setText("Advanced Panning");
+        advancedPanning.setToolTipText(ADVANCED_PANNING_TOOLTIP);
+        advancedPanning.setSelection(getPreferenceStore().getBoolean(
+                KlighdPreferences.ADVANCED_PANNING_MODE));
 
         return generalGroup;
     }
@@ -174,7 +225,7 @@ public final class KlighdPreferencePage extends PreferencePage implements IWorkb
         
         return zoomStyleGroup;
     }
-
+    
     // End of UI code -- no magic numbers allowed anymore.
     // CHECKSTYLEON MagicNumber
 
@@ -199,5 +250,68 @@ public final class KlighdPreferencePage extends PreferencePage implements IWorkb
         } else {
             return ZoomStyle.NONE;
         }
+    }
+
+
+    private Group createMagnificationLensGroup(final Composite parent) {
+
+        final Group magnificationLensGroup = new Group(parent, SWT.NONE);
+        magnificationLensGroup.setText("Magification lens");
+        magnificationLensGroup.setLayout(new RowLayout(SWT.VERTICAL));
+
+        magLensEnabled = new Button(magnificationLensGroup, SWT.CHECK | SWT.LEFT);
+        magLensEnabled.setText("Enable magnification lens, hit ALT + CTRL/CMD to use it");
+        magLensEnabled.setSelection(getPreferenceStore().getBoolean(
+                KlighdPreferences.MAGNIFICATION_LENS_ENABLED));
+
+        final Composite magnificationLensSizeGroup =
+                new Composite(magnificationLensGroup, SWT.NONE);
+        
+        // SUPPRESS CHECKSTYLE NEXT MagicNumber
+        magnificationLensSizeGroup.setLayout(new GridLayout(6, false));
+        magnificationLensSizeGroup.setEnabled(magLensEnabled.getSelection());
+        
+        magLensEnabled.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                magnificationLensSizeGroup.setEnabled(magLensEnabled.getSelection());
+            }            
+        });
+        
+        // SUPPRESS CHECKSTYLE NEXT 30 MagicNumber
+        
+        final Label width = new Label(magnificationLensSizeGroup, SWT.NONE);
+        width.setText("width:");
+        magLensWidth = new Spinner(magnificationLensSizeGroup, SWT.NONE);
+        magLensWidth.setMinimum(100);
+        magLensWidth.setMaximum(1000);
+        magLensWidth.setIncrement(10);
+        magLensWidth.setPageIncrement(50);
+        magLensWidth.setSelection(getPreferenceStore().getInt(
+                KlighdPreferences.MAGNIFICATION_LENS_WIDTH));
+        
+        final Label height = new Label(magnificationLensSizeGroup, SWT.NONE);
+        height.setText("height:");
+        magLensHeight = new Spinner(magnificationLensSizeGroup, SWT.NONE);
+        magLensHeight.setMinimum(100);
+        magLensHeight.setMaximum(1000);
+        magLensHeight.setIncrement(10);
+        magLensHeight.setPageIncrement(50);
+        magLensHeight.setSelection(getPreferenceStore().getInt(
+                KlighdPreferences.MAGNIFICATION_LENS_HEIGHT));
+        
+        final Label scale = new Label(magnificationLensSizeGroup, SWT.NONE);
+        scale.setText("scale:");
+        magLensScale = new Spinner(magnificationLensSizeGroup, SWT.NONE);
+        magLensScale.setMinimum(50);
+        magLensScale.setDigits(2);
+        magLensScale.setMaximum(500);
+        magLensScale.setIncrement(25);
+        magLensScale.setPageIncrement(100);
+        magLensScale.setSelection(getPreferenceStore().getInt(
+                KlighdPreferences.MAGNIFICATION_LENS_SCALE));
+        
+        return magnificationLensGroup;
     }
 }
