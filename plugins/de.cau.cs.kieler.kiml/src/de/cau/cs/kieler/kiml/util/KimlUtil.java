@@ -542,6 +542,12 @@ public final class KimlUtil {
                     scalingFactor * kgeLayout.getYpos());
             kgeLayout.setSize(scalingFactor * kgeLayout.getWidth(),
                     scalingFactor * kgeLayout.getHeight());
+            
+            final KVector anchor = kgeLayout.getProperty(LayoutOptions.PORT_ANCHOR);
+            if (anchor != null) {
+                anchor.x *= scalingFactor;
+                anchor.y *= scalingFactor;
+            }
         }
     }
 
