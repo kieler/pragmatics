@@ -25,7 +25,9 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters;
 import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters.KGraphAdapter;
 import de.cau.cs.kieler.kiml.util.nodespacing.KimlNodeDimensionCalculation;
@@ -34,6 +36,8 @@ import de.cau.cs.kieler.klay.cola.graph.CEdge;
 import de.cau.cs.kieler.klay.cola.graph.CGraph;
 import de.cau.cs.kieler.klay.cola.graph.CNode;
 import de.cau.cs.kieler.klay.cola.graph.CPort;
+import de.cau.cs.kieler.klay.cola.graphimport.HierarchicalKGraphImporter;
+import de.cau.cs.kieler.klay.cola.graphimport.IGraphImporter;
 import de.cau.cs.kieler.klay.cola.graphimport.KGraphImporter;
 import de.cau.cs.kieler.klay.cola.processors.DirectionConstraintProcessor;
 import de.cau.cs.kieler.klay.cola.processors.NonUniformEdgeLengthProcessor;
@@ -55,14 +59,16 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
 
         parentNode.getData(KShapeLayout.class).setProperty(ColaProperties.PORT_DUMMIES, false);
 
-        KGraphAdapter adapter = KGraphAdapters.adapt(parentNode);
-        KimlNodeDimensionCalculation.sortPortLists(adapter);
-        KimlNodeDimensionCalculation.calculateLabelAndNodeSizes(adapter);
-        KimlNodeDimensionCalculation.getNodeMarginCalculator(adapter).process();
+        calculateMarginsAndSizes(parentNode);
 
-        KGraphImporter importer = new KGraphImporter();
-
-        final CGraph graph = importer.importGraph(parentNode);
+        // execute layout algorithm
+        IGraphImporter<KNode> importer;
+        if (!parentNode.getData(KShapeLayout.class).getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {
+            importer = new KGraphImporter();
+        } else {
+            importer = new HierarchicalKGraphImporter();
+        }
+        CGraph graph = importer.importGraph(parentNode);
         graph.init();
         
         new DirectionConstraintProcessor().process(graph, progressMonitor.subTask(1));
@@ -72,6 +78,8 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
         ACALayout aca = new ACALayout(graph.nodes, graph.edges, graph.constraints, 100, true);
         //ACALayout aca = new ACALayout(graph.nodes, graph.edges, graph.constraints, 100, true, graph.getIdealEdgeLengths());
 
+        aca.setClusterHierarchy(graph.rootCluster);
+        
         // add flags that restrict edges to being aligned horizontally
         ACASepFlagsStruct struct = new ACASepFlagsStruct();
         for (int i = 0; i < graph.edges.size(); ++i) {
@@ -106,11 +114,11 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
         aca.setAlignmentOffsetsForCompassDirection(ACASepFlag.ACAEAST, edgeOffsets);
         
         int i = 0;
-//        while (aca.createOneAlignment()) {
-//            aca.getFDLayout().outputInstanceToSVG("aca_output_" + (i++));
-//        }
+        while (aca.createOneAlignment()) {
+            aca.getFDLayout().outputInstanceToSVG("aca_output_" + (i++));
+        }
         
-        aca.createAlignments();
+//        aca.createAlignments();
         //aca.layout();
 
         aca.getFDLayout().outputInstanceToSVG();
@@ -136,5 +144,21 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
                         + (portLayout.getHeight() / 2);
 
         return dy;
+    }
+    
+    private void calculateMarginsAndSizes(final KNode parent) {
+        KGraphAdapter adapter = KGraphAdapters.adapt(parent);
+        KimlNodeDimensionCalculation.sortPortLists(adapter);
+        KimlNodeDimensionCalculation.calculateLabelAndNodeSizes(adapter);
+        
+        
+//        KimlNodeDimensionCalculation.getNodeMarginCalculator(adapter).excludePorts().process();
+        KimlNodeDimensionCalculation.getNodeMarginCalculator(adapter).process();
+
+        if (parent.getData(KLayoutData.class).getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {
+            for (KNode child : parent.getChildren()) {
+                calculateMarginsAndSizes(child);
+            }
+        }
     }
 }

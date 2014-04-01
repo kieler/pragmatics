@@ -111,11 +111,23 @@
                option="de.cau.cs.kieler.klay.cola.considerPreviousPositions">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.klay.cola.alignNodes">
+               option="de.cau.cs.kieler.klay.cola.alignNodesHorizontal">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.klay.cola.cycleTreatment">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layoutHierarchy">
+         </knownOption>
+         <supportedFeature
+               feature="COMPOUND">
+         </supportedFeature>
+         <supportedFeature
+               feature="CLUSTERS">
+         </supportedFeature>
+         <supportedFeature
+               feature="PORTS">
+         </supportedFeature>
       </layoutAlgorithm>
       <layoutOption
             appliesTo="parents"
