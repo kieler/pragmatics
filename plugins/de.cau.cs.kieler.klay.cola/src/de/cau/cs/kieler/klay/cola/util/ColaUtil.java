@@ -21,9 +21,14 @@ import java.util.Stack;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 import de.cau.cs.kieler.klay.cola.graph.CEdge;
 import de.cau.cs.kieler.klay.cola.graph.CGraph;
 import de.cau.cs.kieler.klay.cola.graph.CNode;
+import de.cau.cs.kieler.klay.cola.graph.CShape;
 
 /**
  * @author uru
@@ -105,5 +110,35 @@ public final class ColaUtil {
                 sccs.add(scc);
             }
         }
+    }
+    
+    
+    /**
+     * Copies the position and size information from {@code k} to {@code c}.
+     * 
+     * @param c
+     *            the shape for which to set position and size
+     * @param k
+     *            the {@link KShapeLayoutData} element holding the original information.
+     */
+    public static void setPosAndSize(final CShape c, final KShapeLayout k) {
+        c.getPos().x = k.getXpos();
+        c.getPos().y = k.getYpos();
+        c.getSize().x = k.getWidth();
+        c.getSize().y = k.getHeight();
+
+        // insets
+        KInsets insets = k.getInsets();
+        c.getInsets().left = insets.getLeft();
+        c.getInsets().right = insets.getRight();
+        c.getInsets().top = insets.getTop();
+        c.getInsets().bottom = insets.getBottom();
+
+        // margins
+        Margins margins = k.getProperty(LayoutOptions.MARGINS);
+        c.getMargins().left = margins.left;
+        c.getMargins().right = margins.right;
+        c.getMargins().top = margins.top;
+        c.getMargins().bottom = margins.bottom;
     }
 }

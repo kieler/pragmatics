@@ -48,6 +48,7 @@ import de.cau.cs.kieler.klay.cola.graph.CNode;
 import de.cau.cs.kieler.klay.cola.graph.CPort;
 import de.cau.cs.kieler.klay.cola.graph.CShape;
 import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
+import de.cau.cs.kieler.klay.cola.util.ColaUtil;
 
 /**
  * @author uru
@@ -98,7 +99,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
          */
         for (KPort p : root.getPorts()) {
             CPort port = new CPort(graph, null);
-            setPosAndSize(port, p.getData(KShapeLayout.class));
+            ColaUtil.setPosAndSize(port, p.getData(KShapeLayout.class));
             port.copyProperties(p.getData(KLayoutData.class));
             port.setProperty(ColaProperties.ORIGIN, p);
             kportMap.put(p, port);
@@ -158,7 +159,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             // create the node
             cnode = new CNode(graph);
             // dimensions
-            setPosAndSize(cnode, n.getData(KShapeLayout.class));
+            ColaUtil.setPosAndSize(cnode, n.getData(KShapeLayout.class));
             // properties
             cnode.copyProperties(n.getData(KLayoutData.class));
             cnode.setProperty(ColaProperties.ORIGIN, n);
@@ -172,7 +173,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             if (portDummies) {
                 for (KPort p : n.getPorts()) {
                     CPort port = new CPort(graph, cnode);
-                    setPosAndSize(port, p.getData(KShapeLayout.class));
+                    ColaUtil.setPosAndSize(port, p.getData(KShapeLayout.class));
                     port.copyProperties(p.getData(KLayoutData.class));
                     port.setProperty(ColaProperties.ORIGIN, p);
                     kportMap.put(p, port);
@@ -435,28 +436,5 @@ public class KGraphImporter implements IGraphImporter<KNode> {
 
     }
 
-    /**
-     * Copies the position and size information from {@code k} to {@code c}.
-     */
-    private void setPosAndSize(final CShape c, final KShapeLayout k) {
-        c.getPos().x = k.getXpos();
-        c.getPos().y = k.getYpos();
-        c.getSize().x = k.getWidth();
-        c.getSize().y = k.getHeight();
-
-        // insets
-        KInsets insets = k.getInsets();
-        c.getInsets().left = insets.getLeft();
-        c.getInsets().right = insets.getRight();
-        c.getInsets().top = insets.getTop();
-        c.getInsets().bottom = insets.getBottom();
-
-        // margins
-        Margins margins = k.getProperty(LayoutOptions.MARGINS);
-        c.getMargins().left = margins.left;
-        c.getMargins().right = margins.right;
-        c.getMargins().top = margins.top;
-        c.getMargins().bottom = margins.bottom;
-    }
 
 }

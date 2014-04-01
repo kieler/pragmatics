@@ -28,6 +28,8 @@ import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters;
 import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters.KGraphAdapter;
 import de.cau.cs.kieler.kiml.util.nodespacing.KimlNodeDimensionCalculation;
 import de.cau.cs.kieler.klay.cola.graph.CGraph;
+import de.cau.cs.kieler.klay.cola.graphimport.HierarchicalKGraphImporter;
+import de.cau.cs.kieler.klay.cola.graphimport.IGraphImporter;
 import de.cau.cs.kieler.klay.cola.graphimport.KGraphImporter;
 import de.cau.cs.kieler.klay.cola.processors.DirectionConstraintProcessor;
 import de.cau.cs.kieler.klay.cola.processors.LibtopologyProcessor;
@@ -62,8 +64,8 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
 
         // spacing
         spacing = rootLayout.getProperty(LayoutOptions.SPACING);
-        Rectangle.setXBorder(spacing);
-        Rectangle.setYBorder(spacing);
+        //Rectangle.setXBorder(spacing);
+        //Rectangle.setYBorder(spacing);
 
         borderSpacing = rootLayout.getProperty(LayoutOptions.BORDER_SPACING);
 
@@ -71,7 +73,12 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         calculateMarginsAndSizes(parentNode);
 
         // execute layout algorithm
-        KGraphImporter importer = new KGraphImporter();
+        IGraphImporter<KNode> importer;
+        if (!rootLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {
+            importer = new KGraphImporter();
+        } else {
+            importer = new HierarchicalKGraphImporter();
+        }
         graph = importer.importGraph(parentNode);
 
         new DirectionConstraintProcessor().process(graph, progressMonitor.subTask(1));
@@ -84,7 +91,7 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         // for the moment fix the issue where the edge lengths do not allow 0
         for (int i = 0; i < graph.idealEdgeLengths.length; ++i) {
             if (graph.idealEdgeLengths[i] == 0) {
-                graph.idealEdgeLengths[i] = borderSpacing + 20;
+                graph.idealEdgeLengths[i] = borderSpacing + 40;
             }
         }
 
