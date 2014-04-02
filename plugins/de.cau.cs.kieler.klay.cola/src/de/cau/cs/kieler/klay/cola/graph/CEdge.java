@@ -36,6 +36,8 @@ public class CEdge extends CGraphElement {
 
     public ColaEdge edge;
 
+    public boolean crossHierarchy = false;
+    
     /**
      * 
      */

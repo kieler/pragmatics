@@ -13,7 +13,10 @@
  */
 package de.cau.cs.kieler.klay.cola.graphimport;
 
+import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -27,17 +30,20 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.cola.graph.CEdge;
 import de.cau.cs.kieler.klay.cola.graph.CGraph;
@@ -59,6 +65,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode> {
     
     private CGraph graph;
     private boolean portDummies = false;
+    private boolean repositionHierarchicalPorts = false;
     
     /**
      * {@inheritDoc}
@@ -71,6 +78,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode> {
         graph.setProperty(ColaProperties.ORIGIN, rootNode);
         
         portDummies = graph.getProperty(ColaProperties.PORT_DUMMIES);
+        repositionHierarchicalPorts = graph.getProperty(ColaProperties.REPOSITION_HIERARCHICAL_PORTS);
         
         // transform the nodes
         recImportNodes(rootNode, null);
@@ -142,7 +150,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode> {
                 // this is a compound node, create a cluster for it  
                 Cluster compoundCluster = new RectangularCluster();
                 
-                // the top level nodes are not cummulated within a cluster
+                // the top level nodes are not cumulated within a cluster
                 if (parentCluster == null) {
                     graph.rootCluster.addChildCluster(compoundCluster);
                 } else {
@@ -165,7 +173,8 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode> {
             // we start a atomic nodes
             if (node.getChildren().isEmpty()) {
                 for (KEdge edge : node.getOutgoingEdges()) {
-                    introduceEdge(edge, edge.getSource(), edge.getTarget());
+                    List<KEdge> edgeChain = Lists.newLinkedList();
+                    introduceEdge(edge, edge.getSource(), edge, edge.getTarget(), edgeChain);
                 }
             } else {
                 
@@ -177,13 +186,16 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode> {
         
     }
 
-    private void introduceEdge(final KEdge edge, final KNode startNode, final KNode currentTarget) {
-           
+    private void introduceEdge(final KEdge edge, final KNode startNode, final KEdge startEdge,
+            final KNode currentTarget, final List<KEdge> edgeChain) {
+
+        edgeChain.add(edge);
+        
         // if the target or the target ports node are atomic, finish the edge
         if (edge.getTarget().getChildren().isEmpty()) {
             CNode src = nodeMap.get(startNode);
             CNode tgt = nodeMap.get(edge.getTarget());
-            CPort srcPort = portMap.get(edge.getSourcePort());
+            CPort srcPort = portMap.get(startEdge.getSourcePort());
             CPort tgtPort = portMap.get(edge.getTargetPort());
             
             CEdge cedge = new CEdge(graph, src, srcPort, tgt, tgtPort);
@@ -191,6 +203,12 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode> {
             cedge.copyProperties(edge.getData(KLayoutData.class));
             cedge.setProperty(ColaProperties.ORIGIN, edge);
             cedge.init();
+            
+            // spans the edge hierarchy levels?
+            if (!startNode.getParent().equals(currentTarget.getParent())) {
+                cedge.crossHierarchy = true;
+                cedge.setProperty(ColaProperties.EDGE_CHAIN, edgeChain);
+            }
 
             src.getOutgoingEdges().add(cedge);
             if (srcPort != null) {
@@ -205,14 +223,14 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode> {
         
         // if the target is a hierarchical port, follow that port!
         if (edge.getTargetPort() != null) {
-            
+
             for (KEdge portEdge : getOutgoingEdges(edge.getTargetPort())) {
-                introduceEdge(portEdge, startNode, portEdge.getTarget());
+                // make sure to copy the list, as we might follow multiple edges
+                introduceEdge(portEdge, startNode, startEdge, portEdge.getTarget(),
+                        Lists.newArrayList(edgeChain));
             }
-            
+
         }
-        
-        // TODO howto apply layout back?
         
     }
     
@@ -252,28 +270,24 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode> {
             maxY = Math.max(maxY, c.getBounds().getMaxY());
         }
         
-        
-        KVector offset = new KVector(borderSpacing - minX, borderSpacing - minY);
-
+        // the global offset by which the whole diagram is shifted
+        final KVector offset = new KVector(borderSpacing - minX, borderSpacing - minY);
 
         /*
          * Clusters
          */
         for (Entry<KNode, Cluster> clusterEnty : clusterMap.entrySet()) {
-
             KNode knode = clusterEnty.getKey();
             KShapeLayout layout = knode.getData(KShapeLayout.class);
             RectangularCluster c = (RectangularCluster) clusterEnty.getValue();
-            
+
             // clusters in clusters have to be offset properly
             KVector relative = relativeToCluster(c, offset);
 
-            // TODO clusters in clusters have to be offset as well
             layout.setXpos((float) (relative.x));
             layout.setYpos((float) (relative.y));
-            layout.setWidth((float) (c.getBounds().getMaxX()  - c.getBounds().getMinX()));
+            layout.setWidth((float) (c.getBounds().getMaxX() - c.getBounds().getMinX()));
             layout.setHeight((float) (c.getBounds().getMaxY() - c.getBounds().getMinY()));
-
         }
         
         /*
@@ -286,6 +300,18 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode> {
             KVector relative = relativeToCluster(n, offset);
             layout.setXpos((float) (relative.x +  n.getMargins().left));
             layout.setYpos((float) (relative.y +  n.getMargins().top));
+            
+            // ports
+            for (CPort p : n.getPorts()) {
+                if (p.cEdgeIndex != -1) {
+                    KShapeLayout portLayout =
+                            p.getProperty(ColaProperties.ORIGIN).getData(KShapeLayout.class);
+                    // ports are relative to the parent in KGraph
+                    KVector relativePort = p.getRelativePos();
+                    portLayout.setXpos((float) relativePort.x);
+                    portLayout.setYpos((float) relativePort.y);
+                }
+            }
         }
 
         KNode root = (KNode) graph.getProperty(ColaProperties.ORIGIN);
@@ -304,10 +330,39 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode> {
         }
 
         for (CEdge e : edgeMap.values()) {
-            KEdge edge = (KEdge) e.getProperty(ColaProperties.ORIGIN);
-            KEdgeLayout layout = edge.getData(KEdgeLayout.class);
-            layout.getSourcePoint().applyVector(e.getSourcePoint().sumCreate(offset));
-            layout.getTargetPoint().applyVector(e.getTargetPoint().sumCreate(offset));
+            if (!e.crossHierarchy) {
+                KEdge edge = (KEdge) e.getProperty(ColaProperties.ORIGIN);
+                KEdgeLayout layout = edge.getData(KEdgeLayout.class);
+                
+                // convert to relative coordinates (note that both are relative to the source's
+                // parent)
+                KVector relativeSrcPoint =
+                        KimlUtil.toRelative(e.getSourcePoint(), edge.getSource().getParent());
+                KVector relativeTgtPoint =
+                        KimlUtil.toRelative(e.getTargetPoint(), edge.getSource().getParent());
+
+                // apply new positions
+                layout.getSourcePoint().applyVector(relativeSrcPoint.sumCreate(offset));
+                layout.getTargetPoint().applyVector(relativeTgtPoint.sumCreate(offset));
+            } else {
+
+                // assign better positions to hierarchical ports
+                if (repositionHierarchicalPorts) {
+                    repositionHierarchicalPorts(e, offset);
+                }
+
+                // transfer positions to all edges that are part of this hierarchical edge
+                // FIXME edges may be handled multiple times
+                // this should yield deterministic results, however performance could be improved
+                List<KEdge> edgeChain = e.getProperty(ColaProperties.EDGE_CHAIN);
+                for (KEdge hierarchyEdge : edgeChain) {
+                    KEdgeLayout edgeLayout = hierarchyEdge.getData(KEdgeLayout.class);
+
+                    // ports have been repositioned, let the edges point from port to port
+                    // TODO !
+                }
+            }
+
         }
 
         // FIXME atm this is too small! Why are we missing some of the overall size?
@@ -355,4 +410,72 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode> {
         }
     }
     
+    private void repositionHierarchicalPorts(final CEdge e, final KVector offset) {
+        
+        List<KEdge> edgeChain = e.getProperty(ColaProperties.EDGE_CHAIN);
+        // initialize the line connecting the centers of the start and end port
+        KVector srcPnt;
+        KVector tgtPnt;
+        if (e.srcPort == null || e.tgtPort == null) {
+            // use the nodes' centers
+            srcPnt = new KVector(e.src.rect.getCentreX(), e.src.rect.getCentreY());
+            tgtPnt = new KVector(e.tgt.rect.getCentreX(), e.tgt.rect.getCentreY());
+        } else {
+            srcPnt = new KVector(e.srcPort.rect.getCentreX(), e.srcPort.rect.getCentreY());
+            tgtPnt = new KVector(e.tgtPort.rect.getCentreX(), e.tgtPort.rect.getCentreY());
+        }
+        
+        final Line2D line = new Line2D.Double(srcPnt.x, srcPnt.y, tgtPnt.x, tgtPnt.y);
+        
+        // iterate through all edge but the last and 
+        // reposition the target port of all intermediate ports
+        for (KEdge kedge : edgeChain.subList(0, edgeChain.size() - 1)) {
+           
+            // find the currently surrounding cluster
+            Cluster c = clusterMap.get(kedge.getTarget());
+            Rectangle bounds = c.getBounds();
+            final Rectangle2D rect =
+                    new Rectangle2D.Double(bounds.getMinX(), bounds.getMinY(), bounds.width(),
+                            bounds.height());
+            
+            final Pair<KVector, PortSide> intersection = ColaUtil.getIntersectionPoint(line, rect);
+            
+            if (intersection != null) {
+                KVector relativePos =
+                        KimlUtil.toRelative(intersection.getFirst(), kedge.getTarget());
+                KShapeLayout portLayout = kedge.getTargetPort().getData(KShapeLayout.class);
+                
+                // the calculated intersection bound lies exactly on the rectangles boundary,
+                // hence we have to shift the port into a specific direction according to its size
+                KVector positionOffset = new KVector();
+                switch (intersection.getSecond()) {
+                case NORTH:
+                    positionOffset.x = 0;
+                    positionOffset.y = -portLayout.getHeight();
+                    break;
+                case EAST:
+                    positionOffset.x = portLayout.getWidth();
+                    positionOffset.y = 0;
+                    break;
+                case SOUTH:
+                    positionOffset.x = 0;
+                    positionOffset.y = portLayout.getHeight();
+                    break;
+                case WEST:
+                    positionOffset.x = -portLayout.getWidth();
+                    positionOffset.y = 0;
+                    break;
+                default:
+                    // we dont care
+                }
+                
+                portLayout.setProperty(LayoutOptions.PORT_SIDE, intersection.getSecond());
+
+                // ports are relative to the parent in KGraph
+                portLayout.setXpos((float) (relativePos.x + offset.x - positionOffset.x));
+                portLayout.setYpos((float) (relativePos.y + offset.y - positionOffset.y));
+            }
+        }
+        
+    }
 }

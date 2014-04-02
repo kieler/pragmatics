@@ -48,6 +48,9 @@
          <knownOption
                option="de.cau.cs.kieler.klay.cola.alignNodes">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.cola.repositionHierarchicalPorts">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             class="de.cau.cs.kieler.klay.cola.CompactingLayoutProvider"
@@ -142,6 +145,13 @@
             default="false"
             id="de.cau.cs.kieler.klay.cola.considerPreviousPositions"
             name="Consider Previous Node Positions"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            id="de.cau.cs.kieler.klay.cola.repositionHierarchicalPorts"
+            name="Reposition Hierarchical Ports"
             type="boolean">
       </layoutOption>
    </extension>
