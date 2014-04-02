@@ -27,13 +27,14 @@ import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.klay.cola.algs.EadesMFASHeuristic;
+import de.cau.cs.kieler.klay.cola.algs.TrajansAlgorithm;
 import de.cau.cs.kieler.klay.cola.graph.CEdge;
 import de.cau.cs.kieler.klay.cola.graph.CGraph;
 import de.cau.cs.kieler.klay.cola.graph.CNode;
 import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
 import de.cau.cs.kieler.klay.cola.properties.CycleTreatment;
 import de.cau.cs.kieler.klay.cola.properties.HorizontalAlignment;
-import de.cau.cs.kieler.klay.cola.util.ColaUtil;
 
 /**
  * Adds direction constraints to the graph.
@@ -49,6 +50,7 @@ public class DirectionConstraintProcessor implements ILayoutProcessor {
 
     private Set<CEdge> fasEdges;
 
+    
     /**
      * {@inheritDoc}
      */
@@ -58,7 +60,7 @@ public class DirectionConstraintProcessor implements ILayoutProcessor {
         float spacing = graph.getProperty(LayoutOptions.SPACING);
         cycleTreatment = graph.getProperty(ColaProperties.CYCLE_TREATMENT);
 
-        sccs = ColaUtil.findStronglyConnectedComponents(graph);
+        sccs = TrajansAlgorithm.getStronglyConnectedComponents(graph);
         nodeSccMap = Maps.newHashMap();
         for (Set<CNode> scc : sccs) {
             for (CNode n : scc) {
@@ -71,12 +73,12 @@ public class DirectionConstraintProcessor implements ILayoutProcessor {
         switch (cycleTreatment) {
         case MFAS_SCC:
             for (Set<CNode> scc : sccs) {
-                fasEdges.addAll(ColaUtil.findMinimalFAS(Lists.newLinkedList(scc)));
+                fasEdges.addAll(EadesMFASHeuristic.execute(Lists.newArrayList(scc)));
             }
             break;
 
         case MFAS_GLOBAL:
-            fasEdges.addAll(ColaUtil.findMinimalFAS(graph.getChildren()));
+            fasEdges.addAll(EadesMFASHeuristic.execute(graph.getChildren()));
             break;
 
         case ALIGN_SCC:

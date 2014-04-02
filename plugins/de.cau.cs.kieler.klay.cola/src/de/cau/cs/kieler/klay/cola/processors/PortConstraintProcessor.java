@@ -23,6 +23,7 @@ import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.klay.cola.graph.CGraph;
 import de.cau.cs.kieler.klay.cola.graph.CNode;
 import de.cau.cs.kieler.klay.cola.graph.CPort;
+import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
 
 /**
  * 
@@ -82,7 +83,7 @@ public class PortConstraintProcessor implements ILayoutProcessor {
 
                 // shift the port's offset into the correct direction
                 // Note: make sure the dummy nodes have some space to breathe (overlap removal)
-                float breathe = 3;
+                float breathe = graph.getProperty(ColaProperties.PORT_DUMMY_BREATHE);
                 KVector portOffset = origCenter.clone();
                 switch (p.side) {
                 case WEST:

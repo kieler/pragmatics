@@ -22,21 +22,28 @@ import de.cau.cs.kieler.core.properties.Property;
  */
 public final class ColaProperties {
 
-    /** A scalar modifier of ideal edge lengths. */
-    public static final IProperty<Float> IDEAL_EDGE_LENGTHS = new Property<Float>(
-            "de.cau.cs.kieler.klay.cola.idealEdgeLengths", 100f, 1f);
+    /**
+     * Whether to vertically align nodes wrt to their left bound.
+     */
+    public static final IProperty<HorizontalAlignment> ALIGN_NODES =
+            new Property<HorizontalAlignment>("de.cau.cs.kieler.klay.cola.alignNodesHorizontal",
+                    HorizontalAlignment.LEFT);
 
     /**
-     * Should ports be turned into dummy nodes?
+     * Whether to consider previous node positions.
      */
-    public static final IProperty<Boolean> PORT_DUMMIES = new Property<Boolean>(
-            "de.cau.cs.kieler.klay.cola.dummyPortNodes", true);
+    public static final IProperty<Boolean> CONSIDER_PREVIOUS_POSITION = new Property<Boolean>(
+            "de.cau.cs.kieler.klay.cola.considerPreviousPositions", false);
 
     /**
      * How to handle cycles in the graph.
      */
     public static final IProperty<CycleTreatment> CYCLE_TREATMENT = new Property<CycleTreatment>(
             "de.cau.cs.kieler.klay.cola.cycleTreatment", CycleTreatment.NONE);
+
+    /** A scalar modifier of ideal edge lengths. */
+    public static final IProperty<Float> IDEAL_EDGE_LENGTHS = new Property<Float>(
+            "de.cau.cs.kieler.klay.cola.idealEdgeLengths", 100f, 1f);
 
     /**
      * The maximum length of a centre S-bend connector segments to attempt to improve (default
@@ -46,23 +53,23 @@ public final class ColaProperties {
             "de.cau.cs.kieler.klay.cola.moveLimit", 120f, 10f);
 
     /**
-     * Whether to consider previous node positions.
+     * Should ports be turned into dummy nodes?
      */
-    public static final IProperty<Boolean> CONSIDER_PREVIOUS_POSITION = new Property<Boolean>(
-            "de.cau.cs.kieler.klay.cola.considerPreviousPositions", false);
+    public static final IProperty<Boolean> PORT_DUMMIES = new Property<Boolean>(
+            "de.cau.cs.kieler.klay.cola.dummyPortNodes", true);
+
+    /**
+     * Distance of dummy port nodes to their parent node. This allows the ports to breathe a bit and
+     * move along the outside of the node.
+     */
+    public static final IProperty<Integer> PORT_DUMMY_BREATHE = new Property<Integer>(
+            "de.cau.cs.kieler.klay.cola.portDummyBreathe", 3);
 
     /**
      * Whether to consider previous node positions.
      */
     public static final IProperty<Boolean> REPOSITION_HIERARCHICAL_PORTS = new Property<Boolean>(
             "de.cau.cs.kieler.klay.cola.repositionHierarchicalPorts", false);
-
-    /**
-     * Whether to vertically align nodes wrt to their left bound.
-     */
-    public static final IProperty<HorizontalAlignment> ALIGN_NODES =
-            new Property<HorizontalAlignment>("de.cau.cs.kieler.klay.cola.alignNodesHorizontal",
-                    HorizontalAlignment.LEFT);
 
     /**
      * Utility class.

@@ -15,13 +15,6 @@ package de.cau.cs.kieler.klay.cola.util;
 
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
-
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.util.Pair;
@@ -30,9 +23,6 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
-import de.cau.cs.kieler.klay.cola.graph.CEdge;
-import de.cau.cs.kieler.klay.cola.graph.CGraph;
-import de.cau.cs.kieler.klay.cola.graph.CNode;
 import de.cau.cs.kieler.klay.cola.graph.CShape;
 
 /**
@@ -43,81 +33,6 @@ public final class ColaUtil {
     private ColaUtil() {
     }
 
-    public static Set<CEdge> findMinimalFAS(final List<CNode> nodes) {
-        return new MinimalFeedbackArcSetProcessor().process(nodes);
-    }
-    
-    /**
-     * @param graph
-     *            the graph for which to find the strongly connected components.
-     * @return a set containing all strongly connected components of the graph.
-     */
-    public static Set<Set<CNode>> findStronglyConnectedComponents(final CGraph graph) {
-        return new TarjanAlg(graph).getStronglyConnectedComponents();
-    }
-
-    /**
-     * Performs Tarjan's algorithm to find strongly connected components.
-     */
-    private static class TarjanAlg {
-
-        private Map<CNode, Integer> indexMap = Maps.newHashMap();
-        private Map<CNode, Integer> lowlinkMap = Maps.newHashMap();
-        private int index = 0;
-        private Stack<CNode> stack = new Stack<CNode>();
-        private Set<Set<CNode>> sccs = Sets.newHashSet();
-
-        public TarjanAlg(final CGraph graph) {
-            for (CNode n : graph.getChildren()) {
-                if (!indexMap.containsKey(n)) {
-                    strongConnect(n);
-                }
-            }
-        }
-
-        public Set<Set<CNode>> getStronglyConnectedComponents() {
-            return sccs;
-        }
-
-        private void strongConnect(final CNode node) {
-            indexMap.put(node, index);
-            lowlinkMap.put(node, index);
-            index++;
-            stack.push(node);
-
-            // successors of current node
-            for (CEdge e : node.getOutgoingEdges()) {
-                CNode target = e.getTarget();
-
-                // ignore cross hierarchy edges
-                if (!node.getParent().equals(target.getParent())) {
-                    continue;
-                }
-
-                if (!indexMap.containsKey(target)) {
-                    // successor not been visited
-                    strongConnect(target);
-                    lowlinkMap.put(node, Math.min(lowlinkMap.get(node), lowlinkMap.get(target)));
-                } else if (stack.contains(target)) {
-                    // successor is in the current scc
-                    lowlinkMap.put(node, Math.min(lowlinkMap.get(node), indexMap.get(target)));
-                }
-            }
-
-            // if current node is a root node, generate scc
-            if (lowlinkMap.get(node) == indexMap.get(node)) {
-                Set<CNode> scc = Sets.newHashSet();
-                CNode sn = null;
-                do {
-                    sn = stack.pop();
-                    scc.add(sn);
-                } while (sn != node);
-                sccs.add(scc);
-            }
-        }
-    }
-    
-    
     /**
      * Copies the position and size information from {@code k} to {@code c}.
      * 
@@ -146,8 +61,7 @@ public final class ColaUtil {
         c.getMargins().top = margins.top;
         c.getMargins().bottom = margins.bottom;
     }
-    
-    
+
     /**
      * Possible intersections are checked within this order: NORTH, EAST, SOUTH, WEST. The first
      * intersection that is found is returned, i.e. if the line intersects the rectangle at the WEST
@@ -202,17 +116,18 @@ public final class ColaUtil {
 
         return null;
     }
-    
+
     /**
      * Checks if the value is between the two bounds. Assures that the bounds form a closed
      * interval, ie if necessary the passed bounds are swapped.
      */
-    private static boolean isWithinRange(final double value, final double bound1, final double bound2) {
+    private static boolean isWithinRange(final double value, final double bound1,
+            final double bound2) {
         if (bound1 > bound2) {
             return value > bound2 && value < bound1;
         } else {
             return value > bound1 && value < bound2;
         }
     }
-    
+
 }

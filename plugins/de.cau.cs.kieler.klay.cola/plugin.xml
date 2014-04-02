@@ -3,6 +3,9 @@
 <plugin>
    <extension
          point="de.cau.cs.kieler.kiml.layoutProviders">
+      <!--____________________________________________ 
+                      Layout Options
+       _____________________________________________-->
       <layoutOption
             advanced="true"
             appliesTo="parents"
@@ -13,6 +16,62 @@
             name="Ideal Edge Lengths"
             type="float">
       </layoutOption>
+          <layoutOption
+            appliesTo="parents"
+            class="de.cau.cs.kieler.klay.cola.properties.HorizontalAlignment"
+            default="LEFT"
+            id="de.cau.cs.kieler.klay.cola.alignNodesHorizontal"
+            name="Horizontal Node Alignment"
+            type="enum">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="false"
+            id="de.cau.cs.kieler.klay.cola.considerPreviousPositions"
+            name="Consider Previous Node Positions"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            id="de.cau.cs.kieler.klay.cola.repositionHierarchicalPorts"
+            name="Reposition Hierarchical Ports"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            id="de.cau.cs.kieler.klay.cola.dummyPortNodes"
+            name="Create Dummy Port Nodes"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            class="de.cau.cs.kieler.klay.cola.properties.CycleTreatment"
+            id="de.cau.cs.kieler.klay.cola.cycleTreatment"
+            name="Cycle Treatment"
+            type="enum">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="120"
+            description="The maximum length of a centre S-bend connector segments to attempt to improve (default 120.0)."
+            id="de.cau.cs.kieler.klay.cola.moveLimit"
+            name="Move Limit"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="3"
+            description="Breathing distance of dummy port nodes to their parent node."
+            id="de.cau.cs.kieler.klay.cola.portDummyBreathe"
+            name="Port Dummy Breathe"
+            type="int">
+      </layoutOption>
+      <!--____________________________________________ 
+                      Layout Algorithms
+       _____________________________________________-->
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.adaptagrams"
             class="de.cau.cs.kieler.klay.cola.ColaLayoutProvider"
@@ -44,25 +103,15 @@
          <knownOption
                option="de.cau.cs.kieler.klay.cola.repositionHierarchicalPorts">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.cola.portDummyBreathe">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             class="de.cau.cs.kieler.klay.cola.CompactingLayoutProvider"
             id="de.cau.cs.kieler.klay.cola.compaction"
             name="Compacting Layout">
       </layoutAlgorithm>
-      <layoutOption
-            appliesTo="parents"
-            id="de.cau.cs.kieler.klay.cola.dummyPortNodes"
-            name="Create Dummy Port Nodes"
-            type="boolean">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            class="de.cau.cs.kieler.klay.cola.properties.CycleTreatment"
-            id="de.cau.cs.kieler.klay.cola.cycleTreatment"
-            name="Cycle Treatment"
-            type="enum">
-      </layoutOption>
       <layoutAlgorithm
             class="de.cau.cs.kieler.klay.cola.TIOLayoutProvider"
             id="de.cau.cs.kieler.klay.cola.TIPLayout"
@@ -77,15 +126,6 @@
                option="de.cau.cs.kieler.spacing">
          </knownOption>
       </layoutAlgorithm>
-      <layoutOption
-            advanced="true"
-            appliesTo="parents"
-            default="120"
-            description="The maximum length of a centre S-bend connector segments to attempt to improve (default 120.0)."
-            id="de.cau.cs.kieler.klay.cola.moveLimit"
-            name="Move Limit"
-            type="float">
-      </layoutOption>
       <layoutAlgorithm
             class="de.cau.cs.kieler.klay.cola.ACALayoutProvider"
             id="de.cau.cs.kieler.klay.cola.aca"
@@ -118,28 +158,5 @@
                feature="PORTS">
          </supportedFeature>
       </layoutAlgorithm>
-      <layoutOption
-            appliesTo="parents"
-            class="de.cau.cs.kieler.klay.cola.properties.HorizontalAlignment"
-            default="LEFT"
-            id="de.cau.cs.kieler.klay.cola.alignNodesHorizontal"
-            name="Horizontal Node Alignment"
-            type="enum">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            default="false"
-            id="de.cau.cs.kieler.klay.cola.considerPreviousPositions"
-            name="Consider Previous Node Positions"
-            type="boolean">
-      </layoutOption>
-      <layoutOption
-            advanced="true"
-            appliesTo="parents"
-            id="de.cau.cs.kieler.klay.cola.repositionHierarchicalPorts"
-            name="Reposition Hierarchical Ports"
-            type="boolean">
-      </layoutOption>
    </extension>
-
 </plugin>
