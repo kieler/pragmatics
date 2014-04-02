@@ -41,6 +41,7 @@ import de.cau.cs.kieler.klay.cola.graph.CGraph;
 import de.cau.cs.kieler.klay.cola.graph.CNode;
 import de.cau.cs.kieler.klay.cola.graph.CPort;
 import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
+import de.cau.cs.kieler.klay.cola.properties.InternalColaProperties;
 import de.cau.cs.kieler.klay.cola.util.ColaUtil;
 
 /**
@@ -64,7 +65,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         // setup the graph
         CGraph graph = new CGraph();
         graph.copyProperties(root.getData(KLayoutData.class));
-        graph.setProperty(ColaProperties.ORIGIN, root);
+        graph.setProperty(InternalColaProperties.ORIGIN, root);
 
         portDummies = graph.getProperty(ColaProperties.PORT_DUMMIES);
 
@@ -83,7 +84,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             CPort port = new CPort(graph, null);
             ColaUtil.setPosAndSize(port, p.getData(KShapeLayout.class));
             port.copyProperties(p.getData(KLayoutData.class));
-            port.setProperty(ColaProperties.ORIGIN, p);
+            port.setProperty(InternalColaProperties.ORIGIN, p);
             kportMap.put(p, port);
             graph.getExternalPorts().add(port);
             port.init();
@@ -138,7 +139,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         ColaUtil.setPosAndSize(cnode, n.getData(KShapeLayout.class));
         // properties
         cnode.copyProperties(n.getData(KLayoutData.class));
-        cnode.setProperty(ColaProperties.ORIGIN, n);
+        cnode.setProperty(InternalColaProperties.ORIGIN, n);
         // remember it
         knodeMap.put(n, cnode);
         graph.getChildren().add(cnode);
@@ -151,7 +152,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                 CPort port = new CPort(graph, cnode);
                 ColaUtil.setPosAndSize(port, p.getData(KShapeLayout.class));
                 port.copyProperties(p.getData(KLayoutData.class));
-                port.setProperty(ColaProperties.ORIGIN, p);
+                port.setProperty(InternalColaProperties.ORIGIN, p);
                 kportMap.put(p, port);
                 cnode.getPorts().add(port);
                 port.init();
@@ -188,7 +189,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
 
         CEdge edge = new CEdge(graph, srcNode, srcPort, tgtNode, tgtPort);
         edge.copyProperties(e.getData(KLayoutData.class));
-        edge.setProperty(ColaProperties.ORIGIN, e);
+        edge.setProperty(InternalColaProperties.ORIGIN, e);
         edge.init();
 
         // register the edge (if it is no edge to an external port dummy
@@ -238,7 +239,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
          */
         for (CNode n : graph.getChildren()) {
             Rectangle r = n.rect;
-            KShapeLayout layout = n.getProperty(ColaProperties.ORIGIN).getData(KShapeLayout.class);
+            KShapeLayout layout = n.getProperty(InternalColaProperties.ORIGIN).getData(KShapeLayout.class);
 
             // set new positions
             layout.setXpos((float) (r.getMinX() + n.getMargins().left + offset.x));
@@ -255,7 +256,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             for (CPort p : n.getPorts()) {
                 if (p.cEdgeIndex != -1) {
                     KShapeLayout portLayout =
-                            p.getProperty(ColaProperties.ORIGIN).getData(KShapeLayout.class);
+                            p.getProperty(InternalColaProperties.ORIGIN).getData(KShapeLayout.class);
                     // ports are relative to the parent in KGraph
                     // portLayout.setXpos((float) p.getActualXPos());
                     // portLayout.setYpos((float) p.getActualYPos());
@@ -272,7 +273,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         for (CPort p : graph.getExternalPorts()) {
             Rectangle r = p.rect;
 
-            KShapeLayout layout = p.getProperty(ColaProperties.ORIGIN).getData(KShapeLayout.class);
+            KShapeLayout layout = p.getProperty(InternalColaProperties.ORIGIN).getData(KShapeLayout.class);
             layout.setXpos((float) (r.getMinX() + offset.x));
             layout.setYpos((float) (r.getMinY() + offset.y));
         }
@@ -280,7 +281,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         /*
          * Edges, no routing done -> clear the bend points
          */
-        KNode root = (KNode) graph.getProperty(ColaProperties.ORIGIN);
+        KNode root = (KNode) graph.getProperty(InternalColaProperties.ORIGIN);
         Iterator<EObject> allEdges =
                 Iterators.filter(root.eAllContents(), new Predicate<EObject>() {
                     public boolean apply(final EObject obj) {
@@ -297,7 +298,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
 
         for (CNode n : graph.getChildren()) {
             for (CEdge e : n.getOutgoingEdges()) {
-                KEdge edge = (KEdge) e.getProperty(ColaProperties.ORIGIN);
+                KEdge edge = (KEdge) e.getProperty(InternalColaProperties.ORIGIN);
                 KEdgeLayout layout = edge.getData(KEdgeLayout.class);
                 layout.getSourcePoint().applyVector(e.getSourcePoint().sumCreate(offset));
                 layout.getTargetPoint().applyVector(e.getTargetPoint().sumCreate(offset));

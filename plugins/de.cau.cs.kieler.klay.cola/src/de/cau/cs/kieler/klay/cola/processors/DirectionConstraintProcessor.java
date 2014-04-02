@@ -286,7 +286,6 @@ public class DirectionConstraintProcessor implements ILayoutProcessor {
                 cycleTreatment)) {
             // don't create constraints for nodes in the FAS
             if (fasEdges.contains(e)) {
-                System.out.println("Excluding: " + e.getProperty(ColaProperties.ORIGIN));
                 return true;
             }
         }

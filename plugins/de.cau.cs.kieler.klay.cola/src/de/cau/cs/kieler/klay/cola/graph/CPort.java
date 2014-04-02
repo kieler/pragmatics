@@ -27,7 +27,7 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Insets;
-import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
+import de.cau.cs.kieler.klay.cola.properties.InternalColaProperties;
 
 /**
  * @author uru
@@ -249,7 +249,7 @@ public class CPort extends CShape {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("CPort { ");
-        Object origin = getProperty(ColaProperties.ORIGIN);
+        Object origin = getProperty(InternalColaProperties.ORIGIN);
         if (origin != null) {
             sb.append(origin).append(" ");
         }

@@ -16,8 +16,6 @@ package de.cau.cs.kieler.klay.cola;
 import java.util.Map.Entry;
 
 import org.adaptagrams.AvoidTopologyAddon;
-import org.adaptagrams.Box;
-import org.adaptagrams.FixedRelativeConstraint;
 import org.adaptagrams.Rectangle;
 import org.adaptagrams.ShapeRef;
 import org.adaptagrams.Unsigneds;
@@ -40,6 +38,7 @@ import de.cau.cs.kieler.klay.cola.graph.CGraph;
 import de.cau.cs.kieler.klay.cola.graph.CNode;
 import de.cau.cs.kieler.klay.cola.graphimport.KGraphImporter;
 import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
+import de.cau.cs.kieler.klay.cola.properties.InternalColaProperties;
 
 /**
  * @author uru
@@ -61,7 +60,8 @@ public class TIOLayoutProvider extends AbstractLayoutProvider {
            return; 
         }
         
-        if(parentNode.getLabels().size() > 0 && parentNode.getLabels().get(0).getText().equals("Car Model")) {
+        if (parentNode.getLabels().size() > 0
+                && parentNode.getLabels().get(0).getText().equals("Car Model")) {
             return;
         }
         
@@ -114,7 +114,7 @@ public class TIOLayoutProvider extends AbstractLayoutProvider {
         // Map all cola rectangles to libavoid shapeidrefs
         VariableIDMap idmap = new VariableIDMap();
         for (CNode n : graph.getChildren()) {
-            KNode origin = (KNode) n.getProperty(ColaProperties.ORIGIN);
+            KNode origin = (KNode) n.getProperty(InternalColaProperties.ORIGIN);
             Integer libId = libGraph.getNodeIdMap().inverse().get(origin);
             idmap.addMappingForVariable(n.cIndex, libId);
             System.out.println("Mapping: " + libId + " " + origin + " ");

@@ -27,6 +27,7 @@ import de.cau.cs.kieler.klay.cola.graph.CGraph;
 import de.cau.cs.kieler.klay.cola.graph.CNode;
 import de.cau.cs.kieler.klay.cola.graph.CPort;
 import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
+import de.cau.cs.kieler.klay.cola.properties.InternalColaProperties;
 
 /**
  * @author uru
@@ -35,6 +36,8 @@ import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
 public class NonUniformEdgeLengthProcessor implements ILayoutProcessor {
 
     private double idealEdgeLength = 0;
+    
+    private Map<Object, Double> originEdgeLengthMapping;
 
     /**
      * {@inheritDoc}
@@ -46,8 +49,16 @@ public class NonUniformEdgeLengthProcessor implements ILayoutProcessor {
 
         dummyPortEdgeLengths(graph);
 
+        originEdgeLengthMapping  = Maps.newHashMap();
+        
 //         symmDiffLengths(graph);
         connectivity(graph);
+        
+//        VolatileLayoutConfig vc = new VolatileLayoutConfig();
+//        vc.setValue(new Property<Map<Object, Double>>("mama"), originEdgeLengthMapping);
+//        // FIXME ...
+//        KNode n = (KNode)graph.getProperty(ColaProperties.ORIGIN);
+//        n.getData(KShapeLayout.class).setProperty(AbstractLayoutProvider.ADD_LAYOUT_CONFIG, vc);
     }
 
     private void connectivity(final CGraph graph) {
@@ -125,6 +136,9 @@ public class NonUniformEdgeLengthProcessor implements ILayoutProcessor {
                                                                            // two nodes itself
                 graph.idealEdgeLengths[e.cIndex] = idealEdgeLength * Math.sqrt(cumWeight);
                 
+//                originEdgeLengthMapping.put(e.getProperty(InternalColaProperties.ORIGIN), idealEdgeLength
+//                        * Math.sqrt(cumWeight));
+
                 System.out.println(e + " " + graph.idealEdgeLengths[e.cIndex]);
 
             }

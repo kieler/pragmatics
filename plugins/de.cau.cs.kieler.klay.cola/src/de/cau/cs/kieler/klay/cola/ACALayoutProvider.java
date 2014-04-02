@@ -23,7 +23,7 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
-import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
@@ -35,13 +35,13 @@ import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 import de.cau.cs.kieler.klay.cola.graph.CEdge;
 import de.cau.cs.kieler.klay.cola.graph.CGraph;
 import de.cau.cs.kieler.klay.cola.graph.CNode;
-import de.cau.cs.kieler.klay.cola.graph.CPort;
 import de.cau.cs.kieler.klay.cola.graphimport.HierarchicalKGraphImporter;
 import de.cau.cs.kieler.klay.cola.graphimport.IGraphImporter;
 import de.cau.cs.kieler.klay.cola.graphimport.KGraphImporter;
 import de.cau.cs.kieler.klay.cola.processors.DirectionConstraintProcessor;
 import de.cau.cs.kieler.klay.cola.processors.NonUniformEdgeLengthProcessor;
 import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
+import de.cau.cs.kieler.klay.cola.properties.InternalColaProperties;
 
 /**
  * @author uru
@@ -92,7 +92,7 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
         for (CNode n : graph.getChildren()) {
             for (CEdge e : n.getOutgoingEdges()) {
 
-                KEdge kedge = (KEdge) e.getProperty(ColaProperties.ORIGIN);
+                KEdge kedge = (KEdge) e.getProperty(InternalColaProperties.ORIGIN);
                 KPort srcPort = kedge.getSourcePort();
                 KPort tgtPort = kedge.getTargetPort();
                 

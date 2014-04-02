@@ -16,7 +16,7 @@ package de.cau.cs.kieler.klay.cola.graph;
 import org.adaptagrams.ColaEdge;
 
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
+import de.cau.cs.kieler.klay.cola.properties.InternalColaProperties;
 
 /**
  * @author uru
@@ -162,7 +162,7 @@ public class CEdge extends CGraphElement {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("CEdge { ");
-        Object origin = getProperty(ColaProperties.ORIGIN);
+        Object origin = getProperty(InternalColaProperties.ORIGIN);
         if (origin != null) {
             sb.append(origin).append(" ");
         }

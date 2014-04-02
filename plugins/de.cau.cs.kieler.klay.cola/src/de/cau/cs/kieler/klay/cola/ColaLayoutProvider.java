@@ -16,7 +16,6 @@ package de.cau.cs.kieler.klay.cola;
 import java.util.Arrays;
 
 import org.adaptagrams.ConstrainedFDLayout;
-import org.adaptagrams.Rectangle;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -32,10 +31,8 @@ import de.cau.cs.kieler.klay.cola.graphimport.HierarchicalKGraphImporter;
 import de.cau.cs.kieler.klay.cola.graphimport.IGraphImporter;
 import de.cau.cs.kieler.klay.cola.graphimport.KGraphImporter;
 import de.cau.cs.kieler.klay.cola.processors.DirectionConstraintProcessor;
-import de.cau.cs.kieler.klay.cola.processors.LibtopologyProcessor;
 import de.cau.cs.kieler.klay.cola.processors.NonUniformEdgeLengthProcessor;
 import de.cau.cs.kieler.klay.cola.processors.PortConstraintProcessor;
-import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
 
 /**
  * 
@@ -141,11 +138,6 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
 
         // apply the calculated layout back to the kgrap
         importer.applyLayout(graph);
-
-        if (graph.getProperty(ColaProperties.LIBTOPOLOGY)) {
-            System.out.println("running topology");
-            new LibtopologyProcessor().process(graph, progressMonitor.subTask(1));
-        }
 
         // cleanup c++ objects
         algo.freeAssociatedObjects();
