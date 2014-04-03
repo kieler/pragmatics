@@ -105,7 +105,6 @@ public final class LabelDummyInserter implements ILayoutProcessor {
                                 dummySize.y += label.getSize().y + LABEL_SPACING;
                             }
                         }
-                        dummySize.y -= LABEL_SPACING;
                                 
                         // Create dummy ports
                         LPort dummyInput = new LPort(layeredGraph);

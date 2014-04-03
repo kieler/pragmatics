@@ -133,7 +133,7 @@
                option="de.cau.cs.kieler.klay.layered.fixedAlignment">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.klay.layered.LabelSide">
+               option="de.cau.cs.kieler.klay.layered.edgeLabelSideSelection">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.portLabelPlacement">
