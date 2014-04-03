@@ -30,6 +30,7 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -94,7 +95,9 @@ public final class BJLNodePlacer implements ILayoutPhase {
     public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
             final LGraph graph) {
 
-        if (graph.getProperty(Properties.GRAPH_PROPERTIES).contains(GraphProperties.EXTERNAL_PORTS)) {
+        if (graph.getProperty(InternalProperties.GRAPH_PROPERTIES).contains(
+                GraphProperties.EXTERNAL_PORTS)) {
+            
             return HIERARCHY_PROCESSING_ADDITIONS;
         } else {
             return null;
@@ -109,9 +112,8 @@ public final class BJLNodePlacer implements ILayoutPhase {
 
         this.layeredGraph = lGraph;
 
-        normalSpacing =
-                layeredGraph.getProperty(Properties.OBJ_SPACING)
-                        * layeredGraph.getProperty(Properties.OBJ_SPACING_VERTICAL_FACTOR);
+        normalSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING)
+                * layeredGraph.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
         smallSpacing = normalSpacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
 
         //preparation
@@ -652,7 +654,7 @@ public final class BJLNodePlacer implements ILayoutPhase {
      */
     private boolean isDummy(final LNode node) {
         if (node != null) {
-            return node.getProperty(Properties.NODE_TYPE) != NodeType.NORMAL;
+            return node.getProperty(InternalProperties.NODE_TYPE) != NodeType.NORMAL;
         } else {
             return false;
         }
@@ -794,6 +796,7 @@ public final class BJLNodePlacer implements ILayoutPhase {
                 directions[topDummy.id] = 0;
                 if (Math.abs((bottomDummy.getPosition().y - topDummy.getPosition().y)
                         - minimumDistance(topDummy, bottomDummy)) < 5) {
+                    
                     placed[topDummy.id] = true;
                 } else {
                     placed[topDummy.id] = false;
