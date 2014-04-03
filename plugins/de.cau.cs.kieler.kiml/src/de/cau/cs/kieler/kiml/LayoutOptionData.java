@@ -159,7 +159,7 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
      * @return an instance of the data object
      */
     private IDataObject createDataInstance() {
-        if (!IDataObject.class.isAssignableFrom(clazz)) {
+        if (clazz == null || !IDataObject.class.isAssignableFrom(clazz)) {
             throw new IllegalStateException("IDataType class expected for layout option " + id);
         }
         try {
