@@ -27,7 +27,6 @@ import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.Direction;
-import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -37,8 +36,8 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.components.ComponentsProcessor;
 import de.cau.cs.kieler.klay.layered.compound.CompoundGraphPostprocessor;
 import de.cau.cs.kieler.klay.layered.compound.CompoundGraphPreprocessor;
-import de.cau.cs.kieler.klay.layered.graph.LGraphUtil;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraphUtil;
 import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -51,6 +50,7 @@ import de.cau.cs.kieler.klay.layered.p2layers.LongestPathLayerer;
 import de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer;
 import de.cau.cs.kieler.klay.layered.p3order.InteractiveCrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.p3order.LayerSweepCrossingMinimizer;
+import de.cau.cs.kieler.klay.layered.p4nodes.BJLNodePlacer;
 import de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer;
 import de.cau.cs.kieler.klay.layered.p4nodes.LinearSegmentsNodePlacer;
 import de.cau.cs.kieler.klay.layered.p4nodes.SimpleNodePlacer;
@@ -527,6 +527,14 @@ public final class KlayLayered {
                 phaseCache.put(LinearSegmentsNodePlacer.class, nodePlacer);
             }
             break;
+        case BUCHHEIM_JUENGER_LEIPERT:
+            nodePlacer = phaseCache.get(BJLNodePlacer.class);
+            if (nodePlacer == null) {
+                nodePlacer = new BJLNodePlacer();
+                phaseCache.put(BJLNodePlacer.class, nodePlacer);
+            }
+            break;
+            
         default: // BRANDES_KOEPF
             nodePlacer = phaseCache.get(BKNodePlacer.class);
             if (nodePlacer == null) {
@@ -649,8 +657,7 @@ public final class KlayLayered {
                 new IntermediateProcessingConfiguration(BASELINE_PROCESSING_CONFIGURATION);
 
         // port side processor, put to first slot only if requested and routing is orthogonal
-        if (graph.getProperty(Properties.FEEDBACK_EDGES)
-                && graph.getProperty(LayoutOptions.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL) {
+        if (graph.getProperty(Properties.FEEDBACK_EDGES)) {
             configuration.addLayoutProcessor(IntermediateProcessingConfiguration.BEFORE_PHASE_1,
                     LayoutProcessorStrategy.PORT_SIDE_PROCESSOR);
         } else {
@@ -680,8 +687,7 @@ public final class KlayLayered {
             break;
         default:
             // This is either RIGHT or UNDEFINED, which is just mapped to RIGHT. Either way, we
-            // don't
-            // need any processors here
+            // don't need any processors here
             break;
         }
 

@@ -88,7 +88,7 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
      *     - LABEL_SIDE_SELECTOR
      *   
      *   - For center edge labels:
-     *      - LABEL_DUMMY_SWITCHER
+     *     - LABEL_DUMMY_SWITCHER
      * 
      * Before phase 4:
      *   - For hyperedges:
