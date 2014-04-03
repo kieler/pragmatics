@@ -649,8 +649,7 @@ public final class KlayLayered {
                 new IntermediateProcessingConfiguration(BASELINE_PROCESSING_CONFIGURATION);
 
         // port side processor, put to first slot only if requested and routing is orthogonal
-        if (graph.getProperty(Properties.FEEDBACK_EDGES)
-                && graph.getProperty(LayoutOptions.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL) {
+        if (graph.getProperty(Properties.FEEDBACK_EDGES)) {
             configuration.addLayoutProcessor(IntermediateProcessingConfiguration.BEFORE_PHASE_1,
                     LayoutProcessorStrategy.PORT_SIDE_PROCESSOR);
         } else {
