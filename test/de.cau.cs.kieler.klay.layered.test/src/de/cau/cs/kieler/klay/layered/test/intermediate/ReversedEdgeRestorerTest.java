@@ -27,7 +27,7 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.intermediate.ReversedEdgeRestorer;
-import de.cau.cs.kieler.klay.layered.properties.Properties;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.test.AbstractLayeredProcessorTest;
 import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
 import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
@@ -70,7 +70,7 @@ public class ReversedEdgeRestorerTest extends AbstractLayeredProcessorTest {
             for (Layer layer : g.getLayers()) {
                 for (LNode node : layer.getNodes()) {
                     for (LEdge edge : node.getOutgoingEdges()) {
-                        assertTrue(!edge.getProperty(Properties.REVERSED));
+                        assertTrue(!edge.getProperty(InternalProperties.REVERSED));
                     }
                 }
             }

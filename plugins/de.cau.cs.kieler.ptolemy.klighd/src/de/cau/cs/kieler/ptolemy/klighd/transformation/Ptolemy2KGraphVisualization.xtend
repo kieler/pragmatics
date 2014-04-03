@@ -37,7 +37,6 @@ import de.cau.cs.kieler.kiml.options.PortConstraints
 import de.cau.cs.kieler.kiml.options.PortLabelPlacement
 import de.cau.cs.kieler.kiml.options.PortSide
 import de.cau.cs.kieler.kiml.options.SizeConstraint
-import de.cau.cs.kieler.klay.layered.properties.Properties
 import de.cau.cs.kieler.klighd.KlighdConstants
 import de.cau.cs.kieler.klighd.microlayout.PlacementUtil
 import de.cau.cs.kieler.klighd.util.KlighdProperties
@@ -420,13 +419,13 @@ class Ptolemy2KGraphVisualization {
             case PortSide::EAST: {
                 layout.setProperty(LayoutOptions::OFFSET, 0f)
                 if (!port.markedAsModalModelPort) {
-                    layout.setProperty(Properties::PORT_ANCHOR, new KVector(7, 3.5))
+                    layout.setProperty(LayoutOptions::PORT_ANCHOR, new KVector(7, 3.5))
                 }
             }
             case PortSide::WEST: {
                 layout.setProperty(LayoutOptions::OFFSET, 0f)
                 if (!port.markedAsModalModelPort) {
-                    layout.setProperty(Properties::PORT_ANCHOR, new KVector(0, 3.5))
+                    layout.setProperty(LayoutOptions::PORT_ANCHOR, new KVector(0, 3.5))
                 }
                 layout.setProperty(LayoutOptions::PORT_INDEX, -index);
             }

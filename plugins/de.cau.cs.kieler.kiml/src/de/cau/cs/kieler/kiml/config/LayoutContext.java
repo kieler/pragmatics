@@ -25,10 +25,10 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
  * Context information for configuration of layout options. A layout context contains references
  * to a diagram (view model) element, its corresponding domain model element, its corresponding
  * graph element, and other information that is relevant for the layout of that element.
- * Contexts are used by {@link de.cau.cs.kieler.kiml.config.ILayoutConfig ILayoutConfigs}:
- * first a context is enriched with properties that hold required information, then layout options
- * can be queried either one at a time or all at once. The most important properties that should
- * be contained in a layout context are defined here.
+ * Contexts are used by {@link de.cau.cs.kieler.kiml.config.ILayoutConfig ILayoutConfigs}
+ * in order to identify elements of a diagram for correctly assign values of layout options.
+ * The most important properties that should be contained in a layout context are defined here.
+ * These should be considered when a layout configurator is queried about context properties.
  *
  * @author msp
  * @kieler.design proposed by msp

@@ -13,8 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.util.nodespacing;
 
-import java.awt.geom.Rectangle2D;
-
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortLabelPlacement;
@@ -51,15 +49,79 @@ import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
  */
 public final class NodeMarginCalculator  {
 
+    private boolean includeLabels = true;
+    private boolean includePorts = true;
+    private boolean includePortLabels = true;
+    private boolean includeEdgeHeadTailLabels = true;
+
+    private GraphAdapter<?> adapter;
+
     /**
-     * {@inheritDoc}
+     * Creates a new calculator for the passed adapter.
+     * 
+     * @param adapter
+     *            for the underlying graph type.
      */
-    public void processNodeMargin(final GraphAdapter<?> layeredGraph) {
-        
-        double spacing = layeredGraph.getProperty(LayoutOptions.SPACING);
+    protected NodeMarginCalculator(final GraphAdapter<?> adapter) {
+        this.adapter = adapter;
+    }
+
+    // ------------
+    //  configure
+    // ------------
+
+    /**
+     * Do not consider labels during margin calculation.
+     * 
+     * @return this
+     */
+    public NodeMarginCalculator excludeLabels() {
+        this.includeLabels = false;
+        return this;
+    }
+    
+    /**
+     * Do not consider ports during margin calculation.
+     * 
+     * @return this
+     */
+    public NodeMarginCalculator excludePorts() {
+        this.includePorts = false;
+        return this;
+    }
+    
+    /**
+     * Do not consider port labels during margin calculation.
+     * 
+     * @return this
+     */
+    public NodeMarginCalculator excludePortLabels() {
+        this.includePortLabels = false;
+        return this;
+    }
+    
+    /**
+     * Do not consider an edge's head and tail labels during margin calculation.
+     * 
+     * @return this
+     */
+    public NodeMarginCalculator excludeEdgeHeadTailLabels() {
+        this.includeEdgeHeadTailLabels = false;
+        return this;
+    }
+    
+    // ------------
+    //   process
+    // ------------
+    
+    /**
+     * Calculates and assigns margins to all nodes.
+     */
+    public void process() {
+        double spacing = adapter.getProperty(LayoutOptions.SPACING);
 
         // Iterate through all nodes
-        for (NodeAdapter<?> node : layeredGraph.getNodes()) {
+        for (NodeAdapter<?> node : adapter.getNodes()) {
             processNode(node, spacing);
         }
     }
@@ -73,23 +135,25 @@ public final class NodeMarginCalculator  {
     private void processNode(final NodeAdapter<?> node, final double spacing) {
         // This will be our bounding box. We'll start with one that's the same size
         // as our node, and at the same position.
-        Rectangle2D.Double boundingBox = new Rectangle2D.Double(
+        Rectangle boundingBox = new Rectangle(
                 node.getPosition().x,
                 node.getPosition().y,
                 node.getSize().x,
                 node.getSize().y);
         
         // We'll reuse this rectangle as our box for elements to add to the bounding box
-        Rectangle2D.Double elementBox = new Rectangle2D.Double();
+        Rectangle elementBox = new Rectangle();
         
         // Put the node's labels into the bounding box
-        for (LabelAdapter<?> label : node.getLabels()) {
-            elementBox.x = label.getPosition().x + node.getPosition().x;
-            elementBox.y = label.getPosition().y + node.getPosition().y;
-            elementBox.width = label.getSize().x;
-            elementBox.height = label.getSize().y;
-            
-            Rectangle2D.union(boundingBox, elementBox, boundingBox);
+        if (includeLabels) {
+            for (LabelAdapter<?> label : node.getLabels()) {
+                elementBox.x = label.getPosition().x + node.getPosition().x;
+                elementBox.y = label.getPosition().y + node.getPosition().y;
+                elementBox.width = label.getSize().x;
+                elementBox.height = label.getSize().y;
+                
+                boundingBox.union(elementBox);
+            }
         }
         
         // Do the same for ports and their labels
@@ -99,73 +163,79 @@ public final class NodeMarginCalculator  {
             double portY = port.getPosition().y + node.getPosition().y;
             
             // The port itself
-            elementBox.x = portX;
-            elementBox.y = portY;
-            elementBox.width = port.getSize().x;
-            elementBox.height = port.getSize().y;
-            
-            Rectangle2D.union(boundingBox, elementBox, boundingBox);
+            if (includePorts) {
+                elementBox.x = portX;
+                elementBox.y = portY;
+                elementBox.width = port.getSize().x;
+                elementBox.height = port.getSize().y;
+                
+                boundingBox.union(elementBox);
+            }
             
             // The port's labels
-            for (LabelAdapter<?> label : port.getLabels()) {
-                elementBox.x = label.getPosition().x + portX;
-                elementBox.y = label.getPosition().y + portY;
-                elementBox.width = label.getSize().x;
-                elementBox.height = label.getSize().y;
-                
-                Rectangle2D.union(boundingBox, elementBox, boundingBox);
+            if (includePortLabels) {
+                for (LabelAdapter<?> label : port.getLabels()) {
+                    elementBox.x = label.getPosition().x + portX;
+                    elementBox.y = label.getPosition().y + portY;
+                    elementBox.width = label.getSize().x;
+                    elementBox.height = label.getSize().y;
+                    
+                    boundingBox.union(elementBox);
+                }
             }
         }
         
         // Do the same for end labels and port labels on edges connected to the node
-        for (PortAdapter<?> port : node.getPorts()) {
-            // Calculate the port's upper left corner's x and y coordinate
-            double portX = port.getPosition().x + node.getPosition().x;
-            double portY = port.getPosition().y + node.getPosition().y;
-            double maxPortLabelWidth = 0;
-            double maxPortLabelHeight = 0;
-            
-            // TODO: maybe leave space for manually placed ports 
-            if (node.getProperty(LayoutOptions.PORT_LABEL_PLACEMENT) == PortLabelPlacement.OUTSIDE) {
-                for (LabelAdapter<?> label : port.getLabels()) {
-                    if (maxPortLabelWidth < label.getSize().x) {
-                        maxPortLabelWidth = label.getSize().x;
-                    }
-                    
-                    if (maxPortLabelHeight < label.getSize().y) {
-                        maxPortLabelHeight = label.getSize().y;
-                    }
-                }
-            }
-
-            // For each edge, the tail labels of outgoing edges ...
-            for (EdgeAdapter<?> edge : port.getOutgoingEdges()) {
-                for (LabelAdapter<?> label : edge.getLabels()) {
-                    if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
-                            == EdgeLabelPlacement.TAIL) {
+        if (includeEdgeHeadTailLabels) {
+            for (PortAdapter<?> port : node.getPorts()) {
+                // Calculate the port's upper left corner's x and y coordinate
+                double portX = port.getPosition().x + node.getPosition().x;
+                double portY = port.getPosition().y + node.getPosition().y;
+                double maxPortLabelWidth = 0;
+                double maxPortLabelHeight = 0;
+                
+                // TODO: maybe leave space for manually placed ports 
+                if (node.getProperty(LayoutOptions.PORT_LABEL_PLACEMENT) == PortLabelPlacement.OUTSIDE) {
+                    for (LabelAdapter<?> label : port.getLabels()) {
+                        if (maxPortLabelWidth < label.getSize().x) {
+                            maxPortLabelWidth = label.getSize().x;
+                        }
                         
-                        elementBox.x = portX;
-                        elementBox.y = portY;
-                        elementBox.width = label.getSize().x + maxPortLabelWidth;
-                        elementBox.height = label.getSize().y + maxPortLabelHeight;
-                        
-                        Rectangle2D.union(boundingBox, elementBox, boundingBox);
+                        if (maxPortLabelHeight < label.getSize().y) {
+                            maxPortLabelHeight = label.getSize().y;
+                        }
                     }
                 }
-            }
-
-            // ... and the head label of incoming edges shall be considered 
-            for (EdgeAdapter<?> edge : port.getIncomingEdges()) {
-                for (LabelAdapter<?> label : edge.getLabels()) {
-                    if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
-                            == EdgeLabelPlacement.HEAD) {
-                        
-                        elementBox.x = portX - maxPortLabelWidth - label.getSize().x;
-                        elementBox.y = portY;
-                        elementBox.width = label.getSize().x;
-                        elementBox.height = label.getSize().y;
-                        
-                        Rectangle2D.union(boundingBox, elementBox, boundingBox);
+    
+                // For each edge, the tail labels of outgoing edges ...
+                for (EdgeAdapter<?> edge : port.getOutgoingEdges()) {
+                    for (LabelAdapter<?> label : edge.getLabels()) {
+                        if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
+                                == EdgeLabelPlacement.TAIL) {
+                            
+                            elementBox.x = portX;
+                            elementBox.y = portY;
+                            elementBox.width = label.getSize().x + maxPortLabelWidth;
+                            elementBox.height = label.getSize().y + maxPortLabelHeight;
+                            
+                            boundingBox.union(elementBox);
+                        }
+                    }
+                }
+    
+                // ... and the head label of incoming edges shall be considered 
+                for (EdgeAdapter<?> edge : port.getIncomingEdges()) {
+                    for (LabelAdapter<?> label : edge.getLabels()) {
+                        if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
+                                == EdgeLabelPlacement.HEAD) {
+                            
+                            elementBox.x = portX - maxPortLabelWidth - label.getSize().x;
+                            elementBox.y = portY;
+                            elementBox.width = label.getSize().x;
+                            elementBox.height = label.getSize().y;
+                            
+                            boundingBox.union(elementBox);
+                        }
                     }
                 }
             }
@@ -174,9 +244,9 @@ public final class NodeMarginCalculator  {
         // Reset the margin
         Margins margin = new Margins(node.getMargin());
         margin.top = node.getPosition().y - boundingBox.y;
-        margin.bottom = boundingBox.getMaxY() - (node.getPosition().y + node.getSize().y);
+        margin.bottom = boundingBox.y + boundingBox.height - (node.getPosition().y + node.getSize().y);
         margin.left = node.getPosition().x - boundingBox.x;
-        margin.right = boundingBox.getMaxX() - (node.getPosition().x + node.getSize().x);
+        margin.right = boundingBox.x + boundingBox.width - (node.getPosition().x + node.getSize().x);
         node.setMargin(margin);
     }
 }

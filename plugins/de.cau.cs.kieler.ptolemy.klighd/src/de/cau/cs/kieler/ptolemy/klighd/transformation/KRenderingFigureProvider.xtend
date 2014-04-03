@@ -44,6 +44,8 @@ import de.cau.cs.kieler.ptolemy.klighd.transformation.util.GraphicsUtils
 
 import static de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties.*
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
+import org.eclipse.swt.widgets.Display
+import org.eclipse.swt.SWT
 
 /**
  * Creates concrete KRendering information for Ptolemy diagram elements.
@@ -80,7 +82,12 @@ class KRenderingFigureProvider {
     // Node Renderings
     
     /**
+     * Returns the rendering library associated with the given node. The associated rendering library is
+     * the library of the root ancestor of the node. If no library exists yet, one is created and
+     * attached to the root ancestor.
      * 
+     * @param node the node whose's rendering library to return.
+     * @return the rendering library associated with the given node.
      */
     def private KRenderingLibrary getLibrary(KNode node) {
         var parent = node
@@ -98,7 +105,12 @@ class KRenderingFigureProvider {
     }
     
     /**
+     * Returns a reference to rendering with the given ID in the given library.
      * 
+     * @param id identifier of the rendering to look up.
+     * @param library the rendering library to search for the rendering.
+     * @return new rendering reference to the rendering, or {@code null} if no rendering with the given
+     *         identifier exists in the library.
      */
     def private KRenderingRef getFromLibrary(String id, KRenderingLibrary library) {
         val rendering = library.renderings.findFirst[r | r.id == id] as KRendering
@@ -107,11 +119,17 @@ class KRenderingFigureProvider {
             val ref = renderingFactory.createKRenderingRef()
             ref.rendering = rendering
             return ref
+        } else {
+            return null
         }
     }
     
     /**
+     * Adds the given rendering to the given rendering library with the given id.
      * 
+     * @param rendering the rendering to add to the library.
+     * @param id the id that will identify the rendering in the library.
+     * @param library the library to add the rendering to.
      */
     def private KRenderingRef addToLibrary(KRendering rendering, String id, KRenderingLibrary library) {
         rendering.id = id
@@ -143,9 +161,6 @@ class KRenderingFigureProvider {
      * @return the rendering.
      */
     def KRendering createExpandedCompoundNodeRendering(KNode node, int alpha) {
-        // This is the code for representing expanded compound nodes as rounded rectangles with
-        // progressively darker backgrounds whose color depends on whether the expanded node is
-        // a regular node or whether it displays a state refinement
         val bgColor = if (node.markedAsState) {
             renderingFactory.createKColor() => [col |
                 col.red = 11
@@ -169,20 +184,6 @@ class KRenderingFigureProvider {
                 bg.color = bgColor
             ]
         ]
-
-        // This in turn is the code for representing expanded compound nodes as regular rectangles
-        // with drop shadows
-//        val rendering = renderingFactory.createKRectangle() => [rect |
-//            rect.styles += renderingFactory.createKBackground() => [bg |
-//                bg.alpha = alpha
-//                bg.color = renderingFactory.createKColor() => [col |
-//                    col.red = 16
-//                    col.green = 78
-//                    col.blue = 139
-//                ]
-//            ]
-//            rect.setShadow(GraphicsUtils::lookupColor("darkgrey"))
-//        ]
         
         return rendering
     }
@@ -578,6 +579,10 @@ class KRenderingFigureProvider {
                 "ren_accumulator", library)
     }
     
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Node Selection Rendering
+    
     /**
      * Builds up and adds helper renderings forming the selection to given node,
      * attaches the provided rendering to the selection helpers.  
@@ -593,12 +598,14 @@ class KRenderingFigureProvider {
      * attaches the provided rendering to the selection helpers.  
      */
     def KContainerRendering addRenderingWithSelectionWrapper(KGraphElement kge) {
+        val selectionColor = Display.current.getSystemColor(SWT.COLOR_LIST_SELECTION)
+        
         kge.addRectangle => [
             it.invisible = true;
-            it.addRoundedRectangle(10, 10f, 1) => [
-                it.setSurroundingSpace(-10, 0);
+            it.addRoundedRectangle(3f, 3f, 1) => [
+            it.setSurroundingSpace(-3, 0);
                 it.invisible = true;
-                it.setBackgroundColor(56, 117, 215);
+                it.setBackgroundColor(selectionColor.red, selectionColor.green, selectionColor.blue)
                 it.lineStyle = LineStyle.DASH;
                 it.selectionInvisible = false;
             ]

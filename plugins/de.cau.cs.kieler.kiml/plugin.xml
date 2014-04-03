@@ -174,6 +174,16 @@
             variance="0">
       </layoutOption>
       <layoutOption
+            advanced="true"
+            appliesTo="ports"
+            class="de.cau.cs.kieler.core.math.KVector"
+            description="The offset to the port position where connections shall be attached (programmatically set)."
+            id="de.cau.cs.kieler.klay.layered.portAnchor"
+            name="Port Anchor Offset"
+            type="object"
+            variance="0">
+      </layoutOption>
+      <layoutOption
             appliesTo="parents"
             class="de.cau.cs.kieler.kiml.options.Direction"
             default="UNDEFINED"
@@ -386,7 +396,7 @@
            advanced="true"
            class="de.cau.cs.kieler.kiml.options.EdgeLabelPlacement"
            default="UNDEFINED"
-           description="Gives a hint on where to put edge labels"
+           description="Gives a hint on where to put edge labels."
            id="de.cau.cs.kieler.edgeLabelPlacement"
            name="Edge Label Placement"
            type="enum"
@@ -533,13 +543,25 @@
      <layoutOption
            advanced="true"
            appliesTo="nodes"
-           default="1f"
+           default="1"
            description="The scaling factor to be applied to the corresponding node in recursive layout."
            id="de.cau.cs.kieler.scaleFactor"
-           lowerBound="0.01f"
+           lowerBound="0.01"
            name="Scale Factor"
            type="float"
-           upperBound="100f"
+           upperBound="100"
+           variance="0">
+     </layoutOption>
+     <layoutOption
+           advanced="true"
+           appliesTo="edges"
+           default="1"
+           description="The thickness of an edge."
+           id="de.cau.cs.kieler.thickness"
+           lowerBound="0.001"
+           name="Thickness"
+           type="float"
+           upperBound="1000"
            variance="0">
      </layoutOption>
      <layoutOption

@@ -170,6 +170,13 @@ public final class LayoutOptions {
      * </ul>
      */
     public static final IProperty<Float> OFFSET = new Property<Float>("de.cau.cs.kieler.offset");
+
+    /**
+     * The offset to the port position where connections shall be attached. For compatibility reasons,
+     * the ID still starts with the KLay Layered ID.
+     */
+    public static final IProperty<KVector> PORT_ANCHOR = new Property<KVector>(
+            "de.cau.cs.kieler.klay.layered.portAnchor");
     
     /**
      * The index of a port in the fixed order of ports around its node. [programmatically set]
@@ -208,6 +215,13 @@ public final class LayoutOptions {
             "de.cau.cs.kieler.scaleFactor", 1f);
     
     /**
+     * The thickness of an edge. [programmatically set] This is a hint on the line width used
+     * to draw an edge, possibly requiring more space to be reserved for it.
+     */
+    public static final IProperty<Float> THICKNESS = new Property<Float>(
+            "de.cau.cs.kieler.thickness", 1f);
+    
+    /**
      * Whether the zoom level shall be set to view the whole diagram after layout.
      * [programmatically set]
      */
@@ -219,29 +233,21 @@ public final class LayoutOptions {
      * For instance, ports or labels being placed on the outside of a node's border 
      * might introduce such a margin. The margin is used to guarantee non-overlap
      * of other graph elements with those ports or labels.
-     * Currently this option is only used by the klay.layered algorithm.  
+     * FIXME is this the right place for this property?
      * [programmatically set]
      */
     public static final IProperty<Margins> MARGINS = new Property<Margins>(
             "de.cau.cs.kieler.margins", new Margins());
     
     /**
-     * On which side of its corresponding edge a label is situated. 
+     * On which side of its corresponding edge a label is situated.
+     * FIXME is this the right place for this property?
      * [programmatically set]
      */
     public static final IProperty<LabelSide> LABEL_SIDE = new Property<LabelSide>(
             "de.cau.cs.kieler.labelSide", LabelSide.UNKNOWN);
-    
-    /**
-     * Copy of the {@link de.cau.cs.kieler.klay.layered.properties.Properties#PORT_RATIO_OR_POSITION}
-     * option. For further information see the documentation found there. 
-     * We added this copy here to allow a generic treatment of spacing calculations for graph elements.
-     * See the {@link de.cau.cs.kieler.kiml.util.nodespacing} package.
-     * [programmatically set]
-     */
-    public static final IProperty<Double> PORT_RATIO_OR_POSITION = new Property<Double>(
-            "portRatioOrPosition", 0.0);
 
+    
     ///////  USER INTERFACE LAYOUT OPTIONS  ///////
 
     /**
