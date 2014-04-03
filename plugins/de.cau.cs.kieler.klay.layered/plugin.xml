@@ -234,6 +234,10 @@
             id="de.cau.cs.kieler.klay.layered.mergeHierarchyPorts"
             name="Merge Hierarchy-crossing Edges"
             type="boolean">
+         <dependency
+               option="de.cau.cs.kieler.layoutHierarchy"
+               value="true">
+         </dependency>
       </layoutOption>
       <layoutOption
             advanced="true"
