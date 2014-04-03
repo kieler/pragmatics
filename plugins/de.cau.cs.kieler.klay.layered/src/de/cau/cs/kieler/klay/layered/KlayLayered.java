@@ -42,7 +42,7 @@ import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
+import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
 import de.cau.cs.kieler.klay.layered.p1cycles.InteractiveCycleBreaker;
 import de.cau.cs.kieler.klay.layered.p2layers.InteractiveLayerer;
@@ -118,7 +118,7 @@ public final class KlayLayered {
     /** cache of instantiated layout phases. */
     private final Map<Class<? extends ILayoutPhase>, ILayoutPhase> phaseCache = Maps.newHashMap();
     /** cache of instantiated intermediate modules. */
-    private final Map<LayoutProcessorStrategy, ILayoutProcessor> intermediateLayoutProcessorCache =
+    private final Map<IntermediateProcessorStrategy, ILayoutProcessor> intermediateLayoutProcessorCache =
             Maps.newHashMap();
     
 
@@ -615,14 +615,14 @@ public final class KlayLayered {
     private List<ILayoutProcessor> getIntermediateProcessorList(
             final IntermediateProcessingConfiguration configuration, final int slotIndex) {
         // fetch the set of layout processors configured for the given slot
-        EnumSet<LayoutProcessorStrategy> processors = configuration.getProcessors(slotIndex);
+        EnumSet<IntermediateProcessorStrategy> processors = configuration.getProcessors(slotIndex);
         List<ILayoutProcessor> result = new ArrayList<ILayoutProcessor>(processors.size());
 
         // iterate through the layout processors and add them to the result list; the EnumSet
         // guarantees that we iterate over the processors in the order in which they occur in
         // the LayoutProcessorStrategy, thereby satisfying all of their runtime order
         // dependencies without having to sort them in any way
-        for (LayoutProcessorStrategy processor : processors) {
+        for (IntermediateProcessorStrategy processor : processors) {
             // check if an instance of the given layout processor is already in the cache
             ILayoutProcessor processorImpl = intermediateLayoutProcessorCache.get(processor);
 
@@ -659,31 +659,31 @@ public final class KlayLayered {
         // port side processor, put to first slot only if requested and routing is orthogonal
         if (graph.getProperty(Properties.FEEDBACK_EDGES)) {
             configuration.addLayoutProcessor(IntermediateProcessingConfiguration.BEFORE_PHASE_1,
-                    LayoutProcessorStrategy.PORT_SIDE_PROCESSOR);
+                    IntermediateProcessorStrategy.PORT_SIDE_PROCESSOR);
         } else {
             configuration.addLayoutProcessor(IntermediateProcessingConfiguration.BEFORE_PHASE_3,
-                    LayoutProcessorStrategy.PORT_SIDE_PROCESSOR);
+                    IntermediateProcessorStrategy.PORT_SIDE_PROCESSOR);
         }
 
         // graph transformations for unusual layout directions
         switch (graph.getProperty(LayoutOptions.DIRECTION)) {
         case LEFT:
             configuration.addLayoutProcessor(IntermediateProcessingConfiguration.BEFORE_PHASE_1,
-                    LayoutProcessorStrategy.LEFT_DIR_PREPROCESSOR);
+                    IntermediateProcessorStrategy.LEFT_DIR_PREPROCESSOR);
             configuration.addLayoutProcessor(IntermediateProcessingConfiguration.AFTER_PHASE_5,
-                    LayoutProcessorStrategy.LEFT_DIR_POSTPROCESSOR);
+                    IntermediateProcessorStrategy.LEFT_DIR_POSTPROCESSOR);
             break;
         case DOWN:
             configuration.addLayoutProcessor(IntermediateProcessingConfiguration.BEFORE_PHASE_1,
-                    LayoutProcessorStrategy.DOWN_DIR_PREPROCESSOR);
+                    IntermediateProcessorStrategy.DOWN_DIR_PREPROCESSOR);
             configuration.addLayoutProcessor(IntermediateProcessingConfiguration.AFTER_PHASE_5,
-                    LayoutProcessorStrategy.DOWN_DIR_POSTPROCESSOR);
+                    IntermediateProcessorStrategy.DOWN_DIR_POSTPROCESSOR);
             break;
         case UP:
             configuration.addLayoutProcessor(IntermediateProcessingConfiguration.BEFORE_PHASE_1,
-                    LayoutProcessorStrategy.UP_DIR_PREPROCESSOR);
+                    IntermediateProcessorStrategy.UP_DIR_PREPROCESSOR);
             configuration.addLayoutProcessor(IntermediateProcessingConfiguration.AFTER_PHASE_5,
-                    LayoutProcessorStrategy.UP_DIR_POSTPROCESSOR);
+                    IntermediateProcessorStrategy.UP_DIR_POSTPROCESSOR);
             break;
         default:
             // This is either RIGHT or UNDEFINED, which is just mapped to RIGHT. Either way, we
@@ -694,9 +694,9 @@ public final class KlayLayered {
         // Additional dependencies
         if (graphProperties.contains(GraphProperties.COMMENTS)) {
             configuration.addLayoutProcessor(IntermediateProcessingConfiguration.BEFORE_PHASE_1,
-                    LayoutProcessorStrategy.COMMENT_PREPROCESSOR);
+                    IntermediateProcessorStrategy.COMMENT_PREPROCESSOR);
             configuration.addLayoutProcessor(IntermediateProcessingConfiguration.AFTER_PHASE_5,
-                    LayoutProcessorStrategy.COMMENT_POSTPROCESSOR);
+                    IntermediateProcessorStrategy.COMMENT_POSTPROCESSOR);
         }
 
         return configuration;
@@ -913,11 +913,11 @@ public final class KlayLayered {
             new IntermediateProcessingConfiguration(null, null, null,
 
                     // Before Phase 4
-                    EnumSet.of(LayoutProcessorStrategy.NODE_MARGIN_CALCULATOR,
-                            LayoutProcessorStrategy.LABEL_AND_NODE_SIZE_PROCESSOR),
+                    EnumSet.of(IntermediateProcessorStrategy.NODE_MARGIN_CALCULATOR,
+                            IntermediateProcessorStrategy.LABEL_AND_NODE_SIZE_PROCESSOR),
 
                     // Before Phase 5
-                    EnumSet.of(LayoutProcessorStrategy.LAYER_SIZE_AND_GRAPH_HEIGHT_CALCULATOR),
+                    EnumSet.of(IntermediateProcessorStrategy.LAYER_SIZE_AND_GRAPH_HEIGHT_CALCULATOR),
 
                     null);
 

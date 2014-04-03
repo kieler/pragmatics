@@ -30,7 +30,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
-import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
+import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 
@@ -59,13 +59,13 @@ public final class InteractiveCrossingMinimizer implements ILayoutPhase {
                 // Before Phase 2
                 null,
                 // Before Phase 3
-                EnumSet.of(LayoutProcessorStrategy.LONG_EDGE_SPLITTER),
+                EnumSet.of(IntermediateProcessorStrategy.LONG_EDGE_SPLITTER),
                 // Before Phase 4
-                EnumSet.of(LayoutProcessorStrategy.IN_LAYER_CONSTRAINT_PROCESSOR),
+                EnumSet.of(IntermediateProcessorStrategy.IN_LAYER_CONSTRAINT_PROCESSOR),
                 // Before Phase 5
                 null,
                 // After Phase 5
-                EnumSet.of(LayoutProcessorStrategy.LONG_EDGE_JOINER));
+                EnumSet.of(IntermediateProcessorStrategy.LONG_EDGE_JOINER));
     
     /**
      * {@inheritDoc}
@@ -78,7 +78,7 @@ public final class InteractiveCrossingMinimizer implements ILayoutPhase {
         if (graph.getProperty(InternalProperties.GRAPH_PROPERTIES).contains(
                 GraphProperties.NON_FREE_PORTS)) {
             configuration.addLayoutProcessor(IntermediateProcessingConfiguration.BEFORE_PHASE_3,
-                    LayoutProcessorStrategy.PORT_LIST_SORTER);
+                    IntermediateProcessorStrategy.PORT_LIST_SORTER);
         }
         
         return configuration;

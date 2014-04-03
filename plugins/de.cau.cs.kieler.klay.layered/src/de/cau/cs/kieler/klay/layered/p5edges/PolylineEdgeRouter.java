@@ -33,7 +33,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
-import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
+import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
@@ -109,7 +109,7 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
     /** additional processor dependencies for graphs with possible inverted ports. */
     private static final IntermediateProcessingConfiguration INVERTED_PORT_PROCESSING_ADDITIONS =
         new IntermediateProcessingConfiguration(IntermediateProcessingConfiguration.BEFORE_PHASE_3,
-                LayoutProcessorStrategy.INVERTED_PORT_PROCESSOR);
+                IntermediateProcessorStrategy.INVERTED_PORT_PROCESSOR);
     
     /** additional processor dependencies for graphs with northern / southern non-free ports. */
     private static final IntermediateProcessingConfiguration NORTH_SOUTH_PORT_PROCESSING_ADDITIONS =
@@ -121,7 +121,7 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
                 null,
                 
                 // Before Phase 3
-                EnumSet.of(LayoutProcessorStrategy.NORTH_SOUTH_PORT_PREPROCESSOR),
+                EnumSet.of(IntermediateProcessorStrategy.NORTH_SOUTH_PORT_PREPROCESSOR),
                 
                 // Before Phase 4
                 null,
@@ -130,7 +130,7 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
                 null,
                 
                 // After Phase 5
-                EnumSet.of(LayoutProcessorStrategy.NORTH_SOUTH_PORT_POSTPROCESSOR));
+                EnumSet.of(IntermediateProcessorStrategy.NORTH_SOUTH_PORT_POSTPROCESSOR));
     
     /** additional processor dependencies for graphs with center edge labels. */
     private static final IntermediateProcessingConfiguration CENTER_EDGE_LABEL_PROCESSING_ADDITIONS =
@@ -139,11 +139,11 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
                 null,
                 
                 // Before Phase 2
-                EnumSet.of(LayoutProcessorStrategy.LABEL_DUMMY_INSERTER),
+                EnumSet.of(IntermediateProcessorStrategy.LABEL_DUMMY_INSERTER),
                 
                 // Before Phase 3
-                EnumSet.of(LayoutProcessorStrategy.LABEL_SIDE_SELECTOR,
-                           LayoutProcessorStrategy.LABEL_DUMMY_SWITCHER),
+                EnumSet.of(IntermediateProcessorStrategy.LABEL_SIDE_SELECTOR,
+                           IntermediateProcessorStrategy.LABEL_DUMMY_SWITCHER),
                 
                 // Before Phase 4
                 null,
@@ -152,7 +152,7 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
                 null,
                 
                 // After Phase 5
-                EnumSet.of(LayoutProcessorStrategy.LABEL_DUMMY_REMOVER));
+                EnumSet.of(IntermediateProcessorStrategy.LABEL_DUMMY_REMOVER));
     
     /** additional processor dependencies for graphs with head or tail edge labels. */
     private static final IntermediateProcessingConfiguration END_EDGE_LABEL_PROCESSING_ADDITIONS =
@@ -164,7 +164,7 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
                 null,
                 
                 // Before Phase 3
-                EnumSet.of(LayoutProcessorStrategy.LABEL_SIDE_SELECTOR),
+                EnumSet.of(IntermediateProcessorStrategy.LABEL_SIDE_SELECTOR),
                 
                 // Before Phase 4
                 null,
@@ -173,7 +173,7 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
                 null,
                 
                 // After Phase 5
-                EnumSet.of(LayoutProcessorStrategy.END_LABEL_PROCESSOR));
+                EnumSet.of(IntermediateProcessorStrategy.END_LABEL_PROCESSOR));
     
     /** the minimal vertical difference for creating bend points. */
     private static final double MIN_VERT_DIFF = 1.0;

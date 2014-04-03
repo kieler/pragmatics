@@ -118,9 +118,11 @@ public final class LabelSideSelector implements ILayoutProcessor {
                 for (LLabel label : edge.getLabels()) {
                     label.setSide(LabelSide.ABOVE);
                 }
+                
                 for (LLabel portLabel : edge.getSource().getLabels()) {
                     portLabel.setSide(LabelSide.ABOVE);
                 }
+                
                 for (LLabel portLabel : edge.getTarget().getLabels()) {
                     portLabel.setSide(LabelSide.ABOVE);
                 }
@@ -140,9 +142,11 @@ public final class LabelSideSelector implements ILayoutProcessor {
                 for (LLabel label : edge.getLabels()) {
                     label.setSide(LabelSide.BELOW);
                 }
+                
                 for (LLabel portLabel : edge.getSource().getLabels()) {
                     portLabel.setSide(LabelSide.BELOW);
                 }
+                
                 for (LLabel portLabel : edge.getTarget().getLabels()) {
                     portLabel.setSide(LabelSide.BELOW);
                 }
@@ -162,22 +166,29 @@ public final class LabelSideSelector implements ILayoutProcessor {
             for (LEdge edge : node.getOutgoingEdges()) {
                 LabelSide side = LabelSide.ABOVE;
                 LNode target = edge.getTarget().getNode();
+                
                 if (target.getProperty(InternalProperties.NODE_TYPE) == NodeType.LONG_EDGE
                         || target.getProperty(InternalProperties.NODE_TYPE) == NodeType.LABEL) {
+                    
                     target = target.getProperty(InternalProperties.LONG_EDGE_TARGET).getNode();
                 }
-                if ((node.getLayer().getIndex() < target.getLayer().getIndex() && !edge
-                        .getProperty(InternalProperties.REVERSED))) {
+                
+                if ((node.getLayer().getIndex() < target.getLayer().getIndex()
+                        && !edge.getProperty(InternalProperties.REVERSED))) {
+                    
                     side = LabelSide.ABOVE;
                 } else {
                     side = LabelSide.BELOW;
                 }
+                
                 for (LLabel label : edge.getLabels()) {
                     label.setSide(side);
                 }
+                
                 for (LLabel portLabel : edge.getSource().getLabels()) {
                     portLabel.setSide(side);
                 }
+                
                 for (LLabel portLabel : edge.getTarget().getLabels()) {
                     portLabel.setSide(side);
                 }
@@ -197,22 +208,29 @@ public final class LabelSideSelector implements ILayoutProcessor {
             for (LEdge edge : node.getOutgoingEdges()) {
                 LabelSide side = LabelSide.ABOVE;
                 LNode target = edge.getTarget().getNode();
+                
                 if (target.getProperty(InternalProperties.NODE_TYPE) == NodeType.LONG_EDGE
                         || target.getProperty(InternalProperties.NODE_TYPE) == NodeType.LABEL) {
+                    
                     target = target.getProperty(InternalProperties.LONG_EDGE_TARGET).getNode();
                 }
-                if ((node.getLayer().getIndex() < target.getLayer().getIndex() && !edge
-                        .getProperty(InternalProperties.REVERSED))) {
+                
+                if ((node.getLayer().getIndex() < target.getLayer().getIndex()
+                        && !edge.getProperty(InternalProperties.REVERSED))) {
+                    
                     side = LabelSide.BELOW;
                 } else {
                     side = LabelSide.ABOVE;
                 }
+                
                 for (LLabel label : edge.getLabels()) {
                     label.setSide(side);
                 }
+                
                 for (LLabel portLabel : edge.getSource().getLabels()) {
                     portLabel.setSide(side);
                 }
+                
                 for (LLabel portLabel : edge.getTarget().getLabels()) {
                     portLabel.setSide(side);
                 }
@@ -234,11 +252,14 @@ public final class LabelSideSelector implements ILayoutProcessor {
                 for (LEdge edge : eastPort.getOutgoingEdges()) {
                     LabelSide chosenSide = LabelSide.ABOVE;
                     LNode targetNode = edge.getTarget().getNode();
+                    
                     if (targetNode.getProperty(InternalProperties.NODE_TYPE) == NodeType.LONG_EDGE
                             || targetNode.getProperty(InternalProperties.NODE_TYPE) == NodeType.LABEL) {
-                        targetNode = targetNode.getProperty(InternalProperties.LONG_EDGE_TARGET)
-                                .getNode();
+                        
+                        targetNode =
+                                targetNode.getProperty(InternalProperties.LONG_EDGE_TARGET).getNode();
                     }
+                    
                     // Markers make sure that no overlaps will be created
                     if (nodeMarkers.containsKey(targetNode)) {
                         chosenSide = nodeMarkers.get(targetNode);
@@ -256,12 +277,15 @@ public final class LabelSideSelector implements ILayoutProcessor {
                         }
                     }
                     nodeMarkers.put(targetNode, chosenSide);
+                    
                     for (LLabel label : edge.getLabels()) {
                         label.setSide(chosenSide);
                     }
+                    
                     for (LLabel portLabel : edge.getSource().getLabels()) {
                         portLabel.setSide(chosenSide);
                     }
+                    
                     for (LLabel portLabel : edge.getTarget().getLabels()) {
                         portLabel.setSide(chosenSide);
                     }
@@ -282,9 +306,11 @@ public final class LabelSideSelector implements ILayoutProcessor {
      */
     private List<LPort> getPortsBySide(final LNode node, final PortSide portSide) {
         List<LPort> result = new LinkedList<LPort>();
+        
         for (LPort port : node.getPorts(portSide)) {
             result.add(port);
         }
+        
         Collections.sort(result, new Comparator<LPort>() {
             public int compare(final LPort o1, final LPort o2) {
                 if (o1.getPosition().y < o2.getPosition().y) {

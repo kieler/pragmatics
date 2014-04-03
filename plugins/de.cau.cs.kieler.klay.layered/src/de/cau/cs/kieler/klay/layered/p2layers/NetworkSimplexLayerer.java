@@ -32,7 +32,7 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
+import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -62,13 +62,13 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
     private static final IntermediateProcessingConfiguration BASELINE_PROCESSING_CONFIGURATION =
             new IntermediateProcessingConfiguration(
             // Before Phase 1
-                    EnumSet.of(LayoutProcessorStrategy.EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER),
+                    EnumSet.of(IntermediateProcessorStrategy.EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER),
 
                     // Before Phase 2
                     null,
 
                     // Before Phase 3
-                    EnumSet.of(LayoutProcessorStrategy.LAYER_CONSTRAINT_PROCESSOR),
+                    EnumSet.of(IntermediateProcessorStrategy.LAYER_CONSTRAINT_PROCESSOR),
 
                     // Before Phase 4
                     null,
@@ -86,10 +86,10 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
                     null,
 
                     // Before Phase 2
-                    EnumSet.of(LayoutProcessorStrategy.BIG_NODES_PREPROCESSOR),
+                    EnumSet.of(IntermediateProcessorStrategy.BIG_NODES_PREPROCESSOR),
 
                     // Before Phase 3
-                    EnumSet.of(LayoutProcessorStrategy.BIG_NODES_INTERMEDIATEPROCESSOR),
+                    EnumSet.of(IntermediateProcessorStrategy.BIG_NODES_INTERMEDIATEPROCESSOR),
 
                     // Before Phase 4
                     null,
@@ -98,7 +98,7 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
                     null,
 
                     // After Phase 5
-                    EnumSet.of(LayoutProcessorStrategy.BIG_NODES_POSTPROCESSOR));
+                    EnumSet.of(IntermediateProcessorStrategy.BIG_NODES_POSTPROCESSOR));
 
     // ================================== Attributes ==============================================
 

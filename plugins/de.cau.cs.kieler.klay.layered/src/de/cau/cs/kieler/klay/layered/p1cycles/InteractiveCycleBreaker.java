@@ -24,7 +24,7 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
-import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
+import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
 
 /**
@@ -46,7 +46,7 @@ public final class InteractiveCycleBreaker implements ILayoutPhase {
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION =
         new IntermediateProcessingConfiguration(
                 IntermediateProcessingConfiguration.AFTER_PHASE_5,
-                EnumSet.of(LayoutProcessorStrategy.REVERSED_EDGE_RESTORER));
+                EnumSet.of(IntermediateProcessorStrategy.REVERSED_EDGE_RESTORER));
 
     /**
      * {@inheritDoc}

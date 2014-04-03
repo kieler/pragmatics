@@ -28,7 +28,7 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
+import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
@@ -87,7 +87,7 @@ public final class BJLNodePlacer implements ILayoutPhase {
     private static final IntermediateProcessingConfiguration HIERARCHY_PROCESSING_ADDITIONS =
             new IntermediateProcessingConfiguration(
                     IntermediateProcessingConfiguration.BEFORE_PHASE_5,
-                    LayoutProcessorStrategy.HIERARCHICAL_PORT_POSITION_PROCESSOR);
+                    IntermediateProcessorStrategy.HIERARCHICAL_PORT_POSITION_PROCESSOR);
 
     /**
      * {@inheritDoc}

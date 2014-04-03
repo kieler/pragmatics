@@ -22,7 +22,7 @@ import de.cau.cs.kieler.klay.tree.ILayoutProcessor;
  * @author sor
  * @author sgu
  */
-public enum LayoutProcessorStrategy {
+public enum IntermediateProcessorStrategy {
 
     /**
      * In this enumeration, intermediate layout processors are listed by the earliest slot in which
