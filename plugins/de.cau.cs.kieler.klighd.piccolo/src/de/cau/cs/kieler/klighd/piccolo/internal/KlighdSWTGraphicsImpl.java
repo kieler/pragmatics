@@ -72,7 +72,7 @@ import edu.umd.cs.piccolox.swt.SWTShapeManager;
  */
 public class KlighdSWTGraphicsImpl extends Graphics2D implements KlighdSWTGraphicsEx {
 
-    // SUPPRESS CHECKSTYLE NEXT 22 Visibility
+    // SUPPRESS CHECKSTYLE NEXT 25 Visibility
     
     /** The {@link Device} to draw on. */
     protected Device device;
@@ -83,8 +83,11 @@ public class KlighdSWTGraphicsImpl extends Graphics2D implements KlighdSWTGraphi
     /** An internal SWT {@link Rectangle} used for clip handling computations. */
     protected Transform swtTransform;
     
-    /** A {@link TextLayout} used to draw style texts (e.g. those with underline and/or strikeout. */
+    /** A {@link TextLayout} used to draw styled texts (e.g. those with underline and/or strikeout). */
     protected TextLayout textLayout;
+    
+    /** Indicates a self-created textLayout that is to be disposed while disposing this instance. */
+    protected boolean disposeTextLayout = false;
     
     /** The current font to use when drawing text. */
     protected Font curFont;
@@ -105,7 +108,8 @@ public class KlighdSWTGraphicsImpl extends Graphics2D implements KlighdSWTGraphi
      *            Device onto which ultimately all gc operations are drawn onto
      */
     public KlighdSWTGraphicsImpl(final GC gc, final Device device) {
-        this(device, gc, null);
+        this(device, gc, new TextLayout(device));
+        this.disposeTextLayout = true;
     }
 
     /**
@@ -125,6 +129,22 @@ public class KlighdSWTGraphicsImpl extends Graphics2D implements KlighdSWTGraphi
         this.gc = gc;
         this.swtTransform = new Transform(device);
         this.textLayout = tl;
+        this.transform = new AffineTransform();
+
+        this.initializeTransform();
+    }
+
+    /**
+     * Initializes the {@link #transform(AffineTransform)} based on the current {@link #gc}'s
+     * {@link Transform}.
+     */
+    private void initializeTransform() {
+        if (gc != null) {
+            gc.getTransform(swtTransform);
+            final float[] elements = new float[6]; // SUPPRESS CHECKSTYLE MagicNumber
+            this.swtTransform.getElements(elements);
+            this.transform.setTransform(new AffineTransform(elements));
+        }
     }
 
     /**
@@ -154,6 +174,8 @@ public class KlighdSWTGraphicsImpl extends Graphics2D implements KlighdSWTGraphi
     public void setGC(final GC theGc) {
         this.gc = theGc;
         this.gc.setAntialias(SWT.ON);
+
+        this.initializeTransform();
     }
 
     /**
@@ -637,7 +659,7 @@ public class KlighdSWTGraphicsImpl extends Graphics2D implements KlighdSWTGraphi
     }
 
     /** An {@link AffineTransform} instance denoting the currently set drawing transform. */
-    protected final AffineTransform transform = new AffineTransform();  // SUPPRESS CHECKSTYLE Visibility
+    private final AffineTransform transform; 
     
     @Override
     public AffineTransform getTransform() {
@@ -716,13 +738,14 @@ public class KlighdSWTGraphicsImpl extends Graphics2D implements KlighdSWTGraphi
     @Override
     public void clip(final Shape clip) {
         // important: clip bounds must not be adjusted in any way, since in combination with
-        //  usage of 'getClip()' those manipulations will accumulate and lead to unintended effects!! 
+        //  usage of 'getClip()' those manipulations will accumulate and lead to unintended effects!!
+        //  (PCamera.fullPaint() calls 'clip(getBoundsReference()', for example);
         
         if (clip == null) {
             this.gc.setClipping((Rectangle) null);
             
         } else if (clip instanceof Rectangle2D) {
-            final Rectangle2D rect = (Rectangle2D) clip;
+            final Rectangle2D rect = clip.getBounds2D();
             Rectangle2D.intersect(this.getClip().getBounds2D(), rect, rect);
             this.setClip(rect);
             
@@ -782,7 +805,14 @@ public class KlighdSWTGraphicsImpl extends Graphics2D implements KlighdSWTGraphi
         /* do nothing */
     }
 
-    
+    @Override
+    public void dispose() {
+        if (disposeTextLayout && this.textLayout != null) {
+            this.textLayout.dispose();
+        }
+    }
+
+
     /* ------------------------------------------------ */
     /*  legacy methods due to inheritance of Graphics2D */
     /*   that are not supported by this implementation  */
@@ -1067,11 +1097,6 @@ public class KlighdSWTGraphicsImpl extends Graphics2D implements KlighdSWTGraphi
     @Override
     public boolean drawImage(java.awt.Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1,
             int sx2, int sy2, java.awt.Color bgcolor, ImageObserver observer) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void dispose() {
         throw new UnsupportedOperationException();
     }
 }

@@ -19,7 +19,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -35,14 +35,14 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 public class LayoutOptionLabelProvider extends LabelProvider {
     
     /** the layout option data instance associated with this label provider. */
-    private final LayoutOptionData<?> optionData;
+    private final LayoutOptionData optionData;
 
     /**
      * Create a label provider for the given layout option.
      * 
      * @param optionData a layout option
      */
-    public LayoutOptionLabelProvider(final LayoutOptionData<?> optionData) {
+    public LayoutOptionLabelProvider(final LayoutOptionData optionData) {
         this.optionData = optionData;
     }
     
@@ -68,8 +68,6 @@ public class LayoutOptionLabelProvider extends LabelProvider {
             } else {
                 return images.getPropFalse();
             }
-        case REMOTE_ENUM:
-        case REMOTE_ENUMSET:
         case ENUM:
         case ENUMSET:
             return images.getPropChoice();
@@ -90,7 +88,7 @@ public class LayoutOptionLabelProvider extends LabelProvider {
     public String getText(final Object element) {
         switch (optionData.getType()) {
         case STRING:
-            LayoutDataService layoutServices = LayoutDataService.getInstance();
+            LayoutMetaDataService layoutServices = LayoutMetaDataService.getInstance();
             if (LayoutOptions.ALGORITHM.equals(optionData)) {
                 String layoutHint = (String) element;
                 LayoutTypeData layoutType = layoutServices.getTypeData(layoutHint);
@@ -109,13 +107,11 @@ public class LayoutOptionLabelProvider extends LabelProvider {
                 return ((Boolean) element).toString();
             }
             // fall through so the same method as for enums is applied
-        case REMOTE_ENUM:
         case ENUM:
             if (element instanceof Integer) {
                 return optionData.getChoices()[(Integer) element];
             }
             break;
-        case REMOTE_ENUMSET:
         case ENUMSET:
             if (element instanceof String) {
                 return (String) element;

@@ -17,8 +17,8 @@ package de.cau.cs.kieler.kwebs.server.service.filter;
 import java.util.List;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kwebs.GraphLayoutOption;
-import de.cau.cs.kieler.kwebs.Statistics;
+import de.cau.cs.kieler.kwebs.server.layout.GraphLayoutOption;
+import de.cau.cs.kieler.kwebs.server.service.Statistics;
 
 /**
  * 

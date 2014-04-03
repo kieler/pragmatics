@@ -13,10 +13,6 @@
  */
 package de.cau.cs.kieler.klay.layered.p4nodes;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -26,9 +22,9 @@ import java.util.ListIterator;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.klay.layered.DebugUtil;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
-import de.cau.cs.kieler.klay.layered.Util;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -36,6 +32,7 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -67,7 +64,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
     /**
      * A linear segment contains a single regular node or all dummy nodes of a long edge.
      */
-    private static class LinearSegment implements Comparable<LinearSegment> {
+    public static class LinearSegment implements Comparable<LinearSegment> {
         /** Nodes of the linear segment. */
         private List<LNode> nodes = new LinkedList<LNode>();
         /** Identifier value, used as index in the segments array. */
@@ -175,7 +172,8 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
     public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
             final LGraph graph) {
         
-        if (graph.getProperty(Properties.GRAPH_PROPERTIES).contains(GraphProperties.EXTERNAL_PORTS)) {
+        if (graph.getProperty(InternalProperties.GRAPH_PROPERTIES)
+                .contains(GraphProperties.EXTERNAL_PORTS)) {
             return HIERARCHY_PROCESSING_ADDITIONS;
         } else {
             return null;
@@ -454,7 +452,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
 
         // Write debug output graph
         if (layeredGraph.getProperty(LayoutOptions.DEBUG_MODE)) {
-            writeDebugGraph(layeredGraph, segmentList, outgoingList);
+            DebugUtil.writeDebugGraph(layeredGraph, segmentList, outgoingList);
         }
     }
 
@@ -478,9 +476,10 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
             segment.nodes.add(node);
         }
 
-        NodeType nodeType = node.getProperty(Properties.NODE_TYPE);
+        NodeType nodeType = node.getProperty(InternalProperties.NODE_TYPE);
         if (nodeType == NodeType.LONG_EDGE || nodeType == NodeType.NORTH_SOUTH_PORT
-                || nodeType == NodeType.COMPOUND_SIDE) {
+                || nodeType == NodeType.BIG_NODE) {
+            
             // This is a LONG_EDGE, COMPOUND_SIDE or NORTH_SOUTH_PORT dummy; check if any of its
             // successors are of one of these types too. If so, we can form a linear segment with one
             // of them. (not with more than one, though) Note: we must take care not to make
@@ -488,12 +487,12 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
             for (LPort sourcePort : node.getPorts()) {
                 for (LPort targetPort : sourcePort.getSuccessorPorts()) {
                     LNode targetNode = targetPort.getNode();
-                    NodeType targetNodeType = targetNode.getProperty(Properties.NODE_TYPE);
+                    NodeType targetNodeType = targetNode.getProperty(InternalProperties.NODE_TYPE);
 
                     if (node.getLayer() != targetNode.getLayer()
-                            && (targetNodeType == NodeType.LONG_EDGE || targetNodeType 
-                                    == NodeType.NORTH_SOUTH_PORT 
-                                    || targetNodeType == NodeType.COMPOUND_SIDE)) {
+                            && (targetNodeType == NodeType.LONG_EDGE
+                                    || targetNodeType == NodeType.NORTH_SOUTH_PORT 
+                                    || targetNodeType == NodeType.BIG_NODE)) {
 
                         if (fillSegment(targetNode, segment)) {
                             // We just added another node to this node's linear segment.
@@ -519,7 +518,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
      */
     private void createUnbalancedPlacement(final LGraph layeredGraph) {
         float normalSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING)
-                * layeredGraph.getProperty(Properties.OBJ_SPACING_VERTICAL_FACTOR);
+                * layeredGraph.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
         float smallSpacing = normalSpacing
                 * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
 
@@ -542,7 +541,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
                 float space = 0.0f;
                 if (nodeCount[layerIndex] > 0) {
                     if (recentNodeNormal[layerIndex]
-                            && node.getProperty(Properties.NODE_TYPE) == NodeType.NORMAL) {
+                            && node.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORMAL) {
 
                         space = normalSpacing;
                     } else {
@@ -563,7 +562,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
                 layer.getSize().y = uppermostPlace + node.getMargin().top
                         + node.getSize().y + node.getMargin().bottom;
 
-                recentNodeNormal[layer.getIndex()] = node.getProperty(Properties.NODE_TYPE) 
+                recentNodeNormal[layer.getIndex()] = node.getProperty(InternalProperties.NODE_TYPE) 
                     == NodeType.NORMAL;
             }
         }
@@ -600,7 +599,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
      */
     private void balancePlacement(final LGraph layeredGraph) {
         float spacing = layeredGraph.getProperty(Properties.OBJ_SPACING)
-                * layeredGraph.getProperty(Properties.OBJ_SPACING_VERTICAL_FACTOR);
+                * layeredGraph.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
         float smallSpacing = spacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
         
         // Determine a suitable number of pendulum iterations
@@ -768,14 +767,15 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
             // Get the first node
             LNode node1 = nodeIter.next();
             LinearSegment region1 = linearSegments[node1.id].region();
-            boolean isNode1Normal = node1.getProperty(Properties.NODE_TYPE) == NodeType.NORMAL;
+            boolean isNode1Normal = node1.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORMAL;
 
             // While there are still nodes following the current node
             while (nodeIter.hasNext()) {
                 // Test whether nodes have different regions
                 LNode node2 = nodeIter.next();
                 LinearSegment region2 = linearSegments[node2.id].region();
-                boolean isNode2Normal = node2.getProperty(Properties.NODE_TYPE) == NodeType.NORMAL;
+                boolean isNode2Normal = node2.getProperty(InternalProperties.NODE_TYPE)
+                        == NodeType.NORMAL;
 
                 if (region1 != region2) {
                     // Calculate how much space is allowed between the nodes
@@ -819,7 +819,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
      */
     private void postProcess(final LGraph layeredGraph) {
         float normalSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING)
-                * layeredGraph.getProperty(Properties.OBJ_SPACING_VERTICAL_FACTOR);
+                * layeredGraph.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
         float smallSpacing = normalSpacing
                 * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
 
@@ -830,12 +830,13 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
             for (LNode node : segment.nodes) {
                 double roomAbove, roomBelow;
                 int index = node.getIndex();
-                boolean isNodeNormal = node.getProperty(Properties.NODE_TYPE) == NodeType.NORMAL;
+                boolean isNodeNormal = node.getProperty(InternalProperties.NODE_TYPE)
+                        == NodeType.NORMAL;
 
                 // determine the amount by which the linear segment can be moved up without overlap
                 if (index > 0) {
                     LNode neighbor = node.getLayer().getNodes().get(index - 1);
-                    boolean isNeighborNormal = neighbor.getProperty(Properties.NODE_TYPE) 
+                    boolean isNeighborNormal = neighbor.getProperty(InternalProperties.NODE_TYPE) 
                         == NodeType.NORMAL;
                     float spacing = isNodeNormal && isNeighborNormal ? normalSpacing : smallSpacing;
                     roomAbove = node.getPosition().y - node.getMargin().top
@@ -850,7 +851,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
                 // overlap
                 if (index < node.getLayer().getNodes().size() - 1) {
                     LNode neighbor = node.getLayer().getNodes().get(index + 1);
-                    boolean isNeighborNormal = neighbor.getProperty(Properties.NODE_TYPE) 
+                    boolean isNeighborNormal = neighbor.getProperty(InternalProperties.NODE_TYPE) 
                         == NodeType.NORMAL;
                     float spacing = isNodeNormal && isNeighborNormal ? normalSpacing : smallSpacing;
                     roomBelow = neighbor.getPosition().y - neighbor.getMargin().top
@@ -906,62 +907,4 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
         }
     }
     
-
-    // /////////////////////////////////////////////////////////////////////////////
-    // Debug Output
-
-    /**
-     * Writes a debug graph for the given linear segments and their dependencies.
-     * 
-     * @param layeredGraph
-     *            the layered graph.
-     * @param segmentList
-     *            the list of linear segments.
-     * @param outgoingList
-     *            the list of successors for each linear segment.
-     */
-    private static void writeDebugGraph(final LGraph layeredGraph,
-            final List<LinearSegment> segmentList, final List<List<LinearSegment>> outgoingList) {
-
-        try {
-            Writer writer = createWriter(layeredGraph);
-            writer.write("digraph {\n");
-
-            Iterator<LinearSegment> segmentIterator = segmentList.iterator();
-            Iterator<List<LinearSegment>> successorsIterator = outgoingList.iterator();
-
-            while (segmentIterator.hasNext()) {
-                LinearSegment segment = segmentIterator.next();
-                List<LinearSegment> successors = successorsIterator.next();
-
-                writer.write("  " + segment.hashCode() + "[label=\"" + segment + "\"]\n");
-
-                for (LinearSegment successor : successors) {
-                    writer.write("  " + segment.hashCode() + "->" + successor.hashCode() + "\n");
-                }
-            }
-
-            writer.write("}\n");
-            writer.close();
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
-    }
-
-    /**
-     * Creates a writer for debug output.
-     * 
-     * @param layeredGraph
-     *            the layered graph.
-     * @return a file writer for debug output.
-     * @throws IOException
-     *             if creating the output file fails.
-     */
-    private static Writer createWriter(final LGraph layeredGraph) throws IOException {
-        String path = Util.getDebugOutputPath();
-        new File(path).mkdirs();
-
-        String debugFileName = Util.getDebugOutputFileBaseName(layeredGraph) + "linseg-dep";
-        return new FileWriter(new File(path + File.separator + debugFileName + ".dot"));
-    }
 }

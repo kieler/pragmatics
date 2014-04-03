@@ -14,7 +14,6 @@
 
 package de.cau.cs.kieler.kwebs.server.service;
 
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -26,6 +25,7 @@ import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EClass;
 
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
+import de.cau.cs.kieler.core.alg.DefaultFactory;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphData;
@@ -35,29 +35,32 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutOptionData.Target;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine;
+import de.cau.cs.kieler.kiml.formats.GraphFormatData;
+import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
+import de.cau.cs.kieler.kiml.formats.IGraphFormatHandler;
+import de.cau.cs.kieler.kiml.formats.TransformationData;
 import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.impl.KLayoutDataFactoryImpl;
 import de.cau.cs.kieler.kiml.klayoutdata.impl.KLayoutDataPackageImpl;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.service.TransformationService;
-import de.cau.cs.kieler.kiml.service.formats.GraphFormatData;
-import de.cau.cs.kieler.kiml.service.formats.ITransformationHandler;
-import de.cau.cs.kieler.kiml.service.formats.TransformationData;
-import de.cau.cs.kieler.kwebs.GraphLayoutOption;
-import de.cau.cs.kieler.kwebs.RemoteServiceException;
-import de.cau.cs.kieler.kwebs.Statistics;
-import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService;
+import de.cau.cs.kieler.kwebs.server.RemoteServiceException;
+import de.cau.cs.kieler.kwebs.server.layout.GraphLayoutOption;
+import de.cau.cs.kieler.kwebs.server.layout.ServerGraphFormatsService;
+import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutMetaDataService;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 import de.cau.cs.kieler.kwebs.server.service.filter.LayoutFilter;
 import de.cau.cs.kieler.kwebs.server.service.filter.LayoutFilterData;
 import de.cau.cs.kieler.kwebs.server.service.filter.LayoutFilters;
-import de.cau.cs.kieler.kwebs.util.Graphs;
+import de.cau.cs.kieler.kwebs.server.util.Graphs;
+import de.cau.cs.kieler.statistics.KIELERStatistics;
+import de.cau.cs.kieler.statistics.KIELERStatistics.Granularity;
 
 /**
  * This abstract base class provides the implementation of the layout functionality. Web service
@@ -88,14 +91,14 @@ public abstract class AbstractService {
     //////////
     
     /**
-     * Protected constructor. Initialized the layout data services.
+     * Protected constructor. Initializes the layout data services.
      */
     protected AbstractService() {
-        
-        ServerLayoutDataService.create();
-        LayoutDataService.setMode(ServerLayoutDataService.class.getCanonicalName());
+        LayoutMetaDataService.setInstanceFactory(new DefaultFactory<LayoutMetaDataService>(
+                ServerLayoutMetaDataService.class));
+        GraphFormatsService.setInstanceFactory(new DefaultFactory<GraphFormatsService>(
+                ServerGraphFormatsService.class));
         initFilters();
-        
     }
 
     /** */
@@ -126,6 +129,21 @@ public abstract class AbstractService {
     private static final String ATTRIBUTE_IMPLEMENTATION
         = "implementation";
 
+    /*
+     * Some constants to collect usage information.
+     */
+    private static final String STATS_OPTION = "kwebs.layout.specifiedoption";
+    private static final String STATS_ALG = "kwebs.layout.algorithm";
+    private static final String STATS_EXECTIME = "kwebs.layout.exectime";
+    private static final String STATS_GRAPH_SIZE = "kwebs.layout.graphsize";
+    private static final String STATS_GRAPH_NODES = "kwebs.layout.nodes";
+    private static final String STATS_GRAPH_EDGES = "kwebs.layout.edges";
+    private static final String STATS_GRAPH_PORTS = "kwebs.layout.ports";
+    private static final String STATS_GRAPH_LABELS = "kwebs.layout.labels";
+    private static final String STATS_INFORMAT = "kwebs.layout.informat";
+    private static final String STATS_OUTFORMAT = "kwebs.layout.outformat";
+    
+    
     /**
      * 
      */
@@ -162,7 +180,7 @@ public abstract class AbstractService {
                         if (element.getName().equals(ELEMENT_PREFILTERS)) {
                             
                             Logger.log(
-                                Severity.INFO, 
+                                Severity.DEBUG, 
                                 "Added pre processing filter '" 
                                 + instance.getClass().getSimpleName() 
                                 + "'."
@@ -173,7 +191,7 @@ public abstract class AbstractService {
                         } else {
 
                             Logger.log(
-                                Severity.INFO, 
+                                Severity.DEBUG, 
                                 "Added post processing filter '" 
                                 + instance.getClass().getSimpleName() 
                                 + "'."
@@ -193,11 +211,11 @@ public abstract class AbstractService {
             
         }
         
-        final Comparator<LayoutFilter> comparator = new Comparator<LayoutFilter>() {
-            public int compare(final LayoutFilter filter1, final LayoutFilter filter2) {
-                return filter1.getPriority() - filter2.getPriority();
-            }
-        };
+//        final Comparator<LayoutFilter> comparator = new Comparator<LayoutFilter>() {
+//            public int compare(final LayoutFilter filter1, final LayoutFilter filter2) {
+//                return filter1.getPriority() - filter2.getPriority();
+//            }
+//        };
         
 //        preFilters.sortSegments(comparator);
 //        postFilters.sortSegments(comparator);
@@ -230,7 +248,7 @@ public abstract class AbstractService {
         }
 
         Logger.log(Severity.DEBUG, "Starting layout");
-        GraphFormatData informatData = TransformationService.getInstance()
+        GraphFormatData informatData = GraphFormatsService.getInstance()
                 .getFormatDataBySuffix(informat);
         if (informatData == null) {
             throw new IllegalArgumentException("Graph format \"" + informat + "\" is unknown.");
@@ -239,7 +257,7 @@ public abstract class AbstractService {
         if (outformat == null || outformat.equals(informat)) {
             serializedResult = layout(serializedGraph, informatData.getHandler(), null, options);
         } else {
-            GraphFormatData outformatData = TransformationService.getInstance()
+            GraphFormatData outformatData = GraphFormatsService.getInstance()
                     .getFormatDataBySuffix(outformat);
             if (outformatData == null) {
                 throw new IllegalArgumentException("Graph format \"" + outformat + "\" is unknown.");
@@ -247,6 +265,11 @@ public abstract class AbstractService {
             serializedResult = layout(serializedGraph, informatData.getHandler(),
                     outformatData.getHandler(), options);
         }
+        
+        Logger.INSTANCE.getUsageStats().incCounter(Logger.STATS_KWEBS, STATS_INFORMAT, informat,
+                Granularity.MONTH);
+        Logger.INSTANCE.getUsageStats().incCounter(Logger.STATS_KWEBS, STATS_OUTFORMAT, outformat,
+                Granularity.MONTH);
 
         Logger.log(Severity.DEBUG, "Finished layout");
         return serializedResult;
@@ -273,7 +296,7 @@ public abstract class AbstractService {
      * @return the graph on which the layout was done in the same format as used for the source graph
      */
     private <I, O> String layout(final String serializedGraph,
-            final ITransformationHandler<I> inhandler, final ITransformationHandler<O> outhandler,
+            final IGraphFormatHandler<I> inhandler, final IGraphFormatHandler<O> outhandler,
             final List<GraphLayoutOption> options) {
         
         // Start measuring the total time of the operation
@@ -325,6 +348,10 @@ public abstract class AbstractService {
                 layoutTime += layoutMonitor.getExecutionTime() * NANO_FACT;
             }
         }
+        
+        // Record usage statistics
+        collectUsageStatistics(inTransData.getTargetGraphs(), options, 
+                serializedGraph.length(), layoutTime);
 
         // Calculate statistical values and annotate graph if it is a KGraph instance.
         // The serialization process can not be included.
@@ -424,7 +451,80 @@ public abstract class AbstractService {
         }
         identifier.setProperty(Statistics.STATISTICS, statistics.toString());
     }
+    
+    /**
+     * Create statistics for the layout process and logs them to a database.
+     *
+     * @param sourceGraph the source graph to annotate
+     * @param serializedSize the size of the serialized graph
+     * @param layoutTime the time taken for layout
+     */
+    private void collectUsageStatistics(final List<KNode> layoutGraphs,
+            final List<GraphLayoutOption> options, final int serializedSize,
+            final double layoutTime) {
 
+        // do this in its own thread to not let it influence response time too much
+        new Thread("RecordStats") {
+            @Override
+            public void run() {
+
+                KIELERStatistics stats = Logger.INSTANCE.getUsageStats();
+
+                // we log all user specified layout options
+                for (GraphLayoutOption opt : options) {
+                    String fullId =
+                            LayoutMetaDataService.getInstance().getOptionDataBySuffix(opt.getId())
+                                    .getId();
+                    stats.incCounter(Logger.STATS_KWEBS, STATS_OPTION, fullId, opt.getValue(),
+                            Granularity.DAY);
+                }
+
+                int nodes = 0;
+                int ports = 0;
+                int labels = 0;
+                int edges = 0;
+                
+                // we wanna know which algorithm is used
+                for (KNode graph : layoutGraphs) {
+                    KLayoutData data = graph.getData(KLayoutData.class);
+                    String alg = data.getProperty(LayoutOptions.ALGORITHM);
+                    stats.incCounter(Logger.STATS_KWEBS, STATS_ALG,
+                            LayoutOptions.ALGORITHM.getId(), alg, Granularity.DAY);
+
+                    // if its klay we wanna know even more :) Just to make everything better!
+                    stats.recordKlayLayeredStats(graph);
+                    
+                    // graph information
+                    for (KNode layout : layoutGraphs) {
+                        for (KGraphElement element 
+                                : Graphs.getAllElementsOfType(layout, KGraphElement.class)) {
+                            if (element instanceof KNode) {
+                                nodes++;
+                            } else if (element instanceof KPort) {
+                                ports++;
+                            } else if (element instanceof KLabel) {
+                                labels++;
+                            } else if (element instanceof KEdge) {
+                                edges++;
+                            }
+                        }
+                    }
+                }
+                
+                // number of elements
+                stats.recordValue(Logger.STATS_KWEBS, STATS_GRAPH_NODES, nodes);
+                stats.recordValue(Logger.STATS_KWEBS, STATS_GRAPH_EDGES, edges);
+                stats.recordValue(Logger.STATS_KWEBS, STATS_GRAPH_PORTS, ports);
+                stats.recordValue(Logger.STATS_KWEBS, STATS_GRAPH_LABELS, labels);
+
+                // and log some times
+                stats.recordValue(Logger.STATS_KWEBS, STATS_EXECTIME, layoutTime);
+                stats.recordValue(Logger.STATS_KWEBS, STATS_GRAPH_SIZE, layoutTime);
+
+            };
+        } .start();
+    }
+    
     /**
      * Annotate transformation data with the given layout options. This is done so the user
      * can control how graphs are imported and exported.
@@ -434,9 +534,9 @@ public abstract class AbstractService {
      */
     private void annotateTransData(final TransformationData<?, ?> transData,
             final List<GraphLayoutOption> options) {
-        LayoutDataService dataService = LayoutDataService.getInstance();
+        LayoutMetaDataService dataService = LayoutMetaDataService.getInstance();
         for (GraphLayoutOption option : options) {
-            LayoutOptionData<?> optionData = dataService.getOptionDataBySuffix(option.getId());
+            LayoutOptionData optionData = dataService.getOptionDataBySuffix(option.getId());
             if (optionData != null) {
                 Object optionValue = optionData.parseValue(option.getValue());
                 if (optionValue != null) {
@@ -453,9 +553,9 @@ public abstract class AbstractService {
      * @param options a list of layout options
      */
     private void annotateGraph(final KNode graph, final List<GraphLayoutOption> options) {
-        LayoutDataService dataService = LayoutDataService.getInstance();
+        LayoutMetaDataService dataService = LayoutMetaDataService.getInstance();
         for (GraphLayoutOption option : options) {
-            LayoutOptionData<?> optionData = dataService.getOptionDataBySuffix(option.getId());
+            LayoutOptionData optionData = dataService.getOptionDataBySuffix(option.getId());
             // Fail silent on invalid option declarations
             if (optionData != null) {
                 Object optionValue = optionData.parseValue(option.getValue());
@@ -543,6 +643,7 @@ public abstract class AbstractService {
      * @param layoutOptionValue
      *            the value of the option
      */
+    @SuppressWarnings("unchecked")
     private void annotateGraphElement(final KGraphElement element,
         final EClass type, final IProperty<?> layoutOption,
         final Object layoutOptionValue) {
@@ -559,7 +660,7 @@ public abstract class AbstractService {
         // Do not overwrite element specific option if already set
         EMap<IProperty<?>, Object> properties = layout.getProperties();
         if (!properties.containsKey(layoutOption)) {
-            layout.setProperty(layoutOption, layoutOptionValue);
+            layout.setProperty((IProperty<Object>) layoutOption, layoutOptionValue);
         }
     }
 

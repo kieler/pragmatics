@@ -21,6 +21,9 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.LineAttributes;
 import org.eclipse.swt.graphics.RGB;
 
+import de.cau.cs.kieler.core.krendering.KColor;
+import de.cau.cs.kieler.core.krendering.KRenderingFactory;
+import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
 import de.cau.cs.kieler.klighd.actions.CollapseExpandAction;
 import de.cau.cs.kieler.klighd.microlayout.Bounds;
 
@@ -31,6 +34,14 @@ import de.cau.cs.kieler.klighd.microlayout.Bounds;
  */
 public final class KlighdConstants {
 
+    /**
+     * The background color used in default selection highlighting
+     * {@link de.cau.cs.kieler.core.krendering.KBackground KBackground} style.
+     */
+    // the color values of 'DimGray'
+    public static final KColor DEFAULT_SELECTION_HIGHLIGHTING_BACKGROUND_COLOR =
+            KRenderingFactory.eINSTANCE.createKColor().setColor(190, 190, 190);
+    
     /**
      * Constant definition of the black {@link RGB} color constant.
      */
@@ -75,6 +86,12 @@ public final class KlighdConstants {
      */
     public static final int ALPHA_FULL_OPAQUE = 255;
 
+    /**
+     * Default animation time in ms.
+     */
+    public static final int DEFAULT_ANIMATION_TIME = 500;
+    
+    
     /**
      * Constant definition denoting the standard line drawing attributes.
      */
@@ -143,11 +160,13 @@ public final class KlighdConstants {
      * no definition is given for a particular node.
      */
     public static final Bounds MINIMAL_NODE_BOUNDS = Bounds.immutableCopy(new Bounds(10, 10));
-
+    
     /**
-     * An identifier for the SVG image format.
+     * The priority of the {@link de.cau.cs.kieler.kiml.config.ILayoutConfig ILayoutConfig} employed
+     * in the side bar layout configuration tools of KLighD diagrams.
      */
-    public static final int IMAGE_SVG = 1337;
+    // SUPPRESS CHECKSTYLE NEXT MagicNumber
+    public static final int SIDE_BAR_LAYOUT_CONFIG_PRIORITY = VolatileLayoutConfig.DEFAULT_PRIORITY - 25;
 
     /**
      * Hidden default constructor.

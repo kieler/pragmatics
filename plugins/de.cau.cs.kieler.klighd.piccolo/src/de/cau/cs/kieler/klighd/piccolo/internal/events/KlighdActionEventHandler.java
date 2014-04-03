@@ -13,23 +13,33 @@
  */
 package de.cau.cs.kieler.klighd.piccolo.internal.events;
 
+import java.util.List;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.ui.PlatformUI;
+
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 
+import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.krendering.KAction;
 import de.cau.cs.kieler.core.krendering.KRendering;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.klighd.IAction;
 import de.cau.cs.kieler.klighd.IAction.ActionContext;
+import de.cau.cs.kieler.klighd.IAction.ActionResult;
 import de.cau.cs.kieler.klighd.KlighdDataManager;
+import de.cau.cs.kieler.klighd.KlighdPlugin;
 import de.cau.cs.kieler.klighd.LightDiagramServices;
+import de.cau.cs.kieler.klighd.ViewContext;
+import de.cau.cs.kieler.klighd.ZoomStyle;
+import de.cau.cs.kieler.klighd.internal.IKlighdTrigger;
 import de.cau.cs.kieler.klighd.piccolo.internal.controller.AbstractKGERenderingController;
 import de.cau.cs.kieler.klighd.piccolo.internal.events.KlighdMouseEventListener.KlighdMouseEvent;
+import de.cau.cs.kieler.klighd.piccolo.internal.nodes.INode;
+import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KNodeTopNode;
 import de.cau.cs.kieler.klighd.piccolo.viewer.PiccoloViewer;
-import de.cau.cs.kieler.klighd.triggers.KlighdStatusTrigger;
-import de.cau.cs.kieler.klighd.triggers.KlighdStatusTrigger.KlighdStatusState;
-import de.cau.cs.kieler.klighd.util.Iterables2;
 import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.event.PInputEventListener;
 
@@ -58,7 +68,7 @@ public class KlighdActionEventHandler implements PInputEventListener {
      */
     private static final Predicate<KAction> WELLFORMED = new Predicate<KAction>() {
         public boolean apply(final KAction action) {
-            return action.getTrigger() != null && !Strings.isNullOrEmpty(action.getId());
+            return action.getTrigger() != null && !Strings.isNullOrEmpty(action.getActionId());
         }
     };
     
@@ -67,60 +77,154 @@ public class KlighdActionEventHandler implements PInputEventListener {
      * {@inheritDoc}
      */
     public void processEvent(final PInputEvent inputEvent, final int eventType) {
-        if (inputEvent.getSourceSwingEvent() instanceof KlighdMouseEvent) {
-            final KlighdMouseEvent me = (KlighdMouseEvent) inputEvent.getSourceSwingEvent();
-            
-            final KRendering rendering = (KRendering) inputEvent.getPickedNode().getAttribute(
-                    AbstractKGERenderingController.ATTR_KRENDERING);
-            if (rendering == null) {
+        // don't modify the evaluation of the 'handled' flag in an ad-hoc way,
+        //  first make sure that the scenario described below is not enabled again.
+        if (inputEvent.isHandled()) {
+            return;
+        }
+
+        if (!(inputEvent.getSourceSwingEvent() instanceof KlighdMouseEvent)) {
+            return;
+        }
+
+        final KlighdMouseEvent me = (KlighdMouseEvent) inputEvent.getSourceSwingEvent();
+        
+        if (me.getEventType() == SWT.MouseMove) {
+            return;
+        }
+
+        KRendering rendering = (KRendering) inputEvent.getPickedNode().getAttribute(
+                AbstractKGERenderingController.ATTR_KRENDERING);
+
+        if (rendering == null) {
+            // in case no KRendering has been found,
+            //  check whether top node has been picked
+
+            if (inputEvent.getPickedNode() instanceof KNodeTopNode) {
+
+                // if so reveal the represented KNode and check for a dummy KRendering element
+                //  which might contain KActions...
+                final KNode node = ((INode) inputEvent.getPickedNode()).getGraphElement();
+
+                if (node != null) {
+                    rendering = node.getData(KRendering.class);
+                }
+
+                if (rendering == null) {
+                    return;
+                }
+            } else {
                 return;
             }
+        }
+        
+        ActionContext context = null; // construct the context lazily when it is required
+        ActionResult result = null;
+        
+        // this flag is used to track the successful execution of actions
+        //  in order to enable animated diagram changes, the viewer must be informed to
+        //  record view model changes, which is done once an action is actually executed
+        boolean anyActionPerformed = false;
+        
+        for (KAction action : Iterables.filter(rendering.getActions(), WELLFORMED)) {
+            if (!action.getTrigger().equals(me.getTrigger()) || !guardsMatch(action, me)) {
+                continue;
+            }
             
-            ActionContext context = null; // construct the context lazily when it is required
-            ILayoutConfig config = null;
+            final IAction actionImpl =
+                    KlighdDataManager.getInstance().getActionById(action.getActionId());
+            if (actionImpl == null) {
+                continue;
+            }
             
-            // this flag is used to track the successful execution of actions
-            //  in order to enable animated diagram changes, the viewer must be informed to
-            //  record view model changes, which is done once an action is actually executed
-            boolean anyActionPerformed = false;
-            
-            for (KAction action : Iterables.filter(rendering.getActions(), WELLFORMED)) {
-                if (action.getTrigger().equals(me.getTrigger())) {
-                    IAction actionImpl = KlighdDataManager.getInstance().getActionById(
-                            action.getId());
-                    if (actionImpl != null) {
-                        if (context == null) {
-                            context = new ActionContext(this.viewer, action.getTrigger(), null,
-                                    rendering);
-                        }
-                        if (!anyActionPerformed) {
-                            viewer.setRecording(true);
-                            // the related 'setRecording(false) will be performed after the layout
-                            // application
-                        }
-                        config = actionImpl.execute(context);
-                        anyActionPerformed = true;
-                    } else {
-                        continue;
-                    }
-                }
+            if (context == null) {
+                context = new ActionContext(this.viewer, action.getTrigger(), null, rendering);
             }
             
             if (!anyActionPerformed) {
-                // if no action has been performed, skip the layout update and return
-                return;
+                viewer.startRecording();
+                // the related 'stopRecording(...)' will be performed after the layout application
+            }
+            result = actionImpl.execute(context);
+
+            if (result == null) {
+                viewer.stopRecording(ZoomStyle.NONE, 0);
+                final String msg = "KLighD action event handler: Execution of "
+                        + actionImpl.getClass()
+                        + " returned 'null', expected an IAction.ActionResult.";
+                throw new IllegalResultException(msg);
             }
 
-            LightDiagramServices.getInstance().layoutDiagram(
-                    viewer.getContextViewer().getCurrentViewContext(),
-                    Iterables2.singletonList(config));
-            
-            KlighdStatusState state = new KlighdStatusState(KlighdStatusState.Status.UPDATE, viewer
-                    .getContextViewer().getViewPartId(), viewer.getContextViewer()
-                    .getCurrentViewContext(), viewer);
-            if (KlighdStatusTrigger.getInstance() != null) {
-                KlighdStatusTrigger.getInstance().trigger(state);
+            anyActionPerformed = result.getActionPerformed();
+        }
+        
+        if (!anyActionPerformed) {
+            // if no action has been performed, skip the layout update and return
+            return;
+        }
+        
+        // don't modify the evaluation of the 'handled' flag in an ad-hoc way,
+        //  first make sure that the scenario described below is not enabled again.
+        inputEvent.setHandled(true);
+        
+        final boolean zoomToFit = result.getZoomToFit() != null
+                ? result.getZoomToFit() : context.getViewContext().isZoomToFit();
+        final boolean zoomToFocus = result.getZoomToFocus() != null
+                ? result.getZoomToFocus()
+                        : context.getViewContext().getZoomStyle() == ZoomStyle.ZOOM_TO_FOCUS;
+
+        // remember the desired zoom style in the view context
+        final ViewContext vc = viewer.getViewContext();
+        vc.setZoomStyle(ZoomStyle.create(zoomToFit, zoomToFocus));
+
+        final boolean animate = result.getAnimateLayout();
+        final List<ILayoutConfig> layoutConfigs = result.getLayoutConfigs();
+
+        // Execute the layout asynchronously in order to let the KLighdInputManager
+        //  finish the processing of 'inputEvent' quickly.
+        // Otherwise if the diagram layout engine interrupts its work by calling
+        //  Display.readAndDispatch() and, with that, the control flow executing this method
+        //  the processing of 'inputEvent' by the input manager might get triggered a
+        //  second time by some timer event causing a kind of nested/recursive (!) evaluation
+        //  of 'inputEvent' and, thereby, this method.
+        // In addition, this scenario is tried to avoid by setting & evaluating the 'handled'.
+        //  flag of 'inputEvent' properly.
+        PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+            public void run() {
+                LightDiagramServices.layoutDiagram(vc, animate, zoomToFit, layoutConfigs);
             }
+        });
+        
+        KlighdPlugin.getTrigger().triggerStatus(IKlighdTrigger.Status.UPDATE, viewer.getViewContext());
+    }
+    
+    private boolean guardsMatch(final KAction action, final KlighdMouseEvent event) {
+        return (!action.isAltPressed() || event.isAltDown())
+                && (!action.isCtrlCmdPressed() || event.isControlDown())
+                && (!action.isShiftPressed() || event.isShiftDown());
+    }
+
+
+    /**
+     * A dedicated exception indicating an illegal result of a method.<br>
+     * It is currently thrown if implementations of {@link IAction#execute(ActionContext)} returns
+     * <code>null</code>.
+     * 
+     * @author chsch
+     */
+    public class IllegalResultException extends RuntimeException {
+
+        private static final long serialVersionUID = -5838587904577606037L;
+
+        /**
+         * Constructor.
+         * 
+         * @param msg
+         *            the detail message. The detail message is saved for later retrieval by the
+         *            {@link #getMessage()} method.
+         */
+        public IllegalResultException(final String msg) {
+            super(msg);
         }
     }
 }

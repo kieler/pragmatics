@@ -46,7 +46,7 @@ public class FaceSidesProcessor implements ILayoutProcessor {
      * rectangular shape of the input faces. Attention: This works only for graphs with rectangular
      * face shapes.
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({ "unchecked" })
     public void process(final PGraph graph, final IKielerProgressMonitor monitor) {
         monitor.begin("Face side processing", 1);
         
@@ -69,7 +69,7 @@ public class FaceSidesProcessor implements ILayoutProcessor {
 
         while (currentFace != null) {
             // 0 for left, 1 for top, 2 for right, 3 for bottom.
-            List[] faceSides = new ArrayList[FACE_SIDES_NUMBER];
+            List<PEdge>[] faceSides = new ArrayList[FACE_SIDES_NUMBER];
 
             for (int i = 0; i < faceSides.length; i++) {
                 faceSides[i] = new ArrayList<PEdge>();

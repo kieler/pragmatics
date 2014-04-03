@@ -23,13 +23,14 @@ import de.cau.cs.kieler.kiml.options.GraphFeature;
 
 /**
  * Data type used to store information for a layout algorithm. Instances are created using
- * data from the {@code layoutProviders} extension point and are managed by {@link LayoutDataService}.
+ * data from the {@code layoutProviders} extension point and are managed by
+ * {@link LayoutMetaDataService}.
  * 
  * @kieler.design 2011-02-01 reviewed by cmot, soh
  * @kieler.rating yellow 2012-10-09 review KI-25 by chsch, bdu
  * @author msp
  */
-public class LayoutAlgorithmData implements ILayoutData {
+public final class LayoutAlgorithmData implements ILayoutMetaData {
 
     /**
      * The minimal allowed priority value. Priorities less or equal to this value are treated
@@ -57,7 +58,7 @@ public class LayoutAlgorithmData implements ILayoutData {
     private Object imageData;
     
     /** Map of known layout options. Keys are option data, values are the default values. */
-    private final Map<LayoutOptionData<?>, Object> knownOptions = Maps.newHashMap();
+    private final Map<LayoutOptionData, Object> knownOptions = Maps.newHashMap();
     /** map of supported diagrams. */
     private final Map<String, Integer> supportedDiagrams = Maps.newHashMap();
     /** map of supported graph features. */
@@ -86,7 +87,7 @@ public class LayoutAlgorithmData implements ILayoutData {
     @Override
     public String toString() {
         if (name != null && name.length() > 0) {
-            String categoryName = LayoutDataService.getInstance().getCategoryName(category);
+            String categoryName = LayoutMetaDataService.getInstance().getCategoryName(category);
             if (categoryName == null) {
                 return name;
             } else {
@@ -103,7 +104,7 @@ public class LayoutAlgorithmData implements ILayoutData {
      * @param optionData layout option data
      * @param defaultValue the default value, or {@code null} if none is specified
      */
-    public void setOption(final LayoutOptionData<?> optionData, final Object defaultValue) {
+    public void setOption(final LayoutOptionData optionData, final Object defaultValue) {
         if (optionData != null) {
             knownOptions.put(optionData, defaultValue);
         }
@@ -115,7 +116,7 @@ public class LayoutAlgorithmData implements ILayoutData {
      * @param optionData layout option data
      * @return true if the associated layout algorithm knows the option
      */
-    public boolean knowsOption(final LayoutOptionData<?> optionData) {
+    public boolean knowsOption(final LayoutOptionData optionData) {
         return knownOptions.containsKey(optionData);
     }
     
@@ -123,12 +124,10 @@ public class LayoutAlgorithmData implements ILayoutData {
      * Returns the layout algorithm's default value for the given option.
      * 
      * @param optionData layout option data
-     * @param <T> the layout option type
      * @return the associated default value, or {@code null} if there is none
      */
-    @SuppressWarnings("unchecked")
-    public <T> T getDefaultValue(final LayoutOptionData<T> optionData) {
-        return (T) knownOptions.get(optionData);
+    public Object getDefaultValue(final LayoutOptionData optionData) {
+        return knownOptions.get(optionData);
     }
     
     /**

@@ -15,12 +15,15 @@ package de.cau.cs.kieler.kiml;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 
 /**
  * A layout provider executes a layout algorithm to layout the child elements of a node.
  * <p>When used in Eclipse, layout providers must register through the {@code layoutProviders}
  * extension point. All layout providers published to Eclipse this way are collected in the
- * {@link LayoutDataService} singleton, provided the UI plugin is loaded.
+ * {@link LayoutMetaDataService} singleton, provided the UI plugin is loaded.
  * 
  * @kieler.design 2011-01-17 reviewed by haf, cmot, soh
  * @kieler.rating yellow 2012-08-10 review KI-23 by cds, sgu
@@ -28,6 +31,17 @@ import de.cau.cs.kieler.core.kgraph.KNode;
  * @author msp
  */
 public abstract class AbstractLayoutProvider {
+
+    /**
+     * Property attached to the shape layout of the top-level {@link KNode} holding a reference
+     * to an additional layout configurator that shall be applied for the remaining iterations.
+     * This is applicable only when multiple layout iterations are performed, e.g. for applying
+     * different layout algorithms one after another. If only a single iteration is performed or
+     * the current iteration is the last one, the value of this property is ignored. Otherwise
+     * the referenced configurator will be added to all iterations that follow the current one.
+     */
+    public static final IProperty<ILayoutConfig> ADD_LAYOUT_CONFIG = new Property<ILayoutConfig>(
+            "kiml.addLayoutConfig");
     
     /**
      * Initialize the layout provider with the given parameter.

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.cau.cs.kieler.kiml.layoutProviders">
+      <layoutOption
+            appliesTo="parents"
+            default="true"
+            id="de.cau.cs.kieler.kiml.cola.direction"
+            name="Direction Constraints"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            id="de.cau.cs.kieler.kiml.cola.port"
+            name="Port Constraints"
+            type="boolean">
+      </layoutOption>
+      <layoutAlgorithm
+            category="de.cau.cs.kieler.kiml.categories.adaptagrams"
+            class="de.cau.cs.kieler.kiml.cola.ConstrainedLayoutProvider"
+            description="This method is based on a non-linear gradient projection technique. Conceptually it&apos;s similar to a force directed method like Fruchterman-Reingold—but using a more principled goal function and optimisation techniques. "
+            id="org.adaptagrams.cola.constraintLayout"
+            name="Constrained Layout"
+            type="de.cau.cs.kieler.type.cola">
+         <knownOption
+               default="10"
+               option="de.cau.cs.kieler.borderSpacing">
+         </knownOption>
+         <knownOption
+               default="20"
+               option="de.cau.cs.kieler.spacing">
+         </knownOption>
+         <knownOption
+               default="UNDEFINED"
+               option="de.cau.cs.kieler.direction">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.cola.avoidOverlaps">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.cola.idealEdgeLengths">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.cola.considerPrevious">
+         </knownOption>
+      </layoutAlgorithm>
+      <category
+            id="de.cau.cs.kieler.kiml.categories.adaptagrams"
+            name="Adaptagrams">
+      </category>
+      <layoutOption
+            appliesTo="parents"
+            default="100"
+            description="The ideal length of all edges"
+            id="de.cau.cs.kieler.kiml.cola.idealEdgeLengths"
+            lowerBound="0"
+            name="Ideal Edge Lengths"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="true"
+            description="Causes non-overlap constraints to be generated for all rectangles, if it is set to true."
+            id="de.cau.cs.kieler.kiml.cola.avoidOverlaps"
+            name="Avoid Overlaps"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="false"
+            description="Whether ports should be moved to the point where edges cross the node&apos;s bounds."
+            id="de.cau.cs.kieler.kiml.cola.adaptPortPositions"
+            name="Adapt Port Positions"
+            type="boolean">
+      </layoutOption>
+      <layoutType
+            description="Constrained Layout is a generalisation of force-based layout which allows to add constraints to node placement."
+            id="de.cau.cs.kieler.type.cola"
+            name="Constrained">
+      </layoutType>
+      <layoutOption
+            appliesTo="parents"
+            default="false"
+            description="If activated, prior node positons are considered during the layout."
+            id="de.cau.cs.kieler.kiml.cola.considerPrevious"
+            name="Previous Node Positions"
+            type="boolean">
+      </layoutOption>
+   </extension>
+
+</plugin>

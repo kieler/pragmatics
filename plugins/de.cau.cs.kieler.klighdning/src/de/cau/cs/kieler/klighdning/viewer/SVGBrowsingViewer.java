@@ -18,6 +18,7 @@ import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -48,10 +49,11 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.klighd.ZoomStyle;
 import de.cau.cs.kieler.klighd.piccolo.internal.controller.DiagramController;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KNodeNode;
+import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdMainCamera;
 import de.cau.cs.kieler.klighd.piccolo.svg.KlighdSVGCanvas;
-import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
 
@@ -97,6 +99,9 @@ public class SVGBrowsingViewer {
             recursivelyWrapKNodeNodes(controller.getNode());
         }
 
+        // FIXME
+        controller.zoom(ZoomStyle.ZOOM_TO_FIT, 0);
+
         // render
         String rendered = canvas.render();
 
@@ -116,7 +121,7 @@ public class SVGBrowsingViewer {
      */
     public void setModel(final KNode model, final boolean sync) {
         // prepare the camera
-        PCamera camera = canvas.getCamera();
+        KlighdMainCamera camera = canvas.getCamera();
 
         // remove the old nodes from the camera
         @SuppressWarnings("unchecked")
@@ -126,9 +131,9 @@ public class SVGBrowsingViewer {
         }
 
         // create a controller for the graph
-        controller = new DiagramController(model, camera.getLayer(0), sync);
-        controller.initialize();
-        controller.setRecording(false);
+        controller = new DiagramController(model, camera, sync);
+//        controller.initialize();
+        controller.stopRecording(ZoomStyle.NONE, 0);
     }
 
     /**
@@ -169,7 +174,7 @@ public class SVGBrowsingViewer {
      * Zooms and translates the current model such that it fits into the current viewport.
      */
     public void zoomToFit() {
-        controller.zoomToFit(0);
+        controller.zoom(ZoomStyle.ZOOM_TO_FIT, 0);
     }
 
     /**
@@ -201,14 +206,15 @@ public class SVGBrowsingViewer {
     public String getSvgTransform() {
         return svgTransform;
     }
-    
+
     /**
-     * @param resourceLastModified the resourceLastModified to set
+     * @param resourceLastModified
+     *            the resourceLastModified to set
      */
     public void setResourceChecksum(final String resourceLastModified) {
         this.resourceChecksum = resourceLastModified;
     }
-    
+
     /*------------------------------------
      * Internal functionality.
      */
@@ -277,7 +283,7 @@ public class SVGBrowsingViewer {
             if (svgTransform != null) {
                 permaLink += "&transform=" + URLEncoder.encode(svgTransform, "utf8");
             }
-            
+
             // add checksum
             permaLink += "&cs=" + resourceChecksum;
 
@@ -301,13 +307,13 @@ public class SVGBrowsingViewer {
     }
 
     /**
-     * Applies a perma link.
+     * Applies a perma link. Either of the parameters may be {@code null}, in that case the
+     * corresponding parameter is ignored.
      * 
      * @param expanded
      *            a $ separated string containing references to the expanded elements.
      * @param transform
      *            the specified transform for the SVG.
-     * 
      * 
      * @return true if all specified elements were expanded
      */
@@ -315,13 +321,27 @@ public class SVGBrowsingViewer {
 
         // transform (it will be added automatically to the SVG during post processing in the
         // SVGLayoutProvider).
-        setSvgTransform(transform);
+        if (transform != null) {
+            try {
+                setSvgTransform(URLDecoder.decode(transform, "utf8"));
+            } catch (UnsupportedEncodingException e) {
+                // silent
+            }
+        }
 
-        // expand
-        Set<String> fragments = Sets.newHashSet(Splitter.on("$").split(expanded));
-        applyPermalink(getModel(), fragments);
+        if (expanded != null) {
+            try {
+                // decode
+                String decoded = URLDecoder.decode(expanded, "utf8");
+                // expand
+                Set<String> fragments = Sets.newHashSet(Splitter.on("$").split(decoded));
+                applyPermalink(getModel(), fragments);
+            } catch (UnsupportedEncodingException e) {
+                // silent
+            }
+        }
 
-        return expanded.isEmpty();
+        return expanded != null && expanded.isEmpty();
     }
 
     private void applyPermalink(final KNode parent, final Set<String> expanded) {

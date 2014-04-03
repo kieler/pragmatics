@@ -13,14 +13,18 @@
  */
 package de.cau.cs.kieler.kiml.evol;
 
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+
+import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.kiml.LayoutContext;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
+import de.cau.cs.kieler.kiml.config.LayoutContext;
 import de.cau.cs.kieler.kiml.evol.genetic.Gene;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
@@ -39,10 +43,6 @@ public class EvolLayoutConfig implements ILayoutConfig {
     /** property for activation of the evolutionary layout configurator. */
     public static final Property<Boolean> ACTIVATION = new Property<Boolean>(
             "de.cau.cs.kieler.kiml.evol", false);
-    
-    /** property for the evolution model stored in the layout context. */
-    private static final Property<LayoutEvolutionModel> EVOL_MODEL = new Property<LayoutEvolutionModel>(
-            "evol.model");
 
     /**
      * {@inheritDoc}
@@ -54,38 +54,29 @@ public class EvolLayoutConfig implements ILayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public void enrich(final LayoutContext context) {
+    public Object getContextValue(final IProperty<?> property, final LayoutContext context) {
         LayoutEvolutionModel model = LayoutEvolutionModel.getInstance();
         Object diagramPart = context.getProperty(LayoutContext.DIAGRAM_PART);
         if (model.getSelected() != null && diagramPart != null) {
-            context.setProperty(EVOL_MODEL, model);
-            if (context.getProperty(DefaultLayoutConfig.OPT_MAKE_OPTIONS)) {
+            if (property.equals(DefaultLayoutConfig.CONTENT_HINT)
+                    || property.equals(DefaultLayoutConfig.CONTAINER_HINT)) {
                 Gene<?> algorithmGene = model.getSelected().findGene(LayoutOptions.ALGORITHM.getId(),
                         diagramPart);
-                if (algorithmGene != null && algorithmGene.getValue() != null) {
-                    String algorithm = (String) GenomeFactory.translateFromGene(algorithmGene);
-                    
-                    // set layout algorithm identifier for the content
-                    if (context.getProperty(DefaultLayoutConfig.CONTENT_HINT) == null) {
-                        context.setProperty(DefaultLayoutConfig.CONTENT_HINT, algorithm);
-                    }
-                    
-                    // set layout algorithm identifier for the container
-                    if (context.getProperty(DefaultLayoutConfig.CONTAINER_HINT) == null) {
-                        context.setProperty(DefaultLayoutConfig.CONTAINER_HINT, algorithm);
-                    }
+                if (algorithmGene != null) {
+                    return GenomeFactory.translateFromGene(algorithmGene);
                 }
             }
         }
+        return null;
     }
 
     /**
      * {@inheritDoc}
      */
-    public Object getValue(final LayoutOptionData<?> optionData, final LayoutContext context) {
-        LayoutEvolutionModel model = context.getProperty(EVOL_MODEL);
+    public Object getOptionValue(final LayoutOptionData optionData, final LayoutContext context) {
+        LayoutEvolutionModel model = LayoutEvolutionModel.getInstance();
         Object diagramPart = context.getProperty(LayoutContext.DIAGRAM_PART);
-        if (model != null && diagramPart != null) {
+        if (model.getSelected() != null && diagramPart != null) {
             Gene<?> gene = model.getSelected().findGene(optionData.getId(), diagramPart);
             if (gene != null && gene.getValue() != null) {
                 return GenomeFactory.translateFromGene(gene);
@@ -97,24 +88,26 @@ public class EvolLayoutConfig implements ILayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public void transferValues(final KLayoutData graphData, final LayoutContext inputContext) {
-        LayoutEvolutionModel model = inputContext.getProperty(EVOL_MODEL);
+    public Collection<IProperty<?>> getAffectedOptions(final LayoutContext inputContext) {
+        LayoutEvolutionModel model = LayoutEvolutionModel.getInstance();
         Object diagramPart = inputContext.getProperty(LayoutContext.DIAGRAM_PART);
-        if (model != null && diagramPart != null) {
+        List<IProperty<?>> options = new LinkedList<IProperty<?>>();
+        if (model.getSelected() != null && diagramPart != null) {
             LayoutContext keyContext = model.getSelected().findContext(diagramPart);
             if (keyContext != null) {
-                LayoutDataService dataService = LayoutDataService.getInstance();
+                LayoutMetaDataService dataService = LayoutMetaDataService.getInstance();
                 for (Gene<?> gene : model.getSelected().getGenes(keyContext)) {
                     if (gene.getValue() != null) {
-                        LayoutOptionData<?> optionData = dataService.getOptionData(
+                        LayoutOptionData optionData = dataService.getOptionData(
                                 gene.getTypeInfo().getId());
                         if (optionData != null) {
-                            graphData.setProperty(optionData, GenomeFactory.translateFromGene(gene));
+                            options.add(optionData);
                         }
                     }
                 }
             }
         }
+        return options;
     }
 
 }

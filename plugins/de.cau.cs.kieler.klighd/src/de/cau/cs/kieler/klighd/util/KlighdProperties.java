@@ -48,10 +48,16 @@ public final class KlighdProperties {
      * <b>Caution</b>: This property has been defined in
      * {@link de.cau.cs.kieler.core.krendering.extensions.KNodeExtensions KNodeExtensions}, too, in
      * order to enable the independence of both bundles. This is possible as {@link IProperty
-     * IProperties} are determined to be equal or unequal based on their id's.
+     * IProperties} are determined to be equal or unequal based on their id's.<br>
+     * <br>
+     * Besides, it is registered as a layout option in plugin.xml in order to get values of
+     * persisted diagrams loaded properly, see
+     * {@link de.cau.cs.kieler.kiml.util.KimlUtil#loadDataElements(de.cau.cs.kieler.core.kgraph.KNode)
+     * KimlUtil#loadDataElements(de.cau.cs.kieler.core.kgraph.KNode)}.
      */
     public static final IProperty<KVector> MINIMAL_NODE_SIZE = new Property<KVector>(
-            "klighd.minimalNodeSize", new KVector(KlighdConstants.MINIMAL_NODE_BOUNDS.getWidth(),
+            "de.cau.cs.kieler.klighd.minimalNodeSize", new KVector(
+                    KlighdConstants.MINIMAL_NODE_BOUNDS.getWidth(),
                     KlighdConstants.MINIMAL_NODE_BOUNDS.getHeight()));
 
     /**
@@ -77,7 +83,8 @@ public final class KlighdProperties {
      * This is property is currently to be attached to the nodes shape layout data during the view
      * synthesis process. If it is absent the node gets expanded, anyway.
      */
-    public static final IProperty<Boolean> EXPAND = new Property<Boolean>("klighd.expand", true);
+    public static final IProperty<Boolean> EXPAND = new Property<Boolean>(
+            "de.cau.cs.kieler.klighd.expand", true);
 
     /**
      * Property providing a URI to semantic elements to be depicted but that are to be loaded lazily.
@@ -108,8 +115,8 @@ public final class KlighdProperties {
      * modification of the port's rendering.<br>
      * <br>
      * This property must be set in implementations of
-     * {@link de.cau.cs.kieler.klighd.transformations.AbstractDiagramSynthesis
-     * AbstractDiagramSynthesis} if it is needed, it is not set by KLighD automatically.
+     * {@link de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis AbstractDiagramSynthesis}
+     * if it is needed, it is not set by KLighD automatically.
      */
     public static final IProperty<PortSide> ORIGINAL_PORT_SIDE = new Property<PortSide>(
             "klighd.original.port.side");
@@ -128,9 +135,4 @@ public final class KlighdProperties {
      */
     public static final IProperty<String> TOOLTIP = new Property<String>("klighd.tooltip", null);
     
-    /**
-     * Determines whether a node should be ignored during the layout process.
-     */
-    public static final IProperty<Boolean> LAYOUT_IGNORE = new Property<Boolean>(
-            "klighd.layoutIgnore", false);
 }

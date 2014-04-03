@@ -1,24 +1,24 @@
 package de.cau.cs.kieler.klighd.examples.uml2
 
-import org.eclipse.uml2.uml.Model
-import de.cau.cs.kieler.klighd.transformations.AbstractDiagramSynthesis
+import de.cau.cs.kieler.core.kgraph.KEdge
 import de.cau.cs.kieler.core.kgraph.KNode
-import javax.inject.Inject
+import de.cau.cs.kieler.core.krendering.KPolyline
+import de.cau.cs.kieler.core.krendering.extensions.KColorExtensions
+import de.cau.cs.kieler.core.krendering.extensions.KContainerRenderingExtensions
+import de.cau.cs.kieler.core.krendering.extensions.KEdgeExtensions
+import de.cau.cs.kieler.core.krendering.extensions.KLabelExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KNodeExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KRenderingExtensions
-import org.eclipse.uml2.uml.Actor
-import org.eclipse.uml2.uml.UseCase
-import org.eclipse.uml2.uml.Association
-import de.cau.cs.kieler.core.krendering.extensions.KEdgeExtensions
-import de.cau.cs.kieler.core.kgraph.KEdge
-import de.cau.cs.kieler.core.krendering.extensions.KLabelExtensions
-import de.cau.cs.kieler.klighd.KlighdConstants
-import de.cau.cs.kieler.core.krendering.extensions.KColorExtensions
-import de.cau.cs.kieler.core.krendering.KPolyline
 import de.cau.cs.kieler.kiml.options.LayoutOptions
-import de.cau.cs.kieler.core.krendering.extensions.KContainerRenderingExtensions
-import de.cau.cs.kieler.klay.layered.properties.Properties
 import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy
+import de.cau.cs.kieler.klay.layered.properties.Properties
+import de.cau.cs.kieler.klighd.KlighdConstants
+import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
+import javax.inject.Inject
+import org.eclipse.uml2.uml.Actor
+import org.eclipse.uml2.uml.Association
+import org.eclipse.uml2.uml.Model
+import org.eclipse.uml2.uml.UseCase
 
 /**
  * This exemplary diagram synthesis implementation generates KGraph/KRendering model
@@ -70,7 +70,7 @@ class UML2UseCaseDiagramSynthesis extends AbstractDiagramSynthesis<Model> {
     def KNode createActorNode(Actor actor) {
         return actor.createNode().putToLookUpWith(actor) => [
             it.setNodeSize(60, 100);
-            it.addOutsideCentralBottomNodeLabel(actor.name,
+            it.addOutsideBottomCenteredNodeLabel(actor.name,
                 KlighdConstants::DEFAULT_FONT_SIZE, KlighdConstants::DEFAULT_FONT_NAME
             ).putToLookUpWith(actor);
             it.addRectangle() => [

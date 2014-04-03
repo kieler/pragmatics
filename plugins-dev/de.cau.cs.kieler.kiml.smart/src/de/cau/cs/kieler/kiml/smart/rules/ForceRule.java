@@ -15,8 +15,8 @@ package de.cau.cs.kieler.kiml.smart.rules;
 
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
+import de.cau.cs.kieler.kiml.grana.analyses.NodeCountAnalysis;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.service.grana.analyses.NodeCountAnalysis;
 import de.cau.cs.kieler.kiml.smart.ISmartRule;
 import de.cau.cs.kieler.kiml.smart.MetaLayout;
 import de.cau.cs.kieler.kiml.smart.SmartLayoutConfig;

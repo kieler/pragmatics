@@ -42,7 +42,22 @@ public class KVectorChainTest {
         assertTrue(v0.equals(kv.get(0)));
         assertTrue(v1.equals(kv.get(1)));
         assertTrue(v2.equals(kv.get(2)));
+        
+        // ignore a dangling element
+        kv = new KVectorChain();
+        kv.parse("{(5,50),(10,50),(30,)}");
 
+        assertTrue(v0.equals(kv.get(0)));
+        assertTrue(v1.equals(kv.get(1)));
+        assertTrue(kv.size() == 2);
+        
+        // some weird syntax
+        kv = new KVectorChain();
+        kv.parse("{(5; 50 ], [10 , 50 ),(30,,,)}");
+
+        assertTrue(v0.equals(kv.get(0)));
+        assertTrue(v1.equals(kv.get(1)));
+        assertTrue(kv.size() == 2);
     }
 
     /** 

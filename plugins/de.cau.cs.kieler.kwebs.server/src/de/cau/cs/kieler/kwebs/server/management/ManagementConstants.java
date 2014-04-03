@@ -66,10 +66,6 @@ public final class ManagementConstants {
     public static final String HTTPS_PUBLISHED
         = PREFIX + "https.published";
 
-    /** Parameter for the published state of the jETI service. */
-    public static final String JETI_PUBLISHED
-        = PREFIX + "jeti.published";
-
     //////////
 
     /**

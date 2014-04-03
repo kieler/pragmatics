@@ -269,6 +269,7 @@ public class KSBasEContributionItem extends CompoundContributionItem implements
                     // define a Handler for the command
                     ButtonHandler buttonHandler = new ButtonHandler();
                     cmd.setHandler(buttonHandler);
+                    buttonHandler.setId(cmd.getId());
                     handlerService.activateHandler(cmd.getId(), buttonHandler);
                     // System.out.println("Created command " + cmd.getId() + " " + cmd.isDefined());
                     // now specify the button

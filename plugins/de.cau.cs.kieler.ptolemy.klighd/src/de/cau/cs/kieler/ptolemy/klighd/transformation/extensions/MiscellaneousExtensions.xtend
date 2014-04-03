@@ -38,6 +38,8 @@ import static extension com.google.common.base.Strings.*
  * 
  * @author cds
  * @kieler.rating yellow 2012-07-10 KI-15 cmot, grh
+ * 
+ * @containsExtensions
  */
 class MiscellaneousExtensions {
     /** Access to annotations. */
@@ -115,11 +117,14 @@ class MiscellaneousExtensions {
      * Returns the layout information of the given graph element. This method is guaranteed to not
      * return {@code null}: if the element has no layout information yet, a new layout instance is
      * created and added to the element, depending on the element's type.
+     * <p>
+     * chsch: renamed in order to avoid name clashes with {@link AnnotationExtensions#getLayout()}.
+     * </p>
      * 
      * @param element the element whose layout information to return.
      * @return layout information of the element.
      */
-    def KLayoutData getLayout(KGraphElement element) {
+    def KLayoutData getLayoutEx(KGraphElement element) {
         if (element instanceof KEdge) {
             // Return the edge layout, if any
             var edgeLayout = element.getData(typeof(KEdgeLayout))

@@ -45,16 +45,19 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.kiml.LayoutConfigService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
+import de.cau.cs.kieler.kiml.service.ExtensionLayoutConfigService;
+import de.cau.cs.kieler.kiml.service.KimlServicePlugin;
+import de.cau.cs.kieler.kiml.service.LayoutManagersService;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
+import de.cau.cs.kieler.kiml.ui.LayoutHandler;
 import de.cau.cs.kieler.kiml.ui.LayoutOptionValidator;
 import de.cau.cs.kieler.kiml.ui.AlgorithmSelectionDialog;
 import de.cau.cs.kieler.kiml.ui.Messages;
-import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
-import de.cau.cs.kieler.kiml.ui.diagram.LayoutHandler;
-import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
 
 /**
@@ -122,6 +125,8 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
      * @return a group with general options
      */
     private Group createGeneralGroup(final Composite parent) {
+        IPreferenceStore mainPrefStore = getPreferenceStore();
+        IPreferenceStore servicePrefStore = KimlServicePlugin.getDefault().getPreferenceStore();
         Group generalGroup = new Group(parent, SWT.NONE);
         generalGroup.setText(Messages.getString("kiml.ui.35")); //$NON-NLS-1$
         
@@ -129,37 +134,38 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         animationCheckBox = new Button(generalGroup, SWT.CHECK | SWT.LEFT);
         animationCheckBox.setText(Messages.getString("kiml.ui.64")); //$NON-NLS-1$
         animationCheckBox.setToolTipText(Messages.getString("kiml.ui.67")); //$NON-NLS-1$
-        animationCheckBox.setSelection(getPreferenceStore().getBoolean(LayoutHandler.PREF_ANIMATION));
+        animationCheckBox.setSelection(mainPrefStore.getBoolean(LayoutHandler.PREF_ANIMATION));
         
         // add checkbox for zoom-to-fit
         zoomCheckBox = new Button(generalGroup, SWT.CHECK | SWT.LEFT);
         zoomCheckBox.setText(Messages.getString("kiml.ui.65")); //$NON-NLS-1$
         zoomCheckBox.setToolTipText(Messages.getString("kiml.ui.68")); //$NON-NLS-1$
-        zoomCheckBox.setSelection(getPreferenceStore().getBoolean(LayoutHandler.PREF_ZOOM));
+        zoomCheckBox.setSelection(mainPrefStore.getBoolean(LayoutHandler.PREF_ZOOM));
         
         // add checkbox for progress dialog
         progressCheckBox = new Button(generalGroup, SWT.CHECK | SWT.LEFT);
         progressCheckBox.setText(Messages.getString("kiml.ui.66")); //$NON-NLS-1$
         progressCheckBox.setToolTipText(Messages.getString("kiml.ui.69")); //$NON-NLS-1$
-        progressCheckBox.setSelection(getPreferenceStore().getBoolean(LayoutHandler.PREF_PROGRESS));
+        progressCheckBox.setSelection(mainPrefStore.getBoolean(LayoutHandler.PREF_PROGRESS));
         
         // add checkbox for oblique routing
         obliqueCheckBox = new Button(generalGroup, SWT.CHECK | SWT.LEFT);
         obliqueCheckBox.setText(Messages.getString("kiml.ui.36")); //$NON-NLS-1$
         obliqueCheckBox.setToolTipText(Messages.getString("kiml.ui.70")); //$NON-NLS-1$
-        obliqueCheckBox.setSelection(getPreferenceStore().getBoolean(
-                EclipseLayoutInfoService.PREF_OBLIQUE_ROUTE));
+        obliqueCheckBox.setSelection(servicePrefStore.getBoolean(
+                LayoutManagersService.PREF_OBLIQUE_ROUTE));
         
         // add checkbox for debug graph output
         debugCheckBox = new Button(generalGroup, SWT.CHECK | SWT.LEFT);
         debugCheckBox.setText(Messages.getString("kiml.ui.71")); //$NON-NLS-1$
         debugCheckBox.setToolTipText(Messages.getString("kiml.ui.72")); //$NON-NLS-1$
-        debugCheckBox.setSelection(getPreferenceStore().getBoolean(
+        debugCheckBox.setSelection(servicePrefStore.getBoolean(
                 DiagramLayoutEngine.PREF_DEBUG_OUTPUT));
         
         FillLayout layout = new FillLayout(SWT.VERTICAL);
         layout.marginWidth = MARGIN_WIDTH;
         layout.marginHeight = MARGIN_HEIGHT;
+        layout.spacing = LayoutConstants.getSpacing().y;
         generalGroup.setLayout(layout);
         return generalGroup;
     }
@@ -174,20 +180,22 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
      * @return a group with the diagram element options table
      */
     private Group createOptionsGroup(final Composite parent) {
+        IPreferenceStore servicePrefStore = KimlServicePlugin.getDefault().getPreferenceStore();
         Group elementGroup = new Group(parent, SWT.NONE);
         elementGroup.setText(Messages.getString("kiml.ui.28")); //$NON-NLS-1$
-        IPreferenceStore preferenceStore = getPreferenceStore();
-        LayoutDataService dataService = LayoutDataService.getInstance();
-        Collection<LayoutOptionData<?>> layoutOptionData = dataService.getOptionData();
+        LayoutMetaDataService dataService = LayoutMetaDataService.getInstance();
+        Collection<LayoutOptionData> layoutOptionData = dataService.getOptionData();
         optionEntries = new LinkedList<OptionsTableProvider.DataEntry>();
 
         // add options for edit parts and domain model elements
-        Set<String> elements = EclipseLayoutInfoService.getInstance().getRegisteredElements();
+        Set<String> elements = ((ExtensionLayoutConfigService) LayoutConfigService.getInstance())
+                .getRegisteredElements();
         for (String element : elements) {
-            for (LayoutOptionData<?> data : layoutOptionData) {
-                String preference = EclipseLayoutInfoService.getPreferenceName(element, data.getId());
-                if (preferenceStore.contains(preference)) {
-                    Object value = data.parseValue(preferenceStore.getString(preference));
+            for (LayoutOptionData data : layoutOptionData) {
+                String preference = ExtensionLayoutConfigService.getPreferenceName(
+                        element, data.getId());
+                if (servicePrefStore.contains(preference)) {
+                    Object value = data.parseValue(servicePrefStore.getString(preference));
                     if (value != null) {
                         int dotIndex = element.lastIndexOf('.');
                         String partName = element.substring(dotIndex + 1);
@@ -204,14 +212,14 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         }
         
         // add options for diagram types
-        List<Pair<String, String>> diagramTypeList = EclipseLayoutInfoService.getInstance()
+        List<Pair<String, String>> diagramTypeList = LayoutConfigService.getInstance()
                 .getDiagramTypes();
         for (Pair<String, String> diagramType : diagramTypeList) {
-            for (LayoutOptionData<?> data : layoutOptionData) {
-                String preference = EclipseLayoutInfoService.getPreferenceName(
+            for (LayoutOptionData data : layoutOptionData) {
+                String preference = ExtensionLayoutConfigService.getPreferenceName(
                         diagramType.getFirst(), data.getId());
-                if (preferenceStore.contains(preference)) {
-                    Object value = data.parseValue(preferenceStore.getString(preference));
+                if (servicePrefStore.contains(preference)) {
+                    Object value = data.parseValue(servicePrefStore.getString(preference));
                     if (value != null) {
                         optionEntries.add(new OptionsTableProvider.DataEntry(
                                 diagramType.getSecond(), diagramType.getFirst(),
@@ -415,7 +423,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
      * @param entry an option table entry
      */
     private void showEditDialog(final Shell shell, final OptionsTableProvider.DataEntry entry) {
-        LayoutOptionData<?> optionData = entry.getOptionData();
+        LayoutOptionData optionData = entry.getOptionData();
         if (entry.getValue() != null) {
             if (optionData.equals(LayoutOptions.ALGORITHM)) {
                 // show a selection dialog for a layouter hint
@@ -434,10 +442,8 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
                 if (dialog.open() == InputDialog.OK) {
                     String result = dialog.getValue().trim();
                     switch (optionData.getType()) {
-                    case REMOTE_ENUM:
                     case ENUM:
                     case ENUMSET:
-                    case REMOTE_ENUMSET:
                         entry.setValue(optionData.parseValue(result.toUpperCase()));
                         break;
                     default:
@@ -499,15 +505,16 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
     @Override
     protected void performDefaults() {
         super.performDefaults();
-        IPreferenceStore preferenceStore = getPreferenceStore();
+        IPreferenceStore mainPrefStore = getPreferenceStore();
+        IPreferenceStore servicePrefStore = KimlServicePlugin.getDefault().getPreferenceStore();
         
         // set default values for the general options
-        animationCheckBox.setSelection(preferenceStore.getDefaultBoolean(LayoutHandler.PREF_ANIMATION));
-        zoomCheckBox.setSelection(preferenceStore.getDefaultBoolean(LayoutHandler.PREF_ZOOM));
-        progressCheckBox.setSelection(preferenceStore.getDefaultBoolean(LayoutHandler.PREF_PROGRESS));
-        obliqueCheckBox.setSelection(preferenceStore.getDefaultBoolean(
-                EclipseLayoutInfoService.PREF_OBLIQUE_ROUTE));
-        debugCheckBox.setSelection(preferenceStore.getDefaultBoolean(
+        animationCheckBox.setSelection(mainPrefStore.getDefaultBoolean(LayoutHandler.PREF_ANIMATION));
+        zoomCheckBox.setSelection(mainPrefStore.getDefaultBoolean(LayoutHandler.PREF_ZOOM));
+        progressCheckBox.setSelection(mainPrefStore.getDefaultBoolean(LayoutHandler.PREF_PROGRESS));
+        obliqueCheckBox.setSelection(servicePrefStore.getDefaultBoolean(
+                LayoutManagersService.PREF_OBLIQUE_ROUTE));
+        debugCheckBox.setSelection(servicePrefStore.getDefaultBoolean(
                 DiagramLayoutEngine.PREF_DEBUG_OUTPUT));
         
         // clear the layout options table
@@ -522,37 +529,40 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
      */
     @Override
     public boolean performOk() {
-        EclipseLayoutInfoService infoService = EclipseLayoutInfoService.getInstance();
-        IPreferenceStore preferenceStore = getPreferenceStore();
+        LayoutConfigService configService = LayoutConfigService.getInstance();
+        IPreferenceStore mainPrefStore = getPreferenceStore();
+        IPreferenceStore servicePrefStore = KimlServicePlugin.getDefault().getPreferenceStore();
         
         // set new values for the general options
-        preferenceStore.setValue(LayoutHandler.PREF_ANIMATION, animationCheckBox.getSelection());
-        preferenceStore.setValue(LayoutHandler.PREF_ZOOM, zoomCheckBox.getSelection());
-        preferenceStore.setValue(LayoutHandler.PREF_PROGRESS, progressCheckBox.getSelection());
-        preferenceStore.setValue(EclipseLayoutInfoService.PREF_OBLIQUE_ROUTE,
+        mainPrefStore.setValue(LayoutHandler.PREF_ANIMATION, animationCheckBox.getSelection());
+        mainPrefStore.setValue(LayoutHandler.PREF_ZOOM, zoomCheckBox.getSelection());
+        mainPrefStore.setValue(LayoutHandler.PREF_PROGRESS, progressCheckBox.getSelection());
+        servicePrefStore.setValue(LayoutManagersService.PREF_OBLIQUE_ROUTE,
                 obliqueCheckBox.getSelection());
-        preferenceStore.setValue(DiagramLayoutEngine.PREF_DEBUG_OUTPUT, debugCheckBox.getSelection());
+        servicePrefStore.setValue(DiagramLayoutEngine.PREF_DEBUG_OUTPUT, debugCheckBox.getSelection());
         
         // store data for the diagram element and diagram type options
         for (OptionsTableProvider.DataEntry entry : optionEntries) {
-            Object oldValue = infoService.getOptionValue(entry.getElementId(),
+            Object oldValue = configService.getOptionValue(entry.getElementId(),
                     entry.getOptionData().getId());
             Object newValue = entry.getValue();
             if (oldValue == null && newValue != null
                     || oldValue != null && !oldValue.equals(newValue)) {
-                String preference = EclipseLayoutInfoService.getPreferenceName(
+                String preference = ExtensionLayoutConfigService.getPreferenceName(
                         entry.getElementId(), entry.getOptionData().getId());
                 if (newValue == null) {
-                    infoService.removeOptionValue(entry.getElementId(),
+                    configService.removeOptionValue(entry.getElementId(),
                             entry.getOptionData().getId());
-                    preferenceStore.setToDefault(preference);
-                    infoService.getRegisteredElements().remove(entry.getElementId());
+                    servicePrefStore.setToDefault(preference);
+                    ((ExtensionLayoutConfigService) configService).getRegisteredElements().remove(
+                            entry.getElementId());
                 } else {
-                    infoService.addOptionValue(entry.getElementId(),
+                    configService.addOptionValue(entry.getElementId(),
                             entry.getOptionData().getId(), newValue);
-                    preferenceStore.setValue(preference, newValue.toString());
+                    servicePrefStore.setValue(preference, newValue.toString());
                     if (entry.getType() != ElementType.DIAG_TYPE) {
-                        infoService.getRegisteredElements().add(entry.getElementId());
+                        ((ExtensionLayoutConfigService) configService).getRegisteredElements().add(
+                                entry.getElementId());
                     }
                 }
             }

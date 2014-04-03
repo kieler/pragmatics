@@ -50,29 +50,29 @@ public final class Configuration extends Properties {
 
     /** Shall JAXWS service be published via HTTP? */
     public static final String JAXWS_PUBLISH_HTTP
-        = PREFIX + "jaxws.publishHttp";
+        = PREFIX + "server.jaxws.publishHttp";
 
     /** JAXWS HTTP service address. */
     public static final String JAXWS_HTTP_ADDRESS
-        = PREFIX + "jaxws.httpAddress";
+        = PREFIX + "server.jaxws.httpAddress";
 
     /** JAXWS HTTP service address from outside. */
     public static final String JAXWS_HTTP_PUBLIC_ADDRESS
-        = PREFIX + "jaxws.publicHttpAddress";
+        = PREFIX + "server.jaxws.publicHttpAddress";
 
     // Preferences for HTTPS based publishing of the JAXWS service
 
     /** Shall JAXWS service be published via HTTPS? */
     public static final String JAXWS_PUBLISH_HTTPS
-        = PREFIX + "jaxws.publishHttps";
+        = PREFIX + "server.jaxws.publishHttps";
 
     /** JAXWS HTTPS service address. */
     public static final String JAXWS_HTTPS_ADDRESS
-        = PREFIX + "jaxws.httpsAddress";
+        = PREFIX + "server.jaxws.httpsAddress";
 
     /** JAXWS HTTPS service address from outside. */
     public static final String JAXWS_HTTPS_PUBLIC_ADDRESS
-        = PREFIX + "jaxws.publicHttpsAddress";
+        = PREFIX + "server.jaxws.publicHttpsAddress";
 
     // Properties for HTTP based publishing of the REST service
 
@@ -248,8 +248,20 @@ public final class Configuration extends Properties {
     public static final String CONTACT_EMAIL_ADDRESS
         = PREFIX + "frontend.contact.information.email.address";
 
-    //
-
+    // Usage Statistics
+    
+    /** Whether to record statistics at all. */
+    public static final String STATS_RECORDING
+        = PREFIX + "statistics.record";
+    
+    /** Host address of a statistics server. */
+    public static final String STATS_SERVER_HOST
+        = PREFIX + "statistics.host";
+    
+    /** Port of the statistics server. */
+    public static final String STATS_SERVER_HTTP
+        = PREFIX + "statistics.http";
+    
     /**
      * This is a container class for configuration identifiers so no
      * instantiation is required.

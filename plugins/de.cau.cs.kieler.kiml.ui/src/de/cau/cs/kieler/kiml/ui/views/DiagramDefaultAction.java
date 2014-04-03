@@ -19,14 +19,16 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.views.properties.IPropertySheetEntry;
 
-import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
+import de.cau.cs.kieler.kiml.config.LayoutContext;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
+import de.cau.cs.kieler.kiml.service.EclipseLayoutConfig;
+import de.cau.cs.kieler.kiml.service.LayoutManagersService;
+import de.cau.cs.kieler.kiml.service.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
-import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
-import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 
 /**
@@ -65,23 +67,30 @@ public class DiagramDefaultAction extends Action {
     @Override
     public void run() {
         IWorkbenchPart workbenchPart = layoutView.getCurrentWorkbenchPart();
-        IDiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance()
+        IDiagramLayoutManager<?> manager = LayoutManagersService.getInstance()
                 .getManager(workbenchPart, null);
-        if (manager != null && manager.getAdapterList().length > 0) {
-            Object diagramPart = manager.getAdapter(workbenchPart, manager.getAdapterList()[0]);
-            IMutableLayoutConfig layoutConfig = (IMutableLayoutConfig) manager.getAdapter(
-                    null, IMutableLayoutConfig.class);
-            EditingDomain editingDomain = (EditingDomain) manager.getAdapter(workbenchPart,
-                    EditingDomain.class);
-            if (diagramPart != null && layoutConfig != null) {
+        if (manager != null) {
+            IMutableLayoutConfig layoutConfig = manager.getDiagramConfig();
+            if (layoutConfig != null) {
                 // build a layout context for setting the option
-                final LayoutContext context = new LayoutContext();
-                context.setProperty(LayoutContext.DIAGRAM_PART, diagramPart);
-                context.setProperty(IMutableLayoutConfig.OPT_RECURSIVE, true);
-                layoutConfig.enrich(context);
+                LayoutContext context = new LayoutContext();
+                context.setProperty(EclipseLayoutConfig.WORKBENCH_PART, workbenchPart);
                 
-                for (IPropertySheetEntry entry : layoutView.getSelection()) {
-                    applyOption(editingDomain, layoutConfig, context, entry);
+                Object diagramPart = layoutConfig.getContextValue(LayoutContext.DIAGRAM_PART, context);
+                if (diagramPart == null) {
+                    diagramPart = layoutView.getCurrentDiagramPart();
+                }
+                if (diagramPart != null) {
+                    context.setProperty(LayoutContext.DIAGRAM_PART, diagramPart);
+                    context.setProperty(LayoutContext.GLOBAL, true);
+                    DiagramLayoutEngine.INSTANCE.getOptionManager().enrich(context, layoutConfig,
+                            false);
+
+                    EditingDomain editingDomain = (EditingDomain) layoutConfig.getContextValue(
+                            EclipseLayoutConfig.EDITING_DOMAIN, context);
+                    for (IPropertySheetEntry entry : layoutView.getSelection()) {
+                        applyOption(editingDomain, layoutConfig, context, entry);
+                    }
                 }
             }
         }
@@ -99,7 +108,7 @@ public class DiagramDefaultAction extends Action {
     private void applyOption(final EditingDomain editingDomain,
             final IMutableLayoutConfig config, final LayoutContext context,
             final IPropertySheetEntry entry) {
-        final LayoutOptionData<?> optionData = KimlUiUtil.getOptionData(
+        final LayoutOptionData optionData = KimlUiUtil.getOptionData(
                 layoutView.getCurrentLayouterData(), entry.getDisplayName());
         if (optionData == null) {
             return;
@@ -114,7 +123,7 @@ public class DiagramDefaultAction extends Action {
         if (value != null) {
             Runnable modelChange = new Runnable() {
                 public void run() {
-                    config.setValue(optionData, context, value);
+                    config.setOptionValue(optionData, context, value);
                 }
             };
             KimlUiUtil.runModelChange(modelChange, editingDomain, Messages.getString("kiml.ui.13"));

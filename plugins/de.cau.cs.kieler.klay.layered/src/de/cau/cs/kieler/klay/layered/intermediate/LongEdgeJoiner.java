@@ -27,12 +27,16 @@ import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
-import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
- * Removes dummy nodes due to edge splitting. (dummy nodes that have the node
- * type {@link de.cau.cs.kieler.klay.layered.properties.NodeType#LONG_EDGE})
+ * Removes dummy nodes due to edge splitting (dummy nodes that have the node
+ * type {@link de.cau.cs.kieler.klay.layered.properties.NodeType#LONG_EDGE}).
+ * If an edge is split into a chain of edges <i>e1, e2, ..., ek</i>, the first edge <i>e1</i> is
+ * retained, while the other edges <i>e2, ..., ek</i> are discarded. This fact should be respected
+ * by all processors that create dummy nodes: they should always put the original edge as first
+ * edge in the chain of edges, so the original edge is restored.
  * 
  * <dl>
  *   <dt>Precondition:</dt><dd>a layered graph; nodes are placed; edges are routed.</dd>
@@ -64,9 +68,10 @@ public final class LongEdgeJoiner implements ILayoutProcessor {
                 LNode node = nodeIterator.next();
                 
                 // Check if it's a dummy edge we're looking for
-                if (node.getProperty(Properties.NODE_TYPE).equals(NodeType.LONG_EDGE)) {
+                if (node.getProperty(InternalProperties.NODE_TYPE).equals(NodeType.LONG_EDGE)) {
                     // Get the input and output port (of which we assume to have only one,
-                    // on the western side and on the eastern side, respectively)
+                    // on the western side and on the eastern side, respectively);
+                    // the incoming edges are retained, and the outgoing edges are discarded
                     List<LEdge> inputPortEdges =
                         node.getPorts(PortSide.WEST).iterator().next().getIncomingEdges();
                     List<LEdge> outputPortEdges =

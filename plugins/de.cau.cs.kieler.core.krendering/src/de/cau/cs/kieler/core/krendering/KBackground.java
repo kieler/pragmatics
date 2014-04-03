@@ -20,7 +20,7 @@ package de.cau.cs.kieler.core.krendering;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * Defines the alphaChannel of a background of a rendering
+ * Defines the Backgroundcolor and its alphaChannel of a rendering
  * <!-- end-model-doc -->
  *
  *
@@ -28,5 +28,5 @@ package de.cau.cs.kieler.core.krendering;
  * @model
  * @generated
  */
-public interface KBackground extends KColoring {
+public interface KBackground extends KColoring<KBackground> {
 } // KBackground

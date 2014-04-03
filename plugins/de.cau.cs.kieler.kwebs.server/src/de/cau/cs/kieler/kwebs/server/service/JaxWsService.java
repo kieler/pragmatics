@@ -16,16 +16,21 @@ package de.cau.cs.kieler.kwebs.server.service;
 
 import java.util.List;
 
+
+
+
+
 //import javax.jws.HandlerChain;
 import javax.jws.WebService;
 
-import de.cau.cs.kieler.kwebs.GraphLayoutOption;
-import de.cau.cs.kieler.kwebs.jaxws.LayoutServicePort;
-import de.cau.cs.kieler.kwebs.jaxws.ServiceFault;
-import de.cau.cs.kieler.kwebs.jaxws.ServiceFault_Exception;
-import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService;
+import de.cau.cs.kieler.kwebs.server.jaxws.LayoutServicePort;
+import de.cau.cs.kieler.kwebs.server.jaxws.ServiceFault;
+import de.cau.cs.kieler.kwebs.server.jaxws.ServiceFault_Exception;
+import de.cau.cs.kieler.kwebs.server.layout.GraphLayoutOption;
+import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutMetaDataService;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
+import de.cau.cs.kieler.statistics.KIELERStatistics.Granularity;
 
 /**
  * Service endpoint to be published as JAX-WS web service.
@@ -36,7 +41,7 @@ import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 // The attributes are necessary because otherwise JAX-WS would use package and class name for
 // the definition of the service and port name and the namespace.
 @WebService(
-    endpointInterface = "de.cau.cs.kieler.kwebs.jaxws.LayoutServicePort",
+    endpointInterface = "de.cau.cs.kieler.kwebs.server.jaxws.LayoutServicePort",
     name = "LayoutServicePort",
     portName = "LayoutServicePort",
     serviceName = "LayoutService",
@@ -46,6 +51,9 @@ import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 //@HandlerChain(file = "handlerchain/handlerchain.xml")
 public final class JaxWsService extends AbstractService implements LayoutServicePort {
 
+    private static final String STATS_JAXWS_TRY = "kwebs.jaxws.try";
+    private static final String STATS_JAXWS_SUCC = "kwebs.jaxws.success";
+    
     /**
      * Creates a new instance of the JAX-WS based layout service.
      */
@@ -72,9 +80,13 @@ public final class JaxWsService extends AbstractService implements LayoutService
             final String outformat, final List<GraphLayoutOption> options)
             throws ServiceFault_Exception {
         Logger.log(Severity.DEBUG, "Handling layout request");
+        Logger.INSTANCE.getUsageStats().incCounter(Logger.STATS_KWEBS, STATS_JAXWS_TRY, 
+                Granularity.DAY | Granularity.MONTH);
         try {
             String result = layout(serializedGraph, informat, outformat, options);
             Logger.log(Severity.DEBUG, "Handling layout request succeeded");
+            Logger.INSTANCE.getUsageStats().incCounter(Logger.STATS_KWEBS, STATS_JAXWS_SUCC, 
+                    Granularity.DAY | Granularity.MONTH);
             return result;
         } catch (Exception e) {
             Logger.log(Severity.WARNING, 
@@ -93,7 +105,7 @@ public final class JaxWsService extends AbstractService implements LayoutService
      */
     public String getServiceData() throws ServiceFault_Exception {
         try {
-            return ServerLayoutDataService.getInstance().getServiceData();
+            return ServerLayoutMetaDataService.getInstance().getServiceData();
         } catch (Exception e) {
             throw createException(0, e);
         }
@@ -112,7 +124,7 @@ public final class JaxWsService extends AbstractService implements LayoutService
     public byte[] getPreviewImage(final String previewImage) throws ServiceFault_Exception {
         Logger.log(Severity.DEBUG, "Handling preview image request");
         try {
-            byte[] result = ServerLayoutDataService.getInstance().getPreviewImage(previewImage);
+            byte[] result = ServerLayoutMetaDataService.getInstance().getPreviewImage(previewImage);
             Logger.log(Severity.DEBUG, "Handling preview image request succeeded");
             return result;
         } catch (Exception e) {

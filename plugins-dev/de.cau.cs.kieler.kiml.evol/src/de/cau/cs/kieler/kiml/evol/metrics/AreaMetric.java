@@ -15,10 +15,10 @@ import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
-import de.cau.cs.kieler.kiml.service.grana.analyses.AreaAnalysis;
-import de.cau.cs.kieler.kiml.service.grana.analyses.EdgeCountAnalysis;
-import de.cau.cs.kieler.kiml.service.grana.analyses.NodeCountAnalysis;
+import de.cau.cs.kieler.kiml.grana.IAnalysis;
+import de.cau.cs.kieler.kiml.grana.analyses.AreaAnalysis;
+import de.cau.cs.kieler.kiml.grana.analyses.EdgeCountAnalysis;
+import de.cau.cs.kieler.kiml.grana.analyses.NodeCountAnalysis;
 
 /**
  * Measures the area extent of the given graph layout.
@@ -47,7 +47,7 @@ public class AreaMetric implements IAnalysis {
      */
     public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Area metric analysis", 1);
+        progressMonitor.begin("Area metric", 1);
         Object[] dimsResult = (Object[]) results.get(AreaAnalysis.ID);
         int nodeCount = (Integer) results.get(NodeCountAnalysis.ID);
         int edgeCount = (Integer) results.get(EdgeCountAnalysis.ID);

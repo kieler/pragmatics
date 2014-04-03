@@ -15,50 +15,34 @@ package de.cau.cs.kieler.klighd.piccolo.internal.controller;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Collections;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.krendering.KRendering;
 import de.cau.cs.kieler.core.krendering.KRenderingFactory;
-import de.cau.cs.kieler.core.krendering.KStyle;
 import de.cau.cs.kieler.klighd.microlayout.Bounds;
+import de.cau.cs.kieler.klighd.microlayout.PlacementUtil;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KChildAreaNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KNodeNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.util.NodeUtil;
-import de.cau.cs.kieler.klighd.piccolo.internal.util.PiccoloPlacementUtil;
 import edu.umd.cs.piccolo.PNode;
 
 /**
  * An {@link AbstractKGERenderingController} for KNodes generating the rendering PNodes according to
  * the related KRendering rendering description.
  * 
- * 
  * @author mri
+ * @author chsch
  */
 public class KNodeRenderingController extends AbstractKGERenderingController<KNode, KNodeNode> {
-
-    /** the Piccolo node representing the child area. */
-    private KChildAreaNode childAreaNode;
 
     /**
      * Constructs a rendering controller for a node.
      * 
      * @param node
-     *            the Piccolo node representing a node
+     *            the Piccolo2D node representing a node
      */
     public KNodeRenderingController(final KNodeNode node) {
         super(node.getGraphElement(), node);
-        this.childAreaNode = new KChildAreaNode(node);
-        initializeRenderingNode(childAreaNode);
-    }
-
-    /**
-     * Returns the Piccolo node representing the child area.
-     * 
-     * @return the Piccolo node representing the child area
-     */
-    public KChildAreaNode getChildAreaNode() {
-        return childAreaNode;
     }
 
     /**
@@ -66,21 +50,20 @@ public class KNodeRenderingController extends AbstractKGERenderingController<KNo
      */
     @Override
     protected PNode internalUpdateRendering() {
-        PNode repNode = getRepresentation();
+        final KNodeNode repNode = getRepresentation();
+        final KChildAreaNode childAreaNode = repNode.getChildAreaNode(); 
 
         // detach the child area before updating the rendering
         childAreaNode.removeFromParent();
 
         // evaluate the rendering data
-        KRendering currentRendering = getCurrentRendering();
-        PNode renderingNode;
-        // KPlacementData pd;
+        final KRendering currentRendering = getCurrentRendering();
+        
+        final PNode renderingNode;
         if (currentRendering != null) {
-            renderingNode = handleAreaPlacementRendering(currentRendering,
-                    Collections.<KStyle>emptyList(), repNode);
+            renderingNode = handleAreaAndPointPlacementRendering(currentRendering, repNode);
         } else {
-            renderingNode = handleAreaPlacementRendering(createDefaultNodeRendering(),
-                    Collections.<KStyle>emptyList(), repNode);
+            renderingNode = handleAreaAndPointPlacementRendering(createDefaultRendering(), repNode);
         }
 
         // make sure the child area is attached to something
@@ -97,6 +80,8 @@ public class KNodeRenderingController extends AbstractKGERenderingController<KNo
      */
     @Override
     protected PNodeController<?> createChildArea(final PNode parent, final Bounds initialBounds) {
+        final KChildAreaNode childAreaNode = getRepresentation().getChildAreaNode(); 
+        
         // there can only be none or one child area
         if (childAreaNode.getParent() != null) {
             throw new RuntimeException("More then one child area found in graph element: "
@@ -121,15 +106,14 @@ public class KNodeRenderingController extends AbstractKGERenderingController<KNo
     }
 
     /**
-     * Creates the Piccolo node for the parent Piccolo node using direct placement.
+     * Creates the Piccolo2D node for the parent Piccolo2D node using direct placement.
      * 
      * @param parent
-     *            the parent Piccolo node
+     *            the parent Piccolo2D node
      */
     private void createDefaultChildArea(final PNode parent) {
         // determine the initial bounds
-        Bounds bounds = PiccoloPlacementUtil.evaluateAreaPlacement(null,
-                parent.getBoundsReference());
+        Bounds bounds = PlacementUtil.evaluateAreaPlacement(null, parent.getBoundsReference());
 
         // configure the child area
         final PNodeController<?> controller = createChildArea(parent, bounds);
@@ -139,7 +123,7 @@ public class KNodeRenderingController extends AbstractKGERenderingController<KNo
                 new PropertyChangeListener() {
                     public void propertyChange(final PropertyChangeEvent e) {
                         // calculate the new bounds of the rendering
-                        Bounds bounds = PiccoloPlacementUtil.evaluateAreaPlacement(null,
+                        Bounds bounds = PlacementUtil.evaluateAreaPlacement(null,
                                 parent.getBoundsReference());
                         // use the controller to apply the new bounds
                         controller.setBounds(bounds);
@@ -152,7 +136,7 @@ public class KNodeRenderingController extends AbstractKGERenderingController<KNo
      * 
      * @return the rendering
      */
-    private static KRendering createDefaultNodeRendering() {
+    protected KRendering createDefaultRendering() {
         // create the default rendering model
         return KRenderingFactory.eINSTANCE.createKRectangle();
     }

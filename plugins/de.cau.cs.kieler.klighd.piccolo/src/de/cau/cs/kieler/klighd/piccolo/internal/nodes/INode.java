@@ -17,28 +17,28 @@
 package de.cau.cs.kieler.klighd.piccolo.internal.nodes;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.Property;
 
 /**
- * The interface for Piccolo nodes representing a {@code KNode}.
- * 
- * Info (chsch): So far I figured out, only INodes are set pickable, concrete rendering nodes
- *  such as rectangles, paths, ... are not pickable. This influences e.g. the selection
- *  handling.
+ * The interface for Piccolo2D nodes that represent a {@link KNode} (currently {@link KNodeNode} and
+ * {@link KNodeTopNode}).
  * 
  * @author mri
+ * @author chsch
  */
 public interface INode extends IGraphElement<KNode> {
-
-    /** the property for the Piccolo representation of a node. */
-    IProperty<INode> NODE_REP = new Property<INode>("klighd.piccolo.prepresentation");
 
     /**
      * Returns the child area of this parent node.
      * 
      * @return the child area
      */
-    KChildAreaNode getChildArea();
+    KChildAreaNode getChildAreaNode();
+    
+    /**
+     * Returns the parent {@link INode} that (deeply) contains this {@link INode}.
+     * 
+     * @return the parent {@link INode}
+     */
+    INode getParentNode();
 
 }

@@ -19,6 +19,7 @@ import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.core.kgraph.KPort
 import de.cau.cs.kieler.kiml.options.LayoutOptions
 import de.cau.cs.kieler.kiml.util.KimlUtil
+import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
 import de.cau.cs.kieler.ptolemy.klighd.PluginConstants
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.LabelExtensions
@@ -41,6 +42,7 @@ import org.ptolemy.moml.RelationType
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
 
 import static extension com.google.common.base.Strings.*
+import org.eclipse.emf.ecore.util.EcoreUtil
 
 /**
  * Transforms a Ptolemy2 model to a KGraph. This is step one of the Ptolemy model transformation
@@ -93,7 +95,18 @@ class Ptolemy2KGraphTransformation {
      * List of warnings collected during the transformation. These will usually only be warnings about
      * actors that couldn't be instantiated.
      */
-    ArrayList<IStatus> warnings = new ArrayList<IStatus>()
+    List<IStatus> warnings = new ArrayList<IStatus>()
+    
+    /**
+     * The diagram synthesis from which this transformation is called. Used to save the mapping from
+     * Ptolemy objects to view model objects.
+     */
+    AbstractDiagramSynthesis<?> diagramSynthesis = null
+    
+    /**
+     * List of locally defined classes, which can be reused multiple times.
+     */
+    List<KNode> actorClasses = new ArrayList<KNode>();
     
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -104,13 +117,17 @@ class Ptolemy2KGraphTransformation {
      * root element and returns a KGraph node representing the converted model.
      * 
      * @param ptDocumentRoot the Ptolemy MOML document's root element.
+     * @param synthesis the diagram synthesis calling this transformation. Used to map Ptolemy model
+     *                  objects to KGraph model objects.
      * @return the transformed KGraph node.
      * @throws IllegalStateException if this class's instance has already been used.
      */
-    def KNode transform(DocumentRoot ptDocumentRoot) {
+    def KNode transform(DocumentRoot ptDocumentRoot, AbstractDiagramSynthesis<?> synthesis) {
         if (alreadyUsed) {
             throw new IllegalStateException("Transformations cannot be reused.")
         }
+        
+        diagramSynthesis = synthesis
         
         // A Ptolemy document can contain an entity or a class, so transform those and add the
         // transformed objects as the KGraph's children
@@ -124,7 +141,7 @@ class Ptolemy2KGraphTransformation {
             return kClassNode
         }
         
-        return null
+        return KimlUtil::createInitializedNode
     }
     
     /**
@@ -134,6 +151,7 @@ class Ptolemy2KGraphTransformation {
      * @return the KGraph node.
      */
     def private create kNode : KimlUtil::createInitializedNode() transform(EntityType ptEntity) {
+        diagramSynthesis.putToLookUpWith(kNode, ptEntity)
         kNode.name = ptEntity.name
         
         // Add annotations identifying this node as having been created from a Ptolemy entity
@@ -198,6 +216,7 @@ class Ptolemy2KGraphTransformation {
             }
         } else {
             // Add the required relations, links, and child entities
+            actorClasses.addAll(ptEntity.class_.map[c | transform(c)])
             kNode.addChildEntities(ptEntity.entity)
             kNode.addChildRelations(ptEntity.relation)
             kNode.addChildLinks(ptEntity.link)
@@ -219,14 +238,20 @@ class Ptolemy2KGraphTransformation {
         
         // Add annotations identifying this node as having been created from a Ptolemy entity
         kNode.markAsPtolemyElement()
-        kNode.addAnnotation(ANNOTATION_PTOLEMY_CLASS, ptClass.^extends)
+        
+        var extendedClass = ptClass.^extends
+        val matchingLocalClass = actorClasses.findFirst[c | c.name == ptClass.^extends]
+        if (matchingLocalClass != null) {
+            extendedClass = matchingLocalClass.getAnnotation(ANNOTATION_PTOLEMY_CLASS).value
+        }
+        kNode.addAnnotation(ANNOTATION_PTOLEMY_CLASS, extendedClass)
         
         // Add properties and ports
         kNode.addProperties(ptClass.property)
         kNode.addChildPorts(ptClass)
         
         // Check if we have an FSM, a modal model, or a regular node
-        if (ptClass.^extends.equals(ENTITY_CLASS_FSM)) {
+        if (extendedClass.equals(ENTITY_CLASS_FSM)) {
             // Mark as a state machine and then add the required relations, links, and child
             // entities as usual
             kNode.markAsStateMachineContainer()
@@ -234,8 +259,8 @@ class Ptolemy2KGraphTransformation {
             kNode.addChildEntities(ptClass.entity)
             kNode.addChildRelations(ptClass.relation)
             kNode.addChildLinks(ptClass.link)
-        } else if (ptClass.^extends.equals(ENTITY_CLASS_MODAL_MODEL)
-            || ptClass.^extends.equals(ENTITY_CLASS_FSM_MODAL_MODEL)) {
+        } else if (extendedClass.equals(ENTITY_CLASS_MODAL_MODEL)
+            || extendedClass.equals(ENTITY_CLASS_FSM_MODAL_MODEL)) {
             
             // Mark as a state machine
             kNode.markAsStateMachineContainer()
@@ -248,8 +273,8 @@ class Ptolemy2KGraphTransformation {
                     kNode.addChildLinks(child.link)
                 }
             }
-        } else if (ptClass.^extends.equals(ENTITY_CLASS_MODAL_MODEL)
-            || ptClass.^extends.equals(ENTITY_CLASS_FSM_MODAL_MODEL)) {
+        } else if (extendedClass.equals(ENTITY_CLASS_MODAL_MODEL)
+            || extendedClass.equals(ENTITY_CLASS_FSM_MODAL_MODEL)) {
             
             // A modal model state may have refinements
             val refinement = ptClass.findRefinement()
@@ -279,6 +304,7 @@ class Ptolemy2KGraphTransformation {
             }
         } else {
             // Add the required relations, links, and child entities
+            actorClasses.addAll(ptClass.class_.map[c | transform(c)])
             kNode.addChildEntities(ptClass.entity)
             kNode.addChildRelations(ptClass.relation)
             kNode.addChildLinks(ptClass.link)
@@ -292,6 +318,7 @@ class Ptolemy2KGraphTransformation {
      * @return the KGraph node.
      */
     def private create kNode : KimlUtil::createInitializedNode() transform(RelationType ptRelation) {
+        diagramSynthesis.putToLookUpWith(kNode, ptRelation)
         kNode.name = ptRelation.name
         
         // Add annotation identifying this relation as having been created from a Ptolemy relation
@@ -579,8 +606,19 @@ class Ptolemy2KGraphTransformation {
      */
     def private void addChildEntities(KNode parent, EntityType[] ptEntities) {
         for (ptEntity : ptEntities) {
-            // Transform the entity and add the result to the new parent
-            parent.children.add(transform(ptEntity))
+            
+            // Look for a local class definition that matches the entity class
+            val matchingClass = actorClasses.findFirst[c | c.name == ptEntity.class1]
+            if (matchingClass != null) {
+                val copy = EcoreUtil.copy(matchingClass)
+                parent.children.add(copy)
+                diagramSynthesis.putToLookUpWith(copy, ptEntity)
+                copy.name = ptEntity.name
+                
+            } else {
+                // Transform the entity and add the result to the new parent
+                parent.children.add(transform(ptEntity))
+            }
         }
     }
     

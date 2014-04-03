@@ -14,47 +14,36 @@
 package de.cau.cs.kieler.klighd.piccolo.internal.nodes;
 
 import de.cau.cs.kieler.core.kgraph.KPort;
-import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.klighd.piccolo.internal.controller.AbstractKGERenderingController;
 import de.cau.cs.kieler.klighd.piccolo.internal.controller.KPortRenderingController;
 import de.cau.cs.kieler.klighd.util.KlighdProperties;
-import de.cau.cs.kieler.klighd.util.RenderingContextData;
+import edu.umd.cs.piccolo.PNode;
 
 /**
- * The Piccolo node for representing a {@code KPort}.
+ * The Piccolo2D node for representing a {link KPort}.
  * 
  * @author mri
+ * @author chsch
  */
-public class KPortNode extends PZIndexNode implements ILabeledGraphElement<KPort> {
+public class KPortNode extends PEmptyNode implements ILabeledGraphElement<KPort> {
 
     private static final long serialVersionUID = 6016725932024647084L;
 
-    /** the property for the Piccolo representation of a port. */
-    public static final IProperty<KPortNode> PORT_REP = new Property<KPortNode>(
-            "klighd.piccolo.prepresentation");
-    
-    /** the number of z-layers (rendering and ports). */
-    private static final int Z_LAYERS = 2;
-    /** the z-index for the label layer. */
-    private static final int LABEL_LAYER = 1;
-    
     /** the represented {@link KPort}. */
     private transient KPort port;
     /** the port rendering controller deployed to manage the rendering of {@link #port}. */
     private KPortRenderingController renderingController;
 
     /**
-     * Constructs a Piccolo node for representing a {@code KPort}.
+     * Constructs a Piccolo2D node for representing a {@code KPort}.
      * 
      * @param port
      *            the port
      */
     public KPortNode(final KPort port) {
-        super(Z_LAYERS);
+        super();
         this.port = port;
-        RenderingContextData.get(port).setProperty(PORT_REP, this);
         Boolean b = port.getData(KShapeLayout.class).getProperty(
                 KlighdProperties.KLIGHD_SELECTION_UNPICKABLE);
         setPickable(b != null && b.equals(Boolean.TRUE) ? false : true);
@@ -96,6 +85,20 @@ public class KPortNode extends PZIndexNode implements ILabeledGraphElement<KPort
      *            the label representation
      */
     public void addLabel(final KLabelNode label) {
-        addChild(label, LABEL_LAYER);
+        addChild(label);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addChild(final PNode child) {
+        if (child instanceof KLabelNode) {
+            super.addChild(child);
+        } else {
+            // There is only one figure child supposed to be attached to KPortNodes
+            //  so the following is justified
+            super.addChild(0, child);
+        }
     }
 }

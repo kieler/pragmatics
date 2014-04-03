@@ -18,9 +18,12 @@ import java.util.List;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 
+import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
+import de.cau.cs.kieler.kiml.LayoutOptionData;
+import de.cau.cs.kieler.kiml.grana.AnalysisData;
+import de.cau.cs.kieler.kiml.grana.AnalysisService;
 import de.cau.cs.kieler.kiml.grana.GranaPlugin;
-import de.cau.cs.kieler.kiml.service.AnalysisService;
-import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
 
 /**
  * A utility class for grana handlers.
@@ -53,12 +56,11 @@ public final class GranaUtil {
      * Returns an analysis selection from the preference store.
      * 
      * @param preferenceKey
-     *            the key of the preference which stores the given analysis selection
+     *            the key of the preference which stores the analysis selection
      * @return the last selected analyses
      */
     public static List<AnalysisData> getAnalysesSelection(final String preferenceKey) {
         List<AnalysisData> result = new LinkedList<AnalysisData>();
-        // get the preference store
         IPreferenceStore preferenceStore = GranaPlugin.getDefault().getPreferenceStore();
         // get the serialized analyses ids from the preference store
         String analysesIdsSerialized = preferenceStore.getString(preferenceKey);
@@ -67,6 +69,37 @@ public final class GranaUtil {
             AnalysisData analysis = AnalysisService.getInstance().getAnalysis(analysisId.trim());
             if (analysis != null) {
                 result.add(analysis);
+            }
+        }
+        return result;
+    }
+    
+    /**
+     * Returns a layout configuration from the preference store.
+     * 
+     * @param preferenceKey
+     *            the key of the preference which stores the layout configuration
+     * @return the last used layout configuration
+     */
+    public static List<Pair<LayoutOptionData, Object>> getConfiguration(
+            final String preferenceKey) {
+        List<Pair<LayoutOptionData, Object>> result
+                = new LinkedList<Pair<LayoutOptionData, Object>>();
+        IPreferenceStore preferenceStore = GranaPlugin.getDefault().getPreferenceStore();
+        // get the serialized analyses ids from the preference store
+        String optionsSerialized = preferenceStore.getString(preferenceKey);
+        String[] options = optionsSerialized.split(";");
+        for (String option : options) {
+            String[] keyAndValue = option.split("=");
+            if (keyAndValue.length == 2) {
+                LayoutOptionData optionData = LayoutMetaDataService.getInstance()
+                .getOptionData(keyAndValue[0]);
+                if (optionData != null) {
+                    Object value = optionData.parseValue(keyAndValue[1]);
+                    if (value != null) {
+                        result.add(new Pair<LayoutOptionData, Object>(optionData, value));
+                    }
+                }
             }
         }
         return result;
@@ -92,7 +125,6 @@ public final class GranaUtil {
      */
     public static void setAnalysesSelection(final String preferenceKey,
             final List<AnalysisData> analyses) {
-        // get the preference store
         IPreferenceStore preferenceStore = GranaPlugin.getDefault().getPreferenceStore();
         // serialize the analyses ids
         StringBuilder analysesIdsSerialized = new StringBuilder();
@@ -101,4 +133,25 @@ public final class GranaUtil {
         }
         preferenceStore.setValue(preferenceKey, analysesIdsSerialized.toString());
     }
+    
+    /**
+     * Sets a layout configuration in the preference store.
+     * 
+     * @param preferenceKey
+     *            the key of the preference which stores the given layout configuration
+     * @param layoutConfig
+     *            the configuration
+     */
+    public static void setConfiguration(final String preferenceKey,
+            final List<Pair<LayoutOptionData, Object>> layoutConfig) {
+        IPreferenceStore preferenceStore = GranaPlugin.getDefault().getPreferenceStore();
+        // serialize the layout options
+        StringBuilder optionsSerialized = new StringBuilder();
+        for (Pair<LayoutOptionData, Object> entry : layoutConfig) {
+            optionsSerialized.append(entry.getFirst().getId()).append("=")
+                    .append(entry.getSecond().toString()).append(";");
+        }
+        preferenceStore.setValue(preferenceKey, optionsSerialized.toString());
+    }
+    
 }

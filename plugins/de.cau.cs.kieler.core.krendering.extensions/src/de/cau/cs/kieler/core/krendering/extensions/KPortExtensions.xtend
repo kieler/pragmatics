@@ -13,25 +13,42 @@
  */
 package de.cau.cs.kieler.core.krendering.extensions
 
-import de.cau.cs.kieler.core.kgraph.KPort
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
-import de.cau.cs.kieler.kiml.util.KimlUtil
 import de.cau.cs.kieler.core.kgraph.KNode
-import de.cau.cs.kieler.core.util.Maybe
-import javax.inject.Inject
-import de.cau.cs.kieler.core.krendering.VerticalAlignment
-import de.cau.cs.kieler.core.krendering.KRenderingFactory
-import de.cau.cs.kieler.core.krendering.KFontSize
+import de.cau.cs.kieler.core.kgraph.KPort
 import de.cau.cs.kieler.core.krendering.HorizontalAlignment
+import de.cau.cs.kieler.core.krendering.KFontSize
+import de.cau.cs.kieler.core.krendering.KRendering
+import de.cau.cs.kieler.core.krendering.KRenderingFactory
+import de.cau.cs.kieler.core.krendering.KText
+import de.cau.cs.kieler.core.krendering.VerticalAlignment
+import de.cau.cs.kieler.core.krendering.ViewSynthesisShared
+import de.cau.cs.kieler.core.properties.IProperty
+import de.cau.cs.kieler.core.util.Maybe
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
 import de.cau.cs.kieler.kiml.options.LayoutOptions
 import de.cau.cs.kieler.kiml.options.PortSide
-import de.cau.cs.kieler.core.properties.IProperty
+import de.cau.cs.kieler.kiml.util.KimlUtil
 import java.util.ArrayList
-import de.cau.cs.kieler.core.krendering.KText
-import de.cau.cs.kieler.core.krendering.KRendering
+import javax.inject.Inject
 
 /**
+ * Provides some helpful extension methods for simplifying the composition of KGraph/KRendering-based view models.<br>
+ * <br>
+ * In order to employ them beyond KLighD diagram syntheses you best declare a field of type
+ * {@link KNodeExtensions} in your class and annotate it with {@link javax.inject.Inject Inject}.<br>
+ * <br>
+ * Make sure to bind the {@link ViewSynthesisShared} annotation in the employed
+ * {@link com.google.inject.Injector Injector} to a {@link com.google.inject.Scope}, e.g. by calling
+ * {@code Guice.createInjector(KRenderingExtensionsPlugin.createSingletonScopeBindingModule());} or 
+ * {@code Guice.createInjector(KRenderingExtensionsPlugin.createNoScopeBindingModule());}.<br>
+ * <br>
+ * By means of that {@link com.google.inject.Injector Injector} you may get a new instance of your class,
+ * or you may inject the above mentioned attribute within instances of your class, e.g. by calling
+ * {@code injector.injectMembers(this)} in the constructor of your class.
+ * 
  * @author chsch
+ * 
+ * @containsExtensions
  */
 @ViewSynthesisShared
 class KPortExtensions {
@@ -60,7 +77,7 @@ class KPortExtensions {
      */
     private static val Integer PORT_LABEL_FONT_SIZE = 7;
 
-    private static val KRenderingFactory renderingFactory = KRenderingFactory::eINSTANCE
+    extension KRenderingFactory = KRenderingFactory::eINSTANCE
     
     @Inject
     extension KRenderingExtensions;
@@ -271,53 +288,53 @@ class KPortExtensions {
     }
     
     def private KRendering createWPortRendering(String label) {
-        return renderingFactory.createKRectangle => [
-            it.foreground = renderingFactory.createKForeground() => [
+        return createKRectangle => [
+            it.foreground = createKForeground() => [
                 it.alpha = 255; // is also the default in the meta model
-                it.color = renderingFactory.createKColor();
+                it.color = createKColor();
             ];
-            it.background = renderingFactory.createKBackground() => [
+            it.background = createKBackground() => [
                 it.alpha = 255; // is also the default in the meta model
-                it.color = renderingFactory.createKColor();
+                it.color = createKColor();
             ];
-            it.children += renderingFactory.createKText.withCopyOf(portLabelFontSize()) => [
+            it.children += createKText.withCopyOf(portLabelFontSize()) => [
                 it.text = label;
                 it.setHorizontalAlignment(
                     if (inlyingPortLabels) HorizontalAlignment::LEFT else HorizontalAlignment::RIGHT
                 );
                 it.setVerticalAlignment(VerticalAlignment::CENTER)
-                it.placementData = renderingFactory.createKAreaPlacementData() => [
+                it.placementData = createKAreaPlacementData() => [
                     if (inlyingPortLabels) {
-                        topLeft = renderingFactory.createKPosition() => [
-                            it.x = renderingFactory.createKRightPosition() => [
+                        topLeft = createKPosition() => [
+                            it.x = createKRightPosition() => [
                                 it.absolute = -2
                             ];
-                            it.y = renderingFactory.createKTopPosition() => [
+                            it.y = createKTopPosition() => [
                                 it.absolute = portEdgeLength/2;
                             ];
                         ]
-                        bottomRight = renderingFactory.createKPosition() => [
-                            it.x = renderingFactory.createKRightPosition() => [
+                        bottomRight = createKPosition() => [
+                            it.x = createKRightPosition() => [
                                 it.absolute = -2
                             ];
-                            it.y = renderingFactory.createKTopPosition() => [
+                            it.y = createKTopPosition() => [
                                 it.absolute = portEdgeLength/2;
                             ];
                         ];
                     } else {
-                        topLeft = renderingFactory.createKPosition() => [
-                            it.x = renderingFactory.createKLeftPosition() => [
+                        topLeft = createKPosition() => [
+                            it.x = createKLeftPosition() => [
                                 it.absolute = -2
                             ];
-                            it.y = renderingFactory.createKTopPosition() => [
+                            it.y = createKTopPosition() => [
                                 it.absolute = portEdgeLength/2;
                             ];
                         ];
-                        bottomRight = renderingFactory.createKPosition() => [
-                            it.x = renderingFactory.createKLeftPosition() => [
+                        bottomRight = createKPosition() => [
+                            it.x = createKLeftPosition() => [
                                 it.absolute = -2
                             ];
-                            it.y = renderingFactory.createKTopPosition() => [
+                            it.y = createKTopPosition() => [
                                 it.absolute = portEdgeLength/2;
                             ];
                         ];
@@ -328,53 +345,53 @@ class KPortExtensions {
     }
     
     def private KRendering createEPortRendering(String label) {
-        return renderingFactory.createKRectangle() => [
-            it.foreground = renderingFactory.createKForeground() => [
+        return createKRectangle() => [
+            it.foreground = createKForeground() => [
                 it.alpha = 255; // is also the default in the meta model
-                it.color = renderingFactory.createKColor();
+                it.color = createKColor();
             ];
-            it.background = renderingFactory.createKBackground() => [
+            it.background = createKBackground() => [
                 it.alpha = 255; // is also the default in the meta model
-                it.color = renderingFactory.createKColor();
+                it.color = createKColor();
             ];
-            it.children += renderingFactory.createKText.withCopyOf(portLabelFontSize()) => [
+            it.children += createKText.withCopyOf(portLabelFontSize()) => [
                 it.text = label;
                 it.setHorizontalAlignment(
                     if (inlyingPortLabels) HorizontalAlignment::RIGHT else HorizontalAlignment::LEFT
                 );
                 it.setVerticalAlignment(VerticalAlignment::CENTER)
-                it.placementData = renderingFactory.createKAreaPlacementData() => [
+                it.placementData = createKAreaPlacementData() => [
                     if (inlyingPortLabels) {
-                        topLeft = renderingFactory.createKPosition() => [
-                            it.x = renderingFactory.createKLeftPosition() => [
+                        topLeft = createKPosition() => [
+                            it.x = createKLeftPosition() => [
                                 it.absolute = -2
                             ];
-                            it.y = renderingFactory.createKTopPosition() => [
+                            it.y = createKTopPosition() => [
                                 it.absolute = portEdgeLength/2;
                             ];
                         ];
-                        bottomRight = renderingFactory.createKPosition() => [
-                            it.x = renderingFactory.createKLeftPosition() => [
+                        bottomRight = createKPosition() => [
+                            it.x = createKLeftPosition() => [
                                 it.absolute = -2
                             ];
-                            it.y = renderingFactory.createKTopPosition() => [
+                            it.y = createKTopPosition() => [
                                 it.absolute = portEdgeLength/2;
                             ];
                         ];
                     } else {
-                        topLeft = renderingFactory.createKPosition() => [
-                            it.x = renderingFactory.createKRightPosition() => [
+                        topLeft = createKPosition() => [
+                            it.x = createKRightPosition() => [
                                 it.absolute = -2
                             ];
-                            it.y = renderingFactory.createKTopPosition() => [
+                            it.y = createKTopPosition() => [
                                 it.absolute = portEdgeLength/2;
                             ];
                         ]
-                        bottomRight = renderingFactory.createKPosition() => [
-                            it.x = renderingFactory.createKRightPosition() => [
+                        bottomRight = createKPosition() => [
+                            it.x = createKRightPosition() => [
                                 it.absolute = -2
                             ];
-                            it.y = renderingFactory.createKTopPosition() => [
+                            it.y = createKTopPosition() => [
                                 it.absolute = portEdgeLength/2;
                             ];
                         ];
@@ -405,7 +422,7 @@ class KPortExtensions {
         ];
     }
     
-    def KPort addLayoutParam(KPort port, IProperty<?> property, Object value) {
+    def <T> KPort addLayoutParam(KPort port, IProperty<? super T> property, T value) {
         return port => [
             it.getData(typeof(KShapeLayout)).setProperty(property, value)
         ];
@@ -415,7 +432,7 @@ class KPortExtensions {
         port.getData(typeof(KShapeLayout))
     }
 
-    def KFontSize create it: renderingFactory.createKFontSize portLabelFontSize() {
+    def KFontSize create it: createKFontSize portLabelFontSize() {
         it.size = PORT_LABEL_FONT_SIZE;
     }
 

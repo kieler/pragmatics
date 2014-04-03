@@ -218,10 +218,10 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
         
         // set the target point onto the border of the target element
         float targetPX = sourceX;
-        if (sourceX > targetY + targetWidth) {
-            targetPX = targetY + targetWidth;
-        } else if (sourceX < targetY - targetWidth) {
-            targetPX = targetY - targetWidth;
+        if (sourceX > targetX + targetWidth) {
+            targetPX = targetX + targetWidth;
+        } else if (sourceX < targetX - targetWidth) {
+            targetPX = targetX - targetWidth;
         }
         float targetPY = sourceY;
         if (sourceY > targetY + targetHeight) {

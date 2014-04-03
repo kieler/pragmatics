@@ -1,23 +1,19 @@
 package de.cau.cs.kieler.klighd.examples.ecore
 
-import java.util.List
-
 import de.cau.cs.kieler.core.kivi.AbstractCombination
 import de.cau.cs.kieler.core.kivi.triggers.PartTrigger
 import de.cau.cs.kieler.core.kivi.triggers.SelectionTrigger
-import de.cau.cs.kieler.klighd.effects.KlighdUpdateDiagramEffect
-import de.cau.cs.kieler.klighd.examples.ecore.EModelElementCollection
-import de.cau.cs.kieler.klighd.triggers.KlighdSelectionTrigger$KlighdSelectionState
-import de.cau.cs.kieler.klighd.LightDiagramServices
-
+import de.cau.cs.kieler.klighd.KlighdTreeSelection
+import de.cau.cs.kieler.klighd.kivi.effects.KlighdUpdateDiagramEffect
+import de.cau.cs.kieler.klighd.krendering.SimpleUpdateStrategy
+import de.cau.cs.kieler.klighd.util.KlighdProperties
+import de.cau.cs.kieler.klighd.util.KlighdSynthesisProperties
+import java.util.List
 import org.eclipse.core.runtime.IPath
-import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EClass
-import org.eclipse.emf.ecore.EClassifier
 import org.eclipse.emf.ecore.EModelElement
-import org.eclipse.emf.ecoretools.diagram.navigator.EcoreDomainNavigatorItem
-import org.eclipse.ui.part.FileEditorInput;
-import de.cau.cs.kieler.klighd.util.KlighdPropertiesimport de.cau.cs.kieler.klighd.krendering.SimpleUpdateStrategy
+import org.eclipse.emf.ecore.EPackage
+import org.eclipse.ui.part.FileEditorInput
 
 /**
  * Combination that triggers the synthesis of Ecore diagrams.
@@ -29,33 +25,24 @@ class EcoreDiagramSynthesisCombination extends AbstractCombination {
 	/**
 	 * The 'execute()' method, see doc of {@link AbstractCombination}.
 	 */
-	def public void execute(PartTrigger$PartState es, SelectionTrigger$SelectionState selectionState,
-	    KlighdSelectionTrigger$KlighdSelectionState klighdSelectionState) {
+	def public void execute(PartTrigger.PartState es, SelectionTrigger.SelectionState selectionState) {
+	    
+	    if (selectionState.selection instanceof KlighdTreeSelection) {
+	        // do not react on selections in KLighD diagrams
+	        return;
+	    }
 		
 		// do not react on partStates as well as on selectionStates in case
 		//  a view part has been deactivated recently, as an potentially out-dated selection
 		//  is currently about to be processed
 		// most certainly a "part activated" event will follow and subsequently a further
 		//  selection event if the selection of the newly active part is changed, too! 
-		if (this.latestState() == es || es.eventType == PartTrigger$EventType::VIEW_DEACTIVATED) {
+		if (this.latestState() == es || es.eventType == PartTrigger.EventType::VIEW_DEACTIVATED) {
 		   //inputPath = es.getProperty(PartTrigger::EDITOR_INPUT_PATH) as IPath;
 		   return; // do only react on selectionState
 		}
 		
-		if (this.latestState() == klighdSelectionState && klighdSelectionState.selections.size > 1) {
-		    // in case a selection has been performed in the diagram ...
-		    //  (the case of selections.size == 1 is skipped as this interferes with the
-		    //   'highlight in source functionality')
-            this.schedule(
-                new KlighdUpdateDiagramEffect("de.cau.cs.kieler.klighd.examples.ecore.selection",
-                    EModelElementCollection::of(klighdSelectionState.selectedEModelElements
-                        .filter(typeof(EClassifier)))
-                )
-            );
-            return;
-		}
-		
-		val selection = selectionState.selection;
+		val selection = selectionState.selectionElements;
 		if (!selection.nullOrEmpty) {
             if (selection.forall[typeof(EPackage).isInstance(it) || typeof(EClass).isInstance(it)]) {
                 // in case the elements to be depicted are given immediately,
@@ -71,15 +58,16 @@ class EcoreDiagramSynthesisCombination extends AbstractCombination {
                 if (editorInputPath != null) {
                     val id = editorInputPath.toPortableString().replace(":", "") as String;
                     this.schedule(new KlighdUpdateDiagramEffect(id, editorInputPath.lastSegment,
-                            EModelElementCollection::of(selectionState.selection.filter(typeof(EModelElement)).toList),
+                            EModelElementCollection::of(selectionState.selectionElements.filter(typeof(EModelElement)).toList),
                             es.editorPart
                         )
                     );
                 }
             } else {
-                // this case covers the situation of depicting classes selected in the Project Explorer               
-                if (selection.forall[typeof(EcoreDomainNavigatorItem).isInstance(it)]) {
-                    val elements = selectionState.selection.filter(typeof(EcoreDomainNavigatorItem)).map[
+                // this case covers the situation of depicting classes selected in the Project Explorer
+                val itemClass = typeof(org.eclipse.emf.ecoretools.diagram.navigator.EcoreDomainNavigatorItem);               
+                if (selection.forall[itemClass.isInstance(it)]) {
+                    val elements = selectionState.selectionElements.filter(itemClass).map[
                         it.EObject
                     ].filter(typeof(EModelElement)).toList;
                     
@@ -98,7 +86,7 @@ class EcoreDiagramSynthesisCombination extends AbstractCombination {
         		        ) => [
         		       	// FIXME reactivate incremental update
                         // it.setProperty(LightDiagramServices::REQUESTED_UPDATE_STRATEGY, UpdateStrategy::ID);
-                        it.setProperty(LightDiagramServices::REQUESTED_UPDATE_STRATEGY, SimpleUpdateStrategy::ID);
+                        it.setProperty(KlighdSynthesisProperties::REQUESTED_UPDATE_STRATEGY, SimpleUpdateStrategy::ID);
                         it.setProperty(KlighdProperties::MODEL_ACCESS, new EcoreModelAccess(this.selectedModelElements));
                     ]);
                 }

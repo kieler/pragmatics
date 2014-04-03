@@ -17,11 +17,13 @@ import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import de.cau.cs.kieler.klighd.KlighdPlugin;
+import de.cau.cs.kieler.klighd.KlighdPreferences;
 
 /**
  * Initializes the KLighD preferences to their default values.
  * 
  * @author cds
+ * @author chsch
  */
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
@@ -33,10 +35,33 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         IPreferenceStore preferenceStore = KlighdPlugin.getDefault().getPreferenceStore();
         
         // Set default option values
-        preferenceStore.setDefault(
-                KlighdPreferences.ANIMATE_LAYOUT, KlighdPreferences.ANIMATE_LAYOUT_DEFAULT);
-        preferenceStore.setDefault(
-                KlighdPreferences.ZOOM_TO_FIT, KlighdPreferences.ZOOM_TO_FIT_DEFAULT);
-    }
+        preferenceStore.setDefault(KlighdPreferences.ANIMATE_LAYOUT,
+                KlighdPreferences.ANIMATE_LAYOUT_DEFAULT);
 
+        preferenceStore.setDefault(KlighdPreferences.ADVANCED_PANNING_MODE,
+                KlighdPreferences.ADVANCED_PANNING_MODE_DEFAULT);
+
+        preferenceStore.setDefault(KlighdPreferences.ZOOM_STYLE,
+                KlighdPreferences.ZOOM_STYLE_DEFAULT);
+        
+        preferenceStore.setDefault(KlighdPreferences.ZOOM_ON_WORKBENCHPART_CHANGE,
+                KlighdPreferences.ZOOM_ON_WORKBENCHPART_CHANGE_DEFAULT);
+
+        // Magnification lens settings
+        preferenceStore.setDefault(KlighdPreferences.MAGNIFICATION_LENS_ENABLED,
+                KlighdPreferences.MAGNIFICATION_LENS_ENABLED_DEFAULT);
+
+        preferenceStore.setDefault(KlighdPreferences.MAGNIFICATION_LENS_WIDTH,
+                KlighdPreferences.MAGNIFICATION_LENS_WIDTH_DEFAULT);
+
+        preferenceStore.setDefault(KlighdPreferences.MAGNIFICATION_LENS_HEIGHT,
+                KlighdPreferences.MAGNIFICATION_LENS_HEIGHT_DEFAULT);
+
+        preferenceStore.setDefault(KlighdPreferences.MAGNIFICATION_LENS_SCALE,
+                KlighdPreferences.MAGNIFICATION_LENS_SCALE_DEFAULT);
+        
+        
+        preferenceStore.setDefault(KlighdPreferences.EXPAND_SIDE_BAR,
+                KlighdPreferences.EXPAND_SIDE_BAR_DEFAULT);
+    }
 }

@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.kiml.smart;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Map;
 
@@ -26,22 +27,21 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.LayoutContext;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
+import de.cau.cs.kieler.kiml.config.LayoutContext;
+import de.cau.cs.kieler.kiml.grana.AnalysisOptions;
+import de.cau.cs.kieler.kiml.grana.analyses.CompoundEdgeAnalysis;
+import de.cau.cs.kieler.kiml.grana.analyses.EdgeLabelCountAnalysis;
+import de.cau.cs.kieler.kiml.grana.analyses.MultiEdgeCountAnalysis;
+import de.cau.cs.kieler.kiml.grana.analyses.PortCountAnalysis;
+import de.cau.cs.kieler.kiml.grana.analyses.SelfLoopAnalysis;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.GraphFeature;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
-import de.cau.cs.kieler.kiml.service.grana.analyses.CompoundEdgeAnalysis;
-import de.cau.cs.kieler.kiml.service.grana.analyses.EdgeLabelCountAnalysis;
-import de.cau.cs.kieler.kiml.service.grana.analyses.MultiEdgeCountAnalysis;
-import de.cau.cs.kieler.kiml.service.grana.analyses.PortCountAnalysis;
-import de.cau.cs.kieler.kiml.service.grana.analyses.SelfLoopAnalysis;
 import de.cau.cs.kieler.kiml.smart.SmartLayoutService.SmartRuleData;
 
 /**
@@ -148,37 +148,28 @@ public class SmartLayoutConfig implements ILayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public void enrich(final LayoutContext context) {
-        MetaLayout metaLayout = provideMetaLayout(context);
-        if (context.getProperty(DefaultLayoutConfig.OPT_MAKE_OPTIONS)) {
-            // provide content algorithm hint option
-            if (context.getProperty(DefaultLayoutConfig.CONTENT_HINT) == null && metaLayout != null) {
-                String algorithm = (String) metaLayout.getConfig().get(LayoutOptions.ALGORITHM);
-                if (algorithm != null) {
-                    context.setProperty(DefaultLayoutConfig.CONTENT_HINT, algorithm);
-                }
+    public Object getContextValue(final IProperty<?> property, final LayoutContext context) {
+        if (property.equals(DefaultLayoutConfig.CONTENT_HINT)) {
+            MetaLayout metaLayout = provideMetaLayout(context);
+            if (metaLayout != null) {
+                return metaLayout.getConfig().get(LayoutOptions.ALGORITHM);
             }
-            
-            // provide container algorithm hint option
+        } else if (property.equals(DefaultLayoutConfig.CONTAINER_HINT)) {
             Object containerDiagramPart = context.getProperty(LayoutContext.CONTAINER_DIAGRAM_PART);
-            if (context.getProperty(DefaultLayoutConfig.CONTAINER_HINT) == null
-                    && containerDiagramPart != null) {
+            if (containerDiagramPart != null) {
                 MetaLayout containerMetaLayout = metaLayoutCache.get(containerDiagramPart);
                 if (containerMetaLayout != null) {
-                    String containerAlgorithm = (String) containerMetaLayout.getConfig()
-                            .get(LayoutOptions.ALGORITHM);
-                    if (containerAlgorithm != null) {
-                        context.setProperty(DefaultLayoutConfig.CONTAINER_HINT, containerAlgorithm);
-                    }
+                    return containerMetaLayout.getConfig().get(LayoutOptions.ALGORITHM);
                 }
             }
         }
+        return null;
     }
 
     /**
      * {@inheritDoc}
      */
-    public Object getValue(final LayoutOptionData<?> optionData, final LayoutContext context) {
+    public Object getOptionValue(final LayoutOptionData optionData, final LayoutContext context) {
         MetaLayout metaLayout = provideMetaLayout(context);
         if (metaLayout != null) {
             return metaLayout.getConfig().get(optionData);
@@ -189,13 +180,12 @@ public class SmartLayoutConfig implements ILayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public void transferValues(final KLayoutData graphData, final LayoutContext context) {
+    public Collection<IProperty<?>> getAffectedOptions(final LayoutContext context) {
         MetaLayout metaLayout = provideMetaLayout(context);
         if (metaLayout != null) {
-            for (Map.Entry<IProperty<?>, Object> entry : metaLayout.getConfig().entrySet()) {
-                graphData.setProperty(entry.getKey(), entry.getValue());
-            }
+            return metaLayout.getConfig().keySet();
         }
+        return Collections.emptyList();
     }
     
     /**
@@ -303,7 +293,7 @@ public class SmartLayoutConfig implements ILayoutConfig {
      * @return a penalty for the missing features
      */
     public static double missingFeaturesFromType(final MetaLayout metaLayout, final String typeId) {
-        LayoutTypeData typeData = LayoutDataService.getInstance().getTypeData(typeId);
+        LayoutTypeData typeData = LayoutMetaDataService.getInstance().getTypeData(typeId);
         EnumSet<GraphFeature> graphFeatures = metaLayout.getGraphFeatures();
         double penalty = GraphFeature.values().length;
         for (LayoutAlgorithmData algorithmData : typeData.getLayouters()) {
@@ -334,7 +324,7 @@ public class SmartLayoutConfig implements ILayoutConfig {
      */
     public static LayoutAlgorithmData mostFeasibleAlgorithm(final MetaLayout metaLayout,
             final String typeId) {
-        LayoutTypeData typeData = LayoutDataService.getInstance().getTypeData(typeId);
+        LayoutTypeData typeData = LayoutMetaDataService.getInstance().getTypeData(typeId);
         EnumSet<GraphFeature> graphFeatures = metaLayout.getGraphFeatures();
         int featureSupport = 0;
         LayoutAlgorithmData bestAlgo = null;
@@ -348,9 +338,9 @@ public class SmartLayoutConfig implements ILayoutConfig {
                 bestAlgo = algorithmData;
             } else if (s == featureSupport) {
                 int bestPrio = bestAlgo == null ? 0 : bestAlgo.getDiagramSupport(
-                        LayoutDataService.DIAGRAM_TYPE_GENERAL);
+                        LayoutMetaDataService.DIAGRAM_TYPE_GENERAL);
                 int currentPrio = algorithmData.getDiagramSupport(
-                        LayoutDataService.DIAGRAM_TYPE_GENERAL);
+                        LayoutMetaDataService.DIAGRAM_TYPE_GENERAL);
                 if (bestAlgo == null || currentPrio > bestPrio) {
                     bestAlgo = algorithmData;
                 }

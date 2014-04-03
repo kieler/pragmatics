@@ -18,6 +18,8 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Set;
 
+import com.google.common.collect.Iterables;
+
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.BezierSpline;
 import de.cau.cs.kieler.core.math.CubicSplineInterpolator;
@@ -29,12 +31,14 @@ import de.cau.cs.kieler.core.math.BezierSpline.BezierCurve;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
+import de.cau.cs.kieler.klay.layered.graph.LGraphUtil;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
@@ -172,7 +176,7 @@ public final class SplineEdgeRouter implements ILayoutPhase {
     public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
             final LGraph graph) {
         
-        Set<GraphProperties> graphProperties = graph.getProperty(Properties.GRAPH_PROPERTIES);
+        Set<GraphProperties> graphProperties = graph.getProperty(InternalProperties.GRAPH_PROPERTIES);
         
         // Basic configuration
         IntermediateProcessingConfiguration configuration = new IntermediateProcessingConfiguration();
@@ -199,8 +203,14 @@ public final class SplineEdgeRouter implements ILayoutPhase {
         
         double xpos = 0.0, layerSpacing = 0.0;
         for (Layer layer : layeredGraph) {
+            boolean externalLayer = Iterables.all(layer, PolylineEdgeRouter.PRED_EXTERNAL_PORT);
+            // the rightmost layer is not given any node spacing
+            if (externalLayer && xpos > 0) {
+                xpos -= spacing;
+            }
+            
             // set horizontal coordinates for all nodes of the layer
-            layer.placeNodes(xpos);
+            LGraphUtil.placeNodes(layer, xpos);
             
             double maxVertDiff = 0;
             for (LNode node : layer) {
@@ -219,8 +229,13 @@ public final class SplineEdgeRouter implements ILayoutPhase {
                 }
             }
             
-            // determine placement of next layer based on the maximal vertical difference
-            layerSpacing = spacing + LAYER_SPACE_FAC * edgeSpaceFac * maxVertDiff;
+            // Determine placement of next layer based on the maximal vertical difference (as the
+            // maximum vertical difference edges span grows, the layer grows wider to allow enough
+            // space for such sloped edges to avoid too harsh angles)
+            layerSpacing = LAYER_SPACE_FAC * edgeSpaceFac * maxVertDiff + 1;
+            if (!externalLayer) {
+                layerSpacing += spacing;
+            }
             xpos += layer.getSize().x + layerSpacing;
         }
         layeredGraph.getSize().x = xpos - layerSpacing;
@@ -228,7 +243,7 @@ public final class SplineEdgeRouter implements ILayoutPhase {
         // process all edges
         for (Layer layer : layeredGraph) {
             for (LNode node : layer) {
-                NodeType sourceNodeType = node.getProperty(Properties.NODE_TYPE);
+                NodeType sourceNodeType = node.getProperty(InternalProperties.NODE_TYPE);
                 
                 if (sourceNodeType != NodeType.LONG_EDGE
                         && sourceNodeType != NodeType.LABEL) {
@@ -236,7 +251,7 @@ public final class SplineEdgeRouter implements ILayoutPhase {
                     for (LPort port : node.getPorts()) {
                         for (LEdge edge : port.getOutgoingEdges()) {
                             NodeType targetNodeType =
-                                    edge.getTarget().getNode().getProperty(Properties.NODE_TYPE);
+                                    edge.getTarget().getNode().getProperty(InternalProperties.NODE_TYPE);
                             
                             if (targetNodeType == NodeType.LONG_EDGE
                                     || targetNodeType == NodeType.LABEL) {
@@ -300,7 +315,7 @@ public final class SplineEdgeRouter implements ILayoutPhase {
                 }
             }
             points.add(targetPort.getAbsoluteAnchor());
-        } while (intermediateEdge.getTarget().getNode().getProperty(Properties.NODE_TYPE) 
+        } while (intermediateEdge.getTarget().getNode().getProperty(InternalProperties.NODE_TYPE) 
                 == NodeType.LONG_EDGE);
 
         points.add(intermediateEdge.getTarget().getAbsoluteAnchor());

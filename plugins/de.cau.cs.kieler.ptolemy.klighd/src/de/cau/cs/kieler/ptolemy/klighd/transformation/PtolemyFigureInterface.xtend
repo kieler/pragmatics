@@ -23,9 +23,10 @@ import diva.canvas.Figure
 import diva.canvas.toolbox.ImageFigure
 import java.awt.AlphaComposite
 import java.awt.Color
+import java.awt.EventQueue
 import java.awt.Image
 import java.awt.RenderingHints
-import java.awt.geom.Rectangle2D$Double
+import java.awt.geom.Rectangle2D
 import java.awt.image.BufferedImage
 import java.util.List
 import org.w3c.dom.Document
@@ -41,16 +42,12 @@ import ptolemy.vergil.icon.EditorIcon
  * @author ckru
  * @author cds
  */
-class PtolemyFigureInterface {
+final class PtolemyFigureInterface {
     
     /** Instantiating Ptolemy entities. */
     @Inject extension PtolemyInterface
-    /** KRendering utility methods. */
-    @Inject extension KRenderingExtensions
-    
-    /** Factory used to instantiate KRendering classes. */
-    val renderingFactory = KRenderingFactory::eINSTANCE
-    
+    /** The object that does the image loading in another thread. */
+    @Inject ImageLoadWorker imageLoadWorker
     
     /**
      * Tries to return a KRendering of actors with the given class name.
@@ -67,15 +64,104 @@ class PtolemyFigureInterface {
             return null;
         }
         
-        // Try to load all icons for this element
-        val List<EditorIcon> icons = loadIconsForEntity(entity)
-        if (icons.empty) {
-            // We couldn't load any icons; try to load SVG description and turn it into a KRendering
-            val Document svgDocument = loadSvgForEntity(entity)
-            val figure = GraphicsUtils::createFigureFromSvg(svgDocument)
-            return figure
+        /* The following stuff is a bit complicated and perhaps a tiny bit ugly, but it works... We're
+         * resetting our image load worker to make it ready for another go at preparing the KRendering
+         * representation of our entity. To avoid exceptions, this has to be done in the AWT event queue.
+         * When we ask Ptolemy to load the entity's editor icons (and if it has found some), there might
+         * be ImageIcons involved. Those wait for their image to finish loading, which the load worker
+         * then does as well. Once they've finished loading, though, the image might have to be scaled
+         * as well -- which the ImageIcon does through a runnable in the AWT event queue. Thus, our
+         * load worker stops executing, with its result still being null. Then, we start it again. This
+         * time, all images have finished loading and all scaling operations have started. All it does
+         * now is wait for the scaled images to become available. It then constructs images for the
+         * entities, turns them into a KRendering, and terminates.
+         */
+        
+        imageLoadWorker.reset(entity)
+        while (imageLoadWorker.getResult() == null) {
+            EventQueue.invokeAndWait(imageLoadWorker)
+        }
+        return imageLoadWorker.getResult()
+    }
+}
+
+
+/**
+ * Loads Ptolemy stuff. Set the Ptolemy entity to load icons for, run it in the AWT event queue thread,
+ * and retrieve the result.
+ */
+final class ImageLoadWorker implements Runnable {
+    
+    /** KRendering utility methods. */
+    @Inject extension KRenderingExtensions
+    
+    /** Factory used to instantiate KRendering classes. */
+    val renderingFactory = KRenderingFactory::eINSTANCE
+    
+    /** The entity whose icon to load. */
+    private Entity entity = null;
+    /** EditorIcons we have loaded for the entity. */
+    private List<EditorIcon> loadedIcons = null;
+    /**
+     * Whether we have already waited for the unscaled images to finish loading. If so, we only need
+     * to wait for the scaled images to finish loading the next time around.
+     */
+    private boolean unscaledImagesLoaded = false;
+    /** The rendering resulting from the loading operations. */
+    private KRendering result = null;
+    
+    
+    /**
+     * Sets the entity that this worker object is to load icons for.
+     * 
+     * @param newEntity the entity to load icons for.
+     */
+    def void reset(Entity newEntity) {
+        entity = newEntity
+        loadedIcons = null
+        result = null
+        unscaledImagesLoaded = false;
+    }
+    
+    /**
+     * Returns the KRendering representation of the loaded entity icon.
+     * 
+     * @return the resulting KRednering representation.
+     */
+    def KRendering getResult() {
+        return result
+    }
+    
+    
+    /**
+     * Loads icons for the entity set previously. Must be executed in the AWT event queue thread.
+     */
+    override run() {
+        // Check if we have already tried to load our icons
+        if (loadedIcons == null) {
+            // We have not -- load them
+            loadedIcons = loadIconsForEntity(entity)
+            if (loadedIcons.empty) {
+                // We couldn't load any icons; try to load SVG description and turn it into a KRendering
+                val Document svgDocument = loadSvgForEntity(entity)
+                val figure = GraphicsUtils::createFigureFromSvg(svgDocument)
+                result = figure
+            } else {
+                // We have loaded the icons; give Ptolemy a chance now to prepare the scaled images
+                // by terminating and letting createPtolemyFigureRendering create us again
+            }
         } else {
-            return createRenderingFromIcon(icons.get(0))
+            // Icons have been loaded -- we'll use the first one. We will now be waiting for the regular
+            // images, then return, and on the next attempt wait for the scaled images
+            if (unscaledImagesLoaded) {
+                GraphicsUtils::waitForImages(loadedIcons.get(0), false);
+                
+                // We should now have all scaled images; create the rendering!
+                result = createRenderingFromIcon(loadedIcons.get(0))
+            } else {
+                GraphicsUtils::waitForImages(loadedIcons.get(0), true);
+                unscaledImagesLoaded = true;
+            }
         }
     }
     
@@ -87,7 +173,6 @@ class PtolemyFigureInterface {
      */
     def private KRendering createRenderingFromIcon(EditorIcon icon) {
         val ptFigure = icon.createBackgroundFigure()
-        GraphicsUtils::repairEditorIcon(icon, ptFigure)
         
         val figureImage = ptFigure.toImage()
         val width = figureImage.getWidth(null)
@@ -190,7 +275,7 @@ class PtolemyFigureInterface {
             // It's not an ImageFigure, so try to get some SWT graphics stuff and turn that into
             // an image
             val bounds = figure.bounds
-            val size = new Rectangle2D$Double(0, 0, bounds.width, bounds.height)
+            val size = new Rectangle2D.Double(0, 0, bounds.width, bounds.height)
             val transform = CanvasUtilities::computeFitTransform(bounds, size)
             figure.transform(transform)
             
@@ -208,4 +293,5 @@ class PtolemyFigureInterface {
             return image
         }
     }
+    
 }

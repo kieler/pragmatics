@@ -24,6 +24,9 @@ import org.eclipse.emf.common.util.Enumerator;
  * A representation of the literals of the enumeration '<em><b>Trigger</b></em>',
  * and utility methods for working with them.
  * <!-- end-user-doc -->
+ * <!-- begin-model-doc -->
+ * Trigger presets to determine when to execute actions.
+ * <!-- end-model-doc -->
  * @see de.cau.cs.kieler.core.krendering.KRenderingPackage#getTrigger()
  * @model
  * @generated
@@ -47,7 +50,15 @@ public enum Trigger implements Enumerator {
      * @generated
      * @ordered
      */
-    DOUBLECLICK(1, "DOUBLECLICK", "DOUBLECLICK");
+    DOUBLECLICK(1, "DOUBLECLICK", "DOUBLECLICK"), /**
+     * The '<em><b>MIDDLE SINGLECLICK</b></em>' literal object.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #MIDDLE_SINGLECLICK_VALUE
+     * @generated
+     * @ordered
+     */
+    MIDDLE_SINGLECLICK(2, "MIDDLE_SINGLECLICK", "MIDDLE_SINGLECLICK");
 
     /**
      * The '<em><b>SINGLECLICK</b></em>' literal value.
@@ -57,6 +68,9 @@ public enum Trigger implements Enumerator {
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
+     * Fires on left button's single click.
+     * <!-- end-model-doc -->
      * @see #SINGLECLICK
      * @model
      * @generated
@@ -72,12 +86,29 @@ public enum Trigger implements Enumerator {
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
+     * Fires on left button's double click.
+     * <!-- end-model-doc -->
      * @see #DOUBLECLICK
      * @model
      * @generated
      * @ordered
      */
     public static final int DOUBLECLICK_VALUE = 1;
+
+    /**
+     * The '<em><b>MIDDLE SINGLECLICK</b></em>' literal value.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
+     * Fires on middle button's single click.
+     * <!-- end-model-doc -->
+     * @see #MIDDLE_SINGLECLICK
+     * @model
+     * @generated
+     * @ordered
+     */
+    public static final int MIDDLE_SINGLECLICK_VALUE = 2;
 
     /**
      * An array of all the '<em><b>Trigger</b></em>' enumerators.
@@ -89,6 +120,7 @@ public enum Trigger implements Enumerator {
         new Trigger[] {
             SINGLECLICK,
             DOUBLECLICK,
+            MIDDLE_SINGLECLICK,
         };
 
     /**
@@ -141,6 +173,7 @@ public enum Trigger implements Enumerator {
         switch (value) {
             case SINGLECLICK_VALUE: return SINGLECLICK;
             case DOUBLECLICK_VALUE: return DOUBLECLICK;
+            case MIDDLE_SINGLECLICK_VALUE: return MIDDLE_SINGLECLICK;
         }
         return null;
     }

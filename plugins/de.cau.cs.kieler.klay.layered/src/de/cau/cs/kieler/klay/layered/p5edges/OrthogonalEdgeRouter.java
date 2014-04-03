@@ -18,15 +18,20 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
+import com.google.common.collect.Iterables;
+
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
+import de.cau.cs.kieler.klay.layered.graph.LGraphUtil;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
+import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -83,7 +88,7 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
      *     - LABEL_SIDE_SELECTOR
      *   
      *   - For center edge labels:
-     *      - LABEL_DUMMY_SWITCHER
+     *     - LABEL_DUMMY_SWITCHER
      * 
      * Before phase 4:
      *   - For hyperedges:
@@ -218,7 +223,7 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
     public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
             final LGraph graph) {
         
-        Set<GraphProperties> graphProperties = graph.getProperty(Properties.GRAPH_PROPERTIES);
+        Set<GraphProperties> graphProperties = graph.getProperty(InternalProperties.GRAPH_PROPERTIES);
         
         // Basic configuration
         IntermediateProcessingConfiguration configuration = new IntermediateProcessingConfiguration();
@@ -275,8 +280,8 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
         
         // Prepare for iteration!
         OrthogonalRoutingGenerator routingGenerator = new OrthogonalRoutingGenerator(
-                new OrthogonalRoutingGenerator.WestToEastRoutingStrategy(), edgeSpacing,
-                debug ? "phase5" : null);
+                OrthogonalRoutingGenerator.IRoutingDirectionStrategy.Strategy.WEST_TO_EAST,
+                edgeSpacing, debug ? "phase5" : null);
         float xpos = 0.0f;
         ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
         Layer leftLayer = null;
@@ -297,25 +302,35 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
             
             // Place the left layer's nodes, if any
             if (leftLayer != null) {
-                leftLayer.placeNodes(xpos);
+                LGraphUtil.placeNodes(leftLayer, xpos);
                 xpos += leftLayer.getSize().x;
             }
             
             // Route edges between the two layers
             slotsCount = routingGenerator.routeEdges(layeredGraph, leftLayerNodes, leftLayerIndex,
-                    rightLayerNodes, xpos + edgeSpacing);
+                    rightLayerNodes, leftLayer == null ? xpos : xpos + edgeSpacing);
             
+            boolean externalLeftLayer = leftLayer == null || Iterables.all(leftLayerNodes,
+                    PolylineEdgeRouter.PRED_EXTERNAL_PORT);
+            boolean externalRightLayer = rightLayer == null || Iterables.all(rightLayerNodes,
+                    PolylineEdgeRouter.PRED_EXTERNAL_PORT);
             if (slotsCount > 0) {
                 // The space between each pair of edge segments, and between nodes and edges
-                double increment = (slotsCount + 1) * edgeSpacing;
-                // If  we are between two layers, make sure their minimal spacing is preserved
-                if (increment < nodeSpacing && leftLayer != null && rightLayer != null) {
+                double increment = slotsCount * edgeSpacing;
+                if (rightLayer != null) {
+                    increment += edgeSpacing;
+                }
+                // If we are between two layers, make sure their minimal spacing is preserved
+                if (increment < nodeSpacing && !externalLeftLayer && !externalRightLayer) {
                     increment = nodeSpacing;
                 }
                 xpos += increment;
-            } else if (leftLayer != null && rightLayer != null) {
-                // If we are between two layers, but all edges are straight, take the default spacing
-                xpos += nodeSpacing;
+            } else if (!externalLeftLayer && !externalRightLayer) {
+                // If all edges are straight, use the usual spacing 
+                //   (except when we are between two layers where both only contains dummy nodes)
+                if (!layersContainOnlyDummies(leftLayer, rightLayer)) {
+                    xpos += nodeSpacing;
+                }
             }
             
             leftLayer = rightLayer;
@@ -326,6 +341,24 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
         layeredGraph.getSize().x = xpos;
         
         monitor.done();
+    }
+    
+    /**
+     * Check if the layer only contains non {@link NodeType#NORMAL} nodes.
+     * 
+     * Here we allow the initial big node (which is marked as normal node) 
+     * as we want to avoid additional spacing for this node as well.
+     */
+    private boolean layersContainOnlyDummies(final Layer... layers) {
+        for (Layer l : layers) {
+            for (LNode n : l.getNodes()) {
+                if (n.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORMAL
+                       && !n.getProperty(InternalProperties.BIG_NODE_INITIAL)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
     
 }

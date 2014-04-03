@@ -17,8 +17,8 @@ import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
-import de.cau.cs.kieler.kiml.service.grana.analyses.AreaAnalysis;
+import de.cau.cs.kieler.kiml.grana.IAnalysis;
+import de.cau.cs.kieler.kiml.grana.analyses.AreaAnalysis;
 
 /**
  * A layout metric that computes the aspect ratio of the given graph layout.
@@ -40,7 +40,7 @@ public class AspectRatioMetric implements IAnalysis {
      */
     public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Flatness metric analysis", 1);
+        progressMonitor.begin("Flatness metric", 1);
 
         float result;
         Object[] dimsResult = (Object[]) results.get(AreaAnalysis.ID);

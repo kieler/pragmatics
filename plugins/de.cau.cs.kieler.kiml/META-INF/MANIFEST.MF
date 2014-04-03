@@ -2,8 +2,9 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: de.cau.cs.kieler.kiml;singleton:=true
-Bundle-Version: 0.13.0.qualifier
+Bundle-Version: 0.14.0.qualifier
 Bundle-Localization: plugin
+Eclipse-BuddyPolicy: registered
 Require-Bundle: com.google.guava;bundle-version="10.0.0",
  de.cau.cs.kieler.core,
  de.cau.cs.kieler.core.kgraph
@@ -18,7 +19,9 @@ Export-Package: de.cau.cs.kieler.kiml,
    de.cau.cs.kieler.core.alg,
    de.cau.cs.kieler.kiml.layout.options,
    de.cau.cs.kieler.core.slimgraph,
-   de.cau.cs.kieler.core.kgraph"
+   de.cau.cs.kieler.core.kgraph",
+ de.cau.cs.kieler.kiml.util.adapters,
+ de.cau.cs.kieler.kiml.util.nodespacing
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy

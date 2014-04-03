@@ -13,44 +13,30 @@
  */
 package de.cau.cs.kieler.ksbase.ui.kivi;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.operations.OperationHistoryFactory;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.transaction.Transaction;
-import org.eclipse.emf.workspace.AbstractEMFOperation;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.statushandlers.StatusManager;
-import org.eclipse.xtext.resource.XtextResource;
-import org.eclipse.xtext.ui.editor.XtextEditor;
-import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
+import de.cau.cs.kieler.core.kivi.KiVi;
 import de.cau.cs.kieler.core.kivi.menu.ButtonTrigger.ButtonState;
 import de.cau.cs.kieler.core.kivi.triggers.SelectionTrigger.SelectionState;
 import de.cau.cs.kieler.kiml.kivi.LayoutEffect;
+import de.cau.cs.kieler.klighd.IModelModificationHandler;
+import de.cau.cs.kieler.klighd.ui.modifymodel.ModelModificationHandlerProvider;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.KSBasETransformation;
-import de.cau.cs.kieler.ksbase.core.TransformationFrameworkFactory;
 import de.cau.cs.kieler.ksbase.m2m.ITransformationListener;
-import de.cau.cs.kieler.ksbase.m2m.TransformationDescriptor;
 import de.cau.cs.kieler.ksbase.m2m.TransformationObserver;
 import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
-import de.cau.cs.kieler.ksbase.ui.m2m.XtendTransformationContext;
-import de.cau.cs.kieler.ksbase.ui.m2m.XtendTransformationEffect;
 
 /**
  * A Combination triggering the KSBasE transformations from kivi menu contributions.
@@ -60,13 +46,12 @@ import de.cau.cs.kieler.ksbase.ui.m2m.XtendTransformationEffect;
  */
 public class KSBasECombination extends AbstractCombination implements ITransformationListener {
 
-    private EditorTransformationSettings editorSettings;
 
     private HashMap<String, KSBasETransformation> transformations =
             new HashMap<String, KSBasETransformation>();
 
     // private static DiagramDocumentEditor lastEditor = null;
-    private static IKSBasEHandler activeHandler = null;
+    private static IModelModificationHandler activeHandler = null;
 
     private static EObject select = null;
 
@@ -75,7 +60,7 @@ public class KSBasECombination extends AbstractCombination implements ITransform
      *            the KSBasE editor settings used as a context for the transformation.
      */
     public KSBasECombination(final EditorTransformationSettings editorSettings) {
-        this.editorSettings = editorSettings;
+        KiVi.getInstance().setActive(true);
         this.setActive(true);
         TransformationObserver.getInstance().register(this);
     }
@@ -116,7 +101,7 @@ public class KSBasECombination extends AbstractCombination implements ITransform
         if (transformation != null) {
 
             // update the corresponding handler
-            activeHandler = KSBasEUIPlugin.getDefault().getFittingKSBasEHandler(editor, selection);
+            activeHandler = ModelModificationHandlerProvider.getInstance().getFittingHandler(editor);
             if (activeHandler == null) {
                 StatusManager.getManager().handle(
                         new Status(Status.WARNING, KSBasEUIPlugin.PLUGIN_ID,
@@ -124,34 +109,18 @@ public class KSBasECombination extends AbstractCombination implements ITransform
                 return;
             }
 
-            List<EObject> selectionList = activeHandler.getSelection(editor, selection);
+            List<EObject> selectionList = activeHandler.getSelection(editor, selection.getSelectionElements());
 
             // do xtend2 stuff
             if (transformation.getTransformationClass() != null) {
                 evokeXtend2(transformation, selectionList, editor);
-
-                // do xtend1 stuff
-            } else {
-                // map the selection to the parameters of this transformation
-                List<Object> selectionMapping = null;
-                for (List<String> parameters : transformation.getParameterList()) {
-                    selectionMapping =
-                            TransformationFrameworkFactory.getDefaultTransformationFramework()
-                                    .createParameterMapping(selectionList,
-                                            parameters.toArray(new String[parameters.size()]));
-                }
-                // execute xtend transformation
-                if (selectionMapping != null) {
-                    evokeXtend(transformation, selectionMapping);
-                    // refreshEditPolicy(diagramEditor);
-                }
             }
 
             // arbitrary post processing, eg, refreshing editing policies
             activeHandler.performPostProcessing();
 
             // possibly execute layout
-            if (activeHandler.isPerformLayout()) {
+            if (activeHandler.isLayoutRequired()) {
                 EObject rootObject = activeHandler.getLayoutRoot();
                 evokeLayout(selectionList, rootObject, editor);
             }
@@ -236,66 +205,7 @@ public class KSBasECombination extends AbstractCombination implements ITransform
         }
         // if you found a fitting method execute it
         if (method != null) {
-            try {
-                if (activeHandler.getEditingDomain() != null) {
-
-                    final Method fmethod = method;
-                    final List<Object> fparams = params;
-                    AbstractEMFOperation emfOp =
-                            new AbstractEMFOperation(activeHandler.getEditingDomain(),
-                                    "xtend2 transformation", Collections.singletonMap(
-                                            Transaction.OPTION_UNPROTECTED, true)) {
-
-                                @Override
-                                protected IStatus doExecute(final IProgressMonitor monitor,
-                                        final IAdaptable info) throws ExecutionException {
-                                    try {
-                                        fmethod.invoke(transformation.getTransformationClass(),
-                                                fparams.toArray());
-                                    } catch (IllegalArgumentException e) {
-                                        e.printStackTrace();
-                                    } catch (IllegalAccessException e) {
-                                        e.printStackTrace();
-                                    } catch (InvocationTargetException e) {
-                                        e.printStackTrace();
-                                    }
-                                    return Status.OK_STATUS;
-                                }
-
-                            };
-                    try {
-                        // execute above operation
-                        OperationHistoryFactory.getOperationHistory().execute(emfOp, null, null);
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    }
-                } else if (editor instanceof XtextEditor) {
-                        final XtextEditor xtextEditor = (XtextEditor) editor;
-                        final Method fmethod = method;
-                        final List<Object> fparams = params;
-                        Display.getDefault().asyncExec(new Runnable() {
-                            
-                            public void run() {
-                                xtextEditor.getDocument().modify(new IUnitOfWork.Void<XtextResource>() {
-                                    public void process(XtextResource state) throws Exception {
-                                        fmethod.invoke(transformation.getTransformationClass(), fparams.toArray());
-                                    }
-                                });
-                                
-                            }
-                        });
-                    
-                } else {
-                    method.invoke(transformation.getTransformationClass(), params.toArray());
-                }
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
-
+            activeHandler.execute(editor, method, transformation.getTransformationClass(), params);
         }
 
     }
@@ -341,30 +251,6 @@ public class KSBasECombination extends AbstractCombination implements ITransform
             }
         }
         return false;
-    }
-
-    /**
-     * Method to execute a given Xtend1 transformation.
-     * 
-     * @param transformation
-     *            the transformation to execute
-     * @param selectionMapping
-     *            the current selection
-     * @param diagramEditor
-     *            the current diagram editor
-     */
-    private void evokeXtend(final KSBasETransformation transformation,
-            final List<Object> selectionMapping) {
-        TransformationDescriptor descriptor =
-                new TransformationDescriptor(transformation.getTransformation(),
-                        selectionMapping.toArray());
-        XtendTransformationContext context =
-                new XtendTransformationContext(editorSettings.getTransformationFile(),
-                        editorSettings.getModelPackages().toArray(
-                                new String[editorSettings.getModelPackages().size()]), null,
-                        activeHandler.getEditingDomain());
-        XtendTransformationEffect effect = new XtendTransformationEffect(context, descriptor);
-        effect.schedule();
     }
 
     /**

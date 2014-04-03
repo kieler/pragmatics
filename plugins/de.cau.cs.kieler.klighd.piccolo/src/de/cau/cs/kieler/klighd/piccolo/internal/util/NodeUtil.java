@@ -16,11 +16,13 @@
  */
 package de.cau.cs.kieler.klighd.piccolo.internal.util;
 
+import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 
-import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.klighd.microlayout.Bounds;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.IGraphElement;
+import de.cau.cs.kieler.klighd.piccolo.internal.nodes.INode;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.activities.PActivity;
 import edu.umd.cs.piccolo.activities.PActivity.PActivityDelegate;
@@ -28,12 +30,13 @@ import edu.umd.cs.piccolo.util.PAffineTransform;
 import edu.umd.cs.piccolo.util.PBounds;
 
 /**
- * A utility class for handling common Piccolo node related tasks.<br>
+ * A utility class for handling common Piccolo2D node related tasks.<br>
  * <br>
  * In the context of this utility class the term 'smart bounds' refers to a bounds instance, which
  * origin is the translation of an associated node instead of a static offset.
  * 
  * @author mri
+ * @author chsch
  */
 public final class NodeUtil {
     
@@ -70,9 +73,8 @@ public final class NodeUtil {
      *            a custom {@link PNode} implementing {@link IGraphElement}
      * @return node typed as {@link IGraphElement}
      */
-    public static IGraphElement<KGraphElement> asIGraphElement(final PNode node) {
-        @SuppressWarnings("unchecked")
-        final IGraphElement<KGraphElement> graphNode = (IGraphElement<KGraphElement>) node;
+    public static IGraphElement<?> asIGraphElement(final PNode node) {
+        final IGraphElement<?> graphNode = (IGraphElement<?>) node;
         return graphNode;
     }
 
@@ -210,7 +212,7 @@ public final class NodeUtil {
     }
 
     /**
-     * Unschedules a primary activity of the given node if any.
+     * Removes a formerly scheduled primary activity of the given from the schedule if any exists.
      * 
      * @param node
      *            the node
@@ -222,5 +224,82 @@ public final class NodeUtil {
             oldActivity.terminate();
         }
     }
+    
+    /**
+     * Recursively concatenates the {@link AffineTransform AffineTransforms} of all {@link PNode
+     * PNodes} in the containment hierarchy between <code>ancestor</code> and <code>child</code>
+     * starting with the transform of <code>ancestor</code>'s first child in that containment path
+     * (<code>ancestor</code>'s transform is not considered).<br>
+     * If <code>ancestor</code> is actually not an ancestor of <code>child</code>, this method
+     * concatenates all transforms of <code>child</code>' ancestors and that of<code>child</code>.
+     * 
+     * @param child
+     *            the child {@link PNode}
+     * @param ancestor
+     *            the ancestor {@link PNode}
+     * @return an {@link AffineTransform} being formed by the concatenation of the required
+     *         transforms
+     */
+    public static PAffineTransform localToParent(final PNode child, final PNode ancestor) {
+        if (child == null || child == ancestor) {
+            return new PAffineTransform();
+        }
+        
+        final PNode childsParent = child.getParent();
+        final PAffineTransform transform;
 
+        if (childsParent != null) {
+            transform = localToParent(childsParent, ancestor);
+        } else {
+            return child.getTransform(); 
+        }
+
+        transform.concatenate(child.getTransformReference(true));
+        return transform;
+    }
+    
+    /**
+     * This method simply wraps {@link AffineTransform#createInverse()} in order to encapsulate its
+     * required try-catch-block. <br>
+     * The method can be used without any doubts if the provided <code>transform</code>
+     * only consists of <i>translate</i> data. <b>Otherwise be careful!</b>
+     * 
+     * @param transform
+     *            the transform to invert
+     * @return the inverted transform, or an <b>empty transform if <code>transform</code> is not
+     *         invertible</b>
+     */
+    public static AffineTransform inverse(final AffineTransform transform) {
+        try {
+            return transform.createInverse();
+        } catch (NoninvertibleTransformException e) {
+            return new AffineTransform();
+        }
+    }
+
+    /**
+     * Advancement of {@link PNode#getGlobalBounds()} respecting the current clip that may be set to
+     * a non-root {@link de.cau.cs.kieler.core.kgraph.KNode KNode}.<br>
+     * <br>
+     * It is used in {@link de.cau.cs.kieler.klighd.piccolo.internal.controller.DiagramController
+     * DiagramController#isVisible(de.cau.cs.kieler.core.kgraph.KGraphElement)}, for example.
+     * 
+     * @param node
+     *            the {@link PNode} to compute the bounds for
+     * @param clipNode
+     *            the INode the diagram is currently clipped to (for convenience)
+     * @return <code>node's</code> global bounds relative to the current clip
+     */
+    public static PBounds clipRelativeGlobalBoundsOf(final PNode node, final INode clipNode) {
+        final PBounds nodeBounds = node.getBounds();
+        PNode p = node;
+        while (p != null && p.getParent() != null) {
+            p.localToParent(nodeBounds);
+            if (p == clipNode) {
+                break;
+            }
+            p = p.getParent();
+        }
+        return nodeBounds;
+    }
 }

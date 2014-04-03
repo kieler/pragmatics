@@ -28,19 +28,21 @@ import org.eclipse.core.internal.expressions.CompositeExpression;
 import org.eclipse.core.internal.expressions.EqualsExpression;
 import org.eclipse.core.internal.expressions.OrExpression;
 import org.eclipse.core.internal.expressions.WithExpression;
+import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.actions.CompoundContributionItem;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.handlers.RegistryToggleState;
-import org.eclipse.ui.internal.menus.WorkbenchMenuService;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
-import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.menus.IWorkbenchContribution;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.services.IServiceLocator;
@@ -130,10 +132,29 @@ IWorkbenchContribution {
             handlerService.deactivateHandler(act);
         }
         handlerActivations.clear();
-        
-        return makeContributionItems();
+        IContributionItem[] items = makeContributionItems();
+        if (items.length == 0) {
+            items = makeDefaultItem();
+        }
+        return items;
     }
 
+    /**
+     * Makes a default contribution displaying an error message.
+     * @return "no contributions found" contribution
+     */
+    private IContributionItem[] makeDefaultItem() {
+        ContributionItem defaultItem = new ContributionItem("de.cau.cs.kieler.kivi.default") {
+            public void fill(final Menu menu, final int index) {
+                MenuItem item = new MenuItem(menu, SWT.NONE);
+                item.setEnabled(false);
+                item.setText("No contributions available");
+            }
+        };
+        IContributionItem[] items = {defaultItem};
+        return items;
+    }
+    
     /**
      * The main code to create a button. It reads the button configurations from the
      * KiviMenuContributionService and adds buttons accordingly.

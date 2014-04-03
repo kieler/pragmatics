@@ -20,7 +20,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kwebs.server.alg.Message;
 import de.cau.cs.kieler.kwebs.server.alg.Message.Severity;
 import de.cau.cs.kieler.kwebs.server.configuration.Configuration;
-import de.cau.cs.kieler.kwebs.util.Graphs;
+import de.cau.cs.kieler.kwebs.server.util.Graphs;
 
 /**
  * 
@@ -68,7 +68,6 @@ public class GraphConstraints extends LayoutFilter {
      * {@inheritDoc}
      */
     public boolean apply(final LayoutFilterData data, final List<Message> messages) {
-System.out.println(maxGraphs + " " + maxElements);
         if (testMaxGraphs && data.getGraphs().size() > maxGraphs) {
             messages.add(new Message(
                 this, 

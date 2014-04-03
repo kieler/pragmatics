@@ -22,6 +22,7 @@ import java.util.Set;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -37,7 +38,8 @@ import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.kgraph.PersistentEntry;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.core.properties.IPropertyHolder;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier;
@@ -114,8 +116,9 @@ public final class KimlUtil {
      */
     public static KPort createInitializedPort() {
         KPort port = KGraphFactory.eINSTANCE.createKPort();
-        KShapeLayout labelLayout = KLayoutDataFactory.eINSTANCE.createKShapeLayout();
-        port.getData().add(labelLayout);
+        KShapeLayout portLayout = KLayoutDataFactory.eINSTANCE.createKShapeLayout();
+        portLayout.setInsets(KLayoutDataFactory.eINSTANCE.createKInsets());
+        port.getData().add(portLayout);
         return port;
     }
 
@@ -401,18 +404,14 @@ public final class KimlUtil {
             final boolean movePorts, final boolean moveLabels) {
         
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-        if (nodeLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
-            // don't resize nodes that aren't laid out
-            return null;
-        }
         Set<SizeConstraint> sizeConstraint = nodeLayout.getProperty(LayoutOptions.SIZE_CONSTRAINT);
-        Set<SizeOptions> sizeOptions = nodeLayout.getProperty(LayoutOptions.SIZE_OPTIONS);
         
         KVector oldSize = new KVector(nodeLayout.getWidth(), nodeLayout.getHeight());
         KVector newSize;
         
         // Calculate the new size
         if (sizeConstraint.contains(SizeConstraint.MINIMUM_SIZE)) {
+            Set<SizeOptions> sizeOptions = nodeLayout.getProperty(LayoutOptions.SIZE_OPTIONS);
             float minWidth = nodeLayout.getProperty(LayoutOptions.MIN_WIDTH);
             float minHeight = nodeLayout.getProperty(LayoutOptions.MIN_HEIGHT);
             
@@ -514,6 +513,45 @@ public final class KimlUtil {
     }
 
     /**
+     * Applies the scaling factor configured in terms of {@link LayoutOptions#SCALE_FACTOR} in its
+     * {@link KShapeLayout} to {@code node} 's size data, and updates the layout data of
+     * {@code node}'s ports and labels accordingly.<br>
+     * <b>Note:</b> The scaled layout data won't be reverted during the layout process, see
+     * {@link LayoutOptions#SCALE_FACTOR}.
+     * 
+     * @author chsch
+     * 
+     * @param node
+     *            the {@link KNode} to be scaled
+     */
+    public static void applyConfiguredNodeScaling(final KNode node) {
+        final KShapeLayout shapeLayout = node.getData(KShapeLayout.class);
+        final float scalingFactor = shapeLayout.getProperty(LayoutOptions.SCALE_FACTOR);
+
+        if (scalingFactor == 1f) {
+            return;
+        }
+
+        shapeLayout.setSize(scalingFactor * shapeLayout.getWidth(),
+                scalingFactor * shapeLayout.getHeight());
+
+        for (KGraphElement kge : Iterables.concat(node.getPorts(), node.getLabels())) {
+            final KShapeLayout kgeLayout = kge.getData(KShapeLayout.class);
+
+            kgeLayout.setPos(scalingFactor * kgeLayout.getXpos(),
+                    scalingFactor * kgeLayout.getYpos());
+            kgeLayout.setSize(scalingFactor * kgeLayout.getWidth(),
+                    scalingFactor * kgeLayout.getHeight());
+            
+            final KVector anchor = kgeLayout.getProperty(LayoutOptions.PORT_ANCHOR);
+            if (anchor != null) {
+                anchor.x *= scalingFactor;
+                anchor.y *= scalingFactor;
+            }
+        }
+    }
+
+    /**
      * Determines whether the given child node is a descendant of the parent
      * node.
      * 
@@ -539,8 +577,9 @@ public final class KimlUtil {
      * 
      * @param point a relative point
      * @param parent the parent node to which the point is relative to
+     * @return {@code point} for convenience
      */
-    public static void toAbsolute(final KVector point, final KNode parent) {
+    public static KVector toAbsolute(final KVector point, final KNode parent) {
         KNode node = parent;
         while (node != null) {
             KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
@@ -549,6 +588,7 @@ public final class KimlUtil {
                     nodeLayout.getYpos() + insets.getTop());
             node = node.getParent();
         }
+        return point;
     }
     
     /**
@@ -557,8 +597,9 @@ public final class KimlUtil {
      * 
      * @param point an absolute point
      * @param parent the parent node to which the point shall be made relative to
+     * @return {@code point} for convenience
      */
-    public static void toRelative(final KVector point, final KNode parent) {
+    public static KVector toRelative(final KVector point, final KNode parent) {
         KNode node = parent;
         while (node != null) {
             KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
@@ -567,6 +608,7 @@ public final class KimlUtil {
                         -nodeLayout.getYpos() - insets.getTop());
             node = node.getParent();
         }
+        return point;
     }
     
     /**
@@ -618,8 +660,8 @@ public final class KimlUtil {
      */
     public static void setOption(final KGraphData graphData, final String id,
             final String value) {
-        LayoutDataService dataService = LayoutDataService.getInstance();
-        LayoutOptionData<?> optionData = dataService.getOptionData(id);
+        LayoutMetaDataService dataService = LayoutMetaDataService.getInstance();
+        LayoutOptionData optionData = dataService.getOptionData(id);
         if (optionData != null) {
             Object obj = optionData.parseValue(value);
             if (obj != null) {
@@ -647,40 +689,61 @@ public final class KimlUtil {
     /**
      * Loads all {@link de.cau.cs.kieler.core.properties.IProperty} of KGraphData elements of a
      * KGraph by deserializing {@link PersistentEntry} tuples.
-     * Values are parsed using layout option data obtained from the {@link LayoutDataService}.
+     * Values are parsed using layout option data obtained from the {@link LayoutMetaDataService}.
      * Options that cannot be resolved immediately (e.g. because the extension points have not
      * been read yet) are stored as {@link LayoutOptionProxy}.
      * 
      * @param graph the root element of the graph to load elements of.
      */
     public static void loadDataElements(final KNode graph) {
-        LayoutDataService dataService = LayoutDataService.getInstance();
+        LayoutMetaDataService dataService = LayoutMetaDataService.getInstance();
         TreeIterator<EObject> iterator = graph.eAllContents();
         while (iterator.hasNext()) {
             EObject eObject = iterator.next();
             if (eObject instanceof KLayoutData) {
-                KLayoutData kgraphData = (KLayoutData) eObject;
-                for (PersistentEntry persistentEntry : kgraphData.getPersistentEntries()) {
-                    String key = persistentEntry.getKey();
-                    String value = persistentEntry.getValue();
-                    if (key != null && value != null) {
-                        LayoutOptionData<?> layoutOptionData = null;
-                        
-                        // try to get the layout option from the data service.
-                        layoutOptionData = dataService.getOptionDataBySuffix(key);
-                        
-                        // if we have a valid layout option, parse its value.
-                        if (layoutOptionData != null) {
-                            Object layoutOptionValue = layoutOptionData.parseValue(value);
-                            if (layoutOptionValue != null) {
-                                kgraphData.setProperty(layoutOptionData, layoutOptionValue);
-                            }
-                        } else {
-                            // the layout option could not be resolved, so create a proxy
-                            LayoutOptionProxy.setProxyValue(kgraphData, key, value);
-                        }
-                    }
+                final KLayoutData layoutData = (KLayoutData) eObject;
+                for (PersistentEntry persistentEntry : layoutData.getPersistentEntries()) {
+                    loadDataElement(dataService, layoutData, persistentEntry.getKey(),
+                            persistentEntry.getValue());
                 }
+            }
+        }
+    }
+
+    /**
+     * Configures the {@link de.cau.cs.kieler.core.properties.IProperty layout option} given by
+     * {@code key} and {@code value} in the given {@link IPropertyHolder}, if {@code key}
+     * denominates a registered Layout Option; configures a {@link LayoutOptionProxy} otherwise.<br>
+     * <br>
+     * Extracted that part into a dedicated method in order to be able to re-use it, e.g. in
+     * KLighD's ExpansionAwareLayoutOptionData.
+     * 
+     * @author chsch (extractor)
+     * 
+     * @param dataService
+     *            the current {@link LayoutMetaDataService}
+     * @param propertyHolder
+     *            the {@link IPropertyHolder} to be configured
+     * @param id
+     *            the layout option's id
+     * @param value
+     *            the desired option value
+     */
+    public static void loadDataElement(final LayoutMetaDataService dataService,
+            final IPropertyHolder propertyHolder, final String id, final String value) {
+        if (id != null && value != null) {
+            // try to get the layout option from the data service.
+            final LayoutOptionData layoutOptionData = dataService.getOptionDataBySuffix(id);
+            
+            // if we have a valid layout option, parse its value.
+            if (layoutOptionData != null) {
+                Object layoutOptionValue = layoutOptionData.parseValue(value);
+                if (layoutOptionValue != null) {
+                    propertyHolder.setProperty(layoutOptionData, layoutOptionValue);
+                }
+            } else {
+                // the layout option could not be resolved, so create a proxy
+                LayoutOptionProxy.setProxyValue(propertyHolder, id, value);
             }
         }
     }

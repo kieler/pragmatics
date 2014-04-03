@@ -33,6 +33,7 @@
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="krendering.ecore#//Trigger">
       <genEnumLiterals ecoreEnumLiteral="krendering.ecore#//Trigger/SINGLECLICK"/>
       <genEnumLiterals ecoreEnumLiteral="krendering.ecore#//Trigger/DOUBLECLICK"/>
+      <genEnumLiterals ecoreEnumLiteral="krendering.ecore#//Trigger/MIDDLE_SINGLECLICK"/>
     </genEnums>
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="krendering.ecore#//Underline">
       <genEnumLiterals ecoreEnumLiteral="krendering.ecore#//Underline/NONE"/>
@@ -52,11 +53,16 @@
       <genEnumLiterals ecoreEnumLiteral="krendering.ecore#//Arc/CHORD"/>
       <genEnumLiterals ecoreEnumLiteral="krendering.ecore#//Arc/PIE"/>
     </genEnums>
+    <genDataTypes ecoreDataType="krendering.ecore#//Colors"/>
     <genClasses image="false" ecoreClass="krendering.ecore#//KPosition">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference krendering.ecore#//KPosition/x"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference krendering.ecore#//KPosition/y"/>
       <genOperations ecoreOperation="krendering.ecore#//KPosition/equals">
         <genParameters ecoreParameter="krendering.ecore#//KPosition/equals/other"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KPosition/setPositions">
+        <genParameters ecoreParameter="krendering.ecore#//KPosition/setPositions/x"/>
+        <genParameters ecoreParameter="krendering.ecore#//KPosition/setPositions/y"/>
       </genOperations>
     </genClasses>
     <genClasses image="false" ecoreClass="krendering.ecore#//KRendering">
@@ -72,7 +78,7 @@
     </genClasses>
     <genClasses ecoreClass="krendering.ecore#//KPolyline">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference krendering.ecore#//KPolyline/points"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference krendering.ecore#//KPolyline/jointPointRendering"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference krendering.ecore#//KPolyline/junctionPointRendering"/>
     </genClasses>
     <genClasses ecoreClass="krendering.ecore#//KPolygon"/>
     <genClasses ecoreClass="krendering.ecore#//KImage">
@@ -101,6 +107,7 @@
     <genClasses ecoreClass="krendering.ecore#//KStyle">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KStyle/propagateToChildren"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KStyle/modifierId"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KStyle/selection"/>
     </genClasses>
     <genClasses ecoreClass="krendering.ecore#//KRenderingLibrary">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference krendering.ecore#//KRenderingLibrary/renderings"/>
@@ -111,6 +118,7 @@
     <genClasses ecoreClass="krendering.ecore#//KChildArea"/>
     <genClasses ecoreClass="krendering.ecore#//KText">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KText/text"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KText/cursorSelectable"/>
     </genClasses>
     <genClasses image="false" ecoreClass="krendering.ecore#//KPlacement"/>
     <genClasses ecoreClass="krendering.ecore#//KGridPlacement">
@@ -121,11 +129,9 @@
     <genClasses image="false" ecoreClass="krendering.ecore#//KPlacementData"/>
     <genClasses ecoreClass="krendering.ecore#//KGridPlacementData">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KGridPlacementData/minCellWidth"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KGridPlacementData/maxCellWidth"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KGridPlacementData/minCellHeight"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KGridPlacementData/maxCellHeight"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KGridPlacementData/fixedWidth"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KGridPlacementData/fixedHeight"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KGridPlacementData/flexibleWidth"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KGridPlacementData/flexibleHeight"/>
     </genClasses>
     <genClasses ecoreClass="krendering.ecore#//KAreaPlacementData">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference krendering.ecore#//KAreaPlacementData/topLeft"/>
@@ -140,6 +146,20 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KColor/red"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KColor/green"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KColor/blue"/>
+      <genOperations ecoreOperation="krendering.ecore#//KColor/setColor">
+        <genParameters ecoreParameter="krendering.ecore#//KColor/setColor/red"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColor/setColor/green"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColor/setColor/blue"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KColor/setColor.1">
+        <genParameters ecoreParameter="krendering.ecore#//KColor/setColor.1/color"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KColor/setColor.2">
+        <genParameters ecoreParameter="krendering.ecore#//KColor/setColor.2/kColor"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KColor/equals">
+        <genParameters ecoreParameter="krendering.ecore#//KColor/equals/other"/>
+      </genOperations>
     </genClasses>
     <genClasses ecoreClass="krendering.ecore#//KLineWidth">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KLineWidth/lineWidth"/>
@@ -156,17 +176,27 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KHorizontalAlignment/horizontalAlignment"/>
     </genClasses>
     <genClasses image="false" ecoreClass="krendering.ecore#//KXPosition">
+      <genTypeParameters ecoreTypeParameter="krendering.ecore#//KXPosition/T"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KXPosition/absolute"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KXPosition/relative"/>
       <genOperations ecoreOperation="krendering.ecore#//KXPosition/equals">
         <genParameters ecoreParameter="krendering.ecore#//KXPosition/equals/other"/>
       </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KXPosition/setPosition">
+        <genParameters ecoreParameter="krendering.ecore#//KXPosition/setPosition/absolute"/>
+        <genParameters ecoreParameter="krendering.ecore#//KXPosition/setPosition/relative"/>
+      </genOperations>
     </genClasses>
     <genClasses image="false" ecoreClass="krendering.ecore#//KYPosition">
+      <genTypeParameters ecoreTypeParameter="krendering.ecore#//KYPosition/T"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KYPosition/absolute"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KYPosition/relative"/>
       <genOperations ecoreOperation="krendering.ecore#//KYPosition/equals">
         <genParameters ecoreParameter="krendering.ecore#//KYPosition/equals/other"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KYPosition/setPosition">
+        <genParameters ecoreParameter="krendering.ecore#//KYPosition/setPosition/absolute"/>
+        <genParameters ecoreParameter="krendering.ecore#//KYPosition/setPosition/relative"/>
       </genOperations>
     </genClasses>
     <genClasses ecoreClass="krendering.ecore#//KLeftPosition"/>
@@ -176,11 +206,166 @@
     <genClasses ecoreClass="krendering.ecore#//KSpline"/>
     <genClasses ecoreClass="krendering.ecore#//KForeground"/>
     <genClasses image="false" ecoreClass="krendering.ecore#//KColoring">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KColoring/alpha"/>
+      <genTypeParameters ecoreTypeParameter="krendering.ecore#//KColoring/T"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference krendering.ecore#//KColoring/color"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KColoring/alpha"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference krendering.ecore#//KColoring/targetColor"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KColoring/targetAlpha"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KColoring/gradientAngle"/>
+      <genOperations ecoreOperation="krendering.ecore#//KColoring/setColor">
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColor/red"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColor/green"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColor/blue"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KColoring/setColor.1">
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColor.1/color"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KColoring/setColor.2">
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColor.2/red"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColor.2/green"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColor.2/blue"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColor.2/alpha"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KColoring/setColor.3">
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColor.3/color"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColor.3/alpha"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KColoring/setColor2">
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColor2/color"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KColoring/setColor2.1">
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColor2.1/color"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColor2.1/alpha"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KColoring/setColorCopyOf">
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColorCopyOf/kColor"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KColoring/setColorCopyOf.1">
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColorCopyOf.1/kColor"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColorCopyOf.1/alpha"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KColoring/setColorCopiedFrom">
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColorCopiedFrom/coloring"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KColoring/setColorAndAlphaCopiedFrom">
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColorAndAlphaCopiedFrom/coloring"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KColoring/setTargetColor">
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setTargetColor/red"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setTargetColor/green"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setTargetColor/blue"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KColoring/setTargetColor.1">
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setTargetColor.1/color"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KColoring/setTargetColor.2">
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setTargetColor.2/red"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setTargetColor.2/green"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setTargetColor.2/blue"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setTargetColor.2/alpha"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KColoring/setTargetColor.3">
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setTargetColor.3/color"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setTargetColor.3/alpha"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KColoring/setTargetColor2">
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setTargetColor2/targetColor"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KColoring/setTargetColor2.1">
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setTargetColor2.1/targetColor"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setTargetColor2.1/targetAlpha"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KColoring/setTargetColorCopyOf">
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setTargetColorCopyOf/targetColor"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KColoring/setTargetColorCopyOf.1">
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setTargetColorCopyOf.1/targetColor"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setTargetColorCopyOf.1/targetAlpha"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KColoring/setTargetColorCopiedFrom">
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setTargetColorCopiedFrom/coloring"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KColoring/setTargetColorAndAlphaCopiedFrom">
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setTargetColorAndAlphaCopiedFrom/coloring"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KColoring/setGradientAngle2">
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setGradientAngle2/angle"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KColoring/setColors">
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColors/color"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColors/targetColor"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KColoring/setColors.1">
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColors.1/color"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColors.1/targetColor"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColors.1/angle"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KColoring/setColors.2">
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColors.2/color"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColors.2/alpha"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColors.2/targetColor"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColors.2/targetAlpha"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KColoring/setColors.3">
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColors.3/color"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColors.3/alpha"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColors.3/targetColor"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColors.3/targetAlpha"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColors.3/angle"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KColoring/setColors.4">
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColors.4/color"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColors.4/targetColor"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KColoring/setColors.5">
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColors.5/color"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColors.5/targetColor"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColors.5/angle"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KColoring/setColors.6">
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColors.6/color"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColors.6/alpha"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColors.6/targetColor"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColors.6/targetAlpha"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KColoring/setColors.7">
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColors.7/color"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColors.7/alpha"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColors.7/targetColor"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColors.7/targetAlpha"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColors.7/angle"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KColoring/setColorsCopiesOf">
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColorsCopiesOf/color"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColorsCopiesOf/targetColor"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KColoring/setColorsCopiesOf.1">
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColorsCopiesOf.1/color"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColorsCopiesOf.1/targetColor"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColorsCopiesOf.1/angle"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KColoring/setColorsCopiesOf.2">
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColorsCopiesOf.2/color"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColorsCopiesOf.2/alpha"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColorsCopiesOf.2/targetColor"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColorsCopiesOf.2/targetAlpha"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KColoring/setColorsCopiesOf.3">
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColorsCopiesOf.3/color"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColorsCopiesOf.3/alpha"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColorsCopiesOf.3/targetColor"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColorsCopiesOf.3/targetAlpha"/>
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColorsCopiesOf.3/angle"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KColoring/setColorsCopiedFrom">
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColorsCopiedFrom/coloring"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KColoring/setColorsAlphasGradientAngleCopiedFrom">
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/setColorsAlphasGradientAngleCopiedFrom/coloring"/>
+      </genOperations>
+      <genOperations ecoreOperation="krendering.ecore#//KColoring/equals">
+        <genParameters ecoreParameter="krendering.ecore#//KColoring/equals/other"/>
+      </genOperations>
     </genClasses>
     <genClasses ecoreClass="krendering.ecore#//KBackground"/>
     <genClasses ecoreClass="krendering.ecore#//KFontBold">
@@ -207,8 +392,11 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KLineCap/lineCap"/>
     </genClasses>
     <genClasses image="false" ecoreClass="krendering.ecore#//KAction">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KAction/id"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KAction/actionId"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KAction/trigger"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KAction/altPressed"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KAction/ctrlCmdPressed"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KAction/shiftPressed"/>
     </genClasses>
     <genClasses ecoreClass="krendering.ecore#//KPointPlacementData">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference krendering.ecore#//KPointPlacementData/referencePoint"/>

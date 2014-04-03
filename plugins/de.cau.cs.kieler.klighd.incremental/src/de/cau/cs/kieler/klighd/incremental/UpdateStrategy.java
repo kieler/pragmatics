@@ -45,6 +45,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klighd.IUpdateStrategy;
 import de.cau.cs.kieler.klighd.ViewContext;
+import de.cau.cs.kieler.klighd.krendering.SimpleUpdateStrategy;
 
 /**
  * The incremental update strategy for KGraph models with attached KRendering data that is based on
@@ -55,7 +56,7 @@ import de.cau.cs.kieler.klighd.ViewContext;
  * @kieler.design proposed by chsch
  * @kieler.rating proposed yellow by chsch
  */
-public class UpdateStrategy implements IUpdateStrategy<KNode> {
+public class UpdateStrategy implements IUpdateStrategy {
 
     /** The id used at registration of this strategy in the plugin.xml. */
     public static final String ID = UpdateStrategy.class.getCanonicalName();
@@ -66,11 +67,16 @@ public class UpdateStrategy implements IUpdateStrategy<KNode> {
     /** the priority for this update strategy. */
     public static final int PRIORITY = 20;
     
+    private final Resource baseModelResource;
+    private final Resource newModelResource;
+    
     /**
-     * {@inheritDoc}
+     * Constructor.
      */
-    public Class<?> getModelClass() {
-        return KNode.class;
+    public UpdateStrategy() {
+        final ResourceSet resourceSet = new ResourceSetImpl();
+        baseModelResource = resourceSet.createResource(URI.createURI("baseModel.kgraph"));
+        newModelResource = resourceSet.createResource(URI.createURI("newModel.kgraph"));
     }
     
     /**
@@ -80,25 +86,6 @@ public class UpdateStrategy implements IUpdateStrategy<KNode> {
         return PRIORITY;
     }
     
-    private Resource updateResource = null;
-    
-    /**
-     * {@inheritDoc}<br>
-     * <br>
-     * Beyond the view model's root element two resources are created within the same resource set.
-     * They are required by EMF Compare as that uses fragmentURIs for identifying similar elements,
-     * for example.
-     */
-    public KNode getInitialBaseModel(final ViewContext viewContext) {
-        final KNode baseModel = KimlUtil.createInitializedNode();
-        final ResourceSet resourceSet = new ResourceSetImpl();
-        final Resource resource = resourceSet.createResource(URI.createURI("baseModel.kgraph"));
-        updateResource = resourceSet.createResource(URI.createURI("newModel.kgraph"));
-        resource.getContents().add(baseModel);
-        return baseModel;
-    }
-
-
     /** The match option definition, they lead to reduced number of incorporated similarity checkers. */
     private static final Map<String, Object> MATCH_OPTIONS = ImmutableMap.<String, Object>of(
             MatchOptions.OPTION_DISTINCT_METAMODELS, false,
@@ -106,13 +93,17 @@ public class UpdateStrategy implements IUpdateStrategy<KNode> {
             MatchOptions.OPTION_IGNORE_ID, true,
             MatchOptions.OPTION_MATCH_SCOPE_PROVIDER, new KGraphMatchScopeProvider());
 
-
+    private SimpleUpdateStrategy fallbackDelegate = null;
+    
     /**
      * {@inheritDoc}
      */
     public void update(final KNode baseModel, final KNode newModel, final ViewContext viewContext) {
+        boolean ok = false;
+        
         try {
-            updateResource.getContents().add(newModel);
+            baseModelResource.getContents().add(baseModel);
+            newModelResource.getContents().add(newModel);
 
             // match the base and the new model
             MatchModel match = MatchService.doMatch(baseModel, newModel, MATCH_OPTIONS);
@@ -126,20 +117,33 @@ public class UpdateStrategy implements IUpdateStrategy<KNode> {
             // merge differences
             MergeService.merge(diff.getOwnedElements(), false);
             
-            updateResource.getContents().clear();
+            ok = true;
 
         } catch (InterruptedException e) {
             final String msg = "KLighD: Incremental update of diagram by means of the EMF"
                     + "Compare-based update strategy failed due to some unexpected execution"
                     + "interruption.";
             StatusManager.getManager().handle(new Status(IStatus.ERROR, PLUGIN_ID, msg, e),
-                    StatusManager.SHOW);
+                    StatusManager.LOG);
+            
         } catch (RuntimeException e) {
             final String msg = "KLighD: Incremental update of diagram by means of the EMF"
                     + "Compare-based update strategy failed.";
             StatusManager.getManager().handle(new Status(IStatus.ERROR, PLUGIN_ID, msg, e),
-                    StatusManager.SHOW);
+                    StatusManager.LOG);
             e.printStackTrace();
+            
+        } finally {
+            newModelResource.getContents().clear();
+            baseModelResource.getContents().clear();
+        }
+        
+        // if incremental updating failed, apply the SimpleUpdateStrategy
+        if (!ok) {
+            if (this.fallbackDelegate == null) {
+                this.fallbackDelegate = new SimpleUpdateStrategy();                
+            }
+            this.fallbackDelegate.update(baseModel, newModel, viewContext);
         }
     }
 

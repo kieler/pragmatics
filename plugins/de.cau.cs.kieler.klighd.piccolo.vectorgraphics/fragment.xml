@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<fragment>
+   <extension
+         point="de.cau.cs.kieler.klighd.piccolo.svg.svgGenerators">
+      <svgGenerator
+            class="de.cau.cs.kieler.klighd.piccolo.svg.impl.FreeHEPSVGGraphics"
+            id="de.cau.cs.kieler.klighd.piccolo.svg.freeHEP">
+      </svgGenerator>
+      <svgGenerator
+            class="de.cau.cs.kieler.klighd.piccolo.svg.impl.VectorGraphicsSVGGraphics"
+            id="de.cau.cs.kieler.klighd.piccolo.svg.vectorGraphics2D">
+      </svgGenerator>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.klighd.extensions">
+      <exporter
+            class="de.cau.cs.kieler.klighd.piccolo.svg.export.SVGExporter"
+            description="VectorGraphics2D"
+            extension="svg"
+            id="de.cau.cs.kieler.klighd.piccolo.svg.exporter.vectorGraphics2D"
+            subFormat="de.cau.cs.kieler.klighd.piccolo.svg.vectorGraphics2D">
+      </exporter>
+      <exporter
+            class="de.cau.cs.kieler.klighd.piccolo.svg.export.SVGExporter"
+            description="FreeHEP"
+            extension="svg"
+            id="de.cau.cs.kieler.klighd.piccolo.svg.exporter.freeHEP"
+            subFormat="de.cau.cs.kieler.klighd.piccolo.svg.freeHEP">
+      </exporter>
+      <exporter
+            class="de.cau.cs.kieler.klighd.piccolo.pdf.impl.VectorGraphicsPDFGraphics"
+            description="VectorGraphics2D"
+            extension="pdf"
+            id="de.cau.cs.kieler.klighd.piccolo.pdf.vectorGraphics">
+      </exporter>
+   </extension>
+</fragment>

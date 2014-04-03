@@ -86,7 +86,7 @@ class Flattener {
                             e.sourcePort = edge1.sourcePort
                             e.target = edge2.target
                             e.targetPort = edge2.targetPort
-                            e.getLayout().copyProperties(edge1.getLayout())
+                            e.getLayoutEx().copyProperties(edge1.getLayoutEx())
                         ]
                     }
                 }

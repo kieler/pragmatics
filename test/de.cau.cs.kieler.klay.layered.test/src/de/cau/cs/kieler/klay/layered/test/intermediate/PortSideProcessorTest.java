@@ -58,7 +58,7 @@ public class PortSideProcessorTest extends AbstractLayeredProcessorTest {
      */
     @Before
     public void runUntil() {
-        lgraphs = layered.runLayoutTestUntil(PortSideProcessor.class);
+        layered.runLayoutTestUntil(PortSideProcessor.class, state);
     }
 
     /**
@@ -67,7 +67,7 @@ public class PortSideProcessorTest extends AbstractLayeredProcessorTest {
      */
     @Test
     public void testNodeConstraints() {
-        for (LGraph g : lgraphs) {
+        for (LGraph g : state.getGraphs()) {
             for (Layer layer : g.getLayers()) {
                 for (LNode node : layer.getNodes()) {
                     Assert.assertTrue(node.getProperty(LayoutOptions.PORT_CONSTRAINTS) 
@@ -84,7 +84,7 @@ public class PortSideProcessorTest extends AbstractLayeredProcessorTest {
      */
     @Test
     public void testPortSides() {
-        for (LGraph g : lgraphs) {
+        for (LGraph g : state.getGraphs()) {
             for (Layer layer : g.getLayers()) {
                 for (LNode node : layer.getNodes()) {
                     for (LPort port : node.getPorts()) {

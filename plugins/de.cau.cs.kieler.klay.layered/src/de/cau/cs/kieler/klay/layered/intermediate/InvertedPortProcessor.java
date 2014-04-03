@@ -27,9 +27,9 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
-import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Inserts dummy nodes to cope with inverted ports.
@@ -97,7 +97,8 @@ public final class InvertedPortProcessor implements ILayoutProcessor {
             // Iterate through the layer's nodes
             for (LNode node : currentLayer) {
                 // Skip dummy nodes
-                if (!node.getProperty(Properties.NODE_TYPE).equals(NodeType.NORMAL)) {
+                if (!node.getProperty(InternalProperties.NODE_TYPE).equals(NodeType.NORMAL)
+                        || node.getProperty(InternalProperties.NODE_TYPE).equals(NodeType.BIG_NODE)) {
                     continue;
                 }
                 
@@ -163,8 +164,8 @@ public final class InvertedPortProcessor implements ILayoutProcessor {
         
         // Dummy node in the same layer
         LNode dummy = new LNode(layeredGraph);
-        dummy.setProperty(Properties.ORIGIN, edge);
-        dummy.setProperty(Properties.NODE_TYPE,
+        dummy.setProperty(InternalProperties.ORIGIN, edge);
+        dummy.setProperty(InternalProperties.NODE_TYPE,
                 NodeType.LONG_EDGE);
         dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         layerNodeList.add(dummy);
@@ -210,8 +211,8 @@ public final class InvertedPortProcessor implements ILayoutProcessor {
         
         // Dummy node in the same layer
         LNode dummy = new LNode(layeredGraph);
-        dummy.setProperty(Properties.ORIGIN, edge);
-        dummy.setProperty(Properties.NODE_TYPE,
+        dummy.setProperty(InternalProperties.ORIGIN, edge);
+        dummy.setProperty(InternalProperties.NODE_TYPE,
                 NodeType.LONG_EDGE);
         dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         layerNodeList.add(dummy);
@@ -225,13 +226,14 @@ public final class InvertedPortProcessor implements ILayoutProcessor {
         dummyOutput.setSide(PortSide.EAST);
         
         // Reroute the original edge
-        edge.setSource(dummyOutput);
+        LPort originalTarget = edge.getTarget();
+        edge.setTarget(dummyInput);
         
         // Connect the dummy with the original port
         LEdge dummyEdge = new LEdge(layeredGraph);
         dummyEdge.copyProperties(edge);
-        dummyEdge.setSource(westwardPort);
-        dummyEdge.setTarget(dummyInput);
+        dummyEdge.setSource(dummyOutput);
+        dummyEdge.setTarget(originalTarget);
         
         // Set LONG_EDGE_SOURCE and LONG_EDGE_TARGET properties on the LONG_EDGE dummy
         setLongEdgeSourceAndTarget(dummy, dummyInput, dummyOutput, westwardPort);
@@ -255,29 +257,29 @@ public final class InvertedPortProcessor implements ILayoutProcessor {
         // There's exactly one edge connected to the input and output port
         LPort sourcePort = dummyInputPort.getIncomingEdges().get(0).getSource();
         LNode sourceNode = sourcePort.getNode();
-        NodeType sourceNodeType = sourceNode.getProperty(Properties.NODE_TYPE);
+        NodeType sourceNodeType = sourceNode.getProperty(InternalProperties.NODE_TYPE);
         LPort targetPort = dummyOutputPort.getOutgoingEdges().get(0).getTarget();
         LNode targetNode = targetPort.getNode();
-        NodeType targetNodeType = targetNode.getProperty(Properties.NODE_TYPE);
+        NodeType targetNodeType = targetNode.getProperty(InternalProperties.NODE_TYPE);
         
         // Set the LONG_EDGE_SOURCE property
         if (sourceNodeType == NodeType.LONG_EDGE) {
             // The source is a LONG_EDGE node; use its LONG_EDGE_SOURCE
-            longEdgeDummy.setProperty(Properties.LONG_EDGE_SOURCE,
-                    sourceNode.getProperty(Properties.LONG_EDGE_SOURCE));
+            longEdgeDummy.setProperty(InternalProperties.LONG_EDGE_SOURCE,
+                    sourceNode.getProperty(InternalProperties.LONG_EDGE_SOURCE));
         } else {
             // The target is the original node; use it
-            longEdgeDummy.setProperty(Properties.LONG_EDGE_SOURCE, sourcePort);
+            longEdgeDummy.setProperty(InternalProperties.LONG_EDGE_SOURCE, sourcePort);
         }
 
         // Set the LONG_EDGE_TARGET property
         if (targetNodeType == NodeType.LONG_EDGE) {
             // The target is a LONG_EDGE node; use its LONG_EDGE_TARGET
-            longEdgeDummy.setProperty(Properties.LONG_EDGE_TARGET,
-                    targetNode.getProperty(Properties.LONG_EDGE_TARGET));
+            longEdgeDummy.setProperty(InternalProperties.LONG_EDGE_TARGET,
+                    targetNode.getProperty(InternalProperties.LONG_EDGE_TARGET));
         } else {
             // The target is the original node; use it
-            longEdgeDummy.setProperty(Properties.LONG_EDGE_TARGET, targetPort);
+            longEdgeDummy.setProperty(InternalProperties.LONG_EDGE_TARGET, targetPort);
         }
     }
 

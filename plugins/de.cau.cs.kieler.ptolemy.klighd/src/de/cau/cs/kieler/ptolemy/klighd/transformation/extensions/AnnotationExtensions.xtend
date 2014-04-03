@@ -22,12 +22,17 @@ import org.ptolemy.moml.PropertyType
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData
 import org.ptolemy.moml.EntityType
 import org.ptolemy.moml.ClassType
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
+import de.cau.cs.kieler.core.kgraph.KNode
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory
 
 /**
  * Utility methods regarding annotations used by the Ptolemy to KGraph transformation.
  * 
  * @author cds
  * @kieler.rating yellow 2012-07-10 KI-15 cmot, grh
+ * 
+ * @containsExtensions ptolemy
  */
 class AnnotationExtensions {
     
@@ -43,6 +48,21 @@ class AnnotationExtensions {
      */
     def KLayoutData getLayout(KGraphElement element) {
         return element.getData(typeof(KLayoutData))
+    }
+    
+    /**
+     * Returns the shape layout of the given element, creating it if it does not exist yet.
+     * 
+     * @param node the node.
+     * @return the shape layout.
+     */
+    def KShapeLayout getSafeLayout(KNode node) {
+        var layout = node.getData(typeof(KShapeLayout))
+        if (layout == null) {
+            layout = KLayoutDataFactory::eINSTANCE.createKShapeLayout()
+            node.data += layout
+        }
+        return layout
     }
     
     /**

@@ -19,6 +19,7 @@ import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.GraphFeature;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * Performs layout on a graph with hierarchy by executing a layout algorithm on each level of the
@@ -57,6 +58,9 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
      */
     private void layoutRecursively(final KNode layoutNode,
             final IKielerProgressMonitor progressMonitor) {
+        if (progressMonitor.isCanceled()) {
+            return;
+        }
         
         KShapeLayout layoutNodeShapeLayout = layoutNode.getData(KShapeLayout.class);
         
@@ -66,7 +70,6 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
             // this node has children and is thus a compound node;
             // fetch the layout algorithm that should be used to compute a layout for its content
             LayoutAlgorithmData algorithmData = getAlgorithm(layoutNode);
-            AbstractLayoutProvider layoutProvider = algorithmData.getInstancePool().fetch();
             
             // if the layout provider supports hierarchy, it is expected to layout the node's compound
             // node children as well
@@ -85,15 +88,27 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                 nodeCount = layoutNode.getChildren().size();
                 for (KNode child : layoutNode.getChildren()) {
                     layoutRecursively(child, progressMonitor);
-                    if (progressMonitor.isCanceled()) {
-                        return;
-                    }
+                    
+                    // apply the LayoutOptions.SCALE_FACTOR if present
+                    KimlUtil.applyConfiguredNodeScaling(child);
                 }
             }
 
-            // perform layout on the current hierarchy level
-            layoutProvider.doLayout(layoutNode, progressMonitor.subTask(nodeCount));
-            algorithmData.getInstancePool().release(layoutProvider);
+            if (progressMonitor.isCanceled()) {
+                return;
+            }
+
+            // get an instance of the layout provider
+            AbstractLayoutProvider layoutProvider = algorithmData.getInstancePool().fetch();
+            try {
+                // perform layout on the current hierarchy level
+                layoutProvider.doLayout(layoutNode, progressMonitor.subTask(nodeCount));
+                algorithmData.getInstancePool().release(layoutProvider);
+            } catch (RuntimeException exception) {
+                // the layout provider has failed - destroy it
+                layoutProvider.dispose();
+                throw exception;
+            }
         }
     }
 
@@ -139,13 +154,6 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
             }
         }
         return count;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean isActive() {
-        return true;
     }
 
 }

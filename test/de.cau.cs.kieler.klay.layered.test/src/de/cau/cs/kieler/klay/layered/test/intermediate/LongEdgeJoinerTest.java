@@ -26,8 +26,8 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.intermediate.LongEdgeJoiner;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
-import de.cau.cs.kieler.klay.layered.properties.Properties;
 import de.cau.cs.kieler.klay.layered.test.AbstractLayeredProcessorTest;
 import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
 import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
@@ -60,21 +60,21 @@ public class LongEdgeJoinerTest extends AbstractLayeredProcessorTest {
      */
     @Before
     public void runUntil() {
-        lgraphs = layered.runLayoutTestUntil(LongEdgeJoiner.class, false);
+        layered.runLayoutTestUntil(LongEdgeJoiner.class, false, state);
 
         // count the number of overall nodes and of the tested type
-        for (LGraph g : lgraphs) {
+        for (LGraph g : state.getGraphs()) {
             for (Layer layer : g.getLayers()) {
                 for (LNode node : layer.getNodes()) {
                     noOverallNodes++;
-                    if (node.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE) {
+                    if (node.getProperty(InternalProperties.NODE_TYPE) == NodeType.LONG_EDGE) {
                         noTypeNodes++;
                     }
                 }
             }
         }
 
-        lgraphs = layered.runLayoutTestUntil(LongEdgeJoiner.class, true);
+        layered.runLayoutTestUntil(LongEdgeJoiner.class, true, state);
 
     }
 
@@ -85,10 +85,10 @@ public class LongEdgeJoinerTest extends AbstractLayeredProcessorTest {
     @Test
     public void testRemovedNodes() {
         int noNodesAfter = 0;
-        for (LGraph g : lgraphs) {
+        for (LGraph g : state.getGraphs()) {
             for (Layer layer : g.getLayers()) {
                 for (LNode node : layer.getNodes()) {
-                    assertTrue(node.getProperty(Properties.NODE_TYPE) != NodeType.LONG_EDGE);
+                    assertTrue(node.getProperty(InternalProperties.NODE_TYPE) != NodeType.LONG_EDGE);
                     noNodesAfter++;
                 }
             }

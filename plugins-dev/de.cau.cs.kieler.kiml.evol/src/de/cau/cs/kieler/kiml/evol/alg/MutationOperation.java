@@ -21,10 +21,10 @@ import java.util.Random;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
+import de.cau.cs.kieler.kiml.config.LayoutContext;
 import de.cau.cs.kieler.kiml.evol.GenomeFactory;
 import de.cau.cs.kieler.kiml.evol.genetic.Gene;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
@@ -122,7 +122,7 @@ public class MutationOperation implements IEvolutionaryOperation {
             
             if (newLayoutAlgo != null) {
                 // update the active flag of the gene in order to match the new algorithm
-                LayoutOptionData<?> optionData = (LayoutOptionData<?>) typeInfo.getTypeParam();
+                LayoutOptionData optionData = (LayoutOptionData) typeInfo.getTypeParam();
                 if (newLayoutAlgo.knowsOption(optionData)) {
                     if (gene.getValue() == null) {
                         // the gene previously had no assigned value - generate one

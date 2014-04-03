@@ -15,13 +15,21 @@ package de.cau.cs.kieler.ptolemy.klighd.transformation
 
 import com.google.inject.Inject
 import de.cau.cs.kieler.core.kgraph.KEdge
+import de.cau.cs.kieler.core.kgraph.KGraphElement
 import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.core.kgraph.KPort
+import de.cau.cs.kieler.core.krendering.HorizontalAlignment
 import de.cau.cs.kieler.core.krendering.KContainerRendering
+import de.cau.cs.kieler.core.krendering.KDecoratorPlacementData
+import de.cau.cs.kieler.core.krendering.KPolyline
 import de.cau.cs.kieler.core.krendering.KRendering
 import de.cau.cs.kieler.core.krendering.KRenderingFactory
+import de.cau.cs.kieler.core.krendering.KRenderingLibrary
+import de.cau.cs.kieler.core.krendering.KRenderingRef
 import de.cau.cs.kieler.core.krendering.LineStyle
+import de.cau.cs.kieler.core.krendering.VerticalAlignment
 import de.cau.cs.kieler.core.krendering.extensions.KColorExtensions
+import de.cau.cs.kieler.core.krendering.extensions.KContainerRenderingExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KPolylineExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
@@ -36,6 +44,8 @@ import de.cau.cs.kieler.ptolemy.klighd.transformation.util.GraphicsUtils
 
 import static de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties.*
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
+import org.eclipse.swt.widgets.Display
+import org.eclipse.swt.SWT
 
 /**
  * Creates concrete KRendering information for Ptolemy diagram elements.
@@ -60,6 +70,8 @@ class KRenderingFigureProvider {
     /** Rendering stuff. */
     @Inject extension KRenderingExtensions
     /** Rendering stuff. */
+    @Inject extension KContainerRenderingExtensions
+    /** Rendering stuff. */
     @Inject extension KPolylineExtensions
     
     /** Rendering factory used to instantiate KRendering instances. */
@@ -69,6 +81,64 @@ class KRenderingFigureProvider {
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Node Renderings
     
+    /**
+     * Returns the rendering library associated with the given node. The associated rendering library is
+     * the library of the root ancestor of the node. If no library exists yet, one is created and
+     * attached to the root ancestor.
+     * 
+     * @param node the node whose's rendering library to return.
+     * @return the rendering library associated with the given node.
+     */
+    def private KRenderingLibrary getLibrary(KNode node) {
+        var parent = node
+        while (parent.parent != null) {
+            parent = parent.getParent()
+        }
+        
+        var library = parent.getData(typeof(KRenderingLibrary))
+        if (library == null) {
+            library = renderingFactory.createKRenderingLibrary()
+            parent.data.add(library)
+        }
+        
+        return library
+    }
+    
+    /**
+     * Returns a reference to rendering with the given ID in the given library.
+     * 
+     * @param id identifier of the rendering to look up.
+     * @param library the rendering library to search for the rendering.
+     * @return new rendering reference to the rendering, or {@code null} if no rendering with the given
+     *         identifier exists in the library.
+     */
+    def private KRenderingRef getFromLibrary(String id, KRenderingLibrary library) {
+        val rendering = library.renderings.findFirst[r | r.id == id] as KRendering
+        
+        if (rendering != null) {
+            val ref = renderingFactory.createKRenderingRef()
+            ref.rendering = rendering
+            return ref
+        } else {
+            return null
+        }
+    }
+    
+    /**
+     * Adds the given rendering to the given rendering library with the given id.
+     * 
+     * @param rendering the rendering to add to the library.
+     * @param id the id that will identify the rendering in the library.
+     * @param library the library to add the rendering to.
+     */
+    def private KRenderingRef addToLibrary(KRendering rendering, String id, KRenderingLibrary library) {
+        rendering.id = id
+        library.renderings.add(rendering)
+        
+        val ref = renderingFactory.createKRenderingRef()
+        ref.rendering = rendering
+        return ref
+    }
     
     /**
      * Renders the given node in a default way, that is, as a simple rectangle.
@@ -91,9 +161,6 @@ class KRenderingFigureProvider {
      * @return the rendering.
      */
     def KRendering createExpandedCompoundNodeRendering(KNode node, int alpha) {
-        // This is the code for representing expanded compound nodes as rounded rectangles with
-        // progressively darker backgrounds whose color depends on whether the expanded node is
-        // a regular node or whether it displays a state refinement
         val bgColor = if (node.markedAsState) {
             renderingFactory.createKColor() => [col |
                 col.red = 11
@@ -111,26 +178,12 @@ class KRenderingFigureProvider {
         val rendering = renderingFactory.createKRoundedRectangle() => [rect |
             rect.cornerHeight = 15
             rect.cornerWidth = 15
-            rect.setLineWidth(0)
+            rect.setLineWidth(if (node.markedAsState) 1 else 0)
             rect.styles += renderingFactory.createKBackground() => [bg |
                 bg.alpha = alpha
                 bg.color = bgColor
             ]
         ]
-
-        // This in turn is the code for representing expanded compound nodes as regular rectangles
-        // with drop shadows
-//        val rendering = renderingFactory.createKRectangle() => [rect |
-//            rect.styles += renderingFactory.createKBackground() => [bg |
-//                bg.alpha = alpha
-//                bg.color = renderingFactory.createKColor() => [col |
-//                    col.red = 16
-//                    col.green = 78
-//                    col.blue = 139
-//                ]
-//            ]
-//            rect.setShadow(GraphicsUtils::lookupColor("darkgrey"))
-//        ]
         
         return rendering
     }
@@ -142,14 +195,20 @@ class KRenderingFigureProvider {
      * @return the rendering.
      */
     def KRendering createRelationNodeRendering(KNode node) {
-        return renderingFactory.createKPolygon() => [poly |
-            poly.points += createKPosition(5, 0)
-            poly.points += createKPosition(10, 5)
-            poly.points += createKPosition(5, 10)
-            poly.points += createKPosition(0, 5)
-            poly.points += createKPosition(5, 0)
+        val library = getLibrary(node)
+        val rendering = getFromLibrary("ren_relation", library)
+        if (rendering != null) {
+            return rendering
+        }
+        
+        return addToLibrary(renderingFactory.createKPolygon() => [poly |
+            poly.points += createKPosition(4, 0)
+            poly.points += createKPosition(8, 4)
+            poly.points += createKPosition(4, 8)
+            poly.points += createKPosition(0, 4)
+            poly.points += createKPosition(4, 0)
             poly.setBackgroundColor(0, 0, 0)
-        ]
+        ], "ren_relation", library)
     }
     
     /**
@@ -159,14 +218,20 @@ class KRenderingFigureProvider {
      * @return the rendering.
      */
     def KRendering createDirectorNodeRendering(KNode node) {
-        return renderingFactory.createKRectangle() => [rec |
+        val library = getLibrary(node)
+        val rendering = getFromLibrary("ren_director", library)
+        if (rendering != null) {
+            return rendering
+        }
+        
+        return addToLibrary(renderingFactory.createKRectangle() => [rec |
             rec.background = "green".color
             rec.foreground = "black".color
             rec.setAreaPlacementData(
                 createKPosition(LEFT, 0, 0, TOP, 0, 0),
                 createKPosition(LEFT, 100, 0, TOP, 30, 0)
             )
-        ]
+        ], "ren_director", library)
     }
     
     /**
@@ -176,6 +241,7 @@ class KRenderingFigureProvider {
      * @return the rendering.
      */
     def KRendering createCommentNodeRendering(KNode node) {
+        // TODO this rendering could be put into the library if its text is kept generic
         val rectangle = renderingFactory.createKRectangle() => [rec |
             rec.background = renderingFactory.createKColor() => [col |
                 col.red = 255
@@ -233,9 +299,7 @@ class KRenderingFigureProvider {
                 name.setFontSize(KlighdConstants::DEFAULT_FONT_SIZE - 2)
                 name.setGridPlacementData(
                     0,
-                    // We need to specify a minimum height to work around a grid placement bug that
-                    // would cause the cell not to be high enough for the label
-                    25,
+                    0,
                     createKPosition(LEFT, 0, 0, TOP, 3, 0),
                     createKPosition(RIGHT, 5, 0, BOTTOM, 3, 0))
             ]
@@ -254,9 +318,7 @@ class KRenderingFigureProvider {
                 value.setFontSize(KlighdConstants::DEFAULT_FONT_SIZE - 2)
                 value.setGridPlacementData(
                     0,
-                    // We need to specify a minimum height to work around a grid placement bug that
-                    // would cause the cell not to be high enough for the label
-                    25,
+                    0,
                     createKPosition(LEFT, 5, 0, TOP, 3, 0),
                     createKPosition(RIGHT, 5, 0, BOTTOM, 3, 0))
             ]
@@ -267,28 +329,13 @@ class KRenderingFigureProvider {
     }
     
     /**
-     * Creates a rendering for an edge that attaches a comment node to a commented node.
-     * 
-     * @param edge the edge to create the rendering information for.
-     * @return the rendering.
-     */
-    def KRendering createCommentEdgeRendering(KEdge edge) {
-        val polyline = renderingFactory.createKPolyline() => [line |
-            line.lineStyle = LineStyle::DASH
-            line.lineWidth = 1
-            line.foreground = GraphicsUtils::lookupColor("grey")
-        ]
-        
-        return polyline
-    }
-    
-    /**
      * Creates a rendering for a state node.
      * 
      * @param node the node to create the rendering information for.
      * @return the rendering.
      */
     def KRendering createStateNodeRendering(KNode node) {
+        // TODO this rendering could be put into the library if its text is kept generic
         val isFinal = node.getAnnotationBooleanValue("isFinalState")
         val isInitial = node.getAnnotationBooleanValue("isInitialState")
         val lineWidth = if (isInitial) 3 else 1
@@ -356,6 +403,7 @@ class KRenderingFigureProvider {
      * @return the rendering.
      */
     def KRendering createValueDisplayingNodeRendering(KNode node, String value) {
+        // TODO this rendering could be put into the library if its text is kept generic
         val nodeRendering = createDefaultRendering(node) as KContainerRendering
         
         // Add a text field to the default rendering
@@ -378,6 +426,15 @@ class KRenderingFigureProvider {
         val input = node.markedAsInputPort
         val output = node.markedAsOutputPort
         val multiport = node.hasAnnotation("multiport")
+        val id = "ren_" + (if (multiport) "multi" else "") + (if (input) "in" else "")
+                + (if (output) "out" else "") + "mmport"
+        
+        val library = getLibrary(node)
+        val rendering = getFromLibrary(id, library)
+        if (rendering != null) {
+            return rendering
+        }
+        
         val polygon = renderingFactory.createKPolygon()
         
         if (multiport) {
@@ -472,7 +529,7 @@ class KRenderingFigureProvider {
             }
         }
         
-        return polygon
+        return addToLibrary(polygon, id, library)
     }
     
     /**
@@ -482,8 +539,19 @@ class KRenderingFigureProvider {
      * @return the rendering.
      */
     def KRendering createRegularNodeRendering(KNode node) {
+        val id = "ren_" + node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS).replace('.', '')
+        val library = getLibrary(node)
+        val rendering = getFromLibrary(id, library)
+        if (rendering != null) {
+            return rendering
+        }
+        
         val ptRendering = createPtolemyFigureRendering(node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS))
-        return ptRendering ?: createDefaultRendering(node)
+        if (ptRendering != null) {
+            return addToLibrary(ptRendering, id, library)
+        }
+        
+        return createDefaultRendering(node)
     }
     
     /**
@@ -494,6 +562,12 @@ class KRenderingFigureProvider {
      * @return the rendering.
      */
     def KRendering createAccumulatorNodeRendering(KNode node) {
+        val library = getLibrary(node)
+        val rendering = getFromLibrary("ren_accumulator", library)
+        if (rendering != null) {
+            return rendering
+        }
+        
         val accumulatorSvg = "<svg height=\"41\" width=\"41\" >"
                 + "<rect height=\"40\" style=\"fill:white;stroke:black;stroke-width:1\" "
                 + "width=\"40\" x=\"0.0\" y=\"0.0\" />"
@@ -501,7 +575,41 @@ class KRenderingFigureProvider {
                 + "-8.789062,10.335937 14.554687,0 0,3.041016 -18.246093,0 "
                 + "0,-3.550781 8.419921,-9.826172 -8.419921,-8.9648439 0,-3.4277344 z\" />"
                 + "</svg>"
-        return GraphicsUtils::createFigureFromSvg(accumulatorSvg)
+        return addToLibrary(GraphicsUtils::createFigureFromSvg(accumulatorSvg),
+                "ren_accumulator", library)
+    }
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Node Selection Rendering
+    
+    /**
+     * Builds up and adds helper renderings forming the selection to given node,
+     * attaches the provided rendering to the selection helpers.  
+     */
+    def KContainerRendering addRenderingWithSelectionWrapper(KGraphElement kge, KRendering rendering) {
+        return kge.addRenderingWithSelectionWrapper => [
+            it.children += rendering;
+        ];
+    }
+    
+    /**
+     * Builds up and adds helper renderings forming the selection to given node,
+     * attaches the provided rendering to the selection helpers.  
+     */
+    def KContainerRendering addRenderingWithSelectionWrapper(KGraphElement kge) {
+        val selectionColor = Display.current.getSystemColor(SWT.COLOR_LIST_SELECTION)
+        
+        kge.addRectangle => [
+            it.invisible = true;
+            it.addRoundedRectangle(3f, 3f, 1) => [
+            it.setSurroundingSpace(-3, 0);
+                it.invisible = true;
+                it.setBackgroundColor(selectionColor.red, selectionColor.green, selectionColor.blue)
+                it.lineStyle = LineStyle.DASH;
+                it.selectionInvisible = false;
+            ]
+        ]
     }
     
     
@@ -512,7 +620,7 @@ class KRenderingFigureProvider {
      * Creates a rendering for an edge that represents a transition in a state machine.
      */
     def KRendering createTransitionRendering(KEdge edge) {
-        val rendering = renderingFactory.createKSpline() => [spline |
+        return renderingFactory.createKSpline() => [spline |
             spline.lineWidth = 1.6f
             
             // Special rendering options for transition types
@@ -523,10 +631,86 @@ class KRenderingFigureProvider {
             if (edge.getAnnotationBooleanValue(ANNOTATION_DEFAULT_TRANSITION)) {
                 spline.lineStyle = LineStyle::DASH
             }
+
+            spline.addHeadArrowDecorator() => [
+    
+                // in case the 'reset' flag of the transition is 'false' ...
+                if (!edge.getAnnotationBooleanValue(ANNOTATION_RESET_TRANSITION)) {
+
+                    // ... move the arrow decorator a bit towards the edge source,
+                    (it.placementData as KDecoratorPlacementData).absolute = -12
+
+                    // and add a history decorator
+                    spline.addHistoryDecorator()
+                }
+            ]
         ]
-        rendering.addArrowDecorator()
+    }
+    
+    private def KRendering addHistoryDecorator(KPolyline line) {
+        return line.addEllipse() => [
+            it.lineWidth = 0.5f;
+            it.background = "gray".color
+            it.setDecoratorPlacementData(12, 12, -3, 1, false);
+            it.addPolyline(1) => [
+                it.points += createKPosition(LEFT, 3.5f, 0, TOP, 2.5f, 0);
+                it.points += createKPosition(LEFT, 3.5f, 0, BOTTOM, 2.5f, 0);
+                it.points += createKPosition(LEFT, 3.5f, 0, TOP, 0, 0.5f);
+                it.points += createKPosition(RIGHT, 3.5f, 0, TOP, 0, 0.5f);
+                it.points += createKPosition(RIGHT, 3.5f, 0, BOTTOM, 2.5f, 0);
+                it.points += createKPosition(RIGHT, 3.5f, 0, TOP, 2.5f, 0);
+            ]
+        ]
+    }
+
+    
+    
+    /**
+     * Creates a rendering for an edge that represents a data flow buffer.
+     */
+    def KRendering createDataFlowRendering(KEdge edge) {
+        val library = getLibrary(edge.source)
+        var junction = getFromLibrary("ren_junction", library)
+        if (junction == null) {
+            junction = addToLibrary(renderingFactory.createKPolygon() => [poly |
+                poly.points += createKPosition(4, 0)
+                poly.points += createKPosition(8, 4)
+                poly.points += createKPosition(4, 8)
+                poly.points += createKPosition(0, 4)
+                poly.points += createKPosition(4, 0)
+                poly.setBackgroundColor(0, 0, 0)
+                poly.placementData = renderingFactory.createKPointPlacementData() => [ ppd |
+                    ppd.horizontalAlignment = HorizontalAlignment.CENTER
+                    ppd.verticalAlignment = VerticalAlignment.CENTER
+                    ppd.minWidth = 8
+                    ppd.minHeight = 8
+                ]
+            ], "ren_junction", library)
+        }
+        
+        val rendering = renderingFactory.createKRoundedBendsPolyline() => [ polyLine |
+            polyLine.bendRadius = 5f
+            polyLine.lineWidth = 2f
+        ]
+        rendering.junctionPointRendering = junction
         
         return rendering
+    }
+    
+    /**
+     * Creates a rendering for an edge that attaches a comment node to a commented node.
+     * 
+     * @param edge the edge to create the rendering information for.
+     * @return the rendering.
+     */
+    def KRendering createCommentEdgeRendering(KEdge edge) {
+        val polyline = renderingFactory.createKPolyline() => [line |
+            line.lineStyle = LineStyle::DASH
+            line.lineWidth = 1
+            line.foreground = GraphicsUtils::lookupColor("grey")
+        ]
+        
+        return polyline
     }
     
     

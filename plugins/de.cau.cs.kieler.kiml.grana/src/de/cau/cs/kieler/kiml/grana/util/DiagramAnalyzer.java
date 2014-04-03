@@ -16,28 +16,26 @@ package de.cau.cs.kieler.kiml.grana.util;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef.EditPart;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.PlatformUI;
 
 import com.google.common.collect.Lists;
 
-import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.Maybe;
-import de.cau.cs.kieler.kiml.service.AnalysisService;
-import de.cau.cs.kieler.kiml.service.grana.AnalysisData;
-import de.cau.cs.kieler.kiml.ui.diagram.DiagramLayoutEngine;
-import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
-import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
-import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
-import de.cau.cs.kieler.kiml.ui.util.MonitoredOperation;
-import de.cau.cs.kieler.kiml.ui.util.ProgressMonitorAdapter;
+import de.cau.cs.kieler.kiml.grana.AnalysisData;
+import de.cau.cs.kieler.kiml.grana.AnalysisService;
+import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
+import de.cau.cs.kieler.kiml.service.LayoutManagersService;
+import de.cau.cs.kieler.kiml.service.IDiagramLayoutManager;
+import de.cau.cs.kieler.kiml.service.LayoutMapping;
+import de.cau.cs.kieler.kiml.service.util.MonitoredOperation;
 
 /**
  * This class provides static methods to start an analysis of a given diagram.
@@ -47,8 +45,8 @@ import de.cau.cs.kieler.kiml.ui.util.ProgressMonitorAdapter;
  */
 public final class DiagramAnalyzer {
 
-    /** maximal number of recursion levels for which progress is displayed. */
-    private static final int MAX_PROGRESS_LEVELS = 3;
+    /** the executor service for analysis operations. */
+    private static final ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadExecutor(); 
 
     /**
      * This class is an utility class and should not be instantiated.
@@ -98,7 +96,7 @@ public final class DiagramAnalyzer {
     public static Map<String, Object> analyze(final IEditorPart editorPart,
             final EditPart editPart, final List<AnalysisData> analyses,
             final boolean progressBar) {
-        final IDiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance().getManager(
+        final IDiagramLayoutManager<?> manager = LayoutManagersService.getInstance().getManager(
                 editorPart, editPart);
         if (manager == null) {
             return Collections.emptyMap();
@@ -106,52 +104,42 @@ public final class DiagramAnalyzer {
         
         final Maybe<LayoutMapping<?>> layoutMapping = new Maybe<LayoutMapping<?>>();
         final Maybe<Map<String, Object>> result = new Maybe<Map<String, Object>>();
-        if (progressBar) {
-            // perform analysis with a progress bar
-            final MonitoredOperation monitoredOperation = new MonitoredOperation() {
-                // first phase: build the graph
-                protected void preUIexec() {
-                    layoutMapping.set(manager.buildLayoutGraph(editorPart, editPart));
-                }
-
-                // second phase: analyze the graph
-                protected IStatus execute(final IProgressMonitor monitor) {
-                    IKielerProgressMonitor kmonitor = new ProgressMonitorAdapter(monitor,
-                            MAX_PROGRESS_LEVELS);
-                    kmonitor.begin("Diagram analysis", TOTAL_WORK);
-                    // configure the layout graph to set proper layout options
-                    DiagramLayoutEngine.INSTANCE.getOptionManager().configure(layoutMapping.get(),
-                            kmonitor.subTask(CONFIGURE_WORK));
-                    // perform analyses on the graph
-                    KNode graph = layoutMapping.get().getLayoutGraph();
-                    result.set(AnalysisService.getInstance().analyze(graph, analyses,
-                            kmonitor.subTask(ANALYSIS_WORK)));
-                    if (kmonitor.isCanceled()) {
-                        return Status.CANCEL_STATUS;
-                    } else {
-                        return Status.OK_STATUS;
-                    }
-                }
-            };
-            monitoredOperation.runMonitored();
-            if (result.get() != null) {
-                return result.get();
-            } else {
-                return Collections.emptyMap();
+        final MonitoredOperation monitoredOperation = new MonitoredOperation(EXECUTOR_SERVICE) {
+            // first phase: build the graph
+            protected void preUIexec() {
+                layoutMapping.set(manager.buildLayoutGraph(editorPart, editPart));
             }
 
+            // second phase: analyze the graph
+            protected IStatus execute(final IKielerProgressMonitor monitor) {
+                monitor.begin("Diagram analysis", TOTAL_WORK);
+                // configure the layout graph to set proper layout options
+                DiagramLayoutEngine.INSTANCE.getOptionManager().configure(layoutMapping.get(),
+                        monitor.subTask(CONFIGURE_WORK));
+                // perform analyses on the graph
+                KNode graph = layoutMapping.get().getLayoutGraph();
+                result.set(AnalysisService.getInstance().analyze(graph, analyses,
+                        monitor.subTask(ANALYSIS_WORK)));
+                if (monitor.isCanceled()) {
+                    return Status.CANCEL_STATUS;
+                } else {
+                    return Status.OK_STATUS;
+                }
+            }
+        };
+
+        if (progressBar) {
+            // perform analysis with a progress bar
+            monitoredOperation.runMonitored();
         } else {
             // perform analysis without a progress bar
-            PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-                // first phase: build the graph
-                public void run() {
-                    layoutMapping.set(manager.buildLayoutGraph(editorPart, editPart));
-                }
-            });
-            
-            // second phase: analyze the graph
-            KNode graph = layoutMapping.get().getLayoutGraph();
-            return AnalysisService.getInstance().analyze(graph, analyses, new BasicProgressMonitor(0));
+            monitoredOperation.runUnmonitored();
+        }
+        
+        if (result.get() != null) {
+            return result.get();
+        } else {
+            return Collections.emptyMap();
         }
     }
     

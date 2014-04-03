@@ -22,6 +22,8 @@ package de.cau.cs.kieler.klay.layered.properties;
  * <p>An {@code EnumSet} for this enumeration can be attached to a graph via the
  * {@link Properties#GRAPH_PROPERTIES} property.</p>
  * 
+ * FIXME can this be merged with {@link de.cau.cs.kieler.kiml.options.GraphFeature}?
+ * 
  * @author cds
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
@@ -32,8 +34,6 @@ public enum GraphProperties {
     COMMENTS,
     /** The graph contains dummy nodes representing external ports. */
     EXTERNAL_PORTS,
-    /** The graph is a flattened hierarchical graph. */ 
-    FLAT_HIERARCHICAL,
     /** The graph contains hyperedges. */
     HYPEREDGES,
     /** The graph contains hypernodes (nodes that are marked as such). */

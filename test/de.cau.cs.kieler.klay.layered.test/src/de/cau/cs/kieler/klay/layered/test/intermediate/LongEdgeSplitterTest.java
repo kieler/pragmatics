@@ -55,7 +55,7 @@ public class LongEdgeSplitterTest extends AbstractLayeredProcessorTest {
      */
     @Before
     public void runUntil() {
-        lgraphs = layered.runLayoutTestUntil(LongEdgeSplitter.class);
+        layered.runLayoutTestUntil(LongEdgeSplitter.class, state);
     }
 
     /**
@@ -64,7 +64,7 @@ public class LongEdgeSplitterTest extends AbstractLayeredProcessorTest {
      */
     @Test
     public void testEdgesBetweenAdjacentLayers() {
-        for (LGraph g : lgraphs) {
+        for (LGraph g : state.getGraphs()) {
             for (Layer layer : g.getLayers()) {
                 for (LNode node : layer.getNodes()) {
                     for (LEdge edge : node.getOutgoingEdges()) {

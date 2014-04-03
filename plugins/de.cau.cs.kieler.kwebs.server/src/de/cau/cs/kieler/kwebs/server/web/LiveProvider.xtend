@@ -13,29 +13,30 @@
  */
 package de.cau.cs.kieler.kwebs.server.web
 
+import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutMetaDataService
+
 /**
  * Presents a HTML page with input elements for a textual graph element and a config area.
  * Upon pressing a 'layout' button, the layouted graph is presented as an svg.
  * 
  * @author uru
  */
-import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutDataService
-
 class LiveProvider extends AbstractProvider {
 
-	val DEFAULT_INPUT_FORMAT = "org.graphviz.dot"
-	val DEFAULT_OUTPUT_FORMAT = "org.w3.svg"
+    // default formats
+	private val String DEFAULT_INPUT_FORMAT = "org.json"
+	private val String DEFAULT_OUTPUT_FORMAT = "org.w3.svg"
 
 	/**
 	 * 
 	 */
 	override getHeaders(ResourceProcessingExchange processingExchange) {
 		'''
-		<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+		««««<link href="styles/bootstrap-3.0.2.min.css" rel="stylesheet">
 		<link href="styles/prettify.css" type="text/css" rel="stylesheet" />
 		
-		<script	src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
-		<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+		««««<script	src="scripts/jquery-1.10.2.min.js"></script>
+		««««<script src="scripts/bootstrap-3.0.2.min.js"></script>
 		<script src="scripts/jquery.event.drag.js"></script>
 		<script src="scripts/jquery.mousewheel.js"></script>
 		<script src="scripts/jquery.svg.js"></script>
@@ -43,8 +44,9 @@ class LiveProvider extends AbstractProvider {
 		<script src="scripts/prettify.js"></script>
 		
 		<style>
-			body {
-				background-color: #5781BB;
+			body, html {
+			  height: 100%;
+				««««background-color: #5781BB;
 			}
 			
 			.alert-error {
@@ -63,21 +65,17 @@ class LiveProvider extends AbstractProvider {
 			
 			#resGraph {
 				width: 100%;
-				height: 500px;
+				height: 100%;
 			}
 			
-			.row-fluid {
-				min-width: 10px;
+			.row {
+			    margin-bottom: 5px;  
 			}
 			
 			svg {
 				width: 100%;
 				height: 100%;
 			}
-			
-			td.body {
-				padding-left: 10px;
-			} 
 
 			textarea {
 				resize: none;
@@ -95,53 +93,86 @@ class LiveProvider extends AbstractProvider {
 	}
 	
 	/**
+	 * We specify our own container here to allow the svg more space
+	 */
+	override requireContainer() {
+	  return false
+	}
+	
+	/**
 	 * 
 	 */
 	override getBody(ResourceProcessingExchange processingExchange) {
-		val formats = ServerLayoutDataService::instance.serviceDataModel.supportedFormats
+		val formats = ServerLayoutMetaDataService::getInstance.serviceDataModel.supportedFormats
 		
 		'''
-			<div class="container">
-				<div class="row-fluid span12">
-					<div id="srcGraph" class="span8">
-						<h4>Input Graph</h4>
-			<textarea id="srcArea">
-			</textarea>
+			<div class="container">	
+				<div class="row">
+					<div id="srcGraph" class="col-md-8">
+						<h4>Input Graph <small><a href="Providedlayout.html#formats">See Formats</a></small></h4>
+			            <textarea id="srcArea">
+			            </textarea>
 					</div>
-					<div id="config" class="span4">
-						<h4>Config</h4>
-			<textarea id="configArea">
-			</textarea>
+					<div id="config" class="col-md-4">
+						<h4>Config <small><a href="Providedlayout.html#algorithms">See Layout Options</a></small></h4>
+			            <textarea id="configArea">
+			            </textarea>
 					</div>
 				</div>
-				<div class="row-fluid span12">
-					<div class="input-prepend">
-						<span class="add-on">Input Format</span>
-						<select id="inputFormat" class="span6">
+				<div class="row">
+				    <div class="col-md-12">
+					<div class="col-md-3 input-group">
+						<span class="input-group-addon">Input Format</span>
+						<select id="inputFormat" class="form-control">
 							«formats.map(f |
 								'''<option «if(f.id == DEFAULT_INPUT_FORMAT) '''selected="selected"'''» value="«f.id»">«f.name»</option>'''
 							).join»
 						</select>
 					</div>
-					<div class="input-prepend">
-						<span class="add-on">Output Format</span>
-						<select id="outputFormat" class="span6">
+					<div class=" col-md-3 input-group">
+						<span class="input-group-addon">Output Format</span>
+						<select id="outputFormat" class="form-control">
 							«formats.map(f |
 								'''<option «if(f.id == DEFAULT_OUTPUT_FORMAT) '''selected="selected"'''» value="«f.id»">«f.name»</option>'''
 							).join»
 						</select>
 					</div>
 					<button id="layout" class="btn pull-right" style="margin-right: 10px">Layout</button><span id="working"></span>
+					</div>
 				</div>
 			
-				<div class="row-fluid span12">
-					<div id="errorDiv" class="alert alert-error" style="display: none;"></div>
+				<div class="row">
+				    <div class="col-md-12">
+					   <div id="errorDiv" class="alert alert-error" style="display: none;"></div>
+					</div>
 				</div>
-				<div id="resGraph" class="row-fluid span12"></div>
+			</div>	
 			 
-			 </div>
+			 <!-- the svg gets the remaining size, i.e full display area -->
+			 <div id="resGraph"></div>
+			 
 			<script>
 			$(function() {
+			  
+			  // add tabbing behavior to the textareas
+			  $('textarea').keydown(function(e) {
+			  
+			   if (e.keyCode === 9) { // tab
+			     var start = this.selectionStart;
+			     var end = this.selectionEnd;
+			     
+			     // replace textarea content with text before + tabs + text after
+			     $(this).val($(this).val().substring(0, start)
+			       + "    " // 4 spaces
+			       + $(this).val().substring(end));
+			       
+			     // move cursor 
+			     this.selectionStart = this.selectionEnd = start + 4;
+			     
+			     // prevent the default tab behavior
+			     e.preventDefault();
+			   }
+			  });
 
 				// init the svg with zoom and pan
 				$('#resGraph').svg();
@@ -157,8 +188,8 @@ class LiveProvider extends AbstractProvider {
 					var oFormat = $('#outputFormat > option:selected').val();
 					
 					$.ajax({
-						type: 'GET',
-						url: '/live', 
+						type: 'POST',
+						url: '/layout', 
 						data: {
 							graph: graph,
 							config: config,
@@ -166,7 +197,25 @@ class LiveProvider extends AbstractProvider {
 							oFormat: oFormat
 						}, 
 						success: function(svggraph) {
+							
+							// if not svg, surround with pretty print
+							if (oFormat != "org.w3.svg") {
+							  // replace xml markup for displaying
+			                  svggraph = svggraph.replace(/>/g, '&gt;').replace(/</g, '&lt;');
+			                  // make it look nice 
+			                  svggraph = "<pre class='pre-scrollable prettyprint'>" + svggraph + "</pre>";
+							}
+							
 							svg.html(svggraph);
+							
+							// center the graph horizontally
+							var svgRect = $('g#group')[0].getBoundingClientRect();
+							var offset = ($(document).width() - svgRect.width) / 2; 
+							var g = svg.svg('get').getElementById('group');
+							// we put a 1 for the y value as the IE seems to omit 0s 
+							// what breaks our regex in the draggable addon
+							g.setAttribute('transform', 'translate(' + offset + ', 1)');
+							
 							// show graph section and hide errorDiv
 							$('#resGraph').show();
 							$('#errorDiv').hide();
@@ -178,16 +227,21 @@ class LiveProvider extends AbstractProvider {
 							// hide the graph section
 							$('#resGraph').hide();
 							// show errorDiv
-							$('#errorDiv').html(error.responseText);
+							var errorJson = JSON.parse(error.responseText);
+							var errorPre = "<h4>Error:</h4> " + errorJson.message;
+							if (errorJson.throwable) {
+							    errorPre += "<br /><br /><pre>" + errorJson.throwable + "</pre>";    
+							}
+							$('#errorDiv').html(errorPre);
 							$('#errorDiv').show();	
 						}
 					});
 				});
 				
 				// add initial example data
-				var exGraph ="digraph finite_state_machine {\n  rankdir=LR;\n  size=\"8,5\"\n  LR_0 LR_3 LR_4 LR_8;\n  LR_0 -> LR_2 [ label =\"SS(B)\" ];\n  LR_0 -> LR_1 [ label = \"SS(S)\" ];\n  LR_1 -> LR_3 [ label = \"S($end)\" ];\n  LR_2 -> LR_6 [ label =\"SS(b)\" ];\n  LR_2 -> LR_5 [ label = \"SS(a)\" ];\n  LR_2 -> LR_4 [ label = \"S(A)\" ];\n  LR_5 -> LR_7 [ label = \"S(b)\"];\n  LR_5 -> LR_5 [ label = \"S(a)\" ];\n  LR_6 -> LR_6 [ label = \"S(b)\" ];\n  LR_6 -> LR_5 [ label = \"S(a)\" ];\n  LR_7 -> LR_8 [ label = \"S(b)\" ];\n  LR_7 -> LR_5 [ label = \"S(a)\" ];\n  LR_8 -> LR_6 [ label = \"S(b)\" ];\n  LR_8-> LR_5 [ label = \"S(a)\" ];\n}";
+				var exGraph = "{\n  id: \"root\",  \n   children: [{\n      id: \"n1\",  \n     labels: [ { text: \"n1\" } ],\n     width: 100, \n      height: 100\n   },{\n       id: \"n2\", \n      labels: [ { text: \"n2\" } ],\n     width: 100,\n       height: 50,\n       ports: [{\n         id: \"n2_p1\",\n            width: 10,\n            height: 10\n        }],\n       children: [{  \n            id: \"n3\",  \n         labels: [ { text: \"n3\" } ],\n         width: 20,\n            height: 20\n        },{\n           id: \"n4\", \n          labels: [ { text: \"n4\" } ],\n         width: 20,\n            height: 20}\n       ],\n        edges: [{\n         id: \"e4\",  \n         source: \"n3\",\n           target: \"n4\"\n        }]\n    },{\n       id: \"n5\",\n       labels: [ { text: \"n5\" } ],\n     width: 100,\n       height: 50\n    }],\n   edges: [{\n     id: \"e1\",  \n     labels: [ { text: \"e1\" } ],\n     source: \"n1\",\n       target: \"n2\",\n       targetPort: \"n2_p1\"\n },{\n       id: \"e2\",  \n     labels: [ { text: \"e2\" } ],\n     source: \"n1\",\n       target: \"n5\"\n    }]\n}";
 				$('#srcArea').val(exGraph);
-				var exConfig = "spacing: 100,\nalgorithm: de.cau.cs.kieler.klay.layered";
+				var exConfig = "spacing: 100,\nalgorithm: de.cau.cs.kieler.klay.layered,\nedgeRouting: ORTHOGONAL";
 				$('#configArea').val(exConfig);
 			});
 			</script>

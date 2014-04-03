@@ -16,43 +16,40 @@ package de.cau.cs.kieler.klighd.piccolo.internal.nodes;
 import java.awt.geom.Point2D;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.klighd.util.RenderingContextData;
 import de.cau.cs.kieler.klighd.piccolo.internal.controller.AbstractKGERenderingController;
 import de.cau.cs.kieler.klighd.piccolo.internal.controller.KEdgeRenderingController;
 import edu.umd.cs.piccolo.PNode;
 
 /**
- * The Piccolo node for representing a {@code KEdge}.
- * 
- * Warning (chsch): KEdge renderings, i.e. splines and polylines, must not have a
- *  paint (box color) since this will impair the correct selection determination.
- *  (surrounding edge will cover node and other edges) 
+ * The Piccolo2D node for representing a {@link KEdge}.
  * 
  * @author mri
+ * @author chsch
  */
 public class KEdgeNode extends PChildRepresentedNode implements ILabeledGraphElement<KEdge> {
 
     private static final long serialVersionUID = -1867615197736299487L;
 
-    /** the property for the Piccolo representation of an edge. */
-    public static final IProperty<KEdgeNode> EDGE_REP = new Property<KEdgeNode>(
-            "klighd.piccolo.prepresentation");
-
     /** the property name for changes of the edge's bend points. */
     public static final String PROPERTY_BEND_POINTS = "bendPoints";
 
+    /** the property name for changes of the edge's bend points. */
+    public static final String PROPERTY_JUNCTION_POINTS = "junctionPoints";
+
     /** the represented {@link KEdge}. */
     private transient KEdge edge;
+
     /** the edge rendering controller deployed to manage the rendering of {@link #edge}. */
     private KEdgeRenderingController renderingController;
 
     /** the bend points. */
     private Point2D[] bendPoints = new Point2D[2];
 
+    /** the junction points. */
+    private Point2D[] junctionPoints = new Point2D[0];
+
     /**
-     * Constructs a Piccolo node for representing a {@code KEdge}.
+     * Constructs a Piccolo2D node for representing a {@link KEdge}.
      * 
      * @param edge
      *            the edge
@@ -63,7 +60,6 @@ public class KEdgeNode extends PChildRepresentedNode implements ILabeledGraphEle
         setChildrenPickable(true);
         bendPoints[0] = new Point2D.Double();
         bendPoints[1] = new Point2D.Double();
-        RenderingContextData.get(edge).setProperty(EDGE_REP, this);
     }
 
     /**
@@ -96,6 +92,13 @@ public class KEdgeNode extends PChildRepresentedNode implements ILabeledGraphEle
     }
     
     /**
+     * {@inheritDoc}
+     */
+    public void addLabel(final KLabelNode label) {
+        addChild(label);
+    }
+    
+    /**
      * Sets the bend points for the edge.
      * 
      * @param bendPoints
@@ -117,24 +120,37 @@ public class KEdgeNode extends PChildRepresentedNode implements ILabeledGraphEle
     }
 
     /**
+     * Sets the junction points for the edge.
+     * 
+     * @param junctionPoints
+     *            the bend points
+     */
+    public void setJunctionPoints(final Point2D[] junctionPoints) {
+        // set the new bend points and fire a property change event
+        this.junctionPoints = junctionPoints;
+        firePropertyChange(-1, PROPERTY_JUNCTION_POINTS, null, junctionPoints);
+    }
+
+    /**
+     * Returns the junction points for the edge.
+     * 
+     * @return the junction points
+     */
+    public Point2D[] getJunctionPoints() {
+        return junctionPoints;
+    }
+
+    /**
      * Returns the child area that contains this edge.
      * 
      * @return the child area containing this edge or null if the edge is not contained in a child
      *         area
      */
-    public KChildAreaNode getChildArea() {
+    public KChildAreaNode getParentChildArea() {
         PNode parent = getParent();
-        if (parent instanceof KChildAreaNode) {
-            return (KChildAreaNode) parent;
+        if (parent != null && parent.getParent() instanceof KChildAreaNode) {
+            return (KChildAreaNode) parent.getParent();
         }
         return null;
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void addLabel(final KLabelNode label) {
-        addChild(label);
-    }
-    
 }

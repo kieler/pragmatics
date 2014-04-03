@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -33,6 +34,7 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.FixedAlignment;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -142,7 +144,8 @@ public final class BKNodePlacer implements ILayoutPhase {
     public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
             final LGraph graph) {
         
-        if (graph.getProperty(Properties.GRAPH_PROPERTIES).contains(GraphProperties.EXTERNAL_PORTS)) {
+        if (graph.getProperty(InternalProperties.GRAPH_PROPERTIES).contains(
+                GraphProperties.EXTERNAL_PORTS)) {
             return HIERARCHY_PROCESSING_ADDITIONS;
         } else {
             return null;
@@ -173,7 +176,7 @@ public final class BKNodePlacer implements ILayoutPhase {
 
         // Initialize spacing value from layout options.
         normalSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING) 
-                * layeredGraph.getProperty(Properties.OBJ_SPACING_VERTICAL_FACTOR);
+                * layeredGraph.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
         smallSpacing = normalSpacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
 
         // Regard possible other layout options.
@@ -377,13 +380,13 @@ public final class BKNodePlacer implements ILayoutPhase {
                 bal.align.put(v, v);
                 bal.innerShift.put(v, 0.0);
                 
-                if (v.getProperty(Properties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT) {
+                if (v.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT) {
                     bal.blockContainsNorthSouth.put(v, true);
                 } else {
                     bal.blockContainsNorthSouth.put(v, false);
                 }
                 
-                if (v.getProperty(Properties.NODE_TYPE) == NodeType.NORMAL) {
+                if (v.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORMAL) {
                     bal.blockContainsRegularNode.put(v, true);
                 } else {
                     bal.blockContainsRegularNode.put(v, false);
@@ -396,11 +399,7 @@ public final class BKNodePlacer implements ILayoutPhase {
         // If the horizontal direction is bottom, the layers are traversed from
         // right to left, thus a reverse iterator is needed
         if (bal.hdir == HDirection.BOTTOM) {
-            layers = Arrays.asList(new Layer[layeredGraph.getLayers().size()]);
-            
-            // Create a copy of the layer list to prevent modifying the original list.
-            Collections.copy(layers, layeredGraph.getLayers());
-            Collections.reverse(layers);
+            layers = Lists.reverse(layers);
         }
 
         for (Layer layer : layers) {
@@ -413,10 +412,7 @@ public final class BKNodePlacer implements ILayoutPhase {
                 // If the alignment direction is RIGHT, the nodes in a layer are traversed
                 // reversely, thus we start at INT_MAX and with the reversed list of nodes.
                 r = Integer.MAX_VALUE;
-                nodes = Arrays.asList(new LNode[layer.getNodes().size()]);
-                // Create a copy of the node list to prevent modifying the original list.
-                Collections.copy(nodes, layer.getNodes());
-                Collections.reverse(nodes);
+                nodes = Lists.reverse(nodes);
             }
             
             // Variable names here are again taken from the paper mentioned above.
@@ -593,19 +589,14 @@ public final class BKNodePlacer implements ILayoutPhase {
         // If the horizontal direction is bottom, the layers are traversed from
         // right to left, thus a reverse iterator is needed
         if (bal.hdir == HDirection.BOTTOM) {
-            layers = Arrays.asList(new Layer[layeredGraph.getLayers().size()]);
-            // Create a copy of the layer list to prevent modifying the original list.
-            Collections.copy(layers, layeredGraph.getLayers());
-            Collections.reverse(layers);
+            layers = Lists.reverse(layers);
         }
 
         for (Layer layer : layers) {
             // As with layers, we need a reversed iterator for blocks for different directions
             List<LNode> nodes = layer.getNodes();
             if (bal.vdir == VDirection.RIGHT) {
-                nodes = Arrays.asList(new LNode[layer.getNodes().size()]);
-                Collections.copy(nodes, layer.getNodes());
-                Collections.reverse(nodes);
+                nodes = Lists.reverse(nodes);
             }
             
             // Do a initial placement for all blocks
@@ -717,11 +708,11 @@ public final class BKNodePlacer implements ILayoutPhase {
                                 + bal.innerShift.get(w);
                         double xSize = x.getSize().y + x.getMargin().bottom;
                         
-                        if (w.getProperty(Properties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT) {
+                        if (w.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT) {
                             wSize += NORTH_SOUTH_SPACING;
                         }
                         
-                        if (x.getProperty(Properties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT) {
+                        if (x.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT) {
                             xSize += NORTH_SOUTH_SPACING;
                         }
                         
@@ -868,13 +859,17 @@ public final class BKNodePlacer implements ILayoutPhase {
      * @return True if the node is part of a long edge between the layers, false else
      */
     private boolean incidentToInnerSegment(final LNode node, final int layer1, final int layer2) {
-        if (node.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE
-                || node.getProperty(Properties.NODE_TYPE) == NodeType.COMPOUND_SIDE) {
-            
+        
+        // consider that big nodes include their respective start and end node.
+        if (node.getProperty(InternalProperties.NODE_TYPE) == NodeType.BIG_NODE) {
+            // all nodes should be placed straightly
+            return true;
+        }
+        
+        if (node.getProperty(InternalProperties.NODE_TYPE) == NodeType.LONG_EDGE) {
             for (LEdge edge : node.getIncomingEdges()) {
-                if ((edge.getSource().getNode().getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE
-                        || edge.getSource().getNode().getProperty(Properties.NODE_TYPE)
-                                                             == NodeType.COMPOUND_SIDE)
+                if (edge.getSource().getNode().getProperty(InternalProperties.NODE_TYPE)
+                            == NodeType.LONG_EDGE
                         && edge.getSource().getNode().getLayer().getIndex() == layer2
                         && node.getLayer().getIndex() == layer1) {
                     
@@ -1064,9 +1059,7 @@ public final class BKNodePlacer implements ILayoutPhase {
      * Comparator which determines the order of nodes in a layer.
      */
     private static class NeighborComparator implements Comparator<LNode>, Serializable {
-        /**
-         * 
-         */
+        /** The serial version UID. */
         private static final long serialVersionUID = 7540379553811800233L;
 
         /**

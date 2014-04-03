@@ -13,10 +13,6 @@
  */
 package de.cau.cs.kieler.klighd.xtext;
 
-import java.util.List;
-
-import com.google.common.collect.Lists;
-
 import de.cau.cs.kieler.klighd.xtext.transformations.KGraphDiagramSynthesis;
 import de.cau.cs.kieler.klighd.xtext.triggers.XtextBasedEditorActivationChangeTrigger.XtextModelChangeState;
 // SUPPRESS CHECKSTYLE PREVIOUS LineLength
@@ -34,8 +30,7 @@ public class VisualizeKGraphCombination extends UpdateXtextModelKLighDCombinatio
      * List of requested transformations, used to force KLighD to use our enriching KGraph
      * transformation.
      */
-    private static final List<String> REQUESTED_TRANSFORMATIONS = Lists.newArrayList(
-            KGraphDiagramSynthesis.TRANSFORMATION_ID);
+    private static final String REQUESTED_SYNTHESIS = KGraphDiagramSynthesis.TRANSFORMATION_ID;
 
     /**
      * The execute method revealed and invoked by KIVi.
@@ -56,8 +51,8 @@ public class VisualizeKGraphCombination extends UpdateXtextModelKLighDCombinatio
     }
 
     @Override
-    protected List<String> getRequestedTransformations(final XtextModelChangeState state) {
-        return REQUESTED_TRANSFORMATIONS;
+    protected String getRequestedDiagramSynthesis(final XtextModelChangeState state) {
+        return REQUESTED_SYNTHESIS;
     }
     
 }

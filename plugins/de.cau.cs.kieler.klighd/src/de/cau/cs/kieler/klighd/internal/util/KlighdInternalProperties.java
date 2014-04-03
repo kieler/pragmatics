@@ -13,14 +13,13 @@
  */
 package de.cau.cs.kieler.klighd.internal.util;
 
-import org.eclipse.emf.ecore.EObject;
-
 import com.google.common.base.Predicate;
 
 import de.cau.cs.kieler.core.kgraph.PersistentEntry;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.klighd.IViewer;
+import de.cau.cs.kieler.klighd.internal.ILayoutRecorder;
 
 /**
  * A collection of internal KLighD-specific {@link de.cau.cs.kieler.core.properties.IProperty
@@ -42,34 +41,49 @@ public final class KlighdInternalProperties {
      * KGraphData}, for {@link de.cau.cs.kieler.core.kgraph.KGraphElement KGraphElements} it is to
      * be attached to their layout data.
      */
-    public static final IProperty<EObject> MODEL_ELEMEMT = new Property<EObject>("klighd.modelElement");
+    public static final IProperty<Object> MODEL_ELEMEMT = new Property<Object>("klighd.modelElement");
 
     /**
      * Property indicating that the node has been populated. A node is populated, if and only if the
      * node's child nodes are visible in the diagram.<br>
      * <br>
-     * <b>It is intended for KLighD internal use only!</b> The property declaration has been moved
-     * here from klighd.piccolo's AbstractRenderingController.
+     * <b>It is intended for KLighD internal use only!</b><br>
+     * The property declaration has been moved here from klighd.piccolo's
+     * AbstractRenderingController.
      */
     public static final IProperty<Boolean> POPULATED = new Property<Boolean>("klighd.populated",
             false);
     
     /**
-     * A property for identifying whether a node is currently active. A node is active if and only
-     * if it is visible.<br>
+     * A property indicating whether a {@link de.cau.cs.kieler.core.kgraph.KGraphElement
+     * KGraphElement} is currently active. This is the case if and only if it is represented in the
+     * diagram.<br>
      * <br>
-     * <b>It is intended for KLighD internal use only!</b> The property declaration has been moved
-     * here from klighd.piccolo's AbstractRenderingController.
+     * <b>It is intended for KLighD internal use only!</b><br>
+     * The property declaration has been moved here from klighd.piccolo's
+     * AbstractRenderingController.
      */
     public static final IProperty<Boolean> ACTIVE = new Property<Boolean>("klighd.active", false);
-
-    /** the duration for applying the layout. */
-    public static final IProperty<Integer> APPLY_LAYOUT_DURATION = new Property<Integer>(
-            "krendering.layout.applyLayoutDuration", 0);
     
+    /**
+     * A property indicating the selection of a {@link de.cau.cs.kieler.core.kgraph.KGraphElement
+     * KGraphElement} or a {@link de.cau.cs.kieler.core.krendering.KText KText}. It is used for
+     * communicating the 'selected' state of such an element from the
+     * {@link de.cau.cs.kieler.klighd.viewers.ContextViewer ContextViewer}, which sets this
+     * property, to concrete viewers, usually the PiccoloViewer and, more specifically, the
+     * (Abstract)KGERenderingControllers. Those viewers will then have to update the respective
+     * diagram figures and incorporate the {@link de.cau.cs.kieler.core.krendering.KStyle KStyles}
+     * with flag 'selection' set.
+     */
+    public static final IProperty<Boolean> SELECTED = new Property<Boolean>("klighd.selected", false);
+
     /** the viewer visualizing the graph. */
     public static final IProperty<IViewer<?>> VIEWER = new Property<IViewer<?>>(
             "krendering.layout.viewer");
+    
+    /** the layout recorder responsible for diagram animation. */
+    public static final IProperty<ILayoutRecorder> RECORDER = new Property<ILayoutRecorder>(
+            "krendering.layout.recorder");
     
     /**
      * Property to be attached to the {@link de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout

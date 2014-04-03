@@ -13,11 +13,15 @@
  */
 package de.cau.cs.kieler.klighd.util;
 
+import java.util.Arrays;
 import java.util.Iterator;
 
+import org.eclipse.emf.common.util.AbstractTreeIterator;
+import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 
 /**
@@ -31,6 +35,24 @@ public final class ModelingUtil {
     }
     
 
+    /**
+     * Returns an {@link Iterable} containing all recursively contained elements of type
+     * {@code value}'s type.
+     * 
+     * @param <T>
+     *            the required type of {@code value}
+     * @param value
+     *            the value
+     * @param clazz
+     *            the required type
+     * @return the requested {@link Iterable}
+     */
+    public static <T extends EObject> Iterable<T> eAllContentsOfType(final EObject value,
+            final Class<T> clazz) {
+        return Iterables2.toIterable(Iterators.filter(value.eAllContents(), clazz));
+    }
+
+    
     /**
      * Returns an {@link Iterable} containing {@code value} itself and all recursively contained
      * elements.
@@ -84,7 +106,7 @@ public final class ModelingUtil {
     public static EObject eContainerOfType(final EObject eObject, final EClass eClass) {
         EObject eo = eObject;
         while (eo != null && eo.eContainer() != null) {
-            if (eo.eContainer().eClass().equals(eClass)) {
+            if (eClass.isInstance(eo.eContainer())) {
                 return eo.eContainer();
             } else {
                 eo = eo.eContainer();
@@ -104,7 +126,7 @@ public final class ModelingUtil {
      * @return the required parent
      */
     public static EObject eContainerOrSelfOfType(final EObject eObject, final EClass eClass) {
-        if (eObject.eClass().equals(eClass)) {
+        if (eClass.isInstance(eObject)) {
             return eObject;
         } else {
             return eContainerOfType(eObject, eClass);
@@ -167,7 +189,19 @@ public final class ModelingUtil {
      * @return the an {@link Iterator} visiting all eContainers.
      */
     public static Iterator<EObject> eAllContainers(final EObject eObject) {
-        return new EContainerIterator(eObject);
+        return new EContainerIterator(eObject, false);
+    }
+    
+    /**
+     * Creates an iterator traversing along the 'eContainer' chain of an {@link EObject} including
+     * (starting with) <code>eOject</code> itself.
+     * 
+     * @param eObject
+     *            the element to start with
+     * @return the an {@link Iterator} visiting <code>eObject</code> and all eContainers.
+     */
+    public static Iterator<EObject> selfAndEAllContainers(final EObject eObject) {
+        return new EContainerIterator(eObject, true);
     }
     
     /**
@@ -180,21 +214,25 @@ public final class ModelingUtil {
 
         private EObject element;
         
-        public EContainerIterator(final EObject theElement) {
+        public EContainerIterator(final EObject theElement, final boolean includingSelf) {
             if (theElement == null) {
-                throw new IllegalArgumentException(
-                        "Constructor of EContainerIterator requires a non-null input.");
+                throw new IllegalArgumentException("Class EContainerIterator:"
+                        + "Constructor of EContainerIterator requires a non-null input.");
             }
-            this.element = theElement;
+            this.element = includingSelf ? theElement : theElement.eContainer();
         }
         
         public boolean hasNext() {
-            return element.eContainer() != null;
+            return element != null;
         }
 
         public EObject next() {
+            if (element == null) {
+                throw new IllegalStateException("Class EContainerIterator: There is no more element.");
+            }
+            final EObject res = element;
             element = element.eContainer();
-            return element;
+            return res;
         }
 
         public void remove() {
@@ -203,4 +241,91 @@ public final class ModelingUtil {
         }
     }
 
+
+    /**
+     * A modified version of {@link EObject#eAllContents()} allowing to filter the traversed
+     * elements based on its type. In contrast to
+     * 
+     * <pre>
+     * Iterators.filter(eObject.eAllContents(), ...)
+     * </pre>
+     * 
+     * or {@link ModelingUtil#eAllContentsOfType(EObject, Class)} this function does not visit
+     * elements being not of one of the given types. Consequently, elements of one of the given types
+     * being (deeply) contained by those skipped elements are not found.
+     * 
+     * @param eObject
+     *            the {@link EObject} whose contents are to be traversed
+     * @param types
+     *            the types of elements to be visited (varArgs)
+     * @return the tailored {@link TreeIterator}
+     */
+    public static TreeIterator<EObject> eAllContentsOfType2(final EObject eObject,
+            final Class<?>... types) {
+        if (types == null) {
+            return eObject.eAllContents();
+        }
+
+        final Predicate<Object> p = KlighdPredicates.instanceOf(Arrays.asList(types));
+
+        return new AbstractTreeIterator<EObject>(eObject, false) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public Iterator<EObject> getChildren(final Object object) {
+                return Iterators.filter(((EObject) object).eContents().iterator(), p);
+            }
+        };
+    }
+
+
+
+    /**
+     * A little shortcut for removing {@link org.eclipse.emf.common.notify.Adapter Adapters} from an
+     * {@link EObject} by their type.<br>
+     * <br>
+     * Is to be used in instead of
+     * {@link com.google.common.collect.Iterables#removeIf(Iterable, Predicate)
+     * Iterables#removeIf(Iterable, Predicate)}, which may lead to unintended behavior wrt. to the
+     * caused notifications. That one moves elements via {@link java.util.List#set(int, Object)
+     * List#set(int, Object)} leading to duplicate entries in the adapters list, and removes the
+     * duplicates later on causing {@link org.eclipse.emf.common.notify.Notification#REMOVE
+     * Notification#REMOVE} or {@link org.eclipse.emf.common.notify.Notification#REMOVE_MANY
+     * #REMOVE_MANY} notifications for elements that are still in the list!
+     * 
+     * @param eObject
+     *            the {@link EObject} to remove {@link org.eclipse.emf.common.notify.Adapter
+     *            Adapters} from
+     * @param adapterTypes
+     *            the types of the {@link org.eclipse.emf.common.notify.Adapter Adapters} to be
+     *            removed
+     */
+    public static void removeAdapters(final EObject eObject, final Class<?>... adapterTypes) {
+        final Predicate<Object> p = KlighdPredicates.instanceOf(Arrays.asList(adapterTypes));
+        Iterators.removeIf(eObject.eAdapters().iterator(), p);
+    }
+
+    /**
+     * A little shortcut for removing {@link org.eclipse.emf.common.notify.Adapter Adapters} from an
+     * {@link EObject} by means of a {@link Predicate}.<br>
+     * <br>
+     * Is to be used in instead of
+     * {@link com.google.common.collect.Iterables#removeIf(Iterable, Predicate)
+     * Iterables#removeIf(Iterable, Predicate)}, which may lead to unintended behavior wrt. to the
+     * caused notifications. That one moves elements via {@link java.util.List#set(int, Object)
+     * List#set(int, Object)} leading to duplicate entries in the adapters list, and removes the
+     * duplicates later on causing {@link org.eclipse.emf.common.notify.Notification#REMOVE
+     * Notification#REMOVE} or {@link org.eclipse.emf.common.notify.Notification#REMOVE_MANY
+     * #REMOVE_MANY} notifications for elements that are still in the list!
+     * 
+     * @param eObject
+     *            the {@link EObject} to remove {@link org.eclipse.emf.common.notify.Adapter
+     *            Adapters} from
+     * @param predicate
+     *            the predicate to be applied to the list of
+     *            {@link org.eclipse.emf.common.notify.Adapter Adapters}
+     */
+    public static void removeAdapters(final EObject eObject, final Predicate<Object> predicate) {
+        Iterators.removeIf(eObject.eAdapters().iterator(), predicate);
+    }
 }

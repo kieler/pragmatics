@@ -141,12 +141,14 @@ public final class LPort extends LShape {
      * @param node the owner to set
      */
     public void setNode(final LNode node) {
-        if (owner != null) {
-            owner.getPorts().remove(this);
+        if (this.owner != null) {
+            this.owner.getPorts().remove(this);
         }
+        
         this.owner = node;
-        if (owner != null) {
-            owner.getPorts().add(this);
+        
+        if (this.owner != null) {
+            this.owner.getPorts().add(this);
         }
     }
 
@@ -165,6 +167,9 @@ public final class LPort extends LShape {
      * @param theside the side to set
      */
     public void setSide(final PortSide theside) {
+        if (theside == null) {
+            throw new NullPointerException();
+        }
         this.side = theside;
     }
     

@@ -50,16 +50,16 @@ KPort returns KPort:
 
 //-------------- KLayoutData ---------------
 
-PersistentEntry returns PersistentEntry:
+Property returns PersistentEntry:
     key=QualifiedID '=' value=PropertyValue;
 
 KIdentifier returns KIdentifier:
-    id=QualifiedID ('[' (persistentEntries+=PersistentEntry)* ']')?;
+    id=QualifiedID ('[' (persistentEntries+=Property)* ']')?;
 
 KNodeLayout returns KShapeLayout:
     (('pos' ':' (('x' '=' xpos=Float)? & ('y' '=' ypos=Float)?))?
 	    & ('size' ':' (('width' '=' width=Float)? & ('height' '=' height=Float)?))?
-	    & ('properties' ':' (persistentEntries+=PersistentEntry)*)?)
+	    & ('properties' ':' (persistentEntries+=Property)*)?)
     (('insets' ':' insets=KInsets) | insets=EmptyKInsets);
 
 EmptyKNodeLayout returns KShapeLayout:
@@ -77,7 +77,7 @@ KShapeLayout returns KShapeLayout:
     {KShapeLayout}
     (('pos' ':' (('x' '=' xpos=Float)? & ('y' '=' ypos=Float)?))?
     & ('size' ':' (('width' '=' width=Float)? & ('height' '=' height=Float)?))?
-    & ('properties' ':' (persistentEntries+=PersistentEntry)*)?);
+    & ('properties' ':' (persistentEntries+=Property)*)?);
 
 EmptyKShapeLayout returns KShapeLayout:
     {KShapeLayout};
@@ -88,7 +88,7 @@ KEdgeLayout returns KEdgeLayout:
             | targetPoint=EmptyKPoint))
         | (sourcePoint=EmptyKPoint targetPoint=EmptyKPoint))
     ) | (sourcePoint=EmptyKPoint targetPoint=EmptyKPoint))
-    ('properties' ':' (persistentEntries+=PersistentEntry)*)?;
+    ('properties' ':' (persistentEntries+=Property)*)?;
 
 EmptyKEdgeLayout returns KEdgeLayout:
     sourcePoint=EmptyKPoint targetPoint=EmptyKPoint;
@@ -107,7 +107,7 @@ KRendering returns KRendering:
 
 KSimpleRendering returns KRendering:
 	(KRenderingRef | KChildArea | KText)
-	(id=QualifiedID)? ('[' (persistentEntries+=PersistentEntry)* ']')? ('{'
+	(id=QualifiedID)? ('[' (persistentEntries+=Property)* ']')? ('{'
 		(('styles' ':' (styles+=KStyle)*)?
 		& ('actions' ':' (actions+=KAction)*)?
 		& (placementData=KPlacementData)?)
@@ -115,7 +115,7 @@ KSimpleRendering returns KRendering:
 
 KContainerRendering returns KContainerRendering:
 	(KRectangle | KRoundedRectangle | KEllipse | KArc | KCustomRendering | KImage)
-	(id=QualifiedID)? ('[' (persistentEntries+=PersistentEntry)* ']')? ('{'
+	(id=QualifiedID)? ('[' (persistentEntries+=Property)* ']')? ('{'
 		(('styles' ':' (styles+=KStyle)*)?
 		& ('actions' ':' (actions+=KAction)*)?
 		& (placementData=KPlacementData)?
@@ -132,7 +132,7 @@ KChildArea returns KChildArea:
 
 KText returns KText:
 	{KText}
-	'ktext' ('(' text=STRING ')')?;
+	'ktext' ('(' text=STRING (',' cursorSelectable=BOOLEAN)? ')')?;
 
 KRectangle returns KRectangle:
 	{KRectangle}
@@ -160,13 +160,13 @@ KImage returns KImage:
 
 KPolyline returns KPolyline:
 	(KSimplePolyline | KPolygon | KRoundedBendsPolyline | KSpline)
-	(id=QualifiedID)? ('[' (persistentEntries+=PersistentEntry)* ']')? ('{'
+	(id=QualifiedID)? ('[' (persistentEntries+=Property)* ']')? ('{'
 		(('points' ':' (points+=KPosition (';' points+=KPosition)*)?)?
 		& ('styles' ':' (styles+=KStyle)*)?
 		& ('actions' ':' (actions+=KAction)*)?
 		& (placementData=KPlacementData)?
 		& (childPlacement=KPlacement)?)
-		('junction' jointPointRendering=KRendering)?
+		('junction' junctionPointRendering=KRendering)?
 		(children+=KRendering)*
 	'}')?;
 
@@ -207,60 +207,60 @@ KColoring returns KColoring:
 
 KForeground returns KForeground:
 	{KForeground}
-	(propagateToChildren?='propagate')? 'foreground';
+	(propagateToChildren?='propagate')? (selection?='selection')? 'foreground';
 
 KBackground returns KBackground:
 	{KBackground}
-	(propagateToChildren?='propagate')? 'background';
+	(propagateToChildren?='propagate')? (selection?='selection')? 'background';
 
 KFontBold returns KFontBold:
-	(propagateToChildren?='propagate')? 'bold' '=' bold=BOOLEAN;
+	(propagateToChildren?='propagate')? (selection?='selection')? 'bold' '=' bold=BOOLEAN;
 
 KFontItalic returns KFontItalic:
-	(propagateToChildren?='propagate')? 'italic' '=' italic=BOOLEAN;
+	(propagateToChildren?='propagate')? (selection?='selection')? 'italic' '=' italic=BOOLEAN;
 
 KFontName returns KFontName:
-	(propagateToChildren?='propagate')? 'fontName' '=' name=STRING;
+	(propagateToChildren?='propagate')? (selection?='selection')? 'fontName' '=' name=STRING;
 
 KFontSize returns KFontSize:
-	(propagateToChildren?='propagate')? (scaleWithZoom?='scale')?
+	(propagateToChildren?='propagate')? (selection?='selection')? (scaleWithZoom?='scale')?
 	'fontSize' '=' size=FSIZE;
 
 KTextUnderline returns KTextUnderline:
-	(propagateToChildren?='propagate')? 'underline' '=' underline=Underline;
+	(propagateToChildren?='propagate')? (selection?='selection')? 'underline' '=' underline=Underline;
 
 KHorizontalAlignment returns KHorizontalAlignment:
-	(propagateToChildren?='propagate')? 'hAlign' '=' horizontalAlignment=HorizontalAlignment;
+	(propagateToChildren?='propagate')? (selection?='selection')? 'hAlign' '=' horizontalAlignment=HorizontalAlignment;
 
 KVerticalAlignment returns KVerticalAlignment:
-	(propagateToChildren?='propagate')? 'vAlign' '=' verticalAlignment=VerticalAlignment;
+	(propagateToChildren?='propagate')? (selection?='selection')? 'vAlign' '=' verticalAlignment=VerticalAlignment;
 
 KInvisibility returns KInvisibility:
-	(propagateToChildren?='propagate')? 'invisible' '=' invisible=BOOLEAN;
+	(propagateToChildren?='propagate')? (selection?='selection')? 'invisible' '=' invisible=BOOLEAN;
 
 KLineCap returns KLineCap:
-    (propagateToChildren?='propagate')? 'lineCap' '=' lineCap=LineCap;
+    (propagateToChildren?='propagate')? (selection?='selection')? 'lineCap' '=' lineCap=LineCap;
 
 KLineJoin returns KLineJoin:
-    (propagateToChildren?='propagate')? 'lineJoin' '=' lineJoin=LineJoin;
+    (propagateToChildren?='propagate')? (selection?='selection')? 'lineJoin' '=' lineJoin=LineJoin;
 
 KLineStyle returns KLineStyle:
-	(propagateToChildren?='propagate')? 'lineStyle' '=' lineStyle=LineStyle;
+	(propagateToChildren?='propagate')? (selection?='selection')? 'lineStyle' '=' lineStyle=LineStyle;
 
 KLineWidth returns KLineWidth:
-	(propagateToChildren?='propagate')? 'lineWidth' '=' lineWidth=Float;
+	(propagateToChildren?='propagate')? (selection?='selection')? 'lineWidth' '=' lineWidth=Float;
 
 KRotation returns KRotation:
-	(propagateToChildren?='propagate')? 'rotation' '=' rotation=Float
+	(propagateToChildren?='propagate')? (selection?='selection')? 'rotation' '=' rotation=Float
 	('(' 'anchor' '=' rotationAnchor=KPosition ')')?;
 
 KShadow returns KShadow:
 	{KShadow}
-	(propagateToChildren?='propagate')? 'shadow' '=' (color=KColor)?
+	(propagateToChildren?='propagate')? (selection?='selection')? 'shadow' '=' (color=KColor)?
 	('(' xOffset=Float ',' yOffset=Float (',' blur=Float)? ')')?;
 
 KStyleRef returns KStyleRef:
-	'reference' '=' styleHolder=[KStyleHolder|QualifiedID];
+	 (selection?='selection')? 'reference' '=' styleHolder=[KStyleHolder|QualifiedID];
 
 
 //----------- KRendering Utility ------------
@@ -268,7 +268,7 @@ KStyleRef returns KStyleRef:
 KRenderingLibrary returns KRenderingLibrary:
 	{KRenderingLibrary}
 	'krenderingLibrary'
-	('[' (persistentEntries+=PersistentEntry)* ']')? '{'
+	('[' (persistentEntries+=Property)* ']')? '{'
 		(renderings+=KRendering | renderings+=KStyleHolder)*
 	'}';
 
@@ -315,8 +315,8 @@ KGridPlacementData returns KGridPlacementData:
 		& ('bottomRightAnchor' '=' bottomRight=KPosition)?
 		& ('minCellWidth' '=' minCellWidth=Float)?
 		& ('minCellHeight' '=' minCellHeight=Float)?
-		& ('maxCellWidth' '=' maxCellWidth=Float)?
-		& ('maxCellHeight' '=' maxCellHeight=Float)?);
+		& ('flexibleWidth' '=' flexibleWidth=BOOLEAN)?
+		& ('flexibleHeight' '=' flexibleHeight=BOOLEAN)?);
 
 KDecoratorPlacementData returns KDecoratorPlacementData:
 	{KDecoratorPlacementData}
@@ -330,7 +330,7 @@ KDecoratorPlacementData returns KDecoratorPlacementData:
 		& ('rotateWithLine' '=' rotateWithLine=BOOLEAN)?);
 
 KAction returns KAction:
-	trigger=Trigger '=>' id=QualifiedID;
+	trigger=Trigger '=>' actionId=QualifiedID;
 
 KPosition returns KPosition:
 	x=KXPosition ',' y=KYPosition;

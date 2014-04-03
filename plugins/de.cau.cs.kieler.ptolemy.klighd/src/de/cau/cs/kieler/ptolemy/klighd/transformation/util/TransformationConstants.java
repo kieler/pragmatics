@@ -14,6 +14,10 @@
 
 package de.cau.cs.kieler.ptolemy.klighd.transformation.util;
 
+import java.util.Map;
+
+import com.google.common.collect.Maps;
+
 /**
  * Contains constants used during the transformations. This class is not to be instantiated.
  * 
@@ -94,6 +98,23 @@ public final class TransformationConstants {
     /** Class of an entity that is a String Const actor. */
     public static final String ENTITY_CLASS_STRING_CONST = "ptolemy.actor.lib.StringConst";
     
+    /** Class of an entity that is an Expression actor. */
+    public static final String ENTITY_CLASS_EXPRESSION = "ptolemy.actor.lib.Expression";
+    
+    /** Class of an entity that is a Sample Delay actor. */
+    public static final String ENTITY_CLASS_SAMPLE_DELAY = "ptolemy.domains.sdf.lib.SampleDelay";
+    
+    /** Class of an entity that is a Non-Strict Delay actor. */
+    public static final String ENTITY_CLASS_NONSTRICT_DELAY = "ptolemy.domains.sr.lib.NonStrictDelay";
+    
+    /** Class of an entity that is a Logic Function actor. */
+    public static final String ENTITY_CLASS_LOGIC_FUNTION = "ptolemy.actor.lib.logic.LogicFunction";
+
+    /** Class of an entity that is a Unary Math Function actor. */
+    public static final String ENTITY_CLASS_UNARY_MATH_FUNTION = "ptolemy.actor.lib.UnaryMathFunction";
+    
+    /** Class of an entity that is a Trig Function actor. */
+    public static final String ENTITY_CLASS_TRIG_FUNTION = "ptolemy.actor.lib.TrigFunction";
     
     // ENTITY NAMES
     
@@ -188,6 +209,19 @@ public final class TransformationConstants {
     
     /** Name of the annotation that identifies reset transitions. */
     public static final String ANNOTATION_NONDETERMINISTIC_TRANSITION = "nondeterministic";
+    
+    /** Map of value displaying classes to the properties the value is stored in. */
+    public static final Map<String, String> VALUE_DISPLAY_MAP = Maps.newHashMap();
+    static {
+        VALUE_DISPLAY_MAP.put(ENTITY_CLASS_CONST, "value");
+        VALUE_DISPLAY_MAP.put(ENTITY_CLASS_STRING_CONST, "value");
+        VALUE_DISPLAY_MAP.put(ENTITY_CLASS_EXPRESSION, "expression");
+        VALUE_DISPLAY_MAP.put(ENTITY_CLASS_SAMPLE_DELAY, "initialOutputs");
+        VALUE_DISPLAY_MAP.put(ENTITY_CLASS_NONSTRICT_DELAY, "initialValue");
+        VALUE_DISPLAY_MAP.put(ENTITY_CLASS_LOGIC_FUNTION, "function");
+        VALUE_DISPLAY_MAP.put(ENTITY_CLASS_TRIG_FUNTION, "function");
+        VALUE_DISPLAY_MAP.put(ENTITY_CLASS_UNARY_MATH_FUNTION, "function");
+    }
     
     
     /**

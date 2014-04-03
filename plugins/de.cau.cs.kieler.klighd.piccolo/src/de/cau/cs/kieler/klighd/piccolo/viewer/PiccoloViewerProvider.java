@@ -21,14 +21,22 @@ import de.cau.cs.kieler.klighd.IViewerProvider;
 import de.cau.cs.kieler.klighd.viewers.ContextViewer;
 
 /**
- * A viewer provider for the Piccolo viewer for KGraphs with attached KRendering data.
- * 
+ * A viewer provider for the Piccolo2D viewer for KGraphs with attached KRendering data.<br>
+ * <br>
+ * This class is not registered via the corresponding extension point and, thus, (currently) not
+ * used. Instead the PiccoloViewer is contributed via a related viewer provider in
+ * <code>de.cau.cs.kieler.klighd.ui</code>. This class has not been deleted as it may be used in
+ * (and registered) in application code. We'll decide on its right to exist in future ;-)<br>
+ * <br>
+ * <b>UPDATE</b>: It's employed and registered in 'de.cau.cs.kieler.klighd.test'.
+ *  
  * @author mri
+ * @author chsch
  */
 public class PiccoloViewerProvider implements IViewerProvider<KNode> {
 
     /** the identifier for this viewer provider as specified in the extension point. */
-    public static final String ID = "de.cau.cs.kieler.klighd.piccolo.piccoloViewer";
+    public static final String ID = "de.cau.cs.kieler.klighd.piccolo.viewer.PiccoloViewer";
 
     /**
      * {@inheritDoc}

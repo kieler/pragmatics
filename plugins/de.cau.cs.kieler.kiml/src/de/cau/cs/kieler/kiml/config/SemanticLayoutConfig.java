@@ -13,14 +13,12 @@
  */
 package de.cau.cs.kieler.kiml.config;
 
-import org.eclipse.emf.ecore.EObject;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
 import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.kiml.LayoutContext;
-import de.cau.cs.kieler.kiml.LayoutDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
  * An abstract layout configuration that is able to consider semantic model properties.
@@ -29,7 +27,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  * @kieler.design proposed by msp
  * @kieler.rating yellow 2013-07-01 review KI-38 by cds, uru
  */
-public abstract class SemanticLayoutConfig implements IMutableLayoutConfig {
+public abstract class SemanticLayoutConfig extends AbstractMutableLayoutConfig {
     
     /** the default priority for semantic layout configurations. */
     public static final int PRIORITY = 5;
@@ -47,7 +45,7 @@ public abstract class SemanticLayoutConfig implements IMutableLayoutConfig {
      * @param semanticElem a semantic model element
      * @return the affected options, or {@code null} if there are none
      */
-    protected abstract IProperty<?>[] getAffectedOptions(EObject semanticElem);
+    protected abstract IProperty<?>[] getAffectedOptions(Object semanticElem);
     
     /**
      * Determine the value of the given layout option from the semantic element.
@@ -56,8 +54,8 @@ public abstract class SemanticLayoutConfig implements IMutableLayoutConfig {
      * @param layoutOption a layout option
      * @return the corresponding value, or {@code null} if no specific value is determined
      */
-    protected abstract Object getSemanticValue(EObject semanticElem,
-            LayoutOptionData<?> layoutOption);
+    protected abstract Object getSemanticValue(Object semanticElem,
+            LayoutOptionData layoutOption);
     
     /**
      * Set a layout option value for the semantic element. This feature is optional, so
@@ -68,65 +66,14 @@ public abstract class SemanticLayoutConfig implements IMutableLayoutConfig {
      * @param value a value for the layout option, or {@code null} if the currently set
      *     value shall be deleted
      */
-    protected abstract void setSemanticValue(EObject semanticElem,
-            LayoutOptionData<?> layoutOption, Object value);
+    protected abstract void setSemanticValue(Object semanticElem,
+            LayoutOptionData layoutOption, Object value);
 
     /**
      * {@inheritDoc}
      */
-    public void enrich(final LayoutContext context) {
-        LayoutDataService layoutDataService = LayoutDataService.getInstance();
-        LayoutOptionData<?> algorithmData = layoutDataService.getOptionData(
-                LayoutOptions.ALGORITHM.getId());
-        LayoutOptionData<?> diagTypeData = layoutDataService.getOptionData(
-                LayoutOptions.DIAGRAM_TYPE.getId());
-        
-        EObject element = context.getProperty(LayoutContext.DOMAIN_MODEL);
-        if (element != null) {
-            // set layout algorithm hint for the content of the selected element
-            if (context.getProperty(DefaultLayoutConfig.CONTENT_HINT) == null
-                    && algorithmData != null) {
-                String hint = (String) getSemanticValue(element, algorithmData);
-                if (hint != null) {
-                    context.setProperty(DefaultLayoutConfig.CONTENT_HINT, hint);
-                }
-            }
-            // set diagram type for the content of the selected element
-            if (context.getProperty(DefaultLayoutConfig.CONTENT_DIAGT) == null
-                    && diagTypeData != null) {
-                String diagType = (String) getSemanticValue(element, diagTypeData);
-                if (diagType != null) {
-                    context.setProperty(DefaultLayoutConfig.CONTENT_DIAGT, diagType);
-                }
-            }
-        }
-        
-        EObject containerElem = context.getProperty(LayoutContext.CONTAINER_DOMAIN_MODEL);
-        if (containerElem != null) {
-            // set layout algorithm hint for the container of the selected element
-            if (context.getProperty(DefaultLayoutConfig.CONTAINER_HINT) == null
-                    && algorithmData != null) {
-                String hint = (String) getSemanticValue(containerElem, algorithmData);
-                if (hint != null) {
-                    context.setProperty(DefaultLayoutConfig.CONTAINER_HINT, hint);
-                }
-            }
-            // set diagram type for the container of the selected element
-            if (context.getProperty(DefaultLayoutConfig.CONTAINER_DIAGT) == null
-                    && diagTypeData != null) {
-                String diagType = (String) getSemanticValue(containerElem, diagTypeData);
-                if (diagType != null) {
-                    context.setProperty(DefaultLayoutConfig.CONTAINER_DIAGT, diagType);
-                }
-            }
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public final Object getValue(final LayoutOptionData<?> optionData, final LayoutContext context) {
-        EObject element = context.getProperty(LayoutContext.DOMAIN_MODEL);
+    public final Object getOptionValue(final LayoutOptionData optionData, final LayoutContext context) {
+        Object element = context.getProperty(LayoutContext.DOMAIN_MODEL);
         if (element != null) {
             return getSemanticValue(element, optionData);
         }
@@ -136,60 +83,9 @@ public abstract class SemanticLayoutConfig implements IMutableLayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public final void transferValues(final KLayoutData graphData, final LayoutContext context) {
-        EObject element = context.getProperty(LayoutContext.DOMAIN_MODEL);
-        if (element != null) {
-            LayoutDataService layoutDataService = LayoutDataService.getInstance();
-            IProperty<?>[] affectedOptions = getAffectedOptions(element);
-            if (affectedOptions != null) {
-                for (IProperty<?> property : affectedOptions) {
-                    LayoutOptionData<?> optionData;
-                    if (property instanceof LayoutOptionData<?>) {
-                        optionData = (LayoutOptionData<?>) property;
-                    } else {
-                        optionData = layoutDataService.getOptionData(property.getId());
-                    }
-                    
-                    if (optionData != null) {
-                        Object value = getSemanticValue(element, optionData);
-                        graphData.setProperty(property, value);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void clearValues(final LayoutContext context) {
-        EObject element = context.getProperty(LayoutContext.DOMAIN_MODEL);
-        if (element != null) {
-            LayoutDataService layoutDataService = LayoutDataService.getInstance();
-            IProperty<?>[] affectedOptions = getAffectedOptions(element);
-            if (affectedOptions != null) {
-                for (IProperty<?> property : affectedOptions) {
-                    LayoutOptionData<?> optionData;
-                    if (property instanceof LayoutOptionData<?>) {
-                        optionData = (LayoutOptionData<?>) property;
-                    } else {
-                        optionData = layoutDataService.getOptionData(property.getId());
-                    }
-                    
-                    if (optionData != null) {
-                        setSemanticValue(element, optionData, null);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public final void setValue(final LayoutOptionData<?> optionData, final LayoutContext context,
+    public final void setOptionValue(final LayoutOptionData optionData, final LayoutContext context,
             final Object value) {
-        EObject element = context.getProperty(LayoutContext.DOMAIN_MODEL);
+        Object element = context.getProperty(LayoutContext.DOMAIN_MODEL);
         if (element != null) {
             setSemanticValue(element, optionData, value);
         }
@@ -198,12 +94,15 @@ public abstract class SemanticLayoutConfig implements IMutableLayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public final boolean isSet(final LayoutOptionData<?> optionData, final LayoutContext context) {
-        EObject element = context.getProperty(LayoutContext.DOMAIN_MODEL);
+    public final Collection<IProperty<?>> getAffectedOptions(final LayoutContext context) {
+        Object element = context.getProperty(LayoutContext.DOMAIN_MODEL);
         if (element != null) {
-            return getSemanticValue(element, optionData) != null;
+            IProperty<?>[] affectedOptions = getAffectedOptions(element);
+            if (affectedOptions != null) {
+                return Arrays.asList(affectedOptions);
+            }
         }
-        return false;
+        return Collections.emptyList();
     }
 
 }

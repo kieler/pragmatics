@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: KIELER Bridge for Libavoid Layout
+Bundle-SymbolicName: de.cau.cs.kieler.kiml.libavoid;singleton:=true
+Bundle-Version: 0.1.0.qualifier
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
+Require-Bundle: com.google.guava,
+ de.cau.cs.kieler.core,
+ de.cau.cs.kieler.core.kgraph,
+ de.cau.cs.kieler.kiml,
+ de.cau.cs.kieler.kiml.service,
+ org.adaptagrams

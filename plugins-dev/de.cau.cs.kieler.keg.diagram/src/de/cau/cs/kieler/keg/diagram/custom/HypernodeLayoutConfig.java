@@ -13,8 +13,6 @@
  */
 package de.cau.cs.kieler.keg.diagram.custom;
 
-import org.eclipse.emf.ecore.EObject;
-
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.keg.Node;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
@@ -33,7 +31,7 @@ public class HypernodeLayoutConfig extends SemanticLayoutConfig {
      * {@inheritDoc}
      */
     @Override
-    protected IProperty<?>[] getAffectedOptions(final EObject semanticElem) {
+    protected IProperty<?>[] getAffectedOptions(final Object semanticElem) {
         if (semanticElem instanceof Node) {
             return new IProperty<?>[] { LayoutOptions.HYPERNODE };
         }
@@ -44,8 +42,8 @@ public class HypernodeLayoutConfig extends SemanticLayoutConfig {
      * {@inheritDoc}
      */
     @Override
-    protected Object getSemanticValue(final EObject semanticElem,
-            final LayoutOptionData<?> layoutOption) {
+    protected Object getSemanticValue(final Object semanticElem,
+            final LayoutOptionData layoutOption) {
         if (semanticElem instanceof Node && layoutOption.equals(LayoutOptions.HYPERNODE)) {
             return ((Node) semanticElem).isHypernode();
         }
@@ -56,8 +54,8 @@ public class HypernodeLayoutConfig extends SemanticLayoutConfig {
      * {@inheritDoc}
      */
     @Override
-    protected void setSemanticValue(final EObject semanticElem,
-            final LayoutOptionData<?> layoutOption, final Object value) {
+    protected void setSemanticValue(final Object semanticElem,
+            final LayoutOptionData layoutOption, final Object value) {
         // not supported by this layout configuration
     }
 

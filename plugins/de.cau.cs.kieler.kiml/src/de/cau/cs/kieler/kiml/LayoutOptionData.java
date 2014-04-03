@@ -16,7 +16,6 @@ package de.cau.cs.kieler.kiml;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -32,12 +31,12 @@ import de.cau.cs.kieler.core.util.Pair;
 /**
  * Data type used to store information for a layout option.
  * 
- * @param <T> data type for the option data
  * @kieler.design 2011-02-01 reviewed by cmot, soh
  * @kieler.rating yellow 2012-10-09 review KI-25 by chsch, bdu
  * @author msp
  */
-public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparable<IProperty<?>> {
+public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object>,
+        Comparable<IProperty<?>> {
 
     /** literal value constant for booleans. */
     public static final String BOOLEAN_LITERAL = "boolean";
@@ -53,10 +52,6 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
     public static final String ENUMSET_LITERAL = "enumset";
     /** literal value constant for data objects. */
     public static final String OBJECT_LITERAL = "object";
-    /** literal value constant for enumerations coming from remote layout. */
-    public static final String REMOTEENUM_LITERAL = "remoteenum";
-    /** literal value constant for enumeration sets coming from remote layout. */
-    public static final String REMOTEENUMSET_LITERAL = "remoteenumset";
     /** default name for layout options for which no name is given. */
     public static final String DEFAULT_OPTION_NAME = "<Unnamed Option>";
 
@@ -77,11 +72,7 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
         /** enumeration set type. */
         ENUMSET,
         /** {@link IDataObject} type. */
-        OBJECT,
-        /** remote enumeration type. */
-        REMOTE_ENUM,
-        /** remote enumeration set type. */
-        REMOTE_ENUMSET;         
+        OBJECT;        
         
         /**
          * Returns a user-friendly literal for the enumeration value.
@@ -104,10 +95,6 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
                 return ENUMSET_LITERAL;
             case OBJECT:
                 return OBJECT_LITERAL;
-            case REMOTE_ENUM:
-                return REMOTEENUM_LITERAL;
-            case REMOTE_ENUMSET:
-                return REMOTEENUMSET_LITERAL;
             default:
                 return toString();
             }
@@ -131,7 +118,7 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
     /** identifier of the layout option. */
     private String id = "";
     /** the default value of this option. */
-    private T defaultValue;
+    private Object defaultValue;
     /** type of the layout option. */
     private Type type = Type.UNDEFINED;
     /** user friendly name of the layout option. */
@@ -141,7 +128,7 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
     /** configured targets. */
     private Set<Target> targets = Collections.emptySet();
     /** dependencies to other layout options. */
-    private List<Pair<LayoutOptionData<?>, Object>> dependencies = Lists.newLinkedList();
+    private List<Pair<LayoutOptionData, Object>> dependencies = Lists.newLinkedList();
     /** the class that represents this option type. */
     private Class<?> clazz;
     /** cached value of the available choices. */
@@ -149,9 +136,9 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
     /** whether the option should be shown in advanced mode only. */
     private boolean advanced;
     /** the lower bound for option values. */
-    private T lowerBound;
+    private Object lowerBound;
     /** the upper bound for option values. */
-    private T upperBound;
+    private Object upperBound;
     /** the variance for option values. */
     private float variance = 1.0f;
     
@@ -166,25 +153,13 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
     }
 
     /**
-     * Checks whether the remote enumeration options have been correctly initialized.
-     */
-    private void checkRemoteEnumoptions() {
-        if (choices == null || choices.length == 0) {
-            throw new IllegalStateException(
-                "Remote enumeration values have not been initialized correctly"
-                + " for layout option with id " + id
-            );
-        }
-    }
-
-    /**
      * Checks whether the {@link IDataType} class is set correctly and creates an instance.
      * This method must not be called for options other than of type 'object'.
      * 
      * @return an instance of the data object
      */
     private IDataObject createDataInstance() {
-        if (!IDataObject.class.isAssignableFrom(clazz)) {
+        if (clazz == null || !IDataObject.class.isAssignableFrom(clazz)) {
             throw new IllegalStateException("IDataType class expected for layout option " + id);
         }
         try {
@@ -202,8 +177,8 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
      * {@inheritDoc}
      */
     public boolean equals(final Object obj) {
-        if (obj instanceof LayoutOptionData<?>) {
-            return this.id.equals(((LayoutOptionData<?>) obj).id);
+        if (obj instanceof LayoutOptionData) {
+            return this.id.equals(((LayoutOptionData) obj).id);
         } else if (obj instanceof IProperty<?>) {
             return this.id.equals(((IProperty<?>) obj).getId());
         } else {
@@ -258,10 +233,6 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
             type = Type.ENUMSET;
         } else if (OBJECT_LITERAL.equalsIgnoreCase(typeLiteral)) {
             type = Type.OBJECT;
-        } else if (REMOTEENUM_LITERAL.equalsIgnoreCase(typeLiteral)) {
-            type = Type.REMOTE_ENUM;
-        } else if (REMOTEENUMSET_LITERAL.equalsIgnoreCase(typeLiteral)) {
-            type = Type.REMOTE_ENUMSET;
         } else {
             throw new IllegalArgumentException("The given type literal is invalid.");
         }
@@ -275,59 +246,48 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
      *         {@code null} if the given value string is invalid
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public T parseValue(final String valueString) {
+    public Object parseValue(final String valueString) {
         if (valueString == null || valueString.equals("null")) {
             return null;
         }
         
         // if this open data instance is an ENUMSET or a REMOTE_ENUMSET, we need to allow empty strings
         // to denote that no enumeration value is selected. Otherwise, we forbid empty strings
-        if (valueString.length() == 0 && type != Type.ENUMSET && type != Type.REMOTE_ENUMSET) {
+        if (valueString.length() == 0 && type != Type.ENUMSET) {
             return null;
         }
         
         switch (type) {
         case BOOLEAN:
-            return (T) Boolean.valueOf(valueString);
+            return Boolean.valueOf(valueString);
         case INT:
             try {
-                return (T) Integer.valueOf(valueString);
+                return Integer.valueOf(valueString);
             } catch (NumberFormatException exception) {
                 return null;
             }
         case STRING:
-            return (T) valueString;
+            return valueString;
         case FLOAT:
             try {
-                return (T) Float.valueOf(valueString);
+                return Float.valueOf(valueString);
             } catch (NumberFormatException exception) {
                 return null;
             }
         case ENUM:
             checkEnumClass();
-            return (T) enumForString(valueString);
+            return enumForString(valueString);
         case ENUMSET:
             checkEnumClass();
-            return (T) enumSetForStringArray((Class<? extends Enum>) clazz, valueString);
+            return enumSetForStringArray((Class<? extends Enum>) clazz, valueString);
         case OBJECT:
             try {
                 IDataObject value = createDataInstance();
                 value.parse(valueString);
-                return (T) value;
+                return value;
             } catch (IllegalArgumentException exception) {
                 return null;
             }
-        case REMOTE_ENUM:
-            checkRemoteEnumoptions();
-            for (int i = 0; i < choices.length; i++) {
-                if (choices[i].equals(valueString)) {
-                    return (T) valueString;
-                }
-            }
-            return null;
-        case REMOTE_ENUMSET:
-            checkRemoteEnumoptions();
-            return (T) remoteEnumSetForStringArray(valueString);
         default:
             throw new IllegalStateException("Invalid type set for this layout option.");
         }
@@ -368,48 +328,6 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
             } else {
                 // add the enumeration object to the set
                 set.add(leClazz.cast(o));
-            }
-        }
-        
-        return set;
-    }
-    
-    /**
-     * Tries to turn the given string representation into a set over the possible string
-     * choices given by the remote enumset. The string consists of multiple parts, with
-     * each part following the convention specified in the comment of
-     * {@link #enumForString(String)}. The format of the string is something like
-     * {@code [a, b, c]}.
-     * 
-     * @param leString the string to convert.
-     * @return the set.
-     */
-    private Set<String> remoteEnumSetForStringArray(final String leString) {
-        Set<String> set = new HashSet<String>();
-        
-        // break the value string into its different components and iterate over them;
-        // the string will be of the form "[a, b, c]"
-        String[] components = leString.split("[\\[\\]\\s,]+");
-        for (String component : components) {
-            // Check for empty strings
-            if (component.trim().length() == 0) {
-                continue;
-            }
-            
-            // Check if we have a valid option
-            boolean found = false;
-            int i;
-            for (i = 0; i < choices.length; i++) {
-                if (choices[i].equalsIgnoreCase(component)) {
-                    found = true;
-                    break;
-                }
-            }
-            
-            if (found) {
-                set.add(choices[i]);
-            } else {
-                return null;
             }
         }
         
@@ -469,31 +387,25 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
      * @return a default-default value, depending on the option type
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public T getDefaultDefault() {
+    public Object getDefaultDefault() {
         switch (type) {
         case STRING:
-            return (T) "";
+            return "";
         case BOOLEAN:
-            return (T) Boolean.FALSE;
+            return Boolean.FALSE;
         case INT:
-            return (T) Integer.valueOf(0);
+            return Integer.valueOf(0);
         case FLOAT:
-            return (T) Float.valueOf(0.0f);
+            return Float.valueOf(0.0f);
         case ENUM:
             checkEnumClass();
             Enum<?>[] enums = ((Class<Enum>) clazz).getEnumConstants();
-            return (T) enums[0];
+            return enums[0];
         case ENUMSET:
             checkEnumClass();
-            return (T) EnumSet.noneOf(((Class<Enum>) clazz));
+            return EnumSet.noneOf(((Class<Enum>) clazz));
         case OBJECT:
             return null;
-        case REMOTE_ENUM:
-            checkRemoteEnumoptions();
-            return (T) choices[0];
-        case REMOTE_ENUMSET:
-            checkRemoteEnumoptions();
-            return (T) new HashSet<String>();
         default:
             throw new IllegalStateException("Invalid type set for this layout option.");
         }
@@ -524,12 +436,6 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
                 break;
             case BOOLEAN:
                 choices = BOOLEAN_CHOICES;
-                break;
-            case REMOTE_ENUM:
-                checkRemoteEnumoptions();
-                break;
-            case REMOTE_ENUMSET:
-                checkRemoteEnumoptions();
                 break;
             default:
                 choices = new String[0];
@@ -593,44 +499,6 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
     public Set<Target> getTargets() {
         return targets;
     }
-
-    /**
-     * Returns a user friendly description of the active targets of this layout
-     * option.
-     * 
-     * @return a description of the active targets, or {@code null} if there are
-     *         no active targets
-     */
-    public String getTargetsDescription() {
-        StringBuilder descriptionBuf = new StringBuilder();
-        int count = targets.size(), index = 0;
-        for (Target target : targets) {
-            switch (target) {
-            case PARENTS:
-                descriptionBuf.append("Parents");
-                break;
-            case NODES:
-                descriptionBuf.append("Nodes");
-                break;
-            case EDGES:
-                descriptionBuf.append("Edges");
-                break;
-            case PORTS:
-                descriptionBuf.append("Ports");
-                break;
-            case LABELS:
-                descriptionBuf.append("Labels");
-                break;
-            }
-            index++;
-            if (count - index >= 2) {
-                descriptionBuf.append(", ");
-            } else if (count - index == 1) {
-                descriptionBuf.append(" and ");
-            }
-        }
-        return descriptionBuf.toString();
-    }
     
     /**
      * Returns the dependencies to other layout options. The option should only be made visible if
@@ -638,7 +506,7 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
      * 
      * @return the options from which this option depends together with the expected values
      */
-    public List<Pair<LayoutOptionData<?>, Object>> getDependencies() {
+    public List<Pair<LayoutOptionData, Object>> getDependencies() {
         return dependencies;
     }
 
@@ -742,17 +610,15 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
      * 
      * @return the default value.
      */
-    public T getDefault() {
+    public Object getDefault() {
         // Clone the default value if it's a Cloneable. We need to use reflection for this to work
-        // properly (classes implementing Clonable are not required to make their clone() method
+        // properly (classes implementing Cloneable are not required to make their clone() method
         // public, so we need to check if they have such a method and invoke it via reflection, which
         // results in ugly and unchecked type casting)
         if (defaultValue instanceof Cloneable) {
             try {
                 Method cloneMethod = defaultValue.getClass().getMethod("clone");
-                @SuppressWarnings("unchecked")
-                T clonedDefaultValue = (T) cloneMethod.invoke(defaultValue);
-                return clonedDefaultValue;
+                return cloneMethod.invoke(defaultValue);
             } catch (Exception e) {
                 // Give up cloning and return the default instance
                 return defaultValue;
@@ -766,11 +632,11 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public Comparable<T> getLowerBound() {
+    public Comparable<? super Object> getLowerBound() {
         if (lowerBound instanceof Comparable<?>) {
-            return (Comparable<T>) lowerBound;
+            return (Comparable<Object>) lowerBound;
         }
-        return (Comparable<T>) Property.NEGATIVE_INFINITY;
+        return (Comparable<Object>) Property.NEGATIVE_INFINITY;
     }
 
     /**
@@ -778,7 +644,7 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
      * 
      * @param lowerBound the lowerBound to set
      */
-    public void setLowerBound(final T lowerBound) {
+    public void setLowerBound(final Object lowerBound) {
         this.lowerBound = lowerBound;
     }
 
@@ -786,11 +652,11 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public Comparable<T> getUpperBound() {
+    public Comparable<? super Object> getUpperBound() {
         if (upperBound instanceof Comparable<?>) {
-            return (Comparable<T>) upperBound;
+            return (Comparable<Object>) upperBound;
         }
-        return (Comparable<T>) Property.POSITIVE_INFINITY;
+        return (Comparable<Object>) Property.POSITIVE_INFINITY;
     }
 
     /**
@@ -798,7 +664,7 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
      * 
      * @param upperBound the upperBound to set
      */
-    public void setUpperBound(final T upperBound) {
+    public void setUpperBound(final Object upperBound) {
         this.upperBound = upperBound;
     }
     
@@ -807,7 +673,7 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
      * 
      * @param thedefaultValue the default value
      */
-    public void setDefault(final T thedefaultValue) {
+    public void setDefault(final Object thedefaultValue) {
         this.defaultValue = thedefaultValue;
     }
 

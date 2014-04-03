@@ -36,11 +36,11 @@ import org.eclipse.ui.views.properties.IPropertySheetEntry;
 
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
+import de.cau.cs.kieler.kiml.config.LayoutContext;
+import de.cau.cs.kieler.kiml.service.LayoutManagersService;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
-import de.cau.cs.kieler.kiml.ui.diagram.IDiagramLayoutManager;
-import de.cau.cs.kieler.kiml.ui.service.EclipseLayoutInfoService;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 
 /**
@@ -159,7 +159,7 @@ public class SelectionInfoAction extends Action {
      * @return an info string
      */
     private String createInfo() {
-        LayoutDataService layoutServices = LayoutDataService.getInstance();
+        LayoutMetaDataService layoutServices = LayoutMetaDataService.getInstance();
         StringBuilder builder = new StringBuilder();
         
         // display editor part
@@ -174,12 +174,16 @@ public class SelectionInfoAction extends Action {
         if (diagramPart != null) {
             builder.append("<b>Diagram part class</b><ul><li>"
                     + diagramPart.getClass().getName() + "</li></ul>");
-            IDiagramLayoutManager<?> manager = EclipseLayoutInfoService.getInstance().getManager(
-                    null, diagramPart);
-            EObject model = (EObject) manager.getAdapter(diagramPart, EObject.class);
+            Object model = LayoutManagersService.getInstance().getContextValue(
+                    LayoutContext.DOMAIN_MODEL, null, diagramPart);
             if (model != null) {
-                builder.append("<b>Domain model class</b><ul><li>"
-                        + model.eClass().getInstanceTypeName() + "</li></ul>");
+                if (model instanceof EObject) {
+                    builder.append("<b>Domain model class</b><ul><li>"
+                            + ((EObject) model).eClass().getInstanceTypeName() + "</li></ul>");
+                } else {
+                    builder.append("<b>Domain model class</b><ul><li>"
+                            + model.getClass().getName() + "</li></ul>");
+                }
             }
         }
         
@@ -205,7 +209,7 @@ public class SelectionInfoAction extends Action {
         if (!selectedOptions.isEmpty()) {
             builder.append("<b>Selected options</b><ul>");
             for (IPropertySheetEntry entry : selectedOptions) {
-                final LayoutOptionData<?> optionData = KimlUiUtil.getOptionData(layouterData,
+                final LayoutOptionData optionData = KimlUiUtil.getOptionData(layouterData,
                         entry.getDisplayName());
                 if (optionData != null) {
                     builder.append("<li>" + optionData.getName() + " (" + optionData.getType().literal()

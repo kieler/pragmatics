@@ -17,9 +17,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.emf.common.notify.Adapter;
-import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
@@ -181,6 +178,13 @@ public class XtextBasedEditorActivationChangeTrigger extends AbstractTrigger imp
     private boolean checkAndIndicateErrors(final XtextResource resource) {
         final String msg = "Model contains syntactic errors, so KIVi is not triggered.";
         IFile underlyingFile = ResourceUtil.getUnderlyingFile(resource);
+
+        if (underlyingFile == null) {
+            // this happens in case models being part of installed bundles (e.g. Xtend files)
+            //  are opened; it doesn't make sense to attach any markers to them
+            return true;
+        }
+        
         IMarker marker = null;
         try {
             /* examine the files error markers, whether one of is created by this mechanisms */

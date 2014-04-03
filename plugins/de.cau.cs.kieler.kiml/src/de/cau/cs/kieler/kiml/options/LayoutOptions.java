@@ -19,6 +19,7 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 
 /**
  * Definition of layout options. Layout options are divided into programmatic options,
@@ -29,11 +30,41 @@ import de.cau.cs.kieler.core.properties.Property;
  * @kieler.design 2011-03-14 reviewed by cmot, cds
  * @kieler.rating yellow 2013-01-09 review KI-32 by ckru, chsch
  * @author msp
+ * 
+ * @containsLayoutOptions
  */
 public final class LayoutOptions {
     
+    
     ///////   PROGRAMMATIC LAYOUT OPTIONS   ///////
 
+    /**
+     * Whether the shift from the old layout to the new computed layout shall be animated.
+     * [programmatically set]
+     */
+    public static final IProperty<Boolean> ANIMATE = new Property<Boolean>(
+            "de.cau.cs.kieler.animate", true);
+    
+    /**
+     * The minimal time for animations, in milliseconds. [programmatically set]
+     */
+    public static final IProperty<Integer> MIN_ANIMATION_TIME = new Property<Integer>(
+            "de.cau.cs.kieler.minAnimTime", 400);
+    
+    /**
+     * The maximal time for animations, in milliseconds. [programmatically set]
+     */
+    public static final IProperty<Integer> MAX_ANIMATION_TIME = new Property<Integer>(
+            "de.cau.cs.kieler.maxAnimTime", 4000);
+    
+    /**
+     * Factor for calculation of animation time. The higher the value, the longer the animation
+     * time. If the value is 0, the resulting time is always equal to the minimum defined
+     * by {@link #MIN_ANIMATION_TIME}. [programmatically set]
+     */
+    public static final IProperty<Integer> ANIMATION_TIME_FACTOR = new Property<Integer>(
+            "de.cau.cs.kieler.animTimeFactor", 100);
+    
     /**
      * Whether the associated node is to be interpreted as a comment box. In that case its placement
      * should be similar to how labels are handled. Any edges incident to a comment box specify to
@@ -89,9 +120,17 @@ public final class LayoutOptions {
      * be drawn in order to represent hyperedges with orthogonal routing.
      * Whether such points are computed depends on the chosen layout algorithm and
      * edge routing style. The points are put into the vector chain with no specific order.
+     * [programmatically set]
      */
     public static final IProperty<KVectorChain> JUNCTION_POINTS
             = new Property<KVectorChain>("de.cau.cs.kieler.junctionPoints");
+    
+    /**
+     * Whether the hierarchy levels on the path from the selected element to the root
+     * of the diagram shall be included in the layout process. [programmatically set]
+     */
+    public static final IProperty<Boolean> LAYOUT_ANCESTORS = new Property<Boolean>(
+            "de.cau.cs.kieler.layoutAncestors", false);
     
     /**
      * The minimal height of a node. [programmatically set]
@@ -109,6 +148,11 @@ public final class LayoutOptions {
      * No layout is done for the associated element. This is used to mark parts of a diagram to
      * avoid their inclusion in the layout graph, or to mark parts of the layout graph to prevent
      * layout engines from processing them. [programmatically set]
+     * 
+     * If you wish to exclude the contents of a compound node from automatic layout, while the node
+     * itself is still considered on its own layer, set
+     * {@link de.cau.cs.kieler.kiml.util.FixedLayoutProvider FixedLayoutProvider#ID} as
+     * {@link LayoutOptions#ALGORITHM} for this node.
      */
     public static final IProperty<Boolean> NO_LAYOUT = new Property<Boolean>(
             "de.cau.cs.kieler.noLayout", false);
@@ -126,6 +170,13 @@ public final class LayoutOptions {
      * </ul>
      */
     public static final IProperty<Float> OFFSET = new Property<Float>("de.cau.cs.kieler.offset");
+
+    /**
+     * The offset to the port position where connections shall be attached. For compatibility reasons,
+     * the ID still starts with the KLay Layered ID.
+     */
+    public static final IProperty<KVector> PORT_ANCHOR = new Property<KVector>(
+            "de.cau.cs.kieler.klay.layered.portAnchor");
     
     /**
      * The index of a port in the fixed order of ports around its node. [programmatically set]
@@ -145,11 +196,56 @@ public final class LayoutOptions {
      */
     public static final IProperty<PortSide> PORT_SIDE = new Property<PortSide>(
             "de.cau.cs.kieler.portSide", PortSide.UNDEFINED);
+    
+    /**
+     * Whether a progress bar shall be displayed during layout computations. [programmatically set]
+     */
+    public static final IProperty<Boolean> PROGRESS_BAR = new Property<Boolean>(
+            "de.cau.cs.kieler.progressBar", false);
+    
+    /**
+     * The scaling factor to be applied to the corresponding node in recursive layout.
+     * [programmatically set] It causes the corresponding node's size to be adjusted, and its ports
+     * & labels to be sized and placed accordingly after the layout of that node has been determined
+     * (and before the node itself and its siblings get arranged). The scaling is not reverted
+     * afterwards, so the resulting layout graph contains the adjusted size and position data. This
+     * option is currently not supported if {@link #LAYOUT_HIERARCHY} is set.
+     */
+    public static final IProperty<Float> SCALE_FACTOR = new Property<Float>(
+            "de.cau.cs.kieler.scaleFactor", 1f);
+    
+    /**
+     * The thickness of an edge. [programmatically set] This is a hint on the line width used
+     * to draw an edge, possibly requiring more space to be reserved for it.
+     */
+    public static final IProperty<Float> THICKNESS = new Property<Float>(
+            "de.cau.cs.kieler.thickness", 1f);
+    
+    /**
+     * Whether the zoom level shall be set to view the whole diagram after layout.
+     * [programmatically set]
+     */
+    public static final IProperty<Boolean> ZOOM_TO_FIT = new Property<Boolean>(
+            "de.cau.cs.kieler.zoomToFit", false);
 
-    /** Specifies whether the given attribute is a tooltip.
-     *  FIXME is this used anywhere? and is it a layout option? consider moving or removing it. */
-    public static final IProperty<String> TOOLTIP = new Property<String>(
-            "de.cau.cs.kieler.tooltip", null);
+    /**
+     * Margins define additional space around the actual bounds of a graph element.
+     * For instance, ports or labels being placed on the outside of a node's border 
+     * might introduce such a margin. The margin is used to guarantee non-overlap
+     * of other graph elements with those ports or labels.
+     * [programmatically set]
+     */
+    public static final IProperty<Margins> MARGINS = new Property<Margins>(
+            "de.cau.cs.kieler.margins", new Margins());
+    
+    /**
+     * On which side of its corresponding edge a label is situated.
+     * FIXME is this the right place for this property?
+     * [programmatically set]
+     */
+    public static final IProperty<LabelSide> LABEL_SIDE = new Property<LabelSide>(
+            "de.cau.cs.kieler.labelSide", LabelSide.UNKNOWN);
+
     
     ///////  USER INTERFACE LAYOUT OPTIONS  ///////
 
@@ -227,7 +323,7 @@ public final class LayoutOptions {
             "de.cau.cs.kieler.interactive", false);
     
     /**
-     * Determines the amount of space to be left around the labels of the associated edge.
+     * Determines the amount of space to be left around labels.
      */
     public static final IProperty<Float> LABEL_SPACING = new Property<Float>(
             "de.cau.cs.kieler.labelSpacing", 3.0f, 0.0f);
@@ -251,15 +347,23 @@ public final class LayoutOptions {
                     NodeLabelPlacement.fixed());
 
     /**
-     * What constraints on port positions are given for the associated node.
+     * The constraints on port positions for the associated node.
      */
     public static final IProperty<PortConstraints> PORT_CONSTRAINTS = new Property<PortConstraints>(
             "de.cau.cs.kieler.portConstraints", PortConstraints.UNDEFINED);
     
-    /** property to choose a port label placement strategy. */
+    /**
+     * How port labels are placed.
+     */
     public static final IProperty<PortLabelPlacement> PORT_LABEL_PLACEMENT =
             new Property<PortLabelPlacement>("de.cau.cs.kieler.portLabelPlacement",
                     PortLabelPlacement.OUTSIDE);
+    
+    /**
+     * How much space to leave between ports if their positions are determined by the layout algorithm.
+     */
+    public static final IProperty<Float> PORT_SPACING = new Property<Float>(
+            "de.cau.cs.kieler.portSpacing", -1f, 0f);
     
     /**
      * The position of a node, port, or label. This is used by the
@@ -299,7 +403,7 @@ public final class LayoutOptions {
                     "de.cau.cs.kieler.sizeConstraint", SizeConstraint.fixed());
 
     /**
-     * Options modifying the behaviour of the size constraints set on a node. Each member of the set
+     * Options modifying the behavior of the size constraints set on a node. Each member of the set
      * specifies something that should be taken into account when calculating node sizes. The empty
      * set corresponds to no further modifications.
      */

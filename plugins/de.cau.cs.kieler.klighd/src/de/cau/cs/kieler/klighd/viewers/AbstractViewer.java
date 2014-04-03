@@ -13,183 +13,309 @@
  */
 package de.cau.cs.kieler.klighd.viewers;
 
-import java.util.LinkedHashSet;
+import java.awt.geom.Rectangle2D;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
-import de.cau.cs.kieler.core.kgraph.KNode;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
+import com.google.common.collect.SetMultimap;
+
+import de.cau.cs.kieler.core.kgraph.KGraphElement;
+import de.cau.cs.kieler.core.krendering.KText;
+import de.cau.cs.kieler.klighd.IViewChangeListener;
+import de.cau.cs.kieler.klighd.IViewChangeListener.ViewChange;
 import de.cau.cs.kieler.klighd.IViewer;
-import de.cau.cs.kieler.klighd.IViewerEventListener;
+import de.cau.cs.kieler.klighd.KlighdTreeSelection;
+import de.cau.cs.kieler.klighd.ViewChangeType;
+import de.cau.cs.kieler.klighd.ZoomStyle;
 
 /**
- * An abstract base class for viewers which provides an implementation for the handling of listeners
- * and an empty implementation for advanced functionality.
+ * An abstract base class for concrete KGraph/KRendering viewers. It provides implementations of
+ * those methods concrete viewers are not in charge of implementing, e.g. the source model related
+ * ones ({@link Object}-based) and the selection related ones. The view model related methods (
+ * {@link KGraphElement}/{@link de.cau.cs.kieler.core.kgraph.KNode KNode}/{@link KText}-based ones)
+ * must be implemented by concrete viewers.
  * 
  * @author mri
+ * @author chsch
  * 
  * @param <T>
  *            the type of the model this viewer accepts
  */
 public abstract class AbstractViewer<T> implements IViewer<T> {
 
-    /** the listeners registered on this viewer. */
-    private Set<IViewerEventListener> listeners = new LinkedHashSet<IViewerEventListener>();
-    
     /**
      * {@inheritDoc}
      */
     public void setModel(final T model) {
-        setModel(model, false);
+        this.setModel(model, false);
+    }
+
+    private SetMultimap<ViewChangeType, IViewChangeListener> viewChangeListeners;
+
+    /**
+     * {@inheritDoc}
+     */
+    public void addViewChangedListener(final IViewChangeListener listener,
+            final ViewChangeType... eventTypes) {
+        if (listener == null) {
+            return;
+        }
+
+        if (viewChangeListeners == null) {
+            viewChangeListeners = HashMultimap.create();
+        }
+        
+        final ViewChangeType[] types =
+                eventTypes != null && eventTypes.length != 0 ? eventTypes : ViewChangeType.values();
+        
+        for (ViewChangeType t : types) {
+            viewChangeListeners.put(t, listener);
+        }
+    }
+    
+    private SetMultimap<ViewChangeType, IViewChangeListener> viewChangeListenersView;
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void removeViewChangedEventListener(final IViewChangeListener listener) {
+        if (listener != null) {
+            this.viewChangeListeners.values().remove(listener);
+        }
+    }
+    
+    /**
+     * Provides the {@link Multimap} containing the registered {@link IViewChangeListener
+     * IViewChangeListeners}.
+     * 
+     * @return the {@link Multimap} containing the registered {@link IViewChangeListener
+     *         IViewChangeListeners}.
+     */
+    protected Multimap<ViewChangeType, IViewChangeListener> getViewChangeListeners() {
+        if (viewChangeListenersView == null) {
+            viewChangeListenersView = Multimaps.unmodifiableSetMultimap(this.viewChangeListeners);
+        }
+        return viewChangeListeners;
+    }
+    
+    /**
+     * Notifies the registered {@link IViewChangeListener IViewChangeListeners} of a diagram view
+     * change.
+     * 
+     * @param type
+     *            the corresponding {@link ViewChangeType}
+     * @param affectedElement
+     *            a potentially affect few element, e.g. a collapsed or expanded
+     *            {@link de.cau.cs.kieler.core.kgraph.KNode KNode}, may be <code>null</code>
+     * @param viewPort
+     *            a {@link Rectangle2D} with the bounds of the currently visible diagram area
+     * @param diagramScale
+     *            the zoom factor of the currently visible diagram area
+     */
+    protected void notifyViewChangeListeners(final ViewChangeType type,
+            final KGraphElement affectedElement, final Rectangle2D viewPort,
+            final double diagramScale) {
+        
+        if (viewChangeListeners == null) {
+            return;
+        }
+        
+        final ViewChange change = new ViewChange(this, type, affectedElement, viewPort, diagramScale);
+
+        for (IViewChangeListener l : viewChangeListeners.get(type)) {
+            l.viewChanged(change);
+        }
+    }
+
+
+    /* ----------------------------- */
+    /*   the view manipulation API   */
+    /* ----------------------------- */
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isVisible(final Object semanticElement) {
+        return getContextViewer().isVisible(semanticElement);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void setSelection(final Iterable<EObject> diagramElements) {
-        // do nothing
+    public void zoomToLevel(final float zoomLevel, final int duration) {
+        getContextViewer().zoomToLevel(zoomLevel, duration);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void clearSelection() {
-        // do nothing
+    public void zoom(final ZoomStyle style, final int duration) {
+        getContextViewer().zoom(style, duration);
     }
-
+    
     /**
      * {@inheritDoc}
      */
-    public void select(final Iterable<EObject> diagramElements) {
-        // do nothing
+    public boolean isExpanded(final Object semanticElement) {
+        return getContextViewer().isExpanded(semanticElement);
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void unselect(final Iterable<EObject> diagramElements) {
-        // do nothing
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void zoom(final float zoomLevel, final int duration) {
-        // do nothing
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void zoomToFit(final int duration) {
-        // do nothing
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void reveal(final EObject diagramObject, final int duration) {
-        // do nothing
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void centerOn(final EObject diagramObject, final int duration) {
-        // do nothing
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void collapse(final KNode diagramElement) {
-        // do nothing
-    }
-
+    
     /**
      * {@inheritDoc}
      */
     public void collapse(final Object semanticElement) {
-        // do nothing
+        getContextViewer().collapse(semanticElement);
     }
-
+    
     /**
      * {@inheritDoc}
      */
     public void expand(final Object semanticElement) {
-        // do nothing
+        getContextViewer().expand(semanticElement);
     }
     
-    /**
-     * {@inheritDoc}
-     */
-    public void expand(final KNode diagramElement) {
-        // do nothing
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public void toggleExpansion(final KNode diagramElement) {
-        // do nothing
-    }
-
     /**
      * {@inheritDoc}
      */
     public void toggleExpansion(final Object semanticElement) {
-        // do nothing
+        getContextViewer().toggleExpansion(semanticElement);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void hide(final Object semanticElement) {
+        getContextViewer().hide(semanticElement);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void show(final Object semanticElement) {
+        getContextViewer().show(semanticElement);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void clip(final Object semanticElement) {
+        getContextViewer().clip(semanticElement);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void addEventListener(final IViewerEventListener listener) {
-        listeners.add(listener);
+    public void scale(final Object semanticElement, final float scale) {
+        getContextViewer().scale(semanticElement, scale);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void removeEventListener(final IViewerEventListener listener) {
-        listeners.remove(listener);
+    public float getScale(final Object semanticElement) {
+        return getContextViewer().getScale(semanticElement);
     }
 
     /**
-     * Notifies the registered listeners about the occurrence of a selection event.
-     * 
-     * @param selectedElements
-     *            the selected elements
+     * {@inheritDoc}
      */
-    protected void notifyListenersSelection(final Iterable<? extends Object> selectedElements) {
-        for (IViewerEventListener listener : listeners) {
-            listener.selection(this, selectedElements);
-        }
+    public void reveal(final Object semanticElement, final int duration) {
+        getContextViewer().reveal(semanticElement, duration);
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void centerOn(final Object semanticElement, final int duration) {
+        getContextViewer().centerOn(semanticElement, duration);
+    }
+    
+
+    /* ---------------------------------------------------------- */
+    /*   the selection setting API                                */
+    /*    it is completely implemented by the ContextViewer,      */
+    /*    no implementations of this class need to implement it!  */
+    /* ---------------------------------------------------------- */
 
     /**
-     * Notifies the registered listeners about the occurrence of a selected event.
-     * 
-     * @param selectedElement
-     *            the selected element
+     * {@inheritDoc}
      */
-    protected void notifyListenersSelected(final EObject selectedElement) {
-        for (IViewerEventListener listener : listeners) {
-            listener.selected(this, selectedElement);
-        }
+    public KlighdTreeSelection getSelection() {
+        return getContextViewer().getSelection();
     }
     
     /**
-     * Notifies the registered listeners about the occurrence of a unselected event.
-     * 
-     * @param unselectedElement
-     *            the selected element
+     * {@inheritDoc}
      */
-    protected void notifyListenersUnselected(final EObject unselectedElement) {
-        for (IViewerEventListener listener : listeners) {
-            listener.unselected(this, unselectedElement);
-        }
+    public void toggleSelectionOf(final Object semanticElement) {
+        getContextViewer().toggleSelectionOf(semanticElement);
     }
     
+    /**
+     * {@inheritDoc}
+     */
+    public void toggleSelectionOf(final KGraphElement diagramElement) {
+        getContextViewer().toggleSelectionOf(diagramElement);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void toggleSelectionOf(final KText diagramElement) {
+        getContextViewer().toggleSelectionOf(diagramElement);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void toggleSelectionOfSemanticElements(final Set<Object> diagramElements) {
+        getContextViewer().toggleSelectionOfSemanticElements(diagramElements);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void toggleSelectionOfDiagramElements(final Set<? extends EObject> diagramElements) {
+        getContextViewer().toggleSelectionOfDiagramElements(diagramElements);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void resetSelectionTo(final Object semanticElement) {
+        getContextViewer().resetSelectionTo(semanticElement);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void resetSelectionTo(final KGraphElement diagramElement) {
+        getContextViewer().resetSelectionTo(diagramElement);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void resetSelectionTo(final KText diagramElement) {
+        getContextViewer().resetSelectionTo(diagramElement);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void resetSelectionToSemanticElements(final Iterable<? extends Object> diagramElements) {
+        getContextViewer().resetSelectionToSemanticElements(diagramElements);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void resetSelectionToDiagramElements(final Iterable<? extends EObject> diagramElements) {
+        getContextViewer().resetSelectionToDiagramElements(diagramElements);
+    }
 }
 

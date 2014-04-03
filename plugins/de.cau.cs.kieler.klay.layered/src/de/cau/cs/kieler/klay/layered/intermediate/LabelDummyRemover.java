@@ -24,11 +24,12 @@ import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
+import de.cau.cs.kieler.klay.layered.graph.LLabel.LabelSide;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
-import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * <p>Processor that removes the inserted center label dummies and places the labels on their
@@ -62,11 +63,20 @@ public final class LabelDummyRemover implements ILayoutProcessor {
             while (nodeIterator.hasNext()) {
                 LNode node = nodeIterator.next();
                 
-                if (node.getProperty(Properties.NODE_TYPE) == NodeType.LABEL) {
-                    // First, place label on position of dummy node 
-                    LLabel label = (LLabel) node.getProperty(Properties.ORIGIN);
-                    label.getPosition().x = node.getPosition().x;
-                    label.getPosition().y = node.getPosition().y;
+                if (node.getProperty(InternalProperties.NODE_TYPE) == NodeType.LABEL) {
+                    // First, place labels on position of dummy node 
+                    LEdge originEdge = (LEdge) node.getProperty(InternalProperties.ORIGIN);
+                    double ypos = node.getPosition().y;
+                    if (!originEdge.getLabels().isEmpty()
+                            && originEdge.getLabels().get(0).getSide() == LabelSide.BELOW) {
+                        ypos += originEdge.getProperty(LayoutOptions.THICKNESS);
+                    }
+                    for (LLabel label : originEdge.getLabels()) {
+                        label.getPosition().x = node.getPosition().x
+                                + (node.getSize().x - label.getSize().x) / 2;
+                        label.getPosition().y = ypos;
+                        ypos += label.getSize().y + LabelDummyInserter.LABEL_SPACING;
+                    }
                     
                     // We can assume that there are exactly one western and eastern port
                     // on each side of the node

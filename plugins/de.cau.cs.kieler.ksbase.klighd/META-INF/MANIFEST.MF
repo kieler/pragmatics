@@ -1,9 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: KSBasEKlight
-Bundle-SymbolicName: de.cau.cs.kieler.ksbase.klighd;singleton:=true
-Bundle-Version: 0.7.1.qualifier
-Fragment-Host: de.cau.cs.kieler.ksbase.ui
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
-Require-Bundle: org.eclipse.xtext.ui;bundle-version="2.3.0"

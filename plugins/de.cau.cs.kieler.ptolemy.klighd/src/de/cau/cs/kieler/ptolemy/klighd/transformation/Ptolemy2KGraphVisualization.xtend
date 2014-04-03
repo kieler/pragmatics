@@ -21,12 +21,12 @@ import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.core.kgraph.KPort
 import de.cau.cs.kieler.core.krendering.KAreaPlacementData
 import de.cau.cs.kieler.core.krendering.KRendering
-import de.cau.cs.kieler.core.krendering.KRenderingFactory
+import de.cau.cs.kieler.core.krendering.KRenderingRef
 import de.cau.cs.kieler.core.krendering.Trigger
-import de.cau.cs.kieler.core.krendering.extensions.KEdgeExtensions
+import de.cau.cs.kieler.core.krendering.extensions.KContainerRenderingExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KRenderingExtensions
-import de.cau.cs.kieler.core.krendering.extensions.ViewSynthesisShared
 import de.cau.cs.kieler.core.math.KVector
+import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizTool
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
 import de.cau.cs.kieler.kiml.options.Direction
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement
@@ -37,7 +37,6 @@ import de.cau.cs.kieler.kiml.options.PortConstraints
 import de.cau.cs.kieler.kiml.options.PortLabelPlacement
 import de.cau.cs.kieler.kiml.options.PortSide
 import de.cau.cs.kieler.kiml.options.SizeConstraint
-import de.cau.cs.kieler.klay.layered.properties.Properties
 import de.cau.cs.kieler.klighd.KlighdConstants
 import de.cau.cs.kieler.klighd.microlayout.PlacementUtil
 import de.cau.cs.kieler.klighd.util.KlighdProperties
@@ -45,6 +44,7 @@ import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExten
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.LabelExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MarkerExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MiscellaneousExtensions
+import de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants
 import java.util.EnumSet
 
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
@@ -57,7 +57,6 @@ import static extension com.google.common.base.Strings.*
  * 
  * @author cds
  */
-@ViewSynthesisShared
 class Ptolemy2KGraphVisualization {
     
     /** Access to annotations. */
@@ -68,15 +67,17 @@ class Ptolemy2KGraphVisualization {
     @Inject extension MarkerExtensions
     /** Extensions used during the transformation. To make things easier. And stuff. */
     @Inject extension MiscellaneousExtensions
-    /** Extensions for creating edge renderings. */
-    @Inject extension KEdgeExtensions
+    // /** Utility class that provides renderings. */
+    // @Inject extension KLabelExtensions
     /** Utility class that provides renderings. */
     @Inject extension KRenderingExtensions
     /** Utility class that provides renderings. */
+    @Inject extension KContainerRenderingExtensions
+    /** Utility class that provides renderings. */
     @Inject extension KRenderingFigureProvider
     
-    /** Rendering factory used to create stuff. */
-    val renderingFactory = KRenderingFactory::eINSTANCE
+    /** Whether Graphviz is available to be used or not. */
+    val isGraphvizAvailable = GraphvizTool::getDotExecutable(false) != null
     /** alpha value of the background of expanded compound nodes. */
     var compoundNodeAlpha = 10
     
@@ -130,9 +131,9 @@ class Ptolemy2KGraphVisualization {
             } else if (child.markedAsParameterNode) {
                 // We have a parameter node that displays model parameters
                 child.addParameterNodeRendering()
-            } else if (child.markedAsConstActor) {
-                // We have a const actor whose rendering is a bit special
-                child.addConstNodeRendering()
+            } else if (child.markedAsValueDisplayingActor) {
+                // We have a value displaying actor whose rendering is a bit special
+                child.addValueDisplayingNodeRendering()
             } else if (child.markedAsModalModelPort) {
                 // We have a modal model port
                 child.addModalModelPortRendering()
@@ -181,19 +182,21 @@ class Ptolemy2KGraphVisualization {
         
         node.setLayoutAlgorithm()
         
-        // Create the rendering for the expanded version of this node
-        val expandedRendering = createExpandedCompoundNodeRendering(node, compoundNodeAlpha)
-        expandedRendering.setProperty(KlighdProperties::EXPANDED_RENDERING, true)
-        expandedRendering.addAction(Trigger::DOUBLECLICK, KlighdConstants::ACTION_COLLAPSE_EXPAND)
-        node.data += expandedRendering
-        
         // Add a rendering for the collapsed version of this node
         val collapsedRendering = createRegularNodeRendering(node)
-        collapsedRendering.setProperty(KlighdProperties::COLLAPSED_RENDERING, true)
-        collapsedRendering.addAction(Trigger::DOUBLECLICK, KlighdConstants::ACTION_COLLAPSE_EXPAND)
-        node.data += collapsedRendering
+        node.addRenderingWithSelectionWrapper(collapsedRendering) => [
+            it.setProperty(KlighdProperties::COLLAPSED_RENDERING, true)
+            it.addDoubleClickAction(KlighdConstants::ACTION_COLLAPSE_EXPAND)
+        ];
         
-        layout.setLayoutSize(collapsedRendering)
+        //layout.setLayoutSize(collapsedRendering)
+        
+        // Create the rendering for the expanded version of this node
+        val expandedRendering = createExpandedCompoundNodeRendering(node, compoundNodeAlpha)
+        node.addRenderingWithSelectionWrapper(expandedRendering) => [
+            it.setProperty(KlighdProperties::EXPANDED_RENDERING, true)
+            it.addDoubleClickAction(KlighdConstants::ACTION_COLLAPSE_EXPAND)
+        ];
     }
     
     /**
@@ -299,11 +302,11 @@ class Ptolemy2KGraphVisualization {
     }
     
     /**
-     * Renders the given node as a Const node, with the constant displayed in it.
+     * Renders the given node displaying a specific value, for instance a Const actor.
      * 
      * @param node the node to attach the rendering information to.
      */
-    def private void addConstNodeRendering(KNode node) {
+    def private void addValueDisplayingNodeRendering(KNode node) {
         val layout = node.layout as KShapeLayout
         layout.setProperty(LayoutOptions::NODE_LABEL_PLACEMENT, EnumSet::of(
             NodeLabelPlacement::OUTSIDE, NodeLabelPlacement::H_LEFT, NodeLabelPlacement::V_TOP))
@@ -311,8 +314,9 @@ class Ptolemy2KGraphVisualization {
         layout.setProperty(LayoutOptions::PORT_CONSTRAINTS, PortConstraints::FIXED_ORDER)
         
         // Create the rendering
-        val rendering = createValueDisplayingNodeRendering(node,
-            node.getAnnotationValue("value") ?: "")
+        val className = node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS).nullToEmpty()
+        val value = node.getAnnotationValue(TransformationConstants.VALUE_DISPLAY_MAP.get(className))
+        val rendering = createValueDisplayingNodeRendering(node, value ?: "")
         node.data += rendering
     }
     
@@ -350,14 +354,16 @@ class Ptolemy2KGraphVisualization {
         layout.setProperty(LayoutOptions::PORT_CONSTRAINTS, PortConstraints::FIXED_ORDER)
         
         // Some kinds of nodes require special treatment
-        var KRendering rendering = switch node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS) {
+        val KRendering rendering = switch node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS) {
             case "ptolemy.actor.lib.Accumulator" : createAccumulatorNodeRendering(node)
             default : createRegularNodeRendering(node)
-        }
-        node.data += rendering
+        }        
+        //node.data += rendering
+        node.addRenderingWithSelectionWrapper(rendering);
         
         // Calculate layout size.
         layout.setLayoutSize(rendering)
+
     }
     
     
@@ -413,13 +419,13 @@ class Ptolemy2KGraphVisualization {
             case PortSide::EAST: {
                 layout.setProperty(LayoutOptions::OFFSET, 0f)
                 if (!port.markedAsModalModelPort) {
-                    layout.setProperty(Properties::PORT_ANCHOR, new KVector(7, 3.5))
+                    layout.setProperty(LayoutOptions::PORT_ANCHOR, new KVector(7, 3.5))
                 }
             }
             case PortSide::WEST: {
                 layout.setProperty(LayoutOptions::OFFSET, 0f)
                 if (!port.markedAsModalModelPort) {
-                    layout.setProperty(Properties::PORT_ANCHOR, new KVector(0, 3.5))
+                    layout.setProperty(LayoutOptions::PORT_ANCHOR, new KVector(0, 3.5))
                 }
                 layout.setProperty(LayoutOptions::PORT_INDEX, -index);
             }
@@ -499,7 +505,7 @@ class Ptolemy2KGraphVisualization {
             edge.data += rendering
         } else {
             // We have a regular edge
-            edge.addRoundedBendsPolyline(5f, 2f)
+            edge.data += createDataFlowRendering(edge);
         }
     }
     
@@ -515,8 +521,11 @@ class Ptolemy2KGraphVisualization {
     def private void addLabelRendering(KLabeledGraphElement element) {
         for (label : element.labels) {
             // Add empty text rendering
-            val ktext = renderingFactory.createKText()
-            label.data += ktext
+//            val ktext = label.addInvisibleContainerRendering.setSelectionInvisible(false).addText("")
+            val ktext = label.addRenderingWithSelectionWrapper.addText("")
+//            ktext.cursorSelectable = true
+//            val ktext = renderingFactory.createKText()
+//            label.data += ktext
             
             // If we have a modal model port, we need to determine a fixed placement for the label at
             // this point
@@ -600,16 +609,20 @@ class Ptolemy2KGraphVisualization {
      */
     def private void setLayoutSize(KShapeLayout layout, KRendering rendering) {
         // TODO Provide proper size information for every actor
-        
-        if (rendering == null) {
+        var actualRendering = rendering
+        while (actualRendering instanceof KRenderingRef) {
+            actualRendering = (actualRendering as KRenderingRef).rendering
+        }
+                
+        if (actualRendering == null) {
             // If we have no rendering in the first place, fix the size
             layout.height = 50
             layout.width = 50
-        } else if (rendering.placementData != null
-            && rendering.placementData instanceof KAreaPlacementData) {
+        } else if (actualRendering.placementData != null
+            && actualRendering.placementData instanceof KAreaPlacementData) {
             
             // We have concrete placement data to infer the size from
-            val placementData = rendering.placementData as KAreaPlacementData
+            val placementData = actualRendering.placementData as KAreaPlacementData
             
             layout.height = placementData.bottomRight.y.absolute
             layout.width = placementData.bottomRight.x.absolute
@@ -628,7 +641,7 @@ class Ptolemy2KGraphVisualization {
     def private void setLayoutAlgorithm(KNode node) {
         val layout = node.layout
         // Check if this is a state machine
-        if (node.markedAsStateMachineContainer) {
+        if (node.markedAsStateMachineContainer && isGraphvizAvailable) {
             layout.setProperty(LayoutOptions::ALGORITHM, "de.cau.cs.kieler.graphviz.dot")
             layout.setProperty(LayoutOptions::DIRECTION, Direction::RIGHT)
         } else {

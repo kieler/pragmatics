@@ -17,6 +17,7 @@ import de.cau.cs.kieler.core.kgraph.KGraphPackage;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
@@ -33,8 +34,11 @@ import org.eclipse.emf.ecore.EReference;
  * </ul>
  * <!-- end-user-doc -->
  * <!-- begin-model-doc -->
- * define if this text is increased in size to be able to read it when zooming out.
- * Text will only grow until the node space is 
+ * This package contains the classes of the KRendering language.<br>
+ * This languages extends {@link KGraphPackage KGraph} and provides the means for describing the
+ * figures the elements of a KGraph instance are depicted by. This involves
+ * primitive figures to be composed to complex ones, <i>micro layout</i> directives,
+ * styles, as well as actions for expressing interactivity of KGraph/KRendering-based diagrams.
  * <!-- end-model-doc -->
  * @see de.cau.cs.kieler.core.krendering.KRenderingFactory
  * @model kind="package"
@@ -711,13 +715,13 @@ public interface KRenderingPackage extends EPackage {
     int KPOLYLINE__POINTS = KCONTAINER_RENDERING_FEATURE_COUNT + 0;
 
     /**
-     * The feature id for the '<em><b>Joint Point Rendering</b></em>' containment reference.
+     * The feature id for the '<em><b>Junction Point Rendering</b></em>' containment reference.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int KPOLYLINE__JOINT_POINT_RENDERING = KCONTAINER_RENDERING_FEATURE_COUNT + 1;
+    int KPOLYLINE__JUNCTION_POINT_RENDERING = KCONTAINER_RENDERING_FEATURE_COUNT + 1;
 
     /**
      * The number of structural features of the '<em>KPolyline</em>' class.
@@ -829,13 +833,13 @@ public interface KRenderingPackage extends EPackage {
     int KPOLYGON__POINTS = KPOLYLINE__POINTS;
 
     /**
-     * The feature id for the '<em><b>Joint Point Rendering</b></em>' containment reference.
+     * The feature id for the '<em><b>Junction Point Rendering</b></em>' containment reference.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int KPOLYGON__JOINT_POINT_RENDERING = KPOLYLINE__JOINT_POINT_RENDERING;
+    int KPOLYGON__JUNCTION_POINT_RENDERING = KPOLYLINE__JUNCTION_POINT_RENDERING;
 
     /**
      * The number of structural features of the '<em>KPolygon</em>' class.
@@ -1212,13 +1216,31 @@ public interface KRenderingPackage extends EPackage {
     int KSTYLE = 11;
 
     /**
+     * The feature id for the '<em><b>Properties</b></em>' map.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KSTYLE__PROPERTIES = KGraphPackage.EMAP_PROPERTY_HOLDER__PROPERTIES;
+
+    /**
+     * The feature id for the '<em><b>Persistent Entries</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KSTYLE__PERSISTENT_ENTRIES = KGraphPackage.EMAP_PROPERTY_HOLDER__PERSISTENT_ENTRIES;
+
+    /**
      * The feature id for the '<em><b>Propagate To Children</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int KSTYLE__PROPAGATE_TO_CHILDREN = 0;
+    int KSTYLE__PROPAGATE_TO_CHILDREN = KGraphPackage.EMAP_PROPERTY_HOLDER_FEATURE_COUNT + 0;
 
     /**
      * The feature id for the '<em><b>Modifier Id</b></em>' attribute.
@@ -1227,7 +1249,16 @@ public interface KRenderingPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int KSTYLE__MODIFIER_ID = 1;
+    int KSTYLE__MODIFIER_ID = KGraphPackage.EMAP_PROPERTY_HOLDER_FEATURE_COUNT + 1;
+
+    /**
+     * The feature id for the '<em><b>Selection</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KSTYLE__SELECTION = KGraphPackage.EMAP_PROPERTY_HOLDER_FEATURE_COUNT + 2;
 
     /**
      * The number of structural features of the '<em>KStyle</em>' class.
@@ -1236,7 +1267,7 @@ public interface KRenderingPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int KSTYLE_FEATURE_COUNT = 2;
+    int KSTYLE_FEATURE_COUNT = KGraphPackage.EMAP_PROPERTY_HOLDER_FEATURE_COUNT + 3;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.core.krendering.impl.KRenderingLibraryImpl <em>Library</em>}' class.
@@ -1540,13 +1571,22 @@ public interface KRenderingPackage extends EPackage {
     int KTEXT__TEXT = KRENDERING_FEATURE_COUNT + 0;
 
     /**
+     * The feature id for the '<em><b>Cursor Selectable</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KTEXT__CURSOR_SELECTABLE = KRENDERING_FEATURE_COUNT + 1;
+
+    /**
      * The number of structural features of the '<em>KText</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int KTEXT_FEATURE_COUNT = KRENDERING_FEATURE_COUNT + 1;
+    int KTEXT_FEATURE_COUNT = KRENDERING_FEATURE_COUNT + 2;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.core.krendering.KPlacement <em>KPlacement</em>}' class.
@@ -1688,49 +1728,31 @@ public interface KRenderingPackage extends EPackage {
     int KGRID_PLACEMENT_DATA__MIN_CELL_WIDTH = KAREA_PLACEMENT_DATA_FEATURE_COUNT + 0;
 
     /**
-     * The feature id for the '<em><b>Max Cell Width</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int KGRID_PLACEMENT_DATA__MAX_CELL_WIDTH = KAREA_PLACEMENT_DATA_FEATURE_COUNT + 1;
-
-    /**
      * The feature id for the '<em><b>Min Cell Height</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int KGRID_PLACEMENT_DATA__MIN_CELL_HEIGHT = KAREA_PLACEMENT_DATA_FEATURE_COUNT + 2;
+    int KGRID_PLACEMENT_DATA__MIN_CELL_HEIGHT = KAREA_PLACEMENT_DATA_FEATURE_COUNT + 1;
 
     /**
-     * The feature id for the '<em><b>Max Cell Height</b></em>' attribute.
+     * The feature id for the '<em><b>Flexible Width</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int KGRID_PLACEMENT_DATA__MAX_CELL_HEIGHT = KAREA_PLACEMENT_DATA_FEATURE_COUNT + 3;
+    int KGRID_PLACEMENT_DATA__FLEXIBLE_WIDTH = KAREA_PLACEMENT_DATA_FEATURE_COUNT + 2;
 
     /**
-     * The feature id for the '<em><b>Fixed Width</b></em>' attribute.
+     * The feature id for the '<em><b>Flexible Height</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int KGRID_PLACEMENT_DATA__FIXED_WIDTH = KAREA_PLACEMENT_DATA_FEATURE_COUNT + 4;
-
-    /**
-     * The feature id for the '<em><b>Fixed Height</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int KGRID_PLACEMENT_DATA__FIXED_HEIGHT = KAREA_PLACEMENT_DATA_FEATURE_COUNT + 5;
+    int KGRID_PLACEMENT_DATA__FLEXIBLE_HEIGHT = KAREA_PLACEMENT_DATA_FEATURE_COUNT + 3;
 
     /**
      * The number of structural features of the '<em>KGrid Placement Data</em>' class.
@@ -1739,7 +1761,7 @@ public interface KRenderingPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int KGRID_PLACEMENT_DATA_FEATURE_COUNT = KAREA_PLACEMENT_DATA_FEATURE_COUNT + 6;
+    int KGRID_PLACEMENT_DATA_FEATURE_COUNT = KAREA_PLACEMENT_DATA_FEATURE_COUNT + 4;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.core.krendering.impl.KCustomRenderingImpl <em>KCustom Rendering</em>}' class.
@@ -1925,6 +1947,24 @@ public interface KRenderingPackage extends EPackage {
     int KLINE_WIDTH = 23;
 
     /**
+     * The feature id for the '<em><b>Properties</b></em>' map.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KLINE_WIDTH__PROPERTIES = KSTYLE__PROPERTIES;
+
+    /**
+     * The feature id for the '<em><b>Persistent Entries</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KLINE_WIDTH__PERSISTENT_ENTRIES = KSTYLE__PERSISTENT_ENTRIES;
+
+    /**
      * The feature id for the '<em><b>Propagate To Children</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1941,6 +1981,15 @@ public interface KRenderingPackage extends EPackage {
      * @ordered
      */
     int KLINE_WIDTH__MODIFIER_ID = KSTYLE__MODIFIER_ID;
+
+    /**
+     * The feature id for the '<em><b>Selection</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KLINE_WIDTH__SELECTION = KSTYLE__SELECTION;
 
     /**
      * The feature id for the '<em><b>Line Width</b></em>' attribute.
@@ -1971,6 +2020,24 @@ public interface KRenderingPackage extends EPackage {
     int KLINE_STYLE = 24;
 
     /**
+     * The feature id for the '<em><b>Properties</b></em>' map.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KLINE_STYLE__PROPERTIES = KSTYLE__PROPERTIES;
+
+    /**
+     * The feature id for the '<em><b>Persistent Entries</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KLINE_STYLE__PERSISTENT_ENTRIES = KSTYLE__PERSISTENT_ENTRIES;
+
+    /**
      * The feature id for the '<em><b>Propagate To Children</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1987,6 +2054,15 @@ public interface KRenderingPackage extends EPackage {
      * @ordered
      */
     int KLINE_STYLE__MODIFIER_ID = KSTYLE__MODIFIER_ID;
+
+    /**
+     * The feature id for the '<em><b>Selection</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KLINE_STYLE__SELECTION = KSTYLE__SELECTION;
 
     /**
      * The feature id for the '<em><b>Line Style</b></em>' attribute.
@@ -2035,6 +2111,24 @@ public interface KRenderingPackage extends EPackage {
     int KVERTICAL_ALIGNMENT = 25;
 
     /**
+     * The feature id for the '<em><b>Properties</b></em>' map.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KVERTICAL_ALIGNMENT__PROPERTIES = KSTYLE__PROPERTIES;
+
+    /**
+     * The feature id for the '<em><b>Persistent Entries</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KVERTICAL_ALIGNMENT__PERSISTENT_ENTRIES = KSTYLE__PERSISTENT_ENTRIES;
+
+    /**
      * The feature id for the '<em><b>Propagate To Children</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -2051,6 +2145,15 @@ public interface KRenderingPackage extends EPackage {
      * @ordered
      */
     int KVERTICAL_ALIGNMENT__MODIFIER_ID = KSTYLE__MODIFIER_ID;
+
+    /**
+     * The feature id for the '<em><b>Selection</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KVERTICAL_ALIGNMENT__SELECTION = KSTYLE__SELECTION;
 
     /**
      * The feature id for the '<em><b>Vertical Alignment</b></em>' attribute.
@@ -2081,6 +2184,24 @@ public interface KRenderingPackage extends EPackage {
     int KHORIZONTAL_ALIGNMENT = 26;
 
     /**
+     * The feature id for the '<em><b>Properties</b></em>' map.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KHORIZONTAL_ALIGNMENT__PROPERTIES = KSTYLE__PROPERTIES;
+
+    /**
+     * The feature id for the '<em><b>Persistent Entries</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KHORIZONTAL_ALIGNMENT__PERSISTENT_ENTRIES = KSTYLE__PERSISTENT_ENTRIES;
+
+    /**
      * The feature id for the '<em><b>Propagate To Children</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -2097,6 +2218,15 @@ public interface KRenderingPackage extends EPackage {
      * @ordered
      */
     int KHORIZONTAL_ALIGNMENT__MODIFIER_ID = KSTYLE__MODIFIER_ID;
+
+    /**
+     * The feature id for the '<em><b>Selection</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KHORIZONTAL_ALIGNMENT__SELECTION = KSTYLE__SELECTION;
 
     /**
      * The feature id for the '<em><b>Horizontal Alignment</b></em>' attribute.
@@ -2439,13 +2569,13 @@ public interface KRenderingPackage extends EPackage {
     int KSPLINE__POINTS = KPOLYLINE__POINTS;
 
     /**
-     * The feature id for the '<em><b>Joint Point Rendering</b></em>' containment reference.
+     * The feature id for the '<em><b>Junction Point Rendering</b></em>' containment reference.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int KSPLINE__JOINT_POINT_RENDERING = KPOLYLINE__JOINT_POINT_RENDERING;
+    int KSPLINE__JUNCTION_POINT_RENDERING = KPOLYLINE__JUNCTION_POINT_RENDERING;
 
     /**
      * The number of structural features of the '<em>KSpline</em>' class.
@@ -2467,6 +2597,24 @@ public interface KRenderingPackage extends EPackage {
     int KCOLORING = 35;
 
     /**
+     * The feature id for the '<em><b>Properties</b></em>' map.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KCOLORING__PROPERTIES = KSTYLE__PROPERTIES;
+
+    /**
+     * The feature id for the '<em><b>Persistent Entries</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KCOLORING__PERSISTENT_ENTRIES = KSTYLE__PERSISTENT_ENTRIES;
+
+    /**
      * The feature id for the '<em><b>Propagate To Children</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -2485,13 +2633,13 @@ public interface KRenderingPackage extends EPackage {
     int KCOLORING__MODIFIER_ID = KSTYLE__MODIFIER_ID;
 
     /**
-     * The feature id for the '<em><b>Alpha</b></em>' attribute.
+     * The feature id for the '<em><b>Selection</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int KCOLORING__ALPHA = KSTYLE_FEATURE_COUNT + 0;
+    int KCOLORING__SELECTION = KSTYLE__SELECTION;
 
     /**
      * The feature id for the '<em><b>Color</b></em>' containment reference.
@@ -2500,7 +2648,16 @@ public interface KRenderingPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int KCOLORING__COLOR = KSTYLE_FEATURE_COUNT + 1;
+    int KCOLORING__COLOR = KSTYLE_FEATURE_COUNT + 0;
+
+    /**
+     * The feature id for the '<em><b>Alpha</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KCOLORING__ALPHA = KSTYLE_FEATURE_COUNT + 1;
 
     /**
      * The feature id for the '<em><b>Target Color</b></em>' containment reference.
@@ -2549,6 +2706,24 @@ public interface KRenderingPackage extends EPackage {
     int KFOREGROUND = 34;
 
     /**
+     * The feature id for the '<em><b>Properties</b></em>' map.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KFOREGROUND__PROPERTIES = KCOLORING__PROPERTIES;
+
+    /**
+     * The feature id for the '<em><b>Persistent Entries</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KFOREGROUND__PERSISTENT_ENTRIES = KCOLORING__PERSISTENT_ENTRIES;
+
+    /**
      * The feature id for the '<em><b>Propagate To Children</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -2567,13 +2742,13 @@ public interface KRenderingPackage extends EPackage {
     int KFOREGROUND__MODIFIER_ID = KCOLORING__MODIFIER_ID;
 
     /**
-     * The feature id for the '<em><b>Alpha</b></em>' attribute.
+     * The feature id for the '<em><b>Selection</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int KFOREGROUND__ALPHA = KCOLORING__ALPHA;
+    int KFOREGROUND__SELECTION = KCOLORING__SELECTION;
 
     /**
      * The feature id for the '<em><b>Color</b></em>' containment reference.
@@ -2583,6 +2758,15 @@ public interface KRenderingPackage extends EPackage {
      * @ordered
      */
     int KFOREGROUND__COLOR = KCOLORING__COLOR;
+
+    /**
+     * The feature id for the '<em><b>Alpha</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KFOREGROUND__ALPHA = KCOLORING__ALPHA;
 
     /**
      * The feature id for the '<em><b>Target Color</b></em>' containment reference.
@@ -2631,6 +2815,24 @@ public interface KRenderingPackage extends EPackage {
     int KBACKGROUND = 36;
 
     /**
+     * The feature id for the '<em><b>Properties</b></em>' map.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KBACKGROUND__PROPERTIES = KCOLORING__PROPERTIES;
+
+    /**
+     * The feature id for the '<em><b>Persistent Entries</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KBACKGROUND__PERSISTENT_ENTRIES = KCOLORING__PERSISTENT_ENTRIES;
+
+    /**
      * The feature id for the '<em><b>Propagate To Children</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -2649,13 +2851,13 @@ public interface KRenderingPackage extends EPackage {
     int KBACKGROUND__MODIFIER_ID = KCOLORING__MODIFIER_ID;
 
     /**
-     * The feature id for the '<em><b>Alpha</b></em>' attribute.
+     * The feature id for the '<em><b>Selection</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int KBACKGROUND__ALPHA = KCOLORING__ALPHA;
+    int KBACKGROUND__SELECTION = KCOLORING__SELECTION;
 
     /**
      * The feature id for the '<em><b>Color</b></em>' containment reference.
@@ -2665,6 +2867,15 @@ public interface KRenderingPackage extends EPackage {
      * @ordered
      */
     int KBACKGROUND__COLOR = KCOLORING__COLOR;
+
+    /**
+     * The feature id for the '<em><b>Alpha</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KBACKGROUND__ALPHA = KCOLORING__ALPHA;
 
     /**
      * The feature id for the '<em><b>Target Color</b></em>' containment reference.
@@ -2713,6 +2924,24 @@ public interface KRenderingPackage extends EPackage {
     int KFONT_BOLD = 37;
 
     /**
+     * The feature id for the '<em><b>Properties</b></em>' map.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KFONT_BOLD__PROPERTIES = KSTYLE__PROPERTIES;
+
+    /**
+     * The feature id for the '<em><b>Persistent Entries</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KFONT_BOLD__PERSISTENT_ENTRIES = KSTYLE__PERSISTENT_ENTRIES;
+
+    /**
      * The feature id for the '<em><b>Propagate To Children</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -2729,6 +2958,15 @@ public interface KRenderingPackage extends EPackage {
      * @ordered
      */
     int KFONT_BOLD__MODIFIER_ID = KSTYLE__MODIFIER_ID;
+
+    /**
+     * The feature id for the '<em><b>Selection</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KFONT_BOLD__SELECTION = KSTYLE__SELECTION;
 
     /**
      * The feature id for the '<em><b>Bold</b></em>' attribute.
@@ -2759,6 +2997,24 @@ public interface KRenderingPackage extends EPackage {
     int KFONT_ITALIC = 38;
 
     /**
+     * The feature id for the '<em><b>Properties</b></em>' map.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KFONT_ITALIC__PROPERTIES = KSTYLE__PROPERTIES;
+
+    /**
+     * The feature id for the '<em><b>Persistent Entries</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KFONT_ITALIC__PERSISTENT_ENTRIES = KSTYLE__PERSISTENT_ENTRIES;
+
+    /**
      * The feature id for the '<em><b>Propagate To Children</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -2775,6 +3031,15 @@ public interface KRenderingPackage extends EPackage {
      * @ordered
      */
     int KFONT_ITALIC__MODIFIER_ID = KSTYLE__MODIFIER_ID;
+
+    /**
+     * The feature id for the '<em><b>Selection</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KFONT_ITALIC__SELECTION = KSTYLE__SELECTION;
 
     /**
      * The feature id for the '<em><b>Italic</b></em>' attribute.
@@ -2805,6 +3070,24 @@ public interface KRenderingPackage extends EPackage {
     int KFONT_NAME = 39;
 
     /**
+     * The feature id for the '<em><b>Properties</b></em>' map.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KFONT_NAME__PROPERTIES = KSTYLE__PROPERTIES;
+
+    /**
+     * The feature id for the '<em><b>Persistent Entries</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KFONT_NAME__PERSISTENT_ENTRIES = KSTYLE__PERSISTENT_ENTRIES;
+
+    /**
      * The feature id for the '<em><b>Propagate To Children</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -2821,6 +3104,15 @@ public interface KRenderingPackage extends EPackage {
      * @ordered
      */
     int KFONT_NAME__MODIFIER_ID = KSTYLE__MODIFIER_ID;
+
+    /**
+     * The feature id for the '<em><b>Selection</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KFONT_NAME__SELECTION = KSTYLE__SELECTION;
 
     /**
      * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -2851,6 +3143,24 @@ public interface KRenderingPackage extends EPackage {
     int KFONT_SIZE = 40;
 
     /**
+     * The feature id for the '<em><b>Properties</b></em>' map.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KFONT_SIZE__PROPERTIES = KSTYLE__PROPERTIES;
+
+    /**
+     * The feature id for the '<em><b>Persistent Entries</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KFONT_SIZE__PERSISTENT_ENTRIES = KSTYLE__PERSISTENT_ENTRIES;
+
+    /**
      * The feature id for the '<em><b>Propagate To Children</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -2867,6 +3177,15 @@ public interface KRenderingPackage extends EPackage {
      * @ordered
      */
     int KFONT_SIZE__MODIFIER_ID = KSTYLE__MODIFIER_ID;
+
+    /**
+     * The feature id for the '<em><b>Selection</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KFONT_SIZE__SELECTION = KSTYLE__SELECTION;
 
     /**
      * The feature id for the '<em><b>Size</b></em>' attribute.
@@ -2996,13 +3315,13 @@ public interface KRenderingPackage extends EPackage {
     int KROUNDED_BENDS_POLYLINE__POINTS = KPOLYLINE__POINTS;
 
     /**
-     * The feature id for the '<em><b>Joint Point Rendering</b></em>' containment reference.
+     * The feature id for the '<em><b>Junction Point Rendering</b></em>' containment reference.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int KROUNDED_BENDS_POLYLINE__JOINT_POINT_RENDERING = KPOLYLINE__JOINT_POINT_RENDERING;
+    int KROUNDED_BENDS_POLYLINE__JUNCTION_POINT_RENDERING = KPOLYLINE__JUNCTION_POINT_RENDERING;
 
     /**
      * The feature id for the '<em><b>Bend Radius</b></em>' attribute.
@@ -3033,6 +3352,24 @@ public interface KRenderingPackage extends EPackage {
     int KROTATION = 42;
 
     /**
+     * The feature id for the '<em><b>Properties</b></em>' map.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KROTATION__PROPERTIES = KSTYLE__PROPERTIES;
+
+    /**
+     * The feature id for the '<em><b>Persistent Entries</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KROTATION__PERSISTENT_ENTRIES = KSTYLE__PERSISTENT_ENTRIES;
+
+    /**
      * The feature id for the '<em><b>Propagate To Children</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -3049,6 +3386,15 @@ public interface KRenderingPackage extends EPackage {
      * @ordered
      */
     int KROTATION__MODIFIER_ID = KSTYLE__MODIFIER_ID;
+
+    /**
+     * The feature id for the '<em><b>Selection</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KROTATION__SELECTION = KSTYLE__SELECTION;
 
     /**
      * The feature id for the '<em><b>Rotation</b></em>' attribute.
@@ -3088,6 +3434,24 @@ public interface KRenderingPackage extends EPackage {
     int KLINE_CAP = 43;
 
     /**
+     * The feature id for the '<em><b>Properties</b></em>' map.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KLINE_CAP__PROPERTIES = KSTYLE__PROPERTIES;
+
+    /**
+     * The feature id for the '<em><b>Persistent Entries</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KLINE_CAP__PERSISTENT_ENTRIES = KSTYLE__PERSISTENT_ENTRIES;
+
+    /**
      * The feature id for the '<em><b>Propagate To Children</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -3104,6 +3468,15 @@ public interface KRenderingPackage extends EPackage {
      * @ordered
      */
     int KLINE_CAP__MODIFIER_ID = KSTYLE__MODIFIER_ID;
+
+    /**
+     * The feature id for the '<em><b>Selection</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KLINE_CAP__SELECTION = KSTYLE__SELECTION;
 
     /**
      * The feature id for the '<em><b>Line Cap</b></em>' attribute.
@@ -3134,13 +3507,13 @@ public interface KRenderingPackage extends EPackage {
     int KACTION = 44;
 
     /**
-     * The feature id for the '<em><b>Id</b></em>' attribute.
+     * The feature id for the '<em><b>Action Id</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int KACTION__ID = 0;
+    int KACTION__ACTION_ID = 0;
 
     /**
      * The feature id for the '<em><b>Trigger</b></em>' attribute.
@@ -3152,13 +3525,40 @@ public interface KRenderingPackage extends EPackage {
     int KACTION__TRIGGER = 1;
 
     /**
+     * The feature id for the '<em><b>Alt Pressed</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KACTION__ALT_PRESSED = 2;
+
+    /**
+     * The feature id for the '<em><b>Ctrl Cmd Pressed</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KACTION__CTRL_CMD_PRESSED = 3;
+
+    /**
+     * The feature id for the '<em><b>Shift Pressed</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KACTION__SHIFT_PRESSED = 4;
+
+    /**
      * The number of structural features of the '<em>KAction</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int KACTION_FEATURE_COUNT = 2;
+    int KACTION_FEATURE_COUNT = 5;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.core.krendering.impl.KPointPlacementDataImpl <em>KPoint Placement Data</em>}' class.
@@ -3290,6 +3690,24 @@ public interface KRenderingPackage extends EPackage {
     int KINVISIBILITY = 47;
 
     /**
+     * The feature id for the '<em><b>Properties</b></em>' map.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KINVISIBILITY__PROPERTIES = KSTYLE__PROPERTIES;
+
+    /**
+     * The feature id for the '<em><b>Persistent Entries</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KINVISIBILITY__PERSISTENT_ENTRIES = KSTYLE__PERSISTENT_ENTRIES;
+
+    /**
      * The feature id for the '<em><b>Propagate To Children</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -3306,6 +3724,15 @@ public interface KRenderingPackage extends EPackage {
      * @ordered
      */
     int KINVISIBILITY__MODIFIER_ID = KSTYLE__MODIFIER_ID;
+
+    /**
+     * The feature id for the '<em><b>Selection</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KINVISIBILITY__SELECTION = KSTYLE__SELECTION;
 
     /**
      * The feature id for the '<em><b>Invisible</b></em>' attribute.
@@ -3336,6 +3763,24 @@ public interface KRenderingPackage extends EPackage {
     int KSHADOW = 48;
 
     /**
+     * The feature id for the '<em><b>Properties</b></em>' map.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KSHADOW__PROPERTIES = KSTYLE__PROPERTIES;
+
+    /**
+     * The feature id for the '<em><b>Persistent Entries</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KSHADOW__PERSISTENT_ENTRIES = KSTYLE__PERSISTENT_ENTRIES;
+
+    /**
      * The feature id for the '<em><b>Propagate To Children</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -3352,6 +3797,15 @@ public interface KRenderingPackage extends EPackage {
      * @ordered
      */
     int KSHADOW__MODIFIER_ID = KSTYLE__MODIFIER_ID;
+
+    /**
+     * The feature id for the '<em><b>Selection</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KSHADOW__SELECTION = KSTYLE__SELECTION;
 
     /**
      * The feature id for the '<em><b>XOffset</b></em>' attribute.
@@ -3409,6 +3863,24 @@ public interface KRenderingPackage extends EPackage {
     int KTEXT_UNDERLINE = 49;
 
     /**
+     * The feature id for the '<em><b>Properties</b></em>' map.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KTEXT_UNDERLINE__PROPERTIES = KSTYLE__PROPERTIES;
+
+    /**
+     * The feature id for the '<em><b>Persistent Entries</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KTEXT_UNDERLINE__PERSISTENT_ENTRIES = KSTYLE__PERSISTENT_ENTRIES;
+
+    /**
      * The feature id for the '<em><b>Propagate To Children</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -3425,6 +3897,15 @@ public interface KRenderingPackage extends EPackage {
      * @ordered
      */
     int KTEXT_UNDERLINE__MODIFIER_ID = KSTYLE__MODIFIER_ID;
+
+    /**
+     * The feature id for the '<em><b>Selection</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KTEXT_UNDERLINE__SELECTION = KSTYLE__SELECTION;
 
     /**
      * The feature id for the '<em><b>Underline</b></em>' attribute.
@@ -3464,6 +3945,24 @@ public interface KRenderingPackage extends EPackage {
     int KSTYLE_REF = 50;
 
     /**
+     * The feature id for the '<em><b>Properties</b></em>' map.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KSTYLE_REF__PROPERTIES = KSTYLE__PROPERTIES;
+
+    /**
+     * The feature id for the '<em><b>Persistent Entries</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KSTYLE_REF__PERSISTENT_ENTRIES = KSTYLE__PERSISTENT_ENTRIES;
+
+    /**
      * The feature id for the '<em><b>Propagate To Children</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -3480,6 +3979,15 @@ public interface KRenderingPackage extends EPackage {
      * @ordered
      */
     int KSTYLE_REF__MODIFIER_ID = KSTYLE__MODIFIER_ID;
+
+    /**
+     * The feature id for the '<em><b>Selection</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KSTYLE_REF__SELECTION = KSTYLE__SELECTION;
 
     /**
      * The feature id for the '<em><b>Style Holder</b></em>' reference.
@@ -3510,6 +4018,24 @@ public interface KRenderingPackage extends EPackage {
     int KTEXT_STRIKEOUT = 51;
 
     /**
+     * The feature id for the '<em><b>Properties</b></em>' map.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KTEXT_STRIKEOUT__PROPERTIES = KSTYLE__PROPERTIES;
+
+    /**
+     * The feature id for the '<em><b>Persistent Entries</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KTEXT_STRIKEOUT__PERSISTENT_ENTRIES = KSTYLE__PERSISTENT_ENTRIES;
+
+    /**
      * The feature id for the '<em><b>Propagate To Children</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -3526,6 +4052,15 @@ public interface KRenderingPackage extends EPackage {
      * @ordered
      */
     int KTEXT_STRIKEOUT__MODIFIER_ID = KSTYLE__MODIFIER_ID;
+
+    /**
+     * The feature id for the '<em><b>Selection</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KTEXT_STRIKEOUT__SELECTION = KSTYLE__SELECTION;
 
     /**
      * The feature id for the '<em><b>Struck Out</b></em>' attribute.
@@ -3565,6 +4100,24 @@ public interface KRenderingPackage extends EPackage {
     int KLINE_JOIN = 52;
 
     /**
+     * The feature id for the '<em><b>Properties</b></em>' map.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KLINE_JOIN__PROPERTIES = KSTYLE__PROPERTIES;
+
+    /**
+     * The feature id for the '<em><b>Persistent Entries</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KLINE_JOIN__PERSISTENT_ENTRIES = KSTYLE__PERSISTENT_ENTRIES;
+
+    /**
      * The feature id for the '<em><b>Propagate To Children</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -3581,6 +4134,15 @@ public interface KRenderingPackage extends EPackage {
      * @ordered
      */
     int KLINE_JOIN__MODIFIER_ID = KSTYLE__MODIFIER_ID;
+
+    /**
+     * The feature id for the '<em><b>Selection</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KLINE_JOIN__SELECTION = KSTYLE__SELECTION;
 
     /**
      * The feature id for the '<em><b>Line Join</b></em>' attribute.
@@ -3640,16 +4202,6 @@ public interface KRenderingPackage extends EPackage {
     int VERTICAL_ALIGNMENT = 55;
 
     /**
-     * The meta object id for the '{@link de.cau.cs.kieler.core.krendering.Trigger <em>Trigger</em>}' enum.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.cau.cs.kieler.core.krendering.Trigger
-     * @see de.cau.cs.kieler.core.krendering.impl.KRenderingPackageImpl#getTrigger()
-     * @generated
-     */
-    int TRIGGER = 57;
-
-    /**
      * The meta object id for the '{@link de.cau.cs.kieler.core.krendering.LineCap <em>Line Cap</em>}' enum.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -3658,6 +4210,16 @@ public interface KRenderingPackage extends EPackage {
      * @generated
      */
     int LINE_CAP = 56;
+
+    /**
+     * The meta object id for the '{@link de.cau.cs.kieler.core.krendering.Trigger <em>Trigger</em>}' enum.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.core.krendering.Trigger
+     * @see de.cau.cs.kieler.core.krendering.impl.KRenderingPackageImpl#getTrigger()
+     * @generated
+     */
+    int TRIGGER = 57;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.core.krendering.Underline <em>Underline</em>}' enum.
@@ -3688,6 +4250,17 @@ public interface KRenderingPackage extends EPackage {
      * @generated
      */
     int ARC = 60;
+
+    /**
+     * The meta object id for the '<em>Colors</em>' data type.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.core.krendering.Colors
+     * @see de.cau.cs.kieler.core.krendering.impl.KRenderingPackageImpl#getColors()
+     * @generated
+     */
+    int COLORS = 61;
+
 
     /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.core.krendering.KPosition <em>KPosition</em>}'.
@@ -3838,15 +4411,15 @@ public interface KRenderingPackage extends EPackage {
     EReference getKPolyline_Points();
 
     /**
-     * Returns the meta object for the containment reference '{@link de.cau.cs.kieler.core.krendering.KPolyline#getJointPointRendering <em>Joint Point Rendering</em>}'.
+     * Returns the meta object for the containment reference '{@link de.cau.cs.kieler.core.krendering.KPolyline#getJunctionPointRendering <em>Junction Point Rendering</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @return the meta object for the containment reference '<em>Joint Point Rendering</em>'.
-     * @see de.cau.cs.kieler.core.krendering.KPolyline#getJointPointRendering()
+     * @return the meta object for the containment reference '<em>Junction Point Rendering</em>'.
+     * @see de.cau.cs.kieler.core.krendering.KPolyline#getJunctionPointRendering()
      * @see #getKPolyline()
      * @generated
      */
-    EReference getKPolyline_JointPointRendering();
+    EReference getKPolyline_JunctionPointRendering();
 
     /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.core.krendering.KPolygon <em>KPolygon</em>}'.
@@ -4096,6 +4669,17 @@ public interface KRenderingPackage extends EPackage {
     EAttribute getKStyle_ModifierId();
 
     /**
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.core.krendering.KStyle#isSelection <em>Selection</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Selection</em>'.
+     * @see de.cau.cs.kieler.core.krendering.KStyle#isSelection()
+     * @see #getKStyle()
+     * @generated
+     */
+    EAttribute getKStyle_Selection();
+
+    /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.core.krendering.KRenderingLibrary <em>Library</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -4167,6 +4751,17 @@ public interface KRenderingPackage extends EPackage {
      * @generated
      */
     EAttribute getKText_Text();
+
+    /**
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.core.krendering.KText#isCursorSelectable <em>Cursor Selectable</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Cursor Selectable</em>'.
+     * @see de.cau.cs.kieler.core.krendering.KText#isCursorSelectable()
+     * @see #getKText()
+     * @generated
+     */
+    EAttribute getKText_CursorSelectable();
 
     /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.core.krendering.KPlacement <em>KPlacement</em>}'.
@@ -4253,17 +4848,6 @@ public interface KRenderingPackage extends EPackage {
     EAttribute getKGridPlacementData_MinCellWidth();
 
     /**
-     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.core.krendering.KGridPlacementData#getMaxCellWidth <em>Max Cell Width</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>Max Cell Width</em>'.
-     * @see de.cau.cs.kieler.core.krendering.KGridPlacementData#getMaxCellWidth()
-     * @see #getKGridPlacementData()
-     * @generated
-     */
-    EAttribute getKGridPlacementData_MaxCellWidth();
-
-    /**
      * Returns the meta object for the attribute '{@link de.cau.cs.kieler.core.krendering.KGridPlacementData#getMinCellHeight <em>Min Cell Height</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -4275,37 +4859,26 @@ public interface KRenderingPackage extends EPackage {
     EAttribute getKGridPlacementData_MinCellHeight();
 
     /**
-     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.core.krendering.KGridPlacementData#getMaxCellHeight <em>Max Cell Height</em>}'.
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.core.krendering.KGridPlacementData#getFlexibleWidth <em>Flexible Width</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>Max Cell Height</em>'.
-     * @see de.cau.cs.kieler.core.krendering.KGridPlacementData#getMaxCellHeight()
+     * @return the meta object for the attribute '<em>Flexible Width</em>'.
+     * @see de.cau.cs.kieler.core.krendering.KGridPlacementData#getFlexibleWidth()
      * @see #getKGridPlacementData()
      * @generated
      */
-    EAttribute getKGridPlacementData_MaxCellHeight();
+    EAttribute getKGridPlacementData_FlexibleWidth();
 
     /**
-     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.core.krendering.KGridPlacementData#getFixedWidth <em>Fixed Width</em>}'.
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.core.krendering.KGridPlacementData#getFlexibleHeight <em>Flexible Height</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>Fixed Width</em>'.
-     * @see de.cau.cs.kieler.core.krendering.KGridPlacementData#getFixedWidth()
+     * @return the meta object for the attribute '<em>Flexible Height</em>'.
+     * @see de.cau.cs.kieler.core.krendering.KGridPlacementData#getFlexibleHeight()
      * @see #getKGridPlacementData()
      * @generated
      */
-    EAttribute getKGridPlacementData_FixedWidth();
-
-    /**
-     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.core.krendering.KGridPlacementData#getFixedHeight <em>Fixed Height</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>Fixed Height</em>'.
-     * @see de.cau.cs.kieler.core.krendering.KGridPlacementData#getFixedHeight()
-     * @see #getKGridPlacementData()
-     * @generated
-     */
-    EAttribute getKGridPlacementData_FixedHeight();
+    EAttribute getKGridPlacementData_FlexibleHeight();
 
     /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.core.krendering.KAreaPlacementData <em>KArea Placement Data</em>}'.
@@ -4666,17 +5239,6 @@ public interface KRenderingPackage extends EPackage {
     EClass getKColoring();
 
     /**
-     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.core.krendering.KColoring#getAlpha <em>Alpha</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>Alpha</em>'.
-     * @see de.cau.cs.kieler.core.krendering.KColoring#getAlpha()
-     * @see #getKColoring()
-     * @generated
-     */
-    EAttribute getKColoring_Alpha();
-
-    /**
      * Returns the meta object for the containment reference '{@link de.cau.cs.kieler.core.krendering.KColoring#getColor <em>Color</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -4686,6 +5248,17 @@ public interface KRenderingPackage extends EPackage {
      * @generated
      */
     EReference getKColoring_Color();
+
+    /**
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.core.krendering.KColoring#getAlpha <em>Alpha</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Alpha</em>'.
+     * @see de.cau.cs.kieler.core.krendering.KColoring#getAlpha()
+     * @see #getKColoring()
+     * @generated
+     */
+    EAttribute getKColoring_Alpha();
 
     /**
      * Returns the meta object for the containment reference '{@link de.cau.cs.kieler.core.krendering.KColoring#getTargetColor <em>Target Color</em>}'.
@@ -4910,15 +5483,15 @@ public interface KRenderingPackage extends EPackage {
     EClass getKAction();
 
     /**
-     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.core.krendering.KAction#getId <em>Id</em>}'.
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.core.krendering.KAction#getActionId <em>Action Id</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>Id</em>'.
-     * @see de.cau.cs.kieler.core.krendering.KAction#getId()
+     * @return the meta object for the attribute '<em>Action Id</em>'.
+     * @see de.cau.cs.kieler.core.krendering.KAction#getActionId()
      * @see #getKAction()
      * @generated
      */
-    EAttribute getKAction_Id();
+    EAttribute getKAction_ActionId();
 
     /**
      * Returns the meta object for the attribute '{@link de.cau.cs.kieler.core.krendering.KAction#getTrigger <em>Trigger</em>}'.
@@ -4930,6 +5503,39 @@ public interface KRenderingPackage extends EPackage {
      * @generated
      */
     EAttribute getKAction_Trigger();
+
+    /**
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.core.krendering.KAction#isAltPressed <em>Alt Pressed</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Alt Pressed</em>'.
+     * @see de.cau.cs.kieler.core.krendering.KAction#isAltPressed()
+     * @see #getKAction()
+     * @generated
+     */
+    EAttribute getKAction_AltPressed();
+
+    /**
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.core.krendering.KAction#isCtrlCmdPressed <em>Ctrl Cmd Pressed</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Ctrl Cmd Pressed</em>'.
+     * @see de.cau.cs.kieler.core.krendering.KAction#isCtrlCmdPressed()
+     * @see #getKAction()
+     * @generated
+     */
+    EAttribute getKAction_CtrlCmdPressed();
+
+    /**
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.core.krendering.KAction#isShiftPressed <em>Shift Pressed</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Shift Pressed</em>'.
+     * @see de.cau.cs.kieler.core.krendering.KAction#isShiftPressed()
+     * @see #getKAction()
+     * @generated
+     */
+    EAttribute getKAction_ShiftPressed();
 
     /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.core.krendering.KPointPlacementData <em>KPoint Placement Data</em>}'.
@@ -5273,16 +5879,6 @@ public interface KRenderingPackage extends EPackage {
     EEnum getVerticalAlignment();
 
     /**
-     * Returns the meta object for enum '{@link de.cau.cs.kieler.core.krendering.Trigger <em>Trigger</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for enum '<em>Trigger</em>'.
-     * @see de.cau.cs.kieler.core.krendering.Trigger
-     * @generated
-     */
-    EEnum getTrigger();
-
-    /**
      * Returns the meta object for enum '{@link de.cau.cs.kieler.core.krendering.LineCap <em>Line Cap</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -5291,6 +5887,16 @@ public interface KRenderingPackage extends EPackage {
      * @generated
      */
     EEnum getLineCap();
+
+    /**
+     * Returns the meta object for enum '{@link de.cau.cs.kieler.core.krendering.Trigger <em>Trigger</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for enum '<em>Trigger</em>'.
+     * @see de.cau.cs.kieler.core.krendering.Trigger
+     * @generated
+     */
+    EEnum getTrigger();
 
     /**
      * Returns the meta object for enum '{@link de.cau.cs.kieler.core.krendering.Underline <em>Underline</em>}'.
@@ -5321,6 +5927,17 @@ public interface KRenderingPackage extends EPackage {
      * @generated
      */
     EEnum getArc();
+
+    /**
+     * Returns the meta object for data type '{@link de.cau.cs.kieler.core.krendering.Colors <em>Colors</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for data type '<em>Colors</em>'.
+     * @see de.cau.cs.kieler.core.krendering.Colors
+     * @model instanceClass="de.cau.cs.kieler.core.krendering.Colors"
+     * @generated
+     */
+    EDataType getColors();
 
     /**
      * Returns the factory that creates the instances of the model.
@@ -5469,12 +6086,12 @@ public interface KRenderingPackage extends EPackage {
         EReference KPOLYLINE__POINTS = eINSTANCE.getKPolyline_Points();
 
         /**
-         * The meta object literal for the '<em><b>Joint Point Rendering</b></em>' containment reference feature.
+         * The meta object literal for the '<em><b>Junction Point Rendering</b></em>' containment reference feature.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
          * @generated
          */
-        EReference KPOLYLINE__JOINT_POINT_RENDERING = eINSTANCE.getKPolyline_JointPointRendering();
+        EReference KPOLYLINE__JUNCTION_POINT_RENDERING = eINSTANCE.getKPolyline_JunctionPointRendering();
 
         /**
          * The meta object literal for the '{@link de.cau.cs.kieler.core.krendering.impl.KPolygonImpl <em>KPolygon</em>}' class.
@@ -5673,6 +6290,14 @@ public interface KRenderingPackage extends EPackage {
         EAttribute KSTYLE__MODIFIER_ID = eINSTANCE.getKStyle_ModifierId();
 
         /**
+         * The meta object literal for the '<em><b>Selection</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute KSTYLE__SELECTION = eINSTANCE.getKStyle_Selection();
+
+        /**
          * The meta object literal for the '{@link de.cau.cs.kieler.core.krendering.impl.KRenderingLibraryImpl <em>Library</em>}' class.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
@@ -5735,6 +6360,14 @@ public interface KRenderingPackage extends EPackage {
          * @generated
          */
         EAttribute KTEXT__TEXT = eINSTANCE.getKText_Text();
+
+        /**
+         * The meta object literal for the '<em><b>Cursor Selectable</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute KTEXT__CURSOR_SELECTABLE = eINSTANCE.getKText_CursorSelectable();
 
         /**
          * The meta object literal for the '{@link de.cau.cs.kieler.core.krendering.KPlacement <em>KPlacement</em>}' class.
@@ -5809,14 +6442,6 @@ public interface KRenderingPackage extends EPackage {
         EAttribute KGRID_PLACEMENT_DATA__MIN_CELL_WIDTH = eINSTANCE.getKGridPlacementData_MinCellWidth();
 
         /**
-         * The meta object literal for the '<em><b>Max Cell Width</b></em>' attribute feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EAttribute KGRID_PLACEMENT_DATA__MAX_CELL_WIDTH = eINSTANCE.getKGridPlacementData_MaxCellWidth();
-
-        /**
          * The meta object literal for the '<em><b>Min Cell Height</b></em>' attribute feature.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
@@ -5825,28 +6450,20 @@ public interface KRenderingPackage extends EPackage {
         EAttribute KGRID_PLACEMENT_DATA__MIN_CELL_HEIGHT = eINSTANCE.getKGridPlacementData_MinCellHeight();
 
         /**
-         * The meta object literal for the '<em><b>Max Cell Height</b></em>' attribute feature.
+         * The meta object literal for the '<em><b>Flexible Width</b></em>' attribute feature.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
          * @generated
          */
-        EAttribute KGRID_PLACEMENT_DATA__MAX_CELL_HEIGHT = eINSTANCE.getKGridPlacementData_MaxCellHeight();
+        EAttribute KGRID_PLACEMENT_DATA__FLEXIBLE_WIDTH = eINSTANCE.getKGridPlacementData_FlexibleWidth();
 
         /**
-         * The meta object literal for the '<em><b>Fixed Width</b></em>' attribute feature.
+         * The meta object literal for the '<em><b>Flexible Height</b></em>' attribute feature.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
          * @generated
          */
-        EAttribute KGRID_PLACEMENT_DATA__FIXED_WIDTH = eINSTANCE.getKGridPlacementData_FixedWidth();
-
-        /**
-         * The meta object literal for the '<em><b>Fixed Height</b></em>' attribute feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EAttribute KGRID_PLACEMENT_DATA__FIXED_HEIGHT = eINSTANCE.getKGridPlacementData_FixedHeight();
+        EAttribute KGRID_PLACEMENT_DATA__FLEXIBLE_HEIGHT = eINSTANCE.getKGridPlacementData_FlexibleHeight();
 
         /**
          * The meta object literal for the '{@link de.cau.cs.kieler.core.krendering.impl.KAreaPlacementDataImpl <em>KArea Placement Data</em>}' class.
@@ -6153,20 +6770,20 @@ public interface KRenderingPackage extends EPackage {
         EClass KCOLORING = eINSTANCE.getKColoring();
 
         /**
-         * The meta object literal for the '<em><b>Alpha</b></em>' attribute feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EAttribute KCOLORING__ALPHA = eINSTANCE.getKColoring_Alpha();
-
-        /**
          * The meta object literal for the '<em><b>Color</b></em>' containment reference feature.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
          * @generated
          */
         EReference KCOLORING__COLOR = eINSTANCE.getKColoring_Color();
+
+        /**
+         * The meta object literal for the '<em><b>Alpha</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute KCOLORING__ALPHA = eINSTANCE.getKColoring_Alpha();
 
         /**
          * The meta object literal for the '<em><b>Target Color</b></em>' containment reference feature.
@@ -6355,12 +6972,12 @@ public interface KRenderingPackage extends EPackage {
         EClass KACTION = eINSTANCE.getKAction();
 
         /**
-         * The meta object literal for the '<em><b>Id</b></em>' attribute feature.
+         * The meta object literal for the '<em><b>Action Id</b></em>' attribute feature.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
          * @generated
          */
-        EAttribute KACTION__ID = eINSTANCE.getKAction_Id();
+        EAttribute KACTION__ACTION_ID = eINSTANCE.getKAction_ActionId();
 
         /**
          * The meta object literal for the '<em><b>Trigger</b></em>' attribute feature.
@@ -6369,6 +6986,30 @@ public interface KRenderingPackage extends EPackage {
          * @generated
          */
         EAttribute KACTION__TRIGGER = eINSTANCE.getKAction_Trigger();
+
+        /**
+         * The meta object literal for the '<em><b>Alt Pressed</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute KACTION__ALT_PRESSED = eINSTANCE.getKAction_AltPressed();
+
+        /**
+         * The meta object literal for the '<em><b>Ctrl Cmd Pressed</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute KACTION__CTRL_CMD_PRESSED = eINSTANCE.getKAction_CtrlCmdPressed();
+
+        /**
+         * The meta object literal for the '<em><b>Shift Pressed</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute KACTION__SHIFT_PRESSED = eINSTANCE.getKAction_ShiftPressed();
 
         /**
          * The meta object literal for the '{@link de.cau.cs.kieler.core.krendering.impl.KPointPlacementDataImpl <em>KPoint Placement Data</em>}' class.
@@ -6649,16 +7290,6 @@ public interface KRenderingPackage extends EPackage {
         EEnum VERTICAL_ALIGNMENT = eINSTANCE.getVerticalAlignment();
 
         /**
-         * The meta object literal for the '{@link de.cau.cs.kieler.core.krendering.Trigger <em>Trigger</em>}' enum.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @see de.cau.cs.kieler.core.krendering.Trigger
-         * @see de.cau.cs.kieler.core.krendering.impl.KRenderingPackageImpl#getTrigger()
-         * @generated
-         */
-        EEnum TRIGGER = eINSTANCE.getTrigger();
-
-        /**
          * The meta object literal for the '{@link de.cau.cs.kieler.core.krendering.LineCap <em>Line Cap</em>}' enum.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
@@ -6667,6 +7298,16 @@ public interface KRenderingPackage extends EPackage {
          * @generated
          */
         EEnum LINE_CAP = eINSTANCE.getLineCap();
+
+        /**
+         * The meta object literal for the '{@link de.cau.cs.kieler.core.krendering.Trigger <em>Trigger</em>}' enum.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see de.cau.cs.kieler.core.krendering.Trigger
+         * @see de.cau.cs.kieler.core.krendering.impl.KRenderingPackageImpl#getTrigger()
+         * @generated
+         */
+        EEnum TRIGGER = eINSTANCE.getTrigger();
 
         /**
          * The meta object literal for the '{@link de.cau.cs.kieler.core.krendering.Underline <em>Underline</em>}' enum.
@@ -6697,6 +7338,16 @@ public interface KRenderingPackage extends EPackage {
          * @generated
          */
         EEnum ARC = eINSTANCE.getArc();
+
+        /**
+         * The meta object literal for the '<em>Colors</em>' data type.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see de.cau.cs.kieler.core.krendering.Colors
+         * @see de.cau.cs.kieler.core.krendering.impl.KRenderingPackageImpl#getColors()
+         * @generated
+         */
+        EDataType COLORS = eINSTANCE.getColors();
 
     }
 

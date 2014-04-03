@@ -30,16 +30,17 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.ForkedOutputStream;
 import de.cau.cs.kieler.core.util.ForwardingInputStream;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
+import de.cau.cs.kieler.kiml.formats.GraphFormatData;
+import de.cau.cs.kieler.kiml.formats.IGraphFormatHandler;
+import de.cau.cs.kieler.kiml.formats.TransformationData;
+import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.GraphvizModel;
 import de.cau.cs.kieler.kiml.graphviz.dot.transform.Command;
 import de.cau.cs.kieler.kiml.graphviz.dot.transform.DotExporter;
-import de.cau.cs.kieler.kiml.graphviz.dot.transform.DotHandler;
+import de.cau.cs.kieler.kiml.graphviz.dot.transform.DotFormatHandler;
 import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizTool.Cleanup;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.service.TransformationService;
-import de.cau.cs.kieler.kiml.service.formats.ITransformationHandler;
-import de.cau.cs.kieler.kiml.service.formats.TransformationData;
 
 /**
  * Layout provider for the Graphviz layout tool.
@@ -60,7 +61,7 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
     /** the Graphviz process pool. */
     private GraphvizTool graphvizTool;
     /** the Graphviz Dot format handler. */
-    private DotHandler dotHandler;
+    private DotFormatHandler dotHandler;
     /** the call number for the current execution. */
     private int myCallNo;
 
@@ -72,10 +73,14 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
         command = Command.valueOf(parameter);
         graphvizTool = new GraphvizTool(command);
         // the dot format handler is indirectly fetched in order to ensure proper injection
-        ITransformationHandler<?> handler = TransformationService.getInstance()
-                .getFormatData(DotHandler.ID).getHandler();
-        if (handler instanceof DotHandler) {
-            dotHandler = (DotHandler) handler;
+        IGraphFormatHandler<?> handler = null;
+        GraphFormatData formatData = GraphFormatsService.getInstance().getFormatData(
+                DotFormatHandler.ID);
+        if (formatData != null) {
+            handler = formatData.getHandler();
+        }
+        if (handler instanceof DotFormatHandler) {
+            dotHandler = (DotFormatHandler) handler;
         } else {
             throw new IllegalStateException("The Graphviz Dot language support is not available.");
         }

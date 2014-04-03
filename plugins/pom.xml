@@ -26,9 +26,13 @@
     <module>de.cau.cs.kieler.core.krendering.extensions</module>
     <module>de.cau.cs.kieler.core.ui</module>
     <module>de.cau.cs.kieler.kiml</module>
+    <module>de.cau.cs.kieler.kiml.cola</module>
     <module>de.cau.cs.kieler.kiml.export</module>
     <module>de.cau.cs.kieler.kiml.formats</module>
     <module>de.cau.cs.kieler.kiml.formats.gml</module>
+    <module>de.cau.cs.kieler.kiml.formats.graphml</module>
+    <module>de.cau.cs.kieler.kiml.formats.json</module>
+    <module>de.cau.cs.kieler.kiml.formats.ogml</module>
     <module>de.cau.cs.kieler.kiml.formats.svg</module>
     <module>de.cau.cs.kieler.kiml.gmf</module>
     <module>de.cau.cs.kieler.kiml.grana</module>
@@ -37,6 +41,7 @@
     <module>de.cau.cs.kieler.kiml.graphviz.layouter</module>
     <module>de.cau.cs.kieler.kiml.kivi</module>
     <module>de.cau.cs.kieler.kiml.ogdf</module>
+    <module>de.cau.cs.kieler.kiml.libavoid</module>
     <module>de.cau.cs.kieler.kiml.service</module>
     <module>de.cau.cs.kieler.kiml.ui</module>
     <module>de.cau.cs.kieler.klay.force</module>
@@ -45,6 +50,7 @@
     <module>de.cau.cs.kieler.klay.tree</module>
     <module>de.cau.cs.kieler.klighd</module>
     <module>de.cau.cs.kieler.klighd.examples</module>
+    <module>de.cau.cs.kieler.klighd.kivi</module>
 <!--
     KLighD Incremental is disabled as long as it doesn't work with the Kepler version of EMF Compare.
     <module>de.cau.cs.kieler.klighd.incremental</module>
@@ -53,15 +59,18 @@
     <module>de.cau.cs.kieler.klighd.piccolo.draw2d</module>
     <module>de.cau.cs.kieler.klighd.piccolo.svg</module>
     <module>de.cau.cs.kieler.klighd.xtext</module>
+    <module>de.cau.cs.kieler.klighd.ui</module>
+    <module>de.cau.cs.kieler.klighd.ui.emf</module>
+    <module>de.cau.cs.kieler.klighd.ui.wizard</module>
     <module>de.cau.cs.kieler.ksbase</module>
     <module>de.cau.cs.kieler.ksbase.ui</module>
-    <module>de.cau.cs.kieler.kwebs</module>
-    <module>de.cau.cs.kieler.kwebs.client</module>
     <module>de.cau.cs.kieler.kwebs.server</module>
     <module>de.cau.cs.kieler.ptolemy.klighd</module>
+    <module>de.cau.cs.kieler.web.statistics</module>
     <module>edu.umd.cs.piccolo</module>
     <module>net.ogdf.bin</module>
     <module>net.ogdf.ogml</module>
+    <module>org.adaptagrams</module>
     <module>org.graphdrawing.graphml</module>
   </modules>
 

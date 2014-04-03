@@ -530,7 +530,7 @@ public class OgdfServer {
                         // no error message -- check for exit value
                         int exitValue = process.exitValue();
                         if (exitValue != 0) {
-                            error.append("Process terminated with exit value " + exitValue + ".");
+                            exitValueError(exitValue, error);
                         }
                     }
                 }
@@ -576,8 +576,51 @@ public class OgdfServer {
         
         if (error != null && error.length() > 0) {
             // an error output could be read from OGDF, so display that to the user
-            throw new OgdfServerException("OGDF error: " + error.toString());
+            error.insert(0, "OGDF error: ");
+            throw new OgdfServerException(error.toString());
         }
+    }
+    
+    /**
+     * Generate an error message for the given exit value.
+     * 
+     * @param exitValue an exit value
+     * @param error a string builder for error messages
+     */
+    private void exitValueError(final int exitValue, final StringBuilder error) {
+        error.append("Process terminated with exit value ").append(exitValue);
+        if (exitValue > 128) {
+            switch (exitValue - 128) {
+            case 2: // SIGINT
+                error.append(" (interrupted)");
+                break;
+            case 3: // SIGQUIT
+                error.append(" (quit)");
+                break;
+            case 4: // SIGILL
+                error.append(" (illegal instruction)");
+                break;
+            case 6: // SIGABRT
+                error.append(" (aborted)");
+                break;
+            case 8: // SIGFPE
+                error.append(" (floating point error)");
+                break;
+            case 9: // SIGKILL
+                error.append(" (killed)");
+                break;
+            case 11: // SIGSEGV
+                error.append(" (segmentation fault)");
+                break;
+            case 13: // SIGPIPE
+                error.append(" (broken pipe)");
+                break;
+            case 15: // SIGTERM
+                error.append(" (terminated)");
+                break;
+            }
+        }
+        error.append('.');
     }
 
     /** preference constant for timeout. */

@@ -10,7 +10,7 @@
    </description>
 
    <copyright>
-      Copyright 2011 by Real-Time and Embedded Systems Group, Department
+      Copyright 2013 by Real-Time and Embedded Systems Group, Department
 of Computer Science, Christian-Albrechts-University of Kiel
    </copyright>
 
@@ -170,20 +170,6 @@ This Agreement is governed by the laws of the State of New York and the intellec
 
    <plugin
          id="de.cau.cs.kieler.kiml.ogdf"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kiml.service"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kwebs"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -612,13 +598,6 @@ This Agreement is governed by the laws of the State of New York and the intellec
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.xtend2.lib"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.xtext.xbase.lib"
          download-size="0"
          install-size="0"
@@ -627,6 +606,62 @@ This Agreement is governed by the laws of the State of New York and the intellec
 
    <plugin
          id="org.eclipse.xtend.lib"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.kiml.formats.json"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.emf.ecore.change"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.kiml.service"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.kiml.formats.graphml"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.kiml.formats.ogml"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.core.resources"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.core.filesystem"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.web.statistics"
          download-size="0"
          install-size="0"
          version="0.0.0"

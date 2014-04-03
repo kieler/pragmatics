@@ -31,7 +31,7 @@ import org.eclipse.xtext.util.Strings;
 import de.cau.cs.kieler.core.kgraph.PersistentEntry;
 import de.cau.cs.kieler.core.kgraph.text.services.KGraphGrammarAccess;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.LayoutDataService;
+import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutOptionData.Type;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -226,10 +226,10 @@ public class KGraphProposalProvider extends AbstractKGraphProposalProvider {
      */
     private void keyProposal(final ContentAssistContext context,
             final ICompletionProposalAcceptor acceptor) {
-        LayoutDataService layoutServices = LayoutDataService.getInstance();
+        LayoutMetaDataService layoutServices = LayoutMetaDataService.getInstance();
 
         // create and register the completion proposal for every element in the list
-        for (LayoutOptionData<?> optionData : layoutServices.getOptionData()) {
+        for (LayoutOptionData optionData : layoutServices.getOptionData()) {
             StyledString displayString = new StyledString(optionData.toString(),
                     (optionData.isAdvanced()) ? StyledString.COUNTER_STYLER : null);
             displayString.append(" (" + optionData.getId() + ")", StyledString.QUALIFIER_STYLER);
@@ -240,15 +240,36 @@ public class KGraphProposalProvider extends AbstractKGraphProposalProvider {
             LayoutOptionLabelProvider labelProvider = new LayoutOptionLabelProvider(optionData);
             Image image = labelProvider.getImage(optionData.getDefault());
             
-            boolean escape = proposal.contains("^");
-            ICompletionProposal completeProposal = createCompletionProposal(proposal, displayString,
-                    image, getPriorityHelper().getDefaultPriority(),
-                    "de.cau.cs.kieler." + (escape ? "^" : "") + context.getPrefix(), context);
-
-            if (completeProposal != null) {
-                acceptor.accept(completeProposal);
+            if (isValidProposal(proposal, context.getPrefix(), context)) {
+                // accept the proposal with unmodified prefix
+                acceptor.accept(doCreateProposal(proposal, displayString, image,
+                        getPriorityHelper().getDefaultPriority(), context));
             } else {
-                acceptor.accept(createCompletionProposal(proposal, displayString, image, context));
+                int lastDotIndex = optionData.getId().lastIndexOf('.');
+                if (lastDotIndex >= 0) {
+                    // accept the proposal with enhanced prefix
+                    StringBuilder prefix = new StringBuilder(
+                            optionData.getId().substring(0, lastDotIndex + 1));
+                    prefix.append(context.getPrefix());
+                    // add escape characters as required
+                    for (int i = 0; i < proposal.length(); i++) {
+                        if (i >= prefix.length()) {
+                            break;
+                        }
+                        if (proposal.charAt(i) != prefix.charAt(i)) {
+                            if (proposal.charAt(i) == '^') {
+                                prefix.insert(i, '^');
+                            } else {
+                                break;
+                            }
+                        }
+                    }
+                    if (isValidProposal(proposal, prefix.toString(), context)) {
+                        // accept the proposal with unmodified prefix
+                        acceptor.accept(doCreateProposal(proposal, displayString, image,
+                                getPriorityHelper().getDefaultPriority(), context));
+                    }
+                }
             }
         }
     }
@@ -270,18 +291,22 @@ public class KGraphProposalProvider extends AbstractKGraphProposalProvider {
             if (!Strings.isEmpty(annotationName)) {
 
                 // get the option list
-                LayoutDataService layoutServices = LayoutDataService.getInstance();
+                LayoutMetaDataService layoutServices = LayoutMetaDataService.getInstance();
 
                 // find the specific option an display all possible values
-                LayoutOptionData<?> optionData = layoutServices.getOptionData(annotationName);
+                LayoutOptionData optionData = layoutServices.getOptionData(annotationName);
+                
+                // if option data is null, try to add the kieler prefix
+                if (optionData == null) {
+                    optionData = layoutServices.getOptionData("de.cau.cs.kieler." + annotationName);
+                }
+                
                 Type theType = (optionData != null) ? optionData.getType() : Type.UNDEFINED;
                 String proposal = null;
                 
                 switch (theType) {
                 // show the available choices for boolean and enumeration/
                 case BOOLEAN:
-                case REMOTE_ENUM:
-                case REMOTE_ENUMSET:
                 case ENUM:
                 case ENUMSET:
                     for (int j = 0; j < optionData.getChoices().length; j++) {
@@ -352,11 +377,11 @@ public class KGraphProposalProvider extends AbstractKGraphProposalProvider {
      * {@inheritDoc}
      */
     @Override
-    public void completePersistentEntry_Key(final EObject model, final Assignment assignment,
+    public void completeProperty_Key(final EObject model, final Assignment assignment,
             final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
 
         /* call implementation of superclass */
-        super.completePersistentEntry_Key(model, assignment, context, acceptor);
+        super.completeProperty_Key(model, assignment, context, acceptor);
 
         /* call modified completion */
         keyProposal(context, acceptor);
@@ -366,11 +391,11 @@ public class KGraphProposalProvider extends AbstractKGraphProposalProvider {
      * {@inheritDoc}
      */
     @Override
-    public void completePersistentEntry_Value(final EObject model, final Assignment assignment,
+    public void completeProperty_Value(final EObject model, final Assignment assignment,
             final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
 
         /* call implementation of superclass */
-        super.completePersistentEntry_Value(model, assignment, context, acceptor);
+        super.completeProperty_Value(model, assignment, context, acceptor);
 
         /* call modified completion */
         valueProposal(context, acceptor);

@@ -24,7 +24,6 @@ import java.util.Map.Entry;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.OperationHistoryFactory;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.draw2d.Connection;
 import org.eclipse.draw2d.ConnectionLocator;
@@ -37,7 +36,6 @@ import org.eclipse.draw2d.geometry.PointList;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.transaction.impl.InternalTransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.RootEditPart;
@@ -47,7 +45,6 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderItemEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.CompartmentEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramRootEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.LabelEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ResizableCompartmentEditPart;
@@ -57,14 +54,9 @@ import org.eclipse.gmf.runtime.diagram.ui.figures.ResizableCompartmentFigure;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramCommandStack;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel;
-import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 
 import com.google.common.collect.BiMap;
 
@@ -79,7 +71,7 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Maybe;
-import de.cau.cs.kieler.kiml.LayoutContext;
+import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
@@ -90,7 +82,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.impl.KEdgeLayoutImpl;
 import de.cau.cs.kieler.kiml.klayoutdata.impl.KShapeLayoutImpl;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.ui.diagram.LayoutMapping;
+import de.cau.cs.kieler.kiml.service.LayoutMapping;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
@@ -130,10 +122,6 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
     /** the offset to add for all coordinates. */
     public static final IProperty<KVector> COORDINATE_OFFSET = new Property<KVector>(
             "gmf.coordinateOffset");
-    
-    /** the volatile layout config for static properties such as minimal node sizes. */
-    public static final IProperty<VolatileLayoutConfig> STATIC_CONFIG
-            = new Property<VolatileLayoutConfig>("gmf.staticLayoutConfig");
     
     /**
      * Calculates the absolute bounds of the given figure.
@@ -177,65 +165,6 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
         }
         return (DiagramEditPart) ep;
     }
-    
-    /**
-     * Find the edit part that corresponds to the given model or notation element in the
-     * currently active editor part.
-     * 
-     * @param object a domain model or view element
-     * @return the corresponding edit part, or {@code null}
-     */
-    public static IGraphicalEditPart getEditPartFromActiveEditor(final EObject object) {
-        final Maybe<IGraphicalEditPart> editPart = new Maybe<IGraphicalEditPart>();
-        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-            public void run() {
-                IWorkbenchWindow workbenchWindow = PlatformUI.getWorkbench()
-                        .getActiveWorkbenchWindow();
-                if (workbenchWindow != null) {
-                    IWorkbenchPage workbenchPage = workbenchWindow.getActivePage();
-                    if (workbenchPage != null) {
-                        IEditorPart editorPart = workbenchPage.getActiveEditor();
-                        if (editorPart instanceof DiagramEditor) {
-                            DiagramEditPart diagramEditPart = ((DiagramEditor) editorPart)
-                                    .getDiagramEditPart();
-                            if (object instanceof View) {
-                                editPart.set((IGraphicalEditPart) diagramEditPart.getViewer()
-                                        .getEditPartRegistry().get(object));
-                            } else {
-                                editPart.set(getEditPart(diagramEditPart, object));
-                            }
-                        }
-                    }
-                }
-            }
-        });
-        return editPart.get();
-    }
-    
-    /**
-     * Find an edit part that is contained in the given diagram edit part. The edit part should
-     * correspond to the given model element.
-     * 
-     * @param dep a diagram edit part
-     * @param element a model element
-     * @return the corresponding edit part, or {@code null}
-     */
-    public static IGraphicalEditPart getEditPart(final DiagramEditPart dep, final EObject element) {
-        EditPart found = dep.findEditPart(dep, element);
-        if (found instanceof IGraphicalEditPart) {
-            return (IGraphicalEditPart) found;
-        } else {
-            for (Object connection : dep.getConnections()) {
-                if (connection instanceof IGraphicalEditPart) {
-                    IGraphicalEditPart ep = (IGraphicalEditPart) connection;
-                    if (element.equals(ep.getNotationView().getElement())) {
-                        return ep;
-                    }
-                }
-            }
-        }
-        return null;
-    }
 
     /**
      * {@inheritDoc}
@@ -253,120 +182,14 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
         return object instanceof DiagramEditor || object instanceof IGraphicalEditPart;
     }
 
-    /** the cached layout configuration for GMF. */
-    private GmfLayoutConfig layoutConfig = new GmfLayoutConfig();
+    /** the cached layout configurator for GMF. */
+    private final GmfLayoutConfig layoutConfig = new GmfLayoutConfig();
 
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" }) // the signature of IAdapterFactory is unchecked
-    public Object getAdapter(final Object object, final Class adapterType) {
-        try {
-            if (adapterType.isAssignableFrom(GmfLayoutConfig.class)) {
-                return layoutConfig;
-            } else if (adapterType.isAssignableFrom(IGraphicalEditPart.class)) {
-                if (object instanceof CompartmentEditPart) {
-                    return ((CompartmentEditPart) object).getParent();
-                } else if (object instanceof IGraphicalEditPart) {
-                    return object;
-                } else if (object instanceof DiagramEditor) {
-                    return ((DiagramEditor) object).getDiagramEditPart();
-                } else if (object instanceof DiagramRootEditPart) {
-                    return ((DiagramRootEditPart) object).getContents();
-                } else if (object instanceof EObject) {
-                    return getEditPartFromActiveEditor((EObject) object);
-                }
-            } else if (adapterType.isAssignableFrom(EObject.class)) {
-                if (object instanceof IGraphicalEditPart) {
-                    IGraphicalEditPart editPart = (IGraphicalEditPart) object;
-                    EObject element = editPart.getNotationView().getElement();
-                    if (editPart.getParent() != null) {
-                        // return the EObject only if the edit part has its own model element
-                        Object model = editPart.getParent().getModel();
-                        if (model instanceof View) {
-                            EObject parentElement = ((View) model).getElement();
-                            if (element == parentElement) {
-                                return null;
-                            }
-                        }
-                    }
-                    return element;
-                } else if (object instanceof View) {
-                    return ((View) object).getElement();
-                }
-            } else if (adapterType.isAssignableFrom(TransactionalEditingDomain.class)) {
-                if (object instanceof DiagramEditor) {
-                    return ((DiagramEditor) object).getEditingDomain();
-                } else if (object instanceof IGraphicalEditPart) {
-                    return ((IGraphicalEditPart) object).getEditingDomain();
-                }
-            }
-            if (object instanceof IAdaptable) {
-                return ((IAdaptable) object).getAdapter(adapterType);
-            }
-        } catch (RuntimeException exception) {
-            // when the editor part has been closed NPEs can occur
-        }
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Class<?>[] getAdapterList() {
-        return new Class<?>[] { IGraphicalEditPart.class };
-    }
-    
-    /**
-     * Determines the insets for a parent figure, relative to the given child.
-     * Subclasses may override this if the generic insets calculation does not work.
-     * 
-     * @param parent the figure of a parent edit part
-     * @param child the figure of a child edit part
-     * @return the insets to add to the relative coordinates of the child
-     */
-    protected Insets calcSpecificInsets(final IFigure parent, final IFigure child) {
-        Insets result = new Insets(0);
-        IFigure currentChild = child;
-        IFigure currentParent = child.getParent();
-        Point coordsToAdd = null;
-        boolean isRelative = false;
-        // follow the chain of parents in the figure hierarchy up to the given parent figure
-        while (currentChild != parent && currentParent != null) {
-            if (currentParent.isCoordinateSystem()) {
-                // the content of the current parent is relative to that figure's position
-                isRelative = true;
-                result.add(currentParent.getInsets());
-                if (coordsToAdd != null) {
-                    // add the position of the previous parent with local coordinate system
-                    result.left += coordsToAdd.x;
-                    result.top += coordsToAdd.y;
-                }
-                coordsToAdd = currentParent.getBounds().getLocation();
-            } else if (currentParent == parent && coordsToAdd != null) {
-                // we found the top parent, and it does not have local coordinate system,
-                // so subtract the parent's coordinates from the previous parent's position
-                Point parentCoords = parent.getBounds().getLocation();
-                result.left += coordsToAdd.x - parentCoords.x;
-                result.top += coordsToAdd.y - parentCoords.y;
-            }
-            currentChild = currentParent;
-            currentParent = currentChild.getParent();
-        }
-        if (!isRelative) {
-            // there is no local coordinate system, so just subtract the coordinates
-            Rectangle parentBounds = parent.getBounds();
-            currentParent = child.getParent();
-            Rectangle containerBounds = currentParent.getBounds();
-            result.left = containerBounds.x - parentBounds.x;
-            result.top = containerBounds.y - parentBounds.y;
-        }
-        // In theory it would be better to get the bottom and right insets from the size.
-        // However, due to the inpredictability of Draw2D layout managers, this leads to
-        // bad results in many cases, so a fixed insets value is more stable.
-        result.right = result.left;
-        result.bottom = result.left;
-        return result;
+    public IMutableLayoutConfig getDiagramConfig() {
+        return layoutConfig;
     }
 
     /**
@@ -441,9 +264,9 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
             mapping.setProperty(DIAGRAM_EDITOR, diagramEditor);
         }
         
-        // create a layout configuration
-        mapping.getLayoutConfigs().add(mapping.getProperty(STATIC_CONFIG));
-        mapping.getLayoutConfigs().add(layoutConfig);
+        // create a layout configurator from the properties that were set while building
+        mapping.getLayoutConfigs().add(VolatileLayoutConfig.fromProperties(mapping.getLayoutGraph(),
+                GmfLayoutConfig.PRIORITY - 1));
 
         return mapping;
     }
@@ -499,9 +322,8 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
      */
     protected LayoutMapping<IGraphicalEditPart> buildLayoutGraph(
             final IGraphicalEditPart layoutRootPart, final List<ShapeNodeEditPart> selection) {
-        LayoutMapping<IGraphicalEditPart> mapping = new LayoutMapping<IGraphicalEditPart>(this);
+        LayoutMapping<IGraphicalEditPart> mapping = new LayoutMapping<IGraphicalEditPart>();
         mapping.setProperty(CONNECTIONS, new LinkedList<ConnectionEditPart>());
-        mapping.setProperty(STATIC_CONFIG, new VolatileLayoutConfig(GmfLayoutConfig.PRIORITY - 1));
         mapping.setParentElement(layoutRootPart);
 
         // find the diagram edit part
@@ -762,11 +584,8 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
         // determine minimal size of the node
         try {
             Dimension minSize = nodeFigure.getMinimumSize();
-            VolatileLayoutConfig staticConfig = mapping.getProperty(STATIC_CONFIG);
-            staticConfig.setValue(LayoutOptions.MIN_WIDTH, childLayoutNode, LayoutContext.GRAPH_ELEM,
-                    (float) minSize.width);
-            staticConfig.setValue(LayoutOptions.MIN_HEIGHT, childLayoutNode, LayoutContext.GRAPH_ELEM,
-                    (float) minSize.height);
+            nodeLayout.setProperty(LayoutOptions.MIN_WIDTH, (float) minSize.width);
+            nodeLayout.setProperty(LayoutOptions.MIN_HEIGHT, (float) minSize.height);
         } catch (SWTException exception) {
             // getMinimumSize() can cause this exception when fonts are disposed for some reason;
             // ignore exception and leave the default minimal size
@@ -791,6 +610,58 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
         // store all the connections to process them later
         addConnections(mapping, nodeEditPart);
         return childLayoutNode;
+    }
+    
+    /**
+     * Determines the insets for a parent figure, relative to the given child.
+     * Subclasses may override this if the generic insets calculation does not work.
+     * 
+     * @param parent the figure of a parent edit part
+     * @param child the figure of a child edit part
+     * @return the insets to add to the relative coordinates of the child
+     */
+    protected Insets calcSpecificInsets(final IFigure parent, final IFigure child) {
+        Insets result = new Insets(0);
+        IFigure currentChild = child;
+        IFigure currentParent = child.getParent();
+        Point coordsToAdd = null;
+        boolean isRelative = false;
+        // follow the chain of parents in the figure hierarchy up to the given parent figure
+        while (currentChild != parent && currentParent != null) {
+            if (currentParent.isCoordinateSystem()) {
+                // the content of the current parent is relative to that figure's position
+                isRelative = true;
+                result.add(currentParent.getInsets());
+                if (coordsToAdd != null) {
+                    // add the position of the previous parent with local coordinate system
+                    result.left += coordsToAdd.x;
+                    result.top += coordsToAdd.y;
+                }
+                coordsToAdd = currentParent.getBounds().getLocation();
+            } else if (currentParent == parent && coordsToAdd != null) {
+                // we found the top parent, and it does not have local coordinate system,
+                // so subtract the parent's coordinates from the previous parent's position
+                Point parentCoords = parent.getBounds().getLocation();
+                result.left += coordsToAdd.x - parentCoords.x;
+                result.top += coordsToAdd.y - parentCoords.y;
+            }
+            currentChild = currentParent;
+            currentParent = currentChild.getParent();
+        }
+        if (!isRelative) {
+            // there is no local coordinate system, so just subtract the coordinates
+            Rectangle parentBounds = parent.getBounds();
+            currentParent = child.getParent();
+            Rectangle containerBounds = currentParent.getBounds();
+            result.left = containerBounds.x - parentBounds.x;
+            result.top = containerBounds.y - parentBounds.y;
+        }
+        // In theory it would be better to get the bottom and right insets from the size.
+        // However, due to the inpredictability of Draw2D layout managers, this leads to
+        // bad results in many cases, so a fixed insets value is more stable.
+        result.right = result.left;
+        result.bottom = result.left;
+        return result;
     }
 
     /**
@@ -903,11 +774,8 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                 Dimension size = labelFigure.getPreferredSize();
                 labelLayout.setSize(size.width, size.height);
                 if (font != null && !font.isDisposed()) {
-                    VolatileLayoutConfig staticConfig = mapping.getProperty(STATIC_CONFIG);
-                    staticConfig.setValue(LayoutOptions.FONT_NAME, label, LayoutContext.GRAPH_ELEM,
-                            font.getFontData()[0].getName());
-                    staticConfig.setValue(LayoutOptions.FONT_SIZE, label, LayoutContext.GRAPH_ELEM,
-                            font.getFontData()[0].getHeight());
+                    labelLayout.setProperty(LayoutOptions.FONT_NAME, font.getFontData()[0].getName());
+                    labelLayout.setProperty(LayoutOptions.FONT_SIZE, font.getFontData()[0].getHeight());
                 }
             } catch (SWTException exception) {
                 // ignore exception and leave the label size to (0, 0)
@@ -1104,7 +972,6 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
     protected void processEdgeLabels(final LayoutMapping<IGraphicalEditPart> mapping,
             final ConnectionEditPart connection, final KEdge edge,
             final EdgeLabelPlacement placement, final KVector offset) {
-        VolatileLayoutConfig staticConfig = mapping.getProperty(STATIC_CONFIG);
         /*
          * ars: source and target is exchanged when defining it in the gmfgen file. So if Emma sets
          * a label to be placed as target on a connection, then the label will show up next to the
@@ -1154,27 +1021,27 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                     if (placement == EdgeLabelPlacement.UNDEFINED) {
                         switch (labelEditPart.getKeyPoint()) {
                         case ConnectionLocator.SOURCE:
-                            staticConfig.setValue(LayoutOptions.EDGE_LABEL_PLACEMENT, label,
-                                    LayoutContext.GRAPH_ELEM, EdgeLabelPlacement.HEAD);
+                            labelLayout.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
+                                    EdgeLabelPlacement.HEAD);
                             break;
                         case ConnectionLocator.MIDDLE:
-                            staticConfig.setValue(LayoutOptions.EDGE_LABEL_PLACEMENT, label,
-                                    LayoutContext.GRAPH_ELEM, EdgeLabelPlacement.CENTER);
+                            labelLayout.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
+                                    EdgeLabelPlacement.CENTER);
                             break;
                         case ConnectionLocator.TARGET:
-                            staticConfig.setValue(LayoutOptions.EDGE_LABEL_PLACEMENT, label,
-                                    LayoutContext.GRAPH_ELEM, EdgeLabelPlacement.TAIL);
+                            labelLayout.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
+                                    EdgeLabelPlacement.TAIL);
                             break;
                         }
                     } else {
-                        staticConfig.setValue(LayoutOptions.EDGE_LABEL_PLACEMENT, label,
-                                LayoutContext.GRAPH_ELEM, placement);
+                        labelLayout.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
+                                placement);
                     }
                     Font font = labelFigure.getFont();
                     if (font != null && !font.isDisposed()) {
-                        staticConfig.setValue(LayoutOptions.FONT_NAME, label, LayoutContext.GRAPH_ELEM,
+                        labelLayout.setProperty(LayoutOptions.FONT_NAME,
                                 font.getFontData()[0].getName());
-                        staticConfig.setValue(LayoutOptions.FONT_SIZE, label, LayoutContext.GRAPH_ELEM,
+                        labelLayout.setProperty(LayoutOptions.FONT_SIZE,
                                 font.getFontData()[0].getHeight());
                     }
                     labelLayout.setXpos(labelBounds.x - (float) offset.x);

@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.klighd.actions;
 
-import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.klighd.IAction;
 
 /**
@@ -43,9 +42,10 @@ public class CollapseExpandAction implements IAction {
      * layout options.
      * 
      */
-    public ILayoutConfig execute(final ActionContext context) {
-        context.getViewer().toggleExpansion(context.getNode());
-        return null;
+    public ActionResult execute(final ActionContext context) {
+
+        context.getActiveViewer().toggleExpansion(context.getKNode());
+
+        return ActionResult.createResult(true);
     }
-    
 }

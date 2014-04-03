@@ -20,11 +20,11 @@ import java.util.Map;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.grana.AnalysisOptions;
+import de.cau.cs.kieler.kiml.grana.IAnalysis;
+import de.cau.cs.kieler.kiml.grana.analyses.EdgeCountAnalysis;
+import de.cau.cs.kieler.kiml.grana.analyses.EdgeLengthAnalysis;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.service.grana.AnalysisOptions;
-import de.cau.cs.kieler.kiml.service.grana.IAnalysis;
-import de.cau.cs.kieler.kiml.service.grana.analyses.EdgeCountAnalysis;
-import de.cau.cs.kieler.kiml.service.grana.analyses.EdgeLengthAnalysis;
 
 /**
  * A layout metric that computes the edge length uniformity of the graph layout.
@@ -46,7 +46,7 @@ public class EdgeUniformityMetric implements IAnalysis {
      */
     public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Edge length uniformity analysis", 1);
+        progressMonitor.begin("Edge length uniformity metric", 1);
         float result;
 
         int numberOfEdges = (Integer) results.get(EdgeCountAnalysis.ID);
@@ -80,19 +80,23 @@ public class EdgeUniformityMetric implements IAnalysis {
             }
             average = average / numberOfEdges;
             
-            // compute standard deviation of edge length
-            double deviation = 0;
-            for (int i = 0; i < index; i++) {
-                double diff = individualLengths[i] - average;
-                deviation += diff * diff;
-            }
-            deviation = Math.sqrt(deviation / numberOfEdges);
-            
-            // the higher the standard deviation, the more the result goes to zero
-            if (deviation >= average) {
-                result = RESULT_BASE * (float) (average / deviation);
+            if (average > 0) {
+                // compute standard deviation of edge length
+                double deviation = 0;
+                for (int i = 0; i < index; i++) {
+                    double diff = individualLengths[i] - average;
+                    deviation += diff * diff;
+                }
+                deviation = Math.sqrt(deviation / numberOfEdges);
+                
+                // the higher the standard deviation, the more the result goes to zero
+                if (deviation >= average) {
+                    result = RESULT_BASE * (float) (average / deviation);
+                } else {
+                    result = 1 - (float) (deviation / average) * (1 - RESULT_BASE);
+                }
             } else {
-                result = 1 - (float) (deviation / average) * (1 - RESULT_BASE);
+                result = 1.0f;
             }
 
             assert result >= 0 && result <= 1;

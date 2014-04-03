@@ -13,9 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.config;
 
-import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.kiml.LayoutContext;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 
 /**
@@ -27,9 +24,6 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
  */
 public interface IMutableLayoutConfig extends ILayoutConfig {
     
-    /** option for layout context: whether changes should be applied also for all child elements. */
-    IProperty<Boolean> OPT_RECURSIVE = new Property<Boolean>("context.recursive", false);
-    
     /**
      * Set a new value for a layout option in the given context.
      * 
@@ -37,14 +31,14 @@ public interface IMutableLayoutConfig extends ILayoutConfig {
      * @param context a context for layout configuration
      * @param value the new layout option value, or {@code null} if the current value shall be removed
      */
-    void setValue(LayoutOptionData<?> optionData, LayoutContext context, Object value);
+    void setOptionValue(LayoutOptionData optionData, LayoutContext context, Object value);
     
     /**
      * Clear all layout option values that have been set for the given context.
      * 
      * @param context a context for layout configuration
      */
-    void clearValues(LayoutContext context);
+    void clearOptionValues(LayoutContext context);
     
     /**
      * Determine whether the given layout option is set, not considering any default values.
@@ -53,6 +47,6 @@ public interface IMutableLayoutConfig extends ILayoutConfig {
      * @param context a context for layout configuration
      * @return true if the option is set
      */
-    boolean isSet(LayoutOptionData<?> optionData, LayoutContext context);
+    boolean isSet(LayoutOptionData optionData, LayoutContext context);
 
 }
