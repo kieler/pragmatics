@@ -54,8 +54,8 @@ public final class IntermediateProcessingConfiguration {
     public static final int INTERMEDIATE_PHASE_SLOTS = 5;
 
     /** Array of sets describing which processors this strategy is composed of. */
-    private List<Set<IntermediateProcessorStrategy>> strategy = new ArrayList<Set<IntermediateProcessorStrategy>>(
-            INTERMEDIATE_PHASE_SLOTS);
+    private List<Set<IntermediateProcessorStrategy>> strategy =
+            new ArrayList<Set<IntermediateProcessorStrategy>>(INTERMEDIATE_PHASE_SLOTS);
 
     /**
      * Constructs a new empty strategy.
@@ -263,7 +263,9 @@ public final class IntermediateProcessingConfiguration {
      * @param processor
      *            the layout processor to add.
      */
-    public void removeLayoutProcessor(final int slotIndex, final IntermediateProcessorStrategy processor) {
+    public void removeLayoutProcessor(final int slotIndex,
+            final IntermediateProcessorStrategy processor) {
+        
         if (slotIndex < 0 || slotIndex >= INTERMEDIATE_PHASE_SLOTS) {
             throw new IllegalArgumentException("slotIndex must be >= 0 and < "
                     + INTERMEDIATE_PHASE_SLOTS + ".");

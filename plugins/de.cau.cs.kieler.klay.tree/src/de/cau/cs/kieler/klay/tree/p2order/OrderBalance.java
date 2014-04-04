@@ -48,8 +48,10 @@ public class OrderBalance implements ILayoutPhase {
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION
             = new IntermediateProcessingConfiguration(
                     IntermediateProcessingConfiguration.BEFORE_PHASE_2,
-                    EnumSet.of(IntermediateProcessorStrategy.ROOT_PROC, IntermediateProcessorStrategy.FAN_PROC,
-                    IntermediateProcessorStrategy.NEIGHBORS_PROC));
+                    EnumSet.of(
+                            IntermediateProcessorStrategy.ROOT_PROC,
+                            IntermediateProcessorStrategy.FAN_PROC,
+                            IntermediateProcessorStrategy.NEIGHBORS_PROC));
 
     /**
      * Tells the node order which weighting it should use.

@@ -86,7 +86,8 @@ public class TidyRectangleCompactor implements ILayoutPhase {
             null,
             // Before Phase 4
             EnumSet.of(IntermediateProcessorStrategy.BEND_DUMMY,
-                    IntermediateProcessorStrategy.RECT_SHAPE_DUMMY, IntermediateProcessorStrategy.FACE_SIDES),
+                    IntermediateProcessorStrategy.RECT_SHAPE_DUMMY,
+                    IntermediateProcessorStrategy.FACE_SIDES),
             // After Phase 4
             EnumSet.of(IntermediateProcessorStrategy.GRID_DRAWING,
                     IntermediateProcessorStrategy.RECT_SHAPE_DUMMY_REMOVER,
@@ -107,7 +108,8 @@ public class TidyRectangleCompactor implements ILayoutPhase {
             null,
             // Before Phase 4
             EnumSet.of(IntermediateProcessorStrategy.BEND_DUMMY,
-                    IntermediateProcessorStrategy.RECT_SHAPE_DUMMY, IntermediateProcessorStrategy.FACE_SIDES),
+                    IntermediateProcessorStrategy.RECT_SHAPE_DUMMY,
+                    IntermediateProcessorStrategy.FACE_SIDES),
             // After Phase 4
             EnumSet.of(IntermediateProcessorStrategy.GRID_DRAWING,
                     IntermediateProcessorStrategy.RECT_SHAPE_DUMMY_REMOVER,

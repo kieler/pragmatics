@@ -42,7 +42,9 @@ public class NodeOrderer implements ILayoutPhase {
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION
             = new IntermediateProcessingConfiguration(
                     IntermediateProcessingConfiguration.BEFORE_PHASE_2,
-                    EnumSet.of(IntermediateProcessorStrategy.ROOT_PROC, IntermediateProcessorStrategy.FAN_PROC));
+                    EnumSet.of(
+                            IntermediateProcessorStrategy.ROOT_PROC,
+                            IntermediateProcessorStrategy.FAN_PROC));
 
     /**
      * {@inheritDoc}

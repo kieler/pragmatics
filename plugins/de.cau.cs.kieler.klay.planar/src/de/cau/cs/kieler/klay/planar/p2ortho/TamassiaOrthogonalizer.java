@@ -89,7 +89,8 @@ public class TamassiaOrthogonalizer implements ILayoutPhase {
             // Before Phase 2
             null,
             // Before Phase 3
-            EnumSet.of(IntermediateProcessorStrategy.EXT_FACE, IntermediateProcessorStrategy.EXPANSION_CYCLE,
+            EnumSet.of(IntermediateProcessorStrategy.EXT_FACE,
+                    IntermediateProcessorStrategy.EXPANSION_CYCLE,
                     IntermediateProcessorStrategy.FULL_ANGLE),
             // Before Phase 4
             EnumSet.of(IntermediateProcessorStrategy.FULL_ANGLE_REMOVER),
