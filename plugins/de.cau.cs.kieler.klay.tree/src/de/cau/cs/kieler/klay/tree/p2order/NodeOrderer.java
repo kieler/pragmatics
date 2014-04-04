@@ -26,7 +26,7 @@ import de.cau.cs.kieler.klay.tree.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.tree.graph.TEdge;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
 import de.cau.cs.kieler.klay.tree.graph.TNode;
-import de.cau.cs.kieler.klay.tree.intermediate.LayoutProcessorStrategy;
+import de.cau.cs.kieler.klay.tree.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.tree.properties.Properties;
 
 /**
@@ -42,7 +42,9 @@ public class NodeOrderer implements ILayoutPhase {
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION
             = new IntermediateProcessingConfiguration(
                     IntermediateProcessingConfiguration.BEFORE_PHASE_2,
-                    EnumSet.of(LayoutProcessorStrategy.ROOT_PROC, LayoutProcessorStrategy.FAN_PROC));
+                    EnumSet.of(
+                            IntermediateProcessorStrategy.ROOT_PROC,
+                            IntermediateProcessorStrategy.FAN_PROC));
 
     /**
      * {@inheritDoc}

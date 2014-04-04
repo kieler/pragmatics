@@ -474,6 +474,17 @@
      <layoutOption
            advanced="true"
            appliesTo="nodes"
+           class="de.cau.cs.kieler.kiml.util.nodespacing.Spacing$Margins"
+           default="[top=0,left=0,bottom=0,right=0]"
+           description="Margins define additional space around the actual bounds of a graph element. For instance, ports or labels being placed on the outside of a node's border might introduce such a margin."
+           id="de.cau.cs.kieler.margins"
+           name="Margins"
+           type="object"
+           variance="0">
+     </layoutOption>
+     <layoutOption
+           advanced="true"
+           appliesTo="nodes"
            default="0"
            description="The minimal height to which a node can be reduced"
            id="de.cau.cs.kieler.minHeight"

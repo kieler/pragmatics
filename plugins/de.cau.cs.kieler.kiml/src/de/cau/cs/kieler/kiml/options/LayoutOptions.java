@@ -233,7 +233,6 @@ public final class LayoutOptions {
      * For instance, ports or labels being placed on the outside of a node's border 
      * might introduce such a margin. The margin is used to guarantee non-overlap
      * of other graph elements with those ports or labels.
-     * FIXME is this the right place for this property?
      * [programmatically set]
      */
     public static final IProperty<Margins> MARGINS = new Property<Margins>(

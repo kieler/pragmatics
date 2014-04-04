@@ -10,16 +10,11 @@ Require-Bundle: com.google.guava;bundle-version="10.0.0",
  de.cau.cs.kieler.core.kgraph
 Export-Package: de.cau.cs.kieler.kiml,
  de.cau.cs.kieler.kiml.config,
- de.cau.cs.kieler.kiml.klayoutdata;uses:="org.eclipse.emf.ecore,org.eclipse.emf.common.util,de.cau.cs.kieler.core.kgraph",
+ de.cau.cs.kieler.kiml.klayoutdata,
  de.cau.cs.kieler.kiml.klayoutdata.impl,
  de.cau.cs.kieler.kiml.klayoutdata.util,
- de.cau.cs.kieler.kiml.options;uses:="de.cau.cs.kieler.kiml.layout.klayoutdata",
- de.cau.cs.kieler.kiml.util;
-  uses:="de.cau.cs.kieler.kiml.layout.klayoutdata,
-   de.cau.cs.kieler.core.alg,
-   de.cau.cs.kieler.kiml.layout.options,
-   de.cau.cs.kieler.core.slimgraph,
-   de.cau.cs.kieler.core.kgraph",
+ de.cau.cs.kieler.kiml.options,
+ de.cau.cs.kieler.kiml.util,
  de.cau.cs.kieler.kiml.util.adapters,
  de.cau.cs.kieler.kiml.util.nodespacing
 Bundle-Vendor: %providerName

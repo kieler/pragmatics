@@ -22,7 +22,7 @@ import de.cau.cs.kieler.klay.tree.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.tree.graph.TEdge;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
 import de.cau.cs.kieler.klay.tree.graph.TNode;
-import de.cau.cs.kieler.klay.tree.intermediate.LayoutProcessorStrategy;
+import de.cau.cs.kieler.klay.tree.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.tree.properties.Properties;
 import de.cau.cs.kieler.klay.tree.properties.TreeifyingOrder;
 
@@ -43,7 +43,7 @@ public class DFSTreeifyer implements ILayoutPhase {
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = 
             new IntermediateProcessingConfiguration(IntermediateProcessingConfiguration.AFTER_PHASE_4,
-                    LayoutProcessorStrategy.DETREEIFYING_PROC);
+                    IntermediateProcessorStrategy.DETREEIFYING_PROC);
 
     /**
      * {@inheritDoc}

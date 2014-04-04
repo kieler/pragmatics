@@ -28,7 +28,7 @@ import de.cau.cs.kieler.klay.planar.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
 import de.cau.cs.kieler.klay.planar.graph.PNode;
-import de.cau.cs.kieler.klay.planar.intermediate.LayoutProcessorStrategy;
+import de.cau.cs.kieler.klay.planar.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.planar.properties.Properties;
 import de.cau.cs.kieler.klay.planar.util.ManuallyIterable;
 import de.cau.cs.kieler.klay.planar.util.ManuallyIterable.Direction;
@@ -62,7 +62,7 @@ public class BoyerMyrvoldPlanarSubgraphBuilder implements ILayoutPhase {
     private static final IntermediateProcessingConfiguration 
         INTERMEDIATE_PROCESSING_CONFIGURATION = new IntermediateProcessingConfiguration(
     // Before Phase 1
-            EnumSet.of(LayoutProcessorStrategy.SELF_LOOP),
+            EnumSet.of(IntermediateProcessorStrategy.SELF_LOOP),
             // Before Phase 2
             null,
             // Before Phase 3
