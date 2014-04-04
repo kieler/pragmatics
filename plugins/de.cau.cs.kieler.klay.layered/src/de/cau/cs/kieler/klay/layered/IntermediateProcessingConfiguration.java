@@ -145,7 +145,8 @@ public final class IntermediateProcessingConfiguration {
      * @param beforePhase5 layout processors before phase 5. May be {@code null}.
      * @param afterPhase5 layout processors after phase 5. May be {@code null}.
      */
-    public IntermediateProcessingConfiguration(final Collection<IntermediateProcessorStrategy> beforePhase1,
+    public IntermediateProcessingConfiguration(
+            final Collection<IntermediateProcessorStrategy> beforePhase1,
             final Collection<IntermediateProcessorStrategy> beforePhase2,
             final Collection<IntermediateProcessorStrategy> beforePhase3,
             final Collection<IntermediateProcessorStrategy> beforePhase4,
@@ -249,7 +250,9 @@ public final class IntermediateProcessingConfiguration {
      *                  {@code < INTERMEDIATE_PHASE_SLOTS}.
      * @param processor the layout processor to add.
      */
-    public void removeLayoutProcessor(final int slotIndex, final IntermediateProcessorStrategy processor) {
+    public void removeLayoutProcessor(final int slotIndex,
+            final IntermediateProcessorStrategy processor) {
+        
         if (slotIndex < 0 || slotIndex >= INTERMEDIATE_PHASE_SLOTS) {
             throw new IllegalArgumentException("slotIndex must be >= 0 and < "
                     + INTERMEDIATE_PHASE_SLOTS + ".");

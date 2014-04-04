@@ -742,6 +742,13 @@ public final class BJLNodePlacer implements ILayoutPhase {
     // end placeDummy
     // ////////////////////////////////////////////////////////////////////////////////////////
     // begin placeRegular
+    
+    /**
+     * Threshold for two doubles to still be considered equal. This could probably be done better with
+     * a relative threshold, but it will suffice for the moment.
+     */
+    private static final double EQUALITY_PRECISION = 2.0;
+    
     /**
      * placeRegular minimizes the total length of all outer segments. The positions of dummy nodes
      * are regarded as fixed. Thus the regular sequences can be placed independently, if a dummy
@@ -795,7 +802,7 @@ public final class BJLNodePlacer implements ILayoutPhase {
             if (bottomDummy != null) {
                 directions[topDummy.id] = 0;
                 if (Math.abs((bottomDummy.getPosition().y - topDummy.getPosition().y)
-                        - minimumDistance(topDummy, bottomDummy)) < 5) {
+                        - minimumDistance(topDummy, bottomDummy)) < EQUALITY_PRECISION) {
                     
                     placed[topDummy.id] = true;
                 } else {
@@ -1333,8 +1340,8 @@ public final class BJLNodePlacer implements ILayoutPhase {
     // //////////////////////////////////////////////////////////////////////////////////////////////
     // helper classes
     /**
-     * LNodeExtensions contains additional informations about a node that are used in several methods
-    */
+     * LNodeExtensions contains additional informations about a node that are used in several methods.
+     */
     private static final class LNodeExtensions {
         /** previous node in the same layer. */
         private LNode topSibling;
