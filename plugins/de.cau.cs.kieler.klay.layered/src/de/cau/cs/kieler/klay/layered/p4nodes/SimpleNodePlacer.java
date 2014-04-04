@@ -37,8 +37,8 @@ public final class SimpleNodePlacer implements ILayoutPhase {
 
     /** additional processor dependencies for graphs with hierarchical ports. */
     private static final IntermediateProcessingConfiguration HIERARCHY_PROCESSING_ADDITIONS =
-        new IntermediateProcessingConfiguration(IntermediateProcessingConfiguration.BEFORE_PHASE_5,
-                IntermediateProcessorStrategy.HIERARCHICAL_PORT_POSITION_PROCESSOR);
+        IntermediateProcessingConfiguration.createEmpty()
+            .addBeforePhase5(IntermediateProcessorStrategy.HIERARCHICAL_PORT_POSITION_PROCESSOR);
 
     /**
      * {@inheritDoc}

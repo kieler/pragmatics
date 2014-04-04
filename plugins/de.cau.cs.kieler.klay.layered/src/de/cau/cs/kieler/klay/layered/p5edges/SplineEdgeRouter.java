@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.klay.layered.p5edges;
 
-import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Set;
@@ -22,20 +21,20 @@ import com.google.common.collect.Iterables;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.BezierSpline;
+import de.cau.cs.kieler.core.math.BezierSpline.BezierCurve;
 import de.cau.cs.kieler.core.math.CubicSplineInterpolator;
 import de.cau.cs.kieler.core.math.ISplineInterpolator;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.math.KielerMath;
-import de.cau.cs.kieler.core.math.BezierSpline.BezierCurve;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LGraphUtil;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
@@ -78,11 +77,11 @@ public final class SplineEdgeRouter implements ILayoutPhase {
      *     - LABEL_SIDE_SELECTOR
      *   
      *   - For center edge labels:
-     *     - LABEL_SIDE_SELECTOR
      *     - LABEL_DUMMY_SWITCHER
      * 
      * Before phase 4:
-     *   - None.
+     *   - For center edge labels:
+     *     - LABEL_SIDE_SELECTOR
      * 
      * Before phase 5:
      *   - None.
@@ -97,46 +96,17 @@ public final class SplineEdgeRouter implements ILayoutPhase {
     
     /** additional processor dependencies for graphs with center edge labels. */
     private static final IntermediateProcessingConfiguration CENTER_EDGE_LABEL_PROCESSING_ADDITIONS =
-        new IntermediateProcessingConfiguration(
-                // Before Phase 1
-                null,
-                
-                // Before Phase 2
-                EnumSet.of(IntermediateProcessorStrategy.LABEL_DUMMY_INSERTER),
-                
-                // Before Phase 3
-                EnumSet.of(IntermediateProcessorStrategy.LABEL_SIDE_SELECTOR,
-                           IntermediateProcessorStrategy.LABEL_DUMMY_SWITCHER),
-                
-                // Before Phase 4
-                null,
-                
-                // Before Phase 5
-                null,
-                
-                // After Phase 5
-                EnumSet.of(IntermediateProcessorStrategy.LABEL_DUMMY_REMOVER));
+        IntermediateProcessingConfiguration.createEmpty()
+            .addBeforePhase2(IntermediateProcessorStrategy.LABEL_DUMMY_INSERTER)
+            .addBeforePhase3(IntermediateProcessorStrategy.LABEL_DUMMY_SWITCHER)
+            .addBeforePhase4(IntermediateProcessorStrategy.LABEL_SIDE_SELECTOR)
+            .addAfterPhase5(IntermediateProcessorStrategy.LABEL_DUMMY_REMOVER);
     
     /** additional processor dependencies for graphs with head or tail edge labels. */
     private static final IntermediateProcessingConfiguration END_EDGE_LABEL_PROCESSING_ADDITIONS =
-        new IntermediateProcessingConfiguration(
-                // Before Phase 1
-                null,
-                
-                // Before Phase 2
-                null,
-                
-                // Before Phase 3
-                EnumSet.of(IntermediateProcessorStrategy.LABEL_SIDE_SELECTOR),
-                
-                // Before Phase 4
-                null,
-                
-                // Before Phase 5
-                null,
-                
-                // After Phase 5
-                EnumSet.of(IntermediateProcessorStrategy.END_LABEL_PROCESSOR));
+        IntermediateProcessingConfiguration.createEmpty()
+            .addBeforePhase4(IntermediateProcessorStrategy.LABEL_SIDE_SELECTOR)
+            .addAfterPhase5(IntermediateProcessorStrategy.END_LABEL_PROCESSOR);
 
     /** factor for layer spacing. */
     private static final double LAYER_SPACE_FAC = 0.2;
@@ -179,7 +149,8 @@ public final class SplineEdgeRouter implements ILayoutPhase {
         Set<GraphProperties> graphProperties = graph.getProperty(InternalProperties.GRAPH_PROPERTIES);
         
         // Basic configuration
-        IntermediateProcessingConfiguration configuration = new IntermediateProcessingConfiguration();
+        IntermediateProcessingConfiguration configuration =
+                IntermediateProcessingConfiguration.createEmpty();
         
         // Additional dependencies
         if (graphProperties.contains(GraphProperties.CENTER_LABELS)) {
