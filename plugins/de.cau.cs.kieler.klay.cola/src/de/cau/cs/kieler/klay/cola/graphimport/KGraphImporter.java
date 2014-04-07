@@ -101,15 +101,17 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         }
 
         // align external ports
-        AlignmentConstraint acLeft = new AlignmentConstraint(Dim.XDIM);
-        graph.constraints.add(acLeft);
-        AlignmentConstraint acRight = new AlignmentConstraint(Dim.XDIM);
-        graph.constraints.add(acRight);
-        for (CPort p : graph.getExternalPorts()) {
-            if (p.side == PortSide.WEST) {
-                acLeft.addShape(p.cIndex, 0);
-            } else {
-                acRight.addShape(p.cIndex, 0);
+        if (!graph.getExternalPorts().isEmpty()) {
+            AlignmentConstraint acLeft = new AlignmentConstraint(Dim.XDIM);
+            graph.constraints.add(acLeft);
+            AlignmentConstraint acRight = new AlignmentConstraint(Dim.XDIM);
+            graph.constraints.add(acRight);
+            for (CPort p : graph.getExternalPorts()) {
+                if (p.side == PortSide.WEST) {
+                    acLeft.addShape(p.cIndex, 0);
+                } else {
+                    acRight.addShape(p.cIndex, 0);
+                }
             }
         }
 
@@ -239,7 +241,8 @@ public class KGraphImporter implements IGraphImporter<KNode> {
          */
         for (CNode n : graph.getChildren()) {
             Rectangle r = n.rect;
-            KShapeLayout layout = n.getProperty(InternalColaProperties.ORIGIN).getData(KShapeLayout.class);
+            KShapeLayout layout = n.getProperty(InternalColaProperties.ORIGIN)
+                                    .getData(KShapeLayout.class);
 
             // set new positions
             layout.setXpos((float) (r.getMinX() + n.getMargins().left + offset.x));
@@ -273,7 +276,8 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         for (CPort p : graph.getExternalPorts()) {
             Rectangle r = p.rect;
 
-            KShapeLayout layout = p.getProperty(InternalColaProperties.ORIGIN).getData(KShapeLayout.class);
+            KShapeLayout layout = p.getProperty(InternalColaProperties.ORIGIN)
+                                    .getData(KShapeLayout.class);
             layout.setXpos((float) (r.getMinX() + offset.x));
             layout.setYpos((float) (r.getMinY() + offset.y));
         }

@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.libavoid;
 
+import java.io.File;
 import java.util.Map;
 
 import org.adaptagrams.AvoidPoints;
@@ -172,20 +173,24 @@ public class LibavoidGraph {
         transformGraph(parentNode);
 
     }
-    
+
     /**
      * @return the router
      */
     public Router getRouter() {
         return router;
     }
-    
+
     /**
      * Actually run the libavoid router and apply the layout back.
      */
     public void process() {
+
+        File folder =
+                new File(System.getProperty("user.home") + File.separatorChar + "tmp"
+                        + File.separatorChar + "libavoid");
+        folder.mkdirs();
         
-        router.outputInstanceToSVG("libavoid-preroute.svg");
         // perform the routing
         router.processTransaction();
 
@@ -193,14 +198,15 @@ public class LibavoidGraph {
         applyLayout(parentNode);
         calculateJunctionPoints(parentNode);
 
-        router.outputInstanceToSVG();
+        router.outputInstanceToSVG(folder.getAbsolutePath() + File.separator
+                + "libavoid-afterroute" + this.hashCode() + ".svg");
 
         // destroy
         router.delete();
         // make sure it is not used anymore, otherwise it will result in a jvm crash
         router = null;
     }
-    
+
     /**
      * @return the nodeIdMap
      */
@@ -343,30 +349,25 @@ public class LibavoidGraph {
 
         KShapeLayout shape = parent.getData(KShapeLayout.class);
         KInsets insets = shape.getInsets();
-        float borderSpacing = shape.getProperty(LayoutOptions.BORDER_SPACING); 
+        float borderSpacing = shape.getProperty(LayoutOptions.BORDER_SPACING);
 
         // offset each side by the shape buffer distance to let edges route properly
         float bufferDistance = shape.getProperty(LibavoidProperties.SHAPE_BUFFER_DISTANCE);
         // top
-        libavoidNode(parent, NODE_COMPOUND_NORTH, 
-                0, 
-                0 - SURROUNDING_RECT_SIZE - bufferDistance,
-                shape.getWidth(), 
-                SURROUNDING_RECT_SIZE, 
+        libavoidNode(parent, NODE_COMPOUND_NORTH, 0, 0 - SURROUNDING_RECT_SIZE - bufferDistance,
+                shape.getWidth(), SURROUNDING_RECT_SIZE + insets.getTop(),
                 // edges
                 0, 0);
         // right
-        libavoidNode(parent, NODE_COMPOUND_EAST, 0 + shape.getWidth() + bufferDistance, 0,
+        libavoidNode(parent, NODE_COMPOUND_EAST,
+                0 + shape.getWidth() + bufferDistance - insets.getRight(), 0,
                 SURROUNDING_RECT_SIZE, shape.getHeight(), 0, 0);
         // bottom
-        libavoidNode(parent, NODE_COMPOUND_SOUTH, 0, 0 + shape.getHeight() + bufferDistance,
-                shape.getWidth(), SURROUNDING_RECT_SIZE, 0, 0);
+        libavoidNode(parent, NODE_COMPOUND_SOUTH, 0, 0 + shape.getHeight() + bufferDistance
+                - insets.getBottom(), shape.getWidth(), SURROUNDING_RECT_SIZE, 0, 0);
         // left
-        libavoidNode(parent, NODE_COMPOUND_WEST, 
-                0 - bufferDistance - SURROUNDING_RECT_SIZE, 
-                0,
-                SURROUNDING_RECT_SIZE + insets.getLeft() + borderSpacing, 
-                shape.getHeight(), 0, 0);
+        libavoidNode(parent, NODE_COMPOUND_WEST, 0 - bufferDistance - SURROUNDING_RECT_SIZE, 0,
+                SURROUNDING_RECT_SIZE + insets.getLeft() + borderSpacing, shape.getHeight(), 0, 0);
 
         // convert the ports of the compound node itself
         for (KPort port : parent.getPorts()) {
@@ -520,6 +521,9 @@ public class LibavoidGraph {
         // parents margins
         Margins margin =
                 port.getNode().getData(KShapeLayout.class).getProperty(LayoutOptions.MARGINS);
+        if (compoundNode != null) {
+            margin = new Margins();
+        }
 
         // get center point of port
         double centerX = portLayout.getXpos() + portLayout.getWidth() / 2 + margin.left;
@@ -748,11 +752,11 @@ public class LibavoidGraph {
             }
         }
     }
-    
+
     private KPoint toKPoint(final Point p) {
         return toKPoint(p, null);
     }
- 
+
     private KPoint toKPoint(final Point p, final KVector offset) {
         KPoint kpoint = KLayoutDataFactory.eINSTANCE.createKPoint();
         if (offset != null) {

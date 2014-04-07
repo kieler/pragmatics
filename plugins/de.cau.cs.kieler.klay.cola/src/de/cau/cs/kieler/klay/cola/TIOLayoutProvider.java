@@ -17,6 +17,7 @@ import java.util.Map.Entry;
 
 import org.adaptagrams.AvoidTopologyAddon;
 import org.adaptagrams.FixedRelativeConstraint;
+import org.adaptagrams.PageBoundaryConstraints;
 import org.adaptagrams.Rectangle;
 import org.adaptagrams.ShapeRef;
 import org.adaptagrams.Unsigneds;
@@ -85,6 +86,7 @@ public class TIOLayoutProvider extends AbstractLayoutProvider {
 
                 // move the nodes to their new positions
                 for (Entry<Integer, ShapeRef> entry : this.idShapeRefMap.entrySet()) {
+                    
                     if (entry.getKey() < LibavoidGraph.NODE_ID_START) {
                         continue;
                     }
@@ -96,16 +98,16 @@ public class TIOLayoutProvider extends AbstractLayoutProvider {
 
                     KShapeLayout layout = node.getData(KShapeLayout.class);
                     // FIXME why add half the port size here?
-                    layout.setXpos((float) (sr.routingBox().getMin().getX() + offset.x
-                            + margins.left + 4));
-                    layout.setYpos((float) (sr.routingBox().getMin().getY() + offset.y
-                            + margins.top + 4));
+                    layout.setXpos((float) (sr.routingBox().getMin().getX() 
+                            + offset.x + margins.left + 4));
+                    layout.setYpos((float) (sr.routingBox().getMin().getY() 
+                            + offset.y + margins.top + 4));
 
                 }
 
                 // no need to call the original implementation, we use it to move the nodes alone
                 // TODO might be an option to do both at once
-                // super.applyLayout(root);
+                 super.applyLayout(root);
             }
         };
         libGraph.transformGraph();
@@ -171,6 +173,17 @@ public class TIOLayoutProvider extends AbstractLayoutProvider {
             FixedRelativeConstraint frc =
                     new FixedRelativeConstraint(graph.nodes, surroundingRects, false);
             graph.constraints.add(frc);
+            
+            // we also have to fix the surrounding nodes at their positions, otherwise
+            // the topologyaddon might move them together into an arbitrary direction. 
+            PageBoundaryConstraints pb =
+                    new PageBoundaryConstraints(r4.getMinX(),  r2.getMaxX(),
+                            r.getMinY(), r3.getMaxY());
+            pb.addShape(graph.getLastNodeIndex() + 0, r.width() / 2, r.height() / 2);
+            pb.addShape(graph.getLastNodeIndex() + 1, r2.width() / 2, r2.height() / 2);
+            pb.addShape(graph.getLastNodeIndex() + 2, r3.width() / 2, r3.height() / 2);
+            pb.addShape(graph.getLastNodeIndex() + 3, r4.width() / 2, r4.height() / 2);
+            graph.constraints.add(pb);
         }
 
         // create the libavoid addon that will improve the node positioning while preserving topology
