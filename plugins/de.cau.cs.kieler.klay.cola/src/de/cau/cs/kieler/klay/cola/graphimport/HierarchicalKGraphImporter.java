@@ -135,8 +135,16 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode> {
                         portMap.put(p, port);
                         cnode.getPorts().add(port);
                         port.init();
-                        port.side =
-                                KimlUtil.calcPortSide(p, graph.getProperty(LayoutOptions.DIRECTION)); // FIXME
+                        PortSide ps =
+                                p.getData(KLayoutData.class).getProperty(LayoutOptions.PORT_SIDE);
+                        if (ps != PortSide.UNDEFINED) {
+                            port.side = ps;
+                        } else {
+                            // calculate a useful side
+                            port.side =
+                                    KimlUtil.calcPortSide(p,
+                                            graph.getProperty(LayoutOptions.DIRECTION)); // FIXME
+                        }
 
                         // add an edge from the port to the node's center
                         port.withCenterEdge();
@@ -357,6 +365,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode> {
                 // transfer positions to all edges that are part of this hierarchical edge
                 // FIXME edges may be handled multiple times
                 // this should yield deterministic results, however performance could be improved
+                // however, it might be better to use a median or average value
                 List<KEdge> edgeChain = e.getProperty(InternalColaProperties.EDGE_CHAIN);
                 for (KEdge hierarchyEdge : edgeChain) {
                     KEdgeLayout edgeLayout = hierarchyEdge.getData(KEdgeLayout.class);
@@ -454,18 +463,18 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode> {
                 switch (intersection.getSecond()) {
                 case NORTH:
                     positionOffset.x = 0;
-                    positionOffset.y = -portLayout.getHeight();
+                    positionOffset.y = portLayout.getHeight();
                     break;
                 case EAST:
-                    positionOffset.x = portLayout.getWidth();
+                    positionOffset.x = 0;
                     positionOffset.y = 0;
                     break;
                 case SOUTH:
                     positionOffset.x = 0;
-                    positionOffset.y = portLayout.getHeight();
+                    positionOffset.y = 0;
                     break;
                 case WEST:
-                    positionOffset.x = -portLayout.getWidth();
+                    positionOffset.x = portLayout.getWidth();
                     positionOffset.y = 0;
                     break;
                 default:

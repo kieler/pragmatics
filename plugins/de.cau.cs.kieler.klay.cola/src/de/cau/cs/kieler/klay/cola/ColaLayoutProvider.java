@@ -14,14 +14,18 @@
 package de.cau.cs.kieler.klay.cola;
 
 import java.util.Arrays;
+import java.util.Set;
 
 import org.adaptagrams.ConstrainedFDLayout;
+import org.adaptagrams.TestConvergence;
+import org.eclipse.emf.ecore.util.EcoreUtil;
+
+import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters;
 import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters.KGraphAdapter;
@@ -33,6 +37,8 @@ import de.cau.cs.kieler.klay.cola.graphimport.KGraphImporter;
 import de.cau.cs.kieler.klay.cola.processors.DirectionConstraintProcessor;
 import de.cau.cs.kieler.klay.cola.processors.NonUniformEdgeLengthProcessor;
 import de.cau.cs.kieler.klay.cola.processors.PortConstraintProcessor;
+import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
+import de.cau.cs.kieler.klay.cola.util.DebugTestConvergence;
 
 /**
  * 
@@ -40,10 +46,24 @@ import de.cau.cs.kieler.klay.cola.processors.PortConstraintProcessor;
  */
 public class ColaLayoutProvider extends AbstractLayoutProvider {
 
+    private float idealEdgeLength;
     private float spacing;
     private float borderSpacing;
 
     private CGraph graph;
+
+    /**
+     * Remember the created layouters in order to free the c++ elements after the layout has been
+     * applied back to the original graph.
+     */
+    private Set<ConstrainedFDLayout> layouters;
+
+    /*
+     * Debug
+     */
+    private boolean debug = false;
+    private TestConvergence testConvergence;
+    private String debugPrefix;
 
     /**
      * Main entry point of the layout provider.
@@ -52,19 +72,33 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
      */
     public void doLayout(final KNode parentNode, final IKielerProgressMonitor progressMonitor) {
 
-        System.out.println("Called layout "
-                + parentNode.getData(KShapeLayout.class)
-                        .getProperty(LayoutOptions.LAYOUT_HIERARCHY));
-
         // handle some properties
         KLayoutData rootLayout = parentNode.getData(KLayoutData.class);
 
-        // spacing
         spacing = rootLayout.getProperty(LayoutOptions.SPACING);
-        //Rectangle.setXBorder(spacing);
-        //Rectangle.setYBorder(spacing);
-
+        idealEdgeLength = rootLayout.getProperty(ColaProperties.IDEAL_EDGE_LENGTHS);
         borderSpacing = rootLayout.getProperty(LayoutOptions.BORDER_SPACING);
+        debug = rootLayout.getProperty(LayoutOptions.DEBUG_MODE);
+
+        if (debug) {
+            // Internal convergence test that outputs debug information.
+            testConvergence = new DebugTestConvergence("cola");
+
+            // store hierarchical debug output separately
+            debugPrefix = "";
+            if (parentNode.getParent() != null) {
+                debugPrefix +=
+                        EcoreUtil.getURI(parentNode.getParent()) + "-"
+                                + EcoreUtil.getURI(parentNode) + "-";
+                // make sure it's a valid file path
+                debugPrefix = debugPrefix.replace("/", "").replace("#", "");
+            }
+        } else {
+            // use default convergence test
+            testConvergence = new TestConvergence();
+        }
+
+        layouters = Sets.newHashSet();
 
         // calculate margins
         calculateMarginsAndSizes(parentNode);
@@ -78,79 +112,72 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         }
         graph = importer.importGraph(parentNode);
 
+        // apply some processors
         new DirectionConstraintProcessor().process(graph, progressMonitor.subTask(1));
         new PortConstraintProcessor().process(graph, progressMonitor.subTask(1));
         new NonUniformEdgeLengthProcessor().process(graph, progressMonitor.subTask(1));
 
-        // System.out.println(parentNode);
-        System.out.println(Arrays.toString(graph.idealEdgeLengths));
+        if (debug) {
+            System.out.println(Arrays.toString(graph.idealEdgeLengths));
+        }
 
         // for the moment fix the issue where the edge lengths do not allow 0
         for (int i = 0; i < graph.idealEdgeLengths.length; ++i) {
             if (graph.idealEdgeLengths[i] == 0) {
-                graph.idealEdgeLengths[i] = borderSpacing + 40;
+                graph.idealEdgeLengths[i] = borderSpacing;
             }
         }
 
-        ConstrainedFDLayout algo =
-                new ConstrainedFDLayout(graph.getNodes(), graph.getEdges(), 50, false,
-                        graph.getIdealEdgeLengths());
+        // first run w/o overlap prevention
+        runLayout(false);
 
-        algo.setConstraints(graph.getConstraints());
-        algo.setClusterHierarchy(graph.rootCluster);
+        // then run some with overlap prevention
+        runLayout(true);
 
-        // run some w/o overlap
-        algo.makeFeasible();
-
-        int runs = 10;
-
-        for (int i = 0; i < runs; i++) {
-            algo.runOnce();
-
-            algo.outputInstanceToSVG("out" + i + ".svg");
-
-            // System.out.println(i);
-        }
-
-        // do some with overlap
-        algo =
-                new ConstrainedFDLayout(graph.getNodes(), graph.getEdges(), 1, true,
-                        graph.getIdealEdgeLengths());
-
-        algo.setConstraints(graph.getConstraints());
-        algo.setClusterHierarchy(graph.rootCluster);
-
-        algo.makeFeasible();
-
-        for (int i = 0; i < runs; i++) {
-            algo.runOnce();
-
-            algo.outputInstanceToSVG("out99overlap" + i + ".svg");
-
-            // System.out.println(i);
-        }
-
+        // FIXME atm still have to compute the bounding rects of clusters
         graph.rootCluster.computeBoundingRect(graph.nodes);
-
-        /*
-         * End
-         */
 
         // apply the calculated layout back to the kgrap
         importer.applyLayout(graph);
 
-        // cleanup c++ objects
-        algo.freeAssociatedObjects();
+        // free c++ object
+        for (ConstrainedFDLayout layouter : layouters) {
+            // TODO what does this all remove??
+            // layouter.freeAssociatedObjects();
+        }
+    }
 
+    private void runLayout(final boolean overlap) {
+
+        // create a new layouter instance
+        ConstrainedFDLayout algo =
+                new ConstrainedFDLayout(graph.getNodes(), graph.getEdges(), idealEdgeLength,
+                        overlap, graph.getIdealEdgeLengths(), testConvergence);
+
+        // remember for later disposal
+        layouters.add(algo);
+
+        if (debug) {
+            DebugTestConvergence debugConvergence = (DebugTestConvergence) testConvergence;
+            debugConvergence.setLayouter(algo);
+            debugConvergence.setNamePrefix(debugPrefix + (overlap ? "overlap" : "non_overlap"));
+        }
+
+        // set constraints and clusters
+        algo.setConstraints(graph.getConstraints());
+        algo.setClusterHierarchy(graph.rootCluster);
+
+        algo.makeFeasible();
+
+        algo.run();
     }
 
     private void calculateMarginsAndSizes(final KNode parent) {
         KGraphAdapter adapter = KGraphAdapters.adapt(parent);
         KimlNodeDimensionCalculation.sortPortLists(adapter);
         KimlNodeDimensionCalculation.calculateLabelAndNodeSizes(adapter);
-        
-        
-//        KimlNodeDimensionCalculation.getNodeMarginCalculator(adapter).excludePorts().process();
+
+        // KimlNodeDimensionCalculation.getNodeMarginCalculator(adapter).excludePorts().process();
         KimlNodeDimensionCalculation.getNodeMarginCalculator(adapter).process();
 
         if (parent.getData(KLayoutData.class).getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {

@@ -16,6 +16,7 @@ package de.cau.cs.kieler.klay.cola;
 import java.util.Map.Entry;
 
 import org.adaptagrams.AvoidTopologyAddon;
+import org.adaptagrams.FixedRelativeConstraint;
 import org.adaptagrams.Rectangle;
 import org.adaptagrams.ShapeRef;
 import org.adaptagrams.Unsigneds;
@@ -42,47 +43,47 @@ import de.cau.cs.kieler.klay.cola.properties.InternalColaProperties;
 
 /**
  * @author uru
- *
+ * 
  */
 public class TIOLayoutProvider extends AbstractLayoutProvider {
 
     private static final int FIRST_INDEX = 5;
-    
+
+    private CGraph graph;
+
     /**
      * {@inheritDoc}
      */
     @Override
     public void doLayout(final KNode parentNode, final IKielerProgressMonitor progressMonitor) {
-        
+
         progressMonitor.begin("Improve Layout Topology Preserving", 1);
-        
+
         if (!(parentNode.getParent() == null || parentNode.getParent().getParent() == null)) {
-           return; 
+            return;
         }
-        
+
         if (parentNode.getLabels().size() > 0
                 && parentNode.getLabels().get(0).getText().equals("Car Model")) {
             return;
         }
-        
+
         parentNode.getData(KShapeLayout.class).setProperty(ColaProperties.PORT_DUMMIES, false);
-        
+
         KGraphAdapter adapter = KGraphAdapters.adapt(parentNode);
         KimlNodeDimensionCalculation.sortPortLists(adapter);
         KimlNodeDimensionCalculation.calculateLabelAndNodeSizes(adapter);
         KimlNodeDimensionCalculation.getNodeMarginCalculator(adapter).process();
-        
-        
-        
-        final CGraph graph = new KGraphImporter().importGraph(parentNode);
-        
+
+        graph = new KGraphImporter().importGraph(parentNode);
+
         LibavoidGraph libGraph = new LibavoidGraph(parentNode) {
             /**
              * {@inheritDoc}
              */
             @Override
             protected void applyLayout(final KNode root) {
-                
+
                 KVector offset = new KVector();
 
                 // move the nodes to their new positions
@@ -100,17 +101,19 @@ public class TIOLayoutProvider extends AbstractLayoutProvider {
 
                     KShapeLayout layout = node.getData(KShapeLayout.class);
                     // FIXME why add half the port size here?
-                    layout.setXpos((float) (sr.routingBox().getMin().getX() + offset.x + margins.left + 4));
-                    layout.setYpos((float) (sr.routingBox().getMin().getY() + offset.y + margins.top + 4));
+                    layout.setXpos((float) (sr.routingBox().getMin().getX() + offset.x
+                            + margins.left + 4));
+                    layout.setYpos((float) (sr.routingBox().getMin().getY() + offset.y
+                            + margins.top + 4));
 
                 }
-                
-                //super.applyLayout(root);
-                
+
+                // super.applyLayout(root);
+
             }
         };
         libGraph.transformGraph();
-        
+
         // Map all cola rectangles to libavoid shapeidrefs
         VariableIDMap idmap = new VariableIDMap();
         for (CNode n : graph.getChildren()) {
@@ -119,12 +122,11 @@ public class TIOLayoutProvider extends AbstractLayoutProvider {
             idmap.addMappingForVariable(n.cIndex, libId);
             System.out.println("Mapping: " + libId + " " + origin + " ");
         }
-        
-        
-        // the topology stuff is not allowed to move the restricting nodes of a 
+
+        // the topology stuff is not allowed to move the restricting nodes of a
         // compound node, hence we generate a FixedRelativeConstraint to keep this in position.
         if (parentNode.getParent() != null) {
-            
+
             // create copies of the four bounding nodes as cola rectangles
             KShapeLayout shape = parentNode.getData(KShapeLayout.class);
             KInsets insets = shape.getInsets();
@@ -137,8 +139,7 @@ public class TIOLayoutProvider extends AbstractLayoutProvider {
             Rectangle r =
                     new Rectangle(0, shape.getWidth(), y, y + LibavoidGraph.SURROUNDING_RECT_SIZE);
             graph.nodes.add(r);
-            idmap.addMappingForVariable(graph.getLastNodeIndex(),
-                    LibavoidGraph.NODE_COMPOUND_NORTH);
+            idmap.addMappingForVariable(graph.getLastNodeIndex(), LibavoidGraph.NODE_COMPOUND_NORTH);
 
             // right
             double x = 0 + shape.getWidth() + bufferDistance;
@@ -157,7 +158,7 @@ public class TIOLayoutProvider extends AbstractLayoutProvider {
                     LibavoidGraph.NODE_COMPOUND_SOUTH);
 
             // left
-            x  = 0 - bufferDistance - LibavoidGraph.SURROUNDING_RECT_SIZE;
+            x = 0 - bufferDistance - LibavoidGraph.SURROUNDING_RECT_SIZE;
             Rectangle r4 =
                     new Rectangle(x, x + LibavoidGraph.SURROUNDING_RECT_SIZE + insets.getLeft()
                             + borderSpacing, 0, shape.getHeight());
@@ -166,17 +167,16 @@ public class TIOLayoutProvider extends AbstractLayoutProvider {
                     LibavoidGraph.NODE_COMPOUND_WEST);
 
             Unsigneds surroundingRects = new Unsigneds();
-            surroundingRects.add(3);
-            surroundingRects.add(4);
-            //surroundingRects.add(graph.getLastNodeIndex() + 2);
-            //surroundingRects.add(graph.getLastNodeIndex() + 3);
-//            Sign
-//            FixedRelativeConstraint frc =
-//                    new FixedRelativeConstraint(graph.nodes, surroundingRects, false);
-//            graph.constraints.add(frc);
+            surroundingRects.add(graph.getLastNodeIndex() + 0);
+            surroundingRects.add(graph.getLastNodeIndex() + 1);
+            surroundingRects.add(graph.getLastNodeIndex() + 2);
+            surroundingRects.add(graph.getLastNodeIndex() + 3);
+            // add a constraint that keeps the bounding nodes fixed relative to each other
+            FixedRelativeConstraint frc =
+                    new FixedRelativeConstraint(graph.nodes, surroundingRects, false);
+            graph.constraints.add(frc);
         }
-        
-        
+
         double moveLimit = graph.getProperty(ColaProperties.MOVE_LIMIT);
         AvoidTopologyAddon addon =
                 new AvoidTopologyAddon(graph.nodes, graph.constraints, graph.rootCluster, idmap,
@@ -184,10 +184,7 @@ public class TIOLayoutProvider extends AbstractLayoutProvider {
         libGraph.getRouter().setTopologyAddon(addon);
 
         libGraph.process();
-        
-        
+
         progressMonitor.done();
     }
-    
-    
 }

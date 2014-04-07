@@ -19,6 +19,11 @@ package de.cau.cs.kieler.klay.cola.properties;
  */
 public enum HorizontalAlignment {
 
-    LEFT, CENTER, RIGHT
+    /** Nodes are aligned wrt to their left border. */
+    LEFT, 
+    /** Nodes are aligned wrt to their center. */
+    CENTER, 
+    /** Nodes are aligned wrt to their right border. */
+    RIGHT
     
 }
