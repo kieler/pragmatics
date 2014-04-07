@@ -69,24 +69,36 @@ public class LibavoidGraph {
     private Direction direction;
     /** The router object used to perform the edge routing. */
     private Router router;
-
+ 
+    // maps are accessible in extending classes
+    // CHECKSTYLEOFF VisibilityModifier NEXT 10 LINES
     // Maps holding the nodes and edges of the current graph.
+    /** Maps node to their ids. */
     protected BiMap<Integer, KNode> nodeIdMap = HashBiMap.create();
-    private BiMap<Integer, KPort> portIdMap = HashBiMap.create();
-    private BiMap<Integer, KEdge> edgeIdMap = HashBiMap.create();
+    /** Maps ports to their ids. */
+    protected BiMap<Integer, KPort> portIdMap = HashBiMap.create();
+    /** Maps edges to their ids. */
+    protected BiMap<Integer, KEdge> edgeIdMap = HashBiMap.create();
 
+    /** Maps ids to the respective shapes. */
     protected Map<Integer, ShapeRef> idShapeRefMap = Maps.newHashMap();
-    private BiMap<Integer, ConnRef> idConnRefMap = HashBiMap.create();
+    /** Maps ids to the respective connection refs . */
+    protected BiMap<Integer, ConnRef> idConnRefMap = HashBiMap.create();
 
     private Map<ConnRef, KEdge> connRefEdgeMap = Maps.newHashMap();
-    
-    // Internal data.
-    private static final int PORT_ID_START = 5;
-    private static final int NODE_ID_START = 5;
+
+    /** First id used to reference ports. */
+    public static final int PORT_ID_START = 5;
+    /** First id used to reference nodes. */
+    public static final int NODE_ID_START = 5;
     // reserved for compound node's boundaries
+    /** Id of the bounding node at the north. */
     public static final int NODE_COMPOUND_NORTH = 1;
+    /** Id of the bounding node at the east. */
     public static final int NODE_COMPOUND_EAST = 2;
+    /** Id of the bounding node at the south. */
     public static final int NODE_COMPOUND_SOUTH = 3;
+    /** Id of the bounding node at the west. */
     public static final int NODE_COMPOUND_WEST = 4;
     /** size, either width or height, of the surrounding rectangles of compound nodes. */
     public static final int SURROUNDING_RECT_SIZE = 10;
@@ -556,10 +568,10 @@ public class LibavoidGraph {
 
         // turn this into an option
         // atm ignore unconnected components
-        if(node.getOutgoingEdges().isEmpty() && node.getIncomingEdges().isEmpty()) {
+        if (node.getOutgoingEdges().isEmpty() && node.getIncomingEdges().isEmpty()) {
             return;
         }
-        
+
         // get information about port-less incoming and outgoing edges
         int portLessIncomingEdges =
                 Iterables.size(Iterables.filter(node.getIncomingEdges(), new Predicate<KEdge>() {
@@ -680,7 +692,12 @@ public class LibavoidGraph {
      *  Layout Application
      * -----------------------------------------------------
      */
-
+    /**
+     * Apply the positions back to the original elements.
+     * 
+     * @param root
+     *            the original parent node
+     */
     protected void applyLayout(final KNode root) {
 
         for (ConnRef cr : idConnRefMap.values()) {
@@ -697,23 +714,33 @@ public class LibavoidGraph {
             KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
             // clear the old bend points
             edgeLayout.getBendPoints().clear();
-            
+
             // determine some offsets
             // in libavoid the pins are placed on the border of the rectangle
             // which includes margins. Here, offsets are added to the endpoints
             // that correlate to the port's specified side.
             KVector srcOffset = calculatePortOffset(edge.getSourcePort());
             KVector tgtOffset = calculatePortOffset(edge.getTargetPort());
-            
+
             AvoidPoints pts = route.getPs();
             // transfer libavoid's results to the edges
             for (int i = 0; i < pts.size(); ++i) {
                 if (i == 0) {
                     // first point is the source point
-                    edgeLayout.setSourcePoint(toKPoint(pts.get(i), srcOffset));
+                    if (edge.getSourcePort() != null) {
+                        edgeLayout.setSourcePoint(toKPointWPortSize(edge.getSourcePort(), pts.get(i),
+                                srcOffset));
+                    } else {
+                        edgeLayout.setSourcePoint(toKPoint(pts.get(i), srcOffset));
+                    }
                 } else if (i == pts.size() - 1) {
                     // last point is the target point
-                    edgeLayout.setTargetPoint(toKPoint(pts.get(i), tgtOffset));
+                    if (edge.getTargetPort() != null) {
+                        edgeLayout.setTargetPoint(toKPointWPortSize(edge.getTargetPort(), pts.get(i),
+                                tgtOffset));
+                    } else {
+                        edgeLayout.setTargetPoint(toKPoint(pts.get(i), tgtOffset));
+                    }
                 } else {
                     // rest are bend points
                     edgeLayout.getBendPoints().add(toKPoint(pts.get(i)));
@@ -735,12 +762,38 @@ public class LibavoidGraph {
         }
         return kpoint;
     }
-    
+
+    /**
+     * Considers the size of the port to adjust the actual anchor point.
+     */
+    private KPoint toKPointWPortSize(final KPort port, final Point pnt, final KVector offset) {
+        KPoint kpoint = toKPoint(pnt, offset);
+        KShapeLayout portLayout = port.getData(KShapeLayout.class);
+        PortSide side = portLayout.getProperty(LayoutOptions.PORT_SIDE);
+        switch (side) {
+        case WEST:
+            kpoint.setX((float) (kpoint.getX() - portLayout.getWidth()));
+            return kpoint;
+        case EAST:
+            kpoint.setX((float) (kpoint.getX() + portLayout.getWidth()));
+            return kpoint;
+        case NORTH:
+            kpoint.setY((float) (kpoint.getY() - portLayout.getHeight()));
+            return kpoint;
+        case SOUTH:
+            kpoint.setY((float) (kpoint.getY() + portLayout.getHeight()));
+            return kpoint;
+        default:
+            // nothing to adapt
+        }
+
+        return kpoint;
+    }
+
     /**
      * 
      * @param p
-     * @return
-     *  if {@code p} is null, a (0, 0) offset is returned.
+     * @return if {@code p} is null, a (0, 0) offset is returned.
      */
     private KVector calculatePortOffset(final KPort p) {
         KVector offset = new KVector();
@@ -761,7 +814,7 @@ public class LibavoidGraph {
                 offset.translate(0, margins.top);
                 break;
             case SOUTH:
-                offset.translate(0, margins.bottom);
+                offset.translate(0, -margins.bottom);
                 break;
             default:
                 // leave it where it is
