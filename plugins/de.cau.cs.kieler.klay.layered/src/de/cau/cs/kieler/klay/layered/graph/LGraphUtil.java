@@ -227,7 +227,7 @@ public final class LGraphUtil {
             props.clear();
         }
         
-        Direction direction = layeredGraph.getProperty(LayoutOptions.DIRECTION);
+        Direction direction = getDirection(layeredGraph);
         for (LNode node : layeredGraph.getLayerlessNodes()) {
             if (node.getProperty(LayoutOptions.COMMENT_BOX)) {
                 props.add(GraphProperties.COMMENTS);
@@ -308,11 +308,7 @@ public final class LGraphUtil {
     public static LPort createPort(final LNode node, final KVector endPoint, final PortType type,
             final LGraph layeredGraph) {
         LPort port;
-        Direction direction = layeredGraph.getProperty(LayoutOptions.DIRECTION);
-        if (direction == Direction.UNDEFINED) {
-            // The default direction is right
-            direction = Direction.RIGHT;
-        }
+        Direction direction = getDirection(layeredGraph);
         boolean mergePorts = layeredGraph.getProperty(Properties.MERGE_PORTS);
         
         if ((mergePorts || node.getProperty(LayoutOptions.HYPERNODE))
@@ -891,6 +887,30 @@ public final class LGraphUtil {
                 graph = node.getGraph();
             }
         } while (node != null);
+    }
+    
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Other Stuff
+    
+    /**
+     * Determine the layout direction for the given graph. If the direction option is undefined,
+     * a suitable direction is chosen depending on the aspect ratio.
+     * 
+     * @param graph a layered graph
+     * @return the layout direction to apply for the graph
+     */
+    public static Direction getDirection(final LGraph graph) {
+        Direction direction = graph.getProperty(LayoutOptions.DIRECTION);
+        if (direction == Direction.UNDEFINED) {
+            float aspectRatio = graph.getProperty(Properties.ASPECT_RATIO);
+            if (aspectRatio >= 1) {
+                return Direction.RIGHT;
+            } else {
+                return Direction.DOWN;
+            }
+        }
+        return direction;
     }
     
 }

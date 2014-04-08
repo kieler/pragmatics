@@ -575,7 +575,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
         
         // find the port on the outside of its parent node that the edge connects to
         LPort outsidePort = portType == PortType.INPUT ? edge.getSource() : edge.getTarget();
-        Direction layoutDirection = graph.getProperty(LayoutOptions.DIRECTION);
+        Direction layoutDirection = LGraphUtil.getDirection(graph);
         
         // check if the edge connects to the parent node or to something way outside...
         if (outsidePort.getNode() == parentNode) {
@@ -653,7 +653,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
             final PortType type) {
         
         LGraph graph = parentNode.getGraph();
-        Direction layoutDirection = graph.getProperty(LayoutOptions.DIRECTION);
+        Direction layoutDirection = LGraphUtil.getDirection(graph);
         LPort port = new LPort(graph);
         port.setNode(parentNode);
         switch (type) {

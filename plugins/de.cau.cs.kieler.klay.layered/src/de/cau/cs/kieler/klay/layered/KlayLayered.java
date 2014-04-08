@@ -423,9 +423,7 @@ public final class KlayLayered {
         }
         Direction direction = layeredGraph.getProperty(LayoutOptions.DIRECTION);
         if (direction == Direction.UNDEFINED) {
-            // The default layout direction is right.
-            direction = Direction.RIGHT;
-            layeredGraph.setProperty(LayoutOptions.DIRECTION, direction);
+            layeredGraph.setProperty(LayoutOptions.DIRECTION, LGraphUtil.getDirection(layeredGraph));
         }
         
         // set the random number generator based on the random seed option
