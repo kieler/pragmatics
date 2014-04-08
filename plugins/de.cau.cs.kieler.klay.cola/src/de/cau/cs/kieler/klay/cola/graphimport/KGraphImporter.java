@@ -95,6 +95,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             for (KEdge e : p.getEdges()) {
                 if (e.getSource().getParent().equals(root)
                         || e.getTarget().getParent().equals(root)) {
+                    // FIXME atm edges are possibly generated twice, here and in place of usual edges
                     transformEdge(e, graph);
                 }
             }
@@ -102,14 +103,20 @@ public class KGraphImporter implements IGraphImporter<KNode> {
 
         // align external ports
         if (!graph.getExternalPorts().isEmpty()) {
-            AlignmentConstraint acLeft = new AlignmentConstraint(Dim.XDIM);
-            graph.constraints.add(acLeft);
-            AlignmentConstraint acRight = new AlignmentConstraint(Dim.XDIM);
-            graph.constraints.add(acRight);
+            AlignmentConstraint acLeft = null;
+            AlignmentConstraint acRight = null;
             for (CPort p : graph.getExternalPorts()) {
                 if (p.side == PortSide.WEST) {
+                    if (acLeft == null) {
+                        acLeft = new AlignmentConstraint(Dim.XDIM);
+                        graph.constraints.add(acLeft);
+                    }
                     acLeft.addShape(p.cIndex, 0);
                 } else {
+                    if (acRight == null) {
+                        acRight = new AlignmentConstraint(Dim.XDIM);
+                        graph.constraints.add(acRight);
+                    }
                     acRight.addShape(p.cIndex, 0);
                 }
             }
