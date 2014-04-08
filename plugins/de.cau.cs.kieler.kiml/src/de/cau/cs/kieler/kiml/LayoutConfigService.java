@@ -440,7 +440,9 @@ public abstract class LayoutConfigService {
                 if (semanticConfigMap.containsKey(c.getName())) {
                     configs.addAll(semanticConfigMap.get(c.getName()));
                 }
-                classes.add(c.getSuperclass());
+                if (c.getSuperclass() != null) {
+                    classes.add(c.getSuperclass());
+                }
                 for (Class<?> i : c.getInterfaces()) {
                     classes.add(i);
                 }

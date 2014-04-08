@@ -38,9 +38,11 @@ import org.eclipse.graphiti.ui.internal.parts.IPictogramElementEditPart;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
@@ -104,20 +106,33 @@ public class GraphitiLayoutConfig implements IMutableLayoutConfig {
     public Object getContextValue(final IProperty<?> property, final LayoutContext context) {
         if (property.equals(EclipseLayoutConfig.ASPECT_RATIO)) {
             // get aspect ratio for the current diagram
-            try {
-                IWorkbenchPart workbenchPart = context.getProperty(EclipseLayoutConfig.WORKBENCH_PART);
-                if (workbenchPart instanceof DiagramEditor) {
-                    Control control = ((DiagramEditor) workbenchPart).getGraphicalViewer().getControl();
-                    if (control != null) {
-                        Point size = control.getSize();
-                        if (size.x > 0 && size.y > 0) {
-                            return Math.round(ASPECT_RATIO_ROUND * (float) size.x / size.y)
-                                    / ASPECT_RATIO_ROUND;
+            IWorkbenchPart workbenchPart = context.getProperty(EclipseLayoutConfig.WORKBENCH_PART);
+            if (workbenchPart instanceof DiagramEditor) {
+                final Control control = ((DiagramEditor) workbenchPart).getGraphicalViewer()
+                        .getControl();
+                if (control != null) {
+                    final Maybe<Float> result = new Maybe<Float>();
+                    Runnable runnable = new Runnable() {
+                        public void run() {
+                            try {
+                                Point size = control.getSize();
+                                if (size.x > 0 && size.y > 0) {
+                                    result.set(Math.round(
+                                            ASPECT_RATIO_ROUND * (float) size.x / size.y)
+                                            / ASPECT_RATIO_ROUND);
+                                }
+                            } catch (SWTException exception) {
+                                // ignore exception
+                            }
                         }
+                    };
+                    if (control.getDisplay() == Display.getCurrent()) {
+                        runnable.run();
+                    } else {
+                        control.getDisplay().syncExec(runnable);
                     }
+                    return result.get();
                 }
-            } catch (SWTException exception) {
-                // ignore exception
             }
             return null;
             
