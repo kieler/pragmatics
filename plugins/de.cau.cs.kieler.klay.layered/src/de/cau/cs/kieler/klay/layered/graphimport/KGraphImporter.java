@@ -193,8 +193,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         KShapeLayout parentLayout = parentKNode.getData(KShapeLayout.class);
         layeredGraph.copyProperties(parentLayout);
         if (layeredGraph.getProperty(LayoutOptions.DIRECTION) == Direction.UNDEFINED) {
-            // The default direction is right
-            layeredGraph.setProperty(LayoutOptions.DIRECTION, Direction.RIGHT);
+            layeredGraph.setProperty(LayoutOptions.DIRECTION, LGraphUtil.getDirection(layeredGraph));
         }
 
         // Initialize the graph properties discovered during the transformations
@@ -213,13 +212,24 @@ public class KGraphImporter implements IGraphImporter<KNode> {
     }
     
     /**
-     * Check the external ports of the given parent node and set the corresponding graph properties.
+     * Checks if external ports processing should be active. This is the case if the parent node has
+     * ports and at least one of the following conditions is true:
+     * <ul>
+     *   <li>
+     *     Port label placement is set to {@code INSIDE} and at least one of the ports has a label.
+     *   </li>
+     *   <li>
+     *     At least one of the ports has an edge that connects to the insides of the parent node.
+     *   </li>
+     * </ul>
      * 
      * @param parentNode a parent KNode
      * @param graphProperties the set of graph properties to modify
      */
-    private void checkExternalPorts(final KNode parentNode,
-            final Set<GraphProperties> graphProperties) {
+    private void checkExternalPorts(final KNode parentNode, final Set<GraphProperties> graphProperties) {
+        PortLabelPlacement portLabelPlacement = parentNode.getData(KShapeLayout.class).getProperty(
+                LayoutOptions.PORT_LABEL_PLACEMENT);
+        
         for (KPort kport : parentNode.getPorts()) {
             int hierarchicalEdges = 0;
 
@@ -234,6 +244,8 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             }
 
             if (hierarchicalEdges > 0) {
+                graphProperties.add(GraphProperties.EXTERNAL_PORTS);
+            } else if (portLabelPlacement == PortLabelPlacement.INSIDE && kport.getLabels().size() > 0) {
                 graphProperties.add(GraphProperties.EXTERNAL_PORTS);
             }
 
@@ -264,14 +276,23 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         KVector kportPosition = new KVector(kportLayout.getXpos() + kportLayout.getWidth() / 2.0,
                 kportLayout.getYpos() + kportLayout.getHeight() / 2.0);
 
-        // Count the number of incoming and outgoing edges
-        int inEdges = 0, outEdges = 0;
+        // Count how many edges want the port to be an output port of the parent and how many want it to
+        // be an input port. An edge coming into the port from the inside votes for the port to be an
+        // output port of the parent, as does an edge leaving the port for the outside.
+        int outputPortVote = 0, inputPortVote = 0;
         for (KEdge edge : kport.getEdges()) {
-            if (edge.getSourcePort() == kport && edge.getTarget().getParent() == graph) {
-                outEdges++;
-            }
-            if (edge.getTargetPort() == kport && edge.getSource().getParent() == graph) {
-                inEdges++;
+            if (edge.getSourcePort() == kport) {
+                if (edge.getTarget().getParent() == graph) {
+                    inputPortVote++;
+                } else {
+                    outputPortVote++;
+                }
+            } else {
+                if (edge.getSource().getParent() == graph) {
+                    outputPortVote++;
+                } else {
+                    inputPortVote++;
+                }
             }
         }
 
@@ -302,7 +323,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         KVector layoutNodeSize = new KVector(layoutNodeLayout.getWidth(),
                 layoutNodeLayout.getHeight());
         LNode dummy = LGraphUtil.createExternalPortDummy(
-                kportLayout, portConstraints, portSide, inEdges - outEdges, layoutNodeSize,
+                kportLayout, portConstraints, portSide, outputPortVote - inputPortVote, layoutNodeSize,
                 kportPosition, new KVector(kportLayout.getWidth(), kportLayout.getHeight()),
                 direction, layeredGraph);
         dummy.setProperty(InternalProperties.ORIGIN, kport);

@@ -165,6 +165,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         FillLayout layout = new FillLayout(SWT.VERTICAL);
         layout.marginWidth = MARGIN_WIDTH;
         layout.marginHeight = MARGIN_HEIGHT;
+        layout.spacing = LayoutConstants.getSpacing().y;
         generalGroup.setLayout(layout);
         return generalGroup;
     }

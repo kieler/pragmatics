@@ -180,7 +180,7 @@ public final class KIELERStatistics {
         // get the exact property list
         if (alg != null && alg.equals(ID_KLAY_LAYERED)) {
             for (Entry<IProperty<?>, Object> entry : data.getProperties()) {
-                if (supportedTypes.contains(entry.getValue().getClass())) {
+                if (entry.getValue() != null && supportedTypes.contains(entry.getValue().getClass())) {
                     recordValue(ID_KLAY_LAYERED, entry.getKey().getId(), entry.getValue());
                 }
             }

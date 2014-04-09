@@ -133,7 +133,7 @@
                option="de.cau.cs.kieler.klay.layered.fixedAlignment">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.klay.layered.LabelSide">
+               option="de.cau.cs.kieler.klay.layered.edgeLabelSideSelection">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.portLabelPlacement">
@@ -234,6 +234,10 @@
             id="de.cau.cs.kieler.klay.layered.mergeHierarchyPorts"
             name="Merge Hierarchy-crossing Edges"
             type="boolean">
+         <dependency
+               option="de.cau.cs.kieler.layoutHierarchy"
+               value="true">
+         </dependency>
       </layoutOption>
       <layoutOption
             advanced="true"
@@ -298,10 +302,6 @@
             id="de.cau.cs.kieler.klay.layered.feedBackEdges"
             name="Feedback Edges"
             type="boolean">
-         <dependency
-               option="de.cau.cs.kieler.edgeRouting"
-               value="ORTHOGONAL">
-         </dependency>
       </layoutOption>
       <layoutOption
             advanced="true"

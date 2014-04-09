@@ -44,7 +44,8 @@ class LiveProvider extends AbstractProvider {
 		<script src="scripts/prettify.js"></script>
 		
 		<style>
-			body {
+			body, html {
+			  height: 100%;
 				««««background-color: #5781BB;
 			}
 			
@@ -64,7 +65,7 @@ class LiveProvider extends AbstractProvider {
 			
 			#resGraph {
 				width: 100%;
-				height: 500px;
+				height: 100%;
 			}
 			
 			.row {
@@ -92,13 +93,20 @@ class LiveProvider extends AbstractProvider {
 	}
 	
 	/**
+	 * We specify our own container here to allow the svg more space
+	 */
+	override requireContainer() {
+	  return false
+	}
+	
+	/**
 	 * 
 	 */
 	override getBody(ResourceProcessingExchange processingExchange) {
 		val formats = ServerLayoutMetaDataService::getInstance.serviceDataModel.supportedFormats
 		
 		'''
-			<div class="container">
+			<div class="container">	
 				<div class="row">
 					<div id="srcGraph" class="col-md-8">
 						<h4>Input Graph <small><a href="Providedlayout.html#formats">See Formats</a></small></h4>
@@ -138,13 +146,33 @@ class LiveProvider extends AbstractProvider {
 					   <div id="errorDiv" class="alert alert-error" style="display: none;"></div>
 					</div>
 				</div>
-				<div class="row">
-				    <div id="resGraph" class="col-md-12"></div>
-				</div>
+			</div>	
 			 
-			 </div>
+			 <!-- the svg gets the remaining size, i.e full display area -->
+			 <div id="resGraph"></div>
+			 
 			<script>
 			$(function() {
+			  
+			  // add tabbing behavior to the textareas
+			  $('textarea').keydown(function(e) {
+			  
+			   if (e.keyCode === 9) { // tab
+			     var start = this.selectionStart;
+			     var end = this.selectionEnd;
+			     
+			     // replace textarea content with text before + tabs + text after
+			     $(this).val($(this).val().substring(0, start)
+			       + "    " // 4 spaces
+			       + $(this).val().substring(end));
+			       
+			     // move cursor 
+			     this.selectionStart = this.selectionEnd = start + 4;
+			     
+			     // prevent the default tab behavior
+			     e.preventDefault();
+			   }
+			  });
 
 				// init the svg with zoom and pan
 				$('#resGraph').svg();
@@ -179,6 +207,14 @@ class LiveProvider extends AbstractProvider {
 							}
 							
 							svg.html(svggraph);
+							
+							// center the graph horizontally
+							var svgRect = $('g#group')[0].getBoundingClientRect();
+							var offset = ($(document).width() - svgRect.width) / 2; 
+							var g = svg.svg('get').getElementById('group');
+							// we put a 1 for the y value as the IE seems to omit 0s 
+							// what breaks our regex in the draggable addon
+							g.setAttribute('transform', 'translate(' + offset + ', 1)');
 							
 							// show graph section and hide errorDiv
 							$('#resGraph').show();

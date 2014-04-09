@@ -22,6 +22,7 @@ import java.awt.geom.Point2D;
 
 import de.cau.cs.kieler.klighd.microlayout.Bounds;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.IGraphElement;
+import de.cau.cs.kieler.klighd.piccolo.internal.nodes.INode;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.activities.PActivity;
 import edu.umd.cs.piccolo.activities.PActivity.PActivityDelegate;
@@ -38,21 +39,6 @@ import edu.umd.cs.piccolo.util.PBounds;
  * @author chsch
  */
 public final class NodeUtil {
-    
-    /**
-     * A {@link PNode} property change event key indicating dispose
-     * {@link org.eclipse.swt.graphics.Device}-dependent SWT objects.
-     */
-    public static final String DISPOSE = "dispose";
-    
-    /**
-     * The property change event code related to {@link #DISPOSE} events.<br>
-     * It is set to zero since this code is only used for deciding whether to propagate such events
-     * to the parent nodes, too. This, however, is not necessary and even not valid in context of
-     * {@link #DISPOSE} events. (see {@link PNode#firePropertyChange(int, String, Object, Object)}
-     * for details).
-     */
-    public static final int DISPOSE_CODE = 0;
 
     /** the attribute key for the activity. */
     private static final Object ACTIVITY_KEY = "activity";
@@ -63,7 +49,7 @@ public final class NodeUtil {
     private NodeUtil() {
         // do nothing
     }
-    
+
     /**
      * Casts a custom {@link PNode} object that implements {@link IGraphElement} to
      * {@link IGraphElement}, the <b>type check is omitted for performance reasons</b>.
@@ -276,4 +262,29 @@ public final class NodeUtil {
         }
     }
 
+    /**
+     * Advancement of {@link PNode#getGlobalBounds()} respecting the current clip that may be set to
+     * a non-root {@link de.cau.cs.kieler.core.kgraph.KNode KNode}.<br>
+     * <br>
+     * It is used in {@link de.cau.cs.kieler.klighd.piccolo.internal.controller.DiagramController
+     * DiagramController#isVisible(de.cau.cs.kieler.core.kgraph.KGraphElement)}, for example.
+     * 
+     * @param node
+     *            the {@link PNode} to compute the bounds for
+     * @param clipNode
+     *            the INode the diagram is currently clipped to (for convenience)
+     * @return <code>node's</code> global bounds relative to the current clip
+     */
+    public static PBounds clipRelativeGlobalBoundsOf(final PNode node, final INode clipNode) {
+        final PBounds nodeBounds = node.getBounds();
+        PNode p = node;
+        while (p != null && p.getParent() != null) {
+            p.localToParent(nodeBounds);
+            if (p == clipNode) {
+                break;
+            }
+            p = p.getParent();
+        }
+        return nodeBounds;
+    }
 }

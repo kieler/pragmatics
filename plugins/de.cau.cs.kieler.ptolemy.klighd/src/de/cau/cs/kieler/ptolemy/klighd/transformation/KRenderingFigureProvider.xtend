@@ -44,6 +44,8 @@ import de.cau.cs.kieler.ptolemy.klighd.transformation.util.GraphicsUtils
 
 import static de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties.*
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
+import org.eclipse.swt.widgets.Display
+import org.eclipse.swt.SWT
 
 /**
  * Creates concrete KRendering information for Ptolemy diagram elements.
@@ -159,9 +161,6 @@ class KRenderingFigureProvider {
      * @return the rendering.
      */
     def KRendering createExpandedCompoundNodeRendering(KNode node, int alpha) {
-        // This is the code for representing expanded compound nodes as rounded rectangles with
-        // progressively darker backgrounds whose color depends on whether the expanded node is
-        // a regular node or whether it displays a state refinement
         val bgColor = if (node.markedAsState) {
             renderingFactory.createKColor() => [col |
                 col.red = 11
@@ -185,20 +184,6 @@ class KRenderingFigureProvider {
                 bg.color = bgColor
             ]
         ]
-
-        // This in turn is the code for representing expanded compound nodes as regular rectangles
-        // with drop shadows
-//        val rendering = renderingFactory.createKRectangle() => [rect |
-//            rect.styles += renderingFactory.createKBackground() => [bg |
-//                bg.alpha = alpha
-//                bg.color = renderingFactory.createKColor() => [col |
-//                    col.red = 16
-//                    col.green = 78
-//                    col.blue = 139
-//                ]
-//            ]
-//            rect.setShadow(GraphicsUtils::lookupColor("darkgrey"))
-//        ]
         
         return rendering
     }
@@ -594,6 +579,10 @@ class KRenderingFigureProvider {
                 "ren_accumulator", library)
     }
     
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Node Selection Rendering
+    
     /**
      * Builds up and adds helper renderings forming the selection to given node,
      * attaches the provided rendering to the selection helpers.  
@@ -609,12 +598,14 @@ class KRenderingFigureProvider {
      * attaches the provided rendering to the selection helpers.  
      */
     def KContainerRendering addRenderingWithSelectionWrapper(KGraphElement kge) {
+        val selectionColor = Display.current.getSystemColor(SWT.COLOR_LIST_SELECTION)
+        
         kge.addRectangle => [
             it.invisible = true;
             it.addRoundedRectangle(3f, 3f, 1) => [
             it.setSurroundingSpace(-3, 0);
                 it.invisible = true;
-                it.setBackgroundColor(181, 198, 226);
+                it.setBackgroundColor(selectionColor.red, selectionColor.green, selectionColor.blue)
                 it.lineStyle = LineStyle.DASH;
                 it.selectionInvisible = false;
             ]
