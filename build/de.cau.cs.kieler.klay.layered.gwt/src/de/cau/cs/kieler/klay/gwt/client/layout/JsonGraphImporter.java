@@ -35,6 +35,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortLabelPlacement;
 import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.kiml.options.SizeOptions;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
@@ -100,9 +101,6 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
      */
     private HashCodeCounter hashCodeCounter = new HashCodeCounter();
     
-    /** The root json element of the graph passed to {@link #importGraph(JSONObject)}. */
-    private JSONObject rootJson = null;
-    
     /** Global options being applied to every compound graph. */
     private JSONObject globalOptions = null;
     
@@ -134,8 +132,6 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
      * {@inheritDoc}
      */
     public LGraph importGraph(final JSONObject json) {
-        
-        this.rootJson = json;
         
         reset();
         
@@ -204,6 +200,29 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         
         // properties on a certain node serve as layout options for this graph
         transformProperties(jparent, graph);
+        
+        // copy the insets to the layered graph
+        if (jparent.containsKey("padding")) {
+            LInsets linsets = graph.getInsets();
+            JSONObject padding = (JSONObject) jparent.get("padding");
+            JSONNumber left = (JSONNumber) padding.get("left");
+            if (left != null) {
+                linsets.left = left.doubleValue();
+            }
+            JSONNumber top = (JSONNumber) padding.get("top");
+            if (top != null) {
+                linsets.top = top.doubleValue();
+            }
+            JSONNumber right = (JSONNumber) padding.get("right");
+            if (right != null) {
+                linsets.right = right.doubleValue();
+            }
+            JSONNumber bottom = (JSONNumber) padding.get("bottom");
+            if (bottom != null) {
+                linsets.bottom = bottom.doubleValue();
+            }
+            System.out.println("set insets " + parentNode + " " + linsets + " " + jparent);
+        }
 
         // the graph properties discovered during the transformations
         EnumSet<GraphProperties>  graphProperties = EnumSet.noneOf(GraphProperties.class);
@@ -738,7 +757,7 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
             JSONNumber height = (JSONNumber) jsonEle.get("height");
             ele.getSize().y = height.doubleValue();
         }
-
+        
     }
     
     /**
@@ -787,19 +806,16 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
     public void applyLayout(final LGraph layeredGraph) {
         
         // transfer the layout information back to the json objects
-        // root graph's dimensions
-        transferLayout(layeredGraph, rootJson);
-        // positions and dimension of all other elements
+        // and positions and dimension of all other elements
         transferLayout(layeredGraph);
     }
 
-    
     private void transferLayout(final LGraph parentGraph) {
         
+        // now the child nodes
+        KVector offset = parentGraph.getOffset();
         for (LNode n : parentGraph.getLayerlessNodes()) {
             JSONObject jNode = nodeJsonMap.get(n);
-
-            KVector offset = parentGraph.getOffset();
             
             if (jNode != null) {
                 // it's a usual node
@@ -850,6 +866,22 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
                 // TODO
             }
         }
+        
+        KVector actualGraphSize = parentGraph.getActualSize();
+        // transfer to origin LNode 
+        // this is necessary for processing higher graph levels properly
+        LNode graphNode = parentGraph.getProperty(InternalProperties.PARENT_LNODE);
+        if (graphNode != null) {
+            // the root has no parent
+            graphNode.getSize().x = actualGraphSize.x;
+            graphNode.getSize().y = actualGraphSize.y;
+        }
+        
+        // transfer to json
+        JSONObject graphJson = parentGraph.getProperty(JSON_OBJECT);
+        setJsNumber(graphJson, "width", actualGraphSize.x);
+        setJsNumber(graphJson, "height", actualGraphSize.y);
+        
 
         // Process nested subgraphs
         for (LNode n : parentGraph.getLayerlessNodes()) {
@@ -858,11 +890,6 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
                 transferLayout(childGraph);
             }
         }
-    }
-
-    private void transferLayout(final LGraph graph, final JSONObject json) {
-        setJsNumber(json, "width", graph.getSize().x);
-        setJsNumber(json, "height", graph.getSize().y);
     }
 
     private void transferLayout(final LShape shape, final JSONObject json, final KVector parentOffset) {
@@ -877,7 +904,25 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         setJsNumber(json, "y", shape.getPosition().y + offset.y);
         setJsNumber(json, "width", shape.getSize().x);
         setJsNumber(json, "height", shape.getSize().y);
+        
+        // padding
+        if (shape instanceof LNode) {
+            // set node insets, if requested
+            if (shape.getProperty(LayoutOptions.SIZE_OPTIONS).contains(SizeOptions.COMPUTE_INSETS)) {
+                LInsets insets = ((LNode) shape).getInsets();
 
+                JSONValue paddingVal = json.get("padding");
+                if (paddingVal == null) {
+                    paddingVal = new JSONObject();
+                    json.put("padding", paddingVal);
+                }
+                JSONObject padding = paddingVal.isObject();
+                setJsNumber(padding, "left", insets.left);
+                setJsNumber(padding, "top", insets.top);
+                setJsNumber(padding, "right", insets.right);
+                setJsNumber(padding, "bottom", insets.bottom);
+            }
+        }
     }
 
     private void transferLayout(final LEdge edge, final JSONObject json, final KVector offset) {

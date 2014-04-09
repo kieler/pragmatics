@@ -70,8 +70,10 @@ public class RecursiveLGraphLayout {
 
                 // resize the compound node, such that it is considered
                 // properly when layouting the parent graph
-                n.getSize().x = res.getSize().x;
-                n.getSize().y = res.getSize().y;
+                // note, we have to do this here as klay won't write 
+                // the size back to the parent node
+                n.getSize().x = res.getActualSize().x;
+                n.getSize().y = res.getActualSize().y;
             }
         }
 
