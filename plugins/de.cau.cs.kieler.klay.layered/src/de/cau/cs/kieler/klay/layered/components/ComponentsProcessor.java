@@ -43,21 +43,21 @@ import de.cau.cs.kieler.klay.layered.properties.NodeType;
  * external ports with port constraints other than these, connected components processing is disabled
  * even if requested by the user.</p>
  * 
- * <p>Splitting into components
+ * <p><strong>Splitting into components</strong></p>
  * <dl>
  *   <dt>Precondition:</dt>
  *     <dd>an unlayered graph.</dd>
- *   <dt>Postcondition:</dt><dd>a list of graphs that represent the connected components of
- *     the input graph.</dd>
+ *   <dt>Postcondition:</dt>
+ *     <dd>a list of graphs that represent the connected components of the input graph.</dd>
  * </dl>
- * </p>
  * 
- * <p>Packing components
+ * <p><strong>Packing components</strong></p>
  * <dl>
- *   <dt>Precondition:</dt><dd>a list of unlayered graphs with complete layout.</dd>
- *   <dt>Postcondition:</dt><dd>a single unlayered graph.</dd>
+ *   <dt>Precondition:</dt>
+ *     <dd>a list of unlayered graphs with complete layout.</dd>
+ *   <dt>Postcondition:</dt>
+ *     <dd>a single unlayered graph.</dd>
  * </dl>
- * </p>
  *
  * @author msp
  * @author cds
@@ -86,14 +86,12 @@ public final class ComponentsProcessor {
         boolean separate = separateProperty == null || separateProperty.booleanValue();
         
         // Whether the graph contains external ports
-        boolean extPorts =
-                graph.getProperty(InternalProperties.GRAPH_PROPERTIES).contains(
-                        GraphProperties.EXTERNAL_PORTS);
+        boolean extPorts = graph.getProperty(InternalProperties.GRAPH_PROPERTIES).contains(
+                GraphProperties.EXTERNAL_PORTS);
         
         // The graph's external port constraints
         PortConstraints extPortConstraints = graph.getProperty(LayoutOptions.PORT_CONSTRAINTS);
-        boolean compatiblePortConstraints = extPortConstraints == PortConstraints.FREE
-                || extPortConstraints == PortConstraints.FIXED_SIDE;
+        boolean compatiblePortConstraints = !extPortConstraints.isOrderFixed();
         
         // The graph may only be separated 
         //  1. Separation was requested.

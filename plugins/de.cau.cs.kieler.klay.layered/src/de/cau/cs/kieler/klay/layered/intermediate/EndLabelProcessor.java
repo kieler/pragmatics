@@ -35,10 +35,15 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
  * this positioning.</p>
  * 
  * <dl>
- *   <dt>Precondition:</dt><dd>a layered graph; no dummy nodes;
- *   labels are marked with a placement side; nodes have port sides.</dd>
- *   <dt>Postcondition:</dt><dd>edge and port labels have absolute coordinates.</dd>
- *   <dt>Slots:</dt><dd>After phase 5.</dd>
+ *   <dt>Precondition:</dt>
+ *     <dd>a layered graph</dd>
+ *     <dd>no dummy nodes</dd>
+ *     <dd>labels are marked with a placement side</dd>
+ *     <dd>nodes have port sides</dd>
+ *   <dt>Postcondition:</dt>
+ *     <dd>edge and port labels have absolute coordinates.</dd>
+ *   <dt>Slots:</dt>
+ *     <dd>After phase 5.</dd>
  *   <dt>Same-slot dependencies:</dt><dd>{@link LongEdgeJoiner}</dd>
  *                                   <dd>{@link NorthSouthPortPostProcessor}</dd>
  *                                   <dd>{@link LabelDummyRemover}</dd>

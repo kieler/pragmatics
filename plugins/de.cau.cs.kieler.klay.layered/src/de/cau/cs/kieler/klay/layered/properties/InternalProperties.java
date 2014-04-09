@@ -100,7 +100,13 @@ public final class InternalProperties {
      */
     public static final IProperty<KVectorChain> ORIGINAL_BENDPOINTS = new Property<KVectorChain>(
             "originalBendpoints");
-
+    
+    /**
+     * The edge a label originally belonged to. This property was introduced to remember which
+     * cross-hierarchy edge a label originally belonged to.
+     */
+    public static final IProperty<LEdge> ORIGINAL_LABEL_EDGE = new Property<LEdge>("originalLabelEdge");
+    
     /**
      * Flag for reversed edges.
      */

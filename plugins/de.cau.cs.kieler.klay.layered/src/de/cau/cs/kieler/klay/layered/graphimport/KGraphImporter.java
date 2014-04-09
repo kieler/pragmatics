@@ -193,8 +193,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         KShapeLayout parentLayout = parentKNode.getData(KShapeLayout.class);
         layeredGraph.copyProperties(parentLayout);
         if (layeredGraph.getProperty(LayoutOptions.DIRECTION) == Direction.UNDEFINED) {
-            // The default direction is right
-            layeredGraph.setProperty(LayoutOptions.DIRECTION, Direction.RIGHT);
+            layeredGraph.setProperty(LayoutOptions.DIRECTION, LGraphUtil.getDirection(layeredGraph));
         }
 
         // Initialize the graph properties discovered during the transformations
