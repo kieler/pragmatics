@@ -16,7 +16,13 @@ package de.cau.cs.kieler.klay.cola.graph;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 
 /**
- * .
+ * An element of the {@link CGraph}. Every element has an {@code #id} that can be arbitrarily used
+ * internally and a {@link #cIndex} that determines the index of the element within adaptagram's
+ * containers. E.g. nodes are collected within an array and the index refers to a node's index
+ * within this collection.
+ * 
+ * The {@link #init()} method should be implemented if an internal state has to be initialized
+ * _after_ the whole graph has been constructed.
  * 
  * @author uru
  */

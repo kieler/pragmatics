@@ -143,6 +143,8 @@ public class CPort extends CShape {
         }
 
         switch (side) {
+        
+        // FIXME ... all cases!
         case EAST:
             // generate a separation constraint to the right most node
             double gRight =
@@ -218,8 +220,7 @@ public class CPort extends CShape {
             }
         }
 
-        // FIXME turn this into an offset
-        float breathe = 3;
+        float breathe = graph.getProperty(ColaProperties.PORT_DUMMY_BREATHE);
         switch (side) {
 
         case NORTH:
@@ -262,6 +263,20 @@ public class CPort extends CShape {
      */
     public KVector getRectPos() {
         return new KVector(rect.getMinX() + getMargins().left, rect.getMinY() + getMargins().top);
+    }
+    
+    /**
+     * @return the center position of the underlying adaptagrams rectangle. The margin is already
+     *         subtracted.
+     */
+    public KVector getRectCenter() {
+        double centerX =
+                rect.getMinX() + getMargins().left
+                        + (rect.width() - getMargins().left - getMargins().right) / 2;
+        double centerY =
+                rect.getMinY() + getMargins().top
+                        + (rect.height() - getMargins().top - getMargins().bottom) / 2;
+        return new KVector(centerX, centerY);
     }
 
     /**

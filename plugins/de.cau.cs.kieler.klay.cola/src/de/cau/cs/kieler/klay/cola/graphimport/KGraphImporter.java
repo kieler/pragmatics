@@ -334,18 +334,14 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                     layout.getSourcePoint().applyVector(e.getSourcePoint().sumCreate(offset));
                 } else {
                     // get the port's position relative to the parent
-                    KVector portPos =
-                            new KVector(e.getSourcePort().rect.getMinX(),
-                                    e.getSourcePort().rect.getMinY());
-                    layout.getSourcePoint().applyVector(portPos.sumCreate(offset));
+                    layout.getSourcePoint().applyVector(
+                            e.getSourcePort().getRectCenter().sumCreate(offset));
                 }
                 if (e.getTarget() != null) {
                     layout.getTargetPoint().applyVector(e.getTargetPoint().sumCreate(offset));
                 } else {
-                    KVector portPos =
-                            new KVector(e.getTargetPort().rect.getMinX(),
-                                    e.getTargetPort().rect.getMinY());
-                    layout.getTargetPoint().applyVector(portPos.sumCreate(offset));
+                    layout.getTargetPoint().applyVector(
+                            e.getTargetPort().getRectCenter().sumCreate(offset));
                 }
             }
         }

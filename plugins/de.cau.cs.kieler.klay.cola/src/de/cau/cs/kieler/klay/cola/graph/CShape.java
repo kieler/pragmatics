@@ -18,7 +18,10 @@ import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Insets;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 
 /**
- * .
+ * A shape that has a position, a size and defines margins and insets.
+ * 
+ * Margins are spacings outside the bounding box of the shape, insets (aka padding) on the
+ * inside of the shape's bounding box.
  * 
  * @author uru
  */
