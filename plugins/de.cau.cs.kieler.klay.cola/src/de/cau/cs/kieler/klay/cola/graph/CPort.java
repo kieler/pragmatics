@@ -218,6 +218,10 @@ public class CPort extends CShape {
         return external;
     }
 
+    /**
+     * @return the position of the underlying adaptagrams rectangle. The margin is already
+     *         subtracted.
+     */
     public KVector getRectPos() {
         return new KVector(rect.getMinX() + getMargins().left, rect.getMinY() + getMargins().top);
     }

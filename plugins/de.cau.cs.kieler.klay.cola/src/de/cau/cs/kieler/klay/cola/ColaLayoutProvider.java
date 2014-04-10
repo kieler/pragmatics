@@ -145,13 +145,14 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
             // TODO what does this all remove??
             // layouter.freeAssociatedObjects();
         }
+        layouters.clear();
     }
 
     private void runLayout(final boolean overlap) {
 
         // create a new layouter instance
         ConstrainedFDLayout algo =
-                new ConstrainedFDLayout(graph.getNodes(), graph.getEdges(), idealEdgeLength,
+                new ConstrainedFDLayout(graph.getNodes(), graph.getEdges(), 1, // multiplier is 1
                         overlap, graph.getIdealEdgeLengths(), testConvergence);
 
         // remember for later disposal

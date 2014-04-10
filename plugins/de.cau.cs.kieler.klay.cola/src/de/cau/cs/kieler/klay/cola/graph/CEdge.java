@@ -121,6 +121,9 @@ public class CEdge extends CGraphElement {
     /**
      * Returns the docking point at the source node.
      * 
+     * Note, this method cannot be used in conjunction with external ports, it requires the source
+     * node to be set.
+     * 
      * @return the source docking point
      */
     public KVector getSourcePoint() {
@@ -139,6 +142,9 @@ public class CEdge extends CGraphElement {
 
     /**
      * Returns the docking point at the target node.
+     * 
+     * Note, this method cannot be used in conjunction with external ports, it requires the target
+     * node to be set.
      * 
      * @return the target docking point
      */

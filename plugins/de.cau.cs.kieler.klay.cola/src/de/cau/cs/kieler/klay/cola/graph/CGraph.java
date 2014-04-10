@@ -25,6 +25,9 @@ import org.adaptagrams.RootCluster;
 import com.google.common.collect.Lists;
 
 /**
+ * 
+ * Remark: after all elements have been created the {@link #init()} method must be called.
+ * 
  * @author uru
  */
 public class CGraph extends CGraphElement {
