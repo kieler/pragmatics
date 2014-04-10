@@ -27,6 +27,7 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Insets;
+import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
 import de.cau.cs.kieler.klay.cola.properties.InternalColaProperties;
 
 /**
@@ -39,12 +40,26 @@ public class CPort extends CShape {
     // CHECKSTYLEOFF VisibilityModifier
     // CHECKSTYLEOFF Javadoc
 
+    /**
+     * The index of the edge that connects this dummy port node with the port's parent node.
+     */
     public int cEdgeIndex = -1;
+    /**
+     * The underlying adaptagrams rectangle for this port.
+     */
     public Rectangle rect;
+    /**
+     * The ideal length of the edge connecting this port to its owner. External ports do not have
+     * such an edge.
+     */
     public double idealDummyEdgeLength;
 
     public PortSide side = PortSide.UNDEFINED;
 
+    /**
+     * The owner of this port, this is the node that contains the port. In case of an external
+     * port, this field might be {@code null}.
+     */
     public final CNode owner;
     protected List<CEdge> outgoingEdges = Lists.newLinkedList();
     protected List<CEdge> incomingEdges = Lists.newLinkedList();
@@ -64,7 +79,30 @@ public class CPort extends CShape {
      */
     @Override
     public void init() {
-        rect = new Rectangle(0, 0 + this.getSize().x, 0, 0 + this.getSize().y);
+        
+        double xPos = 0;
+        double yPos = 0;
+
+        // should previously assigned positions be considered?
+        boolean considerPreviousPositions =
+                graph.getProperty(ColaProperties.CONSIDER_PREVIOUS_POSITION);
+        if (considerPreviousPositions) {
+
+            xPos += this.getPos().x;
+            yPos += this.getPos().y;
+
+            // if the port has an owner, ie it is no external port
+            if (owner != null) {
+                // offset by the owner's position to turn it into an absolut position
+                xPos += owner.getPos().x;
+                yPos += owner.getPos().y;
+
+            }
+        }
+
+        // create the adaptagrams rectangle
+        rect = new Rectangle(xPos, xPos + this.getSize().x, yPos, yPos + this.getSize().y);
+        // assign it an id
         cIndex = graph.nodeIndex++;
         graph.nodes.add(rect);
 
