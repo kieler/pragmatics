@@ -136,12 +136,11 @@ public class DirectionConstraintProcessor implements ILayoutProcessor {
 
                     CNode src = e.getSource();
 
-                    final KVector nSize = n.getRectSizeRaw();
-                    double d = nSize.x / 2f 
+                    double d = n.getRectSizeRaw().x / 2f 
                             + spacing
                             + n.getMargins().left
                             + maxWidth / 2f
-                            + (maxWidth / 2f - nSize.x / 2f);
+                            + (maxWidth / 2f - src.getRectSizeRaw().x / 2f);
 
                     // consider left margin of the src node
                     d += src.getMargins().left;
