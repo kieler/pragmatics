@@ -375,6 +375,15 @@
      <layoutOption
            appliesTo="nodes"
            advanced="true"
+           description="Additional space around the sets of nodes on each node side."
+           id="de.cau.cs.kieler.additionalPortSpace"
+           name="Additional Port Space"
+           type="object"
+           class="de.cau.cs.kieler.kiml.util.nodespacing.Spacing$Margins">
+     </layoutOption>
+     <layoutOption
+           appliesTo="nodes"
+           advanced="true"
            default="false"
            description="Whether the node should be regarded as a comment box instead of a regular node"
            id="de.cau.cs.kieler.commentBox"
