@@ -21,7 +21,6 @@ import org.adaptagrams.Rectangle;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
-import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
@@ -37,9 +36,6 @@ public class CNode extends CShape {
 
     // CHECKSTYLEOFF VisibilityModifier
     // CHECKSTYLEOFF Javadoc
-
-    /** The adaptagrams {@link Rectangle} representing this node. */
-    public Rectangle rect;
 
     protected List<CNode> children;
     protected List<CEdge> outgoingEdges;
@@ -169,10 +165,6 @@ public class CNode extends CShape {
         return filtered;
     }
     
-    public KVector getRectPos() {
-        return new KVector(rect.getMinX() + getMargins().left, rect.getMinY() + getMargins().top);
-    }
-
     /**
      * {@inheritDoc}
      */

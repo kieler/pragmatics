@@ -26,6 +26,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.cola.algs.EadesMFASHeuristic;
 import de.cau.cs.kieler.klay.cola.algs.TrajansAlgorithm;
@@ -120,8 +121,9 @@ public class DirectionConstraintProcessor implements ILayoutProcessor {
                 // for every node with incoming edges, find the widest of the incoming edges
                 double maxWidth = Double.MIN_VALUE;
                 for (CEdge e : n.getIncomingEdges()) {
-                    if (maxWidth < e.getSource().rect.width()) {
-                        maxWidth = e.getSource().rect.width();
+                    KVector size = e.getSource().getRectSizeRaw();
+                    if (maxWidth < size.x) {
+                        maxWidth = size.x;
                     }
                 }
 
@@ -134,11 +136,12 @@ public class DirectionConstraintProcessor implements ILayoutProcessor {
 
                     CNode src = e.getSource();
 
-                    double d = n.rect.width() / 2f 
+                    final KVector nSize = n.getRectSizeRaw();
+                    double d = nSize.x / 2f 
                             + spacing
                             + n.getMargins().left
                             + maxWidth / 2f
-                            + (maxWidth / 2f - src.rect.width() / 2f);
+                            + (maxWidth / 2f - nSize.x / 2f);
 
                     // consider left margin of the src node
                     d += src.getMargins().left;
@@ -166,8 +169,9 @@ public class DirectionConstraintProcessor implements ILayoutProcessor {
                 // for every node with incoming edges, find the widest of the incoming edges
                 double maxWidth = Double.MIN_VALUE;
                 for (CEdge e : n.getIncomingEdges()) {
-                    if (maxWidth < e.getSource().rect.width()) {
-                        maxWidth = e.getSource().rect.width();
+                    final KVector size = e.getSource().getRectSizeRaw();
+                    if (maxWidth < size.x) {
+                        maxWidth = size.x;
                     }
                 }
 
@@ -182,7 +186,7 @@ public class DirectionConstraintProcessor implements ILayoutProcessor {
                     CNode tgt = e.getTarget();
 
                     // separation has to go from mid to mid
-                    double d = tgt.rect.width() / 2f + spacing + maxWidth / 2f;
+                    double d = tgt.getRectSizeRaw().x / 2f + spacing + maxWidth / 2f;
 
                     SeparationConstraint sc =
                             new SeparationConstraint(Dim.XDIM, e.getSource().cIndex,
@@ -194,8 +198,9 @@ public class DirectionConstraintProcessor implements ILayoutProcessor {
                 // for every node with incoming edges, find the widest of the outgoing edges
                 maxWidth = Double.MIN_VALUE;
                 for (CEdge e : n.getOutgoingEdges()) {
-                    if (maxWidth < e.getTarget().rect.width()) {
-                        maxWidth = e.getTarget().rect.width();
+                    final KVector size = e.getTarget().getRectSizeRaw();
+                    if (maxWidth < size.x) {
+                        maxWidth = size.x;
                     }
                 }
 
@@ -210,7 +215,7 @@ public class DirectionConstraintProcessor implements ILayoutProcessor {
                     CNode tgt = e.getTarget();
 
                     // separation has to go from mid to mid
-                    double d = src.rect.width() / 2f + spacing + maxWidth / 2f;
+                    double d = src.getRectSizeRaw().x / 2f + spacing + maxWidth / 2f;
 
                     SeparationConstraint sc =
                             new SeparationConstraint(Dim.XDIM, e.getSource().cIndex,
@@ -228,8 +233,9 @@ public class DirectionConstraintProcessor implements ILayoutProcessor {
                 // for every node with incoming edges, find the widest of the incoming edges
                 double maxWidth = Double.MIN_VALUE;
                 for (CEdge e : n.getOutgoingEdges()) {
-                    if (maxWidth < e.getTarget().rect.width()) {
-                        maxWidth = e.getTarget().rect.width();
+                    final KVector size = e.getTarget().getRectSizeRaw();
+                    if (maxWidth < size.x) {
+                        maxWidth = size.x;
                     }
                 }
 
@@ -243,11 +249,11 @@ public class DirectionConstraintProcessor implements ILayoutProcessor {
                     CNode tgt = e.getTarget();
 
                     // separation has to go from mid to mid
-                    double d = src.rect.width() / 2f 
+                    double d = src.getRectSizeRaw().x / 2f 
                             + spacing        
                             + maxWidth / 2f
                             - src.getMargins().right
-                            + (maxWidth / 2f - tgt.rect.width() / 2f);
+                            + (maxWidth / 2f - tgt.getRectSizeRaw().x / 2f);
 
                     // consider right margin of the tgt node
                     d += tgt.getMargins().right;

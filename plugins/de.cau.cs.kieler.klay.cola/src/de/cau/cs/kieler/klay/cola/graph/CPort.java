@@ -45,10 +45,6 @@ public class CPort extends CShape {
      */
     public int cEdgeIndex = -1;
     /**
-     * The underlying adaptagrams rectangle for this port.
-     */
-    public Rectangle rect;
-    /**
      * The ideal length of the edge connecting this port to its owner. External ports do not have
      * such an edge.
      */
@@ -255,28 +251,6 @@ public class CPort extends CShape {
      */
     public boolean isExternal() {
         return external;
-    }
-
-    /**
-     * @return the position of the underlying adaptagrams rectangle. The margin is already
-     *         subtracted.
-     */
-    public KVector getRectPos() {
-        return new KVector(rect.getMinX() + getMargins().left, rect.getMinY() + getMargins().top);
-    }
-    
-    /**
-     * @return the center position of the underlying adaptagrams rectangle. The margin is already
-     *         subtracted.
-     */
-    public KVector getRectCenter() {
-        double centerX =
-                rect.getMinX() + getMargins().left
-                        + (rect.width() - getMargins().left - getMargins().right) / 2;
-        double centerY =
-                rect.getMinY() + getMargins().top
-                        + (rect.height() - getMargins().top - getMargins().bottom) / 2;
-        return new KVector(centerX, centerY);
     }
 
     /**

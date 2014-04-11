@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.klay.cola.graph;
 
+import org.adaptagrams.Rectangle;
+
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Insets;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
@@ -20,8 +22,12 @@ import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 /**
  * A shape that has a position, a size and defines margins and insets.
  * 
- * Margins are spacings outside the bounding box of the shape, insets (aka padding) on the
- * inside of the shape's bounding box.
+ * Margins are spacings outside the bounding box of the shape, insets (aka padding) on the inside of
+ * the shape's bounding box.
+ * 
+ * Note that there is a difference between {@link #getPos()} and {@link #getRectPos()}. The latter
+ * returns the position of the adaptagrams rectangle an thus the position of this shape after any
+ * layout is applied.
  * 
  * @author uru
  */
@@ -39,6 +45,10 @@ public abstract class CShape extends CGraphElement {
     /** the insets inside this node, usually reserved for port and label placement. */
     private final Insets insets = new Insets();
 
+    // CHECKSTYLEOFF VisibilityModifier
+    /** The adaptagrams {@link Rectangle} representing this shape. */
+    protected Rectangle rect;
+
     /**
      * Constructs a new shaped element.
      * 
@@ -50,10 +60,49 @@ public abstract class CShape extends CGraphElement {
     }
 
     /**
+     * Note that this position might diverge from the position of {@link #getRectPos()}. This position is
+     * mainly used <emph>before</emph> any layout algorithm is applied.
+     * 
      * @return the current position of this element.
+     * @see #getRectPos()
      */
     public KVector getPos() {
         return pos;
+    }
+
+    /**
+     * Note that this position might diverge from the one of {@link #getPos()}. The rect's position
+     * is mainly used <emph>after</emph> any layout algorithm is applied.
+     * 
+     * To get the raw position (w/o considering margins) use the {@link #getRectPosRaw()} method.
+     * 
+     * @return the position of the underlying adaptagrams rectangle. The margin is already
+     *         subtracted.
+     * @see #getPos()
+     */
+    public KVector getRectPos() {
+        return new KVector(rect.getMinX() + getMargins().left, rect.getMinY() + getMargins().top);
+    }
+    
+    /**
+     * @return the position of the underlying adaptagrams rectangle without considering any margins.
+     */
+    public KVector getRectPosRaw() {
+        return new KVector(rect.getMinX(), rect.getMinY());
+    }
+
+    /**
+     * @return the center position of the underlying adaptagrams rectangle. The margin is already
+     *         subtracted.
+     */
+    public KVector getRectCenter() {
+        double centerX =
+                rect.getMinX() + getMargins().left
+                        + (rect.width() - getMargins().left - getMargins().right) / 2;
+        double centerY =
+                rect.getMinY() + getMargins().top
+                        + (rect.height() - getMargins().top - getMargins().bottom) / 2;
+        return new KVector(centerX, centerY);
     }
 
     /**
@@ -61,6 +110,26 @@ public abstract class CShape extends CGraphElement {
      */
     public KVector getSize() {
         return size;
+    }
+    
+    /**
+     * Note that the size might diverge from the on of {@link #getSize()}. The rect's size is mainly
+     * used <emph>after</emph> any layout algorithm is applied.
+     * 
+     * To get the raw size (w/o considering margins) use the {@link #getRectSizeRaw()} method.
+     * 
+     * @return the size of the underlying adaptagrams rectangle. The margin is already subtracted.
+     */
+    public KVector getRectSize() {
+        return new KVector(rect.width() - getMargins().left - getMargins().right, rect.height()
+                - getMargins().top - getMargins().bottom);
+    }
+    
+    /**
+     * @return the raw size of the underlying adaptagrams rectangle, no margin is considered.
+     */
+    public KVector getRectSizeRaw() {
+        return new KVector(rect.width(), rect.height());
     }
 
     /**

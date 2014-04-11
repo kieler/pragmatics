@@ -17,7 +17,6 @@ import java.util.Map;
 
 import org.adaptagrams.AlignmentConstraint;
 import org.adaptagrams.Dim;
-import org.adaptagrams.Rectangle;
 
 import com.google.common.collect.Maps;
 
@@ -256,23 +255,23 @@ public class KGraphImporter implements IGraphImporter<KNode> {
 
         // find the minimal and maximal positions of the contained nodes
         for (CNode n : graph.getChildren()) {
-            Rectangle r = n.rect;
-            minX = Math.min(minX, r.getMinX());
-            minY = Math.min(minY, r.getMinY());
-            maxX = Math.max(maxX, r.getMaxX());
-            maxY = Math.max(maxY, r.getMaxY());
+            final KVector pos = n.getRectPosRaw();
+            final KVector size = n.getRectSizeRaw();
+            minX = Math.min(minX, pos.x);
+            minY = Math.min(minY, pos.y);
+            maxX = Math.max(maxX, pos.x + size.x);
+            maxY = Math.max(maxY, pos.y + size.y);
         }
         KVector offset = new KVector(borderSpacing - minX, borderSpacing - minY);
 
         // nodes
         for (CNode n : graph.getChildren()) {
-            Rectangle r = n.rect;
             KShapeLayout layout =
                     n.getProperty(InternalColaProperties.ORIGIN).getData(KShapeLayout.class);
 
             // set new positions
-            layout.setXpos((float) (r.getMinX() + n.getMargins().left + offset.x));
-            layout.setYpos((float) (r.getMinY() + n.getMargins().top + offset.y));
+            layout.setXpos((float) (n.getRectPos().x + offset.x));
+            layout.setYpos((float) (n.getRectPos().y + offset.y));
 
             // write back insets
             KInsets insets = layout.getInsets();
@@ -299,12 +298,10 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         // TODO we always wanna reposition the external ports??
         // if (!graph.getProperty(LayoutOptions.PORT_CONSTRAINTS).isPosFixed()) {
         for (CPort p : graph.getExternalPorts()) {
-            Rectangle r = p.rect;
-
             KShapeLayout layout =
                     p.getProperty(InternalColaProperties.ORIGIN).getData(KShapeLayout.class);
-            layout.setXpos((float) (r.getMinX() + offset.x));
-            layout.setYpos((float) (r.getMinY() + offset.y));
+            layout.setXpos((float) (p.getRectPos().x + offset.x));
+            layout.setYpos((float) (p.getRectPos().y + offset.y));
         }
         // }
 

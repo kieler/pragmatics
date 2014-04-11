@@ -245,7 +245,7 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
     private double calculatePortOffset(final CNode n, final KPort p) {
 
         Margins margins = n.getMargins();
-        double nodeHeight = n.rect.height();
+        double nodeHeight = n.getRectSizeRaw().y;
 
         // TODO not sure about the validity of selecting the port's pos and size
         KShapeLayout portLayout = p.getData(KShapeLayout.class);

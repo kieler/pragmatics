@@ -264,11 +264,12 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode> {
 
         // find the minimal and maximal positions of the contained nodes
         for (CNode n : graph.getChildren()) {
-            Rectangle r = n.rect;
-            minX = Math.min(minX, r.getMinX());
-            minY = Math.min(minY, r.getMinY());
-            maxX = Math.max(maxX, r.getMaxX());
-            maxY = Math.max(maxY, r.getMaxY());
+            final KVector pos = n.getRectPosRaw();
+            final KVector size = n.getRectSizeRaw();
+            minX = Math.min(minX, pos.x);
+            minY = Math.min(minY, pos.y);
+            maxX = Math.max(maxX, pos.x + size.x);
+            maxY = Math.max(maxY, pos.y + size.y);
         }
         // also consider the clusters here
         for (Cluster cluster : clusterMap.values()) {
@@ -391,7 +392,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode> {
      */
     private KVector relativeToCluster(final CNode node, final KVector offset) {
 
-        KVector nodePos = new KVector(node.rect.getMinX(), node.rect.getMinY());
+        KVector nodePos = node.getRectPos();
         KNode parent = ((KNode) node.getProperty(InternalColaProperties.ORIGIN)).getParent();
         Cluster c = clusterMap.get(parent);
         if (c == null) {
@@ -430,11 +431,11 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode> {
         KVector tgtPnt;
         if (e.srcPort == null || e.tgtPort == null) {
             // use the nodes' centers
-            srcPnt = new KVector(e.src.rect.getCentreX(), e.src.rect.getCentreY());
-            tgtPnt = new KVector(e.tgt.rect.getCentreX(), e.tgt.rect.getCentreY());
+            srcPnt = e.src.getRectCenter();
+            tgtPnt = e.tgt.getRectCenter();
         } else {
-            srcPnt = new KVector(e.srcPort.rect.getCentreX(), e.srcPort.rect.getCentreY());
-            tgtPnt = new KVector(e.tgtPort.rect.getCentreX(), e.tgtPort.rect.getCentreY());
+            srcPnt = e.srcPort.getRectCenter();
+            tgtPnt = e.tgtPort.getRectCenter();
         }
 
         final Line2D line = new Line2D.Double(srcPnt.x, srcPnt.y, tgtPnt.x, tgtPnt.y);
