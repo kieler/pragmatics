@@ -36,7 +36,7 @@ import de.cau.cs.kieler.klay.planar.graph.PGraph;
 import de.cau.cs.kieler.klay.planar.graph.PGraphElement;
 import de.cau.cs.kieler.klay.planar.graph.PGraphFactory;
 import de.cau.cs.kieler.klay.planar.graph.PNode;
-import de.cau.cs.kieler.klay.planar.intermediate.LayoutProcessorStrategy;
+import de.cau.cs.kieler.klay.planar.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.planar.pathfinding.IPathFinder;
 import de.cau.cs.kieler.klay.planar.properties.Properties;
 
@@ -85,15 +85,16 @@ public class TidyRectangleCompactor implements ILayoutPhase {
             // Before Phase 3
             null,
             // Before Phase 4
-            EnumSet.of(LayoutProcessorStrategy.BEND_DUMMY,
-                    LayoutProcessorStrategy.RECT_SHAPE_DUMMY, LayoutProcessorStrategy.FACE_SIDES),
+            EnumSet.of(IntermediateProcessorStrategy.BEND_DUMMY,
+                    IntermediateProcessorStrategy.RECT_SHAPE_DUMMY,
+                    IntermediateProcessorStrategy.FACE_SIDES),
             // After Phase 4
-            EnumSet.of(LayoutProcessorStrategy.GRID_DRAWING,
-                    LayoutProcessorStrategy.RECT_SHAPE_DUMMY_REMOVER,
-                    LayoutProcessorStrategy.BEND_DUMMY_REMOVER,
-                    LayoutProcessorStrategy.QUOD_DUMMY_REMOVER,
-                    LayoutProcessorStrategy.PLANAR_DUMMY_REMOVER,
-                    LayoutProcessorStrategy.SELFLOOP_DUMMY_REMOVER));
+            EnumSet.of(IntermediateProcessorStrategy.GRID_DRAWING,
+                    IntermediateProcessorStrategy.RECT_SHAPE_DUMMY_REMOVER,
+                    IntermediateProcessorStrategy.BEND_DUMMY_REMOVER,
+                    IntermediateProcessorStrategy.QUOD_DUMMY_REMOVER,
+                    IntermediateProcessorStrategy.PLANAR_DUMMY_REMOVER,
+                    IntermediateProcessorStrategy.SELFLOOP_DUMMY_REMOVER));
 
     /** Intermediate processing configuration with Giotto high-degree strategy. */
     private static final IntermediateProcessingConfiguration 
@@ -106,15 +107,16 @@ public class TidyRectangleCompactor implements ILayoutPhase {
             // Before Phase 3
             null,
             // Before Phase 4
-            EnumSet.of(LayoutProcessorStrategy.BEND_DUMMY,
-                    LayoutProcessorStrategy.RECT_SHAPE_DUMMY, LayoutProcessorStrategy.FACE_SIDES),
+            EnumSet.of(IntermediateProcessorStrategy.BEND_DUMMY,
+                    IntermediateProcessorStrategy.RECT_SHAPE_DUMMY,
+                    IntermediateProcessorStrategy.FACE_SIDES),
             // After Phase 4
-            EnumSet.of(LayoutProcessorStrategy.GRID_DRAWING,
-                    LayoutProcessorStrategy.RECT_SHAPE_DUMMY_REMOVER,
-                    LayoutProcessorStrategy.BEND_DUMMY_REMOVER,
-                    LayoutProcessorStrategy.GIOTTO_DUMMY_REMOVER,
-                    LayoutProcessorStrategy.PLANAR_DUMMY_REMOVER,
-                    LayoutProcessorStrategy.SELFLOOP_DUMMY_REMOVER));
+            EnumSet.of(IntermediateProcessorStrategy.GRID_DRAWING,
+                    IntermediateProcessorStrategy.RECT_SHAPE_DUMMY_REMOVER,
+                    IntermediateProcessorStrategy.BEND_DUMMY_REMOVER,
+                    IntermediateProcessorStrategy.GIOTTO_DUMMY_REMOVER,
+                    IntermediateProcessorStrategy.PLANAR_DUMMY_REMOVER,
+                    IntermediateProcessorStrategy.SELFLOOP_DUMMY_REMOVER));
 
     /**
      * {@inheritDoc}

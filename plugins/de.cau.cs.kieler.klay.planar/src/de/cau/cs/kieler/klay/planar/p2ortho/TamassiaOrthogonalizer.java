@@ -37,7 +37,7 @@ import de.cau.cs.kieler.klay.planar.graph.PGraph;
 import de.cau.cs.kieler.klay.planar.graph.PGraphFactory;
 import de.cau.cs.kieler.klay.planar.graph.PNode;
 import de.cau.cs.kieler.klay.planar.graph.PNode.NodeType;
-import de.cau.cs.kieler.klay.planar.intermediate.LayoutProcessorStrategy;
+import de.cau.cs.kieler.klay.planar.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation.OrthogonalAngle;
 import de.cau.cs.kieler.klay.planar.pathfinding.IPathFinder;
 import de.cau.cs.kieler.klay.planar.properties.Properties;
@@ -89,10 +89,11 @@ public class TamassiaOrthogonalizer implements ILayoutPhase {
             // Before Phase 2
             null,
             // Before Phase 3
-            EnumSet.of(LayoutProcessorStrategy.EXT_FACE, LayoutProcessorStrategy.EXPANSION_CYCLE,
-                    LayoutProcessorStrategy.FULL_ANGLE),
+            EnumSet.of(IntermediateProcessorStrategy.EXT_FACE,
+                    IntermediateProcessorStrategy.EXPANSION_CYCLE,
+                    IntermediateProcessorStrategy.FULL_ANGLE),
             // Before Phase 4
-            EnumSet.of(LayoutProcessorStrategy.FULL_ANGLE_REMOVER),
+            EnumSet.of(IntermediateProcessorStrategy.FULL_ANGLE_REMOVER),
             // After Phase 4
             null);
 

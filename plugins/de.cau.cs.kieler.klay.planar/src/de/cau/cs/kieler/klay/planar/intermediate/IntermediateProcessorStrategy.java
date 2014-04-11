@@ -21,7 +21,7 @@ import de.cau.cs.kieler.klay.planar.ILayoutProcessor;
  * 
  * @author pkl
  */
-public enum LayoutProcessorStrategy {
+public enum IntermediateProcessorStrategy {
 
     /*
      * In this enumeration, intermediate layout processors are listed by the earliest slot in which
@@ -92,7 +92,7 @@ public enum LayoutProcessorStrategy {
      *            ordinal value
      * @return the related enumeration value
      */
-    public static LayoutProcessorStrategy valueOf(final int i) {
+    public static IntermediateProcessorStrategy valueOf(final int i) {
         return values()[i];
     }
 
