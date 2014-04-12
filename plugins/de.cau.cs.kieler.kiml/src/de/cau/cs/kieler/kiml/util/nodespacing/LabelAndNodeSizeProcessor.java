@@ -202,6 +202,8 @@ public class LabelAndNodeSizeProcessor {
              */
             resetContext();
             KVector originalNodeSize = new KVector(node.getSize());
+            double portSpacing = Math.max(MIN_PORT_SPACING,
+                    node.getProperty(LayoutOptions.PORT_SPACING));
             
             
             /* PHASE 1 (SAD DUCK): PLACE PORT LABELS
@@ -236,7 +238,7 @@ public class LabelAndNodeSizeProcessor {
              * If the node has labels, the node insets might have to be adjusted to reserve space
              * for them, which is what this phase does.
              */
-            resizeNode(node, labelSpacing);
+            resizeNode(node, portSpacing, labelSpacing);
             
             
             /* PHASE 4 (DUCK AND COVER): PLACE PORTS
@@ -563,9 +565,13 @@ public class LabelAndNodeSizeProcessor {
      * Resizes the given node subject to the sizing constraints and options.
      * 
      * @param node the node to resize.
+     * @param portSpacing the minimum amount of space to be left between ports if there positions are
+     *                    not fixed.
      * @param labelSpacing the amount of space to leave between labels and other objects.
      */
-    private void resizeNode(final NodeAdapter<?> node, final double labelSpacing) {
+    private void resizeNode(final NodeAdapter<?> node, final double portSpacing,
+            final double labelSpacing) {
+        
         KVector nodeSize = node.getSize();
         KVector originalNodeSize = new KVector(nodeSize);
         EnumSet<SizeConstraint> sizeConstraint = node.getProperty(LayoutOptions.SIZE_CONSTRAINT);
@@ -591,7 +597,7 @@ public class LabelAndNodeSizeProcessor {
         case FIXED_SIDE:
         case FIXED_ORDER:
             // Calculate the space necessary to accomodate all ports
-            minSizeForPorts = calculatePortSpaceRequirements(node, accountForLabels);
+            minSizeForPorts = calculatePortSpaceRequirements(node, portSpacing, accountForLabels);
             break;
         
         case FIXED_RATIO:
@@ -618,9 +624,9 @@ public class LabelAndNodeSizeProcessor {
             // part of minSizeForPorts)
             if (accountForLabels) {
                 nodeSize.x = Math.max(nodeSize.x,
-                        requiredPortLabelSpace.left + requiredPortLabelSpace.right + MIN_PORT_SPACING);
+                        requiredPortLabelSpace.left + requiredPortLabelSpace.right + portSpacing);
                 nodeSize.y = Math.max(nodeSize.y,
-                        requiredPortLabelSpace.top + requiredPortLabelSpace.bottom + MIN_PORT_SPACING);
+                        requiredPortLabelSpace.top + requiredPortLabelSpace.bottom + portSpacing);
             }
         }
         
@@ -710,11 +716,13 @@ public class LabelAndNodeSizeProcessor {
      * space requirements are not included in the result.
      * 
      * @param node the node to calculate the minimum size for.
+     * @param portSpacing the minimum amount of space to be left between ports if there positions are
+     *                    not fixed.
      * @param accountForLabels if {@code true}, the port labels will be taken into account
      *                         when calculating the space requirements.
      * @return minimum size.
      */
-    private KVector calculatePortSpaceRequirements(final NodeAdapter<?> node,
+    private KVector calculatePortSpaceRequirements(final NodeAdapter<?> node, final double portSpacing,
             final boolean accountForLabels) {
         
         // Calculate the additional port space to be left around the set of ports on each side. If this
@@ -724,8 +732,8 @@ public class LabelAndNodeSizeProcessor {
         
         Margins additionalPortSpace = node.getProperty(LayoutOptions.ADDITIONAL_PORT_SPACE);
         if (additionalPortSpace == null) {
-            additionalWidth = 2 * MIN_PORT_SPACING;
-            additionalHeight = 2 * MIN_PORT_SPACING;
+            additionalWidth = 2 * portSpacing;
+            additionalHeight = 2 * portSpacing;
         } else {
             additionalWidth = additionalPortSpace.left + additionalPortSpace.right;
             additionalHeight = additionalPortSpace.top + additionalPortSpace.bottom;
@@ -735,17 +743,17 @@ public class LabelAndNodeSizeProcessor {
         // the ports into consideration as well
         double requiredWidth = Math.max(
                 northPortsCount > 0
-                    ? additionalWidth + (northPortsCount - 1) * MIN_PORT_SPACING + northPortsWidth
+                    ? additionalWidth + (northPortsCount - 1) * portSpacing + northPortsWidth
                     : 0.0,
                 southPortsCount > 0
-                    ? additionalWidth + (southPortsCount - 1) * MIN_PORT_SPACING + southPortsWidth
+                    ? additionalWidth + (southPortsCount - 1) * portSpacing + southPortsWidth
                     : 0.0);
         double requiredHeight = Math.max(
                 westPortsCount > 0
-                    ? additionalHeight + (westPortsCount - 1) * MIN_PORT_SPACING + westPortsHeight
+                    ? additionalHeight + (westPortsCount - 1) * portSpacing + westPortsHeight
                     : 0.0,
                 eastPortsCount > 0
-                    ? additionalHeight + (eastPortsCount - 1) * MIN_PORT_SPACING + eastPortsHeight
+                    ? additionalHeight + (eastPortsCount - 1) * portSpacing + eastPortsHeight
                     : 0.0);
         
         return new KVector(requiredWidth, requiredHeight);
