@@ -106,6 +106,15 @@ public abstract class CShape extends CGraphElement {
     }
 
     /**
+     * @return the center position of the underlying adaptagrams rectangle.
+     */
+    public KVector getRectCenterRaw() {
+        double centerX = rect.getMinX() + (rect.width()) / 2;
+        double centerY = rect.getMinY() + (rect.height()) / 2;
+        return new KVector(centerX, centerY);
+    }
+    
+    /**
      * @return the current size of this element.
      */
     public KVector getSize() {

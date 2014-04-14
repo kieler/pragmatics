@@ -296,8 +296,8 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode> {
 
             layout.setXpos((float) (relative.x));
             layout.setYpos((float) (relative.y));
-            layout.setWidth((float) (c.getBounds().getMaxX() - c.getBounds().getMinX()));
-            layout.setHeight((float) (c.getBounds().getMaxY() - c.getBounds().getMinY()));
+            layout.setWidth((float) (c.getBounds().width()));
+            layout.setHeight((float) (c.getBounds().height()));
         }
 
         /*
@@ -309,8 +309,8 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode> {
 
             // if the node is contained in a cluster we have to offset it
             KVector relative = relativeToCluster(n, offset);
-            layout.setXpos((float) (relative.x + n.getMargins().left));
-            layout.setYpos((float) (relative.y + n.getMargins().top));
+            layout.setXpos((float) relative.x );
+            layout.setYpos((float) relative.y );
 
             // ports
             for (CPort p : n.getPorts()) {
@@ -360,25 +360,15 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode> {
 
                 // assign better positions to hierarchical ports
                 if (repositionHierarchicalPorts) {
+                    // transfer positions to all edges that are part of this hierarchical edge
+                    // FIXME edges may be handled multiple times
+                    // this should yield deterministic results, however performance could be improved
+                    // however, it might be better to use a median or average value
                     repositionHierarchicalPorts(e, offset);
                 }
-
-                // transfer positions to all edges that are part of this hierarchical edge
-                // FIXME edges may be handled multiple times
-                // this should yield deterministic results, however performance could be improved
-                // however, it might be better to use a median or average value
-                List<KEdge> edgeChain = e.getProperty(InternalColaProperties.EDGE_CHAIN);
-                for (KEdge hierarchyEdge : edgeChain) {
-                    KEdgeLayout edgeLayout = hierarchyEdge.getData(KEdgeLayout.class);
-
-                    // ports have been repositioned, let the edges point from port to port
-                    // TODO !
-                }
             }
-
         }
 
-        // FIXME atm this is too small! Why are we missing some of the overall size?
         // resize the parent node
         KInsets insets = root.getData(KShapeLayout.class).getInsets();
         double width = (maxX - minX) + 2 * borderSpacing + insets.getLeft() + insets.getRight();
@@ -431,11 +421,11 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode> {
         KVector tgtPnt;
         if (e.srcPort == null || e.tgtPort == null) {
             // use the nodes' centers
-            srcPnt = e.src.getRectCenter();
-            tgtPnt = e.tgt.getRectCenter();
+            srcPnt = e.src.getRectCenterRaw();
+            tgtPnt = e.tgt.getRectCenterRaw();
         } else {
-            srcPnt = e.srcPort.getRectCenter();
-            tgtPnt = e.tgtPort.getRectCenter();
+            srcPnt = e.srcPort.getRectCenterRaw();
+            tgtPnt = e.tgtPort.getRectCenterRaw();
         }
 
         final Line2D line = new Line2D.Double(srcPnt.x, srcPnt.y, tgtPnt.x, tgtPnt.y);
@@ -454,41 +444,47 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode> {
             final Pair<KVector, PortSide> intersection = ColaUtil.getIntersectionPoint(line, rect);
 
             if (intersection != null) {
-                KVector relativePos =
-                        KimlUtil.toRelative(intersection.getFirst(), kedge.getTarget());
                 KShapeLayout portLayout = kedge.getTargetPort().getData(KShapeLayout.class);
 
                 // the calculated intersection bound lies exactly on the rectangles boundary,
                 // hence we have to shift the port into a specific direction according to its size
+                // also, the intersection refers to the center position, so add half the dimension
                 KVector positionOffset = new KVector();
                 switch (intersection.getSecond()) {
                 case NORTH:
-                    positionOffset.x = 0;
+                    positionOffset.x = portLayout.getWidth() / 2d;
                     positionOffset.y = portLayout.getHeight();
                     break;
                 case EAST:
                     positionOffset.x = 0;
-                    positionOffset.y = 0;
+                    positionOffset.y = portLayout.getHeight() / 2d;
                     break;
                 case SOUTH:
-                    positionOffset.x = 0;
+                    positionOffset.x = portLayout.getWidth() / 2d;
                     positionOffset.y = 0;
                     break;
                 case WEST:
                     positionOffset.x = portLayout.getWidth();
-                    positionOffset.y = 0;
+                    positionOffset.y = portLayout.getHeight() / 2d;
                     break;
                 default:
                     // we dont care
                 }
 
+                // assign the new side of the port
                 portLayout.setProperty(LayoutOptions.PORT_SIDE, intersection.getSecond());
 
-                // ports are relative to the parent in KGraph
-                portLayout.setXpos((float) (relativePos.x + offset.x - positionOffset.x));
-                portLayout.setYpos((float) (relativePos.y + offset.y - positionOffset.y));
+                // determine the new position, relative to the parent node
+                KVector clusterPos = new KVector(bounds.getMinX(), bounds.getMinY());
+                KVector newPos = new KVector();
+                newPos.add(intersection.getFirst()) // intersection point
+                        .sub(clusterPos) // relative to the cluster
+                        .sub(positionOffset); // proper port position
+
+                portLayout.applyVector(newPos);
             }
         }
 
     }
 }
+
