@@ -146,6 +146,8 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
         // the edge is connected
         generateEdgeOffsets();
         
+        // FIXME adaptagrams - atm still have to compute the bounding rects of clusters
+        graph.rootCluster.computeBoundingRect(graph.nodes);
         
         aca.outputInstanceToSVG("aca_original_the_one_before");
 
@@ -162,6 +164,8 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
         aca.outputInstanceToSVG("aca_original_the_one");
 
         // aca.getFDLayout().outputInstanceToSVG("aca_post_alignment");
+        // FIXME adaptagrams - atm still have to compute the bounding rects of clusters
+        graph.rootCluster.computeBoundingRect(graph.nodes);
 
         // apply the layout back
         importer.applyLayout(graph);

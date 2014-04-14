@@ -83,17 +83,8 @@ public class CPort extends CShape {
         boolean considerPreviousPositions =
                 graph.getProperty(ColaProperties.CONSIDER_PREVIOUS_POSITION);
         if (considerPreviousPositions) {
-
-            xPos += this.getPos().x;
-            yPos += this.getPos().y;
-
-            // if the port has an owner, ie it is no external port
-            if (owner != null) {
-                // offset by the owner's position to turn it into an absolut position
-                xPos += owner.getPos().x;
-                yPos += owner.getPos().y;
-
-            }
+            xPos = this.getPos().x;
+            yPos = this.getPos().y;
         }
 
         // create the adaptagrams rectangle

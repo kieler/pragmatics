@@ -63,6 +63,8 @@ public abstract class CShape extends CGraphElement {
      * Note that this position might diverge from the position of {@link #getRectPos()}. This position is
      * mainly used <emph>before</emph> any layout algorithm is applied.
      * 
+     * Opposed to KGraph, adaptagram positions are absolute. 
+     * 
      * @return the current position of this element.
      * @see #getRectPos()
      */

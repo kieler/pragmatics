@@ -153,8 +153,9 @@ public class PortConstraintProcessor implements ILayoutProcessor {
         case WEST:
         case EAST: {
             // fix x coordinate
+            double relX = p.getPos().x - n.getPos().x;
             SeparationConstraint scX =
-                    new SeparationConstraint(Dim.XDIM, n.cIndex, p.cIndex, p.getPos().x
+                    new SeparationConstraint(Dim.XDIM, n.cIndex, p.cIndex, relX 
                             - portOffset.x, true);
             graph.constraints.add(scX);
 
@@ -174,8 +175,9 @@ public class PortConstraintProcessor implements ILayoutProcessor {
         case NORTH:
         case SOUTH: {
             // fix y coordinate
+            double relY = p.getPos().y - n.getPos().y;
             SeparationConstraint scY =
-                    new SeparationConstraint(Dim.YDIM, n.cIndex, p.cIndex, p.getPos().y
+                    new SeparationConstraint(Dim.YDIM, n.cIndex, p.cIndex, relY
                             - portOffset.y, true);
             graph.constraints.add(scY);
 
@@ -202,8 +204,9 @@ public class PortConstraintProcessor implements ILayoutProcessor {
         switch (p.side) {
         case WEST: {
             // fix the port on the left side of the node
+            double relX = p.getPos().x - n.getPos().x;
             SeparationConstraint scX =
-                    new SeparationConstraint(Dim.XDIM, n.cIndex, p.cIndex, p.getPos().x
+                    new SeparationConstraint(Dim.XDIM, n.cIndex, p.cIndex, relX
                             - portOffset.x, true);
             graph.constraints.add(scX);
 
@@ -228,8 +231,9 @@ public class PortConstraintProcessor implements ILayoutProcessor {
 
         case EAST: {
             // fix the ports on the right side of the node
+            double relX = p.getPos().x - n.getPos().x;
             SeparationConstraint scX =
-                    new SeparationConstraint(Dim.XDIM, n.cIndex, p.cIndex, p.getPos().x
+                    new SeparationConstraint(Dim.XDIM, n.cIndex, p.cIndex, relX
                             - portOffset.x, true);
             graph.constraints.add(scX);
 
@@ -253,8 +257,9 @@ public class PortConstraintProcessor implements ILayoutProcessor {
 
         case SOUTH: {
             // fix the ports on the bottom side of the node
+            double relY = p.getPos().y - n.getPos().y;
             SeparationConstraint scY =
-                    new SeparationConstraint(Dim.YDIM, n.cIndex, p.cIndex, p.getPos().y
+                    new SeparationConstraint(Dim.YDIM, n.cIndex, p.cIndex, relY
                             - portOffset.y, true);
             graph.constraints.add(scY);
 
@@ -275,8 +280,9 @@ public class PortConstraintProcessor implements ILayoutProcessor {
 
         case NORTH: {
             // fix the ports on the top side of the node
+            double relY = p.getPos().y - n.getPos().y;
             SeparationConstraint scY =
-                    new SeparationConstraint(Dim.YDIM, n.cIndex, p.cIndex, p.getPos().y
+                    new SeparationConstraint(Dim.YDIM, n.cIndex, p.cIndex, relY
                             - portOffset.y, true);
             graph.constraints.add(scY);
 
@@ -338,15 +344,15 @@ public class PortConstraintProcessor implements ILayoutProcessor {
 
     private void generateFixedPosConstraints(final CPort p, final CNode n,
             final KVector portOffset, final KVector marginCenter) {
-
-        double gx = p.getPos().x - portOffset.x;
+ 
+        double gx = p.getPos().x - n.getPos().x - portOffset.x;
         SeparationConstraint scX =
                 new SeparationConstraint(Dim.XDIM, n.cIndex, p.cIndex, gx,
                         true);
         graph.constraints.add(scX);
         
 
-        double gy = p.getPos().y - portOffset.y;
+        double gy = p.getPos().y - n.getPos().y - portOffset.y;
         SeparationConstraint scY =
                 new SeparationConstraint(Dim.YDIM, n.cIndex, p.cIndex, gy,
                         true);
@@ -354,7 +360,9 @@ public class PortConstraintProcessor implements ILayoutProcessor {
         System.out.println(scY);
         
         // calculate the fixed distance of the dummy to the center
-        KVector portPos = new KVector(p.getPos().x - portOffset.x, p.getPos().y - portOffset.y);
+        KVector portPos =
+                new KVector(p.getPos().x - n.getPos().x - portOffset.x, p.getPos().y - n.getPos().y
+                        - portOffset.y);
         p.idealDummyEdgeLength = KVector.distance(marginCenter, portPos);
     }
 

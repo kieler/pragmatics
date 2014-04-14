@@ -109,7 +109,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode> {
                 // create an adaptagrams node
                 CNode cnode = new CNode(graph);
                 // dimensions
-                ColaUtil.setPosAndSize(cnode, node.getData(KShapeLayout.class));
+                ColaUtil.setPosAndSizeAbsolute(cnode, node, node.getParent());
                 // properties
                 cnode.copyProperties(node.getData(KLayoutData.class));
                 cnode.setProperty(InternalColaProperties.ORIGIN, node);
@@ -129,7 +129,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode> {
                     // create ports
                     for (KPort p : node.getPorts()) {
                         CPort port = new CPort(graph, cnode);
-                        ColaUtil.setPosAndSize(port, p.getData(KShapeLayout.class));
+                        ColaUtil.setPosAndSizeAbsolute(port, p, p.getNode());
                         port.copyProperties(p.getData(KLayoutData.class));
                         port.setProperty(InternalColaProperties.ORIGIN, p);
                         portMap.put(p, port);
@@ -159,6 +159,11 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode> {
             } else {
                 // this is a compound node, create a cluster for it
                 Cluster compoundCluster = new RectangularCluster();
+                KShapeLayout compoundLayout = node.getData(KShapeLayout.class);
+                KVector absolute = KimlUtil.toAbsolute(compoundLayout.createVector(), parentNode);
+                compoundCluster.setBounds(new Rectangle(absolute.x, absolute.x
+                        + compoundLayout.getWidth(), absolute.y, absolute.y
+                        + compoundLayout.getHeight()));
 
                 // the top level nodes are not cumulated within a cluster
                 if (parentCluster == null) {
@@ -309,8 +314,8 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode> {
 
             // if the node is contained in a cluster we have to offset it
             KVector relative = relativeToCluster(n, offset);
-            layout.setXpos((float) relative.x );
-            layout.setYpos((float) relative.y );
+            layout.setXpos((float) relative.x);
+            layout.setYpos((float) relative.y);
 
             // ports
             for (CPort p : n.getPorts()) {

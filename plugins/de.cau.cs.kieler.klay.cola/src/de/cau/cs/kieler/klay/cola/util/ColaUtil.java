@@ -16,12 +16,15 @@ package de.cau.cs.kieler.klay.cola.util;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 
+import de.cau.cs.kieler.core.kgraph.KGraphElement;
+import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 import de.cau.cs.kieler.klay.cola.graph.CShape;
 
@@ -60,6 +63,29 @@ public final class ColaUtil {
         c.getMargins().right = margins.right;
         c.getMargins().top = margins.top;
         c.getMargins().bottom = margins.bottom;
+    }
+    
+    /**
+     * Copies the position and size information from {@code e} to {@code c}. Additionally, converts
+     * e's relative position into an absolute position.
+     * 
+     * @param c
+     *            the shape for which to set position and size
+     * @param e
+     *            the element holding the original information.
+     * @param parent
+     *            the parent node that is used to calculate the absolute position.
+     */
+    public static void setPosAndSizeAbsolute(final CShape c, final KGraphElement e,
+            final KNode parent) {
+
+        KShapeLayout layout = e.getData(KShapeLayout.class);
+        setPosAndSize(c, layout);
+
+        // convert to absolute position by adding parent's absolute position
+        KVector absolute = KimlUtil.toAbsolute(layout.createVector(), parent);
+        c.getPos().x = absolute.x;
+        c.getPos().y = absolute.y;
     }
 
     /**
