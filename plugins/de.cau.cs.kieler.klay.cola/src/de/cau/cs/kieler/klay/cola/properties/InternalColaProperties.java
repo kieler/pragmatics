@@ -18,6 +18,7 @@ import java.util.List;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 
@@ -33,14 +34,20 @@ public final class InternalColaProperties {
     /**
      * The original object from which a graph element was created.
      */
-    public static final IProperty<KGraphElement> ORIGIN = new Property<KGraphElement>(
-            "kgraph.origin");
+    public static final IProperty<KGraphElement> ORIGIN =
+            new Property<KGraphElement>("cola.origin");
 
     /**
      * The original object from which a graph element was created.
      */
     public static final IProperty<List<KEdge>> EDGE_CHAIN = new Property<List<KEdge>>(
-            "kgraph.edgeChain", new LinkedList<KEdge>());
+            "cola.edgeChain", new LinkedList<KEdge>());
+
+    /**
+     * Positions of ports that represent hierarchy transitions on hierarchy-crossing edges.
+     */
+    public static final IProperty<List<KVector>> EDGE_CHECKPOINTS = new Property<List<KVector>>(
+            "cola.checkpoints", new LinkedList<KVector>());
 
     /**
      * Utility class.

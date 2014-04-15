@@ -37,6 +37,9 @@ import org.adaptagrams.adaptagrams
 import org.adaptagrams.ConnDirFlag
 import org.adaptagrams.RouterFlag
 import org.adaptagrams.RoutingParameter
+import de.cau.cs.kieler.klay.cola.properties.InternalColaProperties
+import org.adaptagrams.Checkpoint
+import org.adaptagrams.AvoidCheckpoints
 
 /**
  * TODO document
@@ -54,7 +57,9 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
                         RouterFlag.OrthogonalRouting else RouterFlag.PolyLineRouting
     val router = new Router(edgeRouting)
     
-    router.setRoutingParameter(RoutingParameter.shapeBufferDistance, 2)
+    router.setRoutingParameter(RoutingParameter.shapeBufferDistance, 5)
+    router.setRoutingParameter(RoutingParameter.crossingPenalty, 1000)
+    router.setRoutingParameter(RoutingParameter.clusterCrossingPenalty, 10000 )
     
     // transform all the nodes
     for (node : graph.children) {
@@ -106,6 +111,7 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
 
     // determine the pin's positions relative on the respective side
     val relativePortPos = port.rectPosRaw.differenceCreate(port.owner.rectPosRaw)
+    relativePortPos.add(port.rectSizeRaw.scale(0.5))
     val relX = relativePortPos.x / width
     val relY = relativePortPos.y / height
     
@@ -150,6 +156,18 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
     connRef.setRoutingType(
       if (edgeRouting == EdgeRouting.ORTHOGONAL) ConnType.ConnType_Orthogonal else ConnType.ConnType_PolyLine)
 
+
+
+    // for hierarchical edges we have to add checkpoints
+    if (edge.crossHierarchy) {
+      val ports = edge.getProperty(InternalColaProperties.EDGE_CHECKPOINTS) 
+      val checkpoints = new AvoidCheckpoints
+      for (port : ports.take(Math.max(0, ports.size - 1))) {
+        val cp = new Checkpoint(new Point(port.x, port.y))
+        checkpoints.add(cp)
+      }
+      connRef.setRoutingCheckpoints(checkpoints)
+    }
   }
   
 
@@ -182,7 +200,11 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
         
         edge.bendpoints.add(pts.get(i).toKVector.add(offset))
       }
-    }
+      
+      
+      // apply checkpoints back
+      //route.
+      }
     
   }
   

@@ -240,8 +240,13 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
         // if the target is a hierarchical port, follow that port!
         if (edge.getTargetPort() != null) {
 
-            // and add the ports position to a list of "checkpoints"
-            checkpoints.add(edge.getTargetPort().getData(KShapeLayout.class).createVector());
+            // and add the port's position to a list of "checkpoints"
+            KShapeLayout portLayout = edge.getTargetPort().getData(KShapeLayout.class);
+            KVector cp = portLayout.createVector();
+            cp.translate(portLayout.getWidth() / 2f, portLayout.getHeight() / 2f);
+            // convert it to a global position
+            cp = KimlUtil.toAbsolute(cp, edge.getTarget());
+            checkpoints.add(cp);
             
             for (KEdge portEdge : getOutgoingEdges(edge.getTargetPort())) {
                 // make sure to copy the list, as we might follow multiple edges

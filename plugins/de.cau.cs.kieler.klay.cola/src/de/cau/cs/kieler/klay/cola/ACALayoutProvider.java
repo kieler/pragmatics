@@ -151,11 +151,13 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
         
         aca.outputInstanceToSVG("aca_original_the_one_before");
 
+        aca.removeOverlaps();
+        
         // execute ACA
         if (debug) {
             int i = 0;
             while (aca.createOneAlignment()) {
-                aca.getFDLayout().outputInstanceToSVG("aca_output_" + (i++));
+                aca.outputInstanceToSVG("aca_output_" + (i++));
             }
         } else {
             aca.createAlignments();
@@ -213,7 +215,7 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
             System.out.println("edge " + edge);
             if (edge == null) {
                 // edges to dummy ports, no alignment for them
-                struct.addFlag(ACASepFlag.ACANOSEP);
+                struct.addFlag(ACASepFlag.ACAEAST);
             } else {
 
                 // TODO properly here
@@ -234,7 +236,7 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
         // position of a possible src/tgt port relative to the node's center
         ACAEdgeOffsets edgeOffsets = new ACAEdgeOffsets(graph.edges.size());
         for (CNode n : graph.getChildren()) {
-            for (CEdge e : n.getOutgoingEdges()) {
+            for (CEdge e : n.getOutgoingEdges()) { 
                 KEdge kedge = (KEdge) e.getProperty(InternalColaProperties.ORIGIN);
                 KPort srcPort = kedge.getSourcePort();
                 KPort tgtPort = kedge.getTargetPort();
@@ -273,12 +275,34 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
         // all edges connected to external ports
         for (CPort p : graph.getExternalPorts()) {
             for (CEdge e : p.getConnectedEdges()) {
-                bools.set(e.cIndex, true);
+                // TODO do we wanna ignore these?
+                // bools.set(e.cIndex, true);
+            }
+        }
+        
+        for (CNode n : graph.getChildren()) {
+            for (CEdge e : n.getOutgoingEdges()) {
+                if (e.crossHierarchy) {
+                    bools.set(e.cIndex, true);
+                }
             }
         }
         
         // configure aca
         aca.ignoreEdges(bools);
+        
+        
+        Bools boolNodes = new Bools(graph.getLastNodeIndex());
+        for (int i = 0; i < boolNodes.size(); ++i) {
+            boolNodes.set(i, false);
+        }
+        // also ignore all dummy port nodes
+        for (CNode node : graph.getChildren()) {
+            for (CPort p : node.getPorts()) {
+                boolNodes.set(p.cIndex, true);
+            }
+        }
+        aca.ignoreNodesForOPWithOffets(boolNodes);
     }
     
     private void generatePortNodeMapping() {

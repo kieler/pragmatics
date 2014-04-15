@@ -39,6 +39,8 @@ public class LibavoidLayoutProvider extends AbstractLayoutProvider {
     public void doLayout(final KNode parentNode, final IKielerProgressMonitor progressMonitor) {
      
         KGraphAdapter adapter = KGraphAdapters.adapt(parentNode);
+        KimlNodeDimensionCalculation.sortPortLists(adapter);
+        KimlNodeDimensionCalculation.calculateLabelAndNodeSizes(adapter);
         KimlNodeDimensionCalculation.getNodeMarginCalculator(adapter).process();
         
         // importing

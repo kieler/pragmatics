@@ -114,6 +114,8 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
             for (KPort p : n.getPorts()) {
                 CPort port = new CPort(graph, cnode);
                 ColaUtil.setPosAndSize(port, p.getData(KShapeLayout.class));
+                // port position is absolute on this hierarchical level
+                port.getPos().add(cnode.getPos());
                 port.copyProperties(p.getData(KLayoutData.class));
                 port.setProperty(InternalColaProperties.ORIGIN, p);
                 kportMap.put(p, port);
