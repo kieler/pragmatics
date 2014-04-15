@@ -44,7 +44,7 @@ import de.cau.cs.kieler.klay.cola.util.ColaUtil;
  * 
  * @author uru
  */
-public class KGraphImporter implements IGraphImporter<KNode> {
+public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
 
     /*
      * Internal mappings of KGraph elements to Adaptagram elements

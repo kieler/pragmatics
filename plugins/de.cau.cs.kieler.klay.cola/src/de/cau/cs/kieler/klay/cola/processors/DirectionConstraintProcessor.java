@@ -121,6 +121,11 @@ public class DirectionConstraintProcessor implements ILayoutProcessor {
                 // for every node with incoming edges, find the widest of the incoming edges
                 double maxWidth = Double.MIN_VALUE;
                 for (CEdge e : n.getIncomingEdges()) {
+                    
+                    if (excludeEdge(e)) {
+                        continue;
+                    }
+                    
                     KVector size = e.getSource().getRectSizeRaw();
                     if (maxWidth < size.x) {
                         maxWidth = size.x;

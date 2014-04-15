@@ -105,7 +105,7 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
         calculateMarginsAndSizes(parentNode);
 
         // execute layout algorithm
-        IGraphImporter<KNode> importer;
+        IGraphImporter<KNode, CGraph> importer;
         if (layoutHierarchy) {
             importer = new HierarchicalKGraphImporter();
         } else {

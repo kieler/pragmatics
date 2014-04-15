@@ -84,10 +84,10 @@ public class CNode extends CShape {
         // assure that the size is at least 1
         if (considerPreviousPositions) {
             rect =
-                    new Rectangle(getPos().x - margin.left, Math.max(1,
-                            0 + getPos().x + this.getSize().x + margin.right), getPos().y
-                            - margin.top, Math.max(1, 0 + getPos().y + this.getSize().y
-                            + margin.bottom));
+                    new Rectangle(getPos().x - margin.left, 
+                            Math.max(1, getPos().x + this.getSize().x + margin.right), 
+                            getPos().y - margin.top, 
+                            Math.max(1, getPos().y + this.getSize().y + margin.bottom));
         } else {
             // position them at 0,0
             rect =

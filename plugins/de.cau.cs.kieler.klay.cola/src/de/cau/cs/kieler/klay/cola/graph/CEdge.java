@@ -13,7 +13,11 @@
  */
 package de.cau.cs.kieler.klay.cola.graph;
 
+import java.util.List;
+
 import org.adaptagrams.ColaEdge;
+
+import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.klay.cola.properties.InternalColaProperties;
@@ -37,6 +41,8 @@ public class CEdge extends CGraphElement {
     public ColaEdge edge;
 
     public boolean crossHierarchy = false;
+    
+    public List<KVector> bendpoints = Lists.newLinkedList();
     
     /**
      * 

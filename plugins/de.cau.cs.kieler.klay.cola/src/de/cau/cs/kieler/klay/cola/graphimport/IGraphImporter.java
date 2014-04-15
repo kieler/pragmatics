@@ -13,18 +13,18 @@
  */
 package de.cau.cs.kieler.klay.cola.graphimport;
 
-import de.cau.cs.kieler.klay.cola.graph.CGraph;
 
 /**
  * Interface for importer classes for the constrained graph structure.
  * 
- * 
+ * @param <S> 
+ *      the type of graph that this importer can transform into a graph of type T.
  * @param <T>
- *            the type of graph that this importer can transform into a layered graph.
+ *      the type of graph that this importer outputs.
  * 
  * @author uru
  */
-public interface IGraphImporter<T> {
+public interface IGraphImporter<S, T> {
 
     /**
      * Create a constrained graph from the given graph.
@@ -33,7 +33,7 @@ public interface IGraphImporter<T> {
      *            the graph to turn into a constrained graph.
      * @return a constrained graph, or {@code null} if the input was not recognized
      */
-    CGraph importGraph(T graph);
+    T importGraph(S graph);
 
     /**
      * Apply the computed layout of the given constrained graph to the original input graph.
@@ -42,6 +42,6 @@ public interface IGraphImporter<T> {
      * @param constrainedGraph
      *            a graph for which layout is applied
      */
-    void applyLayout(CGraph constrainedGraph);
+    void applyLayout(T constrainedGraph);
 
 }

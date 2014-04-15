@@ -190,5 +190,25 @@
                feature="PORTS">
          </supportedFeature>
       </layoutAlgorithm>
+      <layoutAlgorithm
+            class="de.cau.cs.kieler.klay.cola.LibavoidLayoutProvider"
+            id="de.cau.cs.kieler.klay.cola.libavoid"
+            name="New Libavoid Layout">
+         <supportedFeature
+               feature="COMPOUND">
+         </supportedFeature>
+         <supportedFeature
+               feature="CLUSTERS">
+         </supportedFeature>
+         <supportedFeature
+               feature="PORTS">
+         </supportedFeature>
+         <knownOption
+               option="de.cau.cs.kieler.layoutHierarchy">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.cola.considerPreviousPositions">
+         </knownOption>
+      </layoutAlgorithm>
    </extension>
 </plugin>

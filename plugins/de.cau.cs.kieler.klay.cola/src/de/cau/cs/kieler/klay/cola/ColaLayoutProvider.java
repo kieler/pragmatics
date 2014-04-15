@@ -94,7 +94,7 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         calculateMarginsAndSizes(parentNode);
 
         // execute layout algorithm
-        IGraphImporter<KNode> importer;
+        IGraphImporter<KNode, CGraph> importer;
         if (!rootLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {
             importer = new KGraphImporter();
         } else {
