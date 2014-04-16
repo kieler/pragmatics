@@ -168,9 +168,7 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
                 srcPort.getOutgoingEdges().add(edge);
             }
             tgtNode.getIncomingEdges().add(edge);
-            if (tgtPort != null) {
-                tgtPort.getIncomingEdges().add(edge);
-            }
+            
         } else {
             // add to the list of external edges of the node that is on this graph layer,
             // ie not the parent
@@ -178,6 +176,15 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
                 srcNode.getExternalEdges().add(edge);
             } else {
                 tgtNode.getExternalEdges().add(edge);
+            }
+            
+            // external edges wanna know their connected edges as well
+            if (tgtPort != null) {
+                tgtPort.getIncomingEdges().add(edge);
+            }
+            
+            if (srcPort != null) {
+                srcPort.getOutgoingEdges().add(edge);
             }
         }
     }

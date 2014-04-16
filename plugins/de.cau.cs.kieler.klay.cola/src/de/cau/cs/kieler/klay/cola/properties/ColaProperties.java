@@ -63,7 +63,7 @@ public final class ColaProperties {
      * move along the outside of the node.
      */
     public static final IProperty<Integer> PORT_DUMMY_BREATHE = new Property<Integer>(
-            "de.cau.cs.kieler.klay.cola.portDummyBreathe", 3);
+            "de.cau.cs.kieler.klay.cola.portDummyBreathe", 1);
 
     /**
      * Whether to consider previous node positions.

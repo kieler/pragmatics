@@ -52,6 +52,7 @@ import de.cau.cs.kieler.klay.cola.processors.DirectionConstraintProcessor;
 import de.cau.cs.kieler.klay.cola.processors.NonUniformEdgeLengthProcessor;
 import de.cau.cs.kieler.klay.cola.processors.PortConstraintProcessor;
 import de.cau.cs.kieler.klay.cola.properties.InternalColaProperties;
+import de.cau.cs.kieler.klay.cola.util.ACADebugTestConvergence;
 import de.cau.cs.kieler.klay.cola.util.DebugTestConvergence;
 
 /**
@@ -85,7 +86,7 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
 
         if (debug) {
             // Internal convergence test that outputs debug information.
-            testConvergence = new DebugTestConvergence("aca");
+            testConvergence = new ACADebugTestConvergence("aca");
 
             // store hierarchical debug output separately
             debugPrefix = "";
@@ -121,9 +122,15 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
 
         // assemble ACA object
         aca = new ACALayout(graph.nodes, graph.edges, graph.constraints, 1, true,
-                        graph.getIdealEdgeLengths());
+                        graph.getIdealEdgeLengths(), testConvergence);
         aca.setClusterHierarchy(graph.rootCluster);
 
+        if (debug) {
+            ACADebugTestConvergence debugConvergence = (ACADebugTestConvergence) testConvergence;
+            debugConvergence.setLayouter(aca);
+            debugConvergence.setNamePrefix(debugPrefix + (true ? "overlap" : "non_overlap"));
+        }
+        
         // if (debug) {
         // DebugTestConvergence debugConvergence = (DebugTestConvergence) testConvergence;
         // debugConvergence.setLayouter(aca.getFDLayout());
@@ -175,26 +182,6 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
         progressMonitor.done();
     }
 
-    /**
-     * Calculates the offset of the passed port relative to the parent.
-     * 
-     * FIXME .. generically
-     * Note, to do this we require FIXED_POS ports!
-     */
-    private double calculatePortOffset(final CNode n, final KPort p) {
-
-        Margins margins = n.getMargins();
-        double nodeHeight = n.getRectSizeRaw().y;
-
-        // TODO not sure about the validity of selecting the port's pos and size
-        KShapeLayout portLayout = p.getData(KShapeLayout.class);
-        double dy =
-                -(nodeHeight / 2f) + margins.top + portLayout.getYpos()
-                        + (portLayout.getHeight() / 2);
-
-        return dy;
-    }
-    
     private void generateAllowedSeparations() {
         // add flags that restrict edges to being aligned horizontally
         ACASepFlagsStruct struct = new ACASepFlagsStruct();
@@ -208,7 +195,9 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
             }
         }
         for (CPort p : graph.getExternalPorts()) {
-            
+            for (CEdge e : p.getConnectedEdges()) {
+                edges.set(e.cIndex, e);
+            }
         }
         for (int i = 0; i < graph.edges.size(); ++i) {
             CEdge edge = edges.get(i);
@@ -218,8 +207,13 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
                 struct.addFlag(ACASepFlag.ACAEAST);
             } else {
 
+                if(edge.getTargetPort() != null && edge.getTargetPort().isExternal()
+                        || edge.getSourcePort() != null && edge.getSourcePort().isExternal()) {
+                    struct.addFlag(ACASepFlag.ACAEASTWEST);
+                }
+                
                 // TODO properly here
-                if ((edge.getSourcePort() != null && edge.getTargetPort() != null)
+                else if ((edge.getSourcePort() != null && edge.getTargetPort() != null)
                         && (edge.getSourcePort().side != PortSide.EAST 
                         || edge.getTargetPort().side != PortSide.WEST)) {
                     struct.addFlag(ACASepFlag.ACANOSEP);
@@ -254,9 +248,53 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
             }
         }
         
+        // add the external thingys
+        for (CPort p : graph.getExternalPorts()) {
+            for (CEdge e : p.getConnectedEdges()) {
+                
+                KEdge kedge = (KEdge) e.getProperty(InternalColaProperties.ORIGIN);
+                KPort srcPort = kedge.getSourcePort();
+                KPort tgtPort = kedge.getTargetPort();
+                
+                // calculate the offset for this edge
+                DoublePair st = new DoublePair(0, 0);
+                if (e.getSource() != null) {
+                    st.setFirst(-calculatePortOffset(e.getSource(), srcPort));
+                }
+                if (e.getTarget() != null) {
+                    st.setSecond(-calculatePortOffset(e.getTarget(), tgtPort));
+                }
+                System.out.println("adding offset for external port " + st);
+                edgeOffsets.set(e.cIndex, st);
+            }
+        }
+        
+        System.out.println("edge offsets"  +edgeOffsets);
+        
         aca.overlapPrevention(ACAOverlapPrevention.ACAOPWITHOFFSETS);
         aca.setAlignmentOffsetsForCompassDirection(ACASepFlag.ACAEAST, edgeOffsets);
     }
+    
+    /**
+     * Calculates the offset of the passed port relative to the parent.
+     * 
+     * FIXME .. generically
+     * Note, to do this we require FIXED_POS ports!
+     */
+    private double calculatePortOffset(final CNode n, final KPort p) {
+
+        Margins margins = n.getMargins();
+        double nodeHeight = n.getRectSizeRaw().y;
+
+        // TODO not sure about the validity of selecting the port's pos and size
+        KShapeLayout portLayout = p.getData(KShapeLayout.class);
+        double dy =
+                -(nodeHeight / 2f) + margins.top + portLayout.getYpos()
+                        + (portLayout.getHeight() / 2);
+
+        return dy;
+    }
+    
 
     private void generateIgnoredEdges() {
         // we have to tell aca to ignore edges from dummy port nodes to their parents
@@ -292,6 +330,7 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
         aca.ignoreEdges(bools);
         
         
+        // ignore port dummies when determining overlaps in aca
         Bools boolNodes = new Bools(graph.getLastNodeIndex());
         for (int i = 0; i < boolNodes.size(); ++i) {
             boolNodes.set(i, false);
@@ -320,8 +359,8 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
         KimlNodeDimensionCalculation.sortPortLists(adapter);
         KimlNodeDimensionCalculation.calculateLabelAndNodeSizes(adapter);
 
-        // KimlNodeDimensionCalculation.getNodeMarginCalculator(adapter).excludePorts().process();
-        KimlNodeDimensionCalculation.getNodeMarginCalculator(adapter).process();
+        KimlNodeDimensionCalculation.getNodeMarginCalculator(adapter).excludePorts().process();
+        //KimlNodeDimensionCalculation.getNodeMarginCalculator(adapter).process();
 
         if (parent.getData(KLayoutData.class).getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {
             for (KNode child : parent.getChildren()) {

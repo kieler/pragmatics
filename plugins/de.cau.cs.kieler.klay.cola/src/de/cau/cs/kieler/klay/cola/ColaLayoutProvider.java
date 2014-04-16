@@ -24,10 +24,12 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters;
 import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters.KGraphAdapter;
 import de.cau.cs.kieler.kiml.util.nodespacing.KimlNodeDimensionCalculation;
+import de.cau.cs.kieler.kiml.util.nodespacing.NodeMarginCalculator;
 import de.cau.cs.kieler.klay.cola.graph.CGraph;
 import de.cau.cs.kieler.klay.cola.graphimport.HierarchicalKGraphImporter;
 import de.cau.cs.kieler.klay.cola.graphimport.IGraphImporter;
@@ -35,6 +37,7 @@ import de.cau.cs.kieler.klay.cola.graphimport.KGraphImporter;
 import de.cau.cs.kieler.klay.cola.processors.DirectionConstraintProcessor;
 import de.cau.cs.kieler.klay.cola.processors.NonUniformEdgeLengthProcessor;
 import de.cau.cs.kieler.klay.cola.processors.PortConstraintProcessor;
+import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
 import de.cau.cs.kieler.klay.cola.util.DebugTestConvergence;
 
 /**
@@ -137,7 +140,7 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         layouters.clear();
     }
 
-    private void runLayout(final boolean overlap) {
+    private ConstrainedFDLayout runLayout(final boolean overlap) {
 
         // create a new layouter instance
         ConstrainedFDLayout algo =
@@ -161,13 +164,19 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         algo.makeFeasible();
 
         algo.run();
+        
+        return algo;
     }
 
     private void calculateMarginsAndSizes(final KNode parent) {
         KGraphAdapter adapter = KGraphAdapters.adapt(parent);
         KimlNodeDimensionCalculation.sortPortLists(adapter);
         KimlNodeDimensionCalculation.calculateLabelAndNodeSizes(adapter);
-        KimlNodeDimensionCalculation.getNodeMarginCalculator(adapter).process();
+        NodeMarginCalculator mc = KimlNodeDimensionCalculation.getNodeMarginCalculator(adapter);
+        if (parent.getData(KShapeLayout.class).getProperty(ColaProperties.PORT_DUMMIES)) {
+            mc.excludePorts();
+        }
+        mc.process();
 
         if (parent.getData(KLayoutData.class).getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {
             for (KNode child : parent.getChildren()) {
