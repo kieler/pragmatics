@@ -26,27 +26,49 @@ import de.cau.cs.kieler.klay.cola.graph.CPort;
 import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
 
 /**
+ * This class generates {@link SeparationConstraint} between ports and their parents to 
+ * regard {@link PortConstraints}. Based on the restrictiveness of the {@link PortConstraints} 
+ * different separation constraints are created.
+ * 
+ * <p>
+ * <dl>
+ *  <dt>{@link PortConstraints#FIXED_POS}</dt>
+ *  <dd>
+ *      For every port exactly two equality constraints are created (one for each dimension),
+ *      fixing the port exactly at the desired position relative to its parent node.
+ *  </dd>
+ *  <dt>{@link PortConstraints#FIXED_SIDE}</dt>
+ *  <dd>
+ *      For every port three constraints are generated. One that fixes to port on the specific 
+ *      side, e.g. for a WEST port, one equality constraint is created in the XDIM fixing
+ *      its x-coordinate and two inequality constraints are created in the YDIM bounding
+ *      the ports y-coordinate to the parent node's height. 
+ *  </dd> 
+ *  <dt>...</dt>
+ * </dl>
+ * </p>
  * 
  * Precondition: for fixed order we require the port lists to be sorted.
  * 
- * TODO ideal edge lengths for non fixed pos?
- * 
- * TODO FREE and FIXED_RATIO
+ * FIXME 
+ * Known problems:
+ *  - Implement FREE, FIXED_RATIO, FIXED_ORDER 
  * 
  * @author uru
  */
 public class PortConstraintProcessor implements ILayoutProcessor {
 
+    /** The current {@link CGraph}. */
     private CGraph graph;
 
     /*
      * Following variables are used internally when generating FIXED_ORDER constraints
      */
-    private CPort lastWestPort = null;
-    private CPort lastNorthPort = null;
-    private CPort lastEastPort = null;
-    private CPort lastSouthPort = null;
-
+    // private CPort lastWestPort = null;
+    // private CPort lastNorthPort = null;
+    // private CPort lastEastPort = null;
+    // private CPort lastSouthPort = null;
+    
     /**
      * {@inheritDoc}
      */
@@ -58,10 +80,8 @@ public class PortConstraintProcessor implements ILayoutProcessor {
         // handle the ports of every node
         for (CNode n : graph.getChildren()) {
 
-            // Note, ports are in the node's coordinate system
-            
             PortConstraints portConstraints = n.getProperty(LayoutOptions.PORT_CONSTRAINTS);
-
+            
             // determine the center of the node
             KVector origCenter = new KVector(n.getSize().x / 2f, n.getSize().y / 2f);
             // determine the center when considering margins of the node
@@ -73,10 +93,10 @@ public class PortConstraintProcessor implements ILayoutProcessor {
             KVector diff = KVector.diff(origCenter, marginCenter);
 
             // reset the internal markers for fixed order constraints
-            lastWestPort = null;
-            lastNorthPort = null;
-            lastEastPort = null;
-            lastSouthPort = null;
+            // lastWestPort = null;
+            // lastNorthPort = null;
+            // lastEastPort = null;
+            // lastSouthPort = null;
 
             // handle every port
             for (CPort p : n.getPorts()) {
@@ -107,8 +127,7 @@ public class PortConstraintProcessor implements ILayoutProcessor {
                 switch (portConstraints) {
 
                 case FREE:
-                    // TODO
-                    break;
+                    throw new UnsupportedOperationException("FREE ports are unsupported");
 
                 case FIXED_SIDE:
                     generateFixedSideConstraints(p, n, portOffset);
@@ -116,39 +135,70 @@ public class PortConstraintProcessor implements ILayoutProcessor {
 
                 case FIXED_ORDER:
                     // we require the list of ports to be sorted
-                    generateFixedOrderConstraints(p, n, portOffset);
-                    break;
+                    throw new UnsupportedOperationException("FIXED_ORDER ports are unsupported");
+                    // generateFixedOrderConstraints(p, n, portOffset);
+                    // break;
 
                 case FIXED_RATIO:
-                    // TODO
-                    break;
+                    throw new UnsupportedOperationException("FIXED_RATIO ports are unsupported");
+                    // break;
 
                 case FIXED_POS:
                     generateFixedPosConstraints(p, n, portOffset, marginCenter);
                     break;
 
                 default:
-                    // TODO undefined?!
-                    System.err.println("Oh noooooo!!");
-                    // shouldn't happen
+                    throw new UnsupportedOperationException("Unsupported port constraints "
+                            + portConstraints);
                 }
 
             }
 
             // if fixed order we have to bound the port positions to the "other" side of each node
-            if (portConstraints == PortConstraints.FIXED_ORDER) {
-                postprocessFixedOrderConstraints(n);
-            }
+            // if (portConstraints == PortConstraints.FIXED_ORDER) {
+            // postprocessFixedOrderConstraints(n);
+            // }
 
         }
 
         progressMonitor.done();
     }
-
-    // CHECKSTYLEOFF AvoidNestedBlocks
-
+    
+    /**
+     * {@link PortConstraints#FIXED_POS}.
+     */
+    private void generateFixedPosConstraints(final CPort p, final CNode n,
+            final KVector portOffset, final KVector marginCenter) {
+ 
+        // fix X coordinate
+        double gx = p.getPos().x - n.getPos().x - portOffset.x;
+        SeparationConstraint scX =
+                new SeparationConstraint(Dim.XDIM, n.cIndex, p.cIndex, 
+                        gx, true);
+        graph.constraints.add(scX);
+        
+        // fix y coordinate
+        double gy = p.getPos().y - n.getPos().y - portOffset.y;
+        SeparationConstraint scY =
+                new SeparationConstraint(Dim.YDIM, n.cIndex, p.cIndex, 
+                        gy, true);
+        graph.constraints.add(scY);
+        
+        // calculate the fixed distance of the dummy to the center
+        // KVector portPos =
+        // new KVector(p.getPos().x - n.getPos().x - portOffset.x, p.getPos().y - n.getPos().y
+        // - portOffset.y);
+        // p.idealDummyEdgeLength = KVector.distance(marginCenter, portPos);
+        p.idealDummyEdgeLength =
+                n.getRectSizeRaw().getLength() / 2f + p.getRectSizeRaw().getLength() / 2f;
+    }
+    
+    /**
+     * {@link PortConstraints#FIXED_SIDE}.
+     */
     private void generateFixedSideConstraints(final CPort p, final CNode n, final KVector portOffset) {
 
+        // CHECKSTYLEOFF AvoidNestedBlocks
         switch (p.side) {
         case WEST:
         case EAST: {
@@ -196,174 +246,150 @@ public class PortConstraintProcessor implements ILayoutProcessor {
         }
     }
 
-    private void generateFixedOrderConstraints(final CPort p, final CNode n,
-            final KVector portOffset) {
-        
-        // FIXME restrict to the NONmargin area
-        
-        switch (p.side) {
-        case WEST: {
-            // fix the port on the left side of the node
-            double relX = p.getPos().x - n.getPos().x;
-            SeparationConstraint scX =
-                    new SeparationConstraint(Dim.XDIM, n.cIndex, p.cIndex, relX
-                            - portOffset.x, true);
-            graph.constraints.add(scX);
-
-            // we are free in y direction
-            if (lastWestPort != null) {
-                // relative to previous port
-                // constraints are generated from bottom to top
-                double g = p.getSize().y / 2f + lastWestPort.getSize().y / 2f;
-                SeparationConstraint scY =
-                        new SeparationConstraint(Dim.YDIM, p.cIndex, lastWestPort.cIndex, g, false);
-                graph.constraints.add(scY);
-            } else {
-                // relative to parent node, restrict the ports pos to the 'bottom'
-                double g = n.getSize().y / 2f - p.getSize().y / 2f;
-                SeparationConstraint scY =
-                        new SeparationConstraint(Dim.YDIM, p.cIndex, n.cIndex, -g, false);
-                graph.constraints.add(scY);
-            }
-            lastWestPort = p;
-        }
-            break;
-
-        case EAST: {
-            // fix the ports on the right side of the node
-            double relX = p.getPos().x - n.getPos().x;
-            SeparationConstraint scX =
-                    new SeparationConstraint(Dim.XDIM, n.cIndex, p.cIndex, relX
-                            - portOffset.x, true);
-            graph.constraints.add(scX);
-
-            // we are free in y direction
-            if (lastEastPort != null) {
-                // relative to previous port
-                double g = p.getSize().y / 2f + lastEastPort.getSize().y / 2f;
-                SeparationConstraint scY =
-                        new SeparationConstraint(Dim.YDIM, lastEastPort.cIndex, p.cIndex, g, false);
-                graph.constraints.add(scY);
-            } else {
-                // relative to parent node
-                double g = n.getSize().y / 2f - p.getSize().y / 2f;
-                SeparationConstraint scY =
-                        new SeparationConstraint(Dim.YDIM, n.cIndex, p.cIndex, -g, false);
-                graph.constraints.add(scY);
-            }
-            lastEastPort = p;
-        }
-            break;
-
-        case SOUTH: {
-            // fix the ports on the bottom side of the node
-            double relY = p.getPos().y - n.getPos().y;
-            SeparationConstraint scY =
-                    new SeparationConstraint(Dim.YDIM, n.cIndex, p.cIndex, relY
-                            - portOffset.y, true);
-            graph.constraints.add(scY);
-
-            if (lastSouthPort != null) {
-                double g = p.getSize().x / 2f + lastSouthPort.getSize().x / 2f;
-                SeparationConstraint scX =
-                        new SeparationConstraint(Dim.XDIM, p.cIndex, lastSouthPort.cIndex, g, false);
-                graph.constraints.add(scX);
-            } else {
-                double g = n.getSize().x / 2f - p.getSize().x;
-                SeparationConstraint scX =
-                        new SeparationConstraint(Dim.XDIM, p.cIndex, n.cIndex, -g, false);
-                graph.constraints.add(scX);
-            }
-            lastSouthPort = p;
-        }
-            break;
-
-        case NORTH: {
-            // fix the ports on the top side of the node
-            double relY = p.getPos().y - n.getPos().y;
-            SeparationConstraint scY =
-                    new SeparationConstraint(Dim.YDIM, n.cIndex, p.cIndex, relY
-                            - portOffset.y, true);
-            graph.constraints.add(scY);
-
-            if (lastNorthPort != null) {
-                double g = p.getSize().x / 2f + lastNorthPort.getSize().x / 2f;
-                SeparationConstraint scX =
-                        new SeparationConstraint(Dim.XDIM, lastNorthPort.cIndex, p.cIndex, g, false);
-                graph.constraints.add(scX);
-            } else {
-                double g = n.getSize().x / 2f - p.getSize().x / 2f;
-                SeparationConstraint scX =
-                        new SeparationConstraint(Dim.XDIM, n.cIndex, p.cIndex, -g, false);
-                graph.constraints.add(scX);
-            }
-            lastNorthPort = p;
-        }
-            break;
-
-        default:
-            // nothing
-        }
-    }
-
-    private void postprocessFixedOrderConstraints(final CNode n) {
-        // WEST
-        if (lastWestPort != null) {
-            // restrict to the 'top': n.y - (n/2) <= p.y
-            double g = n.getSize().y / 2f - lastWestPort.getSize().y / 2f;
-            SeparationConstraint scY =
-                    new SeparationConstraint(Dim.YDIM, n.cIndex, lastWestPort.cIndex, -g, false);
-            graph.constraints.add(scY);
-        }
-
-        // EAST
-        if (lastEastPort != null) {
-            // restrict to the 'bottom'
-            double g = n.getSize().y / 2f - lastEastPort.getSize().y / 2f;
-            SeparationConstraint scY =
-                    new SeparationConstraint(Dim.YDIM, lastEastPort.cIndex, n.cIndex, -g, false);
-            graph.constraints.add(scY);
-        }
-
-        // SOUTH
-        if (lastSouthPort != null) {
-            double g = n.getSize().x / 2f - lastSouthPort.getSize().x / 2f;
-            SeparationConstraint scX =
-                    new SeparationConstraint(Dim.XDIM, n.cIndex, lastSouthPort.cIndex, -g, false);
-            graph.constraints.add(scX);
-        }
-
-        // NORTH
-        if (lastNorthPort != null) {
-            double g = n.getSize().x / 2f - lastNorthPort.getSize().x / 2f;
-            SeparationConstraint scX =
-                    new SeparationConstraint(Dim.XDIM, lastNorthPort.cIndex, n.cIndex, -g, false);
-            graph.constraints.add(scX);
-        }
-    }
-
-    private void generateFixedPosConstraints(final CPort p, final CNode n,
-            final KVector portOffset, final KVector marginCenter) {
- 
-        double gx = p.getPos().x - n.getPos().x - portOffset.x;
-        SeparationConstraint scX =
-                new SeparationConstraint(Dim.XDIM, n.cIndex, p.cIndex, gx,
-                        true);
-        graph.constraints.add(scX);
-        
-
-        double gy = p.getPos().y - n.getPos().y - portOffset.y;
-        SeparationConstraint scY =
-                new SeparationConstraint(Dim.YDIM, n.cIndex, p.cIndex, gy,
-                        true);
-        graph.constraints.add(scY);
-        System.out.println(scY);
-        
-        // calculate the fixed distance of the dummy to the center
-        KVector portPos =
-                new KVector(p.getPos().x - n.getPos().x - portOffset.x, p.getPos().y - n.getPos().y
-                        - portOffset.y);
-        p.idealDummyEdgeLength = KVector.distance(marginCenter, portPos);
-    }
+    // private void generateFixedOrderConstraints(final CPort p, final CNode n,
+    // final KVector portOffset) {
+    //
+    // // FIXME restrict to the NONmargin area
+    //
+    // switch (p.side) {
+    // case WEST: {
+    // // fix the port on the left side of the node
+    // double relX = p.getPos().x - n.getPos().x;
+    // SeparationConstraint scX =
+    // new SeparationConstraint(Dim.XDIM, n.cIndex, p.cIndex, relX
+    // - portOffset.x, true);
+    // graph.constraints.add(scX);
+    //
+    // // we are free in y direction
+    // if (lastWestPort != null) {
+    // // relative to previous port
+    // // constraints are generated from bottom to top
+    // double g = p.getSize().y / 2f + lastWestPort.getSize().y / 2f;
+    // SeparationConstraint scY =
+    // new SeparationConstraint(Dim.YDIM, p.cIndex, lastWestPort.cIndex, g, false);
+    // graph.constraints.add(scY);
+    // } else {
+    // // relative to parent node, restrict the ports pos to the 'bottom'
+    // double g = n.getSize().y / 2f - p.getSize().y / 2f;
+    // SeparationConstraint scY =
+    // new SeparationConstraint(Dim.YDIM, p.cIndex, n.cIndex, -g, false);
+    // graph.constraints.add(scY);
+    // }
+    // lastWestPort = p;
+    // }
+    // break;
+    //
+    // case EAST: {
+    // // fix the ports on the right side of the node
+    // double relX = p.getPos().x - n.getPos().x;
+    // SeparationConstraint scX =
+    // new SeparationConstraint(Dim.XDIM, n.cIndex, p.cIndex, relX
+    // - portOffset.x, true);
+    // graph.constraints.add(scX);
+    //
+    // // we are free in y direction
+    // if (lastEastPort != null) {
+    // // relative to previous port
+    // double g = p.getSize().y / 2f + lastEastPort.getSize().y / 2f;
+    // SeparationConstraint scY =
+    // new SeparationConstraint(Dim.YDIM, lastEastPort.cIndex, p.cIndex, g, false);
+    // graph.constraints.add(scY);
+    // } else {
+    // // relative to parent node
+    // double g = n.getSize().y / 2f - p.getSize().y / 2f;
+    // SeparationConstraint scY =
+    // new SeparationConstraint(Dim.YDIM, n.cIndex, p.cIndex, -g, false);
+    // graph.constraints.add(scY);
+    // }
+    // lastEastPort = p;
+    // }
+    // break;
+    //
+    // case SOUTH: {
+    // // fix the ports on the bottom side of the node
+    // double relY = p.getPos().y - n.getPos().y;
+    // SeparationConstraint scY =
+    // new SeparationConstraint(Dim.YDIM, n.cIndex, p.cIndex, relY
+    // - portOffset.y, true);
+    // graph.constraints.add(scY);
+    //
+    // if (lastSouthPort != null) {
+    // double g = p.getSize().x / 2f + lastSouthPort.getSize().x / 2f;
+    // SeparationConstraint scX =
+    // new SeparationConstraint(Dim.XDIM, p.cIndex, lastSouthPort.cIndex, g, false);
+    // graph.constraints.add(scX);
+    // } else {
+    // double g = n.getSize().x / 2f - p.getSize().x;
+    // SeparationConstraint scX =
+    // new SeparationConstraint(Dim.XDIM, p.cIndex, n.cIndex, -g, false);
+    // graph.constraints.add(scX);
+    // }
+    // lastSouthPort = p;
+    // }
+    // break;
+    //
+    // case NORTH: {
+    // // fix the ports on the top side of the node
+    // double relY = p.getPos().y - n.getPos().y;
+    // SeparationConstraint scY =
+    // new SeparationConstraint(Dim.YDIM, n.cIndex, p.cIndex, relY
+    // - portOffset.y, true);
+    // graph.constraints.add(scY);
+    //
+    // if (lastNorthPort != null) {
+    // double g = p.getSize().x / 2f + lastNorthPort.getSize().x / 2f;
+    // SeparationConstraint scX =
+    // new SeparationConstraint(Dim.XDIM, lastNorthPort.cIndex, p.cIndex, g, false);
+    // graph.constraints.add(scX);
+    // } else {
+    // double g = n.getSize().x / 2f - p.getSize().x / 2f;
+    // SeparationConstraint scX =
+    // new SeparationConstraint(Dim.XDIM, n.cIndex, p.cIndex, -g, false);
+    // graph.constraints.add(scX);
+    // }
+    // lastNorthPort = p;
+    // }
+    // break;
+    //
+    // default:
+    // // nothing
+    // }
+    // }
+    //
+    // private void postprocessFixedOrderConstraints(final CNode n) {
+    // // WEST
+    // if (lastWestPort != null) {
+    // // restrict to the 'top': n.y - (n/2) <= p.y
+    // double g = n.getSize().y / 2f - lastWestPort.getSize().y / 2f;
+    // SeparationConstraint scY =
+    // new SeparationConstraint(Dim.YDIM, n.cIndex, lastWestPort.cIndex, -g, false);
+    // graph.constraints.add(scY);
+    // }
+    //
+    // // EAST
+    // if (lastEastPort != null) {
+    // // restrict to the 'bottom'
+    // double g = n.getSize().y / 2f - lastEastPort.getSize().y / 2f;
+    // SeparationConstraint scY =
+    // new SeparationConstraint(Dim.YDIM, lastEastPort.cIndex, n.cIndex, -g, false);
+    // graph.constraints.add(scY);
+    // }
+    //
+    // // SOUTH
+    // if (lastSouthPort != null) {
+    // double g = n.getSize().x / 2f - lastSouthPort.getSize().x / 2f;
+    // SeparationConstraint scX =
+    // new SeparationConstraint(Dim.XDIM, n.cIndex, lastSouthPort.cIndex, -g, false);
+    // graph.constraints.add(scX);
+    // }
+    //
+    // // NORTH
+    // if (lastNorthPort != null) {
+    // double g = n.getSize().x / 2f - lastNorthPort.getSize().x / 2f;
+    // SeparationConstraint scX =
+    // new SeparationConstraint(Dim.XDIM, lastNorthPort.cIndex, n.cIndex, -g, false);
+    // graph.constraints.add(scX);
+    // }
+    // }
 
 }
