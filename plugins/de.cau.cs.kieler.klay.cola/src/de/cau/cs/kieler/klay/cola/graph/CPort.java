@@ -26,7 +26,6 @@ import com.google.common.collect.Lists;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Insets;
 import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
 import de.cau.cs.kieler.klay.cola.properties.InternalColaProperties;
 
@@ -88,7 +87,10 @@ public class CPort extends CShape {
         }
 
         // create the adaptagrams rectangle
-        rect = new Rectangle(xPos, xPos + this.getSize().x, yPos, yPos + this.getSize().y);
+        rect = new Rectangle(xPos, 
+                Math.max(1 + xPos, xPos + this.getSize().x), 
+                yPos, 
+                Math.max(1 + yPos, yPos + this.getSize().y));
         // assign it an id
         cIndex = graph.nodeIndex++;
         graph.nodes.add(rect);
@@ -193,41 +195,33 @@ public class CPort extends CShape {
         return this;
     }
 
+    /**
+     * Ports are moved to the outside of a node's margin in cola. Here
+     * we have to revert this process.
+     */
     public KVector getRelativePos() {
-        KVector pos = new KVector(rect.getMinX(), rect.getMinY());
-
-        CNode node = owner;
-        while (node != null) {
-            Insets insets = node.getInsets();
-            pos.translate(-node.rect.getMinX() - insets.left, -node.rect.getMinY() - insets.top);
-            if (node.getParent() instanceof CNode) {
-                node = (CNode) node.getParent();
-            } else {
-                node = null;
-            }
-        }
-
+        final KVector pos = getRectPos().clone().sub(owner.getRectPos());
         float breathe = graph.getProperty(ColaProperties.PORT_DUMMY_BREATHE);
         switch (side) {
 
         case NORTH:
             pos.x -= owner.getMargins().left;
-            pos.y += breathe;
+            pos.y += owner.getMargins().top + breathe;
             break;
 
         case SOUTH:
             pos.x -= owner.getMargins().left;
-            pos.y -= owner.getMargins().top + owner.getMargins().bottom + breathe;
+            pos.y -= owner.getMargins().bottom + breathe + getMargins().top;
             break;
 
         case WEST:
-            pos.x += breathe;
-            pos.y -= owner.getMargins().top;
+            pos.x += owner.getMargins().left + breathe - getMargins().left;
+            pos.y -= getMargins().top;
             break;
 
         case EAST:
-            pos.x -= owner.getMargins().left + owner.getMargins().right + breathe;
-            pos.y -= owner.getMargins().top;
+            pos.x -= owner.getMargins().right + breathe + getMargins().left;
+            pos.y -= getMargins().top;
             break;
 
         default:

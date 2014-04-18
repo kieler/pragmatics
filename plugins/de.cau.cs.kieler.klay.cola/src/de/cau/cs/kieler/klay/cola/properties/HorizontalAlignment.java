@@ -15,14 +15,18 @@ package de.cau.cs.kieler.klay.cola.properties;
 
 /**
  * @author uru
- *
  */
 public enum HorizontalAlignment {
 
+    /**
+     * Minimal spacings are calculated without consideration of other nodes that are connected to
+     * the same origin.
+     */
+    NONE,
     /** Nodes are aligned wrt to their left border. */
-    LEFT, 
+    LEFT,
     /** Nodes are aligned wrt to their center. */
-    CENTER, 
+    CENTER,
     /** Nodes are aligned wrt to their right border. */
     RIGHT
     

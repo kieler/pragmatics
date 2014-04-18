@@ -48,6 +48,13 @@ public class CNode extends CShape {
     protected CGraphElement parent = null;
 
     private boolean considerPreviousPositions = false; 
+    
+    /**
+     * Artificial margin added to guarantee spacing above and below a node. Hence, top and bottom
+     * will be spacing/2.
+     */
+    private Margins artificialMargin = new Margins();
+    
     /**
      * .
      */
@@ -77,8 +84,9 @@ public class CNode extends CShape {
         // currently the adaptagrams rectangles do not support any border or margin,
         // hence we add it to the top and bottom margin of the rectangle.
         // Horizontal spacing will be considered during separation constraint generation
-        margin.top += spacing;
-        margin.bottom += spacing;
+        artificialMargin.set(spacing / 2f, 0, spacing / 2f, 0);
+        margin.top += artificialMargin.top;
+        margin.bottom += artificialMargin.bottom;
         
         // x X y Y meaning x width y height
         // assure that the size is at least 1

@@ -48,7 +48,6 @@ import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.cola.graph.CEdge;
 import de.cau.cs.kieler.klay.cola.graph.CGraph;
-import de.cau.cs.kieler.klay.cola.graph.CGraphElement;
 import de.cau.cs.kieler.klay.cola.graph.CNode;
 import de.cau.cs.kieler.klay.cola.graph.CPort;
 import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
@@ -285,6 +284,14 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
             minY = Math.min(minY, pos.y);
             maxX = Math.max(maxX, pos.x + size.x);
             maxY = Math.max(maxY, pos.y + size.y);
+            for (CPort p : n.getPorts()) {
+                final KVector ppos = p.getRectPosRaw();
+                final KVector psize = p.getRectSizeRaw();
+                minX = Math.min(minX, ppos.x);
+                minY = Math.min(minY, ppos.y);
+                maxX = Math.max(maxX, ppos.x + psize.x);
+                maxY = Math.max(maxY, ppos.y + psize.y);
+            }
         }
         // also consider the clusters here
         for (Cluster cluster : clusterMap.values()) {

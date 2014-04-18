@@ -63,11 +63,11 @@
       <layoutOption
             advanced="true"
             appliesTo="parents"
-            default="1"
+            default="2"
             description="Breathing distance of dummy port nodes to their parent node."
             id="de.cau.cs.kieler.klay.cola.portDummyBreathe"
             name="Port Dummy Breathe"
-            type="int">
+            type="float">
       </layoutOption>
       <!--____________________________________________ 
                       Layout Algorithms

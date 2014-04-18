@@ -62,8 +62,8 @@ public final class ColaProperties {
      * Distance of dummy port nodes to their parent node. This allows the ports to breathe a bit and
      * move along the outside of the node.
      */
-    public static final IProperty<Integer> PORT_DUMMY_BREATHE = new Property<Integer>(
-            "de.cau.cs.kieler.klay.cola.portDummyBreathe", 1);
+    public static final IProperty<Float> PORT_DUMMY_BREATHE = new Property<Float>(
+            "de.cau.cs.kieler.klay.cola.portDummyBreathe", 2f);
 
     /**
      * Whether to consider previous node positions.

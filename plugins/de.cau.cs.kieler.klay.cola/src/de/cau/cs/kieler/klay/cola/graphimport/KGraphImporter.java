@@ -270,6 +270,14 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
             minY = Math.min(minY, pos.y);
             maxX = Math.max(maxX, pos.x + size.x);
             maxY = Math.max(maxY, pos.y + size.y);
+            for (CPort p : n.getPorts()) {
+                final KVector ppos = p.getRectPosRaw();
+                final KVector psize = p.getRectSizeRaw();
+                minX = Math.min(minX, ppos.x);
+                minY = Math.min(minY, ppos.y);
+                maxX = Math.max(maxX, ppos.x + psize.x);
+                maxY = Math.max(maxY, ppos.y + psize.y);
+            }
         }
         KVector offset = new KVector(borderSpacing - minX, borderSpacing - minY);
 

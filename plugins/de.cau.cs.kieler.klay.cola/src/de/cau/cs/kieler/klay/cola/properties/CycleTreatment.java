@@ -14,13 +14,15 @@
 package de.cau.cs.kieler.klay.cola.properties;
 
 /**
- * @author uru
  * 
+ * @author uru
  */
 public enum CycleTreatment {
 
-    /** Do not generate any constraints for cycles. */
+    /** Generate all constraints no matter if they contradict or not. */
     NONE,
+    /** Do not generate any constraints for cycles. */
+    IGNORE_SCCS,
     /** Align nodes of a scc and introduce a 'ladder'. */ 
     ALIGN_SCC, 
     /** Find the minimal feedback arc set for each strongly connected component. */
