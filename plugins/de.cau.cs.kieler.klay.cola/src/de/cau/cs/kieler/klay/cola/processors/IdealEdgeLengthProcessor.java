@@ -27,41 +27,78 @@ import de.cau.cs.kieler.klay.cola.graph.CGraph;
 import de.cau.cs.kieler.klay.cola.graph.CNode;
 import de.cau.cs.kieler.klay.cola.graph.CPort;
 import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
-import de.cau.cs.kieler.klay.cola.properties.InternalColaProperties;
+import de.cau.cs.kieler.klay.cola.properties.EdgeLengthStrategy;
 
 /**
- * @author uru
+ * Assigns an ideal edge length to every {@link CEdge} of the {@link CGraph}. The strategy to select
+ * the ideal edge length is specified using the {@link ColaProperties#EDGE_LENGTH_STRATEGY}
+ * property.
  * 
+ * <h1>Two Special Cases</h1> Note that special edge lengths are assigned to 'port dummy edges',
+ * edges that connect dummy ports with their parent nodes to maintain the 'force-flow' through the
+ * whole graph.
+ * 
+ * Furthermore, edges to external ports have to be treated differently. We assign a value of 0.9 *
+ * {@link LayoutOptions#SPACING}.
+ * 
+ * 
+ * <h1>Known Limitations</h1> The {@link #getIncidentEdgeCount(CNode, PortSide)} method only works
+ * with ports.
+ * 
+ * @author uru
  */
-public class NonUniformEdgeLengthProcessor implements ILayoutProcessor {
-
-    private double idealEdgeLength = 0;
-    
-    private Map<Object, Double> originEdgeLengthMapping;
+public class IdealEdgeLengthProcessor implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
      */
     public void process(final CGraph graph, final IKielerProgressMonitor progressMonitor) {
 
-        idealEdgeLength = graph.getProperty(ColaProperties.IDEAL_EDGE_LENGTHS);
-        System.out.println("IDEAL  " + idealEdgeLength);
+        final double idealEdgeLength = graph.getProperty(ColaProperties.IDEAL_EDGE_LENGTHS);
 
-        dummyPortEdgeLengths(graph);
+        // assign the edge lengths for the dummy port edges
+        assignDummyPortEdgeLengths(graph);
 
-        originEdgeLengthMapping  = Maps.newHashMap();
-        
-//         symmDiffLengths(graph);
-        connectivity(graph);
-        
-//        VolatileLayoutConfig vc = new VolatileLayoutConfig();
-//        vc.setValue(new Property<Map<Object, Double>>("mama"), originEdgeLengthMapping);
-//        // FIXME ...
-//        KNode n = (KNode)graph.getProperty(ColaProperties.ORIGIN);
-//        n.getData(KShapeLayout.class).setProperty(AbstractLayoutProvider.ADD_LAYOUT_CONFIG, vc);
+        // handle external ports
+        assignExternalPortEdgeValues(graph);
+
+        // set ideal edge lengths for usual edges based on the specified strategy
+        EdgeLengthStrategy ees = graph.getProperty(ColaProperties.EDGE_LENGTH_STRATEGY);
+        switch (ees) {
+        case CONNECTIVITY:
+        case CONNECTIVITY_CAPPED:
+            // assign values based on the connectivity
+            assignConnectivityBasedValues(graph);
+            break;
+
+        case SYMMDIFF:
+            symmDiffLengths(graph);
+            break;
+
+        default: // UNIFORM
+            // assign the same value to all edges
+            for (CNode n : graph.getChildren()) {
+                for (CEdge e : n.getOutgoingEdges()) {
+                    graph.idealEdgeLengths[e.cIndex] = idealEdgeLength;
+                }
+            }
+            break;
+
+        }
+
+        //
+
+        if (ees == EdgeLengthStrategy.CONNECTIVITY_CAPPED) {
+            limitEdgeLengths(graph);
+        }
+
     }
 
-    private void connectivity(final CGraph graph) {
+    /**
+     * For every node we record how many edges are incident to every side of the node.
+     * 
+     */
+    private void assignConnectivityBasedValues(final CGraph graph) {
 
         int[][] connectivity = new int[graph.getLastNodeIndex()][];
 
@@ -81,9 +118,10 @@ public class NonUniformEdgeLengthProcessor implements ILayoutProcessor {
 
         }
 
+        final double idealEdgeLength = graph.getProperty(ColaProperties.IDEAL_EDGE_LENGTHS);
         // now use this information to determine the edge lengths of all edges
         for (CNode src : graph.getChildren()) {
-            System.out.println("Looking at " + src);
+            // System.out.println("Looking at " + src);
             for (CEdge e : src.getOutgoingEdges()) {
                 CPort srcPort = e.getSourcePort();
                 CNode tgt = e.getTarget();
@@ -131,28 +169,9 @@ public class NonUniformEdgeLengthProcessor implements ILayoutProcessor {
                     break;
                 }
 
-                double cumWeight = Math.max(1, srcWeight + tgtWeight - 1); // subtract the
-                                                                           // connection between the
-                                                                           // two nodes itself
+                // subtract the connection between the two nodes itself
+                double cumWeight = Math.max(1, srcWeight + tgtWeight - 1);
                 graph.idealEdgeLengths[e.cIndex] = idealEdgeLength * Math.sqrt(cumWeight);
-                
-//                originEdgeLengthMapping.put(e.getProperty(InternalColaProperties.ORIGIN), idealEdgeLength
-//                        * Math.sqrt(cumWeight));
-
-                System.out.println(e + " " + graph.idealEdgeLengths[e.cIndex]);
-
-            }
-            
-            // check for external ports
-            for (CEdge e : src.getExternalEdges()) {
-                if (e.getSourcePort() != null && e.getSourcePort().isExternal()
-                        || e.getTargetPort() != null && e.getTargetPort().isExternal()) {
-                    // for external ports try to straighten the edges as much as possible,
-                    // hence we set the ideal edge length smaller than the spacing
-                    graph.idealEdgeLengths[e.cIndex] = // SUPPRESS CHECKSTYLE NEXT 1 MagicNumber
-                            graph.getProperty(LayoutOptions.SPACING) / 2f;
-                    continue;
-                }
             }
         }
     }
@@ -169,13 +188,14 @@ public class NonUniformEdgeLengthProcessor implements ILayoutProcessor {
             for (CEdge e : p.getConnectedEdges()) {
 
                 CNode other = null;
-                if (e.getTarget().equals(n)) {
+                // TODO ignore external edges from the start
+                if (e.getTarget() != null && e.getTarget().equals(n)) {
                     other = e.getSource();
-                } else {
+                } else if (e.getSource() != null) {
                     other = e.getTarget();
                 }
 
-                if (!knownTargets.contains(other)) {
+                if (other != null && !knownTargets.contains(other)) {
                     incidentEdges++;
                 }
 
@@ -188,13 +208,52 @@ public class NonUniformEdgeLengthProcessor implements ILayoutProcessor {
     /**
      * Writes the ideal edge lengths of dummy port nodes to the graph's array.
      */
-    private void dummyPortEdgeLengths(final CGraph graph) {
+    private void assignDummyPortEdgeLengths(final CGraph graph) {
         // set the ideal edge lengths for the port dummy edges
         for (CNode n : graph.getChildren()) {
             for (CPort p : n.getPorts()) {
                 // SUPPRESS CHECKSTYLE NEXT MagicNumber
-                float dummyPortBreathe = 30;
+                float dummyPortBreathe = 0;
                 graph.idealEdgeLengths[p.cEdgeIndex] = p.idealDummyEdgeLength + dummyPortBreathe;
+                // graph.idealEdgeLengths[p.cEdgeIndex] = 20;
+                // System.out.println(p + " " + graph.idealEdgeLengths[p.cEdgeIndex]);
+            }
+        }
+    }
+
+    private void assignExternalPortEdgeValues(final CGraph graph) {
+        for (CNode n : graph.getChildren()) {
+            // check for external ports
+            for (CEdge e : n.getExternalEdges()) {
+                if (e.getSourcePort() != null && e.getSourcePort().isExternal()
+                        || e.getTargetPort() != null && e.getTargetPort().isExternal()) {
+                    // for external ports try to straighten the edges as much as possible,
+                    // hence we set the ideal edge length smaller than the spacing
+                    graph.idealEdgeLengths[e.cIndex] = // SUPPRESS CHECKSTYLE NEXT 1 MagicNumber
+                            graph.getProperty(LayoutOptions.SPACING) * 0.9f;
+                    continue;
+                }
+            }
+        }
+    }
+
+    private void limitEdgeLengths(final CGraph graph) {
+        final double spacing = graph.getProperty(LayoutOptions.SPACING);
+
+        // find the maximal edge length amongst the 'usual' edges
+        // note, that no edge lengths need to be changed if all of them are smaller than the spacing
+        double maxLength = spacing;
+        for (CNode n : graph.getChildren()) {
+            for (CEdge e : n.getOutgoingEdges()) {
+                maxLength = Math.max(maxLength, graph.idealEdgeLengths[e.cIndex]);
+            }
+        }
+
+        // scale the values according to the new interval
+        final double factor = spacing / maxLength;
+        for (CNode n : graph.getChildren()) {
+            for (CEdge e : n.getOutgoingEdges()) {
+                graph.idealEdgeLengths[e.cIndex] *= factor;
             }
         }
     }
@@ -202,10 +261,9 @@ public class NonUniformEdgeLengthProcessor implements ILayoutProcessor {
     /**
      * 
      */
-    @SuppressWarnings("unused")
     private void symmDiffLengths(final CGraph graph) {
 
-        Map<CNode, Set<CNode>> neighbours = Maps.newHashMap();
+        final Map<CNode, Set<CNode>> neighbours = Maps.newHashMap();
         for (CNode node : graph.getChildren()) {
             Set<CNode> neighbourSet = Sets.newHashSet();
             for (CEdge e : node.getOutgoingEdges()) {
@@ -217,10 +275,11 @@ public class NonUniformEdgeLengthProcessor implements ILayoutProcessor {
             neighbours.put(node, neighbourSet);
         }
 
+        final double idealEdgeLength = graph.getProperty(ColaProperties.IDEAL_EDGE_LENGTHS);
         // calc link sizes for each edge
         for (CNode n : graph.getChildren()) {
             for (CEdge e : n.getOutgoingEdges()) {
-                
+
                 Set<CNode> srcSet = neighbours.get(e.getSource());
                 Set<CNode> tgtSet = neighbours.get(e.getTarget());
 
@@ -231,15 +290,7 @@ public class NonUniformEdgeLengthProcessor implements ILayoutProcessor {
                 // symmdifflinks
                 double sqrt = Math.sqrt((double) (union - intersection));
 
-                // jaccard
-                // double jaccard = 1;
-                // if (union > 1 && intersection > 1) {
-                // jaccard = 1 / (intersection / (double) union);
-                // }
-
-                // System.out.println("Edge: " + e.cIndex + " " + (1 + idealEdgeLength * sqrt));
                 graph.idealEdgeLengths[e.cIndex] = 1 + idealEdgeLength * sqrt;
-                // edgeLengths[index] = 1 + w * jaccard;
             }
         }
     }

@@ -41,7 +41,16 @@ public final class ColaProperties {
     public static final IProperty<CycleTreatment> CYCLE_TREATMENT = new Property<CycleTreatment>(
             "de.cau.cs.kieler.klay.cola.cycleTreatment", CycleTreatment.NONE);
 
-    /** A scalar modifier of ideal edge lengths. */
+    /**
+     * Specifies how ideal edge lengths are determined.
+     */ 
+    public static final IProperty<EdgeLengthStrategy> EDGE_LENGTH_STRATEGY =
+            new Property<EdgeLengthStrategy>("de.cau.cs.kieler.klay.cola.edgeLengthStrategy",
+                    EdgeLengthStrategy.UNIFORM);
+
+    /**
+     * A scalar modifier of ideal edge lengths.
+     * */
     public static final IProperty<Float> IDEAL_EDGE_LENGTHS = new Property<Float>(
             "de.cau.cs.kieler.klay.cola.idealEdgeLengths", 100f, 1f);
 

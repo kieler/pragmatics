@@ -69,6 +69,15 @@
             name="Port Dummy Breathe"
             type="float">
       </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="UNIFORM"
+            class="de.cau.cs.kieler.klay.cola.properties.EdgeLengthStrategy"
+            id="de.cau.cs.kieler.klay.cola.edgeLengthStrategy"
+            name="Ideal Edge Length Strategy"
+            type="enum">
+      </layoutOption>
       <!--____________________________________________ 
                       Layout Algorithms
        _____________________________________________-->
@@ -105,6 +114,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.klay.cola.portDummyBreathe">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.cola.edgeLengthStrategy">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
@@ -157,6 +169,9 @@
          <supportedFeature
                feature="PORTS">
          </supportedFeature>
+         <knownOption
+               option="de.cau.cs.kieler.klay.cola.edgeLengthStrategy">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             class="de.cau.cs.kieler.klay.cola.CoDaLayoutProvider"
@@ -189,6 +204,9 @@
          <supportedFeature
                feature="PORTS">
          </supportedFeature>
+         <knownOption
+               option="de.cau.cs.kieler.klay.cola.edgeLengthStrategy">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             class="de.cau.cs.kieler.klay.cola.LibavoidLayoutProvider"
