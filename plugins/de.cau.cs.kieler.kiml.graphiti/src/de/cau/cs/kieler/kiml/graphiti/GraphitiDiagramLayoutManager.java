@@ -659,7 +659,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
      * @param connection
      *            a pictogram connection
      */
-    protected void createEdge(final LayoutMapping<PictogramElement> mapping,
+    protected KEdge createEdge(final LayoutMapping<PictogramElement> mapping,
             final Connection connection) {
         BiMap<KGraphElement, PictogramElement> graphMap = mapping.getGraphMap();
 
@@ -673,7 +673,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
             targetNode = (KNode) graphMap.inverse().get(targetAnchor.getParent());
         }
         if (targetNode == null) {
-            return;
+            return null;
         }
 
         // set source node and port
@@ -686,7 +686,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
             sourceNode = (KNode) graphMap.inverse().get(sourceAnchor.getParent());
         }
         if (sourceNode == null) {
-            return;
+            return null;
         }
         
         KEdge edge = KimlUtil.createInitializedEdge();
@@ -736,6 +736,8 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
                 createEdgeLabel(mapping, edge, decorator, allPoints);
             }
         }
+        
+        return edge;
     }
 
     /**
