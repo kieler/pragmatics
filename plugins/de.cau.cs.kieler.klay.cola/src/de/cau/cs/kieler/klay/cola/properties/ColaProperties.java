@@ -36,6 +36,13 @@ public final class ColaProperties {
             "de.cau.cs.kieler.klay.cola.considerPreviousPositions", false);
 
     /**
+     * Whether to emphasize direction of the diagram, i.e. whether separation constraints should be
+     * created.
+     */
+    public static final IProperty<Boolean> EMPHASIZE_DIRECTION = new Property<Boolean>(
+            "de.cau.cs.kieler.klay.cola.emphasizeDirection", true);
+
+    /**
      * How to handle cycles in the graph.
      */
     public static final IProperty<CycleTreatment> CYCLE_TREATMENT = new Property<CycleTreatment>(

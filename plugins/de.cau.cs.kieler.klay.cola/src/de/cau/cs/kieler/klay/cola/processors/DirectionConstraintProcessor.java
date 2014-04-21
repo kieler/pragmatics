@@ -101,6 +101,11 @@ public class DirectionConstraintProcessor implements ILayoutProcessor {
 
         this.graph = theGraph;
         
+        if (!graph.getProperty(ColaProperties.EMPHASIZE_DIRECTION)) {
+            progressMonitor.done();
+            return;
+        }
+
         spacing = theGraph.getProperty(LayoutOptions.SPACING);
         if (theGraph.getProperty(ColaProperties.PORT_DUMMIES)) {
             // when we use dummy ports, we let them breathe a bit from its parent node
