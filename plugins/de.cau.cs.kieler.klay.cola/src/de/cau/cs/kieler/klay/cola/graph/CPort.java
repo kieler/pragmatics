@@ -16,15 +16,12 @@ package de.cau.cs.kieler.klay.cola.graph;
 import java.util.List;
 
 import org.adaptagrams.ColaEdge;
-import org.adaptagrams.Dim;
 import org.adaptagrams.Rectangle;
-import org.adaptagrams.SeparationConstraint;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
 import de.cau.cs.kieler.klay.cola.properties.InternalColaProperties;
@@ -99,86 +96,6 @@ public class CPort extends CShape {
     }
 
     public CPort asExternalDummy() {
-
-        double borderSpacing = graph.getProperty(LayoutOptions.BORDER_SPACING);
-
-        // FIXME this should really be done only once for all external ports
-        double leftMostX = Double.MAX_VALUE;
-        CNode leftMost = null;
-        double rightMostX = Double.MIN_VALUE;
-        CNode rightMost = null;
-
-        // find the leftmost node
-        for (CNode n : graph.getChildren()) {
-            double maxX = n.getPos().x + n.getSize().x + n.getMargins().right;
-            double minX = n.getPos().x - n.getMargins().left;
-            if (rightMost == null && leftMost == null) {
-                leftMostX = minX;
-                leftMost = n;
-                rightMostX = maxX;
-                rightMost = n;
-                continue;
-            }
-
-            if (maxX > rightMostX) {
-                rightMostX = maxX;
-                rightMost = n;
-            }
-
-            if (minX < leftMostX) {
-                leftMostX = minX;
-                leftMost = n;
-            }
-        }
-
-        switch (side) {
-        
-        // FIXME ... all cases!
-        case EAST:
-            // generate a separation constraint to the right most node
-            double gRight =
-                    rightMost.getSize().x / 2f + this.getSize().x / 2f + borderSpacing
-                            + rightMost.getMargins().right;
-            SeparationConstraint scRight =
-                    new SeparationConstraint(Dim.XDIM, rightMost.cIndex, cIndex, gRight, false);
-            graph.constraints.add(scRight);
-            System.out.println("Generated External EAST port " + scRight);
-            System.out.println("RightMost node " + rightMost);
-
-            // generate a separation constraint on the right side of all nodes
-            // for (CNode n : graph.getChildren()) {
-            // SeparationConstraint scRight =
-            // new SeparationConstraint(Dim.XDIM, n.cIndex, cIndex, n.getSize().x / 2f
-            // + this.getSize().x / 2f + borderSpacing, false);
-            // graph.constraints.add(scRight);
-            // }
-            break;
-
-        case WEST:
-            // generate a separation constraint on the left side of all nodes
-            double gLeft =
-                    leftMost.getSize().x / 2f + this.getSize().x / 2f + borderSpacing
-                            + leftMost.getMargins().left;
-            SeparationConstraint scLeft =
-                    new SeparationConstraint(Dim.XDIM, cIndex, leftMost.cIndex, gLeft, false);
-            graph.constraints.add(scLeft);
-
-            System.out.println("Generated External WEST port " + scLeft);
-            System.out.println("LeftMost node " + leftMost);
-
-            // for (CNode n : graph.getChildren()) {
-            // SeparationConstraint scRight =
-            // new SeparationConstraint(Dim.XDIM, cIndex, n.cIndex, n.getSize().x / 2f
-            // + this.getSize().x / 2f + borderSpacing, false);
-            // graph.constraints.add(scRight);
-            // }
-
-            break;
-
-        default:
-            System.err.println("No port side defined " + this);
-
-        }
 
         external = true;
 

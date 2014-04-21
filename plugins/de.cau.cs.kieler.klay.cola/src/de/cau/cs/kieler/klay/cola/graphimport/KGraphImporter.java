@@ -16,7 +16,9 @@ package de.cau.cs.kieler.klay.cola.graphimport;
 import java.util.Map;
 
 import org.adaptagrams.AlignmentConstraint;
+import org.adaptagrams.Cluster;
 import org.adaptagrams.Dim;
+import org.adaptagrams.RectangularCluster;
 
 import com.google.common.collect.Maps;
 
@@ -28,6 +30,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
@@ -41,6 +44,12 @@ import de.cau.cs.kieler.klay.cola.util.ColaUtil;
 
 /**
  * Imports a KGraph and converts it into a CGraph (adaptagrams).
+ * 
+ * This importer only handles one hierarchical level. 
+ * 
+ * 
+ * <h1>External Ports</h1>
+ * TODO
  * 
  * @author uru
  */
@@ -77,7 +86,7 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
 
         // handle external ports
         handleExternalPorts(root, graph);
-
+        
         // edges
         for (KNode n : root.getChildren()) {
             transformEdges(n, graph);
@@ -126,7 +135,7 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
                 // determine the port side based on the current position
                 if (port.side == PortSide.UNDEFINED
                         && cnode.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()) {
-                    port.side = KimlUtil.calcPortSide(p, graph.getProperty(LayoutOptions.DIRECTION));
+                    //port.side = KimlUtil.calcPortSide(p, graph.getProperty(LayoutOptions.DIRECTION));
                 }
 
                 // add an edge from the port to the node's center
@@ -193,7 +202,12 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
      * Creates dummy ports for external ports and transforms the connected edges.
      */
     private void handleExternalPorts(final KNode root, final CGraph graph) {
-
+        
+        // nothing to do if no external ports exist
+        if (root.getPorts().isEmpty()) {
+            return;
+        }
+        
         // iterate through all ports of the parent node
         for (KPort p : root.getPorts()) {
             CPort port = new CPort(graph, null);
@@ -208,7 +222,7 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
             // determine the port side based on the current position
             if (port.side == PortSide.UNDEFINED
                     && graph.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()) {
-                port.side = KimlUtil.calcPortSide(p, graph.getProperty(LayoutOptions.DIRECTION)); 
+                //port.side = KimlUtil.calcPortSide(p, graph.getProperty(LayoutOptions.DIRECTION)); 
             }
             port.asExternalDummy();
 
@@ -226,25 +240,36 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
         // order, however, we align them vertically
         // note that the position of the alignment guideline is
         // automatically assured to be on the border of the compound node
-        if (!graph.getExternalPorts().isEmpty()) {
-            AlignmentConstraint acLeft = null;
-            AlignmentConstraint acRight = null;
-            for (CPort p : graph.getExternalPorts()) {
-                if (p.side == PortSide.WEST) {
-                    if (acLeft == null) {
-                        acLeft = new AlignmentConstraint(Dim.XDIM);
-                        graph.constraints.add(acLeft);
-                    }
-                    acLeft.addShape(p.cIndex, 0);
-                } else {
-                    if (acRight == null) {
-                        acRight = new AlignmentConstraint(Dim.XDIM);
-                        graph.constraints.add(acRight);
-                    }
-                    acRight.addShape(p.cIndex, 0);
-                }
+        // because SeparationConstraints are generated for the external ports
+//        if (!graph.getExternalPorts().isEmpty()) {
+//            AlignmentConstraint acLeft = null;
+//            AlignmentConstraint acRight = null;
+//            for (CPort p : graph.getExternalPorts()) {
+//                if (p.side == PortSide.WEST) {
+//                    if (acLeft == null) {
+//                        acLeft = new AlignmentConstraint(Dim.XDIM);
+//                        graph.constraints.add(acLeft);
+//                    }
+//                    acLeft.addShape(p.cIndex, 0);
+//                } else {
+//                    if (acRight == null) {
+//                        acRight = new AlignmentConstraint(Dim.XDIM);
+//                        graph.constraints.add(acRight);
+//                    }
+//                    acRight.addShape(p.cIndex, 0);
+//                }
+//            }
+//        }
+        
+        // we add all nodes and their dummy ports to a cluster to separate them from the external ports
+        Cluster cluster = new RectangularCluster();
+        for (CNode n : graph.getChildren()) {
+            cluster.addChildNode(n.cIndex);
+            for (CPort p : n.getPorts()) {
+                cluster.addChildNode(p.cIndex);
             }
         }
+        graph.rootCluster.addChildCluster(cluster);
     }
 
     // --------------------------------------------------------------------------------------
@@ -298,27 +323,33 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
             insets.setBottom((float) n.getInsets().bottom);
 
             // ports
-            for (CPort p : n.getPorts()) {
-                if (p.cEdgeIndex != -1) {
-                    KShapeLayout portLayout =
-                            p.getProperty(InternalColaProperties.ORIGIN)
-                                    .getData(KShapeLayout.class);
-                    // ports are relative to the parent in KGraph
-                    KVector relative = p.getRelativePos();
-                    portLayout.setXpos((float) relative.x);
-                    portLayout.setYpos((float) relative.y);
+//            if (!n.getProperty(LayoutOptions.PORT_CONSTRAINTS).isPosFixed()) {
+                for (CPort p : n.getPorts()) {
+                    if (p.cEdgeIndex != -1) {
+                        KShapeLayout portLayout =
+                                p.getProperty(InternalColaProperties.ORIGIN)
+                                        .getData(KShapeLayout.class);
+                        // ports are relative to the parent in KGraph
+                        KVector relative = p.getRelativePos();
+                        portLayout.setXpos((float) relative.x);
+                        portLayout.setYpos((float) relative.y);
+                    }
                 }
-            }
+//            }
         }
 
         // re-position external ports
         // TODO we always wanna reposition the external ports??
         // if (!graph.getProperty(LayoutOptions.PORT_CONSTRAINTS).isPosFixed()) {
         for (CPort p : graph.getExternalPorts()) {
+            KPort kp = (KPort) p.getProperty(InternalColaProperties.ORIGIN);
             KShapeLayout layout =
-                    p.getProperty(InternalColaProperties.ORIGIN).getData(KShapeLayout.class);
+                    kp.getData(KShapeLayout.class);
             layout.setXpos((float) (p.getRectPos().x + offset.x));
             layout.setYpos((float) (p.getRectPos().y + offset.y));
+            PortSide ps = KimlUtil.calcPortSide(kp  , Direction.RIGHT);
+            System.out.println("PS " + ps);
+            layout.setProperty(LayoutOptions.PORT_SIDE, ps);
         }
         // }
 

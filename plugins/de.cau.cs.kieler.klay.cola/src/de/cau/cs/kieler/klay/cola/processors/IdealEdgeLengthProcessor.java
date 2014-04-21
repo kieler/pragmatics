@@ -34,16 +34,16 @@ import de.cau.cs.kieler.klay.cola.properties.EdgeLengthStrategy;
  * the ideal edge length is specified using the {@link ColaProperties#EDGE_LENGTH_STRATEGY}
  * property.
  * 
- * <h1>Two Special Cases</h1> Note that special edge lengths are assigned to 'port dummy edges',
+ * <h1>Two Special Cases</h1> 
+ * Note that special edge lengths are assigned to 'port dummy edges',
  * edges that connect dummy ports with their parent nodes to maintain the 'force-flow' through the
  * whole graph.
  * 
- * Furthermore, edges to external ports have to be treated differently. We assign a value of 0.9 *
- * {@link LayoutOptions#SPACING}.
+ * Furthermore, edges to external ports have to be treated differently. We assign a value of 1 to 
+ * straighten them as much as possible.
  * 
- * 
- * <h1>Known Limitations</h1> The {@link #getIncidentEdgeCount(CNode, PortSide)} method only works
- * with ports.
+ * <h1>Known Limitations</h1> 
+ * The {@link #getIncidentEdgeCount(CNode, PortSide)} method only works with ports.
  * 
  * @author uru
  */
@@ -213,10 +213,9 @@ public class IdealEdgeLengthProcessor implements ILayoutProcessor {
         for (CNode n : graph.getChildren()) {
             for (CPort p : n.getPorts()) {
                 // SUPPRESS CHECKSTYLE NEXT MagicNumber
+                // TODO 
                 float dummyPortBreathe = 0;
                 graph.idealEdgeLengths[p.cEdgeIndex] = p.idealDummyEdgeLength + dummyPortBreathe;
-                // graph.idealEdgeLengths[p.cEdgeIndex] = 20;
-                // System.out.println(p + " " + graph.idealEdgeLengths[p.cEdgeIndex]);
             }
         }
     }
@@ -229,8 +228,8 @@ public class IdealEdgeLengthProcessor implements ILayoutProcessor {
                         || e.getTargetPort() != null && e.getTargetPort().isExternal()) {
                     // for external ports try to straighten the edges as much as possible,
                     // hence we set the ideal edge length smaller than the spacing
-                    graph.idealEdgeLengths[e.cIndex] = // SUPPRESS CHECKSTYLE NEXT 1 MagicNumber
-                            graph.getProperty(LayoutOptions.SPACING) * 0.9f;
+                    graph.idealEdgeLengths[e.cIndex] = 1; // SUPPRESS CHECKSTYLE NEXT 1 MagicNumber
+                            //graph.getProperty(LayoutOptions.SPACING) * 0.9f;
                     continue;
                 }
             }
