@@ -393,7 +393,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
      * @param mapping the mapping of pictogram elements to graph elements
      * @param parentNode the parent node
      * @param shape the shape for a new node
-     * @return a new layout node
+     * @return the new layout node
      */
     protected KNode createNode(final LayoutMapping<PictogramElement> mapping,
             final KNode parentNode, final Shape shape) {
@@ -495,7 +495,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
      * @param mapping the mapping of pictogram elements to graph elements
      * @param parentNode the parent node
      * @param bra the anchor
-     * @return a new layout port
+     * @return the new layout port
      */
     protected KPort createPort(final LayoutMapping<PictogramElement> mapping,
             final KNode parentNode, final BoxRelativeAnchor bra) {
@@ -536,7 +536,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
      * @param mapping the mapping of pictogram elements to graph elements
      * @param parentNode the parent node
      * @param fpa the anchor
-     * @return a new layout port
+     * @return the new layout port
      */
     protected KPort createPort(final LayoutMapping<PictogramElement> mapping,
             final KNode parentNode, final FixPointAnchor fpa) {
@@ -658,6 +658,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
      *            the mapping of pictogram elements to graph elements
      * @param connection
      *            a pictogram connection
+     * @return the new layout edge
      */
     protected KEdge createEdge(final LayoutMapping<PictogramElement> mapping,
             final Connection connection) {
