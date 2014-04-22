@@ -320,7 +320,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
         }
         
         // add the corrected offset
-        offset.translate(-minx, -miny);
+        offset.add(-minx, -miny);
         KimlUtil.translate(parentNode, (float) offset.x, (float) offset.y);
     }
 
@@ -393,7 +393,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
      * @param mapping the mapping of pictogram elements to graph elements
      * @param parentNode the parent node
      * @param shape the shape for a new node
-     * @return a new layout node
+     * @return the new layout node
      */
     protected KNode createNode(final LayoutMapping<PictogramElement> mapping,
             final KNode parentNode, final Shape shape) {
@@ -495,7 +495,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
      * @param mapping the mapping of pictogram elements to graph elements
      * @param parentNode the parent node
      * @param bra the anchor
-     * @return a new layout port
+     * @return the new layout port
      */
     protected KPort createPort(final LayoutMapping<PictogramElement> mapping,
             final KNode parentNode, final BoxRelativeAnchor bra) {
@@ -536,7 +536,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
      * @param mapping the mapping of pictogram elements to graph elements
      * @param parentNode the parent node
      * @param fpa the anchor
-     * @return a new layout port
+     * @return the new layout port
      */
     protected KPort createPort(final LayoutMapping<PictogramElement> mapping,
             final KNode parentNode, final FixPointAnchor fpa) {
@@ -658,8 +658,9 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
      *            the mapping of pictogram elements to graph elements
      * @param connection
      *            a pictogram connection
+     * @return the new layout edge
      */
-    protected void createEdge(final LayoutMapping<PictogramElement> mapping,
+    protected KEdge createEdge(final LayoutMapping<PictogramElement> mapping,
             final Connection connection) {
         BiMap<KGraphElement, PictogramElement> graphMap = mapping.getGraphMap();
 
@@ -673,7 +674,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
             targetNode = (KNode) graphMap.inverse().get(targetAnchor.getParent());
         }
         if (targetNode == null) {
-            return;
+            return null;
         }
 
         // set source node and port
@@ -686,7 +687,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
             sourceNode = (KNode) graphMap.inverse().get(sourceAnchor.getParent());
         }
         if (sourceNode == null) {
-            return;
+            return null;
         }
         
         KEdge edge = KimlUtil.createInitializedEdge();
@@ -736,6 +737,8 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
                 createEdgeLabel(mapping, edge, decorator, allPoints);
             }
         }
+        
+        return edge;
     }
 
     /**
@@ -780,10 +783,10 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
         // set label position
         KVector labelPos;
         if (decorator.isLocationRelative()) {
-            labelPos = allPoints.getPointOnLine(decorator.getLocation()
-                    * allPoints.getLength());
+            labelPos = allPoints.pointOnLine(decorator.getLocation()
+                    * allPoints.totalLength());
         } else {
-            labelPos = allPoints.getPointOnLine(decorator.getLocation());
+            labelPos = allPoints.pointOnLine(decorator.getLocation());
         }
         GraphicsAlgorithm ga = decorator.getGraphicsAlgorithm();
         labelPos.x += ga.getX();

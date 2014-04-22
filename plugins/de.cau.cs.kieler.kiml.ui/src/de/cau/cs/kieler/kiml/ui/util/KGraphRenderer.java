@@ -289,7 +289,7 @@ public class KGraphRenderer {
                 rect.painted = true;
                 KVector contentOffset = new KVector(childOffset);
                 KInsets insets = child.getData(KShapeLayout.class).getInsets();
-                contentOffset.translate(insets.getLeft() * scale, insets.getTop() * scale);
+                contentOffset.add(insets.getLeft() * scale, insets.getTop() * scale);
                 renderNode(child, graphics, area, contentOffset, edgeSet, nodeAlpha);
             }
 
@@ -396,7 +396,7 @@ public class KGraphRenderer {
         while (node != graph) {
             KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
             KInsets insets = nodeLayout.getInsets();
-            offset.translate(nodeLayout.getXpos() + insets.getLeft(),
+            offset.add(nodeLayout.getXpos() + insets.getLeft(),
                     nodeLayout.getYpos() + insets.getTop());
             node = node.getParent();
         }
@@ -411,9 +411,9 @@ public class KGraphRenderer {
         if (!rect.painted && rect.intersects(area)) {
             KVectorChain bendPoints = edgeLayout.createVectorChain();
             if (edgeLayout.getProperty(LayoutOptions.EDGE_ROUTING) == EdgeRouting.SPLINES) {
-                bendPoints = KielerMath.approximateSpline(bendPoints);
+                bendPoints = KielerMath.approximateBezierSpline(bendPoints);
             }
-            bendPoints.scale(scale).translate(offset);
+            bendPoints.scale(scale).offset(offset);
             KVector point1 = bendPoints.getFirst();
             for (KVector point2 : bendPoints) {
                 graphics.drawLine((int) Math.round(point1.x), (int) Math.round(point1.y),

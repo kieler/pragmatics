@@ -326,7 +326,7 @@ public final class LGraphUtil {
                 KVector pos = port.getPosition();
                 pos.x = endPoint.x - node.getPosition().x;
                 pos.y = endPoint.y - node.getPosition().y;
-                pos.applyBounds(0, 0, node.getSize().x, node.getSize().y);
+                pos.bound(0, 0, node.getSize().x, node.getSize().y);
                 port.setSide(calcPortSide(port, direction));
             } else {
                 PortSide defaultSide = PortSide.fromDirection(direction);
@@ -869,7 +869,7 @@ public final class LGraphUtil {
             node = graph.getProperty(InternalProperties.PARENT_LNODE);
             if (node != null) {
                 LInsets insets = graph.getInsets();
-                point.translate(insets.left, insets.top);
+                point.add(insets.left, insets.top);
                 point.add(node.getPosition());
                 graph = node.getGraph();
             }
@@ -882,7 +882,7 @@ public final class LGraphUtil {
             node = graph.getProperty(InternalProperties.PARENT_LNODE);
             if (node != null) {
                 LInsets insets = graph.getInsets();
-                point.translate(-insets.left, -insets.top);
+                point.add(-insets.left, -insets.top);
                 point.sub(node.getPosition());
                 graph = node.getGraph();
             }

@@ -452,7 +452,7 @@ public class OgmlServerCommunicator {
         for (Map.Entry<KNode, String> entry : node2IdMap.entrySet()) {
             KShapeLayout nodeLayout = entry.getKey().getData(KShapeLayout.class);
             KVectorChain ogdfNodeLayout = layoutInformation.get(entry.getValue());
-            if (ogdfNodeLayout != null && ogdfNodeLayout.size() == 2 && !ogdfNodeLayout.isNaN()) {
+            if (ogdfNodeLayout != null && ogdfNodeLayout.size() == 2 && !ogdfNodeLayout.hasNaN()) {
                 KVector location = ogdfNodeLayout.getFirst();
                 KVector shape = ogdfNodeLayout.getLast();
                 toKShape(nodeLayout, (float) location.x + offsetX, (float) location.y + offsetY,
@@ -469,7 +469,7 @@ public class OgmlServerCommunicator {
             EList<KPoint> kbends = edgeLayout.getBendPoints();
             kbends.clear();
             KVectorChain ogdfEdgeLayout = layoutInformation.get(entry.getKey());
-            if (ogdfEdgeLayout != null && ogdfEdgeLayout.size() >= 2 && !ogdfEdgeLayout.isNaN()) {
+            if (ogdfEdgeLayout != null && ogdfEdgeLayout.size() >= 2 && !ogdfEdgeLayout.hasNaN()) {
                 Iterator<KVector> bendIt = ogdfEdgeLayout.iterator();
                 KVector sourceBend = bendIt.next();
                 
@@ -544,7 +544,7 @@ public class OgmlServerCommunicator {
                     KVectorChain ogdfLabelLayout = layoutInformation.get(entry.getKey()
                             + OgdfServer.EDGE_LABEL_SUFFIX + labelType);
                     if (ogdfLabelLayout != null && ogdfLabelLayout.size() == 1
-                            && !ogdfLabelLayout.isNaN()) {
+                            && !ogdfLabelLayout.hasNaN()) {
                         KVector labelPos = ogdfLabelLayout.getFirst();
                         toKShape(labelLayout, (float) labelPos.x + offsetX, (float) labelPos.y
                                 + offsetY, labelLayout.getWidth(), labelLayout.getHeight());

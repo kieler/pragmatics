@@ -67,10 +67,10 @@ public class PortConstraintProcessor implements ILayoutProcessor {
             KVector origCenter = new KVector(n.getSize().x / 2f, n.getSize().y / 2f);
             // determine the center when considering margins of the node
             KVector marginCenter =
-                    origCenter.clone().translate((margins.left + margins.right) / 2f,
+                    origCenter.clone().add((margins.left + margins.right) / 2f,
                             (margins.top + margins.bottom) / 2f);
 
-            KVector diff = KVector.diff(origCenter, marginCenter);
+            KVector diff = origCenter.clone().sub(marginCenter);
 
             // reset the internal markers for fixed order constraints
             lastWestPort = null;
@@ -85,21 +85,21 @@ public class PortConstraintProcessor implements ILayoutProcessor {
                 KVector portOffset = origCenter.clone();
                 switch (p.side) {
                     case WEST:
-                        portOffset.translate(-diff.x, 0);
+                        portOffset.add(-diff.x, 0);
                         break;
                     case EAST:
-                        portOffset.translate(diff.x, 0);
+                        portOffset.add(diff.x, 0);
                         break;
                     case SOUTH:
-                        portOffset.translate(0, diff.y);
+                        portOffset.add(0, diff.y);
                         break;
                     case NORTH:
-                        portOffset.translate(0, -diff.y);
+                        portOffset.add(0, -diff.y);
                         break;
                 }
 
                 // add half the port size
-                portOffset.translate(-p.getSize().x / 2f, -p.getSize().y / 2f);
+                portOffset.add(-p.getSize().x / 2f, -p.getSize().y / 2f);
 
                 // now handle the specified port constraints
                 switch (portConstraints) {
@@ -345,7 +345,7 @@ public class PortConstraintProcessor implements ILayoutProcessor {
 
         // calculate the fixed distance of the dummy to the center
         KVector portPos = new KVector(p.getPos().x - portOffset.x, p.getPos().y - portOffset.y);
-        p.idealDummyEdgeLength = KVector.distance(marginCenter, portPos);
+        p.idealDummyEdgeLength = marginCenter.distance(portPos);
     }
 
 }

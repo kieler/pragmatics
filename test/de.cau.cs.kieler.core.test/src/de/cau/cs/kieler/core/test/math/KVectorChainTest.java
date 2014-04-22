@@ -78,10 +78,10 @@ public class KVectorChainTest {
         // 3 overlaped KVectors
         KVectorChain kv = new KVectorChain();
         kv.parse("{(10,50),(10,50),(10,50)}");
-        assertEquals(0, kv.getLength(), 0);
+        assertEquals(0, kv.totalLength(), 0);
         // 3 differing KVecors
         kv.parse("{(10,0),(10,20),(10,30)}");
-        assertEquals(30, kv.getLength(), 0);
+        assertEquals(30, kv.totalLength(), 0);
 
     }
 
@@ -93,14 +93,13 @@ public class KVectorChainTest {
         KVector v0 = new KVector(5, 50);
         KVector v1 = new KVector(10, 50);
         KVector v2 = new KVector(30, 50);
-        KVector[] vectors = { v0, v1, v2 };
-        KVectorChain kv = new KVectorChain(vectors);
+        KVectorChain kv = new KVectorChain(v0, v1, v2);
         // test if resturns v0 for distance = 0
-        assertTrue(v0.equals(kv.getPointOnLine(0)));
+        assertTrue(v0.equals(kv.pointOnLine(0)));
         // test if resturns v1 for distance = 5
-        assertTrue(v1.equals(kv.getPointOnLine(5)));
+        assertTrue(v1.equals(kv.pointOnLine(5)));
         // test if resturns endpoint  for distance > KVectorChain's length
-        assertTrue(v2.equals(kv.getPointOnLine(40)));
+        assertTrue(v2.equals(kv.pointOnLine(40)));
     }
 
 }

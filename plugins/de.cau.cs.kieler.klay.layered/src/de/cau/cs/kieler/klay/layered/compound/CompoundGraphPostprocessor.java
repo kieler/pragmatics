@@ -121,7 +121,7 @@ public class CompoundGraphPostprocessor implements ILayoutProcessor {
                 LEdge ledge = chEdge.getEdge();
                 KVectorChain bendPoints = new KVectorChain();
                 bendPoints.addAllAsCopies(0, ledge.getBendPoints());
-                bendPoints.translate(offset);
+                bendPoints.offset(offset);
                 
                 // Note: if an NPE occurs here, that means KLay Layered has replaced the original edge
                 KVector sourcePoint = new KVector(ledge.getSource().getAbsoluteAnchor());
@@ -156,7 +156,7 @@ public class CompoundGraphPostprocessor implements ILayoutProcessor {
                 if (ledgeJPs != null) {
                     KVectorChain jpCopies = new KVectorChain();
                     jpCopies.addAllAsCopies(0, ledgeJPs);
-                    jpCopies.translate(offset);
+                    jpCopies.offset(offset);
                     
                     junctionPoints.addAll(jpCopies);
                 }

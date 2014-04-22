@@ -80,8 +80,8 @@ public class FruchtermanReingoldModel extends AbstractForceModel {
         avoidSamePosition(getRandom(), forcer, forcee);
 
         // compute distance (z in the original algorithm)
-        KVector displacement = forcee.getPosition().differenceCreate(forcer.getPosition());
-        double length = displacement.getLength();
+        KVector displacement = forcee.getPosition().clone().sub(forcer.getPosition());
+        double length = displacement.length();
         double d = Math.max(0, length - forcer.getRadius() - forcee.getRadius());
         
         // calculate repulsive force, independent of adjacency
