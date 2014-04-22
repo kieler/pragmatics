@@ -255,7 +255,6 @@ class KRenderingFigureProvider {
         rectangle.children += renderingFactory.createKText() => [text |
             text.text = node.layout.getProperty(COMMENT_TEXT)
             text.setSurroundingSpace(5, 0)
-            text.setFontSize(KlighdConstants::DEFAULT_FONT_SIZE - 2)
         ]
         
         return rectangle
