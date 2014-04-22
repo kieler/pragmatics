@@ -13,33 +13,46 @@
  */
 package de.cau.cs.kieler.klay.cola.avoid
 
+import com.google.common.collect.Lists
 import com.google.common.collect.Maps
+import de.cau.cs.kieler.core.kgraph.KPort
 import de.cau.cs.kieler.core.math.KVector
+import de.cau.cs.kieler.core.math.KVectorChain
 import de.cau.cs.kieler.core.util.Pair
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
 import de.cau.cs.kieler.kiml.options.Direction
 import de.cau.cs.kieler.kiml.options.EdgeRouting
 import de.cau.cs.kieler.kiml.options.LayoutOptions
+import de.cau.cs.kieler.kiml.options.PortSide
 import de.cau.cs.kieler.klay.cola.graph.CEdge
 import de.cau.cs.kieler.klay.cola.graph.CGraph
 import de.cau.cs.kieler.klay.cola.graph.CNode
 import de.cau.cs.kieler.klay.cola.graph.CPort
 import de.cau.cs.kieler.klay.cola.graphimport.IGraphImporter
+import de.cau.cs.kieler.klay.cola.properties.InternalColaProperties
+import java.awt.geom.Line2D
+import java.awt.geom.Point2D
+import java.util.Iterator
+import java.util.List
 import java.util.Map
+import org.adaptagrams.AvoidCheckpoints
 import org.adaptagrams.AvoidRectangle
+import org.adaptagrams.Checkpoint
+import org.adaptagrams.ConnDirFlag
 import org.adaptagrams.ConnEnd
 import org.adaptagrams.ConnRef
 import org.adaptagrams.ConnType
 import org.adaptagrams.Point
+import org.adaptagrams.Polygon
 import org.adaptagrams.Router
-import org.adaptagrams.ShapeRef
-import org.adaptagrams.ShapeConnectionPin
-import org.adaptagrams.adaptagrams
-import org.adaptagrams.ConnDirFlag
 import org.adaptagrams.RouterFlag
 import org.adaptagrams.RoutingParameter
-import de.cau.cs.kieler.klay.cola.properties.InternalColaProperties
-import org.adaptagrams.Checkpoint
-import org.adaptagrams.AvoidCheckpoints
+import org.adaptagrams.ShapeConnectionPin
+import org.adaptagrams.ShapeRef
+import org.adaptagrams.adaptagrams
+
+import static de.cau.cs.kieler.kiml.options.PortSide.*
+import de.cau.cs.kieler.kiml.libavoid.LibavoidProperties
 
 /**
  * TODO document
@@ -58,7 +71,7 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
     val router = new Router(edgeRouting)
     
     router.setRoutingParameter(RoutingParameter.shapeBufferDistance, 5)
-    router.setRoutingParameter(RoutingParameter.crossingPenalty, 1000)
+    router.setRoutingParameter(RoutingParameter.crossingPenalty, 100)
     router.setRoutingParameter(RoutingParameter.clusterCrossingPenalty, 10000 )
     
     // transform all the nodes
@@ -156,14 +169,26 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
     connRef.setRoutingType(
       if (edgeRouting == EdgeRouting.ORTHOGONAL) ConnType.ConnType_Orthogonal else ConnType.ConnType_PolyLine)
 
-
-
     // for hierarchical edges we have to add checkpoints
     if (edge.crossHierarchy) {
-      val ports = edge.getProperty(InternalColaProperties.EDGE_CHECKPOINTS) 
-      val checkpoints = new AvoidCheckpoints
-      for (port : ports.take(Math.max(0, ports.size - 1))) {
-        val cp = new Checkpoint(new Point(port.x, port.y))
+      val ports = edge.getProperty(InternalColaProperties.EDGE_CHECKPOINTS)
+      val checkpoints = new AvoidCheckpoints()
+      for (pair : ports.take(ports.size - 1)) {
+        val port = pair.second
+        val cp = new Checkpoint(new Point(port.x, port.y)).register(pair.first)
+
+        // set arrival and departure directions for the ports        
+        val portLayout = pair.first.getData(typeof(KShapeLayout))
+        val portSide = portLayout.getProperty(LayoutOptions.PORT_SIDE)
+        if (portSide == PortSide.EAST || portSide == PortSide.WEST) {
+          // allow the edge to be routed left-right or right-left
+          cp.setArrivalDirections(LibavoidProperties.CONN_DIR_LEFTRIGHT)
+          cp.setDepartureDirections(LibavoidProperties.CONN_DIR_LEFTRIGHT)
+        } else {
+          // bottom-up or up-bottom
+          cp.setArrivalDirections(LibavoidProperties.CONN_DIR_UPDOWN)
+          cp.setDepartureDirections(LibavoidProperties.CONN_DIR_UPDOWN)
+        }        
         checkpoints.add(cp)
       }
       connRef.setRoutingCheckpoints(checkpoints)
@@ -188,24 +213,113 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
       val edge = cr.edge
       edge.bendpoints.clear
       
-      val pts = route.getPs()
-      for (i : 0 ..< pts.size.intValue) {
-        val offset = new KVector
+      val edgeChain = edge.getProperty(InternalColaProperties.EDGE_CHAIN)
+      
+      if (edgeChain.empty) {
+        // this is a regular edge, just write the bendpoints back
         
-        if (i == 0) {
-          offset.add(edge.sourcePort.portMarginAndSizeOffset)
-        } else if (i == pts.size - 1) {
-          offset.add(edge.targetPort.portMarginAndSizeOffset)
+        val pts = route.getPs()
+        for (i : 0 ..< pts.size.intValue) {
+          val offset = new KVector
+          
+          if (i == 0) {
+            offset.add(edge.sourcePort.portMarginAndSizeOffset)
+          } else if (i == pts.size - 1) {
+            offset.add(edge.targetPort.portMarginAndSizeOffset)
+          }
+          
+          edge.bendpoints.add(pts.get(i).toKVector.add(offset))
         }
         
-        edge.bendpoints.add(pts.get(i).toKVector.add(offset))
+      } else {
+        // a hierarchy crossing edge
+        
+        // we have to split the route into chunks
+        val subRoutes = edge.determineSubRoutes(route)
+        subRoutes.forEach[println("SubRoute " + it)]
+        edge.setProperty(InternalColaProperties.EDGE_SUB_ROUTES, subRoutes)
       }
-      
-      
-      // apply checkpoints back
-      //route.
-      }
+    }
+  }
+  
+  /**
+   * @return for each sub route from a port to another (possibly hierarchical port one
+   * {@link KVectorChain} that represents the start point, bendpoints, and the end point. 
+   */
+  private def List<KVectorChain> determineSubRoutes(CEdge edge, Polygon route) {
     
+    // original checkpoints specified for the edge
+    val chkPoints = edge.getProperty(InternalColaProperties.EDGE_CHECKPOINTS)
+    val ports = chkPoints.take(chkPoints.size - 1).map[it.second].iterator
+    
+    // the sub routes we are about to determine
+    val List<KVectorChain> subRoutes = Lists.newLinkedList
+
+    // start values of some variables
+    val pts = route.getPs()
+    var currentPort = ports.next()
+    var KVectorChain currentSubRoute = new KVectorChain
+
+    for (i : 0 ..< pts.size.intValue - 1) {
+
+      val fst = pts.get(i)
+      val snd = pts.get(i + 1)
+
+      // add start point to the current sub route
+      currentSubRoute.add(fst.toKVector)
+
+      // create a line for the current segment
+      val segment = new Line2D.Double(fst.x, fst.y, snd.x, snd.y)
+      val point = if (currentPort != null) new Point2D.Double(currentPort.x, currentPort.y) else null
+
+      // check if the checkpoint is represented by the start or end 
+      // point of the segment or if it lies on the segment
+      if (segment.p1 == point) {
+        
+        throw new AssertionError("Really shouldnt happen")
+
+      } else if (segment.p2 == point) {
+
+        // assemble a segment
+        currentSubRoute.add(currentPort.clone())
+        subRoutes.add(currentSubRoute)
+
+        // start new sub route
+        currentSubRoute = new KVectorChain
+        currentPort = ports.saveNext()
+
+      } else if (point != null && segment.ptLineDist(point) < 0.01d) {
+
+        // FIXME sometimes cp not on line!
+        
+        // assemble a segment
+        currentSubRoute.add(currentPort.clone())
+        subRoutes.add(currentSubRoute)
+
+        // start new sub route
+        currentSubRoute = new KVectorChain
+        currentSubRoute.add(currentPort.clone())
+        currentPort = ports.saveNext()
+
+      }
+    }
+
+    // finish last subroute
+    currentSubRoute.add(pts.get(pts.size().intValue - 1).toKVector)
+    subRoutes.add(currentSubRoute)
+
+    return subRoutes;
+  }
+  
+  /**
+   * @return either the next element or null.
+   */
+  private def <T> T saveNext(Iterator<T> ite) {
+    if(ite.hasNext()) {
+      return ite.next()
+    } else {
+      return null
+    }
   }
   
   /**
@@ -244,34 +358,27 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
   }
   
   
-  
-  
-  
-  
   /*----------------------------------------------------------
    *    Convenience
    */
   
-  
-  
-  
-      /** First id used to reference ports. */
-    val PORT_ID_START = 5;
-    /** First id used to reference nodes. */
-    val NODE_ID_START = 5;
-  
-      /*
-     * Pin Types
-     * 
-     * Per definition the ids of passed ports start at 5. Thus, [1..4] are free for arbitrary
-     * definition. Remark: the id has to be > 0! Otherwise a c++ assertion fails.
-     */
-    /** Indicates pins that can be used by an arbitrary endpoint of an edge. */
-    val PIN_ARBITRARY = 1;
-    /** Indicates pins reserved for incoming edges. */
-    val PIN_INCOMING = 2;
-    /** Indicates pins reserved for outgoing edges. */
-    val PIN_OUTGOING = 3;
+  /** First id used to reference ports. */
+  val PORT_ID_START = 5;
+  /** First id used to reference nodes. */
+  val NODE_ID_START = 5;
+
+  /*
+   * Pin Types
+   * 
+   * Per definition the ids of passed ports start at 5. Thus, [1..4] are free for arbitrary
+   * definition. Remark: the id has to be > 0! Otherwise a c++ assertion fails.
+   */
+  /** Indicates pins that can be used by an arbitrary endpoint of an edge. */
+  val PIN_ARBITRARY = 1;
+  /** Indicates pins reserved for incoming edges. */
+  val PIN_INCOMING = 2;
+  /** Indicates pins reserved for outgoing edges. */
+  val PIN_OUTGOING = 3;
   
   val Map<Integer, ShapeRef> idShapeRefMap = Maps.newHashMap
   val Map<Integer, ConnRef> idConnRefMap = Maps.newHashMap
@@ -297,6 +404,17 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
     return connRefEdgeMap.get(connRef)
   }
   
+  
+  val Map<KPort, Checkpoint> portCheckpointMap = Maps.newHashMap
+  
+  def Checkpoint register(Checkpoint cp, KPort port) {
+    portCheckpointMap.put(port, cp)
+    return cp
+  }
+  
+  def checkpoint(CPort p) {
+    return portCheckpointMap.get(p)
+  }
   
   /**
    * Return the source pin (aka port) for this edge. 

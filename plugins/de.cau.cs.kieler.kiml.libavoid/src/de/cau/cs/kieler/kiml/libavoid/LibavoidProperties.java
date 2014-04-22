@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.kiml.libavoid;
 
+import org.adaptagrams.ConnDirFlag;
+
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 
@@ -23,14 +25,27 @@ import de.cau.cs.kieler.core.properties.Property;
  */
 public final class LibavoidProperties {
 
+    /**
+     * Represents bitwise or if {@link ConnDirFlag#ConnDirDown} and {@link ConnDirFlag#ConnDirUp}.
+     * 
+     * Mainly for convenience, as xtend does not allow bitwise or.
+     */
+    public static final int CONN_DIR_UPDOWN = ConnDirFlag.ConnDirDown | ConnDirFlag.ConnDirUp;
+    
+    /**
+     * Represents bitwise or if {@link ConnDirFlag#ConnDirLeft} and {@link ConnDirFlag#ConnDirRight}.
+     * 
+     * Mainly for convenience, as xtend does not allow bitwise or.
+     */
+    public static final int CONN_DIR_LEFTRIGHT = ConnDirFlag.ConnDirLeft | ConnDirFlag.ConnDirRight;
+
     private LibavoidProperties() {
     }
 
-    
     /*
      * General Properties
      */
-    
+
     // CHECKSTYLEOFF javadoc
     // for documentation on the properties see the libavoid documentation.
 
@@ -88,5 +103,5 @@ public final class LibavoidProperties {
     public static final IProperty<Boolean> IMPROVE_HYPEREDGES_ADD_DELETE = new Property<Boolean>(
             "de.cau.cs.kieler.kiml.libavoid."
                     + "improveHyperedgeRoutesMovingAddingAndDeletingJunctions", true);
-    
+
 }

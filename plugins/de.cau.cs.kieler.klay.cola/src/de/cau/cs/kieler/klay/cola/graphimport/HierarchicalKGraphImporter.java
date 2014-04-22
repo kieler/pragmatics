@@ -188,7 +188,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
             if (node.getChildren().isEmpty()) {
                 for (KEdge edge : node.getOutgoingEdges()) {
                     List<KEdge> edgeChain = Lists.newLinkedList();
-                    List<KVector> checkpoints = Lists.newLinkedList();
+                    List<Pair<KPort, KVector>> checkpoints = Lists.newLinkedList();
                     introduceEdge(edge, edge.getSource(), edge, edge.getTarget(), edgeChain,
                             checkpoints);
                 }
@@ -201,7 +201,8 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
     }
 
     private void introduceEdge(final KEdge edge, final KNode startNode, final KEdge startEdge,
-            final KNode currentTarget, final List<KEdge> edgeChain, final List<KVector> checkpoints) {
+            final KNode currentTarget, final List<KEdge> edgeChain, 
+            final List<Pair<KPort, KVector>> checkpoints) {
 
         edgeChain.add(edge);
 
@@ -245,7 +246,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
             cp.translate(portLayout.getWidth() / 2f, portLayout.getHeight() / 2f);
             // convert it to a global position
             cp = KimlUtil.toAbsolute(cp, edge.getTarget());
-            checkpoints.add(cp);
+            checkpoints.add(Pair.of(edge.getTargetPort(), cp));
             
             for (KEdge portEdge : getOutgoingEdges(edge.getTargetPort())) {
                 // make sure to copy the list, as we might follow multiple edges
@@ -417,9 +418,38 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
                     // however, it might be better to use a median or average value
                     repositionHierarchicalPorts(e, offset);
                 }
+                
+                List<KVectorChain> subRoutes =
+                        e.getProperty(InternalColaProperties.EDGE_SUB_ROUTES);
+                List<KEdge> edgeChain = e.getProperty(InternalColaProperties.EDGE_CHAIN);
+                if (!subRoutes.isEmpty()) {
+                    Iterator<KVectorChain> subRoutesIt = subRoutes.iterator();
+                    Iterator<KEdge> edgeChainIt = edgeChain.iterator();
+
+                    while (subRoutesIt.hasNext() && edgeChainIt.hasNext()) {
+                        final KVectorChain vc = subRoutesIt.next();
+                        final KEdge edge = edgeChainIt.next();
+                        KVector globalOffset = new KVector();
+                        // current coordinates are in global, translate them to relative
+                        if (KimlUtil.isDescendant(edge.getTarget(), edge.getSource())) {
+                            // relative to the source
+                            globalOffset = KimlUtil.toRelative(globalOffset, edge.getSource());
+                        } else {
+                            // relative to the source's parent
+                            globalOffset =
+                                    KimlUtil.toRelative(globalOffset, edge.getSource().getParent());
+                        }
+
+                        vc.translate(globalOffset);
+                        vc.translate(offset);
+
+                        // apply back to the original edge layout
+                        KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
+                        edgeLayout.applyVectorChain(vc);
+                    }
+
+                }
             }
-            
-            
         }
 
         // resize the parent node

@@ -13,11 +13,21 @@
  */
 package de.cau.cs.kieler.klay.cola;
 
+import java.util.Iterator;
+
 import org.adaptagrams.Router;
+
+import com.google.common.collect.Iterators;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.Direction;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters;
 import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters.KGraphAdapter;
 import de.cau.cs.kieler.kiml.util.nodespacing.KimlNodeDimensionCalculation;
@@ -39,9 +49,19 @@ public class LibavoidLayoutProvider extends AbstractLayoutProvider {
     public void doLayout(final KNode parentNode, final IKielerProgressMonitor progressMonitor) {
      
         KGraphAdapter adapter = KGraphAdapters.adapt(parentNode);
-        KimlNodeDimensionCalculation.sortPortLists(adapter);
-        KimlNodeDimensionCalculation.calculateLabelAndNodeSizes(adapter);
+//        KimlNodeDimensionCalculation.sortPortLists(adapter);
+//        KimlNodeDimensionCalculation.calculateLabelAndNodeSizes(adapter);
         KimlNodeDimensionCalculation.getNodeMarginCalculator(adapter).process();
+        
+        
+        // bloody hack to fix port sides
+        Iterator<KPort> ports = Iterators.filter(parentNode.eAllContents(), KPort.class);
+        while (ports.hasNext()) {
+            KPort p = ports.next();
+            PortSide ps = KimlUtil.calcPortSide(p, Direction.RIGHT);
+            p.getData(KShapeLayout.class).setProperty(LayoutOptions.PORT_SIDE, ps);
+        }
+        
         
         // importing
         IGraphImporter<KNode, CGraph> cImporter;

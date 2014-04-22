@@ -18,9 +18,12 @@ import java.util.List;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
+import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.core.util.Pair;
 
 /**
  * @author uru
@@ -44,10 +47,17 @@ public final class InternalColaProperties {
             "cola.edgeChain", new LinkedList<KEdge>());
 
     /**
+     * Sub routes of a hierarchy-crossing {@link de.cau.cs.kieler.klay.cola.graph.CEdge CEdge}.
+     */
+    public static final IProperty<List<KVectorChain>> EDGE_SUB_ROUTES =
+            new Property<List<KVectorChain>>("libavoid.subRoutes", new LinkedList<KVectorChain>());
+
+    /**
      * Positions of ports that represent hierarchy transitions on hierarchy-crossing edges.
      */
-    public static final IProperty<List<KVector>> EDGE_CHECKPOINTS = new Property<List<KVector>>(
-            "cola.checkpoints", new LinkedList<KVector>());
+    public static final IProperty<List<Pair<KPort, KVector>>> EDGE_CHECKPOINTS =
+            new Property<List<Pair<KPort, KVector>>>("cola.checkpoints",
+                    new LinkedList<Pair<KPort, KVector>>());
 
     /**
      * Utility class.
