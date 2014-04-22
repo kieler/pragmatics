@@ -233,7 +233,7 @@ public class PEdge extends PGraphElement {
      * @return the source docking point
      */
     public KVector getSourcePoint() {
-        final KVector v = target.getPosition().differenceCreate(source.getPosition());
+        final KVector v = target.getPosition().clone().sub(source.getPosition());
         clipVector(v, source.getSize().x, source.getSize().y);
         return v.add(source.getPosition());
     }
@@ -244,7 +244,7 @@ public class PEdge extends PGraphElement {
      * @return the target docking point
      */
     public KVector getTargetPoint() {
-        final KVector v = source.getPosition().differenceCreate(target.getPosition());
+        final KVector v = source.getPosition().clone().sub(target.getPosition());
         clipVector(v, target.getSize().x, target.getSize().y);
         return v.add(target.getPosition());
     }

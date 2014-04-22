@@ -195,9 +195,9 @@ public class ComponentsProcessor {
                 int prio = graph2.getProperty(Properties.PRIORITY)
                         - graph1.getProperty(Properties.PRIORITY);
                 if (prio == 0) {
-                    KVector size1 = KVector.diff(graph1.getProperty(Properties.BB_LOWRIGHT),
+                    KVector size1 = graph1.getProperty(Properties.BB_LOWRIGHT).clone().sub(
                             graph1.getProperty(Properties.BB_UPLEFT));
-                    KVector size2 = KVector.diff(graph2.getProperty(Properties.BB_LOWRIGHT),
+                    KVector size2 = graph2.getProperty(Properties.BB_LOWRIGHT).clone().sub(
                             graph2.getProperty(Properties.BB_UPLEFT));
                     return Double.compare(size1.x * size1.y, size2.x * size2.y);
                 }
@@ -212,7 +212,7 @@ public class ComponentsProcessor {
         double maxRowWidth = 0.0f;
         double totalArea = 0.0f;
         for (PGraph graph : components) {
-            KVector size = KVector.diff(graph.getProperty(Properties.BB_LOWRIGHT),
+            KVector size = graph.getProperty(Properties.BB_LOWRIGHT).clone().sub(
                     graph.getProperty(Properties.BB_UPLEFT));
             maxRowWidth = Math.max(maxRowWidth, size.x);
             totalArea += size.x * size.y;
@@ -224,7 +224,7 @@ public class ComponentsProcessor {
         // place nodes iteratively into rows
         double xpos = 0, ypos = 0, highestBox = 0, broadestRow = spacing;
         for (PGraph graph : components) {
-            KVector size = KVector.diff(graph.getProperty(Properties.BB_LOWRIGHT),
+            KVector size = graph.getProperty(Properties.BB_LOWRIGHT).clone().sub(
                     graph.getProperty(Properties.BB_UPLEFT));
             if (xpos + size.x > maxRowWidth) {
                 // place the graph into the next row

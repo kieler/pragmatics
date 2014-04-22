@@ -160,7 +160,7 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
         
         // finally process the edges
         LinkedList<Statement> statements = new LinkedList<Statement>(graph.getStatements());
-        KVector edgeOffset = baseOffset.translate(borderSpacing, borderSpacing);
+        KVector edgeOffset = baseOffset.add(borderSpacing, borderSpacing);
         while (!statements.isEmpty()) {
             Statement statement = statements.removeFirst();
             if (statement instanceof EdgeStatement) {
@@ -207,7 +207,7 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
                 double subgraphx = nodeLayout.getXpos() + nodeLayout.getInsets().getLeft();
                 double subgraphy = nodeLayout.getYpos() + nodeLayout.getInsets().getTop();
                 transformNodes(childNode, subgraph.getStatements(), true,
-                        new KVector(offset).translate(subgraphx, subgraphy), transData);
+                        new KVector(offset).add(subgraphx, subgraphy), transData);
                 // create a dummy node for compound edges
                 nodeID = getNodeID(childNode, NodeType.DUMMY, transData);
                 attributes.add(createAttribute(Attributes.STYLE, "invis"));
@@ -794,7 +794,7 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
                                 if (parentNode == transData.getSourceGraph()) {
                                     width += 2 * spacing;
                                     height += 2 * spacing;
-                                    baseOffset.translate(-leftx, -topy);
+                                    baseOffset.add(-leftx, -topy);
                                 } else {
                                     parentLayout.setXpos((float) (baseOffset.x + leftx
                                             - insets.getLeft() + spacing));
@@ -914,7 +914,7 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
             reference.y += nodeLayout.getYpos() + nodeLayout.getInsets().getTop();
             referenceNode = referenceNode.getParent();
         }
-        KVector offset = edgeOffset.differenceCreate(reference);
+        KVector offset = edgeOffset.clone().sub(reference);
 
         // parse the list of spline control coordinates
         List<KVectorChain> splines = new LinkedList<KVectorChain>();

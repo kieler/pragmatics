@@ -252,7 +252,7 @@ public final class SplineEdgeRouter implements ILayoutPhase {
         KVector endVec = end.getAbsoluteAnchor();
 
         // it is enough to check one vector, as the angle at the other node is the same
-        KVector startToEnd = KVector.diff(endVec, startVec);
+        KVector startToEnd = endVec.clone().sub(startVec);
         double radians = startToEnd.toRadians();
 
         // if the minimalAngle criteria is not met, create a short spline
@@ -353,9 +353,9 @@ public final class SplineEdgeRouter implements ILayoutPhase {
             if (bendLeft == null) {
                 test = bendRight.clone();
             }
-            KVector startTangent = KVector.diff((bendLeft == null) ? test : bendLeft, start)
+            KVector startTangent = (bendLeft == null ? test : bendLeft).clone().sub(start)
                     .normalize();
-            KVector endTangent = KVector.diff(bendRight, end).normalize().negate();
+            KVector endTangent = bendRight.clone().sub(end).normalize().negate();
 
             return generateSpline(newPoints, startTangent, endTangent);
 
@@ -429,19 +429,19 @@ public final class SplineEdgeRouter implements ILayoutPhase {
 
         while (listIt.hasNext()) {
             BezierCurve curve = listIt.next();
-            double dist = KVector.distance(curve.start, curve.end);
-            double distFst = KVector.distance(curve.start, curve.fstControlPnt);
-            double distSnd = KVector.distance(curve.end, curve.sndControlPnt);
+            double dist = curve.start.distance(curve.end);
+            double distFst = curve.start.distance(curve.fstControlPnt);
+            double distSnd = curve.end.distance(curve.sndControlPnt);
             // scale first ctrl point and therefore second of next curve
             if (distFst > dist * MAX_DISTANCE) {
-                KVector v = KVector.diff(curve.fstControlPnt, curve.start);
+                KVector v = curve.fstControlPnt.clone().sub(curve.start);
                 v.scaleToLength(dist * SMOOTHNESS_FACTOR);
                 curve.fstControlPnt = KVector.sum(curve.start, v);
                 if (listIt.hasPrevious()) {
                     listIt.previous();
                     if (listIt.hasPrevious()) {
                         BezierCurve tempCurve = listIt.previous();
-                        KVector v1 = KVector.diff(tempCurve.sndControlPnt, tempCurve.end);
+                        KVector v1 = tempCurve.sndControlPnt.clone().sub(tempCurve.end);
                         v1.scaleToLength(dist * SMOOTHNESS_FACTOR);
                         tempCurve.sndControlPnt = KVector.sum(tempCurve.end, v1);
                         listIt.next();
@@ -451,12 +451,12 @@ public final class SplineEdgeRouter implements ILayoutPhase {
             }
             // scale second ctrl point and therefore first of next curve
             if (distSnd > dist * MAX_DISTANCE) {
-                KVector v = KVector.diff(curve.sndControlPnt, curve.end);
+                KVector v = curve.sndControlPnt.clone().sub(curve.end);
                 v.scaleToLength(dist * SMOOTHNESS_FACTOR);
                 curve.sndControlPnt = KVector.sum(curve.end, v);
                 if (listIt.hasNext()) {
                     BezierCurve tempCurve = listIt.next();
-                    KVector v1 = KVector.diff(tempCurve.fstControlPnt, tempCurve.start);
+                    KVector v1 = tempCurve.fstControlPnt.clone().sub(tempCurve.start);
                     v1.scaleToLength(dist * SMOOTHNESS_FACTOR);
                     tempCurve.fstControlPnt = KVector.sum(tempCurve.start, v1);
                     listIt.previous();

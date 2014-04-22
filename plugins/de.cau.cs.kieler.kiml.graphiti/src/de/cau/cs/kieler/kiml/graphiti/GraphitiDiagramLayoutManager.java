@@ -320,7 +320,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
         }
         
         // add the corrected offset
-        offset.translate(-minx, -miny);
+        offset.add(-minx, -miny);
         KimlUtil.translate(parentNode, (float) offset.x, (float) offset.y);
     }
 
@@ -782,10 +782,10 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
         // set label position
         KVector labelPos;
         if (decorator.isLocationRelative()) {
-            labelPos = allPoints.getPointOnLine(decorator.getLocation()
-                    * allPoints.getLength());
+            labelPos = allPoints.pointOnLine(decorator.getLocation()
+                    * allPoints.totalLength());
         } else {
-            labelPos = allPoints.getPointOnLine(decorator.getLocation());
+            labelPos = allPoints.pointOnLine(decorator.getLocation());
         }
         GraphicsAlgorithm ga = decorator.getGraphicsAlgorithm();
         labelPos.x += ga.getX();

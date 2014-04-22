@@ -746,7 +746,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                 LPort sourcePort = ledge.getSource();
                 sourcePoint = KVector.sum(sourcePort.getPosition(), sourcePort.getAnchor());
                 LInsets sourceInsets = sourcePort.getNode().getInsets();
-                sourcePoint.translate(-sourceInsets.left, -sourceInsets.top);
+                sourcePoint.add(-sourceInsets.left, -sourceInsets.top);
                 LGraph nestedGraph = sourcePort.getNode().getProperty(InternalProperties.NESTED_LGRAPH);
                 if (nestedGraph != null) {
                     edgeOffset = nestedGraph.getOffset();
@@ -765,7 +765,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             bendPoints.addLast(targetPoint);
 
             // Translate the bend points by the offset and apply the bend points
-            bendPoints.translate(edgeOffset);
+            bendPoints.offset(edgeOffset);
             edgeLayout.applyVectorChain(bendPoints);
 
             // Apply layout to labels
@@ -778,7 +778,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             // Copy junction points
             KVectorChain junctionPoints = ledge.getProperty(LayoutOptions.JUNCTION_POINTS);
             if (junctionPoints != null) {
-                junctionPoints.translate(edgeOffset);
+                junctionPoints.offset(edgeOffset);
                 edgeLayout.setProperty(LayoutOptions.JUNCTION_POINTS, junctionPoints);
             } else {
                 edgeLayout.setProperty(LayoutOptions.JUNCTION_POINTS, null);

@@ -116,10 +116,10 @@ public class MathTest {
     public void testPow() {
         double ad = 10;
         float af = 10;
-        assertEquals(1, KielerMath.pow(ad, 0), 0);
-        assertEquals(1, KielerMath.pow(af, 0), 0);
-        assertEquals(100, KielerMath.pow(ad, 2), 0);
-        assertEquals(100, KielerMath.pow(af, 2), 0);
+        assertEquals(1, KielerMath.powd(ad, 0), 0);
+        assertEquals(1, KielerMath.powf(af, 0), 0);
+        assertEquals(100, KielerMath.powd(ad, 2), 0);
+        assertEquals(100, KielerMath.powf(af, 2), 0);
     }
 
     /**
@@ -133,7 +133,7 @@ public class MathTest {
         KVector kvector3 = new KVector(30, 30);
         KVector kvector4 = new KVector(50, 50);
         /* test if the last KVector of the result similar to kvector4 */
-        KVector[] result = KielerMath.calcBezierPoints(20, kvector1, kvector2, kvector3, kvector4);
+        KVector[] result = KielerMath.approximateBezierSegment(20, kvector1, kvector2, kvector3, kvector4);
         assertEquals(kvector4.x, result[result.length - 1].x, 0.000000001);
         assertEquals(kvector4.y, result[result.length - 1].y, 0.000000001);
 
@@ -143,7 +143,7 @@ public class MathTest {
         kvector3 = new KVector(80, 10);
         kvector4 = new KVector(100, 10);
         /* test if the all result-KVectors with y=10 */
-        result = KielerMath.calcBezierPoints(20, kvector1, kvector2, kvector3, kvector4);
+        result = KielerMath.approximateBezierSegment(20, kvector1, kvector2, kvector3, kvector4);
         for (KVector k : result) {
             assertEquals(10, k.y, 0.000000001);
         }
@@ -161,9 +161,9 @@ public class MathTest {
         KVector kvector3 = new KVector(30, 30);
         KVector kvector4 = new KVector(50, 50);
         /* test if the last KVector of the result similar to kvector4 */
-        KVector[] vectors = KielerMath.calcBezierPoints(20, kvector1, kvector2, kvector3, kvector4);
+        KVector[] vectors = KielerMath.approximateBezierSegment(20, kvector1, kvector2, kvector3, kvector4);
         KVectorChain controlPoints = new KVectorChain(vectors);
-        KVectorChain result = KielerMath.approximateSpline(controlPoints);
+        KVectorChain result = KielerMath.approximateBezierSpline(controlPoints);
         KVector k = result.get(result.size() - 1);
         assertEquals(kvector4.x, k.x, 0.000000001);
         assertEquals(kvector4.y, k.y, 0.000000001);
@@ -174,9 +174,9 @@ public class MathTest {
         kvector3 = new KVector(80, 10);
         kvector4 = new KVector(100, 10);
         /* test if the all result-KVectors with y=10 */
-        vectors = KielerMath.calcBezierPoints(20, kvector1, kvector2, kvector3, kvector4);
+        vectors = KielerMath.approximateBezierSegment(20, kvector1, kvector2, kvector3, kvector4);
         controlPoints = new KVectorChain(vectors);
-        result = KielerMath.approximateSpline(controlPoints);
+        result = KielerMath.approximateBezierSpline(controlPoints);
 
         for (KVector kv : result) {
             assertEquals(10, kv.y, 0.000000001);
@@ -196,20 +196,20 @@ public class MathTest {
         KVector kvector4 = new KVector(50, 50);
         /* test if the result is 0 when kvector4 = needle */
         KVector needle = kvector4;
-        double result = KielerMath.distanceFromSpline(kvector1, kvector2, kvector3, kvector4,
+        double result = KielerMath.distanceFromBezierSegment(kvector1, kvector2, kvector3, kvector4,
                 needle);
         assertEquals(0, result, 0.01);
         /* test if the result is 0 when kvector3 = needle */
         needle = kvector3;
-        result = KielerMath.distanceFromSpline(kvector1, kvector2, kvector3, kvector4, needle);
+        result = KielerMath.distanceFromBezierSegment(kvector1, kvector2, kvector3, kvector4, needle);
         assertEquals(0, result, 0.01);
         /* test if the result is 0 when kvector2 = needle */
         needle = kvector2;
-        result = KielerMath.distanceFromSpline(kvector1, kvector2, kvector3, kvector4, needle);
+        result = KielerMath.distanceFromBezierSegment(kvector1, kvector2, kvector3, kvector4, needle);
         assertEquals(0, result, 0.01);
         /* test if the result is 0 when kvector1 = needle */
         needle = kvector1;
-        result = KielerMath.distanceFromSpline(kvector1, kvector2, kvector3, kvector4, needle);
+        result = KielerMath.distanceFromBezierSegment(kvector1, kvector2, kvector3, kvector4, needle);
         assertEquals(0, result, 0.01);
 
     }

@@ -276,7 +276,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
             // the target node is contained in the source node
             translateDescendantPoint(sourceRel, sourceLayout);
         } else {
-            sourceRel.translate(-sourceLayout.getXpos(), -sourceLayout.getYpos());
+            sourceRel.add(-sourceLayout.getXpos(), -sourceLayout.getYpos());
         }
 
         if (edge.getSourcePort() != null) {
@@ -307,7 +307,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         }
 
         // check the bound of the relative position
-        return sourceRel.applyBounds(0, 0, 1, 1);
+        return sourceRel.bound(0, 0, 1, 1);
     }
 
     /**
@@ -331,15 +331,15 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                 KimlUtil.toAbsolute(targetRel, sourceNode);
                 KimlUtil.toRelative(targetRel, targetNode.getParent());
             }
-            targetRel.translate(-targetLayout.getXpos(), -targetLayout.getYpos());
+            targetRel.add(-targetLayout.getXpos(), -targetLayout.getYpos());
         } else if (sourceNode.getParent() != targetNode.getParent()) {
             // the reference point of the target is different from the source
             KimlUtil.toAbsolute(targetRel, sourceNode.getParent());
             KimlUtil.toRelative(targetRel, targetNode.getParent());
-            targetRel.translate(-targetLayout.getXpos(), -targetLayout.getYpos());
+            targetRel.add(-targetLayout.getXpos(), -targetLayout.getYpos());
         } else {
             // source and target have the same reference point
-            targetRel.translate(-targetLayout.getXpos(), -targetLayout.getYpos());
+            targetRel.add(-targetLayout.getXpos(), -targetLayout.getYpos());
         }
 
         if (edge.getTargetPort() != null) {
@@ -370,7 +370,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         }
 
         // check the bound of the relative position
-        return targetRel.applyBounds(0, 0, 1, 1);
+        return targetRel.bound(0, 0, 1, 1);
     }
 
     /**
@@ -492,7 +492,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                     edgeLayout.getProperty(LayoutOptions.EDGE_ROUTING));
             // in other cases an approximation is used
             if (approx && bendPoints.size() >= 1) {
-                bendPoints = KielerMath.approximateSpline(bendPoints);
+                bendPoints = KielerMath.approximateBezierSpline(bendPoints);
             }
 
             bendPoints.scale(scale);

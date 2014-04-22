@@ -13,9 +13,7 @@
  */
 package de.cau.cs.kieler.keg.util;
 
-import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.List;
 
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.PointList;
@@ -69,12 +67,12 @@ public final class SplineUtilities {
         int i = 1;
         // code needs lots of 3s and 4s for splines consisting of 3/4 points
         for (; i < control.size() - 2; i += 3) {
-            List<KVector> spline = new ArrayList<KVector>(4);
-            spline.add(new KVector(control.getPoint(i - 1).x, control.getPoint(i - 1).y));
-            spline.add(new KVector(control.getPoint(i).x, control.getPoint(i).y));
-            spline.add(new KVector(control.getPoint(i + 1).x, control.getPoint(i + 1).y));
-            spline.add(new KVector(control.getPoint(i + 2).x, control.getPoint(i + 2).y));
-            for (KVector p : KielerMath.calcBezierPoints(spline, approxCount(spline))) {
+            KVector[] spline = new KVector[4];
+            spline[0] = new KVector(control.getPoint(i - 1).x, control.getPoint(i - 1).y);
+            spline[1] = new KVector(control.getPoint(i).x, control.getPoint(i).y);
+            spline[2] = new KVector(control.getPoint(i + 1).x, control.getPoint(i + 1).y);
+            spline[3] = new KVector(control.getPoint(i + 2).x, control.getPoint(i + 2).y);
+            for (KVector p : KielerMath.approximateBezierSegment(approxCount(spline), spline)) {
                 points.addPoint(new PrecisionPoint(p.x, p.y));
             }
         }
@@ -83,11 +81,11 @@ public final class SplineUtilities {
             points.addPoint(control.getPoint(i));
             break;
         case 2:
-            List<KVector> spline = new ArrayList<KVector>(3);
-            spline.add(new KVector(control.getPoint(i - 1).x, control.getPoint(i - 1).y));
-            spline.add(new KVector(control.getPoint(i).x, control.getPoint(i).y));
-            spline.add(new KVector(control.getPoint(i + 1).x, control.getPoint(i + 1).y));
-            for (KVector p : KielerMath.calcBezierPoints(spline, approxCount(spline))) {
+            KVector[] spline = new KVector[3];
+            spline[0] = new KVector(control.getPoint(i - 1).x, control.getPoint(i - 1).y);
+            spline[1] = new KVector(control.getPoint(i).x, control.getPoint(i).y);
+            spline[2] = new KVector(control.getPoint(i + 1).x, control.getPoint(i + 1).y);
+            for (KVector p : KielerMath.approximateBezierSegment(approxCount(spline), spline)) {
                 points.addPoint(new PrecisionPoint(p.x, p.y));
             }
             break;
@@ -100,18 +98,18 @@ public final class SplineUtilities {
      * Calculate number of approximation points for given spline. The more bendy
      * the spline, the more points to be used.
      * 
-     * @param spline
-     * @return
+     * @param spline a spline segment
+     * @return the number of points to approximate
      */
-    private static int approxCount(final List<KVector> spline) {
+    private static int approxCount(final KVector[] spline) {
         int count = BEND_POINT_MINIMUM;
         long distance = 0;
-        KVector start = spline.get(0);
-        KVector end = spline.get(spline.size() - 1);
+        KVector start = spline[0];
+        KVector end = spline[spline.length - 1];
         LineSeg line = new LineSeg(new PrecisionPoint(start.x, start.y),
                 new PrecisionPoint(end.x, end.y));
-        for (int i = 1; i < spline.size() - 1; i++) {
-            KVector k = spline.get(i);
+        for (int i = 1; i < spline.length - 1; i++) {
+            KVector k = spline[i];
             distance += line.distanceToPoint((int) k.x, (int) k.y);
         }
         count += distance / BEND_POINT_FACTOR;

@@ -590,7 +590,7 @@ public class DotImporter implements IGraphTransformer<GraphvizModel, KNode> {
                 attributes.add(DotExporter.createAttribute(Attributes.HEIGHT,
                         nodeLayout.getHeight() / DotExporter.DPI));
             } else if (statement instanceof Subgraph) {
-                applyLayout(knode, new KVector(offset).translate(nodeLayout.getXpos(),
+                applyLayout(knode, new KVector(offset).add(nodeLayout.getXpos(),
                         nodeLayout.getYpos()), graph);
             }
             

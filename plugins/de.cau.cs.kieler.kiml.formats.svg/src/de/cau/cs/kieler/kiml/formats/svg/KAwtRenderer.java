@@ -368,7 +368,7 @@ public class KAwtRenderer {
         while (node != graph && node != null) {
             KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
             KInsets insets = nodeLayout.getInsets();
-            offset.translate(nodeLayout.getXpos() + insets.getLeft(),
+            offset.add(nodeLayout.getXpos() + insets.getLeft(),
                     nodeLayout.getYpos() + insets.getTop());
             node = node.getParent();
         }
@@ -926,7 +926,7 @@ public class KAwtRenderer {
             // approximate the spline for more accurate decorator placement
             KVectorChain referencePoints = points;
             if (isSpline || rendering instanceof KSpline) {
-                referencePoints = KielerMath.approximateSpline(points);
+                referencePoints = KielerMath.approximateBezierSpline(points);
             }
             
             // handle the decorator placement of the contained children
@@ -992,7 +992,7 @@ public class KAwtRenderer {
             }
             
             // determine bottom right corner
-            childSize.translate(-x, -y);
+            childSize.add(-x, -y);
             if (directPlaceData.getBottomRight() != null) {
                 KPosition bottomRight = directPlaceData.getBottomRight();
                 KXPosition<?> xpos = bottomRight.getX();
@@ -1246,8 +1246,8 @@ public class KAwtRenderer {
             KDecoratorPlacementData decoPlaceData = (KDecoratorPlacementData) placeData;
             
             // calculate the reference point
-            double absLocation = decoPlaceData.getRelative() * linePoints.getLength();
-            KVector referencePoint = linePoints.getPointOnLine(absLocation);
+            double absLocation = decoPlaceData.getRelative() * linePoints.totalLength();
+            KVector referencePoint = linePoints.pointOnLine(absLocation);
             
             KVector size = new KVector(decoPlaceData.getWidth(), decoPlaceData.getHeight());
             if (size.x < 0) {
@@ -1265,7 +1265,7 @@ public class KAwtRenderer {
             
             // rotate the decorator if requested
             if (decoPlaceData.isRotateWithLine()) {
-                double angle = linePoints.getAngleOnLine(absLocation);
+                double angle = linePoints.angleOnLine(absLocation);
                 
                 // render the decorator with translated and rotated graphics
                 graphics.translate(referencePoint.x, referencePoint.y);
