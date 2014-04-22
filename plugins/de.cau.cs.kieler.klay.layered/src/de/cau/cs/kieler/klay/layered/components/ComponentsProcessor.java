@@ -43,7 +43,7 @@ import de.cau.cs.kieler.klay.layered.properties.NodeType;
  * external ports with port constraints other than these, connected components processing is disabled
  * even if requested by the user.</p>
  * 
- * <p><strong>Splitting into components</strong></p>
+ * <h4>Splitting into components</h4>
  * <dl>
  *   <dt>Precondition:</dt>
  *     <dd>an unlayered graph.</dd>
@@ -51,7 +51,7 @@ import de.cau.cs.kieler.klay.layered.properties.NodeType;
  *     <dd>a list of graphs that represent the connected components of the input graph.</dd>
  * </dl>
  * 
- * <p><strong>Packing components</strong></p>
+ * <h4>Packing components</h4>
  * <dl>
  *   <dt>Precondition:</dt>
  *     <dd>a list of unlayered graphs with complete layout.</dd>
@@ -62,9 +62,19 @@ import de.cau.cs.kieler.klay.layered.properties.NodeType;
  * @author msp
  * @author cds
  * @kieler.design 2012-08-10 chsch grh
- * @kieler.rating proposed yellow by msp
+ * @kieler.rating yellow 2014-04-22 review KI-48 by uru, tit, csp
  */
 public final class ComponentsProcessor {
+    
+    /**
+     * Cached instance of a {@link ComponentGroupGraphPlacer}.
+     */
+    private final ComponentGroupGraphPlacer componentGroupGraphPlacer = new ComponentGroupGraphPlacer();
+    
+    /**
+     * Cached instance of a {@link SimpleRowGraphPlacer}.
+     */
+    private final SimpleRowGraphPlacer simpleRowGraphPlacer = new SimpleRowGraphPlacer();
     
     /**
      * Graph placer to be used to combine the different components back into a single graph.
@@ -125,24 +135,17 @@ public final class ComponentsProcessor {
             }
             
             if (extPorts) {
-                // With external ports connections, we want to use the more complex components
+                // With external port connections, we want to use the more complex components
                 // placement algorithm
-                if (!(graphPlacer instanceof ComponentGroupGraphPlacer)) {
-                    graphPlacer = new ComponentGroupGraphPlacer();
-                }
+                graphPlacer = componentGroupGraphPlacer;
             } else {
                 // If there are no connections to external ports, default to the simpler components
                 // placement algorithm
-                if (!(graphPlacer instanceof SimpleRowGraphPlacer)) {
-                    graphPlacer = new SimpleRowGraphPlacer();
-                }
+                graphPlacer = simpleRowGraphPlacer;
             }
         } else {
             result = Arrays.asList(graph);
-            
-            if (!(graphPlacer instanceof SimpleRowGraphPlacer)) {
-                graphPlacer = new SimpleRowGraphPlacer();
-            }
+            graphPlacer = simpleRowGraphPlacer;
         }
         
         return result;
