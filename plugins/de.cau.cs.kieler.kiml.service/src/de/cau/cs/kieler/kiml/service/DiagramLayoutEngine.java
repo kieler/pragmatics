@@ -22,7 +22,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -82,6 +81,8 @@ public class DiagramLayoutEngine {
             = new Property<IDiagramLayoutManager<?>>("layoutEngine.diagramLayoutManager");
     /** preference identifier for debug graph output. */
     public static final String PREF_DEBUG_OUTPUT = "kiml.debug.graph";
+    /** preference identifier for execution time measurement. */
+    public static final String PREF_EXEC_TIME_MEASUREMENT = "kiml.exectime.measure";
     
     
     /** the graph layout engine for executing layout algorithms on the hierarchy levels of a graph. */
@@ -411,7 +412,8 @@ public class DiagramLayoutEngine {
             final IKielerProgressMonitor progressMonitor) {
         IKielerProgressMonitor monitor;
         if (progressMonitor == null) {
-            monitor = new BasicProgressMonitor(0);
+            monitor = new BasicProgressMonitor(0, KimlServicePlugin.getDefault().getPreferenceStore()
+                    .getBoolean(PREF_EXEC_TIME_MEASUREMENT));
         } else {
             monitor = progressMonitor;
         }
@@ -581,8 +583,7 @@ public class DiagramLayoutEngine {
             layoutOptionManager.configure(mapping, progressMonitor.subTask(CONFIGURE_WORK));
             
             // export the layout graph for debugging
-            if (Platform.getPreferencesService().getBoolean("de.cau.cs.kieler.kiml.ui",
-                    PREF_DEBUG_OUTPUT, false, null)) {
+            if (KimlServicePlugin.getDefault().getPreferenceStore().getBoolean(PREF_DEBUG_OUTPUT)) {
                 exportLayoutGraph(mapping.getLayoutGraph());
             }
 

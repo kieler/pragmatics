@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.draw2d.ConnectionAnchor;
 import org.eclipse.draw2d.ConnectionLocator;
 import org.eclipse.draw2d.IFigure;
@@ -65,6 +64,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.service.KimlServicePlugin;
 import de.cau.cs.kieler.kiml.service.LayoutManagersService;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
@@ -124,9 +124,8 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                 }
 
                 // set further options
-                boolean obliqueRouting = Platform.getPreferencesService().getBoolean(
-                        "de.cau.cs.kieler.kiml.ui",
-                        LayoutManagersService.PREF_OBLIQUE_ROUTE, true, null);
+                boolean obliqueRouting = KimlServicePlugin.getDefault().getPreferenceStore().getBoolean(
+                        LayoutManagersService.PREF_OBLIQUE_ROUTE);
                 command.setObliqueRouting(obliqueRouting);
 
                 pointListMap.clear();
