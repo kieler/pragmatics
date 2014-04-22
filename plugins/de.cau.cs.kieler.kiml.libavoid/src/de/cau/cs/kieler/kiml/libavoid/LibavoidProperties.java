@@ -14,8 +14,12 @@
 package de.cau.cs.kieler.kiml.libavoid;
 
 import org.adaptagrams.ConnDirFlag;
+import org.adaptagrams.Router;
+import org.adaptagrams.RoutingOption;
+import org.adaptagrams.RoutingParameter;
 
 import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.core.properties.Property;
 
 /**
@@ -104,4 +108,83 @@ public final class LibavoidProperties {
             "de.cau.cs.kieler.kiml.libavoid."
                     + "improveHyperedgeRoutesMovingAddingAndDeletingJunctions", true);
 
+    
+    /**
+     * Transfers the layout options that are set on the passed {@code node} to the passed libavoid
+     * {@code router} instance.
+     * 
+     * @param router
+     *            the used libavoid router
+     * @param node
+     *            the node from which to copy the layout options
+     */
+    public static void transferOptions(final Router router, final IPropertyHolder propertyHolder) {
+
+        /*
+         * Penalties
+         */
+        float segmentPenalty = propertyHolder.getProperty(LibavoidProperties.SEGMENT_PENALTY);
+        router.setRoutingParameter(RoutingParameter.segmentPenalty, segmentPenalty);
+
+        float anglePenalty = propertyHolder.getProperty(LibavoidProperties.ANGLE_PENALTY);
+        router.setRoutingParameter(RoutingParameter.anglePenalty, anglePenalty);
+
+        float crossingPenalty = propertyHolder.getProperty(LibavoidProperties.CROSSING_PENALTY);
+        router.setRoutingParameter(RoutingParameter.crossingPenalty, crossingPenalty);
+
+        float clusterCrossingPenalty =
+                propertyHolder.getProperty(LibavoidProperties.CLUSTER_CROSSING_PENALTY);
+        router.setRoutingParameter(RoutingParameter.clusterCrossingPenalty, clusterCrossingPenalty);
+
+        float fixedSharedPathPenalty =
+                propertyHolder.getProperty(LibavoidProperties.FIXED_SHARED_PATH_PENALTY);
+        router.setRoutingParameter(RoutingParameter.fixedSharedPathPenalty, fixedSharedPathPenalty);
+
+        float portDirectionPenalty =
+                propertyHolder.getProperty(LibavoidProperties.PORT_DIRECTION_PENALTY);
+        router.setRoutingParameter(RoutingParameter.portDirectionPenalty, portDirectionPenalty);
+
+        float shapeBufferDistance =
+                propertyHolder.getProperty(LibavoidProperties.SHAPE_BUFFER_DISTANCE);
+        router.setRoutingParameter(RoutingParameter.shapeBufferDistance, shapeBufferDistance);
+
+        float idealNudgingDistance =
+                propertyHolder.getProperty(LibavoidProperties.IDEAL_NUDGING_DISTANCE);
+        router.setRoutingParameter(RoutingParameter.idealNudgingDistance, idealNudgingDistance);
+
+        /*
+         * Routing options
+         */
+        boolean nudgeOrthogonalSegmentsConnectedToShapes =
+                propertyHolder.getProperty(LibavoidProperties.NUDGE_ORTHOGONAL_SEGMENTS);
+        router.setRoutingOption(RoutingOption.nudgeOrthogonalSegmentsConnectedToShapes,
+                nudgeOrthogonalSegmentsConnectedToShapes);
+
+        boolean improveHyperedgeRoutesMovingJunctions =
+                propertyHolder.getProperty(LibavoidProperties.IMPROVE_HYPEREDGES);
+        router.setRoutingOption(RoutingOption.improveHyperedgeRoutesMovingJunctions,
+                improveHyperedgeRoutesMovingJunctions);
+
+        boolean penaliseOrthogonalSharedPathsAtConnEnds =
+                propertyHolder.getProperty(LibavoidProperties.PENALISE_ORTH_SHATE_PATHS);
+        router.setRoutingOption(RoutingOption.penaliseOrthogonalSharedPathsAtConnEnds,
+                penaliseOrthogonalSharedPathsAtConnEnds);
+
+        boolean nudgeOrthogonalTouchingColinearSegments =
+                propertyHolder.getProperty(LibavoidProperties.NUDGE_ORTHOGONAL_COLINEAR_SEGMENTS);
+        router.setRoutingOption(RoutingOption.nudgeOrthogonalTouchingColinearSegments,
+                nudgeOrthogonalTouchingColinearSegments);
+
+        boolean performUnifyingNudgingPreprocessingStep =
+                propertyHolder.getProperty(LibavoidProperties.NUDGE_PREPROCESSING);
+        router.setRoutingOption(RoutingOption.performUnifyingNudgingPreprocessingStep,
+                performUnifyingNudgingPreprocessingStep);
+
+        boolean improveHyperedgeRoutesMovingAddingAndDeletingJunctions =
+                propertyHolder.getProperty(LibavoidProperties.IMPROVE_HYPEREDGES_ADD_DELETE);
+        router.setRoutingOption(
+                RoutingOption.improveHyperedgeRoutesMovingAddingAndDeletingJunctions,
+                improveHyperedgeRoutesMovingAddingAndDeletingJunctions);
+
+    }
 }

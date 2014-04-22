@@ -27,8 +27,6 @@ import org.adaptagrams.Point;
 import org.adaptagrams.Polygon;
 import org.adaptagrams.Router;
 import org.adaptagrams.RouterFlag;
-import org.adaptagrams.RoutingOption;
-import org.adaptagrams.RoutingParameter;
 import org.adaptagrams.ShapeConnectionPin;
 import org.adaptagrams.ShapeRef;
 import org.adaptagrams.adaptagrams;
@@ -160,8 +158,7 @@ public class LibavoidGraph {
         router = new Router(rf);
 
         // layout options
-        transformOptions(parentNode);
-
+        LibavoidProperties.transferOptions(router, layout);
     }
 
     /**
@@ -219,77 +216,7 @@ public class LibavoidGraph {
      * -----------------------------------------------------
      */
 
-    private void transformOptions(final KNode node) {
-
-        KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-
-        /*
-         * Penalties
-         */
-        float segmentPenalty = nodeLayout.getProperty(LibavoidProperties.SEGMENT_PENALTY);
-        router.setRoutingParameter(RoutingParameter.segmentPenalty, segmentPenalty);
-
-        float anglePenalty = nodeLayout.getProperty(LibavoidProperties.ANGLE_PENALTY);
-        router.setRoutingParameter(RoutingParameter.anglePenalty, anglePenalty);
-
-        float crossingPenalty = nodeLayout.getProperty(LibavoidProperties.CROSSING_PENALTY);
-        router.setRoutingParameter(RoutingParameter.crossingPenalty, crossingPenalty);
-
-        float clusterCrossingPenalty =
-                nodeLayout.getProperty(LibavoidProperties.CLUSTER_CROSSING_PENALTY);
-        router.setRoutingParameter(RoutingParameter.clusterCrossingPenalty, clusterCrossingPenalty);
-
-        float fixedSharedPathPenalty =
-                nodeLayout.getProperty(LibavoidProperties.FIXED_SHARED_PATH_PENALTY);
-        router.setRoutingParameter(RoutingParameter.fixedSharedPathPenalty, fixedSharedPathPenalty);
-
-        float portDirectionPenalty =
-                nodeLayout.getProperty(LibavoidProperties.PORT_DIRECTION_PENALTY);
-        router.setRoutingParameter(RoutingParameter.portDirectionPenalty, portDirectionPenalty);
-
-        float shapeBufferDistance =
-                nodeLayout.getProperty(LibavoidProperties.SHAPE_BUFFER_DISTANCE);
-        router.setRoutingParameter(RoutingParameter.shapeBufferDistance, shapeBufferDistance);
-
-        float idealNudgingDistance =
-                nodeLayout.getProperty(LibavoidProperties.IDEAL_NUDGING_DISTANCE);
-        router.setRoutingParameter(RoutingParameter.idealNudgingDistance, idealNudgingDistance);
-
-        /*
-         * Routing options
-         */
-        boolean nudgeOrthogonalSegmentsConnectedToShapes =
-                nodeLayout.getProperty(LibavoidProperties.NUDGE_ORTHOGONAL_SEGMENTS);
-        router.setRoutingOption(RoutingOption.nudgeOrthogonalSegmentsConnectedToShapes,
-                nudgeOrthogonalSegmentsConnectedToShapes);
-
-        boolean improveHyperedgeRoutesMovingJunctions =
-                nodeLayout.getProperty(LibavoidProperties.IMPROVE_HYPEREDGES);
-        router.setRoutingOption(RoutingOption.improveHyperedgeRoutesMovingJunctions,
-                improveHyperedgeRoutesMovingJunctions);
-
-        boolean penaliseOrthogonalSharedPathsAtConnEnds =
-                nodeLayout.getProperty(LibavoidProperties.PENALISE_ORTH_SHATE_PATHS);
-        router.setRoutingOption(RoutingOption.penaliseOrthogonalSharedPathsAtConnEnds,
-                penaliseOrthogonalSharedPathsAtConnEnds);
-
-        boolean nudgeOrthogonalTouchingColinearSegments =
-                nodeLayout.getProperty(LibavoidProperties.NUDGE_ORTHOGONAL_COLINEAR_SEGMENTS);
-        router.setRoutingOption(RoutingOption.nudgeOrthogonalTouchingColinearSegments,
-                nudgeOrthogonalTouchingColinearSegments);
-
-        boolean performUnifyingNudgingPreprocessingStep =
-                nodeLayout.getProperty(LibavoidProperties.NUDGE_PREPROCESSING);
-        router.setRoutingOption(RoutingOption.performUnifyingNudgingPreprocessingStep,
-                performUnifyingNudgingPreprocessingStep);
-
-        boolean improveHyperedgeRoutesMovingAddingAndDeletingJunctions =
-                nodeLayout.getProperty(LibavoidProperties.IMPROVE_HYPEREDGES_ADD_DELETE);
-        router.setRoutingOption(
-                RoutingOption.improveHyperedgeRoutesMovingAddingAndDeletingJunctions,
-                improveHyperedgeRoutesMovingAddingAndDeletingJunctions);
-
-    }
+  
 
     /*-----------------------------------------------------
      *  KGraph -> Libavoid

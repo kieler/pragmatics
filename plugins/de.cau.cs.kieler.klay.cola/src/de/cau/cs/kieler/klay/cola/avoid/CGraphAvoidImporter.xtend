@@ -20,6 +20,7 @@ import de.cau.cs.kieler.core.math.KVector
 import de.cau.cs.kieler.core.math.KVectorChain
 import de.cau.cs.kieler.core.util.Pair
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
+import de.cau.cs.kieler.kiml.libavoid.LibavoidProperties
 import de.cau.cs.kieler.kiml.options.Direction
 import de.cau.cs.kieler.kiml.options.EdgeRouting
 import de.cau.cs.kieler.kiml.options.LayoutOptions
@@ -46,13 +47,11 @@ import org.adaptagrams.Point
 import org.adaptagrams.Polygon
 import org.adaptagrams.Router
 import org.adaptagrams.RouterFlag
-import org.adaptagrams.RoutingParameter
 import org.adaptagrams.ShapeConnectionPin
 import org.adaptagrams.ShapeRef
 import org.adaptagrams.adaptagrams
 
 import static de.cau.cs.kieler.kiml.options.PortSide.*
-import de.cau.cs.kieler.kiml.libavoid.LibavoidProperties
 
 /**
  * TODO document
@@ -66,13 +65,13 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
 
   override importGraph(CGraph graph) {
     
+    // create a router instance
     val edgeRouting = if (graph.getProperty(LayoutOptions.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL) 
                         RouterFlag.OrthogonalRouting else RouterFlag.PolyLineRouting
     val router = new Router(edgeRouting)
-    
-    router.setRoutingParameter(RoutingParameter.shapeBufferDistance, 5)
-    router.setRoutingParameter(RoutingParameter.crossingPenalty, 100)
-    router.setRoutingParameter(RoutingParameter.clusterCrossingPenalty, 10000 )
+
+    // transfer the libavoid properties specified in the graph to the router    
+    LibavoidProperties.transferOptions(router, graph)
     
     // transform all the nodes
     for (node : graph.children) {
@@ -83,6 +82,7 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
       } 
     } 
     
+    // edges
     for (node : graph.children) {
       for (edge : node.outgoingEdges) {
         edge.transform(router)
@@ -94,14 +94,11 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
   
   
   def dispatch transform(CNode node, Router router) {
-    
-    
+
     // the raw size already concludes margins
     val rect = new AvoidRectangle(node.rectPosRaw.toPoint, 
                 node.rectPosRaw.sumCreate(node.rectSizeRaw).toPoint)
-    //println("rect " + node.rectPosRaw + node.rectSizeRaw)
     createAndRegisterShapeRef(rect, node, router)
-    
     
   }
   
