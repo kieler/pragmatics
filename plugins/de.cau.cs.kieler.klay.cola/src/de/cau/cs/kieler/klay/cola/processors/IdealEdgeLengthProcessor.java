@@ -226,10 +226,18 @@ public class IdealEdgeLengthProcessor implements ILayoutProcessor {
             for (CEdge e : n.getExternalEdges()) {
                 if (e.getSourcePort() != null && e.getSourcePort().isExternal()
                         || e.getTargetPort() != null && e.getTargetPort().isExternal()) {
-                    // for external ports try to straighten the edges as much as possible,
-                    // hence we set the ideal edge length smaller than the spacing
-                    graph.idealEdgeLengths[e.cIndex] = 1; // SUPPRESS CHECKSTYLE NEXT 1 MagicNumber
-                            //graph.getProperty(LayoutOptions.SPACING) * 0.9f;
+                    // for external ports try to straighten the edges as much as possible
+                    // TODO is there a better strategy?
+                    if (graph.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()) {
+                        // when alignment constraints are used
+                        // we set the ideal edge length smaller than the spacing
+                        // SUPPRESS CHECKSTYLE NEXT 2 MagicNumber
+                        graph.idealEdgeLengths[e.cIndex] =
+                                graph.getProperty(LayoutOptions.BORDER_SPACING) * 1f;
+                    } else {
+                        // with clusters set them as short as possible
+                        graph.idealEdgeLengths[e.cIndex] = 1;
+                    }
                     continue;
                 }
             }
