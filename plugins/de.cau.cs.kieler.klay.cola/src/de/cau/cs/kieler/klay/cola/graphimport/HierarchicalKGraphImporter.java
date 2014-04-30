@@ -243,7 +243,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
             // and add the port's position to a list of "checkpoints"
             KShapeLayout portLayout = edge.getTargetPort().getData(KShapeLayout.class);
             KVector cp = portLayout.createVector();
-            cp.translate(portLayout.getWidth() / 2f, portLayout.getHeight() / 2f);
+            cp.add(portLayout.getWidth() / 2f, portLayout.getHeight() / 2f);
             // convert it to a global position
             cp = KimlUtil.toAbsolute(cp, edge.getTarget());
             checkpoints.add(Pair.of(edge.getTargetPort(), cp));
@@ -393,7 +393,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
                     System.out.println(parent + " " + c);
                     //KVector relativeOffset = offset.differenceCreate(clusterPos);
                     
-                    chain.translate(clusterPos);
+                    chain.add(clusterPos);
                     
                     layout.applyVectorChain(chain);
                 } else {
@@ -405,8 +405,8 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
                             KimlUtil.toRelative(e.getTargetPoint(), edge.getSource().getParent());
     
                     // apply new positions
-                    layout.getSourcePoint().applyVector(relativeSrcPoint.sumCreate(offset));
-                    layout.getTargetPoint().applyVector(relativeTgtPoint.sumCreate(offset));
+                    layout.getSourcePoint().applyVector(relativeSrcPoint.clone().add(offset));
+                    layout.getTargetPoint().applyVector(relativeTgtPoint.clone().add(offset));
                 }
             } else {
 
@@ -440,8 +440,8 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
                                     KimlUtil.toRelative(globalOffset, edge.getSource().getParent());
                         }
 
-                        vc.translate(globalOffset);
-                        vc.translate(offset);
+                        vc.add(globalOffset);
+                        vc.add(offset);
 
                         // apply back to the original edge layout
                         KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
@@ -471,11 +471,11 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
         Cluster c = clusterMap.get(parent);
         if (c == null) {
             // no offset required, we are on the root level
-            return nodePos.sumCreate(offset);
+            return nodePos.clone().add(offset);
         } else {
             // if it's a nested cluster we have to offset that
             KVector clusterPos = new KVector(c.getBounds().getMinX(), c.getBounds().getMinY());
-            return nodePos.differenceCreate(clusterPos);
+            return nodePos.clone().sub(clusterPos);
         }
     }
 
@@ -488,12 +488,12 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
         Cluster parentCluster = clusterMap.get(node.getParent());
 
         if (parentCluster == null) {
-            return clusterPos.sumCreate(offset);
+            return clusterPos.clone().add(offset);
         } else {
             KVector parentClusterPos =
                     new KVector(parentCluster.getBounds().getMinX(), parentCluster.getBounds()
                             .getMinY());
-            return clusterPos.differenceCreate(parentClusterPos);
+            return clusterPos.clone().sub(parentClusterPos);
         }
     }
 

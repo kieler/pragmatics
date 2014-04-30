@@ -22,11 +22,9 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.klighd.piccolo.internal.controller.AbstractKGERenderingController;
 import de.cau.cs.kieler.klighd.piccolo.internal.controller.KNodeRenderingController;
 import de.cau.cs.kieler.klighd.piccolo.internal.util.NodeUtil;
-import de.cau.cs.kieler.klighd.util.KlighdProperties;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
@@ -39,7 +37,7 @@ import edu.umd.cs.piccolo.util.PPickPath;
  * @author mri
  * @author chsch
  */
-public class KNodeNode extends PLayer implements INode, ILabeledGraphElement<KNode> {
+public class KNodeNode extends KDisposingLayer implements INode, ILabeledGraphElement<KNode> {
 
     private static final long serialVersionUID = 6311105654943173693L;
     
@@ -75,36 +73,29 @@ public class KNodeNode extends PLayer implements INode, ILabeledGraphElement<KNo
 
 
     /**
-     * Constructs a Piccolo2D node for representing a {@code KNode}.
+     * Constructs a Piccolo2D node for representing a <code>KNode</code>.
      * 
      * @param node
      *            the node
-     * @param parent
-     *            the parent node
      */
-    public KNodeNode(final KNode node, final INode parent) {
+    public KNodeNode(final KNode node) {
         super();
 
         this.node = node;
-        this.parent = parent;
-        this.portLayer = new PLayer();
-        this.labelLayer = new PLayer();
+        this.portLayer = new KDisposingLayer();
+        this.labelLayer = new KDisposingLayer();
         this.childArea = new KChildAreaNode(this);
-        
+
         this.childAreaCamera = new PCamera();
 
         this.childAreaCamera.setPickable(true);
         this.childAreaCamera.setVisible(false);
         this.childAreaCamera.addLayer(this.childArea);
-        
+
         this.addChild(childAreaCamera);
         this.addChild(portLayer);
         this.addChild(labelLayer);
-        
-        final Boolean b = node.getData(KLayoutData.class).getProperty(
-                KlighdProperties.KLIGHD_SELECTION_UNPICKABLE);
-        this.setPickable(b != null && b.equals(Boolean.TRUE) ? false : true);
-        
+
         this.addPropertyChangeListener(PLayer.PROPERTY_CAMERAS, new PropertyChangeListener() {
             // this property change listener reacts on changes in the cameras list
             
@@ -218,10 +209,29 @@ public class KNodeNode extends PLayer implements INode, ILabeledGraphElement<KNo
     }
 
     /**
+     * Setter.
+     * 
+     * @param parentINode
+     *            the {@link INode} being the new parent in terms of the structural nodes
+     */
+    public void setParentNode(final INode parentINode) {
+        this.parent = parentINode;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public KChildAreaNode getChildAreaNode() {
         return childArea;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void removeFromParent() {
+        super.removeFromParent();
+        this.parent = null;
     }
     
     /**

@@ -445,8 +445,8 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
                 KEdgeLayout layout = edge.getData(KEdgeLayout.class);
                 
                 layout.getBendPoints().clear();
-                layout.getSourcePoint().applyVector(e.getSourcePoint().sumCreate(offset));
-                layout.getTargetPoint().applyVector(e.getTargetPoint().sumCreate(offset));
+                layout.getSourcePoint().applyVector(e.getSourcePoint().clone().add(offset));
+                layout.getTargetPoint().applyVector(e.getTargetPoint().clone().add(offset));
             }
             
             // edges that connect to external ports, reference point is the root node for both
@@ -457,17 +457,17 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
 
                 layout.getBendPoints().clear();
                 if (e.getSource() != null) {
-                    layout.getSourcePoint().applyVector(e.getSourcePoint().sumCreate(offset));
+                    layout.getSourcePoint().applyVector(e.getSourcePoint().clone().add(offset));
                 } else {
                     // get the port's position relative to the parent
                     layout.getSourcePoint().applyVector(
-                            e.getSourcePort().getRectCenter().sumCreate(offset));
+                            e.getSourcePort().getRectCenter().clone().add(offset));
                 }
                 if (e.getTarget() != null) {
-                    layout.getTargetPoint().applyVector(e.getTargetPoint().sumCreate(offset));
+                    layout.getTargetPoint().applyVector(e.getTargetPoint().clone().add(offset));
                 } else {
                     layout.getTargetPoint().applyVector(
-                            e.getTargetPort().getRectCenter().sumCreate(offset));
+                            e.getTargetPort().getRectCenter().clone().add(offset));
                 }
             }
         }

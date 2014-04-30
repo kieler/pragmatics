@@ -97,7 +97,7 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
 
     // the raw size already concludes margins
     val rect = new AvoidRectangle(node.rectPosRaw.toPoint, 
-                node.rectPosRaw.sumCreate(node.rectSizeRaw).toPoint)
+                node.rectPosRaw.clone.add(node.rectSizeRaw).toPoint)
     createAndRegisterShapeRef(rect, node, router)
     
   }
@@ -120,7 +120,7 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
     val height = box.getMax().getY() - box.getMin().getY();
 
     // determine the pin's positions relative on the respective side
-    val relativePortPos = port.rectPosRaw.differenceCreate(port.owner.rectPosRaw)
+    val relativePortPos = port.rectPosRaw.clone.sub(port.owner.rectPosRaw)
     relativePortPos.add(port.rectSizeRaw.scale(0.5))
     val relX = relativePortPos.x / width
     val relY = relativePortPos.y / height
@@ -333,20 +333,20 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
        val margins = port.owner.margins
        switch (port.side) {
         case WEST: {
-          offset.translate(margins.left, 0)
-          offset.translate(-port.rectSize.x, 0)
+          offset.add(margins.left, 0)
+          offset.add(-port.rectSize.x, 0)
         }
         case EAST: {
-          offset.translate(-margins.right, 0)
-          offset.translate(port.rectSize.x, 0)
+          offset.add(-margins.right, 0)
+          offset.add(port.rectSize.x, 0)
         }
         case NORTH: {
-          offset.translate(0, margins.top)
-          offset.translate(0, -port.rectSize.y)
+          offset.add(0, margins.top)
+          offset.add(0, -port.rectSize.y)
         }
         case SOUTH: {
-          offset.translate(0, -margins.bottom)
-          offset.translate(0, port.rectSize.y)  
+          offset.add(0, -margins.bottom)
+          offset.add(0, port.rectSize.y)  
         }
       }
     }

@@ -15,6 +15,7 @@ package de.cau.cs.kieler.klighd.util;
 
 import org.eclipse.emf.common.util.URI;
 
+import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
@@ -80,11 +81,42 @@ public final class KlighdProperties {
     
     /**
      * Property indicating the auto expansion of a node if the value is true.<br>
-     * This is property is currently to be attached to the nodes shape layout data during the view
+     * This property is currently to be attached to the node's shape layout data during the view
      * synthesis process. If it is absent the node gets expanded, anyway.
      */
     public static final IProperty<Boolean> EXPAND = new Property<Boolean>(
             "de.cau.cs.kieler.klighd.expand", true);
+    
+    /**
+     * Property indicating the auto incorporation of a
+     * {@link de.cau.cs.kieler.core.kgraph.KGraphElement KGraphElement} (kge) into the corresponding
+     * diagram if the value is true.<br>
+     * This property is currently to be attached to the kge's
+     * {@link de.cau.cs.kieler.kiml.klayoutdata.KLayoutData } data during the view synthesis process.
+     * If it is absent the kge is incorporated, anyway.
+     */
+    public static final IProperty<Boolean> SHOW = new Property<Boolean>(
+            "de.cau.cs.kieler.klighd.show", true);
+
+    /**
+     * Property indicating the initialization of the diagram clip to the associated node (property
+     * value).<br>
+     * This property is to be attached to the {@link de.cau.cs.kieler.klighd.ViewContext
+     * ViewContext} being used during the view synthesis process.
+     */
+    public static final IProperty<KNode> CLIP = new Property<KNode>(
+            "de.cau.cs.kieler.klighd.clip");
+
+    /**
+     * Property determining the selectability of a certain
+     * {@link de.cau.cs.kieler.core.kgraph.KGraphElement KGraphElement} or
+     * {@link de.cau.cs.kieler.core.krendering.KText KText}. If it is set to <code>true</code> that
+     * particular diagram element cannot be selected, and the (geometrically) underlying element will
+     * be selected if possible.<br>
+     * If a {@link KNode} is not selectable the selection attempt is stopped!
+     */
+    public static final IProperty<Boolean> NOT_SELECTABLE = new Property<Boolean>(
+            "de.cau.cs.kieler.klighd.suppressSelectability", false);
 
     /**
      * Property providing a URI to semantic elements to be depicted but that are to be loaded lazily.
@@ -96,9 +128,11 @@ public final class KlighdProperties {
     /**
      * Property of {@link de.cau.cs.kieler.core.kgraph.KNode KNodes} indicating that the containing
      * node is not pickable in a KLighD diagram. Can be used to mask auxiliary encapsulating nodes.
+     * 
+     * @deprecated use {@link #NOT_SELECTABLE}
      */
     public static final IProperty<Boolean> KLIGHD_SELECTION_UNPICKABLE = new Property<Boolean>(
-            "klighd.selection.unpickable");
+            "klighd.selection.unpickable", false);
 
     /**
      * A pre-defined property to be used for handing over an {@link RunnableWithResult} to the

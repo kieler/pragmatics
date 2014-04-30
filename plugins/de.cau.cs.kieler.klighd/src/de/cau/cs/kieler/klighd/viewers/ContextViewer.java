@@ -279,11 +279,11 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
     /**
      * {@inheritDoc}
      */
-    public boolean isVisible(final Object semanticElement) {
+    public boolean isDisplayed(final Object semanticElement, final boolean checkParents) {
         final EObject diagramNode =
                 getViewContext().getTargetElement(semanticElement, KNode.class);
         if (diagramNode instanceof KGraphElement) {
-            return currentViewer.isVisible((KGraphElement) diagramNode);
+            return currentViewer.isDisplayed((KGraphElement) diagramNode, checkParents);
         } else {
             return false;
         }
@@ -292,8 +292,28 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
     /**
      * {@inheritDoc}
      */
-    public boolean isVisible(final KGraphElement diagramElement) {
-        return this.currentViewer.isVisible(diagramElement);
+    public boolean isDisplayed(final KGraphElement diagramElement, final boolean checkParents) {
+        return this.currentViewer.isDisplayed(diagramElement, checkParents);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isVisible(final Object semanticElement, final boolean checkParents) {
+        final EObject diagramNode =
+                getViewContext().getTargetElement(semanticElement, KNode.class);
+        if (diagramNode instanceof KGraphElement) {
+            return currentViewer.isVisible((KGraphElement) diagramNode, checkParents);
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isVisible(final KGraphElement diagramElement, final boolean checkParents) {
+        return this.currentViewer.isVisible(diagramElement, checkParents);
     }
     
     /**
@@ -676,11 +696,13 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
 
         createSelection(toBeSelected);
     }
-    
+
     /**
-     * A.
+     * Updates the selection provided by <code>this</code> {@link ContextViewer} and notifies the
+     * registered {@link ISelectionChangedListener ISelectionChangedListeners}.
      * 
-     * @param elements a
+     * @param elements
+     *            the elements contained in the updated selection
      */
     protected void createSelection(final Collection<EObject> elements) {
         // update the selection status for the ISelectionProvider interface
@@ -709,8 +731,12 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
     private void notifySelectionListeners(final KlighdTreeSelection theSelection) {
         this.selection = theSelection;
         synchronized (selectionListeners) {
-            for (ISelectionChangedListener listener : selectionListeners) {
-                listener.selectionChanged(new SelectionChangedEvent(this, theSelection));
+            if (!selectionListeners.isEmpty()) {
+                final SelectionChangedEvent event = new SelectionChangedEvent(this, theSelection);
+
+                for (ISelectionChangedListener listener : selectionListeners) {
+                    listener.selectionChanged(event);
+                }
             }
         }
     }
@@ -738,13 +764,18 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
      * {@inheritDoc}
      */
     public void addSelectionChangedListener(final ISelectionChangedListener listener) {
-        selectionListeners.add(listener);
+        synchronized (selectionListeners) {
+            selectionListeners.add(listener);
+            listener.selectionChanged(new SelectionChangedEvent(this, selection));
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     public void removeSelectionChangedListener(final ISelectionChangedListener listener) {
-        selectionListeners.remove(listener);
+        synchronized (selectionListeners) {
+            selectionListeners.remove(listener);
+        }
     }
 }

@@ -39,8 +39,6 @@ import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.math.KielerMath;
-import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
@@ -51,6 +49,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.impl.KShapeLayoutImpl;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
+import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 
 /**
  * A command for applying the result of automatic layout to a Graphiti diagram.
@@ -61,10 +60,6 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  */
 public class GraphitiLayoutCommand extends RecordingCommand {
     
-    /** node property for the insets caused by invisible shapes. */
-    public static final IProperty<KInsets> INVIS_INSETS = new Property<KInsets>(
-            "graphiti.layout.invisibleInsets");
-
     /** list of graph elements and pictogram elements to layout. */
     private List<Pair<KGraphElement, PictogramElement>> elements =
             new LinkedList<Pair<KGraphElement, PictogramElement>>();
@@ -209,22 +204,21 @@ public class GraphitiLayoutCommand extends RecordingCommand {
         float xpos = shapeLayout.getXpos();
         float ypos = shapeLayout.getYpos();
         if (knode.getParent() != null) {
-            KInsets parentInsets = knode.getParent().getData(KShapeLayout.class)
-                    .getProperty(INVIS_INSETS);
-            if (parentInsets != null) {
-                xpos += parentInsets.getLeft();
-                ypos += parentInsets.getRight();
-            }
+            KShapeLayout parentLayout = knode.getParent().getData(KShapeLayout.class);
+            KInsets parentInsets = parentLayout.getInsets();
+            Margins parentMargins = parentLayout.getProperty(LayoutOptions.MARGINS);
+            xpos += parentMargins.left + parentInsets.getLeft();
+            ypos += parentMargins.top + parentInsets.getTop();
         }
+        
         float width = shapeLayout.getWidth();
         float height = shapeLayout.getHeight();
-        KInsets nodeInsets = shapeLayout.getProperty(INVIS_INSETS);
-        if (nodeInsets != null) {
-            xpos -= nodeInsets.getLeft();
-            ypos -= nodeInsets.getTop();
-            width += nodeInsets.getLeft() + nodeInsets.getRight();
-            height += nodeInsets.getTop() + nodeInsets.getBottom();
-        }
+        Margins nodeMargins = shapeLayout.getProperty(LayoutOptions.MARGINS);
+        xpos -= nodeMargins.left;
+        ypos -= nodeMargins.top;
+        width += nodeMargins.left + nodeMargins.right;
+        height += nodeMargins.top + nodeMargins.bottom;
+        
         ga.setX(Math.round(xpos));
         ga.setY(Math.round(ypos));
         ga.setWidth(Math.round(width));
@@ -326,7 +320,7 @@ public class GraphitiLayoutCommand extends RecordingCommand {
             EdgeRouting edgeRouting = edgeLayout.getProperty(LayoutOptions.EDGE_ROUTING);
             if (edgeRouting == EdgeRouting.SPLINES
                     && edgeLayout.getBendPoints().size() >= 1) {
-                bendPoints = KielerMath.approximateSpline(bendPoints);
+                bendPoints = KielerMath.approximateBezierSpline(bendPoints);
             }
             
             bendPoints.removeFirst();
@@ -360,10 +354,10 @@ public class GraphitiLayoutCommand extends RecordingCommand {
         // calculate reference point for the label
         KVector referencePoint;
         if (decorator.isLocationRelative()) {
-            referencePoint = bendPoints.getPointOnLine(decorator.getLocation()
-                            * bendPoints.getLength());
+            referencePoint = bendPoints.pointOnLine(decorator.getLocation()
+                            * bendPoints.totalLength());
         } else {
-            referencePoint = bendPoints.getPointOnLine(decorator.getLocation());
+            referencePoint = bendPoints.pointOnLine(decorator.getLocation());
         }
         
         KShapeLayout shapeLayout = klabel.getData(KShapeLayout.class);

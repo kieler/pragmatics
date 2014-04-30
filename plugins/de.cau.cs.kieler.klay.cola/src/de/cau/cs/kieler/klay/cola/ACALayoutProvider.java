@@ -49,11 +49,10 @@ import de.cau.cs.kieler.klay.cola.graphimport.HierarchicalKGraphImporter;
 import de.cau.cs.kieler.klay.cola.graphimport.IGraphImporter;
 import de.cau.cs.kieler.klay.cola.graphimport.KGraphImporter;
 import de.cau.cs.kieler.klay.cola.processors.DirectionConstraintProcessor;
-import de.cau.cs.kieler.klay.cola.processors.NonUniformEdgeLengthProcessor;
+import de.cau.cs.kieler.klay.cola.processors.IdealEdgeLengthProcessor;
 import de.cau.cs.kieler.klay.cola.processors.PortConstraintProcessor;
 import de.cau.cs.kieler.klay.cola.properties.InternalColaProperties;
 import de.cau.cs.kieler.klay.cola.util.ACADebugTestConvergence;
-import de.cau.cs.kieler.klay.cola.util.DebugTestConvergence;
 
 /**
  * 
@@ -118,7 +117,7 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
         // execute some processors
         new DirectionConstraintProcessor().process(graph, progressMonitor.subTask(1));
         new PortConstraintProcessor().process(graph, progressMonitor.subTask(1));
-        new NonUniformEdgeLengthProcessor().process(graph, progressMonitor.subTask(1));
+        new IdealEdgeLengthProcessor().process(graph, progressMonitor.subTask(1));
 
         // assemble ACA object
         aca = new ACALayout(graph.nodes, graph.edges, graph.constraints, 1, true,
@@ -222,7 +221,7 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
                 }
             }
         }
-        aca.setAllowedSeparations(struct);
+        aca.setAllowedDirections(struct);
     }
     
     private void generateEdgeOffsets() {
@@ -341,7 +340,7 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
                 boolNodes.set(p.cIndex, true);
             }
         }
-        aca.ignoreNodesForOPWithOffets(boolNodes);
+        aca.ignoreNodesForOPWithOffsets(boolNodes);
     }
     
     private void generatePortNodeMapping() {

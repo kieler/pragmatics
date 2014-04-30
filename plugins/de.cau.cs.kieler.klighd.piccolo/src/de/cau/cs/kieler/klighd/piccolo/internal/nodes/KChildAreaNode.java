@@ -28,7 +28,7 @@ import edu.umd.cs.piccolo.util.PPickPath;
  * @author mri
  * @author chsch
  */
-public class KChildAreaNode extends PLayer {
+public class KChildAreaNode extends KDisposingLayer {
 
     private static final long serialVersionUID = -403773990520864787L;
     
@@ -39,6 +39,7 @@ public class KChildAreaNode extends PLayer {
      */
     public static final String PROPERTY_EXPANSION = "expansion";
 
+    private final INode containingINode;
     /** the node layer. */
     private final PLayer nodeLayer;
     
@@ -60,10 +61,11 @@ public class KChildAreaNode extends PLayer {
     public KChildAreaNode(final INode containingNode) {
         super();
         this.setPickable(false);
-
-        this.nodeLayer = new PLayer();
+        this.containingINode = containingNode; 
+        
+        this.nodeLayer = new KDisposingLayer();
         super.addChild(nodeLayer);
-        this.edgeLayer = new PLayer();
+        this.edgeLayer = new KDisposingLayer();
         super.addChild(edgeLayer);
     }
 
@@ -85,6 +87,7 @@ public class KChildAreaNode extends PLayer {
      */
     public void addNode(final KNodeNode node) {
         nodeLayer.addChild(node);
+        node.setParentNode(containingINode);
     }
     
     /**

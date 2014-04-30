@@ -33,6 +33,20 @@ import java.util.List
 import javax.inject.Inject
 
 /**
+ * Provides some helpful extension methods for simplifying the composition of KGraph/KRendering-based view models.<br>
+ * <br>
+ * In order to employ them beyond KLighD diagram syntheses you best declare a field of type
+ * {@link KNodeExtensions} in your class and annotate it with {@link javax.inject.Inject Inject}.<br>
+ * <br>
+ * Make sure to bind the {@link ViewSynthesisShared} annotation in the employed
+ * {@link com.google.inject.Injector Injector} to a {@link com.google.inject.Scope}, e.g. by calling
+ * {@code Guice.createInjector(KRenderingExtensionsPlugin.createSingletonScopeBindingModule());} or 
+ * {@code Guice.createInjector(KRenderingExtensionsPlugin.createNoScopeBindingModule());}.<br>
+ * <br>
+ * By means of that {@link com.google.inject.Injector Injector} you may get a new instance of your class,
+ * or you may inject the above mentioned attribute within instances of your class, e.g. by calling
+ * {@code injector.injectMembers(this)} in the constructor of your class.
+ * 
  * @author chsch
  * @author ssm
  * 
@@ -346,7 +360,7 @@ class KLabelExtensions {
      * Adds an outside top centrally-aligned node label!
      */
     def KLabel addOutsideTopCenteredNodeLabel(KNode node, String labelText, int fontSize, String fontName) {
-        return node.createLabel().configureOutsideBottomCenteredNodeLabel(labelText, fontSize, fontName);
+        return node.createLabel().configureOutsideTopCenteredNodeLabel(labelText, fontSize, fontName);
     }
 
     /**
@@ -446,33 +460,15 @@ class KLabelExtensions {
     /* --------------------------------- */
     /*  edge label configurators/adders  */
     /* --------------------------------- */
-
-    /**
-     * Configures a central (main) edge label, e.g. a state transition guard/effect label!
-     * 
-     * @deprecated Use {@link #configureCenteralEdgeLabel(KLabel, String, int, String)} instead!
-     */
-    def KLabel configureCenteralLabel(KLabel label, String labelText, int fontSize, String fontName) {
-        return configureCenteralEdgeLabel(label, labelText, fontSize, fontName);
-    }
     
     /**
      * Configures a central (main) edge label, e.g. a state transition guard/effect label!
      */
-    def KLabel configureCenteralEdgeLabel(KLabel label, String labelText, int fontSize, String fontName) {
+    def KLabel configureCenterEdgeLabel(KLabel label, String labelText, int fontSize, String fontName) {
         return label => [
             it.basicConfigureLabel(labelText, fontSize, fontName);
             it.addLayoutParam(LayoutOptions::EDGE_LABEL_PLACEMENT, EdgeLabelPlacement::CENTER);
         ];
-    }
-    
-    /**
-     * Configures a head edge label, e.g. the cardinality of a relation in an class diagram!
-     * 
-     * @deprecated Use {@link #configureHeadEdgeLabel(KLabel, String, int, String)} instead!
-     */
-    def KLabel configureHeadLabel(KLabel label, String labelText, int fontSize, String fontName) {
-        return configureHeadEdgeLabel(label, labelText, fontSize, fontName);
     }
 
     /**
@@ -483,15 +479,6 @@ class KLabelExtensions {
             it.basicConfigureLabel(labelText, fontSize, fontName);
             it.addLayoutParam(LayoutOptions::EDGE_LABEL_PLACEMENT, EdgeLabelPlacement::HEAD);
         ];
-    }
-    
-    /**
-     * Configures a tail edge label, e.g. the cardinality of a relation in an class diagram!
-     * 
-     * @deprecated Use {@link #configureTailEdgeLabel(KLabel, String, int, String)} instead!
-     */
-    def KLabel configureTailLabel(KLabel label, String labelText, int fontSize, String fontName) {
-        return configureTailEdgeLabel(label, labelText, fontSize, fontName);
     }
 
     /**

@@ -58,7 +58,7 @@ public abstract class FParticle extends MapPropertyHolder {
      * @return radius of smallest circle surrounding shape of p
      */
     public double getRadius() {
-        return size.getLength() / 2;
+        return size.length() / 2;
     }
 
 }

@@ -150,7 +150,7 @@ public class OgmlExporter implements IGraphTransformer<KNode, DocumentRoot> {
             if (!knode.getChildren().isEmpty()) {
                 // transform subgraph
                 KVector suboffset = new KVector(offset);
-                suboffset.translate(knodeLayout.getXpos() + knodeLayout.getInsets().getLeft(),
+                suboffset.add(knodeLayout.getXpos() + knodeLayout.getInsets().getLeft(),
                         knodeLayout.getYpos() + knodeLayout.getInsets().getTop());
                 transformNodes(knode, ogmlNode.getNode(), styles, suboffset);
             }
@@ -174,7 +174,7 @@ public class OgmlExporter implements IGraphTransformer<KNode, DocumentRoot> {
                 KVector edgeOffset = offset;
                 if (KimlUtil.isDescendant(kedge.getTarget(), knode)) {
                     KShapeLayout sourceLayout = knode.getData(KShapeLayout.class);
-                    edgeOffset = new KVector(offset).translate(sourceLayout.getXpos(),
+                    edgeOffset = new KVector(offset).add(sourceLayout.getXpos(),
                             sourceLayout.getYpos());
                 }
                 String edgeId = kedgeLayout.getProperty(PROP_ID);
@@ -238,7 +238,7 @@ public class OgmlExporter implements IGraphTransformer<KNode, DocumentRoot> {
             if (!knode.getChildren().isEmpty()) {
                 KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
                 KVector suboffset = new KVector(offset);
-                suboffset.translate(nodeLayout.getXpos() + nodeLayout.getInsets().getLeft(),
+                suboffset.add(nodeLayout.getXpos() + nodeLayout.getInsets().getLeft(),
                         nodeLayout.getYpos() + nodeLayout.getInsets().getTop());
                 transformEdges(knode, edgeList, styles, suboffset);
             }

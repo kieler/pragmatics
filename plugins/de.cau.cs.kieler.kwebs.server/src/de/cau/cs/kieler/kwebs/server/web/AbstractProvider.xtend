@@ -117,13 +117,17 @@ abstract class AbstractProvider
                           </div>
                         </header>
                                             
+                        «IF requireContainer()»
                         <div class="container">
                           <div class="row">
                             <div class="col-md-12">
+                        «ENDIF»
                                 «getBody(processingExchange)»
+                        «IF requireContainer()»
                             </div>
                           </div>
                         </div>
+                        «ENDIF»
                         
                     </body>
                 </html>
@@ -153,6 +157,10 @@ abstract class AbstractProvider
      * 
      */
     def boolean providerOverride(ResourceProcessingExchange processingExchange)
+    
+    def boolean requireContainer() {
+      return true
+    }
     
     //////////
     

@@ -482,6 +482,21 @@
             id="de.cau.cs.kieler.kiml.grana.longestPath"
             name="Longest Path">
       </analysis>
+      <analysis
+            category="de.cau.cs.kieler.kiml.grana.drawing"
+            class="de.cau.cs.kieler.kiml.grana.analyses.WhitespaceAnalysis"
+            description="Determines the amount of whitespace in the diagram."
+            id="de.cau.cs.kieler.kiml.grana.whitespace"
+            name="Whitespace">
+         <component
+               abbreviation="TL"
+               name="Top-Level">
+         </component>
+         <component
+               abbreviation="H"
+               name="Hierarchy">
+         </component>
+      </analysis>
    </extension>
 
 </plugin>

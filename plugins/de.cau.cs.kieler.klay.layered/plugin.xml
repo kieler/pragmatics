@@ -52,6 +52,9 @@
                option="de.cau.cs.kieler.noLayout">
          </knownOption>
          <knownOption
+               option="de.cau.cs.kieler.additionalPortSpace">
+         </knownOption>
+         <knownOption
                option="de.cau.cs.kieler.klay.layered.edgeSpacingFactor">
          </knownOption>
          <knownOption
@@ -133,7 +136,7 @@
                option="de.cau.cs.kieler.klay.layered.fixedAlignment">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.klay.layered.LabelSide">
+               option="de.cau.cs.kieler.klay.layered.edgeLabelSideSelection">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.portLabelPlacement">
@@ -143,6 +146,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.klay.layered.inLayerSpacingFactor">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.linearSegmentsDeflectionDampening">
          </knownOption>
       </layoutAlgorithm>
       <layoutOption
@@ -234,6 +240,10 @@
             id="de.cau.cs.kieler.klay.layered.mergeHierarchyPorts"
             name="Merge Hierarchy-crossing Edges"
             type="boolean">
+         <dependency
+               option="de.cau.cs.kieler.layoutHierarchy"
+               value="true">
+         </dependency>
       </layoutOption>
       <layoutOption
             advanced="true"
@@ -278,6 +288,21 @@
          </dependency>
       </layoutOption>
       <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            id="de.cau.cs.kieler.klay.layered.linearSegmentsDeflectionDampening"
+            name="Linear Segments Deflection Dampening"
+            description="Dampens the movement of nodes to keep the diagram from getting too large."
+            default="0.3"
+            lowerBound="0.0"
+            upperBound="1.0"
+            type="float">
+         <dependency
+               option="de.cau.cs.kieler.klay.layered.nodePlace"
+               value="LINEAR_SEGMENTS">
+         </dependency>
+      </layoutOption>
+      <layoutOption
             appliesTo="parents"
             class="de.cau.cs.kieler.klay.layered.properties.EdgeLabelSideSelection"
             default="SMART"
@@ -298,10 +323,6 @@
             id="de.cau.cs.kieler.klay.layered.feedBackEdges"
             name="Feedback Edges"
             type="boolean">
-         <dependency
-               option="de.cau.cs.kieler.edgeRouting"
-               value="ORTHOGONAL">
-         </dependency>
       </layoutOption>
       <layoutOption
             advanced="true"

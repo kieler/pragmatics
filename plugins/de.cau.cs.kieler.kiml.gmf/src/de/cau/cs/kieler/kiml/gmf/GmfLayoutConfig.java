@@ -39,6 +39,7 @@ import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.core.properties.IProperty;
@@ -164,20 +165,32 @@ public class GmfLayoutConfig implements IMutableLayoutConfig {
                 
             } else if (property.equals(EclipseLayoutConfig.ASPECT_RATIO)) {
                 // get aspect ratio for the current diagram
-                try {
-                    EditPartViewer viewer = focusEditPart.getViewer();
-                    if (viewer != null) {
-                        Control control = viewer.getControl();
-                        if (control != null) {
-                            Point size = control.getSize();
-                            if (size.x > 0 && size.y > 0) {
-                                return Math.round(ASPECT_RATIO_ROUND * (float) size.x / size.y)
-                                        / ASPECT_RATIO_ROUND;
+                EditPartViewer viewer = focusEditPart.getViewer();
+                if (viewer != null) {
+                    final Control control = viewer.getControl();
+                    if (control != null) {
+                        final Maybe<Float> result = new Maybe<Float>();
+                        Runnable runnable = new Runnable() {
+                            public void run() {
+                                try {
+                                    Point size = control.getSize();
+                                    if (size.x > 0 && size.y > 0) {
+                                        result.set(Math.round(
+                                                ASPECT_RATIO_ROUND * (float) size.x / size.y)
+                                                / ASPECT_RATIO_ROUND);
+                                    }
+                                } catch (SWTException exception) {
+                                    // ignore exception
+                                }
                             }
+                        };
+                        if (control.getDisplay() == Display.getCurrent()) {
+                            runnable.run();
+                        } else {
+                            control.getDisplay().syncExec(runnable);
                         }
+                        return result.get();
                     }
-                } catch (SWTException exception) {
-                    // ignore exception
                 }
                 
             } else if (property.equals(DefaultLayoutConfig.CONTENT_HINT)) {

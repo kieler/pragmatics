@@ -542,6 +542,12 @@ public final class KimlUtil {
                     scalingFactor * kgeLayout.getYpos());
             kgeLayout.setSize(scalingFactor * kgeLayout.getWidth(),
                     scalingFactor * kgeLayout.getHeight());
+            
+            final KVector anchor = kgeLayout.getProperty(LayoutOptions.PORT_ANCHOR);
+            if (anchor != null) {
+                anchor.x *= scalingFactor;
+                anchor.y *= scalingFactor;
+            }
         }
     }
 
@@ -578,7 +584,7 @@ public final class KimlUtil {
         while (node != null) {
             KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
             KInsets insets = nodeLayout.getInsets();
-            point.translate(nodeLayout.getXpos() + insets.getLeft(),
+            point.add(nodeLayout.getXpos() + insets.getLeft(),
                     nodeLayout.getYpos() + insets.getTop());
             node = node.getParent();
         }
@@ -598,7 +604,7 @@ public final class KimlUtil {
         while (node != null) {
             KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
             KInsets insets = nodeLayout.getInsets();
-            point.translate(-nodeLayout.getXpos() - insets.getLeft(),
+            point.add(-nodeLayout.getXpos() - insets.getLeft(),
                         -nodeLayout.getYpos() - insets.getTop());
             node = node.getParent();
         }

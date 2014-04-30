@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.ui.IWorkbenchPart;
@@ -258,12 +259,17 @@ public class LayoutOptionManager {
         enrich(LayoutContext.DOMAIN_MODEL, context, config);
         // enrich the layout option targets
         enrich(LayoutContext.OPT_TARGETS, context, config);
-        // enrich the property indicating whether the selected node has ports
-        enrich(DefaultLayoutConfig.HAS_PORTS, context, config);
-        // enrich the aspect ratio of the diagram viewer
-        enrich(EclipseLayoutConfig.ASPECT_RATIO, context, config);
-        // enrich the diagram type for the selected element
-        enrich(DefaultLayoutConfig.CONTENT_DIAGT, context, config);
+        Set<LayoutOptionData.Target> targets = context.getProperty(LayoutContext.OPT_TARGETS);
+        if (targets.contains(LayoutOptionData.Target.NODES)) {
+            // enrich the property indicating whether the selected node has ports
+            enrich(DefaultLayoutConfig.HAS_PORTS, context, config);
+        }
+        if (targets.contains(LayoutOptionData.Target.PARENTS)) {
+            // enrich the aspect ratio of the diagram viewer
+            enrich(EclipseLayoutConfig.ASPECT_RATIO, context, config);
+            // enrich the diagram type for the selected element
+            enrich(DefaultLayoutConfig.CONTENT_DIAGT, context, config);
+        }
         
         if (makeOptionsList) {
             // enrich the container diagram part

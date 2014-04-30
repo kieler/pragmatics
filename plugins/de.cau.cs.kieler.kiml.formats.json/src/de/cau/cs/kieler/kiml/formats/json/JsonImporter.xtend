@@ -32,6 +32,7 @@ import de.cau.cs.kieler.core.kgraph.KLabel
 import de.cau.cs.kieler.kiml.formats.IGraphTransformer
 import de.cau.cs.kieler.kiml.formats.TransformationException
 import de.cau.cs.kieler.kiml.formats.TransformationData
+import de.cau.cs.kieler.kiml.LayoutMetaDataService
 
 /**
  * Importer for graphs in the json format.
@@ -121,13 +122,6 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
         return node
     }
 
-    private def transformShapeLayout(JSONObject jsonObj, KShapeLayout shapeLayout) {
-        jsonObj.optDouble("x") => [shapeLayout.xpos = it.floatValueValid]
-        jsonObj.optDouble("y") => [shapeLayout.ypos = it.floatValueValid]
-        jsonObj.optDouble("width") => [shapeLayout.width = it.floatValueValid]
-        jsonObj.optDouble("height") => [shapeLayout.height = it.floatValueValid]
-    }
-
     private def void transformEdges(JSONObject jsonObj) {
 
         // transform edges of the current hierarchy level
@@ -208,10 +202,12 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
     }
 
     private def transformProperties(JSONObject jsonObject, KLayoutData layoutData) {
+        val metaService = LayoutMetaDataService.getInstance()
+      
         jsonObject.optJSONObject("properties") => [ props |
             props?.keys.emptyIfNull.forEach [ key |
                 val value = props.optString(key)
-                KimlUtil.setOption(layoutData, key, value)
+                KimlUtil.loadDataElement(metaService, layoutData, key, value)
             ]
         ]
     }
@@ -258,16 +254,32 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
         parent.ports += port
 
         // position and dimension
-        jsonPort.optDouble("x") => [port.layout.xpos = it.floatValueValid]
-        jsonPort.optDouble("y") => [port.layout.ypos = it.floatValueValid]
-        jsonPort.optDouble("width") => [port.layout.width = it.floatValueValid]
-        jsonPort.optDouble("height") => [port.layout.height = it.floatValueValid]
+        jsonPort.transformShapeLayout(port.layout)
 
         // labels 
         jsonPort.transformLabels(port)
 
         // properties
         jsonPort.transformProperties(port.layout)
+    }
+    
+    private def transformShapeLayout(JSONObject jsonObj, KShapeLayout shapeLayout) {
+        jsonObj.optDouble("x") => [shapeLayout.xpos = it.floatValueValid]
+        jsonObj.optDouble("y") => [shapeLayout.ypos = it.floatValueValid]
+        jsonObj.optDouble("width") => [shapeLayout.width = it.floatValueValid]
+        jsonObj.optDouble("height") => [shapeLayout.height = it.floatValueValid]
+        
+        // transfer padding
+        jsonObj.optJSONObject("padding") => [ padding |
+            if (padding != null) {
+                val insets = shapeLayout.insets
+                padding.optDouble("left") => [insets.left = it.floatValueValid]
+                padding.optDouble("right") => [insets.right = it.floatValueValid]
+                padding.optDouble("top") => [insets.top = it.floatValueValid]
+                padding.optDouble("bottom") => [insets.bottom = it.floatValueValid]
+                println(insets)
+            }
+        ]
     }
 
     /* ---------------------------------------------------------------------------
@@ -294,20 +306,15 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
         val jsonObj = nodeJsonMap.get(node)
 
         // transfer positions and dimension
-        jsonObj?.put("x", node.layout.xpos)
-        jsonObj?.put("y", node.layout.ypos)
-        jsonObj?.put("width", node.layout.width)
-        jsonObj?.put("height", node.layout.height)
+        node.layout.transferShapeLayout(jsonObj)
+
     }
 
     private def dispatch transferLayoutInt(KPort port) {
         val jsonObj = portJsonMap.get(port)
 
         // transfer positions and dimension
-        jsonObj?.put("x", port.layout.xpos)
-        jsonObj?.put("y", port.layout.ypos)
-        jsonObj?.put("width", port.layout.width)
-        jsonObj?.put("height", port.layout.height)
+        port.layout.transferShapeLayout(jsonObj)
     }
 
     private def dispatch transferLayoutInt(KEdge edge) {
@@ -340,15 +347,34 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
         val jsonObj = labelJsonMap.get(label)
 
         // transfer positions and dimension
-        jsonObj?.put("x", label.layout.xpos)
-        jsonObj?.put("y", label.layout.ypos)
-        jsonObj?.put("width", label.layout.width)
-        jsonObj?.put("height", label.layout.height)
+        label.layout.transferShapeLayout(jsonObj)
     }
     
     private def dispatch transferLayoutInt(Object obj) {
         // don't care about the rest
     }
+
+    private def transferShapeLayout(KShapeLayout layout, JSONObject jsonObj) {
+        // pos and dimension
+        jsonObj?.put("x", layout.xpos)
+        jsonObj?.put("y", layout.ypos)
+        jsonObj?.put("width", layout.width)
+        jsonObj?.put("height", layout.height)
+        
+        // padding
+        val insets = layout.insets
+        if (insets != null) {
+          var padding = jsonObj?.optJSONObject("padding")
+          if (padding == null) {
+              padding = new JSONObject()
+              jsonObj?.put("padding", padding)  
+          }
+          padding?.put("left", insets.left)
+          padding?.put("top", insets.top)
+          padding?.put("right", insets.right)
+          padding?.put("bottom", insets.bottom)
+        }
+    } 
 
     /* ---------------------------------------------------------------------------
      *   Convenience methods

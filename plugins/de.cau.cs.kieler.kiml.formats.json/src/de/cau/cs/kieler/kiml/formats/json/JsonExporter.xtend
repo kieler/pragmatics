@@ -24,6 +24,7 @@ import org.json.JSONObject
 import de.cau.cs.kieler.core.kgraph.KLabel
 import de.cau.cs.kieler.kiml.formats.IGraphTransformer
 import de.cau.cs.kieler.kiml.formats.TransformationData
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
 
 /**
  * Exporter from KNode to json.
@@ -90,10 +91,7 @@ class JsonExporter implements IGraphTransformer<KNode, JSONObject> {
         node.labels.forEach [ it.transformLabel(labels) ]
 
         // transfer positions and dimension
-        jsonObj.put("x", node.layout.xpos)
-        jsonObj.put("y", node.layout.ypos)
-        jsonObj.put("width", node.layout.width)
-        jsonObj.put("height", node.layout.height)
+        node.layout.transferShapeLayout(jsonObj)
         
         // ports
         val ports = new JSONArray
@@ -124,10 +122,7 @@ class JsonExporter implements IGraphTransformer<KNode, JSONObject> {
         port.layout.transformProperties(jsonObj)
 
         // transfer positions and dimension
-        jsonObj.put("x", port.layout.xpos)
-        jsonObj.put("y", port.layout.ypos)
-        jsonObj.put("width", port.layout.width)
-        jsonObj.put("height", port.layout.height)
+        port.layout.transferShapeLayout(jsonObj)
     }
 
     private def void transformEdges(KNode node) {
@@ -189,8 +184,7 @@ class JsonExporter implements IGraphTransformer<KNode, JSONObject> {
             label.layout.transformProperties(jsonLabel)
             
             // position
-            jsonLabel.put("x", label.layout.xpos)
-            jsonLabel.put("y", label.layout.ypos)
+            label.layout.transferShapeLayout(jsonLabel)
     }
 
     private def void transformProperties(KLayoutData holder, JSONObject parent) {
@@ -208,6 +202,28 @@ class JsonExporter implements IGraphTransformer<KNode, JSONObject> {
     override transferLayout(TransformationData<KNode, JSONObject> data) {
         throw new UnsupportedOperationException("TODO: auto-generated method stub")
     }
+    
+    private def transferShapeLayout(KShapeLayout layout, JSONObject jsonObj) {
+        // pos and dimension
+        jsonObj?.put("x", layout.xpos)
+        jsonObj?.put("y", layout.ypos)
+        jsonObj?.put("width", layout.width)
+        jsonObj?.put("height", layout.height)
+        
+        // padding
+        val insets = layout.insets
+        if (insets != null) {
+          var padding = jsonObj?.optJSONObject("padding")
+          if (padding == null) {
+              padding = new JSONObject()
+              jsonObj?.put("padding", padding)  
+          }
+          padding?.put("left", insets.left)
+          padding?.put("top", insets.top)
+          padding?.put("right", insets.right)
+          padding?.put("bottom", insets.bottom)
+        }
+    } 
     
     /* ---------------------------------------------------------------------------
      *   Convenience methods

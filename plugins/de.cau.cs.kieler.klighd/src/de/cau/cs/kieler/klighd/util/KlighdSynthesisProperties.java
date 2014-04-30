@@ -31,18 +31,33 @@ public class KlighdSynthesisProperties extends MapPropertyHolder {
 
     private static final long serialVersionUID = -5635072164749313580L;
 
-    /** the property for a viewer provider. */
+    /** property denoting a desired viewer provider. */
     public static final IProperty<String> REQUESTED_VIEWER_PROVIDER = new Property<String>(
             "klighd.viewerProvider");
 
-    /** the property for a path of transformations (can contain gaps). */
+    /** property denoting a desired diagram synthesis. */
     public static final IProperty<String> REQUESTED_DIAGRAM_SYNTHESIS = new Property<String>(
             "klighd.synthesis");
 
-    /** the property for an update strategy. */
+    /** property denoting a desired update strategy. */
     public static final IProperty<String> REQUESTED_UPDATE_STRATEGY = new Property<String>(
             "klighd.updateStrategy");
-    
+
+    /** property denoting a desired side bar handling. */
+    public static final IProperty<SideBarHandling> REQUESTED_SIDE_BAR_HANDLING =
+            new Property<SideBarHandling>("klighd.sideBarHandling", SideBarHandling.UNDEFINED);
+
+    /**
+     * Defines the possible diagram side bar initialization options. 
+     */
+    public static enum SideBarHandling {
+        /** Forces the diagram viewer to show the side bar. */
+        EXPAND,
+        /** Forces the diagram viewer to hide the side bar. */
+        COLLAPSE,
+        /** The initialization of the side bar is done according to the related preference setting. */
+        UNDEFINED
+    }
 
     /**
      * Immutable singleton instance of {@link KlighdSynthesisProperties}.  
@@ -78,9 +93,24 @@ public class KlighdSynthesisProperties extends MapPropertyHolder {
      *            a variable number of {@link IPropertyHolder IPropertyHolders} allowing providing
      *            configurations
      * 
+     * @deprecated use {@link #create(IPropertyHolder...)}
+     * 
      * @return a new instance of {@link KlighdSynthesisProperties}.
      */
     public static KlighdSynthesisProperties newInstance(final IPropertyHolder... propertyHolders) {
+        return create(propertyHolders);
+    }
+
+    /**
+     * Factory method.
+     * 
+     * @param propertyHolders
+     *            a variable number of {@link IPropertyHolder IPropertyHolders} allowing providing
+     *            configurations
+     * 
+     * @return a new instance of {@link KlighdSynthesisProperties}.
+     */
+    public static KlighdSynthesisProperties create(final IPropertyHolder... propertyHolders) {
         if (propertyHolders == null || propertyHolders.length == 0) {
             return new KlighdSynthesisProperties();
             
@@ -96,6 +126,36 @@ public class KlighdSynthesisProperties extends MapPropertyHolder {
     }
     
     /**
+     * Sets a property value and returns <code>this</code> {@link IPropertyHolder} for convenience.
+     * 
+     * @param <T> type of property
+     * @param property the property to set
+     * @param value the new value
+     * 
+     * @see IPropertyHolder#setProperty(IProperty, Object)
+     *
+     * @return <code>this<code> {@link KlighdSynthesisProperties} object.
+     */
+    public <T> KlighdSynthesisProperties setProperty2(final IProperty<? super T> property,
+            final T value) {
+        super.setProperty(property, value);
+        return this;
+    }
+    
+    /**
+     * Configures the {@link de.cau.cs.kieler.klighd.IUpdateStrategy IUpdateStrategy} to be employed
+     * by means of the id it is registered via KLighD's 'extensions' extension point.
+     * 
+     * @param id
+     *            the id the desired {@link de.cau.cs.kieler.klighd.IUpdateStrategy IUpdateStrategy}
+     * @return <code>this<code> {@link KlighdSynthesisProperties} object.
+     */
+    public KlighdSynthesisProperties useUpdateStrategy(final String id) {
+        this.setProperty(REQUESTED_UPDATE_STRATEGY, id);
+        return this;
+    }
+    
+    /**
      * Configures a 'use simple update strategy' setting.
      * 
      * @return <code>this<code> {@link KlighdSynthesisProperties} object.
@@ -106,15 +166,36 @@ public class KlighdSynthesisProperties extends MapPropertyHolder {
     }
     
     /**
-     * Configures the {@link de.cau.cs.kieler.klighd.IViewer IViewer} to be employed by means of the
-     * id it is registered via KLighD's 'extensions' extension point.
+     * Configures the {@link de.cau.cs.kieler.klighd.IViewerProvider IViewerProvider} to be employed
+     * by means of the id it is registered via KLighD's 'extensions' extension point.
      * 
      * @param id
-     *            the id the desired {@link de.cau.cs.kieler.klighd.IViewer IViewer}
+     *            the id the desired {@link de.cau.cs.kieler.klighd.IViewerProvider IViewerProvider}
      * @return <code>this<code> {@link KlighdSynthesisProperties} object.
      */
     public KlighdSynthesisProperties useViewer(final String id) {
         this.setProperty(REQUESTED_VIEWER_PROVIDER, id);
+        return this;
+    }
+    
+    /**
+     * Configures the initial visibility of the diagram side bar in the diagram viewer to be opened.
+     * 
+     * @return <code>this<code> {@link KlighdSynthesisProperties} object.
+     */
+    public KlighdSynthesisProperties expandSideBar() {
+        this.setProperty(REQUESTED_SIDE_BAR_HANDLING, SideBarHandling.EXPAND);
+        return this;
+    }
+
+    /**
+     * Configures the initial invisibility of the diagram side bar in the diagram viewer to be
+     * opened.
+     * 
+     * @return <code>this<code> {@link KlighdSynthesisProperties} object.
+     */
+    public KlighdSynthesisProperties collapseSideBar() {
+        this.setProperty(REQUESTED_SIDE_BAR_HANDLING, SideBarHandling.COLLAPSE);
         return this;
     }
 }

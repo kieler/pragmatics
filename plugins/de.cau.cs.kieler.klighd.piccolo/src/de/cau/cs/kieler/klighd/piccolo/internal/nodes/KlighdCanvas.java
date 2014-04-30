@@ -14,7 +14,10 @@
 package de.cau.cs.kieler.klighd.piccolo.internal.nodes;
 
 import java.awt.Graphics2D;
+import java.awt.event.InputEvent;
 
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Composite;
@@ -75,6 +78,21 @@ public class KlighdCanvas extends PSWTCanvas {
         // this reduces flickering drastically
         this.setDoubleBuffered(true);
 
+        this.addDisposeListener(new DisposeListener() {
+            
+            public void widgetDisposed(final DisposeEvent e) {
+                final KlighdCanvas thisCanvas = KlighdCanvas.this;
+
+                NodeDisposeListener.disposePNode(thisCanvas.getCamera().getRoot());
+
+                // this way the backbuffer image will be disposed!
+                thisCanvas.setDoubleBuffered(false);
+                
+                if (thisCanvas.graphics != null) {
+                    thisCanvas.graphics.dispose();
+                }
+            }
+        });
     }
 
     /**
@@ -145,7 +163,29 @@ public class KlighdCanvas extends PSWTCanvas {
         this.addDragDetectListener(mouseListener);
         this.addGestureListener(mouseListener);
     }
-    
+
+    /**
+     * {@inheritDoc}<br>
+     * <br>
+     * This specialization simply changes visibility to 'public' in order to be used in
+     * {@link KlighdMouseEventListener}, for example.
+     */
+    @Override
+    public void sendInputEventToInputManager(final InputEvent awtEvent, final int type) {
+        super.sendInputEventToInputManager(awtEvent, type);
+    }
+
+    /**
+     * {@inheritDoc}<br>
+     * <br>
+     * This specialization simply deactivates the inherited behavior. Since we do not (have
+     * opportunities to?) change the rendering quality, there is no need repaint the whole visible
+     * diagram area after user interaction.
+     */
+    @Override
+    public void setInteracting(final boolean isInteracting) {
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -195,9 +235,5 @@ public class KlighdCanvas extends PSWTCanvas {
     @Override
     public void dispose() {
         super.dispose();
-        
-        if (this.graphics != null) {
-            this.graphics.dispose();
-        }
     }
 }

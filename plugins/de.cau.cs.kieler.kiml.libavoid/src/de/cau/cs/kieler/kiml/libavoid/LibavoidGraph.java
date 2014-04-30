@@ -736,16 +736,16 @@ public class LibavoidGraph {
 
             switch (side) {
             case WEST:
-                offset.translate(margins.left, 0);
+                offset.add(margins.left, 0);
                 break;
             case EAST:
-                offset.translate(-margins.right, 0);
+                offset.add(-margins.right, 0);
                 break;
             case NORTH:
-                offset.translate(0, margins.top);
+                offset.add(0, margins.top);
                 break;
             case SOUTH:
-                offset.translate(0, -margins.bottom);
+                offset.add(0, -margins.bottom);
                 break;
             default:
                 // leave it where it is

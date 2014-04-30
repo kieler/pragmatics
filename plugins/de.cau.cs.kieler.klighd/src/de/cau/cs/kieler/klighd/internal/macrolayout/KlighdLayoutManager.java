@@ -655,6 +655,12 @@ public class KlighdLayoutManager implements IDiagramLayoutManager<KGraphElement>
                         sourceShapeLayout.getYpos() / scale);
                 targetShapeLayout.setSize(sourceShapeLayout.getWidth() / scale,
                         sourceShapeLayout.getHeight() / scale);
+
+                final KVector anchor = targetShapeLayout.getProperty(LayoutOptions.PORT_ANCHOR);
+                if (anchor != null) {
+                    anchor.x /= scale;
+                    anchor.y /= scale;
+                }
             }
             
         } else {
@@ -855,11 +861,11 @@ public class KlighdLayoutManager implements IDiagramLayoutManager<KGraphElement>
         KVector sourcePoint = toElementBorder(sourceNode, sourcePort, targetNode, targetPort);
         if (targetInSource) {
             if (sourceLayout.getInsets() != null) {
-                sourcePoint.translate(-sourceLayout.getInsets().getLeft(),
+                sourcePoint.add(-sourceLayout.getInsets().getLeft(),
                         -sourceLayout.getInsets().getTop());
             }
         } else {
-            sourcePoint.translate(sourceLayout.getXpos(), sourceLayout.getYpos());
+            sourcePoint.add(sourceLayout.getXpos(), sourceLayout.getYpos());
         }
         KPoint sourceKPoint = edgeLayout.getSourcePoint();
         if (sourceKPoint == null) {
@@ -871,7 +877,7 @@ public class KlighdLayoutManager implements IDiagramLayoutManager<KGraphElement>
         // determine the target point
         KShapeLayout targetLayout = targetNode.getData(KShapeLayout.class);
         KVector targetPoint = toElementBorder(targetNode, targetPort, sourceNode, sourcePort);
-        targetPoint.translate(targetLayout.getXpos(), targetLayout.getYpos());
+        targetPoint.add(targetLayout.getXpos(), targetLayout.getYpos());
         if (targetInSource) {
             KimlUtil.toAbsolute(targetPoint, targetNode.getParent());
             KimlUtil.toRelative(targetPoint, sourceNode);
@@ -933,9 +939,9 @@ public class KlighdLayoutManager implements IDiagramLayoutManager<KGraphElement>
             final KShapeLayout portLayout = port.getData(KShapeLayout.class);
             
             if (adjustPortPos) {
-                offset.translate(-portLayout.getXpos() / scale, -portLayout.getYpos() / scale);
+                offset.add(-portLayout.getXpos() / scale, -portLayout.getYpos() / scale);
             } else {
-                offset.translate(-portLayout.getXpos(), -portLayout.getYpos());
+                offset.add(-portLayout.getXpos(), -portLayout.getYpos());
             }
 
             p.add(offset);
@@ -969,14 +975,14 @@ public class KlighdLayoutManager implements IDiagramLayoutManager<KGraphElement>
             point.x = remotePortLayout.getXpos() + remotePortLayout.getWidth() / 2;
             point.y = remotePortLayout.getYpos() + remotePortLayout.getHeight() / 2;
         }
-        point.translate(remoteNodeLayout.getXpos(), remoteNodeLayout.getYpos());
+        point.add(remoteNodeLayout.getXpos(), remoteNodeLayout.getYpos());
         if (centerNode.getParent() != remoteNode.getParent()) {
             KimlUtil.toAbsolute(point, remoteNode.getParent());
             KimlUtil.toRelative(point, centerNode.getParent());
         }
         
         KShapeLayout centerNodeLayout = centerNode.getData(KShapeLayout.class);
-        point.translate(-centerNodeLayout.getXpos(), -centerNodeLayout.getYpos());
+        point.add(-centerNodeLayout.getXpos(), -centerNodeLayout.getYpos());
         if (centerPort == null) {
             point = AnchorUtil.collideTowardsCenter(
                     point,
@@ -985,13 +991,13 @@ public class KlighdLayoutManager implements IDiagramLayoutManager<KGraphElement>
                     centerNode.getData(KRendering.class));
         } else {
             KShapeLayout centerPortLayout = centerPort.getData(KShapeLayout.class);
-            point.translate(-centerPortLayout.getXpos(), -centerPortLayout.getYpos());
+            point.add(-centerPortLayout.getXpos(), -centerPortLayout.getYpos());
             point = AnchorUtil.collideTowardsCenter(
                     point,
                     centerPortLayout.getWidth(),
                     centerPortLayout.getHeight(),
                     centerPort.getData(KRendering.class));
-            point.translate(centerPortLayout.getXpos(), centerPortLayout.getYpos());
+            point.add(centerPortLayout.getXpos(), centerPortLayout.getYpos());
         }
         
         return point;

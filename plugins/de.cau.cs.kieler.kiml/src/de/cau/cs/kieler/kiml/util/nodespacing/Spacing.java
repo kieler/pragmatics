@@ -13,15 +13,20 @@
  */
 package de.cau.cs.kieler.kiml.util.nodespacing;
 
+import de.cau.cs.kieler.core.util.IDataObject;
+
 /**
  * Stores the spacing of an object in {@code double} precision.
  * 
  * @author cds
  * @author uru
  */
-public abstract class Spacing {
+public abstract class Spacing implements IDataObject, Cloneable {
     // Allow public fields in these utility classes.
     // CHECKSTYLEOFF VisibilityModifier
+
+    /** The serial version UID. */
+    private static final long serialVersionUID = 4358555478195088364L;
 
     /**
      * The inset from the top.
@@ -130,8 +135,64 @@ public abstract class Spacing {
      */
     @Override
     public String toString() {
-        return getClass().getName() + "[top=" + top + ",left=" + left + ",bottom=" + bottom
-                + ",right=" + right + "]";
+        return "[top=" + top + ",left=" + left + ",bottom=" + bottom + ",right=" + right + "]";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void parse(final String string) {
+        int start = 0;
+        while (start < string.length() && isdelim(string.charAt(start), "([{\"' \t\r\n")) {
+            start++;
+        }
+        int end = string.length();
+        while (end > 0 && isdelim(string.charAt(end - 1), ")]}\"' \t\r\n")) {
+            end--;
+        }
+        if (start < end) {
+            String[] tokens = string.substring(start, end).split(",|;");
+            try {
+                for (String token : tokens) {
+                    String[] keyandvalue = token.split("=");
+                    if (keyandvalue.length != 2) {
+                        throw new IllegalArgumentException("Expecting a list of key-value pairs.");
+                    }
+                    String key = keyandvalue[0].trim();
+                    double value = Double.parseDouble(keyandvalue[1].trim());
+                    if (key.equals("top")) {
+                        top = value;
+                    } else if (key.equals("left")) {
+                        left = value;
+                    } else if (key.equals("bottom")) {
+                        bottom = value;
+                    } else if (key.equals("right")) {
+                        right = value;
+                    }
+                }
+            } catch (NumberFormatException exception) {
+                throw new IllegalArgumentException(
+                        "The given string contains parts that cannot be parsed as numbers." + exception);
+            }
+        }
+    }
+
+    /**
+     * Determine whether the given character is a delimiter.
+     * 
+     * @param c
+     *            a character
+     * @param delims
+     *            a string of possible delimiters
+     * @return true if {@code c} is one of the characters in {@code delims}
+     */
+    private static boolean isdelim(final char c, final String delims) {
+        for (int i = 0; i < delims.length(); i++) {
+            if (c == delims.charAt(i)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -148,6 +209,21 @@ public abstract class Spacing {
         this.bottom = other.bottom;
         return this;
     }
+    
+    // GWTExcludeStart
+    // Object.clone() is not available in GWT
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Spacing clone() {
+        try {
+            return (Spacing) super.clone();
+        } catch (CloneNotSupportedException exception) {
+            throw new AssertionError();
+        }
+    }
+    // GWTExcludeEnd
 
     /**
      * Stores the insets of an element. The insets are spacings from the border of an element to
@@ -156,6 +232,9 @@ public abstract class Spacing {
      * @author uru
      */
     public static final class Insets extends Spacing {
+
+        /** The serial version UID. */
+        private static final long serialVersionUID = -2159860709896900657L;
 
         /**
          * Creates a new instance with all fields set to {@code 0.0}.
@@ -198,6 +277,9 @@ public abstract class Spacing {
      * @author uru
      */
     public static final class Margins extends Spacing {
+
+        /** The serial version UID. */
+        private static final long serialVersionUID = 7465583871643915474L;
 
         /**
          * Creates a new instance with all fields set to {@code 0.0}.

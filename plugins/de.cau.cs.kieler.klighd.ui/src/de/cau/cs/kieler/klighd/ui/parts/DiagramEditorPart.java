@@ -42,8 +42,10 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -186,10 +188,32 @@ public class DiagramEditorPart extends EditorPart implements IDiagramWorkbenchPa
                 // determined. The async call here hopefully assures this.
                 Display.getCurrent().asyncExec(new Runnable() {
                     public void run() {
+                        final Control control = viewer.getControl();
+                        
+                        // In case of the editor initialization at start of the tool (due
+                        //  to foregoing tool exit without closing the editor)
+                        // and some startup logic closing all "leftover" editor parts
+                        //  the viewer's control (the canvas) may have been disposed in the
+                        //  meantime of schedule this runnable and executing it.
+                        // Thus check disposition here, and for cautiousness below, too.
+                        // (further Display activities may be schedule during the layout run
+                        //  while waiting for the layouters to finish).
+                        if (control.isDisposed()) {
+                            return;
+                        }
+                        
                         LightDiagramServices.layoutDiagram(viewContext, false, false);
+
+                        if (control.isDisposed()) {
+                            return;
+                        }
                         
                         // now the editor's and outline page's canvas can be set visible
-                        viewer.getControl().setVisible(true);
+                        control.setVisible(true);
+                        if (toBeFocussed) {
+                            toBeFocussed = false;
+                            control.setFocus();
+                        }
                         if (currentOutlinePage != null) {
                             currentOutlinePage.setVisible(true);
                         }
@@ -311,12 +335,19 @@ public class DiagramEditorPart extends EditorPart implements IDiagramWorkbenchPa
         return viewer;
     }
     
+    private boolean toBeFocussed = false;
+    
     /**
      * {@inheritDoc}
      */
     @Override
     public void setFocus() {
-        viewer.getControl().setFocus();
+        final Control c = viewer.getControl();
+        if (c.isVisible()) {
+            c.setFocus();
+        } else {
+            toBeFocussed = true;
+        }
     }
 
     /**
@@ -379,8 +410,10 @@ public class DiagramEditorPart extends EditorPart implements IDiagramWorkbenchPa
      * Load a model from the editor input. The result is put into {@link #model}.
      * 
      * @throws PartInitException if loading the model fails
+     * 
+     * @return the loaded model for convenience
      */
-    protected void loadModel() throws PartInitException {
+    protected Object loadModel() throws PartInitException {
         // get a URI or an input stream from the editor input
         URI uri = null;
         InputStream inputStream = null;
@@ -406,7 +439,7 @@ public class DiagramEditorPart extends EditorPart implements IDiagramWorkbenchPa
             throw new PartInitException("The given editor input is not supported.");
         }
         
-        Resource resource;
+        final Resource resource;
         try {
             resourceSet = new ResourceSetImpl();
             configureResourceSet(resourceSet);
@@ -431,6 +464,8 @@ public class DiagramEditorPart extends EditorPart implements IDiagramWorkbenchPa
         }
         // default behavior: get the first element in the resource
         model = resource.getContents().get(0);
+        
+        return model;
     }
     
     /**
@@ -561,7 +596,7 @@ public class DiagramEditorPart extends EditorPart implements IDiagramWorkbenchPa
                 final ViewContext vc =
                         DiagramEditorPart.this.getViewer().getViewContext();
                 if (vc != null) {
-                    vc.setZoomStyle(ZoomStyle.create(this.isChecked(), false));
+                    vc.setZoomStyle(ZoomStyle.create(false, this.isChecked(), false));
 
                     // perform zoom to fit upon activation of the toggle button
                     if (this.isChecked()) {
@@ -598,7 +633,7 @@ public class DiagramEditorPart extends EditorPart implements IDiagramWorkbenchPa
             public void run() {
                 final ViewContext vc = DiagramEditorPart.this.getViewer().getViewContext();
                 if (vc != null) {
-                    vc.setZoomStyle(ZoomStyle.create(false, this.isChecked()));
+                    vc.setZoomStyle(ZoomStyle.create(false, false, this.isChecked()));
 
                     // perform zoom to focus upon activation of the toggle button
                     if (this.isChecked()) {
@@ -679,20 +714,54 @@ public class DiagramEditorPart extends EditorPart implements IDiagramWorkbenchPa
      */
     private ControlListener diagramAreaListener = new ControlListener() {
 
+        /** The aspect ratio is rounded at two decimal places. */
+        private static final float ASPECT_RATIO_ROUND = 100;
+
+        private double oldAspectRatio = -1;
+
         public void controlResized(final ControlEvent e) {
             // assure that the composite's size is settled before we execute the layout
-            Display.getCurrent().asyncExec(new Runnable() {
-                public void run() {
-                    // if the part is not visible, no zoom is required
-                    if (!DiagramEditorPart.this.getViewer().getControl().isDisposed() 
-                            && DiagramEditorPart.this.getViewer().getControl().isVisible()) {
-                        LightDiagramServices.zoomDiagram(DiagramEditorPart.this);
+            if (KlighdPreferences.isZoomOnWorkbenchpartChange()) {
+                Display.getCurrent().asyncExec(new Runnable() {
+                    public void run() {
+                        // if the part is not visible, no zoom is required
+                        if (!DiagramEditorPart.this.getViewer().getControl().isDisposed()
+                                && DiagramEditorPart.this.getViewer().getControl().isVisible()) {
+                            zoomOrRelayout();
+                        }
                     }
-                }
-            });
+                });
+            }
         }
 
         public void controlMoved(final ControlEvent e) {
         }
+
+        /**
+         * Some layouters (eg KlayLayered) might change the layout based on the aspect ratio of the
+         * canvas. Thus, when the aspect ratio passes 1 we re-layout the diagram instead of just
+         * triggering a re-zoom.
+         */
+        private void zoomOrRelayout() {
+            // it makes only sense to do something if we have a viewcontext, ie a viewmodel
+            if (getViewer().getViewContext() != null) {
+                // calculate the aspect ratio of the current canvas
+                Point size = getViewer().getControl().getSize();
+                if (size.x > 0 && size.y > 0) {
+                    Float aspectRatio =
+                            Math.round(ASPECT_RATIO_ROUND * (float) size.x / size.y)
+                                    / ASPECT_RATIO_ROUND;
+                    if (oldAspectRatio == -1 || (oldAspectRatio > 1 && aspectRatio < 1)
+                            || (oldAspectRatio < 1 && aspectRatio > 1)) {
+                        LightDiagramServices.layoutAndZoomDiagram(DiagramEditorPart.this);
+                        oldAspectRatio = aspectRatio;
+                        return;
+                    }
+                }
+            }
+
+            LightDiagramServices.zoomDiagram(DiagramEditorPart.this);
+        }
     };
+
 }

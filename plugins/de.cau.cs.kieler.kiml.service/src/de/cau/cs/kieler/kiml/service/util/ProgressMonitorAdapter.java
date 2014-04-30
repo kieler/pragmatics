@@ -53,6 +53,21 @@ public class ProgressMonitorAdapter extends BasicProgressMonitor {
         super(maxLevels);
         this.progressMonitor = theprogressMonitor;
     }
+    
+    /**
+     * Creates a progress monitor wrapper with given maximal number of hierarchy levels. Progress
+     * is reported to parent monitors only up to the specified hierarchy level. The third argument
+     * controls whether any execution time measurements are performed.
+     * 
+     * @param theprogressMonitor the progress monitor
+     * @param maxLevels maximal number of hierarchy levels for which progress is reported
+     * @param measureExecTime whether the execution time shall be measured when the task is done
+     */
+    public ProgressMonitorAdapter(final IProgressMonitor theprogressMonitor, final int maxLevels,
+            final boolean measureExecTime) {
+        super(maxLevels, measureExecTime);
+        this.progressMonitor = theprogressMonitor;
+    }
 
     /**
      * Reports to the integrated Eclipse progress monitor that the current task begins.
@@ -104,14 +119,16 @@ public class ProgressMonitorAdapter extends BasicProgressMonitor {
      *            instance when the sub-task ends
      * @param maxHierarchyLevels the maximal number of hierarchy levels for the parent
      *         progress monitor
+     * @param measureExecTime whether the execution time shall be measured when the task is done
      * @return a new progress monitor instance
      */
     @Override
-    public BasicProgressMonitor doSubTask(final float work, final int maxHierarchyLevels) {
+    protected BasicProgressMonitor doSubTask(final float work, final int maxHierarchyLevels,
+            final boolean measureExecTime) {
         if (maxHierarchyLevels > 0) {
-            return new ProgressMonitorAdapter(progressMonitor, maxHierarchyLevels - 1);
+            return new ProgressMonitorAdapter(progressMonitor, maxHierarchyLevels - 1, measureExecTime);
         } else {
-            return new ProgressMonitorAdapter(progressMonitor, maxHierarchyLevels);            
+            return new ProgressMonitorAdapter(progressMonitor, maxHierarchyLevels, measureExecTime);
         }
     }
 

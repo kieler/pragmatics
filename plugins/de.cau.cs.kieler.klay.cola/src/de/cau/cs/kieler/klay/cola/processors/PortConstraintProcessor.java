@@ -86,11 +86,11 @@ public class PortConstraintProcessor implements ILayoutProcessor {
             KVector origCenter = new KVector(n.getSize().x / 2f, n.getSize().y / 2f);
             // determine the center when considering margins of the node
             KVector marginCenter =
-                    origCenter.clone().translate((n.getMargins().left + n.getMargins().right) / 2f,
+                    origCenter.clone().add((n.getMargins().left + n.getMargins().right) / 2f,
                             (n.getMargins().top + n.getMargins().bottom) / 2f);
-            marginCenter.translate(-n.getMargins().left, -n.getMargins().top);
+            marginCenter.add(-n.getMargins().left, -n.getMargins().top);
 
-            KVector diff = KVector.diff(origCenter, marginCenter);
+            KVector diff = origCenter.clone().sub(marginCenter);
 
             // reset the internal markers for fixed order constraints
             // lastWestPort = null;
@@ -107,21 +107,21 @@ public class PortConstraintProcessor implements ILayoutProcessor {
                 KVector portOffset = origCenter.clone();
                 switch (p.side) {
                 case WEST:
-                    portOffset.translate(-(diff.x - breathe - n.getMargins().left), -diff.y);
+                    portOffset.add(-(diff.x - breathe - n.getMargins().left), -diff.y);
                     break;
                 case EAST:
-                    portOffset.translate(diff.x - breathe - n.getMargins().left, -diff.y);
+                    portOffset.add(diff.x - breathe - n.getMargins().left, -diff.y);
                     break;
                 case SOUTH:
-                    portOffset.translate(-diff.x, diff.y - breathe - n.getMargins().top);
+                    portOffset.add(-diff.x, diff.y - breathe - n.getMargins().top);
                     break;
                 case NORTH:
-                    portOffset.translate(-diff.x, -(diff.y - breathe - n.getMargins().top));
+                    portOffset.add(-diff.x, -(diff.y - breathe - n.getMargins().top));
                     break;
                 }
 
                 // add half the port size
-                portOffset.translate(-p.getSize().x / 2f, -p.getSize().y / 2f);
+                portOffset.add(-p.getSize().x / 2f, -p.getSize().y / 2f);
 
                 // now handle the specified port constraints
                 switch (portConstraints) {
@@ -190,7 +190,7 @@ public class PortConstraintProcessor implements ILayoutProcessor {
         // - portOffset.y);
         // p.idealDummyEdgeLength = KVector.distance(marginCenter, portPos);
         p.idealDummyEdgeLength =
-                n.getRectSizeRaw().getLength() / 2f + p.getRectSizeRaw().getLength() / 2f;
+                n.getRectSizeRaw().length() / 2f + p.getRectSizeRaw().length() / 2f;
     }
     
     /**

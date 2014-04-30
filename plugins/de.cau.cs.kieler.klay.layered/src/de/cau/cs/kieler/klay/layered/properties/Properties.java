@@ -100,7 +100,13 @@ public final class Properties {
     public static final IProperty<NodePlacementStrategy> NODE_PLACER
             = new Property<NodePlacementStrategy>("de.cau.cs.kieler.klay.layered.nodePlace",
                     NodePlacementStrategy.BRANDES_KOEPF);
-
+    
+    /**
+     * Dampening of deflections between linear segments in the linear segments node placer.
+     */
+    public static final IProperty<Float> LINEAR_SEGMENTS_DEFLECTION_DAMPENING = new Property<Float>(
+            "de.cau.cs.kieler.klay.layered.linearSegmentsDeflectionDampening", 0.3f, 0.0f, 1.0f);
+    
     /**
      * Tells the BK node placer to use a certain alignment instead of taking the optimal result.
      */
