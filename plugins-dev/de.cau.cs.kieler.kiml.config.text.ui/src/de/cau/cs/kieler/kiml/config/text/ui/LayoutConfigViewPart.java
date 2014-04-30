@@ -457,7 +457,9 @@ public class LayoutConfigViewPart extends ViewPart {
     
     private File getCfgFolder() {
         String usrPath = System.getProperty("user.home");
-        return new File(usrPath + File.separator + CFGS_SUBFOLDER);
+        File f = new File(usrPath + File.separator + CFGS_SUBFOLDER);
+        f.mkdirs();
+        return f;
     }
     
     /** preference identifier for animation of layout. */
