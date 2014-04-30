@@ -393,7 +393,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
                     System.out.println(parent + " " + c);
                     //KVector relativeOffset = offset.differenceCreate(clusterPos);
                     
-                    chain.add(clusterPos);
+                    chain.offset(clusterPos);
                     
                     layout.applyVectorChain(chain);
                 } else {
@@ -440,8 +440,8 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
                                     KimlUtil.toRelative(globalOffset, edge.getSource().getParent());
                         }
 
-                        vc.add(globalOffset);
-                        vc.add(offset);
+                        vc.offset(globalOffset);
+                        vc.offset(offset);
 
                         // apply back to the original edge layout
                         KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
