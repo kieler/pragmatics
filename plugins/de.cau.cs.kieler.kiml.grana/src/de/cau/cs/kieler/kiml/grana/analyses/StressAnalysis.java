@@ -78,7 +78,7 @@ public class StressAnalysis implements IAnalysis {
                         AnalysisOptions.ANALYZE_HIERARCHY);
 
         // collect all nodes of the graph
-        int index = 0;
+        int index = 1;
         List<KNode> nodeQueue = new LinkedList<KNode>();
         List<KNode> nodes = new LinkedList<KNode>();
         nodeQueue.addAll(parentNode.getChildren());
@@ -173,14 +173,16 @@ public class StressAnalysis implements IAnalysis {
         int[][] matrix = new int[n + 1][n + 1];
 
         // set weights to infinity
-        for (int i = 1; i <= n; i++) {
-            for (int j = 1; j <= n; j++) {
-                matrix[i][j] = Integer.MAX_VALUE;
+        for (int i = 0; i <= n; i++) {
+            for (int j = 0; j <= n; j++) {
+                // assure that adding two of this does not exceed INT_MAX
+                matrix[i][j] = (Integer.MAX_VALUE / 2) - 1;
             }
         }
 
         // mark the nodes
-        for (int i = 1; i <= n; i++) {
+        for (KNode child : nodes) {
+            int i = nodeMap.get(child);
             matrix[i][i] = 0;
         }
 
