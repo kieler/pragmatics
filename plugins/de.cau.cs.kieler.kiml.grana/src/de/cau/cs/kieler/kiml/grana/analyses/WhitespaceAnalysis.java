@@ -25,6 +25,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
@@ -162,12 +163,19 @@ public class WhitespaceAnalysis implements IAnalysis {
         }
 
         // TODO consider some spacing around the node
-
+        float spacing = Math.max(0,
+                            node.getParent().getData(KShapeLayout.class)
+                                .getProperty(LayoutOptions.SPACING));
+        
+        // assure that we stay within the image's boundaries (the spacing might reach out further)
+        int minX = (int) Math.max(0, rect.getMinX() - spacing + absoluteOffset.x);
+        int minY = (int) Math.max(0, rect.getMinY() - spacing + absoluteOffset.y);
+        int maxX = (int) Math.min(bi.getWidth(), rect.getMaxX() + spacing + absoluteOffset.x);
+        int maxY = (int) Math.min(bi.getHeight(), rect.getMaxY() + spacing + absoluteOffset.y);
+        
         // Mark every pixel occupied by the node
-        for (int x = (int) (rect.getMinX() + absoluteOffset.x); 
-                x < (int) (rect.getMaxX() + absoluteOffset.x); ++x) {
-            for (int y = (int) (rect.getMinY() + absoluteOffset.y); 
-                    y < (int) (rect.getMaxY() + absoluteOffset.y); ++y) {
+        for (int x = minX; x < maxX; ++x) {
+            for (int y = minY; y < maxY; ++y) {
                 bi.setRGB(x, y, Color.BLACK.getRGB());
             }
         }
