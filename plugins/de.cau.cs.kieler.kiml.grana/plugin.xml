@@ -497,6 +497,13 @@
                name="Hierarchy">
          </component>
       </analysis>
+      <analysis
+            category="de.cau.cs.kieler.kiml.grana.drawing"
+            class="de.cau.cs.kieler.kiml.grana.analyses.StressAnalysis"
+            description="The stress of the graph."
+            id="de.cau.cs.kieler.kiml.grana.stress"
+            name="Stress">
+      </analysis>
    </extension>
 
 </plugin>
