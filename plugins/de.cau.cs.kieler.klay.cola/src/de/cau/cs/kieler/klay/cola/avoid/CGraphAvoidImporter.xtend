@@ -52,6 +52,10 @@ import org.adaptagrams.ShapeRef
 import org.adaptagrams.adaptagrams
 
 import static de.cau.cs.kieler.kiml.options.PortSide.*
+import org.adaptagrams.Cluster
+import org.eclipse.xtend.lib.macro.declaration.ClassDeclaration
+import org.adaptagrams.ClusterRef
+import org.adaptagrams.Box
 
 /**
  * TODO document
@@ -89,8 +93,27 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
       }
     }
     
+    // make libavoid aware of the clusters
+    graph.rootCluster.mapClusters(router)
+    router.setClusteredRouting(true)
+    
+    
     router
   } 
+  
+  def private void mapClusters(Cluster c, Router r) {
+  	
+  	val bounds = c.bounds
+  	val colaRect = new AvoidRectangle(new Point(bounds.minX, bounds.minY), new Point(bounds.maxX, bounds.maxY))
+  	
+  	// create a cluster ref
+  	new ClusterRef(r, colaRect)
+  	
+  	val children = c.clusters
+  	for (i : 0..< children.size.intValue) {
+  		children.get(i).mapClusters(r)
+  	}
+  }
   
   
   def dispatch transform(CNode node, Router router) {
