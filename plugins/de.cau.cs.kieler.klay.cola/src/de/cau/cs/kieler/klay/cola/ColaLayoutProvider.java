@@ -17,7 +17,9 @@ import java.util.Arrays;
 import java.util.Stack;
 
 import org.adaptagrams.ConstrainedFDLayout;
+import org.adaptagrams.Doubles;
 import org.adaptagrams.TestConvergence;
+import org.adaptagrams.UnsatisfiableConstraintInfoPtrs;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -106,12 +108,15 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         graph = importer.importGraph(parentNode);
 
         // apply some processors
-        new DirectionConstraintProcessor().process(graph, progressMonitor.subTask(1));
+        
+        // CARE ideal edge length processor has a dependency on 
+        // port constraint process (to get correct lengths for the ports)
         new PortConstraintProcessor().process(graph, progressMonitor.subTask(1));
         new IdealEdgeLengthProcessor().process(graph, progressMonitor.subTask(1));
 
         if (debug) {
-            System.out.println(Arrays.toString(graph.idealEdgeLengths));
+            System.out.println("Cola Ideal Edge Lengths: " + Arrays.toString(graph.idealEdgeLengths));
+            System.out.println(graph);
         }
 
         // FIXME for the moment fix the issue where the edge lengths do not allow 0
@@ -123,10 +128,15 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         }
 
         // first run w/o overlap prevention
-        runLayout(false);
+        runLayout(false, "", 1);
+        
+        // generate the flow constraints
+        new DirectionConstraintProcessor().process(graph, progressMonitor.subTask(1));
+        runLayout(false, "_flow", 1);
 
+        
         // then run some with overlap prevention
-        runLayout(true);
+        runLayout(true, "", 1);
 
         // FIXME adaptagrams - atm still have to compute the bounding rects of clusters
         graph.rootCluster.computeBoundingRect(graph.nodes);
@@ -140,30 +150,49 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         layouters.clear();
     }
 
-    private ConstrainedFDLayout runLayout(final boolean overlap) {
+    private ConstrainedFDLayout runLayout(final boolean overlap, final String dbgString, 
+            final double edgelength) {
 
         // create a new layouter instance
         ConstrainedFDLayout algo =
                 // edge length multiplier is 1
-                new ConstrainedFDLayout(graph.getNodes(), graph.getEdges(), 1, overlap,
+                new ConstrainedFDLayout(graph.getNodes(), graph.getEdges(), edgelength, overlap,
                         graph.getIdealEdgeLengths(), testConvergence);
 
+        UnsatisfiableConstraintInfoPtrs uciX = new UnsatisfiableConstraintInfoPtrs();
+        UnsatisfiableConstraintInfoPtrs uciY = new UnsatisfiableConstraintInfoPtrs();
+                
+        algo.setUnsatisfiableConstraintInfo(uciX, uciY);
+        
         // remember for later disposal
         layouters.add(algo);
 
         if (debug) {
             DebugTestConvergence debugConvergence = (DebugTestConvergence) testConvergence;
             debugConvergence.setLayouter(algo);
-            debugConvergence.setNamePrefix(debugPrefix + (overlap ? "overlap" : "non_overlap"));
+            debugConvergence.setNamePrefix(debugPrefix + (overlap ? "overlap" : "non_overlap")
+                    + dbgString);
         }
 
         // set constraints and clusters
         algo.setConstraints(graph.getConstraints());
         algo.setClusterHierarchy(graph.rootCluster);
 
+        algo.outputInstanceToSVG("colapre_" + (overlap ? "overlap" : "non_overlap" + dbgString));
+        
         algo.makeFeasible();
+        
+        algo.outputInstanceToSVG("colapremf_" + (overlap ? "overlap" : "non_overlap" + dbgString));
 
         algo.run();
+        
+        for (int i = 0; i < uciX.size(); i++) {
+            System.out.println("X " + uciX.get(i));
+        }
+        
+        for (int i = 0; i < uciY.size(); i++) {
+            System.out.println("Y" + uciY.get(i));
+        }
         
         return algo;
     }

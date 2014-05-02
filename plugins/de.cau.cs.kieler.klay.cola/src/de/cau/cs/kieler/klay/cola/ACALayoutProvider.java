@@ -127,18 +127,13 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
         if (debug) {
             ACADebugTestConvergence debugConvergence = (ACADebugTestConvergence) testConvergence;
             debugConvergence.setLayouter(aca);
-            debugConvergence.setNamePrefix(debugPrefix + (true ? "overlap" : "non_overlap"));
+            debugConvergence.setNamePrefix(debugPrefix + "aca");
         }
         
-        // if (debug) {
-        // DebugTestConvergence debugConvergence = (DebugTestConvergence) testConvergence;
-        // debugConvergence.setLayouter(aca.getFDLayout());
-        // debugConvergence.setNamePrefix(debugPrefix + (true ? "overlap" : "non_overlap"));
-        // }
-
         // tell aca to ignore some edges, e.g. edges connecting dummy port nodes to parent nodes,
         // or edges to/from external ports
-        generateIgnoredEdges();
+        // furthermore, any dummy port node is ignored during overlap calculation in aca
+        generateIgnoredEdgesAndNodes();
 
         // tell aca which nodes ports belong to. aca uses this information to check valid alignments
         // based on the nodes instead of the ports
@@ -200,13 +195,13 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
         }
         for (int i = 0; i < graph.edges.size(); ++i) {
             CEdge edge = edges.get(i);
-            System.out.println("edge " + edge);
             if (edge == null) {
                 // edges to dummy ports, no alignment for them
                 struct.addFlag(ACASepFlag.ACAEAST);
             } else {
 
-                if(edge.getTargetPort() != null && edge.getTargetPort().isExternal()
+                // external ports can be aligned into either west or east
+                if (edge.getTargetPort() != null && edge.getTargetPort().isExternal()
                         || edge.getSourcePort() != null && edge.getSourcePort().isExternal()) {
                     struct.addFlag(ACASepFlag.ACAEASTWEST);
                 }
@@ -234,6 +229,18 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
                 KPort srcPort = kedge.getSourcePort();
                 KPort tgtPort = kedge.getTargetPort();
 
+                // FIXME clean this, we dont have to differ between the cases!
+                // for cross hierarchy edges we have to extract the ports from the cedge 
+                if (e.crossHierarchy) {
+                    if (e.getSourcePort() != null) {
+                        srcPort = (KPort) e.getSourcePort().getProperty(InternalColaProperties.ORIGIN);
+                    }
+                    
+                    if (e.getTargetPort() != null) { 
+                        tgtPort = (KPort) e.getTargetPort().getProperty(InternalColaProperties.ORIGIN);
+                    }
+                }
+                
                 // calculate the offset for this edge
                 DoublePair st = new DoublePair(0, 0);
                 if (srcPort != null) {
@@ -242,6 +249,11 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
                 if (tgtPort != null) {
                     st.setSecond(-calculatePortOffset(e.getTarget(), tgtPort));
                 }
+                
+//                System.out.println(e.getSource() + " " + e.getTarget());
+//                System.out.println("\t" + srcPort + " " + srcPort.getData(KShapeLayout.class) + " " + e.getSourcePort().getPos());
+//                System.out.println("\t" + tgtPort + " " + tgtPort.getData(KShapeLayout.class) + " " + e.getTargetPort().getPos());
+//                System.out.println(st);
                 edgeOffsets.set(e.cIndex, st);
 
             }
@@ -295,7 +307,7 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
     }
     
 
-    private void generateIgnoredEdges() {
+    private void generateIgnoredEdgesAndNodes() {
         // we have to tell aca to ignore edges from dummy port nodes to their parents
         Bools bools = new Bools(graph.edges.size());
         // first accept all edges
