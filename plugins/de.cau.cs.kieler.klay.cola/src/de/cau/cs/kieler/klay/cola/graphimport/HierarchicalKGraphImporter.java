@@ -158,7 +158,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
 
             } else {
                 // this is a compound node, create a cluster for it
-                Cluster compoundCluster = new RectangularCluster();
+                RectangularCluster compoundCluster = new RectangularCluster();
                 KShapeLayout compoundLayout = node.getData(KShapeLayout.class); 
                 KVector absolute = KimlUtil.toAbsolute(compoundLayout.createVector(), parentNode);
                 compoundCluster.setBounds(new Rectangle(absolute.x, absolute.x
@@ -172,6 +172,17 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
                     parentCluster.addChildCluster(compoundCluster);
                 }
                 clusterMap.put(node, compoundCluster);
+                
+                
+                // set spacing and border spacing
+                if (node.getParent() != null) {
+                    float spacing = node.getParent().getData(KShapeLayout.class)
+                                        .getProperty(LayoutOptions.SPACING);
+                    compoundCluster.setMargin(spacing);
+                }
+                float borderSpacing =
+                        node.getData(KShapeLayout.class).getProperty(LayoutOptions.BORDER_SPACING);
+                compoundCluster.setPadding(20);
 
                 // recursively convert the children
                 recImportNodes(node, compoundCluster);

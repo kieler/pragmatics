@@ -112,17 +112,21 @@ public final class ColaUtil {
         double n = line.getY1() - (slope * line.getX1());
 
         // top
-        double lineTopX = (rectangle.getMinY() - n) / slope;
-        if (isWithinRange(lineTopX, line.getX1(), line.getX2())
-                && isWithinRange(lineTopX, rectangle.getMinX(), rectangle.getMaxX())) {
-            return Pair.of(new KVector(lineTopX, rectangle.getMinY()), PortSide.NORTH);
+        if (isWithinRange(rectangle.getMinY(), line.getY1(), line.getY2())) {
+            double lineTopX = (rectangle.getMinY() - n) / slope;
+            if (isWithinRange(lineTopX, line.getX1(), line.getX2())
+                    && isWithinRange(lineTopX, rectangle.getMinX(), rectangle.getMaxX())) {
+                return Pair.of(new KVector(lineTopX, rectangle.getMinY()), PortSide.NORTH);
+            }
         }
-
+        
         // right
-        double lineRightY = (rectangle.getMaxX() * slope) + n;
-        if (isWithinRange(lineRightY, line.getY1(), line.getY2())
-                && isWithinRange(lineRightY, rectangle.getMinY(), rectangle.getMaxY())) {
-            return Pair.of(new KVector(rectangle.getMaxX(), lineRightY), PortSide.EAST);
+        if (isWithinRange(rectangle.getMaxX(), line.getX1(), line.getX2())) {
+            double lineRightY = (rectangle.getMaxX() * slope) + n;
+            if (isWithinRange(lineRightY, line.getY1(), line.getY2())
+                    && isWithinRange(lineRightY, rectangle.getMinY(), rectangle.getMaxY())) {
+                return Pair.of(new KVector(rectangle.getMaxX(), lineRightY), PortSide.EAST);
+            }
         }
 
         // bottom
@@ -134,10 +138,12 @@ public final class ColaUtil {
         }
 
         // left
-        double lineLeftY = (rectangle.getMinX() * slope) + n;
-        if (isWithinRange(lineLeftY, line.getY1(), line.getY2())
-                && isWithinRange(lineLeftY, rectangle.getMinY(), rectangle.getMaxY())) {
-            return Pair.of(new KVector(rectangle.getMinX(), lineLeftY), PortSide.WEST);
+        if (isWithinRange(rectangle.getMinX(), line.getX1(), line.getX2())) {
+            double lineLeftY = (rectangle.getMinX() * slope) + n;
+            if (isWithinRange(lineLeftY, line.getY1(), line.getY2())
+                    && isWithinRange(lineLeftY, rectangle.getMinY(), rectangle.getMaxY())) {
+                return Pair.of(new KVector(rectangle.getMinX(), lineLeftY), PortSide.WEST);
+            }
         }
 
         return null;
@@ -150,9 +156,9 @@ public final class ColaUtil {
     private static boolean isWithinRange(final double value, final double bound1,
             final double bound2) {
         if (bound1 > bound2) {
-            return value > bound2 && value < bound1;
+            return value >= bound2 && value <= bound1;
         } else {
-            return value > bound1 && value < bound2;
+            return value >= bound1 && value <= bound2;
         }
     }
 
