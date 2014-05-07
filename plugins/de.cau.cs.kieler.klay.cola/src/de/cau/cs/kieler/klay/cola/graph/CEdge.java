@@ -87,7 +87,7 @@ public class CEdge extends CGraphElement {
         // create the cola representation
         edge = new ColaEdge(srcIndex, tgtIndex);
 
-        System.out.println("Initialized " + edge + " " + this);
+        // System.out.println("Initialized " + edge + " " + this);
 
         cIndex = graph.edgeIndex++;
 
@@ -174,9 +174,14 @@ public class CEdge extends CGraphElement {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("CEdge { ");
-        Object origin = getProperty(InternalColaProperties.ORIGIN);
-        if (origin != null) {
-            sb.append(origin).append(" ");
+        if (crossHierarchy) {
+            sb.append("CrossHierarchy: ").append(src.getProperty(InternalColaProperties.ORIGIN))
+                    .append("->").append(tgt.getProperty(InternalColaProperties.ORIGIN)).append(" ");
+        } else {
+            Object origin = getProperty(InternalColaProperties.ORIGIN);
+            if (origin != null) {
+                sb.append(origin).append(" ");
+            }
         }
         if (edge != null) {
             sb.append(edge).append(" ");

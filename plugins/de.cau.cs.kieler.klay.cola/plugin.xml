@@ -186,6 +186,15 @@
          <knownOption
                option="de.cau.cs.kieler.klay.cola.emphasizeDirection">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.cola.aca.alignCrossHierarchyEdges">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.cola.aca.postCompaction">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.cola.aca.favorLongEdges">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             class="de.cau.cs.kieler.klay.cola.CoDaLayoutProvider"
@@ -224,6 +233,15 @@
          <knownOption
                option="de.cau.cs.kieler.klay.cola.emphasizeDirection">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.cola.aca.alignCrossHierarchyEdges">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.cola.aca.postCompaction">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.cola.aca.favorLongEdges">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             class="de.cau.cs.kieler.klay.cola.LibavoidLayoutProvider"
@@ -245,5 +263,26 @@
                option="de.cau.cs.kieler.klay.cola.considerPreviousPositions">
          </knownOption>
       </layoutAlgorithm>
+      <layoutOption
+            appliesTo="parents"
+            default="false"
+            id="de.cau.cs.kieler.klay.cola.aca.alignCrossHierarchyEdges"
+            name="ACA Align Cross-Hierarchy Edges"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="false"
+            id="de.cau.cs.kieler.klay.cola.aca.favorLongEdges"
+            name="ACA Favor Long Edges"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="false"
+            id="de.cau.cs.kieler.klay.cola.aca.postCompaction"
+            name="ACA Post Compaction"
+            type="boolean">
+      </layoutOption>
    </extension>
 </plugin>

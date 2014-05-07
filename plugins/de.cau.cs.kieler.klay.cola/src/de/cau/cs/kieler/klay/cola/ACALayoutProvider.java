@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.klay.cola;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.adaptagrams.ACAEdgeOffsets;
 import org.adaptagrams.ACALayout;
@@ -21,6 +22,7 @@ import org.adaptagrams.ACAOverlapPrevention;
 import org.adaptagrams.ACASepFlag;
 import org.adaptagrams.ACASepFlagsStruct;
 import org.adaptagrams.Bools;
+import org.adaptagrams.ConstrainedFDLayout;
 import org.adaptagrams.DoublePair;
 import org.adaptagrams.IntIntMap;
 import org.adaptagrams.TestConvergence;
@@ -51,6 +53,7 @@ import de.cau.cs.kieler.klay.cola.graphimport.KGraphImporter;
 import de.cau.cs.kieler.klay.cola.processors.DirectionConstraintProcessor;
 import de.cau.cs.kieler.klay.cola.processors.IdealEdgeLengthProcessor;
 import de.cau.cs.kieler.klay.cola.processors.PortConstraintProcessor;
+import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
 import de.cau.cs.kieler.klay.cola.properties.InternalColaProperties;
 import de.cau.cs.kieler.klay.cola.util.ACADebugTestConvergence;
 
@@ -119,16 +122,26 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
         new PortConstraintProcessor().process(graph, progressMonitor.subTask(1));
         new IdealEdgeLengthProcessor().process(graph, progressMonitor.subTask(1));
 
+
+        if (debug) {
+            System.out.println("ACA Ideal Edge Lengths: " + Arrays.toString(graph.idealEdgeLengths));
+        }
+        
+        
         // assemble ACA object
         aca = new ACALayout(graph.nodes, graph.edges, graph.constraints, 1, true,
                         graph.getIdealEdgeLengths(), testConvergence);
         aca.setClusterHierarchy(graph.rootCluster);
 
+        
         if (debug) {
             ACADebugTestConvergence debugConvergence = (ACADebugTestConvergence) testConvergence;
             debugConvergence.setLayouter(aca);
             debugConvergence.setNamePrefix(debugPrefix + "aca");
         }
+
+        // favor long edges when aligning?
+        aca.favourLongEdges(parentLayout.getProperty(ColaProperties.ACA_FAVOR_LONG_EDGES));
         
         // tell aca to ignore some edges, e.g. edges connecting dummy port nodes to parent nodes,
         // or edges to/from external ports
@@ -170,6 +183,27 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
         // FIXME adaptagrams - atm still have to compute the bounding rects of clusters
         graph.rootCluster.computeBoundingRect(graph.nodes);
 
+        
+        
+        
+        for (CNode n : graph.getChildren()) {
+            for (CEdge e : n.getOutgoingEdges()) {
+                if (aca.edgeIsAligned(e.cIndex)) {
+                    e.setProperty(InternalColaProperties.ACA_EDGE_ALIGNED, true);
+                }
+            }
+        }
+        
+        if (parentLayout.getProperty(ColaProperties.ACA_POST_COMPACTION)) {
+            ConstrainedFDLayout fd =
+                    new ConstrainedFDLayout(graph.nodes, graph.edges, 10, true);
+            // WhitparentLayout.getProperty(LayoutOptions.SPACING)
+            fd.setClusterHierarchy(graph.rootCluster);
+            fd.setConstraints(graph.constraints);
+            fd.run();
+        }
+        
+        
         // apply the layout back
         importer.applyLayout(graph);
 
@@ -275,12 +309,10 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
                 if (e.getTarget() != null) {
                     st.setSecond(-calculatePortOffset(e.getTarget(), tgtPort));
                 }
-                System.out.println("adding offset for external port " + st);
+                // System.out.println("adding offset for external port " + st);
                 edgeOffsets.set(e.cIndex, st);
             }
         }
-        
-        System.out.println("edge offsets"  +edgeOffsets);
         
         aca.overlapPrevention(ACAOverlapPrevention.ACAOPWITHOFFSETS);
         aca.setAlignmentOffsetsForCompassDirection(ACASepFlag.ACAEAST, edgeOffsets);
@@ -289,16 +321,17 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
     /**
      * Calculates the offset of the passed port relative to the parent.
      * 
-     * FIXME .. generically
+     * FIXME .. do not use the KPort here, but the CPort, is that possible?
      * Note, to do this we require FIXED_POS ports!
      */
     private double calculatePortOffset(final CNode n, final KPort p) {
 
         Margins margins = n.getMargins();
         double nodeHeight = n.getRectSizeRaw().y;
-
+        
         // TODO not sure about the validity of selecting the port's pos and size
         KShapeLayout portLayout = p.getData(KShapeLayout.class);
+        // System.out.println(n.getProperty(LayoutOptions.PORT_CONSTRAINTS) + " " + portLayout);
         double dy =
                 -(nodeHeight / 2f) + margins.top + portLayout.getYpos()
                         + (portLayout.getHeight() / 2);
@@ -331,7 +364,8 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
         
         for (CNode n : graph.getChildren()) {
             for (CEdge e : n.getOutgoingEdges()) {
-                if (e.crossHierarchy) {
+                if (e.crossHierarchy
+                        && !graph.getProperty(ColaProperties.ACA_ALIGN_CROSS_HIERARCHY_EDGES)) {
                     bools.set(e.cIndex, true);
                 }
             }

@@ -18,6 +18,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.libavoid.LibavoidLayoutProvider;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
 
 /**
@@ -30,33 +31,51 @@ public class CoDaLayoutProvider extends AbstractLayoutProvider {
      */
     @Override
     public void doLayout(final KNode parentNode, final IKielerProgressMonitor progressMonitor) {
-     
-        final KLayoutData parentLayout = parentNode.getData(KLayoutData.class);
+
         
+        final KLayoutData parentLayout = parentNode.getData(KLayoutData.class);
+
         /*
          * Cola
          */
         ColaLayoutProvider cola = new ColaLayoutProvider();
-        
+
         cola.doLayout(parentNode, progressMonitor.subTask(1));
+
         
         /*
          * ACA
          */
         ACALayoutProvider aca = new ACALayoutProvider();
-        
+
         parentLayout.setProperty(ColaProperties.CONSIDER_PREVIOUS_POSITION, true);
-        
+
         aca.doLayout(parentNode, progressMonitor.subTask(1));
-        
-        
+
         /*
          * Libavoid
          */
-        LibavoidLayoutProvider libavoid = new LibavoidLayoutProvider();
-                
-        libavoid.doLayout(parentNode, progressMonitor.subTask(1));
-                
+        
+        parentLayout.setProperty(ColaProperties.REPOSITION_HIERARCHICAL_PORTS, false);
+        if (parentLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {
+
+            de.cau.cs.kieler.klay.cola.LibavoidLayoutProvider globalLibavoid =
+                    new de.cau.cs.kieler.klay.cola.LibavoidLayoutProvider();
+
+            globalLibavoid.doLayout(parentNode, progressMonitor.subTask(1));
+
+        } else {
+            LibavoidLayoutProvider libavoid = new LibavoidLayoutProvider();
+
+            libavoid.doLayout(parentNode, progressMonitor.subTask(1));
+        }
+
+        
+        
+        // Print execution times
+        for (IKielerProgressMonitor pm : progressMonitor.getSubMonitors()) {
+            System.out.println(pm.getTaskName() + " " + pm.getExecutionTime() + "s");
+        }
     }
-    
+
 }

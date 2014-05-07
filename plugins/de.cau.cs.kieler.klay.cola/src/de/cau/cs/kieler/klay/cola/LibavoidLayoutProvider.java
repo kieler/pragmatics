@@ -20,8 +20,10 @@ import org.adaptagrams.Router;
 import com.google.common.collect.Iterators;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
+import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
@@ -32,12 +34,10 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters;
 import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters.KGraphAdapter;
 import de.cau.cs.kieler.kiml.util.nodespacing.KimlNodeDimensionCalculation;
-import de.cau.cs.kieler.kiml.util.nodespacing.NodeMarginCalculator;
 import de.cau.cs.kieler.klay.cola.avoid.CGraphAvoidImporter;
 import de.cau.cs.kieler.klay.cola.graph.CGraph;
 import de.cau.cs.kieler.klay.cola.graphimport.HierarchicalKGraphImporter;
 import de.cau.cs.kieler.klay.cola.graphimport.IGraphImporter;
-import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
 
 /**
  * @author uru
@@ -50,7 +50,8 @@ public class LibavoidLayoutProvider extends AbstractLayoutProvider {
      */
     @Override
     public void doLayout(final KNode parentNode, final IKielerProgressMonitor progressMonitor) {
-     
+        progressMonitor.begin("Global Libavoid Layout", 1);
+        
         // bloody hack to fix port sides
         Iterator<KPort> ports = Iterators.filter(parentNode.eAllContents(), KPort.class);
         while (ports.hasNext()) {
@@ -80,7 +81,16 @@ public class LibavoidLayoutProvider extends AbstractLayoutProvider {
         rImporter.applyLayout(router);
         cImporter.applyLayout(cGraph);
         
+        // determine junction points
+        Iterator<KEdge> edges = Iterators.filter(parentNode.eAllContents(), KEdge.class);
+        while (edges.hasNext()) {
+            KEdge edge = edges.next();
+            KVectorChain junctionPoints = KimlUtil.determineJunctionPoints(edge);
+            edge.getData(KLayoutData.class).setProperty(LayoutOptions.JUNCTION_POINTS,
+                    junctionPoints);
+        }
         
+        progressMonitor.done();
     }
     
 

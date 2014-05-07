@@ -38,6 +38,8 @@ public class DebugTestConvergence extends TestConvergence {
         this.absoluteFolder =
                 new File(System.getProperty("user.home") + File.separatorChar + "tmp"
                         + File.separatorChar + folder);
+        
+        
     }
 
     /**
@@ -87,7 +89,12 @@ public class DebugTestConvergence extends TestConvergence {
         layouter.outputInstanceToSVG(outputName);
 
         // we use the default implementation of the convergence test
-        return super.ColaTestConvergenceOperator(arg0, arg1, arg2);
+        if (getIterations() > 20) {
+            return super.ColaTestConvergenceOperator(arg0, arg1, arg2);
+        } else {
+            super.ColaTestConvergenceOperator(arg0, arg1, arg2);
+            return false;
+        }
     }
 
 }

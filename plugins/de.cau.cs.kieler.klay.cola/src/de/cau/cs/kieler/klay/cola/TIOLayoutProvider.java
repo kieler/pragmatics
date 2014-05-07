@@ -107,7 +107,7 @@ public class TIOLayoutProvider extends AbstractLayoutProvider {
 
                 // no need to call the original implementation, we use it to move the nodes alone
                 // TODO might be an option to do both at once
-                 super.applyLayout(root);
+                 //super.applyLayout(root);
             }
         };
         libGraph.transformGraph();

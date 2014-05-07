@@ -87,6 +87,15 @@ public final class ColaProperties {
     public static final IProperty<Boolean> REPOSITION_HIERARCHICAL_PORTS = new Property<Boolean>(
             "de.cau.cs.kieler.klay.cola.repositionHierarchicalPorts", false);
 
+    public static final IProperty<Boolean> ACA_ALIGN_CROSS_HIERARCHY_EDGES = new Property<Boolean>(
+            "de.cau.cs.kieler.klay.cola.aca.alignCrossHierarchyEdges", false);
+    
+    public static final IProperty<Boolean> ACA_FAVOR_LONG_EDGES = new Property<Boolean>(
+            "de.cau.cs.kieler.klay.cola.aca.favorLongEdges", false);
+    
+    public static final IProperty<Boolean> ACA_POST_COMPACTION = new Property<Boolean>(
+            "de.cau.cs.kieler.klay.cola.aca.postCompaction", false);
+    
     /**
      * Utility class.
      */

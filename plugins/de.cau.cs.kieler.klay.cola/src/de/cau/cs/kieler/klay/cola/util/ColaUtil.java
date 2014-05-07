@@ -130,11 +130,13 @@ public final class ColaUtil {
         }
 
         // bottom
-        double lineBottomX = ((rectangle.getMaxY() - n) / slope);
-        if (isWithinRange(lineBottomX, line.getX1(), line.getX2())
-                && isWithinRange(lineBottomX, rectangle.getMinX(), rectangle.getMaxX())) {
-            // intersection at bottom
-            return Pair.of(new KVector(lineBottomX, rectangle.getMaxY()), PortSide.SOUTH);
+        if (isWithinRange(rectangle.getMaxY(), line.getY1(), line.getY2())) {
+            double lineBottomX = ((rectangle.getMaxY() - n) / slope);
+            if (isWithinRange(lineBottomX, line.getX1(), line.getX2())
+                    && isWithinRange(lineBottomX, rectangle.getMinX(), rectangle.getMaxX())) {
+                // intersection at bottom
+                return Pair.of(new KVector(lineBottomX, rectangle.getMaxY()), PortSide.SOUTH);
+            }
         }
 
         // left
@@ -161,5 +163,4 @@ public final class ColaUtil {
             return value >= bound1 && value <= bound2;
         }
     }
-
 }

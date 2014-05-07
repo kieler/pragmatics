@@ -19,19 +19,23 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
+import org.adaptagrams.Box;
 import org.adaptagrams.Cluster;
 import org.adaptagrams.Rectangle;
 import org.adaptagrams.RectangularCluster;
 import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -50,11 +54,14 @@ import de.cau.cs.kieler.klay.cola.graph.CEdge;
 import de.cau.cs.kieler.klay.cola.graph.CGraph;
 import de.cau.cs.kieler.klay.cola.graph.CNode;
 import de.cau.cs.kieler.klay.cola.graph.CPort;
+import de.cau.cs.kieler.klay.cola.properties.ColaPredicates;
 import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
 import de.cau.cs.kieler.klay.cola.properties.InternalColaProperties;
 import de.cau.cs.kieler.klay.cola.util.ColaUtil;
 
 /**
+ * 
+ * TODO assign higher edge length to cross hierarchy edges!
  * 
  * @author uru
  */
@@ -173,16 +180,21 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
                 }
                 clusterMap.put(node, compoundCluster);
                 
-                
                 // set spacing and border spacing
+                float spacing = 0;
                 if (node.getParent() != null) {
-                    float spacing = node.getParent().getData(KShapeLayout.class)
+                     spacing = node.getParent().getData(KShapeLayout.class)
                                         .getProperty(LayoutOptions.SPACING);
                     compoundCluster.setMargin(spacing);
                 }
+
+                KInsets kInsets = compoundLayout.getInsets();
                 float borderSpacing =
                         node.getData(KShapeLayout.class).getProperty(LayoutOptions.BORDER_SPACING);
-                compoundCluster.setPadding(20);
+                float padding = spacing / 2f + Math.max(borderSpacing, 0);
+                // Box as Padding -> left, right, top, bottom
+                compoundCluster.setPadding(new Box(padding + kInsets.getLeft(), padding
+                        + kInsets.getRight(), kInsets.getTop(), kInsets.getBottom()));
 
                 // recursively convert the children
                 recImportNodes(node, compoundCluster);
@@ -377,6 +389,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
             layout.getTargetPoint().setPos(0, 0);
         }
 
+        // set bend points of non hierarchy-crossing edges
         for (CEdge e : edgeMap.values()) {
             if (!e.crossHierarchy) {
                 KEdge edge = (KEdge) e.getProperty(InternalColaProperties.ORIGIN);
@@ -401,8 +414,8 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
                     } else {
                         clusterPos.add(offset);
                     }
-                    System.out.println(parent + " " + c);
-                    //KVector relativeOffset = offset.differenceCreate(clusterPos);
+                    // System.out.println(parent + " " + c);
+                    // KVector relativeOffset = offset.differenceCreate(clusterPos);
                     
                     chain.offset(clusterPos);
                     
@@ -420,16 +433,8 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
                     layout.getTargetPoint().applyVector(relativeTgtPoint.clone().add(offset));
                 }
             } else {
-
-                // assign better positions to hierarchical ports
-                if (repositionHierarchicalPorts) {
-                    // transfer positions to all edges that are part of this hierarchical edge
-                    // FIXME edges may be handled multiple times
-                    // this should yield deterministic results, however performance could be improved
-                    // however, it might be better to use a median or average value
-                    repositionHierarchicalPorts(e, offset);
-                }
                 
+                // if libavoid assigned sub routes
                 List<KVectorChain> subRoutes =
                         e.getProperty(InternalColaProperties.EDGE_SUB_ROUTES);
                 List<KEdge> edgeChain = e.getProperty(InternalColaProperties.EDGE_CHAIN);
@@ -453,12 +458,43 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
 
                         vc.offset(globalOffset);
                         vc.offset(offset);
-
+                        
                         // apply back to the original edge layout
                         KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
                         edgeLayout.applyVectorChain(vc);
                     }
 
+                }
+            }
+        }
+
+        // should we reposition hierarchical ports?
+        if (repositionHierarchicalPorts) {
+
+            Set<KPort> repositionedPorts = Sets.newHashSet();
+
+            // PASS 1 - ACA aligned hierarchy crossing edges
+            for (CNode n : constrainedGraph.getChildren()) {
+                for (CPort p : n.getPorts()) {
+                    final Iterable<CEdge> alignedEdges =
+                            Iterables.filter(p.getIncomingEdges(), Predicates.and(
+                                    ColaPredicates.PREDICATE_HIERARCHICAL_EDGE,
+                                    ColaPredicates.PREDICATE_ACA_ALIGNED_EDGE));
+                    for (CEdge e : alignedEdges) {
+                        repositionHierarchicalPorts(e, offset, repositionedPorts);
+                    }
+                }
+            }
+
+            // PASS 2 - All the order hierarchy crossing edges
+            for (CNode n : constrainedGraph.getChildren()) {
+                for (CPort p : n.getPorts()) {
+                    final Iterable<CEdge> alignedEdges =
+                            Iterables.filter(p.getIncomingEdges(),
+                                    ColaPredicates.PREDICATE_HIERARCHICAL_EDGE);
+                    for (CEdge e : alignedEdges) {
+                        repositionHierarchicalPorts(e, offset, repositionedPorts);
+                    }
                 }
             }
         }
@@ -470,7 +506,6 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
         KimlUtil.resizeNode(root, (float) width, (float) height, false, true);
     }
 
-    
     /**
      * Every node's position is in global coordinates. We translate this back to the position
      * relative to the parent node.
@@ -508,7 +543,15 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
         }
     }
 
-    private void repositionHierarchicalPorts(final CEdge e, final KVector offset) {
+    /**
+     * 
+     * @param e
+     * @param offset
+     * @param fixedPortSet
+     *            a set with ports that must not moved.
+     */
+    private void repositionHierarchicalPorts(final CEdge e, final KVector offset,
+            final Set<KPort> fixedPortSet) {
 
         List<KEdge> edgeChain = e.getProperty(InternalColaProperties.EDGE_CHAIN);
         // initialize the line connecting the centers of the start and end port
@@ -529,6 +572,10 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
         // reposition the target port of all intermediate ports
         for (KEdge kedge : edgeChain.subList(0, edgeChain.size() - 1)) {
 
+            if (fixedPortSet.contains(kedge.getTargetPort())) {
+                continue;
+            }
+            
             // find the currently surrounding cluster
             Cluster c = clusterMap.get(kedge.getTarget());
             Rectangle bounds = c.getBounds();
@@ -577,6 +624,9 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
                         .sub(positionOffset); // proper port position
 
                 portLayout.applyVector(newPos);
+                
+                // we moved this port, remember to not move it again
+                fixedPortSet.add(kedge.getTargetPort());
             }
         }
 

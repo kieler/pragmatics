@@ -92,7 +92,7 @@ public class CPort extends CShape {
         cIndex = graph.nodeIndex++;
         graph.nodes.add(rect);
 
-        System.out.println("Initialized " + this);
+        // System.out.println("Initialized " + this);
     }
 
     public CPort asExternalDummy() {

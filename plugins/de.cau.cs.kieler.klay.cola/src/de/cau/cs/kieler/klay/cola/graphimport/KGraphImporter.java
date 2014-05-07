@@ -360,7 +360,7 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
      */
     public void applyLayout(final CGraph graph) {
 
-        double borderSpacing = graph.getProperty(LayoutOptions.BORDER_SPACING);
+        double borderSpacing = Math.max(0, graph.getProperty(LayoutOptions.BORDER_SPACING));
 
         // calculate the offset from border spacing and node distribution
         double minX = Float.MAX_VALUE, minY = Float.MAX_VALUE, maxX = Float.MIN_VALUE, maxY =
@@ -383,7 +383,8 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
                 maxY = Math.max(maxY, ppos.y + psize.y);
             }
         }
-        KVector offset = new KVector(borderSpacing - minX, borderSpacing - minY);
+        // FIXME the 10 emulates internal padding, implement this properly
+        KVector offset = new KVector(borderSpacing - minX + 10, borderSpacing - minY);
 
         // nodes
         for (CNode n : graph.getChildren()) {
@@ -396,6 +397,7 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
 
             // write back insets
             KInsets insets = layout.getInsets();
+            // TODO ... remove magic numbers
             insets.setLeft((float) n.getInsets().left);
             insets.setRight((float) n.getInsets().right);
             insets.setTop((float) n.getInsets().top);
@@ -420,17 +422,23 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
 
         // re-position external ports
         // TODO we always wanna reposition the external ports??
-        // if (!graph.getProperty(LayoutOptions.PORT_CONSTRAINTS).isPosFixed()) {
-        for (CPort p : graph.getExternalPorts()) {
-            KPort kp = (KPort) p.getProperty(InternalColaProperties.ORIGIN);
-            KShapeLayout layout =
-                    kp.getData(KShapeLayout.class);
-            layout.setXpos((float) (p.getRectPos().x + offset.x));
-            layout.setYpos((float) (p.getRectPos().y + offset.y));
-            
-            // reposition the port
-            PortSide ps = KimlUtil.calcPortSide(kp  , Direction.RIGHT);
-            layout.setProperty(LayoutOptions.PORT_SIDE, ps);
+        // the thing with the bottom up approach is, that aca will move nodes on the 
+        // guideline freely, thus the ports kind of have to be adjusted or 
+        // some kinks will be introduced
+        
+        //if (graph.getProperty(ColaProperties.REPOSITION_HIERARCHICAL_PORTS)) {
+        if (!graph.getProperty(LayoutOptions.PORT_CONSTRAINTS).isPosFixed()) {
+            for (CPort p : graph.getExternalPorts()) {
+                KPort kp = (KPort) p.getProperty(InternalColaProperties.ORIGIN);
+                KShapeLayout layout =
+                        kp.getData(KShapeLayout.class);
+                layout.setXpos((float) (p.getRectPos().x + offset.x));
+                layout.setYpos((float) (p.getRectPos().y + offset.y));
+                
+                // reposition the port
+                PortSide ps = KimlUtil.calcPortSide(kp  , Direction.RIGHT);
+                layout.setProperty(LayoutOptions.PORT_SIDE, ps);
+            }
         }
         // }
 
@@ -473,10 +481,11 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
         }
                 
         // resize the parent node
-        KInsets insets = root.getData(KShapeLayout.class).getInsets();
-        double width = (maxX - minX) + 2 * borderSpacing + insets.getLeft() + insets.getRight();
-        double height = (maxY - minY) + 2 * borderSpacing + insets.getTop() + insets.getBottom();
-        KimlUtil.resizeNode(root, (float) width, (float) height, false, true);
+        // FIXME 
+        // KInsets insets = root.getData(KShapeLayout.class).getInsets();
+        double width = (maxX - minX) + 2 * borderSpacing + 20; // + insets.getLeft() + insets.getRight();
+        double height = (maxY - minY) + 2 * borderSpacing ; // insets.getTop() + insets.getBottom();
+        KimlUtil.resizeNode(root, (float) width, (float) height, true, true);
     }
 
 }

@@ -16,6 +16,7 @@ package de.cau.cs.kieler.kiml.libavoid;
 import java.io.File;
 import java.util.Map;
 
+import org.adaptagrams.AvoidBox;
 import org.adaptagrams.AvoidPoints;
 import org.adaptagrams.AvoidRectangle;
 import org.adaptagrams.Box;
@@ -465,7 +466,7 @@ public class LibavoidGraph {
         ShapeRef sr = idShapeRefMap.get(nodeId);
 
         // get the bounding box of the node
-        Box box = sr.polygon().offsetBoundingBox(0);
+        AvoidBox box = sr.polygon().offsetBoundingBox(0);
         // calculate width and height
         double width = box.getMax().getX() - box.getMin().getX();
         double height = box.getMax().getY() - box.getMin().getY();
@@ -654,8 +655,11 @@ public class LibavoidGraph {
             KVector tgtOffset = calculatePortOffset(edge.getTargetPort());
 
             AvoidPoints pts = route.getPs();
+            // FIXME libavoid produces duplicate points ... why ??
+            Point lastPoint = null;
             // transfer libavoid's results to the edges
             for (int i = 0; i < pts.size(); ++i) {
+                System.out.println(edge + "BP " + i + " " + pts.get(i).getX() + " " + pts.get(i).getY());
                 if (i == 0) {
                     // first point is the source point
                     if (edge.getSourcePort() != null) {
@@ -673,10 +677,22 @@ public class LibavoidGraph {
                         edgeLayout.setTargetPoint(toKPoint(pts.get(i), tgtOffset));
                     }
                 } else {
-                    // rest are bend points
-                    edgeLayout.getBendPoints().add(toKPoint(pts.get(i)));
+                    Point current = pts.get(i);
+                    if(Math.abs(current.getX() - lastPoint.getX()) < 0.001d && Math.abs(current.getY() - lastPoint.getY()) < 0.001d ) {
+                        // duplicate
+                    } else {
+                     // rest are bend points
+                        edgeLayout.getBendPoints().add(toKPoint(pts.get(i)));
+                    }
+                    
+                    
                 }
+                
+                lastPoint = pts.get(i);
             }
+            
+
+            
         }
     }
 

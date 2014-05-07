@@ -70,6 +70,7 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     public void doLayout(final KNode parentNode, final IKielerProgressMonitor progressMonitor) {
+        progressMonitor.begin("Cola Layout", 1);
 
         // handle some properties
         KLayoutData rootLayout = parentNode.getData(KLayoutData.class);
@@ -148,6 +149,8 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         // FIXME this should still leak the earlier layouter instances ...
         layouters.pop().freeAssociatedObjects();
         layouters.clear();
+        
+        progressMonitor.done();
     }
 
     private ConstrainedFDLayout runLayout(final boolean overlap, final String dbgString, 
