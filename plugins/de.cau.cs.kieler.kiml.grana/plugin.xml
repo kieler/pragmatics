@@ -297,7 +297,7 @@
       <analysis
             category="de.cau.cs.kieler.kiml.grana.drawing"
             class="de.cau.cs.kieler.kiml.grana.analyses.EdgeLengthAnalysis"
-            description="The minimum, average and maximum edge length."
+            description="The minimum, average, and maximum edge length and its variance."
             id="de.cau.cs.kieler.kiml.grana.edgeLength"
             name="Edge Length">
          <component
@@ -311,6 +311,9 @@
          <component
                abbreviation="Max"
                name="Maximum">
+         </component>
+         <component
+               name="Variance">
          </component>
       </analysis>
       <analysis
@@ -496,6 +499,13 @@
                abbreviation="H"
                name="Hierarchy">
          </component>
+      </analysis>
+      <analysis
+            category="de.cau.cs.kieler.kiml.grana.drawing"
+            class="de.cau.cs.kieler.kiml.grana.analyses.StressAnalysis"
+            description="The stress of the graph."
+            id="de.cau.cs.kieler.kiml.grana.stress"
+            name="Stress">
       </analysis>
    </extension>
 
