@@ -128,7 +128,7 @@ IWorkbenchContribution {
     @Override
     protected IContributionItem[] getContributionItems() {
         KiVi.getInstance().initialize();
-        for (IHandlerActivation act: handlerActivations.values()) {
+        for (final IHandlerActivation act: handlerActivations.values()) {
             handlerService.deactivateHandler(act);
         }
         handlerActivations.clear();
@@ -144,14 +144,15 @@ IWorkbenchContribution {
      * @return "no contributions found" contribution
      */
     private IContributionItem[] makeDefaultItem() {
-        ContributionItem defaultItem = new ContributionItem("de.cau.cs.kieler.kivi.default") {
+        final ContributionItem defaultItem = new ContributionItem("de.cau.cs.kieler.kivi.default") {
+            @Override
             public void fill(final Menu menu, final int index) {
-                MenuItem item = new MenuItem(menu, SWT.NONE);
+                final MenuItem item = new MenuItem(menu, SWT.NONE);
                 item.setEnabled(false);
                 item.setText("No contributions available");
             }
         };
-        IContributionItem[] items = {defaultItem};
+        final IContributionItem[] items = {defaultItem};
         return items;
     }
     
@@ -160,22 +161,22 @@ IWorkbenchContribution {
      * KiviMenuContributionService and adds buttons accordingly.
      */
     private IContributionItem[] makeContributionItems() {
-        List<IContributionItem> items = new LinkedList<IContributionItem>();
+        final List<IContributionItem> items = new LinkedList<IContributionItem>();
         
-        List<ButtonConfiguration> buttonConfigurations = KiviMenuContributionService.INSTANCE
+        final List<ButtonConfiguration> buttonConfigurations = KiviMenuContributionService.INSTANCE
                 .getButtonConfigurations();
-        for (ButtonConfiguration config : buttonConfigurations) {
+        for (final ButtonConfiguration config : buttonConfigurations) {
             IContributionItem item = null;
             
             if (config.isSeparator()) {
-                Separator separator = new Separator();
+                final Separator separator = new Separator();
                 item = separator;
                 separator.setId(config.getId());
                 
                 
                 
             } else if (config.getResponsiveCombination().isActive()) {
-                Command cmd = commandService.getCommand(config.getId());
+                final Command cmd = commandService.getCommand(config.getId());
                 State state = toggleStates.get(config.getId());
                 if (state == null) {
                     state = new RegistryToggleState();
@@ -183,17 +184,17 @@ IWorkbenchContribution {
                 }
                 
                 cmd.addState("org.eclipse.ui.commands.toggleState", state);
-                Category category = commandService.getCategory("de.cau.cs.kieler");
-                IParameter[] params = {};
+                final Category category = commandService.getCategory("de.cau.cs.kieler");
+                final IParameter[] params = {};
                 cmd.define(config.getLabel(), null, category, params);
                 // define a Handler for the command
-                ButtonHandler buttonHandler = new ButtonHandler();
+                final ButtonHandler buttonHandler = new ButtonHandler();
                 cmd.setHandler(buttonHandler);
                 buttonHandler.setId(cmd.getId());
-                IHandlerActivation handlerActivation = 
+                final IHandlerActivation handlerActivation = 
                         handlerService.activateHandler(cmd.getId(), buttonHandler);
                 handlerActivations.put(config.getId(), handlerActivation);
-                CommandContributionItemParameter parameter = new CommandContributionItemParameter(
+                final CommandContributionItemParameter parameter = new CommandContributionItemParameter(
                         serviceLocator, config.getId(), config.getId(),
                         new HashMap<String, String>(), config.getIcon(), null, null,
                         config.getLabel(), null, config.getTooltip(), config.getStyle(), null,
@@ -203,11 +204,11 @@ IWorkbenchContribution {
                 
             }
             
-            Expression visibilityExpression = getVisibilityExpression(config);
+            final Expression visibilityExpression = getVisibilityExpression(config);
             if (visibilityExpression != null) {
                 //menuService.registerVisibleWhen(item, visibilityExpression, null, null);
                 
-                ContributionItemUpdater listener = new ContributionItemUpdater(item);
+                final ContributionItemUpdater listener = new ContributionItemUpdater(item);
                 evaluationService.addEvaluationListener(
                         visibilityExpression, listener, "visibilityExpression");
                 
@@ -229,11 +230,11 @@ IWorkbenchContribution {
         Expression visibilityExpression = null;
         
         if (config.getActiveEditors() != null && config.getActiveEditors().length > 0) {
-            CompositeExpression or = new OrExpression();
+            final CompositeExpression or = new OrExpression();
             visibilityExpression = or;
-            for (String editorId : config.getActiveEditors()) {
-                CompositeExpression with = new WithExpression("activeEditorId");
-                Expression equals = new EqualsExpression(editorId);
+            for (final String editorId : config.getActiveEditors()) {
+                final CompositeExpression with = new WithExpression("activeEditorId");
+                final Expression equals = new EqualsExpression(editorId);
                 with.add(equals);
                 or.add(with);
             }
@@ -244,7 +245,7 @@ IWorkbenchContribution {
                 visibilityExpression = config.getVisibilityExpression();
             } else {
                 // there are some active editor specifications already
-                CompositeExpression and = new AndExpression();
+                final CompositeExpression and = new AndExpression();
                 and.add(visibilityExpression);
                 and.add(config.getVisibilityExpression());
                 visibilityExpression = and;
@@ -266,9 +267,9 @@ IWorkbenchContribution {
      *            true if the handler is enabled.
      */
     public static void setEnabledState(final String buttonID, final boolean enabled) {
-         IHandlerActivation activation = handlerActivations.get(buttonID);
+         final IHandlerActivation activation = handlerActivations.get(buttonID);
          if (activation != null) {
-             ButtonHandler handler = (ButtonHandler) activation.getHandler();
+             final ButtonHandler handler = (ButtonHandler) activation.getHandler();
              if (handler != null) {
                  handler.setEnabled(enabled);
              }
@@ -297,7 +298,7 @@ IWorkbenchContribution {
          * {@inheritDoc}
          */
         public void propertyChange(final PropertyChangeEvent event) {
-            if (event.getProperty() == "visibilityExpression") {
+            if (event.getProperty().equals("visibilityExpression")) {
                 if (event.getNewValue() != null
                         && ((Boolean) event.getNewValue()).booleanValue() != visible) {
                     this.visible = ((Boolean) event.getNewValue()).booleanValue();
