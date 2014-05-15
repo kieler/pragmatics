@@ -35,6 +35,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LabelSide;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.EdgeAdapter;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.GraphAdapter;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.GraphElementAdapter;
@@ -318,11 +319,13 @@ public final class KGraphAdapters {
     /**
      * .
      */
-    private static class KPortAdapter extends AbstractKGraphElementAdapter<KPort> implements
-            PortAdapter<KPort> {
+    private static class KPortAdapter extends AbstractKGraphElementAdapter<KPort>
+            implements PortAdapter<KPort> {
 
         /**
+         * Creates a new adapter for the given port.
          * 
+         * @param port the port to adapt.
          */
         public KPortAdapter(final KPort port) {
             super(port);
@@ -371,6 +374,29 @@ public final class KGraphAdapters {
                 }
             }
             return edgeAdapters;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public boolean hasCompoundConnections() {
+            KNode node = element.getNode();
+            
+            for (KEdge edge : element.getEdges()) {
+                if (edge.getSource() == node) {
+                    // check if the edge's target is a descendant of its source node
+                    if (KimlUtil.isDescendant(edge.getTarget(), node)) {
+                        return true;
+                    }
+                } else {
+                    // check if the edge's source is a descendant of its source node
+                    if (KimlUtil.isDescendant(edge.getSource(), node)) {
+                        return true;
+                    }
+                }
+            }
+            
+            return false;
         }
     }
 
