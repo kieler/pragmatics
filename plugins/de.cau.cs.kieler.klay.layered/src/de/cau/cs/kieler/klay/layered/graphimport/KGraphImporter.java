@@ -416,6 +416,23 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             
             newPort.copyProperties(portLayout);
             newPort.setSide(portLayout.getProperty(LayoutOptions.PORT_SIDE));
+            
+            // check if the original port has any connections to descendants of its node
+            for (KEdge edge : kport.getEdges()) {
+                if (edge.getSource() == node) {
+                    // check if the edge's target is a descendant of its source node
+                    if (KimlUtil.isDescendant(edge.getTarget(), node)) {
+                        newPort.setProperty(InternalProperties.INSIDE_CONNECTIONS, true);
+                        break;
+                    }
+                } else {
+                 // check if the edge's source is a descendant of its source node
+                    if (KimlUtil.isDescendant(edge.getSource(), node)) {
+                        newPort.setProperty(InternalProperties.INSIDE_CONNECTIONS, true);
+                        break;
+                    }
+                }
+            }
 
             // initialize the port's side, offset, and anchor point
             LGraphUtil.initializePort(newPort, portConstraints, direction,
