@@ -598,7 +598,7 @@ class KRenderingFigureProvider {
      */
     def KContainerRendering addRenderingWithSelectionWrapper(KGraphElement kge) {
         // Use a default selection color if there is no display (which is true in headless mode)
-        val systemSelection = Display.current.getSystemColor(SWT.COLOR_LIST_SELECTION)
+        val systemSelection = Display.current?.getSystemColor(SWT.COLOR_LIST_SELECTION)
         
         val selectionR = if (systemSelection == null) {180;} else {systemSelection.red;}
         val selectionG = if (systemSelection == null) {213;} else {systemSelection.green;}
