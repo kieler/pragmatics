@@ -14,6 +14,8 @@
 package de.cau.cs.kieler.klighd.piccolo.svg.impl;
 
 import java.awt.geom.Rectangle2D;
+import java.io.IOException;
+import java.io.OutputStream;
 
 import de.cau.cs.kieler.klighd.piccolo.svg.KlighdAbstractSVGGraphics;
 import de.erichseifert.vectorgraphics2d.SVGGraphics2D;
@@ -49,7 +51,7 @@ public class VectorGraphicsSVGGraphics extends KlighdAbstractSVGGraphics {
 
     private void init() {
 
-        CustomizedSVGGraphics2D g =
+        final CustomizedSVGGraphics2D g =
                 new CustomizedSVGGraphics2D(bounds.getX(), bounds.getY(), bounds.getWidth(),
                         bounds.getHeight());
 
@@ -69,9 +71,9 @@ public class VectorGraphicsSVGGraphics extends KlighdAbstractSVGGraphics {
      */
     @Override
     public String getSVG() {
-        SVGGraphics2D g = (SVGGraphics2D) getGraphicsDelegate();
+        final SVGGraphics2D g = (SVGGraphics2D) getGraphicsDelegate();
 
-        StringBuffer sb = new StringBuffer(new String(g.getBytes()));
+        final StringBuffer sb = new StringBuffer(new String(g.getBytes()));
         // add a surrounding group
         sb.insert(sb.indexOf("<style") - 1, "<g>");
         sb.insert(sb.lastIndexOf("<") - 1, "</g>");
@@ -79,6 +81,13 @@ public class VectorGraphicsSVGGraphics extends KlighdAbstractSVGGraphics {
         return sb.toString();
 
     }
+
+    @Override
+    public void stream(final OutputStream out) throws IOException {
+        out.write(((CustomizedSVGGraphics2D) getGraphicsDelegate()).getBytes());
+        out.flush();
+    }
+
 
     /**
      * {@inheritDoc}
@@ -105,11 +114,11 @@ public class VectorGraphicsSVGGraphics extends KlighdAbstractSVGGraphics {
 
         @Override
         protected void writeHeader() {
-            Rectangle2D bounds = getBounds();
-            double x = bounds.getX();
-            double y = bounds.getY();
-            double w = bounds.getWidth();
-            double h = bounds.getHeight();
+            final Rectangle2D bounds = getBounds();
+            final double x = bounds.getX();
+            final double y = bounds.getY();
+            final double w = bounds.getWidth();
+            final double h = bounds.getHeight();
             writeln("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
             writeln("<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" ",
                     "\"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">");

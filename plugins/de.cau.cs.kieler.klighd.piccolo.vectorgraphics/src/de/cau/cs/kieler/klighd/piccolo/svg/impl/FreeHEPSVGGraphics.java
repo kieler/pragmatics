@@ -17,6 +17,7 @@ import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import org.freehep.graphicsio.svg.SVGGraphics2D;
 import org.freehep.util.UserProperties;
@@ -38,17 +39,22 @@ public class FreeHEPSVGGraphics extends KlighdAbstractSVGGraphics {
 
     private Rectangle2D bounds;
     private boolean textAsShapes;
+    private boolean embedFonts;
 
     /**
      * @param bounds
      *            the bounds will be set as viewport values for the resulting root <svg ..> tag.
      * @param textAsShapes
      *            whether text should be rendered as shapes
+     * @param embedFonts
+     *            whether the texts' fonts shall be embedded in the output
      */
-    public FreeHEPSVGGraphics(final Rectangle2D bounds, final Boolean textAsShapes) {
+    public FreeHEPSVGGraphics(final Rectangle2D bounds, final Boolean textAsShapes,
+            final Boolean embedFonts) {
         super(null);
         this.bounds = bounds;
         this.textAsShapes = textAsShapes;
+        this.embedFonts = embedFonts.booleanValue();
 
         init();
     }
@@ -56,21 +62,18 @@ public class FreeHEPSVGGraphics extends KlighdAbstractSVGGraphics {
     private void init() {
         baos = new ByteArrayOutputStream();
 
-        // calc viewport
-        int w = (int) (bounds.getWidth() - bounds.getX());
-        int h = (int) (bounds.getHeight() - bounds.getY());
-        Dimension d = new Dimension(w, h);
         // create graphics object
-        graphicsDelegate = new SVGGraphics2D(baos, d);
+        graphicsDelegate = new SVGGraphics2D(baos, new Dimension(
+                (int) Math.round(bounds.getWidth()), (int) Math.round(bounds.getHeight())));
 
         // some settings
-        UserProperties props = new UserProperties();
+        final UserProperties props = new UserProperties();
         props.setProperty(SVGGraphics2D.TEXT_AS_SHAPES, textAsShapes);
+        props.setProperty(SVGGraphics2D.EMBED_FONTS, embedFonts);
         graphicsDelegate.setProperties(props);
 
         // start
         graphicsDelegate.startExport();
-        graphicsDelegate.translate(bounds.getX(), bounds.getY());
 
         setGraphicsDelegate(graphicsDelegate);
     }
@@ -85,10 +88,10 @@ public class FreeHEPSVGGraphics extends KlighdAbstractSVGGraphics {
             graphicsDelegate.endExport();
             graphicsDelegate.closeStream();
 
-            String s = new String(baos.toByteArray());
+            final String s = new String(baos.toByteArray());
             return s;
 
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
         }
 
@@ -103,4 +106,11 @@ public class FreeHEPSVGGraphics extends KlighdAbstractSVGGraphics {
         init();
     }
 
+    @Override
+    public void stream(final OutputStream out) throws IOException {
+        // finish the data 
+        graphicsDelegate.endExport();
+
+        baos.writeTo(out);
+    }
 }

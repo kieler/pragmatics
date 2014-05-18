@@ -63,19 +63,17 @@ public class VectorGraphicsPDFGraphics extends KlighdAbstractSVGGraphics impleme
     }
 
     private void init() {
-//
-//        PDFGraphics2D g =
-//                new PDFGraphics2D(bounds.getX(), bounds.getY(), bounds.getWidth(),
-//                        bounds.getHeight());
-//
+
+        final PDFGraphics2D g = new PDFGraphics2D(0, 0, 1000, 1000);
+
 //        // set text handling
 //        if (textAsShapes) {
 //            g.setFontRendering(FontRendering.VECTORS);
 //        } else {
 //            g.setFontRendering(FontRendering.TEXT);
 //        }
-//
-//        setGraphicsDelegate(g);
+
+        setGraphicsDelegate(g);
 
     }
 
@@ -94,6 +92,15 @@ public class VectorGraphicsPDFGraphics extends KlighdAbstractSVGGraphics impleme
     @Override
     public void clear() {
         init();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void stream(final OutputStream output) throws IOException {
+        output.write(((PDFGraphics2D) getGraphicsDelegate()).getBytes());
+        output.flush();
     }
     
     /**
@@ -125,7 +132,7 @@ public class VectorGraphicsPDFGraphics extends KlighdAbstractSVGGraphics impleme
             final boolean embedFonts, final String subFormatId) {
 
         // FIXME ... dont do this again, improve the KlighdAbstractSVGGraphics ... remove the "svg"
-        PCamera camera = canvas.getCamera();
+        final PCamera camera = canvas.getCamera();
         Rectangle2D bounds = null;
         if (viewPort) {
             bounds = camera.getBounds();
@@ -137,7 +144,7 @@ public class VectorGraphicsPDFGraphics extends KlighdAbstractSVGGraphics impleme
         // set up the paint context
 //        PDFGraphics2D graphics = (PDFGraphics2D) getGraphicsDelegate();
         
-        PDFGraphics2D graphics =
+        final PDFGraphics2D graphics =
                 new PDFGraphics2D(bounds.getX(), bounds.getY(), bounds.getWidth(),
                         bounds.getHeight());
 
@@ -169,8 +176,9 @@ public class VectorGraphicsPDFGraphics extends KlighdAbstractSVGGraphics impleme
         } else {
             // render the whole diagram
             @SuppressWarnings("unchecked")
-            List<PLayer> layersReference = (List<PLayer>) camera.getLayersReference();
-            for (PLayer layer : layersReference) {
+            final
+            List<PLayer> layersReference = camera.getLayersReference();
+            for (final PLayer layer : layersReference) {
                 layer.fullPaint(paintContext);
             }
         }
@@ -178,7 +186,7 @@ public class VectorGraphicsPDFGraphics extends KlighdAbstractSVGGraphics impleme
         // write to stream
         try {
             stream.write(graphics.getBytes());
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
         }
     }
