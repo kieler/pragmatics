@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: KIELER Additional SVG Generators
 Bundle-SymbolicName: de.cau.cs.kieler.klighd.piccolo.vectorgraphics;singleton:=true
 Bundle-Version: 0.2.0.qualifier
-Fragment-Host: de.cau.cs.kieler.klighd.piccolo;bundle-version="0.2.0"
+Fragment-Host: de.cau.cs.kieler.klighd.piccolo
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ClassPath: lib/freehep-graphics2d-2.1.1.jar,
  lib/freehep-graphicsio-2.1.1.jar,
