@@ -16,9 +16,9 @@ package de.cau.cs.kieler.klighdning.viewer;
 import java.awt.Cursor;
 import java.awt.geom.Rectangle2D;
 
+import de.cau.cs.kieler.klighd.piccolo.export.KlighdAbstractSVGGraphics;
+import de.cau.cs.kieler.klighd.piccolo.export.SVGGeneratorManager;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdMainCamera;
-import de.cau.cs.kieler.klighd.piccolo.svg.KlighdAbstractSVGGraphics;
-import de.cau.cs.kieler.klighd.piccolo.svg.SVGGeneratorManager;
 import edu.umd.cs.piccolo.PComponent;
 import edu.umd.cs.piccolo.PRoot;
 import edu.umd.cs.piccolo.util.PBounds;
