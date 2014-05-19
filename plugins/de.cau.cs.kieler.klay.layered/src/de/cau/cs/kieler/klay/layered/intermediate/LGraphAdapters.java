@@ -378,6 +378,13 @@ public final class LGraphAdapters {
             }
             return edgeAdapters;
         }
+
+        /**
+         * {@inheritDoc}
+         */
+        public boolean hasCompoundConnections() {
+            return element.getProperty(InternalProperties.INSIDE_CONNECTIONS);
+        }
     }
 
     /**

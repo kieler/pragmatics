@@ -70,6 +70,14 @@ public final class InternalProperties {
      * overlap edges.
      */
     public static final IProperty<Boolean> COMPOUND_NODE = new Property<Boolean>("compoundNode", false);
+    
+    /**
+     * Whether the original port an LPort was created from was a compound port with connections to or
+     * from descendants of its node. This might influence certain layout decisions, such as where to
+     * place its inside port label.
+     */
+    public static final IProperty<Boolean> INSIDE_CONNECTIONS = new Property<Boolean>(
+            "insideConnections", false);
 
     /**
      * An LNode that represents a compound node can hold a reference to a nested LGraph which
