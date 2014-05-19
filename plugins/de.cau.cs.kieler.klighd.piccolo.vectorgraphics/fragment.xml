@@ -2,7 +2,7 @@
 <?eclipse version="3.4"?>
 <fragment>
    <extension
-         point="de.cau.cs.kieler.klighd.piccolo.svg.svgGenerators">
+         point="de.cau.cs.kieler.klighd.piccolo.svgGenerators">
       <svgGenerator
             class="de.cau.cs.kieler.klighd.piccolo.svg.impl.FreeHEPSVGGraphics"
             id="de.cau.cs.kieler.klighd.piccolo.svggen.freeHEP">
