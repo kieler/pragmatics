@@ -4,7 +4,7 @@
    <extension
          point="de.cau.cs.kieler.klighd.piccolo.svgGenerators">
       <svgGenerator
-            class="de.cau.cs.kieler.klighd.piccolo.svg.impl.FreeHEPSVGGraphics"
+            class="de.cau.cs.kieler.klighd.piccolo.freehep.FreeHEPSVGGraphics"
             id="de.cau.cs.kieler.klighd.piccolo.svggen.freeHEP">
       </svgGenerator>
    </extension>
