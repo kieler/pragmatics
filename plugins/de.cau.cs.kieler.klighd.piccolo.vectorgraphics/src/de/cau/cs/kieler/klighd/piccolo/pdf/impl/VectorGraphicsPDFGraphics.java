@@ -21,9 +21,9 @@ import java.util.List;
 import org.eclipse.swt.widgets.Control;
 
 import de.cau.cs.kieler.klighd.IDiagramExporter;
+import de.cau.cs.kieler.klighd.piccolo.export.KlighdAbstractSVGGraphics;
 import de.cau.cs.kieler.klighd.piccolo.export.KlighdCanvasExporter;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdCanvas;
-import de.cau.cs.kieler.klighd.piccolo.svg.KlighdAbstractSVGGraphics;
 import de.erichseifert.vectorgraphics2d.PDFGraphics2D;
 import de.erichseifert.vectorgraphics2d.VectorGraphics2D.FontRendering;
 import edu.umd.cs.piccolo.PCamera;

@@ -5,34 +5,34 @@
          point="de.cau.cs.kieler.klighd.piccolo.svg.svgGenerators">
       <svgGenerator
             class="de.cau.cs.kieler.klighd.piccolo.svg.impl.FreeHEPSVGGraphics"
-            id="de.cau.cs.kieler.klighd.piccolo.svg.freeHEP">
+            id="de.cau.cs.kieler.klighd.piccolo.svggen.freeHEP">
       </svgGenerator>
       <svgGenerator
             class="de.cau.cs.kieler.klighd.piccolo.svg.impl.VectorGraphicsSVGGraphics"
-            id="de.cau.cs.kieler.klighd.piccolo.svg.vectorGraphics2D">
+            id="de.cau.cs.kieler.klighd.piccolo.svggen.vectorGraphics2D">
       </svgGenerator>
    </extension>
    <extension
          point="de.cau.cs.kieler.klighd.extensions">
       <exporter
-            class="de.cau.cs.kieler.klighd.piccolo.svg.export.SVGExporter"
-            description="VectorGraphics2D"
-            extension="svg"
-            id="de.cau.cs.kieler.klighd.piccolo.svg.exporter.vectorGraphics2D"
-            subFormat="de.cau.cs.kieler.klighd.piccolo.svg.vectorGraphics2D">
-      </exporter>
-      <exporter
-            class="de.cau.cs.kieler.klighd.piccolo.svg.export.SVGExporter"
+            class="de.cau.cs.kieler.klighd.piccolo.export.SVGExporter"
             description="FreeHEP"
             extension="svg"
-            id="de.cau.cs.kieler.klighd.piccolo.svg.exporter.freeHEP"
-            subFormat="de.cau.cs.kieler.klighd.piccolo.svg.freeHEP">
+            id="de.cau.cs.kieler.klighd.piccolo.export.freeHEP.svg"
+            subFormat="de.cau.cs.kieler.klighd.piccolo.svggen.freeHEP">
+      </exporter>
+      <exporter
+            class="de.cau.cs.kieler.klighd.piccolo.export.SVGExporter"
+            description="VectorGraphics2D"
+            extension="svg"
+            id="de.cau.cs.kieler.klighd.piccolo.export.vectorGraphics2D.svg"
+            subFormat="de.cau.cs.kieler.klighd.piccolo.svggen.vectorGraphics2D">
       </exporter>
       <exporter
             class="de.cau.cs.kieler.klighd.piccolo.pdf.impl.VectorGraphicsPDFGraphics"
             description="VectorGraphics2D"
             extension="pdf"
-            id="de.cau.cs.kieler.klighd.piccolo.pdf.vectorGraphics">
+            id="de.cau.cs.kieler.klighd.piccolo.export.vectorGraphics.pdf">
       </exporter>
    </extension>
 </fragment>

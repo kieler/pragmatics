@@ -22,7 +22,7 @@ import java.io.OutputStream;
 import org.freehep.graphicsio.svg.SVGGraphics2D;
 import org.freehep.util.UserProperties;
 
-import de.cau.cs.kieler.klighd.piccolo.svg.KlighdAbstractSVGGraphics;
+import de.cau.cs.kieler.klighd.piccolo.export.KlighdAbstractSVGGraphics;
 
 /**
  * Wrapper for the FreeHEP {@link SVGGraphics2D} class.

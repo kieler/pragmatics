@@ -17,7 +17,7 @@ import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import de.cau.cs.kieler.klighd.piccolo.svg.KlighdAbstractSVGGraphics;
+import de.cau.cs.kieler.klighd.piccolo.export.KlighdAbstractSVGGraphics;
 import de.erichseifert.vectorgraphics2d.SVGGraphics2D;
 import de.erichseifert.vectorgraphics2d.VectorGraphics2D.FontRendering;
 
