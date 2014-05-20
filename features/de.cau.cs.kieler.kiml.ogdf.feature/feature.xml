@@ -214,7 +214,7 @@ litigation.
    </license>
 
    <url>
-      <update label="KIELER Nightly Builds" url="http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/"/>
+      <update label="KIELER Release" url="http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/"/>
    </url>
 
    <includes
