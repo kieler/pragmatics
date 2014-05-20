@@ -84,9 +84,9 @@ public class CrossoverOperation implements IEvolutionaryOperation {
         }
         
         // Only some are allowed to generate offspring - these are selected by truncation
-        int selectCount = KielerMath.limit(Math.round(population.size() * SELECTION_RATIO),
+        int selectCount = KielerMath.boundi(Math.round(population.size() * SELECTION_RATIO),
                 MIN_SELECT, MAX_SELECT);
-        int crossoverCount = KielerMath.limit(Math.round(selectCount * CROSS_OVER_RATIO),
+        int crossoverCount = KielerMath.boundi(Math.round(selectCount * CROSS_OVER_RATIO),
                 MIN_CROSS_OVERS, MAX_CROSS_OVERS);
 
         for (int i = 0; i < crossoverCount; i++) {

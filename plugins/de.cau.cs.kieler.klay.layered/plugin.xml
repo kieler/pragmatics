@@ -52,6 +52,9 @@
                option="de.cau.cs.kieler.noLayout">
          </knownOption>
          <knownOption
+               option="de.cau.cs.kieler.additionalPortSpace">
+         </knownOption>
+         <knownOption
                option="de.cau.cs.kieler.klay.layered.edgeSpacingFactor">
          </knownOption>
          <knownOption
@@ -143,6 +146,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.klay.layered.inLayerSpacingFactor">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.linearSegmentsDeflectionDampening">
          </knownOption>
       </layoutAlgorithm>
       <layoutOption
@@ -279,6 +285,21 @@
          <dependency
                option="de.cau.cs.kieler.klay.layered.nodePlace"
                value="BRANDES_KOEPF">
+         </dependency>
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            id="de.cau.cs.kieler.klay.layered.linearSegmentsDeflectionDampening"
+            name="Linear Segments Deflection Dampening"
+            description="Dampens the movement of nodes to keep the diagram from getting too large."
+            default="0.3"
+            lowerBound="0.0"
+            upperBound="1.0"
+            type="float">
+         <dependency
+               option="de.cau.cs.kieler.klay.layered.nodePlace"
+               value="LINEAR_SEGMENTS">
          </dependency>
       </layoutOption>
       <layoutOption

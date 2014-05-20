@@ -17,6 +17,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
+
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -32,6 +34,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
  * supported).
  * 
  * @author mri
+ * @author uru
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow 2012-07-10 msp
  */
@@ -80,9 +83,10 @@ public class EdgeLengthAnalysis implements IAnalysis {
         float overallEdgeLength = 0;
         float minEdgeLength = Float.MAX_VALUE;
         float maxEdgeLength = 0;
+        List<Float> edgeLengths = Lists.newLinkedList();
         List<KNode> nodeQueue = new LinkedList<KNode>();
         nodeQueue.addAll(parentNode.getChildren());
-        while (nodeQueue.size() > 0) {
+        while (nodeQueue.size() > 0) { 
             // pop first element
             KNode node = nodeQueue.remove(0);
             
@@ -95,6 +99,7 @@ public class EdgeLengthAnalysis implements IAnalysis {
                 numberOfEdges++;
                 float edgeLength = computeEdgeLength(edge);
                 overallEdgeLength += edgeLength;
+                edgeLengths.add(edgeLength);
                 // min edge length
                 if (edgeLength < minEdgeLength) {
                     minEdgeLength = edgeLength;
@@ -109,14 +114,22 @@ public class EdgeLengthAnalysis implements IAnalysis {
                 nodeQueue.addAll(node.getChildren());
             }
         }
+        
+        // calculate variance
+        double avg = overallEdgeLength / (double) numberOfEdges;
+        double variance = 0;
+        for (double l : edgeLengths) {
+            variance += Math.pow(l - avg, 2);
+        }
+        variance *= 1 / (double) (numberOfEdges - 1);
 
         progressMonitor.done();
 
         if (numberOfEdges > 0) {
             return new Object[] { minEdgeLength,
-                    overallEdgeLength / numberOfEdges, maxEdgeLength };
+                    avg, maxEdgeLength, variance };
         } else {
-            return new Object[] { 0, 0.0f, 0 };
+            return new Object[] { 0, 0.0f, 0, 0.0f };
         }
     }
 

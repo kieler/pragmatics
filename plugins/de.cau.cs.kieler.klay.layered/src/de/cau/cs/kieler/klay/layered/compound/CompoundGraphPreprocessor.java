@@ -83,6 +83,8 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *
  * @author msp
  * @author cds
+ * @kieler.design proposed by cds
+ * @kieler.rating proposed yellow by cds
  */
 public class CompoundGraphPreprocessor implements ILayoutProcessor {
     

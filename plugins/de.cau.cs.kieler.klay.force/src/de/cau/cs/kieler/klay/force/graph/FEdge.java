@@ -96,7 +96,7 @@ public class FEdge extends MapPropertyHolder {
      * @return the source docking point
      */
     public KVector getSourcePoint() {
-        KVector v = target.getPosition().differenceCreate(source.getPosition());
+        KVector v = target.getPosition().clone().sub(source.getPosition());
         clipVector(v, source.getSize().x, source.getSize().y);
         return v.add(source.getPosition());
     }
@@ -107,7 +107,7 @@ public class FEdge extends MapPropertyHolder {
      * @return the target docking point
      */
     public KVector getTargetPoint() {
-        KVector v = source.getPosition().differenceCreate(target.getPosition());
+        KVector v = source.getPosition().clone().sub(target.getPosition());
         clipVector(v, target.getSize().x, target.getSize().y);
         return v.add(target.getPosition());
     }
@@ -175,7 +175,7 @@ public class FEdge extends MapPropertyHolder {
         if (count > 0) {
             KVector sourcePos = source.getPosition();
             KVector targetPos = target.getPosition();
-            KVector incr = targetPos.differenceCreate(sourcePos).scale(1 / (double) (count + 1));
+            KVector incr = targetPos.clone().sub(sourcePos).scale(1 / (double) (count + 1));
             KVector pos = sourcePos.clone();
             for (FBendpoint bendPoint : bendpoints) {
                 bendPoint.getPosition().x = pos.x;

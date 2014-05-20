@@ -13,9 +13,11 @@
  */
 package de.cau.cs.kieler.klighd.ui.internal.viewers;
 
+import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
@@ -28,10 +30,10 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.krendering.KText;
 import de.cau.cs.kieler.klighd.IViewChangeListener;
 import de.cau.cs.kieler.klighd.IViewer;
+import de.cau.cs.kieler.klighd.KlighdTreeSelection;
 import de.cau.cs.kieler.klighd.ViewChangeType;
 import de.cau.cs.kieler.klighd.ViewContext;
 import de.cau.cs.kieler.klighd.ZoomStyle;
-import de.cau.cs.kieler.klighd.KlighdTreeSelection;
 import de.cau.cs.kieler.klighd.viewers.ContextViewer;
 
 /**
@@ -127,15 +129,43 @@ public class StringViewer implements IViewer<String> {
     /**
      * {@inheritDoc}
      */
-    public boolean isVisible(final Object semanticElement) {
+    public boolean isDisplayed(final Object semanticElement, final boolean checkParents) {
         return false;
     }
     
     /**
      * {@inheritDoc}
      */
-    public boolean isVisible(final KGraphElement diagramElement) {
+    public boolean isDisplayed(final KGraphElement diagramElement, final boolean checkContainment) {
         return false;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isVisible(final Object semanticElement, final boolean checkParents) {
+        return false;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isVisible(final KGraphElement diagramElement, final boolean checkContainment) {
+        return false;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Iterator<KNode> getVisibleDiagramNodes() {
+        return null;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Iterator<KGraphElement> getVisibleDiagramElements() {
+        return null;
     }
     
     /**
@@ -316,7 +346,14 @@ public class StringViewer implements IViewer<String> {
     /**
      * {@inheritDoc}
      */
-    public KlighdTreeSelection getSelection() {
+    public ISelection getSelection() {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public KlighdTreeSelection getDiagramSelection() {
         return null;
     }
 

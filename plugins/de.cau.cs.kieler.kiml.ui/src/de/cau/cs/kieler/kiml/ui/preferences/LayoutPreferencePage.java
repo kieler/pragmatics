@@ -79,6 +79,8 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
     private Button obliqueCheckBox;
     /** checkbox for debug graph output. */
     private Button debugCheckBox;
+    /** checkbox for execution time measurement. */
+    private Button execTimeCheckBox;
     /** list of layout option entries. */
     private List<OptionsTableProvider.DataEntry> optionEntries;
     /** table viewer to refresh after changes to the option table data. */
@@ -154,6 +156,13 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         obliqueCheckBox.setToolTipText(Messages.getString("kiml.ui.70")); //$NON-NLS-1$
         obliqueCheckBox.setSelection(servicePrefStore.getBoolean(
                 LayoutManagersService.PREF_OBLIQUE_ROUTE));
+        
+        // add checkbox for execution time measurements
+        execTimeCheckBox = new Button(generalGroup, SWT.CHECK | SWT.LEFT);
+        execTimeCheckBox.setText(Messages.getString("kiml.ui.79")); //$NON-NLS-1$
+        execTimeCheckBox.setToolTipText(Messages.getString("kiml.ui.80")); //$NON-NLS-1$
+        execTimeCheckBox.setSelection(servicePrefStore.getBoolean(
+                DiagramLayoutEngine.PREF_EXEC_TIME_MEASUREMENT));
         
         // add checkbox for debug graph output
         debugCheckBox = new Button(generalGroup, SWT.CHECK | SWT.LEFT);
@@ -516,6 +525,8 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
                 LayoutManagersService.PREF_OBLIQUE_ROUTE));
         debugCheckBox.setSelection(servicePrefStore.getDefaultBoolean(
                 DiagramLayoutEngine.PREF_DEBUG_OUTPUT));
+        execTimeCheckBox.setSelection(servicePrefStore.getDefaultBoolean(
+                DiagramLayoutEngine.PREF_EXEC_TIME_MEASUREMENT));
         
         // clear the layout options table
         for (OptionsTableProvider.DataEntry entry : optionEntries) {
@@ -540,6 +551,8 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         servicePrefStore.setValue(LayoutManagersService.PREF_OBLIQUE_ROUTE,
                 obliqueCheckBox.getSelection());
         servicePrefStore.setValue(DiagramLayoutEngine.PREF_DEBUG_OUTPUT, debugCheckBox.getSelection());
+        servicePrefStore.setValue(DiagramLayoutEngine.PREF_EXEC_TIME_MEASUREMENT,
+                execTimeCheckBox.getSelection());
         
         // store data for the diagram element and diagram type options
         for (OptionsTableProvider.DataEntry entry : optionEntries) {

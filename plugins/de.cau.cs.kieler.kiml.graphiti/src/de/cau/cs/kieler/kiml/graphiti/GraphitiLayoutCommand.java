@@ -320,7 +320,7 @@ public class GraphitiLayoutCommand extends RecordingCommand {
             EdgeRouting edgeRouting = edgeLayout.getProperty(LayoutOptions.EDGE_ROUTING);
             if (edgeRouting == EdgeRouting.SPLINES
                     && edgeLayout.getBendPoints().size() >= 1) {
-                bendPoints = KielerMath.approximateSpline(bendPoints);
+                bendPoints = KielerMath.approximateBezierSpline(bendPoints);
             }
             
             bendPoints.removeFirst();
@@ -354,10 +354,10 @@ public class GraphitiLayoutCommand extends RecordingCommand {
         // calculate reference point for the label
         KVector referencePoint;
         if (decorator.isLocationRelative()) {
-            referencePoint = bendPoints.getPointOnLine(decorator.getLocation()
-                            * bendPoints.getLength());
+            referencePoint = bendPoints.pointOnLine(decorator.getLocation()
+                            * bendPoints.totalLength());
         } else {
-            referencePoint = bendPoints.getPointOnLine(decorator.getLocation());
+            referencePoint = bendPoints.pointOnLine(decorator.getLocation());
         }
         
         KShapeLayout shapeLayout = klabel.getData(KShapeLayout.class);

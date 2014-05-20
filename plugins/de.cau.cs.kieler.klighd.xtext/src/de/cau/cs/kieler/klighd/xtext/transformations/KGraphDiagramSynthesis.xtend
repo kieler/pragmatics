@@ -13,31 +13,42 @@
  */
 package de.cau.cs.kieler.klighd.xtext.transformations
 
+import com.google.common.base.Strings
 import com.google.common.collect.ImmutableList
 import com.google.inject.Inject
 import de.cau.cs.kieler.core.kgraph.KEdge
 import de.cau.cs.kieler.core.kgraph.KGraphElement
 import de.cau.cs.kieler.core.kgraph.KLabel
+import de.cau.cs.kieler.core.kgraph.KLabeledGraphElement
 import de.cau.cs.kieler.core.kgraph.KNode
+import de.cau.cs.kieler.core.kgraph.KPort
 import de.cau.cs.kieler.core.krendering.KRendering
 import de.cau.cs.kieler.core.krendering.KRenderingFactory
 import de.cau.cs.kieler.core.krendering.KRenderingLibrary
 import de.cau.cs.kieler.core.krendering.extensions.KPolylineExtensions
+import de.cau.cs.kieler.core.krendering.extensions.KRenderingExtensions
+import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement
+import de.cau.cs.kieler.kiml.options.EdgeRouting
 import de.cau.cs.kieler.kiml.options.LayoutOptions
+import de.cau.cs.kieler.kiml.options.NodeLabelPlacement
 import de.cau.cs.kieler.kiml.options.PortConstraints
+import de.cau.cs.kieler.kiml.options.SizeConstraint
+import de.cau.cs.kieler.kiml.util.KimlUtil
+import de.cau.cs.kieler.klighd.KlighdConstants
 import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData
-import de.cau.cs.kieler.kiml.options.EdgeRouting
-import de.cau.cs.kieler.kiml.util.KimlUtil
 
 /**
- * Synthesizes a copy of the given {@code KNode} and enriches it with a selection of default renderings
- * where no explicit renderings are specified. To be more precise, the following renderings are added
- * if necessary:
+ * Synthesizes a copy of the given {@code KNode} and adds default stuff.
+ * 
+ * <p>Default stuff, in this case, is the following:</p>
  * <ul>
+ *   <li>If a node has no label, but an ID, a label with the ID as its text is added.</li>
+ *   <li>If a node label is present, node label placement defaults to inner centered placement.</li>
  *   <li>Edges without attached {@code KRendering}s are provided with a {@code KPolyline} with
  *       an arrowhead at the end. (the default would be a simple polyline without arrowhead)</li>
  *   <li>Labels without attached {@code KRendering}s are provided with a default {@code KText}
@@ -55,14 +66,23 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
     public static String TRANSFORMATION_ID =
          "de.cau.cs.kieler.klighd.xtext.transformations.KGraphDiagramSynthesis"
     
+    @Inject extension KPolylineExtensions
+    @Inject extension KRenderingExtensions
+    
     /**
      * Rendering factory used to create KRendering model instances.
      */
     static KRenderingFactory renderingFactory = KRenderingFactory::eINSTANCE
     
-    @Inject
-    extension KPolylineExtensions
+    /**
+     * Default rendering for polyline edges.
+     */
+    private var KRendering defaultPolylineRendering;
     
+    /**
+     * Default rendering for spline edges.
+     */
+    private var KRendering defaultSplineRendering;
     
     override getDisplayedLayoutOptions() {
         return ImmutableList::of(
@@ -72,8 +92,6 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         );
     }
     
-    private var KRendering polylineRendering;
-    private var KRendering splineRendering;
     
     /**
      * Transforms the given graph into an equivalent graph that may be enriched with additional
@@ -96,30 +114,45 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         }
         
         // Create a common rendering for polylines
-        polylineRendering = renderingFactory.createKPolyline() => [
+        defaultPolylineRendering = renderingFactory.createKPolyline() => [
             it.id = "DefaultEdgeRendering"
             it.addArrowDecorator
             it.addJunctionPointDecorator
         ];
-        library.renderings += polylineRendering
+        library.renderings += defaultPolylineRendering
+        
         // Create a common rendering for splines
-        splineRendering = renderingFactory.createKSpline => [
+        defaultSplineRendering = renderingFactory.createKSpline => [
             it.id = "SplineEdgeRendering"
             it.addArrowDecorator
         ];
+        library.renderings += defaultSplineRendering
         
-        // Associate original objects with transformed objects and provide default renderings
+        // Associate original objects with transformed objects
         for (entry : copier.entrySet()) {
-            entry.value.putToLookUpWith(entry.key)
-            entry.value.enrichRendering
+            entry.value.associateWith(entry.key)
         }
+        
+        // Enrich the rendering
+        recursivelyEnrichRendering(result)
         
         return result
     }
     
     
     ///////////////////////////////////////////////////////////////////////////////
-    // ENRICHING RENDERINGS
+    // RENDERINGS ENRICHMENT CENTER
+    //   "Thank you for helping us help you help us all."
+    
+    /**
+     * Recursively calls {@link #enrichRendering(EObject)} on this object and all of its children.
+     * 
+     * @param o object to enrich.
+     */
+    def private void recursivelyEnrichRendering(EObject o) {
+        enrichRendering(o)
+        o.eContents.forEach[child | recursivelyEnrichRendering(child)]
+    }
     
     /**
      * Fallback metchod that does not add any rendering information to the given object.
@@ -127,6 +160,48 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
      * @param o an EMF object.
      */
     def private dispatch void enrichRendering(EObject o) {
+    }
+    
+    /**
+     * Make sure the node has a valid size and a label.
+     * 
+     * @param node the node whose rendering to enrich.
+     */
+    def private dispatch void enrichRendering(KNode node) {
+        // Try to add a label
+        ensureLabel(node)
+        
+        // Make sure the node has a size if the size constraints are fixed
+        val layoutData = node.getData(typeof(KShapeLayout))
+        if (layoutData != null) {
+            val sizeConstraint = layoutData.getProperty(LayoutOptions::SIZE_CONSTRAINT)
+            
+            if (layoutData.width == 0.0f && layoutData.height == 0.0f
+                && sizeConstraint.equals(SizeConstraint.fixed)) {
+                
+                layoutData.width = 80
+                layoutData.height = 80
+            }
+        }
+    }
+    
+    /**
+     * Make sure the port has a valid size.
+     * 
+     * @param port the port whose rendering to enrich.
+     */
+    def private dispatch void enrichRendering(KPort port) {
+        // Try to add a label
+        ensureLabel(port)
+        
+        // Make sure the port has a size
+        val layoutData = port.getData(typeof(KShapeLayout))
+        if (layoutData != null) {
+            if (layoutData.width == 0.0f && layoutData.height == 0.0f) {
+                layoutData.width = 5
+                layoutData.height = 5
+            }
+        }
     }
     
     /**
@@ -142,9 +217,9 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
             val routing = parent?.getData(typeof(KLayoutData))?.getProperty(LayoutOptions::EDGE_ROUTING)
             edge.data += renderingFactory.createKRenderingRef => [
                 if (routing != null && routing == EdgeRouting::SPLINES) {
-                    it.rendering = splineRendering
+                    it.rendering = defaultSplineRendering
                 } else {
-                    it.rendering = polylineRendering
+                    it.rendering = defaultPolylineRendering
                 }
             ]
         }
@@ -159,13 +234,18 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
      */
     def private dispatch void enrichRendering(KLabel label) {
         if (!label.hasRendering) {
-            renderingFactory.createKText() => [
-                label.data += it
+            renderingFactory.createKText() => [text |
+                label.data += text
+                
+                // Port labels should have a smaller font size
+                if (label.eContainer instanceof KPort) {
+                    text.fontSize = KlighdConstants::DEFAULT_FONT_SIZE - 2
+                }
             ]
         }
         
-        // Make sure that edge labels have an edge label placement
         if (label.eContainer instanceof KEdge) {
+            // Make sure that edge labels have an edge label placement
             val layoutData = label.getData(typeof(KLayoutData))
             if (layoutData != null) {
                 val edgeLabelPlacement = layoutData.getProperty(LayoutOptions::EDGE_LABEL_PLACEMENT)
@@ -174,8 +254,23 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
                         LayoutOptions::EDGE_LABEL_PLACEMENT, EdgeLabelPlacement::CENTER)
                 }
             }
+        } else if (label.eContainer instanceof KNode) {
+            // Make sure that nodes have a proper node label placement
+            val node = label.eContainer as KNode
+            val layoutData = node.getData(typeof(KLayoutData))
+            if (layoutData != null) {
+                val nodeLabelPlacement = layoutData.getProperty(LayoutOptions::NODE_LABEL_PLACEMENT)
+                if (nodeLabelPlacement.equals(NodeLabelPlacement.fixed())) {
+                    layoutData.setProperty(
+                        LayoutOptions::NODE_LABEL_PLACEMENT, NodeLabelPlacement.insideTopCenter())
+                }
+            }
         }
     }
+    
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // UTILITY METHODS
     
     /**
      * Checks if the given graph element already has a rendering attached.
@@ -185,6 +280,25 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
      */
     def private boolean hasRendering(KGraphElement e) {
         e.data.exists[it instanceof KRendering]
+    }
+    
+    /**
+     * Ensures that the given element has a label, if possible. If it doesn't, a label is added with its
+     * identifier. If there is no identifier, no label is added.
+     * 
+     * @param e the element to add the label to.
+     */
+    def private void ensureLabel(KLabeledGraphElement e) {
+        // We're only interested in elements that don't have a label yet
+        if (e.labels.empty) {
+            // Find the element's ID
+            val identifier = e.getData(typeof(KIdentifier))
+            if (identifier != null && !Strings.isNullOrEmpty(identifier.id)) {
+                // Add a node label
+                val label = KimlUtil.createInitializedLabel(e)
+                label.text = identifier.id
+            }
+        }
     }
     
 }

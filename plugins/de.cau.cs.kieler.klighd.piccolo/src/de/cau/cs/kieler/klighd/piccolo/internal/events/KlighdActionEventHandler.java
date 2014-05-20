@@ -25,7 +25,6 @@ import com.google.common.collect.Iterables;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.krendering.KAction;
 import de.cau.cs.kieler.core.krendering.KRendering;
-import de.cau.cs.kieler.core.krendering.Trigger;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.klighd.IAction;
 import de.cau.cs.kieler.klighd.IAction.ActionContext;
@@ -45,23 +44,14 @@ import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.event.PInputEventListener;
 
 /**
- * Initial draft of an event handler that invokes actions associated with KRenderings.
+ * Event handler that invokes actions associated with KRenderings on corresponding mouse click events.
  * 
  * @author chsch
  */
 public class KlighdActionEventHandler implements PInputEventListener {
 
-    /**
-     * Denotes the minimal time in ms to be elapsed between two consecutive mouse single click
-     * events. The aim of this filter is the avoidance of inconsistency failures due to consecutive
-     * action invocation a too short delay in between.
-     */
-    private static final int SINGLE_CLICK_DELAY = 100;
-    
     private PiccoloViewer viewer = null;
-    
-    private long lastMouseUpTime = 0;
-    
+
     /**
      * Constructor.
      * 
@@ -98,7 +88,7 @@ public class KlighdActionEventHandler implements PInputEventListener {
         }
 
         final KlighdMouseEvent me = (KlighdMouseEvent) inputEvent.getSourceSwingEvent();
-        
+
         if (me.getEventType() == SWT.MouseMove) {
             return;
         }
@@ -140,20 +130,7 @@ public class KlighdActionEventHandler implements PInputEventListener {
             if (!action.getTrigger().equals(me.getTrigger()) || !guardsMatch(action, me)) {
                 continue;
             }
-            
-            if (action.getTrigger() == Trigger.SINGLECLICK) {
-                // if the trigger is a single click event and the time elapsed since the previous
-                //  one is less than SINGLE_CLICK_DELAY stop the evaluation completely
-                //  as we simply assume that no other action is associated with that rendering  
-                long time = System.currentTimeMillis();
-                if (time - lastMouseUpTime < SINGLE_CLICK_DELAY) {
-                    break;
-                } else {
-                    // otherwise keep the current time and go on
-                    lastMouseUpTime = time;
-                }
-            }
-            
+
             final IAction actionImpl =
                     KlighdDataManager.getInstance().getActionById(action.getActionId());
             if (actionImpl == null) {
@@ -190,17 +167,11 @@ public class KlighdActionEventHandler implements PInputEventListener {
         //  first make sure that the scenario described below is not enabled again.
         inputEvent.setHandled(true);
         
-        final boolean zoomToFit = result.getZoomToFit() != null
-                ? result.getZoomToFit() : context.getViewContext().isZoomToFit();
-        final boolean zoomToFocus = result.getZoomToFocus() != null
-                ? result.getZoomToFocus()
-                        : context.getViewContext().getZoomStyle() == ZoomStyle.ZOOM_TO_FOCUS;
-
         // remember the desired zoom style in the view context
         final ViewContext vc = viewer.getViewContext();
-        vc.setZoomStyle(ZoomStyle.create(zoomToFit, zoomToFocus));
 
         final boolean animate = result.getAnimateLayout();
+        final ZoomStyle zoomStyle = ZoomStyle.create(result, vc);
         final List<ILayoutConfig> layoutConfigs = result.getLayoutConfigs();
 
         // Execute the layout asynchronously in order to let the KLighdInputManager
@@ -214,7 +185,7 @@ public class KlighdActionEventHandler implements PInputEventListener {
         //  flag of 'inputEvent' properly.
         PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
             public void run() {
-                LightDiagramServices.layoutDiagram(vc, animate, zoomToFit, layoutConfigs);
+                LightDiagramServices.layoutDiagram(vc, animate, zoomStyle, layoutConfigs);
             }
         });
         

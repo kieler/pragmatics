@@ -68,7 +68,7 @@ public class SurvivalOperation implements IEvolutionaryOperation {
         }
         
         // only some survive
-        int surviveCount = KielerMath.limit(Math.round(population.size() * SURVIVAL_RATIO),
+        int surviveCount = KielerMath.boundi(Math.round(population.size() * SURVIVAL_RATIO),
                 MIN_SURVIVORS, MAX_SURVIVORS);
 
         Genome[] survivors = new Genome[surviveCount];

@@ -25,6 +25,8 @@ import de.cau.cs.kieler.klay.layered.properties.PortType;
  * segment.
  * 
  * @author msp
+ * @kieler.design proposed by cds
+ * @kieler.rating proposed yellow by cds
  */
 final class CrossHierarchyEdgeComparator implements Comparator<CrossHierarchyEdge> {
     private final LGraph graph;
@@ -39,6 +41,9 @@ final class CrossHierarchyEdgeComparator implements Comparator<CrossHierarchyEdg
         this.graph = graph;
     }
     
+    /**
+     * {@inheritDoc}
+     */
     public int compare(final CrossHierarchyEdge edge1, final CrossHierarchyEdge edge2) {
         if (edge1.getType() == PortType.OUTPUT
                 && edge2.getType() == PortType.INPUT) {

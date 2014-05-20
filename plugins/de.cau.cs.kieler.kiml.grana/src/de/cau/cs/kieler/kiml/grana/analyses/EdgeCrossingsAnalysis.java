@@ -157,12 +157,12 @@ public class EdgeCrossingsAnalysis implements IAnalysis {
                 }
                 KVector referencePoint = new KVector();
                 KimlUtil.toAbsolute(referencePoint, parent);
-                chain.translate(referencePoint);
+                chain.offset(referencePoint);
                 
                 // transform spline control points to approximated bend points
                 if (edge.getData(KEdgeLayout.class).getProperty(LayoutOptions.EDGE_ROUTING)
                         == EdgeRouting.SPLINES) {
-                    chain = KielerMath.approximateSpline(chain);
+                    chain = KielerMath.approximateBezierSpline(chain);
                 }
                 
                 edges.add(edge);

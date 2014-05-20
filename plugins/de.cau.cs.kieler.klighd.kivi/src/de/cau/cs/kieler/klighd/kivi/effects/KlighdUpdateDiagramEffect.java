@@ -105,17 +105,18 @@ public class KlighdUpdateDiagramEffect extends KlighdDiagramEffect {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void execute() {
         final IPropertyHolder propertyHolder = this;
         PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
             public void run() {
-                IDiagramWorkbenchPart view;
-                if (DiagramViewManager.getInstance().getView(getId()) == null) {
-                    view = DiagramViewManager.getInstance().createView(getId(), getName(),
-                            getModel(), propertyHolder);
+                final IDiagramWorkbenchPart view;
+                if (DiagramViewManager.getView(getId()) == null) {
+                    view = DiagramViewManager.createView(getId(), getName(), getModel(),
+                                   propertyHolder);
                 } else {
-                    view = DiagramViewManager.getInstance().updateView(getId(), getName(),
-                            getModel(), propertyHolder);
+                    view = DiagramViewManager.updateView(getId(), getName(), getModel(),
+                                   propertyHolder);
                 }
 
                 setView(view);

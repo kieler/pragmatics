@@ -47,6 +47,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         uiPrefStore.setDefault(LayoutViewPart.PREF_ADVANCED, false);
         servicePrefStore.setDefault(LayoutManagersService.PREF_OBLIQUE_ROUTE, true);
         servicePrefStore.setDefault(DiagramLayoutEngine.PREF_DEBUG_OUTPUT, false);
+        servicePrefStore.setDefault(DiagramLayoutEngine.PREF_EXEC_TIME_MEASUREMENT, false);
     }
 
 }

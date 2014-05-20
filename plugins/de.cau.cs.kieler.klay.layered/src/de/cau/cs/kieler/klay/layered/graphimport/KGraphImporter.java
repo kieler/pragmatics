@@ -150,7 +150,6 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             } while (!knodeQueue.isEmpty());
         
         } else {
-
             // Transform the node's children
             for (KNode child : kgraph.getChildren()) {
                 if (!child.getData(KShapeLayout.class).getProperty(LayoutOptions.NO_LAYOUT)) {
@@ -335,14 +334,15 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             dummy.setProperty(LayoutOptions.PORT_LABEL_PLACEMENT, PortLabelPlacement.OUTSIDE);
             for (KLabel klabel : kport.getLabels()) {
                 KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
-
-                LLabel newLabel = new LLabel(layeredGraph, klabel.getText());
-                newLabel.setProperty(InternalProperties.ORIGIN, klabel);
-                newLabel.getSize().x = labelLayout.getWidth();
-                newLabel.getSize().y = labelLayout.getHeight();
-                newLabel.getPosition().x = labelLayout.getXpos();
-                newLabel.getPosition().y = labelLayout.getYpos();
-                dummyPort.getLabels().add(newLabel);
+                if (!labelLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
+                    LLabel newLabel = new LLabel(layeredGraph, klabel.getText());
+                    newLabel.setProperty(InternalProperties.ORIGIN, klabel);
+                    newLabel.getSize().x = labelLayout.getWidth();
+                    newLabel.getSize().y = labelLayout.getHeight();
+                    newLabel.getPosition().x = labelLayout.getXpos();
+                    newLabel.getPosition().y = labelLayout.getYpos();
+                    dummyPort.getLabels().add(newLabel);
+                }
             }
         }
         
@@ -416,6 +416,23 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             
             newPort.copyProperties(portLayout);
             newPort.setSide(portLayout.getProperty(LayoutOptions.PORT_SIDE));
+            
+            // check if the original port has any connections to descendants of its node
+            for (KEdge edge : kport.getEdges()) {
+                if (edge.getSource() == node) {
+                    // check if the edge's target is a descendant of its source node
+                    if (KimlUtil.isDescendant(edge.getTarget(), node)) {
+                        newPort.setProperty(InternalProperties.INSIDE_CONNECTIONS, true);
+                        break;
+                    }
+                } else {
+                 // check if the edge's source is a descendant of its source node
+                    if (KimlUtil.isDescendant(edge.getSource(), node)) {
+                        newPort.setProperty(InternalProperties.INSIDE_CONNECTIONS, true);
+                        break;
+                    }
+                }
+            }
 
             // initialize the port's side, offset, and anchor point
             LGraphUtil.initializePort(newPort, portConstraints, direction,
@@ -746,7 +763,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                 LPort sourcePort = ledge.getSource();
                 sourcePoint = KVector.sum(sourcePort.getPosition(), sourcePort.getAnchor());
                 LInsets sourceInsets = sourcePort.getNode().getInsets();
-                sourcePoint.translate(-sourceInsets.left, -sourceInsets.top);
+                sourcePoint.add(-sourceInsets.left, -sourceInsets.top);
                 LGraph nestedGraph = sourcePort.getNode().getProperty(InternalProperties.NESTED_LGRAPH);
                 if (nestedGraph != null) {
                     edgeOffset = nestedGraph.getOffset();
@@ -765,7 +782,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             bendPoints.addLast(targetPoint);
 
             // Translate the bend points by the offset and apply the bend points
-            bendPoints.translate(edgeOffset);
+            bendPoints.offset(edgeOffset);
             edgeLayout.applyVectorChain(bendPoints);
 
             // Apply layout to labels
@@ -778,7 +795,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             // Copy junction points
             KVectorChain junctionPoints = ledge.getProperty(LayoutOptions.JUNCTION_POINTS);
             if (junctionPoints != null) {
-                junctionPoints.translate(edgeOffset);
+                junctionPoints.offset(edgeOffset);
                 edgeLayout.setProperty(LayoutOptions.JUNCTION_POINTS, junctionPoints);
             } else {
                 edgeLayout.setProperty(LayoutOptions.JUNCTION_POINTS, null);

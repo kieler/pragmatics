@@ -21,7 +21,7 @@ import java.util.List;
  * execution time measurement, keeps track of the amount of completed work, and
  * handles sub-tasks properly.
  * 
- * @kieler.design proposed 2012-11-02 cds
+ * @kieler.design 2014-04-17 reviewed by cds, chsch, tit, uru
  * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
  */
@@ -32,7 +32,7 @@ public class BasicProgressMonitor implements IKielerProgressMonitor {
     /** indicates whether the monitor has been closed. */
     private boolean closed = false;
     /** list of child monitors. */
-    private List<IKielerProgressMonitor> children = new LinkedList<IKielerProgressMonitor>();
+    private final List<IKielerProgressMonitor> children = new LinkedList<IKielerProgressMonitor>();
     /**
      * the number of work units that will be consumed after completion of the
      * currently active child task.
@@ -49,13 +49,16 @@ public class BasicProgressMonitor implements IKielerProgressMonitor {
     /** the number of work units that can be completed in total. */
     private float totalWork;
     /** the maximal number of hierarchy levels for which progress is reported. */
-    private int maxLevels;
+    private final int maxLevels;
+    /** whether the execution time shall be measured when the task is done. */
+    private final boolean measureExecutionTime;
 
     /**
      * Creates a progress monitor with infinite number of hierarchy levels.
      */
     public BasicProgressMonitor() {
         this.maxLevels = -1;
+        this.measureExecutionTime = true;
     }
     
     /**
@@ -68,6 +71,21 @@ public class BasicProgressMonitor implements IKielerProgressMonitor {
      */
     public BasicProgressMonitor(final int themaxLevels) {
         this.maxLevels = themaxLevels;
+        this.measureExecutionTime = true;
+    }
+    
+    /**
+     * Creates a progress monitor with the given maximal number of hierarchy levels. If the
+     * number is negative, the hierarchy levels are infinite. Otherwise progress is
+     * reported to parent monitors only up to the specified number of levels. Furthermore, the
+     * second parameter controls whether any execution time measurements shall be performed.
+     * 
+     * @param maxLevels the maximal number of hierarchy levels for which progress is reported
+     * @param measureExecutionTime whether the execution time shall be measured when the task is done
+     */
+    public BasicProgressMonitor(final int maxLevels, final boolean measureExecutionTime) {
+        this.maxLevels = maxLevels;
+        this.measureExecutionTime = measureExecutionTime;
     }
 
     /**
@@ -85,9 +103,11 @@ public class BasicProgressMonitor implements IKielerProgressMonitor {
             this.taskName = name;
             this.totalWork = thetotalWork;
             doBegin(name, thetotalWork, parentMonitor == null, maxLevels);
-            // GWTExcludeStart
-            startTime = System.nanoTime();
-            // GWTExcludeEnd
+            if (measureExecutionTime) {
+                // GWTExcludeStart
+                startTime = System.nanoTime();
+                // GWTExcludeEnd
+            }
             return true;
         }
     }
@@ -124,9 +144,11 @@ public class BasicProgressMonitor implements IKielerProgressMonitor {
             throw new IllegalStateException("The task has not begun yet.");
         }
         if (!closed) {
-            // GWTExcludeStart
-            totalTime = (System.nanoTime() - startTime) * NANO_FACT;
-            // GWTExcludeEnd
+            if (measureExecutionTime) {
+                // GWTExcludeStart
+                totalTime = (System.nanoTime() - startTime) * NANO_FACT;
+                // GWTExcludeEnd
+            }
             if (completedWork < totalWork) {
                 internalWorked(totalWork - completedWork);
             }
@@ -188,7 +210,7 @@ public class BasicProgressMonitor implements IKielerProgressMonitor {
      */
     public final IKielerProgressMonitor subTask(final float work) {
         if (!closed) {
-            BasicProgressMonitor subMonitor = doSubTask(work, maxLevels);
+            BasicProgressMonitor subMonitor = doSubTask(work, maxLevels, measureExecutionTime);
             children.add(subMonitor);
             subMonitor.parentMonitor = this;
             currentChildWork = work;
@@ -206,13 +228,15 @@ public class BasicProgressMonitor implements IKielerProgressMonitor {
      *         instance when the sub-task ends
      * @param maxHierarchyLevels the maximal number of reported hierarchy levels for the parent
      *         progress monitor, or -1 for infinite levels
+     * @param measureExecTime whether the execution time shall be measured when the task is done
      * @return a new progress monitor instance
      */
-    protected BasicProgressMonitor doSubTask(final float work, final int maxHierarchyLevels) {
+    protected BasicProgressMonitor doSubTask(final float work, final int maxHierarchyLevels,
+            final boolean measureExecTime) {
         if (maxHierarchyLevels > 0) {
-            return new BasicProgressMonitor(maxHierarchyLevels - 1);
+            return new BasicProgressMonitor(maxHierarchyLevels - 1, measureExecTime);
         } else {
-            return new BasicProgressMonitor(maxHierarchyLevels);
+            return new BasicProgressMonitor(maxHierarchyLevels, measureExecTime);
         }
     }
 

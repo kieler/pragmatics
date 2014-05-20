@@ -425,7 +425,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
         }
         
         // add the corrected offset
-        offset.translate(-minx, -miny);
+        offset.add(-minx, -miny);
         KimlUtil.translate(parentNode, (float) offset.x, (float) offset.y);
     }
 

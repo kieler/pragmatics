@@ -391,7 +391,7 @@ public class OgmlImporter implements IGraphTransformer<DocumentRoot, KNode> {
             for (KEdge kedge : knode.getOutgoingEdges()) {
                 KVector edgeOffset = offset;
                 if (KimlUtil.isDescendant(kedge.getTarget(), knode)) {
-                    edgeOffset = new KVector(offset).translate(knodeLayout.getXpos(),
+                    edgeOffset = new KVector(offset).add(knodeLayout.getXpos(),
                             knodeLayout.getYpos());
                 }
                 KEdgeLayout kedgeLayout = kedge.getData(KEdgeLayout.class);
@@ -443,7 +443,7 @@ public class OgmlImporter implements IGraphTransformer<DocumentRoot, KNode> {
             // apply layout for child nodes
             if (!knode.getChildren().isEmpty()) {
                 KVector childOffset = new KVector(offset);
-                childOffset.translate(knodeLayout.getXpos(), knodeLayout.getYpos());
+                childOffset.add(knodeLayout.getXpos(), knodeLayout.getYpos());
                 applyLayout(knode, childOffset, graph);
             }
         }

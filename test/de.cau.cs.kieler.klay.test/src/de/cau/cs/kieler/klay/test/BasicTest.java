@@ -196,7 +196,7 @@ public class BasicTest extends KlayAutomatedJUnitTest {
                 KVectorChain vectorChain = edgeLayout.createVectorChain();
                 // approximate spline if required
                 if (edgeLayout.getProperty(LayoutOptions.EDGE_ROUTING) == EdgeRouting.SPLINES) {
-                    vectorChain = KielerMath.approximateSpline(vectorChain);
+                    vectorChain = KielerMath.approximateBezierSpline(vectorChain);
                 }
                 // transform to absolute coordinates
                 KNode referenceNode = edge.getSource();
