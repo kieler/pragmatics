@@ -937,7 +937,7 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
             LPort sourcePort = edge.getSource();
             src = KVector.sum(sourcePort.getPosition(), sourcePort.getAnchor());
             LInsets sourceInsets = sourcePort.getNode().getInsets();
-            src.translate(-sourceInsets.left, -sourceInsets.top);
+            src.add(-sourceInsets.left, -sourceInsets.top);
             LGraph nestedGraph = sourcePort.getNode().getProperty(InternalProperties.NESTED_LGRAPH);
             if (nestedGraph != null) {
                 edgeOffset = nestedGraph.getOffset();
@@ -947,7 +947,7 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
             src = edge.getSource().getAbsoluteAnchor();
         }
         
-        src.translate(offset.x, offset.y);
+        src.add(offset.x, offset.y);
         JSONObject srcPnt = new JSONObject();
         setJsNumber(srcPnt, "x", src.x);
         setJsNumber(srcPnt, "y", src.y);
@@ -959,7 +959,7 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
             tgt.add(edge.getProperty(InternalProperties.TARGET_OFFSET));
         }
         
-        tgt.translate(offset.x, offset.y);
+        tgt.add(offset.x, offset.y);
         JSONObject tgtPnt = new JSONObject();
         setJsNumber(tgtPnt, "x", tgt.x);
         setJsNumber(tgtPnt, "y", tgt.y);
@@ -967,7 +967,7 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
 
         // Bend Points
         JSONArray bends = new JSONArray();
-        KVectorChain vc = edge.getBendPoints().translate(edgeOffset);
+        KVectorChain vc = edge.getBendPoints().offset(edgeOffset);
         int index = 0;
         for (KVector v : vc) {
             JSONObject jv = new JSONObject();
@@ -985,7 +985,7 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         KVectorChain junctionPoints = edge.getProperty(LayoutOptions.JUNCTION_POINTS);
         index = 0;
         if (junctionPoints != null) {
-            junctionPoints.translate(offset);
+            junctionPoints.offset(offset);
             JSONArray junctions = new JSONArray();
             for (KVector v : junctionPoints) {
                 JSONObject jv = new JSONObject();
