@@ -95,6 +95,20 @@
       <category name="kieler-sources"/>
    </feature>
 
+   <feature url="features/de.cau.cs.kieler.klighd.batik.feature_0.1.0.qualifier.jar" id="de.cau.cs.kieler.klighd.batik.feature" version="0.1.0.qualifier">
+      <category name="kieler-klighd"/>
+   </feature>
+   <feature url="features/de.cau.cs.kieler.klighd.batik.feature.source_0.1.0.qualifier.jar" id="de.cau.cs.kieler.klighd.batik.feature.source" version="0.1.0.qualifier">
+      <category name="kieler-sources"/>
+   </feature>
+   
+   <feature url="features/de.cau.cs.kieler.klighd.freehep.feature_0.1.0.qualifier.jar" id="de.cau.cs.kieler.klighd.freehep.feature" version="0.1.0.qualifier">
+      <category name="kieler-klighd"/>
+   </feature>
+   <feature url="features/de.cau.cs.kieler.klighd.freehep.feature.source_0.1.0.qualifier.jar" id="de.cau.cs.kieler.klighd.freehep.feature.source" version="0.1.0.qualifier">
+      <category name="kieler-sources"/>
+   </feature>
+   
    <feature url="features/de.cau.cs.kieler.klighd.sdk.feature_0.5.0.qualifier.jar" id="de.cau.cs.kieler.klighd.sdk.feature" version="0.5.0.qualifier">
       <category name="kieler-klighd"/>
    </feature>
