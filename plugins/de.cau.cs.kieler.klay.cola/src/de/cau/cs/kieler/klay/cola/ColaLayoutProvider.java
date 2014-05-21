@@ -142,6 +142,14 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         // FIXME adaptagrams - atm still have to compute the bounding rects of clusters
         graph.rootCluster.computeBoundingRect(graph.nodes);
 
+        ConstrainedFDLayout fd =
+                new ConstrainedFDLayout(graph.nodes, graph.edges, 10, true);
+        // WhitparentLayout.getProperty(LayoutOptions.SPACING)
+        fd.setClusterHierarchy(graph.rootCluster);
+        fd.setConstraints(graph.constraints);
+        fd.run();
+        
+        
         // apply the calculated layout back to the kgrap
         importer.applyLayout(graph);
 

@@ -133,9 +133,9 @@ public class PortConstraintProcessor implements ILayoutProcessor {
                     generateFixedSideConstraints(p, n, portOffset);
                     break;
 
-                case FIXED_ORDER:
+                //case FIXED_ORDER:
                     // we require the list of ports to be sorted
-                    throw new UnsupportedOperationException("FIXED_ORDER ports are unsupported");
+                  //  throw new UnsupportedOperationException("FIXED_ORDER ports are unsupported");
                     // generateFixedOrderConstraints(p, n, portOffset);
                     // break;
 
@@ -143,6 +143,7 @@ public class PortConstraintProcessor implements ILayoutProcessor {
                     throw new UnsupportedOperationException("FIXED_RATIO ports are unsupported");
                     // break;
 
+                case FIXED_ORDER:
                 case FIXED_POS:
                     generateFixedPosConstraints(p, n, portOffset, marginCenter);
                     break;
