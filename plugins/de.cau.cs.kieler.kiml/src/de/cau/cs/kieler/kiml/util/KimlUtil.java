@@ -553,12 +553,12 @@ public final class KimlUtil {
 
     /**
      * Determines whether the given child node is a descendant of the parent
-     * node.
+     * node. This method does not regard a node as its own descendant.
      * 
      * @param child a child node
      * @param parent a parent node
-     * @return true if {@code child} is a direct or indirect child of {@code
-     *         parent}
+     * @return {@code true} if {@code child} is a direct or indirect child of {@code
+     *         parent}.
      */
     public static boolean isDescendant(final KNode child, final KNode parent) {
         KNode current = child;

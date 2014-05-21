@@ -56,8 +56,9 @@
     <module>de.cau.cs.kieler.klighd.incremental</module>
 -->
     <module>de.cau.cs.kieler.klighd.piccolo</module>
+    <module>de.cau.cs.kieler.klighd.piccolo.batik</module>
     <module>de.cau.cs.kieler.klighd.piccolo.draw2d</module>
-    <module>de.cau.cs.kieler.klighd.piccolo.svg</module>
+    <module>de.cau.cs.kieler.klighd.piccolo.freehep</module>
     <module>de.cau.cs.kieler.klighd.xtext</module>
     <module>de.cau.cs.kieler.klighd.ui</module>
     <module>de.cau.cs.kieler.klighd.ui.emf</module>

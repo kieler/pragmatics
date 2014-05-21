@@ -594,17 +594,22 @@ class KRenderingFigureProvider {
     
     /**
      * Builds up and adds helper renderings forming the selection to given node,
-     * attaches the provided rendering to the selection helpers.  
+     * attaches the provided rendering to the selection helpers.
      */
     def KContainerRendering addRenderingWithSelectionWrapper(KGraphElement kge) {
-        val selectionColor = Display.current.getSystemColor(SWT.COLOR_LIST_SELECTION)
+        // Use a default selection color if there is no display (which is true in headless mode)
+        val systemSelection = Display.current?.getSystemColor(SWT.COLOR_LIST_SELECTION)
+        
+        val selectionR = if (systemSelection == null) {180;} else {systemSelection.red;}
+        val selectionG = if (systemSelection == null) {213;} else {systemSelection.green;}
+        val selectionB = if (systemSelection == null) {255;} else {systemSelection.blue;}
         
         kge.addRectangle => [
             it.invisible = true;
             it.addRoundedRectangle(3f, 3f, 1) => [
             it.setSurroundingSpace(-3, 0);
                 it.invisible = true;
-                it.setBackgroundColor(selectionColor.red, selectionColor.green, selectionColor.blue)
+                it.setBackgroundColor(selectionR, selectionG, selectionB)
                 it.lineStyle = LineStyle.DASH;
                 it.selectionInvisible = false;
             ]
