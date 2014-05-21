@@ -19,13 +19,13 @@ import java.util.Set;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import de.cau.cs.kieler.adaptagrams.cgraph.CEdge;
+import de.cau.cs.kieler.adaptagrams.cgraph.CGraph;
+import de.cau.cs.kieler.adaptagrams.cgraph.CNode;
+import de.cau.cs.kieler.adaptagrams.cgraph.CPort;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.klay.cola.graph.CEdge;
-import de.cau.cs.kieler.klay.cola.graph.CGraph;
-import de.cau.cs.kieler.klay.cola.graph.CNode;
-import de.cau.cs.kieler.klay.cola.graph.CPort;
 import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
 import de.cau.cs.kieler.klay.cola.properties.EdgeLengthStrategy;
 

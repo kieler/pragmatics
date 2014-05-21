@@ -15,6 +15,10 @@ package de.cau.cs.kieler.klay.cola.avoid
 
 import com.google.common.collect.Lists
 import com.google.common.collect.Maps
+import de.cau.cs.kieler.adaptagrams.cgraph.CEdge
+import de.cau.cs.kieler.adaptagrams.cgraph.CGraph
+import de.cau.cs.kieler.adaptagrams.cgraph.CNode
+import de.cau.cs.kieler.adaptagrams.cgraph.CPort
 import de.cau.cs.kieler.core.kgraph.KPort
 import de.cau.cs.kieler.core.math.KVector
 import de.cau.cs.kieler.core.math.KVectorChain
@@ -25,10 +29,6 @@ import de.cau.cs.kieler.kiml.options.Direction
 import de.cau.cs.kieler.kiml.options.EdgeRouting
 import de.cau.cs.kieler.kiml.options.LayoutOptions
 import de.cau.cs.kieler.kiml.options.PortSide
-import de.cau.cs.kieler.klay.cola.graph.CEdge
-import de.cau.cs.kieler.klay.cola.graph.CGraph
-import de.cau.cs.kieler.klay.cola.graph.CNode
-import de.cau.cs.kieler.klay.cola.graph.CPort
 import de.cau.cs.kieler.klay.cola.graphimport.IGraphImporter
 import de.cau.cs.kieler.klay.cola.properties.InternalColaProperties
 import java.awt.geom.Line2D
@@ -39,6 +39,8 @@ import java.util.Map
 import org.adaptagrams.AvoidCheckpoints
 import org.adaptagrams.AvoidRectangle
 import org.adaptagrams.Checkpoint
+import org.adaptagrams.Cluster
+import org.adaptagrams.ClusterRef
 import org.adaptagrams.ConnDirFlag
 import org.adaptagrams.ConnEnd
 import org.adaptagrams.ConnRef
@@ -52,8 +54,6 @@ import org.adaptagrams.ShapeRef
 import org.adaptagrams.adaptagrams
 
 import static de.cau.cs.kieler.kiml.options.PortSide.*
-import org.adaptagrams.Cluster
-import org.adaptagrams.ClusterRef
 
 /**
  * TODO document

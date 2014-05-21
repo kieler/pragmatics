@@ -13,8 +13,8 @@
  */
 package de.cau.cs.kieler.klay.cola.processors;
 
+import de.cau.cs.kieler.adaptagrams.cgraph.CGraph;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.klay.cola.graph.CGraph;
 
 /**
  * A layout processor processes a {@link CGraph}, performing layout related tasks on it.

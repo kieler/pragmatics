@@ -30,6 +30,10 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import com.google.common.collect.Lists;
 
+import de.cau.cs.kieler.adaptagrams.cgraph.CEdge;
+import de.cau.cs.kieler.adaptagrams.cgraph.CGraph;
+import de.cau.cs.kieler.adaptagrams.cgraph.CNode;
+import de.cau.cs.kieler.adaptagrams.cgraph.CPort;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -43,10 +47,6 @@ import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters;
 import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters.KGraphAdapter;
 import de.cau.cs.kieler.kiml.util.nodespacing.KimlNodeDimensionCalculation;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
-import de.cau.cs.kieler.klay.cola.graph.CEdge;
-import de.cau.cs.kieler.klay.cola.graph.CGraph;
-import de.cau.cs.kieler.klay.cola.graph.CNode;
-import de.cau.cs.kieler.klay.cola.graph.CPort;
 import de.cau.cs.kieler.klay.cola.graphimport.HierarchicalKGraphImporter;
 import de.cau.cs.kieler.klay.cola.graphimport.IGraphImporter;
 import de.cau.cs.kieler.klay.cola.graphimport.KGraphImporter;

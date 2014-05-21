@@ -20,9 +20,9 @@ import java.util.Stack;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import de.cau.cs.kieler.klay.cola.graph.CEdge;
-import de.cau.cs.kieler.klay.cola.graph.CGraph;
-import de.cau.cs.kieler.klay.cola.graph.CNode;
+import de.cau.cs.kieler.adaptagrams.cgraph.CEdge;
+import de.cau.cs.kieler.adaptagrams.cgraph.CGraph;
+import de.cau.cs.kieler.adaptagrams.cgraph.CNode;
 
 /**
  * Tarjan's algorithm to find strongly connected components.

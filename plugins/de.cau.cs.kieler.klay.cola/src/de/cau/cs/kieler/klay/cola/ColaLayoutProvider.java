@@ -17,11 +17,11 @@ import java.util.Arrays;
 import java.util.Stack;
 
 import org.adaptagrams.ConstrainedFDLayout;
-import org.adaptagrams.Doubles;
 import org.adaptagrams.TestConvergence;
 import org.adaptagrams.UnsatisfiableConstraintInfoPtrs;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
+import de.cau.cs.kieler.adaptagrams.cgraph.CGraph;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
@@ -32,7 +32,6 @@ import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters;
 import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters.KGraphAdapter;
 import de.cau.cs.kieler.kiml.util.nodespacing.KimlNodeDimensionCalculation;
 import de.cau.cs.kieler.kiml.util.nodespacing.NodeMarginCalculator;
-import de.cau.cs.kieler.klay.cola.graph.CGraph;
 import de.cau.cs.kieler.klay.cola.graphimport.HierarchicalKGraphImporter;
 import de.cau.cs.kieler.klay.cola.graphimport.IGraphImporter;
 import de.cau.cs.kieler.klay.cola.graphimport.KGraphImporter;

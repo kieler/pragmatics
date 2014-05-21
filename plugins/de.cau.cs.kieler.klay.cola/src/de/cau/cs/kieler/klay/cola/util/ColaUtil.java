@@ -16,6 +16,7 @@ package de.cau.cs.kieler.klay.cola.util;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 
+import de.cau.cs.kieler.adaptagrams.cgraph.CShape;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
@@ -26,7 +27,6 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
-import de.cau.cs.kieler.klay.cola.graph.CShape;
 
 /**
  * @author uru

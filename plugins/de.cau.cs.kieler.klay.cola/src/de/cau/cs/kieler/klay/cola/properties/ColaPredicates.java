@@ -15,7 +15,7 @@ package de.cau.cs.kieler.klay.cola.properties;
 
 import com.google.common.base.Predicate;
 
-import de.cau.cs.kieler.klay.cola.graph.CEdge;
+import de.cau.cs.kieler.adaptagrams.cgraph.CEdge;
 
 /**
  * @author uru
