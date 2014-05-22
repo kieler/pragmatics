@@ -26,6 +26,7 @@ import org.adaptagrams.ConstrainedFDLayout;
 import org.adaptagrams.DoublePair;
 import org.adaptagrams.IntIntMap;
 import org.adaptagrams.TestConvergence;
+import org.adaptagrams.Unsigneds;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import com.google.common.collect.Lists;
@@ -153,7 +154,6 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
         // FIXME remove
 //        generatePortNodeMapping();
         
-        
         aca.overlapPrevention(ACAOverlapPrevention.ACAOPWITHOFFSETS);
         
         // we only allow aca to create certain alignments, basically horizontal ones for 
@@ -169,7 +169,11 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
         
         aca.outputInstanceToSVG("aca_original_the_one_before");
 
+       
+        // FIXME usually I wanna generate exemptions first, but the fd layout is not yet available
         aca.removeOverlaps();
+        
+        generateOverlapIgnores(graph, aca.getFDLayout());
         
         // execute ACA
         if (debug) {
@@ -403,6 +407,26 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
 //        }
 //        //aca.setNodeAliases(map);
 //    }
+    
+    private void generateOverlapIgnores(final CGraph graph, final ConstrainedFDLayout alg) {
+
+        for (CNode n : graph.getChildren()) {
+
+            Unsigneds portsGroup = new Unsigneds();
+            
+            // add the ports to be ignored
+            for (CPort p : n.getPorts()) {
+                portsGroup.add(p.cIndex);
+            }
+            
+            // add the node as "head" of the group
+            portsGroup.add(n.cIndex);
+
+            alg.addGroupOfNonOverlapExemptRectangles(portsGroup);
+            System.out.println("Added group: " + n + " " + portsGroup);
+        }
+
+    }
 
     private void calculateMarginsAndSizes(final KNode parent) {
         KGraphAdapter adapter = KGraphAdapters.adapt(parent);

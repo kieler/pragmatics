@@ -195,7 +195,8 @@ public class PortConstraintProcessor implements ILayoutProcessor {
         // - portOffset.y);
         // p.idealDummyEdgeLength = KVector.distance(marginCenter, portPos);
         p.idealDummyEdgeLength =
-                n.getRectSizeRaw().length() / 2f + p.getRectSizeRaw().length() / 2f;
+                //n.getRectSizeRaw().length() / 2f + p.getRectSizeRaw().length() / 2f;
+                new KVector(gx, gy).length();
     }
     
     /**

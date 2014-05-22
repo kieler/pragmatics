@@ -239,9 +239,9 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         KimlNodeDimensionCalculation.sortPortLists(adapter);
         KimlNodeDimensionCalculation.calculateLabelAndNodeSizes(adapter);
         NodeMarginCalculator mc = KimlNodeDimensionCalculation.getNodeMarginCalculator(adapter);
-        if (parent.getData(KShapeLayout.class).getProperty(ColaProperties.PORT_DUMMIES)) {
-            mc.excludePorts();
-        }
+        //if (parent.getData(KShapeLayout.class).getProperty(ColaProperties.PORT_DUMMIES)) {
+            //mc.excludePorts();
+        //}
         mc.process();
 
         if (parent.getData(KLayoutData.class).getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {
