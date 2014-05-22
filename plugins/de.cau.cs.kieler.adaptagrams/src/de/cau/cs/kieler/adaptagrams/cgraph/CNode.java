@@ -83,8 +83,10 @@ public class CNode extends CShape {
         // currently the adaptagrams rectangles do not support any border or margin,
         // hence we add it to the top and bottom margin of the rectangle.
         // Horizontal spacing will be considered during separation constraint generation
-        artificialMargin.set(spacing / 2f, 0, spacing / 2f, 0);
+        artificialMargin.set(spacing / 2f, spacing / 2f, spacing / 2f, spacing / 2f);
+        margin.left += artificialMargin.left;
         margin.top += artificialMargin.top;
+        margin.right += artificialMargin.right;
         margin.bottom += artificialMargin.bottom;
         
         // x X y Y meaning x width y height

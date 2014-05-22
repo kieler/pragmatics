@@ -19,9 +19,12 @@ import java.util.Stack;
 import org.adaptagrams.ConstrainedFDLayout;
 import org.adaptagrams.TestConvergence;
 import org.adaptagrams.UnsatisfiableConstraintInfoPtrs;
+import org.adaptagrams.Unsigneds;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import de.cau.cs.kieler.adaptagrams.cgraph.CGraph;
+import de.cau.cs.kieler.adaptagrams.cgraph.CNode;
+import de.cau.cs.kieler.adaptagrams.cgraph.CPort;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
@@ -174,6 +177,8 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
                 
         algo.setUnsatisfiableConstraintInfo(uciX, uciY);
         
+        generateOverlapIgnores(graph, algo);
+        
         // remember for later disposal
         layouters.add(algo);
 
@@ -207,6 +212,28 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         return algo;
     }
 
+    
+    private void generateOverlapIgnores(final CGraph graph, final ConstrainedFDLayout alg) {
+
+        for (CNode n : graph.getChildren()) {
+
+            Unsigneds portsGroup = new Unsigneds();
+            
+            // add the ports to be ignored
+            for (CPort p : n.getPorts()) {
+                portsGroup.add(p.cIndex);
+            }
+            
+            // add the node as "head" of the group
+            portsGroup.add(n.cIndex);
+
+            alg.addGroupOfNonOverlapExemptRectangles(portsGroup);
+            System.out.println("Added group: " + n + " " + portsGroup);
+        }
+
+    }
+    
+    
     private void calculateMarginsAndSizes(final KNode parent) {
         KGraphAdapter adapter = KGraphAdapters.adapt(parent);
         KimlNodeDimensionCalculation.sortPortLists(adapter);

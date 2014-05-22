@@ -171,15 +171,19 @@ public class PortConstraintProcessor implements ILayoutProcessor {
     private void generateFixedPosConstraints(final CPort p, final CNode n,
             final KVector portOffset, final KVector marginCenter) {
  
+        KVector nodeCenterMove = new KVector().add(n.getRectCenterRaw()).sub(n.getCenter());
+        
         // fix X coordinate
-        double gx = p.getPos().x - n.getPos().x - portOffset.x;
+        //double gx = p.getPos().x - n.getPos().x - portOffset.x;
+        double gx = p.getCenter().x - n.getCenter().x - nodeCenterMove.x;
         SeparationConstraint scX =
                 new SeparationConstraint(Dim.XDIM, n.cIndex, p.cIndex, 
                         gx, true);
         graph.constraints.add(scX);
         
         // fix y coordinate
-        double gy = p.getPos().y - n.getPos().y - portOffset.y;
+        //double gy = p.getPos().y - n.getPos().y - portOffset.y;
+        double gy = p.getCenter().y - n.getCenter().y - nodeCenterMove.y;
         SeparationConstraint scY =
                 new SeparationConstraint(Dim.YDIM, n.cIndex, p.cIndex, 
                         gy, true);
