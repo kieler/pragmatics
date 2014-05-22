@@ -71,6 +71,10 @@ public abstract class CShape extends CGraphElement {
     public KVector getPos() {
         return pos;
     }
+    
+    public KVector getCenter() {
+        return new KVector(pos.x + size.x / 2, pos.y + size.y / 2);
+    }
 
     /**
      * Note that this position might diverge from the one of {@link #getPos()}. The rect's position

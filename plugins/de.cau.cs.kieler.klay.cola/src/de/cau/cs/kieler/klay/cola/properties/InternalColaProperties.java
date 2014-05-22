@@ -37,12 +37,6 @@ public final class InternalColaProperties {
     /**
      * The original object from which a graph element was created.
      */
-    public static final IProperty<KGraphElement> ORIGIN =
-            new Property<KGraphElement>("cola.origin");
-
-    /**
-     * The original object from which a graph element was created.
-     */
     public static final IProperty<List<KEdge>> EDGE_CHAIN = new Property<List<KEdge>>(
             "cola.edgeChain", new LinkedList<KEdge>());
 

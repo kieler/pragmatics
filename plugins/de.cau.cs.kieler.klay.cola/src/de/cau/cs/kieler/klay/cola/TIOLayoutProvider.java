@@ -25,6 +25,7 @@ import org.adaptagrams.VariableIDMap;
 
 import de.cau.cs.kieler.adaptagrams.cgraph.CGraph;
 import de.cau.cs.kieler.adaptagrams.cgraph.CNode;
+import de.cau.cs.kieler.adaptagrams.properties.CGraphProperties;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
@@ -41,7 +42,6 @@ import de.cau.cs.kieler.kiml.util.nodespacing.KimlNodeDimensionCalculation;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 import de.cau.cs.kieler.klay.cola.graphimport.KGraphImporter;
 import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
-import de.cau.cs.kieler.klay.cola.properties.InternalColaProperties;
 
 /**
  * @author uru
@@ -115,7 +115,7 @@ public class TIOLayoutProvider extends AbstractLayoutProvider {
         // Map all cola rectangles to libavoid shapeidrefs
         VariableIDMap idmap = new VariableIDMap();
         for (CNode n : graph.getChildren()) {
-            KNode origin = (KNode) n.getProperty(InternalColaProperties.ORIGIN);
+            KNode origin = (KNode) n.getProperty(CGraphProperties.ORIGIN);
             Integer libId = libGraph.getNodeIdMap().inverse().get(origin);
             idmap.addMappingForVariable(n.cIndex, libId);
         }

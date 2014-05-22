@@ -41,6 +41,7 @@ import de.cau.cs.kieler.adaptagrams.cgraph.CEdge;
 import de.cau.cs.kieler.adaptagrams.cgraph.CGraph;
 import de.cau.cs.kieler.adaptagrams.cgraph.CNode;
 import de.cau.cs.kieler.adaptagrams.cgraph.CPort;
+import de.cau.cs.kieler.adaptagrams.properties.CGraphProperties;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
@@ -85,7 +86,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
         // create a new adaptagrams graph
         graph = new CGraph();
         graph.copyProperties(rootNode.getData(KLayoutData.class));
-        graph.setProperty(InternalColaProperties.ORIGIN, rootNode);
+        graph.setProperty(CGraphProperties.ORIGIN, rootNode);
 
         portDummies = graph.getProperty(ColaProperties.PORT_DUMMIES);
         repositionHierarchicalPorts =
@@ -119,7 +120,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
                 ColaUtil.setPosAndSizeAbsolute(cnode, node, node.getParent());
                 // properties
                 cnode.copyProperties(node.getData(KLayoutData.class));
-                cnode.setProperty(InternalColaProperties.ORIGIN, node);
+                cnode.setProperty(CGraphProperties.ORIGIN, node);
                 // remember it
                 nodeMap.put(node, cnode);
                 graph.getChildren().add(cnode);
@@ -138,7 +139,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
                         CPort port = new CPort(graph, cnode);
                         ColaUtil.setPosAndSizeAbsolute(port, p, p.getNode());
                         port.copyProperties(p.getData(KLayoutData.class));
-                        port.setProperty(InternalColaProperties.ORIGIN, p);
+                        port.setProperty(CGraphProperties.ORIGIN, p);
                         portMap.put(p, port);
                         cnode.getPorts().add(port);
                         port.init();
@@ -239,7 +240,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
             CEdge cedge = new CEdge(graph, src, srcPort, tgt, tgtPort);
             edgeMap.put(edge, cedge);
             cedge.copyProperties(edge.getData(KLayoutData.class));
-            cedge.setProperty(InternalColaProperties.ORIGIN, edge);
+            cedge.setProperty(CGraphProperties.ORIGIN, edge);
             cedge.init();
 
             // spans the edge hierarchy levels?
@@ -351,7 +352,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
          */
         for (CNode n : graph.getChildren()) {
             KShapeLayout layout =
-                    n.getProperty(InternalColaProperties.ORIGIN).getData(KShapeLayout.class);
+                    n.getProperty(CGraphProperties.ORIGIN).getData(KShapeLayout.class);
 
             // if the node is contained in a cluster we have to offset it
             KVector relative = relativeToCluster(n, offset);
@@ -363,7 +364,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
                 for (CPort p : n.getPorts()) {
                     if (p.cEdgeIndex != -1) {
                         KShapeLayout portLayout =
-                                p.getProperty(InternalColaProperties.ORIGIN)
+                                p.getProperty(CGraphProperties.ORIGIN)
                                         .getData(KShapeLayout.class);
                         // ports are relative to the parent in KGraph
                         KVector relativePort = p.getRelativePos();
@@ -374,7 +375,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
             }
         }
 
-        KNode root = (KNode) graph.getProperty(InternalColaProperties.ORIGIN);
+        KNode root = (KNode) graph.getProperty(CGraphProperties.ORIGIN);
         Iterator<EObject> allEdges =
                 Iterators.filter(root.eAllContents(), new Predicate<EObject>() {
                     public boolean apply(final EObject obj) {
@@ -392,7 +393,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
         // set bend points of non hierarchy-crossing edges
         for (CEdge e : edgeMap.values()) {
             if (!e.crossHierarchy) {
-                KEdge edge = (KEdge) e.getProperty(InternalColaProperties.ORIGIN);
+                KEdge edge = (KEdge) e.getProperty(CGraphProperties.ORIGIN);
                 KEdgeLayout layout = edge.getData(KEdgeLayout.class);
 
                 // if bendpoints were specified use these
@@ -404,7 +405,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
                     // note, that we have to consider hierarchy as well
                     // is the source node contained in a cluster?
                     KNode parent = ((KNode) e.getSource().getProperty(
-                            InternalColaProperties.ORIGIN)).getParent();
+                            CGraphProperties.ORIGIN)).getParent();
                     Cluster c =
                             clusterMap.get(parent);
                     KVector clusterPos = new KVector();
@@ -513,7 +514,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
     private KVector relativeToCluster(final CNode node, final KVector offset) {
 
         KVector nodePos = node.getRectPos();
-        KNode parent = ((KNode) node.getProperty(InternalColaProperties.ORIGIN)).getParent();
+        KNode parent = ((KNode) node.getProperty(CGraphProperties.ORIGIN)).getParent();
         Cluster c = clusterMap.get(parent);
         if (c == null) {
             // no offset required, we are on the root level
