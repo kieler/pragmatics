@@ -83,9 +83,9 @@ public class AdaptagramsPlugin implements BundleActivator {
     /** the relative path for the win64 library. */
     public static final String LIBRARY_PATH_WIN64 = LIBRARY_PATH_BIN + "/win64/adaptagrams.dll";
     /** the relative path for the osx32 library. */
-    public static final String LIBRARY_PATH_OSX32 = LIBRARY_PATH_BIN + "/osx32/adaptagrams";
+    public static final String LIBRARY_PATH_OSX32 = LIBRARY_PATH_BIN + "/osx32/adaptagrams.dylib";
     /** the relative path for the osx64 library. */
-    public static final String LIBRARY_PATH_OSX64 = LIBRARY_PATH_BIN + "/osx64/adaptagrams";
+    public static final String LIBRARY_PATH_OSX64 = LIBRARY_PATH_BIN + "/osx64/adaptagrams.dylib";
 
     /**
      * Detect the operating system from system properties.
