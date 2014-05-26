@@ -54,6 +54,7 @@ import org.adaptagrams.ShapeRef
 import org.adaptagrams.adaptagrams
 
 import static de.cau.cs.kieler.kiml.options.PortSide.*
+import de.cau.cs.kieler.klay.cola.util.ColaUtil
 
 /**
  * TODO document
@@ -291,17 +292,20 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
       // create a line for the current segment
       val segment = new Line2D.Double(fst.x, fst.y, snd.x, snd.y)
       val point = if (currentPort != null) new Point2D.Double(currentPort.x, currentPort.y) else null
+	
 
+		val pntLineDist = if (point != null) ColaUtil.pointToSegmentDistance(currentPort, fst.toKVector, snd.toKVector) else Double.MAX_VALUE
 
-	  println("\t check " + segment.p1 + " " + segment.p2 + " " + point + " " +  ((if (point != null) segment.ptLineDist(point) else "" ) ))
+	  println("\t check " + segment.p1 + " " + segment.p2 + " " + point + " " + pntLineDist)
+     
       // check if the checkpoint is represented by the start or end 
       // point of the segment or if it lies on the segment
       if (segment.p1 == point) {
         
         throw new AssertionError("Really shouldnt happen")
 
-      } else if (point != null && segment.p2.distance(point) < 0.01d) { // segment.p2 == point
-		// CASE 1: checkpoint is the first point of the line
+      } else if (point != null && snd.toKVector.distance(currentPort) < 0.01d) { // segment.p2 == point
+		// CASE 1: checkpoint is the second point of the line
 
         // assemble a segment
         currentSubRoute.add(currentPort.clone())
@@ -313,7 +317,7 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
         
         i = i + 1
 
-      } else if (point != null && segment.ptLineDist(point) < 0.01d) {
+      } else if (point != null && pntLineDist < 0.01d) {
 		// CASE 2: checkpoint is somewhere along the line
 
         // FIXME sometimes cp not on line!
@@ -326,8 +330,12 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
         currentSubRoute = new KVectorChain
         currentSubRoute.add(currentPort.clone())
         currentPort = ports.saveNext()
+        
+        // do not increase i, as we are still on the same segment
 
       } else {
+      	// CASE 3: 
+      	
       	i = i + 1
       }
       
