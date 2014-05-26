@@ -16,6 +16,7 @@ package de.cau.cs.kieler.klay.cola;
 import java.util.Iterator;
 
 import org.adaptagrams.Router;
+import org.adaptagrams.RoutingOption;
 
 import com.google.common.collect.Iterators;
 
@@ -71,6 +72,9 @@ public class LibavoidLayoutProvider extends AbstractLayoutProvider {
         
         final CGraph cGraph = cImporter.importGraph(parentNode);
         final Router router = rImporter.importGraph(cGraph);
+        
+        // FIXME
+        router.setRoutingOption(RoutingOption.nudgeSharedPathsWithCommonEndPoint, false);
         
         // do layout
         router.processTransaction();
