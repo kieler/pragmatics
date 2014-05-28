@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.kiml.grana.ui.visualizers;
 
 import de.cau.cs.kieler.kiml.grana.AnalysisData;
+import de.cau.cs.kieler.kiml.grana.DynamicAnalysisResult;
 import de.cau.cs.kieler.kiml.grana.ui.visualization.AbstractSimpleVisualizer;
 import de.cau.cs.kieler.kiml.grana.ui.visualization.Visualization;
 import de.cau.cs.kieler.kiml.grana.ui.visualization.VisualizationService;
@@ -65,6 +66,11 @@ public class BasicCSVVisualizer extends AbstractSimpleVisualizer<String> {
                 for (int i = 1; i < analysis.getComponents().size(); ++i) {
                     str.append("; ").append(ERROR_WRONG_RESULT_FORMAT);
                 }
+            }
+        } else if (result instanceof DynamicAnalysisResult) { 
+            DynamicAnalysisResult dr = (DynamicAnalysisResult) result;
+            for (Object val : dr.getValues()) {
+                str.append(val).append(";");
             }
         } else {
             if (analysis.getComponents().size() > 1) {

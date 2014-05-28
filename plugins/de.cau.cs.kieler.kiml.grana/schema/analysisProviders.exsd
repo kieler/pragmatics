@@ -113,6 +113,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="dynamicSize" type="boolean">
+            <annotation>
+               <documentation>
+                  Wheter the amount of components is dynamically determined during runtime. Default is false.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

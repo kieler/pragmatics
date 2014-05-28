@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.kiml.grana.ui.visualizers;
 
 import de.cau.cs.kieler.kiml.grana.AnalysisData;
+import de.cau.cs.kieler.kiml.grana.DynamicAnalysisResult;
 import de.cau.cs.kieler.kiml.grana.ui.visualization.IVisualizer;
 import de.cau.cs.kieler.kiml.grana.ui.visualization.Visualization;
 import de.cau.cs.kieler.kiml.grana.ui.visualization.VisualizationService;
@@ -62,6 +63,16 @@ public class BasicHtmlVisualizer implements IVisualizer<String, Object> {
             } else {
                 str = "<font color='red'>" + ERROR_WRONG_RESULT_FORMAT + "</font>";
             }
+        } else if (result instanceof DynamicAnalysisResult) { 
+            StringBuilder sb = new StringBuilder();
+            DynamicAnalysisResult dr = (DynamicAnalysisResult) result;
+            for (int i = 0; i < dr.getLabels().size(); i++) {
+                sb.append(dr.getValues().get(i) + " (" + dr.getLabels().get(i) + ")");
+                if (i < dr.getLabels().size() - 1) {
+                    sb.append("<br />");
+                }
+            }
+            str = sb.toString();
         } else {
             // Check if the result should actually be an array
             if (analysis.getComponents().size() > 1) {

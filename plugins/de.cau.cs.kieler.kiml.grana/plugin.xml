@@ -507,6 +507,13 @@
             id="de.cau.cs.kieler.kiml.grana.stress"
             name="Stress">
       </analysis>
+      <analysis
+            class="de.cau.cs.kieler.kiml.grana.analyses.ExecutionTimeAnalysis"
+            description="The execution times of the separate phases."
+            dynamicSize="true"
+            id="de.cau.cs.kieler.kiml.grana.executionTime"
+            name="Execution Time">
+      </analysis>
    </extension>
 
 </plugin>

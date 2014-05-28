@@ -20,6 +20,7 @@ import java.util.Map;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.grana.AnalysisData;
+import de.cau.cs.kieler.kiml.grana.DynamicAnalysisResult;
 import de.cau.cs.kieler.kiml.grana.ui.visualization.Visualization;
 import de.cau.cs.kieler.kiml.grana.ui.visualization.VisualizationService;
 
@@ -51,6 +52,13 @@ public class CSVResultSerializer implements IBatchResultSerializer {
                 for (Pair<String, String> component : analysis.getComponents()) {
                     writer.write(";" + analysis.getName() + " ("
                             + component.getFirst() + ")");
+                }
+            } else if (analysis.isDynamicSize()) {
+                DynamicAnalysisResult dr =
+                        (DynamicAnalysisResult) batchResult.getJobResults().get(0).getResults()
+                                .get(analysis.getId());
+                for (Object lab : dr.getLabels()) {
+                    writer.write(";" + analysis.getName() + " (" + lab + ")");
                 }
             } else {
                 writer.write(";" + analysis.getName());

@@ -79,6 +79,8 @@ public final class AnalysisService {
     protected static final String ATTRIBUTE_WEAK = "weak";
     /** name of the 'programmatic' attribute in the extension point. */
     protected static final String ATTRIBUTE_PROGRAMMATIC = "programmatic";
+    /** name of the 'dynamicSize' attribute in the extension point. */
+    protected static final String ATTRIBUTE_DYNAMICSIZE = "dynamicSize";
     
     /** id of the default category. */
     public static final String DEFAULT_CATEGORY_ID = "de.cau.cs.kieler.kiml.grana.defaultCategory";
@@ -218,6 +220,8 @@ public final class AnalysisService {
                 String description = element.getAttribute(ATTRIBUTE_DESCRIPTION);
                 String category = element.getAttribute(ATTRIBUTE_CATEGORY);
                 String isProgrString = element.getAttribute(ATTRIBUTE_PROGRAMMATIC);
+                String isDynamicSizeString = element.getAttribute(ATTRIBUTE_DYNAMICSIZE);
+                boolean isDynamicSize = Boolean.parseBoolean(isDynamicSizeString);
                 boolean isProgr = Boolean.parseBoolean(isProgrString);
                 if (id == null || id.length() == 0) {
                     reportError(EXTP_ID_ANALYSIS_PROVIDERS, element, ATTRIBUTE_ID, null);
@@ -249,6 +253,7 @@ public final class AnalysisService {
                     analysisData.setDescription(description);
                     analysisData.setCategory(category);
                     analysisData.setProgrammatic(isProgr);
+                    analysisData.setDynamicSize(isDynamicSize);
                     analyses.add(analysisData);
                     analysisIdMapping.put(id, analysisData);
                     // read the analysis dependencies

@@ -46,6 +46,8 @@ public class AnalysisData implements ILayoutMetaData, IDepending<String> {
     private String analysisCategory;
     /** is the analysis programmatic and hidden from the user? */
     private boolean isProgrAnalysis;
+    /** is the analysis dynamic in its size of results. */
+    private boolean isDynamicSize;
     /** the components. */
     private final List<Pair<String, String>> components = new LinkedList<Pair<String, String>>();
     /** the analysis dependencies. */
@@ -173,6 +175,21 @@ public class AnalysisData implements ILayoutMetaData, IDepending<String> {
      */
     public void setProgrammatic(final boolean progr) {
         this.isProgrAnalysis = progr;
+    }
+    
+    /**
+     * @return the isDynamicSize
+     */
+    public boolean isDynamicSize() {
+        return isDynamicSize;
+    }
+    
+    /**
+     * @param isDynamicSize2
+     *            the isDynamicSize to set
+     */
+    public void setDynamicSize(final boolean isDynamicSize2) {
+        this.isDynamicSize = isDynamicSize2;
     }
 
     /**
