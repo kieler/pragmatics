@@ -64,8 +64,8 @@ public class ExecutionTimeAnalysis implements IAnalysis {
             return new AnalysisFailed(Type.Failed);
         }
         Stack<IKielerProgressMonitor> mons = new Stack<IKielerProgressMonitor>();
-        mons.addAll(Lists.reverse(pm.getSubMonitors()));
-
+        mons.add(pm);
+        
         List<String> labels = Lists.newLinkedList();
         List<Object> values = Lists.newLinkedList();
         while (!mons.isEmpty()) {
