@@ -16,16 +16,14 @@ package de.cau.cs.kieler.klay.cola.util;
 import java.io.File;
 
 import org.adaptagrams.ACALayout;
-import org.adaptagrams.ConstrainedFDLayout;
 import org.adaptagrams.SWIGTYPE_p_std__valarrayT_double_t;
-import org.adaptagrams.TestConvergence;
 
 /**
  * Debug helper for Cola-based layouters.
  * 
  * @author uru
  */
-public class ACADebugTestConvergence extends TestConvergence {
+public class ACADebugTestConvergence extends MinMaxTestConvergence {
 
     private ACALayout layouter;
     private String namePrefix;

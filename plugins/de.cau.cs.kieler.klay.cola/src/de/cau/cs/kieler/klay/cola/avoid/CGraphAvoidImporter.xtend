@@ -261,7 +261,7 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
         
         // we have to split the route into chunks
         val subRoutes = edge.determineSubRoutes(route)
-        subRoutes.forEach[e,i | println("SubRoute " + i + " " + cr.edge + " " + e)]
+        //subRoutes.forEach[e,i | println("SubRoute " + i + " " + cr.edge + " " + e)]
         edge.setProperty(InternalColaProperties.EDGE_SUB_ROUTES, subRoutes)
       }
     }
@@ -275,7 +275,7 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
     
     // original checkpoints specified for the edge
     val chkPoints = edge.getProperty(InternalColaProperties.EDGE_CHECKPOINTS)
-    println("Checkpoints: " + chkPoints)
+    // println("Checkpoints: " + chkPoints)
     val ports = chkPoints.take(chkPoints.size - 1).map[it.second].iterator
     
     // the sub routes we are about to determine
@@ -311,7 +311,7 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
 
 	  val pntLineDist = if (point != null) ColaUtil.pointToSegmentDistance(currentPort, fst.toKVector, snd.toKVector) else Double.MAX_VALUE
 
-	  println("\t check " + segment.p1 + " " + segment.p2 + " " + point + " " + pntLineDist)
+	  // println("\t check " + segment.p1 + " " + segment.p2 + " " + point + " " + pntLineDist)
      
       // check if the checkpoint is represented by the start or end 
       // point of the segment or if it lies on the segment

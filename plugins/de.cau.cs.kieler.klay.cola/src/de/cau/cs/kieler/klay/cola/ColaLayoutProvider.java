@@ -46,6 +46,7 @@ import de.cau.cs.kieler.klay.cola.processors.PortConstraintProcessor;
 import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
 import de.cau.cs.kieler.klay.cola.properties.InternalColaProperties;
 import de.cau.cs.kieler.klay.cola.util.DebugTestConvergence;
+import de.cau.cs.kieler.klay.cola.util.MinMaxTestConvergence;
 
 /**
  * Basic constrained force-based layout using adaptagrams {@link ConstrainedFDLayout}.
@@ -66,7 +67,7 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
      * Debug
      */
     private boolean debug = false;
-    private TestConvergence testConvergence;
+    private MinMaxTestConvergence testConvergence;
     private String debugPrefix;
 
     /**
@@ -96,7 +97,7 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
             }
         } else {
             // use default convergence test
-            testConvergence = new TestConvergence();
+            testConvergence = new MinMaxTestConvergence();
         }
 
         layouters = new Stack<ConstrainedFDLayout>();
@@ -135,23 +136,25 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
             }
         }
 
+        int cap = Integer.MAX_VALUE;
+        
         // first run w/o overlap prevention
         IKielerProgressMonitor spm = progressMonitor.subTask(1);
         spm.begin("Untangling Layout", 1);
-        runLayout(false, "", 1, 5, 10);
+        runLayout(false, "", 1, 5, cap, spm);
         spm.done();
 
         // generate the flow constraints
         new DirectionConstraintProcessor().process(graph, progressMonitor.subTask(1));
         spm = progressMonitor.subTask(1);
         spm.begin("Flow Constrained Layout", 1);
-        runLayout(false, "_flow", 1, 5, 10);
+        runLayout(false, "_flow", 1, 1, cap, spm);
         spm.done();
 
         // then run some with overlap prevention
         spm = progressMonitor.subTask(1);
         spm.begin("Overlap Preventing Layout", 1);
-        runLayout(true, "", 1, 5, Integer.MAX_VALUE);
+        runLayout(true, "", 1, 1, cap, spm);
         spm.done();
 
         // FIXME adaptagrams - atm still have to compute the bounding rects of clusters
@@ -177,7 +180,7 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
     }
 
     private ConstrainedFDLayout runLayout(final boolean overlap, final String dbgString, 
-            final double edgelength, int minIts, int maxIts) {
+            final double edgelength, final int minIts, final int maxIts, IKielerProgressMonitor pm) {
 
         // create a new layouter instance
         ConstrainedFDLayout algo =
@@ -196,14 +199,14 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         
         // remember for later disposal
         layouters.add(algo);
-
+        
+        testConvergence.minIterations = minIts;
+        testConvergence.maxIterations = maxIts;
         if (debug) {
             DebugTestConvergence debugConvergence = (DebugTestConvergence) testConvergence;
             debugConvergence.setLayouter(algo);
             debugConvergence.setNamePrefix(debugPrefix + (overlap ? "overlap" : "non_overlap")
                     + dbgString);
-            debugConvergence.minIterations = minIts;
-            debugConvergence.maxIterations = maxIts;
         }
 
         // set constraints and clusters
@@ -216,7 +219,10 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         
         algo.outputInstanceToSVG("colapremf_" + (overlap ? "overlap" : "non_overlap" + dbgString));
 
+        IKielerProgressMonitor ipm = pm.subTask(1);
+        ipm.begin("Run", 1);
         algo.run();
+        ipm.done();
         
         for (int i = 0; i < uciX.size(); i++) {
             System.out.println("X " + uciX.get(i));
@@ -245,7 +251,7 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
             portsGroup.add(n.cIndex);
 
             alg.addGroupOfNonOverlapExemptRectangles(portsGroup);
-            System.out.println("Added group: " + n + " " + portsGroup);
+            // System.out.println("Added group: " + n + " " + portsGroup);
         }
 
     }

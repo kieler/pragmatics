@@ -53,7 +53,7 @@ public final class ColaUtil {
 
         // insets
         KInsets insets = k.getInsets();
-        if(insets == null) {
+        if (insets == null) {
             insets = KLayoutDataFactory.eINSTANCE.createKInsets();
             k.setInsets(insets);
         }

@@ -17,14 +17,13 @@ import java.io.File;
 
 import org.adaptagrams.ConstrainedFDLayout;
 import org.adaptagrams.SWIGTYPE_p_std__valarrayT_double_t;
-import org.adaptagrams.TestConvergence;
 
 /**
  * Debug helper for Cola-based layouters.
  * 
  * @author uru
  */
-public class DebugTestConvergence extends TestConvergence {
+public class DebugTestConvergence extends MinMaxTestConvergence {
 
     private ConstrainedFDLayout layouter;
     private String namePrefix;
@@ -38,8 +37,7 @@ public class DebugTestConvergence extends TestConvergence {
         this.absoluteFolder =
                 new File(System.getProperty("user.home") + File.separatorChar + "tmp"
                         + File.separatorChar + folder);
-        
-        
+
     }
 
     /**
@@ -88,13 +86,7 @@ public class DebugTestConvergence extends TestConvergence {
         String outputName = absoluteFolder + File.separator + namePrefix + "_" + getIterations();
         layouter.outputInstanceToSVG(outputName);
 
-        // we use the default implementation of the convergence test
-        if (getIterations() > 20) {
-            return super.ColaTestConvergenceOperator(arg0, arg1, arg2);
-        } else {
-            super.ColaTestConvergenceOperator(arg0, arg1, arg2);
-            return false;
-        }
+        return super.ColaTestConvergenceOperator(arg0, arg1, arg2);
     }
 
 }

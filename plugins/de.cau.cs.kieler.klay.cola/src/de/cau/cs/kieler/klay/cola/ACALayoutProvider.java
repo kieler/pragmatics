@@ -58,6 +58,7 @@ import de.cau.cs.kieler.klay.cola.processors.PortConstraintProcessor;
 import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
 import de.cau.cs.kieler.klay.cola.properties.InternalColaProperties;
 import de.cau.cs.kieler.klay.cola.util.ACADebugTestConvergence;
+import de.cau.cs.kieler.klay.cola.util.MinMaxTestConvergence;
 
 /**
  * 
@@ -74,7 +75,7 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
      * Debug
      */
     private boolean debug = false;
-    private TestConvergence testConvergence;
+    private MinMaxTestConvergence testConvergence;
     private String debugPrefix;
 
     /**
@@ -103,7 +104,7 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
             }
         } else {
             // use default convergence test
-            testConvergence = new TestConvergence();
+            testConvergence = new MinMaxTestConvergence();
         }
 
         // margins for the nodes (include the labels etc)
