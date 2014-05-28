@@ -25,8 +25,10 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import de.cau.cs.kieler.adaptagrams.cgraph.CGraph;
 import de.cau.cs.kieler.adaptagrams.cgraph.CNode;
 import de.cau.cs.kieler.adaptagrams.cgraph.CPort;
+import de.cau.cs.kieler.adaptagrams.properties.CGraphProperties;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
@@ -42,6 +44,7 @@ import de.cau.cs.kieler.klay.cola.processors.DirectionConstraintProcessor;
 import de.cau.cs.kieler.klay.cola.processors.IdealEdgeLengthProcessor;
 import de.cau.cs.kieler.klay.cola.processors.PortConstraintProcessor;
 import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
+import de.cau.cs.kieler.klay.cola.properties.InternalColaProperties;
 import de.cau.cs.kieler.klay.cola.util.DebugTestConvergence;
 
 /**
@@ -77,7 +80,7 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         // handle some properties
         KLayoutData rootLayout = parentNode.getData(KLayoutData.class);
         debug = rootLayout.getProperty(LayoutOptions.DEBUG_MODE);
-
+        
         if (debug) {
             // Internal convergence test that outputs debug information.
             testConvergence = new DebugTestConvergence("cola");
@@ -101,6 +104,8 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         // calculate margins
         calculateMarginsAndSizes(parentNode);
 
+        rootLayout.setProperty(CGraphProperties.MARGIN_INCLUDES_SPACING, true);
+        
         // execute layout algorithm
         IGraphImporter<KNode, CGraph> importer;
         if (!rootLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {
@@ -131,25 +136,33 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         }
 
         // first run w/o overlap prevention
-        runLayout(false, "", 1);
-        
+        IKielerProgressMonitor spm = progressMonitor.subTask(1);
+        spm.begin("Untangling Layout", 1);
+        runLayout(false, "", 1, 5, 10);
+        spm.done();
+
         // generate the flow constraints
         new DirectionConstraintProcessor().process(graph, progressMonitor.subTask(1));
-        runLayout(false, "_flow", 1);
+        spm = progressMonitor.subTask(1);
+        spm.begin("Flow Constrained Layout", 1);
+        runLayout(false, "_flow", 1, 5, 10);
+        spm.done();
 
-        
         // then run some with overlap prevention
-        runLayout(true, "", 1);
+        spm = progressMonitor.subTask(1);
+        spm.begin("Overlap Preventing Layout", 1);
+        runLayout(true, "", 1, 5, Integer.MAX_VALUE);
+        spm.done();
 
         // FIXME adaptagrams - atm still have to compute the bounding rects of clusters
         graph.rootCluster.computeBoundingRect(graph.nodes);
 
-        ConstrainedFDLayout fd =
-                new ConstrainedFDLayout(graph.nodes, graph.edges, 10, true);
+        // ConstrainedFDLayout fd =
+        // new ConstrainedFDLayout(graph.nodes, graph.edges, 10, true);
         // WhitparentLayout.getProperty(LayoutOptions.SPACING)
-        fd.setClusterHierarchy(graph.rootCluster);
-        fd.setConstraints(graph.constraints);
-        fd.run();
+        // fd.setClusterHierarchy(graph.rootCluster);
+        // fd.setConstraints(graph.constraints);
+        // fd.run();
         
         
         // apply the calculated layout back to the kgrap
@@ -164,7 +177,7 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
     }
 
     private ConstrainedFDLayout runLayout(final boolean overlap, final String dbgString, 
-            final double edgelength) {
+            final double edgelength, int minIts, int maxIts) {
 
         // create a new layouter instance
         ConstrainedFDLayout algo =
@@ -177,6 +190,8 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
                 
         algo.setUnsatisfiableConstraintInfo(uciX, uciY);
         
+        algo.setM_doYAxisFirst(true);
+        
         generateOverlapIgnores(graph, algo);
         
         // remember for later disposal
@@ -187,6 +202,8 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
             debugConvergence.setLayouter(algo);
             debugConvergence.setNamePrefix(debugPrefix + (overlap ? "overlap" : "non_overlap")
                     + dbgString);
+            debugConvergence.minIterations = minIts;
+            debugConvergence.maxIterations = maxIts;
         }
 
         // set constraints and clusters

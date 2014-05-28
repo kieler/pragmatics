@@ -28,6 +28,7 @@ import org.adaptagrams.Point;
 import org.adaptagrams.Polygon;
 import org.adaptagrams.Router;
 import org.adaptagrams.RouterFlag;
+import org.adaptagrams.RoutingOption;
 import org.adaptagrams.ShapeConnectionPin;
 import org.adaptagrams.ShapeRef;
 import org.adaptagrams.adaptagrams;
@@ -188,6 +189,8 @@ public class LibavoidGraph {
                 new File(System.getProperty("user.home") + File.separatorChar + "tmp"
                         + File.separatorChar + "libavoid");
         folder.mkdirs();
+        
+        router.setRoutingOption(RoutingOption.nudgeSharedPathsWithCommonEndPoint, false);
         
         // perform the routing
         router.processTransaction();

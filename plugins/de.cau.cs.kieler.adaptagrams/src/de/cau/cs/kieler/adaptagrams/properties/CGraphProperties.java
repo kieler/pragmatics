@@ -22,6 +22,10 @@ import de.cau.cs.kieler.core.properties.Property;
  */
 public final class CGraphProperties {
 
+    // FIXME shouldnt be a property here!
+    public static final IProperty<Boolean> CONSIDER_PREVIOUS_POSITION = new Property<Boolean>(
+            "de.cau.cs.kieler.klay.cola.considerPreviousPositions", false);
+
     /*--------------------------------------------------------------------------------------------
      *                          Internal Use only
      */
@@ -29,12 +33,12 @@ public final class CGraphProperties {
     /**
      * The original object from which a graph element was created.
      */
-    public static final IProperty<KGraphElement> ORIGIN =
-            new Property<KGraphElement>("cgraph.origin");
+    public static final IProperty<KGraphElement> ORIGIN = new Property<KGraphElement>(
+            "cgraph.origin");
 
-    // FIXME shouldnt be a property here!
-    public static final IProperty<Boolean> CONSIDER_PREVIOUS_POSITION =
-            new Property<Boolean>("de.cau.cs.kieler.klay.cola.considerPreviousPositions", false);
+    public static final IProperty<Boolean> MARGIN_INCLUDES_SPACING = new Property<Boolean>(
+            "cgraph.marginIncSpacing", false);
+
     /**
      * Utility class.
      */

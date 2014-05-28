@@ -31,6 +31,7 @@ public class CoDaLayoutProvider extends AbstractLayoutProvider {
      */
     @Override
     public void doLayout(final KNode parentNode, final IKielerProgressMonitor progressMonitor) {
+        progressMonitor.begin("CoDaFlow Layout", 1);
 
         
         final KLayoutData parentLayout = parentNode.getData(KLayoutData.class);
@@ -40,6 +41,7 @@ public class CoDaLayoutProvider extends AbstractLayoutProvider {
          */
         ColaLayoutProvider cola = new ColaLayoutProvider();
 
+        parentLayout.setProperty(ColaProperties.CONSIDER_PREVIOUS_POSITION, true);
         cola.doLayout(parentNode, progressMonitor.subTask(1));
 
         
@@ -76,6 +78,8 @@ public class CoDaLayoutProvider extends AbstractLayoutProvider {
         for (IKielerProgressMonitor pm : progressMonitor.getSubMonitors()) {
             System.out.println(pm.getTaskName() + " " + pm.getExecutionTime() + "s");
         }
+
+        progressMonitor.done();
     }
 
 }

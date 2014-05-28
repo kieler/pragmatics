@@ -22,6 +22,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -52,6 +53,10 @@ public final class ColaUtil {
 
         // insets
         KInsets insets = k.getInsets();
+        if(insets == null) {
+            insets = KLayoutDataFactory.eINSTANCE.createKInsets();
+            k.setInsets(insets);
+        }
         c.getInsets().left = insets.getLeft();
         c.getInsets().right = insets.getRight();
         c.getInsets().top = insets.getTop();

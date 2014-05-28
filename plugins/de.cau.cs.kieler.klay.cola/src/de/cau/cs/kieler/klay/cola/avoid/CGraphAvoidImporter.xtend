@@ -120,6 +120,8 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
     // the raw size already concludes margins
     val rect = new AvoidRectangle(node.rectPosRaw.toPoint, 
                 node.rectPosRaw.clone.add(node.rectSizeRaw).toPoint)
+//	  val rect = new AvoidRectangle(node.rectPos.toPoint, 
+//                node.rectPos.clone.add(node.rectSize).toPoint)
     createAndRegisterShapeRef(rect, node, router)
     
   }
@@ -144,6 +146,8 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
     // determine the pin's positions relative on the respective side
     val relativePortPos = port.rectPosRaw.clone.sub(port.owner.rectPosRaw)
     relativePortPos.add(port.rectSizeRaw.scale(0.5))
+//	val relativePortPos = port.rectPos.clone.sub(port.owner.rectPos)
+//    relativePortPos.add(port.rectSize.scale(0.5))
     val relX = relativePortPos.x / width
     val relY = relativePortPos.y / height
     
@@ -250,6 +254,8 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
           edge.bendpoints.add(pts.get(i).toKVector.add(offset))
         }
         
+//        println("BPS: " + edge + " " + edge.bendpoints)
+        
       } else {
         // a hierarchy crossing edge
         
@@ -277,29 +283,39 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
 
     // start values of some variables
     val pts = route.getPs()
+//    print("Pts: ")
+//    for(i : 0..<pts.size.intValue) {
+//    	print(pts.get(i) + ", ")
+//    }
+//    println
+    
     var currentPort = ports.next()
     var KVectorChain currentSubRoute = new KVectorChain
 
 	var i = 0
+	var newLine = true;
 	while (i < pts.size.intValue - 1) {
 
       val fst = pts.get(i)
       val snd = pts.get(i + 1)
 
       // add start point to the current sub route
-      currentSubRoute.add(fst.toKVector)
+      if (newLine) {
+      	currentSubRoute.add(fst.toKVector)
+      }
 
       // create a line for the current segment
       val segment = new Line2D.Double(fst.x, fst.y, snd.x, snd.y)
       val point = if (currentPort != null) new Point2D.Double(currentPort.x, currentPort.y) else null
 	
 
-		val pntLineDist = if (point != null) ColaUtil.pointToSegmentDistance(currentPort, fst.toKVector, snd.toKVector) else Double.MAX_VALUE
+	  val pntLineDist = if (point != null) ColaUtil.pointToSegmentDistance(currentPort, fst.toKVector, snd.toKVector) else Double.MAX_VALUE
 
 	  println("\t check " + segment.p1 + " " + segment.p2 + " " + point + " " + pntLineDist)
      
       // check if the checkpoint is represented by the start or end 
       // point of the segment or if it lies on the segment
+      newLine = true
       if (segment.p1 == point) {
         
         throw new AssertionError("Really shouldnt happen")
@@ -332,6 +348,7 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
         currentPort = ports.saveNext()
         
         // do not increase i, as we are still on the same segment
+        newLine = false
 
       } else {
       	// CASE 3: 

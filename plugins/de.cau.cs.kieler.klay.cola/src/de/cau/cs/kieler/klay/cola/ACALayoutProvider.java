@@ -108,6 +108,8 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
 
         // margins for the nodes (include the labels etc)
         calculateMarginsAndSizes(parentNode);
+        
+        parentLayout.setProperty(CGraphProperties.MARGIN_INCLUDES_SPACING, true);
 
         // execute layout algorithm
         IGraphImporter<KNode, CGraph> importer;
@@ -171,10 +173,13 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
         aca.outputInstanceToSVG("aca_original_the_one_before");
 
         // FIXME usually I wanna generate exemptions first, but the fd layout is not yet available
-        aca.removeOverlaps();
+        //aca.removeOverlaps();
         
         generateOverlapIgnores(graph, aca);
+
         
+        IKielerProgressMonitor spm = progressMonitor.subTask(1);
+        spm.begin("ACA Alignment Generation", 1);
         // execute ACA
         if (debug) {
             int i = 0;
@@ -184,6 +189,7 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
         } else {
             aca.createAlignments();
         }
+        spm.done();
         
         aca.outputInstanceToSVG("aca_original_the_one");
 
@@ -202,13 +208,26 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
             }
         }
         
+//        ConstrainedFDLayout fd2 =
+//                new ConstrainedFDLayout(graph.nodes, graph.edges, 1, true, graph.getIdealEdgeLengths());
+//        fd2.setClusterHierarchy(graph.rootCluster);
+//        fd2.setConstraints(graph.constraints);
+//        fd2.setM_doYAxisFirst(true);
+//        fd2.run();
+        
+//        fd2.outputInstanceToSVG("aca_overlap_on");
+        
         if (parentLayout.getProperty(ColaProperties.ACA_POST_COMPACTION)) {
+            spm = progressMonitor.subTask(1);
+            spm.begin("ACA Post Compaction", 1);
             ConstrainedFDLayout fd =
                     new ConstrainedFDLayout(graph.nodes, graph.edges, 10, true);
             // WhitparentLayout.getProperty(LayoutOptions.SPACING)
             fd.setClusterHierarchy(graph.rootCluster);
             fd.setConstraints(graph.constraints);
+            fd.setM_doYAxisFirst(true);
             fd.run();
+            spm.done();
         }
         
         

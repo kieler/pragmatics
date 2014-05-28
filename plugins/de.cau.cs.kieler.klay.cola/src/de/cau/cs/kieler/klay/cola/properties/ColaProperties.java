@@ -27,7 +27,7 @@ public final class ColaProperties {
      */
     public static final IProperty<HorizontalAlignment> ALIGN_NODES =
             new Property<HorizontalAlignment>("de.cau.cs.kieler.klay.cola.alignNodesHorizontal",
-                    HorizontalAlignment.LEFT);
+                    HorizontalAlignment.NONE);
 
     /**
      * Whether to consider previous node positions.
@@ -46,20 +46,20 @@ public final class ColaProperties {
      * How to handle cycles in the graph.
      */
     public static final IProperty<CycleTreatment> CYCLE_TREATMENT = new Property<CycleTreatment>(
-            "de.cau.cs.kieler.klay.cola.cycleTreatment", CycleTreatment.NONE);
+            "de.cau.cs.kieler.klay.cola.cycleTreatment", CycleTreatment.MFAS_GLOBAL);
 
     /**
      * Specifies how ideal edge lengths are determined.
      */ 
     public static final IProperty<EdgeLengthStrategy> EDGE_LENGTH_STRATEGY =
             new Property<EdgeLengthStrategy>("de.cau.cs.kieler.klay.cola.edgeLengthStrategy",
-                    EdgeLengthStrategy.UNIFORM);
+                    EdgeLengthStrategy.CONNECTIVITY);
 
     /**
      * A scalar modifier of ideal edge lengths.
      * */
     public static final IProperty<Float> IDEAL_EDGE_LENGTHS = new Property<Float>(
-            "de.cau.cs.kieler.klay.cola.idealEdgeLengths", 100f, 1f);
+            "de.cau.cs.kieler.klay.cola.idealEdgeLengths", 18f, 1f);
 
     /**
      * The maximum length of a centre S-bend connector segments to attempt to improve (default
@@ -85,10 +85,10 @@ public final class ColaProperties {
      * Whether to consider previous node positions.
      */
     public static final IProperty<Boolean> REPOSITION_HIERARCHICAL_PORTS = new Property<Boolean>(
-            "de.cau.cs.kieler.klay.cola.repositionHierarchicalPorts", false);
+            "de.cau.cs.kieler.klay.cola.repositionHierarchicalPorts", true);
 
     public static final IProperty<Boolean> ACA_ALIGN_CROSS_HIERARCHY_EDGES = new Property<Boolean>(
-            "de.cau.cs.kieler.klay.cola.aca.alignCrossHierarchyEdges", false);
+            "de.cau.cs.kieler.klay.cola.aca.alignCrossHierarchyEdges", true);
     
     public static final IProperty<Boolean> ACA_FAVOR_LONG_EDGES = new Property<Boolean>(
             "de.cau.cs.kieler.klay.cola.aca.favorLongEdges", false);
