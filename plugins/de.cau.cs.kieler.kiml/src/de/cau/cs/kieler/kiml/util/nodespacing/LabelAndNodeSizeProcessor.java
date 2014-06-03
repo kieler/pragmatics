@@ -308,7 +308,8 @@ public class LabelAndNodeSizeProcessor {
      * @param label the label to place.
      * @param compoundNodeMode {@code true} if the node contains further nodes in the original graph. In
      *                         this case, port labels are not placed next to ports, but a little down as
-     *                         well to avoid edge-label-crossings.
+     *                         well to avoid edge-label-crossings if the port has edges connected to the
+     *                         node's insides.
      * @param labelSpacing spacing between labels and other objects.
      */
     private void placePortLabelsInside(final PortAdapter<?> port, final LabelAdapter<?> label,
@@ -318,13 +319,13 @@ public class LabelAndNodeSizeProcessor {
         switch (port.getSide()) {
         case WEST:
             position.x = port.getSize().x + labelSpacing;
-            position.y = compoundNodeMode
+            position.y = compoundNodeMode && port.hasCompoundConnections()
                     ? port.getSize().y + labelSpacing
                     : (port.getSize().y - label.getSize().y) / 2.0;
             break;
         case EAST:
             position.x = -label.getSize().x - labelSpacing;
-            position.y = compoundNodeMode
+            position.y = compoundNodeMode && port.hasCompoundConnections()
                     ? port.getSize().y + labelSpacing
                     : (port.getSize().y - label.getSize().y) / 2.0;
             break;

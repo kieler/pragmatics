@@ -152,8 +152,7 @@ public class KlighdDiagramEffect extends MapPropertyHolder implements IEffect {
         final IPropertyHolder propertyHolder = this;
         PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
             public void run() {
-                view = DiagramViewManager.getInstance().createView(
-                        id, name, model, propertyHolder);
+                view = DiagramViewManager.createView(id, name, model, propertyHolder);
                 if (view != null) {
                     setViewer(view.getViewer().getContextViewer().getActiveViewer());
                     setSourceWorkbenchPart();
@@ -281,7 +280,7 @@ public class KlighdDiagramEffect extends MapPropertyHolder implements IEffect {
             return null; // do not merge!!
         }
         
-        KlighdDiagramEffect other = (KlighdDiagramEffect) otherEffect;
+        final KlighdDiagramEffect other = (KlighdDiagramEffect) otherEffect;
         
         if (this.model == null || this.model.equals(other.model)) {
             return other;

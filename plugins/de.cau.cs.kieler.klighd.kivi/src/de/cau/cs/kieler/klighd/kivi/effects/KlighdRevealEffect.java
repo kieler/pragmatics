@@ -58,14 +58,14 @@ public class KlighdRevealEffect extends AbstractEffect {
      * {@inheritDoc}
      */
     public void execute() {
-        DiagramViewPart view = DiagramViewManager.getInstance().getView(viewId);
+        final DiagramViewPart view = DiagramViewManager.getView(viewId);
         if (view != null) {
             // get the diagram element
             KGraphElement theElement;
             if (isDiagramElement) { // implies element instanceof EObject
                 theElement = (KGraphElement) element;
             } else {
-                theElement = (KGraphElement) view.getViewer().getViewContext()
+                theElement = view.getViewer().getViewContext()
                         .getTargetElement(element, KGraphElement.class);
             }
             // reveal the element

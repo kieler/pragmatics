@@ -315,15 +315,29 @@ public class PInputManager extends PBasicInputEventHandler implements PRoot.Inpu
             return;
         }
 
-        final PInputEvent e = new PInputEvent(this, nextInput);
+        // chsch: improved this method by removing the 'nextInput' event from this
+        //  super smart 1-element event queue before starting to process it in order
+        //  to avoid a second evaluation;
+        // that may happen if, e.g., an IAction implementation triggers automatic layout
+        //  without asynchronous execution that then calls Display.readAndDispatch
+        //  in order to temporary give control back to other UI components 
+        final PCamera theNextInputSource = this.nextInputSource;
+        final InputEvent theNextInput = this.nextInput;
+        final int theNextType = this.nextType;
+        
+        nextInputSource = null;
+        nextInput = null;
+        nextType = 0;
+
+        final PInputEvent e = new PInputEvent(this, theNextInput);
 
         Point2D newCurrentCanvasPosition = null;
         Point2D newLastCanvasPosition = null;
 
         if (e.isMouseEvent()) {
             if (e.isMouseEnteredOrMouseExited()) {
-                final PPickPath aPickPath = nextInputSource.pick(((MouseEvent) nextInput).getX(),
-                        ((MouseEvent) nextInput).getY(), 1);
+                final PPickPath aPickPath = theNextInputSource.pick(((MouseEvent) theNextInput).getX(),
+                        ((MouseEvent) theNextInput).getY(), 1);
                 setMouseOver(aPickPath);
                 previousMouseOver = aPickPath;
                 newCurrentCanvasPosition = (Point2D) currentCanvasPosition.clone();
@@ -331,17 +345,14 @@ public class PInputManager extends PBasicInputEventHandler implements PRoot.Inpu
             }
             else {
                 lastCanvasPosition.setLocation(currentCanvasPosition);
-                currentCanvasPosition.setLocation(((MouseEvent) nextInput).getX(), ((MouseEvent) nextInput).getY());
-                final PPickPath aPickPath = nextInputSource.pick(currentCanvasPosition.getX(), currentCanvasPosition
+                currentCanvasPosition.setLocation(((MouseEvent) theNextInput).getX(), ((MouseEvent) theNextInput).getY());
+                final PPickPath aPickPath = theNextInputSource.pick(currentCanvasPosition.getX(), currentCanvasPosition
                         .getY(), 1);
                 setMouseOver(aPickPath);
             }
         }
 
-        processEvent(e, nextType);
-        nextInput = null;
-        nextInputSource = null;
-
+        processEvent(e, theNextType);
 
         if (newCurrentCanvasPosition != null && newLastCanvasPosition != null) {
             currentCanvasPosition.setLocation(newCurrentCanvasPosition);

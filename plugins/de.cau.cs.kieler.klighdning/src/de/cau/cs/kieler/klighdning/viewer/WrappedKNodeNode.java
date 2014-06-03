@@ -14,8 +14,8 @@
 package de.cau.cs.kieler.klighdning.viewer;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.klighd.piccolo.export.KlighdAbstractSVGGraphics;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KNodeNode;
-import de.cau.cs.kieler.klighd.piccolo.svg.KlighdAbstractSVGGraphics;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.util.PPaintContext;
 
@@ -59,11 +59,11 @@ public class WrappedKNodeNode extends PNode {
 //            KlighdSimpleSVGGraphicsImpl g =
 //                    (KlighdSimpleSVGGraphicsImpl) paintContext.getGraphics();
             
-            KlighdAbstractSVGGraphics g =
+            final KlighdAbstractSVGGraphics g =
                     (KlighdAbstractSVGGraphics) paintContext.getGraphics();
 
             // draw invisible text
-            int oldAlpha = g.getAlpha();
+            final int oldAlpha = g.getAlpha();
             g.setAlpha(0);
             g.drawText(ID_TEXT + ":" + node.hashCode());
             g.setAlpha(oldAlpha);

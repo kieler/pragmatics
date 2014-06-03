@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="KIELER Ptolemy Browser" uid="de.cau.cs.kieler.ptolemy.rcp.product" id="de.cau.cs.kieler.ptolemy.rcp.product" application="org.eclipse.ui.ide.workbench" version="0.2.0.qualifier" useFeatures="false" includeLaunchers="true">
+<product name="KIELER Ptolemy Browser" uid="de.cau.cs.kieler.ptolemy.rcp.product" id="de.cau.cs.kieler.ptolemy.rcp.product" application="org.eclipse.ui.ide.workbench" version="0.3.0.qualifier" useFeatures="false" includeLaunchers="true">
 
    <aboutInfo>
       <image path="/de.cau.cs.kieler.ptolemy.rcp/icons/about.png"/>
@@ -13,7 +13,7 @@ A research project on enhancing the model-based design of complex systems
 For more information, visit our website:
 http://www.informatik.uni-kiel.de/rtsys/kieler/
 
-Copyright 2013 by Christian-Albrechts-University of Kiel, Department of Computer Science, Real-Time and Embedded Systems Group
+Copyright 2014 by Christian-Albrechts-University of Kiel, Department of Computer Science, Real-Time and Embedded Systems Group
       </text>
    </aboutInfo>
 
