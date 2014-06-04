@@ -22,7 +22,6 @@ import de.cau.cs.kieler.kiml.options.SizeConstraint;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LGraphUtil;
-import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -147,6 +146,11 @@ public class FixedLayoutProvider {
         lGraph.getSize().x = maxx;
         lGraph.getSize().y = maxy;
         lGraph.setProperty(LayoutOptions.SIZE_CONSTRAINT, SizeConstraint.fixed());
+        LNode compoundNode = (LNode) lGraph.getProperty(InternalProperties.PARENT_LNODE);
+        if (compoundNode != null) {
+            compoundNode.setProperty(LayoutOptions.SIZE_CONSTRAINT, SizeConstraint.fixed());
+        }
+        
         
         progressMonitor.done();
     }
