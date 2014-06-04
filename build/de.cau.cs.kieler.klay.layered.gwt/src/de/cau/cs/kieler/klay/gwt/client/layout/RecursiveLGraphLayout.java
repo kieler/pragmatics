@@ -16,6 +16,7 @@ package de.cau.cs.kieler.klay.gwt.client.layout;
 import com.google.gwt.json.client.JSONObject;
 
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.KlayLayered;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
@@ -50,7 +51,7 @@ public class RecursiveLGraphLayout {
 
         // perform layer-based layout
         KlayLayered klayLayered = new KlayLayered();
-        
+
         if (graph.getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {
             klayLayered.doCompoundLayout(graph, new BasicProgressMonitor());
         } else {
@@ -70,14 +71,22 @@ public class RecursiveLGraphLayout {
 
                 // resize the compound node, such that it is considered
                 // properly when layouting the parent graph
-                // note, we have to do this here as klay won't write 
+                // note, we have to do this here as klay won't write
                 // the size back to the parent node
                 n.getSize().x = res.getActualSize().x;
                 n.getSize().y = res.getActualSize().y;
             }
         }
+        
+        IKielerProgressMonitor pm = new BasicProgressMonitor();
 
-        layered.doLayout(graph, new BasicProgressMonitor());
+        // check for fixed layout
+        final String alg = graph.getProperty(LayoutOptions.ALGORITHM);
+        if (alg != null && alg.equals(FixedLayoutProvider.ID)) {
+            new FixedLayoutProvider().doLayout(graph, pm);
+        } else {
+            layered.doLayout(graph, pm);
+        }
 
         return graph;
     }

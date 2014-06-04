@@ -15,6 +15,7 @@ package de.cau.cs.kieler.klay.gwt.client.layout;
 
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.ALGORITHM;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.ALIGNMENT;
+import static de.cau.cs.kieler.kiml.options.LayoutOptions.BEND_POINTS;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.DIRECTION;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.EDGE_ROUTING;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.THICKNESS;
@@ -54,6 +55,7 @@ import static de.cau.cs.kieler.klay.layered.properties.Properties.THOROUGHNESS;
 
 
 
+
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
@@ -65,6 +67,7 @@ import com.google.common.collect.Sets;
 import com.google.gwt.json.client.JSONValue;
 
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
@@ -161,7 +164,8 @@ public final class LayoutOptionResolver {
             );
     
     private static final Pair<Set<String>, Map<String, IProperty<?>>> OTHER_TYPES = createTypesSet(
-            POSITION
+            POSITION,
+            BEND_POINTS
             // klay
             );
     
@@ -399,7 +403,6 @@ public final class LayoutOptionResolver {
             }
 
             if (equalsIdOrSuffix(POSITION, id)) {
-
                 try {
                     KVector v = new KVector();
                     v.parse(value.isString().stringValue());
@@ -409,7 +412,20 @@ public final class LayoutOptionResolver {
 
                 } catch (IllegalArgumentException exception) {
                     throw new UnsupportedGraphException("Invalid KVector format for property '" + id
-                            + "' (" + value + ").");
+                            + "' " + value + ".");
+                }
+            } else if (equalsIdOrSuffix(BEND_POINTS, id)) {
+                try {
+                    KVectorChain vc = new KVectorChain();
+                    vc.parse(value.isString().stringValue());
+                    IProperty<KVectorChain> p =
+                            (IProperty<KVectorChain>) OTHER_TYPES.getSecond().get(id);
+                    element.setProperty(p, vc);
+                    return;
+
+                } catch (IllegalArgumentException exception) {
+                    throw new UnsupportedGraphException(
+                            "Invalid KVectorChain format for property '" + id + "' " + value + ".");
                 }
             }
 

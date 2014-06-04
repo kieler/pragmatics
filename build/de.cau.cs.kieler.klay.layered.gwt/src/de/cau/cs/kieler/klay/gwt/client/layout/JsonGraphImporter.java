@@ -221,7 +221,6 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
             if (bottom != null) {
                 linsets.bottom = bottom.doubleValue();
             }
-            System.out.println("set insets " + parentNode + " " + linsets + " " + jparent);
         }
 
         // the graph properties discovered during the transformations
