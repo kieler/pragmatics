@@ -22,6 +22,7 @@ import org.adaptagrams.UnsatisfiableConstraintInfoPtrs;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import de.cau.cs.kieler.adaptagrams.cgraph.CGraph;
+import de.cau.cs.kieler.adaptagrams.layouter.KConstrainedFDLayouter;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
@@ -141,70 +142,72 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         // FIXME adaptagrams - atm still have to compute the bounding rects of clusters
         graph.rootCluster.computeBoundingRect(graph.nodes);
 
-        ConstrainedFDLayout fd =
-                new ConstrainedFDLayout(graph.nodes, graph.edges, 10, true);
-        // WhitparentLayout.getProperty(LayoutOptions.SPACING)
-        fd.setClusterHierarchy(graph.rootCluster);
-        fd.setConstraints(graph.constraints);
-        fd.run();
-        
+        // compaction
+        new KConstrainedFDLayouter().withCGraph(graph).withRemoveOverlaps().withIdealEdgeLength(10)
+                .run();
+
+//        ConstrainedFDLayout fd =
+//                new ConstrainedFDLayout(graph.nodes, graph.edges, 10, true);
+//        // WhitparentLayout.getProperty(LayoutOptions.SPACING)
+//        fd.setClusterHierarchy(graph.rootCluster);
+//        fd.setConstraints(graph.constraints);
+//        fd.run();
         
         // apply the calculated layout back to the kgrap
         importer.applyLayout(graph);
 
         // free c++ object after the last layouter finished
         // FIXME this should still leak the earlier layouter instances ...
-        layouters.pop().freeAssociatedObjects();
-        layouters.clear();
+        //layouters.pop().freeAssociatedObjects();
+        //layouters.clear();
         
         progressMonitor.done();
     }
 
-    private ConstrainedFDLayout runLayout(final boolean overlap, final String dbgString, 
+    private ConstrainedFDLayout runLayout(final boolean overlap, final String dbgString,
             final double edgelength) {
 
         // create a new layouter instance
-        ConstrainedFDLayout algo =
-                // edge length multiplier is 1
-                new ConstrainedFDLayout(graph.getNodes(), graph.getEdges(), edgelength, overlap,
-                        graph.getIdealEdgeLengths(), testConvergence);
+        // ConstrainedFDLayout algo =
+        // // edge length multiplier is 1
+        // new ConstrainedFDLayout(graph.getNodes(), graph.getEdges(), edgelength, overlap,
+        // graph.getIdealEdgeLengths(), testConvergence);
+
+        KConstrainedFDLayouter algo =
+                new KConstrainedFDLayouter().withCGraph(graph).withRemoveOverlaps(overlap)
+                        .withIdealEdgeLength(edgelength);
 
         UnsatisfiableConstraintInfoPtrs uciX = new UnsatisfiableConstraintInfoPtrs();
         UnsatisfiableConstraintInfoPtrs uciY = new UnsatisfiableConstraintInfoPtrs();
-                
-        algo.setUnsatisfiableConstraintInfo(uciX, uciY);
-        
+
+        algo.withUnsatisfiableConstraintInfos(uciX, uciY);
+
+        algo.prepare();
+
         // remember for later disposal
-        layouters.add(algo);
+        // layouters.add(algo);
 
         if (debug) {
             DebugTestConvergence debugConvergence = (DebugTestConvergence) testConvergence;
-            debugConvergence.setLayouter(algo);
+            debugConvergence.setLayouter(algo.getLayouter());
             debugConvergence.setNamePrefix(debugPrefix + (overlap ? "overlap" : "non_overlap")
                     + dbgString);
+
+            algo.getLayouter().outputInstanceToSVG(
+                    "colapre_" + (overlap ? "overlap" : "non_overlap" + dbgString));
         }
 
-        // set constraints and clusters
-        algo.setConstraints(graph.getConstraints());
-        algo.setClusterHierarchy(graph.rootCluster);
-
-        algo.outputInstanceToSVG("colapre_" + (overlap ? "overlap" : "non_overlap" + dbgString));
-        
-        algo.makeFeasible();
-        
-        algo.outputInstanceToSVG("colapremf_" + (overlap ? "overlap" : "non_overlap" + dbgString));
-
         algo.run();
-        
+
         for (int i = 0; i < uciX.size(); i++) {
             System.out.println("X " + uciX.get(i));
         }
-        
+
         for (int i = 0; i < uciY.size(); i++) {
             System.out.println("Y" + uciY.get(i));
         }
-        
-        return algo;
+
+        return algo.getLayouter();
     }
 
     private void calculateMarginsAndSizes(final KNode parent) {
