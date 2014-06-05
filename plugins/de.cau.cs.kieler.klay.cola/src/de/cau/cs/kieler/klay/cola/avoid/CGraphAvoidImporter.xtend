@@ -19,18 +19,19 @@ import de.cau.cs.kieler.adaptagrams.cgraph.CEdge
 import de.cau.cs.kieler.adaptagrams.cgraph.CGraph
 import de.cau.cs.kieler.adaptagrams.cgraph.CNode
 import de.cau.cs.kieler.adaptagrams.cgraph.CPort
+import de.cau.cs.kieler.adaptagrams.properties.LibavoidProperties
 import de.cau.cs.kieler.core.kgraph.KPort
 import de.cau.cs.kieler.core.math.KVector
 import de.cau.cs.kieler.core.math.KVectorChain
 import de.cau.cs.kieler.core.util.Pair
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
-import de.cau.cs.kieler.kiml.libavoid.LibavoidProperties
 import de.cau.cs.kieler.kiml.options.Direction
 import de.cau.cs.kieler.kiml.options.EdgeRouting
 import de.cau.cs.kieler.kiml.options.LayoutOptions
 import de.cau.cs.kieler.kiml.options.PortSide
 import de.cau.cs.kieler.klay.cola.graphimport.IGraphImporter
 import de.cau.cs.kieler.klay.cola.properties.InternalColaProperties
+import de.cau.cs.kieler.klay.cola.util.ColaUtil
 import java.awt.geom.Line2D
 import java.awt.geom.Point2D
 import java.util.Iterator
@@ -54,8 +55,6 @@ import org.adaptagrams.ShapeRef
 import org.adaptagrams.adaptagrams
 
 import static de.cau.cs.kieler.kiml.options.PortSide.*
-import de.cau.cs.kieler.klay.cola.util.ColaUtil
-import java.text.DecimalFormat
 
 /**
  * TODO document
