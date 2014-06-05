@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.grana.analyses;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -67,14 +68,18 @@ public class StressAnalysis implements IAnalysis {
 
     private Map<KNode, Integer> nodeMap = Maps.newHashMap();
 
+    /** Our representation of infinity, allow to add two of them without getting an int overflow. */
+    private static final int INFINITY = (Integer.MAX_VALUE / 2) - 1;
+
     /**
      * {@inheritDoc}
      */
     public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Stress analysis", 1);
-        
-        final boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
+
+        final boolean hierarchy =
+                parentNode.getData(KShapeLayout.class).getProperty(
                         AnalysisOptions.ANALYZE_HIERARCHY);
 
         // collect all nodes of the graph
@@ -104,59 +109,50 @@ public class StressAnalysis implements IAnalysis {
         // calculate ideal edge length
         double numerator = 0;
         double denominator = 0;
-        for (KNode child : nodes) {
-            for (KEdge e : child.getOutgoingEdges()) {
-                KNode src = e.getSource();
-                KNode tgt = e.getTarget();
 
-                if (tgt.getChildren().isEmpty() && src.getParent().equals(tgt.getParent())) {
-                    double geomDist = getNodeCenter(src).distance(getNodeCenter(tgt));
-                    double theoDist = shortestPaths[nodeMap.get(src)][nodeMap.get(tgt)];
+        for (int i = 0; i < nodes.size(); ++i) {
+            KNode src = nodes.get(i);
+            for (int j = 0; j < nodes.size(); ++j) {
+                if (i == j) {
+                    continue;
+                }
+                KNode tgt = nodes.get(j);
 
+                double geomDist = getNodeCenter(src).distance(getNodeCenter(tgt));
+                double theoDist = shortestPaths[nodeMap.get(src)][nodeMap.get(tgt)];
+
+                if (theoDist < INFINITY) {
                     numerator += (geomDist * geomDist) / (theoDist * theoDist);
                     denominator += geomDist / theoDist;
-
-                } else if (hierarchy) {
-                    // same as above, just for hierarhcy crossing edges
-                    for (KNode hTgt : followHierarchicalEdge(e)) {
-                        double geomDist = getNodeCenter(src).distance(getNodeCenter(hTgt));
-                        double theoDist = shortestPaths[nodeMap.get(src)][nodeMap.get(hTgt)];
-
-                        numerator += (geomDist * geomDist) / (theoDist * theoDist);
-                        denominator += geomDist / theoDist;
-                    }
                 }
             }
         }
+
         double idealEdgeLength = numerator / denominator;
 
         // calculate the stress
         double stress = 0;
-        for (KNode child : nodes) {
-            for (KEdge e : child.getOutgoingEdges()) {
-                KNode src = e.getSource();
-                KNode tgt = e.getTarget();
+        for (int i = 0; i < nodes.size(); ++i) {
+            KNode src = nodes.get(i);
+            for (int j = 0; j < nodes.size(); ++j) {
+                if (i == j) {
+                    continue;
+                }
+                KNode tgt = nodes.get(j);
 
-                if (tgt.getChildren().isEmpty() && src.getParent().equals(tgt.getParent())) {
-                    double geomDist = getNodeCenter(src).distance(getNodeCenter(tgt));
-                    double theoDist = shortestPaths[nodeMap.get(src)][nodeMap.get(tgt)];
+                double geomDist = getNodeCenter(src).distance(getNodeCenter(tgt));
+                double theoDist = shortestPaths[nodeMap.get(src)][nodeMap.get(tgt)];
 
-                    stress += Math.pow(1 - (geomDist / (idealEdgeLength * theoDist)), 2);
-                } else if (hierarchy) {
-                    // same as above, just for hierarhcy crossing edges
-                    for (KNode hTgt : followHierarchicalEdge(e)) {
-                        double geomDist = getNodeCenter(src).distance(getNodeCenter(hTgt));
-                        double theoDist = shortestPaths[nodeMap.get(src)][nodeMap.get(hTgt)];
-
-                        stress += Math.pow(1 - (geomDist / (idealEdgeLength * theoDist)), 2);
-                    }
+                if (theoDist < INFINITY) {
+                    double current = Math.pow(1 - (geomDist / (idealEdgeLength * theoDist)), 2);
+                    stress += current;
                 }
             }
         }
-        
+
         // done
         progressMonitor.done();
-        
+
         return stress;
     }
 
@@ -176,7 +172,7 @@ public class StressAnalysis implements IAnalysis {
         for (int i = 0; i <= n; i++) {
             for (int j = 0; j <= n; j++) {
                 // assure that adding two of this does not exceed INT_MAX
-                matrix[i][j] = (Integer.MAX_VALUE / 2) - 1;
+                matrix[i][j] = INFINITY;
             }
         }
 
