@@ -211,7 +211,7 @@ public class PPanEventHandler extends PDragSequenceEventHandler {
             clippedDelta = maxDelta;
         }
         else {
-            clippedDelta = delta;
+            clippedDelta = absDelta;
         }
 
         if (delta < 0) {
