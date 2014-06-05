@@ -25,7 +25,7 @@ import org.adaptagrams.SeparationConstraint;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
-import de.cau.cs.kieler.adaptagrams.properties.ColaProperties;
+import de.cau.cs.kieler.adaptagrams.properties.CoLaProperties;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -81,7 +81,7 @@ public class ConstrainedLayoutProvider extends AbstractLayoutProvider {
         KLayoutData rootLayout = parentNode.getData(KLayoutData.class);
 
         // should we consider previous node positions?
-        considerPrevious = rootLayout.getProperty(ColaProperties.CONSIDER_PREVIOUS);
+        considerPrevious = rootLayout.getProperty(CoLaProperties.CONSIDER_PREVIOUS);
 
         // spacing
         spacing = rootLayout.getProperty(LayoutOptions.SPACING);
@@ -89,8 +89,8 @@ public class ConstrainedLayoutProvider extends AbstractLayoutProvider {
         Rectangle.setYBorder(spacing);
 
         // further options
-        double idealEdgeLength = rootLayout.getProperty(ColaProperties.IDEAL_EDGE_LENGTHS);
-        boolean avoidOverlaps = rootLayout.getProperty(ColaProperties.AVOID_OVERLAPS);
+        double idealEdgeLength = rootLayout.getProperty(CoLaProperties.IDEAL_EDGE_LENGTHS);
+        boolean avoidOverlaps = rootLayout.getProperty(CoLaProperties.AVOID_OVERLAPS);
         borderSpacing = rootLayout.getProperty(LayoutOptions.BORDER_SPACING);
 
         // transform to cola representation

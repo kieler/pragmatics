@@ -38,7 +38,7 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
-import de.cau.cs.kieler.adaptagrams.properties.LibavoidProperties;
+import de.cau.cs.kieler.adaptagrams.properties.AvoidProperties;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
@@ -160,7 +160,7 @@ public class LibavoidGraph {
         router = new Router(rf);
 
         // layout options
-        LibavoidProperties.transferOptions(router, layout);
+        AvoidProperties.transferOptions(router, layout);
     }
 
     /**
@@ -283,7 +283,7 @@ public class LibavoidGraph {
         float borderSpacing = shape.getProperty(LayoutOptions.BORDER_SPACING);
 
         // offset each side by the shape buffer distance to let edges route properly
-        float bufferDistance = shape.getProperty(LibavoidProperties.SHAPE_BUFFER_DISTANCE);
+        float bufferDistance = shape.getProperty(AvoidProperties.SHAPE_BUFFER_DISTANCE);
         // top
         libavoidNode(parent, NODE_COMPOUND_NORTH, 0, 0 - SURROUNDING_RECT_SIZE - bufferDistance,
                 shape.getWidth(), SURROUNDING_RECT_SIZE + insets.getTop(),

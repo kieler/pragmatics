@@ -19,7 +19,6 @@ import de.cau.cs.kieler.adaptagrams.cgraph.CEdge
 import de.cau.cs.kieler.adaptagrams.cgraph.CGraph
 import de.cau.cs.kieler.adaptagrams.cgraph.CNode
 import de.cau.cs.kieler.adaptagrams.cgraph.CPort
-import de.cau.cs.kieler.adaptagrams.properties.LibavoidProperties
 import de.cau.cs.kieler.core.kgraph.KPort
 import de.cau.cs.kieler.core.math.KVector
 import de.cau.cs.kieler.core.math.KVectorChain
@@ -55,6 +54,7 @@ import org.adaptagrams.ShapeRef
 import org.adaptagrams.adaptagrams
 
 import static de.cau.cs.kieler.kiml.options.PortSide.*
+import de.cau.cs.kieler.adaptagrams.properties.AvoidProperties
 
 /**
  * TODO document
@@ -74,7 +74,7 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
     val router = new Router(edgeRouting)
 
     // transfer the libavoid properties specified in the graph to the router    
-    LibavoidProperties.transferOptions(router, graph)
+    AvoidProperties.transferOptions(router, graph)
     
     // transform all the nodes
     for (node : graph.children) {
@@ -208,12 +208,12 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
         val portSide = portLayout.getProperty(LayoutOptions.PORT_SIDE)
         if (portSide == PortSide.EAST || portSide == PortSide.WEST) {
           // allow the edge to be routed left-right or right-left
-          cp.setArrivalDirections(LibavoidProperties.CONN_DIR_LEFTRIGHT)
-          cp.setDepartureDirections(LibavoidProperties.CONN_DIR_LEFTRIGHT)
+          cp.setArrivalDirections(AvoidProperties.CONN_DIR_LEFTRIGHT)
+          cp.setDepartureDirections(AvoidProperties.CONN_DIR_LEFTRIGHT)
         } else {
           // bottom-up or up-bottom
-          cp.setArrivalDirections(LibavoidProperties.CONN_DIR_UPDOWN)
-          cp.setDepartureDirections(LibavoidProperties.CONN_DIR_UPDOWN)
+          cp.setArrivalDirections(AvoidProperties.CONN_DIR_UPDOWN)
+          cp.setDepartureDirections(AvoidProperties.CONN_DIR_UPDOWN)
         }        
         checkpoints.add(cp)
       }

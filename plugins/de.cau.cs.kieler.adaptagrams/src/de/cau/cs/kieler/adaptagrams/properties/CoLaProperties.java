@@ -20,7 +20,7 @@ import de.cau.cs.kieler.core.properties.Property;
  * @author uru
  * 
  */
-public final class ColaProperties {
+public final class CoLaProperties {
 
     /** A scalar modifier of ideal edge lengths. */
     public static final IProperty<Float> IDEAL_EDGE_LENGTHS = new Property<Float>(
@@ -51,6 +51,6 @@ public final class ColaProperties {
     /**
      * Utility class.
      */
-    private ColaProperties() {
+    private CoLaProperties() {
     }
 }

@@ -27,7 +27,7 @@ import de.cau.cs.kieler.adaptagrams.avoid.LibavoidGraph;
 import de.cau.cs.kieler.adaptagrams.cgraph.CGraph;
 import de.cau.cs.kieler.adaptagrams.cgraph.CNode;
 import de.cau.cs.kieler.adaptagrams.properties.CGraphProperties;
-import de.cau.cs.kieler.adaptagrams.properties.LibavoidProperties;
+import de.cau.cs.kieler.adaptagrams.properties.AvoidProperties;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
@@ -130,7 +130,7 @@ public class TIOLayoutProvider extends AbstractLayoutProvider {
             float borderSpacing = shape.getProperty(LayoutOptions.BORDER_SPACING);
 
             // offset each side by the shape buffer distance to let edges route properly
-            float bufferDistance = shape.getProperty(LibavoidProperties.SHAPE_BUFFER_DISTANCE);
+            float bufferDistance = shape.getProperty(AvoidProperties.SHAPE_BUFFER_DISTANCE);
             // top
             double y = 0 - LibavoidGraph.SURROUNDING_RECT_SIZE - bufferDistance;
             Rectangle r =
