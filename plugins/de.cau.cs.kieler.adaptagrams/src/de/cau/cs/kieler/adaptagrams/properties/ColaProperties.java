@@ -1,0 +1,56 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2013 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
+package de.cau.cs.kieler.adaptagrams.properties;
+
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.Property;
+
+/**
+ * @author uru
+ * 
+ */
+public final class ColaProperties {
+
+    /** A scalar modifier of ideal edge lengths. */
+    public static final IProperty<Float> IDEAL_EDGE_LENGTHS = new Property<Float>(
+            "de.cau.cs.kieler.adaptagrams.idealEdgeLength", 100f, 1f);
+
+    /** Direction of the desired layout. */
+    public static final IProperty<Boolean> AVOID_OVERLAPS = new Property<Boolean>(
+            "de.cau.cs.kieler.adaptagrams.avoidOverlaps", true);
+
+    /** Whether to adapt port positions after a layout run. */
+    // public static final IProperty<Boolean> ADAPT_PORT_POSITIONS = new Property<Boolean>(
+    // "de.cau.cs.kieler.kiml.cola.adaptPortPositions", false);
+
+    /** Whether to retain previous node positions during the layout run. */
+    public static final IProperty<Boolean> CONSIDER_PREVIOUS = new Property<Boolean>(
+            "de.cau.cs.kieler.adaptagrams.considerPrevious", false);
+
+    /*
+     * Experimental
+     */
+
+    /**
+     * Direction of the desired layout.
+     */
+    public static final IProperty<Boolean> DIRECTION_CONSTRAINTS = new Property<Boolean>(
+            "de.cau.cs.kieler.kiml.cola.direction", true);
+
+    /**
+     * Utility class.
+     */
+    private ColaProperties() {
+    }
+}
