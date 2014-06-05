@@ -9,7 +9,7 @@
       <layoutOption
             advanced="true"
             appliesTo="parents"
-            default="100"
+            default="18"
             description="The ideal length of the edges"
             id="de.cau.cs.kieler.klay.cola.idealEdgeLengths"
             lowerBound="0"
@@ -19,7 +19,7 @@
           <layoutOption
             appliesTo="parents"
             class="de.cau.cs.kieler.klay.cola.properties.HorizontalAlignment"
-            default="LEFT"
+            default="NONE"
             id="de.cau.cs.kieler.klay.cola.alignNodesHorizontal"
             name="Horizontal Node Alignment"
             type="enum">
@@ -33,6 +33,7 @@
       </layoutOption>
       <layoutOption
             advanced="true"
+            default="true"
             appliesTo="parents"
             id="de.cau.cs.kieler.klay.cola.repositionHierarchicalPorts"
             name="Reposition Hierarchical Ports"
@@ -40,12 +41,14 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
+            default="true"
             id="de.cau.cs.kieler.klay.cola.dummyPortNodes"
             name="Create Dummy Port Nodes"
             type="boolean">
       </layoutOption>
       <layoutOption
             appliesTo="parents"
+            default="MFAS_GLOBAL"
             class="de.cau.cs.kieler.klay.cola.properties.CycleTreatment"
             id="de.cau.cs.kieler.klay.cola.cycleTreatment"
             name="Cycle Treatment"
@@ -72,7 +75,7 @@
       <layoutOption
             advanced="true"
             appliesTo="parents"
-            default="UNIFORM"
+            default="CONNECTIVITY"
             class="de.cau.cs.kieler.klay.cola.properties.EdgeLengthStrategy"
             id="de.cau.cs.kieler.klay.cola.edgeLengthStrategy"
             name="Ideal Edge Length Strategy"
@@ -84,6 +87,27 @@
             default="true"
             id="de.cau.cs.kieler.klay.cola.emphasizeDirection"
             name="Emphasize Direction"
+            type="boolean">
+      </layoutOption>
+            <layoutOption
+            appliesTo="parents"
+            default="true"
+            id="de.cau.cs.kieler.klay.cola.aca.alignCrossHierarchyEdges"
+            name="ACA Align Cross-Hierarchy Edges"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="false"
+            id="de.cau.cs.kieler.klay.cola.aca.favorLongEdges"
+            name="ACA Favor Long Edges"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="false"
+            id="de.cau.cs.kieler.klay.cola.aca.postCompaction"
+            name="ACA Post Compaction"
             type="boolean">
       </layoutOption>
       <!--____________________________________________ 
@@ -263,26 +287,5 @@
                option="de.cau.cs.kieler.klay.cola.considerPreviousPositions">
          </knownOption>
       </layoutAlgorithm>
-      <layoutOption
-            appliesTo="parents"
-            default="false"
-            id="de.cau.cs.kieler.klay.cola.aca.alignCrossHierarchyEdges"
-            name="ACA Align Cross-Hierarchy Edges"
-            type="boolean">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            default="false"
-            id="de.cau.cs.kieler.klay.cola.aca.favorLongEdges"
-            name="ACA Favor Long Edges"
-            type="boolean">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            default="false"
-            id="de.cau.cs.kieler.klay.cola.aca.postCompaction"
-            name="ACA Post Compaction"
-            type="boolean">
-      </layoutOption>
    </extension>
 </plugin>

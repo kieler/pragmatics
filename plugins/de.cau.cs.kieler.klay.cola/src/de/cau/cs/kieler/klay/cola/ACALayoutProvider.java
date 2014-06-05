@@ -26,6 +26,7 @@ import org.adaptagrams.ConstrainedFDLayout;
 import org.adaptagrams.DoublePair;
 import org.adaptagrams.IntIntMap;
 import org.adaptagrams.TestConvergence;
+import org.adaptagrams.Unsigneds;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import com.google.common.collect.Lists;
@@ -34,6 +35,7 @@ import de.cau.cs.kieler.adaptagrams.cgraph.CEdge;
 import de.cau.cs.kieler.adaptagrams.cgraph.CGraph;
 import de.cau.cs.kieler.adaptagrams.cgraph.CNode;
 import de.cau.cs.kieler.adaptagrams.cgraph.CPort;
+import de.cau.cs.kieler.adaptagrams.properties.CGraphProperties;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -56,6 +58,7 @@ import de.cau.cs.kieler.klay.cola.processors.PortConstraintProcessor;
 import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
 import de.cau.cs.kieler.klay.cola.properties.InternalColaProperties;
 import de.cau.cs.kieler.klay.cola.util.ACADebugTestConvergence;
+import de.cau.cs.kieler.klay.cola.util.MinMaxTestConvergence;
 
 /**
  * 
@@ -72,7 +75,7 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
      * Debug
      */
     private boolean debug = false;
-    private TestConvergence testConvergence;
+    private MinMaxTestConvergence testConvergence;
     private String debugPrefix;
 
     /**
@@ -101,11 +104,13 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
             }
         } else {
             // use default convergence test
-            testConvergence = new TestConvergence();
+            testConvergence = new MinMaxTestConvergence();
         }
 
         // margins for the nodes (include the labels etc)
         calculateMarginsAndSizes(parentNode);
+        
+        parentLayout.setProperty(CGraphProperties.MARGIN_INCLUDES_SPACING, true);
 
         // execute layout algorithm
         IGraphImporter<KNode, CGraph> importer;
@@ -151,10 +156,9 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
         // tell aca which nodes ports belong to. aca uses this information to check valid alignments
         // based on the nodes instead of the ports
         // FIXME remove
-//        generatePortNodeMapping();
+        generatePortNodeMapping();
         
-        
-        aca.overlapPrevention(ACAOverlapPrevention.ACAOPWITHOFFSETS);
+//        aca.overlapPrevention(ACAOverlapPrevention.ACAOPWITHOFFSETS);
         
         // we only allow aca to create certain alignments, basically horizontal ones for 
         // WEST/EAST edges and vertical ones for SOUTH/NORTH edges
@@ -162,15 +166,21 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
         
         // specify offsets for each edge that relate to the port positions to which
         // the edge is connected
-        //generateEdgeOffsets();
+        generateEdgeOffsets();
         
         // FIXME adaptagrams - atm still have to compute the bounding rects of clusters
         graph.rootCluster.computeBoundingRect(graph.nodes);
         
         aca.outputInstanceToSVG("aca_original_the_one_before");
 
-        aca.removeOverlaps();
+        // FIXME usually I wanna generate exemptions first, but the fd layout is not yet available
+        //aca.removeOverlaps();
         
+        generateOverlapIgnores(graph, aca);
+
+        
+        IKielerProgressMonitor spm = progressMonitor.subTask(1);
+        spm.begin("ACA Alignment Generation", 1);
         // execute ACA
         if (debug) {
             int i = 0;
@@ -180,6 +190,7 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
         } else {
             aca.createAlignments();
         }
+        spm.done();
         
         aca.outputInstanceToSVG("aca_original_the_one");
 
@@ -198,13 +209,26 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
             }
         }
         
+//        ConstrainedFDLayout fd2 =
+//                new ConstrainedFDLayout(graph.nodes, graph.edges, 1, true, graph.getIdealEdgeLengths());
+//        fd2.setClusterHierarchy(graph.rootCluster);
+//        fd2.setConstraints(graph.constraints);
+//        fd2.setM_doYAxisFirst(true);
+//        fd2.run();
+        
+//        fd2.outputInstanceToSVG("aca_overlap_on");
+        
         if (parentLayout.getProperty(ColaProperties.ACA_POST_COMPACTION)) {
+            spm = progressMonitor.subTask(1);
+            spm.begin("ACA Post Compaction", 1);
             ConstrainedFDLayout fd =
                     new ConstrainedFDLayout(graph.nodes, graph.edges, 10, true);
             // WhitparentLayout.getProperty(LayoutOptions.SPACING)
             fd.setClusterHierarchy(graph.rootCluster);
             fd.setConstraints(graph.constraints);
+            fd.setM_doYAxisFirst(true);
             fd.run();
+            spm.done();
         }
         
         
@@ -255,94 +279,96 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
             }
         }
         aca.setAllowedDirections(struct);
+        
+        aca.overlapPrevention(ACAOverlapPrevention.ACAOPWITHOFFSETS);
     }
     
-//    private void generateEdgeOffsets() {
-//        // for each edge two offsets can be passed that correlate to the
-//        // position of a possible src/tgt port relative to the node's center
-//        ACAEdgeOffsets edgeOffsets = new ACAEdgeOffsets(graph.edges.size());
-//        for (CNode n : graph.getChildren()) {
-//            for (CEdge e : n.getOutgoingEdges()) { 
-//                KEdge kedge = (KEdge) e.getProperty(InternalColaProperties.ORIGIN);
-//                KPort srcPort = kedge.getSourcePort();
-//                KPort tgtPort = kedge.getTargetPort();
-//
-//                // FIXME clean this, we dont have to differ between the cases!
-//                // for cross hierarchy edges we have to extract the ports from the cedge 
-//                if (e.crossHierarchy) {
-//                    if (e.getSourcePort() != null) {
-//                        srcPort = (KPort) e.getSourcePort().getProperty(InternalColaProperties.ORIGIN);
-//                    }
-//                    
-//                    if (e.getTargetPort() != null) { 
-//                        tgtPort = (KPort) e.getTargetPort().getProperty(InternalColaProperties.ORIGIN);
-//                    }
-//                }
-//                
-//                // calculate the offset for this edge
-//                DoublePair st = new DoublePair(0, 0);
-//                if (srcPort != null) {
-//                    st.setFirst(-calculatePortOffset(n, srcPort));
-//                }
-//                if (tgtPort != null) {
-//                    st.setSecond(-calculatePortOffset(e.getTarget(), tgtPort));
-//                }
-//                
-////                System.out.println(e.getSource() + " " + e.getTarget());
-////                System.out.println("\t" + srcPort + " " + srcPort.getData(KShapeLayout.class) + " " + e.getSourcePort().getPos());
-////                System.out.println("\t" + tgtPort + " " + tgtPort.getData(KShapeLayout.class) + " " + e.getTargetPort().getPos());
-////                System.out.println(st);
-//                edgeOffsets.set(e.cIndex, st);
-//
-//            }
-//        }
-//        
-//        // add the external thingys
-//        for (CPort p : graph.getExternalPorts()) {
-//            for (CEdge e : p.getConnectedEdges()) {
-//                
-//                KEdge kedge = (KEdge) e.getProperty(InternalColaProperties.ORIGIN);
-//                KPort srcPort = kedge.getSourcePort();
-//                KPort tgtPort = kedge.getTargetPort();
-//                
-//                // calculate the offset for this edge
-//                DoublePair st = new DoublePair(0, 0);
-//                if (e.getSource() != null) {
-//                    st.setFirst(-calculatePortOffset(e.getSource(), srcPort));
-//                }
-//                if (e.getTarget() != null) {
-//                    st.setSecond(-calculatePortOffset(e.getTarget(), tgtPort));
-//                }
-//                // System.out.println("adding offset for external port " + st);
-//                edgeOffsets.set(e.cIndex, st);
-//            }
-//        }
-//        
-//        
-//        aca.overlapPrevention(ACAOverlapPrevention.ACAOPWITHOFFSETS);
-//        //aca.setAlignmentOffsetsForCompassDirection(ACASepFlag.ACAEAST, edgeOffsets);
-//    }
+    private void generateEdgeOffsets() {
+        // for each edge two offsets can be passed that correlate to the
+        // position of a possible src/tgt port relative to the node's center
+        ACAEdgeOffsets edgeOffsets = new ACAEdgeOffsets(graph.edges.size());
+        for (CNode n : graph.getChildren()) {
+            for (CEdge e : n.getOutgoingEdges()) { 
+                KEdge kedge = (KEdge) e.getProperty(CGraphProperties.ORIGIN);
+                KPort srcPort = kedge.getSourcePort();
+                KPort tgtPort = kedge.getTargetPort();
+
+                // FIXME clean this, we dont have to differ between the cases!
+                // for cross hierarchy edges we have to extract the ports from the cedge 
+                if (e.crossHierarchy) {
+                    if (e.getSourcePort() != null) {
+                        srcPort = (KPort) e.getSourcePort().getProperty(CGraphProperties.ORIGIN);
+                    }
+                    
+                    if (e.getTargetPort() != null) { 
+                        tgtPort = (KPort) e.getTargetPort().getProperty(CGraphProperties.ORIGIN);
+                    }
+                }
+                
+                // calculate the offset for this edge
+                DoublePair st = new DoublePair(0, 0);
+                if (srcPort != null) {
+                    st.setFirst(-calculatePortOffset(n, srcPort));
+                }
+                if (tgtPort != null) {
+                    st.setSecond(-calculatePortOffset(e.getTarget(), tgtPort));
+                }
+                
+//                System.out.println(e.getSource() + " " + e.getTarget());
+//                System.out.println("\t" + srcPort + " " + srcPort.getData(KShapeLayout.class) + " " + e.getSourcePort().getPos());
+//                System.out.println("\t" + tgtPort + " " + tgtPort.getData(KShapeLayout.class) + " " + e.getTargetPort().getPos());
+//                System.out.println(st);
+                edgeOffsets.set(e.cIndex, st);
+
+            }
+        }
+        
+        // add the external thingys
+        for (CPort p : graph.getExternalPorts()) {
+            for (CEdge e : p.getConnectedEdges()) {
+                
+                KEdge kedge = (KEdge) e.getProperty(CGraphProperties.ORIGIN);
+                KPort srcPort = kedge.getSourcePort();
+                KPort tgtPort = kedge.getTargetPort();
+                
+                // calculate the offset for this edge
+                DoublePair st = new DoublePair(0, 0);
+                if (e.getSource() != null) {
+                    st.setFirst(-calculatePortOffset(e.getSource(), srcPort));
+                }
+                if (e.getTarget() != null) {
+                    st.setSecond(-calculatePortOffset(e.getTarget(), tgtPort));
+                }
+                // System.out.println("adding offset for external port " + st);
+                edgeOffsets.set(e.cIndex, st);
+            }
+        }
+        
+        
+        aca.overlapPrevention(ACAOverlapPrevention.ACAOPWITHOFFSETS);
+        aca.setAlignmentOffsetsForCompassDirection(ACASepFlag.ACAEAST, edgeOffsets);
+    }
     
-//    /**
-//     * Calculates the offset of the passed port relative to the parent.
-//     * 
-//     * FIXME .. do not use the KPort here, but the CPort, is that possible?
-//     * Note, to do this we require FIXED_POS ports!
-//     */
-//    private double calculatePortOffset(final CNode n, final KPort p) {
-//
-//        Margins margins = n.getMargins();
-//        double nodeHeight = n.getRectSizeRaw().y;
-//        
-//        // TODO not sure about the validity of selecting the port's pos and size
-//        KShapeLayout portLayout = p.getData(KShapeLayout.class);
-//        // System.out.println(n.getProperty(LayoutOptions.PORT_CONSTRAINTS) + " " + portLayout);
-//        double dy =
-//                -(nodeHeight / 2f) + margins.top + portLayout.getYpos()
-//                        + (portLayout.getHeight() / 2);
-//
-//        return dy;
-//    }
+    /**
+     * Calculates the offset of the passed port relative to the parent.
+     * 
+     * FIXME .. do not use the KPort here, but the CPort, is that possible?
+     * Note, to do this we require FIXED_POS ports!
+     */
+    private double calculatePortOffset(final CNode n, final KPort p) {
+
+        Margins margins = n.getMargins();
+        double nodeHeight = n.getRectSizeRaw().y;
+        
+        // TODO not sure about the validity of selecting the port's pos and size
+        KShapeLayout portLayout = p.getData(KShapeLayout.class);
+        // System.out.println(n.getProperty(LayoutOptions.PORT_CONSTRAINTS) + " " + portLayout);
+        double dy =
+                -(nodeHeight / 2f) + margins.top + portLayout.getYpos()
+                        + (portLayout.getHeight() / 2);
+
+        return dy;
+    }
     
 
     private void generateIgnoredEdgesAndNodes() {
@@ -391,26 +417,45 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
                 boolNodes.set(p.cIndex, true);
             }
         }
-        //aca.ignoreNodesForOPWithOffsets(boolNodes);
+        aca.ignoreNodesForOPWithOffsets(boolNodes);
     }
     
-//    private void generatePortNodeMapping() {
-//        IntIntMap map = new IntIntMap();
-//        for (CNode n : graph.getChildren()) {
-//            for (CPort p : n.getPorts()) {
-//                map.set(p.cIndex, n.cIndex);
-//            }
-//        }
-//        //aca.setNodeAliases(map);
-//    }
+    private void generatePortNodeMapping() {
+        IntIntMap map = new IntIntMap();
+        for (CNode n : graph.getChildren()) {
+            for (CPort p : n.getPorts()) {
+                map.set(p.cIndex, n.cIndex);
+            }
+        }
+        aca.setNodeAliases(map);
+    }
+    
+    private void generateOverlapIgnores(final CGraph graph, final ACALayout alg) {
+
+        for (CNode n : graph.getChildren()) {
+
+            Unsigneds portsGroup = new Unsigneds();
+            
+            // add the ports to be ignored
+            for (CPort p : n.getPorts()) {
+                portsGroup.add(p.cIndex);
+            } 
+            
+            // add the node as "head" of the group
+            portsGroup.add(n.cIndex);
+
+            alg.addGroupOfNonOverlapExemptRectangles(portsGroup);
+        }
+
+    }
 
     private void calculateMarginsAndSizes(final KNode parent) {
         KGraphAdapter adapter = KGraphAdapters.adapt(parent);
         KimlNodeDimensionCalculation.sortPortLists(adapter);
         KimlNodeDimensionCalculation.calculateLabelAndNodeSizes(adapter);
 
-        KimlNodeDimensionCalculation.getNodeMarginCalculator(adapter).excludePorts().process();
-        //KimlNodeDimensionCalculation.getNodeMarginCalculator(adapter).process();
+//        KimlNodeDimensionCalculation.getNodeMarginCalculator(adapter).excludePorts().process();
+        KimlNodeDimensionCalculation.getNodeMarginCalculator(adapter).process();
 
         if (parent.getData(KLayoutData.class).getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {
             for (KNode child : parent.getChildren()) {

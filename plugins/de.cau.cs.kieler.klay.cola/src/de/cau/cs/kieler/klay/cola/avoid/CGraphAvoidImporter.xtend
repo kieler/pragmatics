@@ -54,6 +54,7 @@ import org.adaptagrams.ShapeRef
 import org.adaptagrams.adaptagrams
 
 import static de.cau.cs.kieler.kiml.options.PortSide.*
+import de.cau.cs.kieler.klay.cola.util.ColaUtil
 
 /**
  * TODO document
@@ -119,6 +120,8 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
     // the raw size already concludes margins
     val rect = new AvoidRectangle(node.rectPosRaw.toPoint, 
                 node.rectPosRaw.clone.add(node.rectSizeRaw).toPoint)
+//	  val rect = new AvoidRectangle(node.rectPos.toPoint, 
+//                node.rectPos.clone.add(node.rectSize).toPoint)
     createAndRegisterShapeRef(rect, node, router)
     
   }
@@ -143,6 +146,8 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
     // determine the pin's positions relative on the respective side
     val relativePortPos = port.rectPosRaw.clone.sub(port.owner.rectPosRaw)
     relativePortPos.add(port.rectSizeRaw.scale(0.5))
+//	val relativePortPos = port.rectPos.clone.sub(port.owner.rectPos)
+//    relativePortPos.add(port.rectSize.scale(0.5))
     val relX = relativePortPos.x / width
     val relY = relativePortPos.y / height
     
@@ -249,12 +254,14 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
           edge.bendpoints.add(pts.get(i).toKVector.add(offset))
         }
         
+//        println("BPS: " + edge + " " + edge.bendpoints)
+        
       } else {
         // a hierarchy crossing edge
         
         // we have to split the route into chunks
         val subRoutes = edge.determineSubRoutes(route)
-        subRoutes.forEach[e,i | println("SubRoute " + i + " " + cr.edge + " " + e)]
+        //subRoutes.forEach[e,i | println("SubRoute " + i + " " + cr.edge + " " + e)]
         edge.setProperty(InternalColaProperties.EDGE_SUB_ROUTES, subRoutes)
       }
     }
@@ -268,7 +275,7 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
     
     // original checkpoints specified for the edge
     val chkPoints = edge.getProperty(InternalColaProperties.EDGE_CHECKPOINTS)
-    println("Checkpoints: " + chkPoints)
+    // println("Checkpoints: " + chkPoints)
     val ports = chkPoints.take(chkPoints.size - 1).map[it.second].iterator
     
     // the sub routes we are about to determine
@@ -276,32 +283,45 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
 
     // start values of some variables
     val pts = route.getPs()
+//    print("Pts: ")
+//    for(i : 0..<pts.size.intValue) {
+//    	print(pts.get(i) + ", ")
+//    }
+//    println
+    
     var currentPort = ports.next()
     var KVectorChain currentSubRoute = new KVectorChain
 
 	var i = 0
+	var newLine = true;
 	while (i < pts.size.intValue - 1) {
 
       val fst = pts.get(i)
       val snd = pts.get(i + 1)
 
       // add start point to the current sub route
-      currentSubRoute.add(fst.toKVector)
+      if (newLine) {
+      	currentSubRoute.add(fst.toKVector)
+      }
 
       // create a line for the current segment
       val segment = new Line2D.Double(fst.x, fst.y, snd.x, snd.y)
       val point = if (currentPort != null) new Point2D.Double(currentPort.x, currentPort.y) else null
+	
 
+	  val pntLineDist = if (point != null) ColaUtil.pointToSegmentDistance(currentPort, fst.toKVector, snd.toKVector) else Double.MAX_VALUE
 
-	  println("\t check " + segment.p1 + " " + segment.p2 + " " + point + " " +  ((if (point != null) segment.ptLineDist(point) else "" ) ))
+	  // println("\t check " + segment.p1 + " " + segment.p2 + " " + point + " " + pntLineDist)
+     
       // check if the checkpoint is represented by the start or end 
       // point of the segment or if it lies on the segment
+      newLine = true
       if (segment.p1 == point) {
         
         throw new AssertionError("Really shouldnt happen")
 
-      } else if (point != null && segment.p2.distance(point) < 0.01d) { // segment.p2 == point
-		// CASE 1: checkpoint is the first point of the line
+      } else if (point != null && snd.toKVector.distance(currentPort) < 0.01d) { // segment.p2 == point
+		// CASE 1: checkpoint is the second point of the line
 
         // assemble a segment
         currentSubRoute.add(currentPort.clone())
@@ -313,7 +333,7 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
         
         i = i + 1
 
-      } else if (point != null && segment.ptLineDist(point) < 0.01d) {
+      } else if (point != null && pntLineDist < 0.01d) {
 		// CASE 2: checkpoint is somewhere along the line
 
         // FIXME sometimes cp not on line!
@@ -326,8 +346,13 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
         currentSubRoute = new KVectorChain
         currentSubRoute.add(currentPort.clone())
         currentPort = ports.saveNext()
+        
+        // do not increase i, as we are still on the same segment
+        newLine = false
 
       } else {
+      	// CASE 3: 
+      	
       	i = i + 1
       }
       

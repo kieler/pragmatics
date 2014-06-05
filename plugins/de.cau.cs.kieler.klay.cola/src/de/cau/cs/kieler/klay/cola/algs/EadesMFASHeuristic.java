@@ -191,7 +191,7 @@ public final class EadesMFASHeuristic {
 
                 // randomly select a node from the ones with maximal outflow and put it left
                 int rand = random.nextInt(maxNodes.size());
-                System.out.println("random select " + rand);
+                // System.out.println("random select " + rand);
                 CNode maxNode = maxNodes.get(rand);
                 mark[maxNode.id] = nextLeft++;
                 updateNeighbors(maxNode);

@@ -22,6 +22,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -52,6 +53,10 @@ public final class ColaUtil {
 
         // insets
         KInsets insets = k.getInsets();
+        if (insets == null) {
+            insets = KLayoutDataFactory.eINSTANCE.createKInsets();
+            k.setInsets(insets);
+        }
         c.getInsets().left = insets.getLeft();
         c.getInsets().right = insets.getRight();
         c.getInsets().top = insets.getTop();
@@ -163,4 +168,47 @@ public final class ColaUtil {
             return value >= bound1 && value <= bound2;
         }
     }
+
+    private static double square(final double x) {
+        return x * x;
+    }
+
+    private static double dist2(final KVector v1, final KVector v2) {
+        return square(v1.x - v2.x) + square(v1.y - v2.y);
+    }
+
+    private static double pointToSegmentDistanceSquared(final KVector p, final KVector v,
+            final KVector w) {
+
+        double ld = dist2(v, w);
+        if (ld == 0) {
+            return dist2(p, v);
+        }
+        double t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / ld;
+        if (t < 0) {
+            return dist2(p, v);
+        }
+        if (t > 1) {
+            return dist2(p, w);
+        }
+        KVector vw = new KVector(v.x + t * (w.x - v.x), v.y + t * (w.y - v.y));
+        return p.distance(vw);
+    }
+
+    /**
+     * As opposed to standard geometry functions, e.g., AWT's Line2D function, this method does not
+     * consider the line to be of infinite length.
+     * 
+     * @param p
+     *            the point
+     * @param v
+     *            the start point of the line segment
+     * @param w
+     *            the end point of the line segment
+     * @return the shortest distance between {@code p} and the line segment.
+     */
+    public static double pointToSegmentDistance(final KVector p, final KVector v, final KVector w) {
+        return Math.sqrt(pointToSegmentDistanceSquared(p, v, w));
+    }
+
 }

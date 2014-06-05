@@ -53,7 +53,8 @@ public class IdealEdgeLengthProcessor implements ILayoutProcessor {
      * {@inheritDoc}
      */
     public void process(final CGraph graph, final IKielerProgressMonitor progressMonitor) {
-
+        progressMonitor.begin("Ideal Edge Length Determination", 1);
+        
         final double idealEdgeLength = graph.getProperty(ColaProperties.IDEAL_EDGE_LENGTHS);
 
         // assign the edge lengths for the dummy port edges
@@ -92,6 +93,7 @@ public class IdealEdgeLengthProcessor implements ILayoutProcessor {
             limitEdgeLengths(graph);
         }
 
+        progressMonitor.done();
     }
 
     /**

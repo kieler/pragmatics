@@ -97,7 +97,7 @@ public class DirectionConstraintProcessor implements ILayoutProcessor {
      * {@inheritDoc}
      */
     public void process(final CGraph theGraph, final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Cola Direction Constraints", 1);
+        progressMonitor.begin("Flow Constraints Generation", 1);
 
         this.graph = theGraph;
         
@@ -267,14 +267,17 @@ public class DirectionConstraintProcessor implements ILayoutProcessor {
     private double actualSpacing(final CEdge e) {
         double actualSpacing = spacing;
         if (e.getSourcePort() != null) {
-            actualSpacing += portBreath;
-            actualSpacing += e.getSourcePort().getRectSizeRaw().x;
+//            actualSpacing += portBreath;
+//            actualSpacing += e.getSourcePort().getRectSizeRaw().x;
         }
         if (e.getTargetPort() != null) {
-            actualSpacing += portBreath;
-            actualSpacing += e.getTargetPort().getRectSizeRaw().x;
+//            actualSpacing += portBreath;
+//            actualSpacing += e.getTargetPort().getRectSizeRaw().x;
         }
-        return actualSpacing;
+        
+        // FIXME spacing is considered using node sizes, ie margins
+        // however we have to assure a minimal distance such that nodes do not overlap
+        return 2;
     }
     
     /**
