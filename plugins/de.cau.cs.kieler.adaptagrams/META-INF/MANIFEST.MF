@@ -11,4 +11,5 @@ Require-Bundle: com.google.guava,
  de.cau.cs.kieler.kiml,
  org.adaptagrams
 Export-Package: de.cau.cs.kieler.adaptagrams.cgraph,
+ de.cau.cs.kieler.adaptagrams.layouter,
  de.cau.cs.kieler.adaptagrams.properties
