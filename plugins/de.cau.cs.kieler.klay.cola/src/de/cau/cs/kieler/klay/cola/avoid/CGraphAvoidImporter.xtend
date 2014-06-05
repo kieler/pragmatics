@@ -55,6 +55,7 @@ import org.adaptagrams.adaptagrams
 
 import static de.cau.cs.kieler.kiml.options.PortSide.*
 import de.cau.cs.kieler.klay.cola.util.ColaUtil
+import java.text.DecimalFormat
 
 /**
  * TODO document
@@ -192,12 +193,15 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
     connRef.setRoutingType(
       if (edgeRouting == EdgeRouting.ORTHOGONAL) ConnType.ConnType_Orthogonal else ConnType.ConnType_PolyLine)
 
+
     // for hierarchical edges we have to add checkpoints
     if (edge.crossHierarchy) {
       val ports = edge.getProperty(InternalColaProperties.EDGE_CHECKPOINTS)
       val checkpoints = new AvoidCheckpoints()
       for (pair : ports.take(ports.size - 1)) {
         val port = pair.second
+        port.x = port.x.roundDouble
+        port.y = port.y.roundDouble
         val cp = new Checkpoint(new Point(port.x, port.y)).register(pair.first)
 
         // set arrival and departure directions for the ports        
@@ -216,6 +220,11 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
       }
       connRef.setRoutingCheckpoints(checkpoints)
     }
+  }
+  
+  private def roundDouble(double d) {
+  	val toInt =  (d * 100.0).intValue
+  	return toInt / 100.0
   }
   
 

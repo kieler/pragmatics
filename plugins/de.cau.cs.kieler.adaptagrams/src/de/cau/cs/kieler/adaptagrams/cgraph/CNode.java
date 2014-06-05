@@ -111,7 +111,7 @@ public class CNode extends CShape {
         // register in graph
         graph.nodes.add(rect);
 
-        System.out.println("Initialized " + this);
+        // System.out.println("Initialized " + this);
     }
 
     /**
