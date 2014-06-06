@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.grana.analyses;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -72,6 +71,36 @@ public class StressAnalysis implements IAnalysis {
     private static final int INFINITY = (Integer.MAX_VALUE / 2) - 1;
 
     /**
+     * Calculates the euclidean distance between the two nodes' center points.
+     */
+    private static final DistanceStrategy EUCLIDEAN_CENTER_TO_CENTER_DISTANCE =
+            new DistanceStrategy() {
+                public double dist(final KNode u, final KNode v) {
+                    return getNodeCenter(u).distance(getNodeCenter(v));
+                }
+            };
+
+    /**
+     * Calculates the euclidean distance between a line connecting the two nodes' centerpoints
+     * clipped at the nodes bounding rectangles.
+     */
+    private static final DistanceStrategy EUCLIDEAN_BORDER_TO_BORDER_DISTANCE =
+            new DistanceStrategy() {
+                public double dist(final KNode u, final KNode v) {
+                    return getBoundToBound(u, v);
+                }
+            };
+
+    /**
+     * Collection of strategies to be executed. Take care that the order is the same as in the
+     * extension's definition (components of an analysis).
+     */
+    private static final List<DistanceStrategy> STRATEGIES = ImmutableList.of(
+            EUCLIDEAN_CENTER_TO_CENTER_DISTANCE, EUCLIDEAN_BORDER_TO_BORDER_DISTANCE);
+
+    private boolean debug = false;
+    
+    /**
      * {@inheritDoc}
      */
     public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
@@ -104,8 +133,36 @@ public class StressAnalysis implements IAnalysis {
             }
         }
 
+        // execute all pairs shortest paths
         int[][] shortestPaths = floydWarshall(nodes);
 
+        if (debug) {
+            System.out.println(nodes);
+            for (int i = 0; i < shortestPaths.length; i++) {
+                System.out.print((i > 0 ? nodes.get(i - 1) : "\t\t") + ":\t");
+                for (int j = 0; j < shortestPaths.length; j++) {
+                    // SUPPRESS CHECKSTYLE NEXT MagicNumber
+                    System.out.print((shortestPaths[i][j] < 1000 ? shortestPaths[i][j] : "x")
+                            + "\t");
+                }
+                System.out.print("\n");
+            }
+        }
+
+        // for every distance strategy, determine the stress 
+        Object[] stresses = new Object[STRATEGIES.size()];
+        for (int i = 0; i < stresses.length; i++) {
+            stresses[i] = determineStress(STRATEGIES.get(i), nodes, shortestPaths);
+        }
+
+        // done
+        progressMonitor.done();
+
+        return stresses;
+    }
+
+    private double determineStress(final DistanceStrategy strat, final List<KNode> nodes,
+            final int[][] shortestPaths) {
         // calculate ideal edge length
         double numerator = 0;
         double denominator = 0;
@@ -118,10 +175,10 @@ public class StressAnalysis implements IAnalysis {
                 }
                 KNode tgt = nodes.get(j);
 
-                double geomDist = getNodeCenter(src).distance(getNodeCenter(tgt));
                 double theoDist = shortestPaths[nodeMap.get(src)][nodeMap.get(tgt)];
 
                 if (theoDist < INFINITY) {
+                    double geomDist = strat.dist(src, tgt);
                     numerator += (geomDist * geomDist) / (theoDist * theoDist);
                     denominator += geomDist / theoDist;
                 }
@@ -140,19 +197,27 @@ public class StressAnalysis implements IAnalysis {
                 }
                 KNode tgt = nodes.get(j);
 
-                double geomDist = getNodeCenter(src).distance(getNodeCenter(tgt));
                 double theoDist = shortestPaths[nodeMap.get(src)][nodeMap.get(tgt)];
-
                 if (theoDist < INFINITY) {
+                    double geomDist = strat.dist(src, tgt);
                     double current = Math.pow(1 - (geomDist / (idealEdgeLength * theoDist)), 2);
+
+                    if (debug) {
+                        StringBuffer sb = new StringBuffer();
+                        sb.append(src + " -> " + tgt);
+                        // SUPPRESS CHECKSTYLE NEXT MagicNumber
+                        while (sb.length() < 60) {
+                            sb.append(" ");
+                        }
+                        sb.append(String.format("%.6f", current));
+                        sb.append("\td:" + (int) theoDist);
+                        System.out.println(sb.toString());
+                    }
+                    
                     stress += current;
                 }
             }
         }
-
-        // done
-        progressMonitor.done();
-
         return stress;
     }
 
@@ -213,17 +278,6 @@ public class StressAnalysis implements IAnalysis {
     }
 
     /**
-     * @return the center of the passed node.
-     */
-    private KVector getNodeCenter(final KNode n) {
-        KShapeLayout nLayout = n.getData(KShapeLayout.class);
-        KVector pos = nLayout.createVector();
-        pos.add(nLayout.getWidth() / 2f, nLayout.getHeight() / 2f);
-
-        return pos;
-    }
-
-    /**
      * Follows an edge that does not end at an atomic node and eventually returns all target KNodes
      * of a hierarchy crossing edge.
      * 
@@ -254,4 +308,71 @@ public class StressAnalysis implements IAnalysis {
         return Collections.emptyList();
     }
 
+    /*
+     * ----------------------- Distance Strategies -----------------------
+     */
+
+    /**
+     * A specific strategy to calculate the distance between two nodes, eg center to center
+     * euclidean distance.
+     */
+    private interface DistanceStrategy {
+        double dist(final KNode u, final KNode v);
+    }
+
+    /**
+     * @return the center of the passed node.
+     */
+    private static KVector getNodeCenter(final KNode n) {
+        KShapeLayout nLayout = n.getData(KShapeLayout.class);
+        KVector pos = nLayout.createVector();
+        pos.add(nLayout.getWidth() / 2f, nLayout.getHeight() / 2f);
+
+        return pos;
+    }
+
+    private static double getBoundToBound(final KNode n1, final KNode n2) {
+        KShapeLayout ul = n1.getData(KShapeLayout.class);
+        KShapeLayout vl = n2.getData(KShapeLayout.class);
+
+        KVector u = getNodeCenter(n1);
+        KVector v = getNodeCenter(n2);
+
+        double centerToCenterDist = u.distance(v);
+
+        KVector uToBorder = clipVector(v.clone().sub(u), ul.getWidth(), ul.getHeight());
+        double uToBorderDist = uToBorder.length();
+
+        KVector vToBorder = clipVector(u.clone().sub(v), vl.getWidth(), vl.getHeight());
+        double vToBorderDist = vToBorder.length();
+
+        double borderToBorderDist = centerToCenterDist - uToBorderDist - vToBorderDist;
+
+        return borderToBorderDist;
+    }
+
+    /**
+     * Clip the given vector to a rectangular box of given size.
+     * Copied from {@link de.cau.cs.kieler.klay.force.FEdge}.
+     * 
+     * @param v
+     *            vector relative to the center of the box
+     * @param width
+     *            width of the rectangular box
+     * @param height
+     *            height of the rectangular box
+     */
+    private static KVector clipVector(final KVector v, final double width, final double height) {
+        double wh = width / 2, hh = height / 2;
+        double absx = Math.abs(v.x), absy = Math.abs(v.y);
+        double xscale = 1, yscale = 1;
+        if (absx > wh) {
+            xscale = wh / absx;
+        }
+        if (absy > hh) {
+            yscale = hh / absy;
+        }
+        v.scale(Math.min(xscale, yscale));
+        return v;
+    }
 }

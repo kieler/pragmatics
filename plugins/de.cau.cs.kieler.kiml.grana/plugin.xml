@@ -506,6 +506,12 @@
             description="The stress of the graph."
             id="de.cau.cs.kieler.kiml.grana.stress"
             name="Stress">
+         <component
+               name="Center-Center">
+         </component>
+         <component
+               name="Boundary-Boundary">
+         </component>
       </analysis>
       <analysis
             class="de.cau.cs.kieler.kiml.grana.analyses.ExecutionTimeAnalysis"
