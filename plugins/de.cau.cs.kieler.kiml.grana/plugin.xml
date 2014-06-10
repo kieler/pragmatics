@@ -512,6 +512,9 @@
          <component
                name="Boundary-Boundary">
          </component>
+         <component
+               name="PStress">
+         </component>
       </analysis>
       <analysis
             class="de.cau.cs.kieler.kiml.grana.analyses.ExecutionTimeAnalysis"

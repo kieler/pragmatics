@@ -17,16 +17,19 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
@@ -65,7 +68,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
  */
 public class StressAnalysis implements IAnalysis {
 
-    private Map<KNode, Integer> nodeMap = Maps.newHashMap();
+    private static Map<KNode, Integer> nodeMap = Maps.newHashMap();
 
     /** Our representation of infinity, allow to add two of them without getting an int overflow. */
     private static final int INFINITY = (Integer.MAX_VALUE / 2) - 1;
@@ -99,7 +102,7 @@ public class StressAnalysis implements IAnalysis {
             EUCLIDEAN_CENTER_TO_CENTER_DISTANCE, EUCLIDEAN_BORDER_TO_BORDER_DISTANCE);
 
     private boolean debug = false;
-    
+
     /**
      * {@inheritDoc}
      */
@@ -113,10 +116,12 @@ public class StressAnalysis implements IAnalysis {
 
         // collect all nodes of the graph
         int index = 1;
-        List<KNode> nodeQueue = new LinkedList<KNode>();
-        List<KNode> nodes = new LinkedList<KNode>();
+        List<KNode> nodeQueue = Lists.newArrayList();
+        List<KNode> nodes = Lists.newArrayList();
+        List<KEdge> edges = Lists.newArrayList();
         nodeQueue.addAll(parentNode.getChildren());
 
+        nodeMap.clear();
         // assign indexes to all child nodes
         while (nodeQueue.size() > 0) {
             // pop first element
@@ -125,6 +130,7 @@ public class StressAnalysis implements IAnalysis {
             if (node.getChildren().isEmpty()) {
                 nodeMap.put(node, index++);
                 nodes.add(node);
+                edges.addAll(node.getOutgoingEdges());
             }
 
             // collect hierarchical nodes
@@ -149,11 +155,19 @@ public class StressAnalysis implements IAnalysis {
             }
         }
 
-        // for every distance strategy, determine the stress 
-        Object[] stresses = new Object[STRATEGIES.size()];
-        for (int i = 0; i < stresses.length; i++) {
+        // for every distance strategy, determine the stress
+        Object[] stresses = new Object[STRATEGIES.size() + 1];
+        for (int i = 0; i < stresses.length - 1; i++) {
             stresses[i] = determineStress(STRATEGIES.get(i), nodes, shortestPaths);
         }
+        
+        // FIXME
+        
+        double pStressL0 = computeIdealEdgeLengthForPStress(nodes, edges, shortestPaths);
+        stresses[2] = getPStress(nodes, edges, shortestPaths, pStressL0); 
+        
+        // FIXME
+        
 
         // done
         progressMonitor.done();
@@ -213,7 +227,7 @@ public class StressAnalysis implements IAnalysis {
                         sb.append("\td:" + (int) theoDist);
                         System.out.println(sb.toString());
                     }
-                    
+
                     stress += current;
                 }
             }
@@ -252,14 +266,19 @@ public class StressAnalysis implements IAnalysis {
             for (KEdge e : child.getOutgoingEdges()) {
                 KNode src = e.getSource();
                 KNode tgt = e.getTarget();
-                // ignore hierarchy crossing edges
+                Integer u = nodeMap.get(src);
+                Integer v = nodeMap.get(tgt);
+                // handle hierarchy crossing edges
                 if (tgt.getChildren().isEmpty() && src.getParent().equals(tgt.getParent())) {
                     // mark the edge matrix
-                    matrix[nodeMap.get(src)][nodeMap.get(tgt)] = 1;
+                    matrix[u][v] = 1;
+                    matrix[v][u] = 1;
                 } else {
                     // mark all possible hierarchy edges
                     for (KNode hTgt : followHierarchicalEdge(e)) {
-                        matrix[nodeMap.get(src)][nodeMap.get(hTgt)] = 1;
+                        Integer hV = nodeMap.get(hTgt);
+                        matrix[u][hV] = 1;
+                        matrix[hV][u] = 1;
                     }
                 }
             }
@@ -284,7 +303,7 @@ public class StressAnalysis implements IAnalysis {
      * @param edge
      *            for the first call edge must be an outgoing edge of an atomic node.
      */
-    private Iterable<KNode> followHierarchicalEdge(final KEdge edge) {
+    private static Iterable<KNode> followHierarchicalEdge(final KEdge edge) {
 
         KNode tgt = edge.getTarget();
         // does the edge target an atomic node?
@@ -352,8 +371,8 @@ public class StressAnalysis implements IAnalysis {
     }
 
     /**
-     * Clip the given vector to a rectangular box of given size.
-     * Copied from {@link de.cau.cs.kieler.klay.force.FEdge}.
+     * Clip the given vector to a rectangular box of given size. Copied from
+     * {@link de.cau.cs.kieler.klay.force.FEdge}.
      * 
      * @param v
      *            vector relative to the center of the box
@@ -375,4 +394,141 @@ public class StressAnalysis implements IAnalysis {
         v.scale(Math.min(xscale, yscale));
         return v;
     }
+
+    private static double computeIdealEdgeLengthForPStress(final List<KNode> nodes,
+            final List<KEdge> edges, final int[][] shortestPaths) {
+
+        // CHECKSTYLEOFF VariableName
+        // 1. S = { b(u,v) for (u,v) in E }
+        List<Double> S = Lists.newArrayListWithCapacity(edges.size());
+        for (KEdge e : edges) {
+            KNode u = e.getSource();
+            KNode v = e.getTarget();
+            // handle hierarchy crossing edges
+            if (v.getChildren().isEmpty() && u.getParent().equals(v.getParent())) {
+                // add b(u,v) to S
+                double dist = getBoundToBound(u, v);
+                S.add(dist);
+            } else {
+                // follow hierarchical edges and add b(u,v') where v' is the final atomic node
+                for (KNode hV : followHierarchicalEdge(e)) {
+                    // add b(u,v') to S
+                    double dist = getBoundToBound(u, hV);
+                    S.add(dist);
+                }
+            }
+        }
+
+        // 2. L0 = CHM(S)
+        double L0 = contraharmonicMean(S);
+
+        // 3. P0 = PS(L0)
+        double P0 = getPStress(nodes, edges, shortestPaths, L0);
+
+        // 4. C = { b(u,v)/p_{uv} : u != v ^ (u,v) not in E ^ b(u,v)/p_{uv} < L0 }
+        Set<Pair<KNode, KNode>> nodePairs = Sets.newHashSet();
+        for (KNode u : nodes) {
+            for (KNode v : nodes) {
+                if (!u.equals(v)) {
+                    nodePairs.add(Pair.of(u, v));
+                }
+            }
+        }
+        // remove (u,v)s in edges
+        for (KEdge e : edges) {
+            nodePairs.remove(Pair.of(e.getSource(), e.getTarget()));
+        }
+        List<Double> C = Lists.newArrayList();
+        for (Pair<KNode, KNode> pair : nodePairs) {
+            double buv = getBoundToBound(pair.getFirst(), pair.getSecond());
+            double theoDist =
+                    shortestPaths[nodeMap.get(pair.getFirst())][nodeMap.get(pair.getSecond())];
+            double frac = buv / theoDist;
+            if (frac < L0) {
+                C.add(frac);
+            }
+        }
+
+        // 5. Sort C into a sequence c0, c1, ..., c_{m-1} in ascending order
+        Collections.sort(C); // sorts the specified list into ascending order,
+
+        // 6. cm = L0
+        C.add(L0);
+
+        // 7. for ( i = 0; i < m; i++ ) {
+        for (int i = 0; i < C.size() - 1; i++) {
+            // T = { c0, c1, ..., c_i }
+            List<Double> T = C.subList(0, i);
+            // U = union of S and T
+            Set<Double> U = Sets.newHashSet();
+            U.addAll(S);
+            U.addAll(T);
+
+            // L = CHM(U)
+            double L = contraharmonicMean(U);
+
+            // P = PS(L)
+            double P = getPStress(nodes, edges, shortestPaths, L);
+
+            // if ( ci <= L ^ L <= c_{i+1} ^ P < P0 ) {
+            if (C.get(i) <= L && L <= C.get(i + 1) && P < P0) {
+                L0 = L;
+                P0 = P;
+            }
+        }
+
+        // 8. return L0
+        return L0;
+    }
+
+    private static double getPStress(final List<KNode> nodes, final List<KEdge> edges,
+            final int[][] shortestPaths, final double idealEdgeLength) {
+
+        // for u != v in nodes
+        double sum1 = 0;
+        for (KNode u : nodes) {
+            for (KNode v : nodes) {
+                double theoDist = shortestPaths[nodeMap.get(u)][nodeMap.get(v)];
+                if (u.equals(v) || theoDist >= INFINITY) {
+                    continue;
+                }
+                
+                double wuv = Math.pow(idealEdgeLength * theoDist, -1 * 2);
+                double geomDist = getBoundToBound(u, v);
+                double base = Math.max(0, idealEdgeLength * theoDist - geomDist);
+                double term = wuv * Math.pow(base, 2);
+
+                sum1 += term;
+            }
+        }
+        
+        // for (u,v) in edges
+        double sum2 = 0;
+        for (KEdge e : edges) {
+            double geomDist = getBoundToBound(e.getSource(), e.getTarget());
+            double base = Math.max(0, geomDist - idealEdgeLength);
+            double term = Math.pow(idealEdgeLength, -1 * 2) * Math.pow(base, 2);
+            
+            sum2 += term;
+        }
+
+        return sum1 + sum2;
+    }
+    
+    /**
+     * @param numbers
+     *            a set of numbers
+     * @return the contraharmonic mean of the set of numbers. sum(x^2, x in S) / sum(x, x in S)
+     */
+    private static double contraharmonicMean(final Iterable<Double> numbers) {
+        double numerator = 0;
+        double denominator = 0;
+        for (Double d : numbers) {
+            numerator += d * d;
+            denominator += d;
+        }
+
+        return numerator / denominator;
+    }
+    
 }
