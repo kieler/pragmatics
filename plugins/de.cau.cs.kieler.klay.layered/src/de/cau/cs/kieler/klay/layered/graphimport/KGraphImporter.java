@@ -186,7 +186,6 @@ public class KGraphImporter implements IGraphImporter<KNode> {
      */
     private LGraph createLGraph(final KNode parentKNode) {
         LGraph layeredGraph = new LGraph(hashCodeCounter);
-        layeredGraph.setProperty(InternalProperties.ORIGIN, parentKNode);
         
         // Copy the properties of the KGraph to the layered graph
         KShapeLayout parentLayout = parentKNode.getData(KShapeLayout.class);
@@ -194,6 +193,8 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         if (layeredGraph.getProperty(LayoutOptions.DIRECTION) == Direction.UNDEFINED) {
             layeredGraph.setProperty(LayoutOptions.DIRECTION, LGraphUtil.getDirection(layeredGraph));
         }
+        
+        layeredGraph.setProperty(InternalProperties.ORIGIN, parentKNode);
 
         // Initialize the graph properties discovered during the transformations
         layeredGraph.setProperty(InternalProperties.GRAPH_PROPERTIES,
@@ -365,7 +366,9 @@ public class KGraphImporter implements IGraphImporter<KNode> {
 
         // add a new node to the layered graph, copying its position
         LNode newNode = new LNode(layeredGraph);
+        newNode.copyProperties(nodeLayout);
         newNode.setProperty(InternalProperties.ORIGIN, node);
+        
         newNode.getSize().x = nodeLayout.getWidth();
         newNode.getSize().y = nodeLayout.getHeight();
         newNode.getPosition().x = nodeLayout.getXpos();
@@ -405,6 +408,8 @@ public class KGraphImporter implements IGraphImporter<KNode> {
 
             // create layered port, copying its position
             LPort newPort = new LPort(layeredGraph);
+            newPort.copyProperties(portLayout);
+            newPort.setSide(portLayout.getProperty(LayoutOptions.PORT_SIDE));
             newPort.setProperty(InternalProperties.ORIGIN, kport);
             KVector portSize = newPort.getSize();
             portSize.x = portLayout.getWidth();
@@ -414,8 +419,6 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             portPos.y = portLayout.getYpos();
             newPort.setNode(newNode);
             
-            newPort.copyProperties(portLayout);
-            newPort.setSide(portLayout.getProperty(LayoutOptions.PORT_SIDE));
             
             // check if the original port has any connections to descendants of its node
             for (KEdge edge : kport.getEdges()) {
@@ -484,9 +487,6 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             }
         }
 
-        // set properties of the new node
-        newNode.copyProperties(nodeLayout);
-
         if (newNode.getProperty(LayoutOptions.COMMENT_BOX)) {
             graphProperties.add(GraphProperties.COMMENTS);
         }
@@ -541,10 +541,16 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         }
         
         if (sourceNode != null && targetNode != null) {
+            KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
+            
             // Create a layered edge
             LEdge newEdge = new LEdge(layeredGraph);
+            newEdge.copyProperties(edgeLayout);
             newEdge.setProperty(InternalProperties.ORIGIN, kedge);
             elemMap.put(kedge, newEdge);
+            
+            // Clear junction points, since they are recomputed from scratch
+            newEdge.setProperty(LayoutOptions.JUNCTION_POINTS, null);
             
             // If we have a self-loop, set the appropriate graph property
             Set<GraphProperties> graphProperties = layeredGraph.getProperty(
@@ -554,7 +560,6 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             }
 
             // Create source and target ports if they do not exist yet
-            KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
             if (sourcePort == null) {
                 PortType portType = PortType.OUTPUT;
                 KVector sourcePoint = null;
@@ -634,11 +639,6 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                 }
                 newEdge.setProperty(InternalProperties.ORIGINAL_BENDPOINTS, bendpoints);
             }
-    
-            // Set properties of the new edge
-            newEdge.copyProperties(edgeLayout);
-            // Clear junction points, since they are recomputed from scratch
-            newEdge.setProperty(LayoutOptions.JUNCTION_POINTS, null);
             
             return newEdge;
         }
