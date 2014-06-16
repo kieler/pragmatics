@@ -192,10 +192,8 @@ public class PGraphFactory {
     public static PGraph createGraphFromKGraph(final KNode kgraph) {
         PGraph pgraph = new PGraph();
         HashMap<KNode, PNode> map = new HashMap<KNode, PNode>(kgraph.getChildren().size() * 2);
-        pgraph.setProperty(Properties.ORIGIN, kgraph);
-
-        // Adding all user properties to the graph
         pgraph.copyProperties(kgraph.getData(KShapeLayout.class));
+        pgraph.setProperty(Properties.ORIGIN, kgraph);
 
         // Adding Nodes
         for (KNode knode : kgraph.getChildren()) {
