@@ -57,55 +57,55 @@ public final class AvoidProperties {
      * Routing Penalties
      */
     public static final IProperty<Float> SEGMENT_PENALTY = new Property<Float>(
-            "de.cau.cs.kieler.kiml.libavoid.segmentPenalty", 10f, 0f);
+            "de.cau.cs.kieler.libavoid.segmentPenalty", 10f, 0f);
 
     public static final IProperty<Float> ANGLE_PENALTY = new Property<Float>(
-            "de.cau.cs.kieler.kiml.libavoid.anglePenalty", 0f, 0f);
+            "de.cau.cs.kieler.libavoid.anglePenalty", 0f, 0f);
 
     /** Experimental. */
     public static final IProperty<Float> CROSSING_PENALTY = new Property<Float>(
-            "de.cau.cs.kieler.kiml.libavoid.crossingPenalty", 0f, 0f);
+            "de.cau.cs.kieler.libavoid.crossingPenalty", 0f, 0f);
 
     /** Experimental. */
     public static final IProperty<Float> CLUSTER_CROSSING_PENALTY = new Property<Float>(
-            "de.cau.cs.kieler.kiml.libavoid.clusterCrossingPenalty", 4000f, 0f);
+            "de.cau.cs.kieler.libavoid.clusterCrossingPenalty", 4000f, 0f);
 
     /** Experimental. */
     public static final IProperty<Float> FIXED_SHARED_PATH_PENALTY = new Property<Float>(
-            "de.cau.cs.kieler.kiml.libavoid.fixedSharedPathPenalty", 0f, 0f);
+            "de.cau.cs.kieler.libavoid.fixedSharedPathPenalty", 0f, 0f);
 
     /** Experimental. */
     public static final IProperty<Float> PORT_DIRECTION_PENALTY = new Property<Float>(
-            "de.cau.cs.kieler.kiml.libavoid.portDirectionPenalty", 100f, 0f);
+            "de.cau.cs.kieler.libavoid.portDirectionPenalty", 100f, 0f);
 
     public static final IProperty<Float> SHAPE_BUFFER_DISTANCE = new Property<Float>(
-            "de.cau.cs.kieler.kiml.libavoid.shapeBufferDistance", 4.0f, 0f);
+            "de.cau.cs.kieler.libavoid.shapeBufferDistance", 4.0f, 0f);
 
     public static final IProperty<Float> IDEAL_NUDGING_DISTANCE = new Property<Float>(
-            "de.cau.cs.kieler.kiml.libavoid.idealNudgingDistance", 4.0f, 0f);
+            "de.cau.cs.kieler.libavoid.idealNudgingDistance", 4.0f, 0f);
 
     /*
      * Routing Options
      */
     public static final IProperty<Boolean> NUDGE_ORTHOGONAL_SEGMENTS = new Property<Boolean>(
-            "de.cau.cs.kieler.kiml.libavoid.nudgeOrthogonalSegmentsConnectedToShapes", false);
+            "de.cau.cs.kieler.libavoid.nudgeOrthogonalSegmentsConnectedToShapes", false);
 
     public static final IProperty<Boolean> IMPROVE_HYPEREDGES = new Property<Boolean>(
-            "de.cau.cs.kieler.kiml.libavoid.improveHyperedgeRoutesMovingJunctions", true);
+            "de.cau.cs.kieler.libavoid.improveHyperedgeRoutesMovingJunctions", true);
 
     /** Experimental. */
     public static final IProperty<Boolean> PENALISE_ORTH_SHATE_PATHS = new Property<Boolean>(
-            "de.cau.cs.kieler.kiml.libavoid.penaliseOrthogonalSharedPathsAtConnEnds", false);
+            "de.cau.cs.kieler.libavoid.penaliseOrthogonalSharedPathsAtConnEnds", false);
 
     public static final IProperty<Boolean> NUDGE_ORTHOGONAL_COLINEAR_SEGMENTS =
             new Property<Boolean>(
-                    "de.cau.cs.kieler.kiml.libavoid.nudgeOrthogonalTouchingColinearSegments", false);
+                    "de.cau.cs.kieler.libavoid.nudgeOrthogonalTouchingColinearSegments", false);
 
     public static final IProperty<Boolean> NUDGE_PREPROCESSING = new Property<Boolean>(
-            "de.cau.cs.kieler.kiml.libavoid.performUnifyingNudgingPreprocessingStep", true);
+            "de.cau.cs.kieler.libavoid.performUnifyingNudgingPreprocessingStep", true);
 
     public static final IProperty<Boolean> IMPROVE_HYPEREDGES_ADD_DELETE = new Property<Boolean>(
-            "de.cau.cs.kieler.kiml.libavoid."
+            "de.cau.cs.kieler.libavoid."
                     + "improveHyperedgeRoutesMovingAddingAndDeletingJunctions", true);
 
     
