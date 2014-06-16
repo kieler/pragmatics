@@ -20,14 +20,16 @@ import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Insets;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 
 /**
- * A shape that has a position, a size and defines margins and insets.
- * 
+ * A shape that has a position, a size and defined margins and insets.
  * Margins are spacings outside the bounding box of the shape, insets (aka padding) on the inside of
  * the shape's bounding box.
  * 
  * Note that there is a difference between {@link #getPos()} and {@link #getRectPos()}. The latter
  * returns the position of the adaptagrams rectangle an thus the position of this shape after any
  * layout is applied.
+ * 
+ * Before {@link #init()} is called, positions are based on the set position, afterwards
+ * based on the internal positions of the adaptagrams rectangle. 
  * 
  * @author uru
  */
@@ -69,7 +71,11 @@ public abstract class CShape extends CGraphElement {
      * @see #getRectPos()
      */
     public KVector getPos() {
-        return pos;
+        if (!graph.isInitialized()) {
+            return pos;
+        } else {
+            return getRectPos();
+        }
     }
     
     /**
@@ -88,6 +94,8 @@ public abstract class CShape extends CGraphElement {
      * @return the position of the underlying adaptagrams rectangle. The margin is already
      *         subtracted.
      * @see #getPos()
+     * 
+     * @deprecated use {@link #getPos()} (after init)
      */
     public KVector getRectPos() {
         return new KVector(rect.getMinX() + getMargins().left, rect.getMinY() + getMargins().top);
@@ -127,7 +135,11 @@ public abstract class CShape extends CGraphElement {
      * @return the current size of this element.
      */
     public KVector getSize() {
-        return size;
+        if (graph.isInitialized()) {
+            return getRectSize();
+        } else {
+            return size;
+        }
     }
     
     /**
@@ -137,6 +149,8 @@ public abstract class CShape extends CGraphElement {
      * To get the raw size (w/o considering margins) use the {@link #getRectSizeRaw()} method.
      * 
      * @return the size of the underlying adaptagrams rectangle. The margin is already subtracted.
+     * 
+     * @deprecated use {@link #getSize()} (after init)
      */
     public KVector getRectSize() {
         return new KVector(rect.width() - getMargins().left - getMargins().right, rect.height()

@@ -28,6 +28,10 @@ import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 
 /**
+ * 
+ * <h3>Usage:</h3>
+ * Upon {@link #init()} the node is automatically added to the graph's nodes list.
+ * 
  * @author uru
  */
 public class CNode extends CShape {
@@ -37,7 +41,6 @@ public class CNode extends CShape {
     // CHECKSTYLEOFF VisibilityModifier
     // CHECKSTYLEOFF Javadoc
 
-    protected List<CNode> children;
     protected List<CEdge> outgoingEdges;
     protected List<CEdge> incomingEdges;
     protected List<CPort> ports;
@@ -45,14 +48,7 @@ public class CNode extends CShape {
     /** Edges to external ports. */
     protected List<CEdge> externalEdges;
     
-    protected CGraphElement parent = null;
-
-    private boolean considerPreviousPositions = false; 
-    
-    /**
-     * Artificial margin added to guarantee spacing above and below a node. Hence, top and bottom
-     * will be spacing/2.
-     */
+    /** Artificial margin added to guarantee spacing around the node. */
     private Margins artificialMargin = new Margins();
     
     /**
@@ -61,10 +57,7 @@ public class CNode extends CShape {
     public CNode(final CGraph graph) {
         super(graph);
 
-        considerPreviousPositions = graph.getProperty(CoLaProperties.CONSIDER_PREVIOUS_POSITIONS);
-        
         // setup the internal lists
-        children = new ArrayList<CNode>();
         outgoingEdges = new ArrayList<CEdge>();
         incomingEdges = new ArrayList<CEdge>();
         externalEdges = new ArrayList<CEdge>();
@@ -76,15 +69,13 @@ public class CNode extends CShape {
      */
     @Override
     public void init() {
-
         // get spacing and margins
         double spacing = graph.getProperty(LayoutOptions.SPACING);
         Margins margin = getMargins();
 
         if (graph.getProperty(CGraphProperties.MARGIN_INCLUDES_SPACING)) {
             // currently the adaptagrams rectangles do not support any border or margin,
-            // hence we add it to the top and bottom margin of the rectangle.
-            // Horizontal spacing will be considered during separation constraint generation
+            // hence we add it to the rectangle.
             artificialMargin.set(spacing / 2f, spacing / 2f, spacing / 2f, spacing / 2f);
             margin.left += artificialMargin.left;
             margin.top += artificialMargin.top;
@@ -92,6 +83,8 @@ public class CNode extends CShape {
             margin.bottom += artificialMargin.bottom;
         }
         
+        boolean considerPreviousPositions =
+                graph.getProperty(CoLaProperties.CONSIDER_PREVIOUS_POSITIONS);
         // x X y Y meaning x width y height
         // assure that the size is at least 1
         if (considerPreviousPositions) {
@@ -101,7 +94,7 @@ public class CNode extends CShape {
                             getPos().y - margin.top, 
                             Math.max(1, getPos().y + this.getSize().y + margin.bottom));
         } else {
-            // position them at 0,0
+            // position them at 0, 0
             rect =
                     new Rectangle(0 - margin.left,
                             Math.max(1, 0 + this.getSize().x + margin.right), 0 - margin.top,
@@ -111,27 +104,10 @@ public class CNode extends CShape {
 
         // register in graph
         graph.nodes.add(rect);
-
-        // System.out.println("Initialized " + this);
     }
 
     /**
-     * @param parent
-     *            the parent to set
-     */
-    public void setParent(final CGraphElement parent) {
-        this.parent = parent;
-    }
-
-    /**
-     * @return the parent
-     */
-    public CGraphElement getParent() {
-        return parent;
-    }
-
-    /**
-     * @return the outgoing and incoming edges
+     * @return a view of the outgoing and incoming edges
      */
     public Iterable<CEdge> getConnectedEdges() {
         return Iterables.concat(outgoingEdges, incomingEdges);
@@ -166,7 +142,7 @@ public class CNode extends CShape {
     }
 
     /**
-     * @return the ports
+     * @return a view of the ports on the specified side
      */
     public Iterable<CPort> getPorts(final PortSide side) {
         Iterable<CPort> filtered = Iterables.filter(ports, new Predicate<CPort>() {

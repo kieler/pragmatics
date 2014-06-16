@@ -18,16 +18,38 @@ import java.util.List;
 
 import org.adaptagrams.ColaEdges;
 import org.adaptagrams.CompoundConstraintPtrs;
-import org.adaptagrams.ConstrainedFDLayout;
 import org.adaptagrams.Doubles;
 import org.adaptagrams.RectanglePtrs;
 import org.adaptagrams.RootCluster;
 
 import com.google.common.collect.Lists;
 
+
 /**
+ * The {@link CGraph} wraps c++ adaptagrams elements to achieve a 
+ * convenient usage from java. 
  * 
- * Remark: after all elements have been created the {@link #init()} method must be called.
+ * <h3>Usage Remarks</h3>
+ * <ul>
+ *      <li>
+ *          As opposed to a KGraph, a {@link CGraph} is flat. Hierarchy is created by  
+ *          using {@link org.adaptagrams.Cluster Cluster}s.
+ *          Coordinates for all nodes, ports, and edges are in a common coordinate system.
+ *      </li>
+ *      <li>
+ *          After an element has been created the {@link #init()} method must be called. 
+ *      </li>
+ *      <li>
+ *          The {@link CGraphElement#cIndex} and {@link CPort#cEdgeIndex} identify adaptagrams
+ *          elements and are to be used when creating constraints. Do <b>not</b> use the 
+ *          {@link CGraphElement#id} in this case.
+ *          See {@link CGraphElement}.
+ *      </li>
+ *      <li>
+ *          Use the {@link de.cau.cs.kieler.adaptagrams.layouter.KConstrainedFDLayouter 
+ *          KConstrainedFDLayouter} to setup the actual layouter.
+ *      </li>
+ * </ul>
  * 
  * @author uru
  */
@@ -58,7 +80,9 @@ public class CGraph extends CGraphElement {
      */
     private List<CNode> children;
     private List<CPort> externalPorts;
-
+    
+    private boolean initialized = false;
+    
     /**
      * 
      */
@@ -86,6 +110,8 @@ public class CGraph extends CGraphElement {
     public void init() {
         // after all edges have been added we can create the array of proper size
         idealEdgeLengths = new double[edgeIndex];
+        
+        initialized = true;
     }
 
     /**
@@ -100,6 +126,13 @@ public class CGraph extends CGraphElement {
      */
     public List<CPort> getExternalPorts() {
         return externalPorts;
+    }
+    
+    /**
+     * @return the initialized
+     */
+    public boolean isInitialized() {
+        return initialized;
     }
 
     // --------------------------------------------------------------------------------
@@ -174,25 +207,4 @@ public class CGraph extends CGraphElement {
 
         return sb.toString();
     }
-
-    /**
-     * @param graph
-     *            the input graph to be layouted
-     * @param idealEdgeLength
-     *            desired edge lengt
-     * @param overlap
-     *            whether overlap prevention should be turned on
-     * @return a new instance of the {@link ConstrainedFDLayout}er.
-     */
-    public static ConstrainedFDLayout buildLayouter(final CGraph graph,
-            final double idealEdgeLength, final boolean overlap) {
-
-        ConstrainedFDLayout cfl =
-                new ConstrainedFDLayout(graph.nodes, graph.edges, idealEdgeLength, overlap);
-        cfl.setClusterHierarchy(graph.rootCluster);
-        cfl.setConstraints(graph.constraints);
-
-        return cfl;
-    }
-
 }

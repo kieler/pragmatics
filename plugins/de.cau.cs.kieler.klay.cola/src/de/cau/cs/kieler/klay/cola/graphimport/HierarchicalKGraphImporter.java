@@ -124,7 +124,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
                 // remember it
                 nodeMap.put(node, cnode);
                 graph.getChildren().add(cnode);
-                cnode.setParent(graph);
+//                cnode.setParent(graph);
                 cnode.init();
 
                 // add to the cluster

@@ -24,7 +24,6 @@ import de.cau.cs.kieler.core.math.KVector;
 
 /**
  * @author uru
- * 
  */
 public class CEdge extends CGraphElement {
 
@@ -87,8 +86,6 @@ public class CEdge extends CGraphElement {
         // create the cola representation
         edge = new ColaEdge(srcIndex, tgtIndex);
 
-        // System.out.println("Initialized " + edge + " " + this);
-
         cIndex = graph.edgeIndex++;
 
         // add to the graph
@@ -133,7 +130,7 @@ public class CEdge extends CGraphElement {
      * @return the source docking point
      */
     public KVector getSourcePoint() {
-        KVector v = src.getRectPos().clone();
+        KVector v = src.getPos().clone();
         if (srcPort != null) {
             v.add(srcPort.getRelativePos());
             // point to the port's center
@@ -155,7 +152,7 @@ public class CEdge extends CGraphElement {
      * @return the target docking point
      */
     public KVector getTargetPoint() {
-        KVector v = tgt.getRectPos().clone();
+        KVector v = tgt.getPos().clone();
         if (tgtPort != null) {
             v.add(tgtPort.getRelativePos());
             // point to the port's center

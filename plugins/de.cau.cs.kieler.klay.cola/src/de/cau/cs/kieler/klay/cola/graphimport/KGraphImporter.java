@@ -130,7 +130,7 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
         // remember it
         knodeMap.put(n, cnode);
         graph.getChildren().add(cnode);
-        cnode.setParent(graph);
+//        cnode.setParent(graph);
         cnode.init();
 
         // create ports

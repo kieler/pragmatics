@@ -17,8 +17,11 @@ import org.adaptagrams.ConstrainedFDLayout;
 import org.adaptagrams.Doubles;
 import org.adaptagrams.TestConvergence;
 import org.adaptagrams.UnsatisfiableConstraintInfoPtrs;
+import org.adaptagrams.Unsigneds;
 
 import de.cau.cs.kieler.adaptagrams.cgraph.CGraph;
+import de.cau.cs.kieler.adaptagrams.cgraph.CNode;
+import de.cau.cs.kieler.adaptagrams.cgraph.CPort;
 
 /**
  * Wrapper class for adaptagram's {@link ConstrainedFDLayout} algorithm. It allows convenient
@@ -184,6 +187,16 @@ public class KConstrainedFDLayouter {
 
         layouter.setClusterHierarchy(graph.rootCluster);
         layouter.setConstraints(graph.constraints);
+        
+        // node exemptions
+        for (CNode n : graph.getChildren()) {
+            Unsigneds group = new Unsigneds();
+            group.add(n.cIndex);
+            for (CPort p : n.getPorts()) {
+                group.add(p.cIndex);
+            }
+            layouter.addGroupOfNonOverlapExemptRectangles(group);
+        }
 
         // debugging
         if (xPtrs != null && yPtrs != null) {

@@ -54,6 +54,7 @@ public class CPort extends CShape {
      * port, this field might be {@code null}.
      */
     public final CNode owner;
+    
     protected List<CEdge> outgoingEdges = Lists.newLinkedList();
     protected List<CEdge> incomingEdges = Lists.newLinkedList();
 
@@ -73,12 +74,12 @@ public class CPort extends CShape {
     @Override
     public void init() {
         
-        double xPos = 0;
-        double yPos = 0;
-
         // should previously assigned positions be considered?
         boolean considerPreviousPositions =
                 graph.getProperty(CoLaProperties.CONSIDER_PREVIOUS_POSITIONS);
+        
+        double xPos = 0;
+        double yPos = 0;
         if (considerPreviousPositions) {
             xPos = this.getPos().x;
             yPos = this.getPos().y;
@@ -89,22 +90,18 @@ public class CPort extends CShape {
                 Math.max(1 + xPos, xPos + this.getSize().x), 
                 yPos, 
                 Math.max(1 + yPos, yPos + this.getSize().y));
-        // assign it an id
+        // assign an id to it
         cIndex = graph.nodeIndex++;
         graph.nodes.add(rect);
-
-        // System.out.println("Initialized " + this);
     }
 
     public CPort asExternalDummy() {
-
         external = true;
 
         return this;
     }
 
     public CPort withCenterEdge() {
-
         // connect by edge
         ColaEdge dummyEdge = new ColaEdge(owner.cIndex, cIndex);
         cEdgeIndex = graph.edgeIndex++;
@@ -114,40 +111,40 @@ public class CPort extends CShape {
     }
 
     /**
-     * Ports are moved to the outside of a node's margin in cola. Here
-     * we have to revert this process.
+     * @return the port's position relative to the parent node.
      */
     public KVector getRelativePos() {
-        final KVector pos = getRectPos().clone().sub(owner.getRectPos());
-        //float breathe = graph.getProperty(CGraphProperties.PORT_DUMMY_BREATHE);
-        float breathe = 2;
-        switch (side) {
-
-        case NORTH:
-            pos.x -= owner.getMargins().left;
-            pos.y += owner.getMargins().top + breathe;
-            break;
-
-        case SOUTH:
-            pos.x -= owner.getMargins().left;
-            pos.y -= owner.getMargins().bottom + breathe + getMargins().top;
-            break;
-
-        case WEST:
-            pos.x += owner.getMargins().left + breathe - getMargins().left;
-            pos.y -= getMargins().top;
-            break;
-
-        case EAST:
-            pos.x -= owner.getMargins().right + breathe + getMargins().left;
-            pos.y -= getMargins().top;
-            break;
-
-        default:
-            break;
-        }
-
-        return pos;
+        // final KVector pos = getRectPos().clone().sub(owner.getRectPos());
+        // //float breathe = graph.getProperty(CGraphProperties.PORT_DUMMY_BREATHE);
+        // float breathe = 2;
+        // switch (side) {
+        //
+        // case NORTH:
+        // pos.x -= owner.getMargins().left;
+        // pos.y += owner.getMargins().top + breathe;
+        // break;
+        //
+        // case SOUTH:
+        // pos.x -= owner.getMargins().left;
+        // pos.y -= owner.getMargins().bottom + breathe + getMargins().top;
+        // break;
+        //
+        // case WEST:
+        // pos.x += owner.getMargins().left + breathe - getMargins().left;
+        // pos.y -= getMargins().top;
+        // break;
+        //
+        // case EAST:
+        // pos.x -= owner.getMargins().right + breathe + getMargins().left;
+        // pos.y -= getMargins().top;
+        // break;
+        //
+        // default:
+        // break;
+        // }
+        //
+        // return pos;
+        return getPos().clone().sub(owner.getPos());
     }
 
     /**

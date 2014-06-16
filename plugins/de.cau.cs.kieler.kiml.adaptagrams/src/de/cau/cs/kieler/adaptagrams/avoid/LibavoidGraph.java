@@ -662,7 +662,8 @@ public class LibavoidGraph {
             Point lastPoint = null;
             // transfer libavoid's results to the edges
             for (int i = 0; i < pts.size(); ++i) {
-                System.out.println(edge + "BP " + i + " " + pts.get(i).getX() + " " + pts.get(i).getY());
+                // System.out.println(edge + "BP " + i + " " + pts.get(i).getX() + " " 
+                // + pts.get(i).getY());
                 if (i == 0) {
                     // first point is the source point
                     if (edge.getSourcePort() != null) {
@@ -681,7 +682,11 @@ public class LibavoidGraph {
                     }
                 } else {
                     Point current = pts.get(i);
-                    if(Math.abs(current.getX() - lastPoint.getX()) < 0.001d && Math.abs(current.getY() - lastPoint.getY()) < 0.001d ) {
+                    
+                    if (Math.abs(current.getX() - lastPoint.getX())
+                            // SUPPRESS CHECKSTYLE NEXT 2 MagicNumber 
+                            < 0.001d && Math.abs(current.getY() 
+                                    - lastPoint.getY()) < 0.001d) {
                         // duplicate
                     } else {
                      // rest are bend points
