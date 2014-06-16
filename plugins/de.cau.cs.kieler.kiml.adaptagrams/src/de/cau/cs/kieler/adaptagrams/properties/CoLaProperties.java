@@ -17,26 +17,27 @@ import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 
 /**
- * @author uru
+ * Layout options of the {@link org.adaptagrams.ConstrainedFDLayout ConstrainedFDLayout}.
  * 
+ * @author uru
  */
 public final class CoLaProperties {
 
     /** A scalar modifier of ideal edge lengths. */
     public static final IProperty<Float> IDEAL_EDGE_LENGTHS = new Property<Float>(
-            "de.cau.cs.kieler.adaptagrams.idealEdgeLength", 100f, 1f);
+            "de.cau.cs.kieler.cola.idealEdgeLength", 100f, 1f);
 
     /** Direction of the desired layout. */
     public static final IProperty<Boolean> AVOID_OVERLAPS = new Property<Boolean>(
-            "de.cau.cs.kieler.adaptagrams.avoidOverlaps", true);
+            "de.cau.cs.kieler.cola.avoidOverlaps", true);
+
+    /** Whether to retain previous node positions during the layout run. */
+    public static final IProperty<Boolean> CONSIDER_PREVIOUS_POSITIONS = new Property<Boolean>(
+            "de.cau.cs.kieler.cola.considerPreviousPositions", false);
 
     /** Whether to adapt port positions after a layout run. */
     // public static final IProperty<Boolean> ADAPT_PORT_POSITIONS = new Property<Boolean>(
-    // "de.cau.cs.kieler.kiml.cola.adaptPortPositions", false);
-
-    /** Whether to retain previous node positions during the layout run. */
-    public static final IProperty<Boolean> CONSIDER_PREVIOUS = new Property<Boolean>(
-            "de.cau.cs.kieler.adaptagrams.considerPrevious", false);
+    // "de.cau.cs.kieler.cola.adaptPortPositions", false);
 
     /*
      * Experimental
@@ -46,7 +47,7 @@ public final class CoLaProperties {
      * Direction of the desired layout.
      */
     public static final IProperty<Boolean> DIRECTION_CONSTRAINTS = new Property<Boolean>(
-            "de.cau.cs.kieler.kiml.cola.direction", true);
+            "de.cau.cs.kieler.cola.useDirection", true);
 
     /**
      * Utility class.

@@ -22,10 +22,14 @@ import de.cau.cs.kieler.adaptagrams.cgraph.CGraph;
 
 /**
  * Wrapper class for adaptagram's {@link ConstrainedFDLayout} algorithm. It allows convenient
- * configuration and execution.
+ * configuration and execution by {@link de.cau.cs.kieler.kiml.AbstractLayoutProvider
+ * AbstractLayoutProvider}s.
  * 
- * FIXME currently we cannot call {@link ConstrainedFDLayout#freeAssociatedObjects()} as elements
- * might be reused that are deleted by this call. Thus, we have a memory leak.
+ * <h3>Limitation</h3> FIXME currently we cannot call
+ * {@link ConstrainedFDLayout#freeAssociatedObjects()} as elements might be reused that are deleted
+ * by this call. Thus, we have a memory leak.
+ * 
+ * @see org.adaptagrams.ConstrainedFDLayout
  * 
  * @author uru
  */

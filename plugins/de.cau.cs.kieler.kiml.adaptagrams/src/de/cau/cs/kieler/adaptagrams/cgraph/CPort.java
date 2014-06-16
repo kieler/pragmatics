@@ -22,6 +22,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.adaptagrams.properties.CGraphProperties;
+import de.cau.cs.kieler.adaptagrams.properties.CoLaProperties;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.PortSide;
 
@@ -39,6 +40,7 @@ public class CPort extends CShape {
      * The index of the edge that connects this dummy port node with the port's parent node.
      */
     public int cEdgeIndex = -1;
+    
     /**
      * The ideal length of the edge connecting this port to its owner. External ports do not have
      * such an edge.
@@ -76,7 +78,7 @@ public class CPort extends CShape {
 
         // should previously assigned positions be considered?
         boolean considerPreviousPositions =
-                graph.getProperty(CGraphProperties.CONSIDER_PREVIOUS_POSITION);
+                graph.getProperty(CoLaProperties.CONSIDER_PREVIOUS_POSITIONS);
         if (considerPreviousPositions) {
             xPos = this.getPos().x;
             yPos = this.getPos().y;

@@ -22,6 +22,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
 import de.cau.cs.kieler.adaptagrams.properties.CGraphProperties;
+import de.cau.cs.kieler.adaptagrams.properties.CoLaProperties;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
@@ -60,7 +61,7 @@ public class CNode extends CShape {
     public CNode(final CGraph graph) {
         super(graph);
 
-        considerPreviousPositions = graph.getProperty(CGraphProperties.CONSIDER_PREVIOUS_POSITION);
+        considerPreviousPositions = graph.getProperty(CoLaProperties.CONSIDER_PREVIOUS_POSITIONS);
         
         // setup the internal lists
         children = new ArrayList<CNode>();

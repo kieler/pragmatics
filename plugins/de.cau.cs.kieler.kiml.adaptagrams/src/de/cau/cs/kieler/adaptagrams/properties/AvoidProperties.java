@@ -23,7 +23,7 @@ import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.core.properties.Property;
 
 /**
- * Class contains options to configure the Libavoid router.
+ * Specification of layout options for the libavoid {@link Router}.
  * 
  * @author uru
  */
@@ -35,9 +35,9 @@ public final class AvoidProperties {
      * Mainly for convenience, as xtend does not allow bitwise or.
      */
     public static final int CONN_DIR_UPDOWN = ConnDirFlag.ConnDirDown | ConnDirFlag.ConnDirUp;
-    
+
     /**
-     * Represents bitwise or if {@link ConnDirFlag#ConnDirLeft} and {@link ConnDirFlag#ConnDirRight}.
+     * Represents bitwise or if {@link ConnDirFlag#ConnDirLeft} and {@link ConnDirFlag#ConnDirRight}
      * 
      * Mainly for convenience, as xtend does not allow bitwise or.
      */
@@ -104,11 +104,10 @@ public final class AvoidProperties {
     public static final IProperty<Boolean> NUDGE_PREPROCESSING = new Property<Boolean>(
             "de.cau.cs.kieler.libavoid.performUnifyingNudgingPreprocessingStep", true);
 
-    public static final IProperty<Boolean> IMPROVE_HYPEREDGES_ADD_DELETE = new Property<Boolean>(
-            "de.cau.cs.kieler.libavoid."
+    public static final IProperty<Boolean> IMPROVE_HYPEREDGES_ADD_DELETE =
+            new Property<Boolean>("de.cau.cs.kieler.libavoid."
                     + "improveHyperedgeRoutesMovingAddingAndDeletingJunctions", true);
 
-    
     /**
      * Transfers the layout options that are set on the passed {@code node} to the passed libavoid
      * {@code router} instance.

@@ -72,6 +72,9 @@ public abstract class CShape extends CGraphElement {
         return pos;
     }
     
+    /**
+     * @return .
+     */
     public KVector getCenter() {
         return new KVector(pos.x + size.x / 2, pos.y + size.y / 2);
     }

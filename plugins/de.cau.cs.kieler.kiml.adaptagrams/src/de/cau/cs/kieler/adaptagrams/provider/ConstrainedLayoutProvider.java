@@ -81,7 +81,7 @@ public class ConstrainedLayoutProvider extends AbstractLayoutProvider {
         KLayoutData rootLayout = parentNode.getData(KLayoutData.class);
 
         // should we consider previous node positions?
-        considerPrevious = rootLayout.getProperty(CoLaProperties.CONSIDER_PREVIOUS);
+        considerPrevious = rootLayout.getProperty(CoLaProperties.CONSIDER_PREVIOUS_POSITIONS);
 
         // spacing
         spacing = rootLayout.getProperty(LayoutOptions.SPACING);
