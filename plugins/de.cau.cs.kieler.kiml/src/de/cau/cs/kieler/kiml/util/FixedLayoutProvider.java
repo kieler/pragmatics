@@ -140,9 +140,6 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
             for (KNode node : layoutNode.getChildren()) {
                 for (KEdge edge : node.getOutgoingEdges()) {
                     generateJunctionPoints(edge);
-                }
-                for (KEdge edge : node.getIncomingEdges()) {
-                    generateJunctionPoints(edge);
                 }  
             }
         }
