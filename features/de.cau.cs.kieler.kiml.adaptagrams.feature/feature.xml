@@ -228,14 +228,7 @@ litigation.
    </requires>
 
    <plugin
-         id="de.cau.cs.kieler.kiml.libavoid"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kiml.cola"
+         id="de.cau.cs.kieler.kiml.adaptagrams"
          download-size="0"
          install-size="0"
          version="0.0.0"

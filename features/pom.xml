@@ -28,7 +28,7 @@
     <module>de.cau.cs.kieler.kwebs.server.feature</module>
     <module>de.cau.cs.kieler.ptview.feature</module>
     <module>net.ogdf.bin.feature</module>
-    <module>org.adaptagrams.feature</module>
+    <module>../../pragmatics-libraries/features/org.adaptagrams.feature</module>
   </modules>
 
 </project>

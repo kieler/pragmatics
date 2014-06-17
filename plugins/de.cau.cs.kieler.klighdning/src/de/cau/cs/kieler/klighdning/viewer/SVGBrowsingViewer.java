@@ -99,7 +99,7 @@ public class SVGBrowsingViewer {
         }
 
         // FIXME
-        controller.zoom(ZoomStyle.ZOOM_TO_FIT, 0);
+        controller.getZoomController().zoom(ZoomStyle.ZOOM_TO_FIT, 0);
 
         // render
         final String rendered = canvas.render();
@@ -174,7 +174,7 @@ public class SVGBrowsingViewer {
      * Zooms and translates the current model such that it fits into the current viewport.
      */
     public void zoomToFit() {
-        controller.zoom(ZoomStyle.ZOOM_TO_FIT, 0);
+        controller.getZoomController().zoom(ZoomStyle.ZOOM_TO_FIT, 0);
     }
 
     /**
