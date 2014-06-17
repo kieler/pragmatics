@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.util;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -38,6 +39,7 @@ import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.kgraph.PersistentEntry;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
+import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
@@ -685,7 +687,7 @@ public final class KimlUtil {
             }
         }
     }
-
+    
     /**
      * Loads all {@link de.cau.cs.kieler.core.properties.IProperty} of KGraphData elements of a
      * KGraph by deserializing {@link PersistentEntry} tuples.
@@ -693,9 +695,19 @@ public final class KimlUtil {
      * Options that cannot be resolved immediately (e.g. because the extension points have not
      * been read yet) are stored as {@link LayoutOptionProxy}.
      * 
-     * @param graph the root element of the graph to load elements of.
+     * @param graph 
+     *            the root element of the graph to load elements of.
+     * @param knownProps
+     *            a set of additional properties that are known, hence should be parsed properly
      */
-    public static void loadDataElements(final KNode graph) {
+    public static void loadDataElements(final KNode graph,
+            final IProperty<?>... knownProps) {
+        
+        Map<String, IProperty<?>> knowPropsMap = Maps.newHashMap();
+        for (IProperty<?> p : knownProps) {
+            knowPropsMap.put(p.getId(), p);
+        }
+
         LayoutMetaDataService dataService = LayoutMetaDataService.getInstance();
         TreeIterator<EObject> iterator = graph.eAllContents();
         while (iterator.hasNext()) {
@@ -704,7 +716,7 @@ public final class KimlUtil {
                 final KLayoutData layoutData = (KLayoutData) eObject;
                 for (PersistentEntry persistentEntry : layoutData.getPersistentEntries()) {
                     loadDataElement(dataService, layoutData, persistentEntry.getKey(),
-                            persistentEntry.getValue());
+                            persistentEntry.getValue(), knowPropsMap);
                 }
             }
         }
@@ -731,10 +743,38 @@ public final class KimlUtil {
      */
     public static void loadDataElement(final LayoutMetaDataService dataService,
             final IPropertyHolder propertyHolder, final String id, final String value) {
+        Map<String, IProperty<?>> empty = Collections.emptyMap();
+        loadDataElement(dataService, propertyHolder, id, value, empty);
+    }
+      
+    /**
+     * Configures the {@link de.cau.cs.kieler.core.properties.IProperty layout option} given by
+     * {@code key} and {@code value} in the given {@link IPropertyHolder}, if {@code key}
+     * denominates a registered Layout Option; configures a {@link LayoutOptionProxy} otherwise.<br>
+     * <br>
+     * Extracted that part into a dedicated method in order to be able to re-use it, e.g. in
+     * KLighD's ExpansionAwareLayoutOptionData.
+     * 
+     * @author chsch (extractor)
+     * 
+     * @param dataService
+     *            the current {@link LayoutMetaDataService}
+     * @param propertyHolder
+     *            the {@link IPropertyHolder} to be configured
+     * @param id
+     *            the layout option's id
+     * @param value
+     *            the desired option value
+     * @param knownProps
+     *            a map with additional properties that are known, hence should be parsed properly
+     */
+    public static void loadDataElement(final LayoutMetaDataService dataService,
+            final IPropertyHolder propertyHolder, final String id, final String value,
+            final Map<String, ? extends IProperty<?>> knownProps) {
         if (id != null && value != null) {
             // try to get the layout option from the data service.
             final LayoutOptionData layoutOptionData = dataService.getOptionDataBySuffix(id);
-            
+
             // if we have a valid layout option, parse its value.
             if (layoutOptionData != null) {
                 Object layoutOptionValue = layoutOptionData.parseValue(value);
@@ -742,10 +782,49 @@ public final class KimlUtil {
                     propertyHolder.setProperty(layoutOptionData, layoutOptionValue);
                 }
             } else {
-                // the layout option could not be resolved, so create a proxy
-                LayoutOptionProxy.setProxyValue(propertyHolder, id, value);
+                
+                // is it an explicitly known property?
+                if (knownProps.containsKey(id)) {
+                    // id compare ok because Property's hashcode delegates to the id's hashcode    
+                    Object parsed = parseSimpleDatatypes(value);
+                    @SuppressWarnings("unchecked")
+                    IProperty<Object> unchecked = (IProperty<Object>) knownProps.get(id);
+                    propertyHolder.setProperty(unchecked, parsed);
+
+                    // REMARK: A better solution would be to create a 'Typed'Property
+                    // which knows about it's type such that we are able 
+                    // to test the type of the parsed value here 
+                    
+                } else {
+                    // the layout option could not be resolved, so create a proxy
+                    LayoutOptionProxy.setProxyValue(propertyHolder, id, value);
+                }
             }
         }
+    }
+
+    private static Object parseSimpleDatatypes(final String value) {
+        try {
+            return Float.valueOf(value);
+        } catch (NumberFormatException ne) {
+            // silent
+        }
+        try {
+            return Integer.valueOf(value);
+        } catch (NumberFormatException ne) {
+            // silent
+        }
+        
+        // Boolean#valueOf() returns false for every string that is
+        // not "true" (case insensitive). Thus we have to explicitly
+        // test for both literals.
+        if (value.toLowerCase().equals(Boolean.FALSE.toString())) {
+            return false;
+        } else if (value.toLowerCase().equals(Boolean.TRUE.toString())) {
+            return true;
+        }
+
+        return value;
     }
     
     /**
