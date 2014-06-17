@@ -152,8 +152,10 @@ public class KConstrainedFDLayouter {
 
     /**
      * Instantiates an internal layouter object and configures it appropriately.
+     * 
+     * @return this.
      */
-    public void prepare() {
+    public KConstrainedFDLayouter prepare() {
 
         if (graph == null) {
             throw new IllegalStateException("Cannot execute layouter without specified cgraph.");
@@ -202,22 +204,48 @@ public class KConstrainedFDLayouter {
         if (xPtrs != null && yPtrs != null) {
             layouter.setUnsatisfiableConstraintInfo(xPtrs, yPtrs);
         }
+        
+        return this;
     }
 
+    /** 
+     * Runs the layouter, if {@link #prepare()} has not been called beforehand this is done here.
+     * 
+     * @return this
+     * 
+     * @see #run(boolean)
+     */
+    public KConstrainedFDLayouter run() {
+        this.run(false);
+        
+        return this;
+    }
+  
     /**
      * Runs the layouter, if {@link #prepare()} has not been called beforehand this is done here.
+     * 
+     * @param makeFeasible
+     *            whether makeFeasible() should be called before running the layout algorithm.
+     * 
+     * @return this
      */
-    public void run() {
+    public KConstrainedFDLayouter run(final boolean makeFeasible) {
 
         if (layouter == null) {
             // prepare
             prepare();
         }
 
+        if (makeFeasible) {
+            layouter.makeFeasible();
+        }
+
         layouter.run();
 
         // FIXME see javadoc of the class
         // layouter.freeAssociatedObjects();
+
+        return this;
     }
 
     /**
@@ -226,6 +254,10 @@ public class KConstrainedFDLayouter {
      * @return the layouter
      */
     public ConstrainedFDLayout getLayouter() {
+        if (layouter == null) {
+            throw new IllegalStateException("Cannot access the internal layouter "
+                    + "instance before #prepare() or #run() was called.");
+        }
         return layouter;
     }
 
