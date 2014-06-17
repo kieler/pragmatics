@@ -135,6 +135,18 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
             }
         }
         
+        // if orthogonal routing is selected, determine the junction points
+        if (edgeRouting == EdgeRouting.ORTHOGONAL) {
+            for (KNode node : layoutNode.getChildren()) {
+                for (KEdge edge : node.getOutgoingEdges()) {
+                    generateJunctionPoints(edge);
+                }
+                for (KEdge edge : node.getIncomingEdges()) {
+                    generateJunctionPoints(edge);
+                }  
+            }
+        }
+        
         // set size of the parent node
         float borderSpacing = parentLayout.getProperty(LayoutOptions.BORDER_SPACING);
         if (borderSpacing < 0) {
@@ -184,18 +196,23 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
             }
         }
         
-        // if orthogonal routing is selected, determine the junction points
-        // Note: if the edge coordinates are not modified, the junction points are also ignored
-        if (edgeRouting == EdgeRouting.ORTHOGONAL) {
-            KVectorChain junctionPoints = KimlUtil.determineJunctionPoints(edge);
-            if (junctionPoints.isEmpty()) {
-                edgeLayout.setProperty(LayoutOptions.JUNCTION_POINTS, null);
-            } else {
-                edgeLayout.setProperty(LayoutOptions.JUNCTION_POINTS, junctionPoints);
-            }
-        }
-        
         return maxv;
     }
 
+    /**
+     * Determine if given as has junctionpoints and add appopriate layoutoption if necessary.
+     * @param edge the edge to determine junctionpoints of
+     */
+    private void generateJunctionPoints(final KEdge edge) {
+     // Note: if the edge coordinates are not modified, the junction points are also ignored
+        KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
+        KVectorChain junctionPoints = KimlUtil.determineJunctionPoints(edge);
+        if (junctionPoints.isEmpty()) {
+            edgeLayout.setProperty(LayoutOptions.JUNCTION_POINTS, null);
+        } else {
+            edgeLayout.setProperty(LayoutOptions.JUNCTION_POINTS, junctionPoints);
+        }
+        
+    }
+    
 }
