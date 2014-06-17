@@ -200,8 +200,8 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
     }
 
     /**
-     * Determine if given as has junctionpoints and add appopriate layoutoption if necessary.
-     * @param edge the edge to determine junctionpoints of
+     * Determine if given edge has junction points and add appropriate layout option if necessary.
+     * @param edge the edge to determine junction points of
      */
     private void generateJunctionPoints(final KEdge edge) {
      // Note: if the edge coordinates are not modified, the junction points are also ignored
