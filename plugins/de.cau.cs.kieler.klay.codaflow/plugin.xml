@@ -8,7 +8,7 @@
         - - - - - - - - - - - - - - - - - - - - - - -->
       <layoutOption
             appliesTo="parents"
-            class="de.cau.cs.kieler.klay.cola.properties.HorizontalAlignment"
+            class="de.cau.cs.kieler.klay.codaflow.properties.HorizontalAlignment"
             default="NONE"
             id="de.cau.cs.kieler.klay.codaflow.alignNodesHorizontal"
             name="Horizontal Node Alignment"
@@ -18,7 +18,7 @@
             advanced="true"
             appliesTo="parents"
             default="CONNECTIVITY"
-            class="de.cau.cs.kieler.klay.cola.properties.EdgeLengthStrategy"
+            class="de.cau.cs.kieler.klay.codaflow.properties.EdgeLengthStrategy"
             id="de.cau.cs.kieler.klay.codaflow.edgeLengthStrategy"
             name="Ideal Edge Length Strategy"
             type="enum">
@@ -26,7 +26,7 @@
       <layoutOption
             appliesTo="parents"
             default="MFAS_GLOBAL"
-            class="de.cau.cs.kieler.klay.cola.properties.CycleTreatment"
+            class="de.cau.cs.kieler.klay.codaflow.properties.CycleTreatment"
             id="de.cau.cs.kieler.klay.codaflow.cycleTreatment"
             name="Cycle Treatment"
             type="enum">
@@ -107,7 +107,7 @@
       <!-- Codaflow cola -->
       <layoutAlgorithm
             category="de.cau.cs.kieler.cola.category"
-            class="de.cau.cs.kieler.klay.cola.ColaLayoutProvider"
+            class="de.cau.cs.kieler.klay.codaflow.ColaLayoutProvider"
             id="de.cau.cs.kieler.klay.codaflow.cola"
             name="CoDaFlow_CoLa">
          <knownOption
@@ -150,7 +150,7 @@
       <!-- aca -->
       <layoutAlgorithm
             category="de.cau.cs.kieler.cola.category"
-            class="de.cau.cs.kieler.klay.cola.ACALayoutProvider"
+            class="de.cau.cs.kieler.klay.codaflow.ACALayoutProvider"
             id="de.cau.cs.kieler.klay.codaflow.aca"
             name="CoDaFlow_ACA">
          <knownOption
@@ -200,7 +200,7 @@
       <!-- Codaflow -->
       <layoutAlgorithm
             category="de.cau.cs.kieler.cola.category"
-            class="de.cau.cs.kieler.klay.cola.CodaflowLayoutProvider"
+            class="de.cau.cs.kieler.klay.codaflow.CodaflowLayoutProvider"
             id="de.cau.cs.kieler.klay.codaflow"
             name="CoDaFlow Layouter">
          <knownOption
@@ -250,7 +250,7 @@
       
       <!-- global libavoid -->
       <layoutAlgorithm
-            class="de.cau.cs.kieler.klay.cola.LibavoidLayoutProvider"
+            class="de.cau.cs.kieler.klay.codaflow.LibavoidLayoutProvider"
             id="de.cau.cs.kieler.klay.cola.libavoid"
             name="Global Libavoid Layout">
          <supportedFeature
@@ -272,14 +272,14 @@
       
       <!-- Compacting -->
       <layoutAlgorithm
-            class="de.cau.cs.kieler.klay.cola.CompactingLayoutProvider"
+            class="de.cau.cs.kieler.klay.codaflow.CompactingLayoutProvider"
             id="de.cau.cs.kieler.klay.cola.compaction"
             name="Compacting Layout">
       </layoutAlgorithm>
       
       <!-- Topology improvement -->
       <layoutAlgorithm
-            class="de.cau.cs.kieler.klay.cola.TIOLayoutProvider"
+            class="de.cau.cs.kieler.klay.codaflow.TIOLayoutProvider"
             id="de.cau.cs.kieler.klay.cola.TIPLayout"
             name="TIP Layout">
          <knownOption
