@@ -17,21 +17,16 @@ import java.util.Arrays;
 import java.util.Stack;
 
 import org.adaptagrams.ConstrainedFDLayout;
-import org.adaptagrams.TestConvergence;
 import org.adaptagrams.UnsatisfiableConstraintInfoPtrs;
-import org.adaptagrams.Unsigneds;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import de.cau.cs.kieler.adaptagrams.cgraph.CGraph;
-import de.cau.cs.kieler.adaptagrams.cgraph.CNode;
-import de.cau.cs.kieler.adaptagrams.cgraph.CPort;
+import de.cau.cs.kieler.adaptagrams.layouter.KConstrainedFDLayouter;
 import de.cau.cs.kieler.adaptagrams.properties.CGraphProperties;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters;
 import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters.KGraphAdapter;
@@ -43,8 +38,6 @@ import de.cau.cs.kieler.klay.cola.graphimport.KGraphImporter;
 import de.cau.cs.kieler.klay.cola.processors.DirectionConstraintProcessor;
 import de.cau.cs.kieler.klay.cola.processors.IdealEdgeLengthProcessor;
 import de.cau.cs.kieler.klay.cola.processors.PortConstraintProcessor;
-import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
-import de.cau.cs.kieler.klay.cola.properties.InternalColaProperties;
 import de.cau.cs.kieler.klay.cola.util.DebugTestConvergence;
 import de.cau.cs.kieler.klay.cola.util.MinMaxTestConvergence;
 
@@ -76,7 +69,7 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     public void doLayout(final KNode parentNode, final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Cola Layout", 1);
+        progressMonitor.begin("CoDaFlow CoLa Layout", 1);
 
         // handle some properties
         KLayoutData rootLayout = parentNode.getData(KLayoutData.class);
@@ -141,7 +134,7 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         // first run w/o overlap prevention
         IKielerProgressMonitor spm = progressMonitor.subTask(1);
         spm.begin("Untangling Layout", 1);
-        runLayout(false, "", 1, 5, cap, spm);
+        runLayout(false, "", 1, 1, cap, spm);
         spm.done();
 
         // generate the flow constraints
@@ -160,14 +153,6 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         // FIXME adaptagrams - atm still have to compute the bounding rects of clusters
         graph.rootCluster.computeBoundingRect(graph.nodes);
 
-        // ConstrainedFDLayout fd =
-        // new ConstrainedFDLayout(graph.nodes, graph.edges, 10, true);
-        // WhitparentLayout.getProperty(LayoutOptions.SPACING)
-        // fd.setClusterHierarchy(graph.rootCluster);
-        // fd.setConstraints(graph.constraints);
-        // fd.run();
-        
-        
         // apply the calculated layout back to the kgrap
         importer.applyLayout(graph);
 
@@ -179,45 +164,42 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         progressMonitor.done();
     }
 
-    private ConstrainedFDLayout runLayout(final boolean overlap, final String dbgString, 
-            final double edgelength, final int minIts, final int maxIts, IKielerProgressMonitor pm) {
-
-        // create a new layouter instance
-        ConstrainedFDLayout algo =
-                // edge length multiplier is 1
-                new ConstrainedFDLayout(graph.getNodes(), graph.getEdges(), edgelength, overlap,
-                        graph.getIdealEdgeLengths(), testConvergence);
+    private ConstrainedFDLayout runLayout(final boolean overlap, final String dbgString,
+            final double edgelength, final int minIts, final int maxIts,
+            final IKielerProgressMonitor pm) {
 
         UnsatisfiableConstraintInfoPtrs uciX = new UnsatisfiableConstraintInfoPtrs();
         UnsatisfiableConstraintInfoPtrs uciY = new UnsatisfiableConstraintInfoPtrs();
-                
-        algo.setUnsatisfiableConstraintInfo(uciX, uciY);
+
+        // create a new layouter instance
+        KConstrainedFDLayouter algo =
+                new KConstrainedFDLayouter()
+                        .withCGraph(graph)
+                        .withIdealEdgeLength(edgelength)
+                        .withIndividualEdgeLengths().withRemoveOverlaps(overlap)
+                        .withUnsatisfiableConstraintInfos(uciX, uciY)
+                        .withConvergenceTest(testConvergence);
         
-        algo.setM_doYAxisFirst(true);
-        
-        generateOverlapIgnores(graph, algo);
+        algo.prepare();
+        // we favor the y direction
+        algo.getLayouter().setM_doYAxisFirst(true);
         
         // remember for later disposal
-        layouters.add(algo);
+        layouters.add(algo.getLayouter());
         
         testConvergence.minIterations = minIts;
         testConvergence.maxIterations = maxIts;
         if (debug) {
             DebugTestConvergence debugConvergence = (DebugTestConvergence) testConvergence;
-            debugConvergence.setLayouter(algo);
+            debugConvergence.setLayouter(algo.getLayouter());
             debugConvergence.setNamePrefix(debugPrefix + (overlap ? "overlap" : "non_overlap")
                     + dbgString);
         }
 
-        // set constraints and clusters
-        algo.setConstraints(graph.getConstraints());
-        algo.setClusterHierarchy(graph.rootCluster);
-
-        algo.outputInstanceToSVG("colapre_" + (overlap ? "overlap" : "non_overlap" + dbgString));
-        
-        algo.makeFeasible();
-        
-        algo.outputInstanceToSVG("colapremf_" + (overlap ? "overlap" : "non_overlap" + dbgString));
+        // algo.outputInstanceToSVG("colapre_" + (overlap ? "overlap" : "non_overlap" + dbgString));
+        algo.getLayouter().makeFeasible();
+        // algo.outputInstanceToSVG("colapremf_" + (overlap ? "overlap" : "non_overlap" +
+        // dbgString));
 
         IKielerProgressMonitor ipm = pm.subTask(1);
         ipm.begin("Run", 1);
@@ -232,39 +214,15 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
             System.out.println("Y" + uciY.get(i));
         }
         
-        return algo;
+        return algo.getLayouter();
     }
 
-    
-    private void generateOverlapIgnores(final CGraph graph, final ConstrainedFDLayout alg) {
-
-        for (CNode n : graph.getChildren()) {
-
-            Unsigneds portsGroup = new Unsigneds();
-            
-            // add the ports to be ignored
-            for (CPort p : n.getPorts()) {
-                portsGroup.add(p.cIndex);
-            }
-            
-            // add the node as "head" of the group
-            portsGroup.add(n.cIndex);
-
-            alg.addGroupOfNonOverlapExemptRectangles(portsGroup);
-            // System.out.println("Added group: " + n + " " + portsGroup);
-        }
-
-    }
-    
     
     private void calculateMarginsAndSizes(final KNode parent) {
         KGraphAdapter adapter = KGraphAdapters.adapt(parent);
         KimlNodeDimensionCalculation.sortPortLists(adapter);
         KimlNodeDimensionCalculation.calculateLabelAndNodeSizes(adapter);
         NodeMarginCalculator mc = KimlNodeDimensionCalculation.getNodeMarginCalculator(adapter);
-        //if (parent.getData(KShapeLayout.class).getProperty(ColaProperties.PORT_DUMMIES)) {
-            //mc.excludePorts();
-        //}
         mc.process();
 
         if (parent.getData(KLayoutData.class).getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {

@@ -41,7 +41,7 @@ import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters.KGraphAdapter;
 import de.cau.cs.kieler.kiml.util.nodespacing.KimlNodeDimensionCalculation;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 import de.cau.cs.kieler.klay.cola.graphimport.KGraphImporter;
-import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
+import de.cau.cs.kieler.klay.cola.properties.CodaflowProperties;
 
 /**
  * @author uru
@@ -63,9 +63,9 @@ public class TIOLayoutProvider extends AbstractLayoutProvider {
         KLayoutData rootLayout = parentNode.getData(KLayoutData.class);
 
         // always suppress dummy port generation here
-        rootLayout.setProperty(ColaProperties.PORT_DUMMIES, false);
+        rootLayout.setProperty(CodaflowProperties.PORT_DUMMIES, false);
 
-        moveLimit = rootLayout.getProperty(ColaProperties.MOVE_LIMIT);
+        moveLimit = rootLayout.getProperty(CodaflowProperties.MOVE_LIMIT);
 
         // calculate margins of the nodes
         KGraphAdapter adapter = KGraphAdapters.adapt(parentNode);

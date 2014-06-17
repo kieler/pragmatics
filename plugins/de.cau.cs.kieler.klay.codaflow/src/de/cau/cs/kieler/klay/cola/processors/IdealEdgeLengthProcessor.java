@@ -26,12 +26,12 @@ import de.cau.cs.kieler.adaptagrams.cgraph.CPort;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
+import de.cau.cs.kieler.klay.cola.properties.CodaflowProperties;
 import de.cau.cs.kieler.klay.cola.properties.EdgeLengthStrategy;
 
 /**
  * Assigns an ideal edge length to every {@link CEdge} of the {@link CGraph}. The strategy to select
- * the ideal edge length is specified using the {@link ColaProperties#EDGE_LENGTH_STRATEGY}
+ * the ideal edge length is specified using the {@link CodaflowProperties#EDGE_LENGTH_STRATEGY}
  * property.
  * 
  * <h1>Two Special Cases</h1> 
@@ -55,7 +55,7 @@ public class IdealEdgeLengthProcessor implements ILayoutProcessor {
     public void process(final CGraph graph, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Ideal Edge Length Determination", 1);
         
-        final double idealEdgeLength = graph.getProperty(ColaProperties.IDEAL_EDGE_LENGTHS);
+        final double idealEdgeLength = graph.getProperty(CodaflowProperties.IDEAL_EDGE_LENGTHS);
 
         // assign the edge lengths for the dummy port edges
         assignDummyPortEdgeLengths(graph);
@@ -64,7 +64,7 @@ public class IdealEdgeLengthProcessor implements ILayoutProcessor {
         assignExternalPortEdgeValues(graph);
 
         // set ideal edge lengths for usual edges based on the specified strategy
-        EdgeLengthStrategy ees = graph.getProperty(ColaProperties.EDGE_LENGTH_STRATEGY);
+        EdgeLengthStrategy ees = graph.getProperty(CodaflowProperties.EDGE_LENGTH_STRATEGY);
         switch (ees) {
         case CONNECTIVITY:
         case CONNECTIVITY_CAPPED:
@@ -120,7 +120,7 @@ public class IdealEdgeLengthProcessor implements ILayoutProcessor {
 
         }
 
-        final double idealEdgeLength = graph.getProperty(ColaProperties.IDEAL_EDGE_LENGTHS);
+        final double idealEdgeLength = graph.getProperty(CodaflowProperties.IDEAL_EDGE_LENGTHS);
         // now use this information to determine the edge lengths of all edges
         for (CNode src : graph.getChildren()) {
             // System.out.println("Looking at " + src);
@@ -284,7 +284,7 @@ public class IdealEdgeLengthProcessor implements ILayoutProcessor {
             neighbours.put(node, neighbourSet);
         }
 
-        final double idealEdgeLength = graph.getProperty(ColaProperties.IDEAL_EDGE_LENGTHS);
+        final double idealEdgeLength = graph.getProperty(CodaflowProperties.IDEAL_EDGE_LENGTHS);
         // calc link sizes for each edge
         for (CNode n : graph.getChildren()) {
             for (CEdge e : n.getOutgoingEdges()) {

@@ -56,7 +56,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.cola.properties.ColaPredicates;
-import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
+import de.cau.cs.kieler.klay.cola.properties.CodaflowProperties;
 import de.cau.cs.kieler.klay.cola.properties.InternalColaProperties;
 import de.cau.cs.kieler.klay.cola.util.ColaUtil;
 
@@ -88,9 +88,9 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
         graph.copyProperties(rootNode.getData(KLayoutData.class));
         graph.setProperty(CGraphProperties.ORIGIN, rootNode);
 
-        portDummies = graph.getProperty(ColaProperties.PORT_DUMMIES);
+        portDummies = graph.getProperty(CodaflowProperties.PORT_DUMMIES);
         repositionHierarchicalPorts =
-                graph.getProperty(ColaProperties.REPOSITION_HIERARCHICAL_PORTS);
+                graph.getProperty(CodaflowProperties.REPOSITION_HIERARCHICAL_PORTS);
 
         // transform the nodes
         recImportNodes(rootNode, null);

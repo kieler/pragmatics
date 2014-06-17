@@ -3,57 +3,93 @@
 <plugin>
    <extension
          point="de.cau.cs.kieler.kiml.layoutProviders">
-      <!--____________________________________________ 
+      <!-- - - - - - - - - - - - - - - - - - - - - - -  
                       Layout Options
-       _____________________________________________-->
+        - - - - - - - - - - - - - - - - - - - - - - -->
       <layoutOption
-            advanced="true"
-            appliesTo="parents"
-            default="18"
-            description="The ideal length of the edges"
-            id="de.cau.cs.kieler.klay.cola.idealEdgeLengths"
-            lowerBound="0"
-            name="Ideal Edge Lengths"
-            type="float">
-      </layoutOption>
-          <layoutOption
             appliesTo="parents"
             class="de.cau.cs.kieler.klay.cola.properties.HorizontalAlignment"
             default="NONE"
-            id="de.cau.cs.kieler.klay.cola.alignNodesHorizontal"
+            id="de.cau.cs.kieler.klay.codaflow.alignNodesHorizontal"
             name="Horizontal Node Alignment"
             type="enum">
       </layoutOption>
       <layoutOption
+            advanced="true"
             appliesTo="parents"
-            default="false"
-            id="de.cau.cs.kieler.klay.cola.considerPreviousPositions"
-            name="Consider Previous Node Positions"
-            type="boolean">
+            default="CONNECTIVITY"
+            class="de.cau.cs.kieler.klay.cola.properties.EdgeLengthStrategy"
+            id="de.cau.cs.kieler.klay.codaflow.edgeLengthStrategy"
+            name="Ideal Edge Length Strategy"
+            type="enum">
       </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="MFAS_GLOBAL"
+            class="de.cau.cs.kieler.klay.cola.properties.CycleTreatment"
+            id="de.cau.cs.kieler.klay.codaflow.cycleTreatment"
+            name="Cycle Treatment"
+            type="enum">
+      </layoutOption>
+
       <layoutOption
             advanced="true"
             default="true"
             appliesTo="parents"
-            id="de.cau.cs.kieler.klay.cola.repositionHierarchicalPorts"
+            id="de.cau.cs.kieler.klay.codaflow.repositionHierarchicalPorts"
             name="Reposition Hierarchical Ports"
             type="boolean">
       </layoutOption>
       <layoutOption
             appliesTo="parents"
             default="true"
-            id="de.cau.cs.kieler.klay.cola.dummyPortNodes"
+            id="de.cau.cs.kieler.klay.codaflow.dummyPortNodes"
             name="Create Dummy Port Nodes"
             type="boolean">
       </layoutOption>
       <layoutOption
+            advanced="true"
             appliesTo="parents"
-            default="MFAS_GLOBAL"
-            class="de.cau.cs.kieler.klay.cola.properties.CycleTreatment"
-            id="de.cau.cs.kieler.klay.cola.cycleTreatment"
-            name="Cycle Treatment"
-            type="enum">
+            default="2"
+            description="Breathing distance of dummy port nodes to their parent node."
+            id="de.cau.cs.kieler.klay.codaflow.portDummyBreathe"
+            name="Port Dummy Breathe"
+            type="float">
       </layoutOption>
+
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="true"
+            id="de.cau.cs.kieler.klay.codaflow.emphasizeDirection"
+            name="Emphasize Direction"
+            type="boolean">
+            
+      <!-- ACA -->
+      </layoutOption>
+            <layoutOption
+            appliesTo="parents"
+            default="true"
+            id="de.cau.cs.kieler.klay.codaflow.aca.alignCrossHierarchyEdges"
+            name="ACA Align Cross-Hierarchy Edges"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="false"
+            id="de.cau.cs.kieler.klay.codaflow.aca.favorLongEdges"
+            name="ACA Favor Long Edges"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="false"
+            id="de.cau.cs.kieler.klay.codaflow.aca.postCompaction"
+            name="ACA Post Compaction"
+            type="boolean">
+      </layoutOption>
+      
+      <!-- Topology Improvement -->
       <layoutOption
             advanced="true"
             appliesTo="parents"
@@ -63,68 +99,24 @@
             name="Move Limit"
             type="float">
       </layoutOption>
-      <layoutOption
-            advanced="true"
-            appliesTo="parents"
-            default="2"
-            description="Breathing distance of dummy port nodes to their parent node."
-            id="de.cau.cs.kieler.klay.cola.portDummyBreathe"
-            name="Port Dummy Breathe"
-            type="float">
-      </layoutOption>
-      <layoutOption
-            advanced="true"
-            appliesTo="parents"
-            default="CONNECTIVITY"
-            class="de.cau.cs.kieler.klay.cola.properties.EdgeLengthStrategy"
-            id="de.cau.cs.kieler.klay.cola.edgeLengthStrategy"
-            name="Ideal Edge Length Strategy"
-            type="enum">
-      </layoutOption>
-      <layoutOption
-            advanced="true"
-            appliesTo="parents"
-            default="true"
-            id="de.cau.cs.kieler.klay.cola.emphasizeDirection"
-            name="Emphasize Direction"
-            type="boolean">
-      </layoutOption>
-            <layoutOption
-            appliesTo="parents"
-            default="true"
-            id="de.cau.cs.kieler.klay.cola.aca.alignCrossHierarchyEdges"
-            name="ACA Align Cross-Hierarchy Edges"
-            type="boolean">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            default="false"
-            id="de.cau.cs.kieler.klay.cola.aca.favorLongEdges"
-            name="ACA Favor Long Edges"
-            type="boolean">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            default="false"
-            id="de.cau.cs.kieler.klay.cola.aca.postCompaction"
-            name="ACA Post Compaction"
-            type="boolean">
-      </layoutOption>
-      <!--____________________________________________ 
+      
+      <!-- - - - - - - - - - - - - - - - - - - - - - - 
                       Layout Algorithms
-       _____________________________________________-->
+        - - - - - - - - - - - - - - - - - - - - - - -->
+        
+      <!-- Codaflow cola -->
       <layoutAlgorithm
-            category="de.cau.cs.kieler.kiml.categories.adaptagrams"
+            category="de.cau.cs.kieler.cola.category"
             class="de.cau.cs.kieler.klay.cola.ColaLayoutProvider"
-            id="de.cau.cs.kieler.klay.cola.constrained"
-            name="Dataflow CoLa Layout">
+            id="de.cau.cs.kieler.klay.codaflow.cola"
+            name="CoDaFlow_CoLa">
          <knownOption
                default="20"
                option="de.cau.cs.kieler.spacing">
          </knownOption>
          <knownOption
                default="100"
-               option="de.cau.cs.kieler.kiml.cola.idealEdgeLengths">
+               option="de.cau.cs.kieler.cola.idealEdgeLength">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.layoutHierarchy">
@@ -139,26 +131,153 @@
                feature="CLUSTERS">
          </supportedFeature>
          <knownOption
-               option="de.cau.cs.kieler.klay.cola.dummyPortNodes">
+               option="de.cau.cs.kieler.klay.codaflow.dummyPortNodes">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.klay.cola.repositionHierarchicalPorts">
+               option="de.cau.cs.kieler.klay.codaflow.repositionHierarchicalPorts">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.klay.cola.portDummyBreathe">
+               option="de.cau.cs.kieler.klay.codaflow.portDummyBreathe">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.klay.cola.edgeLengthStrategy">
+               option="de.cau.cs.kieler.klay.codaflow.edgeLengthStrategy">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.klay.cola.emphasizeDirection">
+               option="de.cau.cs.kieler.klay.codaflow.emphasizeDirection">
          </knownOption>
       </layoutAlgorithm>
+      
+      <!-- aca -->
+      <layoutAlgorithm
+            category="de.cau.cs.kieler.cola.category"
+            class="de.cau.cs.kieler.klay.cola.ACALayoutProvider"
+            id="de.cau.cs.kieler.klay.codaflow.aca"
+            name="CoDaFlow_ACA">
+         <knownOption
+               option="de.cau.cs.kieler.cola.idealEdgeLength">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.codaflow.dummyPortNodes">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.cola.considerPreviousPositions">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.codaflow.alignNodesHorizontal">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.codaflow.cycleTreatment">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layoutHierarchy">
+         </knownOption>
+         <supportedFeature
+               feature="COMPOUND">
+         </supportedFeature>
+         <supportedFeature
+               feature="CLUSTERS">
+         </supportedFeature>
+         <supportedFeature
+               feature="PORTS">
+         </supportedFeature>
+         <knownOption
+               option="de.cau.cs.kieler.klay.codaflow.edgeLengthStrategy">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.codaflow.emphasizeDirection">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.codaflow.aca.alignCrossHierarchyEdges">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.codaflow.aca.postCompaction">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.codaflow.aca.favorLongEdges">
+         </knownOption>
+      </layoutAlgorithm>
+      
+      <!-- Codaflow -->
+      <layoutAlgorithm
+            category="de.cau.cs.kieler.cola.category"
+            class="de.cau.cs.kieler.klay.cola.CodaflowLayoutProvider"
+            id="de.cau.cs.kieler.klay.codaflow"
+            name="CoDaFlow Layouter">
+         <knownOption
+               default="18"
+               option="de.cau.cs.kieler.cola.idealEdgeLength">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.codaflow.dummyPortNodes">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.cola.considerPreviousPositions">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.codaflow.alignNodesHorizontal">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.codaflow.cycleTreatment">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layoutHierarchy">
+         </knownOption>
+         <supportedFeature
+               feature="COMPOUND">
+         </supportedFeature>
+         <supportedFeature
+               feature="CLUSTERS">
+         </supportedFeature>
+         <supportedFeature
+               feature="PORTS">
+         </supportedFeature>
+         <knownOption
+               option="de.cau.cs.kieler.klay.codaflow.edgeLengthStrategy">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.codaflow.emphasizeDirection">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.codaflow.aca.alignCrossHierarchyEdges">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.codaflow.aca.postCompaction">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.codaflow.aca.favorLongEdges">
+         </knownOption>
+      </layoutAlgorithm>
+      
+      <!-- global libavoid -->
+      <layoutAlgorithm
+            class="de.cau.cs.kieler.klay.cola.LibavoidLayoutProvider"
+            id="de.cau.cs.kieler.klay.cola.libavoid"
+            name="Global Libavoid Layout">
+         <supportedFeature
+               feature="COMPOUND">
+         </supportedFeature>
+         <supportedFeature
+               feature="CLUSTERS">
+         </supportedFeature>
+         <supportedFeature
+               feature="PORTS">
+         </supportedFeature>
+         <knownOption
+               option="de.cau.cs.kieler.layoutHierarchy">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.cola.considerPreviousPositions">
+         </knownOption>
+      </layoutAlgorithm>
+      
+      <!-- Compacting -->
       <layoutAlgorithm
             class="de.cau.cs.kieler.klay.cola.CompactingLayoutProvider"
             id="de.cau.cs.kieler.klay.cola.compaction"
             name="Compacting Layout">
       </layoutAlgorithm>
+      
+      <!-- Topology improvement -->
       <layoutAlgorithm
             class="de.cau.cs.kieler.klay.cola.TIOLayoutProvider"
             id="de.cau.cs.kieler.klay.cola.TIPLayout"
@@ -167,124 +286,10 @@
                option="de.cau.cs.kieler.borderSpacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.klay.cola.dummyPortNodes">
+               option="de.cau.cs.kieler.klay.codaflow.dummyPortNodes">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.spacing">
-         </knownOption>
-      </layoutAlgorithm>
-      <layoutAlgorithm
-            class="de.cau.cs.kieler.klay.cola.ACALayoutProvider"
-            id="de.cau.cs.kieler.klay.cola.aca"
-            name="ACA Layout">
-         <knownOption
-               option="de.cau.cs.kieler.kiml.cola.idealEdgeLengths">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.klay.cola.dummyPortNodes">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.klay.cola.considerPreviousPositions">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.klay.cola.alignNodesHorizontal">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.klay.cola.cycleTreatment">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.layoutHierarchy">
-         </knownOption>
-         <supportedFeature
-               feature="COMPOUND">
-         </supportedFeature>
-         <supportedFeature
-               feature="CLUSTERS">
-         </supportedFeature>
-         <supportedFeature
-               feature="PORTS">
-         </supportedFeature>
-         <knownOption
-               option="de.cau.cs.kieler.klay.cola.edgeLengthStrategy">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.klay.cola.emphasizeDirection">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.klay.cola.aca.alignCrossHierarchyEdges">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.klay.cola.aca.postCompaction">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.klay.cola.aca.favorLongEdges">
-         </knownOption>
-      </layoutAlgorithm>
-      <layoutAlgorithm
-            class="de.cau.cs.kieler.klay.cola.CoDaLayoutProvider"
-            id="de.cau.cs.kieler.klay.cola.codala"
-            name="CoDaLa Layouter">
-         <knownOption
-               option="de.cau.cs.kieler.kiml.cola.idealEdgeLengths">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.klay.cola.dummyPortNodes">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.klay.cola.considerPreviousPositions">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.klay.cola.alignNodesHorizontal">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.klay.cola.cycleTreatment">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.layoutHierarchy">
-         </knownOption>
-         <supportedFeature
-               feature="COMPOUND">
-         </supportedFeature>
-         <supportedFeature
-               feature="CLUSTERS">
-         </supportedFeature>
-         <supportedFeature
-               feature="PORTS">
-         </supportedFeature>
-         <knownOption
-               option="de.cau.cs.kieler.klay.cola.edgeLengthStrategy">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.klay.cola.emphasizeDirection">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.klay.cola.aca.alignCrossHierarchyEdges">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.klay.cola.aca.postCompaction">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.klay.cola.aca.favorLongEdges">
-         </knownOption>
-      </layoutAlgorithm>
-      <layoutAlgorithm
-            class="de.cau.cs.kieler.klay.cola.LibavoidLayoutProvider"
-            id="de.cau.cs.kieler.klay.cola.libavoid"
-            name="New Libavoid Layout">
-         <supportedFeature
-               feature="COMPOUND">
-         </supportedFeature>
-         <supportedFeature
-               feature="CLUSTERS">
-         </supportedFeature>
-         <supportedFeature
-               feature="PORTS">
-         </supportedFeature>
-         <knownOption
-               option="de.cau.cs.kieler.layoutHierarchy">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.klay.cola.considerPreviousPositions">
          </knownOption>
       </layoutAlgorithm>
    </extension>

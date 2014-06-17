@@ -116,6 +116,8 @@ public class KConstrainedFDLayouter {
      * If activated, the {@link CGraph#getIdealEdgeLengths()} are used as edge lengths. Note that
      * the value specified by {@link #withIdealEdgeLength(double)} is used as a multiplier.
      * 
+     * The individual edge lengths are retrieved from the CGraph, {@link CGraph#getIdealEdgeLengths()}.
+     * 
      * @return this.
      */
     public KConstrainedFDLayouter withIndividualEdgeLengths() {

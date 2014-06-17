@@ -23,7 +23,7 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
-import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
+import de.cau.cs.kieler.klay.cola.properties.CodaflowProperties;
 
 /**
  * This class generates {@link SeparationConstraint} between ports and their parents to 
@@ -103,7 +103,7 @@ public class PortConstraintProcessor implements ILayoutProcessor {
 
                 // shift the port's offset into the correct direction
                 // Note: make sure the dummy nodes have some space to breathe (overlap removal)
-                float breathe = graph.getProperty(ColaProperties.PORT_DUMMY_BREATHE);
+                float breathe = graph.getProperty(CodaflowProperties.PORT_DUMMY_BREATHE);
                 KVector portOffset = origCenter.clone();
                 switch (p.side) {
                 case WEST:

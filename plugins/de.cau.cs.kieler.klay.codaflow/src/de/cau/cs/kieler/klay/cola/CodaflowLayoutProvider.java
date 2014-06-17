@@ -17,14 +17,15 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
+import de.cau.cs.kieler.adaptagrams.properties.CoLaProperties;
 import de.cau.cs.kieler.adaptagrams.provider.LibavoidLayoutProvider;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
+import de.cau.cs.kieler.klay.cola.properties.CodaflowProperties;
 
 /**
  * @author uru
  */
-public class CoDaLayoutProvider extends AbstractLayoutProvider {
+public class CodaflowLayoutProvider extends AbstractLayoutProvider {
 
     /**
      * {@inheritDoc}
@@ -41,7 +42,7 @@ public class CoDaLayoutProvider extends AbstractLayoutProvider {
          */
         ColaLayoutProvider cola = new ColaLayoutProvider();
 
-        parentLayout.setProperty(ColaProperties.CONSIDER_PREVIOUS_POSITION, true);
+        parentLayout.setProperty(CoLaProperties.CONSIDER_PREVIOUS_POSITIONS, true);
         cola.doLayout(parentNode, progressMonitor.subTask(1));
 
         
@@ -50,7 +51,7 @@ public class CoDaLayoutProvider extends AbstractLayoutProvider {
          */
         ACALayoutProvider aca = new ACALayoutProvider();
 
-        parentLayout.setProperty(ColaProperties.CONSIDER_PREVIOUS_POSITION, true);
+        parentLayout.setProperty(CoLaProperties.CONSIDER_PREVIOUS_POSITIONS, true);
 
         aca.doLayout(parentNode, progressMonitor.subTask(1));
 
@@ -58,7 +59,7 @@ public class CoDaLayoutProvider extends AbstractLayoutProvider {
          * Libavoid
          */
         
-        parentLayout.setProperty(ColaProperties.REPOSITION_HIERARCHICAL_PORTS, false);
+        parentLayout.setProperty(CodaflowProperties.REPOSITION_HIERARCHICAL_PORTS, false);
         if (parentLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {
 
             de.cau.cs.kieler.klay.cola.LibavoidLayoutProvider globalLibavoid =

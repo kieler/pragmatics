@@ -30,7 +30,7 @@ import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters.KGraphAdapter;
 import de.cau.cs.kieler.kiml.util.nodespacing.KimlNodeDimensionCalculation;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 import de.cau.cs.kieler.klay.cola.graphimport.KGraphImporter;
-import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
+import de.cau.cs.kieler.klay.cola.properties.CodaflowProperties;
 
 /**
  * @author uru
@@ -53,7 +53,7 @@ public class CompactingLayoutProvider extends AbstractLayoutProvider {
         KimlNodeDimensionCalculation.calculateLabelAndNodeSizes(adapter);
         KimlNodeDimensionCalculation.calculateNodeMargins(adapter);
 
-        parentNode.getData(KShapeLayout.class).setProperty(ColaProperties.PORT_DUMMIES, false);
+        parentNode.getData(KShapeLayout.class).setProperty(CodaflowProperties.PORT_DUMMIES, false);
 
         KGraphImporter importer = new KGraphImporter();
         CGraph graph = importer.importGraph(parentNode);

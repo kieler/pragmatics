@@ -55,7 +55,7 @@ import de.cau.cs.kieler.klay.cola.graphimport.KGraphImporter;
 import de.cau.cs.kieler.klay.cola.processors.DirectionConstraintProcessor;
 import de.cau.cs.kieler.klay.cola.processors.IdealEdgeLengthProcessor;
 import de.cau.cs.kieler.klay.cola.processors.PortConstraintProcessor;
-import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
+import de.cau.cs.kieler.klay.cola.properties.CodaflowProperties;
 import de.cau.cs.kieler.klay.cola.properties.InternalColaProperties;
 import de.cau.cs.kieler.klay.cola.util.ACADebugTestConvergence;
 import de.cau.cs.kieler.klay.cola.util.MinMaxTestConvergence;
@@ -146,7 +146,7 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
         }
 
         // favor long edges when aligning?
-        aca.favourLongEdges(parentLayout.getProperty(ColaProperties.ACA_FAVOR_LONG_EDGES));
+        aca.favourLongEdges(parentLayout.getProperty(CodaflowProperties.ACA_FAVOR_LONG_EDGES));
         
         // tell aca to ignore some edges, e.g. edges connecting dummy port nodes to parent nodes,
         // or edges to/from external ports
@@ -218,7 +218,7 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
         
 //        fd2.outputInstanceToSVG("aca_overlap_on");
         
-        if (parentLayout.getProperty(ColaProperties.ACA_POST_COMPACTION)) {
+        if (parentLayout.getProperty(CodaflowProperties.ACA_POST_COMPACTION)) {
             spm = progressMonitor.subTask(1);
             spm.begin("ACA Post Compaction", 1);
             ConstrainedFDLayout fd =
@@ -396,7 +396,7 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
         for (CNode n : graph.getChildren()) {
             for (CEdge e : n.getOutgoingEdges()) {
                 if (e.crossHierarchy
-                        && !graph.getProperty(ColaProperties.ACA_ALIGN_CROSS_HIERARCHY_EDGES)) {
+                        && !graph.getProperty(CodaflowProperties.ACA_ALIGN_CROSS_HIERARCHY_EDGES)) {
                     bools.set(e.cIndex, true);
                 }
             }

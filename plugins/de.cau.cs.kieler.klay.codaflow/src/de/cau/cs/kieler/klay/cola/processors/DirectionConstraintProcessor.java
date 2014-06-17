@@ -32,7 +32,7 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.cola.algs.EadesMFASHeuristic;
 import de.cau.cs.kieler.klay.cola.algs.TrajansAlgorithm;
-import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
+import de.cau.cs.kieler.klay.cola.properties.CodaflowProperties;
 import de.cau.cs.kieler.klay.cola.properties.CycleTreatment;
 import de.cau.cs.kieler.klay.cola.properties.HorizontalAlignment;
 
@@ -43,7 +43,7 @@ import de.cau.cs.kieler.klay.cola.properties.HorizontalAlignment;
  * <h1>Avoiding Contradicting Constraints</h1> 
  * In case the graph contains cycles, contradicting constraints would be introduced for nodes 
  * that are part of a cycle. The way we handle this issue is determined by the value of the
- * {@link ColaProperties#CYCLE_TREATMENT} property.
+ * {@link CodaflowProperties#CYCLE_TREATMENT} property.
  * property. 
  * 
  * <p>
@@ -101,17 +101,17 @@ public class DirectionConstraintProcessor implements ILayoutProcessor {
 
         this.graph = theGraph;
         
-        if (!graph.getProperty(ColaProperties.EMPHASIZE_DIRECTION)) {
+        if (!graph.getProperty(CodaflowProperties.EMPHASIZE_DIRECTION)) {
             progressMonitor.done();
             return;
         }
 
         spacing = theGraph.getProperty(LayoutOptions.SPACING);
-        if (theGraph.getProperty(ColaProperties.PORT_DUMMIES)) {
+        if (theGraph.getProperty(CodaflowProperties.PORT_DUMMIES)) {
             // when we use dummy ports, we let them breathe a bit from its parent node
-            portBreath = theGraph.getProperty(ColaProperties.PORT_DUMMY_BREATHE);
+            portBreath = theGraph.getProperty(CodaflowProperties.PORT_DUMMY_BREATHE);
         }
-        cycleTreatment = theGraph.getProperty(ColaProperties.CYCLE_TREATMENT);
+        cycleTreatment = theGraph.getProperty(CodaflowProperties.CYCLE_TREATMENT);
 
         // initialize some internal information we require to determine whether to exclude specific
         // edges or not.
@@ -178,7 +178,7 @@ public class DirectionConstraintProcessor implements ILayoutProcessor {
      * {@link HorizontalAlignment}.
      */
     private void generateSeparationConstraints() {
-        HorizontalAlignment vAlignment = graph.getProperty(ColaProperties.ALIGN_NODES);
+        HorizontalAlignment vAlignment = graph.getProperty(CodaflowProperties.ALIGN_NODES);
         switch (vAlignment) {
         case LEFT:
             leftAlign();

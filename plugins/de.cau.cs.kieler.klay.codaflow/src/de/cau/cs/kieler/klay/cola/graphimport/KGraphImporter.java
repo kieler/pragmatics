@@ -40,7 +40,7 @@ import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
-import de.cau.cs.kieler.klay.cola.properties.ColaProperties;
+import de.cau.cs.kieler.klay.cola.properties.CodaflowProperties;
 import de.cau.cs.kieler.klay.cola.util.ColaUtil;
 
 /**
@@ -134,7 +134,7 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
         cnode.init();
 
         // create ports
-        if (graph.getProperty(ColaProperties.PORT_DUMMIES)) {
+        if (graph.getProperty(CodaflowProperties.PORT_DUMMIES)) {
             for (KPort p : n.getPorts()) {
                 CPort port = new CPort(graph, cnode);
                 ColaUtil.setPosAndSize(port, p.getData(KShapeLayout.class));
