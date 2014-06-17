@@ -68,7 +68,7 @@ public final class TrajansAlgorithm {
             CNode target = e.getTarget();
 
             // ignore cross hierarchy edges
-            if (!node.getParent().equals(target.getParent())) {
+            if (!node.graph.equals(target.graph)) {
                 continue;
             }
 
