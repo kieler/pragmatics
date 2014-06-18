@@ -9,4 +9,6 @@ Require-Bundle: com.google.guava;bundle-version="10.0.0",
  de.cau.cs.kieler.core,
  de.cau.cs.kieler.kiml,
  de.cau.cs.kieler.core.kgraph
-Export-Package: de.cau.cs.kieler.klay.force
+Export-Package: de.cau.cs.kieler.klay.force,
+ de.cau.cs.kieler.klay.force.model,
+ de.cau.cs.kieler.klay.force.properties
