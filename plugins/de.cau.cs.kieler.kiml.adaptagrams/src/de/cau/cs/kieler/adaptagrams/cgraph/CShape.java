@@ -82,7 +82,11 @@ public abstract class CShape extends CGraphElement {
      * @return .
      */
     public KVector getCenter() {
-        return new KVector(pos.x + size.x / 2, pos.y + size.y / 2);
+        if (!graph.isInitialized()) {
+            return new KVector(pos.x + size.x / 2, pos.y + size.y / 2);
+        } else {
+            return getRectCenter();
+        }
     }
 
     /**
@@ -111,6 +115,8 @@ public abstract class CShape extends CGraphElement {
     /**
      * @return the center position of the underlying adaptagrams rectangle. The margin is already
      *         subtracted.
+     *         
+     * @deprecated use {@link #getCenter()} (after init)
      */
     public KVector getRectCenter() {
         double centerX =

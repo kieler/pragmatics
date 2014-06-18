@@ -122,47 +122,80 @@ public class CEdge extends CGraphElement {
     }
 
     /**
-     * Returns the docking point at the source node.
+     * Returns the docking point at the source node, or port if existent.
      * 
-     * Note, this method cannot be used in conjunction with external ports, it requires the source
-     * node to be set.
+     * Note, if neither a src node nor a src port are specified a (0, 0)
+     * vector is returned.
      * 
      * @return the source docking point
      */
     public KVector getSourcePoint() {
-        KVector v = src.getPos().clone();
-        if (srcPort != null) {
-            v.add(srcPort.getRelativePos());
-            // point to the port's center
-            v.add(srcPort.getSize().scale(0.5f)); // SUPPRESS CHECKSTYLE NEXT 40 MagicNumber
-        } else {
-            // point to the node's center
-            v.add(src.getSize().scale(0.5f));
-        }
-
-        return v;
+        return getClippedCenterToCenterVector(src, srcPort, tgt, tgtPort);
     }
 
     /**
-     * Returns the docking point at the target node.
+     * Returns the docking point at the target node, or port if existent.
      * 
-     * Note, this method cannot be used in conjunction with external ports, it requires the target
-     * node to be set.
+     * Note, if neither a tgt node nor a tgt port are specified a (0, 0)
+     * vector is returned.
      * 
      * @return the target docking point
      */
     public KVector getTargetPoint() {
-        KVector v = tgt.getPos().clone();
-        if (tgtPort != null) {
-            v.add(tgtPort.getRelativePos());
-            // point to the port's center
-            v.add(tgtPort.getSize().scale(0.5f));
-        } else {
-            // point to the node's center
-            v.add(tgt.getSize().scale(0.5f));
+        return getClippedCenterToCenterVector(tgt, tgtPort, src, srcPort);
+    }
+
+    /**
+     * @return a vector connecting the center points of the nodes or the corresponding ports, if
+     *         existent, clipped to the respective bounding box.
+     */
+    private KVector getClippedCenterToCenterVector(final CNode srcNode, final CPort srcNodePort,
+            final CNode tgtNode, final CPort tgtNodePort) {
+        KVector sV = null;
+        KVector srcSize = null;
+        if (srcNode != null) {
+            sV = srcNode.getCenter();
+            srcSize = srcNode.getSize();
+        }
+        if (srcNodePort != null) {
+            sV = srcNodePort.getCenter();
+            srcSize = srcNodePort.getSize();
+        }
+        KVector tV = null; 
+        if (tgtNode != null) {
+            tV = tgtNode.getCenter();
+        }
+        if (tgtNodePort != null) {
+            tV = tgtNodePort.getCenter();
+        }
+        
+        if (sV == null && tV == null) {
+           return new KVector(); 
         }
 
-        return v;
+        KVector v = tV.clone().sub(sV);
+        clipVector(v, srcSize.x, srcSize.y);
+        return v.add(sV);
+    }
+
+    /**
+     * Clip the given vector to a rectangular box of given size.
+     * 
+     * @param v vector relative to the center of the box
+     * @param width width of the rectangular box
+     * @param height height of the rectangular box
+     */
+    private static void clipVector(final KVector v, final double width, final double height) {
+        double wh = width / 2, hh = height / 2;
+        double absx = Math.abs(v.x), absy = Math.abs(v.y);
+        double xscale = 1, yscale = 1;
+        if (absx > wh) {
+            xscale = wh / absx;
+        }
+        if (absy > hh) {
+            yscale = hh / absy;
+        }
+        v.scale(Math.min(xscale, yscale));
     }
 
     /**
