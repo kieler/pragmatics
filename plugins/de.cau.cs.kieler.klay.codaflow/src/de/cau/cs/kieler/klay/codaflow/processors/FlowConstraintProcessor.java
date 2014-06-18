@@ -29,7 +29,6 @@ import de.cau.cs.kieler.adaptagrams.cgraph.CEdge;
 import de.cau.cs.kieler.adaptagrams.cgraph.CGraph;
 import de.cau.cs.kieler.adaptagrams.cgraph.CNode;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.codaflow.algs.EadesMFASHeuristic;
 import de.cau.cs.kieler.klay.codaflow.algs.TrajansAlgorithm;
 import de.cau.cs.kieler.klay.codaflow.properties.CodaflowProperties;
@@ -73,14 +72,12 @@ import de.cau.cs.kieler.klay.codaflow.properties.HorizontalAlignment;
  *  
  * @author uru
  */
-public class DirectionConstraintProcessor implements ILayoutProcessor {
+public class FlowConstraintProcessor implements ILayoutProcessor {
 
     /** The graph to handle. */
     private CGraph graph;
     /** The user-specified treatment of cycles. */
     private CycleTreatment cycleTreatment;
-    /** The spacing that should be retained between nodes. */
-    private float spacing;
     /** The distance of a port dummy to the parent node. */
     private float portBreath = 0f;
     
@@ -106,7 +103,6 @@ public class DirectionConstraintProcessor implements ILayoutProcessor {
             return;
         }
 
-        spacing = theGraph.getProperty(LayoutOptions.SPACING);
         if (theGraph.getProperty(CodaflowProperties.PORT_DUMMIES)) {
             // when we use dummy ports, we let them breathe a bit from its parent node
             portBreath = theGraph.getProperty(CodaflowProperties.PORT_DUMMY_BREATHE);
@@ -261,23 +257,11 @@ public class DirectionConstraintProcessor implements ILayoutProcessor {
     }
     
     /**
-     * If the edge is, on either end-point, connected to a port we have to consider 
-     * this for the spacing.
+     * Minimal distance between connected nodes.
      */
     private double actualSpacing(final CEdge e) {
-        double actualSpacing = spacing;
-        if (e.getSourcePort() != null) {
-//            actualSpacing += portBreath;
-//            actualSpacing += e.getSourcePort().getRectSizeRaw().x;
-        }
-        if (e.getTargetPort() != null) {
-//            actualSpacing += portBreath;
-//            actualSpacing += e.getTargetPort().getRectSizeRaw().x;
-        }
-        
-        // FIXME spacing is considered using node sizes, ie margins
-        // however we have to assure a minimal distance such that nodes do not overlap
-        return 2;
+        // we have to assure a minimal distance such that nodes do not overlap
+        return portBreath;
     }
     
     /**

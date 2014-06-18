@@ -35,7 +35,7 @@ import de.cau.cs.kieler.kiml.util.nodespacing.NodeMarginCalculator;
 import de.cau.cs.kieler.klay.codaflow.graphimport.HierarchicalKGraphImporter;
 import de.cau.cs.kieler.klay.codaflow.graphimport.IGraphImporter;
 import de.cau.cs.kieler.klay.codaflow.graphimport.KGraphImporter;
-import de.cau.cs.kieler.klay.codaflow.processors.DirectionConstraintProcessor;
+import de.cau.cs.kieler.klay.codaflow.processors.FlowConstraintProcessor;
 import de.cau.cs.kieler.klay.codaflow.processors.IdealEdgeLengthProcessor;
 import de.cau.cs.kieler.klay.codaflow.processors.PortConstraintProcessor;
 import de.cau.cs.kieler.klay.codaflow.properties.CodaflowProperties;
@@ -139,7 +139,7 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         spm.done();
 
         // generate the flow constraints
-        new DirectionConstraintProcessor().process(graph, progressMonitor.subTask(1));
+        new FlowConstraintProcessor().process(graph, progressMonitor.subTask(1));
         spm = progressMonitor.subTask(1);
         spm.begin("Flow Constrained Layout", 1);
         runLayout(false, "_flow", 1, 1, cap, spm);
