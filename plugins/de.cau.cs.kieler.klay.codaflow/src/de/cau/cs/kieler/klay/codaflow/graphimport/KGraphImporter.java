@@ -38,6 +38,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.codaflow.properties.CodaflowProperties;
@@ -425,26 +426,6 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
             }
         }
 
-        // re-position external ports
-        // TODO we always wanna reposition the external ports??
-        // the thing with the bottom up approach is, that aca will move nodes on the 
-        // guideline freely, thus the ports kind of have to be adjusted or 
-        // some kinks will be introduced
-        if (graph.getProperty(CodaflowProperties.REPOSITION_HIERARCHICAL_PORTS)) {
-            if (!graph.getProperty(LayoutOptions.PORT_CONSTRAINTS).isPosFixed()) {
-                for (CPort p : graph.getExternalPorts()) {
-                    KPort kp = (KPort) p.getProperty(CGraphProperties.ORIGIN);
-                    KShapeLayout layout = kp.getData(KShapeLayout.class);
-                    layout.setXpos((float) (p.getPos().x + offset.x));
-                    layout.setYpos((float) (p.getPos().y + offset.y));
-
-                    // reposition the port
-                    PortSide ps = KimlUtil.calcPortSide(kp, Direction.RIGHT);
-                    layout.setProperty(LayoutOptions.PORT_SIDE, ps);
-                }
-            }
-        }
-
         // edges, no routing done -> clear the bend points
         // however, we try to give correct positions
         KNode root = (KNode) graph.getProperty(CGraphProperties.ORIGIN);
@@ -482,11 +463,38 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
                 }
             }
         }
+        
+        for (CPort p : graph.getExternalPorts()) {
+            KPort port = (KPort) p.getProperty(CGraphProperties.ORIGIN);
+            port.getData(KShapeLayout.class).setProperty(LayoutOptions.PORT_CONSTRAINTS,
+                    PortConstraints.FIXED_POS);
+        }
                 
         // resize the parent node
         double width = (maxX - minX) + 2 * borderSpacing + graph.insets.left + graph.insets.right;
         double height = (maxY - minY) + 2 * borderSpacing + graph.insets.top + graph.insets.bottom;
         KimlUtil.resizeNode(root, (float) width, (float) height, true, true);
+        
+        
+        // re-position external ports (important AFTER parent node resize)
+        // TODO we always wanna reposition the external ports??
+        // the thing with the bottom up approach is, that aca will move nodes on the 
+        // guideline freely, thus the ports kind of have to be adjusted or 
+        // some kinks will be introduced
+        if (graph.getProperty(CodaflowProperties.REPOSITION_HIERARCHICAL_PORTS)) {
+            //if (!graph.getProperty(LayoutOptions.PORT_CONSTRAINTS).isPosFixed()) {
+                for (CPort p : graph.getExternalPorts()) {
+                    KPort kp = (KPort) p.getProperty(CGraphProperties.ORIGIN);
+                    KShapeLayout layout = kp.getData(KShapeLayout.class);
+                    layout.setXpos((float) (p.getPos().x + offset.x));
+                    layout.setYpos((float) (p.getPos().y + offset.y));
+                    
+                    // reposition the port
+                    PortSide ps = KimlUtil.calcPortSide(kp, Direction.RIGHT);
+                    layout.setProperty(LayoutOptions.PORT_SIDE, ps);
+                }
+            //}
+        }
     }
 
 }
