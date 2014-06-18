@@ -16,6 +16,7 @@ package de.cau.cs.kieler.klay.codaflow.properties;
 import de.cau.cs.kieler.adaptagrams.properties.CoLaProperties;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
  * @author uru
@@ -23,6 +24,12 @@ import de.cau.cs.kieler.core.properties.Property;
  */
 public final class CodaflowProperties {
 
+    /**
+     * Spacing to the border of the drawing.
+     */
+    public static final Property<Float> BORDER_SPACING = new Property<Float>(
+            LayoutOptions.BORDER_SPACING, 12.0f, 0.0f);
+    
     /**
      * Whether to vertically align nodes wrt to their left bound.
      */

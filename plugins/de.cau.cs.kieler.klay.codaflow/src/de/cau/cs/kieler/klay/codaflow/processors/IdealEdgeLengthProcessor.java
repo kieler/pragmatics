@@ -235,7 +235,7 @@ public class IdealEdgeLengthProcessor implements ILayoutProcessor {
                         // we set the ideal edge length smaller than the spacing
                         // SUPPRESS CHECKSTYLE NEXT 2 MagicNumber
                         graph.idealEdgeLengths[e.cIndex] =
-                                graph.getProperty(LayoutOptions.BORDER_SPACING) * 1f;
+                                graph.getProperty(CodaflowProperties.BORDER_SPACING) * 1f;
                     } else {
                         // with clusters set them as short as possible
                         graph.idealEdgeLengths[e.cIndex] = 1;

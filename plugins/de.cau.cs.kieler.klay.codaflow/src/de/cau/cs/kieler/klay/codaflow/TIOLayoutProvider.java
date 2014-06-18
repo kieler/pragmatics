@@ -127,7 +127,7 @@ public class TIOLayoutProvider extends AbstractLayoutProvider {
             // create copies of the four bounding nodes as cola rectangles
             KShapeLayout shape = parentNode.getData(KShapeLayout.class);
             KInsets insets = shape.getInsets();
-            float borderSpacing = shape.getProperty(LayoutOptions.BORDER_SPACING);
+            float borderSpacing = shape.getProperty(CodaflowProperties.BORDER_SPACING);
 
             // offset each side by the shape buffer distance to let edges route properly
             float bufferDistance = shape.getProperty(AvoidProperties.SHAPE_BUFFER_DISTANCE);

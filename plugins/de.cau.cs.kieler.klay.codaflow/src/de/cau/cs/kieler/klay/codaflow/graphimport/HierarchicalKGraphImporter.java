@@ -191,7 +191,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
 
                 KInsets kInsets = compoundLayout.getInsets();
                 float borderSpacing =
-                        node.getData(KShapeLayout.class).getProperty(LayoutOptions.BORDER_SPACING);
+                        node.getData(KShapeLayout.class).getProperty(CodaflowProperties.BORDER_SPACING);
                 float padding = spacing / 2f + Math.max(borderSpacing, 0);
                 // Box as Padding -> left, right, top, bottom
                 compoundCluster.setPadding(new Box(padding + kInsets.getLeft(), padding
@@ -295,7 +295,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
      */
     public void applyLayout(final CGraph constrainedGraph) {
 
-        double borderSpacing = graph.getProperty(LayoutOptions.BORDER_SPACING);
+        double borderSpacing = graph.getProperty(CodaflowProperties.BORDER_SPACING);
 
         // calculate the offset from border spacing and node distribution
         double minX = Float.MAX_VALUE, minY = Float.MAX_VALUE, maxX = Float.MIN_VALUE, maxY =

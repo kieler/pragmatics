@@ -90,6 +90,13 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
         CGraph graph = new CGraph();
         graph.copyProperties(root.getData(KLayoutData.class));
         graph.setProperty(CGraphProperties.ORIGIN, root);
+        
+        // insets
+        KInsets insets = root.getData(KShapeLayout.class).getInsets();
+        graph.insets.left = insets.getLeft();
+        graph.insets.top = insets.getTop();
+        graph.insets.right = insets.getRight();
+        graph.insets.bottom = insets.getBottom();
 
         // put the root in the pool!
         knodeMap.put(root, null);
@@ -130,7 +137,6 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
         // remember it
         knodeMap.put(n, cnode);
         graph.getChildren().add(cnode);
-//        cnode.setParent(graph);
         cnode.init();
 
         // create ports
@@ -336,7 +342,7 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
      */
     private void addSeparationToAllRegularNodes(final CPort p, final CGraph cgraph, final int dim,
             final boolean leftTop) {
-        final double borderSpacing = cgraph.getProperty(LayoutOptions.BORDER_SPACING);
+        final double borderSpacing = cgraph.getProperty(CodaflowProperties.BORDER_SPACING);
         for (CNode n : cgraph.getChildren()) {
             double gap =
                     dim == Dim.XDIM ? (p.getRectSizeRaw().x / 2f + n.getRectSizeRaw().x / 2f) : (p
@@ -360,7 +366,7 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
      */
     public void applyLayout(final CGraph graph) {
 
-        double borderSpacing = Math.max(0, graph.getProperty(LayoutOptions.BORDER_SPACING));
+        double borderSpacing = Math.max(0, graph.getProperty(CodaflowProperties.BORDER_SPACING));
 
         // calculate the offset from border spacing and node distribution
         double minX = Float.MAX_VALUE, minY = Float.MAX_VALUE, maxX = Float.MIN_VALUE, maxY =
@@ -383,8 +389,10 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
                 maxY = Math.max(maxY, ppos.y + psize.y);
             }
         }
-        // FIXME the 10 emulates internal padding, implement this properly
-        KVector offset = new KVector(borderSpacing - minX + 10, borderSpacing - minY);
+
+        KVector offset =
+                new KVector(borderSpacing - minX + graph.insets.left, borderSpacing - minY
+                        + graph.insets.top);
 
         // nodes
         for (CNode n : graph.getChildren()) {
@@ -392,32 +400,29 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
                     n.getProperty(CGraphProperties.ORIGIN).getData(KShapeLayout.class);
 
             // set new positions
-            layout.setXpos((float) (n.getRectPos().x + offset.x));
-            layout.setYpos((float) (n.getRectPos().y + offset.y));
+            layout.setXpos((float) (n.getPos().x + offset.x));
+            layout.setYpos((float) (n.getPos().y + offset.y));
 
             // write back insets
             KInsets insets = layout.getInsets();
-            // TODO ... remove magic numbers
             insets.setLeft((float) n.getInsets().left);
             insets.setRight((float) n.getInsets().right);
             insets.setTop((float) n.getInsets().top);
             insets.setBottom((float) n.getInsets().bottom);
 
             // ports
-            // FIXME
-            // if (!n.getProperty(LayoutOptions.PORT_CONSTRAINTS).isPosFixed()) {
+            if (!n.getProperty(LayoutOptions.PORT_CONSTRAINTS).isPosFixed()) {
                 for (CPort p : n.getPorts()) {
                     if (p.cEdgeIndex != -1) {
                         KShapeLayout portLayout =
-                                p.getProperty(CGraphProperties.ORIGIN)
-                                        .getData(KShapeLayout.class);
+                                p.getProperty(CGraphProperties.ORIGIN).getData(KShapeLayout.class);
                         // ports are relative to the parent in KGraph
                         KVector relative = p.getRelativePos();
                         portLayout.setXpos((float) relative.x);
                         portLayout.setYpos((float) relative.y);
                     }
                 }
-            // }
+            }
         }
 
         // re-position external ports
@@ -425,22 +430,20 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
         // the thing with the bottom up approach is, that aca will move nodes on the 
         // guideline freely, thus the ports kind of have to be adjusted or 
         // some kinks will be introduced
-        
-        //if (graph.getProperty(ColaProperties.REPOSITION_HIERARCHICAL_PORTS)) {
-        if (!graph.getProperty(LayoutOptions.PORT_CONSTRAINTS).isPosFixed()) {
-            for (CPort p : graph.getExternalPorts()) {
-                KPort kp = (KPort) p.getProperty(CGraphProperties.ORIGIN);
-                KShapeLayout layout =
-                        kp.getData(KShapeLayout.class);
-                layout.setXpos((float) (p.getRectPos().x + offset.x));
-                layout.setYpos((float) (p.getRectPos().y + offset.y));
-                
-                // reposition the port
-                PortSide ps = KimlUtil.calcPortSide(kp  , Direction.RIGHT);
-                layout.setProperty(LayoutOptions.PORT_SIDE, ps);
+        if (graph.getProperty(CodaflowProperties.REPOSITION_HIERARCHICAL_PORTS)) {
+            if (!graph.getProperty(LayoutOptions.PORT_CONSTRAINTS).isPosFixed()) {
+                for (CPort p : graph.getExternalPorts()) {
+                    KPort kp = (KPort) p.getProperty(CGraphProperties.ORIGIN);
+                    KShapeLayout layout = kp.getData(KShapeLayout.class);
+                    layout.setXpos((float) (p.getPos().x + offset.x));
+                    layout.setYpos((float) (p.getPos().y + offset.y));
+
+                    // reposition the port
+                    PortSide ps = KimlUtil.calcPortSide(kp, Direction.RIGHT);
+                    layout.setProperty(LayoutOptions.PORT_SIDE, ps);
+                }
             }
         }
-        // }
 
         // edges, no routing done -> clear the bend points
         // however, we try to give correct positions
@@ -469,22 +472,20 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
                 } else {
                     // get the port's position relative to the parent
                     layout.getSourcePoint().applyVector(
-                            e.getSourcePort().getRectCenter().clone().add(offset));
+                            e.getSourcePort().getCenter().clone().add(offset));
                 }
                 if (e.getTarget() != null) {
                     layout.getTargetPoint().applyVector(e.getTargetPoint().clone().add(offset));
                 } else {
                     layout.getTargetPoint().applyVector(
-                            e.getTargetPort().getRectCenter().clone().add(offset));
+                            e.getTargetPort().getCenter().clone().add(offset));
                 }
             }
         }
                 
         // resize the parent node
-        // FIXME 
-        // KInsets insets = root.getData(KShapeLayout.class).getInsets();
-        double width = (maxX - minX) + 2 * borderSpacing + 20; // + insets.getLeft() + insets.getRight();
-        double height = (maxY - minY) + 2 * borderSpacing ; // insets.getTop() + insets.getBottom();
+        double width = (maxX - minX) + 2 * borderSpacing + graph.insets.left + graph.insets.right;
+        double height = (maxY - minY) + 2 * borderSpacing + graph.insets.top + graph.insets.bottom;
         KimlUtil.resizeNode(root, (float) width, (float) height, true, true);
     }
 

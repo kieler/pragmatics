@@ -38,6 +38,7 @@ import de.cau.cs.kieler.klay.codaflow.graphimport.KGraphImporter;
 import de.cau.cs.kieler.klay.codaflow.processors.DirectionConstraintProcessor;
 import de.cau.cs.kieler.klay.codaflow.processors.IdealEdgeLengthProcessor;
 import de.cau.cs.kieler.klay.codaflow.processors.PortConstraintProcessor;
+import de.cau.cs.kieler.klay.codaflow.properties.CodaflowProperties;
 import de.cau.cs.kieler.klay.codaflow.util.DebugTestConvergence;
 import de.cau.cs.kieler.klay.codaflow.util.MinMaxTestConvergence;
 
@@ -122,7 +123,7 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         }
 
         // FIXME for the moment fix the issue where the edge lengths do not allow 0
-        float borderSpacing = rootLayout.getProperty(LayoutOptions.BORDER_SPACING);
+        float borderSpacing = rootLayout.getProperty(CodaflowProperties.BORDER_SPACING);
         for (int i = 0; i < graph.idealEdgeLengths.length; ++i) {
             if (graph.idealEdgeLengths[i] == 0) {
                 graph.idealEdgeLengths[i] = borderSpacing;
