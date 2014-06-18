@@ -218,12 +218,14 @@ public class KConstrainedFDLayouter {
         
         // node exemptions
         for (CNode n : graph.getChildren()) {
-            Unsigneds group = new Unsigneds();
-            group.add(n.cIndex);
+            // Only prevent node<->port overlap removal 
+            // port<->port should still happen
             for (CPort p : n.getPorts()) {
+                Unsigneds group = new Unsigneds();
+                group.add(n.cIndex);
                 group.add(p.cIndex);
+                layouter.addGroupOfNonOverlapExemptRectangles(group);
             }
-            layouter.addGroupOfNonOverlapExemptRectangles(group);
         }
 
         // debugging
