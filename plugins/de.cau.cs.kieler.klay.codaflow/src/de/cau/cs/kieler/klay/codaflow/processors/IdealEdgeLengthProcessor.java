@@ -23,6 +23,7 @@ import de.cau.cs.kieler.adaptagrams.cgraph.CEdge;
 import de.cau.cs.kieler.adaptagrams.cgraph.CGraph;
 import de.cau.cs.kieler.adaptagrams.cgraph.CNode;
 import de.cau.cs.kieler.adaptagrams.cgraph.CPort;
+import de.cau.cs.kieler.adaptagrams.properties.CoLaProperties;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -247,7 +248,7 @@ public class IdealEdgeLengthProcessor implements ILayoutProcessor {
     }
 
     private void limitEdgeLengths(final CGraph graph) {
-        final double spacing = graph.getProperty(LayoutOptions.SPACING);
+        final double spacing = graph.getProperty(CoLaProperties.SPACING);
 
         // find the maximal edge length amongst the 'usual' edges
         // note, that no edge lengths need to be changed if all of them are smaller than the spacing

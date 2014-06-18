@@ -17,13 +17,17 @@ import org.adaptagrams.SWIGTYPE_p_std__valarrayT_double_t;
 import org.adaptagrams.TestConvergence;
 
 /**
- * Debug helper for Cola-based layouters.
+ * A convergence test for {@link org.adaptagrams.ConstrainedFDLayout ConstrainedFDLayout}er that
+ * allows to specify a minimal and maximal number of iterations that are to be executed.
  * 
  * @author uru
  */
 public class MinMaxTestConvergence extends TestConvergence {
 
-    public int maxIterations = 20;
+    // SUPPRESS CHECKSTYLE NEXT 4 VisibilityModifier
+    /** Maximal number of iterations. */
+    public int maxIterations = Integer.MAX_VALUE;
+    /** Minimal number of iterations. */
     public int minIterations = 1;
 
     /**
@@ -31,7 +35,7 @@ public class MinMaxTestConvergence extends TestConvergence {
     public MinMaxTestConvergence() {
     }
 
-    // CHECKSTYLEOFF MethodName - I cannot change swig naming ..
+    // SUPPRESS CHECKSTYLE NEXT 5 MethodName - I cannot change SWIG naming ..
     /**
      * {@inheritDoc}
      */
@@ -43,8 +47,8 @@ public class MinMaxTestConvergence extends TestConvergence {
         // we use the default implementation of the convergence test
         if (getIterations() < minIterations) {
             super.ColaTestConvergenceOperator(arg0, arg1, arg2);
-            return false;
-        } else if (getIterations() > maxIterations) {
+            return (getIterations() >= maxIterations);
+        } else if (getIterations() >= maxIterations) {
             super.ColaTestConvergenceOperator(arg0, arg1, arg2);
             return true;
         } else {

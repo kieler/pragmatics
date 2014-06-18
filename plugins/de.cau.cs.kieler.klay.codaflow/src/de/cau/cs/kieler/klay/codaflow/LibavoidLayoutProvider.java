@@ -22,6 +22,7 @@ import com.google.common.collect.Iterators;
 
 import de.cau.cs.kieler.adaptagrams.cgraph.CGraph;
 import de.cau.cs.kieler.adaptagrams.properties.CGraphProperties;
+import de.cau.cs.kieler.adaptagrams.properties.CoLaProperties;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -32,6 +33,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters;
@@ -40,6 +42,7 @@ import de.cau.cs.kieler.kiml.util.nodespacing.KimlNodeDimensionCalculation;
 import de.cau.cs.kieler.klay.codaflow.avoid.CGraphAvoidImporter;
 import de.cau.cs.kieler.klay.codaflow.graphimport.HierarchicalKGraphImporter;
 import de.cau.cs.kieler.klay.codaflow.graphimport.IGraphImporter;
+import de.cau.cs.kieler.klay.codaflow.graphimport.KGraphImporter;
 
 /**
  * @author uru
@@ -54,6 +57,12 @@ public class LibavoidLayoutProvider extends AbstractLayoutProvider {
     public void doLayout(final KNode parentNode, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Global Libavoid Layout", 1);
         
+        KShapeLayout rootLayout = parentNode.getData(KShapeLayout.class);
+        
+        // we demand fixed positions and fixed ports
+        rootLayout.setProperty(CoLaProperties.CONSIDER_PREVIOUS_POSITIONS, true);
+        rootLayout.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
+        
         // bloody hack to fix port sides
         Iterator<KPort> ports = Iterators.filter(parentNode.eAllContents(), KPort.class);
         while (ports.hasNext()) {
@@ -64,12 +73,16 @@ public class LibavoidLayoutProvider extends AbstractLayoutProvider {
         
         calculateMarginsAndSizes(parentNode);
 
-        parentNode.getData(KLayoutData.class).setProperty(CGraphProperties.MARGIN_INCLUDES_SPACING,
+        parentNode.getData(KLayoutData.class).setProperty(CGraphProperties.INCLUDE_SPACING_IN_MARGIN,
                 false);
 
         // importing
         IGraphImporter<KNode, CGraph> cImporter;
-        cImporter = new HierarchicalKGraphImporter();
+        if (!rootLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {
+            cImporter = new KGraphImporter();
+        } else {
+            cImporter = new HierarchicalKGraphImporter();
+        }
         
         IGraphImporter<CGraph, Router> rImporter;
         rImporter = new CGraphAvoidImporter();
@@ -77,12 +90,14 @@ public class LibavoidLayoutProvider extends AbstractLayoutProvider {
         final CGraph cGraph = cImporter.importGraph(parentNode);
         final Router router = rImporter.importGraph(cGraph);
         
+        System.out.println("handling: " + cGraph);
+        
         // FIXME
         router.setRoutingOption(RoutingOption.nudgeSharedPathsWithCommonEndPoint, false);
         
         // do layout
         router.processTransaction();
-        router.outputInstanceToSVG("hierarchy libavoid");
+        router.outputInstanceToSVG("hierarchy_libavoid");
         
         
         // apply layout

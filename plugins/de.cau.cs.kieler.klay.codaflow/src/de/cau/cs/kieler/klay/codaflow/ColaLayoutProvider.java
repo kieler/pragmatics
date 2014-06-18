@@ -99,7 +99,7 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         // calculate margins
         calculateMarginsAndSizes(parentNode);
 
-        rootLayout.setProperty(CGraphProperties.MARGIN_INCLUDES_SPACING, true);
+        rootLayout.setProperty(CGraphProperties.INCLUDE_SPACING_IN_MARGIN, true);
         
         // execute layout algorithm
         IGraphImporter<KNode, CGraph> importer;

@@ -17,7 +17,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
@@ -33,6 +32,13 @@ public final class InternalColaProperties {
     /*--------------------------------------------------------------------------------------------
      *                          Internal Use only
      */
+
+    /**
+     * Whether libavoid treated a certain edge, ie bendpoints are set and should be applied back to
+     * the source kgraph.
+     */
+    public static final IProperty<Boolean> LIBAVOID_WORKED = new Property<Boolean>(
+            "codaflow.libavoid.worked", false);
 
     /**
      * The original object from which a graph element was created.
@@ -53,8 +59,9 @@ public final class InternalColaProperties {
             new Property<List<Pair<KPort, KVector>>>("cola.checkpoints",
                     new LinkedList<Pair<KPort, KVector>>());
 
-    public static final IProperty<Boolean> ACA_EDGE_ALIGNED = new Property<Boolean>("aca.edgeAligned", false);
-    
+    public static final IProperty<Boolean> ACA_EDGE_ALIGNED = new Property<Boolean>(
+            "aca.edgeAligned", false);
+
     /**
      * Utility class.
      */

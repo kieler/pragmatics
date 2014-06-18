@@ -42,6 +42,7 @@ import de.cau.cs.kieler.adaptagrams.cgraph.CGraph;
 import de.cau.cs.kieler.adaptagrams.cgraph.CNode;
 import de.cau.cs.kieler.adaptagrams.cgraph.CPort;
 import de.cau.cs.kieler.adaptagrams.properties.CGraphProperties;
+import de.cau.cs.kieler.adaptagrams.properties.CoLaProperties;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
@@ -55,6 +56,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
+import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 import de.cau.cs.kieler.klay.codaflow.properties.CodaflowProperties;
 import de.cau.cs.kieler.klay.codaflow.properties.ColaPredicates;
 import de.cau.cs.kieler.klay.codaflow.properties.InternalColaProperties;
@@ -184,8 +186,8 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
                 // set spacing and border spacing
                 float spacing = 0;
                 if (node.getParent() != null) {
-                     spacing = node.getParent().getData(KShapeLayout.class)
-                                        .getProperty(LayoutOptions.SPACING);
+                    spacing = node.getParent().getData(KShapeLayout.class)
+                                    .getProperty(CoLaProperties.SPACING);
                     compoundCluster.setMargin(spacing);
                 }
 
@@ -270,6 +272,18 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
             cp.add(portLayout.getWidth() / 2f, portLayout.getHeight() / 2f);
             // convert it to a global position
             cp = KimlUtil.toAbsolute(cp, edge.getTarget());
+            
+            // FIXME !
+            double spacing =
+                    edge.getTarget().getParent().getData(KLayoutData.class)
+                            .getProperty(CoLaProperties.SPACING);
+            Margins margins =
+                    edge.getTarget().getData(KShapeLayout.class).getProperty(LayoutOptions.MARGINS);
+            cp.x += margins.left;// + spacing / 2f + 6;
+            cp.y += margins.top + spacing / 2f + 6 ;
+            
+            if(!edge.getTarget().getParent().equals(edge.getSource().getParent()))
+            System.out.println("CP: " + cp);
             checkpoints.add(Pair.of(edge.getTargetPort(), cp));
             
             for (KEdge portEdge : getOutgoingEdges(edge.getTargetPort())) {

@@ -110,7 +110,7 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
         // margins for the nodes (include the labels etc)
         calculateMarginsAndSizes(parentNode);
         
-        parentLayout.setProperty(CGraphProperties.MARGIN_INCLUDES_SPACING, true);
+        parentLayout.setProperty(CGraphProperties.INCLUDE_SPACING_IN_MARGIN, true);
 
         // execute layout algorithm
         IGraphImporter<KNode, CGraph> importer;

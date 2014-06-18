@@ -272,6 +272,8 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
         //subRoutes.forEach[e,i | println("SubRoute " + i + " " + cr.edge + " " + e)]
         edge.setProperty(InternalColaProperties.EDGE_SUB_ROUTES, subRoutes)
       }
+      
+      edge.setProperty(InternalColaProperties.LIBAVOID_WORKED, true)
     }
   }
   

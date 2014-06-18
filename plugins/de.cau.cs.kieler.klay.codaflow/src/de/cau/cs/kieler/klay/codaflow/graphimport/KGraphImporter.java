@@ -32,6 +32,7 @@ import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
@@ -42,6 +43,7 @@ import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.codaflow.properties.CodaflowProperties;
+import de.cau.cs.kieler.klay.codaflow.properties.InternalColaProperties;
 import de.cau.cs.kieler.klay.codaflow.util.ColaUtil;
 
 /**
@@ -426,41 +428,16 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
             }
         }
 
-        // edges, no routing done -> clear the bend points
-        // however, we try to give correct positions
-        KNode root = (KNode) graph.getProperty(CGraphProperties.ORIGIN);
+        // edges
         for (CNode n : graph.getChildren()) {
-            
-            // "usual" edges 
+            // "usual" edges
             for (CEdge e : n.getOutgoingEdges()) {
-                KEdge edge = (KEdge) e.getProperty(CGraphProperties.ORIGIN);
-                KEdgeLayout layout = edge.getData(KEdgeLayout.class);
-                
-                layout.getBendPoints().clear();
-                layout.getSourcePoint().applyVector(e.getSourcePoint().clone().add(offset));
-                layout.getTargetPoint().applyVector(e.getTargetPoint().clone().add(offset));
+                applyEdgeLayout(e, offset);
             }
-            
-            // edges that connect to external ports, reference point is the root node for both
-            // source and target point
-            for (CEdge e : n.getExternalEdges()) {
-                KEdge edge = (KEdge) e.getProperty(CGraphProperties.ORIGIN);
-                KEdgeLayout layout = edge.getData(KEdgeLayout.class);
 
-                layout.getBendPoints().clear();
-                if (e.getSource() != null) {
-                    layout.getSourcePoint().applyVector(e.getSourcePoint().clone().add(offset));
-                } else {
-                    // get the port's position relative to the parent
-                    layout.getSourcePoint().applyVector(
-                            e.getSourcePort().getCenter().clone().add(offset));
-                }
-                if (e.getTarget() != null) {
-                    layout.getTargetPoint().applyVector(e.getTargetPoint().clone().add(offset));
-                } else {
-                    layout.getTargetPoint().applyVector(
-                            e.getTargetPort().getCenter().clone().add(offset));
-                }
+            // edges that connect to external ports
+            for (CEdge e : n.getExternalEdges()) {
+                applyEdgeLayout(e, offset);
             }
         }
         
@@ -473,6 +450,7 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
         // resize the parent node
         double width = (maxX - minX) + 2 * borderSpacing + graph.insets.left + graph.insets.right;
         double height = (maxY - minY) + 2 * borderSpacing + graph.insets.top + graph.insets.bottom;
+        KNode root = (KNode) graph.getProperty(CGraphProperties.ORIGIN);
         KimlUtil.resizeNode(root, (float) width, (float) height, true, true);
         
         
@@ -495,6 +473,29 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
                 }
             //}
         }
+    }
+    
+    
+    private void applyEdgeLayout(final CEdge edge, final KVector offset) {
+
+        KEdge kEdge = (KEdge) edge.getProperty(CGraphProperties.ORIGIN);
+        KEdgeLayout layout = kEdge.getData(KEdgeLayout.class);
+        
+        if (edge.getProperty(InternalColaProperties.LIBAVOID_WORKED)) {
+            // assign routes as specified by libavoid
+            KVectorChain chain = new KVectorChain(edge.bendpoints);
+            chain.offset(offset);
+            layout.getBendPoints().clear();
+            layout.applyVectorChain(chain);
+            
+        } else {
+            // edges, no routing done -> clear the bend points
+            // however, we try to give correct positions
+            layout.getBendPoints().clear();
+            layout.getSourcePoint().applyVector(edge.getSourcePoint().clone().add(offset));
+            layout.getTargetPoint().applyVector(edge.getTargetPoint().clone().add(offset));
+        }
+
     }
 
 }
