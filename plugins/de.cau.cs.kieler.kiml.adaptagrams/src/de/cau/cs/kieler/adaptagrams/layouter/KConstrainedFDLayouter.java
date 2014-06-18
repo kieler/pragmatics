@@ -48,7 +48,9 @@ public class KConstrainedFDLayouter {
     private boolean individualEdgeLengths = false;
     /** A custom convergence test. */
     private TestConvergence convergenceTest = null;
-
+    /** Whether make feasible should be called prior to run. */
+    private boolean makeFeasible = false;
+    
     /** The internal layouter object. */
     private ConstrainedFDLayout layouter;
 
@@ -97,6 +99,28 @@ public class KConstrainedFDLayouter {
      */
     public KConstrainedFDLayouter withRemoveOverlaps(final boolean removeOverlaps) {
         this.overlapPrevention = removeOverlaps;
+        return this;
+    }
+    
+    /**
+     * Prior to run {@link ConstrainedFDLayout#makeFeasible()} will be called.
+     * 
+     * @return this.
+     */
+    public KConstrainedFDLayouter withMakeFeasible() {
+        this.makeFeasible = true;
+        return this;
+    }
+
+    /**
+     * Prior to run {@link ConstrainedFDLayout#makeFeasible()} will be called.
+     * 
+     * @param makeFeasiblee
+     *            Whether to call makeFeasible.
+     * @return this.
+     */
+    public KConstrainedFDLayouter withMakeFeasible(final boolean makeFeasiblee) {
+        this.makeFeasible = makeFeasiblee;
         return this;
     }
 
@@ -208,28 +232,13 @@ public class KConstrainedFDLayouter {
         return this;
     }
 
-    /** 
-     * Runs the layouter, if {@link #prepare()} has not been called beforehand this is done here.
-     * 
-     * @return this
-     * 
-     * @see #run(boolean)
-     */
-    public KConstrainedFDLayouter run() {
-        this.run(false);
-        
-        return this;
-    }
   
     /**
      * Runs the layouter, if {@link #prepare()} has not been called beforehand this is done here.
      * 
-     * @param makeFeasible
-     *            whether makeFeasible() should be called before running the layout algorithm.
-     * 
-     * @return this
+     * @return this.
      */
-    public KConstrainedFDLayouter run(final boolean makeFeasible) {
+    public KConstrainedFDLayouter run() {
 
         if (layouter == null) {
             // prepare
