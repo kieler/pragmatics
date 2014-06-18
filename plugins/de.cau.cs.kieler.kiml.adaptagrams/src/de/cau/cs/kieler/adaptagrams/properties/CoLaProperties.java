@@ -15,6 +15,7 @@ package de.cau.cs.kieler.adaptagrams.properties;
 
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
  * Layout options of the {@link org.adaptagrams.ConstrainedFDLayout ConstrainedFDLayout}.
@@ -35,6 +36,10 @@ public final class CoLaProperties {
     public static final IProperty<Boolean> CONSIDER_PREVIOUS_POSITIONS = new Property<Boolean>(
             "de.cau.cs.kieler.cola.considerPreviousPositions", false);
 
+    /** Spacing between nodes. */
+    public static final Property<Float> SPACING = new Property<Float>(
+            LayoutOptions.SPACING, 18.0f, 0.0f);
+    
     /** Whether to adapt port positions after a layout run. */
     // public static final IProperty<Boolean> ADAPT_PORT_POSITIONS = new Property<Boolean>(
     // "de.cau.cs.kieler.cola.adaptPortPositions", false);

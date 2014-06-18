@@ -35,7 +35,7 @@ public final class CGraphProperties {
     /**
      * .
      */
-    public static final IProperty<Boolean> MARGIN_INCLUDES_SPACING = new Property<Boolean>(
+    public static final IProperty<Boolean> INCLUDE_SPACING_IN_MARGIN = new Property<Boolean>(
             "cgraph.marginIncSpacing", false);
 
     /**
