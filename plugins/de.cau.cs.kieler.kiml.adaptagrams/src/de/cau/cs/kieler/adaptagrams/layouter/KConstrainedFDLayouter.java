@@ -48,7 +48,9 @@ public class KConstrainedFDLayouter {
     private boolean individualEdgeLengths = false;
     /** A custom convergence test. */
     private TestConvergence convergenceTest = null;
-
+    /** Whether make feasible should be called prior to run. */
+    private boolean makeFeasible = false;
+    
     /** The internal layouter object. */
     private ConstrainedFDLayout layouter;
 
@@ -97,6 +99,28 @@ public class KConstrainedFDLayouter {
      */
     public KConstrainedFDLayouter withRemoveOverlaps(final boolean removeOverlaps) {
         this.overlapPrevention = removeOverlaps;
+        return this;
+    }
+    
+    /**
+     * Prior to run {@link ConstrainedFDLayout#makeFeasible()} will be called.
+     * 
+     * @return this.
+     */
+    public KConstrainedFDLayouter withMakeFeasible() {
+        this.makeFeasible = true;
+        return this;
+    }
+
+    /**
+     * Prior to run {@link ConstrainedFDLayout#makeFeasible()} will be called.
+     * 
+     * @param makeFeasiblee
+     *            Whether to call makeFeasible.
+     * @return this.
+     */
+    public KConstrainedFDLayouter withMakeFeasible(final boolean makeFeasiblee) {
+        this.makeFeasible = makeFeasiblee;
         return this;
     }
 
@@ -154,8 +178,10 @@ public class KConstrainedFDLayouter {
 
     /**
      * Instantiates an internal layouter object and configures it appropriately.
+     * 
+     * @return this.
      */
-    public void prepare() {
+    public KConstrainedFDLayouter prepare() {
 
         if (graph == null) {
             throw new IllegalStateException("Cannot execute layouter without specified cgraph.");
@@ -204,22 +230,33 @@ public class KConstrainedFDLayouter {
         if (xPtrs != null && yPtrs != null) {
             layouter.setUnsatisfiableConstraintInfo(xPtrs, yPtrs);
         }
+        
+        return this;
     }
 
+  
     /**
      * Runs the layouter, if {@link #prepare()} has not been called beforehand this is done here.
+     * 
+     * @return this.
      */
-    public void run() {
+    public KConstrainedFDLayouter run() {
 
         if (layouter == null) {
             // prepare
             prepare();
         }
 
+        if (makeFeasible) {
+            layouter.makeFeasible();
+        }
+
         layouter.run();
 
         // FIXME see javadoc of the class
         // layouter.freeAssociatedObjects();
+
+        return this;
     }
 
     /**
@@ -228,6 +265,10 @@ public class KConstrainedFDLayouter {
      * @return the layouter
      */
     public ConstrainedFDLayout getLayouter() {
+        if (layouter == null) {
+            throw new IllegalStateException("Cannot access the internal layouter "
+                    + "instance before #prepare() or #run() was called.");
+        }
         return layouter;
     }
 

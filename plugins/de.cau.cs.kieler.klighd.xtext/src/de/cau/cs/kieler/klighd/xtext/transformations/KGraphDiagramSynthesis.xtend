@@ -34,13 +34,15 @@ import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement
 import de.cau.cs.kieler.kiml.options.EdgeRouting
 import de.cau.cs.kieler.kiml.options.LayoutOptions
 import de.cau.cs.kieler.kiml.options.NodeLabelPlacement
-import de.cau.cs.kieler.kiml.options.PortConstraints
 import de.cau.cs.kieler.kiml.options.SizeConstraint
 import de.cau.cs.kieler.kiml.util.KimlUtil
 import de.cau.cs.kieler.klighd.KlighdConstants
+import de.cau.cs.kieler.klighd.SynthesisOption
 import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier
+import de.cau.cs.kieler.core.properties.IProperty
+import de.cau.cs.kieler.core.properties.Property
 
 /**
  * Synthesizes a copy of the given {@code KNode} and adds default stuff.
@@ -69,6 +71,29 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
     @Inject extension KPolylineExtensions
     @Inject extension KRenderingExtensions
     
+    /** 
+     * Whether the model wants default defaults.
+     * This property is no layout option, not registered with kiml, and has
+     * to be loaded explicitly by the 
+     * {@link de.cau.cs.kieler.core.kgraph.text.KGraphResource KGraphResource}. 
+     */
+    private static final IProperty<Boolean> DEFAULTS_PROPERTY = 
+        new Property<Boolean>("de.cau.cs.kieler.kgraphsynthesis.defaults", false)
+    /** The value for the defaults property as specified in the model. */
+    private boolean defaults = false
+    
+    /*
+     * Synthesis option specifying whether default values should be used.
+     * Default values are, eg, node size if not specified and port ids as
+     * labels if no labels exist.
+     */
+    private static val DEFAULTS_AS_IN_MODEL = "As In Model"
+    private static val DEFAULTS_ON = "On"
+    private static val DEFAULTS_OFF = "Off"
+    private static val SynthesisOption DEFAULTS = SynthesisOption::createChoiceOption(
+        "Default Values", 
+        ImmutableList::of(DEFAULTS_AS_IN_MODEL, DEFAULTS_ON, DEFAULTS_OFF), DEFAULTS_AS_IN_MODEL)
+    
     /**
      * Rendering factory used to create KRendering model instances.
      */
@@ -86,13 +111,19 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
     
     override getDisplayedLayoutOptions() {
         return ImmutableList::of(
-            specifyLayoutOption(LayoutOptions::PORT_CONSTRAINTS,
-                ImmutableList::copyOf(PortConstraints::values)),
-            specifyLayoutOption(LayoutOptions::SPACING, ImmutableList::of(0, 255))
-        );
+            // These values are annoying :)
+            //specifyLayoutOption(LayoutOptions::PORT_CONSTRAINTS,
+            //  ImmutableList::copyOf(PortConstraints::values)),
+            //specifyLayoutOption(LayoutOptions::SPACING, ImmutableList::of(0, 255))
+        )
     }
     
-    
+    override getDisplayedSynthesisOptions() {
+        return ImmutableList::of(
+            DEFAULTS
+        )
+    }
+
     /**
      * Transforms the given graph into an equivalent graph that may be enriched with additional
      * rendering information.
@@ -105,6 +136,16 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         val copier = new Copier()
         val KNode result = copier.copy(graph) as KNode
         copier.copyReferences()
+        
+        // Evaluate the defaults property
+        try {
+            defaults = graph.getData(typeof(KLayoutData)).getProperty(DEFAULTS_PROPERTY)
+        } catch (ClassCastException cce) {
+            // this is a 'special' property not known as layout option
+            // hence it is not type-checked, possibly yielding a class cast
+            // exception if neither 'true' nor 'false' are 
+            // specified as value 
+        }
         
         // Create a rendering library for reuse of renderings
         var library = result.getData(typeof(KRenderingLibrary))
@@ -290,13 +331,16 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
      */
     def private void ensureLabel(KLabeledGraphElement e) {
         // We're only interested in elements that don't have a label yet
-        if (e.labels.empty) {
-            // Find the element's ID
-            val identifier = e.getData(typeof(KIdentifier))
-            if (identifier != null && !Strings.isNullOrEmpty(identifier.id)) {
-                // Add a node label
-                val label = KimlUtil.createInitializedLabel(e)
-                label.text = identifier.id
+        if (DEFAULTS.objectValue == DEFAULTS_ON 
+            || (DEFAULTS.objectValue == DEFAULTS_AS_IN_MODEL && defaults)) {
+            if (e.labels.empty) {
+                // Find the element's ID
+                val identifier = e.getData(typeof(KIdentifier))
+                if (identifier != null && !Strings.isNullOrEmpty(identifier.id)) {
+                    // Add a node label
+                    val label = KimlUtil.createInitializedLabel(e)
+                    label.text = identifier.id
+                }
             }
         }
     }
