@@ -71,7 +71,7 @@
               </nonFilteredFileExtensions>
               <resources>
                 <resource>
-                  <directory>../../plugins/de.cau.cs.kieler.core.kgraph.rcp/icons</directory>
+                  <directory>../../products/de.cau.cs.kieler.core.kgraph.rcp/icons</directory>
                 </resource>
               </resources>
             </configuration>

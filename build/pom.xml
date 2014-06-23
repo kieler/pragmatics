@@ -133,7 +133,7 @@
       </repositories>
       
       <modules>
-        <module>../plugins/de.cau.cs.kieler.ptolemy.rcp</module>
+        <module>../products/de.cau.cs.kieler.ptolemy.rcp</module>
         <module>de.cau.cs.kieler.ptolemy.rcp.repository</module>
       </modules>
     </profile>
@@ -156,7 +156,7 @@
       </repositories>
       
       <modules>
-         <module>../plugins/de.cau.cs.kieler.core.kgraph.rcp</module>
+         <module>../products/de.cau.cs.kieler.core.kgraph.rcp</module>
          <module>../features/de.cau.cs.kieler.kgraph.rcp.feature</module>
          <module>de.cau.cs.kieler.kgraph.rcp.repository</module>
       </modules>
