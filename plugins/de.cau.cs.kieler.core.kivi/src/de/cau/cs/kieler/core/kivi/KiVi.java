@@ -226,7 +226,7 @@ public class KiVi {
             for (CombinationDescriptor d : availableCombinations) {
                 // iterate ALL combinations KiVi is aware of
                 for (ICombination combination : combinations) {
-                    if (d.getClazz().isInstance(combination)) {
+                    if (combination.getClass().equals(d.getClazz())) {
                         combination.setActive(d.isActive());
                     }
                 }
