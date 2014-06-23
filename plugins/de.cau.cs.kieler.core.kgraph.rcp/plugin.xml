@@ -74,13 +74,23 @@
             menuGroupId="kgraph"
             type="new"
             wizardId="de.cau.cs.kieler.core.kgraph.text.empty.wizard">
-         <enablement></enablement>
+         <enablement>
+            <or>
+               <adapt
+                     type="org.eclipse.core.resources.IProject">
+               </adapt>
+            </or></enablement>
       </commonWizard>
       <commonWizard
             menuGroupId="kgraph"
             type="new"
             wizardId="de.cau.cs.kieler.core.kgraph.text.random.wizard">
-         <enablement></enablement>
+         <enablement>
+            <or>
+               <adapt
+                     type="org.eclipse.core.resources.IProject">
+               </adapt>
+            </or></enablement>
       </commonWizard>
    </extension>
    

@@ -33,8 +33,10 @@ import de.cau.cs.kieler.klighd.ui.parts.DiagramViewPart;
  */
 public class KGraphPerspective implements IPerspectiveFactory, IStartup {
 
+    /** ID of this perspective as specified in the extension point. */
     public static final String PERSPECTIVE_ID = "de.cau.ca.kieler.core.kgraph.rcp.perspective";
 
+    /** View ID for the kiml.grana view. */
     private static final String GRANA_VIEW_ID = "de.cau.cs.kieler.kiml.grana.views.analysisResults";
 
     /**
@@ -83,7 +85,9 @@ public class KGraphPerspective implements IPerspectiveFactory, IStartup {
 
     private final ImmutableList<String> activeCombinations = ImmutableList.of(
     // create a klighd view for kgraph editors
-            "de.cau.cs.kieler.klighd.xtext.VisualizeKGraphCombination");
+            "de.cau.cs.kieler.klighd.xtext.VisualizeKGraphCombination",
+            "de.cau.cs.kieler.klighd.kivi.combinations.KlighdFocusSelectedElementInTreeViewerCombination",
+            "de.cau.cs.kieler.klighd.xtext.HighlightChosenElementInXtextEditorCombination");
 
     /**
      * {@inheritDoc}
