@@ -237,18 +237,13 @@ litigation.
          id="de.cau.cs.kieler.klighd.feature"
          version="0.0.0"/>
 
-   <!--includes
-         id="de.cau.cs.kieler.klighd.freehep.feature"
-         version="0.0.0"/-->
-
    <includes
          id="net.ogdf.bin.feature"
          version="0.0.0"/>
 
    <requires>
-      <import plugin="org.apache.log4j"/>
-      <import feature="org.eclipse.emf" version="2.6.0" match="greaterOrEqual"/>
-      <import plugin="com.google.guava"/>
+      <import plugin="org.eclipse.ui.ide"/>
+      <import plugin="org.eclipse.ui.ide.application"/>
    </requires>
 
    <plugin

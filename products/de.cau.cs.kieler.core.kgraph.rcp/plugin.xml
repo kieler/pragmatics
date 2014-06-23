@@ -92,6 +92,11 @@
                </adapt>
             </or></enablement>
       </commonWizard>
+      <commonWizard
+            type="new"
+            wizardId="org.eclipse.ui.wizards.new.project">
+         <enablement></enablement>
+      </commonWizard>
    </extension>
    
 </plugin>
