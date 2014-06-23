@@ -238,6 +238,10 @@ litigation.
          version="0.0.0"/>
 
    <includes
+         id="de.cau.cs.kieler.klighd.freehep.feature"
+         version="0.0.0"/>
+ 
+   <includes
          id="net.ogdf.bin.feature"
          version="0.0.0"/>
 
