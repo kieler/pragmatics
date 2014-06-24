@@ -106,10 +106,11 @@
               
       <!-- Codaflow -->
       <layoutAlgorithm
-            category="de.cau.cs.kieler.cola.category"
+            category="de.cau.cs.kieler"
             class="de.cau.cs.kieler.klay.codaflow.CodaflowLayoutProvider"
             id="de.cau.cs.kieler.klay.codaflow"
-            name="CoDaFlow Layouter">
+            name="CoDaFlow"
+            type="de.cau.cs.kieler.type.cola">
          <knownOption
                default="18"
                option="de.cau.cs.kieler.cola.idealEdgeLength">

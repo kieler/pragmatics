@@ -9,10 +9,11 @@
             
           <!-- Codaflow cola -->
           <layoutAlgorithm
-                category="de.cau.cs.kieler.cola.category"
+                category="de.cau.cs.kieler.adaptagrams.category"
                 class="de.cau.cs.kieler.klay.codaflow.ColaLayoutProvider"
                 id="de.cau.cs.kieler.klay.codaflow.cola"
-                name="CoDaFlow_CoLa">
+                name="CoDaFlow_CoLa"
+                type="de.cau.cs.kieler.type.cola">
              <knownOption
                    default="20"
                    option="de.cau.cs.kieler.spacing">
@@ -52,10 +53,11 @@
           
           <!-- aca -->
           <layoutAlgorithm
-                category="de.cau.cs.kieler.cola.category"
+                category="de.cau.cs.kieler.adaptagrams.category"
                 class="de.cau.cs.kieler.klay.codaflow.ACALayoutProvider"
                 id="de.cau.cs.kieler.klay.codaflow.aca"
-                name="CoDaFlow_ACA">
+                name="CoDaFlow_ACA"
+                type="de.cau.cs.kieler.type.cola">
              <knownOption
                    option="de.cau.cs.kieler.cola.idealEdgeLength">
              </knownOption>
@@ -102,9 +104,11 @@
           
           <!-- global libavoid -->
           <layoutAlgorithm
+                category="de.cau.cs.kieler.adaptagrams.category"
                 class="de.cau.cs.kieler.klay.codaflow.LibavoidLayoutProvider"
                 id="de.cau.cs.kieler.klay.cola.libavoid"
-                name="Global Libavoid Layout">
+                name="Global Libavoid Layout"
+                type="de.cau.cs.kieler.type.edgeRouting">
              <supportedFeature
                    feature="COMPOUND">
              </supportedFeature>
@@ -124,16 +128,20 @@
           
           <!-- Compacting -->
           <layoutAlgorithm
+                category="de.cau.cs.kieler.adaptagrams.category"
                 class="de.cau.cs.kieler.klay.codaflow.CompactingLayoutProvider"
                 id="de.cau.cs.kieler.klay.cola.compaction"
-                name="Compacting Layout">
+                name="Compacting Layout"
+                type="de.cau.cs.kieler.type.cola">
           </layoutAlgorithm>
           
           <!-- Topology improvement -->
           <layoutAlgorithm
+                category="de.cau.cs.kieler.adaptagrams.category"
                 class="de.cau.cs.kieler.klay.codaflow.TIOLayoutProvider"
                 id="de.cau.cs.kieler.klay.cola.TIPLayout"
-                name="TIP Layout">
+                name="TIP Layout"
+                type="de.cau.cs.kieler.type.cola">
              <knownOption
                    option="de.cau.cs.kieler.borderSpacing">
              </knownOption>
