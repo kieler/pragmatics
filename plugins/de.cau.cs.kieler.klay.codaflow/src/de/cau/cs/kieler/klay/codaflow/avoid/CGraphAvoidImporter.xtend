@@ -101,18 +101,18 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
   } 
   
   def private void mapClusters(Cluster c, Router r) {
-  	
-  	val bounds = c.bounds
-  	val colaRect = new AvoidRectangle(new Point(bounds.minX, bounds.minY), new Point(bounds.maxX, bounds.maxY))
-  	
-  	// create a cluster ref
-  	new ClusterRef(r, colaRect)
-  	
-  	val children = c.clusters
-  	for (i : 0..< children.size.intValue) {
-  		children.get(i).mapClusters(r)
-  	}
-  }
+
+        val bounds = c.bounds
+        val colaRect = new AvoidRectangle(new Point(bounds.minX, bounds.minY), new Point(bounds.maxX, bounds.maxY))
+
+        // create a cluster ref
+        new ClusterRef(r, colaRect)
+
+        val children = c.clusters
+        for (i : 0 ..< children.size.intValue) {
+            children.get(i).mapClusters(r)
+        }
+    }
   
   
   def dispatch transform(CNode node, Router router) {

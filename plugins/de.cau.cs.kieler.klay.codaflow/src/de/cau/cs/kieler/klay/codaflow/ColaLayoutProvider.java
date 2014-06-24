@@ -177,13 +177,13 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
                 new KConstrainedFDLayouter()
                         .withCGraph(graph)
                         .withIdealEdgeLength(edgelength)
-                        .withIndividualEdgeLengths().withRemoveOverlaps(overlap)
+                        .withIndividualEdgeLengths()
+                        .withRemoveOverlaps(overlap)
+                        .withRemoveOverlapsYFirst()
                         .withUnsatisfiableConstraintInfos(uciX, uciY)
                         .withConvergenceTest(testConvergence);
         
         algo.prepare();
-        // we favor the y direction
-        algo.getLayouter().setM_doYAxisFirst(true);
         
         // remember for later disposal
         layouters.add(algo.getLayouter());

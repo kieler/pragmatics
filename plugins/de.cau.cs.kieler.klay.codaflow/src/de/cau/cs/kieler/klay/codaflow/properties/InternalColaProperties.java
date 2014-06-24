@@ -59,6 +59,9 @@ public final class InternalColaProperties {
             new Property<List<Pair<KPort, KVector>>>("cola.checkpoints",
                     new LinkedList<Pair<KPort, KVector>>());
 
+    /**
+     * Whether aca aligned an edge. 
+     */
     public static final IProperty<Boolean> ACA_EDGE_ALIGNED = new Property<Boolean>(
             "aca.edgeAligned", false);
 
