@@ -21,6 +21,7 @@ import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.adaptagrams.properties.CGraphProperties;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KielerMath;
 
 /**
  * @author uru
@@ -174,28 +175,9 @@ public class CEdge extends CGraphElement {
         }
 
         KVector v = tV.clone().sub(sV);
-        clipVector(v, srcSize.x, srcSize.y);
+        KielerMath.clipVector(v, srcSize.x, srcSize.y);
+        
         return v.add(sV);
-    }
-
-    /**
-     * Clip the given vector to a rectangular box of given size.
-     * 
-     * @param v vector relative to the center of the box
-     * @param width width of the rectangular box
-     * @param height height of the rectangular box
-     */
-    private static void clipVector(final KVector v, final double width, final double height) {
-        double wh = width / 2, hh = height / 2;
-        double absx = Math.abs(v.x), absy = Math.abs(v.y);
-        double xscale = 1, yscale = 1;
-        if (absx > wh) {
-            xscale = wh / absx;
-        }
-        if (absy > hh) {
-            yscale = hh / absy;
-        }
-        v.scale(Math.min(xscale, yscale));
     }
 
     /**

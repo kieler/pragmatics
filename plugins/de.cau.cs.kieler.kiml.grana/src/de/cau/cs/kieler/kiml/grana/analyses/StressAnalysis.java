@@ -28,6 +28,7 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
@@ -308,40 +309,15 @@ public class StressAnalysis implements IAnalysis {
 
         double centerToCenterDist = u.distance(v);
 
-        KVector uToBorder = clipVector(v.clone().sub(u), ul.getWidth(), ul.getHeight());
+        KVector uToBorder = KielerMath.clipVector(v.clone().sub(u), ul.getWidth(), ul.getHeight());
         double uToBorderDist = uToBorder.length();
 
-        KVector vToBorder = clipVector(u.clone().sub(v), vl.getWidth(), vl.getHeight());
+        KVector vToBorder = KielerMath.clipVector(u.clone().sub(v), vl.getWidth(), vl.getHeight());
         double vToBorderDist = vToBorder.length();
 
         double borderToBorderDist = centerToCenterDist - uToBorderDist - vToBorderDist;
 
         return borderToBorderDist;
-    }
-
-    /**
-     * Clip the given vector to a rectangular box of given size. Copied from
-     * {@link de.cau.cs.kieler.klay.force.FEdge}.
-     * 
-     * @param v
-     *            vector relative to the center of the box
-     * @param width
-     *            width of the rectangular box
-     * @param height
-     *            height of the rectangular box
-     */
-    private KVector clipVector(final KVector v, final double width, final double height) {
-        double wh = width / 2, hh = height / 2;
-        double absx = Math.abs(v.x), absy = Math.abs(v.y);
-        double xscale = 1, yscale = 1;
-        if (absx > wh) {
-            xscale = wh / absx;
-        }
-        if (absy > hh) {
-            yscale = hh / absy;
-        }
-        v.scale(Math.min(xscale, yscale));
-        return v;
     }
 
     /*
