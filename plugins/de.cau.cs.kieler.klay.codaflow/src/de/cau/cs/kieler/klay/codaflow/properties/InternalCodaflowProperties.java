@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klay.codaflow.properties;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -27,7 +28,7 @@ import de.cau.cs.kieler.core.util.Pair;
 /**
  * @author uru
  */
-public final class InternalColaProperties {
+public final class InternalCodaflowProperties {
 
     /*--------------------------------------------------------------------------------------------
      *                          Internal Use only
@@ -41,16 +42,20 @@ public final class InternalColaProperties {
             "codaflow.libavoid.worked", false);
 
     /**
-     * The original object from which a graph element was created.
+     * {@link de.cau.cs.kieler.adaptagrams.cgraph.CEdge CEdge}s that represent multiple
+     * {@link KEdge}s should hold this property. For directed edges the order is relevant.
+     * 
+     * Edge routing algorithms may determine separate routes for the elements of the 
+     * edge chain. See {@link #EDGE_SUB_ROUTES}.
      */
     public static final IProperty<List<KEdge>> EDGE_CHAIN = new Property<List<KEdge>>(
-            "cola.edgeChain", new LinkedList<KEdge>());
+            "codaflow.hierarchical.edgeChain", new ArrayList<KEdge>());
 
     /**
-     * Sub routes of a hierarchy-crossing {@link de.cau.cs.kieler.klay.cola.graph.CEdge CEdge}.
+     * Sub routes for edge chains as specified by {@link #EDGE_CHAIN}.
      */
     public static final IProperty<List<KVectorChain>> EDGE_SUB_ROUTES =
-            new Property<List<KVectorChain>>("libavoid.subRoutes", new LinkedList<KVectorChain>());
+            new Property<List<KVectorChain>>("libavoid.subRoutes", new ArrayList<KVectorChain>());
 
     /**
      * Positions of ports that represent hierarchy transitions on hierarchy-crossing edges.
@@ -60,7 +65,7 @@ public final class InternalColaProperties {
                     new LinkedList<Pair<KPort, KVector>>());
 
     /**
-     * Whether aca aligned an edge. 
+     * Whether aca aligned an edge.
      */
     public static final IProperty<Boolean> ACA_EDGE_ALIGNED = new Property<Boolean>(
             "aca.edgeAligned", false);
@@ -68,7 +73,7 @@ public final class InternalColaProperties {
     /**
      * Utility class.
      */
-    private InternalColaProperties() {
+    private InternalCodaflowProperties() {
     }
 
 }

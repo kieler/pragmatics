@@ -30,7 +30,6 @@ import de.cau.cs.kieler.kiml.options.EdgeRouting
 import de.cau.cs.kieler.kiml.options.LayoutOptions
 import de.cau.cs.kieler.kiml.options.PortSide
 import de.cau.cs.kieler.klay.codaflow.graphimport.IGraphImporter
-import de.cau.cs.kieler.klay.codaflow.properties.InternalColaProperties
 import de.cau.cs.kieler.klay.codaflow.util.ColaUtil
 import java.awt.geom.Line2D
 import java.awt.geom.Point2D
@@ -55,6 +54,7 @@ import org.adaptagrams.ShapeRef
 import org.adaptagrams.adaptagrams
 
 import static de.cau.cs.kieler.kiml.options.PortSide.*
+import de.cau.cs.kieler.klay.codaflow.properties.InternalCodaflowProperties
 
 /**
  * TODO document
@@ -195,7 +195,7 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
 
     // for hierarchical edges we have to add checkpoints
     if (edge.crossHierarchy) {
-      val ports = edge.getProperty(InternalColaProperties.EDGE_CHECKPOINTS)
+      val ports = edge.getProperty(InternalCodaflowProperties.EDGE_CHECKPOINTS)
       val checkpoints = new AvoidCheckpoints()
       for (pair : ports.take(ports.size - 1)) {
         val port = pair.second
@@ -244,7 +244,7 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
       val edge = cr.edge
       edge.bendpoints.clear
       
-      val edgeChain = edge.getProperty(InternalColaProperties.EDGE_CHAIN)
+      val edgeChain = edge.getProperty(InternalCodaflowProperties.EDGE_CHAIN)
       
       if (edgeChain.empty) {
         // this is a regular edge, just write the bendpoints back
@@ -270,10 +270,10 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
         // we have to split the route into chunks
         val subRoutes = edge.determineSubRoutes(route)
         //subRoutes.forEach[e,i | println("SubRoute " + i + " " + cr.edge + " " + e)]
-        edge.setProperty(InternalColaProperties.EDGE_SUB_ROUTES, subRoutes)
+        edge.setProperty(InternalCodaflowProperties.EDGE_SUB_ROUTES, subRoutes)
       }
       
-      edge.setProperty(InternalColaProperties.LIBAVOID_WORKED, true)
+      edge.setProperty(InternalCodaflowProperties.LIBAVOID_WORKED, true)
     }
   }
   
@@ -284,7 +284,7 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
   private def List<KVectorChain> determineSubRoutes(CEdge edge, Polygon route) {
     
     // original checkpoints specified for the edge
-    val chkPoints = edge.getProperty(InternalColaProperties.EDGE_CHECKPOINTS)
+    val chkPoints = edge.getProperty(InternalCodaflowProperties.EDGE_CHECKPOINTS)
     // println("Checkpoints: " + chkPoints)
     val ports = chkPoints.take(chkPoints.size - 1).map[it.second].iterator
     

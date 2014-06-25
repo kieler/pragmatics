@@ -43,7 +43,7 @@ import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.codaflow.properties.CodaflowProperties;
-import de.cau.cs.kieler.klay.codaflow.properties.InternalColaProperties;
+import de.cau.cs.kieler.klay.codaflow.properties.InternalCodaflowProperties;
 import de.cau.cs.kieler.klay.codaflow.util.ColaUtil;
 
 /**
@@ -481,7 +481,7 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
         KEdge kEdge = (KEdge) edge.getProperty(CGraphProperties.ORIGIN);
         KEdgeLayout layout = kEdge.getData(KEdgeLayout.class);
         
-        if (edge.getProperty(InternalColaProperties.LIBAVOID_WORKED)) {
+        if (edge.getProperty(InternalCodaflowProperties.LIBAVOID_WORKED)) {
             // assign routes as specified by libavoid
             KVectorChain chain = new KVectorChain(edge.bendpoints);
             chain.offset(offset);

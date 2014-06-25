@@ -48,7 +48,7 @@ import de.cau.cs.kieler.klay.codaflow.processors.FlowConstraintProcessor;
 import de.cau.cs.kieler.klay.codaflow.processors.IdealEdgeLengthProcessor;
 import de.cau.cs.kieler.klay.codaflow.processors.PortConstraintProcessor;
 import de.cau.cs.kieler.klay.codaflow.properties.CodaflowProperties;
-import de.cau.cs.kieler.klay.codaflow.properties.InternalColaProperties;
+import de.cau.cs.kieler.klay.codaflow.properties.InternalCodaflowProperties;
 import de.cau.cs.kieler.klay.codaflow.util.ACADebugTestConvergence;
 import de.cau.cs.kieler.klay.codaflow.util.MinMaxTestConvergence;
 
@@ -197,7 +197,7 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
         for (CNode n : graph.getChildren()) {
             for (CEdge e : n.getOutgoingEdges()) {
                 boolean isAligned = acaL.getACALayouter().edgeIsAligned(e.cIndex);
-                e.setProperty(InternalColaProperties.ACA_EDGE_ALIGNED, isAligned);
+                e.setProperty(InternalCodaflowProperties.ACA_EDGE_ALIGNED, isAligned);
             }
         }
 

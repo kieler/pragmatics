@@ -123,7 +123,7 @@ public class CEdge extends CGraphElement {
     }
 
     /**
-     * Returns the docking point at the source node, or port if existent.
+     * Returns the docking point at the source node, or port if existent (relative to the source node).
      * 
      * Note, if neither a src node nor a src port are specified a (0, 0)
      * vector is returned.
@@ -131,7 +131,7 @@ public class CEdge extends CGraphElement {
      * @return the source docking point
      */
     public KVector getSourcePoint() {
-        return getClippedCenterToCenterVector(src, srcPort, tgt, tgtPort);
+        return getClippedAnchorVector(src, srcPort, tgt, tgtPort);
     }
 
     /**
@@ -143,14 +143,17 @@ public class CEdge extends CGraphElement {
      * @return the target docking point
      */
     public KVector getTargetPoint() {
-        return getClippedCenterToCenterVector(tgt, tgtPort, src, srcPort);
+        return getClippedAnchorVector(tgt, tgtPort, src, srcPort);
     }
 
     /**
-     * @return a vector connecting the center points of the nodes or the corresponding ports, if
-     *         existent, clipped to the respective bounding box.
+     * All positions have to be in a common coordinate system.
+     * Either parameter may be null. 
+     * 
+     * @return a vector pointing to either the center of the {@code srcNode} or the {@srcNodePort}
+     *         (the port is prioritized).
      */
-    private KVector getClippedCenterToCenterVector(final CNode srcNode, final CPort srcNodePort,
+    private KVector getClippedAnchorVector(final CNode srcNode, final CPort srcNodePort,
             final CNode tgtNode, final CPort tgtNodePort) {
         KVector sV = null;
         KVector srcSize = null;

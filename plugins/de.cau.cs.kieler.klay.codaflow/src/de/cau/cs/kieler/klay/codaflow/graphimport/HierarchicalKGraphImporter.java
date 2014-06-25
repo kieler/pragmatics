@@ -25,14 +25,12 @@ import org.adaptagrams.Box;
 import org.adaptagrams.Cluster;
 import org.adaptagrams.Rectangle;
 import org.adaptagrams.RectangularCluster;
-import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -44,10 +42,12 @@ import de.cau.cs.kieler.adaptagrams.cgraph.CPort;
 import de.cau.cs.kieler.adaptagrams.properties.CGraphProperties;
 import de.cau.cs.kieler.adaptagrams.properties.CoLaProperties;
 import de.cau.cs.kieler.core.kgraph.KEdge;
+import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
+import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
@@ -59,12 +59,15 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 import de.cau.cs.kieler.klay.codaflow.properties.CodaflowProperties;
 import de.cau.cs.kieler.klay.codaflow.properties.ColaPredicates;
-import de.cau.cs.kieler.klay.codaflow.properties.InternalColaProperties;
+import de.cau.cs.kieler.klay.codaflow.properties.InternalCodaflowProperties;
 import de.cau.cs.kieler.klay.codaflow.util.ColaUtil;
 
 /**
- * 
- * TODO assign higher edge length to cross hierarchy edges!
+ * Imports a {@link CGraph} from a KGraph. As opposed to the {@link KGraphImporter} 
+ * the whole hierarchy of the KGraph is imported at once.
+ *
+ * <h3>Limitations</h3>
+ * - Edges that start/end at ports of compound nodes are not handled properly.
  * 
  * @author uru
  */
@@ -106,6 +109,9 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
         return graph;
     }
 
+    /**
+     * Recursively transforms {@link KNode}s to either {@link CNode}s or {@link Cluster}s. 
+     */
     private void recImportNodes(final KNode parentNode, final Cluster parentCluster) {
 
         for (KNode node : parentNode.getChildren()) {
@@ -126,7 +132,6 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
                 // remember it
                 nodeMap.put(node, cnode);
                 graph.getChildren().add(cnode);
-//                cnode.setParent(graph);
                 cnode.init();
 
                 // add to the cluster
@@ -145,14 +150,12 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
                         portMap.put(p, port);
                         cnode.getPorts().add(port);
                         port.init();
-                        PortSide ps =
-                                p.getData(KLayoutData.class).getProperty(LayoutOptions.PORT_SIDE);
-                        if (ps != PortSide.UNDEFINED) {
-                            port.side = ps;
-                        } else {
-                            // calculate a useful side
-                            port.side =
-                                    KimlUtil.calcPortSide(p,
+                        PortSide ps = p.getData(KLayoutData.class).getProperty(LayoutOptions.PORT_SIDE);
+                        port.side = ps;
+
+                        // calculate a useful side
+                        if (ps == PortSide.UNDEFINED) {
+                            port.side = KimlUtil.calcPortSide(p,
                                             graph.getProperty(LayoutOptions.DIRECTION)); // FIXME
                         }
 
@@ -196,16 +199,20 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
                         node.getData(KShapeLayout.class).getProperty(CodaflowProperties.BORDER_SPACING);
                 float padding = spacing / 2f + Math.max(borderSpacing, 0);
                 // Box as Padding -> left, right, top, bottom
+                // recursively convert the children
                 compoundCluster.setPadding(new Box(padding + kInsets.getLeft(), padding
                         + kInsets.getRight(), kInsets.getTop(), kInsets.getBottom()));
 
-                // recursively convert the children
                 recImportNodes(node, compoundCluster);
             }
         }
 
     }
 
+    /**
+     * through ports are replaced by possibly multiple {@link CEdge} between atomic {@link KNode}s.
+     * Recursively transforms {@link KEdge}s to {@link CEdge}. Edges that cross hierarchy boundaries
+     */
     private void recImportEdges(final KNode parentNode) {
 
         for (KNode node : parentNode.getChildren()) {
@@ -213,8 +220,11 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
             // we start a atomic nodes
             if (node.getChildren().isEmpty()) {
                 for (KEdge edge : node.getOutgoingEdges()) {
+                    
+                    // for every edge 
                     List<KEdge> edgeChain = Lists.newLinkedList();
                     List<Pair<KPort, KVector>> checkpoints = Lists.newLinkedList();
+
                     introduceEdge(edge, edge.getSource(), edge, edge.getTarget(), edgeChain,
                             checkpoints);
                 }
@@ -232,7 +242,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
 
         edgeChain.add(edge);
 
-        // if the target or the target ports node are atomic, finish the edge
+        // if the target or the target port's node is atomic, finish the edge
         if (edge.getTarget().getChildren().isEmpty()) {
             CNode src = nodeMap.get(startNode);
             CNode tgt = nodeMap.get(edge.getTarget());
@@ -248,8 +258,8 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
             // spans the edge hierarchy levels?
             if (!startNode.getParent().equals(currentTarget.getParent())) {
                 cedge.crossHierarchy = true;
-                cedge.setProperty(InternalColaProperties.EDGE_CHAIN, edgeChain);
-                cedge.setProperty(InternalColaProperties.EDGE_CHECKPOINTS, checkpoints);
+                cedge.setProperty(InternalCodaflowProperties.EDGE_CHAIN, edgeChain);
+                cedge.setProperty(InternalCodaflowProperties.EDGE_CHECKPOINTS, checkpoints);
             }
 
             src.getOutgoingEdges().add(cedge);
@@ -274,20 +284,22 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
             cp = KimlUtil.toAbsolute(cp, edge.getTarget());
             
             // FIXME !
-            double spacing =
-                    edge.getTarget().getParent().getData(KLayoutData.class)
-                            .getProperty(CoLaProperties.SPACING);
+//            double spacing =
+//                    edge.getTarget().getParent().getData(KLayoutData.class)
+//                            .getProperty(CoLaProperties.SPACING);
             Margins margins =
                     edge.getTarget().getData(KShapeLayout.class).getProperty(LayoutOptions.MARGINS);
             cp.x += margins.left;// + spacing / 2f + 6;
-            cp.y += margins.top + spacing / 2f + 6 ;
+//            cp.y += margins.top + spacing / 2f + 6 ;
+//            
+            if (!edge.getTarget().getParent().equals(edge.getSource().getParent())) {
+                System.out.println("CP: " + cp);
+            }
             
-            if(!edge.getTarget().getParent().equals(edge.getSource().getParent()))
-            System.out.println("CP: " + cp);
             checkpoints.add(Pair.of(edge.getTargetPort(), cp));
             
             for (KEdge portEdge : getOutgoingEdges(edge.getTargetPort())) {
-                // make sure to copy the list, as we might follow multiple edges
+                // make sure to copy the lists, as we might follow multiple edges
                 introduceEdge(portEdge, startNode, startEdge, portEdge.getTarget(),
                         Lists.newArrayList(edgeChain), Lists.newArrayList(checkpoints));
             }
@@ -304,6 +316,11 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
         });
     }
 
+    
+    /*
+     * ------------------------ Layout Application -------------------------------------------
+     */
+    
     /**
      * {@inheritDoc}
      */
@@ -389,103 +406,8 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
             }
         }
 
-        KNode root = (KNode) graph.getProperty(CGraphProperties.ORIGIN);
-        Iterator<EObject> allEdges =
-                Iterators.filter(root.eAllContents(), new Predicate<EObject>() {
-                    public boolean apply(final EObject obj) {
-                        return obj instanceof KEdge;
-                    }
-                });
-        while (allEdges.hasNext()) {
-            KEdge edge = ((KEdge) allEdges.next());
-            KEdgeLayout layout = edge.getData(KEdgeLayout.class);
-            layout.getBendPoints().clear();
-            layout.getSourcePoint().setPos(0, 0);
-            layout.getTargetPoint().setPos(0, 0);
-        }
-
-        // set bend points of non hierarchy-crossing edges
-        for (CEdge e : edgeMap.values()) {
-            if (!e.crossHierarchy) {
-                KEdge edge = (KEdge) e.getProperty(CGraphProperties.ORIGIN);
-                KEdgeLayout layout = edge.getData(KEdgeLayout.class);
-
-                // if bendpoints were specified use these
-                if (!e.bendpoints.isEmpty()) {
-                    KVectorChain chain = new KVectorChain(e.bendpoints);
-                    
-                    // TODO cleanup below!
-                    // offset the bendpoints
-                    // note, that we have to consider hierarchy as well
-                    // is the source node contained in a cluster?
-                    KNode parent = ((KNode) e.getSource().getProperty(
-                            CGraphProperties.ORIGIN)).getParent();
-                    Cluster c =
-                            clusterMap.get(parent);
-                    KVector clusterPos = new KVector();
-                    if (c != null) {
-                     clusterPos = new KVector(c.getBounds().getMinX(), c.getBounds().getMinY());
-                     clusterPos.negate();
-                    } else {
-                        clusterPos.add(offset);
-                    }
-                    // System.out.println(parent + " " + c);
-                    // KVector relativeOffset = offset.differenceCreate(clusterPos);
-                    
-                    chain.offset(clusterPos);
-                    
-                    layout.applyVectorChain(chain);
-                } else {
-                    // convert to relative coordinates (note that both are relative to the source's
-                    // parent)
-                    KVector relativeSrcPoint =
-                            KimlUtil.toRelative(e.getSourcePoint(), edge.getSource().getParent());
-                    KVector relativeTgtPoint =
-                            KimlUtil.toRelative(e.getTargetPoint(), edge.getSource().getParent());
-    
-                    // apply new positions
-                    layout.getSourcePoint().applyVector(relativeSrcPoint.clone().add(offset));
-                    layout.getTargetPoint().applyVector(relativeTgtPoint.clone().add(offset));
-                }
-            } else {
-                
-                // if libavoid assigned sub routes
-                List<KVectorChain> subRoutes =
-                        e.getProperty(InternalColaProperties.EDGE_SUB_ROUTES);
-                List<KEdge> edgeChain = e.getProperty(InternalColaProperties.EDGE_CHAIN);
-                if (!subRoutes.isEmpty()) {
-                    Iterator<KVectorChain> subRoutesIt = subRoutes.iterator();
-                    Iterator<KEdge> edgeChainIt = edgeChain.iterator();
-
-                    while (subRoutesIt.hasNext() && edgeChainIt.hasNext()) {
-                        final KVectorChain vc = subRoutesIt.next();
-                        final KEdge edge = edgeChainIt.next();
-                        KVector globalOffset = new KVector();
-                        // current coordinates are in global, translate them to relative
-                        if (KimlUtil.isDescendant(edge.getTarget(), edge.getSource())) {
-                            // relative to the source
-                            globalOffset = KimlUtil.toRelative(globalOffset, edge.getSource());
-                        } else {
-                            // relative to the source's parent
-                            globalOffset =
-                                    KimlUtil.toRelative(globalOffset, edge.getSource().getParent());
-                        }
-
-                        vc.offset(globalOffset);
-                        vc.offset(offset);
-                        
-                        // apply back to the original edge layout
-                        KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-                        edgeLayout.applyVectorChain(vc);
-                    }
-
-                }
-            }
-        }
-
         // should we reposition hierarchical ports?
         if (repositionHierarchicalPorts) {
-
             Set<KPort> repositionedPorts = Sets.newHashSet();
 
             // PASS 1 - ACA aligned hierarchy crossing edges
@@ -513,21 +435,212 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
                 }
             }
         }
+        
+        // transfer layout to the edges 
+        for (CEdge e : edgeMap.values()) {
+
+            if (e.crossHierarchy) {
+                applyLayoutToCrossHierarchyEdge(e, offset);
+            } else {
+                applyLayoutToEdge(e, offset);
+            }
+        }
 
         // resize the parent node
+        KNode root = (KNode) graph.getProperty(CGraphProperties.ORIGIN);
         KInsets insets = root.getData(KShapeLayout.class).getInsets();
         double width = (maxX - minX) + 2 * borderSpacing + insets.getLeft() + insets.getRight();
         double height = (maxY - minY) + 2 * borderSpacing + insets.getTop() + insets.getBottom();
         KimlUtil.resizeNode(root, (float) width, (float) height, false, true);
     }
+    
+    
+    
+    /*
+     * ------------------------ Layout Application (Edges) --------------------------------------
+     */
+    
+    /**
+     * If {@link CEdge#bendpoints} contains bendpoints we write these back to the original
+     * {@link KEdge}. Otherwise a straight line is assigned between the attachement points of the
+     * edge.
+     */
+    private void applyLayoutToEdge(final CEdge e, final KVector offset) {
 
+        KEdge edge = (KEdge) e.getProperty(CGraphProperties.ORIGIN);
+        KEdgeLayout layout = edge.getData(KEdgeLayout.class);
+
+        // if bendpoints were specified, use these
+        if (!e.bendpoints.isEmpty()) {
+            KVectorChain chain = new KVectorChain(e.bendpoints);
+
+            // note, that we have to consider hierarchy as well
+            // is the source node contained in a cluster?
+            KNode parent = ((KNode) e.getSource().getProperty(CGraphProperties.ORIGIN)).getParent();
+            Cluster c = clusterMap.get(parent);
+            KVector clusterPos = new KVector();
+            if (c != null) {
+                clusterPos = new KVector(c.getBounds().getMinX(), c.getBounds().getMinY());
+                clusterPos.negate();
+            } else {
+                clusterPos.add(offset);
+            }
+
+            chain.offset(clusterPos);
+            layout.applyVectorChain(chain);
+            
+        } else {
+            // convert to relative coordinates (note that both are relative to the source's
+            // parent)
+            KVector relativeSrcPoint =
+                    KimlUtil.toRelative(e.getSourcePoint(), edge.getSource().getParent());
+            KVector relativeTgtPoint =
+                    KimlUtil.toRelative(e.getTargetPoint(), edge.getSource().getParent());
+
+            // apply new positions
+            layout.getSourcePoint().applyVector(relativeSrcPoint.clone().add(offset));
+            layout.getTargetPoint().applyVector(relativeTgtPoint.clone().add(offset));
+        }
+    }
+    
+    /**
+     *  
+     */
+    private void applyLayoutToCrossHierarchyEdge(final CEdge e, final KVector offset) {
+        
+        // if some edge routing assigned sub routes
+        List<KVectorChain> subRoutes = e.getProperty(InternalCodaflowProperties.EDGE_SUB_ROUTES);
+        List<KEdge> edgeChain = e.getProperty(InternalCodaflowProperties.EDGE_CHAIN);
+        
+        if (!subRoutes.isEmpty()) {
+            Iterator<KVectorChain> subRoutesIt = subRoutes.iterator();
+            Iterator<KEdge> edgeChainIt = edgeChain.iterator();
+
+            while (subRoutesIt.hasNext() && edgeChainIt.hasNext()) {
+                final KVectorChain vc = subRoutesIt.next();
+                final KEdge edge = edgeChainIt.next();
+                KVector globalOffset = new KVector();
+                // current coordinates are in global, translate them to relative
+                if (KimlUtil.isDescendant(edge.getTarget(), edge.getSource())) {
+                    // relative to the source
+                    globalOffset = KimlUtil.toRelative(globalOffset, edge.getSource());
+                } else {
+                    // relative to the source's parent
+                    globalOffset =
+                            KimlUtil.toRelative(globalOffset, edge.getSource().getParent());
+                }
+
+                vc.offset(globalOffset);
+                vc.offset(offset);
+                
+                // apply back to the original edge layout
+                KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
+                edgeLayout.applyVectorChain(vc);
+            }
+
+        } else {
+            
+            // assign a straight line from source to target for each part of the edge chain
+            List<KEdge> chain = e.getProperty(InternalCodaflowProperties.EDGE_CHAIN);
+            if (chain != null) {
+                for (KEdge kedge : chain) {
+                    KEdgeLayout el = kedge.getData(KEdgeLayout.class);
+                    el.getBendPoints().clear();
+
+                    // get the docking positions
+                    KVector srcPoint =
+                            getClippedAnchorVector(kedge.getSource(),
+                                    kedge.getSourcePort(), kedge.getTarget(),
+                                    kedge.getTargetPort());
+                    KVector tgtPoint =
+                            getClippedAnchorVector(kedge.getTarget(),
+                                    kedge.getTargetPort(), kedge.getSource(),
+                                    kedge.getSourcePort());
+
+                    // convert to relative coordinates
+                    KVector relativeSrcPoint;
+                    KVector relativeTgtPoint;
+                    // if the target node is a child of the source node, the source node is
+                    // the reference for the edge's coordinates
+                    if (KimlUtil.isDescendant(kedge.getTarget(), kedge.getSource())) {
+                        relativeSrcPoint = KimlUtil.toRelative(srcPoint, kedge.getSource());
+                        relativeTgtPoint = KimlUtil.toRelative(tgtPoint, kedge.getSource());
+                    } else {
+                        // otherwise the source's parent node
+                        relativeSrcPoint =
+                                KimlUtil.toRelative(srcPoint, kedge.getSource().getParent());
+                        relativeTgtPoint =
+                                KimlUtil.toRelative(tgtPoint, kedge.getSource().getParent());
+                    }
+
+                    // apply new positions
+                    // note that offsets have already been assigned to the nodes and ports
+                    el.getSourcePoint().applyVector(relativeSrcPoint.clone());
+                    el.getTargetPoint().applyVector(relativeTgtPoint.clone());
+                }
+            }
+        }
+    }
+    
+    
+    /*
+     * ------------------------ Convenience -------------------------------------------
+     */
+
+    /**
+     * Note that the positions are transferred to a absolute coordinates and the returned
+     * vector is in absolute coordinates as well.
+     * 
+     * @return a vector pointing to either the center of the {@code srcNode} or the {@srcNodePort}
+     *         (the port is prioritized).
+     */
+    private KVector getClippedAnchorVector(final KNode srcNode, final KPort srcNodePort,
+            final KNode tgtNode, final KPort tgtNodePort) {
+        KVector sV = null;
+        KVector srcSize = null;
+        KShapeLayout sl = srcNode.getData(KShapeLayout.class);
+        sV = KimlUtil.toAbsolute(getCenter(srcNode), srcNode.getParent());
+        srcSize = new KVector(sl.getWidth(), sl.getHeight());
+
+        if (srcNodePort != null) {
+            KShapeLayout slp = srcNodePort.getData(KShapeLayout.class);
+            // the port's position is relative to the node
+            sV =
+                    KimlUtil.toAbsolute(sl.createVector(), srcNode.getParent()).add(
+                            getCenter(srcNodePort));
+            srcSize = new KVector(slp.getWidth(), slp.getHeight());
+        }
+        KVector tV = new KVector();
+        tV = KimlUtil.toAbsolute(getCenter(tgtNode), tgtNode.getParent());
+        if (tgtNodePort != null) {
+            // the port's position is relative to the node
+            tV =
+                    KimlUtil.toAbsolute(tgtNode.getData(KShapeLayout.class).createVector(),
+                            tgtNode.getParent()).add(getCenter(tgtNodePort));
+        }
+        
+        if (sV == null && tV == null) {
+           return new KVector(); 
+        }
+
+        KVector v = tV.clone().sub(sV);
+        KielerMath.clipVector(v, srcSize.x, srcSize.y);
+        
+        return v.add(sV);
+    }
+    
+    private KVector getCenter(final KGraphElement kge) {
+        KShapeLayout sl = kge.getData(KShapeLayout.class);
+        return sl.createVector().add(sl.getWidth() / 2f, sl.getHeight() / 2f);
+    }
+    
     /**
      * Every node's position is in global coordinates. We translate this back to the position
      * relative to the parent node.
      */
     private KVector relativeToCluster(final CNode node, final KVector offset) {
 
-        KVector nodePos = node.getRectPos();
+        KVector nodePos = node.getPos();
         KNode parent = ((KNode) node.getProperty(CGraphProperties.ORIGIN)).getParent();
         Cluster c = clusterMap.get(parent);
         if (c == null) {
@@ -568,7 +681,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
     private void repositionHierarchicalPorts(final CEdge e, final KVector offset,
             final Set<KPort> fixedPortSet) {
 
-        List<KEdge> edgeChain = e.getProperty(InternalColaProperties.EDGE_CHAIN);
+        List<KEdge> edgeChain = e.getProperty(InternalCodaflowProperties.EDGE_CHAIN);
         // initialize the line connecting the centers of the start and end port
         KVector srcPnt;
         KVector tgtPnt;

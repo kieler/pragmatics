@@ -43,7 +43,7 @@ public final class ColaPredicates {
          * {@inheritDoc}
          */
         public boolean apply(final CEdge edge) {
-            return edge.getProperty(InternalColaProperties.ACA_EDGE_ALIGNED);
+            return edge.getProperty(InternalCodaflowProperties.ACA_EDGE_ALIGNED);
         }
     };
     
