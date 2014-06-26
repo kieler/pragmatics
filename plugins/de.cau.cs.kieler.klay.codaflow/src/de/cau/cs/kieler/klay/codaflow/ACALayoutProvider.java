@@ -196,11 +196,11 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
         // remember which edges were aligned by aca
         for (CNode n : graph.getChildren()) {
             for (CEdge e : n.getOutgoingEdges()) {
-                boolean isAligned = acaL.getACALayouter().edgeIsAligned(e.cIndex);
+                boolean isAligned = acaL.getACALayouter().edgeIsAlignedConstTime(e.cIndex);
                 e.setProperty(InternalCodaflowProperties.ACA_EDGE_ALIGNED, isAligned);
             }
         }
-
+        
         // post compaction
         if (parentLayout.getProperty(CodaflowProperties.ACA_POST_COMPACTION)) {
             spm = progressMonitor.subTask(1);

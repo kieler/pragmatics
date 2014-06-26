@@ -56,7 +56,6 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
-import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 import de.cau.cs.kieler.klay.codaflow.properties.CodaflowProperties;
 import de.cau.cs.kieler.klay.codaflow.properties.ColaPredicates;
 import de.cau.cs.kieler.klay.codaflow.properties.InternalCodaflowProperties;
@@ -283,19 +282,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
             // convert it to a global position
             cp = KimlUtil.toAbsolute(cp, edge.getTarget());
             
-            // FIXME !
-//            double spacing =
-//                    edge.getTarget().getParent().getData(KLayoutData.class)
-//                            .getProperty(CoLaProperties.SPACING);
-            Margins margins =
-                    edge.getTarget().getData(KShapeLayout.class).getProperty(LayoutOptions.MARGINS);
-            cp.x += margins.left;// + spacing / 2f + 6;
-//            cp.y += margins.top + spacing / 2f + 6 ;
-//            
-            if (!edge.getTarget().getParent().equals(edge.getSource().getParent())) {
-                System.out.println("CP: " + cp);
-            }
-            
+            // FIXME why calc the position here?
             checkpoints.add(Pair.of(edge.getTargetPort(), cp));
             
             for (KEdge portEdge : getOutgoingEdges(edge.getTargetPort())) {
@@ -428,7 +415,8 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
                 for (CPort p : n.getPorts()) {
                     final Iterable<CEdge> alignedEdges =
                             Iterables.filter(p.getIncomingEdges(),
-                                    ColaPredicates.PREDICATE_HIERARCHICAL_EDGE);
+                                    Predicates.and(ColaPredicates.PREDICATE_HIERARCHICAL_EDGE,
+                                    Predicates.not(ColaPredicates.PREDICATE_ACA_ALIGNED_EDGE)));
                     for (CEdge e : alignedEdges) {
                         repositionHierarchicalPorts(e, offset, repositionedPorts);
                     }
