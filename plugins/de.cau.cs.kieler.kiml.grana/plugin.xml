@@ -506,6 +506,15 @@
             description="The stress of the graph."
             id="de.cau.cs.kieler.kiml.grana.stress"
             name="Stress">
+         <component
+               name="Center-To-Center">
+         </component>
+         <component
+               name="Border-To-Border">
+         </component>
+         <component
+               name="P-Stress">
+         </component>
       </analysis>
    </extension>
 
