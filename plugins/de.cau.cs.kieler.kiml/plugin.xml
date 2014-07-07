@@ -594,6 +594,16 @@
            type="boolean"
            variance="0">
      </layoutOption>
+     <layoutOption
+           advanced="true"
+           appliesTo="parents,nodes,edges,ports,labels"
+           default="true"
+           description="Whether to reset layout options prior to a layout run."
+           id="de.cau.cs.kieler.resetConfig"
+           name="Reset Config"
+           type="boolean"
+           variance="0">
+     </layoutOption>
    </extension>
    
    <extension
