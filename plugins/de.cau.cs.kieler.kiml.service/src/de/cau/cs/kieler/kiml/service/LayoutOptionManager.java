@@ -42,6 +42,7 @@ import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.config.LayoutContext;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
  * The main class for configuration of KGraph instances. Configuration means the annotation of
@@ -171,6 +172,8 @@ public class LayoutOptionManager {
             recursiveConf(child, layoutMapping, config);
         }
     }
+    
+    private LayoutOptionData resetConfigOption;
 
     /**
      * Configure a graph element.
@@ -203,9 +206,18 @@ public class LayoutOptionManager {
         // enrich the layout context using the basic configuration
         enrich(context, config, false);
 
-        // clear the previous configuration
+        // clear the previous configuration, unless specified otherwise by 
+        // a layout option
         KLayoutData layoutData = graphElement.getData(KLayoutData.class);
-        layoutData.getProperties().clear();
+        if (resetConfigOption == null) {
+            resetConfigOption =
+                    LayoutMetaDataService.getInstance().getOptionData(
+                            LayoutOptions.RESET_CONFIG.getId());
+        }
+        if (resetConfigOption == null 
+                || (Boolean) config.getOptionValue(resetConfigOption, context)) {
+            layoutData.getProperties().clear();
+        }
         
         // transfer the options from the layout configuration
         transferValues(layoutData, config, context);
