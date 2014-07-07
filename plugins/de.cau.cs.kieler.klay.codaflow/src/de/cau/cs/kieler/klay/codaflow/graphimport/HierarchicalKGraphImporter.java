@@ -55,6 +55,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.kiml.options.SizeConstraint;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.codaflow.properties.CodaflowProperties;
 import de.cau.cs.kieler.klay.codaflow.properties.ColaPredicates;
@@ -225,7 +226,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
                     List<Pair<KPort, KVector>> checkpoints = Lists.newLinkedList();
 
                     introduceEdge(edge, edge.getSource(), edge, edge.getTarget(), edgeChain,
-                            checkpoints);
+                            checkpoints, false);
                 }
             } else {
 
@@ -237,7 +238,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
 
     private void introduceEdge(final KEdge edge, final KNode startNode, final KEdge startEdge,
             final KNode currentTarget, final List<KEdge> edgeChain, 
-            final List<Pair<KPort, KVector>> checkpoints) {
+            final List<Pair<KPort, KVector>> checkpoints, final boolean hyperedge) {
 
         edgeChain.add(edge);
 
@@ -259,6 +260,11 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
                 cedge.crossHierarchy = true;
                 cedge.setProperty(InternalCodaflowProperties.EDGE_CHAIN, edgeChain);
                 cedge.setProperty(InternalCodaflowProperties.EDGE_CHECKPOINTS, checkpoints);
+            }
+            
+            // hyperedge?
+            if (hyperedge) {
+                cedge.setProperty(InternalCodaflowProperties.HIERARCHICAL_HYPEREDGE, true);
             }
 
             src.getOutgoingEdges().add(cedge);
@@ -285,10 +291,15 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
             // FIXME why calc the position here?
             checkpoints.add(Pair.of(edge.getTargetPort(), cp));
             
+            // if more than 3 edges connect to the same port, we consider
+            // the 'overall' edge to be an hyperedge
+            boolean isHyperedge = edge.getTargetPort().getEdges().size() > 2;
+            
             for (KEdge portEdge : getOutgoingEdges(edge.getTargetPort())) {
                 // make sure to copy the lists, as we might follow multiple edges
                 introduceEdge(portEdge, startNode, startEdge, portEdge.getTarget(),
-                        Lists.newArrayList(edgeChain), Lists.newArrayList(checkpoints));
+                        Lists.newArrayList(edgeChain), Lists.newArrayList(checkpoints), 
+                        isHyperedge);
             }
 
         }

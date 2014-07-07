@@ -65,6 +65,12 @@ public final class InternalCodaflowProperties {
                     new LinkedList<Pair<KPort, KVector>>());
 
     /**
+     * Whether an edge is a hyperedge.
+     */
+    public static final IProperty<Boolean> HIERARCHICAL_HYPEREDGE = new Property<Boolean>(
+            "codaflow.hierarchicalHyperedge", false);
+    
+    /**
      * Whether aca aligned an edge.
      */
     public static final IProperty<Boolean> ACA_EDGE_ALIGNED = new Property<Boolean>(

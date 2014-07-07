@@ -66,6 +66,9 @@ import de.cau.cs.kieler.klay.codaflow.properties.InternalCodaflowProperties
  */
 class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
 
+  /**
+   * Transforms the CGraph elements to libavoid graph elements.
+   */
   override importGraph(CGraph graph) {
     
     // create a router instance
@@ -96,10 +99,13 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
     graph.rootCluster.mapClusters(router)
     router.setClusteredRouting(true)
     
-    
     router
   } 
   
+  /**
+   * Clusters in the CGraph are represented 
+   * as AvoidRectangles and 'mapped'.
+   */
   def private void mapClusters(Cluster c, Router r) {
 
         val bounds = c.bounds
@@ -114,18 +120,21 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
         }
     }
   
-  
+  /**
+   * CNode -> AvoidRectangle.
+   */
   def dispatch transform(CNode node, Router router) {
 
-    // the raw size already concludes margins
+    // the raw size already contains margins
     val rect = new AvoidRectangle(node.rectPosRaw.toPoint, 
                 node.rectPosRaw.clone.add(node.rectSizeRaw).toPoint)
-//	  val rect = new AvoidRectangle(node.rectPos.toPoint, 
-//                node.rectPos.clone.add(node.rectSize).toPoint)
     createAndRegisterShapeRef(rect, node, router)
     
   }
   
+  /**
+   * CPort -> ShapeConnectionPin.
+   */
   def dispatch transform(CPort port, Router router) {
     
     // the shaperef of the port's node
@@ -146,8 +155,6 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
     // determine the pin's positions relative on the respective side
     val relativePortPos = port.rectPosRaw.clone.sub(port.owner.rectPosRaw)
     relativePortPos.add(port.rectSizeRaw.scale(0.5))
-//	val relativePortPos = port.rectPos.clone.sub(port.owner.rectPos)
-//    relativePortPos.add(port.rectSize.scale(0.5))
     val relX = relativePortPos.x / width
     val relY = relativePortPos.y / height
     
@@ -173,6 +180,9 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
     pin.setExclusive(false);
   }
   
+  /**
+   * CEdge -> ConnRef.
+   */
   def dispatch transform(CEdge edge, Router router) {
 
     val srcRef = edge.source.shapeRef
@@ -193,8 +203,8 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
       if (edgeRouting == EdgeRouting.ORTHOGONAL) ConnType.ConnType_Orthogonal else ConnType.ConnType_PolyLine)
 
 
-    // for hierarchical edges we have to add checkpoints
-    if (edge.crossHierarchy) {
+    // for hierarchical hyperedges edges we have to add checkpoints
+    if (edge.crossHierarchy && edge.getProperty(InternalCodaflowProperties.HIERARCHICAL_HYPEREDGE)) {
       val ports = edge.getProperty(InternalCodaflowProperties.EDGE_CHECKPOINTS)
       val checkpoints = new AvoidCheckpoints()
       for (pair : ports.take(ports.size - 1)) {
@@ -222,8 +232,8 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
   }
   
   private def roundDouble(double d) {
-  	val toInt =  (d * 100.0).intValue
-  	return toInt / 100.0
+    val toInt =  (d * 100.0).intValue
+    return toInt / 100.0
   }
   
 
@@ -267,10 +277,15 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
       } else {
         // a hierarchy crossing edge
         
-        // we have to split the route into chunks
+        // #1 hyperedges are split into chunks based on specified checkpoints
         val subRoutes = edge.determineSubRoutes(route)
         //subRoutes.forEach[e,i | println("SubRoute " + i + " " + cr.edge + " " + e)]
         edge.setProperty(InternalCodaflowProperties.EDGE_SUB_ROUTES, subRoutes)
+        
+        
+        // #2 non-hyperedges are split based on intersections with cluster boundaries
+        
+        
       }
       
       edge.setProperty(InternalCodaflowProperties.LIBAVOID_WORKED, true)
