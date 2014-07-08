@@ -60,7 +60,7 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.codaflow.properties.CodaflowProperties;
 import de.cau.cs.kieler.klay.codaflow.properties.ColaPredicates;
 import de.cau.cs.kieler.klay.codaflow.properties.InternalCodaflowProperties;
-import de.cau.cs.kieler.klay.codaflow.util.ColaUtil;
+import de.cau.cs.kieler.klay.codaflow.util.CodaflowUtil;
 
 /**
  * Imports a {@link CGraph} from a KGraph. As opposed to the {@link KGraphImporter} 
@@ -125,7 +125,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
                 // create an adaptagrams node
                 CNode cnode = new CNode(graph);
                 // dimensions
-                ColaUtil.setPosAndSizeAbsolute(cnode, node, node.getParent());
+                CodaflowUtil.setPosAndSizeAbsolute(cnode, node, node.getParent());
                 // properties
                 cnode.copyProperties(node.getData(KLayoutData.class));
                 cnode.setProperty(CGraphProperties.ORIGIN, node);
@@ -144,7 +144,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
                     // create ports
                     for (KPort p : node.getPorts()) {
                         CPort port = new CPort(graph, cnode);
-                        ColaUtil.setPosAndSizeAbsolute(port, p, p.getNode());
+                        CodaflowUtil.setPosAndSizeAbsolute(port, p, p.getNode());
                         port.copyProperties(p.getData(KLayoutData.class));
                         port.setProperty(CGraphProperties.ORIGIN, p);
                         portMap.put(p, port);
@@ -762,7 +762,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
                     new Rectangle2D.Double(bounds.getMinX(), bounds.getMinY(), bounds.width(),
                             bounds.height());
 
-            final Pair<KVector, PortSide> intersection = ColaUtil.getIntersectionPoint(line, rect);
+            final Pair<KVector, PortSide> intersection = CodaflowUtil.getIntersectionPoint(line, rect);
 
             if (intersection != null) {
                 KShapeLayout portLayout = kedge.getTargetPort().getData(KShapeLayout.class);

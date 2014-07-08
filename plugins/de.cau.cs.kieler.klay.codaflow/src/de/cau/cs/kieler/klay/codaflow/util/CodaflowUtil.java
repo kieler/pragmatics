@@ -32,9 +32,9 @@ import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 /**
  * @author uru
  */
-public final class ColaUtil {
+public final class CodaflowUtil {
 
-    private ColaUtil() {
+    private CodaflowUtil() {
     }
 
     /**
@@ -226,21 +226,21 @@ public final class ColaUtil {
             return intersection;
         }
         
-        // Case 1: If r × s = 0 and (q − p) × r = 0, then the two lines are collinear. 
-        // If in addition, either 0 ≤ (q − p) · r ≤ r · r or 0 ≤ (p − q) · s ≤ s · s, 
+        // Case 1: If r × s = 0 and (q − p) × r = 0, then the two lines are collinear.
+        // If in addition, either 0 ≤ (q − p) · r ≤ r · r or 0 ≤ (p − q) · s ≤ s · s,
         // then the two lines are overlapping.
         if (rxs == 0 && crossProduct(qsp, r) == 0) {
             // collinear, return the center of the overlapping segment
             // SUPPRESS CHECKSTYLE NEXT 10 MagicNumber
             final double qspr = qsp.dotProduct(r);
             if (0 <= qspr && qspr <= r.dotProduct(r)) {
-                //return p.clone().add(r.clone().scale(0.5, 0.5));
-                return p.clone().add(r).scale(1.5).sub(q.clone().scale(0.5));
+                // q + 0.5 ((p + r) - q)
+                return q.clone().add(p.clone().add(r).sub(q).scale(0.5));
             }
             final double psqs = p.clone().sub(q).dotProduct(s);
             if (0 <= psqs && psqs <= s.dotProduct(s)) {
-                //return q.clone().add(s.clone().scale(0.5, 0.5));
-                return q.clone().add(s).scale(1.5).sub(p.clone().scale(0.5));
+                // p + 0.5 ((q + s) - p)
+                return p.clone().add(q.clone().add(s).sub(p).scale(0.5));
             }
         }
 

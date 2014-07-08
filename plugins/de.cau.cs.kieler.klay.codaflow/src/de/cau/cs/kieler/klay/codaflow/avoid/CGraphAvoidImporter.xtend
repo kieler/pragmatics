@@ -33,7 +33,6 @@ import de.cau.cs.kieler.kiml.options.PortSide
 import de.cau.cs.kieler.kiml.util.KimlUtil
 import de.cau.cs.kieler.klay.codaflow.graphimport.IGraphImporter
 import de.cau.cs.kieler.klay.codaflow.properties.InternalCodaflowProperties
-import de.cau.cs.kieler.klay.codaflow.util.ColaUtil
 import java.awt.geom.Line2D
 import java.awt.geom.Point2D
 import java.awt.geom.Rectangle2D
@@ -60,6 +59,7 @@ import org.adaptagrams.adaptagrams
 import org.eclipse.xtext.xbase.lib.Pair
 
 import static de.cau.cs.kieler.kiml.options.PortSide.*
+import de.cau.cs.kieler.klay.codaflow.util.CodaflowUtil
 
 /**
  * TODO document
@@ -307,7 +307,7 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
       val (Line2D.Double, KEdge) => Pair<String, KVector> fun = [ line, kedge | 
           
           val boundary = kedge.target.toRectangle2D
-          val intersection = ColaUtil.getIntersectionPoint(line, boundary)
+          val intersection = CodaflowUtil.getIntersectionPoint(line, boundary)
           
           if (intersection == null) {
             return "" -> new KVector()    
@@ -343,7 +343,7 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
         return "END" -> line.p2.toKVector 
       } 
           
-      val pntLineDist = ColaUtil.pointToSegmentDistance(chkPoint, line.p1.toKVector, line.p2.toKVector)
+      val pntLineDist = CodaflowUtil.pointToSegmentDistance(chkPoint, line.p1.toKVector, line.p2.toKVector)
       if (pntLineDist < 0.001) {
         return "MIDDLE" -> chkPoint
       }

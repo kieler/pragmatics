@@ -44,7 +44,7 @@ import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.codaflow.properties.CodaflowProperties;
 import de.cau.cs.kieler.klay.codaflow.properties.InternalCodaflowProperties;
-import de.cau.cs.kieler.klay.codaflow.util.ColaUtil;
+import de.cau.cs.kieler.klay.codaflow.util.CodaflowUtil;
 
 /**
  * Imports a KGraph and converts it into a CGraph (adaptagrams).
@@ -133,7 +133,7 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
         // create the node
         CNode cnode = new CNode(graph);
         // dimensions
-        ColaUtil.setPosAndSize(cnode, n.getData(KShapeLayout.class));
+        CodaflowUtil.setPosAndSize(cnode, n.getData(KShapeLayout.class));
         // properties
         cnode.copyProperties(n.getData(KLayoutData.class));
         cnode.setProperty(CGraphProperties.ORIGIN, n);
@@ -146,7 +146,7 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
         if (graph.getProperty(CodaflowProperties.PORT_DUMMIES)) {
             for (KPort p : n.getPorts()) {
                 CPort port = new CPort(graph, cnode);
-                ColaUtil.setPosAndSize(port, p.getData(KShapeLayout.class));
+                CodaflowUtil.setPosAndSize(port, p.getData(KShapeLayout.class));
                 // port position is absolute on this hierarchical level
                 port.getPos().add(cnode.getPos());
                 port.copyProperties(p.getData(KLayoutData.class));
@@ -247,7 +247,7 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
         // iterate through all ports of the parent node
         for (KPort p : root.getPorts()) {
             CPort port = new CPort(graph, null);
-            ColaUtil.setPosAndSize(port, p.getData(KShapeLayout.class));
+            CodaflowUtil.setPosAndSize(port, p.getData(KShapeLayout.class));
             port.copyProperties(p.getData(KLayoutData.class));
             port.setProperty(CGraphProperties.ORIGIN, p);
             kportMap.put(p, port);
