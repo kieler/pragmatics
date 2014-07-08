@@ -107,66 +107,42 @@ public final class ColaUtil {
      *            a rectangle
      * 
      * @return the <b>first</b> intersection point between the passed line and rectangle that is
-     *         found.
+     *         found. {@code null} if no intersection could be found.
      */
-    public static Pair<KVector, PortSide> getIntersectionPoint(final Line2D line,
+    public static Pair<KVector, PortSide> getIntersectionPoint(final Line2D.Double line,
             final Rectangle2D rectangle) {
 
-        // get slope and x offset of the line
-        double slope = (line.getY2() - line.getY1()) / (line.getX2() - line.getX1());
-        double n = line.getY1() - (slope * line.getX1());
-
-        // top
-        if (isWithinRange(rectangle.getMinY(), line.getY1(), line.getY2())) {
-            double lineTopX = (rectangle.getMinY() - n) / slope;
-            if (isWithinRange(lineTopX, line.getX1(), line.getX2())
-                    && isWithinRange(lineTopX, rectangle.getMinX(), rectangle.getMaxX())) {
-                return Pair.of(new KVector(lineTopX, rectangle.getMinY()), PortSide.NORTH);
-            }
-        }
+        KVector res = null;
         
+        // top
+        res = getLineIntersectionPoint(line, new Line2D.Double(rectangle.getMinX(), rectangle.getMinY(),
+                        rectangle.getMaxX(), rectangle.getMinY()));
+        if (res != null) {
+            return Pair.of(res, PortSide.NORTH);
+        }
+
         // right
-        if (isWithinRange(rectangle.getMaxX(), line.getX1(), line.getX2())) {
-            double lineRightY = (rectangle.getMaxX() * slope) + n;
-            if (isWithinRange(lineRightY, line.getY1(), line.getY2())
-                    && isWithinRange(lineRightY, rectangle.getMinY(), rectangle.getMaxY())) {
-                return Pair.of(new KVector(rectangle.getMaxX(), lineRightY), PortSide.EAST);
-            }
+        res = getLineIntersectionPoint(line, new Line2D.Double(rectangle.getMaxX(), rectangle.getMinY(),
+                        rectangle.getMaxX(), rectangle.getMaxY()));
+        if (res != null) {
+            return Pair.of(res, PortSide.EAST);
         }
 
         // bottom
-        if (isWithinRange(rectangle.getMaxY(), line.getY1(), line.getY2())) {
-            double lineBottomX = ((rectangle.getMaxY() - n) / slope);
-            if (isWithinRange(lineBottomX, line.getX1(), line.getX2())
-                    && isWithinRange(lineBottomX, rectangle.getMinX(), rectangle.getMaxX())) {
-                // intersection at bottom
-                return Pair.of(new KVector(lineBottomX, rectangle.getMaxY()), PortSide.SOUTH);
-            }
+        res = getLineIntersectionPoint(line, new Line2D.Double(rectangle.getMinX(), rectangle.getMaxY(),
+                        rectangle.getMaxX(), rectangle.getMaxY()));
+        if (res != null) {
+            return Pair.of(res, PortSide.SOUTH);
         }
 
         // left
-        if (isWithinRange(rectangle.getMinX(), line.getX1(), line.getX2())) {
-            double lineLeftY = (rectangle.getMinX() * slope) + n;
-            if (isWithinRange(lineLeftY, line.getY1(), line.getY2())
-                    && isWithinRange(lineLeftY, rectangle.getMinY(), rectangle.getMaxY())) {
-                return Pair.of(new KVector(rectangle.getMinX(), lineLeftY), PortSide.WEST);
-            }
+        res = getLineIntersectionPoint(line, new Line2D.Double(rectangle.getMinX(), rectangle.getMinY(),
+                        rectangle.getMinX(), rectangle.getMaxY()));
+        if (res != null) {
+            return Pair.of(res, PortSide.WEST);
         }
-
+        
         return null;
-    }
-
-    /**
-     * Checks if the value is between the two bounds. Assures that the bounds form a closed
-     * interval, ie if necessary the passed bounds are swapped.
-     */
-    private static boolean isWithinRange(final double value, final double bound1,
-            final double bound2) {
-        if (bound1 > bound2) {
-            return value >= bound2 && value <= bound1;
-        } else {
-            return value >= bound1 && value <= bound2;
-        }
     }
 
     private static double square(final double x) {
@@ -210,5 +186,69 @@ public final class ColaUtil {
     public static double pointToSegmentDistance(final KVector p, final KVector v, final KVector w) {
         return Math.sqrt(pointToSegmentDistanceSquared(p, v, w));
     }
+    
+    /**
+     * Determines the intersection point of two lines, if it exists.
+     * 
+     * Method taken from this <a href=
+     * "http://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect"
+     * >Stackoverflow Post</a>.
+     * 
+     * @param l1
+     *            first line with start and end point.
+     * @param l2
+     *            second line with start and end point.
+     * @return The intersection point if it exists, {@code null} otherwise. Note that for (partly)
+     *         overlapping lines the center point of the overlapping segment is returned.
+     */
+    public static KVector getLineIntersectionPoint(final Line2D.Double l1, final Line2D.Double l2) {
 
+        // first line with vector
+        final KVector p = new KVector(l1.x1, l1.y1);
+        final KVector r = new KVector(l1.x2, l1.y2).sub(p);
+
+        // second line as vectors
+        final KVector q = new KVector(l2.x1, l2.y1);
+        final KVector s = new KVector(l2.x2, l2.y2).sub(q);
+
+        // t = (q - p) x s / (r x s)
+        // u = (q − p) × r / (r × s)
+        final double rxs = crossProduct(r, s);
+        final KVector qsp = q.clone().sub(p);
+
+        final double t = crossProduct(qsp, s) / rxs;
+        final double u = crossProduct(qsp, r) / rxs;
+
+        // Case 4: If r × s ≠ 0 and 0 ≤ t ≤ 1 and 0 ≤ u ≤ 1, the two line segments meet at the point
+        // p + t r = q + u s.
+        if (rxs != 0 && t >= 0 && t <= 1 && u >= 0 && u <= 1) {
+            final KVector intersection = new KVector(p.x + t * r.x, p.y + t * r.y);
+            return intersection;
+        }
+        
+        // Case 1: If r × s = 0 and (q − p) × r = 0, then the two lines are collinear. 
+        // If in addition, either 0 ≤ (q − p) · r ≤ r · r or 0 ≤ (p − q) · s ≤ s · s, 
+        // then the two lines are overlapping.
+        if (rxs == 0 && crossProduct(qsp, r) == 0) {
+            // collinear, return the center of the overlapping segment
+            // SUPPRESS CHECKSTYLE NEXT 10 MagicNumber
+            final double qspr = qsp.dotProduct(r);
+            if (0 <= qspr && qspr <= r.dotProduct(r)) {
+                //return p.clone().add(r.clone().scale(0.5, 0.5));
+                return p.clone().add(r).scale(1.5).sub(q.clone().scale(0.5));
+            }
+            final double psqs = p.clone().sub(q).dotProduct(s);
+            if (0 <= psqs && psqs <= s.dotProduct(s)) {
+                //return q.clone().add(s.clone().scale(0.5, 0.5));
+                return q.clone().add(s).scale(1.5).sub(p.clone().scale(0.5));
+            }
+        }
+
+        // other cases default to null
+        return null;
+    }
+
+    private static double crossProduct(final KVector u, final KVector v) {
+        return u.x * v.y - u.y * v.x;
+    }
 }

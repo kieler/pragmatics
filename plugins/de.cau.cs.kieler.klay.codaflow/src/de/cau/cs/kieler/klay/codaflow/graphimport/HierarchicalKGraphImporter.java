@@ -284,7 +284,21 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
             // and add the port's position to a list of "checkpoints"
             KShapeLayout portLayout = edge.getTargetPort().getData(KShapeLayout.class);
             KVector cp = portLayout.createVector();
-            cp.add(portLayout.getWidth() / 2f, portLayout.getHeight() / 2f);
+            // make sure the checkpoint lies _on_ the node boundary
+            switch (portLayout.getProperty(LayoutOptions.PORT_SIDE)) {
+                case NORTH:
+                    cp.add(portLayout.getWidth() / 2f, portLayout.getHeight());
+                    break;
+                case EAST:
+                    cp.add(0, portLayout.getHeight() / 2f);
+                    break;
+                case SOUTH:
+                    cp.add(portLayout.getWidth() / 2f, 0);
+                    break;
+                case WEST:
+                    cp.add(portLayout.getWidth(), portLayout.getHeight() / 2f);
+                    break;
+            }
             // convert it to a global position
             cp = KimlUtil.toAbsolute(cp, edge.getTarget());
             
@@ -366,7 +380,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
             KNode knode = clusterEnty.getKey();
             KShapeLayout layout = knode.getData(KShapeLayout.class);
             RectangularCluster c = (RectangularCluster) clusterEnty.getValue();
-
+            
             // clusters in clusters have to be offset properly
             KVector relative = relativeToCluster(c, offset);
 
@@ -374,6 +388,9 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
             layout.setYpos((float) (relative.y));
             layout.setWidth((float) (c.getBounds().width()));
             layout.setHeight((float) (c.getBounds().height()));
+            
+            // 
+            layout.setProperty(LayoutOptions.SIZE_CONSTRAINT, SizeConstraint.fixed());
         }
 
         /*
@@ -515,15 +532,50 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
             Iterator<KVectorChain> subRoutesIt = subRoutes.iterator();
             Iterator<KEdge> edgeChainIt = edgeChain.iterator();
 
+            boolean first = true;
+            
             while (subRoutesIt.hasNext() && edgeChainIt.hasNext()) {
                 final KVectorChain vc = subRoutesIt.next();
                 final KEdge edge = edgeChainIt.next();
+                
+                // move the hierarchical target ports (not the last port connecting 
+                // to an atomic node)
+                if (edgeChainIt.hasNext() && edge.getTargetPort() != null) {
+                    KShapeLayout portLayout = edge.getTargetPort().getData(KShapeLayout.class);
+                    KVector portPos = KimlUtil.toRelative(vc.getLast().clone(), edge.getTarget());
+                    switch (portLayout.getProperty(LayoutOptions.PORT_SIDE)) {
+                    case NORTH:
+                        portPos.add(-portLayout.getWidth() / 2f, -portLayout.getHeight());
+                        break;
+                    case EAST: 
+                        portPos.add(0, -portLayout.getHeight() / 2f);
+                        break;
+                    case SOUTH:
+                        portPos.add(-portLayout.getWidth() / 2f, 0);
+                        break;
+                    case WEST:
+                        portPos.add(-portLayout.getWidth(), -portLayout.getHeight() / 2f);
+                    }
+                    portLayout.applyVector(portPos.add(offset));
+                }
+                
+                // take care of possible margins on the "start" node
+                if (first && edge.getSourcePort() != null) {
+                    KShapeLayout portLayout = edge.getSourcePort().getData(KShapeLayout.class);
+                    KVector portCenter =
+                            KimlUtil.toAbsolute(portLayout.createVector(), edge.getSource()).add(
+                                    portLayout.getWidth() / 2f, portLayout.getHeight() / 2f);
+                    KVector initialOffset = vc.getFirst().clone().sub(portCenter);
+                    vc.getFirst().sub(initialOffset.add(offset));
+                }
+                first = false;
+                
                 KVector globalOffset = new KVector();
                 // current coordinates are in global, translate them to relative
                 if (KimlUtil.isDescendant(edge.getTarget(), edge.getSource())) {
                     // relative to the source
                     globalOffset = KimlUtil.toRelative(globalOffset, edge.getSource());
-                } else {
+                } else if (edge.getSource().getParent().getParent() != null) {
                     // relative to the source's parent
                     globalOffset =
                             KimlUtil.toRelative(globalOffset, edge.getSource().getParent());
@@ -693,7 +745,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
             tgtPnt = e.tgtPort.getRectCenterRaw();
         }
 
-        final Line2D line = new Line2D.Double(srcPnt.x, srcPnt.y, tgtPnt.x, tgtPnt.y);
+        final Line2D.Double line = new Line2D.Double(srcPnt.x, srcPnt.y, tgtPnt.x, tgtPnt.y);
 
         // iterate through all edge but the last and
         // reposition the target port of all intermediate ports

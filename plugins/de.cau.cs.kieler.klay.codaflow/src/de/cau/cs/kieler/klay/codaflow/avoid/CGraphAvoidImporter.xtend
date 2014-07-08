@@ -20,23 +20,28 @@ import de.cau.cs.kieler.adaptagrams.cgraph.CGraph
 import de.cau.cs.kieler.adaptagrams.cgraph.CNode
 import de.cau.cs.kieler.adaptagrams.cgraph.CPort
 import de.cau.cs.kieler.adaptagrams.properties.AvoidProperties
+import de.cau.cs.kieler.core.kgraph.KEdge
+import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.core.kgraph.KPort
 import de.cau.cs.kieler.core.math.KVector
 import de.cau.cs.kieler.core.math.KVectorChain
-import de.cau.cs.kieler.core.util.Pair
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
 import de.cau.cs.kieler.kiml.options.Direction
 import de.cau.cs.kieler.kiml.options.EdgeRouting
 import de.cau.cs.kieler.kiml.options.LayoutOptions
 import de.cau.cs.kieler.kiml.options.PortSide
+import de.cau.cs.kieler.kiml.util.KimlUtil
 import de.cau.cs.kieler.klay.codaflow.graphimport.IGraphImporter
+import de.cau.cs.kieler.klay.codaflow.properties.InternalCodaflowProperties
 import de.cau.cs.kieler.klay.codaflow.util.ColaUtil
 import java.awt.geom.Line2D
 import java.awt.geom.Point2D
+import java.awt.geom.Rectangle2D
 import java.util.Iterator
 import java.util.List
 import java.util.Map
 import org.adaptagrams.AvoidCheckpoints
+import org.adaptagrams.AvoidPoints
 import org.adaptagrams.AvoidRectangle
 import org.adaptagrams.Checkpoint
 import org.adaptagrams.Cluster
@@ -52,9 +57,9 @@ import org.adaptagrams.RouterFlag
 import org.adaptagrams.ShapeConnectionPin
 import org.adaptagrams.ShapeRef
 import org.adaptagrams.adaptagrams
+import org.eclipse.xtext.xbase.lib.Pair
 
 import static de.cau.cs.kieler.kiml.options.PortSide.*
-import de.cau.cs.kieler.klay.codaflow.properties.InternalCodaflowProperties
 
 /**
  * TODO document
@@ -190,8 +195,8 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
 
     val pins = edge.pins
 
-    val srcConnEnd = new ConnEnd(srcRef, pins.first)
-    val tgtConnEnd = new ConnEnd(tgtRef, pins.second)
+    val srcConnEnd = new ConnEnd(srcRef, pins.key)
+    val tgtConnEnd = new ConnEnd(tgtRef, pins.value)
 
     val edgeRouting = edge.graph.getProperty(LayoutOptions.EDGE_ROUTING)
 
@@ -277,14 +282,16 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
       } else {
         // a hierarchy crossing edge
         
-        // #1 hyperedges are split into chunks based on specified checkpoints
-        val subRoutes = edge.determineSubRoutes(route)
-        //subRoutes.forEach[e,i | println("SubRoute " + i + " " + cr.edge + " " + e)]
+        
+        val subRoutes = if (edge.getProperty(InternalCodaflowProperties.HIERARCHICAL_HYPEREDGE)) {
+          // #1 hyperedges are split into chunks based on specified checkpoints
+          edge.determineHyperedgeSegments(route)
+        } else {        
+          // #2 non-hyperedges are split based on intersections with cluster boundaries
+          edge.determineNonHyperedgeSegments(route)
+        }
+        
         edge.setProperty(InternalCodaflowProperties.EDGE_SUB_ROUTES, subRoutes)
-        
-        
-        // #2 non-hyperedges are split based on intersections with cluster boundaries
-        
         
       }
       
@@ -292,102 +299,139 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
     }
   }
   
-  /**
-   * @return for each sub route from a port to another (possibly hierarchical port one
-   * {@link KVectorChain} that represents the start point, bendpoints, and the end point. 
-   */
-  private def List<KVectorChain> determineSubRoutes(CEdge edge, Polygon route) {
-    
+  private def List<KVectorChain> determineNonHyperedgeSegments(CEdge edge, Polygon route) {
+      
+      val edgeChain = edge.getProperty(InternalCodaflowProperties.EDGE_CHAIN).iterator
+
+      // function that checks if a sub route intersects a cluster boundary
+      val (Line2D.Double, KEdge) => Pair<String, KVector> fun = [ line, kedge | 
+          
+          val boundary = kedge.target.toRectangle2D
+          val intersection = ColaUtil.getIntersectionPoint(line, boundary)
+          
+          if (intersection == null) {
+            return "" -> new KVector()    
+          }
+          else {
+            val hit = if (line.p2.x.doubleEq(intersection.first.x) &&
+                    line.p2.y.doubleEq(intersection.first.y)) "END" else "MIDDLE"
+            kedge.targetPort.getData(typeof(KShapeLayout))
+                .setProperty(LayoutOptions.PORT_SIDE, intersection.second)
+            return hit -> intersection.first
+          }
+      ] 
+          
+      return determineSegments(route, edgeChain, fun) 
+  }
+  
+  private def List<KVectorChain> determineHyperedgeSegments(CEdge edge, Polygon route) {
     // original checkpoints specified for the edge
-    val chkPoints = edge.getProperty(InternalCodaflowProperties.EDGE_CHECKPOINTS)
-    // println("Checkpoints: " + chkPoints)
-    val ports = chkPoints.take(chkPoints.size - 1).map[it.second].iterator
+    val pairs = edge.getProperty(InternalCodaflowProperties.EDGE_CHECKPOINTS)
+    val chkPoints = pairs.take(pairs.size - 1)
+                        .map[it.second].iterator
     
-    // the sub routes we are about to determine
-    val List<KVectorChain> subRoutes = Lists.newLinkedList
-
-    // start values of some variables
-    val pts = route.getPs()
-//    print("Pts: ")
-//    for(i : 0..<pts.size.intValue) {
-//    	print(pts.get(i) + ", ")
-//    }
-//    println
-    
-    var currentPort = ports.next()
-    var KVectorChain currentSubRoute = new KVectorChain
-
-	var i = 0
-	var newLine = true;
-	while (i < pts.size.intValue - 1) {
-
-      val fst = pts.get(i)
-      val snd = pts.get(i + 1)
-
-      // add start point to the current sub route
-      if (newLine) {
-      	currentSubRoute.add(fst.toKVector)
-      }
-
-      // create a line for the current segment
-      val segment = new Line2D.Double(fst.x, fst.y, snd.x, snd.y)
-      val point = if (currentPort != null) new Point2D.Double(currentPort.x, currentPort.y) else null
-	
-
-	  val pntLineDist = if (point != null) ColaUtil.pointToSegmentDistance(currentPort, fst.toKVector, snd.toKVector) else Double.MAX_VALUE
-
-	  // println("\t check " + segment.p1 + " " + segment.p2 + " " + point + " " + pntLineDist)
-     
-      // check if the checkpoint is represented by the start or end 
-      // point of the segment or if it lies on the segment
-      newLine = true
-      if (segment.p1 == point) {
-        
-        throw new AssertionError("Really shouldnt happen")
-
-      } else if (point != null && snd.toKVector.distance(currentPort) < 0.01d) { // segment.p2 == point
-		// CASE 1: checkpoint is the second point of the line
-
-        // assemble a segment
-        currentSubRoute.add(currentPort.clone())
-        subRoutes.add(currentSubRoute)
-
-        // start new sub route
-        currentSubRoute = new KVectorChain
-        currentPort = ports.saveNext()
-        
-        i = i + 1
-
-      } else if (point != null && pntLineDist < 0.01d) {
-		// CASE 2: checkpoint is somewhere along the line
-
-        // FIXME sometimes cp not on line!
-        
-        // assemble a segment
-        currentSubRoute.add(currentPort.clone())
-        subRoutes.add(currentSubRoute)
-
-        // start new sub route
-        currentSubRoute = new KVectorChain
-        currentSubRoute.add(currentPort.clone())
-        currentPort = ports.saveNext()
-        
-        // do not increase i, as we are still on the same segment
-        newLine = false
-
-      } else {
-      	// CASE 3: 
-      	
-      	i = i + 1
+    // function determining relative position of the a checkpoint to a sub route    
+    val (Line2D.Double, KVector) => Pair<String, KVector> fun = [ line, chkPoint | 
+      
+      // when finishing the last segments
+      if (chkPoint == null) {
+          return "" -> new KVector()
       }
       
-    }
- 
-    // finish last subroute
-    currentSubRoute.add(pts.get(pts.size().intValue - 1).toKVector)
-    subRoutes.add(currentSubRoute)
+      // #1 its the end of the current line
+      if (line.p2.toKVector.distance(chkPoint) < 0.001d) {
+        return "END" -> line.p2.toKVector 
+      } 
+          
+      val pntLineDist = ColaUtil.pointToSegmentDistance(chkPoint, line.p1.toKVector, line.p2.toKVector)
+      if (pntLineDist < 0.001) {
+        return "MIDDLE" -> chkPoint
+      }
+        
+      return "" -> new KVector()    
+    ] 
+      
+    return determineSegments(route, chkPoints, fun)
+  }
 
-    return subRoutes;
+  
+  /**
+   * @param route 
+   *    the avoid route. 
+   * @param ite
+   *    iterator with the elements to check against. ite.saveNext is called each time
+   *    the function returns a hit.
+   * @param f
+   *    a stateful function that takes a line as parameter and determines,
+   *    based on the current state, whether that line is intersected by
+   *    eg a cluster.
+   */
+  def <T> determineSegments(Polygon route, Iterator<T> ite, (Line2D.Double, T) => Pair<String, KVector> f) {
+      
+      if (route.ps.size < 2) {
+          throw new IllegalStateException("A route has to have at least two points.")
+      }
+      
+    // the sub routes we are about to determine
+    val List<KVectorChain> segments = Lists.newArrayList
+    val points = route.ps.toIterator
+
+    var start = points.next
+    var end = points.next
+    var currentSegment = new KVectorChain(start.toKVector)
+    var checkElement = ite.saveNext
+
+    while (points.hasNext || end != null) {
+        
+        val line = new Line2D.Double(start.x, start.y, end.x, end.y)
+        
+        val result = f.apply(line, checkElement)
+        
+        switch result.key {
+           case "MIDDLE": {
+                // hit point is somewhere on the current line, thus we ..
+                
+                // finish the current segment
+                currentSegment += result.value.clone
+                segments += currentSegment
+                
+                // start a new one
+                currentSegment = new KVectorChain(result.value.clone)
+                start = result.value.toPoint
+                end = end 
+                
+                checkElement = ite.saveNext
+           }
+           case "END":  {
+               // hit point is the end of the line
+               
+               // finish the current segment
+               currentSegment += end.toKVector
+               segments += currentSegment
+                
+               // start a new one
+               currentSegment = new KVectorChain(end.toKVector)
+               start = end
+               end = points.saveNext
+               
+               checkElement = ite.saveNext
+           }
+           default: {
+               // continue to collect intermediate points
+               currentSegment += end.toKVector
+               start = end
+               end = points.saveNext
+           }
+        }
+    }
+
+    // potentially finish final route
+    if (end != null) {
+        currentSegment += end.toKVector    
+    }
+    segments += currentSegment
+    
+    return segments
   }
   
   /**
@@ -539,5 +583,37 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
   
   def toKVector(Point p) {
     return new KVector(p.x, p.y)
+  }
+  
+  def toKVector(Point2D p) {
+    return new KVector(p.x, p.y)
+  }
+  
+  def toIterator(AvoidPoints ps) {
+    val list = Lists.newArrayListWithCapacity(ps.size.intValue)
+    for (i : 0 ..< ps.size.intValue) {
+      // FIXME weird libavoid issue where points are not simplified
+      if(i == 0 
+          || (!ps.get(i).x.doubleEq(ps.get(i-1).x) || !ps.get(i).y.doubleEq(ps.get(i-1).y))) {
+        list += ps.get(i)    
+      }
+    }
+    return list.iterator
+  }
+  
+  /**
+   * Converts to absolute positions.
+   */
+  def toRectangle2D(KNode n) {
+      val layout = n.getData(typeof(KShapeLayout))
+      // to absolute
+      val absolutePos = KimlUtil.toAbsolute(layout.createVector, n.parent)
+      return new Rectangle2D.Double(absolutePos.x, absolutePos.y, layout.width, layout.height)
+  }
+  
+  val EPSILON = 0.00001;
+
+  def doubleEq(Double d1, Double d2) {
+    return Math.abs(d1 - d2) < EPSILON;
   }
 } 
