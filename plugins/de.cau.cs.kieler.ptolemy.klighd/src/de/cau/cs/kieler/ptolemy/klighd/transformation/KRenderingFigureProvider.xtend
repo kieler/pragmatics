@@ -751,8 +751,18 @@ class KRenderingFigureProvider {
         
         // Create the triangle (depending on the port size)
         val polygon = port.addPolygon()
-        switch layout.getProperty(LayoutOptions::PORT_SIDE) {
-            case PortSide::NORTH: {
+        
+         polygon.points += createKPosition(
+                    LEFT, 0, 0, TOP, PORT_SIZE, 0)
+                polygon.points += createKPosition(
+                    LEFT, 0, 0, TOP, 0, 0)
+                polygon.points += createKPosition(
+                    LEFT, PORT_SIZE, 0, TOP, PORT_SIZE_HALF, 0)
+                polygon.points += createKPosition(
+                    LEFT, 0, 0, TOP, PORT_SIZE, 0)
+        
+        /*switch layout.getProperty(LayoutOptions::PORT_SIDE) {
+            /*case PortSide::NORTH: {
                 polygon.points += createKPosition(
                     LEFT, 0, 0, TOP, 0, 0)
                 polygon.points += createKPosition(
@@ -773,16 +783,17 @@ class KRenderingFigureProvider {
                     LEFT, 0, 0, TOP, PORT_SIZE, 0)
             }
             default: {
-                polygon.points += createKPosition(
-                    LEFT, 0, 0, TOP, PORT_SIZE, 0)
-                polygon.points += createKPosition(
-                    LEFT, 0, 0, TOP, 0, 0)
-                polygon.points += createKPosition(
-                    LEFT, PORT_SIZE, 0, TOP, PORT_SIZE_HALF, 0)
-                polygon.points += createKPosition(
-                    LEFT, 0, 0, TOP, PORT_SIZE, 0)
+               
             }
-        }
+            case PortSide.NORTH:
+                polygon.rotation = 90f
+            case PortSide.SOUTH:
+                polygon.rotation = 270f  
+        }*/
+        
+        polygon.rotation = 0f
+        polygon.rotation.rotationAnchor = createKPosition(7, 7)
+        polygon.rotation.modifierId = "de.cau.cs.kieler.ptolemy.klighd.ptolemyPortStyleModifier"
         
         // Set color properties
         polygon.setBackground(portFillColor)
