@@ -32,9 +32,6 @@ import de.cau.cs.kieler.core.krendering.extensions.KColorExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KContainerRenderingExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KPolylineExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KRenderingExtensions
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
-import de.cau.cs.kieler.kiml.options.LayoutOptions
-import de.cau.cs.kieler.kiml.options.PortSide
 import de.cau.cs.kieler.klighd.KlighdConstants
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.LabelExtensions
@@ -52,6 +49,7 @@ import org.eclipse.swt.SWT
  * 
  * @author ckru
  * @author cds
+ * @author uru
  */
 class KRenderingFigureProvider {
     
@@ -727,6 +725,8 @@ class KRenderingFigureProvider {
     /** Half the width / height of a port. */
     private val PORT_SIZE_HALF = 3.5f
     
+    /** The id of the modifier that rotates the port renderings. */
+    private val PORT_STYLE_MODIFIER_ID = "de.cau.cs.kieler.ptolemy.klighd.ptolemyPortStyleModifier"
     
     /**
      * Creates a rendering for a port.
@@ -735,7 +735,6 @@ class KRenderingFigureProvider {
      * @return the rendering.
      */
     def KRendering createPortRendering(KPort port) {
-        val layout = port.getData(typeof(KShapeLayout))
         
         // Determine the port color
         val portFillColor = if (port.hasAnnotation(IS_PARAMETER_PORT)) {
@@ -751,49 +750,21 @@ class KRenderingFigureProvider {
         
         // Create the triangle (depending on the port size)
         val polygon = port.addPolygon()
+        polygon.points += createKPosition(
+                   LEFT, 0, 0, TOP, PORT_SIZE, 0)
+               polygon.points += createKPosition(
+                   LEFT, 0, 0, TOP, 0, 0)
+               polygon.points += createKPosition(
+                   LEFT, PORT_SIZE, 0, TOP, PORT_SIZE_HALF, 0)
+               polygon.points += createKPosition(
+                   LEFT, 0, 0, TOP, PORT_SIZE, 0)
         
-         polygon.points += createKPosition(
-                    LEFT, 0, 0, TOP, PORT_SIZE, 0)
-                polygon.points += createKPosition(
-                    LEFT, 0, 0, TOP, 0, 0)
-                polygon.points += createKPosition(
-                    LEFT, PORT_SIZE, 0, TOP, PORT_SIZE_HALF, 0)
-                polygon.points += createKPosition(
-                    LEFT, 0, 0, TOP, PORT_SIZE, 0)
-        
-        /*switch layout.getProperty(LayoutOptions::PORT_SIDE) {
-            /*case PortSide::NORTH: {
-                polygon.points += createKPosition(
-                    LEFT, 0, 0, TOP, 0, 0)
-                polygon.points += createKPosition(
-                    LEFT, PORT_SIZE, 0, TOP, 0, 0)
-                polygon.points += createKPosition(
-                    LEFT, PORT_SIZE_HALF, 0, TOP, PORT_SIZE, 0)
-                polygon.points += createKPosition(
-                    LEFT, 0, 0, TOP, 0, 0)
-            }
-            case PortSide::SOUTH: {
-                polygon.points += createKPosition(
-                    LEFT, 0, 0, TOP, PORT_SIZE, 0)
-                polygon.points += createKPosition(
-                    LEFT, PORT_SIZE, 0, TOP, PORT_SIZE, 0)
-                polygon.points += createKPosition(
-                    LEFT, PORT_SIZE_HALF, 0, TOP, 0, 0)
-                polygon.points += createKPosition(
-                    LEFT, 0, 0, TOP, PORT_SIZE, 0)
-            }
-            default: {
-               
-            }
-            case PortSide.NORTH:
-                polygon.rotation = 90f
-            case PortSide.SOUTH:
-                polygon.rotation = 270f  
-        }*/
-        
+        // We create only one representative polygon here: |>
+        //  and rotate it according to its orientation after layout
+        //  using a dedicated klighd style modifier.  
         polygon.rotation = 0f
-        polygon.rotation.rotationAnchor = createKPosition(7, 7)
-        polygon.rotation.modifierId = "de.cau.cs.kieler.ptolemy.klighd.ptolemyPortStyleModifier"
+        polygon.rotation.rotationAnchor = createKPosition(PORT_SIZE_HALF, PORT_SIZE_HALF)
+        polygon.rotation.modifierId = PORT_STYLE_MODIFIER_ID
         
         // Set color properties
         polygon.setBackground(portFillColor)

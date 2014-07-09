@@ -25,6 +25,11 @@ import com.google.inject.Guice
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MarkerExtensions
 
 /**
+ * KlighD style modifier for port renderings. The "direction" 
+ * of a port depends on the actual position after layout application.
+ * This modifier takes care to rotate the generically specified 
+ * port rendering accordingly. 
+ * 
  * @author uru
  */
 class PtolemyPortStyleModifier implements IStyleModifier {
@@ -32,6 +37,10 @@ class PtolemyPortStyleModifier implements IStyleModifier {
     val injector = Guice.createInjector();
     extension MarkerExtensions = injector.getInstance(typeof(MarkerExtensions))
     
+    /**
+     * Rotates ports according to their type (input/output) and 
+     * PortSide.
+     */
     override modify(StyleModificationContext context) {
         
         if (context.style instanceof KRotation) {
@@ -40,34 +49,32 @@ class PtolemyPortStyleModifier implements IStyleModifier {
            val port = context.style.getPort()
            val portLayout = port.getData(typeof(KShapeLayout))
            
-           //println(style.rotationAnchor.x)
-           
            val isInput = port.markedAsInputPort
            
            switch portLayout.getProperty(LayoutOptions.PORT_SIDE) -> isInput {
                case PortSide.NORTH -> true: {
-                 style.rotation = 90f  
+                 style.rotation = 90f   // v
                }
                case PortSide.NORTH -> false: {
-                 style.rotation = 270f 
+                 style.rotation = 270f  // ^
                } 
                case PortSide.EAST -> true: {
-                 style.rotation = 180f 
+                 style.rotation = 180f  // <
                }
                case PortSide.EAST -> false: {
-                 style.rotation = 90f
+                 style.rotation = 0f    // >
                } 
                case PortSide.SOUTH -> true: {
-                 style.rotation = 270f
+                 style.rotation = 270f  // ^
                }
                case PortSide.SOUTH -> false: {
-                 style.rotation = 90f
+                 style.rotation = 90f   // v 
                } 
                case PortSide.WEST -> true: {
-                 style.rotation = 0f
+                 style.rotation = 0f    // >
                }
                case PortSide.WEST -> false: {
-                 style.rotation = 180f  
+                 style.rotation = 180f  // <
                } 
            }
         
@@ -90,6 +97,5 @@ class PtolemyPortStyleModifier implements IStyleModifier {
         }
         return port
     }
-    
     
 }
