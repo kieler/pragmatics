@@ -19,5 +19,12 @@
             id="de.cau.cs.kieler.klighd.examples.uml2.UML2UseCaseDiagramSynthesis">
       </diagramSynthesis>
    </extension>
+   <extension
+         point="de.cau.cs.kieler.klighd.extensions">
+      <styleModifier
+            class="de.cau.cs.kieler.ptolemy.klighd.transformation.util.PtolemyPortStyleModifier"
+            id="de.cau.cs.kieler.ptolemy.klighd.ptolemyPortStyleModifier">
+      </styleModifier>
+   </extension>
 
 </plugin>
