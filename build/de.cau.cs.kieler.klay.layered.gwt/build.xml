@@ -193,13 +193,16 @@
 				<!--exclude name="hosted.html" /-->
 			</fileset>
 		</copy>
+		
+		<!-- copy the license file -->
+		<copy todir="${outputFolder.tmp}" file="${licenseFile}" />
 
 		<property name="outputFile.klay" location="${outputFolder}/klay_layered_js${gwt.module.suffix}_nightly_${timestamp}.zip" />
 		<property name="outputFile.klay.latest" location="${outputFolder}/klay_layered_js${gwt.module.suffix}_nightly_latest.zip" />
 
 		<zip destfile="${outputFile.klay}" basedir="${outputFolder.tmp}" update="true" />
 		<symlink link="${outputFile.klay.latest}" resource="${outputFile.klay}" />
-		<delete dir="${outputFolder.tmp}" failonerror="false" />
+		<!--delete dir="${outputFolder.tmp}" failonerror="false" /-->
 	</target>
 
 	<!-- Builds the default version of klayjs using GWT's standard linker,
@@ -223,11 +226,11 @@
 
   <!-- Uses a WebWorker linker based on gwtwwlinker which generates a just one permutation for a Web Worker called klayjs_worker.js. -->
 	<target name="webworkerlinker">
-			<antcall target="dist">
-				<param name="gwt.module" value="de.cau.cs.kieler.klay.gwt.KlayGWTWebWorker" />
-				<param name="gwt.module.suffix" value="_webworkerlinker" />
-			</antcall>
-		</target>
+		<antcall target="dist">
+			<param name="gwt.module" value="de.cau.cs.kieler.klay.gwt.KlayGWTWebWorker" />
+			<param name="gwt.module.suffix" value="_webworkerlinker" />
+		</antcall>
+	</target>
 
 	<!-- TARGET buildall -->
 	<target name="buildall" depends="clean, webworkerlinker, customlinker, stdlinker" description="Builds all configurations of the KLay js library." />
