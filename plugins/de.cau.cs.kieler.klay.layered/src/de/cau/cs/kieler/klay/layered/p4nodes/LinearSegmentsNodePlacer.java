@@ -602,7 +602,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
                 * layeredGraph.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
         float smallSpacing = spacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
         double deflectionDampening = layeredGraph.getProperty(
-                Properties.LINEAR_SEGMENTS_DEFLECTION_DAMPENING);
+                Properties.LINEAR_SEGMENTS_DEFLECTION_DAMPENING).doubleValue();
         
         // Determine a suitable number of pendulum iterations
         int thoroughness = layeredGraph.getProperty(Properties.THOROUGHNESS);

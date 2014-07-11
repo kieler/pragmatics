@@ -216,7 +216,7 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
         monitor.begin("Orthogonal edge routing", 1);
         
         // Retrieve some generic values
-        double nodeSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
+        double nodeSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING).doubleValue();
         double edgeSpacing = nodeSpacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
         boolean debug = layeredGraph.getProperty(LayoutOptions.DEBUG_MODE);
         
