@@ -277,12 +277,8 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
           edge.bendpoints.add(pts.get(i).toKVector.add(offset))
         }
         
-//        println("BPS: " + edge + " " + edge.bendpoints)
-        
       } else {
         // a hierarchy crossing edge
-        
-        
         val subRoutes = if (edge.getProperty(InternalCodaflowProperties.HIERARCHICAL_HYPEREDGE)) {
           // #1 hyperedges are split into chunks based on specified checkpoints
           edge.determineHyperedgeSegments(route)
@@ -343,7 +339,8 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
         return "END" -> line.p2.toKVector 
       } 
           
-      val pntLineDist = CodaflowUtil.pointToSegmentDistance(chkPoint, line.p1.toKVector, line.p2.toKVector)
+      val pntLineDist = CodaflowUtil.pointToSegmentDistance(chkPoint, 
+          line.p1.toKVector, line.p2.toKVector)
       if (pntLineDist < 0.001) {
         return "MIDDLE" -> chkPoint
       }
@@ -375,6 +372,8 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
     // the sub routes we are about to determine
     val List<KVectorChain> segments = Lists.newArrayList
     val points = route.ps.toIterator
+        // FIXME .. this is due to some precision issue libavoid vs here
+        .map[new Point(it.x.roundDouble, it.y.roundDouble)]
 
     var start = points.next
     var end = points.next
@@ -383,7 +382,8 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
 
     while (points.hasNext || end != null) {
         
-        val line = new Line2D.Double(start.x, start.y, end.x, end.y)
+        val line = new Line2D.Double(start.x, start.y, 
+                                     end.x, end.y)
         
         val result = f.apply(line, checkElement)
         
@@ -460,19 +460,19 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
        switch (port.side) {
         case WEST: {
           offset.add(margins.left, 0)
-          offset.add(-port.rectSize.x, 0)
+          offset.add(-port.size.x, 0)
         }
         case EAST: {
           offset.add(-margins.right, 0)
-          offset.add(port.rectSize.x, 0)
+          offset.add(port.size.x, 0)
         }
         case NORTH: {
           offset.add(0, margins.top)
-          offset.add(0, -port.rectSize.y)
+          offset.add(0, -port.size.y)
         }
         case SOUTH: {
           offset.add(0, -margins.bottom)
-          offset.add(0, port.rectSize.y)  
+          offset.add(0, port.size.y)  
         }
       }
     }
