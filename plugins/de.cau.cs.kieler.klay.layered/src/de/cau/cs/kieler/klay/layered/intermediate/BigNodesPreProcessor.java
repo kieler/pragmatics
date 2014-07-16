@@ -93,7 +93,7 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
         }
 
         // the object spacing in the drawn graph
-        double minSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
+        double minSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING).doubleValue();
         // the ID for the most recently created dummy node
         dummyID = nodes.size();
 
