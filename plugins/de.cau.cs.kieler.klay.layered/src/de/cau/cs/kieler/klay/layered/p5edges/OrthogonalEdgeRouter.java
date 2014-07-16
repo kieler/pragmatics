@@ -288,16 +288,19 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
     /**
      * Check if the layer only contains non {@link NodeType#NORMAL} nodes.
      * 
-     * Here we allow the initial big node (which is marked as normal node) 
-     * as we want to avoid additional spacing for this node as well.
+     * Here we avoid additional spacing after initial big nodes (which are marked as normal node), 
+     * though we allow spacing before them
      */
-    private boolean layersContainOnlyDummies(final Layer... layers) {
-        for (Layer l : layers) {
-            for (LNode n : l.getNodes()) {
-                if (n.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORMAL
-                       && !n.getProperty(InternalProperties.BIG_NODE_INITIAL)) {
-                    return false;
-                }
+    private boolean layersContainOnlyDummies(final Layer leftLayer, final Layer rightLayer) {
+        for (LNode n : leftLayer.getNodes()) {
+            if (n.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORMAL
+            		&& !n.getProperty(InternalProperties.BIG_NODE_INITIAL)) {
+                return false;
+            }
+        }
+        for (LNode n : rightLayer.getNodes()) {
+            if (n.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORMAL) {
+                return false;
             }
         }
         return true;
