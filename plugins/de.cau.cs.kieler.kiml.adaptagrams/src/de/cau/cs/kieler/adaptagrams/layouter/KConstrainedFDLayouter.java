@@ -38,25 +38,30 @@ import de.cau.cs.kieler.adaptagrams.cgraph.CPort;
  */
 public class KConstrainedFDLayouter {
 
+    // SUPPRESS CHECKSTYLE NEXT 70 VisibilityModifier
     /** The graph to be layouted. */
-    private CGraph graph;
+    protected CGraph graph;
     /** Whether overlap removal is performed during layout. */
-    private boolean overlapPrevention = false;
+    protected boolean overlapPrevention = false;
     /** The ideal edge length for all edges or a multiplier for individual edge lengths. */
-    private double idealEdgeLength = 1;
+    protected double idealEdgeLength = 1;
     /** Whether to use individual edge lengths. */
-    private boolean individualEdgeLengths = false;
+    protected boolean individualEdgeLengths = false;
     /** A custom convergence test. */
-    private TestConvergence convergenceTest = null;
+    protected TestConvergence convergenceTest = null;
     /** Whether make feasible should be called prior to run. */
-    private boolean makeFeasible = false;
+    protected boolean makeFeasible = false;
+    /** Whether to start with the y dimension when removing overlaps. */
+    protected boolean removeOverlapsYFirst = false;
     
     /** The internal layouter object. */
     private ConstrainedFDLayout layouter;
 
     // for debugging
-    private UnsatisfiableConstraintInfoPtrs xPtrs;
-    private UnsatisfiableConstraintInfoPtrs yPtrs;
+    /** Constraints that couldn't be satisfied in the x dimension. */
+    protected UnsatisfiableConstraintInfoPtrs xPtrs;
+    /** Constraints that couldn't be satisfied in the y dimension. */
+    protected UnsatisfiableConstraintInfoPtrs yPtrs;
 
     /**
      * Creates a new wrapper object that can be configured.
@@ -140,6 +145,8 @@ public class KConstrainedFDLayouter {
      * If activated, the {@link CGraph#getIdealEdgeLengths()} are used as edge lengths. Note that
      * the value specified by {@link #withIdealEdgeLength(double)} is used as a multiplier.
      * 
+     * The individual edge lengths are retrieved from the CGraph, {@link CGraph#getIdealEdgeLengths()}.
+     * 
      * @return this.
      */
     public KConstrainedFDLayouter withIndividualEdgeLengths() {
@@ -147,6 +154,26 @@ public class KConstrainedFDLayouter {
         return this;
     }
 
+    /**
+     * Whether to start with the y dimension when removing overlaps.
+     * 
+     * @return this.
+     */
+    public KConstrainedFDLayouter withRemoveOverlapsYFirst() {
+        this.removeOverlapsYFirst = true;
+        return this;
+    }
+
+    /**
+     * @param yFirst
+     *            Whether to start with the y dimension when removing overlaps.
+     * @return this.
+     */
+    public KConstrainedFDLayouter withRemoveOverlapsYFirst(final boolean yFirst) {
+        this.removeOverlapsYFirst = yFirst;
+        return this;
+    }
+    
     /**
      * @param test
      *            a subclass of {@link TestConvergence}.
@@ -214,14 +241,18 @@ public class KConstrainedFDLayouter {
         layouter.setClusterHierarchy(graph.rootCluster);
         layouter.setConstraints(graph.constraints);
         
+        layouter.setM_doYAxisFirst(removeOverlapsYFirst);
+        
         // node exemptions
         for (CNode n : graph.getChildren()) {
-            Unsigneds group = new Unsigneds();
-            group.add(n.cIndex);
+            // Only prevent node<->port overlap removal 
+            // port<->port should still happen
             for (CPort p : n.getPorts()) {
+                Unsigneds group = new Unsigneds();
+                group.add(n.cIndex);
                 group.add(p.cIndex);
+                layouter.addGroupOfNonOverlapExemptRectangles(group);
             }
-            layouter.addGroupOfNonOverlapExemptRectangles(group);
         }
 
         // debugging

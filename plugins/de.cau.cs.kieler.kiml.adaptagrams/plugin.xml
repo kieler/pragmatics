@@ -8,24 +8,25 @@
       			          Categories
        - - - - - - - - - - - - - - - - - - - - - - - -->
       <category
-            id="de.cau.cs.kieler.libavoid.category"
-            name="Edge Routing">
+            id="de.cau.cs.kieler.adaptagrams.category"
+            name="Adaptagrams">
       </category>
-      <category
-            id="de.cau.cs.kieler.cola.category"
-            name="Constrained Layout">
-      </category>
-         
-      <!-- - - - - - - - - - - - - - - - - - - - - - - - 
-      			          Libavoid 
-       - - - - - - - - - - - - - - - - - - - - - - - -->
+      <layoutType
+            description="Constrained Layout is a generalisation of force-based layout which allows to add constraints to node placement."
+            id="de.cau.cs.kieler.type.cola"
+            name="Constrained">
+      </layoutType>
       <layoutType
             description="Only route the edges without touching the node&apos;s positions."
             id="de.cau.cs.kieler.type.edgeRouting"
             name="Edge Routing">
       </layoutType>
+         
+      <!-- - - - - - - - - - - - - - - - - - - - - - - - 
+      			          Libavoid 
+       - - - - - - - - - - - - - - - - - - - - - - - -->
       <layoutAlgorithm
-            category="de.cau.cs.kieler.libavoid.category"
+            category="de.cau.cs.kieler.adaptagrams.category"
             class="de.cau.cs.kieler.adaptagrams.provider.LibavoidLayoutProvider"
             description="libavoid is a cross-platform C++ library providing fast, object-avoiding orthogonal and polyline connector routing for use in interactive diagram editors."
             id="org.adaptagrams.cola.libavoid"
@@ -260,13 +261,8 @@
       <!-- - - - - - - - - - - - - - - - - - - - - - - - 
       			      Simple CoLa Provider 
        - - - - - - - - - - - - - - - - - - - - - - - -->
-      <layoutType
-            description="Constrained Layout is a generalisation of force-based layout which allows to add constraints to node placement."
-            id="de.cau.cs.kieler.type.cola"
-            name="Constrained">
-      </layoutType>
       <layoutAlgorithm
-            category="de.cau.cs.kieler.cola.category"
+            category="de.cau.cs.kieler.adaptagrams.category"
             class="de.cau.cs.kieler.adaptagrams.provider.ConstrainedLayoutProvider"
             description="This method is based on a non-linear gradient projection technique. Conceptually it&apos;s similar to a force directed method like Fruchterman-Reingold—but using a more principled goal function and optimisation techniques. "
             id="org.adaptagrams.cola.constraintLayout"

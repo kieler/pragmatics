@@ -23,7 +23,6 @@ import com.google.common.collect.Iterables;
 
 import de.cau.cs.kieler.adaptagrams.properties.CGraphProperties;
 import de.cau.cs.kieler.adaptagrams.properties.CoLaProperties;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 
@@ -70,10 +69,10 @@ public class CNode extends CShape {
     @Override
     public void init() {
         // get spacing and margins
-        double spacing = graph.getProperty(LayoutOptions.SPACING);
+        double spacing = graph.getProperty(CoLaProperties.SPACING);
         Margins margin = getMargins();
 
-        if (graph.getProperty(CGraphProperties.MARGIN_INCLUDES_SPACING)) {
+        if (graph.getProperty(CGraphProperties.INCLUDE_SPACING_IN_MARGIN)) {
             // currently the adaptagrams rectangles do not support any border or margin,
             // hence we add it to the rectangle.
             artificialMargin.set(spacing / 2f, spacing / 2f, spacing / 2f, spacing / 2f);

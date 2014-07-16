@@ -53,6 +53,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
@@ -305,6 +306,11 @@ public class LibavoidGraph {
             int nodeId = determineHierarchicalNodeId(port);
             libavoidPort(port, portIdCounter, nodeId, parent);
             portIdCounter++;
+            
+            // mark these ports as fixed for the next layout run
+            // (of a higher hierarchy level)
+            port.getData(KLayoutData.class).setProperty(LayoutOptions.PORT_CONSTRAINTS,
+                    PortConstraints.FIXED_POS);
         }
     }
 
@@ -527,12 +533,6 @@ public class LibavoidGraph {
         libavoidNode(node, nodeIdCounter, shape.getXpos(), shape.getYpos(), shape.getWidth(),
                 shape.getHeight(), portLessIncomingEdges, portLessOutgoingEdges);
 
-        // transfer port constraints
-        // TODO unsupported yet?
-        // PortConstraints pc = shape.getProperty(LayoutOptions.PORT_CONSTRAINTS);
-        // sb.append("NODEOPTION " + nodeIdCounter + " " + pc);
-        // sb.append("\n");
-
         // transfer all ports
         for (KPort port : node.getPorts()) {
             libavoidPort(port, portIdCounter, nodeIdCounter, null);
@@ -658,12 +658,10 @@ public class LibavoidGraph {
             KVector tgtOffset = calculatePortOffset(edge.getTargetPort());
 
             AvoidPoints pts = route.getPs();
-            // FIXME libavoid produces duplicate points ... why ??
             Point lastPoint = null;
             // transfer libavoid's results to the edges
             for (int i = 0; i < pts.size(); ++i) {
-                // System.out.println(edge + "BP " + i + " " + pts.get(i).getX() + " " 
-                // + pts.get(i).getY());
+
                 if (i == 0) {
                     // first point is the source point
                     if (edge.getSourcePort() != null) {
@@ -683,6 +681,9 @@ public class LibavoidGraph {
                 } else {
                     Point current = pts.get(i);
                     
+                    // FIXME libavoid produces duplicate points ...
+                    // seems to be a weird issue on windows with float precision
+                    // SUPPRESS CHECKSTYLE NEXT 4 EmptyBlock 
                     if (Math.abs(current.getX() - lastPoint.getX())
                             // SUPPRESS CHECKSTYLE NEXT 2 MagicNumber 
                             < 0.001d && Math.abs(current.getY() 

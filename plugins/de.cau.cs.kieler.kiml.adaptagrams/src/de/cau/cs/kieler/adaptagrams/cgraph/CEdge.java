@@ -21,6 +21,7 @@ import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.adaptagrams.properties.CGraphProperties;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KielerMath;
 
 /**
  * @author uru
@@ -122,47 +123,64 @@ public class CEdge extends CGraphElement {
     }
 
     /**
-     * Returns the docking point at the source node.
+     * Returns the docking point at the source node, or port if existent (relative to the source node).
      * 
-     * Note, this method cannot be used in conjunction with external ports, it requires the source
-     * node to be set.
+     * Note, if neither a src node nor a src port are specified a (0, 0)
+     * vector is returned.
      * 
      * @return the source docking point
      */
     public KVector getSourcePoint() {
-        KVector v = src.getPos().clone();
-        if (srcPort != null) {
-            v.add(srcPort.getRelativePos());
-            // point to the port's center
-            v.add(srcPort.getSize().scale(0.5f)); // SUPPRESS CHECKSTYLE NEXT 40 MagicNumber
-        } else {
-            // point to the node's center
-            v.add(src.getSize().scale(0.5f));
-        }
-
-        return v;
+        return getClippedAnchorVector(src, srcPort, tgt, tgtPort);
     }
 
     /**
-     * Returns the docking point at the target node.
+     * Returns the docking point at the target node, or port if existent.
      * 
-     * Note, this method cannot be used in conjunction with external ports, it requires the target
-     * node to be set.
+     * Note, if neither a tgt node nor a tgt port are specified a (0, 0)
+     * vector is returned.
      * 
      * @return the target docking point
      */
     public KVector getTargetPoint() {
-        KVector v = tgt.getPos().clone();
-        if (tgtPort != null) {
-            v.add(tgtPort.getRelativePos());
-            // point to the port's center
-            v.add(tgtPort.getSize().scale(0.5f));
-        } else {
-            // point to the node's center
-            v.add(tgt.getSize().scale(0.5f));
+        return getClippedAnchorVector(tgt, tgtPort, src, srcPort);
+    }
+
+    /**
+     * All positions have to be in a common coordinate system.
+     * Either parameter may be null. 
+     * 
+     * @return a vector pointing to either the center of the {@code srcNode} or the {@srcNodePort}
+     *         (the port is prioritized).
+     */
+    private KVector getClippedAnchorVector(final CNode srcNode, final CPort srcNodePort,
+            final CNode tgtNode, final CPort tgtNodePort) {
+        KVector sV = null;
+        KVector srcSize = null;
+        if (srcNode != null) {
+            sV = srcNode.getCenter();
+            srcSize = srcNode.getSize();
+        }
+        if (srcNodePort != null) {
+            sV = srcNodePort.getCenter();
+            srcSize = srcNodePort.getSize();
+        }
+        KVector tV = null; 
+        if (tgtNode != null) {
+            tV = tgtNode.getCenter();
+        }
+        if (tgtNodePort != null) {
+            tV = tgtNodePort.getCenter();
+        }
+        
+        if (sV == null && tV == null) {
+           return new KVector(); 
         }
 
-        return v;
+        KVector v = tV.clone().sub(sV);
+        KielerMath.clipVector(v, srcSize.x, srcSize.y);
+        
+        return v.add(sV);
     }
 
     /**

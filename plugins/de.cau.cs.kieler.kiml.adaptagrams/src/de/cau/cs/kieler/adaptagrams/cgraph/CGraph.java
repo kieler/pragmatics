@@ -24,6 +24,8 @@ import org.adaptagrams.RootCluster;
 
 import com.google.common.collect.Lists;
 
+import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Insets;
+
 
 /**
  * The {@link CGraph} wraps c++ adaptagrams elements to achieve a 
@@ -80,6 +82,9 @@ public class CGraph extends CGraphElement {
      */
     private List<CNode> children;
     private List<CPort> externalPorts;
+    
+    /** Insets, aka padding for this graph. */
+    public final Insets insets = new Insets();
     
     private boolean initialized = false;
     

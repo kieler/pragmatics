@@ -145,7 +145,9 @@ public class LayoutConfigProposalProvider extends AbstractLayoutConfigProposalPr
                     if (annotationName.equals(LayoutOptions.ALGORITHM.getId())) {
                         String displayString = null;
                         for (LayoutAlgorithmData data : layoutServices.getAlgorithmData()) {
-                            proposal = '"' + data.getId() + '"';
+                            //proposal = '"' + data.getId() + '"';
+                            // the textual config does not like quotes
+                            proposal = data.getId();
                             displayString = data.getName();
                             acceptor.accept(createCompletionProposal(proposal, displayString, null,
                                     context));
