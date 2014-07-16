@@ -122,7 +122,7 @@ public final class BigNodesProcessor implements ILayoutProcessor {
         // the list of dummy nodes to be inserted into the graph
         LinkedList<LNode> dummyNodes = new LinkedList<LNode>();
         // the object spacing in the drawn graph
-        double minSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
+        double minSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING).doubleValue();
         // the ID for the most recently created dummy node
         int dummyID = nodes.size();
         // the list of ports to reassign to the wide node's rightmost dummy node
