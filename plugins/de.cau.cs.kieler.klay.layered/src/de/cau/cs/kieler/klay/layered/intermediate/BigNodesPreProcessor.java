@@ -120,7 +120,7 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
         for (LNode node : nodes) {
             if ((node.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORMAL)
                     && (node.getSize().x > threshold)) {
-                Double parts = Math.ceil(node.getSize().x / minWidth);
+                Double parts = Math.ceil(node.getSize().x / (minWidth + minSpacing));
                 width[node.id] = parts.intValue();
                 bigNodes.add(node);
             }
