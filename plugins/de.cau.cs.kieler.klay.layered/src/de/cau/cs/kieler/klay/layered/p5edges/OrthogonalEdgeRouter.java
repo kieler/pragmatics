@@ -294,7 +294,7 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
     private boolean layersContainOnlyDummies(final Layer leftLayer, final Layer rightLayer) {
         for (LNode n : leftLayer.getNodes()) {
             if (n.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORMAL
-            		&& !n.getProperty(InternalProperties.BIG_NODE_INITIAL)) {
+                    && !n.getProperty(InternalProperties.BIG_NODE_INITIAL)) {
                 return false;
             }
         }
