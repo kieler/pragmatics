@@ -84,7 +84,6 @@ public class PSWTCanvas extends Composite implements PComponent {
     public static PSWTCanvas CURRENT_CANVAS = null;
 
     private Image backBuffer;
-    private GC backBufferGC;
     private boolean doubleBuffered = true;
     private PCamera camera;
     private final PStack cursorStack;
@@ -332,8 +331,6 @@ public class PSWTCanvas extends Composite implements PComponent {
         if (!doubleBuffered && backBuffer != null) {
             backBuffer.dispose();
             backBuffer = null;
-            backBufferGC.dispose();
-            backBufferGC = null;
         }
     }
 
@@ -522,11 +519,7 @@ public class PSWTCanvas extends Composite implements PComponent {
         if (backBuffer != null) {
             backBuffer.dispose();
         }
-        if (backBufferGC != null) {
-            backBufferGC.dispose();
-        }
         backBuffer = new Image(getDisplay(), newWidth, newHeight);
-        backBufferGC = new GC(backBuffer);
     }
 
     private boolean backBufferNeedsResizing(final int newWidth, final int newHeight) {
@@ -574,9 +567,11 @@ public class PSWTCanvas extends Composite implements PComponent {
     public void paintComponent(final GC gc, final int x, final int y, final int w, final int h) {
         PDebug.startProcessingOutput();
 
+        GC imageGC = null;
         Graphics2D g2 = null;
         if (doubleBuffered) {
-            g2 = getGraphics2D(backBufferGC, getDisplay());
+            imageGC = new GC(backBuffer);
+            g2 = getGraphics2D(imageGC, getDisplay());
         }
         else {
             g2 = getGraphics2D(gc, getDisplay());
@@ -629,6 +624,9 @@ public class PSWTCanvas extends Composite implements PComponent {
 
         if (doubleBuffered) {
             gc.drawImage(backBuffer, 0, 0);
+
+            // Dispose of the allocated image gc
+            imageGC.dispose();
         }
     }
     
