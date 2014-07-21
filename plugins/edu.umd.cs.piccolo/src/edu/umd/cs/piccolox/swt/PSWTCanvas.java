@@ -522,7 +522,8 @@ public class PSWTCanvas extends Composite implements PComponent {
         backBuffer = new Image(getDisplay(), newWidth, newHeight);
     }
 
-    private boolean backBufferNeedsResizing(final int newWidth, final int newHeight) {
+    protected boolean backBufferNeedsResizing(final int newWidth, final int newHeight) {
+        // chsch: changed visibility from private to protected in order to specialized method
         if (!doubleBuffered) {
             return false;
         }
@@ -644,7 +645,7 @@ public class PSWTCanvas extends Composite implements PComponent {
      *            Device onto which ultimately all gc operations are drawn onto
      * @return a new {@link SWTGraphics2D} object.
      */
-    protected Graphics2D getGraphics2D(GC gc, Device device) {
+    protected Graphics2D getGraphics2D(final GC gc, final Device device) {
         return new SWTGraphics2D(gc, device);
     }
 
