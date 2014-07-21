@@ -22,6 +22,7 @@ import org.osgi.framework.BundleContext;
  * The activator class controls the plug-in life cycle.
  * 
  * @author haf
+ * @author msp
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
@@ -138,6 +139,9 @@ public class KimlUiPlugin extends AbstractUIPlugin {
      * @return the images
      */
     public Images getImages() {
+        if (images == null) {
+            images = new Images();
+        }
         return images;
     }
 
@@ -148,7 +152,6 @@ public class KimlUiPlugin extends AbstractUIPlugin {
     public void start(final BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
-        images = new Images();
     }
 
     /**
