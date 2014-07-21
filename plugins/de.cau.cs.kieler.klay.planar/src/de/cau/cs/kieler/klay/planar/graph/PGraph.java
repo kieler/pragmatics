@@ -15,6 +15,7 @@ package de.cau.cs.kieler.klay.planar.graph;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Iterator;
@@ -119,23 +120,27 @@ public class PGraph extends PNode {
 
     // ======================== Graph =========================================
 
+    private <P extends PGraphElement> int rehash(final LinkedHashSet<P> elemSet) {
+        int index = 0;
+        List<P> rehashList = new ArrayList<P>(elemSet.size());
+        for (P elem : elemSet) {
+            elem.id = index++;
+            rehashList.add(elem);
+        }
+        elemSet.clear();
+        elemSet.addAll(rehashList);
+        return index;
+    }
+    
     /**
      * Resets the IDs of all nodes, edges and faces in the graph. This guarantees that every ID is
      * at least {@code 0} and at most the number of respective items contained it the graph.
      */
     public void reindex() {
-        this.nodeIndex = 0;
-        for (PNode n : this.nodes) {
-            ((PNode) n).id = this.nodeIndex++;
-        }
-        this.edgeIndex = 0;
-        for (PEdge e : this.edges) {
-            ((PEdge) e).id = this.edgeIndex++;
-        }
-        this.faceIndex = 0;
-        for (PFace f : this.faces) {
-            ((PFace) f).id = this.faceIndex++;
-        }
+        // the id is used in hashSet, since we change the id we have to rehash the set.
+        nodeIndex = rehash(nodes);
+        edgeIndex = rehash(edges);
+        faceIndex = rehash(faces);
     }
 
     // ======================== Nodes ===========================================
@@ -637,12 +642,17 @@ public class PGraph extends PNode {
      */
     private PEdge getNextCClockwiseEdge(final PNode node, final PEdge edge) {
         Iterator<PEdge> iter = node.adjacentEdges().iterator();
-        while (iter.hasNext() && iter.next() == edge) {
-            // Get the next edge on the node
-            return iter.next();
-        }
-        // Reached the last node, get the first
-        return node.adjacentEdges().iterator().next();
+        while (iter.hasNext()) {
+            if (iter.next() == edge) {
+                if (iter.hasNext()) {
+                    // Get the next edge on the node
+                    return iter.next();
+                }
+                // Return the first.
+                return node.adjacentEdges().iterator().next();
+            }
+        } 
+        throw new IllegalArgumentException("The given edge was not found at the given node.");
     }
 
     /**
