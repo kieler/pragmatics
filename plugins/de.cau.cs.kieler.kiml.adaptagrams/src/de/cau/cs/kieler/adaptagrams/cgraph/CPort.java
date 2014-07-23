@@ -160,6 +160,27 @@ public class CPort extends CShape {
     public Iterable<CEdge> getConnectedEdges() {
         return Iterables.concat(outgoingEdges, incomingEdges);
     }
+    
+    /**
+     * @return an iterable containing all nodes that are directly connected to this port via
+     *         incoming and outgoing edges.
+     */
+    public Iterable<CNode> getConnectedNodes() {
+        List<CNode> connectedNodes =
+                Lists.newArrayListWithExpectedSize(outgoingEdges.size() + incomingEdges.size());
+        for (CEdge e : outgoingEdges) {
+            // ignore edges to external ports
+            if (e.getTarget() != null) {
+                connectedNodes.add(e.getTarget());
+            }
+        }
+        for (CEdge e : incomingEdges) {
+            if (e.getSource() != null) {
+                connectedNodes.add(e.getSource());
+            }
+        }
+        return connectedNodes;
+    }
 
     /**
      * @return the outgoingEdges
