@@ -185,6 +185,9 @@ public abstract class LayoutConfigService {
      * @param factory an instance factory
      */
     public static void setInstanceFactory(final IFactory<? extends LayoutConfigService> factory) {
+        if (factory == null) {
+            throw new NullPointerException("The given instance factory is null");
+        }
         instanceFactory = factory;
         instance = null;
     }
