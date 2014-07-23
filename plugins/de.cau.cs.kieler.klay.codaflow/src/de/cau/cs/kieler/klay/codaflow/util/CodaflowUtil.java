@@ -15,7 +15,13 @@ package de.cau.cs.kieler.klay.codaflow.util;
 
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
+import java.util.Queue;
 
+import com.google.common.collect.Lists;
+
+import de.cau.cs.kieler.adaptagrams.cgraph.CEdge;
+import de.cau.cs.kieler.adaptagrams.cgraph.CGraph;
+import de.cau.cs.kieler.adaptagrams.cgraph.CNode;
 import de.cau.cs.kieler.adaptagrams.cgraph.CShape;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -28,6 +34,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
+import de.cau.cs.kieler.klay.codaflow.properties.InternalCodaflowProperties;
 
 /**
  * @author uru
@@ -250,5 +257,73 @@ public final class CodaflowUtil {
 
     private static double crossProduct(final KVector u, final KVector v) {
         return u.x * v.y - u.y * v.x;
+    }
+    
+    
+    /**
+     * Finds all trees of a graph.
+     * 
+     * @param graph
+     *            the graph.
+     */
+    public static void findTrees(final CGraph graph) {
+ 
+        final int n = graph.getChildren().size();
+        final int[] degree = new int[n];
+        Queue<CNode> degOneNodes = Lists.newLinkedList();
+        CNode[] treeNodes = new CNode[n];
+        
+        
+        // determine the degree of all nodes in the graph
+        int index = 0;
+        for (CNode node : graph.getChildren()) {
+            node.id = index++; 
+            for (CEdge e : node.getConnectedEdges()) {
+                if (e.getSource().equals(e.getTarget())) {
+                    // ignore self loops
+                    continue;
+                }
+                degree[node.id] += 1;
+            }
+            
+            if (degree[node.id] == 1) {
+                degOneNodes.add(node);
+            }
+        }
+        
+        // collect all nodes that are part of a tree by 
+        // consecutively pruning degree 1 nodes
+        while (!degOneNodes.isEmpty()) {
+           CNode node = degOneNodes.poll();
+           treeNodes[node.id] = node;
+           // detach incoming edge or outgoing edge
+           // (it is guaranteed to be only one edge
+           for (CEdge e : node.getIncomingEdges()) {
+               index = e.getSource().id;
+               degree[index]--;
+               if (degree[index] == 1) {
+                  degOneNodes.add(e.getSource()); 
+               }
+           }
+           // detach outgoing edges
+           for (CEdge e : node.getOutgoingEdges()) {
+               index = e.getTarget().id;
+               degree[index]--;
+               if (degree[index] == 1) {
+                   degOneNodes.add(e.getTarget());
+               }
+           }
+        }
+
+        // all nodes in the 'treeNodes' set are part of trees now
+
+        // collect
+        for (int i = 0; i < treeNodes.length; i++) {
+            CNode node = treeNodes[i];
+            if (node != null) {
+                node.setProperty(InternalCodaflowProperties.PART_OF_TREE, true);
+            }
+        }
+
     }
 }

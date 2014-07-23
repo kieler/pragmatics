@@ -77,6 +77,12 @@ public final class InternalCodaflowProperties {
             "aca.edgeAligned", false);
 
     /**
+     * Whether a node is part of a tree.
+     */
+    public static final IProperty<Boolean> PART_OF_TREE = new Property<Boolean>(
+            "codaflow.partOfTree", false);
+
+    /**
      * Utility class.
      */
     private InternalCodaflowProperties() {
