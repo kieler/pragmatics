@@ -259,14 +259,14 @@ public final class CodaflowUtil {
         return u.x * v.y - u.y * v.x;
     }
     
-    
     /**
-     * Finds all trees of a graph.
+     * Marks all nodes that are part of a tree within the specified graph
+     * with the {@link InternalCodaflowProperties#PART_OF_TREE} property.
      * 
      * @param graph
      *            the graph.
      */
-    public static void findTrees(final CGraph graph) {
+    public static void markTrees(final CGraph graph) {
  
         final int n = graph.getChildren().size();
         final int[] degree = new int[n];
@@ -317,7 +317,7 @@ public final class CodaflowUtil {
 
         // all nodes in the 'treeNodes' set are part of trees now
 
-        // collect
+        // mark
         for (int i = 0; i < treeNodes.length; i++) {
             CNode node = treeNodes[i];
             if (node != null) {

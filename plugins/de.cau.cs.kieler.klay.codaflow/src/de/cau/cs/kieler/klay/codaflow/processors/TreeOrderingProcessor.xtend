@@ -24,6 +24,7 @@ import de.cau.cs.kieler.klay.codaflow.properties.InternalCodaflowProperties
 import org.adaptagrams.SeparationConstraint
 import org.adaptagrams.Dim
 import de.cau.cs.kieler.adaptagrams.properties.CoLaProperties
+import de.cau.cs.kieler.klay.codaflow.util.CodaflowUtil
 
 /**
  * Removes crossings by introducing ordering constraints on nodes u and v 
@@ -37,23 +38,40 @@ class TreeOrderingProcessor implements ILayoutProcessor {
     
     override process(CGraph graph, IKielerProgressMonitor progressMonitor) {
         
-        spacing = graph.getProperty(CoLaProperties.SPACING)
-        println("SPA " + spacing)
+        CodaflowUtil.markTrees(graph);
+        spacing = graph.getProperty(CoLaProperties.SPACING)        
+
         for (n : graph.children) {
-        
             val eastPorts = n.getPorts(PortSide.EAST).sortBy[it.pos.y].iterator
             processSide(eastPorts, [e | e.pos.y], [e | e.rectSizeRaw.y / 2f])
             
             val westPorts = n.getPorts(PortSide.WEST).sortBy[it.pos.y].iterator 
             processSide(westPorts, [e | e.pos.y], [e | e.rectSizeRaw.y / 2f])
             
+            val northPorts = n.getPorts(PortSide.NORTH).sortBy[it.pos.x].iterator
+            processSide(northPorts, [e | e.pos.x], [e | e.rectSizeRaw.x / 2f])
+            
+            val southPorts = n.getPorts(PortSide.SOUTH).sortBy[it.pos.x].iterator
+            processSide(southPorts, [e | e.pos.x], [e | e.rectSizeRaw.x / 2f])
         }
-        
-        
-        
     }
     
-    private def processSide(Iterator<CPort> ports, (CNode) => Double posFun, (CNode) => Double centerFun) {
+    /**
+     * Checks for a list of ports p0...pn of the same side, if simple 
+     * crossings are present. For example if pi.target.y > pi+1.target.y.
+     * In such a case, a separation constraint is introduced iff
+     * either pi.target or pi+1.target is part of a tree. 
+     * 
+     * @param ports
+     *      the ports of one side for which to check for simple crossings.
+     * @param posFun
+     *      a function returning the position of a node relevant for the 
+     *      current ordering (ie for EAST ports the y coordinates are relevant).
+     * @param sizeFun
+     *      a function returning the size a node contributes to an introduced
+     *      separation constraint (ie for EAST ports half the width). 
+     */
+    private def processSide(Iterator<CPort> ports, (CNode) => Double posFun, (CNode) => Double sizeFun) {
         // skip unconnected ports
         var Pair<Double, CNode> top = null
         while (ports.hasNext && top == null ) {
@@ -66,17 +84,20 @@ class TreeOrderingProcessor implements ILayoutProcessor {
         
         while (ports.hasNext) {
             val p = ports.next
-            val maxNode = p.getMaximalNode(posFun)
-            if (maxNode != null) { // the port must have connected edges
-                if (top.key > maxNode.key) {
-                    if (maxNode.value.getProperty(InternalCodaflowProperties.PART_OF_TREE)) {
-                       val g = centerFun.apply(maxNode.value) + centerFun.apply(top.value) + spacing
-                       println(g + " " + maxNode.value.rectSizeRaw + " " + top.value.rectSizeRaw)
-                       val sc = new SeparationConstraint(Dim.YDIM, top.value.cIndex, maxNode.value.cIndex, g)
-                       top.value.graph.constraints.add(sc) 
+            val max = p.getMaximalNode(posFun)
+            if (max != null) { // the port must have connected edges
+                if (top.key > max.key) {
+                    val maxNode = max.value
+                    val topNode = top.value
+                    val tree = maxNode.getProperty(InternalCodaflowProperties.PART_OF_TREE) 
+                                || topNode.getProperty(InternalCodaflowProperties.PART_OF_TREE)
+                    if (tree) {
+                       val g = sizeFun.apply(maxNode) + sizeFun.apply(topNode) + spacing
+                       val sc = new SeparationConstraint(Dim.YDIM, topNode.cIndex, maxNode.cIndex, g)
+                       topNode.graph.constraints.add(sc) 
                     }
                 }
-                top = maxNode
+                top = max
             }
         }
     }

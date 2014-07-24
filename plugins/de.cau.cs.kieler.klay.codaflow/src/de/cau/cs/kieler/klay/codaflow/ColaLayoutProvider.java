@@ -21,7 +21,6 @@ import org.adaptagrams.UnsatisfiableConstraintInfoPtrs;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import de.cau.cs.kieler.adaptagrams.cgraph.CGraph;
-import de.cau.cs.kieler.adaptagrams.cgraph.CNode;
 import de.cau.cs.kieler.adaptagrams.layouter.KConstrainedFDLayouter;
 import de.cau.cs.kieler.adaptagrams.properties.CGraphProperties;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -41,8 +40,6 @@ import de.cau.cs.kieler.klay.codaflow.processors.IdealEdgeLengthProcessor;
 import de.cau.cs.kieler.klay.codaflow.processors.PortConstraintProcessor;
 import de.cau.cs.kieler.klay.codaflow.processors.TreeOrderingProcessor;
 import de.cau.cs.kieler.klay.codaflow.properties.CodaflowProperties;
-import de.cau.cs.kieler.klay.codaflow.properties.InternalCodaflowProperties;
-import de.cau.cs.kieler.klay.codaflow.util.CodaflowUtil;
 import de.cau.cs.kieler.klay.codaflow.util.DebugTestConvergence;
 import de.cau.cs.kieler.klay.codaflow.util.MinMaxTestConvergence;
 
@@ -134,10 +131,6 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
             }
         }
         
-        
-        CodaflowUtil.findTrees(graph);
-        
-
         int cap = Integer.MAX_VALUE;
         
         // first run w/o overlap prevention
