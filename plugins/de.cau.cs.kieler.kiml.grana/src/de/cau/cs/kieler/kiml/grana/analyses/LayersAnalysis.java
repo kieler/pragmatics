@@ -19,16 +19,24 @@ import java.util.List;
 import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
+import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.Direction;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
- * An analysis for the number of horizontal and vertical layers. Returns a pair
- * of integers.
+ * An analysis for the number of horizontal and vertical layers. Also analyzes 
+ * the number of dummy nodes introduced by a layer-based layout, i.e. the number 
+ * of edge segments that completely span a layer in the specified direction. 
+ * Returns a triple of integers.
  * 
  * @author msp
+ * @author uru
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow 2012-07-10 msp
  */
@@ -94,7 +102,7 @@ public class LayersAnalysis implements IAnalysis {
         int[] count = countLayers(parentNode, hierarchy);
 
         progressMonitor.done();
-        return new Object[] { count[0], count[1] };
+        return new Object[] { count[0], count[1], count[2] };
     }
     
     /**
@@ -123,14 +131,51 @@ public class LayersAnalysis implements IAnalysis {
             insert(verticalLayers, start, end);
         }
         
+        // analyze the number of dummy nodes (only valid for a layer-based layout)
+        int dummyCount = 0;
+        Direction dir = parentNode.getData(KLayoutData.class).getProperty(LayoutOptions.DIRECTION);
+        if (dir == Direction.LEFT || dir == Direction.RIGHT 
+                || dir == Direction.UNDEFINED) { // default direction is kindof left-to-right
+            for (KNode node : parentNode.getChildren()) {
+                for (KEdge e : node.getOutgoingEdges()) {
+                    KEdgeLayout el = e.getData(KEdgeLayout.class);
+                    // edges be 'against' the main flow
+                    float start = Math.min(el.getSourcePoint().getX(), el.getTargetPoint().getX());
+                    float end = Math.max(el.getSourcePoint().getX(), el.getTargetPoint().getX());
+
+                    for (Layer layer : verticalLayers) {
+                        if (start < layer.start && end > layer.end) {
+                            dummyCount++;
+                        }
+                    }
+                }
+            }
+        } else {
+            for (KNode node : parentNode.getChildren()) {
+                for (KEdge e : node.getOutgoingEdges()) {
+                    KEdgeLayout el = e.getData(KEdgeLayout.class);
+                    // edges be 'against' the main flow
+                    float start = Math.min(el.getSourcePoint().getY(), el.getTargetPoint().getY());
+                    float end = Math.max(el.getSourcePoint().getY(), el.getTargetPoint().getY());
+
+                    for (Layer layer : horizontalLayers) {
+                        if (start < layer.start && end > layer.end) {
+                            dummyCount++;
+                        }
+                    }
+                }
+            }
+        }
+        
         // count the number of layers in the nested subgraphs
-        int[] count = new int[] { horizontalLayers.size(), verticalLayers.size() };
+        int[] count = new int[] { horizontalLayers.size(), verticalLayers.size(), dummyCount };
         if (hierarchy) {
             for (KNode child : parentNode.getChildren()) {
                 if (!child.getChildren().isEmpty()) {
                     int[] childResult = countLayers(child, true);
                     count[0] += childResult[0];
                     count[1] += childResult[1];
+                    count[2] += childResult[2];
                 }
             }
         }
