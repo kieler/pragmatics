@@ -31,6 +31,11 @@ public enum CycleBreakingStrategy {
      * as given in the input diagram are considered here. This means that if the user moves
      * a node, that movement is reflected in the decision which edges to reverse.
      */
-    INTERACTIVE;
+    INTERACTIVE,
+    /**
+     * No cycle breaking is done in the first phase. WARNING: This works only for layer
+     * assignment algorithms (phase 2) that are able to handle cycles!
+     */
+    NONE;
 
 }

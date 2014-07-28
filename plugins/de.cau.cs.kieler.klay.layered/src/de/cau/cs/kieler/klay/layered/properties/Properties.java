@@ -170,6 +170,18 @@ public final class Properties {
      */
     public static final IProperty<Boolean> FEEDBACK_EDGES = new Property<Boolean>(
             "de.cau.cs.kieler.klay.layered.feedBackEdges", false);
+    
+    /**
+     * The weight for edge lengths in the MiniZinc layerer.
+     */
+    public static final IProperty<Float> EDGE_LENGTH_WEIGHT = new Property<Float>(
+            "de.cau.cs.kieler.klay.layered.edgeLengthWeight", 0.8f);
+
+    /**
+     * The weight for edge reversals in the MiniZinc layerer.
+     */
+    public static final IProperty<Float> EDGE_REVERSAL_WEIGHT = new Property<Float>(
+            "de.cau.cs.kieler.klay.layered.edgeReversalWeight", 1.0f);
 
 
     // /////////////////////////////////////////////////////////////////////////////

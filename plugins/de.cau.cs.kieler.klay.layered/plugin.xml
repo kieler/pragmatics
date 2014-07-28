@@ -336,5 +336,37 @@
             upperBound="100"
             variance="0.2">
       </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="0.8"
+            description="The weight for edge lengths in the MiniZinc layerer."
+            id="de.cau.cs.kieler.klay.layered.edgeLengthWeight"
+            lowerBound="0"
+            name="Edge Length Weight"
+            type="float"
+            upperBound="100"
+            variance="0.2">
+         <dependency
+               option="de.cau.cs.kieler.klay.layered.nodeLayering"
+               value="MINIZINC">
+         </dependency>
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="1.0"
+            description="The weight for edge reversals in the MiniZinc layerer."
+            id="de.cau.cs.kieler.klay.layered.edgeReversalWeight"
+            lowerBound="0"
+            name="Edge Reversal Weight"
+            type="float"
+            upperBound="100"
+            variance="0.2">
+         <dependency
+               option="de.cau.cs.kieler.klay.layered.nodeLayering"
+               value="MINIZINC">
+         </dependency>
+      </layoutOption>
    </extension>
 </plugin>

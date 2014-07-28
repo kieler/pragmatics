@@ -47,6 +47,7 @@ import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
 import de.cau.cs.kieler.klay.layered.p1cycles.InteractiveCycleBreaker;
 import de.cau.cs.kieler.klay.layered.p2layers.InteractiveLayerer;
 import de.cau.cs.kieler.klay.layered.p2layers.LongestPathLayerer;
+import de.cau.cs.kieler.klay.layered.p2layers.MinizincLayerer;
 import de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer;
 import de.cau.cs.kieler.klay.layered.p3order.InteractiveCrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.p3order.LayerSweepCrossingMinimizer;
@@ -440,6 +441,16 @@ public final class KlayLayered {
         }
     }
 
+    /** A layout phase that does nothing. */
+    private class NullPhase implements ILayoutPhase {
+        public void process(final LGraph layeredGraph, final IKielerProgressMonitor progressMonitor) {
+        }
+        public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
+                final LGraph graph) {
+            return null;
+        }
+    }
+
     /**
      * Update the modules depending on user options.
      * 
@@ -456,6 +467,9 @@ public final class KlayLayered {
                 cycleBreaker = new InteractiveCycleBreaker();
                 phaseCache.put(InteractiveCycleBreaker.class, cycleBreaker);
             }
+            break;
+        case NONE:
+            cycleBreaker = new NullPhase();
             break;
         default: // GREEDY
             cycleBreaker = phaseCache.get(GreedyCycleBreaker.class);
@@ -480,6 +494,13 @@ public final class KlayLayered {
             if (layerer == null) {
                 layerer = new InteractiveLayerer();
                 phaseCache.put(InteractiveLayerer.class, layerer);
+            }
+            break;
+        case MINIZINC:
+            layerer = phaseCache.get(MinizincLayerer.class);
+            if (layerer == null) {
+                layerer = new MinizincLayerer();
+                phaseCache.put(MinizincLayerer.class, layerer);
             }
             break;
         default: // NETWORK_SIMPLEX
