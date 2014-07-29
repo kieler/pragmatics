@@ -25,16 +25,12 @@ import de.cau.cs.kieler.adaptagrams.layouter.KConstrainedFDLayouter;
 import de.cau.cs.kieler.adaptagrams.properties.CGraphProperties;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters;
 import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters.KGraphAdapter;
 import de.cau.cs.kieler.kiml.util.nodespacing.KimlNodeDimensionCalculation;
 import de.cau.cs.kieler.kiml.util.nodespacing.NodeMarginCalculator;
-import de.cau.cs.kieler.klay.codaflow.graphimport.HierarchicalKGraphImporter;
-import de.cau.cs.kieler.klay.codaflow.graphimport.IGraphImporter;
-import de.cau.cs.kieler.klay.codaflow.graphimport.KGraphImporter;
 import de.cau.cs.kieler.klay.codaflow.processors.FlowConstraintProcessor;
 import de.cau.cs.kieler.klay.codaflow.processors.IdealEdgeLengthProcessor;
 import de.cau.cs.kieler.klay.codaflow.processors.PortConstraintProcessor;
@@ -48,7 +44,7 @@ import de.cau.cs.kieler.klay.codaflow.util.MinMaxTestConvergence;
  * 
  * @author uru
  */
-public class ColaLayoutProvider extends AbstractLayoutProvider {
+public class ColaLayoutProvider extends AbstractCodaflowLayoutProvider {
 
     private CGraph graph;
 
@@ -103,20 +99,21 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         rootLayout.setProperty(CGraphProperties.INCLUDE_SPACING_IN_MARGIN, true);
         
         // execute layout algorithm
-        IGraphImporter<KNode, CGraph> importer;
-        if (!rootLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {
-            importer = new KGraphImporter();
-        } else {
-            importer = new HierarchicalKGraphImporter();
-        }
-        graph = importer.importGraph(parentNode);
+//        IGraphImporter<KNode, CGraph> importer;
+//        if (!rootLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {
+//            importer = new KGraphImporter();
+//        } else {
+//            importer = new HierarchicalKGraphImporter();
+//        }
+//        graph = importer.importGraph(parentNode);
+        graph = importGraph(parentNode);
 
         // apply some processors
         
         // CARE ideal edge length processor has a dependency on 
         // port constraint process (to get correct lengths for the ports)
-        new PortConstraintProcessor().process(graph, progressMonitor.subTask(1));
-        new IdealEdgeLengthProcessor().process(graph, progressMonitor.subTask(1));
+        executeProcessor(PortConstraintProcessor.class, graph, progressMonitor);
+        executeProcessor(IdealEdgeLengthProcessor.class, graph, progressMonitor);
 
         if (debug) {
             System.out.println("Cola Ideal Edge Lengths: " + Arrays.toString(graph.idealEdgeLengths));
@@ -140,7 +137,7 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         spm.done();
 
         // generate the flow constraints
-        new FlowConstraintProcessor().process(graph, progressMonitor.subTask(1));
+        executeProcessor(FlowConstraintProcessor.class, graph, progressMonitor);
         spm = progressMonitor.subTask(1);
         spm.begin("Flow Constrained Layout", 1);
         runLayout(false, "_flow", 1, 1, cap, spm);
@@ -152,22 +149,22 @@ public class ColaLayoutProvider extends AbstractLayoutProvider {
         runLayout(true, "", 1, 1, cap, spm);
         spm.done();
         
-        
-        TreeOrderingProcessor top = new TreeOrderingProcessor();
-        top.process(graph, progressMonitor.subTask(1));
+        // order some trees to avoid stupid crossings
+        executeProcessor(TreeOrderingProcessor.class, graph, progressMonitor);
         spm = progressMonitor.subTask(1);
-        spm.begin("Vertical Ordering", 1);
+        spm.begin("Vertical Ordering Layout", 1);
         runLayout(true, "_top", 1, 1, cap, spm);
+        spm.done();
 
         // FIXME adaptagrams - atm still have to compute the bounding rects of clusters
         graph.rootCluster.computeBoundingRect(graph.nodes);
 
-        // apply the calculated layout back to the kgrap
-        importer.applyLayout(graph);
+        // apply the calculated layout back to the kgraph
+        applyLayout(graph, parentNode);
 
         // free c++ object after the last layouter finished
         // FIXME this should still leak the earlier layouter instances ...
-        layouters.pop().freeAssociatedObjects();
+        //layouters.pop().freeAssociatedObjects();
         layouters.clear();
         
         progressMonitor.done();

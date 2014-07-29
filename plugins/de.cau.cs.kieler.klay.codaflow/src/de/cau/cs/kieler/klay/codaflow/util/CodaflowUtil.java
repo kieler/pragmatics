@@ -28,12 +28,16 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
+import de.cau.cs.kieler.klay.codaflow.graphimport.HierarchicalKGraphImporter;
+import de.cau.cs.kieler.klay.codaflow.graphimport.IGraphImporter;
+import de.cau.cs.kieler.klay.codaflow.graphimport.KGraphImporter;
 import de.cau.cs.kieler.klay.codaflow.properties.InternalCodaflowProperties;
 
 /**
@@ -325,5 +329,47 @@ public final class CodaflowUtil {
             }
         }
 
+    }
+    
+    /**
+     * Note that apply layout must be called after each layout step.
+     * 
+     * @param parent
+     *            graph to import if necessary.
+     * @return either a previously or newly imported graph.
+     */
+    public static CGraph importGraphIfNecessary(final KNode parent) {
+        
+        KLayoutData layoutData = parent.getData(KLayoutData.class);
+        CGraph existing = layoutData.getProperty(InternalCodaflowProperties.IMPORTED_CGRAPH);
+
+        // to we have to trigger a new import?
+        boolean newImport = existing == null;
+        // check that 'layoutHierarchy' has the same value
+        newImport = newImport || (existing.getProperty(LayoutOptions.LAYOUT_HIERARCHY) != layoutData
+                                .getProperty(LayoutOptions.LAYOUT_HIERARCHY));
+        // should the config be reset prior to each layout run?
+        newImport = newImport || layoutData.getProperty(LayoutOptions.RESET_CONFIG);
+
+        if (newImport) {
+            // select the correct importer, hierarchical or bottom-up
+            IGraphImporter<KNode, CGraph> importer;
+            if (!layoutData.getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {
+                importer = new KGraphImporter();
+            } else {
+                importer = new HierarchicalKGraphImporter();
+            }
+            
+            // import
+            CGraph graph = importer.importGraph(parent);
+            graph.init();
+            
+            layoutData.setProperty(InternalCodaflowProperties.IMPORTED_CGRAPH, graph);
+            layoutData.setProperty(InternalCodaflowProperties.IMPORTER_USED, importer);
+
+            return graph;
+        } else {
+            return existing;
+        }
     }
 }

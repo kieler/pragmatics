@@ -45,7 +45,7 @@ public class CompactingLayoutProvider extends AbstractLayoutProvider {
     public void doLayout(final KNode parentNode, final IKielerProgressMonitor progressMonitor) {
 
         if (parentNode.getParent() != null) {
-            return;
+            return; 
         }
 
         KGraphAdapter adapter = KGraphAdapters.adapt(parentNode);

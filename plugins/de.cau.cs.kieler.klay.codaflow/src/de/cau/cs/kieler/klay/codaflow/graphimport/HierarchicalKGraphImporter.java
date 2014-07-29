@@ -468,6 +468,9 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
         double width = (maxX - minX) + 2 * borderSpacing + insets.getLeft() + insets.getRight();
         double height = (maxY - minY) + 2 * borderSpacing + insets.getTop() + insets.getBottom();
         KimlUtil.resizeNode(root, (float) width, (float) height, false, true);
+        
+        // offset the graph itself, in case it is used by other pipeline stages
+        graph.offsetColaElements(offset);
     }
     
     

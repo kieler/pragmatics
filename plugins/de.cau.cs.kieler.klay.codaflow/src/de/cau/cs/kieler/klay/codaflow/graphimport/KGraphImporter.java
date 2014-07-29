@@ -473,6 +473,9 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
                 }
             //}
         }
+        
+        // offset the graph itself, in case it is used by other pipeline stages
+        graph.offsetColaElements(offset);
     }
     
     

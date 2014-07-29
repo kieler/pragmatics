@@ -34,7 +34,6 @@ public class CodaflowLayoutProvider extends AbstractLayoutProvider {
     public void doLayout(final KNode parentNode, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("CoDaFlow Layout", 1);
 
-        
         final KLayoutData parentLayout = parentNode.getData(KLayoutData.class);
 
         /*
@@ -44,7 +43,6 @@ public class CodaflowLayoutProvider extends AbstractLayoutProvider {
 
         parentLayout.setProperty(CoLaProperties.CONSIDER_PREVIOUS_POSITIONS, true);
         cola.doLayout(parentNode, progressMonitor.subTask(1));
-
         
         /*
          * ACA
@@ -58,7 +56,6 @@ public class CodaflowLayoutProvider extends AbstractLayoutProvider {
         /*
          * Libavoid
          */
-        
         parentLayout.setProperty(CodaflowProperties.REPOSITION_HIERARCHICAL_PORTS, false);
         if (parentLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {
 
@@ -72,12 +69,12 @@ public class CodaflowLayoutProvider extends AbstractLayoutProvider {
 
             libavoid.doLayout(parentNode, progressMonitor.subTask(1));
         }
-
-        
         
         // Print execution times
-        for (IKielerProgressMonitor pm : progressMonitor.getSubMonitors()) {
-            System.out.println(pm.getTaskName() + " " + pm.getExecutionTime() + "s");
+        if (parentLayout.getProperty(LayoutOptions.DEBUG_MODE)) {
+            for (IKielerProgressMonitor pm : progressMonitor.getSubMonitors()) {
+                System.out.println(pm.getTaskName() + " " + pm.getExecutionTime() + "s");
+            }
         }
 
         progressMonitor.done();

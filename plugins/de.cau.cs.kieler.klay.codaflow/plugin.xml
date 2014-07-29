@@ -31,7 +31,6 @@
             name="Cycle Treatment"
             type="enum">
       </layoutOption>
-
       <layoutOption
             advanced="true"
             default="true"
@@ -56,7 +55,6 @@
             name="Port Dummy Breathe"
             type="float">
       </layoutOption>
-
       <layoutOption
             advanced="true"
             appliesTo="parents"

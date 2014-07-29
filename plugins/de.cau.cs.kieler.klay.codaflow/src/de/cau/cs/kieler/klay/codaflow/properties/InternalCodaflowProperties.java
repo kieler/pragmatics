@@ -14,16 +14,22 @@
 package de.cau.cs.kieler.klay.codaflow.properties;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
+import de.cau.cs.kieler.adaptagrams.cgraph.CGraph;
 import de.cau.cs.kieler.core.kgraph.KEdge;
+import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.klay.codaflow.graphimport.IGraphImporter;
+import de.cau.cs.kieler.klay.codaflow.processors.ILayoutProcessor;
 
 /**
  * @author uru
@@ -81,6 +87,28 @@ public final class InternalCodaflowProperties {
      */
     public static final IProperty<Boolean> PART_OF_TREE = new Property<Boolean>(
             "codaflow.partOfTree", false);
+
+    /**
+     * We try to avoid multiple imports of {@link CGraph}s in the face of a layout pipeline. Thus, if a
+     * CGraph has already been imported during a previous layout step, this property will contain
+     * it.
+     */
+    public static final IProperty<CGraph> IMPORTED_CGRAPH = new Property<CGraph>(
+            "codaflow.importedCGraph", null);
+
+    /**
+     * The used importer for the CGraph attached by {@link #IMPORTED_CGRAPH}.
+     */
+    public static final IProperty<IGraphImporter<KNode, CGraph>> IMPORTER_USED =
+            new Property<IGraphImporter<KNode, CGraph>>("codaflow.importerUsed", null);
+
+    /**
+     * A set of layout {@link ILayoutProcessor}s that have been executed for a certain
+     * {@link CGraph}.
+     */
+    public static final IProperty<Set<Class<? extends ILayoutProcessor>>> EXECUTED_PROCESSPORS =
+            new Property<Set<Class<? extends ILayoutProcessor>>>("codaflow.executedProcessors",
+                    new HashSet<Class<? extends ILayoutProcessor>>());
 
     /**
      * Utility class.

@@ -29,7 +29,10 @@ public final class ColaPredicates {
     private ColaPredicates() {
     }
     
-    public static Predicate<CEdge> PREDICATE_HIERARCHICAL_EDGE = new Predicate<CEdge>() {
+    /**
+     * Predicate whether an edge is hierarchical, ie, spans hierarchy bounds.
+     */
+    public static final Predicate<CEdge> PREDICATE_HIERARCHICAL_EDGE = new Predicate<CEdge>() {
         /**
          * {@inheritDoc}
          */
@@ -38,7 +41,10 @@ public final class ColaPredicates {
         }
     };
     
-    public static Predicate<CEdge> PREDICATE_ACA_ALIGNED_EDGE = new Predicate<CEdge>() {
+    /**
+     * Predicate whether an edge was aligned by aca.
+     */
+    public static final Predicate<CEdge> PREDICATE_ACA_ALIGNED_EDGE = new Predicate<CEdge>() {
         /**
          * {@inheritDoc}
          */

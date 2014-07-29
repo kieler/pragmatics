@@ -33,7 +33,6 @@ import de.cau.cs.kieler.adaptagrams.layouter.KConstrainedFDLayouter;
 import de.cau.cs.kieler.adaptagrams.properties.CGraphProperties;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -41,9 +40,6 @@ import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters;
 import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters.KGraphAdapter;
 import de.cau.cs.kieler.kiml.util.nodespacing.KimlNodeDimensionCalculation;
-import de.cau.cs.kieler.klay.codaflow.graphimport.HierarchicalKGraphImporter;
-import de.cau.cs.kieler.klay.codaflow.graphimport.IGraphImporter;
-import de.cau.cs.kieler.klay.codaflow.graphimport.KGraphImporter;
 import de.cau.cs.kieler.klay.codaflow.processors.FlowConstraintProcessor;
 import de.cau.cs.kieler.klay.codaflow.processors.IdealEdgeLengthProcessor;
 import de.cau.cs.kieler.klay.codaflow.processors.PortConstraintProcessor;
@@ -59,7 +55,7 @@ import de.cau.cs.kieler.klay.codaflow.util.MinMaxTestConvergence;
  * 
  * @author uru
  */
-public class ACALayoutProvider extends AbstractLayoutProvider {
+public class ACALayoutProvider extends AbstractCodaflowLayoutProvider {
 
     private CGraph graph;
 
@@ -79,7 +75,6 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
 
         final KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
         debug = parentLayout.getProperty(LayoutOptions.DEBUG_MODE);
-        boolean layoutHierarchy = parentLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY);
 
         if (debug) {
             // Internal convergence test that outputs debug information.
@@ -105,19 +100,12 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
         parentLayout.setProperty(CGraphProperties.INCLUDE_SPACING_IN_MARGIN, true);
 
         // execute layout algorithm
-        IGraphImporter<KNode, CGraph> importer;
-        if (layoutHierarchy) {
-            importer = new HierarchicalKGraphImporter();
-        } else {
-            importer = new KGraphImporter();
-        }
-        graph = importer.importGraph(parentNode);
-        graph.init();
+        graph = importGraph(parentNode);
 
         // execute some processors
-        new FlowConstraintProcessor().process(graph, progressMonitor.subTask(1));
-        new PortConstraintProcessor().process(graph, progressMonitor.subTask(1));
-        new IdealEdgeLengthProcessor().process(graph, progressMonitor.subTask(1));
+        executeProcessor(FlowConstraintProcessor.class, graph, progressMonitor);
+        executeProcessor(PortConstraintProcessor.class, graph, progressMonitor);
+        executeProcessor(IdealEdgeLengthProcessor.class, graph, progressMonitor);
 
         // tell aca to ignore some edges, e.g. edges connecting dummy port nodes to parent nodes,
         // or edges to/from external ports
@@ -218,8 +206,8 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
         }
 
         // apply the layout back
-        importer.applyLayout(graph);
-
+        applyLayout(graph, parentNode);
+        
         progressMonitor.done();
     }
 
@@ -314,4 +302,5 @@ public class ACALayoutProvider extends AbstractLayoutProvider {
             }
         }
     }
+
 }

@@ -89,7 +89,7 @@ public class TIOLayoutProvider extends AbstractLayoutProvider {
                     
                     if (entry.getKey() < LibavoidGraph.NODE_ID_START) {
                         continue;
-                    }
+                    } 
 
                     KNode node = nodeIdMap.get(entry.getKey());
                     Margins margins =

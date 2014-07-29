@@ -37,6 +37,7 @@ class TreeOrderingProcessor implements ILayoutProcessor {
     var spacing = 0f;
     
     override process(CGraph graph, IKielerProgressMonitor progressMonitor) {
+        progressMonitor.begin("Tree Ordering", 1)
         
         CodaflowUtil.markTrees(graph);
         spacing = graph.getProperty(CoLaProperties.SPACING)        
@@ -54,6 +55,8 @@ class TreeOrderingProcessor implements ILayoutProcessor {
             val southPorts = n.getPorts(PortSide.SOUTH).sortBy[it.pos.x].iterator
             processSide(southPorts, [e | e.pos.x], [e | e.rectSizeRaw.x / 2f])
         }
+        
+        progressMonitor.done();
     }
     
     /**

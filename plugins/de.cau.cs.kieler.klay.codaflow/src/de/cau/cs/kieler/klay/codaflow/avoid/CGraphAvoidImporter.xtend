@@ -60,6 +60,9 @@ import org.eclipse.xtext.xbase.lib.Pair
 
 import static de.cau.cs.kieler.kiml.options.PortSide.*
 import de.cau.cs.kieler.klay.codaflow.util.CodaflowUtil
+import de.cau.cs.kieler.adaptagrams.properties.CGraphProperties
+import de.cau.cs.kieler.adaptagrams.properties.CoLaProperties
+import org.adaptagrams.RootCluster
 
 /**
  * TODO document
@@ -113,28 +116,41 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
    */
   def private void mapClusters(Cluster c, Router r) {
 
-        val bounds = c.bounds
-        val colaRect = new AvoidRectangle(new Point(bounds.minX, bounds.minY), new Point(bounds.maxX, bounds.maxY))
+    // we are not interested in the root cluster
+    if (!(c instanceof RootCluster)) {
+      val bounds = c.bounds
+      val colaRect = new AvoidRectangle(new Point(bounds.minX, bounds.minY), new Point(bounds.maxX, bounds.maxY))
 
-        // create a cluster ref
-        new ClusterRef(r, colaRect)
-
-        val children = c.clusters
-        for (i : 0 ..< children.size.intValue) {
-            children.get(i).mapClusters(r)
-        }
+      // create a cluster ref
+      new ClusterRef(r, colaRect)
     }
+
+    val children = c.clusters
+    for (i : 0 ..< children.size.intValue) {
+      children.get(i).mapClusters(r)
+    }
+  }
   
   /**
    * CNode -> AvoidRectangle.
    */
   def dispatch transform(CNode node, Router router) {
 
+    val topLeft = node.rectPosRaw
+    val bottomRight = node.rectPosRaw.add(node.rectSizeRaw)
+    // to model spacing between nodes, they are enlarged for cola and aca,
+    // libavoid, however, needs the area to route the edges
+    // thus, we subtract the additional size it from the shapes
+    if (node.graph.getProperty(CGraphProperties.INCLUDE_SPACING_IN_MARGIN)) {
+      val spacingHalf = node.graph.getProperty(CoLaProperties.SPACING) / 2f
+      topLeft.add(spacingHalf, spacingHalf)
+      bottomRight.sub(spacingHalf, spacingHalf)
+    }
+
     // the raw size already contains margins
-    val rect = new AvoidRectangle(node.rectPosRaw.toPoint, 
-                node.rectPosRaw.clone.add(node.rectSizeRaw).toPoint)
-    createAndRegisterShapeRef(rect, node, router)
+    val rect = new AvoidRectangle(topLeft.toPoint, bottomRight.toPoint)
     
+    createAndRegisterShapeRef(rect, node, router)
   }
   
   /**
@@ -150,18 +166,19 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
       return null
     }
 
-    // get the bounding box of the node
-    val box = nodeSr.polygon().offsetBoundingBox(0); 
+    val node = port.owner
+    // the node is enlarged by it's margin and possibly by spacing
+    val spacing = if (node.graph.getProperty(CGraphProperties.INCLUDE_SPACING_IN_MARGIN)) 
+                        node.graph.getProperty(CoLaProperties.SPACING) else 0f;
+    val nWidth = node.rectSizeRaw.x - spacing
+    val nHeight = node.rectSizeRaw.y - spacing
 
-    // calculate width and height
-    val width = box.getMax().getX() - box.getMin().getX();
-    val height = box.getMax().getY() - box.getMin().getY();
-
-    // determine the pin's positions relative on the respective side
-    val relativePortPos = port.rectPosRaw.clone.sub(port.owner.rectPosRaw)
-    relativePortPos.add(port.rectSizeRaw.scale(0.5))
-    val relX = relativePortPos.x / width
-    val relY = relativePortPos.y / height
+    // the port is located at it's original position (all absolute coordinates)
+    val relativePortPos = port.rectPosRaw
+                            .add(port.rectSizeRaw.scale(0.5)) // center of port
+                            .sub(node.rectPosRaw.add(spacing / 2f, spacing / 2f)) // relative coordinate
+    val relX = (relativePortPos.x / nWidth).boundTo(0, 1)
+    val relY = (relativePortPos.y / nHeight).boundTo(0, 1)
     
     val portId = port.cIndex + PORT_ID_START
     var ShapeConnectionPin pin = null;
@@ -304,7 +321,6 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
           
           val boundary = kedge.target.toRectangle2D
           val intersection = CodaflowUtil.getIntersectionPoint(line, boundary)
-          
           if (intersection == null) {
             return "" -> new KVector()    
           }
@@ -456,7 +472,14 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
   def KVector portMarginAndSizeOffset(CPort port) {
      val offset = new KVector
      if (port != null) {
-       val margins = port.owner.margins
+       val margins = port.owner.margins.clone
+       if (port.graph.getProperty(CGraphProperties.INCLUDE_SPACING_IN_MARGIN)) {
+         val spacingHalf = port.graph.getProperty(CoLaProperties.SPACING) / 2f
+         margins.bottom = margins.bottom - spacingHalf
+         margins.top = margins.top - spacingHalf
+         margins.left = margins.left - spacingHalf
+         margins.right = margins.right - spacingHalf
+       }
        switch (port.side) {
         case WEST: {
           offset.add(margins.left, 0)
@@ -616,4 +639,8 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
   def doubleEq(Double d1, Double d2) {
     return Math.abs(d1 - d2) < EPSILON;
   }
+  
+  def boundTo(double value, double lower, double upper) {
+      Math.max(lower, Math.min(upper, value))
+  } 
 } 

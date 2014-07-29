@@ -21,14 +21,12 @@ import org.adaptagrams.RoutingOption;
 import com.google.common.collect.Iterators;
 
 import de.cau.cs.kieler.adaptagrams.cgraph.CGraph;
-import de.cau.cs.kieler.adaptagrams.properties.CGraphProperties;
 import de.cau.cs.kieler.adaptagrams.properties.CoLaProperties;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVectorChain;
-import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.Direction;
@@ -40,15 +38,13 @@ import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters;
 import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters.KGraphAdapter;
 import de.cau.cs.kieler.kiml.util.nodespacing.KimlNodeDimensionCalculation;
 import de.cau.cs.kieler.klay.codaflow.avoid.CGraphAvoidImporter;
-import de.cau.cs.kieler.klay.codaflow.graphimport.HierarchicalKGraphImporter;
 import de.cau.cs.kieler.klay.codaflow.graphimport.IGraphImporter;
-import de.cau.cs.kieler.klay.codaflow.graphimport.KGraphImporter;
 
 /**
  * @author uru
  *
  */
-public class LibavoidLayoutProvider extends AbstractLayoutProvider {
+public class LibavoidLayoutProvider extends AbstractCodaflowLayoutProvider {
 
     /**
      * {@inheritDoc}
@@ -73,24 +69,12 @@ public class LibavoidLayoutProvider extends AbstractLayoutProvider {
         
         calculateMarginsAndSizes(parentNode);
 
-        parentNode.getData(KLayoutData.class).setProperty(CGraphProperties.INCLUDE_SPACING_IN_MARGIN,
-                false);
-
         // importing
-        IGraphImporter<KNode, CGraph> cImporter;
-        if (!rootLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {
-            cImporter = new KGraphImporter();
-        } else {
-            cImporter = new HierarchicalKGraphImporter();
-        }
-        
         IGraphImporter<CGraph, Router> rImporter;
         rImporter = new CGraphAvoidImporter();
         
-        final CGraph cGraph = cImporter.importGraph(parentNode);
+        final CGraph cGraph = importGraph(parentNode);
         final Router router = rImporter.importGraph(cGraph);
-        
-        System.out.println("handling: " + cGraph);
         
         // FIXME
         router.setRoutingOption(RoutingOption.nudgeSharedPathsWithCommonEndPoint, false);
@@ -102,7 +86,7 @@ public class LibavoidLayoutProvider extends AbstractLayoutProvider {
         
         // apply layout
         rImporter.applyLayout(router);
-        cImporter.applyLayout(cGraph);
+        applyLayout(cGraph, parentNode);
         
         // determine junction points
         Iterator<KEdge> edges = Iterators.filter(parentNode.eAllContents(), KEdge.class);

@@ -19,11 +19,13 @@ import java.util.List;
 import org.adaptagrams.ColaEdges;
 import org.adaptagrams.CompoundConstraintPtrs;
 import org.adaptagrams.Doubles;
+import org.adaptagrams.Rectangle;
 import org.adaptagrams.RectanglePtrs;
 import org.adaptagrams.RootCluster;
 
 import com.google.common.collect.Lists;
 
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Insets;
 
 
@@ -138,6 +140,23 @@ public class CGraph extends CGraphElement {
      */
     public boolean isInitialized() {
         return initialized;
+    }
+    
+    /**
+     * Adds the specified {@code offset} value to all nodes within the graph and recalculates the
+     * bounding boxes of clusters.
+     * 
+     * @param offset
+     *            an offset to add to all nodes and clusters.
+     */
+    public void offsetColaElements(final KVector offset) {
+        for (int i = 0; i < nodes.size(); i++) {
+            Rectangle r = nodes.get(i);
+            r.offset(offset.x, offset.y);
+        }
+
+        // recalculate the clusters
+        rootCluster.computeBoundingRect(nodes);
     }
 
     // --------------------------------------------------------------------------------
