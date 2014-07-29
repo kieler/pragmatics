@@ -99,13 +99,6 @@ public class ColaLayoutProvider extends AbstractCodaflowLayoutProvider {
         rootLayout.setProperty(CGraphProperties.INCLUDE_SPACING_IN_MARGIN, true);
         
         // execute layout algorithm
-//        IGraphImporter<KNode, CGraph> importer;
-//        if (!rootLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {
-//            importer = new KGraphImporter();
-//        } else {
-//            importer = new HierarchicalKGraphImporter();
-//        }
-//        graph = importer.importGraph(parentNode);
         graph = importGraph(parentNode);
 
         // apply some processors
@@ -153,9 +146,11 @@ public class ColaLayoutProvider extends AbstractCodaflowLayoutProvider {
         executeProcessor(TreeOrderingProcessor.class, graph, progressMonitor);
         spm = progressMonitor.subTask(1);
         spm.begin("Vertical Ordering Layout", 1);
+        // turn overlap off for a moment to let nodes float through each other
+        runLayout(false, "_top", 1, 1, cap, spm);
         runLayout(true, "_top", 1, 1, cap, spm);
         spm.done();
-
+        
         // FIXME adaptagrams - atm still have to compute the bounding rects of clusters
         graph.rootCluster.computeBoundingRect(graph.nodes);
 

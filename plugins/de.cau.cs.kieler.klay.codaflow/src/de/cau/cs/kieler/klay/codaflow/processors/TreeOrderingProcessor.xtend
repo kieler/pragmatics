@@ -30,6 +30,10 @@ import de.cau.cs.kieler.klay.codaflow.util.CodaflowUtil
  * Removes crossings by introducing ordering constraints on nodes u and v 
  * where at least one node is part of a tree.
  * 
+ * At the moment this is done in a very naive fashion where 
+ * several crossings might be missed when multiple edges
+ * are attached to the same port.
+ * 
  * @author uru
  */
 class TreeOrderingProcessor implements ILayoutProcessor {
@@ -89,6 +93,8 @@ class TreeOrderingProcessor implements ILayoutProcessor {
             val p = ports.next
             val max = p.getMaximalNode(posFun)
             if (max != null) { // the port must have connected edges
+            
+                // FIXME also check that a crossing can be introduced at all
                 if (top.key > max.key) {
                     val maxNode = max.value
                     val topNode = top.value

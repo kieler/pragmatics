@@ -30,16 +30,11 @@ import de.cau.cs.kieler.adaptagrams.cgraph.CNode;
 import de.cau.cs.kieler.adaptagrams.cgraph.CPort;
 import de.cau.cs.kieler.adaptagrams.layouter.KACALayouter;
 import de.cau.cs.kieler.adaptagrams.layouter.KConstrainedFDLayouter;
-import de.cau.cs.kieler.adaptagrams.properties.CGraphProperties;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters;
-import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters.KGraphAdapter;
-import de.cau.cs.kieler.kiml.util.nodespacing.KimlNodeDimensionCalculation;
 import de.cau.cs.kieler.klay.codaflow.processors.FlowConstraintProcessor;
 import de.cau.cs.kieler.klay.codaflow.processors.IdealEdgeLengthProcessor;
 import de.cau.cs.kieler.klay.codaflow.processors.PortConstraintProcessor;
@@ -94,19 +89,14 @@ public class ACALayoutProvider extends AbstractCodaflowLayoutProvider {
             testConvergence = new MinMaxTestConvergence();
         }
 
-        // margins for the nodes (include the labels etc)
-        calculateMarginsAndSizes(parentNode);
-
-        parentLayout.setProperty(CGraphProperties.INCLUDE_SPACING_IN_MARGIN, true);
-
         // execute layout algorithm
         graph = importGraph(parentNode);
 
         // execute some processors
-        executeProcessor(FlowConstraintProcessor.class, graph, progressMonitor);
         executeProcessor(PortConstraintProcessor.class, graph, progressMonitor);
         executeProcessor(IdealEdgeLengthProcessor.class, graph, progressMonitor);
-
+        executeProcessor(FlowConstraintProcessor.class, graph, progressMonitor);
+        
         // tell aca to ignore some edges, e.g. edges connecting dummy port nodes to parent nodes,
         // or edges to/from external ports
         // furthermore, any dummy port node is ignored during overlap calculation in aca
@@ -286,21 +276,6 @@ public class ACALayoutProvider extends AbstractCodaflowLayoutProvider {
         }
 
         return bools;
-    }
-
-    private void calculateMarginsAndSizes(final KNode parent) {
-        KGraphAdapter adapter = KGraphAdapters.adapt(parent);
-        KimlNodeDimensionCalculation.sortPortLists(adapter);
-        KimlNodeDimensionCalculation.calculateLabelAndNodeSizes(adapter);
-
-        // KimlNodeDimensionCalculation.getNodeMarginCalculator(adapter).excludePorts().process();
-        KimlNodeDimensionCalculation.getNodeMarginCalculator(adapter).process();
-
-        if (parent.getData(KLayoutData.class).getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {
-            for (KNode child : parent.getChildren()) {
-                calculateMarginsAndSizes(child);
-            }
-        }
     }
 
 }

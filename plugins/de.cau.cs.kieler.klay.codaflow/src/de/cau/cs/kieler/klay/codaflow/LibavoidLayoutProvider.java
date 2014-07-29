@@ -34,15 +34,11 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
-import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters;
-import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters.KGraphAdapter;
-import de.cau.cs.kieler.kiml.util.nodespacing.KimlNodeDimensionCalculation;
 import de.cau.cs.kieler.klay.codaflow.avoid.CGraphAvoidImporter;
 import de.cau.cs.kieler.klay.codaflow.graphimport.IGraphImporter;
 
 /**
  * @author uru
- *
  */
 public class LibavoidLayoutProvider extends AbstractCodaflowLayoutProvider {
 
@@ -67,8 +63,6 @@ public class LibavoidLayoutProvider extends AbstractCodaflowLayoutProvider {
             p.getData(KShapeLayout.class).setProperty(LayoutOptions.PORT_SIDE, ps);
         }
         
-        calculateMarginsAndSizes(parentNode);
-
         // importing
         IGraphImporter<CGraph, Router> rImporter;
         rImporter = new CGraphAvoidImporter();
@@ -100,18 +94,4 @@ public class LibavoidLayoutProvider extends AbstractCodaflowLayoutProvider {
         progressMonitor.done();
     }
     
-
-    private void calculateMarginsAndSizes(final KNode parent) {
-        
-        KGraphAdapter adapter = KGraphAdapters.adapt(parent);
-        KimlNodeDimensionCalculation.sortPortLists(adapter);
-        KimlNodeDimensionCalculation.calculateLabelAndNodeSizes(adapter);
-        KimlNodeDimensionCalculation.getNodeMarginCalculator(adapter).process();
-
-        if (parent.getData(KLayoutData.class).getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {
-            for (KNode child : parent.getChildren()) {
-                calculateMarginsAndSizes(child);
-            }
-        }
-    }
 }

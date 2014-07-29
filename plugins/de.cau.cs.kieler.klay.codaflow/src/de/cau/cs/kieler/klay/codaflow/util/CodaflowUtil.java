@@ -23,6 +23,7 @@ import de.cau.cs.kieler.adaptagrams.cgraph.CEdge;
 import de.cau.cs.kieler.adaptagrams.cgraph.CGraph;
 import de.cau.cs.kieler.adaptagrams.cgraph.CNode;
 import de.cau.cs.kieler.adaptagrams.cgraph.CShape;
+import de.cau.cs.kieler.adaptagrams.properties.CGraphProperties;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
@@ -34,6 +35,9 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
+import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters;
+import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters.KGraphAdapter;
+import de.cau.cs.kieler.kiml.util.nodespacing.KimlNodeDimensionCalculation;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 import de.cau.cs.kieler.klay.codaflow.graphimport.HierarchicalKGraphImporter;
 import de.cau.cs.kieler.klay.codaflow.graphimport.IGraphImporter;
@@ -112,6 +116,8 @@ public final class CodaflowUtil {
      * Alongside the intersection point, the side of the intersection is returned in form of the
      * {@link PortSide} enum.
      * 
+     * If the line's two points are equal, {@code null} is returned.
+     * 
      * @param line
      *            a line
      * @param rectangle
@@ -123,6 +129,11 @@ public final class CodaflowUtil {
     public static Pair<KVector, PortSide> getIntersectionPoint(final Line2D.Double line,
             final Rectangle2D rectangle) {
 
+        // if the line is a dot, no valid intersection is assumed
+        if (line.getP1().equals(line.getP2())) {
+            return null;
+        }
+        
         KVector res = null;
         
         // top
@@ -352,6 +363,12 @@ public final class CodaflowUtil {
         newImport = newImport || layoutData.getProperty(LayoutOptions.RESET_CONFIG);
 
         if (newImport) {
+            
+            layoutData.setProperty(CGraphProperties.INCLUDE_SPACING_IN_MARGIN, true);
+            
+            // assure that valid margins and sizes are assigned
+            calculateMarginsAndSizes(parent);
+            
             // select the correct importer, hierarchical or bottom-up
             IGraphImporter<KNode, CGraph> importer;
             if (!layoutData.getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {
@@ -372,4 +389,18 @@ public final class CodaflowUtil {
             return existing;
         }
     }
+    
+    private static void calculateMarginsAndSizes(final KNode parent) {
+        KGraphAdapter adapter = KGraphAdapters.adapt(parent);
+        KimlNodeDimensionCalculation.sortPortLists(adapter);
+        KimlNodeDimensionCalculation.calculateLabelAndNodeSizes(adapter);
+        KimlNodeDimensionCalculation.getNodeMarginCalculator(adapter).process();
+
+        if (parent.getData(KLayoutData.class).getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {
+            for (KNode child : parent.getChildren()) {
+                calculateMarginsAndSizes(child);
+            }
+        }
+    }
+
 }
