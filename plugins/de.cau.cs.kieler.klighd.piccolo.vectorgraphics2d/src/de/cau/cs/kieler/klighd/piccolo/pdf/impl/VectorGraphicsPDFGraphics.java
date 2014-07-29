@@ -18,8 +18,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
-import org.eclipse.swt.widgets.Control;
-
 import de.cau.cs.kieler.klighd.IDiagramExporter;
 import de.cau.cs.kieler.klighd.piccolo.export.KlighdAbstractSVGGraphics;
 import de.cau.cs.kieler.klighd.piccolo.export.KlighdCanvasExporter;
@@ -106,21 +104,15 @@ public class VectorGraphicsPDFGraphics extends KlighdAbstractSVGGraphics impleme
     /**
      * {@inheritDoc}
      */
-    public void export(final OutputStream stream, final Control control,
-            final boolean cameraViewport, final int scale, final boolean textAsShapes,
-            final boolean embedFonts, final String subFormatId) {
-        this.delegate.export(stream, control, cameraViewport, scale, textAsShapes, embedFonts,
-                subFormatId);
+    public void export(final ExportInfo info) {
+        this.delegate.export(info);
     }
 
     private KlighdCanvasExporter delegate = new KlighdCanvasExporter() {
-        
+
         @Override
-        public void export(final OutputStream stream, final KlighdCanvas canvas,
-                final boolean cameraViewport, final int scale, final boolean textAsShapes,
-                final boolean embedFonts, final String subFormatId) {
-            VectorGraphicsPDFGraphics.this.export(stream, canvas, cameraViewport, scale,
-                    textAsShapes, embedFonts, subFormatId);
+        public void export(final KlighdExportInfo info) {
+            VectorGraphicsPDFGraphics.this.export(info);
         }
     };
 
