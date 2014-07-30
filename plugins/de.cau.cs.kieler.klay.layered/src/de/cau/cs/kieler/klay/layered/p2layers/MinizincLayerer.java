@@ -20,13 +20,15 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
+import java.util.Set;
+import java.util.Stack;
 
 import org.eclipse.emf.common.util.WrappedException;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Sets;
 import com.google.common.io.CharStreams;
+import com.google.common.primitives.Ints;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
@@ -35,6 +37,8 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
+import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -52,12 +56,17 @@ public class MinizincLayerer implements ILayoutPhase {
     /** Path to the SCIP binary. */ 
     private static final String SCIP_INSTALL = System.getenv("SCIP_BIN");
 
+    /** intermediate processing configuration. */
+    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION =
+        IntermediateProcessingConfiguration.createEmpty()
+            .addAfterPhase5(IntermediateProcessorStrategy.REVERSED_EDGE_RESTORER);
+    
     /**
      * {@inheritDoc}
      */
     public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
             final LGraph graph) {
-        return null;
+        return INTERMEDIATE_PROCESSING_CONFIGURATION;
     }
 
     /**
@@ -70,15 +79,32 @@ public class MinizincLayerer implements ILayoutPhase {
             checkForExecutables();    
             
             // ------------------
-            // #1 assign node ids
-            int index = 0;
-            for (LNode n : layeredGraph.getLayerlessNodes()) {
-                n.id = index++;
+            // #1 running Tarjan's algorithm,
+            // note that this has to run _first_ as it assigns node ids
+            Set<Set<LNode>> strongComps = stronglyConnectedComponents(layeredGraph);
+
+            // assemble the adjacency matrix with edge weights 
+            int[][] adj = getAdjencencyMatrix(layeredGraph);
+            
+            // edges that are part of strongly connected components
+            // are penalized less
+            int factor = layeredGraph.getProperty(Properties.EDGE_REVERSAL_WEIGHT_FACTOR).intValue();
+            for (Set<LNode> scc : strongComps) {
+                if (scc.size() > 1) {
+                    for (LNode u : scc) {
+                        for (LEdge e : u.getOutgoingEdges()) {
+                            LNode v = e.getTarget().getNode();
+                            if (scc.contains(v)) {
+                                adj[u.id][v.id] /= factor;
+                            }
+                        }                        
+                    }
+                }
             }
 
             // ------------------
             // #2 create a temporary file as input to MiniZinc
-            String dataFileName = getDataFile(layeredGraph);
+            String dataFileName = getDataFile(layeredGraph, adj);
             
             // ------------------
             // #3 execute MiniZinc and read its output
@@ -146,6 +172,7 @@ public class MinizincLayerer implements ILayoutPhase {
                                 e.getTarget().getNode().getLayer().getIndex() < l.getIndex();
                         if (reversed) {
                             e.reverse(layeredGraph, true);
+                            layeredGraph.setProperty(InternalProperties.CYCLIC, true);
                         }
                     }
                 }
@@ -158,6 +185,22 @@ public class MinizincLayerer implements ILayoutPhase {
         }
     }
     
+    private int[][] getAdjencencyMatrix(final LGraph layeredGraph) {
+        int n = layeredGraph.getLayerlessNodes().size();
+        int[][] adj = new int[n][n];
+        int weight =
+                layeredGraph.getProperty(Properties.EDGE_REVERSAL_WEIGHT).intValue()
+                        * layeredGraph.getProperty(Properties.EDGE_REVERSAL_WEIGHT_FACTOR)
+                                .intValue();
+        for (LNode u : layeredGraph.getLayerlessNodes()) {
+            for (LEdge e : u.getOutgoingEdges()) {
+                LNode v = e.getTarget().getNode();
+                adj[u.id][v.id] = weight;
+            }
+        }
+        return adj;
+    }
+    
     /**
      * Write the given graph as MiniZinc data file and return the absolute path of that file.
      * 
@@ -165,41 +208,34 @@ public class MinizincLayerer implements ILayoutPhase {
      * @return the absolute path to a data file
      * @throws IOException
      */
-    private String getDataFile(final LGraph layeredGraph) throws IOException {
+    private String getDataFile(final LGraph layeredGraph, final int[][] adj) throws IOException {
         File dataFile = File.createTempFile("graph", ".dzn");
         FileWriter writer = new FileWriter(dataFile);
+
+        // edges as adjacency matrix
+        writer.write("N = " + layeredGraph.getLayerlessNodes().size() + ";\n");
         
-        writer.write("N = " + layeredGraph.getLayerlessNodes().size() + ";\ne = [| ");
-        ListIterator<LNode> nodeIter1 = layeredGraph.getLayerlessNodes().listIterator();
-        while (nodeIter1.hasNext()) {
-            LNode node1 = nodeIter1.next();
-            ListIterator<LNode> nodeIter2 = layeredGraph.getLayerlessNodes().listIterator();
-            while (nodeIter2.hasNext()) {
-                final LNode node2 = nodeIter2.next();
-                if (nodeIter1.previousIndex() != nodeIter2.previousIndex()
-                        && Iterables.any(node1.getOutgoingEdges(), new Predicate<LEdge>() {
-                            public boolean apply(final LEdge edge) {
-                                return edge.getTarget().getNode() == node2;
-                            }
-                        })) {
-                    writer.write("1");
-                } else {
-                    writer.write("0");
-                }
-                if (nodeIter2.hasNext()) {
-                    writer.write(", ");
-                }
-            }
-            if (nodeIter1.hasNext()) {
+        // strongly connected components
+        writer.write("e = [| ");
+        for (int i = 0; i < adj.length; i++) {
+            int[] row = adj[i];
+            writer.write(Joiner.on(", ").join(Ints.asList(row)));
+            if (i != adj.length - 1) {
                 writer.write(",\n     | ");
             }
         }
-        writer.write(" |];\nW_length = " + layeredGraph.getProperty(Properties.EDGE_LENGTH_WEIGHT)
+        writer.write(" |];\n");
+        
+        // weights
+        writer.write("\nW_length = " + layeredGraph.getProperty(Properties.EDGE_LENGTH_WEIGHT)
                 + ";\nW_reverse = " + layeredGraph.getProperty(Properties.EDGE_REVERSAL_WEIGHT)
                 + ";\n");
         
         writer.close();
         dataFile.deleteOnExit();
+        
+        // System.out.println(Joiner.on("\n").join(Files.readLines(dataFile, Charset.forName("utf8"))));
+        
         return dataFile.getAbsolutePath();
     }
     
@@ -240,6 +276,69 @@ public class MinizincLayerer implements ILayoutPhase {
         if (SCIP_INSTALL == null || !new File(SCIP_INSTALL).exists()) {
             throw new RuntimeException(
                     "Could not locate SCIP installation, make sure 'SCIP_INSTALL' is set.\n" + NOTE);
+        }
+    }
+    
+    
+    private int index = 0;
+    private int[] lowlink;
+    private Stack<LNode> stack = new Stack<LNode>();
+    private Set<Set<LNode>> sccs = Sets.newHashSet();
+    
+    /**
+     * Tarjan's Algorithm to find strongly connected components.
+     */
+    private Set<Set<LNode>> stronglyConnectedComponents(final LGraph graph) {
+        
+        // invalidate indices
+        for (LNode n : graph.getLayerlessNodes()) {
+            n.id = -1;
+        }
+        
+        int n = graph.getLayerlessNodes().size();
+        index = 0;
+        lowlink = new int[n];
+        stack.clear();
+        sccs.clear();
+        
+        for (LNode node : graph.getLayerlessNodes()) {
+            if (node.id == -1) {
+                strongConnect(node);
+            }
+        }
+        
+        return sccs;
+    }
+
+    private void strongConnect(final LNode v) {
+        v.id = index;
+        lowlink[v.id] = index;
+        index++;
+        stack.push(v);
+
+        // successors of current node
+        for (LEdge e : v.getOutgoingEdges()) {
+            LNode w = e.getTarget().getNode();
+            if (w.id == -1) {
+                // successor not been visited
+                strongConnect(w);
+                lowlink[v.id] = Math.min(lowlink[v.id], lowlink[w.id]);
+                        
+            } else if (stack.contains(w)) {
+                // successor is in the current scc
+                lowlink[v.id] = Math.min(lowlink[v.id], w.id);
+            }
+        }
+
+        // if current node is a root node, generate scc
+        if (lowlink[v.id] == v.id) {
+            Set<LNode> scc = Sets.newHashSet();
+            LNode sn = null;
+            do {
+                sn = stack.pop();
+                scc.add(sn);
+            } while (sn.id != v.id);
+            sccs.add(scc);
         }
     }
     

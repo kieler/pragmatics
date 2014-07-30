@@ -368,5 +368,21 @@
                value="MINIZINC">
          </dependency>
       </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="2.0"
+            description="Factor by which the edge reversal weight is multiplied for usual edges in the MiniZinc layerer (as opposed to edges that are part of strongly connected components)."
+            id="de.cau.cs.kieler.klay.layered.edgeReversalWeightFactor"
+            lowerBound="0"
+            name="Edge Reversal Weight Factor"
+            type="float"
+            upperBound="100"
+            variance="0.2">
+         <dependency
+               option="de.cau.cs.kieler.klay.layered.nodeLayering"
+               value="MINIZINC">
+         </dependency>
+      </layoutOption>
    </extension>
 </plugin>

@@ -183,6 +183,12 @@ public final class Properties {
     public static final IProperty<Float> EDGE_REVERSAL_WEIGHT = new Property<Float>(
             "de.cau.cs.kieler.klay.layered.edgeReversalWeight", 1.0f);
 
+    /**
+     * A factor by which the {@link #EDGE_REVERSAL_WEIGHT} is multiplied for 
+     * edges that are <b>not</b> part of strongly connected components.
+     */
+    public static final IProperty<Float> EDGE_REVERSAL_WEIGHT_FACTOR = new Property<Float>(
+            "de.cau.cs.kieler.klay.layered.edgeReversalWeightFactor", 2.0f);
 
     // /////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR
