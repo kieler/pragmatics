@@ -280,30 +280,6 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
 
         // if the target is a hierarchical port, follow that port!
         if (edge.getTargetPort() != null) {
-
-            // and add the port's position to a list of "checkpoints"
-            KShapeLayout portLayout = edge.getTargetPort().getData(KShapeLayout.class);
-            KVector cp = portLayout.createVector();
-            // make sure the checkpoint lies _on_ the node boundary
-            switch (portLayout.getProperty(LayoutOptions.PORT_SIDE)) {
-                case NORTH:
-                    cp.add(portLayout.getWidth() / 2f, portLayout.getHeight());
-                    break;
-                case EAST:
-                    cp.add(0, portLayout.getHeight() / 2f);
-                    break;
-                case SOUTH:
-                    cp.add(portLayout.getWidth() / 2f, 0);
-                    break;
-                case WEST:
-                    cp.add(portLayout.getWidth(), portLayout.getHeight() / 2f);
-                    break;
-            }
-            // convert it to a global position
-            cp = KimlUtil.toAbsolute(cp, edge.getTarget());
-            
-            // FIXME why calc the position here?
-            checkpoints.add(Pair.of(edge.getTargetPort(), cp));
             
             // if more than 3 edges connect to the same port, we consider
             // the 'overall' edge to be an hyperedge
@@ -315,7 +291,6 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
                         Lists.newArrayList(edgeChain), Lists.newArrayList(checkpoints), 
                         isHyperedge);
             }
-
         }
 
     }

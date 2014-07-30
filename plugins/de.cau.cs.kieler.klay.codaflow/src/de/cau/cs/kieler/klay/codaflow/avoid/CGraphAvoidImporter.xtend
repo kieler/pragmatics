@@ -227,7 +227,30 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
 
     // for hierarchical hyperedges edges we have to add checkpoints
     if (edge.crossHierarchy && edge.getProperty(InternalCodaflowProperties.HIERARCHICAL_HYPEREDGE)) {
-      val ports = edge.getProperty(InternalCodaflowProperties.EDGE_CHECKPOINTS)
+      
+      // determine the positions for the checkpoints
+      // this cannot be done earlier, as previous stages of the layout
+      // pipeline might alter the position
+      val edgeChain = edge.getProperty(InternalCodaflowProperties.EDGE_CHAIN)
+      
+      val ports = edgeChain.map[ e | 
+                        val port = e.targetPort
+                        val pl = port.getData(typeof(KShapeLayout))
+                        val cp = pl.createVector
+                        switch (pl.getProperty(LayoutOptions.PORT_SIDE)) {
+                            case NORTH: 
+                                cp.add(pl.width / 2f, pl.height)
+                            case EAST:
+                              cp.add(0, pl.height / 2f)
+                            case SOUTH:
+                              cp.add(pl.width / 2f, 0)
+                            case WEST:
+                            cp.add(pl.width, pl.height / 2f) 
+                        }
+                        return de.cau.cs.kieler.core.util.Pair.of(port, KimlUtil.toAbsolute(cp, e.target)) 
+                    ]
+      edge.setProperty(InternalCodaflowProperties.EDGE_CHECKPOINTS, ports)
+      
       val checkpoints = new AvoidCheckpoints()
       for (pair : ports.take(ports.size - 1)) {
         val port = pair.second
