@@ -16,9 +16,15 @@ package de.cau.cs.kieler.klighd.piccolo.internal.nodes;
 import java.awt.geom.Point2D;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
+import de.cau.cs.kieler.klighd.piccolo.KlighdSWTGraphics;
 import de.cau.cs.kieler.klighd.piccolo.internal.controller.AbstractKGERenderingController;
 import de.cau.cs.kieler.klighd.piccolo.internal.controller.KEdgeRenderingController;
+import de.cau.cs.kieler.klighd.util.KlighdProperties;
+import de.cau.cs.kieler.klighd.util.KlighdSemanticDiagramData;
 import edu.umd.cs.piccolo.PNode;
+import edu.umd.cs.piccolo.util.PBounds;
+import edu.umd.cs.piccolo.util.PPaintContext;
 
 /**
  * The Piccolo2D node for representing a {@link KEdge}.
@@ -152,5 +158,43 @@ public class KEdgeNode extends PChildRepresentedNode implements ILabeledGraphEle
             return (KChildAreaNode) parent.getParent();
         }
         return null;
+    }
+    
+    /**
+     * {@inheritDoc}<br>
+     * <br>
+     * This specialization has been introduced together with the calls of
+     * <code>KEdgeNode.repaint()</code> in {@link KEdgeRenderingController} in order to paint over
+     * thin "artifact" lines that may survive due to widened anti-aliased edge drawings.
+     */
+    @Override
+    public void repaintFrom(final PBounds localBounds, final PNode childOrThis) {
+        if (childOrThis == this) {
+            localBounds.setRect(
+                localBounds.x - 1, localBounds.y - 1, localBounds.width + 2, localBounds.height + 2);
+        }
+        super.repaintFrom(localBounds, childOrThis);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    protected void paint(final PPaintContext paintContext) {
+        KlighdSWTGraphics g2 = (KlighdSWTGraphics) paintContext.getGraphics();
+        KlighdSemanticDiagramData sd =
+                getGraphElement().getData(KLayoutData.class).getProperty(
+                        KlighdProperties.SEMANTIC_DATA);
+        g2.startGroup(sd);
+        super.paint(paintContext);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void paintAfterChildren(final PPaintContext paintContext) {
+        super.paintAfterChildren(paintContext);
+        KlighdSWTGraphics g2 = (KlighdSWTGraphics) paintContext.getGraphics();
+        g2.endGroup();
     }
 }

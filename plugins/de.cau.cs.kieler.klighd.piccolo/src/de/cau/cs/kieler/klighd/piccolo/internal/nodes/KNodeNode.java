@@ -23,10 +23,12 @@ import com.google.common.collect.Iterables;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
+import de.cau.cs.kieler.klighd.piccolo.KlighdSWTGraphics;
 import de.cau.cs.kieler.klighd.piccolo.internal.controller.AbstractKGERenderingController;
 import de.cau.cs.kieler.klighd.piccolo.internal.controller.KNodeRenderingController;
 import de.cau.cs.kieler.klighd.piccolo.internal.util.NodeUtil;
 import de.cau.cs.kieler.klighd.util.KlighdProperties;
+import de.cau.cs.kieler.klighd.util.KlighdSemanticDiagramData;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
@@ -39,7 +41,7 @@ import edu.umd.cs.piccolo.util.PPickPath;
  * @author mri
  * @author chsch
  */
-public class KNodeNode extends PLayer implements INode, ILabeledGraphElement<KNode> {
+public class KNodeNode extends KDisposingLayer implements INode, ILabeledGraphElement<KNode> {
 
     private static final long serialVersionUID = 6311105654943173693L;
     
@@ -75,36 +77,38 @@ public class KNodeNode extends PLayer implements INode, ILabeledGraphElement<KNo
 
 
     /**
-     * Constructs a Piccolo2D node for representing a {@code KNode}.
+     * Constructs a Piccolo2D node for representing a <code>KNode</code>.
      * 
      * @param node
      *            the node
-     * @param parent
-     *            the parent node
+     * @param edgesFirst
+     *            determining whether edges are drawn before nodes, i.e. nodes have priority over
+     *            edges
      */
-    public KNodeNode(final KNode node, final INode parent) {
+    public KNodeNode(final KNode node, final boolean edgesFirst) {
         super();
 
         this.node = node;
-        this.parent = parent;
-        this.portLayer = new PLayer();
-        this.labelLayer = new PLayer();
-        this.childArea = new KChildAreaNode(this);
-        
+        this.portLayer = new KDisposingLayer();
+        this.labelLayer = new KDisposingLayer();
+        this.childArea = new KChildAreaNode(this, edgesFirst);
+
         this.childAreaCamera = new PCamera();
 
-        this.childAreaCamera.setPickable(true);
+        // the childAreaCamera is set unpickable because it would disturb the "click on canvas"
+        //  feature in case the diagram is clipped to this kNodeNode
+        // without the pickable setting this kNodeNode will be picked in the clipping case,
+        //  see #fullPick(...) below and KlighdActionEventHandler, l.105ff
+        this.childAreaCamera.setPickable(false);
+        this.childAreaCamera.setChildrenPickable(true);
+
         this.childAreaCamera.setVisible(false);
         this.childAreaCamera.addLayer(this.childArea);
-        
+
         this.addChild(childAreaCamera);
         this.addChild(portLayer);
         this.addChild(labelLayer);
-        
-        final Boolean b = node.getData(KLayoutData.class).getProperty(
-                KlighdProperties.KLIGHD_SELECTION_UNPICKABLE);
-        this.setPickable(b != null && b.equals(Boolean.TRUE) ? false : true);
-        
+
         this.addPropertyChangeListener(PLayer.PROPERTY_CAMERAS, new PropertyChangeListener() {
             // this property change listener reacts on changes in the cameras list
             
@@ -176,9 +180,9 @@ public class KNodeNode extends PLayer implements INode, ILabeledGraphElement<KNo
         if (controller == null || controller instanceof KNodeRenderingController) {
             this.renderingController = (KNodeRenderingController) controller;
         } else {
-            String s = "KLighD: Fault occured while building up a concrete KNode rendering: KNodeNodes"
-                    + " are supposed to be controlled by KNodeRenderingControllers rather than "
-                    + controller.getClass().getCanonicalName();
+            final String s = "KLighD: Fault occured while building up a concrete KNode rendering: "
+                + "KNodeNodes are supposed to be controlled by KNodeRenderingControllers rather than "
+                + controller.getClass().getCanonicalName();
             throw new IllegalArgumentException(s);
         }
     }
@@ -218,10 +222,29 @@ public class KNodeNode extends PLayer implements INode, ILabeledGraphElement<KNo
     }
 
     /**
+     * Setter.
+     * 
+     * @param parentINode
+     *            the {@link INode} being the new parent in terms of the structural nodes
+     */
+    public void setParentNode(final INode parentINode) {
+        this.parent = parentINode;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public KChildAreaNode getChildAreaNode() {
         return childArea;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void removeFromParent() {
+        super.removeFromParent();
+        this.parent = null;
     }
     
     /**
@@ -269,6 +292,10 @@ public class KNodeNode extends PLayer implements INode, ILabeledGraphElement<KNo
     public boolean fullPick(final PPickPath pickPath) {
         final boolean fullPick = super.fullPick(pickPath);
         
+        // in case the diagram is clipped to this kNodeNode (isRootLayer == true)
+        //  and the user clicked outside the bounds of this (expanded) kNodeNode
+        //  the above call would return 'false', which is not intended in that case
+        // instead we want this kNodeNode be the picked node anyway so, ...
         if (!fullPick && isRootLayer) {
             pickPath.pushNode(this);
             pickPath.pushTransform(getTransform());
@@ -340,6 +367,29 @@ public class KNodeNode extends PLayer implements INode, ILabeledGraphElement<KNo
      */
     public PLayer getLabelLayer() {
         return this.labelLayer;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void paint(final PPaintContext paintContext) {
+        final KlighdSWTGraphics g2 = (KlighdSWTGraphics) paintContext.getGraphics();
+        final KlighdSemanticDiagramData sd =
+                getGraphElement().getData(KLayoutData.class).getProperty(
+                        KlighdProperties.SEMANTIC_DATA);
+        g2.startGroup(sd);
+        super.paint(paintContext);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void paintAfterChildren(final PPaintContext paintContext) {
+        super.paintAfterChildren(paintContext);
+        final KlighdSWTGraphics g2 = (KlighdSWTGraphics) paintContext.getGraphics();
+        g2.endGroup();
     }
     
 }

@@ -51,7 +51,7 @@ public class KlighdLayoutEffect extends AbstractEffect {
      *            the top-level diagram part to layout, or {@code null}
      */
     public KlighdLayoutEffect(final String viewId, final Object diagramPart) {
-        this.workbenchPart = DiagramViewManager.getInstance().getView(viewId);
+        this.workbenchPart = DiagramViewManager.getView(viewId);
         this.diagramPart = diagramPart;
     }
 
@@ -68,7 +68,7 @@ public class KlighdLayoutEffect extends AbstractEffect {
      *            whether zoom to fit shall be performed
      */
     public KlighdLayoutEffect(final String viewId, final Object diagramPart, final boolean zoomToFit) {
-        this(DiagramViewManager.getInstance().getView(viewId), diagramPart);
+        this(DiagramViewManager.getView(viewId), diagramPart);
         this.doZoom = zoomToFit;
     }
 
@@ -88,7 +88,7 @@ public class KlighdLayoutEffect extends AbstractEffect {
      */
     public KlighdLayoutEffect(final String viewId, final Object diagramPart,
             final boolean zoomToFit, final boolean progressBar) {
-        this(DiagramViewManager.getInstance().getView(viewId), diagramPart);
+        this(DiagramViewManager.getView(viewId), diagramPart);
         this.doZoom = zoomToFit;
         this.progressBar = progressBar;
     }
@@ -254,10 +254,10 @@ public class KlighdLayoutEffect extends AbstractEffect {
             return;
         }
         try {
-            DiagramLayoutEngine layoutEngine = DiagramLayoutEngine.INSTANCE;
+            final DiagramLayoutEngine layoutEngine = DiagramLayoutEngine.INSTANCE;
             layoutEngine.layout(workbenchPart, diagramPart, doAnimate, progressBar,
                     layoutAncestors, doZoom);
-        } catch (UnsupportedOperationException e) {
+        } catch (final UnsupportedOperationException e) {
             // ignore
         }
     }

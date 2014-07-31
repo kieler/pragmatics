@@ -2,12 +2,11 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name.0
 Bundle-SymbolicName: de.cau.cs.kieler.kiml.ui;singleton:=true
-Bundle-Version: 0.10.0.qualifier
+Bundle-Version: 0.11.0.qualifier
 Bundle-Activator: de.cau.cs.kieler.kiml.ui.KimlUiPlugin
 Bundle-Vendor: %Bundle-Vendor.0
 Bundle-Localization: plugin
 Export-Package: de.cau.cs.kieler.kiml.ui,
- de.cau.cs.kieler.kiml.ui.diagram,
  de.cau.cs.kieler.kiml.ui.util,
  de.cau.cs.kieler.kiml.ui.views
 Require-Bundle: org.eclipse.ui;bundle-version="3.4.0",

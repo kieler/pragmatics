@@ -50,6 +50,21 @@ public class ProgressBarMonitor extends BasicProgressMonitor {
         super(maxLevels);
         this.progressBar = theprogressBar;
     }
+    
+    /**
+     * Creates a progress bar monitor with given maximal number of hierarchy levels. Progress
+     * is reported to parent monitors only up to the specified hierarchy level. The third argument
+     * controls whether any execution time measurements are performed.
+     * 
+     * @param theprogressBar the progress bar to which progress is reported
+     * @param maxLevels maximal number of hierarchy levels for which progress is reported
+     * @param measureExecTime whether the execution time shall be measured when the task is done
+     */
+    public ProgressBarMonitor(final ProgressBar theprogressBar, final int maxLevels,
+            final boolean measureExecTime) {
+        super(maxLevels, measureExecTime);
+        this.progressBar = theprogressBar;
+    }
 
     /**
      * Reports to the integrated progress bar that the current task begins.
@@ -74,14 +89,16 @@ public class ProgressBarMonitor extends BasicProgressMonitor {
      *            instance when the sub-task ends
      * @param maxHierarchyLevels the maximal number of hierarchy levels for the parent
      *         progress monitor
+     * @param measureExecTime whether the execution time shall be measured when the task is done
      * @return a new progress monitor instance
      */
     @Override
-    public BasicProgressMonitor doSubTask(final float work, final int maxHierarchyLevels) {
+    public BasicProgressMonitor doSubTask(final float work, final int maxHierarchyLevels,
+            final boolean measureExecTime) {
         if (maxHierarchyLevels > 0) {
-            return new ProgressBarMonitor(progressBar, maxHierarchyLevels - 1);
+            return new ProgressBarMonitor(progressBar, maxHierarchyLevels - 1, measureExecTime);
         } else {
-            return new ProgressBarMonitor(progressBar, maxHierarchyLevels);            
+            return new ProgressBarMonitor(progressBar, maxHierarchyLevels, measureExecTime);
         }
     }
 

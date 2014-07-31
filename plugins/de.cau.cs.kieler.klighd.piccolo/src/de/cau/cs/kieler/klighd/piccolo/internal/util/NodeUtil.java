@@ -20,8 +20,13 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.klighd.microlayout.Bounds;
+import de.cau.cs.kieler.klighd.piccolo.internal.controller.PNodeController;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.IGraphElement;
+import de.cau.cs.kieler.klighd.piccolo.internal.nodes.INode;
+import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdMainCamera;
+import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.activities.PActivity;
 import edu.umd.cs.piccolo.activities.PActivity.PActivityDelegate;
@@ -38,21 +43,6 @@ import edu.umd.cs.piccolo.util.PBounds;
  * @author chsch
  */
 public final class NodeUtil {
-    
-    /**
-     * A {@link PNode} property change event key indicating dispose
-     * {@link org.eclipse.swt.graphics.Device}-dependent SWT objects.
-     */
-    public static final String DISPOSE = "dispose";
-    
-    /**
-     * The property change event code related to {@link #DISPOSE} events.<br>
-     * It is set to zero since this code is only used for deciding whether to propagate such events
-     * to the parent nodes, too. This, however, is not necessary and even not valid in context of
-     * {@link #DISPOSE} events. (see {@link PNode#firePropertyChange(int, String, Object, Object)}
-     * for details).
-     */
-    public static final int DISPOSE_CODE = 0;
 
     /** the attribute key for the activity. */
     private static final Object ACTIVITY_KEY = "activity";
@@ -63,7 +53,7 @@ public final class NodeUtil {
     private NodeUtil() {
         // do nothing
     }
-    
+
     /**
      * Casts a custom {@link PNode} object that implements {@link IGraphElement} to
      * {@link IGraphElement}, the <b>type check is omitted for performance reasons</b>.
@@ -93,14 +83,14 @@ public final class NodeUtil {
      *            
      * @author mri, chsch
      */
-    public static void applySmartBounds(final PNode node, final double x, final double y,
+    public static void applyBounds(final PNode node, final double x, final double y,
             final double width, final double height) {
         // apply the layout;
-        // positions the node at the given coordinates (taken from the related shape layout)
-        node.setOffset(x, y);
-
         // sets the size of the node, does not influence the above determined position
         node.setBounds(0, 0, width, height);
+
+        // positions the node at the given coordinates (taken from the related shape layout)
+        applyTranslation(node, x, y);
     }
 
     /**
@@ -111,8 +101,8 @@ public final class NodeUtil {
      * @param bounds
      *            the bounds
      */
-    public static void applySmartBounds(final PNode node, final Bounds bounds) {
-        applySmartBounds(node, bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
+    public static void applyBounds(final PNode node, final PBounds bounds) {
+        applyBounds(node, bounds.x, bounds.y, bounds.width, bounds.height);
     }
 
     /**
@@ -123,8 +113,54 @@ public final class NodeUtil {
      * @param bounds
      *            the bounds
      */
-    public static void applySmartBounds(final PNode node, final PBounds bounds) {
-        applySmartBounds(node, bounds.x, bounds.y, bounds.width, bounds.height);
+    public static void applyBounds(final PNode node, final Bounds bounds) {
+        applyBounds(node, bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
+    }
+
+    /**
+     * Applies the bounds to the given node using the node's translation and its bounds.
+     * 
+     * @param node
+     *            the node
+     * @param bounds
+     *            the bounds
+     */
+    public static void applyBounds(final PNode node, final KShapeLayout bounds) {
+        applyBounds(node, bounds.getXpos(), bounds.getYpos(), bounds.getWidth(), bounds.getHeight());
+    }
+
+    /**
+     * (Re-)Applies the translation (x,y) and size (w, h) given in <code>bounds</code> and last
+     * rotation configuration to the node controller by <code>controller</code>.
+     * 
+     * @param controller
+     *            the {@link PNodeController}
+     * @param bounds
+     *            the {@link Bounds}
+     */
+    public static void applyBounds(final PNodeController<?> controller, final Bounds bounds) {
+        controller.getNode().setBounds(0, 0,  bounds.getWidth(), bounds.getHeight());
+        
+        applyTranslation(controller, bounds);
+    }
+
+    /**
+     * (Re-)Applies the translation (x,y) given in <code>bounds</code> and last rotation
+     * configuration to the node controller by <code>controller</code>.
+     * 
+     * @param controller
+     *            the {@link PNodeController}
+     * @param bounds
+     *            the {@link Bounds}
+     */
+    public static void applyTranslation(final PNodeController<?> controller, final Bounds bounds) {
+        // apply the translation
+        final PNode node = controller.getNode();
+        node.getTransformReference(true).setToIdentity();
+
+        controller.applyRotation();
+
+        node.translate(bounds.getX(), bounds.getY());
     }
 
     /**
@@ -166,11 +202,11 @@ public final class NodeUtil {
      *            the node
      * @return the smart bounds
      */
-    public static PBounds determineSmartBounds(final PNode node) {
-        PBounds bounds = node.getBounds();
+    public static PBounds determineBounds(final PNode node) {
+        final PBounds bounds = node.getBounds();
 
         // get the translation
-        PAffineTransform transform = node.getTransformReference(true);
+        final PAffineTransform transform = node.getTransformReference(true);
         bounds.setOrigin(transform.getTranslateX(), transform.getTranslateY());
 
         return bounds;
@@ -188,9 +224,9 @@ public final class NodeUtil {
      *            the primary activity
      */
     public static void schedulePrimaryActivity(final PNode node, final PActivity activity) {
-        Object attribute = node.getAttribute(ACTIVITY_KEY);
+        final Object attribute = node.getAttribute(ACTIVITY_KEY);
         if (attribute instanceof PActivity) {
-            PActivity oldActivity = (PActivity) attribute;
+            final PActivity oldActivity = (PActivity) attribute;
             oldActivity.terminate();
         }
         node.addAttribute(ACTIVITY_KEY, activity);
@@ -217,9 +253,9 @@ public final class NodeUtil {
      *            the node
      */
     public static void unschedulePrimaryActivity(final PNode node) {
-        Object attribute = node.getAttribute(ACTIVITY_KEY);
+        final Object attribute = node.getAttribute(ACTIVITY_KEY);
         if (attribute instanceof PActivity) {
-            PActivity oldActivity = (PActivity) attribute;
+            final PActivity oldActivity = (PActivity) attribute;
             oldActivity.terminate();
         }
     }
@@ -271,9 +307,75 @@ public final class NodeUtil {
     public static AffineTransform inverse(final AffineTransform transform) {
         try {
             return transform.createInverse();
-        } catch (NoninvertibleTransformException e) {
+        } catch (final NoninvertibleTransformException e) {
             return new AffineTransform();
         }
     }
 
+    /**
+     * Advancement of {@link PNode#getGlobalBounds()} respecting the current clip that may be set to
+     * a non-root {@link de.cau.cs.kieler.core.kgraph.KNode KNode}.<br>
+     * <br>
+     * It is used in {@link de.cau.cs.kieler.klighd.piccolo.internal.controller.DiagramController
+     * DiagramController#isVisible(de.cau.cs.kieler.core.kgraph.KGraphElement)}, for example.
+     * 
+     * @param node
+     *            the {@link PNode} to compute the bounds for
+     * @param clipNode
+     *            the INode the diagram is currently clipped to (for convenience)
+     * @return <code>node's</code> global bounds relative to the current clip, or <code>null</code>
+     *         if <code>node</code> is not a (recursive) child of <code>clipNode</code>
+     */
+    public static PBounds clipRelativeGlobalBoundsOf(final PNode node, final INode clipNode) {
+        // determine the closure of node's bounds and all recursively contained children's bounds
+        final PBounds nodeBounds = node.getFullBounds();
+
+        if (node == clipNode) {
+            return nodeBounds;
+        }
+
+        // since the fullBounds are already adjusted wrt. to node's transform
+        //  start with node's parent here!
+        PNode p = node.getParent();
+        while (p != null && p.getParent() != null) {
+            p.localToParent(nodeBounds);
+            if (p == clipNode) {
+                return nodeBounds;
+            }
+            p = p.getParent();
+        }
+
+        // node seems not to be (recursively) contained by clipNode, so ...
+        return null;
+    }
+    
+    /**
+     * Tests whether the given <code>node</code> is contained in the <code>camera</code>'s displayed
+     * {@link INode}'s children sub tree.
+     * 
+     * @param node
+     *            the PNode to be tested
+     * @param camera
+     *            the camera the test is based on
+     * @return <code>true</code> if node is contained in <code>camera</code>'s displayed
+     *         {@link INode}'s deep children, <code>false</code> otherwise.
+     */
+    public static boolean isDisplayed(final PNode node, final KlighdMainCamera camera) {
+        if (camera == null) {
+            throw new IllegalArgumentException(
+                    "KLighD: 'camera' in NodeUtil.isDisplayed(...) must not be 'null'");
+        }
+        final PLayer displayedLayer = camera.getDisplayedLayer();
+
+        PNode parent = node;
+        
+        while (parent != null) {
+            if (parent == displayedLayer) {
+                return true;
+            } else {
+                parent = parent.getParent();
+            }
+        }        
+        return false;
+    }
 }

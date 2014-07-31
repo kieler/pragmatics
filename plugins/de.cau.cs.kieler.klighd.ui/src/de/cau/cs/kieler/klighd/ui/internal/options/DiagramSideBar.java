@@ -18,18 +18,26 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Resource;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -50,10 +58,14 @@ import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
 import de.cau.cs.kieler.klighd.IDiagramWorkbenchPart;
 import de.cau.cs.kieler.klighd.KlighdConstants;
 import de.cau.cs.kieler.klighd.KlighdPlugin;
+import de.cau.cs.kieler.klighd.KlighdPreferences;
+import de.cau.cs.kieler.klighd.LightDiagramServices;
 import de.cau.cs.kieler.klighd.SynthesisOption;
 import de.cau.cs.kieler.klighd.ViewContext;
 import de.cau.cs.kieler.klighd.ZoomStyle;
+import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdCanvas;
 import de.cau.cs.kieler.klighd.ui.parts.DiagramViewPart;
+import de.cau.cs.kieler.klighd.util.KlighdSynthesisProperties;
 
 /**
  * Builds up the diagram side bar containing the controls for configuring diagram synthesis and
@@ -80,6 +92,13 @@ public final class DiagramSideBar {
     
     /** Constant value denoting 100%. */
     private static final int FULL = 100;
+
+    /** Right and top offset for the toolbar buttons shown in the canvas. */
+    private static final int CANVAS_ZOOM_BTNS_OFFSET = 3;
+
+    private boolean zoomButtonsVisible = KlighdPreferences.isShowZoomConfigButtons();
+    
+    private boolean initiallyExpanded = KlighdPreferences.isExpandSideBar();
     
     /** The layout configurator that stores the values set by the layout option controls. */
     private final VolatileLayoutConfig layoutConfig = new VolatileLayoutConfig(LAYOUT_CONFIG_PRIORITY);
@@ -94,6 +113,12 @@ public final class DiagramSideBar {
 
     /** the form toolkit, is only kept to properly dispose it finally. */
     private FormToolkit optionsformToolkit;
+
+    /** The form that holds the zoom buttons in the sidebar. */
+    private Form sideZoomBtnsForm;
+    
+    /** The composite that holds the zoom buttons in the canvas. */
+    private Composite canvasZoomBtnsContainer;
 
     /** The form that holds synthesis options. */
     private Form synthesisOptionsForm;
@@ -113,7 +138,9 @@ public final class DiagramSideBar {
      * workbenchPart's right side. Its kept as an attribute in order to avoid the re-initialization
      * of the side bar's size in case a different model has been assigned to the current view.
      */
-    private int horizontalPos = -INITIAL_OPTIONS_FORM_WIDTH;
+    private int horizontalPos = initiallyExpanded ? -INITIAL_OPTIONS_FORM_WIDTH : -SASH_WIDTH;
+
+    private ViewContext viewContext;
     
     /**
      * Hidden constructor.
@@ -156,7 +183,36 @@ public final class DiagramSideBar {
      * @see #createSideBar(Composite, Composite, ViewContext)
      */
     private DiagramSideBar initialize(final Composite diagramContainer,
-            final ViewContext viewContext) {
+            final ViewContext theViewContext) {
+        // SUPPRESS CHECKSTYLE PREVIOUS 2 Length -- UI stuff is lengthy :-(
+        
+        viewContext = theViewContext;
+        
+        // in addition to the side bar initialization preference setting
+        //  a diagram specific configuration shall be possible; thus...
+        switch (viewContext.getProperty(KlighdSynthesisProperties.REQUESTED_SIDE_BAR_HANDLING)) {
+        case UNDEFINED:
+            break;
+        case EXPAND: 
+            initiallyExpanded = true;
+            horizontalPos = -INITIAL_OPTIONS_FORM_WIDTH;
+            break;
+        case COLLAPSE:
+            initiallyExpanded = false;
+            horizontalPos = -SASH_WIDTH;
+        }
+
+        switch (viewContext.getProperty(
+                            KlighdSynthesisProperties.REQUESTED_ZOOM_CONFIG_BUTTONS_HANDLING)) {
+        case UNDEFINED:
+            break;
+        case SHOW:
+            zoomButtonsVisible = true;
+            break;
+        case HIDE:
+            zoomButtonsVisible = false;
+        }
+        
         sideBarParent.setLayout(new FormLayout());
         
         // for easier managing the visibility of the side bar's collapse/expand arrows
@@ -173,7 +229,6 @@ public final class DiagramSideBar {
         resources.add(rightArrow);
         rightArrowLabel.setImage(rightArrow);
         rightArrowLabel.setVisible(true);
-        arrowLabelContainerLayout.topControl = rightArrowLabel;
 
         // create the left arrow for expanding the options pane
         final Label leftArrowLabel = new Label(arrowsContainer, SWT.NONE);
@@ -181,20 +236,36 @@ public final class DiagramSideBar {
         resources.add(leftArrow);
         leftArrowLabel.setImage(leftArrow);
         leftArrowLabel.setVisible(true);
-        
+
+        // depending on the preference of initially expanding or collapsing the side bar
+        //  let the corresponding symbol be visible
+        arrowLabelContainerLayout.topControl = initiallyExpanded ? rightArrowLabel : leftArrowLabel;
+
         // create the sash for resizing the options pane
         final Sash sash = new Sash(sideBarParent, SWT.VERTICAL);
         sideBarControls.add(sash);
         sash.addPaintListener(new LinePainter());
         sash.setVisible(false);
-        
+
         optionsformToolkit = new FormToolkit(sideBarParent.getDisplay());
+
+        if (zoomButtonsVisible) {
+            // create toolbar buttons in the sidebar
+            sideZoomBtnsForm = optionsformToolkit.createForm(sideBarParent);
+            sideZoomBtnsForm.setText(null);
+            sideBarControls.add(sideZoomBtnsForm);
+            final Composite sideZoomBtnsContainer = sideZoomBtnsForm.getBody();
+            sideZoomBtnsForm.setBackground(Display.getCurrent().getSystemColor(
+                    SWT.COLOR_LIST_BACKGROUND));
+
+            initializeZoomButtons(sideZoomBtnsContainer);
+        }
 
         final ScrolledForm formRootScroller = optionsformToolkit.createScrolledForm(sideBarParent);
         formRootScroller.setText(null);
         sideBarControls.add(formRootScroller);
                 
-        Composite formRoot = formRootScroller.getBody();
+        final Composite formRoot = formRootScroller.getBody();
         formRoot.setLayout(new FormLayout());
 
         // create container for diagram synthesis options
@@ -233,7 +304,11 @@ public final class DiagramSideBar {
         arrowsContainerLayoutData.left = new FormAttachment(diagramContainer); 
         arrowsContainerLayoutData.right = new FormAttachment(formRootScroller);
         arrowsContainer.setLayoutData(arrowsContainerLayoutData);
-        
+
+        // initially put the sash outside its parent composite's visible area
+        //  right next to that widget's right border (i.e. at 100% of its width)
+        // if the side bar is to be shown later on, a negative absolute offset
+        //  will be configured on the 'left' form attachment 
         sashLayoutData = new FormData();
         sashLayoutData.top = new FormAttachment(arrowsContainer);
         sashLayoutData.bottom = new FormAttachment(FULL);
@@ -241,8 +316,17 @@ public final class DiagramSideBar {
         sashLayoutData.width = SASH_WIDTH;
         sash.setLayoutData(sashLayoutData);
         
-        final FormData formRootLayoutData = new FormData();        
-        formRootLayoutData.top = new FormAttachment(0);
+        if (zoomButtonsVisible) {
+            final FormData toolbarFormLayoutData = new FormData();
+            toolbarFormLayoutData.top = new FormAttachment(1);
+            toolbarFormLayoutData.left = new FormAttachment(sash, 3); // SUPPRESS CHECKSTYLE MagicNumber
+            toolbarFormLayoutData.right = new FormAttachment(FULL);
+            sideZoomBtnsForm.setLayoutData(toolbarFormLayoutData);
+        }
+
+        final FormData formRootLayoutData = new FormData();
+        formRootLayoutData.top =
+                zoomButtonsVisible ? new FormAttachment(sideZoomBtnsForm) : new FormAttachment(0);
         formRootLayoutData.bottom = new FormAttachment(FULL);
         formRootLayoutData.left = new FormAttachment(sash); 
         formRootLayoutData.right = new FormAttachment(FULL); 
@@ -263,8 +347,10 @@ public final class DiagramSideBar {
         layoutOptionsForm.setLayoutData(layoutOptionsFormLayoutData);
 
         // register the sash moving handler for resizing the options pane
-        sash.addListener(SWT.Selection, new Listener() {
-            public void handleEvent(final Event event) {
+        sash.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent event) {
+                updateZoomButtons(true);
                 final int maxDiagSize = sideBarParent.getClientArea().width - MINIMAL_OPTIONS_FORM_WIDTH;
                 if (maxDiagSize > event.x) {
                     sashLayoutData.left.numerator = FULL;
@@ -277,26 +363,33 @@ public final class DiagramSideBar {
                     event.x = maxDiagSize;
                 }
                 horizontalPos = sashLayoutData.left.offset;
-                sideBarParent.layout(true);
+                arrowLabelContainerLayout.topControl = rightArrowLabel;
+                sideBarParent.layout(true, true);
             }
         });
         
         // a "pseudo" field ;-)
-        final int[] lastXpos = new int[] { 0 };
+        // the initialization with #INITIAL_OPTIONS_FORM_WIDTH is required for proper expansion
+        //  in case the side bar is initially to be collapsed
+        final int[] lastXpos = new int[] { INITIAL_OPTIONS_FORM_WIDTH };
         
         // register actions for the collapse / expand labels
         rightArrowLabel.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseUp(final MouseEvent event) {
+                updateZoomButtons(false);
                 sashLayoutData.left.numerator = FULL;
                 sashLayoutData.left.offset = -sashLayoutData.width;
-                lastXpos[0] = sideBarParent.getClientArea().width - sash.getBounds().x;                
+                lastXpos[0] = sideBarParent.getClientArea().width - sash.getBounds().x;
                 horizontalPos = sashLayoutData.left.offset;
                 arrowLabelContainerLayout.topControl = leftArrowLabel;
                 sideBarParent.layout(true, true);
             }
         });
         leftArrowLabel.addMouseListener(new MouseAdapter() {
-            public void mouseUp(final MouseEvent event) {                
+            @Override
+            public void mouseUp(final MouseEvent event) {
+                updateZoomButtons(true);
                 sashLayoutData.left.numerator = FULL;
                 sashLayoutData.left.offset = -lastXpos[0];
                 horizontalPos = sashLayoutData.left.offset;
@@ -306,31 +399,115 @@ public final class DiagramSideBar {
         });        
         return this;
     }
-    
+
+    /** Constant definition of the key used for referring to buttons' zoom style. */
+    private static final String BUTTON_TYPE = "type";
+
+    /**
+     * Initialize the toolbar, that is create the three buttons and register selection listeners.
+     * 
+     * @param parent
+     *            the {@link Composite} to which the buttons are being added
+     */
+    private void initializeZoomButtons(final Composite parent) {
+        if (!zoomButtonsVisible) {
+            return;
+        }
+
+        parent.setLayout(new RowLayout());
+        final Button zoomToFitBtn = new Button(parent, SWT.TOGGLE | SWT.FLAT);
+        final Button zoomToFocusBtn = new Button(parent, SWT.TOGGLE | SWT.FLAT);
+        final Button zoomToOneBtn = new Button(parent, SWT.PUSH | SWT.FLAT);
+
+        // Zoom to Fit
+        final Image zoomToFitImage =
+                KlighdPlugin.getImageDescriptor("icons/kieler-zoomtofit.gif").createImage();
+        resources.add(zoomToFitImage);
+        zoomToFitBtn.setImage(zoomToFitImage);
+        zoomToFitBtn.setToolTipText("Toggle Zoom to Fit");
+
+        // set extra data to identify the buttons while updating later
+        zoomToFitBtn.setData(BUTTON_TYPE, ZoomStyle.ZOOM_TO_FIT);
+        zoomToFitBtn.setSelection(viewContext.isZoomToFit());
+        zoomToFitBtn.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                viewContext.setZoomStyle(ZoomStyle.create(false, zoomToFitBtn.getSelection(), false));
+                // perform zoom to fit upon activation of the toggle button
+                if (zoomToFitBtn.getSelection()) {
+                    LightDiagramServices.layoutDiagram(viewContext);
+                    // uncheck the zoom to focus button
+                    zoomToFocusBtn.setSelection(false);
+                }
+            }
+        });
+
+        // Zoom to focus
+        final Image zoomToFocusImage =
+                KlighdPlugin.getImageDescriptor("icons/kieler-zoomtofocus.gif").createImage();
+        resources.add(zoomToFocusImage);
+        zoomToFocusBtn.setImage(zoomToFocusImage);
+        zoomToFocusBtn.setToolTipText("Toggle Zoom to Focus");
+        // set extra data to identify the buttons while updating later
+        zoomToFocusBtn.setData(BUTTON_TYPE, ZoomStyle.ZOOM_TO_FOCUS);
+        zoomToFocusBtn.setSelection(viewContext.isZoomToFocus());
+        zoomToFocusBtn.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                viewContext.setZoomStyle(ZoomStyle.create(false, false,
+                        zoomToFocusBtn.getSelection()));
+                // perform zoom to focus upon activation of the toggle button
+                if (zoomToFocusBtn.getSelection()) {
+                    LightDiagramServices.layoutDiagram(viewContext);
+                    // uncheck the zoom to fit button
+                    zoomToFitBtn.setSelection(false);
+                }
+            }
+        });
+
+        // Zoom to actual size (1:1)
+        final Image zoomToOneImage =
+                KlighdPlugin.getImageDescriptor("icons/kieler-zoomtoone.gif").createImage();
+        resources.add(zoomToOneImage);
+        zoomToOneBtn.setImage(zoomToOneImage);
+        zoomToOneBtn.setToolTipText("Zoom to Original Size");
+        zoomToOneBtn.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                viewContext.getViewer().zoomToLevel(1, KlighdConstants.DEFAULT_ANIMATION_TIME);
+            }
+        });
+    }
+
     /**
      * A simple paint listener that draws a vertical line.
      */
     private final class LinePainter implements PaintListener {
         public void paintControl(final PaintEvent event) {
-            Point size = ((Control) event.widget).getSize();
+            final Point size = ((Control) event.widget).getSize();
             event.gc.setForeground(Display.getCurrent().getSystemColor(
                     SWT.COLOR_WIDGET_NORMAL_SHADOW));
             event.gc.drawLine(event.width / 2, 0, event.width / 2, size.y);
         }
     }
-
+    
     /**
      * Update the options to be displayed in the options pane.
      * 
      * @param diagramComposite
      *            the {@link Composite} the diagram canvas is contained in
-     * @param viewContext
+     * @param theViewContext
      *            the current {@link ViewContext}
      * @param fitSpace
      *            true if the diagram shall fit the available space
      */
-    public void updateOptions(final Composite diagramComposite, final ViewContext viewContext,
+    public void updateOptions(final Composite diagramComposite, final ViewContext theViewContext,
             final boolean fitSpace) {
+        
+        viewContext = theViewContext;
 
         if (diagramComposite.isDisposed()) {
             return;
@@ -344,11 +521,11 @@ public final class DiagramSideBar {
         // initialize a layout configuration for retrieving default values
         layoutOptionControlFactory.initialize(viewContext);
 
-        List<Pair<IProperty<?>, List<?>>> recommendedOptions =
+        final List<Pair<IProperty<?>, List<?>>> recommendedOptions =
                 viewContext.getDisplayedLayoutOptions();
         
         boolean layoutOptionsAvailable = false;
-        for (Pair<IProperty<?>, List<?>> pair : recommendedOptions) {
+        for (final Pair<IProperty<?>, List<?>> pair : recommendedOptions) {
             final Object first;
             final Object second;
             if (pair.getSecond() instanceof Collection) {
@@ -391,15 +568,110 @@ public final class DiagramSideBar {
             }
         }
         
-        this.enableOptionsSideBar(viewContext, fitSpace, synthesisOptionsAvailable,
-                layoutOptionsAvailable);
+        final boolean sideBarEnabled = this.enableOptionsSideBar(
+                fitSpace, synthesisOptionsAvailable, layoutOptionsAvailable);
+        
+        updateZoomButtons(sideBarEnabled);
+
         final IDiagramWorkbenchPart part = viewContext.getDiagramWorkbenchPart();
         if (part instanceof DiagramViewPart) {
-            ((DiagramViewPart) part).getAction(DiagramViewPart.ACTION_ID_RESET_LAYOUT_OPTIONS)
-                    .setEnabled(layoutOptionsAvailable);
+            final IAction action = ((DiagramViewPart) part).getAction(
+                    DiagramViewPart.ACTION_ID_RESET_LAYOUT_OPTIONS);
+            if (action != null) {
+                action.setEnabled(layoutOptionsAvailable);
+            }
         }
     }
+
+    /**
+     * Update the zoom buttons. In case the canvas-buttons are not yet initialized but need to be
+     * shown, initialize them (see {@link DiagramSideBar#initializeZoomButtons(Composite)}).
+     */
+    private void updateZoomButtons(final boolean sideBarEnabled) {
+        if (!zoomButtonsVisible) {
+            return;
+        }
+
+        // Set the visibility only if the canvasToolbar is already initialized.
+        if (canvasZoomBtnsContainer != null) {
+            canvasZoomBtnsContainer.setVisible(!sideBarEnabled);
+        }
+
+        if (sideBarEnabled) {
+            // side bar is expanded: simply update the selections status of the buttons.
+            updateZoomButtonSelection(sideZoomBtnsForm.getBody());
+            
+            return;
+        }
+
+        // side bar is hidden: if required, initialize the canvas buttons.
+        if (viewContext.getViewer().getControl() instanceof KlighdCanvas
+                && canvasZoomBtnsContainer == null) {
+
+            final KlighdCanvas canvas = (KlighdCanvas) viewContext.getViewer().getControl();
+            canvas.addDisposeListener(new DisposeListener() {
+                
+                public void widgetDisposed(final DisposeEvent e) {
+                    // whenever a new model is shown in the KlighCanvas, the old one gets disposed,
+                    // along with the canvasZoomBtnsContainer.
+                    // Therefore we need to recreate it when the buttons are updated.
+                    canvasZoomBtnsContainer = null;
+                }
+            });
+
+            canvasZoomBtnsContainer = new Composite(canvas, SWT.NONE);
+            final Color white = new Color(Display.getCurrent(), KlighdConstants.WHITE);
+            resources.add(white);
+            canvasZoomBtnsContainer.setBackground(white);
+
+            initializeZoomButtons(canvasZoomBtnsContainer);
+            // Pack the Composite's children so a size is calculated.
+            canvasZoomBtnsContainer.pack();
+
+            // Take care of the positioning of the canvasToolbar because the KlightCanvas
+            // has no Layout set.
+            
+            final Point canvasSize = canvas.getSize();
+            final Point buttonBarSize = canvasZoomBtnsContainer.getSize();
+
+            // Initial Positioning
+            canvasZoomBtnsContainer.setLocation(canvasSize.x - buttonBarSize.x
+                    - CANVAS_ZOOM_BTNS_OFFSET, CANVAS_ZOOM_BTNS_OFFSET);
+
+            // Position the Toolbar whenever the view is resized.
+            canvas.addListener(SWT.Resize, new Listener() {
+
+                public void handleEvent(final Event event) {
+                    final Point canvasSize = canvas.getSize();
+                    final Point buttonBarSize = canvasZoomBtnsContainer.getSize();
+
+                    canvasZoomBtnsContainer.setLocation(canvasSize.x - buttonBarSize.x
+                            - CANVAS_ZOOM_BTNS_OFFSET, CANVAS_ZOOM_BTNS_OFFSET);
+                }
+            });
+        }
+
+        // finally update the selection status
+        updateZoomButtonSelection(canvasZoomBtnsContainer);
+    }
     
+    /**
+     * Update the selection-status of the zoom buttons.
+     * 
+     * @param container
+     *            the {@link Composite} the buttons are contained in
+     */
+    private void updateZoomButtonSelection(final Composite container) {
+        for (final Control button : container.getChildren()) {
+            final Object type = button.getData(BUTTON_TYPE);
+            if (ZoomStyle.ZOOM_TO_FIT == type) {
+                ((Button) button).setSelection(viewContext.isZoomToFit());
+            } else if (ZoomStyle.ZOOM_TO_FOCUS == type) {
+                ((Button) button).setSelection(viewContext.isZoomToFocus());
+            }
+        }
+    }
+
     /**
      * A simple enabler of the side bar controls. It is to be executed in case there are diagram
      * options to provide in the side bar.
@@ -411,12 +683,13 @@ public final class DiagramSideBar {
      * @param showLayoutOptions
      *            {@code true} if the layout options group should be displayed.
      */
-    private void enableOptionsSideBar(final ViewContext viewContext,
-            final boolean zoomToFit, final boolean showSynthesisOptions,
+    private boolean enableOptionsSideBar(final boolean zoomToFit, final boolean showSynthesisOptions,
             final boolean showLayoutOptions) {
+        final boolean enabled;
+        
         if (showSynthesisOptions || showLayoutOptions) {
             // define the controls (sash, right arrow, form) to be visible
-            for (Control c : this.sideBarControls) {
+            for (final Control c : this.sideBarControls) {
                 if (c == synthesisOptionsForm) {
                     c.setVisible(showSynthesisOptions);
                 } else if (c == layoutOptionsForm) {
@@ -440,16 +713,29 @@ public final class DiagramSideBar {
                 this.sashLayoutData.left.numerator = FULL;
                 this.sashLayoutData.left.offset = horizontalPos;
             }
+            
+            enabled = true;
 
         } else {
-            for (Control c : this.sideBarControls) {
+            for (final Control c : this.sideBarControls) {
                 c.setVisible(false);
             }
             if (this.sashLayoutData != null) {
-                this.horizontalPos = this.sashLayoutData.left.offset;
+                if (this.sashLayoutData.left.offset != 0) {
+                    // The horizontal position of the side bar's sash should only be saved 
+                    // if it is visible in current view.
+                    // It' propose is to avoid the re-initialization of the side bar's size 
+                    // in case a different model has been assigned to the current view.
+                    // But if a sequence of models is displayed where only some of them have a sidebar
+                    // The problem appears that horizontalPos may be set to 0 which permanently
+                    // hides the sidebar and thus this zero check is needed.
+                    this.horizontalPos = this.sashLayoutData.left.offset;
+                }
                 this.sashLayoutData.left.numerator = FULL;
                 this.sashLayoutData.left.offset = 0;
             }
+            
+            enabled = false;
         }
 
         // re-layout the view part's composite
@@ -461,6 +747,8 @@ public final class DiagramSideBar {
         if (zoomToFit) {
             viewContext.getViewer().zoom(ZoomStyle.ZOOM_TO_FIT, 0);
         }
+        
+        return enabled;
     }
 
     /**
@@ -478,11 +766,13 @@ public final class DiagramSideBar {
             optionsformToolkit.dispose();
             optionsformToolkit = null;
         }
-        for (Resource res : resources) {
+        for (final Resource res : resources) {
             res.dispose();
         }
         resources.clear();
-    }
-    
 
+        viewContext = null;
+        layoutOptionControlFactory = null;
+        synthesisOptionControlFactory = null;
+    }
 }

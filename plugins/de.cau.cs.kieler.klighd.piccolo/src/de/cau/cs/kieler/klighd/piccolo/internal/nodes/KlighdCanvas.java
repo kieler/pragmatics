@@ -14,7 +14,10 @@
 package de.cau.cs.kieler.klighd.piccolo.internal.nodes;
 
 import java.awt.Graphics2D;
+import java.awt.event.InputEvent;
 
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Composite;
@@ -32,6 +35,7 @@ import edu.umd.cs.piccolo.PRoot;
 import edu.umd.cs.piccolo.event.PPanEventHandler;
 import edu.umd.cs.piccolo.event.PZoomEventHandler;
 import edu.umd.cs.piccolo.util.PBounds;
+import edu.umd.cs.piccolo.util.PPickPath;
 import edu.umd.cs.piccolox.swt.PSWTCanvas;
 import edu.umd.cs.piccolox.swt.PSWTRoot;
 
@@ -62,6 +66,9 @@ public class KlighdCanvas extends PSWTCanvas {
     public KlighdCanvas(final Composite parent, final int style) {
         super(parent, style);
 
+        // make sure this canvas is not stored in this horrible static reference!
+        PSWTCanvas.CURRENT_CANVAS = null;
+
         // remove the original event handlers as they require AWT event type codes
         //  instances of this class are augmented with SWT-based event handlers
         //  e.g. in PiccoloViewer or PiccoloOutlinePage
@@ -75,6 +82,26 @@ public class KlighdCanvas extends PSWTCanvas {
         // this reduces flickering drastically
         this.setDoubleBuffered(true);
 
+        this.addDisposeListener(new DisposeListener() {
+            
+            public void widgetDisposed(final DisposeEvent e) {
+                final KlighdCanvas thisCanvas = KlighdCanvas.this;
+
+                NodeDisposeListener.disposePNode(thisCanvas.getCamera().getRoot());
+
+                // this horrible static reference may preserve a pick path containing
+                //  a reference to the camera containing a reference to ...,
+                //  thus. preventing the gc from disposing almost every diagram data
+                PPickPath.CURRENT_PICK_PATH = null;
+
+                // this way the back buffer image will be disposed!
+                thisCanvas.setDoubleBuffered(false);
+
+                if (thisCanvas.graphics != null) {
+                    thisCanvas.graphics.dispose();
+                }
+            }
+        });
     }
 
     /**
@@ -145,7 +172,29 @@ public class KlighdCanvas extends PSWTCanvas {
         this.addDragDetectListener(mouseListener);
         this.addGestureListener(mouseListener);
     }
-    
+
+    /**
+     * {@inheritDoc}<br>
+     * <br>
+     * This specialization simply changes visibility to 'public' in order to be used in
+     * {@link KlighdMouseEventListener}, for example.
+     */
+    @Override
+    public void sendInputEventToInputManager(final InputEvent awtEvent, final int type) {
+        super.sendInputEventToInputManager(awtEvent, type);
+    }
+
+    /**
+     * {@inheritDoc}<br>
+     * <br>
+     * This specialization simply deactivates the inherited behavior. Since we do not (have
+     * opportunities to?) change the rendering quality, there is no need repaint the whole visible
+     * diagram area after user interaction.
+     */
+    @Override
+    public void setInteracting(final boolean isInteracting) {
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -173,11 +222,14 @@ public class KlighdCanvas extends PSWTCanvas {
      * This specialized method checks the validity of the canvas
      * before something is painted in order to avoid the 'Widget is disposed' errors.
      */
+    @Override
     public void repaint(final PBounds bounds) {
         if (!this.isDisposed()) {
             super.repaint(bounds);
         }
     }
+
+    private boolean resize = false;
 
     @Override
     public void setBounds(final int x, final int y, final int newWidth, final int newHeight) {
@@ -188,16 +240,28 @@ public class KlighdCanvas extends PSWTCanvas {
             //  and/or height of zero that results in an exception later on. 
             return;
         } else {
+            final PBounds bounds = getCamera().getBoundsReference();
+            resize = bounds.width != newWidth || bounds.height != newHeight;
+
             super.setBounds(x, y, newWidth, newHeight);
         }
+    }
+
+    /**
+     * {@inheritDoc}<br>
+     * <br>
+     * In contrast to the super method this specialized method forces a back buffer recreation even
+     * if the canvas size has been decreased, e.g., after a KLighD diagram view as been maximized
+     * and "re-normalized". Otherwise the oversized back buffer image will be kept until the diagram
+     * is closed.
+     */
+    @Override
+    protected boolean backBufferNeedsResizing(final int newWidth, final int newHeight) {
+        return resize && getDoubleBuffered();
     }
 
     @Override
     public void dispose() {
         super.dispose();
-        
-        if (this.graphics != null) {
-            this.graphics.dispose();
-        }
     }
 }

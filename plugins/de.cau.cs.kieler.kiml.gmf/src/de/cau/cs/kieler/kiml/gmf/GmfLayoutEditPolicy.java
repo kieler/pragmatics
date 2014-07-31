@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.draw2d.ConnectionAnchor;
 import org.eclipse.draw2d.ConnectionLocator;
 import org.eclipse.draw2d.IFigure;
@@ -65,6 +64,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.service.KimlServicePlugin;
 import de.cau.cs.kieler.kiml.service.LayoutManagersService;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
@@ -124,9 +124,8 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                 }
 
                 // set further options
-                boolean obliqueRouting = Platform.getPreferencesService().getBoolean(
-                        "de.cau.cs.kieler.kiml.ui",
-                        LayoutManagersService.PREF_OBLIQUE_ROUTE, true, null);
+                boolean obliqueRouting = KimlServicePlugin.getDefault().getPreferenceStore().getBoolean(
+                        LayoutManagersService.PREF_OBLIQUE_ROUTE);
                 command.setObliqueRouting(obliqueRouting);
 
                 pointListMap.clear();
@@ -276,7 +275,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
             // the target node is contained in the source node
             translateDescendantPoint(sourceRel, sourceLayout);
         } else {
-            sourceRel.translate(-sourceLayout.getXpos(), -sourceLayout.getYpos());
+            sourceRel.add(-sourceLayout.getXpos(), -sourceLayout.getYpos());
         }
 
         if (edge.getSourcePort() != null) {
@@ -307,7 +306,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         }
 
         // check the bound of the relative position
-        return sourceRel.applyBounds(0, 0, 1, 1);
+        return sourceRel.bound(0, 0, 1, 1);
     }
 
     /**
@@ -331,15 +330,15 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                 KimlUtil.toAbsolute(targetRel, sourceNode);
                 KimlUtil.toRelative(targetRel, targetNode.getParent());
             }
-            targetRel.translate(-targetLayout.getXpos(), -targetLayout.getYpos());
+            targetRel.add(-targetLayout.getXpos(), -targetLayout.getYpos());
         } else if (sourceNode.getParent() != targetNode.getParent()) {
             // the reference point of the target is different from the source
             KimlUtil.toAbsolute(targetRel, sourceNode.getParent());
             KimlUtil.toRelative(targetRel, targetNode.getParent());
-            targetRel.translate(-targetLayout.getXpos(), -targetLayout.getYpos());
+            targetRel.add(-targetLayout.getXpos(), -targetLayout.getYpos());
         } else {
             // source and target have the same reference point
-            targetRel.translate(-targetLayout.getXpos(), -targetLayout.getYpos());
+            targetRel.add(-targetLayout.getXpos(), -targetLayout.getYpos());
         }
 
         if (edge.getTargetPort() != null) {
@@ -370,7 +369,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         }
 
         // check the bound of the relative position
-        return targetRel.applyBounds(0, 0, 1, 1);
+        return targetRel.bound(0, 0, 1, 1);
     }
 
     /**
@@ -492,7 +491,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                     edgeLayout.getProperty(LayoutOptions.EDGE_ROUTING));
             // in other cases an approximation is used
             if (approx && bendPoints.size() >= 1) {
-                bendPoints = KielerMath.approximateSpline(bendPoints);
+                bendPoints = KielerMath.approximateBezierSpline(bendPoints);
             }
 
             bendPoints.scale(scale);

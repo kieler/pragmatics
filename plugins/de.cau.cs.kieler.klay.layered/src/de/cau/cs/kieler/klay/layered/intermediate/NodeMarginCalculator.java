@@ -47,6 +47,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @see LabelAndNodeSizeProcessor
  * @author cds
  * @kieler.design 2012-08-10 chsch grh
+ * @kieler.rating proposed yellow by cds
  */
 public final class NodeMarginCalculator implements ILayoutProcessor {
 
@@ -60,7 +61,7 @@ public final class NodeMarginCalculator implements ILayoutProcessor {
         KimlNodeDimensionCalculation.calculateNodeMargins(LGraphAdapters.adapt(layeredGraph));
         
         // Iterate through the layers to additionally handle comments
-        double spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
+        double spacing = layeredGraph.getProperty(Properties.OBJ_SPACING).doubleValue();
         for (Layer layer : layeredGraph) {
             // Iterate through the layer's nodes
             for (LNode node : layer) {

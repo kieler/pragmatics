@@ -65,8 +65,14 @@ import de.cau.cs.kieler.core.krendering.VerticalAlignment
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 
 /**
- * This utility class contains various methods that are convenient while composing KRendering data.
- * It does not claim to be complete ;-).
+ * This class contains lots of convenient helper functions for configuring KRendering-based view models, 
+ * and it does not claim to be complete ;-).<br>
+ * In order to be consistent with the further extension classes the extension methods are non-static
+ * ones requiring this class to be instantiated. Since this class doesn't declare any fields (i.e.
+ * required memory) the instantiation should not be a problem. The instantiation may be done directly
+ * by calling 'new KRenderingExtensions()' or by delegating that to a dependency injection framework.<br>
+ * <br>
+ * NOTE: Do NOT introduce <i>create extensions</i> or other continuous memory in that class!
  * 
  * @containsExtensions
  */
@@ -286,6 +292,9 @@ class KRenderingExtensions {
     
     def <T extends KRendering> T setStyleRef(T rendering, KStyleHolder styleHolder) {
         rendering.styles.removeAll(rendering.styles.filter(typeof(KStyleRef)).toList);
+        if (styleHolder == null) {
+            return rendering;
+        }
         return rendering => [
             it.styles += createKStyleRef() => [
                 it.styleHolder = styleHolder;
@@ -295,6 +304,9 @@ class KRenderingExtensions {
  
     def <T extends KRendering> T setSelectionStyleRef(T rendering, KStyleHolder styleHolder) {
         rendering.styles.removeAll(rendering.styles.filter(IS_SELECTION).filter(typeof(KStyleRef)).toList);
+        if (styleHolder == null) {
+            return rendering;
+        }
         return rendering => [
             it.styles += createKStyleRef() => [
                 it.selection = true;
@@ -304,6 +316,9 @@ class KRenderingExtensions {
     }
  
     def <T extends KRendering> T addStyleRef(T rendering, KStyleHolder styleHolder) {
+        if (styleHolder == null) {
+            return rendering;
+        }
         return rendering => [
             it.styles += createKStyleRef() => [
                 it.styleHolder = styleHolder;
@@ -312,6 +327,9 @@ class KRenderingExtensions {
     }
  
     def <T extends KRendering> T addSelectionStyleRef(T rendering, KStyleHolder styleHolder) {
+        if (styleHolder == null) {
+            return rendering;
+        }
         return rendering => [
             it.styles += createKStyleRef() => [
                 it.selection = true;
@@ -833,6 +851,14 @@ class KRenderingExtensions {
         ];
     }
     
+    def <T extends KRendering> T setSelectionForeground(T rendering, Colors color) {
+        return rendering => [
+            it.styles += createKForeground.setColor(color) => [
+                it.selection = true;
+            ];
+        ];
+    }
+
     def <T extends KRendering>  T setForeground(T rendering, Colors color, int alpha){
         rendering.styles.removeAll(rendering.styles.filter(typeof(KForeground)).toList);
         return rendering => [
@@ -840,6 +866,14 @@ class KRenderingExtensions {
         ];
     }
     
+    def <T extends KRendering> T setSelectionForeground(T rendering, Colors color, int alpha) {
+        return rendering => [
+            it.styles += createKForeground.setColor(color, alpha) => [
+                it.selection = true;
+            ];
+        ];
+    }
+
     def <T extends KRendering>  T setForegroundColor(T rendering, int red, int green, int blue){
         rendering.styles.removeAll(rendering.styles.filter(typeof(KForeground)).toList);
         return rendering => [

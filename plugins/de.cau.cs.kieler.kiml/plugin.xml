@@ -375,6 +375,15 @@
      <layoutOption
            appliesTo="nodes"
            advanced="true"
+           description="Additional space around the sets of nodes on each node side."
+           id="de.cau.cs.kieler.additionalPortSpace"
+           name="Additional Port Space"
+           type="object"
+           class="de.cau.cs.kieler.kiml.util.nodespacing.Spacing$Margins">
+     </layoutOption>
+     <layoutOption
+           appliesTo="nodes"
+           advanced="true"
            default="false"
            description="Whether the node should be regarded as a comment box instead of a regular node"
            id="de.cau.cs.kieler.commentBox"
@@ -469,6 +478,17 @@
            id="de.cau.cs.kieler.layoutAncestors"
            name="Layout Ancestors"
            type="boolean"
+           variance="0">
+     </layoutOption>
+     <layoutOption
+           advanced="true"
+           appliesTo="nodes"
+           class="de.cau.cs.kieler.kiml.util.nodespacing.Spacing$Margins"
+           default="[top=0,left=0,bottom=0,right=0]"
+           description="Margins define additional space around the actual bounds of a graph element. For instance, ports or labels being placed on the outside of a node's border might introduce such a margin."
+           id="de.cau.cs.kieler.margins"
+           name="Margins"
+           type="object"
            variance="0">
      </layoutOption>
      <layoutOption
@@ -571,6 +591,16 @@
            description="Whether the zoom level shall be set to view the whole diagram after layout"
            id="de.cau.cs.kieler.zoomToFit"
            name="Zoom to Fit"
+           type="boolean"
+           variance="0">
+     </layoutOption>
+     <layoutOption
+           advanced="true"
+           appliesTo="parents,nodes,edges,ports,labels"
+           default="true"
+           description="Whether to reset layout options prior to a layout run."
+           id="de.cau.cs.kieler.resetConfig"
+           name="Reset Config"
            type="boolean"
            variance="0">
      </layoutOption>

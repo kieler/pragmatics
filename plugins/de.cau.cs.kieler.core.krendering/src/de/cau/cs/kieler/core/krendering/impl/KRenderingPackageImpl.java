@@ -782,6 +782,15 @@ public class KRenderingPackageImpl extends EPackageImpl implements KRenderingPac
      * <!-- end-user-doc -->
      * @generated
      */
+    public EReference getKImage_ClipShape() {
+        return (EReference)kImageEClass.getEStructuralFeatures().get(3);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public EClass getKDecoratorPlacementData() {
         return kDecoratorPlacementDataEClass;
     }
@@ -1018,6 +1027,15 @@ public class KRenderingPackageImpl extends EPackageImpl implements KRenderingPac
      */
     public EAttribute getKText_CursorSelectable() {
         return (EAttribute)kTextEClass.getEStructuralFeatures().get(1);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getKText_Editable() {
+        return (EAttribute)kTextEClass.getEStructuralFeatures().get(2);
     }
 
     /**
@@ -2074,6 +2092,7 @@ public class KRenderingPackageImpl extends EPackageImpl implements KRenderingPac
         createEAttribute(kImageEClass, KIMAGE__BUNDLE_NAME);
         createEAttribute(kImageEClass, KIMAGE__IMAGE_PATH);
         createEAttribute(kImageEClass, KIMAGE__IMAGE_OBJECT);
+        createEReference(kImageEClass, KIMAGE__CLIP_SHAPE);
 
         kDecoratorPlacementDataEClass = createEClass(KDECORATOR_PLACEMENT_DATA);
         createEAttribute(kDecoratorPlacementDataEClass, KDECORATOR_PLACEMENT_DATA__ABSOLUTE);
@@ -2109,6 +2128,7 @@ public class KRenderingPackageImpl extends EPackageImpl implements KRenderingPac
         kTextEClass = createEClass(KTEXT);
         createEAttribute(kTextEClass, KTEXT__TEXT);
         createEAttribute(kTextEClass, KTEXT__CURSOR_SELECTABLE);
+        createEAttribute(kTextEClass, KTEXT__EDITABLE);
 
         kPlacementEClass = createEClass(KPLACEMENT);
 
@@ -2421,6 +2441,7 @@ public class KRenderingPackageImpl extends EPackageImpl implements KRenderingPac
         initEAttribute(getKImage_BundleName(), ecorePackage.getEString(), "bundleName", null, 0, 1, KImage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getKImage_ImagePath(), ecorePackage.getEString(), "imagePath", null, 0, 1, KImage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getKImage_ImageObject(), ecorePackage.getEJavaObject(), "imageObject", null, 0, 1, KImage.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getKImage_ClipShape(), this.getKRendering(), null, "clipShape", null, 0, 1, KImage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(kDecoratorPlacementDataEClass, KDecoratorPlacementData.class, "KDecoratorPlacementData", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getKDecoratorPlacementData_Absolute(), ecorePackage.getEFloat(), "absolute", null, 1, 1, KDecoratorPlacementData.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -2456,6 +2477,7 @@ public class KRenderingPackageImpl extends EPackageImpl implements KRenderingPac
         initEClass(kTextEClass, KText.class, "KText", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getKText_Text(), ecorePackage.getEString(), "text", null, 0, 1, KText.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getKText_CursorSelectable(), ecorePackage.getEBoolean(), "cursorSelectable", "false", 0, 1, KText.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getKText_Editable(), ecorePackage.getEBoolean(), "editable", "false", 0, 1, KText.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(kPlacementEClass, KPlacement.class, "KPlacement", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 

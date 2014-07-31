@@ -185,6 +185,9 @@ public abstract class LayoutConfigService {
      * @param factory an instance factory
      */
     public static void setInstanceFactory(final IFactory<? extends LayoutConfigService> factory) {
+        if (factory == null) {
+            throw new NullPointerException("The given instance factory is null");
+        }
         instanceFactory = factory;
         instance = null;
     }
@@ -440,7 +443,9 @@ public abstract class LayoutConfigService {
                 if (semanticConfigMap.containsKey(c.getName())) {
                     configs.addAll(semanticConfigMap.get(c.getName()));
                 }
-                classes.add(c.getSuperclass());
+                if (c.getSuperclass() != null) {
+                    classes.add(c.getSuperclass());
+                }
                 for (Class<?> i : c.getInterfaces()) {
                     classes.add(i);
                 }

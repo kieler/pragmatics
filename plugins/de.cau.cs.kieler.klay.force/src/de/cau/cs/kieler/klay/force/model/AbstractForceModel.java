@@ -132,7 +132,7 @@ public abstract class AbstractForceModel {
             // apply calculated displacement
             for (FNode v : fgraph.getNodes()) {
                 KVector d = v.getDisplacement();
-                d.applyBounds(-dispBound, -dispBound, dispBound, dispBound);
+                d.bound(-dispBound, -dispBound, dispBound, dispBound);
                 v.getPosition().add(d);
                 d.reset();
             }

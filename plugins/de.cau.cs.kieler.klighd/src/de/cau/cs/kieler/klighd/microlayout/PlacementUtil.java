@@ -26,7 +26,6 @@ import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +54,7 @@ import de.cau.cs.kieler.core.krendering.KFontItalic;
 import de.cau.cs.kieler.core.krendering.KFontName;
 import de.cau.cs.kieler.core.krendering.KFontSize;
 import de.cau.cs.kieler.core.krendering.KGridPlacement;
+import de.cau.cs.kieler.core.krendering.KImage;
 import de.cau.cs.kieler.core.krendering.KLeftPosition;
 import de.cau.cs.kieler.core.krendering.KPlacement;
 import de.cau.cs.kieler.core.krendering.KPlacementData;
@@ -166,6 +166,7 @@ public final class PlacementUtil {
         /**
          * {@inheritDoc}
          */
+        @Override
         public String toString() {
             return "(" + this.x + "," + this.y + ")";
         }
@@ -264,8 +265,8 @@ public final class PlacementUtil {
      */
     public static Point evaluateKPosition(final KPosition position,
             final Bounds parentBounds, final boolean topLeft) {
-        float width = (float) parentBounds.getWidth();
-        float height = (float) parentBounds.getHeight();
+        final float width = parentBounds.getWidth();
+        final float height = parentBounds.getHeight();
         
         final Point point = new Point(0, 0);
         final KXPosition<?> xPos = topLeft ? toNonNullLeftPosition(position.getX())
@@ -446,8 +447,8 @@ public final class PlacementUtil {
      * @return the estimated size or (0, 0) if no text is contained.
      */
     public static Bounds estimateSize(final KNode node) {
-        KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-        KRendering nodeRendering = node.getData(KRendering.class);
+        final KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+        final KRendering nodeRendering = node.getData(KRendering.class);
 
         if (nodeLayout != null && nodeRendering != null) {
             return estimateSize(nodeRendering,
@@ -471,15 +472,14 @@ public final class PlacementUtil {
      */
     public static Bounds estimateSize(final KRendering rendering, final Bounds givenBounds) {
         // determine the type of the rendering
-        int id =
-                KRENDERING_PACKAGE.getKText().isInstance(rendering) ? KRenderingPackage.KTEXT
-                        : (KRENDERING_PACKAGE.getKContainerRendering().isInstance(rendering) 
-                                ? KRenderingPackage.KCONTAINER_RENDERING
-                                : KRENDERING_PACKAGE.getKChildArea().isInstance(rendering) 
-                                ? KRenderingPackage.KCHILD_AREA
-                                        : KRENDERING_PACKAGE.getKRenderingRef().isInstance(
-                                                rendering) ? KRenderingPackage.KRENDERING_REF
-                                                : KRenderingPackage.KRENDERING);
+        final int id = KRENDERING_PACKAGE.getKText().isInstance(rendering) ? KRenderingPackage.KTEXT
+            : KRENDERING_PACKAGE.getKContainerRendering().isInstance(rendering) 
+                ? KRenderingPackage.KCONTAINER_RENDERING
+                    : KRENDERING_PACKAGE.getKChildArea().isInstance(rendering) 
+                        ? KRenderingPackage.KCHILD_AREA
+                            : KRENDERING_PACKAGE.getKRenderingRef().isInstance(rendering)
+                                ? KRenderingPackage.KRENDERING_REF
+                                    : KRenderingPackage.KRENDERING;
 
         // calculate size based on type
         switch (id) {
@@ -487,12 +487,15 @@ public final class PlacementUtil {
             // for a text rendering just calculate the bounds of the text
             // and put the minimal size into 'minBounds'
             return estimateTextSize((KText) rendering);
+
         case KRenderingPackage.KCHILD_AREA:
             // KChildAreas do not cover any space that is not gathered by the (macro) layout
             return new Bounds(0, 0);
+
         case KRenderingPackage.KRENDERING_REF:
             // calculate the size of the referenced Rendering instead
             return estimateSize(((KRenderingRef) rendering).getRendering(), givenBounds);
+
         case KRenderingPackage.KCONTAINER_RENDERING:
 
             final KContainerRendering container = (KContainerRendering) rendering;
@@ -508,20 +511,31 @@ public final class PlacementUtil {
             default:
                 // in case of no placement definition calculate the size of each child rendering and
                 // find the biggest rendering in width and height
-                Bounds maxSize = new Bounds(givenBounds);
-                for (KRendering child : container.getChildren()) {
-                    final KPlacementData pd = getPlacementData(child); 
+                final Bounds maxSize = new Bounds(givenBounds);
+                for (final KRendering child : container.getChildren()) {
+                    final KPlacementData pd = getPlacementData(child);
+
+                    final Bounds childSize; 
                     if (pd instanceof KPointPlacementData) {
-                        Bounds.max(maxSize,
-                                estimatePointPlacedChildSize(child, (KPointPlacementData) pd));
+                        childSize = estimatePointPlacedChildSize(child, (KPointPlacementData) pd);
+
                     } else if (pd instanceof KAreaPlacementData) {
-                        Bounds.max(maxSize,
-                                estimateAreaPlacedChildSize(child, (KAreaPlacementData) pd,
-                                        givenBounds));
+                        childSize = estimateAreaPlacedChildSize(child, (KAreaPlacementData) pd,
+                                givenBounds);
+
                     } else {
                         // in case no valid placement data are given we assume the size of the
                         // parent by the size of the child
                         Bounds.max(maxSize, estimateSize(child, givenBounds));
+                        continue;
+                    }
+
+                    if (child instanceof KImage) {
+                        final Bounds imageSize = estimateImageSize((KImage) child, childSize);
+                        Bounds.max(maxSize, imageSize);
+                        
+                    } else {
+                        Bounds.max(maxSize, childSize);
                     }
                 }
                 return maxSize;
@@ -533,7 +547,111 @@ public final class PlacementUtil {
             return givenBounds;
         }
     }
-    
+
+    /**
+     * Computes the minimal bounds of an {@link KImage}, esp. in case a clip shape is configured.<br>
+     * This method basically applies the area/point placement data of the clip shape to the already
+     * determined size of the KImage in order to avoid the extension of the, e.g., node to the
+     * complete bounds of the image.<br>
+     * <br>
+     * <b>Note</b> that the general assumption of the size estimation assuming the bounds of a child
+     * figure being completely encompassed by the bounds of the parent figure is not applied here!
+     * Instead, the size estimation of images is supposed to cope with negative values of, at least,
+     * the absolute positioning components.<br>
+     * <br>
+     * If no clip shape is defined it simply returns <code>imageSize</code>.
+     * 
+     * @param image
+     *            the {@link KImage}
+     * @param imageSize
+     *            the pre-calculated size of the image itself
+     * @return the minimal size
+     */
+    public static Bounds estimateImageSize(final KImage image, final Bounds imageSize) {
+        final KRendering clipShape = image.getClipShape();
+
+        if (clipShape == null) {
+            return imageSize;
+
+        } else {
+            final KPlacementData pd = image.getPlacementData();
+            final int pdType = pd == null ? 0 : pd.eClass().getClassifierID();
+            
+            if (pdType == KRenderingPackage.KPOINT_PLACEMENT_DATA) {
+                // if the image is placed by means of point placement data
+                
+                final KPlacementData cpd = clipShape.getPlacementData();
+                final int cpdType = cpd == null ? 0 : cpd.eClass().getClassifierID();
+                
+                if (cpdType == KRenderingPackage.KPOINT_PLACEMENT_DATA) {
+                    return estimatePointPlacedChildSize(clipShape, (KPointPlacementData) cpd);
+                    
+                } else if (cpdType == KRenderingPackage.KAREA_PLACEMENT_DATA) {
+                    // if the image clip is determined by means of point placement data
+                    //  just take the (minimal) size specified in image's placement data  
+                    //  to calculate the bounds of the clip shape
+                    final KPointPlacementData ppd = (KPointPlacementData) pd;
+                    return calculateBounds(null, Bounds.of(ppd.getMinWidth(), ppd.getMinHeight()),
+                            null, clipShape);
+                } else {
+                    return imageSize;
+                }
+
+            } else if (pdType ==  KRenderingPackage.KAREA_PLACEMENT_DATA) {
+                // if the image is placed by means of point placement data ...
+                // NOTE that RELATIVE POSITION COMPONENTS ARE NOT CONSIDERED HERE (yet)
+                //  as relative positioning of clipped images with unknown node size
+                //  seems to be rather unlikely to me!
+
+                final KAreaPlacementData apd = (KAreaPlacementData) pd;
+                final KPosition tl = apd.getTopLeft();
+                final KPosition br = apd.getBottomRight();
+
+                // ... a reasonable size estimation can be performed if both
+                //  top left and bottom right positions refer the same side,
+                //  i.e. both refer to 'left'/'top' or both refer to 'right'/'bottom'.
+
+                final boolean widthModEnabled =
+                        tl != null && br != null && tl.getX().eClass() == br.getX().eClass();
+                final boolean heightModEnabled =
+                        tl != null && br != null && tl.getY().eClass() == br.getY().eClass();
+
+                if (widthModEnabled) {
+                    // if that is given adjust the assumed image width by subtracting the
+                    //  potentially negative value of ...
+                    if (tl.getX().eClass().getClassifierID() == KRenderingPackage.KLEFT_POSITION) {
+                        // ... topLeft's absolute value ...
+                        imageSize.width -= tl.getX().getAbsolute();
+                        imageSize.x = 0;
+                    } else {
+                        // ... bottomRight's absolute value ...
+                        imageSize.width -= br.getX().getAbsolute();
+                        imageSize.x = 0;
+                    }
+                    // ... since in case of left/left (or right/right) positions just bottomRight's
+                    //  absolute component (or topLeft's absolute component respectively)
+                    //  is treated as the width of the image
+                }
+
+                if (heightModEnabled) {
+                    // see horizontal case above
+                    if (tl.getY().eClass().getClassifierID() == KRenderingPackage.KTOP_POSITION) {
+                        imageSize.height -= tl.getY().getAbsolute();
+                        imageSize.y = 0;
+                    } else {
+                        imageSize.height -= br.getY().getAbsolute();
+                        imageSize.y = 0;
+                    }
+                }
+
+                return calculateBounds(null, imageSize, null, clipShape);
+
+            } else {
+                return imageSize;
+            }
+        }
+    }
+
     /**
      * Returns the minimal bounds for a KText.
      * 
@@ -582,10 +700,10 @@ public final class PlacementUtil {
         KFontItalic kFontItalic = null;
         
         if (kText != null) {
-            PersistentEntry testHeight =
+            final PersistentEntry testHeight =
                     Iterables.find(kText.getPersistentEntries(),
                             KlighdInternalProperties.PRED_TESTING_HEIGHT, null);
-            PersistentEntry testWidth =
+            final PersistentEntry testWidth =
                     Iterables.find(kText.getPersistentEntries(),
                             KlighdInternalProperties.PRED_TESTING_WIDTH, null);
             if (testHeight != null || testWidth != null) {
@@ -593,8 +711,8 @@ public final class PlacementUtil {
                 // (I don't trust in the different SWT implementations to
                 // provide the same size of a text on different platforms
                 // so given data are to be used)
-                float height = testHeight != null ? Float.parseFloat(testHeight.getValue()) : 0f;
-                float width = testWidth != null ? Float.parseFloat(testWidth.getValue()) : 0f;
+                final float height = testHeight != null ? Float.parseFloat(testHeight.getValue()) : 0f;
+                final float width = testWidth != null ? Float.parseFloat(testWidth.getValue()) : 0f;
                 if (height != 0f || width != 0f) {
                     return new Bounds(width, height);
                 }
@@ -603,7 +721,7 @@ public final class PlacementUtil {
             // the following lines look for font styles propagated from parents
             //  TODO also make allowance of styles propagated via KRenderingRefs
             final List<KStyle> styles = Lists.newLinkedList(kText.getStyles());            
-            for (KRendering k : Iterables2.toIterable(Iterators.filter(
+            for (final KRendering k : Iterables2.toIterable(Iterators.filter(
                     ModelingUtil.eAllContainers(kText), KRendering.class))) {
                 Iterables.addAll(styles, Iterables.filter(k.getStyles(), FILTER));
             }
@@ -664,30 +782,12 @@ public final class PlacementUtil {
 
             fmg.setFont(new java.awt.Font(fontData.getName(), KTextUtil.swtFontStyle2Awt(fontData
                     .getStyle()), fontData.getHeight()));
-            FontMetrics fm = fmg.getFontMetrics();
+            final FontMetrics fm = fmg.getFontMetrics();
 
             if (Strings.isNullOrEmpty(text)) {
                 textBounds = new Bounds(fm.getStringBounds(" ", fmg));
             } else {
-                List<String> lines = KTextUtil.getTextLines(text);
-
-                boolean firstLine = true;
-                final Iterator<String> lineIterator = lines.iterator();
-                while (lineIterator.hasNext()) {
-                    String line = (String) lineIterator.next();
-                    Rectangle2D lineBounds = fm.getStringBounds(line, fmg);
-                    if (firstLine) {
-                        textBounds.width = (float) lineBounds.getWidth();
-                        textBounds.height +=
-                                fm.getAscent() + fm.getDescent()
-                                        + (firstLine ? 0 : fm.getLeading());
-                        firstLine = false;
-                    } else {
-                        textBounds.width =
-                                Math.max((float) lineBounds.getWidth(), textBounds.width);
-                        textBounds.height += fm.getHeight();
-                    }
-                }
+                textBounds = new Bounds(fm.getStringBounds(text, fmg));
             }
 
         } else {
@@ -735,8 +835,8 @@ public final class PlacementUtil {
         final Bounds minimalSize = Bounds.of(ppd.getMinWidth(), ppd.getMinHeight());
         final Bounds cSize = Bounds.max(minimalSize, estimateSize(rendering, minimalSize));
 
-        float requiredWidth = getHorizontalSize(ppd, cSize.getWidth());
-        float requiredHeight = getVerticalSize(ppd, cSize.getHeight());
+        final float requiredWidth = getHorizontalSize(ppd, cSize.getWidth());
+        final float requiredHeight = getVerticalSize(ppd, cSize.getHeight());
 
         return Bounds.of(requiredWidth, requiredHeight);
     }
@@ -766,7 +866,7 @@ public final class PlacementUtil {
             calculatedWidth = abs + minWidth + ppd.getHorizontalMargin();
             break;
         case CENTER:
-            float halfWidth = minWidth / 2;
+            final float halfWidth = minWidth / 2;
             if (abs > halfWidth) {
                 // in this case the child requires, depending on type of pos.getX, on one side more
                 // space than on the other, so:
@@ -805,7 +905,7 @@ public final class PlacementUtil {
             calculatedHeight = abs + minHeight + ppd.getVerticalMargin();
             break;
         case CENTER:
-            float halfHeight = minHeight / 2;
+            final float halfHeight = minHeight / 2;
             if (abs > halfHeight) {
                 // in this case the child requires, depending on type of pos.getY, on one side more
                 // space than on the other, so:
@@ -1006,7 +1106,7 @@ public final class PlacementUtil {
         final float absOffset;
         final float relWidth;
 
-        int position = positionId0 * FIRST_OFFSET + positionId1;
+        final int position = positionId0 * FIRST_OFFSET + positionId1;
 
         switch (position) {
         case PIMARY_PIMARY:
@@ -1062,11 +1162,11 @@ public final class PlacementUtil {
      */
     private static Bounds inverselyApplySizeData(final Bounds bounds,
             final Pair<Float, Float> horSize, final Pair<Float, Float> vertSize) {
-        float absXOffest = horSize.getFirst();
-        float relWidth = horSize.getSecond();
+        final float absXOffest = horSize.getFirst();
+        final float relWidth = horSize.getSecond();
 
-        float absYOffest = vertSize.getFirst();
-        float relHeight = vertSize.getSecond();
+        final float absYOffest = vertSize.getFirst();
+        final float relHeight = vertSize.getSecond();
 
         bounds.width = (relWidth == 0f ? absXOffest : (bounds.width  + absXOffest) / relWidth);
         bounds.height = (relHeight == 0f ? absYOffest : (bounds.height  + absYOffest) / relHeight);
@@ -1137,7 +1237,7 @@ public final class PlacementUtil {
 
             // dereference all rendering references
             while (currentRendering instanceof KRenderingRef) {
-                KRenderingRef renderingRef = (KRenderingRef) currentRendering;
+                final KRenderingRef renderingRef = (KRenderingRef) currentRendering;
                 currentRendering = renderingRef.getRendering();
                 path.removeFirst();
             }
@@ -1183,6 +1283,7 @@ public final class PlacementUtil {
             }
         } else {
             bounds = new KRenderingSwitch<Bounds>() {
+                @Override
                 public Bounds caseKGridPlacement(final KGridPlacement gridPlacement) {
                     // evaluate grid based on the children, their placementData and size
                     // and get placement for current child
@@ -1225,8 +1326,8 @@ public final class PlacementUtil {
         float maxX = Float.MIN_VALUE;
         float minY = Float.MAX_VALUE;
         float maxY = Float.MIN_VALUE;
-        for (KPosition polylinePoint : line.getPoints()) {
-            Point point = evaluateKPosition(polylinePoint, givenBounds, true);
+        for (final KPosition polylinePoint : line.getPoints()) {
+            final Point point = evaluateKPosition(polylinePoint, givenBounds, true);
             if (point.x < minX) {
                 minX = point.x;
             }
@@ -1261,15 +1362,15 @@ public final class PlacementUtil {
             return true;
         }
         if (rendering instanceof KContainerRendering) {
-            KContainerRendering containerRendering = (KContainerRendering) rendering;
-            for (KRendering childRendering : containerRendering.getChildren()) {
+            final KContainerRendering containerRendering = (KContainerRendering) rendering;
+            for (final KRendering childRendering : containerRendering.getChildren()) {
                 if (findChildArea(childRendering, path)) {
                     return true;
                 }
             }
         } else if (rendering instanceof KRenderingRef) {
-            KRenderingRef renderingReference = (KRenderingRef) rendering;
-            KRendering referencedRendering = renderingReference.getRendering();
+            final KRenderingRef renderingReference = (KRenderingRef) rendering;
+            final KRendering referencedRendering = renderingReference.getRendering();
             if (referencedRendering != null) {
                 if (findChildArea(referencedRendering, path)) {
                     return true;

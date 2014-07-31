@@ -22,7 +22,7 @@ import java.util.Map;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.klay.tree.intermediate.LayoutProcessorStrategy;
+import de.cau.cs.kieler.klay.tree.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.tree.graph.TGraph;
 import de.cau.cs.kieler.klay.tree.p1treeify.DFSTreeifyer;
 import de.cau.cs.kieler.klay.tree.p2order.OrderBalance;
@@ -69,8 +69,8 @@ public final class KlayTree {
             = new IntermediateProcessingConfiguration();
 
     /** collection of instantiated intermediate modules. */
-    private Map<LayoutProcessorStrategy, ILayoutProcessor> intermediateLayoutProcessorCache
-            = new HashMap<LayoutProcessorStrategy, ILayoutProcessor>();
+    private Map<IntermediateProcessorStrategy, ILayoutProcessor> intermediateLayoutProcessorCache
+            = new HashMap<IntermediateProcessorStrategy, ILayoutProcessor>();
 
     /** list of layout processors that compose the current algorithm. */
     private List<ILayoutProcessor> algorithm = new LinkedList<ILayoutProcessor>();
@@ -173,7 +173,7 @@ public final class KlayTree {
      */
     private List<ILayoutProcessor> getIntermediateProcessorList(final int slotIndex) {
         // fetch the set of layout processors configured for the given slot
-        EnumSet<LayoutProcessorStrategy> processors = intermediateProcessingConfiguration
+        EnumSet<IntermediateProcessorStrategy> processors = intermediateProcessingConfiguration
                 .getProcessors(slotIndex);
         List<ILayoutProcessor> result = new ArrayList<ILayoutProcessor>(processors.size());
 
@@ -181,7 +181,7 @@ public final class KlayTree {
         // guarantees that we iterate over the processors in the order in which they occur in
         // the LayoutProcessorStrategy, thereby satisfying all of their runtime order
         // dependencies without having to sort them in any way
-        for (LayoutProcessorStrategy processor : processors) {
+        for (IntermediateProcessorStrategy processor : processors) {
             // check if an instance of the given layout processor is already in the cache
             ILayoutProcessor processorImpl = intermediateLayoutProcessorCache.get(processor);
 

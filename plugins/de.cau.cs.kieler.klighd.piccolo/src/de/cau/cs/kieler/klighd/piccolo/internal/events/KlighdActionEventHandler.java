@@ -21,7 +21,6 @@ import org.eclipse.ui.PlatformUI;
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
-
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.krendering.KAction;
 import de.cau.cs.kieler.core.krendering.KRendering;
@@ -40,18 +39,19 @@ import de.cau.cs.kieler.klighd.piccolo.internal.events.KlighdMouseEventListener.
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.INode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KNodeTopNode;
 import de.cau.cs.kieler.klighd.piccolo.viewer.PiccoloViewer;
+import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.event.PInputEventListener;
 
 /**
- * Initial draft of an event handler that invokes actions associated with KRenderings.
+ * Event handler that invokes actions associated with KRenderings on corresponding mouse click events.
  * 
  * @author chsch
  */
 public class KlighdActionEventHandler implements PInputEventListener {
 
     private PiccoloViewer viewer = null;
-    
+
     /**
      * Constructor.
      * 
@@ -88,26 +88,37 @@ public class KlighdActionEventHandler implements PInputEventListener {
         }
 
         final KlighdMouseEvent me = (KlighdMouseEvent) inputEvent.getSourceSwingEvent();
-        
+
         if (me.getEventType() == SWT.MouseMove) {
             return;
         }
 
-        KRendering rendering = (KRendering) inputEvent.getPickedNode().getAttribute(
-                AbstractKGERenderingController.ATTR_KRENDERING);
+        final PNode pickedNode = inputEvent.getPickedNode();
+
+        KRendering rendering =
+                (KRendering) pickedNode.getAttribute(AbstractKGERenderingController.ATTR_KRENDERING);
 
         if (rendering == null) {
-            // in case no KRendering has been found,
-            //  check whether top node has been picked
+            // in case no KRendering has been found ...
 
-            if (inputEvent.getPickedNode() instanceof KNodeTopNode) {
+            // ... check whether a KNode's representative has been picked,
+            //  which happens if a click or double click occurred on the canvas, for example 
+            if (pickedNode instanceof INode) {
+                final INode iNode = (INode) pickedNode;
 
-                // if so reveal the represented KNode and check for a dummy KRendering element
-                //  which might contain KActions...
-                final KNode node = ((INode) inputEvent.getPickedNode()).getGraphElement();
+                // if so test whether the diagram's top node has been picked ...
+                if (pickedNode instanceof KNodeTopNode) {
+                    // and if so reveal the represented KNode and look for a dummy KRendering element
+                    //  that might contain KActions
+                    rendering = iNode.getGraphElement().getData(KRendering.class);
 
-                if (node != null) {
-                    rendering = node.getData(KRendering.class);
+                } else {
+                    // Otherwise we assume that a nested KNode's representative has been picked,
+                    //  which may happen if the diagram has been clipped to that particular KNode.
+                    
+                    // in that case ask the associated KGE rendering controller for the currently
+                    //  displayed KRendering
+                    rendering = iNode.getRenderingController().getCurrentRenderingReference();
                 }
 
                 if (rendering == null) {
@@ -126,11 +137,11 @@ public class KlighdActionEventHandler implements PInputEventListener {
         //  record view model changes, which is done once an action is actually executed
         boolean anyActionPerformed = false;
         
-        for (KAction action : Iterables.filter(rendering.getActions(), WELLFORMED)) {
+        for (final KAction action : Iterables.filter(rendering.getActions(), WELLFORMED)) {
             if (!action.getTrigger().equals(me.getTrigger()) || !guardsMatch(action, me)) {
                 continue;
             }
-            
+
             final IAction actionImpl =
                     KlighdDataManager.getInstance().getActionById(action.getActionId());
             if (actionImpl == null) {
@@ -148,7 +159,7 @@ public class KlighdActionEventHandler implements PInputEventListener {
             result = actionImpl.execute(context);
 
             if (result == null) {
-                viewer.stopRecording(ZoomStyle.NONE, 0);
+                viewer.stopRecording(ZoomStyle.NONE, null, 0);
                 final String msg = "KLighD action event handler: Execution of "
                         + actionImpl.getClass()
                         + " returned 'null', expected an IAction.ActionResult.";
@@ -167,17 +178,13 @@ public class KlighdActionEventHandler implements PInputEventListener {
         //  first make sure that the scenario described below is not enabled again.
         inputEvent.setHandled(true);
         
-        final boolean zoomToFit = result.getZoomToFit() != null
-                ? result.getZoomToFit() : context.getViewContext().isZoomToFit();
-        final boolean zoomToFocus = result.getZoomToFocus() != null
-                ? result.getZoomToFocus()
-                        : context.getViewContext().getZoomStyle() == ZoomStyle.ZOOM_TO_FOCUS;
-
         // remember the desired zoom style in the view context
         final ViewContext vc = viewer.getViewContext();
-        vc.setZoomStyle(ZoomStyle.create(zoomToFit, zoomToFocus));
 
         final boolean animate = result.getAnimateLayout();
+        final ZoomStyle zoomStyle = ZoomStyle.create(result, vc);
+        final KNode focusNode = zoomStyle == ZoomStyle.ZOOM_TO_FOCUS ? result.getFocusNode() : null;
+        
         final List<ILayoutConfig> layoutConfigs = result.getLayoutConfigs();
 
         // Execute the layout asynchronously in order to let the KLighdInputManager
@@ -191,7 +198,7 @@ public class KlighdActionEventHandler implements PInputEventListener {
         //  flag of 'inputEvent' properly.
         PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
             public void run() {
-                LightDiagramServices.layoutDiagram(vc, animate, zoomToFit, layoutConfigs);
+                LightDiagramServices.layoutDiagram(vc, animate, zoomStyle, focusNode, layoutConfigs);
             }
         });
         

@@ -297,7 +297,7 @@
       <analysis
             category="de.cau.cs.kieler.kiml.grana.drawing"
             class="de.cau.cs.kieler.kiml.grana.analyses.EdgeLengthAnalysis"
-            description="The minimum, average and maximum edge length."
+            description="The minimum, average, and maximum edge length and its variance."
             id="de.cau.cs.kieler.kiml.grana.edgeLength"
             name="Edge Length">
          <component
@@ -311,6 +311,9 @@
          <component
                abbreviation="Max"
                name="Maximum">
+         </component>
+         <component
+               name="Variance">
          </component>
       </analysis>
       <analysis
@@ -481,6 +484,37 @@
             description="The number of edges on the longest path (for acyclic graphs)."
             id="de.cau.cs.kieler.kiml.grana.longestPath"
             name="Longest Path">
+      </analysis>
+      <analysis
+            category="de.cau.cs.kieler.kiml.grana.drawing"
+            class="de.cau.cs.kieler.kiml.grana.analyses.WhitespaceAnalysis"
+            description="Determines the amount of whitespace in the diagram."
+            id="de.cau.cs.kieler.kiml.grana.whitespace"
+            name="Whitespace">
+         <component
+               abbreviation="TL"
+               name="Top-Level">
+         </component>
+         <component
+               abbreviation="H"
+               name="Hierarchy">
+         </component>
+      </analysis>
+      <analysis
+            category="de.cau.cs.kieler.kiml.grana.drawing"
+            class="de.cau.cs.kieler.kiml.grana.analyses.StressAnalysis"
+            description="The stress of the graph."
+            id="de.cau.cs.kieler.kiml.grana.stress"
+            name="Stress">
+         <component
+               name="Center-To-Center">
+         </component>
+         <component
+               name="Border-To-Border">
+         </component>
+         <component
+               name="P-Stress">
+         </component>
       </analysis>
    </extension>
 

@@ -27,7 +27,9 @@ import java.awt.Stroke;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -57,9 +59,12 @@ import org.eclipse.swt.graphics.TextStyle;
 import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.widgets.Display;
 
+import com.google.common.collect.Maps;
+
 import de.cau.cs.kieler.klighd.KlighdConstants;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdPaths;
 import de.cau.cs.kieler.klighd.piccolo.internal.util.RGBGradient;
+import de.cau.cs.kieler.klighd.util.KlighdSemanticDiagramData;
 import edu.umd.cs.piccolo.util.PAffineTransform;
 import edu.umd.cs.piccolox.swt.SWTShapeManager;
 
@@ -72,7 +77,7 @@ import edu.umd.cs.piccolox.swt.SWTShapeManager;
  */
 public class KlighdSWTGraphicsImpl extends Graphics2D implements KlighdSWTGraphicsEx {
 
-    // SUPPRESS CHECKSTYLE NEXT 25 Visibility
+    // SUPPRESS CHECKSTYLE NEXT 30 Visibility
     
     /** The {@link Device} to draw on. */
     protected Device device;
@@ -82,6 +87,9 @@ public class KlighdSWTGraphicsImpl extends Graphics2D implements KlighdSWTGraphi
     
     /** An internal SWT {@link Rectangle} used for clip handling computations. */
     protected Transform swtTransform;
+
+    /** The bit position of {@link GC#DRAW_OFFSET} required for avoiding Eclipse bug 335769. */
+    private static final int DRAW_OFFSET_BIT = 9;
     
     /** A {@link TextLayout} used to draw styled texts (e.g. those with underline and/or strikeout). */
     protected TextLayout textLayout;
@@ -263,7 +271,7 @@ public class KlighdSWTGraphicsImpl extends Graphics2D implements KlighdSWTGraphi
     public void setStrokePattern(final RGBGradient gradient, final Rectangle2D bounds) {
         final Point2D[] points = computePatternPoints(bounds, Math.toRadians(gradient.getAngle()));
 
-        final float curAlpha = (float) this.getAlpha();
+        final float curAlpha = this.getAlpha();
         final int alpha1 = (int) (gradient.getAlpha1() * (curAlpha / KlighdConstants.ALPHA_FULL_OPAQUE));
         final int alpha2 = (int) (gradient.getAlpha2() * (curAlpha / KlighdConstants.ALPHA_FULL_OPAQUE));
 
@@ -284,7 +292,7 @@ public class KlighdSWTGraphicsImpl extends Graphics2D implements KlighdSWTGraphi
     public void setFillPattern(final RGBGradient gradient, final Rectangle2D bounds) {
         final Point2D[] points = computePatternPoints(bounds, Math.toRadians(gradient.getAngle()));
 
-        final float curAlpha = (float) this.getAlpha();
+        final float curAlpha = this.getAlpha();
         final int alpha1 = (int) (gradient.getAlpha1() * (curAlpha / KlighdConstants.ALPHA_FULL_OPAQUE));
         final int alpha2 = (int) (gradient.getAlpha2() * (curAlpha / KlighdConstants.ALPHA_FULL_OPAQUE));
 
@@ -421,13 +429,16 @@ public class KlighdSWTGraphicsImpl extends Graphics2D implements KlighdSWTGraphi
     /**
      * {@inheritDoc}
      */
+    @Override
     public void draw(final Shape shape) {
-        int alpha = getAlpha();
+        final int alpha = getAlpha();
         // antiAliase();
 
         final Path path = KlighdPaths.createSWTPath(shape.getPathIterator(null), this.device);
 
         gc.setTransform(this.swtTransform);
+        gc.getGCData().state |= 1 << DRAW_OFFSET_BIT;
+
         gc.drawPath(path);
 
         path.dispose();
@@ -440,16 +451,21 @@ public class KlighdSWTGraphicsImpl extends Graphics2D implements KlighdSWTGraphi
      */
     public void draw(final Path path) {
         gc.setTransform(this.swtTransform);
+        gc.getGCData().state |= 1 << DRAW_OFFSET_BIT;
+
         gc.drawPath(path);
     }
     
     /**
      * {@inheritDoc}
      */
+    @Override
     public void fill(final Shape shape) {
         final Path path = KlighdPaths.createSWTPath(shape.getPathIterator(null), this.device);
 
         gc.setTransform(this.swtTransform);
+        gc.getGCData().state |= 1 << DRAW_OFFSET_BIT;
+
         gc.fillPath(path);
         
         path.dispose();
@@ -460,6 +476,8 @@ public class KlighdSWTGraphicsImpl extends Graphics2D implements KlighdSWTGraphi
      */
     public void fill(final Path path) {
         gc.setTransform(this.swtTransform);
+        gc.getGCData().state |= 1 << DRAW_OFFSET_BIT;
+
         gc.fillPath(path);
     }
     
@@ -470,16 +488,24 @@ public class KlighdSWTGraphicsImpl extends Graphics2D implements KlighdSWTGraphi
     public void drawImage(final Image image, final double width, final double height) {
         final Rectangle bounds = image.getBounds();
         gc.setTransform(swtTransform);
+        gc.getGCData().state |= 1 << DRAW_OFFSET_BIT;
+
         gc.drawImage(image, 0, 0, bounds.width, bounds.height, 0, 0, (int) width, (int) height);
     }
+    
+    private Map<ImageData, Image> images = Maps.newHashMap();
 
     /**
      * {@inheritDoc}
      */
     public void drawImage(final ImageData imageData, final double width, final double height) {
-        final Image image = new Image(this.device, imageData);
+        Image image = images.get(imageData);
+        if (image == null) {
+            image = new Image(this.device, imageData);
+            images.put(imageData, image);
+        }
+
         this.drawImage(image, width, height);
-        image.dispose();
     }
 
 
@@ -490,12 +516,16 @@ public class KlighdSWTGraphicsImpl extends Graphics2D implements KlighdSWTGraphi
         if (!useTextStyle) {
             gc.setFont(curFont);
             gc.setTransform(swtTransform);
+            gc.getGCData().state |= 1 << DRAW_OFFSET_BIT;
+
             gc.drawText(text, 0, 0, SWT.DRAW_DELIMITER | SWT.DRAW_TRANSPARENT);
             gc.setTransform(null);
         } else {
             this.textLayout.setText(text);
             this.textLayout.setStyle(curTextStyle, 0, text.length() - 1);            
             gc.setTransform(swtTransform);
+            gc.getGCData().state |= 1 << DRAW_OFFSET_BIT;
+
             this.textLayout.draw(gc, 0, 0);
             gc.setTransform(null);
         }
@@ -544,7 +574,7 @@ public class KlighdSWTGraphicsImpl extends Graphics2D implements KlighdSWTGraphi
         final int factor = 100;
         
         if (transformedLineWidth < 2) {
-            double adjustedAlpha = 
+            final double adjustedAlpha = 
                     alpha * (KlighdConstants.ALPHA_FULL_OPAQUE - (2 - transformedLineWidth) * factor)
                             / KlighdConstants.ALPHA_FULL_OPAQUE;
             this.setAlpha((int) adjustedAlpha);
@@ -564,7 +594,7 @@ public class KlighdSWTGraphicsImpl extends Graphics2D implements KlighdSWTGraphi
         if (this.gc.getGCData().lineStyle == SWT.LINE_CUSTOM) {
             
             // adjust the pattern
-            float[] dashPattern = this.gc.getGCData().lineDashes;
+            final float[] dashPattern = this.gc.getGCData().lineDashes;
             for (int i = 0; i < dashPattern.length; i++) {
                 TEMP_DASH_RECT.setRect(0, 0, dashPattern[i], dashPattern[i]);
                 SWTShapeManager.transform(TEMP_DASH_RECT, transform);
@@ -572,7 +602,7 @@ public class KlighdSWTGraphicsImpl extends Graphics2D implements KlighdSWTGraphi
             }
             
             // adjust the offset
-            float dashOffset = this.gc.getGCData().lineDashesOffset;
+            final float dashOffset = this.gc.getGCData().lineDashesOffset;
             TEMP_DASH_RECT.setRect(0, 0, dashOffset, dashOffset);
             SWTShapeManager.transform(TEMP_DASH_RECT, transform);
             this.gc.getGCData().lineDashesOffset = TEMP_DASH_RECT.width;
@@ -694,7 +724,7 @@ public class KlighdSWTGraphicsImpl extends Graphics2D implements KlighdSWTGraphi
         //  their errors will also be scaled up leading to unacceptable results 
         try {
             SWTShapeManager.transform(clip, transform.createInverse());
-        } catch (NoninvertibleTransformException e) {
+        } catch (final NoninvertibleTransformException e) {
             throw new RuntimeException(e);
         }
         return clip;
@@ -717,7 +747,7 @@ public class KlighdSWTGraphicsImpl extends Graphics2D implements KlighdSWTGraphi
             // however, due to the required coordinate roundings their errors will also be scaled up
             //  leading to unacceptable results; see also #getClip() and #clip(Shape) 
             this.gc.setTransform(null);
-            java.awt.Rectangle rect = clip.getBounds();
+            final java.awt.Rectangle rect = clip.getBounds();
             SWTShapeManager.transform(rect, transform);
 
             this.swtClipRect.x = rect.x;
@@ -728,7 +758,7 @@ public class KlighdSWTGraphicsImpl extends Graphics2D implements KlighdSWTGraphi
 
         } else {
             this.gc.setTransform(null);
-            Path clipPath =
+            final Path clipPath =
                     KlighdPaths.createSWTPath(clip.getPathIterator(this.transform), this.device);
             this.gc.setClipping(clipPath);
             clipPath.dispose();
@@ -765,6 +795,19 @@ public class KlighdSWTGraphicsImpl extends Graphics2D implements KlighdSWTGraphi
             // final Rectangle clipping = gc.getClipping();
             // this.swtClipRect.intersect(clipping);
             // this.gc.setClipping(this.swtClipRect);
+
+        } else if (clip instanceof Ellipse2D) {
+            // TODO the following is not correct wrt the specification of this method (see method doc)
+            //  I however don't know an efficient way to intersect arbitrary shapes at the moment
+            final Ellipse2D ellipse = (Ellipse2D) ((Ellipse2D) clip).clone();
+            this.setClip(ellipse);
+
+        } else if (clip instanceof Path2D) {
+            // TODO the following is not correct wrt the specification of this method (see method doc)
+            //  I however don't know an efficient way to intersect arbitrary shapes at the moment
+            final Path2D polygon = (Path2D) ((Path2D) clip).clone();
+            this.setClip(polygon);
+
         } else {
             throw new UnsupportedOperationException();
         }
@@ -810,6 +853,11 @@ public class KlighdSWTGraphicsImpl extends Graphics2D implements KlighdSWTGraphi
         if (disposeTextLayout && this.textLayout != null) {
             this.textLayout.dispose();
         }
+
+        for (final Image image : images.values()) {
+            image.dispose();
+        }
+        images.clear();
     }
 
 
@@ -821,52 +869,53 @@ public class KlighdSWTGraphicsImpl extends Graphics2D implements KlighdSWTGraphi
     // CHECKSTYLEOFF Parameter
     
     @Override
-    public boolean drawImage(java.awt.Image img, AffineTransform xform, ImageObserver obs) {
+    public boolean drawImage(final java.awt.Image img, final AffineTransform xform,
+            final ImageObserver obs) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void drawImage(BufferedImage img, BufferedImageOp op, int x, int y) {
+    public void drawImage(final BufferedImage img, final BufferedImageOp op, final int x, final int y) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void drawRenderedImage(RenderedImage img, AffineTransform xform) {
+    public void drawRenderedImage(final RenderedImage img, final AffineTransform xform) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void drawRenderableImage(RenderableImage img, AffineTransform xform) {
+    public void drawRenderableImage(final RenderableImage img, final AffineTransform xform) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void drawString(String str, int x, int y) {
+    public void drawString(final String str, final int x, final int y) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void drawString(String str, float x, float y) {
+    public void drawString(final String str, final float x, final float y) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void drawString(AttributedCharacterIterator iterator, int x, int y) {
+    public void drawString(final AttributedCharacterIterator iterator, final int x, final int y) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void drawString(AttributedCharacterIterator iterator, float x, float y) {
+    public void drawString(final AttributedCharacterIterator iterator, final float x, final float y) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void drawGlyphVector(GlyphVector g, float x, float y) {
+    public void drawGlyphVector(final GlyphVector g, final float x, final float y) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public boolean hit(java.awt.Rectangle rect, Shape s, boolean onStroke) {
+    public boolean hit(final java.awt.Rectangle rect, final Shape s, final boolean onStroke) {
         throw new UnsupportedOperationException();
     }
 
@@ -876,27 +925,27 @@ public class KlighdSWTGraphicsImpl extends Graphics2D implements KlighdSWTGraphi
     }
     
     @Override
-    public void setPaint(Paint paint) {
+    public void setPaint(final Paint paint) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setStroke(Stroke s) {
+    public void setStroke(final Stroke s) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Object getRenderingHint(Key hintKey) {
+    public Object getRenderingHint(final Key hintKey) {
          throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setRenderingHints(Map<?, ?> hints) {
+    public void setRenderingHints(final Map<?, ?> hints) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void addRenderingHints(Map<?, ?> hints) {
+    public void addRenderingHints(final Map<?, ?> hints) {
         throw new UnsupportedOperationException();
     }
 
@@ -906,32 +955,32 @@ public class KlighdSWTGraphicsImpl extends Graphics2D implements KlighdSWTGraphi
     }
 
     @Override
-    public void translate(int x, int y) {
+    public void translate(final int x, final int y) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void translate(double tx, double ty) {
+    public void translate(final double tx, final double ty) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void rotate(double theta) {
+    public void rotate(final double theta) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void rotate(double theta, double x, double y) {
+    public void rotate(final double theta, final double x, final double y) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void scale(double sx, double sy) {
+    public void scale(final double sx, final double sy) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void shear(double shx, double shy) {
+    public void shear(final double shx, final double shy) {
         throw new UnsupportedOperationException();
     }
 
@@ -971,7 +1020,7 @@ public class KlighdSWTGraphicsImpl extends Graphics2D implements KlighdSWTGraphi
     }
 
     @Override
-    public void setXORMode(java.awt.Color c1) {
+    public void setXORMode(final java.awt.Color c1) {
         throw new UnsupportedOperationException();
     }
 
@@ -981,12 +1030,12 @@ public class KlighdSWTGraphicsImpl extends Graphics2D implements KlighdSWTGraphi
     }
 
     @Override
-    public void setFont(java.awt.Font font) {
+    public void setFont(final java.awt.Font font) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FontMetrics getFontMetrics(java.awt.Font f) {
+    public FontMetrics getFontMetrics(final java.awt.Font f) {
         throw new UnsupportedOperationException();
     }
 
@@ -996,107 +1045,128 @@ public class KlighdSWTGraphicsImpl extends Graphics2D implements KlighdSWTGraphi
     }
 
     @Override
-    public void clipRect(int x, int y, int width, int height) {
+    public void clipRect(final int x, final int y, final int width, final int height) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setClip(int x, int y, int width, int height) {
+    public void setClip(final int x, final int y, final int width, final int height) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void copyArea(int x, int y, int width, int height, int dx, int dy) {
+    public void copyArea(final int x, final int y, final int width, final int height, final int dx,
+            final int dy) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void drawLine(int x1, int y1, int x2, int y2) {
+    public void drawLine(final int x1, final int y1, final int x2, final int y2) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void clearRect(int x, int y, int width, int height) {
+    public void clearRect(final int x, final int y, final int width, final int height) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void drawRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight) {
+    public void drawRoundRect(final int x, final int y, final int width, final int height,
+            final int arcWidth, final int arcHeight) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void fillRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight) {
+    public void fillRoundRect(final int x, final int y, final int width, final int height,
+            final int arcWidth, final int arcHeight) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void drawOval(int x, int y, int width, int height) {
+    public void drawOval(final int x, final int y, final int width, final int height) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void fillOval(int x, int y, int width, int height) {
+    public void fillOval(final int x, final int y, final int width, final int height) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void drawArc(int x, int y, int width, int height, int startAngle, int arcAngle) {
+    public void drawArc(final int x, final int y, final int width, final int height,
+            final int startAngle, final int arcAngle) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void fillArc(int x, int y, int width, int height, int startAngle, int arcAngle) {
+    public void fillArc(final int x, final int y, final int width, final int height,
+            final int startAngle, final int arcAngle) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void drawPolyline(int[] xPoints, int[] yPoints, int nPoints) {
+    public void drawPolyline(final int[] xPoints, final int[] yPoints, final int nPoints) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void drawPolygon(int[] xPoints, int[] yPoints, int nPoints) {
+    public void drawPolygon(final int[] xPoints, final int[] yPoints, final int nPoints) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void fillPolygon(int[] xPoints, int[] yPoints, int nPoints) {
+    public void fillPolygon(final int[] xPoints, final int[] yPoints, final int nPoints) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public boolean drawImage(java.awt.Image img, int x, int y, ImageObserver observer) {
+    public boolean drawImage(final java.awt.Image img, final int x, final int y,
+            final ImageObserver observer) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public boolean drawImage(java.awt.Image img, int x, int y, int width, int height,
-            ImageObserver observer) {
+    public boolean drawImage(final java.awt.Image img, final int x, final int y, final int width,
+            final int height, final ImageObserver observer) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public boolean drawImage(java.awt.Image img, int x, int y, java.awt.Color bgcolor,
-            ImageObserver observer) {
+    public boolean drawImage(final java.awt.Image img, final int x, final int y,
+            final java.awt.Color bgcolor,            final ImageObserver observer) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public boolean drawImage(java.awt.Image img, int x, int y, int width, int height,
-            java.awt.Color bgcolor, ImageObserver observer) {
+    public boolean drawImage(final java.awt.Image img, final int x, final int y, final int width,
+            final int height, final java.awt.Color bgcolor, final ImageObserver observer) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public boolean drawImage(java.awt.Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1,
-            int sx2, int sy2, ImageObserver observer) {
+    public boolean drawImage(final java.awt.Image img, final int dx1, final int dy1, final int dx2,
+            final int dy2, final int sx1, final int sy1, final int sx2, final int sy2,
+            final ImageObserver observer) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public boolean drawImage(java.awt.Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1,
-            int sx2, int sy2, java.awt.Color bgcolor, ImageObserver observer) {
+    public boolean drawImage(final java.awt.Image img, final int dx1, final int dy1, final int dx2,
+            final int dy2, final int sx1, final int sy1, final int sx2, final int sy2,
+            final java.awt.Color bgcolor, final ImageObserver observer) {
         throw new UnsupportedOperationException();
+    }
+    
+    /* --------------------- Semantic Data ---------------------*/
+    
+    // CHECKSTYLEOFF Javadoc
+    // unsupported for the SWT graphics
+    public void addSemanticData(KlighdSemanticDiagramData semanticData) {
+    }
+
+    public void startGroup(KlighdSemanticDiagramData semanticData) {
+    }
+
+    public void endGroup() {
     }
 }

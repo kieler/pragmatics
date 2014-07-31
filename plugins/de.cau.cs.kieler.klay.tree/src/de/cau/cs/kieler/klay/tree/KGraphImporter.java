@@ -46,12 +46,12 @@ public class KGraphImporter implements IGraphImporter<KNode> {
      */
     public TGraph importGraph(final KNode kgraph) {
         TGraph tGraph = new TGraph();
-        tGraph.setProperty(Properties.ORIGIN, kgraph);
 
         // copy the properties of the KGraph to the t-graph
         KShapeLayout sourceShapeLayout = kgraph.getData(KShapeLayout.class);
         tGraph.copyProperties(sourceShapeLayout);
         tGraph.checkProperties(Properties.SPACING, Properties.ASPECT_RATIO);
+        tGraph.setProperty(Properties.ORIGIN, kgraph);
 
         // keep a list of created nodes in the t-graph
         Map<KNode, TNode> elemMap = new HashMap<KNode, TNode>();
@@ -89,18 +89,18 @@ public class KGraphImporter implements IGraphImporter<KNode> {
 
             // create new tNode
             TNode newNode = new TNode(index++, tGraph, label);
+            newNode.copyProperties(nodeLayout);
             newNode.setProperty(Properties.ORIGIN, knode);
+            
             newNode.getPosition().y = nodeLayout.getYpos() + nodeLayout.getHeight() / 2;
             newNode.getSize().x = Math.max(nodeLayout.getWidth(), 1);
             newNode.getPosition().x = nodeLayout.getXpos() + nodeLayout.getWidth() / 2;
             newNode.getSize().y = Math.max(nodeLayout.getHeight(), 1);
+            
             tGraph.getNodes().add(newNode);
 
             // keep the corresponding tNode of each kNode for edge transformation
             elemMap.put(knode, newNode);
-
-            // set properties of the new node
-            newNode.copyProperties(nodeLayout);
         }
     }
 

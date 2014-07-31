@@ -66,6 +66,7 @@ import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.service.LayoutMapping;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
+import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 
 /**
  * Generic layout manager implementation for Graphiti diagrams.
@@ -319,7 +320,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
         }
         
         // add the corrected offset
-        offset.translate(-minx, -miny);
+        offset.add(-minx, -miny);
         KimlUtil.translate(parentNode, (float) offset.x, (float) offset.y);
     }
 
@@ -392,29 +393,33 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
      * @param mapping the mapping of pictogram elements to graph elements
      * @param parentNode the parent node
      * @param shape the shape for a new node
-     * @return a new layout node
+     * @return the new layout node
      */
     protected KNode createNode(final LayoutMapping<PictogramElement> mapping,
             final KNode parentNode, final Shape shape) {
         KNode childNode = KimlUtil.createInitializedNode();
         childNode.setParent(parentNode);
 
-        // set the node's layout
+        // set the node's layout, considering margins and insets
         KShapeLayout nodeLayout = childNode.getData(KShapeLayout.class);
-        KInsets nodeInsets = getInsets(shape);
-        nodeLayout.setProperty(GraphitiLayoutCommand.INVIS_INSETS, nodeInsets);
-        KInsets parentInsets = parentNode == null ? null : parentNode.getData(KShapeLayout.class)
-                .getProperty(GraphitiLayoutCommand.INVIS_INSETS);
+        computeInsets(nodeLayout.getInsets(), shape);
+        Margins nodeMargins = computeMargins(shape);
+        nodeLayout.setProperty(LayoutOptions.MARGINS, nodeMargins);
         GraphicsAlgorithm nodeGa = shape.getGraphicsAlgorithm();
-        if (parentInsets == null) {
-            nodeLayout.setPos(nodeGa.getX() + nodeInsets.getLeft(),
-                    nodeGa.getY() + nodeInsets.getTop());
+        if (parentNode == null) {
+            nodeLayout.setPos(nodeGa.getX() + (float) nodeMargins.left,
+                    nodeGa.getY() + (float) nodeMargins.top);
         } else {
-            nodeLayout.setPos(nodeGa.getX() + nodeInsets.getLeft() - parentInsets.getLeft(),
-                    nodeGa.getY() + nodeInsets.getTop() - parentInsets.getTop());
+            KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
+            Margins parentMargins = parentLayout.getProperty(LayoutOptions.MARGINS);
+            KInsets parentInsets = parentLayout.getInsets();
+            nodeLayout.setPos(nodeGa.getX() + (float) (nodeMargins.left - parentMargins.left)
+                    - parentInsets.getLeft(),
+                    nodeGa.getY() + (float) (nodeMargins.top - parentMargins.top)
+                    - parentInsets.getTop());
         }
-        nodeLayout.setSize(nodeGa.getWidth() - nodeInsets.getLeft() - nodeInsets.getRight(),
-                nodeGa.getHeight() - nodeInsets.getTop() - nodeInsets.getBottom());
+        nodeLayout.setSize(nodeGa.getWidth() - (float) (nodeMargins.left - nodeMargins.right),
+                nodeGa.getHeight() - (float) (nodeMargins.top - nodeMargins.bottom));
         // the modification flag must initially be false
         nodeLayout.resetModificationFlag();
 
@@ -428,7 +433,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
             // find a label for the container shape
             for (Shape child : ((ContainerShape) shape).getChildren()) {
                 if (isNodeLabel(child)) {
-                    createLabel(childNode, child, -nodeInsets.getLeft(), -nodeInsets.getTop());
+                    createLabel(childNode, child, (float) -nodeMargins.left, (float) -nodeMargins.top);
                 }
             }
         }
@@ -448,36 +453,40 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
         
         return childNode;
     }
-
+    
     /**
-     * Determine the insets of the given pictogram element. The default implementation
-     * calculates insets from an invisible rectangle to the first visible shape. Subclasses
-     * may override this behavior.
+     * Determine the margins around a node. Margins are areas on the border of a pictogram element
+     * that are not visible in the diagram, but are required for placing elements such as labels
+     * or ports. The default implementation computes margins from an invisible rectangle to the
+     * first visible shape. Subclasses may override this behavior.
      * 
      * @param pictogramElement a pictogram element
-     * @return the insets
+     * @return the margins for the given element
      */
-    protected KInsets getInsets(final PictogramElement pictogramElement) {
+    protected Margins computeMargins(final PictogramElement pictogramElement) {
         GraphicsAlgorithm graphicsAlgorithm = pictogramElement.getGraphicsAlgorithm();
         GraphicsAlgorithm visibleGa = KimlGraphitiUtil.findVisibleGa(graphicsAlgorithm);
-        int left = 0;
-        int top = 0;
-        int right = 0;
-        int bottom = 0;
+        Margins margins = new Margins();
         while (visibleGa != null && visibleGa != graphicsAlgorithm) {
-            left += visibleGa.getX();
-            top += visibleGa.getY();
+            margins.left += visibleGa.getX();
+            margins.top += visibleGa.getY();
             GraphicsAlgorithm parentGa = visibleGa.getParentGraphicsAlgorithm();
-            right += parentGa.getWidth() - visibleGa.getX() - visibleGa.getWidth();
-            bottom += parentGa.getHeight() - visibleGa.getY() - visibleGa.getHeight();
+            margins.right += parentGa.getWidth() - visibleGa.getX() - visibleGa.getWidth();
+            margins.bottom += parentGa.getHeight() - visibleGa.getY() - visibleGa.getHeight();
             visibleGa = parentGa;
         }
-        KInsets insets = KLayoutDataFactory.eINSTANCE.createKInsets();
-        insets.setLeft(left);
-        insets.setRight(right);
-        insets.setTop(top);
-        insets.setBottom(bottom);
-        return insets;
+        return margins;
+    }
+
+    /**
+     * Determine the insets of a node. Insets are areas inside the visible part of a pictogram
+     * element that must not be covered by contained child nodes. The default implementation
+     * retains the default insets (left=0, right=0, top=0, bottom=0). Subclasses may override this.
+     * 
+     * @param insets the insets where computed values shall be stored
+     * @param pictogramElement a pictogram element
+     */
+    protected void computeInsets(final KInsets insets, final PictogramElement pictogramElement) {
     }
 
     /**
@@ -486,7 +495,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
      * @param mapping the mapping of pictogram elements to graph elements
      * @param parentNode the parent node
      * @param bra the anchor
-     * @return a new layout port
+     * @return the new layout port
      */
     protected KPort createPort(final LayoutMapping<PictogramElement> mapping,
             final KNode parentNode, final BoxRelativeAnchor bra) {
@@ -527,7 +536,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
      * @param mapping the mapping of pictogram elements to graph elements
      * @param parentNode the parent node
      * @param fpa the anchor
-     * @return a new layout port
+     * @return the new layout port
      */
     protected KPort createPort(final LayoutMapping<PictogramElement> mapping,
             final KNode parentNode, final FixPointAnchor fpa) {
@@ -649,8 +658,9 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
      *            the mapping of pictogram elements to graph elements
      * @param connection
      *            a pictogram connection
+     * @return the new layout edge
      */
-    protected void createEdge(final LayoutMapping<PictogramElement> mapping,
+    protected KEdge createEdge(final LayoutMapping<PictogramElement> mapping,
             final Connection connection) {
         BiMap<KGraphElement, PictogramElement> graphMap = mapping.getGraphMap();
 
@@ -664,7 +674,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
             targetNode = (KNode) graphMap.inverse().get(targetAnchor.getParent());
         }
         if (targetNode == null) {
-            return;
+            return null;
         }
 
         // set source node and port
@@ -677,7 +687,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
             sourceNode = (KNode) graphMap.inverse().get(sourceAnchor.getParent());
         }
         if (sourceNode == null) {
-            return;
+            return null;
         }
         
         KEdge edge = KimlUtil.createInitializedEdge();
@@ -727,6 +737,8 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
                 createEdgeLabel(mapping, edge, decorator, allPoints);
             }
         }
+        
+        return edge;
     }
 
     /**
@@ -771,10 +783,10 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
         // set label position
         KVector labelPos;
         if (decorator.isLocationRelative()) {
-            labelPos = allPoints.getPointOnLine(decorator.getLocation()
-                    * allPoints.getLength());
+            labelPos = allPoints.pointOnLine(decorator.getLocation()
+                    * allPoints.totalLength());
         } else {
-            labelPos = allPoints.getPointOnLine(decorator.getLocation());
+            labelPos = allPoints.pointOnLine(decorator.getLocation());
         }
         GraphicsAlgorithm ga = decorator.getGraphicsAlgorithm();
         labelPos.x += ga.getX();

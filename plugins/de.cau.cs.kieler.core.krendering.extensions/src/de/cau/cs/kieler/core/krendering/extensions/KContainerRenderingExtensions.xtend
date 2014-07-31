@@ -13,39 +13,44 @@
  */
 package de.cau.cs.kieler.core.krendering.extensions
 
-import javax.inject.Inject
-import java.util.List
-
 import de.cau.cs.kieler.core.krendering.KArc
 import de.cau.cs.kieler.core.krendering.KChildArea
 import de.cau.cs.kieler.core.krendering.KContainerRendering
-import de.cau.cs.kieler.core.krendering.KPolyline
-import de.cau.cs.kieler.core.krendering.KRectangle
-import de.cau.cs.kieler.core.krendering.KRenderingFactory
-import de.cau.cs.kieler.core.krendering.KPolygon
+import de.cau.cs.kieler.core.krendering.KCustomRendering
+import de.cau.cs.kieler.core.krendering.KEllipse
 import de.cau.cs.kieler.core.krendering.KGridPlacement
 import de.cau.cs.kieler.core.krendering.KImage
+import de.cau.cs.kieler.core.krendering.KPolygon
+import de.cau.cs.kieler.core.krendering.KPolyline
 import de.cau.cs.kieler.core.krendering.KPosition
-import de.cau.cs.kieler.core.krendering.KRoundedRectangle
+import de.cau.cs.kieler.core.krendering.KRectangle
 import de.cau.cs.kieler.core.krendering.KRendering
+import de.cau.cs.kieler.core.krendering.KRenderingFactory
+import de.cau.cs.kieler.core.krendering.KRoundedRectangle
 import de.cau.cs.kieler.core.krendering.KText
-import de.cau.cs.kieler.core.krendering.KEllipse
 import de.cau.cs.kieler.core.krendering.LineJoin
+import java.util.List
 
 /**
+ * This class contains lots of convenient helper functions for composing & configuring
+ * KRendering-based view models. In order to be consistent with the further extension classes
+ * the extension methods are non-static ones requiring this class to be instantiated. Since this
+ * class doesn't declare any fields (i.e. required memory) except the reference of further extensions
+ * classes the instantiation should not be a problem. The instantiation may be done directly by calling
+ * 'new KContainerRenderingExtensions()' or by delegating that to a dependency injection framework.<br>
+ * <br>
+ * NOTE: Do NOT introduce <i>create extensions</i> or other continuous memory in that class!
+ * 
  * @author chsch, alb
  * 
  * @containsExtensions
  */
 class KContainerRenderingExtensions {
 
-   extension KRenderingFactory = KRenderingFactory::eINSTANCE
+    extension KRenderingFactory = KRenderingFactory::eINSTANCE
     
-    @Inject
-    extension KRenderingExtensions;
-    
-    @Inject
-    extension KColorExtensions;
+    extension KRenderingExtensions = new KRenderingExtensions();    
+    extension KColorExtensions = new KColorExtensions;
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////                    KContainerRenderings
@@ -151,6 +156,71 @@ class KContainerRenderingExtensions {
             cr.children += it;
             it.imageObject = imageObj
         ];
+    }
+
+    /**
+     * Sets a {@link KRectangle} clip shape on the provided <code>image</code>.<br>
+     * Set area or point placement data on this (returned) rectangle as usual in order
+     * to determine the clip area.
+     *  
+     * @extensionCategory composition
+     * 
+     * @example
+     * ...addImage(...).addRectangularClip
+     *          .addAreaPlacementData.from(LEFT, 3, 0, TOP, 3, 0).to(RIGHT, 3, 0, BOTTOM, 3, 0);
+     */
+    def KRectangle addRectangularClip(KImage image) {
+        val rect = createKRectangle;
+        image.clipShape = rect;
+        return rect;
+    }
+
+    /**
+     * Sets a {@link KEllipse} clip shape on the provided <code>image</code>.<br>
+     * Set area or point placement data on this (returned) ellipse as usual in order
+     * to determine the clip area. 
+     *  
+     * @extensionCategory composition
+     * 
+     * @example
+     * ...addImage(...).addEllipticalClip
+     *          .addAreaPlacementData.from(LEFT, 3, 0, TOP, 3, 0).to(RIGHT, 3, 0, BOTTOM, 3, 0);
+     */
+    def KEllipse addEllipticalClip(KImage image) {
+        val ellipse = createKEllipse;
+        image.clipShape = ellipse;
+        return ellipse;
+    }
+
+    /**
+     * Sets a {@link KPolygon} clip shape on the provided <code>image</code>.<br>
+     * Add {@link KPosition KPositions} on this (returned) polygon as usual in order
+     * to determine the clip area. 
+     *  
+     * @extensionCategory composition
+     * 
+     * @example
+     * ..addImage(...).addPolygonClip.addKPosition(LEFT, 3, 0, TOP, 3, 0)
+     *          .addKPosition(RIGHT, 3, 0, TOP, 3, 0)
+     *          .addKPosition(LEFT, 0, 0.5f, BOTTOM, 3, 0);
+     */
+    def KPolygon addPolygonClip(KImage image) {
+        val polygon = createKPolygon;
+        image.clipShape = polygon
+        return polygon;      
+    }
+
+    def KCustomRendering addCustomRendering(KContainerRendering cr) {
+        return createKCustomRendering => [
+            cr.children += it;
+        ]
+    }
+
+    def KCustomRendering addCustomRendering(KContainerRendering cr, Object figureObject) {
+        return createKCustomRendering => [
+            cr.children += it;
+            it.figureObject = figureObject;
+        ]
     }
 
     /**

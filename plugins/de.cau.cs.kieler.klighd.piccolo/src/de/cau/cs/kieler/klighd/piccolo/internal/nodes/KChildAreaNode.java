@@ -28,7 +28,7 @@ import edu.umd.cs.piccolo.util.PPickPath;
  * @author mri
  * @author chsch
  */
-public class KChildAreaNode extends PLayer {
+public class KChildAreaNode extends KDisposingLayer {
 
     private static final long serialVersionUID = -403773990520864787L;
     
@@ -39,6 +39,7 @@ public class KChildAreaNode extends PLayer {
      */
     public static final String PROPERTY_EXPANSION = "expansion";
 
+    private final INode containingINode;
     /** the node layer. */
     private final PLayer nodeLayer;
     
@@ -56,15 +57,28 @@ public class KChildAreaNode extends PLayer {
      * 
      * @param containingNode
      *            the node containing this child area
+     * @param edgesFirst
+     *            determining whether edges are drawn before nodes, i.e. nodes have priority over
+     *            edges
      */
-    public KChildAreaNode(final INode containingNode) {
+    public KChildAreaNode(final INode containingNode, final boolean edgesFirst) {
         super();
         this.setPickable(false);
+        this.containingINode = containingNode; 
 
-        this.nodeLayer = new PLayer();
-        super.addChild(nodeLayer);
-        this.edgeLayer = new PLayer();
-        super.addChild(edgeLayer);
+        this.nodeLayer = new KDisposingLayer();
+        this.edgeLayer = new KDisposingLayer();
+
+        if (edgesFirst) {
+            // this non-usual case required by a customer ;-)
+            super.addChild(edgeLayer);
+            super.addChild(nodeLayer);
+
+        } else {
+            // the regular (preferred) case
+            super.addChild(nodeLayer);
+            super.addChild(edgeLayer);
+        }
     }
 
     /**
@@ -85,6 +99,7 @@ public class KChildAreaNode extends PLayer {
      */
     public void addNode(final KNodeNode node) {
         nodeLayer.addChild(node);
+        node.setParentNode(containingINode);
     }
     
     /**
@@ -186,9 +201,9 @@ public class KChildAreaNode extends PLayer {
                 pickPath.pushNode(this);
                 pickPath.pushTransform(getTransformReference(false));
 
-                int count = getChildrenCount();
+                final int count = getChildrenCount();
                 for (int i = count - 1; i >= 0; i--) {
-                    PNode child = getChild(i);
+                    final PNode child = getChild(i);
                     if (child.fullPick(pickPath)) {
                         return true;
                     }

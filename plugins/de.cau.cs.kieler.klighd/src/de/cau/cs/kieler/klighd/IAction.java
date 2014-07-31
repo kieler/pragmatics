@@ -167,8 +167,10 @@ public interface IAction {
         
         private boolean actionPerformed = true;
         private Boolean animateLayout = null;
+        private Boolean zoomToActualSize = null;
         private Boolean zoomToFit = null;
         private Boolean zoomToFocus = null;
+        private KNode focus = null;
         
         private ActionResult(final boolean theActionPerformed) {
             this.actionPerformed = theActionPerformed;
@@ -215,13 +217,36 @@ public interface IAction {
         }
         
         /**
+         * Schedule zoomToActualSize during the subsequent automatic layout run. 
+         * 
+         * @return <code>this</code> {@link ActionResult}
+         */
+        public ActionResult doZoomToActualSize() {
+            this.zoomToActualSize = true;
+            this.zoomToFit = null;
+            this.zoomToFocus = null;
+            return this;
+        }
+        
+        /**
+         * Suppress zoomToActualSize during the subsequent automatic layout run. 
+         * 
+         * @return <code>this</code> {@link ActionResult}
+         */
+        public ActionResult dontZoomToActualSize() {
+            this.zoomToActualSize = false;
+            return this;
+        }
+        
+        /**
          * Schedule zoomToFit during the subsequent automatic layout run. 
          * 
          * @return <code>this</code> {@link ActionResult}
          */
         public ActionResult doZoomToFit() {
+            this.zoomToActualSize = null;
             this.zoomToFit = true;
-            this.zoomToFocus = false;
+            this.zoomToFocus = null;
             return this;
         }
         
@@ -241,8 +266,24 @@ public interface IAction {
          * @return <code>this</code> {@link ActionResult}
          */
         public ActionResult doZoomToFocus() {
-            this.zoomToFit = false;
+            this.zoomToActualSize = null;
+            this.zoomToFit = null;
             this.zoomToFocus = true;
+            return this;
+        }
+        
+        /**
+         * Schedule zoomToFocus during the subsequent automatic layout run.
+         * 
+         * @param focusNode
+         *            the {@link KNode} to focus
+         * @return <code>this</code> {@link ActionResult}
+         */
+        public ActionResult doZoomToFocus(final KNode focusNode) {
+            this.zoomToActualSize = null;
+            this.zoomToFit = null;
+            this.zoomToFocus = true;
+            this.focus = focusNode;
             return this;
         }
         
@@ -252,6 +293,18 @@ public interface IAction {
          * @return <code>this</code> {@link ActionResult}
          */
         public ActionResult dontZoomToFocus() {
+            this.zoomToFocus = false;
+            return this;
+        }
+        
+        /**
+         * Suppress any zooming during the subsequent automatic layout run. 
+         * 
+         * @return <code>this</code> {@link ActionResult}
+         */
+        public ActionResult dontZoom() {
+            this.zoomToActualSize = false;
+            this.zoomToFit = false;
             this.zoomToFocus = false;
             return this;
         }
@@ -285,21 +338,45 @@ public interface IAction {
         }
         
         /**
-         * Getter.
+         * Getter. Returns a {@link Boolean} instead of the primitive <code>boolean</code>
+         * in order distinguish the 'not configured' state. Returns <code>null</code> in this
+         * case.
          * 
-         * @return the {@link #zoomToFit} flag
+         * @return the {@link #zoomToActualSize} state
+         */
+        public Boolean getZoomToActualSize() {
+            return this.zoomToActualSize;
+        }
+        
+        /**
+         * Getter. Returns a {@link Boolean} instead of the primitive <code>boolean</code>
+         * in order distinguish the 'not configured' state. Returns <code>null</code> in this
+         * case.
+         * 
+         * @return the {@link #zoomToFit} state
          */
         public Boolean getZoomToFit() {
             return this.zoomToFit;
         }
         
         /**
-         * Getter.
+         * Getter. Returns a {@link Boolean} instead of the primitive <code>boolean</code>
+         * in order distinguish the 'not configured' state. Returns <code>null</code> in this
+         * case.
          * 
-         * @return the {@link #zoomToFocus} flag
+         * @return the {@link #zoomToFocus} state
          */
         public Boolean getZoomToFocus() {
             return this.zoomToFocus;
+        }
+
+        /**
+         * Getter.
+         * 
+         * @return the {@link KNode} to focus on
+         */
+        public KNode getFocusNode() {
+            return focus;
         }
     }
 }

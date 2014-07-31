@@ -14,18 +14,20 @@
 package de.cau.cs.kieler.klighd.piccolo.internal.nodes;
 
 import de.cau.cs.kieler.core.kgraph.KLabel;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
+import de.cau.cs.kieler.klighd.piccolo.KlighdSWTGraphics;
 import de.cau.cs.kieler.klighd.piccolo.internal.controller.AbstractKGERenderingController;
 import de.cau.cs.kieler.klighd.piccolo.internal.controller.KLabelRenderingController;
 import de.cau.cs.kieler.klighd.util.KlighdProperties;
-import edu.umd.cs.piccolo.util.PPickPath;
+import de.cau.cs.kieler.klighd.util.KlighdSemanticDiagramData;
+import edu.umd.cs.piccolo.util.PPaintContext;
 
 /**
  * The Piccolo node for representing a {@code KLabel}.
  * 
  * @author mri
  */
-public class KLabelNode extends PEmptyNode implements IGraphElement<KLabel> {
+public class KLabelNode extends KlighdNode implements IGraphElement<KLabel> {
 
     private static final long serialVersionUID = -3999806360081871118L;
 
@@ -48,10 +50,6 @@ public class KLabelNode extends PEmptyNode implements IGraphElement<KLabel> {
      */
     public KLabelNode(final KLabel label) {
         this.label = label;
-
-        Boolean b = label.getData(KShapeLayout.class).getProperty(
-                KlighdProperties.KLIGHD_SELECTION_UNPICKABLE);
-        setPickable(b != null && b.equals(Boolean.TRUE) ? false : true);
     }
 
     /**
@@ -69,9 +67,9 @@ public class KLabelNode extends PEmptyNode implements IGraphElement<KLabel> {
         if (controller == null || controller instanceof KLabelRenderingController) {
             this.renderingController = (KLabelRenderingController) controller;
         } else {
-            String s = "KLighD: Fault occured while building up a concrete KLabel rendering: KLabelNodes"
-                    + " are supposed to be controlled by KLabelRenderingControllers rather than "
-                    + controller.getClass().getCanonicalName();
+            final String s = "KLighD: Fault occured while building up a concrete KLabel rendering: "
+                    + "KLabelNodes are supposed to be controlled by KLabelRenderingControllers rather "
+                    + "than " + controller.getClass().getCanonicalName();
             throw new IllegalArgumentException(s);
         }
     }
@@ -102,17 +100,27 @@ public class KLabelNode extends PEmptyNode implements IGraphElement<KLabel> {
     public String getText() {
         return text;
     }
-
+    
     /**
-     * {@inheritDoc}.<br>
-     * <br>
-     * By means of this configuration the {@link KLabelNode KLabelNodes} themselves are pickable
-     * rather then their children (KText renderings). This allows reduction of the tracing
-     * information needed in order to link view and (source) model.
-     * 
-     * @return true since we can abstract the pick of a concrete text rendering node this way.
+     * {@inheritDoc}
      */
-    protected boolean pick(final PPickPath pickPath) {
-        return true;
+    @Override
+    protected void paint(final PPaintContext paintContext) {
+        KlighdSWTGraphics g2 = (KlighdSWTGraphics) paintContext.getGraphics();
+        KlighdSemanticDiagramData sd =
+                getGraphElement().getData(KLayoutData.class).getProperty(
+                        KlighdProperties.SEMANTIC_DATA);
+        g2.startGroup(sd);
+        super.paint(paintContext);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void paintAfterChildren(final PPaintContext paintContext) {
+        super.paintAfterChildren(paintContext);
+        KlighdSWTGraphics g2 = (KlighdSWTGraphics) paintContext.getGraphics();
+        g2.endGroup();
     }
 }

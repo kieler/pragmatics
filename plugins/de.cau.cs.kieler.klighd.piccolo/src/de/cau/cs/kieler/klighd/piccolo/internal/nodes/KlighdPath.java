@@ -23,9 +23,6 @@ import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.graphics.Device;
@@ -35,25 +32,28 @@ import org.eclipse.swt.graphics.RGB;
 
 import com.google.common.collect.Maps;
 
+import de.cau.cs.kieler.core.krendering.KRendering;
 import de.cau.cs.kieler.klighd.KlighdConstants;
 import de.cau.cs.kieler.klighd.piccolo.KlighdSWTGraphics;
-import de.cau.cs.kieler.klighd.piccolo.internal.util.NodeUtil;
+import de.cau.cs.kieler.klighd.piccolo.internal.controller.AbstractKGERenderingController;
+import de.cau.cs.kieler.klighd.piccolo.internal.nodes.NodeDisposeListener.IResourceEmployer;
 import de.cau.cs.kieler.klighd.piccolo.internal.util.PolylineUtil;
 import de.cau.cs.kieler.klighd.piccolo.internal.util.RGBGradient;
-import edu.umd.cs.piccolo.PNode;
+import de.cau.cs.kieler.klighd.util.KlighdProperties;
 import edu.umd.cs.piccolo.nodes.PPath;
 import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolo.util.PPaintContext;
 
 /**
- * The KLighD-specific {@link PNode} implementation for displaying primitive figures.<br>
+ * The KLighD-specific {@link edu.umd.cs.piccolo.PNode PNode} implementation for displaying
+ * primitive figures.<br>
  * It is inspired by the Piccolo2D {@link edu.umd.cs.piccolox.swt.PSWTPath PSWTPath} and is
  * tailored/extended to those features required by KLighD.<br>
  * <br>
  * {@link KlighdPath} instances require a {@link KlighdSWTGraphics} while drawing (i.e. in
  * {@link #paint(PPaintContext)}). In case the available implementation provides an SWT
- * {@link Device} SWT {@link Path} objects are created and drawn, and disposed if they got out-dated.
- * Otherwise the internally used AWT {@link Shape Shapes} are used for drawing.<br>
+ * {@link Device} SWT {@link Path} objects are created and drawn, and disposed if they got
+ * out-dated. Otherwise the internally used AWT {@link Shape Shapes} are used for drawing.<br>
  * <br>
  * The stroke lines of closed figures like rectangles, ellipses, and arcs (although arcs are usually
  * not closed), i.e. those whose size is determined by a rectangular bounding box, do not violate
@@ -65,20 +65,20 @@ import edu.umd.cs.piccolo.util.PPaintContext;
  * <br>
  * <b>Note:</b> All <code>invalidate...</code> and <code>repaint</code> calls are deactivated in
  * order to avoid superfluous repaint activities. The repaint events are fired by
- * {@link #addChild(PNode)}/{@link #removeChild(PNode)} in case of rendering changes, by
- * {@link #setBounds(double, double, double, double)} in case of layout changes, and in case of pure
- * style changes by the {@link de.cau.cs.kieler.core.kgraph.KGraphElement KGraphElement} rendering
- * controllers ({@link de.cau.cs.kieler.klighd.piccolo.internal.controller.AbstractKGERenderingController
- * #updateStyles() AbstractKGERenderingController#updateStyles()}) after all rendering and style changes
- * are performed.
+ * {@link #addChild(edu.umd.cs.piccolo.PNode) addChild(PNode)}/
+ * {@link #removeChild(edu.umd.cs.piccolo.PNode) removeChild(PNode)} in case of rendering changes,
+ * by {@link #setBounds(double, double, double, double)} in case of layout changes, and in case of
+ * pure style changes by the {@link de.cau.cs.kieler.core.kgraph.KGraphElement KGraphElement}
+ * rendering controllers ({@link
+ * de.cau.cs.kieler.klighd.piccolo.internal.controller.AbstractKGERenderingController #updateStyles()
+ * AbstractKGERenderingController#updateStyles()}) after all rendering and style changes are
+ * performed.
  * 
  * @author chsch, mri
  */
-public class KlighdPath extends PNode {
+public class KlighdPath extends KlighdNode implements IResourceEmployer {
 
     private static final long serialVersionUID = 8034306769936734586L;
-
-    private static final RGB DEFAULT_STROKE_PAINT = new RGB(0, 0, 0);
 
     private static final Map<Color, RGB> RGB_CACHE = Maps.newConcurrentMap();
 
@@ -86,7 +86,7 @@ public class KlighdPath extends PNode {
     private BasicStroke stroke = new BasicStroke();
 
     private int strokeAlpha = KlighdConstants.ALPHA_FULL_OPAQUE;
-    private RGB strokePaint = DEFAULT_STROKE_PAINT;
+    private RGB strokePaint = KlighdConstants.BLACK;
     private RGBGradient strokePaintGradient = null;
 
     private int paintAlpha = KlighdConstants.ALPHA_FULL_OPAQUE;
@@ -129,24 +129,12 @@ public class KlighdPath extends PNode {
      * Creates an empty {@link KlighdPath}.
      */
     public KlighdPath() {
-        final PropertyChangeListener disposeListener = new PropertyChangeListener() {
-            public void propertyChange(final PropertyChangeEvent event) {
-                if (event.getNewValue() == null) {
-                    disposeSWTPath();
-                    
-                    @SuppressWarnings("unchecked")
-                    final List<PNode> children = KlighdPath.this.getChildrenReference();
-                    for (PNode p : children) {
-                        p.firePropertyChange(NodeUtil.DISPOSE_CODE, NodeUtil.DISPOSE, this, null);
-                    }
-                }
-            }
-        };
-        this.addPropertyChangeListener(PROPERTY_PARENT, disposeListener);
-        this.addPropertyChangeListener(NodeUtil.DISPOSE, disposeListener);
+        // this.addPropertyChangeListener(NodeDisposeListener.DISPOSE, new NodeDisposeListener(this));
+        super();
+        
         // reacting on event of PROPERTY_BOUNDS seems to be not necessary as that will lead to
         //  a call of one of the 'setPathTo...' methods below that in turn will lead to a call of
-        //  'updateShape', which calls 'disposeSWTPath', too!
+        //  'updateShape', which calls 'disposeSWTResource', too!
     }
 
     /**
@@ -204,10 +192,21 @@ public class KlighdPath extends PNode {
      *            the desired {@link LineAttributes} record.
      */
     public void setLineAttributes(final LineAttributes theLineAttributes) {
+        if (theLineAttributes == null || theLineAttributes.equals(this.lineAttributes)) {
+            return;
+        }
         this.lineAttributes = theLineAttributes;
+        flushAttributes();
+    }
+
+    /**
+     * Triggers a re-evaluation of the attached {@link LineAttributes}, must be called after
+     * manipulating the {@link LineAttributes} obtained via {@link #getLineAttributes()}.
+     */
+    public void flushAttributes() {
         this.stroke = new BasicStroke(lineAttributes.width, lineAttributes.cap - 1,
-                lineAttributes.join - 1, lineAttributes.miterLimit, lineAttributes.dash,
-                lineAttributes.dashOffset);
+                lineAttributes.join - 1, lineAttributes.miterLimit);
+                //, lineAttributes.dash, lineAttributes.dashOffset);
         updateBoundsFromPath();
         updateShape();
     }
@@ -228,10 +227,13 @@ public class KlighdPath extends PNode {
      *            the line width
      */
     public void setLineWidth(final float width) {
+        if (width == this.lineAttributes.width) {
+            return;
+        }
         this.lineAttributes.width = width;
         this.stroke = new BasicStroke(lineAttributes.width, lineAttributes.cap - 1,
-                lineAttributes.join - 1, lineAttributes.miterLimit, lineAttributes.dash,
-                lineAttributes.dashOffset);
+                lineAttributes.join - 1, lineAttributes.miterLimit);
+                // , lineAttributes.dash, lineAttributes.dashOffset);
         updateBoundsFromPath();
         updateShape();
     }
@@ -435,6 +437,7 @@ public class KlighdPath extends PNode {
      *            bounds being tested for intersection
      * @return true if path visibly crosses bounds
      */
+    @Override
     public boolean intersects(final Rectangle2D aBounds) {
         if (super.intersects(aBounds)) {
             final Rectangle2D srcBounds = aBounds;
@@ -474,7 +477,7 @@ public class KlighdPath extends PNode {
      * @author chsch
      */
     private void updateShape() {
-        disposeSWTPath();
+        disposeSWTResource();
 
         if (isLine() || isPolygon) {
             shape = origShape;
@@ -544,6 +547,7 @@ public class KlighdPath extends PNode {
      * 
      * @author chsch
      */
+    @Override
     public PBounds getFullBoundsReference() {
         PBounds curBounds = super.getFullBoundsReference();
         if (shadow != null) {
@@ -579,8 +583,24 @@ public class KlighdPath extends PNode {
             drawShadow(graphics, swt);
         }
         final int currentAlpha = graphics.getAlpha();
-        final float currentAlphaFloat = (float) currentAlpha;
+        final float currentAlphaFloat = currentAlpha;
 
+        
+        // We attach semantic data favored to the foreground element
+        // however, if no foreground exists, we attach it to the background
+        // FIXME not working for rendering refs
+        final boolean drawForeground = (lineAttributes.width != 0f)
+                        && (strokePaint != null || strokePaintGradient != null);
+        final boolean drawBackground = !isLine() && (paint != null || paintGradient != null);
+
+        final KRendering rendering =
+                (KRendering) this.getAttribute(AbstractKGERenderingController.ATTR_KRENDERING);
+        
+        // if not even a background is painted, don't attach the semantic data at all
+        if (!drawForeground && drawBackground) {
+            graphics.addSemanticData(rendering.getProperty(KlighdProperties.SEMANTIC_DATA));
+        }
+        
         // draw the background if possible and required
         if (!isLine()) {
             if (swt && shapePath == null && (paint != null || paintGradient != null)) {
@@ -606,6 +626,10 @@ public class KlighdPath extends PNode {
                     graphics.fill(shape);
                 }
             }
+        }
+
+        if (rendering != null && drawForeground) {
+            graphics.addSemanticData(rendering.getProperty(KlighdProperties.SEMANTIC_DATA));
         }
 
         // draw the foreground if required
@@ -661,8 +685,8 @@ public class KlighdPath extends PNode {
 
         
         // determine the movement of the shape coordinates by means of an affine transform
-        AffineTransform t = graphics.getTransform();
-        AffineTransform tc = new AffineTransform(t);
+        final AffineTransform t = graphics.getTransform();
+        final AffineTransform tc = new AffineTransform(t);
         tc.translate(shadowExtendX, shadowExtendY);
 
         // configure the graphics layer
@@ -671,12 +695,12 @@ public class KlighdPath extends PNode {
         // a sufficiently small number unequal to 0
         graphics.setLineAttributes(new LineAttributes(0.0001f)); // SUPPRESS CHECKSTYLE MagicNumber
         graphics.setAlpha(
-                (int) ((float) currentAlpha * shadowAlpha / KlighdConstants.ALPHA_FULL_OPAQUE));
+                (int) (currentAlpha * shadowAlpha / KlighdConstants.ALPHA_FULL_OPAQUE));
 
         // use the maximal value for the loop
-        int maxShadowExtend = (int) Math.ceil(Math.max(shadowExtendX, shadowExtendY));
-        boolean xIsBigger = shadowExtendX > shadowExtendY;
-        double ratio =
+        final int maxShadowExtend = (int) Math.ceil(Math.max(shadowExtendX, shadowExtendY));
+        final boolean xIsBigger = shadowExtendX > shadowExtendY;
+        final double ratio =
                 xIsBigger ? (shadowExtendY / shadowExtendX) : (shadowExtendX / shadowExtendY);
         // draw a bunch of shape copies, each of them is moved a bit towards the original position
         for (int i = 0; i < maxShadowExtend; i++) {
@@ -718,7 +742,7 @@ public class KlighdPath extends PNode {
      * to tidy up the native drawing objects, which have been created while constructing
      * {@link #shapePath}. (see {@link Path#Path(Device)} for details)
      */
-    private void disposeSWTPath() {
+    public void disposeSWTResource() {
         if (this.shapePath != null) {
             this.shapePath.dispose();
             this.shapePath = null;
@@ -824,7 +848,7 @@ public class KlighdPath extends PNode {
         }
 
         this.isSpline = true;
-        Path2D spline = PolylineUtil.createSplinePath(new Path2D.Float(), points);
+        final Path2D spline = PolylineUtil.createSplinePath(new Path2D.Float(), points);
         this.linePoints = PolylineUtil.createSplineApproximationPath(spline);
         this.setShape(spline);
     }
@@ -846,7 +870,7 @@ public class KlighdPath extends PNode {
         this.isRoundedBendsPolyline = true;
         this.linePoints = points;
         this.setShape(
-                PolylineUtil.createRoundedBendsPolylinePath(new Path2D.Float(), points, bendRadius));
+            PolylineUtil.createRoundedBendsPolylinePath(new Path2D.Float(), points, bendRadius, this));
     }
 
 

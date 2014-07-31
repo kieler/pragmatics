@@ -969,13 +969,22 @@ public interface KRenderingPackage extends EPackage {
     int KIMAGE__IMAGE_OBJECT = KCONTAINER_RENDERING_FEATURE_COUNT + 2;
 
     /**
+     * The feature id for the '<em><b>Clip Shape</b></em>' containment reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KIMAGE__CLIP_SHAPE = KCONTAINER_RENDERING_FEATURE_COUNT + 3;
+
+    /**
      * The number of structural features of the '<em>KImage</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int KIMAGE_FEATURE_COUNT = KCONTAINER_RENDERING_FEATURE_COUNT + 3;
+    int KIMAGE_FEATURE_COUNT = KCONTAINER_RENDERING_FEATURE_COUNT + 4;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.core.krendering.KPlacementData <em>KPlacement Data</em>}' class.
@@ -1580,13 +1589,22 @@ public interface KRenderingPackage extends EPackage {
     int KTEXT__CURSOR_SELECTABLE = KRENDERING_FEATURE_COUNT + 1;
 
     /**
+     * The feature id for the '<em><b>Editable</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KTEXT__EDITABLE = KRENDERING_FEATURE_COUNT + 2;
+
+    /**
      * The number of structural features of the '<em>KText</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int KTEXT_FEATURE_COUNT = KRENDERING_FEATURE_COUNT + 2;
+    int KTEXT_FEATURE_COUNT = KRENDERING_FEATURE_COUNT + 3;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.core.krendering.KPlacement <em>KPlacement</em>}' class.
@@ -4475,6 +4493,17 @@ public interface KRenderingPackage extends EPackage {
     EAttribute getKImage_ImageObject();
 
     /**
+     * Returns the meta object for the containment reference '{@link de.cau.cs.kieler.core.krendering.KImage#getClipShape <em>Clip Shape</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the containment reference '<em>Clip Shape</em>'.
+     * @see de.cau.cs.kieler.core.krendering.KImage#getClipShape()
+     * @see #getKImage()
+     * @generated
+     */
+    EReference getKImage_ClipShape();
+
+    /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.core.krendering.KDecoratorPlacementData <em>KDecorator Placement Data</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -4762,6 +4791,17 @@ public interface KRenderingPackage extends EPackage {
      * @generated
      */
     EAttribute getKText_CursorSelectable();
+
+    /**
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.core.krendering.KText#isEditable <em>Editable</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Editable</em>'.
+     * @see de.cau.cs.kieler.core.krendering.KText#isEditable()
+     * @see #getKText()
+     * @generated
+     */
+    EAttribute getKText_Editable();
 
     /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.core.krendering.KPlacement <em>KPlacement</em>}'.
@@ -6138,6 +6178,14 @@ public interface KRenderingPackage extends EPackage {
         EAttribute KIMAGE__IMAGE_OBJECT = eINSTANCE.getKImage_ImageObject();
 
         /**
+         * The meta object literal for the '<em><b>Clip Shape</b></em>' containment reference feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EReference KIMAGE__CLIP_SHAPE = eINSTANCE.getKImage_ClipShape();
+
+        /**
          * The meta object literal for the '{@link de.cau.cs.kieler.core.krendering.impl.KDecoratorPlacementDataImpl <em>KDecorator Placement Data</em>}' class.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
@@ -6368,6 +6416,14 @@ public interface KRenderingPackage extends EPackage {
          * @generated
          */
         EAttribute KTEXT__CURSOR_SELECTABLE = eINSTANCE.getKText_CursorSelectable();
+
+        /**
+         * The meta object literal for the '<em><b>Editable</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute KTEXT__EDITABLE = eINSTANCE.getKText_Editable();
 
         /**
          * The meta object literal for the '{@link de.cau.cs.kieler.core.krendering.KPlacement <em>KPlacement</em>}' class.

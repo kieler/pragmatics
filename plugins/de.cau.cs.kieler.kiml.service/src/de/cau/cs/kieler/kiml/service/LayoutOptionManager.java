@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.ui.IWorkbenchPart;
@@ -41,6 +42,7 @@ import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.config.LayoutContext;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
  * The main class for configuration of KGraph instances. Configuration means the annotation of
@@ -170,6 +172,8 @@ public class LayoutOptionManager {
             recursiveConf(child, layoutMapping, config);
         }
     }
+    
+    private LayoutOptionData resetConfigOption;
 
     /**
      * Configure a graph element.
@@ -202,9 +206,18 @@ public class LayoutOptionManager {
         // enrich the layout context using the basic configuration
         enrich(context, config, false);
 
-        // clear the previous configuration
+        // clear the previous configuration, unless specified otherwise by 
+        // a layout option
         KLayoutData layoutData = graphElement.getData(KLayoutData.class);
-        layoutData.getProperties().clear();
+        if (resetConfigOption == null) {
+            resetConfigOption =
+                    LayoutMetaDataService.getInstance().getOptionData(
+                            LayoutOptions.RESET_CONFIG.getId());
+        }
+        if (resetConfigOption == null 
+                || (Boolean) config.getOptionValue(resetConfigOption, context)) {
+            layoutData.getProperties().clear();
+        }
         
         // transfer the options from the layout configuration
         transferValues(layoutData, config, context);
@@ -258,12 +271,17 @@ public class LayoutOptionManager {
         enrich(LayoutContext.DOMAIN_MODEL, context, config);
         // enrich the layout option targets
         enrich(LayoutContext.OPT_TARGETS, context, config);
-        // enrich the property indicating whether the selected node has ports
-        enrich(DefaultLayoutConfig.HAS_PORTS, context, config);
-        // enrich the aspect ratio of the diagram viewer
-        enrich(EclipseLayoutConfig.ASPECT_RATIO, context, config);
-        // enrich the diagram type for the selected element
-        enrich(DefaultLayoutConfig.CONTENT_DIAGT, context, config);
+        Set<LayoutOptionData.Target> targets = context.getProperty(LayoutContext.OPT_TARGETS);
+        if (targets.contains(LayoutOptionData.Target.NODES)) {
+            // enrich the property indicating whether the selected node has ports
+            enrich(DefaultLayoutConfig.HAS_PORTS, context, config);
+        }
+        if (targets.contains(LayoutOptionData.Target.PARENTS)) {
+            // enrich the aspect ratio of the diagram viewer
+            enrich(EclipseLayoutConfig.ASPECT_RATIO, context, config);
+            // enrich the diagram type for the selected element
+            enrich(DefaultLayoutConfig.CONTENT_DIAGT, context, config);
+        }
         
         if (makeOptionsList) {
             // enrich the container diagram part

@@ -39,6 +39,7 @@ import de.cau.cs.kieler.kiml.options.PortSide
 import de.cau.cs.kieler.kiml.options.SizeConstraint
 import de.cau.cs.kieler.klighd.KlighdConstants
 import de.cau.cs.kieler.klighd.microlayout.PlacementUtil
+import de.cau.cs.kieler.klighd.util.ExpansionAwareLayoutOption
 import de.cau.cs.kieler.klighd.util.KlighdProperties
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.LabelExtensions
@@ -177,7 +178,8 @@ class Ptolemy2KGraphVisualization {
         layout.setProperty(KlighdProperties::EXPAND, false)
         layout.setProperty(LayoutOptions::NODE_LABEL_PLACEMENT, EnumSet::of(
             NodeLabelPlacement::OUTSIDE, NodeLabelPlacement::H_LEFT, NodeLabelPlacement::V_TOP))
-        layout.setProperty(LayoutOptions::PORT_CONSTRAINTS, PortConstraints::FIXED_ORDER)
+        ExpansionAwareLayoutOption::setProperty(layout, LayoutOptions::PORT_CONSTRAINTS,
+            PortConstraints::FIXED_ORDER, PortConstraints::FREE)
         layout.setProperty(LayoutOptions::SIZE_CONSTRAINT, SizeConstraint::fixed)
         
         node.setLayoutAlgorithm()

@@ -19,7 +19,7 @@
   <properties>
     <update.site.name>KIELER Pragmatics</update.site.name>
     <update.site.description>Nightly</update.site.description>
-    <update.site.version>0.11.0</update.site.version>
+    <update.site.version>0.12.0</update.site.version>
     <target.eclipse.version>4.3 (Kepler)</target.eclipse.version>
   </properties>
   
@@ -47,11 +47,11 @@
                 <!-- Google Guava -->
                 <associateSite>http://guava-osgi.googlecode.com/svn/trunk/repository/</associateSite>
                 <!-- Graphiti -->
-                <associateSite>http://download.eclipse.org/graphiti/updates/0.10.1</associateSite>
+                <associateSite>http://download.eclipse.org/graphiti/updates/0.10.2</associateSite>
+                <!-- Eclipse Orbit for Apache Batik -->
+                <associateSite>http://download.eclipse.org/tools/orbit/downloads/drops/R20140114142710/repository/</associateSite>
                 <!-- Our Ptolemy library -->
                 <associateSite>http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/ptolemy</associateSite>
-                <!-- Eclipse Orbit for Apache Batik -->
-                <associateSite>http://download.eclipse.org/tools/orbit/downloads/drops/R20130827064939/repository/</associateSite>
               </associateSites>
               <siteTemplateFolder>siteTemplate</siteTemplateFolder>
               <symbols>

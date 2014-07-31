@@ -53,7 +53,6 @@ import de.cau.cs.kieler.klighd.ZoomStyle;
 import de.cau.cs.kieler.klighd.piccolo.internal.controller.DiagramController;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KNodeNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdMainCamera;
-import de.cau.cs.kieler.klighd.piccolo.svg.KlighdSVGCanvas;
 import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
 
@@ -100,13 +99,13 @@ public class SVGBrowsingViewer {
         }
 
         // FIXME
-        controller.zoom(ZoomStyle.ZOOM_TO_FIT, 0);
+        controller.getZoomController().zoom(ZoomStyle.ZOOM_TO_FIT, null, 0);
 
         // render
-        String rendered = canvas.render();
+        final String rendered = canvas.render();
 
         // post process the textual hashcodes to allow expansion of hierarchical elements
-        String expandifized = expandifySVG(rendered);
+        final String expandifized = expandifySVG(rendered);
 
         return expandifized;
     }
@@ -121,19 +120,20 @@ public class SVGBrowsingViewer {
      */
     public void setModel(final KNode model, final boolean sync) {
         // prepare the camera
-        KlighdMainCamera camera = canvas.getCamera();
+        final KlighdMainCamera camera = canvas.getCamera();
 
         // remove the old nodes from the camera
         @SuppressWarnings("unchecked")
+        final
         Iterable<PLayer> layers = camera.getLayersReference();
-        for (PLayer layer : layers) {
+        for (final PLayer layer : layers) {
             layer.removeAllChildren();
         }
 
         // create a controller for the graph
-        controller = new DiagramController(model, camera, sync);
+        controller = new DiagramController(model, camera, sync, false);
 //        controller.initialize();
-        controller.stopRecording(ZoomStyle.NONE, 0);
+        controller.stopRecording(ZoomStyle.NONE, null, 0);
     }
 
     /**
@@ -152,10 +152,10 @@ public class SVGBrowsingViewer {
      */
     public void toggleExpansion(final String hashCode) {
         try {
-            int hash = Integer.valueOf(hashCode);
-            KNode node = currentHashCodeMapping.get(hash);
+            final int hash = Integer.valueOf(hashCode);
+            final KNode node = currentHashCodeMapping.get(hash);
             toggleExpansion(node);
-        } catch (NumberFormatException ex) {
+        } catch (final NumberFormatException ex) {
             // fail silent
         }
     }
@@ -174,7 +174,7 @@ public class SVGBrowsingViewer {
      * Zooms and translates the current model such that it fits into the current viewport.
      */
     public void zoomToFit() {
-        controller.zoom(ZoomStyle.ZOOM_TO_FIT, 0);
+        controller.getZoomController().zoom(ZoomStyle.ZOOM_TO_FIT, null, 0);
     }
 
     /**
@@ -226,32 +226,32 @@ public class SVGBrowsingViewer {
 
         // if already wrapped dont wrap it again, but remember it in the hash map
         if ((parent instanceof WrappedKNodeNode)) {
-            WrappedKNodeNode wrapper = (WrappedKNodeNode) parent;
-            KNode wrappedGraphElement = wrapper.getKnodeNode().getGraphElement();
+            final WrappedKNodeNode wrapper = (WrappedKNodeNode) parent;
+            final KNode wrappedGraphElement = wrapper.getKnodeNode().getGraphElement();
             currentHashCodeMapping.put(wrappedGraphElement.hashCode(), wrappedGraphElement);
 
             // recurse the children
             for (int i = 0; i < wrapper.getKnodeNode().getChildrenCount(); i++) {
-                PNode child = wrapper.getKnodeNode().getChild(i);
+                final PNode child = wrapper.getKnodeNode().getChild(i);
                 recursivelyWrapKNodeNodes(child);
             }
 
         } else {
             // newly wrap the children
-            List<WrappedKNodeNode> toAdd = Lists.newLinkedList();
+            final List<WrappedKNodeNode> toAdd = Lists.newLinkedList();
 
             for (int i = 0; i < parent.getChildrenCount(); i++) {
-                PNode child = parent.getChild(i);
+                final PNode child = parent.getChild(i);
                 recursivelyWrapKNodeNodes(child);
 
                 // only handle KNodeNodes as they can contain children
                 if (child instanceof KNodeNode) {
-                    KNodeNode knodenode = (KNodeNode) child;
+                    final KNodeNode knodenode = (KNodeNode) child;
                     // if there are any children
                     if (knodenode.getGraphElement().getChildren().size() > 0) {
 
                         // wrap it
-                        WrappedKNodeNode wrapper = new WrappedKNodeNode(knodenode);
+                        final WrappedKNodeNode wrapper = new WrappedKNodeNode(knodenode);
                         toAdd.add(wrapper);
 
                         // place it in the hash map
@@ -260,7 +260,7 @@ public class SVGBrowsingViewer {
                     }
 
                 }
-                for (WrappedKNodeNode pair : toAdd) {
+                for (final WrappedKNodeNode pair : toAdd) {
                     parent.addChild(pair);
                 }
             }
@@ -274,11 +274,11 @@ public class SVGBrowsingViewer {
      *         state of expanded/collapsed nodes and the viewer's viewport.
      */
     public String assemblePermaLink() {
-        Set<String> expanded = new HashSet<String>();
+        final Set<String> expanded = new HashSet<String>();
         assemblePermaLink(getModel(), expanded);
 
         try {
-            String joined = Joiner.on("$").join(expanded);
+            final String joined = Joiner.on("$").join(expanded);
             String permaLink = resourcePath + "?perma=" + URLEncoder.encode(joined, "utf8");
             if (svgTransform != null) {
                 permaLink += "&transform=" + URLEncoder.encode(svgTransform, "utf8");
@@ -288,13 +288,13 @@ public class SVGBrowsingViewer {
             permaLink += "&cs=" + resourceChecksum;
 
             return permaLink;
-        } catch (UnsupportedEncodingException uee) {
+        } catch (final UnsupportedEncodingException uee) {
             return null;
         }
     }
 
     private void assemblePermaLink(final KNode parent, final Set<String> expanded) {
-        for (KNode node : parent.getChildren()) {
+        for (final KNode node : parent.getChildren()) {
 
             if (!node.getChildren().isEmpty()) {
                 assemblePermaLink(node, expanded);
@@ -324,7 +324,7 @@ public class SVGBrowsingViewer {
         if (transform != null) {
             try {
                 setSvgTransform(URLDecoder.decode(transform, "utf8"));
-            } catch (UnsupportedEncodingException e) {
+            } catch (final UnsupportedEncodingException e) {
                 // silent
             }
         }
@@ -332,11 +332,11 @@ public class SVGBrowsingViewer {
         if (expanded != null) {
             try {
                 // decode
-                String decoded = URLDecoder.decode(expanded, "utf8");
+                final String decoded = URLDecoder.decode(expanded, "utf8");
                 // expand
-                Set<String> fragments = Sets.newHashSet(Splitter.on("$").split(decoded));
+                final Set<String> fragments = Sets.newHashSet(Splitter.on("$").split(decoded));
                 applyPermalink(getModel(), fragments);
-            } catch (UnsupportedEncodingException e) {
+            } catch (final UnsupportedEncodingException e) {
                 // silent
             }
         }
@@ -346,10 +346,10 @@ public class SVGBrowsingViewer {
 
     private void applyPermalink(final KNode parent, final Set<String> expanded) {
 
-        for (KNode node : parent.getChildren()) {
+        for (final KNode node : parent.getChildren()) {
 
             // possibly expand
-            String thisFragment = EcoreUtil.getURI(node).toString();
+            final String thisFragment = EcoreUtil.getURI(node).toString();
 
             if (expanded.contains(thisFragment)) {
                 System.out.println("Expanding: " + thisFragment + " contained: "
@@ -383,7 +383,7 @@ public class SVGBrowsingViewer {
             spf.setFeature("http://xml.org/sax/features/validation", false);
             spf.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
             spf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
     }
@@ -392,32 +392,32 @@ public class SVGBrowsingViewer {
 
         try {
             // prepare an outputstream
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            BufferedOutputStream bos = new BufferedOutputStream(baos);
+            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            final BufferedOutputStream bos = new BufferedOutputStream(baos);
 
             // set up parser and serializer
-            SAXParser parser = spf.newSAXParser();
-            XMLReader reader = parser.getXMLReader();
+            final SAXParser parser = spf.newSAXParser();
+            final XMLReader reader = parser.getXMLReader();
 
-            TransformerHandler serializer = factory.newTransformerHandler();
+            final TransformerHandler serializer = factory.newTransformerHandler();
             serializer.setResult(new StreamResult(bos));
 
             // create the filter
-            XMLFilter filter = new ExpandifierFilter();
+            final XMLFilter filter = new ExpandifierFilter();
             filter.setContentHandler(serializer);
             filter.setParent(reader);
 
             // prepare an input stream and parse
-            BufferedInputStream bais =
+            final BufferedInputStream bais =
                     new BufferedInputStream(new ByteArrayInputStream(svg.getBytes()));
             filter.parse(new InputSource(bais));
 
             // retrieve the result
-            String s = new String(baos.toByteArray());
+            final String s = new String(baos.toByteArray());
 
             return s;
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
 
@@ -443,7 +443,7 @@ public class SVGBrowsingViewer {
 
             // if we found an id, add it to the element's attributes
             if (nextId != null) {
-                AttributesImpl impl = new AttributesImpl(atts);
+                final AttributesImpl impl = new AttributesImpl(atts);
                 impl.addAttribute(uri, localName, "data-id", "string", nextId);
                 impl.addAttribute(uri, localName, "class", "string", "expandable");
 
@@ -472,7 +472,7 @@ public class SVGBrowsingViewer {
 
             if (textMarker) {
                 // check if the current text marks an expandable node
-                String currentText = new String(Arrays.copyOfRange(ch, start, start + length));
+                final String currentText = new String(Arrays.copyOfRange(ch, start, start + length));
                 if (!Strings.isNullOrEmpty(currentText.trim())) {
                     if (currentText.trim().startsWith(WrappedKNodeNode.ID_TEXT)) {
                         // found one!! add the id as property

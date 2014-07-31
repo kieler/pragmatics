@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.statushandlers.StatusManager;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
@@ -28,6 +29,7 @@ import de.cau.cs.kieler.klighd.ZoomStyle;
 import de.cau.cs.kieler.klighd.piccolo.KlighdPiccoloPlugin;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KNodeTopNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdMainCamera;
+import edu.umd.cs.piccolo.util.PAffineTransform;
 import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolo.util.PDimension;
 
@@ -41,9 +43,14 @@ public class DiagramZoomController {
     /** the main camera that determines the actually drawn picture. */
     private final KlighdMainCamera canvasCamera;
 
-    private KNodeTopNode topNode;
-    private KNode focusNode = null;
+    private final DiagramController diagramController;
+    
+    private final Predicate<KGraphElement> visibilityFilter = new Predicate<KGraphElement>() {
 
+        public boolean apply(final KGraphElement input) {
+            return diagramController.isVisible(input, false);
+        }
+    };
 
     /**
      * Constructor.
@@ -52,11 +59,16 @@ public class DiagramZoomController {
      *            the employed {@link KNodeTopNode}
      * @param theCanvasCamera
      *            the employed {@link KlighdMainCamera}
+     * @param theDiagramController
+     *            the employed {@link DiagramController}
      */
-    public DiagramZoomController(final KNodeTopNode theTopNode, final KlighdMainCamera theCanvasCamera) {
+    public DiagramZoomController(final KNodeTopNode theTopNode,
+            final KlighdMainCamera theCanvasCamera, final DiagramController theDiagramController) {
         this.canvasCamera = theCanvasCamera;
-        this.topNode = theTopNode;
+        this.diagramController = theDiagramController;
     }
+
+    private KNode focusNode = null;
 
     /**
      * Sets the node to be focused during next 'zoom to focus' run.
@@ -71,37 +83,74 @@ public class DiagramZoomController {
     /**
      * Performs a zooming depending on the specified style.
      * 
-     * @param style
+     * @param zoomStyle
      *            the desired style
+     * @param desiredFocusNode
+     *            the {@link KNode} to focus in case <code>zoomStyle</code> is
+     *            {@link ZoomStyle#ZOOM_TO_FOCUS}, is ignored otherwise
      * @param duration
      *            time to animate
      */
-    public void zoom(final ZoomStyle style, final int duration) {
-        switch (style) {
+    public void zoom(final ZoomStyle zoomStyle, final KNode desiredFocusNode, final int duration) {
+        switch (zoomStyle) {
+        case ZOOM_TO_ACTUAL_SIZE:
+            zoomToActualSize(duration);
+            break;
+
         case ZOOM_TO_FIT:
             zoomToFit(duration);
             break;
+
         case ZOOM_TO_FOCUS:
-            KNode focus = focusNode != null ? focusNode : topNode.getGraphElement();
+            final KNode focus = desiredFocusNode != null
+                    ? desiredFocusNode : focusNode != null
+                            ? focusNode : diagramController.getClip();
             zoomToFocus(focus, duration);
             break;
+
         default:
             // nothing
         }
     }
+
+    /**
+     * 
+     * 
+     * @param duration
+     *            time to animate in ms
+     */
+    private void zoomToActualSize(final int duration) {
+        final KNode displayedKNode = this.canvasCamera.getDisplayedINode().getGraphElement(); 
+        final KShapeLayout nodeLayout = displayedKNode.getData(KShapeLayout.class);
+
+        if (nodeLayout == null) {
+            final String msg = "KLighD DiagramController: "
+                    + "Failed to apply 'zoom to actual size' as the displayed node's layout data are "
+                    + "unavailable. This is most likely due to a failed incremental update before.";
+            StatusManager.getManager().handle(
+                    new Status(IStatus.ERROR, KlighdPiccoloPlugin.PLUGIN_ID, msg),
+                    StatusManager.LOG);
+            return;
+        }
+        
+        final PBounds newBounds = toPBoundsIncludingPortsAndLabels(displayedKNode);
+
+        this.canvasCamera.animateViewToTransform(
+                PAffineTransform.getTranslateInstance(-newBounds.x, -newBounds.y), duration);
+    }
     
     /**
      * @param duration
-     *            time to animate
+     *            time to animate in ms
      */
     private void zoomToFit(final int duration) {
         final KNode displayedKNode = this.canvasCamera.getDisplayedINode().getGraphElement(); 
         final KShapeLayout nodeLayout = displayedKNode.getData(KShapeLayout.class);
 
         if (nodeLayout == null) {
-            String msg = "KLighD DiagramController: "
-                    + "Failed to apply 'zoom to fit' as the topNode's layout data are unavailable. "
-                    + "This is most likely due to a failed incremental update before.";
+            final String msg = "KLighD DiagramController: "
+                    + "Failed to apply 'zoom to fit' as the displayed node's layout data are "
+                    + "unavailable. This is most likely due to a failed incremental update before.";
             StatusManager.getManager().handle(
                     new Status(IStatus.ERROR, KlighdPiccoloPlugin.PLUGIN_ID, msg),
                     StatusManager.LOG);
@@ -129,7 +178,7 @@ public class DiagramZoomController {
      * @param duration
      *            duration of the animation
      */
-    private void zoomToFocus(final KNode focus, final int duration) {
+    public void zoomToFocus(final KNode focus, final int duration) {
         final KNode displayedKNode = this.canvasCamera.getDisplayedINode().getGraphElement(); 
         final PBounds newBounds = toPBoundsIncludingPortsAndLabels(focus);
 
@@ -139,7 +188,7 @@ public class DiagramZoomController {
         if (focus != displayedKNode) {
             KNode parent = focus.getParent();
             while (parent != null && parent != displayedKNode.getParent()) {
-                KShapeLayout parentLayout = parent.getData(KShapeLayout.class);
+                final KShapeLayout parentLayout = parent.getData(KShapeLayout.class);
                 newBounds.moveBy(parentLayout.getXpos(), parentLayout.getYpos());
                 parent = parent.getParent();
             }
@@ -160,14 +209,26 @@ public class DiagramZoomController {
 
         // check if we need to scale the view in order for the view to
         // contain the whole focus
-        boolean scale = viewBounds.getWidth() < focus.getWidth()
+        final boolean scale = viewBounds.getWidth() < focus.getWidth()
                 || viewBounds.getHeight() < focus.getHeight();
 
         // fetch bounds of the whole diagram
         final KNode displayedKNode = this.canvasCamera.getDisplayedINode().getGraphElement(); 
+        final KShapeLayout nodeLayout = displayedKNode.getData(KShapeLayout.class);
+
+        if (nodeLayout == null) {
+            final String msg = "KLighD DiagramController: "
+                    + "Failed to apply 'zoom to focus' as the displayed node's layout data are "
+                    + "unavailable. This is most likely due to a failed incremental update before.";
+            StatusManager.getManager().handle(
+                    new Status(IStatus.ERROR, KlighdPiccoloPlugin.PLUGIN_ID, msg),
+                    StatusManager.LOG);
+            return;
+        }
+
         final PBounds newBounds = toPBoundsIncludingPortsAndLabels(displayedKNode);
         
-        boolean fullyContains = viewBounds.getWidth() > newBounds.getWidth()
+        final boolean fullyContains = viewBounds.getWidth() > newBounds.getWidth()
                 && viewBounds.getHeight() > newBounds.getHeight();
 
         // if the viewport can fully accommodate the diagram, we perform zoom to fit 
@@ -196,8 +257,8 @@ public class DiagramZoomController {
 
         if (topNodeLayout == null) {
             final String msg = "KLighD DiagramController: "
-                    + "Failed to apply 'zoom to one' as the topNode's layout data are unavailable. "
-                    + "This is most likely due to a failed incremental update before.";
+                    + "Failed to apply 'zoom to level' as the displayed node's layout data are "
+                    + "unavailable. This is most likely due to a failed incremental update before.";
             StatusManager.getManager().handle(
                     new Status(IStatus.ERROR, KlighdPiccoloPlugin.PLUGIN_ID, msg),
                     StatusManager.LOG);
@@ -257,7 +318,7 @@ public class DiagramZoomController {
      *            the node
      * @return the corresponding {@link PBounds}
      */
-    public static PBounds toPBoundsIncludingPortsAndLabels(final KNode node) {
+    public PBounds toPBoundsIncludingPortsAndLabels(final KNode node) {
         return includePortAndLabelBounds(toPBounds(node), node);
     }    
 
@@ -273,7 +334,7 @@ public class DiagramZoomController {
      *            the {@link KNode} to be evaluated for ports and labels
      * @return the updated <code>nodeBounds</code> for convenience
      */
-    private static PBounds includePortAndLabelBounds(final PBounds nodeBounds, final KNode node) {
+    private PBounds includePortAndLabelBounds(final PBounds nodeBounds, final KNode node) {
         double maxX = nodeBounds.getWidth();
         double maxY = nodeBounds.getHeight();
         final float scale = node.getData(KShapeLayout.class).getProperty(LayoutOptions.SCALE_FACTOR); 
@@ -284,7 +345,10 @@ public class DiagramZoomController {
 
         boolean includedElement = false;
         
-        for (KGraphElement element : Iterables.concat(node.getPorts(), node.getLabels())) {
+        // incorporate only those contained ports & labels that are actually visible
+        //  others may not have reasonable positions
+        for (final KGraphElement element : Iterables.filter(
+                Iterables.concat(node.getPorts(), node.getLabels()), visibilityFilter)) {
             final KShapeLayout pL = element.getData(KShapeLayout.class);
             float val;
 

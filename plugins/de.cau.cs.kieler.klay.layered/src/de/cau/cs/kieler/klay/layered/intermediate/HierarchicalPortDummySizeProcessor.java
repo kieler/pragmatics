@@ -66,7 +66,7 @@ public final class HierarchicalPortDummySizeProcessor implements ILayoutProcesso
         List<LNode> southernDummies = new LinkedList<LNode>();
         
         // Calculate the width difference (this assumes CENTER node alignment)
-        double normalSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
+        double normalSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING).doubleValue();
         double smallSpacing = normalSpacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
         double delta = smallSpacing * 2;
         

@@ -30,7 +30,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
-import de.cau.cs.kieler.klay.layered.intermediate.LayoutProcessorStrategy;
+import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
@@ -165,8 +165,8 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
     
     /** additional processor dependencies for graphs with hierarchical ports. */
     private static final IntermediateProcessingConfiguration HIERARCHY_PROCESSING_ADDITIONS =
-        new IntermediateProcessingConfiguration(IntermediateProcessingConfiguration.BEFORE_PHASE_5,
-                LayoutProcessorStrategy.HIERARCHICAL_PORT_POSITION_PROCESSOR);
+        IntermediateProcessingConfiguration.createEmpty()
+            .addBeforePhase5(IntermediateProcessorStrategy.HIERARCHICAL_PORT_POSITION_PROCESSOR);
 
     /**
      * {@inheritDoc}
@@ -629,6 +629,8 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
         float spacing = layeredGraph.getProperty(Properties.OBJ_SPACING)
                 * layeredGraph.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
         float smallSpacing = spacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
+        double deflectionDampening = layeredGraph.getProperty(
+                Properties.LINEAR_SEGMENTS_DEFLECTION_DAMPENING).doubleValue();
         
         // Determine a suitable number of pendulum iterations
         int thoroughness = layeredGraph.getProperty(Properties.THOROUGHNESS);
@@ -648,7 +650,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
             double totalDeflection = 0;
             for (LinearSegment segment : linearSegments) {
                 segment.refSegment = null;
-                calcDeflection(segment, incoming, outgoing);
+                calcDeflection(segment, incoming, outgoing, deflectionDampening);
                 totalDeflection += Math.abs(segment.deflection);
             }
             
@@ -694,22 +696,17 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
     }
     
     /**
-     * Factor by which deflections are damped. WARNING: For high values the balancing can become
-     * unstable, creating a lot of whitespace. Therefore a low constant value (i.e. strong damping)
-     * is preferable.
-     */
-    private static final double DEFLECTION_DAMP = 0.3;
-
-    /**
      * Calculate the force acting on the given linear segment. The force is stored in the segment's
      * deflection field.
      * 
      * @param segment the linear segment whose force is to be calculated
      * @param incoming whether incoming edges should be considered
      * @param outgoing whether outgoing edges should be considered
+     * @param deflectionDampening factor by which deflections are dampened
      */
     private void calcDeflection(final LinearSegment segment, final boolean incoming,
-            final boolean outgoing) {
+            final boolean outgoing, final double deflectionDampening) {
+        
         double segmentDeflection = 0;
         int nodeWeightSum = 0;
         for (LNode node : segment.nodes) {
@@ -766,7 +763,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
             }
         }
         if (nodeWeightSum > 0) {
-            segment.deflection = DEFLECTION_DAMP * segmentDeflection / nodeWeightSum;
+            segment.deflection = deflectionDampening * segmentDeflection / nodeWeightSum;
             segment.weight = nodeWeightSum;
         } else {
             segment.deflection = 0;

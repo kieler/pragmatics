@@ -17,8 +17,10 @@ import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
 
-import com.google.common.base.Function;
 import org.eclipse.emf.ecore.EObject;
+
+import com.google.common.base.Function;
+
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
@@ -110,7 +112,7 @@ public abstract class AbstractDiagramSynthesis<S> implements ISynthesis {
         // try to find a method with one parameter which returns KNode
         // takes the first matching method with parameter 0 != Object
         Method transformMethod = null;
-        for (Method method : getClass().getDeclaredMethods()) {
+        for (final Method method : getClass().getDeclaredMethods()) {
             if (method.getParameterTypes().length == 1
                     && method.getReturnType().equals(KNode.class)
                     && method.getName().equals(TRANSFORM_METHOD_NAME)) {
@@ -176,9 +178,17 @@ public abstract class AbstractDiagramSynthesis<S> implements ISynthesis {
      */
     public final KNode transform(final Object model, final ViewContext viewContext) {
         use(viewContext);
+
         @SuppressWarnings("unchecked")
-        final S input = (S) model; 
-        return transform(input);
+        final S input = (S) model;
+        final KNode result = transform(input);
+
+        // clear the reference to ViewContext in order to allow the garbage collector to dispose
+        //  view model, the source model and other memory consuming components once the
+        //  corresponding viewer or diagram workbench part is closed (instances of this class are
+        //  kept for the life-time of the tool in case they are employed without Google Guice).
+        use(null);
+        return result;
     }
 
     /**
@@ -306,7 +316,8 @@ public abstract class AbstractDiagramSynthesis<S> implements ISynthesis {
 
 
     // ---------------------------------------------------------------------------------- //
-    //  Recommended layout option handling    
+    //  Hook allowing to register additional ILayoutConfigs for
+    //   those in a row with the default one    
 
     /**
      * {@inheritDoc}
@@ -317,7 +328,54 @@ public abstract class AbstractDiagramSynthesis<S> implements ISynthesis {
 
 
     // ---------------------------------------------------------------------------------- //
-    //  Convenience methods to be used in concrete implementations   
+    //  Hook for registering model update functions being used for transferring
+    //   name & label updates back to the application/business/semantic model
+
+    /**
+     * {@inheritDoc}
+     */
+    public Function<String, Void> getTextUpdateFunction(final KText kText, final KGraphElement element) {
+        return null;
+    }
+
+
+    // ---------------------------------------------------------------------------------- //
+    //  Convenience methods to be used in concrete implementations
+
+    /**
+     * Convenience method for setting the initially applied diagram clip node.<br>
+     * Refers to {@link #getUsedContext()} for determining the {@link ViewContext} to perform this
+     * definition and delegates to {@link #initiallyClipTo(ViewContext, KNode)}.
+     * 
+     * @param node
+     *            the initial diagram clip node
+     * @return <code>node</code> for convenience
+     */
+    protected final KNode initiallyClipTo(final KNode node) {
+        return setInitialClipTo(getUsedContext(), node);
+    }
+
+
+    private static final String NO_VIEWCONTEXT_ERROR_MSG =
+            "KLighD: Failed to set the initial diagram clip in XX: No ViewContext is available.";
+
+    /**
+     * Convenience method for setting the initially applied diagram clip node.
+     * 
+     * @param viewContext
+     *            the {@link ViewContext} to perform this definition in
+     * @param node
+     *            the initial diagram clip node
+     * @return <code>node</code> for convenience
+     */
+    protected final KNode setInitialClipTo(final ViewContext viewContext, final KNode node) {
+        if (viewContext != null) {
+            return DiagramSyntheses.initiallyClipTo(viewContext, node);
+        } else {
+            throw new RuntimeException(NO_VIEWCONTEXT_ERROR_MSG.replace("XX", getClass().getName()));
+        }
+    }
+
 
     /**
      * Convenience method for defining layout options for {@link KGraphElement KGraphElements}.
@@ -335,7 +393,7 @@ public abstract class AbstractDiagramSynthesis<S> implements ISynthesis {
      *            the option value
      * @return <code>node</code> allowing to perform multiple operations on it in one statement
      */
-    protected <R extends KGraphElement, T> R setLayoutOption(final R element,
+    protected final <R extends KGraphElement, T> R setLayoutOption(final R element,
             final IProperty<T> option, final T value) {
         element.getData(KLayoutData.class).setProperty(option, value);
         return element;
@@ -358,7 +416,7 @@ public abstract class AbstractDiagramSynthesis<S> implements ISynthesis {
      *            the value in case <code>node</code> is expanded
      * @return <code>node</code> allowing to perform multiple operations on it in one statement
      */
-    protected <T> KNode setExpansionAwareLayoutOption(final KNode node, final IProperty<T> option,
+    protected final <T> KNode setExpansionAwareLayoutOption(final KNode node, final IProperty<T> option,
             final T collapsedValue, final T expandedValue) {
         final KLayoutData sl = node.getData(KLayoutData.class);
         if (sl != null) {
@@ -385,8 +443,8 @@ public abstract class AbstractDiagramSynthesis<S> implements ISynthesis {
      *            the value in case <code>port</code>'s container node is expanded
      * @return <code>node</code> allowing to perform multiple operations on it in one statement
      */
-    protected <T> KPort setExpansionAwareLayoutOption(final KPort port, final IProperty<T> option,
-            final T collapsedValue, final T expandedValue) {
+    protected final <T> KPort setExpansionAwareLayoutOption(final KPort port,
+            final IProperty<T> option, final T collapsedValue, final T expandedValue) {
         final KLayoutData sl = port.getData(KLayoutData.class); 
         ExpansionAwareLayoutOptionData data = sl.getProperty(ExpansionAwareLayoutOption.OPTION);
         
@@ -399,25 +457,24 @@ public abstract class AbstractDiagramSynthesis<S> implements ISynthesis {
                 
         return port;
     }
-    
+
     /**
-     * {@inheritDoc}
-     */
-    public Function<String, Void> getTextUpdateFunction(final KText kText, final KGraphElement element) {
-        return null;
-    }
-    
-    /**
-     * Initializes the transformation run.
-     * Currently, just keeps the context to be used
-     * (allowing to neglect it in the concrete transformation methods).
-     * Initializes the transformation run. Currently, just keeps the context to be used (allowing to
-     * neglect it in the concrete transformation methods).
+     * Initializes the {@link ViewContext} being used within this diagram synthesis allowing to
+     * neglect it in the concrete diagram synthesis methods' interfaces (parameters).<br>
+     * <br>
+     * In common case this method need not to be called by application code but only if delegate
+     * diagram syntheses are employed by means of a {@link com.google.inject.Provider Provider}, see
+     * {@link ReinitializingDiagramSynthesisProxy#ViewSynthesisScope ViewSynthesisScope} for
+     * details.<br>
+     * <br>
+     * Make sure to reset the reference by calling <code>use(null)</code> after calling
+     * {@link #transform(Object)} in order safely let the garbage collect dispose the given view
+     * context and its referenced data if possible. Otherwise this can result in a memory leak!
      * 
      * @param viewContext
      *            the context to be used during the current run
      */
-    protected void use(final ViewContext viewContext) {
+    public void use(final ViewContext viewContext) {
         this.currentContext = viewContext;
     }
     

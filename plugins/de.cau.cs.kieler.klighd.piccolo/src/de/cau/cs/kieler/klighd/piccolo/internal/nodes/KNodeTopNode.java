@@ -14,8 +14,12 @@
 package de.cau.cs.kieler.klighd.piccolo.internal.nodes;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
+import de.cau.cs.kieler.klighd.piccolo.KlighdSWTGraphics;
 import de.cau.cs.kieler.klighd.piccolo.internal.controller.AbstractKGERenderingController;
-import edu.umd.cs.piccolo.PLayer;
+import de.cau.cs.kieler.klighd.util.KlighdProperties;
+import de.cau.cs.kieler.klighd.util.KlighdSemanticDiagramData;
+import edu.umd.cs.piccolo.util.PPaintContext;
 import edu.umd.cs.piccolo.util.PPickPath;
 
 /**
@@ -25,7 +29,7 @@ import edu.umd.cs.piccolo.util.PPickPath;
  * @author mri
  * @author chsch
  */
-public class KNodeTopNode extends PLayer implements INode {
+public class KNodeTopNode extends KDisposingLayer implements INode {
 
     private static final long serialVersionUID = 8395163186723344696L;
 
@@ -43,12 +47,15 @@ public class KNodeTopNode extends PLayer implements INode {
      * 
      * @param node
      *            the KNode
+     * @param edgesFirst
+     *            determining whether edges are drawn before nodes, i.e. nodes have priority over
+     *            edges
      */
-    public KNodeTopNode(final KNode node) {
+    public KNodeTopNode(final KNode node, final boolean edgesFirst) {
         this.setPickable(true);        
         this.node = node;
-        
-        childArea = new KChildAreaNode(this);
+
+        childArea = new KChildAreaNode(this, edgesFirst);
         childArea.setPickable(true);
         childArea.setClip(false);
         
@@ -88,7 +95,7 @@ public class KNodeTopNode extends PLayer implements INode {
      */
     public void setRenderingController(
             final AbstractKGERenderingController<KNode, ? extends IGraphElement<KNode>> controller) {
-        String s = "KLighD: Invalid access occured: invoking setRenderingController()"
+        final String s = "KLighD: Invalid access occured: invoking setRenderingController()"
                 + "is not allowed for KNodeTopNodes!";
         throw new UnsupportedOperationException(s);
     }
@@ -97,7 +104,7 @@ public class KNodeTopNode extends PLayer implements INode {
      * {@inheritDoc}
      */
     public AbstractKGERenderingController<KNode, KNodeNode> getRenderingController() {
-        String s = "KLighD: Invalid access occured: calling getRenderingController()"
+        final String s = "KLighD: Invalid access occured: calling getRenderingController()"
                         + "is not allowed for KNodeTopNodes!";
         throw new UnsupportedOperationException(s);
     }
@@ -139,4 +146,28 @@ public class KNodeTopNode extends PLayer implements INode {
     protected boolean pickAfterChildren(final PPickPath pickPath) {
         return true;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void paint(final PPaintContext paintContext) {
+        KlighdSWTGraphics g2 = (KlighdSWTGraphics) paintContext.getGraphics();
+        KlighdSemanticDiagramData sd =
+                getGraphElement().getData(KLayoutData.class).getProperty(
+                        KlighdProperties.SEMANTIC_DATA);
+        g2.startGroup(sd);
+        super.paint(paintContext);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void paintAfterChildren(final PPaintContext paintContext) {
+        super.paintAfterChildren(paintContext);
+        KlighdSWTGraphics g2 = (KlighdSWTGraphics) paintContext.getGraphics();
+        g2.endGroup();
+    }
+    
 }

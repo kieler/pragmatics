@@ -28,6 +28,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.util.Maybe;
+import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
 import de.cau.cs.kieler.kiml.service.KimlServicePlugin;
 
 /**
@@ -340,7 +341,10 @@ public abstract class MonitoredOperation {
                 }
             }
             if (status.get() == null && !isCanceled) {
-                status.set(execute(new ProgressMonitorAdapter(monitor.get(), MAX_PROGRESS_LEVELS)));
+                boolean measureExecTime = KimlServicePlugin.getDefault().getPreferenceStore()
+                        .getBoolean(DiagramLayoutEngine.PREF_EXEC_TIME_MEASUREMENT);
+                status.set(execute(new ProgressMonitorAdapter(monitor.get(), MAX_PROGRESS_LEVELS,
+                        measureExecTime)));
                 assert status.get() != null;
             }
         } finally {
@@ -572,7 +576,7 @@ public abstract class MonitoredOperation {
          * {@inheritDoc}
          */
         public void setCanceled(final boolean value) {
-            isCanceled = true;
+            isCanceled = value;
         }
         
     }
@@ -587,7 +591,8 @@ public abstract class MonitoredOperation {
          * Create a cancelable progress monitor.
          */
         CancelableProgressMonitor() {
-            super(0);
+            super(0, KimlServicePlugin.getDefault().getPreferenceStore()
+                    .getBoolean(DiagramLayoutEngine.PREF_EXEC_TIME_MEASUREMENT));
         }
         
         /**

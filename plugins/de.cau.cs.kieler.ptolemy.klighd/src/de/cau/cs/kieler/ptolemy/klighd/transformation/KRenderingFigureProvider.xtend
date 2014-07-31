@@ -32,9 +32,6 @@ import de.cau.cs.kieler.core.krendering.extensions.KColorExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KContainerRenderingExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KPolylineExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KRenderingExtensions
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
-import de.cau.cs.kieler.kiml.options.LayoutOptions
-import de.cau.cs.kieler.kiml.options.PortSide
 import de.cau.cs.kieler.klighd.KlighdConstants
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.LabelExtensions
@@ -44,12 +41,15 @@ import de.cau.cs.kieler.ptolemy.klighd.transformation.util.GraphicsUtils
 
 import static de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties.*
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
+import org.eclipse.swt.widgets.Display
+import org.eclipse.swt.SWT
 
 /**
  * Creates concrete KRendering information for Ptolemy diagram elements.
  * 
  * @author ckru
  * @author cds
+ * @author uru
  */
 class KRenderingFigureProvider {
     
@@ -80,7 +80,12 @@ class KRenderingFigureProvider {
     // Node Renderings
     
     /**
+     * Returns the rendering library associated with the given node. The associated rendering library is
+     * the library of the root ancestor of the node. If no library exists yet, one is created and
+     * attached to the root ancestor.
      * 
+     * @param node the node whose's rendering library to return.
+     * @return the rendering library associated with the given node.
      */
     def private KRenderingLibrary getLibrary(KNode node) {
         var parent = node
@@ -98,7 +103,12 @@ class KRenderingFigureProvider {
     }
     
     /**
+     * Returns a reference to rendering with the given ID in the given library.
      * 
+     * @param id identifier of the rendering to look up.
+     * @param library the rendering library to search for the rendering.
+     * @return new rendering reference to the rendering, or {@code null} if no rendering with the given
+     *         identifier exists in the library.
      */
     def private KRenderingRef getFromLibrary(String id, KRenderingLibrary library) {
         val rendering = library.renderings.findFirst[r | r.id == id] as KRendering
@@ -107,11 +117,17 @@ class KRenderingFigureProvider {
             val ref = renderingFactory.createKRenderingRef()
             ref.rendering = rendering
             return ref
+        } else {
+            return null
         }
     }
     
     /**
+     * Adds the given rendering to the given rendering library with the given id.
      * 
+     * @param rendering the rendering to add to the library.
+     * @param id the id that will identify the rendering in the library.
+     * @param library the library to add the rendering to.
      */
     def private KRenderingRef addToLibrary(KRendering rendering, String id, KRenderingLibrary library) {
         rendering.id = id
@@ -143,9 +159,6 @@ class KRenderingFigureProvider {
      * @return the rendering.
      */
     def KRendering createExpandedCompoundNodeRendering(KNode node, int alpha) {
-        // This is the code for representing expanded compound nodes as rounded rectangles with
-        // progressively darker backgrounds whose color depends on whether the expanded node is
-        // a regular node or whether it displays a state refinement
         val bgColor = if (node.markedAsState) {
             renderingFactory.createKColor() => [col |
                 col.red = 11
@@ -169,20 +182,6 @@ class KRenderingFigureProvider {
                 bg.color = bgColor
             ]
         ]
-
-        // This in turn is the code for representing expanded compound nodes as regular rectangles
-        // with drop shadows
-//        val rendering = renderingFactory.createKRectangle() => [rect |
-//            rect.styles += renderingFactory.createKBackground() => [bg |
-//                bg.alpha = alpha
-//                bg.color = renderingFactory.createKColor() => [col |
-//                    col.red = 16
-//                    col.green = 78
-//                    col.blue = 139
-//                ]
-//            ]
-//            rect.setShadow(GraphicsUtils::lookupColor("darkgrey"))
-//        ]
         
         return rendering
     }
@@ -254,7 +253,6 @@ class KRenderingFigureProvider {
         rectangle.children += renderingFactory.createKText() => [text |
             text.text = node.layout.getProperty(COMMENT_TEXT)
             text.setSurroundingSpace(5, 0)
-            text.setFontSize(KlighdConstants::DEFAULT_FONT_SIZE - 2)
         ]
         
         return rectangle
@@ -578,6 +576,10 @@ class KRenderingFigureProvider {
                 "ren_accumulator", library)
     }
     
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Node Selection Rendering
+    
     /**
      * Builds up and adds helper renderings forming the selection to given node,
      * attaches the provided rendering to the selection helpers.  
@@ -590,15 +592,22 @@ class KRenderingFigureProvider {
     
     /**
      * Builds up and adds helper renderings forming the selection to given node,
-     * attaches the provided rendering to the selection helpers.  
+     * attaches the provided rendering to the selection helpers.
      */
     def KContainerRendering addRenderingWithSelectionWrapper(KGraphElement kge) {
+        // Use a default selection color if there is no display (which is true in headless mode)
+        val systemSelection = Display.current?.getSystemColor(SWT.COLOR_LIST_SELECTION)
+        
+        val selectionR = if (systemSelection == null) {180;} else {systemSelection.red;}
+        val selectionG = if (systemSelection == null) {213;} else {systemSelection.green;}
+        val selectionB = if (systemSelection == null) {255;} else {systemSelection.blue;}
+        
         kge.addRectangle => [
             it.invisible = true;
-            it.addRoundedRectangle(10, 10f, 1) => [
-                it.setSurroundingSpace(-10, 0);
+            it.addRoundedRectangle(3f, 3f, 1) => [
+            it.setSurroundingSpace(-3, 0);
                 it.invisible = true;
-                it.setBackgroundColor(56, 117, 215);
+                it.setBackgroundColor(selectionR, selectionG, selectionB)
                 it.lineStyle = LineStyle.DASH;
                 it.selectionInvisible = false;
             ]
@@ -716,6 +725,8 @@ class KRenderingFigureProvider {
     /** Half the width / height of a port. */
     private val PORT_SIZE_HALF = 3.5f
     
+    /** The id of the modifier that rotates the port renderings. */
+    private val PORT_STYLE_MODIFIER_ID = "de.cau.cs.kieler.ptolemy.klighd.ptolemyPortStyleModifier"
     
     /**
      * Creates a rendering for a port.
@@ -724,7 +735,6 @@ class KRenderingFigureProvider {
      * @return the rendering.
      */
     def KRendering createPortRendering(KPort port) {
-        val layout = port.getData(typeof(KShapeLayout))
         
         // Determine the port color
         val portFillColor = if (port.hasAnnotation(IS_PARAMETER_PORT)) {
@@ -740,38 +750,21 @@ class KRenderingFigureProvider {
         
         // Create the triangle (depending on the port size)
         val polygon = port.addPolygon()
-        switch layout.getProperty(LayoutOptions::PORT_SIDE) {
-            case PortSide::NORTH: {
-                polygon.points += createKPosition(
-                    LEFT, 0, 0, TOP, 0, 0)
-                polygon.points += createKPosition(
-                    LEFT, PORT_SIZE, 0, TOP, 0, 0)
-                polygon.points += createKPosition(
-                    LEFT, PORT_SIZE_HALF, 0, TOP, PORT_SIZE, 0)
-                polygon.points += createKPosition(
-                    LEFT, 0, 0, TOP, 0, 0)
-            }
-            case PortSide::SOUTH: {
-                polygon.points += createKPosition(
-                    LEFT, 0, 0, TOP, PORT_SIZE, 0)
-                polygon.points += createKPosition(
-                    LEFT, PORT_SIZE, 0, TOP, PORT_SIZE, 0)
-                polygon.points += createKPosition(
-                    LEFT, PORT_SIZE_HALF, 0, TOP, 0, 0)
-                polygon.points += createKPosition(
-                    LEFT, 0, 0, TOP, PORT_SIZE, 0)
-            }
-            default: {
-                polygon.points += createKPosition(
-                    LEFT, 0, 0, TOP, PORT_SIZE, 0)
-                polygon.points += createKPosition(
-                    LEFT, 0, 0, TOP, 0, 0)
-                polygon.points += createKPosition(
-                    LEFT, PORT_SIZE, 0, TOP, PORT_SIZE_HALF, 0)
-                polygon.points += createKPosition(
-                    LEFT, 0, 0, TOP, PORT_SIZE, 0)
-            }
-        }
+        polygon.points += createKPosition(
+                   LEFT, 0, 0, TOP, PORT_SIZE, 0)
+               polygon.points += createKPosition(
+                   LEFT, 0, 0, TOP, 0, 0)
+               polygon.points += createKPosition(
+                   LEFT, PORT_SIZE, 0, TOP, PORT_SIZE_HALF, 0)
+               polygon.points += createKPosition(
+                   LEFT, 0, 0, TOP, PORT_SIZE, 0)
+        
+        // We create only one representative polygon here: |>
+        //  and rotate it according to its orientation after layout
+        //  using a dedicated klighd style modifier.  
+        polygon.rotation = 0f
+        polygon.rotation.rotationAnchor = createKPosition(PORT_SIZE_HALF, PORT_SIZE_HALF)
+        polygon.rotation.modifierId = PORT_STYLE_MODIFIER_ID
         
         // Set color properties
         polygon.setBackground(portFillColor)

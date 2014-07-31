@@ -66,7 +66,7 @@
          point="org.eclipse.ui.views">
       <category
             id="de.cau.cs.kieler.klighd"
-            name="KIELER Light-weight Diagrams">
+            name="KIELER Lightweight Diagrams">
       </category>
       <view
             allowMultiple="true"
@@ -74,7 +74,7 @@
             class="de.cau.cs.kieler.klighd.ui.parts.DiagramViewPart"
             icon="icons/klighd.gif"
             id="de.cau.cs.kieler.klighd.ui.parts.DiagramViewPart"
-            name="Light-weight Diagram"
+            name="Lightweight Diagram"
             restorable="true">
       </view>
    </extension>
@@ -85,7 +85,7 @@
             default="false"
             icon="icons/klighd.gif"
             id="de.cau.cs.kieler.klighd.ui.parts.DiagramEditorPart"
-            name="Light-weight Diagram Viewer">
+            name="Lightweight Diagram Viewer">
       </editor>
    </extension>
    <extension
@@ -93,7 +93,7 @@
       <page
             class="de.cau.cs.kieler.klighd.ui.internal.KlighdPreferencePage"
             id="de.cau.cs.kieler.klighd.ui.preferences"
-            name="KIELER Light-weight Diagrams">
+            name="KIELER Lightweight Diagrams">
       </page>
    </extension>
    <extension
@@ -120,6 +120,20 @@
                values="de.cau.cs.kieler.klighd.ui.internal.handlers.KlighdActionExecutionHandler$IActionParameterValues">
          </commandParameter>
       </command>
+      <command
+            categoryId="de.cau.cs.kieler.klighd.ui"
+            defaultHandler="de.cau.cs.kieler.klighd.ui.internal.handlers.KlighdSaveKGraphHandler"
+            description="Allows to write the view model KGraph to a file."
+            id="de.cau.cs.kieler.klighd.ui.savekgraph"
+            name="Save Underlying KGraph">
+      </command>
+      <command
+            categoryId="de.cau.cs.kieler.klighd.ui"
+            defaultHandler="de.cau.cs.kieler.klighd.ui.internal.handlers.SaveAsImageHandler"
+            description="Contributes bitmap and vectorgraphics based diagram export of KLighD diagrams"
+            id="de.cau.cs.kieler.klighd.ui.saveAsImage"
+            name="Save as image">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -131,11 +145,19 @@
                <reference
                      definitionId="de.cau.cs.kieler.klighd.ui.isKlighdContext">
                </reference>
-               <iterate>
-                  <instanceof
-                        value="de.cau.cs.kieler.core.kgraph.KGraphElement">
-                  </instanceof>
-               </iterate>
+                    <or>
+                   <with
+                         variable="selection">
+                      <instanceof
+                            value="de.cau.cs.kieler.klighd.ui.KlighdTextSelection">
+                      </instanceof>
+                   </with>
+                   <iterate>
+                      <instanceof
+                            value="de.cau.cs.kieler.core.kgraph.KGraphElement">
+                      </instanceof>
+                   </iterate>
+                    </or>
             </and>
          </enabledWhen>
       </handler>
@@ -159,6 +181,7 @@
             locationURI="popup:org.eclipse.ui.popup.any?before=additions">
          <command
                commandId="de.cau.cs.kieler.klighd.ui.actionExecution"
+               id="de.cau.cs.kieler.klighd.ui.clipSelected"
                label="Clip selected"
                style="push">
             <parameter
@@ -174,6 +197,7 @@
          </command>
          <command
                commandId="de.cau.cs.kieler.klighd.ui.actionExecution"
+               id="de.cau.cs.kieler.klighd.ui.clipTowardsSelection"
                label="Clip towards selection"
                style="push">
             <parameter
@@ -189,6 +213,7 @@
          </command>
          <command
                commandId="de.cau.cs.kieler.klighd.ui.actionExecution"
+               id="de.cau.cs.kieler.klighd.ui.clipParent"
                label="Clip parent"
                style="push">
             <parameter
@@ -204,6 +229,7 @@
          </command>
          <command
                commandId="de.cau.cs.kieler.klighd.ui.actionExecution"
+               id="de.cau.cs.kieler.klighd.ui.clipRoot"
                label="Clip root"
                style="push">
             <parameter
@@ -219,6 +245,7 @@
          </command>
          <command
                commandId="de.cau.cs.kieler.klighd.ui.actionExecution"
+               id="de.cau.cs.kieler.klighd.ui.scaleUp"
                label="Scale up"
                style="push">
             <parameter
@@ -234,6 +261,7 @@
          </command>
          <command
                commandId="de.cau.cs.kieler.klighd.ui.actionExecution"
+               id="de.cau.cs.kieler.klighd.ui.scaleDown"
                label="Scale down"
                style="push">
             <parameter
@@ -249,6 +277,7 @@
          </command>
          <command
                commandId="de.cau.cs.kieler.klighd.ui.actionExecution"
+               id="de.cau.cs.kieler.klighd.ui.scaleActualSize"
                label="Scale 100%"
                style="push">
             <parameter
@@ -263,6 +292,30 @@
             </visibleWhen>
          </command>
          <command
+               commandId="de.cau.cs.kieler.klighd.ui.savekgraph"
+               id="de.cau.cs.kieler.klighd.ui.saveKGraph"
+               label="Save underlying KGraph"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="de.cau.cs.kieler.klighd.ui.nodesSelected">
+               </reference>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="de.cau.cs.kieler.klighd.ui.saveAsImage"
+               id="de.cau.cs.kieler.klighd.ui.saveAsImage"
+               label="Save as image..."
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="de.cau.cs.kieler.klighd.ui.isKlighdContext">
+               </reference>
+            </visibleWhen>
+         </command>
+         <!-- command
                commandId="org.eclipse.ui.edit.copy"
                label="hugo"
                style="push">
@@ -276,7 +329,7 @@
                      </equals></iterate>
                </with>
             </visibleWhen>
-         </command>
+         </command -->
       </menuContribution>
    </extension>
    <extension
