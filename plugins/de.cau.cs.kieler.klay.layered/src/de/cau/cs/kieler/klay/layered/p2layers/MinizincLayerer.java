@@ -28,7 +28,7 @@ import org.eclipse.emf.common.util.WrappedException;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 import com.google.common.io.CharStreams;
-import com.google.common.primitives.Ints;
+import com.google.common.primitives.Floats;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
@@ -84,18 +84,18 @@ public class MinizincLayerer implements ILayoutPhase {
             Set<Set<LNode>> strongComps = stronglyConnectedComponents(layeredGraph);
 
             // assemble the adjacency matrix with edge weights 
-            int[][] adj = getAdjencencyMatrix(layeredGraph);
+            float[][] adj = getAdjencencyMatrix(layeredGraph);
             
             // edges that are part of strongly connected components
             // are penalized less
-            int factor = layeredGraph.getProperty(Properties.EDGE_REVERSAL_WEIGHT_FACTOR).intValue();
+            float factor = layeredGraph.getProperty(Properties.EDGE_REVERSAL_WEIGHT_FACTOR);
             for (Set<LNode> scc : strongComps) {
                 if (scc.size() > 1) {
                     for (LNode u : scc) {
                         for (LEdge e : u.getOutgoingEdges()) {
                             LNode v = e.getTarget().getNode();
                             if (scc.contains(v)) {
-                                adj[u.id][v.id] /= factor;
+                                adj[u.id][v.id] *= factor;
                             }
                         }                        
                     }
@@ -185,13 +185,10 @@ public class MinizincLayerer implements ILayoutPhase {
         }
     }
     
-    private int[][] getAdjencencyMatrix(final LGraph layeredGraph) {
+    private float[][] getAdjencencyMatrix(final LGraph layeredGraph) {
         int n = layeredGraph.getLayerlessNodes().size();
-        int[][] adj = new int[n][n];
-        int weight =
-                layeredGraph.getProperty(Properties.EDGE_REVERSAL_WEIGHT).intValue()
-                        * layeredGraph.getProperty(Properties.EDGE_REVERSAL_WEIGHT_FACTOR)
-                                .intValue();
+        float[][] adj = new float[n][n];
+        float weight = layeredGraph.getProperty(Properties.EDGE_REVERSAL_WEIGHT);
         for (LNode u : layeredGraph.getLayerlessNodes()) {
             for (LEdge e : u.getOutgoingEdges()) {
                 LNode v = e.getTarget().getNode();
@@ -208,7 +205,7 @@ public class MinizincLayerer implements ILayoutPhase {
      * @return the absolute path to a data file
      * @throws IOException
      */
-    private String getDataFile(final LGraph layeredGraph, final int[][] adj) throws IOException {
+    private String getDataFile(final LGraph layeredGraph, final float[][] adj) throws IOException {
         File dataFile = File.createTempFile("graph", ".dzn");
         FileWriter writer = new FileWriter(dataFile);
 
@@ -218,8 +215,8 @@ public class MinizincLayerer implements ILayoutPhase {
         // strongly connected components
         writer.write("e = [| ");
         for (int i = 0; i < adj.length; i++) {
-            int[] row = adj[i];
-            writer.write(Joiner.on(", ").join(Ints.asList(row)));
+            float[] row = adj[i];
+            writer.write(Joiner.on(", ").join(Floats.asList(row)));
             if (i != adj.length - 1) {
                 writer.write(",\n     | ");
             }

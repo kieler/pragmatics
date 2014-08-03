@@ -185,10 +185,11 @@ public final class Properties {
 
     /**
      * A factor by which the {@link #EDGE_REVERSAL_WEIGHT} is multiplied for 
-     * edges that are <b>not</b> part of strongly connected components.
+     * edges that are part of strongly connected components.
+     * Thus, a value lower than 1.0 means these edges are penalized less. 
      */
     public static final IProperty<Float> EDGE_REVERSAL_WEIGHT_FACTOR = new Property<Float>(
-            "de.cau.cs.kieler.klay.layered.edgeReversalWeightFactor", 2.0f);
+            "de.cau.cs.kieler.klay.layered.edgeReversalWeightFactor", 0.5f);
 
     // /////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR
