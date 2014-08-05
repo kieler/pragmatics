@@ -18,14 +18,21 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
 
 import org.eclipse.emf.common.util.WrappedException;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.io.CharStreams;
 import com.google.common.primitives.Floats;
@@ -86,21 +93,40 @@ public class MinizincLayerer implements ILayoutPhase {
             // assemble the adjacency matrix with edge weights 
             float[][] adj = getAdjencencyMatrix(layeredGraph);
             
+            
+            // ----- SCC --------
             // edges that are part of strongly connected components
             // are penalized less
             float factor = layeredGraph.getProperty(Properties.EDGE_REVERSAL_WEIGHT_FACTOR);
-            for (Set<LNode> scc : strongComps) {
-                if (scc.size() > 1) {
-                    for (LNode u : scc) {
-                        for (LEdge e : u.getOutgoingEdges()) {
-                            LNode v = e.getTarget().getNode();
-                            if (scc.contains(v)) {
-                                adj[u.id][v.id] *= factor;
+            boolean usescc = false;
+            if (usescc) {
+                for (Set<LNode> scc : strongComps) {
+                    if (scc.size() > 1) {
+                        for (LNode u : scc) {
+                            for (LEdge e : u.getOutgoingEdges()) {
+                                LNode v = e.getTarget().getNode();
+                                if (scc.contains(v)) {
+                                    adj[u.id][v.id] *= factor;
+                                }
                             }
-                        }                        
+                        }
                     }
                 }
+            } else {
+
+                // ----- Betweenness --------
+                int nn = layeredGraph.getLayerlessNodes().size();
+                float normFactor = 2f / (nn * nn - 3f * nn + 2f); // SUPPRESS CHECKSTYLE MagicNumber
+                for (Entry<LEdge, Double> e : new Betweenness().calculate(layeredGraph).entrySet()) {
+                    float val = e.getValue().floatValue() * normFactor * factor;
+                    LEdge edge = e.getKey();
+                    adj[edge.getSource().getNode().id][edge.getTarget().getNode().id] =
+                            Math.max(val, 2 * layeredGraph.getProperty(Properties.EDGE_LENGTH_WEIGHT));
+                }
             }
+            
+            
+          
 
             // ------------------
             // #2 create a temporary file as input to MiniZinc
@@ -232,7 +258,6 @@ public class MinizincLayerer implements ILayoutPhase {
         dataFile.deleteOnExit();
         
         // System.out.println(Joiner.on("\n").join(Files.readLines(dataFile, Charset.forName("utf8"))));
-        
         return dataFile.getAbsolutePath();
     }
     
@@ -339,4 +364,111 @@ public class MinizincLayerer implements ILayoutPhase {
         }
     }
     
+    /**
+     * Calculate Edge Betweenness using Brandes' algorithm. 
+     */
+    private static class Betweenness {
+        
+        private Queue<LNode> queue = new LinkedList<LNode>();
+        private Stack<LNode> stack = new Stack<LNode>();
+        private int[] dist;
+        private ArrayList<List<LNode>> pred = Lists.newArrayList();
+        private int[] sigma;
+        private double[] delta;
+        
+        private static final int INF = Integer.MAX_VALUE / 2;
+        
+        private Map<LEdge, Double> edgeBetweenness = Maps.newHashMap();
+        
+        public Map<LEdge, Double> calculate(final LGraph g) {
+        
+            int n = g.getLayerlessNodes().size();
+            int[] oldIds = new int[n];
+            // remember old ids
+            int bindex = 0;
+            for (LNode node : g.getLayerlessNodes()) {
+                oldIds[bindex] = node.id;
+                node.id = bindex++;
+            }
+            
+            // reset
+            edgeBetweenness.clear();
+            queue.clear();
+            stack.clear();
+            pred.clear();
+            for (int i = 0; i < n; i++) {
+                pred.add(null);
+            }
+            dist = new int[n];
+            sigma = new int[n];
+            delta = new double[n];
+            
+            for (LNode s : g.getLayerlessNodes()) {
+                // initialization
+                for (LNode w : g.getLayerlessNodes()) {
+                    pred.set(w.id, new LinkedList<LNode>());
+                }
+                for (LNode t : g.getLayerlessNodes()) {
+                    dist[t.id] = INF;
+                    sigma[t.id] = 0;
+                }
+                dist[s.id] = 0;
+                sigma[s.id] = 1;
+                queue.add(s);
+            
+                // path discovery and path counting
+                while (!queue.isEmpty()) {
+                    LNode v = queue.poll();
+                    stack.push(v);
+                    
+                    for (LEdge edge : v.getOutgoingEdges()) {
+                        LNode w = edge.getTarget().getNode();
+                        
+                        // path discovery
+                        if (dist[w.id] >= INF) {
+                            dist[w.id] = dist[v.id] + 1;
+                            queue.add(w);
+                        }
+                        
+                        // path counting
+                        if (dist[w.id] == dist[v.id] + 1) {
+                            sigma[w.id] = sigma[w.id] + sigma[v.id];
+                            pred.get(w.id).add(v);
+                        }
+                    }
+                }
+                
+                // accumulation
+                // (edge betweenness)
+                for (LNode v : g.getLayerlessNodes()) {
+                    delta[v.id] = 0;
+                }
+                while (!stack.isEmpty()) {
+                    LNode w = stack.pop();
+                    for (LNode v : pred.get(w.id)) {
+                        double c = (sigma[v.id] / (double) sigma[w.id]) * (1 + delta[w.id]);
+
+                        for (LEdge edge : v.getOutgoingEdges()) {
+                            if (edge.getTarget().getNode().equals(w)) {
+                                Double prev = edgeBetweenness.get(edge) != null 
+                                                ? edgeBetweenness.get(edge) : 0;
+                                edgeBetweenness.put(edge, prev + c);
+                                delta[v.id] = delta[v.id] + c;
+                            }
+                        }
+
+                    }
+                }
+            
+            }
+            
+            // set ids to original values
+            for (LNode node : g.getLayerlessNodes()) {
+                node.id = oldIds[node.id];
+            }
+            
+            return edgeBetweenness;
+        }
+        
+    }
 }
