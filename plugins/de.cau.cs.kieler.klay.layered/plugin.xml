@@ -384,5 +384,32 @@
                value="MINIZINC">
          </dependency>
       </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            class="de.cau.cs.kieler.klay.layered.p2layers.MinizincMode"
+            default="STATIC"
+            description="The mode in which the minizinc layering should be applied."
+            id="de.cau.cs.kieler.klay.layered.minizincMode"
+            name="Minizinc Mode"
+            type="enum">
+         <dependency
+               option="de.cau.cs.kieler.klay.layered.nodeLayering"
+               value="MINIZINC">
+         </dependency>
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="0"
+            description="The maximal number of layers allowed."
+            id="de.cau.cs.kieler.klay.layered.maximalNoOfLayers"
+            name="Maximal Layers"
+            type="int">
+         <dependency
+               option="de.cau.cs.kieler.klay.layered.nodeLayering"
+               value="MINIZINC">
+         </dependency>
+      </layoutOption>
    </extension>
 </plugin>

@@ -18,6 +18,7 @@ import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
+import de.cau.cs.kieler.klay.layered.p2layers.MinizincMode;
 import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
 import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
 
@@ -190,6 +191,18 @@ public final class Properties {
      */
     public static final IProperty<Float> EDGE_REVERSAL_WEIGHT_FACTOR = new Property<Float>(
             "de.cau.cs.kieler.klay.layered.edgeReversalWeightFactor", 0.5f);
+
+    /**
+     * The maximal number of layers allowed.
+     */
+    public static final IProperty<Integer> MAXIMAL_LAYERS = new Property<Integer>(
+            "de.cau.cs.kieler.klay.layered.maximalNoOfLayers", 0);
+    
+    /**
+     * The mode in which the minizinc layering should be executed.
+     */
+    public static final IProperty<MinizincMode> MINIZINC_MODE = new Property<MinizincMode>(
+            "de.cau.cs.kieler.klay.layered.minizincMode", MinizincMode.STATIC);
 
     // /////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR

@@ -19,6 +19,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,6 +39,7 @@ import com.google.common.io.CharStreams;
 import com.google.common.primitives.Floats;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -94,12 +96,14 @@ public class MinizincLayerer implements ILayoutPhase {
             float[][] adj = getAdjencencyMatrix(layeredGraph);
             
             
-            // ----- SCC --------
-            // edges that are part of strongly connected components
-            // are penalized less
-            float factor = layeredGraph.getProperty(Properties.EDGE_REVERSAL_WEIGHT_FACTOR);
-            boolean usescc = false;
-            if (usescc) {
+            
+            MinizincMode mode = layeredGraph.getProperty(Properties.MINIZINC_MODE);
+
+            if (mode == MinizincMode.STATIC_SCC) {
+                // ----- SCC --------
+                // edges that are part of strongly connected components
+                // are penalized less
+                float factor = layeredGraph.getProperty(Properties.EDGE_REVERSAL_WEIGHT_FACTOR);
                 for (Set<LNode> scc : strongComps) {
                     if (scc.size() > 1) {
                         for (LNode u : scc) {
@@ -112,16 +116,17 @@ public class MinizincLayerer implements ILayoutPhase {
                         }
                     }
                 }
-            } else {
+            }
 
+            if (mode == MinizincMode.BETWEENNESS || mode == MinizincMode.BETWEENNESS_BOTH) {
                 // ----- Betweenness --------
                 int nn = layeredGraph.getLayerlessNodes().size();
                 float normFactor = 2f / (nn * nn - 3f * nn + 2f); // SUPPRESS CHECKSTYLE MagicNumber
+                float factor = layeredGraph.getProperty(Properties.EDGE_REVERSAL_WEIGHT);
                 for (Entry<LEdge, Double> e : new Betweenness().calculate(layeredGraph).entrySet()) {
-                    float val = e.getValue().floatValue() * normFactor * factor;
+                    float val = e.getValue().floatValue() * normFactor;
                     LEdge edge = e.getKey();
-                    adj[edge.getSource().getNode().id][edge.getTarget().getNode().id] =
-                            Math.max(val, 2 * layeredGraph.getProperty(Properties.EDGE_LENGTH_WEIGHT));
+                    adj[edge.getSource().getNode().id][edge.getTarget().getNode().id] = val;
                 }
             }
             
@@ -161,14 +166,19 @@ public class MinizincLayerer implements ILayoutPhase {
             int maxLayer = Integer.MIN_VALUE;
             
             for (String line : lines) {
+                System.out.println("Line " + line);
                 String[] chunks = line.trim().split(" ");
-                int id = Integer.valueOf(chunks[0]);
-                int layer = Integer.valueOf(chunks[1]);
-                
-                // minizinc starts with 1 instead of 0
-                assignLayers[id - 1] = layer - 1;
-                minLayer = Math.min(minLayer, layer - 1);
-                maxLayer = Math.max(maxLayer, layer - 1);
+                if (chunks.length > 1) {
+                    int id = Integer.valueOf(chunks[0]);
+                    int layer = Integer.valueOf(chunks[1]);
+                    
+                    // minizinc starts with 1 instead of 0
+                    assignLayers[id - 1] = layer - 1;
+                    minLayer = Math.min(minLayer, layer - 1);
+                    maxLayer = Math.max(maxLayer, layer - 1);
+                } else {
+                    System.out.println(Arrays.toString(chunks));
+                }
             }
             
             // create the layers
@@ -214,11 +224,11 @@ public class MinizincLayerer implements ILayoutPhase {
     private float[][] getAdjencencyMatrix(final LGraph layeredGraph) {
         int n = layeredGraph.getLayerlessNodes().size();
         float[][] adj = new float[n][n];
-        float weight = layeredGraph.getProperty(Properties.EDGE_REVERSAL_WEIGHT);
+        // float weight = layeredGraph.getProperty(Properties.EDGE_REVERSAL_WEIGHT);
         for (LNode u : layeredGraph.getLayerlessNodes()) {
             for (LEdge e : u.getOutgoingEdges()) {
                 LNode v = e.getTarget().getNode();
-                adj[u.id][v.id] = weight;
+                adj[u.id][v.id] = 1;
             }
         }
         return adj;
@@ -253,6 +263,15 @@ public class MinizincLayerer implements ILayoutPhase {
         writer.write("\nW_length = " + layeredGraph.getProperty(Properties.EDGE_LENGTH_WEIGHT)
                 + ";\nW_reverse = " + layeredGraph.getProperty(Properties.EDGE_REVERSAL_WEIGHT)
                 + ";\n");
+        
+        MinizincMode mode = layeredGraph.getProperty(Properties.MINIZINC_MODE);
+        boolean staticDummyWeight = mode != MinizincMode.BETWEENNESS_BOTH;
+        boolean staticReverseWeight = mode == MinizincMode.STATIC;
+        writer.write("static_w_length = " + staticDummyWeight + ";\nstatic_w_reverse = "
+                + staticReverseWeight + ";\n");
+
+        int maximalLayers = layeredGraph.getProperty(Properties.MAXIMAL_LAYERS);
+        writer.write("L_max_param = " + maximalLayers + ";\n");
         
         writer.close();
         dataFile.deleteOnExit();
