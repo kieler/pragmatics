@@ -3,11 +3,14 @@
 package de.cau.cs.kieler.kiml.grana.text.grana.impl;
 
 import de.cau.cs.kieler.kiml.grana.text.grana.Analysis;
+import de.cau.cs.kieler.kiml.grana.text.grana.GlobalResourceRef;
 import de.cau.cs.kieler.kiml.grana.text.grana.Grana;
 import de.cau.cs.kieler.kiml.grana.text.grana.GranaFactory;
 import de.cau.cs.kieler.kiml.grana.text.grana.GranaPackage;
 import de.cau.cs.kieler.kiml.grana.text.grana.Job;
+import de.cau.cs.kieler.kiml.grana.text.grana.LocalResource;
 import de.cau.cs.kieler.kiml.grana.text.grana.Resource;
+import de.cau.cs.kieler.kiml.grana.text.grana.ResourceReference;
 
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage;
 
@@ -46,6 +49,27 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
    * @generated
    */
   private EClass resourceEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass resourceReferenceEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass globalResourceRefEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass localResourceEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -135,9 +159,19 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getGrana_Jobs()
+  public EReference getGrana_GlobalResources()
   {
     return (EReference)granaEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getGrana_Jobs()
+  {
+    return (EReference)granaEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -225,9 +259,9 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getResource_Path()
+  public EClass getResourceReference()
   {
-    return (EAttribute)resourceEClass.getEStructuralFeatures().get(0);
+    return resourceReferenceEClass;
   }
 
   /**
@@ -235,9 +269,69 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getResource_Filter()
+  public EReference getResourceReference_ResourceRefs()
   {
-    return (EAttribute)resourceEClass.getEStructuralFeatures().get(1);
+    return (EReference)resourceReferenceEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getGlobalResourceRef()
+  {
+    return globalResourceRefEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getGlobalResourceRef_Name()
+  {
+    return (EAttribute)globalResourceRefEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getGlobalResourceRef_Resources()
+  {
+    return (EReference)globalResourceRefEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getLocalResource()
+  {
+    return localResourceEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getLocalResource_Path()
+  {
+    return (EAttribute)localResourceEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getLocalResource_Filter()
+  {
+    return (EAttribute)localResourceEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -291,6 +385,7 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
 
     // Create classes and their features
     granaEClass = createEClass(GRANA);
+    createEReference(granaEClass, GRANA__GLOBAL_RESOURCES);
     createEReference(granaEClass, GRANA__JOBS);
 
     jobEClass = createEClass(JOB);
@@ -302,8 +397,17 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
     createEAttribute(jobEClass, JOB__OUTPUT);
 
     resourceEClass = createEClass(RESOURCE);
-    createEAttribute(resourceEClass, RESOURCE__PATH);
-    createEAttribute(resourceEClass, RESOURCE__FILTER);
+
+    resourceReferenceEClass = createEClass(RESOURCE_REFERENCE);
+    createEReference(resourceReferenceEClass, RESOURCE_REFERENCE__RESOURCE_REFS);
+
+    globalResourceRefEClass = createEClass(GLOBAL_RESOURCE_REF);
+    createEAttribute(globalResourceRefEClass, GLOBAL_RESOURCE_REF__NAME);
+    createEReference(globalResourceRefEClass, GLOBAL_RESOURCE_REF__RESOURCES);
+
+    localResourceEClass = createEClass(LOCAL_RESOURCE);
+    createEAttribute(localResourceEClass, LOCAL_RESOURCE__PATH);
+    createEAttribute(localResourceEClass, LOCAL_RESOURCE__FILTER);
 
     analysisEClass = createEClass(ANALYSIS);
     createEAttribute(analysisEClass, ANALYSIS__NAME);
@@ -341,9 +445,12 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
     // Set bounds for type parameters
 
     // Add supertypes to classes
+    resourceReferenceEClass.getESuperTypes().add(this.getResource());
+    localResourceEClass.getESuperTypes().add(this.getResource());
 
     // Initialize classes and features; add operations and parameters
     initEClass(granaEClass, Grana.class, "Grana", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getGrana_GlobalResources(), this.getGlobalResourceRef(), null, "globalResources", null, 0, -1, Grana.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getGrana_Jobs(), this.getJob(), null, "jobs", null, 0, -1, Grana.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(jobEClass, Job.class, "Job", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -355,8 +462,17 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
     initEAttribute(getJob_Output(), ecorePackage.getEString(), "output", null, 0, 1, Job.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(resourceEClass, Resource.class, "Resource", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getResource_Path(), ecorePackage.getEString(), "path", null, 0, 1, Resource.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getResource_Filter(), ecorePackage.getEString(), "filter", null, 0, 1, Resource.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(resourceReferenceEClass, ResourceReference.class, "ResourceReference", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getResourceReference_ResourceRefs(), this.getGlobalResourceRef(), null, "resourceRefs", null, 0, -1, ResourceReference.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(globalResourceRefEClass, GlobalResourceRef.class, "GlobalResourceRef", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getGlobalResourceRef_Name(), ecorePackage.getEString(), "name", null, 0, 1, GlobalResourceRef.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getGlobalResourceRef_Resources(), this.getLocalResource(), null, "resources", null, 0, -1, GlobalResourceRef.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(localResourceEClass, LocalResource.class, "LocalResource", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getLocalResource_Path(), ecorePackage.getEString(), "path", null, 0, 1, LocalResource.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getLocalResource_Filter(), ecorePackage.getEString(), "filter", null, 0, 1, LocalResource.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(analysisEClass, Analysis.class, "Analysis", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getAnalysis_Name(), ecorePackage.getEString(), "name", null, 0, 1, Analysis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

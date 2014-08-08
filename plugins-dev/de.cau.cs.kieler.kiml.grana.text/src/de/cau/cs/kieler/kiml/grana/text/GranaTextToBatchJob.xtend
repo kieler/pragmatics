@@ -30,6 +30,8 @@ import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.core.runtime.Path
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ExtensibleURIConverterImpl
+import de.cau.cs.kieler.kiml.grana.text.grana.ResourceReference
+import de.cau.cs.kieler.kiml.grana.text.grana.LocalResource
 
 /**
  * @author uru
@@ -48,9 +50,19 @@ class GranaTextToBatchJob {
             val analyses = job.analyses.map[AnalysisService.instance.getAnalysis(it.name)]
             val batch = new Batch(analyses)
 
-            // collect all model files within the specified resources
-            for (resource : job.resources) {
-                val filter = Pattern.compile(resource.filter);
+
+            // resolve possible references
+            val resources =  job.resources.map[ r |
+                switch r {
+                    case ResourceReference: (r as ResourceReference).resourceRefs.map[it.resources].flatten
+                    default: #[(r as LocalResource)]
+                }
+            ].flatten
+            
+            // collect all model files within the specified resources            
+            for (resource : resources) {
+                val filter = if (!resource.filter.nullOrEmpty)
+                    Pattern.compile(resource.filter) else null
 
                 // FIXME path handling is very very bad !!!!!! 
                 val p = wsRoot.projects.findFirst[p|resource.path.contains(p.name)]
@@ -58,7 +70,7 @@ class GranaTextToBatchJob {
 
                 // add all files to the batch job
                 for (file : (wsloc as IContainer).members) {
-                    if (filter.matcher(file.name).matches) {
+                    if (filter == null || filter.matcher(file.name).matches) {
                         val provider = new FileKGraphProvider
                         provider.setLayoutBeforeAnalysis(job.layoutBeforeAnalysis)
 

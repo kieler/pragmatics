@@ -19,19 +19,39 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	
 	public class GranaElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "Grana");
-		private final Assignment cJobsAssignment = (Assignment)rule.eContents().get(1);
-		private final RuleCall cJobsJobParserRuleCall_0 = (RuleCall)cJobsAssignment.eContents().get(0);
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Group cGroup_0 = (Group)cGroup.eContents().get(0);
+		private final Keyword cGlobalResourcesKeyword_0_0 = (Keyword)cGroup_0.eContents().get(0);
+		private final Assignment cGlobalResourcesAssignment_0_1 = (Assignment)cGroup_0.eContents().get(1);
+		private final RuleCall cGlobalResourcesGlobalResourceRefParserRuleCall_0_1_0 = (RuleCall)cGlobalResourcesAssignment_0_1.eContents().get(0);
+		private final Assignment cJobsAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cJobsJobParserRuleCall_1_0 = (RuleCall)cJobsAssignment_1.eContents().get(0);
 		
 		//Grana:
 		//
-		//	jobs+=Job*;
+		//	("globalResources" globalResources+=GlobalResourceRef*)? jobs+=Job+;
 		public ParserRule getRule() { return rule; }
 
-		//jobs+=Job*
-		public Assignment getJobsAssignment() { return cJobsAssignment; }
+		//("globalResources" globalResources+=GlobalResourceRef*)? jobs+=Job+
+		public Group getGroup() { return cGroup; }
+
+		//("globalResources" globalResources+=GlobalResourceRef*)?
+		public Group getGroup_0() { return cGroup_0; }
+
+		//"globalResources"
+		public Keyword getGlobalResourcesKeyword_0_0() { return cGlobalResourcesKeyword_0_0; }
+
+		//globalResources+=GlobalResourceRef*
+		public Assignment getGlobalResourcesAssignment_0_1() { return cGlobalResourcesAssignment_0_1; }
+
+		//GlobalResourceRef
+		public RuleCall getGlobalResourcesGlobalResourceRefParserRuleCall_0_1_0() { return cGlobalResourcesGlobalResourceRefParserRuleCall_0_1_0; }
+
+		//jobs+=Job+
+		public Assignment getJobsAssignment_1() { return cJobsAssignment_1; }
 
 		//Job
-		public RuleCall getJobsJobParserRuleCall_0() { return cJobsJobParserRuleCall_0; }
+		public RuleCall getJobsJobParserRuleCall_1_0() { return cJobsJobParserRuleCall_1_0; }
 	}
 
 	public class JobElements extends AbstractParserRuleElementFinder {
@@ -125,6 +145,85 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 
 	public class ResourceElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "Resource");
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final RuleCall cResourceReferenceParserRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
+		private final RuleCall cLocalResourceParserRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
+		
+		//Resource:
+		//
+		//	ResourceReference | LocalResource;
+		public ParserRule getRule() { return rule; }
+
+		//ResourceReference | LocalResource
+		public Alternatives getAlternatives() { return cAlternatives; }
+
+		//ResourceReference
+		public RuleCall getResourceReferenceParserRuleCall_0() { return cResourceReferenceParserRuleCall_0; }
+
+		//LocalResource
+		public RuleCall getLocalResourceParserRuleCall_1() { return cLocalResourceParserRuleCall_1; }
+	}
+
+	public class ResourceReferenceElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "ResourceReference");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cRefKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Assignment cResourceRefsAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final CrossReference cResourceRefsGlobalResourceRefCrossReference_1_0 = (CrossReference)cResourceRefsAssignment_1.eContents().get(0);
+		private final RuleCall cResourceRefsGlobalResourceRefIDTerminalRuleCall_1_0_1 = (RuleCall)cResourceRefsGlobalResourceRefCrossReference_1_0.eContents().get(1);
+		
+		//ResourceReference:
+		//
+		//	"ref" resourceRefs+=[GlobalResourceRef]+;
+		public ParserRule getRule() { return rule; }
+
+		//"ref" resourceRefs+=[GlobalResourceRef]+
+		public Group getGroup() { return cGroup; }
+
+		//"ref"
+		public Keyword getRefKeyword_0() { return cRefKeyword_0; }
+
+		//resourceRefs+=[GlobalResourceRef]+
+		public Assignment getResourceRefsAssignment_1() { return cResourceRefsAssignment_1; }
+
+		//[GlobalResourceRef]
+		public CrossReference getResourceRefsGlobalResourceRefCrossReference_1_0() { return cResourceRefsGlobalResourceRefCrossReference_1_0; }
+
+		//ID
+		public RuleCall getResourceRefsGlobalResourceRefIDTerminalRuleCall_1_0_1() { return cResourceRefsGlobalResourceRefIDTerminalRuleCall_1_0_1; }
+	}
+
+	public class GlobalResourceRefElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "GlobalResourceRef");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Assignment cNameAssignment_0 = (Assignment)cGroup.eContents().get(0);
+		private final RuleCall cNameIDTerminalRuleCall_0_0 = (RuleCall)cNameAssignment_0.eContents().get(0);
+		private final Assignment cResourcesAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cResourcesLocalResourceParserRuleCall_1_0 = (RuleCall)cResourcesAssignment_1.eContents().get(0);
+		
+		//GlobalResourceRef:
+		//
+		//	name=ID resources+=LocalResource;
+		public ParserRule getRule() { return rule; }
+
+		//name=ID resources+=LocalResource
+		public Group getGroup() { return cGroup; }
+
+		//name=ID
+		public Assignment getNameAssignment_0() { return cNameAssignment_0; }
+
+		//ID
+		public RuleCall getNameIDTerminalRuleCall_0_0() { return cNameIDTerminalRuleCall_0_0; }
+
+		//resources+=LocalResource
+		public Assignment getResourcesAssignment_1() { return cResourcesAssignment_1; }
+
+		//LocalResource
+		public RuleCall getResourcesLocalResourceParserRuleCall_1_0() { return cResourcesLocalResourceParserRuleCall_1_0; }
+	}
+
+	public class LocalResourceElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "LocalResource");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Assignment cPathAssignment_0 = (Assignment)cGroup.eContents().get(0);
 		private final RuleCall cPathSTRINGTerminalRuleCall_0_0 = (RuleCall)cPathAssignment_0.eContents().get(0);
@@ -133,7 +232,7 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cFilterAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
 		private final RuleCall cFilterSTRINGTerminalRuleCall_1_1_0 = (RuleCall)cFilterAssignment_1_1.eContents().get(0);
 		
-		//Resource:
+		//LocalResource:
 		//
 		//	path=STRING ("filter" filter=STRING);
 		public ParserRule getRule() { return rule; }
@@ -346,6 +445,9 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	private GranaElements pGrana;
 	private JobElements pJob;
 	private ResourceElements pResource;
+	private ResourceReferenceElements pResourceReference;
+	private GlobalResourceRefElements pGlobalResourceRef;
+	private LocalResourceElements pLocalResource;
 	private AnalysisElements pAnalysis;
 	private KIdentifierElements pKIdentifier;
 	private PersistentEntryElements pPersistentEntry;
@@ -393,7 +495,7 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	
 	//Grana:
 	//
-	//	jobs+=Job*;
+	//	("globalResources" globalResources+=GlobalResourceRef*)? jobs+=Job+;
 	public GranaElements getGranaAccess() {
 		return (pGrana != null) ? pGrana : (pGrana = new GranaElements());
 	}
@@ -417,13 +519,46 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 
 	//Resource:
 	//
-	//	path=STRING ("filter" filter=STRING);
+	//	ResourceReference | LocalResource;
 	public ResourceElements getResourceAccess() {
 		return (pResource != null) ? pResource : (pResource = new ResourceElements());
 	}
 	
 	public ParserRule getResourceRule() {
 		return getResourceAccess().getRule();
+	}
+
+	//ResourceReference:
+	//
+	//	"ref" resourceRefs+=[GlobalResourceRef]+;
+	public ResourceReferenceElements getResourceReferenceAccess() {
+		return (pResourceReference != null) ? pResourceReference : (pResourceReference = new ResourceReferenceElements());
+	}
+	
+	public ParserRule getResourceReferenceRule() {
+		return getResourceReferenceAccess().getRule();
+	}
+
+	//GlobalResourceRef:
+	//
+	//	name=ID resources+=LocalResource;
+	public GlobalResourceRefElements getGlobalResourceRefAccess() {
+		return (pGlobalResourceRef != null) ? pGlobalResourceRef : (pGlobalResourceRef = new GlobalResourceRefElements());
+	}
+	
+	public ParserRule getGlobalResourceRefRule() {
+		return getGlobalResourceRefAccess().getRule();
+	}
+
+	//LocalResource:
+	//
+	//	path=STRING ("filter" filter=STRING);
+	public LocalResourceElements getLocalResourceAccess() {
+		return (pLocalResource != null) ? pLocalResource : (pLocalResource = new LocalResourceElements());
+	}
+	
+	public ParserRule getLocalResourceRule() {
+		return getLocalResourceAccess().getRule();
 	}
 
 	//Analysis:

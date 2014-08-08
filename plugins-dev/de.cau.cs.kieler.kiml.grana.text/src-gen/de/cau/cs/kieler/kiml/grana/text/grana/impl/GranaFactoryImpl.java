@@ -67,6 +67,9 @@ public class GranaFactoryImpl extends EFactoryImpl implements GranaFactory
       case GranaPackage.GRANA: return createGrana();
       case GranaPackage.JOB: return createJob();
       case GranaPackage.RESOURCE: return createResource();
+      case GranaPackage.RESOURCE_REFERENCE: return createResourceReference();
+      case GranaPackage.GLOBAL_RESOURCE_REF: return createGlobalResourceRef();
+      case GranaPackage.LOCAL_RESOURCE: return createLocalResource();
       case GranaPackage.ANALYSIS: return createAnalysis();
       default:
         throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
@@ -104,6 +107,39 @@ public class GranaFactoryImpl extends EFactoryImpl implements GranaFactory
   {
     ResourceImpl resource = new ResourceImpl();
     return resource;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public ResourceReference createResourceReference()
+  {
+    ResourceReferenceImpl resourceReference = new ResourceReferenceImpl();
+    return resourceReference;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public GlobalResourceRef createGlobalResourceRef()
+  {
+    GlobalResourceRefImpl globalResourceRef = new GlobalResourceRefImpl();
+    return globalResourceRef;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public LocalResource createLocalResource()
+  {
+    LocalResourceImpl localResource = new LocalResourceImpl();
+    return localResource;
   }
 
   /**

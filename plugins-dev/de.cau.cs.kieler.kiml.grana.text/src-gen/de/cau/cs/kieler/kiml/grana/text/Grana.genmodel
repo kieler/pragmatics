@@ -9,6 +9,7 @@
   <genPackages prefix="Grana" basePackage="de.cau.cs.kieler.kiml.grana.text" disposableProviderFactory="true"
       fileExtensions="grana" ecorePackage="Grana.ecore#/">
     <genClasses ecoreClass="Grana.ecore#//Grana">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Grana.ecore#//Grana/globalResources"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Grana.ecore#//Grana/jobs"/>
     </genClasses>
     <genClasses ecoreClass="Grana.ecore#//Job">
@@ -19,9 +20,17 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Grana.ecore#//Job/analyses"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Grana.ecore#//Job/output"/>
     </genClasses>
-    <genClasses ecoreClass="Grana.ecore#//Resource">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Grana.ecore#//Resource/path"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Grana.ecore#//Resource/filter"/>
+    <genClasses ecoreClass="Grana.ecore#//Resource"/>
+    <genClasses ecoreClass="Grana.ecore#//ResourceReference">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Grana.ecore#//ResourceReference/resourceRefs"/>
+    </genClasses>
+    <genClasses ecoreClass="Grana.ecore#//GlobalResourceRef">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Grana.ecore#//GlobalResourceRef/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Grana.ecore#//GlobalResourceRef/resources"/>
+    </genClasses>
+    <genClasses ecoreClass="Grana.ecore#//LocalResource">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Grana.ecore#//LocalResource/path"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Grana.ecore#//LocalResource/filter"/>
     </genClasses>
     <genClasses ecoreClass="Grana.ecore#//Analysis">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Grana.ecore#//Analysis/name"/>
