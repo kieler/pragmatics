@@ -36,12 +36,14 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * A graph analysis that computes the number of edge crossings. It assumes that
- * the edge bend points describe polylines. Returns a four-component result
- * {@code (int min, float avg, int max, int sum)}.
+ * the edge bend points describe polylines. Returns a five-component result
+ * {@code (int min, float avg, int max, int sum, float onefold)}. Where 
+ * onefold is the ratio of edges that cross at least once and all edges.
  * 
  * @author mri
  * @author cds
  * @author msp
+ * @author uru
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow 2012-07-10 msp
  */
@@ -229,8 +231,18 @@ public class EdgeCrossingsAnalysis implements IAnalysis {
             min = 0;
         }
         sum /= 2;
+        
+        // count edges that cross at least once
+        int onefold = 0;
+        for (int i = 0; i < edgeCount; i++) {
+            if (crossings[i] > 0) {
+                onefold++;
+            }
+        }
+        // normalize
+        float onefoldNorm = onefold / (float) edgeCount; 
 
         progressMonitor.done();
-        return new Object[] {min, avg, max, sum};
+        return new Object[] {min, avg, max, sum, onefoldNorm};
     }
 }

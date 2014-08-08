@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.grana.ui.views;
+package de.cau.cs.kieler.kiml.grana.ui;
 
 import java.util.List;
 
@@ -24,8 +24,6 @@ import org.eclipse.swt.widgets.Shell;
 
 import de.cau.cs.kieler.kiml.grana.AnalysisCategory;
 import de.cau.cs.kieler.kiml.grana.AnalysisData;
-import de.cau.cs.kieler.kiml.grana.ui.AnalysisSelectionViewer;
-import de.cau.cs.kieler.kiml.grana.ui.ISelectionListener;
 
 /**
  * The dialog that shows a selection of graph analyses to the user to select from.
@@ -33,7 +31,7 @@ import de.cau.cs.kieler.kiml.grana.ui.ISelectionListener;
  * @author mri
  * @kieler.ignore (excluded from review process)
  */
-public class AnalysisSelectionDialog extends Dialog implements ISelectionListener {
+public class AnalysisSelectionDialog extends Dialog {
 
     /** the dialogs title. */
     private static final String TITLE = "Select analyses";
@@ -43,11 +41,13 @@ public class AnalysisSelectionDialog extends Dialog implements ISelectionListene
     private static final int HEIGHT = 400;
 
     /** the selected analyses. */
-    private List<AnalysisData> result;
+    private List<AnalysisData> result = null;
     /** the analyses categories. */
     private List<AnalysisCategory> categories;
     /** the initially selected analyses. */
     private List<AnalysisData> initialAnalyses;
+    /** the analysis selection viewer. */
+    private AnalysisSelectionViewer analysisSelectionViewer;
 
     /**
      * Constructs the dialog.
@@ -69,7 +69,7 @@ public class AnalysisSelectionDialog extends Dialog implements ISelectionListene
     }
 
     /**
-     * Returns the selected analyses.
+     * Returns the selected analyses. Only valid if the user confirmed the dialog instead of canceling.
      * 
      * @return the analyses
      */
@@ -83,13 +83,12 @@ public class AnalysisSelectionDialog extends Dialog implements ISelectionListene
     @Override
     protected Control createDialogArea(final Composite parent) {
         Composite composite = (Composite) super.createDialogArea(parent);
-        AnalysisSelectionViewer viewer = new AnalysisSelectionViewer(parent, categories,
+        analysisSelectionViewer = new AnalysisSelectionViewer(parent, categories,
                 initialAnalyses);
         GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
         data.widthHint = WIDTH;
         data.heightHint = HEIGHT;
-        viewer.setLayoutData(data);
-        viewer.addSelectionListener(this);
+        analysisSelectionViewer.setLayoutData(data);
         return composite;
     }
 
@@ -102,11 +101,12 @@ public class AnalysisSelectionDialog extends Dialog implements ISelectionListene
         shell.setText(TITLE);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void selectionChanged(final List<AnalysisData> selectedAnalyses) {
-        result = selectedAnalyses;
+    @Override
+    protected void okPressed() {
+        // Remember the selection in the viewer before closing the dialog
+        result = analysisSelectionViewer.getSelectedAnalyses();
+        
+        super.okPressed();
     }
-
+    
 }
