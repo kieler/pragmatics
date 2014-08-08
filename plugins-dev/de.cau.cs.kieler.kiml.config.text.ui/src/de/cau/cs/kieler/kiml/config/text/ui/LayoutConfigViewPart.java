@@ -197,7 +197,7 @@ public class LayoutConfigViewPart extends ViewPart {
         setupXtextEditor(composite);
 
         // a scaler to increase/decrease the value of an option
-        setupScale(composite);
+        // setupScale(composite);
 
         // create the buttons
         createButtons();
