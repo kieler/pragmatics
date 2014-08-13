@@ -22,6 +22,7 @@ import de.cau.cs.kieler.klighd.IDiagramExporter;
 import de.cau.cs.kieler.klighd.piccolo.export.KlighdAbstractSVGGraphics;
 import de.cau.cs.kieler.klighd.piccolo.export.KlighdCanvasExporter;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdCanvas;
+import de.cau.cs.kieler.klighd.piccolo.internal.util.KlighdPaintContext;
 import de.erichseifert.vectorgraphics2d.PDFGraphics2D;
 import de.erichseifert.vectorgraphics2d.VectorGraphics2D.FontRendering;
 import edu.umd.cs.piccolo.PCamera;
@@ -158,7 +159,7 @@ public class VectorGraphicsPDFGraphics extends KlighdAbstractSVGGraphics impleme
             graphics.setClip(bounds);
         }
 
-        final PPaintContext paintContext = new PPaintContext(this);
+        final KlighdPaintContext paintContext = new KlighdPaintContext(this);
         paintContext.setRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
 
         // perform the painting

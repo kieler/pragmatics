@@ -594,7 +594,7 @@ public class PSWTCanvas extends Composite implements PComponent {
         }
 
         // create new paint context and set render quality
-        final PPaintContext paintContext = new PPaintContext(g2);
+        final PPaintContext paintContext = getPaintContext(g2);
         if (getInteracting() || getAnimating()) {
             if (interactingRenderQuality > animatingRenderQuality) {
                 paintContext.setRenderQuality(interactingRenderQuality);
@@ -647,6 +647,23 @@ public class PSWTCanvas extends Composite implements PComponent {
      */
     protected Graphics2D getGraphics2D(final GC gc, final Device device) {
         return new SWTGraphics2D(gc, device);
+    }
+    
+    /**
+     * Getter providing a concrete {@link PPaintContext} implementation. Has been introduced to
+     * simplify the injection of customized implementations. It is called by the
+     * {@link #paintComponent(GC, int, int, int, int)} method, which did invoke the concrete
+     * constructor itself in the original version.
+     * 
+     * @author chsch
+     * 
+     * @param g2
+     *            a {@link Graphics2D} implementation being required by
+     *            {@link PPaintContext#PPaintContext(Graphics2D)} in the original implementation
+     * @return a new {@link PPaintContext} instance.
+     */
+    protected PPaintContext getPaintContext(final Graphics2D g2) {
+        return new PPaintContext(g2);
     }
 
     /**
