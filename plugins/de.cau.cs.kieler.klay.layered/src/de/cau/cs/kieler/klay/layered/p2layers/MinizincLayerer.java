@@ -39,7 +39,6 @@ import com.google.common.io.CharStreams;
 import com.google.common.primitives.Floats;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -122,7 +121,11 @@ public class MinizincLayerer implements ILayoutPhase {
                 // ----- Betweenness --------
                 int nn = layeredGraph.getLayerlessNodes().size();
                 float normFactor = 2f / (nn * nn - 3f * nn + 2f); // SUPPRESS CHECKSTYLE MagicNumber
-                float factor = layeredGraph.getProperty(Properties.EDGE_REVERSAL_WEIGHT);
+                if (nn == 1 || nn == 2) {
+                    // above expression divides by 0 in case nn is 1 or two
+                    normFactor = 1;
+                }
+                // float factor = layeredGraph.getProperty(Properties.EDGE_REVERSAL_WEIGHT);
                 for (Entry<LEdge, Double> e : new Betweenness().calculate(layeredGraph).entrySet()) {
                     float val = e.getValue().floatValue() * normFactor;
                     LEdge edge = e.getKey();
@@ -169,8 +172,9 @@ public class MinizincLayerer implements ILayoutPhase {
                 System.out.println("Line " + line);
                 String[] chunks = line.trim().split(" ");
                 if (chunks.length > 1) {
-                    int id = Integer.valueOf(chunks[0]);
-                    int layer = Integer.valueOf(chunks[1]);
+                    // FIXME sometimes scip returns 0.99999999999, so we round here 
+                    int id = Math.round(Float.valueOf(chunks[0]));
+                    int layer = Math.round(Float.valueOf(chunks[1]));
                     
                     // minizinc starts with 1 instead of 0
                     assignLayers[id - 1] = layer - 1;
