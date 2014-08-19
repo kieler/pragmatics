@@ -77,26 +77,6 @@ public class AnalysisSelectionViewer extends Composite implements ISelectionChan
         gridLayout.numColumns = 1;
         this.setLayout(gridLayout);
         treeViewer.addSelectionChangedListener(this);
-        // correct initial category selection
-        for (AnalysisCategory category : theCategories) {
-            if (category.getAnalyses().size() > 0) {
-                boolean allChecked = true;
-                boolean oneChecked = false;
-                for (AnalysisData infoAnalysis : category.getAnalyses()) {
-                    if (!treeViewer.getChecked(infoAnalysis)) {
-                        allChecked = false;
-                    } else {
-                        oneChecked = true;
-                    }
-                }
-                if (allChecked) {
-                    treeViewer.setChecked(category, true);
-                }
-                if (oneChecked) {
-                    treeViewer.setExpandedState(category, true);
-                }
-            }
-        }
     }
 
     /**

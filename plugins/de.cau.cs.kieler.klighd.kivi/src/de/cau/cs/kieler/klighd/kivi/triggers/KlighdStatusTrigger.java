@@ -90,7 +90,7 @@ public class KlighdStatusTrigger extends AbstractTrigger {
          *            the viewer
          */
         public KlighdStatusState(final Status status, final String viewId,
-                final ViewContext viewContext, final IViewer<?> viewer) {
+                final ViewContext viewContext, final IViewer viewer) {
             super(viewId, viewContext, viewer);
             this.status = status;
         }
