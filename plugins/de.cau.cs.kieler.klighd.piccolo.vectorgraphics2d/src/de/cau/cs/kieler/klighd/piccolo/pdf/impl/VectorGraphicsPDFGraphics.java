@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
+import org.eclipse.swt.widgets.Control;
+
 import de.cau.cs.kieler.klighd.IDiagramExporter;
 import de.cau.cs.kieler.klighd.piccolo.export.KlighdAbstractSVGGraphics;
 import de.cau.cs.kieler.klighd.piccolo.export.KlighdCanvasExporter;
@@ -104,15 +106,15 @@ public class VectorGraphicsPDFGraphics extends KlighdAbstractSVGGraphics impleme
     /**
      * {@inheritDoc}
      */
-    public void export(final ExportInfo info) {
-        this.delegate.export(info);
+    public void export(final ExportData info, final Control control) {
+        this.delegate.export(info, control);
     }
 
     private KlighdCanvasExporter delegate = new KlighdCanvasExporter() {
 
         @Override
-        public void export(final KlighdExportInfo info) {
-            VectorGraphicsPDFGraphics.this.export(info);
+        public void export(final ExportData data, final KlighdCanvas canvas) {
+            VectorGraphicsPDFGraphics.this.export(data, canvas);
         }
     };
 
