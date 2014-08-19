@@ -3,6 +3,8 @@
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="grana" nsURI="http://www.cau.de/cs/kieler/kiml/grana/text/Grana"
     nsPrefix="grana">
   <eClassifiers xsi:type="ecore:EClass" name="Grana">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="globalResources" upperBound="-1"
+        eType="#//GlobalResourceRef" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="jobs" upperBound="-1" eType="#//Job"
         containment="true"/>
   </eClassifiers>
@@ -18,7 +20,17 @@
         eType="#//Analysis" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="output" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Resource">
+  <eClassifiers xsi:type="ecore:EClass" name="Resource"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ResourceReference" eSuperTypes="#//Resource">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="resourceRefs" unique="false"
+        upperBound="-1" eType="#//GlobalResourceRef"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="GlobalResourceRef">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="resources" upperBound="-1"
+        eType="#//LocalResource" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="LocalResource" eSuperTypes="#//Resource">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="path" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="filter" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>

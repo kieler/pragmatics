@@ -77,25 +77,47 @@ ruleGrana returns [EObject current=null]
     @init { enterRule(); 
     }
     @after { leaveRule(); }:
+((	otherlv_0='globalResources' 
+    {
+    	newLeafNode(otherlv_0, grammarAccess.getGranaAccess().getGlobalResourcesKeyword_0_0());
+    }
 (
 (
 		{ 
-	        newCompositeNode(grammarAccess.getGranaAccess().getJobsJobParserRuleCall_0()); 
+	        newCompositeNode(grammarAccess.getGranaAccess().getGlobalResourcesGlobalResourceRefParserRuleCall_0_1_0()); 
 	    }
-		lv_jobs_0_0=ruleJob		{
+		lv_globalResources_1_0=ruleGlobalResourceRef		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getGranaRule());
+	        }
+       		add(
+       			$current, 
+       			"globalResources",
+        		lv_globalResources_1_0, 
+        		"GlobalResourceRef");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
+)*)?(
+(
+		{ 
+	        newCompositeNode(grammarAccess.getGranaAccess().getJobsJobParserRuleCall_1_0()); 
+	    }
+		lv_jobs_2_0=ruleJob		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getGranaRule());
 	        }
        		add(
        			$current, 
        			"jobs",
-        		lv_jobs_0_0, 
+        		lv_jobs_2_0, 
         		"Job");
 	        afterParserOrEnumRuleCall();
 	    }
 
 )
-)*
+)+)
 ;
 
 
@@ -268,15 +290,150 @@ ruleResource returns [EObject current=null]
     @init { enterRule(); 
     }
     @after { leaveRule(); }:
+(
+    { 
+        newCompositeNode(grammarAccess.getResourceAccess().getResourceReferenceParserRuleCall_0()); 
+    }
+    this_ResourceReference_0=ruleResourceReference
+    { 
+        $current = $this_ResourceReference_0.current; 
+        afterParserOrEnumRuleCall();
+    }
+
+    |
+    { 
+        newCompositeNode(grammarAccess.getResourceAccess().getLocalResourceParserRuleCall_1()); 
+    }
+    this_LocalResource_1=ruleLocalResource
+    { 
+        $current = $this_LocalResource_1.current; 
+        afterParserOrEnumRuleCall();
+    }
+)
+;
+
+
+
+
+
+// Entry rule entryRuleResourceReference
+entryRuleResourceReference returns [EObject current=null] 
+	:
+	{ newCompositeNode(grammarAccess.getResourceReferenceRule()); }
+	 iv_ruleResourceReference=ruleResourceReference 
+	 { $current=$iv_ruleResourceReference.current; } 
+	 EOF 
+;
+
+// Rule ResourceReference
+ruleResourceReference returns [EObject current=null] 
+    @init { enterRule(); 
+    }
+    @after { leaveRule(); }:
+(	otherlv_0='ref' 
+    {
+    	newLeafNode(otherlv_0, grammarAccess.getResourceReferenceAccess().getRefKeyword_0());
+    }
+(
+(
+		{
+			if ($current==null) {
+	            $current = createModelElement(grammarAccess.getResourceReferenceRule());
+	        }
+        }
+	otherlv_1=RULE_ID
+	{
+		newLeafNode(otherlv_1, grammarAccess.getResourceReferenceAccess().getResourceRefsGlobalResourceRefCrossReference_1_0()); 
+	}
+
+)
+)+)
+;
+
+
+
+
+
+// Entry rule entryRuleGlobalResourceRef
+entryRuleGlobalResourceRef returns [EObject current=null] 
+	:
+	{ newCompositeNode(grammarAccess.getGlobalResourceRefRule()); }
+	 iv_ruleGlobalResourceRef=ruleGlobalResourceRef 
+	 { $current=$iv_ruleGlobalResourceRef.current; } 
+	 EOF 
+;
+
+// Rule GlobalResourceRef
+ruleGlobalResourceRef returns [EObject current=null] 
+    @init { enterRule(); 
+    }
+    @after { leaveRule(); }:
+((
+(
+		lv_name_0_0=RULE_ID
+		{
+			newLeafNode(lv_name_0_0, grammarAccess.getGlobalResourceRefAccess().getNameIDTerminalRuleCall_0_0()); 
+		}
+		{
+	        if ($current==null) {
+	            $current = createModelElement(grammarAccess.getGlobalResourceRefRule());
+	        }
+       		setWithLastConsumed(
+       			$current, 
+       			"name",
+        		lv_name_0_0, 
+        		"ID");
+	    }
+
+)
+)(
+(
+		{ 
+	        newCompositeNode(grammarAccess.getGlobalResourceRefAccess().getResourcesLocalResourceParserRuleCall_1_0()); 
+	    }
+		lv_resources_1_0=ruleLocalResource		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getGlobalResourceRefRule());
+	        }
+       		add(
+       			$current, 
+       			"resources",
+        		lv_resources_1_0, 
+        		"LocalResource");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
+))
+;
+
+
+
+
+
+// Entry rule entryRuleLocalResource
+entryRuleLocalResource returns [EObject current=null] 
+	:
+	{ newCompositeNode(grammarAccess.getLocalResourceRule()); }
+	 iv_ruleLocalResource=ruleLocalResource 
+	 { $current=$iv_ruleLocalResource.current; } 
+	 EOF 
+;
+
+// Rule LocalResource
+ruleLocalResource returns [EObject current=null] 
+    @init { enterRule(); 
+    }
+    @after { leaveRule(); }:
 ((
 (
 		lv_path_0_0=RULE_STRING
 		{
-			newLeafNode(lv_path_0_0, grammarAccess.getResourceAccess().getPathSTRINGTerminalRuleCall_0_0()); 
+			newLeafNode(lv_path_0_0, grammarAccess.getLocalResourceAccess().getPathSTRINGTerminalRuleCall_0_0()); 
 		}
 		{
 	        if ($current==null) {
-	            $current = createModelElement(grammarAccess.getResourceRule());
+	            $current = createModelElement(grammarAccess.getLocalResourceRule());
 	        }
        		setWithLastConsumed(
        			$current, 
@@ -288,17 +445,17 @@ ruleResource returns [EObject current=null]
 )
 )(	otherlv_1='filter' 
     {
-    	newLeafNode(otherlv_1, grammarAccess.getResourceAccess().getFilterKeyword_1_0());
+    	newLeafNode(otherlv_1, grammarAccess.getLocalResourceAccess().getFilterKeyword_1_0());
     }
 (
 (
 		lv_filter_2_0=RULE_STRING
 		{
-			newLeafNode(lv_filter_2_0, grammarAccess.getResourceAccess().getFilterSTRINGTerminalRuleCall_1_1_0()); 
+			newLeafNode(lv_filter_2_0, grammarAccess.getLocalResourceAccess().getFilterSTRINGTerminalRuleCall_1_1_0()); 
 		}
 		{
 	        if ($current==null) {
-	            $current = createModelElement(grammarAccess.getResourceRule());
+	            $current = createModelElement(grammarAccess.getLocalResourceRule());
 	        }
        		setWithLastConsumed(
        			$current, 
