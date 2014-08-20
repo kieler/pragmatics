@@ -107,21 +107,15 @@ public class VectorGraphicsPDFGraphics extends KlighdAbstractSVGGraphics impleme
     /**
      * {@inheritDoc}
      */
-    public void export(final OutputStream stream, final Control control,
-            final boolean cameraViewport, final int scale, final boolean textAsShapes,
-            final boolean embedFonts, final String subFormatId) {
-        this.delegate.export(stream, control, cameraViewport, scale, textAsShapes, embedFonts,
-                subFormatId);
+    public void export(final ExportData info, final Control control) {
+        this.delegate.export(info, control);
     }
 
     private KlighdCanvasExporter delegate = new KlighdCanvasExporter() {
-        
+
         @Override
-        public void export(final OutputStream stream, final KlighdCanvas canvas,
-                final boolean cameraViewport, final int scale, final boolean textAsShapes,
-                final boolean embedFonts, final String subFormatId) {
-            VectorGraphicsPDFGraphics.this.export(stream, canvas, cameraViewport, scale,
-                    textAsShapes, embedFonts, subFormatId);
+        public void export(final ExportData data, final KlighdCanvas canvas) {
+            VectorGraphicsPDFGraphics.this.export(data, canvas);
         }
     };
 
