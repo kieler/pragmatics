@@ -21,17 +21,20 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.FixedAlignment;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
@@ -119,9 +122,9 @@ public final class BKNodePlacer implements ILayoutPhase {
             .addBeforePhase5(IntermediateProcessorStrategy.HIERARCHICAL_PORT_POSITION_PROCESSOR);
 
     /**
-     * In the compaction step, nodes connected with north south dummies
-     * are compacted in a way which doesn't leave enough space for e.g., arrowheads.
-     * Thus, a small offset is added to give north south dummies enough space.
+     * In the compaction step, nodes connected with north south dummies are compacted in a way which
+     * doesn't leave enough space for e.g., arrowheads. Thus, a small offset is added to give north
+     * south dummies enough space.
      */
     private static final double NORTH_SOUTH_SPACING = 10.0;
     
@@ -131,8 +134,10 @@ public final class BKNodePlacer implements ILayoutPhase {
     private float normalSpacing;
     /** Spacing between dummy nodes, determined by layout options. */
     private float smallSpacing;
+    /** Spacing between external ports, determined by layout options. */
+    private float externalPortSpacing;
     /** Flag which switches debug output of the algorithm on or off. */
-    private boolean debug = false;
+    private boolean debugMode = false;
     /** Whether to produce a balanced layout or not. */
     private boolean produceBalancedLayout = false;
     
@@ -177,9 +182,10 @@ public final class BKNodePlacer implements ILayoutPhase {
         normalSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING) 
                 * layeredGraph.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
         smallSpacing = normalSpacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
+        externalPortSpacing = layeredGraph.getProperty(LayoutOptions.PORT_SPACING);
 
         // Regard possible other layout options.
-        debug = layeredGraph.getProperty(Properties.DEBUG_MODE);
+        debugMode = layeredGraph.getProperty(Properties.DEBUG_MODE);
         produceBalancedLayout =
                 layeredGraph.getProperty(Properties.FIXED_ALIGNMENT) == FixedAlignment.BALANCED;
 
@@ -210,7 +216,7 @@ public final class BKNodePlacer implements ILayoutPhase {
         horizontalCompaction(layeredGraph, rightbottom);
 
         // Debug output
-        if (debug) {
+        if (debugMode) {
             System.out.println("lefttop size is " + lefttop.layoutSize());
             System.out.println("righttop size is " + righttop.layoutSize());
             System.out.println("leftbottom size is " + leftbottom.layoutSize());
@@ -279,9 +285,10 @@ public final class BKNodePlacer implements ILayoutPhase {
         }
 
         // Debug output
-        if (debug) {
-            System.out.println("Blocks: " + getBlocks(chosenLayout));
+        if (debugMode) {
             System.out.println("Chosen node placement: " + chosenLayout);
+            System.out.println("Blocks: " + getBlocks(chosenLayout));
+            System.out.println("Classes: " + getClasses(chosenLayout));
             System.out.println("Marked edges: " + markedEdges);
         }
 
@@ -670,7 +677,13 @@ public final class BKNodePlacer implements ILayoutPhase {
         }
         
         // Initial placement
+        // TODO Fix the following two lines
+        // Placing the root at coordinate 0 causes problems later on. The initial position should
+        // be determined more intelligently. The second line was a first attempt that fixed the problem
+        // in the sample graph attached to KIPRA-1426, but I'm not convinced that it is a good solution
+        // in general.
         bal.y.put(root, 0.0);
+//        bal.y.put(root, -bal.innerShift.get(root));
         
         // Iterate through block and determine, where the block can be placed (until we arrive at the
         // block's root node again)
@@ -678,6 +691,7 @@ public final class BKNodePlacer implements ILayoutPhase {
         do {
             int currentIndexInLayer = currentNode.getIndex();
             int currentLayerSize = currentNode.getLayer().getNodes().size();
+            NodeType currentNodeType = currentNode.getProperty(InternalProperties.NODE_TYPE);
             
             // If the node is the top or bottom node of its layer, it can be placed safely since it is
             // the first to be placed in its layer. If it's not, we'll have to check its neighbours
@@ -694,6 +708,9 @@ public final class BKNodePlacer implements ILayoutPhase {
                     neighbor = currentNode.getLayer().getNodes().get(currentIndexInLayer - 1);
                     neighborRoot = bal.root.get(neighbor);
                 }
+                
+                // The neighbour's node type is important for the spacing between the two later on
+                NodeType neighborNodeType = neighbor.getProperty(InternalProperties.NODE_TYPE);
 
                 // Ensure the neighbor was already placed
                 placeBlock(neighborRoot, bal);
@@ -706,57 +723,49 @@ public final class BKNodePlacer implements ILayoutPhase {
                 
                 // Check if the blocks of the two nodes are members of the same class
                 if (bal.sink.get(root).equals(bal.sink.get(neighborRoot))) {
-                    // They are part of the same class. Calculate a y position for the current block
-                    // depending on the neighbor's placement
-                    double spacing = normalSpacing;
+                    // They are part of the same class
                     
-                    // Get size of current node
-                    double currentSize = currentNode.getSize().y
-                            + currentNode.getMargin().bottom
-                            + bal.innerShift.get(currentNode);
-                    if (currentNode.getProperty(InternalProperties.NODE_TYPE)
-                            == NodeType.NORTH_SOUTH_PORT) {
+                    // The minimal spacing between the two nodes depends on their node type
+                    double spacing = smallSpacing;
+                    if (currentNodeType == NodeType.EXTERNAL_PORT
+                            && neighborNodeType == NodeType.EXTERNAL_PORT) {
                         
-                        currentSize += NORTH_SOUTH_SPACING;
+                        spacing = externalPortSpacing;
+                    } else if (currentNodeType == NodeType.NORMAL
+                            || neighborNodeType == NodeType.NORMAL) {
+                        
+                        spacing = normalSpacing;
                     }
                     
-                    // Get size of neighbor
-                    double neighborSize = neighbor.getSize().y
-                            + neighbor.getMargin().bottom;
-                    if (neighbor.getProperty(InternalProperties.NODE_TYPE)
-                            == NodeType.NORTH_SOUTH_PORT) {
-                        
-                        neighborSize += NORTH_SOUTH_SPACING;
-                    }
-                    
-                    // Check if we may use small spacing
-                    if ((!(blockHasNSDummy(bal, root) && blockContainsRegularNode(bal, neighborRoot))
-                      && !(blockHasNSDummy(bal, neighborRoot) && blockContainsRegularNode(bal, root))
-                      && (bal.blockSize.get(root) == 0.0 || bal.blockSize.get(neighborRoot) == 0.0))) {
-                        
-                        spacing = smallSpacing;
-                    }
+                    // TODO Check what to do about NORTH_SOUTH_SPACING
+                    // (previous version of the algorithm did something here, which the current version
+                    // does not)
                     
                     // Determine the block's final position
                     if (bal.vdir == VDirection.RIGHT) {
-                        bal.y.put(
-                                root,
+                        bal.y.put(root,
                                 Math.min(bal.y.get(root),
-                                         (bal.y.get(neighborRoot)
-                                                 + bal.innerShift.get(neighbor)
-                                                 - neighbor.getMargin().top)
-                                          - spacing - currentSize));
-
+                                         bal.y.get(neighborRoot)
+                                             + bal.innerShift.get(neighbor)
+                                             - neighbor.getMargin().top
+                                             - spacing
+                                             - currentNode.getMargin().bottom
+                                             - currentNode.getSize().y
+                                             - bal.innerShift.get(currentNode)));
                     } else {
-                        bal.y.put(
-                                root,
+                        bal.y.put(root,
                                 Math.max(bal.y.get(root),
-                                        (bal.y.get(neighborRoot) 
-                                                + bal.innerShift.get(neighbor)
-                                                + neighbor.getMargin().top)
-                                         + spacing + neighborSize));
+                                         bal.y.get(neighborRoot)
+                                             + bal.innerShift.get(neighbor)
+                                             + neighbor.getSize().y
+                                             + neighbor.getMargin().bottom
+                                             + spacing
+                                             + currentNode.getMargin().top
+                                             - bal.innerShift.get(currentNode)));
                     }
                 } else {
+                    // TODO Take a look at this code
+                    
                     // They are not part of the same class. Compute how the two classes can be compacted
                     // later
                     double spacing = normalSpacing;
@@ -880,8 +889,11 @@ public final class BKNodePlacer implements ILayoutPhase {
         
         if (node.getProperty(InternalProperties.NODE_TYPE) == NodeType.LONG_EDGE) {
             for (LEdge edge : node.getIncomingEdges()) {
-                if (edge.getSource().getNode().getProperty(InternalProperties.NODE_TYPE)
-                            == NodeType.LONG_EDGE
+                NodeType sourceNodeType =
+                        edge.getSource().getNode().getProperty(InternalProperties.NODE_TYPE);
+                
+                // TODO Using layer indices here is not a good idea in terms of performance
+                if (sourceNodeType == NodeType.LONG_EDGE
                         && edge.getSource().getNode().getLayer().getIndex() == layer2
                         && node.getLayer().getIndex() == layer1) {
                     
@@ -940,6 +952,7 @@ public final class BKNodePlacer implements ILayoutPhase {
         for (LEdge edge : node.getOutgoingEdges()) {
             if (node.getLayer() != edge.getTarget().getNode().getLayer()
                     && edge.getProperty(Properties.PRIORITY) == maxPriority) {
+                
                 result.add(edge.getTarget().getNode());
             }
         }
@@ -957,9 +970,7 @@ public final class BKNodePlacer implements ILayoutPhase {
      */
     private LEdge getEdge(final LNode source, final LNode target) {
         for (LEdge edge : source.getConnectedEdges()) {
-            if (edge.getTarget().getNode().equals(target)
-                    || edge.getSource().getNode().equals(target)) {
-                
+            if (edge.getTarget().getNode().equals(target) || edge.getSource().getNode().equals(target)) {
                 return edge;
             }
         }
@@ -976,17 +987,51 @@ public final class BKNodePlacer implements ILayoutPhase {
     private HashMap<LNode, List<LNode>> getBlocks(final BKAlignedLayout bal) {
         HashMap<LNode, List<LNode>> blocks = new HashMap<LNode, List<LNode>>();
         
-        for (LNode blockRoot : bal.root.keySet()) {
-            List<LNode> blockContents = Lists.newLinkedList();
-            blockContents.add(blockRoot);
-            blocks.put(bal.root.get(blockRoot), blockContents);
+        for (LNode node : bal.root.keySet()) {
+            LNode root = bal.root.get(node);
+            List<LNode> blockContents = blocks.get(root);
+            
+            if (blockContents == null) {
+                blockContents = Lists.newLinkedList();
+                blocks.put(root, blockContents);
+            }
+            
+            blockContents.add(node);
         }
         
         return blocks;
     }
+
+    /**
+     * Finds all classes of a given layout.
+     * 
+     * @param bal The layout whose classes to find
+     * @return The classes of the given layout
+     */
+    private HashMap<LNode, List<LNode>> getClasses(final BKAlignedLayout bal) {
+        HashMap<LNode, List<LNode>> classes = new HashMap<LNode, List<LNode>>();
+        
+        // We need to enumerate all block roots
+        Set<LNode> roots = Sets.newHashSet(bal.root.values());
+        for (LNode root : roots) {
+            LNode sink = bal.sink.get(root);
+            List<LNode> classContents = classes.get(sink);
+            
+            if (classContents == null) {
+                classContents = Lists.newLinkedList();
+                classes.put(sink, classContents);
+            }
+            
+            classContents.add(root);
+        }
+        
+        return classes;
+    }
     
     /**
      * Checks whether any regular nodes are included in the block given by the root node.
+     * 
+     * TODO This method was used before, but I don't think it is required.
      * 
      * @param bal The layout of which the blocks shall be found
      * @param root The root of the block to investigate
@@ -998,6 +1043,8 @@ public final class BKNodePlacer implements ILayoutPhase {
     
     /**
      * Checks whether any north-south port dummies are included in the block given by the root node.
+     * 
+     * TODO This method was used before, but I don't think it is required.
      * 
      * @param bal The layout of which the blocks shall be found
      * @param root The root of the block to investigate
@@ -1050,7 +1097,7 @@ public final class BKNodePlacer implements ILayoutPhase {
                 } else {
                     // We've found an overlap
                     feasible = false;
-                    if (debug) {
+                    if (debugMode) {
                         System.out.println("bk node placement breaks on " + node
                                 + " which should have been after " + previous);
                     }
@@ -1064,7 +1111,7 @@ public final class BKNodePlacer implements ILayoutPhase {
             }
         }
         
-        if (debug) {
+        if (debugMode) {
             System.out.println(bal + " is feasible: " + feasible);
         }
         
@@ -1094,9 +1141,11 @@ public final class BKNodePlacer implements ILayoutPhase {
         private HashMap<LNode, Double> shift;
         /** The y-coordinate of every node, forming the final layout. */
         private HashMap<LNode, Double> y;
-        /** Stores, whether a block contains a NORTH SOUTH port dummy. */
+        /** Whether a block contains a NORTH SOUTH port dummy. */
+        // TODO: I don't think this is necessary anymore. If it is, it doesn't need to be a map.
         private HashMap<LNode, Boolean> blockContainsNorthSouth;
-        /** Stores, whether a block contains a regular node. */
+        /** Whether a block contains a regular node. */
+        // TODO: I don't think this is necessary anymore. If it is, it doesn't need to be a map.
         private HashMap<LNode, Boolean> blockContainsRegularNode;
         /** The vertical direction of the current layout. */
         private VDirection vdir;
