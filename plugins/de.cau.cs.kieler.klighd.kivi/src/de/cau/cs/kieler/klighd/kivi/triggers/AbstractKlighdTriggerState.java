@@ -30,7 +30,7 @@ public abstract class AbstractKlighdTriggerState extends AbstractTriggerState {
     /** the view context in which the selection occurred. */
     private ViewContext viewContext = null;
     /** the viewer in which the selection occurred. */
-    private IViewer<?> viewer = null;
+    private IViewer viewer = null;
 
     /**
      * Constructs an abstract KLighD trigger state from no context.
@@ -51,7 +51,7 @@ public abstract class AbstractKlighdTriggerState extends AbstractTriggerState {
      *            the viewer
      */
     public AbstractKlighdTriggerState(final String viewId, final ViewContext viewContext,
-            final IViewer<?> viewer) {
+            final IViewer viewer) {
         this.viewId = viewId;
         this.viewContext = viewContext;
         this.viewer = viewer;
@@ -80,7 +80,7 @@ public abstract class AbstractKlighdTriggerState extends AbstractTriggerState {
      * 
      * @return the viewer or null if no selection occurred so far
      */
-    public IViewer<?> getViewer() {
+    public IViewer getViewer() {
         return viewer;
     }
 

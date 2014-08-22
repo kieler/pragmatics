@@ -67,13 +67,22 @@ public interface GranaPackage extends EPackage
   int GRANA = 0;
 
   /**
+   * The feature id for the '<em><b>Global Resources</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GRANA__GLOBAL_RESOURCES = 0;
+
+  /**
    * The feature id for the '<em><b>Jobs</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int GRANA__JOBS = 0;
+  int GRANA__JOBS = 1;
 
   /**
    * The number of structural features of the '<em>Grana</em>' class.
@@ -82,7 +91,7 @@ public interface GranaPackage extends EPackage
    * @generated
    * @ordered
    */
-  int GRANA_FEATURE_COUNT = 1;
+  int GRANA_FEATURE_COUNT = 2;
 
   /**
    * The meta object id for the '{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.JobImpl <em>Job</em>}' class.
@@ -168,13 +177,97 @@ public interface GranaPackage extends EPackage
   int RESOURCE = 2;
 
   /**
+   * The number of structural features of the '<em>Resource</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int RESOURCE_FEATURE_COUNT = 0;
+
+  /**
+   * The meta object id for the '{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.ResourceReferenceImpl <em>Resource Reference</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.ResourceReferenceImpl
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaPackageImpl#getResourceReference()
+   * @generated
+   */
+  int RESOURCE_REFERENCE = 3;
+
+  /**
+   * The feature id for the '<em><b>Resource Refs</b></em>' reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int RESOURCE_REFERENCE__RESOURCE_REFS = RESOURCE_FEATURE_COUNT + 0;
+
+  /**
+   * The number of structural features of the '<em>Resource Reference</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int RESOURCE_REFERENCE_FEATURE_COUNT = RESOURCE_FEATURE_COUNT + 1;
+
+  /**
+   * The meta object id for the '{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.GlobalResourceRefImpl <em>Global Resource Ref</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.GlobalResourceRefImpl
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaPackageImpl#getGlobalResourceRef()
+   * @generated
+   */
+  int GLOBAL_RESOURCE_REF = 4;
+
+  /**
+   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GLOBAL_RESOURCE_REF__NAME = 0;
+
+  /**
+   * The feature id for the '<em><b>Resources</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GLOBAL_RESOURCE_REF__RESOURCES = 1;
+
+  /**
+   * The number of structural features of the '<em>Global Resource Ref</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GLOBAL_RESOURCE_REF_FEATURE_COUNT = 2;
+
+  /**
+   * The meta object id for the '{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.LocalResourceImpl <em>Local Resource</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.LocalResourceImpl
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaPackageImpl#getLocalResource()
+   * @generated
+   */
+  int LOCAL_RESOURCE = 5;
+
+  /**
    * The feature id for the '<em><b>Path</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int RESOURCE__PATH = 0;
+  int LOCAL_RESOURCE__PATH = RESOURCE_FEATURE_COUNT + 0;
 
   /**
    * The feature id for the '<em><b>Filter</b></em>' attribute.
@@ -183,16 +276,16 @@ public interface GranaPackage extends EPackage
    * @generated
    * @ordered
    */
-  int RESOURCE__FILTER = 1;
+  int LOCAL_RESOURCE__FILTER = RESOURCE_FEATURE_COUNT + 1;
 
   /**
-   * The number of structural features of the '<em>Resource</em>' class.
+   * The number of structural features of the '<em>Local Resource</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int RESOURCE_FEATURE_COUNT = 2;
+  int LOCAL_RESOURCE_FEATURE_COUNT = RESOURCE_FEATURE_COUNT + 2;
 
   /**
    * The meta object id for the '{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.AnalysisImpl <em>Analysis</em>}' class.
@@ -202,7 +295,7 @@ public interface GranaPackage extends EPackage
    * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaPackageImpl#getAnalysis()
    * @generated
    */
-  int ANALYSIS = 3;
+  int ANALYSIS = 6;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -232,6 +325,17 @@ public interface GranaPackage extends EPackage
    * @generated
    */
   EClass getGrana();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link de.cau.cs.kieler.kiml.grana.text.grana.Grana#getGlobalResources <em>Global Resources</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Global Resources</em>'.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.Grana#getGlobalResources()
+   * @see #getGrana()
+   * @generated
+   */
+  EReference getGrana_GlobalResources();
 
   /**
    * Returns the meta object for the containment reference list '{@link de.cau.cs.kieler.kiml.grana.text.grana.Grana#getJobs <em>Jobs</em>}'.
@@ -331,26 +435,89 @@ public interface GranaPackage extends EPackage
   EClass getResource();
 
   /**
-   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kiml.grana.text.grana.Resource#getPath <em>Path</em>}'.
+   * Returns the meta object for class '{@link de.cau.cs.kieler.kiml.grana.text.grana.ResourceReference <em>Resource Reference</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Resource Reference</em>'.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.ResourceReference
+   * @generated
+   */
+  EClass getResourceReference();
+
+  /**
+   * Returns the meta object for the reference list '{@link de.cau.cs.kieler.kiml.grana.text.grana.ResourceReference#getResourceRefs <em>Resource Refs</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the reference list '<em>Resource Refs</em>'.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.ResourceReference#getResourceRefs()
+   * @see #getResourceReference()
+   * @generated
+   */
+  EReference getResourceReference_ResourceRefs();
+
+  /**
+   * Returns the meta object for class '{@link de.cau.cs.kieler.kiml.grana.text.grana.GlobalResourceRef <em>Global Resource Ref</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Global Resource Ref</em>'.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.GlobalResourceRef
+   * @generated
+   */
+  EClass getGlobalResourceRef();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kiml.grana.text.grana.GlobalResourceRef#getName <em>Name</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Name</em>'.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.GlobalResourceRef#getName()
+   * @see #getGlobalResourceRef()
+   * @generated
+   */
+  EAttribute getGlobalResourceRef_Name();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link de.cau.cs.kieler.kiml.grana.text.grana.GlobalResourceRef#getResources <em>Resources</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Resources</em>'.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.GlobalResourceRef#getResources()
+   * @see #getGlobalResourceRef()
+   * @generated
+   */
+  EReference getGlobalResourceRef_Resources();
+
+  /**
+   * Returns the meta object for class '{@link de.cau.cs.kieler.kiml.grana.text.grana.LocalResource <em>Local Resource</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Local Resource</em>'.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.LocalResource
+   * @generated
+   */
+  EClass getLocalResource();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kiml.grana.text.grana.LocalResource#getPath <em>Path</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the attribute '<em>Path</em>'.
-   * @see de.cau.cs.kieler.kiml.grana.text.grana.Resource#getPath()
-   * @see #getResource()
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.LocalResource#getPath()
+   * @see #getLocalResource()
    * @generated
    */
-  EAttribute getResource_Path();
+  EAttribute getLocalResource_Path();
 
   /**
-   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kiml.grana.text.grana.Resource#getFilter <em>Filter</em>}'.
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kiml.grana.text.grana.LocalResource#getFilter <em>Filter</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the attribute '<em>Filter</em>'.
-   * @see de.cau.cs.kieler.kiml.grana.text.grana.Resource#getFilter()
-   * @see #getResource()
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.LocalResource#getFilter()
+   * @see #getLocalResource()
    * @generated
    */
-  EAttribute getResource_Filter();
+  EAttribute getLocalResource_Filter();
 
   /**
    * Returns the meta object for class '{@link de.cau.cs.kieler.kiml.grana.text.grana.Analysis <em>Analysis</em>}'.
@@ -405,6 +572,14 @@ public interface GranaPackage extends EPackage
      * @generated
      */
     EClass GRANA = eINSTANCE.getGrana();
+
+    /**
+     * The meta object literal for the '<em><b>Global Resources</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference GRANA__GLOBAL_RESOURCES = eINSTANCE.getGrana_GlobalResources();
 
     /**
      * The meta object literal for the '<em><b>Jobs</b></em>' containment reference list feature.
@@ -483,12 +658,66 @@ public interface GranaPackage extends EPackage
     EClass RESOURCE = eINSTANCE.getResource();
 
     /**
+     * The meta object literal for the '{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.ResourceReferenceImpl <em>Resource Reference</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.ResourceReferenceImpl
+     * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaPackageImpl#getResourceReference()
+     * @generated
+     */
+    EClass RESOURCE_REFERENCE = eINSTANCE.getResourceReference();
+
+    /**
+     * The meta object literal for the '<em><b>Resource Refs</b></em>' reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference RESOURCE_REFERENCE__RESOURCE_REFS = eINSTANCE.getResourceReference_ResourceRefs();
+
+    /**
+     * The meta object literal for the '{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.GlobalResourceRefImpl <em>Global Resource Ref</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.GlobalResourceRefImpl
+     * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaPackageImpl#getGlobalResourceRef()
+     * @generated
+     */
+    EClass GLOBAL_RESOURCE_REF = eINSTANCE.getGlobalResourceRef();
+
+    /**
+     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute GLOBAL_RESOURCE_REF__NAME = eINSTANCE.getGlobalResourceRef_Name();
+
+    /**
+     * The meta object literal for the '<em><b>Resources</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference GLOBAL_RESOURCE_REF__RESOURCES = eINSTANCE.getGlobalResourceRef_Resources();
+
+    /**
+     * The meta object literal for the '{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.LocalResourceImpl <em>Local Resource</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.LocalResourceImpl
+     * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaPackageImpl#getLocalResource()
+     * @generated
+     */
+    EClass LOCAL_RESOURCE = eINSTANCE.getLocalResource();
+
+    /**
      * The meta object literal for the '<em><b>Path</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute RESOURCE__PATH = eINSTANCE.getResource_Path();
+    EAttribute LOCAL_RESOURCE__PATH = eINSTANCE.getLocalResource_Path();
 
     /**
      * The meta object literal for the '<em><b>Filter</b></em>' attribute feature.
@@ -496,7 +725,7 @@ public interface GranaPackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute RESOURCE__FILTER = eINSTANCE.getResource_Filter();
+    EAttribute LOCAL_RESOURCE__FILTER = eINSTANCE.getLocalResource_Filter();
 
     /**
      * The meta object literal for the '{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.AnalysisImpl <em>Analysis</em>}' class.

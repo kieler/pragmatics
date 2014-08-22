@@ -50,6 +50,33 @@ public interface GranaFactory extends EFactory
   Resource createResource();
 
   /**
+   * Returns a new object of class '<em>Resource Reference</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Resource Reference</em>'.
+   * @generated
+   */
+  ResourceReference createResourceReference();
+
+  /**
+   * Returns a new object of class '<em>Global Resource Ref</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Global Resource Ref</em>'.
+   * @generated
+   */
+  GlobalResourceRef createGlobalResourceRef();
+
+  /**
+   * Returns a new object of class '<em>Local Resource</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Local Resource</em>'.
+   * @generated
+   */
+  LocalResource createLocalResource();
+
+  /**
    * Returns a new object of class '<em>Analysis</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

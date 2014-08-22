@@ -8,7 +8,9 @@ import "http://kieler.cs.cau.de/KLayoutData"
 import "http://kieler.cs.cau.de/KGraph"  
 
 Grana:
-    (jobs+=Job)*
+    ('globalResources' (globalResources+=GlobalResourceRef)*)?
+    
+    (jobs+=Job)+
 ;
 
 Job: {Job}
@@ -18,6 +20,7 @@ Job: {Job}
     
     'resources'
         (resources+=Resource)*
+        
     
     'layoutoptions'
         layoutOptions+=KIdentifier
@@ -30,10 +33,22 @@ Job: {Job}
 ;
 
 Resource:
+    ResourceReference | LocalResource
+;
+
+ResourceReference:
+    'ref' (resourceRefs+=[GlobalResourceRef | ID])+
+;
+
+GlobalResourceRef:
+    name=ID
+    (resources+=LocalResource)
+;
+
+LocalResource:
     path=STRING
     ('filter' filter=STRING)
 ;
-
 
 Analysis:
     name=QualifiedID

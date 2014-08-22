@@ -90,6 +90,21 @@ public class GranaAdapterFactory extends AdapterFactoryImpl
         return createResourceAdapter();
       }
       @Override
+      public Adapter caseResourceReference(ResourceReference object)
+      {
+        return createResourceReferenceAdapter();
+      }
+      @Override
+      public Adapter caseGlobalResourceRef(GlobalResourceRef object)
+      {
+        return createGlobalResourceRefAdapter();
+      }
+      @Override
+      public Adapter caseLocalResource(LocalResource object)
+      {
+        return createLocalResourceAdapter();
+      }
+      @Override
       public Adapter caseAnalysis(Analysis object)
       {
         return createAnalysisAdapter();
@@ -157,6 +172,51 @@ public class GranaAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createResourceAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kiml.grana.text.grana.ResourceReference <em>Resource Reference</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.ResourceReference
+   * @generated
+   */
+  public Adapter createResourceReferenceAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kiml.grana.text.grana.GlobalResourceRef <em>Global Resource Ref</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.GlobalResourceRef
+   * @generated
+   */
+  public Adapter createGlobalResourceRefAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kiml.grana.text.grana.LocalResource <em>Local Resource</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.LocalResource
+   * @generated
+   */
+  public Adapter createLocalResourceAdapter()
   {
     return null;
   }

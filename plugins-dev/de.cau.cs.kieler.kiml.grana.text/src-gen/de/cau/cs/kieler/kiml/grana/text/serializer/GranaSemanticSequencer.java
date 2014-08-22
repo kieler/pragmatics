@@ -5,10 +5,12 @@ import com.google.inject.Provider;
 import de.cau.cs.kieler.core.kgraph.KGraphPackage;
 import de.cau.cs.kieler.core.kgraph.PersistentEntry;
 import de.cau.cs.kieler.kiml.grana.text.grana.Analysis;
+import de.cau.cs.kieler.kiml.grana.text.grana.GlobalResourceRef;
 import de.cau.cs.kieler.kiml.grana.text.grana.Grana;
 import de.cau.cs.kieler.kiml.grana.text.grana.GranaPackage;
 import de.cau.cs.kieler.kiml.grana.text.grana.Job;
-import de.cau.cs.kieler.kiml.grana.text.grana.Resource;
+import de.cau.cs.kieler.kiml.grana.text.grana.LocalResource;
+import de.cau.cs.kieler.kiml.grana.text.grana.ResourceReference;
 import de.cau.cs.kieler.kiml.grana.text.services.GranaGrammarAccess;
 import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage;
@@ -38,6 +40,12 @@ public class GranaSemanticSequencer extends AbstractDelegatingSemanticSequencer 
 					return; 
 				}
 				else break;
+			case GranaPackage.GLOBAL_RESOURCE_REF:
+				if(context == grammarAccess.getGlobalResourceRefRule()) {
+					sequence_GlobalResourceRef(context, (GlobalResourceRef) semanticObject); 
+					return; 
+				}
+				else break;
 			case GranaPackage.GRANA:
 				if(context == grammarAccess.getGranaRule()) {
 					sequence_Grana(context, (Grana) semanticObject); 
@@ -50,9 +58,17 @@ public class GranaSemanticSequencer extends AbstractDelegatingSemanticSequencer 
 					return; 
 				}
 				else break;
-			case GranaPackage.RESOURCE:
-				if(context == grammarAccess.getResourceRule()) {
-					sequence_Resource(context, (Resource) semanticObject); 
+			case GranaPackage.LOCAL_RESOURCE:
+				if(context == grammarAccess.getLocalResourceRule() ||
+				   context == grammarAccess.getResourceRule()) {
+					sequence_LocalResource(context, (LocalResource) semanticObject); 
+					return; 
+				}
+				else break;
+			case GranaPackage.RESOURCE_REFERENCE:
+				if(context == grammarAccess.getResourceRule() ||
+				   context == grammarAccess.getResourceReferenceRule()) {
+					sequence_ResourceReference(context, (ResourceReference) semanticObject); 
 					return; 
 				}
 				else break;
@@ -94,7 +110,16 @@ public class GranaSemanticSequencer extends AbstractDelegatingSemanticSequencer 
 	
 	/**
 	 * Constraint:
-	 *     jobs+=Job*
+	 *     (name=ID resources+=LocalResource)
+	 */
+	protected void sequence_GlobalResourceRef(EObject context, GlobalResourceRef semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     (globalResources+=GlobalResourceRef* jobs+=Job+)
 	 */
 	protected void sequence_Grana(EObject context, Grana semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -128,6 +153,25 @@ public class GranaSemanticSequencer extends AbstractDelegatingSemanticSequencer 
 	
 	/**
 	 * Constraint:
+	 *     (path=STRING filter=STRING)
+	 */
+	protected void sequence_LocalResource(EObject context, LocalResource semanticObject) {
+		if(errorAcceptor != null) {
+			if(transientValues.isValueTransient(semanticObject, GranaPackage.Literals.LOCAL_RESOURCE__PATH) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GranaPackage.Literals.LOCAL_RESOURCE__PATH));
+			if(transientValues.isValueTransient(semanticObject, GranaPackage.Literals.LOCAL_RESOURCE__FILTER) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GranaPackage.Literals.LOCAL_RESOURCE__FILTER));
+		}
+		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
+		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
+		feeder.accept(grammarAccess.getLocalResourceAccess().getPathSTRINGTerminalRuleCall_0_0(), semanticObject.getPath());
+		feeder.accept(grammarAccess.getLocalResourceAccess().getFilterSTRINGTerminalRuleCall_1_1_0(), semanticObject.getFilter());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Constraint:
 	 *     (key=QualifiedID value=PropertyValue)
 	 */
 	protected void sequence_PersistentEntry(EObject context, PersistentEntry semanticObject) {
@@ -147,19 +191,9 @@ public class GranaSemanticSequencer extends AbstractDelegatingSemanticSequencer 
 	
 	/**
 	 * Constraint:
-	 *     (path=STRING filter=STRING)
+	 *     resourceRefs+=[GlobalResourceRef|ID]+
 	 */
-	protected void sequence_Resource(EObject context, Resource semanticObject) {
-		if(errorAcceptor != null) {
-			if(transientValues.isValueTransient(semanticObject, GranaPackage.Literals.RESOURCE__PATH) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GranaPackage.Literals.RESOURCE__PATH));
-			if(transientValues.isValueTransient(semanticObject, GranaPackage.Literals.RESOURCE__FILTER) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GranaPackage.Literals.RESOURCE__FILTER));
-		}
-		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
-		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
-		feeder.accept(grammarAccess.getResourceAccess().getPathSTRINGTerminalRuleCall_0_0(), semanticObject.getPath());
-		feeder.accept(grammarAccess.getResourceAccess().getFilterSTRINGTerminalRuleCall_1_1_0(), semanticObject.getFilter());
-		feeder.finish();
+	protected void sequence_ResourceReference(EObject context, ResourceReference semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
 	}
 }

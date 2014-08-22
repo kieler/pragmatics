@@ -93,6 +93,29 @@ public class GranaSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case GranaPackage.RESOURCE_REFERENCE:
+      {
+        ResourceReference resourceReference = (ResourceReference)theEObject;
+        T result = caseResourceReference(resourceReference);
+        if (result == null) result = caseResource(resourceReference);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case GranaPackage.GLOBAL_RESOURCE_REF:
+      {
+        GlobalResourceRef globalResourceRef = (GlobalResourceRef)theEObject;
+        T result = caseGlobalResourceRef(globalResourceRef);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case GranaPackage.LOCAL_RESOURCE:
+      {
+        LocalResource localResource = (LocalResource)theEObject;
+        T result = caseLocalResource(localResource);
+        if (result == null) result = caseResource(localResource);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case GranaPackage.ANALYSIS:
       {
         Analysis analysis = (Analysis)theEObject;
@@ -148,6 +171,54 @@ public class GranaSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseResource(Resource object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Resource Reference</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Resource Reference</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseResourceReference(ResourceReference object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Global Resource Ref</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Global Resource Ref</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseGlobalResourceRef(GlobalResourceRef object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Local Resource</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Local Resource</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseLocalResource(LocalResource object)
   {
     return null;
   }
