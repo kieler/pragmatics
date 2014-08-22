@@ -182,7 +182,7 @@ public final class BKNodePlacer implements ILayoutPhase {
         normalSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING) 
                 * layeredGraph.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
         smallSpacing = normalSpacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
-        externalPortSpacing = layeredGraph.getProperty(LayoutOptions.PORT_SPACING);
+        externalPortSpacing = layeredGraph.getProperty(Properties.PORT_SPACING);
 
         // Regard possible other layout options.
         debugMode = layeredGraph.getProperty(Properties.DEBUG_MODE);
@@ -732,7 +732,7 @@ public final class BKNodePlacer implements ILayoutPhase {
                         
                         spacing = externalPortSpacing;
                     } else if (currentNodeType == NodeType.NORMAL
-                            || neighborNodeType == NodeType.NORMAL) {
+                            && neighborNodeType == NodeType.NORMAL) {
                         
                         spacing = normalSpacing;
                     }
