@@ -21,17 +21,20 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.FixedAlignment;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
@@ -48,54 +51,54 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *     LNCS vol. 2265, pp. 33-36, Springer, 2002. </li>
  * </ul>
  * 
- * <p>The original algorithm was extended to be able to cope with ports, node sizes, and
- * node margins, and was made more stable in general.
- * The algorithm is structured in five steps, which include two new steps which were
- * not included in the original algorithm by Brandes and Koepf. The middle three steps
- * are executed four times, traversing the graph in all combinations of TOP or BOTTOM
- * and LEFT or RIGHT.</p>
+ * <p>The original algorithm was extended to be able to cope with ports, node sizes, and node margins,
+ * and was made more stable in general. The algorithm is structured in five steps, which include two new
+ * steps which were not included in the original algorithm by Brandes and Koepf. The middle three steps
+ * are executed four times, traversing the graph in all combinations of TOP or BOTTOM and LEFT or
+ * RIGHT.</p>
  * 
- * <p>Although we have, in KLay Layered, the general idea of layouting from left to right
- * and transforming in the desired direction later, we decided to keep the terminology
- * from the original algorithm which thinks of a layout from top to bottom. When placing
- * coordinates, we have to differ from the original algorithm, since node placement in
- * KLay Layered has to assign y-coordinates and not x-coordinates.</p>
+ * <p>Although we have, in KLay Layered, the general idea of layouting from left to right and
+ * transforming in the desired direction later, we decided to keep the terminology from the original
+ * algorithm which thinks of a layout from top to bottom. When placing coordinates, we have to differ
+ * from the original algorithm, since node placement in KLay Layered has to assign y-coordinates and not
+ * x-coordinates.</p>
+ * 
+ * <p>The variable naming in this code is mostly chosen such that it matches the original variable names
+ * in the paper. There are methods that divert from this convention, though, to achieve better code
+ * readability.</p>
  * 
  * <h4>The algorithm:</h4>
  * 
- * <p>The first step checks the graphs' edges and marks short edges which cross long edges
- * (called type 1 conflict). The algorithm indents to draw long edges as straight
- * as possible, thus trying to solve the marked conflicts in a way which keep the
- * long edge straight.</p>
+ * <p>The first step checks the graphs' edges and marks short edges which cross long edges (called
+ * type 1 conflict). The algorithm indents to draw long edges as straight as possible, thus trying to
+ * solve the marked conflicts in a way which keep the long edge straight.</p>
  * 
  * <p>============ TOP, BOTTOM x LEFT, RIGHT ============</p>
  * 
- * <p>The second step traverses the graph in the given directions and tries to group
- * connected nodes into (horizontal) blocks. These blocks, respectively the contained
- * nodes, will be drawn straight when the algorithm is finished. Here, type 1 conflicts
- * are resolved, so that the dummy nodes of a long edge share the same block if possible,
- * such that the long edge is drawn straightly.</p>
+ * <p>The second step traverses the graph in the given directions and tries to group connected nodes
+ * into (horizontal) blocks. These blocks, respectively the contained nodes, will be drawn straight when
+ * the algorithm is finished. Here, type 1 conflicts are resolved, so that the dummy nodes of a long
+ * edge share the same block if possible, such that the long edge is drawn straightly.</p>
  * 
- * <p>The third step contains the addition of node size and port positions to the original
- * algorithm. Each block is investigated from TOP to BOTTOM. Nodes are moved inside the
- * blocks, such that the port of the edge going to the next node is on the same level as
- * that next node. Furthermore, the size of the block is calculated, regarding node sizes
- * and new space needed due to node movement.</p>
+ * <p>The third step contains the addition of node size and port positions to the original algorithm.
+ * Each block is investigated from TOP to BOTTOM. Nodes are moved inside the blocks, such that the port
+ * of the edge going to the next node is on the same level as that next node. Furthermore, the size of
+ * the block is calculated, regarding node sizes and new space needed due to node movement.</p>
  * 
- * <p>In the fourth step, actual y-coordinates are determined. The blocks are placed, start
- * block and direction determined by the directions of the current iteration. 
- * It is tried to place the blocks as compact as possible by grouping blocks.</p>
+ * <p>In the fourth step, actual y-coordinates are determined. The blocks are placed, start block and
+ * direction determined by the directions of the current iteration. It is tried to place the blocks as
+ * compact as possible by grouping blocks.</p>
  *  
  * <p>======================= END =======================</p>
  * 
- * <p>The action of the last step depends on a layout option. If "Less Edge Bends" is set to
- * true, one of the four calculated layouts is selected and applied, choosing the layout 
- * which uses the least space. If it is false, a balanced layout is chosen by calculating
- * a median layout of all four layouts.</p>
+ * <p>The action of the last step depends on a layout option. If "Less Edge Bends" is set to true, one
+ * of the four calculated layouts is selected and applied, choosing the layout which uses the least
+ * space. If it is false, a balanced layout is chosen by calculating a median layout of all four
+ * layouts.</p>
  * 
- * <p>In rare cases, it is possible that one or more layouts is not correct, e.g. having nodes
- * which overlap each other or violating the layer ordering constraint. If the algorithm
- * detects that, the respective layout is discarded and another one is chosen.</p>
+ * <p>In rare cases, it is possible that one or more layouts is not correct, e.g. having nodes which
+ * overlap each other or violating the layer ordering constraint. If the algorithm detects that, the
+ * respective layout is discarded and another one is chosen.</p>
  * 
  * <dl>
  *   <dt>Preconditions:</dt>
@@ -119,9 +122,9 @@ public final class BKNodePlacer implements ILayoutPhase {
             .addBeforePhase5(IntermediateProcessorStrategy.HIERARCHICAL_PORT_POSITION_PROCESSOR);
 
     /**
-     * In the compaction step, nodes connected with north south dummies
-     * are compacted in a way which doesn't leave enough space for e.g., arrowheads.
-     * Thus, a small offset is added to give north south dummies enough space.
+     * In the compaction step, nodes connected with north south dummies are compacted in a way which
+     * doesn't leave enough space for e.g., arrowheads. Thus, a small offset is added to give north
+     * south dummies enough space.
      */
     private static final double NORTH_SOUTH_SPACING = 10.0;
     
@@ -131,8 +134,10 @@ public final class BKNodePlacer implements ILayoutPhase {
     private float normalSpacing;
     /** Spacing between dummy nodes, determined by layout options. */
     private float smallSpacing;
+    /** Spacing between external ports, determined by layout options. */
+    private float externalPortSpacing;
     /** Flag which switches debug output of the algorithm on or off. */
-    private boolean debug = false;
+    private boolean debugMode = false;
     /** Whether to produce a balanced layout or not. */
     private boolean produceBalancedLayout = false;
     
@@ -177,9 +182,10 @@ public final class BKNodePlacer implements ILayoutPhase {
         normalSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING) 
                 * layeredGraph.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
         smallSpacing = normalSpacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
+        externalPortSpacing = layeredGraph.getProperty(Properties.PORT_SPACING);
 
         // Regard possible other layout options.
-        debug = layeredGraph.getProperty(Properties.DEBUG_MODE);
+        debugMode = layeredGraph.getProperty(Properties.DEBUG_MODE);
         produceBalancedLayout =
                 layeredGraph.getProperty(Properties.FIXED_ALIGNMENT) == FixedAlignment.BALANCED;
 
@@ -210,7 +216,7 @@ public final class BKNodePlacer implements ILayoutPhase {
         horizontalCompaction(layeredGraph, rightbottom);
 
         // Debug output
-        if (debug) {
+        if (debugMode) {
             System.out.println("lefttop size is " + lefttop.layoutSize());
             System.out.println("righttop size is " + righttop.layoutSize());
             System.out.println("leftbottom size is " + leftbottom.layoutSize());
@@ -279,9 +285,10 @@ public final class BKNodePlacer implements ILayoutPhase {
         }
 
         // Debug output
-        if (debug) {
-            System.out.println("Blocks: " + getBlocks(chosenLayout));
+        if (debugMode) {
             System.out.println("Chosen node placement: " + chosenLayout);
+            System.out.println("Blocks: " + getBlocks(chosenLayout));
+            System.out.println("Classes: " + getClasses(chosenLayout));
             System.out.println("Marked edges: " + markedEdges);
         }
 
@@ -461,6 +468,7 @@ public final class BKNodePlacer implements ILayoutPhase {
                         for (int m = high; m >= low; m--) {
                             if (bal.align.get(v_i_k).equals(v_i_k)) {
                                 LNode u_m = neighbors.get(m);
+                                
                                 // Again, getEdge won't return null because the neighbor relationship
                                 // ensures that at least one edge exists
                                 if (!markedEdges.contains(getEdge(u_m, v_i_k)) && r > u_m.getIndex()) {
@@ -648,121 +656,141 @@ public final class BKNodePlacer implements ILayoutPhase {
             }
         }
     }
+    
+    /* Note: The following methods diverts from the convention of naming variables as they were named in
+     *       the original paper for better code readability. (Since this is one of the most intricate
+     *       pieces of code in the algorithm.) The original variable names are mentioned in comments.
+     */
 
     /**
      * Blocks are placed based on their root node. This is done by going through all layers the block
      * occupies and moving the whole block upwards / downwards if there are blocks that it overlaps
      * with.
      * 
-     * @param v The root node of the block
+     * @param root The root node of the block (usually called {@code v})
      * @param bal One of the four layouts which shall be used in this step
      */
-    private void placeBlock(final LNode v, final BKAlignedLayout bal) {
-        // Only place block if it does not have a placement already
-        if (!bal.y.containsKey(v)) {
-            bal.y.put(v, 0.0);
-            LNode w = v;
+    private void placeBlock(final LNode root, final BKAlignedLayout bal) {
+        // Skip if the block was already placed
+        if (bal.y.containsKey(root)) {
+            return;
+        }
+        
+        // Initial placement
+        // TODO Fix the following two lines
+        // Placing the root at coordinate 0 causes problems later on. The initial position should
+        // be determined more intelligently. The second line was a first attempt that fixed the problem
+        // in the sample graph attached to KIPRA-1426, but I'm not convinced that it is a good solution
+        // in general.
+        bal.y.put(root, 0.0);
+//        bal.y.put(root, -bal.innerShift.get(root));
+        
+        // Iterate through block and determine, where the block can be placed (until we arrive at the
+        // block's root node again)
+        LNode currentNode = root;
+        do {
+            int currentIndexInLayer = currentNode.getIndex();
+            int currentLayerSize = currentNode.getLayer().getNodes().size();
+            NodeType currentNodeType = currentNode.getProperty(InternalProperties.NODE_TYPE);
             
-            // Iterate through block and determine, where the block can be placed
-            do {
-                // If the node is the top or bottom node of it's layer, it can be, depending
-                // on the current direction, placed safely since it is the first to be placed
-                if ((bal.vdir == VDirection.LEFT && w.getIndex() > 0)
-                        || (bal.vdir == VDirection.RIGHT && w.getIndex() < (w.getLayer()
-                                .getNodes().size() - 1))) {
+            // If the node is the top or bottom node of its layer, it can be placed safely since it is
+            // the first to be placed in its layer. If it's not, we'll have to check its neighbours
+            if ((bal.vdir == VDirection.LEFT && currentIndexInLayer > 0)
+                    || (bal.vdir == VDirection.RIGHT && currentIndexInLayer < (currentLayerSize - 1))) {
 
-                    // Get the node which is top/bottom to the node to be placed to check,
-                    // whether the current node conflicts with it
-                    LNode u = null;
-                    LNode x = null;
+                // Get the node which is above / below the current node as well as the root of its block
+                LNode neighbor = null;
+                LNode neighborRoot = null;
+                if (bal.vdir == VDirection.RIGHT) {
+                    neighbor = currentNode.getLayer().getNodes().get(currentIndexInLayer + 1);
+                    neighborRoot = bal.root.get(neighbor);
+                } else {
+                    neighbor = currentNode.getLayer().getNodes().get(currentIndexInLayer - 1);
+                    neighborRoot = bal.root.get(neighbor);
+                }
+                
+                // The neighbour's node type is important for the spacing between the two later on
+                NodeType neighborNodeType = neighbor.getProperty(InternalProperties.NODE_TYPE);
+
+                // Ensure the neighbor was already placed
+                placeBlock(neighborRoot, bal);
+                
+                // Note that the two nodes and their blocks form a unit called class in the original
+                // algorithm. These are combinations of blocks which play a role in the final compaction
+                if (bal.sink.get(root).equals(root)) {
+                    bal.sink.put(root, bal.sink.get(neighborRoot));
+                }
+                
+                // Check if the blocks of the two nodes are members of the same class
+                if (bal.sink.get(root).equals(bal.sink.get(neighborRoot))) {
+                    // They are part of the same class
+                    
+                    // The minimal spacing between the two nodes depends on their node type
+                    double spacing = smallSpacing;
+                    if (currentNodeType == NodeType.EXTERNAL_PORT
+                            && neighborNodeType == NodeType.EXTERNAL_PORT) {
+                        
+                        spacing = externalPortSpacing;
+                    } else if (currentNodeType == NodeType.NORMAL
+                            && neighborNodeType == NodeType.NORMAL) {
+                        
+                        spacing = normalSpacing;
+                    }
+                    
+                    // TODO Check what to do about NORTH_SOUTH_SPACING
+                    // (previous version of the algorithm did something here, which the current version
+                    // does not)
+                    
+                    // Determine the block's final position
                     if (bal.vdir == VDirection.RIGHT) {
-                        x = w.getLayer().getNodes().get(w.getIndex() + 1);
-                        u = bal.root.get(x);
+                        bal.y.put(root,
+                                Math.min(bal.y.get(root),
+                                         bal.y.get(neighborRoot)
+                                             + bal.innerShift.get(neighbor)
+                                             - neighbor.getMargin().top
+                                             - spacing
+                                             - currentNode.getMargin().bottom
+                                             - currentNode.getSize().y
+                                             - bal.innerShift.get(currentNode)));
                     } else {
-                        x = w.getLayer().getNodes().get(w.getIndex() - 1);
-                        u = bal.root.get(x);
+                        bal.y.put(root,
+                                Math.max(bal.y.get(root),
+                                         bal.y.get(neighborRoot)
+                                             + bal.innerShift.get(neighbor)
+                                             + neighbor.getSize().y
+                                             + neighbor.getMargin().bottom
+                                             + spacing
+                                             + currentNode.getMargin().top
+                                             - bal.innerShift.get(currentNode)));
                     }
-
-                    // Check whether the comparison node is already placed, place it if not
-                    placeBlock(u, bal);
+                } else {
+                    // TODO Take a look at this code
                     
-                    // Note that the two nodes and their blocks form a unit called class in the
-                    // original algorithm. These are combinations of blocks which play a role
-                    // in the final compaction
-                    if (bal.sink.get(v).equals(v)) {
-                        bal.sink.put(v, bal.sink.get(u));
-                    }
+                    // They are not part of the same class. Compute how the two classes can be compacted
+                    // later
+                    double spacing = normalSpacing;
                     
-                    // If two nodes aren't member of the same class, calculate how the two classes
-                    // might be compacted later on
-                    if (!bal.sink.get(v).equals(bal.sink.get(u))) {
-                        double spacing = normalSpacing;
-                        if (bal.vdir == VDirection.RIGHT) {
-                            bal.shift.put(
-                                    bal.sink.get(u),
-                                    Math.max(bal.shift.get(bal.sink.get(u)), bal.y.get(v)
-                                            - bal.y.get(u)
-                                            + bal.blockSize.get(v)
-                                            + spacing));
-                        } else {
-                            bal.shift.put(
-                                    bal.sink.get(u),
-                                    Math.min(bal.shift.get(bal.sink.get(u)), bal.y.get(v)
-                                            - bal.y.get(u)
-                                            - bal.blockSize.get(u)
-                                            - spacing));
-                        }
+                    if (bal.vdir == VDirection.RIGHT) {
+                        bal.shift.put(
+                                bal.sink.get(neighborRoot),
+                                Math.max(bal.shift.get(bal.sink.get(neighborRoot)), bal.y.get(root)
+                                        - bal.y.get(neighborRoot)
+                                        + bal.blockSize.get(root)
+                                        + spacing));
                     } else {
-                        // If they are on the class, calculate a y position for the current block,
-                        // using the information from the comparison node
-                        
-                        // Determine the available space in the current layer, by taking node sizes,
-                        // and special node types into account
-                        double spacing = normalSpacing;
-                        double wSize = w.getSize().y + w.getMargin().bottom + bal.innerShift.get(w);
-                        double xSize = x.getSize().y + x.getMargin().bottom;
-                        
-                        if (w.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT) {
-                            wSize += NORTH_SOUTH_SPACING;
-                        }
-                        
-                        if (x.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT) {
-                            xSize += NORTH_SOUTH_SPACING;
-                        }
-                        
-                        // Check if we may use small spacing
-                        if ((!(blockContainsNorthSouthDummy(bal, v) && blockContainsRegularNode(bal, u))
-                          && !(blockContainsNorthSouthDummy(bal, u) && blockContainsRegularNode(bal, v))
-                          && (bal.blockSize.get(v) == 0.0 || bal.blockSize.get(u) == 0.0))) {
-                            
-                            spacing = smallSpacing;
-                        }
-                        
-                        // Determine the block's final position
-                        if (bal.vdir == VDirection.RIGHT) {
-                            bal.y.put(
-                                    v,
-                                    Math.min(bal.y.get(v),
-                                             (bal.y.get(u)
-                                                     + bal.innerShift.get(x)
-                                                     - x.getMargin().top)
-                                              - spacing - wSize));
-
-                        } else {
-                            bal.y.put(
-                                    v,
-                                    Math.max(bal.y.get(v),
-                                            (bal.y.get(u) 
-                                                    + bal.innerShift.get(x)
-                                                    + x.getMargin().top)
-                                             + spacing + xSize));
-                        }
+                        bal.shift.put(
+                                bal.sink.get(neighborRoot),
+                                Math.min(bal.shift.get(bal.sink.get(neighborRoot)), bal.y.get(root)
+                                        - bal.y.get(neighborRoot)
+                                        - bal.blockSize.get(neighborRoot)
+                                        - spacing));
                     }
                 }
-                // Get the next node in the block
-                w = bal.align.get(w);
-            } while (w != v);
-        }
+            }
+            
+            // Get the next node in the block
+            currentNode = bal.align.get(currentNode);
+        } while (currentNode != root);
     }
     
 
@@ -861,8 +889,11 @@ public final class BKNodePlacer implements ILayoutPhase {
         
         if (node.getProperty(InternalProperties.NODE_TYPE) == NodeType.LONG_EDGE) {
             for (LEdge edge : node.getIncomingEdges()) {
-                if (edge.getSource().getNode().getProperty(InternalProperties.NODE_TYPE)
-                            == NodeType.LONG_EDGE
+                NodeType sourceNodeType =
+                        edge.getSource().getNode().getProperty(InternalProperties.NODE_TYPE);
+                
+                // TODO Using layer indices here is not a good idea in terms of performance
+                if (sourceNodeType == NodeType.LONG_EDGE
                         && edge.getSource().getNode().getLayer().getIndex() == layer2
                         && node.getLayer().getIndex() == layer1) {
                     
@@ -921,6 +952,7 @@ public final class BKNodePlacer implements ILayoutPhase {
         for (LEdge edge : node.getOutgoingEdges()) {
             if (node.getLayer() != edge.getTarget().getNode().getLayer()
                     && edge.getProperty(Properties.PRIORITY) == maxPriority) {
+                
                 result.add(edge.getTarget().getNode());
             }
         }
@@ -938,9 +970,7 @@ public final class BKNodePlacer implements ILayoutPhase {
      */
     private LEdge getEdge(final LNode source, final LNode target) {
         for (LEdge edge : source.getConnectedEdges()) {
-            if (edge.getTarget().getNode().equals(target)
-                    || edge.getSource().getNode().equals(target)) {
-                
+            if (edge.getTarget().getNode().equals(target) || edge.getSource().getNode().equals(target)) {
                 return edge;
             }
         }
@@ -957,34 +987,71 @@ public final class BKNodePlacer implements ILayoutPhase {
     private HashMap<LNode, List<LNode>> getBlocks(final BKAlignedLayout bal) {
         HashMap<LNode, List<LNode>> blocks = new HashMap<LNode, List<LNode>>();
         
-        for (LNode blockRoot : bal.root.keySet()) {
-            List<LNode> blockContents = Lists.newLinkedList();
-            blockContents.add(blockRoot);
-            blocks.put(bal.root.get(blockRoot), blockContents);
+        for (LNode node : bal.root.keySet()) {
+            LNode root = bal.root.get(node);
+            List<LNode> blockContents = blocks.get(root);
+            
+            if (blockContents == null) {
+                blockContents = Lists.newLinkedList();
+                blocks.put(root, blockContents);
+            }
+            
+            blockContents.add(node);
         }
         
         return blocks;
     }
-    
+
     /**
-     * Checks whether any north-south port dummies are included in the block given by the root node.
+     * Finds all classes of a given layout.
      * 
-     * @param bal The layout of which the blocks shall be found
-     * @param root The root of the block to investigate
-     * @return True, if the block contains a north-south dummy, false else
+     * @param bal The layout whose classes to find
+     * @return The classes of the given layout
      */
-    private boolean blockContainsNorthSouthDummy(final BKAlignedLayout bal, final LNode root) {
-        return bal.blockContainsRegularNode.get(root);
+    private HashMap<LNode, List<LNode>> getClasses(final BKAlignedLayout bal) {
+        HashMap<LNode, List<LNode>> classes = new HashMap<LNode, List<LNode>>();
+        
+        // We need to enumerate all block roots
+        Set<LNode> roots = Sets.newHashSet(bal.root.values());
+        for (LNode root : roots) {
+            LNode sink = bal.sink.get(root);
+            List<LNode> classContents = classes.get(sink);
+            
+            if (classContents == null) {
+                classContents = Lists.newLinkedList();
+                classes.put(sink, classContents);
+            }
+            
+            classContents.add(root);
+        }
+        
+        return classes;
     }
     
     /**
      * Checks whether any regular nodes are included in the block given by the root node.
+     * 
+     * TODO This method was used before, but I don't think it is required.
      * 
      * @param bal The layout of which the blocks shall be found
      * @param root The root of the block to investigate
      * @return True, if the block contains a regular node, false else
      */
     private boolean blockContainsRegularNode(final BKAlignedLayout bal, final LNode root) {
+        return bal.blockContainsRegularNode.get(root);
+    }
+    
+    /**
+     * Checks whether any north-south port dummies are included in the block given by the root node.
+     * 
+     * TODO This method was used before, but I don't think it is required.
+     * 
+     * @param bal The layout of which the blocks shall be found
+     * @param root The root of the block to investigate
+     * @return True, if the block contains a north-south dummy, false else
+     */
+    private boolean blockHasNSDummy(final BKAlignedLayout bal, final LNode root) {
+        // TODO The method sdoesn't seem to do what it says in the documentation
         return bal.blockContainsRegularNode.get(root);
     }
 
@@ -1030,7 +1097,7 @@ public final class BKNodePlacer implements ILayoutPhase {
                 } else {
                     // We've found an overlap
                     feasible = false;
-                    if (debug) {
+                    if (debugMode) {
                         System.out.println("bk node placement breaks on " + node
                                 + " which should have been after " + previous);
                     }
@@ -1044,7 +1111,7 @@ public final class BKNodePlacer implements ILayoutPhase {
             }
         }
         
-        if (debug) {
+        if (debugMode) {
             System.out.println(bal + " is feasible: " + feasible);
         }
         
@@ -1074,9 +1141,11 @@ public final class BKNodePlacer implements ILayoutPhase {
         private HashMap<LNode, Double> shift;
         /** The y-coordinate of every node, forming the final layout. */
         private HashMap<LNode, Double> y;
-        /** Stores, whether a block contains a NORTH SOUTH port dummy. */
+        /** Whether a block contains a NORTH SOUTH port dummy. */
+        // TODO: I don't think this is necessary anymore. If it is, it doesn't need to be a map.
         private HashMap<LNode, Boolean> blockContainsNorthSouth;
-        /** Stores, whether a block contains a regular node. */
+        /** Whether a block contains a regular node. */
+        // TODO: I don't think this is necessary anymore. If it is, it doesn't need to be a map.
         private HashMap<LNode, Boolean> blockContainsRegularNode;
         /** The vertical direction of the current layout. */
         private VDirection vdir;
