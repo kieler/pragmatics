@@ -204,9 +204,7 @@ public class LiveLayoutHandler implements HttpHandler {
     private String fixSvg(final String graph) {
 
         String res3 = graph.substring(graph.indexOf("<svg") - 1, graph.length());
-        String res4 = res3.replaceFirst("width=", "w=");
-        String res5 = res4.replaceFirst("height=", "w=");
-        StringBuffer sb = new StringBuffer(res5);
+        StringBuffer sb = new StringBuffer(res3);
         sb.insert(sb.indexOf("<g") + 2, " id=\"group\"");
 
         return sb.toString();
