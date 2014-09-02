@@ -162,7 +162,7 @@ public class VectorGraphicsPDFGraphics extends KlighdAbstractSVGGraphics impleme
             graphics.setClip(bounds);
         }
 
-        final KlighdPaintContext paintContext = new KlighdPaintContext(this);
+        final KlighdPaintContext paintContext = KlighdPaintContext.createExportDiagramPaintContext(this);
         paintContext.setRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
 
         // perform the painting
