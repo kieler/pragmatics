@@ -703,11 +703,10 @@ public final class BKNodePlacer implements ILayoutPhase {
                 LNode neighborRoot = null;
                 if (bal.vdir == VDirection.RIGHT) {
                     neighbor = currentNode.getLayer().getNodes().get(currentIndexInLayer + 1);
-                    neighborRoot = bal.root.get(neighbor);
                 } else {
                     neighbor = currentNode.getLayer().getNodes().get(currentIndexInLayer - 1);
-                    neighborRoot = bal.root.get(neighbor);
                 }
+                neighborRoot = bal.root.get(neighbor);
                 
                 // The neighbour's node type is important for the spacing between the two later on
                 NodeType neighborNodeType = neighbor.getProperty(InternalProperties.NODE_TYPE);
