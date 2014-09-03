@@ -34,6 +34,9 @@ import de.cau.cs.kieler.klay.layered.graphimport.KGraphImporter;
  * @kieler.rating proposed yellow by msp
  */
 public final class LayeredLayoutProvider extends AbstractLayoutProvider {
+
+    /** the layout provider id. */
+    public static final String ID = "de.cau.cs.kieler.klay.layered";
     
     ///////////////////////////////////////////////////////////////////////////////
     // Variables

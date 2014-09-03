@@ -48,6 +48,9 @@ import de.cau.cs.kieler.klay.planar.util.PUtil;
  */
 public class PlanarLayoutProvider extends AbstractLayoutProvider {
 
+    /** the layout provider id. */
+    public static final String ID = "de.cau.cs.kieler.klay.planar.orthogonal";
+
     // ======================== Variables ============================
     /** phase 1: algorithm for planar testing and building a subgraph. */
     private ILayoutPhase subgraphBuilder = new BoyerMyrvoldPlanarSubgraphBuilder();

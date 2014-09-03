@@ -29,6 +29,9 @@ import de.cau.cs.kieler.klay.tree.graph.TGraph;
  */
 public class TreeLayoutProvider extends AbstractLayoutProvider {
 
+    /** the layout provider id. */
+    public static final String ID = "de.cau.cs.kieler.klay.tree";
+
     // /////////////////////////////////////////////////////////////////////////////
     // Variables
 
