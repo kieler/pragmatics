@@ -53,7 +53,7 @@ public class LiveLayoutService extends AbstractService {
         Logger.INSTANCE.getUsageStats().incCounter(Logger.STATS_KWEBS, STATS_LIVE_LAYOUT_TRY, 
                 Granularity.DAY | Granularity.MONTH);
         // perform the actual layout
-        String result =  layout(serializedGraph, informat, outformat, options);
+        String result = layout(serializedGraph, informat, outformat, options);
         // log the success
         Logger.INSTANCE.getUsageStats().incCounter(Logger.STATS_KWEBS, STATS_LIVE_LAYOUT_SUCC, 
                 Granularity.DAY | Granularity.MONTH);

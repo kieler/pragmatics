@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.widgets.Control;
 
 import de.cau.cs.kieler.klighd.IDiagramExporter;
@@ -107,15 +108,15 @@ public class VectorGraphicsPDFGraphics extends KlighdAbstractSVGGraphics impleme
     /**
      * {@inheritDoc}
      */
-    public void export(final ExportData info, final Control control) {
-        this.delegate.export(info, control);
+    public IStatus export(final ExportData info, final Control control) {
+        return this.delegate.export(info, control);
     }
 
     private KlighdCanvasExporter delegate = new KlighdCanvasExporter() {
 
         @Override
-        public void export(final ExportData data, final KlighdCanvas canvas) {
-            VectorGraphicsPDFGraphics.this.export(data, canvas);
+        public IStatus export(final ExportData data, final KlighdCanvas canvas) {
+            return VectorGraphicsPDFGraphics.this.export(data, canvas);
         }
     };
 
@@ -161,7 +162,7 @@ public class VectorGraphicsPDFGraphics extends KlighdAbstractSVGGraphics impleme
             graphics.setClip(bounds);
         }
 
-        final KlighdPaintContext paintContext = new KlighdPaintContext(this);
+        final KlighdPaintContext paintContext = KlighdPaintContext.createExportDiagramPaintContext(this);
         paintContext.setRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
 
         // perform the painting
