@@ -90,12 +90,13 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
      *   - For hyperedges:
      *     - HYPEREDGE_DUMMY_MERGER
      *   
+     *   - For hierarchical ports:
+     *     - HIERARCHICAL_PORT_DUMMY_SIZE_PROCESSOR
+     *     
      *   - For edge labels:
      *     - LABEL_SIDE_SELECTOR
      * 
      * Before phase 5:
-     *   - For hierarchical ports:
-     *     - HIERARCHICAL_PORT_DUMMY_SIZE_PROCESSOR
      * 
      * After phase 5:
      *   - For non-free ports:
@@ -131,7 +132,7 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
     private static final IntermediateProcessingConfiguration HIERARCHICAL_PORT_PROCESSING_ADDITIONS =
         IntermediateProcessingConfiguration.createEmpty()
             .addBeforePhase3(IntermediateProcessorStrategy.HIERARCHICAL_PORT_CONSTRAINT_PROCESSOR)
-            .addBeforePhase5(IntermediateProcessorStrategy.HIERARCHICAL_PORT_DUMMY_SIZE_PROCESSOR)
+            .addBeforePhase4(IntermediateProcessorStrategy.HIERARCHICAL_PORT_DUMMY_SIZE_PROCESSOR)
             .addAfterPhase5(IntermediateProcessorStrategy.HIERARCHICAL_PORT_ORTHOGONAL_EDGE_ROUTER);
     
     /** additional processor dependencies for graphs with self-loops. */

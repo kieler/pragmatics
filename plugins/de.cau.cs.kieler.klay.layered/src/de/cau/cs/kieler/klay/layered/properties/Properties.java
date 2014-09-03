@@ -37,6 +37,12 @@ public final class Properties {
      */
     public static final Property<Float> OBJ_SPACING = new Property<Float>(LayoutOptions.SPACING,
             20.0f, 1.0f);
+
+    /**
+     * Minimal spacing between ports.
+     */
+    public static final Property<Float> PORT_SPACING = new Property<Float>(LayoutOptions.PORT_SPACING,
+            10.0f, 1.0f);
     
     /**
      * The factor by which the in-layer spacing between objects differs from the inter-layer

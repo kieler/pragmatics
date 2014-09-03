@@ -296,20 +296,20 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
                 // bend points to the connected edges
                 KVector bendPoint = new KVector(
                         node.getPosition().x + node.getSize().x + nodeMargin.right,
-                        port.getAbsoluteAnchor().y
-                );
+                        port.getAbsoluteAnchor().y);
+                
                 for (LEdge edge : port.getOutgoingEdges()) {
                     if (edge.getTarget().getNode().getLayer() != node.getLayer()
                             && Math.abs(edge.getTarget().getAbsoluteAnchor().y - bendPoint.y)
                             > MIN_VERT_DIFF) {
-                        edge.getBendPoints().add(0, bendPoint);
+                        edge.getBendPoints().add(0, new KVector(bendPoint));
                     }
                 }
                 for (LEdge edge : port.getIncomingEdges()) {
                     if (edge.getSource().getNode().getLayer() != node.getLayer()
                             && Math.abs(edge.getSource().getAbsoluteAnchor().y - bendPoint.y)
                             > MIN_VERT_DIFF) {
-                        edge.getBendPoints().add(bendPoint);
+                        edge.getBendPoints().add(new KVector(bendPoint));
                     }
                 }
             } else if (port.getSide() == PortSide.WEST && nodeMargin.left > -port.getPosition().x) {
@@ -324,14 +324,14 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
                     if (edge.getTarget().getNode().getLayer() != node.getLayer()
                             && Math.abs(edge.getTarget().getAbsoluteAnchor().y - bendPoint.y)
                             > MIN_VERT_DIFF) {
-                        edge.getBendPoints().add(0, bendPoint);
+                        edge.getBendPoints().add(0, new KVector(bendPoint));
                     }
                 }
                 for (LEdge edge : port.getIncomingEdges()) {
                     if (edge.getSource().getNode().getLayer() != node.getLayer()
                             && Math.abs(edge.getSource().getAbsoluteAnchor().y - bendPoint.y)
                             > MIN_VERT_DIFF) {
-                        edge.getBendPoints().add(bendPoint);
+                        edge.getBendPoints().add(new KVector(bendPoint));
                     }
                 }
             }

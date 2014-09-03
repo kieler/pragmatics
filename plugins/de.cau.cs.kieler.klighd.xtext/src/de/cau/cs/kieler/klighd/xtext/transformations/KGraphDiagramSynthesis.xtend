@@ -68,47 +68,41 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
     public static String TRANSFORMATION_ID =
          "de.cau.cs.kieler.klighd.xtext.transformations.KGraphDiagramSynthesis"
     
-    @Inject extension KPolylineExtensions
-    @Inject extension KRenderingExtensions
-    
-    /** 
-     * Whether the model wants default defaults.
-     * This property is no layout option, not registered with kiml, and has
-     * to be loaded explicitly by the 
+    /**
+     * Whether the model wants default defaults. This property is no layout option, not registered with
+     * KIML, and has to be loaded explicitly by the 
      * {@link de.cau.cs.kieler.core.kgraph.text.KGraphResource KGraphResource}. 
      */
     private static final IProperty<Boolean> DEFAULTS_PROPERTY = 
         new Property<Boolean>("de.cau.cs.kieler.kgraphsynthesis.defaults", false)
-    /** The value for the defaults property as specified in the model. */
-    private boolean defaults = false
     
-    /*
-     * Synthesis option specifying whether default values should be used.
-     * Default values are, eg, node size if not specified and port ids as
-     * labels if no labels exist.
-     */
-    private static val DEFAULTS_AS_IN_MODEL = "As In Model"
+    private static val DEFAULTS_AS_IN_MODEL = "As in Model"
     private static val DEFAULTS_ON = "On"
     private static val DEFAULTS_OFF = "Off"
+    
+    /**
+     * Synthesis option specifying whether default values should be used. Default values are, eg, node
+     * size if not specified and port ids as labels if no labels exist.
+     */
     private static val SynthesisOption DEFAULTS = SynthesisOption::createChoiceOption(
         "Default Values", 
         ImmutableList::of(DEFAULTS_AS_IN_MODEL, DEFAULTS_ON, DEFAULTS_OFF), DEFAULTS_AS_IN_MODEL)
     
-    /**
-     * Rendering factory used to create KRendering model instances.
-     */
+    @Inject extension KPolylineExtensions
+    @Inject extension KRenderingExtensions
+    /** Rendering factory used to create KRendering model instances. */
     static KRenderingFactory renderingFactory = KRenderingFactory::eINSTANCE
     
-    /**
-     * Default rendering for polyline edges.
-     */
+    /** The value for the defaults property as specified in the model. */
+    private boolean defaults = false
+    /** Default rendering for polyline edges. */
     private var KRendering defaultPolylineRendering;
-    
-    /**
-     * Default rendering for spline edges.
-     */
+    /** Default rendering for spline edges. */
     private var KRendering defaultSplineRendering;
     
+    /**
+     * {@inheritDoc} 
+     */
     override getDisplayedLayoutOptions() {
         return ImmutableList::of(
             // These values are annoying :)
@@ -118,6 +112,9 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         )
     }
     
+    /**
+     * {@inheritDoc} 
+     */
     override getDisplayedSynthesisOptions() {
         return ImmutableList::of(
             DEFAULTS
@@ -141,10 +138,10 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         try {
             defaults = graph.getData(typeof(KLayoutData)).getProperty(DEFAULTS_PROPERTY)
         } catch (ClassCastException cce) {
-            // this is a 'special' property not known as layout option
-            // hence it is not type-checked, possibly yielding a class cast
-            // exception if neither 'true' nor 'false' are 
-            // specified as value 
+            /* This is a 'special' property not known as layout option hence it is not type-checked,
+             * possibly yielding a class cast exception if neither 'true' nor 'false' are specified
+             * as value.
+             */
         }
         
         // Create a rendering library for reuse of renderings
@@ -204,11 +201,16 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
     }
     
     /**
-     * Make sure the node has a valid size and a label.
+     * Make sure the node has a valid size and a label (if defaults are switched on).
      * 
      * @param node the node whose rendering to enrich.
      */
     def private dispatch void enrichRendering(KNode node) {
+        // If defaults are switched off, don't bother
+        if (!defaultsEnabled()) {
+            return;
+        }
+        
         // Try to add a label
         ensureLabel(node)
         
@@ -227,11 +229,16 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
     }
     
     /**
-     * Make sure the port has a valid size.
+     * Make sure the port has a valid size and a label (if defaults are switched on).
      * 
      * @param port the port whose rendering to enrich.
      */
     def private dispatch void enrichRendering(KPort port) {
+        // If defaults are switched off, don't bother
+        if (!defaultsEnabled()) {
+            return;
+        }
+        
         // Try to add a label
         ensureLabel(port)
         
@@ -253,8 +260,11 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
      */
     def private dispatch void enrichRendering(KEdge edge) {
         if (!edge.hasRendering) {
-            val parent = if (KimlUtil.isDescendant(edge.target, edge.source))
-                edge.source else edge.source?.parent
+            val parent = 
+                if (KimlUtil.isDescendant(edge.target, edge.source))
+                    edge.source
+                else
+                    edge.source?.parent
             val routing = parent?.getData(typeof(KLayoutData))?.getProperty(LayoutOptions::EDGE_ROUTING)
             edge.data += renderingFactory.createKRenderingRef => [
                 if (routing != null && routing == EdgeRouting::SPLINES) {
@@ -274,6 +284,7 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
      * @param edge the edge whose rendering to enrich.
      */
     def private dispatch void enrichRendering(KLabel label) {
+        // We do this in any case, whether defaults are turned on or not
         if (!label.hasRendering) {
             renderingFactory.createKText() => [text |
                 label.data += text
@@ -283,6 +294,11 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
                     text.fontSize = KlighdConstants::DEFAULT_FONT_SIZE - 2
                 }
             ]
+        }
+        
+        // The rest adds layout options and is dependent on whether defaults are switched on or not
+        if (!defaultsEnabled()) {
+            return;
         }
         
         if (label.eContainer instanceof KEdge) {
@@ -330,19 +346,30 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
      * @param e the element to add the label to.
      */
     def private void ensureLabel(KLabeledGraphElement e) {
+        // If defaults are switched off, don't bother
+        if (!defaultsEnabled()) {
+            return;
+        }
+        
         // We're only interested in elements that don't have a label yet
-        if (DEFAULTS.objectValue == DEFAULTS_ON 
-            || (DEFAULTS.objectValue == DEFAULTS_AS_IN_MODEL && defaults)) {
-            if (e.labels.empty) {
-                // Find the element's ID
-                val identifier = e.getData(typeof(KIdentifier))
-                if (identifier != null && !Strings.isNullOrEmpty(identifier.id)) {
-                    // Add a node label
-                    val label = KimlUtil.createInitializedLabel(e)
-                    label.text = identifier.id
-                }
+        if (e.labels.empty) {
+            // Find the element's ID
+            val identifier = e.getData(typeof(KIdentifier))
+            if (identifier != null && !Strings.isNullOrEmpty(identifier.id)) {
+                // Add a node label
+                val label = KimlUtil.createInitializedLabel(e)
+                label.text = identifier.id
             }
         }
     }
     
+    /**
+     * Returns whether or not default stuff should be added or not.
+     * 
+     * @return {@code true} if default stuff should be added, {@code false} otherwise.
+     */
+    def private boolean defaultsEnabled() {
+        return DEFAULTS.objectValue == DEFAULTS_ON
+            || (DEFAULTS.objectValue == DEFAULTS_AS_IN_MODEL && defaults)
+    }
 }
