@@ -49,7 +49,7 @@ public class KlighdDiagramEffect extends MapPropertyHolder implements IEffect {
     /** the created/updated view. */
     private transient IDiagramWorkbenchPart view = null;
     /** the created viewer. */
-    private transient IViewer<?> viewer = null;
+    private transient IViewer viewer = null;
 
     /**
      * Constructs an effect that opens the default diagram view if it is not already open.
@@ -204,7 +204,7 @@ public class KlighdDiagramEffect extends MapPropertyHolder implements IEffect {
      * @return the viewer or null when called before the effect executed, the execute failed or was
      *         invalid
      */
-    public IViewer<?> getViewer() {
+    public IViewer getViewer() {
         return viewer;
     }
 
@@ -304,7 +304,7 @@ public class KlighdDiagramEffect extends MapPropertyHolder implements IEffect {
      * @param viewer
      *            the viewer
      */
-    protected void setViewer(final IViewer<?> viewer) {
+    protected void setViewer(final IViewer viewer) {
         this.viewer = viewer;
     }
     
