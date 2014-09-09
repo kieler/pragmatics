@@ -13,13 +13,7 @@
  */
 package de.cau.cs.kieler.klay.layered.p2layers;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,14 +25,12 @@ import java.util.Stack;
 
 import org.eclipse.emf.common.util.WrappedException;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.common.io.CharStreams;
-import com.google.common.primitives.Floats;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -48,6 +40,10 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
+import de.cau.cs.kieler.klay.layered.solver.CPLEXLayeringModel;
+import de.cau.cs.kieler.klay.layered.solver.ISolverModel;
+import de.cau.cs.kieler.klay.layered.solver.MiniZincLayeringModel;
+import de.cau.cs.kieler.klay.layered.solver.ModelRunner;
 
 /**
  * A layer assignment implementation using the external tool MiniZinc.
@@ -57,13 +53,6 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  */
 public class MinizincLayerer implements ILayoutPhase {
     
-    /** Home folder of the minizinc installation, ie where the 'bin' folder resides. */
-    private static final String MINIZINC_INSTALL = System.getenv("MINIZINC_HOME");
-    /** Folder of the minizinc model and the layering script to be executed. */
-    private static final String MINIZINC_SOLVE = System.getenv("MINIZINC_SOLVE");
-    /** Path to the SCIP binary. */ 
-    private static final String SCIP_INSTALL = System.getenv("SCIP_BIN");
-
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION =
         IntermediateProcessingConfiguration.createEmpty()
@@ -84,7 +73,6 @@ public class MinizincLayerer implements ILayoutPhase {
         progressMonitor.begin("MiniZinc layering", 1);
         
         try {
-            checkForExecutables();    
             
             // ------------------
             // #1 running Tarjan's algorithm,
@@ -93,8 +81,6 @@ public class MinizincLayerer implements ILayoutPhase {
 
             // assemble the adjacency matrix with edge weights 
             float[][] adj = getAdjencencyMatrix(layeredGraph);
-            
-            
             
             MinizincMode mode = layeredGraph.getProperty(Properties.MINIZINC_MODE);
 
@@ -133,60 +119,25 @@ public class MinizincLayerer implements ILayoutPhase {
                 }
             }
             
-            
-          
-
             // ------------------
-            // #2 create a temporary file as input to MiniZinc
-            String dataFileName = getDataFile(layeredGraph, adj);
+            // # 2-4 execute the solver
+            //
+            // The model is expected to expect a float[][] matrix where 
+            // each entry larger than 0 represents the weight of that edge 
             
-            // ------------------
-            // #3 execute MiniZinc and read its output
-            String[] args;
-            if (System.getProperty("os.name").toLowerCase().contains("windows")) {
-                args = new String[] { "bash", MINIZINC_SOLVE, MINIZINC_INSTALL, SCIP_INSTALL,
-                                dataFileName };
+            ISolverModel<Object, Pair<Integer, List<Integer>>> model;
+            if (layeredGraph.getProperty(Properties.LAYERING_SOLVER) == LayeringSolver.SCIP) {
+                model = new MiniZincLayeringModel(layeredGraph);
             } else {
-                args = new String[] { MINIZINC_SOLVE, MINIZINC_INSTALL, SCIP_INSTALL, dataFileName };
+                model = new CPLEXLayeringModel(layeredGraph);
             }
             
-            Process process = Runtime.getRuntime().exec(args);
-            process.waitFor();
-            
-            // ------------------
-            // #4 import results and assign layers
-            final List<String> lines =
-                    CharStreams.readLines(new InputStreamReader(process.getInputStream()));
-
-            // errors?
-            if (lines.isEmpty()) {
-                readErrorStream(process);
-            }
-            
-            int nodeCount = layeredGraph.getLayerlessNodes().size();
-            int[] assignLayers = new int[nodeCount];
-            int minLayer = Integer.MAX_VALUE;
-            int maxLayer = Integer.MIN_VALUE;
-            
-            for (String line : lines) {
-                System.out.println("Line " + line);
-                String[] chunks = line.trim().split(" ");
-                if (chunks.length > 1) {
-                    // FIXME sometimes scip returns 0.99999999999, so we round here 
-                    int id = Math.round(Float.valueOf(chunks[0]));
-                    int layer = Math.round(Float.valueOf(chunks[1]));
-                    
-                    // minizinc starts with 1 instead of 0
-                    assignLayers[id - 1] = layer - 1;
-                    minLayer = Math.min(minLayer, layer - 1);
-                    maxLayer = Math.max(maxLayer, layer - 1);
-                } else {
-                    System.out.println(Arrays.toString(chunks));
-                }
-            }
+            Pair<Integer, List<Integer>> result = ModelRunner.execute(model, adj);
+            int numberOfLayers = result.getFirst();
+            List<Integer> assignLayers = result.getSecond();
             
             // create the layers
-            Layer[] layers = new Layer[maxLayer - minLayer + 1];
+            Layer[] layers = new Layer[numberOfLayers];
             for (int i = 0; i < layers.length; i++) {
                 layers[i] = new Layer(layeredGraph);
                 layeredGraph.getLayers().add(layers[i]);
@@ -195,9 +146,8 @@ public class MinizincLayerer implements ILayoutPhase {
             // apply the computed layer assignment
             Iterator<LNode> nodes = layeredGraph.getLayerlessNodes().iterator();
             while (nodes.hasNext()) {
-
                 LNode node = nodes.next();
-                node.setLayer(layers[assignLayers[node.id] - minLayer]);
+                node.setLayer(layers[assignLayers.get(node.id)]);
 
                 // remove from layerless nodes
                 nodes.remove();
@@ -237,93 +187,6 @@ public class MinizincLayerer implements ILayoutPhase {
         }
         return adj;
     }
-    
-    /**
-     * Write the given graph as MiniZinc data file and return the absolute path of that file.
-     * 
-     * @param layeredGraph a layered graph
-     * @return the absolute path to a data file
-     * @throws IOException
-     */
-    private String getDataFile(final LGraph layeredGraph, final float[][] adj) throws IOException {
-        File dataFile = File.createTempFile("graph", ".dzn");
-        FileWriter writer = new FileWriter(dataFile);
-
-        // edges as adjacency matrix
-        writer.write("N = " + layeredGraph.getLayerlessNodes().size() + ";\n");
-        
-        // strongly connected components
-        writer.write("e = [| ");
-        for (int i = 0; i < adj.length; i++) {
-            float[] row = adj[i];
-            writer.write(Joiner.on(", ").join(Floats.asList(row)));
-            if (i != adj.length - 1) {
-                writer.write(",\n     | ");
-            }
-        }
-        writer.write(" |];\n");
-        
-        // weights
-        writer.write("\nW_length = " + layeredGraph.getProperty(Properties.EDGE_LENGTH_WEIGHT)
-                + ";\nW_reverse = " + layeredGraph.getProperty(Properties.EDGE_REVERSAL_WEIGHT)
-                + ";\n");
-        
-        MinizincMode mode = layeredGraph.getProperty(Properties.MINIZINC_MODE);
-        boolean staticDummyWeight = mode != MinizincMode.BETWEENNESS_BOTH;
-        boolean staticReverseWeight = mode == MinizincMode.STATIC;
-        writer.write("static_w_length = " + staticDummyWeight + ";\nstatic_w_reverse = "
-                + staticReverseWeight + ";\n");
-
-        int maximalLayers = layeredGraph.getProperty(Properties.MAXIMAL_LAYERS);
-        writer.write("L_max_param = " + maximalLayers + ";\n");
-        
-        writer.close();
-        dataFile.deleteOnExit();
-        
-        // System.out.println(Joiner.on("\n").join(Files.readLines(dataFile, Charset.forName("utf8"))));
-        return dataFile.getAbsolutePath();
-    }
-    
-    /**
-     * Read the error stream and throw an exception.
-     * 
-     * @param process the MiniZinc process
-     * @throws IOException if reading from the error stream fails
-     */
-    private void readErrorStream(final Process process) throws IOException {
-        String line;
-        StringBuilder errorBuilder = new StringBuilder();
-        BufferedReader errorReader = new BufferedReader(new InputStreamReader(
-                process.getErrorStream()));
-        while ((line = errorReader.readLine()) != null) {
-            errorBuilder.append(line);
-        }
-        throw new RuntimeException("Communication to MiniZinc failed: "
-                + errorBuilder.toString());
-    }
-
-    private static final String NOTE =
-            "Note that system variables are loaded only once upon program startup.";
-
-    private void checkForExecutables() {
-
-        if (MINIZINC_INSTALL == null || !new File(MINIZINC_INSTALL).exists()) {
-            throw new RuntimeException(
-                    "Could not locate MiniZinc installation, make sure 'MINIZINC_HOME' is set.\n"
-                            + NOTE);
-        }
-
-        if (MINIZINC_SOLVE == null || !new File(MINIZINC_SOLVE).exists()) {
-            throw new RuntimeException(
-                    "Could not locate MiniZinc installation, make sure 'MINIZINC_SOLVE' is set.\n"
-                            + NOTE);
-        }
-        if (SCIP_INSTALL == null || !new File(SCIP_INSTALL).exists()) {
-            throw new RuntimeException(
-                    "Could not locate SCIP installation, make sure 'SCIP_INSTALL' is set.\n" + NOTE);
-        }
-    }
-    
     
     private int index = 0;
     private int[] lowlink;

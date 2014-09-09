@@ -414,5 +414,19 @@
                value="MINIZINC">
          </dependency>
       </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            class="de.cau.cs.kieler.klay.layered.p2layers.LayeringSolver"
+            default="CPLEX"
+            description="The solver to use for the layering problem."
+            id="de.cau.cs.kieler.klay.layered.layeringSolver"
+            name="Solver"
+            type="enum">
+         <dependency
+               option="de.cau.cs.kieler.klay.layered.nodeLayering"
+               value="MINIZINC">
+         </dependency>
+      </layoutOption>
    </extension>
 </plugin>
