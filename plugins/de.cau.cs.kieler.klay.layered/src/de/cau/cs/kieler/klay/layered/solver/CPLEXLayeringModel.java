@@ -25,6 +25,7 @@ import com.google.common.primitives.Floats;
 
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * @author uru
@@ -50,7 +51,6 @@ public class CPLEXLayeringModel extends AbstractCPLEXModel<Object, Pair<Integer,
     /**
      * {@inheritDoc}
      */
-    @Override
     public String serializeSourceModel(final Object source) {
         float[][] adj = (float[][]) source;
         
@@ -70,10 +70,10 @@ public class CPLEXLayeringModel extends AbstractCPLEXModel<Object, Pair<Integer,
         sb.append(" ]];\n");
         
         // TODO
-//        // weights
-//        sb.append("\nW_length = " + layeredGraph.getProperty(Properties.EDGE_LENGTH_WEIGHT)
-//                + ";\nW_reverse = " + layeredGraph.getProperty(Properties.EDGE_REVERSAL_WEIGHT)
-//                + ";\n");
+        // weights
+        sb.append("\nw_length = " + layeredGraph.getProperty(Properties.EDGE_LENGTH_WEIGHT)
+                + ";\nw_reverse = " + layeredGraph.getProperty(Properties.EDGE_REVERSAL_WEIGHT)
+                + ";\n");
 //        
 //        MinizincMode mode = layeredGraph.getProperty(Properties.MINIZINC_MODE);
 //        boolean staticDummyWeight = mode != MinizincMode.BETWEENNESS_BOTH;
@@ -90,7 +90,6 @@ public class CPLEXLayeringModel extends AbstractCPLEXModel<Object, Pair<Integer,
     /**
      * {@inheritDoc}
      */
-    @Override
     public Pair<Integer, List<Integer>> parseResult(final InputStream is) throws IOException {
         
         final List<String> lines =

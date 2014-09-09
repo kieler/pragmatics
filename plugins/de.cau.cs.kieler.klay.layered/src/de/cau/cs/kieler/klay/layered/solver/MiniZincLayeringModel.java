@@ -45,7 +45,6 @@ public class MiniZincLayeringModel extends
     /**
      * {@inheritDoc}
      */
-    @Override
     public String serializeSourceModel(final Object source) {
         float[][] adj = (float[][]) source;
 
@@ -84,7 +83,6 @@ public class MiniZincLayeringModel extends
     /**
      * {@inheritDoc}
      */
-    @Override
     public Pair<Integer, List<Integer>> parseResult(final InputStream is) throws IOException {
 
         final List<String> lines = CharStreams.readLines(new InputStreamReader(is));

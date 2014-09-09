@@ -41,7 +41,6 @@ public abstract class AbstractCPLEXModel<S, T> implements ISolverModel<S, T> {
     /**
      * {@inheritDoc}
      */
-    @Override
     public String[] getSolverArgs() {
         return new String[] { "oplrun", "-deploy", getModel() };
     }
@@ -49,7 +48,6 @@ public abstract class AbstractCPLEXModel<S, T> implements ISolverModel<S, T> {
     /**
      * {@inheritDoc}
      */
-    @Override
     public String getDataFileExtension() {
         return ".dat";
     }

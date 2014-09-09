@@ -54,7 +54,6 @@ public abstract class AbstractMiniZincModel<S, T> implements ISolverModel<S, T> 
     /**
      * {@inheritDoc}
      */
-    @Override
     public String[] getSolverArgs() {
         if (System.getProperty("os.name").toLowerCase().contains("windows")) {
             return new String[] { "bash", MINIZINC_SOLVE, MINIZINC_INSTALL, SCIP_INSTALL };
@@ -66,7 +65,6 @@ public abstract class AbstractMiniZincModel<S, T> implements ISolverModel<S, T> 
     /**
      * {@inheritDoc}
      */
-    @Override
     public String getDataFileExtension() {
         return ".dzn";
     }
