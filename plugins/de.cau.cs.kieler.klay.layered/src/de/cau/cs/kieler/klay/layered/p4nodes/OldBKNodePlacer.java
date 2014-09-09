@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
- * Copyright 2012 by
+ * Copyright 2014 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -12,6 +12,28 @@
  * See the file epl-v10.html for the license text.
  */
 package de.cau.cs.kieler.klay.layered.p4nodes;
+
+/**
+ * @author sor
+ *
+ */
+
+
+
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2012 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
+
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -114,7 +136,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating yellow 2012-08-10 chsch grh KI-19
  */
-public final class BKNodePlacer implements ILayoutPhase {
+public final class OldBKNodePlacer implements ILayoutPhase {
     
     /** Additional processor dependencies for graphs with hierarchical ports. */
     private static final IntermediateProcessingConfiguration HIERARCHY_PROCESSING_ADDITIONS =
@@ -141,14 +163,7 @@ public final class BKNodePlacer implements ILayoutPhase {
     /** Whether to produce a balanced layout or not. */
     private boolean produceBalancedLayout = false;
     
-    private double blockSize;
-    
-    private int rek = 0;
-    
-    private int doWhile = 0;
-    
-    private int blockCount = 0;
-    
+
     /**
      * {@inheritDoc}
      */
@@ -168,7 +183,7 @@ public final class BKNodePlacer implements ILayoutPhase {
      */
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
         monitor.begin("Brandes & Koepf node placement", 1);
-
+                
         // Determine overall node count for an optimal initialization of maps.
         int nodeCount = 0;
         for (Layer layer : layeredGraph) {
@@ -293,7 +308,6 @@ public final class BKNodePlacer implements ILayoutPhase {
 
         // Debug output
         if (debugMode) {
-            System.out.println("Node count: " + nodeCount);
             System.out.println("Chosen node placement: " + chosenLayout);
             System.out.println("Blocks: " + getBlocks(chosenLayout));
             System.out.println("Classes: " + getClasses(chosenLayout));
@@ -302,8 +316,6 @@ public final class BKNodePlacer implements ILayoutPhase {
 
         markedEdges.clear();
         monitor.done();
-        rek = 0;
-        doWhile = 0;
     }
     
 
@@ -526,72 +538,6 @@ public final class BKNodePlacer implements ILayoutPhase {
             // CHECKSTYLEOFF Local Variable Names
         }
     }
-    
-//    private void verticalAlignment(final LGraph layeredGraph, final BKAlignedLayout bal) {
-//        for (Layer layer : layeredGraph.getLayers()) {
-//            for (LNode v : layer.getNodes()) {
-//                bal.root.put(v, v);
-//                bal.align.put(v, v);
-//                bal.innerShift.put(v, 0.0);
-//                
-//                
-//          
-//                if (v.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT) {
-//                    bal.blockContainsNorthSouth.put(v, true);
-//                } else {
-//                    bal.blockContainsNorthSouth.put(v, false);
-//                }
-//          
-//                if (v.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORMAL) {
-//                    bal.blockContainsRegularNode.put(v, true);
-//                } else {
-//                    bal.blockContainsRegularNode.put(v, false);
-//                }
-//            }
-//        }
-//
-//        List<Layer> layers = layeredGraph.getLayers();
-//  
-//        // If the horizontal direction is bottom, the layers are traversed from
-//        // right to left, thus a reverse iterator is needed
-//        if (bal.hdir == HDirection.BOTTOM) {
-//            layers = Lists.reverse(layers);
-//        }
-//
-//        for (Layer layer : layers) {
-//            // r denotes the position in layer order where the last block was found
-//            // It is initialized with -1, since nothing is found and the ordering starts with 0
-//            int r = -1;
-//            List<LNode> nodes = layer.getNodes();
-//      
-//            if (bal.vdir == VDirection.RIGHT) {
-//                // If the alignment direction is RIGHT, the nodes in a layer are traversed
-//                // reversely, thus we start at INT_MAX and with the reversed list of nodes.
-//                r = Integer.MAX_VALUE;
-//                nodes = Lists.reverse(nodes);
-//            }
-//      
-//            // Variable names here are again taken from the paper mentioned above.
-//            // i denotes the index of the layer and k the position of the node within the layer.
-//            // m denotes the position of a neighbor in the neighbor list of a node.
-//            // CHECKSTYLEOFF Local Variable Names
-//            for (LNode v_i_k : nodes) {
-//                List<LNode> neighbors = null;
-//                if (bal.hdir == HDirection.BOTTOM) {
-//                    neighbors = allLowerNeighbors(v_i_k);
-//                        System.out.println("UNTERE NACHBARN WERDEN GESUCHT...");
-//                } else {
-//                    neighbors = allUpperNeighbors(v_i_k);
-//
-//                        System.out.println("OBERE NACHBARN WERDEN GESUCHT...." );
-//                    
-//                }
-//                for (int i = 0; i < neighbors.size(); i++) {
-//                    System.out.println("Liste aller Nachbarn: " + neighbors.get(i).getName());
-//                }
-//            }
-//        }
-//    }
 
     /**
      * This phase moves the nodes inside a block, ensuring that all edges inside a block can be drawn
@@ -680,7 +626,6 @@ public final class BKNodePlacer implements ILayoutPhase {
      */
     private void horizontalCompaction(final LGraph layeredGraph, final BKAlignedLayout bal) {
         // Initialize fields with basic values, partially depending on the direction
-        blockSize = 0.0;
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
                 bal.sink.put(node, node);
@@ -707,9 +652,7 @@ public final class BKNodePlacer implements ILayoutPhase {
             // Do an initial placement for all blocks
             for (LNode v : nodes) {
                 if (bal.root.get(v).equals(v)) {
-                    //pos += bal.blockSize.get(bal.root);
-                    System.out.println("Platziere Block mit Knoten " + v.getName() + " und Layout " + bal.toString() + " an Stelle " + blockSize);
-                    placeBlock(v, bal, blockSize);
+                    placeBlock(v, bal);
                 }
             }
         }
@@ -749,39 +692,28 @@ public final class BKNodePlacer implements ILayoutPhase {
      * @param root The root node of the block (usually called {@code v})
      * @param bal One of the four layouts which shall be used in this step
      */
-    private void placeBlock(final LNode root, final BKAlignedLayout bal, double initialPosition) {
+    private void placeBlock(final LNode root, final BKAlignedLayout bal) {
         // Skip if the block was already placed
         if (bal.y.containsKey(root)) {
-            System.out.println("Block " + getBlocks(bal) + " schon platziert...");
             return;
         }
         
-        blockCount++;
-        //rek++;
-        //System.out.println("Anzahl Rekursionen: " + rek);
-       
         // Initial placement
         // TODO Fix the following two lines
         // Placing the root at coordinate 0 causes problems later on. The initial position should
         // be determined more intelligently. The second line was a first attempt that fixed the problem
         // in the sample graph attached to KIPRA-1426, but I'm not convinced that it is a good solution
         // in general.
-        //System.out.println("Block Nummer " + blockCount + "...");
-       // bal.y.put(root, -bal.innerShift.get(root));
-        System.out.println("Platziere Block " + blockCount + " an y-Koordinate: " + blockSize);
-        bal.y.put(root, blockSize);
+        bal.y.put(root, 0.0);
+//        bal.y.put(root, -bal.innerShift.get(root));
         
-        // Iterate through block        and determine, where the block can be placed (until we arrive at 
-        // the block's root node again)
+        // Iterate through block and determine, where the block can be placed (until we arrive at the
+        // block's root node again)
         LNode currentNode = root;
-
         do {
-            //blockCount = 0;
-           // System.out.println("Blocksize = " + blockSize);
             int currentIndexInLayer = currentNode.getIndex();
             int currentLayerSize = currentNode.getLayer().getNodes().size();
             NodeType currentNodeType = currentNode.getProperty(InternalProperties.NODE_TYPE);
-
             
             // If the node is the top or bottom node of its layer, it can be placed safely since it is
             // the first to be placed in its layer. If it's not, we'll have to check its neighbours
@@ -793,10 +725,8 @@ public final class BKNodePlacer implements ILayoutPhase {
                 LNode neighborRoot = null;
                 if (bal.vdir == VDirection.RIGHT) {
                     neighbor = currentNode.getLayer().getNodes().get(currentIndexInLayer + 1);
-                    //bal.y.put(root, Double.POSITIVE_INFINITY);
                 } else {
                     neighbor = currentNode.getLayer().getNodes().get(currentIndexInLayer - 1);
-                    //bal.y.put(root, Double.NEGATIVE_INFINITY);
                 }
                 neighborRoot = bal.root.get(neighbor);
                 
@@ -804,8 +734,7 @@ public final class BKNodePlacer implements ILayoutPhase {
                 NodeType neighborNodeType = neighbor.getProperty(InternalProperties.NODE_TYPE);
 
                 // Ensure the neighbor was already placed
-                placeBlock(neighborRoot, bal, initialPosition);
-
+                placeBlock(neighborRoot, bal);
                 
                 // Note that the two nodes and their blocks form a unit called class in the original
                 // algorithm. These are combinations of blocks which play a role in the final compaction
@@ -816,6 +745,7 @@ public final class BKNodePlacer implements ILayoutPhase {
                 // Check if the blocks of the two nodes are members of the same class
                 if (bal.sink.get(root).equals(bal.sink.get(neighborRoot))) {
                     // They are part of the same class
+                    
                     // The minimal spacing between the two nodes depends on their node type
                     double spacing = smallSpacing;
                     if (currentNodeType == NodeType.EXTERNAL_PORT
@@ -843,14 +773,6 @@ public final class BKNodePlacer implements ILayoutPhase {
                                              - currentNode.getMargin().bottom
                                              - currentNode.getSize().y
                                              - bal.innerShift.get(currentNode)));
-                        System.out.println("Finale Blockposition von rechts  = " + Math.min(bal.y.get(root),
-                                         bal.y.get(neighborRoot)
-                                             + bal.innerShift.get(neighbor)
-                                             - neighbor.getMargin().top
-                                             - spacing
-                                             - currentNode.getMargin().bottom
-                                             - currentNode.getSize().y
-                                             - bal.innerShift.get(currentNode)));
                     } else {
                         bal.y.put(root,
                                 Math.max(bal.y.get(root),
@@ -861,60 +783,35 @@ public final class BKNodePlacer implements ILayoutPhase {
                                              + spacing
                                              + currentNode.getMargin().top
                                              - bal.innerShift.get(currentNode)));
-                        System.out.println("Finale Blockposition von links = " + Math.min(bal.y.get(root),
-                                         bal.y.get(neighborRoot)
-                                             + bal.innerShift.get(neighbor)
-                                             + neighbor.getSize().y
-                                             + neighbor.getMargin().bottom
-                                             + spacing
-                                             + currentNode.getMargin().top
-                                             - bal.innerShift.get(currentNode)));
                     }
-                } 
-                // Even if there are more than one classes, this code is never reached...
-//                else {
-//                    // TODO Take a look at this code
-//                    
-//                    // They are not part of the same class. Compute how the two classes can be compacted
-//                    // later
-//                    double spacing = normalSpacing;
-//                    
-//                    if (bal.vdir == VDirection.RIGHT) {
-//                        bal.shift.put(
-//                                bal.sink.get(neighborRoot),
-//                                Math.max(bal.shift.get(bal.sink.get(neighborRoot)), bal.y.get(root)
-//                                        - bal.y.get(neighborRoot)
-//                                        + bal.blockSize.get(root)
-//                                        + spacing));
-//                        System.out.println("DER ELSE FALL WURDE AUFGERUFEN!!!" + Math.max(bal.shift.get(bal.sink.get(neighborRoot)), bal.y.get(root)
-//                                        - bal.y.get(neighborRoot)
-//                                        + bal.blockSize.get(root)
-//                                        + spacing));
-//                    } else {
-//                        bal.shift.put(
-//                                bal.sink.get(neighborRoot),
-//                                Math.min(bal.shift.get(bal.sink.get(neighborRoot)), bal.y.get(root)
-//                                        - bal.y.get(neighborRoot)
-//                                        - bal.blockSize.get(neighborRoot)
-//                                        - spacing));
-//                        System.out.println("DER ELSE FALL WURDE AUFGERUFEN!!!" + Math.min(bal.shift.get(bal.sink.get(neighborRoot)), bal.y.get(root)
-//                                        - bal.y.get(neighborRoot)
-//                                        - bal.blockSize.get(neighborRoot)
-//                                        - spacing));
-//                    }
-//                }
+                } else {
+                    // TODO Take a look at this code
+                    
+                    // They are not part of the same class. Compute how the two classes can be compacted
+                    // later
+                    double spacing = normalSpacing;
+                    
+                    if (bal.vdir == VDirection.RIGHT) {
+                        bal.shift.put(
+                                bal.sink.get(neighborRoot),
+                                Math.max(bal.shift.get(bal.sink.get(neighborRoot)), bal.y.get(root)
+                                        - bal.y.get(neighborRoot)
+                                        + bal.blockSize.get(root)
+                                        + spacing));
+                    } else {
+                        bal.shift.put(
+                                bal.sink.get(neighborRoot),
+                                Math.min(bal.shift.get(bal.sink.get(neighborRoot)), bal.y.get(root)
+                                        - bal.y.get(neighborRoot)
+                                        - bal.blockSize.get(neighborRoot)
+                                        - spacing));
+                    }
+                }
             }
-////            
+            
             // Get the next node in the block
             currentNode = bal.align.get(currentNode);
-            blockCount++;
-
         } while (currentNode != root);
-        blockCount = 0;
-        System.out.println("Y-Koordinate nach Durchlauf eines Blocks: " + bal.y.get(root));
-        System.out.println("Blocksize vor Aktualisierung: " + blockSize);
-        blockSize = bal.blockSize.get(root) + bal.y.get(root);
-        System.out.println("Blocksize nach Aktualisierung: " + blockSize);
     }
     
 

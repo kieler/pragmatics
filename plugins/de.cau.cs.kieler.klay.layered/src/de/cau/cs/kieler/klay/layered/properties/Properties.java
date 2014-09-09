@@ -105,7 +105,7 @@ public final class Properties {
      */
     public static final IProperty<NodePlacementStrategy> NODE_PLACER
             = new Property<NodePlacementStrategy>("de.cau.cs.kieler.klay.layered.nodePlace",
-                    NodePlacementStrategy.BRANDES_KOEPF);
+                    NodePlacementStrategy.MODIFIED_BRANDES_KOEPF);
     
     /**
      * Dampening of deflections between linear segments in the linear segments node placer.
