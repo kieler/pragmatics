@@ -40,9 +40,7 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
-import de.cau.cs.kieler.klay.layered.solver.CPLEXLayeringModel;
 import de.cau.cs.kieler.klay.layered.solver.ISolverModel;
-import de.cau.cs.kieler.klay.layered.solver.MiniZincLayeringModel;
 import de.cau.cs.kieler.klay.layered.solver.ModelRunner;
 
 /**

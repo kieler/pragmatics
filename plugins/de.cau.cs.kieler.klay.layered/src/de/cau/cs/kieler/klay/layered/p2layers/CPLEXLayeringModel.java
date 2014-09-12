@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.layered.solver;
+package de.cau.cs.kieler.klay.layered.p2layers;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,6 +26,7 @@ import com.google.common.primitives.Floats;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
+import de.cau.cs.kieler.klay.layered.solver.AbstractCPLEXModel;
 
 /**
  * @author uru
@@ -44,7 +45,7 @@ public class CPLEXLayeringModel extends AbstractCPLEXModel<Object, Pair<Integer,
      * {@inheritDoc}
      */
     @Override
-    String getModel() {
+    public String getModel() {
         return "D:/Uni/ma/minizinc-layering/second/cplex/Layering2/Layering.mod";
     }
     

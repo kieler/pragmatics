@@ -45,6 +45,7 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
 import de.cau.cs.kieler.klay.layered.p1cycles.InteractiveCycleBreaker;
+import de.cau.cs.kieler.klay.layered.p1cycles.OptimalCycleBreaker;
 import de.cau.cs.kieler.klay.layered.p2layers.InteractiveLayerer;
 import de.cau.cs.kieler.klay.layered.p2layers.LongestPathLayerer;
 import de.cau.cs.kieler.klay.layered.p2layers.MinizincLayerer;
@@ -466,6 +467,13 @@ public final class KlayLayered {
             if (cycleBreaker == null) {
                 cycleBreaker = new InteractiveCycleBreaker();
                 phaseCache.put(InteractiveCycleBreaker.class, cycleBreaker);
+            }
+            break;
+        case OPTIMAL:
+            cycleBreaker = phaseCache.get(OptimalCycleBreaker.class);
+            if (cycleBreaker == null) {
+                cycleBreaker = new OptimalCycleBreaker();
+                phaseCache.put(OptimalCycleBreaker.class, cycleBreaker);
             }
             break;
         case NONE:

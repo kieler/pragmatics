@@ -55,6 +55,6 @@ public abstract class AbstractCPLEXModel<S, T> implements ISolverModel<S, T> {
     /**
      * @return a reference to the model to be solved.
      */
-    abstract String getModel();
+    public abstract String getModel();
 
 }

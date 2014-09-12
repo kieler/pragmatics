@@ -33,6 +33,10 @@ public enum CycleBreakingStrategy {
      */
     INTERACTIVE,
     /**
+     * Uses an integer program to solve the problem to optimality.
+     */
+    OPTIMAL,
+    /**
      * No cycle breaking is done in the first phase. WARNING: This works only for layer
      * assignment algorithms (phase 2) that are able to handle cycles!
      */
