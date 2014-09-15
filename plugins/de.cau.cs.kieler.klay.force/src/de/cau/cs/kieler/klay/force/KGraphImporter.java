@@ -157,8 +157,6 @@ public class KGraphImporter implements IGraphImporter<KNode> {
     
     ///////////////////////////////////////////////////////////////////////////////
     // Apply Layout Results
-    
-
 
     /**
      * {@inheritDoc}

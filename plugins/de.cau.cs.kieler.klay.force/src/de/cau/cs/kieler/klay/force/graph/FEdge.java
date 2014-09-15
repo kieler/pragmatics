@@ -22,14 +22,13 @@ import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 
 /**
- * A physico-virtual representation of an edge, including a list of
- * associated bend points.
+ * A physico-virtual representation of an edge, including a list of associated bend points.
  * 
  * @author owo
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class FEdge extends MapPropertyHolder {
+public final class FEdge extends MapPropertyHolder {
 
     /** the serial version UID. */
     private static final long serialVersionUID = 4387555754824186467L;
@@ -119,7 +118,7 @@ public class FEdge extends MapPropertyHolder {
      * @param theSource
      *            the source vertex set to
      */
-    public final void setSource(final FNode theSource) {
+    public void setSource(final FNode theSource) {
         source = theSource;
     }
     
@@ -129,7 +128,7 @@ public class FEdge extends MapPropertyHolder {
      * @param theTarget
      *            the target vertex
      */
-    public final void setTarget(final FNode theTarget) {
+    public void setTarget(final FNode theTarget) {
         target = theTarget;
     }
     

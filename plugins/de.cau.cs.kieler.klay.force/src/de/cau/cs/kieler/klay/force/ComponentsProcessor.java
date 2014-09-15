@@ -30,79 +30,51 @@ import de.cau.cs.kieler.klay.force.graph.FNode;
 import de.cau.cs.kieler.klay.force.properties.Properties;
 
 /**
- * A processor that is able to split an input graph into connected components and to pack those
- * components after layout.
+ * Splits an input graph into connected components and recombines those components after layout.
  * 
- * <p>Splitting into components
+ * <h4>Splitting into components</h4>
  * <dl>
  *   <dt>Precondition:</dt><dd>a graph.</dd>
  *   <dt>Postcondition:</dt><dd>a list of graphs that represent the connected components of
  *     the input graph.</dd>
  * </dl>
- * </p>
  * 
- * <p>Packing components
+ * <h4>Packing components</h4>
  * <dl>
  *   <dt>Precondition:</dt><dd>a list of graphs with complete layout and layer assignment.</dd>
  *   <dt>Postcondition:</dt><dd>a single graph.</dd>
  * </dl>
- * </p>
  *
  * @author msp
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class ComponentsProcessor {
-
-    /** the incidence lists of the graph. */
-    private List<FEdge>[] incidence;
-    /** the visited array of the graph. */
-    private boolean[] visited;
-
-    /**
-     * Initialize adjacency lists.
-     * 
-     * @param graph a force graph
-     */
-    @SuppressWarnings("unchecked")
-    private void initialize(final FGraph graph) {
-        int n = graph.getNodes().size();
-        incidence = new List[n];
-        visited = new boolean[n];
-        
-        // create incidence lists
-        for (FNode node : graph.getNodes()) {
-            incidence[node.id] = new LinkedList<FEdge>();
-        }
-        // add edges to incidence lists
-        for (FEdge edge : graph.getEdges()) {
-            incidence[edge.getSource().id].add(edge);
-            incidence[edge.getTarget().id].add(edge);
-        }
-    }
+public final class ComponentsProcessor {
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    // Splitting
     
     /**
      * Split the given graph into its connected components.
      * 
-     * @param graph an input graph
-     * @return a list of components that can be processed one by one
+     * @param graph an input graph.
+     * @return a list of components that can be processed one by one.
      */
     public List<FGraph> split(final FGraph graph) {
         Boolean separate = graph.getProperty(LayoutOptions.SEPARATE_CC);
         if (separate == null || separate.booleanValue()) {
-            initialize(graph);
+            boolean[] visited = new boolean[graph.getNodes().size()];
+            List<FEdge>[] incidence = buildIncidenceLists(graph);
             
             // perform DFS starting on each node, collecting connected components
             List<FGraph> components = new LinkedList<FGraph>();
             for (FNode node : graph.getNodes()) {
-                FGraph comp = dfs(node, null);
+                FGraph comp = dfs(node, null, visited, incidence);
                 if (comp != null) {
                     comp.copyProperties(graph);
                     components.add(comp);
                 }
             }
-            incidence = null;
-            visited = null;
             
             // redistribute identifier numbers to each component
             if (components.size() > 1) {
@@ -117,16 +89,46 @@ public class ComponentsProcessor {
         }
         return Lists.newArrayList(graph);
     }
+
+    /**
+     * Creates and returns the incidence list that for each node lists the incident edges.
+     * 
+     * @param graph a force graph.
+     * 
+     */
+    @SuppressWarnings("unchecked")
+    private List<FEdge>[] buildIncidenceLists(final FGraph graph) {
+        int n = graph.getNodes().size();
+        List<FEdge>[] incidence = new List[n];
+        
+        // create incidence lists
+        for (FNode node : graph.getNodes()) {
+            incidence[node.id] = new LinkedList<FEdge>();
+        }
+        
+        // add edges to incidence lists
+        for (FEdge edge : graph.getEdges()) {
+            incidence[edge.getSource().id].add(edge);
+            incidence[edge.getTarget().id].add(edge);
+        }
+        
+        return incidence;
+    }
     
     /**
      * Perform a DFS starting on the given node and collect all nodes that are found in the
      * corresponding connected component.
      * 
-     * @param node a node
-     * @param graph a graph representing a connected component, or {@code null}
-     * @return the connected component, or {@code null} if the node was already visited
+     * @param node a node.
+     * @param graph a graph representing a connected component, or {@code null}.
+     * @param visited boolean indicating for each node whether it was already visited ({@code true})
+     *                or not.
+     * @param incidence list of incident edges for each node.
+     * @return the connected component, or {@code null} if the node was already visited.
      */
-    private FGraph dfs(final FNode node, final FGraph graph) {
+    private FGraph dfs(final FNode node, final FGraph graph, final boolean[] visited,
+            final List<FEdge>[] incidence) {
+        
         if (!visited[node.id]) {
             visited[node.id] = true;
             FGraph component = graph;
@@ -136,10 +138,10 @@ public class ComponentsProcessor {
             component.getNodes().add(node);
             for (FEdge edge : incidence[node.id]) {
                 if (edge.getSource() != node) {
-                    dfs(edge.getSource(), component);
+                    dfs(edge.getSource(), component, visited, incidence);
                 }
                 if (edge.getTarget() != node) {
-                    dfs(edge.getTarget(), component);
+                    dfs(edge.getTarget(), component, visited, incidence);
                 }
                 component.getEdges().add(edge);
                 component.getLabels().addAll(edge.getLabels());
@@ -149,13 +151,17 @@ public class ComponentsProcessor {
         return null;
     }
     
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    // Recombination
+    
     /**
      * Pack the given components into a single graph.
      * 
-     * @param components a list of components
-     * @return a single graph that contains all components
+     * @param components a list of components.
+     * @return a single graph that contains all components.
      */
-    public FGraph pack(final List<FGraph> components) {
+    public FGraph recombine(final List<FGraph> components) {
         if (components.size() == 1) {
             return components.get(0);
         } else if (components.size() <= 0) {
@@ -237,25 +243,29 @@ public class ComponentsProcessor {
     /**
      * Move the source graph into the destination graph using a specified offset.
      * 
-     * @param destGraph the destination graph
-     * @param sourceGraph the source graph
-     * @param offsetx x coordinate offset
-     * @param offsety y coordinate offset
+     * @param destGraph the destination graph.
+     * @param sourceGraph the source graph.
+     * @param offsetx x coordinate offset.
+     * @param offsety y coordinate offset.
      */
     private void moveGraph(final FGraph destGraph, final FGraph sourceGraph,
             final double offsetx, final double offsety) {
+        
         KVector graphOffset = new KVector(offsetx, offsety);
         graphOffset.sub(sourceGraph.getProperty(Properties.BB_UPLEFT));
+        
         for (FNode node : sourceGraph.getNodes()) {
             node.getPosition().add(graphOffset);
             destGraph.getNodes().add(node);
         }
+        
         for (FEdge edge : sourceGraph.getEdges()) {
             for (FBendpoint bendpoint : edge.getBendpoints()) {
                 bendpoint.getPosition().add(graphOffset);
             }
             destGraph.getEdges().add(edge);
         }
+        
         for (FLabel label : sourceGraph.getLabels()) {
             label.getPosition().add(graphOffset);
             destGraph.getLabels().add(label);
