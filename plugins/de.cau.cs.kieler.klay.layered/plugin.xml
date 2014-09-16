@@ -78,6 +78,9 @@
                option="de.cau.cs.kieler.portSide">
          </knownOption>
          <knownOption
+               option="de.cau.cs.kieler.offset">
+         </knownOption>
+         <knownOption
                option="de.cau.cs.kieler.debugMode">
          </knownOption>
          <knownOption
