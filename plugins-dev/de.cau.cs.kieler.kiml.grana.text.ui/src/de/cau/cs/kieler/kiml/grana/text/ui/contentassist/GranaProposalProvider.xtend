@@ -16,20 +16,20 @@ import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor
  */
 class GranaProposalProvider extends AbstractGranaProposalProvider {
     
-    override completeResource_Path(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
-        
-        val members = ResourcesPlugin.workspace.root.members
-        
-        for (m : members) {
-            val proposal = m.fullPath.toString
-            val displayString = new StyledString(proposal)
-            
-            acceptor.accept(doCreateProposal(proposal, displayString, null,
-                            getPriorityHelper().getDefaultPriority(), context));
-        }
-        
-        super.completeResource_Path(model, assignment, context, acceptor)
-    }
+//    override completeResource_Path(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+//        
+//        val members = ResourcesPlugin.workspace.root.members
+//        
+//        for (m : members) {
+//            val proposal = m.fullPath.toString
+//            val displayString = new StyledString(proposal)
+//            
+//            acceptor.accept(doCreateProposal(proposal, displayString, null,
+//                            getPriorityHelper().getDefaultPriority(), context));
+//        }
+//        
+//        super.completeResource_Path(model, assignment, context, acceptor)
+//    }
     
     override completeAnalysis_Name(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
         

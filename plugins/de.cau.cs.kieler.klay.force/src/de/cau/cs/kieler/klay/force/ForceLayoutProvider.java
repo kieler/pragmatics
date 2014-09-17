@@ -34,8 +34,11 @@ import de.cau.cs.kieler.klay.force.properties.Properties;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class ForceLayoutProvider extends AbstractLayoutProvider {
+public final class ForceLayoutProvider extends AbstractLayoutProvider {
 
+    /** the layout provider id. */
+    public static final String ID = "de.cau.cs.kieler.klay.force";
+    
     /** the force model used by this layout algorithm. */
     private AbstractForceModel forceModel;
     /** connected components processor. */
@@ -67,7 +70,7 @@ public class ForceLayoutProvider extends AbstractLayoutProvider {
         }
         
         // pack the components back into one graph
-        fgraph = componentsProcessor.pack(components);
+        fgraph = componentsProcessor.recombine(components);
         
         // apply the layout results to the original graph
         graphImporter.applyLayout(fgraph);

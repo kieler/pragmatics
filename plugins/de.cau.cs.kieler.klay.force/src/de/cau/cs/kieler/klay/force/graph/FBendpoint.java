@@ -14,7 +14,7 @@
 package de.cau.cs.kieler.klay.force.graph;
 
 /**
- * A bend point in the force graph.
+ * A bend point of an edge in the force graph.
  * 
  * @author tmn
  * @author owo
@@ -22,7 +22,7 @@ package de.cau.cs.kieler.klay.force.graph;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class FBendpoint extends FParticle {
+public final class FBendpoint extends FParticle {
     
     /** the serial version UID. */
     private static final long serialVersionUID = -7146373072650467350L;
