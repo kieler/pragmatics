@@ -164,22 +164,25 @@ public class OptimalCycleBreaker implements ILayoutPhase {
 
             List<Integer> layers = Lists.newArrayList();
 
+            boolean start = false;
             for (String line : lines) {
-                if (!line.startsWith("Result")) {
+                if (line.startsWith("Done")) {
+                    break;
+                }
+                if (!start) {
+                    if (line.startsWith("Result")) {
+                        start = true;
+                    }
                     continue;
                 }
-                System.out.println("Line " + line);
 
-                String values = line.substring(line.indexOf("[") + 1, line.lastIndexOf("]"));
-                System.out.println("values: " + values);
-                String[] chunks = values.trim().split(" ");
-
-                for (int i = 0; i < chunks.length; i++) {
-                    // FIXME sometimes scip returns 0.99999999999, so we round here
-                    int layer = Math.round(Float.valueOf(chunks[i]));
-                    layers.add(layer);
-                }
+                String chunk = line.trim();
+                // FIXME sometimes scip returns 0.99999999999, so we round here
+                int layer = Math.round(Float.valueOf(chunk));
+                layers.add(layer);
             }
+            
+            System.out.println("Length: " + layers.size() + " " + layers);
 
             return layers;
         }

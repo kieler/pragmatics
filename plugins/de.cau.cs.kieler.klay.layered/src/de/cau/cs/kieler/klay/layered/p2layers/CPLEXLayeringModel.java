@@ -101,26 +101,29 @@ public class CPLEXLayeringModel extends AbstractCPLEXModel<Object, Pair<Integer,
         int minLayer = Integer.MAX_VALUE;
         int maxLayer = Integer.MIN_VALUE;
         System.out.println("Lines: " + lines);
+        
+        int index = 0;
+        boolean start = false;
         for (String line : lines) {
-            if (!line.startsWith("Result")) {
+            if (line.startsWith("Done")) {
+                break;
+            }
+            if (!start) {
+                if (line.startsWith("Result")) {
+                    start = true;
+                }
                 continue;
             }
-            System.out.println("Line " + line);
-            
-            String values = line.substring(line.indexOf("[") + 1, line.lastIndexOf("]"));
-            System.out.println("values: " + values);
-            String[] chunks = values.trim().split(" ");
-            
-            for (int i = 0; i < chunks.length; i++) {
-             // FIXME sometimes scip returns 0.99999999999, so we round here
-                int layer = Math.round(Float.valueOf(chunks[i]));
-                assignLayers[i] = layer;
-                minLayer = Math.min(minLayer, layer);
-                maxLayer = Math.max(maxLayer, layer);
-            }
+
+            String chunk = line.trim();
+            // FIXME sometimes scip returns 0.99999999999, so we round here
+            int layer = Math.round(Float.valueOf(chunk));
+            assignLayers[index++] = layer;
+            minLayer = Math.min(minLayer, layer);
+            maxLayer = Math.max(maxLayer, layer);
         }
         
-        System.out.println(Arrays.toString(assignLayers));
+        System.out.println("Length: " + index + " " + Arrays.toString(assignLayers));
         int numberOfLayers = maxLayer - minLayer + 1;
         // shift all layers such that the first layer is 0
         for (int i = 0; i < assignLayers.length; i++) {
