@@ -25,7 +25,7 @@ import de.cau.cs.kieler.klay.force.properties.Properties;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class FLabel extends FParticle {
+public final class FLabel extends FParticle {
     
     /** the serial version UID. */
     private static final long serialVersionUID = 9047772256368142239L;
@@ -78,7 +78,7 @@ public class FLabel extends FParticle {
     }
     
     /**
-     * Refresh the label position, that is place it in the center of the edge.
+     * Refresh the label position, that is, place it in the center of the edge.
      */
     public void refreshPosition() { 
         double spacing = edge.getProperty(Properties.LABEL_SPACING);

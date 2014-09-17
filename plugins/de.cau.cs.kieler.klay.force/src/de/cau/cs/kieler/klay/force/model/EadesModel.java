@@ -25,7 +25,7 @@ import de.cau.cs.kieler.klay.force.properties.Properties;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class EadesModel extends AbstractForceModel {
+public final class EadesModel extends AbstractForceModel {
 
     /** factor used for force calculations when the distance of two particles is zero. */
     private static final double ZERO_FACTOR = 100;
