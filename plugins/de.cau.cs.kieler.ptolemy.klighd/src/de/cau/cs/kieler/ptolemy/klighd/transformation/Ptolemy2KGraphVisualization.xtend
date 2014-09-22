@@ -51,6 +51,7 @@ import java.util.EnumSet
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
 
 import static extension com.google.common.base.Strings.*
+import de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses
 
 /**
  * Enriches a KGraph model freshly transformed from a Ptolemy2 model with the KRendering information
@@ -185,8 +186,8 @@ class Ptolemy2KGraphVisualization {
         node.setLayoutAlgorithm()
         
         // Add a rendering for the collapsed version of this node
-        val collapsedRendering = createRegularNodeRendering(node)
-        node.addRenderingWithSelectionWrapper(collapsedRendering) => [
+        val collapsedRendering = createRegularNodeRendering(node);
+        DiagramSyntheses.addRenderingWithStandardSelectionWrapper(node, collapsedRendering) => [
             it.setProperty(KlighdProperties::COLLAPSED_RENDERING, true)
             it.addDoubleClickAction(KlighdConstants::ACTION_COLLAPSE_EXPAND)
         ];
@@ -194,8 +195,8 @@ class Ptolemy2KGraphVisualization {
         //layout.setLayoutSize(collapsedRendering)
         
         // Create the rendering for the expanded version of this node
-        val expandedRendering = createExpandedCompoundNodeRendering(node, compoundNodeAlpha)
-        node.addRenderingWithSelectionWrapper(expandedRendering) => [
+        val expandedRendering = createExpandedCompoundNodeRendering(node, compoundNodeAlpha);
+        DiagramSyntheses.addRenderingWithStandardSelectionWrapper(node, expandedRendering) => [
             it.setProperty(KlighdProperties::EXPANDED_RENDERING, true)
             it.addDoubleClickAction(KlighdConstants::ACTION_COLLAPSE_EXPAND)
         ];
@@ -359,9 +360,8 @@ class Ptolemy2KGraphVisualization {
         val KRendering rendering = switch node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS) {
             case "ptolemy.actor.lib.Accumulator" : createAccumulatorNodeRendering(node)
             default : createRegularNodeRendering(node)
-        }        
-        //node.data += rendering
-        node.addRenderingWithSelectionWrapper(rendering);
+        }
+        DiagramSyntheses.addRenderingWithStandardSelectionWrapper(node, rendering);
         
         // Calculate layout size.
         layout.setLayoutSize(rendering)
@@ -524,7 +524,9 @@ class Ptolemy2KGraphVisualization {
         for (label : element.labels) {
             // Add empty text rendering
 //            val ktext = label.addInvisibleContainerRendering.setSelectionInvisible(false).addText("")
-            val ktext = label.addRenderingWithSelectionWrapper.addText("")
+            // TODO: Re-enable
+            val ktext = DiagramSyntheses.addRenderingWithStandardSelectionWrapper(label, null)
+                .addText("")
 //            ktext.cursorSelectable = true
 //            val ktext = renderingFactory.createKText()
 //            label.data += ktext

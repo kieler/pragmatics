@@ -15,7 +15,6 @@ package de.cau.cs.kieler.ptolemy.klighd.transformation
 
 import com.google.inject.Inject
 import de.cau.cs.kieler.core.kgraph.KEdge
-import de.cau.cs.kieler.core.kgraph.KGraphElement
 import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.core.kgraph.KPort
 import de.cau.cs.kieler.core.krendering.HorizontalAlignment
@@ -41,8 +40,6 @@ import de.cau.cs.kieler.ptolemy.klighd.transformation.util.GraphicsUtils
 
 import static de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties.*
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
-import org.eclipse.swt.widgets.Display
-import org.eclipse.swt.SWT
 
 /**
  * Creates concrete KRendering information for Ptolemy diagram elements.
@@ -574,44 +571,6 @@ class KRenderingFigureProvider {
                 + "</svg>"
         return addToLibrary(GraphicsUtils::createFigureFromSvg(accumulatorSvg),
                 "ren_accumulator", library)
-    }
-    
-    
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Node Selection Rendering
-    
-    /**
-     * Builds up and adds helper renderings forming the selection to given node,
-     * attaches the provided rendering to the selection helpers.  
-     */
-    def KContainerRendering addRenderingWithSelectionWrapper(KGraphElement kge, KRendering rendering) {
-        return kge.addRenderingWithSelectionWrapper => [
-            it.children += rendering;
-        ];
-    }
-    
-    /**
-     * Builds up and adds helper renderings forming the selection to given node,
-     * attaches the provided rendering to the selection helpers.
-     */
-    def KContainerRendering addRenderingWithSelectionWrapper(KGraphElement kge) {
-        // Use a default selection color if there is no display (which is true in headless mode)
-        val systemSelection = Display.current?.getSystemColor(SWT.COLOR_LIST_SELECTION)
-        
-        val selectionR = if (systemSelection == null) {180;} else {systemSelection.red;}
-        val selectionG = if (systemSelection == null) {213;} else {systemSelection.green;}
-        val selectionB = if (systemSelection == null) {255;} else {systemSelection.blue;}
-        
-        kge.addRectangle => [
-            it.invisible = true;
-            it.addRoundedRectangle(3f, 3f, 1) => [
-            it.setSurroundingSpace(-3, 0);
-                it.invisible = true;
-                it.setBackgroundColor(selectionR, selectionG, selectionB)
-                it.lineStyle = LineStyle.DASH;
-                it.selectionInvisible = false;
-            ]
-        ]
     }
     
     
