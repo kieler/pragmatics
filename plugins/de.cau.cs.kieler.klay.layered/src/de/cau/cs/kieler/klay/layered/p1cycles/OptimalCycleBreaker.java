@@ -83,7 +83,7 @@ public class OptimalCycleBreaker implements ILayoutPhase {
 
             // reverse the edges
             for (LNode node : layeredGraph.getLayerlessNodes()) {
-                for (LEdge e : node.getOutgoingEdges()) {
+                for (LEdge e : Lists.newArrayList(node.getOutgoingEdges())) {
                     LNode target = e.getTarget().getNode();
                     if (layers[node.id] > layers[target.id]) {
                         e.reverse(layeredGraph, true);
@@ -150,7 +150,7 @@ public class OptimalCycleBreaker implements ILayoutPhase {
             sb.append(" ]];\n");
 
             // weights
-            sb.append("\nw_length = 0;\nw_reverse = 1;\n");
+            sb.append("\nw_length = 0.0;\nw_reverse = 1.0;\n");
 
             return sb.toString();
         }

@@ -155,7 +155,7 @@ public class MinizincLayerer implements ILayoutPhase {
             // #5 set edge reversal state
             for (Layer l : layers) {
                 for (LNode n : l.getNodes()) {
-                    for (LEdge e : n.getOutgoingEdges()) {
+                    for (LEdge e : Lists.newArrayList(n.getOutgoingEdges())) {
                         boolean reversed =
                                 e.getTarget().getNode().getLayer().getIndex() < l.getIndex();
                         if (reversed) {
