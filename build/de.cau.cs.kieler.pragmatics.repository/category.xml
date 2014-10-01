@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site associateSitesURL="associateSites.xml">
 
-   <description name="KIELER Pragmatics (Nightly Builds)" url="http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/">
-      Update site for the KIELER Pragmatics project nightly builds.
+   <description name="KIELER Pragmatics (Release 2014-10)" url="http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/">
+      Update site for the KIELER Pragmatics release 2014-10.
    </description>
 
    <!-- CATEGORY DEFINITIONS -->
