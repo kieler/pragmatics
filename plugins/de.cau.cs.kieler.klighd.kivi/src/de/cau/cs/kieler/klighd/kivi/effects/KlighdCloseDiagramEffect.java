@@ -2,12 +2,12 @@
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
- * 
+ *
  * Copyright 2011 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
- * 
+ *
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
@@ -20,7 +20,7 @@ import de.cau.cs.kieler.klighd.ui.DiagramViewManager;
 
 /**
  * A view management effect for closing KLighD views.
- * 
+ *
  * @author mri
  */
 public class KlighdCloseDiagramEffect extends AbstractEffect {
@@ -30,7 +30,7 @@ public class KlighdCloseDiagramEffect extends AbstractEffect {
 
     /**
      * Constructs an effect that closes the diagram view associated with the given id.
-     * 
+     *
      * @param viewId
      *            identifier of the view to be closed.
      */
@@ -47,7 +47,7 @@ public class KlighdCloseDiagramEffect extends AbstractEffect {
         }
         PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
             public void run() {
-                DiagramViewManager.getInstance().closeView(viewId);
+                DiagramViewManager.closeView(viewId);
             }
         });
     }

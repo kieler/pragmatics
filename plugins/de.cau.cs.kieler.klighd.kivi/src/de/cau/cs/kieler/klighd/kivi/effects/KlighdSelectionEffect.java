@@ -2,12 +2,12 @@
  * KIELER - Kiel Integrated Environment for Layout Eclipse Rich Client
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
- * 
+ *
  * Copyright 2011 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
- * 
+ *
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
@@ -24,7 +24,7 @@ import de.cau.cs.kieler.klighd.util.Iterables2;
 
 /**
  * A view management effect to select a number of diagram elements in a view.
- * 
+ *
  * @author mri
  * @author chsch
  */
@@ -39,7 +39,7 @@ public class KlighdSelectionEffect extends AbstractEffect {
 
     /**
      * Constructs a selection effect.
-     * 
+     *
      * @param viewId
      *            the view identifier
      * @param element
@@ -56,7 +56,7 @@ public class KlighdSelectionEffect extends AbstractEffect {
 
     /**
      * Constructs a selection effect.
-     * 
+     *
      * @param viewId
      *            the view identifier
      * @param elements
@@ -76,7 +76,7 @@ public class KlighdSelectionEffect extends AbstractEffect {
      * {@inheritDoc}
      */
     public void execute() {
-        IDiagramWorkbenchPart part = DiagramViewManager.getInstance().getDiagramWorkbenchPart(viewId);
+        final IDiagramWorkbenchPart part = DiagramViewManager.getDiagramWorkbenchPart(viewId);
         if (part != null) {
             // get the diagram elements
             if (areDiagramElements) {
