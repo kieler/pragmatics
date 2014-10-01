@@ -16,6 +16,8 @@ package de.cau.cs.kieler.klighd;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
 
+import de.cau.cs.kieler.klighd.viewers.ContextViewer;
+
 /**
  * Interface for workbench parts implemented by KLighD.
  *
