@@ -26,7 +26,10 @@
     <module>de.cau.cs.kieler.core.krendering.extensions</module>
     <module>de.cau.cs.kieler.core.ui</module>
     <module>de.cau.cs.kieler.kiml</module>
+ <!--
+    Adaptagrams is not part of this release.
     <module>de.cau.cs.kieler.kiml.adaptagrams</module>
+ -->
     <module>de.cau.cs.kieler.kiml.export</module>
     <module>de.cau.cs.kieler.kiml.formats</module>
     <module>de.cau.cs.kieler.kiml.formats.gml</module>
@@ -45,7 +48,10 @@
     <module>de.cau.cs.kieler.kiml.ui</module>
     <module>de.cau.cs.kieler.klay.force</module>
     <module>de.cau.cs.kieler.klay.layered</module>
-    <!--module>de.cau.cs.kieler.klay.codaflow</module-->
+ <!--
+    Adaptagrams is not part of this release.
+    <module>de.cau.cs.kieler.klay.codaflow</module>
+ -->
     <module>de.cau.cs.kieler.klay.planar</module>
     <module>de.cau.cs.kieler.klay.tree</module>
     <module>de.cau.cs.kieler.klighd</module>
@@ -71,7 +77,10 @@
     <module>edu.umd.cs.piccolo</module>
     <module>net.ogdf.bin</module>
     <module>net.ogdf.ogml</module>
+<!--
+    KLighD Incremental is disabled as long as it doesn't work with the Kepler version of EMF Compare.
     <module>../../pragmatics-libraries/plugins/org.adaptagrams</module>
+-->
     <module>org.graphdrawing.graphml</module>
   </modules>
 
