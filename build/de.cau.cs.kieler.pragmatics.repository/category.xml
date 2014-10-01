@@ -69,6 +69,8 @@
       <category name="kieler-layout"/>
    </feature>
    
+<!--
+   Adaptagrams is not part of this release.
    <feature url="features/de.cau.cs.kieler.kiml.adaptagrams_0.1.0.qualifier.jar" id="de.cau.cs.kieler.kiml.adaptagrams.feature" version="0.1.0.qualifier">
       <category name="kieler-layout"/>
    </feature>
@@ -78,6 +80,7 @@
    <feature url="features/org.adaptagrams_0.1.0.qualifier.jar" id="org.adaptagrams.feature" version="0.1.0.qualifier" os="linux,macosx,solaris,win32" arch="sparc,x86,x86_64">
       <category name="kieler-layout"/>
    </feature>
+-->
 
    <feature url="features/de.cau.cs.kieler.kgraph_0.5.0.qualifier.jar" id="de.cau.cs.kieler.kgraph.feature" version="0.5.0.qualifier">
       <category name="kieler-layout"/>
