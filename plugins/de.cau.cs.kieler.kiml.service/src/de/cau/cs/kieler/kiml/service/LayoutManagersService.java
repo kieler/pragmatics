@@ -79,6 +79,9 @@ public class LayoutManagersService {
      * @param factory an instance factory
      */
     public static void setInstanceFactory(final IFactory<? extends LayoutManagersService> factory) {
+        if (factory == null) {
+            throw new NullPointerException("The given instance factory is null");
+        }
         instanceFactory = factory;
         instance = null;
     }

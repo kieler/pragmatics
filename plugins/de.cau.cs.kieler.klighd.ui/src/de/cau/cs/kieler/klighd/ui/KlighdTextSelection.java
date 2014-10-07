@@ -13,65 +13,93 @@
  */
 package de.cau.cs.kieler.klighd.ui;
 
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.Iterators;
+
+import de.cau.cs.kieler.core.kgraph.KGraphElement;
+import de.cau.cs.kieler.core.kgraph.KLabel;
+import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.krendering.KText;
+import de.cau.cs.kieler.klighd.IKlighdSelection;
+import de.cau.cs.kieler.klighd.IViewer;
+import de.cau.cs.kieler.klighd.ViewContext;
+import de.cau.cs.kieler.klighd.piccolo.internal.nodes.IGraphElement;
+import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdNode.KlighdFigureNode;
+import de.cau.cs.kieler.klighd.util.ModelingUtil;
+import edu.umd.cs.piccolo.PNode;
 
 /**
  * KLighD-specific implementation of {@link ITextSelection}.<br>
  * Its aim is to broadcast the selection of cursor selectable label's text to platform's
- * {@link org.eclipse.ui.ISelectionService ISelectionService}.
+ * {@link org.eclipse.ui.ISelectionService ISelectionService}.<br>
+ * In order to let the Properties View also react on this type of selection this class
+ * also implements {@link IStructuredSelection} by providing itself as the only element.<br>
+ * Be aware of the risk of recursion!
  * 
  * @author chsch
  */
-public class KlighdTextSelection implements ITextSelection {
+public class KlighdTextSelection implements IKlighdSelection, IStructuredSelection, ITextSelection {
+
+    private final KlighdFigureNode<KText> figureNode;
+
+    private final IViewer viewer;
+
+    private final KText diagramElement;
+    
+    private KGraphElement kgraphElement;
 
     private final String text;
+    
+    private final int offset;
     
     private final boolean completeLine;
 
     private final boolean completeLabel;
-    
+
 
     /**
      * Standard Constructor.
      * 
      * @param theText
      *            the text selection
+     * @param theOffset
+     *            see {@link ITextSelection#getOffset()}
      * @param isCompleteLine
      *            <code>true</code> if whole line is selected
      * @param isCompleteLabel
      *            <code>true</code> if whole label is selected
+     * @param figureNode
+     *            the underlying {@link KGraphElement} containing the selected text
+     * @param theViewer 
      */
-    public KlighdTextSelection(final String theText, final boolean isCompleteLine,
-            final boolean isCompleteLabel) {
+    public KlighdTextSelection(final String theText, final int theOffset,
+            final boolean isCompleteLine, final boolean isCompleteLabel,
+            final KlighdFigureNode<KText> figureNode, final IViewer theViewer) {
+        this.viewer = theViewer;
         this.text = theText;
+        this.offset = theOffset;
         this.completeLine = isCompleteLine;
         this.completeLabel = isCompleteLabel;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return text;
+        this.figureNode = figureNode;
+        this.diagramElement = figureNode == null ? null : figureNode.getGraphElement();
+        this.kgraphElement = null;
     }
 
-
     /**
-     * @return the text
-     */
-    public String getText() {
-        return text;
-    }
-
-
-    /**
+     * @deprecated this method may still return wrong values
      * @return the completeLine
      */
     public boolean isCompleteLine() {
         return completeLine;
     }
-
 
     /**
      * @return the completeLabel
@@ -80,12 +108,94 @@ public class KlighdTextSelection implements ITextSelection {
         return completeLabel;
     }
 
+    /**
+     * @return the viewer
+     */
+    public IViewer getViewer() {
+        return viewer;
+    }
+
+    /**
+     * @return the {@link ViewContext}
+     */
+    public ViewContext getViewContext() {
+        return viewer.getViewContext();
+    }
+
+    /**
+     * @return the corresponding {@link KText} instance.
+     */
+    public KText getViewElement() {
+        return diagramElement;
+    }
+
+    /**
+     * @return the corresponding {@link KGraphElement} instance.
+     */
+    public KGraphElement getKGraphElement() {
+        return determineKGraphElement();
+    }
+
+    /**
+     * @return the corresponding {@link KLabel} instance, may be <code>null</code>.
+     */
+    public KLabel getKLabel() {
+        return determineKGraphElement() instanceof KLabel ? (KLabel) kgraphElement : null;
+    }
+
+    /**
+     * @return the parent {@link KNode} of {@link #getKGraphElement()}
+     */
+    public KNode getKNode() {
+        return ModelingUtil.eContainerOfType(determineKGraphElement(), KNode.class);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Iterator<EObject> diagramElementsIterator() {
+        return Iterators.<EObject>singletonIterator(determineKGraphElement());
+    }
+    
+    private KGraphElement determineKGraphElement() {
+        if (kgraphElement == null) {
+            PNode node = figureNode;
+            while (node != null) {
+                if (node instanceof IGraphElement<?>) {
+                    kgraphElement = ((IGraphElement<?>) node).getGraphElement();
+                    break;
+                }
+                node = node.getParent();
+            }
+        }
+        return kgraphElement;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return "KLighdTextSelection: " + text;
+    }
+
+
+    /* -------------------------------- */
+    /*   ITextSelection methods         */
+    /* -------------------------------- */
+
+    /**
+     * @return the text
+     */
+    public String getText() {
+        return text;
+    }
 
     /**
      * {@inheritDoc}
      */
     public boolean isEmpty() {
-        return false;
+        return Strings.isNullOrEmpty(text);
     }
 
 
@@ -93,7 +203,7 @@ public class KlighdTextSelection implements ITextSelection {
      * {@inheritDoc}
      */
     public int getOffset() {
-        return 0;
+        return offset;
     }
 
 
@@ -107,16 +217,57 @@ public class KlighdTextSelection implements ITextSelection {
 
     /**
      * {@inheritDoc}
+     * @deprecated this method still simply returns zero
      */
     public int getStartLine() {
         return 0;
     }
 
 
+    /* -------------------------------- */
+    /*   IStructuredSelection methods   */
+    /* -------------------------------- */
+    
     /**
      * {@inheritDoc}
+     * @deprecated this method still simply returns zero
      */
     public int getEndLine() {
         return 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Object getFirstElement() {
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Iterator<KlighdTextSelection> iterator() {
+        return Iterators.singletonIterator(this);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int size() {
+        return 1;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public KlighdTextSelection[] toArray() {
+        return new KlighdTextSelection[] { this };
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<KlighdTextSelection> toList() {
+        return Collections.singletonList(this);
     }
 }

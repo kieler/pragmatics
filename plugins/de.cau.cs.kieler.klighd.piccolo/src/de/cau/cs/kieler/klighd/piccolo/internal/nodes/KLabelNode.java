@@ -18,19 +18,18 @@ import de.cau.cs.kieler.klighd.piccolo.internal.controller.AbstractKGERenderingC
 import de.cau.cs.kieler.klighd.piccolo.internal.controller.KLabelRenderingController;
 
 /**
- * The Piccolo node for representing a {@code KLabel}.
+ * The Piccolo2D node for representing a {@code KLabel}.
  * 
  * @author mri
+ * @author chsch
  */
-public class KLabelNode extends PEmptyNode implements IGraphElement<KLabel> {
+public class KLabelNode extends KlighdNode.KlighdGraphNode<KLabel> {
 
     private static final long serialVersionUID = -3999806360081871118L;
 
     /** the property name for changes of the label's text. */
     public static final String PROPERTY_TEXT = "labelText";
 
-    /** the represented {@link KLabel}. */
-    private transient KLabel label;
     /** the label rendering controller deployed to manage the rendering of {@link #label}. */
     private KLabelRenderingController renderingController;
 
@@ -38,20 +37,13 @@ public class KLabelNode extends PEmptyNode implements IGraphElement<KLabel> {
     private String text = "";
 
     /**
-     * Constructs a Piccolo node for representing a {@code KLabel}.
+     * Constructs a Piccolo2D node for representing a {@code KLabel}.
      * 
      * @param label
      *            the label
      */
     public KLabelNode(final KLabel label) {
-        this.label = label;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public KLabel getGraphElement() {
-        return label;
+        super(label);
     }
 
     /**

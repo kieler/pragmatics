@@ -13,8 +13,6 @@
  */
 package de.cau.cs.kieler.klighd.util;
 
-import org.eclipse.emf.common.util.URI;
-
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.IProperty;
@@ -29,6 +27,8 @@ import de.cau.cs.kieler.klighd.KlighdConstants;
  * implementations.
  * 
  * @author chsch
+ * 
+ * @kieler.design proposed by chsch
  */
 public final class KlighdProperties {
 
@@ -117,22 +117,52 @@ public final class KlighdProperties {
      */
     public static final IProperty<Boolean> NOT_SELECTABLE = new Property<Boolean>(
             "de.cau.cs.kieler.klighd.suppressSelectability", false);
+    
+    /**
+     * Property determining the visibility of a certain
+     * {@link de.cau.cs.kieler.core.krendering.KRendering KRendering} in the outline diagram view.
+     * If it is set to <code>true</code> that particular rendering element is not shown in the
+     * outline.
+     */
+    public static final IProperty<Boolean> OUTLINE_INVISIBLE = new Property<Boolean>(
+            "de.cau.cs.kieler.klighd.outlineInvisible", false);
+    
+    /**
+     * Property determining the visibility of a certain
+     * {@link de.cau.cs.kieler.core.krendering.KRendering KRendering} in exported diagram diagram
+     * images. If it is set to <code>true</code> that particular rendering element is not shown in
+     * exported images.
+     */
+    public static final IProperty<Boolean> EXPORTED_IMAGE_INVISIBLE = new Property<Boolean>(
+            "de.cau.cs.kieler.klighd.exportedImageInvisible", false);
+    
+    /**
+     * Property determining the visibility of a certain
+     * {@link de.cau.cs.kieler.core.krendering.KRendering KRendering} in diagram printouts. If it is
+     * set to <code>true</code> that particular rendering element is not shown in diagram printouts.
+     */
+    public static final IProperty<Boolean> PRINTOUT_INVISIBLE = new Property<Boolean>(
+            "de.cau.cs.kieler.klighd.printoutInvisible", false);
 
     /**
-     * Property providing a URI to semantic elements to be depicted but that are to be loaded lazily.
-     * This is property is currently to be attached to the nodes shape layout data during the view
-     * synthesis process. 
+     * Property determining the upper visibility bound of a certain
+     * {@link de.cau.cs.kieler.core.kgraph.KGraphElement KGraphElement} or
+     * {@link de.cau.cs.kieler.core.krendering.KRendering KRendering} wrt. the diagram scale/zoom.
+     * If the diagram is shown is in equal or higher scale (>=) than the determined value the
+     * corresponding diagram or figure element is not visible anymore.
      */
-    public static final IProperty<URI> CHILD_URI = new Property<URI>("klighd.childURI");
+    public static final IProperty<Number> VISIBILITY_SCALE_UPPER_BOUND = new Property<Number>(
+            "de.cau.cs.kieler.klighd.visibilityScaleUpperBound", -1);
 
     /**
-     * Property of {@link de.cau.cs.kieler.core.kgraph.KNode KNodes} indicating that the containing
-     * node is not pickable in a KLighD diagram. Can be used to mask auxiliary encapsulating nodes.
-     * 
-     * @deprecated use {@link #NOT_SELECTABLE}
+     * Property determining the lower visibility bound of a certain
+     * {@link de.cau.cs.kieler.core.kgraph.KGraphElement KGraphElement} or
+     * {@link de.cau.cs.kieler.core.krendering.KRendering KRendering} wrt. the diagram scale/zoom.
+     * If the diagram is shown is in strictly lower scale (<) than the determined value the
+     * corresponding diagram or figure element is not visible anymore.
      */
-    public static final IProperty<Boolean> KLIGHD_SELECTION_UNPICKABLE = new Property<Boolean>(
-            "klighd.selection.unpickable", false);
+    public static final IProperty<Number> VISIBILITY_SCALE_LOWER_BOUND = new Property<Number>(
+            "de.cau.cs.kieler.klighd.visibilityScaleLowerBound", 0);
 
     /**
      * A pre-defined property to be used for handing over an {@link RunnableWithResult} to the
@@ -169,4 +199,21 @@ public final class KlighdProperties {
      */
     public static final IProperty<String> TOOLTIP = new Property<String>("klighd.tooltip", null);
     
+    /**
+     * A map of string/string pairs that will be added to the generated rendering. Note that not all
+     * rendering mechanisms support this feature. 
+     * An example would be to add 'id' elements to svg elements.
+     * 
+     * @see KlighdConstants#SEMANTIC_DATA_ID
+     * @see KlighdConstants#SEMANTIC_DATA_CLASS
+     */
+    public static final IProperty<KlighdSemanticDiagramData> SEMANTIC_DATA =
+            new Property<KlighdSemanticDiagramData>("klighd.semanticData", null);
+
+    /**
+     * Property for globally determining whether edges should be drawn before nodes, leading to
+     * the effect of overpainting edges by nodes with background color.
+     */
+    public static final IProperty<Boolean> EDGES_FIRST = new Property<Boolean>(
+            "klighd.edgesFirst", false);
 }

@@ -4,8 +4,8 @@
    <extension
          point="de.cau.cs.kieler.klighd.extensions">
       <viewer
-            class="de.cau.cs.kieler.klighd.ui.internal.viewers.PiccoloViewerProvider"
-            id="de.cau.cs.kieler.klighd.piccolo.piccoloViewer">
+            class="de.cau.cs.kieler.klighd.ui.viewers.PiccoloViewerUI$Provider"
+            id="de.cau.cs.kieler.klighd.ui.viewers.PiccoloViewerUI">
       </viewer>
    </extension>
    <extension
@@ -55,6 +55,12 @@
       </definition>
    </extension>
    <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="de.cau.cs.kieler.klighd.ui.printing.PrintOptions$Initializer">
+      </initializer>
+   </extension>
+   <extension
          point="org.eclipse.ui.contexts">
       <context
             id="de.cau.cs.kieler.klighd.ui.context"
@@ -82,6 +88,7 @@
          point="org.eclipse.ui.editors">
       <editor
             class="de.cau.cs.kieler.klighd.ui.parts.DiagramEditorPart"
+            contributorClass="de.cau.cs.kieler.klighd.ui.parts.DiagramEditorPart$ActionContributor"
             default="false"
             icon="icons/klighd.gif"
             id="de.cau.cs.kieler.klighd.ui.parts.DiagramEditorPart"
@@ -145,11 +152,19 @@
                <reference
                      definitionId="de.cau.cs.kieler.klighd.ui.isKlighdContext">
                </reference>
-               <iterate>
-                  <instanceof
-                        value="de.cau.cs.kieler.core.kgraph.KGraphElement">
-                  </instanceof>
-               </iterate>
+                    <or>
+                   <with
+                         variable="selection">
+                      <instanceof
+                            value="de.cau.cs.kieler.klighd.ui.KlighdTextSelection">
+                      </instanceof>
+                   </with>
+                   <iterate>
+                      <instanceof
+                            value="de.cau.cs.kieler.core.kgraph.KGraphElement">
+                      </instanceof>
+                   </iterate>
+                    </or>
             </and>
          </enabledWhen>
       </handler>

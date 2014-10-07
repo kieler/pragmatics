@@ -81,15 +81,18 @@ import de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties;
  * @author mri
  * @author chsch
  * @author msp
+ * 
+ * @kieler.design proposed by chsch
+ * @kieler.rating proposed yellow by chsch 
  */
-public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelectionProvider,
+public class ContextViewer implements IViewer, ILayoutRecorder, ISelectionProvider,
         IDiagramOutlinePage.Provider {
 
     /** the parent composite for diagram viewers. */
     private Composite diagramComposite;
 
     /** the current viewer. */
-    private IViewer<Object> currentViewer;
+    private IViewer currentViewer;
 
     /** the current view context. */
     private ViewContext currentViewContext = null;
@@ -114,15 +117,14 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
      * @param viewer
      *            the {@link IViewer} to be employed
      */
-    protected synchronized void setViewer(final IViewer<?> viewer) {
+    protected synchronized void setViewer(final IViewer viewer) {
         // remove the current viewer if someone exists
         if (currentViewer != null) {
             currentViewer.getControl().dispose();
             currentViewer = null;
         }
 
-        @SuppressWarnings("unchecked")
-        final IViewer<Object> objViewer = (IViewer<Object>) viewer;
+        final IViewer objViewer = viewer;
         currentViewer = objViewer;
 
         diagramComposite.layout();
@@ -174,10 +176,10 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
     /**
      * {@inheritDoc}
      */
-    public void stopRecording(final ZoomStyle zoomStyle,
+    public void stopRecording(final ZoomStyle zoomStyle, final KNode focusNode,
             final int animationTime) {
         if (layoutRecorder != null) {
-            layoutRecorder.stopRecording(zoomStyle, animationTime);
+            layoutRecorder.stopRecording(zoomStyle, focusNode, animationTime);
         }
     }
 
@@ -249,7 +251,7 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
      * 
      * @return the viewer
      */
-    public IViewer<?> getActiveViewer() {
+    public IViewer getActiveViewer() {
         return currentViewer;
     }
 
@@ -334,7 +336,7 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
     public Iterator<KNode> getVisibleDiagramNodes() {
         // SUPPRESS CHECKSTYLE PREVIOUS 4 Javadoc, see http://sourceforge.net/p/checkstyle/bugs/592/
 
-        final IViewer<?> activeViewer = getActiveViewer();
+        final IViewer activeViewer = getActiveViewer();
         final KNode clip = activeViewer.getClip();
 
         if (!activeViewer.isVisible(clip, false)) {
@@ -368,7 +370,7 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
     public Iterator<KGraphElement> getVisibleDiagramElements() {
         // SUPPRESS CHECKSTYLE PREVIOUS 4 Javadoc, see http://sourceforge.net/p/checkstyle/bugs/592/
         
-        final IViewer<?> activeViewer = getActiveViewer();
+        final IViewer activeViewer = getActiveViewer();
         final KNode clip = activeViewer.getClip();
 
         if (!activeViewer.isVisible(clip, false)) {
@@ -446,6 +448,17 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
     public void zoom(final ZoomStyle style, final int duration) {
         if (currentViewer != null) {
             currentViewer.zoom(style, duration);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public float getZoomLevel() {
+        if (currentViewer != null) {
+            return currentViewer.getZoomLevel();
+        } else {
+            return 1f;
         }
     }
 
@@ -836,7 +849,12 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
                 AS_RENDERING))) {
             r.setProperty(KlighdInternalProperties.SELECTED, false);
         }
-        
+
+        // in the following loop 'filter(toBeSelected, notIn(currentlySelected))' is skipped by intention
+        //  leading to repeated property settings to 'true'
+        // this has the positive effect that unselected edges will automatically go to background since
+        //  the still selected ones will be brought to front again
+        // that should be the only side effect, except some addition performance waste ;-)
         for (final KRendering r : concat(transform(toBeSelected, AS_RENDERING))) {
             r.setProperty(KlighdInternalProperties.SELECTED, true);
         }
@@ -888,6 +906,7 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
             if (theSelection instanceof KlighdTreeSelection) {
                 this.diagramSelection = (KlighdTreeSelection) theSelection;
             } else {
+                resetSelectionHighlighting();
                 this.diagramSelection = null;
             }
 
@@ -897,6 +916,18 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
                 for (final ISelectionChangedListener listener : selectionListeners) {
                     listener.selectionChanged(event);
                 }
+            }
+        }
+    }
+
+    /**
+     * Resets the highlighting of the currently selected diagram elements.
+     */
+    private void resetSelectionHighlighting() {
+        final Iterable<EObject> currentSelection = getDiagramSelection();
+        if (currentSelection != null) {
+            for (final KRendering r : concat(transform(currentSelection, AS_RENDERING))) {
+                r.setProperty(KlighdInternalProperties.SELECTED, false);
             }
         }
     }

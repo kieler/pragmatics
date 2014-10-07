@@ -16,8 +16,12 @@ package de.cau.cs.kieler.klighd.piccolo.internal.events;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
+import org.eclipse.swt.SWT;
+
 import de.cau.cs.kieler.klighd.KlighdConstants;
+import de.cau.cs.kieler.klighd.piccolo.internal.events.KlighdKeyEventListener.KlighdKeyEvent;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdPath;
+import de.cau.cs.kieler.klighd.piccolo.viewer.PiccoloViewer;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.event.PDragSequenceEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
@@ -33,17 +37,24 @@ public class KlighdSelectiveZoomEventHandler extends PDragSequenceEventHandler {
 
     /** Transparency value used for the preview rectangle. */
     private static final int PREVIEW_RECTANGLE_ALPHA = 100;
+
+    /** Minimal drag distance required for initiating the selective zooming. */
+    private static final int MINIMAL_DRAG_DISTANCE = 5;
+
+    private final PiccoloViewer viewer;
     
     /** The rectangle that acts as a preview for the area to zoom to. */
     private final KlighdPath previewRectangle;
 
-    /** Starting point of the drag operation. */
-    private Point2D.Double canvasStart;
-
     /**
      * Constructor.
+     * 
+     * @param theViewer
+     *            the {@link PiccoloViewer} it is attached to
      */
-    public KlighdSelectiveZoomEventHandler() {
+    public KlighdSelectiveZoomEventHandler(final PiccoloViewer theViewer) {
+        setMinDragStartDistance(MINIMAL_DRAG_DISTANCE);
+        viewer = theViewer;
         previewRectangle = new KlighdPath();
         previewRectangle.setPaintAlpha(PREVIEW_RECTANGLE_ALPHA);
         previewRectangle.setPaint(KlighdConstants.WHITE);
@@ -51,14 +62,26 @@ public class KlighdSelectiveZoomEventHandler extends PDragSequenceEventHandler {
 
     @Override
     protected boolean shouldStartDragInteraction(final PInputEvent event) {
-        return event.isControlDown() && super.shouldStartDragInteraction(event);
+        return event.isControlDown() && !viewer.isMagnificationLensVisible()
+                && super.shouldStartDragInteraction(event);
+    }
+
+    @Override
+    public void keyPressed(final PInputEvent event) {
+        super.keyPressed(event);
+
+        if (isDragging() && ((KlighdKeyEvent) event.getSourceSwingEvent()).getKeyCode() == SWT.ESC) {
+            super.endDrag(event);
+            event.getTopCamera().removeChild(previewRectangle);
+            event.setHandled(true);
+        }
     }
 
     @Override
     protected void startDrag(final PInputEvent event) {
         super.startDrag(event);
 
-        canvasStart = (Point2D.Double) event.getCanvasPosition();
+        final Point2D.Double canvasStart = (Point2D.Double) this.getMousePressedCanvasPoint();
         previewRectangle.setPathToRectangle((float) canvasStart.x, (float) canvasStart.y, 0, 0);
 
         event.getTopCamera().addChild(previewRectangle);
@@ -70,8 +93,8 @@ public class KlighdSelectiveZoomEventHandler extends PDragSequenceEventHandler {
         super.drag(event);
 
         final Rectangle2D.Float bounds = new Rectangle2D.Float();
-        bounds.setFrameFromDiagonal(canvasStart, event.getCanvasPosition());
-        previewRectangle.setPathToRectangle(bounds.x, bounds.y, bounds.width, bounds.height);
+        bounds.setFrameFromDiagonal(this.getMousePressedCanvasPoint(), event.getCanvasPosition());
+        previewRectangle.setPathToRectangle(bounds);
 
         event.setHandled(true);
     }
@@ -81,9 +104,9 @@ public class KlighdSelectiveZoomEventHandler extends PDragSequenceEventHandler {
         super.endDrag(event);
 
         final PCamera topCamera = event.getTopCamera();
-
         final Rectangle2D bounds = new Rectangle2D.Double();
-        bounds.setFrameFromDiagonal(topCamera.localToView(canvasStart), event.getPosition());
+        bounds.setFrameFromDiagonal(
+                topCamera.localToView(this.getMousePressedCanvasPoint()), event.getPosition());
 
         topCamera.removeChild(previewRectangle);
         topCamera.animateViewToCenterBounds(bounds, true, KlighdConstants.DEFAULT_ANIMATION_TIME);

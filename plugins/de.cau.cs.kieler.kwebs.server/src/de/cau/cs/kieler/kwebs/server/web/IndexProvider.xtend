@@ -92,6 +92,10 @@ class IndexProvider extends AbstractProvider {
                 <h3>C#</h3>
                 <pre class="prettyprint lang-cs" style="text-align: left;">
                 String layouted = KIELER.KIELERLayout.layout(server, "org.json", "org.json", options, graph);</pre>
+                
+                <h3>Python</h3>
+                <pre class="prettyprint lang-py" style="text-align: left;">
+                layouted = KIELERLayout().layout(server, "org.json", "org.w3.svg", options, graph)</pre>
             
             
                 «if (config.hasConfigProperty(Configuration::FRONTEND_SERVICE_HOSTER_LOGO)) // src has to be declared relative to the classpath

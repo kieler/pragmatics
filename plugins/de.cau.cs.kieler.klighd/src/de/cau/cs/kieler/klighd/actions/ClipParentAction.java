@@ -22,6 +22,9 @@ import de.cau.cs.kieler.klighd.IViewer;
  * that parent exists.
  * 
  * @author chsch
+ * 
+ * @kieler.design proposed by chsch
+ * @kieler.rating proposed yellow by chsch
  */
 public class ClipParentAction implements IAction {
 
@@ -35,11 +38,11 @@ public class ClipParentAction implements IAction {
      * {@inheritDoc}
      */
     public ActionResult execute(final ActionContext context) {        
-        final IViewer<?> activeViewer = context.getActiveViewer();        
+        final IViewer activeViewer = context.getActiveViewer();        
         final KNode clip = activeViewer.getClip();
         
         if (clip != null && clip.getParent() != null) {
-            activeViewer.clip((KNode) clip.getParent());
+            activeViewer.clip(clip.getParent());
             
             return ActionResult.createResult(true);            
         } else {

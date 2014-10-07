@@ -18,8 +18,12 @@ import de.cau.cs.kieler.klighd.IAction;
 import de.cau.cs.kieler.klighd.IViewer;
 
 /**
+ * Scales the chosen {@link KNode} up by (roughly) one unit, i.e. 100 percent points.
+ * 
  * @author chsch
- *
+ * 
+ * @kieler.design proposed by chsch
+ * @kieler.rating proposed yellow by chsch
  */
 public class ScaleUpAction implements IAction {
 
@@ -27,7 +31,7 @@ public class ScaleUpAction implements IAction {
      * {@inheritDoc}
      */
     public ActionResult execute(final ActionContext context) {
-        final IViewer<?> viewer = context.getActiveViewer();
+        final IViewer viewer = context.getActiveViewer();
         final KNode node = context.getKNode();
 
         viewer.scale(node, viewer.getScale(node) + 1);        

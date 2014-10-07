@@ -18,12 +18,14 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.widgets.Control;
 
 import de.cau.cs.kieler.klighd.IDiagramExporter;
 import de.cau.cs.kieler.klighd.piccolo.export.KlighdAbstractSVGGraphics;
 import de.cau.cs.kieler.klighd.piccolo.export.KlighdCanvasExporter;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdCanvas;
+import de.cau.cs.kieler.klighd.piccolo.internal.util.KlighdPaintContext;
 import de.erichseifert.vectorgraphics2d.PDFGraphics2D;
 import de.erichseifert.vectorgraphics2d.VectorGraphics2D.FontRendering;
 import edu.umd.cs.piccolo.PCamera;
@@ -106,21 +108,15 @@ public class VectorGraphicsPDFGraphics extends KlighdAbstractSVGGraphics impleme
     /**
      * {@inheritDoc}
      */
-    public void export(final OutputStream stream, final Control control,
-            final boolean cameraViewport, final int scale, final boolean textAsShapes,
-            final boolean embedFonts, final String subFormatId) {
-        this.delegate.export(stream, control, cameraViewport, scale, textAsShapes, embedFonts,
-                subFormatId);
+    public IStatus export(final ExportData info, final Control control) {
+        return this.delegate.export(info, control);
     }
 
     private KlighdCanvasExporter delegate = new KlighdCanvasExporter() {
-        
+
         @Override
-        public void export(final OutputStream stream, final KlighdCanvas canvas,
-                final boolean cameraViewport, final int scale, final boolean textAsShapes,
-                final boolean embedFonts, final String subFormatId) {
-            VectorGraphicsPDFGraphics.this.export(stream, canvas, cameraViewport, scale,
-                    textAsShapes, embedFonts, subFormatId);
+        public IStatus export(final ExportData data, final KlighdCanvas canvas) {
+            return VectorGraphicsPDFGraphics.this.export(data, canvas);
         }
     };
 
@@ -166,7 +162,7 @@ public class VectorGraphicsPDFGraphics extends KlighdAbstractSVGGraphics impleme
             graphics.setClip(bounds);
         }
 
-        final PPaintContext paintContext = new PPaintContext(this);
+        final KlighdPaintContext paintContext = KlighdPaintContext.createExportDiagramPaintContext(this);
         paintContext.setRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
 
         // perform the painting

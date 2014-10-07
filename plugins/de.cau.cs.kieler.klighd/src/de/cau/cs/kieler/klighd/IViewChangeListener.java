@@ -25,6 +25,9 @@ import de.cau.cs.kieler.core.kgraph.KNode;
  * current clip, ...
  * 
  * @author chsch
+ * 
+ * @kieler.design proposed by chsch
+ * @kieler.rating proposed yellow by chsch
  */
 public interface IViewChangeListener {
 
@@ -44,7 +47,7 @@ public interface IViewChangeListener {
      */
     public static class ViewChange {
         
-        private final IViewer<?> activeViewer;
+        private final IViewer activeViewer;
         private final ViewChangeType changeType;
         private final KGraphElement affectedElement;
         private final double diagramScale;
@@ -63,21 +66,21 @@ public interface IViewChangeListener {
          * @param diagramScale
          *            the zoom factor of the currently visible diagram area
          */
-        public ViewChange(final IViewer<?> viewer, final ViewChangeType type,
+        public ViewChange(final IViewer viewer, final ViewChangeType type,
                 final KGraphElement element, final Rectangle2D viewPort, final double diagramScale) {
             this.activeViewer = viewer;
             this.changeType = type;
             this.affectedElement = element;
             this.diagramScale = diagramScale;
         }
-        
+
         /**
-         * Provides the view change type.
+         * Provides the {@link IViewer} the change occurred in.
          * 
-         * @return a element of {@link ViewChangeType} denoting view change type.  
+         * @return the {@link IViewer} the change occurred in.
          */
-        public ViewChangeType getType() {
-            return this.changeType;
+        public IViewer getViewer() {
+            return this.activeViewer;
         }
 
         /**
@@ -91,6 +94,15 @@ public interface IViewChangeListener {
             } else {
                 return null;
             }
+        }
+        
+        /**
+         * Provides the view change type.
+         * 
+         * @return a element of {@link ViewChangeType} denoting view change type.  
+         */
+        public ViewChangeType getType() {
+            return this.changeType;
         }
 
         /**

@@ -63,7 +63,8 @@ public abstract class LayoutMetaDataService {
                     // plugin is activated and the instance factory is set.
                     Class.forName("de.cau.cs.kieler.kiml.service.ExtensionLayoutMetaDataService");
                 } catch (ClassNotFoundException exception) {
-                    throw new IllegalStateException("The layout data service is not initialized yet."
+                    throw new IllegalStateException(
+                            "The layout meta data service is not initialized yet."
                             + " Load the plugin 'de.cau.cs.kieler.kiml.service' in order to initialize"
                             + " this service with Eclipse extensions.");
                 }
@@ -80,6 +81,9 @@ public abstract class LayoutMetaDataService {
      * @param factory an instance factory
      */
     public static void setInstanceFactory(final IFactory<? extends LayoutMetaDataService> factory) {
+        if (factory == null) {
+            throw new NullPointerException("The given instance factory is null");
+        }
         instanceFactory = factory;
         instance = null;
     }

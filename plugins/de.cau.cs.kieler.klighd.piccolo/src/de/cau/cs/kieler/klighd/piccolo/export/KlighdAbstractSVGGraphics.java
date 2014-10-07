@@ -63,6 +63,7 @@ import de.cau.cs.kieler.klighd.KlighdConstants;
 import de.cau.cs.kieler.klighd.krendering.KTextUtil;
 import de.cau.cs.kieler.klighd.piccolo.internal.KlighdSWTGraphicsEx;
 import de.cau.cs.kieler.klighd.piccolo.internal.util.RGBGradient;
+import de.cau.cs.kieler.klighd.util.KlighdSemanticDiagramData;
 
 /**
  * Common superclass for SVG generators using a {@link Graphics2D} to produce svg images.
@@ -96,6 +97,11 @@ public abstract class KlighdAbstractSVGGraphics extends Graphics2D implements Kl
 
     private final Map<ImageData, BufferedImage> imageBuffer = Maps.newHashMap();
     private final Rectangle2D imageBoundsRect = new Rectangle2D.Double();
+    
+    /**
+     * true if multiline strings can be handled by exporter.
+     */
+    private boolean canHandleMultiline = false;
 
     /**
      * @param graphicsDelegate
@@ -424,19 +430,23 @@ public abstract class KlighdAbstractSVGGraphics extends Graphics2D implements Kl
         // individually.
         // SVG 1.2 supports a textArea with automatic wrapping, however this is not supported by all
         // browsers.
-        int y = 0;
-        final int fontHeight =
-                graphics.getFontMetrics().getHeight() - graphics.getFontMetrics().getDescent();
-
-        // translate by the font height as the reference point for drawing text in svg seems to be
-        // at the bottom left corner, SWT has it as the top left corner.
-        translate(0, fontHeight);
-
-        for (final String line : string.split("\\r?\\n|\\r")) {
-            graphics.drawString(line, 0, y);
-            y += fontHeight;
+        if (!canHandleMultiline) {
+            int y = 0;
+            final int fontHeight =
+                    graphics.getFontMetrics().getHeight() - graphics.getFontMetrics().getDescent();
+    
+            // translate by the font height as the reference point for drawing text in svg seems to be
+            // at the bottom left corner, SWT has it as the top left corner.
+            translate(0, fontHeight);
+    
+            for (final String line : string.split("\\r?\\n|\\r")) {
+                graphics.drawString(line, 0, y);
+                y += fontHeight;
+            }
+            translate(0, -fontHeight);
+        } else {
+            graphics.drawString(string, 0, 0);
         }
-        translate(0, -fontHeight);
     }
 
     /*------------------------------------------------ 
@@ -844,5 +854,31 @@ public abstract class KlighdAbstractSVGGraphics extends Graphics2D implements Kl
     @Override
     public void dispose() {
         throw new UnsupportedOperationException();
+    }
+    
+    // CHECKSTYLEOFF Javadoc
+    public void addSemanticData(KlighdSemanticDiagramData semanticData) {
+    }
+
+    public void startGroup(KlighdSemanticDiagramData semanticData) {
+    }
+
+    public void endGroup() {
+    }
+    
+    /**
+     * Set if this exporter can handle multiline strings themself or needs fallback
+     * @param canHandleMultiline true if multiline strings can be coped with.
+     */
+    public void setCanHandleMultiline(boolean canHandleMultiline) {
+        this.canHandleMultiline = canHandleMultiline;
+    }
+    
+    /**
+     * 
+     * @return true if multiline strings can be coped with.
+     */
+    public boolean canHandleMultiline() {
+        return this.canHandleMultiline;
     }
 }

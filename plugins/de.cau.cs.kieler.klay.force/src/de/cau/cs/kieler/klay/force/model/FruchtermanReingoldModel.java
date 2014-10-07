@@ -28,7 +28,7 @@ import de.cau.cs.kieler.klay.force.properties.Properties;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class FruchtermanReingoldModel extends AbstractForceModel {
+public final class FruchtermanReingoldModel extends AbstractForceModel {
 
     /** factor that determines the C constant used for calculation of K. */
     private static final double SPACING_FACTOR = 0.01;

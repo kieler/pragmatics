@@ -30,21 +30,24 @@ import de.cau.cs.kieler.core.kgraph.KNode;
  * <br>
  * 
  * @author chsch
+ * 
+ * @kieler.design proposed by chsch
+ * @kieler.rating proposed yellow by chsch 
  */
 public class DuplicatingDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
 
-    private Copier currentCopier = null;
-    
     /**
      * {@inheritDoc}
      */
+    @Override
     public KNode transform(final KNode model) {
-        // 3 lines are copied from EcoreUtil.copy()
-        this.currentCopier = new Copier();
-        final EObject result = this.currentCopier.copy(model);
-        this.currentCopier.copyReferences();
 
-        for (Map.Entry<EObject, EObject> entry : currentCopier.entrySet()) {
+        // 3 lines are taken from EcoreUtil.copy()
+        final Copier currentCopier = new Copier();
+        final EObject result = currentCopier.copy(model);
+        currentCopier.copyReferences();
+
+        for (final Map.Entry<EObject, EObject> entry : currentCopier.entrySet()) {
             getUsedContext().associateSourceTargetPair(entry.getKey(), entry.getValue());
         }
 
@@ -54,6 +57,7 @@ public class DuplicatingDiagramSynthesis extends AbstractDiagramSynthesis<KNode>
     /**
      * {@inheritDoc}
      */
+    @Override
     public Class<?> getSourceClass() {
         return KNode.class;
     }

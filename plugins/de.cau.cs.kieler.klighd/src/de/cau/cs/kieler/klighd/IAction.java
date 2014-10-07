@@ -35,6 +35,9 @@ import de.cau.cs.kieler.klighd.viewers.ContextViewer;
  * created only.
  * 
  * @author chsch
+ * 
+ * @kieler.design proposed by chsch
+ * @kieler.rating proposed yellow by chsch
  */
 public interface IAction {
     
@@ -58,7 +61,7 @@ public interface IAction {
      */
     public static class ActionContext {
         
-        private IViewer<?> viewer = null;
+        private IViewer viewer = null;
         private Trigger trigger = null;
         private KGraphElement kgraphElement = null;
         private KRendering rendering = null;
@@ -75,7 +78,7 @@ public interface IAction {
          * @param r
          *            the rendering the action is invoked on
          */
-        public ActionContext(final IViewer<?> v, final Trigger t, final KGraphElement kge,
+        public ActionContext(final IViewer v, final Trigger t, final KGraphElement kge,
                 final KRendering r) {
             this.viewer = v;
             this.trigger = t;
@@ -86,7 +89,7 @@ public interface IAction {
         /**
          * @return the current actual diagram viewer, usually the PiccoloViewer
          */
-        public IViewer<?> getActiveViewer() {
+        public IViewer getActiveViewer() {
             return viewer;
         }
         
@@ -170,6 +173,7 @@ public interface IAction {
         private Boolean zoomToActualSize = null;
         private Boolean zoomToFit = null;
         private Boolean zoomToFocus = null;
+        private KNode focus = null;
         
         private ActionResult(final boolean theActionPerformed) {
             this.actionPerformed = theActionPerformed;
@@ -272,6 +276,21 @@ public interface IAction {
         }
         
         /**
+         * Schedule zoomToFocus during the subsequent automatic layout run.
+         * 
+         * @param focusNode
+         *            the {@link KNode} to focus
+         * @return <code>this</code> {@link ActionResult}
+         */
+        public ActionResult doZoomToFocus(final KNode focusNode) {
+            this.zoomToActualSize = null;
+            this.zoomToFit = null;
+            this.zoomToFocus = true;
+            this.focus = focusNode;
+            return this;
+        }
+        
+        /**
          * Suppress zoomToFocus during the subsequent automatic layout run. 
          * 
          * @return <code>this</code> {@link ActionResult}
@@ -352,6 +371,15 @@ public interface IAction {
          */
         public Boolean getZoomToFocus() {
             return this.zoomToFocus;
+        }
+
+        /**
+         * Getter.
+         * 
+         * @return the {@link KNode} to focus on
+         */
+        public KNode getFocusNode() {
+            return focus;
         }
     }
 }

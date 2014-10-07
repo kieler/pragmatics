@@ -15,7 +15,6 @@ package de.cau.cs.kieler.klighd;
 
 import java.awt.Font;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.LineAttributes;
@@ -31,6 +30,9 @@ import de.cau.cs.kieler.klighd.microlayout.Bounds;
  * This class contains definitions of initial & default values.
  * 
  * @author chsch
+ * 
+ * @kieler.design proposed by chsch
+ * @kieler.rating proposed yellow by chsch
  */
 public final class KlighdConstants {
 
@@ -103,17 +105,13 @@ public final class KlighdConstants {
      * 
      * Note: This is a AWT constant!
      */
-    public static final String DEFAULT_FONT_NAME =
-            Platform.getOS().equals(Platform.OS_WIN32) ? "Arial" : Font.SANS_SERIF;
+    public static final String DEFAULT_FONT_NAME = KlighdPlugin.IS_WINDOWS ? "Arial" : Font.SANS_SERIF;
 
     /**
      * A platform independent font name identifier for a default monospaced font.
-     * 
-     * Note: This is a AWT constant!
      */
-    public static final String DEFAULT_MONOSPACE_FONT_NAME =
-            Platform.getOS().equals(Platform.OS_WIN32) ? "Consolas"
-                    : Platform.getOS().equals(Platform.OS_MACOSX) ? "Monaco" : "Monospace";
+    public static final String DEFAULT_MONOSPACE_FONT_NAME = KlighdPlugin.IS_WINDOWS ? "Consolas"
+            : KlighdPlugin.IS_MACOSX ? "Monaco" : "Monospace";
 
     /**
      * This font size is used for {@link de.cau.cs.kieler.core.krendering.KText KTexts}, if no
@@ -176,6 +174,24 @@ public final class KlighdConstants {
      */
     // SUPPRESS CHECKSTYLE NEXT MagicNumber
     public static final int SIDE_BAR_LAYOUT_CONFIG_PRIORITY = VolatileLayoutConfig.DEFAULT_PRIORITY - 25;
+
+    /**
+     * Special type of semantic data that represents an 'id'. A specified value should be mapped to
+     * rendering specific id elements, i.e. for SVGs a {@code <tag id="xyz" />} attribute should be
+     * generated.
+     * 
+     * @see de.cau.cs.kieler.klighd.util.KlighdProperties#SEMANTIC_DATA KlighdProperties#SEMANTIC_DATA
+     */
+    public static final String SEMANTIC_DATA_ID = "__id";
+    
+    /**
+     * Special type of semantic data that represents a 'class'. A specified value should be mapped
+     * to rendering specific class elements, i.e. for SVGs a {@code <tag class="xyz" />} attribute
+     * should be generated.
+     * 
+     * @see de.cau.cs.kieler.klighd.util.KlighdProperties#SEMANTIC_DATA KlighdProperties#SEMANTIC_DATA
+     */
+    public static final String SEMANTIC_DATA_CLASS = "__class";
 
     /**
      * Hidden default constructor.

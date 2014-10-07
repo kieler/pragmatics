@@ -16,6 +16,9 @@ package de.cau.cs.kieler.kiml.grana.ui.batch;
 import java.io.IOException;
 import java.util.Collections;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.emf.common.util.URI;
@@ -43,10 +46,11 @@ import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.config.LayoutContext;
+import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
-import de.cau.cs.kieler.kiml.service.LayoutManagersService;
 import de.cau.cs.kieler.kiml.service.IDiagramLayoutManager;
+import de.cau.cs.kieler.kiml.service.LayoutManagersService;
 import de.cau.cs.kieler.kiml.service.LayoutMapping;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
@@ -73,23 +77,45 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
     public KNode getKGraph(final IPath parameter, final IKielerProgressMonitor monitor) {
         monitor.begin("Retrieving KGraph from " + parameter.toString(), 2);
         
-        // load the notation diagram element
-        URI uri = URI.createPlatformResourceURI(parameter.toString(), true);
-        ResourceSet resourceSet = new ResourceSetImpl();
-        final Resource resource = resourceSet.createResource(uri);
+        // try to load the file as a kgraph 
+        // possibly converting a different format such as graphml
+        KNode graph = null;
         try {
-            resource.load(Collections.emptyMap());
-        } catch (IOException e) {
-            throw new WrappedException(e);
+            IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(parameter);
+            KNode[] nodes = GraphFormatsService.getInstance().loadKGraph(file);
+            // if a file contains multiple graphs, we consider only the first graph
+            if (nodes.length > 0) {
+                graph = nodes[0];
+            }
+        } catch (IOException ie) {
+            // silent, try other options to load the kgraph
+        } catch (CoreException ce) {
+            // silent
         }
-        if (resource.getContents().isEmpty()) {
-            throw new IllegalArgumentException("The selected file is empty.");
-        }
-        monitor.worked(1);
 
-        EObject content = resource.getContents().get(0);
-        if (content instanceof KNode) {
-            KNode graph = (KNode) content;
+        EObject content = null;
+        ResourceSet resourceSet = new ResourceSetImpl();
+        if (graph == null) {
+            // load the notation diagram element
+            URI uri = URI.createPlatformResourceURI(parameter.toString(), true);
+
+            final Resource resource = resourceSet.createResource(uri);
+            try {
+                resource.load(Collections.emptyMap());
+            } catch (IOException e) {
+                throw new WrappedException(e);
+            }
+            if (resource.getContents().isEmpty()) {
+                throw new IllegalArgumentException("The selected file is empty.");
+            }
+            monitor.worked(1);
+            content = resource.getContents().get(0);
+        }
+
+        if (graph != null || content instanceof KNode) {
+            if (graph == null) {
+                graph = (KNode) content;
+            }
             // assure that properties, stored in the model file, are loaded properly 
             KimlUtil.loadDataElements(graph);
             
@@ -107,7 +133,7 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
             monitor.done();
             return graph;
         } else if (content instanceof Diagram) {
-            KNode graph = retrieveGmfGraph((Diagram) content, resourceSet, monitor.subTask(1));
+            graph = retrieveGmfGraph((Diagram) content, resourceSet, monitor.subTask(1));
             monitor.done();
             return graph;
         } else {

@@ -21,7 +21,7 @@ import com.google.common.collect.Maps;
  * An color library containing a huge collection named colors.<br>
  * The list of literals have been extracted from http://www.farb-tabelle.de/de/farbtabelle.htm.  
  * 
- * @author asr
+ * @author als
  * @author chsch
  */
 public enum Colors {
@@ -1742,6 +1742,14 @@ public enum Colors {
         return blueComponent;
     }
 
+    /**
+     * @return a {@link String} representation containing the colors name and the RGB component
+     *         values
+     */
+    public String toStringWithComponents() {
+        return super.toString() + "(" + redComponent + "," + greenComponent + "," + blueComponent + ")";
+    }
+
     private static HashMap<String, Colors> fastColorLookup = Maps.newHashMap();    
 
     /**
@@ -1753,11 +1761,12 @@ public enum Colors {
      * @return the desired color with name <code>name</code> if anyone exists
      */
     public static Colors getColorByName(final String name) {
-        Colors result = fastColorLookup.get(name);
+        final String lowerCaseName = name.toLowerCase();
+        Colors result = fastColorLookup.get(lowerCaseName);
         if (result == null) {
-            for (Colors color : values()) {
-                if (color.getName().toLowerCase().equals(name)) {
-                    fastColorLookup.put(name, color);
+            for (final Colors color : values()) {
+                if (color.getName().toLowerCase().equals(lowerCaseName)) {
+                    fastColorLookup.put(lowerCaseName, color);
                     result = color;
                 }
             }

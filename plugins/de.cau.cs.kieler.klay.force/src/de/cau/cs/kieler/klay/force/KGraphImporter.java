@@ -49,13 +49,13 @@ public class KGraphImporter implements IGraphImporter<KNode> {
      */
     public FGraph importGraph(final KNode kgraph) {
         FGraph fgraph = new FGraph();
-        fgraph.setProperty(Properties.ORIGIN, kgraph);
         
         // copy the properties of the KGraph to the force graph
         KShapeLayout sourceShapeLayout = kgraph.getData(KShapeLayout.class);
         fgraph.copyProperties(sourceShapeLayout);
         fgraph.checkProperties(Properties.SPACING, Properties.ASPECT_RATIO, Properties.TEMPERATURE,
                 Properties.ITERATIONS, Properties.REPULSION);
+        fgraph.setProperty(Properties.ORIGIN, kgraph);
                 
         // keep a list of created nodes in the force graph
         Map<KNode, FNode> elemMap = new HashMap<KNode, FNode>();
@@ -87,12 +87,15 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                 label = knode.getLabels().get(0).getText();
             }
             FNode newNode = new FNode(label);
-            newNode.id = index++;
+            newNode.copyProperties(nodeLayout);
             newNode.setProperty(Properties.ORIGIN, knode);
+            
+            newNode.id = index++;
             newNode.getPosition().x = nodeLayout.getXpos() + nodeLayout.getWidth() / 2;
             newNode.getPosition().y = nodeLayout.getYpos() + nodeLayout.getHeight() / 2;
             newNode.getSize().x = Math.max(nodeLayout.getWidth(), 1);
             newNode.getSize().y = Math.max(nodeLayout.getHeight(), 1);
+            
             fgraph.getNodes().add(newNode);
             
             elemMap.put(knode, newNode);
@@ -104,9 +107,6 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             }
             
             // TODO consider ports
-            
-            // set properties of the new node
-            newNode.copyProperties(nodeLayout);
         }
     }
     
@@ -128,25 +128,28 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                     
                     // create a force edge
                     FEdge newEdge = new FEdge();
+                    newEdge.copyProperties(edgeLayout);
+                    newEdge.checkProperties(Properties.LABEL_SPACING, Properties.EDGE_REP);
                     newEdge.setProperty(Properties.ORIGIN, kedge);
+                    
                     newEdge.setSource(elemMap.get(knode));
                     newEdge.setTarget(elemMap.get(kedge.getTarget()));
+                    
                     fgraph.getEdges().add(newEdge);
                     
                     // transform the edge's labels
                     for (KLabel klabel : kedge.getLabels()) {
                         KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
+                        
                         FLabel newLabel = new FLabel(newEdge, klabel.getText());
+                        newLabel.setProperty(Properties.ORIGIN, klabel);
+                        
                         newLabel.getSize().x = Math.max(labelLayout.getWidth(), 1);
                         newLabel.getSize().y = Math.max(labelLayout.getHeight(), 1);
-                        newLabel.setProperty(Properties.ORIGIN, klabel);
                         newLabel.refreshPosition();
+                        
                         fgraph.getLabels().add(newLabel);
                     }
-                    
-                    // set properties of the new edge
-                    newEdge.copyProperties(edgeLayout);
-                    newEdge.checkProperties(Properties.LABEL_SPACING, Properties.EDGE_REP);
                 }
             }
         }
@@ -154,8 +157,6 @@ public class KGraphImporter implements IGraphImporter<KNode> {
     
     ///////////////////////////////////////////////////////////////////////////////
     // Apply Layout Results
-    
-
 
     /**
      * {@inheritDoc}

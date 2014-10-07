@@ -74,7 +74,6 @@ import de.cau.cs.kieler.klighd.piccolo.internal.util.PiccoloPlacementUtil.Decora
 import de.cau.cs.kieler.klighd.piccolo.internal.util.Styles;
 import de.cau.cs.kieler.klighd.util.CrossDocumentContentAdapter;
 import de.cau.cs.kieler.klighd.util.KlighdPredicates;
-import de.cau.cs.kieler.klighd.util.KlighdProperties;
 import de.cau.cs.kieler.klighd.util.ModelingUtil;
 import de.cau.cs.kieler.klighd.util.RenderingContextData;
 import edu.umd.cs.piccolo.PNode;
@@ -186,44 +185,45 @@ public abstract class AbstractKGERenderingController
     }
 
     /**
-     * Determines and returns the rendering currently managed by this controller.<br>
+     * Determines and returns the {@link KRendering} currently managed by <code>this</code>
+     * controller.<br>
      * As a side effect this method puts the returned rendering into the 'currentRendering' field.
      * 
-     * @return the rendering
+     * @return the (potentially) updated {@link KRendering} managed by <code>this</code> controller
      */
     public KRendering getCurrentRendering() {
         if (this.element instanceof KNode) {
-            Iterable<KRendering> renderings = Iterables.filter(element.getData(), KRendering.class);
-            
-//            // in case the node to be depicted has no children (yet - might be added lazily)
-//            // look for a rendering marked as 'collapsed' one,
-//            //  and if none exists simply take the first one
-//            if (((KNode) element).getChildren().isEmpty()) {   
-//                currentRendering = Iterables.getFirst(
-//                        Iterables.filter(renderings, IS_COLLAPSED_RENDERING),
-//                        Iterables.getFirst(renderings, null));
-//            } else
-                
-            // in case the node to be depicted has children and is populated,
-            //  i.e. children are depicted in the diagram
-            // look for a rendering marked as 'expanded' one,
-            //  and if none exists take the first one that is not marked as 'collapsed' one
+            final Iterable<KRendering> renderings =
+                    Iterables.filter(element.getData(), KRendering.class);
+
+            // in case the node to be depicted is tagged as 'populated',
+            //  i.e. children are depicted in the diagram ...
             if (RenderingContextData.get(this.element).getProperty(
                     KlighdInternalProperties.POPULATED)) {
+                // ... look for a rendering tagged as 'expanded', ...
                 currentRendering = Iterables.getFirst(
-                        Iterables.filter(renderings, IS_EXPANDED_RENDERING),
-                        Iterables.getFirst(Iterables.filter(renderings,
-                                Predicates.not(IS_COLLAPSED_RENDERING)), null));
+                        Iterables.filter(renderings, KlighdPredicates.isExpandedRendering()), null);
 
-            // in case the node to be depicted has children and is not populated,
-            //  i.e. no children are visible in the diagram
-            // look for a rendering marked as 'collapsed' one,
-            //  and if none exists take the first one that is not marked as 'expanded' one
+                // ... and if none exists ...
+                if (currentRendering == null) {
+                    // ... take the first one that is not marked as 'collapsed' one
+                    currentRendering = Iterables.getFirst(Iterables.filter(renderings,
+                            Predicates.not(KlighdPredicates.isCollapsedRendering())), null);
+                }
+
             } else {
+                // in case the node to be depicted is tagged as 'not populated',
+                //  i.e. no children are visible in the diagram
+                // look for a rendering marked as 'collapsed' one, ...
                 currentRendering = Iterables.getFirst(
-                        Iterables.filter(renderings, IS_COLLAPSED_RENDERING),
-                        Iterables.getFirst(Iterables.filter(renderings,
-                                Predicates.not(IS_EXPANDED_RENDERING)), null));
+                        Iterables.filter(renderings, KlighdPredicates.isCollapsedRendering()), null);
+
+                // ... and if none exists ...
+                if (currentRendering == null) {
+                    // ... take the first one that is not marked as 'expanded' one
+                    currentRendering = Iterables.getFirst(Iterables.filter(renderings,
+                            Predicates.not(KlighdPredicates.isExpandedRendering())), null);
+                }
             }
 
         } else {
@@ -235,6 +235,16 @@ public abstract class AbstractKGERenderingController
         }
         
         return currentRendering;
+    }
+
+    /**
+     * Returns the {@link KRendering} currently managed by <code>this</code> controller without any
+     * side effect.
+     * 
+     * @return the {@link KRendering} currently managed by <code>this</code> controller
+     */
+    public KRendering getCurrentRenderingReference() {
+        return this.currentRendering;
     }
 
     /**
@@ -266,7 +276,7 @@ public abstract class AbstractKGERenderingController
     
     
     /**
-     * Convenience etter.
+     * Convenience getter.
      * 
      * @param kText
      *            the {@link KText} element to check for selection.
@@ -294,28 +304,6 @@ public abstract class AbstractKGERenderingController
     // ---------------------------------------------------------------------------------- //
     //  internal part
     
-    /**
-     * A predicate used to identify the KRendering of a KNode in case the node is collapsed.
-     * This predicate is also used by the {@link DiagramController} and thus marked
-     * 'package protected' (no modifier).
-     */
-    static final Predicate<KRendering> IS_COLLAPSED_RENDERING = new Predicate<KRendering>() {
-        public boolean apply(final KRendering rendering) {
-            return rendering.getProperty(KlighdProperties.COLLAPSED_RENDERING);
-        }
-    };
-    
-    /**
-     * A predicate used to identify the KRendering of a KNode in case the node is expanded.
-     * This predicate is also used by the {@link DiagramController} and thus marked
-     * 'package protected' (no modifier).
-     */
-    static final Predicate<KRendering> IS_EXPANDED_RENDERING = new Predicate<KRendering>() {
-        public boolean apply(final KRendering rendering) {
-            return rendering.getProperty(KlighdProperties.EXPANDED_RENDERING);
-        }
-    };
-
     /**
      * Updates the rendering by removing the current rendering and evaluating the rendering data
      * attached to the graph element.
@@ -390,6 +378,7 @@ public abstract class AbstractKGERenderingController
      * @author chsch
      */
     private class ElementAdapter extends AdapterImpl {
+        @Override
         public void notifyChanged(final Notification msg) {
             if (msg.getFeatureID(KGraphElement.class) == KGraphPackage.KGRAPH_ELEMENT__DATA) {
                 switch (msg.getEventType()) {
@@ -427,12 +416,14 @@ public abstract class AbstractKGERenderingController
         // register adapter on the rendering to stay in sync
         renderingDeepAdapter = new CrossDocumentContentAdapter() {
 
+            @Override
             protected boolean shouldAdapt(final EStructuralFeature feature) {
                 // follow the rendering feature of the KRenderingRef
                 return feature.getFeatureID() == KRenderingPackage.KRENDERING_REF__RENDERING
                         || feature.getFeatureID() == KRenderingPackage.KSTYLE_REF__STYLE_HOLDER;
             }
 
+            @Override
             public void notifyChanged(final Notification msg) {
                 super.notifyChanged(msg);
 
@@ -454,7 +445,7 @@ public abstract class AbstractKGERenderingController
                         entry = null;
                     }
                     if (entry != null && entry.getKey() == KlighdInternalProperties.SELECTED) {
-                        updateStylesInUi();
+                        updateStylesInUi((Boolean) entry.getValue());
                     }
                     return;
                 }
@@ -462,9 +453,9 @@ public abstract class AbstractKGERenderingController
                 Iterable<KRendering> allRemovedRenderings = Collections.emptyList();
                 switch (msg.getEventType()) {
                 case Notification.REMOVE_MANY:
-                    Iterable<?> removed = (Iterable<?>) msg.getOldValue();
+                    final Iterable<?> removed = (Iterable<?>) msg.getOldValue();
                     if (Iterables.any(removed, Predicates.instanceOf(KStyle.class))) {
-                        updateStylesInUi();
+                        updateStylesInUi(false);
                         return;
                     }
                     
@@ -481,7 +472,7 @@ public abstract class AbstractKGERenderingController
                     
                 case Notification.REMOVE:
                     if (msg.getOldValue() instanceof KStyle) {
-                        updateStylesInUi();
+                        updateStylesInUi(false);
                         return;
                     }
                     
@@ -489,7 +480,7 @@ public abstract class AbstractKGERenderingController
                         allRemovedRenderings = ModelingUtil
                                 .selfAndEAllContentsOfSameType((KRendering) msg.getOldValue());
                     }
-                    for (KRendering r : allRemovedRenderings) {
+                    for (final KRendering r : allRemovedRenderings) {
                         removePNodeController(r);
                     }
                     // there is no break here by intention !
@@ -505,7 +496,7 @@ public abstract class AbstractKGERenderingController
 
                     // handle style changes
                     if (msg.getNotifier() instanceof KStyle || msg.getNotifier() instanceof KColor) {
-                        updateStylesInUi();
+                        updateStylesInUi(true);
                         return;
                     }
 
@@ -516,7 +507,7 @@ public abstract class AbstractKGERenderingController
                     if (msg.getNotifier() instanceof KRendering
                             && msg.getFeatureID(KRendering.class)
                                == KRenderingPackage.KRENDERING__STYLES) {
-                        updateStylesInUi();
+                        updateStylesInUi(true);
                         return;
                     }
 
@@ -595,12 +586,28 @@ public abstract class AbstractKGERenderingController
     };
 
     /**
+     * A re-usable {@link Runnable} to be executed in UI context wrapping {@link #updateStyles()}.
+     */
+    private Runnable updateStylesRunnableToFront = new Runnable() {
+        public void run() {
+            updateStyles();
+            bringToFront();
+        }
+    };
+
+    /**
      * A short convenience method for invoking {@link #updateStyles()} in UI context.
      */
-    private void updateStylesInUi() {
-        runInUI(this.updateStylesRunnable);
+    private void updateStylesInUi(final boolean moveToFront) {
+        runInUI(moveToFront ? this.updateStylesRunnableToFront : this.updateStylesRunnable);
     }
 
+    /**
+     * Empty method hook to be overridden by {@link KEdgeRenderingController} in order to bring
+     * highlighted edges to front. Method is not supposed to be overridden by other sub classes.
+     */
+    protected void bringToFront() {        
+    }
 
     /* ----------------------------------------------------------------------------------- 
      * The style evaluation methods: 
@@ -634,10 +641,10 @@ public abstract class AbstractKGERenderingController
         // in case styles of a detached KRendering are modified, e.g. if selection highlighting
         //  is removed from renderings that are not part of the diagram in the meantime
         //  'null' values may occur here 
-        for (PNodeController<?> nodeController : getPNodeController(currentRendering)) {
+        for (final PNodeController<?> nodeController : getPNodeController(currentRendering)) {
             final PNode node = nodeController.getNode();
             if (node != null) {
-                node.invalidatePaint();
+                node.repaint();
             }
         }
     }
@@ -657,10 +664,10 @@ public abstract class AbstractKGERenderingController
 
         if (rendering instanceof KRenderingRef) {
             // update referenced rendering
-            KRenderingRef renderingRef = (KRenderingRef) rendering;
+            final KRenderingRef renderingRef = (KRenderingRef) rendering;
 
             // get the referenced rendering
-            KRendering referencedRendering = renderingRef.getRendering();
+            final KRendering referencedRendering = renderingRef.getRendering();
 
             // proceed recursively with the referenced rendering
             updateStyles(referencedRendering, isSelected,
@@ -675,7 +682,7 @@ public abstract class AbstractKGERenderingController
         final Styles styles = prepareStylesRecord(rendering, propagatedStyles, isSelected);
         
         // apply the styles to the rendering
-        for (PNodeController<?> controller : controllers) {
+        for (final PNodeController<?> controller : controllers) {
             controller.applyChanges(styles);
         }
         
@@ -690,7 +697,7 @@ public abstract class AbstractKGERenderingController
                          rendering.getStyles(), propagatedStyles);
 
                 // propagate to all children
-                for (KRendering child : container.getChildren()) {
+                for (final KRendering child : container.getChildren()) {
                     updateStyles(child, isSelected, childPropagatedStyles);
                 }
             }
@@ -698,7 +705,7 @@ public abstract class AbstractKGERenderingController
             if (rendering instanceof KPolyline) {
                 final KPolyline polyline = (KPolyline) rendering;
                 
-                KRendering jpr = polyline.getJunctionPointRendering();
+                final KRendering jpr = polyline.getJunctionPointRendering();
                 if (jpr != null) {
 
                     if (childPropagatedStyles == null) {
@@ -741,9 +748,9 @@ public abstract class AbstractKGERenderingController
      */
     protected List<KStyle> determinePropagationStyles(final List<KStyle> renderingStyles,
             final List<KStyle> propagatedStyles) {
-        List<KStyle> propagationStyles = Lists.newLinkedList();
+        final List<KStyle> propagationStyles = Lists.newLinkedList();
 //        propagationStyles.addAll(propagatedStyles);
-        for (KStyle style : Iterables.concat(propagatedStyles, renderingStyles)) {
+        for (final KStyle style : Iterables.concat(propagatedStyles, renderingStyles)) {
             if (style.isPropagateToChildren()) {
                 propagationStyles.add(style);
             }
@@ -775,7 +782,7 @@ public abstract class AbstractKGERenderingController
         }
         
         boolean deliver;
-        for (KStyle s: localModifiedStyles) {
+        for (final KStyle s: localModifiedStyles) {
             deliver  = s.eDeliver();
             s.eSetDeliver(false);
             KlighdDataManager.getInstance().getStyleModifierById(s.getModifierId()).modify(
@@ -938,7 +945,7 @@ public abstract class AbstractKGERenderingController
 
                         // use the controllers to apply the new bounds
                         int i = 0;
-                        for (PNodeController<?> controller : controllers) {
+                        for (final PNodeController<?> controller : controllers) {
                             if (bounds[i] != null) {
                                 controller.setBounds(bounds[i++]);
                                 controller.getNode().setVisible(true);
@@ -977,7 +984,6 @@ public abstract class AbstractKGERenderingController
         // create the rendering and receive its controller
         final PNodeController<?> controller = createRendering(rendering, styles, decorator,
                 decoration.getBounds());
-        decorator.setRepresentationNode(controller.getNode());
 
         // apply the initial rotation
         decorator.setRotation(decoration.getRotation());
@@ -991,7 +997,7 @@ public abstract class AbstractKGERenderingController
 
                     public void propertyChange(final PropertyChangeEvent e) {
                         // calculate the new bounds and rotation for the rendering
-                        Decoration decoration = PiccoloPlacementUtil.evaluateDecoratorPlacement(
+                        final Decoration decoration = PiccoloPlacementUtil.evaluateDecoratorPlacement(
                                 PiccoloPlacementUtil.getDecoratorPlacementData(rendering), parent);
 
                         // apply the new offset
@@ -1095,17 +1101,6 @@ public abstract class AbstractKGERenderingController
                         + getGraphElement());
     }
 
-    /**
-     * Sets default values for the given Piccolo2D node used as representation for a rendering.
-     * 
-     * @param node
-     *            the Piccolo2D node
-     */
-    protected void initializeRenderingNode(final PNode node) {
-        node.setVisible(true);
-        node.setPickable(false);
-    }
-
     private static final Object PROPERTY_LISTENER_KEY = new Object();
 
     /**
@@ -1124,8 +1119,8 @@ public abstract class AbstractKGERenderingController
             final PropertyChangeListener listener) {
         parent.addPropertyChangeListener(property, listener);
         @SuppressWarnings("unchecked")
-        List<Pair<String, PropertyChangeListener>> listeners
-          = (List<Pair<String, PropertyChangeListener>>) node.getAttribute(PROPERTY_LISTENER_KEY);
+        List<Pair<String, PropertyChangeListener>> listeners =
+                (List<Pair<String, PropertyChangeListener>>) node.getAttribute(PROPERTY_LISTENER_KEY);
         if (listeners == null) {
             listeners = Lists.newLinkedList();
             node.addAttribute(PROPERTY_LISTENER_KEY, listeners);
@@ -1141,10 +1136,10 @@ public abstract class AbstractKGERenderingController
      */
     protected void removeListeners(final PNode node) {
         @SuppressWarnings("unchecked")
-        List<Pair<String, PropertyChangeListener>> listeners
-          = (List<Pair<String, PropertyChangeListener>>) node.getAttribute(PROPERTY_LISTENER_KEY);
+        final List<Pair<String, PropertyChangeListener>> listeners =
+                (List<Pair<String, PropertyChangeListener>>) node.getAttribute(PROPERTY_LISTENER_KEY);
         if (listeners != null && node.getParent() != null) {
-            for (Pair<String, PropertyChangeListener> pair : listeners) {
+            for (final Pair<String, PropertyChangeListener> pair : listeners) {
                 node.getParent().removePropertyChangeListener(pair.getFirst(), pair.getSecond());
             }
         }

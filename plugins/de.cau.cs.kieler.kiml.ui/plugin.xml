@@ -72,6 +72,7 @@ point="org.eclipse.ui.menus">
             <with
                   variable="activeEditor">
                <test
+                     forcePluginActivation="true"
                      property="de.cau.cs.kieler.kiml.ui.activeEditorIsSupported">
                </test>
             </with>
@@ -98,6 +99,7 @@ point="org.eclipse.ui.menus">
          <with
                variable="activePart">
             <test
+                  forcePluginActivation="true"
                   property="de.cau.cs.kieler.kiml.ui.activeEditorIsSupported">
             </test>
          </with>
@@ -114,6 +116,7 @@ point="org.eclipse.ui.menus">
          <with
                variable="activePart">
             <test
+                  forcePluginActivation="true"
                   property="de.cau.cs.kieler.kiml.ui.activeEditorIsSupported">
             </test>
          </with>

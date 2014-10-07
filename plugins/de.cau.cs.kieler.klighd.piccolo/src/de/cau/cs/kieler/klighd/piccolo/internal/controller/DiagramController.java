@@ -54,10 +54,12 @@ import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klighd.ZoomStyle;
+import de.cau.cs.kieler.klighd.internal.macrolayout.KlighdLayoutManager;
 import de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties;
 import de.cau.cs.kieler.klighd.piccolo.internal.activities.ApplyBendPointsActivity;
 import de.cau.cs.kieler.klighd.piccolo.internal.activities.ApplySmartBoundsActivity;
@@ -65,7 +67,7 @@ import de.cau.cs.kieler.klighd.piccolo.internal.activities.FadeEdgeInActivity;
 import de.cau.cs.kieler.klighd.piccolo.internal.activities.FadeNodeInActivity;
 import de.cau.cs.kieler.klighd.piccolo.internal.activities.IStartingAndFinishingActivity;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.IGraphElement;
-import de.cau.cs.kieler.klighd.piccolo.internal.nodes.ILabeledGraphElement;
+import de.cau.cs.kieler.klighd.piccolo.internal.nodes.IGraphElement.ILabeledGraphElement;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.INode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KChildAreaNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KEdgeNode;
@@ -129,13 +131,16 @@ public class DiagramController {
     private final DiagramZoomController zoomController;
     
     /** whether to sync the representation with the graph model. */
-    private boolean sync = false;
+    private final boolean sync;
+
+    /** whether edges are drawn before nodes, i.e. nodes have priority over edges. */
+    private final boolean edgesFirst;
 
     /** whether to record layout changes, will be set to true by the KlighdLayoutManager. */
     private boolean record = false;
-    
+
     /** the layout changes to graph elements while recording. */
-    private Map<PNode, Object> recordedChanges = Maps.newLinkedHashMap();
+    private final Map<IGraphElement<?>, Object> recordedChanges = Maps.newLinkedHashMap();
 
 
     /**
@@ -148,14 +153,20 @@ public class DiagramController {
      * @param sync
      *            true if the visualization should be synchronized with the graph; false otherwise<br>
      *            <b>Hint</b>: setting to false will prevent the application of automatic layout
+     * @param edgesFirst
+     *            determining whether edges are drawn before nodes, i.e. nodes have priority over
+     *            edges
      */
-    public DiagramController(final KNode graph, final KlighdMainCamera camera, final boolean sync) {
+    public DiagramController(final KNode graph, final KlighdMainCamera camera, final boolean sync,
+            final boolean edgesFirst) {
         DiagramControllerHelper.resetGraphElement(graph);
 
         this.sync = sync;
+        this.edgesFirst = edgesFirst;
+        
         this.canvasCamera = camera;
 
-        this.topNode = new KNodeTopNode(graph);
+        this.topNode = new KNodeTopNode(graph, edgesFirst);
         final RenderingContextData contextData = RenderingContextData.get(graph);
         contextData.setProperty(REP, topNode);
 
@@ -220,7 +231,7 @@ public class DiagramController {
      * Starts to record layout changes in the model instead of instantly applying them to the
      * visualization.<br>
      * <br>
-     * Executing {@link #stopRecording(ZoomStyle, int)} applies all recorded layout changes.
+     * Executing {@link #stopRecording(ZoomStyle, KNode, int)} applies all recorded layout changes.
      * 
      * @see de.cau.cs.kieler.klighd.internal.ILayoutRecorder#startRecording()
      *      ILayoutRecorder#startRecording()
@@ -232,17 +243,21 @@ public class DiagramController {
     /**
      * @param zoomStyle
      *            the style used to zoom, e.g. zoom to fit or zoom to focus
+     * @param focusNode
+     *            the {@link KNode} to focus in case <code>zoomStyle</code> is
+     *            {@link ZoomStyle#ZOOM_TO_FOCUS}, is ignored otherwise
      * @param animationTime
      *            duration of the animated layout
      * 
-     * @see de.cau.cs.kieler.klighd.internal.ILayoutRecorder#stopRecording(ZoomStyle, int)
-     *      ILayoutRecorder#stopRecording(ZoomStyle, int)
+     * @see de.cau.cs.kieler.klighd.internal.ILayoutRecorder#stopRecording(ZoomStyle, KNode, int)
+     *      ILayoutRecorder#stopRecording(ZoomStyle, KNode, int)
      */
-    public void stopRecording(final ZoomStyle zoomStyle, final int animationTime) {
+    public void stopRecording(final ZoomStyle zoomStyle, final KNode focusNode,
+            final int animationTime) {
         if (record) {
             record = false;
 
-            handleRecordedChanges(zoomStyle, animationTime);
+            handleRecordedChanges(zoomStyle, focusNode, animationTime);
         }
     }
 
@@ -339,11 +354,26 @@ public class DiagramController {
      */
     public boolean isVisible(final KGraphElement diagramElement, final boolean checkContainment) {
         final PNode p = (PNode) getRepresentation(diagramElement);
+
+        // first check whether 'diagramElement' is represented by any figure (PNode)
+        //  that is contained by any other figure (and thus hopefully contained in the figure tree)
         if (p == canvasCamera.getDisplayedLayer()) {
             return true;
         } else if (p == null || p.getParent() == null) {
             return false;
         }
+
+        // check whether the lower visibility scale bound is exceeded
+        final float viewScale = (float) canvasCamera.getViewTransformReference().getScaleX();
+        final float lowerBound = diagramElement.getData(KLayoutData.class)
+                .getProperty(KlighdProperties.VISIBILITY_SCALE_LOWER_BOUND).floatValue();
+
+        if (viewScale < lowerBound) {
+            return false;
+        }
+
+        // the upper visibility scale bound is not checked because I think it is unlikely that a
+        //  label or any other kgraph element is masked if the diagram scale exceeds a certain value
 
         if (checkContainment) {
             if (!NodeUtil.isDisplayed(p, canvasCamera)) {
@@ -451,11 +481,11 @@ public class DiagramController {
     /* internal part */
     /* --------------------------------------------- */
 
-    void recordChange(final PNode node, final Object change) {
+    void recordChange(final IGraphElement<?> node, final Object change) {
         recordedChanges.put(node, change);
     }
     
-    private Set<AbstractKGERenderingController<?, ?>> dirtyDiagramElements = Sets.newHashSet();
+    private final Set<AbstractKGERenderingController<?, ?>> dirtyDiagramElements = Sets.newHashSet();
 
     void scheduleRenderingUpdate(final AbstractKGERenderingController<?, ?> controller) {
         renderingUpdater.cancel();
@@ -502,10 +532,11 @@ public class DiagramController {
     /**
      * Applies the recorded layout changes by creating appropriate activities.
      */
-    private void handleRecordedChanges(final ZoomStyle zoomStyle, final int animationTime) {
+    private void handleRecordedChanges(final ZoomStyle zoomStyle, final KNode focusNode,
+            final int animationTime) {
 
         // create activities to apply all recorded changes
-        for (final Map.Entry<PNode, Object> recordedChange : recordedChanges.entrySet()) {
+        for (final Map.Entry<IGraphElement<?>, Object> recordedChange : recordedChanges.entrySet()) {
             // create the activity to apply the change
             PInterpolatingActivity activity;
             final PNode shapeNode;
@@ -514,7 +545,10 @@ public class DiagramController {
                 
                 final KEdgeNode edgeNode = (KEdgeNode) recordedChange.getKey();
                 shapeNode = edgeNode;
-                
+
+                // the following case is still to be implemented!
+                // if (recordedChange.getValue() == KlighdLayoutManager.LAYOUT_DATA_UNCHANGED_VALUE) {
+
                 @SuppressWarnings("unchecked")
                 final Pair<Point2D[], Point2D[]> value =
                         (Pair<Point2D[], Point2D[]>) recordedChange.getValue();
@@ -532,8 +566,15 @@ public class DiagramController {
                 }
             } else {
                 // shape layout changed
-                shapeNode = recordedChange.getKey();
-                final PBounds bounds = (PBounds) recordedChange.getValue();
+                shapeNode = (PNode) recordedChange.getKey();
+                final PBounds bounds;
+
+                // check whether an actual bounds change occurred, and if so get the new bounds
+                if (recordedChange.getValue() == KlighdLayoutManager.LAYOUT_DATA_UNCHANGED_VALUE) {
+                    bounds = null;
+                } else {
+                    bounds = (PBounds) recordedChange.getValue();
+                }
 
                 final float scale;
                 if (shapeNode instanceof KNodeNode) {
@@ -544,12 +585,17 @@ public class DiagramController {
                 }
 
                 if (!shapeNode.getVisible()) {
-                    // the visibility is set to false for newly introduced edges in #addNode,
+                    // the visibility is set to false for newly introduced elements in #addNode,
                     //  #addPort, and #addLabel for avoiding unnecessary flickering and indicating
                     //  to fade it in
+                    // note the special behavior of FadeNodeInActivity if 'bounds' is 'null',
+                    //  i.e. 'LAYOUT_DATA_UNCHANGED_VALUE' was notified
                     activity = new FadeNodeInActivity(shapeNode, bounds,
                             scale, animationTime > 0 ? animationTime : 1);
-                } else { 
+                } else if (bounds == null) {
+                    continue;
+
+                } else {
                     activity = new ApplySmartBoundsActivity(shapeNode, bounds,
                             scale, animationTime > 0 ? animationTime : 1);
                 }
@@ -568,7 +614,7 @@ public class DiagramController {
         recordedChanges.clear();
 
         // apply a proper zoom handling if requested
-        getZoomController().zoom(zoomStyle, animationTime);
+        getZoomController().zoom(zoomStyle, focusNode, animationTime);
     }
 
     /**
@@ -605,9 +651,7 @@ public class DiagramController {
                             //  are given the rendering needs to be updated/exchanged after changing the
                             //  expansion state, so ...
                             if (Iterables.any(Iterables.filter(node.getData(), KRendering.class),
-                                    Predicates.or(
-                                            AbstractKGERenderingController.IS_COLLAPSED_RENDERING,
-                                            AbstractKGERenderingController.IS_EXPANDED_RENDERING))) {
+                                    KlighdPredicates.isCollapsedOrExpandedRendering())) {
                                 nodeNode.getRenderingController().updateRenderingInUi();
                             }
                         }
@@ -756,6 +800,8 @@ public class DiagramController {
             return;
         }
         
+        final int expand;
+
         // if there is no Piccolo2D representation of the node create it
         if (nodeNode == null) {
             final KGraphData data = node.getData(KLayoutDataPackage.eINSTANCE.getKLayoutData());
@@ -764,20 +810,19 @@ public class DiagramController {
                 return;
             }
 
-            nodeNode = new KNodeNode(node);
+            nodeNode = new KNodeNode(node, edgesFirst);
             contextData.setProperty(REP, nodeNode);
 
             updateRendering(nodeNode);
             
             addExpansionListener(nodeNode);
 
-            final boolean expand = data == null || data.getProperty(KlighdProperties.EXPAND);
+            expand = data == null || data.getProperty(KlighdProperties.EXPAND) ?  1 : 0;
             // in case the EXPAND property is not set the default value 'true' is returned
-            nodeNode.getChildAreaNode().setExpanded(expand);
             
         } else {
             // touch the expansion state, see the methods javadoc for details
-            nodeNode.getChildAreaNode().touchExpanded();
+            expand = 2;
         }
 
         if (record && isAutomaticallyArranged(node)) {
@@ -793,9 +838,23 @@ public class DiagramController {
         handleEdges(nodeNode);
         handlePorts(nodeNode);
         handleLabels(nodeNode, node);
-        
-        // add the node
+
+        // add the node to its parents
         parent.getChildAreaNode().addNode(nodeNode);
+
+        // perform expansion strictly AFTER adding 'nodeNode' to its parent as the edge offset adjustment
+        //  logic requires that (for registration of an transform change listener on the parents row)
+        switch (expand) {
+        case 1:
+            nodeNode.getChildAreaNode().setExpanded(true);
+            break;
+        case 2:
+            // touch the expansion state, see the methods javadoc for details
+            nodeNode.getChildAreaNode().touchExpanded();
+            break;
+        default:
+            // e.g. case 0: don't expand
+        }
     }
 
 
@@ -1297,8 +1356,7 @@ public class DiagramController {
  
         final KShapeLayout shapeLayout = nodeNode.getGraphElement().getData(KShapeLayout.class);
         if (shapeLayout != null) {
-            NodeUtil.applySmartBounds(nodeNode, shapeLayout.getXpos(), shapeLayout.getYpos(),
-                    shapeLayout.getWidth(), shapeLayout.getHeight());
+            NodeUtil.applyBounds(nodeNode, shapeLayout);
         }
     }
 
@@ -1328,9 +1386,7 @@ public class DiagramController {
 
         final KShapeLayout shapeLayout = portNode.getGraphElement().getData(KShapeLayout.class);
         if (shapeLayout != null) {
-            NodeUtil.applySmartBounds(portNode, shapeLayout.getXpos(), shapeLayout.getYpos(),
-                    shapeLayout.getWidth(), shapeLayout.getHeight());
-
+            NodeUtil.applyBounds(portNode, shapeLayout);
         }
     }
 
@@ -1360,8 +1416,7 @@ public class DiagramController {
 
         final KShapeLayout shapeLayout = labelNode.getGraphElement().getData(KShapeLayout.class);
         if (shapeLayout != null) {
-            NodeUtil.applySmartBounds(labelNode, shapeLayout.getXpos(), shapeLayout.getYpos(),
-                    shapeLayout.getWidth(), shapeLayout.getHeight());
+            NodeUtil.applyBounds(labelNode, shapeLayout);
         }
     }
 

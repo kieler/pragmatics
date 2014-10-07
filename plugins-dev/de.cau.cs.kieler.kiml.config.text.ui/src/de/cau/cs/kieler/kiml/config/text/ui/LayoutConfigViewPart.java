@@ -197,7 +197,7 @@ public class LayoutConfigViewPart extends ViewPart {
         setupXtextEditor(composite);
 
         // a scaler to increase/decrease the value of an option
-        setupScale(composite);
+        // setupScale(composite);
 
         // create the buttons
         createButtons();
@@ -292,7 +292,7 @@ public class LayoutConfigViewPart extends ViewPart {
         final IToolBarManager toolBar = getViewSite().getActionBars().getToolBarManager();
 
         // add a button that allows to perform the specified layout
-        toolBar.add(new Action("Layout", KimlUiPlugin
+        final IAction layoutAction = new Action("Layout", KimlUiPlugin
                 .getImageDescriptor("icons/menu16/kieler-arrange.gif")) {
             public void run() {
                 if (lastActiveEditor != null) {
@@ -303,7 +303,8 @@ public class LayoutConfigViewPart extends ViewPart {
                                     "No editor available to apply layout to."), StatusManager.SHOW);
                 }
             }
-        });
+        };
+        toolBar.add(layoutAction);
         
         final IPreferenceStore store = LayoutConfigActivator.getInstance().getPreferenceStore();
         // add a menu for storing/loading templates
@@ -456,7 +457,9 @@ public class LayoutConfigViewPart extends ViewPart {
     
     private File getCfgFolder() {
         String usrPath = System.getProperty("user.home");
-        return new File(usrPath + File.separator + CFGS_SUBFOLDER);
+        File f = new File(usrPath + File.separator + CFGS_SUBFOLDER);
+        f.mkdirs();
+        return f;
     }
     
     /** preference identifier for animation of layout. */

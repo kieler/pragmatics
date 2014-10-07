@@ -29,13 +29,10 @@ import de.cau.cs.kieler.core.krendering.KText;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
+import de.cau.cs.kieler.klighd.DisplayedActionData;
 import de.cau.cs.kieler.klighd.SynthesisOption;
 import de.cau.cs.kieler.klighd.ViewContext;
 import de.cau.cs.kieler.klighd.internal.ISynthesis;
-import de.cau.cs.kieler.klighd.util.ExpansionAwareLayoutOption;
-import de.cau.cs.kieler.klighd.util.ExpansionAwareLayoutOption.ExpansionAwareLayoutOptionData;
-// SUPPRESS CHECKSTYLE PREVIOUS LineLength
 
 /**
  * The abstract base class for KLighD diagram synthesis implementations.<br>
@@ -72,6 +69,9 @@ import de.cau.cs.kieler.klighd.util.ExpansionAwareLayoutOption.ExpansionAwareLay
  * 
  * @author chsch
  * @author uru
+ * 
+ * @kieler.design proposed by chsch
+ * @kieler.rating proposed yellow by chsch 
  */
 public abstract class AbstractDiagramSynthesis<S> implements ISynthesis {
 
@@ -178,9 +178,17 @@ public abstract class AbstractDiagramSynthesis<S> implements ISynthesis {
      */
     public final KNode transform(final Object model, final ViewContext viewContext) {
         use(viewContext);
+
         @SuppressWarnings("unchecked")
-        final S input = (S) model; 
-        return transform(input);
+        final S input = (S) model;
+        final KNode result = transform(input);
+
+        // clear the reference to ViewContext in order to allow the garbage collector to dispose
+        //  view model, the source model and other memory consuming components once the
+        //  corresponding viewer or diagram workbench part is closed (instances of this class are
+        //  kept for the life-time of the tool in case they are employed without Google Guice).
+        use(null);
+        return result;
     }
 
     /**
@@ -308,6 +316,17 @@ public abstract class AbstractDiagramSynthesis<S> implements ISynthesis {
 
 
     // ---------------------------------------------------------------------------------- //
+    //  Offered diagram actions handling    
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<DisplayedActionData> getDisplayedActions() {
+        return Collections.emptyList();
+    }
+
+
+    // ---------------------------------------------------------------------------------- //
     //  Hook allowing to register additional ILayoutConfigs for
     //   those in a row with the default one    
 
@@ -387,8 +406,8 @@ public abstract class AbstractDiagramSynthesis<S> implements ISynthesis {
      */
     protected final <R extends KGraphElement, T> R setLayoutOption(final R element,
             final IProperty<T> option, final T value) {
-        element.getData(KLayoutData.class).setProperty(option, value);
-        return element;
+
+        return DiagramSyntheses.setLayoutOption(element, option, value);
     }
     
     /**
@@ -410,11 +429,9 @@ public abstract class AbstractDiagramSynthesis<S> implements ISynthesis {
      */
     protected final <T> KNode setExpansionAwareLayoutOption(final KNode node, final IProperty<T> option,
             final T collapsedValue, final T expandedValue) {
-        final KLayoutData sl = node.getData(KLayoutData.class);
-        if (sl != null) {
-            ExpansionAwareLayoutOption.setProperty(sl, option, collapsedValue, expandedValue);
-        }
-        return node;
+
+        return DiagramSyntheses.setExpansionAwareLayoutOption(
+                node, option, collapsedValue, expandedValue);
     }
 
     /**
@@ -437,17 +454,9 @@ public abstract class AbstractDiagramSynthesis<S> implements ISynthesis {
      */
     protected final <T> KPort setExpansionAwareLayoutOption(final KPort port,
             final IProperty<T> option, final T collapsedValue, final T expandedValue) {
-        final KLayoutData sl = port.getData(KLayoutData.class); 
-        ExpansionAwareLayoutOptionData data = sl.getProperty(ExpansionAwareLayoutOption.OPTION);
-        
-        if (data == null) {
-            data = new ExpansionAwareLayoutOptionData();
-            sl.setProperty(ExpansionAwareLayoutOption.OPTION, data);
-        }
-        
-        data.setProperty(option, collapsedValue, expandedValue);
-                
-        return port;
+
+        return DiagramSyntheses.setExpansionAwareLayoutOption(
+                port, option, collapsedValue, expandedValue);
     }
 
     /**
@@ -457,7 +466,11 @@ public abstract class AbstractDiagramSynthesis<S> implements ISynthesis {
      * In common case this method need not to be called by application code but only if delegate
      * diagram syntheses are employed by means of a {@link com.google.inject.Provider Provider}, see
      * {@link ReinitializingDiagramSynthesisProxy#ViewSynthesisScope ViewSynthesisScope} for
-     * details.
+     * details.<br>
+     * <br>
+     * Make sure to reset the reference by calling <code>use(null)</code> after calling
+     * {@link #transform(Object)} in order safely let the garbage collect dispose the given view
+     * context and its referenced data if possible. Otherwise this can result in a memory leak!
      * 
      * @param viewContext
      *            the context to be used during the current run

@@ -15,6 +15,7 @@ package de.cau.cs.kieler.klighd.internal.util;
 
 import com.google.common.base.Predicate;
 
+import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.PersistentEntry;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
@@ -27,6 +28,9 @@ import de.cau.cs.kieler.klighd.internal.ILayoutRecorder;
  * IProperties}.
  * 
  * @author chsch
+ * 
+ * @kieler.design proposed by chsch
+ * @kieler.rating proposed yellow by chsch 
  */
 public final class KlighdInternalProperties {
 
@@ -79,7 +83,7 @@ public final class KlighdInternalProperties {
     public static final IProperty<Boolean> SELECTED = new Property<Boolean>("klighd.selected", false);
 
     /** the viewer visualizing the graph. */
-    public static final IProperty<IViewer<?>> VIEWER = new Property<IViewer<?>>(
+    public static final IProperty<IViewer> VIEWER = new Property<IViewer>(
             "klighd.layout.viewer");
     
     /** the layout recorder responsible for diagram animation. */
@@ -89,6 +93,13 @@ public final class KlighdInternalProperties {
     /** the zoom style to be applied during upcoming diagram layout. */
     public static final IProperty<ZoomStyle> NEXT_ZOOM_STYLE = new Property<ZoomStyle>(
             "klighd.zoom.nextZoomStyle");
+    
+    /**
+     * The {@link KNode} to be focus during upcoming diagram layout if {@link #NEXT_ZOOM_STYLE} is
+     * {@link ZoomStyle#ZOOM_TO_FOCUS}.
+     */
+    public static final IProperty<KNode> NEXT_FOCUS_NODE = new Property<KNode>(
+            "klighd.zoom.nextFocusNode");
     
     /**
      * Property to be attached to the {@link de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout

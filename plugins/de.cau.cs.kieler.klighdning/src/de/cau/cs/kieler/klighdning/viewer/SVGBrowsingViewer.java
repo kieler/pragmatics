@@ -99,7 +99,7 @@ public class SVGBrowsingViewer {
         }
 
         // FIXME
-        controller.zoom(ZoomStyle.ZOOM_TO_FIT, 0);
+        controller.getZoomController().zoom(ZoomStyle.ZOOM_TO_FIT, null, 0);
 
         // render
         final String rendered = canvas.render();
@@ -131,9 +131,9 @@ public class SVGBrowsingViewer {
         }
 
         // create a controller for the graph
-        controller = new DiagramController(model, camera, sync);
+        controller = new DiagramController(model, camera, sync, false);
 //        controller.initialize();
-        controller.stopRecording(ZoomStyle.NONE, 0);
+        controller.stopRecording(ZoomStyle.NONE, null, 0);
     }
 
     /**
@@ -174,7 +174,7 @@ public class SVGBrowsingViewer {
      * Zooms and translates the current model such that it fits into the current viewport.
      */
     public void zoomToFit() {
-        controller.zoom(ZoomStyle.ZOOM_TO_FIT, 0);
+        controller.getZoomController().zoom(ZoomStyle.ZOOM_TO_FIT, null, 0);
     }
 
     /**

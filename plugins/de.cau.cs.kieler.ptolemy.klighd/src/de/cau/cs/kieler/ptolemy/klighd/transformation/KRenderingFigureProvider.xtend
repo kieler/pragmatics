@@ -15,7 +15,6 @@ package de.cau.cs.kieler.ptolemy.klighd.transformation
 
 import com.google.inject.Inject
 import de.cau.cs.kieler.core.kgraph.KEdge
-import de.cau.cs.kieler.core.kgraph.KGraphElement
 import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.core.kgraph.KPort
 import de.cau.cs.kieler.core.krendering.HorizontalAlignment
@@ -32,9 +31,6 @@ import de.cau.cs.kieler.core.krendering.extensions.KColorExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KContainerRenderingExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KPolylineExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KRenderingExtensions
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
-import de.cau.cs.kieler.kiml.options.LayoutOptions
-import de.cau.cs.kieler.kiml.options.PortSide
 import de.cau.cs.kieler.klighd.KlighdConstants
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.LabelExtensions
@@ -44,14 +40,13 @@ import de.cau.cs.kieler.ptolemy.klighd.transformation.util.GraphicsUtils
 
 import static de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties.*
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
-import org.eclipse.swt.widgets.Display
-import org.eclipse.swt.SWT
 
 /**
  * Creates concrete KRendering information for Ptolemy diagram elements.
  * 
  * @author ckru
  * @author cds
+ * @author uru
  */
 class KRenderingFigureProvider {
     
@@ -580,44 +575,6 @@ class KRenderingFigureProvider {
     
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Node Selection Rendering
-    
-    /**
-     * Builds up and adds helper renderings forming the selection to given node,
-     * attaches the provided rendering to the selection helpers.  
-     */
-    def KContainerRendering addRenderingWithSelectionWrapper(KGraphElement kge, KRendering rendering) {
-        return kge.addRenderingWithSelectionWrapper => [
-            it.children += rendering;
-        ];
-    }
-    
-    /**
-     * Builds up and adds helper renderings forming the selection to given node,
-     * attaches the provided rendering to the selection helpers.
-     */
-    def KContainerRendering addRenderingWithSelectionWrapper(KGraphElement kge) {
-        // Use a default selection color if there is no display (which is true in headless mode)
-        val systemSelection = Display.current?.getSystemColor(SWT.COLOR_LIST_SELECTION)
-        
-        val selectionR = if (systemSelection == null) {180;} else {systemSelection.red;}
-        val selectionG = if (systemSelection == null) {213;} else {systemSelection.green;}
-        val selectionB = if (systemSelection == null) {255;} else {systemSelection.blue;}
-        
-        kge.addRectangle => [
-            it.invisible = true;
-            it.addRoundedRectangle(3f, 3f, 1) => [
-            it.setSurroundingSpace(-3, 0);
-                it.invisible = true;
-                it.setBackgroundColor(selectionR, selectionG, selectionB)
-                it.lineStyle = LineStyle.DASH;
-                it.selectionInvisible = false;
-            ]
-        ]
-    }
-    
-    
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Edge Renderings
     
     /**
@@ -727,6 +684,8 @@ class KRenderingFigureProvider {
     /** Half the width / height of a port. */
     private val PORT_SIZE_HALF = 3.5f
     
+    /** The id of the modifier that rotates the port renderings. */
+    private val PORT_STYLE_MODIFIER_ID = "de.cau.cs.kieler.ptolemy.klighd.ptolemyPortStyleModifier"
     
     /**
      * Creates a rendering for a port.
@@ -735,7 +694,6 @@ class KRenderingFigureProvider {
      * @return the rendering.
      */
     def KRendering createPortRendering(KPort port) {
-        val layout = port.getData(typeof(KShapeLayout))
         
         // Determine the port color
         val portFillColor = if (port.hasAnnotation(IS_PARAMETER_PORT)) {
@@ -751,38 +709,21 @@ class KRenderingFigureProvider {
         
         // Create the triangle (depending on the port size)
         val polygon = port.addPolygon()
-        switch layout.getProperty(LayoutOptions::PORT_SIDE) {
-            case PortSide::NORTH: {
-                polygon.points += createKPosition(
-                    LEFT, 0, 0, TOP, 0, 0)
-                polygon.points += createKPosition(
-                    LEFT, PORT_SIZE, 0, TOP, 0, 0)
-                polygon.points += createKPosition(
-                    LEFT, PORT_SIZE_HALF, 0, TOP, PORT_SIZE, 0)
-                polygon.points += createKPosition(
-                    LEFT, 0, 0, TOP, 0, 0)
-            }
-            case PortSide::SOUTH: {
-                polygon.points += createKPosition(
-                    LEFT, 0, 0, TOP, PORT_SIZE, 0)
-                polygon.points += createKPosition(
-                    LEFT, PORT_SIZE, 0, TOP, PORT_SIZE, 0)
-                polygon.points += createKPosition(
-                    LEFT, PORT_SIZE_HALF, 0, TOP, 0, 0)
-                polygon.points += createKPosition(
-                    LEFT, 0, 0, TOP, PORT_SIZE, 0)
-            }
-            default: {
-                polygon.points += createKPosition(
-                    LEFT, 0, 0, TOP, PORT_SIZE, 0)
-                polygon.points += createKPosition(
-                    LEFT, 0, 0, TOP, 0, 0)
-                polygon.points += createKPosition(
-                    LEFT, PORT_SIZE, 0, TOP, PORT_SIZE_HALF, 0)
-                polygon.points += createKPosition(
-                    LEFT, 0, 0, TOP, PORT_SIZE, 0)
-            }
-        }
+        polygon.points += createKPosition(
+                   LEFT, 0, 0, TOP, PORT_SIZE, 0)
+               polygon.points += createKPosition(
+                   LEFT, 0, 0, TOP, 0, 0)
+               polygon.points += createKPosition(
+                   LEFT, PORT_SIZE, 0, TOP, PORT_SIZE_HALF, 0)
+               polygon.points += createKPosition(
+                   LEFT, 0, 0, TOP, PORT_SIZE, 0)
+        
+        // We create only one representative polygon here: |>
+        //  and rotate it according to its orientation after layout
+        //  using a dedicated klighd style modifier.  
+        polygon.rotation = 0f
+        polygon.rotation.rotationAnchor = createKPosition(PORT_SIZE_HALF, PORT_SIZE_HALF)
+        polygon.rotation.modifierId = PORT_STYLE_MODIFIER_ID
         
         // Set color properties
         polygon.setBackground(portFillColor)

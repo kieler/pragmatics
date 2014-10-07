@@ -1589,13 +1589,22 @@ public interface KRenderingPackage extends EPackage {
     int KTEXT__CURSOR_SELECTABLE = KRENDERING_FEATURE_COUNT + 1;
 
     /**
+     * The feature id for the '<em><b>Editable</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KTEXT__EDITABLE = KRENDERING_FEATURE_COUNT + 2;
+
+    /**
      * The number of structural features of the '<em>KText</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int KTEXT_FEATURE_COUNT = KRENDERING_FEATURE_COUNT + 2;
+    int KTEXT_FEATURE_COUNT = KRENDERING_FEATURE_COUNT + 3;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.core.krendering.KPlacement <em>KPlacement</em>}' class.
@@ -4008,13 +4017,22 @@ public interface KRenderingPackage extends EPackage {
     int KSTYLE_REF__STYLE_HOLDER = KSTYLE_FEATURE_COUNT + 0;
 
     /**
+     * The feature id for the '<em><b>Referenced Types</b></em>' attribute list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KSTYLE_REF__REFERENCED_TYPES = KSTYLE_FEATURE_COUNT + 1;
+
+    /**
      * The number of structural features of the '<em>KStyle Ref</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int KSTYLE_REF_FEATURE_COUNT = KSTYLE_FEATURE_COUNT + 1;
+    int KSTYLE_REF_FEATURE_COUNT = KSTYLE_FEATURE_COUNT + 2;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.core.krendering.impl.KTextStrikeoutImpl <em>KText Strikeout</em>}' class.
@@ -4782,6 +4800,17 @@ public interface KRenderingPackage extends EPackage {
      * @generated
      */
     EAttribute getKText_CursorSelectable();
+
+    /**
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.core.krendering.KText#isEditable <em>Editable</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Editable</em>'.
+     * @see de.cau.cs.kieler.core.krendering.KText#isEditable()
+     * @see #getKText()
+     * @generated
+     */
+    EAttribute getKText_Editable();
 
     /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.core.krendering.KPlacement <em>KPlacement</em>}'.
@@ -5805,6 +5834,17 @@ public interface KRenderingPackage extends EPackage {
     EReference getKStyleRef_StyleHolder();
 
     /**
+     * Returns the meta object for the attribute list '{@link de.cau.cs.kieler.core.krendering.KStyleRef#getReferencedTypes <em>Referenced Types</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute list '<em>Referenced Types</em>'.
+     * @see de.cau.cs.kieler.core.krendering.KStyleRef#getReferencedTypes()
+     * @see #getKStyleRef()
+     * @generated
+     */
+    EAttribute getKStyleRef_ReferencedTypes();
+
+    /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.core.krendering.KTextStrikeout <em>KText Strikeout</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -6396,6 +6436,14 @@ public interface KRenderingPackage extends EPackage {
          * @generated
          */
         EAttribute KTEXT__CURSOR_SELECTABLE = eINSTANCE.getKText_CursorSelectable();
+
+        /**
+         * The meta object literal for the '<em><b>Editable</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute KTEXT__EDITABLE = eINSTANCE.getKText_Editable();
 
         /**
          * The meta object literal for the '{@link de.cau.cs.kieler.core.krendering.KPlacement <em>KPlacement</em>}' class.
@@ -7234,6 +7282,14 @@ public interface KRenderingPackage extends EPackage {
          * @generated
          */
         EReference KSTYLE_REF__STYLE_HOLDER = eINSTANCE.getKStyleRef_StyleHolder();
+
+        /**
+         * The meta object literal for the '<em><b>Referenced Types</b></em>' attribute list feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute KSTYLE_REF__REFERENCED_TYPES = eINSTANCE.getKStyleRef_ReferencedTypes();
 
         /**
          * The meta object literal for the '{@link de.cau.cs.kieler.core.krendering.impl.KTextStrikeoutImpl <em>KText Strikeout</em>}' class.

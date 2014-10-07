@@ -13,10 +13,15 @@
  */
 package de.cau.cs.kieler.klighd.util;
 
+import java.util.Map;
+
+import com.google.common.collect.Maps;
+
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.klighd.SynthesisOption;
 import de.cau.cs.kieler.klighd.krendering.SimpleUpdateStrategy;
 
 /**
@@ -26,6 +31,8 @@ import de.cau.cs.kieler.klighd.krendering.SimpleUpdateStrategy;
  * To be continued ... :-
  * 
  * @author chsch
+ * 
+ * @kieler.design proposed by chsch
  */
 public class KlighdSynthesisProperties extends MapPropertyHolder {
 
@@ -47,6 +54,24 @@ public class KlighdSynthesisProperties extends MapPropertyHolder {
     public static final IProperty<SideBarHandling> REQUESTED_SIDE_BAR_HANDLING =
             new Property<SideBarHandling>("klighd.sideBarHandling", SideBarHandling.UNDEFINED);
 
+    /** property denoting the support of selecting multiple diagram elements. */
+    public static final IProperty<Boolean> MULTI_SELECTION = new Property<Boolean>(
+            "klighd.multiSelection", true);
+
+    /** property denoting pre-definition of diagram {@link SynthesisOption} values. */
+    public static final IProperty<Map<SynthesisOption, Object>> SYNTHESIS_OPTION_CONFIG =
+            new Property<Map<SynthesisOption, Object>>("klighd.synthesisOptionConfig");
+    
+    /** property denoting a desired zoom buttons handling. */
+    public static final IProperty<ZoomConfigButtonsHandling> REQUESTED_ZOOM_CONFIG_BUTTONS_HANDLING =
+            new Property<ZoomConfigButtonsHandling>("klighd.zoomConfigButtonsHandling",
+                    ZoomConfigButtonsHandling.UNDEFINED);
+
+    /** property denoting whether to suppress the automatic size estimation of
+     * {@link de.cau.cs.kieler.core.kgraph.KNode KNodes} and
+     * {@link de.cau.cs.kieler.core.kgraph.KLabel KLabels}. */
+    public static final IProperty<Boolean> SUPPRESS_SIZE_ESTIMATION = new Property<Boolean>(
+            "klighd.suppressSizeEstimation", false);
     /**
      * Defines the possible diagram side bar initialization options. 
      */
@@ -58,7 +83,20 @@ public class KlighdSynthesisProperties extends MapPropertyHolder {
         /** The initialization of the side bar is done according to the related preference setting. */
         UNDEFINED
     }
+    
 
+    /**
+     * Defines the possible zoom buttons visibility options. 
+     */
+    public static enum ZoomConfigButtonsHandling {
+        /** Forces the diagram viewer to show the zoom buttons. */
+        SHOW,
+        /** Forces the diagram viewer to hide the zoom buttons. */
+        HIDE,
+        /** The visibility of the zoom buttons is set according to the related preference setting. */
+        UNDEFINED
+    }
+    
     /**
      * Immutable singleton instance of {@link KlighdSynthesisProperties}.  
      */
@@ -68,11 +106,14 @@ public class KlighdSynthesisProperties extends MapPropertyHolder {
         private final String msg =
                 "KLighD: Empty KlighdSynthesisProperties config must not be changed.";
         
-        public <T> void setProperty(final IProperty<? super T> property, final T value) {
+        @Override
+        public <T> KlighdSynthesisProperties setProperty(final IProperty<? super T> property,
+                final T value) {
             throw new UnsupportedOperationException(msg);
         }
         
-        public void copyProperties(final IPropertyHolder other) {
+        @Override
+        public MapPropertyHolder copyProperties(final IPropertyHolder other) {
             throw new UnsupportedOperationException(msg);
         }
     };
@@ -117,16 +158,30 @@ public class KlighdSynthesisProperties extends MapPropertyHolder {
         } else {
             final KlighdSynthesisProperties sp = new KlighdSynthesisProperties();
             
-            for (IPropertyHolder p : propertyHolders) {
+            for (final IPropertyHolder p : propertyHolders) {
                 sp.copyProperties(p);
             }
             
             return sp;
         }
     }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @return <code>this</code> {@link KlighdSynthesisProperties} instance for convenience
+     */
+    @Override
+    public <T> KlighdSynthesisProperties setProperty(final IProperty<? super T> property,
+            final T value) {
+        super.setProperty(property, value);
+        return this;
+    }
     
     /**
      * Sets a property value and returns <code>this</code> {@link IPropertyHolder} for convenience.
+     * 
+     * @deprecated use {@link #setProperty(IProperty, Object)}
      * 
      * @param <T> type of property
      * @param property the property to set
@@ -196,6 +251,67 @@ public class KlighdSynthesisProperties extends MapPropertyHolder {
      */
     public KlighdSynthesisProperties collapseSideBar() {
         this.setProperty(REQUESTED_SIDE_BAR_HANDLING, SideBarHandling.COLLAPSE);
+        return this;
+    }
+
+    /**
+     * Configures the diagram viewer's support for selecting multiple diagram elements.
+     * 
+     * @return <code>this<code> {@link KlighdSynthesisProperties} object.
+     */
+    public KlighdSynthesisProperties suppressMultiSelection() {
+        this.setProperty(MULTI_SELECTION, false);
+        return this;
+    }
+
+    /**
+     * Configures the diagram viewer's support for automatically computing the minimal size of
+     * diagram nodes (especially non-compound ones) and .
+     * 
+     * @return <code>this<code> {@link KlighdSynthesisProperties} object.
+     */
+    public KlighdSynthesisProperties suppressNodeAndLabelSizeEstimation() {
+        this.setProperty(SUPPRESS_SIZE_ESTIMATION, true);
+        return this;
+    }
+
+    /**
+     * Configures diagram {@link SynthesisOption} values beyond the default value definitions.
+     * 
+     * @param option
+     *            the singleton {@link SynthesisOption} object
+     * @param value
+     *            the value to be configured for <code>option</code>
+     * @return <code>this<code> {@link KlighdSynthesisProperties} object.
+     */
+    public KlighdSynthesisProperties configureSynthesisOptionValue(
+            final SynthesisOption option, final Object value) {
+        Map<SynthesisOption, Object> optionConfig = this.getProperty(SYNTHESIS_OPTION_CONFIG);
+        if (optionConfig == null) {
+            optionConfig = Maps.newHashMap();
+            this.setProperty(SYNTHESIS_OPTION_CONFIG, optionConfig);
+        }
+        optionConfig.put(option, value);
+        return this;
+    }
+
+
+    /**
+     * Configures diagram {@link SynthesisOption} values beyond the default value definitions.
+     * 
+     * @param options
+     *            a {@link Map} of singleton {@link SynthesisOption} objects and their desired
+     *            values
+     * @return <code>this<code> {@link KlighdSynthesisProperties} object.
+     */
+    public KlighdSynthesisProperties configureSynthesisOptionValues(
+            final Map<SynthesisOption, Object> options) {
+        Map<SynthesisOption, Object> optionConfig = this.getProperty(SYNTHESIS_OPTION_CONFIG);
+        if (optionConfig == null) {
+            optionConfig = Maps.newHashMap();
+            this.setProperty(SYNTHESIS_OPTION_CONFIG, optionConfig);
+        }
+        optionConfig.putAll(options);
         return this;
     }
 }

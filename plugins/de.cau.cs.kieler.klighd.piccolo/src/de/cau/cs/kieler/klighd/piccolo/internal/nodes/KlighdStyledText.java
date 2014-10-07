@@ -28,35 +28,34 @@ import de.cau.cs.kieler.klighd.KlighdConstants;
 import de.cau.cs.kieler.klighd.microlayout.PlacementUtil;
 import de.cau.cs.kieler.klighd.piccolo.KlighdPiccoloPlugin;
 import de.cau.cs.kieler.klighd.piccolo.KlighdSWTGraphics;
+import de.cau.cs.kieler.klighd.piccolo.internal.util.KlighdPaintContext;
 import de.cau.cs.kieler.klighd.piccolo.internal.util.RGBGradient;
-import edu.umd.cs.piccolo.PNode;
+import de.cau.cs.kieler.klighd.util.KlighdProperties;
+import edu.umd.cs.piccolo.nodes.PText;
 import edu.umd.cs.piccolo.util.PPaintContext;
 
 /**
- * The KLighD-specific {@link PNode} implementation for displaying text strings supporting
- * {@link org.eclipse.swt.graphics.TextStyle TextStyles}.<br>
+ * The KLighD-specific {@link edu.umd.cs.piccolo.PNode PNode} implementation for displaying text
+ * strings supporting {@link org.eclipse.swt.graphics.TextStyle TextStyles}.<br>
  * It is inspired by the Piccolo2D {@link edu.umd.cs.piccolox.swt.PSWTText PSWTText} and is
  * tailored/extended to those features required by KLighD.<br>
  * <br>
- * It enables proper view-model-tracing by preserving the related {@link KText} view model element
- * and implementing {@link ITracingElement}.<br>
- * <br>
  * <b>Note:</b> All <code>invalidate...</code> and <code>repaint</code> calls are deactivated in
  * order to avoid superfluous repaint activities. The repaint events are fired by
- * {@link #addChild(PNode)}/{@link #removeChild(PNode)} in case of rendering changes, by
- * {@link #setBounds(double, double, double, double)} in case of layout changes, and in case of pure
- * style changes by the {@link de.cau.cs.kieler.core.kgraph.KGraphElement KGraphElement} rendering
- * controllers ({@link de.cau.cs.kieler.klighd.piccolo.internal.controller.AbstractKGERenderingController
- * #updateStyles() AbstractKGERenderingController#updateStyles()}) after all rendering and style
- * changes are performed.
+ * {@link #addChild(edu.umd.cs.piccolo.PNode) addChild(PNode)}/
+ * {@link #removeChild(edu.umd.cs.piccolo.PNode) removeChild(PNode)} in case of rendering changes,
+ * by {@link #setBounds(double, double, double, double)} in case of layout changes, and in case of
+ * pure style changes by the {@link de.cau.cs.kieler.core.kgraph.KGraphElement KGraphElement}
+ * rendering controllers ({@link
+ * de.cau.cs.kieler.klighd.piccolo.internal.controller.AbstractKGERenderingController #updateStyles()
+ * AbstractKGERenderingController#updateStyles()}) after all rendering and style changes are
+ * performed.
  * 
  * @author chsch
  */
-public class KlighdStyledText extends PNode implements ITracingElement<KText> {
+public class KlighdStyledText extends KlighdNode.KlighdFigureNode<KText> {
 
     private static final long serialVersionUID = -4463204146476543138L;
-
-    private KText kText = null;
 
     private String text = "";
     
@@ -82,7 +81,11 @@ public class KlighdStyledText extends PNode implements ITracingElement<KText> {
      */
     public KlighdStyledText(final KText theKText) {
         this(theKText.getText(), KlighdConstants.DEFAULT_FONT);
-        this.kText = theKText;
+        this.setRendering(theKText);
+
+        // re-enable the pickability of textNode as
+        //  the selection and cursor selection will not work otherwise
+        this.setPickable(true);
     }
 
     /**
@@ -104,8 +107,17 @@ public class KlighdStyledText extends PNode implements ITracingElement<KText> {
      *            The SWT {@link FontData} configuration for this text component.
      */
     public KlighdStyledText(final String theText, final FontData theFont) {
+        super();
         this.text = theText;
         this.setFont(theFont != null ? theFont : KlighdConstants.DEFAULT_FONT);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isSelectable() {
+        return !getRendering().getProperty(KlighdProperties.NOT_SELECTABLE);
     }
 
     /**
@@ -129,18 +141,9 @@ public class KlighdStyledText extends PNode implements ITracingElement<KText> {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    public KText getGraphElement() {
-        return this.kText;
-    }
-
-    /**
      * Provides the currently set pen color.<br>
      * It's currently used in order configure the text widget enabling the cursor-based text
-     * selection, see
-     * {@link de.cau.cs.kieler.klighd.piccolo.viewer.PiccoloViewer.KlighdTextInputHandler
-     * PiccoloViewer.KlighdTextInputHandler}.
+     * selection, see {@link de.cau.cs.kieler.klighd.ui.internal.viewers.KlighdLabelWidgetHandler}.
      * 
      * @return the current pen color {@link RGB}.
      */
@@ -149,30 +152,68 @@ public class KlighdStyledText extends PNode implements ITracingElement<KText> {
     }
 
     /**
+     * Provides the currently set pen color's alpha value.<br>
+     * It's currently used in order configure the text widget enabling the cursor-based text
+     * selection, see {@link de.cau.cs.kieler.klighd.ui.internal.viewers.KlighdLabelWidgetHandler}.
+     * 
+     * @return the current pen color's alpha value
+     */
+    public int getPenAlpha() {
+        return penAlpha;
+    }
+
+    /**
+     * Provides the currently set background color or <code>null</code>, if no background coloring
+     * or a background gradient is set.<br>
+     * It's currently used in order configure the text widget enabling the cursor-based text
+     * selection, see {@link de.cau.cs.kieler.klighd.ui.internal.viewers.KlighdLabelWidgetHandler}.
+     * 
+     * @return the current background color {@link RGB}.
+     */
+    public RGB getBackgroundColor() {
+        return paint;
+    }
+
+    /**
+     * Provides the currently set background color's alpha value.<br>
+     * It's currently used in order configure the text widget enabling the cursor-based text
+     * selection, see {@link de.cau.cs.kieler.klighd.ui.internal.viewers.KlighdLabelWidgetHandler}.
+     * 
+     * @return the current background color's alpha value
+     */
+    public int getBackgroundAlpha() {
+        return paintAlpha;
+    }
+
+    /**
+     * Provides the currently set background gradient configuration or <code>null</code>, if no
+     * background coloring or a single background color is set.<br>
+     * It's currently used in order configure the text widget enabling the cursor-based text
+     * selection, see {@link de.cau.cs.kieler.klighd.ui.internal.viewers.KlighdLabelWidgetHandler}.
+     * 
+     * @return the current background color's alpha value
+     */
+    public RGBGradient getBackgroundGradient() {
+        return paintGradient;
+    }
+
+    /**
      * Sets the current pen color.
      * 
      * @param color
      *            use this color.
-     */
-    public void setPenColor(final RGB color) {
-        if (penColor.equals(color)) {
-            return;
-        }        
-        // Object oldPaint = penColor;
-        penColor = color;
-        // repaint();
-        // firePropertyChange(PText.PROPERTY_CODE_TEXT_PAINT, PROPERTY_PAINT, oldPaint, penColor);
-    }
-
-    /**
-     * Sets the current pen color alpha.
-     * 
      * @param alpha
      *            use this alpha.
      */
-    public void setPenAlpha(final int alpha) {
+    public void setPenColor(final RGB color, final int alpha) {
+        if (penColor.equals(color) && penAlpha == alpha) {
+            return;
+        }
+        final Object oldPaint = penColor;
+        penColor = color;
         penAlpha = alpha;
         // repaint();
+        firePropertyChange(PText.PROPERTY_CODE_TEXT_PAINT, PROPERTY_PAINT, oldPaint, penColor);
     }
 
     private static final String TEXT_GRADIENT_MESSAGE = "KLighD (Piccolo2D): A color gradient has been"
@@ -190,54 +231,42 @@ public class KlighdStyledText extends PNode implements ITracingElement<KText> {
                 new Status(IStatus.WARNING, KlighdPiccoloPlugin.PLUGIN_ID, TEXT_GRADIENT_MESSAGE),
                 StatusManager.LOG);
     }
-    
+
     /**
      * Sets the current pen paint.
      * 
      * @param color
      *            use this color.
-     */
-    public void setPaint(final RGB color) {
-        if (paint != null && paint.equals(color)) {
-            return;
-        }        
-        // Object oldPaint = penPaint;
-        paintGradient = null;
-        paint = color;
-        // repaint();
-        // firePropertyChange(PROPERTY_CODE_PAINT, PROPERTY_PAINT, oldPaint, penPaint);
-    }
-
-    /**
-     * Sets the current pen paint alpha.
-     * 
      * @param alpha
      *            use this alpha.
      */
-    public void setPaintAlpha(final int alpha) {
+    public void setPaint(final RGB color, final int alpha) {
+        if (paint != null && paint.equals(color) && paintAlpha == alpha) {
+            return;
+        }        
+        final Object oldPaint = paintGradient != null ? paintGradient : paint;
+        paintGradient = null;
+        paint = color;
         paintAlpha = alpha;
         // repaint();
+        firePropertyChange(PROPERTY_CODE_PAINT, PROPERTY_PAINT, oldPaint, color);
     }
-    
+
     /**
      * Set the paint used to paint this node, which may be null.
      * 
-     * @param newPaint paint that this node should use when painting itself.
+     * @param gradient paint that this node should use when painting itself.
      */
-    public void setPaint(final RGBGradient newPaint) {        
-        if (paintGradient != null && paintGradient.equals(newPaint)) {
+    public void setPaint(final RGBGradient gradient) {        
+        if (paintGradient != null && paintGradient.equals(gradient)) {
             return;
         }
-        // Object oldPaint = null;
-        // if (penPaintGradient != null) {
-        //      oldPaint = penPaintGradient;   
-        // } else if (penPaint != null) {
-        //      oldPaint = penPaint;
+        final Object oldPaint = paintGradient != null ? paintGradient : paint;
         paint = null;
-        // }
-        paintGradient = newPaint;
+        paintAlpha = KlighdConstants.ALPHA_FULL_OPAQUE;
+        paintGradient = gradient;
         // repaint();
-        // firePropertyChange(PROPERTY_CODE_PAINT, PROPERTY_PAINT, oldPaint, penPaintGradient);
+        firePropertyChange(PROPERTY_CODE_PAINT, PROPERTY_PAINT, oldPaint, gradient);
     }
 
     /**
@@ -260,8 +289,11 @@ public class KlighdStyledText extends PNode implements ITracingElement<KText> {
      *            the desired {@link FontData}, must not be <code>null<code>
      */
     public void setFont(final FontData theFont) {
+        final Object oldFont = this.fontData;
         this.fontData = theFont;
         this.updateBounds();
+        // repaint();
+        firePropertyChange(PText.PROPERTY_CODE_FONT, PText.PROPERTY_FONT, oldFont, theFont);
     }
 
     /**
@@ -307,15 +339,21 @@ public class KlighdStyledText extends PNode implements ITracingElement<KText> {
     private static final Rectangle2D BACKGROUND = new Rectangle2D.Double();
 
     @Override
-    public void paint(final PPaintContext ppc) {
+    protected void paint(final PPaintContext paintContext) {
         if (Strings.isNullOrEmpty(this.text)) {
             return;
+        } else {
+            super.paint(paintContext);
         }
+    }
 
-        final KlighdSWTGraphics graphics = (KlighdSWTGraphics) ppc.getGraphics();
+    @Override
+    protected void paint(final KlighdPaintContext kpc) {
+
+        final KlighdSWTGraphics graphics = kpc.getKlighdGraphics();
 
         final int currentAlpha = graphics.getAlpha();
-        final float currentAlphaFloat = (float) currentAlpha;
+        final float currentAlphaFloat = currentAlpha;
 
         if (this.paintGradient != null) {
             graphics.setFillPattern(this.paintGradient, getBounds());
@@ -333,7 +371,7 @@ public class KlighdStyledText extends PNode implements ITracingElement<KText> {
 
         graphics.setUnderline(underlining, underlineColor);
         graphics.setStrikeout(strikeout, strikeoutColor);
-        
+
         if (this.penColor != null) {
             graphics.setAlpha(
                     (int) (penAlpha * (currentAlphaFloat / KlighdConstants.ALPHA_FULL_OPAQUE)));
@@ -342,15 +380,17 @@ public class KlighdStyledText extends PNode implements ITracingElement<KText> {
         } else {
             graphics.setStrokeColor(KlighdConstants.BLACK);
         }
-        
+
         if (fontData != null) {
             graphics.setFont(fontData);
         } else {
             graphics.setFont(KlighdConstants.DEFAULT_FONT);
         }
 
+        addSemanticData(kpc);
+
         graphics.drawText(text);
-        
+
         graphics.setAlpha(currentAlpha);
     }
 }

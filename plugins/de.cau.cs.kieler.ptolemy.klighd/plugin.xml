@@ -5,6 +5,7 @@
          point="org.eclipse.ui.editors">
       <editor
             class="de.cau.cs.kieler.ptolemy.klighd.PtolemyEditorPart"
+            contributorClass="de.cau.cs.kieler.klighd.ui.parts.DiagramEditorPart$ActionContributor"
             default="true"
             extensions="moml"
             icon="icons/PtolemyII16x16.png"
@@ -18,6 +19,13 @@
             class="de.cau.cs.kieler.klighd.syntheses.GuiceBasedSynthesisFactory:de.cau.cs.kieler.ptolemy.klighd.PtolemyDiagramSynthesis"
             id="de.cau.cs.kieler.klighd.examples.uml2.UML2UseCaseDiagramSynthesis">
       </diagramSynthesis>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.klighd.extensions">
+      <styleModifier
+            class="de.cau.cs.kieler.ptolemy.klighd.transformation.util.PtolemyPortStyleModifier"
+            id="de.cau.cs.kieler.ptolemy.klighd.ptolemyPortStyleModifier">
+      </styleModifier>
    </extension>
 
 </plugin>

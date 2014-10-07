@@ -16,6 +16,7 @@ package de.cau.cs.kieler.klighd.piccolo.internal.nodes;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.klighd.piccolo.internal.controller.AbstractKGERenderingController;
 import de.cau.cs.kieler.klighd.piccolo.internal.controller.KPortRenderingController;
+import de.cau.cs.kieler.klighd.piccolo.internal.nodes.IGraphElement.ILabeledGraphElement;
 import edu.umd.cs.piccolo.PNode;
 
 /**
@@ -24,12 +25,10 @@ import edu.umd.cs.piccolo.PNode;
  * @author mri
  * @author chsch
  */
-public class KPortNode extends PEmptyNode implements ILabeledGraphElement<KPort> {
+public class KPortNode extends KlighdNode.KlighdGraphNode<KPort> implements ILabeledGraphElement<KPort> {
 
     private static final long serialVersionUID = 6016725932024647084L;
 
-    /** the represented {@link KPort}. */
-    private transient KPort port;
     /** the port rendering controller deployed to manage the rendering of {@link #port}. */
     private KPortRenderingController renderingController;
 
@@ -40,15 +39,7 @@ public class KPortNode extends PEmptyNode implements ILabeledGraphElement<KPort>
      *            the port
      */
     public KPortNode(final KPort port) {
-        super();
-        this.port = port;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public KPort getGraphElement() {
-        return port;
+        super(port);
     }
 
     /**
@@ -59,8 +50,8 @@ public class KPortNode extends PEmptyNode implements ILabeledGraphElement<KPort>
         if (controller == null || controller instanceof KPortRenderingController) {
             this.renderingController = (KPortRenderingController) controller;
         } else {
-            String s = "KLighD: Fault occured while building up a concrete KPort rendering: KPortNodes"
-                    + " are supposed to be controlled by KPortRenderingController rather than "
+            final String s = "KLighD: Fault occured while building up a concrete KPort rendering: "
+                    + "KPortNodes are supposed to be controlled by KPortRenderingController rather than "
                     + controller.getClass().getCanonicalName();
             throw new IllegalArgumentException(s);
         }

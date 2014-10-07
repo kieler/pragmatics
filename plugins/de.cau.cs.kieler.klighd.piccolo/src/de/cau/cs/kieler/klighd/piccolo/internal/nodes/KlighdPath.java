@@ -32,25 +32,26 @@ import org.eclipse.swt.graphics.RGB;
 
 import com.google.common.collect.Maps;
 
+import de.cau.cs.kieler.core.krendering.KRendering;
 import de.cau.cs.kieler.klighd.KlighdConstants;
 import de.cau.cs.kieler.klighd.piccolo.KlighdSWTGraphics;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.NodeDisposeListener.IResourceEmployer;
+import de.cau.cs.kieler.klighd.piccolo.internal.util.KlighdPaintContext;
 import de.cau.cs.kieler.klighd.piccolo.internal.util.PolylineUtil;
 import de.cau.cs.kieler.klighd.piccolo.internal.util.RGBGradient;
-import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.nodes.PPath;
 import edu.umd.cs.piccolo.util.PBounds;
-import edu.umd.cs.piccolo.util.PPaintContext;
 
 /**
- * The KLighD-specific {@link PNode} implementation for displaying primitive figures.<br>
+ * The KLighD-specific {@link edu.umd.cs.piccolo.PNode PNode} implementation for displaying
+ * primitive figures.<br>
  * It is inspired by the Piccolo2D {@link edu.umd.cs.piccolox.swt.PSWTPath PSWTPath} and is
  * tailored/extended to those features required by KLighD.<br>
  * <br>
  * {@link KlighdPath} instances require a {@link KlighdSWTGraphics} while drawing (i.e. in
- * {@link #paint(PPaintContext)}). In case the available implementation provides an SWT
- * {@link Device} SWT {@link Path} objects are created and drawn, and disposed if they got out-dated.
- * Otherwise the internally used AWT {@link Shape Shapes} are used for drawing.<br>
+ * {@link #paint(KlighdPaintContext)}). In case the available implementation provides an SWT
+ * {@link Device} SWT {@link Path} objects are created and drawn, and disposed if they got
+ * out-dated. Otherwise the internally used AWT {@link Shape Shapes} are used for drawing.<br>
  * <br>
  * The stroke lines of closed figures like rectangles, ellipses, and arcs (although arcs are usually
  * not closed), i.e. those whose size is determined by a rectangular bounding box, do not violate
@@ -62,16 +63,18 @@ import edu.umd.cs.piccolo.util.PPaintContext;
  * <br>
  * <b>Note:</b> All <code>invalidate...</code> and <code>repaint</code> calls are deactivated in
  * order to avoid superfluous repaint activities. The repaint events are fired by
- * {@link #addChild(PNode)}/{@link #removeChild(PNode)} in case of rendering changes, by
- * {@link #setBounds(double, double, double, double)} in case of layout changes, and in case of pure
- * style changes by the {@link de.cau.cs.kieler.core.kgraph.KGraphElement KGraphElement} rendering
- * controllers ({@link de.cau.cs.kieler.klighd.piccolo.internal.controller.AbstractKGERenderingController
- * #updateStyles() AbstractKGERenderingController#updateStyles()}) after all rendering and style changes
- * are performed.
+ * {@link #addChild(edu.umd.cs.piccolo.PNode) addChild(PNode)}/
+ * {@link #removeChild(edu.umd.cs.piccolo.PNode) removeChild(PNode)} in case of rendering changes,
+ * by {@link #setBounds(double, double, double, double)} in case of layout changes, and in case of
+ * pure style changes by the {@link de.cau.cs.kieler.core.kgraph.KGraphElement KGraphElement}
+ * rendering controllers ({@link
+ * de.cau.cs.kieler.klighd.piccolo.internal.controller.AbstractKGERenderingController #updateStyles()
+ * AbstractKGERenderingController#updateStyles()}) after all rendering and style changes are
+ * performed.
  * 
  * @author chsch, mri
  */
-public class KlighdPath extends PNode implements IResourceEmployer {
+public class KlighdPath extends KlighdNode.KlighdFigureNode<KRendering> implements IResourceEmployer {
 
     private static final long serialVersionUID = 8034306769936734586L;
 
@@ -121,14 +124,22 @@ public class KlighdPath extends PNode implements IResourceEmployer {
     private boolean isSpline = false;
 
     /**
-     * Creates an empty {@link KlighdPath}.
+     * Standard constructor.
      */
     public KlighdPath() {
-        this.addPropertyChangeListener(NodeDisposeListener.DISPOSE, new NodeDisposeListener(this));
-        // reacting on event of PROPERTY_BOUNDS seems to be not necessary as that will lead to
-        //  a call of one of the 'setPathTo...' methods below that in turn will lead to a call of
-        //  'updateShape', which calls 'disposeSWTResource', too!
+        super();        
     }
+
+    /**
+     * Constructor.
+     * 
+     * @param rendering
+     *            the {@link KRendering} element being represented by this {@link KlighdPath}
+     */
+    public KlighdPath(final KRendering rendering) {
+        super(rendering);
+    }
+
 
     /**
      * Changes the underlying shape of this {@link KlighdPath}.
@@ -189,9 +200,17 @@ public class KlighdPath extends PNode implements IResourceEmployer {
             return;
         }
         this.lineAttributes = theLineAttributes;
+        flushAttributes();
+    }
+
+    /**
+     * Triggers a re-evaluation of the attached {@link LineAttributes}, must be called after
+     * manipulating the {@link LineAttributes} obtained via {@link #getLineAttributes()}.
+     */
+    public void flushAttributes() {
         this.stroke = new BasicStroke(lineAttributes.width, lineAttributes.cap - 1,
-                lineAttributes.join - 1, lineAttributes.miterLimit, lineAttributes.dash,
-                lineAttributes.dashOffset);
+                lineAttributes.join - 1, lineAttributes.miterLimit);
+                //, lineAttributes.dash, lineAttributes.dashOffset);
         updateBoundsFromPath();
         updateShape();
     }
@@ -217,8 +236,8 @@ public class KlighdPath extends PNode implements IResourceEmployer {
         }
         this.lineAttributes.width = width;
         this.stroke = new BasicStroke(lineAttributes.width, lineAttributes.cap - 1,
-                lineAttributes.join - 1, lineAttributes.miterLimit, lineAttributes.dash,
-                lineAttributes.dashOffset);
+                lineAttributes.join - 1, lineAttributes.miterLimit);
+                // , lineAttributes.dash, lineAttributes.dashOffset);
         updateBoundsFromPath();
         updateShape();
     }
@@ -454,7 +473,7 @@ public class KlighdPath extends PNode implements IResourceEmployer {
      * This method realizes the adjustment of the shape bounds according to stroke line width.
      * To this end, the initial shape definition, which is kept in {@link #origShape} is replicated
      * with adjusted bounds. This replicate is stored in {@link #shape} and drawn on the canvas
-     * in {@link #paint(PPaintContext)}.<br>
+     * in {@link #paint(KlighdPaintContext)}.<br>
      * <br>
      * In case of lines and polygons the {@link #origShape} is put into {@link #shape}, too, and
      * thus used while drawing.
@@ -552,8 +571,9 @@ public class KlighdPath extends PNode implements IResourceEmployer {
      * {@inheritDoc}
      */
     @Override
-    protected void paint(final PPaintContext paintContext) {
-        final KlighdSWTGraphics graphics = (KlighdSWTGraphics) paintContext.getGraphics();
+    protected void paint(final KlighdPaintContext kpc) {
+
+        final KlighdSWTGraphics graphics = kpc.getKlighdGraphics();
         final Device device = graphics.getDevice();
         
         // flag indicating whether we can construct SWT Paths and rely on
@@ -570,6 +590,19 @@ public class KlighdPath extends PNode implements IResourceEmployer {
         final int currentAlpha = graphics.getAlpha();
         final float currentAlphaFloat = currentAlpha;
 
+        
+        // We attach semantic data favored to the foreground element
+        // however, if no foreground exists, we attach it to the background
+        // FIXME not working for rendering refs
+        final boolean drawForeground = (lineAttributes.width != 0f)
+                        && (strokePaint != null || strokePaintGradient != null);
+        final boolean drawBackground = !isLine() && (paint != null || paintGradient != null);
+
+        // if not even a background is painted, don't attach the semantic data at all
+        if (!drawForeground && drawBackground) {
+            addSemanticData(kpc);
+        }
+        
         // draw the background if possible and required
         if (!isLine()) {
             if (swt && shapePath == null && (paint != null || paintGradient != null)) {
@@ -595,6 +628,10 @@ public class KlighdPath extends PNode implements IResourceEmployer {
                     graphics.fill(shape);
                 }
             }
+        }
+
+        if (drawForeground) {
+            addSemanticData(kpc);
         }
 
         // draw the foreground if required
@@ -720,7 +757,19 @@ public class KlighdPath extends PNode implements IResourceEmployer {
     /* --------------------- */
 
     /**
-     * Resets the path to a rectangle with the dimensions and position provided.
+     * Resets <code>this</code> path to <code>rect</code>.<br>
+     * <b>Be careful:</b>The given {@link Rectangle2D.Float} instance is used further on so don't
+     * modify it externally!
+     * 
+     * @param rect
+     *            the rectangle determining the new bounds
+     */
+    public void setPathToRectangle(final Rectangle2D.Float rect) {
+        this.setShape(rect);
+    }
+
+    /**
+     * Resets <code>this</code> path to a rectangle with the dimensions and position provided.
      * 
      * @param x
      *            left of the rectangle
@@ -735,9 +784,8 @@ public class KlighdPath extends PNode implements IResourceEmployer {
             final float height) {
         this.setShape(new Rectangle2D.Float(x, y, width, height));
     }
-
     /**
-     * Resets the path to a rectangle with the dimensions and position provided.
+     * Resets <code>this</code> path to a rectangle with the dimensions and position provided.
      * 
      * @param x
      *            left of the rectangle
@@ -758,8 +806,8 @@ public class KlighdPath extends PNode implements IResourceEmployer {
     }
 
     /**
-     * Resets the path to an ellipse positioned at the coordinate provided with the dimensions
-     * provided.
+     * Resets <code>this</code> path to an ellipse positioned at the coordinate provided with the
+     * dimensions provided.
      * 
      * @param x
      *            left of the ellipse
@@ -776,8 +824,8 @@ public class KlighdPath extends PNode implements IResourceEmployer {
 
 
     /**
-     * Resets the path to an arc positioned at the coordinate provided with the dimensions, angular
-     * start and angular extent provided.
+     * Resets <code>this</code> path to an arc positioned at the coordinate provided with the
+     * dimensions, angular start and angular extent provided.
      * 
      * @param x
      *            left of the arc
@@ -802,7 +850,7 @@ public class KlighdPath extends PNode implements IResourceEmployer {
 
 
     /**
-     * Sets the path to a sequence of segments described by the points.
+     * Sets <code>this</code> path to a sequence of segments described by the points.
      * 
      * @param points
      *            points to that lie along the generated path
@@ -820,7 +868,7 @@ public class KlighdPath extends PNode implements IResourceEmployer {
 
 
     /**
-     * Sets the path to a sequence of segments described by the points.
+     * Sets <code>this</code> path to a sequence of segments described by the points.
      * 
      * @param points
      *            points to that lie along the generated path
@@ -835,12 +883,12 @@ public class KlighdPath extends PNode implements IResourceEmployer {
         this.isRoundedBendsPolyline = true;
         this.linePoints = points;
         this.setShape(
-                PolylineUtil.createRoundedBendsPolylinePath(new Path2D.Float(), points, bendRadius));
+            PolylineUtil.createRoundedBendsPolylinePath(new Path2D.Float(), points, bendRadius, this));
     }
 
 
     /**
-     * Sets the path to a sequence of segments described by the points.
+     * Sets <code>this</code> path to a sequence of segments described by the points.
      * 
      * @param points
      *            points to that lie along the generated path
@@ -857,7 +905,7 @@ public class KlighdPath extends PNode implements IResourceEmployer {
 
 
     /**
-     * Sets the path to a sequence of segments described by the points.
+     * Sets <code>this</code> path to a sequence of segments described by the points.
      * 
      * @param points
      *            points to that lie along the generated path
