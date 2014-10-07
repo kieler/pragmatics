@@ -3,7 +3,7 @@
 <module rename-to='klay'>
 
   <!-- Inherits some modules, from Klay and GWT -->  
-  <inherits name='de.cau.cs.kieler.klay.gwt.KlayGWTWebWorker'/>
+  <inherits name='de.cau.cs.kieler.klay.gwt.KlayGWTPlainJS'/>
   <inherits name='com.google.gwt.core.Core'/>
   <inherits name='com.google.gwt.json.JSON'/>
   <inherits name='de.cau.cs.kieler.Klay'/>
@@ -14,11 +14,11 @@
   <set-property name="user.agent" value="gecko1_8" />
 
   <!-- Define and specify the linker -->
-  <define-linker name="workerlinker" class="de.cau.cs.kieler.klay.gwt.linker.WorkerLinker" />
+  <define-linker name="workerlinker" class="de.cau.cs.kieler.klay.gwt.linker.PlainJSLinker" />
   <add-linker name="workerlinker" />
 
   <!-- Specify the app entry point class.                         -->
-  <entry-point class='de.cau.cs.kieler.klay.gwt.client.KlayGWTWebWorker'/>
+  <entry-point class='de.cau.cs.kieler.klay.gwt.client.KlayGWTPlainJS'/>
 
   <!-- Specify the paths for translatable code                    -->
   <source path='client'/>

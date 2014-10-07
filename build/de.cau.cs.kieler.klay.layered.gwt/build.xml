@@ -93,13 +93,11 @@
 	<!-- TARGET clean -->
 	<target name="clean" description="Cleans this project.">
 
+		<antcall target="cleancompilation" />
+		
+		<!-- target folder -->
 		<delete dir="${outputFolder}" />
-
-		<delete dir="war/WEB-INF/classes" failonerror="false" />
-		<delete dir="war/WEB-INF/deploy" failonerror="false" />
-		<delete dir="war/klay" failonerror="false" />
-		<delete dir="gwt-unitCache" failonerror="false" />
-
+		
 		<!-- Remove the klay layered sources which are copied from the original plugins -->
 		<delete failonerror="false">
 			<fileset dir="src-external">
@@ -110,6 +108,17 @@
 				<exclude name="de/cau/cs/kieler/emul/**" />
 			</fileset>
 		</delete>
+	</target>
+	
+	<!-- TARGET cleancompilation - does not remove targets, only compilation units -->
+	<target name="cleancompilation" description="Cleans this project's compilation units.">
+		
+		<delete dir="${outputFolder.tmp}" />
+		
+		<delete dir="war/WEB-INF/classes" failonerror="false" />
+		<delete dir="war/WEB-INF/deploy" failonerror="false" />
+		<delete dir="war/klay" failonerror="false" />
+		<delete dir="gwt-unitCache" failonerror="false" />
 	</target>
 
 	<!-- TARGET copySrc -->
@@ -224,16 +233,33 @@
 		</antcall>
 	</target>
 
-  <!-- Uses a WebWorker linker based on gwtwwlinker which generates a just one permutation for a Web Worker called klayjs_worker.js. -->
+    <!-- Uses a WebWorker linker based on gwtwwlinker which generates a just one 
+         permutation for a Web Worker called klayjs_worker.js. -->
 	<target name="webworkerlinker">
 		<antcall target="dist">
 			<param name="gwt.module" value="de.cau.cs.kieler.klay.gwt.KlayGWTWebWorker" />
 			<param name="gwt.module.suffix" value="_webworkerlinker" />
 		</antcall>
 	</target>
+	
+	<target name="plainjslinker">
+		<antcall target="dist">
+			<param name="gwt.module" value="de.cau.cs.kieler.klay.gwt.KlayGWTPlainJS" />
+			<param name="gwt.module.suffix" value="_plainjslinker" />
+		</antcall>
+	</target>
 
 	<!-- TARGET buildall -->
-	<target name="buildall" depends="clean, webworkerlinker, customlinker, stdlinker" description="Builds all configurations of the KLay js library." />
+	<target name="buildall" description="Builds all configurations of the KLay js library.">
+		<antcall target="clean" />
+		<antcall target="stdlinker" />
+		<antcall target="cleancompilation" />
+		<antcall target="customlinker" />
+		<antcall target="cleancompilation" />
+		<antcall target="webworkerlinker" />
+		<antcall target="cleancompilation" />
+		<antcall target="plainjslinker" />
+	</target>
 
 </project>
 
