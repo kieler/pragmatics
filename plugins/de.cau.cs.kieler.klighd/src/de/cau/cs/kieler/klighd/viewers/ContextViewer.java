@@ -2,12 +2,12 @@
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
- * 
+ *
  * Copyright 2011 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
- * 
+ *
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
@@ -77,19 +77,22 @@ import de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties;
  * <br>
  * This viewer also implements the {@code ISelectionProvider} interface and acts as KLighD's
  * provider of selection events.
- * 
+ *
  * @author mri
  * @author chsch
  * @author msp
+ *
+ * @kieler.design proposed by chsch
+ * @kieler.rating proposed yellow by chsch
  */
-public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelectionProvider,
+public class ContextViewer implements IViewer, ILayoutRecorder, ISelectionProvider,
         IDiagramOutlinePage.Provider {
 
     /** the parent composite for diagram viewers. */
     private Composite diagramComposite;
 
     /** the current viewer. */
-    private IViewer<Object> currentViewer;
+    private IViewer currentViewer;
 
     /** the current view context. */
     private ViewContext currentViewContext = null;
@@ -100,7 +103,7 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
 
     /**
      * Constructs a view context viewer.
-     * 
+     *
      * @param parent
      *            the parent composite
      */
@@ -110,23 +113,22 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
 
     /**
      * Employs the given <code>viewer</code>.
-     * 
+     *
      * @param viewer
      *            the {@link IViewer} to be employed
      */
-    protected synchronized void setViewer(final IViewer<?> viewer) {
+    protected synchronized void setViewer(final IViewer viewer) {
         // remove the current viewer if someone exists
         if (currentViewer != null) {
             currentViewer.getControl().dispose();
             currentViewer = null;
         }
 
-        @SuppressWarnings("unchecked")
-        final IViewer<Object> objViewer = (IViewer<Object>) viewer;
+        final IViewer objViewer = viewer;
         currentViewer = objViewer;
 
         diagramComposite.layout();
-        
+
         if (currentViewer instanceof ILayoutRecorder) {
             layoutRecorder = (ILayoutRecorder) currentViewer;
         }
@@ -161,7 +163,7 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
             layoutRecorder.startRecording();
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -210,7 +212,7 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
 
             // set the new view context
             currentViewContext = viewContext;
-            
+
             // create and set a corresponding new viewer
             setViewer(viewContext.createViewer(this, diagramComposite));
 
@@ -235,9 +237,9 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
 
     /**
      * Returns the currently active view context.
-     * 
+     *
      * @deprecated use {@link IViewer#getViewContext()}, which is implemented by this class
-     * 
+     *
      * @return the view context
      */
     public ViewContext getCurrentViewContext() {
@@ -246,10 +248,10 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
 
     /**
      * Returns the currently active viewer.
-     * 
+     *
      * @return the viewer
      */
-    public IViewer<?> getActiveViewer() {
+    public IViewer getActiveViewer() {
         return currentViewer;
     }
 
@@ -268,7 +270,7 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
                     + " is not possible, since the actual diagram viewer is not initialized yet.");
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -295,14 +297,14 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
             return false;
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public boolean isDisplayed(final KGraphElement diagramElement, final boolean checkParents) {
         return this.currentViewer.isDisplayed(diagramElement, checkParents);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -315,14 +317,14 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
             return false;
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public boolean isVisible(final KGraphElement diagramElement, final boolean checkParents) {
         return this.currentViewer.isVisible(diagramElement, checkParents);
     }
-    
+
     private static final String NON_DISPLAY_ERROR_MSG =
             "KLighD: Application attempted to traverse an Iterator provided by "
             + "IViewer.##. Evaluations of those Iterators must be "
@@ -334,7 +336,7 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
     public Iterator<KNode> getVisibleDiagramNodes() {
         // SUPPRESS CHECKSTYLE PREVIOUS 4 Javadoc, see http://sourceforge.net/p/checkstyle/bugs/592/
 
-        final IViewer<?> activeViewer = getActiveViewer();
+        final IViewer activeViewer = getActiveViewer();
         final KNode clip = activeViewer.getClip();
 
         if (!activeViewer.isVisible(clip, false)) {
@@ -364,11 +366,11 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
 
     /**
      * {@inheritDoc}
-     */    
+     */
     public Iterator<KGraphElement> getVisibleDiagramElements() {
         // SUPPRESS CHECKSTYLE PREVIOUS 4 Javadoc, see http://sourceforge.net/p/checkstyle/bugs/592/
-        
-        final IViewer<?> activeViewer = getActiveViewer();
+
+        final IViewer activeViewer = getActiveViewer();
         final KNode clip = activeViewer.getClip();
 
         if (!activeViewer.isVisible(clip, false)) {
@@ -399,7 +401,7 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
                     Iterator<? extends KGraphElement> res = (Iterator<KGraphElement>) (Iterator<?>)
                             Iterators.filter(candidates, filter);
 
-                    return res; 
+                    return res;
                 }
 
                 private Predicate<EObject> filter = new Predicate<EObject>() {
@@ -423,7 +425,7 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
             currentViewer.zoomToFocus((KNode) diagramNode, duration);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -472,7 +474,7 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
             return false;
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -490,14 +492,14 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
             currentViewer.collapse((KNode) diagramNode);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public void collapse(final KNode diagramElement) {
         currentViewer.collapse(diagramElement);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -508,14 +510,14 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
             currentViewer.expand((KNode) diagramNode);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public void expand(final KNode diagramElement) {
         currentViewer.expand(diagramElement);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -526,14 +528,14 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
             currentViewer.toggleExpansion((KNode) diagramNode);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public void toggleExpansion(final KNode diagramElement) {
         currentViewer.toggleExpansion(diagramElement);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -541,17 +543,17 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
         final EObject diagramElement =
                 getViewContext().getTargetElement(semanticElement, KGraphElement.class);
         if (diagramElement instanceof KGraphElement) {
-            currentViewer.hide(diagramElement);
+            currentViewer.hide((KGraphElement) diagramElement);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public void hide(final KGraphElement diagramElement) {
         currentViewer.hide(diagramElement);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -559,17 +561,17 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
         final EObject diagramElement =
                 getViewContext().getTargetElement(semanticElement, KGraphElement.class);
         if (diagramElement instanceof KGraphElement) {
-            currentViewer.show(diagramElement);
+            currentViewer.show((KGraphElement) diagramElement);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public void show(final KGraphElement diagramElement) {
         currentViewer.show(diagramElement);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -578,14 +580,14 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
             this.currentViewer.clip(this.getViewContext().getViewModel());
             return;
         }
-        
+
         final EObject diagramElement =
                 getViewContext().getTargetElement(semanticElement, KGraphElement.class);
         if (diagramElement instanceof KNode) {
-            this.currentViewer.clip(diagramElement);
+            this.currentViewer.clip((KNode) diagramElement);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -596,7 +598,7 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
             this.currentViewer.clip(diagramElement);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -611,17 +613,17 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
         final EObject diagramElement =
                 getViewContext().getTargetElement(semanticElement, KGraphElement.class);
         if (diagramElement instanceof KGraphElement) {
-            currentViewer.scale(diagramElement, scale);
+            currentViewer.scale((KGraphElement) diagramElement, scale);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public void scale(final KNode diagramElement, final float scale) {
         currentViewer.scale(diagramElement, scale);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -649,10 +651,10 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
         final EObject diagramElement =
                 getViewContext().getTargetElement(semanticElement, KGraphElement.class);
         if (diagramElement instanceof KGraphElement) {
-            currentViewer.centerOn(diagramElement, duration);
+            currentViewer.centerOn((KGraphElement) diagramElement, duration);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -669,10 +671,10 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
         final EObject diagramElement =
                 getViewContext().getTargetElement(semanticElement, KGraphElement.class);
         if (diagramElement instanceof KGraphElement) {
-            currentViewer.centerOn(diagramElement, duration);
+            currentViewer.centerOn((KGraphElement) diagramElement, duration);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -689,10 +691,10 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
         final EObject diagramElement =
                 getViewContext().getTargetElement(semanticElement, KGraphElement.class);
         if (diagramElement instanceof KGraphElement) {
-            currentViewer.panToTopLeftCorner(diagramElement, duration);
+            currentViewer.panToTopLeftCorner((KGraphElement) diagramElement, duration);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -701,7 +703,7 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
             currentViewer.panToTopLeftCorner(diagramElement, duration);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -722,7 +724,7 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
             return isSelectable().apply(diagramElement) ? diagramElement : null;
         }
     };
-    
+
 
     /**
      * {@inheritDoc}
@@ -733,30 +735,30 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
             toggleSelectionOfDiagramElements(singleton(diagramElement));
         }
     };
-    
+
     /**
      * {@inheritDoc}
      */
     public void toggleSelectionOf(final KGraphElement diagramElement) {
         toggleSelectionOfDiagramElements(singleton(diagramElement));
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public void toggleSelectionOf(final KText diagramElement) {
         toggleSelectionOfDiagramElements(singleton(diagramElement));
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public void toggleSelectionOfSemanticElements(final Set<Object> semanticElements) {
         toggleSelectionOfDiagramElements(
                 Sets.newHashSet(transform(semanticElements, getViews)));
-   
+
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -769,9 +771,9 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
             }
         }
         updateSelection(theSelection);
-        
+
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -780,35 +782,35 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
         // Collections.singleton accepts 'null' values and 'updateSelection' does so, too!
         updateSelection(singleton(diagramElement));
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public void resetSelectionTo(final KGraphElement diagramElement) {
         updateSelection(singleton(diagramElement));
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public void resetSelectionTo(final KText diagramElement) {
         updateSelection(singleton(diagramElement));
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public void resetSelectionToSemanticElements(final Iterable<? extends Object> semanticElements) {
         updateSelection(transform(semanticElements, getViews));
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public void resetSelectionToDiagramElements(final Iterable<? extends EObject> diagramElements) {
         updateSelection(filter(diagramElements, isSelectable()));
     }
-    
+
 
     /**
      * Function for determining the (root) {@link KRendering KRenderings} corresponding to a
@@ -819,7 +821,7 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
      */
     private static final Function<EObject, Iterable<KRendering>> AS_RENDERING
         = new Function<EObject, Iterable<KRendering>>() {
-        
+
         public Iterable<KRendering> apply(final EObject eo) {
             if (KRenderingPackage.eINSTANCE.getKRendering().isInstance(eo)) {
                 return singleton((KRendering) eo);
@@ -831,18 +833,18 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
 
     /**
      * Updates the selection provided by this {@link IViewer}.
-     * 
+     *
      * @param diagramElements an {@link Iterable} of view model elements being selected
      */
     private void updateSelection(final Iterable<? extends EObject> diagramElements) {
         // here the selected elements are assumed to be diagram elements, i.e. KGraph elements or KTexts
-        
+
         final KlighdTreeSelection diagSelection = getDiagramSelection();
-        
+
         final List<EObject> currentlySelected = diagSelection != null
                 ? newArrayList(diagSelection) : Collections.<EObject>emptyList();
-        final List<EObject> toBeSelected = newArrayList(filter(diagramElements, Predicates.notNull())); 
-        
+        final List<EObject> toBeSelected = newArrayList(filter(diagramElements, Predicates.notNull()));
+
         for (final KRendering r : concat(transform(filter(currentlySelected, notIn(toBeSelected)),
                 AS_RENDERING))) {
             r.setProperty(KlighdInternalProperties.SELECTED, false);
@@ -863,7 +865,7 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
     /**
      * Updates the selection provided by <code>this</code> {@link ContextViewer} and notifies the
      * registered {@link ISelectionChangedListener ISelectionChangedListeners}.
-     * 
+     *
      * @param elements
      *            the elements contained in the updated selection
      */
@@ -891,7 +893,7 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
      * listeners are registered e.g. by the platform in order to broadcast changes in the selection
      * across change listeners registered in the {@link org.eclipse.ui.ISelectionService
      * ISelectionService}.
-     * 
+     *
      * @param theSelection
      *            the selection to be broadcasted
      */
@@ -900,7 +902,7 @@ public class ContextViewer implements IViewer<Object>, ILayoutRecorder, ISelecti
 
         synchronized (selectionListeners) {
             this.selection = theSelection;
-            
+
             if (theSelection instanceof KlighdTreeSelection) {
                 this.diagramSelection = (KlighdTreeSelection) theSelection;
             } else {

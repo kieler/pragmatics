@@ -25,6 +25,7 @@ import org.eclipse.ui.PlatformUI;
 import de.cau.cs.kieler.kiml.grana.AnalysisData;
 import de.cau.cs.kieler.kiml.grana.AnalysisService;
 import de.cau.cs.kieler.kiml.grana.GranaPlugin;
+import de.cau.cs.kieler.kiml.grana.ui.AnalysisSelectionDialog;
 import de.cau.cs.kieler.kiml.grana.ui.visualization.VisualizationService;
 import de.cau.cs.kieler.kiml.grana.util.DiagramAnalyzer;
 import de.cau.cs.kieler.kiml.grana.util.GranaUtil;

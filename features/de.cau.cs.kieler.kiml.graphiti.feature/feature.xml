@@ -2,7 +2,7 @@
 <feature
       id="de.cau.cs.kieler.kiml.graphiti.feature"
       label="KIELER Layout for Graphiti"
-      version="0.12.0.qualifier"
+      version="0.12.1.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel"
       plugin="de.cau.cs.kieler.kiml.graphiti">
 

@@ -15,18 +15,18 @@ package de.cau.cs.kieler.klighd;
 
 import org.eclipse.swt.widgets.Composite;
 
-import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.klighd.viewers.ContextViewer;
 
 /**
  * The interface for classes which provide a viewer for a model class.
  * 
  * @author mri
+ * @author chsch
  * 
- * @param <T>
- *            the type of the model class
+ * @kieler.design proposed by chsch
+ * @kieler.rating proposed yellow by chsch
  */
-public interface IViewerProvider<T extends KNode> {
+public interface IViewerProvider {
 
     /**
      * Returns a viewer for models of the provided model class attached to the given composite.
@@ -37,13 +37,5 @@ public interface IViewerProvider<T extends KNode> {
      *            the parent composite
      * @return a viewer for the supported model types
      */
-    IViewer<T> createViewer(ContextViewer parentViewer, Composite parent);
-
-    /**
-     * Returns the class of the models supported by the viewer provided by this viewer provider.
-     * 
-     * @return the class of the supported models
-     */
-    Class<T> getModelClass();
-
+    IViewer createViewer(ContextViewer parentViewer, Composite parent);
 }

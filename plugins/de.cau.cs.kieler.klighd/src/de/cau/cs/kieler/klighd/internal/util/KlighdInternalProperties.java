@@ -28,6 +28,9 @@ import de.cau.cs.kieler.klighd.internal.ILayoutRecorder;
  * IProperties}.
  * 
  * @author chsch
+ * 
+ * @kieler.design proposed by chsch
+ * @kieler.rating proposed yellow by chsch 
  */
 public final class KlighdInternalProperties {
 
@@ -80,7 +83,7 @@ public final class KlighdInternalProperties {
     public static final IProperty<Boolean> SELECTED = new Property<Boolean>("klighd.selected", false);
 
     /** the viewer visualizing the graph. */
-    public static final IProperty<IViewer<?>> VIEWER = new Property<IViewer<?>>(
+    public static final IProperty<IViewer> VIEWER = new Property<IViewer>(
             "klighd.layout.viewer");
     
     /** the layout recorder responsible for diagram animation. */

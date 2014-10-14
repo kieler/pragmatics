@@ -31,6 +31,8 @@ import de.cau.cs.kieler.klighd.krendering.SimpleUpdateStrategy;
  * To be continued ... :-
  * 
  * @author chsch
+ * 
+ * @kieler.design proposed by chsch
  */
 public class KlighdSynthesisProperties extends MapPropertyHolder {
 
@@ -60,6 +62,16 @@ public class KlighdSynthesisProperties extends MapPropertyHolder {
     public static final IProperty<Map<SynthesisOption, Object>> SYNTHESIS_OPTION_CONFIG =
             new Property<Map<SynthesisOption, Object>>("klighd.synthesisOptionConfig");
     
+    /** property denoting a desired zoom buttons handling. */
+    public static final IProperty<ZoomConfigButtonsHandling> REQUESTED_ZOOM_CONFIG_BUTTONS_HANDLING =
+            new Property<ZoomConfigButtonsHandling>("klighd.zoomConfigButtonsHandling",
+                    ZoomConfigButtonsHandling.UNDEFINED);
+
+    /** property denoting whether to suppress the automatic size estimation of
+     * {@link de.cau.cs.kieler.core.kgraph.KNode KNodes} and
+     * {@link de.cau.cs.kieler.core.kgraph.KLabel KLabels}. */
+    public static final IProperty<Boolean> SUPPRESS_SIZE_ESTIMATION = new Property<Boolean>(
+            "klighd.suppressSizeEstimation", false);
     /**
      * Defines the possible diagram side bar initialization options. 
      */
@@ -72,10 +84,6 @@ public class KlighdSynthesisProperties extends MapPropertyHolder {
         UNDEFINED
     }
     
-    /** property denoting a desired zoom buttons handling. */
-    public static final IProperty<ZoomConfigButtonsHandling> REQUESTED_ZOOM_CONFIG_BUTTONS_HANDLING =
-            new Property<ZoomConfigButtonsHandling>("klighd.zoomConfigButtonsHandling",
-                    ZoomConfigButtonsHandling.UNDEFINED);
 
     /**
      * Defines the possible zoom buttons visibility options. 
@@ -99,12 +107,13 @@ public class KlighdSynthesisProperties extends MapPropertyHolder {
                 "KLighD: Empty KlighdSynthesisProperties config must not be changed.";
         
         @Override
-        public <T> void setProperty(final IProperty<? super T> property, final T value) {
+        public <T> KlighdSynthesisProperties setProperty(final IProperty<? super T> property,
+                final T value) {
             throw new UnsupportedOperationException(msg);
         }
         
         @Override
-        public void copyProperties(final IPropertyHolder other) {
+        public MapPropertyHolder copyProperties(final IPropertyHolder other) {
             throw new UnsupportedOperationException(msg);
         }
     };
@@ -156,9 +165,23 @@ public class KlighdSynthesisProperties extends MapPropertyHolder {
             return sp;
         }
     }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @return <code>this</code> {@link KlighdSynthesisProperties} instance for convenience
+     */
+    @Override
+    public <T> KlighdSynthesisProperties setProperty(final IProperty<? super T> property,
+            final T value) {
+        super.setProperty(property, value);
+        return this;
+    }
     
     /**
      * Sets a property value and returns <code>this</code> {@link IPropertyHolder} for convenience.
+     * 
+     * @deprecated use {@link #setProperty(IProperty, Object)}
      * 
      * @param <T> type of property
      * @param property the property to set
@@ -238,6 +261,17 @@ public class KlighdSynthesisProperties extends MapPropertyHolder {
      */
     public KlighdSynthesisProperties suppressMultiSelection() {
         this.setProperty(MULTI_SELECTION, false);
+        return this;
+    }
+
+    /**
+     * Configures the diagram viewer's support for automatically computing the minimal size of
+     * diagram nodes (especially non-compound ones) and .
+     * 
+     * @return <code>this<code> {@link KlighdSynthesisProperties} object.
+     */
+    public KlighdSynthesisProperties suppressNodeAndLabelSizeEstimation() {
+        this.setProperty(SUPPRESS_SIZE_ESTIMATION, true);
         return this;
     }
 

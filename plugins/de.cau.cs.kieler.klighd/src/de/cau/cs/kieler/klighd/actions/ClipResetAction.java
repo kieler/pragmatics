@@ -22,6 +22,9 @@ import de.cau.cs.kieler.klighd.IViewer;
  * Does nothing if the diagram root is the current clip.
  * 
  * @author chsch
+ * 
+ * @kieler.design proposed by chsch
+ * @kieler.rating proposed yellow by chsch
  */
 public class ClipResetAction implements IAction {
 
@@ -29,7 +32,7 @@ public class ClipResetAction implements IAction {
      * {@inheritDoc}
      */
     public ActionResult execute(final ActionContext context) {        
-        final IViewer<?> activeViewer = context.getActiveViewer();
+        final IViewer activeViewer = context.getActiveViewer();
         final KNode diagramRoot = context.getViewContext().getViewModel();
         
         if (activeViewer.getClip() != diagramRoot) {

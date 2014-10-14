@@ -89,11 +89,11 @@ public enum IntermediateProcessorStrategy {
     LABEL_AND_NODE_SIZE_PROCESSOR,
     /** Calculates the margins of nodes according to the sizes of ports and labels. */
     NODE_MARGIN_CALCULATOR,
+    /** Adjusts the width of hierarchical port dummy nodes. */
+    HIERARCHICAL_PORT_DUMMY_SIZE_PROCESSOR,
     
     // Before Phase 5
 
-    /** Adjusts the width of hierarchical port dummy nodes. */
-    HIERARCHICAL_PORT_DUMMY_SIZE_PROCESSOR,
     /** Fix coordinates of hierarchical port dummy nodes. */
     HIERARCHICAL_PORT_POSITION_PROCESSOR,
     /** Calculate the size of layers. */

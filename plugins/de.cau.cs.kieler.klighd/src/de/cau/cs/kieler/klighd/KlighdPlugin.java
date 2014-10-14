@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klighd;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -24,6 +25,9 @@ import de.cau.cs.kieler.klighd.internal.IKlighdTrigger;
  * 
  * @author mri
  * @author chsch
+ * 
+ * @kieler.design proposed by chsch
+ * @kieler.rating proposed yellow by chsch
  */
 public class KlighdPlugin extends AbstractUIPlugin {
 
@@ -32,6 +36,15 @@ public class KlighdPlugin extends AbstractUIPlugin {
 
     /** A definition place of the platform-specific line separator. */
     public static final String LINE_SEPARATOR = System.getProperty("line.separator");
+
+    /** A Boolean flag indicating that the tool is running on a linux system. */
+    public static final boolean IS_LINUX = Platform.getOS().equals(Platform.OS_LINUX);
+
+    /** A Boolean flag indicating that the tool is running on a MacOSX system. */
+    public static final boolean IS_MACOSX = Platform.getOS().equals(Platform.OS_MACOSX);
+
+    /** A Boolean flag indicating that the tool is running on a Windows system. */
+    public static final boolean IS_WINDOWS = Platform.getOS().equals(Platform.OS_WIN32);
 
     /** the shared instance. */
     private static KlighdPlugin plugin;
@@ -79,8 +92,7 @@ public class KlighdPlugin extends AbstractUIPlugin {
      */
     public static ImageDescriptor getImageDescriptor(final String path) {
         return imageDescriptorFromPlugin(PLUGIN_ID, path);
-    }
-
+    }    
 
     /* -------------------------- */
     /*   Access to KIVi-binding   */

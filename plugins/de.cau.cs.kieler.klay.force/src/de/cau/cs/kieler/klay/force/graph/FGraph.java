@@ -29,7 +29,7 @@ import de.cau.cs.kieler.klay.force.properties.Properties;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class FGraph extends MapPropertyHolder {
+public final class FGraph extends MapPropertyHolder {
     
     /** the serial version UID. */
     private static final long serialVersionUID = -2396315570561498425L;
@@ -118,8 +118,7 @@ public class FGraph extends MapPropertyHolder {
         int n = nodes.size();
         adjacency = new int[n][n];
         for (FEdge edge : edges) {
-            adjacency[edge.getSource().id][edge.getTarget().id]
-                                           += edge.getProperty(Properties.PRIORITY);
+            adjacency[edge.getSource().id][edge.getTarget().id] += edge.getProperty(Properties.PRIORITY);
         }
     }
 

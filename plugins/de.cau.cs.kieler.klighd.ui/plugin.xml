@@ -4,8 +4,8 @@
    <extension
          point="de.cau.cs.kieler.klighd.extensions">
       <viewer
-            class="de.cau.cs.kieler.klighd.ui.internal.viewers.PiccoloViewerProvider"
-            id="de.cau.cs.kieler.klighd.piccolo.piccoloViewer">
+            class="de.cau.cs.kieler.klighd.ui.viewers.PiccoloViewerUI$Provider"
+            id="de.cau.cs.kieler.klighd.ui.viewers.PiccoloViewerUI">
       </viewer>
    </extension>
    <extension
@@ -55,6 +55,12 @@
       </definition>
    </extension>
    <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="de.cau.cs.kieler.klighd.ui.printing.PrintOptions$Initializer">
+      </initializer>
+   </extension>
+   <extension
          point="org.eclipse.ui.contexts">
       <context
             id="de.cau.cs.kieler.klighd.ui.context"
@@ -82,7 +88,9 @@
          point="org.eclipse.ui.editors">
       <editor
             class="de.cau.cs.kieler.klighd.ui.parts.DiagramEditorPart"
+            contributorClass="de.cau.cs.kieler.klighd.ui.parts.DiagramEditorPart$ActionContributor"
             default="false"
+            extensions="kgx,kgraph"
             icon="icons/klighd.gif"
             id="de.cau.cs.kieler.klighd.ui.parts.DiagramEditorPart"
             name="Lightweight Diagram Viewer">
@@ -125,7 +133,7 @@
             defaultHandler="de.cau.cs.kieler.klighd.ui.internal.handlers.KlighdSaveKGraphHandler"
             description="Allows to write the view model KGraph to a file."
             id="de.cau.cs.kieler.klighd.ui.savekgraph"
-            name="Save Underlying KGraph">
+            name="Save View Model (KGraph)">
       </command>
       <command
             categoryId="de.cau.cs.kieler.klighd.ui"

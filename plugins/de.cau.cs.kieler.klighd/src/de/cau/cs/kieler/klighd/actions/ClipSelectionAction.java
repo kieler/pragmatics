@@ -26,6 +26,9 @@ import de.cau.cs.kieler.klighd.IViewer;
  * Does nothing otherwise.
  * 
  * @author chsch
+ * 
+ * @kieler.design proposed by chsch
+ * @kieler.rating proposed yellow by chsch
  */
 public class ClipSelectionAction implements IAction {
 
@@ -40,7 +43,7 @@ public class ClipSelectionAction implements IAction {
      */
     public ActionResult execute(final ActionContext context) {
         final Iterable<EObject> selection = context.getContextViewer().getDiagramSelection();
-        final IViewer<?> contextViewer = context.getContextViewer();
+        final IViewer contextViewer = context.getContextViewer();
         
         final Object first = Iterables.getFirst(selection, null);
 

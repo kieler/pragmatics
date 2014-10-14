@@ -2,12 +2,12 @@
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
- * 
+ *
  * Copyright 2013 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
- * 
+ *
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
@@ -42,6 +42,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
@@ -50,6 +51,8 @@ import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.IURIEditorInput;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
@@ -71,19 +74,51 @@ import de.cau.cs.kieler.klighd.internal.IDiagramOutlinePage;
 import de.cau.cs.kieler.klighd.internal.ILayoutConfigProvider;
 import de.cau.cs.kieler.klighd.krendering.SimpleUpdateStrategy;
 import de.cau.cs.kieler.klighd.ui.internal.options.DiagramSideBar;
-import de.cau.cs.kieler.klighd.ui.internal.viewers.UiContextViewer;
+import de.cau.cs.kieler.klighd.ui.printing.PrintAction;
+import de.cau.cs.kieler.klighd.ui.viewers.UiContextViewer;
 import de.cau.cs.kieler.klighd.util.KlighdSynthesisProperties;
 import de.cau.cs.kieler.klighd.viewers.ContextViewer;
 
 /**
  * An editor which is able to display models in lightweight diagrams.
- * 
+ *
  * @author msp
  * @author chsch
  * @author uru
  */
 public class DiagramEditorPart extends EditorPart implements
         IDiagramWorkbenchPart.IDiagramEditorPart, ILayoutConfigProvider {
+
+    /**
+     * ActionBarContributor providing the print action for DiagramEditorParts.
+     */
+    public static class ActionContributor extends EditorActionBarContributor {
+
+        /** The print action. */
+        private final PrintAction action = new PrintAction();
+
+        /**
+         * Sets the active editor for the contributor.
+         * Updates the print action to reflect the the editor change.
+         *
+         * @param targetEditor
+         *            the new active editor.
+         */
+        @Override
+        public void setActiveEditor(final IEditorPart targetEditor) {
+            super.setActiveEditor(targetEditor);
+
+            final IActionBars bars = getActionBars();
+            if (bars == null) {
+                return;
+            }
+
+            action.setViewer(((DiagramEditorPart) targetEditor).getViewer());
+            bars.setGlobalActionHandler(ActionFactory.PRINT.getId(), action);
+            bars.updateActionBars();
+        }
+
+    }
 
     /** the resource set managed by this editor part. */
     private ResourceSet resourceSet;
@@ -111,7 +146,7 @@ public class DiagramEditorPart extends EditorPart implements
 
     /**
      * Creates a diagram editor part.
-     * 
+     *
      * @param installResourceChangeListener
      *            if <code>true</code> an {@link IResourceChangeListener} will be installed on the
      *            workspace, which is in charge updating the diagram if the related editor input is
@@ -235,7 +270,7 @@ public class DiagramEditorPart extends EditorPart implements
     /**
      * Tester that decides on the need for computing the diagram layout while opening the diagram.<br>
      * May be overridden by subclasses.
-     * 
+     *
      * @param viewContext
      *            provides context data that might be incorporated in the decision
      * @return true if the layout shall be (re-) computed while opening the diagram.
@@ -250,7 +285,7 @@ public class DiagramEditorPart extends EditorPart implements
     /**
      * Provides the initial {@link ZoomStyle}, which is {@link ZoomStyle#NONE NONE} by default.
      * May be overridden by sub classes.
-     * 
+     *
      * @return the {@link ZoomStyle} being applied during initial layout application.
      */
     protected ZoomStyle getInitialZoomStyle() {
@@ -283,6 +318,7 @@ public class DiagramEditorPart extends EditorPart implements
         if (!diagramComposite.isDisposed()) {
             diagramComposite.removeControlListener(diagramAreaListener);
         }
+        this.diagramComposite = null;
 
         if (this.sideBar != null) {
             this.sideBar.dispose();
@@ -330,17 +366,15 @@ public class DiagramEditorPart extends EditorPart implements
     /**
      * {@inheritDoc}
      */
-    public IViewer<?> getViewer() {
+    public IViewer getViewer() {
         return viewer;
     }
 
     /**
      * {@inheritDoc}
-     * 
-     * @deprecated Use {@link #getViewer()}.
      */
-    public ContextViewer getContextViewer() {
-        return viewer;
+    public ViewContext getViewContext() {
+        return viewer.getViewContext();
     }
 
     private boolean toBeFocussed = false;
@@ -416,10 +450,10 @@ public class DiagramEditorPart extends EditorPart implements
 
     /**
      * Load a model from the editor input. The result is put into {@link #model}.
-     * 
+     *
      * @throws PartInitException
      *             if loading the model fails
-     * 
+     *
      * @return the loaded model for convenience
      */
     protected Object loadModel() throws PartInitException {
@@ -479,7 +513,7 @@ public class DiagramEditorPart extends EditorPart implements
 
     /**
      * Getter, provides access to the input model to subclasses.
-     * 
+     *
      * @return the model
      */
     protected Object getModel() {
@@ -488,7 +522,7 @@ public class DiagramEditorPart extends EditorPart implements
 
     /**
      * Setter, allows to change the input model in subclass implementations.
-     * 
+     *
      * @param model
      *            the model to set
      */
@@ -498,7 +532,7 @@ public class DiagramEditorPart extends EditorPart implements
 
     /**
      * Configures the given resource set. The default implementation does nothing.
-     * 
+     *
      * @param set
      *            the resource set to be configured.
      */
@@ -510,7 +544,7 @@ public class DiagramEditorPart extends EditorPart implements
      * Returns a configuration for the KLighD view. Override this method to use a custom
      * configuration. The default implementation configures KLighD to use the simple update
      * strategy.
-     * 
+     *
      * @return KLighD configuration.
      */
     protected IPropertyHolder configureKlighdProperties() {
@@ -642,7 +676,7 @@ public class DiagramEditorPart extends EditorPart implements
      * Listens to resize changes and triggers a re-layout of the diagram in case a zoom style is
      * defined.
      */
-    private ControlListener diagramAreaListener = new ControlListener() {
+    private final ControlListener diagramAreaListener = new ControlListener() {
 
         /** The aspect ratio is rounded at two decimal places. */
         private static final float ASPECT_RATIO_ROUND = 100;

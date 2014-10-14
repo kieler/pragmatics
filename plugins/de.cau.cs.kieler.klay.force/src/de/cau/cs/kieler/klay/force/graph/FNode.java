@@ -26,7 +26,7 @@ import de.cau.cs.kieler.core.math.KVector;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class FNode extends FParticle {
+public final class FNode extends FParticle {
 
     /** the serial version UID. */
     private static final long serialVersionUID = 8663670492984978893L;
@@ -88,7 +88,7 @@ public class FNode extends FParticle {
      * 
      * @return the displacement vector
      */
-    public final KVector getDisplacement() {
+    public KVector getDisplacement() {
         return displacement;
     }
 

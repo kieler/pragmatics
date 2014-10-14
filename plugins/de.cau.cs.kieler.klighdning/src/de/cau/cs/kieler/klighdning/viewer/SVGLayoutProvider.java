@@ -63,7 +63,7 @@ public final class SVGLayoutProvider {
         if (model == null) {
             return "";
         }
-        LayoutMapping<KGraphElement> mapping = mng.buildLayoutGraph(model);
+        LayoutMapping<KGraphElement> mapping = mng.buildLayoutGraph(model, true);
 
         // perform the layout
         DiagramLayoutEngine.INSTANCE.layout(mapping, new BasicProgressMonitor());

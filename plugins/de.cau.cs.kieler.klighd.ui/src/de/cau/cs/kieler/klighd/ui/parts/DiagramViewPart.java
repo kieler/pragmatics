@@ -2,12 +2,12 @@
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
- * 
+ *
  * Copyright 2011 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
- * 
+ *
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
@@ -32,6 +32,8 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ViewPart;
 import org.osgi.framework.Bundle;
@@ -46,12 +48,13 @@ import de.cau.cs.kieler.klighd.ViewContext;
 import de.cau.cs.kieler.klighd.internal.ILayoutConfigProvider;
 import de.cau.cs.kieler.klighd.ui.DiagramViewManager;
 import de.cau.cs.kieler.klighd.ui.internal.options.DiagramSideBar;
-import de.cau.cs.kieler.klighd.ui.internal.viewers.UiContextViewer;
+import de.cau.cs.kieler.klighd.ui.printing.PrintAction;
+import de.cau.cs.kieler.klighd.ui.viewers.UiContextViewer;
 import de.cau.cs.kieler.klighd.viewers.ContextViewer;
 
 /**
  * A view which is able to display models in lightweight diagrams.
- * 
+ *
  * @author mri
  * @author chsch
  * @author msp
@@ -128,19 +131,27 @@ public class DiagramViewPart extends ViewPart implements IDiagramWorkbenchPart,
     /**
      * Sets the {@link ViewContext} to be used by this view part.<br>
      * Note that this method may be called multiple times in life of a part instance.
-     * 
+     *
      * @param viewContext
      *            the {@link ViewContext} to be displayed
      */
     public void setViewContext(final ViewContext viewContext) {
         // create the options pane
         if (sideBar == null) {
-            sideBar =
-                    DiagramSideBar.createSideBar(diagramComposite.getParent(), diagramComposite,
-                            viewContext);
+            sideBar = DiagramSideBar.createSideBar(
+                diagramComposite.getParent(), diagramComposite, viewContext);
         }
 
         this.getViewer().getContextViewer().setModel(viewContext);
+
+        registerPrintSupport();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ViewContext getViewContext() {
+        return viewer.getViewContext();
     }
 
     /**
@@ -186,7 +197,7 @@ public class DiagramViewPart extends ViewPart implements IDiagramWorkbenchPart,
     /**
      * (Re-)Evaluates the diagram (synthesis) and layout options registered in the employed
      * {@link ViewContext} and populates the diagram side bar accordingly. For internal use only!
-     * 
+     *
      * @param fitSpace
      *            if <code>true</code> a {@link de.cau.cs.kieler.klighd.ZoomStyle#ZOOM_TO_FIT
      *            ZoomStyle#ZOOM_TO_FIT} will applied to the diagram in order to fit into the
@@ -199,7 +210,7 @@ public class DiagramViewPart extends ViewPart implements IDiagramWorkbenchPart,
     /**
      * Returns true if this {@link ViewPart} is disposed. Since the {@link DiagramViewManager}
      * tracks created views it needs to test whether those views are still alive.
-     * 
+     *
      * @return whether {@link #dispose()} has been called on this {@link ViewPart}
      */
     public boolean isDisposed() {
@@ -208,11 +219,11 @@ public class DiagramViewPart extends ViewPart implements IDiagramWorkbenchPart,
 
     /**
      * Fill the view menu with some contributions.
-     * 
+     *
      * @param menuManager
      *            the menu manager
      */
-    private void fillViewMenu(final IMenuManager menuManager) {
+    protected void fillViewMenu(final IMenuManager menuManager) {
     }
 
     /**
@@ -260,6 +271,18 @@ public class DiagramViewPart extends ViewPart implements IDiagramWorkbenchPart,
     }
 
     /**
+     * Registers the default print support, may be overriden if necessary.
+     */
+    protected void registerPrintSupport() {
+
+        // registers the print action by means of the action bars
+        final IActionBars actions = this.getViewSite().getActionBars();
+        if (actions != null) {
+            actions.setGlobalActionHandler(ActionFactory.PRINT.getId(), new PrintAction(getViewer()));
+        }
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -277,22 +300,13 @@ public class DiagramViewPart extends ViewPart implements IDiagramWorkbenchPart,
     /**
      * {@inheritDoc}
      */
-    public IViewer<?> getViewer() {
-        return viewer;
-    }
-
-    /**
-     * {@inheritDoc}
-     * 
-     * @deprecated Use {@link #getViewer()}.
-     */
-    public ContextViewer getContextViewer() {
+    public IViewer getViewer() {
         return viewer;
     }
 
     /**
      * Retrieve an action with the specified identifier.
-     * 
+     *
      * @param id
      *            an action identifier
      * @return the corresponding action
@@ -306,7 +320,7 @@ public class DiagramViewPart extends ViewPart implements IDiagramWorkbenchPart,
 
     /**
      * Sets a new name for the view.
-     * 
+     *
      * @param name
      *            the name
      */

@@ -22,6 +22,9 @@ import org.eclipse.jface.viewers.ISelection;
  * A common interface of KLighD-specific implementations of {@link ISelection}.
  * 
  * @author chsch
+ * 
+ * @kieler.design proposed by chsch
+ * @kieler.rating proposed yellow by chsch
  */
 public interface IKlighdSelection extends ISelection {
 
@@ -30,7 +33,7 @@ public interface IKlighdSelection extends ISelection {
      *   
      * @return the {@link IViewer} of the corresponding diagram.
      */
-    IViewer<?> getViewer();
+    IViewer getViewer();
 
     /**
      * Provides the {@link ViewContext} of corresponding diagram.
