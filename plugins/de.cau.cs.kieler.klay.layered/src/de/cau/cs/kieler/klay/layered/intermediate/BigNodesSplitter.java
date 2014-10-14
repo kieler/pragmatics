@@ -23,6 +23,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
@@ -336,20 +337,26 @@ public class BigNodesSplitter implements ILayoutProcessor {
             /*
              * Handle depending on the big node type
              */
+            Pair<Integer, Double> created = null;
             if (type == BigNodeType.NO_OUTGOING) {
 
-                processNoOutgoingEdge(node, node.getLayer().getIndex(), node.getSize().x);
+                created = processNoOutgoingEdge(node, node.getLayer().getIndex(), node.getSize().x);
 
             } else if (type == BigNodeType.OUT_LONG_EDGE) {
 
-                processOutLongEdge(node, node.getSize().x);
+                created = processOutLongEdge(node, node.getSize().x);
                 
             } else if (type == BigNodeType.INC_LONG_EDGE) {
                 
-                processIncLongEdge(node, node.getSize().x);
+                created = processIncLongEdge(node, node.getSize().x);
                 
             }
 
+            if (created != null) {
+                // handle labels
+                BigNodesLabelHandler.handle(node, dummies, created.getSecond());
+            }
+            
         }
 
         /*------------------------------------------------------------------------------------------
@@ -357,7 +364,8 @@ public class BigNodesSplitter implements ILayoutProcessor {
          *------------------------------------------------------------------------------------------
          */
 
-        private void processIncLongEdge(final LNode bignode, final double originalWidth) {
+        private Pair<Integer, Double> processIncLongEdge(final LNode bignode,
+                final double originalWidth) {
 
             // remember all nodes we create to adapt the size later on
             List<LNode> chainOfNodes = Lists.newLinkedList();
@@ -365,11 +373,13 @@ public class BigNodesSplitter implements ILayoutProcessor {
 
             // create the dummies
             LNode start = bignode;
+            int replacedDummies = 0;
             do {
                 start = swapIncLongEdgeDummy(start);
                 if (start != null) {
                     chainOfNodes.add(start);
                 }
+                replacedDummies++;
             } while (start != null);
 
             // assign a width to the nodes of the big node chain, care about spacing
@@ -379,6 +389,7 @@ public class BigNodesSplitter implements ILayoutProcessor {
             for (LNode d : chainOfNodes) {
                 d.getSize().x = newWidth;
             }
+            return Pair.of(replacedDummies, newWidth);
         }
         
         private LNode swapIncLongEdgeDummy(final LNode start) {
@@ -476,7 +487,8 @@ public class BigNodesSplitter implements ILayoutProcessor {
          *------------------------------------------------------------------------------------------
          */
 
-        private void processOutLongEdge(final LNode bignode, final double originalWidth) {
+        private Pair<Integer, Double> processOutLongEdge(final LNode bignode,
+                final double originalWidth) {
 
             // remember all nodes we create to adapt the size lateron
             List<LNode> chainOfNodes = Lists.newLinkedList();
@@ -484,11 +496,13 @@ public class BigNodesSplitter implements ILayoutProcessor {
 
             // create dummies
             LNode start = bignode;
+            int replacedDummies = 0;
             do {
                 start = replaceOutLongEdgeDummy(start);
                 if (start != null) {
                     chainOfNodes.add(start);
                 }
+                replacedDummies++;
             } while (start != null);
 
             // assign a width to the nodes of the big node chain, care about spacing
@@ -499,6 +513,7 @@ public class BigNodesSplitter implements ILayoutProcessor {
                 d.getSize().x = newWidth;
             }
 
+            return Pair.of(replacedDummies, newWidth);
         }
 
         private LNode replaceOutLongEdgeDummy(final LNode start) {
@@ -585,13 +600,13 @@ public class BigNodesSplitter implements ILayoutProcessor {
          *------------------------------------------------------------------------------------------
          */
 
-        private void processNoOutgoingEdge(final LNode bignode, final int startLayerIndex,
-                final double originalWidth) {
+        private Pair<Integer, Double> processNoOutgoingEdge(final LNode bignode,
+                final int startLayerIndex, final double originalWidth) {
 
             int maxLayer = layeredGraph.getLayers().size();
             if (startLayerIndex >= maxLayer - 1) {
                 // there are no more layers, we cannot create dummies
-                return;
+                return null;
             }
 
             // remember all nodes we create to adapt the size lateron
@@ -617,12 +632,13 @@ public class BigNodesSplitter implements ILayoutProcessor {
                     canCreateEndDummies(inLayerPos, currentLayer + 1, maxLayer, chunks, true);
             if (inLayerPositions == null) {
                 // no valid positioning could be found
-                return;
+                return null;
             }
 
             // create at most 'chunks' nodes
             int tmpChunks = chunks;
             int i = 0;
+            int createdChunks = 0;
             while (start != null && tmpChunks > 1 && currentLayer < maxLayer - 1) {
                 // create the dummy
                 LNode dummy = introduceDummyNode(start, 0);
@@ -640,6 +656,7 @@ public class BigNodesSplitter implements ILayoutProcessor {
 
                 start = dummy;
                 tmpChunks--;
+                createdChunks++;
                 // each chunk implicitly covers one spacing as well
                 currentLayer++;
             }
@@ -651,6 +668,8 @@ public class BigNodesSplitter implements ILayoutProcessor {
             for (LNode d : chainOfNodes) {
                 d.getSize().x = newWidth;
             }
+            
+            return Pair.of(createdChunks, newWidth);
         }
 
         /**
