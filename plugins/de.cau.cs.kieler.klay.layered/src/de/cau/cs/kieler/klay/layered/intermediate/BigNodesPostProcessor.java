@@ -79,21 +79,23 @@ public class BigNodesPostProcessor implements ILayoutProcessor {
             for (LNode node : bigNodes) {
                 // set the original size
                 Float originalSize = node.getProperty(InternalProperties.BIG_NODE_ORIGINAL_SIZE);
-                node.getSize().x = originalSize.doubleValue();
+                
 
                 // remove the dummy nodes
                 LNode lastDummy = removeBigNodeChain(node);
 
                 // move the east ports
                 List<LPort> toMove = Lists.newLinkedList();
-                for (LPort p : lastDummy.getPorts()) {
-                    if (p.getSide() == PortSide.EAST) {
-                        toMove.add(p);
+                for (LPort p : lastDummy.getPorts(PortSide.EAST)) {
+                    toMove.add(p);
 
-                        // adjust position
-                        p.getPosition().x = node.getSize().x;
-                    }
+                    // adjust position of ports
+                    double offset = p.getPosition().x - lastDummy.getSize().x;
+                    p.getPosition().x = originalSize + offset;
+
                 }
+                
+                node.getSize().x = originalSize.doubleValue();
 
                 for (LPort p : toMove) {
                     p.setNode(node);

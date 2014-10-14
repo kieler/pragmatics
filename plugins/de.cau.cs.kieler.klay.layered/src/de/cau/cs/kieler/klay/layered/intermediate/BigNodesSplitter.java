@@ -419,10 +419,15 @@ public class BigNodesSplitter implements ILayoutProcessor {
                 if (!p.getIncomingEdges().isEmpty()) {
                     p.setProperty(Properties.ORIGIN, origin);
 
-                    p.getSize().x = incEdge.getTarget().getSize().x;
-                    p.getSize().y = incEdge.getTarget().getSize().y;
-                    p.getAnchor().x = incEdge.getTarget().getAnchor().x;
-                    p.getAnchor().y = incEdge.getTarget().getAnchor().y;
+                    LPort tgt = incEdge.getTarget();
+                    p.getSize().x = tgt.getSize().x;
+                    p.getSize().y = tgt.getSize().y;
+                    p.getAnchor().x = tgt.getAnchor().x;
+                    p.getAnchor().y = tgt.getAnchor().y;
+                    
+                    // copy the labels of the port
+                    p.getLabels().addAll(tgt.getLabels());
+                    tgt.getLabels().clear();
 
                     outPort = p;
                     break;
@@ -529,10 +534,15 @@ public class BigNodesSplitter implements ILayoutProcessor {
                 if (!p.getOutgoingEdges().isEmpty()) {
                     p.setProperty(Properties.ORIGIN, origin);
 
-                    p.getSize().x = outEdge.getSource().getSize().x;
-                    p.getSize().y = outEdge.getSource().getSize().y;
-                    p.getAnchor().x = outEdge.getSource().getAnchor().x;
-                    p.getAnchor().y = outEdge.getSource().getAnchor().y;
+                    LPort src = outEdge.getSource();
+                    p.getSize().x = src.getSize().x;
+                    p.getSize().y = src.getSize().y;
+                    p.getAnchor().x = src.getAnchor().x;
+                    p.getAnchor().y = src.getAnchor().y;
+                    
+                    // copy the labels of the port
+                    p.getLabels().addAll(src.getLabels());
+                    src.getLabels().clear();
 
                     outPort = p;
                     break;
@@ -829,6 +839,14 @@ public class BigNodesSplitter implements ILayoutProcessor {
             // width of the bignode, i.e.
             // overallWidth - (n-1) * minWidth
             dummy.getSize().x = width;
+            
+            
+            // move any EAST ports of the current src node
+            List<LPort> eastPorts = Lists.newArrayList(src.getPorts(PortSide.EAST));
+            for (LPort p : eastPorts) {
+                p.setNode(dummy);
+            }
+            
 
             // add ports to connect it with the previous node
             LPort outPort = new LPort(layeredGraph);
