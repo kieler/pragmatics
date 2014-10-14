@@ -44,22 +44,6 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * guarantee not to introduce any node-edge crossings. This would not be possible otherwise.
  * 
  * 
- * <h2>BigNode Without Outgoing Edge</h2>
- * <p>
- *      We add new bignode dummies in the consecutive layers of the original bignode. While doing this,
- *      we assure that the dummies are placed at position within a consecutive layer such that
- *      no node-edge crossing is introduced. If this is not possible, we retain the original bignode 
- *      without splitting it. The original number of layers is not increased, i.e. a bignode in the
- *      right-most layer will never be split. 
- * </p>
- * 
- * <h3>Remarks</h3>
- * <p>
- *      Care has to be taken with nodes of the type {@link NodeType#NORTH_SOUTH_PORT}. These are not
- *      connected by edges but are kept edge crossing free by constraints. Hence we are not allowed to
- *      place bignode dummies between such a node and its corresponding normal node.
- * </p>
- * 
  * <h2>BigNode With Incoming Long Edge</h2>
  * <p>
  *      We replace as many long edge dummies in front of the big node as possible. The long edge dummies
@@ -78,6 +62,22 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *      original bignode's width. 
  * </p>
  * 
+ * 
+ * <h2>BigNode Without Outgoing Edge</h2>
+ * <p>
+ *      We add new bignode dummies in the consecutive layers of the original bignode. While doing this,
+ *      we assure that the dummies are placed at a position within a consecutive layer such that
+ *      no node-edge crossing is introduced. If this is not possible, we retain the original bignode 
+ *      without splitting it. The original number of layers is not increased, i.e. a bignode in the
+ *      right-most layer will never be split. 
+ * </p>
+ * 
+ * <h3>Remarks</h3>
+ * <p>
+ *      Care has to be taken with nodes of the type {@link NodeType#NORTH_SOUTH_PORT}. These are not
+ *      connected by edges but are kept edge crossing free by constraints. Hence we are not allowed to
+ *      place bignode dummies between such a node and its corresponding normal node.
+ * </p>
  * 
  * <dl>
  *   <dt>Precondition:</dt>
@@ -184,7 +184,6 @@ public class BigNodesSplitter implements ILayoutProcessor {
         for (BigNode node : bigNodes) {
             // is this big node ok?
             if (isProcessorApplicable(node)) {
-                System.out.println("Applicable");
                 node.process();
             }
         }
@@ -622,7 +621,7 @@ public class BigNodesSplitter implements ILayoutProcessor {
                 Layer dummyLayer = layeredGraph.getLayers().get(currentLayer + 1);
 
                 int upperStrokeMax = inLayerPositions.get(i++);
-                dummy.setLayer(Math.min(upperStrokeMax + 1, dummyLayer.getNodes().size()), dummyLayer);
+                dummy.setLayer(Math.min(upperStrokeMax, dummyLayer.getNodes().size()), dummyLayer);
 
                 if (start != null) {
                     chainOfNodes.add(start);
@@ -673,8 +672,6 @@ public class BigNodesSplitter implements ILayoutProcessor {
                 
                 if (i < inLayerPos) {
                     upper.add(n);
-                } else if (i == inLayerPos && !initial) {
-                    upper.add(n);
                 } else if (i > inLayerPos) {
                     lower.add(n);
                 }
@@ -704,9 +701,23 @@ public class BigNodesSplitter implements ILayoutProcessor {
             // System.out.println("Lower: " + lower);
             // System.out.println("UpperStroke: " + upperStroke);
             // System.out.println("LowerStroke: " + lowerStroke);
+            
+            // find min and max
+            Layer rightLayer = layeredGraph.getLayers().get(layerIndex);
+            int maxUprime = Integer.MIN_VALUE;
+            int minLprime = Integer.MAX_VALUE;
+            for (int i = 0; i < rightLayer.getNodes().size(); i++) {
+                LNode n = rightLayer.getNodes().get(i);
+                if (upperStroke.contains(n)) {
+                   maxUprime = Math.max(maxUprime, i); 
+                } else if (lowerStroke.contains(n)) {
+                    minLprime = Math.min(minLprime, i);
+                }
+            }
 
             // it's ok if the intersection is empty
-            if (Sets.intersection(upperStroke, lowerStroke).isEmpty()) {
+            //if (Sets.intersection(upperStroke, lowerStroke).isEmpty()) {
+            if (maxUprime < minLprime) {
 
                 // we also require
                 // no inlayer edges spanning from upper to lower
@@ -743,22 +754,19 @@ public class BigNodesSplitter implements ILayoutProcessor {
                     }
                 }
 
-                // TODO really true? cant it be that the upper is completely located below the lower
-
                 // get layer
                 Layer dummyLayer = layeredGraph.getLayers().get(layerIndex);
                 int upperStrokeMax = -1; // -1, to differ between '0 pos' and 'not found'
                 
-                // if we only have an upper set, place it at the bottom of the dummy layer
-                if (lower.isEmpty()) {
+
+                if (upper.isEmpty()) {
+                    upperStrokeMax = 0;
+                } else if (lower.isEmpty()) {
+                    // if we only have an upper set, place it at the bottom of the dummy layer
                     upperStrokeMax = dummyLayer.getNodes().size();
-                   
                 } else {
-                
                     // find the proper position
-                    for (LNode n : upperStroke) {
-                        upperStrokeMax =  Math.max(upperStrokeMax, dummyLayer.getNodes().indexOf(n));
-                    }
+                    upperStrokeMax = maxUprime + 1;
                 }
                 
                 // we also require
@@ -780,7 +788,7 @@ public class BigNodesSplitter implements ILayoutProcessor {
                     return Lists.newArrayList(upperStrokeMax);
                 } else {
                     List<Integer> rec =
-                            canCreateEndDummies(upperStrokeMax + 1, layerIndex + 1, maxLayer,
+                            canCreateEndDummies(upperStrokeMax, layerIndex + 1, maxLayer,
                                     remainingChunks - 1, false);
                     if (rec != null) {
                         rec.add(upperStrokeMax);
