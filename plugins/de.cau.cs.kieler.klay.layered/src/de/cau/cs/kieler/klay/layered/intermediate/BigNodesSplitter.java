@@ -631,7 +631,8 @@ public class BigNodesSplitter implements ILayoutProcessor {
                 Layer dummyLayer = layeredGraph.getLayers().get(currentLayer + 1);
 
                 int upperStrokeMax = inLayerPositions.get(i++);
-                dummy.setLayer(Math.min(upperStrokeMax, dummyLayer.getNodes().size()), dummyLayer);
+                int newInLayerPos = Math.min(upperStrokeMax, dummyLayer.getNodes().size());
+                dummy.setLayer(newInLayerPos, dummyLayer);
 
                 if (start != null) {
                     chainOfNodes.add(start);
@@ -801,7 +802,7 @@ public class BigNodesSplitter implements ILayoutProcessor {
                             canCreateEndDummies(upperStrokeMax, layerIndex + 1, maxLayer,
                                     remainingChunks - 1, false);
                     if (rec != null) {
-                        rec.add(upperStrokeMax);
+                        rec.add(0, upperStrokeMax);
                     }
                     return rec;
                 }
