@@ -44,6 +44,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * scenarios, as described below. However, since the crossing minimization is finished it can
  * guarantee not to introduce any node-edge crossings. This would not be possible otherwise.
  * 
+ * <h1>Long Edge Dummies</h1>
  * 
  * <h2>BigNode With Incoming Long Edge</h2>
  * <p>
@@ -63,6 +64,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *      original bignode's width. 
  * </p>
  * 
+ * <h1>Without In-/Outgoing Edges</h1>
  * 
  * <h2>BigNode Without Outgoing Edge</h2>
  * <p>

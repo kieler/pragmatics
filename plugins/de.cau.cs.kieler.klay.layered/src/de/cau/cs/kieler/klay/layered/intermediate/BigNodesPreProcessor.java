@@ -41,7 +41,6 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * node, as well, as the {@link PortConstraints} value and is connected to its predecessor by
  * exactly one edge. EAST ports of the original node are moved to the lastly created dummy node.
  * 
- * 
  * <h2>Remarks</h2>
  * <ul>
  *   <li>During minimal width calculation, any type of dummy node is ignored.</li>
@@ -49,12 +48,9 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *       greater port constraints we demand that the node has no NORTH and SOUTH ports.</li>
  * </ul>
  * 
- * 
  * <h2>Labels</h2>
  * Labels require special treatment, otherwise labels with a larger width than the node's width
  * would introduce possibly unnecessary spacing between the big node dummies. 
- * 
- * 
  * 
  * <dl>
  *   <dt>Precondition:</dt>

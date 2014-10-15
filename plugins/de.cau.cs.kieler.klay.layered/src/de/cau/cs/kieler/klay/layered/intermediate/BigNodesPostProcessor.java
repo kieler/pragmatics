@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
- * Copyright 2013 by
+ * Copyright 2014 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -33,11 +33,11 @@ import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 
 /**
- * This class merges the series of big node dummy nodes introduced by the
- * {@link BigNodesPreProcessor} back into the original node. I.e., the original width is assigned to
- * the first node of the series, all other dummies are dropped. Furthermore, the EAST ports that were
- * moved to the last dummy node, are moved back to the original node. Here, the x coordinate of the
- * moved ports have to be adapted properly.
+ * This class merges the series of big node dummy nodes introduced by either the
+ * {@link BigNodesPreProcessor} or the {@link BigNodesSplitter} back into the original node. 
+ * I.e., the original width is assigned to the first node of the series, all other dummies 
+ * are dropped. Furthermore, the EAST ports that were moved to the last dummy node, are moved 
+ * back to the original node. Here, the x coordinate of the moved ports have to be adapted properly.
  * 
  * <dl>
  *   <dt>Precondition:</dt>
@@ -79,7 +79,6 @@ public class BigNodesPostProcessor implements ILayoutProcessor {
             for (LNode node : bigNodes) {
                 // set the original size
                 Float originalSize = node.getProperty(InternalProperties.BIG_NODE_ORIGINAL_SIZE);
-                
 
                 // remove the dummy nodes
                 LNode lastDummy = removeBigNodeChain(node);
@@ -90,9 +89,11 @@ public class BigNodesPostProcessor implements ILayoutProcessor {
                     toMove.add(p);
 
                     // adjust position of ports
+                    // ports might not be placed exactly at a node's boundary,
+                    // hence we apply the relative position of the port 
+                    // at the dummy node to the original node
                     double offset = p.getPosition().x - lastDummy.getSize().x;
                     p.getPosition().x = originalSize + offset;
-
                 }
                 
                 node.getSize().x = originalSize.doubleValue();
