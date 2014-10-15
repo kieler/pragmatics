@@ -107,7 +107,7 @@ public class BigNodesSplitter implements ILayoutProcessor {
      * Describes the type of a certain bignode. 
      */
     private enum BigNodeType {
-        NO_OUTGOING, INC_LONG_EDGE, INVALID, OUT_LONG_EDGE
+        NO_INCOMING, NO_OUTGOING, INC_LONG_EDGE, OUT_LONG_EDGE, INVALID
     }
 
     /**
@@ -123,6 +123,8 @@ public class BigNodesSplitter implements ILayoutProcessor {
     private double spacing = 0;
     /** Current layout direction. */
     private Direction direction = Direction.UNDEFINED;
+    
+    private static boolean debug = false;
 
     /**
      * {@inheritDoc}
@@ -130,6 +132,8 @@ public class BigNodesSplitter implements ILayoutProcessor {
     public void process(final LGraph theLayeredGraph, final IKielerProgressMonitor monitor) {
         monitor.begin("Big nodes pre-processing", 1);
 
+        debug = theLayeredGraph.getProperty(LayoutOptions.DEBUG_MODE);
+        
         this.layeredGraph = theLayeredGraph;
         // List<LNode> nodes = layeredGraph.getLayerlessNodes();
         List<LNode> nodes = Lists.newLinkedList();
@@ -244,15 +248,22 @@ public class BigNodesSplitter implements ILayoutProcessor {
             eastwardEdges = node.node.getOutgoingEdges();
         }
         
+        boolean hasOutgoing = !Iterables.isEmpty(node.node.getOutgoingEdges());
+        boolean hasIncoming = !Iterables.isEmpty(node.node.getIncomingEdges());
         // the node has to be connected
-        if (Iterables.isEmpty(node.node.getOutgoingEdges())
-                && Iterables.isEmpty(node.node.getIncomingEdges())) {
+        if (!hasOutgoing && !hasIncoming) {
             return false;
         }
 
         // or no outgoing edge
-        if (Iterables.isEmpty(node.node.getOutgoingEdges())) {
+        if (!hasOutgoing) {
             node.type = BigNodeType.NO_OUTGOING;
+            return true;
+        }
+        
+        // or no outgoing edge
+        if (!hasIncoming) {
+            node.type = BigNodeType.NO_INCOMING;
             return true;
         }
 
@@ -282,6 +293,9 @@ public class BigNodesSplitter implements ILayoutProcessor {
         return false;
     }
 
+    /** The direction within the layering into which to proceed in helper methods. */ 
+    private static enum Dir { Left, Right };
+    
     /**
      * Internal representation of a big node.
      * 
@@ -343,6 +357,10 @@ public class BigNodesSplitter implements ILayoutProcessor {
             if (type == BigNodeType.NO_OUTGOING) {
 
                 created = processNoOutgoingEdge(node, node.getLayer().getIndex(), node.getSize().x);
+                
+            } else if (type == BigNodeType.NO_INCOMING) {
+                
+                created = processNoIncomingEdge(node, node.getLayer().getIndex(), node.getSize().x);
 
             } else if (type == BigNodeType.OUT_LONG_EDGE) {
 
@@ -632,7 +650,8 @@ public class BigNodesSplitter implements ILayoutProcessor {
             }
 
             List<Integer> inLayerPositions =
-                    canCreateEndDummies(inLayerPos, currentLayer + 1, maxLayer, chunks, true);
+                    findPossibleDummyPositions(Dir.Right, inLayerPos, currentLayer, maxLayer,
+                            chunks, true);
             if (inLayerPositions == null) {
                 // no valid positioning could be found
                 return null;
@@ -644,7 +663,7 @@ public class BigNodesSplitter implements ILayoutProcessor {
             int createdChunks = 0;
             while (start != null && tmpChunks > 1 && currentLayer < maxLayer - 1) {
                 // create the dummy
-                LNode dummy = introduceDummyNode(start, 0);
+                LNode dummy = introduceDummyNode(Dir.Right, start, 0);
 
                 // get layer
                 Layer dummyLayer = layeredGraph.getLayers().get(currentLayer + 1);
@@ -674,14 +693,107 @@ public class BigNodesSplitter implements ILayoutProcessor {
             
             return Pair.of(createdChunks, newWidth);
         }
+        
+        
+        /*------------------------------------------------------------------------------------------
+         *                      Big Node without outgoing edges. 
+         *------------------------------------------------------------------------------------------
+         */
 
+        private Pair<Integer, Double> processNoIncomingEdge(final LNode bignode,
+                final int startLayerIndex, final double originalWidth) {
+
+            if (startLayerIndex <= 0) {
+                // there are no more layers, we cannot create dummies
+                return null;
+            }
+
+            // remember all nodes we create to adapt the size lateron
+            List<LNode> chainOfNodes = Lists.newLinkedList();
+            chainOfNodes.add(bignode);
+
+            // copy variables to make them mutable
+            LNode start = bignode;          
+            int currentLayer = startLayerIndex;
+            
+            // check if we can split the big node without introducing node edge overlaps
+            int inLayerPos = -1;
+            Layer currentLayerLayer = layeredGraph.getLayers().get(currentLayer);
+            for (int i = 0; i <  currentLayerLayer.getNodes().size(); ++i) {
+                LNode n = currentLayerLayer.getNodes().get(i);
+                if (n.equals(start)) {
+                    inLayerPos = i;
+                    break;
+                }
+            }
+
+            List<Integer> inLayerPositions =
+                    findPossibleDummyPositions(Dir.Left, inLayerPos, currentLayer, 
+                            layeredGraph.getLayers().size(), chunks, true);
+            if (inLayerPositions == null) {
+                // no valid positioning could be found
+                return null;
+            }
+            
+            // create at most 'chunks' nodes
+            int tmpChunks = chunks;
+            int i = 0;
+            int createdChunks = 0;
+            int prevInLayerPosition = inLayerPos;
+            while (start != null && tmpChunks > 1 && currentLayer > 1) {
+                // create the dummy
+                LNode dummy = introduceDummyNode(Dir.Left, start, 0);
+
+                // get layers
+                currentLayerLayer = layeredGraph.getLayers().get(currentLayer);
+                Layer dummyLayer = layeredGraph.getLayers().get(currentLayer - 1);
+
+                int upperStrokeMax = inLayerPositions.get(i++);
+                int newInLayerPos = Math.min(upperStrokeMax, dummyLayer.getNodes().size());
+                
+                // move the big node to the new layer
+                start.setLayer(newInLayerPos, dummyLayer);
+                
+                // fill the big node's old spot with the dummy
+                dummy.setLayer(prevInLayerPosition, currentLayerLayer);
+                prevInLayerPosition = newInLayerPos;
+                
+                if (start != null) {
+                    chainOfNodes.add(start);
+                }
+
+                start = dummy;
+                tmpChunks--;
+                createdChunks++;
+                // each chunk implicitly covers one spacing as well
+                currentLayer--;
+            }
+
+            // assign a width to the nodes of the big node chain, care about spacing
+            double newWidth =
+                    (originalWidth - (chainOfNodes.size() - 1) * spacing)
+                            / (double) chainOfNodes.size();
+            for (LNode d : chainOfNodes) {
+                d.getSize().x = newWidth;
+            }
+            
+            return Pair.of(createdChunks, newWidth);
+        }
+
+        /*------------------------------------------------------------------------------------------
+         *                   Common helper methods for the no in/out edges case. 
+         *------------------------------------------------------------------------------------------
+         */
+        
         /**
          * Checks if we can create enough valid dummy nodes without introducing node edge crossings.
          * 
+         * @param dir
+         *            the direction into which we are extending our search
          * @param inLayerPos
-         *            the vertical position within the current layer we wanna check
+         *            the vertical position of the bignode or the lastly created dummy
          * @param layerIndex
-         *            the current layer we wanna check
+         *            the layer in which either the bignode or the lastly created dummy in situated
          * @param maxLayer
          *            last layer of the diagram
          * @param remainingChunks
@@ -689,72 +801,86 @@ public class BigNodesSplitter implements ILayoutProcessor {
          * @param initial
          *            is this the first layer we check
          * @return either a list containing in layer positions for the dummy nodes to be created or
-         *         null if no valid positioning could be found.
+         *         null if no valid positioning could be found. The list is sorted according to the
+         *         order of the dummy nodes how they should be created in {@code dir} direction.
          */
-        private List<Integer> canCreateEndDummies(final int inLayerPos, final int layerIndex,
-                final int maxLayer, final int remainingChunks, final boolean initial) {
+        private List<Integer> findPossibleDummyPositions(
+                final Dir dir, 
+                final int inLayerPos, 
+                final int layerIndex,
+                final int maxLayer, 
+                final int remainingChunks, 
+                final boolean initial) {
 
             // current layer
-            Layer layer = layeredGraph.getLayers().get(layerIndex - 1);
+            Layer currentLayer = layeredGraph.getLayers().get(layerIndex);
 
+            // populate upper and lower set 
             Set<LNode> upper = Sets.newHashSet();
             Set<LNode> lower = Sets.newHashSet();
-
-            for (int i = 0; i < layer.getNodes().size(); ++i) {
-                LNode n = layer.getNodes().get(i);
+            for (int i = 0; i < currentLayer.getNodes().size(); ++i) {
+                LNode n = currentLayer.getNodes().get(i);
                 
                 if (i < inLayerPos) {
                     upper.add(n);
                 } else if (i > inLayerPos) {
                     lower.add(n);
                 }
+                // ignore the big node and created dummies
             }
 
-            Set<LNode> upperStroke = Sets.newHashSet();
-            Set<LNode> lowerStroke = Sets.newHashSet();
+            // populate the upper and lower sets for the next layer in the specified direction
+            Set<LNode> upperPrime = Sets.newHashSet();
+            Set<LNode> lowerPrime = Sets.newHashSet();
             for (LNode n : upper) {
-                for (LEdge e : n.getOutgoingEdges()) {
+                Iterable<LEdge> connectedEdges =
+                        (dir == Dir.Right) ? n.getOutgoingEdges() : n.getIncomingEdges();
+                for (LEdge e : connectedEdges) {
                     // no inlayer edges
                     if (n.getLayer().getIndex() != e.getTarget().getNode().getLayer().getIndex()) {
-                        upperStroke.add(e.getTarget().getNode());
+                        upperPrime.add(e.getTarget().getNode());
                     }
                 }
             }
             for (LNode n : lower) {
-                for (LEdge e : n.getOutgoingEdges()) {
+                Iterable<LEdge> connectedEdges =
+                        (dir == Dir.Right) ? n.getOutgoingEdges() : n.getIncomingEdges();
+                for (LEdge e : connectedEdges) {
                     // no inlayer edge
                     if (n.getLayer().getIndex() != e.getTarget().getNode().getLayer().getIndex()) {
-                        lowerStroke.add(e.getTarget().getNode());
+                        lowerPrime.add(e.getTarget().getNode());
                     }
                 }
             }
 
-            // System.out.println("\n" + node);
-            // System.out.println("Upper: " + upper);
-            // System.out.println("Lower: " + lower);
-            // System.out.println("UpperStroke: " + upperStroke);
-            // System.out.println("LowerStroke: " + lowerStroke);
+            if (debug) {
+                System.out.println("\n" + node);
+                System.out.println("Dir: " + dir);
+                System.out.println("Upper: " + upper);
+                System.out.println("Lower: " + lower);
+                System.out.println("UpperStroke: " + upperPrime);
+                System.out.println("LowerStroke: " + lowerPrime);
+            }
             
             // find min and max
-            Layer rightLayer = layeredGraph.getLayers().get(layerIndex);
+            Layer nextLayer = layeredGraph.getLayers().get(layerIndex + (dir == Dir.Right ? 1 : -1));
             int maxUprime = Integer.MIN_VALUE;
             int minLprime = Integer.MAX_VALUE;
-            for (int i = 0; i < rightLayer.getNodes().size(); i++) {
-                LNode n = rightLayer.getNodes().get(i);
-                if (upperStroke.contains(n)) {
+            for (int i = 0; i < nextLayer.getNodes().size(); i++) {
+                LNode n = nextLayer.getNodes().get(i);
+                if (upperPrime.contains(n)) {
                    maxUprime = Math.max(maxUprime, i); 
-                } else if (lowerStroke.contains(n)) {
+                } else if (lowerPrime.contains(n)) {
                     minLprime = Math.min(minLprime, i);
                 }
             }
 
-            // it's ok if the intersection is empty
-            //if (Sets.intersection(upperStroke, lowerStroke).isEmpty()) {
+            // we can find a valid position if max(U') < min(L')
             if (maxUprime < minLprime) {
 
                 // we also require
                 // no inlayer edges spanning from upper to lower
-                for (LNode n : upperStroke) {
+                for (LNode n : upperPrime) {
                     for (LEdge e : n.getOutgoingEdges()) {
                         if (n.getLayer().getIndex() == e.getTarget().getNode().getLayer()
                                 .getIndex()) {
@@ -770,33 +896,28 @@ public class BigNodesSplitter implements ILayoutProcessor {
                 }
 
                 // or lower to upper
-                for (LNode n : lowerStroke) {
+                for (LNode n : lowerPrime) {
                     for (LEdge e : n.getOutgoingEdges()) {
                         if (n.getLayer().getIndex() == e.getTarget().getNode().getLayer()
                                 .getIndex()) {
-                            System.out.println("Inlayer Edge out");
                             return null;
                         }
                     }
                     for (LEdge e : n.getIncomingEdges()) {
                         if (n.getLayer().getIndex() == e.getSource().getNode().getLayer()
                                 .getIndex()) {
-                            System.out.println("Inlayer Edge in");
                             return null;
                         }
                     }
                 }
 
                 // get layer
-                Layer dummyLayer = layeredGraph.getLayers().get(layerIndex);
                 int upperStrokeMax = -1; // -1, to differ between '0 pos' and 'not found'
-                
-
                 if (upper.isEmpty()) {
                     upperStrokeMax = 0;
                 } else if (lower.isEmpty()) {
                     // if we only have an upper set, place it at the bottom of the dummy layer
-                    upperStrokeMax = dummyLayer.getNodes().size();
+                    upperStrokeMax = nextLayer.getNodes().size();
                 } else {
                     // find the proper position
                     upperStrokeMax = maxUprime + 1;
@@ -806,7 +927,7 @@ public class BigNodesSplitter implements ILayoutProcessor {
                 // that no node groups are broken ...
                 // FIXME this is too restrictive!
                 // It would be better if an interleaving exists.
-                for (LNode n : layer.getNodes()) {
+                for (LNode n : currentLayer.getNodes()) {
                     if (n.getProperty(Properties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT) {
                         return null;
                     }
@@ -816,15 +937,19 @@ public class BigNodesSplitter implements ILayoutProcessor {
                 if (remainingChunks == 1) {
                     // we created all chunks we need
                     return Lists.newArrayList(upperStrokeMax);
-                } else if (layerIndex == maxLayer - 1) {
+                } else if ((dir == Dir.Right && layerIndex == maxLayer - 2)
+                        || (dir == Dir.Left && layerIndex == 1)) {
                     // we reached the end of the diagram
                     return Lists.newArrayList(upperStrokeMax);
                 } else {
-                    List<Integer> rec =
-                            canCreateEndDummies(upperStrokeMax, layerIndex + 1, maxLayer,
-                                    remainingChunks - 1, false);
+                    List<Integer> rec = findPossibleDummyPositions(dir, upperStrokeMax, 
+                            layerIndex + (dir == Dir.Right ? 1 : -1), maxLayer, 
+                            remainingChunks - 1, false);
+
                     if (rec != null) {
-                        rec.add(0, upperStrokeMax);
+                        if (dir == Dir.Right) {
+                            rec.add(0, upperStrokeMax);
+                        }
                     }
                     return rec;
                 }
@@ -833,13 +958,13 @@ public class BigNodesSplitter implements ILayoutProcessor {
 
             return null; 
         }
-
+        
         /**
          * Creates a new dummy node of the specified width.
          * 
          * @return the created dummy.
          */
-        private LNode introduceDummyNode(final LNode src, final double width) {
+        private LNode introduceDummyNode(final Dir dir, final LNode src, final double width) {
             // create new dummy node
             LNode dummy = new LNode(layeredGraph);
             dummy.setProperty(Properties.NODE_TYPE, NodeType.BIG_NODE);
@@ -864,31 +989,37 @@ public class BigNodesSplitter implements ILayoutProcessor {
             dummy.getSize().x = width;
             
             
-            // move any EAST ports of the current src node
-            List<LPort> eastPorts = Lists.newArrayList(src.getPorts(PortSide.EAST));
-            for (LPort p : eastPorts) {
+            // move either WEST or EAST ports of the current src node
+            //PortSide portSide = dir == Dir.Right ? PortSide.EAST : PortSide.WEST;
+            PortSide portSide = PortSide.EAST;
+            List<LPort> movePorts = Lists.newArrayList(src.getPorts(portSide));
+            for (LPort p : movePorts) {
                 p.setNode(dummy);
             }
-            
 
             // add ports to connect it with the previous node
             LPort outPort = new LPort(layeredGraph);
-            outPort.setSide(PortSide.EAST);
+            outPort.setSide(portSide);
             outPort.setNode(src);
             // assign reasonable positions to the port in case of FIXES_POS
             outPort.getPosition().x = dummy.getSize().x;
             outPort.getPosition().y = dummy.getSize().y / 2;
 
             LPort inPort = new LPort(layeredGraph);
-            inPort.setSide(PortSide.WEST);
+            inPort.setSide(portSide.opposed());
             inPort.setNode(dummy);
             inPort.getPosition().y = dummy.getSize().y / 2;
             inPort.getPosition().x = -inPort.getSize().x;
 
             // add edge to connect it with the previous node
             LEdge edge = new LEdge(layeredGraph);
-            edge.setSource(outPort);
-            edge.setTarget(inPort);
+//            if (dir == Dir.Right) {
+                edge.setSource(outPort);
+                edge.setTarget(inPort);
+//            } else {
+//                edge.setSource(inPort);
+//                edge.setTarget(outPort);
+//            }
 
             return dummy;
         }
