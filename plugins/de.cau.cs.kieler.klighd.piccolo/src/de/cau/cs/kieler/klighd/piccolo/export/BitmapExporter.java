@@ -2,12 +2,12 @@
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
- * 
+ *
  * Copyright 2013 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
- * 
+ *
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
@@ -16,6 +16,7 @@ package de.cau.cs.kieler.klighd.piccolo.export;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -27,6 +28,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
+
 import de.cau.cs.kieler.klighd.KlighdPlugin;
 import de.cau.cs.kieler.klighd.piccolo.KlighdPiccoloPlugin;
 import de.cau.cs.kieler.klighd.piccolo.KlighdSWTGraphics;
@@ -37,14 +39,14 @@ import edu.umd.cs.piccolo.util.PBounds;
 
 /**
  * Generic {@link IViewExporter} for bitmap formats, e.g., png and jpeg.
- * 
+ *
  * Currently the following formats are supported:
  * <ul>
  * <li>bmp</li>
  * <li>jpeg</li>
  * <li>png</li>
  * </ul>
- * 
+ *
  * @author chsch
  * @author uru
  */
@@ -52,21 +54,18 @@ public class BitmapExporter extends KlighdCanvasExporter {
 
     /** the bmp format. */
     public static final String SUB_FORMAT_BMP = "bmp";
-
     /** the jpeg format. */
     public static final String SUB_FORMAT_JPEG = "jpeg";
-
     /** the png format. */
     public static final String SUB_FORMAT_PNG = "png";
 
     private static final String ERROR_MSG_PREFIX = "KLighD bitmap export: ";
 
-
     /**
      * {@inheritDoc}
      */
     @Override
-    public IStatus export(final ExportData data, final KlighdCanvas canvas) {
+    public IStatus export(final KlighdCanvas canvas, final ExportData data) {
 
         // reveal the canvas' camera ...
         final KlighdMainCamera camera = canvas.getCamera();
@@ -107,6 +106,15 @@ public class BitmapExporter extends KlighdCanvasExporter {
         return Status.OK_STATUS;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Rectangle2D getBufferImageSize() {
+        return imageSize;
+    }
+
+    private Rectangle2D imageSize = null;
 
     private IStatus exportTile(final ExportData data, final KlighdCanvas canvas, final PBounds bounds,
             final int row, final int col, final int width, final int height) {
@@ -123,15 +131,19 @@ public class BitmapExporter extends KlighdCanvasExporter {
             return new Status(IStatus.ERROR, KlighdPiccoloPlugin.PLUGIN_ID, msg, e);
         }
 
+        imageSize = new Rectangle2D.Double(0, 0, width, height);
+
         final GC gc = new GC(image);
 
         // initialize a graphics object that 'collects' all the drawing instructions
         final KlighdSWTGraphics graphics = new KlighdSWTGraphicsImpl(gc, canvas.getDisplay());
 
-        // apply translation and clipping for tiled export if necessary
+        // define the initial clip
+        graphics.setClip(new Rectangle(width, height));
+
+        // apply translation for tiled exports
         if (data.getTilingInfo().isTiled) {
             graphics.transform(AffineTransform.getTranslateInstance(-col * width, -row * height));
-            graphics.clip(new Rectangle(width, height));
         }
 
         // apply the scale factor to the employed graphics object
@@ -139,7 +151,8 @@ public class BitmapExporter extends KlighdCanvasExporter {
         graphics.transform(AffineTransform.getScaleInstance(data.scale, data.scale));
 
         // do the action diagram drawing work
-        drawDiagram(canvas.getCamera(), data.isCameraViewport, graphics, bounds, false);
+        drawDiagram(canvas.getCamera(), data.isCameraViewport, graphics, bounds, false,
+                ExportHooks.getExportHooksByFormat(data.format, data.viewContext));
 
         // create an image loader to save the image
         // although the API differently suggests:
@@ -162,14 +175,13 @@ public class BitmapExporter extends KlighdCanvasExporter {
         // dump out the binary image data via the provided output stream
         OutputStream stream = null;
         IStatus status;
-
         try {
+
             if (data.getTilingInfo().isTiled) {
                 stream = data.createOutputStream(row, col);
             } else {
                 stream = data.createOutputStream();
             }
-
             loader.save(stream, format);
             stream.close();
             status = Status.OK_STATUS;
@@ -178,13 +190,11 @@ public class BitmapExporter extends KlighdCanvasExporter {
             String msg = ERROR_MSG_PREFIX + "Failed to write bitmap data";
             if (stream != null) {
                 msg += " into the provided OutputStream of type "
-                    + stream.getClass().getCanonicalName()
-                    + KlighdPlugin.LINE_SEPARATOR + " the stream instance is "
-                    + stream.toString();
+                        + stream.getClass().getCanonicalName()
+                        + KlighdPlugin.LINE_SEPARATOR + " the stream instance is "
+                        + stream.toString();
             }
-
             status = new Status(IStatus.ERROR, KlighdPiccoloPlugin.PLUGIN_ID, msg, e);
-
         } catch (final IOException e) {
             final String msg;
             if (stream == null) {
@@ -202,7 +212,6 @@ public class BitmapExporter extends KlighdCanvasExporter {
         ((Graphics2D) graphics).dispose();
         gc.dispose();
         image.dispose();
-
         return status;
     }
 }

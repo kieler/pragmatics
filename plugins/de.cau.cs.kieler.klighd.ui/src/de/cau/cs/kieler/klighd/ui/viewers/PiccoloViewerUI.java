@@ -20,7 +20,6 @@ import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -32,11 +31,7 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
@@ -44,7 +39,6 @@ import com.google.common.base.Function;
 
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.krendering.KText;
-import de.cau.cs.kieler.klighd.IDiagramWorkbenchPart;
 import de.cau.cs.kieler.klighd.IKlighdSelection;
 import de.cau.cs.kieler.klighd.IModelModificationHandler;
 import de.cau.cs.kieler.klighd.IViewer;
@@ -58,7 +52,6 @@ import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdStyledText;
 import de.cau.cs.kieler.klighd.piccolo.internal.util.NodeUtil;
 import de.cau.cs.kieler.klighd.piccolo.viewer.PiccoloOutlinePage;
 import de.cau.cs.kieler.klighd.piccolo.viewer.PiccoloViewer;
-import de.cau.cs.kieler.klighd.piccolo.viewer.PrintAction;
 import de.cau.cs.kieler.klighd.ui.KlighdTextSelection;
 import de.cau.cs.kieler.klighd.ui.KlighdUIPlugin;
 import de.cau.cs.kieler.klighd.ui.modifymodel.ModelModificationHandlerProvider;
@@ -116,34 +109,6 @@ public class PiccoloViewerUI extends PiccoloViewer {
     public PiccoloViewerUI(final ContextViewer parentViewer, final Composite parent, final int style) {
         super(parentViewer, parent);
 
-        // registers a print action by means of the global action bars
-        final IActionBars actions;
-        final IDiagramWorkbenchPart part = getViewContext().getDiagramWorkbenchPart();
-
-        if (part instanceof IEditorPart) {
-            actions = ((IEditorPart) part).getEditorSite().getActionBars();
-
-        } else if (getViewContext().getDiagramWorkbenchPart() instanceof IViewPart) {
-            actions = ((IViewPart) part).getViewSite().getActionBars();
-
-        } else {
-            actions = null;
-        }
-
-        // register print action
-        if (actions != null) {
-            final PiccoloViewer thisViewer = this;
-
-            actions.setGlobalActionHandler(ActionFactory.PRINT.getId(), new Action() {
-                private final PrintAction printer = new PrintAction(thisViewer);
-
-                @Override
-                public void run() {
-                    printer.run();
-                }
-            });
-        }
-
         addLabelTextWidget(parentViewer);
     }
 
@@ -169,7 +134,7 @@ public class PiccoloViewerUI extends PiccoloViewer {
      *            the viewer to which to add the text widget
      */
     private void addLabelTextWidget(final ContextViewer parentViewer) {
-        labelWidget = new StyledText(this.getCanvas(), SWT.MULTI);
+        labelWidget = new StyledText(this.getControl(), SWT.MULTI);
         labelWidget.setEditable(false);
         labelWidget.setVisible(false);
 
@@ -191,7 +156,7 @@ public class PiccoloViewerUI extends PiccoloViewer {
         final IWorkbenchPart part = parentViewer.getViewContext().getDiagramWorkbenchPart();
         part.getSite().registerContextMenu(KlighdUIPlugin.FLOATING_TEXT_MENU_ID, menu, parentViewer);
 
-        this.getCanvas().getCamera().addInputEventListener(
+        this.getControl().getCamera().addInputEventListener(
                 new KlighdLabelWidgetEventHandler(this, labelWidget));
 
         // add a selection changed listener to the diagram viewer in order to deactivate
@@ -281,7 +246,7 @@ public class PiccoloViewerUI extends PiccoloViewer {
         protected KlighdFigureNode<KText> getFigureNode() {
             @SuppressWarnings("unchecked")
             final KlighdFigureNode<KText> figureNode =
-                    (KlighdFigureNode<KText>) labelWidget.getData(STYLED_TEXT_FIGURE_KEY);
+            (KlighdFigureNode<KText>) labelWidget.getData(STYLED_TEXT_FIGURE_KEY);
             return figureNode;
         }
 
@@ -364,7 +329,7 @@ public class PiccoloViewerUI extends PiccoloViewer {
      *            the new {@link IKlighdSelection} to be propagated to the selection service.
      */
     protected void updateSelection(final IKlighdSelection selection) {
-        getCanvas().getDisplay().asyncExec(new Runnable() {
+        getControl().getDisplay().asyncExec(new Runnable() {
             public void run() {
                 PiccoloViewerUI.super.updateSelection(selection);
             }
@@ -378,7 +343,7 @@ public class PiccoloViewerUI extends PiccoloViewer {
      * styling up to date.
      */
     static final String TEXT_STYLING_CHANGE_LISTENER_KEY = "TEXT_STYLING_CHANGE_LISTENER_KEY";
-    
+
     /** String key for caching the KlighdStyledText in the labelWidget's data list. */
     private static final String STYLED_TEXT_FIGURE_KEY = "STYLED_TEXT_FIGURE_KEY";
 
@@ -418,7 +383,7 @@ public class PiccoloViewerUI extends PiccoloViewer {
             }
         }
 
-        final KlighdMainCamera camera = this.getCanvas().getCamera();
+        final KlighdMainCamera camera = this.getControl().getCamera();
 
         // determine global position of the text element
         //  although 'clipRelativeGlobalBoundsOf' may return null that should never happen here as
@@ -598,7 +563,7 @@ public class PiccoloViewerUI extends PiccoloViewer {
      * @author chsch
      */
     private static class PiccoloContentOutlinePage extends PiccoloOutlinePage implements
-            IContentOutlinePage {
+    IContentOutlinePage {
 
         /**
          * {@inheritDoc}

@@ -2,12 +2,12 @@
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
- * 
+ *
  * Copyright 2011 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
- * 
+ *
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
@@ -26,10 +26,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
@@ -48,18 +45,16 @@ import de.cau.cs.kieler.klighd.internal.IDiagramOutlinePage;
 import de.cau.cs.kieler.klighd.internal.ILayoutRecorder;
 import de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties;
 import de.cau.cs.kieler.klighd.piccolo.KlighdPiccoloPlugin;
-import de.cau.cs.kieler.klighd.piccolo.internal.KlighdSWTGraphicsImpl;
 import de.cau.cs.kieler.klighd.piccolo.internal.controller.DiagramController;
 import de.cau.cs.kieler.klighd.piccolo.internal.events.KlighdActionEventHandler;
 import de.cau.cs.kieler.klighd.piccolo.internal.events.KlighdBasicInputEventHandler;
+import de.cau.cs.kieler.klighd.piccolo.internal.events.KlighdMagnificationLensEventHandler;
 import de.cau.cs.kieler.klighd.piccolo.internal.events.KlighdMouseWheelZoomEventHandler;
 import de.cau.cs.kieler.klighd.piccolo.internal.events.KlighdPanEventHandler;
 import de.cau.cs.kieler.klighd.piccolo.internal.events.KlighdSelectionEventHandler;
 import de.cau.cs.kieler.klighd.piccolo.internal.events.KlighdSelectiveZoomEventHandler;
-import de.cau.cs.kieler.klighd.piccolo.internal.events.KlighdMagnificationLensEventHandler;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdCanvas;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdMainCamera;
-import de.cau.cs.kieler.klighd.piccolo.internal.util.KlighdPaintContext;
 import de.cau.cs.kieler.klighd.piccolo.internal.util.NodeUtil;
 import de.cau.cs.kieler.klighd.util.KlighdProperties;
 import de.cau.cs.kieler.klighd.util.RenderingContextData;
@@ -67,13 +62,11 @@ import de.cau.cs.kieler.klighd.viewers.AbstractViewer;
 import de.cau.cs.kieler.klighd.viewers.ContextViewer;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PNode;
-import edu.umd.cs.piccolo.POffscreenCanvas;
 import edu.umd.cs.piccolo.util.PBounds;
-import edu.umd.cs.piccolo.util.PPaintContext;
 
 /**
  * A viewer for Piccolo2D diagram contexts.
- * 
+ *
  * @author mri
  * @author chsch
  */
@@ -104,9 +97,11 @@ public class PiccoloViewer extends AbstractViewer implements ILayoutRecorder,
     private static final int VIEW_PORT_CHANGE_NOTIFY_DELAY = 250; // ms
 
     /** the canvas used for drawing. */
-    private KlighdCanvas canvas;
+    private final KlighdCanvas canvas;
     /** the content outline page. */
     private PiccoloOutlinePage outlinePage;
+    /** the event handler contributing the magnifying lens. */
+    private final KlighdMagnificationLensEventHandler magnificationLensHandler;
 
     /** the parent viewer. */
     private ContextViewer parentViewer;
@@ -115,7 +110,7 @@ public class PiccoloViewer extends AbstractViewer implements ILayoutRecorder,
 
     /**
      * Creates a Piccolo2D viewer with default style.
-     * 
+     *
      * @param parentViewer
      *            the parent {@link ContextViewer}
      * @param parent
@@ -127,7 +122,7 @@ public class PiccoloViewer extends AbstractViewer implements ILayoutRecorder,
 
     /**
      * Creates a Piccolo2D viewer with given style.
-     * 
+     *
      * @param theParentViewer
      *            the parent {@link ContextViewer}
      * @param parent
@@ -147,6 +142,7 @@ public class PiccoloViewer extends AbstractViewer implements ILayoutRecorder,
         this.canvas = new KlighdCanvas(parent, style);
 
         final KlighdMainCamera camera = canvas.getCamera();
+        magnificationLensHandler = new KlighdMagnificationLensEventHandler(camera);
 
         // install the required event handlers, they rely on SWT event type codes
         // the order of registering them DOES MATTER,
@@ -154,14 +150,16 @@ public class PiccoloViewer extends AbstractViewer implements ILayoutRecorder,
         // make sure those handlers properly execute 'event.setHandled(true);'
         //  in order to skip invoking the less priority handlers
         camera.addInputEventListener(new KlighdActionEventHandler(this));
-        camera.addInputEventListener(new KlighdMagnificationLensEventHandler(camera));
+        camera.addInputEventListener(magnificationLensHandler);
         camera.addInputEventListener(new KlighdMouseWheelZoomEventHandler());
         camera.addInputEventListener(new KlighdBasicInputEventHandler(
                 new KlighdPanEventHandler(canvas)));
+
+        // caution: the selection handler currently marks most of the 'mouse release'
+        //  events as handled; thus all handlers registered above will not get those events!
+        camera.addInputEventListener(new KlighdSelectionEventHandler(this));
         camera.addInputEventListener(new KlighdBasicInputEventHandler(
-                new KlighdSelectiveZoomEventHandler()));
-        camera.addInputEventListener(
-                new KlighdSelectionEventHandler(theParentViewer));
+                new KlighdSelectiveZoomEventHandler(this)));
 
         // add a tooltip element
         new PiccoloTooltip(parent.getDisplay(), canvas.getCamera());
@@ -209,6 +207,17 @@ public class PiccoloViewer extends AbstractViewer implements ILayoutRecorder,
     }
 
     /**
+     * Provides the visibility state of the magnifying lens.<br>
+     * This is evaluated by particular Klighd...EventHandlers that are inactive in case the
+     * lens is shown.
+     *
+     * @return the visibility state of the magnifying lens.
+     */
+    public boolean isMagnificationLensVisible() {
+        return magnificationLensHandler.isLensVisible();
+    }
+
+    /**
      * {@inheritDoc}
      */
     public IDiagramOutlinePage getDiagramOutlinePage() {
@@ -223,7 +232,7 @@ public class PiccoloViewer extends AbstractViewer implements ILayoutRecorder,
      * Factory method for creation of a corresponding outline page.<br>
      * To be overridden by subclasses in order to inject specialized outline pages, see e.g.
      * PiccoloViewerProvider in <code>de.cau.cs.kieler.klighd.ui.internal.PiccoloViewer</code>.
-     * 
+     *
      * @return a {@link PiccoloOutlinePage}
      */
     protected PiccoloOutlinePage createDiagramOutlinePage() {
@@ -233,7 +242,7 @@ public class PiccoloViewer extends AbstractViewer implements ILayoutRecorder,
     /**
      * {@inheritDoc}
      */
-    public Control getControl() {
+    public KlighdCanvas getControl() {
         return canvas;
     }
 
@@ -292,7 +301,7 @@ public class PiccoloViewer extends AbstractViewer implements ILayoutRecorder,
             final ZoomStyle nzs = viewContext.getProperty(KlighdInternalProperties.NEXT_ZOOM_STYLE);
             if (nzs != null) {
                 zoomStyle = nzs;
-                
+
                 // in case 'nzs' is unequal to ZOOM_TO_FOCUS, the NEXT_FOCUS_NODE is likely to be null,
                 //  otherwise it may be null, or may denote to a KNode
                 //  - both cases have to be handled properly!
@@ -322,10 +331,10 @@ public class PiccoloViewer extends AbstractViewer implements ILayoutRecorder,
 
     /**
      * Convenience method simplifying the notification call.
-     * 
+     *
      * @see #notifyViewChangeListeners(ViewChangeType, KGraphElement, java.awt.geom.Rectangle2D,
      *      float)
-     * 
+     *
      * @param type
      *            the corresponding {@link ViewChangeType}
      * @param affectedElement
@@ -337,7 +346,7 @@ public class PiccoloViewer extends AbstractViewer implements ILayoutRecorder,
         final PCamera camera = canvas.getCamera();
         super.notifyViewChangeListeners(type, affectedElement, camera.getViewBounds(),
                 camera.getViewScale());
-                
+
     }
 
     /**
@@ -406,7 +415,7 @@ public class PiccoloViewer extends AbstractViewer implements ILayoutRecorder,
     public void zoomToFocus(final KNode diagramElement, final int duration) {
         controller.getZoomController().zoomToFocus(diagramElement, duration);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -518,11 +527,11 @@ public class PiccoloViewer extends AbstractViewer implements ILayoutRecorder,
             if (destBounds != null) {
                 final double scale = camera.getViewTransformReference().getScale();
 
-                // compose a new affine transform describing the desired camera view ... 
+                // compose a new affine transform describing the desired camera view ...
                 final AffineTransform t = AffineTransform.getScaleInstance(scale, scale);
                 t.translate(-destBounds.x, -destBounds.y);
-                
-                // ... and trigger the change 
+
+                // ... and trigger the change
                 camera.animateViewToTransform(t, duration);
             } else {
                 StatusManager.getManager().handle(
@@ -532,7 +541,7 @@ public class PiccoloViewer extends AbstractViewer implements ILayoutRecorder,
             }
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -646,7 +655,7 @@ public class PiccoloViewer extends AbstractViewer implements ILayoutRecorder,
 
     /**
      * Returns the Piccolo2D representation for the given diagram element.
-     * 
+     *
      * @param diagramElement
      *            the diagram element
      * @return the Piccolo2D representation
@@ -657,54 +666,5 @@ public class PiccoloViewer extends AbstractViewer implements ILayoutRecorder,
             return node;
         }
         return null;
-    }
-
-    /**
-     * Returns the canvas used to render the scene graph.
-     * 
-     * @return the canvas
-     */
-    public KlighdCanvas getCanvas() {
-        return canvas;
-    }
-
-    /**
-     * Renders this viewer's contents to the passed gc with the targeted bounds.
-     * 
-     * @param gc
-     *            where to draw to.
-     * @param bounds
-     *            the bounds of the target we are printing to.
-     */
-    public void renderOffscreen(final GC gc, final Rectangle bounds) {
-
-        // create a wrapping graphics object
-        final KlighdSWTGraphicsImpl g2 = new KlighdSWTGraphicsImpl(gc, gc.getDevice());
-
-        final AffineTransform t = g2.getTransform();
-        t.translate(bounds.x, bounds.y);
-        g2.setTransform(t);
-
-        // create an offscreen canvas and fetch its camera
-        final POffscreenCanvas offCanvas = new POffscreenCanvas(bounds.width, bounds.height);
-        final PCamera camera = offCanvas.getCamera();
-        camera.getLayersReference().clear();
-
-        // let the camera view the original canvas's first layer
-        camera.addLayer(canvas.getLayer());
-
-        // fit the currently displayed diagram into the passed bounds
-        final KNode displayedNode =
-                controller.getMainCamera().getDisplayedINode().getGraphElement();
-
-        final PBounds newBounds =
-                controller.getZoomController().toPBoundsIncludingPortsAndLabels(displayedNode);
-        camera.animateViewToCenterBounds(newBounds, true, 0);
-
-        // set up a new paint context and paint the camera
-        final KlighdPaintContext paintContext = KlighdPaintContext.createPrintoutPaintContext(g2);
-        paintContext.setRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
-        camera.fullPaint(paintContext);
-        g2.dispose();
     }
 }

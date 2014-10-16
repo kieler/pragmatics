@@ -16,6 +16,7 @@ package de.cau.cs.kieler.klighd.piccolo.export;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Control;
+
 import de.cau.cs.kieler.klighd.IDiagramExporter;
 import de.cau.cs.kieler.klighd.piccolo.KlighdPiccoloPlugin;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdCanvas;
@@ -38,11 +39,11 @@ public abstract class KlighdCanvasExporter extends AbstractDiagramExporter imple
     /**
      * {@inheritDoc}
      */
-    public IStatus export(final ExportData data, final Control control) {
+    public IStatus export(final Control control, final ExportData data) {
 
         if (control instanceof KlighdCanvas) {
             final KlighdCanvas canvas = (KlighdCanvas) control;
-            return export(data, canvas);
+            return export(canvas, data);
 
         } else {
             final String msg = IVALID_CONTROL_FAILURE
@@ -55,15 +56,15 @@ public abstract class KlighdCanvasExporter extends AbstractDiagramExporter imple
 
     /**
      * Exports the diagram depicted by the given <code>control</code>.
-     * 
-     * @param data
-     *            the specified export info
      * @param canvas
      *            the canvas to export
+     * @param data
+     *            the specified export info
+     * 
      * @return {@link org.eclipse.core.runtime.Status#OK_STATUS Status#OK_STATUS} if the diagram
      *         export went successfully, an {@link IStatus} providing information on the failure
      *         otherwise.
      * @see IDiagramExporter#export(de.cau.cs.kieler.klighd.IDiagramExporter.ExportData, Control)
      */
-    public abstract IStatus export(ExportData data, KlighdCanvas canvas);
+    public abstract IStatus export(KlighdCanvas canvas, ExportData data);
 }

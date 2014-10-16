@@ -21,6 +21,7 @@ import org.eclipse.ui.PlatformUI;
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
+
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.krendering.KAction;
 import de.cau.cs.kieler.core.krendering.KRendering;
@@ -71,7 +72,7 @@ public class KlighdActionEventHandler implements PInputEventListener {
             return action.getTrigger() != null && !Strings.isNullOrEmpty(action.getActionId());
         }
     };
-    
+
 
     /**
      * {@inheritDoc}
@@ -80,6 +81,10 @@ public class KlighdActionEventHandler implements PInputEventListener {
         // don't modify the evaluation of the 'handled' flag in an ad-hoc way,
         //  first make sure that the scenario described below is not enabled again.
         if (inputEvent.isHandled()) {
+            return;
+        }
+
+        if (this.viewer.isMagnificationLensVisible()) {
             return;
         }
 

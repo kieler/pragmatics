@@ -2,6 +2,7 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="svgGenerators" name="SVG Generators" schema="schema/svgGenerators.exsd"/>
+   <extension-point id="exportHooks" name="Export Hooks" schema="schema/exportHooks.exsd"/>
    <extension
          point="de.cau.cs.kieler.kiml.layoutProviders">
       <layoutOption
@@ -46,5 +47,13 @@
             supportedFormats="svg">
       </offscreenRenderer>
    </extension>
+   <!-- extension
+         point="de.cau.cs.kieler.klighd.piccolo.exportHooks">
+      <exportHook
+            class="de.cau.cs.kieler.klighd.piccolo.export.AuthorConfidentialExportHook"
+            id="de.cau.cs.kieler.klighd.piccolo.export.AuthorConfidentialExportHook"
+            supportedFormats="bmp, jpeg, png, printout, de.cau.cs.kieler.klighd.piccolo.svggen.batik, de.cau.cs.kieler.klighd.piccolo.svggen.freeHEPSemantic">
+      </exportHook>
+   </extension -->
 
 </plugin>

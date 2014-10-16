@@ -2,7 +2,7 @@
 <feature
       id="de.cau.cs.kieler.kgraph.rcp.feature"
       label="KIELER KGraph Editor"
-      version="0.1.0.qualifier"
+      version="0.2.0.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel"
       plugin="de.cau.cs.kieler.core.kgraph.rcp">
 
@@ -240,7 +240,7 @@ litigation.
    <includes
          id="de.cau.cs.kieler.klighd.freehep.feature"
          version="0.0.0"/>
- 
+
    <includes
          id="net.ogdf.bin.feature"
          version="0.0.0"/>

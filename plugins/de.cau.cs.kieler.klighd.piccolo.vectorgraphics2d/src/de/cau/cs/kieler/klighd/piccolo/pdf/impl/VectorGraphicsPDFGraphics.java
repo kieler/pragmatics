@@ -2,12 +2,12 @@
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
- * 
+ *
  * Copyright 2013 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
- * 
+ *
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
@@ -33,11 +33,11 @@ import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.util.PPaintContext;
 
 /**
- * 
+ *
  * FIXME generalize the abstract svg graphics ...
- * 
+ *
  * This is still a proof of concept, major cleanup required!
- * 
+ *
  * @author uru
  */
 public class VectorGraphicsPDFGraphics extends KlighdAbstractSVGGraphics implements IDiagramExporter {
@@ -95,7 +95,7 @@ public class VectorGraphicsPDFGraphics extends KlighdAbstractSVGGraphics impleme
     public void clear() {
         init();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -104,19 +104,19 @@ public class VectorGraphicsPDFGraphics extends KlighdAbstractSVGGraphics impleme
         output.write(((PDFGraphics2D) getGraphicsDelegate()).getBytes());
         output.flush();
     }
-    
+
     /**
      * {@inheritDoc}
      */
-    public IStatus export(final ExportData info, final Control control) {
-        return this.delegate.export(info, control);
+    public IStatus export(final Control control, final ExportData info) {
+        return this.delegate.export(control, info);
     }
 
     private KlighdCanvasExporter delegate = new KlighdCanvasExporter() {
 
         @Override
-        public IStatus export(final ExportData data, final KlighdCanvas canvas) {
-            return VectorGraphicsPDFGraphics.this.export(data, canvas);
+        public IStatus export(final KlighdCanvas canvas, final ExportData data) {
+            return VectorGraphicsPDFGraphics.this.export(canvas, data);
         }
     };
 
@@ -139,7 +139,7 @@ public class VectorGraphicsPDFGraphics extends KlighdAbstractSVGGraphics impleme
 
         // set up the paint context
 //        PDFGraphics2D graphics = (PDFGraphics2D) getGraphicsDelegate();
-        
+
         final PDFGraphics2D graphics =
                 new PDFGraphics2D(bounds.getX(), bounds.getY(), bounds.getWidth(),
                         bounds.getHeight());
@@ -150,7 +150,7 @@ public class VectorGraphicsPDFGraphics extends KlighdAbstractSVGGraphics impleme
         } else {
             graphics.setFontRendering(FontRendering.TEXT);
         }
-        
+
         // TODO: any way to configure the embedding of used fonts???
 
         setGraphicsDelegate(graphics);
