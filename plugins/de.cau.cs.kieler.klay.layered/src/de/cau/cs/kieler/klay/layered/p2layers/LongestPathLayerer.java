@@ -76,6 +76,10 @@ public final class LongestPathLayerer implements ILayoutPhase {
             strategy.addAll(BIG_NODES_PROCESSING_ADDITIONS);
         }
         
+        if (graph.getProperty(Properties.SAUSAGE_FOLDING)) {
+            strategy.addBeforePhase4(IntermediateProcessorStrategy.SAUSAGE_COMPACTION);
+        }
+        
         return strategy;
     }
     

@@ -77,6 +77,8 @@ public enum IntermediateProcessorStrategy {
     
     // Before Phase 4
     
+    /** Compacts looong sausages. */
+    SAUSAGE_COMPACTION,
     /** Makes sure that in-layer constraints are handled. */
     IN_LAYER_CONSTRAINT_PROCESSOR,
     /** Merges long edge dummy nodes belonging to the same hyperedge. */
@@ -231,6 +233,9 @@ public enum IntermediateProcessorStrategy {
         case REVERSED_EDGE_RESTORER:
             return new ReversedEdgeRestorer();
         
+        case SAUSAGE_COMPACTION:
+            return new SausageFolding();
+            
         case SELF_LOOP_PROCESSOR:
             return new SelfLoopProcessor();
             
