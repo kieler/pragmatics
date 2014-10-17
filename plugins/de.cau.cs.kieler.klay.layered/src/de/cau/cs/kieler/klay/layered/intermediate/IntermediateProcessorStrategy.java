@@ -83,6 +83,8 @@ public enum IntermediateProcessorStrategy {
     HYPEREDGE_DUMMY_MERGER,
     /** Decides, on which side of an edge the edge labels should be placed. */ 
     LABEL_SIDE_SELECTOR,
+    /** Alternative big nodes handling, splitting nodes _after_ crossing minimization. */
+    BIG_NODES_SPLITTER,
     /** Sets the positions of ports and labels, and sets the node sizes. */
     LABEL_AND_NODE_SIZE_PROCESSOR,
     /** Calculates the margins of nodes according to the sizes of ports and labels. */
@@ -141,6 +143,9 @@ public enum IntermediateProcessorStrategy {
             
         case BIG_NODES_PREPROCESSOR:
             return new BigNodesPreProcessor();
+            
+        case BIG_NODES_SPLITTER:
+            return new BigNodesSplitter();
             
         case COMMENT_POSTPROCESSOR:
             return new CommentPostprocessor();
