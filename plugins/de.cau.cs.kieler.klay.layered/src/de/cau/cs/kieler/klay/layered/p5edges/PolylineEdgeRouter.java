@@ -280,6 +280,9 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
      * is to ensure that edges don't cross port labels or anything. The edges are first routed
      * horizontally through the node's margin before sloping off to wherever they're going.
      * 
+     * However, only add bendpoints that are unequal to the absolute anchor points of the 
+     * ports an edge is attached to.
+     * 
      * @param node the node whose edges to insert bend points for.
      * @param layerXPos the x position of the node's layer.
      * @param layerWidth the width of the node's layer.
@@ -295,17 +298,19 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
                 
                 for (LEdge edge : port.getOutgoingEdges()) {
                     if (edge.getTarget().getNode().getLayer() != node.getLayer()
-                            && Math.abs(edge.getTarget().getAbsoluteAnchor().y - bendPoint.y)
-                            > MIN_VERT_DIFF) {
-                        
+                            && !bendPoint.equals(edge.getSource().getAbsoluteAnchor())
+                            && Math.abs(edge.getTarget().getAbsoluteAnchor().y - bendPoint.y) 
+                               > MIN_VERT_DIFF) {
+
                         edge.getBendPoints().add(0, new KVector(bendPoint));
                     }
                 }
                 
                 for (LEdge edge : port.getIncomingEdges()) {
                     if (edge.getSource().getNode().getLayer() != node.getLayer()
+                            && !bendPoint.equals(edge.getTarget().getAbsoluteAnchor())
                             && Math.abs(edge.getSource().getAbsoluteAnchor().y - bendPoint.y)
-                            > MIN_VERT_DIFF) {
+                               > MIN_VERT_DIFF) {
                         
                         edge.getBendPoints().add(new KVector(bendPoint));
                     }
@@ -316,8 +321,9 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
                     
                 for (LEdge edge : port.getOutgoingEdges()) {
                     if (edge.getTarget().getNode().getLayer() != node.getLayer()
+                            && !bendPoint.equals(edge.getSource().getAbsoluteAnchor())
                             && Math.abs(edge.getTarget().getAbsoluteAnchor().y - bendPoint.y)
-                            > MIN_VERT_DIFF) {
+                               > MIN_VERT_DIFF) {
                         
                         edge.getBendPoints().add(0, new KVector(bendPoint));
                     }
@@ -325,8 +331,9 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
                 
                 for (LEdge edge : port.getIncomingEdges()) {
                     if (edge.getSource().getNode().getLayer() != node.getLayer()
+                            && !bendPoint.equals(edge.getTarget().getAbsoluteAnchor())
                             && Math.abs(edge.getSource().getAbsoluteAnchor().y - bendPoint.y)
-                            > MIN_VERT_DIFF) {
+                               > MIN_VERT_DIFF) {
                         
                         edge.getBendPoints().add(new KVector(bendPoint));
                     }
