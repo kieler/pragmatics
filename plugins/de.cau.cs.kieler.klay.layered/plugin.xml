@@ -157,7 +157,7 @@
                option="de.cau.cs.kieler.klay.layered.distributeNodes">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.klay.layered.distributeNodesAC">
+               option="de.cau.cs.kieler.klay.layered.wideNodesOnMultipleLayers">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.klay.layered.linearSegmentsDeflectionDampening">
@@ -169,17 +169,18 @@
             default="false"
             description="Whether wide nodes should be distributed to several layers."
             id="de.cau.cs.kieler.klay.layered.distributeNodes"
-            name="Distribute Nodes"
+            name="Distribute Nodes (Deprecated)"
             type="boolean">
       </layoutOption>
       <layoutOption
             advanced="true"
             appliesTo="parents"
-            default="false"
-            description="Whether wide nodes should be distributed to several layers after crossing minimization."
-            id="de.cau.cs.kieler.klay.layered.distributeNodesAC"
-            name="Distribute Nodes After CrossMin"
-            type="boolean">
+            class="de.cau.cs.kieler.klay.layered.properties.WideNodesStrategy"
+            default="OFF"
+            description="Strategy to distribute wide nodes over multiple layers."
+            id="de.cau.cs.kieler.klay.layered.wideNodesOnMultipleLayers"
+            name="Wide Nodes on Multiple Layers"
+            type="enum">
       </layoutOption>
       <layoutOption
             appliesTo="parents"

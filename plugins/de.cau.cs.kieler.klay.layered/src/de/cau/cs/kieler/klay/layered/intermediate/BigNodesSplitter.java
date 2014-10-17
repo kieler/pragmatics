@@ -75,6 +75,12 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *      right-most layer will never be split. 
  * </p>
  * 
+ * <h2>BigNode Without Incoming Edge</h2>
+ * <p>
+ *      Symmetric case as above for bignodes that have no incoming edges. Big nodes in the left-most 
+ *      layer are not split any further. 
+ * </p>
+ * 
  * <h3>Remarks</h3>
  * <p>
  *      Care has to be taken with nodes of the type {@link NodeType#NORTH_SOUTH_PORT}. These are not
@@ -663,7 +669,7 @@ public class BigNodesSplitter implements ILayoutProcessor {
             int createdChunks = 0;
             while (start != null && tmpChunks > 1 && currentLayer < maxLayer - 1) {
                 // create the dummy
-                LNode dummy = introduceDummyNode(Dir.Right, start, 0);
+                LNode dummy = introduceDummyNode(start, 0);
 
                 // get layer
                 Layer dummyLayer = layeredGraph.getLayers().get(currentLayer + 1);
@@ -696,7 +702,7 @@ public class BigNodesSplitter implements ILayoutProcessor {
         
         
         /*------------------------------------------------------------------------------------------
-         *                      Big Node without outgoing edges. 
+         *                      Big Node without incoming edges. 
          *------------------------------------------------------------------------------------------
          */
 
@@ -742,7 +748,7 @@ public class BigNodesSplitter implements ILayoutProcessor {
             int prevInLayerPosition = inLayerPos;
             while (start != null && tmpChunks > 1 && currentLayer > 1) {
                 // create the dummy
-                LNode dummy = introduceDummyNode(Dir.Left, start, 0);
+                LNode dummy = introduceDummyNode(start, 0);
 
                 // get layers
                 currentLayerLayer = layeredGraph.getLayers().get(currentLayer);
@@ -960,11 +966,14 @@ public class BigNodesSplitter implements ILayoutProcessor {
         }
         
         /**
-         * Creates a new dummy node of the specified width.
+         * Creates a new dummy node of the specified width and connectes 
+         * the {@code src} node with an edge to the created dummy node. Thus,
+         * {@code src} will be the source of the edge and the dummy the 
+         * target of the edge.
          * 
          * @return the created dummy.
          */
-        private LNode introduceDummyNode(final Dir dir, final LNode src, final double width) {
+        private LNode introduceDummyNode(final LNode src, final double width) {
             // create new dummy node
             LNode dummy = new LNode(layeredGraph);
             dummy.setProperty(Properties.NODE_TYPE, NodeType.BIG_NODE);
@@ -990,7 +999,6 @@ public class BigNodesSplitter implements ILayoutProcessor {
             
             
             // move either WEST or EAST ports of the current src node
-            //PortSide portSide = dir == Dir.Right ? PortSide.EAST : PortSide.WEST;
             PortSide portSide = PortSide.EAST;
             List<LPort> movePorts = Lists.newArrayList(src.getPorts(portSide));
             for (LPort p : movePorts) {
@@ -1013,13 +1021,8 @@ public class BigNodesSplitter implements ILayoutProcessor {
 
             // add edge to connect it with the previous node
             LEdge edge = new LEdge(layeredGraph);
-//            if (dir == Dir.Right) {
-                edge.setSource(outPort);
-                edge.setTarget(inPort);
-//            } else {
-//                edge.setSource(inPort);
-//                edge.setTarget(outPort);
-//            }
+            edge.setSource(outPort);
+            edge.setTarget(inPort);
 
             return dummy;
         }

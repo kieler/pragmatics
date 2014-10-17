@@ -26,6 +26,7 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
+import de.cau.cs.kieler.klay.layered.properties.WideNodesStrategy;
 
 /**
  * The most basic layering algorithm, which assign layers according to the
@@ -50,14 +51,14 @@ public final class LongestPathLayerer implements ILayoutPhase {
             .addBeforePhase3(IntermediateProcessorStrategy.LAYER_CONSTRAINT_PROCESSOR);
     
     /** additional processor dependencies for handling big nodes. */
-    private static final IntermediateProcessingConfiguration BIG_NODES_PROCESSING_ADDITIONS =
+    private static final IntermediateProcessingConfiguration BIG_NODES_PROCESSING_ADDITIONS_AGGRESSIVE =
             IntermediateProcessingConfiguration.createEmpty()
                     .addBeforePhase2(IntermediateProcessorStrategy.BIG_NODES_PREPROCESSOR)
                     .addBeforePhase3(IntermediateProcessorStrategy.BIG_NODES_INTERMEDIATEPROCESSOR)
                     .addAfterPhase5(IntermediateProcessorStrategy.BIG_NODES_POSTPROCESSOR);
 
     /** additional processor dependencies for handling big nodes after cross min. */
-    private static final IntermediateProcessingConfiguration BIG_NODES_PROCESSING_AC_ADDITIONS =
+    private static final IntermediateProcessingConfiguration BIG_NODES_PROCESSING_ADDITIONS_CAREFUL =
             IntermediateProcessingConfiguration.createEmpty()
                     .addBeforePhase4(IntermediateProcessorStrategy.BIG_NODES_SPLITTER)
                     .addAfterPhase5(IntermediateProcessorStrategy.BIG_NODES_POSTPROCESSOR);
@@ -70,20 +71,25 @@ public final class LongestPathLayerer implements ILayoutPhase {
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("deprecation")
     public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
             final LGraph graph) {
-        
+
         // Basic strategy
         IntermediateProcessingConfiguration strategy =
                 IntermediateProcessingConfiguration.fromExisting(BASELINE_PROCESSING_CONFIGURATION);
-        
+
         // Additional dependencies
-        if (graph.getProperty(Properties.DISTRIBUTE_NODES)) {
-            strategy.addAll(BIG_NODES_PROCESSING_ADDITIONS);
-        } else if (graph.getProperty(Properties.DISTRIBUTE_NODES_AC)) {
-            strategy.addAll(BIG_NODES_PROCESSING_AC_ADDITIONS);
+        if (graph.getProperty(Properties.DISTRIBUTE_NODES)
+                || graph.getProperty(Properties.WIDE_NODES_ON_MULTIPLE_LAYERS) 
+                        == WideNodesStrategy.AGGRESSIVE) {
+            strategy.addAll(BIG_NODES_PROCESSING_ADDITIONS_AGGRESSIVE);
+            
+        } else if (graph.getProperty(Properties.WIDE_NODES_ON_MULTIPLE_LAYERS) 
+                        == WideNodesStrategy.CAREFUL) {
+            strategy.addAll(BIG_NODES_PROCESSING_ADDITIONS_CAREFUL);
         }
-        
+
         return strategy;
     }
     
