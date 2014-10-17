@@ -52,6 +52,8 @@ import static de.cau.cs.kieler.klay.layered.properties.Properties.OBJ_SPACING;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.OBJ_SPACING_IN_LAYER_FACTOR;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.PRIORITY;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.THOROUGHNESS;
+import static de.cau.cs.kieler.klay.layered.properties.Properties.WIDE_NODES_ON_MULTIPLE_LAYERS;
+
 
 
 
@@ -89,6 +91,7 @@ import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
 import de.cau.cs.kieler.klay.layered.properties.EdgeLabelSideSelection;
 import de.cau.cs.kieler.klay.layered.properties.FixedAlignment;
 import de.cau.cs.kieler.klay.layered.properties.LayerConstraint;
+import de.cau.cs.kieler.klay.layered.properties.WideNodesStrategy;
 
 /**
  * GWT does not support any of Java's reflection mechanisms. Hence we have to 
@@ -153,7 +156,8 @@ public final class LayoutOptionResolver {
             CROSS_MIN,
             NODE_PLACER,
             FIXED_ALIGNMENT,
-            LAYER_CONSTRAINT
+            LAYER_CONSTRAINT,
+            WIDE_NODES_ON_MULTIPLE_LAYERS
             );
     
     private static final Pair<Set<String>, Map<String, IProperty<?>>> ENUMSET_TYPES = createTypesSet(
@@ -328,6 +332,8 @@ public final class LayoutOptionResolver {
                     enumeration = FixedAlignment.valueOf(enumValue);
                 } else if (equalsIdOrSuffix(LAYER_CONSTRAINT, id)) {
                     enumeration = LayerConstraint.valueOf(enumValue);
+                } else if (equalsIdOrSuffix(WIDE_NODES_ON_MULTIPLE_LAYERS, id)) {
+                    enumeration = WideNodesStrategy.valueOf(enumValue);
                 }
                 
             } catch (Exception e) {
