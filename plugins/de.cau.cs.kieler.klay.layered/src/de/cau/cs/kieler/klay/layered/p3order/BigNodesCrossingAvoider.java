@@ -29,7 +29,6 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
-import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * This class contains methods that can be used during the crossing minimization phase to avoid
@@ -154,7 +153,7 @@ public class BigNodesCrossingAvoider {
                 NodeGroup bigNodeLayerGroup = nodeGroup;
                 NodeGroup bigNodePreGroup =
                         (forward ? bigNodeEdge.getSource().getNode() : bigNodeEdge.getTarget()
-                                .getNode()).getProperty(Properties.NODE_GROUP);
+                                .getNode()).getProperty(InternalProperties.NODE_GROUP);
 
                 // during a backward sweep, don't treat the last node
                 if (!forward && !isBigNodeGroup(bigNodePreGroup)) {
@@ -190,7 +189,7 @@ public class BigNodesCrossingAvoider {
                         // the edge's attached node group on the other layer
                         NodeGroup preLayerGroup =
                                 (forward ? layerEdge.getSource().getNode() : layerEdge.getTarget()
-                                        .getNode()).getProperty(Properties.NODE_GROUP);
+                                        .getNode()).getProperty(InternalProperties.NODE_GROUP);
 
                         // interleaving?
                         if ((bigNodeLayerGroup.barycenter > layerGroup.barycenter 
@@ -444,7 +443,7 @@ public class BigNodesCrossingAvoider {
     }
 
     private boolean isBigNode(final LNode node) {
-        return (node.getProperty(Properties.NODE_TYPE) == NodeType.BIG_NODE)
+        return (node.getProperty(InternalProperties.NODE_TYPE) == NodeType.BIG_NODE)
                 || node.getProperty(InternalProperties.BIG_NODE_INITIAL);
     }
 
@@ -455,7 +454,7 @@ public class BigNodesCrossingAvoider {
     private boolean isLastBigNode(final LNode node) {
         boolean nextIsBignode = false;
         for (LEdge e : node.getOutgoingEdges()) {
-            if (e.getTarget().getNode().getProperty(Properties.NODE_TYPE) == NodeType.BIG_NODE) {
+            if (e.getTarget().getNode().getProperty(InternalProperties.NODE_TYPE) == NodeType.BIG_NODE) {
                 nextIsBignode = true;
                 break;
             }
@@ -464,7 +463,7 @@ public class BigNodesCrossingAvoider {
     }
 
     private boolean isNormalNode(final LNode node) {
-        return node.getProperty(Properties.NODE_TYPE) == NodeType.NORMAL;
+        return node.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORMAL;
     }
 
     private void addInLayerConstraint(final LNode above, final LNode below) {

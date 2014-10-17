@@ -15,7 +15,6 @@ package de.cau.cs.kieler.klay.layered.properties;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -45,6 +44,7 @@ import de.cau.cs.kieler.klay.layered.p3order.NodeGroup;
  * 
  * @author msp
  * @author cds
+ * @author uru 
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
@@ -306,7 +306,7 @@ public final class InternalProperties {
      * Original labels of a big node. 
      * */
     public static final IProperty<List<LLabel>> BIGNODES_ORIG_LABELS = new Property<List<LLabel>>(
-            "de.cau.cs.kieler.klay.layered.bigNodeLabels", new LinkedList<LLabel>());
+            "de.cau.cs.kieler.klay.layered.bigNodeLabels", new ArrayList<LLabel>());
     
     /** A post processing function that is called during big nodes post processing. */
     public static final IProperty<Function<Void, Void>> BIGNODES_POST_PROCESS =

@@ -285,7 +285,7 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
         private LNode introduceDummyNode(final LNode src, final double width) {
             // create new dummy node
             LNode dummy = new LNode(layeredGraph);
-            dummy.setProperty(Properties.NODE_TYPE, NodeType.BIG_NODE);
+            dummy.setProperty(InternalProperties.NODE_TYPE, NodeType.BIG_NODE);
             
             // copy some properties
             dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS,

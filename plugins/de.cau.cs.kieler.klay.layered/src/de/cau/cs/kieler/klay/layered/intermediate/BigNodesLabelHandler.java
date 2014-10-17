@@ -27,7 +27,6 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
-import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Utility class that contains methods to split and distribute long labels on
@@ -295,7 +294,7 @@ public final class BigNodesLabelHandler {
                 // remove all the dummies again
                 for (LNode dummy : dummies) {
                     for (LLabel l : Lists.newLinkedList(dummy.getLabels())) {
-                        if (l.getProperty(Properties.ORIGIN) == null) {
+                        if (l.getProperty(InternalProperties.ORIGIN) == null) {
                             dummy.getLabels().remove(l);
                         }
                     }

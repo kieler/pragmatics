@@ -28,7 +28,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -886,7 +885,7 @@ public final class BKNodePlacer implements ILayoutPhase {
             // all nodes should be placed straightly
             for (LEdge edge : node.getIncomingEdges()) {
                 LNode source = edge.getSource().getNode();
-                if ((source.getProperty(Properties.NODE_TYPE) == NodeType.BIG_NODE 
+                if ((source.getProperty(InternalProperties.NODE_TYPE) == NodeType.BIG_NODE 
                         || source.getProperty(InternalProperties.BIG_NODE_INITIAL))
                         && edge.getSource().getNode().getLayer().getIndex() == layer2
                         && node.getLayer().getIndex() == layer1) {
