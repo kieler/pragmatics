@@ -30,7 +30,6 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
-import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -270,10 +269,7 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
                 xpos += increment;
             } else if (!externalLeftLayer && !externalRightLayer) {
                 // If all edges are straight, use the usual spacing 
-                //   (except when we are between two layers where both only contains dummy nodes)
-                if (!layersContainOnlyDummies(leftLayer, rightLayer)) {
-                    xpos += nodeSpacing;
-                }
+                xpos += nodeSpacing;
             }
             
             leftLayer = rightLayer;
@@ -286,23 +282,4 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
         monitor.done();
     }
     
-    /**
-     * Check if the layer contains only non-{@link NodeType#NORMAL} nodes.
-     * 
-     * Big node dummies are considered to be 'usual' nodes here, as we regard the spacing during
-     * node splitting.
-     */
-    private boolean layersContainOnlyDummies(final Layer... layers) {
-
-        for (Layer layer : layers) {
-            for (LNode n : layer.getNodes()) {
-                if (n.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORMAL
-                        || n.getProperty(InternalProperties.NODE_TYPE) == NodeType.BIG_NODE) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
 }
