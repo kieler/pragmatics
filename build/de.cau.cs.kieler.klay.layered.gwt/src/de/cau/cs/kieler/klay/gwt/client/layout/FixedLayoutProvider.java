@@ -13,6 +13,14 @@
  */
 package de.cau.cs.kieler.klay.gwt.client.layout;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
@@ -48,9 +56,6 @@ public class FixedLayoutProvider {
 
     /** the layout provider id. */
     public static final String ID = "de.cau.cs.kieler.fixed";
-    
-    /** default value for border spacing. */
-    private static final float DEF_BORDER_SPACING = 15.0f;
     
     /**
      * Perform the layout.
@@ -139,6 +144,24 @@ public class FixedLayoutProvider {
             }
         }
         
+        // if orthogonal routing is selected, determine the junction points
+        if (edgeRouting == EdgeRouting.ORTHOGONAL) {
+            for (LNode node : lGraph.getLayerlessNodes()) {
+                for (LEdge edge : node.getOutgoingEdges()) {
+
+                    // Note: if the edge coordinates are not modified, the junction points are also
+                    // ignored
+                    KVectorChain junctionPoints = determineJunctionPoints(edge);
+                    if (junctionPoints.isEmpty()) {
+                        edge.setProperty(LayoutOptions.JUNCTION_POINTS, null);
+                    } else {
+                        edge.setProperty(LayoutOptions.JUNCTION_POINTS, junctionPoints);
+                    }
+
+                }
+            }
+        }
+        
         // set size of the parent node
         // border spacing and insets are included in #getActualSize
         
@@ -215,19 +238,152 @@ public class FixedLayoutProvider {
             }
         }
         
-        // TODO not yet supported
-        // if orthogonal routing is selected, determine the junction points
-        // Note: if the edge coordinates are not modified, the junction points are also ignored
-        // if (edgeRouting == EdgeRouting.ORTHOGONAL) {
-        // KVectorChain junctionPoints = LGraphUtil.determineJunctionPoints(edge);
-        // if (junctionPoints.isEmpty()) {
-        // edge.setProperty(LayoutOptions.JUNCTION_POINTS, null);
-        // } else {
-        // edge.setProperty(LayoutOptions.JUNCTION_POINTS, junctionPoints);
-        // }
-        // }
-        
         return maxv;
     }
+    
+    /**
+     * Copied from {@link KimlUtil} and adjusted for the LGraph structure.
+     * 
+     * Determine the junction points of the given edge. This is done by comparing the bend points
+     * of the given edge with the bend points of all other edges that are connected to the same
+     * source port or the same target port.
+     * 
+     * @param edge an edge
+     * @return a list of junction points
+     */
+    public static KVectorChain determineJunctionPoints(final LEdge edge) {
+        KVectorChain junctionPoints = new KVectorChain();
+        Map<LEdge, KVector[]> pointsMap = Maps.newHashMap();
+        pointsMap.put(edge, getPoints(edge));
+        
+        // for each connected port p
+        List<LPort> connectedPorts = Lists.newArrayListWithCapacity(2);
+        if (edge.getSource() != null) {
+            connectedPorts.add(edge.getSource());
+        }
+        if (edge.getTarget() != null) {
+            connectedPorts.add(edge.getTarget());
+        }
+        for (LPort p : connectedPorts) {
+            
+            // let allConnectedEdges be the set of edges connected to p without the main edge
+            List<LEdge> allConnectedEdges = Lists.newLinkedList();
+            allConnectedEdges.addAll(Lists.newArrayList(p.getConnectedEdges()));
+            allConnectedEdges.remove(edge);
+            if (!allConnectedEdges.isEmpty()) {
+                KVector[] thisPoints = pointsMap.get(edge);
+                boolean reverse;
+                
+                // let p1 be the start point
+                KVector p1;
+                if (p == edge.getTarget()) {
+                    p1 = thisPoints[thisPoints.length - 1];
+                    reverse = true;
+                } else {
+                    p1 = thisPoints[0];
+                    reverse = false;
+                }
+                
+                // for all bend points of this connection
+                for (int i = 1; i < thisPoints.length; i++) {
+                    // let p2 be the next bend point on this connection
+                    KVector p2;
+                    if (reverse) {
+                        p2 = thisPoints[thisPoints.length - 1 - i];
+                    } else {
+                        p2 = thisPoints[i];
+                    }
+                    
+                    // for all other connections that are still on the same track as this one
+                    Iterator<LEdge> allEdgeIter = allConnectedEdges.iterator();
+                    while (allEdgeIter.hasNext()) {
+                        LEdge otherEdge = allEdgeIter.next();
+                        KVector[] otherPoints = pointsMap.get(otherEdge);
+                        if (otherPoints == null) {
+                            otherPoints = getPoints(otherEdge);
+                            pointsMap.put(otherEdge, otherPoints);
+                        }
+                        if (otherPoints.length <= i) {
+                            allEdgeIter.remove();
+                        } else {
+                            
+                            // let p3 be the next bend point of the other connection
+                            KVector p3;
+                            if (reverse) {
+                                p3 = otherPoints[otherPoints.length - 1 - i];
+                            } else {
+                                p3 = otherPoints[i];
+                            }
+                            if (p2.x != p3.x || p2.y != p3.y) {
+                                // the next point of this and the other connection differ
+                                double dx2 = p2.x - p1.x;
+                                double dy2 = p2.y - p1.y;
+                                double dx3 = p3.x - p1.x;
+                                double dy3 = p3.y - p1.y;
+                                if ((dx3 * dy2) == (dy3 * dx2)
+                                        && signum(dx2) == signum(dx3)
+                                        && signum(dy2) == signum(dy3)) {
+                                    
+                                    // the points p1, p2, p3 form a straight line,
+                                    // now check whether p2 is between p1 and p3
+                                    if (Math.abs(dx2) < Math.abs(dx3)
+                                            || Math.abs(dy2) < Math.abs(dy3)) {
+                                        junctionPoints.add(p2);
+                                    }
+                                    
+                                } else if (i > 1) {
+                                    // p2 and p3 have diverged, so the last common point is p1
+                                    junctionPoints.add(p1);
+                                }
 
+                                // do not consider the other connection in the next iterations
+                                allEdgeIter.remove();
+                            }
+                        }
+                    }
+                    // for the next iteration p2 is taken as reference point
+                    p1 = p2;
+                }
+            }
+        }
+        return junctionPoints;
+    }
+    
+    /**
+     * Returns the signum function of the specified <tt>double</tt> value. The return value
+     * is -1 if the specified value is negative; 0 if the specified value is zero; and 1 if the
+     * specified value is positive.
+     *
+     * @return the signum function of the specified <tt>double</tt> value.
+     */
+    private static int signum(final double x) {
+        if (x < 0) {
+            return -1;
+        }
+        if (x > 0) {
+            return 1;
+        }
+        return 0;
+    }
+    
+    
+    /**
+     * Get the edge points as an array of vectors.
+     * 
+     * @param edge an edge
+     * @return an array with all edge points
+     */
+    private static KVector[] getPoints(final LEdge edge) {
+        int n = edge.getBendPoints().size() + 2;
+        KVector[] points = new KVector[n];
+        points[0] = edge.getSource().getAbsoluteAnchor().clone();
+        ListIterator<KVector> pointIter = edge.getBendPoints().listIterator();
+        while (pointIter.hasNext()) {
+            KVector bendPoint = pointIter.next();
+            points[pointIter.nextIndex()] = bendPoint.clone();
+        }
+        points[n - 1] = edge.getTarget().getAbsoluteAnchor().clone();
+        return points;
+    }
+    
 }
