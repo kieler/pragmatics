@@ -34,5 +34,35 @@
             class="de.cau.cs.kieler.klighd.xtext.XtextModelModificationHandler">
       </handler>
    </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="de.cau.cs.kieler.klighd.xtext.transformations.OpenGraphDiagramHandler"
+            id="de.cau.cs.kieler.klighd.xtext.graphDiagram"
+            name="Open Graph Diagram">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.ui.popup.any?before=additions">
+         <command
+               commandId="de.cau.cs.kieler.klighd.xtext.graphDiagram"
+               label="Open Graph Diagram"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate>
+                  <or>
+                     <instanceof
+                           value="org.eclipse.core.resources.IFile">
+                     </instanceof>
+                  </or>
+               </iterate>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
 
 </plugin>
