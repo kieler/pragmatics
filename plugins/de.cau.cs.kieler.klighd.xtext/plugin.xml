@@ -27,6 +27,10 @@
             class="de.cau.cs.kieler.klighd.syntheses.GuiceBasedSynthesisFactory:de.cau.cs.kieler.klighd.xtext.transformations.KGraphDiagramSynthesis"
             id="de.cau.cs.kieler.klighd.xtext.transformations.KGraphDiagramSynthesis">
       </diagramSynthesis>
+      <diagramSynthesis
+            class="de.cau.cs.kieler.klighd.syntheses.GuiceBasedSynthesisFactory:de.cau.cs.kieler.klighd.xtext.transformations.GMLDiagramSynthesis"
+            id="de.cau.cs.kieler.klighd.xtext.transformations.GMLDiagramSynthesis">
+      </diagramSynthesis>
    </extension>
    <extension
          point="de.cau.cs.kieler.klighd.extensions">
