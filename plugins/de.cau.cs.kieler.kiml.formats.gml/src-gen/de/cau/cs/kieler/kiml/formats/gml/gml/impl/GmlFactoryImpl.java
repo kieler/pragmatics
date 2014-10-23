@@ -30,7 +30,7 @@ public class GmlFactoryImpl extends EFactoryImpl implements GmlFactory
   {
     try
     {
-      GmlFactory theGmlFactory = (GmlFactory)EPackage.Registry.INSTANCE.getEFactory("http://kieler.cs.cau.de/GML"); 
+      GmlFactory theGmlFactory = (GmlFactory)EPackage.Registry.INSTANCE.getEFactory(GmlPackage.eNS_URI);
       if (theGmlFactory != null)
       {
         return theGmlFactory;

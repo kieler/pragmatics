@@ -30,8 +30,8 @@ public class InternalGMLParser extends AbstractInternalAntlrParser {
     public static final int RULE_GML_FLOAT=6;
     public static final int RULE_PREC_LINE=8;
     public static final int RULE_WS=9;
-    public static final int EOF=-1;
     public static final int RULE_GML_INT=5;
+    public static final int EOF=-1;
 
     // delegates
     // delegators

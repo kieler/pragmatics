@@ -4,7 +4,7 @@
     editorDirectory="/de.cau.cs.kieler.kiml.formats.gml.editor/src" modelPluginID="de.cau.cs.kieler.kiml.formats.gml"
     forceOverwrite="true" modelName="GML" updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
     complianceLevel="5.0" copyrightFields="false" editPluginID="de.cau.cs.kieler.kiml.formats.gml.edit"
-    editorPluginID="de.cau.cs.kieler.kiml.formats.gml.editor" runtimeVersion="2.8">
+    editorPluginID="de.cau.cs.kieler.kiml.formats.gml.editor" runtimeVersion="2.9">
   <genPackages prefix="Gml" basePackage="de.cau.cs.kieler.kiml.formats.gml" disposableProviderFactory="true"
       ecorePackage="GML.ecore#/">
     <genClasses ecoreClass="GML.ecore#//GmlModel">
