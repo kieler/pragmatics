@@ -29,7 +29,6 @@ import de.cau.cs.kieler.core.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.core.math.KVector
 import de.cau.cs.kieler.kiml.formats.gml.gml.Element
 import de.cau.cs.kieler.kiml.formats.gml.gml.GmlModel
-import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
 import de.cau.cs.kieler.kiml.options.LayoutOptions
@@ -39,10 +38,10 @@ import de.cau.cs.kieler.klighd.SynthesisOption
 import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
 import de.cau.cs.kieler.core.math.KVectorChain
 import de.cau.cs.kieler.core.math.KielerMath
+import java.util.List
 
 /**
- * TODO create rendering asap, with the node, to set the colors in
- * case the type is specified later 
+ * Generic diagram synthesis for GML files. 
  * 
  * @author uru
  */
@@ -73,54 +72,28 @@ class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GmlModel> {
             
             // first only convert all the nodes
             model.elements.forEach[it.convert(root)]
-            
+ 
             // shift positions as gml specifies node centers
             root.centerNodes
-            
-            // draw edges to node centers and clip
-            if (hasPositions)
+ 
+            // gml edges point to node centers, clip them at node boundaries
+            if (hasPositions) {
                 root.clipEdges
-            
+            }
+                       
+            // set the fixed layouter if we found positions    
             if (hasPositions) {
                 root.setLayoutOption(LayoutOptions.ALGORITHM, FixedLayoutProvider.ID)
             }
         ]
-    }
-     
-     
-    private def clipEdges(KNode parent) {
         
-        parent.children.forEach[ n |
-            
-            n.outgoingEdges.forEach [ e |
-                
-                val bps = e.layout.getProperty(LayoutOptions.BEND_POINTS)
-                
-                if(bps.isEmpty) {
-                    
-                    val sShape = e.source.shapeLayout
-                    val src = e.source.layout.getProperty(LayoutOptions.POSITION).clone.add(sShape.width / 2f, sShape.height / 2f)
-                    val tShape = e.target.shapeLayout
-                    val tgt = e.target.layout.getProperty(LayoutOptions.POSITION).clone.add(tShape.width / 2f, tShape.height / 2f)
-                    
-                    val st = tgt.clone.sub(src).clip(e.source).add(src)
-                    bps.add(0, st)
-                    val ts = src.clone.sub(tgt).clip(e.target).add(tgt)
-                    bps.add(ts)   
-                }
-            ]
-            
-            n.clipEdges
-        ]
     }
-    
-    private def clip(KVector v, KNode n) {
-        KielerMath.clipVector(v, n.shapeLayout.width, n.shapeLayout.height)
-    }
-    
+     
     private def void convert(Element d, KNode parent) {
         switch d.key {
             case "graph" : {
+                
+                // first convert all nodes such that they are available for edges
                 d.elements.filter[it.key == "node"].forEach[ e |
                     e.createNode => [ node |
                         parent.children += node
@@ -132,6 +105,7 @@ class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GmlModel> {
                     ]
                 ]
                 
+                // convert the edges
                 d.elements.filter[it.key == "edge"].forEach[ e |
                     e.createEdge => [ edge |
                         edge.addPolyline
@@ -140,11 +114,9 @@ class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GmlModel> {
                     ]
                 ]    
                 
+                // currently there is nothing else we want to convert
             }
-        
-//            case "type" : d.convertType(parent)
         }
-        
     } 
     
     private def void convertNode(Element e, KNode node) {
@@ -154,7 +126,6 @@ class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GmlModel> {
             
             case "label": if (SHOW_LABELS.booleanValue) 
                             KimlUtil.createInitializedLabel(node).text = e.value.stripQuotes
-            //case "label" : node.KContainerRendering.addText(e.value.stripQuotes)
             
             case "graphics" : e.elements.forEach[it.convertNode(node)]
             
@@ -173,7 +144,17 @@ class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GmlModel> {
             
             case "line": node.KRendering.foreground = e.value.stripQuotes.color
             
-            case "fill": node.KRendering.background = e.value.stripQuotes.color
+            case "fill": {
+                node.KRendering.background = e.value.stripQuotes.color
+                node.KRendering.background.propagateToChildren = true
+                }
+            
+            case "type": switch e.value.stripQuotes {
+                 case "oval": {
+                     node.KContainerRendering.invisible = true
+                     node.KContainerRendering.addEllipse
+                 }
+            } 
             
             // compound nodes
             case "node": e.convert(node)
@@ -185,22 +166,14 @@ class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GmlModel> {
             case "source": {
                 val src = idMap.get(e.value.toInt)
                 edge.source = src
-//                val bps = edge.layout.getProperty(LayoutOptions.BEND_POINTS) 
-//                bps += new KVector(src.shapeLayout.width / 2f, src.shapeLayout.height / 2f)
             }
             
             case "target": {
                 val tgt = idMap.get(e.value.toInt)
                 edge.target = tgt
-  //              val bps = edge.layout.getProperty(LayoutOptions.BEND_POINTS) 
-  //              bps += new KVector(tgt.shapeLayout.width / 2f, tgt.shapeLayout.height / 2f)
             }
             
-            
             case "graphics" : e.elements.forEach[it.convertEdge(edge)]
-//            case "type": 
-            
-//            case "fill":
             
             case "arrow": switch e.value.stripQuotes {
                 case "head": (edge.KRendering as KPolyline).addHeadArrowDecorator
@@ -208,9 +181,10 @@ class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GmlModel> {
                 case "last": (edge.KRendering as KPolyline).addHeadArrowDecorator
             } 
 
-//              case "width"
+            case "width": edge.KRendering.lineWidth = Float.valueOf(e.value)
 
-     
+            // convert the bendpoints
+            // note that the source and target anchor points are included in the list of bendpoints
             case "Line": e.elements.filter[it.key == "point"].forEach[it.convertEdgeBendpoints(edge)]
             
         }
@@ -222,16 +196,65 @@ class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GmlModel> {
         val x = bp.elements.findFirst[it.key == "x"]
         val y = bp.elements.findFirst[it.key == "y"]
         
-        val offset = new KVector(e.source.shapeLayout.width / 2f, e.source.shapeLayout.height / 2f)
-        bps += new KVector(Double.valueOf(x.value) + offset.x, Double.valueOf(y.value) + offset.y)
+        bps += new KVector(Double.valueOf(x.value), Double.valueOf(y.value))
         
+    }
+         
+    private def void clipEdges(KNode parent) {
+        
+        parent.children.forEach[ n |
+            
+            n.outgoingEdges.forEach [ e |
+                
+                val bps = e.layout.getProperty(LayoutOptions.BEND_POINTS)
+                
+                val sShape = e.source.shapeLayout
+                val tShape = e.target.shapeLayout
+                
+                if (bps.isEmpty) {
+                    
+                    
+                    val src = e.source.layout.getProperty(LayoutOptions.POSITION).clone.add(sShape.width / 2f, sShape.height / 2f)
+                    val tgt = e.target.layout.getProperty(LayoutOptions.POSITION).clone.add(tShape.width / 2f, tShape.height / 2f)
+                    
+                    val st = tgt.clone.sub(src).clip(e.source).add(src)
+                    bps.add(0, st)
+                    val ts = src.clone.sub(tgt).clip(e.target).add(tgt)
+                    bps.add(ts)   
+    
+                } else if (bps.size >= 2) {
+
+                    // clip the first and the last point of the bends
+                    val src = bps.head
+                    val snd = bps.tail.head
+                    src.add(snd.clone.sub(src).clip(e.source))
+                    
+                    val tgt = (bps.clone as List<KVector>).reverse.head
+                    val penult = (bps.clone as List<KVector>).reverse.tail.head
+                    tgt.add(penult.clone.sub(tgt).clip(e.target))
+                }
+            ]
+            
+            n.clipEdges
+        ]
+    }
+    
+    private def clip(KVector v, KNode n) {
+        KielerMath.clipVector(v, n.shapeLayout.width, n.shapeLayout.height)
     }
     
     var minX = Double.MAX_VALUE
     var minY = Double.MAX_VALUE
     
+    /**
+     * KGraph's node positions refer to the top-left corner
+     * while GML specifies center positions. Here we move 
+     * the node by half its width and height towards the 
+     * top left position.
+     */    
     private def void centerNodes(KNode parent) {
         
+        // determine maximal extend of a node in x and y direction
         parent.children.forEach[ n |
             val pos = n.layout.getProperty(LayoutOptions.POSITION)
             if (pos != null) {
@@ -243,11 +266,9 @@ class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GmlModel> {
             n.centerNodes    
         ]
         
-        
-        println(minX + " " + minY)
-        
         val borderSpacing = parent.layout.getProperty(LayoutOptions.BORDER_SPACING)
-        // minX and minY are determined now
+        
+        // minX and minY are determined
         parent.children.forEach[ n |
             val pos = n.layout.getProperty(LayoutOptions.POSITION)
             
@@ -257,6 +278,17 @@ class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GmlModel> {
                 pos.y = -minY + pos.y - n.height / 2 + borderSpacing
             }
             
+            // move all the bend points
+            n.outgoingEdges.forEach [ e |
+                val bps = e.layout.getProperty(LayoutOptions.BEND_POINTS)
+                if (bps != null) {
+                    bps.forEach [ bp |
+                        bp.x = bp.x - minX
+                        bp.y = bp.y - minY
+                    ]
+                }
+            ]
+            
             // shift labels to the center of the node
             n.labels.forEach[ l |
                 l.shapeLayout.xpos = n.width / 2
@@ -264,16 +296,6 @@ class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GmlModel> {
             ]
         ]
     }
-    
-    
-    private def convertType(Element d, KNode parent) {
-        println(d.value + "--" + d.value.stripQuotes)
-        switch d.value.stripQuotes {
-            case "rectangle" : parent.addRectangle
-            case "oval": parent.addEllipse
-        }
-    }
-    
     
     private def toInt(String s) {
         return Integer.valueOf(s)
@@ -299,7 +321,4 @@ class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GmlModel> {
         e.getData(typeof(KShapeLayout))
     }
     
-    private def getEdgeLayout(KEdge e) {
-        e.getData(typeof(KEdgeLayout))
-    }
 }
