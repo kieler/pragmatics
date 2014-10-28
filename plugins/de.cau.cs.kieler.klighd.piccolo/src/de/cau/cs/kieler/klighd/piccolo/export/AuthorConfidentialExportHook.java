@@ -13,21 +13,24 @@
  */
 package de.cau.cs.kieler.klighd.piccolo.export;
 
+import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.LineAttributes;
 
+import de.cau.cs.kieler.klighd.DiagramExportConfig;
 import de.cau.cs.kieler.klighd.KlighdConstants;
 import de.cau.cs.kieler.klighd.ViewContext;
 import de.cau.cs.kieler.klighd.microlayout.PlacementUtil;
 import de.cau.cs.kieler.klighd.piccolo.KlighdSWTGraphics;
 
 /**
- * Example export hook. Draws a border around the diagram, prints the author and a "TOP SECRET"
+ * Example export hook. Draws a border around the diagram, prints the author and a "Confidential"
  * watermark.
  *
  * Registration is to be done in plugin.xml like
@@ -45,48 +48,107 @@ import de.cau.cs.kieler.klighd.piccolo.KlighdSWTGraphics;
  *
  * @author csp
  */
-public class AuthorConfidentialExportHook implements IExportHook {
+public class AuthorConfidentialExportHook extends AbstractExportBranding {
 
-    private static final int BORDER_LINE_WIDTH = 1;
+    private static final int BORDER_LINE_WIDTH = 3;
     private static final int BOTTOM_MARGIN = 30;
     private static final int TOP_LEFT_RIGHT_MARGIN = 20;
     private static final int BORDER_PADDING = 5;
     private static final int WATERMARK_ALPHA = 100;
     private static final double WATERMARK_PADDING_FACTOR = 0.8;
 
+    // CHECKSTYLEOFF MagicNumber
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setViewContext(final ViewContext viewContext) {
     }
 
     /**
      * {@inheritDoc}
      */
-    public AffineTransform drawPreDiagram(final KlighdSWTGraphics graphics, final Rectangle2D bounds) {
-
-        final double innerWidth = bounds.getWidth() - (2 * TOP_LEFT_RIGHT_MARGIN);
-        final double innerHeight = bounds.getHeight() - (TOP_LEFT_RIGHT_MARGIN + BOTTOM_MARGIN);
-        final double scaleX = innerWidth / bounds.getWidth();
-        final double scaleY = innerHeight / bounds.getHeight();
-
-        final AffineTransform transform = new AffineTransform();
-        transform.translate(TOP_LEFT_RIGHT_MARGIN, TOP_LEFT_RIGHT_MARGIN);
-        transform.scale(scaleX, scaleY);
-        return transform;
+    @Override
+    public Trim getDiagramTrim(final Rectangle2D bounds) {
+        return new Trim(100, 100, 200, 200);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void drawPostDiagram(final KlighdSWTGraphics graphics, final Rectangle2D bounds) {
+    @Override
+    public Trim getDiagramTileTrimm(final Rectangle2D bounds, final boolean fixSizedTiles) {
+        if (bounds.getWidth() > 1000 && bounds.getHeight() > 1000) {
+            return new Trim(500, 500, 200, 200);
+        } else {
+            return new Trim(50, 50, 20, 20);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void drawDiagramBackground(final KlighdSWTGraphics graphics,
+            final DiagramExportConfig config) {
+        graphics.setFillColor(KlighdConstants.RED);
+
+        final Rectangle2D bounds = config.diagramBounds.getBounds2D();
+        bounds.setRect(0, 0, 200 + bounds.getWidth(), 400 + bounds.getHeight());
+
+        graphics.fill(new Rectangle2D.Double(0, 0, 100, bounds.getHeight()));
+        graphics.fill(new Rectangle2D.Double(bounds.getWidth() - 100, 0, 100, bounds.getHeight()));
+
+        final Path2D p = new Path2D.Float();
+        p.moveTo(0, 0);
+        p.lineTo(bounds.getWidth(), 0);
+        p.lineTo(bounds.getWidth() - 100, 200);
+        p.lineTo(100, 200);
+        p.closePath();
+
+        graphics.setFillColor(KlighdConstants.BLUE);
+
+        graphics.fill(p);
+
+        graphics.transform(AffineTransform.getRotateInstance(
+              Math.toRadians(180), bounds.getCenterX(), bounds.getCenterY()));
+
+        graphics.fill(p);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void drawDiagramTileBackground(final KlighdSWTGraphics graphics,
+            final DiagramExportConfig config) {
+        graphics.setFillColor(KlighdConstants.YELLOW);
+        if (config.tileBounds.getWidth() > 1000 && config.tileBounds.getHeight() > 1000) {
+            graphics.fill(new Rectangle2D.Double(500, 200,
+                    config.tileBounds.getWidth() - 1000,
+                    config.tileBounds.getHeight() - 400));
+        } else {
+            graphics.fill(new Rectangle2D.Double(50, 20,
+                    config.tileBounds.getWidth() - 100,
+                    config.tileBounds.getHeight() - 40));
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void drawDiagramOverlay(final KlighdSWTGraphics graphics, final DiagramExportConfig config) {
+
+        final Rectangle2D bounds = config.getDiagramBoundsIncludingTrim();
 
         final double innerWidth = bounds.getWidth() - (2 * TOP_LEFT_RIGHT_MARGIN);
         final double innerHeight = bounds.getHeight() - (TOP_LEFT_RIGHT_MARGIN + BOTTOM_MARGIN);
 
         // make border
         graphics.setLineAttributes(new LineAttributes(BORDER_LINE_WIDTH));
-        graphics.setStrokeColor(KlighdConstants.BLACK);
+        graphics.setStrokeColor(KlighdConstants.WHITE);
         graphics.draw(new Rectangle2D.Double(
                 TOP_LEFT_RIGHT_MARGIN - BORDER_PADDING, TOP_LEFT_RIGHT_MARGIN - BORDER_PADDING,
                 innerWidth + 2 * BORDER_PADDING, innerHeight + 2 * BORDER_PADDING));
@@ -103,14 +165,18 @@ public class AuthorConfidentialExportHook implements IExportHook {
     /**
      * {@inheritDoc}
      */
-    public void drawPostDiagramTile(final KlighdSWTGraphics graphics, final Rectangle2D bounds) {
+    @Override
+    public void drawDiagramTileOverlay(final KlighdSWTGraphics graphics,
+            final DiagramExportConfig config) {
         // draw confidential
-        final double innerWidth = bounds.getWidth() - (2 * TOP_LEFT_RIGHT_MARGIN);
-        final double innerHeight = bounds.getHeight() - (TOP_LEFT_RIGHT_MARGIN + BOTTOM_MARGIN);
+
+        final Dimension bounds = config.tileBounds;
+
+        final double innerWidth = bounds.getWidth(); // - (2 * TOP_LEFT_RIGHT_MARGIN);
+        final double innerHeight = bounds.getHeight(); // - (TOP_LEFT_RIGHT_MARGIN + BOTTOM_MARGIN);
 
         // font
-        final FontData font = new FontData();
-        font.setStyle(SWT.BOLD);
+        final FontData font = new FontData("Arial", KlighdConstants.DEFAULT_FONT_SIZE, SWT.BOLD);
         graphics.setFont(font);
         graphics.setAlpha(WATERMARK_ALPHA);
 
@@ -130,8 +196,11 @@ public class AuthorConfidentialExportHook implements IExportHook {
                 bounds.getWidth() / 2d - size.width / 2d, bounds.getHeight() / 2d - size.height / 2d));
         graphics.transform(AffineTransform.getRotateInstance(
                 innerWidth, -innerHeight, size.width / 2d, size.height / 2d));
-        graphics.transform(AffineTransform.getScaleInstance(scale, scale));
 
+        graphics.setStrokeColor(KlighdConstants.BLACK);
+        graphics.draw(size);
+
+        graphics.transform(AffineTransform.getScaleInstance(scale, scale));
         graphics.drawText(confidential);
     }
 }

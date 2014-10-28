@@ -29,6 +29,7 @@ import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
  * 
  * @author msp
  * @author cds
+ * @author uru
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
@@ -78,10 +79,19 @@ public final class Properties {
 
     /**
      * Whether nodes shall be distributed during layer assignment.
+     * 
+     * @deprecated use the {@link #WIDE_NODES_ON_MULTIPLE_LAYERS} property instead.
      */
     public static final IProperty<Boolean> DISTRIBUTE_NODES = new Property<Boolean>(
             "de.cau.cs.kieler.klay.layered.distributeNodes", false);
 
+    /**
+     * Whether wide nodes may be be distributed over several layers.
+     */
+    public static final IProperty<WideNodesStrategy> WIDE_NODES_ON_MULTIPLE_LAYERS =
+            new Property<WideNodesStrategy>(
+                    "de.cau.cs.kieler.klay.layered.wideNodesOnMultipleLayers",
+                    WideNodesStrategy.OFF);
     /**
      * Property to choose a cycle breaking strategy.
      */

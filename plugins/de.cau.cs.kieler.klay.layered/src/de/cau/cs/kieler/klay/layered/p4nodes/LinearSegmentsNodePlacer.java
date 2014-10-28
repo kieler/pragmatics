@@ -80,6 +80,8 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
         private int weight;
         /** The reference segment, if this has been unified with another. */
         private LinearSegment refSegment;
+        /** The nodetype contained in this linear segment. */
+        private NodeType nodeType;
         
         /**
          * Determine the reference segment for the region to which this segment is associated.
@@ -467,37 +469,63 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
      *         added to the given segment.
      */
     private boolean fillSegment(final LNode node, final LinearSegment segment) {
+        NodeType nodeType = node.getProperty(InternalProperties.NODE_TYPE);
+        
+        // handle initial big nodes as big node type
+        if (node.getProperty(InternalProperties.BIG_NODE_INITIAL)) {
+            nodeType = NodeType.BIG_NODE;
+        }
+        
         if (node.id >= 0) {
             // The node is already part of another linear segment
+            return false;
+        } else if (segment.nodeType != null 
+                && (nodeType == NodeType.BIG_NODE && nodeType != segment.nodeType)) {
+            // Big nodes are not allowed to share a linear segment with other dummy nodes
             return false;
         } else {
             // Add the node to the given linear segment
             node.id = segment.id;
             segment.nodes.add(node);
         }
-
-        NodeType nodeType = node.getProperty(InternalProperties.NODE_TYPE);
-        if (nodeType == NodeType.LONG_EDGE || nodeType == NodeType.NORTH_SOUTH_PORT
+        segment.nodeType = nodeType;
+        
+        if (nodeType == NodeType.LONG_EDGE 
+                || nodeType == NodeType.NORTH_SOUTH_PORT
                 || nodeType == NodeType.BIG_NODE) {
             
-            // This is a LONG_EDGE, COMPOUND_SIDE or NORTH_SOUTH_PORT dummy; check if any of its
-            // successors are of one of these types too. If so, we can form a linear segment with one
-            // of them. (not with more than one, though) Note: we must take care not to make
-            // a segment out of nodes that are in the same layer
+            // This is a LONG_EDGE, NORTH_SOUTH_PORT or BIG_NODE dummy; check if any of its
+            // successors are of one of these types too. If so, we can form a linear segment
+            // with one of them. (not with more than one, though) 
+            // Note 1: LONG_EDGES and NORTH_SOUTH_PORTs can share a common linear segment
+            // Note 2: we must take care not to make a segment out of nodes that are in the same layer
+            // Note 3: for BIG_NODEs also the first BIG_NODE_INITIAL which is no actual dummy node has
+            // to be considered here
             for (LPort sourcePort : node.getPorts()) {
                 for (LPort targetPort : sourcePort.getSuccessorPorts()) {
                     LNode targetNode = targetPort.getNode();
                     NodeType targetNodeType = targetNode.getProperty(InternalProperties.NODE_TYPE);
 
-                    if (node.getLayer() != targetNode.getLayer()
-                            && (targetNodeType == NodeType.LONG_EDGE
-                                    || targetNodeType == NodeType.NORTH_SOUTH_PORT 
-                                    || targetNodeType == NodeType.BIG_NODE)) {
-
-                        if (fillSegment(targetNode, segment)) {
-                            // We just added another node to this node's linear segment.
-                            // That's quite enough.
-                            return true;
+                    if (node.getLayer() != targetNode.getLayer()) {
+                        if (nodeType == NodeType.BIG_NODE) {
+                            // current AND the next node are BIG_NODE dummies
+                            if (targetNodeType == NodeType.BIG_NODE) {
+                                if (fillSegment(targetNode, segment)) {
+                                    // We just added another node to this node's linear segment.
+                                    // That's quite enough.
+                                    return true;
+                                }
+                            }
+                        } else {
+                            // current no bignode and next node is LONG_EDGE and NORTH_SOUTH_PORT
+                            if (targetNodeType == NodeType.LONG_EDGE
+                                    || targetNodeType == NodeType.NORTH_SOUTH_PORT) {
+                                if (fillSegment(targetNode, segment)) {
+                                    // We just added another node to this node's linear segment.
+                                    // That's quite enough.
+                                    return true;
+                                }
+                            }
                         }
                     }
                 }
