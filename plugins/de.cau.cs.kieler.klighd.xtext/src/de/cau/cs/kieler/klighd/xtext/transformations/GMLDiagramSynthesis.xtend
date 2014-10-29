@@ -27,6 +27,8 @@ import de.cau.cs.kieler.core.krendering.extensions.KNodeExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KPolylineExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.core.math.KVector
+import de.cau.cs.kieler.core.math.KVectorChain
+import de.cau.cs.kieler.core.math.KielerMath
 import de.cau.cs.kieler.kiml.formats.gml.gml.Element
 import de.cau.cs.kieler.kiml.formats.gml.gml.GmlModel
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData
@@ -34,10 +36,10 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
 import de.cau.cs.kieler.kiml.options.LayoutOptions
 import de.cau.cs.kieler.kiml.util.FixedLayoutProvider
 import de.cau.cs.kieler.kiml.util.KimlUtil
+import de.cau.cs.kieler.klighd.KlighdConstants
 import de.cau.cs.kieler.klighd.SynthesisOption
 import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
-import de.cau.cs.kieler.core.math.KVectorChain
-import de.cau.cs.kieler.core.math.KielerMath
+import de.cau.cs.kieler.klighd.util.KlighdProperties
 import java.util.List
 
 /**
@@ -54,6 +56,8 @@ class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GmlModel> {
     @Inject extension KColorExtensions
     @Inject extension KPolylineExtensions
     
+    // TODO one gml may contain multiple graphs, thus this needs to be 
+    // in the scope of the currently handles graph 
     val idMap = Maps.<Integer, KNode>newHashMap
     var hasPositions = false
     
@@ -86,38 +90,44 @@ class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GmlModel> {
                 root.setLayoutOption(LayoutOptions.ALGORITHM, FixedLayoutProvider.ID)
             }
         ]
-        
     }
      
     private def void convert(Element d, KNode parent) {
         switch d.key {
-            case "graph" : {
-                
+            case "graph": {
                 // first convert all nodes such that they are available for edges
                 d.elements.filter[it.key == "node"].forEach[ e |
-                    e.createNode => [ node |
-                        parent.children += node
-                        
-                        node.layout.setProperty(LayoutOptions.POSITION, new KVector())
-                        node.addRectangle => [it.lineWidth = 1 ]
-                        // style and position of created noode
-                        e.elements.forEach[it.convertNode(node)]
-                    ]
+                    e.createKNode(parent)
                 ]
                 
                 // convert the edges
                 d.elements.filter[it.key == "edge"].forEach[ e |
-                    e.createEdge => [ edge |
-                        edge.addPolyline
-                        edge.layout.setProperty(LayoutOptions.BEND_POINTS, new KVectorChain())
-                        e.elements.forEach[it.convertEdge(edge)]
-                    ]
+                    createKEdge(e)
                 ]    
                 
                 // currently there is nothing else we want to convert
             }
         }
     } 
+    
+    private def void createKNode(Element e, KNode parent) {
+        e.createNode => [ node |
+            parent.children += node
+            
+            node.layout.setProperty(LayoutOptions.POSITION, new KVector())
+            node.addRectangle => [it.lineWidth = 1 ]
+            // style and position of created noode
+            e.elements.forEach[it.convertNode(node)]
+        ]
+    }
+    
+    private def void createKEdge(Element e) {
+        e.createEdge => [ edge |
+            edge.addPolyline
+            edge.layout.setProperty(LayoutOptions.BEND_POINTS, new KVectorChain())
+            e.elements.forEach[it.convertEdge(edge)]
+        ]
+    }
     
     private def void convertNode(Element e, KNode node) {
         switch e.key {
@@ -146,8 +156,8 @@ class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GmlModel> {
             
             case "fill": {
                 node.KRendering.background = e.value.stripQuotes.color
-                node.KRendering.background.propagateToChildren = true
-                }
+                //node.KRendering.background.propagateToChildren = true
+            }
             
             case "type": switch e.value.stripQuotes {
                  case "oval": {
@@ -157,7 +167,36 @@ class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GmlModel> {
             } 
             
             // compound nodes
-            case "node": e.convert(node)
+            case "node": {
+                
+                // create a knode and 
+                // recursively add children
+                e.createKNode(node)
+            
+                // by default, do not expand
+                node.layout.setProperty(KlighdProperties.EXPAND, false)
+
+                // if this is the first child node, style the parent as a 
+                // compound node with special rendering and the ability 
+                // to collapse and expand
+                val ren = node.KContainerRendering
+                if (!ren.getProperty(KlighdProperties.COLLAPSED_RENDERING)) {
+                    // use the currently attached krendering as collapsed rendering
+                    ren.setProperty(KlighdProperties.COLLAPSED_RENDERING, true)
+                    ren.addDoubleClickAction(KlighdConstants.ACTION_COLLAPSE_EXPAND)
+
+                    // add another rendering which will be used if the node is expanded
+                    node.addRoundedRectangle(5, 5) => [ er |
+                        er.background = "#0000FF".color
+                        er.background.alpha = 20
+                        er.setProperty(KlighdProperties.EXPANDED_RENDERING, true)
+                        er.addDoubleClickAction(KlighdConstants.ACTION_COLLAPSE_EXPAND)
+                    ]        
+                }
+            }
+           
+            // edges of the compound node
+            case "edge": e.createKEdge()
         }
     }
     
