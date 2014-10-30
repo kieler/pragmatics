@@ -38,10 +38,10 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow 2012-07-10 msp
  */
-public class DirectedCycleAnalysis implements IAnalysis {
+public class DirectedCycleApproximationAnalysis implements IAnalysis {
     
     /** the identifier for the cycle analysis. */
-    public static final String ID = "de.cau.cs.kieler.kiml.grana.directedCycles";
+    public static final String ID = "de.cau.cs.kieler.kiml.grana.directedCyclesApprox";
 
     /** indegree values for the nodes. */
     private int[] indeg;
