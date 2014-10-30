@@ -18,9 +18,10 @@ Job: {Job}
     
     (layoutBeforeAnalysis ?= 'layoutBeforeAnalysis')?
     
+    (measureExecutionTime ?= 'measureExecutionTime')?
+    
     'resources'
         (resources+=Resource)*
-        
     
     'layoutoptions'
         layoutOptions+=KIdentifier

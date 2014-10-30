@@ -131,6 +131,7 @@ public class GranaSemanticSequencer extends AbstractDelegatingSemanticSequencer 
 	 *     (
 	 *         name=ID? 
 	 *         layoutBeforeAnalysis?='layoutBeforeAnalysis'? 
+	 *         measureExecutionTime?='measureExecutionTime'? 
 	 *         resources+=Resource* 
 	 *         layoutOptions+=KIdentifier 
 	 *         analyses+=Analysis* 

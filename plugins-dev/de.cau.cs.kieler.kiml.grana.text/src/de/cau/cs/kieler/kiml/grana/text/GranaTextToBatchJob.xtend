@@ -53,7 +53,6 @@ class GranaTextToBatchJob {
                 val analyses = job.analyses.map[AnalysisService.instance.getAnalysis(it.name)]
                 val batch = new Batch(analyses)
     
-    
                 // resolve possible references
                 val resources =  job.resources.map[ r |
                     switch r {
@@ -78,8 +77,9 @@ class GranaTextToBatchJob {
                         if (filter == null || filter.matcher(file.name).matches) {
                             val provider = new FileKGraphProvider
                             provider.setLayoutBeforeAnalysis(job.layoutBeforeAnalysis)
+                            provider.setExecutionTimeAnalysis(job.measureExecutionTime)
     
-                            // TODO set layout options
+                            // set the layout options
                             val clc = new CompoundLayoutConfig
                             for (cfg : job.layoutOptions) {
                                 clc.add(LayoutConfigTransformer.transformConfig(cfg))
