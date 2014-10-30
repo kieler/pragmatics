@@ -20,6 +20,7 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.grana.AnalysisData;
 import de.cau.cs.kieler.kiml.grana.AnalysisService;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 
 /**
  * The class which represents an analysis batch job.
@@ -93,7 +94,9 @@ public class BatchJob<T> {
         KNode graph = kgraphProvider.getKGraph(parameter, monitor.subTask(WORK_KGRAPH));
         Map<String, Object> results = AnalysisService.getInstance().analyze(graph, analyses,
                 monitor.subTask(WORK_ANALYSIS));
-        BatchJobResult<T> batchJobResult = new BatchJobResult<T>(this, results);
+        Map<String, Double> execResults =
+                graph.getData(KLayoutData.class).getProperty(BatchHandler.EXECUTION_TIME_RESULTS);
+        BatchJobResult<T> batchJobResult = new BatchJobResult<T>(this, results, execResults);
         monitor.done();
         return batchJobResult;
     }

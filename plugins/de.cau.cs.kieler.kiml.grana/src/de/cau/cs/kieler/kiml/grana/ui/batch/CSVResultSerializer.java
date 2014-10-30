@@ -15,7 +15,10 @@ package de.cau.cs.kieler.kiml.grana.ui.batch;
 
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.List;
 import java.util.Map;
+
+import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.util.Pair;
@@ -56,11 +59,18 @@ public class CSVResultSerializer implements IBatchResultSerializer {
                 writer.write(";" + analysis.getName());
             }
         }
+        // headers for execution time
+        List<String> executionTimePhases = Lists.newArrayList(batchResult.getExecutionTimePhases());
+        for (String phase : executionTimePhases) {
+            writer.write(";" + phase);
+        }
         writer.write("\n");
+        
         // write the job results
         for (BatchJobResult<?> jobResult : batchResult.getJobResults()) {
             writer.write(jobResult.getJob().getParameter().toString());
             Map<String, Object> results = jobResult.getResults();
+            // basic analyses
             for (AnalysisData analysis : batchResult.getAnalyses()) {
                 Object result = results.get(analysis.getId());
                 Visualization visualization =
@@ -69,6 +79,16 @@ public class CSVResultSerializer implements IBatchResultSerializer {
                 String s = visualization.get(analysis, result);
                 writer.write(";" + s);
             }
+            
+            // execution time results
+            Map<String, Double> execTimes = jobResult.getExecTimeResults();
+            if (execTimes != null) {
+                for (String phase : executionTimePhases) {
+                    Double time = execTimes.get(phase);
+                    writer.write(";" + (time != null ? time + "" : "0"));
+                }
+            }
+            
             writer.write("\n");
         }
         writer.close();

@@ -15,6 +15,7 @@ package de.cau.cs.kieler.kiml.grana.ui.batch;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -33,6 +34,8 @@ import org.eclipse.gmf.runtime.notation.Diagram;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.statushandlers.StatusManager;
+
+import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -59,6 +62,7 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  * headless diagram, that is without an editor.
  *
  * @author msp
+ * @author uru
  * @kieler.ignore (excluded from review process)
  */
 public class FileKGraphProvider implements IKGraphProvider<IPath> {
@@ -68,8 +72,12 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
     
     /** the 'layout before analysis' option. */
     private boolean layoutBeforeAnalysis;
+    /** whether to measure the execution times. */
+    private boolean executionTimeAnalysis;
     /** the layout configurator to apply to each graph. */
     private ILayoutConfig configurator;
+    
+    private static final int NO_EXEC_TIME_RUNS = 5;
     
     /**
      * {@inheritDoc}
@@ -127,7 +135,41 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
                 if (layoutEngine == null) {
                     layoutEngine = new RecursiveGraphLayoutEngine();
                 }
-                layoutEngine.layout(graph, monitor.subTask(1));
+                
+                // shall we perform execution time analysis?
+                if (executionTimeAnalysis) {
+                    // Do a bunch of layout runs and take the one that took the least amount of time
+                    double minTime = Double.MAX_VALUE;
+                    Map<String, Double> minPhaseTimes = Maps.newHashMap();
+                    for (int j = 0; j < NO_EXEC_TIME_RUNS; j++) {
+                        System.gc();
+                        
+                        IKielerProgressMonitor recLayoutMonitor = monitor.subTask(1);
+                        layoutEngine.layout(graph, recLayoutMonitor);
+                        // we are interested in the top level progress monitor of the recursive
+                        // layout engine
+                        IKielerProgressMonitor layoutMonitor =
+                                recLayoutMonitor.getSubMonitors().get(0);
+                        double time = layoutMonitor.getExecutionTime();
+                        
+                        if (time < minTime) {
+                            minTime = time;
+                            for (IKielerProgressMonitor task : layoutMonitor.getSubMonitors()) {
+                                minPhaseTimes.put(task.getTaskName(), task.getExecutionTime());
+                            }
+                        }
+                    }
+                    minPhaseTimes.put("Overall", minTime);
+                    
+                    // attach the results to the graph such that the 
+                    // execution time analysis can print them
+                    graph.getData(KLayoutData.class).setProperty(
+                            BatchHandler.EXECUTION_TIME_RESULTS, minPhaseTimes);
+
+                } else {
+                    // plain layout - no hassle
+                    layoutEngine.layout(graph, monitor.subTask(1));
+                }
             }
             
             monitor.done();
@@ -150,6 +192,13 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
      */
     public void setLayoutBeforeAnalysis(final boolean layoutBeforeAnalysisOption) {
         layoutBeforeAnalysis = layoutBeforeAnalysisOption;
+    }
+    
+    /**
+     * @param executionTimeAnalysis the executionTimeAnalysis to set
+     */
+    public void setExecutionTimeAnalysis(final boolean executionTimeAnalysis) {
+        this.executionTimeAnalysis = executionTimeAnalysis;
     }
     
     /**
