@@ -146,20 +146,23 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
                         
                         IKielerProgressMonitor recLayoutMonitor = monitor.subTask(1);
                         layoutEngine.layout(graph, recLayoutMonitor);
-                        // we are interested in the top level progress monitor of the recursive
-                        // layout engine
-                        IKielerProgressMonitor layoutMonitor =
-                                recLayoutMonitor.getSubMonitors().get(0);
-                        double time = layoutMonitor.getExecutionTime();
-                        
-                        if (time < minTime) {
-                            minTime = time;
-                            for (IKielerProgressMonitor task : layoutMonitor.getSubMonitors()) {
-                                minPhaseTimes.put(task.getTaskName(), task.getExecutionTime());
+
+                        if (!recLayoutMonitor.getSubMonitors().isEmpty()) {
+                            // we are interested in the top level progress monitor of the recursive
+                            // layout engine
+                            IKielerProgressMonitor layoutMonitor =
+                                    recLayoutMonitor.getSubMonitors().get(0);
+                            double time = layoutMonitor.getExecutionTime();
+                            
+                            if (time < minTime) {
+                                minTime = time;
+                                for (IKielerProgressMonitor task : layoutMonitor.getSubMonitors()) {
+                                    minPhaseTimes.put(task.getTaskName(), task.getExecutionTime());
+                                }
                             }
                         }
                     }
-                    minPhaseTimes.put("Overall", minTime);
+                    minPhaseTimes.put("Overall Execution Time", minTime);
                     
                     // attach the results to the graph such that the 
                     // execution time analysis can print them

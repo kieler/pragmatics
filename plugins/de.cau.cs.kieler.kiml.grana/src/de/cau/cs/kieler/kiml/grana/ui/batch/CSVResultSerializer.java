@@ -15,6 +15,7 @@ package de.cau.cs.kieler.kiml.grana.ui.batch;
 
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -61,6 +62,8 @@ public class CSVResultSerializer implements IBatchResultSerializer {
         }
         // headers for execution time
         List<String> executionTimePhases = Lists.newArrayList(batchResult.getExecutionTimePhases());
+        // sort them lexicographically 
+        Collections.sort(executionTimePhases);
         for (String phase : executionTimePhases) {
             writer.write(";" + phase);
         }
@@ -85,7 +88,7 @@ public class CSVResultSerializer implements IBatchResultSerializer {
             if (execTimes != null) {
                 for (String phase : executionTimePhases) {
                     Double time = execTimes.get(phase);
-                    writer.write(";" + (time != null ? time + "" : "0"));
+                    writer.write(";" + (time != null ? time + "" : ""));
                 }
             }
             
