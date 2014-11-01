@@ -13,7 +13,9 @@
  */
 package de.cau.cs.kieler.kiml.grana.ui.batch;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.Map;
 
@@ -89,8 +91,18 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
         // possibly converting a different format such as graphml
         KNode graph = null;
         try {
+
+            String extension = parameter.getFileExtension();
+            InputStream is;
             IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(parameter);
-            KNode[] nodes = GraphFormatsService.getInstance().loadKGraph(file);
+            if (file.exists()) {
+                is = file.getContents();
+            } else {
+                // try as absolute path
+                is = new FileInputStream(parameter.toFile());
+            }
+            
+            KNode[] nodes = GraphFormatsService.getInstance().loadKGraph(is, extension);
             // if a file contains multiple graphs, we consider only the first graph
             if (nodes.length > 0) {
                 graph = nodes[0];
