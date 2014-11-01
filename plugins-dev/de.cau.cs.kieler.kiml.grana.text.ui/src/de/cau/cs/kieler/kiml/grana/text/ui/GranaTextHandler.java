@@ -69,7 +69,7 @@ public class GranaTextHandler extends AbstractHandler {
                         Job job = new Job("Execute Batch Analysis") {
                             protected IStatus run(final IProgressMonitor monitor) {
                                 monitor.beginTask("Execute Batch Analysis", 1);
-                                new GranaTextToBatchJob().transform(grana, monitor);
+                                new GranaTextToBatchJob().execute(grana, monitor);
                                 monitor.done();
                                 return Status.OK_STATUS;
                             }
