@@ -87,9 +87,11 @@ class GranaTextToBatchJob {
                     } catch (Exception e) {
                         // if this fails, try absolute file system
                         val dir = new File(wsRoot.location.toFile, resource.path)
+                        if (!dir.exists) 
+                            throw new IllegalArgumentException("Could not find resource " + resource.path)
                         for (file : dir.listFiles) {
                             if (filter == null || filter.matcher(file.name).matches) {
-                                addBatchJob(batch, job, new Path(resource.path + "/" + file.name))
+                                addBatchJob(batch, job, new Path(file.absolutePath))
                             }
                         }                    
                     }
