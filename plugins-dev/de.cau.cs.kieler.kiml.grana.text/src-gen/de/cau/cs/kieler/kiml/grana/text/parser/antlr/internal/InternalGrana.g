@@ -181,81 +181,96 @@ ruleJob returns [EObject current=null]
 	    }
 
 )
-)?	otherlv_4='resources' 
+)?(
+(
+		lv_measureExecutionTime_4_0=	'measureExecutionTime' 
     {
-    	newLeafNode(otherlv_4, grammarAccess.getJobAccess().getResourcesKeyword_4());
+        newLeafNode(lv_measureExecutionTime_4_0, grammarAccess.getJobAccess().getMeasureExecutionTimeMeasureExecutionTimeKeyword_4_0());
+    }
+ 
+	    {
+	        if ($current==null) {
+	            $current = createModelElement(grammarAccess.getJobRule());
+	        }
+       		setWithLastConsumed($current, "measureExecutionTime", true, "measureExecutionTime");
+	    }
+
+)
+)?	otherlv_5='resources' 
+    {
+    	newLeafNode(otherlv_5, grammarAccess.getJobAccess().getResourcesKeyword_5());
     }
 (
 (
 		{ 
-	        newCompositeNode(grammarAccess.getJobAccess().getResourcesResourceParserRuleCall_5_0()); 
+	        newCompositeNode(grammarAccess.getJobAccess().getResourcesResourceParserRuleCall_6_0()); 
 	    }
-		lv_resources_5_0=ruleResource		{
+		lv_resources_6_0=ruleResource		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getJobRule());
 	        }
        		add(
        			$current, 
        			"resources",
-        		lv_resources_5_0, 
+        		lv_resources_6_0, 
         		"Resource");
 	        afterParserOrEnumRuleCall();
 	    }
 
 )
-)*	otherlv_6='layoutoptions' 
+)*	otherlv_7='layoutoptions' 
     {
-    	newLeafNode(otherlv_6, grammarAccess.getJobAccess().getLayoutoptionsKeyword_6());
+    	newLeafNode(otherlv_7, grammarAccess.getJobAccess().getLayoutoptionsKeyword_7());
     }
 (
 (
 		{ 
-	        newCompositeNode(grammarAccess.getJobAccess().getLayoutOptionsKIdentifierParserRuleCall_7_0()); 
+	        newCompositeNode(grammarAccess.getJobAccess().getLayoutOptionsKIdentifierParserRuleCall_8_0()); 
 	    }
-		lv_layoutOptions_7_0=ruleKIdentifier		{
+		lv_layoutOptions_8_0=ruleKIdentifier		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getJobRule());
 	        }
        		add(
        			$current, 
        			"layoutOptions",
-        		lv_layoutOptions_7_0, 
+        		lv_layoutOptions_8_0, 
         		"KIdentifier");
 	        afterParserOrEnumRuleCall();
 	    }
 
 )
-)	otherlv_8='analyses' 
+)	otherlv_9='analyses' 
     {
-    	newLeafNode(otherlv_8, grammarAccess.getJobAccess().getAnalysesKeyword_8());
+    	newLeafNode(otherlv_9, grammarAccess.getJobAccess().getAnalysesKeyword_9());
     }
 (
 (
 		{ 
-	        newCompositeNode(grammarAccess.getJobAccess().getAnalysesAnalysisParserRuleCall_9_0()); 
+	        newCompositeNode(grammarAccess.getJobAccess().getAnalysesAnalysisParserRuleCall_10_0()); 
 	    }
-		lv_analyses_9_0=ruleAnalysis		{
+		lv_analyses_10_0=ruleAnalysis		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getJobRule());
 	        }
        		add(
        			$current, 
        			"analyses",
-        		lv_analyses_9_0, 
+        		lv_analyses_10_0, 
         		"Analysis");
 	        afterParserOrEnumRuleCall();
 	    }
 
 )
-)*	otherlv_10='output' 
+)*	otherlv_11='output' 
     {
-    	newLeafNode(otherlv_10, grammarAccess.getJobAccess().getOutputKeyword_10());
+    	newLeafNode(otherlv_11, grammarAccess.getJobAccess().getOutputKeyword_11());
     }
 (
 (
-		lv_output_11_0=RULE_STRING
+		lv_output_12_0=RULE_STRING
 		{
-			newLeafNode(lv_output_11_0, grammarAccess.getJobAccess().getOutputSTRINGTerminalRuleCall_11_0()); 
+			newLeafNode(lv_output_12_0, grammarAccess.getJobAccess().getOutputSTRINGTerminalRuleCall_12_0()); 
 		}
 		{
 	        if ($current==null) {
@@ -264,7 +279,7 @@ ruleJob returns [EObject current=null]
        		setWithLastConsumed(
        			$current, 
        			"output",
-        		lv_output_11_0, 
+        		lv_output_12_0, 
         		"STRING");
 	    }
 

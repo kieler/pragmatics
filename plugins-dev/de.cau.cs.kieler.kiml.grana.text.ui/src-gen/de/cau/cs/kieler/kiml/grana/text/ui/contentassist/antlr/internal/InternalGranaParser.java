@@ -22,10 +22,11 @@ import java.util.ArrayList;
 @SuppressWarnings("all")
 public class InternalGranaParser extends AbstractInternalContentAssistParser {
     public static final String[] tokenNames = new String[] {
-        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_BOOLEAN", "RULE_STRING", "RULE_TFLOAT", "RULE_NATURAL", "RULE_ID", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "'globalResources'", "'job'", "'resources'", "'layoutoptions'", "'analyses'", "'output'", "'ref'", "'filter'", "'{'", "'}'", "':'", "'.'", "'layoutBeforeAnalysis'"
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_BOOLEAN", "RULE_STRING", "RULE_TFLOAT", "RULE_NATURAL", "RULE_ID", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "'globalResources'", "'job'", "'resources'", "'layoutoptions'", "'analyses'", "'output'", "'ref'", "'filter'", "'{'", "'}'", "':'", "'.'", "'layoutBeforeAnalysis'", "'measureExecutionTime'"
     };
     public static final int RULE_BOOLEAN=4;
     public static final int RULE_ID=8;
+    public static final int T__25=25;
     public static final int T__24=24;
     public static final int T__23=23;
     public static final int T__22=22;
@@ -2055,21 +2056,42 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Job__Group__4__Impl"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:739:1: rule__Job__Group__4__Impl : ( 'resources' ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:739:1: rule__Job__Group__4__Impl : ( ( rule__Job__MeasureExecutionTimeAssignment_4 )? ) ;
     public final void rule__Job__Group__4__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:743:1: ( ( 'resources' ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:744:1: ( 'resources' )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:743:1: ( ( ( rule__Job__MeasureExecutionTimeAssignment_4 )? ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:744:1: ( ( rule__Job__MeasureExecutionTimeAssignment_4 )? )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:744:1: ( 'resources' )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:745:1: 'resources'
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:744:1: ( ( rule__Job__MeasureExecutionTimeAssignment_4 )? )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:745:1: ( rule__Job__MeasureExecutionTimeAssignment_4 )?
             {
-             before(grammarAccess.getJobAccess().getResourcesKeyword_4()); 
-            match(input,14,FOLLOW_14_in_rule__Job__Group__4__Impl1508); 
-             after(grammarAccess.getJobAccess().getResourcesKeyword_4()); 
+             before(grammarAccess.getJobAccess().getMeasureExecutionTimeAssignment_4()); 
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:746:1: ( rule__Job__MeasureExecutionTimeAssignment_4 )?
+            int alt9=2;
+            int LA9_0 = input.LA(1);
+
+            if ( (LA9_0==25) ) {
+                alt9=1;
+            }
+            switch (alt9) {
+                case 1 :
+                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:746:2: rule__Job__MeasureExecutionTimeAssignment_4
+                    {
+                    pushFollow(FOLLOW_rule__Job__MeasureExecutionTimeAssignment_4_in_rule__Job__Group__4__Impl1507);
+                    rule__Job__MeasureExecutionTimeAssignment_4();
+
+                    state._fsp--;
+
+
+                    }
+                    break;
+
+            }
+
+             after(grammarAccess.getJobAccess().getMeasureExecutionTimeAssignment_4()); 
 
             }
 
@@ -2092,21 +2114,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Job__Group__5"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:758:1: rule__Job__Group__5 : rule__Job__Group__5__Impl rule__Job__Group__6 ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:756:1: rule__Job__Group__5 : rule__Job__Group__5__Impl rule__Job__Group__6 ;
     public final void rule__Job__Group__5() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:762:1: ( rule__Job__Group__5__Impl rule__Job__Group__6 )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:763:2: rule__Job__Group__5__Impl rule__Job__Group__6
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:760:1: ( rule__Job__Group__5__Impl rule__Job__Group__6 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:761:2: rule__Job__Group__5__Impl rule__Job__Group__6
             {
-            pushFollow(FOLLOW_rule__Job__Group__5__Impl_in_rule__Job__Group__51539);
+            pushFollow(FOLLOW_rule__Job__Group__5__Impl_in_rule__Job__Group__51538);
             rule__Job__Group__5__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__Job__Group__6_in_rule__Job__Group__51542);
+            pushFollow(FOLLOW_rule__Job__Group__6_in_rule__Job__Group__51541);
             rule__Job__Group__6();
 
             state._fsp--;
@@ -2130,49 +2152,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Job__Group__5__Impl"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:770:1: rule__Job__Group__5__Impl : ( ( rule__Job__ResourcesAssignment_5 )* ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:768:1: rule__Job__Group__5__Impl : ( 'resources' ) ;
     public final void rule__Job__Group__5__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:774:1: ( ( ( rule__Job__ResourcesAssignment_5 )* ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:775:1: ( ( rule__Job__ResourcesAssignment_5 )* )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:772:1: ( ( 'resources' ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:773:1: ( 'resources' )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:775:1: ( ( rule__Job__ResourcesAssignment_5 )* )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:776:1: ( rule__Job__ResourcesAssignment_5 )*
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:773:1: ( 'resources' )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:774:1: 'resources'
             {
-             before(grammarAccess.getJobAccess().getResourcesAssignment_5()); 
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:777:1: ( rule__Job__ResourcesAssignment_5 )*
-            loop9:
-            do {
-                int alt9=2;
-                int LA9_0 = input.LA(1);
-
-                if ( (LA9_0==RULE_STRING||LA9_0==18) ) {
-                    alt9=1;
-                }
-
-
-                switch (alt9) {
-            	case 1 :
-            	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:777:2: rule__Job__ResourcesAssignment_5
-            	    {
-            	    pushFollow(FOLLOW_rule__Job__ResourcesAssignment_5_in_rule__Job__Group__5__Impl1569);
-            	    rule__Job__ResourcesAssignment_5();
-
-            	    state._fsp--;
-
-
-            	    }
-            	    break;
-
-            	default :
-            	    break loop9;
-                }
-            } while (true);
-
-             after(grammarAccess.getJobAccess().getResourcesAssignment_5()); 
+             before(grammarAccess.getJobAccess().getResourcesKeyword_5()); 
+            match(input,14,FOLLOW_14_in_rule__Job__Group__5__Impl1569); 
+             after(grammarAccess.getJobAccess().getResourcesKeyword_5()); 
 
             }
 
@@ -2233,21 +2227,49 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Job__Group__6__Impl"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:799:1: rule__Job__Group__6__Impl : ( 'layoutoptions' ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:799:1: rule__Job__Group__6__Impl : ( ( rule__Job__ResourcesAssignment_6 )* ) ;
     public final void rule__Job__Group__6__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:803:1: ( ( 'layoutoptions' ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:804:1: ( 'layoutoptions' )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:803:1: ( ( ( rule__Job__ResourcesAssignment_6 )* ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:804:1: ( ( rule__Job__ResourcesAssignment_6 )* )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:804:1: ( 'layoutoptions' )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:805:1: 'layoutoptions'
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:804:1: ( ( rule__Job__ResourcesAssignment_6 )* )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:805:1: ( rule__Job__ResourcesAssignment_6 )*
             {
-             before(grammarAccess.getJobAccess().getLayoutoptionsKeyword_6()); 
-            match(input,15,FOLLOW_15_in_rule__Job__Group__6__Impl1631); 
-             after(grammarAccess.getJobAccess().getLayoutoptionsKeyword_6()); 
+             before(grammarAccess.getJobAccess().getResourcesAssignment_6()); 
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:806:1: ( rule__Job__ResourcesAssignment_6 )*
+            loop10:
+            do {
+                int alt10=2;
+                int LA10_0 = input.LA(1);
+
+                if ( (LA10_0==RULE_STRING||LA10_0==18) ) {
+                    alt10=1;
+                }
+
+
+                switch (alt10) {
+            	case 1 :
+            	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:806:2: rule__Job__ResourcesAssignment_6
+            	    {
+            	    pushFollow(FOLLOW_rule__Job__ResourcesAssignment_6_in_rule__Job__Group__6__Impl1630);
+            	    rule__Job__ResourcesAssignment_6();
+
+            	    state._fsp--;
+
+
+            	    }
+            	    break;
+
+            	default :
+            	    break loop10;
+                }
+            } while (true);
+
+             after(grammarAccess.getJobAccess().getResourcesAssignment_6()); 
 
             }
 
@@ -2270,21 +2292,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Job__Group__7"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:818:1: rule__Job__Group__7 : rule__Job__Group__7__Impl rule__Job__Group__8 ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:816:1: rule__Job__Group__7 : rule__Job__Group__7__Impl rule__Job__Group__8 ;
     public final void rule__Job__Group__7() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:822:1: ( rule__Job__Group__7__Impl rule__Job__Group__8 )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:823:2: rule__Job__Group__7__Impl rule__Job__Group__8
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:820:1: ( rule__Job__Group__7__Impl rule__Job__Group__8 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:821:2: rule__Job__Group__7__Impl rule__Job__Group__8
             {
-            pushFollow(FOLLOW_rule__Job__Group__7__Impl_in_rule__Job__Group__71662);
+            pushFollow(FOLLOW_rule__Job__Group__7__Impl_in_rule__Job__Group__71661);
             rule__Job__Group__7__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__Job__Group__8_in_rule__Job__Group__71665);
+            pushFollow(FOLLOW_rule__Job__Group__8_in_rule__Job__Group__71664);
             rule__Job__Group__8();
 
             state._fsp--;
@@ -2308,31 +2330,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Job__Group__7__Impl"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:830:1: rule__Job__Group__7__Impl : ( ( rule__Job__LayoutOptionsAssignment_7 ) ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:828:1: rule__Job__Group__7__Impl : ( 'layoutoptions' ) ;
     public final void rule__Job__Group__7__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:834:1: ( ( ( rule__Job__LayoutOptionsAssignment_7 ) ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:835:1: ( ( rule__Job__LayoutOptionsAssignment_7 ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:832:1: ( ( 'layoutoptions' ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:833:1: ( 'layoutoptions' )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:835:1: ( ( rule__Job__LayoutOptionsAssignment_7 ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:836:1: ( rule__Job__LayoutOptionsAssignment_7 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:833:1: ( 'layoutoptions' )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:834:1: 'layoutoptions'
             {
-             before(grammarAccess.getJobAccess().getLayoutOptionsAssignment_7()); 
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:837:1: ( rule__Job__LayoutOptionsAssignment_7 )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:837:2: rule__Job__LayoutOptionsAssignment_7
-            {
-            pushFollow(FOLLOW_rule__Job__LayoutOptionsAssignment_7_in_rule__Job__Group__7__Impl1692);
-            rule__Job__LayoutOptionsAssignment_7();
-
-            state._fsp--;
-
-
-            }
-
-             after(grammarAccess.getJobAccess().getLayoutOptionsAssignment_7()); 
+             before(grammarAccess.getJobAccess().getLayoutoptionsKeyword_7()); 
+            match(input,15,FOLLOW_15_in_rule__Job__Group__7__Impl1692); 
+             after(grammarAccess.getJobAccess().getLayoutoptionsKeyword_7()); 
 
             }
 
@@ -2364,12 +2376,12 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:851:1: ( rule__Job__Group__8__Impl rule__Job__Group__9 )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:852:2: rule__Job__Group__8__Impl rule__Job__Group__9
             {
-            pushFollow(FOLLOW_rule__Job__Group__8__Impl_in_rule__Job__Group__81722);
+            pushFollow(FOLLOW_rule__Job__Group__8__Impl_in_rule__Job__Group__81723);
             rule__Job__Group__8__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__Job__Group__9_in_rule__Job__Group__81725);
+            pushFollow(FOLLOW_rule__Job__Group__9_in_rule__Job__Group__81726);
             rule__Job__Group__9();
 
             state._fsp--;
@@ -2393,21 +2405,31 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Job__Group__8__Impl"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:859:1: rule__Job__Group__8__Impl : ( 'analyses' ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:859:1: rule__Job__Group__8__Impl : ( ( rule__Job__LayoutOptionsAssignment_8 ) ) ;
     public final void rule__Job__Group__8__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:863:1: ( ( 'analyses' ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:864:1: ( 'analyses' )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:863:1: ( ( ( rule__Job__LayoutOptionsAssignment_8 ) ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:864:1: ( ( rule__Job__LayoutOptionsAssignment_8 ) )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:864:1: ( 'analyses' )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:865:1: 'analyses'
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:864:1: ( ( rule__Job__LayoutOptionsAssignment_8 ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:865:1: ( rule__Job__LayoutOptionsAssignment_8 )
             {
-             before(grammarAccess.getJobAccess().getAnalysesKeyword_8()); 
-            match(input,16,FOLLOW_16_in_rule__Job__Group__8__Impl1753); 
-             after(grammarAccess.getJobAccess().getAnalysesKeyword_8()); 
+             before(grammarAccess.getJobAccess().getLayoutOptionsAssignment_8()); 
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:866:1: ( rule__Job__LayoutOptionsAssignment_8 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:866:2: rule__Job__LayoutOptionsAssignment_8
+            {
+            pushFollow(FOLLOW_rule__Job__LayoutOptionsAssignment_8_in_rule__Job__Group__8__Impl1753);
+            rule__Job__LayoutOptionsAssignment_8();
+
+            state._fsp--;
+
+
+            }
+
+             after(grammarAccess.getJobAccess().getLayoutOptionsAssignment_8()); 
 
             }
 
@@ -2430,21 +2452,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Job__Group__9"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:878:1: rule__Job__Group__9 : rule__Job__Group__9__Impl rule__Job__Group__10 ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:876:1: rule__Job__Group__9 : rule__Job__Group__9__Impl rule__Job__Group__10 ;
     public final void rule__Job__Group__9() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:882:1: ( rule__Job__Group__9__Impl rule__Job__Group__10 )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:883:2: rule__Job__Group__9__Impl rule__Job__Group__10
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:880:1: ( rule__Job__Group__9__Impl rule__Job__Group__10 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:881:2: rule__Job__Group__9__Impl rule__Job__Group__10
             {
-            pushFollow(FOLLOW_rule__Job__Group__9__Impl_in_rule__Job__Group__91784);
+            pushFollow(FOLLOW_rule__Job__Group__9__Impl_in_rule__Job__Group__91783);
             rule__Job__Group__9__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__Job__Group__10_in_rule__Job__Group__91787);
+            pushFollow(FOLLOW_rule__Job__Group__10_in_rule__Job__Group__91786);
             rule__Job__Group__10();
 
             state._fsp--;
@@ -2468,49 +2490,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Job__Group__9__Impl"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:890:1: rule__Job__Group__9__Impl : ( ( rule__Job__AnalysesAssignment_9 )* ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:888:1: rule__Job__Group__9__Impl : ( 'analyses' ) ;
     public final void rule__Job__Group__9__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:894:1: ( ( ( rule__Job__AnalysesAssignment_9 )* ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:895:1: ( ( rule__Job__AnalysesAssignment_9 )* )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:892:1: ( ( 'analyses' ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:893:1: ( 'analyses' )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:895:1: ( ( rule__Job__AnalysesAssignment_9 )* )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:896:1: ( rule__Job__AnalysesAssignment_9 )*
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:893:1: ( 'analyses' )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:894:1: 'analyses'
             {
-             before(grammarAccess.getJobAccess().getAnalysesAssignment_9()); 
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:897:1: ( rule__Job__AnalysesAssignment_9 )*
-            loop10:
-            do {
-                int alt10=2;
-                int LA10_0 = input.LA(1);
-
-                if ( (LA10_0==RULE_ID) ) {
-                    alt10=1;
-                }
-
-
-                switch (alt10) {
-            	case 1 :
-            	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:897:2: rule__Job__AnalysesAssignment_9
-            	    {
-            	    pushFollow(FOLLOW_rule__Job__AnalysesAssignment_9_in_rule__Job__Group__9__Impl1814);
-            	    rule__Job__AnalysesAssignment_9();
-
-            	    state._fsp--;
-
-
-            	    }
-            	    break;
-
-            	default :
-            	    break loop10;
-                }
-            } while (true);
-
-             after(grammarAccess.getJobAccess().getAnalysesAssignment_9()); 
+             before(grammarAccess.getJobAccess().getAnalysesKeyword_9()); 
+            match(input,16,FOLLOW_16_in_rule__Job__Group__9__Impl1814); 
+             after(grammarAccess.getJobAccess().getAnalysesKeyword_9()); 
 
             }
 
@@ -2571,21 +2565,49 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Job__Group__10__Impl"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:919:1: rule__Job__Group__10__Impl : ( 'output' ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:919:1: rule__Job__Group__10__Impl : ( ( rule__Job__AnalysesAssignment_10 )* ) ;
     public final void rule__Job__Group__10__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:923:1: ( ( 'output' ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:924:1: ( 'output' )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:923:1: ( ( ( rule__Job__AnalysesAssignment_10 )* ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:924:1: ( ( rule__Job__AnalysesAssignment_10 )* )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:924:1: ( 'output' )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:925:1: 'output'
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:924:1: ( ( rule__Job__AnalysesAssignment_10 )* )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:925:1: ( rule__Job__AnalysesAssignment_10 )*
             {
-             before(grammarAccess.getJobAccess().getOutputKeyword_10()); 
-            match(input,17,FOLLOW_17_in_rule__Job__Group__10__Impl1876); 
-             after(grammarAccess.getJobAccess().getOutputKeyword_10()); 
+             before(grammarAccess.getJobAccess().getAnalysesAssignment_10()); 
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:926:1: ( rule__Job__AnalysesAssignment_10 )*
+            loop11:
+            do {
+                int alt11=2;
+                int LA11_0 = input.LA(1);
+
+                if ( (LA11_0==RULE_ID) ) {
+                    alt11=1;
+                }
+
+
+                switch (alt11) {
+            	case 1 :
+            	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:926:2: rule__Job__AnalysesAssignment_10
+            	    {
+            	    pushFollow(FOLLOW_rule__Job__AnalysesAssignment_10_in_rule__Job__Group__10__Impl1875);
+            	    rule__Job__AnalysesAssignment_10();
+
+            	    state._fsp--;
+
+
+            	    }
+            	    break;
+
+            	default :
+            	    break loop11;
+                }
+            } while (true);
+
+             after(grammarAccess.getJobAccess().getAnalysesAssignment_10()); 
 
             }
 
@@ -2608,17 +2630,22 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Job__Group__11"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:938:1: rule__Job__Group__11 : rule__Job__Group__11__Impl ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:936:1: rule__Job__Group__11 : rule__Job__Group__11__Impl rule__Job__Group__12 ;
     public final void rule__Job__Group__11() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:942:1: ( rule__Job__Group__11__Impl )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:943:2: rule__Job__Group__11__Impl
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:940:1: ( rule__Job__Group__11__Impl rule__Job__Group__12 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:941:2: rule__Job__Group__11__Impl rule__Job__Group__12
             {
-            pushFollow(FOLLOW_rule__Job__Group__11__Impl_in_rule__Job__Group__111907);
+            pushFollow(FOLLOW_rule__Job__Group__11__Impl_in_rule__Job__Group__111906);
             rule__Job__Group__11__Impl();
+
+            state._fsp--;
+
+            pushFollow(FOLLOW_rule__Job__Group__12_in_rule__Job__Group__111909);
+            rule__Job__Group__12();
 
             state._fsp--;
 
@@ -2641,31 +2668,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Job__Group__11__Impl"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:949:1: rule__Job__Group__11__Impl : ( ( rule__Job__OutputAssignment_11 ) ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:948:1: rule__Job__Group__11__Impl : ( 'output' ) ;
     public final void rule__Job__Group__11__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:953:1: ( ( ( rule__Job__OutputAssignment_11 ) ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:954:1: ( ( rule__Job__OutputAssignment_11 ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:952:1: ( ( 'output' ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:953:1: ( 'output' )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:954:1: ( ( rule__Job__OutputAssignment_11 ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:955:1: ( rule__Job__OutputAssignment_11 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:953:1: ( 'output' )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:954:1: 'output'
             {
-             before(grammarAccess.getJobAccess().getOutputAssignment_11()); 
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:956:1: ( rule__Job__OutputAssignment_11 )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:956:2: rule__Job__OutputAssignment_11
-            {
-            pushFollow(FOLLOW_rule__Job__OutputAssignment_11_in_rule__Job__Group__11__Impl1934);
-            rule__Job__OutputAssignment_11();
-
-            state._fsp--;
-
-
-            }
-
-             after(grammarAccess.getJobAccess().getOutputAssignment_11()); 
+             before(grammarAccess.getJobAccess().getOutputKeyword_11()); 
+            match(input,17,FOLLOW_17_in_rule__Job__Group__11__Impl1937); 
+             after(grammarAccess.getJobAccess().getOutputKeyword_11()); 
 
             }
 
@@ -2687,22 +2704,102 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
     // $ANTLR end "rule__Job__Group__11__Impl"
 
 
+    // $ANTLR start "rule__Job__Group__12"
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:967:1: rule__Job__Group__12 : rule__Job__Group__12__Impl ;
+    public final void rule__Job__Group__12() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+            
+        try {
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:971:1: ( rule__Job__Group__12__Impl )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:972:2: rule__Job__Group__12__Impl
+            {
+            pushFollow(FOLLOW_rule__Job__Group__12__Impl_in_rule__Job__Group__121968);
+            rule__Job__Group__12__Impl();
+
+            state._fsp--;
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__Job__Group__12"
+
+
+    // $ANTLR start "rule__Job__Group__12__Impl"
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:978:1: rule__Job__Group__12__Impl : ( ( rule__Job__OutputAssignment_12 ) ) ;
+    public final void rule__Job__Group__12__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+            
+        try {
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:982:1: ( ( ( rule__Job__OutputAssignment_12 ) ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:983:1: ( ( rule__Job__OutputAssignment_12 ) )
+            {
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:983:1: ( ( rule__Job__OutputAssignment_12 ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:984:1: ( rule__Job__OutputAssignment_12 )
+            {
+             before(grammarAccess.getJobAccess().getOutputAssignment_12()); 
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:985:1: ( rule__Job__OutputAssignment_12 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:985:2: rule__Job__OutputAssignment_12
+            {
+            pushFollow(FOLLOW_rule__Job__OutputAssignment_12_in_rule__Job__Group__12__Impl1995);
+            rule__Job__OutputAssignment_12();
+
+            state._fsp--;
+
+
+            }
+
+             after(grammarAccess.getJobAccess().getOutputAssignment_12()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__Job__Group__12__Impl"
+
+
     // $ANTLR start "rule__ResourceReference__Group__0"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:990:1: rule__ResourceReference__Group__0 : rule__ResourceReference__Group__0__Impl rule__ResourceReference__Group__1 ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1021:1: rule__ResourceReference__Group__0 : rule__ResourceReference__Group__0__Impl rule__ResourceReference__Group__1 ;
     public final void rule__ResourceReference__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:994:1: ( rule__ResourceReference__Group__0__Impl rule__ResourceReference__Group__1 )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:995:2: rule__ResourceReference__Group__0__Impl rule__ResourceReference__Group__1
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1025:1: ( rule__ResourceReference__Group__0__Impl rule__ResourceReference__Group__1 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1026:2: rule__ResourceReference__Group__0__Impl rule__ResourceReference__Group__1
             {
-            pushFollow(FOLLOW_rule__ResourceReference__Group__0__Impl_in_rule__ResourceReference__Group__01988);
+            pushFollow(FOLLOW_rule__ResourceReference__Group__0__Impl_in_rule__ResourceReference__Group__02051);
             rule__ResourceReference__Group__0__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__ResourceReference__Group__1_in_rule__ResourceReference__Group__01991);
+            pushFollow(FOLLOW_rule__ResourceReference__Group__1_in_rule__ResourceReference__Group__02054);
             rule__ResourceReference__Group__1();
 
             state._fsp--;
@@ -2726,20 +2823,20 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ResourceReference__Group__0__Impl"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1002:1: rule__ResourceReference__Group__0__Impl : ( 'ref' ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1033:1: rule__ResourceReference__Group__0__Impl : ( 'ref' ) ;
     public final void rule__ResourceReference__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1006:1: ( ( 'ref' ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1007:1: ( 'ref' )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1037:1: ( ( 'ref' ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1038:1: ( 'ref' )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1007:1: ( 'ref' )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1008:1: 'ref'
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1038:1: ( 'ref' )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1039:1: 'ref'
             {
              before(grammarAccess.getResourceReferenceAccess().getRefKeyword_0()); 
-            match(input,18,FOLLOW_18_in_rule__ResourceReference__Group__0__Impl2019); 
+            match(input,18,FOLLOW_18_in_rule__ResourceReference__Group__0__Impl2082); 
              after(grammarAccess.getResourceReferenceAccess().getRefKeyword_0()); 
 
             }
@@ -2763,16 +2860,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ResourceReference__Group__1"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1021:1: rule__ResourceReference__Group__1 : rule__ResourceReference__Group__1__Impl ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1052:1: rule__ResourceReference__Group__1 : rule__ResourceReference__Group__1__Impl ;
     public final void rule__ResourceReference__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1025:1: ( rule__ResourceReference__Group__1__Impl )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1026:2: rule__ResourceReference__Group__1__Impl
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1056:1: ( rule__ResourceReference__Group__1__Impl )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1057:2: rule__ResourceReference__Group__1__Impl
             {
-            pushFollow(FOLLOW_rule__ResourceReference__Group__1__Impl_in_rule__ResourceReference__Group__12050);
+            pushFollow(FOLLOW_rule__ResourceReference__Group__1__Impl_in_rule__ResourceReference__Group__12113);
             rule__ResourceReference__Group__1__Impl();
 
             state._fsp--;
@@ -2796,26 +2893,26 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ResourceReference__Group__1__Impl"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1032:1: rule__ResourceReference__Group__1__Impl : ( ( ( rule__ResourceReference__ResourceRefsAssignment_1 ) ) ( ( rule__ResourceReference__ResourceRefsAssignment_1 )* ) ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1063:1: rule__ResourceReference__Group__1__Impl : ( ( ( rule__ResourceReference__ResourceRefsAssignment_1 ) ) ( ( rule__ResourceReference__ResourceRefsAssignment_1 )* ) ) ;
     public final void rule__ResourceReference__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1036:1: ( ( ( ( rule__ResourceReference__ResourceRefsAssignment_1 ) ) ( ( rule__ResourceReference__ResourceRefsAssignment_1 )* ) ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1037:1: ( ( ( rule__ResourceReference__ResourceRefsAssignment_1 ) ) ( ( rule__ResourceReference__ResourceRefsAssignment_1 )* ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1067:1: ( ( ( ( rule__ResourceReference__ResourceRefsAssignment_1 ) ) ( ( rule__ResourceReference__ResourceRefsAssignment_1 )* ) ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1068:1: ( ( ( rule__ResourceReference__ResourceRefsAssignment_1 ) ) ( ( rule__ResourceReference__ResourceRefsAssignment_1 )* ) )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1037:1: ( ( ( rule__ResourceReference__ResourceRefsAssignment_1 ) ) ( ( rule__ResourceReference__ResourceRefsAssignment_1 )* ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1038:1: ( ( rule__ResourceReference__ResourceRefsAssignment_1 ) ) ( ( rule__ResourceReference__ResourceRefsAssignment_1 )* )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1068:1: ( ( ( rule__ResourceReference__ResourceRefsAssignment_1 ) ) ( ( rule__ResourceReference__ResourceRefsAssignment_1 )* ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1069:1: ( ( rule__ResourceReference__ResourceRefsAssignment_1 ) ) ( ( rule__ResourceReference__ResourceRefsAssignment_1 )* )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1038:1: ( ( rule__ResourceReference__ResourceRefsAssignment_1 ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1039:1: ( rule__ResourceReference__ResourceRefsAssignment_1 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1069:1: ( ( rule__ResourceReference__ResourceRefsAssignment_1 ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1070:1: ( rule__ResourceReference__ResourceRefsAssignment_1 )
             {
              before(grammarAccess.getResourceReferenceAccess().getResourceRefsAssignment_1()); 
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1040:1: ( rule__ResourceReference__ResourceRefsAssignment_1 )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1040:2: rule__ResourceReference__ResourceRefsAssignment_1
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1071:1: ( rule__ResourceReference__ResourceRefsAssignment_1 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1071:2: rule__ResourceReference__ResourceRefsAssignment_1
             {
-            pushFollow(FOLLOW_rule__ResourceReference__ResourceRefsAssignment_1_in_rule__ResourceReference__Group__1__Impl2079);
+            pushFollow(FOLLOW_rule__ResourceReference__ResourceRefsAssignment_1_in_rule__ResourceReference__Group__1__Impl2142);
             rule__ResourceReference__ResourceRefsAssignment_1();
 
             state._fsp--;
@@ -2827,26 +2924,26 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
             }
 
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1043:1: ( ( rule__ResourceReference__ResourceRefsAssignment_1 )* )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1044:1: ( rule__ResourceReference__ResourceRefsAssignment_1 )*
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1074:1: ( ( rule__ResourceReference__ResourceRefsAssignment_1 )* )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1075:1: ( rule__ResourceReference__ResourceRefsAssignment_1 )*
             {
              before(grammarAccess.getResourceReferenceAccess().getResourceRefsAssignment_1()); 
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1045:1: ( rule__ResourceReference__ResourceRefsAssignment_1 )*
-            loop11:
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1076:1: ( rule__ResourceReference__ResourceRefsAssignment_1 )*
+            loop12:
             do {
-                int alt11=2;
-                int LA11_0 = input.LA(1);
+                int alt12=2;
+                int LA12_0 = input.LA(1);
 
-                if ( (LA11_0==RULE_ID) ) {
-                    alt11=1;
+                if ( (LA12_0==RULE_ID) ) {
+                    alt12=1;
                 }
 
 
-                switch (alt11) {
+                switch (alt12) {
             	case 1 :
-            	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1045:2: rule__ResourceReference__ResourceRefsAssignment_1
+            	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1076:2: rule__ResourceReference__ResourceRefsAssignment_1
             	    {
-            	    pushFollow(FOLLOW_rule__ResourceReference__ResourceRefsAssignment_1_in_rule__ResourceReference__Group__1__Impl2091);
+            	    pushFollow(FOLLOW_rule__ResourceReference__ResourceRefsAssignment_1_in_rule__ResourceReference__Group__1__Impl2154);
             	    rule__ResourceReference__ResourceRefsAssignment_1();
 
             	    state._fsp--;
@@ -2856,7 +2953,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             	    break;
 
             	default :
-            	    break loop11;
+            	    break loop12;
                 }
             } while (true);
 
@@ -2886,21 +2983,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__GlobalResourceRef__Group__0"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1060:1: rule__GlobalResourceRef__Group__0 : rule__GlobalResourceRef__Group__0__Impl rule__GlobalResourceRef__Group__1 ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1091:1: rule__GlobalResourceRef__Group__0 : rule__GlobalResourceRef__Group__0__Impl rule__GlobalResourceRef__Group__1 ;
     public final void rule__GlobalResourceRef__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1064:1: ( rule__GlobalResourceRef__Group__0__Impl rule__GlobalResourceRef__Group__1 )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1065:2: rule__GlobalResourceRef__Group__0__Impl rule__GlobalResourceRef__Group__1
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1095:1: ( rule__GlobalResourceRef__Group__0__Impl rule__GlobalResourceRef__Group__1 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1096:2: rule__GlobalResourceRef__Group__0__Impl rule__GlobalResourceRef__Group__1
             {
-            pushFollow(FOLLOW_rule__GlobalResourceRef__Group__0__Impl_in_rule__GlobalResourceRef__Group__02128);
+            pushFollow(FOLLOW_rule__GlobalResourceRef__Group__0__Impl_in_rule__GlobalResourceRef__Group__02191);
             rule__GlobalResourceRef__Group__0__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__GlobalResourceRef__Group__1_in_rule__GlobalResourceRef__Group__02131);
+            pushFollow(FOLLOW_rule__GlobalResourceRef__Group__1_in_rule__GlobalResourceRef__Group__02194);
             rule__GlobalResourceRef__Group__1();
 
             state._fsp--;
@@ -2924,23 +3021,23 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__GlobalResourceRef__Group__0__Impl"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1072:1: rule__GlobalResourceRef__Group__0__Impl : ( ( rule__GlobalResourceRef__NameAssignment_0 ) ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1103:1: rule__GlobalResourceRef__Group__0__Impl : ( ( rule__GlobalResourceRef__NameAssignment_0 ) ) ;
     public final void rule__GlobalResourceRef__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1076:1: ( ( ( rule__GlobalResourceRef__NameAssignment_0 ) ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1077:1: ( ( rule__GlobalResourceRef__NameAssignment_0 ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1107:1: ( ( ( rule__GlobalResourceRef__NameAssignment_0 ) ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1108:1: ( ( rule__GlobalResourceRef__NameAssignment_0 ) )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1077:1: ( ( rule__GlobalResourceRef__NameAssignment_0 ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1078:1: ( rule__GlobalResourceRef__NameAssignment_0 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1108:1: ( ( rule__GlobalResourceRef__NameAssignment_0 ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1109:1: ( rule__GlobalResourceRef__NameAssignment_0 )
             {
              before(grammarAccess.getGlobalResourceRefAccess().getNameAssignment_0()); 
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1079:1: ( rule__GlobalResourceRef__NameAssignment_0 )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1079:2: rule__GlobalResourceRef__NameAssignment_0
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1110:1: ( rule__GlobalResourceRef__NameAssignment_0 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1110:2: rule__GlobalResourceRef__NameAssignment_0
             {
-            pushFollow(FOLLOW_rule__GlobalResourceRef__NameAssignment_0_in_rule__GlobalResourceRef__Group__0__Impl2158);
+            pushFollow(FOLLOW_rule__GlobalResourceRef__NameAssignment_0_in_rule__GlobalResourceRef__Group__0__Impl2221);
             rule__GlobalResourceRef__NameAssignment_0();
 
             state._fsp--;
@@ -2971,16 +3068,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__GlobalResourceRef__Group__1"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1089:1: rule__GlobalResourceRef__Group__1 : rule__GlobalResourceRef__Group__1__Impl ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1120:1: rule__GlobalResourceRef__Group__1 : rule__GlobalResourceRef__Group__1__Impl ;
     public final void rule__GlobalResourceRef__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1093:1: ( rule__GlobalResourceRef__Group__1__Impl )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1094:2: rule__GlobalResourceRef__Group__1__Impl
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1124:1: ( rule__GlobalResourceRef__Group__1__Impl )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1125:2: rule__GlobalResourceRef__Group__1__Impl
             {
-            pushFollow(FOLLOW_rule__GlobalResourceRef__Group__1__Impl_in_rule__GlobalResourceRef__Group__12188);
+            pushFollow(FOLLOW_rule__GlobalResourceRef__Group__1__Impl_in_rule__GlobalResourceRef__Group__12251);
             rule__GlobalResourceRef__Group__1__Impl();
 
             state._fsp--;
@@ -3004,23 +3101,23 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__GlobalResourceRef__Group__1__Impl"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1100:1: rule__GlobalResourceRef__Group__1__Impl : ( ( rule__GlobalResourceRef__ResourcesAssignment_1 ) ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1131:1: rule__GlobalResourceRef__Group__1__Impl : ( ( rule__GlobalResourceRef__ResourcesAssignment_1 ) ) ;
     public final void rule__GlobalResourceRef__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1104:1: ( ( ( rule__GlobalResourceRef__ResourcesAssignment_1 ) ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1105:1: ( ( rule__GlobalResourceRef__ResourcesAssignment_1 ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1135:1: ( ( ( rule__GlobalResourceRef__ResourcesAssignment_1 ) ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1136:1: ( ( rule__GlobalResourceRef__ResourcesAssignment_1 ) )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1105:1: ( ( rule__GlobalResourceRef__ResourcesAssignment_1 ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1106:1: ( rule__GlobalResourceRef__ResourcesAssignment_1 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1136:1: ( ( rule__GlobalResourceRef__ResourcesAssignment_1 ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1137:1: ( rule__GlobalResourceRef__ResourcesAssignment_1 )
             {
              before(grammarAccess.getGlobalResourceRefAccess().getResourcesAssignment_1()); 
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1107:1: ( rule__GlobalResourceRef__ResourcesAssignment_1 )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1107:2: rule__GlobalResourceRef__ResourcesAssignment_1
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1138:1: ( rule__GlobalResourceRef__ResourcesAssignment_1 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1138:2: rule__GlobalResourceRef__ResourcesAssignment_1
             {
-            pushFollow(FOLLOW_rule__GlobalResourceRef__ResourcesAssignment_1_in_rule__GlobalResourceRef__Group__1__Impl2215);
+            pushFollow(FOLLOW_rule__GlobalResourceRef__ResourcesAssignment_1_in_rule__GlobalResourceRef__Group__1__Impl2278);
             rule__GlobalResourceRef__ResourcesAssignment_1();
 
             state._fsp--;
@@ -3051,21 +3148,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__LocalResource__Group__0"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1121:1: rule__LocalResource__Group__0 : rule__LocalResource__Group__0__Impl rule__LocalResource__Group__1 ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1152:1: rule__LocalResource__Group__0 : rule__LocalResource__Group__0__Impl rule__LocalResource__Group__1 ;
     public final void rule__LocalResource__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1125:1: ( rule__LocalResource__Group__0__Impl rule__LocalResource__Group__1 )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1126:2: rule__LocalResource__Group__0__Impl rule__LocalResource__Group__1
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1156:1: ( rule__LocalResource__Group__0__Impl rule__LocalResource__Group__1 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1157:2: rule__LocalResource__Group__0__Impl rule__LocalResource__Group__1
             {
-            pushFollow(FOLLOW_rule__LocalResource__Group__0__Impl_in_rule__LocalResource__Group__02249);
+            pushFollow(FOLLOW_rule__LocalResource__Group__0__Impl_in_rule__LocalResource__Group__02312);
             rule__LocalResource__Group__0__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__LocalResource__Group__1_in_rule__LocalResource__Group__02252);
+            pushFollow(FOLLOW_rule__LocalResource__Group__1_in_rule__LocalResource__Group__02315);
             rule__LocalResource__Group__1();
 
             state._fsp--;
@@ -3089,23 +3186,23 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__LocalResource__Group__0__Impl"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1133:1: rule__LocalResource__Group__0__Impl : ( ( rule__LocalResource__PathAssignment_0 ) ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1164:1: rule__LocalResource__Group__0__Impl : ( ( rule__LocalResource__PathAssignment_0 ) ) ;
     public final void rule__LocalResource__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1137:1: ( ( ( rule__LocalResource__PathAssignment_0 ) ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1138:1: ( ( rule__LocalResource__PathAssignment_0 ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1168:1: ( ( ( rule__LocalResource__PathAssignment_0 ) ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1169:1: ( ( rule__LocalResource__PathAssignment_0 ) )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1138:1: ( ( rule__LocalResource__PathAssignment_0 ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1139:1: ( rule__LocalResource__PathAssignment_0 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1169:1: ( ( rule__LocalResource__PathAssignment_0 ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1170:1: ( rule__LocalResource__PathAssignment_0 )
             {
              before(grammarAccess.getLocalResourceAccess().getPathAssignment_0()); 
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1140:1: ( rule__LocalResource__PathAssignment_0 )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1140:2: rule__LocalResource__PathAssignment_0
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1171:1: ( rule__LocalResource__PathAssignment_0 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1171:2: rule__LocalResource__PathAssignment_0
             {
-            pushFollow(FOLLOW_rule__LocalResource__PathAssignment_0_in_rule__LocalResource__Group__0__Impl2279);
+            pushFollow(FOLLOW_rule__LocalResource__PathAssignment_0_in_rule__LocalResource__Group__0__Impl2342);
             rule__LocalResource__PathAssignment_0();
 
             state._fsp--;
@@ -3136,16 +3233,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__LocalResource__Group__1"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1150:1: rule__LocalResource__Group__1 : rule__LocalResource__Group__1__Impl ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1181:1: rule__LocalResource__Group__1 : rule__LocalResource__Group__1__Impl ;
     public final void rule__LocalResource__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1154:1: ( rule__LocalResource__Group__1__Impl )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1155:2: rule__LocalResource__Group__1__Impl
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1185:1: ( rule__LocalResource__Group__1__Impl )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1186:2: rule__LocalResource__Group__1__Impl
             {
-            pushFollow(FOLLOW_rule__LocalResource__Group__1__Impl_in_rule__LocalResource__Group__12309);
+            pushFollow(FOLLOW_rule__LocalResource__Group__1__Impl_in_rule__LocalResource__Group__12372);
             rule__LocalResource__Group__1__Impl();
 
             state._fsp--;
@@ -3169,23 +3266,23 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__LocalResource__Group__1__Impl"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1161:1: rule__LocalResource__Group__1__Impl : ( ( rule__LocalResource__Group_1__0 ) ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1192:1: rule__LocalResource__Group__1__Impl : ( ( rule__LocalResource__Group_1__0 ) ) ;
     public final void rule__LocalResource__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1165:1: ( ( ( rule__LocalResource__Group_1__0 ) ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1166:1: ( ( rule__LocalResource__Group_1__0 ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1196:1: ( ( ( rule__LocalResource__Group_1__0 ) ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1197:1: ( ( rule__LocalResource__Group_1__0 ) )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1166:1: ( ( rule__LocalResource__Group_1__0 ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1167:1: ( rule__LocalResource__Group_1__0 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1197:1: ( ( rule__LocalResource__Group_1__0 ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1198:1: ( rule__LocalResource__Group_1__0 )
             {
              before(grammarAccess.getLocalResourceAccess().getGroup_1()); 
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1168:1: ( rule__LocalResource__Group_1__0 )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1168:2: rule__LocalResource__Group_1__0
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1199:1: ( rule__LocalResource__Group_1__0 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1199:2: rule__LocalResource__Group_1__0
             {
-            pushFollow(FOLLOW_rule__LocalResource__Group_1__0_in_rule__LocalResource__Group__1__Impl2336);
+            pushFollow(FOLLOW_rule__LocalResource__Group_1__0_in_rule__LocalResource__Group__1__Impl2399);
             rule__LocalResource__Group_1__0();
 
             state._fsp--;
@@ -3216,21 +3313,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__LocalResource__Group_1__0"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1182:1: rule__LocalResource__Group_1__0 : rule__LocalResource__Group_1__0__Impl rule__LocalResource__Group_1__1 ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1213:1: rule__LocalResource__Group_1__0 : rule__LocalResource__Group_1__0__Impl rule__LocalResource__Group_1__1 ;
     public final void rule__LocalResource__Group_1__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1186:1: ( rule__LocalResource__Group_1__0__Impl rule__LocalResource__Group_1__1 )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1187:2: rule__LocalResource__Group_1__0__Impl rule__LocalResource__Group_1__1
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1217:1: ( rule__LocalResource__Group_1__0__Impl rule__LocalResource__Group_1__1 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1218:2: rule__LocalResource__Group_1__0__Impl rule__LocalResource__Group_1__1
             {
-            pushFollow(FOLLOW_rule__LocalResource__Group_1__0__Impl_in_rule__LocalResource__Group_1__02370);
+            pushFollow(FOLLOW_rule__LocalResource__Group_1__0__Impl_in_rule__LocalResource__Group_1__02433);
             rule__LocalResource__Group_1__0__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__LocalResource__Group_1__1_in_rule__LocalResource__Group_1__02373);
+            pushFollow(FOLLOW_rule__LocalResource__Group_1__1_in_rule__LocalResource__Group_1__02436);
             rule__LocalResource__Group_1__1();
 
             state._fsp--;
@@ -3254,20 +3351,20 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__LocalResource__Group_1__0__Impl"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1194:1: rule__LocalResource__Group_1__0__Impl : ( 'filter' ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1225:1: rule__LocalResource__Group_1__0__Impl : ( 'filter' ) ;
     public final void rule__LocalResource__Group_1__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1198:1: ( ( 'filter' ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1199:1: ( 'filter' )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1229:1: ( ( 'filter' ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1230:1: ( 'filter' )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1199:1: ( 'filter' )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1200:1: 'filter'
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1230:1: ( 'filter' )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1231:1: 'filter'
             {
              before(grammarAccess.getLocalResourceAccess().getFilterKeyword_1_0()); 
-            match(input,19,FOLLOW_19_in_rule__LocalResource__Group_1__0__Impl2401); 
+            match(input,19,FOLLOW_19_in_rule__LocalResource__Group_1__0__Impl2464); 
              after(grammarAccess.getLocalResourceAccess().getFilterKeyword_1_0()); 
 
             }
@@ -3291,16 +3388,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__LocalResource__Group_1__1"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1213:1: rule__LocalResource__Group_1__1 : rule__LocalResource__Group_1__1__Impl ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1244:1: rule__LocalResource__Group_1__1 : rule__LocalResource__Group_1__1__Impl ;
     public final void rule__LocalResource__Group_1__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1217:1: ( rule__LocalResource__Group_1__1__Impl )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1218:2: rule__LocalResource__Group_1__1__Impl
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1248:1: ( rule__LocalResource__Group_1__1__Impl )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1249:2: rule__LocalResource__Group_1__1__Impl
             {
-            pushFollow(FOLLOW_rule__LocalResource__Group_1__1__Impl_in_rule__LocalResource__Group_1__12432);
+            pushFollow(FOLLOW_rule__LocalResource__Group_1__1__Impl_in_rule__LocalResource__Group_1__12495);
             rule__LocalResource__Group_1__1__Impl();
 
             state._fsp--;
@@ -3324,23 +3421,23 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__LocalResource__Group_1__1__Impl"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1224:1: rule__LocalResource__Group_1__1__Impl : ( ( rule__LocalResource__FilterAssignment_1_1 ) ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1255:1: rule__LocalResource__Group_1__1__Impl : ( ( rule__LocalResource__FilterAssignment_1_1 ) ) ;
     public final void rule__LocalResource__Group_1__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1228:1: ( ( ( rule__LocalResource__FilterAssignment_1_1 ) ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1229:1: ( ( rule__LocalResource__FilterAssignment_1_1 ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1259:1: ( ( ( rule__LocalResource__FilterAssignment_1_1 ) ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1260:1: ( ( rule__LocalResource__FilterAssignment_1_1 ) )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1229:1: ( ( rule__LocalResource__FilterAssignment_1_1 ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1230:1: ( rule__LocalResource__FilterAssignment_1_1 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1260:1: ( ( rule__LocalResource__FilterAssignment_1_1 ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1261:1: ( rule__LocalResource__FilterAssignment_1_1 )
             {
              before(grammarAccess.getLocalResourceAccess().getFilterAssignment_1_1()); 
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1231:1: ( rule__LocalResource__FilterAssignment_1_1 )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1231:2: rule__LocalResource__FilterAssignment_1_1
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1262:1: ( rule__LocalResource__FilterAssignment_1_1 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1262:2: rule__LocalResource__FilterAssignment_1_1
             {
-            pushFollow(FOLLOW_rule__LocalResource__FilterAssignment_1_1_in_rule__LocalResource__Group_1__1__Impl2459);
+            pushFollow(FOLLOW_rule__LocalResource__FilterAssignment_1_1_in_rule__LocalResource__Group_1__1__Impl2522);
             rule__LocalResource__FilterAssignment_1_1();
 
             state._fsp--;
@@ -3371,21 +3468,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__KIdentifier__Group__0"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1245:1: rule__KIdentifier__Group__0 : rule__KIdentifier__Group__0__Impl rule__KIdentifier__Group__1 ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1276:1: rule__KIdentifier__Group__0 : rule__KIdentifier__Group__0__Impl rule__KIdentifier__Group__1 ;
     public final void rule__KIdentifier__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1249:1: ( rule__KIdentifier__Group__0__Impl rule__KIdentifier__Group__1 )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1250:2: rule__KIdentifier__Group__0__Impl rule__KIdentifier__Group__1
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1280:1: ( rule__KIdentifier__Group__0__Impl rule__KIdentifier__Group__1 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1281:2: rule__KIdentifier__Group__0__Impl rule__KIdentifier__Group__1
             {
-            pushFollow(FOLLOW_rule__KIdentifier__Group__0__Impl_in_rule__KIdentifier__Group__02493);
+            pushFollow(FOLLOW_rule__KIdentifier__Group__0__Impl_in_rule__KIdentifier__Group__02556);
             rule__KIdentifier__Group__0__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__KIdentifier__Group__1_in_rule__KIdentifier__Group__02496);
+            pushFollow(FOLLOW_rule__KIdentifier__Group__1_in_rule__KIdentifier__Group__02559);
             rule__KIdentifier__Group__1();
 
             state._fsp--;
@@ -3409,21 +3506,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__KIdentifier__Group__0__Impl"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1257:1: rule__KIdentifier__Group__0__Impl : ( () ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1288:1: rule__KIdentifier__Group__0__Impl : ( () ) ;
     public final void rule__KIdentifier__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1261:1: ( ( () ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1262:1: ( () )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1292:1: ( ( () ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1293:1: ( () )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1262:1: ( () )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1263:1: ()
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1293:1: ( () )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1294:1: ()
             {
              before(grammarAccess.getKIdentifierAccess().getKIdentifierAction_0()); 
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1264:1: ()
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1266:1: 
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1295:1: ()
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1297:1: 
             {
             }
 
@@ -3446,21 +3543,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__KIdentifier__Group__1"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1276:1: rule__KIdentifier__Group__1 : rule__KIdentifier__Group__1__Impl rule__KIdentifier__Group__2 ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1307:1: rule__KIdentifier__Group__1 : rule__KIdentifier__Group__1__Impl rule__KIdentifier__Group__2 ;
     public final void rule__KIdentifier__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1280:1: ( rule__KIdentifier__Group__1__Impl rule__KIdentifier__Group__2 )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1281:2: rule__KIdentifier__Group__1__Impl rule__KIdentifier__Group__2
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1311:1: ( rule__KIdentifier__Group__1__Impl rule__KIdentifier__Group__2 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1312:2: rule__KIdentifier__Group__1__Impl rule__KIdentifier__Group__2
             {
-            pushFollow(FOLLOW_rule__KIdentifier__Group__1__Impl_in_rule__KIdentifier__Group__12554);
+            pushFollow(FOLLOW_rule__KIdentifier__Group__1__Impl_in_rule__KIdentifier__Group__12617);
             rule__KIdentifier__Group__1__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__KIdentifier__Group__2_in_rule__KIdentifier__Group__12557);
+            pushFollow(FOLLOW_rule__KIdentifier__Group__2_in_rule__KIdentifier__Group__12620);
             rule__KIdentifier__Group__2();
 
             state._fsp--;
@@ -3484,23 +3581,23 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__KIdentifier__Group__1__Impl"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1288:1: rule__KIdentifier__Group__1__Impl : ( ( rule__KIdentifier__IdAssignment_1 ) ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1319:1: rule__KIdentifier__Group__1__Impl : ( ( rule__KIdentifier__IdAssignment_1 ) ) ;
     public final void rule__KIdentifier__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1292:1: ( ( ( rule__KIdentifier__IdAssignment_1 ) ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1293:1: ( ( rule__KIdentifier__IdAssignment_1 ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1323:1: ( ( ( rule__KIdentifier__IdAssignment_1 ) ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1324:1: ( ( rule__KIdentifier__IdAssignment_1 ) )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1293:1: ( ( rule__KIdentifier__IdAssignment_1 ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1294:1: ( rule__KIdentifier__IdAssignment_1 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1324:1: ( ( rule__KIdentifier__IdAssignment_1 ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1325:1: ( rule__KIdentifier__IdAssignment_1 )
             {
              before(grammarAccess.getKIdentifierAccess().getIdAssignment_1()); 
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1295:1: ( rule__KIdentifier__IdAssignment_1 )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1295:2: rule__KIdentifier__IdAssignment_1
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1326:1: ( rule__KIdentifier__IdAssignment_1 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1326:2: rule__KIdentifier__IdAssignment_1
             {
-            pushFollow(FOLLOW_rule__KIdentifier__IdAssignment_1_in_rule__KIdentifier__Group__1__Impl2584);
+            pushFollow(FOLLOW_rule__KIdentifier__IdAssignment_1_in_rule__KIdentifier__Group__1__Impl2647);
             rule__KIdentifier__IdAssignment_1();
 
             state._fsp--;
@@ -3531,21 +3628,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__KIdentifier__Group__2"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1305:1: rule__KIdentifier__Group__2 : rule__KIdentifier__Group__2__Impl rule__KIdentifier__Group__3 ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1336:1: rule__KIdentifier__Group__2 : rule__KIdentifier__Group__2__Impl rule__KIdentifier__Group__3 ;
     public final void rule__KIdentifier__Group__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1309:1: ( rule__KIdentifier__Group__2__Impl rule__KIdentifier__Group__3 )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1310:2: rule__KIdentifier__Group__2__Impl rule__KIdentifier__Group__3
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1340:1: ( rule__KIdentifier__Group__2__Impl rule__KIdentifier__Group__3 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1341:2: rule__KIdentifier__Group__2__Impl rule__KIdentifier__Group__3
             {
-            pushFollow(FOLLOW_rule__KIdentifier__Group__2__Impl_in_rule__KIdentifier__Group__22614);
+            pushFollow(FOLLOW_rule__KIdentifier__Group__2__Impl_in_rule__KIdentifier__Group__22677);
             rule__KIdentifier__Group__2__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__KIdentifier__Group__3_in_rule__KIdentifier__Group__22617);
+            pushFollow(FOLLOW_rule__KIdentifier__Group__3_in_rule__KIdentifier__Group__22680);
             rule__KIdentifier__Group__3();
 
             state._fsp--;
@@ -3569,20 +3666,20 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__KIdentifier__Group__2__Impl"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1317:1: rule__KIdentifier__Group__2__Impl : ( '{' ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1348:1: rule__KIdentifier__Group__2__Impl : ( '{' ) ;
     public final void rule__KIdentifier__Group__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1321:1: ( ( '{' ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1322:1: ( '{' )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1352:1: ( ( '{' ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1353:1: ( '{' )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1322:1: ( '{' )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1323:1: '{'
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1353:1: ( '{' )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1354:1: '{'
             {
              before(grammarAccess.getKIdentifierAccess().getLeftCurlyBracketKeyword_2()); 
-            match(input,20,FOLLOW_20_in_rule__KIdentifier__Group__2__Impl2645); 
+            match(input,20,FOLLOW_20_in_rule__KIdentifier__Group__2__Impl2708); 
              after(grammarAccess.getKIdentifierAccess().getLeftCurlyBracketKeyword_2()); 
 
             }
@@ -3606,21 +3703,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__KIdentifier__Group__3"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1336:1: rule__KIdentifier__Group__3 : rule__KIdentifier__Group__3__Impl rule__KIdentifier__Group__4 ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1367:1: rule__KIdentifier__Group__3 : rule__KIdentifier__Group__3__Impl rule__KIdentifier__Group__4 ;
     public final void rule__KIdentifier__Group__3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1340:1: ( rule__KIdentifier__Group__3__Impl rule__KIdentifier__Group__4 )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1341:2: rule__KIdentifier__Group__3__Impl rule__KIdentifier__Group__4
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1371:1: ( rule__KIdentifier__Group__3__Impl rule__KIdentifier__Group__4 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1372:2: rule__KIdentifier__Group__3__Impl rule__KIdentifier__Group__4
             {
-            pushFollow(FOLLOW_rule__KIdentifier__Group__3__Impl_in_rule__KIdentifier__Group__32676);
+            pushFollow(FOLLOW_rule__KIdentifier__Group__3__Impl_in_rule__KIdentifier__Group__32739);
             rule__KIdentifier__Group__3__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__KIdentifier__Group__4_in_rule__KIdentifier__Group__32679);
+            pushFollow(FOLLOW_rule__KIdentifier__Group__4_in_rule__KIdentifier__Group__32742);
             rule__KIdentifier__Group__4();
 
             state._fsp--;
@@ -3644,31 +3741,31 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__KIdentifier__Group__3__Impl"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1348:1: rule__KIdentifier__Group__3__Impl : ( ( rule__KIdentifier__Group_3__0 )? ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1379:1: rule__KIdentifier__Group__3__Impl : ( ( rule__KIdentifier__Group_3__0 )? ) ;
     public final void rule__KIdentifier__Group__3__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1352:1: ( ( ( rule__KIdentifier__Group_3__0 )? ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1353:1: ( ( rule__KIdentifier__Group_3__0 )? )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1383:1: ( ( ( rule__KIdentifier__Group_3__0 )? ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1384:1: ( ( rule__KIdentifier__Group_3__0 )? )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1353:1: ( ( rule__KIdentifier__Group_3__0 )? )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1354:1: ( rule__KIdentifier__Group_3__0 )?
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1384:1: ( ( rule__KIdentifier__Group_3__0 )? )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1385:1: ( rule__KIdentifier__Group_3__0 )?
             {
              before(grammarAccess.getKIdentifierAccess().getGroup_3()); 
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1355:1: ( rule__KIdentifier__Group_3__0 )?
-            int alt12=2;
-            int LA12_0 = input.LA(1);
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1386:1: ( rule__KIdentifier__Group_3__0 )?
+            int alt13=2;
+            int LA13_0 = input.LA(1);
 
-            if ( (LA12_0==RULE_ID) ) {
-                alt12=1;
+            if ( (LA13_0==RULE_ID) ) {
+                alt13=1;
             }
-            switch (alt12) {
+            switch (alt13) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1355:2: rule__KIdentifier__Group_3__0
+                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1386:2: rule__KIdentifier__Group_3__0
                     {
-                    pushFollow(FOLLOW_rule__KIdentifier__Group_3__0_in_rule__KIdentifier__Group__3__Impl2706);
+                    pushFollow(FOLLOW_rule__KIdentifier__Group_3__0_in_rule__KIdentifier__Group__3__Impl2769);
                     rule__KIdentifier__Group_3__0();
 
                     state._fsp--;
@@ -3702,16 +3799,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__KIdentifier__Group__4"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1365:1: rule__KIdentifier__Group__4 : rule__KIdentifier__Group__4__Impl ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1396:1: rule__KIdentifier__Group__4 : rule__KIdentifier__Group__4__Impl ;
     public final void rule__KIdentifier__Group__4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1369:1: ( rule__KIdentifier__Group__4__Impl )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1370:2: rule__KIdentifier__Group__4__Impl
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1400:1: ( rule__KIdentifier__Group__4__Impl )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1401:2: rule__KIdentifier__Group__4__Impl
             {
-            pushFollow(FOLLOW_rule__KIdentifier__Group__4__Impl_in_rule__KIdentifier__Group__42737);
+            pushFollow(FOLLOW_rule__KIdentifier__Group__4__Impl_in_rule__KIdentifier__Group__42800);
             rule__KIdentifier__Group__4__Impl();
 
             state._fsp--;
@@ -3735,20 +3832,20 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__KIdentifier__Group__4__Impl"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1376:1: rule__KIdentifier__Group__4__Impl : ( '}' ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1407:1: rule__KIdentifier__Group__4__Impl : ( '}' ) ;
     public final void rule__KIdentifier__Group__4__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1380:1: ( ( '}' ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1381:1: ( '}' )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1411:1: ( ( '}' ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1412:1: ( '}' )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1381:1: ( '}' )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1382:1: '}'
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1412:1: ( '}' )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1413:1: '}'
             {
              before(grammarAccess.getKIdentifierAccess().getRightCurlyBracketKeyword_4()); 
-            match(input,21,FOLLOW_21_in_rule__KIdentifier__Group__4__Impl2765); 
+            match(input,21,FOLLOW_21_in_rule__KIdentifier__Group__4__Impl2828); 
              after(grammarAccess.getKIdentifierAccess().getRightCurlyBracketKeyword_4()); 
 
             }
@@ -3772,21 +3869,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__KIdentifier__Group_3__0"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1405:1: rule__KIdentifier__Group_3__0 : rule__KIdentifier__Group_3__0__Impl rule__KIdentifier__Group_3__1 ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1436:1: rule__KIdentifier__Group_3__0 : rule__KIdentifier__Group_3__0__Impl rule__KIdentifier__Group_3__1 ;
     public final void rule__KIdentifier__Group_3__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1409:1: ( rule__KIdentifier__Group_3__0__Impl rule__KIdentifier__Group_3__1 )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1410:2: rule__KIdentifier__Group_3__0__Impl rule__KIdentifier__Group_3__1
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1440:1: ( rule__KIdentifier__Group_3__0__Impl rule__KIdentifier__Group_3__1 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1441:2: rule__KIdentifier__Group_3__0__Impl rule__KIdentifier__Group_3__1
             {
-            pushFollow(FOLLOW_rule__KIdentifier__Group_3__0__Impl_in_rule__KIdentifier__Group_3__02806);
+            pushFollow(FOLLOW_rule__KIdentifier__Group_3__0__Impl_in_rule__KIdentifier__Group_3__02869);
             rule__KIdentifier__Group_3__0__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__KIdentifier__Group_3__1_in_rule__KIdentifier__Group_3__02809);
+            pushFollow(FOLLOW_rule__KIdentifier__Group_3__1_in_rule__KIdentifier__Group_3__02872);
             rule__KIdentifier__Group_3__1();
 
             state._fsp--;
@@ -3810,23 +3907,23 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__KIdentifier__Group_3__0__Impl"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1417:1: rule__KIdentifier__Group_3__0__Impl : ( ( rule__KIdentifier__PersistentEntriesAssignment_3_0 ) ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1448:1: rule__KIdentifier__Group_3__0__Impl : ( ( rule__KIdentifier__PersistentEntriesAssignment_3_0 ) ) ;
     public final void rule__KIdentifier__Group_3__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1421:1: ( ( ( rule__KIdentifier__PersistentEntriesAssignment_3_0 ) ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1422:1: ( ( rule__KIdentifier__PersistentEntriesAssignment_3_0 ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1452:1: ( ( ( rule__KIdentifier__PersistentEntriesAssignment_3_0 ) ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1453:1: ( ( rule__KIdentifier__PersistentEntriesAssignment_3_0 ) )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1422:1: ( ( rule__KIdentifier__PersistentEntriesAssignment_3_0 ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1423:1: ( rule__KIdentifier__PersistentEntriesAssignment_3_0 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1453:1: ( ( rule__KIdentifier__PersistentEntriesAssignment_3_0 ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1454:1: ( rule__KIdentifier__PersistentEntriesAssignment_3_0 )
             {
              before(grammarAccess.getKIdentifierAccess().getPersistentEntriesAssignment_3_0()); 
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1424:1: ( rule__KIdentifier__PersistentEntriesAssignment_3_0 )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1424:2: rule__KIdentifier__PersistentEntriesAssignment_3_0
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1455:1: ( rule__KIdentifier__PersistentEntriesAssignment_3_0 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1455:2: rule__KIdentifier__PersistentEntriesAssignment_3_0
             {
-            pushFollow(FOLLOW_rule__KIdentifier__PersistentEntriesAssignment_3_0_in_rule__KIdentifier__Group_3__0__Impl2836);
+            pushFollow(FOLLOW_rule__KIdentifier__PersistentEntriesAssignment_3_0_in_rule__KIdentifier__Group_3__0__Impl2899);
             rule__KIdentifier__PersistentEntriesAssignment_3_0();
 
             state._fsp--;
@@ -3857,16 +3954,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__KIdentifier__Group_3__1"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1434:1: rule__KIdentifier__Group_3__1 : rule__KIdentifier__Group_3__1__Impl ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1465:1: rule__KIdentifier__Group_3__1 : rule__KIdentifier__Group_3__1__Impl ;
     public final void rule__KIdentifier__Group_3__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1438:1: ( rule__KIdentifier__Group_3__1__Impl )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1439:2: rule__KIdentifier__Group_3__1__Impl
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1469:1: ( rule__KIdentifier__Group_3__1__Impl )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1470:2: rule__KIdentifier__Group_3__1__Impl
             {
-            pushFollow(FOLLOW_rule__KIdentifier__Group_3__1__Impl_in_rule__KIdentifier__Group_3__12866);
+            pushFollow(FOLLOW_rule__KIdentifier__Group_3__1__Impl_in_rule__KIdentifier__Group_3__12929);
             rule__KIdentifier__Group_3__1__Impl();
 
             state._fsp--;
@@ -3890,35 +3987,35 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__KIdentifier__Group_3__1__Impl"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1445:1: rule__KIdentifier__Group_3__1__Impl : ( ( rule__KIdentifier__PersistentEntriesAssignment_3_1 )* ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1476:1: rule__KIdentifier__Group_3__1__Impl : ( ( rule__KIdentifier__PersistentEntriesAssignment_3_1 )* ) ;
     public final void rule__KIdentifier__Group_3__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1449:1: ( ( ( rule__KIdentifier__PersistentEntriesAssignment_3_1 )* ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1450:1: ( ( rule__KIdentifier__PersistentEntriesAssignment_3_1 )* )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1480:1: ( ( ( rule__KIdentifier__PersistentEntriesAssignment_3_1 )* ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1481:1: ( ( rule__KIdentifier__PersistentEntriesAssignment_3_1 )* )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1450:1: ( ( rule__KIdentifier__PersistentEntriesAssignment_3_1 )* )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1451:1: ( rule__KIdentifier__PersistentEntriesAssignment_3_1 )*
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1481:1: ( ( rule__KIdentifier__PersistentEntriesAssignment_3_1 )* )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1482:1: ( rule__KIdentifier__PersistentEntriesAssignment_3_1 )*
             {
              before(grammarAccess.getKIdentifierAccess().getPersistentEntriesAssignment_3_1()); 
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1452:1: ( rule__KIdentifier__PersistentEntriesAssignment_3_1 )*
-            loop13:
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1483:1: ( rule__KIdentifier__PersistentEntriesAssignment_3_1 )*
+            loop14:
             do {
-                int alt13=2;
-                int LA13_0 = input.LA(1);
+                int alt14=2;
+                int LA14_0 = input.LA(1);
 
-                if ( (LA13_0==RULE_ID) ) {
-                    alt13=1;
+                if ( (LA14_0==RULE_ID) ) {
+                    alt14=1;
                 }
 
 
-                switch (alt13) {
+                switch (alt14) {
             	case 1 :
-            	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1452:2: rule__KIdentifier__PersistentEntriesAssignment_3_1
+            	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1483:2: rule__KIdentifier__PersistentEntriesAssignment_3_1
             	    {
-            	    pushFollow(FOLLOW_rule__KIdentifier__PersistentEntriesAssignment_3_1_in_rule__KIdentifier__Group_3__1__Impl2893);
+            	    pushFollow(FOLLOW_rule__KIdentifier__PersistentEntriesAssignment_3_1_in_rule__KIdentifier__Group_3__1__Impl2956);
             	    rule__KIdentifier__PersistentEntriesAssignment_3_1();
 
             	    state._fsp--;
@@ -3928,7 +4025,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             	    break;
 
             	default :
-            	    break loop13;
+            	    break loop14;
                 }
             } while (true);
 
@@ -3955,21 +4052,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__PersistentEntry__Group__0"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1466:1: rule__PersistentEntry__Group__0 : rule__PersistentEntry__Group__0__Impl rule__PersistentEntry__Group__1 ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1497:1: rule__PersistentEntry__Group__0 : rule__PersistentEntry__Group__0__Impl rule__PersistentEntry__Group__1 ;
     public final void rule__PersistentEntry__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1470:1: ( rule__PersistentEntry__Group__0__Impl rule__PersistentEntry__Group__1 )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1471:2: rule__PersistentEntry__Group__0__Impl rule__PersistentEntry__Group__1
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1501:1: ( rule__PersistentEntry__Group__0__Impl rule__PersistentEntry__Group__1 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1502:2: rule__PersistentEntry__Group__0__Impl rule__PersistentEntry__Group__1
             {
-            pushFollow(FOLLOW_rule__PersistentEntry__Group__0__Impl_in_rule__PersistentEntry__Group__02928);
+            pushFollow(FOLLOW_rule__PersistentEntry__Group__0__Impl_in_rule__PersistentEntry__Group__02991);
             rule__PersistentEntry__Group__0__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__PersistentEntry__Group__1_in_rule__PersistentEntry__Group__02931);
+            pushFollow(FOLLOW_rule__PersistentEntry__Group__1_in_rule__PersistentEntry__Group__02994);
             rule__PersistentEntry__Group__1();
 
             state._fsp--;
@@ -3993,23 +4090,23 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__PersistentEntry__Group__0__Impl"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1478:1: rule__PersistentEntry__Group__0__Impl : ( ( rule__PersistentEntry__KeyAssignment_0 ) ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1509:1: rule__PersistentEntry__Group__0__Impl : ( ( rule__PersistentEntry__KeyAssignment_0 ) ) ;
     public final void rule__PersistentEntry__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1482:1: ( ( ( rule__PersistentEntry__KeyAssignment_0 ) ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1483:1: ( ( rule__PersistentEntry__KeyAssignment_0 ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1513:1: ( ( ( rule__PersistentEntry__KeyAssignment_0 ) ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1514:1: ( ( rule__PersistentEntry__KeyAssignment_0 ) )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1483:1: ( ( rule__PersistentEntry__KeyAssignment_0 ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1484:1: ( rule__PersistentEntry__KeyAssignment_0 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1514:1: ( ( rule__PersistentEntry__KeyAssignment_0 ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1515:1: ( rule__PersistentEntry__KeyAssignment_0 )
             {
              before(grammarAccess.getPersistentEntryAccess().getKeyAssignment_0()); 
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1485:1: ( rule__PersistentEntry__KeyAssignment_0 )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1485:2: rule__PersistentEntry__KeyAssignment_0
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1516:1: ( rule__PersistentEntry__KeyAssignment_0 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1516:2: rule__PersistentEntry__KeyAssignment_0
             {
-            pushFollow(FOLLOW_rule__PersistentEntry__KeyAssignment_0_in_rule__PersistentEntry__Group__0__Impl2958);
+            pushFollow(FOLLOW_rule__PersistentEntry__KeyAssignment_0_in_rule__PersistentEntry__Group__0__Impl3021);
             rule__PersistentEntry__KeyAssignment_0();
 
             state._fsp--;
@@ -4040,21 +4137,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__PersistentEntry__Group__1"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1495:1: rule__PersistentEntry__Group__1 : rule__PersistentEntry__Group__1__Impl rule__PersistentEntry__Group__2 ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1526:1: rule__PersistentEntry__Group__1 : rule__PersistentEntry__Group__1__Impl rule__PersistentEntry__Group__2 ;
     public final void rule__PersistentEntry__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1499:1: ( rule__PersistentEntry__Group__1__Impl rule__PersistentEntry__Group__2 )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1500:2: rule__PersistentEntry__Group__1__Impl rule__PersistentEntry__Group__2
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1530:1: ( rule__PersistentEntry__Group__1__Impl rule__PersistentEntry__Group__2 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1531:2: rule__PersistentEntry__Group__1__Impl rule__PersistentEntry__Group__2
             {
-            pushFollow(FOLLOW_rule__PersistentEntry__Group__1__Impl_in_rule__PersistentEntry__Group__12988);
+            pushFollow(FOLLOW_rule__PersistentEntry__Group__1__Impl_in_rule__PersistentEntry__Group__13051);
             rule__PersistentEntry__Group__1__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__PersistentEntry__Group__2_in_rule__PersistentEntry__Group__12991);
+            pushFollow(FOLLOW_rule__PersistentEntry__Group__2_in_rule__PersistentEntry__Group__13054);
             rule__PersistentEntry__Group__2();
 
             state._fsp--;
@@ -4078,20 +4175,20 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__PersistentEntry__Group__1__Impl"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1507:1: rule__PersistentEntry__Group__1__Impl : ( ':' ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1538:1: rule__PersistentEntry__Group__1__Impl : ( ':' ) ;
     public final void rule__PersistentEntry__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1511:1: ( ( ':' ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1512:1: ( ':' )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1542:1: ( ( ':' ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1543:1: ( ':' )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1512:1: ( ':' )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1513:1: ':'
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1543:1: ( ':' )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1544:1: ':'
             {
              before(grammarAccess.getPersistentEntryAccess().getColonKeyword_1()); 
-            match(input,22,FOLLOW_22_in_rule__PersistentEntry__Group__1__Impl3019); 
+            match(input,22,FOLLOW_22_in_rule__PersistentEntry__Group__1__Impl3082); 
              after(grammarAccess.getPersistentEntryAccess().getColonKeyword_1()); 
 
             }
@@ -4115,16 +4212,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__PersistentEntry__Group__2"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1526:1: rule__PersistentEntry__Group__2 : rule__PersistentEntry__Group__2__Impl ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1557:1: rule__PersistentEntry__Group__2 : rule__PersistentEntry__Group__2__Impl ;
     public final void rule__PersistentEntry__Group__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1530:1: ( rule__PersistentEntry__Group__2__Impl )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1531:2: rule__PersistentEntry__Group__2__Impl
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1561:1: ( rule__PersistentEntry__Group__2__Impl )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1562:2: rule__PersistentEntry__Group__2__Impl
             {
-            pushFollow(FOLLOW_rule__PersistentEntry__Group__2__Impl_in_rule__PersistentEntry__Group__23050);
+            pushFollow(FOLLOW_rule__PersistentEntry__Group__2__Impl_in_rule__PersistentEntry__Group__23113);
             rule__PersistentEntry__Group__2__Impl();
 
             state._fsp--;
@@ -4148,23 +4245,23 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__PersistentEntry__Group__2__Impl"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1537:1: rule__PersistentEntry__Group__2__Impl : ( ( rule__PersistentEntry__ValueAssignment_2 ) ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1568:1: rule__PersistentEntry__Group__2__Impl : ( ( rule__PersistentEntry__ValueAssignment_2 ) ) ;
     public final void rule__PersistentEntry__Group__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1541:1: ( ( ( rule__PersistentEntry__ValueAssignment_2 ) ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1542:1: ( ( rule__PersistentEntry__ValueAssignment_2 ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1572:1: ( ( ( rule__PersistentEntry__ValueAssignment_2 ) ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1573:1: ( ( rule__PersistentEntry__ValueAssignment_2 ) )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1542:1: ( ( rule__PersistentEntry__ValueAssignment_2 ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1543:1: ( rule__PersistentEntry__ValueAssignment_2 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1573:1: ( ( rule__PersistentEntry__ValueAssignment_2 ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1574:1: ( rule__PersistentEntry__ValueAssignment_2 )
             {
              before(grammarAccess.getPersistentEntryAccess().getValueAssignment_2()); 
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1544:1: ( rule__PersistentEntry__ValueAssignment_2 )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1544:2: rule__PersistentEntry__ValueAssignment_2
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1575:1: ( rule__PersistentEntry__ValueAssignment_2 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1575:2: rule__PersistentEntry__ValueAssignment_2
             {
-            pushFollow(FOLLOW_rule__PersistentEntry__ValueAssignment_2_in_rule__PersistentEntry__Group__2__Impl3077);
+            pushFollow(FOLLOW_rule__PersistentEntry__ValueAssignment_2_in_rule__PersistentEntry__Group__2__Impl3140);
             rule__PersistentEntry__ValueAssignment_2();
 
             state._fsp--;
@@ -4195,21 +4292,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__QualifiedID__Group__0"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1560:1: rule__QualifiedID__Group__0 : rule__QualifiedID__Group__0__Impl rule__QualifiedID__Group__1 ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1591:1: rule__QualifiedID__Group__0 : rule__QualifiedID__Group__0__Impl rule__QualifiedID__Group__1 ;
     public final void rule__QualifiedID__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1564:1: ( rule__QualifiedID__Group__0__Impl rule__QualifiedID__Group__1 )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1565:2: rule__QualifiedID__Group__0__Impl rule__QualifiedID__Group__1
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1595:1: ( rule__QualifiedID__Group__0__Impl rule__QualifiedID__Group__1 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1596:2: rule__QualifiedID__Group__0__Impl rule__QualifiedID__Group__1
             {
-            pushFollow(FOLLOW_rule__QualifiedID__Group__0__Impl_in_rule__QualifiedID__Group__03113);
+            pushFollow(FOLLOW_rule__QualifiedID__Group__0__Impl_in_rule__QualifiedID__Group__03176);
             rule__QualifiedID__Group__0__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__QualifiedID__Group__1_in_rule__QualifiedID__Group__03116);
+            pushFollow(FOLLOW_rule__QualifiedID__Group__1_in_rule__QualifiedID__Group__03179);
             rule__QualifiedID__Group__1();
 
             state._fsp--;
@@ -4233,20 +4330,20 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__QualifiedID__Group__0__Impl"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1572:1: rule__QualifiedID__Group__0__Impl : ( RULE_ID ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1603:1: rule__QualifiedID__Group__0__Impl : ( RULE_ID ) ;
     public final void rule__QualifiedID__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1576:1: ( ( RULE_ID ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1577:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1607:1: ( ( RULE_ID ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1608:1: ( RULE_ID )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1577:1: ( RULE_ID )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1578:1: RULE_ID
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1608:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1609:1: RULE_ID
             {
              before(grammarAccess.getQualifiedIDAccess().getIDTerminalRuleCall_0()); 
-            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__QualifiedID__Group__0__Impl3143); 
+            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__QualifiedID__Group__0__Impl3206); 
              after(grammarAccess.getQualifiedIDAccess().getIDTerminalRuleCall_0()); 
 
             }
@@ -4270,16 +4367,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__QualifiedID__Group__1"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1589:1: rule__QualifiedID__Group__1 : rule__QualifiedID__Group__1__Impl ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1620:1: rule__QualifiedID__Group__1 : rule__QualifiedID__Group__1__Impl ;
     public final void rule__QualifiedID__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1593:1: ( rule__QualifiedID__Group__1__Impl )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1594:2: rule__QualifiedID__Group__1__Impl
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1624:1: ( rule__QualifiedID__Group__1__Impl )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1625:2: rule__QualifiedID__Group__1__Impl
             {
-            pushFollow(FOLLOW_rule__QualifiedID__Group__1__Impl_in_rule__QualifiedID__Group__13172);
+            pushFollow(FOLLOW_rule__QualifiedID__Group__1__Impl_in_rule__QualifiedID__Group__13235);
             rule__QualifiedID__Group__1__Impl();
 
             state._fsp--;
@@ -4303,35 +4400,35 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__QualifiedID__Group__1__Impl"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1600:1: rule__QualifiedID__Group__1__Impl : ( ( rule__QualifiedID__Group_1__0 )* ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1631:1: rule__QualifiedID__Group__1__Impl : ( ( rule__QualifiedID__Group_1__0 )* ) ;
     public final void rule__QualifiedID__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1604:1: ( ( ( rule__QualifiedID__Group_1__0 )* ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1605:1: ( ( rule__QualifiedID__Group_1__0 )* )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1635:1: ( ( ( rule__QualifiedID__Group_1__0 )* ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1636:1: ( ( rule__QualifiedID__Group_1__0 )* )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1605:1: ( ( rule__QualifiedID__Group_1__0 )* )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1606:1: ( rule__QualifiedID__Group_1__0 )*
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1636:1: ( ( rule__QualifiedID__Group_1__0 )* )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1637:1: ( rule__QualifiedID__Group_1__0 )*
             {
              before(grammarAccess.getQualifiedIDAccess().getGroup_1()); 
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1607:1: ( rule__QualifiedID__Group_1__0 )*
-            loop14:
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1638:1: ( rule__QualifiedID__Group_1__0 )*
+            loop15:
             do {
-                int alt14=2;
-                int LA14_0 = input.LA(1);
+                int alt15=2;
+                int LA15_0 = input.LA(1);
 
-                if ( (LA14_0==23) ) {
-                    alt14=1;
+                if ( (LA15_0==23) ) {
+                    alt15=1;
                 }
 
 
-                switch (alt14) {
+                switch (alt15) {
             	case 1 :
-            	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1607:2: rule__QualifiedID__Group_1__0
+            	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1638:2: rule__QualifiedID__Group_1__0
             	    {
-            	    pushFollow(FOLLOW_rule__QualifiedID__Group_1__0_in_rule__QualifiedID__Group__1__Impl3199);
+            	    pushFollow(FOLLOW_rule__QualifiedID__Group_1__0_in_rule__QualifiedID__Group__1__Impl3262);
             	    rule__QualifiedID__Group_1__0();
 
             	    state._fsp--;
@@ -4341,7 +4438,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             	    break;
 
             	default :
-            	    break loop14;
+            	    break loop15;
                 }
             } while (true);
 
@@ -4368,21 +4465,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__QualifiedID__Group_1__0"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1621:1: rule__QualifiedID__Group_1__0 : rule__QualifiedID__Group_1__0__Impl rule__QualifiedID__Group_1__1 ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1652:1: rule__QualifiedID__Group_1__0 : rule__QualifiedID__Group_1__0__Impl rule__QualifiedID__Group_1__1 ;
     public final void rule__QualifiedID__Group_1__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1625:1: ( rule__QualifiedID__Group_1__0__Impl rule__QualifiedID__Group_1__1 )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1626:2: rule__QualifiedID__Group_1__0__Impl rule__QualifiedID__Group_1__1
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1656:1: ( rule__QualifiedID__Group_1__0__Impl rule__QualifiedID__Group_1__1 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1657:2: rule__QualifiedID__Group_1__0__Impl rule__QualifiedID__Group_1__1
             {
-            pushFollow(FOLLOW_rule__QualifiedID__Group_1__0__Impl_in_rule__QualifiedID__Group_1__03234);
+            pushFollow(FOLLOW_rule__QualifiedID__Group_1__0__Impl_in_rule__QualifiedID__Group_1__03297);
             rule__QualifiedID__Group_1__0__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__QualifiedID__Group_1__1_in_rule__QualifiedID__Group_1__03237);
+            pushFollow(FOLLOW_rule__QualifiedID__Group_1__1_in_rule__QualifiedID__Group_1__03300);
             rule__QualifiedID__Group_1__1();
 
             state._fsp--;
@@ -4406,20 +4503,20 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__QualifiedID__Group_1__0__Impl"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1633:1: rule__QualifiedID__Group_1__0__Impl : ( '.' ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1664:1: rule__QualifiedID__Group_1__0__Impl : ( '.' ) ;
     public final void rule__QualifiedID__Group_1__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1637:1: ( ( '.' ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1638:1: ( '.' )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1668:1: ( ( '.' ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1669:1: ( '.' )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1638:1: ( '.' )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1639:1: '.'
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1669:1: ( '.' )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1670:1: '.'
             {
              before(grammarAccess.getQualifiedIDAccess().getFullStopKeyword_1_0()); 
-            match(input,23,FOLLOW_23_in_rule__QualifiedID__Group_1__0__Impl3265); 
+            match(input,23,FOLLOW_23_in_rule__QualifiedID__Group_1__0__Impl3328); 
              after(grammarAccess.getQualifiedIDAccess().getFullStopKeyword_1_0()); 
 
             }
@@ -4443,16 +4540,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__QualifiedID__Group_1__1"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1652:1: rule__QualifiedID__Group_1__1 : rule__QualifiedID__Group_1__1__Impl ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1683:1: rule__QualifiedID__Group_1__1 : rule__QualifiedID__Group_1__1__Impl ;
     public final void rule__QualifiedID__Group_1__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1656:1: ( rule__QualifiedID__Group_1__1__Impl )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1657:2: rule__QualifiedID__Group_1__1__Impl
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1687:1: ( rule__QualifiedID__Group_1__1__Impl )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1688:2: rule__QualifiedID__Group_1__1__Impl
             {
-            pushFollow(FOLLOW_rule__QualifiedID__Group_1__1__Impl_in_rule__QualifiedID__Group_1__13296);
+            pushFollow(FOLLOW_rule__QualifiedID__Group_1__1__Impl_in_rule__QualifiedID__Group_1__13359);
             rule__QualifiedID__Group_1__1__Impl();
 
             state._fsp--;
@@ -4476,20 +4573,20 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__QualifiedID__Group_1__1__Impl"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1663:1: rule__QualifiedID__Group_1__1__Impl : ( RULE_ID ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1694:1: rule__QualifiedID__Group_1__1__Impl : ( RULE_ID ) ;
     public final void rule__QualifiedID__Group_1__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1667:1: ( ( RULE_ID ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1668:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1698:1: ( ( RULE_ID ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1699:1: ( RULE_ID )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1668:1: ( RULE_ID )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1669:1: RULE_ID
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1699:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1700:1: RULE_ID
             {
              before(grammarAccess.getQualifiedIDAccess().getIDTerminalRuleCall_1_1()); 
-            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__QualifiedID__Group_1__1__Impl3323); 
+            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__QualifiedID__Group_1__1__Impl3386); 
              after(grammarAccess.getQualifiedIDAccess().getIDTerminalRuleCall_1_1()); 
 
             }
@@ -4513,20 +4610,20 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Grana__GlobalResourcesAssignment_0_1"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1685:1: rule__Grana__GlobalResourcesAssignment_0_1 : ( ruleGlobalResourceRef ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1716:1: rule__Grana__GlobalResourcesAssignment_0_1 : ( ruleGlobalResourceRef ) ;
     public final void rule__Grana__GlobalResourcesAssignment_0_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1689:1: ( ( ruleGlobalResourceRef ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1690:1: ( ruleGlobalResourceRef )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1720:1: ( ( ruleGlobalResourceRef ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1721:1: ( ruleGlobalResourceRef )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1690:1: ( ruleGlobalResourceRef )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1691:1: ruleGlobalResourceRef
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1721:1: ( ruleGlobalResourceRef )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1722:1: ruleGlobalResourceRef
             {
              before(grammarAccess.getGranaAccess().getGlobalResourcesGlobalResourceRefParserRuleCall_0_1_0()); 
-            pushFollow(FOLLOW_ruleGlobalResourceRef_in_rule__Grana__GlobalResourcesAssignment_0_13361);
+            pushFollow(FOLLOW_ruleGlobalResourceRef_in_rule__Grana__GlobalResourcesAssignment_0_13424);
             ruleGlobalResourceRef();
 
             state._fsp--;
@@ -4554,20 +4651,20 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Grana__JobsAssignment_1"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1700:1: rule__Grana__JobsAssignment_1 : ( ruleJob ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1731:1: rule__Grana__JobsAssignment_1 : ( ruleJob ) ;
     public final void rule__Grana__JobsAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1704:1: ( ( ruleJob ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1705:1: ( ruleJob )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1735:1: ( ( ruleJob ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1736:1: ( ruleJob )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1705:1: ( ruleJob )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1706:1: ruleJob
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1736:1: ( ruleJob )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1737:1: ruleJob
             {
              before(grammarAccess.getGranaAccess().getJobsJobParserRuleCall_1_0()); 
-            pushFollow(FOLLOW_ruleJob_in_rule__Grana__JobsAssignment_13392);
+            pushFollow(FOLLOW_ruleJob_in_rule__Grana__JobsAssignment_13455);
             ruleJob();
 
             state._fsp--;
@@ -4595,20 +4692,20 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Job__NameAssignment_2"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1715:1: rule__Job__NameAssignment_2 : ( RULE_ID ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1746:1: rule__Job__NameAssignment_2 : ( RULE_ID ) ;
     public final void rule__Job__NameAssignment_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1719:1: ( ( RULE_ID ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1720:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1750:1: ( ( RULE_ID ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1751:1: ( RULE_ID )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1720:1: ( RULE_ID )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1721:1: RULE_ID
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1751:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1752:1: RULE_ID
             {
              before(grammarAccess.getJobAccess().getNameIDTerminalRuleCall_2_0()); 
-            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__Job__NameAssignment_23423); 
+            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__Job__NameAssignment_23486); 
              after(grammarAccess.getJobAccess().getNameIDTerminalRuleCall_2_0()); 
 
             }
@@ -4632,24 +4729,24 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Job__LayoutBeforeAnalysisAssignment_3"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1730:1: rule__Job__LayoutBeforeAnalysisAssignment_3 : ( ( 'layoutBeforeAnalysis' ) ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1761:1: rule__Job__LayoutBeforeAnalysisAssignment_3 : ( ( 'layoutBeforeAnalysis' ) ) ;
     public final void rule__Job__LayoutBeforeAnalysisAssignment_3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1734:1: ( ( ( 'layoutBeforeAnalysis' ) ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1735:1: ( ( 'layoutBeforeAnalysis' ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1765:1: ( ( ( 'layoutBeforeAnalysis' ) ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1766:1: ( ( 'layoutBeforeAnalysis' ) )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1735:1: ( ( 'layoutBeforeAnalysis' ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1736:1: ( 'layoutBeforeAnalysis' )
-            {
-             before(grammarAccess.getJobAccess().getLayoutBeforeAnalysisLayoutBeforeAnalysisKeyword_3_0()); 
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1737:1: ( 'layoutBeforeAnalysis' )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1738:1: 'layoutBeforeAnalysis'
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1766:1: ( ( 'layoutBeforeAnalysis' ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1767:1: ( 'layoutBeforeAnalysis' )
             {
              before(grammarAccess.getJobAccess().getLayoutBeforeAnalysisLayoutBeforeAnalysisKeyword_3_0()); 
-            match(input,24,FOLLOW_24_in_rule__Job__LayoutBeforeAnalysisAssignment_33459); 
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1768:1: ( 'layoutBeforeAnalysis' )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1769:1: 'layoutBeforeAnalysis'
+            {
+             before(grammarAccess.getJobAccess().getLayoutBeforeAnalysisLayoutBeforeAnalysisKeyword_3_0()); 
+            match(input,24,FOLLOW_24_in_rule__Job__LayoutBeforeAnalysisAssignment_33522); 
              after(grammarAccess.getJobAccess().getLayoutBeforeAnalysisLayoutBeforeAnalysisKeyword_3_0()); 
 
             }
@@ -4676,26 +4773,71 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
     // $ANTLR end "rule__Job__LayoutBeforeAnalysisAssignment_3"
 
 
-    // $ANTLR start "rule__Job__ResourcesAssignment_5"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1753:1: rule__Job__ResourcesAssignment_5 : ( ruleResource ) ;
-    public final void rule__Job__ResourcesAssignment_5() throws RecognitionException {
+    // $ANTLR start "rule__Job__MeasureExecutionTimeAssignment_4"
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1784:1: rule__Job__MeasureExecutionTimeAssignment_4 : ( ( 'measureExecutionTime' ) ) ;
+    public final void rule__Job__MeasureExecutionTimeAssignment_4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1757:1: ( ( ruleResource ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1758:1: ( ruleResource )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1788:1: ( ( ( 'measureExecutionTime' ) ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1789:1: ( ( 'measureExecutionTime' ) )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1758:1: ( ruleResource )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1759:1: ruleResource
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1789:1: ( ( 'measureExecutionTime' ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1790:1: ( 'measureExecutionTime' )
             {
-             before(grammarAccess.getJobAccess().getResourcesResourceParserRuleCall_5_0()); 
-            pushFollow(FOLLOW_ruleResource_in_rule__Job__ResourcesAssignment_53498);
+             before(grammarAccess.getJobAccess().getMeasureExecutionTimeMeasureExecutionTimeKeyword_4_0()); 
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1791:1: ( 'measureExecutionTime' )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1792:1: 'measureExecutionTime'
+            {
+             before(grammarAccess.getJobAccess().getMeasureExecutionTimeMeasureExecutionTimeKeyword_4_0()); 
+            match(input,25,FOLLOW_25_in_rule__Job__MeasureExecutionTimeAssignment_43566); 
+             after(grammarAccess.getJobAccess().getMeasureExecutionTimeMeasureExecutionTimeKeyword_4_0()); 
+
+            }
+
+             after(grammarAccess.getJobAccess().getMeasureExecutionTimeMeasureExecutionTimeKeyword_4_0()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__Job__MeasureExecutionTimeAssignment_4"
+
+
+    // $ANTLR start "rule__Job__ResourcesAssignment_6"
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1807:1: rule__Job__ResourcesAssignment_6 : ( ruleResource ) ;
+    public final void rule__Job__ResourcesAssignment_6() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+            
+        try {
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1811:1: ( ( ruleResource ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1812:1: ( ruleResource )
+            {
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1812:1: ( ruleResource )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1813:1: ruleResource
+            {
+             before(grammarAccess.getJobAccess().getResourcesResourceParserRuleCall_6_0()); 
+            pushFollow(FOLLOW_ruleResource_in_rule__Job__ResourcesAssignment_63605);
             ruleResource();
 
             state._fsp--;
 
-             after(grammarAccess.getJobAccess().getResourcesResourceParserRuleCall_5_0()); 
+             after(grammarAccess.getJobAccess().getResourcesResourceParserRuleCall_6_0()); 
 
             }
 
@@ -4714,29 +4856,29 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__Job__ResourcesAssignment_5"
+    // $ANTLR end "rule__Job__ResourcesAssignment_6"
 
 
-    // $ANTLR start "rule__Job__LayoutOptionsAssignment_7"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1768:1: rule__Job__LayoutOptionsAssignment_7 : ( ruleKIdentifier ) ;
-    public final void rule__Job__LayoutOptionsAssignment_7() throws RecognitionException {
+    // $ANTLR start "rule__Job__LayoutOptionsAssignment_8"
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1822:1: rule__Job__LayoutOptionsAssignment_8 : ( ruleKIdentifier ) ;
+    public final void rule__Job__LayoutOptionsAssignment_8() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1772:1: ( ( ruleKIdentifier ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1773:1: ( ruleKIdentifier )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1826:1: ( ( ruleKIdentifier ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1827:1: ( ruleKIdentifier )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1773:1: ( ruleKIdentifier )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1774:1: ruleKIdentifier
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1827:1: ( ruleKIdentifier )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1828:1: ruleKIdentifier
             {
-             before(grammarAccess.getJobAccess().getLayoutOptionsKIdentifierParserRuleCall_7_0()); 
-            pushFollow(FOLLOW_ruleKIdentifier_in_rule__Job__LayoutOptionsAssignment_73529);
+             before(grammarAccess.getJobAccess().getLayoutOptionsKIdentifierParserRuleCall_8_0()); 
+            pushFollow(FOLLOW_ruleKIdentifier_in_rule__Job__LayoutOptionsAssignment_83636);
             ruleKIdentifier();
 
             state._fsp--;
 
-             after(grammarAccess.getJobAccess().getLayoutOptionsKIdentifierParserRuleCall_7_0()); 
+             after(grammarAccess.getJobAccess().getLayoutOptionsKIdentifierParserRuleCall_8_0()); 
 
             }
 
@@ -4755,29 +4897,29 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__Job__LayoutOptionsAssignment_7"
+    // $ANTLR end "rule__Job__LayoutOptionsAssignment_8"
 
 
-    // $ANTLR start "rule__Job__AnalysesAssignment_9"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1783:1: rule__Job__AnalysesAssignment_9 : ( ruleAnalysis ) ;
-    public final void rule__Job__AnalysesAssignment_9() throws RecognitionException {
+    // $ANTLR start "rule__Job__AnalysesAssignment_10"
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1837:1: rule__Job__AnalysesAssignment_10 : ( ruleAnalysis ) ;
+    public final void rule__Job__AnalysesAssignment_10() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1787:1: ( ( ruleAnalysis ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1788:1: ( ruleAnalysis )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1841:1: ( ( ruleAnalysis ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1842:1: ( ruleAnalysis )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1788:1: ( ruleAnalysis )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1789:1: ruleAnalysis
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1842:1: ( ruleAnalysis )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1843:1: ruleAnalysis
             {
-             before(grammarAccess.getJobAccess().getAnalysesAnalysisParserRuleCall_9_0()); 
-            pushFollow(FOLLOW_ruleAnalysis_in_rule__Job__AnalysesAssignment_93560);
+             before(grammarAccess.getJobAccess().getAnalysesAnalysisParserRuleCall_10_0()); 
+            pushFollow(FOLLOW_ruleAnalysis_in_rule__Job__AnalysesAssignment_103667);
             ruleAnalysis();
 
             state._fsp--;
 
-             after(grammarAccess.getJobAccess().getAnalysesAnalysisParserRuleCall_9_0()); 
+             after(grammarAccess.getJobAccess().getAnalysesAnalysisParserRuleCall_10_0()); 
 
             }
 
@@ -4796,25 +4938,25 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__Job__AnalysesAssignment_9"
+    // $ANTLR end "rule__Job__AnalysesAssignment_10"
 
 
-    // $ANTLR start "rule__Job__OutputAssignment_11"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1798:1: rule__Job__OutputAssignment_11 : ( RULE_STRING ) ;
-    public final void rule__Job__OutputAssignment_11() throws RecognitionException {
+    // $ANTLR start "rule__Job__OutputAssignment_12"
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1852:1: rule__Job__OutputAssignment_12 : ( RULE_STRING ) ;
+    public final void rule__Job__OutputAssignment_12() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1802:1: ( ( RULE_STRING ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1803:1: ( RULE_STRING )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1856:1: ( ( RULE_STRING ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1857:1: ( RULE_STRING )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1803:1: ( RULE_STRING )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1804:1: RULE_STRING
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1857:1: ( RULE_STRING )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1858:1: RULE_STRING
             {
-             before(grammarAccess.getJobAccess().getOutputSTRINGTerminalRuleCall_11_0()); 
-            match(input,RULE_STRING,FOLLOW_RULE_STRING_in_rule__Job__OutputAssignment_113591); 
-             after(grammarAccess.getJobAccess().getOutputSTRINGTerminalRuleCall_11_0()); 
+             before(grammarAccess.getJobAccess().getOutputSTRINGTerminalRuleCall_12_0()); 
+            match(input,RULE_STRING,FOLLOW_RULE_STRING_in_rule__Job__OutputAssignment_123698); 
+             after(grammarAccess.getJobAccess().getOutputSTRINGTerminalRuleCall_12_0()); 
 
             }
 
@@ -4833,28 +4975,28 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__Job__OutputAssignment_11"
+    // $ANTLR end "rule__Job__OutputAssignment_12"
 
 
     // $ANTLR start "rule__ResourceReference__ResourceRefsAssignment_1"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1813:1: rule__ResourceReference__ResourceRefsAssignment_1 : ( ( RULE_ID ) ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1867:1: rule__ResourceReference__ResourceRefsAssignment_1 : ( ( RULE_ID ) ) ;
     public final void rule__ResourceReference__ResourceRefsAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1817:1: ( ( ( RULE_ID ) ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1818:1: ( ( RULE_ID ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1871:1: ( ( ( RULE_ID ) ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1872:1: ( ( RULE_ID ) )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1818:1: ( ( RULE_ID ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1819:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1872:1: ( ( RULE_ID ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1873:1: ( RULE_ID )
             {
              before(grammarAccess.getResourceReferenceAccess().getResourceRefsGlobalResourceRefCrossReference_1_0()); 
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1820:1: ( RULE_ID )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1821:1: RULE_ID
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1874:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1875:1: RULE_ID
             {
              before(grammarAccess.getResourceReferenceAccess().getResourceRefsGlobalResourceRefIDTerminalRuleCall_1_0_1()); 
-            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__ResourceReference__ResourceRefsAssignment_13626); 
+            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__ResourceReference__ResourceRefsAssignment_13733); 
              after(grammarAccess.getResourceReferenceAccess().getResourceRefsGlobalResourceRefIDTerminalRuleCall_1_0_1()); 
 
             }
@@ -4882,20 +5024,20 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__GlobalResourceRef__NameAssignment_0"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1832:1: rule__GlobalResourceRef__NameAssignment_0 : ( RULE_ID ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1886:1: rule__GlobalResourceRef__NameAssignment_0 : ( RULE_ID ) ;
     public final void rule__GlobalResourceRef__NameAssignment_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1836:1: ( ( RULE_ID ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1837:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1890:1: ( ( RULE_ID ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1891:1: ( RULE_ID )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1837:1: ( RULE_ID )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1838:1: RULE_ID
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1891:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1892:1: RULE_ID
             {
              before(grammarAccess.getGlobalResourceRefAccess().getNameIDTerminalRuleCall_0_0()); 
-            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__GlobalResourceRef__NameAssignment_03661); 
+            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__GlobalResourceRef__NameAssignment_03768); 
              after(grammarAccess.getGlobalResourceRefAccess().getNameIDTerminalRuleCall_0_0()); 
 
             }
@@ -4919,20 +5061,20 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__GlobalResourceRef__ResourcesAssignment_1"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1847:1: rule__GlobalResourceRef__ResourcesAssignment_1 : ( ruleLocalResource ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1901:1: rule__GlobalResourceRef__ResourcesAssignment_1 : ( ruleLocalResource ) ;
     public final void rule__GlobalResourceRef__ResourcesAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1851:1: ( ( ruleLocalResource ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1852:1: ( ruleLocalResource )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1905:1: ( ( ruleLocalResource ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1906:1: ( ruleLocalResource )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1852:1: ( ruleLocalResource )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1853:1: ruleLocalResource
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1906:1: ( ruleLocalResource )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1907:1: ruleLocalResource
             {
              before(grammarAccess.getGlobalResourceRefAccess().getResourcesLocalResourceParserRuleCall_1_0()); 
-            pushFollow(FOLLOW_ruleLocalResource_in_rule__GlobalResourceRef__ResourcesAssignment_13692);
+            pushFollow(FOLLOW_ruleLocalResource_in_rule__GlobalResourceRef__ResourcesAssignment_13799);
             ruleLocalResource();
 
             state._fsp--;
@@ -4960,20 +5102,20 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__LocalResource__PathAssignment_0"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1862:1: rule__LocalResource__PathAssignment_0 : ( RULE_STRING ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1916:1: rule__LocalResource__PathAssignment_0 : ( RULE_STRING ) ;
     public final void rule__LocalResource__PathAssignment_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1866:1: ( ( RULE_STRING ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1867:1: ( RULE_STRING )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1920:1: ( ( RULE_STRING ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1921:1: ( RULE_STRING )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1867:1: ( RULE_STRING )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1868:1: RULE_STRING
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1921:1: ( RULE_STRING )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1922:1: RULE_STRING
             {
              before(grammarAccess.getLocalResourceAccess().getPathSTRINGTerminalRuleCall_0_0()); 
-            match(input,RULE_STRING,FOLLOW_RULE_STRING_in_rule__LocalResource__PathAssignment_03723); 
+            match(input,RULE_STRING,FOLLOW_RULE_STRING_in_rule__LocalResource__PathAssignment_03830); 
              after(grammarAccess.getLocalResourceAccess().getPathSTRINGTerminalRuleCall_0_0()); 
 
             }
@@ -4997,20 +5139,20 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__LocalResource__FilterAssignment_1_1"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1877:1: rule__LocalResource__FilterAssignment_1_1 : ( RULE_STRING ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1931:1: rule__LocalResource__FilterAssignment_1_1 : ( RULE_STRING ) ;
     public final void rule__LocalResource__FilterAssignment_1_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1881:1: ( ( RULE_STRING ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1882:1: ( RULE_STRING )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1935:1: ( ( RULE_STRING ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1936:1: ( RULE_STRING )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1882:1: ( RULE_STRING )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1883:1: RULE_STRING
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1936:1: ( RULE_STRING )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1937:1: RULE_STRING
             {
              before(grammarAccess.getLocalResourceAccess().getFilterSTRINGTerminalRuleCall_1_1_0()); 
-            match(input,RULE_STRING,FOLLOW_RULE_STRING_in_rule__LocalResource__FilterAssignment_1_13754); 
+            match(input,RULE_STRING,FOLLOW_RULE_STRING_in_rule__LocalResource__FilterAssignment_1_13861); 
              after(grammarAccess.getLocalResourceAccess().getFilterSTRINGTerminalRuleCall_1_1_0()); 
 
             }
@@ -5034,20 +5176,20 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Analysis__NameAssignment"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1892:1: rule__Analysis__NameAssignment : ( ruleQualifiedID ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1946:1: rule__Analysis__NameAssignment : ( ruleQualifiedID ) ;
     public final void rule__Analysis__NameAssignment() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1896:1: ( ( ruleQualifiedID ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1897:1: ( ruleQualifiedID )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1950:1: ( ( ruleQualifiedID ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1951:1: ( ruleQualifiedID )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1897:1: ( ruleQualifiedID )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1898:1: ruleQualifiedID
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1951:1: ( ruleQualifiedID )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1952:1: ruleQualifiedID
             {
              before(grammarAccess.getAnalysisAccess().getNameQualifiedIDParserRuleCall_0()); 
-            pushFollow(FOLLOW_ruleQualifiedID_in_rule__Analysis__NameAssignment3785);
+            pushFollow(FOLLOW_ruleQualifiedID_in_rule__Analysis__NameAssignment3892);
             ruleQualifiedID();
 
             state._fsp--;
@@ -5075,20 +5217,20 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__KIdentifier__IdAssignment_1"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1907:1: rule__KIdentifier__IdAssignment_1 : ( RULE_ID ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1961:1: rule__KIdentifier__IdAssignment_1 : ( RULE_ID ) ;
     public final void rule__KIdentifier__IdAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1911:1: ( ( RULE_ID ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1912:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1965:1: ( ( RULE_ID ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1966:1: ( RULE_ID )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1912:1: ( RULE_ID )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1913:1: RULE_ID
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1966:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1967:1: RULE_ID
             {
              before(grammarAccess.getKIdentifierAccess().getIdIDTerminalRuleCall_1_0()); 
-            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__KIdentifier__IdAssignment_13816); 
+            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__KIdentifier__IdAssignment_13923); 
              after(grammarAccess.getKIdentifierAccess().getIdIDTerminalRuleCall_1_0()); 
 
             }
@@ -5112,20 +5254,20 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__KIdentifier__PersistentEntriesAssignment_3_0"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1922:1: rule__KIdentifier__PersistentEntriesAssignment_3_0 : ( rulePersistentEntry ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1976:1: rule__KIdentifier__PersistentEntriesAssignment_3_0 : ( rulePersistentEntry ) ;
     public final void rule__KIdentifier__PersistentEntriesAssignment_3_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1926:1: ( ( rulePersistentEntry ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1927:1: ( rulePersistentEntry )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1980:1: ( ( rulePersistentEntry ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1981:1: ( rulePersistentEntry )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1927:1: ( rulePersistentEntry )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1928:1: rulePersistentEntry
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1981:1: ( rulePersistentEntry )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1982:1: rulePersistentEntry
             {
              before(grammarAccess.getKIdentifierAccess().getPersistentEntriesPersistentEntryParserRuleCall_3_0_0()); 
-            pushFollow(FOLLOW_rulePersistentEntry_in_rule__KIdentifier__PersistentEntriesAssignment_3_03847);
+            pushFollow(FOLLOW_rulePersistentEntry_in_rule__KIdentifier__PersistentEntriesAssignment_3_03954);
             rulePersistentEntry();
 
             state._fsp--;
@@ -5153,20 +5295,20 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__KIdentifier__PersistentEntriesAssignment_3_1"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1937:1: rule__KIdentifier__PersistentEntriesAssignment_3_1 : ( rulePersistentEntry ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1991:1: rule__KIdentifier__PersistentEntriesAssignment_3_1 : ( rulePersistentEntry ) ;
     public final void rule__KIdentifier__PersistentEntriesAssignment_3_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1941:1: ( ( rulePersistentEntry ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1942:1: ( rulePersistentEntry )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1995:1: ( ( rulePersistentEntry ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1996:1: ( rulePersistentEntry )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1942:1: ( rulePersistentEntry )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1943:1: rulePersistentEntry
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1996:1: ( rulePersistentEntry )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1997:1: rulePersistentEntry
             {
              before(grammarAccess.getKIdentifierAccess().getPersistentEntriesPersistentEntryParserRuleCall_3_1_0()); 
-            pushFollow(FOLLOW_rulePersistentEntry_in_rule__KIdentifier__PersistentEntriesAssignment_3_13878);
+            pushFollow(FOLLOW_rulePersistentEntry_in_rule__KIdentifier__PersistentEntriesAssignment_3_13985);
             rulePersistentEntry();
 
             state._fsp--;
@@ -5194,20 +5336,20 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__PersistentEntry__KeyAssignment_0"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1952:1: rule__PersistentEntry__KeyAssignment_0 : ( ruleQualifiedID ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2006:1: rule__PersistentEntry__KeyAssignment_0 : ( ruleQualifiedID ) ;
     public final void rule__PersistentEntry__KeyAssignment_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1956:1: ( ( ruleQualifiedID ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1957:1: ( ruleQualifiedID )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2010:1: ( ( ruleQualifiedID ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2011:1: ( ruleQualifiedID )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1957:1: ( ruleQualifiedID )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1958:1: ruleQualifiedID
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2011:1: ( ruleQualifiedID )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2012:1: ruleQualifiedID
             {
              before(grammarAccess.getPersistentEntryAccess().getKeyQualifiedIDParserRuleCall_0_0()); 
-            pushFollow(FOLLOW_ruleQualifiedID_in_rule__PersistentEntry__KeyAssignment_03909);
+            pushFollow(FOLLOW_ruleQualifiedID_in_rule__PersistentEntry__KeyAssignment_04016);
             ruleQualifiedID();
 
             state._fsp--;
@@ -5235,20 +5377,20 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__PersistentEntry__ValueAssignment_2"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1967:1: rule__PersistentEntry__ValueAssignment_2 : ( rulePropertyValue ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2021:1: rule__PersistentEntry__ValueAssignment_2 : ( rulePropertyValue ) ;
     public final void rule__PersistentEntry__ValueAssignment_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1971:1: ( ( rulePropertyValue ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1972:1: ( rulePropertyValue )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2025:1: ( ( rulePropertyValue ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2026:1: ( rulePropertyValue )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1972:1: ( rulePropertyValue )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1973:1: rulePropertyValue
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2026:1: ( rulePropertyValue )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2027:1: rulePropertyValue
             {
              before(grammarAccess.getPersistentEntryAccess().getValuePropertyValueParserRuleCall_2_0()); 
-            pushFollow(FOLLOW_rulePropertyValue_in_rule__PersistentEntry__ValueAssignment_23940);
+            pushFollow(FOLLOW_rulePropertyValue_in_rule__PersistentEntry__ValueAssignment_24047);
             rulePropertyValue();
 
             state._fsp--;
@@ -5336,113 +5478,117 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
     public static final BitSet FOLLOW_rule__Grana__GlobalResourcesAssignment_0_1_in_rule__Grana__Group_0__1__Impl1197 = new BitSet(new long[]{0x0000000000000102L});
     public static final BitSet FOLLOW_rule__Job__Group__0__Impl_in_rule__Job__Group__01232 = new BitSet(new long[]{0x0000000000002000L});
     public static final BitSet FOLLOW_rule__Job__Group__1_in_rule__Job__Group__01235 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Job__Group__1__Impl_in_rule__Job__Group__11293 = new BitSet(new long[]{0x0000000001004100L});
+    public static final BitSet FOLLOW_rule__Job__Group__1__Impl_in_rule__Job__Group__11293 = new BitSet(new long[]{0x0000000003004100L});
     public static final BitSet FOLLOW_rule__Job__Group__2_in_rule__Job__Group__11296 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_13_in_rule__Job__Group__1__Impl1324 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Job__Group__2__Impl_in_rule__Job__Group__21355 = new BitSet(new long[]{0x0000000001004100L});
+    public static final BitSet FOLLOW_rule__Job__Group__2__Impl_in_rule__Job__Group__21355 = new BitSet(new long[]{0x0000000003004100L});
     public static final BitSet FOLLOW_rule__Job__Group__3_in_rule__Job__Group__21358 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_rule__Job__NameAssignment_2_in_rule__Job__Group__2__Impl1385 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Job__Group__3__Impl_in_rule__Job__Group__31416 = new BitSet(new long[]{0x0000000001004100L});
+    public static final BitSet FOLLOW_rule__Job__Group__3__Impl_in_rule__Job__Group__31416 = new BitSet(new long[]{0x0000000003004100L});
     public static final BitSet FOLLOW_rule__Job__Group__4_in_rule__Job__Group__31419 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_rule__Job__LayoutBeforeAnalysisAssignment_3_in_rule__Job__Group__3__Impl1446 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Job__Group__4__Impl_in_rule__Job__Group__41477 = new BitSet(new long[]{0x0000000000048020L});
+    public static final BitSet FOLLOW_rule__Job__Group__4__Impl_in_rule__Job__Group__41477 = new BitSet(new long[]{0x0000000003004100L});
     public static final BitSet FOLLOW_rule__Job__Group__5_in_rule__Job__Group__41480 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_14_in_rule__Job__Group__4__Impl1508 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Job__Group__5__Impl_in_rule__Job__Group__51539 = new BitSet(new long[]{0x0000000000048020L});
-    public static final BitSet FOLLOW_rule__Job__Group__6_in_rule__Job__Group__51542 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Job__ResourcesAssignment_5_in_rule__Job__Group__5__Impl1569 = new BitSet(new long[]{0x0000000000040022L});
-    public static final BitSet FOLLOW_rule__Job__Group__6__Impl_in_rule__Job__Group__61600 = new BitSet(new long[]{0x0000000000000100L});
+    public static final BitSet FOLLOW_rule__Job__MeasureExecutionTimeAssignment_4_in_rule__Job__Group__4__Impl1507 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__Job__Group__5__Impl_in_rule__Job__Group__51538 = new BitSet(new long[]{0x0000000000048020L});
+    public static final BitSet FOLLOW_rule__Job__Group__6_in_rule__Job__Group__51541 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_14_in_rule__Job__Group__5__Impl1569 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__Job__Group__6__Impl_in_rule__Job__Group__61600 = new BitSet(new long[]{0x0000000000048020L});
     public static final BitSet FOLLOW_rule__Job__Group__7_in_rule__Job__Group__61603 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_15_in_rule__Job__Group__6__Impl1631 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Job__Group__7__Impl_in_rule__Job__Group__71662 = new BitSet(new long[]{0x0000000000010000L});
-    public static final BitSet FOLLOW_rule__Job__Group__8_in_rule__Job__Group__71665 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Job__LayoutOptionsAssignment_7_in_rule__Job__Group__7__Impl1692 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Job__Group__8__Impl_in_rule__Job__Group__81722 = new BitSet(new long[]{0x0000000000020100L});
-    public static final BitSet FOLLOW_rule__Job__Group__9_in_rule__Job__Group__81725 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_16_in_rule__Job__Group__8__Impl1753 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Job__Group__9__Impl_in_rule__Job__Group__91784 = new BitSet(new long[]{0x0000000000020100L});
-    public static final BitSet FOLLOW_rule__Job__Group__10_in_rule__Job__Group__91787 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Job__AnalysesAssignment_9_in_rule__Job__Group__9__Impl1814 = new BitSet(new long[]{0x0000000000000102L});
-    public static final BitSet FOLLOW_rule__Job__Group__10__Impl_in_rule__Job__Group__101845 = new BitSet(new long[]{0x0000000000000020L});
+    public static final BitSet FOLLOW_rule__Job__ResourcesAssignment_6_in_rule__Job__Group__6__Impl1630 = new BitSet(new long[]{0x0000000000040022L});
+    public static final BitSet FOLLOW_rule__Job__Group__7__Impl_in_rule__Job__Group__71661 = new BitSet(new long[]{0x0000000000000100L});
+    public static final BitSet FOLLOW_rule__Job__Group__8_in_rule__Job__Group__71664 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_15_in_rule__Job__Group__7__Impl1692 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__Job__Group__8__Impl_in_rule__Job__Group__81723 = new BitSet(new long[]{0x0000000000010000L});
+    public static final BitSet FOLLOW_rule__Job__Group__9_in_rule__Job__Group__81726 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__Job__LayoutOptionsAssignment_8_in_rule__Job__Group__8__Impl1753 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__Job__Group__9__Impl_in_rule__Job__Group__91783 = new BitSet(new long[]{0x0000000000020100L});
+    public static final BitSet FOLLOW_rule__Job__Group__10_in_rule__Job__Group__91786 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_16_in_rule__Job__Group__9__Impl1814 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__Job__Group__10__Impl_in_rule__Job__Group__101845 = new BitSet(new long[]{0x0000000000020100L});
     public static final BitSet FOLLOW_rule__Job__Group__11_in_rule__Job__Group__101848 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_17_in_rule__Job__Group__10__Impl1876 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Job__Group__11__Impl_in_rule__Job__Group__111907 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Job__OutputAssignment_11_in_rule__Job__Group__11__Impl1934 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__ResourceReference__Group__0__Impl_in_rule__ResourceReference__Group__01988 = new BitSet(new long[]{0x0000000000000100L});
-    public static final BitSet FOLLOW_rule__ResourceReference__Group__1_in_rule__ResourceReference__Group__01991 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_18_in_rule__ResourceReference__Group__0__Impl2019 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__ResourceReference__Group__1__Impl_in_rule__ResourceReference__Group__12050 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__ResourceReference__ResourceRefsAssignment_1_in_rule__ResourceReference__Group__1__Impl2079 = new BitSet(new long[]{0x0000000000000102L});
-    public static final BitSet FOLLOW_rule__ResourceReference__ResourceRefsAssignment_1_in_rule__ResourceReference__Group__1__Impl2091 = new BitSet(new long[]{0x0000000000000102L});
-    public static final BitSet FOLLOW_rule__GlobalResourceRef__Group__0__Impl_in_rule__GlobalResourceRef__Group__02128 = new BitSet(new long[]{0x0000000000040020L});
-    public static final BitSet FOLLOW_rule__GlobalResourceRef__Group__1_in_rule__GlobalResourceRef__Group__02131 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__GlobalResourceRef__NameAssignment_0_in_rule__GlobalResourceRef__Group__0__Impl2158 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__GlobalResourceRef__Group__1__Impl_in_rule__GlobalResourceRef__Group__12188 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__GlobalResourceRef__ResourcesAssignment_1_in_rule__GlobalResourceRef__Group__1__Impl2215 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__LocalResource__Group__0__Impl_in_rule__LocalResource__Group__02249 = new BitSet(new long[]{0x0000000000080000L});
-    public static final BitSet FOLLOW_rule__LocalResource__Group__1_in_rule__LocalResource__Group__02252 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__LocalResource__PathAssignment_0_in_rule__LocalResource__Group__0__Impl2279 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__LocalResource__Group__1__Impl_in_rule__LocalResource__Group__12309 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__LocalResource__Group_1__0_in_rule__LocalResource__Group__1__Impl2336 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__LocalResource__Group_1__0__Impl_in_rule__LocalResource__Group_1__02370 = new BitSet(new long[]{0x0000000000000020L});
-    public static final BitSet FOLLOW_rule__LocalResource__Group_1__1_in_rule__LocalResource__Group_1__02373 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_19_in_rule__LocalResource__Group_1__0__Impl2401 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__LocalResource__Group_1__1__Impl_in_rule__LocalResource__Group_1__12432 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__LocalResource__FilterAssignment_1_1_in_rule__LocalResource__Group_1__1__Impl2459 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__KIdentifier__Group__0__Impl_in_rule__KIdentifier__Group__02493 = new BitSet(new long[]{0x0000000000000100L});
-    public static final BitSet FOLLOW_rule__KIdentifier__Group__1_in_rule__KIdentifier__Group__02496 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__KIdentifier__Group__1__Impl_in_rule__KIdentifier__Group__12554 = new BitSet(new long[]{0x0000000000100000L});
-    public static final BitSet FOLLOW_rule__KIdentifier__Group__2_in_rule__KIdentifier__Group__12557 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__KIdentifier__IdAssignment_1_in_rule__KIdentifier__Group__1__Impl2584 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__KIdentifier__Group__2__Impl_in_rule__KIdentifier__Group__22614 = new BitSet(new long[]{0x0000000000200100L});
-    public static final BitSet FOLLOW_rule__KIdentifier__Group__3_in_rule__KIdentifier__Group__22617 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_20_in_rule__KIdentifier__Group__2__Impl2645 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__KIdentifier__Group__3__Impl_in_rule__KIdentifier__Group__32676 = new BitSet(new long[]{0x0000000000200100L});
-    public static final BitSet FOLLOW_rule__KIdentifier__Group__4_in_rule__KIdentifier__Group__32679 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__KIdentifier__Group_3__0_in_rule__KIdentifier__Group__3__Impl2706 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__KIdentifier__Group__4__Impl_in_rule__KIdentifier__Group__42737 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_21_in_rule__KIdentifier__Group__4__Impl2765 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__KIdentifier__Group_3__0__Impl_in_rule__KIdentifier__Group_3__02806 = new BitSet(new long[]{0x0000000000000100L});
-    public static final BitSet FOLLOW_rule__KIdentifier__Group_3__1_in_rule__KIdentifier__Group_3__02809 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__KIdentifier__PersistentEntriesAssignment_3_0_in_rule__KIdentifier__Group_3__0__Impl2836 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__KIdentifier__Group_3__1__Impl_in_rule__KIdentifier__Group_3__12866 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__KIdentifier__PersistentEntriesAssignment_3_1_in_rule__KIdentifier__Group_3__1__Impl2893 = new BitSet(new long[]{0x0000000000000102L});
-    public static final BitSet FOLLOW_rule__PersistentEntry__Group__0__Impl_in_rule__PersistentEntry__Group__02928 = new BitSet(new long[]{0x0000000000400000L});
-    public static final BitSet FOLLOW_rule__PersistentEntry__Group__1_in_rule__PersistentEntry__Group__02931 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__PersistentEntry__KeyAssignment_0_in_rule__PersistentEntry__Group__0__Impl2958 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__PersistentEntry__Group__1__Impl_in_rule__PersistentEntry__Group__12988 = new BitSet(new long[]{0x00000000000001F0L});
-    public static final BitSet FOLLOW_rule__PersistentEntry__Group__2_in_rule__PersistentEntry__Group__12991 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_22_in_rule__PersistentEntry__Group__1__Impl3019 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__PersistentEntry__Group__2__Impl_in_rule__PersistentEntry__Group__23050 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__PersistentEntry__ValueAssignment_2_in_rule__PersistentEntry__Group__2__Impl3077 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__QualifiedID__Group__0__Impl_in_rule__QualifiedID__Group__03113 = new BitSet(new long[]{0x0000000000800000L});
-    public static final BitSet FOLLOW_rule__QualifiedID__Group__1_in_rule__QualifiedID__Group__03116 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_ID_in_rule__QualifiedID__Group__0__Impl3143 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__QualifiedID__Group__1__Impl_in_rule__QualifiedID__Group__13172 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__QualifiedID__Group_1__0_in_rule__QualifiedID__Group__1__Impl3199 = new BitSet(new long[]{0x0000000000800002L});
-    public static final BitSet FOLLOW_rule__QualifiedID__Group_1__0__Impl_in_rule__QualifiedID__Group_1__03234 = new BitSet(new long[]{0x0000000000000100L});
-    public static final BitSet FOLLOW_rule__QualifiedID__Group_1__1_in_rule__QualifiedID__Group_1__03237 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_23_in_rule__QualifiedID__Group_1__0__Impl3265 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__QualifiedID__Group_1__1__Impl_in_rule__QualifiedID__Group_1__13296 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_ID_in_rule__QualifiedID__Group_1__1__Impl3323 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleGlobalResourceRef_in_rule__Grana__GlobalResourcesAssignment_0_13361 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleJob_in_rule__Grana__JobsAssignment_13392 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_ID_in_rule__Job__NameAssignment_23423 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_24_in_rule__Job__LayoutBeforeAnalysisAssignment_33459 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleResource_in_rule__Job__ResourcesAssignment_53498 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleKIdentifier_in_rule__Job__LayoutOptionsAssignment_73529 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleAnalysis_in_rule__Job__AnalysesAssignment_93560 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_STRING_in_rule__Job__OutputAssignment_113591 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_ID_in_rule__ResourceReference__ResourceRefsAssignment_13626 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_ID_in_rule__GlobalResourceRef__NameAssignment_03661 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleLocalResource_in_rule__GlobalResourceRef__ResourcesAssignment_13692 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_STRING_in_rule__LocalResource__PathAssignment_03723 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_STRING_in_rule__LocalResource__FilterAssignment_1_13754 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleQualifiedID_in_rule__Analysis__NameAssignment3785 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_ID_in_rule__KIdentifier__IdAssignment_13816 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rulePersistentEntry_in_rule__KIdentifier__PersistentEntriesAssignment_3_03847 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rulePersistentEntry_in_rule__KIdentifier__PersistentEntriesAssignment_3_13878 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleQualifiedID_in_rule__PersistentEntry__KeyAssignment_03909 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rulePropertyValue_in_rule__PersistentEntry__ValueAssignment_23940 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__Job__AnalysesAssignment_10_in_rule__Job__Group__10__Impl1875 = new BitSet(new long[]{0x0000000000000102L});
+    public static final BitSet FOLLOW_rule__Job__Group__11__Impl_in_rule__Job__Group__111906 = new BitSet(new long[]{0x0000000000000020L});
+    public static final BitSet FOLLOW_rule__Job__Group__12_in_rule__Job__Group__111909 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_17_in_rule__Job__Group__11__Impl1937 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__Job__Group__12__Impl_in_rule__Job__Group__121968 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__Job__OutputAssignment_12_in_rule__Job__Group__12__Impl1995 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__ResourceReference__Group__0__Impl_in_rule__ResourceReference__Group__02051 = new BitSet(new long[]{0x0000000000000100L});
+    public static final BitSet FOLLOW_rule__ResourceReference__Group__1_in_rule__ResourceReference__Group__02054 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_18_in_rule__ResourceReference__Group__0__Impl2082 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__ResourceReference__Group__1__Impl_in_rule__ResourceReference__Group__12113 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__ResourceReference__ResourceRefsAssignment_1_in_rule__ResourceReference__Group__1__Impl2142 = new BitSet(new long[]{0x0000000000000102L});
+    public static final BitSet FOLLOW_rule__ResourceReference__ResourceRefsAssignment_1_in_rule__ResourceReference__Group__1__Impl2154 = new BitSet(new long[]{0x0000000000000102L});
+    public static final BitSet FOLLOW_rule__GlobalResourceRef__Group__0__Impl_in_rule__GlobalResourceRef__Group__02191 = new BitSet(new long[]{0x0000000000040020L});
+    public static final BitSet FOLLOW_rule__GlobalResourceRef__Group__1_in_rule__GlobalResourceRef__Group__02194 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__GlobalResourceRef__NameAssignment_0_in_rule__GlobalResourceRef__Group__0__Impl2221 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__GlobalResourceRef__Group__1__Impl_in_rule__GlobalResourceRef__Group__12251 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__GlobalResourceRef__ResourcesAssignment_1_in_rule__GlobalResourceRef__Group__1__Impl2278 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__LocalResource__Group__0__Impl_in_rule__LocalResource__Group__02312 = new BitSet(new long[]{0x0000000000080000L});
+    public static final BitSet FOLLOW_rule__LocalResource__Group__1_in_rule__LocalResource__Group__02315 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__LocalResource__PathAssignment_0_in_rule__LocalResource__Group__0__Impl2342 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__LocalResource__Group__1__Impl_in_rule__LocalResource__Group__12372 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__LocalResource__Group_1__0_in_rule__LocalResource__Group__1__Impl2399 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__LocalResource__Group_1__0__Impl_in_rule__LocalResource__Group_1__02433 = new BitSet(new long[]{0x0000000000000020L});
+    public static final BitSet FOLLOW_rule__LocalResource__Group_1__1_in_rule__LocalResource__Group_1__02436 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_19_in_rule__LocalResource__Group_1__0__Impl2464 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__LocalResource__Group_1__1__Impl_in_rule__LocalResource__Group_1__12495 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__LocalResource__FilterAssignment_1_1_in_rule__LocalResource__Group_1__1__Impl2522 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__KIdentifier__Group__0__Impl_in_rule__KIdentifier__Group__02556 = new BitSet(new long[]{0x0000000000000100L});
+    public static final BitSet FOLLOW_rule__KIdentifier__Group__1_in_rule__KIdentifier__Group__02559 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__KIdentifier__Group__1__Impl_in_rule__KIdentifier__Group__12617 = new BitSet(new long[]{0x0000000000100000L});
+    public static final BitSet FOLLOW_rule__KIdentifier__Group__2_in_rule__KIdentifier__Group__12620 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__KIdentifier__IdAssignment_1_in_rule__KIdentifier__Group__1__Impl2647 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__KIdentifier__Group__2__Impl_in_rule__KIdentifier__Group__22677 = new BitSet(new long[]{0x0000000000200100L});
+    public static final BitSet FOLLOW_rule__KIdentifier__Group__3_in_rule__KIdentifier__Group__22680 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_20_in_rule__KIdentifier__Group__2__Impl2708 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__KIdentifier__Group__3__Impl_in_rule__KIdentifier__Group__32739 = new BitSet(new long[]{0x0000000000200100L});
+    public static final BitSet FOLLOW_rule__KIdentifier__Group__4_in_rule__KIdentifier__Group__32742 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__KIdentifier__Group_3__0_in_rule__KIdentifier__Group__3__Impl2769 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__KIdentifier__Group__4__Impl_in_rule__KIdentifier__Group__42800 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_21_in_rule__KIdentifier__Group__4__Impl2828 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__KIdentifier__Group_3__0__Impl_in_rule__KIdentifier__Group_3__02869 = new BitSet(new long[]{0x0000000000000100L});
+    public static final BitSet FOLLOW_rule__KIdentifier__Group_3__1_in_rule__KIdentifier__Group_3__02872 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__KIdentifier__PersistentEntriesAssignment_3_0_in_rule__KIdentifier__Group_3__0__Impl2899 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__KIdentifier__Group_3__1__Impl_in_rule__KIdentifier__Group_3__12929 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__KIdentifier__PersistentEntriesAssignment_3_1_in_rule__KIdentifier__Group_3__1__Impl2956 = new BitSet(new long[]{0x0000000000000102L});
+    public static final BitSet FOLLOW_rule__PersistentEntry__Group__0__Impl_in_rule__PersistentEntry__Group__02991 = new BitSet(new long[]{0x0000000000400000L});
+    public static final BitSet FOLLOW_rule__PersistentEntry__Group__1_in_rule__PersistentEntry__Group__02994 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__PersistentEntry__KeyAssignment_0_in_rule__PersistentEntry__Group__0__Impl3021 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__PersistentEntry__Group__1__Impl_in_rule__PersistentEntry__Group__13051 = new BitSet(new long[]{0x00000000000001F0L});
+    public static final BitSet FOLLOW_rule__PersistentEntry__Group__2_in_rule__PersistentEntry__Group__13054 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_22_in_rule__PersistentEntry__Group__1__Impl3082 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__PersistentEntry__Group__2__Impl_in_rule__PersistentEntry__Group__23113 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__PersistentEntry__ValueAssignment_2_in_rule__PersistentEntry__Group__2__Impl3140 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__QualifiedID__Group__0__Impl_in_rule__QualifiedID__Group__03176 = new BitSet(new long[]{0x0000000000800000L});
+    public static final BitSet FOLLOW_rule__QualifiedID__Group__1_in_rule__QualifiedID__Group__03179 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_ID_in_rule__QualifiedID__Group__0__Impl3206 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__QualifiedID__Group__1__Impl_in_rule__QualifiedID__Group__13235 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__QualifiedID__Group_1__0_in_rule__QualifiedID__Group__1__Impl3262 = new BitSet(new long[]{0x0000000000800002L});
+    public static final BitSet FOLLOW_rule__QualifiedID__Group_1__0__Impl_in_rule__QualifiedID__Group_1__03297 = new BitSet(new long[]{0x0000000000000100L});
+    public static final BitSet FOLLOW_rule__QualifiedID__Group_1__1_in_rule__QualifiedID__Group_1__03300 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_23_in_rule__QualifiedID__Group_1__0__Impl3328 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__QualifiedID__Group_1__1__Impl_in_rule__QualifiedID__Group_1__13359 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_ID_in_rule__QualifiedID__Group_1__1__Impl3386 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleGlobalResourceRef_in_rule__Grana__GlobalResourcesAssignment_0_13424 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleJob_in_rule__Grana__JobsAssignment_13455 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_ID_in_rule__Job__NameAssignment_23486 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_24_in_rule__Job__LayoutBeforeAnalysisAssignment_33522 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_25_in_rule__Job__MeasureExecutionTimeAssignment_43566 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleResource_in_rule__Job__ResourcesAssignment_63605 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleKIdentifier_in_rule__Job__LayoutOptionsAssignment_83636 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleAnalysis_in_rule__Job__AnalysesAssignment_103667 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_STRING_in_rule__Job__OutputAssignment_123698 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_ID_in_rule__ResourceReference__ResourceRefsAssignment_13733 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_ID_in_rule__GlobalResourceRef__NameAssignment_03768 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleLocalResource_in_rule__GlobalResourceRef__ResourcesAssignment_13799 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_STRING_in_rule__LocalResource__PathAssignment_03830 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_STRING_in_rule__LocalResource__FilterAssignment_1_13861 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleQualifiedID_in_rule__Analysis__NameAssignment3892 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_ID_in_rule__KIdentifier__IdAssignment_13923 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rulePersistentEntry_in_rule__KIdentifier__PersistentEntriesAssignment_3_03954 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rulePersistentEntry_in_rule__KIdentifier__PersistentEntriesAssignment_3_13985 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleQualifiedID_in_rule__PersistentEntry__KeyAssignment_04016 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rulePropertyValue_in_rule__PersistentEntry__ValueAssignment_24047 = new BitSet(new long[]{0x0000000000000002L});
 
 }

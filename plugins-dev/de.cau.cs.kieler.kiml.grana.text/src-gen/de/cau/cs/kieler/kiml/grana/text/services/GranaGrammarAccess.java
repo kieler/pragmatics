@@ -63,29 +63,35 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cNameIDTerminalRuleCall_2_0 = (RuleCall)cNameAssignment_2.eContents().get(0);
 		private final Assignment cLayoutBeforeAnalysisAssignment_3 = (Assignment)cGroup.eContents().get(3);
 		private final Keyword cLayoutBeforeAnalysisLayoutBeforeAnalysisKeyword_3_0 = (Keyword)cLayoutBeforeAnalysisAssignment_3.eContents().get(0);
-		private final Keyword cResourcesKeyword_4 = (Keyword)cGroup.eContents().get(4);
-		private final Assignment cResourcesAssignment_5 = (Assignment)cGroup.eContents().get(5);
-		private final RuleCall cResourcesResourceParserRuleCall_5_0 = (RuleCall)cResourcesAssignment_5.eContents().get(0);
-		private final Keyword cLayoutoptionsKeyword_6 = (Keyword)cGroup.eContents().get(6);
-		private final Assignment cLayoutOptionsAssignment_7 = (Assignment)cGroup.eContents().get(7);
-		private final RuleCall cLayoutOptionsKIdentifierParserRuleCall_7_0 = (RuleCall)cLayoutOptionsAssignment_7.eContents().get(0);
-		private final Keyword cAnalysesKeyword_8 = (Keyword)cGroup.eContents().get(8);
-		private final Assignment cAnalysesAssignment_9 = (Assignment)cGroup.eContents().get(9);
-		private final RuleCall cAnalysesAnalysisParserRuleCall_9_0 = (RuleCall)cAnalysesAssignment_9.eContents().get(0);
-		private final Keyword cOutputKeyword_10 = (Keyword)cGroup.eContents().get(10);
-		private final Assignment cOutputAssignment_11 = (Assignment)cGroup.eContents().get(11);
-		private final RuleCall cOutputSTRINGTerminalRuleCall_11_0 = (RuleCall)cOutputAssignment_11.eContents().get(0);
+		private final Assignment cMeasureExecutionTimeAssignment_4 = (Assignment)cGroup.eContents().get(4);
+		private final Keyword cMeasureExecutionTimeMeasureExecutionTimeKeyword_4_0 = (Keyword)cMeasureExecutionTimeAssignment_4.eContents().get(0);
+		private final Keyword cResourcesKeyword_5 = (Keyword)cGroup.eContents().get(5);
+		private final Assignment cResourcesAssignment_6 = (Assignment)cGroup.eContents().get(6);
+		private final RuleCall cResourcesResourceParserRuleCall_6_0 = (RuleCall)cResourcesAssignment_6.eContents().get(0);
+		private final Keyword cLayoutoptionsKeyword_7 = (Keyword)cGroup.eContents().get(7);
+		private final Assignment cLayoutOptionsAssignment_8 = (Assignment)cGroup.eContents().get(8);
+		private final RuleCall cLayoutOptionsKIdentifierParserRuleCall_8_0 = (RuleCall)cLayoutOptionsAssignment_8.eContents().get(0);
+		private final Keyword cAnalysesKeyword_9 = (Keyword)cGroup.eContents().get(9);
+		private final Assignment cAnalysesAssignment_10 = (Assignment)cGroup.eContents().get(10);
+		private final RuleCall cAnalysesAnalysisParserRuleCall_10_0 = (RuleCall)cAnalysesAssignment_10.eContents().get(0);
+		private final Keyword cOutputKeyword_11 = (Keyword)cGroup.eContents().get(11);
+		private final Assignment cOutputAssignment_12 = (Assignment)cGroup.eContents().get(12);
+		private final RuleCall cOutputSTRINGTerminalRuleCall_12_0 = (RuleCall)cOutputAssignment_12.eContents().get(0);
 		
 		//Job:
 		//
-		//	{Job} "job" name=ID? layoutBeforeAnalysis?="layoutBeforeAnalysis"? "resources" resources+=Resource* "layoutoptions"
+		//	{Job} "job" name=ID? layoutBeforeAnalysis?="layoutBeforeAnalysis"? measureExecutionTime?="measureExecutionTime"?
 		//
-		//	layoutOptions+=KIdentifier "analyses" analyses+=Analysis* "output" output=STRING;
+		//	"resources" resources+=Resource* "layoutoptions" layoutOptions+=KIdentifier "analyses" analyses+=Analysis* "output"
+		//
+		//	output=STRING;
 		public ParserRule getRule() { return rule; }
 
-		//{Job} "job" name=ID? layoutBeforeAnalysis?="layoutBeforeAnalysis"? "resources" resources+=Resource* "layoutoptions"
+		//{Job} "job" name=ID? layoutBeforeAnalysis?="layoutBeforeAnalysis"? measureExecutionTime?="measureExecutionTime"?
 		//
-		//layoutOptions+=KIdentifier "analyses" analyses+=Analysis* "output" output=STRING
+		//"resources" resources+=Resource* "layoutoptions" layoutOptions+=KIdentifier "analyses" analyses+=Analysis* "output"
+		//
+		//output=STRING
 		public Group getGroup() { return cGroup; }
 
 		//{Job}
@@ -106,41 +112,47 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		//"layoutBeforeAnalysis"
 		public Keyword getLayoutBeforeAnalysisLayoutBeforeAnalysisKeyword_3_0() { return cLayoutBeforeAnalysisLayoutBeforeAnalysisKeyword_3_0; }
 
+		//measureExecutionTime?="measureExecutionTime"?
+		public Assignment getMeasureExecutionTimeAssignment_4() { return cMeasureExecutionTimeAssignment_4; }
+
+		//"measureExecutionTime"
+		public Keyword getMeasureExecutionTimeMeasureExecutionTimeKeyword_4_0() { return cMeasureExecutionTimeMeasureExecutionTimeKeyword_4_0; }
+
 		//"resources"
-		public Keyword getResourcesKeyword_4() { return cResourcesKeyword_4; }
+		public Keyword getResourcesKeyword_5() { return cResourcesKeyword_5; }
 
 		//resources+=Resource*
-		public Assignment getResourcesAssignment_5() { return cResourcesAssignment_5; }
+		public Assignment getResourcesAssignment_6() { return cResourcesAssignment_6; }
 
 		//Resource
-		public RuleCall getResourcesResourceParserRuleCall_5_0() { return cResourcesResourceParserRuleCall_5_0; }
+		public RuleCall getResourcesResourceParserRuleCall_6_0() { return cResourcesResourceParserRuleCall_6_0; }
 
 		//"layoutoptions"
-		public Keyword getLayoutoptionsKeyword_6() { return cLayoutoptionsKeyword_6; }
+		public Keyword getLayoutoptionsKeyword_7() { return cLayoutoptionsKeyword_7; }
 
 		//layoutOptions+=KIdentifier
-		public Assignment getLayoutOptionsAssignment_7() { return cLayoutOptionsAssignment_7; }
+		public Assignment getLayoutOptionsAssignment_8() { return cLayoutOptionsAssignment_8; }
 
 		//KIdentifier
-		public RuleCall getLayoutOptionsKIdentifierParserRuleCall_7_0() { return cLayoutOptionsKIdentifierParserRuleCall_7_0; }
+		public RuleCall getLayoutOptionsKIdentifierParserRuleCall_8_0() { return cLayoutOptionsKIdentifierParserRuleCall_8_0; }
 
 		//"analyses"
-		public Keyword getAnalysesKeyword_8() { return cAnalysesKeyword_8; }
+		public Keyword getAnalysesKeyword_9() { return cAnalysesKeyword_9; }
 
 		//analyses+=Analysis*
-		public Assignment getAnalysesAssignment_9() { return cAnalysesAssignment_9; }
+		public Assignment getAnalysesAssignment_10() { return cAnalysesAssignment_10; }
 
 		//Analysis
-		public RuleCall getAnalysesAnalysisParserRuleCall_9_0() { return cAnalysesAnalysisParserRuleCall_9_0; }
+		public RuleCall getAnalysesAnalysisParserRuleCall_10_0() { return cAnalysesAnalysisParserRuleCall_10_0; }
 
 		//"output"
-		public Keyword getOutputKeyword_10() { return cOutputKeyword_10; }
+		public Keyword getOutputKeyword_11() { return cOutputKeyword_11; }
 
 		//output=STRING
-		public Assignment getOutputAssignment_11() { return cOutputAssignment_11; }
+		public Assignment getOutputAssignment_12() { return cOutputAssignment_12; }
 
 		//STRING
-		public RuleCall getOutputSTRINGTerminalRuleCall_11_0() { return cOutputSTRINGTerminalRuleCall_11_0; }
+		public RuleCall getOutputSTRINGTerminalRuleCall_12_0() { return cOutputSTRINGTerminalRuleCall_12_0; }
 	}
 
 	public class ResourceElements extends AbstractParserRuleElementFinder {
@@ -506,9 +518,11 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 
 	//Job:
 	//
-	//	{Job} "job" name=ID? layoutBeforeAnalysis?="layoutBeforeAnalysis"? "resources" resources+=Resource* "layoutoptions"
+	//	{Job} "job" name=ID? layoutBeforeAnalysis?="layoutBeforeAnalysis"? measureExecutionTime?="measureExecutionTime"?
 	//
-	//	layoutOptions+=KIdentifier "analyses" analyses+=Analysis* "output" output=STRING;
+	//	"resources" resources+=Resource* "layoutoptions" layoutOptions+=KIdentifier "analyses" analyses+=Analysis* "output"
+	//
+	//	output=STRING;
 	public JobElements getJobAccess() {
 		return (pJob != null) ? pJob : (pJob = new JobElements());
 	}
