@@ -15,6 +15,9 @@ package de.cau.cs.kieler.kiml.grana.ui.batch;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+
+import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.grana.AnalysisData;
@@ -31,6 +34,11 @@ public class BatchResult {
     /** the analysis which have been performed in the batch run. */
     private List<AnalysisData> analyses =
             new LinkedList<AnalysisData>();
+    /**
+     * List of phases that occurred during the execution time analysis. Note that not the phases of
+     * different layout runs for different graphs may differ.
+     */
+    private Set<String> executionTimePhases = Sets.newHashSet();
     /** the results of the individual jobs. */
     private List<BatchJobResult<?>> results =
             new LinkedList<BatchJobResult<?>>();
@@ -64,6 +72,13 @@ public class BatchResult {
      */
     public List<BatchJobResult<?>> getJobResults() {
         return results;
+    }
+    
+    /**
+     * @return the executionTimePhases
+     */
+    public Set<String> getExecutionTimePhases() {
+        return executionTimePhases;
     }
 
     /**

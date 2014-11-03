@@ -31,6 +31,7 @@ import de.cau.cs.kieler.kiml.grana.util.GranaUtil;
  * currently selected graph analyses and saves the results to a file.
  * 
  * @author mri
+ * @author uru
  * @kieler.ignore (excluded from review process)
  */
 public class BatchWizard extends Wizard {
@@ -64,6 +65,8 @@ public class BatchWizard extends Wizard {
     private List<AnalysisData> selectedAnalyses;
     /** the layout configurator. */
     private ILayoutConfig layoutConfig;
+    /** whether to record execution times. */
+    private boolean performExecutionTimeAnalysis;
 
     /**
      * Constructs a BatchWizard without initial file selection.
@@ -111,6 +114,7 @@ public class BatchWizard extends Wizard {
         resultFilePage.savePreferences();
         selectedFiles = fileSelectionPage.getSelectedFiles();
         layoutBeforeAnalysis = fileSelectionPage.getLayoutBeforeAnalysis();
+        performExecutionTimeAnalysis = fileSelectionPage.getExecutionTimeAnalysis();
         resultFile = resultFilePage.getResultFile();
         selectedAnalyses = analysisSelectionPage.getAnalyses();
         GranaUtil.setAnalysesSelection(PREFERENCE_SELECTED_ANALYSES, selectedAnalyses);
@@ -137,6 +141,13 @@ public class BatchWizard extends Wizard {
      */
     public boolean getLayoutBeforeAnalysis() {
         return layoutBeforeAnalysis;
+    }
+    
+    /**
+     * @return the performExecutionTimeAnalysis
+     */
+    public boolean getExecutionTimeAnalysis() {
+        return performExecutionTimeAnalysis;
     }
 
     /**

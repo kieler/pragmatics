@@ -32,13 +32,17 @@ import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ExtensibleURIConverterImpl
 import de.cau.cs.kieler.kiml.grana.text.grana.ResourceReference
 import de.cau.cs.kieler.kiml.grana.text.grana.LocalResource
+import java.io.File
+import java.io.OutputStream
+import java.io.FileOutputStream
+import de.cau.cs.kieler.kiml.grana.text.grana.Job
 
 /**
  * @author uru
  */
 class GranaTextToBatchJob {
 
-    def transform(Grana grana, IProgressMonitor progressMonitor) {
+    def execute(Grana grana, IProgressMonitor progressMonitor) {
 
         val pm = new ProgressMonitorAdapter(progressMonitor)
         val wsRoot = ResourcesPlugin.workspace.root
@@ -52,7 +56,6 @@ class GranaTextToBatchJob {
                 // collect requested analyses
                 val analyses = job.analyses.map[AnalysisService.instance.getAnalysis(it.name)]
                 val batch = new Batch(analyses)
-    
     
                 // resolve possible references
                 val resources =  job.resources.map[ r |
@@ -68,28 +71,29 @@ class GranaTextToBatchJob {
                         Pattern.compile(resource.filter) else null
     
                     // FIXME path handling is very very bad !!!!!! 
-                    val p = wsRoot.projects.findFirst[p|resource.path.contains(p.name)]
-                    if (p == null) 
-                        throw new IllegalArgumentException("Could not find resource " + resource.path)
-                    val wsloc = p.findMember(resource.path.replace(p.name, ""))
-    
-                    // add all files to the batch job
-                    for (file : (wsloc as IContainer).members) {
-                        if (filter == null || filter.matcher(file.name).matches) {
-                            val provider = new FileKGraphProvider
-                            provider.setLayoutBeforeAnalysis(job.layoutBeforeAnalysis)
-    
-                            // TODO set layout options
-                            val clc = new CompoundLayoutConfig
-                            for (cfg : job.layoutOptions) {
-                                clc.add(LayoutConfigTransformer.transformConfig(cfg))
+                    try {
+                        // first we try to interpret the path as workspace relative
+                        val p = wsRoot.projects.findFirst[p|resource.path.contains(p.name)]
+                        if (p == null) 
+                            throw new IllegalArgumentException("Could not find resource " + resource.path)
+                        val wsloc = p.findMember(resource.path.replace(p.name, ""))
+        
+                        // add all files to the batch job
+                        for (file : (wsloc as IContainer).members) {
+                            if (filter == null || filter.matcher(file.name).matches) {
+                                addBatchJob(batch, job, new Path(resource.path + "/" + file.name))
                             }
-                            provider.setLayoutConfigurator(clc)
-                            
-                            // the batch executer expects a workspace relative path
-                            val batchJob = new BatchJob<IPath>(new Path(resource.path + "/" + file.name), provider)
-                            batch.appendJob(batchJob)
                         }
+                    } catch (Exception e) {
+                        // if this fails, try absolute file system
+                        val dir = new File(wsRoot.location.toFile, resource.path)
+                        if (!dir.exists) 
+                            throw new IllegalArgumentException("Could not find resource " + resource.path)
+                        for (file : dir.listFiles) {
+                            if (filter == null || filter.matcher(file.name).matches) {
+                                addBatchJob(batch, job, new Path(file.absolutePath))
+                            }
+                        }                    
                     }
                 }
     
@@ -107,15 +111,41 @@ class GranaTextToBatchJob {
                 }
     
                 // write results
-                val fileURI = URI.createPlatformResourceURI(job.output, true)
-                val uriConv = new ExtensibleURIConverterImpl
-                val os = uriConv.createOutputStream(fileURI)
+                var OutputStream os
+                try {
+                    // try to use the workspace
+                    val fileURI = URI.createPlatformResourceURI(job.output, true)
+                    val uriConv = new ExtensibleURIConverterImpl
+                    os = uriConv.createOutputStream(fileURI)
+                } catch (Exception e) {
+                    // fall back to the file system
+                    val dir = wsRoot.location.toFile
+                    os = new FileOutputStream(new File(dir, job.output))
+                }
+                
                 val serializer = new CSVResultSerializer
                 serializer.serialize(os, result, pm.subTask(1))
                 os.close
 
             }
         }
+    }
+    
+    private def addBatchJob(Batch batch, Job job, IPath path) {
+        val provider = new FileKGraphProvider
+        provider.setLayoutBeforeAnalysis(job.layoutBeforeAnalysis)
+        provider.setExecutionTimeAnalysis(job.measureExecutionTime)
+    
+        // set the layout options
+        val clc = new CompoundLayoutConfig
+        for (cfg : job.layoutOptions) {
+            clc.add(LayoutConfigTransformer.transformConfig(cfg))
+        }
+        provider.setLayoutConfigurator(clc)
+        
+        // the batch executer expects a workspace relative path
+        val batchJob = new BatchJob<IPath>(path, provider)
+        batch.appendJob(batchJob)
     }
 
 //        // display problems

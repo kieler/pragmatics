@@ -259,12 +259,24 @@ public class GraphFormatsService {
      * @throws CoreException if accessing the file fails
      */
     public KNode[] loadKGraph(final IFile file) throws IOException, CoreException {
-        String extension = file.getFileExtension();
+        return loadKGraph(file.getContents(), file.getFileExtension());
+    }
+
+    /**
+     * Load the given file and transform it to the KGraph format.
+     * 
+     * @param inputStream an input stream containing the graph data
+     * @param extension the file extension used to determine the graph format
+     * @return the contained graphs as KGraph instances
+     * @throws IOException if reading the file fails
+     * @throws CoreException if accessing the file fails
+     */
+    public KNode[] loadKGraph(final InputStream inputStream, final String extension)
+            throws IOException, CoreException {
         for (GraphFormatData formatData : graphFormatMap.values()) {
             for (String fe : formatData.getExtensions()) {
                 if (fe.equalsIgnoreCase(extension)) {
                     // a matching extension was found -- try to load the file
-                    InputStream inputStream = file.getContents();
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     int c = inputStream.read();
                     while (c >= 0) {
@@ -288,7 +300,7 @@ public class GraphFormatsService {
         }
         throw new IOException("The extension of the given file is unknown.");
     }
-
+    
     /**
      * Load KGraph instances from the given serialized graph.
      * 

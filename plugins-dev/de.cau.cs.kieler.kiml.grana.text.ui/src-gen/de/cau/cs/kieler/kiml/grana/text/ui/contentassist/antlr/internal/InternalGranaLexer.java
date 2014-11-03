@@ -14,6 +14,7 @@ import java.util.ArrayList;
 public class InternalGranaLexer extends Lexer {
     public static final int RULE_BOOLEAN=4;
     public static final int RULE_ID=8;
+    public static final int T__25=25;
     public static final int T__24=24;
     public static final int T__23=23;
     public static final int T__22=22;
@@ -317,20 +318,41 @@ public class InternalGranaLexer extends Lexer {
     }
     // $ANTLR end "T__24"
 
+    // $ANTLR start "T__25"
+    public final void mT__25() throws RecognitionException {
+        try {
+            int _type = T__25;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:24:7: ( 'measureExecutionTime' )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:24:9: 'measureExecutionTime'
+            {
+            match("measureExecutionTime"); 
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "T__25"
+
     // $ANTLR start "RULE_TFLOAT"
     public final void mRULE_TFLOAT() throws RecognitionException {
         try {
             int _type = RULE_TFLOAT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:13: ( ( ( '+' | '-' ) ( ( '0' .. '9' )+ ( '.' ( '0' .. '9' )* )? ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? ) | ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | ( '0' .. '9' )+ ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:15: ( ( '+' | '-' ) ( ( '0' .. '9' )+ ( '.' ( '0' .. '9' )* )? ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? ) | ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | ( '0' .. '9' )+ ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:13: ( ( ( '+' | '-' ) ( ( '0' .. '9' )+ ( '.' ( '0' .. '9' )* )? ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? ) | ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | ( '0' .. '9' )+ ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:15: ( ( '+' | '-' ) ( ( '0' .. '9' )+ ( '.' ( '0' .. '9' )* )? ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? ) | ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | ( '0' .. '9' )+ ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:15: ( ( '+' | '-' ) ( ( '0' .. '9' )+ ( '.' ( '0' .. '9' )* )? ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? ) | ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | ( '0' .. '9' )+ ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:15: ( ( '+' | '-' ) ( ( '0' .. '9' )+ ( '.' ( '0' .. '9' )* )? ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? ) | ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | ( '0' .. '9' )+ ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )
             int alt24=4;
             alt24 = dfa24.predict(input);
             switch (alt24) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:16: ( '+' | '-' ) ( ( '0' .. '9' )+ ( '.' ( '0' .. '9' )* )? ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? )
+                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:16: ( '+' | '-' ) ( ( '0' .. '9' )+ ( '.' ( '0' .. '9' )* )? ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? )
                     {
                     if ( input.LA(1)=='+'||input.LA(1)=='-' ) {
                         input.consume();
@@ -341,7 +363,7 @@ public class InternalGranaLexer extends Lexer {
                         recover(mse);
                         throw mse;}
 
-                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:26: ( ( '0' .. '9' )+ ( '.' ( '0' .. '9' )* )? ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? )
+                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:26: ( ( '0' .. '9' )+ ( '.' ( '0' .. '9' )* )? ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? )
                     int alt11=2;
                     int LA11_0 = input.LA(1);
 
@@ -359,9 +381,9 @@ public class InternalGranaLexer extends Lexer {
                     }
                     switch (alt11) {
                         case 1 :
-                            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:27: ( '0' .. '9' )+ ( '.' ( '0' .. '9' )* )? ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
+                            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:27: ( '0' .. '9' )+ ( '.' ( '0' .. '9' )* )? ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
                             {
-                            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:27: ( '0' .. '9' )+
+                            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:27: ( '0' .. '9' )+
                             int cnt1=0;
                             loop1:
                             do {
@@ -375,7 +397,7 @@ public class InternalGranaLexer extends Lexer {
 
                                 switch (alt1) {
                             	case 1 :
-                            	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:28: '0' .. '9'
+                            	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:28: '0' .. '9'
                             	    {
                             	    matchRange('0','9'); 
 
@@ -391,7 +413,7 @@ public class InternalGranaLexer extends Lexer {
                                 cnt1++;
                             } while (true);
 
-                            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:39: ( '.' ( '0' .. '9' )* )?
+                            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:39: ( '.' ( '0' .. '9' )* )?
                             int alt3=2;
                             int LA3_0 = input.LA(1);
 
@@ -400,10 +422,10 @@ public class InternalGranaLexer extends Lexer {
                             }
                             switch (alt3) {
                                 case 1 :
-                                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:40: '.' ( '0' .. '9' )*
+                                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:40: '.' ( '0' .. '9' )*
                                     {
                                     match('.'); 
-                                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:44: ( '0' .. '9' )*
+                                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:44: ( '0' .. '9' )*
                                     loop2:
                                     do {
                                         int alt2=2;
@@ -416,7 +438,7 @@ public class InternalGranaLexer extends Lexer {
 
                                         switch (alt2) {
                                     	case 1 :
-                                    	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:45: '0' .. '9'
+                                    	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:45: '0' .. '9'
                                     	    {
                                     	    matchRange('0','9'); 
 
@@ -434,7 +456,7 @@ public class InternalGranaLexer extends Lexer {
 
                             }
 
-                            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:58: ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
+                            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:58: ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
                             int alt6=2;
                             int LA6_0 = input.LA(1);
 
@@ -443,7 +465,7 @@ public class InternalGranaLexer extends Lexer {
                             }
                             switch (alt6) {
                                 case 1 :
-                                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:59: ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+
+                                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:59: ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+
                                     {
                                     if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                                         input.consume();
@@ -454,7 +476,7 @@ public class InternalGranaLexer extends Lexer {
                                         recover(mse);
                                         throw mse;}
 
-                                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:69: ( '+' | '-' )?
+                                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:69: ( '+' | '-' )?
                                     int alt4=2;
                                     int LA4_0 = input.LA(1);
 
@@ -480,7 +502,7 @@ public class InternalGranaLexer extends Lexer {
 
                                     }
 
-                                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:80: ( '0' .. '9' )+
+                                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:80: ( '0' .. '9' )+
                                     int cnt5=0;
                                     loop5:
                                     do {
@@ -494,7 +516,7 @@ public class InternalGranaLexer extends Lexer {
 
                                         switch (alt5) {
                                     	case 1 :
-                                    	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:81: '0' .. '9'
+                                    	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:81: '0' .. '9'
                                     	    {
                                     	    matchRange('0','9'); 
 
@@ -520,10 +542,10 @@ public class InternalGranaLexer extends Lexer {
                             }
                             break;
                         case 2 :
-                            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:94: '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
+                            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:94: '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
                             {
                             match('.'); 
-                            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:98: ( '0' .. '9' )+
+                            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:98: ( '0' .. '9' )+
                             int cnt7=0;
                             loop7:
                             do {
@@ -537,7 +559,7 @@ public class InternalGranaLexer extends Lexer {
 
                                 switch (alt7) {
                             	case 1 :
-                            	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:99: '0' .. '9'
+                            	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:99: '0' .. '9'
                             	    {
                             	    matchRange('0','9'); 
 
@@ -553,7 +575,7 @@ public class InternalGranaLexer extends Lexer {
                                 cnt7++;
                             } while (true);
 
-                            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:110: ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
+                            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:110: ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
                             int alt10=2;
                             int LA10_0 = input.LA(1);
 
@@ -562,7 +584,7 @@ public class InternalGranaLexer extends Lexer {
                             }
                             switch (alt10) {
                                 case 1 :
-                                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:111: ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+
+                                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:111: ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+
                                     {
                                     if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                                         input.consume();
@@ -573,7 +595,7 @@ public class InternalGranaLexer extends Lexer {
                                         recover(mse);
                                         throw mse;}
 
-                                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:121: ( '+' | '-' )?
+                                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:121: ( '+' | '-' )?
                                     int alt8=2;
                                     int LA8_0 = input.LA(1);
 
@@ -599,7 +621,7 @@ public class InternalGranaLexer extends Lexer {
 
                                     }
 
-                                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:132: ( '0' .. '9' )+
+                                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:132: ( '0' .. '9' )+
                                     int cnt9=0;
                                     loop9:
                                     do {
@@ -613,7 +635,7 @@ public class InternalGranaLexer extends Lexer {
 
                                         switch (alt9) {
                                     	case 1 :
-                                    	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:133: '0' .. '9'
+                                    	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:133: '0' .. '9'
                                     	    {
                                     	    matchRange('0','9'); 
 
@@ -645,9 +667,9 @@ public class InternalGranaLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:147: ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
+                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:147: ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
                     {
-                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:147: ( '0' .. '9' )+
+                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:147: ( '0' .. '9' )+
                     int cnt12=0;
                     loop12:
                     do {
@@ -661,7 +683,7 @@ public class InternalGranaLexer extends Lexer {
 
                         switch (alt12) {
                     	case 1 :
-                    	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:148: '0' .. '9'
+                    	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:148: '0' .. '9'
                     	    {
                     	    matchRange('0','9'); 
 
@@ -678,7 +700,7 @@ public class InternalGranaLexer extends Lexer {
                     } while (true);
 
                     match('.'); 
-                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:163: ( '0' .. '9' )*
+                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:163: ( '0' .. '9' )*
                     loop13:
                     do {
                         int alt13=2;
@@ -691,7 +713,7 @@ public class InternalGranaLexer extends Lexer {
 
                         switch (alt13) {
                     	case 1 :
-                    	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:164: '0' .. '9'
+                    	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:164: '0' .. '9'
                     	    {
                     	    matchRange('0','9'); 
 
@@ -703,7 +725,7 @@ public class InternalGranaLexer extends Lexer {
                         }
                     } while (true);
 
-                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:175: ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
+                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:175: ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
                     int alt16=2;
                     int LA16_0 = input.LA(1);
 
@@ -712,7 +734,7 @@ public class InternalGranaLexer extends Lexer {
                     }
                     switch (alt16) {
                         case 1 :
-                            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:176: ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+
+                            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:176: ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+
                             {
                             if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                                 input.consume();
@@ -723,7 +745,7 @@ public class InternalGranaLexer extends Lexer {
                                 recover(mse);
                                 throw mse;}
 
-                            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:186: ( '+' | '-' )?
+                            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:186: ( '+' | '-' )?
                             int alt14=2;
                             int LA14_0 = input.LA(1);
 
@@ -749,7 +771,7 @@ public class InternalGranaLexer extends Lexer {
 
                             }
 
-                            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:197: ( '0' .. '9' )+
+                            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:197: ( '0' .. '9' )+
                             int cnt15=0;
                             loop15:
                             do {
@@ -763,7 +785,7 @@ public class InternalGranaLexer extends Lexer {
 
                                 switch (alt15) {
                             	case 1 :
-                            	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:198: '0' .. '9'
+                            	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:198: '0' .. '9'
                             	    {
                             	    matchRange('0','9'); 
 
@@ -789,10 +811,10 @@ public class InternalGranaLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:211: '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
+                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:211: '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
                     {
                     match('.'); 
-                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:215: ( '0' .. '9' )+
+                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:215: ( '0' .. '9' )+
                     int cnt17=0;
                     loop17:
                     do {
@@ -806,7 +828,7 @@ public class InternalGranaLexer extends Lexer {
 
                         switch (alt17) {
                     	case 1 :
-                    	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:216: '0' .. '9'
+                    	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:216: '0' .. '9'
                     	    {
                     	    matchRange('0','9'); 
 
@@ -822,7 +844,7 @@ public class InternalGranaLexer extends Lexer {
                         cnt17++;
                     } while (true);
 
-                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:227: ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
+                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:227: ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
                     int alt20=2;
                     int LA20_0 = input.LA(1);
 
@@ -831,7 +853,7 @@ public class InternalGranaLexer extends Lexer {
                     }
                     switch (alt20) {
                         case 1 :
-                            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:228: ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+
+                            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:228: ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+
                             {
                             if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                                 input.consume();
@@ -842,7 +864,7 @@ public class InternalGranaLexer extends Lexer {
                                 recover(mse);
                                 throw mse;}
 
-                            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:238: ( '+' | '-' )?
+                            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:238: ( '+' | '-' )?
                             int alt18=2;
                             int LA18_0 = input.LA(1);
 
@@ -868,7 +890,7 @@ public class InternalGranaLexer extends Lexer {
 
                             }
 
-                            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:249: ( '0' .. '9' )+
+                            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:249: ( '0' .. '9' )+
                             int cnt19=0;
                             loop19:
                             do {
@@ -882,7 +904,7 @@ public class InternalGranaLexer extends Lexer {
 
                                 switch (alt19) {
                             	case 1 :
-                            	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:250: '0' .. '9'
+                            	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:250: '0' .. '9'
                             	    {
                             	    matchRange('0','9'); 
 
@@ -908,9 +930,9 @@ public class InternalGranaLexer extends Lexer {
                     }
                     break;
                 case 4 :
-                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:263: ( '0' .. '9' )+ ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+
+                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:263: ( '0' .. '9' )+ ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+
                     {
-                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:263: ( '0' .. '9' )+
+                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:263: ( '0' .. '9' )+
                     int cnt21=0;
                     loop21:
                     do {
@@ -924,7 +946,7 @@ public class InternalGranaLexer extends Lexer {
 
                         switch (alt21) {
                     	case 1 :
-                    	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:264: '0' .. '9'
+                    	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:264: '0' .. '9'
                     	    {
                     	    matchRange('0','9'); 
 
@@ -949,7 +971,7 @@ public class InternalGranaLexer extends Lexer {
                         recover(mse);
                         throw mse;}
 
-                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:285: ( '+' | '-' )?
+                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:285: ( '+' | '-' )?
                     int alt22=2;
                     int LA22_0 = input.LA(1);
 
@@ -975,7 +997,7 @@ public class InternalGranaLexer extends Lexer {
 
                     }
 
-                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:296: ( '0' .. '9' )+
+                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:296: ( '0' .. '9' )+
                     int cnt23=0;
                     loop23:
                     do {
@@ -989,7 +1011,7 @@ public class InternalGranaLexer extends Lexer {
 
                         switch (alt23) {
                     	case 1 :
-                    	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1983:297: '0' .. '9'
+                    	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2037:297: '0' .. '9'
                     	    {
                     	    matchRange('0','9'); 
 
@@ -1027,10 +1049,10 @@ public class InternalGranaLexer extends Lexer {
         try {
             int _type = RULE_NATURAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1985:14: ( ( '0' .. '9' )+ )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1985:16: ( '0' .. '9' )+
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2039:14: ( ( '0' .. '9' )+ )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2039:16: ( '0' .. '9' )+
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1985:16: ( '0' .. '9' )+
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2039:16: ( '0' .. '9' )+
             int cnt25=0;
             loop25:
             do {
@@ -1044,7 +1066,7 @@ public class InternalGranaLexer extends Lexer {
 
                 switch (alt25) {
             	case 1 :
-            	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1985:17: '0' .. '9'
+            	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2039:17: '0' .. '9'
             	    {
             	    matchRange('0','9'); 
 
@@ -1076,10 +1098,10 @@ public class InternalGranaLexer extends Lexer {
         try {
             int _type = RULE_BOOLEAN;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1987:14: ( ( 'true' | 'false' ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1987:16: ( 'true' | 'false' )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2041:14: ( ( 'true' | 'false' ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2041:16: ( 'true' | 'false' )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1987:16: ( 'true' | 'false' )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2041:16: ( 'true' | 'false' )
             int alt26=2;
             int LA26_0 = input.LA(1);
 
@@ -1097,7 +1119,7 @@ public class InternalGranaLexer extends Lexer {
             }
             switch (alt26) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1987:17: 'true'
+                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2041:17: 'true'
                     {
                     match("true"); 
 
@@ -1105,7 +1127,7 @@ public class InternalGranaLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1987:24: 'false'
+                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2041:24: 'false'
                     {
                     match("false"); 
 
@@ -1131,11 +1153,11 @@ public class InternalGranaLexer extends Lexer {
         try {
             int _type = RULE_STRING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1989:13: ( '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )* '\"' )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1989:15: '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )* '\"'
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2043:13: ( '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )* '\"' )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2043:15: '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )* '\"'
             {
             match('\"'); 
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1989:19: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )*
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2043:19: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )*
             loop27:
             do {
                 int alt27=3;
@@ -1151,7 +1173,7 @@ public class InternalGranaLexer extends Lexer {
 
                 switch (alt27) {
             	case 1 :
-            	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1989:20: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\'' | '\\\\' )
+            	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2043:20: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\'' | '\\\\' )
             	    {
             	    match('\\'); 
             	    if ( input.LA(1)=='\"'||input.LA(1)=='\''||input.LA(1)=='\\'||input.LA(1)=='b'||input.LA(1)=='f'||input.LA(1)=='n'||input.LA(1)=='r'||(input.LA(1)>='t' && input.LA(1)<='u') ) {
@@ -1167,7 +1189,7 @@ public class InternalGranaLexer extends Lexer {
             	    }
             	    break;
             	case 2 :
-            	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1989:65: ~ ( ( '\\\\' | '\"' ) )
+            	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2043:65: ~ ( ( '\\\\' | '\"' ) )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -1204,10 +1226,10 @@ public class InternalGranaLexer extends Lexer {
         try {
             int _type = RULE_ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1991:9: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1991:11: ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2045:9: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2045:11: ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1991:11: ( '^' )?
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2045:11: ( '^' )?
             int alt28=2;
             int LA28_0 = input.LA(1);
 
@@ -1216,7 +1238,7 @@ public class InternalGranaLexer extends Lexer {
             }
             switch (alt28) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1991:11: '^'
+                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2045:11: '^'
                     {
                     match('^'); 
 
@@ -1234,7 +1256,7 @@ public class InternalGranaLexer extends Lexer {
                 recover(mse);
                 throw mse;}
 
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1991:40: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2045:40: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             loop29:
             do {
                 int alt29=2;
@@ -1283,12 +1305,12 @@ public class InternalGranaLexer extends Lexer {
         try {
             int _type = RULE_ML_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1993:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1993:19: '/*' ( options {greedy=false; } : . )* '*/'
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2047:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2047:19: '/*' ( options {greedy=false; } : . )* '*/'
             {
             match("/*"); 
 
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1993:24: ( options {greedy=false; } : . )*
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2047:24: ( options {greedy=false; } : . )*
             loop30:
             do {
                 int alt30=2;
@@ -1313,7 +1335,7 @@ public class InternalGranaLexer extends Lexer {
 
                 switch (alt30) {
             	case 1 :
-            	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1993:52: .
+            	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2047:52: .
             	    {
             	    matchAny(); 
 
@@ -1343,12 +1365,12 @@ public class InternalGranaLexer extends Lexer {
         try {
             int _type = RULE_SL_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1995:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1995:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2049:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2049:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
             {
             match("//"); 
 
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1995:24: (~ ( ( '\\n' | '\\r' ) ) )*
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2049:24: (~ ( ( '\\n' | '\\r' ) ) )*
             loop31:
             do {
                 int alt31=2;
@@ -1361,7 +1383,7 @@ public class InternalGranaLexer extends Lexer {
 
                 switch (alt31) {
             	case 1 :
-            	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1995:24: ~ ( ( '\\n' | '\\r' ) )
+            	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2049:24: ~ ( ( '\\n' | '\\r' ) )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -1381,7 +1403,7 @@ public class InternalGranaLexer extends Lexer {
                 }
             } while (true);
 
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1995:40: ( ( '\\r' )? '\\n' )?
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2049:40: ( ( '\\r' )? '\\n' )?
             int alt33=2;
             int LA33_0 = input.LA(1);
 
@@ -1390,9 +1412,9 @@ public class InternalGranaLexer extends Lexer {
             }
             switch (alt33) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1995:41: ( '\\r' )? '\\n'
+                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2049:41: ( '\\r' )? '\\n'
                     {
-                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1995:41: ( '\\r' )?
+                    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2049:41: ( '\\r' )?
                     int alt32=2;
                     int LA32_0 = input.LA(1);
 
@@ -1401,7 +1423,7 @@ public class InternalGranaLexer extends Lexer {
                     }
                     switch (alt32) {
                         case 1 :
-                            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1995:41: '\\r'
+                            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2049:41: '\\r'
                             {
                             match('\r'); 
 
@@ -1433,10 +1455,10 @@ public class InternalGranaLexer extends Lexer {
         try {
             int _type = RULE_WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1997:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1997:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2051:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2051:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1997:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2051:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             int cnt34=0;
             loop34:
             do {
@@ -1486,8 +1508,8 @@ public class InternalGranaLexer extends Lexer {
     // $ANTLR end "RULE_WS"
 
     public void mTokens() throws RecognitionException {
-        // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1:8: ( T__12 | T__13 | T__14 | T__15 | T__16 | T__17 | T__18 | T__19 | T__20 | T__21 | T__22 | T__23 | T__24 | RULE_TFLOAT | RULE_NATURAL | RULE_BOOLEAN | RULE_STRING | RULE_ID | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS )
-        int alt35=21;
+        // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1:8: ( T__12 | T__13 | T__14 | T__15 | T__16 | T__17 | T__18 | T__19 | T__20 | T__21 | T__22 | T__23 | T__24 | T__25 | RULE_TFLOAT | RULE_NATURAL | RULE_BOOLEAN | RULE_STRING | RULE_ID | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS )
+        int alt35=22;
         alt35 = dfa35.predict(input);
         switch (alt35) {
             case 1 :
@@ -1582,56 +1604,63 @@ public class InternalGranaLexer extends Lexer {
                 }
                 break;
             case 14 :
-                // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1:88: RULE_TFLOAT
+                // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1:88: T__25
+                {
+                mT__25(); 
+
+                }
+                break;
+            case 15 :
+                // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1:94: RULE_TFLOAT
                 {
                 mRULE_TFLOAT(); 
 
                 }
                 break;
-            case 15 :
-                // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1:100: RULE_NATURAL
+            case 16 :
+                // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1:106: RULE_NATURAL
                 {
                 mRULE_NATURAL(); 
 
                 }
                 break;
-            case 16 :
-                // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1:113: RULE_BOOLEAN
+            case 17 :
+                // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1:119: RULE_BOOLEAN
                 {
                 mRULE_BOOLEAN(); 
 
                 }
                 break;
-            case 17 :
-                // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1:126: RULE_STRING
+            case 18 :
+                // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1:132: RULE_STRING
                 {
                 mRULE_STRING(); 
 
                 }
                 break;
-            case 18 :
-                // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1:138: RULE_ID
+            case 19 :
+                // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1:144: RULE_ID
                 {
                 mRULE_ID(); 
 
                 }
                 break;
-            case 19 :
-                // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1:146: RULE_ML_COMMENT
+            case 20 :
+                // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1:152: RULE_ML_COMMENT
                 {
                 mRULE_ML_COMMENT(); 
 
                 }
                 break;
-            case 20 :
-                // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1:162: RULE_SL_COMMENT
+            case 21 :
+                // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1:168: RULE_SL_COMMENT
                 {
                 mRULE_SL_COMMENT(); 
 
                 }
                 break;
-            case 21 :
-                // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1:178: RULE_WS
+            case 22 :
+                // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:1:184: RULE_WS
                 {
                 mRULE_WS(); 
 
@@ -1654,13 +1683,13 @@ public class InternalGranaLexer extends Lexer {
     static final String DFA24_maxS =
         "\1\71\1\uffff\1\145\3\uffff";
     static final String DFA24_acceptS =
-        "\1\uffff\1\1\1\uffff\1\3\1\2\1\4";
+        "\1\uffff\1\1\1\uffff\1\3\1\4\1\2";
     static final String DFA24_specialS =
         "\6\uffff}>";
     static final String[] DFA24_transitionS = {
             "\1\1\1\uffff\1\1\1\3\1\uffff\12\2",
             "",
-            "\1\4\1\uffff\12\2\13\uffff\1\5\37\uffff\1\5",
+            "\1\5\1\uffff\12\2\13\uffff\1\4\37\uffff\1\4",
             "",
             "",
             ""
@@ -1696,157 +1725,181 @@ public class InternalGranaLexer extends Lexer {
             this.transition = DFA24_transition;
         }
         public String getDescription() {
-            return "1983:15: ( ( '+' | '-' ) ( ( '0' .. '9' )+ ( '.' ( '0' .. '9' )* )? ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? ) | ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | ( '0' .. '9' )+ ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )";
+            return "2037:15: ( ( '+' | '-' ) ( ( '0' .. '9' )+ ( '.' ( '0' .. '9' )* )? ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? ) | ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | ( '0' .. '9' )+ ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )";
         }
     }
     static final String DFA35_eotS =
-        "\1\uffff\7\20\3\uffff\1\33\1\uffff\1\34\1\20\4\uffff\10\20\2\uffff"+
-        "\1\20\2\uffff\1\20\1\53\1\20\1\55\7\20\1\uffff\1\20\1\uffff\5\20"+
-        "\1\73\6\20\1\73\1\uffff\4\20\1\107\1\110\5\20\2\uffff\4\20\1\122"+
-        "\1\20\1\124\2\20\1\uffff\1\20\1\uffff\11\20\1\141\2\20\1\uffff\1"+
-        "\20\1\145\1\20\1\uffff\4\20\1\153\1\uffff";
+        "\1\uffff\7\21\3\uffff\1\34\1\21\1\uffff\1\36\1\21\4\uffff\10\21"+
+        "\1\uffff\1\21\1\uffff\1\21\2\uffff\1\21\1\56\1\21\1\60\10\21\1\uffff"+
+        "\1\21\1\uffff\6\21\1\100\6\21\1\100\1\21\1\uffff\4\21\1\115\1\116"+
+        "\6\21\2\uffff\5\21\1\132\2\21\1\135\2\21\1\uffff\2\21\1\uffff\14"+
+        "\21\1\156\3\21\1\uffff\2\21\1\164\2\21\1\uffff\10\21\1\177\1\u0080"+
+        "\2\uffff";
     static final String DFA35_eofS =
-        "\154\uffff";
+        "\u0081\uffff";
     static final String DFA35_minS =
         "\1\11\1\154\1\157\1\145\1\141\1\156\1\165\1\141\3\uffff\1\60\1"+
-        "\uffff\1\56\1\162\2\uffff\1\52\1\uffff\1\157\1\142\1\146\1\171\1"+
-        "\141\1\164\2\154\2\uffff\1\165\2\uffff\1\142\1\60\1\157\1\60\1\157"+
-        "\1\154\1\160\1\164\1\163\1\145\1\141\1\uffff\1\165\1\uffff\1\165"+
-        "\1\171\1\165\2\145\1\60\1\154\1\162\1\164\1\163\1\164\1\162\1\60"+
-        "\1\uffff\1\122\1\143\1\102\1\145\2\60\2\145\1\160\1\145\1\163\2"+
-        "\uffff\2\163\1\164\1\146\1\60\1\157\1\60\1\151\1\157\1\uffff\1\165"+
-        "\1\uffff\1\157\2\162\1\156\1\145\1\143\1\163\1\101\1\145\1\60\1"+
-        "\156\1\163\1\uffff\1\141\1\60\1\154\1\uffff\1\171\1\163\1\151\1"+
-        "\163\1\60\1\uffff";
+        "\145\1\uffff\1\56\1\162\2\uffff\1\52\1\uffff\1\157\1\142\1\146\1"+
+        "\171\1\141\1\164\2\154\1\uffff\1\141\1\uffff\1\165\2\uffff\1\142"+
+        "\1\60\1\157\1\60\1\157\1\154\1\160\1\164\2\163\1\145\1\141\1\uffff"+
+        "\1\165\1\uffff\1\165\1\171\1\165\2\145\1\165\1\60\1\154\1\162\1"+
+        "\164\1\163\1\164\1\162\1\60\1\162\1\uffff\1\122\1\143\1\102\1\145"+
+        "\2\60\3\145\1\160\1\145\1\163\2\uffff\1\105\2\163\1\164\1\146\1"+
+        "\60\1\170\1\157\1\60\1\151\1\157\1\uffff\1\145\1\165\1\uffff\1\157"+
+        "\1\162\1\143\1\162\1\156\1\145\1\165\1\143\1\163\1\101\1\164\1\145"+
+        "\1\60\1\156\1\151\1\163\1\uffff\1\141\1\157\1\60\1\154\1\156\1\uffff"+
+        "\1\171\1\124\1\163\2\151\1\155\1\163\1\145\2\60\2\uffff";
     static final String DFA35_maxS =
         "\1\175\1\154\1\157\1\145\1\141\1\156\1\165\1\151\3\uffff\1\71\1"+
-        "\uffff\1\145\1\162\2\uffff\1\57\1\uffff\1\157\1\142\1\163\1\171"+
-        "\1\141\1\164\2\154\2\uffff\1\165\2\uffff\1\142\1\172\1\157\1\172"+
-        "\1\157\1\154\1\160\1\164\1\163\1\145\1\141\1\uffff\1\165\1\uffff"+
-        "\1\165\1\171\1\165\2\145\1\172\1\154\1\162\1\164\1\163\1\164\1\162"+
-        "\1\172\1\uffff\1\122\1\143\1\157\1\145\2\172\2\145\1\160\1\145\1"+
-        "\163\2\uffff\2\163\1\164\1\146\1\172\1\157\1\172\1\151\1\157\1\uffff"+
-        "\1\165\1\uffff\1\157\2\162\1\156\1\145\1\143\1\163\1\101\1\145\1"+
-        "\172\1\156\1\163\1\uffff\1\141\1\172\1\154\1\uffff\1\171\1\163\1"+
-        "\151\1\163\1\172\1\uffff";
+        "\145\1\uffff\1\145\1\162\2\uffff\1\57\1\uffff\1\157\1\142\1\163"+
+        "\1\171\1\141\1\164\2\154\1\uffff\1\141\1\uffff\1\165\2\uffff\1\142"+
+        "\1\172\1\157\1\172\1\157\1\154\1\160\1\164\2\163\1\145\1\141\1\uffff"+
+        "\1\165\1\uffff\1\165\1\171\1\165\2\145\1\165\1\172\1\154\1\162\1"+
+        "\164\1\163\1\164\1\162\1\172\1\162\1\uffff\1\122\1\143\1\157\1\145"+
+        "\2\172\3\145\1\160\1\145\1\163\2\uffff\1\105\2\163\1\164\1\146\1"+
+        "\172\1\170\1\157\1\172\1\151\1\157\1\uffff\1\145\1\165\1\uffff\1"+
+        "\157\1\162\1\143\1\162\1\156\1\145\1\165\1\143\1\163\1\101\1\164"+
+        "\1\145\1\172\1\156\1\151\1\163\1\uffff\1\141\1\157\1\172\1\154\1"+
+        "\156\1\uffff\1\171\1\124\1\163\2\151\1\155\1\163\1\145\2\172\2\uffff";
     static final String DFA35_acceptS =
-        "\10\uffff\1\11\1\12\1\13\1\uffff\1\16\2\uffff\1\21\1\22\1\uffff"+
-        "\1\25\10\uffff\1\14\1\17\1\uffff\1\23\1\24\13\uffff\1\2\1\uffff"+
-        "\1\7\15\uffff\1\20\13\uffff\1\6\1\10\11\uffff\1\5\1\uffff\1\3\14"+
-        "\uffff\1\4\3\uffff\1\1\5\uffff\1\15";
+        "\10\uffff\1\11\1\12\1\13\2\uffff\1\17\2\uffff\1\22\1\23\1\uffff"+
+        "\1\26\10\uffff\1\14\1\uffff\1\20\1\uffff\1\24\1\25\14\uffff\1\2"+
+        "\1\uffff\1\7\17\uffff\1\21\14\uffff\1\6\1\10\13\uffff\1\5\2\uffff"+
+        "\1\3\20\uffff\1\4\5\uffff\1\1\12\uffff\1\15\1\16";
     static final String DFA35_specialS =
-        "\154\uffff}>";
+        "\u0081\uffff}>";
     static final String[] DFA35_transitionS = {
-            "\2\22\2\uffff\1\22\22\uffff\1\22\1\uffff\1\17\10\uffff\1\14"+
-            "\1\uffff\1\14\1\13\1\21\12\15\1\12\6\uffff\32\20\3\uffff\2\20"+
-            "\1\uffff\1\5\4\20\1\7\1\1\2\20\1\2\1\20\1\4\2\20\1\6\2\20\1"+
-            "\3\1\20\1\16\6\20\1\10\1\uffff\1\11",
-            "\1\23",
+            "\2\23\2\uffff\1\23\22\uffff\1\23\1\uffff\1\20\10\uffff\1\15"+
+            "\1\uffff\1\15\1\13\1\22\12\16\1\12\6\uffff\32\21\3\uffff\2\21"+
+            "\1\uffff\1\5\4\21\1\7\1\1\2\21\1\2\1\21\1\4\1\14\1\21\1\6\2"+
+            "\21\1\3\1\21\1\17\6\21\1\10\1\uffff\1\11",
             "\1\24",
             "\1\25",
             "\1\26",
             "\1\27",
             "\1\30",
-            "\1\32\7\uffff\1\31",
+            "\1\31",
+            "\1\33\7\uffff\1\32",
             "",
             "",
             "",
-            "\12\14",
-            "",
-            "\1\14\1\uffff\12\15\13\uffff\1\14\37\uffff\1\14",
+            "\12\15",
             "\1\35",
             "",
+            "\1\15\1\uffff\12\16\13\uffff\1\15\37\uffff\1\15",
+            "\1\37",
             "",
-            "\1\36\4\uffff\1\37",
             "",
-            "\1\40",
-            "\1\41",
-            "\1\43\14\uffff\1\42",
-            "\1\44",
-            "\1\45",
+            "\1\40\4\uffff\1\41",
+            "",
+            "\1\42",
+            "\1\43",
+            "\1\45\14\uffff\1\44",
             "\1\46",
             "\1\47",
             "\1\50",
-            "",
-            "",
             "\1\51",
-            "",
-            "",
             "\1\52",
-            "\12\20\7\uffff\32\20\4\uffff\1\20\1\uffff\32\20",
+            "",
+            "\1\53",
+            "",
             "\1\54",
-            "\12\20\7\uffff\32\20\4\uffff\1\20\1\uffff\32\20",
-            "\1\56",
+            "",
+            "",
+            "\1\55",
+            "\12\21\7\uffff\32\21\4\uffff\1\21\1\uffff\32\21",
             "\1\57",
-            "\1\60",
+            "\12\21\7\uffff\32\21\4\uffff\1\21\1\uffff\32\21",
             "\1\61",
             "\1\62",
             "\1\63",
             "\1\64",
-            "",
             "\1\65",
-            "",
             "\1\66",
             "\1\67",
             "\1\70",
+            "",
             "\1\71",
+            "",
             "\1\72",
-            "\12\20\7\uffff\32\20\4\uffff\1\20\1\uffff\32\20",
+            "\1\73",
             "\1\74",
             "\1\75",
             "\1\76",
             "\1\77",
-            "\1\100",
+            "\12\21\7\uffff\32\21\4\uffff\1\21\1\uffff\32\21",
             "\1\101",
-            "\12\20\7\uffff\32\20\4\uffff\1\20\1\uffff\32\20",
-            "",
             "\1\102",
             "\1\103",
-            "\1\105\54\uffff\1\104",
+            "\1\104",
+            "\1\105",
             "\1\106",
-            "\12\20\7\uffff\32\20\4\uffff\1\20\1\uffff\32\20",
-            "\12\20\7\uffff\32\20\4\uffff\1\20\1\uffff\32\20",
+            "\12\21\7\uffff\32\21\4\uffff\1\21\1\uffff\32\21",
+            "\1\107",
+            "",
+            "\1\110",
             "\1\111",
-            "\1\112",
-            "\1\113",
+            "\1\113\54\uffff\1\112",
             "\1\114",
-            "\1\115",
-            "",
-            "",
-            "\1\116",
+            "\12\21\7\uffff\32\21\4\uffff\1\21\1\uffff\32\21",
+            "\12\21\7\uffff\32\21\4\uffff\1\21\1\uffff\32\21",
             "\1\117",
             "\1\120",
             "\1\121",
-            "\12\20\7\uffff\32\20\4\uffff\1\20\1\uffff\32\20",
+            "\1\122",
             "\1\123",
-            "\12\20\7\uffff\32\20\4\uffff\1\20\1\uffff\32\20",
+            "\1\124",
+            "",
+            "",
             "\1\125",
             "\1\126",
-            "",
             "\1\127",
-            "",
             "\1\130",
             "\1\131",
-            "\1\132",
+            "\12\21\7\uffff\32\21\4\uffff\1\21\1\uffff\32\21",
             "\1\133",
             "\1\134",
-            "\1\135",
+            "\12\21\7\uffff\32\21\4\uffff\1\21\1\uffff\32\21",
             "\1\136",
             "\1\137",
+            "",
             "\1\140",
-            "\12\20\7\uffff\32\20\4\uffff\1\20\1\uffff\32\20",
+            "\1\141",
+            "",
             "\1\142",
             "\1\143",
-            "",
             "\1\144",
-            "\12\20\7\uffff\32\20\4\uffff\1\20\1\uffff\32\20",
+            "\1\145",
             "\1\146",
-            "",
             "\1\147",
             "\1\150",
             "\1\151",
             "\1\152",
-            "\12\20\7\uffff\32\20\4\uffff\1\20\1\uffff\32\20",
+            "\1\153",
+            "\1\154",
+            "\1\155",
+            "\12\21\7\uffff\32\21\4\uffff\1\21\1\uffff\32\21",
+            "\1\157",
+            "\1\160",
+            "\1\161",
+            "",
+            "\1\162",
+            "\1\163",
+            "\12\21\7\uffff\32\21\4\uffff\1\21\1\uffff\32\21",
+            "\1\165",
+            "\1\166",
+            "",
+            "\1\167",
+            "\1\170",
+            "\1\171",
+            "\1\172",
+            "\1\173",
+            "\1\174",
+            "\1\175",
+            "\1\176",
+            "\12\21\7\uffff\32\21\4\uffff\1\21\1\uffff\32\21",
+            "\12\21\7\uffff\32\21\4\uffff\1\21\1\uffff\32\21",
+            "",
             ""
     };
 
@@ -1880,7 +1933,7 @@ public class InternalGranaLexer extends Lexer {
             this.transition = DFA35_transition;
         }
         public String getDescription() {
-            return "1:1: Tokens : ( T__12 | T__13 | T__14 | T__15 | T__16 | T__17 | T__18 | T__19 | T__20 | T__21 | T__22 | T__23 | T__24 | RULE_TFLOAT | RULE_NATURAL | RULE_BOOLEAN | RULE_STRING | RULE_ID | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS );";
+            return "1:1: Tokens : ( T__12 | T__13 | T__14 | T__15 | T__16 | T__17 | T__18 | T__19 | T__20 | T__21 | T__22 | T__23 | T__24 | T__25 | RULE_TFLOAT | RULE_NATURAL | RULE_BOOLEAN | RULE_STRING | RULE_ID | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS );";
         }
     }
  

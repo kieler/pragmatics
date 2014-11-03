@@ -56,10 +56,11 @@ public class GranaParser extends AbstractContentAssistParser {
 					put(grammarAccess.getGranaAccess().getJobsAssignment_1(), "rule__Grana__JobsAssignment_1");
 					put(grammarAccess.getJobAccess().getNameAssignment_2(), "rule__Job__NameAssignment_2");
 					put(grammarAccess.getJobAccess().getLayoutBeforeAnalysisAssignment_3(), "rule__Job__LayoutBeforeAnalysisAssignment_3");
-					put(grammarAccess.getJobAccess().getResourcesAssignment_5(), "rule__Job__ResourcesAssignment_5");
-					put(grammarAccess.getJobAccess().getLayoutOptionsAssignment_7(), "rule__Job__LayoutOptionsAssignment_7");
-					put(grammarAccess.getJobAccess().getAnalysesAssignment_9(), "rule__Job__AnalysesAssignment_9");
-					put(grammarAccess.getJobAccess().getOutputAssignment_11(), "rule__Job__OutputAssignment_11");
+					put(grammarAccess.getJobAccess().getMeasureExecutionTimeAssignment_4(), "rule__Job__MeasureExecutionTimeAssignment_4");
+					put(grammarAccess.getJobAccess().getResourcesAssignment_6(), "rule__Job__ResourcesAssignment_6");
+					put(grammarAccess.getJobAccess().getLayoutOptionsAssignment_8(), "rule__Job__LayoutOptionsAssignment_8");
+					put(grammarAccess.getJobAccess().getAnalysesAssignment_10(), "rule__Job__AnalysesAssignment_10");
+					put(grammarAccess.getJobAccess().getOutputAssignment_12(), "rule__Job__OutputAssignment_12");
 					put(grammarAccess.getResourceReferenceAccess().getResourceRefsAssignment_1(), "rule__ResourceReference__ResourceRefsAssignment_1");
 					put(grammarAccess.getGlobalResourceRefAccess().getNameAssignment_0(), "rule__GlobalResourceRef__NameAssignment_0");
 					put(grammarAccess.getGlobalResourceRefAccess().getResourcesAssignment_1(), "rule__GlobalResourceRef__ResourcesAssignment_1");

@@ -122,13 +122,22 @@ public interface GranaPackage extends EPackage
   int JOB__LAYOUT_BEFORE_ANALYSIS = 1;
 
   /**
+   * The feature id for the '<em><b>Measure Execution Time</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int JOB__MEASURE_EXECUTION_TIME = 2;
+
+  /**
    * The feature id for the '<em><b>Resources</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int JOB__RESOURCES = 2;
+  int JOB__RESOURCES = 3;
 
   /**
    * The feature id for the '<em><b>Layout Options</b></em>' containment reference list.
@@ -137,7 +146,7 @@ public interface GranaPackage extends EPackage
    * @generated
    * @ordered
    */
-  int JOB__LAYOUT_OPTIONS = 3;
+  int JOB__LAYOUT_OPTIONS = 4;
 
   /**
    * The feature id for the '<em><b>Analyses</b></em>' containment reference list.
@@ -146,7 +155,7 @@ public interface GranaPackage extends EPackage
    * @generated
    * @ordered
    */
-  int JOB__ANALYSES = 4;
+  int JOB__ANALYSES = 5;
 
   /**
    * The feature id for the '<em><b>Output</b></em>' attribute.
@@ -155,7 +164,7 @@ public interface GranaPackage extends EPackage
    * @generated
    * @ordered
    */
-  int JOB__OUTPUT = 5;
+  int JOB__OUTPUT = 6;
 
   /**
    * The number of structural features of the '<em>Job</em>' class.
@@ -164,7 +173,7 @@ public interface GranaPackage extends EPackage
    * @generated
    * @ordered
    */
-  int JOB_FEATURE_COUNT = 6;
+  int JOB_FEATURE_COUNT = 7;
 
   /**
    * The meta object id for the '{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.ResourceImpl <em>Resource</em>}' class.
@@ -379,6 +388,17 @@ public interface GranaPackage extends EPackage
    * @generated
    */
   EAttribute getJob_LayoutBeforeAnalysis();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kiml.grana.text.grana.Job#isMeasureExecutionTime <em>Measure Execution Time</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Measure Execution Time</em>'.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.Job#isMeasureExecutionTime()
+   * @see #getJob()
+   * @generated
+   */
+  EAttribute getJob_MeasureExecutionTime();
 
   /**
    * Returns the meta object for the containment reference list '{@link de.cau.cs.kieler.kiml.grana.text.grana.Job#getResources <em>Resources</em>}'.
@@ -614,6 +634,14 @@ public interface GranaPackage extends EPackage
      * @generated
      */
     EAttribute JOB__LAYOUT_BEFORE_ANALYSIS = eINSTANCE.getJob_LayoutBeforeAnalysis();
+
+    /**
+     * The meta object literal for the '<em><b>Measure Execution Time</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute JOB__MEASURE_EXECUTION_TIME = eINSTANCE.getJob_MeasureExecutionTime();
 
     /**
      * The meta object literal for the '<em><b>Resources</b></em>' containment reference list feature.

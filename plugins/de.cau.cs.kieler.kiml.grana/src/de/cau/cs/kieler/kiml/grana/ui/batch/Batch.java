@@ -70,6 +70,10 @@ public class Batch {
                 BatchJobResult<?> batchJobResult =
                         batchJob.execute(analyses, monitor.subTask(1));
                 batchResult.appendJobResult(batchJobResult);
+                if (batchJobResult.getExecTimeResults() != null) {
+                    batchResult.getExecutionTimePhases().addAll(
+                            batchJobResult.getExecTimeResults().keySet());
+                }
             } catch (Throwable e) {
                 batchResult.appendFailedJob(batchJob, e);
             }
