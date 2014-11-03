@@ -23,7 +23,7 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
  * @param <S>
  *            type of the input
  */
-public abstract class AbstractCPLEXModel<S, T> implements ISolverModel<S, T> {
+public abstract class AbstractCPLEXModel<S, T> extends  AbstractSolverModel<S, T> {
 
     /** The graph to be layered. */
 

@@ -13,8 +13,6 @@
  */
 package de.cau.cs.kieler.klay.layered.solver;
 
-import java.io.File;
-
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 
 /**
@@ -28,7 +26,7 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
  * @param <S>
  *            type of the input
  */
-public abstract class AbstractMiniZincModel<S, T> implements ISolverModel<S, T> {
+public abstract class AbstractMiniZincModel<S, T> extends AbstractSolverModel<S, T> {
 
     /** Home folder of the minizinc installation, ie where the 'bin' folder resides. */
     private static final String MINIZINC_INSTALL = System.getenv("MINIZINC_HOME");
@@ -48,7 +46,9 @@ public abstract class AbstractMiniZincModel<S, T> implements ISolverModel<S, T> 
     public AbstractMiniZincModel(final LGraph graph) {
         this.layeredGraph = graph;
 
-        checkForExecutables();
+        checkForExecutable(MINIZINC_INSTALL, "MINIZINC_HOME");
+        checkForExecutable(MINIZINC_SOLVE, "MINIZINC_SOLVE");
+        checkForExecutable(SCIP_INSTALL, "SCIP_INSTALL");
     }
 
     /**
@@ -68,27 +68,4 @@ public abstract class AbstractMiniZincModel<S, T> implements ISolverModel<S, T> 
     public String getDataFileExtension() {
         return ".dzn";
     }
-
-    private static final String NOTE =
-            "Note that system variables are loaded only once upon program startup.";
-
-    private void checkForExecutables() {
-
-        if (MINIZINC_INSTALL == null || !new File(MINIZINC_INSTALL).exists()) {
-            throw new RuntimeException(
-                    "Could not locate MiniZinc installation, make sure 'MINIZINC_HOME' is set.\n"
-                            + NOTE);
-        }
-
-        if (MINIZINC_SOLVE == null || !new File(MINIZINC_SOLVE).exists()) {
-            throw new RuntimeException(
-                    "Could not locate MiniZinc installation, make sure 'MINIZINC_SOLVE' is set.\n"
-                            + NOTE);
-        }
-        if (SCIP_INSTALL == null || !new File(SCIP_INSTALL).exists()) {
-            throw new RuntimeException(
-                    "Could not locate SCIP installation, make sure 'SCIP_INSTALL' is set.\n" + NOTE);
-        }
-    }
-
 }

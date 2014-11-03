@@ -105,19 +105,24 @@ public class OptimalCycleBreaker implements ILayoutPhase {
      * .
      */
     private static class CycleBreakingModel extends AbstractCPLEXModel<LGraph, List<Integer>> {
-
+        
+        /** CPLEX model be executed. */
+        private static final String CPLEX_MFAS = System.getenv("CPLEX_MFAS");
+        
         /**
          * 
          */
         public CycleBreakingModel() {
             super(null);
+            
+            checkForExecutable(CPLEX_MFAS, "CPLEX_MFAS");
         }
 
         /**
          * {@inheritDoc}
          */
         public String getModel() {
-            return "D:/Uni/ma/minizinc-layering/second/cplex/Layering2/Layering.mod";
+            return CPLEX_MFAS;
         }
 
         /**

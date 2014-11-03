@@ -34,11 +34,16 @@ import de.cau.cs.kieler.klay.layered.solver.AbstractCPLEXModel;
  */
 public class CPLEXLayeringModel extends AbstractCPLEXModel<Object, Pair<Integer, List<Integer>>> {
 
+    /** CPLEX model be executed. */
+    private static final String CPLEX_LAYERING = System.getenv("CPLEX_LAYERING");
+    
     /**
      * @param graph the layered graph
      */
     public CPLEXLayeringModel(final LGraph graph) {
         super(graph);
+        
+        checkForExecutable(CPLEX_LAYERING, "CPLEX_LAXERING");
     }
 
     /**
@@ -46,7 +51,7 @@ public class CPLEXLayeringModel extends AbstractCPLEXModel<Object, Pair<Integer,
      */
     @Override
     public String getModel() {
-        return "D:/Uni/ma/minizinc-layering/second/cplex/Layering2/Layering.mod";
+        return CPLEX_LAYERING;
     }
     
     /**
