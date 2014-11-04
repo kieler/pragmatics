@@ -216,10 +216,10 @@
       </analysis>
       <analysis
             category="de.cau.cs.kieler.kiml.grana.basic"
-            class="de.cau.cs.kieler.kiml.grana.analyses.DirectedCycleAnalysis"
+            class="de.cau.cs.kieler.kiml.grana.analyses.DirectedCycleApproximationAnalysis"
             description="An approximate number of directed cycles determined by the back edges found in a minimizing heuristic."
-            id="de.cau.cs.kieler.kiml.grana.directedCycles"
-            name="Directed Cycles">
+            id="de.cau.cs.kieler.kiml.grana.directedCyclesApprox"
+            name="Directed Cycles Approximation">
       </analysis>
       <analysis
             category="de.cau.cs.kieler.kiml.grana.basic"
@@ -342,6 +342,9 @@
          </component>
          <component
                name="Height">
+         </component>
+         <component
+               name="Product">
          </component>
       </analysis>
       <analysis

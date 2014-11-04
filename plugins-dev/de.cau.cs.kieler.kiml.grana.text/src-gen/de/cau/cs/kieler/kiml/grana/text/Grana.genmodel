@@ -15,6 +15,7 @@
     <genClasses ecoreClass="Grana.ecore#//Job">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Grana.ecore#//Job/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Grana.ecore#//Job/layoutBeforeAnalysis"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Grana.ecore#//Job/measureExecutionTime"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Grana.ecore#//Job/resources"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Grana.ecore#//Job/layoutOptions"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Grana.ecore#//Job/analyses"/>

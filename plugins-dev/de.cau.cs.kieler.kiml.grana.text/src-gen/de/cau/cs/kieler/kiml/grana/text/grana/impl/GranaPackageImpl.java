@@ -209,9 +209,9 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getJob_Resources()
+  public EAttribute getJob_MeasureExecutionTime()
   {
-    return (EReference)jobEClass.getEStructuralFeatures().get(2);
+    return (EAttribute)jobEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -219,7 +219,7 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getJob_LayoutOptions()
+  public EReference getJob_Resources()
   {
     return (EReference)jobEClass.getEStructuralFeatures().get(3);
   }
@@ -229,7 +229,7 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getJob_Analyses()
+  public EReference getJob_LayoutOptions()
   {
     return (EReference)jobEClass.getEStructuralFeatures().get(4);
   }
@@ -239,9 +239,19 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EReference getJob_Analyses()
+  {
+    return (EReference)jobEClass.getEStructuralFeatures().get(5);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EAttribute getJob_Output()
   {
-    return (EAttribute)jobEClass.getEStructuralFeatures().get(5);
+    return (EAttribute)jobEClass.getEStructuralFeatures().get(6);
   }
 
   /**
@@ -391,6 +401,7 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
     jobEClass = createEClass(JOB);
     createEAttribute(jobEClass, JOB__NAME);
     createEAttribute(jobEClass, JOB__LAYOUT_BEFORE_ANALYSIS);
+    createEAttribute(jobEClass, JOB__MEASURE_EXECUTION_TIME);
     createEReference(jobEClass, JOB__RESOURCES);
     createEReference(jobEClass, JOB__LAYOUT_OPTIONS);
     createEReference(jobEClass, JOB__ANALYSES);
@@ -456,6 +467,7 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
     initEClass(jobEClass, Job.class, "Job", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getJob_Name(), ecorePackage.getEString(), "name", null, 0, 1, Job.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getJob_LayoutBeforeAnalysis(), ecorePackage.getEBoolean(), "layoutBeforeAnalysis", null, 0, 1, Job.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getJob_MeasureExecutionTime(), ecorePackage.getEBoolean(), "measureExecutionTime", null, 0, 1, Job.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getJob_Resources(), this.getResource(), null, "resources", null, 0, -1, Job.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getJob_LayoutOptions(), theKLayoutDataPackage.getKIdentifier(), null, "layoutOptions", null, 0, -1, Job.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getJob_Analyses(), this.getAnalysis(), null, "analyses", null, 0, -1, Job.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

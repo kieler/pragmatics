@@ -21,6 +21,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
@@ -34,6 +36,7 @@ import de.cau.cs.kieler.kiml.grana.GranaPlugin;
  * files.
  * 
  * @author mri
+ * @author uru
  * @kieler.ignore (excluded from review process)
  */
 public class BatchFileSelectionPage extends WizardExportResourcesPage {
@@ -46,6 +49,9 @@ public class BatchFileSelectionPage extends WizardExportResourcesPage {
     /** the message for the 'layout before analysis' option. */
     private static final String MESSAGE_LAYOUT_BEFORE_ANALYSIS =
             "Layout diagrams before analysis";
+    /** the message for the 'measure execution time' option. */
+    private static final String MESSAGE_EXECUTION_TIME_ANALYSIS =
+            "Measure layout execution time of top-level graph";
     /** the error message for 'no file selected'. */
     private static final String MESSAGE_NO_FILE_SELECTED =
             "At least one diagram file has to be selected.";
@@ -54,12 +60,19 @@ public class BatchFileSelectionPage extends WizardExportResourcesPage {
     private static final String PREFERENCE_LAYOUT_BEFORE_ANALYSIS =
             "grana.batch.layoutBeforeAnalysis";
 
+    /** the preference store key for the 'execution time analysis' option. */
+    private static final String PREFERENCE_EXECUTION_TIME_ANALYSIS =
+            "grana.batch.execTimeAnalysis";
+    
     /** the list of selected files. */
     private List<IPath> selectedFiles = new LinkedList<IPath>();
 
     /** the layout before analysis checkbox. */
     private Button layoutBeforeAnalysisCheckbox;
-
+    
+    /** the layout before analysis checkbox. */
+    private Button executionTimeAnalysisCheckbox;
+    
     /**
      * Constructs a BatchFileSelectionPage with initial selection.
      * 
@@ -125,6 +138,17 @@ public class BatchFileSelectionPage extends WizardExportResourcesPage {
     protected void createOptionsGroupButtons(final Group parent) {
         layoutBeforeAnalysisCheckbox = new Button(parent, SWT.CHECK | SWT.LEFT);
         layoutBeforeAnalysisCheckbox.setText(MESSAGE_LAYOUT_BEFORE_ANALYSIS);
+        layoutBeforeAnalysisCheckbox.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                executionTimeAnalysisCheckbox.setEnabled(layoutBeforeAnalysisCheckbox
+                        .getSelection());
+            }
+        });
+        
+        executionTimeAnalysisCheckbox = new Button(parent, SWT.CHECK | SWT.LEFT);
+        executionTimeAnalysisCheckbox.setText(MESSAGE_EXECUTION_TIME_ANALYSIS);
+        executionTimeAnalysisCheckbox.setEnabled(false);
     }
 
     /**
@@ -161,9 +185,11 @@ public class BatchFileSelectionPage extends WizardExportResourcesPage {
         IPreferenceStore preferenceStore =
                 GranaPlugin.getDefault().getPreferenceStore();
         preferenceStore.setDefault(PREFERENCE_LAYOUT_BEFORE_ANALYSIS, true);
-        boolean selected =
-                preferenceStore.getBoolean(PREFERENCE_LAYOUT_BEFORE_ANALYSIS);
+        boolean selected = preferenceStore.getBoolean(PREFERENCE_LAYOUT_BEFORE_ANALYSIS);
         layoutBeforeAnalysisCheckbox.setSelection(selected);
+        selected = preferenceStore.getBoolean(PREFERENCE_EXECUTION_TIME_ANALYSIS);
+        executionTimeAnalysisCheckbox.setSelection(selected);
+        executionTimeAnalysisCheckbox.setEnabled(layoutBeforeAnalysisCheckbox.getSelection());
     }
 
     /**
@@ -174,6 +200,8 @@ public class BatchFileSelectionPage extends WizardExportResourcesPage {
                 GranaPlugin.getDefault().getPreferenceStore();
         preferenceStore.setValue(PREFERENCE_LAYOUT_BEFORE_ANALYSIS,
                 layoutBeforeAnalysisCheckbox.getSelection());
+        preferenceStore.setValue(PREFERENCE_EXECUTION_TIME_ANALYSIS,
+                executionTimeAnalysisCheckbox.getSelection());
     }
 
     /**
@@ -193,5 +221,12 @@ public class BatchFileSelectionPage extends WizardExportResourcesPage {
      */
     public boolean getLayoutBeforeAnalysis() {
         return layoutBeforeAnalysisCheckbox.getSelection();
+    }
+    
+    /**
+     * @return true if the execution time of a performed layout should be measured
+     */
+    public boolean getExecutionTimeAnalysis() {
+        return executionTimeAnalysisCheckbox.getSelection();
     }
 }
