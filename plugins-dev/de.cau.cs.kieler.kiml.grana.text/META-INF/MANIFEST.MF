@@ -41,4 +41,5 @@ Export-Package: de.cau.cs.kieler.kiml.grana.text,
  de.cau.cs.kieler.kiml.grana.text.serializer,
  de.cau.cs.kieler.kiml.grana.text.parser.antlr,
  de.cau.cs.kieler.kiml.grana.text.parser.antlr.internal
+Bundle-Activator: de.cau.cs.kieler.kiml.grana.text.GranaTextPlugin
 

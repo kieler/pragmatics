@@ -20,6 +20,7 @@ import java.io.IOException;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.common.util.URI;
@@ -32,17 +33,26 @@ import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.xtext.util.Arrays;
 
+import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.kiml.grana.GranaPlugin;
 import de.cau.cs.kieler.kiml.grana.text.GranaStandaloneSetup;
+import de.cau.cs.kieler.kiml.grana.text.GranaTextPlugin;
 import de.cau.cs.kieler.kiml.grana.text.GranaTextToBatchJob;
 import de.cau.cs.kieler.kiml.grana.text.grana.Grana;
+import de.cau.cs.kieler.kiml.grana.ui.batch.BatchJob;
+import de.cau.cs.kieler.kiml.grana.ui.batch.BatchResult;
 
 /**
  * Headless application used to execute Grana Batch Jobs from the command line.
  * 
  * @author uru
+ * @kieler.ignore (excluded from review process)
  */
 public class HeadlessGranaExecutor implements IApplication {
 
+    /** the error message for a failed batch analysis. */
+    private static final String MESSAGE_BATCH_FAILED = "The batch analysis failed.";
+    
     private final ResourceSet set = new ResourceSetImpl();
 
     /**
@@ -104,8 +114,18 @@ public class HeadlessGranaExecutor implements IApplication {
                 Job job = new Job("Execute Batch Analysis") {
                     protected IStatus run(final IProgressMonitor monitor) {
                         monitor.beginTask("Execute Batch Analysis", 1);
-                        new GranaTextToBatchJob().execute(grana, monitor);
-                        monitor.done();
+                        try {
+                            Iterable<BatchResult> results =
+                                    new GranaTextToBatchJob().execute(grana, monitor);
+                            displayProblems(results);
+                        } catch (Exception e) {
+                            IStatus status =
+                                    new Status(IStatus.ERROR, GranaPlugin.PLUGIN_ID, 0,
+                                            MESSAGE_BATCH_FAILED, e);
+                            GranaTextPlugin.getDefault().getLog().log(status);
+                        } finally {
+                            monitor.done();
+                        }
                         return Status.OK_STATUS;
                     }
                 };
@@ -126,5 +146,23 @@ public class HeadlessGranaExecutor implements IApplication {
      * {@inheritDoc}
      */
     public void stop() {
+    }
+    
+    private void displayProblems(final Iterable<BatchResult> results) {
+        for (BatchResult result : results) {
+            if (!result.getFailedJobs().isEmpty()) {
+                IStatus[] stati = new IStatus[result.getFailedJobs().size()];
+                int i = 0;
+                for (Pair<BatchJob<?>, Throwable> entry : result.getFailedJobs()) {
+                    stati[i++] =
+                            new Status(IStatus.ERROR, GranaTextPlugin.PLUGIN_ID,
+                                    "Failed analysis of " + entry.getFirst().getParameter(),
+                                    entry.getSecond());
+                }
+                GranaTextPlugin.getDefault().getLog()
+                        .log(new MultiStatus(GranaTextPlugin.PLUGIN_ID, 0, stati,
+                                MESSAGE_BATCH_FAILED, null));
+            }
+        }
     }
 }

@@ -13,15 +13,23 @@
  */
 package de.cau.cs.kieler.kiml.grana.text
 
+import com.google.common.collect.Lists
 import de.cau.cs.kieler.kiml.config.CompoundLayoutConfig
 import de.cau.cs.kieler.kiml.config.text.LayoutConfigTransformer
 import de.cau.cs.kieler.kiml.grana.AnalysisService
 import de.cau.cs.kieler.kiml.grana.text.grana.Grana
+import de.cau.cs.kieler.kiml.grana.text.grana.Job
+import de.cau.cs.kieler.kiml.grana.text.grana.LocalResource
+import de.cau.cs.kieler.kiml.grana.text.grana.ResourceReference
 import de.cau.cs.kieler.kiml.grana.ui.batch.Batch
 import de.cau.cs.kieler.kiml.grana.ui.batch.BatchJob
+import de.cau.cs.kieler.kiml.grana.ui.batch.BatchResult
 import de.cau.cs.kieler.kiml.grana.ui.batch.CSVResultSerializer
 import de.cau.cs.kieler.kiml.grana.ui.batch.FileKGraphProvider
 import de.cau.cs.kieler.kiml.service.util.ProgressMonitorAdapter
+import java.io.File
+import java.io.FileOutputStream
+import java.io.OutputStream
 import java.util.regex.Pattern
 import org.eclipse.core.resources.IContainer
 import org.eclipse.core.resources.ResourcesPlugin
@@ -30,29 +38,29 @@ import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.core.runtime.Path
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ExtensibleURIConverterImpl
-import de.cau.cs.kieler.kiml.grana.text.grana.ResourceReference
-import de.cau.cs.kieler.kiml.grana.text.grana.LocalResource
-import java.io.File
-import java.io.OutputStream
-import java.io.FileOutputStream
-import de.cau.cs.kieler.kiml.grana.text.grana.Job
 
 /**
  * @author uru
+ * @kieler.ignore (excluded from review process)
  */
 class GranaTextToBatchJob {
 
-    def execute(Grana grana, IProgressMonitor progressMonitor) {
+    /**
+     * @return an iterable with the results of all executed batch jobs. These can be used to print problems that might have occurred during the execution. 
+     */
+    def Iterable<BatchResult> execute(Grana grana, IProgressMonitor progressMonitor) {
 
         val pm = new ProgressMonitorAdapter(progressMonitor)
         val wsRoot = ResourcesPlugin.workspace.root
 
+        val results = Lists.<BatchResult>newLinkedList
+        
         // execute for every job
         for (job : grana.jobs) {
             
             // ignore deactivated jobs
             if (!job.name.startsWith("_")) {
-
+                
                 // collect requested analyses
                 val analyses = job.analyses.map[AnalysisService.instance.getAnalysis(it.name)]
                 val batch = new Batch(analyses)
@@ -96,21 +104,16 @@ class GranaTextToBatchJob {
                         }                    
                     }
                 }
-    
+
                 // execute the analyses
                 val result = batch.execute(pm.subTask(1))
                 if (pm.canceled) {
-                    return
+                    return #[]
                 }
                 
-                if (!result.failedJobs.empty) {
-                    for (entry : result.failedJobs) {
-                        // FIXME :)
-                        throw entry.second
-                    }
-                }
+                results += result
     
-                // write results
+                // write results (of successful analyses)
                 var OutputStream os
                 try {
                     // try to use the workspace
@@ -126,9 +129,10 @@ class GranaTextToBatchJob {
                 val serializer = new CSVResultSerializer
                 serializer.serialize(os, result, pm.subTask(1))
                 os.close
-
             }
         }
+        
+        return results
     }
     
     private def addBatchJob(Batch batch, Job job, IPath path) {
@@ -147,28 +151,4 @@ class GranaTextToBatchJob {
         val batchJob = new BatchJob<IPath>(path, provider)
         batch.appendJob(batchJob)
     }
-
-//        // display problems
-//        if (!result.getFailedJobs().isEmpty()) {
-//            IStatus[] stati = new IStatus[result.getFailedJobs().size()];
-//            int i = 0;
-//            for (Pair<BatchJob<?>, Throwable> entry : result.getFailedJobs()) {
-//                stati[i++] = new Status(IStatus.ERROR, GranaPlugin.PLUGIN_ID,
-//                        "Failed analysis of " + entry.getFirst().getParameter(),
-//                        entry.getSecond());
-//            }
-//            StatusManager.getManager().handle(new MultiStatus(GranaPlugin.PLUGIN_ID,
-//                    0, stati, MESSAGE_BATCH_FAILED, null),
-//                    StatusManager.SHOW | StatusManager.LOG);
-//        }
-//        
-//    } catch (Exception e) {
-//        IStatus status = new Status(IStatus.ERROR, GranaPlugin.PLUGIN_ID, 0,
-//                MESSAGE_BATCH_FAILED, e);
-//        StatusManager.getManager().handle(status,
-//                StatusManager.SHOW | StatusManager.LOG);
-//    } finally {
-//        monitor.done();
-//    }
-//}
 }
