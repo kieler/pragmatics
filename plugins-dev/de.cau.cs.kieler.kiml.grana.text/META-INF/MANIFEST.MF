@@ -20,12 +20,12 @@ Require-Bundle: org.eclipse.xtext;visibility:=reexport,
  org.eclipse.emf.common,
  org.eclipse.core.resources,
  org.eclipse.core.runtime,
- de.cau.cs.kieler.core,
- de.cau.cs.kieler.core.kgraph,
- de.cau.cs.kieler.kiml,
- de.cau.cs.kieler.kiml.config.text,
+ de.cau.cs.kieler.core;visibility:=reexport,
+ de.cau.cs.kieler.core.kgraph;visibility:=reexport,
+ de.cau.cs.kieler.kiml;visibility:=reexport,
+ de.cau.cs.kieler.kiml.config.text;visibility:=reexport,
  de.cau.cs.kieler.kiml.grana;visibility:=reexport,
- de.cau.cs.kieler.kiml.service
+ de.cau.cs.kieler.kiml.service;visibility:=reexport
 Import-Package: org.apache.log4j,
  org.eclipse.xtext.xbase.lib
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
@@ -41,4 +41,5 @@ Export-Package: de.cau.cs.kieler.kiml.grana.text,
  de.cau.cs.kieler.kiml.grana.text.serializer,
  de.cau.cs.kieler.kiml.grana.text.parser.antlr,
  de.cau.cs.kieler.kiml.grana.text.parser.antlr.internal
+Bundle-Activator: de.cau.cs.kieler.kiml.grana.text.GranaTextPlugin
 

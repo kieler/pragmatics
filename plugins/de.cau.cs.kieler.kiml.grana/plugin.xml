@@ -343,6 +343,9 @@
          <component
                name="Height">
          </component>
+         <component
+               name="Product">
+         </component>
       </analysis>
       <analysis
             category="de.cau.cs.kieler.kiml.grana.drawing"

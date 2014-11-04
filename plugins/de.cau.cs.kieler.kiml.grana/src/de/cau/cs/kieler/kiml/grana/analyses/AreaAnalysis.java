@@ -58,7 +58,7 @@ public class AreaAnalysis implements IAnalysis {
         Point2D.Float area = computeArea(parentNode);
         progressMonitor.done();
         
-        return new Object[] { area.x, area.y };
+        return new Object[] { area.x, area.y, area.x * area.y };
     }
     
     /**

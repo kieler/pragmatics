@@ -19,6 +19,7 @@ import java.util.Map;
  * The class that contains the results of a batch job.
  * 
  * @author mri
+ * @author uru 
  * @kieler.ignore (excluded from review process)
  * @param <T> the parameter type
  */
@@ -28,6 +29,8 @@ public class BatchJobResult<T> {
     private BatchJob<T> job;
     /** the analyses results. */
     private Map<String, Object> results;
+    /** results of the execution time analysis. */
+    private Map<String, Double> execTimeResults;
 
     /**
      * Constructs an AnalysisBatchJobResult using the AnalysisBatchJob and the
@@ -45,6 +48,20 @@ public class BatchJobResult<T> {
     }
 
     /**
+     * @param theJob
+     *            the job
+     * @param theResults
+     *            the results
+     * @param execResults
+     *            execution time results
+     */
+    public BatchJobResult(final BatchJob<T> theJob,
+            final Map<String, Object> theResults, final Map<String, Double> execResults) {
+        this(theJob, theResults);
+        this.execTimeResults = execResults;
+    }
+    
+    /**
      * Returns the job.
      * 
      * @return the job
@@ -60,5 +77,12 @@ public class BatchJobResult<T> {
      */
     public Map<String, Object> getResults() {
         return results;
+    }
+    
+    /**
+     * @return the execTimeResults
+     */
+    public Map<String, Double> getExecTimeResults() {
+        return execTimeResults;
     }
 }

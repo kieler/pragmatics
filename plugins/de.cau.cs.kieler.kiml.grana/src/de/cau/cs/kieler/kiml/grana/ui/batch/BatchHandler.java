@@ -15,6 +15,7 @@ package de.cau.cs.kieler.kiml.grana.ui.batch;
 
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -38,6 +39,8 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.grana.GranaPlugin;
 import de.cau.cs.kieler.kiml.service.util.ProgressMonitorAdapter;
@@ -47,6 +50,7 @@ import de.cau.cs.kieler.kiml.service.util.ProgressMonitorAdapter;
  * appropriate wizard and executing it.
  * 
  * @author mri
+ * @author uru
  * @kieler.ignore (excluded from review process)
  */
 public class BatchHandler extends AbstractHandler {
@@ -58,6 +62,13 @@ public class BatchHandler extends AbstractHandler {
     private static final int WORK_BATCH = 1;
     private static final int WORK_EXECUTE = 4;
     private static final int WORK_SERIALIZE = 1;
+    
+    /**
+     * Property holding the results of an execution time measurement for a layout run performed
+     * prior to other graph analyses.
+     */
+    public static final IProperty<Map<String, Double>> EXECUTION_TIME_RESULTS =
+            new Property<Map<String, Double>>("grana.execTimeResults");
 
     /**
      * {@inheritDoc}
@@ -94,6 +105,7 @@ public class BatchHandler extends AbstractHandler {
                             for (IPath file : wizard.getSelectedFiles()) {
                                 FileKGraphProvider provider = new FileKGraphProvider();
                                 provider.setLayoutBeforeAnalysis(wizard.getLayoutBeforeAnalysis());
+                                provider.setExecutionTimeAnalysis(wizard.getExecutionTimeAnalysis());
                                 provider.setLayoutConfigurator(wizard.getLayoutConfig());
                                 BatchJob<IPath> batchJob = new BatchJob<IPath>(file, provider);
                                 batch.appendJob(batchJob);

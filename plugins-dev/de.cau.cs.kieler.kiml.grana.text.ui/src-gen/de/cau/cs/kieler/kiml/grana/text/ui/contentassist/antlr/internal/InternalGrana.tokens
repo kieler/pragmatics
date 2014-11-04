@@ -1,5 +1,6 @@
 RULE_BOOLEAN=4
 RULE_ID=8
+T__25=25
 T__24=24
 T__23=23
 T__22=22
@@ -23,6 +24,7 @@ RULE_WS=11
 'filter'=19
 '}'=21
 'analyses'=16
+'measureExecutionTime'=25
 'layoutoptions'=15
 'job'=13
 ':'=22
