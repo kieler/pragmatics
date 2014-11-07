@@ -227,6 +227,10 @@ public final class Properties {
     public static final IProperty<LayeringSolver> LAYERING_SOLVER = new Property<LayeringSolver>(
             "de.cau.cs.kieler.klay.layered.layeringSolver", LayeringSolver.CPLEX);
     
+    /** Whether cycle breaking should calculate a FAS but not revert the edges. */
+    public static final IProperty<Boolean> DRY_CYCLE_BREAKING = new Property<Boolean>(
+            "de.cau.cs.kieler.klay.layered.dryCyclebreaking", false);
+    
     // /////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR
 

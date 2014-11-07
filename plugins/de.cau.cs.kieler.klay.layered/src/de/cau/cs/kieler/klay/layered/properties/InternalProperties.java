@@ -325,6 +325,10 @@ public final class InternalProperties {
      */
     public static final IProperty<KVector> TARGET_OFFSET = new Property<KVector>("targetOffset");
 
+    /**
+     * The size of the feedback arc set calculated by a cycle breaker.
+     */
+    public static final IProperty<Integer> FAS_SIZE = new Property<Integer>("cyclebreaking.fasSize");
     
     // /////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR

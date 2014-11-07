@@ -198,6 +198,8 @@ public final class GreedyCycleBreaker implements ILayoutPhase {
         }
 
         // reverse edges that point left
+        boolean dry = layeredGraph.getProperty(Properties.DRY_CYCLE_BREAKING);
+        int reveseCount = 0;
         for (LNode node : nodes) {
             LPort[] ports = node.getPorts().toArray(new LPort[node.getPorts().size()]);
             for (LPort port : ports) {
@@ -208,12 +210,16 @@ public final class GreedyCycleBreaker implements ILayoutPhase {
                 for (LEdge edge : outgoingEdges) {
                     int targetIx = edge.getTarget().getNode().id;
                     if (mark[node.id] > mark[targetIx]) {
-                        edge.reverse(layeredGraph, true);
-                        layeredGraph.setProperty(InternalProperties.CYCLIC, true);
+                        if (!dry) {
+                            edge.reverse(layeredGraph, true);
+                            layeredGraph.setProperty(InternalProperties.CYCLIC, true);
+                        }
+                        reveseCount++;
                     }
                 }                
             }
         }
+        layeredGraph.setProperty(InternalProperties.FAS_SIZE, reveseCount);
 
         dispose();
         monitor.done();

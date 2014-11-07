@@ -445,5 +445,18 @@
                value="MINIZINC">
          </dependency>
       </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="false"
+            description="Calculate a FAS and remember its size but do not revert edges."
+            id="de.cau.cs.kieler.klay.layered.dryCyclebreaking"
+            name="Dry Cycle Breaking"
+            type="boolean">
+         <dependency
+               option="de.cau.cs.kieler.klay.layered.nodeLayering"
+               value="MINIZINC">
+         </dependency>
+      </layoutOption>
    </extension>
 </plugin>

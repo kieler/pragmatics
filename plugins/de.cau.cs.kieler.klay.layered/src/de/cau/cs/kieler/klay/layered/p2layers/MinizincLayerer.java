@@ -126,6 +126,9 @@ public class MinizincLayerer implements ILayoutPhase {
             ISolverModel<Object, Pair<Integer, List<Integer>>> model;
             if (layeredGraph.getProperty(Properties.LAYERING_SOLVER) == LayeringSolver.SCIP) {
                 model = new MiniZincLayeringModel(layeredGraph);
+            } else if (layeredGraph.getProperty(Properties.LAYERING_SOLVER) 
+                            == LayeringSolver.CPLEX_EPSILON) {
+                model = new CPLEXEpsilonLayeringModel(layeredGraph);
             } else {
                 model = new CPLEXLayeringModel(layeredGraph);
             }
