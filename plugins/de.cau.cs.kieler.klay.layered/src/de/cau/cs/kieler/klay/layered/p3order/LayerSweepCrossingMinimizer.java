@@ -288,6 +288,10 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                     curSweepCrossings += countNorthSouthPortCrossings(fixedLayer);
                 }
                 
+                if (northSouthPorts[fixedLayerIndex]) {
+                    curSweepCrossings += countNorthSouthPortCrossings(fixedLayer);
+                }
+                
                 if (forward) {
                     // Perform a forward sweep
                     for (int layerIndex = 1; layerIndex < layerCount; layerIndex++) {
