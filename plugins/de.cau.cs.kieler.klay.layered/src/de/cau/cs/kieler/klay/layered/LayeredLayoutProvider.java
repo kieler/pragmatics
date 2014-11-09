@@ -31,7 +31,7 @@ import de.cau.cs.kieler.klay.layered.graphimport.KGraphImporter;
  * @author msp
  * @author cds
  * @kieler.design 2012-08-10 chsch grh
- * @kieler.rating proposed yellow by msp
+ * @kieler.rating yellow 2014-11-09 review KI-56 by chsch, als
  */
 public final class LayeredLayoutProvider extends AbstractLayoutProvider {
 
@@ -57,7 +57,9 @@ public final class LayeredLayoutProvider extends AbstractLayoutProvider {
         // that all hash codes are unique, but predictable independently of the object instances.
         HashCodeCounter hashCodeCounter = new HashCodeCounter();
 
-        // Import the graph
+        // Import the graph (layeredGraph won't be null since the KGraphImporter always returns an
+        // LGraph instance, even though the IGraphImporter interface would allow null as a return
+        // value)
         IGraphImporter<KNode> graphImporter = new KGraphImporter(hashCodeCounter);
         LGraph layeredGraph = graphImporter.importGraph(kgraph);
 
@@ -99,8 +101,10 @@ public final class LayeredLayoutProvider extends AbstractLayoutProvider {
         // that all hash codes are unique, but predictable independently of the object instances.
         HashCodeCounter hashCodeCounter = new HashCodeCounter();
 
+        // Import the graph (layeredGraph won't be null since the KGraphImporter always returns an
+        // LGraph instance, even though the IGraphImporter interface would allow null as a return
+        // value)
         IGraphImporter<KNode> graphImporter = new KGraphImporter(hashCodeCounter);
-
         LGraph layeredGraph = graphImporter.importGraph(kgraph);
         
         // Prepare a layout test and return the test execution state
