@@ -22,6 +22,7 @@
             <element ref="staticConfig"/>
             <element ref="semanticConfig"/>
             <element ref="customConfig"/>
+            <element ref="globalStaticConfig"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -190,6 +191,33 @@
                <appInfo>
                   <meta.attribute kind="java" basedOn=":java.lang.Runnable"/>
                </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="globalStaticConfig">
+      <annotation>
+         <documentation>
+            A global layout option configuration. This can be used to statically specify default layout option values to be used throughout the tool.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="option" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Identifier of a layout option, which can be defined using the &lt;code&gt;layoutOption&lt;/code&gt; element of the &lt;code&gt;layoutProviders&lt;/code&gt; extension point.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.layoutProviders/layoutOption/@id"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Value of the layout option.
+               </documentation>
             </annotation>
          </attribute>
       </complexType>
