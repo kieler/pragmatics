@@ -445,6 +445,8 @@ public final class KlayLayered {
     /** A layout phase that does nothing. */
     private class NullPhase implements ILayoutPhase {
         public void process(final LGraph layeredGraph, final IKielerProgressMonitor progressMonitor) {
+            progressMonitor.begin("Null Phase", 1);
+            progressMonitor.done();
         }
         public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
                 final LGraph graph) {
