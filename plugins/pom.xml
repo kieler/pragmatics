@@ -49,7 +49,8 @@
     <module>de.cau.cs.kieler.klay.planar</module>
     <module>de.cau.cs.kieler.klay.tree</module>
     <module>de.cau.cs.kieler.klighd</module>
-    <module>de.cau.cs.kieler.klighd.examples</module>
+    <!-- Deactivated for the moment as luna target platform misses ecoretools -->
+    <!--module>de.cau.cs.kieler.klighd.examples</module-->
     <module>de.cau.cs.kieler.klighd.kivi</module>
 <!--
     KLighD Incremental is disabled as long as it doesn't work with the Kepler version of EMF Compare.
