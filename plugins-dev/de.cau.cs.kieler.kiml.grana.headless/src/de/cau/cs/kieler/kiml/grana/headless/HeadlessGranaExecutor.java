@@ -63,7 +63,7 @@ public class HeadlessGranaExecutor implements IApplication {
                 (String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS);
 
         if (Arrays.contains(appArgs, "--help")) {
-            System.out.println("Usage: grana -ws [WORKSPACE_LOCATION] [GRANA_FILES...]");
+            System.out.println("Usage: grana -data [WORKSPACE_LOCATION] [GRANA_FILES...]");
             System.in.read();
             return IApplication.EXIT_OK;
         }
@@ -76,6 +76,7 @@ public class HeadlessGranaExecutor implements IApplication {
 
         for (final String arg : appArgs) {
             if (!new File(arg).exists()) {
+                System.err.println("\tIgnoring " + arg + " - file does not exist.");
                 continue;
             }
 
@@ -84,7 +85,7 @@ public class HeadlessGranaExecutor implements IApplication {
                 this.executeBatch(arg);
                 System.out.println("\tDone ...");
             } catch (Throwable t) {
-                System.out.println("Failed with ... " + t.getMessage());
+                System.err.println("Failed with ... " + t.getMessage());
             }
         }
 
