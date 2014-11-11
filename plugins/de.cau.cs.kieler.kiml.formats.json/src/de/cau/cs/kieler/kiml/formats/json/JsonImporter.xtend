@@ -206,8 +206,8 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
       
         jsonObject.optJSONObject("properties") => [ props |
             props?.keys.emptyIfNull.forEach [ key |
-                val value = props.optString(key)
-                KimlUtil.loadDataElement(metaService, layoutData, key, value)
+                val value = props.optString(key as String)
+                KimlUtil.loadDataElement(metaService, layoutData, key as String, value)
             ]
         ]
     }
