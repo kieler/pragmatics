@@ -101,6 +101,10 @@ public class EclipseLayoutConfig implements ILayoutConfig {
             if (value != null) {
                 return value;
             }
+        } else {
+            Object value = configService.getOptionValue(
+                    ExtensionLayoutConfigService.GLOBAL_OPTION_VALUE_ID, id);
+            return value;
         }
         return null;
     }
