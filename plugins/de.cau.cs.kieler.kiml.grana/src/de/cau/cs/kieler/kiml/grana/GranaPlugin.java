@@ -21,7 +21,6 @@ import org.osgi.framework.BundleContext;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.kivi.KiVi;
 import de.cau.cs.kieler.kiml.grana.ui.AnalysisEffect;
 import de.cau.cs.kieler.kiml.grana.ui.visualization.VisualizationService;
 import de.cau.cs.kieler.kiml.grana.util.GranaUtil;
@@ -60,7 +59,7 @@ public class GranaPlugin extends AbstractUIPlugin {
             public void layoutDone(final KNode layoutGraph, final IKielerProgressMonitor monitor) {
                 if (VisualizationService.getInstance().findActiveMethod(true)) {
                     List<AnalysisData> analyses = GranaUtil.getLastAnalysesSelection();
-                    KiVi.getInstance().executeEffect(new AnalysisEffect(layoutGraph, analyses));
+                    new AnalysisEffect(layoutGraph, analyses).schedule();
                 }
             }
         });
