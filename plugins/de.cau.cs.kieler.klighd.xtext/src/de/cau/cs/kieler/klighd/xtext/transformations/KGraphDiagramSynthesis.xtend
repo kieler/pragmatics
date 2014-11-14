@@ -25,8 +25,12 @@ import de.cau.cs.kieler.core.kgraph.KPort
 import de.cau.cs.kieler.core.krendering.KRendering
 import de.cau.cs.kieler.core.krendering.KRenderingFactory
 import de.cau.cs.kieler.core.krendering.KRenderingLibrary
+import de.cau.cs.kieler.core.krendering.extensions.KColorExtensions
+import de.cau.cs.kieler.core.krendering.extensions.KLibraryExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KPolylineExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KRenderingExtensions
+import de.cau.cs.kieler.core.properties.IProperty
+import de.cau.cs.kieler.core.properties.Property
 import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
@@ -41,8 +45,6 @@ import de.cau.cs.kieler.klighd.SynthesisOption
 import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier
-import de.cau.cs.kieler.core.properties.IProperty
-import de.cau.cs.kieler.core.properties.Property
 
 /**
  * Synthesizes a copy of the given {@code KNode} and adds default stuff.
@@ -60,6 +62,7 @@ import de.cau.cs.kieler.core.properties.Property
  * </ul>
  * 
  * @author cds
+ * @author uru
  */
 class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
     /**
@@ -87,14 +90,22 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
     private static val SynthesisOption DEFAULTS = SynthesisOption::createChoiceOption(
         "Default Values", 
         ImmutableList::of(DEFAULTS_AS_IN_MODEL, DEFAULTS_ON, DEFAULTS_OFF), DEFAULTS_AS_IN_MODEL)
+        
+   private static val SynthesisOption STYLE = SynthesisOption::createChoiceOption(
+        "Style", 
+        ImmutableList::of("Boring", "Stylish", "Hello Kitty"), "Boring")
     
     @Inject extension KPolylineExtensions
     @Inject extension KRenderingExtensions
+    @Inject extension KColorExtensions
+    @Inject extension KLibraryExtensions
     /** Rendering factory used to create KRendering model instances. */
     static KRenderingFactory renderingFactory = KRenderingFactory::eINSTANCE
     
     /** The value for the defaults property as specified in the model. */
     private boolean defaults = false
+    /** Default rendering for nodes. */
+    private var KRendering defaultNodeRendering;
     /** Default rendering for polyline edges. */
     private var KRendering defaultPolylineRendering;
     /** Default rendering for spline edges. */
@@ -117,7 +128,7 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
      */
     override getDisplayedSynthesisOptions() {
         return ImmutableList::of(
-            DEFAULTS
+            DEFAULTS, STYLE
         )
     }
 
@@ -151,6 +162,25 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
             result.data += library
         }
         
+        switch STYLE.objectValue {
+            case "Stylish": library.initStylishFactory
+            case "Hello Kitty": library.initHelloKittyFactory
+            default: library.initBoringFactory // boring 
+        }
+        
+        // Associate original objects with transformed objects
+        for (entry : copier.entrySet()) {
+            entry.value.associateWith(entry.key)
+        }
+        
+        // Enrich the rendering
+        recursivelyEnrichRendering(result)
+        
+        return result
+    }
+    
+    
+    private def initEdgeRenderings(KRenderingLibrary library) {
         // Create a common rendering for polylines
         defaultPolylineRendering = renderingFactory.createKPolyline() => [
             it.id = "DefaultEdgeRendering"
@@ -165,18 +195,35 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
             it.addArrowDecorator
         ];
         library.renderings += defaultSplineRendering
-        
-        // Associate original objects with transformed objects
-        for (entry : copier.entrySet()) {
-            entry.value.associateWith(entry.key)
-        }
-        
-        // Enrich the rendering
-        recursivelyEnrichRendering(result)
-        
-        return result
     }
     
+    private def initBoringFactory(KRenderingLibrary library) {
+        library.initEdgeRenderings
+        defaultNodeRendering = renderingFactory.createKRectangle => [
+            it.id = "DefaultNodeRendering"
+        ]
+        library.renderings += defaultNodeRendering
+    }
+    
+    private def initStylishFactory(KRenderingLibrary library) {
+        library.initEdgeRenderings
+        defaultNodeRendering = renderingFactory.createKRoundedRectangle => [
+            it.id = "DefaultNodeRendering"
+            it.cornerWidth = 5
+            it.cornerHeight = 5
+            it.setBackgroundGradient("#EBF6FA".color, "#C4E3F3".color, 90)
+        ]
+        library.renderings += defaultNodeRendering
+    }
+    
+    private def initHelloKittyFactory(KRenderingLibrary library) {
+        library.initEdgeRenderings
+        defaultNodeRendering = renderingFactory.createKEllipse => [
+            it.id = "DefaultNodeRendering"
+            it.setBackgroundGradient("#FFEEEE".color, "#FFBBBB".color, 90)
+        ]
+        library.renderings += defaultNodeRendering
+    }
     
     ///////////////////////////////////////////////////////////////////////////////
     // RENDERINGS ENRICHMENT CENTER
@@ -226,6 +273,9 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
                 layoutData.height = 80
             }
         }
+        
+        // add a rendering to the node
+        node.addRenderingRef(defaultNodeRendering) 
     }
     
     /**
@@ -288,10 +338,11 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         if (!label.hasRendering) {
             renderingFactory.createKText() => [text |
                 label.data += text
+                text.fontSize = KlighdConstants::DEFAULT_FONT_SIZE - 2
                 
                 // Port labels should have a smaller font size
                 if (label.eContainer instanceof KPort) {
-                    text.fontSize = KlighdConstants::DEFAULT_FONT_SIZE - 2
+                    text.fontSize = KlighdConstants::DEFAULT_FONT_SIZE - 3
                 }
             ]
         }
@@ -319,7 +370,7 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
                 val nodeLabelPlacement = layoutData.getProperty(LayoutOptions::NODE_LABEL_PLACEMENT)
                 if (nodeLabelPlacement.equals(NodeLabelPlacement.fixed())) {
                     layoutData.setProperty(
-                        LayoutOptions::NODE_LABEL_PLACEMENT, NodeLabelPlacement.insideTopCenter())
+                        LayoutOptions::NODE_LABEL_PLACEMENT, NodeLabelPlacement.insideCenter())
                 }
             }
         }
