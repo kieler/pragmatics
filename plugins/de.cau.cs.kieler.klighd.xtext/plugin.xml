@@ -43,7 +43,7 @@
       <command
             defaultHandler="de.cau.cs.kieler.klighd.xtext.transformations.OpenGraphDiagramHandler"
             id="de.cau.cs.kieler.klighd.xtext.graphDiagram"
-            name="Open Graph Diagram">
+            name="Open General Graph Diagram">
       </command>
    </extension>
    <extension
@@ -53,20 +53,36 @@
             locationURI="popup:org.eclipse.ui.popup.any?before=additions">
          <command
                commandId="de.cau.cs.kieler.klighd.xtext.graphDiagram"
-               label="Open Graph Diagram"
-               style="push">
+               label="Open General Graph Diagram"
+               style="push"
+               tooltip="Opens a generic visualization of the graph&apos;s structure.">
             <visibleWhen
                   checkEnabled="false">
                <iterate>
                   <or>
-                     <instanceof
-                           value="org.eclipse.core.resources.IFile">
-                     </instanceof>
+                     <and>
+                        <instanceof
+                              value="org.eclipse.core.resources.IFile">
+                        </instanceof>
+                        <test
+                              property="de.cau.cs.kieler.klighd.xtext.graphFormatIsSupported">
+                        </test>
+                     </and>
                   </or>
                </iterate>
             </visibleWhen>
          </command>
       </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="de.cau.cs.kieler.klighd.xtext.transformations.SupportedGraphFormatPropertyTester"
+            id="de.cau.cs.kieler.klighd.xtext.SupportedGraphFormatPropertyTester"
+            namespace="de.cau.cs.kieler.klighd.xtext"
+            properties="graphFormatIsSupported"
+            type="org.eclipse.core.resources.IFile">
+      </propertyTester>
    </extension>
 
 </plugin>

@@ -184,7 +184,7 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         // Create a common rendering for polylines
         defaultPolylineRendering = renderingFactory.createKPolyline() => [
             it.id = "DefaultEdgeRendering"
-            it.addArrowDecorator
+            it.addHeadArrowDecorator
             it.addJunctionPointDecorator
         ];
         library.renderings += defaultPolylineRendering
@@ -192,7 +192,7 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         // Create a common rendering for splines
         defaultSplineRendering = renderingFactory.createKSpline => [
             it.id = "SplineEdgeRendering"
-            it.addArrowDecorator
+            it.addHeadArrowDecorator
         ];
         library.renderings += defaultSplineRendering
     }
