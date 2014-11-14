@@ -20,8 +20,6 @@ import java.net.URLEncoder;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.zip.Adler32;
-import java.util.zip.Checksum;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +38,7 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+import com.google.common.hash.Hashing;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Files;
 
@@ -58,8 +57,6 @@ public class KlighdningHTTPHandler extends AbstractHandler {
     private SVGBrowsingViewer getViewer;
 
     private HtmlGenerator gen = new HtmlGenerator();
-    
-    private Checksum checksum = new Adler32();
     
     private static final String TARGET_TREE_NAVIGATION = "/json/content";
     private static final String TARGET_TEXT_FORMATS = "/textualFormats";
@@ -144,7 +141,8 @@ public class KlighdningHTTPHandler extends AbstractHandler {
                 
                 // get timestamp
                 String cs = request.getParameterMap().get("cs")[0];
-                if (Long.valueOf(cs) != Files.getChecksum(file, checksum)) {
+                Long hash = Hashing.adler32().hashBytes(Files.toByteArray(file)).asLong();
+                if (Long.valueOf(cs) != hash) {
                     hasChanged = true;
                 }
                 
