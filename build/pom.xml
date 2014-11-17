@@ -228,6 +228,9 @@
         </configuration>
       </plugin>
 
+<!-- chsch: deactivated all the code assessment plugins,
+            we didn't execute them as they slowed down the build process
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
@@ -245,7 +248,7 @@
         <configuration>
           <targetJdk>1.5</targetJdk>
           <format>xml</format>
-          <!--  <aggregate>true</aggregate> -->
+          <!-  <aggregate>true</aggregate> ->
         </configuration>
       </plugin>
 
@@ -266,7 +269,7 @@
           </execution>
         </executions>
       </plugin>
-
+-->
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
