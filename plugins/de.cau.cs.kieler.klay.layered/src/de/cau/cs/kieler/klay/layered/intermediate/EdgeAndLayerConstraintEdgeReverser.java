@@ -90,11 +90,23 @@ public final class EdgeAndLayerConstraintEdgeReverser implements ILayoutProcesso
                 // have a feedback node. Normally, the connected edges would be routed around the node,
                 // but that hides the feedback node character. We thus simply reverse all connected
                 // edges and thus make KLay Layered think we have a regular node
+                //
+                // Note that this behavior is only desired if reversed edges into both directions,
+                // WEST and EAST, exist. Otherwise this processing causes issues with an external 
+                // port dummy with FIRST_SEPARATE and an inverted ports on the target node's EAST side.
                 if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()
                         && !node.getPorts().isEmpty()) {
                     
                     boolean allPortsReversed = true;
+                    int westPorts = 0;
+                    int eastPorts = 0;
+                    
                     for (LPort port : node.getPorts()) {
+                        if (port.getSide() == PortSide.WEST) {
+                            westPorts++;
+                        } else if (port.getSide() == PortSide.EAST) {
+                            eastPorts++;
+                        }
                         if (!(port.getSide() == PortSide.EAST && port.getNetFlow() > 0
                                 || port.getSide() == PortSide.WEST && port.getNetFlow() < 0)) {
                             
@@ -102,7 +114,8 @@ public final class EdgeAndLayerConstraintEdgeReverser implements ILayoutProcesso
                             break;
                         }
                     }
-                    if (allPortsReversed) {
+                    
+                    if (allPortsReversed && westPorts > 0 && eastPorts > 0) {
                         reverseEdges(layeredGraph, node, layerConstraint, PortType.UNDEFINED);
                     }
                 }
