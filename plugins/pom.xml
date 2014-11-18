@@ -27,6 +27,8 @@
     <module>de.cau.cs.kieler.core.ui</module>
     <module>de.cau.cs.kieler.kiml</module>
     <module>de.cau.cs.kieler.kiml.adaptagrams</module>
+    <module>de.cau.cs.kieler.kiml.config.text</module>
+    <module>de.cau.cs.kieler.kiml.config.text.ui</module>
     <module>de.cau.cs.kieler.kiml.export</module>
     <module>de.cau.cs.kieler.kiml.formats</module>
     <module>de.cau.cs.kieler.kiml.formats.gml</module>
@@ -36,6 +38,9 @@
     <module>de.cau.cs.kieler.kiml.formats.svg</module>
     <module>de.cau.cs.kieler.kiml.gmf</module>
     <module>de.cau.cs.kieler.kiml.grana</module>
+    <module>de.cau.cs.kieler.kiml.grana.headless</module>
+    <module>de.cau.cs.kieler.kiml.grana.text</module>
+    <module>de.cau.cs.kieler.kiml.grana.text.ui</module>
     <module>de.cau.cs.kieler.kiml.graphiti</module>
     <module>de.cau.cs.kieler.kiml.graphviz.dot</module>
     <module>de.cau.cs.kieler.kiml.graphviz.layouter</module>
