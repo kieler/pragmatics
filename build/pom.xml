@@ -38,32 +38,35 @@
     </kieler.ptolemy>
   </properties>
 
-
-
-  <!-- common repositories -->
-  <repositories>
-    <!-- eclipse base installation --> 
-    <repository>
-      <id>p2.targetPlatform</id>
-      <layout>p2</layout>
-      <url>${kieler.targetplatform}</url>
-    </repository>
-    <!-- eclipse delta packs -->
-    <repository>
-      <id>p2.targetPlatformDelta</id>
-      <layout>p2</layout>
-      <url>${kieler.targetplatform.delta}</url>
-    </repository>
-  </repositories>
-
-  
-  <!-- Define one profile for each output target we have. -->
+  <!-- Define one profile for each output target we have.
+       Formerly, we had the <repository> definitions repeated below in each profile
+       globally defined, i.e. profile independent. This, however, prevents the
+       Stuttgart/India guys from relying on our build infrastructure as it is 
+       (they don't want and cannot rely on our target platform repos) and would
+       require customization, which may lead to merge conflicts due updates in our
+       config and further hassles... -->
   <profiles>
+
     <!-- The KWebS product. -->
     <profile>
       <id>kwebs</id>
       
       <repositories>
+        <!-- eclipse base installation -->
+        <repository>
+          <id>p2.targetPlatform</id>
+          <layout>p2</layout>
+          <url>${kieler.targetplatform}</url>
+        </repository>
+
+        <!-- eclipse delta packs -->
+        <repository>
+          <id>p2.targetPlatformDelta</id>
+          <layout>p2</layout>
+          <url>${kieler.targetplatform.delta}</url>
+        </repository>
+
+        <!-- kieler pragmatics runtime -->
         <repository>
           <id>p2.nightly_pragmatics</id>
           <layout>p2</layout>
@@ -84,11 +87,28 @@
       <id>klighdning</id>
       
       <repositories>
+        <!-- eclipse base installation --> 
+        <repository>
+          <id>p2.targetPlatform</id>
+          <layout>p2</layout>
+          <url>${kieler.targetplatform}</url>
+        </repository>
+
+        <!-- eclipse delta packs -->
+        <repository>
+          <id>p2.targetPlatformDelta</id>
+          <layout>p2</layout>
+          <url>${kieler.targetplatform.delta}</url>
+        </repository>
+
+        <!-- kieler pragmatics runtime -->
         <repository>
           <id>p2.nightly_pragmatics</id>
           <layout>p2</layout>
           <url>${kieler.pragmatics.nightly}</url>
         </repository>
+        
+        <!-- ptolemy runtime -->
         <repository>
           <id>p2.ptolemy</id>
           <layout>p2</layout>
@@ -113,6 +133,21 @@
       </activation>
       
       <repositories>
+        <!-- eclipse base installation --> 
+        <repository>
+          <id>p2.targetPlatform</id>
+          <layout>p2</layout>
+          <url>${kieler.targetplatform}</url>
+        </repository>
+
+        <!-- eclipse delta packs -->
+        <repository>
+          <id>p2.targetPlatformDelta</id>
+          <layout>p2</layout>
+          <url>${kieler.targetplatform.delta}</url>
+        </repository>
+
+        <!-- ptolemy runtime -->
         <repository>
           <id>p2.ptolemy</id>
           <layout>p2</layout>
@@ -132,11 +167,28 @@
       <id>ptolemy-rcp</id>
       
       <repositories>
+        <!-- eclipse base installation --> 
+        <repository>
+          <id>p2.targetPlatform</id>
+          <layout>p2</layout>
+          <url>${kieler.targetplatform}</url>
+        </repository>
+
+        <!-- eclipse delta packs -->
+        <repository>
+          <id>p2.targetPlatformDelta</id>
+          <layout>p2</layout>
+          <url>${kieler.targetplatform.delta}</url>
+        </repository>
+
+        <!-- kieler pragmatics runtime -->
         <repository>
           <id>p2.nightly_pragmatics</id>
           <layout>p2</layout>
           <url>${kieler.pragmatics.nightly}</url>
         </repository>
+
+        <!-- ptolemy runtime -->
         <repository>
           <id>p2.ptolemy</id>
           <layout>p2</layout>
@@ -155,6 +207,21 @@
       <id>kgraph-rcp</id>
       
       <repositories>
+        <!-- eclipse base installation --> 
+        <repository>
+          <id>p2.targetPlatform</id>
+          <layout>p2</layout>
+          <url>${kieler.targetplatform}</url>
+        </repository>
+
+        <!-- eclipse delta packs -->
+        <repository>
+          <id>p2.targetPlatformDelta</id>
+          <layout>p2</layout>
+          <url>${kieler.targetplatform.delta}</url>
+        </repository>
+
+        <!-- kieler pragmatics runtime -->
         <repository>
           <id>p2.nightly_pragmatics</id>
           <layout>p2</layout>
