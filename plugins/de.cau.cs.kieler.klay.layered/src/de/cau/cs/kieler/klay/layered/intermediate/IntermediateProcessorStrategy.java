@@ -81,6 +81,12 @@ public enum IntermediateProcessorStrategy {
     PORT_DISTRIBUTER,
     /** Compacts looong sausages. This is a hidden feature. */
     SAUSAGE_COMPACTION,
+    /** Attempts to improve crossing number through greedy switch algorithm. */
+    GREEDY_SWITCH_CROSSING_COUNTER_MINIMIZER,
+    /** Attempts to improve crossing number through greedy switch algorithm with crossing matrix. */
+    GREEDY_SWITCH_CROSSING_CROSSINGMATRIX_MINIMIZER,
+    /** Attempts to improve crossing number through greedy switch algorithm on demand crossing matrix. */
+    GREEDY_SWITCH_CROSSING_ONDEMAND_CROSSINGMATRIX_MINIMIZER,
     /** Makes sure that in-layer constraints are handled. */
     IN_LAYER_CONSTRAINT_PROCESSOR,
     /** Merges long edge dummy nodes belonging to the same hyperedge. */
@@ -166,6 +172,15 @@ public enum IntermediateProcessorStrategy {
             
         case END_LABEL_PROCESSOR:
             return new EndLabelProcessor();
+            
+        case GREEDY_SWITCH_CROSSING_COUNTER_MINIMIZER:
+            return new GreedySwitchCounterProcessor();
+
+        case GREEDY_SWITCH_CROSSING_CROSSINGMATRIX_MINIMIZER:
+            return new GreedySwitchCrossingMatrixProcessor();
+            
+        case GREEDY_SWITCH_CROSSING_ONDEMAND_CROSSINGMATRIX_MINIMIZER:
+            return new GreedySwitchOnDemandCrossingMatrixProcessor();
             
         case HIERARCHICAL_PORT_CONSTRAINT_PROCESSOR:
             return new HierarchicalPortConstraintProcessor();
@@ -259,3 +274,4 @@ public enum IntermediateProcessorStrategy {
         }
     }
 }
+

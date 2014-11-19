@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2014 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
 import java.util.ListIterator;
@@ -18,7 +31,7 @@ import de.cau.cs.kieler.klay.layered.p3order.NodeGroup;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 
-public abstract class AbstractGreedySwitchProcessor implements ILayoutProcessor{
+public abstract class AbstractGreedySwitchProcessor implements ILayoutProcessor {
 
     /**
      * Port position array used for counting the number of edge crossings.
@@ -41,11 +54,42 @@ public abstract class AbstractGreedySwitchProcessor implements ILayoutProcessor{
     /**
      * Complete node order of the current layer sweep.
      */
-    protected NodeGroup[][] curSweep;
+    private NodeGroup[][] curSweep;
+    /**
+     * Complete node order of the best layer sweep.
+     */
+    private NodeGroup[][] bestSweep;
     /**
      * Complete node order of the previous layer sweep.
      */
-    protected NodeGroup[][] prevSweep;
+    private NodeGroup[][] prevSweep;
+
+    /**
+     * Returns the current sweep.
+     * 
+     * @return
+     */
+    protected NodeGroup[][] getCurSweep() {
+        return curSweep;
+    }
+
+    /**
+     * Returns the best sweep.
+     * 
+     * @return
+     */
+    protected NodeGroup[][] getBestSweep() {
+        return bestSweep;
+    }
+
+    /**
+     * returns the previous sweep.
+     * 
+     * @return
+     */
+    protected NodeGroup[][] getPrevSweep() {
+        return prevSweep;
+    }
 
     /**
      * {@inheritDoc}
@@ -57,21 +101,20 @@ public abstract class AbstractGreedySwitchProcessor implements ILayoutProcessor{
             return;
         }
 
-        initialize(layeredGraph);
+        initialize(layeredGraph);//TodoAlan Think about this
         // -- delme TODOAlan
         int totalCrossingsBefore = countAllCrossings(layerCount);
         // --delme
 
         boolean forward = true;
-
-
-        for (int layerIndex = 0; layerIndex < layerCount - 1; layerIndex++) {
-            switchInLayer(forward, layerIndex);
-        }
-        forward = false;
-
-        for (int layerIndex = layerCount - 1; layerIndex > 0; layerIndex--) {
-            switchInLayer(forward, layerIndex);
+        int sweepCount = 0;
+        while (sweepCount < 2) { // TODOAlan: Stop depending on improvement and take previous or current sweep.
+            for (int layerIndex = forward ? 0 : layerCount - 1; forward ? layerIndex < layerCount - 1
+                    : layerIndex > 0; layerIndex = forward ? layerIndex + 1 : layerIndex - 1) {
+                switchInLayer(forward, layerIndex);
+            }
+            forward = !forward;
+            sweepCount++;
         }
 
         // -- delme TODOAlan
@@ -85,11 +128,12 @@ public abstract class AbstractGreedySwitchProcessor implements ILayoutProcessor{
     }
 
     /**
-     * Complete node order of the best layer sweep.
+     * Performs switches in one layer depending on implementation.
+     * 
+     * @param forward
+     * @param layerIndex
      */
-    protected NodeGroup[][] bestSweep;
-
-    protected abstract void switchInLayer(boolean forward, int layerIndex);
+    protected abstract void switchInLayer(final boolean forward, final int layerIndex);
 
     private void setNewGraph(final LGraph layeredGraph) {
         ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();

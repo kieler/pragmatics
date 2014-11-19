@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2014 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
 import java.util.List;
@@ -6,13 +19,18 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.p3order.NodeGroup;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 
+/**
+ * This Processor uses greedy switch and recounts number of crossings in layer for every feasable switch.
+ * @author alan
+ *
+ */
 public class GreedySwitchCounterProcessor extends AbstractGreedySwitchProcessor {
 
     @Override
-    protected void switchInLayer(boolean forward, int layerIndex) {
+    protected void switchInLayer(final boolean forward, final int layerIndex) {
         int freeLayerIndex = forward ? layerIndex + 1 : layerIndex - 1;
-        NodeGroup[] fixedLayer = curSweep[layerIndex];
-        NodeGroup[] freeLayer = curSweep[freeLayerIndex];
+        NodeGroup[] fixedLayer = getCurSweep()[layerIndex];
+        NodeGroup[] freeLayer = getCurSweep()[freeLayerIndex];
         int currentAmountOfCrossings =
                 forward ? countCrossings(fixedLayer, freeLayer) : countCrossings(fixedLayer,
                         freeLayer);
