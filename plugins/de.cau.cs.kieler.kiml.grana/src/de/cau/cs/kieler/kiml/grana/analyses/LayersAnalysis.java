@@ -18,6 +18,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
+
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -35,6 +37,9 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  * of edge segments that completely span a layer in the specified direction. 
  * Returns a triple of integers.
  * 
+ * Note that measuring maximal nodes per layer does not really make 
+ * sense for hierarchical graphs.
+ * 
  * @author msp
  * @author uru
  * @kieler.design proposed by msp
@@ -46,6 +51,10 @@ public class LayersAnalysis implements IAnalysis {
     private static final class Layer {
         private float start;
         private float end;
+        /** number of nodes in this layer. */
+        public List<KNode> nodes = Lists.newArrayList(); // SUPPRESS CHECKSTYLE NEXT 3 VisibilityModifier
+        /** number of dummies for edges spanning this layer. */
+        public int dummies = 0;
 
         private Layer(final float thestart, final float theend) {
             this.start = thestart;
@@ -64,29 +73,35 @@ public class LayersAnalysis implements IAnalysis {
      *            the end position of the new segment
      */
     private static void insert(final List<Layer> layers, final float start,
-            final float end) {
+            final float end, final KNode node) {
         Layer insertLayer = null;
         Iterator<Layer> layerIter = layers.iterator();
         while (layerIter.hasNext()) {
             Layer currentLayer = layerIter.next();
             if (start <= currentLayer.end && end >= currentLayer.start) {
                 if (insertLayer == null) {
+                    // expand the current layer and insert the node into it
                     insertLayer = currentLayer;
                     insertLayer.start = Math.min(insertLayer.start, start);
                     insertLayer.end = Math.max(insertLayer.end, end);
                 } else {
+                    // merge two partly created layers
                     layerIter.remove();
                     insertLayer.start =
                             Math.min(insertLayer.start, currentLayer.start);
                     insertLayer.end =
                             Math.max(insertLayer.end, currentLayer.end);
+                    insertLayer.nodes.addAll(currentLayer.nodes);
                 }
             }
         }
         if (insertLayer == null) {
             Layer newLayer = new Layer(start, end);
             layers.add(newLayer);
+            insertLayer = newLayer;
         }
+        
+        insertLayer.nodes.add(node);
     }
 
     /**
@@ -102,7 +117,8 @@ public class LayersAnalysis implements IAnalysis {
         int[] count = countLayers(parentNode, hierarchy);
 
         progressMonitor.done();
-        return new Object[] { count[0], count[1], count[2] };
+        // SUPPRESS CHECKSTYLE NEXT 1 MagicNumber
+        return new Object[] { count[0], count[1], count[2], count[3] , count[4]};
     }
     
     /**
@@ -119,7 +135,7 @@ public class LayersAnalysis implements IAnalysis {
             KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
             float start = nodeLayout.getYpos();
             float end = start + nodeLayout.getHeight();
-            insert(horizontalLayers, start, end);
+            insert(horizontalLayers, start, end, node);
         }
 
         // analyze vertical layers
@@ -128,7 +144,7 @@ public class LayersAnalysis implements IAnalysis {
             KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
             float start = nodeLayout.getXpos();
             float end = start + nodeLayout.getWidth();
-            insert(verticalLayers, start, end);
+            insert(verticalLayers, start, end, node);
         }
         
         // analyze the number of dummy nodes (only valid for a layer-based layout)
@@ -146,6 +162,7 @@ public class LayersAnalysis implements IAnalysis {
                     for (Layer layer : verticalLayers) {
                         if (start < layer.start && end > layer.end) {
                             dummyCount++;
+                            layer.dummies++;
                         }
                     }
                 }
@@ -161,14 +178,34 @@ public class LayersAnalysis implements IAnalysis {
                     for (Layer layer : horizontalLayers) {
                         if (start < layer.start && end > layer.end) {
                             dummyCount++;
+                            layer.dummies++;
                         }
                     }
                 }
             }
         }
         
+        // analyze maximal number of nodes over all layers (only valid for a layer-based layout)
+        int maxNodesPerLayer = Integer.MIN_VALUE;
+        int maxNodesPerLayerWDummies = Integer.MIN_VALUE;
+        if (dir == Direction.LEFT || dir == Direction.RIGHT 
+                || dir == Direction.UNDEFINED) { // default direction is kindof left-to-right
+            for (Layer l : verticalLayers) {
+                maxNodesPerLayer = Math.max(maxNodesPerLayer, l.nodes.size());
+                maxNodesPerLayerWDummies =
+                        Math.max(maxNodesPerLayerWDummies, l.nodes.size() + l.dummies);
+            }
+        } else {
+            for (Layer l : horizontalLayers) {
+                maxNodesPerLayer = Math.max(maxNodesPerLayer, l.nodes.size());
+                maxNodesPerLayerWDummies =
+                        Math.max(maxNodesPerLayerWDummies, l.nodes.size() + l.dummies);
+            }
+        }
         // count the number of layers in the nested subgraphs
-        int[] count = new int[] { horizontalLayers.size(), verticalLayers.size(), dummyCount };
+        int[] count =
+                new int[] { horizontalLayers.size(), verticalLayers.size(), dummyCount,
+                        maxNodesPerLayer, maxNodesPerLayerWDummies };
         if (hierarchy) {
             for (KNode child : parentNode.getChildren()) {
                 if (!child.getChildren().isEmpty()) {
@@ -176,6 +213,7 @@ public class LayersAnalysis implements IAnalysis {
                     count[0] += childResult[0];
                     count[1] += childResult[1];
                     count[2] += childResult[2];
+                    // 3, 4 do not make sense here
                 }
             }
         }

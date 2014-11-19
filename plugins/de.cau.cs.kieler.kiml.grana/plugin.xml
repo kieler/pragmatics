@@ -436,6 +436,12 @@
                abbreviation="DN"
                name="Dummy Nodes">
          </component>
+         <component
+               name="Max Nodes Per Layer">
+         </component>
+         <component
+               name="Max Nodes Per Layer (Inc Dummies)">
+         </component>
       </analysis>
       <analysis
             category="de.cau.cs.kieler.kiml.grana.drawing"
