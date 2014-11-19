@@ -32,8 +32,12 @@ import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
- * An analysis for the number of horizontal and vertical layers. Returns a pair
- * of integers.
+ * An analysis for the number of horizontal and vertical layers. Also analyzes 
+ * the number of dummy nodes introduced by a layer-based layout, i.e. the number 
+ * of edge segments that completely span a layer in the specified direction.
+ * Additionally, the maximum number of nodes (with dummies) per layer (for layer-based layout)
+ * and the maximum edge density between any pair of layers is determined.
+ * Returns six integers.
  * 
  * Note that measuring maximal nodes per layer does not really make 
  * sense for hierarchical graphs.
@@ -115,7 +119,7 @@ public class LayersAnalysis implements IAnalysis {
 
         progressMonitor.done();
         // SUPPRESS CHECKSTYLE NEXT 1 MagicNumber
-        return new Object[] { count[0], count[1], count[2], count[3] , count[4]};
+        return new Object[] { count[0], count[1], count[2], count[3] , count[4], count[5] };
     }
     
     /**
@@ -152,7 +156,7 @@ public class LayersAnalysis implements IAnalysis {
             for (KNode node : parentNode.getChildren()) {
                 for (KEdge e : node.getOutgoingEdges()) {
                     KEdgeLayout el = e.getData(KEdgeLayout.class);
-                    // edges be 'against' the main flow
+                    // edges may be 'against' the main flow
                     float start = Math.min(el.getSourcePoint().getX(), el.getTargetPoint().getX());
                     float end = Math.max(el.getSourcePoint().getX(), el.getTargetPoint().getX());
 
@@ -168,7 +172,7 @@ public class LayersAnalysis implements IAnalysis {
             for (KNode node : parentNode.getChildren()) {
                 for (KEdge e : node.getOutgoingEdges()) {
                     KEdgeLayout el = e.getData(KEdgeLayout.class);
-                    // edges be 'against' the main flow
+                    // edges may be 'against' the main flow
                     float start = Math.min(el.getSourcePoint().getY(), el.getTargetPoint().getY());
                     float end = Math.max(el.getSourcePoint().getY(), el.getTargetPoint().getY());
 
@@ -199,10 +203,65 @@ public class LayersAnalysis implements IAnalysis {
                         Math.max(maxNodesPerLayerWDummies, l.nodes.size() + l.dummies);
             }
         }
+        
+        // analyze the edge density between adjacent layers
+        // for the i-th and i+1-th layers (in flow direction) the edge 
+        // density can be determined by counting the number of 
+        // outgoing edges with a target in a layer j > i plus the number of 
+        // incoming edges with a source in a layer j' > i plus the number of
+        // dummy nodes in layer i
+        int maxEdgeDensity = Integer.MIN_VALUE;
+        if (dir == Direction.LEFT || dir == Direction.RIGHT
+                || dir == Direction.UNDEFINED) { // default direction is kindof left-to-right
+            for (Layer l : verticalLayers) {
+                int layerOutEdges = l.dummies;
+                for (KNode n : l.nodes) {
+                    // out edges targeting higher layer
+                    for (KEdge e : n.getOutgoingEdges()) {
+                        KEdgeLayout el = e.getData(KEdgeLayout.class);
+                        if (el.getSourcePoint().getX() < el.getTargetPoint().getX()) {
+                            layerOutEdges++;
+                        }
+                    }
+                    // in edges coming from higher layer
+                    for (KEdge e : n.getIncomingEdges()) {
+                        KEdgeLayout el = e.getData(KEdgeLayout.class);
+                        if (el.getSourcePoint().getX() > el.getTargetPoint().getX()) {
+                            layerOutEdges++;
+                        }
+                    }
+                }
+                maxEdgeDensity = Math.max(maxEdgeDensity, layerOutEdges);
+            }
+        } else {
+            for (Layer l : horizontalLayers) {
+                int layerOutEdges = l.dummies;
+                for (KNode n : l.nodes) {
+                    // out edges targeting higher layer
+                    for (KEdge e : n.getOutgoingEdges()) {
+                        KEdgeLayout el = e.getData(KEdgeLayout.class);
+                        if (el.getSourcePoint().getY() < el.getTargetPoint().getY()) {
+                            layerOutEdges++;
+                        }
+                    }
+                    // in edges coming from higher layer
+                    for (KEdge e : n.getIncomingEdges()) {
+                        KEdgeLayout el = e.getData(KEdgeLayout.class);
+                        if (el.getSourcePoint().getY() > el.getTargetPoint().getY()) {
+                            layerOutEdges++;
+                        }
+                    }
+                }
+                maxEdgeDensity = Math.max(maxEdgeDensity, layerOutEdges);
+            }
+        }
+        
+        
+        
         // count the number of layers in the nested subgraphs
         int[] count =
                 new int[] { horizontalLayers.size(), verticalLayers.size(), dummyCount,
-                        maxNodesPerLayer, maxNodesPerLayerWDummies };
+                        maxNodesPerLayer, maxNodesPerLayerWDummies, maxEdgeDensity };
 
         if (hierarchy) {
             for (KNode child : parentNode.getChildren()) {
@@ -211,7 +270,7 @@ public class LayersAnalysis implements IAnalysis {
                     count[0] += childResult[0];
                     count[1] += childResult[1];
                     count[2] += childResult[2];
-                    // 3, 4 do not make sense here
+                    // 3, 4, 5 do not make sense here
                 }
             }
         }
