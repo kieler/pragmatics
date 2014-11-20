@@ -139,6 +139,8 @@ public final class BKNodePlacer implements ILayoutPhase {
     private boolean debugMode = false;
     /** Whether to produce a balanced layout or not. */
     private boolean produceBalancedLayout = false;
+    /** During block placement, the y position where the next block should be placed initially. */
+    private double nextBlockYPosition = 0;
     
 
     /**
@@ -603,6 +605,7 @@ public final class BKNodePlacer implements ILayoutPhase {
      */
     private void horizontalCompaction(final LGraph layeredGraph, final BKAlignedLayout bal) {
         // Initialize fields with basic values, partially depending on the direction
+        nextBlockYPosition = 0;
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
                 bal.sink.put(node, node);
@@ -681,8 +684,12 @@ public final class BKNodePlacer implements ILayoutPhase {
         // be determined more intelligently. The second line was a first attempt that fixed the problem
         // in the sample graph attached to KIPRA-1426, but I'm not convinced that it is a good solution
         // in general.
-        bal.y.put(root, 0.0);
-//        bal.y.put(root, -bal.innerShift.get(root));
+        
+        // Prior to KIPRA-1426 the root was placed at coordinate 0 (following line).
+        // Now we do something slightly more intelligent, we initially place all 
+        // blocks one belwo the other.
+        // bal.y.put(root, 0.0);
+        bal.y.put(root, nextBlockYPosition);
         
         // Iterate through block and determine, where the block can be placed (until we arrive at the
         // block's root node again)
@@ -789,6 +796,9 @@ public final class BKNodePlacer implements ILayoutPhase {
             // Get the next node in the block
             currentNode = bal.align.get(currentNode);
         } while (currentNode != root);
+        
+        // determine position for next block
+        nextBlockYPosition = bal.blockSize.get(root) + bal.y.get(root);
     }
     
 

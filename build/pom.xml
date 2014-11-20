@@ -38,32 +38,107 @@
     </kieler.ptolemy>
   </properties>
 
-
-
-  <!-- common repositories -->
-  <repositories>
-    <!-- eclipse base installation --> 
-    <repository>
-      <id>p2.targetPlatform</id>
-      <layout>p2</layout>
-      <url>${kieler.targetplatform}</url>
-    </repository>
-    <!-- eclipse delta packs -->
-    <repository>
-      <id>p2.targetPlatformDelta</id>
-      <layout>p2</layout>
-      <url>${kieler.targetplatform.delta}</url>
-    </repository>
-  </repositories>
-
-  
-  <!-- Define one profile for each output target we have. -->
+  <!-- Define one profile for each output target we have.
+       Formerly, we had the <repository> definitions repeated below in each profile
+       globally defined, i.e. profile independent. This, however, prevents the
+       Stuttgart/India guys from relying on our build infrastructure as it is 
+       (they don't want and cannot rely on our target platform repos) and would
+       require customization, which may lead to merge conflicts due updates in our
+       config and further hassles... -->
   <profiles>
+
+    <!-- The Pragmatics update site. -->
+    <profile>
+      <id>pragmatics</id>
+
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+
+      <repositories>
+        <!-- eclipse base installation --> 
+        <repository>
+          <id>p2.targetPlatform</id>
+          <layout>p2</layout>
+          <url>${kieler.targetplatform}</url>
+        </repository>
+
+        <!-- eclipse delta packs -->
+        <repository>
+          <id>p2.targetPlatformDelta</id>
+          <layout>p2</layout>
+          <url>${kieler.targetplatform.delta}</url>
+        </repository>
+
+        <!-- ptolemy runtime -->
+        <repository>
+          <id>p2.ptolemy</id>
+          <layout>p2</layout>
+          <url>${kieler.ptolemy}</url>
+        </repository>
+      </repositories>
+
+      <modules>
+        <module>../plugins</module>
+        <module>../features</module>
+        <module>de.cau.cs.kieler.pragmatics.repository</module>
+      </modules>
+    </profile>
+
+    <!-- The KGraph RCP. -->
+    <profile>
+      <id>kgraph-rcp</id>
+      
+      <repositories>
+        <!-- eclipse base installation --> 
+        <repository>
+          <id>p2.targetPlatform</id>
+          <layout>p2</layout>
+          <url>${kieler.targetplatform}</url>
+        </repository>
+
+        <!-- eclipse delta packs -->
+        <repository>
+          <id>p2.targetPlatformDelta</id>
+          <layout>p2</layout>
+          <url>${kieler.targetplatform.delta}</url>
+        </repository>
+
+        <!-- kieler pragmatics runtime -->
+        <repository>
+          <id>p2.nightly_pragmatics</id>
+          <layout>p2</layout>
+          <url>${kieler.pragmatics.nightly}</url>
+        </repository> 
+      </repositories>
+      
+      <modules>
+         <module>../products/de.cau.cs.kieler.core.kgraph.rcp</module>
+         <module>../features/de.cau.cs.kieler.kgraph.rcp.feature</module>
+         <module>de.cau.cs.kieler.kgraph.rcp.repository</module>
+      </modules>
+    </profile>
+
     <!-- The KWebS product. -->
     <profile>
       <id>kwebs</id>
       
       <repositories>
+        <!-- eclipse base installation -->
+        <repository>
+          <id>p2.targetPlatform</id>
+          <layout>p2</layout>
+          <url>${kieler.targetplatform}</url>
+        </repository>
+
+        <!-- eclipse delta packs -->
+        <repository>
+          <id>p2.targetPlatformDelta</id>
+          <layout>p2</layout>
+          <url>${kieler.targetplatform.delta}</url>
+        </repository>
+
+        <!-- kieler pragmatics runtime -->
         <repository>
           <id>p2.nightly_pragmatics</id>
           <layout>p2</layout>
@@ -78,65 +153,34 @@
         <module>de.cau.cs.kieler.kwebs.repository</module>
       </modules>
     </profile>
-      
-    <!-- The KLighDning update site. -->
-    <profile>
-      <id>klighdning</id>
-      
-      <repositories>
-        <repository>
-          <id>p2.nightly_pragmatics</id>
-          <layout>p2</layout>
-          <url>${kieler.pragmatics.nightly}</url>
-        </repository>
-        <repository>
-          <id>p2.ptolemy</id>
-          <layout>p2</layout>
-          <url>${kieler.ptolemy}</url>
-        </repository>
-      </repositories>
-      
-      <modules>
-        <module>../plugins/de.cau.cs.kieler.web.statistics</module>
-        <module>../plugins/de.cau.cs.kieler.klighdning</module>
-        <module>../features/de.cau.cs.kieler.klighdning.feature</module>
-        <module>de.cau.cs.kieler.klighdning.repository</module>
-      </modules>
-    </profile>
-      
-    <!-- The Pragmatics update site. -->
-    <profile>
-      <id>pragmatics</id>
-      
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      
-      <repositories>
-        <repository>
-          <id>p2.ptolemy</id>
-          <layout>p2</layout>
-          <url>${kieler.ptolemy}</url>
-        </repository>
-      </repositories>
-      
-      <modules>
-        <module>../plugins</module>
-        <module>../features</module>
-        <module>de.cau.cs.kieler.pragmatics.repository</module>
-      </modules>
-    </profile>
     
     <!-- The Ptolemy RCP. -->
     <profile>
       <id>ptolemy-rcp</id>
       
       <repositories>
+        <!-- eclipse base installation --> 
+        <repository>
+          <id>p2.targetPlatform</id>
+          <layout>p2</layout>
+          <url>${kieler.targetplatform}</url>
+        </repository>
+
+        <!-- eclipse delta packs -->
+        <repository>
+          <id>p2.targetPlatformDelta</id>
+          <layout>p2</layout>
+          <url>${kieler.targetplatform.delta}</url>
+        </repository>
+
+        <!-- kieler pragmatics runtime -->
         <repository>
           <id>p2.nightly_pragmatics</id>
           <layout>p2</layout>
           <url>${kieler.pragmatics.nightly}</url>
         </repository>
+
+        <!-- ptolemy runtime -->
         <repository>
           <id>p2.ptolemy</id>
           <layout>p2</layout>
@@ -149,23 +193,46 @@
         <module>de.cau.cs.kieler.ptolemy.rcp.repository</module>
       </modules>
     </profile>
-
-    <!-- The KGraph RCP. -->
+      
+    <!-- The KLighDning update site. -->
     <profile>
-      <id>kgraph-rcp</id>
+      <id>klighdning</id>
       
       <repositories>
+        <!-- eclipse base installation --> 
+        <repository>
+          <id>p2.targetPlatform</id>
+          <layout>p2</layout>
+          <url>${kieler.targetplatform}</url>
+        </repository>
+
+        <!-- eclipse delta packs -->
+        <repository>
+          <id>p2.targetPlatformDelta</id>
+          <layout>p2</layout>
+          <url>${kieler.targetplatform.delta}</url>
+        </repository>
+
+        <!-- kieler pragmatics runtime -->
         <repository>
           <id>p2.nightly_pragmatics</id>
           <layout>p2</layout>
           <url>${kieler.pragmatics.nightly}</url>
-        </repository> 
+        </repository>
+        
+        <!-- ptolemy runtime -->
+        <repository>
+          <id>p2.ptolemy</id>
+          <layout>p2</layout>
+          <url>${kieler.ptolemy}</url>
+        </repository>
       </repositories>
       
       <modules>
-         <module>../products/de.cau.cs.kieler.core.kgraph.rcp</module>
-         <module>../features/de.cau.cs.kieler.kgraph.rcp.feature</module>
-         <module>de.cau.cs.kieler.kgraph.rcp.repository</module>
+        <module>../plugins/de.cau.cs.kieler.web.statistics</module>
+        <module>../plugins/de.cau.cs.kieler.klighdning</module>
+        <module>../features/de.cau.cs.kieler.klighdning.feature</module>
+        <module>de.cau.cs.kieler.klighdning.repository</module>
       </modules>
     </profile>
   
@@ -228,6 +295,9 @@
         </configuration>
       </plugin>
 
+<!-- chsch: deactivated all the code assessment plugins,
+            we didn't execute them as they slowed down the build process
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
@@ -245,7 +315,7 @@
         <configuration>
           <targetJdk>1.5</targetJdk>
           <format>xml</format>
-          <!--  <aggregate>true</aggregate> -->
+          <!-  <aggregate>true</aggregate> ->
         </configuration>
       </plugin>
 
@@ -266,7 +336,7 @@
           </execution>
         </executions>
       </plugin>
-
+-->
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
