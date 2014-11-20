@@ -97,9 +97,12 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
     private final LayoutPropertySourceProvider propSourceProvider = new LayoutPropertySourceProvider();
     /** the part listener for reacting to closed workbench parts. */
     private final IPartListener partListener = new IPartListener() {
+
         public void partClosed(final IWorkbenchPart part) {
             if (propSourceProvider.getWorkbenchPart() == part) {
-                propSourceProvider.resetContext();
+                // reset esp. the workbenchPart field in order to ensure proper
+                //  garbage collection of that workbench part instance
+                propSourceProvider.resetContext(null);
             }
         }
         public void partOpened(final IWorkbenchPart part) { }
