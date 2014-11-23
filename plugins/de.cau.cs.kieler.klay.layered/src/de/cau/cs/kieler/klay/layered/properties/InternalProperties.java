@@ -107,10 +107,19 @@ public final class InternalProperties {
     public static final IProperty<Float> OFFSET = new Property<Float>(LayoutOptions.OFFSET, 0.0f);
 
     /**
-     * The original bend points.
+     * The original bend points of an edge.
      */
     public static final IProperty<KVectorChain> ORIGINAL_BENDPOINTS = new Property<KVectorChain>(
             "originalBendpoints");
+    
+    /**
+     * In interactive layout settings, this property can be set to indicate where a dummy node that
+     * represents an edge in a given layer was probably placed in that layer. This information can
+     * be calculated during the crossing minimization phase and later be used by an interactive node
+     * placement algorithm.
+     */
+    public static final IProperty<Double> ORIGINAL_DUMMY_NODE_POSITION = new Property<Double>(
+            "originalDummyNodePosition");
     
     /**
      * The edge a label originally belonged to. This property was introduced to remember which

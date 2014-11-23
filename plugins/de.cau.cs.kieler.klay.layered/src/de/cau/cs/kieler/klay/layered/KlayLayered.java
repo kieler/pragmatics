@@ -52,6 +52,7 @@ import de.cau.cs.kieler.klay.layered.p3order.InteractiveCrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.p3order.LayerSweepCrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.p4nodes.BJLNodePlacer;
 import de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer;
+import de.cau.cs.kieler.klay.layered.p4nodes.InteractiveNodePlacer;
 import de.cau.cs.kieler.klay.layered.p4nodes.LinearSegmentsNodePlacer;
 import de.cau.cs.kieler.klay.layered.p4nodes.SimpleNodePlacer;
 import de.cau.cs.kieler.klay.layered.p5edges.OrthogonalEdgeRouter;
@@ -543,6 +544,13 @@ public final class KlayLayered {
             if (nodePlacer == null) {
                 nodePlacer = new SimpleNodePlacer();
                 phaseCache.put(SimpleNodePlacer.class, nodePlacer);
+            }
+            break;
+        case INTERACTIVE:
+            nodePlacer = phaseCache.get(InteractiveNodePlacer.class);
+            if (nodePlacer == null) {
+                nodePlacer = new InteractiveNodePlacer();
+                phaseCache.put(InteractiveNodePlacer.class, nodePlacer);
             }
             break;
         case LINEAR_SEGMENTS:

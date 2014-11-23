@@ -36,7 +36,6 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *   <dt>Postconditions:</dt>
  *     <dd>Each node is assigned a vertical coordinate such that no two nodes overlap</dd>
  *     <dd>The size of each layer is set according to the area occupied by its nodes</dd>
- *     <dd>The height of the graph is set to the maximal layer height</dd>
  * </dl>
  * 
  * @author msp
