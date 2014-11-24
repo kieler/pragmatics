@@ -46,6 +46,15 @@ public final class Properties {
             10.0f, 1.0f);
     
     /**
+     * A pre-defined seed for pseudo-random number generators.
+     * We redefine the property here to set its default value to 1.
+     * 
+     * @see LayoutOptions#RANDOM_SEED
+     */
+    public static final IProperty<Integer> RANDOM_SEED = new Property<Integer>(
+            "de.cau.cs.kieler.randomSeed", 1);
+    
+    /**
      * The factor by which the in-layer spacing between objects differs from the inter-layer
      * {@link Properties#OBJ_SPACING}.
      */
