@@ -195,6 +195,12 @@ public final class Properties {
      */
     public static final IProperty<Boolean> FEEDBACK_EDGES = new Property<Boolean>(
             "de.cau.cs.kieler.klay.layered.feedBackEdges", false);
+    
+    /**
+     * Handles large sausages.
+     */
+    public static final IProperty<Boolean> SAUSAGE_FOLDING = new Property<Boolean>(
+            "de.cau.cs.kieler.klay.layered.sausageFolding", false);    
 
 
     // /////////////////////////////////////////////////////////////////////////////

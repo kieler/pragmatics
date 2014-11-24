@@ -89,7 +89,11 @@ public final class LongestPathLayerer implements ILayoutPhase {
                         == WideNodesStrategy.CAREFUL) {
             strategy.addAll(BIG_NODES_PROCESSING_ADDITIONS_CAREFUL);
         }
-
+        
+        if (graph.getProperty(Properties.SAUSAGE_FOLDING)) {
+            strategy.addBeforePhase4(IntermediateProcessorStrategy.SAUSAGE_COMPACTION);
+        }
+        
         return strategy;
     }
     
