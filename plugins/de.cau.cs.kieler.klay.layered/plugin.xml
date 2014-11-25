@@ -356,5 +356,18 @@
             upperBound="100"
             variance="0.2">
       </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="false"
+            description="Whether long sausages should be folded up nice and tight."
+            id="de.cau.cs.kieler.klay.layered.sausageFolding"
+            name="Sausage Folding"
+            type="boolean">
+         <dependency
+               option="de.cau.cs.kieler.klay.layered.nodeLayering"
+               value="LONGEST_PATH">
+         </dependency>
+      </layoutOption>
    </extension>
 </plugin>

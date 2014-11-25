@@ -101,12 +101,12 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * <dl>
  *   <dt>Preconditions:</dt>
- *     <dd>The graph has a proper layering with optimized nodes ordering; Ports are properly
- *         arranged</dd>
+ *     <dd>The graph has a proper layering with optimized nodes ordering</dd>
+ *     <dd>Ports are properly arranged</dd>
  *   <dt>Postconditions:</dt>
- *     <dd>Each node is assigned a vertical coordinate such that no two nodes overlap; The size of each
- *         layer is set according to the area occupied by contained nodes; The height of the graph is
- *         set to the maximal layer height</dd>
+ *     <dd>Each node is assigned a vertical coordinate such that no two nodes overlap</dd>
+ *     <dd>The size of each layer is set according to the area occupied by its nodes</dd>
+ *     <dd>The height of the graph is set to the maximal layer height</dd>
  * </dl>
  * 
  * @author jjc
@@ -684,12 +684,8 @@ public final class BKNodePlacer implements ILayoutPhase {
         // be determined more intelligently. The second line was a first attempt that fixed the problem
         // in the sample graph attached to KIPRA-1426, but I'm not convinced that it is a good solution
         // in general.
-        
-        // Prior to KIPRA-1426 the root was placed at coordinate 0 (following line).
-        // Now we do something slightly more intelligent, we initially place all 
-        // blocks one belwo the other.
-        // bal.y.put(root, 0.0);
-        bal.y.put(root, nextBlockYPosition);
+        bal.y.put(root, 0.0);
+        // bal.y.put(root, nextBlockYPosition);
         
         // Iterate through block and determine, where the block can be placed (until we arrive at the
         // block's root node again)
@@ -1195,16 +1191,18 @@ public final class BKNodePlacer implements ILayoutPhase {
         public double layoutSize() {
             double min = Double.POSITIVE_INFINITY;
             double max = Double.NEGATIVE_INFINITY;
-            for (double i : y.values()) {
-                if (i < min) {
-                    min = i;
-                }
-                if (i > max) {
-                    max = i;
-                }
+            // Prior to KIPRA-1426 the size of the layout was determined  
+            // only based on y coordinates, neglecting any block sizes.
+            // We now determine the maximal extend of the layout based on
+            // the minimum y coordinate of any node and the maximum
+            // y coordinate _plus_ the size of any block.
+            for (LNode n : y.keySet()) {
+                double yMin = y.get(n);
+                double yMax = yMin + blockSize.get(root.get(n));
+                min = Math.min(min, yMin);
+                max = Math.max(max, yMax);
             }
-            min = Math.abs(min);
-            return max + min;
+            return max - min;
         }
 
         @Override
