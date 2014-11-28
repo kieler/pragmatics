@@ -283,6 +283,9 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                 if (inLayerEdgeCount[fixedLayerIndex] > 0) {
                     curSweepCrossings += countInLayerEdgeCrossings(fixedLayer);
                 }
+                if (northSouthPorts[fixedLayerIndex]) {
+                    curSweepCrossings += countNorthSouthPortCrossings(fixedLayer);
+                }
                 
                 if (forward) {
                     // Perform a forward sweep
