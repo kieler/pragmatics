@@ -77,6 +77,8 @@ public enum IntermediateProcessorStrategy {
     
     // Before Phase 4
     
+    /** Distributes ports after crossing minimization. Used by the layer sweep crossing minimizer. */
+    PORT_DISTRIBUTER,
     /** Compacts looong sausages. This is a hidden feature. */
     SAUSAGE_COMPACTION,
     /** Makes sure that in-layer constraints are handled. */
@@ -228,6 +230,9 @@ public enum IntermediateProcessorStrategy {
         
         case INVERTED_PORT_PROCESSOR:
             return new InvertedPortProcessor();
+        
+        case PORT_DISTRIBUTER:
+            return new PortDistributionProcessor();
         
         case PORT_LIST_SORTER:
             return new PortListSorter();
