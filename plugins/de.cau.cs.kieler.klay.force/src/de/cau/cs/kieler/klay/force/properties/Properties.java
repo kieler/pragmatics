@@ -50,7 +50,7 @@ public final class Properties {
     
     /** minimal spacing between objects. */
     public static final Property<Float> SPACING = new Property<Float>(
-            LayoutOptions.SPACING, 80.0f);
+            LayoutOptions.SPACING, 80.0f, 1.0f);
     
     /** the aspect ratio for packing connected components. */
     public static final Property<Float> ASPECT_RATIO = new Property<Float>(
