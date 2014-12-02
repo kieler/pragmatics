@@ -19,9 +19,12 @@ import java.io.OutputStream;
 import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Control;
 
 import de.cau.cs.kieler.klighd.IDiagramExporter;
+import de.cau.cs.kieler.klighd.KlighdPlugin;
+import de.cau.cs.kieler.klighd.piccolo.KlighdPiccoloPlugin;
 import de.cau.cs.kieler.klighd.piccolo.export.KlighdAbstractSVGGraphics;
 import de.cau.cs.kieler.klighd.piccolo.export.KlighdCanvasExporter;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdCanvas;
@@ -116,7 +119,31 @@ public class VectorGraphicsPDFGraphics extends KlighdAbstractSVGGraphics impleme
 
         @Override
         public IStatus export(final KlighdCanvas canvas, final ExportData data) {
-            return VectorGraphicsPDFGraphics.this.export(canvas, data);
+
+            OutputStream stream = null;
+            try {
+                // dump out the resulting SVG description via the provided output stream
+                stream = data.createOutputStream();
+
+                VectorGraphicsPDFGraphics.this.export(stream, canvas, data.isCameraViewport,
+                        data.scale, data.isTextAsShapes, data.isEmbedFonts, "");
+
+                stream.close();
+
+                return Status.OK_STATUS;
+
+            } catch (final IOException e) {
+                String msg = "KLighD PDF export: Failed to write PDF data";
+                if (stream != null) {
+                    msg +=
+                            " into the provided OutputStream of type "
+                                    + stream.getClass().getCanonicalName()
+                                    + KlighdPlugin.LINE_SEPARATOR + " the stream instance is "
+                                    + stream.toString();
+                }
+                return new Status(IStatus.ERROR, KlighdPiccoloPlugin.PLUGIN_ID, msg, e);
+            }
+
         }
     };
 
