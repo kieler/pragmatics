@@ -19,6 +19,7 @@ import java.util.ListIterator;
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -84,7 +85,19 @@ public class SausageFolding implements ILayoutProcessor {
         double maxWidth = determineMaximalWidth(graph); // maximum node in one layer
 
         double sumWidth = longestPath * maxWidth;
-        double desiredAR = graph.getProperty(Properties.ASPECT_RATIO);
+        
+        // since the graph direction may be horizontal (default) or vertical,
+        //  the desired aspect ration must be adjusted correspondingly
+        //  (Klay internally always assumes left to right, however the
+        //  aspect ratio is not adjusted during graph import)
+        double desiredAR;
+        final Direction dir = graph.getProperty(LayoutOptions.DIRECTION);
+        if (dir == Direction.LEFT || dir == Direction.RIGHT || dir == Direction.UNDEFINED) {
+            desiredAR = graph.getProperty(Properties.ASPECT_RATIO);
+        } else {
+            desiredAR = 1 / graph.getProperty(Properties.ASPECT_RATIO);
+        }
+        
         double currentAR = (sumWidth / maxHeight);
         
         // get the number of rows into which to split the sausage

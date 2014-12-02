@@ -17,7 +17,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
@@ -141,18 +140,9 @@ public final class InteractiveCrossingMinimizer implements ILayoutPhase {
             });
         }
 
-        // Initialize the position arrays and layered graph array
-        LNode[][] lgraphArray = new LNode[layeredGraph.getLayers().size()][];
-        ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
-        while (layerIter.hasNext()) {
-            Layer layer = layerIter.next();
-            int layerIndex = layerIter.previousIndex();
-            lgraphArray[layerIndex] = layer.getNodes().toArray(new LNode[layer.getNodes().size()]);
-        }
-        
         // Distribute the ports of all nodes with free port constraints
         AbstractPortDistributor portDistributor = new NodeRelativePortDistributor(new float[portCount]);
-        portDistributor.distributePorts(lgraphArray);
+        portDistributor.distributePorts(layeredGraph.toNodeArray());
         
         monitor.done();
     }
