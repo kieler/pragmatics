@@ -18,9 +18,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
+import org.eclipse.xtext.resource.SaveOptions;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceSet;
 
@@ -183,7 +185,15 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
             XtextResource resource = (XtextResource) resourceSet.createResource(
                     URI.createURI("output.graphviz_dot"));
             resource.getContents().add(graphvizModel);
-            resource.save(outputStream, null);
+            
+            /* KIPRA-1498
+             * We disable formatting and validation when saving the resource. Enabling it lead to
+             * possible ConcurrentModificationExceptions in Xtext.
+             */
+            Map<Object, Object> saveOptions =
+                    SaveOptions.newBuilder().noValidation().getOptions().toOptionsMap();
+            resource.save(outputStream, saveOptions);
+            
             outputStream.write('\n');
             outputStream.flush();
         } catch (IOException exception) {
