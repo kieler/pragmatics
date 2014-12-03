@@ -55,6 +55,7 @@ import de.cau.cs.kieler.klay.layered.p3order.LayerSweepCrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.p4nodes.BJLNodePlacer;
 import de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer;
 import de.cau.cs.kieler.klay.layered.p4nodes.LinearSegmentsNodePlacer;
+import de.cau.cs.kieler.klay.layered.p4nodes.OptiPlacer;
 import de.cau.cs.kieler.klay.layered.p4nodes.SimpleNodePlacer;
 import de.cau.cs.kieler.klay.layered.p5edges.OrthogonalEdgeRouter;
 import de.cau.cs.kieler.klay.layered.p5edges.PolylineEdgeRouter;
@@ -590,7 +591,14 @@ public final class KlayLayered {
                 phaseCache.put(BJLNodePlacer.class, nodePlacer);
             }
             break;
-            
+        case OPTIMAL: 
+            nodePlacer = phaseCache.get(OptiPlacer.class);
+            if (nodePlacer == null) {
+                nodePlacer = new OptiPlacer();
+                phaseCache.put(OptiPlacer.class, nodePlacer);
+            }
+            break;
+
         default: // BRANDES_KOEPF
             nodePlacer = phaseCache.get(BKNodePlacer.class);
             if (nodePlacer == null) {

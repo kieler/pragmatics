@@ -39,6 +39,8 @@ public enum NodePlacementStrategy {
     /**
      * Node placement which groups nodes in classes which result in straight edges.
      * */
-    BUCHHEIM_JUENGER_LEIPERT;
+    BUCHHEIM_JUENGER_LEIPERT,
+    
+    OPTIMAL;
   
 }
