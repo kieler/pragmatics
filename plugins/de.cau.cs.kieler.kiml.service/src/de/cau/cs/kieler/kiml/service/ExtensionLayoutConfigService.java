@@ -122,13 +122,11 @@ public class ExtensionLayoutConfigService extends LayoutConfigService {
             final String attribute, final Throwable exception) {
         String message;
         if (element != null && attribute != null) {
-            message =
-                    "Extension point " + extensionPoint + ": Invalid entry in attribute '"
+            message = "Extension point " + extensionPoint + ": Invalid entry in attribute '"
                             + attribute + "' of element " + element.getName() + ", contributed by "
                             + element.getContributor().getName();
         } else {
-            message =
-                    "Extension point " + extensionPoint
+            message = "Extension point " + extensionPoint
                             + ": An error occured while loading extensions.";
         }
         IStatus status =
@@ -316,12 +314,10 @@ public class ExtensionLayoutConfigService extends LayoutConfigService {
         if (value != null) {
             Object object;
             if (storeDomainModel) {
-                object =
-                        LayoutManagersService.getInstance().getContextValue(
+                object = LayoutManagersService.getInstance().getContextValue(
                                 LayoutContext.DOMAIN_MODEL, null, diagramPart);
             } else {
-                object =
-                        LayoutManagersService.getInstance().getContextValue(
+                object = LayoutManagersService.getInstance().getContextValue(
                                 LayoutContext.DIAGRAM_PART, null, diagramPart);
                 if (object == null) {
                     object = diagramPart;
