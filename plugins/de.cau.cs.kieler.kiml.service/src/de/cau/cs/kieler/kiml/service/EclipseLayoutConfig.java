@@ -70,6 +70,9 @@ public class EclipseLayoutConfig implements ILayoutConfig {
      * Retrieves a layout option value for the given edit part and model element by querying the option
      * for the edit part's class name and its domain model name.
      * 
+     * If both diagramPart and modelElement are null it will return the 
+     * value set by the global static layout configuration.
+     * 
      * @param property the layout option data
      * @param diagramPart a diagram part such as an edit part
      * @param modelElement the corresponding domain model element
