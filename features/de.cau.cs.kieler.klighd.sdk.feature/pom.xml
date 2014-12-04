@@ -26,6 +26,9 @@
             </goals>
             <configuration>
               <labelSuffix>${sourceFeatureLabelSuffix}</labelSuffix>
+              <excludes>
+                <plugin id="de.cau.cs.kieler.klighd.ui.contrib3x" />
+              </excludes>
             </configuration>
           </execution>
         </executions>
