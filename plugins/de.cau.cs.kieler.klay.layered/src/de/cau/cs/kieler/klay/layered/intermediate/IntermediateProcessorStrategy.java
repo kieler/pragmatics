@@ -77,16 +77,16 @@ public enum IntermediateProcessorStrategy {
     
     // Before Phase 4
     
-    /** Distributes ports after crossing minimization. Used by the layer sweep crossing minimizer. */
-    PORT_DISTRIBUTER,
-    /** Compacts looong sausages. This is a hidden feature. */
-    SAUSAGE_COMPACTION,
     /** Attempts to improve crossing number through greedy switch algorithm. */
     GREEDY_SWITCH_CROSSING_COUNTER_MINIMIZER,
     /** Attempts to improve crossing number through greedy switch algorithm with crossing matrix. */
     GREEDY_SWITCH_CROSSING_CROSSINGMATRIX_MINIMIZER,
     /** Attempts to improve crossing number through greedy switch algorithm on demand crossing matrix. */
     GREEDY_SWITCH_CROSSING_ONDEMAND_CROSSINGMATRIX_MINIMIZER,
+    /** Distributes ports after crossing minimization. Used by the layer sweep crossing minimizer. */
+    PORT_DISTRIBUTER,
+    /** Compacts looong sausages. This is a hidden feature. */
+    SAUSAGE_COMPACTION,
     /** Makes sure that in-layer constraints are handled. */
     IN_LAYER_CONSTRAINT_PROCESSOR,
     /** Merges long edge dummy nodes belonging to the same hyperedge. */

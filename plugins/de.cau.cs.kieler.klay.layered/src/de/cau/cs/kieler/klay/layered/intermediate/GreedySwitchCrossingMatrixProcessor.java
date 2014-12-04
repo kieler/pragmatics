@@ -13,16 +13,14 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
+import java.util.TreeMap;
 
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.p3order.NodeGroup;
-import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 
 /**
  * This processor attempts to improve crossing number by using a simple greedy switch heuristic.
@@ -34,101 +32,72 @@ import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 public class GreedySwitchCrossingMatrixProcessor extends AbstractGreedySwitchProcessor implements
         ILayoutProcessor {
 
+    private boolean crossingMatrixConstructed;
+    private int[][] crossingMatrix;
+    private int amountOfCrossings;
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    protected void switchInLayer(final boolean forward, final int layerIndex) {
-        NodeGroup[] fixedLayer = getCurSweep()[layerIndex];
-        int freeLayerIndex = forward ? layerIndex + 1 : layerIndex - 1;
-        NodeGroup[] freeLayer = getCurSweep()[freeLayerIndex];
-        int[][] crossingMatrix = calculateCrossingMatrix(freeLayer, fixedLayer, forward);
-        switchInLayerWithCrossingMatrix(crossingMatrix, freeLayerIndex);
+    boolean checkIfSwitchReducesCrossings(final int currentNodeIndex, final int nextNodeIndex,
+            final boolean forward, final NodeGroup[] fixedLayer, final NodeGroup[] freeLayer, boolean firstRun) {
+        if (!crossingMatrixConstructed) {
+            crossingMatrix = calculateCrossingMatrix(freeLayer, fixedLayer, forward);
+            crossingMatrixConstructed = true;
+        }
+        if (nextNodeIndex == freeLayer.length - 1) {
+            crossingMatrixConstructed = false;
+        }
+        return crossingMatrix[currentNodeIndex][nextNodeIndex] > crossingMatrix[nextNodeIndex][currentNodeIndex];
     }
 
     private int[][] calculateCrossingMatrix(final NodeGroup[] freeLayer,
             final NodeGroup[] fixedLayer, final boolean forwardSweep) {
-        // set all ids to indices first
-        setIds(freeLayer);
-        setIds(fixedLayer);
-
+        amountOfCrossings = 0;
         int matrixSize = freeLayer.length;
-        int[][] crossingMatrix = new int[matrixSize][matrixSize];
+        crossingMatrix = new int[matrixSize][matrixSize];
         for (int i = 0; i < matrixSize; i++) {
             for (int j = i + 1; j < matrixSize; j++) {
 
-                List<LEdge> iEdges = getEdges(forwardSweep, freeLayer, i);
-                List<LEdge> jEdges = getEdges(forwardSweep, freeLayer, j);
+                TreeMap<Integer, LEdge> iEdges = getEdges(forwardSweep, freeLayer[i].getNode());
+                TreeMap<Integer, LEdge> jEdges = getEdges(forwardSweep, freeLayer[j].getNode());
 
                 if (iEdges.isEmpty() || jEdges.isEmpty()) {
                     continue;
                 }
-                IncidentEdgeCrossCounter crossCounter = new IncidentEdgeCrossCounter(iEdges, jEdges, forwardSweep);
+                IncidentEdgeCrossCounter crossCounter =
+                        new IncidentEdgeCrossCounter(iEdges, jEdges, forwardSweep);
                 crossCounter.calculateCrossingNumber();
                 crossingMatrix[i][j] = crossCounter.getCrossingsForOrderIJ();
                 crossingMatrix[j][i] = crossCounter.getCrossingsForOrderJI();
+                amountOfCrossings += crossingMatrix[i][j];
             }
         }
         return crossingMatrix;
     }
-    
-    private void setIds(final NodeGroup[] freeLayer) {
-        int id = 0;
-        for (NodeGroup nodeGroup : freeLayer) {
-            nodeGroup.getNode().id = id;
-            id++;
 
-            int portId = 0;
-            for (LPort lPort : nodeGroup.getNode().getPorts()) {
-                lPort.id = portId;
-                portId++;
-            }
-        }
-    }
-
-    private List<LEdge> getEdges(final boolean forwardSweep, final NodeGroup[] freeLayer,
-            final int index) {
-        List<LPort> ports = freeLayer[index].getNode().getPorts();
-        List<LEdge> edges = new LinkedList<LEdge>();
-        ListIterator<LPort> portIterator =
-                forwardSweep ? ports.listIterator(ports.size()) : ports.listIterator();
-        while (forwardSweep ? portIterator.hasPrevious() : portIterator.hasNext()) {
-            LPort lPort = forwardSweep ? portIterator.previous() : portIterator.next();
-            if (forwardSweep) {
-                edges.addAll(lPort.getIncomingEdges());
-            } else {
-                edges.addAll(lPort.getOutgoingEdges());
+    private TreeMap<Integer, LEdge> getEdges(final boolean forwardSweep, final LNode node) {
+        List<LPort> ports = node.getPorts();
+        TreeMap<Integer, LEdge> edges = new TreeMap<Integer, LEdge>();
+        for (LPort port : ports) {
+            for (LEdge edge : forwardSweep ? port.getIncomingEdges() : port.getOutgoingEdges()) {
+                boolean edgeIsNotSelfLoop =
+                        edge.getSource().getNode() != edge.getTarget().getNode();
+                if (edgeIsNotSelfLoop) {
+                    int indexInOtherLayer = forwardSweep ? edge.getSource().getNode().id : edge.getTarget().getNode().id;
+                    edges.put(indexInOtherLayer, edge);
+                }
             }
         }
         return edges;
     }
 
-    private boolean switchInLayerWithCrossingMatrix(final int[][] crossingMatrix,
-            final int freeLayerIndex) {
-        NodeGroup[] freeLayer = getCurSweep()[freeLayerIndex];
-
-        boolean crossingNumberHasImproved = true;
-        boolean stop = false;
-        while (!stop) {
-            stop = true;
-            for (int i = 0; i < freeLayer.length - 1; i++) {
-
-                LNode currentNode = freeLayer[i].getNode();
-                LNode nextNode = freeLayer[i + 1].getNode();
-
-                List<LNode> constraints =
-                        currentNode.getProperty(InternalProperties.IN_LAYER_SUCCESSOR_CONSTRAINTS);
-                boolean noSuccessorConstraint =
-                        constraints == null || constraints.size() == 0
-                                || !constraints.get(0).equals(nextNode);
-                boolean switchReducesCrossings =
-                        crossingMatrix[currentNode.id][nextNode.id] > crossingMatrix[nextNode.id][currentNode.id];
-
-                if (noSuccessorConstraint && switchReducesCrossings) {
-                    exchangeNodes(i, i + 1, freeLayer);
-                    crossingNumberHasImproved = true;
-                    stop = false;
-                }
-            }
-        }
-
-        return crossingNumberHasImproved;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    int getAmountOfCrossings(NodeGroup[][] currentOrder) {
+        return amountOfCrossings;
     }
 }
