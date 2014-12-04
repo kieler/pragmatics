@@ -66,10 +66,13 @@ public class KlayTestRunner extends KielerTestRunner {
         Object[] objectArray = parameterObjectList.get(parameterIndex);
         // The objectArray is always affected with a GraphTestObject that is why this method is save
         GraphTestObject file = (GraphTestObject) objectArray[0];
-        ILayoutConfigurator config = (ILayoutConfigurator) objectArray[1];
+        ILayoutConfigurator config = null;
+        if (objectArray.length > 1) {
+           config = (ILayoutConfigurator) objectArray[1];
+        }
         // IMPORTANT to include the index here, otherwise the junit view might get messed up
-        return "[" + parameterIndex + "]" + file.getFile().getPath() + "-"
-                + config.getDescription();
+        return "[" + parameterIndex + "]" + file.getFile().getPath()
+                + (config != null ? "-" + config.getDescription() : "");
     }
 
     /**

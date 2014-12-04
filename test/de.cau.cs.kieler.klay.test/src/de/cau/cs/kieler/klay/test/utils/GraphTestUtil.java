@@ -33,6 +33,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.text.KGraphStandaloneSetup;
 import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * Class to load graphs from a given folder and its subfolders (optional).
@@ -130,7 +131,9 @@ public final class GraphTestUtil {
                             "The selected file does not contain a graph: " + gfile);
                 }
                 KNode graph = (KNode) resource.getContents().get(0);
-
+                // parse persisted key-value pairs using KIML's layout data service
+                KimlUtil.loadDataElements(graph);
+                
                 // apply layout when applyLayout = true
                 if (doLayout) {
                     layoutEngine.layout(graph, new BasicProgressMonitor());
