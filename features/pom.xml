@@ -23,6 +23,7 @@
     <module>de.cau.cs.kieler.kiml.graphviz.feature</module>
     <module>de.cau.cs.kieler.kiml.ogdf.feature</module>
     <module>de.cau.cs.kieler.klighd.feature</module>
+    <module>de.cau.cs.kieler.klighd.contrib3x.feature</module>
     <module>de.cau.cs.kieler.klighd.batik.feature</module>
     <module>de.cau.cs.kieler.klighd.freehep.feature</module>
     <module>de.cau.cs.kieler.klighd.sdk.feature</module>
@@ -32,5 +33,50 @@
     <module>net.ogdf.bin.feature</module>
     <module>../../pragmatics-libraries/features/org.adaptagrams.feature</module>
   </modules>
+
+  <!-- customization of the feature build sub process: incorporate
+        the 'tycho-source-feature-plugin' for generating source features and
+        the 'tycho-p2-plugin' for deriving the p2-specific meta data
+       while building (this and) each of the modules referenced above -->
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho.extras</groupId>
+        <artifactId>tycho-source-feature-plugin</artifactId>
+        <version>${tycho-version}</version>
+        <executions>
+          <execution>
+            <id>source-feature</id>
+            <phase>package</phase>
+            <goals>
+              <goal>source-feature</goal>
+            </goals>
+            <configuration>
+              <labelSuffix>${sourceFeatureLabelSuffix}</labelSuffix>
+              <excludes>
+                <plugin id="de.cau.cs.kieler.klighd.ui.contrib3x" />
+                <feature id="net.ogdf.bin.feature"/>
+              </excludes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-p2-plugin</artifactId>
+        <version>${tycho-version}</version>
+        <executions>
+          <execution>
+            <id>attached-p2-metadata</id>
+            <phase>package</phase>
+            <goals>
+              <goal>p2-metadata</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>
