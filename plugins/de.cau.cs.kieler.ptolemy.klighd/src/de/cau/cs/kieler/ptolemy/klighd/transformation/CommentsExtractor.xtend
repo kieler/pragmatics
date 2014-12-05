@@ -214,7 +214,7 @@ class CommentsExtractor {
                 val commentNode = addCommentNode(root,
                     annotation.getAnnotationValue(ANNOTATION_COMMENT_TEXT) ?: "")
                 commentNode.annotations += annotation.annotations
-                diagramSynthesis.putToLookUpWith(commentNode, annotation)
+                diagramSynthesis.associateWith(commentNode, annotation)
             } else if ((annotation.class_ ?: "").equals(ANNOTATION_TYPE_ATTRIBUTE)) {
                 // Check if there is an _iconDescription attribute
                 val iconDescription = annotation.getAnnotation("_iconDescription")
@@ -227,7 +227,7 @@ class CommentsExtractor {
                         // We were successful; add a comment node
                         val commentNode = addCommentNode(root, text)
                         commentNode.annotations += annotation.annotations
-                        diagramSynthesis.putToLookUpWith(commentNode, annotation)
+                        diagramSynthesis.associateWith(commentNode, annotation)
                     }
                 }
             }

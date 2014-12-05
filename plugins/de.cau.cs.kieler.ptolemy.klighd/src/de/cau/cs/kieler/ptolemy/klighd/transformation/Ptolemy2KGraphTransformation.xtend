@@ -151,7 +151,7 @@ class Ptolemy2KGraphTransformation {
      * @return the KGraph node.
      */
     def private create kNode : KimlUtil::createInitializedNode() transform(EntityType ptEntity) {
-        diagramSynthesis.putToLookUpWith(kNode, ptEntity)
+        diagramSynthesis.associateWith(kNode, ptEntity)
         kNode.name = ptEntity.name
         
         // Add annotations identifying this node as having been created from a Ptolemy entity
@@ -318,7 +318,7 @@ class Ptolemy2KGraphTransformation {
      * @return the KGraph node.
      */
     def private create kNode : KimlUtil::createInitializedNode() transform(RelationType ptRelation) {
-        diagramSynthesis.putToLookUpWith(kNode, ptRelation)
+        diagramSynthesis.associateWith(kNode, ptRelation)
         kNode.name = ptRelation.name
         
         // Add annotation identifying this relation as having been created from a Ptolemy relation
@@ -612,7 +612,7 @@ class Ptolemy2KGraphTransformation {
             if (matchingClass != null) {
                 val copy = EcoreUtil.copy(matchingClass)
                 parent.children.add(copy)
-                diagramSynthesis.putToLookUpWith(copy, ptEntity)
+                diagramSynthesis.associateWith(copy, ptEntity)
                 copy.name = ptEntity.name
                 
             } else {
