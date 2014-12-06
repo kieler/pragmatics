@@ -7,11 +7,10 @@ class DefaultTemplates {
     
     public static final List<Pair<String, String>> defaultTemplates = ImmutableList.of(
         Pair.of(
-        "Libavoid", 
+        "KLay", 
         '''
-        Libavoid {
-            algorithm: org.adaptagrams.cola.libavoid
-            edgeRouting: ORTHOGONAL 
+        KLay {
+            algorithm: de.cau.cs.kieler.klay.layered 
         }
         '''),
         Pair.of(
