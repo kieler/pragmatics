@@ -23,7 +23,6 @@
     <module>de.cau.cs.kieler.kiml.graphviz.feature</module>
     <module>de.cau.cs.kieler.kiml.ogdf.feature</module>
     <module>de.cau.cs.kieler.klighd.feature</module>
-    <module>de.cau.cs.kieler.klighd.contrib3x.feature</module>
     <module>de.cau.cs.kieler.klighd.batik.feature</module>
     <module>de.cau.cs.kieler.klighd.freehep.feature</module>
     <module>de.cau.cs.kieler.klighd.sdk.feature</module>

@@ -82,7 +82,7 @@ public final class GraphTransformer implements ILayoutProcessor {
             nodes.addAll(layer.getNodes());
         }
         
-        switch(mode) {
+        switch (mode) {
         case MIRROR_X:
             mirrorX(nodes, layeredGraph);
             break;
@@ -365,6 +365,7 @@ public final class GraphTransformer implements ILayoutProcessor {
             // External port dummy?
             if (node.getProperty(InternalProperties.NODE_TYPE) == NodeType.EXTERNAL_PORT) {
                 mirrorExternalPortSideY(node);
+                mirrorInLayerConstraintY(node);
             }
             
             // Mirror node label positions
@@ -439,6 +440,24 @@ public final class GraphTransformer implements ILayoutProcessor {
             
         default:
             return side;
+        }
+    }
+    
+    /**
+     * Vertically mirrors the in-layer constraint set on a node. This is only meant for handling external
+     * port dummy nodes.
+     * 
+     * @param node the node whose in-layer constraint to mirror.
+     */
+    private void mirrorInLayerConstraintY(final LNode node) {
+        switch (node.getProperty(InternalProperties.IN_LAYER_CONSTRAINT)) {
+        case TOP:
+            node.setProperty(InternalProperties.IN_LAYER_CONSTRAINT, InLayerConstraint.BOTTOM);
+            break;
+
+        case BOTTOM:
+            node.setProperty(InternalProperties.IN_LAYER_CONSTRAINT, InLayerConstraint.TOP);
+            break;
         }
     }
     
