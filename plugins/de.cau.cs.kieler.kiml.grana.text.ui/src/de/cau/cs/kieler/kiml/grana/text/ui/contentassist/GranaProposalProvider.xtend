@@ -149,10 +149,9 @@ class GranaProposalProvider extends AbstractGranaProposalProvider {
                 
                 switch (theType) {
                 // show the available choices for boolean and enumeration/
-                //case Type.BOOLEAN,
-                //case Type.ENUM,
-                //case Type.ENUMSET:
-                case theType == Type.BOOLEAN || theType == Type.ENUM || theType == Type.ENUMSET:
+                case Type.BOOLEAN,
+                case Type.ENUM,
+                case Type.ENUMSET:
                     for ( j : 0..< optionData.getChoices().length) {
                         proposal = optionData.choices.get(j)
                         acceptor.accept(createCompletionProposal(proposal, context));
@@ -175,8 +174,10 @@ class GranaProposalProvider extends AbstractGranaProposalProvider {
                 //case Type.FLOAT:
                 //case Type.INT:
                 //case Type.OBJECT:
-                case theType == Type.STRING || theType == Type.FLOAT || theType == Type.INT || theType == Type.OBJECT: { 
-                   
+                case Type.STRING,
+                case Type.FLOAT,
+                case Type.INT,
+                case Type.OBJECT: {
                     // chose the corresponding default value
                     switch (theType) {
                         case Type.STRING:
@@ -196,6 +197,8 @@ class GranaProposalProvider extends AbstractGranaProposalProvider {
                                 proposal = "\"\"";
                             }
                         }
+                        default: 
+                        	proposal = ""
                     }
                     acceptor.accept(createCompletionProposal(proposal, optionData.getType()
                             .toString(), null, context));
