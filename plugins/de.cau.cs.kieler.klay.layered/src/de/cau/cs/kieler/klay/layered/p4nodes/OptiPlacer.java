@@ -23,6 +23,7 @@ import com.google.common.collect.Lists;
 import com.google.common.io.CharStreams;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -33,6 +34,7 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
+import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.solver.AbstractCPLEXModel;
 import de.cau.cs.kieler.klay.layered.solver.ISolverModel;
 import de.cau.cs.kieler.klay.layered.solver.ModelRunner;
@@ -147,6 +149,7 @@ public class OptiPlacer implements ILayoutPhase {
 
             // edges
             int[][] e = new int[P][P];
+            List<Pair<Integer, Integer>> longEdgeDummyPairs = Lists.newArrayList();
 
             for (Layer l : layeredGraph.getLayers()) {
                 l_count[l_cnt] = l.getNodes().size();
@@ -168,12 +171,24 @@ public class OptiPlacer implements ILayoutPhase {
                 }
             }
 
+            // for all edges that connect exactly two long edge dummies
+            // we add equality constraints to keep that edge straight
             for (Layer l : layeredGraph.getLayers()) {
                 for (LNode n : l.getNodes()) {
                     for (LPort po : n.getPorts()) {
                         int[] src = e[po.id];
                         for (LEdge edge : po.getOutgoingEdges()) {
                             src[edge.getTarget().id] = 1;
+                            
+                            // record long edge dummies
+                            if (edge.getSource().getNode().getProperty(InternalProperties.NODE_TYPE) 
+                                    == NodeType.LONG_EDGE
+                                && edge.getTarget().getNode().getProperty(InternalProperties.NODE_TYPE) 
+                                    == NodeType.LONG_EDGE) {
+                                longEdgeDummyPairs.add(
+                                        Pair.of(edge.getSource().id + 1,
+                                                edge.getTarget().id + 1));
+                            }
                         }
                     }
                 }
@@ -195,6 +210,17 @@ public class OptiPlacer implements ILayoutPhase {
             for (int[] arr : e) {
                 sb.append("\n\t" + Arrays.toString(arr));
                 if (i++ < P - 1) {
+                    sb.append(",");
+                }
+            }
+            sb.append("];");
+            
+            sb.append("\n\nLD = " + longEdgeDummyPairs.size() + ";");
+            sb.append("\nd = [");
+            for (int ii = 0; ii < longEdgeDummyPairs.size(); ii++) {
+                Pair<Integer, Integer> pa = longEdgeDummyPairs.get(ii);
+                sb.append("\n\t[" + pa.getFirst() + ", " + pa.getSecond() + "]");
+                if (ii < longEdgeDummyPairs.size() - 1) {
                     sb.append(",");
                 }
             }
