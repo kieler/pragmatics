@@ -222,9 +222,6 @@ litigation.
       <import plugin="org.antlr.runtime"/>
       <import plugin="org.apache.log4j"/>
       <import feature="org.eclipse.emf" version="2.6.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.gef" version="3.6.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.gmf" version="1.4.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.gmf.runtime.notation" version="1.4.0" match="greaterOrEqual"/>
       <import plugin="com.google.guava"/>
       <import feature="de.cau.cs.kieler.kiml.feature"/>
    </requires>
