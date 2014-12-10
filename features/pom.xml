@@ -54,9 +54,32 @@
             <configuration>
               <labelSuffix>${sourceFeatureLabelSuffix}</labelSuffix>
               <excludes>
-                <plugin id="de.cau.cs.kieler.klighd.ui.contrib3x" />
                 <feature id="net.ogdf.bin.feature"/>
                 <feature id="de.cau.cs.kieler.kwebs.server.feature"/>
+
+                <!-- the following bundles are excluded in the source feature generation process
+                      as they don't contribute any classes and, thus,
+                      no related source bundles exist -->
+                <plugin id="de.cau.cs.kieler.klighd.ui.contrib3x" />
+                <plugin id="org.eclipse.emf" />
+                <plugin id="org.eclipse.swt" />
+
+                <!-- the following bundles are excluded as
+                      there are no sources offered via the eclipse update sites -->
+                <plugin id="javax.activation" />
+                <plugin id="javax.jws" />
+                <plugin id="javax.xml" />
+                <plugin id="javax.xml.bind" />
+                <plugin id="javax.xml.soap" />
+                <plugin id="javax.xml.stream" />
+                <plugin id="javax.xml.ws" />
+
+                <plugin id="org.apache.commons.codec" />
+                <plugin id="org.apache.xerces" />
+                <plugin id="org.apache.xml.resolver" />
+                <plugin id="org.apache.xml.serializer" />
+                
+                <plugin id="org.eclipse.jetty.websocket" />
               </excludes>
             </configuration>
           </execution>
