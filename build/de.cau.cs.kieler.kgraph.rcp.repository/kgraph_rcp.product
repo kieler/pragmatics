@@ -27,7 +27,7 @@ Copyright 2014 by Christian-Albrechts-University of Kiel, Department of Computer
 256m</programArgs>
       <programArgsMac>-showsplash
 org.eclipse.platform
---launcher.defaultAction 
+--launcher.defaultAction
 openFile</programArgsMac>
       <vmArgs>-Xss4m
 -Xms512m
@@ -165,7 +165,7 @@ This Agreement is governed by the laws of the State of New York and the intellec
    </plugins>
 
    <features>
-      <feature id="de.cau.cs.kieler.kgraph.rcp.feature" version=“0.3.0.qualifier"/>
+      <feature id="de.cau.cs.kieler.kgraph.rcp.feature" version="0.3.0.qualifier"/>
    </features>
 
    <configurations>
