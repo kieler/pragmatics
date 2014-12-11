@@ -22,7 +22,7 @@
     <update.site.version>2014-10</update.site.version>
     <target.eclipse.version>4.3 (Kepler)</target.eclipse.version>
   </properties>
-  
+
   <build>
     <plugins>
       <!-- This plug-in generates a nice index.html for our update site and adds associate update
@@ -42,8 +42,8 @@
             </goals>
             <configuration>
               <associateSites>
-                <!-- Eclipse Kepler -->
-                <associateSite>http://download.eclipse.org/releases/kepler</associateSite>
+                <!-- Eclipse Luna -->
+                <associateSite>http://download.eclipse.org/releases/luna</associateSite>
                 <!-- Google Guava -->
                 <associateSite>http://guava-osgi.googlecode.com/svn/trunk/repository/</associateSite>
                 <!-- Graphiti -->
