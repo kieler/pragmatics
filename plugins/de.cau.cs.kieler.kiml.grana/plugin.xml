@@ -538,6 +538,28 @@
                name="P-Stress">
          </component>
       </analysis>
+      <analysis
+            category="de.cau.cs.kieler.kiml.grana.drawing"
+            class="de.cau.cs.kieler.kiml.grana.analyses.StraightEdgesAnalysis"
+            description="Determines the number of edges that are straight and axis aligned."
+            id="de.cau.cs.kieler.kiml.grana.straightEdges"
+            name="Straight Edges">
+         <component
+               name="Top">
+         </component>
+         <component
+               name="Left">
+         </component>
+         <component
+               name="Bottom">
+         </component>
+         <component
+               name="Right">
+         </component>
+         <component
+                name="Sum">
+         </component>
+      </analysis>
    </extension>
 
 </plugin>
