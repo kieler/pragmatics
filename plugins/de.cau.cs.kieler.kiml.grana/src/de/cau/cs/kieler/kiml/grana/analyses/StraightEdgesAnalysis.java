@@ -28,10 +28,17 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 
 /**
  * A graph analysis that computes the number of straight edges in a graph.
- * Depending on the layout direction, with 'number of straight edges' the number of edges
- * orthogonal to the x-axis or y-axis of the whole graph is meant.
  * 
+ * The analysis reports 5 values. The first values are axis-aligned straight
+ * edges in one of four directions, ie TOP, LEFT, DOWN, RIGHT.
+ * The fifth value is the sum of the previous values.
+ * 
+ * Layout direction has no influence on this analysis. Edges with bendpoints
+ * are allowed as long as the bendpoints conform to the straightness of the 
+ * edge.
+ *  
  * @author sor
+ * @author uru
  */
 public class StraightEdgesAnalysis implements IAnalysis {
     
@@ -74,7 +81,7 @@ public class StraightEdgesAnalysis implements IAnalysis {
     public Object doAnalysis(final KNode parentNode,
             final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Straight Edges analysis", 1);
+        progressMonitor.begin("Straight edges analysis", 1);
         
         boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
                 AnalysisOptions.ANALYZE_HIERARCHY);
