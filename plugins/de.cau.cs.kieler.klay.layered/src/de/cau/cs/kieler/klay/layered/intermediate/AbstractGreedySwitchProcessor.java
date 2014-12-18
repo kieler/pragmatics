@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -39,6 +40,10 @@ public abstract class AbstractGreedySwitchProcessor implements ILayoutProcessor 
     private int crossingsInGraph;
 
     private LGraph layeredGraph;
+    
+    private int[][] eastNodeDegrees;
+    
+    private int[][] westNodeDegrees;
 
     /**
      * @return the layeredGraph
@@ -69,7 +74,7 @@ public abstract class AbstractGreedySwitchProcessor implements ILayoutProcessor 
             tempCrossingsInGraph = crossingsInGraph;
             copySweep(curSweep, bestSweep);
             
-            // Always sweep forwards and backwards
+            // Always sweep forwards and backwards TODOALAN depending on METHOD
             for (int layerIndex = 0; layerIndex < layerCount - 1; layerIndex++) {
                 switchInLayer(forward, layerIndex);
             }
@@ -94,7 +99,9 @@ public abstract class AbstractGreedySwitchProcessor implements ILayoutProcessor 
     private void initialize(final LGraph layeredGraph, final int layerCount) {
         bestSweep = new NodeGroup[layerCount][];
         curSweep = new NodeGroup[layerCount][];
-
+        eastNodeDegrees = new int[layerCount][];
+        westNodeDegrees = new int[layerCount][];
+        
         ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
         while (layerIter.hasNext()) {
             Layer layer = layerIter.next();
@@ -107,6 +114,11 @@ public abstract class AbstractGreedySwitchProcessor implements ILayoutProcessor 
             // Initialize this layer's node arrays in the different sweeps
             bestSweep[layerIndex] = new NodeGroup[layerNodeCount];
             curSweep[layerIndex] = new NodeGroup[layerNodeCount];
+            
+            eastNodeDegrees[layerIndex] = new int[layerNodeCount];
+            westNodeDegrees[layerIndex] = new int[layerNodeCount];
+
+            int nodeId = 0;
 
             ListIterator<LNode> nodeIter = layer.getNodes().listIterator();
             while (nodeIter.hasNext()) {
@@ -117,7 +129,25 @@ public abstract class AbstractGreedySwitchProcessor implements ILayoutProcessor 
                 curSweep[layerIndex][nodeIter.previousIndex()] = nodeGroup;
                 bestSweep[layerIndex][nodeIter.previousIndex()] = nodeGroup;
                 node.setProperty(InternalProperties.NODE_GROUP, nodeGroup);
-
+                
+                // Set node ids
+                node.id = nodeId;
+                nodeId++;
+                
+                // Set port Ids, the ports of each node are numbered from 0 upwards
+                // in a clockwise manner, as received by getPorts()
+                // This way, the ids need not be updated when a switch occurs.
+                int portId = 0;
+                for (LPort port : node.getPorts()) {
+                    port.id = portId;
+                    portId++;
+                    if(port.getSide() == PortSide.EAST){
+                        eastNodeDegrees[layerIndex][node.id] += port.getDegree();
+                    }
+                    if(port.getSide() == PortSide.WEST){
+                        westNodeDegrees[layerIndex][node.id] += port.getDegree();
+                    }
+                }
             }
         }
     }
@@ -126,9 +156,6 @@ public abstract class AbstractGreedySwitchProcessor implements ILayoutProcessor 
         int freeLayerIndex = forward ? layerIndex + 1 : layerIndex - 1;
         NodeGroup[] fixedLayer = curSweep[layerIndex];
         NodeGroup[] freeLayer = curSweep[freeLayerIndex];
-
-        setIdsToIndicesInLayer(freeLayer);
-        setIdsToIndicesInLayer(fixedLayer);
 
         boolean stop = false;
         boolean firstRun = true;
@@ -149,7 +176,7 @@ public abstract class AbstractGreedySwitchProcessor implements ILayoutProcessor 
                 if (noSuccessorConstraint) {
                     boolean switchReducesCrossings =
                             checkIfSwitchReducesCrossings(i, i + 1, forward, fixedLayer, freeLayer,
-                                    firstRun);
+                                    firstRun, freeLayerIndex);
 
                     if (switchReducesCrossings) {
                         exchangeNodes(i, i + 1, freeLayer);
@@ -163,7 +190,7 @@ public abstract class AbstractGreedySwitchProcessor implements ILayoutProcessor 
 
     abstract boolean checkIfSwitchReducesCrossings(final int currentNodeIndex,
             final int nextNodeIndex, final boolean forward, final NodeGroup[] fixedLayer,
-            final NodeGroup[] freeLayer, boolean firstRun);
+            final NodeGroup[] freeLayer, boolean firstRun, int freeLayerIndex);
 
     abstract int getAmountOfCrossings(NodeGroup[][] currentOrder);
 
@@ -183,19 +210,6 @@ public abstract class AbstractGreedySwitchProcessor implements ILayoutProcessor 
         }
     }
 
-    private void setIdsToIndicesInLayer(final NodeGroup[] freeLayer) {
-        int id = 0;
-        for (NodeGroup nodeGroup : freeLayer) {
-            nodeGroup.getNode().id = id;
-            id++;
-
-            int portId = 0;
-            for (LPort lPort : nodeGroup.getNode().getPorts()) {
-                lPort.id = portId;
-                portId++;
-            }
-        }
-    }
 
     private void setNewGraph(NodeGroup[][] sweep) {
         ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
@@ -226,6 +240,34 @@ public abstract class AbstractGreedySwitchProcessor implements ILayoutProcessor 
         NodeGroup temp = layer[indexTwo];
         layer[indexTwo] = layer[indexOne];
         layer[indexOne] = temp;
+        
+        updateNodeIds(indexOne, indexTwo, layer);
+    }
+
+    /**
+     * Switches Node ids.
+     * @param indexOne
+     * @param indexTwo
+     * @param layer
+     */
+    private void updateNodeIds(final int indexOne, final int indexTwo, final NodeGroup[] layer) {
+        int nodeOneId = layer[indexOne].getNode().id;
+        layer[indexOne].getNode().id = layer[indexTwo].getNode().id;
+        layer[indexTwo].getNode().id = nodeOneId;
+    }
+
+    /**
+     * @return the eastNodeDegrees
+     */
+    protected int[][] getEastNodeDegrees() {
+        return eastNodeDegrees;
+    }
+
+    /**
+     * @return the westNodeDegrees
+     */
+    protected int[][] getWestNodeDegrees() {
+        return westNodeDegrees;
     }
 
 }

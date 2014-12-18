@@ -13,13 +13,7 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
-import java.util.List;
-import java.util.TreeMap;
-
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
-import de.cau.cs.kieler.klay.layered.graph.LEdge;
-import de.cau.cs.kieler.klay.layered.graph.LNode;
-import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.p3order.NodeGroup;
 
 /**
@@ -35,13 +29,16 @@ public class GreedySwitchCrossingMatrixProcessor extends AbstractGreedySwitchPro
     private boolean crossingMatrixConstructed;
     private int[][] crossingMatrix;
     private int amountOfCrossings;
+    private int freeLayerIndex;
 
     /**
      * {@inheritDoc}
      */
     @Override
     boolean checkIfSwitchReducesCrossings(final int currentNodeIndex, final int nextNodeIndex,
-            final boolean forward, final NodeGroup[] fixedLayer, final NodeGroup[] freeLayer, boolean firstRun) {
+            final boolean forward, final NodeGroup[] fixedLayer, final NodeGroup[] freeLayer,
+            boolean firstRun, int freeLayerIndex) {
+        this.freeLayerIndex = freeLayerIndex;
         if (!crossingMatrixConstructed) {
             crossingMatrix = calculateCrossingMatrix(freeLayer, fixedLayer, forward);
             crossingMatrixConstructed = true;
@@ -53,21 +50,18 @@ public class GreedySwitchCrossingMatrixProcessor extends AbstractGreedySwitchPro
     }
 
     private int[][] calculateCrossingMatrix(final NodeGroup[] freeLayer,
-            final NodeGroup[] fixedLayer, final boolean forwardSweep) {
+            final NodeGroup[] fixedLayer, final boolean isForwardSweep) {
         amountOfCrossings = 0;
         int matrixSize = freeLayer.length;
         crossingMatrix = new int[matrixSize][matrixSize];
+        int[] nodeDegrees =
+                isForwardSweep ? super.getWestNodeDegrees()[freeLayerIndex] : super
+                        .getEastNodeDegrees()[freeLayerIndex];
         for (int i = 0; i < matrixSize; i++) {
             for (int j = i + 1; j < matrixSize; j++) {
-
-                TreeMap<Integer, LEdge> iEdges = getEdges(forwardSweep, freeLayer[i].getNode());
-                TreeMap<Integer, LEdge> jEdges = getEdges(forwardSweep, freeLayer[j].getNode());
-
-                if (iEdges.isEmpty() || jEdges.isEmpty()) {
-                    continue;
-                }
                 IncidentEdgeCrossCounter crossCounter =
-                        new IncidentEdgeCrossCounter(iEdges, jEdges, forwardSweep);
+                        new IncidentEdgeCrossCounter(freeLayer[i].getNode(),
+                                freeLayer[j].getNode(), isForwardSweep, nodeDegrees);
                 crossCounter.calculateCrossingNumber();
                 crossingMatrix[i][j] = crossCounter.getCrossingsForOrderIJ();
                 crossingMatrix[j][i] = crossCounter.getCrossingsForOrderJI();
@@ -75,22 +69,6 @@ public class GreedySwitchCrossingMatrixProcessor extends AbstractGreedySwitchPro
             }
         }
         return crossingMatrix;
-    }
-
-    private TreeMap<Integer, LEdge> getEdges(final boolean forwardSweep, final LNode node) {
-        List<LPort> ports = node.getPorts();
-        TreeMap<Integer, LEdge> edges = new TreeMap<Integer, LEdge>();
-        for (LPort port : ports) {
-            for (LEdge edge : forwardSweep ? port.getIncomingEdges() : port.getOutgoingEdges()) {
-                boolean edgeIsNotSelfLoop =
-                        edge.getSource().getNode() != edge.getTarget().getNode();
-                if (edgeIsNotSelfLoop) {
-                    int indexInOtherLayer = forwardSweep ? edge.getSource().getNode().id : edge.getTarget().getNode().id;
-                    edges.put(indexInOtherLayer, edge);
-                }
-            }
-        }
-        return edges;
     }
 
     /**

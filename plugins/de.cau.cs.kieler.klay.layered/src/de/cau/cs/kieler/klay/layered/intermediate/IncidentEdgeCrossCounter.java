@@ -13,9 +13,12 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.TreeMap;
 
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -30,9 +33,11 @@ public class IncidentEdgeCrossCounter {
 
     private int crossingsForOrderJI;
 
-    private TreeMap<Integer, LEdge> iEdges;
+    private LNode currNode;
 
-    private TreeMap<Integer, LEdge> jEdges;
+    private LNode nextNode;
+    
+    private int [] nodeDegrees;
 
     /**
      * @return the crossingsForOrderIJ
@@ -48,20 +53,21 @@ public class IncidentEdgeCrossCounter {
         return crossingsForOrderJI;
     }
 
-    private boolean forwardSweep;
+    private boolean isForwardSweep;
 
     /**
-     * @param iEdges
-     * @param jEdges
+     * @param currNode
+     * @param nextNode
      * @param forwardSweep
      */
-    public IncidentEdgeCrossCounter(final TreeMap<Integer, LEdge> iEdges,
-            final TreeMap<Integer, LEdge> jEdges, final boolean forwardSweep) {
+    public IncidentEdgeCrossCounter(final LNode currNode,
+            final LNode nextNode, final boolean forwardSweep, int [] nodeDegrees) {
         crossingsForOrderIJ = 0;
         crossingsForOrderJI = 0;
-        this.iEdges = iEdges;
-        this.jEdges = jEdges;
-        this.forwardSweep = forwardSweep;
+        this.currNode = currNode;
+        this.nextNode = nextNode;
+        this.isForwardSweep = forwardSweep;
+        this.nodeDegrees = nodeDegrees;
     }
 
     /**
@@ -69,6 +75,10 @@ public class IncidentEdgeCrossCounter {
      * can be received with getCrossingForOrderJI and getCrossingForOrderIJ.
      */
     public void calculateCrossingNumber() {
+        TreeMap<Integer, LEdge> iEdges = getEdges(isForwardSweep, currNode);
+        TreeMap<Integer, LEdge> jEdges = getEdges(isForwardSweep, nextNode);
+        System.out.println("\nIEdges = " + iEdges);
+        System.out.println("JEdges = " + jEdges);
         int remainingIEdges = iEdges.size();
         int remainingJEdges = jEdges.size();
         LPort iNeighbourPort = null, jNeighbourPort = null;
@@ -93,7 +103,7 @@ public class IncidentEdgeCrossCounter {
             boolean causesCrossingsToOrderJI = neighbourToINode.id < neighbourToJNode.id;
             if (neighbourToINode.id == neighbourToJNode.id
                     && neighbourToINode.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
-                if (forwardSweep) {
+                if (isForwardSweep) {
                     causesCrossingsToOrderIJ |= iNeighbourPort.id > jNeighbourPort.id;
                     causesCrossingsToOrderJI |= iNeighbourPort.id < jNeighbourPort.id;
                 } else {
@@ -150,6 +160,29 @@ public class IncidentEdgeCrossCounter {
                 }
             }
         }
+        
+        countInLayerEdgeCrossings(currNode, nextNode);
+    }
+    
+    private TreeMap<Integer, LEdge> getEdges(final boolean forwardSweep, final LNode node) {
+        List<LPort> ports = node.getPorts();
+        TreeMap<Integer, LEdge> edges = new TreeMap<Integer, LEdge>();
+        for (LPort port : ports) {
+            for (LEdge edge : forwardSweep ? port.getIncomingEdges() : port.getOutgoingEdges()) {
+                boolean edgeIsNotSelfLoop =
+                        edge.getSource().getNode() != edge.getTarget().getNode();
+                boolean edgeIsNotInLayerEdge =
+                        edge.getSource().getNode().getLayer() != edge.getTarget().getNode()
+                                .getLayer();
+                if (edgeIsNotSelfLoop && edgeIsNotInLayerEdge) {
+                    int indexInOtherLayer =
+                            forwardSweep ? edge.getSource().getNode().id : edge.getTarget()
+                                    .getNode().id;
+                    edges.put(indexInOtherLayer, edge);
+                }
+            }
+        }
+        return edges;
     }
 
     private LPort getNextPortAndRemoveEdge(final TreeMap<Integer, LEdge> edges) {
@@ -158,11 +191,78 @@ public class IncidentEdgeCrossCounter {
         while (!edges.isEmpty()) {
             edge = edges.remove(edges.firstKey());
             if (edge.getSource().getNode() != edge.getTarget().getNode()) {
-                iNeighbourPort = forwardSweep ? edge.getSource() : edge.getTarget();
+                iNeighbourPort = isForwardSweep ? edge.getSource() : edge.getTarget();
                 break;
             }
         }
         return iNeighbourPort;
     }
+    
+    /**
+     * TODOALAN explain this: if (otherNodeId > thisNodeId){ inLayerCrossingsIJ +=
+     * nodeDegrees[otherNodeId]; } else if (otherNodeId < thisNodeId){ inLayerCrossingsJI +=
+     * nodeDegrees[otherNodeId]; }
+     * 
+     * @param isFirstRun
+     * @param freeLayer
+     * @param isForwardSweep
+     * @param currNode
+     * @param nextNode
+     * @param freeLayerIndex
+     */
+    private void countInLayerEdgeCrossings(final LNode currNode, final LNode nextNode) {
+        LinkedList<LEdge> currNodeInLayerEdges = new LinkedList<LEdge>();
+        PortSide portSide = isForwardSweep ? PortSide.WEST : PortSide.EAST;
+        boolean currNodeHasInLayerEdges =
+                collectInLayerEdges(currNode, currNodeInLayerEdges, portSide);
+
+        if (currNodeHasInLayerEdges) {
+            for (LEdge edge : currNodeInLayerEdges) {
+                int nextNodeId = nextNode.id;
+                boolean currNodeIsSource = edge.getSource().getNode() == currNode;
+                int edgeTargetNodeId =
+                        currNodeIsSource ? edge.getTarget().getNode().id : edge.getSource()
+                                .getNode().id;
+
+                if (edgeTargetNodeId > nextNodeId) {
+                    crossingsForOrderIJ += nodeDegrees[edgeTargetNodeId];
+                } else if (edgeTargetNodeId < nextNodeId) {
+                    crossingsForOrderJI += nodeDegrees[edgeTargetNodeId];
+                }
+            }
+        }
+    }
+
+    /**
+     * TODOALAN
+     * 
+     * @param currNode
+     * @param currNodeInLayerEdges
+     * @param portSide
+     * @return
+     */
+    private boolean collectInLayerEdges(final LNode currNode,
+            final LinkedList<LEdge> currNodeInLayerEdges, final PortSide portSide) {
+        boolean currNodeHasInLayerEdges = false;
+        for (LPort port : currNode.getPorts(portSide)) {
+            for (LEdge edge : port.getConnectedEdges()) {
+                boolean inLayerIncomingEdge =
+                        edge.getSource().getNode() != currNode
+                                && edge.getSource().getNode().getLayer() == currNode.getLayer();
+                boolean inLayerOutgoingEdge =
+                        edge.getTarget().getNode() != currNode
+                                && edge.getTarget().getNode().getLayer() == currNode.getLayer();
+                boolean currEdgeHasInLayerEdges = inLayerIncomingEdge || inLayerOutgoingEdge;
+
+                if (currEdgeHasInLayerEdges) {
+                    currNodeInLayerEdges.add(edge);
+                    currNodeHasInLayerEdges |= currEdgeHasInLayerEdges;
+                }
+            }
+        }
+        return currNodeHasInLayerEdges;
+    }
+    
+    
 
 }

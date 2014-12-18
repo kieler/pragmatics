@@ -33,7 +33,7 @@ public class GreedySwitchCounterProcessor extends AbstractGreedySwitchProcessor 
     @Override
     protected boolean checkIfSwitchReducesCrossings(final int currentNodeIndex,
             final int nextNodeIndex, final boolean forward, final NodeGroup[] fixedLayer,
-            final NodeGroup[] freeLayer, boolean firstRun) {
+            final NodeGroup[] freeLayer, boolean firstRun, int freeLayerIndex) {
         CrossingCounter crossingCounter = new CrossingCounter(freeLayer[0].getNode().getGraph());
         amountOfCrossings =
                 crossingCounter.countCrossingsBetweenLayers(fixedLayer, freeLayer, forward);
