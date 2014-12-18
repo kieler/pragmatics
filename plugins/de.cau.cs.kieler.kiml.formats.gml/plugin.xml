@@ -11,8 +11,9 @@
 	
   </extension>
   <extension point="org.eclipse.emf.ecore.extension_parser">
+<!--class="de.cau.cs.kieler.kiml.formats.gml.GmlExecutableExtensionFactory:org.eclipse.xtext.resource.IResourceFactory"-->
       <parser
-          class="de.cau.cs.kieler.kiml.formats.gml.GmlExecutableExtensionFactory:org.eclipse.xtext.resource.IResourceFactory"
+          class="de.cau.cs.kieler.kiml.formats.gml.GmlResource$GmlResourceFactory"
           type="gml">
       </parser>
   </extension>
