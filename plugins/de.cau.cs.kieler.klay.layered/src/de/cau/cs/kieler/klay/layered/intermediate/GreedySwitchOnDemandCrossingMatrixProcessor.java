@@ -15,18 +15,16 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
 
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.p3order.NodeGroup;
-import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
-import de.cau.cs.kieler.klay.layered.properties.NodeType;
 
 /**
  * @author alan
@@ -36,13 +34,14 @@ public class GreedySwitchOnDemandCrossingMatrixProcessor extends AbstractGreedyS
 
     private boolean[][] isCrossingMatrixEntryFilled;
     private int[][] crossingMatrix;
-    HashMap<LPort, Integer> portIndices = new HashMap<LPort, Integer>();
+    private HashMap<LPort, Integer> portIndices = new HashMap<LPort, Integer>();
     private int inLayerCrossingsIJ, inLayerCrossingsJI;
+    private boolean isForwardSweep;
+    private int[] nodeDegrees; // amount of ports per port.id
 
-    public int getAmountOfCrossings(final NodeGroup[][] currentOrder) { // Doesn't work!!! TODOALAN
+    public int getAmountOfCrossings(final NodeGroup[][] currentOrder) {
         CrossingCounter allCrossingsCounter = new CrossingCounter(super.getLayeredGraph());
         int result = allCrossingsCounter.countAllCrossingsInGraph(currentOrder);
-        System.out.println("Current amount of crossings in graph = " + result);
         return result;
     }
 
@@ -53,7 +52,7 @@ public class GreedySwitchOnDemandCrossingMatrixProcessor extends AbstractGreedyS
     boolean checkIfSwitchReducesCrossings(final int currentNodeIndex, final int nextNodeIndex,
             final boolean forward, final NodeGroup[] fixedLayer, final NodeGroup[] freeLayer,
             final boolean isFirstRun) {
-
+        this.isForwardSweep = forward;
         int freeLayerSize = freeLayer.length;
         LNode currNode = freeLayer[currentNodeIndex].getNode();
         LNode nextNode = freeLayer[nextNodeIndex].getNode();
@@ -80,20 +79,11 @@ public class GreedySwitchOnDemandCrossingMatrixProcessor extends AbstractGreedyS
 
         }
 
-//        countInLayerEdgeCrossings(isFirstRun, freeLayer, forward, currNode, nextNode);
+        countInLayerEdgeCrossings(isFirstRun, freeLayer, forward, currNode, nextNode);
 
         crossingMatrix[currNode.id][nextNode.id] += inLayerCrossingsIJ;
         crossingMatrix[nextNode.id][currNode.id] += inLayerCrossingsJI;
 
-        // // TODOALAN delme
-        // boolean decisionChangedByInLayerCrossCounter =
-        // crossingMatrix[currNode.id][nextNode.id] <= crossingMatrix[nextNode.id][currNode.id]
-        // && crossingsIJ > crossingsJI;
-        // if (decisionChangedByInLayerCrossCounter) {
-        // // breakpointdummy;
-        // int i = 0;
-        // }
-        // // delme
         System.out.println("Crossing Matrix freeLayer " + currNode.getLayer().getIndex() + " i = "
                 + currNode.id + ", j = " + nextNode.id);
         System.out.println("Direction = " + (forward ? "forward" : "backward"));
@@ -103,103 +93,66 @@ public class GreedySwitchOnDemandCrossingMatrixProcessor extends AbstractGreedyS
         return crossingMatrix[currNode.id][nextNode.id] > crossingMatrix[nextNode.id][currNode.id];
     }
 
-    private void setPortIndices(NodeGroup[] layer, boolean forward) {
-        int currentNumber = 0;
-        PortSide portSide = forward ? PortSide.WEST : PortSide.EAST;
-        // Assign numbers to ports, top-down
+    private void setPortIndices(NodeGroup[] layer, boolean isForwardSweep) {
+        nodeDegrees = new int[layer.length];
+        int portIndex = 0;
+        PortSide portSide = isForwardSweep ? PortSide.WEST : PortSide.EAST;
         for (int nodeIndex = 0; nodeIndex < layer.length; nodeIndex++) {
             LNode node = layer[nodeIndex].getNode();
-            // At the moment the port switcher is not implemented after this processor
-            // if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
-            // for (LPort port : node.getPorts(portSide)) {
-            // if (port.getDegree() > 0) {
-            // currentNumber += port.getDegree();
-            // portIndices.put(port, currentNumber);
-            // }
-            // }
-            // } else {
-            // Find the number of edges incident to ports
-            for (LPort easternPort : node.getPorts(portSide)) {
-                currentNumber += easternPort.getDegree();
-            }
-
-            // Assign the number to all ports
-            for (LPort easternPort : node.getPorts(portSide)) {
-                if (easternPort.getDegree() > 0) {
-                    portIndices.put(easternPort, currentNumber);
+            int nodeDegree = 0;
+            for (LPort port : node.getPorts(portSide)) {
+                if (port.getDegree() > 0) {
+                    portIndex += port.getDegree();
+                    nodeDegree += port.getDegree();
+                    portIndices.put(port, portIndex);
                 }
             }
-            // }
+
+            nodeDegrees[node.id] = nodeDegree; // TEST TodoAlan
         }
     }
 
-    private void countInLayerEdgeCrossings(boolean isFirstRun, NodeGroup[] freeLayer,
-            boolean forward, LNode currNode, LNode nextNode) {
-        boolean currNodeHasInLayerEdges = false;
+    /**
+     * TODOALAN
+     * 
+     * @param isFirstRun
+     * @param freeLayer
+     * @param forward
+     * @param currNode
+     * @param nextNode
+     */
+    private void countInLayerEdgeCrossings(final boolean isFirstRun, final NodeGroup[] freeLayer,
+            final boolean forward, final LNode currNode, final LNode nextNode) {
+        inLayerCrossingsIJ = 0;
+        inLayerCrossingsJI = 0;
         LinkedList<LEdge> currNodeInLayerEdges = new LinkedList<LEdge>();
-        for (LPort port : currNode.getPorts(forward ? PortSide.WEST : PortSide.EAST)) {
-            if (!port.getConnectedEdges().iterator().hasNext()) {
-                break;
-            }
-            // TODOALAN change for mutliple edges into port
-            LEdge edge = port.getConnectedEdges().iterator().next();
+        PortSide portSide = forward ? PortSide.WEST : PortSide.EAST;
+        boolean currNodeHasInLayerEdges =
+                collectInLayerEdges(currNode, currNodeInLayerEdges, portSide); // CHECK!
 
-            boolean inLayerIncomingEdge =
-                    edge.getSource().getNode() != currNode
-                            && edge.getSource().getNode().getLayer() == currNode.getLayer();
-            boolean inLayerOutgoingEdge =
-                    edge.getTarget().getNode() != currNode
-                            && edge.getTarget().getNode().getLayer() == currNode.getLayer();
-            boolean currEdgeHasInLayerEdges = inLayerIncomingEdge || inLayerOutgoingEdge;
-
-            if (currEdgeHasInLayerEdges) {
-                currNodeInLayerEdges.add(edge);
-                currNodeHasInLayerEdges |= currEdgeHasInLayerEdges;
-            }
+        if (isFirstRun) {
+            setPortIndices(freeLayer, forward);
         }
-        if (currNodeHasInLayerEdges) {
-            if (isFirstRun) {
-                setPortIndices(freeLayer, forward);
-            }
-            PortSide portSide = forward ? PortSide.WEST : PortSide.EAST;
-            for (LEdge edge : currNodeInLayerEdges) {
-                LPort otherPort = null;
-                LPort thisPort = null;
-                if (edge.getSource().getNode() == currNode) {
-                    otherPort = edge.getTarget();
-                    thisPort = edge.getSource();
-                } else {
-                    otherPort = edge.getSource();
-                    thisPort = edge.getTarget();
-                }
 
-                if (nextNode.getPorts(portSide) != null
-                        && nextNode.getPorts(portSide).iterator().hasNext()
-                        && portIndices.containsKey(nextNode.getPorts(portSide).iterator().next())) {
-                    // F** iterator TODOALAN Bug: Can lead to endless loop
-                    if (portIndices.get(otherPort) > portIndices.get(nextNode.getPorts(portSide)
-                            .iterator().next())) {
-                        for (LPort port : nextNode.getPorts(portSide)) {
-                            inLayerCrossingsIJ += port.getDegree();
-                        }
-                        // nextNode.getPorts(portSide).iterator().
-                    }
-                }
-                assert portIndices != null;
-                assert otherPort != null;
-                assert thisPort != null;
-                if (portIndices.containsKey(otherPort) && portIndices.containsKey(thisPort)) {
-                    if (portIndices.get(otherPort) < portIndices.get(thisPort)) {
-                        boolean countRestOfPorts = false;
-                        for (LPort port : currNode.getPorts(portSide)) {
-                            if (port == thisPort) {
-                                countRestOfPorts = true;
-                            }
-                            if (countRestOfPorts) {
-                                inLayerCrossingsJI += port.getDegree();
-                            }
-                        }
-                    }
+        if (currNodeHasInLayerEdges) {
+            for (LEdge edge : currNodeInLayerEdges) {
+                boolean currNodeIsSource = edge.getSource().getNode() == currNode;
+                LPort thisPort = currNodeIsSource ? edge.getSource() : edge.getTarget();
+                LPort otherPort = currNodeIsSource ? edge.getTarget() : edge.getSource();
+
+                if (portIndices.get(otherPort) > portIndices.get(thisPort)) {
+                    assert portIndices.containsKey(thisPort) && portIndices.containsKey(otherPort);
+                    int thisPortIndex = portIndices.get(thisPort);
+                    int otherPortIndex = portIndices.get(otherPort);
+                    inLayerCrossingsIJ +=
+                            Math.abs(portIndices.get(thisPort) - portIndices.get(otherPort)) - 1;
+                    updatePortIndices(currNode, nextNode); // switch indices
+                    thisPortIndex = portIndices.get(thisPort);
+                    otherPortIndex = portIndices.get(otherPort);
+                    inLayerCrossingsJI +=
+                            Math.abs(portIndices.get(thisPort) - portIndices.get(otherPort)) - 1;
+                    updatePortIndices(nextNode, currNode); // switch back
+                    assert inLayerCrossingsIJ >= 0 && inLayerCrossingsJI >= 0;
                 }
             }
         }
@@ -207,17 +160,30 @@ public class GreedySwitchOnDemandCrossingMatrixProcessor extends AbstractGreedyS
 
     /**
      * @param currNode
-     * @param nextNode
+     * @param currNodeInLayerEdges
+     * @param portSide
+     * @return
      */
-    private void northSouthPortAdjust(LNode currNode, LNode nextNode) {
-        if (currNode.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT
-                && nextNode.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT) {
-            CrossingCounter crossingCounter = new CrossingCounter(currNode.getGraph());
-            crossingMatrix[currNode.id][nextNode.id] +=
-                    crossingCounter.crossBetweenTwoNorthSouthNodes(currNode, nextNode);
-            crossingMatrix[nextNode.id][currNode.id] +=
-                    crossingCounter.crossBetweenTwoNorthSouthNodes(nextNode, currNode);
+    private boolean collectInLayerEdges(final LNode currNode,
+            final LinkedList<LEdge> currNodeInLayerEdges, final PortSide portSide) {
+        boolean currNodeHasInLayerEdges = false;
+        for (LPort port : currNode.getPorts(portSide)) {
+            for (LEdge edge : port.getConnectedEdges()) {
+                boolean inLayerIncomingEdge =
+                        edge.getSource().getNode() != currNode
+                                && edge.getSource().getNode().getLayer() == currNode.getLayer();
+                boolean inLayerOutgoingEdge =
+                        edge.getTarget().getNode() != currNode
+                                && edge.getTarget().getNode().getLayer() == currNode.getLayer();
+                boolean currEdgeHasInLayerEdges = inLayerIncomingEdge || inLayerOutgoingEdge;
+
+                if (currEdgeHasInLayerEdges) {
+                    currNodeInLayerEdges.add(edge);
+                    currNodeHasInLayerEdges |= currEdgeHasInLayerEdges;
+                }
+            }
         }
+        return currNodeHasInLayerEdges;
     }
 
     private TreeMap<Integer, LEdge> getEdges(final boolean forwardSweep, final LNode node) {
@@ -251,61 +217,34 @@ public class GreedySwitchOnDemandCrossingMatrixProcessor extends AbstractGreedyS
      * @param layer
      *            The layer as NodeGroup array
      */
+    @Override
     protected void exchangeNodes(final int indexOne, final int indexTwo, final NodeGroup[] layer) {
-        // Edit port Indices Map for in-layer edge crossings
-        // We simply edit for both sides, as we don't know which direction we are going into yet
-        // TODOALAN
-        // make more efficient or at least reduce code amount TODOALAN
-        int nodeOneDegreeEast = 0, nodeOneDegreeWest = 0;
-        int nodeTwoDegreeEast = 0, nodeTwoDegreeWest = 0;
-
-        LNode nodeOne = layer[indexOne].getNode();
-        Iterator<LPort> nodeOneEastIterator = nodeOne.getPorts(PortSide.EAST).iterator();
-        Iterator<LPort> nodeOneWestIterator = nodeOne.getPorts(PortSide.WEST).iterator();
-        LNode nodeTwo = layer[indexTwo].getNode();
-        Iterator<LPort> nodeTwoEastIterator = nodeTwo.getPorts(PortSide.EAST).iterator();
-        Iterator<LPort> nodeTwoWestIterator = nodeTwo.getPorts(PortSide.WEST).iterator();
-        while (nodeOneEastIterator.hasNext()) {
-            nodeOneEastIterator.next();
-            nodeOneDegreeEast++;
-        }
-        while (nodeOneWestIterator.hasNext()) {
-            nodeOneWestIterator.next();
-            nodeOneDegreeWest++;
-        }
-        while (nodeTwoEastIterator.hasNext()) {
-            nodeTwoEastIterator.next();
-            nodeTwoDegreeEast++;
-        }
-        while (nodeTwoWestIterator.hasNext()) {
-            nodeTwoWestIterator.next();
-            nodeTwoDegreeWest++;
-        }
-
-        for (LPort port : nodeOne.getPorts(PortSide.EAST)) {
-            if (portIndices.containsKey(port)) {
-                int iCurrent = portIndices.get(port);
-                portIndices.put(port, iCurrent + nodeOneDegreeEast);
-            }
-        }
-        for (LPort port : nodeOne.getPorts(PortSide.WEST)) {
-            if (portIndices.containsKey(port)) {
-                int iCurrent = portIndices.get(port);
-                portIndices.put(port, iCurrent + nodeOneDegreeWest);
-            }
-        }
-        for (LPort port : nodeTwo.getPorts(PortSide.EAST)) {
-            if (portIndices.containsKey(port)) {
-                int iCurrent = portIndices.get(port);
-                portIndices.put(port, iCurrent + nodeTwoDegreeEast);
-            }
-        }
-        for (LPort port : nodeTwo.getPorts(PortSide.WEST)) {
-            if (portIndices.containsKey(port)) {
-                int iCurrent = portIndices.get(port);
-                portIndices.put(port, iCurrent + nodeTwoDegreeWest);
-            }
-        }
+        updatePortIndices(layer[indexOne].getNode(), layer[indexTwo].getNode());
         super.exchangeNodes(indexOne, indexTwo, layer);
+    }
+
+    /**
+     * NodeOne has been switched with (is now below of) nodeTwo.
+     * 
+     * @param indexOne
+     * @param indexTwo
+     * @param layer
+     */
+    private void updatePortIndices(LNode nodeOne, LNode nodeTwo) {
+        PortSide portSide = isForwardSweep ? PortSide.WEST : PortSide.EAST;
+
+        for (LPort port : nodeOne.getPorts(portSide)) {
+            if (portIndices.containsKey(port)) {
+                int iCurrent = portIndices.get(port);
+                portIndices.put(port, iCurrent + nodeDegrees[nodeTwo.id]);
+            }
+        }
+
+        for (LPort port : nodeTwo.getPorts(portSide)) {
+            if (portIndices.containsKey(port)) {
+                int iCurrent = portIndices.get(port);
+                portIndices.put(port, iCurrent - nodeDegrees[nodeOne.id]);
+            }
+        }
     }
 }

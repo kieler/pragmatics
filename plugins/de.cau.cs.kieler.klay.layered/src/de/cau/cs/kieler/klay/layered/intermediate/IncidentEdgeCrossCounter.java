@@ -13,8 +13,6 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
-import java.util.List;
-import java.util.ListIterator;
 import java.util.TreeMap;
 
 import de.cau.cs.kieler.kiml.options.LayoutOptions;

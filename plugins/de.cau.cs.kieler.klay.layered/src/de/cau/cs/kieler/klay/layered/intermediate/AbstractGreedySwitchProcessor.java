@@ -16,21 +16,14 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 import java.util.List;
 import java.util.ListIterator;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
-import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.p3order.NodeGroup;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
-import de.cau.cs.kieler.klay.layered.properties.NodeType;
 
 public abstract class AbstractGreedySwitchProcessor implements ILayoutProcessor {
 
@@ -58,56 +51,40 @@ public abstract class AbstractGreedySwitchProcessor implements ILayoutProcessor 
      * {@inheritDoc}
      */
     public void process(final LGraph layeredGraphIn, final IKielerProgressMonitor progressMonitor) {
+        progressMonitor.begin("Begin Greedy Switch intermediate processor", 1);
         this.layeredGraph = layeredGraphIn;
         int layerCount = layeredGraph.getLayers().size();
         if (layerCount < 2) {
-            // progressMonitor.done();
+            progressMonitor.done();
             return;
         }
 
         initialize(layeredGraph, layerCount);
-        CrossingCounter crossCounter = new CrossingCounter(layeredGraph);
-        crossingsInGraph = getAmountOfCrossings(curSweep);
-        int crossingsBeforeReduction = crossingsInGraph;// delme
+        crossingsInGraph = getAmountOfCrossings(curSweep); // TODOALAN depending on Method
 
         boolean forward = true;
         int tempCrossingsInGraph = Integer.MAX_VALUE;
 
-//        for (int i = 0; i < 2; i++) {
-//            // tempCrossingsInGraph = crossingsInGraph;
-//            for (int layerIndex = forward ? 0 : layerCount - 1; forward ? layerIndex < layerCount - 1
-//                    : layerIndex > 0; layerIndex = forward ? layerIndex + 1 : layerIndex - 1) {
-//                switchInLayer(forward, layerIndex);
-//            }
-//            forward = !forward;
-//            setNewGraph(curSweep);
-//            crossingsInGraph = getAmountOfCrossings(curSweep);
-//        }
-//        copySweep(curSweep, bestSweep);
-        long startTime = System.nanoTime();
         while (tempCrossingsInGraph > crossingsInGraph && crossingsInGraph > 0) {
             tempCrossingsInGraph = crossingsInGraph;
             copySweep(curSweep, bestSweep);
-            //always sweep backwards and forwards
-            for (int i = 0; i < 2; i++) {
-                for (int layerIndex = forward ? 0 : layerCount - 1; forward ? layerIndex < layerCount - 1
-                        : layerIndex > 0; layerIndex = forward ? layerIndex + 1 : layerIndex - 1) {
-                    switchInLayer(forward, layerIndex);
-                }
-                forward = !forward;
+            
+            // Always sweep forwards and backwards
+            for (int layerIndex = 0; layerIndex < layerCount - 1; layerIndex++) {
+                switchInLayer(forward, layerIndex);
             }
+
+            forward = !forward;
+            for (int layerIndex = layerCount - 1; layerIndex > 0; layerIndex--) {
+                switchInLayer(forward, layerIndex);
+            }
+            
             setNewGraph(curSweep); // TODOALAN: BAD!!
-            crossingsInGraph = getAmountOfCrossings(curSweep);
+            crossingsInGraph = getAmountOfCrossings(curSweep);  // TODOALAN depending on Method
         }
-        System.out.println("This operation took: " + (System.nanoTime() - startTime) + " ns.");
+
         setNewGraph(bestSweep);
-        // -- delme TODOAlan
-        int totalCrossingsAfter = crossCounter.countAllCrossingsInGraph(curSweep);
-        float ratioSaved =
-                (float) (crossingsBeforeReduction - totalCrossingsAfter)
-                        / (float) crossingsBeforeReduction;
-        int i = 0;
-        // -- delme
+        progressMonitor.done();
     }
 
     /**
@@ -166,7 +143,8 @@ public abstract class AbstractGreedySwitchProcessor implements ILayoutProcessor 
                         currentNode.getProperty(InternalProperties.IN_LAYER_SUCCESSOR_CONSTRAINTS);
                 boolean noSuccessorConstraint =
                         constraints == null || constraints.size() == 0
-                                || !constraints.get(0).equals(nextNode);
+                                || !constraints.contains(nextNode); // TODOALAN constraints can
+                                                                    // be a list
 
                 if (noSuccessorConstraint) {
                     boolean switchReducesCrossings =

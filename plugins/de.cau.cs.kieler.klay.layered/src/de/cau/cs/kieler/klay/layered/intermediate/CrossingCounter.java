@@ -30,17 +30,25 @@ import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 
 /**
+ * TODOALAN
  * @author alan
  *
  */
 public class CrossingCounter {
 
-    private int portCount;
-
-    public CrossingCounter(final LGraph layeredGraph) { // TODOALAN this class does not work :-(
+    /**
+     * Constructs and initializes a cross counter. Initialization iterates through all ports.
+     * @param layeredGraph
+     */
+    public CrossingCounter(final LGraph layeredGraph) {
         initialize(layeredGraph);
     }
 
+    /**
+     * TODOALAN
+     * @param currentOrder
+     * @return
+     */
     public int countAllCrossingsInGraph(NodeGroup[][] currentOrder) {
         int totalCrossingsAfter = 0;
         for (int layerIndex = 0; layerIndex < currentOrder.length - 1; layerIndex++) {
@@ -51,9 +59,15 @@ public class CrossingCounter {
         return totalCrossingsAfter;
     }
 
+    /**
+     * TODOALAN
+     * @param fixedLayer
+     * @param freeLayer
+     * @param forward
+     * @return
+     */
     public int countCrossingsBetweenLayers(final NodeGroup[] fixedLayer,
             final NodeGroup[] freeLayer, boolean forward) {
-        initialize(fixedLayer[0].getNode().getGraph());
         int amountOfCrossings = 0;
         boolean isLayerEmpty =
                 fixedLayer == null || fixedLayer.length == 0 || freeLayer == null
@@ -64,8 +78,8 @@ public class CrossingCounter {
         amountOfCrossings +=
                 forward ? countCrossings(fixedLayer, freeLayer) : countCrossings(freeLayer,
                         fixedLayer);
-         amountOfCrossings += countNorthSouthPortCrossings(freeLayer);
-         amountOfCrossings += countInLayerEdgeCrossings(freeLayer);
+        amountOfCrossings += countNorthSouthPortCrossings(freeLayer);
+        amountOfCrossings += countInLayerEdgeCrossings(freeLayer);
         return amountOfCrossings;
     }
 
@@ -73,69 +87,20 @@ public class CrossingCounter {
      * Port position array used for counting the number of edge crossings.
      */
     private int[] portPos;
-    /**
-     * The number of in-layer edges for each layer, including virtual connections to north/south
-     * dummies.
-     */
-    private int[] inLayerEdgeCount;
-    /**
-     * Whether the layers contain north / south port dummies or not.
-     */
-    private boolean[] northSouthPorts;
 
-    /**
-     * Initialize all data for the layer sweep crossing minimizer.
-     * 
-     * @param layeredGraph
-     *            a layered graph
-     */
     private void initialize(final LGraph layeredGraph) {
-        int layerCount = layeredGraph.getLayers().size();
-
-        inLayerEdgeCount = new int[layerCount];
-        northSouthPorts = new boolean[layerCount];
-        int nodeCount = 0;
-        portCount = 0; // TODOALAN Why not local?
-
-        // Iterate through the layers, initializing port and node IDs, collecting
-        // the nodes into the current sweep and building the layout unit map
-        ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
-        while (layerIter.hasNext()) {
-            Layer layer = layerIter.next();
-
-            int layerIndex = layerIter.previousIndex();
-            int layerNodeCount = layer.getNodes().size();
-            // Empty layers are not allowed!
-            assert layerNodeCount > 0;
-
-            inLayerEdgeCount[layerIndex] = 0;
-            northSouthPorts[layerIndex] = false;
-
-            // Initialize this layer's node arrays in the different sweeps
-
-            ListIterator<LNode> nodeIter = layer.getNodes().listIterator();
-            while (nodeIter.hasNext()) {
-                LNode node = nodeIter.next();
-
-                // Create node group and register layout unit
+        int portCount = 0; 
+        
+        for (Layer layer : layeredGraph) {
+            for (LNode node : layer) {
+                
+                // Register node groups
                 NodeGroup nodeGroup = new NodeGroup(node);
-                node.id = nodeCount++;
                 node.setProperty(InternalProperties.NODE_GROUP, nodeGroup);
-
-                // Count in-layer edges
+                
+                // Initialize port ids.
                 for (LPort port : node.getPorts()) {
                     port.id = portCount++;
-                    for (LEdge edge : port.getOutgoingEdges()) {
-                        if (edge.getTarget().getNode().getLayer() == layer) {
-                            inLayerEdgeCount[layerIndex]++;
-                        }
-                    }
-                }
-
-                // Count north/south dummy nodes
-                if (node.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT) {
-                    inLayerEdgeCount[layerIndex]++;
-                    northSouthPorts[layerIndex] = true;
                 }
             }
         }
@@ -574,7 +539,7 @@ public class CrossingCounter {
      *            the layer whose north / south port related crossings to count.
      * @return the number of crossings caused by edges connected to northern or southern ports.
      */
-    public int countNorthSouthPortCrossings(final NodeGroup[] layer) {
+    private int countNorthSouthPortCrossings(final NodeGroup[] layer) {
         int crossings = 0;
         boolean northernSide = true;
         LNode recentNormalNode = null;
@@ -612,6 +577,24 @@ public class CrossingCounter {
                     continue;
                 }
 
+                // Find the up to two ports represented by this dummy node
+                LPort nodeInputPort = null;
+                LPort nodeOutputPort = null;
+                for (LPort port : node.getPorts()) {
+                    // We assume here that a port of a north / south dummy has either incoming or
+                    // outgoing edges, but not both. So far, that's the case.
+                    assert port.getIncomingEdges().isEmpty() ^ port.getOutgoingEdges().isEmpty() : port
+                            .getIncomingEdges().size()
+                            + " incoming edges, "
+                            + port.getOutgoingEdges().size() + " outgoing edges";
+
+                    if (!port.getIncomingEdges().isEmpty()) {
+                        nodeInputPort = (LPort) port.getProperty(InternalProperties.ORIGIN);
+                    } else if (!port.getOutgoingEdges().isEmpty()) {
+                        nodeOutputPort = (LPort) port.getProperty(InternalProperties.ORIGIN);
+                    }
+                }
+
                 // Iterate over the next nodes until we find a north / south port dummy belonging to
                 // a
                 // new normal node or until we find our current normal node
@@ -623,8 +606,90 @@ public class CrossingCounter {
                         // We can stop
                         break;
                     } else if (node2Type == NodeType.NORTH_SOUTH_PORT) {
-                        
-                        crossings += crossBetweenTwoNorthSouthNodes(node, node2);
+                        // Check if the north / south port dummy still belongs to the same normal
+                        // node
+                        if (node2.getProperty(InternalProperties.ORIGIN) != currentNormalNode) {
+                            // New normal node, we can stop
+                            break;
+                        }
+
+                        // Find the up to two ports represented by this dummy node
+                        LPort node2InputPort = null;
+                        LPort node2OutputPort = null;
+                        for (LPort port2 : node2.getPorts()) {
+                            // We assume here that a port of a north / south dummy has either
+                            // incoming or
+                            // outgoing edges, but not both. So far, that's the case.
+                            if (!port2.getIncomingEdges().isEmpty()) {
+                                node2InputPort =
+                                        (LPort) port2.getProperty(InternalProperties.ORIGIN);
+                            } else if (!port2.getOutgoingEdges().isEmpty()) {
+                                node2OutputPort =
+                                        (LPort) port2.getProperty(InternalProperties.ORIGIN);
+                            }
+                        }
+
+                        // How crossings are determined depends on which side of the normal node
+                        // we're on
+                        if (northernSide) {
+                            boolean nodeInputPortCollision = false;
+                            boolean nodeOutputPortCollision = false;
+
+                            if (nodeOutputPort != null && node2InputPort != null
+                                    && nodeOutputPort.id < node2InputPort.id) {
+                                crossings++;
+                                nodeOutputPortCollision = true;
+                            }
+                            if (nodeInputPort != null && node2OutputPort != null
+                                    && nodeInputPort.id > node2OutputPort.id) {
+                                crossings++;
+                                nodeInputPortCollision = true;
+                            }
+                            if (nodeOutputPort != null && node2OutputPort != null
+                                    && nodeOutputPort.id > node2OutputPort.id) {
+                                crossings++;
+                                nodeOutputPortCollision = true;
+                            }
+                            if (nodeInputPort != null && node2InputPort != null
+                                    && nodeInputPort.id < node2InputPort.id) {
+                                crossings++;
+                                nodeInputPortCollision = true;
+                            }
+
+                            if (nodeInputPortCollision && nodeOutputPortCollision
+                                    && nodeInputPort == nodeOutputPort) {
+                                crossings--;
+                            }
+                        } else {
+                            boolean node2InputPortCollision = false;
+                            boolean node2OutputPortCollision = false;
+
+                            if (nodeInputPort != null && node2OutputPort != null
+                                    && nodeInputPort.id < node2OutputPort.id) {
+                                crossings++;
+                                node2OutputPortCollision = true;
+                            }
+                            if (nodeOutputPort != null && node2InputPort != null
+                                    && nodeOutputPort.id > node2InputPort.id) {
+                                crossings++;
+                                node2InputPortCollision = true;
+                            }
+                            if (nodeInputPort != null && node2InputPort != null
+                                    && nodeInputPort.id < node2InputPort.id) {
+                                crossings++;
+                                node2InputPortCollision = true;
+                            }
+                            if (nodeOutputPort != null && node2OutputPort != null
+                                    && nodeOutputPort.id > node2OutputPort.id) {
+                                crossings++;
+                                node2OutputPortCollision = true;
+                            }
+
+                            if (node2InputPortCollision && node2OutputPortCollision
+                                    && node2InputPort == node2OutputPort) {
+                                crossings--;
+                            }
+                        }
                     }
                 }
             }
@@ -633,120 +698,8 @@ public class CrossingCounter {
         return crossings;
     }
 
-    public int crossBetweenTwoNorthSouthNodes(LNode node1, LNode node2) {
-        // Find the up to two ports represented by this dummy node
-        LPort nodeInputPort = null;
-        LPort nodeOutputPort = null;
-        int crossings = 0;
-        
-        boolean northernSide = false;
-        for (LPort port1 : node1.getPorts()) {
-            // We assume here that a port of a north / south dummy has either
-            // incoming or
-            // outgoing edges, but not both. So far, that's the case.
-            LPort originPort = (LPort) port1.getProperty(InternalProperties.ORIGIN);
-            if (!port1.getIncomingEdges().isEmpty()) {
-                nodeInputPort = originPort;
-            } else if (!port1.getOutgoingEdges().isEmpty()) {
-                nodeOutputPort = originPort;
-            }
-            northernSide = node1.id < originPort.getNode().id;
-        }
-        LPort node2InputPort = null;
-        LPort node2OutputPort = null;
-        for (LPort port2 : node2.getPorts()) {
-            // We assume here that a port of a north / south dummy has either
-            // incoming or
-            // outgoing edges, but not both. So far, that's the case.
-            if (!port2.getIncomingEdges().isEmpty()) {
-                node2InputPort = (LPort) port2.getProperty(InternalProperties.ORIGIN);
-            } else if (!port2.getOutgoingEdges().isEmpty()) {
-                node2OutputPort = (LPort) port2.getProperty(InternalProperties.ORIGIN);
-            }
-        }
-
-        // How crossings are determined depends on which side of the normal node
-        // we're on 
-        if (northernSide) {
-            boolean nodeInputPortCollision = false;
-            boolean nodeOutputPortCollision = false;
-
-            if (nodeOutputPort != null && node2InputPort != null
-                    && nodeOutputPort.id < node2InputPort.id) {
-                crossings++;
-                nodeOutputPortCollision = true;
-            }
-            if (nodeInputPort != null && node2OutputPort != null
-                    && nodeInputPort.id > node2OutputPort.id) {
-                crossings++;
-                nodeInputPortCollision = true;
-            }
-            if (nodeOutputPort != null && node2OutputPort != null
-                    && nodeOutputPort.id > node2OutputPort.id) {
-                crossings++;
-                nodeOutputPortCollision = true;
-            }
-            if (nodeInputPort != null && node2InputPort != null
-                    && nodeInputPort.id < node2InputPort.id) {
-                crossings++;
-                nodeInputPortCollision = true;
-            }
-
-            if (nodeInputPortCollision && nodeOutputPortCollision
-                    && nodeInputPort == nodeOutputPort) {
-                crossings--;
-            }
-        } else {
-            boolean node2InputPortCollision = false;
-            boolean node2OutputPortCollision = false;
-
-            if (nodeInputPort != null && node2OutputPort != null
-                    && nodeInputPort.id < node2OutputPort.id) {
-                crossings++;
-                node2OutputPortCollision = true;
-            }
-            if (nodeOutputPort != null && node2InputPort != null
-                    && nodeOutputPort.id > node2InputPort.id) {
-                crossings++;
-                node2InputPortCollision = true;
-            }
-            if (nodeInputPort != null && node2InputPort != null
-                    && nodeInputPort.id < node2InputPort.id) {
-                crossings++;
-                node2InputPortCollision = true;
-            }
-            if (nodeOutputPort != null && node2OutputPort != null
-                    && nodeOutputPort.id > node2OutputPort.id) {
-                crossings++;
-                node2OutputPortCollision = true;
-            }
-
-            if (node2InputPortCollision && node2OutputPortCollision
-                    && node2InputPort == node2OutputPort) {
-                crossings--;
-            }
-        }
-        return crossings;
-    }
-
     // /////////////////////////////////////////////////////////////////////////////
     // Utility Methods
-
-    /**
-     * Copy the content of the source node array to the target node array.
-     * 
-     * @param source
-     *            a layered graph
-     * @param dest
-     *            a node array to copy the graph into
-     */
-    private static void copySweep(final NodeGroup[][] source, final NodeGroup[][] dest) {
-        for (int i = 0; i < dest.length; i++) {
-            for (int j = 0; j < dest[i].length; j++) {
-                dest[i][j] = source[i][j];
-            }
-        }
-    }
 
     /**
      * Insert a number into a sorted range of an array.
