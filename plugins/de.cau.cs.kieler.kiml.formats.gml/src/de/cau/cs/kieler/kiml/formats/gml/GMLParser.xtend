@@ -14,20 +14,25 @@
 package de.cau.cs.kieler.kiml.formats.gml
 
 import java.io.BufferedReader
-import java.io.ByteArrayInputStream
-import java.io.File
-import java.io.FileInputStream
+import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.io.StreamTokenizer
 import java.util.Stack
-import java.io.IOException
 
 /**
- * TODO
- * numbers are interpreted as int if %1 == 0
+ * Parses the GML files in one top-down pass using a {@link StreamTokenizer}. 
+ * For more information on the Graph Modelling Language see 
+ * http://www.fim.uni-passau.de/en/fim/faculty/chairs/theoretische-informatik/projects.html.
+ * 
+ * Note that the StreamTokenizer assumes all numbers to be doubles. To
+ * add support for integers we interpret a numbers {@code n} as integer
+ * if {@code n % 1 == 0}. For instance, both {@code 1} and {@code 1.0} 
+ * are converted to integers.
  * 
  * @author uru
+ * @see GMLModel
+ * @see GMLSerializer
  */
 final class GMLParser {
 
@@ -48,56 +53,66 @@ final class GMLParser {
         var expecting = KEY_OR_CLOSE;
 
         var Element currentElement
-        val elementStack = new Stack<CollectionElement>
-        elementStack.push(new CollectionElement(null, "root"))
-
         var currentKey = "";
+        
+        val elementStack = new Stack<CollectionElement>
+        // we always have a root element that collects top level
+        // elements in the GML file
+        elementStack.push(new CollectionElement(null, "root"))
         
         var eof = false;
         do {
-
             val token = st.nextToken();
 
+            // expecting key values or a closing bracket
             if (expecting == KEY_OR_CLOSE) {
-
                 switch (token) {
                     case StreamTokenizer.TT_EOF: {
                         eof = true;
                     }
+                    case StreamTokenizer.TT_EOL: {}
                     case StreamTokenizer.TT_WORD: {
                         currentKey = st.sval
                         expecting = VAL_OR_COL
                     }
                     default: {
                         if (token as char == SBC) {
+                            if (elementStack.size == 1) {
+                                throw new IllegalArgumentException("Too many closing ']'.")
+                            }
                             currentElement = elementStack.pop()
                             expecting = KEY_OR_CLOSE;
+                        } else {
+                            throw new IllegalArgumentException("Expected key or ']' but read '" 
+                                + token as char + "' at line " + st.lineno + ".")
                         }
                     }
                 }
 
+            // expecting a value or an opening bracket, i.e.
+            // the start of a collection of elements
             } else if (expecting == VAL_OR_COL) {
 
+                // initially we push the root element on the stack and afterwards
+                // assure that always at least the root element is on the stack
+                // when reading a ']' (and popping an element).
+                val container = elementStack.peek 
                 var Element newElement = null
-                val container = (if(!elementStack.isEmpty) elementStack.peek else null) as CollectionElement
-
+                
                 switch (token) {
                     case StreamTokenizer.TT_EOF: {
                         eof = true;
                     }
-                    case StreamTokenizer.TT_EOL: {
-                    }
+                    case StreamTokenizer.TT_EOL: {}
                     case StreamTokenizer.TT_WORD,
                     case TT_QUOTED: {
-
                         newElement = new StringElement(container, currentKey, st.sval)
                         expecting = KEY_OR_CLOSE
                     }
                     case StreamTokenizer.TT_NUMBER: {
-                        
+                        // special treatment of numbers, see class's javadoc
                         val Number n = if ((st.nval % 1) == 0.0) st.nval.intValue as Integer 
                                        else st.nval as Double
-                       
                         newElement = new NumberElement(container, currentKey, n)
                         expecting = KEY_OR_CLOSE
                     }
@@ -105,16 +120,16 @@ final class GMLParser {
                         if (token as char == SBO) {
                             newElement = new CollectionElement(container, currentKey)
                             expecting = KEY_OR_CLOSE
+                        } else {
+                            throw new IllegalArgumentException("Expected value or but read " 
+                                + token as char + "' at line " + st.lineno + ".")
                         }
                     }
                 }
 
+                // handle newly created elements
                 if (newElement != null) {
-
-                    // if a parent element exists, add the new element to it
-                    if (container != null) {
-                        container.elements += newElement
-                    }
+                    container.elements += newElement
 
                     // push collection element to the stack
                     if (newElement instanceof CollectionElement) {
@@ -128,36 +143,20 @@ final class GMLParser {
 
         } while (!eof);
 
+        if (elementStack.size < 1) {
+            throw new IllegalArgumentException("Too many closing ']'.")
+        } else if (elementStack.size > 1) {
+            throw new IllegalArgumentException("Too many opening '['.")
+        }
+        
         // pop the root element
         val root = elementStack.pop
+        
         // copy to eobject surrogate
         val model = new GMLModel
         model.elements.addAll(root.elements)
         
         return model
-
     }
-
-    def static void main(String[] args) {
-
-        val test2 = '''
-            cluster [
-               id 1
-            ] 
-            cluster [
-               id 2
-            ]
-        '''
-
-        val fi = new FileInputStream(new File("D:/till_clusters.gml"));
-
-        val e =  GMLParser.parse(new ByteArrayInputStream(test2.bytes))
-
-        //        val large = new GMLParser().parse(fi)
-        println(e)
-        //        Files.write(large.toString.bytes, new File("D:/tmp.gml"))
-       // println(GMLSerializer.serialize(e))
-
-    } 
 
 }

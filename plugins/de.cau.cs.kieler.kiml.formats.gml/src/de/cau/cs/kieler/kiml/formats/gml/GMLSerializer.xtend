@@ -14,8 +14,11 @@
 package de.cau.cs.kieler.kiml.formats.gml
 
 /**
+ * Serializer for GML models.
+ * 
  * @author uru
- *
+ * @see GMLModel
+ * @see GMLParser
  */
 final class GMLSerializer {
     

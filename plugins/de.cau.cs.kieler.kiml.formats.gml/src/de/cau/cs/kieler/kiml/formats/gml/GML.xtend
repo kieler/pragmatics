@@ -18,9 +18,9 @@ import org.eclipse.emf.ecore.impl.EObjectImpl
 import org.eclipse.xtend.lib.annotations.Data
 
 /**
- * @author uru
+ * Root element of GML models. Inherits from {@link EObjectImpl} 
+ * such that it can be used within an EMF context.
  */
- 
  class GMLModel extends EObjectImpl {
     List<Element> elements = newArrayList
     def getElements() { return elements }
@@ -30,6 +30,13 @@ import org.eclipse.xtend.lib.annotations.Data
     }
  }
  
+ /**
+  * Abstract class for GML Elements. Every element 
+  * consists of a key and either a value or a collection of
+  * further elements.
+  * All valued elements have to implement a method that 
+  * returns the value in form of a String.
+  */
  @Data abstract class Element {
     Element container 
     String key
@@ -53,16 +60,26 @@ import org.eclipse.xtend.lib.annotations.Data
     }
 }
  
- 
+/**
+ * A StringElement has a String as value.
+ */
 @Data class StringElement extends Element {
     String value
 }
 
+/**
+ * A NumberElement has either an integer 
+ * or double as value.
+ */
 @Data class NumberElement extends Element {
     Number number
     override def String getValue() { return number.toString }
 }
 
+/**
+ * A CollectionElement comprises of a key and 
+ * a collection of arbitrary elements.
+ */
 @Data class CollectionElement extends Element {
     new(Element parent, String key) {
         super(parent, key)
