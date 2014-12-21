@@ -27,6 +27,13 @@ public class GreedySwitchOnDemandCrossingMatrixProcessor extends AbstractGreedyS
     private boolean[][] isCrossingMatrixEntryFilled;
     private int[][] crossingMatrix;
 
+    /**
+     * @return the crossingMatrix
+     */
+    int[][] getCrossingMatrix() {
+        return crossingMatrix;
+    }
+
     public int getAmountOfCrossings(final NodeGroup[][] currentOrder) {
         CrossingCounter allCrossingsCounter = new CrossingCounter(super.getLayeredGraph());
         int result = allCrossingsCounter.countAllCrossingsInGraph(currentOrder);
@@ -50,16 +57,20 @@ public class GreedySwitchOnDemandCrossingMatrixProcessor extends AbstractGreedyS
         }
         if (!isCrossingMatrixEntryFilled[currNode.id][nextNode.id]) {
             // northSouthPortAdjust(currNode, nextNode);
+
             int[] nodeDegrees =
                     forward ? super.getWestNodeDegrees()[freeLayerIndex] : super
                             .getEastNodeDegrees()[freeLayerIndex];
             IncidentEdgeCrossCounter incidentEdgeCrossCounter =
-                    new IncidentEdgeCrossCounter(currNode, nextNode, forward, nodeDegrees);
+                    new IncidentEdgeCrossCounter(currNode, nextNode, forward, nodeDegrees,
+                            super.getNodePositions()[freeLayerIndex]);
             incidentEdgeCrossCounter.calculateCrossingNumber();
+
             crossingMatrix[currNode.id][nextNode.id] =
                     incidentEdgeCrossCounter.getCrossingsForOrderIJ();
             crossingMatrix[nextNode.id][currNode.id] =
                     incidentEdgeCrossCounter.getCrossingsForOrderJI();
+
             isCrossingMatrixEntryFilled[currNode.id][nextNode.id] = true;
 
         }
@@ -71,21 +82,6 @@ public class GreedySwitchOnDemandCrossingMatrixProcessor extends AbstractGreedyS
             System.out.println(Arrays.toString(crossingMatrix[i]));
         }
         return crossingMatrix[currNode.id][nextNode.id] > crossingMatrix[nextNode.id][currNode.id];
-    }
-
-    /**
-     * Switches nodes with index indexOne and indexTwo in layer layer.
-     * 
-     * @param indexOne
-     *            The first nodes index
-     * @param indexTwo
-     *            The second nodes index
-     * @param layer
-     *            The layer as NodeGroup array
-     */
-    @Override
-    protected void exchangeNodes(final int indexOne, final int indexTwo, final NodeGroup[] layer) {
-        super.exchangeNodes(indexOne, indexTwo, layer);
     }
 
 }

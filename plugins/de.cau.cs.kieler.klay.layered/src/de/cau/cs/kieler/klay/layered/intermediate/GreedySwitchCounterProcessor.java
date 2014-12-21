@@ -40,10 +40,10 @@ public class GreedySwitchCounterProcessor extends AbstractGreedySwitchProcessor 
         if (amountOfCrossings == 0) {
             return false;
         }
-        exchangeNodes(currentNodeIndex, nextNodeIndex, freeLayer);
+        exchangeNodes(currentNodeIndex, nextNodeIndex, freeLayer, freeLayerIndex);
         int newAmountOfCrossings =
                 crossingCounter.countCrossingsBetweenLayers(fixedLayer, freeLayer, forward);
-        exchangeNodes(nextNodeIndex, currentNodeIndex, freeLayer); // always switch back TODOALAN
+        exchangeNodes(nextNodeIndex, currentNodeIndex, freeLayer, freeLayerIndex); // always switch back TODOALAN
         boolean switchReducesCrossings = newAmountOfCrossings < amountOfCrossings;
         if (switchReducesCrossings) {
             amountOfCrossings = newAmountOfCrossings;
