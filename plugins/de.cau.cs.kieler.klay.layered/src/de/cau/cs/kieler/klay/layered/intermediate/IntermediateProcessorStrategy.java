@@ -78,11 +78,11 @@ public enum IntermediateProcessorStrategy {
     // Before Phase 4
     
     /** Attempts to improve crossing number through greedy switch algorithm. */
-    GREEDY_SWITCH_CROSSING_COUNTER_MINIMIZER,
+    GREEDY_SWITCH_CROSSING_COUNTER,
     /** Attempts to improve crossing number through greedy switch algorithm with crossing matrix. */
-    GREEDY_SWITCH_CROSSING_CROSSINGMATRIX_MINIMIZER,
+    GREEDY_SWITCH_CROSSINGMATRIX,
     /** Attempts to improve crossing number through greedy switch algorithm on demand crossing matrix. */
-    GREEDY_SWITCH_CROSSING_ONDEMAND_CROSSINGMATRIX_MINIMIZER,
+    GREEDY_SWITCH_ONDEMAND_CROSSINGMATRIX,
     /** Distributes ports after crossing minimization. Used by the layer sweep crossing minimizer. */
     PORT_DISTRIBUTER,
     /** Compacts looong sausages. This is a hidden feature. */
@@ -173,13 +173,13 @@ public enum IntermediateProcessorStrategy {
         case END_LABEL_PROCESSOR:
             return new EndLabelProcessor();
             
-        case GREEDY_SWITCH_CROSSING_COUNTER_MINIMIZER:
+        case GREEDY_SWITCH_CROSSING_COUNTER:
             return new GreedySwitchCounterProcessor();
 
-        case GREEDY_SWITCH_CROSSING_CROSSINGMATRIX_MINIMIZER:
+        case GREEDY_SWITCH_CROSSINGMATRIX:
             return new GreedySwitchCrossingMatrixProcessor();
             
-        case GREEDY_SWITCH_CROSSING_ONDEMAND_CROSSINGMATRIX_MINIMIZER:
+        case GREEDY_SWITCH_ONDEMAND_CROSSINGMATRIX:
             return new GreedySwitchOnDemandCrossingMatrixProcessor();
             
         case HIERARCHICAL_PORT_CONSTRAINT_PROCESSOR:

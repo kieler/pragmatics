@@ -2,12 +2,12 @@
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
- * 
+ *
  * Copyright 2014 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
- * 
+ *
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
@@ -25,88 +25,49 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.p3order.NodeGroup;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 
 /**
- * TODOALAN
+ * Counts the amount of crossings between two given layers or all layers in a graph. Counts
+ * crossings between layers, worst-case crossings caused by in-layer edges and crossings caused by
+ * north-south ports.
+ *
  * @author alan
  *
  */
 public class CrossingCounter {
 
     /**
+     * Port position array used for counting the number of edge crossings.
+     */
+    private int[] portPos;
+
+    /**
      * Constructs and initializes a cross counter. Initialization iterates through all ports.
+     *
      * @param layeredGraph
+     *            The layered graph
      */
     public CrossingCounter(final LGraph layeredGraph) {
         initialize(layeredGraph);
     }
 
     /**
-     * TODOALAN
+     * Counts all crossings in a graph.
+     *
      * @param currentOrder
-     * @return
+     *            The current order of the nodes.
+     * @return the amount of crossings
      */
-    public int countAllCrossingsInGraph(NodeGroup[][] currentOrder) {
-        int totalCrossingsAfter = 0;
+    public int countAllCrossingsInGraph(final LNode[][] currentOrder) {
+        int totalCrossings = 0;
         for (int layerIndex = 0; layerIndex < currentOrder.length - 1; layerIndex++) {
-            NodeGroup[] fixedLayer = currentOrder[layerIndex];
-            NodeGroup[] freeLayer = currentOrder[layerIndex + 1];
-            totalCrossingsAfter += countCrossingsBetweenLayers(fixedLayer, freeLayer, true);
+            LNode[] fixedLayer = currentOrder[layerIndex];
+            LNode[] freeLayer = currentOrder[layerIndex + 1];
+            totalCrossings += countCrossingsBetweenLayers(fixedLayer, freeLayer, true);
         }
-        return totalCrossingsAfter;
-    }
-
-    /**
-     * TODOALAN
-     * @param fixedLayer
-     * @param freeLayer
-     * @param forward
-     * @return
-     */
-    public int countCrossingsBetweenLayers(final NodeGroup[] fixedLayer,
-            final NodeGroup[] freeLayer, boolean forward) {
-        int amountOfCrossings = 0;
-        boolean isLayerEmpty =
-                fixedLayer == null || fixedLayer.length == 0 || freeLayer == null
-                        || freeLayer.length == 0;
-        if (isLayerEmpty) {
-            return 0;
-        }
-        amountOfCrossings +=
-                forward ? countCrossings(fixedLayer, freeLayer) : countCrossings(freeLayer,
-                        fixedLayer);
-        amountOfCrossings += countNorthSouthPortCrossings(freeLayer);
-        amountOfCrossings += countInLayerEdgeCrossings(freeLayer);
-        return amountOfCrossings;
-    }
-
-    /**
-     * Port position array used for counting the number of edge crossings.
-     */
-    private int[] portPos;
-
-    private void initialize(final LGraph layeredGraph) {
-        int portCount = 0; 
-        
-        for (Layer layer : layeredGraph) {
-            for (LNode node : layer) {
-                
-                // Register node groups
-                NodeGroup nodeGroup = new NodeGroup(node);
-                node.setProperty(InternalProperties.NODE_GROUP, nodeGroup);
-                
-                // Initialize port ids.
-                for (LPort port : node.getPorts()) {
-                    port.id = portCount++;
-                }
-            }
-        }
-
-        // Initialize the port positions and ranks arrays
-        portPos = new int[portCount];
+        return totalCrossings;
     }
 
     /**
@@ -115,20 +76,19 @@ public class CrossingCounter {
      * <li>W. Barth , M. Juenger, P. Mutzel, Simple and efficient bilayer cross counting, In
      * <i>Graph Drawing</i>, volume 2528 of LNCS, pp. 331-360. Springer, 2002.</li>
      * </ul>
-     * 
+     *
      * @param leftLayer
      *            the left layer
      * @param rightLayer
      *            the right layer
      * @return the number of edge crossings
      */
-    private int countCrossings(final NodeGroup[] leftLayer, final NodeGroup[] rightLayer) {
+    private int countCrossings(final LNode[] leftLayer, final LNode[] rightLayer) {
         // Assign index values to the ports of the right layer
         int targetCount = 0, edgeCount = 0;
-        Layer leftLayerRef = leftLayer[0].getNode().getLayer();
-        Layer rightLayerRef = rightLayer[0].getNode().getLayer();
-        for (NodeGroup nodeGroup : rightLayer) {
-            LNode node = nodeGroup.getNode();
+        Layer leftLayerRef = leftLayer[0].getLayer();
+        Layer rightLayerRef = rightLayer[0].getLayer();
+        for (LNode node : rightLayer) {
             assert node.getLayer() == rightLayerRef;
             if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                 // Determine how many input ports there are on the north side
@@ -191,8 +151,7 @@ public class CrossingCounter {
         // Determine the sequence of edge target positions sorted by source and target index
         int[] southSequence = new int[edgeCount];
         int i = 0;
-        for (NodeGroup nodeGroup : leftLayer) {
-            LNode node = nodeGroup.getNode();
+        for (LNode node : leftLayer) {
             assert node.getLayer() == leftLayerRef;
             if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                 // Iterate output ports in their natural order, that is north - east - south - west
@@ -248,6 +207,77 @@ public class CrossingCounter {
         return crossCount;
     }
 
+    /**
+     * Count crossings between the fixedLayer and the freeLayer.
+     *
+     * @param fixedLayer
+     *            The layer with which to count crossings.
+     * @param freeLayer
+     *            Count in-layer and north-south-port crossings in this layer.
+     * @param fixedLayerIsLeftOfFreeLayer
+     *            Defines order of fixedLayer and freeLayer.
+     * @return Amount of crossings.
+     */
+    public int countCrossingsBetweenLayers(final LNode[] fixedLayer, final LNode[] freeLayer,
+            final boolean fixedLayerIsLeftOfFreeLayer) {
+        int amountOfCrossings = 0;
+        boolean isLayerEmpty =
+                fixedLayer == null || fixedLayer.length == 0 || freeLayer == null
+                        || freeLayer.length == 0;
+        if (isLayerEmpty) {
+            return 0;
+        }
+        amountOfCrossings +=
+                fixedLayerIsLeftOfFreeLayer ? countCrossings(fixedLayer, freeLayer)
+                        : countCrossings(freeLayer, fixedLayer);
+        amountOfCrossings += countNorthSouthPortCrossings(freeLayer);
+        amountOfCrossings += countInLayerEdgeCrossings(freeLayer);
+        return amountOfCrossings;
+    }
+
+    /**
+     * Counts the crossings caused by in-layer edges connected to the given port. An edge is only
+     * counted once.
+     *
+     * @param port
+     *            the port whose edge crossings to count.
+     * @param portIndices
+     *            map of ports to their respective indices as calculated by
+     *            {@link #numberEastWestPorts(LNode[], Map, Map)}.
+     * @return the maximum number of crossings‚ for this port.
+     */
+    public int countInLayerCrossings(final LPort port, final Map<LPort, Integer> portIndices) {
+        int maxCrossings = 0;
+
+        // Find this port's index
+        Integer portIndex = portIndices.get(port);
+        if (portIndex == null) {
+            return 0;
+        }
+
+        // Find the maximum distance between two connected ports
+        Integer connectedPortIndex = null;
+        for (LEdge edge : port.getConnectedEdges()) {
+            if (edge.getSource() == port) {
+                connectedPortIndex = portIndices.get(edge.getTarget());
+            } else {
+                connectedPortIndex = portIndices.get(edge.getSource());
+            }
+
+            // Check if the edge is connected to another port in the same layer
+            if (connectedPortIndex != null) {
+                // Only count the edge once
+                if (portIndex.intValue() > connectedPortIndex.intValue()) {
+                    maxCrossings =
+                            Math.max(maxCrossings,
+                                    portIndex.intValue() - connectedPortIndex.intValue() - 1);
+                }
+            }
+        }
+
+        return maxCrossings;
+    }
+
     /*
      * The algorithm used to count crossings within a layer implemented in the following method has
      * two parts:
@@ -284,12 +314,12 @@ public class CrossingCounter {
      * Calculates the worst case for the number of crossings caused by in-layer edges in the given
      * layer and by north/south port dummies that are later connected to their corresponding regular
      * nodes. The actual number of crossings may be lower.
-     * 
+     *
      * @param layer
      *            the layer whose in-layer crossings and north/south dummy crossings to estimate.
      * @return the worst possible number of crossings
      */
-    public int countInLayerEdgeCrossings(final NodeGroup[] layer) {
+    public int countInLayerEdgeCrossings(final LNode[] layer) {
         int eastWestCrossings = 0;
         int northSouthCrossings = 0;
 
@@ -311,8 +341,7 @@ public class CrossingCounter {
         boolean northernSide = true;
         boolean layerLayoutUnitsSet = true;
 
-        for (NodeGroup nodeGroup : layer) {
-            LNode node = nodeGroup.getNode();
+        for (LNode node : layer) {
 
             // Part 1 of the crossing counting algorithm
             for (LPort port : node.getPorts()) {
@@ -383,8 +412,7 @@ public class CrossingCounter {
             int dummyCount = 0;
             northernSide = true;
 
-            for (NodeGroup nodeGroup : layer) {
-                LNode node = nodeGroup.getNode();
+            for (LNode node : layer) {
                 NodeType nodeType = node.getProperty(InternalProperties.NODE_TYPE);
 
                 switch (nodeType) {
@@ -419,134 +447,20 @@ public class CrossingCounter {
     }
 
     /**
-     * Assigns numbers to the eastern ports of a layer, and to the western ports of a layer. A
-     * number is assigned to a port if it has incident edges. Eastern ports are numbered top-down,
-     * while western ports are numbered bottom-up.
-     * 
-     * @param layer
-     *            the layer whose ports to index.
-     * @param easternMap
-     *            map to put the eastern ports' indices in.
-     * @param westernMap
-     *            map to put the western ports' indices in.
-     */
-    private void numberEastWestPorts(final NodeGroup[] layer, final Map<LPort, Integer> easternMap,
-            final Map<LPort, Integer> westernMap) {
-
-        int currentEasternNumber = 0;
-        int currentWesternNumber = 0;
-
-        // Assign numbers to eastern ports, top-down
-        for (int nodeIndex = 0; nodeIndex < layer.length; nodeIndex++) {
-            LNode node = layer[nodeIndex].getNode();
-
-            if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
-                for (LPort easternPort : node.getPorts(PortSide.EAST)) {
-                    if (easternPort.getDegree() > 0) {
-                        currentEasternNumber += easternPort.getDegree();
-                        easternMap.put(easternPort, currentEasternNumber);
-                    }
-                }
-            } else {
-                // Find the number of edges incident to eastern ports
-                for (LPort easternPort : node.getPorts(PortSide.EAST)) {
-                    currentEasternNumber += easternPort.getDegree();
-                }
-
-                // Assign the eastern number to all eastern ports
-                for (LPort easternPort : node.getPorts(PortSide.EAST)) {
-                    if (easternPort.getDegree() > 0) {
-                        easternMap.put(easternPort, currentEasternNumber);
-                    }
-                }
-            }
-        }
-
-        // Assign indices to western ports, bottom-up
-        for (int nodeIndex = layer.length - 1; nodeIndex >= 0; nodeIndex--) {
-            LNode node = layer[nodeIndex].getNode();
-
-            if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
-                for (LPort westernPort : node.getPorts(PortSide.WEST)) {
-                    if (westernPort.getDegree() > 0) {
-                        currentWesternNumber += westernPort.getDegree();
-                        westernMap.put(westernPort, currentWesternNumber);
-                    }
-                }
-            } else {
-                // Find the number of edges incident to western ports
-                for (LPort westernPort : node.getPorts(PortSide.WEST)) {
-                    currentWesternNumber += westernPort.getDegree();
-                }
-
-                // Assign the western number to all western ports
-                for (LPort westernPort : node.getPorts(PortSide.WEST)) {
-                    if (westernPort.getDegree() > 0) {
-                        westernMap.put(westernPort, currentWesternNumber);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Counts the crossings caused by in-layer edges connected to the given port. An edge is only
-     * counted once.
-     * 
-     * @param port
-     *            the port whose edge crossings to count.
-     * @param portIndices
-     *            map of ports to their respective indices as calculated by
-     *            {@link #numberEastWestPorts(LNode[], Map, Map)}.
-     * @return the maximum number of crossings‚ for this port.
-     */
-    public int countInLayerCrossings(final LPort port, final Map<LPort, Integer> portIndices) {
-        int maxCrossings = 0;
-
-        // Find this port's index
-        Integer portIndex = portIndices.get(port);
-        if (portIndex == null) {
-            return 0;
-        }
-
-        // Find the maximum distance between two connected ports
-        Integer connectedPortIndex = null;
-        for (LEdge edge : port.getConnectedEdges()) {
-            if (edge.getSource() == port) {
-                connectedPortIndex = portIndices.get(edge.getTarget());
-            } else {
-                connectedPortIndex = portIndices.get(edge.getSource());
-            }
-
-            // Check if the edge is connected to another port in the same layer
-            if (connectedPortIndex != null) {
-                // Only count the edge once
-                if (portIndex.intValue() > connectedPortIndex.intValue()) {
-                    maxCrossings =
-                            Math.max(maxCrossings,
-                                    portIndex.intValue() - connectedPortIndex.intValue() - 1);
-                }
-            }
-        }
-
-        return maxCrossings;
-    }
-
-    /**
      * Counts the number of edge crossings caused by the way north / south port dummies are ordered.
-     * 
+     *
      * @param layer
      *            the layer whose north / south port related crossings to count.
      * @return the number of crossings caused by edges connected to northern or southern ports.
      */
-    private int countNorthSouthPortCrossings(final NodeGroup[] layer) {
+    private int countNorthSouthPortCrossings(final LNode[] layer) {
         int crossings = 0;
         boolean northernSide = true;
         LNode recentNormalNode = null;
 
         // Iterate through the layer's nodes
         for (int i = 0; i < layer.length; i++) {
-            LNode node = layer[i].getNode();
+            LNode node = layer[i];
             NodeType nodeType = node.getProperty(InternalProperties.NODE_TYPE);
 
             if (nodeType == NodeType.NORMAL) {
@@ -599,7 +513,7 @@ public class CrossingCounter {
                 // a
                 // new normal node or until we find our current normal node
                 for (int j = i + 1; j < layer.length; j++) {
-                    LNode node2 = layer[j].getNode();
+                    LNode node2 = layer[j];
                     NodeType node2Type = node2.getProperty(InternalProperties.NODE_TYPE);
 
                     if (node2Type == NodeType.NORMAL) {
@@ -698,12 +612,132 @@ public class CrossingCounter {
         return crossings;
     }
 
+    private void initialize(final LGraph layeredGraph) {
+        int portCount = 0;
+
+        for (Layer layer : layeredGraph) {
+            for (LNode node : layer) {
+
+                // Initialize port ids.
+                for (LPort port : node.getPorts()) {
+                    port.id = portCount++;
+                }
+            }
+        }
+
+        // Initialize the port positions and ranks arrays
+        portPos = new int[portCount];
+    }
+
+    /**
+     * Assigns numbers to the eastern ports of a layer, and to the western ports of a layer. A
+     * number is assigned to a port if it has incident edges. Eastern ports are numbered top-down,
+     * while western ports are numbered bottom-up.
+     *
+     * @param layer
+     *            the layer whose ports to index.
+     * @param easternMap
+     *            map to put the eastern ports' indices in.
+     * @param westernMap
+     *            map to put the western ports' indices in.
+     */
+    private void numberEastWestPorts(final LNode[] layer, final Map<LPort, Integer> easternMap,
+            final Map<LPort, Integer> westernMap) {
+
+        int currentEasternNumber = 0;
+        int currentWesternNumber = 0;
+
+        // Assign numbers to eastern ports, top-down
+        for (LNode node : layer) {
+            if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+                for (LPort easternPort : node.getPorts(PortSide.EAST)) {
+                    if (easternPort.getDegree() > 0) {
+                        currentEasternNumber += easternPort.getDegree();
+                        easternMap.put(easternPort, currentEasternNumber);
+                    }
+                }
+            } else {
+                // Find the number of edges incident to eastern ports
+                for (LPort easternPort : node.getPorts(PortSide.EAST)) {
+                    currentEasternNumber += easternPort.getDegree();
+                }
+
+                // Assign the eastern number to all eastern ports
+                for (LPort easternPort : node.getPorts(PortSide.EAST)) {
+                    if (easternPort.getDegree() > 0) {
+                        easternMap.put(easternPort, currentEasternNumber);
+                    }
+                }
+            }
+        }
+
+        // Assign indices to western ports, bottom-up
+        for (int nodeIndex = layer.length - 1; nodeIndex >= 0; nodeIndex--) {
+            LNode node = layer[nodeIndex];
+
+            if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+                for (LPort westernPort : node.getPorts(PortSide.WEST)) {
+                    if (westernPort.getDegree() > 0) {
+                        currentWesternNumber += westernPort.getDegree();
+                        westernMap.put(westernPort, currentWesternNumber);
+                    }
+                }
+            } else {
+                // Find the number of edges incident to western ports
+                for (LPort westernPort : node.getPorts(PortSide.WEST)) {
+                    currentWesternNumber += westernPort.getDegree();
+                }
+
+                // Assign the western number to all western ports
+                for (LPort westernPort : node.getPorts(PortSide.WEST)) {
+                    if (westernPort.getDegree() > 0) {
+                        westernMap.put(westernPort, currentWesternNumber);
+                    }
+                }
+            }
+        }
+    }
+
     // /////////////////////////////////////////////////////////////////////////////
     // Utility Methods
 
     /**
+     * Searches a range of the specified array of ints for the specified value using the binary
+     * search algorithm. The range must be sorted prior to making this call.
+     *
+     * @param a
+     *            the array to be searched
+     * @param fromIndex
+     *            the index of the first element (inclusive) to be searched
+     * @param toIndex
+     *            the index of the last element (exclusive) to be searched
+     * @param key
+     *            the value to be searched for
+     * @return index of the search key
+     */
+    private static int binarySearch(final int[] a, final int fromIndex, final int toIndex,
+            final int key) {
+        int low = fromIndex;
+        int high = toIndex - 1;
+
+        while (low <= high) {
+            int mid = low + high >>> 1;
+            int midVal = a[mid];
+
+            if (midVal < key) {
+                low = mid + 1;
+            } else if (midVal > key) {
+                high = mid - 1;
+            } else {
+                return mid; // key found
+            }
+        }
+        return -(low + 1); // key not found
+    }
+
+    /**
      * Insert a number into a sorted range of an array.
-     * 
+     *
      * @param array
      *            an integer array
      * @param start
@@ -722,39 +756,5 @@ public class CrossingCounter {
             array[j + 1] = array[j];
         }
         array[insx] = n;
-    }
-
-    /**
-     * Searches a range of the specified array of ints for the specified value using the binary
-     * search algorithm. The range must be sorted prior to making this call.
-     * 
-     * @param a
-     *            the array to be searched
-     * @param fromIndex
-     *            the index of the first element (inclusive) to be searched
-     * @param toIndex
-     *            the index of the last element (exclusive) to be searched
-     * @param key
-     *            the value to be searched for
-     * @return index of the search key
-     */
-    private static int binarySearch(final int[] a, final int fromIndex, final int toIndex,
-            final int key) {
-        int low = fromIndex;
-        int high = toIndex - 1;
-
-        while (low <= high) {
-            int mid = (low + high) >>> 1;
-            int midVal = a[mid];
-
-            if (midVal < key) {
-                low = mid + 1;
-            } else if (midVal > key) {
-                high = mid - 1;
-            } else {
-                return mid; // key found
-            }
-        }
-        return -(low + 1); // key not found
     }
 }

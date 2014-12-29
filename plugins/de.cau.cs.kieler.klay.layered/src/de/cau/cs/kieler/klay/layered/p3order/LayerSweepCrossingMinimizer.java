@@ -80,7 +80,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                     .addBeforePhase3(IntermediateProcessorStrategy.LONG_EDGE_SPLITTER)
                     .addBeforePhase4(IntermediateProcessorStrategy.PORT_DISTRIBUTER)
                     .addBeforePhase4(
-                            IntermediateProcessorStrategy.GREEDY_SWITCH_CROSSING_ONDEMAND_CROSSINGMATRIX_MINIMIZER)
+                            IntermediateProcessorStrategy.GREEDY_SWITCH_ONDEMAND_CROSSINGMATRIX)
                     .addBeforePhase4(IntermediateProcessorStrategy.IN_LAYER_CONSTRAINT_PROCESSOR)
                     .addAfterPhase5(IntermediateProcessorStrategy.LONG_EDGE_JOINER);
 
@@ -744,8 +744,8 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
         int currentWesternNumber = 0;
 
         // Assign numbers to eastern ports, top-down
-        for (int nodeIndex = 0; nodeIndex < layer.length; nodeIndex++) {
-            LNode node = layer[nodeIndex].getNode();
+        for (NodeGroup element : layer) {
+            LNode node = element.getNode();
 
             if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                 for (LPort easternPort : node.getPorts(PortSide.EAST)) {
@@ -1067,7 +1067,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
         int high = toIndex - 1;
 
         while (low <= high) {
-            int mid = (low + high) >>> 1;
+            int mid = low + high >>> 1;
             int midVal = a[mid];
 
             if (midVal < key) {
