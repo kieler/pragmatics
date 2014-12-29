@@ -3,23 +3,24 @@
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
- * 
+ *
  * Copyright 2014 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
- * 
+ *
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
-import de.cau.cs.kieler.klay.layered.p3order.NodeGroup;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.graph.LNode;
 
 /**
  * This Processor uses greedy switch and recounts number of crossings in layer for every feasable
  * switch.
- * 
+ *
  * @author alan
  *
  */
@@ -28,34 +29,65 @@ public class GreedySwitchCounterProcessor extends AbstractGreedySwitchProcessor 
     private int amountOfCrossings = 0;
 
     /**
-     * {@inheritDoc}
+     * TODOALAN DEPRECATED REPAIR AND TEST! {@inheritDoc}
      */
     @Override
-    protected boolean checkIfSwitchReducesCrossings(final int currentNodeIndex,
-            final int nextNodeIndex, final boolean forward, final NodeGroup[] fixedLayer,
-            final NodeGroup[] freeLayer, boolean firstRun, int freeLayerIndex) {
-        CrossingCounter crossingCounter = new CrossingCounter(freeLayer[0].getNode().getGraph());
+    protected boolean switchReducesCrossings(final LNode[][] currentGraph,
+            final int freeLayerIndex, final int fixedLayerIndex, final int currentNodeIndex,
+            final int nextNodeIndex, final boolean calculateOnBothSides) {
+        LNode[] freeLayer = currentGraph[freeLayerIndex];
+        LNode[] fixedLayer = currentGraph[fixedLayerIndex];
+        CrossingCounter crossingCounter = new CrossingCounter(freeLayer[0].getGraph());
+
         amountOfCrossings =
-                crossingCounter.countCrossingsBetweenLayers(fixedLayer, freeLayer, forward);
+                calculateCrossings(currentGraph, freeLayerIndex, calculateOnBothSides, freeLayer,
+                        fixedLayer, crossingCounter);
+
         if (amountOfCrossings == 0) {
             return false;
         }
+
         exchangeNodes(currentNodeIndex, nextNodeIndex, freeLayer, freeLayerIndex);
+
         int newAmountOfCrossings =
-                crossingCounter.countCrossingsBetweenLayers(fixedLayer, freeLayer, forward);
-        exchangeNodes(nextNodeIndex, currentNodeIndex, freeLayer, freeLayerIndex); // always switch back TODOALAN
-        boolean switchReducesCrossings = newAmountOfCrossings < amountOfCrossings;
+                calculateCrossings(currentGraph, freeLayerIndex, calculateOnBothSides, freeLayer,
+                        fixedLayer, crossingCounter);
+        exchangeNodes(nextNodeIndex, currentNodeIndex, freeLayer, freeLayerIndex);
+
+        boolean switchReducesCrossings = newAmountOfCrossings > amountOfCrossings;
         if (switchReducesCrossings) {
             amountOfCrossings = newAmountOfCrossings;
         }
         return switchReducesCrossings;
     }
 
+    private int calculateCrossings(final LNode[][] currentGraph, final int freeLayerIndex,
+            final boolean calculateOnBothSides, final LNode[] freeLayer, final LNode[] fixedLayer,
+            final CrossingCounter crossingCounter) {
+        int crossings = 0;
+        if (calculateOnBothSides) {
+            if (freeLayerIndex == 0) {
+                crossings =
+                        crossingCounter.countCrossingsBetweenLayers(fixedLayer, freeLayer, false);
+            } else if (freeLayerIndex == currentGraph.length - 1) {
+                crossings =
+                        crossingCounter.countCrossingsBetweenLayers(fixedLayer, freeLayer, true);
+            } else {
+                crossings =
+                        crossingCounter.countCrossingsBetweenLayers(fixedLayer, freeLayer, true);
+                crossings +=
+                        crossingCounter.countCrossingsBetweenLayers(fixedLayer, freeLayer, false);
+
+            }
+        }
+        return crossings;
+    }
+
     /**
-     * {@inheritDoc}
+     * {@inheritDoc} // TODOALAN think about this. THIS DOESNT WORK!!!
      */
     @Override
-    int getAmountOfCrossings(final NodeGroup[][] currentOrder) { // TODOALAN think about this.
+    protected int getAmountOfCrossings(final LNode[][] currentOrder, final LGraph layeredGraph) {
         return amountOfCrossings;
     }
 }
