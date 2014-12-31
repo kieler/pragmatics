@@ -42,6 +42,8 @@ public class CrossingCounter {
      * Port position array used for counting the number of edge crossings.
      */
     private int[] portPos;
+    private final LGraph layeredGraph;
+    private final LNode[][] currentOrder;
 
     /**
      * Constructs and initializes a cross counter. Initialization iterates through all ports.
@@ -50,11 +52,22 @@ public class CrossingCounter {
      *            The layered graph
      */
     public CrossingCounter(final LGraph layeredGraph) {
-        initialize(layeredGraph);
+        this.layeredGraph = layeredGraph;
+        currentOrder = new LNode[layeredGraph.getLayers().size()][];
+        initialize();
     }
 
     /**
      * Counts all crossings in a graph.
+     * 
+     * @return
+     */
+    public int countAllCrossingsInGraph() {
+        return countAllCrossingsInGraph(currentOrder);
+    }
+
+    /**
+     * Counts all crossings in a graph in the currentOrder.
      *
      * @param currentOrder
      *            The current order of the nodes.
@@ -68,6 +81,54 @@ public class CrossingCounter {
             totalCrossings += countCrossingsBetweenLayers(fixedLayer, freeLayer, true);
         }
         return totalCrossings;
+    }
+
+    /**
+     * Count crossings between the fixedLayer and the freeLayer.
+     *
+     * @param fixedLayer
+     *            The layer with which to count crossings.
+     * @param freeLayer
+     *            Count in-layer and north-south-port crossings in this layer.
+     * @param fixedLayerIsEastOfFreeLayer
+     *            Defines order of fixedLayer and freeLayer.
+     * @return Amount of crossings.
+     */
+    public int countCrossingsBetweenLayers(final LNode[] fixedLayer, final LNode[] freeLayer,
+            final boolean fixedLayerIsEastOfFreeLayer) {
+        int amountOfCrossings = 0;
+        boolean isLayerEmpty =
+                fixedLayer == null || fixedLayer.length == 0 || freeLayer == null
+                        || freeLayer.length == 0;
+        if (isLayerEmpty) {
+            return 0;
+        }
+        amountOfCrossings +=
+                fixedLayerIsEastOfFreeLayer ? countCrossings(fixedLayer, freeLayer)
+                        : countCrossings(freeLayer, fixedLayer);
+        amountOfCrossings += countNorthSouthPortCrossings(freeLayer);
+        amountOfCrossings += countInLayerEdgeCrossings(freeLayer);
+        return amountOfCrossings;
+    }
+
+    private void initialize() {
+        int portCount = 0;
+        for (ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator(); layerIter
+                .hasNext();) {
+            Layer layer = layerIter.next();
+            currentOrder[layerIter.previousIndex()] = new LNode[layer.getNodes().size()];
+
+            for (ListIterator<LNode> nodeIter = layer.getNodes().listIterator(); nodeIter.hasNext();) {
+                LNode node = nodeIter.next();
+                currentOrder[layerIter.previousIndex()][nodeIter.previousIndex()] = node;
+                for (LPort port : node.getPorts()) {
+                    port.id = portCount++;
+                }
+            }
+        }
+
+        // Initialize the port positions and ranks arrays
+        portPos = new int[portCount];
     }
 
     /**
@@ -208,34 +269,6 @@ public class CrossingCounter {
     }
 
     /**
-     * Count crossings between the fixedLayer and the freeLayer.
-     *
-     * @param fixedLayer
-     *            The layer with which to count crossings.
-     * @param freeLayer
-     *            Count in-layer and north-south-port crossings in this layer.
-     * @param fixedLayerIsEastOfFreeLayer
-     *            Defines order of fixedLayer and freeLayer.
-     * @return Amount of crossings.
-     */
-    public int countCrossingsBetweenLayers(final LNode[] fixedLayer, final LNode[] freeLayer,
-            final boolean fixedLayerIsEastOfFreeLayer) {
-        int amountOfCrossings = 0;
-        boolean isLayerEmpty =
-                fixedLayer == null || fixedLayer.length == 0 || freeLayer == null
-                        || freeLayer.length == 0;
-        if (isLayerEmpty) {
-            return 0;
-        }
-        amountOfCrossings +=
-                fixedLayerIsEastOfFreeLayer ? countCrossings(fixedLayer, freeLayer)
-                        : countCrossings(freeLayer, fixedLayer);
-        amountOfCrossings += countNorthSouthPortCrossings(freeLayer);
-        amountOfCrossings += countInLayerEdgeCrossings(freeLayer);
-        return amountOfCrossings;
-    }
-
-    /**
      * Counts the crossings caused by in-layer edges connected to the given port. An edge is only
      * counted once.
      *
@@ -246,7 +279,7 @@ public class CrossingCounter {
      *            {@link #numberEastWestPorts(LNode[], Map, Map)}.
      * @return the maximum number of crossings‚ for this port.
      */
-    public int countInLayerCrossings(final LPort port, final Map<LPort, Integer> portIndices) {
+    private int countInLayerCrossings(final LPort port, final Map<LPort, Integer> portIndices) {
         int maxCrossings = 0;
 
         // Find this port's index
@@ -319,7 +352,7 @@ public class CrossingCounter {
      *            the layer whose in-layer crossings and north/south dummy crossings to estimate.
      * @return the worst possible number of crossings
      */
-    public int countInLayerEdgeCrossings(final LNode[] layer) {
+    private int countInLayerEdgeCrossings(final LNode[] layer) {
         int eastWestCrossings = 0;
         int northSouthCrossings = 0;
 
@@ -610,23 +643,6 @@ public class CrossingCounter {
         }
 
         return crossings;
-    }
-
-    private void initialize(final LGraph layeredGraph) {
-        int portCount = 0;
-
-        for (Layer layer : layeredGraph) {
-            for (LNode node : layer) {
-
-                // Initialize port ids.
-                for (LPort port : node.getPorts()) {
-                    port.id = portCount++;
-                }
-            }
-        }
-
-        // Initialize the port positions and ranks arrays
-        portPos = new int[portCount];
     }
 
     /**

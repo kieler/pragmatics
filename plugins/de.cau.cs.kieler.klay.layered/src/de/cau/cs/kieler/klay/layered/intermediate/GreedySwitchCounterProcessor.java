@@ -18,8 +18,8 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 
 /**
- * This Processor uses greedy switch and recounts number of crossings in layer for every feasable
- * switch.
+ * Uses greedy switch to reduce crossing number by recounting the number of crossings in layer for
+ * every feasible switch.
  *
  * @author alan
  *
@@ -30,44 +30,56 @@ public class GreedySwitchCounterProcessor extends AbstractGreedySwitchProcessor 
         super(considerAllCrossings);
     }
 
-    private int amountOfCrossings = 0;
+    private int amountOfCrossingsInCurrentLayer = 0;
+    private boolean crossingsInLayerHaveBeenCalculated = false;
+    private CrossingCounter crossingCounter;
 
     /**
-     * TODOALAN DEPRECATED REPAIR AND TEST! {@inheritDoc}
+     * {@inheritDoc}
      */
     @Override
     protected boolean switchReducesCrossings(final LNode[][] currentGraph,
-            final int freeLayerIndex, final int fixedLayerIndex, final int currentNodeIndex,
-            final int nextNodeIndex, final boolean calculateOnBothSides) {
+            final int freeLayerIndex, final int fixedLayerIndex, final int upperNodeIndex,
+            final int lowerNodeIndex, final boolean calculateOnBothSides) {
         LNode[] freeLayer = currentGraph[freeLayerIndex];
         LNode[] fixedLayer = currentGraph[fixedLayerIndex];
-        CrossingCounter crossingCounter = new CrossingCounter(freeLayer[0].getGraph());
 
-        amountOfCrossings =
-                calculateCrossings(currentGraph, freeLayerIndex, fixedLayerIndex,
-                        calculateOnBothSides, freeLayer, fixedLayer, crossingCounter);
+        boolean isNewFreeLayer = upperNodeIndex == 0 && lowerNodeIndex == 1;
+        if (isNewFreeLayer) {
+            crossingsInLayerHaveBeenCalculated = false;
+            crossingCounter = new CrossingCounter(freeLayer[0].getGraph());
+        }
 
-        if (amountOfCrossings == 0) {
+        if (!crossingsInLayerHaveBeenCalculated) {
+            amountOfCrossingsInCurrentLayer =
+                    calculateCrossings(currentGraph, freeLayerIndex, fixedLayerIndex,
+                            calculateOnBothSides, freeLayer, fixedLayer);
+            crossingsInLayerHaveBeenCalculated = true;
+        }
+
+        if (amountOfCrossingsInCurrentLayer == 0) {
             return false;
         }
 
-        exchangeNodes(currentNodeIndex, nextNodeIndex, freeLayer, freeLayerIndex);
+        exchangeNodes(upperNodeIndex, lowerNodeIndex, freeLayer, freeLayerIndex);
 
         int newAmountOfCrossings =
                 calculateCrossings(currentGraph, freeLayerIndex, fixedLayerIndex,
-                        calculateOnBothSides, freeLayer, fixedLayer, crossingCounter);
-        exchangeNodes(nextNodeIndex, currentNodeIndex, freeLayer, freeLayerIndex);
+                        calculateOnBothSides, freeLayer, fixedLayer);
 
-        boolean switchReducesCrossings = newAmountOfCrossings < amountOfCrossings;
+        exchangeNodes(lowerNodeIndex, upperNodeIndex, freeLayer, freeLayerIndex);
+
+        boolean switchReducesCrossings = newAmountOfCrossings < amountOfCrossingsInCurrentLayer;
         if (switchReducesCrossings) {
-            amountOfCrossings = newAmountOfCrossings;
+            amountOfCrossingsInCurrentLayer = newAmountOfCrossings;
         }
+
         return switchReducesCrossings;
     }
 
     private int calculateCrossings(final LNode[][] currentGraph, final int freeLayerIndex,
             final int fixedLayerIndex, final boolean calculateOnBothSides, final LNode[] freeLayer,
-            final LNode[] fixedLayer, final CrossingCounter crossingCounter) {
+            final LNode[] fixedLayer) {
         int crossings = 0;
         if (calculateOnBothSides) {
             if (freeLayerIndex == 0 && currentGraph.length > 1) {
@@ -100,6 +112,7 @@ public class GreedySwitchCounterProcessor extends AbstractGreedySwitchProcessor 
      */
     @Override
     protected int getAmountOfCrossings(final LNode[][] currentOrder, final LGraph layeredGraph) {
-        return amountOfCrossings;
+        crossingCounter = new CrossingCounter(layeredGraph);
+        return crossingCounter.countAllCrossingsInGraph(currentOrder);
     }
 }

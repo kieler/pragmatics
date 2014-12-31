@@ -86,10 +86,11 @@ public class GreedySwitchCrossingMatrixProcessor extends AbstractGreedySwitchPro
             for (int j = i + 1; j < matrixSize; j++) {
                 TwoNodeCrossingCounter crossCounter =
                         new TwoNodeCrossingCounter(freeLayer[i], freeLayer[j], isFixedEastOfFree,
-                                nodeDegrees, super.getNodePositions()[freeLayerIndex]);
+                                nodeDegrees, super.getNodePositions()[freeLayerIndex],
+                                super.getPortIndices());
                 crossCounter.calculateCrossingNumber();
-                crossingMatrix[i][j] += crossCounter.getCrossingsForOrderIJ();
-                crossingMatrix[j][i] += crossCounter.getCrossingsForOrderJI();
+                crossingMatrix[i][j] += crossCounter.getCrossingsForOrderUpperLower();
+                crossingMatrix[j][i] += crossCounter.getCrossingsForOrderLowerUpper();
                 // amountOfCrossings += crossingMatrix[i][j]; TODOALAN
             }
         }

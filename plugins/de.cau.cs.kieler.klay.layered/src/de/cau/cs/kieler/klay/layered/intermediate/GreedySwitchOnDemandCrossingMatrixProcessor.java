@@ -94,13 +94,14 @@ public class GreedySwitchOnDemandCrossingMatrixProcessor extends AbstractGreedyS
                         .getEastNodeDegrees()[freeLayerIndex];
         TwoNodeCrossingCounter incidentEdgeCrossCounter =
                 new TwoNodeCrossingCounter(upperNode, lowerNode, fixedLayerEastOfFreeLayer,
-                        nodeDegrees, super.getNodePositions()[freeLayerIndex]);
+                        nodeDegrees, super.getNodePositions()[freeLayerIndex],
+                        super.getPortIndices());
         incidentEdgeCrossCounter.calculateCrossingNumber();
 
         crossingMatrix[upperNode.id][lowerNode.id] +=
-                incidentEdgeCrossCounter.getCrossingsForOrderIJ();
+                incidentEdgeCrossCounter.getCrossingsForOrderUpperLower();
         crossingMatrix[lowerNode.id][upperNode.id] +=
-                incidentEdgeCrossCounter.getCrossingsForOrderJI();
+                incidentEdgeCrossCounter.getCrossingsForOrderLowerUpper();
         isCrossingMatrixEntryFilled[upperNode.id][lowerNode.id] = true;
         isCrossingMatrixEntryFilled[lowerNode.id][upperNode.id] = true;
     }
