@@ -92,8 +92,8 @@ public class GreedySwitchOnDemandCrossingMatrixProcessor extends AbstractGreedyS
         int[] nodeDegrees =
                 fixedLayerEastOfFreeLayer ? super.getWestNodeDegrees()[freeLayerIndex] : super
                         .getEastNodeDegrees()[freeLayerIndex];
-        TwoNodeCrossingCounter incidentEdgeCrossCounter =
-                new TwoNodeCrossingCounter(upperNode, lowerNode, fixedLayerEastOfFreeLayer,
+        TwoNodeTwoLayerCrossingCounter incidentEdgeCrossCounter =
+                new TwoNodeTwoLayerCrossingCounter(upperNode, lowerNode, fixedLayerEastOfFreeLayer,
                         nodeDegrees, super.getNodePositions()[freeLayerIndex],
                         super.getPortIndices());
         incidentEdgeCrossCounter.calculateCrossingNumber();

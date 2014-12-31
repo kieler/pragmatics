@@ -33,7 +33,6 @@ public class GreedySwitchCrossingMatrixProcessor extends AbstractGreedySwitchPro
 
     private int[][] crossingMatrix;
 
-    // private int amountOfCrossings; TODOALAN
     /**
      * {@inheritDoc}
      */
@@ -77,15 +76,14 @@ public class GreedySwitchCrossingMatrixProcessor extends AbstractGreedySwitchPro
 
     private void calculateCrossingMatrix(final LNode[] freeLayer, final LNode[] fixedLayer,
             final boolean isFixedEastOfFree, final int freeLayerIndex) {
-        // amountOfCrossings = 0; TODOALAN
         int matrixSize = freeLayer.length;
         int[] nodeDegrees =
                 isFixedEastOfFree ? super.getWestNodeDegrees()[freeLayerIndex] : super
                         .getEastNodeDegrees()[freeLayerIndex];
         for (int i = 0; i < matrixSize; i++) {
             for (int j = i + 1; j < matrixSize; j++) {
-                TwoNodeCrossingCounter crossCounter =
-                        new TwoNodeCrossingCounter(freeLayer[i], freeLayer[j], isFixedEastOfFree,
+                TwoNodeTwoLayerCrossingCounter crossCounter =
+                        new TwoNodeTwoLayerCrossingCounter(freeLayer[i], freeLayer[j], isFixedEastOfFree,
                                 nodeDegrees, super.getNodePositions()[freeLayerIndex],
                                 super.getPortIndices());
                 crossCounter.calculateCrossingNumber();
@@ -97,7 +95,7 @@ public class GreedySwitchCrossingMatrixProcessor extends AbstractGreedySwitchPro
     }
 
     /**
-     * {@inheritDoc} // TODOALAN uncool.
+     * {@inheritDoc}
      */
     @Override
     protected int getAmountOfCrossings(final LNode[][] currentOrder, final LGraph layeredGraph) {

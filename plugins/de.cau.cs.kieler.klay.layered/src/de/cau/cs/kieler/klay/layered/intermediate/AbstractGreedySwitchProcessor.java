@@ -33,7 +33,7 @@ import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
  * the crossing matrix for a pair of fixed and free layers beforehand. Entries i,j in a crossing
  * matrix show the amount of crossings between incident edges to nodes i and j when node i is above
  * node j. {@link GreedySwitchOnDemandCrossingMatrixProcessor} calculates the entries in the
- * crossing matrix only when needed. The last two both use {@link TwoNodeCrossingCounter} which
+ * crossing matrix only when needed. The last two both use {@link TwoNodeTwoLayerCrossingCounter} which
  * calculates two entries i,j and j,i in the crossing matrix.
  *
  * @author alan
@@ -131,14 +131,14 @@ public abstract class AbstractGreedySwitchProcessor implements ILayoutProcessor 
                     easternPortNo += port.getDegree();
                 }
                 eastNodeDegrees[layerIndex][node.id] = easternPortNo;
-                int westernPortId = 0;
+                int westernPortNo = 0;
                 // TODOALAN Should this be simplified for later by running up and down the list?
                 for (LPort lPort : node.getPorts(PortSide.WEST)) {
                     LPort port = lPort;
-                    portIndices.put(port, westernPortId);
-                    westernPortId += port.getDegree();
+                    portIndices.put(port, westernPortNo);
+                    westernPortNo += port.getDegree();
                 }
-                westNodeDegrees[layerIndex][node.id] = westernPortId; // TODOALAN explain problem
+                westNodeDegrees[layerIndex][node.id] = westernPortNo;
             }
         }
     }
@@ -200,7 +200,6 @@ public abstract class AbstractGreedySwitchProcessor implements ILayoutProcessor 
                 switchInLayer(false, fixedLayerIndex);
             }
 
-            // setNewGraph(currentNodeOrder, layeredGraph); // TODOALAN: BAD!!
             crossingsInGraph = getAmountOfCrossings(currentNodeOrder, layeredGraph);
         }
         setNewGraph(bestNodeOrder, layeredGraph);

@@ -108,7 +108,7 @@ public class GreedySwitchCounterProcessor extends AbstractGreedySwitchProcessor 
     }
 
     /**
-     * {@inheritDoc} // TODOALAN think about this. THIS DOESNT WORK!!!
+     * {@inheritDoc}
      */
     @Override
     protected int getAmountOfCrossings(final LNode[][] currentOrder, final LGraph layeredGraph) {
