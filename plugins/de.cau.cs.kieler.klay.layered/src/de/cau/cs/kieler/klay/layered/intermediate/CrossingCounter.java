@@ -214,12 +214,12 @@ public class CrossingCounter {
      *            The layer with which to count crossings.
      * @param freeLayer
      *            Count in-layer and north-south-port crossings in this layer.
-     * @param fixedLayerIsLeftOfFreeLayer
+     * @param fixedLayerIsEastOfFreeLayer
      *            Defines order of fixedLayer and freeLayer.
      * @return Amount of crossings.
      */
     public int countCrossingsBetweenLayers(final LNode[] fixedLayer, final LNode[] freeLayer,
-            final boolean fixedLayerIsLeftOfFreeLayer) {
+            final boolean fixedLayerIsEastOfFreeLayer) {
         int amountOfCrossings = 0;
         boolean isLayerEmpty =
                 fixedLayer == null || fixedLayer.length == 0 || freeLayer == null
@@ -228,7 +228,7 @@ public class CrossingCounter {
             return 0;
         }
         amountOfCrossings +=
-                fixedLayerIsLeftOfFreeLayer ? countCrossings(fixedLayer, freeLayer)
+                fixedLayerIsEastOfFreeLayer ? countCrossings(fixedLayer, freeLayer)
                         : countCrossings(freeLayer, fixedLayer);
         amountOfCrossings += countNorthSouthPortCrossings(freeLayer);
         amountOfCrossings += countInLayerEdgeCrossings(freeLayer);

@@ -24,8 +24,9 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 
 /**
- * Calculates the number of crossings for incident edges to node i and j. 
- * Prerequisites: Node.id's set to original order 
+ * Calculates the number of crossings for incident edges to node i and j. Prerequisites: Node.id's
+ * set to original order
+ * 
  * @author alan
  *
  */
@@ -73,14 +74,15 @@ public class TwoNodeCrossingCounter {
 
     /**
      * Calculates the number of crossings for incident edges to node i and j. The crossing amounts
-     * can be received with getCrossingForOrderJI and getCrossingForOrderIJ.
+     * can be received with getCrossingForOrderJI and getCrossingForOrderIJ. TODOALAN change names:
+     * IJ,nEdges
      */
     public void calculateCrossingNumber() {
 
         if (upperNode == lowerNode) {
             return;
         }
-        
+
         TreeMap<Integer, EdgeAndCardinality> iEdges =
                 new TreeMap<Integer, TwoNodeCrossingCounter.EdgeAndCardinality>();
         int nIEdges = getEdges(fixedLayerLeftOfFreeLayer, upperNode, iEdges);
@@ -122,8 +124,8 @@ public class TwoNodeCrossingCounter {
 
             boolean causesCrossingsToBoth =
                     neighbourToINode.id == neighbourToJNode.id
-                    && !neighbourToINode.getProperty(LayoutOptions.PORT_CONSTRAINTS)
-                    .isOrderFixed();
+                            && !neighbourToINode.getProperty(LayoutOptions.PORT_CONSTRAINTS)
+                                    .isOrderFixed();
 
             if (causesCrossingsToOrderIJ) {
                 crossingsForOrderIJ += nIEdges;
@@ -178,10 +180,10 @@ public class TwoNodeCrossingCounter {
             for (LEdge edge : port.getConnectedEdges()) {
                 boolean inLayerIncomingEdge =
                         edge.getSource().getNode() != currNode
-                        && edge.getSource().getNode().getLayer() == currNode.getLayer();
+                                && edge.getSource().getNode().getLayer() == currNode.getLayer();
                 boolean inLayerOutgoingEdge =
                         edge.getTarget().getNode() != currNode
-                        && edge.getTarget().getNode().getLayer() == currNode.getLayer();
+                                && edge.getTarget().getNode().getLayer() == currNode.getLayer();
                 boolean currEdgeHasInLayerEdges = inLayerIncomingEdge || inLayerOutgoingEdge;
 
                 if (currEdgeHasInLayerEdges) {
@@ -239,7 +241,7 @@ public class TwoNodeCrossingCounter {
             for (LEdge edge : nextNodeInLayerEdges) {
                 boolean edgeAlredyCounted =
                         edge.getSource().getNode() == currNode
-                        || edge.getTarget().getNode() == currNode;
+                                || edge.getTarget().getNode() == currNode;
                 if (edgeAlredyCounted) {
                     continue;
                 }
@@ -297,18 +299,18 @@ public class TwoNodeCrossingCounter {
                         edge.getSource().getNode() != edge.getTarget().getNode();
                 boolean edgeIsNotInLayerEdge =
                         edge.getSource().getNode().getLayer() != edge.getTarget().getNode()
-                        .getLayer();
+                                .getLayer();
 
                 if (edgeIsNotSelfLoop && edgeIsNotInLayerEdge) {
                     int index =
                             forwardSweep ? edge.getSource().getNode().id : edge.getTarget()
                                     .getNode().id;
-                            int cardinality = 1;
-                            if (edges.containsKey(index)) {
-                                cardinality += edges.get(index).getCardinality();
-                            }
-                            edges.put(index, new EdgeAndCardinality(cardinality, edge));
-                            nEdges++;
+                    int cardinality = 1;
+                    if (edges.containsKey(index)) {
+                        cardinality += edges.get(index).getCardinality();
+                    }
+                    edges.put(index, new EdgeAndCardinality(cardinality, edge));
+                    nEdges++;
                 }
             }
         }
@@ -331,7 +333,7 @@ public class TwoNodeCrossingCounter {
                 neighbourPort =
                         fixedLayerLeftOfFreeLayer ? edgeAndCardinality.getEdge().getSource()
                                 : edgeAndCardinality.getEdge().getTarget();
-                        break;
+                break;
             }
         }
         return neighbourPort;
@@ -354,14 +356,14 @@ public class TwoNodeCrossingCounter {
      * @author alan
      *
      */
-    private static class EdgeAndCardinality {
+    private static class EdgeAndCardinality { // TODOALAN consider using Multimaps
         private int cardinality;
 
         private LEdge edge;
 
         public EdgeAndCardinality(final int cardinality, final LEdge edge) {
-            this.setCardinality(cardinality);
-            this.setEdge(edge);
+            setCardinality(cardinality);
+            setEdge(edge);
         }
 
         /**
