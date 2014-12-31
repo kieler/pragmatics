@@ -26,6 +26,10 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
  */
 public class GreedySwitchCounterProcessor extends AbstractGreedySwitchProcessor {
 
+    public GreedySwitchCounterProcessor(final boolean considerAllCrossings) {
+        super(considerAllCrossings);
+    }
+
     private int amountOfCrossings = 0;
 
     /**
@@ -40,8 +44,8 @@ public class GreedySwitchCounterProcessor extends AbstractGreedySwitchProcessor 
         CrossingCounter crossingCounter = new CrossingCounter(freeLayer[0].getGraph());
 
         amountOfCrossings =
-                calculateCrossings(currentGraph, freeLayerIndex, calculateOnBothSides, freeLayer,
-                        fixedLayer, crossingCounter);
+                calculateCrossings(currentGraph, freeLayerIndex, fixedLayerIndex,
+                        calculateOnBothSides, freeLayer, fixedLayer, crossingCounter);
 
         if (amountOfCrossings == 0) {
             return false;
@@ -50,11 +54,11 @@ public class GreedySwitchCounterProcessor extends AbstractGreedySwitchProcessor 
         exchangeNodes(currentNodeIndex, nextNodeIndex, freeLayer, freeLayerIndex);
 
         int newAmountOfCrossings =
-                calculateCrossings(currentGraph, freeLayerIndex, calculateOnBothSides, freeLayer,
-                        fixedLayer, crossingCounter);
+                calculateCrossings(currentGraph, freeLayerIndex, fixedLayerIndex,
+                        calculateOnBothSides, freeLayer, fixedLayer, crossingCounter);
         exchangeNodes(nextNodeIndex, currentNodeIndex, freeLayer, freeLayerIndex);
 
-        boolean switchReducesCrossings = newAmountOfCrossings > amountOfCrossings;
+        boolean switchReducesCrossings = newAmountOfCrossings < amountOfCrossings;
         if (switchReducesCrossings) {
             amountOfCrossings = newAmountOfCrossings;
         }
@@ -62,23 +66,31 @@ public class GreedySwitchCounterProcessor extends AbstractGreedySwitchProcessor 
     }
 
     private int calculateCrossings(final LNode[][] currentGraph, final int freeLayerIndex,
-            final boolean calculateOnBothSides, final LNode[] freeLayer, final LNode[] fixedLayer,
-            final CrossingCounter crossingCounter) {
+            final int fixedLayerIndex, final boolean calculateOnBothSides, final LNode[] freeLayer,
+            final LNode[] fixedLayer, final CrossingCounter crossingCounter) {
         int crossings = 0;
         if (calculateOnBothSides) {
-            if (freeLayerIndex == 0) {
+            if (freeLayerIndex == 0 && currentGraph.length > 1) {
+                LNode[] fixedLayerEastOfFreeLayer = currentGraph[freeLayerIndex + 1];
                 crossings =
-                        crossingCounter.countCrossingsBetweenLayers(fixedLayer, freeLayer, false);
+                        crossingCounter.countCrossingsBetweenLayers(fixedLayerEastOfFreeLayer,
+                                freeLayer, false);
             } else if (freeLayerIndex == currentGraph.length - 1) {
                 crossings =
                         crossingCounter.countCrossingsBetweenLayers(fixedLayer, freeLayer, true);
             } else {
+                LNode[] fixedLayerEastOfFreeLayer = currentGraph[freeLayerIndex + 1];
                 crossings =
                         crossingCounter.countCrossingsBetweenLayers(fixedLayer, freeLayer, true);
                 crossings +=
-                        crossingCounter.countCrossingsBetweenLayers(fixedLayer, freeLayer, false);
-
+                        crossingCounter.countCrossingsBetweenLayers(fixedLayerEastOfFreeLayer,
+                                freeLayer, false);
             }
+        } else {
+            boolean fixedLayerIsEastOfFreeLayer = fixedLayerIndex < freeLayerIndex;
+            crossings =
+                    crossingCounter.countCrossingsBetweenLayers(fixedLayer, freeLayer,
+                            fixedLayerIsEastOfFreeLayer);
         }
         return crossings;
     }
