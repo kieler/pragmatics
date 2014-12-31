@@ -16,8 +16,8 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 
 /**
- * Definition of available intermediate layout processors for the layered layouter.
- * This enumeration also serves as a factory for intermediate layout processors.
+ * Definition of available intermediate layout processors for the layered layouter. This enumeration
+ * also serves as a factory for intermediate layout processors.
  * 
  * @author cds
  * @author ima
@@ -25,14 +25,15 @@ import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
  * @kieler.rating proposed yellow by msp
  */
 public enum IntermediateProcessorStrategy {
-    
-    /* In this enumeration, intermediate layout processors are listed by the earliest
-     * slot in which they can sensibly be used. The order in which they are listed is
-     * determined by the dependencies on other processors.
+
+    /*
+     * In this enumeration, intermediate layout processors are listed by the earliest slot in which
+     * they can sensibly be used. The order in which they are listed is determined by the
+     * dependencies on other processors.
      */
-    
+
     // Before Phase 1
-    
+
     /** Mirrors the graph to perform a right-to-left drawing. */
     LEFT_DIR_PREPROCESSOR,
     /** Transposes the graph to perform a top-bottom drawing. */
@@ -43,16 +44,16 @@ public enum IntermediateProcessorStrategy {
     COMMENT_PREPROCESSOR,
     /** Makes sure nodes with layer constraints have only incoming or only outgoing edges. */
     EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER,
-    
+
     // Before Phase 2
-    
+
     /** Splits big nodes into multiple layers to distribute them better and reduce whitespace. */
     BIG_NODES_PREPROCESSOR,
     /** Adds dummy nodes in edges where center labels are present. */
     LABEL_DUMMY_INSERTER,
-    
+
     // Before Phase 3
-    
+
     /** Makes sure that layer constraints are taken care of. */
     LAYER_CONSTRAINT_PROCESSOR,
     /** Handles northern and southern hierarchical ports. */
@@ -73,16 +74,21 @@ public enum IntermediateProcessorStrategy {
     PORT_LIST_SORTER,
     /** Inserts dummy nodes to take care of northern and southern ports. */
     NORTH_SOUTH_PORT_PREPROCESSOR,
-   
-    
+
     // Before Phase 4
-    
-    /** Attempts to improve crossing number through greedy switch algorithm. */
+
+    /** Greedy switch crossing reduction: count all crossings each time. */
     GREEDY_SWITCH_CROSSING_COUNTER,
-    /** Attempts to improve crossing number through greedy switch algorithm with crossing matrix. */
+    /** Greedy switch crossing reduction: count all crossings each time on both sides of free layer. */
+    GREEDY_SWITCH_CAREFUL_CROSSING_COUNTER,
+    /** Greedy switch crossing reduction: with crossing matrix. */
     GREEDY_SWITCH_CROSSINGMATRIX,
-    /** Attempts to improve crossing number through greedy switch algorithm on demand crossing matrix. */
+    /** Greedy switch crossing reduction: with crossing matrix on both sides of free layer. */
+    GREEDY_SWITCH_CAREFUL_CROSSINGMATRIX,
+    /** Greedy switch crossing reduction: with crossing matrix created on demand. */
     GREEDY_SWITCH_ONDEMAND_CROSSINGMATRIX,
+    /** Greedy switch cross reduction: crossing matrix created on demand both sides of free layer. */
+    GREEDY_SWITCH_CAREFUL_ONDEMAND_CROSSINGMATRIX,
     /** Distributes ports after crossing minimization. Used by the layer sweep crossing minimizer. */
     PORT_DISTRIBUTER,
     /** Compacts looong sausages. This is a hidden feature. */
@@ -91,7 +97,7 @@ public enum IntermediateProcessorStrategy {
     IN_LAYER_CONSTRAINT_PROCESSOR,
     /** Merges long edge dummy nodes belonging to the same hyperedge. */
     HYPEREDGE_DUMMY_MERGER,
-    /** Decides, on which side of an edge the edge labels should be placed. */ 
+    /** Decides, on which side of an edge the edge labels should be placed. */
     LABEL_SIDE_SELECTOR,
     /** Alternative big nodes handling, splitting nodes _after_ crossing minimization. */
     BIG_NODES_SPLITTER,
@@ -101,7 +107,7 @@ public enum IntermediateProcessorStrategy {
     NODE_MARGIN_CALCULATOR,
     /** Adjusts the width of hierarchical port dummy nodes. */
     HIERARCHICAL_PORT_DUMMY_SIZE_PROCESSOR,
-    
+
     // Before Phase 5
 
     /** Fix coordinates of hierarchical port dummy nodes. */
@@ -110,9 +116,9 @@ public enum IntermediateProcessorStrategy {
     LAYER_SIZE_AND_GRAPH_HEIGHT_CALCULATOR,
     /** Merges dummy nodes originating from big nodes. */
     BIG_NODES_POSTPROCESSOR,
-    
+
     // After Phase 5
-    
+
     /** Reinserts and places comment boxes that have been removed before. */
     COMMENT_POSTPROCESSOR,
     /** Moves hypernodes horizontally for better placement. */
@@ -135,8 +141,7 @@ public enum IntermediateProcessorStrategy {
     UP_DIR_POSTPROCESSOR,
     /** Place end labels on edges. */
     END_LABEL_PROCESSOR;
-    
-    
+
     /**
      * Creates an instance of the layout processor described by this instance.
      * 
@@ -144,134 +149,142 @@ public enum IntermediateProcessorStrategy {
      */
     public ILayoutProcessor create() {
         switch (this) {
-        
+
         case BIG_NODES_INTERMEDIATEPROCESSOR:
             return new BigNodesIntermediateProcessor();
-            
-        case BIG_NODES_POSTPROCESSOR: 
+
+        case BIG_NODES_POSTPROCESSOR:
             return new BigNodesPostProcessor();
-            
+
         case BIG_NODES_PREPROCESSOR:
             return new BigNodesPreProcessor();
-            
+
         case BIG_NODES_SPLITTER:
             return new BigNodesSplitter();
-            
+
         case COMMENT_POSTPROCESSOR:
             return new CommentPostprocessor();
-            
+
         case COMMENT_PREPROCESSOR:
             return new CommentPreprocessor();
-            
+
         case DOWN_DIR_POSTPROCESSOR:
         case DOWN_DIR_PREPROCESSOR:
             return new GraphTransformer(GraphTransformer.Mode.TRANSPOSE);
-        
+
         case EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER:
             return new EdgeAndLayerConstraintEdgeReverser();
-            
+
         case END_LABEL_PROCESSOR:
             return new EndLabelProcessor();
-            
+
         case GREEDY_SWITCH_CROSSING_COUNTER:
-            return new GreedySwitchCounterProcessor();
+            return new GreedySwitchCounterProcessor(false);
+
+        case GREEDY_SWITCH_CAREFUL_CROSSING_COUNTER:
+            return new GreedySwitchCounterProcessor(true);
 
         case GREEDY_SWITCH_CROSSINGMATRIX:
-            return new GreedySwitchCrossingMatrixProcessor();
-            
+            return new GreedySwitchCrossingMatrixProcessor(false);
+
+        case GREEDY_SWITCH_CAREFUL_CROSSINGMATRIX:
+            return new GreedySwitchCrossingMatrixProcessor(true);
+
         case GREEDY_SWITCH_ONDEMAND_CROSSINGMATRIX:
-            return new GreedySwitchOnDemandCrossingMatrixProcessor();
-            
+            return new GreedySwitchOnDemandCrossingMatrixProcessor(false);
+
+        case GREEDY_SWITCH_CAREFUL_ONDEMAND_CROSSINGMATRIX:
+            return new GreedySwitchOnDemandCrossingMatrixProcessor(true);
+
         case HIERARCHICAL_PORT_CONSTRAINT_PROCESSOR:
             return new HierarchicalPortConstraintProcessor();
-        
+
         case HIERARCHICAL_PORT_DUMMY_SIZE_PROCESSOR:
             return new HierarchicalPortDummySizeProcessor();
-            
+
         case HIERARCHICAL_PORT_ORTHOGONAL_EDGE_ROUTER:
             return new HierarchicalPortOrthogonalEdgeRouter();
-        
+
         case HIERARCHICAL_PORT_POSITION_PROCESSOR:
             return new HierarchicalPortPositionProcessor();
-            
+
         case HYPEREDGE_DUMMY_MERGER:
             return new HyperedgeDummyMerger();
-            
+
         case HYPERNODE_PROCESSOR:
             return new HypernodesProcessor();
-        
+
         case IN_LAYER_CONSTRAINT_PROCESSOR:
             return new InLayerConstraintProcessor();
-        
+
         case LABEL_AND_NODE_SIZE_PROCESSOR:
             return new LabelAndNodeSizeProcessor();
-            
+
         case LABEL_DUMMY_INSERTER:
             return new LabelDummyInserter();
-            
+
         case LABEL_DUMMY_REMOVER:
             return new LabelDummyRemover();
-            
+
         case LABEL_DUMMY_SWITCHER:
             return new LabelDummySwitcher();
-            
+
         case LABEL_SIDE_SELECTOR:
             return new LabelSideSelector();
-        
+
         case LAYER_CONSTRAINT_PROCESSOR:
             return new LayerConstraintProcessor();
-            
+
         case LAYER_SIZE_AND_GRAPH_HEIGHT_CALCULATOR:
             return new LayerSizeAndGraphHeightCalculator();
-            
+
         case LEFT_DIR_POSTPROCESSOR:
         case LEFT_DIR_PREPROCESSOR:
             return new GraphTransformer(GraphTransformer.Mode.MIRROR_X);
-            
+
         case LONG_EDGE_JOINER:
             return new LongEdgeJoiner();
-            
+
         case LONG_EDGE_SPLITTER:
             return new LongEdgeSplitter();
-        
+
         case NODE_MARGIN_CALCULATOR:
             return new NodeMarginCalculator();
-        
+
         case NORTH_SOUTH_PORT_POSTPROCESSOR:
             return new NorthSouthPortPostprocessor();
-        
+
         case NORTH_SOUTH_PORT_PREPROCESSOR:
             return new NorthSouthPortPreprocessor();
-        
+
         case INVERTED_PORT_PROCESSOR:
             return new InvertedPortProcessor();
-        
+
         case PORT_DISTRIBUTER:
             return new PortDistributionProcessor();
-        
+
         case PORT_LIST_SORTER:
             return new PortListSorter();
-        
+
         case PORT_SIDE_PROCESSOR:
             return new PortSideProcessor();
-        
+
         case REVERSED_EDGE_RESTORER:
             return new ReversedEdgeRestorer();
-        
+
         case SAUSAGE_COMPACTION:
             return new SausageFolding();
-            
+
         case SELF_LOOP_PROCESSOR:
             return new SelfLoopProcessor();
-            
+
         case UP_DIR_POSTPROCESSOR:
         case UP_DIR_PREPROCESSOR:
             return new GraphTransformer(GraphTransformer.Mode.MIRROR_AND_TRANSPOSE);
-        
+
         default:
             throw new IllegalArgumentException(
-                    "No implementation is available for the layout processor " + this.toString());
+                    "No implementation is available for the layout processor " + toString());
         }
     }
 }
-

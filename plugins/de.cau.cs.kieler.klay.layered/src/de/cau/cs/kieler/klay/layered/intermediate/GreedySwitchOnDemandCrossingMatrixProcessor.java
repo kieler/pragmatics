@@ -22,6 +22,10 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
  */
 public class GreedySwitchOnDemandCrossingMatrixProcessor extends AbstractGreedySwitchProcessor {
 
+    public GreedySwitchOnDemandCrossingMatrixProcessor(final boolean considerAllCrossings) {
+        super(considerAllCrossings);
+    }
+
     private int freeLayerIndex;
     private int[][] crossingMatrix;
     private boolean[][] isCrossingMatrixFilled;

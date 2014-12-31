@@ -57,23 +57,96 @@ public abstract class AbstractGreedySwitchProcessor implements ILayoutProcessor 
 
     private int[][] westNodeDegrees;
 
+    public AbstractGreedySwitchProcessor(final boolean considerAllCrossings) {
+        this.considerAllCrossings = considerAllCrossings;
+    }
+
     /**
-     * TODOALAN rename!
+     * {@inheritDoc}
+     */
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor progressMonitor) {
+        progressMonitor.begin("Begin Greedy Switch intermediate processor", 1);
+
+        int layerCount = layeredGraph.getLayers().size();
+        if (layerCount < 2) {
+            progressMonitor.done();
+            return;
+        }
+
+        initialize(layeredGraph, layerCount);
+        if (considerAllCrossings) {
+            layerSweepConsiderThreeLayers(layerCount, layeredGraph);
+        } else {
+            layerSweepConsiderTwoLayers(layerCount, layeredGraph);
+        }
+        progressMonitor.done();
+    }
+
+    /**
+     * This version of the greedy switch processor repeatedly sweeps only forward across the graph.
+     * For each layer it holds the neighboring layers in place and switches the node order iff it
+     * would reduce the amount of crossings on both sides of the middle layer. In this manner, the
+     * amount of crossings can not be increased and we do not need to calculate the total amount of
+     * crossings.
      *
      * @param layerCount
      * @param layeredGraph
      */
-    private void carefulLayerSweep(final int layerCount, final LGraph layeredGraph) {
+    private void layerSweepConsiderThreeLayers(final int layerCount, final LGraph layeredGraph) {
         boolean improved = true;
         while (improved) {
             improved = false;
             improved |= switchInLayer(false, 1);
-            for (int fixedLayerIndex = 0; fixedLayerIndex < layerCount - 1; fixedLayerIndex++) {
-                improved |= switchInLayer(true, fixedLayerIndex); // TODOALAN change free Layer??
+            for (int leftFixedLayerIndex = 0; leftFixedLayerIndex < layerCount - 1; leftFixedLayerIndex++) {
+                improved |= switchInLayer(true, leftFixedLayerIndex);
             }
             improved |= switchInLayer(true, layerCount - 2);
         }
         setNewGraph(currentNodeOrder, layeredGraph);
+    }
+
+    /**
+     * This version of the greedy switch processor sweeps forward and backward over the graph.
+     * Assuming a forward sweep, for each pair of layers it holds the nodes of the eastern layer in
+     * place and changes the order of the western layer. A node is switched if it causes more
+     * crossings between these two layers in the current order than in the switched order. Since the
+     * layer following the western layer is not considered, this switch can cause more crossings in
+     * the whole graph. In order to prevent this, the amount of crossings are counted at the
+     * beginning and after each forward and backward sweep. The result with the fewest crossings
+     * (possibly the original order) is taken.
+     * 
+     * and counts the number of crossings at the end of each sweep.
+     *
+     * @param layerCount
+     *            The amount of layers.
+     * @param layeredGraph
+     */
+    private void layerSweepConsiderTwoLayers(final int layerCount, final LGraph layeredGraph) {
+        crossingsInGraph = getAmountOfCrossings(currentNodeOrder, layeredGraph);
+
+        boolean forward = true;
+        int tempCrossingsInGraph = Integer.MAX_VALUE;
+
+        while (tempCrossingsInGraph > crossingsInGraph && crossingsInGraph > 0) {
+            tempCrossingsInGraph = crossingsInGraph;
+            copySweep(currentNodeOrder, bestNodeOrder);
+
+            for (int fixedLayerIndex = 0; fixedLayerIndex < layerCount - 1; fixedLayerIndex++) {
+                switchInLayer(forward, fixedLayerIndex);
+            }
+
+            forward = !forward;
+
+            for (int fixedLayerIndex = layerCount - 1; fixedLayerIndex > 0; fixedLayerIndex--) {
+                switchInLayer(forward, fixedLayerIndex);
+            }
+
+            setNewGraph(currentNodeOrder, layeredGraph); // TODOALAN: BAD!!
+            crossingsInGraph = getAmountOfCrossings(currentNodeOrder, layeredGraph);
+            forward = !forward;
+        }
+        // setNewGraph(currentNodeOrder, layeredGraph);
+        setNewGraph(bestNodeOrder, layeredGraph);
     }
 
     /**
@@ -90,92 +163,6 @@ public abstract class AbstractGreedySwitchProcessor implements ILayoutProcessor 
                 dest[i][j] = source[i][j];
             }
         }
-    }
-
-    /**
-     * Switches nodes with index indexOne and indexTwo in layer layer.
-     *
-     * @param indexOne
-     *            The first nodes index
-     * @param indexTwo
-     *            The second nodes index
-     * @param layer
-     *            The layer as LNode array
-     * @param freeLayerIndex
-     *            The index of the free layer
-     */
-    protected void exchangeNodes(final int indexOne, final int indexTwo, final LNode[] layer,
-            final int freeLayerIndex) {
-
-        int positionNodeOne = nodePositions[freeLayerIndex][layer[indexOne].id];
-        nodePositions[freeLayerIndex][layer[indexOne].id] =
-                nodePositions[freeLayerIndex][layer[indexTwo].id];
-        nodePositions[freeLayerIndex][layer[indexTwo].id] = positionNodeOne;
-
-        LNode temp = layer[indexTwo];
-        layer[indexTwo] = layer[indexOne];
-        layer[indexOne] = temp;
-    }
-
-    /**
-     * Calculates the amount of crossings in the graph.
-     * 
-     * @param currentOrder
-     *            The current ordering of nodes in the graph.
-     * @param layeredGraph
-     *            The layered graph.
-     * @return the amount of crossings in the graph.
-     */
-    protected abstract int getAmountOfCrossings(LNode[][] currentOrder, LGraph layeredGraph);
-
-    /**
-     * Returns whether or not a switch of upperNodeIndex and lowerNodeIndex would reduce the amount
-     * of crossings.
-     *
-     * @param currentGraph
-     *            Currently calculated node order.
-     * @param freeLayerIndex
-     *            Index of the layer which is currently being reordered.
-     * @param fixedLayerIndex
-     *            Index of the layer which is fixed assuming a one sided view TODOALAN.
-     * @param upperNodeIndex
-     *            Upper node.
-     * @param lowerNodeIndex
-     *            LowerNode
-     * @param calculateOnBothSides
-     *            Defines if crossings caused on both sides of the free layer should be considered.
-     * @return true if a switch would reduce crossings.
-     */
-    protected abstract boolean switchReducesCrossings(final LNode[][] currentGraph,
-            final int freeLayerIndex, final int fixedLayerIndex, final int upperNodeIndex,
-            final int lowerNodeIndex, boolean calculateOnBothSides);
-
-    /**
-     * @return the eastNodeDegrees
-     */
-    public int[][] getEastNodeDegrees() {
-        return eastNodeDegrees;
-    }
-
-    /**
-     * @return the nodePositions
-     */
-    public int[][] getNodePositions() {
-        return nodePositions;
-    }
-
-    /**
-     * @return the port indices
-     */
-    public TreeMap<LPort, Integer> getPortIndices() {
-        return portIndices;
-    }
-
-    /**
-     * @return the westNodeDegrees
-     */
-    public int[][] getWestNodeDegrees() {
-        return westNodeDegrees;
     }
 
     private void initialize(final LGraph layeredGraph, final int layerCount) {
@@ -237,77 +224,6 @@ public abstract class AbstractGreedySwitchProcessor implements ILayoutProcessor 
         }
     }
 
-    /**
-     * @return the considerAllCrossings
-     */
-    public boolean isConsiderAllCrossings() {
-        return considerAllCrossings;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void process(final LGraph layeredGraph, final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Begin Greedy Switch intermediate processor", 1);
-
-        considerAllCrossings = true; // ??? TODOALAN How to
-
-        int layerCount = layeredGraph.getLayers().size();
-        if (layerCount < 2) {
-            progressMonitor.done();
-            return;
-        }
-
-        initialize(layeredGraph, layerCount);
-        if (considerAllCrossings) {
-            carefulLayerSweep(layerCount, layeredGraph);
-        } else {
-            riskyProcess(layerCount, layeredGraph);
-        }
-        progressMonitor.done();
-    }
-
-    /**
-     * TODOALAN rename!
-     *
-     * @param layerCount
-     */
-    private void riskyProcess(final int layerCount, final LGraph layeredGraph) {
-        crossingsInGraph = getAmountOfCrossings(currentNodeOrder, layeredGraph);
-
-        boolean forward = true;
-        int tempCrossingsInGraph = Integer.MAX_VALUE;
-
-        while (tempCrossingsInGraph > crossingsInGraph && crossingsInGraph > 0) {
-            tempCrossingsInGraph = crossingsInGraph;
-            copySweep(currentNodeOrder, bestNodeOrder);
-
-            for (int fixedLayerIndex = 0; fixedLayerIndex < layerCount - 1; fixedLayerIndex++) {
-                switchInLayer(forward, fixedLayerIndex);
-            }
-
-            forward = !forward;
-
-            for (int fixedLayerIndex = layerCount - 1; fixedLayerIndex > 0; fixedLayerIndex--) {
-                switchInLayer(forward, fixedLayerIndex);
-            }
-
-            setNewGraph(currentNodeOrder, layeredGraph); // TODOALAN: BAD!!
-            crossingsInGraph = getAmountOfCrossings(currentNodeOrder, layeredGraph);
-            forward = !forward;
-        }
-        // setNewGraph(currentNodeOrder, layeredGraph);
-        setNewGraph(bestNodeOrder, layeredGraph);
-    }
-
-    /**
-     * @param considerAllCrossings
-     *            the considerAllCrossings to set
-     */
-    public void setConsiderAllCrossings(final boolean considerAllCrossings) {
-        this.considerAllCrossings = considerAllCrossings;
-    }
-
     private void setNewGraph(final LNode[][] sweep, final LGraph layeredGraph) {
         ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
         while (layerIter.hasNext()) {
@@ -324,31 +240,40 @@ public abstract class AbstractGreedySwitchProcessor implements ILayoutProcessor 
     private boolean switchInLayer(final boolean fixedLayerLeftOfFreeLayer, final int fixedLayerIndex) {
         int freeLayerIndex = fixedLayerLeftOfFreeLayer ? fixedLayerIndex + 1 : fixedLayerIndex - 1;
         LNode[] freeLayer = currentNodeOrder[freeLayerIndex];
-
+    
         boolean improved = false;
         boolean stop = false;
         while (!stop) {
             stop = true;
             for (int upperNodeIndex = 0; upperNodeIndex < freeLayer.length - 1; upperNodeIndex++) {
                 int lowerNodeIndex = upperNodeIndex + 1;
-                LNode currentNode = freeLayer[upperNodeIndex];
-                LNode nextNode = freeLayer[lowerNodeIndex];
-
+                LNode upperNode = freeLayer[upperNodeIndex];
+                LNode lowerNode = freeLayer[lowerNodeIndex];
+    
                 List<LNode> constraints =
-                        currentNode.getProperty(InternalProperties.IN_LAYER_SUCCESSOR_CONSTRAINTS);
+                        upperNode.getProperty(InternalProperties.IN_LAYER_SUCCESSOR_CONSTRAINTS);
                 boolean noSuccessorConstraint =
                         constraints == null || constraints.size() == 0
-                                || !constraints.contains(nextNode); // TODOALAN constraints can
-                // be a list
-
+                                || !constraints.contains(lowerNode);
+    
+                // If upperNode and lowerNode are part of a layout unit, then the layout units must
+                // be equal for a switch to be allowed.
+                LNode upperLayoutUnit =
+                        upperNode.getProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT);
+                LNode lowerLayoutUnit =
+                        lowerNode.getProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT);
+                if (upperLayoutUnit != null && lowerLayoutUnit != null) {
+                    noSuccessorConstraint &= upperLayoutUnit == lowerLayoutUnit;
+                }
+    
                 if (noSuccessorConstraint) {
                     boolean switchReducesCrossings =
                             switchReducesCrossings(currentNodeOrder, freeLayerIndex,
                                     fixedLayerIndex, upperNodeIndex, lowerNodeIndex,
                                     considerAllCrossings);
-
+    
                     improved |= switchReducesCrossings;
-
+    
                     if (switchReducesCrossings) {
                         exchangeNodes(upperNodeIndex, lowerNodeIndex, freeLayer, freeLayerIndex);
                         stop = false;
@@ -357,6 +282,92 @@ public abstract class AbstractGreedySwitchProcessor implements ILayoutProcessor 
             }
         }
         return improved;
+    }
+
+    /**
+     * Switches nodes with index indexOne and indexTwo in layer layer.
+     *
+     * @param indexOne
+     *            The first nodes index
+     * @param indexTwo
+     *            The second nodes index
+     * @param layer
+     *            The layer as LNode array
+     * @param freeLayerIndex
+     *            The index of the free layer
+     */
+    protected void exchangeNodes(final int indexOne, final int indexTwo, final LNode[] layer,
+            final int freeLayerIndex) {
+
+        int positionNodeOne = nodePositions[freeLayerIndex][layer[indexOne].id];
+        nodePositions[freeLayerIndex][layer[indexOne].id] =
+                nodePositions[freeLayerIndex][layer[indexTwo].id];
+        nodePositions[freeLayerIndex][layer[indexTwo].id] = positionNodeOne;
+
+        LNode temp = layer[indexTwo];
+        layer[indexTwo] = layer[indexOne];
+        layer[indexOne] = temp;
+    }
+
+    /**
+     * Calculates the amount of crossings in the graph.
+     * 
+     * @param currentOrder
+     *            The current ordering of nodes in the graph.
+     * @param layeredGraph
+     *            The layered graph.
+     * @return the amount of crossings in the graph.
+     */
+    protected abstract int getAmountOfCrossings(LNode[][] currentOrder, LGraph layeredGraph);
+
+    /**
+     * Returns whether or not a switch of upperNodeIndex and lowerNodeIndex would reduce the amount
+     * of crossings.
+     *
+     * @param currentGraph
+     *            Currently calculated node order.
+     * @param freeLayerIndex
+     *            Index of the layer which is currently being reordered.
+     * @param fixedLayerIndex
+     *            Index of the layer whose node order is fixed.
+     * @param upperNodeIndex
+     *            Upper node.
+     * @param lowerNodeIndex
+     *            Lower node.
+     * @param calculateOnBothSides
+     *            Defines if crossings caused on both sides of the free layer should be considered.
+     * @return true if a switch would reduce crossings.
+     */
+    protected abstract boolean switchReducesCrossings(final LNode[][] currentGraph,
+            final int freeLayerIndex, final int fixedLayerIndex, final int upperNodeIndex,
+            final int lowerNodeIndex, boolean calculateOnBothSides);
+
+    /**
+     * @return the eastNodeDegrees
+     */
+    public int[][] getEastNodeDegrees() {
+        return eastNodeDegrees;
+    }
+
+    /**
+     * @return the nodePositions
+     */
+    public int[][] getNodePositions() {
+        return nodePositions;
+    }
+
+    /**
+     * @return the port indices
+     */
+    public TreeMap<LPort, Integer> getPortIndices() {
+        return portIndices;
+    }
+
+    /**
+     * @return the westNodeDegrees
+     */
+    public int[][] getWestNodeDegrees() {
+        return westNodeDegrees;
     }
 
 }

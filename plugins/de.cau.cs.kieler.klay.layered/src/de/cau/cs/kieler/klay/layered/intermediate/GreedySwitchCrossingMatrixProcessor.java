@@ -27,10 +27,13 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 public class GreedySwitchCrossingMatrixProcessor extends AbstractGreedySwitchProcessor implements
         ILayoutProcessor {
 
+    public GreedySwitchCrossingMatrixProcessor(final boolean considerAllCrossings) {
+        super(considerAllCrossings);
+    }
+
     private int[][] crossingMatrix;
 
     // private int amountOfCrossings; TODOALAN
-
     /**
      * {@inheritDoc}
      */
@@ -67,8 +70,8 @@ public class GreedySwitchCrossingMatrixProcessor extends AbstractGreedySwitchPro
             crossingMatrix = null;
         }
 
-        boolean shouldSwitch = crossingMatrixReturn[currentNodeIndex][nextNodeIndex]
-                > crossingMatrixReturn[nextNodeIndex][currentNodeIndex];
+        boolean shouldSwitch =
+                crossingMatrixReturn[currentNodeIndex][nextNodeIndex] > crossingMatrixReturn[nextNodeIndex][currentNodeIndex];
         return shouldSwitch;
     }
 
