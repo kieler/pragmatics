@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.klay.layered.intermediate;
 
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
-import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 
 /**
@@ -27,6 +26,13 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 public class GreedySwitchCrossingMatrixProcessor extends AbstractGreedySwitchProcessor implements
         ILayoutProcessor {
 
+    /**
+     * Calls super constructor.
+     *
+     * @param considerAllCrossings
+     *            true when greedy switch should consider all neighboring layers of the layer whose
+     *            node order should be switched.
+     */
     public GreedySwitchCrossingMatrixProcessor(final boolean considerAllCrossings) {
         super(considerAllCrossings);
     }
@@ -37,59 +43,72 @@ public class GreedySwitchCrossingMatrixProcessor extends AbstractGreedySwitchPro
      * {@inheritDoc}
      */
     @Override
-    protected boolean switchReducesCrossings(final LNode[][] currentGraph,
-            final int freeLayerIndex, final int fixedLayerIndex, final int currentNodeIndex,
-            final int nextNodeIndex, final boolean calculateOnBothSides) {
-        LNode[] freeLayer = currentGraph[freeLayerIndex];
-        LNode[] fixedLayer = currentGraph[fixedLayerIndex];
+    protected boolean checkIfSwitchReducesCrossings(final LNode[][] currentGraph,
+            final int freeLayerIndex, final int fixedLayerIndex, final int upperNodeIndex,
+            final int lowerNodeIndex) {
+        final LNode[] freeLayer = currentGraph[freeLayerIndex];
         if (crossingMatrix == null) {
             crossingMatrix = new int[freeLayer.length][freeLayer.length];
         }
 
-        if (calculateOnBothSides) {
-            boolean isFreeLayerFirstLayer = freeLayerIndex == 0;
-            boolean isFreeLayerLastLayer = freeLayerIndex == currentGraph.length - 1;
-            if (isFreeLayerFirstLayer) {
-                calculateCrossingMatrix(freeLayer, fixedLayer, false, freeLayerIndex);
-            } else if (isFreeLayerLastLayer) {
-                calculateCrossingMatrix(freeLayer, fixedLayer, true, freeLayerIndex);
-            } else {
-                calculateCrossingMatrix(freeLayer, fixedLayer, false, freeLayerIndex);
-                calculateCrossingMatrix(freeLayer, fixedLayer, true, freeLayerIndex);
-            }
+        if (super.isConsiderAllCrossings()) {
+            calculateCrossingsOnBothSides(currentGraph, freeLayerIndex, freeLayer);
         } else {
-            boolean isFixedLayerEastOfFreeLayer = fixedLayerIndex < freeLayerIndex;
-            calculateCrossingMatrix(freeLayer, fixedLayer, isFixedLayerEastOfFreeLayer,
-                    freeLayerIndex);
+            calculateCrossingsFromOneSide(freeLayerIndex, fixedLayerIndex, freeLayer);
         }
 
-        int[][] crossingMatrixReturn = crossingMatrix;
-        boolean lowerNodeIsLastInLayer = nextNodeIndex == freeLayer.length - 1;
+        final int[][] resultMatr = resetCrossingMatrixIfEndOfLayer(lowerNodeIndex, freeLayer);
+
+        final boolean causesCrossings =
+                resultMatr[upperNodeIndex][lowerNodeIndex] > resultMatr[lowerNodeIndex][upperNodeIndex];
+        return causesCrossings;
+    }
+
+    private int[][] resetCrossingMatrixIfEndOfLayer(final int lowerNodeIndex,
+            final LNode[] freeLayer) {
+        final int[][] resultMatr = crossingMatrix;
+        final boolean lowerNodeIsLastInLayer = lowerNodeIndex == freeLayer.length - 1;
         if (lowerNodeIsLastInLayer) {
             crossingMatrix = null;
         }
-
-        boolean shouldSwitch =
-                crossingMatrixReturn[currentNodeIndex][nextNodeIndex] > crossingMatrixReturn[nextNodeIndex][currentNodeIndex];
-        return shouldSwitch;
+        return resultMatr;
     }
 
-    private void calculateCrossingMatrix(final LNode[] freeLayer, final LNode[] fixedLayer,
-            final boolean isFixedEastOfFree, final int freeLayerIndex) {
-        int matrixSize = freeLayer.length;
-        int[] nodeDegrees =
+    private void calculateCrossingsFromOneSide(final int freeLayerIndex, final int fixedLayerIndex,
+            final LNode[] freeLayer) {
+        final boolean isFixedLayerEastOfFreeLayer = fixedLayerIndex < freeLayerIndex;
+        calculateCrossingMatrix(freeLayer, isFixedLayerEastOfFreeLayer, freeLayerIndex);
+    }
+
+    private void calculateCrossingsOnBothSides(final LNode[][] currentGraph,
+            final int freeLayerIndex, final LNode[] freeLayer) {
+        final boolean isFreeLayerFirstLayer = freeLayerIndex == 0;
+        final boolean isFreeLayerLastLayer = freeLayerIndex == currentGraph.length - 1;
+        if (isFreeLayerFirstLayer) {
+            calculateCrossingMatrix(freeLayer, false, freeLayerIndex);
+        } else if (isFreeLayerLastLayer) {
+            calculateCrossingMatrix(freeLayer, true, freeLayerIndex);
+        } else {
+            calculateCrossingMatrix(freeLayer, false, freeLayerIndex);
+            calculateCrossingMatrix(freeLayer, true, freeLayerIndex);
+        }
+    }
+
+    private void calculateCrossingMatrix(final LNode[] freeLayer, final boolean isFixedEastOfFree,
+            final int freeLayerIndex) {
+        final int matrixSize = freeLayer.length;
+        final int[] nodeDegrees =
                 isFixedEastOfFree ? super.getWestNodeDegrees()[freeLayerIndex] : super
                         .getEastNodeDegrees()[freeLayerIndex];
         for (int i = 0; i < matrixSize; i++) {
             for (int j = i + 1; j < matrixSize; j++) {
-                TwoNodeTwoLayerCrossingCounter crossCounter =
-                        new TwoNodeTwoLayerCrossingCounter(freeLayer[i], freeLayer[j], isFixedEastOfFree,
-                                nodeDegrees, super.getNodePositions()[freeLayerIndex],
-                                super.getPortIndices());
-                crossCounter.calculateCrossingNumber();
+                final TwoNodeTwoLayerCrossingCounter crossCounter =
+                        new TwoNodeTwoLayerCrossingCounter(freeLayer[i], freeLayer[j],
+                                isFixedEastOfFree, nodeDegrees,
+                                super.getNodePositions()[freeLayerIndex], super.getPortIndices());
+                crossCounter.countCrossings();
                 crossingMatrix[i][j] += crossCounter.getCrossingsForOrderUpperLower();
                 crossingMatrix[j][i] += crossCounter.getCrossingsForOrderLowerUpper();
-                // amountOfCrossings += crossingMatrix[i][j]; TODOALAN
             }
         }
     }
@@ -98,9 +117,9 @@ public class GreedySwitchCrossingMatrixProcessor extends AbstractGreedySwitchPro
      * {@inheritDoc}
      */
     @Override
-    protected int getAmountOfCrossings(final LNode[][] currentOrder, final LGraph layeredGraph) {
-        CrossingCounter allCrossingsCounter = new CrossingCounter(layeredGraph);
-        int result = allCrossingsCounter.countAllCrossingsInGraph(currentOrder);
+    protected int getAmountOfCrossings(final LNode[][] currentOrder) {
+        final CrossingCounter allCrossingsCounter = new CrossingCounter(super.getGraph());
+        final int result = allCrossingsCounter.countAllCrossingsInGraphWithOrder(currentOrder);
         return result;
     }
 }

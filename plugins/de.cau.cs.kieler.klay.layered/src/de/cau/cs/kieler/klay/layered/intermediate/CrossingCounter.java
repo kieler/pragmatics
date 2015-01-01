@@ -43,7 +43,7 @@ public class CrossingCounter {
      */
     private int[] portPos;
     private final LGraph layeredGraph;
-    private final LNode[][] currentOrder;
+    private final LNode[][] originalOrder;
 
     /**
      * Constructs and initializes a cross counter. Initialization iterates through all ports.
@@ -53,27 +53,27 @@ public class CrossingCounter {
      */
     public CrossingCounter(final LGraph layeredGraph) {
         this.layeredGraph = layeredGraph;
-        currentOrder = new LNode[layeredGraph.getLayers().size()][];
+        originalOrder = new LNode[layeredGraph.getLayers().size()][];
         initialize();
     }
 
     /**
      * Counts all crossings in a graph.
      * 
-     * @return
+     * @return the number of crossings for the node order passed to the constructor.
      */
     public int countAllCrossingsInGraph() {
-        return countAllCrossingsInGraph(currentOrder);
+        return countAllCrossingsInGraphWithOrder(originalOrder);
     }
 
     /**
-     * Counts all crossings in a graph in the currentOrder.
+     * Counts all crossings in a graph in the originalOrder.
      *
      * @param currentOrder
      *            The current order of the nodes.
      * @return the amount of crossings
      */
-    public int countAllCrossingsInGraph(final LNode[][] currentOrder) {
+    public int countAllCrossingsInGraphWithOrder(final LNode[][] currentOrder) {
         int totalCrossings = 0;
         for (int layerIndex = 0; layerIndex < currentOrder.length - 1; layerIndex++) {
             LNode[] fixedLayer = currentOrder[layerIndex];
@@ -116,11 +116,11 @@ public class CrossingCounter {
         for (ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator(); layerIter
                 .hasNext();) {
             Layer layer = layerIter.next();
-            currentOrder[layerIter.previousIndex()] = new LNode[layer.getNodes().size()];
+            originalOrder[layerIter.previousIndex()] = new LNode[layer.getNodes().size()];
 
             for (ListIterator<LNode> nodeIter = layer.getNodes().listIterator(); nodeIter.hasNext();) {
                 LNode node = nodeIter.next();
-                currentOrder[layerIter.previousIndex()][nodeIter.previousIndex()] = node;
+                originalOrder[layerIter.previousIndex()][nodeIter.previousIndex()] = node;
                 for (LPort port : node.getPorts()) {
                     port.id = portCount++;
                 }
