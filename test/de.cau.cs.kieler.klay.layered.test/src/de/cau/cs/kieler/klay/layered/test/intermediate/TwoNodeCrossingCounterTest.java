@@ -17,6 +17,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -26,9 +27,11 @@ import com.google.common.collect.Lists;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.intermediate.GreedySwitchOnDemandCrossingMatrixProcessor;
-import de.cau.cs.kieler.klay.layered.intermediate.TwoNodeCrossingCounter;
+import de.cau.cs.kieler.klay.layered.intermediate.TwoNodeInLayerEdgeCrossingCounter;
+import de.cau.cs.kieler.klay.layered.intermediate.TwoNodeTwoLayerCrossingCounter;
 import de.cau.cs.kieler.klay.layered.test.AbstractLayeredProcessorTest;
 import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
 import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
@@ -78,12 +81,12 @@ public class TwoNodeCrossingCounterTest extends AbstractLayeredProcessorTest {
         List<ILayoutProcessor> processors = layered.getLayoutTestConfiguration(state);
         greedyProcessor =
                 (GreedySwitchOnDemandCrossingMatrixProcessor) processors.get(state.getStep() - 1);
-
     }
 
     @Test
     public void noEntryInCrossingMatrixShouldBeNegative() {
         // forward sweep
+        Map<LPort, Integer> portIndices = greedyProcessor.getPortIndices();
         for (LGraph graph : state.getGraphs()) {
             for (int i = 1; i < graph.getLayers().size(); i++) {
                 Layer layer = graph.getLayers().get(i);
@@ -91,12 +94,12 @@ public class TwoNodeCrossingCounterTest extends AbstractLayeredProcessorTest {
                 int[] nodeDegrees = greedyProcessor.getWestNodeDegrees()[i];
                 for (LNode nodeOne : layer) {
                     for (LNode nodeTwo : layer) {
-                        TwoNodeCrossingCounter crossCounter =
-                                new TwoNodeCrossingCounter(nodeOne, nodeTwo, true, nodeDegrees,
-                                        nodePositions);
-                        crossCounter.calculateCrossingNumber();
-                        assertTrue(crossCounter.getCrossingsForOrderIJ() >= 0);
-                        assertTrue(crossCounter.getCrossingsForOrderJI() >= 0);
+                        TwoNodeTwoLayerCrossingCounter crossCounter =
+                                new TwoNodeTwoLayerCrossingCounter(nodeOne, nodeTwo, true,
+                                        nodeDegrees, nodePositions, portIndices);
+                        crossCounter.countCrossings();
+                        assertTrue(crossCounter.getCrossingsForOrderUpperLower() >= 0);
+                        assertTrue(crossCounter.getCrossingsForOrderLowerUpper() >= 0);
                     }
                 }
             }
@@ -109,12 +112,12 @@ public class TwoNodeCrossingCounterTest extends AbstractLayeredProcessorTest {
                 int[] nodeDegrees = greedyProcessor.getEastNodeDegrees()[i];
                 for (LNode nodeOne : layer) {
                     for (LNode nodeTwo : layer) {
-                        TwoNodeCrossingCounter crossCounter =
-                                new TwoNodeCrossingCounter(nodeOne, nodeTwo, false, nodeDegrees,
-                                        nodePositions);
-                        crossCounter.calculateCrossingNumber();
-                        assertTrue(crossCounter.getCrossingsForOrderIJ() >= 0);
-                        assertTrue(crossCounter.getCrossingsForOrderJI() >= 0);
+                        TwoNodeTwoLayerCrossingCounter crossCounter =
+                                new TwoNodeTwoLayerCrossingCounter(nodeOne, nodeTwo, false,
+                                        nodeDegrees, nodePositions, portIndices);
+                        crossCounter.countCrossings();
+                        assertTrue(crossCounter.getCrossingsForOrderUpperLower() >= 0);
+                        assertTrue(crossCounter.getCrossingsForOrderLowerUpper() >= 0);
                     }
                 }
             }
@@ -164,17 +167,26 @@ public class TwoNodeCrossingCounterTest extends AbstractLayeredProcessorTest {
                 LNode nodeOne = layer.getNodes().get(j);
                 for (int k = 0; k < layer.getNodes().size(); k++) {
                     LNode nodeTwo = layer.getNodes().get(k);
-                    TwoNodeCrossingCounter crossCounter =
-                            new TwoNodeCrossingCounter(nodeOne, nodeTwo, isForwardSweep,
-                                    nodeDegrees, nodePositions);
-                    crossCounter.calculateCrossingNumber();
-                    int actualEntry = crossCounter.getCrossingsForOrderIJ();
+                    Map<LPort, Integer> portIndices = greedyProcessor.getPortIndices();
+                    TwoNodeTwoLayerCrossingCounter crossCounter =
+                            new TwoNodeTwoLayerCrossingCounter(nodeOne, nodeTwo, isForwardSweep,
+                                    nodeDegrees, nodePositions, portIndices);
+                    crossCounter.countCrossings();
+                    int actualEntry = crossCounter.getCrossingsForOrderUpperLower();
+
+                    TwoNodeInLayerEdgeCrossingCounter inLayerEdgeCrossCounter =
+                            new TwoNodeInLayerEdgeCrossingCounter(nodePositions, nodeDegrees,
+                                    false, portIndices);
+                    inLayerEdgeCrossCounter.countCrossings(nodeOne, nodeTwo);
+                    actualEntry += inLayerEdgeCrossCounter.getCrossingsForOrderUpperLower();
+
                     String failureMessage = "Failed in layer " + i + " nodes " + j + " above " + k;
                     int currentEntryInExpectedMatrix = isForwardSweep ? i - 1 : i;
                     assertEquals(failureMessage,
                             expectedMatrices[currentEntryInExpectedMatrix][j][k], actualEntry);
 
-                    int otherOrder = crossCounter.getCrossingsForOrderJI();
+                    int otherOrder = crossCounter.getCrossingsForOrderLowerUpper();
+                    otherOrder += inLayerEdgeCrossCounter.getCrossingsForOrderLowerUpper();
                     failureMessage =
                             "Failed in layer " + i + " nodes " + k + " above " + j + " order ji ";
                     assertEquals(failureMessage,
@@ -201,11 +213,19 @@ public class TwoNodeCrossingCounterTest extends AbstractLayeredProcessorTest {
                 LNode nodeOne = layer.getNodes().get(j);
                 for (int k = 0; k < layer.getNodes().size(); k++) {
                     LNode nodeTwo = layer.getNodes().get(k);
-                    TwoNodeCrossingCounter crossCounter =
-                            new TwoNodeCrossingCounter(nodeOne, nodeTwo, false, nodeDegrees,
-                                    nodePositions);
-                    crossCounter.calculateCrossingNumber();
-                    int actualEntry = crossCounter.getCrossingsForOrderIJ();
+                    Map<LPort, Integer> portIndices = greedyProcessor.getPortIndices();
+                    TwoNodeTwoLayerCrossingCounter crossCounter =
+                            new TwoNodeTwoLayerCrossingCounter(nodeOne, nodeTwo, false,
+                                    nodeDegrees, nodePositions, portIndices);
+                    crossCounter.countCrossings();
+                    int actualEntry = crossCounter.getCrossingsForOrderUpperLower();
+
+                    TwoNodeInLayerEdgeCrossingCounter inLayerEdgeCrossCounter =
+                            new TwoNodeInLayerEdgeCrossingCounter(nodePositions, nodeDegrees,
+                                    false, portIndices);
+                    inLayerEdgeCrossCounter.countCrossings(nodeOne, nodeTwo);
+                    actualEntry += inLayerEdgeCrossCounter.getCrossingsForOrderUpperLower();
+
                     String failureMessage =
                             "Failed in layer " + i + " nodes " + j + " above " + k + "Entry was "
                                     + inLayerEdgesBackwardCrossingMatrices[i - 1][j][k]
@@ -213,7 +233,9 @@ public class TwoNodeCrossingCounterTest extends AbstractLayeredProcessorTest {
                     assertTrue(failureMessage,
                             inLayerEdgesBackwardCrossingMatrices[i - 1][j][k] <= actualEntry);
 
-                    int otherOrderActualEntry = crossCounter.getCrossingsForOrderJI();
+                    int otherOrderActualEntry = crossCounter.getCrossingsForOrderLowerUpper();
+                    otherOrderActualEntry +=
+                            inLayerEdgeCrossCounter.getCrossingsForOrderLowerUpper();
 
                     failureMessage =
                             "Failed in layer " + i + " nodes " + k + " above " + j
