@@ -80,7 +80,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                     .addBeforePhase3(IntermediateProcessorStrategy.LONG_EDGE_SPLITTER)
                     .addBeforePhase4(IntermediateProcessorStrategy.PORT_DISTRIBUTER)
                     .addBeforePhase4(
-                            IntermediateProcessorStrategy.GREEDY_SWITCH_ONDEMAND_CROSSINGMATRIX)
+                            IntermediateProcessorStrategy.GREEDY_SWITCH_CAREFUL_ONDEMAND_CROSSINGMATRIX)
                     .addBeforePhase4(IntermediateProcessorStrategy.IN_LAYER_CONSTRAINT_PROCESSOR)
                     .addAfterPhase5(IntermediateProcessorStrategy.LONG_EDGE_JOINER);
 
