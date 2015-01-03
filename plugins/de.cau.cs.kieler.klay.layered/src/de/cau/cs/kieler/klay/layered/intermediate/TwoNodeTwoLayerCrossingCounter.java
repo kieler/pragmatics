@@ -107,8 +107,8 @@ public class TwoNodeTwoLayerCrossingCounter {
 
     private boolean nextEdgeCausesCrossingsToOrder(final NodeData upperNode,
             final NodeData lowerNode) {
-        final LNode neighbourToUpperNode = upperNode.getNeighbourPort().getNode();
-        final LNode neighbourToLowerNode = lowerNode.getNeighbourPort().getNode();
+        LNode neighbourToUpperNode = upperNode.getNeighbourPort().getNode();
+        LNode neighbourToLowerNode = lowerNode.getNeighbourPort().getNode();
         boolean causesCrossingsToOrderUpperLower =
                 neighbourToUpperNode.id > neighbourToLowerNode.id;
 
@@ -136,9 +136,9 @@ public class TwoNodeTwoLayerCrossingCounter {
     }
 
     private boolean nextEdgeCausesCrossingsToBothOrders() {
-        final LNode neighbourToLowerNode = lower.getNeighbourPort().getNode();
-        final LNode neighbourToUpperNode = upper.getNeighbourPort().getNode();
-        final boolean causesCrossingsToBoth =
+        LNode neighbourToLowerNode = lower.getNeighbourPort().getNode();
+        LNode neighbourToUpperNode = upper.getNeighbourPort().getNode();
+        boolean causesCrossingsToBoth =
                 neighbourToUpperNode.id == neighbourToLowerNode.id
                         && !neighbourToUpperNode.getProperty(LayoutOptions.PORT_CONSTRAINTS)
                                 .isOrderFixed();
@@ -183,19 +183,19 @@ public class TwoNodeTwoLayerCrossingCounter {
         }
 
         private TreeMap<Integer, List<LEdge>> fetchEdges() {
-            final TreeMap<Integer, List<LEdge>> resultEdges = new TreeMap<Integer, List<LEdge>>();
-            final List<LPort> ports = node.getPorts();
-            for (final LPort port : ports) {
-                for (final LEdge edge : fixedLayerEastOfFreeLayer ? port.getIncomingEdges() : port
+            TreeMap<Integer, List<LEdge>> resultEdges = new TreeMap<Integer, List<LEdge>>();
+            List<LPort> ports = node.getPorts();
+            for (LPort port : ports) {
+                for (LEdge edge : fixedLayerEastOfFreeLayer ? port.getIncomingEdges() : port
                         .getOutgoingEdges()) {
-                    final boolean edgeIsNotSelfLoop =
+                    boolean edgeIsNotSelfLoop =
                             edge.getSource().getNode() != edge.getTarget().getNode();
-                    final boolean edgeIsNotInLayerEdge =
+                    boolean edgeIsNotInLayerEdge =
                             edge.getSource().getNode().getLayer() != edge.getTarget().getNode()
                                     .getLayer();
 
                     if (edgeIsNotSelfLoop && edgeIsNotInLayerEdge) {
-                        final int index =
+                        int index =
                                 fixedLayerEastOfFreeLayer ? edge.getSource().getNode().id : edge
                                         .getTarget().getNode().id;
                         if (resultEdges.containsKey(index)) {
@@ -220,7 +220,7 @@ public class TwoNodeTwoLayerCrossingCounter {
         private LPort fetchNextPort() {
             LPort resultNeighbourPort = null;
             while (!edges.isEmpty()) {
-                final List<LEdge> edgesWithSameNodes = edges.firstEntry().getValue();
+                List<LEdge> edgesWithSameNodes = edges.firstEntry().getValue();
                 if (edgesWithSameNodes.get(0).getSource().getNode() == edgesWithSameNodes.get(0)
                         .getTarget().getNode()) {
                     edges.remove(edges.firstKey());
@@ -243,7 +243,7 @@ public class TwoNodeTwoLayerCrossingCounter {
         }
 
         public void setNextPortAndRemoveEdge() {
-            final List<LEdge> firstEdgesWithSameNodes = edges.get(edges.firstKey());
+            List<LEdge> firstEdgesWithSameNodes = edges.get(edges.firstKey());
             if (firstEdgesWithSameNodes.size() == 1) {
                 edges.remove(edges.firstKey());
             } else {

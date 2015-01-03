@@ -59,7 +59,7 @@ public final class GreedySwitchCrossingMatrixProcessor extends AbstractGreedySwi
     protected boolean checkIfSwitchReducesCrossings(final LNode[][] currentGraph,
             final int freeLayerIndex, final int fixedLayerIndex, final int upperNodeIndex,
             final int lowerNodeIndex) {
-        final LNode[] freeLayer = currentGraph[freeLayerIndex];
+        LNode[] freeLayer = currentGraph[freeLayerIndex];
         if (crossingMatrix == null) {
             crossingMatrix = new int[freeLayer.length][freeLayer.length];
         }
@@ -70,17 +70,17 @@ public final class GreedySwitchCrossingMatrixProcessor extends AbstractGreedySwi
             calculateCrossingsFromOneSide(freeLayerIndex, fixedLayerIndex, freeLayer);
         }
 
-        final int[][] resultMatr = resetCrossingMatrixIfEndOfLayer(lowerNodeIndex, freeLayer);
+        int[][] resultMatr = resetCrossingMatrixIfEndOfLayer(lowerNodeIndex, freeLayer);
 
-        final boolean causesCrossings =
+        boolean causesCrossings =
                 resultMatr[upperNodeIndex][lowerNodeIndex] > resultMatr[lowerNodeIndex][upperNodeIndex];
         return causesCrossings;
     }
 
     private int[][] resetCrossingMatrixIfEndOfLayer(final int lowerNodeIndex,
             final LNode[] freeLayer) {
-        final int[][] resultMatr = crossingMatrix;
-        final boolean lowerNodeIsLastInLayer = lowerNodeIndex == freeLayer.length - 1;
+        int[][] resultMatr = crossingMatrix;
+        boolean lowerNodeIsLastInLayer = lowerNodeIndex == freeLayer.length - 1;
         if (lowerNodeIsLastInLayer) {
             crossingMatrix = null;
         }
@@ -89,14 +89,14 @@ public final class GreedySwitchCrossingMatrixProcessor extends AbstractGreedySwi
 
     private void calculateCrossingsFromOneSide(final int freeLayerIndex, final int fixedLayerIndex,
             final LNode[] freeLayer) {
-        final boolean isFixedLayerEastOfFreeLayer = fixedLayerIndex < freeLayerIndex;
+        boolean isFixedLayerEastOfFreeLayer = fixedLayerIndex < freeLayerIndex;
         calculateCrossingMatrix(freeLayer, isFixedLayerEastOfFreeLayer, freeLayerIndex);
     }
 
     private void calculateCrossingsOnBothSides(final LNode[][] currentGraph,
             final int freeLayerIndex, final LNode[] freeLayer) {
-        final boolean isFreeLayerFirstLayer = freeLayerIndex == 0;
-        final boolean isFreeLayerLastLayer = freeLayerIndex == currentGraph.length - 1;
+        boolean isFreeLayerFirstLayer = freeLayerIndex == 0;
+        boolean isFreeLayerLastLayer = freeLayerIndex == currentGraph.length - 1;
         if (isFreeLayerFirstLayer) {
             calculateCrossingMatrix(freeLayer, false, freeLayerIndex);
         } else if (isFreeLayerLastLayer) {
@@ -109,13 +109,13 @@ public final class GreedySwitchCrossingMatrixProcessor extends AbstractGreedySwi
 
     private void calculateCrossingMatrix(final LNode[] freeLayer, final boolean isFixedEastOfFree,
             final int freeLayerIndex) {
-        final int matrixSize = freeLayer.length;
-        final int[] nodeDegrees =
+        int matrixSize = freeLayer.length;
+        int[] nodeDegrees =
                 isFixedEastOfFree ? super.getWestNodeDegrees()[freeLayerIndex] : super
                         .getEastNodeDegrees()[freeLayerIndex];
         for (int i = 0; i < matrixSize; i++) {
             for (int j = i + 1; j < matrixSize; j++) {
-                final TwoNodeTwoLayerCrossingCounter crossCounter =
+                TwoNodeTwoLayerCrossingCounter crossCounter =
                         new TwoNodeTwoLayerCrossingCounter(freeLayer[i], freeLayer[j],
                                 isFixedEastOfFree, nodeDegrees,
                                 super.getNodePositions()[freeLayerIndex], super.getPortIndices());
@@ -131,8 +131,8 @@ public final class GreedySwitchCrossingMatrixProcessor extends AbstractGreedySwi
      */
     @Override
     protected int getAmountOfCrossings(final LNode[][] currentOrder) {
-        final CrossingCounter allCrossingsCounter = new CrossingCounter(super.getGraph());
-        final int result = allCrossingsCounter.countAllCrossingsInGraphWithOrder(currentOrder);
+        CrossingCounter allCrossingsCounter = new CrossingCounter(super.getGraph());
+        int result = allCrossingsCounter.countAllCrossingsInGraphWithOrder(currentOrder);
         return result;
     }
 }

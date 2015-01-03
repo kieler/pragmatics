@@ -71,14 +71,14 @@ public class TwoNodeInLayerEdgeCrossingCounter {
             return;
         }
 
-        final PortSide portSide = fixedLayerEastOfFreeLayer ? PortSide.WEST : PortSide.EAST;
+        PortSide portSide = fixedLayerEastOfFreeLayer ? PortSide.WEST : PortSide.EAST;
 
-        final LinkedList<LEdge> upperNodeInLayerEdges = collectInLayerEdges(upperNode, portSide);
+        LinkedList<LEdge> upperNodeInLayerEdges = collectInLayerEdges(upperNode, portSide);
         if (!upperNodeInLayerEdges.isEmpty()) {
             fetchCrossingsFromUpper(upperNode, lowerNode, upperNodeInLayerEdges);
         }
 
-        final LinkedList<LEdge> lowerNodeInLayerEdges = collectInLayerEdges(lowerNode, portSide);
+        LinkedList<LEdge> lowerNodeInLayerEdges = collectInLayerEdges(lowerNode, portSide);
         if (!lowerNodeInLayerEdges.isEmpty()) {
             fetchCrossingsFromLower(upperNode, lowerNode, lowerNodeInLayerEdges);
         }
@@ -88,16 +88,16 @@ public class TwoNodeInLayerEdgeCrossingCounter {
             final LinkedList<LEdge> lowerNodeInLayerEdges) {
         for (final LEdge edge : lowerNodeInLayerEdges) {
 
-            final boolean edgeAlredyCounted =
+            boolean edgeAlredyCounted =
                     edge.getSource().getNode() == upperNode
                             || edge.getTarget().getNode() == upperNode;
             if (edgeAlredyCounted) {
                 continue;
             }
 
-            final boolean lowerNodeIsSource = edge.getSource().getNode() == lowerNode;
-            final LPort edgeEndPort = lowerNodeIsSource ? edge.getTarget() : edge.getSource();
-            final int edgeEndNodeId = edgeEndPort.getNode().id;
+            boolean lowerNodeIsSource = edge.getSource().getNode() == lowerNode;
+            LPort edgeEndPort = lowerNodeIsSource ? edge.getTarget() : edge.getSource();
+            int edgeEndNodeId = edgeEndPort.getNode().id;
 
             if (nodePositions[edgeEndNodeId] < nodePositions[upperNode.id]) {
                 crossingsForOrderUpperLower += nodeDegrees[upperNode.id];
@@ -112,10 +112,10 @@ public class TwoNodeInLayerEdgeCrossingCounter {
 
     private void fetchCrossingsFromUpper(final LNode upperNode, final LNode lowerNode,
             final LinkedList<LEdge> upperNodeInLayerEdges) {
-        for (final LEdge edge : upperNodeInLayerEdges) {
-            final boolean upperNodeIsSource = edge.getSource().getNode() == upperNode;
-            final LPort edgeEndPort = upperNodeIsSource ? edge.getTarget() : edge.getSource();
-            final int edgeEndNodeId = edgeEndPort.getNode().id;
+        for (LEdge edge : upperNodeInLayerEdges) {
+            boolean upperNodeIsSource = edge.getSource().getNode() == upperNode;
+            LPort edgeEndPort = upperNodeIsSource ? edge.getTarget() : edge.getSource();
+            int edgeEndNodeId = edgeEndPort.getNode().id;
             if (nodePositions[edgeEndNodeId] > nodePositions[lowerNode.id]) {
                 crossingsForOrderUpperLower += nodeDegrees[lowerNode.id];
             } else if (nodePositions[edgeEndNodeId] < nodePositions[upperNode.id]) {
@@ -129,15 +129,15 @@ public class TwoNodeInLayerEdgeCrossingCounter {
 
     private LinkedList<LEdge> collectInLayerEdges(final LNode node, final PortSide portSide) {
         final LinkedList<LEdge> inLayerEdges = new LinkedList<LEdge>();
-        for (final LPort port : node.getPorts(portSide)) {
-            for (final LEdge edge : port.getConnectedEdges()) {
-                final boolean inLayerIncomingEdge =
+        for (LPort port : node.getPorts(portSide)) {
+            for (LEdge edge : port.getConnectedEdges()) {
+                boolean inLayerIncomingEdge =
                         edge.getSource().getNode() != node
                                 && edge.getSource().getNode().getLayer() == node.getLayer();
-                final boolean inLayerOutgoingEdge =
+                boolean inLayerOutgoingEdge =
                         edge.getTarget().getNode() != node
                                 && edge.getTarget().getNode().getLayer() == node.getLayer();
-                final boolean currEdgeHasInLayerEdges = inLayerIncomingEdge || inLayerOutgoingEdge;
+                boolean currEdgeHasInLayerEdges = inLayerIncomingEdge || inLayerOutgoingEdge;
 
                 if (currEdgeHasInLayerEdges) {
                     inLayerEdges.add(edge);

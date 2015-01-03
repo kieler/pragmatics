@@ -70,7 +70,7 @@ public abstract class AbstractGreedySwitchProcessor implements ILayoutProcessor 
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Begin Greedy Switch intermediate processor", 1);
 
-        final int layerCount = layeredGraph.getLayers().size();
+        int layerCount = layeredGraph.getLayers().size();
         if (layerCount < 2) {
             progressMonitor.done();
             return;
@@ -157,17 +157,17 @@ public abstract class AbstractGreedySwitchProcessor implements ILayoutProcessor 
         westNodeDegrees = new int[layerCount][];
         nodePositions = new int[layerCount][];
 
-        final ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
+        ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
         while (layerIter.hasNext()) {
-            final Layer layer = layerIter.next();
+            Layer layer = layerIter.next();
 
-            final int layerIndex = layerIter.previousIndex();
+            int layerIndex = layerIter.previousIndex();
             initializeArrays(layer, layerIndex);
 
             int nodeId = 0;
-            final ListIterator<LNode> nodeIter = layer.getNodes().listIterator();
+            ListIterator<LNode> nodeIter = layer.getNodes().listIterator();
             while (nodeIter.hasNext()) {
-                final LNode node = nodeIter.next();
+                LNode node = nodeIter.next();
 
                 setNodeOrderAndIds(layerIndex, nodeId, nodeIter.previousIndex(), node);
                 nodeId++;
@@ -178,7 +178,7 @@ public abstract class AbstractGreedySwitchProcessor implements ILayoutProcessor 
     }
 
     private void initializeArrays(final Layer layer, final int layerIndex) {
-        final int layerNodeCount = layer.getNodes().size();
+        int layerNodeCount = layer.getNodes().size();
 
         assert layerNodeCount > 0;
 
@@ -199,16 +199,16 @@ public abstract class AbstractGreedySwitchProcessor implements ILayoutProcessor 
      */
     private void setPortIndicesAndNodeDegrees(final int layerIndex, final LNode node) {
         int easternPortNo = 0;
-        for (final LPort lPort : node.getPorts(PortSide.EAST)) {
-            final LPort port = lPort;
+        for (LPort lPort : node.getPorts(PortSide.EAST)) {
+            LPort port = lPort;
             portIndices.put(port, easternPortNo);
             easternPortNo += port.getDegree();
         }
         eastNodeDegrees[layerIndex][node.id] = easternPortNo;
 
         int westernPortNo = 0;
-        for (final LPort lPort : node.getPorts(PortSide.WEST)) {
-            final LPort port = lPort;
+        for (LPort lPort : node.getPorts(PortSide.WEST)) {
+            LPort port = lPort;
             portIndices.put(port, westernPortNo);
             westernPortNo += port.getDegree();
         }
@@ -224,11 +224,11 @@ public abstract class AbstractGreedySwitchProcessor implements ILayoutProcessor 
     }
 
     private void setNewGraph(final LNode[][] sweep, final LGraph layeredGraph) {
-        final ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
+        ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
         while (layerIter.hasNext()) {
-            final Layer layer = layerIter.next();
-            final LNode[] nodes = sweep[layerIter.previousIndex()];
-            final ListIterator<LNode> nodeIter = layer.getNodes().listIterator();
+            Layer layer = layerIter.next();
+            LNode[] nodes = sweep[layerIter.previousIndex()];
+            ListIterator<LNode> nodeIter = layer.getNodes().listIterator();
             while (nodeIter.hasNext()) {
                 nodeIter.next();
                 nodeIter.set(nodes[nodeIter.previousIndex()]);
@@ -238,9 +238,8 @@ public abstract class AbstractGreedySwitchProcessor implements ILayoutProcessor 
 
     private boolean continueSwitchingInLayerUntilNoImprovement(
             final boolean fixedLayerLeftOfFreeLayer, final int fixedLayerIndex) {
-        final int freeLayerIndex =
-                fixedLayerLeftOfFreeLayer ? fixedLayerIndex + 1 : fixedLayerIndex - 1;
-        final LNode[] freeLayer = currentNodeOrder[freeLayerIndex];
+        int freeLayerIndex = fixedLayerLeftOfFreeLayer ? fixedLayerIndex + 1 : fixedLayerIndex - 1;
+        LNode[] freeLayer = currentNodeOrder[freeLayerIndex];
 
         boolean improved = false;
         boolean continueSwitching;
@@ -255,12 +254,12 @@ public abstract class AbstractGreedySwitchProcessor implements ILayoutProcessor 
             final LNode[] freeLayer) {
         boolean continueSwitching = false;
         for (int upperNodeIndex = 0; upperNodeIndex < freeLayer.length - 1; upperNodeIndex++) {
-            final int lowerNodeIndex = upperNodeIndex + 1;
-            final boolean noSuccessorConstraint =
+            int lowerNodeIndex = upperNodeIndex + 1;
+            boolean noSuccessorConstraint =
                     checkForConstraints(freeLayer, upperNodeIndex, lowerNodeIndex);
 
             if (noSuccessorConstraint) {
-                final boolean switchReducesCrossings =
+                boolean switchReducesCrossings =
                         checkIfSwitchReducesCrossings(currentNodeOrder, freeLayerIndex,
                                 fixedLayerIndex, upperNodeIndex, lowerNodeIndex);
 
@@ -275,20 +274,18 @@ public abstract class AbstractGreedySwitchProcessor implements ILayoutProcessor 
 
     private boolean checkForConstraints(final LNode[] freeLayer, final int upperNodeIndex,
             final int lowerNodeIndex) {
-        final LNode upperNode = freeLayer[upperNodeIndex];
-        final LNode lowerNode = freeLayer[lowerNodeIndex];
+        LNode upperNode = freeLayer[upperNodeIndex];
+        LNode lowerNode = freeLayer[lowerNodeIndex];
 
-        final List<LNode> constraints =
+        List<LNode> constraints =
                 upperNode.getProperty(InternalProperties.IN_LAYER_SUCCESSOR_CONSTRAINTS);
         boolean noSuccessorConstraint =
                 constraints == null || constraints.size() == 0 || !constraints.contains(lowerNode);
 
         // If upperNode and lowerNode are part of a layout unit, then the layout units must
         // be equal for a switch to be allowed.
-        final LNode upperLayoutUnit =
-                upperNode.getProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT);
-        final LNode lowerLayoutUnit =
-                lowerNode.getProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT);
+        LNode upperLayoutUnit = upperNode.getProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT);
+        LNode lowerLayoutUnit = lowerNode.getProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT);
         if (upperLayoutUnit != null && lowerLayoutUnit != null) {
             noSuccessorConstraint &= upperLayoutUnit == lowerLayoutUnit;
         }
@@ -318,12 +315,12 @@ public abstract class AbstractGreedySwitchProcessor implements ILayoutProcessor 
     protected void exchangeNodes(final int indexOne, final int indexTwo, final LNode[] layer,
             final int freeLayerIndex) {
 
-        final int positionNodeOne = nodePositions[freeLayerIndex][layer[indexOne].id];
+        int positionNodeOne = nodePositions[freeLayerIndex][layer[indexOne].id];
         nodePositions[freeLayerIndex][layer[indexOne].id] =
                 nodePositions[freeLayerIndex][layer[indexTwo].id];
         nodePositions[freeLayerIndex][layer[indexTwo].id] = positionNodeOne;
 
-        final LNode temp = layer[indexTwo];
+        LNode temp = layer[indexTwo];
         layer[indexTwo] = layer[indexOne];
         layer[indexOne] = temp;
     }
@@ -345,8 +342,7 @@ public abstract class AbstractGreedySwitchProcessor implements ILayoutProcessor 
      * @return true if a switch would reduce crossings.
      */
     protected abstract boolean checkIfSwitchReducesCrossings(LNode[][] currentOrder,
-            final int freeLayerIndex, final int fixedLayerIndex, final int upperNodeIndex,
-            final int lowerNodeIndex);
+            int freeLayerIndex, int fixedLayerIndex, int upperNodeIndex, int lowerNodeIndex);
 
     /**
      * Calculates the amount of crossings in the graph.

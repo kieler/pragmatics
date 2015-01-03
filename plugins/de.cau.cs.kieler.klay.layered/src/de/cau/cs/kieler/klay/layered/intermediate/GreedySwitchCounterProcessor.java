@@ -60,11 +60,11 @@ public final class GreedySwitchCounterProcessor extends AbstractGreedySwitchProc
     protected boolean checkIfSwitchReducesCrossings(final LNode[][] currentOrder,
             final int freeLayerIndex, final int fixedLayerIndex, final int upperNodeIndex,
             final int lowerNodeIndex) {
-        final LNode[] freeLayer = currentOrder[freeLayerIndex];
+        LNode[] freeLayer = currentOrder[freeLayerIndex];
 
         initializeCrossingCounter(upperNodeIndex, lowerNodeIndex, freeLayer);
 
-        final LNode[] fixedLayer = currentOrder[fixedLayerIndex];
+        LNode[] fixedLayer = currentOrder[fixedLayerIndex];
         amountOfCrossingsInCurrentLayer =
                 calculateCurrentCrossings(currentOrder, freeLayerIndex, fixedLayerIndex, freeLayer,
                         fixedLayer);
@@ -75,14 +75,13 @@ public final class GreedySwitchCounterProcessor extends AbstractGreedySwitchProc
 
         exchangeNodes(upperNodeIndex, lowerNodeIndex, freeLayer, freeLayerIndex);
 
-        final int newAmountOfCrossings =
+        int newAmountOfCrossings =
                 calculateCrossings(currentOrder, freeLayerIndex, fixedLayerIndex,
                         super.isConsiderAllCrossings(), freeLayer, fixedLayer);
 
         exchangeNodes(lowerNodeIndex, upperNodeIndex, freeLayer, freeLayerIndex);
 
-        final boolean switchReducesCrossings =
-                newAmountOfCrossings < amountOfCrossingsInCurrentLayer;
+        boolean switchReducesCrossings = newAmountOfCrossings < amountOfCrossingsInCurrentLayer;
         if (switchReducesCrossings) {
             amountOfCrossingsInCurrentLayer = newAmountOfCrossings;
         }
@@ -103,7 +102,7 @@ public final class GreedySwitchCounterProcessor extends AbstractGreedySwitchProc
 
     private void initializeCrossingCounter(final int upperNodeIndex, final int lowerNodeIndex,
             final LNode[] freeLayer) {
-        final boolean isNewFreeLayer = upperNodeIndex == 0 && lowerNodeIndex == 1;
+        boolean isNewFreeLayer = upperNodeIndex == 0 && lowerNodeIndex == 1;
         if (isNewFreeLayer) {
             crossingsInLayerHaveBeenCalculated = false;
             crossingCounter = new CrossingCounter(freeLayer[0].getGraph());
@@ -129,7 +128,7 @@ public final class GreedySwitchCounterProcessor extends AbstractGreedySwitchProc
     private int calculateCrossingsFromOneSide(final int freeLayerIndex, final int fixedLayerIndex,
             final LNode[] freeLayer, final LNode[] fixedLayer) {
         int crossings;
-        final boolean fixedLayerIsEastOfFreeLayer = fixedLayerIndex < freeLayerIndex;
+        boolean fixedLayerIsEastOfFreeLayer = fixedLayerIndex < freeLayerIndex;
         crossings =
                 crossingCounter.countCrossingsBetweenLayers(fixedLayer, freeLayer,
                         fixedLayerIsEastOfFreeLayer);
@@ -140,14 +139,14 @@ public final class GreedySwitchCounterProcessor extends AbstractGreedySwitchProc
             final int freeLayerIndex, final LNode[] freeLayer, final LNode[] fixedLayer) {
         int crossings;
         if (freeLayerIndex == 0 && currentGraph.length > 1) {
-            final LNode[] fixedLayerEastOfFreeLayer = currentGraph[freeLayerIndex + 1];
+            LNode[] fixedLayerEastOfFreeLayer = currentGraph[freeLayerIndex + 1];
             crossings =
                     crossingCounter.countCrossingsBetweenLayers(fixedLayerEastOfFreeLayer,
                             freeLayer, false);
         } else if (freeLayerIndex == currentGraph.length - 1) {
             crossings = crossingCounter.countCrossingsBetweenLayers(fixedLayer, freeLayer, true);
         } else {
-            final LNode[] fixedLayerEastOfFreeLayer = currentGraph[freeLayerIndex + 1];
+            LNode[] fixedLayerEastOfFreeLayer = currentGraph[freeLayerIndex + 1];
             crossings = crossingCounter.countCrossingsBetweenLayers(fixedLayer, freeLayer, true);
             crossings +=
                     crossingCounter.countCrossingsBetweenLayers(fixedLayerEastOfFreeLayer,
