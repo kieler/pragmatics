@@ -19,20 +19,36 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
  * @author alan
  *
  */
-public class GreedySwitchOnDemandCrossingMatrixProcessor extends AbstractGreedySwitchProcessor {
+public final class GreedySwitchOnDemandCrossingMatrixProcessor extends
+        AbstractGreedySwitchProcessor {
 
     private int[][] crossingMatrix;
     private boolean[][] isCrossingMatrixFilled;
 
-    /**
-     * Calls super constructor.
-     *
-     * @param considerAllCrossings
-     *            true when greedy switch should consider all neighboring layers of the layer whose
-     *            node order should be switched.
-     */
-    public GreedySwitchOnDemandCrossingMatrixProcessor(final boolean considerAllCrossings) {
+    private GreedySwitchOnDemandCrossingMatrixProcessor(final boolean considerAllCrossings) {
         super(considerAllCrossings);
+    }
+
+    /**
+     * This greedy switcher will calculate the crossing matrix for the free layer only when needed
+     * for a possible switch and consider only one neighboring layer for each layer whose node order
+     * should be switched.
+     *
+     * @return careless {@link GreedySwitchOnDemandCrossingMatrixProcessor}
+     */
+    public static GreedySwitchOnDemandCrossingMatrixProcessor createConsideringOneSidedCrossings() {
+        return new GreedySwitchOnDemandCrossingMatrixProcessor(false);
+    }
+
+    /**
+     * This greedy switcher will calculate the complete crossing matrix for the free layer when
+     * needed for a possible switch and will consider both neighboring layers for each layer whose
+     * node order should be switched.
+     * 
+     * @return careful {@link GreedySwitchOnDemandCrossingMatrixProcessor}
+     */
+    public static GreedySwitchOnDemandCrossingMatrixProcessor createConsideringAllCrossings() {
+        return new GreedySwitchOnDemandCrossingMatrixProcessor(true);
     }
 
     /**

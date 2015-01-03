@@ -41,21 +41,13 @@ import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
  *
  */
 public abstract class AbstractGreedySwitchProcessor implements ILayoutProcessor {
-
     private LNode[][] bestNodeOrder;
-
     private LNode[][] currentNodeOrder;
-
     private final boolean considerAllCrossings;
-
     private int[][] eastNodeDegrees;
-
     private int[][] nodePositions;
-
     private final Map<LPort, Integer> portIndices;
-
     private int[][] westNodeDegrees;
-
     private LGraph graph;
 
     /**
@@ -67,7 +59,7 @@ public abstract class AbstractGreedySwitchProcessor implements ILayoutProcessor 
      *            true when greedy switch should consider all neighbouring layers of the layer whose
      *            node order should be switched.
      */
-    public AbstractGreedySwitchProcessor(final boolean considerAllCrossings) {
+    protected AbstractGreedySwitchProcessor(final boolean considerAllCrossings) {
         this.considerAllCrossings = considerAllCrossings;
         portIndices = new HashMap<LPort, Integer>();
     }

@@ -23,17 +23,30 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
  * @author alan
  *
  */
-public class GreedySwitchCounterProcessor extends AbstractGreedySwitchProcessor {
+public final class GreedySwitchCounterProcessor extends AbstractGreedySwitchProcessor {
+
+    private GreedySwitchCounterProcessor(final boolean considerAllCrossings) {
+        super(considerAllCrossings);
+    }
 
     /**
-     * Calls super constructor.
-     *
-     * @param considerAllCrossings
-     *            true when greedy switch should consider all neighboring layers of the layer whose
-     *            node order should be switched.
+     * This greedy switcher will count all crossings to the free layer for each possible switch and
+     * consider only one neighboring layer for each layer whose node order should be switched.
+     * 
+     * @return careless {@link GreedySwitchCounterProcessor}
      */
-    public GreedySwitchCounterProcessor(final boolean considerAllCrossings) {
-        super(considerAllCrossings);
+    public static GreedySwitchCounterProcessor createConsideringOneSidedCrossings() {
+        return new GreedySwitchCounterProcessor(false);
+    }
+
+    /**
+     * This greedy switcher will count all crossings to the free layer for each possible switch and
+     * will consider both neighboring layers for each layer whose node order should be switched. @
+     * 
+     * @return careful {@link GreedySwitchCounterProcessor}
+     */
+    public static GreedySwitchCounterProcessor createConsideringAllCrossings() {
+        return new GreedySwitchCounterProcessor(true);
     }
 
     private int amountOfCrossingsInCurrentLayer = 0;

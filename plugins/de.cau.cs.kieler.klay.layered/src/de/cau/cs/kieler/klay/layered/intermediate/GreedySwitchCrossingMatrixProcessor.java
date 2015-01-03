@@ -23,18 +23,31 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
  * @author alan
  *
  */
-public class GreedySwitchCrossingMatrixProcessor extends AbstractGreedySwitchProcessor implements
-        ILayoutProcessor {
+public final class GreedySwitchCrossingMatrixProcessor extends AbstractGreedySwitchProcessor
+        implements ILayoutProcessor {
+
+    private GreedySwitchCrossingMatrixProcessor(final boolean considerAllCrossings) {
+        super(considerAllCrossings);
+    }
 
     /**
-     * Calls super constructor.
+     * This greedy switcher will calculate the complete crossing matrix for the free layer and
+     * consider only one neighboring layer for each layer whose node order should be switched.
      *
-     * @param considerAllCrossings
-     *            true when greedy switch should consider all neighboring layers of the layer whose
-     *            node order should be switched.
+     * @return careless {@link GreedySwitchCrossingMatrixProcessor}
      */
-    public GreedySwitchCrossingMatrixProcessor(final boolean considerAllCrossings) {
-        super(considerAllCrossings);
+    public static GreedySwitchCrossingMatrixProcessor createConsideringOneSidedCrossings() {
+        return new GreedySwitchCrossingMatrixProcessor(false);
+    }
+
+    /**
+     * This greedy switcher will calculate the complete crossing matrix for the free layer and will
+     * consider both neighboring layers for each layer whose node order should be switched.
+     * 
+     * @return careful {@link GreedySwitchCrossingMatrixProcessor}
+     */
+    public static GreedySwitchCrossingMatrixProcessor createConsideringAllCrossings() {
+        return new GreedySwitchCrossingMatrixProcessor(true);
     }
 
     private int[][] crossingMatrix;
