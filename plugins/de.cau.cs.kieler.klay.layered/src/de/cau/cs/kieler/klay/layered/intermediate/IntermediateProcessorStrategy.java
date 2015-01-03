@@ -179,22 +179,22 @@ public enum IntermediateProcessorStrategy {
             return new EndLabelProcessor();
 
         case GREEDY_SWITCH_CROSSING_COUNTER:
-            return new GreedySwitchCounterProcessor(false);
+            return GreedySwitchCounterProcessor.createConsideringOneSidedCrossings();
 
         case GREEDY_SWITCH_CAREFUL_CROSSING_COUNTER:
-            return new GreedySwitchCounterProcessor(true);
+            return GreedySwitchCounterProcessor.createConsideringAllCrossings();
 
         case GREEDY_SWITCH_CROSSINGMATRIX:
-            return new GreedySwitchCrossingMatrixProcessor(false);
+            return GreedySwitchCrossingMatrixProcessor.createConsideringOneSidedCrossings();
 
         case GREEDY_SWITCH_CAREFUL_CROSSINGMATRIX:
-            return new GreedySwitchCrossingMatrixProcessor(true);
+            return GreedySwitchCrossingMatrixProcessor.createConsideringAllCrossings();
 
         case GREEDY_SWITCH_ONDEMAND_CROSSINGMATRIX:
-            return new GreedySwitchOnDemandCrossingMatrixProcessor(false);
+            return GreedySwitchOnDemandCrossingMatrixProcessor.createConsideringOneSidedCrossings();
 
         case GREEDY_SWITCH_CAREFUL_ONDEMAND_CROSSINGMATRIX:
-            return new GreedySwitchOnDemandCrossingMatrixProcessor(true);
+            return GreedySwitchOnDemandCrossingMatrixProcessor.createConsideringAllCrossings();
 
         case HIERARCHICAL_PORT_CONSTRAINT_PROCESSOR:
             return new HierarchicalPortConstraintProcessor();
