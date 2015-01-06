@@ -153,6 +153,14 @@
             type="object">
       </layoutOption>
       <layoutOption
+            appliesTo="edges"
+            class="de.cau.cs.kieler.core.math.KVectorChain"
+            description="The fixed list of junction points for the edge"
+            id="de.cau.cs.kieler.junctionPoints"
+            name="Junction Points"
+            type="object">
+      </layoutOption>
+      <layoutOption
             appliesTo="parents"
             default="-1.0"
             description="Minimal amount of space to be left to the border"

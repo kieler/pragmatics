@@ -43,6 +43,8 @@ import de.cau.cs.kieler.kiml.util.KimlUtil
 import de.cau.cs.kieler.klighd.KlighdConstants
 import de.cau.cs.kieler.klighd.SynthesisOption
 import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
+import de.cau.cs.kieler.klighd.util.KlighdProperties
+import de.cau.cs.kieler.klighd.util.ModelingUtil
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier
 
@@ -144,6 +146,19 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         val copier = new Copier()
         val KNode result = copier.copy(graph) as KNode
         copier.copyReferences()
+        
+        // Make sure that the collapse/expand properties of renderings are initialized properly
+        ModelingUtil.eAllContentsOfType2(result, typeof(KNode))
+          .filter[ e | !(e as KNode).children.isEmpty ].forEach [ e |
+            (e as KNode).data.filter(KRendering).forEach [ ren |
+                ren.persistentEntries.forEach [
+                    if (it.key == KlighdProperties.EXPANDED_RENDERING.id)
+                        ren.setProperty(KlighdProperties.EXPANDED_RENDERING, true)
+                    else if (it.key == KlighdProperties.COLLAPSED_RENDERING.id)
+                        ren.setProperty(KlighdProperties.COLLAPSED_RENDERING, true)
+                ]
+            ]
+        ]
         
         // Evaluate the defaults property
         try {
