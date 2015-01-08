@@ -85,7 +85,10 @@ public class AnalysisData implements ILayoutMetaData, IDepending<String> {
      * @param analysisFactory a factory for analysis instances
      */
     public void createPool(final IFactory<IAnalysis> analysisFactory) {
-        this.analysisPool = new InstancePool<IAnalysis>(analysisFactory);
+        // since KIPRA-1513 we are not able to reuse analysis instances
+        // anymore as we allow them to have internal state which can be 
+        // accessed by depending analyses
+        this.analysisPool = new InstancePool<IAnalysis>(analysisFactory, 0);
     }
 
     /**

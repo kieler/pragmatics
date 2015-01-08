@@ -29,8 +29,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-import com.google.common.collect.Maps;
-
 import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.alg.DefaultFactory;
 import de.cau.cs.kieler.core.alg.IFactory;
@@ -382,16 +380,16 @@ public final class AnalysisService {
      * @param graph the parent node of the graph to analyze
      * @param analysisId analysis identifier
      * @param monitor a progress monitor
-     * @param resultCache the result cache with stored values
+     * @param context the result cache with stored values
      * @return the analysis result value
      */
     public Object analyze(final KNode graph, final String analysisId,
-            final IKielerProgressMonitor monitor, final Map<String, Object> resultCache) {
+            final IKielerProgressMonitor monitor, final AnalysisContext context) {
         AnalysisData analysis = analysisIdMapping.get(analysisId);
         if (analysis != null) {
-            Object result = resultCache.get(analysisId);
+            Object result = context.getResult(analysisId);
             if (result == null) {
-                result = analyze(graph, analysis, monitor, resultCache);
+                result = analyze(graph, analysis, monitor, context);
             }
             return result;
         }
@@ -405,14 +403,14 @@ public final class AnalysisService {
      * @param graph the parent node of the graph to analyze
      * @param primalAnalysisData the analysis to execute
      * @param monitor a progress monitor
-     * @param resultCache the result cache with stored values
+     * @param context the result cache with stored values
      * @return the analysis result value
      */
     public Object analyze(final KNode graph, final AnalysisData primalAnalysisData,
-            final IKielerProgressMonitor monitor, final Map<String, Object> resultCache) {
+            final IKielerProgressMonitor monitor, final AnalysisContext context) {
         List<AnalysisData> analysesSequence = getExecutionOrder(primalAnalysisData);
-        doAnalyze(graph, analysesSequence, monitor, resultCache);
-        return resultCache.get(primalAnalysisData.getId());
+        doAnalyze(graph, analysesSequence, monitor, context);
+        return context.getResult(primalAnalysisData.getId());
     }
 
     /**
@@ -424,12 +422,12 @@ public final class AnalysisService {
      * @param monitor a progress monitor
      * @return the analyses results
      */
-    public Map<String, Object> analyze(final KNode graph, final Collection<AnalysisData> analyses,
+    public AnalysisContext analyze(final KNode graph, final Collection<AnalysisData> analyses,
             final IKielerProgressMonitor monitor) {
         List<AnalysisData> analysesSequence = getExecutionOrder(analyses);
-        Map<String, Object> resultCache = Maps.newHashMapWithExpectedSize(analysesSequence.size());
-        doAnalyze(graph, analysesSequence, monitor, resultCache);
-        return resultCache;
+        AnalysisContext context = new AnalysisContext();
+        doAnalyze(graph, analysesSequence, monitor, context);
+        return context;
     }
 
     /**
@@ -441,11 +439,11 @@ public final class AnalysisService {
      * @param monitor a progress monitor
      * @return the analyses results
      */
-    public Map<String, Object> analyzePresorted(final KNode graph, final List<AnalysisData> analyses,
+    public AnalysisContext analyzePresorted(final KNode graph, final List<AnalysisData> analyses,
             final IKielerProgressMonitor monitor) {
-        Map<String, Object> resultCache = Maps.newHashMapWithExpectedSize(analyses.size());
-        doAnalyze(graph, analyses, monitor, resultCache);
-        return resultCache;
+        AnalysisContext context = new AnalysisContext();
+        doAnalyze(graph, analyses, monitor, context);
+        return context;
     }
     
     /**
@@ -457,8 +455,11 @@ public final class AnalysisService {
      * @param resultCache the result cache with stored values
      */
     private void doAnalyze(final KNode graph, final List<AnalysisData> analysesSequence,
-            final IKielerProgressMonitor monitor, final Map<String, Object> resultCache) {
+            final IKielerProgressMonitor monitor, final AnalysisContext context) {
         monitor.begin("Graph analyses", analysesSequence.size());
+        
+        // create a context object
+        Map<String, Object> resultCache = context.getResultsMap();
         for (AnalysisData analysisData : analysesSequence) {
             if (monitor.isCanceled()) {
                 resultCache.put(analysisData.getId(), new AnalysisFailed(AnalysisFailed.Type.Canceled));
@@ -467,14 +468,18 @@ public final class AnalysisService {
             } else {
                 try {
                     IAnalysis analysis = analysisData.getInstancePool().fetch();
-                    Object result = analysis.doAnalysis(graph, resultCache, monitor.subTask(1));
+                    Object result = analysis.doAnalysis(graph, context, monitor.subTask(1));
                     resultCache.put(analysisData.getId(), result);
-                    analysisData.getInstancePool().release(analysis);
                 } catch (Exception exception) {
                     resultCache.put(analysisData.getId(), new AnalysisFailed(
                             AnalysisFailed.Type.Failed, exception));
                 }
             }
+        }
+        
+        // finally release all analysis instances from the instance pools
+        for (AnalysisData analysisData : analysesSequence) {
+            analysisData.getInstancePool().clear();
         }
         monitor.done();
     }
