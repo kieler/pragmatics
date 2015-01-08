@@ -1,66 +1,75 @@
 package de.cau.cs.kieler.klay.layered.test.intermediate;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
-import java.util.List;
-
-import org.junit.Before;
 import org.junit.Test;
 
-import com.google.common.collect.Lists;
-
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.intermediate.CrossingCounter;
-import de.cau.cs.kieler.klay.layered.p3order.LayerSweepCrossingMinimizer;
-import de.cau.cs.kieler.klay.layered.test.AbstractLayeredProcessorTest;
-import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
-import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
-import de.cau.cs.kieler.klay.test.utils.TestPath;
 
-public class CrossingCounterTest extends AbstractLayeredProcessorTest {
-    private static final String TEST_FOLDER = "klay_layered/greedy_switch_testgraphs";
-
-    // CHECKSTYLEOFF javadoc
-    public CrossingCounterTest(final GraphTestObject testObject, final ILayoutConfigurator config) {
-        super(testObject, config);
+public class CrossingCounterTest {
+    @Test
+    public void countOneCrossing() {
+        LGraph graph = givenCrossFormedGraph();
+        int amountOfCrossings = whenCountingAmountOfCrossings(graph);
+        assertThat(amountOfCrossings, is(1));
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected TestPath[] getBundleTestPath() {
-        TestPath[] testPaths = { new TestPath(TEST_FOLDER, false, false, TestPath.Type.KGRAPH) };
-        return testPaths;
+    private LGraph givenCrossFormedGraph() {
+        TestGraphCreator testGraphCreator = new TestGraphCreator();
+        return testGraphCreator.getCrossFormedGraph();
     }
 
-    /**
-     * {@inheritDoc} TODOALAN ???
-     */
-    @Override
-    protected List<ILayoutConfigurator> getConfigurators() {
-        return Lists.newArrayList();
-    }
-
-    private CrossingCounter crossingCounter;
-
-    @Before
-    public void runUntil() {
-        layered.runLayoutTestUntil(LayerSweepCrossingMinimizer.class, true, state);
-        crossingCounter = new CrossingCounter(state.getGraphs().get(0));
+    private int whenCountingAmountOfCrossings(final LGraph graph) {
+        return new CrossingCounter(graph).countAllCrossingsInGraph();
     }
 
     @Test
-    public void testAmountOfCrossings0() {
-        assertEquals(3, crossingCounter.countAllCrossingsInGraph());
+    public void countInLayerCrossing() {
+        LGraph graph = givenGraphWithInLayerCrossings();
+        int amountOfCrossings = whenCountingAmountOfCrossings(graph);
+        assertThat(amountOfCrossings, is(1));
+    }
+
+    private LGraph givenGraphWithInLayerCrossings() {
+        TestGraphCreator testGraphCreator = new TestGraphCreator();
+        return testGraphCreator.getGraphWithInLayerEdges();
     }
 
     @Test
-    public void testAmountOfCrossings2() {
-        assertEquals(2, crossingCounter.countAllCrossingsInGraph());
+    public void countNorthSouthCrossing() {
+        LGraph graph = givenGraphWithNorthSouthCrossing();
+        int amountOfCrossings = whenCountingAmountOfCrossings(graph);
+        assertThat(amountOfCrossings, is(1));
+    }
+
+    private LGraph givenGraphWithNorthSouthCrossing() {
+        TestGraphCreator testGraphCreator = new TestGraphCreator();
+        return testGraphCreator.getGraphWithNorthSouthCrossing();
     }
 
     @Test
-    public void testAmountOfCrossings3() {
-        assertEquals(4, crossingCounter.countAllCrossingsInGraph());
+    public void countCrossingsWithMultipleEdgesBetweenSameNodes() {
+        LGraph graph = givenGraphWithMultipleEdgesBetweenSameNodes();
+        int amountOfCrossings = whenCountingAmountOfCrossings(graph);
+        assertThat(amountOfCrossings, is(4));
+    }
+
+    private LGraph givenGraphWithMultipleEdgesBetweenSameNodes() {
+        TestGraphCreator testGraphCreator = new TestGraphCreator();
+        return testGraphCreator.getGraphWithMultipleEdgesBetweenSameNodes();
+    }
+
+    @Test
+    public void countCrossingsInEmptyGraph() {
+        LGraph graph = givenEmptyGraph();
+        int amountOfCrossings = whenCountingAmountOfCrossings(graph);
+        assertThat(amountOfCrossings, is(0));
+    }
+
+    private LGraph givenEmptyGraph() {
+        TestGraphCreator testGraphCreator = new TestGraphCreator();
+        return testGraphCreator.getEmptyGraph();
     }
 }

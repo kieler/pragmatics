@@ -75,10 +75,14 @@ public class CrossingCounter {
      */
     public int countAllCrossingsInGraphWithOrder(final LNode[][] currentOrder) {
         int totalCrossings = 0;
-        for (int layerIndex = 0; layerIndex < currentOrder.length - 1; layerIndex++) {
+        for (int layerIndex = 0; layerIndex < currentOrder.length; layerIndex++) {
             LNode[] fixedLayer = currentOrder[layerIndex];
-            LNode[] freeLayer = currentOrder[layerIndex + 1];
-            totalCrossings += countCrossingsBetweenLayers(fixedLayer, freeLayer, true);
+            totalCrossings += countNorthSouthPortCrossings(fixedLayer);
+            totalCrossings += countInLayerEdgeCrossings(fixedLayer);
+            if (layerIndex < currentOrder.length - 1) {
+                LNode[] freeLayer = currentOrder[layerIndex + 1];
+                totalCrossings += countCrossingsBetweenLayersInOrder(fixedLayer, freeLayer, true);
+            }
         }
         return totalCrossings;
     }
@@ -94,8 +98,9 @@ public class CrossingCounter {
      *            Defines order of fixedLayer and freeLayer.
      * @return Amount of crossings.
      */
-    public int countCrossingsBetweenLayers(final LNode[] fixedLayer, final LNode[] freeLayer,
-            final boolean fixedLayerIsEastOfFreeLayer) {
+    // TODO-alan make name real
+    public int countCrossingsBetweenLayersInOrder(final LNode[] fixedLayer,
+            final LNode[] freeLayer, final boolean fixedLayerIsEastOfFreeLayer) {
         int amountOfCrossings = 0;
         boolean isLayerEmpty =
                 fixedLayer == null || fixedLayer.length == 0 || freeLayer == null
@@ -106,8 +111,7 @@ public class CrossingCounter {
         amountOfCrossings +=
                 fixedLayerIsEastOfFreeLayer ? countCrossings(fixedLayer, freeLayer)
                         : countCrossings(freeLayer, fixedLayer);
-        amountOfCrossings += countNorthSouthPortCrossings(freeLayer);
-        amountOfCrossings += countInLayerEdgeCrossings(freeLayer);
+
         return amountOfCrossings;
     }
 
