@@ -39,6 +39,10 @@ public enum LayeringStrategy {
     /**
      * Use the MiniZinc optimization tool.
      */
-    MINIZINC;
+    MINIZINC,
+    /**
+     * Heuristic for the generalized layering approach.
+     */
+    HEURISTIC_GLAY;
 
 }

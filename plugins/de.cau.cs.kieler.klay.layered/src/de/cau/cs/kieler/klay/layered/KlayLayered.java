@@ -46,6 +46,7 @@ import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
 import de.cau.cs.kieler.klay.layered.p1cycles.InteractiveCycleBreaker;
 import de.cau.cs.kieler.klay.layered.p1cycles.OptimalCycleBreaker;
+import de.cau.cs.kieler.klay.layered.p2layers.HeuristicGeneralizedLayerer;
 import de.cau.cs.kieler.klay.layered.p2layers.InteractiveLayerer;
 import de.cau.cs.kieler.klay.layered.p2layers.LongestPathLayerer;
 import de.cau.cs.kieler.klay.layered.p2layers.MinizincLayerer;
@@ -539,6 +540,13 @@ public final class KlayLayered {
             if (layerer == null) {
                 layerer = new MinizincLayerer();
                 phaseCache.put(MinizincLayerer.class, layerer);
+            }
+            break;
+        case HEURISTIC_GLAY:
+            layerer = phaseCache.get(HeuristicGeneralizedLayerer.class);
+            if (layerer == null) {
+                layerer = new HeuristicGeneralizedLayerer();
+                phaseCache.put(HeuristicGeneralizedLayerer.class, layerer);
             }
             break;
         default: // NETWORK_SIMPLEX
