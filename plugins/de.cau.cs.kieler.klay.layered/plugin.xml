@@ -127,10 +127,10 @@
                option="de.cau.cs.kieler.klay.layered.crossMin">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.klay.layered.mergePorts">
+               option="de.cau.cs.kieler.klay.layered.mergeEdges">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.klay.layered.mergeHierarchyPorts">
+               option="de.cau.cs.kieler.klay.layered.mergeHierarchyEdges">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.klay.layered.interactiveReferencePoint">
@@ -248,7 +248,7 @@
             appliesTo="parents"
             default="false"
             description="Edges that have no ports are merged so they touch the connected nodes at the same points."
-            id="de.cau.cs.kieler.klay.layered.mergePorts"
+            id="de.cau.cs.kieler.klay.layered.mergeEdges"
             name="Merge Edges"
             type="boolean">
       </layoutOption>
@@ -257,7 +257,7 @@
             appliesTo="parents"
             default="true"
             description="If hierarchical layout is active, hierarchy-crossing edges use as few hierarchical ports as possible."
-            id="de.cau.cs.kieler.klay.layered.mergeHierarchyPorts"
+            id="de.cau.cs.kieler.klay.layered.mergeHierarchyEdges"
             name="Merge Hierarchy-crossing Edges"
             type="boolean">
          <dependency
@@ -359,6 +359,19 @@
       <layoutOption
             advanced="true"
             appliesTo="parents"
+            default="false"
+            description="Whether long sausages should be folded up nice and tight."
+            id="de.cau.cs.kieler.klay.layered.sausageFolding"
+            name="Sausage Folding"
+            type="boolean">
+         <dependency
+               option="de.cau.cs.kieler.klay.layered.nodeLayering"
+               value="LONGEST_PATH">
+         </dependency>
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"         
             default="0.8"
             description="The weight for edge lengths in the MiniZinc layerer."
             id="de.cau.cs.kieler.klay.layered.edgeLengthWeight"

@@ -27,10 +27,11 @@
             class="de.cau.cs.kieler.klighd.syntheses.GuiceBasedSynthesisFactory:de.cau.cs.kieler.klighd.xtext.transformations.KGraphDiagramSynthesis"
             id="de.cau.cs.kieler.klighd.xtext.transformations.KGraphDiagramSynthesis">
       </diagramSynthesis>
-      <diagramSynthesis
+      <!-- deactivated for the moment to avoid collisions with other gml syntheses -->
+      <!--diagramSynthesis
             class="de.cau.cs.kieler.klighd.syntheses.GuiceBasedSynthesisFactory:de.cau.cs.kieler.klighd.xtext.transformations.GMLDiagramSynthesis"
             id="de.cau.cs.kieler.klighd.xtext.transformations.GMLDiagramSynthesis">
-      </diagramSynthesis>
+      </diagramSynthesis-->
    </extension>
    <extension
          point="de.cau.cs.kieler.klighd.extensions">

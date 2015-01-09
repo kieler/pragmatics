@@ -13,8 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.grana;
 
-import java.util.Map;
-
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 
@@ -34,14 +32,14 @@ public interface IAnalysis {
      * 
      * @param parentNode
      *            the parent node which the analysis is performed on
-     * @param results
+     * @param context
      *            the result of analyses that were performed before this one (it
      *            should include the results of all dependency analyses)
      * @param progressMonitor
      *            progress monitor used to keep track of progress
      * @return the analysis results
      */
-    Object doAnalysis(KNode parentNode, Map<String, Object> results,
+    Object doAnalysis(KNode parentNode, AnalysisContext context,
             IKielerProgressMonitor progressMonitor);
 
 }

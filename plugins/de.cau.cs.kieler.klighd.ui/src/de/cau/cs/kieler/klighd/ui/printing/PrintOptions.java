@@ -25,6 +25,7 @@
 package de.cau.cs.kieler.klighd.ui.printing;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 import java.beans.PropertyChangeListener;
@@ -37,6 +38,7 @@ import org.eclipse.swt.printing.PrinterData;
 
 import com.google.common.base.Strings;
 
+import de.cau.cs.kieler.klighd.IExportBranding.Trim;
 import de.cau.cs.kieler.klighd.ui.KlighdUIPlugin;
 
 /**
@@ -206,6 +208,7 @@ public final class PrintOptions {
     // some "cache" fields
     private Printer printer = null;
     private Dimension printerBounds = null;
+    private Trim printerTrim = null;
     private Dimension2D diagramBounds = null;
     private Point2D centeringOffset = null;
 
@@ -680,6 +683,7 @@ public final class PrintOptions {
         }
         this.printer = null;
         this.printerBounds = null;
+        this.printerTrim = null;
     }
 
     /**
@@ -714,12 +718,52 @@ public final class PrintOptions {
      *         printer configuration is present
      */
     public Dimension getPrinterBounds() {
+        if (printerBounds != null) {
+            return printerBounds;
+        }
+
         final Printer p = getPrinter();
         if (p != null) {
-            if (printerBounds == null && exporter != null) {
-                printerBounds = exporter.getPrinterBounds(p);
-            }
+            final org.eclipse.swt.graphics.Rectangle pageArea = printer.getClientArea();
+            printerBounds = new Dimension(pageArea.width, pageArea.height);
             return printerBounds;
+        }
+        return null;
+    }
+
+    /**
+     * Provides a (cached) {@link Trim} describing the technical trim of the currently configured
+     * {@link Printer}. Those margins are not included in {@link #getPrinterBounds()}. Thus,
+     * {@link #getPrinterBounds()} + the result of this method == selected paper size
+     *
+     * @return a {@link Trim} denoting the printer's technical trim, or {@code null} if no valid
+     *         printer configuration is present
+     */
+    public Trim getPrinterTrim() {
+        if (printerTrim != null) {
+            return printerTrim;
+        }
+
+        final Printer p = getPrinter();
+        if (p != null) {
+            final org.eclipse.swt.graphics.Rectangle trim = p.computeTrim(0, 0, 0, 0);
+            printerTrim = new Trim(-trim.x, trim.x + trim.width, -trim.y, trim.y + trim.height);
+            return printerTrim;
+        }
+        return null;
+    }
+
+    /**
+     * Provides the currently chosen printer's resolution in DPI for both x and y direction.
+     *
+     * @return a {@link Point} denoting the printer's resolution, or {@code null} if no valid
+     *         printer configuration is present
+     */
+    public Point getPrinterDPI() {
+        final Printer p = getPrinter();
+        if (p != null) {
+            final org.eclipse.swt.graphics.Point dpi = p.getDPI();
+            return new Point(dpi.x, dpi.y);
         }
         return null;
     }
@@ -771,7 +815,7 @@ public final class PrintOptions {
             return new Point2D.Double();
         }
 
-        final Dimension2D pBounds = getExporter().getTrimmedTileBounds(getPrinterBounds());
+        final Dimension2D pBounds = getExporter().getTrimmedTileBounds(this);
 
         if (pBounds != null) {
             if (diagramBounds == null) {

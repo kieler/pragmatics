@@ -328,7 +328,7 @@ public class DiagramLayoutEngine {
                 maxTime = minTime;
             }
             int factor = layoutOptionManager.getGlobalValue(
-                    LayoutOptions.ANIMATION_TIME_FACTOR, config);
+                    LayoutOptions.ANIMATION_TIME_FACTOR, clc);
             if (factor > 0) {
                 int graphSize = countNodes(mapping.getLayoutGraph());
                 int time = minTime + (int) (factor * Math.sqrt(graphSize));

@@ -30,6 +30,7 @@ import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.dialogs.DialogTray;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -172,18 +173,19 @@ public class PrintPreviewTray extends DialogTray {
         composite.pack();
 
         composite.setLayout(new GridLayout(options.getPagesWide(), true));
+        final Point bodySize = body.getSize();
 
-        // ( body height - top border - bottom border -
-        // ((# of rows - 1) x border between images) ) / # of rows
+        // (body height - top border - bottom border - (# of rows - 1) x border between images)
+        //   / # of rows
         int imageHeight =
-                (body.getSize().y - BORDER_SIZE - BORDER_SIZE - ((options.getPagesTall() - 1)
-                        * BORDER_SIZE)) / options.getPagesTall();
+                (bodySize.y - (2 + options.getPagesTall() - 1) * BORDER_SIZE)
+                        / options.getPagesTall();
 
-        // ( body width - left border - right border -
-        // ((# of columns - 1) x border between images) ) / # of columns
+        // ( body width - left border - right border - (# of columns - 1) x border between images)
+        //   / # of columns
         int imageWidth =
-                (body.getSize().x - BORDER_SIZE - BORDER_SIZE - ((options.getPagesWide() - 1)
-                        * BORDER_SIZE)) / options.getPagesWide();
+                (bodySize.x - (2 + options.getPagesWide() - 1) * BORDER_SIZE)
+                        / options.getPagesWide();
 
         // now adjust to the limiting one based on aspect ratio
 
@@ -200,26 +202,26 @@ public class PrintPreviewTray extends DialogTray {
             imageHeight = (int) (imageWidth * (1.0f / printerRatio));
         }
 
-        final PrintExporter exporter = options.getExporter();
-
-        final DiagramExportConfig config = exporter.createExportConfig(
-                pageBounds, options.getScaleFactor(), options.getPrinter().getDPI());
-
-        final Dimension imageBounds = new Dimension(imageWidth, imageHeight);
-
-        // Adjust the scale according to relation between preview and printing size.
-        final double previewScale = (double) (imageWidth) / pageBounds.width;
-
-        final Rectangle imageClip = exporter.getBasicPageClip(imageBounds,
-                config.tileTrim.getScaled((float) previewScale));
-
-        final Point2D centeringOffset = options.getCenteringOffset(previewScale);
-
         // make sure height and width are not 0, if too small <4, don't bother
         if (!(imageHeight <= MINIMAL_TILE_SIZE || imageWidth <= MINIMAL_TILE_SIZE)) {
 
+            final PrintExporter exporter = options.getExporter();
+
             final int rows = options.getPagesTall();
             final int columns = options.getPagesWide();
+
+            final DiagramExportConfig config = exporter.createExportConfig(options);
+
+            final Dimension imageBounds = new Dimension(imageWidth, imageHeight);
+
+            // Adjust the scale according to relation between preview and printing size.
+            final double previewScale = (double) (imageWidth) / pageBounds.width;
+
+            final Rectangle imageClip = exporter.getBasicPageClip(imageBounds,
+                    config.tileTrim.getScaled((float) previewScale));
+
+            final Point2D centeringOffset = options.getCenteringOffset(previewScale);
+
             int pageNo = 0;
 
             for (int row = 0; row < rows; row++) {

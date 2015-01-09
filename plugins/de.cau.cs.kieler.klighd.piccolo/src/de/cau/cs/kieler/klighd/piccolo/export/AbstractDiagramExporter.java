@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.klighd.piccolo.export;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
@@ -103,12 +104,25 @@ public abstract class AbstractDiagramExporter {
      * @param exportBrandings
      *            the {@link IExportBranding IExportBrandings} to be applied
      * @param bounds
-     *            A
+     *            the printed diagram's (or diagram clip's) bounds
      * @return the desired cumulated {@link Trim}
      */
-    protected final Trim getMaximumDiagramTrim(final Iterable<IExportBranding> exportBrandings,
-            final Rectangle2D bounds) {
-        return getCumulatedTrim(false, false, exportBrandings, bounds);
+    protected final Trim getMaximumDiagramTrim(
+            final Iterable<IExportBranding> exportBrandings, final Rectangle2D bounds) {
+        return getCumulatedTrim(false, exportBrandings, bounds, null, null);
+    }
+
+    /**
+     * Calculates the cumulated (maximal) diagram tile {@link Trim} that is defined to require for
+     * each side the maximum of those trims required by the given {@code exportBrandings} on that
+     * particular side.
+     *
+     * @param exportBrandings
+     *            the {@link IExportBranding IExportBrandings} to be applied
+     * @return the desired cumulated {@link Trim}
+     */
+    protected final Trim getMaximumDiagramTileTrim(final Iterable<IExportBranding> exportBrandings) {
+        return getMaximumDiagramTileTrim(exportBrandings, null, null, null);
     }
 
     /**
@@ -119,49 +133,55 @@ public abstract class AbstractDiagramExporter {
      * @param exportBrandings
      *            the {@link IExportBranding IExportBrandings} to be applied
      * @param bounds
-     *            A
-     * @param fixSizedTiles
-     *            if {@code true} the returned {@link Trim} will reduce the area being available
-     *            for drawing, otherwise the tile is increased by the provided {@link Trim}
+     *            depending on {@code fixSizedTiles} the absolute size of either the diagram tile
+     *            itself, or the diagram excerpt drawn on the tile respectively
+     * @param deviceTrim
+     *            in case the diagram is printed this object represents the printers technically
+     *            required trim, which can be incorporated, e.g., for facilitating margins of
+     *            exactly a particular value, is <code>null</code> otherwise
+     * @param dotsPerInch
+     *            the image resolution applied by the employed drawing
+     *            {@link org.eclipse.swt.graphics.Device Device}, maybe <code>null</code> if not valid
      * @return the desired cumulated {@link Trim}
      */
     protected final Trim getMaximumDiagramTileTrim(final Iterable<IExportBranding> exportBrandings,
-            final Rectangle2D bounds, final boolean fixSizedTiles) {
-        return getCumulatedTrim(true, fixSizedTiles, exportBrandings, bounds);
+            final Rectangle2D bounds, final Trim deviceTrim, final Point dotsPerInch) {
+        return getCumulatedTrim(true, exportBrandings, bounds, deviceTrim, dotsPerInch);
     }
 
-    private Trim getCumulatedTrim(final boolean tileTrim, final boolean fixSizedTiles,
-            final Iterable<IExportBranding> exportBrandings, final Rectangle2D bounds) {
+    private Trim getCumulatedTrim(final boolean tileTrim, final Iterable<IExportBranding> brandings,
+            final Rectangle2D bounds, final Trim deviceTrim, final Point dotsPerInch) {
 
-        final Trim res =
-                Iterables2.fold(exportBrandings, new Function<Pair<Trim, IExportBranding>, Trim>() {
+        final Trim res = Iterables2.fold(brandings, new Function<Pair<Trim, IExportBranding>, Trim>() {
 
             public Trim apply(final Pair<Trim, IExportBranding> input) {
-                final Trim exportersTrim = tileTrim
-                        ? input.getSecond().getDiagramTileTrimm(bounds, fixSizedTiles)
-                                : input.getSecond().getDiagramTrim(bounds);
+                final Trim previousResult = input.getFirst();
+                final IExportBranding branding = input.getSecond();
+                final Trim trim;
 
-                final Trim result = input.getFirst();
+                if (tileTrim) {
+                    trim = branding.getDiagramTileTrimm(bounds, dotsPerInch, deviceTrim);
+                } else {
+                    trim = branding.getDiagramTrim(bounds);
+                }
 
-                if (result == null) {
-                    return exportersTrim;
+                if (previousResult == null) {
+                    return trim;
 
-                } else if (exportersTrim == null) {
-                    return result;
+                } else if (trim == null) {
+                    return previousResult;
 
                 } else {
+                    final float maxLeft = Math.max(previousResult.left, trim.left);
+                    final float maxRight = Math.max(previousResult.right, trim.right);
+                    final float maxTop = Math.max(previousResult.top, trim.top);
+                    final float maxBottom = Math.max(previousResult.bottom, trim.bottom);
 
-                    final float maxLeft = Math.max(result.left, exportersTrim.left);
-                    final float maxRight = Math.max(result.right, exportersTrim.right);
-                    final float maxTop = Math.max(result.top, exportersTrim.top);
-                    final float maxBottom = Math.max(result.bottom, exportersTrim.bottom);
-
-                    if (maxLeft != result.left || maxRight != result.right || maxTop != result.top
-                            || maxBottom != result.bottom) {
+                    if (maxLeft != previousResult.left || maxRight != previousResult.right
+                            || maxTop != previousResult.top || maxBottom != previousResult.bottom) {
                         return new Trim(maxLeft, maxRight, maxTop, maxBottom);
-
                     } else {
-                        return result;
+                        return previousResult;
                     }
                 }
             }

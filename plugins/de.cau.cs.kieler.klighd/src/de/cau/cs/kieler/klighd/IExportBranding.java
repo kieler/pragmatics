@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klighd;
 
+import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 
 /**
@@ -35,6 +36,9 @@ public interface IExportBranding {
      * image exports and printouts.
      */
     public final class Trim {
+
+        /** Constant {@link Trim} instance with each component initialized with zero. */
+        public static final Trim EMPTY_TRIM = new Trim(0, 0, 0, 0);
 
         // SUPPRESS CHECKSTYLE NEXT 5 Visibility|Javadoc -- these are final record data
 
@@ -88,6 +92,15 @@ public interface IExportBranding {
             return new Trim(
                     scale * this.left, scale * this.right, scale * this.top, scale * this.bottom);
         }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            return "Trim(l=" + this.left + ", t=" + this.top + ", r=" + this.right + ", b="
+                    + this.bottom + ")";
+        }
     }
 
 
@@ -110,41 +123,49 @@ public interface IExportBranding {
     boolean isEnabled();
 
     /**
-     * Provides {@link Trim} denoting additional space required on each side of the whole
-     * diagram.<br>
+     * Customization hook providing the additional space to be added on each side of the whole
+     * diagram, specified in terms of a {@link Trim} record.<br>
      * Note: In case multiple {@link IExportBranding}s are employed the side-wise maximum of the
-     * provided {@link Trim} is applied.
-     *
+     * contributed {@link Trim} records is applied.
      *
      * @param bounds
-     *            the size of overall (scaled) diagram
-     *
+     *            the size of overall (scaled) diagram (clip)
      * @return the required {@link Trim}
      */
     Trim getDiagramTrim(final Rectangle2D bounds);
 
     /**
-     * Provides {@link Trim} denoting (additional) space required on each side of each diagram
-     * tile. In case of (tiled) printouts or image exports on fixed size tiles the drawable area of
-     * each tile is reduced by the amount of the returned trim data.<br>
+     * Customization hook providing (additional) space to be added on each side of each diagram
+     * tile, specified in terms of a {@link Trim} record. In case of (tiled) printouts or image
+     * exports on fixed size tiles the drawable area of each tile is reduced by the amount of the
+     * returned trim data.<br>
      * Note: In case multiple {@link IExportBranding}s are employed the side-wise maximum of the
-     * provided {@link Trim} is applied.
+     * provided {@link Trim} records is applied.
      *
      * @param bounds
-     *            the absolute size of
-     * @param fixSizedTiles
-     *            if {@code true} the returned {@link Trim} will reduce the area being available
-     *            for drawing, otherwise the tile is increased by the provided {@link Trim}
-     *
+     *            the absolute size of a diagram tile to be exported, or <code>null</code> if that
+     *            size is not known in advance
+     * @param dotsPerInch
+     *            the image resolution applied by the employed drawing
+     *            {@link org.eclipse.swt.graphics.Device Device}, maybe <code>null</code> if not valid
+     * @param deviceTrim
+     *            in case the diagram is printed this object represents the printers technically
+     *            required trim, which can be incorporated, e.g., for facilitating margins of
+     *            exactly a particular value ({@code bounds + deviceTrim} == the actual page size);
+     *            is <code>null</code> otherwise;
      * @return the required {@link Trim}
      */
-    Trim getDiagramTileTrimm(final Rectangle2D bounds, final boolean fixSizedTiles);
+    Trim getDiagramTileTrimm(final Rectangle2D bounds, final Point dotsPerInch, final Trim deviceTrim);
 
     /**
      * This function allows to contribute diagram-wide background drawings, like water marks for
-     * example. It is called before the diagram is drawn. The bounds have the form
+     * example. It is called before the diagram is drawn. The diagram bounds can be obtained via
+     * {@link DiagramExportConfig#diagramBounds config.diagramBounds} and have the form
      * <code>(0, 0, width, height)</code> with width and height denoting the overall size of the
-     * drawn diagram including the additionally required {@link Trim}.<br>
+     * drawn diagram including the additionally required {@link Trim}, the accumulated diagram trim
+     * is available via {@link DiagramExportConfig#diagramTrim config.diagramTrim}, see also
+     * {@link DiagramExportConfig#getDiagramBoundsIncludingTrim()
+     * config.getDiagramBoundsIncludingTrim()}.
      *
      * @param graphics
      *            the graphics to draw on
@@ -154,10 +175,11 @@ public interface IExportBranding {
     void drawDiagramBackground(Object graphics, DiagramExportConfig config);
 
     /**
-     * This function allows to contribute tile background drawings, like water marks for example.
-     * It is called before the diagram is drawn. The bounds have the form
-     * <code>(0, 0, width, height)</code> with width and height denoting the overall size of the
-     * diagram tile including additionally required {@link Trim}.<br>
+     * This function allows to contribute tile background drawings, like water marks for example. It
+     * is called before the diagram is drawn. The tiles' dimension can be obtained via
+     * {@link DiagramExportConfig#tileBounds config.tileBounds} with width and height denoting the
+     * overall size of the diagram tile including additionally required {@link Trim}, the
+     * accumulated tile trim is available via {@link DiagramExportConfig#tileTrim config.tileTrim}.
      *
      * @param graphics
      *            the graphics to draw on
@@ -168,9 +190,14 @@ public interface IExportBranding {
 
     /**
      * This function allows to contribute diagram-wide overlay drawings, like water marks, authoring
-     * information, or symbol explanations for example. It is called before the diagram is drawn.
-     * The bounds have the form <code>(0, 0, width, height)</code> with width and height denoting
-     * the overall size of the drawn diagram including the additionally required {@link Trim}.<br>
+     * information, or symbol explanations for example. It is called after the diagram is drawn. The
+     * diagram bounds can be obtained via {@link DiagramExportConfig#diagramBounds
+     * config.diagramBounds} and have the form <code>(0, 0, width, height)</code> with width and
+     * height denoting the overall size of the drawn diagram including the additionally required
+     * {@link Trim}, the accumulated diagram trim is available via
+     * {@link DiagramExportConfig#diagramTrim config.diagramTrim}, see also
+     * {@link DiagramExportConfig#getDiagramBoundsIncludingTrim()
+     * config.getDiagramBoundsIncludingTrim()}.
      *
      * @param graphics
      *            the graphics to draw on
@@ -180,10 +207,12 @@ public interface IExportBranding {
     void drawDiagramOverlay(Object graphics, DiagramExportConfig config);
 
     /**
-     * This function allows to contribute tile overlay drawings, like water marks for example or
-     * <i>Confidential</i> brandings. It is called before the diagram is drawn. The bounds have the
-     * form <code>(0, 0, width, height)</code> with width and height denoting the overall size of
-     * the diagram tile including additionally required {@link Trim}.<br>
+     * This function allows to contribute tile overlay drawings, like watermarks for example or
+     * <i>Confidential</i> brandings. It is called after the diagram is drawn. The tiles' dimension
+     * can be obtained via {@link DiagramExportConfig#tileBounds config.tileBounds} with width and
+     * height denoting the overall size of the diagram tile including additionally required
+     * {@link Trim}, the accumulated tile trim is available via {@link DiagramExportConfig#tileTrim
+     * config.tileTrim}.
      *
      * @param graphics
      *            the graphics to draw on

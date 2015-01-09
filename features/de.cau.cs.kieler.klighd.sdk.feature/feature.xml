@@ -2,7 +2,7 @@
 <feature
       id="de.cau.cs.kieler.klighd.sdk.feature"
       label="KIELER Lightweight Diagrams - Developer Resources &amp; Examples"
-      version="0.5.1.qualifier"
+      version="0.5.2.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel"
       plugin="de.cau.cs.kieler.klighd.examples">
 
@@ -218,22 +218,28 @@ litigation.
    </url>
 
    <requires>
-      <import feature="de.cau.cs.kieler.kiml.feature" version="0.14.0" match="compatible"/>
-      <import feature="de.cau.cs.kieler.kiml.feature.source" version="0.14.0" match="compatible"/>
-      <import feature="de.cau.cs.kieler.klighd.feature" version="0.4.0" match="compatible"/>
-      <import feature="de.cau.cs.kieler.klighd.feature.source" version="0.4.0" match="compatible"/>
-      <import feature="de.cau.cs.kieler.klighd.sdk.feature.source" version="0.4.0" match="compatible"/>
-      <import feature="org.eclipse.uml2" version="4.0.0" match="greaterOrEqual"/>
+      <import feature="de.cau.cs.kieler.kiml.feature" version="0.16.0" match="greaterOrEqual"/>
+      <import feature="de.cau.cs.kieler.kiml.feature.source" version="0.16.0" match="greaterOrEqual"/>
+      <import feature="de.cau.cs.kieler.klighd.feature" version="0.6.0" match="greaterOrEqual"/>
+      <import feature="de.cau.cs.kieler.klighd.feature.source" version="0.6.0" match="greaterOrEqual"/>
+      <import feature="de.cau.cs.kieler.klighd.sdk.feature.source" version="0.5.1" match="greaterOrEqual"/>
+      <import feature="org.eclipse.emf.common.source" version="2.8.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.emf.ecore.source" version="2.8.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.jdt" version="3.8.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.xtext.runtime" version="2.4.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.xtext.ui" version="2.4.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.xtend.sdk" version="2.4.2" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.emf.common.source"/>
-      <import plugin="org.eclipse.emf.ecore.source"/>
+      <import feature="org.eclipse.platform" version="4.3.2.v20140221-1852"/>
+      <import feature="org.eclipse.uml2" version="4.0.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.xtend.sdk" version="2.7.2" match="greaterOrEqual"/>
    </requires>
 
    <plugin
-         id="de.cau.cs.kieler.klighd.examples"
+         id="de.cau.cs.kieler.kiml.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.klighd.ui.contrib3x"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -244,6 +250,70 @@ litigation.
          download-size="0"
          install-size="0"
          version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.klighd.examples"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.core.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.core.kivi"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.kiml.kivi"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.klighd.kivi"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.klighd.xtext"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.ksbase"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.ksbase.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.klighd.ui.emf"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"
          unpack="false"/>
 
 </feature>

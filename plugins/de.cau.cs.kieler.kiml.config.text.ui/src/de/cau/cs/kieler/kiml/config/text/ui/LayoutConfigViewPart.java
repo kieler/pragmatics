@@ -37,14 +37,9 @@ import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPage;
@@ -196,9 +191,6 @@ public class LayoutConfigViewPart extends ViewPart {
         // create the xtext editor within this view
         setupXtextEditor(composite);
 
-        // a scaler to increase/decrease the value of an option
-        // setupScale(composite);
-
         // create the buttons
         createButtons();
 
@@ -246,46 +238,6 @@ public class LayoutConfigViewPart extends ViewPart {
                     .withParent(parent);
         partialEditor = handle.createPartialEditor(true);
 
-    }
-    
-    private void setupScale(final Composite parent) {
-        
-        // new parent for the text field and scale
-        Composite scaleParent = new Composite(parent, SWT.NONE);
-        GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-        scaleParent.setLayoutData(gd);
-        GridLayout grid = new GridLayout(2, false);
-        scaleParent.setLayout(grid);
-        
-        // create textfield to specify the desired layout option
-        final Text tf = new Text(scaleParent, SWT.SINGLE | SWT.BORDER);
-        gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-        tf.setLayoutData(gd);
-        tf.setText("Layout Option Id");
-        
-        // a scale to specify the desired value 
-        final Scale scale = new Scale(scaleParent, SWT.NONE);
-        gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-        scale.setLayoutData(gd);
-        scale.setMinimum(0);
-        scale.setMaximum(100);
-        
-        // listen to value changes of the scale
-        scale.addSelectionListener(new SelectionListener() {
-
-            public void widgetSelected(SelectionEvent e) {
-                String option = tf.getText();
-                int value = scale.getSelection();
-
-                scaleAddition = Pair.of(option, (Number) value);
-
-                performLayout();
-            }
-
-            public void widgetDefaultSelected(SelectionEvent e) {
-                System.out.println(e);
-            }
-        });
     }
 
     private void createButtons() {

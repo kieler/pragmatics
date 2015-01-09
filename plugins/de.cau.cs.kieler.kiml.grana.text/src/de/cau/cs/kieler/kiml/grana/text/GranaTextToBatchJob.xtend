@@ -28,7 +28,6 @@ import de.cau.cs.kieler.kiml.grana.ui.batch.CSVResultSerializer
 import de.cau.cs.kieler.kiml.grana.ui.batch.FileKGraphProvider
 import de.cau.cs.kieler.kiml.service.util.ProgressMonitorAdapter
 import java.io.File
-import java.io.FileOutputStream
 import java.io.OutputStream
 import java.util.regex.Pattern
 import org.eclipse.core.resources.IContainer
@@ -38,17 +37,22 @@ import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.core.runtime.Path
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ExtensibleURIConverterImpl
+import java.io.IOException
 
 /**
+ * Utility class to convert textually specified grana executions to 
+ * {@link BatchJob}s and execute them.
+ * 
  * @author uru
  * @kieler.ignore (excluded from review process)
  */
-class GranaTextToBatchJob {
+final class GranaTextToBatchJob {
 
     /**
-     * @return an iterable with the results of all executed batch jobs. These can be used to print problems that might have occurred during the execution. 
+     * @return an iterable with the results of all executed batch jobs.
+     *         These can be used to print problems that might have occurred during the execution. 
      */
-    def Iterable<BatchResult> execute(Grana grana, IProgressMonitor progressMonitor) {
+    public static def Iterable<BatchResult> execute(Grana grana, IProgressMonitor progressMonitor) {
 
         val pm = new ProgressMonitorAdapter(progressMonitor)
         val wsRoot = ResourcesPlugin.workspace.root
@@ -78,7 +82,6 @@ class GranaTextToBatchJob {
                     val filter = if (!resource.filter.nullOrEmpty)
                         Pattern.compile(resource.filter) else null
     
-                    // FIXME path handling is very very bad !!!!!! 
                     try {
                         // first we try to interpret the path as workspace relative
                         val p = wsRoot.projects.findFirst[p|resource.path.contains(p.name)]
@@ -93,10 +96,14 @@ class GranaTextToBatchJob {
                             }
                         }
                     } catch (Exception e) {
-                        // if this fails, try absolute file system
-                        val dir = new File(wsRoot.location.toFile, resource.path)
-                        if (!dir.exists) 
-                            throw new IllegalArgumentException("Could not find resource " + resource.path)
+                    	
+                    	val fileURI = URI.createURI(resource.path, true)
+                    	val dir = new File(fileURI.toFileString)
+						if (!dir.exists) {
+							throw new IllegalArgumentException("Could not find resource location: '" 
+								+ resource.path + "'")
+						}                    	
+                    	
                         for (file : dir.listFiles) {
                             if (filter == null || filter.matcher(file.name).matches) {
                                 addBatchJob(batch, job, new Path(file.absolutePath))
@@ -110,32 +117,29 @@ class GranaTextToBatchJob {
                 if (pm.canceled) {
                     return #[]
                 }
-                
+
                 results += result
-    
-                // write results (of successful analyses)
-                var OutputStream os
-                try {
-                    // try to use the workspace
-                    val fileURI = URI.createPlatformResourceURI(job.output, true)
+
+    			try {
+	                // write results (of successful analyses)
+	                var OutputStream os
+                    val fileURI = URI.createURI(job.output, true)
                     val uriConv = new ExtensibleURIConverterImpl
                     os = uriConv.createOutputStream(fileURI)
-                } catch (Exception e) {
-                    // fall back to the file system
-                    val dir = wsRoot.location.toFile
-                    os = new FileOutputStream(new File(dir, job.output))
+	                val serializer = new CSVResultSerializer
+	                serializer.serialize(os, result, pm.subTask(1))
+	                os.close
+                } catch (IOException e) {
+                	throw new IllegalArgumentException("Could not store results to file '" 
+                		+ job.output + "'")
                 }
-                
-                val serializer = new CSVResultSerializer
-                serializer.serialize(os, result, pm.subTask(1))
-                os.close
             }
         }
         
         return results
     }
     
-    private def addBatchJob(Batch batch, Job job, IPath path) {
+    private static def addBatchJob(Batch batch, Job job, IPath path) {
         val provider = new FileKGraphProvider
         provider.setLayoutBeforeAnalysis(job.layoutBeforeAnalysis)
         provider.setExecutionTimeAnalysis(job.measureExecutionTime)

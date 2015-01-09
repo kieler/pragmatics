@@ -55,6 +55,7 @@ import de.cau.cs.kieler.klay.layered.p3order.InteractiveCrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.p3order.LayerSweepCrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.p4nodes.BJLNodePlacer;
 import de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer;
+import de.cau.cs.kieler.klay.layered.p4nodes.InteractiveNodePlacer;
 import de.cau.cs.kieler.klay.layered.p4nodes.LinearSegmentsNodePlacer;
 import de.cau.cs.kieler.klay.layered.p4nodes.OptiPlacer;
 import de.cau.cs.kieler.klay.layered.p4nodes.SimpleNodePlacer;
@@ -457,16 +458,11 @@ public final class KlayLayered {
         }
         
         // set the random number generator based on the random seed option
-        Integer randomSeed = lgraph.getProperty(LayoutOptions.RANDOM_SEED);
-        if (randomSeed != null) {
-            int val = randomSeed;
-            if (val == 0) {
-                lgraph.setProperty(InternalProperties.RANDOM, new Random());
-            } else {
-                lgraph.setProperty(InternalProperties.RANDOM, new Random(val));
-            }
+        Integer randomSeed = lgraph.getProperty(Properties.RANDOM_SEED);
+        if (randomSeed == 0) {
+            lgraph.setProperty(InternalProperties.RANDOM, new Random());
         } else {
-            lgraph.setProperty(InternalProperties.RANDOM, new Random(1));
+            lgraph.setProperty(InternalProperties.RANDOM, new Random(randomSeed));
         }
     }
 
@@ -583,6 +579,13 @@ public final class KlayLayered {
             if (nodePlacer == null) {
                 nodePlacer = new SimpleNodePlacer();
                 phaseCache.put(SimpleNodePlacer.class, nodePlacer);
+            }
+            break;
+        case INTERACTIVE:
+            nodePlacer = phaseCache.get(InteractiveNodePlacer.class);
+            if (nodePlacer == null) {
+                nodePlacer = new InteractiveNodePlacer();
+                phaseCache.put(InteractiveNodePlacer.class, nodePlacer);
             }
             break;
         case LINEAR_SEGMENTS:

@@ -9,8 +9,24 @@ import java.util.List
 import org.eclipse.emf.ecore.resource.Resource
 import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier
 
-class LayoutConfigTransformer {
+/**
+ * Utility class for transformaing textually specified layout configurations
+ * to the internal layout properties using KIML's {@link LayoutMetaDataService}.
+ * 
+ * @author uru
+ */
+final class LayoutConfigTransformer {
 
+	/**
+	 * 
+	 * @param resource
+	 * 		a resource containing the textually specified layout configuration
+	 * @param additionalOptions
+	 * 		an optional list of layout options that should be added to the 
+	 * 		internal configuration
+	 * @return a list of {@link VolatileLayoutConfig}s that represent 
+	 * 		   the configurations specified in the passed resource. 
+	 */
     public static def List<VolatileLayoutConfig> from(Resource resource, Pair<String, Number>... additionalOptions) {
 
         val List<VolatileLayoutConfig> volatileConfigs = Lists.newLinkedList

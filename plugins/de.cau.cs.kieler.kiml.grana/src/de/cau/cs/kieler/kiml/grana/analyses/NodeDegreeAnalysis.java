@@ -15,11 +15,11 @@ package de.cau.cs.kieler.kiml.grana.analyses;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
@@ -38,7 +38,7 @@ public class NodeDegreeAnalysis implements IAnalysis {
      * {@inheritDoc}
      */
     public Object doAnalysis(final KNode parentNode,
-            final Map<String, Object> results,
+            final AnalysisContext context,
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Node degree analysis", 1);
         

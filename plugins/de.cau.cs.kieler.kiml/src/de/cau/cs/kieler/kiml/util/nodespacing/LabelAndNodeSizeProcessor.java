@@ -14,7 +14,8 @@
 package de.cau.cs.kieler.kiml.util.nodespacing;
 
 import java.util.EnumSet;
-import java.util.Iterator;
+
+import com.google.common.collect.ImmutableList;
 
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.IProperty;
@@ -24,6 +25,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.NodeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortLabelPlacement;
+import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.SizeConstraint;
 import de.cau.cs.kieler.kiml.options.SizeOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
@@ -274,10 +276,7 @@ public class LabelAndNodeSizeProcessor {
     // PORT LABEL PLACEMENT
 
     /**
-     * Places the label of the given port, if any. We assume that the label is actually part of the
-     * given port.
-     * 
-     * <p><i>Note:</i> We currently only support one label per port.</p>
+     * Places the labels of the given port, if any.
      * 
      * @param port the port whose labels to place.
      * @param placement the port label placement that applies to the port.
@@ -288,141 +287,218 @@ public class LabelAndNodeSizeProcessor {
     private void placePortLabels(final PortAdapter<?> port, final PortLabelPlacement placement,
             final boolean compoundNodeMode, final double labelSpacing) {
         
-        // Get the port's label, if any
-        Iterator<LabelAdapter<?>> labelIter = port.getLabels().iterator();
-        if (labelIter.hasNext()) {
-            // We use different implementations based on whether port labels are to be placed
-            // inside or outside the node
-            if (placement.equals(PortLabelPlacement.INSIDE)) {
-                placePortLabelsInside(port, labelIter.next(), compoundNodeMode, labelSpacing);
-            } else if (placement.equals(PortLabelPlacement.OUTSIDE)) {
-                placePortLabelsOutside(port, labelIter.next(), labelSpacing);
-            }
+        if (placement.equals(PortLabelPlacement.INSIDE)) {
+            placePortLabelsInside(port, compoundNodeMode, labelSpacing);
+        } else if (placement.equals(PortLabelPlacement.OUTSIDE)) {
+            placePortLabelsOutside(port, labelSpacing);
         }
     }
 
     /**
-     * Places the label of the given port on the inside of the port's node.
+     * Places the labels of the given port on the inside of the port's node.
      * 
-     * @param port the port whose label to place.
-     * @param label the label to place.
+     * @param port the port whose labels to place.
      * @param compoundNodeMode {@code true} if the node contains further nodes in the original graph. In
      *                         this case, port labels are not placed next to ports, but a little down as
      *                         well to avoid edge-label-crossings if the port has edges connected to the
      *                         node's insides.
      * @param labelSpacing spacing between labels and other objects.
      */
-    private void placePortLabelsInside(final PortAdapter<?> port, final LabelAdapter<?> label,
-            final boolean compoundNodeMode, final double labelSpacing) {
+    private void placePortLabelsInside(final PortAdapter<?> port, final boolean compoundNodeMode,
+            final double labelSpacing) {
         
-        KVector position = new KVector(port.getPosition());
+        ImmutableList<LabelAdapter<?>> labels = ImmutableList.copyOf(port.getLabels());
+        if (labels.isEmpty()) {
+            return;
+        }
+        
+        // The initial y position we'll be starting from depends on the port side
+        double y = 0;
         switch (port.getSide()) {
         case WEST:
-            position.x = port.getSize().x + labelSpacing;
-            position.y = compoundNodeMode && port.hasCompoundConnections()
-                    ? port.getSize().y + labelSpacing
-                    : (port.getSize().y - label.getSize().y) / 2.0;
-            break;
         case EAST:
-            position.x = -label.getSize().x - labelSpacing;
-            position.y = compoundNodeMode && port.hasCompoundConnections()
-                    ? port.getSize().y + labelSpacing
-                    : (port.getSize().y - label.getSize().y) / 2.0;
+            // We need the first label's size here, but we know that there is at least one label
+            y = compoundNodeMode && port.hasCompoundConnections()
+                    ? port.getSize().y
+                    : (port.getSize().y - labels.get(0).getSize().y) / 2.0 - labelSpacing;
             break;
         case NORTH:
-            position.x = -label.getSize().x / 2;
-            position.y = port.getSize().y + labelSpacing;
+            y = port.getSize().y;
             break;
         case SOUTH:
-            position.x = -label.getSize().x / 2;
-            position.y = -label.getSize().y - labelSpacing;
+            y = 0.0;
             break;
         }
-        label.setPosition(position);
+        
+        // In the usual case, we simply start at a given y position and place the labels downwards.
+        // For southern ports, however, we actually need to start with the last label and place them
+        // upwards. We thus first add all labels to a list that we may need to reverse
+        if (port.getSide() == PortSide.SOUTH) {
+            labels = labels.reverse();
+        }
+        
+        // Place da labels!
+        for (LabelAdapter<?> label : port.getLabels()) {
+            KVector position = new KVector(port.getPosition());
+            switch (port.getSide()) {
+            case WEST:
+                position.x = port.getSize().x + labelSpacing;
+                position.y = y + labelSpacing;
+                
+                y += labelSpacing + label.getSize().y;
+                break;
+            case EAST:
+                position.x = -label.getSize().x - labelSpacing;
+                position.y = y + labelSpacing;
+                
+                y += labelSpacing + label.getSize().y;
+                break;
+            case NORTH:
+                position.x = -label.getSize().x / 2;
+                position.y = y + labelSpacing;
+                
+                y += labelSpacing + label.getSize().y;
+                break;
+            case SOUTH:
+                position.x = -label.getSize().x / 2;
+                position.y = y - labelSpacing - label.getSize().y;
+                
+                y -= labelSpacing + label.getSize().y;
+                break;
+            }
+            label.setPosition(position);
+        }
     }
     
     /**
-     * Places the label of the given port on the outside of the port's node.
+     * Places the labels of the given port on the outside of the port's node. We suppose that the first
+     * label has label side information. Those are then used for all labels. We don't support having
+     * some labels above and others below incident edges.
      * 
      * @param port the port whose label to place.
-     * @param label the label to place.
      * @param labelSpacing spacing between labels and other objects.
      */
-    private void placePortLabelsOutside(final PortAdapter<?> port, final LabelAdapter<?> label,
-            final double labelSpacing) {
-        
-        KVector position = new KVector(label.getPosition());
-        if (label.getSide() == LabelSide.ABOVE) {
-            // Place label "above" edges
-            switch (port.getSide()) {
-            case WEST:
-                position.x = -label.getSize().x - labelSpacing;
-                position.y = -label.getSize().y - labelSpacing;
-                break;
-            case EAST:
-                position.x = port.getSize().x + labelSpacing;
-                position.y = -label.getSize().y - labelSpacing;
-                break;
-            case NORTH:
-                position.x = -label.getSize().x - labelSpacing;
-                position.y = -label.getSize().y - labelSpacing;
-                break;
-            case SOUTH:
-                position.x = -label.getSize().x - labelSpacing;
-                position.y = port.getSize().y + labelSpacing;
-                break;
-            }
-        } else {
-            // Place label "below" edges
-            switch (port.getSide()) {
-            case WEST:
-                position.x = -label.getSize().x - labelSpacing;
-                position.y = port.getSize().y + labelSpacing;
-                break;
-            case EAST:
-                position.x = port.getSize().x + labelSpacing;
-                position.y = port.getSize().y + labelSpacing;
-                break;
-            case NORTH:
-                position.x = port.getSize().x + labelSpacing;
-                position.y = -label.getSize().y - labelSpacing;
-                break;
-            case SOUTH:
-                position.x = port.getSize().x + labelSpacing;
-                position.y = port.getSize().y + labelSpacing;
-                break;
-            }
+    private void placePortLabelsOutside(final PortAdapter<?> port, final double labelSpacing) {
+        ImmutableList<LabelAdapter<?>> labels = ImmutableList.copyOf(port.getLabels());
+        if (labels.isEmpty()) {
+            return;
         }
-        label.setPosition(position);
+        
+        // Retrieve the first label's side
+        LabelSide labelSide = labels.get(0).getSide();
+        
+        // The initial y position we'll be starting from depends on port and label sides
+        double y = 0;
+        switch (port.getSide()) {
+        case WEST:
+        case EAST:
+            if (labelSide == LabelSide.BELOW) {
+                y = port.getSize().y;
+            }
+            break;
+            
+        case SOUTH:
+            y = port.getSize().y;
+            break;
+        }
+        
+        // If labels are below incident edges, we simply start at a given y position and place the
+        // labels downwards. Of they are placed above or if we have a nothern port, however, we actually
+        // need to start with the last label and place them upwards. We thus first add all labels to a
+        // list that we may need to reverse
+        if (port.getSide() == PortSide.NORTH || labelSide == LabelSide.ABOVE) {
+            labels = labels.reverse();
+        }
+        
+        for (LabelAdapter<?> label : labels) {
+            KVector position = new KVector(label.getPosition());
+            if (labelSide == LabelSide.ABOVE) {
+                // Place label "above" edges
+                switch (port.getSide()) {
+                case WEST:
+                    position.x = -label.getSize().x - labelSpacing;
+                    position.y = y - labelSpacing - label.getSize().y;
+                    
+                    y -= labelSpacing + label.getSize().y;
+                    break;
+                case EAST:
+                    position.x = port.getSize().x + labelSpacing;
+                    position.y = y - labelSpacing - label.getSize().y;
+                    
+                    y -= labelSpacing + label.getSize().y;
+                    break;
+                case NORTH:
+                    position.x = -label.getSize().x - labelSpacing;
+                    position.y = y - labelSpacing - label.getSize().y;
+                    
+                    y -= labelSpacing + label.getSize().y;
+                    break;
+                case SOUTH:
+                    position.x = -label.getSize().x - labelSpacing;
+                    position.y = y + labelSpacing;
+                    
+                    y += labelSpacing + label.getSize().y;
+                    break;
+                }
+            } else {
+                // Place label "below" edges
+                switch (port.getSide()) {
+                case WEST:
+                    position.x = -label.getSize().x - labelSpacing;
+                    position.y = y + labelSpacing;
+                    
+                    y += labelSpacing + label.getSize().y;
+                    break;
+                case EAST:
+                    position.x = port.getSize().x + labelSpacing;
+                    position.y = y + labelSpacing;
+                    
+                    y += labelSpacing + label.getSize().y;
+                    break;
+                case NORTH:
+                    position.x = port.getSize().x + labelSpacing;
+                    position.y = y - labelSpacing - label.getSize().y;
+                    
+                    y -= labelSpacing + label.getSize().y;
+                    break;
+                case SOUTH:
+                    position.x = port.getSize().x + labelSpacing;
+                    position.y = y + labelSpacing;
+                    
+                    y += labelSpacing + label.getSize().y;
+                    break;
+                }
+            }
+            label.setPosition(position);
+        }
     }
 
     /**
-     * Calculates the port's margins such that its label is part of them and sets them accordingly.
-     * 
-     * <p><i>Note:</i> We currently only support one label per port.</p>
+     * Calculates the port's margins such that its labels are part of them and sets them accordingly.
      * 
      * @param port the port whose margins to calculate.
      */
     private void calculateAndSetPortMargins(final PortAdapter<?> port) {
-        // Get the port's label, if any
-        Iterator<LabelAdapter<?>> labelIter = port.getLabels().iterator();
-        if (labelIter.hasNext()) {
+        // Get the port's labels, if any
+        Iterable<LabelAdapter<?>> labels = port.getLabels();
+        if (labels.iterator().hasNext()) {
             Rectangle portBox = new Rectangle(
                     0.0,
                     0.0,
                     port.getSize().x,
                     port.getSize().y);
             
-            // We only support one label, so retrieve it
-            LabelAdapter<?> label = labelIter.next();
-            Rectangle labelBox = new Rectangle(
-                    label.getPosition().x,
-                    label.getPosition().y,
-                    label.getSize().x,
-                    label.getSize().y);
-            
-            // Calculate the union of the two bounding boxes and calculate the margins
-            portBox.union(labelBox);
+            // Add all labels to the port's bounding box
+            for (LabelAdapter<?> label : labels) {
+                Rectangle labelBox = new Rectangle(
+                        label.getPosition().x,
+                        label.getPosition().y,
+                        label.getSize().x,
+                        label.getSize().y);
+                
+                // Calculate the union of the two bounding boxes and calculate the margins
+                portBox.union(labelBox);
+            }
 
             Margins margin = new Margins(port.getMargin());
             margin.top = -portBox.y;

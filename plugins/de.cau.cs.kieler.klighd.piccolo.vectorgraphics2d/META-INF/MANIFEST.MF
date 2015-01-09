@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: KIELER Lightweight Diagrams Vector Graphics Export Powered by VectorGraphics2D
 Bundle-SymbolicName: de.cau.cs.kieler.klighd.piccolo.vectorgraphics2d;singleton:=true
-Bundle-Version: 0.1.1.qualifier
+Bundle-Version: 0.2.0.qualifier
 Fragment-Host: de.cau.cs.kieler.klighd.piccolo
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ClassPath: lib/VectorGraphics2D-0.9.1.jar,

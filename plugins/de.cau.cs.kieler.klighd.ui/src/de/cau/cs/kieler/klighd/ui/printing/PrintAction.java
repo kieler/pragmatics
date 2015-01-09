@@ -163,17 +163,16 @@ public class PrintAction extends Action {
         // start the print job
         printer.startJob(KlighdUIPrintingMessages.PrintAction_JobName);
 
-        final Dimension pageBounds = exporter.getPrinterBounds(printer);
+        final Dimension pageBounds = options.getPrinterBounds();
 
-        final DiagramExportConfig config =
-                exporter.createExportConfig(pageBounds, options.getScaleFactor(), printer.getDPI());
+        final int rows = options.getPagesTall();
+        final int columns = options.getPagesWide();
+
+        final DiagramExportConfig config = exporter.createExportConfig(options);
 
         final Rectangle pageClip = exporter.getBasicPageClip(pageBounds, config.tileTrim);
 
         final Point2D centeringOffset = options.getCenteringOffset();
-
-        final int rows = options.getPagesTall();
-        final int columns = options.getPagesWide();
 
         int pageNo = 0;
 

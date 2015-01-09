@@ -5,6 +5,8 @@ package de.cau.cs.kieler.kiml.grana.text;
 
 import org.eclipse.xtext.conversion.IValueConverterService;
 
+import de.cau.cs.kieler.core.kgraph.text.KGraphValueConverters;
+
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension
  * registry.
@@ -16,6 +18,6 @@ public class GranaRuntimeModule extends de.cau.cs.kieler.kiml.grana.text.Abstrac
      */
     @Override
     public Class<? extends IValueConverterService> bindIValueConverterService() {
-        return GranaValueConverters.class;
+        return KGraphValueConverters.class;
     }
 }
