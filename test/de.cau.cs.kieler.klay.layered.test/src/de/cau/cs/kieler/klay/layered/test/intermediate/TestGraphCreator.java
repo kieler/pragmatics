@@ -25,7 +25,7 @@ public class TestGraphCreator {
         return graph;
     }
 
-    public LGraph giveGraphWithTwoNodesNoConnection() {
+    public LGraph getTwoNodesNoConnectionGraph() {
         Layer layer = addLayerToGraph();
         addNormalNodeToLayer(layer);
         addNormalNodeToLayer(layer);
@@ -33,6 +33,7 @@ public class TestGraphCreator {
     }
 
     public LGraph getCrossFormedGraph() {
+
         Layer leftLayer = addLayerToGraph();
         Layer rightLayer = addLayerToGraph();
 
@@ -41,8 +42,8 @@ public class TestGraphCreator {
         LNode topRight = addNormalNodeToLayer(rightLayer);
         LNode bottomRight = addNormalNodeToLayer(rightLayer);
 
-        addEastWestEdgeBetweenLayers(topLeft, bottomRight);
-        addEastWestEdgeBetweenLayers(bottomLeft, topRight);
+        addEastWestEdgeFromTo(topLeft, bottomRight);
+        addEastWestEdgeFromTo(bottomLeft, topRight);
         return graph;
     }
 
@@ -63,7 +64,7 @@ public class TestGraphCreator {
      * @return graph of the form above
      */
 //  @formatter:on
-    public LGraph getGraphWithInLayerEdges() {
+    public LGraph getInLayerEdgesGraph() {
         Layer leftLayer = addLayerToGraph();
         Layer middleLayer = addLayerToGraph();
         Layer rightLayer = addLayerToGraph();
@@ -72,13 +73,13 @@ public class TestGraphCreator {
         LNode[] middleNodes = addNodesToLayer(3, middleLayer);
         LNode rightNode = addNormalNodeToLayer(rightLayer);
 
-        addEastWestEdgeBetweenLayers(leftNode, middleNodes[1]);
+        addEastWestEdgeFromTo(leftNode, middleNodes[1]);
         addInLayerEdge(middleNodes[0], middleNodes[2], PortSide.WEST);
-        addEastWestEdgeBetweenLayers(middleNodes[1], rightNode);
+        addEastWestEdgeFromTo(middleNodes[1], rightNode);
         return graph;
     }
 
-    public LGraph getGraphWithNorthSouthCrossing() {
+    public LGraph getNorthSouthCrossingGraph() {
         Layer leftLayer = addLayerToGraph();
         Layer rightLayer = addLayerToGraph();
 
@@ -100,7 +101,7 @@ public class TestGraphCreator {
         return graph;
     }
 
-    public LGraph getGraphWithMultipleEdgesBetweenSameNodes() {
+    public LGraph getMultipleEdgesBetweenSameNodesGraph() {
         Layer leftLayer = addLayerToGraph();
         Layer rightLayer = addLayerToGraph();
 
@@ -109,10 +110,105 @@ public class TestGraphCreator {
         LNode topRight = addNormalNodeToLayer(rightLayer);
         LNode bottomRight = addNormalNodeToLayer(rightLayer);
 
-        addEastWestEdgeBetweenLayers(topLeft, bottomRight);
-        addEastWestEdgeBetweenLayers(topLeft, bottomRight);
-        addEastWestEdgeBetweenLayers(bottomLeft, topRight);
-        addEastWestEdgeBetweenLayers(bottomLeft, topRight);
+        addEastWestEdgeFromTo(topLeft, bottomRight);
+        addEastWestEdgeFromTo(topLeft, bottomRight);
+        addEastWestEdgeFromTo(bottomLeft, topRight);
+        addEastWestEdgeFromTo(bottomLeft, topRight);
+
+        return graph;
+    }
+
+//  @formatter:off
+  /**
+   * *   * 
+   *  \ / 
+   * *-+-* 
+   *  / \
+   * *   *
+   * 
+   * @return graph of the form above
+   */
+//@formatter:on
+    public LGraph getCrossWithExtraEdgeInBetweenGraph() {
+        Layer leftLayer = addLayerToGraph();
+        Layer rightLayer = addLayerToGraph();
+
+        LNode[] leftNodes = addNodesToLayer(3, leftLayer);
+        LNode[] rightNodes = addNodesToLayer(3, rightLayer);
+
+        addEastWestEdgeFromTo(leftNodes[0], rightNodes[2]);
+        addEastWestEdgeFromTo(leftNodes[1], rightNodes[1]);
+        addEastWestEdgeFromTo(leftNodes[2], rightNodes[0]);
+
+        return graph;
+    }
+
+    public LGraph getCrossWithManySelfLoopsGraph() {
+        LGraph graph = getCrossFormedGraph();
+        for (Layer layer : graph) {
+            for (LNode lNode : layer) {
+                addEastWestEdgeFromTo(lNode, lNode);
+                addEastWestEdgeFromTo(lNode, lNode);
+                addEastWestEdgeFromTo(lNode, lNode);
+            }
+        }
+        return graph;
+    }
+
+    //@formatter:off
+    /**
+     * *\  --*
+     *   \/ /
+     * *-*===*
+     *  + /
+     * * * --*
+     * @return
+     */
+    //@formatter:on
+    public LGraph getMoreComplexThreeLayerGraph() {
+        Layer leftLayer = addLayerToGraph();
+        Layer middleLayer = addLayerToGraph();
+        Layer rightLayer = addLayerToGraph();
+
+        LNode[] leftNodes = addNodesToLayer(3, leftLayer);
+        LNode[] middleNodes = addNodesToLayer(2, middleLayer);
+        LNode[] rightNodes = addNodesToLayer(3, rightLayer);
+
+        addEastWestEdgeFromTo(leftNodes[0], middleNodes[0]);
+        addEastWestEdgeFromTo(leftNodes[1], middleNodes[0]);
+        addEastWestEdgeFromTo(leftNodes[1], middleNodes[1]);
+        addEastWestEdgeFromTo(leftNodes[2], middleNodes[0]);
+        addEastWestEdgeFromTo(middleNodes[0], rightNodes[0]);
+        addEastWestEdgeFromTo(middleNodes[0], rightNodes[1]);
+        addEastWestEdgeFromTo(middleNodes[0], rightNodes[1]);
+        addEastWestEdgeFromTo(middleNodes[1], rightNodes[0]);
+        addEastWestEdgeFromTo(middleNodes[1], rightNodes[2]);
+
+        return graph;
+    }
+
+//    @formatter:off
+    /** 
+     * 
+     * ____  *
+     * |  |\/
+     * |__|/\
+     *       *
+     * @return
+     */
+//    @formatter:on
+    public LGraph getFixedPortOrderGraph() {
+        Layer leftLayer = addLayerToGraph();
+        Layer rightLayer = addLayerToGraph();
+
+        LNode leftNode = addNormalNodeToLayer(leftLayer);
+        leftNode.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER);
+
+        LNode rightTopNode = addNormalNodeToLayer(rightLayer);
+        LNode rightBottomNode = addNormalNodeToLayer(rightLayer);
+
+        addEastWestEdgeFromTo(leftNode, rightBottomNode);
+        addEastWestEdgeFromTo(leftNode, rightTopNode);
 
         return graph;
     }
@@ -160,7 +256,7 @@ public class TestGraphCreator {
         return node;
     }
 
-    private void addEastWestEdgeBetweenLayers(final LNode left, final LNode right) {
+    private void addEastWestEdgeFromTo(final LNode left, final LNode right) {
         LPort leftPort = addPortOnSide(left, PortSide.EAST);
         LPort rightPort = addPortOnSide(right, PortSide.WEST);
         addEdgeBetweenPorts(leftPort, rightPort);

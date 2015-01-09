@@ -34,7 +34,7 @@ public class CrossingCounterTest {
 
     private LGraph givenGraphWithInLayerCrossings() {
         TestGraphCreator testGraphCreator = new TestGraphCreator();
-        return testGraphCreator.getGraphWithInLayerEdges();
+        return testGraphCreator.getInLayerEdgesGraph();
     }
 
     @Test
@@ -46,7 +46,7 @@ public class CrossingCounterTest {
 
     private LGraph givenGraphWithNorthSouthCrossing() {
         TestGraphCreator testGraphCreator = new TestGraphCreator();
-        return testGraphCreator.getGraphWithNorthSouthCrossing();
+        return testGraphCreator.getNorthSouthCrossingGraph();
     }
 
     @Test
@@ -58,7 +58,7 @@ public class CrossingCounterTest {
 
     private LGraph givenGraphWithMultipleEdgesBetweenSameNodes() {
         TestGraphCreator testGraphCreator = new TestGraphCreator();
-        return testGraphCreator.getGraphWithMultipleEdgesBetweenSameNodes();
+        return testGraphCreator.getMultipleEdgesBetweenSameNodesGraph();
     }
 
     @Test
