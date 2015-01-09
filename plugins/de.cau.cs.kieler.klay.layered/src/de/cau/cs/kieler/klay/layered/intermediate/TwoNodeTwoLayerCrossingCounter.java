@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.klay.layered.intermediate;
 
 import java.util.List;
-import java.util.Map;
 import java.util.TreeMap;
 
 import com.google.common.collect.Lists;
@@ -31,12 +30,14 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
  * @author alan
  *
  */
-public class TwoNodeTwoLayerCrossingCounter {
+public class TwoNodeTwoLayerCrossingCounter implements TwoNodeCrossingCounter {
     private int crossingsForOrderUpperLower;
     private int crossingsForOrderLowerUpper;
-    private final NodeData upper;
-    private final NodeData lower;
-    private final boolean fixedLayerEastOfFreeLayer;
+    private NodeData upper;
+    private NodeData lower;
+    private boolean fixedLayerEastOfFreeLayer;
+    private final LNode upperNode;
+    private final LNode lowerNode;
 
     /**
      * Create {@link TwoNodeTwoLayerCrossingCounter}. Naming assumes a left-right layer ordering.
@@ -45,34 +46,48 @@ public class TwoNodeTwoLayerCrossingCounter {
      *            The upper node assuming left-right layer ordering.
      * @param lowerNode
      *            The lower node assuming left-right layer ordering.
-     * @param fixedLayerEastOfFreeLayer
-     *            Order of layers in question.
-     * @param nodeDegrees
-     *            Amount of incident edges to node in the given order.
-     * @param nodePositions
-     *            Position of nodes ordered by node.id
-     * @param map
-     *            Each port must be numbered in clockwise order for each node. TODOALAN this is
-     *            crap.
      */
-    public TwoNodeTwoLayerCrossingCounter(final LNode upperNode, final LNode lowerNode,
-            final boolean fixedLayerEastOfFreeLayer, final int[] nodeDegrees,
-            final int[] nodePositions, final Map<LPort, Integer> map) {
-        this.fixedLayerEastOfFreeLayer = fixedLayerEastOfFreeLayer;
-        crossingsForOrderUpperLower = 0;
-        crossingsForOrderLowerUpper = 0;
-        upper = new NodeData(upperNode, fixedLayerEastOfFreeLayer);
-        lower = new NodeData(lowerNode, fixedLayerEastOfFreeLayer);
+    public TwoNodeTwoLayerCrossingCounter(final LNode upperNode, final LNode lowerNode) {
+        this.upperNode = upperNode;
+        this.lowerNode = lowerNode;
+
     }
 
     /**
-     * Calculates the number of crossings for incident edges to node i and j. The crossing amounts
-     * can be received with getCrossingForOrderUpperLower and getCrossingForOrderLowerUpper for the
-     * order node -> lower or lower -> node respectively. TODOALAN this is nasty, and I can't figure
-     * out how to make it better.
+     * Calculates the number of crossings for incident edges coming from the east to node i and j.
+     * The crossing amounts can be received with getCrossingForOrderUpperLower and
+     * getCrossingForOrderLowerUpper for the order node -> lower or lower -> node respectively.
      */
-    public void countCrossings() {
+    public void countWesternEdgeCrossings() {
+        fixedLayerEastOfFreeLayer = true;
+        upper = new NodeData(upperNode);
+        lower = new NodeData(lowerNode);
+        countCrossings();
+    }
 
+    /**
+     * Calculates the number of crossings for incident edges coming from the west to node i and j.
+     * The crossing amounts can be received with getCrossingForOrderUpperLower and
+     * getCrossingForOrderLowerUpper for the order node -> lower or lower -> node respectively.
+     */
+    public void countEasternEdgeCrossings() {
+        fixedLayerEastOfFreeLayer = false;
+        upper = new NodeData(upperNode);
+        lower = new NodeData(lowerNode);
+        countCrossings();
+    }
+
+    /**
+     * Calculates the number of crossings for incident edges coming from the both sides to node i
+     * and j. The crossing amounts can be received with getCrossingForOrderUpperLower and
+     * getCrossingForOrderLowerUpper for the order node -> lower or lower -> node respectively.
+     */
+    public void countBothSideCrossings() {
+        countWesternEdgeCrossings();
+        countEasternEdgeCrossings();
+    }
+
+    private void countCrossings() {
         if (areSameNodes()) {
             return;
         }
@@ -105,10 +120,9 @@ public class TwoNodeTwoLayerCrossingCounter {
         return upper.getNeighbourPort() != null && lower.getNeighbourPort() != null;
     }
 
-    private boolean nextEdgeCausesCrossingsToOrder(final NodeData upperNode,
-            final NodeData lowerNode) {
-        LNode neighbourToUpperNode = upperNode.getNeighbourPort().getNode();
-        LNode neighbourToLowerNode = lowerNode.getNeighbourPort().getNode();
+    private boolean nextEdgeCausesCrossingsToOrder(final NodeData above, final NodeData below) {
+        LNode neighbourToUpperNode = above.getNeighbourPort().getNode();
+        LNode neighbourToLowerNode = below.getNeighbourPort().getNode();
         boolean causesCrossingsToOrderUpperLower =
                 neighbourToUpperNode.id > neighbourToLowerNode.id;
 
@@ -116,10 +130,10 @@ public class TwoNodeTwoLayerCrossingCounter {
                 && neighbourToUpperNode.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
             if (fixedLayerEastOfFreeLayer) {
                 causesCrossingsToOrderUpperLower |=
-                        neighbourToUpperNode.id > neighbourToLowerNode.id;
+                        above.getNeighbourPort().id > below.getNeighbourPort().id;
             } else {
                 causesCrossingsToOrderUpperLower |=
-                        neighbourToUpperNode.id < neighbourToLowerNode.id;
+                        above.getNeighbourPort().id < below.getNeighbourPort().id;
             }
         }
         return causesCrossingsToOrderUpperLower;
@@ -128,6 +142,7 @@ public class TwoNodeTwoLayerCrossingCounter {
     private boolean fetchNextEdge(final NodeData nodeData) {
         boolean crossingsRemain;
         nodeData.decrementEdgeCount();
+
         crossingsRemain = nodeData.getAmountOfEdges() != 0;
         if (crossingsRemain) {
             nodeData.setNextPortAndRemoveEdge();
@@ -148,14 +163,14 @@ public class TwoNodeTwoLayerCrossingCounter {
     /**
      * @return the crossingsForOrderUpperLower
      */
-    public int getCrossingsForOrderUpperLower() {
+    public int getUpperLowerCrossings() {
         return crossingsForOrderUpperLower;
     }
 
     /**
      * @return the crossingsForOrderLowerUpper
      */
-    public int getCrossingsForOrderLowerUpper() {
+    public int getLowerUpperCrossings() {
         return crossingsForOrderLowerUpper;
     }
 
@@ -165,21 +180,17 @@ public class TwoNodeTwoLayerCrossingCounter {
      * @author alan
      *
      */
-    private static class NodeData {
+    private class NodeData {
         private final LNode node;
         private final TreeMap<Integer, List<LEdge>> edges;
         private int amountOfEdges;
         private LPort neighbourPort;
-        private final boolean fixedLayerEastOfFreeLayer;
 
-        public NodeData(final LNode upperNode, final boolean fixedLayerEastOfFreeLayer) {
-            node = upperNode;
-            this.fixedLayerEastOfFreeLayer = fixedLayerEastOfFreeLayer;
-
+        public NodeData(final LNode node) {
+            this.node = node;
             edges = fetchEdges();
             amountOfEdges = fetchAmountOfEdges();
             neighbourPort = fetchNextPort();
-
         }
 
         private TreeMap<Integer, List<LEdge>> fetchEdges() {
@@ -262,6 +273,11 @@ public class TwoNodeTwoLayerCrossingCounter {
 
         public int getAmountOfEdges() {
             return amountOfEdges;
+        }
+
+        @Override
+        public String toString() {
+            return "NodeData [node=" + node + "]";
         }
     }
 }
