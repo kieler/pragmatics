@@ -459,7 +459,7 @@ public final class AnalysisService {
         monitor.begin("Graph analyses", analysesSequence.size());
         
         // create a context object
-        Map<String, Object> resultCache = context.getResultsMap();
+        Map<String, Object> resultCache = context.getResults();
         for (AnalysisData analysisData : analysesSequence) {
             if (monitor.isCanceled()) {
                 resultCache.put(analysisData.getId(), new AnalysisFailed(AnalysisFailed.Type.Canceled));
@@ -470,6 +470,7 @@ public final class AnalysisService {
                     IAnalysis analysis = analysisData.getInstancePool().fetch();
                     Object result = analysis.doAnalysis(graph, context, monitor.subTask(1));
                     resultCache.put(analysisData.getId(), result);
+                    context.putFinishedAnalysis(analysis);
                 } catch (Exception exception) {
                     resultCache.put(analysisData.getId(), new AnalysisFailed(
                             AnalysisFailed.Type.Failed, exception));
