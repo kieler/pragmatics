@@ -29,7 +29,7 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
  * @author alan
  *
  */
-public class TwoNodeInLayerEdgeCrossingCounter {
+public class TwoNodeInLayerEdgeCrossingCounter implements TwoNodeCrossingCounter {
     private int crossingsForOrderUpperLower;
     private int crossingsForOrderLowerUpper;
     private final int[] nodePositions;
@@ -168,14 +168,14 @@ public class TwoNodeInLayerEdgeCrossingCounter {
     /**
      * @return the crossingsForOrderUpperLower
      */
-    public int getCrossingsForOrderUpperLower() {
+    public int getUpperLowerCrossings() {
         return crossingsForOrderUpperLower;
     }
 
     /**
      * @return the crossingsForOrderLowerUpper
      */
-    public int getCrossingsForOrderLowerUpper() {
+    public int getLowerUpperCrossings() {
         return crossingsForOrderLowerUpper;
     }
 }
