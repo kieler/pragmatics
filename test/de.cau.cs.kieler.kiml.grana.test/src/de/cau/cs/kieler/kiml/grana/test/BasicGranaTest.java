@@ -109,7 +109,7 @@ public class BasicGranaTest extends KlayAutomatedJUnitTest {
 
             Map<String, Object> currResults =
                     AnalysisService.getInstance().analyze(testObject.getKnode(), analyses,
-                            new BasicProgressMonitor());
+                            new BasicProgressMonitor()).getResults();
 
             if (prevResults != null) {
                 for (Entry<String, Object> e : prevResults.entrySet()) {
