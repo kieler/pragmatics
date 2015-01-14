@@ -44,20 +44,26 @@ import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizTool.Cleanup;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
+// TODO: Auto-generated Javadoc
 /**
- * Layout provider for the Graphviz layout tool.
- * The actual Graphviz layout that is applied is determined by the parameter
- * passed in the {@link #initialize(String)} method.
+ * Layout provider for the Graphviz layout tool. The actual Graphviz layout that is applied is
+ * determined by the parameter passed in the {@link #initialize(String)} method.
  * 
  * @author msp
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
 public class GraphvizLayoutProvider extends AbstractLayoutProvider {
-    
+
     /** the serial call number for usage in debug mode. */
     private static int serialCallNo = 0;
-    
+
+    /**
+     * WORKAROUND because of Graphiz bug: The process is renewed for each (sub-)layout. This heavily
+     * decreases the layout speed. Leave this false by default. Switch it false after you are done!
+     */
+    public static boolean renewProcess = false;
+
     /** command passed to the layouter. */
     private Command command = Command.INVALID;
     /** the Graphviz process pool. */
@@ -76,8 +82,8 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
         graphvizTool = new GraphvizTool(command);
         // the dot format handler is indirectly fetched in order to ensure proper injection
         IGraphFormatHandler<?> handler = null;
-        GraphFormatData formatData = GraphFormatsService.getInstance().getFormatData(
-                DotFormatHandler.ID);
+        GraphFormatData formatData =
+                GraphFormatsService.getInstance().getFormatData(DotFormatHandler.ID);
         if (formatData != null) {
             handler = formatData.getHandler();
         }
@@ -87,7 +93,7 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
             throw new IllegalStateException("The Graphviz Dot language support is not available.");
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -100,8 +106,7 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void doLayout(final KNode parentNode,
-            final IKielerProgressMonitor progressMonitor) {
+    public void doLayout(final KNode parentNode, final IKielerProgressMonitor progressMonitor) {
         if (command == Command.INVALID) {
             throw new IllegalStateException("The Graphviz layout provider is not initialized.");
         }
@@ -111,8 +116,8 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
             progressMonitor.done();
             return;
         }
-        boolean debugMode = parentNode.getData(KShapeLayout.class)
-                .getProperty(LayoutOptions.DEBUG_MODE);
+        boolean debugMode =
+                parentNode.getData(KShapeLayout.class).getProperty(LayoutOptions.DEBUG_MODE);
         myCallNo = ++serialCallNo;
 
         // start the graphviz process, or retrieve the previously used process
@@ -122,8 +127,8 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
         XtextResourceSet resourceSet = (XtextResourceSet) dotHandler.createResourceSet();
 
         // translate the KGraph to Graphviz and write to the process
-        TransformationData<KNode, GraphvizModel> transData
-                = new TransformationData<KNode, GraphvizModel>();
+        TransformationData<KNode, GraphvizModel> transData =
+                new TransformationData<KNode, GraphvizModel>();
         transData.setSourceGraph(parentNode);
         transData.setProperty(DotExporter.USE_EDGE_IDS, true);
         transData.setProperty(DotExporter.FULL_EXPORT, false);
@@ -134,8 +139,8 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
 
         try {
             // read Graphviz output and apply layout information to the KGraph
-            GraphvizModel graphvizOutput = readDotGraph(progressMonitor.subTask(1),
-                    debugMode, resourceSet);
+            GraphvizModel graphvizOutput =
+                    readDotGraph(progressMonitor.subTask(1), debugMode, resourceSet);
             transData.getTargetGraphs().set(0, graphvizOutput);
             dotHandler.getExporter().transferLayout(transData);
         } finally {
@@ -160,6 +165,10 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
             final IKielerProgressMonitor monitor, final boolean debugMode,
             final XtextResourceSet resourceSet) {
         monitor.begin("Serialize model", 1);
+        // WORKAROUND DUE TO GRAPHIZ BUG*
+        if (renewProcess) {
+            graphvizTool.renewProcess();
+        }
         OutputStream outputStream = graphvizTool.input();
         // enable debug output if needed
         FileOutputStream debugStream = null;
@@ -172,8 +181,9 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
                     path += File.separator + "tmp" + File.separator + "graphviz";
                 }
                 new File(path).mkdirs();
-                debugStream = new FileOutputStream(new File(path + File.separator
-                        + debugFileBase() + "-in.dot"));
+                debugStream =
+                        new FileOutputStream(new File(path + File.separator + debugFileBase()
+                                + "-in.dot"));
                 outputStream = new ForkedOutputStream(outputStream, debugStream);
             } catch (Exception exception) {
                 System.out.println("GraphvizLayouter: Could not initialize debug output: "
@@ -182,18 +192,19 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
         }
 
         try {
-            XtextResource resource = (XtextResource) resourceSet.createResource(
-                    URI.createURI("output.graphviz_dot"));
+            XtextResource resource =
+                    (XtextResource) resourceSet
+                            .createResource(URI.createURI("output.graphviz_dot"));
             resource.getContents().add(graphvizModel);
-            
-            /* KIPRA-1498
-             * We disable formatting and validation when saving the resource. Enabling it lead to
-             * possible ConcurrentModificationExceptions in Xtext.
+
+            /*
+             * KIPRA-1498 We disable formatting and validation when saving the resource. Enabling it
+             * lead to possible ConcurrentModificationExceptions in Xtext.
              */
             Map<Object, Object> saveOptions =
                     SaveOptions.newBuilder().noValidation().getOptions().toOptionsMap();
             resource.save(outputStream, saveOptions);
-            
+
             outputStream.write('\n');
             outputStream.flush();
         } catch (IOException exception) {
@@ -237,8 +248,9 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
                     path += File.separator + "tmp" + File.separator + "graphviz";
                 }
                 new File(path).mkdirs();
-                debugStream = new FileOutputStream(new File(path + File.separator
-                        + debugFileBase() + "-out.dot"));
+                debugStream =
+                        new FileOutputStream(new File(path + File.separator + debugFileBase()
+                                + "-out.dot"));
                 inputStream = new ForwardingInputStream(inputStream, debugStream);
             } catch (Exception exception) {
                 System.out.println("GraphvizLayouter: Could not initialize debug output: "
@@ -247,8 +259,8 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
         }
 
         // parse the output stream of the dot process
-        XtextResource resource = (XtextResource) resourceSet.createResource(
-                URI.createURI("input.graphviz_dot"));
+        XtextResource resource =
+                (XtextResource) resourceSet.createResource(URI.createURI("input.graphviz_dot"));
         try {
             resource.load(inputStream, null);
         } catch (IOException exception) {
@@ -284,7 +296,7 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
         monitor.done();
         return graphvizModel;
     }
-    
+
     /**
      * Return the base name for debug files.
      * 
@@ -301,5 +313,5 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
             return "debug" + no;
         }
     }
-    
+
 }
