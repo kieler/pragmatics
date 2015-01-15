@@ -42,9 +42,7 @@ import de.cau.cs.kieler.kiml.graphviz.layouter.preferences.GraphvizPreferencePag
  * @kieler.rating proposed yellow by msp
  */
 public class GraphvizTool {
-
-    public static String[] args;
-
+    
     /**
      * Available cleanup modes.
      */
@@ -86,14 +84,15 @@ public class GraphvizTool {
     private Watchdog watchdog;
     /** the input stream given by the Graphviz process. */
     private InputStream graphvizStream;
-
+    
+    
     static {
         // Add all paths from the system PATH variable to the list of paths we will look for dot in
         // to our list of default locations
         String envPath = System.getenv("PATH");
         if (envPath != null) {
             String[] envPaths = envPath.split(File.pathSeparator);
-
+            
             for (int i = 0; i < envPaths.length; i++) {
                 if (envPaths[i].trim().length() > 0) {
                     if (envPaths[i].endsWith(File.separator)) {
@@ -104,7 +103,7 @@ public class GraphvizTool {
                 }
             }
         }
-
+        
         // Fallback list of default locations for Unix-like environments
         if (File.separator.equals("/")) {
             DEFAULT_LOCS.add("/opt/local/bin/");
@@ -112,12 +111,12 @@ public class GraphvizTool {
             DEFAULT_LOCS.add("/usr/bin/");
         }
     }
-
+    
+    
     /**
      * Create a Graphviz tool instance for the given command.
      * 
-     * @param thecommand
-     *            a Graphviz command
+     * @param thecommand a Graphviz command
      */
     public GraphvizTool(final Command thecommand) {
         if (thecommand == Command.INVALID) {
@@ -127,20 +126,20 @@ public class GraphvizTool {
     }
 
     /**
-     * Initialize the Graphviz tool instance by starting the dot process and the watcher thread as
-     * necessary.
+     * Initialize the Graphviz tool instance by starting the dot process and the
+     * watcher thread as necessary.
      */
     public void initialize() {
         initialize(null);
     }
-
+    
     /**
-     * Initialize the Graphviz tool instance by starting the dot process and the watcher thread as
-     * necessary. The given command line arguments are appended to the default arguments.
+     * Initialize the Graphviz tool instance by starting the dot process and the watcher
+     * thread as necessary. The given command line arguments are appended to the default
+     * arguments.
      * 
-     * @param arguments
-     *            command line arguments to be added to the default list of arguments. May be
-     *            {@code null} or empty.
+     * @param arguments command line arguments to be added to the default list of arguments.
+     *                  May be {@code null} or empty.
      */
     public synchronized void initialize(final List<String> arguments) {
         if (watchdog == null) {
@@ -152,21 +151,21 @@ public class GraphvizTool {
 
         if (process == null) {
             String dotExecutable = getDotExecutable();
-
+            
             // assemble the final list of command-line arguments
-            List<String> args =
-                    Lists.newArrayList(dotExecutable, ARG_NOWARNINGS, ARG_INVERTYAXIS, ARG_COMMAND
-                            + command);
-
+            List<String> args = Lists.newArrayList(
+                    dotExecutable,
+                    ARG_NOWARNINGS,
+                    ARG_INVERTYAXIS,
+                    ARG_COMMAND + command);
+            
             if (arguments != null) {
                 args.addAll(arguments);
             }
-
-            this.args = args.toArray(new String[args.size()]);
-
+            
             // create the process
             try {
-                process = Runtime.getRuntime().exec(this.args);
+                process = Runtime.getRuntime().exec(args.toArray(new String[args.size()]));
             } catch (IOException exception) {
                 throw new WrappedException(exception, "Failed to start Graphviz process."
                         + " Please check your Graphviz installation.");
@@ -192,10 +191,9 @@ public class GraphvizTool {
     /**
      * Returns the dot executable path.
      * 
-     * @param promptUser
-     *            if the dot executable is not found and this parameter is {@code true}, the user is
-     *            asked to provide the path to the executable. If it is not found and this parameter
-     *            is {@code false}, this method returns {@code null}.
+     * @param promptUser if the dot executable is not found and this parameter is {@code true}, the user
+     *                   is asked to provide the path to the executable. If it is not found and this
+     *                   parameter is {@code false}, this method returns {@code null}.
      * @return path to the dot executable, or {@code null} if the executable was not found
      */
     public static String getDotExecutable(final boolean promptUser) {
@@ -206,7 +204,7 @@ public class GraphvizTool {
         if (dotFile.exists() && dotFile.canExecute()) {
             return dotExecutable;
         }
-
+        
         // look in a selection of default locations where it might be installed
         for (String location : DEFAULT_LOCS) {
             // Linux
@@ -215,7 +213,7 @@ public class GraphvizTool {
             if (dotFile.exists() && dotFile.canExecute()) {
                 return dotExecutable;
             }
-
+            
             // Windows
             dotExecutable = location + "dot.exe";
             dotFile = new File(dotExecutable);
@@ -223,7 +221,7 @@ public class GraphvizTool {
                 return dotExecutable;
             }
         }
-
+        
         if (promptUser) {
             if (handleExecPath()) {
                 // fetch the executable string again after the user has entered a new path
@@ -234,13 +232,14 @@ public class GraphvizTool {
                 }
             }
         }
-
+        
         return null;
     }
 
     /**
-     * Handle missing path to the dot executable. The Graphviz preference page is opened so the user
-     * can enter the correct path. The method returns after the preference page has been closed.
+     * Handle missing path to the dot executable. The Graphviz preference page
+     * is opened so the user can enter the correct path. The method returns
+     * after the preference page has been closed.
      * 
      * @return true if the user has selected "Ok" in the shown dialog, false otherwise
      */
@@ -269,35 +268,7 @@ public class GraphvizTool {
         }
         throw new IllegalStateException("Graphviz tool has not been initialized.");
     }
-
-    // WORKAROUND DUE TO GRAPHIZ BUG*
-    public void renewProcess() {
-        if (process != null) {
-            try {
-                process.getInputStream().close();
-            } catch (Exception e) {
-                // ignore
-            }
-            try {
-                process.getOutputStream().close();
-            } catch (Exception e) {
-                // ignore
-            }
-            try {
-                process.destroy();
-            } catch (Exception e) {
-                // ignore
-            }
-        }
-        // create the process
-        try {
-            process = Runtime.getRuntime().exec(this.args);
-        } catch (IOException exception) {
-            throw new WrappedException(exception, "Failed to start Graphviz process."
-                    + " Please check your Graphviz installation.");
-        }
-    }
-
+    
     /**
      * Return the stream for reading the output of the Graphviz process.
      * 
@@ -315,17 +286,16 @@ public class GraphvizTool {
         }
         throw new IllegalStateException("Graphviz tool has not been initialized.");
     }
-
+    
     /** maximal number of characters to read from error stream. */
     private static final int MAX_ERROR_OUTPUT = 512;
     /** time to wait before checking process errors. */
     private static final int PROC_ERROR_TIME = 500;
-
+    
     /**
      * Clean up, optionally preparing the tool for the next use.
      * 
-     * @param c
-     *            the cleanup option
+     * @param c the cleanup option
      */
     public synchronized void cleanup(final Cleanup c) {
         StringBuilder error = null;
@@ -371,7 +341,7 @@ public class GraphvizTool {
                 process = null;
             }
         }
-
+        
         if (error == null) {
             synchronized (nextJob) {
                 // reset the stream to indicate that the job is done
@@ -390,14 +360,12 @@ public class GraphvizTool {
             throw new GraphvizException("Graphviz error: " + error.toString());
         }
     }
-
+    
     /**
      * Generate an error message for the given exit value.
      * 
-     * @param exitValue
-     *            an exit value
-     * @param error
-     *            a string builder for error messages
+     * @param exitValue an exit value
+     * @param error a string builder for error messages
      */
     private void exitValueError(final int exitValue, final StringBuilder error) {
         error.append("Process terminated with exit value ").append(exitValue);
@@ -441,7 +409,7 @@ public class GraphvizTool {
      * A specialized input stream for reading data from the Graphviz process.
      */
     private static class GraphvizStream extends InputStream {
-
+        
         /** the stream of process data output. */
         private InputStream stream;
         /** how many opening curly braces have been read that haven't closed yet. */
@@ -450,12 +418,11 @@ public class GraphvizTool {
         private int finished = 0;
         /** buffered character to return on the next read. */
         private int buf = -1;
-
+        
         /**
          * Create a Graphviz input stream.
          * 
-         * @param thestream
-         *            the process stream to read from
+         * @param thestream the process stream to read from
          */
         GraphvizStream(final InputStream thestream) {
             this.stream = thestream;
@@ -475,7 +442,7 @@ public class GraphvizTool {
             if (finished > 0 && stream.available() == 0) {
                 return -1;
             }
-
+            
             // track the opening and closing braces while reading the stream
             int c = stream.read();
             if (c == '{') {
@@ -498,7 +465,7 @@ public class GraphvizTool {
             }
             return c;
         }
-
+        
         /**
          * {@inheritDoc}
          */
@@ -506,17 +473,17 @@ public class GraphvizTool {
         public int available() throws IOException {
             return stream.available();
         }
-
+            
     }
-
+    
     /** synchronization object between the main thread and the watcher thread. */
     private Object nextJob = new Object();
-
+    
     /**
      * A watcher thread that takes action when a timeout occurs.
      */
     private class Watchdog extends Thread {
-
+        
         /**
          * {@inheritDoc}
          */
@@ -527,6 +494,7 @@ public class GraphvizTool {
                     // the watcher starts working as soon as a stream is made visible
                     while (graphvizStream == null) {
                         try {
+                            // wait for notification by the main thread
                             nextJob.wait();
                         } catch (InterruptedException ex) {
                             // an interrupt can happen when a shutdown is requested
@@ -536,7 +504,7 @@ public class GraphvizTool {
                         }
                     }
                 }
-
+                
                 // retrieve the current timeout value
                 IPreferenceStore preferenceStore =
                         GraphvizLayouterPlugin.getDefault().getPreferenceStore();
@@ -544,15 +512,15 @@ public class GraphvizTool {
                 if (timeout < PROCESS_MIN_TIMEOUT) {
                     timeout = PROCESS_DEF_TIMEOUT;
                 }
-
+                
                 boolean interrupted = false;
                 try {
                     Thread.sleep(timeout);
-                } catch (InterruptedException ex) {
+                }  catch (InterruptedException ex) {
                     // this means the main thread has done a cleanup before the timeout occurred
                     interrupted = true;
                 }
-
+                
                 if (!interrupted) {
                     synchronized (nextJob) {
                         // timeout has occurred! kill the process so the main thread will wake
@@ -563,10 +531,10 @@ public class GraphvizTool {
                         }
                     }
                 }
-
+                
             } while (watchdog != null);
         }
-
+        
     }
 
 }
