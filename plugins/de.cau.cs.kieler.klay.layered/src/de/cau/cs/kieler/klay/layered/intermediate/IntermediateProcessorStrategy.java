@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.klay.layered.intermediate;
 
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
-import de.cau.cs.kieler.klay.layered.p2layers.HeuristicGLayPreprocessor;
 
 /**
  * Definition of available intermediate layout processors for the layered layouter.
@@ -46,8 +45,7 @@ public enum IntermediateProcessorStrategy {
     EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER,
     
     // Before Phase 2
-    
-    GLAY_PREPROCESSOR,
+
     /** Splits big nodes into multiple layers to distribute them better and reduce whitespace. */
     BIG_NODES_PREPROCESSOR,
     /** Adds dummy nodes in edges where center labels are present. */
@@ -168,9 +166,6 @@ public enum IntermediateProcessorStrategy {
             
         case END_LABEL_PROCESSOR:
             return new EndLabelProcessor();
-            
-        case GLAY_PREPROCESSOR:
-            return new HeuristicGLayPreprocessor();
             
         case HIERARCHICAL_PORT_CONSTRAINT_PROCESSOR:
             return new HierarchicalPortConstraintProcessor();
