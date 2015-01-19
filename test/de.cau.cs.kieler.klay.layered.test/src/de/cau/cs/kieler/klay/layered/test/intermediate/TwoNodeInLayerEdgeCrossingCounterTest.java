@@ -1,0 +1,272 @@
+package de.cau.cs.kieler.klay.layered.test.intermediate;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LPort;
+import de.cau.cs.kieler.klay.layered.graph.Layer;
+import de.cau.cs.kieler.klay.layered.intermediate.TwoNodeInLayerEdgeCrossingCounter;
+
+public class TwoNodeInLayerEdgeCrossingCounterTest {
+    private TestGraphCreator creator;
+    private LGraph graph;
+    private TwoNodeInLayerEdgeCrossingCounter counter;
+    private LNode lowerNode;
+    private LNode upperNode;
+    private Layer layer;
+    private int lowerUpperCrossings;
+    private int upperLowerCrossings;
+    private LNode[] nodeOrder;
+
+    @Before
+    public void setUp() {
+        creator = new TestGraphCreator();
+    }
+
+    @Test
+    public void ignoresInBetweenLayerEdges() {
+        graph = creator.getCrossFormedGraph();
+        initCrossingCounterForLayerIndex(1);
+
+        lowerNode = nodeOrder[0];
+        upperNode = nodeOrder[1];
+
+        countCrossings();
+
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+    }
+
+    @Test
+    public void countInLayerEdgeWithNormalEdgeCrossing() {
+        graph = creator.getInLayerEdgesGraph();
+        initCrossingCounterForLayerIndex(1);
+
+        upperNode = nodeOrder[0];
+        lowerNode = nodeOrder[1];
+
+        countCrossings();
+
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+    }
+
+    @Test(expected = AssertionError.class)
+    public void screwUpIdsAndCountInLayerEdgeWithNormalEdgeCrossing() { // TODO should throw
+        graph = creator.getInLayerEdgesGraph();
+        LNode[][] currentOrder = creator.getCurrentOrder();
+        nodeOrder = currentOrder[1];
+        setAllIdsTo(1);
+        counter = new TwoNodeInLayerEdgeCrossingCounter(nodeOrder);
+    }
+
+    private void setAllIdsTo(final int id) {
+        for (Layer layer : graph) {
+            for (LNode node : layer) {
+                node.id = id;
+                for (LPort port : node.getPorts()) {
+                    port.id = id;
+                }
+            }
+        }
+    }
+
+    @Test
+    public void crossingsWhenSwitched() {
+        graph = creator.getInLayerEdgesGraphWhichResultsInCrossingsWhenSwitched();
+
+        initCrossingCounterForLayerIndex(1);
+
+        upperNode = nodeOrder[1];
+        lowerNode = nodeOrder[2];
+
+        countCrossings();
+
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(1));
+    }
+
+    @Test
+    public void inLayerEdgeOnLowerNode() {
+        graph = creator.getInLayerEdgesGraph();
+        initCrossingCounterForLayerIndex(1);
+
+        upperNode = nodeOrder[1];
+        lowerNode = nodeOrder[2];
+
+        countCrossings();
+
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+    }
+
+    @Test
+    public void inLayerEdgeTargetAndSourceAreSame() {
+        graph = creator.getInLayerEdgesGraph();
+        initCrossingCounterForLayerIndex(1);
+
+        upperNode = nodeOrder[0];
+        lowerNode = nodeOrder[2];
+
+        countCrossings();
+
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+    }
+
+    @Test
+    public void switchNodeOrder() {
+        graph = creator.getInLayerEdgesGraph();
+        initCrossingCounterForLayerIndex(1);
+        switchOrderAndNotifyCounter(1, 2);
+
+        upperNode = nodeOrder[0];
+        lowerNode = nodeOrder[1];
+
+        countCrossings();
+
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+    }
+
+    @Test
+    public void fixedPortOrderNodeToNode() {
+        graph = creator.getInLayerEdgesGraphWithCrossingsToFixedPortOrder();
+        initCrossingCounterForLayerIndex(1);
+
+        upperNode = nodeOrder[0];
+        lowerNode = nodeOrder[1];
+
+        countCrossings();
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(2));
+    }
+
+    @Test
+    public void fixedPortOrderNodeToNodeLowerNode() {
+        graph = creator.getInLayerEdgesGraphWithCrossingsToFixedPortOrder();
+        initCrossingCounterForLayerIndex(1);
+        switchOrderAndNotifyCounter(0, 1);
+
+        upperNode = nodeOrder[0];
+        lowerNode = nodeOrder[1];
+
+        countCrossings();
+
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(2));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(1));
+    }
+
+    @Test
+    public void fixedPortOrderCrossingsAndNormalEdgeCrossings() {
+        graph = creator.getInLayerEdgesWithFixedPortOrderAndNormalEdgeCrossings();
+        initCrossingCounterForLayerIndex(1);
+
+        upperNode = nodeOrder[0];
+        lowerNode = nodeOrder[1];
+
+        countCrossings();
+
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(2));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(1));
+        // assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
+        // assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+
+        switchOrderAndNotifyCounter(0, 1);
+
+        upperNode = nodeOrder[0];
+        lowerNode = nodeOrder[1];
+
+        countCrossings();
+
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(2));
+        // assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
+        // assertThat("lowerUpperCrossings", lowerUpperCrossings, is(1));
+    }
+
+    @Test
+    public void ignoresSelfLoops() {
+        graph = creator.getCrossWithManySelfLoopsGraph();
+        initCrossingCounterForLayerIndex(1);
+
+        upperNode = nodeOrder[0];
+        lowerNode = nodeOrder[1];
+
+        countCrossings();
+
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+    }
+
+    @Test
+    public void ignoresCrossingsWhenPortOrderNotSet() {
+        graph = creator.getInLayerEdgesCrossingsButNoFixedOrder();
+        initCrossingCounterForLayerIndex(1);
+
+        upperNode = nodeOrder[0];
+        lowerNode = nodeOrder[1];
+
+        countCrossings();
+
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+
+    }
+
+    @Test
+    public void ignoresCrossingsWhenPortOrderNotSetNoEdgeBetweenUpperAndLower() {
+        graph = creator.getInLayerEdgesCrossingsButNoFixedOrderNoEdgeBetweenUpperAndLower();
+        initCrossingCounterForLayerIndex(1);
+
+        upperNode = nodeOrder[0];
+        lowerNode = nodeOrder[1];
+
+        countCrossings();
+
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+
+    }
+
+    private void countCrossings() {
+        assertNotNull(upperNode);
+        assertNotNull(lowerNode);
+        counter.countCrossings(upperNode, lowerNode);
+        upperLowerCrossings = counter.getUpperLowerCrossings();
+        lowerUpperCrossings = counter.getLowerUpperCrossings();
+    }
+
+    /**
+     * Initializes Crossing counter, sets nodeOrder with the nodes from the layer being considered
+     * and numbers its in ascending form as required by the counter.
+     * 
+     * @param layerIndex
+     */
+    private void initCrossingCounterForLayerIndex(final int layerIndex) {
+        layer = graph.getLayers().get(layerIndex);
+        LNode[][] currentOrder = creator.getCurrentOrder();
+        nodeOrder = currentOrder[layerIndex];
+        numberIdsAscendinglyIn(nodeOrder);
+        counter = new TwoNodeInLayerEdgeCrossingCounter(nodeOrder);
+    }
+
+    private void numberIdsAscendinglyIn(final LNode[] nodes) {
+        for (int i = 0; i < nodes.length; i++) {
+            nodes[i].id = i;
+        }
+    }
+
+    private void switchOrderAndNotifyCounter(final int indexOne, final int indexTwo) {
+        counter.nodesSwitched(nodeOrder[indexOne], nodeOrder[indexTwo]);
+        LNode one = nodeOrder[indexOne];
+        nodeOrder[indexOne] = nodeOrder[indexTwo];
+        nodeOrder[indexTwo] = one;
+    }
+}

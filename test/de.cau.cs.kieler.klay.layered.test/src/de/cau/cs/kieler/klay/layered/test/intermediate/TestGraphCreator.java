@@ -15,11 +15,14 @@ import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 
 public class TestGraphCreator {
+    private int portId = 0;
+    private int nodeId = 0;
+    private final LGraph graph;
+    private int edgeId = 0;
+
     public TestGraphCreator() {
         graph = new LGraph();
     }
-
-    private final LGraph graph;
 
     public LGraph getEmptyGraph() {
         return graph;
@@ -53,17 +56,17 @@ public class TestGraphCreator {
         return graph;
     }
 
-//    @formatter:off
     /**
+     * <pre>
      *   --* 
      *   |  
      * *-+-*-* 
      *   | 
      *   --*
+     * </pre>
      * 
      * @return graph of the form above
      */
-//  @formatter:on
     public LGraph getInLayerEdgesGraph() {
         Layer leftLayer = addLayerToGraph();
         Layer middleLayer = addLayerToGraph();
@@ -73,9 +76,34 @@ public class TestGraphCreator {
         LNode[] middleNodes = addNodesToLayer(3, middleLayer);
         LNode rightNode = addNormalNodeToLayer(rightLayer);
 
+        // add east side ports first to get expected port ordering
+        addEastWestEdgeFromTo(middleNodes[1], rightNode);
         addEastWestEdgeFromTo(leftNode, middleNodes[1]);
         addInLayerEdge(middleNodes[0], middleNodes[2], PortSide.WEST);
-        addEastWestEdgeFromTo(middleNodes[1], rightNode);
+        return graph;
+    }
+
+    /**
+     * <pre>
+     *   --* 
+     *   |  
+     *   --* 
+     *    
+     *  *--*
+     * </pre>
+     * 
+     * @return graph of the form above
+     */
+    public LGraph getInLayerEdgesGraphWhichResultsInCrossingsWhenSwitched() {
+        Layer leftLayer = addLayerToGraph();
+        Layer rightLayer = addLayerToGraph();
+
+        LNode leftNode = addNormalNodeToLayer(leftLayer);
+        LNode[] rightNodes = addNodesToLayer(3, rightLayer);
+
+        addInLayerEdge(rightNodes[0], rightNodes[1], PortSide.WEST);
+        addEastWestEdgeFromTo(leftNode, rightNodes[2]);
+
         return graph;
     }
 
@@ -89,15 +117,45 @@ public class TestGraphCreator {
         setFixedOrderConstraint(leftNode);
         setFixedOrderConstraint(rightNode);
 
-        LPort leftNodeLeftPort = addPortOnSide(leftNode, PortSide.NORTH);
-        LPort leftNodeRightPort = addPortOnSide(leftNode, PortSide.NORTH);
+        LPort leftNodeLeftPort = addPortOnSide(leftNode, PortSide.SOUTH);
+        LPort leftNodeRightPort = addPortOnSide(leftNode, PortSide.SOUTH);
 
         // ports are added in clockwise fashion, so add bottom port first.
         LPort rightNodeBottomPort = addPortOnSide(rightNode, PortSide.WEST);
         LPort rightNodeTopPort = addPortOnSide(rightNode, PortSide.WEST);
+        rightNodeTopPort.id = 1;
 
-        addNorthEdgeBetweenPorts(leftNodeLeftPort, rightNodeBottomPort, leftLayer);
-        addNorthEdgeBetweenPorts(leftNodeRightPort, rightNodeTopPort, leftLayer);
+        addSouthEdgeBetweenPorts(leftNodeLeftPort, rightNodeTopPort, leftLayer);
+        addSouthEdgeBetweenPorts(leftNodeRightPort, rightNodeBottomPort, leftLayer);
+        return graph;
+    }
+
+    /**
+     * <pre>
+     *     ______
+     * *---|____|
+     *      |  |  ____
+     *      *--+--|  |
+     *         |  |  |
+     *         *--|__|
+     * </pre>
+     * 
+     * @return
+     */
+    public LGraph getThreeLayerNorthSouthCrossingGraph() {
+        // add left Node
+        Layer leftLayer = addLayerToGraph();
+        LNode leftNode = addNormalNodeToLayer(leftLayer);
+
+        // add N/S graph
+        getNorthSouthCrossingGraph();
+
+        // connect
+        Layer secondLayer = graph.getLayers().get(1);
+        LNode nsNode = secondLayer.getNodes().get(0);
+
+        addEastWestEdgeFromTo(leftNode, nsNode);
+
         return graph;
     }
 
@@ -118,17 +176,17 @@ public class TestGraphCreator {
         return graph;
     }
 
-//  @formatter:off
-  /**
-   * *   * 
-   *  \ / 
-   * *-+-* 
-   *  / \
-   * *   *
-   * 
-   * @return graph of the form above
-   */
-//@formatter:on
+    /**
+     * <pre>
+     * *   * 
+     *  \ / 
+     * *-+-* 
+     *  / \
+     * *   *
+     * </pre>
+     * 
+     * @return graph of the form above
+     */
     public LGraph getCrossWithExtraEdgeInBetweenGraph() {
         Layer leftLayer = addLayerToGraph();
         Layer rightLayer = addLayerToGraph();
@@ -155,16 +213,17 @@ public class TestGraphCreator {
         return graph;
     }
 
-    //@formatter:off
     /**
+     * <pre>
      * *\  --*
      *   \/ /
      * *-*===*
      *  + /
      * * * --*
+     * </pre>
+     * 
      * @return
      */
-    //@formatter:on
     public LGraph getMoreComplexThreeLayerGraph() {
         Layer leftLayer = addLayerToGraph();
         Layer middleLayer = addLayerToGraph();
@@ -187,16 +246,16 @@ public class TestGraphCreator {
         return graph;
     }
 
-//    @formatter:off
-    /** 
-     * 
+    /**
+     * <pre>
      * ____  *
      * |  |\/
      * |__|/\
      *       *
+     * </pre>
+     * 
      * @return
      */
-//    @formatter:on
     public LGraph getFixedPortOrderGraph() {
         Layer leftLayer = addLayerToGraph();
         Layer rightLayer = addLayerToGraph();
@@ -213,19 +272,103 @@ public class TestGraphCreator {
         return graph;
     }
 
-    protected MapPropertyHolder setFixedOrderConstraint(final LNode leftNode) {
+    /**
+     * <pre>
+     * *  *---*
+     *  \/
+     *  /\
+     * *  *---*
+     * </pre>
+     * 
+     * @return
+     */
+    public LGraph getSwitchOnlyOneSided() {
+        Layer[] layers = makeLayers(3);
+
+        LNode[] leftNodes = addNodesToLayer(2, layers[0]);
+        LNode[] middleNodes = addNodesToLayer(2, layers[1]);
+        LNode[] rightNodes = addNodesToLayer(2, layers[2]);
+
+        addEastWestEdgeFromTo(leftNodes[0], middleNodes[1]);
+        addEastWestEdgeFromTo(leftNodes[1], middleNodes[0]);
+        addEastWestEdgeFromTo(middleNodes[0], rightNodes[0]);
+        addEastWestEdgeFromTo(middleNodes[1], rightNodes[1]);
+
+        return graph;
+    }
+
+    /**
+     * <pre>
+     * ____   _____
+     * |  |---|   |
+     * |  |---|   |
+     * |  |   |   |
+     * |  |  /|   |
+     * |__|--+|___|
+     *       |
+     *       \
+     *        *
+     * </pre>
+     * 
+     * @return
+     */
+    public LGraph getInLayerEdgesGraphWithCrossingsToFixedPortOrder() {
+        Layer[] layers = makeLayers(2);
+
+        LNode leftNode = addNormalNodeToLayer(layers[0]);
+        LNode[] rightNodes = addNodesToLayer(2, layers[1]);
+
+        setPortOrderFixed(rightNodes[0]);
+
+        // since we expect bottom up ordering of western ports, the order of adding edges is
+        // important
+        addEastWestEdgeFromTo(leftNode, rightNodes[0]);
+        addInLayerEdge(rightNodes[0], rightNodes[1], PortSide.WEST);
+        addEastWestEdgeFromTo(leftNode, rightNodes[0]);
+        addEastWestEdgeFromTo(leftNode, rightNodes[0]);
+        return graph;
+    }
+
+    private void setPortOrderFixed(final LNode node) {
+        node.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER);
+    }
+
+    public LNode[][] getCurrentOrder() {
+        LNode[][] nodeOrder = new LNode[graph.getLayers().size()][];
+        List<Layer> layers = graph.getLayers();
+        for (int i = 0; i < layers.size(); i++) {
+            Layer layer = layers.get(i);
+            List<LNode> nodes = layer.getNodes();
+            nodeOrder[i] = new LNode[nodes.size()];
+            for (int j = 0; j < nodes.size(); j++) {
+                nodeOrder[i][j] = nodes.get(j);
+            }
+        }
+        return nodeOrder;
+    }
+
+    private Layer[] makeLayers(final int amount) {
+        Layer[] layers = new Layer[amount];
+        for (int i = 0; i < layers.length; i++) {
+            layers[i] = addLayerToGraph();
+        }
+        return layers;
+    }
+
+    private MapPropertyHolder setFixedOrderConstraint(final LNode leftNode) {
         return leftNode.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER);
     }
 
-    private void addNorthEdgeBetweenPorts(final LPort northOrigin, final LPort westTarget,
+    private void addSouthEdgeBetweenPorts(final LPort southOrigin, final LPort westTarget,
             final Layer layerWithNSNodes) {
-        LNode nsNode = addNormalNodeToLayer(layerWithNSNodes);
-        nsNode.setProperty(InternalProperties.NODE_TYPE, NodeType.NORTH_SOUTH_PORT);
-        nsNode.setProperty(InternalProperties.ORIGIN, northOrigin.getNode());
-        LPort southPort = addPortOnSide(nsNode, PortSide.SOUTH);
-        LPort eastPort = addPortOnSide(nsNode, PortSide.EAST);
-        addEdgeBetweenPorts(northOrigin, southPort);
-        addEdgeBetweenPorts(eastPort, westTarget);
+        LNode dummyNSNode = addNormalNodeToLayer(layerWithNSNodes);
+        dummyNSNode.setProperty(InternalProperties.NODE_TYPE, NodeType.NORTH_SOUTH_PORT);
+        dummyNSNode.setProperty(InternalProperties.ORIGIN, southOrigin.getNode());
+        LPort northPortDummyNode = addPortOnSide(dummyNSNode, PortSide.NORTH);
+        LPort eastPortDummyNode = addPortOnSide(dummyNSNode, PortSide.EAST);
+        northPortDummyNode.setProperty(InternalProperties.ORIGIN, southOrigin);
+        addEdgeBetweenPorts(southOrigin, northPortDummyNode);
+        addEdgeBetweenPorts(eastPortDummyNode, westTarget);
     }
 
     private void addInLayerEdge(final LNode nodeOne, final LNode nodeTwo, final PortSide portSide) {
@@ -253,6 +396,7 @@ public class TestGraphCreator {
         LNode node = new LNode(graph);
         node.setProperty(InternalProperties.NODE_TYPE, NodeType.NORMAL);
         node.setLayer(leftLayer);
+        node.id = nodeId++;
         return node;
     }
 
@@ -262,10 +406,11 @@ public class TestGraphCreator {
         addEdgeBetweenPorts(leftPort, rightPort);
     }
 
-    private void addEdgeBetweenPorts(final LPort leftPort, final LPort rightPort) {
+    private void addEdgeBetweenPorts(final LPort from, final LPort to) {
         LEdge edge = new LEdge(graph);
-        edge.setSource(leftPort);
-        edge.setTarget(rightPort);
+        edge.setSource(from);
+        edge.setTarget(to);
+        edge.id = edgeId++;
     }
 
     private LPort addPortOnSide(final LNode node, final PortSide portSide) {
@@ -275,9 +420,101 @@ public class TestGraphCreator {
     }
 
     private LPort addPortTo(final LNode node) {
-        LPort leftPort = new LPort(graph);
-        leftPort.setNode(node);
-        return leftPort;
+        LPort port = new LPort(graph);
+        port.setNode(node);
+        port.id = portId++;
+        return port;
     }
+
+    /**
+     * <pre>
+     *       ___
+     *    ---| |
+     *    |  | |  <- switch this
+     * ---+--|_|
+     * |  | 
+     * *--|--*  <- with this
+     *    |
+     *    ---*
+     * </pre>
+     * 
+     * With fixed Port Order.
+     * 
+     * @return
+     */
+    public LGraph getInLayerEdgesWithFixedPortOrderAndNormalEdgeCrossings() {
+        Layer[] layer = makeLayers(2);
+        LNode leftNode = addNormalNodeToLayer(layer[0]);
+        LNode[] rightNodes = addNodesToLayer(3, layer[1]);
+        setFixedOrderConstraint(rightNodes[0]);
+        addEastWestEdgeFromTo(leftNode, rightNodes[0]);
+        addInLayerEdge(rightNodes[0], rightNodes[2], PortSide.WEST);
+        addEastWestEdgeFromTo(leftNode, rightNodes[1]);
+
+        return graph;
+    }
+
+    /**
+     * <pre>
+     *     ____
+     *    /|  |
+     * *-+-|__|
+     *   | ____
+     * *-+-|  |
+     *    \|__|
+     * </pre>
+     *
+     * Port order not fixed.
+     * 
+     * @return
+     */
+    public LGraph getInLayerEdgesCrossingsButNoFixedOrder() {
+        Layer[] layer = makeLayers(2);
+        LNode[] leftNodes = addNodesToLayer(2, layer[0]);
+        LNode[] rightNodes = addNodesToLayer(2, layer[1]);
+
+        addEastWestEdgeFromTo(leftNodes[0], rightNodes[0]);
+        addInLayerEdge(rightNodes[0], rightNodes[1], PortSide.WEST);
+        addEastWestEdgeFromTo(leftNodes[1], rightNodes[1]);
+
+        return graph;
+    }
+
+    /**
+     * <pre>
+     *     ____
+     *    /|  |
+     * *-+-|__|
+     *   | 
+     * *-+-*
+     *    \
+     *     *
+     * </pre>
+     *
+     * Port order not fixed.
+     * 
+     * @return
+     */
+    public LGraph getInLayerEdgesCrossingsButNoFixedOrderNoEdgeBetweenUpperAndLower() {
+        Layer[] layer = makeLayers(2);
+        LNode[] leftNodes = addNodesToLayer(2, layer[0]);
+        LNode[] rightNodes = addNodesToLayer(3, layer[1]);
+
+        addEastWestEdgeFromTo(leftNodes[0], rightNodes[0]);
+        addInLayerEdge(rightNodes[0], rightNodes[2], PortSide.WEST);
+        addEastWestEdgeFromTo(leftNodes[1], rightNodes[1]);
+
+        return graph;
+    }
+
+    // /**
+    // * <pre>
+    // *
+    // * </pre>
+    // * @return
+    // */
+    // public LGraph getInLayerCrossingsOnBothSides() {
+    //
+    // }
 
 }
