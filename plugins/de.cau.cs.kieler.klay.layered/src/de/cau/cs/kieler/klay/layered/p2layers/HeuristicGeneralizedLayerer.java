@@ -163,9 +163,7 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
         
         performMoves();
         
-        cleanup();
 
-        
         // ---------------------
         // #7 Re-attach leaf nodes
         // ---------------------
@@ -201,6 +199,8 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
                 layerIt.remove();
             }
         }
+        
+        cleanup();
     }
 
     private void initialize() {
@@ -230,12 +230,11 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
         move = null;
         profit = null;
         nodes = null;
+        graphLayers = null;
+        graph = null;
     }
     
-
-    
     private void constructiveLayering() {
-        
         Set<LNode> unassigned = Sets.newHashSet();
         Set<LNode> assigned = Sets.newHashSet();
         Set<LNode> candidates = Sets.newHashSet();
@@ -265,7 +264,7 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
             // compute quality of possible solutions
             int minDegree = Integer.MAX_VALUE;
             // if < 0 place the node left, otherwise right
-            int side = 0;
+            double side = 0;
             LNode minDegNode = null;
             for (LNode v : candidates) {
 
@@ -300,6 +299,48 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
                 int score = du - da;
                 if (score < minDegree) {
                     minDegNode = v;
+                    
+                    // decide which side to place the node to
+
+                    // score if placed on the left 
+                    int edgeLengthLeft = 0;
+                    for (LNode adj : getAdjacentNodes(minDegNode)) {
+                        if (assigned.contains(adj)) {
+                           edgeLengthLeft += Math.abs(adj.id - lIndex); 
+                        }
+                    }
+                    int revEdgesLeft = 0;
+                    for (LNode pred : getPredecessorNodes(minDegNode)) {
+                        if (assigned.contains(pred)) {
+                            revEdgesLeft++;
+                        }
+                    }
+                    double scoreLeft = wLen * edgeLengthLeft + wRev * revEdgesLeft;
+                    
+                    // score if placed to the right
+                    int edgeLengthRight = 0;
+                    for (LNode adj : getAdjacentNodes(minDegNode)) {
+                        if (assigned.contains(adj)) {
+                            edgeLengthRight += Math.abs(rIndex - adj.id); 
+                         }
+                    }
+                    int revEdgesRight = 0;
+                    for (LNode succ: getSuccessorNodes(minDegNode)) {
+                        if (assigned.contains(succ)) {
+                            revEdgesRight++;
+                        }
+                    }
+                    double scoreRight = wLen * edgeLengthRight + wRev * revEdgesRight;
+                     
+//                    System.out.println(revEdgesLeft + " " + revEdgesRight);
+//                    System.out.println("Right: " + scoreRight + " Left: " + scoreLeft);
+
+                    // position on left side if sL < sR
+                    
+                    // ## strategy 1 (thought this is more sophisticated)
+//                    side = scoreLeft - scoreRight;
+                    
+                    // ## strategy 2 (looks more promising atm)
                     side = incAssigned - outAssigned;
                 }
                 minDegree = Math.min(minDegree, score);
@@ -331,6 +372,7 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
         // shift all node layers and assign them to layers
         for (LNode n : graph.getLayerlessNodes()) {
             n.id += (-1 * lIndex) - 1;
+//            System.out.println(n + " " + n.id);
         }
     }
 
@@ -384,20 +426,25 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
         int layer = n.getLayer().getIndex();
         move[n.id] = 0;
         
-        // # there are no edges to push towards the correct direction
+        // # there are no edges to change into the 'correct' direction
         if (adjencency[n.id].leftSuccessors.isEmpty()) {
             return;
         }
         
         // # if there are no left predecessors
-
+        if (adjencency[n.id].leftPredecessors.isEmpty()) {
+            int minLeftSucc = getMinLayer(adjencency[n.id].leftSuccessors);
+            move[n.id] = layer - minLeftSucc + 1;
+            return; 
+        }
+        
         // #
 
         // max layer of n.leftPred
         int maxLeftPred = getMaxLayer(adjencency[n.id].leftPredecessors);
         // TODO check for further reversed edges
 
-        // a move only pays of if the node is moved at least by 2
+        // a move only pays off if the node is moved at least by 2
         int pays = layer - 2 - maxLeftPred;
         if (pays > 0) {
             move[n.id] = pays + 1;
@@ -435,7 +482,7 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
         }
         System.out.println();
         System.out.print("Profit: ");
-        for (int i = 0; i < profit.length; i++) {
+        for (int i = 0; i < profit.length; i++) {       
             if (profit[i] != 0.0)
             System.out.print("(" + nodes[i] + ", " + profit[i] + ") ");
         }
@@ -447,8 +494,11 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
             if (move[i] > 0 && profit[i] > 0) {
                 
                 int newLayerIndex = nodes[i].getLayer().getIndex() - move[i];
-                Layer newLayer = graph.getLayers().get(newLayerIndex);
-                nodes[i].setLayer(newLayer);
+                // TODO should be possible even for -1
+                if (newLayerIndex > 0) {
+                    Layer newLayer = graph.getLayers().get(newLayerIndex);
+                    nodes[i].setLayer(newLayer);
+                }
             }
         }
     }
@@ -482,6 +532,14 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
         return max;
     }
 
+    private int getMinLayer(final Iterable<LNode> nodeSet) {
+        int min = Integer.MAX_VALUE;
+        for (LNode n : nodeSet) {
+            min = Math.min(min, n.getLayer().getIndex());
+        }
+        return min;
+    }
+    
     private Iterable<LNode> getAdjacentNodes(final LNode n) {
         return Iterables.concat(
                 Iterables.transform(n.getOutgoingEdges(), new Function<LEdge, LNode>() {
@@ -494,7 +552,22 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
                     }
                 }));
     }
-    
+
+    private Iterable<LNode> getPredecessorNodes(final LNode n) {
+        return Iterables.transform(n.getIncomingEdges(), new Function<LEdge, LNode>() {
+            public LNode apply(final LEdge input) {
+                return input.getSource().getNode();
+            }
+        });
+    }
+
+    private Iterable<LNode> getSuccessorNodes(final LNode n) {
+        return Iterables.transform(n.getOutgoingEdges(), new Function<LEdge, LNode>() {
+            public LNode apply(final LEdge input) {
+                return input.getTarget().getNode();
+            }
+        });
+    }
     
     /**
      * Class holds adjacency information of nodes. That is
