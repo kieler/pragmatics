@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Random;
 import java.util.Set;
 import java.util.Stack;
 
@@ -41,20 +42,6 @@ import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
  */
 public class HeuristicGeneralizedLayerer implements ILayoutPhase {
 
-    /** intermediate processing configuration. */
-    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION =
-            IntermediateProcessingConfiguration.createEmpty()
-                    //.addBeforePhase2(IntermediateProcessorStrategy.GLAY_PREPROCESSOR)
-                    .addAfterPhase5(IntermediateProcessorStrategy.REVERSED_EDGE_RESTORER);
-
-    /**
-     * {@inheritDoc}
-     */
-    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
-            final LGraph lgraph) {
-        return INTERMEDIATE_PROCESSING_CONFIGURATION;
-    }
-
     private LGraph graph;
     private Layer[] graphLayers;
     
@@ -72,20 +59,29 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
     
     private double wLen = 1;
     private double wRev = 1;
-     
+
+    private Random random;
+    
+    /** intermediate processing configuration. */
+    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION =
+            IntermediateProcessingConfiguration.createEmpty()
+                    //.addBeforePhase2(IntermediateProcessorStrategy.GLAY_PREPROCESSOR)
+                    .addAfterPhase5(IntermediateProcessorStrategy.REVERSED_EDGE_RESTORER);
+
+    
 
     /**
      * {@inheritDoc}
      */
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor progressMonitor) {
         graph = layeredGraph;
+        random = layeredGraph.getProperty(InternalProperties.RANDOM);
+        
         
         // ---------------------
         // #1 Create an initial layering where each layer holds a single node
         // ---------------------
         constructiveLayering();
-        
-        
         
         // ---------------------
         // #2 Reverse edges such that the graph is acyclic with regards to the order
@@ -242,13 +238,21 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
         
         Set<LNode> unassigned = Sets.newHashSet();
         Set<LNode> assigned = Sets.newHashSet();
-
+        Set<LNode> candidates = Sets.newHashSet();
+        
         unassigned.addAll(graph.getLayerlessNodes());
 
-        LNode u = graph.getLayerlessNodes().get(0);
+        // randomly choose a starting node
+        int r = random.nextInt(graph.getLayerlessNodes().size());
+        LNode u = graph.getLayerlessNodes().get(r);
         unassigned.remove(u);
         assigned.add(u);
 
+        // add adjacent nodes to the candidate list
+        for (LNode v : getAdjacentNodes(u)) {
+            candidates.add(v);
+        }
+        
         int index = 0;
         u.id = index;
 
@@ -257,17 +261,6 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
 
         while (!unassigned.isEmpty()) {
             index++;
-
-            // construct candidate list
-            // TODO can be done incrementally
-            Set<LNode> candidates = Sets.newHashSet();
-            for (LNode v : assigned) {
-                for (LNode w : getAdjacentNodes(v)) {
-                    if (unassigned.contains(w)) {
-                        candidates.add(w);
-                    }
-                }
-            }
 
             // compute quality of possible solutions
             int minDegree = Integer.MAX_VALUE;
@@ -323,7 +316,16 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
 
             assigned.add(minDegNode);
             unassigned.remove(minDegNode);
+            candidates.remove(minDegNode);
 
+            // add adjacent nodes to the candidates list
+            for (LNode w : getAdjacentNodes(minDegNode)) {
+                // if they have not been assigned so far
+                if (unassigned.contains(w)) {
+                    candidates.add(w);
+                }
+            }
+            
         }
 
         // shift all node layers and assign them to layers
@@ -623,5 +625,13 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
         public String toString() {
             return "LeafNode { " + node + " }";
         }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
+            final LGraph lgraph) {
+        return INTERMEDIATE_PROCESSING_CONFIGURATION;
     }
 }
