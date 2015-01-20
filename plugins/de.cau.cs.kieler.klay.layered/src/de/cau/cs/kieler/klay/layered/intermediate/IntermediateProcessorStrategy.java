@@ -14,6 +14,8 @@
 package de.cau.cs.kieler.klay.layered.intermediate;
 
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
+import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.GreedySwitchProcessor;
+import de.cau.cs.kieler.klay.layered.properties.GreedyType;
 
 /**
  * Definition of available intermediate layout processors for the layered layouter. This enumeration
@@ -77,18 +79,8 @@ public enum IntermediateProcessorStrategy {
 
     // Before Phase 4
 
-    /** Greedy switch crossing reduction: count all crossings each time. */
-    GREEDY_SWITCH_CROSSING_COUNTER,
-    /** Greedy switch crossing reduction: count all crossings each time on both sides of free layer. */
-    GREEDY_SWITCH_CAREFUL_CROSSING_COUNTER,
-    /** Greedy switch crossing reduction: with crossing matrix. */
-    GREEDY_SWITCH_CROSSINGMATRIX,
-    /** Greedy switch crossing reduction: with crossing matrix on both sides of free layer. */
-    GREEDY_SWITCH_CAREFUL_CROSSINGMATRIX,
-    /** Greedy switch crossing reduction: with crossing matrix created on demand. */
-    GREEDY_SWITCH_ONDEMAND_CROSSINGMATRIX,
-    /** Greedy switch cross reduction: crossing matrix created on demand both sides of free layer. */
-    GREEDY_SWITCH_CAREFUL_ONDEMAND_CROSSINGMATRIX,
+    /** Greedy switch crossing reduction. */
+    GREEDY_SWITCH,
     /** Distributes ports after crossing minimization. Used by the layer sweep crossing minimizer. */
     PORT_DISTRIBUTER,
     /** Compacts looong sausages. This is a hidden feature. */
@@ -178,23 +170,8 @@ public enum IntermediateProcessorStrategy {
         case END_LABEL_PROCESSOR:
             return new EndLabelProcessor();
 
-        case GREEDY_SWITCH_CROSSING_COUNTER:
-            return GreedySwitchCounterProcessor.createConsideringOneSidedCrossings();
-
-        case GREEDY_SWITCH_CAREFUL_CROSSING_COUNTER:
-            return GreedySwitchCounterProcessor.createConsideringAllCrossings();
-
-        case GREEDY_SWITCH_CROSSINGMATRIX:
-            return GreedySwitchCrossingMatrixProcessor.createConsideringOneSidedCrossings();
-
-        case GREEDY_SWITCH_CAREFUL_CROSSINGMATRIX:
-            return GreedySwitchCrossingMatrixProcessor.createConsideringAllCrossings();
-
-        case GREEDY_SWITCH_ONDEMAND_CROSSINGMATRIX:
-            return GreedySwitchOnDemandCrossingMatrixProcessor.createConsideringOneSidedCrossings();
-
-        case GREEDY_SWITCH_CAREFUL_ONDEMAND_CROSSINGMATRIX:
-            return GreedySwitchOnDemandCrossingMatrixProcessor.createConsideringAllCrossings();
+        case GREEDY_SWITCH:
+            return new GreedySwitchProcessor(GreedyType.ONE_SIDED_COUNTER);
 
         case HIERARCHICAL_PORT_CONSTRAINT_PROCESSOR:
             return new HierarchicalPortConstraintProcessor();

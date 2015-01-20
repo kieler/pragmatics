@@ -1,4 +1,4 @@
-package de.cau.cs.kieler.klay.layered.test.intermediate;
+package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
@@ -11,7 +11,7 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.intermediate.TwoNodeInLayerEdgeCrossingCounter;
+import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.TwoNodeInLayerEdgeCrossingCounter;
 
 public class TwoNodeInLayerEdgeCrossingCounterTest {
     private TestGraphCreator creator;

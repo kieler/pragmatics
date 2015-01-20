@@ -75,12 +75,10 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
 
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION =
-            IntermediateProcessingConfiguration
-                    .createEmpty()
+            IntermediateProcessingConfiguration.createEmpty()
                     .addBeforePhase3(IntermediateProcessorStrategy.LONG_EDGE_SPLITTER)
                     .addBeforePhase4(IntermediateProcessorStrategy.PORT_DISTRIBUTER)
-                    .addBeforePhase4(
-                            IntermediateProcessorStrategy.GREEDY_SWITCH_CAREFUL_ONDEMAND_CROSSINGMATRIX)
+                    .addBeforePhase4(IntermediateProcessorStrategy.GREEDY_SWITCH)
                     .addBeforePhase4(IntermediateProcessorStrategy.IN_LAYER_CONSTRAINT_PROCESSOR)
                     .addAfterPhase5(IntermediateProcessorStrategy.LONG_EDGE_JOINER);
 

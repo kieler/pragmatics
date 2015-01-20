@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.layered.intermediate;
+package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
 import java.util.List;
 
@@ -31,7 +31,7 @@ import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
  * 
  * @author alan
  */
-public abstract class SwitchDecider {
+abstract class SwitchDecider {
     private final LNode[][] graph;
     private final int freeLayerIndex;
 

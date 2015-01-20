@@ -1,4 +1,4 @@
-package de.cau.cs.kieler.klay.layered.intermediate;
+package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 
@@ -20,7 +20,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
  * 
  * @author alan
  */
-public abstract class CounterSwitchDecider extends SwitchDecider {
+abstract class CounterSwitchDecider extends SwitchDecider {
 
     private final LNode[] freeLayer;
     private final CrossingCounter crossingCounter;

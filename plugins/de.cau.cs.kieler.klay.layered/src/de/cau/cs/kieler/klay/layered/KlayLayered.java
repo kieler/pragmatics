@@ -85,29 +85,33 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *   Phase 1   Phase 2   Phase 3   Phase 4   Phase 5
  * </pre>
  * 
- * <p>To use KLay Layered to layout a given graph, there are three possibilities depending on the kind
- * of graph that is to be laid out:</p>
+ * <p>
+ * To use KLay Layered to layout a given graph, there are three possibilities depending on the kind
+ * of graph that is to be laid out:
+ * </p>
  * <ol>
- *   <li>{@link #doLayout(LGraph, IKielerProgressMonitor)} computes a layout for the given graph, without
- *     any subgraphs it might have.</li>
- *   <li>{@link #doCompoundLayout(LGraph, IKielerProgressMonitor)} computes a layout for the given graph
- *     and for its subgraphs, if any. (Subgraphs are attached to nodes through the
- *     {@link InternalProperties#NESTED_LGRAPH} property.)</li>
- *   <li>If you have a {@code KGraph} instead of an {@code LGraph}, you might want to use
- *     {@link LayeredLayoutProvider#doLayout(de.cau.cs.kieler.core.kgraph.KNode, IKielerProgressMonitor)}
- *     instead.</li>
+ * <li>{@link #doLayout(LGraph, IKielerProgressMonitor)} computes a layout for the given graph,
+ * without any subgraphs it might have.</li>
+ * <li>{@link #doCompoundLayout(LGraph, IKielerProgressMonitor)} computes a layout for the given
+ * graph and for its subgraphs, if any. (Subgraphs are attached to nodes through the
+ * {@link InternalProperties#NESTED_LGRAPH} property.)</li>
+ * <li>If you have a {@code KGraph} instead of an {@code LGraph}, you might want to use
+ * {@link LayeredLayoutProvider#doLayout(de.cau.cs.kieler.core.kgraph.KNode, IKielerProgressMonitor)}
+ * instead.</li>
  * </ol>
- * <p>In addition to regular layout runs, this class provides methods for automatic unit testing based
- * around the concept of <em>test runs</em>. A test run is executed as follows:</p>
+ * <p>
+ * In addition to regular layout runs, this class provides methods for automatic unit testing based
+ * around the concept of <em>test runs</em>. A test run is executed as follows:
+ * </p>
  * <ol>
- *   <li>Call {@link #prepareLayoutTest(LGraph)} to start a new run. The given graph might be split
- *       into its connected components, which are put into the returned state object.</li>
- *   <li>Call one of the actual test methods. {@link #runLayoutTestStep(TestExecutionState)} runs the
- *     next step of the algorithm. {@link #runLayoutTestUntil(Class, TestExecutionState)} runs the
- *     algorithm until a given layout processor has finished executing (its sibling,
- *     {@link #runLayoutTestUntil(Class, boolean, TestExecutionState)}, can also stop just before a
- *     given layout processor starts executing). All of these methods resume execution from where the
- *     algorithm has stopped previously.</li>
+ * <li>Call {@link #prepareLayoutTest(LGraph)} to start a new run. The given graph might be split
+ * into its connected components, which are put into the returned state object.</li>
+ * <li>Call one of the actual test methods. {@link #runLayoutTestStep(TestExecutionState)} runs the
+ * next step of the algorithm. {@link #runLayoutTestUntil(Class, TestExecutionState)} runs the
+ * algorithm until a given layout processor has finished executing (its sibling,
+ * {@link #runLayoutTestUntil(Class, boolean, TestExecutionState)}, can also stop just before a
+ * given layout processor starts executing). All of these methods resume execution from where the
+ * algorithm has stopped previously.</li>
  * </ol>
  * 
  * @see ILayoutPhase
@@ -134,17 +138,18 @@ public final class KlayLayered {
     /** cache of instantiated intermediate modules. */
     private final Map<IntermediateProcessorStrategy, ILayoutProcessor> intermediateLayoutProcessorCache =
             Maps.newHashMap();
-    
 
     // /////////////////////////////////////////////////////////////////////////////
     // Regular Layout
 
     /**
-     * Does a layout on the given graph. If the graph contains compound nodes (see class documentation),
-     * the nested graphs are ignored.
+     * Does a layout on the given graph. If the graph contains compound nodes (see class
+     * documentation), the nested graphs are ignored.
      * 
-     * @param lgraph the graph to layout
-     * @param monitor a progress monitor to show progress information in, or {@code null}
+     * @param lgraph
+     *            the graph to layout
+     * @param monitor
+     *            a progress monitor to show progress information in, or {@code null}
      * @see #doCompoundLayout(LGraph, IKielerProgressMonitor)
      */
     public void doLayout(final LGraph lgraph, final IKielerProgressMonitor monitor) {
@@ -179,13 +184,12 @@ public final class KlayLayered {
             }
         }
         componentsProcessor.combine(components, lgraph);
-        
+
         // Resize the resulting graph, according to minimal size constraints and such
         resizeGraph(lgraph);
 
         theMonitor.done();
     }
-    
 
     // /////////////////////////////////////////////////////////////////////////////
     // Compound Graph Layout
@@ -194,8 +198,10 @@ public final class KlayLayered {
      * Does a layout on the given compound graph. Connected components processing is currently not
      * supported.
      * 
-     * @param lgraph the graph to layout
-     * @param monitor a progress monitor to show progress information in, or {@code null}
+     * @param lgraph
+     *            the graph to layout
+     * @param monitor
+     *            a progress monitor to show progress information in, or {@code null}
      */
     public void doCompoundLayout(final LGraph lgraph, final IKielerProgressMonitor monitor) {
         IKielerProgressMonitor theMonitor = monitor;
@@ -203,7 +209,7 @@ public final class KlayLayered {
             theMonitor = new BasicProgressMonitor(0);
         }
         theMonitor.begin("Layered layout", 3); // SUPPRESS CHECKSTYLE MagicNumber
-        
+
         // Preprocess the compound graph by splitting cross-hierarchy edges
         if (compoundGraphPreprocessor == null) {
             compoundGraphPreprocessor = new CompoundGraphPreprocessor();
@@ -212,7 +218,7 @@ public final class KlayLayered {
 
         // Apply the layout algorithm recursively
         recursiveLayout(lgraph, theMonitor.subTask(1));
-        
+
         // Postprocess the compound graph by combining split cross-hierarchy edges
         if (compoundGraphPostprocessor == null) {
             compoundGraphPostprocessor = new CompoundGraphPostprocessor();
@@ -221,12 +227,14 @@ public final class KlayLayered {
 
         theMonitor.done();
     }
-    
+
     /**
      * Do a recursive compound graph layout.
      * 
-     * @param lgraph the graph
-     * @param monitor a progress monitor to show progress information
+     * @param lgraph
+     *            the graph
+     * @param monitor
+     *            a progress monitor to show progress information
      */
     private void recursiveLayout(final LGraph lgraph, final IKielerProgressMonitor monitor) {
         monitor.begin("Recursive layout", 2);
@@ -240,26 +248,26 @@ public final class KlayLayered {
                     graphLayoutToNode(node, nestedGraph);
                 }
             }
-            
+
             // Set special properties for the layered graph
             setOptions(lgraph);
-    
+
             // Update the modules depending on user options
             updateModules(lgraph);
-    
+
             // Perform the layout algorithm
             layout(lgraph, monitor);
         }
-        
+
         // Resize the resulting graph, according to minimal size constraints and such
         resizeGraph(lgraph);
 
         monitor.done();
     }
-    
+
     // /////////////////////////////////////////////////////////////////////////////
     // Layout Testing
-    
+
     /**
      * The state of a test execution is held in an instance of this class.
      */
@@ -268,7 +276,7 @@ public final class KlayLayered {
         private List<LGraph> graphs;
         /** index of the processor that is to be executed next during a layout test. */
         private int step;
-        
+
         /**
          * Return the list of graphs that are currently being laid out.
          * 
@@ -277,7 +285,7 @@ public final class KlayLayered {
         public List<LGraph> getGraphs() {
             return graphs;
         }
-        
+
         /**
          * Return the index of the processor that is to be executed next during a layout test.
          * 
@@ -293,12 +301,13 @@ public final class KlayLayered {
      * exception is thrown. After this method has run, call {@link #layoutTestStep()} as often as
      * there are layout processors.
      * 
-     * @param lgraph the input graph to initialize the test run with.
+     * @param lgraph
+     *            the input graph to initialize the test run with.
      * @return the test execution state
      */
     public TestExecutionState prepareLayoutTest(final LGraph lgraph) {
         TestExecutionState state = new TestExecutionState();
-        
+
         // set special properties for the layered graph
         setOptions(lgraph);
 
@@ -310,14 +319,16 @@ public final class KlayLayered {
             componentsProcessor = new ComponentsProcessor();
         }
         state.graphs = componentsProcessor.split(lgraph);
-        
+
         return state;
     }
 
     /**
-     * Checks if the current test run still has processors to be executed for the algorithm to finish.
+     * Checks if the current test run still has processors to be executed for the algorithm to
+     * finish.
      * 
-     * @param state the current test execution state
+     * @param state
+     *            the current test execution state
      * @return {@code true} if the current test run has not finished yet. If there is no current
      *         test run, the result is undefined.
      */
@@ -334,28 +345,33 @@ public final class KlayLayered {
      * processor is not among those processors that have not yet executed, an exception is thrown.
      * Also, if there is no current layout test run, an exception is thrown.
      * 
-     * @param phase the phase or processor to stop after
-     * @param inclusive {@code true} if the specified phase should be executed as well
-     * @param state the current test execution state
+     * @param phase
+     *            the phase or processor to stop after
+     * @param inclusive
+     *            {@code true} if the specified phase should be executed as well
+     * @param state
+     *            the current test execution state
      * @throws IllegalArgumentException
      *             if the given layout processor is not part of the processors that are still to be
      *             executed.
      */
     public void runLayoutTestUntil(final Class<? extends ILayoutProcessor> phase,
             final boolean inclusive, final TestExecutionState state) {
-        
-        List<ILayoutProcessor> algorithm = state.graphs.get(0).getProperty(
-                InternalProperties.PROCESSORS);
+
+        List<ILayoutProcessor> algorithm =
+                state.graphs.get(0).getProperty(InternalProperties.PROCESSORS);
 
         // check if the given phase exists in our current algorithm configuration
         boolean phaseExists = false;
         ListIterator<ILayoutProcessor> algorithmIterator = algorithm.listIterator(state.step);
         int phaseIndex = state.step;
-        
+
         while (algorithmIterator.hasNext() && !phaseExists) {
-            if (algorithmIterator.next().getClass().equals(phase)) {
+            // if (algorithmIterator.next().getClass().equals(phase))
+            // TODO-alan discuss this line
+            if (phase.isInstance(algorithmIterator.next())) {
                 phaseExists = true;
-                
+
                 if (inclusive) {
                     phaseIndex++;
                 }
@@ -380,13 +396,15 @@ public final class KlayLayered {
      * Performs the {@link #runLayoutTestUntil(Class, boolean)} methods with {@code inclusive} set
      * to {@code true}.
      * 
-     * @param phase the phase or processor to stop after
-     * @param state the current test execution state
+     * @param phase
+     *            the phase or processor to stop after
+     * @param state
+     *            the current test execution state
      * @see KlayLayered#runLayoutTestUntil(Class, boolean)
      */
     public void runLayoutTestUntil(final Class<? extends ILayoutProcessor> phase,
             final TestExecutionState state) {
-        
+
         runLayoutTestUntil(phase, true, state);
     }
 
@@ -394,8 +412,10 @@ public final class KlayLayered {
      * Runs the next step of the current layout test run. Throws exceptions if no layout test run is
      * currently active or if the current run has finished.
      * 
-     * @param state the current test execution state
-     * @throws IllegalStateException if the given state has finished executing
+     * @param state
+     *            the current test execution state
+     * @throws IllegalStateException
+     *             if the given state has finished executing
      */
     public void runLayoutTestStep(final TestExecutionState state) {
         if (isLayoutTestFinished(state)) {
@@ -403,8 +423,8 @@ public final class KlayLayered {
         }
 
         // perform the next layout step
-        List<ILayoutProcessor> algorithm = state.graphs.get(0).getProperty(
-                InternalProperties.PROCESSORS);
+        List<ILayoutProcessor> algorithm =
+                state.graphs.get(0).getProperty(InternalProperties.PROCESSORS);
         layoutTest(state.graphs, algorithm.get(state.step));
         state.step++;
     }
@@ -413,30 +433,33 @@ public final class KlayLayered {
      * Returns the current list of layout processors that make up the algorithm. This list is only
      * valid and meaningful while a layout test is being run.
      * 
-     * @param state the current test execution state
+     * @param state
+     *            the current test execution state
      * @return the algorithm's current configuration.
      */
     public List<ILayoutProcessor> getLayoutTestConfiguration(final TestExecutionState state) {
         return state.graphs.get(0).getProperty(InternalProperties.PROCESSORS);
     }
 
-
     // /////////////////////////////////////////////////////////////////////////////
     // Options and Modules Management
-    
+
     /** intermediate processing configuration for basic graphs. */
     private static final IntermediateProcessingConfiguration BASELINE_PROCESSING_CONFIGURATION =
-        IntermediateProcessingConfiguration.createEmpty()
-            .addBeforePhase4(IntermediateProcessorStrategy.NODE_MARGIN_CALCULATOR)
-            .addBeforePhase4(IntermediateProcessorStrategy.LABEL_AND_NODE_SIZE_PROCESSOR)
-            .addBeforePhase5(IntermediateProcessorStrategy.LAYER_SIZE_AND_GRAPH_HEIGHT_CALCULATOR);
+            IntermediateProcessingConfiguration
+                    .createEmpty()
+                    .addBeforePhase4(IntermediateProcessorStrategy.NODE_MARGIN_CALCULATOR)
+                    .addBeforePhase4(IntermediateProcessorStrategy.LABEL_AND_NODE_SIZE_PROCESSOR)
+                    .addBeforePhase5(
+                            IntermediateProcessorStrategy.LAYER_SIZE_AND_GRAPH_HEIGHT_CALCULATOR);
     /** the minimal spacing between edges, so edges won't overlap. */
     private static final float MIN_EDGE_SPACING = 2.0f;
 
     /**
      * Set special layout options for the layered graph.
      * 
-     * @param lgraph a new layered graph
+     * @param lgraph
+     *            a new layered graph
      */
     private void setOptions(final LGraph lgraph) {
         // check the bounds of some layout options
@@ -445,14 +468,15 @@ public final class KlayLayered {
         float spacing = lgraph.getProperty(Properties.OBJ_SPACING);
         if (lgraph.getProperty(Properties.EDGE_SPACING_FACTOR) * spacing < MIN_EDGE_SPACING) {
             // Edge spacing is determined by the product of object spacing and edge spacing factor.
-            // Make sure the resulting edge spacing is at least 2 in order to avoid overlapping edges.
+            // Make sure the resulting edge spacing is at least 2 in order to avoid overlapping
+            // edges.
             lgraph.setProperty(Properties.EDGE_SPACING_FACTOR, MIN_EDGE_SPACING / spacing);
         }
         Direction direction = lgraph.getProperty(LayoutOptions.DIRECTION);
         if (direction == Direction.UNDEFINED) {
             lgraph.setProperty(LayoutOptions.DIRECTION, LGraphUtil.getDirection(lgraph));
         }
-        
+
         // set the random number generator based on the random seed option
         Integer randomSeed = lgraph.getProperty(Properties.RANDOM_SEED);
         if (randomSeed == 0) {
@@ -467,7 +491,8 @@ public final class KlayLayered {
     /**
      * Update the modules depending on user options.
      * 
-     * @param lgraph the graph to be laid out.
+     * @param lgraph
+     *            the graph to be laid out.
      */
     private void updateModules(final LGraph lgraph) {
         // check which cycle breaking strategy to use
@@ -487,7 +512,7 @@ public final class KlayLayered {
                 phaseCache.put(GreedyCycleBreaker.class, cycleBreaker);
             }
         }
-        
+
         // check which layering strategy to use
         ILayoutPhase layerer;
         switch (lgraph.getProperty(Properties.NODE_LAYERING)) {
@@ -512,7 +537,7 @@ public final class KlayLayered {
                 phaseCache.put(NetworkSimplexLayerer.class, layerer);
             }
         }
-        
+
         // check which crossing minimization strategy to use
         ILayoutPhase crossingMinimizer;
         switch (lgraph.getProperty(Properties.CROSS_MIN)) {
@@ -562,7 +587,7 @@ public final class KlayLayered {
                 phaseCache.put(BJLNodePlacer.class, nodePlacer);
             }
             break;
-            
+
         default: // BRANDES_KOEPF
             nodePlacer = phaseCache.get(BKNodePlacer.class);
             if (nodePlacer == null) {
@@ -606,42 +631,46 @@ public final class KlayLayered {
                 .addAll(crossingMinimizer.getIntermediateProcessingConfiguration(lgraph))
                 .addAll(nodePlacer.getIntermediateProcessingConfiguration(lgraph))
                 .addAll(edgeRouter.getIntermediateProcessingConfiguration(lgraph))
-                .addAll(this.getIntermediateProcessingConfiguration(lgraph));
+                .addAll(getIntermediateProcessingConfiguration(lgraph));
 
         // construct the list of processors that make up the algorithm
         List<ILayoutProcessor> algorithm = Lists.newLinkedList();
         lgraph.setProperty(InternalProperties.PROCESSORS, algorithm);
         algorithm.addAll(getIntermediateProcessorList(intermediateProcessingConfiguration,
-                        IntermediateProcessingConfiguration.Slot.BEFORE_PHASE_1));
+                IntermediateProcessingConfiguration.Slot.BEFORE_PHASE_1));
         algorithm.add(cycleBreaker);
         algorithm.addAll(getIntermediateProcessorList(intermediateProcessingConfiguration,
-                        IntermediateProcessingConfiguration.Slot.BEFORE_PHASE_2));
+                IntermediateProcessingConfiguration.Slot.BEFORE_PHASE_2));
         algorithm.add(layerer);
         algorithm.addAll(getIntermediateProcessorList(intermediateProcessingConfiguration,
-                        IntermediateProcessingConfiguration.Slot.BEFORE_PHASE_3));
+                IntermediateProcessingConfiguration.Slot.BEFORE_PHASE_3));
         algorithm.add(crossingMinimizer);
         algorithm.addAll(getIntermediateProcessorList(intermediateProcessingConfiguration,
-                        IntermediateProcessingConfiguration.Slot.BEFORE_PHASE_4));
+                IntermediateProcessingConfiguration.Slot.BEFORE_PHASE_4));
         algorithm.add(nodePlacer);
         algorithm.addAll(getIntermediateProcessorList(intermediateProcessingConfiguration,
-                        IntermediateProcessingConfiguration.Slot.BEFORE_PHASE_5));
+                IntermediateProcessingConfiguration.Slot.BEFORE_PHASE_5));
         algorithm.add(edgeRouter);
         algorithm.addAll(getIntermediateProcessorList(intermediateProcessingConfiguration,
-                        IntermediateProcessingConfiguration.Slot.AFTER_PHASE_5));
+                IntermediateProcessingConfiguration.Slot.AFTER_PHASE_5));
     }
+
     // CHECKSTYLEON MethodLength
 
     /**
-     * Returns a list of layout processor instances for the given intermediate layout processing slot.
+     * Returns a list of layout processor instances for the given intermediate layout processing
+     * slot.
      * 
-     * @param configuration the intermediate processing configuration
-     * @param slot the intermediate processing slot whose list of processors to return.
+     * @param configuration
+     *            the intermediate processing configuration
+     * @param slot
+     *            the intermediate processing slot whose list of processors to return.
      * @return list of layout processors.
      */
     private List<ILayoutProcessor> getIntermediateProcessorList(
             final IntermediateProcessingConfiguration configuration,
             final IntermediateProcessingConfiguration.Slot slot) {
-        
+
         // fetch the set of layout processors configured for the given slot
         Set<IntermediateProcessorStrategy> processors = configuration.getProcessors(slot);
         List<ILayoutProcessor> result = new ArrayList<ILayoutProcessor>(processors.size());
@@ -670,14 +699,16 @@ public final class KlayLayered {
     /**
      * Returns an intermediate processing configuration with processors not tied to specific phases.
      * 
-     * @param lgraph the layered graph to be processed. The configuration may vary depending on certain
-     *               properties of the graph.
+     * @param lgraph
+     *            the layered graph to be processed. The configuration may vary depending on certain
+     *            properties of the graph.
      * @return intermediate processing configuration. May be {@code null}.
      */
     private IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
             final LGraph lgraph) {
 
-        Set<GraphProperties> graphProperties = lgraph.getProperty(InternalProperties.GRAPH_PROPERTIES);
+        Set<GraphProperties> graphProperties =
+                lgraph.getProperty(InternalProperties.GRAPH_PROPERTIES);
 
         // Basic configuration
         IntermediateProcessingConfiguration configuration =
@@ -693,19 +724,16 @@ public final class KlayLayered {
         // graph transformations for unusual layout directions
         switch (lgraph.getProperty(LayoutOptions.DIRECTION)) {
         case LEFT:
-            configuration
-                .addBeforePhase1(IntermediateProcessorStrategy.LEFT_DIR_PREPROCESSOR)
-                .addAfterPhase5(IntermediateProcessorStrategy.LEFT_DIR_POSTPROCESSOR);
+            configuration.addBeforePhase1(IntermediateProcessorStrategy.LEFT_DIR_PREPROCESSOR)
+                    .addAfterPhase5(IntermediateProcessorStrategy.LEFT_DIR_POSTPROCESSOR);
             break;
         case DOWN:
-            configuration
-                .addBeforePhase1(IntermediateProcessorStrategy.DOWN_DIR_PREPROCESSOR)
-                .addAfterPhase5(IntermediateProcessorStrategy.DOWN_DIR_POSTPROCESSOR);
+            configuration.addBeforePhase1(IntermediateProcessorStrategy.DOWN_DIR_PREPROCESSOR)
+                    .addAfterPhase5(IntermediateProcessorStrategy.DOWN_DIR_POSTPROCESSOR);
             break;
         case UP:
-            configuration
-                .addBeforePhase1(IntermediateProcessorStrategy.UP_DIR_PREPROCESSOR)
-                .addAfterPhase5(IntermediateProcessorStrategy.UP_DIR_POSTPROCESSOR);
+            configuration.addBeforePhase1(IntermediateProcessorStrategy.UP_DIR_PREPROCESSOR)
+                    .addAfterPhase5(IntermediateProcessorStrategy.UP_DIR_POSTPROCESSOR);
             break;
         default:
             // This is either RIGHT or UNDEFINED, which is just mapped to RIGHT. Either way, we
@@ -715,14 +743,12 @@ public final class KlayLayered {
 
         // Additional dependencies
         if (graphProperties.contains(GraphProperties.COMMENTS)) {
-            configuration
-                .addBeforePhase1(IntermediateProcessorStrategy.COMMENT_PREPROCESSOR)
-                .addAfterPhase5(IntermediateProcessorStrategy.COMMENT_POSTPROCESSOR);
+            configuration.addBeforePhase1(IntermediateProcessorStrategy.COMMENT_PREPROCESSOR)
+                    .addAfterPhase5(IntermediateProcessorStrategy.COMMENT_POSTPROCESSOR);
         }
 
         return configuration;
     }
-    
 
     // /////////////////////////////////////////////////////////////////////////////
     // Layout
@@ -730,8 +756,10 @@ public final class KlayLayered {
     /**
      * Perform the five phases of the layered layouter.
      * 
-     * @param lgraph the graph that is to be laid out
-     * @param monitor a progress monitor
+     * @param lgraph
+     *            the graph that is to be laid out
+     * @param monitor
+     *            a progress monitor
      */
     private void layout(final LGraph lgraph, final IKielerProgressMonitor monitor) {
         boolean monitorStarted = monitor.isRunning();
@@ -767,7 +795,7 @@ public final class KlayLayered {
             // Graph debug output
             DebugUtil.writeDebugGraph(lgraph, slotIndex++);
         } else {
-            
+
             // Invoke each layout processor
             for (ILayoutProcessor processor : algorithm) {
                 if (monitor.isCanceled()) {
@@ -776,8 +804,9 @@ public final class KlayLayered {
                 processor.process(lgraph, monitor.subTask(monitorProgress));
             }
         }
-        
-        // Move all nodes away from the layers (we need to remove nodes from their current layer in a
+
+        // Move all nodes away from the layers (we need to remove nodes from their current layer in
+        // a
         // second loop to avoid ConcurrentModificationExceptions)
         for (Layer layer : lgraph) {
             lgraph.getLayerlessNodes().addAll(layer.getNodes());
@@ -796,9 +825,12 @@ public final class KlayLayered {
     /**
      * Executes the given layout processor on the given list of graphs.
      * 
-     * @param lgraphs the list of graphs to be laid out.
-     * @param monitor a progress monitor.
-     * @param processor processor to execute.
+     * @param lgraphs
+     *            the list of graphs to be laid out.
+     * @param monitor
+     *            a progress monitor.
+     * @param processor
+     *            processor to execute.
      */
     private void layoutTest(final List<LGraph> lgraphs, final ILayoutProcessor processor) {
         // invoke the layout processor on each of the given graphs
@@ -809,66 +841,71 @@ public final class KlayLayered {
 
     // /////////////////////////////////////////////////////////////////////////////
     // Graph Postprocessing (Size and External Ports)
-    
+
     /**
-     * Sets the size of the given graph such that size constraints are adhered to.
-     * Furthermore, the border spacing is added to the graph size and the graph offset.
-     * Afterwards, the border spacing property is reset to 0.
+     * Sets the size of the given graph such that size constraints are adhered to. Furthermore, the
+     * border spacing is added to the graph size and the graph offset. Afterwards, the border
+     * spacing property is reset to 0.
      * 
-     * <p>Major parts of this method are adapted from
-     * {@link KimlUtil#resizeNode(de.cau.cs.kieler.core.kgraph.KNode, float, float, boolean)}.</p>
+     * <p>
+     * Major parts of this method are adapted from
+     * {@link KimlUtil#resizeNode(de.cau.cs.kieler.core.kgraph.KNode, float, float, boolean)}.
+     * </p>
      * 
-     * <p>Note: This method doesn't care about labels of compound nodes since those labels are not
-     * attached to the graph.</p>
+     * <p>
+     * Note: This method doesn't care about labels of compound nodes since those labels are not
+     * attached to the graph.
+     * </p>
      * 
-     * @param lgraph the graph to resize.
+     * @param lgraph
+     *            the graph to resize.
      */
     private void resizeGraph(final LGraph lgraph) {
         Set<SizeConstraint> sizeConstraint = lgraph.getProperty(LayoutOptions.SIZE_CONSTRAINT);
         Set<SizeOptions> sizeOptions = lgraph.getProperty(LayoutOptions.SIZE_OPTIONS);
         float borderSpacing = lgraph.getProperty(Properties.BORDER_SPACING);
-        
+
         // add the border spacing to the graph size and graph offset
         lgraph.getOffset().x += borderSpacing;
         lgraph.getOffset().y += borderSpacing;
         lgraph.getSize().x += 2 * borderSpacing;
         lgraph.getSize().y += 2 * borderSpacing;
-        
+
         // the graph size now contains the border spacing, so clear it in order to keep
         // graph.getActualSize() working properly
         lgraph.setProperty(Properties.BORDER_SPACING, 0f);
-        
+
         // calculate the new size
         if (sizeConstraint.contains(SizeConstraint.MINIMUM_SIZE)) {
             // remember the graph's old size (including border spacing and insets)
             KVector oldSize = lgraph.getActualSize();
-            
+
             float minWidth = lgraph.getProperty(LayoutOptions.MIN_WIDTH);
             float minHeight = lgraph.getProperty(LayoutOptions.MIN_HEIGHT);
-            
+
             // if minimum width or height are not set, maybe default to default values
             if (sizeOptions.contains(SizeOptions.DEFAULT_MINIMUM_SIZE)) {
                 if (minWidth <= 0) {
                     minWidth = KimlUtil.DEFAULT_MIN_WIDTH;
                 }
-                
+
                 if (minHeight <= 0) {
                     minHeight = KimlUtil.DEFAULT_MIN_HEIGHT;
                 }
             }
-            
+
             // apply new size including border spacing
             double newWidth = Math.max(oldSize.x, minWidth);
             double newHeight = Math.max(oldSize.y, minHeight);
             LInsets insets = lgraph.getInsets();
             lgraph.getSize().x = newWidth - insets.left - insets.right;
             lgraph.getSize().y = newHeight - insets.top - insets.bottom;
-            
+
             // correct the position of eastern and southern hierarchical ports, if necessary
             if (lgraph.getProperty(InternalProperties.GRAPH_PROPERTIES).contains(
                     GraphProperties.EXTERNAL_PORTS)
                     && (newWidth > oldSize.x || newHeight > oldSize.y)) {
-                
+
                 // iterate over the graph's nodes, looking for eastern / southern external ports
                 // (at this point, the graph's nodes are not divided into layers anymore)
                 for (LNode node : lgraph.getLayerlessNodes()) {
@@ -878,7 +915,7 @@ public final class KlayLayered {
                         PortSide extPortSide = node.getProperty(InternalProperties.EXT_PORT_SIDE);
                         if (extPortSide == PortSide.EAST) {
                             node.getPosition().x += newWidth - oldSize.x;
-                        } else  if (extPortSide == PortSide.SOUTH) {
+                        } else if (extPortSide == PortSide.SOUTH) {
                             node.getPosition().y += newHeight - oldSize.y;
                         }
                     }
@@ -886,12 +923,14 @@ public final class KlayLayered {
             }
         }
     }
-    
+
     /**
      * Transfer the layout of the given graph to the given associated node.
      * 
-     * @param node a compound node
-     * @param lgraph the graph nested in the compound node
+     * @param node
+     *            a compound node
+     * @param lgraph
+     *            the graph nested in the compound node
      */
     private void graphLayoutToNode(final LNode node, final LGraph lgraph) {
         // Process external ports
@@ -899,14 +938,15 @@ public final class KlayLayered {
             Object origin = childNode.getProperty(InternalProperties.ORIGIN);
             if (origin instanceof LPort) {
                 LPort port = (LPort) origin;
-                KVector portPosition = LGraphUtil.getExternalPortPosition(lgraph, childNode,
-                        port.getSize().x, port.getSize().y);
+                KVector portPosition =
+                        LGraphUtil.getExternalPortPosition(lgraph, childNode, port.getSize().x,
+                                port.getSize().y);
                 port.getPosition().x = portPosition.x;
                 port.getPosition().y = portPosition.y;
                 port.setSide(childNode.getProperty(InternalProperties.EXT_PORT_SIDE));
             }
         }
-        
+
         // Setup the parent node
         KVector actualGraphSize = lgraph.getActualSize();
         if (lgraph.getProperty(InternalProperties.GRAPH_PROPERTIES).contains(

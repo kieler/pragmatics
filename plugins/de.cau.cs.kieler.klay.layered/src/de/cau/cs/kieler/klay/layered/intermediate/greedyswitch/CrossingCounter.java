@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.layered.intermediate;
+package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
 import java.util.HashMap;
 import java.util.ListIterator;
@@ -36,7 +36,7 @@ import de.cau.cs.kieler.klay.layered.properties.NodeType;
  * @author alan
  *
  */
-public class CrossingCounter {
+class CrossingCounter {
 
     /**
      * Port position array used for counting the number of edge crossings.
@@ -78,10 +78,10 @@ public class CrossingCounter {
         for (int layerIndex = 0; layerIndex < currentOrder.length; layerIndex++) {
             LNode[] fixedLayer = currentOrder[layerIndex];
             totalCrossings += countNorthSouthPortCrossings(fixedLayer);
-            totalCrossings += countInLayerEdgeCrossings(fixedLayer);
+            totalCrossings += countInLayerEdgeCrossingsWithOrder(fixedLayer);
             if (layerIndex < currentOrder.length - 1) {
                 LNode[] freeLayer = currentOrder[layerIndex + 1];
-                totalCrossings += countCrossingsBetweenLayersInOrder(fixedLayer, freeLayer, true);
+                totalCrossings += countCrossingsBetweenLayersInOrder(fixedLayer, freeLayer);
             }
         }
         return totalCrossings;
@@ -90,29 +90,24 @@ public class CrossingCounter {
     /**
      * Count crossings between the fixedLayer and the freeLayer.
      *
-     * @param fixedLayer
+     * @param easternLayer
      *            The layer with which to count crossings.
-     * @param freeLayer
+     * @param westernLayer
      *            Count in-layer and north-south-port crossings in this layer.
-     * @param fixedLayerIsEastOfFreeLayer
-     *            Defines order of fixedLayer and freeLayer.
      * @return Amount of crossings.
      */
-    // TODO-alan make name real
-    public int countCrossingsBetweenLayersInOrder(final LNode[] fixedLayer,
-            final LNode[] freeLayer, final boolean fixedLayerIsEastOfFreeLayer) {
-        int amountOfCrossings = 0;
-        boolean isLayerEmpty =
-                fixedLayer == null || fixedLayer.length == 0 || freeLayer == null
-                        || freeLayer.length == 0;
-        if (isLayerEmpty) {
+    public int countCrossingsBetweenLayersInOrder(final LNode[] easternLayer,
+            final LNode[] westernLayer) {
+        if (isALayerEmpty(easternLayer, westernLayer)) {
             return 0;
         }
-        amountOfCrossings +=
-                fixedLayerIsEastOfFreeLayer ? countCrossings(fixedLayer, freeLayer)
-                        : countCrossings(freeLayer, fixedLayer);
+        return countCrossings(easternLayer, westernLayer);
 
-        return amountOfCrossings;
+    }
+
+    private boolean isALayerEmpty(final LNode[] fixedLayer, final LNode[] freeLayer) {
+        return fixedLayer == null || fixedLayer.length == 0 || freeLayer == null
+                || freeLayer.length == 0;
     }
 
     private void initialize() {
@@ -272,49 +267,6 @@ public class CrossingCounter {
         return crossCount;
     }
 
-    /**
-     * Counts the crossings caused by in-layer edges connected to the given port. An edge is only
-     * counted once.
-     *
-     * @param port
-     *            the port whose edge crossings to count.
-     * @param portIndices
-     *            map of ports to their respective indices as calculated by
-     *            {@link #numberEastWestPorts(LNode[], Map, Map)}.
-     * @return the maximum number of crossings‚ for this port.
-     */
-    private int countInLayerCrossings(final LPort port, final Map<LPort, Integer> portIndices) {
-        int maxCrossings = 0;
-
-        // Find this port's index
-        Integer portIndex = portIndices.get(port);
-        if (portIndex == null) {
-            return 0;
-        }
-
-        // Find the maximum distance between two connected ports
-        Integer connectedPortIndex = null;
-        for (LEdge edge : port.getConnectedEdges()) {
-            if (edge.getSource() == port) {
-                connectedPortIndex = portIndices.get(edge.getTarget());
-            } else {
-                connectedPortIndex = portIndices.get(edge.getSource());
-            }
-
-            // Check if the edge is connected to another port in the same layer
-            if (connectedPortIndex != null) {
-                // Only count the edge once
-                if (portIndex.intValue() > connectedPortIndex.intValue()) {
-                    maxCrossings =
-                            Math.max(maxCrossings,
-                                    portIndex.intValue() - connectedPortIndex.intValue() - 1);
-                }
-            }
-        }
-
-        return maxCrossings;
-    }
-
     /*
      * The algorithm used to count crossings within a layer implemented in the following method has
      * two parts:
@@ -348,6 +300,18 @@ public class CrossingCounter {
      */
 
     /**
+     * Calculates the amount of In-Layer edges for the given layer in the order, with which
+     * CrossingCounter was initialized with.
+     * 
+     * @param layerIndex
+     *            index of Layer to count in.
+     * @return north South Port crossing number
+     */
+    public int countInLayerEdgeCrossings(final int layerIndex) {
+        return countInLayerEdgeCrossingsWithOrder(originalOrder[layerIndex]);
+    }
+
+    /**
      * Calculates the worst case for the number of crossings caused by in-layer edges in the given
      * layer and by north/south port dummies that are later connected to their corresponding regular
      * nodes. The actual number of crossings may be lower.
@@ -356,7 +320,7 @@ public class CrossingCounter {
      *            the layer whose in-layer crossings and north/south dummy crossings to estimate.
      * @return the worst possible number of crossings
      */
-    private int countInLayerEdgeCrossings(final LNode[] layer) {
+    public int countInLayerEdgeCrossingsWithOrder(final LNode[] layer) {
         int eastWestCrossings = 0;
         int northSouthCrossings = 0;
 
@@ -484,13 +448,68 @@ public class CrossingCounter {
     }
 
     /**
+     * Counts the crossings caused by in-layer edges connected to the given port. An edge is only
+     * counted once.
+     *
+     * @param port
+     *            the port whose edge crossings to count.
+     * @param portIndices
+     *            map of ports to their respective indices as calculated by
+     *            {@link #numberEastWestPorts(LNode[], Map, Map)}.
+     * @return the maximum number of crossings‚ for this port.
+     */
+    private int countInLayerCrossings(final LPort port, final Map<LPort, Integer> portIndices) {
+        int maxCrossings = 0;
+
+        // Find this port's index
+        Integer portIndex = portIndices.get(port);
+        if (portIndex == null) {
+            return 0;
+        }
+
+        // Find the maximum distance between two connected ports
+        Integer connectedPortIndex = null;
+        for (LEdge edge : port.getConnectedEdges()) {
+            if (edge.getSource() == port) {
+                connectedPortIndex = portIndices.get(edge.getTarget());
+            } else {
+                connectedPortIndex = portIndices.get(edge.getSource());
+            }
+
+            // Check if the edge is connected to another port in the same layer
+            if (connectedPortIndex != null) {
+                // Only count the edge once
+                if (portIndex.intValue() > connectedPortIndex.intValue()) {
+                    maxCrossings =
+                            Math.max(maxCrossings,
+                                    portIndex.intValue() - connectedPortIndex.intValue() - 1);
+                }
+            }
+        }
+
+        return maxCrossings;
+    }
+
+    /**
+     * Calculates the amount of North South Port crossings for the given layer in the order, with
+     * which CrossingCounter was initialized with.
+     * 
+     * @param layerIndex
+     *            index of Layer to count in.
+     * @return north South Port crossing number
+     */
+    public int countNorthSouthPortCrossings(final int layerIndex) {
+        return countNorthSouthPortCrossings(originalOrder[layerIndex]);
+    }
+
+    /**
      * Counts the number of edge crossings caused by the way north / south port dummies are ordered.
      *
      * @param layer
      *            the layer whose north / south port related crossings to count.
      * @return the number of crossings caused by edges connected to northern or southern ports.
      */
-    private int countNorthSouthPortCrossings(final LNode[] layer) {
+    public int countNorthSouthPortCrossings(final LNode[] layer) {
         int crossings = 0;
         boolean northernSide = true;
         LNode recentNormalNode = null;

@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.layered.intermediate;
+package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
 /**
  * Exception thrown on faulty Input.
@@ -19,7 +19,7 @@ package de.cau.cs.kieler.klay.layered.intermediate;
  * @author alan
  *
  */
-public class SwitchDeciderException extends Exception {
+class SwitchDeciderException extends Exception {
 
     private static final long serialVersionUID = 2423454474886943208L;
 

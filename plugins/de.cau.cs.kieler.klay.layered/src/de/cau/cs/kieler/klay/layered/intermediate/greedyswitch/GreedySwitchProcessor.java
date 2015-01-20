@@ -1,9 +1,9 @@
-package de.cau.cs.kieler.klay.layered.intermediate;
+package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
-import de.cau.cs.kieler.klay.layered.intermediate.SwitchDecider.SweepDirection;
+import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.SwitchDecider.SweepDirection;
 import de.cau.cs.kieler.klay.layered.properties.GreedyType;
 
 public class GreedySwitchProcessor implements ILayoutProcessor {

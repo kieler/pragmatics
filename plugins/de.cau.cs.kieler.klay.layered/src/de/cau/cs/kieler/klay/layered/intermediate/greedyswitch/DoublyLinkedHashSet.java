@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.layered.intermediate;
+package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,14 +20,14 @@ import java.util.Map;
  * @author alan
  *
  */
-public class DoublyLinkedHashSet<T> {
+class DoublyLinkedHashSet<T> {
     @Override
     public String toString() {
         return "DoublyLinkedHashSet [map=" + map + "]";
     }
 
     private final Map<T, Entry> map;
-    private Entry youngestEntry;
+    private Entry youngest;
 
     public DoublyLinkedHashSet() {
         this.map = new HashMap<T, Entry>();
@@ -42,17 +42,21 @@ public class DoublyLinkedHashSet<T> {
     }
 
     public void add(final T element) {
-        final Entry newEntry = new Entry();
-        final Entry entryForElement = map.put(element, newEntry);
-        boolean entryWasNotAlreadyInSet = entryForElement == null;
-        if (entryWasNotAlreadyInSet) {
-            newEntry.previousEntry = youngestEntry;
-            if (youngestEntry != null) {
-                youngestEntry.hasNext = true;
-                youngestEntry.nextEntry = newEntry;
-            }
+        if (!map.containsKey(element)) {
+            final Entry newEntry = new Entry();
+            map.put(element, newEntry);
+            setNewYoungest(newEntry);
         }
-        youngestEntry = newEntry;
+    }
+
+    private void setNewYoungest(final Entry newEntry) {
+        newEntry.previous = youngest;
+        if (newEntry.previous != null) {
+            newEntry.previous.hasNext = true;
+            newEntry.previous.next = newEntry;
+            newEntry.hasPrevious = true;
+        }
+        youngest = newEntry;
     }
 
     public void remove(final T element) {
@@ -78,7 +82,7 @@ public class DoublyLinkedHashSet<T> {
         Entry currentEntry = startEntry;
         while (currentEntry.hasNext) {
             amount++;
-            currentEntry = currentEntry.nextEntry;
+            currentEntry = currentEntry.next;
         }
         return amount;
     }
@@ -91,15 +95,15 @@ public class DoublyLinkedHashSet<T> {
         }
 
         if (hasPreviousAndNextEntry(removedEntry)) {
-            final Entry previousEntry = removedEntry.previousEntry;
-            final Entry nextEntry = removedEntry.previousEntry;
+            final Entry previousEntry = removedEntry.previous;
+            final Entry nextEntry = removedEntry.previous;
             connect(previousEntry, nextEntry);
-        } else if (isEndOfList(removedEntry)) {
-            final Entry previousEntry = removedEntry.previousEntry;
-            resetEndTo(previousEntry);
-        } else if (isHead(removedEntry)) {
-            final Entry nextEntry = removedEntry.nextEntry;
-            resetHeadTo(nextEntry);
+        } else if (isYoungest(removedEntry)) {
+            final Entry previousEntry = removedEntry.previous;
+            resetYoungestTo(previousEntry);
+        } else if (isEldest(removedEntry)) {
+            final Entry nextEntry = removedEntry.next;
+            resetEldest(nextEntry);
         }
 
         return removedEntry;
@@ -110,33 +114,33 @@ public class DoublyLinkedHashSet<T> {
     }
 
     private void connect(final Entry previousEntry, final Entry nextEntry) {
-        previousEntry.nextEntry = nextEntry;
+        previousEntry.next = nextEntry;
     }
 
-    private boolean isHead(final Entry entry) {
+    private boolean isEldest(final Entry entry) {
         return !entry.hasPrevious && entry.hasNext;
     }
 
-    private void resetHeadTo(final Entry entry) {
-        entry.previousEntry = null;
-        entry.hasPrevious = false;
-    }
-
-    private boolean isEndOfList(final Entry removedEntry) {
+    private boolean isYoungest(final Entry removedEntry) {
         return removedEntry.hasPrevious && !removedEntry.hasNext;
     }
 
-    private void resetEndTo(final Entry entry) {
-        entry.nextEntry = null;
+    private void resetYoungestTo(final Entry entry) {
+        entry.next = null;
         entry.hasNext = false;
-        youngestEntry = entry;
+        youngest = entry;
+    }
+
+    private void resetEldest(final Entry entry) {
+        entry.previous = null;
+        entry.hasPrevious = false;
     }
 
     private static final class Entry {
-        private boolean hasNext;
-        private boolean hasPrevious;
-        private Entry nextEntry;
-        private Entry previousEntry;
+        private boolean hasNext = false;
+        private boolean hasPrevious = false;
+        private Entry next = null;
+        private Entry previous = null;
 
         @Override
         public String toString() {

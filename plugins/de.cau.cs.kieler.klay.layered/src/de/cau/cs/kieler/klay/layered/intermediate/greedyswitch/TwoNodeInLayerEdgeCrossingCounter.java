@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.layered.intermediate;
+package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
 import java.util.Deque;
 import java.util.Iterator;
@@ -32,7 +32,7 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
  * @author alan
  *
  */
-public class TwoNodeInLayerEdgeCrossingCounter implements TwoNodeCrossingCounter {
+class TwoNodeInLayerEdgeCrossingCounter {
     private final DoublyLinkedHashSet<LEdge> edges;
     private final LNode[] layer;
     private int upperLowerCrossings;
@@ -104,17 +104,17 @@ public class TwoNodeInLayerEdgeCrossingCounter implements TwoNodeCrossingCounter
         Iterator<LPort> iterator = getPortIterator(upperNode, portSide);
         while (iterator.hasNext()) {
             LPort port = iterator.next();
-            for (LEdge edge : port.getConnectedEdges()) {
+            for (LEdge edge1 : port.getConnectedEdges()) {
 
-                if (ignoreUpperNodeEdge(edge)) {
+                if (ignoreUpperNodeEdge(edge1)) {
                     continue;
                 }
 
-                if (isInLayer(edge)) {
-                    if (edges.contains(edge)) {
-                        crossings += edges.removeAndGetAmountOfEntriesAfter(edge);
+                if (isInLayer(edge1)) {
+                    if (edges.contains(edge1)) {
+                        crossings += edges.removeAndGetAmountOfEntriesAfter(edge1);
                     } else {
-                        edges.add(edge);
+                        edges.add(edge1);
                     }
                 } else {
                     if (portOrderIsFixedFor(upperNode)) {

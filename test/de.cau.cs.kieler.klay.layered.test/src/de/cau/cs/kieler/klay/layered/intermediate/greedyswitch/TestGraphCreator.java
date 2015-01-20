@@ -1,4 +1,4 @@
-package de.cau.cs.kieler.klay.layered.test.intermediate;
+package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
 import java.util.List;
 

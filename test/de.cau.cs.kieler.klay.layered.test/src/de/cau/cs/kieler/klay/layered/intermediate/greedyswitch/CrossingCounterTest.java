@@ -1,75 +1,71 @@
-package de.cau.cs.kieler.klay.layered.test.intermediate;
+package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
-import de.cau.cs.kieler.klay.layered.intermediate.CrossingCounter;
+import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.CrossingCounter;
 
 public class CrossingCounterTest {
+
+    private TestGraphCreator testGraphCreator;
+    private LGraph graph;
+
+    @Before
+    public void setup() {
+        testGraphCreator = new TestGraphCreator();
+    }
+
     @Test
     public void countOneCrossing() {
-        LGraph graph = givenCrossFormedGraph();
-        int amountOfCrossings = whenCountingAmountOfCrossings(graph);
+        graph = testGraphCreator.getCrossFormedGraph();
+        int amountOfCrossings = whenCountingAllCrossings();
         assertThat(amountOfCrossings, is(1));
-    }
-
-    private LGraph givenCrossFormedGraph() {
-        TestGraphCreator testGraphCreator = new TestGraphCreator();
-        return testGraphCreator.getCrossFormedGraph();
-    }
-
-    private int whenCountingAmountOfCrossings(final LGraph graph) {
-        return new CrossingCounter(graph).countAllCrossingsInGraph();
     }
 
     @Test
     public void countInLayerCrossing() {
-        LGraph graph = givenGraphWithInLayerCrossings();
-        int amountOfCrossings = whenCountingAmountOfCrossings(graph);
+        graph = testGraphCreator.getInLayerEdgesGraph();
+        int amountOfCrossings = whenCountingAllCrossings();
         assertThat(amountOfCrossings, is(1));
-    }
-
-    private LGraph givenGraphWithInLayerCrossings() {
-        TestGraphCreator testGraphCreator = new TestGraphCreator();
-        return testGraphCreator.getInLayerEdgesGraph();
     }
 
     @Test
     public void countNorthSouthCrossing() {
-        LGraph graph = givenGraphWithNorthSouthCrossing();
-        int amountOfCrossings = whenCountingAmountOfCrossings(graph);
+        graph = testGraphCreator.getNorthSouthCrossingGraph();
+        int amountOfCrossings = whenCountingAllCrossings();
         assertThat(amountOfCrossings, is(1));
     }
 
-    private LGraph givenGraphWithNorthSouthCrossing() {
-        TestGraphCreator testGraphCreator = new TestGraphCreator();
-        return testGraphCreator.getNorthSouthCrossingGraph();
+    @Test
+    public void countNorthSouthCrossingInOneLayer() {
+        graph = testGraphCreator.getNorthSouthCrossingGraph();
+        int amountOfCrossings = whenCountingNorthSouthCrossingsInLayer(0);
+        assertThat(amountOfCrossings, is(1));
+    }
+
+    private int whenCountingNorthSouthCrossingsInLayer(final int layerIndex) {
+        return new CrossingCounter(graph).countNorthSouthPortCrossings(layerIndex);
     }
 
     @Test
     public void countCrossingsWithMultipleEdgesBetweenSameNodes() {
-        LGraph graph = givenGraphWithMultipleEdgesBetweenSameNodes();
-        int amountOfCrossings = whenCountingAmountOfCrossings(graph);
+        graph = testGraphCreator.getMultipleEdgesBetweenSameNodesGraph();
+        int amountOfCrossings = whenCountingAllCrossings();
         assertThat(amountOfCrossings, is(4));
-    }
-
-    private LGraph givenGraphWithMultipleEdgesBetweenSameNodes() {
-        TestGraphCreator testGraphCreator = new TestGraphCreator();
-        return testGraphCreator.getMultipleEdgesBetweenSameNodesGraph();
     }
 
     @Test
     public void countCrossingsInEmptyGraph() {
-        LGraph graph = givenEmptyGraph();
-        int amountOfCrossings = whenCountingAmountOfCrossings(graph);
+        graph = testGraphCreator.getEmptyGraph();
+        int amountOfCrossings = whenCountingAllCrossings();
         assertThat(amountOfCrossings, is(0));
     }
 
-    private LGraph givenEmptyGraph() {
-        TestGraphCreator testGraphCreator = new TestGraphCreator();
-        return testGraphCreator.getEmptyGraph();
+    private int whenCountingAllCrossings() {
+        return new CrossingCounter(graph).countAllCrossingsInGraph();
     }
 }
