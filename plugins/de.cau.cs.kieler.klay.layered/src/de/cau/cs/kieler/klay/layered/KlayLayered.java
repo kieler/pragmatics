@@ -26,6 +26,7 @@ import com.google.common.collect.Maps;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.kiml.labels.LabelLayoutOptions;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
@@ -430,6 +431,10 @@ public final class KlayLayered {
             .addBeforePhase4(IntermediateProcessorStrategy.NODE_MARGIN_CALCULATOR)
             .addBeforePhase4(IntermediateProcessorStrategy.LABEL_AND_NODE_SIZE_PROCESSOR)
             .addBeforePhase5(IntermediateProcessorStrategy.LAYER_SIZE_AND_GRAPH_HEIGHT_CALCULATOR);
+    /** intermediate processors for label management. */
+    private static final IntermediateProcessingConfiguration LABEL_MANAGEMENT_ADDITIONS =
+        IntermediateProcessingConfiguration.createEmpty()
+            .addBeforePhase3(IntermediateProcessorStrategy.LABEL_MANAGEMENT_PROCESSOR);
     /** the minimal spacing between edges, so edges won't overlap. */
     private static final float MIN_EDGE_SPACING = 2.0f;
 
@@ -682,6 +687,11 @@ public final class KlayLayered {
         // Basic configuration
         IntermediateProcessingConfiguration configuration =
                 IntermediateProcessingConfiguration.fromExisting(BASELINE_PROCESSING_CONFIGURATION);
+        
+        // If the graph has a label size modifier, add label management additions
+        if (lgraph.getProperty(LabelLayoutOptions.LABEL_SIZE_MODIFIER) != null) {
+            configuration.addAll(LABEL_MANAGEMENT_ADDITIONS);
+        }
 
         // port side processor, put to first slot only if requested and routing is orthogonal
         if (lgraph.getProperty(Properties.FEEDBACK_EDGES)) {

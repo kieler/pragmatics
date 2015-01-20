@@ -65,6 +65,8 @@ public enum IntermediateProcessorStrategy {
     PORT_SIDE_PROCESSOR,
     /** Tries to switch the label dummy nodes which the middle most dummy node of a long edge. */
     LABEL_DUMMY_SWITCHER,
+    /** Tries to shorten labels where necessary. */
+    LABEL_MANAGEMENT_PROCESSOR,
     /** Takes a layered graph and inserts dummy nodes for edges connected to inverted ports. */
     INVERTED_PORT_PROCESSOR,
     /** Takes care of self loops. */
@@ -199,6 +201,9 @@ public enum IntermediateProcessorStrategy {
             
         case LABEL_DUMMY_SWITCHER:
             return new LabelDummySwitcher();
+            
+        case LABEL_MANAGEMENT_PROCESSOR:
+            return new LabelManagementProcessor();
             
         case LABEL_SIDE_SELECTOR:
             return new LabelSideSelector();

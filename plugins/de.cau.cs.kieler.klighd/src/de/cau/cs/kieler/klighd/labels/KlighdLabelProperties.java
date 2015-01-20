@@ -11,30 +11,29 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.labels;
+package de.cau.cs.kieler.klighd.labels;
 
 import de.cau.cs.kieler.core.properties.Property;
 
 /**
- * Layout options specifically concerned with label management.
+ * KLighD-specific properties related to label management.
  * 
  * @author cds
  */
-public final class LabelLayoutOptions {
+public final class KlighdLabelProperties {
     
     /**
-     * A label size modifier can be attached to center edge labels. The modifier can be called
-     * by layout algorithms to modify labels that are too wide to try and shorten them to a given
-     * target width.
+     * String to override a label's original text with. If this property is set to a non-null value,
+     * that value is used as the label's text instead of the original text set in the view model.
      */
-    public static final Property<ILabelSizeModifier<?>> LABEL_SIZE_MODIFIER =
-            new Property<ILabelSizeModifier<?>>("de.cau.cs.kieler.labelSizeModifier", null);
+    public static final Property<String> LABEL_TEXT_OVERRIDE = new Property<String>(
+            "klighd.labels.modifiedLabelText", null);
     
     
     /**
      * Not supposed to be instantiated.
      */
-    private LabelLayoutOptions() {
+    private KlighdLabelProperties() {
         throw new IllegalStateException("not supposed to be instantiated.");
     }
     
