@@ -33,14 +33,16 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
  *
  */
 public class TwoNodeInLayerEdgeCrossingCounter implements TwoNodeCrossingCounter {
+    private final DoublyLinkedHashSet<LEdge> edges;
+    private final LNode[] layer;
     private int upperLowerCrossings;
     private int lowerUpperCrossings;
     private LNode lowerNode;
     private LNode upperNode;
-    private final LNode[] layer;
     private int[] nodePositions;
 
     public TwoNodeInLayerEdgeCrossingCounter(final LNode[] nodeOrder) {
+        edges = new DoublyLinkedHashSet<LEdge>();
         layer = nodeOrder;
         initializeLayer();
     }
@@ -95,9 +97,9 @@ public class TwoNodeInLayerEdgeCrossingCounter implements TwoNodeCrossingCounter
     }
 
     private int countOnSide(final PortSide portSide) {
-        DoublyLinkedHashSet<LEdge> edges = new DoublyLinkedHashSet<LEdge>();
-        int crossings = 0;
+        edges.clear();
         int upperInBetweenLayerEdges = 0;
+        int crossings = 0;
 
         Iterator<LPort> iterator = getPortIterator(upperNode, portSide);
         while (iterator.hasNext()) {
@@ -145,6 +147,7 @@ public class TwoNodeInLayerEdgeCrossingCounter implements TwoNodeCrossingCounter
                 }
             }
         }
+
         return crossings;
     }
 
