@@ -80,14 +80,14 @@ abstract class CounterSwitchDecider extends SwitchDecider {
      * 
      * @return amoutn of crossings.
      */
-    protected abstract int calculateCrossings();
+    abstract int calculateCrossings();
 
     /**
      * Returns Crossing Counter.
      * 
      * @return the crossing counter
      */
-    protected CrossingCounter getCrossingCounter() {
+    CrossingCounter getCrossingCounter() {
         return crossingCounter;
     }
 
@@ -96,7 +96,7 @@ abstract class CounterSwitchDecider extends SwitchDecider {
      * 
      * @return the free layer
      */
-    protected LNode[] getFreeLayer() {
+    LNode[] getFreeLayer() {
         return freeLayer;
     }
 

@@ -15,21 +15,22 @@ import org.junit.runners.Parameterized.Parameters;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.SwitchDecider;
-import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.SwitchDeciderException;
-import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.SwitchDeciderFactory;
 import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.SwitchDecider.SweepDirection;
 import de.cau.cs.kieler.klay.layered.properties.GreedyType;
 
 @RunWith(Parameterized.class)
-public class OneSidedSwitchDeciderTest {
+public class SwitchDeciderTest {
+
+    private final GreedyType greedyType;
 
     @Parameters(name = "{0}")
     public static Iterable<Object[]> greedyTypes() {
-        return Arrays.asList(new Object[][] { { GreedyType.ONE_SIDED_COUNTER } });
+        return Arrays.asList(new Object[][] { { GreedyType.ONE_SIDED_COUNTER, },
+                { GreedyType.TWO_SIDED_COUNTER } });
     }
 
-    public OneSidedSwitchDeciderTest(final GreedyType greedyType) {
+    public SwitchDeciderTest(final GreedyType greedyType) {
+        this.greedyType = greedyType;
         factory = new SwitchDeciderFactory(greedyType);
     }
 
@@ -39,7 +40,7 @@ public class OneSidedSwitchDeciderTest {
     private final SwitchDeciderFactory factory;
 
     @Test
-    public void crossFormed() throws SwitchDeciderException {
+    public void crossFormed() {
         graph = creator.getCrossFormedGraph();
 
         decider = givenDeciderForFreeLayer(1, SweepDirection.FORWARD);
@@ -50,7 +51,7 @@ public class OneSidedSwitchDeciderTest {
     }
 
     @Test
-    public void oneNode() throws SwitchDeciderException {
+    public void oneNode() {
         graph = creator.getOneNodeGraph();
 
         decider = givenDeciderForFreeLayer(0, SweepDirection.FORWARD);
@@ -69,11 +70,10 @@ public class OneSidedSwitchDeciderTest {
      *   --*
      * </pre>
      * 
-     * @throws SwitchDeciderException
-     *             *
+     * @ * *
      */
     @Test
-    public void inLayerSwitchable() throws SwitchDeciderException {
+    public void inLayerSwitchable() {
         graph = creator.getInLayerEdgesGraph();
 
         decider = givenDeciderForFreeLayer(1, SweepDirection.FORWARD);
@@ -89,21 +89,19 @@ public class OneSidedSwitchDeciderTest {
 
         try {
             decider = givenDeciderForFreeLayer(0, SweepDirection.FORWARD);
-            fail("Did not cause SwitchDecider exception");
-        } catch (SwitchDeciderException e) {
-            assertThat(e.getMessage(), is("0 is out of graph bounds for graph."));
+            fail("Did not cause AssertionError");
+        } catch (AssertionError e) {
         }
 
         try {
             decider = givenDeciderForFreeLayer(0, SweepDirection.BACKWARD);
-            fail("Did not cause SwitchDecider exception");
-        } catch (SwitchDeciderException e) {
-            assertThat(e.getMessage(), is("0 is out of graph bounds for graph."));
+            fail("Did not cause AssertionError");
+        } catch (AssertionError e) {
         }
     }
 
     @Test
-    public void multipleEdgesBetweenSameNodes() throws SwitchDeciderException {
+    public void multipleEdgesBetweenSameNodes() {
         graph = creator.getMultipleEdgesBetweenSameNodesGraph();
 
         decider = givenDeciderForFreeLayer(1, SweepDirection.FORWARD);
@@ -114,7 +112,7 @@ public class OneSidedSwitchDeciderTest {
     }
 
     @Test
-    public void selfLoops() throws SwitchDeciderException {
+    public void selfLoops() {
         graph = creator.getCrossWithManySelfLoopsGraph();
 
         decider = givenDeciderForFreeLayer(1, SweepDirection.FORWARD);
@@ -138,10 +136,10 @@ public class OneSidedSwitchDeciderTest {
      * 
      * The one-side decider should switch north-south port crossings in the center layer.
      * 
-     * @throws SwitchDeciderException
+     * @
      */
     @Test
-    public void northSouthPortCrossing() throws SwitchDeciderException {
+    public void northSouthPortCrossing() {
         graph = creator.getThreeLayerNorthSouthCrossingGraph();
 
         decider = givenDeciderForFreeLayer(1, SweepDirection.FORWARD);
@@ -149,7 +147,7 @@ public class OneSidedSwitchDeciderTest {
     }
 
     @Test
-    public void moreComplex() throws SwitchDeciderException {
+    public void moreComplex() {
         graph = creator.getMoreComplexThreeLayerGraph();
 
         decider = givenDeciderForFreeLayer(1, SweepDirection.FORWARD);
@@ -170,15 +168,19 @@ public class OneSidedSwitchDeciderTest {
     }
 
     @Test
-    public void switchOnlyTrueForOneSided() throws SwitchDeciderException {
+    public void switchOnlyTrueForOneSided() {
         graph = creator.getSwitchOnlyOneSided();
 
         decider = givenDeciderForFreeLayer(1, SweepDirection.FORWARD);
-        assertThat(decider.doesSwitchReduceCrossings(0, 1), is(true));
+        if (greedyType.isOneSided()) {
+            assertThat(decider.doesSwitchReduceCrossings(0, 1), is(true));
+        } else {
+            assertThat(decider.doesSwitchReduceCrossings(0, 1), is(false));
+        }
     }
 
     private SwitchDecider givenDeciderForFreeLayer(final int freeLayerIndex,
-            final SweepDirection direction) throws SwitchDeciderException {
+            final SweepDirection direction) {
         LNode[][] currentNodeOrder = getCurrentNodeOrder();
         return factory.getNewOneSidedSwitchDecider(freeLayerIndex, currentNodeOrder, direction);
     }

@@ -47,7 +47,8 @@ class CrossingCounter {
 
     /**
      * Constructs and initializes a cross counter. Initialization iterates through all ports.
-     *
+     * TODO-alan: consider asking for switch
+     * 
      * @param layeredGraph
      *            The layered graph
      */

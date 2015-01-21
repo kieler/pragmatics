@@ -26,10 +26,14 @@ class SwitchDeciderFactory {
     }
 
     public SwitchDecider getNewOneSidedSwitchDecider(final int freeLayerIndex,
-            final LNode[][] currentNodeOrder, final SweepDirection forward) {
+            final LNode[][] currentNodeOrder, final SweepDirection direction) {
         switch (greedyType) {
         case ONE_SIDED_COUNTER:
-            return new CounterOneSidedSwitchDecider(freeLayerIndex, currentNodeOrder, forward);
+            return new CounterOneSidedSwitchDecider(freeLayerIndex, currentNodeOrder, direction);
+        case TWO_SIDED_COUNTER:
+            return new CounterTwoSidedSwitchDecider(freeLayerIndex, currentNodeOrder);
+        default:
+            break;
         }
         throw new UnsupportedOperationException("Not implemented yet");
     }
