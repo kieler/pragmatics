@@ -49,12 +49,10 @@ class TwoNodeInLayerEdgeCrossingCounter {
 
     private void initializeLayer() {
         nodePositions = new int[layer.length];
-        int id = -1;
         for (int i = 0; i < layer.length; i++) {
-            boolean idsAreAscending = id == layer[i].id - 1;
-            assert idsAreAscending : "node.id's must be numbered in ascending order";
-            id = layer[i].id;
-            nodePositions[i] = id;
+            boolean idsAreAscending = layer[i].id == i;
+            assert idsAreAscending : "Each layers node.id's must be numbered ascendingly starting at 0";
+            nodePositions[i] = layer[i].id;
         }
     }
 
@@ -72,7 +70,10 @@ class TwoNodeInLayerEdgeCrossingCounter {
         nodePositions[secondNode.id] = temp;
     }
 
-    public void countCrossings(final LNode upper, final LNode lower) {
+    public void countCrossings(final int upperNodeIndex, final int lowerNodeIndex) {
+        LNode upper = layer[upperNodeIndex];
+        LNode lower = layer[lowerNodeIndex];
+
         upperLowerCrossings = countForOrder(upper, lower);
         nodesSwitched(upper, lower);
         lowerUpperCrossings = countForOrder(lower, upper);

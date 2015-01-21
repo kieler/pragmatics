@@ -1,7 +1,6 @@
 package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Before;
@@ -11,14 +10,11 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.TwoNodeInLayerEdgeCrossingCounter;
 
 public class TwoNodeInLayerEdgeCrossingCounterTest {
     private TestGraphCreator creator;
     private LGraph graph;
     private TwoNodeInLayerEdgeCrossingCounter counter;
-    private LNode lowerNode;
-    private LNode upperNode;
     private Layer layer;
     private int lowerUpperCrossings;
     private int upperLowerCrossings;
@@ -104,10 +100,7 @@ public class TwoNodeInLayerEdgeCrossingCounterTest {
         initCrossingCounterForLayerIndex(1);
         switchOrderAndNotifyCounter(1, 2);
 
-        upperNode = nodeOrder[0];
-        lowerNode = nodeOrder[1];
-
-        countCrossings();
+        countCrossings(0, 1);
 
         assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
         assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
@@ -128,10 +121,7 @@ public class TwoNodeInLayerEdgeCrossingCounterTest {
         initCrossingCounterForLayerIndex(1);
         switchOrderAndNotifyCounter(0, 1);
 
-        upperNode = nodeOrder[0];
-        lowerNode = nodeOrder[1];
-
-        countCrossings();
+        countCrossings(0, 1);
 
         assertThat("upperLowerCrossings", upperLowerCrossings, is(2));
         assertThat("lowerUpperCrossings", lowerUpperCrossings, is(1));
@@ -150,10 +140,7 @@ public class TwoNodeInLayerEdgeCrossingCounterTest {
 
         switchOrderAndNotifyCounter(0, 1);
 
-        upperNode = nodeOrder[0];
-        lowerNode = nodeOrder[1];
-
-        countCrossings();
+        countCrossings(0, 1);
 
         assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
         assertThat("lowerUpperCrossings", lowerUpperCrossings, is(2));
@@ -257,16 +244,11 @@ public class TwoNodeInLayerEdgeCrossingCounterTest {
 
         initCrossingCounterForLayerIndex(layerIndex);
 
-        upperNode = nodeOrder[upperNodeIndex];
-        lowerNode = nodeOrder[lowerNodeIndex];
-
-        countCrossings();
+        countCrossings(upperNodeIndex, lowerNodeIndex);
     }
 
-    private void countCrossings() {
-        assertNotNull(upperNode);
-        assertNotNull(lowerNode);
-        counter.countCrossings(upperNode, lowerNode);
+    private void countCrossings(final int upperNodeIndex, final int lowerNodeIndex) {
+        counter.countCrossings(upperNodeIndex, lowerNodeIndex);
         upperLowerCrossings = counter.getUpperLowerCrossings();
         lowerUpperCrossings = counter.getLowerUpperCrossings();
     }
