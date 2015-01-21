@@ -27,7 +27,8 @@ public class SwitchDeciderTest {
     @Parameters(name = "{0}")
     public static Iterable<Object[]> greedyTypes() {
         return Arrays.asList(new Object[][] { { GreedyType.ONE_SIDED_COUNTER, },
-                { GreedyType.TWO_SIDED_COUNTER }, { GreedyType.ONE_SIDED_CROSSING_MATRIX } });
+                { GreedyType.TWO_SIDED_COUNTER }, { GreedyType.ONE_SIDED_CROSSING_MATRIX },
+                { GreedyType.TWO_SIDED_CROSSING_MATRIX } });
     }
 
     public SwitchDeciderTest(final GreedyType greedyType) {
@@ -137,7 +138,7 @@ public class SwitchDeciderTest {
      * 
      * The one-side decider should switch north-south port crossings in the center layer.
      * 
-     * @
+     * 
      */
     @Ignore
     // TODO-alan implement for crossing matrix counters

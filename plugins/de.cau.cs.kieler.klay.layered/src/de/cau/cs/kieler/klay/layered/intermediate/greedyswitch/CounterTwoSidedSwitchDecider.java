@@ -43,12 +43,4 @@ class CounterTwoSidedSwitchDecider extends CounterSwitchDecider {
                 super.getFreeLayer());
     }
 
-    private boolean freeLayerIsNotLastLayer() {
-        return super.getFreeLayerIndex() != super.getGraph().length - 1;
-    }
-
-    private boolean freeLayerIsNotFirstLayer() {
-        return getFreeLayerIndex() != 0;
-    }
-
 }

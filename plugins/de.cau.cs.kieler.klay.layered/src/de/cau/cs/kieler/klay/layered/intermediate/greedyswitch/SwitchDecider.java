@@ -59,7 +59,7 @@ abstract class SwitchDecider {
      * @throws SwitchDeciderException
      *             on faulty input
      */
-    protected SwitchDecider(final int freeLayerIndex, final LNode[][] graph) {
+    SwitchDecider(final int freeLayerIndex, final LNode[][] graph) {
         assert graph.length > freeLayerIndex;
         this.freeLayerIndex = freeLayerIndex;
         this.graph = graph;
@@ -89,7 +89,7 @@ abstract class SwitchDecider {
      *            the index of the lower node, assuming a left-right order.
      * @return whether true if constraints should prevent switching.
      */
-    protected boolean constraintsPreventSwitch(final LNode[] freeLayer, final int upperNodeIndex,
+    boolean constraintsPreventSwitch(final LNode[] freeLayer, final int upperNodeIndex,
             final int lowerNodeIndex) {
         LNode upperNode = freeLayer[upperNodeIndex];
         LNode lowerNode = freeLayer[lowerNodeIndex];
@@ -117,7 +117,7 @@ abstract class SwitchDecider {
      *            index of the layer.
      * @return Layer as LNode array for given index.
      */
-    protected LNode[] getLayerForIndex(final int layerIndex) {
+    LNode[] getLayerForIndex(final int layerIndex) {
         return graph[layerIndex];
     }
 
@@ -126,7 +126,7 @@ abstract class SwitchDecider {
      * 
      * @return the node matrix
      */
-    protected LNode[][] getGraph() {
+    LNode[][] getGraph() {
         return graph;
     }
 
@@ -135,7 +135,23 @@ abstract class SwitchDecider {
      * 
      * @return the index of the free layer.
      */
-    protected int getFreeLayerIndex() {
+    int getFreeLayerIndex() {
         return freeLayerIndex;
+    }
+
+    int getFreeLayerLength() {
+        return graph[freeLayerIndex].length;
+    }
+
+    LNode getFreeLayerNode(final int i) {
+        return graph[freeLayerIndex][i];
+    }
+
+    boolean freeLayerIsNotFirstLayer() {
+        return getFreeLayerIndex() != 0;
+    }
+
+    boolean freeLayerIsNotLastLayer() {
+        return getFreeLayerIndex() != getGraph().length - 1;
     }
 }

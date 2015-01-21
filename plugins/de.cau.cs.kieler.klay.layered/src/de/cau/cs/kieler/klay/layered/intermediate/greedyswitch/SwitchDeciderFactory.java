@@ -35,6 +35,8 @@ class SwitchDeciderFactory {
         case ONE_SIDED_CROSSING_MATRIX:
             return new CrossingMatrixOneSidedSwitchDecider(freeLayerIndex, currentNodeOrder,
                     direction);
+        case TWO_SIDED_CROSSING_MATRIX:
+            return new CrossingMatrixTwoSidedSwitchDecider(freeLayerIndex, currentNodeOrder);
         default:
             break;
         }
