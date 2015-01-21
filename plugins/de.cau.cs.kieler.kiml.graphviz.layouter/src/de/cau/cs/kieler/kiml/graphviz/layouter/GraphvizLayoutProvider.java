@@ -59,7 +59,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 public class GraphvizLayoutProvider extends AbstractLayoutProvider {
 
     /** preference constant for determining whether to reuse a single Graphviz process. */
-    public static final String PREF_GRAPHVIZ_REUSE_PROCESS = "graphviz.restartProcess";
+    public static final String PREF_GRAPHVIZ_REUSE_PROCESS = "graphviz.reuseProcess";
     /** default setting of above defined preference. */
     public static final boolean REUSE_PROCESS_DEFAULT = true;
 
