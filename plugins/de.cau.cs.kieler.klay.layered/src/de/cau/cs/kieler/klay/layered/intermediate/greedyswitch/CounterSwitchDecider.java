@@ -36,8 +36,7 @@ abstract class CounterSwitchDecider extends SwitchDecider {
      * @throws SwitchDeciderException
      *             on faulty input.
      */
-    public CounterSwitchDecider(final int freeLayerIndex, final LNode[][] graph)
-            throws SwitchDeciderException {
+    public CounterSwitchDecider(final int freeLayerIndex, final LNode[][] graph) {
         super(freeLayerIndex, graph);
         freeLayer = getLayerForIndex(freeLayerIndex);
         crossingCounter = new CrossingCounter(freeLayer[0].getGraph());

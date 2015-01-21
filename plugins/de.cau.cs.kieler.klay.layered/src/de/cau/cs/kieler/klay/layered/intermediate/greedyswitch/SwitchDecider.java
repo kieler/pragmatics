@@ -59,11 +59,8 @@ abstract class SwitchDecider {
      * @throws SwitchDeciderException
      *             on faulty input
      */
-    protected SwitchDecider(final int freeLayerIndex, final LNode[][] graph)
-            throws SwitchDeciderException {
-        if (graph.length - 1 < freeLayerIndex) {
-            throw new SwitchDeciderException(freeLayerIndex + " is out of graph bounds for graph.");
-        }
+    protected SwitchDecider(final int freeLayerIndex, final LNode[][] graph) {
+        assert graph.length > freeLayerIndex;
         this.freeLayerIndex = freeLayerIndex;
         this.graph = graph;
     }

@@ -26,8 +26,7 @@ class SwitchDeciderFactory {
     }
 
     public SwitchDecider getNewOneSidedSwitchDecider(final int freeLayerIndex,
-            final LNode[][] currentNodeOrder, final SweepDirection forward)
-            throws SwitchDeciderException {
+            final LNode[][] currentNodeOrder, final SweepDirection forward) {
         switch (greedyType) {
         case ONE_SIDED_COUNTER:
             return new CounterOneSidedSwitchDecider(freeLayerIndex, currentNodeOrder, forward);

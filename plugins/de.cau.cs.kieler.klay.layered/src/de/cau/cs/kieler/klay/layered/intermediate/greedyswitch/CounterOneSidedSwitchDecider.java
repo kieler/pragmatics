@@ -36,7 +36,7 @@ class CounterOneSidedSwitchDecider extends CounterSwitchDecider {
      *             on faulty input
      */
     public CounterOneSidedSwitchDecider(final int freeLayerIndex, final LNode[][] graph,
-            final SweepDirection direction) throws SwitchDeciderException {
+            final SweepDirection direction) {
         super(freeLayerIndex, graph);
         this.direction = direction;
     }
