@@ -90,7 +90,7 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
         prefListener = new IPropertyChangeListener() {
             
             public void propertyChange(final PropertyChangeEvent event) {
-               if (event.getProperty().equals(PREF_GRAPHVIZ_REUSE_PROCESS)) {
+               if (PREF_GRAPHVIZ_REUSE_PROCESS.equals(event.getProperty())) {
                    reuseProcess = ((Boolean) event.getNewValue()).booleanValue();
                }
             }
@@ -118,11 +118,15 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
      */
     @Override
     public void dispose() {
-        final IPreferenceStore store = GraphvizLayouterPlugin.getDefault().getPreferenceStore();
-        if (prefListener != null) {
-            store.removePropertyChangeListener(prefListener);
-            prefListener = null;
+        final GraphvizLayouterPlugin plugin = GraphvizLayouterPlugin.getDefault();
+
+        // since during platform shutdown plug-ins will be stopped in reverse order of their dependencies
+        //  'plugin' is likely to be 'null' when kiml.service calls 'dispose()' on the layout managers
+        // in this case removing the preference change listener should be obsolete ;-)
+        if (plugin != null && prefListener != null) {
+            plugin.getPreferenceStore().removePropertyChangeListener(prefListener);
         }
+        prefListener = null;
 
         graphvizTool.cleanup(Cleanup.STOP);
     }
