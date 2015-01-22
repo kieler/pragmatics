@@ -42,7 +42,7 @@ class OnDemandCrossingMatrixOneSidedSwitchDecider extends OnDemandCrossingMatrix
         case WEST:
             super.getTwoLayerCrossCounter().countWesternEdgeCrossings(upperNode, lowerNode);
         }
-        super.getCrossingMatrixEntriesFromCounter(upperNode, lowerNode);
+        super.setCrossingMatrixEntriesFromCounter(upperNode, lowerNode);
     }
 
 }

@@ -301,6 +301,31 @@ public class TestGraphCreator {
 
     /**
      * <pre>
+     * *--*  *
+     *     \/
+     *     /\
+     * *--*  *
+     * </pre>
+     * 
+     * @return
+     */
+    public LGraph getSwitchOnlyEastOneSided() {
+        Layer[] layers = makeLayers(3);
+
+        LNode[] leftNodes = addNodesToLayer(2, layers[0]);
+        LNode[] middleNodes = addNodesToLayer(2, layers[1]);
+        LNode[] rightNodes = addNodesToLayer(2, layers[2]);
+
+        addEastWestEdgeFromTo(leftNodes[0], middleNodes[0]);
+        addEastWestEdgeFromTo(leftNodes[1], middleNodes[1]);
+        addEastWestEdgeFromTo(middleNodes[0], rightNodes[1]);
+        addEastWestEdgeFromTo(middleNodes[1], rightNodes[0]);
+
+        return graph;
+    }
+
+    /**
+     * <pre>
      * ____   _____
      * |  |---|   |
      * |  |---|   |

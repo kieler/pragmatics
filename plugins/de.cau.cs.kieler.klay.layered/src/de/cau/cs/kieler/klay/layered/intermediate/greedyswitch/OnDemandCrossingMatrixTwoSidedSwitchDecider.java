@@ -35,13 +35,8 @@ class OnDemandCrossingMatrixTwoSidedSwitchDecider extends OnDemandCrossingMatrix
      */
     @Override
     void fillCrossingMatrix(final LNode upperNode, final LNode lowerNode) {
-        if (super.freeLayerIsNotFirstLayer()) {
-            super.getTwoLayerCrossCounter().countWesternEdgeCrossings(upperNode, lowerNode);
-        }
-        if (super.freeLayerIsNotLastLayer()) {
-            super.getTwoLayerCrossCounter().countEasternEdgeCrossings(upperNode, lowerNode);
-        }
-        super.getCrossingMatrixEntriesFromCounter(upperNode, lowerNode);
+        super.getTwoLayerCrossCounter().countBothSideCrossings(upperNode, lowerNode);
+        super.setCrossingMatrixEntriesFromCounter(upperNode, lowerNode);
     }
 
 }

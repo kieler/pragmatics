@@ -184,6 +184,18 @@ public class SwitchDeciderTest {
         }
     }
 
+    @Test
+    public void switchOnlyTrueForOneSidedEasternSide() {
+        graph = creator.getSwitchOnlyEastOneSided();
+
+        decider = givenDeciderForFreeLayer(1, CrossingCountSide.EAST);
+        if (greedyType.isOneSided()) {
+            assertThat(decider.doesSwitchReduceCrossings(0, 1), is(true));
+        } else {
+            assertThat(decider.doesSwitchReduceCrossings(0, 1), is(false));
+        }
+    }
+
     private SwitchDecider givenDeciderForFreeLayer(final int freeLayerIndex,
             final CrossingCountSide direction) {
         LNode[][] currentNodeOrder = getCurrentNodeOrder();
