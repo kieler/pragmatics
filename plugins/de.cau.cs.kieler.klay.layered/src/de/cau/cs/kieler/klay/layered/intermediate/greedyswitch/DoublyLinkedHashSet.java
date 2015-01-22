@@ -17,8 +17,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * TODO-alan.
+ * 
  * @author alan
- *
+ * @param <T>
+ *            Type in set.
  */
 class DoublyLinkedHashSet<T> {
     @Override
@@ -136,6 +139,13 @@ class DoublyLinkedHashSet<T> {
         entry.hasPrevious = false;
     }
 
+    /**
+     * Private inner class for linking entries. Currently only can be used to count. Could easily be
+     * upgraded to also have Pointers to next and previous entries.
+     * 
+     * @author alan
+     *
+     */
     private static final class Entry {
         private boolean hasNext = false;
         private boolean hasPrevious = false;

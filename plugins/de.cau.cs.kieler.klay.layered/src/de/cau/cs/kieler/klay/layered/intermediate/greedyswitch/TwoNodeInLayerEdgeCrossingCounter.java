@@ -197,7 +197,7 @@ class TwoNodeInLayerEdgeCrossingCounter {
     private Iterator<LPort> getPortIterator(final LNode node, final PortSide side) {
         Iterator<LPort> iterator;
         if (side == PortSide.WEST) {
-            Deque<LPort> ports = (Deque<LPort>) node.getPorts(); // TODO-alan
+            Deque<LPort> ports = (Deque<LPort>) node.getPorts(); // TODO-alan. :-(
             iterator = ports.descendingIterator();
             iterator = Iterators.filter(iterator, LPort.WEST_PREDICATE);
         } else {

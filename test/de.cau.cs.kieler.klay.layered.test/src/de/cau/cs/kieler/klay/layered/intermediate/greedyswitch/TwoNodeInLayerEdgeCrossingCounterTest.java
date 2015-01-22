@@ -15,7 +15,6 @@ public class TwoNodeInLayerEdgeCrossingCounterTest {
     private TestGraphCreator creator;
     private LGraph graph;
     private TwoNodeInLayerEdgeCrossingCounter counter;
-    private Layer layer;
     private int lowerUpperCrossings;
     private int upperLowerCrossings;
     private LNode[] nodeOrder;
@@ -260,7 +259,6 @@ public class TwoNodeInLayerEdgeCrossingCounterTest {
      * @param layerIndex
      */
     private void initCrossingCounterForLayerIndex(final int layerIndex) {
-        layer = graph.getLayers().get(layerIndex);
         LNode[][] currentOrder = creator.getCurrentOrder();
         nodeOrder = currentOrder[layerIndex];
         numberIdsAscendinglyIn(nodeOrder);

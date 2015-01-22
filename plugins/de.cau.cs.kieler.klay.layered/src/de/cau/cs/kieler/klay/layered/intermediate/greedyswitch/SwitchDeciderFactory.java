@@ -17,6 +17,12 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.SwitchDecider.CrossingCountSide;
 import de.cau.cs.kieler.klay.layered.properties.GreedyType;
 
+/**
+ * TODO-alan.
+ * 
+ * @author alan
+ *
+ */
 class SwitchDeciderFactory {
 
     private final GreedyType greedyType;
