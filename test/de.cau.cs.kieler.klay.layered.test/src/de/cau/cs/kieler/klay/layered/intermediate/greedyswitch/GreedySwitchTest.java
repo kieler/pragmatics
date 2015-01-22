@@ -21,7 +21,6 @@ import de.cau.cs.kieler.klay.layered.properties.GreedyType;
 
 @RunWith(Parameterized.class)
 public class GreedySwitchTest {
-
     private final TestGraphCreator creator = new TestGraphCreator();
     private LGraph graph;
     private final GreedySwitchProcessor greedySwitcher;
@@ -39,22 +38,28 @@ public class GreedySwitchTest {
         return Arrays.asList(new Object[][] { { GreedyType.ONE_SIDED_COUNTER, },
                 { GreedyType.ONE_SIDED_CROSSING_MATRIX },
                 { GreedyType.ONE_SIDED_ON_DEMAND_CROSSING_MATRIX },
-        // { GreedyType.TWO_SIDED_COUNTER },
-        // { GreedyType.TWO_SIDED_CROSSING_MATRIX },
-        // { GreedyType.TWO_SIDED_ON_DEMAND_CROSSING_MATRIX }
-                });
+                { GreedyType.TWO_SIDED_COUNTER }, { GreedyType.TWO_SIDED_CROSSING_MATRIX },
+                { GreedyType.TWO_SIDED_ON_DEMAND_CROSSING_MATRIX } });
     }
 
     @Test
     public void shouldSwitchCross() {
         graph = creator.getCrossFormedGraph();
 
-        int layerIndex = 1;
-        List<LNode> expectedOrder = switchOrderOfNodesInLayer(0, 1, layerIndex);
+        List<LNode> expectedOrderLayerOne;
+        List<LNode> expectedOrderLayerTwo;
+        if (greedyType.isOneSided()) {
+            expectedOrderLayerOne = getNodesInLayer(0);
+            expectedOrderLayerTwo = switchOrderOfNodesInLayer(0, 1, 1);
+        } else {
+            expectedOrderLayerOne = switchOrderOfNodesInLayer(0, 1, 0);
+            expectedOrderLayerTwo = getNodesInLayer(1);
+        }
 
         greedySwitcher.process(graph, monitor);
 
-        assertThat(getNodesInLayer(layerIndex), is(expectedOrder));
+        assertThat("Layer one", getNodesInLayer(0), is(expectedOrderLayerOne));
+        assertThat("Layer two", getNodesInLayer(1), is(expectedOrderLayerTwo));
     }
 
     @Test
@@ -93,24 +98,40 @@ public class GreedySwitchTest {
     public void multipleEdgesBetweenSameNodes() {
         graph = creator.getMultipleEdgesBetweenSameNodesGraph();
 
-        int layerIndex = 1;
-        List<LNode> expectedOrder = switchOrderOfNodesInLayer(0, 1, layerIndex);
+        List<LNode> expectedOrderLayerOne;
+        List<LNode> expectedOrderLayerTwo;
+        if (greedyType.isOneSided()) {
+            expectedOrderLayerOne = getNodesInLayer(0);
+            expectedOrderLayerTwo = switchOrderOfNodesInLayer(0, 1, 1);
+        } else {
+            expectedOrderLayerOne = switchOrderOfNodesInLayer(0, 1, 0);
+            expectedOrderLayerTwo = getNodesInLayer(1);
+        }
 
         greedySwitcher.process(graph, monitor);
 
-        assertThat(getNodesInLayer(layerIndex), is(expectedOrder));
+        assertThat("Layer one", getNodesInLayer(0), is(expectedOrderLayerOne));
+        assertThat("Layer two", getNodesInLayer(1), is(expectedOrderLayerTwo));
     }
 
     @Test
     public void selfLoops() {
         graph = creator.getCrossWithManySelfLoopsGraph();
 
-        int layerIndex = 1;
-        List<LNode> expectedOrder = switchOrderOfNodesInLayer(0, 1, layerIndex);
+        List<LNode> expectedOrderLayerOne;
+        List<LNode> expectedOrderLayerTwo;
+        if (greedyType.isOneSided()) {
+            expectedOrderLayerOne = getNodesInLayer(0);
+            expectedOrderLayerTwo = switchOrderOfNodesInLayer(0, 1, 1);
+        } else {
+            expectedOrderLayerOne = switchOrderOfNodesInLayer(0, 1, 0);
+            expectedOrderLayerTwo = getNodesInLayer(1);
+        }
 
         greedySwitcher.process(graph, monitor);
 
-        assertThat(getNodesInLayer(layerIndex), is(expectedOrder));
+        assertThat("Layer one", getNodesInLayer(0), is(expectedOrderLayerOne));
+        assertThat("Layer two", getNodesInLayer(1), is(expectedOrderLayerTwo));
     }
 
     /**
@@ -155,18 +176,23 @@ public class GreedySwitchTest {
     @Test
     public void moreComplex() {
         graph = creator.getMoreComplexThreeLayerGraph();
-        List<LNode> expectedOrderLayerOne = null;
-        List<LNode> expectedOrderLayerThree = null;
+
+        List<LNode> expectedOrderLayerOne;
+        List<LNode> expectedOrderLayerTwo;
+        List<LNode> expectedOrderLayerThree;
         if (greedyType.isOneSided()) {
             expectedOrderLayerOne = switchOrderOfNodesInLayer(1, 2, 0);
+            expectedOrderLayerTwo = getNodesInLayer(1);
             expectedOrderLayerThree = switchOrderOfNodesInLayer(0, 1, 2);
-            greedySwitcher.process(graph, monitor);
-            assertThat("Layer one", getNodesInLayer(0), is(expectedOrderLayerOne));
-            assertThat("Layer three", getNodesInLayer(2), is(expectedOrderLayerThree));
         } else {
-            fail();
+            expectedOrderLayerOne = switchOrderOfNodesInLayer(1, 2, 0);
+            expectedOrderLayerTwo = getNodesInLayer(1);
+            expectedOrderLayerThree = switchOrderOfNodesInLayer(0, 1, 2);
         }
-
+        greedySwitcher.process(graph, monitor);
+        assertThat("Layer one", getNodesInLayer(0), is(expectedOrderLayerOne));
+        assertThat("Layer two", getNodesInLayer(1), is(expectedOrderLayerTwo));
+        assertThat("Layer three", getNodesInLayer(2), is(expectedOrderLayerThree));
     }
 
     @Test

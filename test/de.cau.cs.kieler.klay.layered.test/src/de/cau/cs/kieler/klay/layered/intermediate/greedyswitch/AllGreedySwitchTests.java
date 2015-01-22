@@ -6,7 +6,8 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({ CrossingCounterTest.class, DoublyLinkeHashSetTest.class, SwitchDeciderTest.class,
-        TwoNodeInLayerEdgeCrossingCounterTest.class, TwoNodeTwoLayerCrossingCounterTest.class })
+        TwoNodeInLayerEdgeCrossingCounterTest.class, TwoNodeTwoLayerCrossingCounterTest.class,
+        GreedySwitchTest.class })
 public class AllGreedySwitchTests {
 
 }

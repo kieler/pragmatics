@@ -124,29 +124,8 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
      *
      */
     private void layerSweepConsiderThreeLayers() {
-        // SwitchDecider switchDecider;
-        // boolean improved;
-        // do {
-        // improved = false;
-        // switchDecider =
-        // switchDeciderFactory.getNewOneSidedSwitchDecider(amountOfLayers, currentNodeOrder, null);
-        // improved |= continueSwitchingUntilNoImprovementInLayer(1, switchDecider);
-        // for (int freeLayerIndex = 0; freeLayerIndex < amountOfLayers; freeLayerIndex++) {
-        // switchDecider =
-        // switchDeciderFactory.getNewOneSidedSwitchDecider(freeLayerIndex,
-        // currentNodeOrder);
-        // improved |=
-        // continueSwitchingUntilNoImprovementInLayer(freeLayerIndex, switchDecider);
-        // }
-        // switchDecider =
-        // switchDeciderFactory.getNewOneSidedSwitchDecider(graph.getAmountOfLayers() - 2,
-        // currentNodeOrder);
-        // improved |=
-        // continueSwitchingUntilNoImprovementInLayer(graph.getAmountOfLayers() - 2,
-        // switchDecider);
-        // } while (improved);
-        //
-        // graph.setBestOrderAsGraph();
+        sweepBackwardAndForwardInGraph();
+        setAsGraph(currentNodeOrder);
     }
 
     /**
@@ -172,14 +151,14 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
         } while (tempCrossingsInGraph > crossingsInGraph && crossingsInGraph > 0);
         setCurrentNodeOrderAsBestNodeOrder();
 
-        setBestOrderAsGraph();
+        setAsGraph(currentNodeOrder);
     }
 
-    private void setBestOrderAsGraph() {
+    private void setAsGraph(final LNode[][] nodeOrder) {
         ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
         while (layerIter.hasNext()) {
             Layer layer = layerIter.next();
-            LNode[] nodes = bestNodeOrder[layerIter.previousIndex()];
+            LNode[] nodes = nodeOrder[layerIter.previousIndex()];
             ListIterator<LNode> nodeIter = layer.getNodes().listIterator();
             while (nodeIter.hasNext()) {
                 nodeIter.next();
@@ -202,14 +181,14 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
 
     private void sweepBackwardAndForwardInGraph() {
         int layerCount = currentNodeOrder.length;
-        for (int freeLayerIndex = 1; freeLayerIndex < layerCount; freeLayerIndex++) {
+        for (int freeLayerIndex = 0; freeLayerIndex < layerCount; freeLayerIndex++) {
             SwitchDecider switchDecider =
                     switchDeciderFactory.getNewSwitchDecider(freeLayerIndex, currentNodeOrder,
                             CrossingCountSide.WEST);
             continueSwitchingUntilNoImprovementInLayer(freeLayerIndex, switchDecider);
         }
 
-        for (int freeLayerIndex = layerCount - 2; freeLayerIndex >= 0; freeLayerIndex--) {
+        for (int freeLayerIndex = layerCount - 1; freeLayerIndex >= 0; freeLayerIndex--) {
             SwitchDecider switchDecider =
                     switchDeciderFactory.getNewSwitchDecider(freeLayerIndex, currentNodeOrder,
                             CrossingCountSide.EAST);
