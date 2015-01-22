@@ -32,8 +32,7 @@ abstract class CrossingMatrixSwitchDecider extends SwitchDecider {
         super(freeLayerIndex, graph);
         initializeNodeIds(graph);
         inBetweenLayerCrossingCounter = new TwoNodeTwoLayerCrossingCounter(graph, freeLayerIndex);
-        LNode[] freeLayer = super.getLayerForIndex(super.getFreeLayerIndex()); // TODO-alan
-        inLayerCounter = new TwoNodeInLayerEdgeCrossingCounter(freeLayer);
+        inLayerCounter = new TwoNodeInLayerEdgeCrossingCounter(super.getFreeLayer());
     }
 
     private void initializeNodeIds(final LNode[][] graph) {
@@ -45,28 +44,26 @@ abstract class CrossingMatrixSwitchDecider extends SwitchDecider {
         }
     }
 
-    TwoNodeInLayerEdgeCrossingCounter getInLayerCounter() {
-        return inLayerCounter;
-    }
-
     /**
      * {@inheritDoc}
      */
     @Override
     public boolean doesSwitchReduceCrossings(final int upperNodeIndex, final int lowerNodeIndex) {
+        inLayerCounter.countCrossings(upperNodeIndex, lowerNodeIndex);
 
-        getInLayerCounter().countCrossings(upperNodeIndex, lowerNodeIndex);
+        LNode upperNode = super.getFreeLayer()[upperNodeIndex];
+        LNode lowerNode = super.getFreeLayer()[lowerNodeIndex];
         int upperLowerCrossings =
-                getCrossingMatrixEntry(upperNodeIndex, lowerNodeIndex)
-                        + getInLayerCounter().getUpperLowerCrossings();
+                getCrossingMatrixEntry(upperNode, lowerNode)
+                        + inLayerCounter.getUpperLowerCrossings();
         int lowerUpperCrossings =
-                getCrossingMatrixEntry(upperNodeIndex, lowerNodeIndex)
-                        + getInLayerCounter().getLowerUpperCrossings();
+                getCrossingMatrixEntry(lowerNode, upperNode)
+                        + inLayerCounter.getLowerUpperCrossings();
 
         return upperLowerCrossings > lowerUpperCrossings;
     }
 
-    abstract int getCrossingMatrixEntry(final int upperNodeIndex, final int lowerNodeIndex);
+    abstract int getCrossingMatrixEntry(final LNode upperNode, final LNode lowerNode);
 
     TwoNodeTwoLayerCrossingCounter getTwoLayerCrossCounter() {
         return inBetweenLayerCrossingCounter;

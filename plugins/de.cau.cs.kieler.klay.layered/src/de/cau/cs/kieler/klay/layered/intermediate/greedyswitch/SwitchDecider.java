@@ -68,7 +68,7 @@ abstract class SwitchDecider {
     }
 
     /**
-     * Calculate if switch reduces crossings.
+     * Calculate if switch reduces crossings. TODO-alan explain INDEX
      * 
      * @param upperNodeIndex
      *            the upper node assuming left-right alignment.

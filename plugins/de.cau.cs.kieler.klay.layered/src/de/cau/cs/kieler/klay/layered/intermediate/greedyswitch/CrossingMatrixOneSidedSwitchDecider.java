@@ -4,33 +4,27 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 
 class CrossingMatrixOneSidedSwitchDecider extends CompleteCrossingMatrixSwitchDecider {
 
-    private final CrossingCountSide direction;
+    private final CrossingCountSide side;
 
     CrossingMatrixOneSidedSwitchDecider(final int freeLayerIndex, final LNode[][] graph,
-            final CrossingCountSide direction) {
+            final CrossingCountSide side) {
         super(freeLayerIndex, graph);
-        this.direction = direction;
+        this.side = side;
 
         calculateCrossingMatrix();
     }
 
     private void calculateCrossingMatrix() {
-        switch (direction) {
+        switch (side) {
         case WEST:
             if (freeLayerIsNotFirstLayer()) {
-                super.calculateOneSidedCrossingMatrix(direction);
+                super.calculateOneSidedCrossingMatrix(side);
             }
             break;
         case EAST:
             if (freeLayerIsNotLastLayer()) {
-                super.calculateOneSidedCrossingMatrix(direction);
+                super.calculateOneSidedCrossingMatrix(side);
             }
         }
     }
-
-    @Override
-    int getCrossingMatrixEntry(final int upperNodeIndex, final int lowerNodeIndex) {
-        return crossingMatrix[upperNodeIndex][lowerNodeIndex];
-    }
-
 }

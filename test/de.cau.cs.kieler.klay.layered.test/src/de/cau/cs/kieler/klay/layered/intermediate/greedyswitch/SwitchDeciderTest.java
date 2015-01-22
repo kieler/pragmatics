@@ -16,7 +16,7 @@ import org.junit.runners.Parameterized.Parameters;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.SwitchDecider.SweepDirection;
+import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.SwitchDecider.CrossingCountSide;
 import de.cau.cs.kieler.klay.layered.properties.GreedyType;
 
 @RunWith(Parameterized.class)
@@ -28,7 +28,8 @@ public class SwitchDeciderTest {
     public static Iterable<Object[]> greedyTypes() {
         return Arrays.asList(new Object[][] { { GreedyType.ONE_SIDED_COUNTER, },
                 { GreedyType.TWO_SIDED_COUNTER }, { GreedyType.ONE_SIDED_CROSSING_MATRIX },
-                { GreedyType.TWO_SIDED_CROSSING_MATRIX } });
+                { GreedyType.TWO_SIDED_CROSSING_MATRIX },
+                { GreedyType.ONE_SIDED_ON_DEMAND_CROSSING_MATRIX } });
     }
 
     public SwitchDeciderTest(final GreedyType greedyType) {
@@ -45,10 +46,10 @@ public class SwitchDeciderTest {
     public void crossFormed() {
         graph = creator.getCrossFormedGraph();
 
-        decider = givenDeciderForFreeLayer(1, SweepDirection.FORWARD);
+        decider = givenDeciderForFreeLayer(1, CrossingCountSide.WEST);
         assertThat(decider.doesSwitchReduceCrossings(0, 1), is(true));
 
-        decider = givenDeciderForFreeLayer(0, SweepDirection.BACKWARD);
+        decider = givenDeciderForFreeLayer(0, CrossingCountSide.EAST);
         assertThat(decider.doesSwitchReduceCrossings(0, 1), is(true));
     }
 
@@ -56,10 +57,10 @@ public class SwitchDeciderTest {
     public void oneNode() {
         graph = creator.getOneNodeGraph();
 
-        decider = givenDeciderForFreeLayer(0, SweepDirection.FORWARD);
+        decider = givenDeciderForFreeLayer(0, CrossingCountSide.WEST);
         assertThat(decider.doesSwitchReduceCrossings(0, 0), is(false));
 
-        decider = givenDeciderForFreeLayer(0, SweepDirection.BACKWARD);
+        decider = givenDeciderForFreeLayer(0, CrossingCountSide.EAST);
         assertThat(decider.doesSwitchReduceCrossings(0, 0), is(false));
     }
 
@@ -78,10 +79,10 @@ public class SwitchDeciderTest {
     public void inLayerSwitchable() {
         graph = creator.getInLayerEdgesGraph();
 
-        decider = givenDeciderForFreeLayer(1, SweepDirection.FORWARD);
+        decider = givenDeciderForFreeLayer(1, CrossingCountSide.WEST);
         assertThat(decider.doesSwitchReduceCrossings(0, 1), is(true));
 
-        decider = givenDeciderForFreeLayer(1, SweepDirection.BACKWARD);
+        decider = givenDeciderForFreeLayer(1, CrossingCountSide.EAST);
         assertThat(decider.doesSwitchReduceCrossings(0, 1), is(true));
     }
 
@@ -90,13 +91,13 @@ public class SwitchDeciderTest {
         graph = creator.getEmptyGraph();
 
         try {
-            decider = givenDeciderForFreeLayer(0, SweepDirection.FORWARD);
+            decider = givenDeciderForFreeLayer(0, CrossingCountSide.WEST);
             fail("Did not cause AssertionError");
         } catch (AssertionError e) {
         }
 
         try {
-            decider = givenDeciderForFreeLayer(0, SweepDirection.BACKWARD);
+            decider = givenDeciderForFreeLayer(0, CrossingCountSide.EAST);
             fail("Did not cause AssertionError");
         } catch (AssertionError e) {
         }
@@ -106,10 +107,10 @@ public class SwitchDeciderTest {
     public void multipleEdgesBetweenSameNodes() {
         graph = creator.getMultipleEdgesBetweenSameNodesGraph();
 
-        decider = givenDeciderForFreeLayer(1, SweepDirection.FORWARD);
+        decider = givenDeciderForFreeLayer(1, CrossingCountSide.WEST);
         assertThat(decider.doesSwitchReduceCrossings(0, 1), is(true));
 
-        decider = givenDeciderForFreeLayer(0, SweepDirection.BACKWARD);
+        decider = givenDeciderForFreeLayer(0, CrossingCountSide.EAST);
         assertThat(decider.doesSwitchReduceCrossings(0, 1), is(true));
     }
 
@@ -117,10 +118,10 @@ public class SwitchDeciderTest {
     public void selfLoops() {
         graph = creator.getCrossWithManySelfLoopsGraph();
 
-        decider = givenDeciderForFreeLayer(1, SweepDirection.FORWARD);
+        decider = givenDeciderForFreeLayer(1, CrossingCountSide.WEST);
         assertThat(decider.doesSwitchReduceCrossings(0, 1), is(true));
 
-        decider = givenDeciderForFreeLayer(0, SweepDirection.BACKWARD);
+        decider = givenDeciderForFreeLayer(0, CrossingCountSide.EAST);
         assertThat(decider.doesSwitchReduceCrossings(0, 1), is(true));
     }
 
@@ -145,7 +146,7 @@ public class SwitchDeciderTest {
     public void northSouthPortCrossing() {
         graph = creator.getThreeLayerNorthSouthCrossingGraph();
 
-        decider = givenDeciderForFreeLayer(1, SweepDirection.FORWARD);
+        decider = givenDeciderForFreeLayer(1, CrossingCountSide.WEST);
         assertThat(decider.doesSwitchReduceCrossings(0, 1), is(true));
     }
 
@@ -153,18 +154,18 @@ public class SwitchDeciderTest {
     public void moreComplex() {
         graph = creator.getMoreComplexThreeLayerGraph();
 
-        decider = givenDeciderForFreeLayer(1, SweepDirection.FORWARD);
+        decider = givenDeciderForFreeLayer(1, CrossingCountSide.WEST);
         assertThat(decider.doesSwitchReduceCrossings(0, 1), is(false));
 
-        decider = givenDeciderForFreeLayer(2, SweepDirection.FORWARD);
+        decider = givenDeciderForFreeLayer(2, CrossingCountSide.WEST);
         assertThat(decider.doesSwitchReduceCrossings(0, 1), is(true));
 
         assertThat(decider.doesSwitchReduceCrossings(1, 2), is(false));
 
-        decider = givenDeciderForFreeLayer(1, SweepDirection.BACKWARD);
+        decider = givenDeciderForFreeLayer(1, CrossingCountSide.EAST);
         assertThat(decider.doesSwitchReduceCrossings(0, 1), is(false));
 
-        decider = givenDeciderForFreeLayer(0, SweepDirection.BACKWARD);
+        decider = givenDeciderForFreeLayer(0, CrossingCountSide.EAST);
         assertThat(decider.doesSwitchReduceCrossings(0, 1), is(false));
 
         assertThat(decider.doesSwitchReduceCrossings(1, 2), is(true));
@@ -174,7 +175,7 @@ public class SwitchDeciderTest {
     public void switchOnlyTrueForOneSided() {
         graph = creator.getSwitchOnlyOneSided();
 
-        decider = givenDeciderForFreeLayer(1, SweepDirection.FORWARD);
+        decider = givenDeciderForFreeLayer(1, CrossingCountSide.WEST);
         if (greedyType.isOneSided()) {
             assertThat(decider.doesSwitchReduceCrossings(0, 1), is(true));
         } else {
@@ -183,9 +184,9 @@ public class SwitchDeciderTest {
     }
 
     private SwitchDecider givenDeciderForFreeLayer(final int freeLayerIndex,
-            final SweepDirection direction) {
+            final CrossingCountSide direction) {
         LNode[][] currentNodeOrder = getCurrentNodeOrder();
-        return factory.getNewOneSidedSwitchDecider(freeLayerIndex, currentNodeOrder, direction);
+        return factory.getNewSwitchDecider(freeLayerIndex, currentNodeOrder, direction);
     }
 
     private LNode[][] getCurrentNodeOrder() {
