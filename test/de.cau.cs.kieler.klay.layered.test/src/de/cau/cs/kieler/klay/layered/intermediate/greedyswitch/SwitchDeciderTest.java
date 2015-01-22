@@ -29,7 +29,8 @@ public class SwitchDeciderTest {
         return Arrays.asList(new Object[][] { { GreedyType.ONE_SIDED_COUNTER, },
                 { GreedyType.TWO_SIDED_COUNTER }, { GreedyType.ONE_SIDED_CROSSING_MATRIX },
                 { GreedyType.TWO_SIDED_CROSSING_MATRIX },
-                { GreedyType.ONE_SIDED_ON_DEMAND_CROSSING_MATRIX } });
+                { GreedyType.ONE_SIDED_ON_DEMAND_CROSSING_MATRIX },
+                { GreedyType.TWO_SIDED_ON_DEMAND_CROSSING_MATRIX } });
     }
 
     public SwitchDeciderTest(final GreedyType greedyType) {

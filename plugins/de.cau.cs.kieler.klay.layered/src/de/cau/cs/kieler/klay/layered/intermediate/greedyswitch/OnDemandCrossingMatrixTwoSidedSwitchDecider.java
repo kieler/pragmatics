@@ -19,28 +19,27 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
  * @author alan
  *
  */
-class OnDemandCrossingMatrixOneSidedSwitchDecider extends OnDemandCrossingMatrixSwitchDecider {
-
-    private final CrossingCountSide direction;
+class OnDemandCrossingMatrixTwoSidedSwitchDecider extends OnDemandCrossingMatrixSwitchDecider {
 
     /**
      * @param freeLayerIndex
      * @param graph
      */
-    public OnDemandCrossingMatrixOneSidedSwitchDecider(final int freeLayerIndex,
-            final LNode[][] graph, final CrossingCountSide direction) {
+    public OnDemandCrossingMatrixTwoSidedSwitchDecider(final int freeLayerIndex,
+            final LNode[][] graph) {
         super(freeLayerIndex, graph);
-        this.direction = direction;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     void fillCrossingMatrix(final LNode upperNode, final LNode lowerNode) {
-        switch (direction) {
-        case EAST:
-            super.getTwoLayerCrossCounter().countEasternEdgeCrossings(upperNode, lowerNode);
-            break;
-        case WEST:
+        if (super.freeLayerIsNotFirstLayer()) {
             super.getTwoLayerCrossCounter().countWesternEdgeCrossings(upperNode, lowerNode);
+        }
+        if (super.freeLayerIsNotLastLayer()) {
+            super.getTwoLayerCrossCounter().countEasternEdgeCrossings(upperNode, lowerNode);
         }
         super.getCrossingMatrixEntriesFromCounter(upperNode, lowerNode);
     }

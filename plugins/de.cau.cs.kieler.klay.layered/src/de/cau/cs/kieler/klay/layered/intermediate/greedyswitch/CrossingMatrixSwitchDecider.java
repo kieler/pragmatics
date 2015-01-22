@@ -65,7 +65,7 @@ abstract class CrossingMatrixSwitchDecider extends SwitchDecider {
 
     abstract int getCrossingMatrixEntry(final LNode upperNode, final LNode lowerNode);
 
-    TwoNodeTwoLayerCrossingCounter getTwoLayerCrossCounter() {
+    protected TwoNodeTwoLayerCrossingCounter getTwoLayerCrossCounter() {
         return inBetweenLayerCrossingCounter;
     }
 

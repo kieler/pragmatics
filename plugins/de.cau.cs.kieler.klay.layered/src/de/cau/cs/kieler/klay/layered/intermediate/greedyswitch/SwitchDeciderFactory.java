@@ -48,8 +48,8 @@ class SwitchDeciderFactory {
         case ONE_SIDED_ON_DEMAND_CROSSING_MATRIX:
             return new OnDemandCrossingMatrixOneSidedSwitchDecider(freeLayerIndex,
                     currentNodeOrder, direction);
-        default:
-            break;
+        case TWO_SIDED_ON_DEMAND_CROSSING_MATRIX:
+            return new OnDemandCrossingMatrixTwoSidedSwitchDecider(freeLayerIndex, currentNodeOrder);
         }
         throw new UnsupportedOperationException("Not implemented yet");
     }

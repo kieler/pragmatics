@@ -24,8 +24,11 @@ abstract class OnDemandCrossingMatrixSwitchDecider extends CrossingMatrixSwitchD
 
     abstract void fillCrossingMatrix(LNode upperNode, LNode lowerNode);
 
-    int[][] getCrossingMatrix() {
-        return crossingMatrix;
+    protected void getCrossingMatrixEntriesFromCounter(final LNode upperNode, final LNode lowerNode) {
+        crossingMatrix[upperNode.id][lowerNode.id] +=
+                super.getTwoLayerCrossCounter().getUpperLowerCrossings();
+        crossingMatrix[lowerNode.id][upperNode.id] +=
+                super.getTwoLayerCrossCounter().getLowerUpperCrossings();
     }
 
 }
