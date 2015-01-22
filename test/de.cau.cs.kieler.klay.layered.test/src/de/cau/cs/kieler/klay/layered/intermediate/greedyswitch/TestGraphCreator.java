@@ -222,6 +222,8 @@ public class TestGraphCreator {
      * * * --*
      * </pre>
      * 
+     * Port order not fixed.
+     * 
      * @return
      */
     public LGraph getMoreComplexThreeLayerGraph() {
