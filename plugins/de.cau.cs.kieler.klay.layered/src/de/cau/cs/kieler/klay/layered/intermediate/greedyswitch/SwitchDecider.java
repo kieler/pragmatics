@@ -34,18 +34,19 @@ import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 abstract class SwitchDecider {
     private final LNode[][] graph;
     private final int freeLayerIndex;
+    private final LNode[] freeLayer;
 
     /**
-     * SweepDirection enum for one sided switchers.
+     * CrossingCountSide enum for one sided switchers.
      * 
      * @author alan
      *
      */
-    public static enum SweepDirection {
+    public static enum CrossingCountSide {
         /** Sweep across graph from left to right. */
-        FORWARD,
+        WEST,
         /** Sweep across graph from right to left. */
-        BACKWARD
+        EAST
     }
 
     /**
@@ -62,6 +63,7 @@ abstract class SwitchDecider {
     SwitchDecider(final int freeLayerIndex, final LNode[][] graph) {
         assert graph.length > freeLayerIndex;
         this.freeLayerIndex = freeLayerIndex;
+        freeLayer = graph[freeLayerIndex];
         this.graph = graph;
     }
 
@@ -139,19 +141,15 @@ abstract class SwitchDecider {
         return freeLayerIndex;
     }
 
-    int getFreeLayerLength() {
-        return graph[freeLayerIndex].length;
-    }
-
-    LNode getFreeLayerNode(final int i) {
-        return graph[freeLayerIndex][i];
-    }
-
     boolean freeLayerIsNotFirstLayer() {
         return getFreeLayerIndex() != 0;
     }
 
     boolean freeLayerIsNotLastLayer() {
         return getFreeLayerIndex() != getGraph().length - 1;
+    }
+
+    protected LNode[] getFreeLayer() {
+        return freeLayer;
     }
 }

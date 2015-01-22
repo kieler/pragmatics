@@ -7,7 +7,7 @@ import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.SwitchDecider.SweepDirection;
+import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.SwitchDecider.CrossingCountSide;
 import de.cau.cs.kieler.klay.layered.properties.GreedyType;
 
 public class GreedySwitchProcessor implements ILayoutProcessor {
@@ -179,15 +179,15 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
         int layerCount = getAmountOfLayers();
         for (int freeLayerIndex = 1; freeLayerIndex < layerCount; freeLayerIndex++) {
             SwitchDecider switchDecider =
-                    switchDeciderFactory.getNewOneSidedSwitchDecider(freeLayerIndex,
-                            currentNodeOrder, SweepDirection.FORWARD);
+                    switchDeciderFactory.getNewSwitchDecider(freeLayerIndex,
+                            currentNodeOrder, CrossingCountSide.WEST);
             continueSwitchingUntilNoImprovementInLayer(freeLayerIndex, switchDecider);
         }
 
         for (int freeLayerIndex = layerCount - 2; freeLayerIndex >= 0; freeLayerIndex--) {
             SwitchDecider switchDecider =
-                    switchDeciderFactory.getNewOneSidedSwitchDecider(freeLayerIndex,
-                            currentNodeOrder, SweepDirection.BACKWARD);
+                    switchDeciderFactory.getNewSwitchDecider(freeLayerIndex,
+                            currentNodeOrder, CrossingCountSide.EAST);
             continueSwitchingUntilNoImprovementInLayer(freeLayerIndex, switchDecider);
         }
     }

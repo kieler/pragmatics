@@ -91,13 +91,4 @@ abstract class CounterSwitchDecider extends SwitchDecider {
         return crossingCounter;
     }
 
-    /**
-     * Gets the layer in which to switch.
-     * 
-     * @return the free layer
-     */
-    LNode[] getFreeLayer() {
-        return freeLayer;
-    }
-
 }

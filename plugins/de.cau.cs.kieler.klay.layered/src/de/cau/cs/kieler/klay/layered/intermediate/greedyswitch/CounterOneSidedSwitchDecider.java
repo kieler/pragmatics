@@ -21,7 +21,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
  * @author alan
  */
 class CounterOneSidedSwitchDecider extends CounterSwitchDecider {
-    private final SweepDirection direction;
+    private final CrossingCountSide direction;
 
     /**
      * Constructs CounterOneSidedSwitchDecider. TODO-alan
@@ -36,7 +36,7 @@ class CounterOneSidedSwitchDecider extends CounterSwitchDecider {
      *             on faulty input
      */
     public CounterOneSidedSwitchDecider(final int freeLayerIndex, final LNode[][] graph,
-            final SweepDirection direction) {
+            final CrossingCountSide direction) {
         super(freeLayerIndex, graph);
         this.direction = direction;
     }
@@ -45,7 +45,7 @@ class CounterOneSidedSwitchDecider extends CounterSwitchDecider {
     protected int calculateCrossings() {
         int crossings = 0;
         switch (direction) {
-        case FORWARD:
+        case WEST:
             if (freeLayerIsNotFirstLayer()) {
                 LNode[] fixedLayer = getLayerForIndex(getFreeLayerIndex() - 1);
                 crossings =
@@ -53,7 +53,7 @@ class CounterOneSidedSwitchDecider extends CounterSwitchDecider {
                                 super.getFreeLayer());
             }
             break;
-        case BACKWARD:
+        case EAST:
             if (freeLayerIsNotLastLayer()) {
                 LNode[] fixedLayer = getLayerForIndex(getFreeLayerIndex() + 1);
                 crossings =

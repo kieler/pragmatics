@@ -2,24 +2,19 @@ package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 
-public class CrossingMatrixTwoSidedSwitchDecider extends CrossingMatrixSwitchDecider {
+public class CrossingMatrixTwoSidedSwitchDecider extends CompleteCrossingMatrixSwitchDecider {
 
     protected CrossingMatrixTwoSidedSwitchDecider(final int freeLayerIndex, final LNode[][] graph) {
         super(freeLayerIndex, graph);
+        calculateCrossingMatrixEntries();
     }
 
-    @Override
-    void calculateCrossingMatrixEntries(final int upperNodeIndex, final int lowerNodeIndex) {
-        boolean isFreeLayerFirstLayer = super.getFreeLayerIndex() == 0;
-        boolean isFreeLayerLastLayer = super.getFreeLayerIndex() == super.getGraph().length - 1;
-        if (isFreeLayerFirstLayer) {
-            super.addEasternCrossingsToMatrix();
-        } else if (isFreeLayerLastLayer) {
-            super.addWesternCrossingsToMatrix();
-        } else {
-            super.addEasternCrossingsToMatrix();
-            super.addWesternCrossingsToMatrix();
+    private void calculateCrossingMatrixEntries() {
+        if (super.freeLayerIsNotLastLayer()) {
+            super.calculateOneSidedCrossingMatrix(CrossingCountSide.EAST);
+        }
+        if (super.freeLayerIsNotFirstLayer()) {
+            super.calculateOneSidedCrossingMatrix(CrossingCountSide.WEST);
         }
     }
-
 }

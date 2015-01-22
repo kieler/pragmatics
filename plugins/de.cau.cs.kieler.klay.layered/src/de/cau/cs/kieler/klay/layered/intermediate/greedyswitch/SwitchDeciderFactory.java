@@ -14,7 +14,7 @@
 package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
 import de.cau.cs.kieler.klay.layered.graph.LNode;
-import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.SwitchDecider.SweepDirection;
+import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.SwitchDecider.CrossingCountSide;
 import de.cau.cs.kieler.klay.layered.properties.GreedyType;
 
 class SwitchDeciderFactory {
@@ -25,8 +25,16 @@ class SwitchDeciderFactory {
         this.greedyType = greedyType;
     }
 
-    public SwitchDecider getNewOneSidedSwitchDecider(final int freeLayerIndex,
-            final LNode[][] currentNodeOrder, final SweepDirection direction) {
+    /**
+     * 
+     * @param freeLayerIndex
+     * @param currentNodeOrder
+     * @param direction
+     *            if applicable
+     * @return
+     */
+    public SwitchDecider getNewSwitchDecider(final int freeLayerIndex,
+            final LNode[][] currentNodeOrder, final CrossingCountSide direction) {
         switch (greedyType) {
         case ONE_SIDED_COUNTER:
             return new CounterOneSidedSwitchDecider(freeLayerIndex, currentNodeOrder, direction);
@@ -37,6 +45,9 @@ class SwitchDeciderFactory {
                     direction);
         case TWO_SIDED_CROSSING_MATRIX:
             return new CrossingMatrixTwoSidedSwitchDecider(freeLayerIndex, currentNodeOrder);
+        case ONE_SIDED_ON_DEMAND_CROSSING_MATRIX:
+            return new OnDemandCrossingMatrixOneSidedSwitchDecider(freeLayerIndex,
+                    currentNodeOrder, direction);
         default:
             break;
         }

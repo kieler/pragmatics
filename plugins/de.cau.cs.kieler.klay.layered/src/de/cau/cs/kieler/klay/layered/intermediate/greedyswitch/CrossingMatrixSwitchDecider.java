@@ -21,8 +21,8 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
  */
 abstract class CrossingMatrixSwitchDecider extends SwitchDecider {
 
-    private final int[][] crossingMatrix;
     private final TwoNodeInLayerEdgeCrossingCounter inLayerCounter;
+    private final TwoNodeTwoLayerCrossingCounter inBetweenLayerCrossingCounter;
 
     /**
      * @param freeLayerIndex
@@ -30,8 +30,8 @@ abstract class CrossingMatrixSwitchDecider extends SwitchDecider {
      */
     public CrossingMatrixSwitchDecider(final int freeLayerIndex, final LNode[][] graph) {
         super(freeLayerIndex, graph);
-        crossingMatrix = new int[super.getFreeLayerLength()][super.getFreeLayerLength()];
         initializeNodeIds(graph);
+        inBetweenLayerCrossingCounter = new TwoNodeTwoLayerCrossingCounter(graph, freeLayerIndex);
         LNode[] freeLayer = super.getLayerForIndex(super.getFreeLayerIndex()); // TODO-alan
         inLayerCounter = new TwoNodeInLayerEdgeCrossingCounter(freeLayer);
     }
@@ -45,34 +45,6 @@ abstract class CrossingMatrixSwitchDecider extends SwitchDecider {
         }
     }
 
-    private void calculateOneSidedCrossingMatrix(final boolean isFixedEastOfFree) {
-        int matrixSize = super.getFreeLayerLength();
-        for (int i = 0; i < matrixSize; i++) {
-            for (int j = i + 1; j < matrixSize; j++) {
-                TwoNodeTwoLayerCrossingCounter crossCounter =
-                        new TwoNodeTwoLayerCrossingCounter(super.getGraph(),
-                                super.getFreeLayerIndex());
-                LNode upperNode = super.getFreeLayerNode(i);
-                LNode lowerNode = super.getFreeLayerNode(j);
-                if (isFixedEastOfFree) {
-                    crossCounter.countWesternEdgeCrossings(upperNode, lowerNode);
-                } else {
-                    crossCounter.countEasternEdgeCrossings(upperNode, lowerNode);
-                }
-                crossingMatrix[i][j] += crossCounter.getUpperLowerCrossings();
-                crossingMatrix[j][i] += crossCounter.getLowerUpperCrossings();
-            }
-        }
-    }
-
-    void addWesternCrossingsToMatrix() {
-        calculateOneSidedCrossingMatrix(true);
-    }
-
-    void addEasternCrossingsToMatrix() {
-        calculateOneSidedCrossingMatrix(false);
-    }
-
     TwoNodeInLayerEdgeCrossingCounter getInLayerCounter() {
         return inLayerCounter;
     }
@@ -83,18 +55,21 @@ abstract class CrossingMatrixSwitchDecider extends SwitchDecider {
     @Override
     public boolean doesSwitchReduceCrossings(final int upperNodeIndex, final int lowerNodeIndex) {
 
-        calculateCrossingMatrixEntries(upperNodeIndex, lowerNodeIndex);
-
         getInLayerCounter().countCrossings(upperNodeIndex, lowerNodeIndex);
         int upperLowerCrossings =
-                crossingMatrix[upperNodeIndex][lowerNodeIndex]
+                getCrossingMatrixEntry(upperNodeIndex, lowerNodeIndex)
                         + getInLayerCounter().getUpperLowerCrossings();
         int lowerUpperCrossings =
-                crossingMatrix[lowerNodeIndex][upperNodeIndex]
+                getCrossingMatrixEntry(upperNodeIndex, lowerNodeIndex)
                         + getInLayerCounter().getLowerUpperCrossings();
 
         return upperLowerCrossings > lowerUpperCrossings;
     }
 
-    abstract void calculateCrossingMatrixEntries(final int upperNodeIndex, final int lowerNodeIndex);
+    abstract int getCrossingMatrixEntry(final int upperNodeIndex, final int lowerNodeIndex);
+
+    TwoNodeTwoLayerCrossingCounter getTwoLayerCrossCounter() {
+        return inBetweenLayerCrossingCounter;
+    }
+
 }
