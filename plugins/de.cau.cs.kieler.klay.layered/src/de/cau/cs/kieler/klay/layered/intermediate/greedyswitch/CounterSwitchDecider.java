@@ -39,13 +39,13 @@ abstract class CounterSwitchDecider extends SwitchDecider {
     public CounterSwitchDecider(final int freeLayerIndex, final LNode[][] graph) {
         super(freeLayerIndex, graph);
         freeLayer = getLayerForIndex(freeLayerIndex);
-        crossingCounter = new CrossingCounter(freeLayer[0].getGraph());
+        crossingCounter = new CrossingCounter(super.getGraph());
     }
 
     @Override
     public boolean doesSwitchReduceCrossings(final int upperNodeIndex, final int lowerNodeIndex) {
 
-        if (super.constraintsPreventSwitch(freeLayer, upperNodeIndex, lowerNodeIndex)) {
+        if (super.constraintsPreventSwitch(upperNodeIndex, lowerNodeIndex)) {
             return false;
         }
 

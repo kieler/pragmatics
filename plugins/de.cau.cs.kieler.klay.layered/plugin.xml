@@ -127,6 +127,9 @@
                option="de.cau.cs.kieler.klay.layered.crossMin">
          </knownOption>
          <knownOption
+               option="de.cau.cs.kieler.klay.layered.greedySwitch">
+         </knownOption>
+         <knownOption
                option="de.cau.cs.kieler.klay.layered.mergeEdges">
          </knownOption>
          <knownOption
@@ -206,6 +209,16 @@
             description="Strategy for crossing minimization."
             id="de.cau.cs.kieler.klay.layered.crossMin"
             name="Crossing Minimization"
+            type="enum"
+            variance="0">
+      </layoutOption>
+      <layoutOption
+      		appliesTo="parents"
+            class="de.cau.cs.kieler.klay.layered.properties.GreedyType"
+            default="TWO_SIDED_ON_DEMAND_CROSSING_MATRIX"
+            description="Greedy Switch strategy for crossing minimization."
+            id="de.cau.cs.kieler.klay.layered.greedySwitch"
+            name="Greedy Switch Crossing Minimization"
             type="enum"
             variance="0">
       </layoutOption>

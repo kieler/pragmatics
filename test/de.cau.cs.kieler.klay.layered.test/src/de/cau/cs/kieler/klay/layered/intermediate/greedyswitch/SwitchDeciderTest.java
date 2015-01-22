@@ -196,6 +196,14 @@ public class SwitchDeciderTest {
         }
     }
 
+    @Test
+    public void constraintsPreventSwitch() {
+        graph = creator.getCrossFormedGraphWithConstraintsInSecondLayer();
+
+        decider = givenDeciderForFreeLayer(1, CrossingCountSide.WEST);
+        assertThat(decider.doesSwitchReduceCrossings(0, 1), is(false));
+    }
+
     private SwitchDecider givenDeciderForFreeLayer(final int freeLayerIndex,
             final CrossingCountSide direction) {
         LNode[][] currentNodeOrder = getCurrentNodeOrder();

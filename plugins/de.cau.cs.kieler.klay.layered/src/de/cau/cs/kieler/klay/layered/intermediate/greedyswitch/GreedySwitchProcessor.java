@@ -22,6 +22,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.SwitchDecider.CrossingCountSide;
 import de.cau.cs.kieler.klay.layered.properties.GreedyType;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * TODO-alan.
@@ -36,34 +37,16 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
     private LNode[][] bestNodeOrder;
     private LGraph layeredGraph;
     private CrossingCounter crossingCounter;
-    private final GreedyType switchDeciderType;
-
-    /**
-     * TODO-alan.
-     * 
-     * @param deciderType
-     *            TODO-alan.
-     */
-    public GreedySwitchProcessor(final GreedyType deciderType) {
-        switchDeciderType = deciderType;
-        switchDeciderFactory = new SwitchDeciderFactory(deciderType);
-    }
-
-    /**
-     * TODO-alan. Probably not necessary.
-     * 
-     * @param deciderType
-     *            TODO-alan.
-     */
-    public void setConfiguration(final GreedyType deciderType) {
-        switchDeciderFactory = new SwitchDeciderFactory(deciderType);
-    }
+    private GreedyType switchDeciderType;
 
     /**
      * {@inheritDoc}
      */
     public void process(final LGraph graph, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Begin Greedy Switch intermediate processor", 1);
+
+        switchDeciderType = graph.getProperty(Properties.GREEDY_TYPE);
+        switchDeciderFactory = new SwitchDeciderFactory(switchDeciderType);
 
         int layerCount = graph.getLayers().size();
         if (layerCount < 2) {
@@ -84,7 +67,6 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
 
     // TODO-alan remove initialization of other classes, maybe add checks.
     private void initialize(final LGraph graph) {
-        crossingCounter = new CrossingCounter(graph);
 
         layeredGraph = graph;
         int layerCount = graph.getLayers().size();
@@ -113,6 +95,7 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
                 nodeId++; // TODO-alan It is not necessary to guarantee this at this level.
             }
         }
+        crossingCounter = new CrossingCounter(currentNodeOrder);
     }
 
     /**
@@ -140,18 +123,20 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
      */
     private void layerSweepConsiderTwoLayers() {
         int crossingsInGraph = getCurrentAmountOfCrossings();
-        int tempCrossingsInGraph;
-        do {
+        int crossingsInGraphInLastSweep = Integer.MAX_VALUE;
+        while (crossingsInGraphInLastSweep > crossingsInGraph) {
             setCurrentNodeOrderAsBestNodeOrder();
-            tempCrossingsInGraph = crossingsInGraph;
+            if (crossingsInGraph == 0) {
+                break;
+            }
 
             sweepBackwardAndForwardInGraph();
 
+            crossingsInGraphInLastSweep = crossingsInGraph;
             crossingsInGraph = getCurrentAmountOfCrossings();
-        } while (tempCrossingsInGraph > crossingsInGraph && crossingsInGraph > 0);
-        setCurrentNodeOrderAsBestNodeOrder();
+        }
 
-        setAsGraph(currentNodeOrder);
+        setAsGraph(bestNodeOrder);
     }
 
     private void setAsGraph(final LNode[][] nodeOrder) {

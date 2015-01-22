@@ -15,7 +15,6 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.GreedySwitchProcessor;
-import de.cau.cs.kieler.klay.layered.properties.GreedyType;
 
 /**
  * Definition of available intermediate layout processors for the layered layouter. This enumeration
@@ -171,7 +170,7 @@ public enum IntermediateProcessorStrategy {
             return new EndLabelProcessor();
 
         case GREEDY_SWITCH:
-            return new GreedySwitchProcessor(GreedyType.ONE_SIDED_COUNTER);
+            return new GreedySwitchProcessor();
 
         case HIERARCHICAL_PORT_CONSTRAINT_PROCESSOR:
             return new HierarchicalPortConstraintProcessor();

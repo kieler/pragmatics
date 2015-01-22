@@ -2,6 +2,8 @@ package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
@@ -35,6 +37,16 @@ public class TestGraphCreator {
         return graph;
     }
 
+    /**
+     * <pre>
+     * *  * 
+     *  \/
+     *  /\
+     * *  *
+     * </pre>
+     * 
+     * @return
+     */
     public LGraph getCrossFormedGraph() {
 
         Layer leftLayer = makeLayer();
@@ -47,6 +59,41 @@ public class TestGraphCreator {
 
         addEastWestEdgeFromTo(topLeft, bottomRight);
         addEastWestEdgeFromTo(bottomLeft, topRight);
+        return graph;
+    }
+
+    /**
+     * <pre>
+     * *  *  <- this node must be ...
+     *  \/
+     *  /\
+     * *  *  <- before this node.
+     * </pre>
+     * 
+     * @return
+     */
+    public LGraph getCrossFormedGraphWithConstraintsInSecondLayer() {
+        getCrossFormedGraph();
+        Layer layerOne = graph.getLayers().get(1);
+        LNode topNode = layerOne.getNodes().get(0);
+        LNode secondNode = layerOne.getNodes().get(1);
+        setInLayerOrderConstraint(topNode, secondNode);
+        return graph;
+    }
+
+    public LGraph getCrossFormedGraphConstraintsPreventAnySwitch() {
+        Layer leftLayer = makeLayer();
+        Layer rightLayer = makeLayer();
+
+        LNode topLeft = addNodeToLayer(leftLayer);
+        LNode bottomLeft = addNodeToLayer(leftLayer);
+        LNode topRight = addNodeToLayer(rightLayer);
+        LNode bottomRight = addNodeToLayer(rightLayer);
+
+        addEastWestEdgeFromTo(topLeft, bottomRight);
+        addEastWestEdgeFromTo(bottomLeft, topRight);
+        setInLayerOrderConstraint(topRight, bottomRight);
+        setInLayerOrderConstraint(topLeft, bottomLeft);
         return graph;
     }
 
@@ -590,6 +637,37 @@ public class TestGraphCreator {
         return graph;
     }
 
+    /**
+     * <pre>
+     * *  *==*
+     *  \/
+     *  /\
+     * *  *==*
+     * </pre>
+     * 
+     * First Layer and last layer in fixed order.
+     * 
+     * @return graph of the form above.
+     */
+    public LGraph getGraphWhichCouldBeWorsenedBySwitch() {
+        Layer[] layers = makeLayers(3);
+        LNode[] leftNodes = addNodesToLayer(2, layers[0]);
+        LNode[] middleNodes = addNodesToLayer(2, layers[1]);
+        LNode[] rightNodes = addNodesToLayer(2, layers[2]);
+
+        setInLayerOrderConstraint(leftNodes[0], leftNodes[1]);
+        setInLayerOrderConstraint(rightNodes[0], rightNodes[1]);
+
+        addEastWestEdgeFromTo(leftNodes[0], middleNodes[1]);
+        addEastWestEdgeFromTo(leftNodes[1], middleNodes[0]);
+        addEastWestEdgeFromTo(middleNodes[0], rightNodes[0]);
+        addEastWestEdgeFromTo(middleNodes[0], rightNodes[0]);
+        addEastWestEdgeFromTo(middleNodes[1], rightNodes[1]);
+        addEastWestEdgeFromTo(middleNodes[1], rightNodes[1]);
+
+        return graph;
+    }
+
     public LNode[][] getCurrentOrder() {
         LNode[][] nodeOrder = new LNode[graph.getLayers().size()][];
         List<Layer> layers = graph.getLayers();
@@ -602,6 +680,43 @@ public class TestGraphCreator {
             }
         }
         return nodeOrder;
+    }
+
+    /**
+     * <pre>
+     *     * <-- this ...
+     *    /
+     * *-+-* <-- cannot switch with this
+     *  / _|__
+     * *  |  |
+     *    |__|
+     * 
+     * </pre>
+     * 
+     * @return
+     */
+    public LGraph getNodesInSameLayoutUnitPreventSwitch() {
+        Layer[] layers = makeLayers(2);
+        LNode[] leftNodes = addNodesToLayer(2, layers[0]);
+        LNode[] rightNodes = addNodesToLayer(3, layers[1]);
+
+        addEastWestEdgeFromTo(leftNodes[0], rightNodes[1]);
+        addEastWestEdgeFromTo(leftNodes[1], rightNodes[0]);
+
+        LPort southPort = addPortOnSide(rightNodes[1], PortSide.SOUTH);
+        LPort northPort = addPortOnSide(rightNodes[2], PortSide.NORTH);
+
+        addEdgeBetweenPorts(southPort, northPort);
+
+        rightNodes[1].setProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT, rightNodes[2]);
+        rightNodes[2].setProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT, rightNodes[2]);
+
+        return graph;
+    }
+
+    private void setInLayerOrderConstraint(final LNode thisNode, final LNode beforeThisNode) {
+        List<LNode> scndNodeAsList = Lists.newArrayList(beforeThisNode);
+        thisNode.setProperty(InternalProperties.IN_LAYER_SUCCESSOR_CONSTRAINTS, scndNodeAsList);
     }
 
     private void setPortOrderFixed(final LNode node) {

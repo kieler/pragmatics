@@ -21,7 +21,6 @@ import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
-import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
@@ -42,7 +41,7 @@ class CrossingCounter {
      * Port position array used for counting the number of edge crossings.
      */
     private int[] portPos;
-    private final LGraph layeredGraph;
+    private final LNode[][] layeredGraph;
     private final LNode[][] originalOrder;
 
     /**
@@ -52,9 +51,9 @@ class CrossingCounter {
      * @param layeredGraph
      *            The layered graph
      */
-    public CrossingCounter(final LGraph layeredGraph) {
+    public CrossingCounter(final LNode[][] layeredGraph) {
         this.layeredGraph = layeredGraph;
-        originalOrder = new LNode[layeredGraph.getLayers().size()][];
+        originalOrder = new LNode[layeredGraph.length][];
         initialize();
     }
 
@@ -113,14 +112,12 @@ class CrossingCounter {
 
     private void initialize() {
         int portCount = 0;
-        for (ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator(); layerIter
-                .hasNext();) {
-            Layer layer = layerIter.next();
-            originalOrder[layerIter.previousIndex()] = new LNode[layer.getNodes().size()];
-
-            for (ListIterator<LNode> nodeIter = layer.getNodes().listIterator(); nodeIter.hasNext();) {
-                LNode node = nodeIter.next();
-                originalOrder[layerIter.previousIndex()][nodeIter.previousIndex()] = node;
+        for (int i = 0; i < layeredGraph.length; i++) {
+            LNode[] layer = layeredGraph[i];
+            originalOrder[i] = new LNode[layer.length]; // TODO-alan WTF orginial order?
+            for (int j = 0; j < layer.length; j++) {
+                LNode node = layeredGraph[i][j];
+                originalOrder[i][j] = node;
                 for (LPort port : node.getPorts()) {
                     port.id = portCount++;
                 }

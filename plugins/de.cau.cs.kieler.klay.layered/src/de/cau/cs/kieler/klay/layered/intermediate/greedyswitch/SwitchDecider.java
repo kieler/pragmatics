@@ -83,17 +83,14 @@ abstract class SwitchDecider {
      * Check if in layer {@link InternalProperties.IN_LAYER_SUCCESSOR_CONSTRAINTS} or
      * {@link InternalProperties.IN_LAYER_LAYOUT_UNIT} constraints prevent a possible switch.
      * 
-     * @param freeLayer
-     *            the layer currently being switched in.
-     * @param upperNodeIndex
+     * @param nodeIndex
      *            the index of the upper node, assuming a left-right order.
      * @param lowerNodeIndex
      *            the index of the lower node, assuming a left-right order.
      * @return whether true if constraints should prevent switching.
      */
-    boolean constraintsPreventSwitch(final LNode[] freeLayer, final int upperNodeIndex,
-            final int lowerNodeIndex) {
-        LNode upperNode = freeLayer[upperNodeIndex];
+    boolean constraintsPreventSwitch(final int nodeIndex, final int lowerNodeIndex) {
+        LNode upperNode = freeLayer[nodeIndex];
         LNode lowerNode = freeLayer[lowerNodeIndex];
 
         List<LNode> constraints =
@@ -105,7 +102,7 @@ abstract class SwitchDecider {
         // be equal for a switch to be allowed.
         LNode upperLayoutUnit = upperNode.getProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT);
         LNode lowerLayoutUnit = lowerNode.getProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT);
-        if (upperLayoutUnit != null && lowerLayoutUnit != null) { // Are they null if not set?
+        if (upperLayoutUnit != null || lowerLayoutUnit != null) { // Are they null if not set?
                                                                   // TODO-alan
             hasSuccessorConstraint |= upperLayoutUnit != lowerLayoutUnit; // ????
         }

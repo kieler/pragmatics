@@ -18,6 +18,7 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.properties.GreedyType;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 @RunWith(Parameterized.class)
 public class GreedySwitchTest {
@@ -29,7 +30,7 @@ public class GreedySwitchTest {
 
     public GreedySwitchTest(final GreedyType greedyType) {
         this.greedyType = greedyType;
-        greedySwitcher = new GreedySwitchProcessor(greedyType);
+        greedySwitcher = new GreedySwitchProcessor();
         monitor = setUpDummyMonitor();
     }
 
@@ -56,10 +57,46 @@ public class GreedySwitchTest {
             expectedOrderLayerTwo = getNodesInLayer(1);
         }
 
-        greedySwitcher.process(graph, monitor);
+        startGreedySwitcherWithCurrentType();
 
         assertThat("Layer one", getNodesInLayer(0), is(expectedOrderLayerOne));
         assertThat("Layer two", getNodesInLayer(1), is(expectedOrderLayerTwo));
+    }
+
+    void startGreedySwitcherWithCurrentType() {
+        graph.setProperty(Properties.GREEDY_TYPE, greedyType);
+        greedySwitcher.process(graph, monitor);
+    }
+
+    @Test
+    public void constraintsPreventSwitchInSecondLayer() {
+        graph = creator.getCrossFormedGraphWithConstraintsInSecondLayer();
+
+        List<LNode> expectedOrderLayerOne = switchOrderOfNodesInLayer(0, 1, 0);
+        List<LNode> expectedOrderLayerTwo = getNodesInLayer(1);
+
+        startGreedySwitcherWithCurrentType();
+
+        assertThat("Layer one", getNodesInLayer(0), is(expectedOrderLayerOne));
+        assertThat("Layer two", getNodesInLayer(1), is(expectedOrderLayerTwo));
+    }
+
+    @Test
+    public void constraintsPreventAnySwitch() {
+        graph = creator.getCrossFormedGraphConstraintsPreventAnySwitch();
+
+        List<LNode> expectedOrderLayerOne = getNodesInLayer(0);
+        List<LNode> expectedOrderLayerTwo = getNodesInLayer(1);
+
+        startGreedySwitcherWithCurrentType();
+
+        assertThat("Layer one", getNodesInLayer(0), is(expectedOrderLayerOne));
+        assertThat("Layer two", getNodesInLayer(1), is(expectedOrderLayerTwo));
+    }
+
+    @Test
+    public void layoutUnitConstraintPreventsSwitch() {
+        graph = creator.getNodesInSameLayoutUnitPreventSwitch();
     }
 
     @Test
@@ -77,7 +114,7 @@ public class GreedySwitchTest {
         int layerIndex = 1;
         List<LNode> expectedOrder = switchOrderOfNodesInLayer(0, 1, layerIndex);
 
-        greedySwitcher.process(graph, monitor);
+        startGreedySwitcherWithCurrentType();
 
         assertThat(getNodesInLayer(layerIndex), is(expectedOrder));
     }
@@ -87,7 +124,7 @@ public class GreedySwitchTest {
         graph = creator.getEmptyGraph();
 
         try {
-            greedySwitcher.process(graph, monitor);
+            startGreedySwitcherWithCurrentType();
             fail("Did not cause AssertionError");
         } catch (AssertionError e) {
         }
@@ -108,7 +145,7 @@ public class GreedySwitchTest {
             expectedOrderLayerTwo = getNodesInLayer(1);
         }
 
-        greedySwitcher.process(graph, monitor);
+        startGreedySwitcherWithCurrentType();
 
         assertThat("Layer one", getNodesInLayer(0), is(expectedOrderLayerOne));
         assertThat("Layer two", getNodesInLayer(1), is(expectedOrderLayerTwo));
@@ -128,7 +165,7 @@ public class GreedySwitchTest {
             expectedOrderLayerTwo = getNodesInLayer(1);
         }
 
-        greedySwitcher.process(graph, monitor);
+        startGreedySwitcherWithCurrentType();
 
         assertThat("Layer one", getNodesInLayer(0), is(expectedOrderLayerOne));
         assertThat("Layer two", getNodesInLayer(1), is(expectedOrderLayerTwo));
@@ -155,7 +192,7 @@ public class GreedySwitchTest {
         List<LNode> expectedOrderOneSided = switchOrderOfNodesInLayer(0, 1, layerIndex);
         List<LNode> expectedOrderTwoSided = new ArrayList<LNode>(getNodesInLayer(layerIndex));
 
-        greedySwitcher.process(graph, monitor);
+        startGreedySwitcherWithCurrentType();
         if (greedyType.isOneSided()) {
             assertThat(getNodesInLayer(layerIndex), is(expectedOrderOneSided));
         } else {
@@ -189,26 +226,38 @@ public class GreedySwitchTest {
             expectedOrderLayerTwo = getNodesInLayer(1);
             expectedOrderLayerThree = switchOrderOfNodesInLayer(0, 1, 2);
         }
-        greedySwitcher.process(graph, monitor);
+        startGreedySwitcherWithCurrentType();
         assertThat("Layer one", getNodesInLayer(0), is(expectedOrderLayerOne));
         assertThat("Layer two", getNodesInLayer(1), is(expectedOrderLayerTwo));
         assertThat("Layer three", getNodesInLayer(2), is(expectedOrderLayerThree));
     }
 
     @Test
-    public void switchOnlyTrueForOneSided() {
+    public void switchOnlyForOneSided() {
         graph = creator.getSwitchOnlyOneSided();
 
         int layerIndex = 1;
         List<LNode> expectedOrderOneSided = switchOrderOfNodesInLayer(0, 1, layerIndex);
         List<LNode> expectedOrderTwoSided = new ArrayList<LNode>(getNodesInLayer(layerIndex));
 
-        greedySwitcher.process(graph, monitor);
+        startGreedySwitcherWithCurrentType();
         if (greedyType.isOneSided()) {
             assertThat(getNodesInLayer(layerIndex), is(expectedOrderOneSided));
         } else {
             assertThat(getNodesInLayer(layerIndex), is(expectedOrderTwoSided));
         }
+    }
+
+    @Test
+    public void doesNotWorsenCrossAmount() {
+        graph = creator.getGraphWhichCouldBeWorsenedBySwitch();
+        List<LNode> expectedOrderFirstLayer = new ArrayList<LNode>(getNodesInLayer(0));
+        List<LNode> expectedOrderSecondLayer = new ArrayList<LNode>(getNodesInLayer(1));
+
+        startGreedySwitcherWithCurrentType();
+
+        assertThat("Layer one", getNodesInLayer(0), is(expectedOrderFirstLayer));
+        assertThat("Layer two", getNodesInLayer(1), is(expectedOrderSecondLayer));
     }
 
     private List<LNode> getNodesInLayer(final int layerIndex) {

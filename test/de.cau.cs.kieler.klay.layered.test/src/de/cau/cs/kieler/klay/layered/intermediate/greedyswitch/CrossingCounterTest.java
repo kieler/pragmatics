@@ -7,7 +7,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
-import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.CrossingCounter;
+import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.Layer;
 
 public class CrossingCounterTest {
 
@@ -48,7 +49,15 @@ public class CrossingCounterTest {
     }
 
     private int whenCountingNorthSouthCrossingsInLayer(final int layerIndex) {
-        return new CrossingCounter(graph).countNorthSouthPortCrossings(layerIndex);
+        return new CrossingCounter(getAsLNodeArray(graph)).countNorthSouthPortCrossings(layerIndex);
+    }
+
+    private LNode[][] getAsLNodeArray(final LGraph graph2) {
+        LNode[][] result = new LNode[graph.getLayers().size()][];
+        for (Layer layer : graph) {
+            result[layer.getIndex()] = layer.getNodes().toArray(new LNode[0]);
+        }
+        return result;
     }
 
     @Test
@@ -66,6 +75,6 @@ public class CrossingCounterTest {
     }
 
     private int whenCountingAllCrossings() {
-        return new CrossingCounter(graph).countAllCrossingsInGraph();
+        return new CrossingCounter(getAsLNodeArray(graph)).countAllCrossingsInGraph();
     }
 }

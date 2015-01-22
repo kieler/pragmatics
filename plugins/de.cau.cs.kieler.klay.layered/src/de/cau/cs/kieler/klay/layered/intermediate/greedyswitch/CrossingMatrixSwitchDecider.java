@@ -49,6 +49,10 @@ abstract class CrossingMatrixSwitchDecider extends SwitchDecider {
      */
     @Override
     public boolean doesSwitchReduceCrossings(final int upperNodeIndex, final int lowerNodeIndex) {
+        if (super.constraintsPreventSwitch(upperNodeIndex, lowerNodeIndex)) {
+            return false;
+        }
+
         inLayerCounter.countCrossings(upperNodeIndex, lowerNodeIndex);
 
         LNode upperNode = super.getFreeLayer()[upperNodeIndex];
