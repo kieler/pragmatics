@@ -95,11 +95,11 @@ public final class LabelManagementProcessor implements ILayoutProcessor {
         double maxWidth = findMaxNonDummyNodeWidth(layer);
         
         // Apply the maximum width to all label dummy nodes
-        for (LNode node : layer) {
-            if (node.getProperty(InternalProperties.NODE_TYPE) == NodeType.LABEL) {
+        for (LNode labelDummy : layer) {
+            if (labelDummy.getProperty(InternalProperties.NODE_TYPE) == NodeType.LABEL) {
                 final KVector newDummySize = new KVector(0.0, 0.0); 
                 
-                Iterable<LLabel> labels = findLabels(node);
+                Iterable<LLabel> labels = findLabels(labelDummy);
                 for (LLabel label : labels) {
                     // If the label has an origin, call the label size modifier
                     Object origin = label.getProperty(InternalProperties.ORIGIN);
@@ -121,8 +121,8 @@ public final class LabelManagementProcessor implements ILayoutProcessor {
                 
                 // Apply new dummy node size (we don't bother with the ports here since they will be
                 // meddled with later anyway)
-                node.getSize().x = newDummySize.x;
-                node.getSize().y = newDummySize.y;
+                labelDummy.getSize().x = newDummySize.x;
+                labelDummy.getSize().y = newDummySize.y;
             }
         }
     }
