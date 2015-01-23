@@ -58,7 +58,7 @@ public class CrossingCounterTest {
         return new CrossingCounter(getAsLNodeArray(graph)).countNorthSouthPortCrossings(layerIndex);
     }
 
-    private LNode[][] getAsLNodeArray(final LGraph graph2) {
+    static LNode[][] getAsLNodeArray(final LGraph graph) {
         LNode[][] result = new LNode[graph.getLayers().size()][];
         for (Layer layer : graph) {
             result[layer.getIndex()] = layer.getNodes().toArray(new LNode[0]);

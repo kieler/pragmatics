@@ -31,7 +31,7 @@ public class GreedySwitchTest {
     public GreedySwitchTest(final GreedyType greedyType) {
         this.greedyType = greedyType;
         greedySwitcher = new GreedySwitchProcessor();
-        monitor = setUpDummyMonitor();
+        monitor = new DummyMonitor();
     }
 
     @Parameters(name = "{0}")
@@ -63,7 +63,7 @@ public class GreedySwitchTest {
         assertThat("Layer two", getNodesInLayer(1), is(expectedOrderLayerTwo));
     }
 
-    void startGreedySwitcherWithCurrentType() {
+    private void startGreedySwitcherWithCurrentType() {
         graph.setProperty(Properties.GREEDY_TYPE, greedyType);
         greedySwitcher.process(graph, monitor);
     }
@@ -275,45 +275,4 @@ public class GreedySwitchTest {
         return switchedList;
     }
 
-    private IKielerProgressMonitor setUpDummyMonitor() {
-        return new IKielerProgressMonitor() {
-            public void worked(final float work) {
-            }
-
-            public IKielerProgressMonitor subTask(final float work) {
-                return this;
-            }
-
-            public boolean isRunning() {
-                return true;
-            }
-
-            public boolean isCanceled() {
-                return false;
-            }
-
-            public String getTaskName() {
-                return "test task";
-            }
-
-            public List<IKielerProgressMonitor> getSubMonitors() {
-                return new ArrayList<IKielerProgressMonitor>();
-            }
-
-            public IKielerProgressMonitor getParentMonitor() {
-                return this;
-            }
-
-            public double getExecutionTime() {
-                return 0.1d;
-            }
-
-            public void done() {
-            }
-
-            public boolean begin(final String name, final float totalWork) {
-                return true;
-            }
-        };
-    }
 }

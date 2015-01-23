@@ -35,7 +35,7 @@ import de.cau.cs.kieler.klay.layered.properties.NodeType;
  * @author alan
  *
  */
-class CrossingCounter {
+public class CrossingCounter {
 
     /**
      * Port position array used for counting the number of edge crossings.
