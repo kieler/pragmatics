@@ -19,10 +19,12 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
@@ -43,13 +45,21 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  * sense for hierarchical graphs.
  * 
  * @author msp
+ * @author uru
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public class LayersAnalysis implements IAnalysis {
 
+    
+    // we store the determined layers in order for other 
+    // analyses to access them
+    private Map<KNode, List<Layer>> allVerticalLayers = Maps.newHashMap();
+    private Map<KNode, List<Layer>> allHorizontalLayers = Maps.newHashMap();
+    
+    
     /** a utility class to mark the start and end position of a layer. */
-    private static final class Layer {
+    public static final class Layer {
         private float start;
         private float end;
         /** number of nodes in this layer. */
@@ -109,7 +119,7 @@ public class LayersAnalysis implements IAnalysis {
      * {@inheritDoc}
      */
     public Object doAnalysis(final KNode parentNode,
-            final Map<String, Object> results,
+            final AnalysisContext context,
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Layers Analysis", 1);
 
@@ -147,6 +157,10 @@ public class LayersAnalysis implements IAnalysis {
             float end = start + nodeLayout.getWidth();
             insert(verticalLayers, start, end, node);
         }
+        
+        // store the layer information
+        allVerticalLayers.put(parentNode, verticalLayers);
+        allHorizontalLayers.put(parentNode, horizontalLayers);
         
         // analyze the number of dummy nodes (only valid for a layer-based layout)
         int dummyCount = 0;
@@ -256,8 +270,6 @@ public class LayersAnalysis implements IAnalysis {
             }
         }
         
-        
-        
         // count the number of layers in the nested subgraphs
         int[] count =
                 new int[] { horizontalLayers.size(), verticalLayers.size(), dummyCount,
@@ -277,4 +289,18 @@ public class LayersAnalysis implements IAnalysis {
         return count;
     }
 
+    
+    /**
+     * @return the allHorizontalLayers
+     */
+    public Map<KNode, List<Layer>> getAllHorizontalLayers() {
+        return allHorizontalLayers;
+    }
+    
+    /**
+     * @return the allVerticalLayers
+     */
+    public Map<KNode, List<Layer>> getAllVerticalLayers() {
+        return allVerticalLayers;
+    }
 }

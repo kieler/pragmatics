@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.kiml.grana.ui;
 
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -23,6 +22,7 @@ import org.eclipse.core.runtime.jobs.Job;
 
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.AnalysisData;
 import de.cau.cs.kieler.kiml.grana.AnalysisService;
 import de.cau.cs.kieler.kiml.grana.ui.visualization.VisualizationService;
@@ -61,10 +61,10 @@ public class AnalysisEffect extends Job {
     @Override
     protected IStatus run(final IProgressMonitor monitor) {
         // perform the analyses on the active diagram
-        final Map<String, Object> results = AnalysisService.getInstance().analyze(parentNode, analyses,
+        final AnalysisContext context = AnalysisService.getInstance().analyze(parentNode, analyses,
                 new BasicProgressMonitor(0));
         // visualize the results using silent methods
-        VisualizationService.getInstance().visualize(analyses, results, true);
+        VisualizationService.getInstance().visualize(analyses, context.getResults(), true);
         
         return Status.OK_STATUS;
     }

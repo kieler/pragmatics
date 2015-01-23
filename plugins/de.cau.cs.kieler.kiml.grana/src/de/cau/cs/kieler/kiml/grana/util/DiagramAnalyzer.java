@@ -119,7 +119,7 @@ public final class DiagramAnalyzer {
                 // perform analyses on the graph
                 KNode graph = layoutMapping.get().getLayoutGraph();
                 result.set(AnalysisService.getInstance().analyze(graph, analyses,
-                        monitor.subTask(ANALYSIS_WORK)));
+                        monitor.subTask(ANALYSIS_WORK)).getResults());
                 if (monitor.isCanceled()) {
                     return Status.CANCEL_STATUS;
                 } else {
