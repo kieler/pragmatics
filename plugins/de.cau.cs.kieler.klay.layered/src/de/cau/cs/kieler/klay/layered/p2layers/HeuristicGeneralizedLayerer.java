@@ -13,20 +13,27 @@
  */
 package de.cau.cs.kieler.klay.layered.p2layers;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Random;
 import java.util.Set;
 import java.util.Stack;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -36,12 +43,26 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * @author uru
  */
 public class HeuristicGeneralizedLayerer implements ILayoutPhase {
 
+    /**
+     * . 
+     */
+    enum GlayConstructionStrategy {
+        SIMPLE,
+        WEIGHT_BASED
+    }
+
+    private static final IProperty<GlayConstructionStrategy> GLAY_CONSTRUCTION_STRATEGY =
+            new Property<HeuristicGeneralizedLayerer.GlayConstructionStrategy>(
+                    "de.cau.cs.kieler.klay.glay.constructionStrategy",
+                    GlayConstructionStrategy.SIMPLE);
+    
     private LGraph graph;
     private Layer[] graphLayers;
     
@@ -75,8 +96,11 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
      */
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor progressMonitor) {
         graph = layeredGraph;
-        random = layeredGraph.getProperty(InternalProperties.RANDOM);
         
+        // initialize some variables that can be configured using layout options
+        random = layeredGraph.getProperty(InternalProperties.RANDOM);
+        wLen = layeredGraph.getProperty(Properties.EDGE_LENGTH_WEIGHT);
+        wRev = layeredGraph.getProperty(Properties.EDGE_REVERSAL_WEIGHT);
         
         // ---------------------
         // #1 Create an initial layering where each layer holds a single node
@@ -100,7 +124,7 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
         // ---------------------
         // #3 run Gansner et al.'s algorithm to compact everything nicely
         // ---------------------
-        new NetworkSimplexLayerer().process(layeredGraph, progressMonitor);
+        new NetworkSimplexLayerer().process(layeredGraph, progressMonitor.subTask(1));
 
         // store the layers we created for quick access
         graphLayers = new Layer[graph.getLayers().size()];
@@ -126,7 +150,6 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
                 }
             }
         }
-        
 
         // ---------------------
         // #5 Remove leafs
@@ -190,15 +213,20 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
         }
         
         // ------------------
-        // #9 Remove any non-occupied layers
+        // #9 Remove all layers, mark nodes as unlayered
         // ---------------------
+        graph.getLayerlessNodes().clear();
         Iterator<Layer> layerIt = graph.getLayers().iterator();
         while (layerIt.hasNext()) {
             Layer l = layerIt.next();
-            if (l.getNodes().isEmpty()) {
-                layerIt.remove();
-            }
+            graph.getLayerlessNodes().addAll(l.getNodes());
+            layerIt.remove();
         }
+        
+        // ------------------
+        // #10 Gansner again
+        // --------------------- 
+        new NetworkSimplexLayerer().process(graph, progressMonitor.subTask(1));
         
         cleanup();
     }
@@ -335,13 +363,15 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
 //                    System.out.println(revEdgesLeft + " " + revEdgesRight);
 //                    System.out.println("Right: " + scoreRight + " Left: " + scoreLeft);
 
-                    // position on left side if sL < sR
+                    if (graph.getProperty(GLAY_CONSTRUCTION_STRATEGY) 
+                            == GlayConstructionStrategy.SIMPLE) {
+                        // ## strategy 2 (looks more promising atm)
+                        side = incAssigned - outAssigned;
+                    } else {
+                        // ## strategy 1 (thought this is more sophisticated)
+                        side = scoreLeft - scoreRight;
+                    }
                     
-                    // ## strategy 1 (thought this is more sophisticated)
-//                    side = scoreLeft - scoreRight;
-                    
-                    // ## strategy 2 (looks more promising atm)
-                    side = incAssigned - outAssigned;
                 }
                 minDegree = Math.min(minDegree, score);
             }
@@ -376,8 +406,10 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
         }
     }
 
-    
 
+    /**
+     * Determines adjacency information of an already layered graph.
+     */
     private void determineAdjencency() {
         for (Layer l : graph) {
             for (LNode n : l) {
@@ -455,49 +487,93 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
     private void determineProfits() {
         for (Layer l : graph) {
             for (LNode n : l) {
-                int indexAfterMove = n.getLayer().getIndex() - move[n.id];
-                
-                double edgeLength = wLen
-                        // saved dummies if moved
-                        //* (adjencency[n.id].leftPredecessors.size() * move[n.id]
-                        * (adjencency[n.id].getLeftAdjencencySizeBefore(indexAfterMove) * move[n.id]
-                        // newly introduced dummies
-                        - adjencency[n.id].getRightAdjacencySize() * move[n.id]);
-                
-                // number of edges that will turn from pointing right->left to left->right
-                double reversed = wRev * adjencency[n.id].getLeftSuccessorsAfter(indexAfterMove);
-
-                profit[n.id] = edgeLength + reversed;
+                determineProfit(n);
             }
         }
+    }
+
+    private void determineProfit(final LNode n) {
+        int indexAfterMove = n.getLayer().getIndex() - move[n.id];
         
+        double edgeLength = wLen
+                // saved dummies if moved
+                //* (adjencency[n.id].leftPredecessors.size() * move[n.id]
+                * (adjencency[n.id].getLeftAdjencencySizeBefore(indexAfterMove) * move[n.id]
+                // newly introduced dummies
+                - adjencency[n.id].getRightAdjacencySize() * move[n.id]);
+        
+        // number of edges that will turn from pointing right->left to left->right
+        double reversed = wRev * adjencency[n.id].getLeftSuccessorCountAfter(indexAfterMove);
+
+        profit[n.id] = edgeLength + reversed;
     }
     
     private void performMoves() {
         
         System.out.print("Move: ");
         for (int i = 0; i < move.length; i++) {
-            if (move[i] != 0) 
-            System.out.print("(" + nodes[i] + ", " + move[i] + ") ");
+            if (move[i] != 0)
+                System.out.print("(" + nodes[i] + ", " + move[i] + ") ");
         }
         System.out.println();
         System.out.print("Profit: ");
-        for (int i = 0; i < profit.length; i++) {       
+        for (int i = 0; i < profit.length; i++) {
             if (profit[i] != 0.0)
-            System.out.print("(" + nodes[i] + ", " + profit[i] + ") ");
+                System.out.print("(" + nodes[i] + ", " + profit[i] + ") ");
         }
         System.out.println();
         
-        // stupidly finding best profit
+        boolean[] queued = new boolean[move.length];
+        Arrays.fill(queued, false);
+        Queue<Pair<Integer, Double>> profitQueue =
+                new PriorityQueue<Pair<Integer, Double>>((int) Math.sqrt(move.length),
+                        new Comparator<Pair<Integer, Double>>() {
+                            public int compare(final Pair<Integer, Double> o1,
+                                    final Pair<Integer, Double> o2) {
+                                return o2.getSecond().compareTo(o1.getSecond());
+                            }
+                        });
+       
         for (int i = 0; i < move.length; i++) {
-            
             if (move[i] > 0 && profit[i] > 0) {
+                queued[i] = true;
+                profitQueue.add(Pair.of(i, profit[i]));
+            }
+        }
+        
+        while (!profitQueue.isEmpty()) {
+            Pair<Integer, Double> aMove = profitQueue.poll();
+            queued[aMove.getFirst()] = false;
+            System.out.println("Perform Move " + aMove);
+            
+            LNode u = nodes[aMove.getFirst()];
+            int newLayerIndex = u.getLayer().getIndex() - move[aMove.getFirst()];
+            
+            // TODO should be possible even for -1
+            if (newLayerIndex > 0) {
+                Layer newLayer = graph.getLayers().get(newLayerIndex);
+                u.setLayer(newLayer);
                 
-                int newLayerIndex = nodes[i].getLayer().getIndex() - move[i];
-                // TODO should be possible even for -1
-                if (newLayerIndex > 0) {
-                    Layer newLayer = graph.getLayers().get(newLayerIndex);
-                    nodes[i].setLayer(newLayer);
+                // update the move array and possibly add something to the queue
+                for (LNode v : adjencency[u.id].getLeftSuccessorsAfter(newLayerIndex)) {
+                    adjencency[u.id].rightPredecessors.remove(v);
+                    adjencency[u.id].leftPredecessors.add(v);
+                    adjencency[v.id].rightSuccessors.add(u);
+                    adjencency[v.id].leftSuccessors.remove(u);
+                }
+                
+                // check if a new move is possible or the profits have changed
+                for (LNode v : getAdjacentNodes(u)) {
+                    determinePossibleMove(v);
+                    determineProfit(v);
+                    
+                    if (move[v.id] > 0 && profit[v.id] > 0) {
+                        if (!queued[v.id]) {
+//                            System.out.println("Found a new move!");
+                            queued[v.id] = true;
+                            profitQueue.add(Pair.of(v.id, profit[v.id]));
+                        }
+                    }
                 }
             }
         }
@@ -589,10 +665,10 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
         }
         
         public int getLeftAdjencencySizeBefore(final int index) {
-            return leftPredecessors.size() + getLeftSuccessorsBefore(index);
+            return leftPredecessors.size() + getLeftSuccessorCountBefore(index);
         }
         
-        public int getLeftSuccessorsBefore(final int index) {
+        public int getLeftSuccessorCountBefore(final int index) {
             int count = 0;
             for (LNode n : leftSuccessors) {
                 if (n.getLayer().getIndex() < index) {
@@ -602,7 +678,7 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
             return count;
         }
         
-        public int getLeftSuccessorsAfter(final int index) {
+        public int getLeftSuccessorCountAfter(final int index) {
             int count = 0;
             for (LNode n : leftSuccessors) {
                 if (n.getLayer().getIndex() > index) {
@@ -610,6 +686,14 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
                 }
             }
             return count;
+        }
+        
+        public Iterable<LNode> getLeftSuccessorsAfter(final int index) {
+            return Iterables.filter(leftSuccessors, new Predicate<LNode>() {
+                public boolean apply(final LNode input) {
+                    return input.getLayer().getIndex() > index;
+                }
+            });
         }
     }
     
