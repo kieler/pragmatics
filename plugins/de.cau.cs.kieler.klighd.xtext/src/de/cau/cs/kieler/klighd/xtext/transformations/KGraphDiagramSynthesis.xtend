@@ -47,6 +47,8 @@ import de.cau.cs.kieler.klighd.util.KlighdProperties
 import de.cau.cs.kieler.klighd.util.ModelingUtil
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier
+import de.cau.cs.kieler.kiml.labels.LabelLayoutOptions
+import de.cau.cs.kieler.klighd.labels.TruncatingLabelSizeModifier
 
 /**
  * Synthesizes a copy of the given {@code KNode} and adds default stuff.
@@ -146,6 +148,12 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         val copier = new Copier()
         val KNode result = copier.copy(graph) as KNode
         copier.copyReferences()
+        
+        // DEBUG START
+        result.setLayoutOption(
+            LabelLayoutOptions.LABEL_SIZE_MODIFIER, new TruncatingLabelSizeModifier()
+        );
+        // DEBUG END
         
         // Make sure that the collapse/expand properties of renderings are initialized properly
         ModelingUtil.eAllContentsOfType2(result, typeof(KNode))
@@ -272,6 +280,10 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         if (!defaultsEnabled()) {
             return;
         }
+        
+        // DEBUG START
+        node.setLayoutOption(LabelLayoutOptions.LABEL_SIZE_MODIFIER, new TruncatingLabelSizeModifier());
+        // DEBUG END
         
         // Try to add a label
         ensureLabel(node)
