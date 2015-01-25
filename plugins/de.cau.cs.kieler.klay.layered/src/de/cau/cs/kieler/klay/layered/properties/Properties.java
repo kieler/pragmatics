@@ -197,6 +197,14 @@ public final class Properties {
             "de.cau.cs.kieler.klay.layered.feedBackEdges", false);
     
     /**
+     * If true, each long edge dummy will contribute a bend point to its edges and hierarchy-crossing
+     * edges will always get a bend point where they cross hierarchy boundaries. By default, bend points
+     * are only added where an edge changes direction.
+     */
+    public static final IProperty<Boolean> ADD_UNNECESSARY_BENDPOINTS = new Property<Boolean>(
+            "de.cau.cs.kieler.klay.layered.unnecessaryBendpoints", false);
+    
+    /**
      * Handles large sausages.
      */
     public static final IProperty<Boolean> SAUSAGE_FOLDING = new Property<Boolean>(
