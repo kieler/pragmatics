@@ -95,6 +95,7 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
      * {@inheritDoc}
      */
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor progressMonitor) {
+        progressMonitor.begin("GLay Heuristic", 1);
         graph = layeredGraph;
         
         // initialize some variables that can be configured using layout options
@@ -105,7 +106,10 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
         // ---------------------
         // #1 Create an initial layering where each layer holds a single node
         // ---------------------
+        IKielerProgressMonitor pmcl = progressMonitor.subTask(1);
+        pmcl.begin("Constructive Layering", 1);
         constructiveLayering();
+        pmcl.done();
         
         // ---------------------
         // #2 Reverse edges such that the graph is acyclic with regards to the order
@@ -176,6 +180,9 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
         // ---------------------
         // #6 Improve result by performing moves
         // ---------------------
+        IKielerProgressMonitor pmil = progressMonitor.subTask(1);
+        pmil.begin("Improve Layering", 1);
+        
         initialize();
         
         determineAdjencency();
@@ -185,7 +192,7 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
         determineProfits();
         
         performMoves();
-        
+        pmil.done();
 
         // ---------------------
         // #7 Re-attach leaf nodes
@@ -229,6 +236,8 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
         new NetworkSimplexLayerer().process(graph, progressMonitor.subTask(1));
         
         cleanup();
+        
+        progressMonitor.done();
     }
 
     private void initialize() {
@@ -510,18 +519,18 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
     
     private void performMoves() {
         
-        System.out.print("Move: ");
-        for (int i = 0; i < move.length; i++) {
-            if (move[i] != 0)
-                System.out.print("(" + nodes[i] + ", " + move[i] + ") ");
-        }
-        System.out.println();
-        System.out.print("Profit: ");
-        for (int i = 0; i < profit.length; i++) {
-            if (profit[i] != 0.0)
-                System.out.print("(" + nodes[i] + ", " + profit[i] + ") ");
-        }
-        System.out.println();
+//        System.out.print("Move: ");
+//        for (int i = 0; i < move.length; i++) {
+//            if (move[i] != 0)
+//                System.out.print("(" + nodes[i] + ", " + move[i] + ") ");
+//        }
+//        System.out.println();
+//        System.out.print("Profit: ");
+//        for (int i = 0; i < profit.length; i++) {
+//            if (profit[i] != 0.0)
+//                System.out.print("(" + nodes[i] + ", " + profit[i] + ") ");
+//        }
+//        System.out.println();
         
         boolean[] queued = new boolean[move.length];
         Arrays.fill(queued, false);
@@ -544,9 +553,16 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
         while (!profitQueue.isEmpty()) {
             Pair<Integer, Double> aMove = profitQueue.poll();
             queued[aMove.getFirst()] = false;
-            System.out.println("Perform Move " + aMove);
+//            System.out.println("Perform Move " + aMove);
             
             LNode u = nodes[aMove.getFirst()];
+
+            // during the updates a previously queued move 
+            // might have become worthless. Ignore it.
+            if (move[u.id] <= 0 || profit[u.id] <= 0) {
+                continue;
+            }
+            
             int newLayerIndex = u.getLayer().getIndex() - move[aMove.getFirst()];
             
             // TODO should be possible even for -1
