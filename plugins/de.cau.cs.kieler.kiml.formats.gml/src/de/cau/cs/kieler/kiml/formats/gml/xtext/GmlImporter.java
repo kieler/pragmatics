@@ -25,9 +25,13 @@ import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.formats.TransformationData;
-import de.cau.cs.kieler.kiml.formats.gml.gml.Element;
-import de.cau.cs.kieler.kiml.formats.gml.gml.GmlFactory;
-import de.cau.cs.kieler.kiml.formats.gml.gml.GmlModel;
+import de.cau.cs.kieler.kiml.formats.gml.Element;
+import de.cau.cs.kieler.kiml.formats.gml.NumberElement;
+import de.cau.cs.kieler.kiml.formats.gml.CollectionElement;
+import de.cau.cs.kieler.kiml.formats.gml.GMLModel;
+//import de.cau.cs.kieler.kiml.formats.gml.gml.Element;
+//import de.cau.cs.kieler.kiml.formats.gml.gml.GmlFactory;
+//import de.cau.cs.kieler.kiml.formats.gml.gml.GmlModel;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
@@ -43,6 +47,7 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  * @kieler.rating proposed yellow by msp
  */
 public class GmlImporter implements IGraphTransformer<GmlModel, KNode> {
+public class GmlImporter implements IGraphTransformer<GMLModel, KNode> {
 
     /** map of GML node identifiers to KNodes. */
     private static final IProperty<Map<String, KNode>> NODE_ID_MAP
@@ -54,8 +59,8 @@ public class GmlImporter implements IGraphTransformer<GmlModel, KNode> {
     /**
      * {@inheritDoc}
      */
-    public void transform(final TransformationData<GmlModel, KNode> data) {
-        GmlModel gmlModel = data.getSourceGraph();
+    public void transform(final TransformationData<GMLModel, KNode> data) {
+        GMLModel gmlModel = data.getSourceGraph();
         for (Element element : gmlModel.getElements()) {
             if ("graph".equalsIgnoreCase(element.getKey())) {
                 KNode parent = KimlUtil.createInitializedNode();
@@ -70,13 +75,27 @@ public class GmlImporter implements IGraphTransformer<GmlModel, KNode> {
     /**
      * {@inheritDoc}
      */
-    public void transferLayout(final TransformationData<GmlModel, KNode> data) {
+    public void transferLayout(final TransformationData<GMLModel, KNode> data) {
         for (KNode layoutNode : data.getTargetGraphs()) {
             applyLayout(layoutNode);
         }
     }
     
     //---------- Transformation GML to KGraph ----------//  
+    /**
+     * Extracts a list (subgraph of a CollectionElement.
+     * 
+     * @param element element to extract list from
+     * @return the list of subgraph to transform
+     */
+    public List<Element> getElements(final Element element) {
+        if (element instanceof CollectionElement) {
+            CollectionElement collectEle = (CollectionElement) element;
+            return collectEle.getElements();
+        } else {
+            return Collections.emptyList();
+        }
+    }
     
     /**
      * Transform the contents of a GML graph or subgraph into a KNode.
@@ -85,12 +104,12 @@ public class GmlImporter implements IGraphTransformer<GmlModel, KNode> {
      * @param parent the corresponding KNode
      */
     private void transformGraph(final Element graph, final KNode parent,
-            final TransformationData<GmlModel, KNode> transData) {
-        for (Element element : graph.getElements()) {
+            final TransformationData<GMLModel, KNode> transData) {
+        for (Element element : getElements(graph)) {
             if ("node".equalsIgnoreCase(element.getKey())) {
                 // transform a node
                 String id = null;
-                for (Element e : element.getElements()) {
+                for (Element e : getElements(element)) {
                     if ("id".equalsIgnoreCase(e.getKey())) {
                         id = e.getValue();
                         break;
@@ -99,14 +118,14 @@ public class GmlImporter implements IGraphTransformer<GmlModel, KNode> {
                 KNode knode = transformNode(id, parent, transData);
                 KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
                 nodeLayout.setProperty(PROP_ELEM, element);
-                for (Element e : element.getElements()) {
+                for (Element e : getElements(element)) {
                     if ("graph".equalsIgnoreCase(e.getKey())) {
                         transformGraph(e, knode, transData);
                     } else if ("label".equalsIgnoreCase(e.getKey())) {
                         KLabel label = KimlUtil.createInitializedLabel(knode);
                         label.setText(e.getValue());
                     } else if ("graphics".equalsIgnoreCase(e.getKey())) {
-                        for (Element f : e.getElements()) {
+                        for (Element f : getElements(element)) {
                             try {
                                 if ("x".equals(f.getKey())) {
                                     nodeLayout.setXpos(Float.parseFloat(f.getValue()));
@@ -128,7 +147,7 @@ public class GmlImporter implements IGraphTransformer<GmlModel, KNode> {
             } else if ("edge".equalsIgnoreCase(element.getKey())) {
                 // transform an edge
                 String sourceid = null, targetid = null;
-                for (Element e : element.getElements()) {
+                for (Element e : getElements(element)) {
                     if ("source".equalsIgnoreCase(e.getKey())) {
                         sourceid = e.getValue();
                     } else if ("target".equalsIgnoreCase(e.getKey())) {
@@ -143,7 +162,7 @@ public class GmlImporter implements IGraphTransformer<GmlModel, KNode> {
                     kedge.setTarget(target);
                     KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
                     edgeLayout.setProperty(PROP_ELEM, element);
-                    for (Element e : element.getElements()) {
+                    for (Element e : getElements(element)) {
                         if ("label".equalsIgnoreCase(e.getKey())) {
                             KLabel label = KimlUtil.createInitializedLabel(kedge);
                             label.setText(e.getValue());
@@ -167,7 +186,7 @@ public class GmlImporter implements IGraphTransformer<GmlModel, KNode> {
      * @return a KNode instance
      */
     private KNode transformNode(final String nodeId, final KNode parent,
-            final TransformationData<GmlModel, KNode> transData) {
+            final TransformationData<GMLModel, KNode> transData) {
         Map<String, KNode> nodeIdMap = transData.getProperty(NODE_ID_MAP);
         KNode knode = nodeIdMap.get(nodeId);
         if (knode == null) {
