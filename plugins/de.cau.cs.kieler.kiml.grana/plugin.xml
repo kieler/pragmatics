@@ -216,10 +216,10 @@
       </analysis>
       <analysis
             category="de.cau.cs.kieler.kiml.grana.basic"
-            class="de.cau.cs.kieler.kiml.grana.analyses.DirectedCycleAnalysis"
+            class="de.cau.cs.kieler.kiml.grana.analyses.DirectedCycleApproximationAnalysis"
             description="An approximate number of directed cycles determined by the back edges found in a minimizing heuristic."
-            id="de.cau.cs.kieler.kiml.grana.directedCycles"
-            name="Directed Cycles">
+            id="de.cau.cs.kieler.kiml.grana.directedCyclesApprox"
+            name="Directed Cycles Approximation">
       </analysis>
       <analysis
             category="de.cau.cs.kieler.kiml.grana.basic"
@@ -343,6 +343,9 @@
          <component
                name="Height">
          </component>
+         <component
+               name="Product">
+         </component>
       </analysis>
       <analysis
             category="de.cau.cs.kieler.kiml.grana.drawing"
@@ -428,6 +431,22 @@
          <component
                abbreviation="Ver"
                name="Vertical">
+         </component>
+         <component
+               abbreviation="DN"
+               name="Dummy Nodes">
+         </component>
+         <component
+               abbreviation="MNPL"
+               name="Max Nodes Per Layer">
+         </component>
+         <component
+               abbreviation="MNPLD"
+               name="Max Nodes Per Layer (Inc Dummies)">
+         </component>
+         <component
+               abbreviation="ED"
+               name="Edge Density (Adj. Layer)">
          </component>
       </analysis>
       <analysis
@@ -517,6 +536,28 @@
          </component>
          <component
                name="P-Stress">
+         </component>
+      </analysis>
+      <analysis
+            category="de.cau.cs.kieler.kiml.grana.drawing"
+            class="de.cau.cs.kieler.kiml.grana.analyses.StraightEdgesAnalysis"
+            description="Determines the number of edges that are straight and axis aligned."
+            id="de.cau.cs.kieler.kiml.grana.straightEdges"
+            name="Straight Edges">
+         <component
+               name="Top">
+         </component>
+         <component
+               name="Left">
+         </component>
+         <component
+               name="Bottom">
+         </component>
+         <component
+               name="Right">
+         </component>
+         <component
+                name="Sum">
          </component>
       </analysis>
    </extension>

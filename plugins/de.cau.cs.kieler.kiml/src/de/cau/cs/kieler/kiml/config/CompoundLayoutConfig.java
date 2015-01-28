@@ -36,13 +36,17 @@ public class CompoundLayoutConfig implements IMutableLayoutConfig {
     /**
      * Create a compound layout configurator from the given configurators.
      * 
-     * @param confs one or more configurators to include in the new compound configurator
+     * @param confs
+     *            one or more configurators to include in the new compound configurator.
+     *            <code>null</code> values are ignored.
      * @return a new compound configurator
      */
     public static CompoundLayoutConfig of(final ILayoutConfig... confs) {
         CompoundLayoutConfig instance = new CompoundLayoutConfig();
         for (ILayoutConfig conf : confs) {
-            instance.add(conf);
+            if (conf != null) {
+                instance.add(conf);
+            }
         }
         return instance;
     }

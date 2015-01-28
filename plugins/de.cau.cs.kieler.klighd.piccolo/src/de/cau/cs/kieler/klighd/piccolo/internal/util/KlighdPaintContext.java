@@ -2,18 +2,19 @@
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
- * 
+ *
  * Copyright 2014 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
- * 
+ *
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
 package de.cau.cs.kieler.klighd.piccolo.internal.util;
 
 import java.awt.Graphics2D;
+import java.awt.Shape;
 
 import de.cau.cs.kieler.klighd.piccolo.KlighdSWTGraphics;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdMagnificationLensCamera;
@@ -22,10 +23,11 @@ import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.util.PPaintContext;
 
 /**
- * This is a specialization of {@link PPaintContext} contributing behavior for adding semantic data
- * into drawn (vector graphics) images or implementing the diagram scale dependent visibility of
- * diagram figures (or figure parts).
- * 
+ * This is a specialization of {@link PPaintContext} suppressing the super class' clipping
+ * functionality and contributing behavior for adding semantic data into drawn (vector graphics)
+ * images as well as implementing the diagram scale dependent visibility of diagram figures (or
+ * figure parts).
+ *
  * @author chsch
  */
 public class KlighdPaintContext extends PPaintContext {
@@ -33,7 +35,7 @@ public class KlighdPaintContext extends PPaintContext {
     /**
      * Factory method creating a {@link KlighdPaintContext} configured for on screen (main) diagram
      * drawing.
-     * 
+     *
      * @param graphics
      *            the {@link KlighdSWTGraphics} to draw on
      * @return the desired {@link KlighdPaintContext}
@@ -45,7 +47,7 @@ public class KlighdPaintContext extends PPaintContext {
     /**
      * Factory method creating a {@link KlighdPaintContext} configured for on screen outline diagram
      * drawing.
-     * 
+     *
      * @param graphics
      *            the {@link KlighdSWTGraphics} to draw on
      * @return the desired {@link KlighdPaintContext}
@@ -57,7 +59,7 @@ public class KlighdPaintContext extends PPaintContext {
     /**
      * Factory method creating a {@link KlighdPaintContext} configured for exporting the diagram
      * into an image.
-     * 
+     *
      * @param graphics
      *            the {@link KlighdSWTGraphics} to draw on
      * @return the desired {@link KlighdPaintContext}
@@ -68,7 +70,7 @@ public class KlighdPaintContext extends PPaintContext {
 
     /**
      * Factory method creating a {@link KlighdPaintContext} configured for printing the diagram.
-     * 
+     *
      * @param graphics
      *            the {@link KlighdSWTGraphics} to draw on
      * @return the desired {@link KlighdPaintContext}
@@ -80,7 +82,7 @@ public class KlighdPaintContext extends PPaintContext {
 
     /**
      * Constructor.
-     * 
+     *
      * @param graphics
      *            the {@link KlighdSWTGraphics} graphics system abstraction object to be used.
      * @param outline
@@ -114,7 +116,7 @@ public class KlighdPaintContext extends PPaintContext {
     /**
      * Provides the current diagram zoom factor as determined by the active {@link KlighdMainCamera}'s
      * view {@link java.awt.geom.AffineTransform transform}.
-     * 
+     *
      * @return the current diagram zoom factor
      */
     public double getCameraZoomScale() {
@@ -156,7 +158,7 @@ public class KlighdPaintContext extends PPaintContext {
     /**
      * Returns <code>true</code> if semantic data shall be added to the diagram while drawing, e.g.
      * while creating an SVG export.
-     * 
+     *
      * @return <code>true</code> if semantic data shall be added to the diagram while drawing,
      *         <code>false</code> otherwise.
      */
@@ -164,12 +166,27 @@ public class KlighdPaintContext extends PPaintContext {
         return this.addSemanticData;
     }
 
+    /**
+     * @return the employed {@link KlighdSWTGraphics} (delegates to {@link #getGraphics()} and casts
+     *         accordingly)
+     */
+    public KlighdSWTGraphics getKlighdGraphics() {
+        return (KlighdSWTGraphics) super.getGraphics();
+    }
+
+
     @Override
     public void pushCamera(final PCamera aCamera) {
         super.pushCamera(aCamera);
 
-        if (aCamera instanceof KlighdMainCamera) {
+        if (isPrintout()) {
+            // in case a printout is to be created leave the cameraZoomScale as it is,
+            //  should be equal to 1d!
+            return;
+
+        } else if (aCamera instanceof KlighdMainCamera) {
             cameraZoomScale = aCamera.getViewTransformReference().getScaleX();
+
         } else if (aCamera instanceof KlighdMagnificationLensCamera) {
             cameraZoomScale = aCamera.getViewTransformReference().getScaleX();
         }
@@ -178,6 +195,7 @@ public class KlighdPaintContext extends PPaintContext {
     @Override
     public void popCamera() {
         final PCamera aCamera = getCamera();
+
         if (aCamera instanceof KlighdMagnificationLensCamera) {
             super.popCamera();
             cameraZoomScale = aCamera.getViewTransformReference().getScaleX();
@@ -186,10 +204,43 @@ public class KlighdPaintContext extends PPaintContext {
         }
     }
 
+
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}<br>
+     * This specialization suppresses the original clipping behavior as we don't need it or event
+     * don't want to have it. Thus, this method <b>does nothing</b>.
      */
-    public KlighdSWTGraphics getKlighdGraphics() {
-        return (KlighdSWTGraphics) super.getGraphics();
+    @Override
+    public void pushClip(final Shape clip) {
+        // don't change the clip
+    }
+
+    /**
+     * {@inheritDoc}<br>
+     * This specialization suppresses the original clipping behavior as we don't need it or event
+     * don't want to have it. Thus, this method <b>does nothing</b>.
+     */
+    @Override
+    public void popClip(final Shape clip) {
+        // don't change the clip
+    }
+
+    /**
+     * Provides clipping if actually required, e.g. while drawing the
+     * {@link de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdMagnificationLensCamera
+     * KlighdMagnificationLensCamera}, delegates to {@link PPaintContext#pushClip(Shape)}.
+     *
+     * @param clip determines the shape to set the clip to
+     */
+    public void forcedPushClip(final Shape clip) {
+        super.pushClip(clip);
+    }
+
+    /**
+     * Resets clipping to former state if a clip was defined by means of
+     * {@link #forcedPushClip(Shape)} earlier, delegates to {@link PPaintContext#popClip(Shape)}.
+     */
+    public void forcedPopClip() {
+        super.popClip(null);
     }
 }

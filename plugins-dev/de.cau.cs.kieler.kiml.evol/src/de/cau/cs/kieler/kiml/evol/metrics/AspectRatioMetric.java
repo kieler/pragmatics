@@ -13,10 +13,9 @@
  */
 package de.cau.cs.kieler.kiml.evol.metrics;
 
-import java.util.Map;
-
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
 import de.cau.cs.kieler.kiml.grana.analyses.AreaAnalysis;
 
@@ -38,12 +37,12 @@ public class AspectRatioMetric implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
+    public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Flatness metric", 1);
 
         float result;
-        Object[] dimsResult = (Object[]) results.get(AreaAnalysis.ID);
+        Object[] dimsResult = (Object[]) context.getResult(AreaAnalysis.ID);
         float xdim = (Float) dimsResult[0];
         float ydim = (Float) dimsResult[1];
 

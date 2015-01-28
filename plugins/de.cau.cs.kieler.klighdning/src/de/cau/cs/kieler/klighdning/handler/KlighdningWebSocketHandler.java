@@ -20,8 +20,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.Adler32;
-import java.util.zip.Checksum;
 import java.util.zip.GZIPOutputStream;
 
 import org.eclipse.emf.common.util.URI;
@@ -38,6 +36,7 @@ import org.eclipse.xtext.xbase.lib.IterableExtensions;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
+import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -69,8 +68,6 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
 
     private String currentRoom = null;
     private Connection connection;
-
-    private Checksum checksum = new Adler32();
 
     /** Commonly used resource set. */
     private ResourceSet rs;
@@ -483,7 +480,8 @@ public class KlighdningWebSocketHandler implements WebSocket, WebSocket.OnTextMe
             KNode currentModel = LightDiagramServices.translateModel(r.getContents().get(0), null);
             viewer.setModel(currentModel, true);
             viewer.setResourcePath(path);
-            viewer.setResourceChecksum(Files.getChecksum(file, checksum) + "");
+            Long hash = Hashing.adler32().hashBytes(Files.toByteArray(file)).asLong();
+            viewer.setResourceChecksum(hash + "");
 
             // if we have initial permalink information, apply them!
             viewer.applyPermalink(expand, viewport);

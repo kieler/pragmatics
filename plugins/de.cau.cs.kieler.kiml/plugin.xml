@@ -153,6 +153,14 @@
             type="object">
       </layoutOption>
       <layoutOption
+            appliesTo="edges"
+            class="de.cau.cs.kieler.core.math.KVectorChain"
+            description="The fixed list of junction points for the edge"
+            id="de.cau.cs.kieler.junctionPoints"
+            name="Junction Points"
+            type="object">
+      </layoutOption>
+      <layoutOption
             appliesTo="parents"
             default="-1.0"
             description="Minimal amount of space to be left to the border"
@@ -344,7 +352,7 @@
            advanced="true"
            default="400"
            description="The minimal time for animations, in milliseconds"
-           id="de.cau.cs.kieler.minAnimTim"
+           id="de.cau.cs.kieler.minAnimTime"
            lowerBound="0"
            name="Minimal Animation Time"
            type="int"
@@ -355,7 +363,7 @@
            advanced="true"
            default="4000"
            description="The maximal time for animations, in milliseconds"
-           id="de.cau.cs.kieler.maxAnimTim"
+           id="de.cau.cs.kieler.maxAnimTime"
            lowerBound="0"
            name="Maximal Animation Time"
            type="int"

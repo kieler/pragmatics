@@ -33,4 +33,73 @@
     <module>../../pragmatics-libraries/features/org.adaptagrams.feature</module>
   </modules>
 
+  <!-- customization of the feature build sub process: incorporate
+        the 'tycho-source-feature-plugin' for generating source features and
+        the 'tycho-p2-plugin' for deriving the p2-specific meta data
+       while building (this and) each of the modules referenced above -->
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho.extras</groupId>
+        <artifactId>tycho-source-feature-plugin</artifactId>
+        <version>${tycho-version}</version>
+        <executions>
+          <execution>
+            <id>source-feature</id>
+            <phase>package</phase>
+            <goals>
+              <goal>source-feature</goal>
+            </goals>
+            <configuration>
+              <labelSuffix>${sourceFeatureLabelSuffix}</labelSuffix>
+              <excludes>
+                <feature id="net.ogdf.bin.feature"/>
+                <feature id="de.cau.cs.kieler.kwebs.server.feature"/>
+
+                <!-- the following bundles are excluded in the source feature generation process
+                      as they don't contribute any classes and, thus,
+                      no related source bundles exist -->
+                <plugin id="de.cau.cs.kieler.klighd.ui.contrib3x" />
+                <plugin id="org.eclipse.emf" />
+                <plugin id="org.eclipse.swt" />
+
+                <!-- the following bundles are excluded as
+                      there are no sources offered via the eclipse update sites -->
+                <plugin id="javax.activation" />
+                <plugin id="javax.jws" />
+                <plugin id="javax.xml" />
+                <plugin id="javax.xml.bind" />
+                <plugin id="javax.xml.soap" />
+                <plugin id="javax.xml.stream" />
+                <plugin id="javax.xml.ws" />
+
+                <plugin id="org.apache.commons.codec" />
+                <plugin id="org.apache.xerces" />
+                <plugin id="org.apache.xml.resolver" />
+                <plugin id="org.apache.xml.serializer" />
+                
+                <plugin id="org.eclipse.jetty.websocket" />
+              </excludes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-p2-plugin</artifactId>
+        <version>${tycho-version}</version>
+        <executions>
+          <execution>
+            <id>attached-p2-metadata</id>
+            <phase>package</phase>
+            <goals>
+              <goal>p2-metadata</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
 </project>

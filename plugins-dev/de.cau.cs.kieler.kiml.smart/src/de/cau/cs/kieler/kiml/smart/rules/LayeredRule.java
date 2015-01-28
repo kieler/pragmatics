@@ -15,7 +15,7 @@ package de.cau.cs.kieler.kiml.smart.rules;
 
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
-import de.cau.cs.kieler.kiml.grana.analyses.DirectedCycleAnalysis;
+import de.cau.cs.kieler.kiml.grana.analyses.DirectedCycleApproximationAnalysis;
 import de.cau.cs.kieler.kiml.grana.analyses.EdgeCountAnalysis;
 import de.cau.cs.kieler.kiml.grana.analyses.LongestPathAnalysis;
 import de.cau.cs.kieler.kiml.grana.analyses.NodeCountAnalysis;
@@ -46,7 +46,7 @@ public class LayeredRule implements ISmartRule {
     public double suitability(final MetaLayout metaLayout) {
         int nodeCount = metaLayout.analyze(NodeCountAnalysis.ID);
         if (nodeCount > 0) {
-            int cycleCount = metaLayout.analyze(DirectedCycleAnalysis.ID);
+            int cycleCount = metaLayout.analyze(DirectedCycleApproximationAnalysis.ID);
             double fp = SmartLayoutConfig.missingFeaturesFromType(metaLayout,
                     LayoutTypeData.TYPE_LAYERED);
             

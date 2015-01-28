@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: KIELER Grana Tests
+Bundle-SymbolicName: de.cau.cs.kieler.kiml.grana.test
+Bundle-Version: 0.1.0.qualifier
+Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Require-Bundle: de.cau.cs.kieler.core.kgraph,
+ de.cau.cs.kieler.klay.test,
+ de.cau.cs.kieler.klay.layered.test,
+ de.cau.cs.kieler.kiml,
+ de.cau.cs.kieler.kiml.grana,
+ de.cau.cs.kieler.kiml.grana.text,
+ de.cau.cs.kieler.kiml.ui,
+ de.cau.cs.kieler.pragmatics.test.common,
+ org.junit;bundle-version="3.8.0"

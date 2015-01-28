@@ -46,6 +46,15 @@ public final class Properties {
             10.0f, 1.0f);
     
     /**
+     * A pre-defined seed for pseudo-random number generators.
+     * We redefine the property here to set its default value to 1.
+     * 
+     * @see LayoutOptions#RANDOM_SEED
+     */
+    public static final IProperty<Integer> RANDOM_SEED = new Property<Integer>(
+            "de.cau.cs.kieler.randomSeed", 1);
+    
+    /**
      * The factor by which the in-layer spacing between objects differs from the inter-layer
      * {@link Properties#OBJ_SPACING}.
      */
@@ -160,8 +169,8 @@ public final class Properties {
      * created for each edge directly connected to a node. When it is enabled, all such incoming
      * edges share an input port, and all outgoing edges share an output port.
      */
-    public static final IProperty<Boolean> MERGE_PORTS = new Property<Boolean>(
-            "de.cau.cs.kieler.klay.layered.mergePorts", false);
+    public static final IProperty<Boolean> MERGE_EDGES = new Property<Boolean>(
+            "de.cau.cs.kieler.klay.layered.mergeEdges", false);
 
     /**
      * Property to enable or disable hierarchical port merging. Merging hierarchical ports is only
@@ -170,8 +179,8 @@ public final class Properties {
      * crossing point. With this option set to {@code true}, we try to create as few hierarchical ports
      * as possible in the process. In particular, all edges that form a hyperedge can share a port.
      */
-    public static final IProperty<Boolean> MERGE_HIERARCHICAL_PORTS = new Property<Boolean>(
-            "de.cau.cs.kieler.klay.layered.mergeHierarchyPorts", true);
+    public static final IProperty<Boolean> MERGE_HIERARCHICAL_EDGES = new Property<Boolean>(
+            "de.cau.cs.kieler.klay.layered.mergeHierarchyEdges", true);
 
     /**
      * Property that determines which point in a node determines the result of interactive phases.
@@ -186,6 +195,20 @@ public final class Properties {
      */
     public static final IProperty<Boolean> FEEDBACK_EDGES = new Property<Boolean>(
             "de.cau.cs.kieler.klay.layered.feedBackEdges", false);
+    
+    /**
+     * If true, each long edge dummy will contribute a bend point to its edges and hierarchy-crossing
+     * edges will always get a bend point where they cross hierarchy boundaries. By default, bend points
+     * are only added where an edge changes direction.
+     */
+    public static final IProperty<Boolean> ADD_UNNECESSARY_BENDPOINTS = new Property<Boolean>(
+            "de.cau.cs.kieler.klay.layered.unnecessaryBendpoints", false);
+    
+    /**
+     * Handles large sausages.
+     */
+    public static final IProperty<Boolean> SAUSAGE_FOLDING = new Property<Boolean>(
+            "de.cau.cs.kieler.klay.layered.sausageFolding", false);    
 
 
     // /////////////////////////////////////////////////////////////////////////////

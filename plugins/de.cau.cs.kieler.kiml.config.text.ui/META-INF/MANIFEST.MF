@@ -1,0 +1,29 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: KIELER Textual Layout Config UI
+Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
+Bundle-Version: 0.1.1.qualifier
+Bundle-SymbolicName: de.cau.cs.kieler.kiml.config.text.ui; singleton:=true
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.eclipse.xtext.ui,
+ org.eclipse.ui.editors;bundle-version="3.5.0",
+ org.eclipse.ui.ide;bundle-version="3.5.0",
+ org.eclipse.xtext.ui.shared,
+ org.eclipse.ui,
+ org.eclipse.xtext.builder,
+ org.antlr.runtime,
+ org.eclipse.xtext.common.types.ui,
+ org.eclipse.xtext.ui.codetemplates.ui,
+ org.eclipse.compare,
+ de.cau.cs.kieler.core,
+ de.cau.cs.kieler.core.kgraph,
+ de.cau.cs.kieler.kiml.config.text,
+ de.cau.cs.kieler.kiml.service,
+ de.cau.cs.kieler.kiml.ui
+Import-Package: org.apache.log4j,
+ org.eclipse.xtext.xbase.lib
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Export-Package: de.cau.cs.kieler.kiml.config.text.ui.quickfix,
+ de.cau.cs.kieler.kiml.config.text.ui.contentassist,
+ de.cau.cs.kieler.kiml.config.text.ui.contentassist.antlr
+Bundle-Activator: de.cau.cs.kieler.kiml.config.text.ui.internal.LayoutConfigActivator

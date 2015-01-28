@@ -77,6 +77,10 @@ public enum IntermediateProcessorStrategy {
     
     // Before Phase 4
     
+    /** Distributes ports after crossing minimization. Used by the layer sweep crossing minimizer. */
+    PORT_DISTRIBUTER,
+    /** Compacts looong sausages. This is a hidden feature. */
+    SAUSAGE_COMPACTION,
     /** Makes sure that in-layer constraints are handled. */
     IN_LAYER_CONSTRAINT_PROCESSOR,
     /** Merges long edge dummy nodes belonging to the same hyperedge. */
@@ -227,6 +231,9 @@ public enum IntermediateProcessorStrategy {
         case INVERTED_PORT_PROCESSOR:
             return new InvertedPortProcessor();
         
+        case PORT_DISTRIBUTER:
+            return new PortDistributionProcessor();
+        
         case PORT_LIST_SORTER:
             return new PortListSorter();
         
@@ -236,6 +243,9 @@ public enum IntermediateProcessorStrategy {
         case REVERSED_EDGE_RESTORER:
             return new ReversedEdgeRestorer();
         
+        case SAUSAGE_COMPACTION:
+            return new SausageFolding();
+            
         case SELF_LOOP_PROCESSOR:
             return new SelfLoopProcessor();
             

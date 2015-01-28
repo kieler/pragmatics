@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -33,6 +34,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.text.KGraphStandaloneSetup;
 import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * Class to load graphs from a given folder and its subfolders (optional).
@@ -83,7 +85,8 @@ public final class GraphTestUtil {
             // break;
             case KGRAPH:
                 graphTestObject.addAll(loadKGraphs(testPath.getFolder(),
-                        testPath.isLoadSubfolder(), testPath.isDoLayout()));
+                        testPath.isLoadSubfolder(), testPath.isDoLayout(),
+                        testPath.getExcludeFolders()));
                 break;
             }
         }
@@ -100,10 +103,12 @@ public final class GraphTestUtil {
      *            if true then load sub-folder graphs else only the given directory
      * @param doLayout
      *            if true, apply automatic layout to loaded graphs
+     * @param exclude 
+     *            a set of folder names that should be excluded
      * @return a list of KNode
      */
     public static List<GraphTestObject> loadKGraphs(final String folder, final boolean subfolder,
-            final boolean doLayout) {
+            final boolean doLayout, final Set<String> exclude) {
         IGraphLayoutEngine layoutEngine = new RecursiveGraphLayoutEngine();
         File rootFolder = new File(SOURCE_GRAPHS_DIRECTORY, folder);
 
@@ -111,7 +116,8 @@ public final class GraphTestUtil {
         if (rootFolder.canRead()) {
 
             // load files from the directory
-            List<File> graphFiles = loadFilesFromDirectory(rootFolder, subfolder, KGRAPH_FORMATS);
+            List<File> graphFiles =
+                    loadFilesFromDirectory(rootFolder, subfolder, KGRAPH_FORMATS, exclude);
             Collections.sort(graphFiles);
             List<GraphTestObject> graphObjects = new ArrayList<GraphTestObject>();
             for (File gfile : graphFiles) {
@@ -130,7 +136,9 @@ public final class GraphTestUtil {
                             "The selected file does not contain a graph: " + gfile);
                 }
                 KNode graph = (KNode) resource.getContents().get(0);
-
+                // parse persisted key-value pairs using KIML's layout data service
+                KimlUtil.loadDataElements(graph);
+                
                 // apply layout when applyLayout = true
                 if (doLayout) {
                     layoutEngine.layout(graph, new BasicProgressMonitor());
@@ -177,10 +185,11 @@ public final class GraphTestUtil {
      *            List of found files to transfer if the method is called recursively
      * @param subfolder
      *            if true then load subfolder graphs else only the given directory
+     * @param exclude a set of folder names which should be excluded
      * @return return the List of graph files
      */
     private static List<File> loadFilesFromDirectory(final File folder, final boolean subfolder,
-            final List<String> extensions) {
+            final List<String> extensions, final Set<String> exclude) {
         List<File> files = new ArrayList<File>();
         // filter to select only files with SOURCE_GRAPHS_FORMAT extension or sub directories
         FileFilter filter = new FileFilter() {
@@ -201,8 +210,10 @@ public final class GraphTestUtil {
                 // load only folders and files with SOURCE_GRAPHS_FORMAT extension
                 if (listOfFiles[i].isFile()) {
                     files.add(listOfFiles[i]);
-                } else if (listOfFiles[i].isDirectory() && subfolder) {
-                    files.addAll(loadFilesFromDirectory(listOfFiles[i], subfolder, extensions));
+                } else if (listOfFiles[i].isDirectory() && subfolder
+                        && !exclude.contains(listOfFiles[i].getName())) {
+                    files.addAll(loadFilesFromDirectory(listOfFiles[i], subfolder, extensions,
+                            exclude));
                 }
             }
         }

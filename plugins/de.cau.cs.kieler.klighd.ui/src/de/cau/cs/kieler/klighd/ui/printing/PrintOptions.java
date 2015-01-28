@@ -24,17 +24,21 @@
  */
 package de.cau.cs.kieler.klighd.ui.printing;
 
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.printing.Printer;
 import org.eclipse.swt.printing.PrinterData;
 
+import com.google.common.base.Strings;
+
+import de.cau.cs.kieler.klighd.IExportBranding.Trim;
 import de.cau.cs.kieler.klighd.ui.KlighdUIPlugin;
 
 /**
@@ -203,8 +207,9 @@ public final class PrintOptions {
 
     // some "cache" fields
     private Printer printer = null;
-    private Rectangle printerBounds = null;
-    private Rectangle2D diagramBounds = null;
+    private Dimension printerBounds = null;
+    private Trim printerTrim = null;
+    private Dimension2D diagramBounds = null;
     private Point2D centeringOffset = null;
 
 
@@ -220,13 +225,17 @@ public final class PrintOptions {
         restoreFromPreferences();
     }
 
+
     /**
      * Restore the options from preference store.
      */
     public void restoreFromPreferences() {
         final String driver = PREF_STORE.getString(PREFERENCE_PRINTER_DRIVER);
         final String name = PREF_STORE.getString(PREFERENCE_PRINTER_NAME);
-        printerData = new PrinterData(driver, name);
+        printerData = new PrinterData(
+                // be careful: driver and name must not be equal to ""
+                //  but must be 'null' to get the default printer
+                Strings.emptyToNull(driver), Strings.emptyToNull(name));
 
         if (printerData != null) {
             setOrientation(PREF_STORE.getInt(PREFERENCE_PRINTER_ORIENTATION));
@@ -562,6 +571,7 @@ public final class PrintOptions {
 
         disposePrinter();
         resetCenteringOffset();
+        getExporter().resetTrimInformation();
     }
 
     /**
@@ -595,6 +605,7 @@ public final class PrintOptions {
         firePropertyChange(PROPERTY_ORIENTATION, oldOrientation, printerData.orientation);
         disposePrinter();
         resetCenteringOffset();
+        getExporter().resetTrimInformation();
     }
 
     /**
@@ -672,6 +683,7 @@ public final class PrintOptions {
         }
         this.printer = null;
         this.printerBounds = null;
+        this.printerTrim = null;
     }
 
     /**
@@ -680,31 +692,78 @@ public final class PrintOptions {
      * @return a {@link Printer} or {@code null} if no valid {@link PrinterData} are configured
      */
     public Printer getPrinter() {
-        if (this.printer == null) {
-            if (this.printerData != null) {
-                this.printer = new Printer(this.printerData);
-            } else {
-                return null;
-            }
-        }
+        if (this.printer != null) {
+            return printer;
 
-        return printer;
+        } else  if (this.printerData != null) {
+            if (Strings.isNullOrEmpty(this.printerData.driver)) {
+                // printerData's 'driver' and 'name' initialized with the empty
+                //  string leads to an error so set at least 'driver' to 'null'
+                this.printerData.driver = null;
+            }
+
+            this.printer = new Printer(this.printerData);
+            return printer;
+
+        } else {
+            return null;
+        }
     }
 
     /**
-     * Provides a (cached) {@link Rectangle} containing the bounds of the currently configured
+     * Provides a (cached) {@link Dimension} containing the bounds of the currently configured
      * {@link Printer}.
      *
-     * @return a {@link Rectangle} denoting the printer's bounds, or {@code null} if no valid
+     * @return a {@link Dimension} denoting the printer's bounds, or {@code null} if no valid
      *         printer configuration is present
      */
-    public Rectangle getPrinterBounds() {
+    public Dimension getPrinterBounds() {
+        if (printerBounds != null) {
+            return printerBounds;
+        }
+
         final Printer p = getPrinter();
         if (p != null) {
-            if (printerBounds == null && exporter != null) {
-                printerBounds = exporter.getPrinterBounds(p);
-            }
+            final org.eclipse.swt.graphics.Rectangle pageArea = printer.getClientArea();
+            printerBounds = new Dimension(pageArea.width, pageArea.height);
             return printerBounds;
+        }
+        return null;
+    }
+
+    /**
+     * Provides a (cached) {@link Trim} describing the technical trim of the currently configured
+     * {@link Printer}. Those margins are not included in {@link #getPrinterBounds()}. Thus,
+     * {@link #getPrinterBounds()} + the result of this method == selected paper size
+     *
+     * @return a {@link Trim} denoting the printer's technical trim, or {@code null} if no valid
+     *         printer configuration is present
+     */
+    public Trim getPrinterTrim() {
+        if (printerTrim != null) {
+            return printerTrim;
+        }
+
+        final Printer p = getPrinter();
+        if (p != null) {
+            final org.eclipse.swt.graphics.Rectangle trim = p.computeTrim(0, 0, 0, 0);
+            printerTrim = new Trim(-trim.x, trim.x + trim.width, -trim.y, trim.y + trim.height);
+            return printerTrim;
+        }
+        return null;
+    }
+
+    /**
+     * Provides the currently chosen printer's resolution in DPI for both x and y direction.
+     *
+     * @return a {@link Point} denoting the printer's resolution, or {@code null} if no valid
+     *         printer configuration is present
+     */
+    public Point getPrinterDPI() {
+        final Printer p = getPrinter();
+        if (p != null) {
+            final org.eclipse.swt.graphics.Point dpi = p.getDPI();
+            return new Point(dpi.x, dpi.y);
         }
         return null;
     }
@@ -756,7 +815,7 @@ public final class PrintOptions {
             return new Point2D.Double();
         }
 
-        final Rectangle pBounds = getPrinterBounds();
+        final Dimension2D pBounds = getExporter().getTrimmedTileBounds(this);
 
         if (pBounds != null) {
             if (diagramBounds == null) {
@@ -764,15 +823,12 @@ public final class PrintOptions {
                     // in this case we cannot compute the centering offset, should not happen
                     return null;
                 }
-                diagramBounds = exporter.getDiagramBounds();
+                diagramBounds = exporter.getDiagramBoundsIncludingTrim();
             }
 
-            final Rectangle2D.Double adjustedPrinterBounds = new Rectangle2D.Double(
-                    0, 0, pBounds.width * pagesWide, pBounds.height * pagesTall);
-
             return new Point2D.Double(
-                    (adjustedPrinterBounds.width - diagramBounds.getWidth() * scaleFactor) / 2,
-                    (adjustedPrinterBounds.height - diagramBounds.getHeight() * scaleFactor) / 2);
+                    (pBounds.getWidth() * pagesWide - diagramBounds.getWidth() * scaleFactor) / 2,
+                    (pBounds.getHeight() * pagesTall - diagramBounds.getHeight() * scaleFactor) / 2);
         }
 
         return null;

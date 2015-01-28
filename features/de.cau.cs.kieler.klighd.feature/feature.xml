@@ -2,7 +2,7 @@
 <feature
       id="de.cau.cs.kieler.klighd.feature"
       label="KIELER Lightweight Diagrams Infrastructure"
-      version="0.6.0.qualifier"
+      version="0.7.0.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel"
       plugin="de.cau.cs.kieler.klighd">
 
@@ -219,24 +219,11 @@ litigation.
 
    <requires>
       <import feature="org.eclipse.platform" version="3.8.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.xtext.xbase.lib" version="2.3.0" match="greaterOrEqual"/>
-      <import plugin="com.google.guava"/>
+      <import feature="org.eclipse.xtext.xbase.lib" version="2.7.2" match="greaterOrEqual"/>
       <import feature="de.cau.cs.kieler.kiml.feature"/>
+      <import plugin="com.google.guava" version="11.0.0" match="greaterOrEqual"/>
+      <import plugin="com.google.inject" version="3.0.0" match="greaterOrEqual"/>
    </requires>
-
-   <plugin
-         id="de.cau.cs.kieler.core.kivi"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.core.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
 
    <plugin
          id="de.cau.cs.kieler.klighd"
@@ -247,13 +234,6 @@ litigation.
 
    <plugin
          id="de.cau.cs.kieler.klighd.piccolo"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.klighd.xtext"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -281,34 +261,6 @@ litigation.
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.ksbase"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.ksbase.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kiml.kivi"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kiml.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.cau.cs.kieler.klighd.ui"
          download-size="0"
          install-size="0"
@@ -316,18 +268,10 @@ litigation.
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.klighd.kivi"
+         id="de.cau.cs.kieler.core"
          download-size="0"
          install-size="0"
          version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.klighd.ui.emf"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
          unpack="false"/>
 
 </feature>

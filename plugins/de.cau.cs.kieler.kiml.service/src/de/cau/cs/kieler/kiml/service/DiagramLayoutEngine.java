@@ -43,7 +43,9 @@ import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
+import de.cau.cs.kieler.kiml.LayoutConfigService;
 import de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine;
+import de.cau.cs.kieler.kiml.config.CompoundLayoutConfig;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.config.IMutableLayoutConfig;
 import de.cau.cs.kieler.kiml.config.LayoutContext;
@@ -311,18 +313,22 @@ public class DiagramLayoutEngine {
      */
     private int calcAnimationTime(final LayoutMapping<?> mapping, final ILayoutConfig config,
             final boolean viewerNotVisible) {
-        boolean animate = layoutOptionManager.getGlobalValue(LayoutOptions.ANIMATE, config);
+        
+        final CompoundLayoutConfig clc = CompoundLayoutConfig.of(config);
+        clc.addAll(LayoutConfigService.getInstance().getActiveConfigs());
+        
+        boolean animate = layoutOptionManager.getGlobalValue(LayoutOptions.ANIMATE, clc);
         if (animate) {
-            int minTime = layoutOptionManager.getGlobalValue(LayoutOptions.MIN_ANIMATION_TIME, config);
+            int minTime = layoutOptionManager.getGlobalValue(LayoutOptions.MIN_ANIMATION_TIME, clc);
             if (minTime < 0) {
                 minTime = 0;
             }
-            int maxTime = layoutOptionManager.getGlobalValue(LayoutOptions.MAX_ANIMATION_TIME, config);
+            int maxTime = layoutOptionManager.getGlobalValue(LayoutOptions.MAX_ANIMATION_TIME, clc);
             if (maxTime < minTime) {
                 maxTime = minTime;
             }
             int factor = layoutOptionManager.getGlobalValue(
-                    LayoutOptions.ANIMATION_TIME_FACTOR, config);
+                    LayoutOptions.ANIMATION_TIME_FACTOR, clc);
             if (factor > 0) {
                 int graphSize = countNodes(mapping.getLayoutGraph());
                 int time = minTime + (int) (factor * Math.sqrt(graphSize));

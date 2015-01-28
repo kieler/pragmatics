@@ -333,20 +333,41 @@ public class InternalGMLLexer extends Lexer {
         try {
             int _type = RULE_STRING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.cau.cs.kieler.kiml.formats.gml/src-gen/de/cau/cs/kieler/kiml/formats/gml/parser/antlr/internal/InternalGML.g:237:13: ( '\"' ( '&' ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '#' )+ ';' | ~ ( ( '&' | '\"' ) ) )* '\"' )
-            // ../de.cau.cs.kieler.kiml.formats.gml/src-gen/de/cau/cs/kieler/kiml/formats/gml/parser/antlr/internal/InternalGML.g:237:15: '\"' ( '&' ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '#' )+ ';' | ~ ( ( '&' | '\"' ) ) )* '\"'
+            // ../de.cau.cs.kieler.kiml.formats.gml/src-gen/de/cau/cs/kieler/kiml/formats/gml/parser/antlr/internal/InternalGML.g:237:13: ( '\"' ( '&' ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '#' )+ ';' | ~ ( ( '&' | '\"' ) ) | '\\\\\"' )* '\"' )
+            // ../de.cau.cs.kieler.kiml.formats.gml/src-gen/de/cau/cs/kieler/kiml/formats/gml/parser/antlr/internal/InternalGML.g:237:15: '\"' ( '&' ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '#' )+ ';' | ~ ( ( '&' | '\"' ) ) | '\\\\\"' )* '\"'
             {
             match('\"'); 
-            // ../de.cau.cs.kieler.kiml.formats.gml/src-gen/de/cau/cs/kieler/kiml/formats/gml/parser/antlr/internal/InternalGML.g:237:19: ( '&' ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '#' )+ ';' | ~ ( ( '&' | '\"' ) ) )*
+            // ../de.cau.cs.kieler.kiml.formats.gml/src-gen/de/cau/cs/kieler/kiml/formats/gml/parser/antlr/internal/InternalGML.g:237:19: ( '&' ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '#' )+ ';' | ~ ( ( '&' | '\"' ) ) | '\\\\\"' )*
             loop10:
             do {
-                int alt10=3;
+                int alt10=4;
                 int LA10_0 = input.LA(1);
 
                 if ( (LA10_0=='&') ) {
                     alt10=1;
                 }
-                else if ( ((LA10_0>='\u0000' && LA10_0<='!')||(LA10_0>='#' && LA10_0<='%')||(LA10_0>='\'' && LA10_0<='\uFFFF')) ) {
+                else if ( (LA10_0=='\\') ) {
+                    int LA10_3 = input.LA(2);
+
+                    if ( (LA10_3=='\"') ) {
+                        int LA10_5 = input.LA(3);
+
+                        if ( ((LA10_5>='\u0000' && LA10_5<='\uFFFF')) ) {
+                            alt10=3;
+                        }
+
+                        else {
+                            alt10=2;
+                        }
+
+                    }
+                    else if ( ((LA10_3>='\u0000' && LA10_3<='!')||(LA10_3>='#' && LA10_3<='\uFFFF')) ) {
+                        alt10=2;
+                    }
+
+
+                }
+                else if ( ((LA10_0>='\u0000' && LA10_0<='!')||(LA10_0>='#' && LA10_0<='%')||(LA10_0>='\'' && LA10_0<='[')||(LA10_0>=']' && LA10_0<='\uFFFF')) ) {
                     alt10=2;
                 }
 
@@ -409,6 +430,14 @@ public class InternalGMLLexer extends Lexer {
             	        MismatchedSetException mse = new MismatchedSetException(null,input);
             	        recover(mse);
             	        throw mse;}
+
+
+            	    }
+            	    break;
+            	case 3 :
+            	    // ../de.cau.cs.kieler.kiml.formats.gml/src-gen/de/cau/cs/kieler/kiml/formats/gml/parser/antlr/internal/InternalGML.g:237:75: '\\\\\"'
+            	    {
+            	    match("\\\""); 
 
 
             	    }

@@ -15,6 +15,7 @@ import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
 import de.cau.cs.kieler.kiml.grana.analyses.AreaAnalysis;
 import de.cau.cs.kieler.kiml.grana.analyses.EdgeCountAnalysis;
@@ -45,9 +46,10 @@ public class AreaMetric implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
+    public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Area metric", 1);
+        Map<String, Object> results = context.getResults();
         Object[] dimsResult = (Object[]) results.get(AreaAnalysis.ID);
         int nodeCount = (Integer) results.get(NodeCountAnalysis.ID);
         int edgeCount = (Integer) results.get(EdgeCountAnalysis.ID);

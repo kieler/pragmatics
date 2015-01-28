@@ -3,7 +3,7 @@ package de.cau.cs.kieler.klighd.examples.dependencies
 import com.google.common.collect.ImmutableList
 import com.google.inject.Inject
 import de.cau.cs.kieler.core.krendering.KRendering
-import de.cau.cs.kieler.core.krendering.Trigger
+import de.cau.cs.kieler.core.krendering.extensions.KColorExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KContainerRenderingExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KEdgeExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KNodeExtensions
@@ -11,9 +11,9 @@ import de.cau.cs.kieler.core.krendering.extensions.KPolylineExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.kiml.options.EdgeRouting
 import de.cau.cs.kieler.kiml.options.LayoutOptions
-import de.cau.cs.kieler.klay.layered.properties.Properties
 import de.cau.cs.kieler.klighd.SynthesisOption
 import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
+import de.cau.cs.kieler.klay.layered.properties.Properties
 
 /**
  * Very basic synthesis that presents a dependency graph for the passed project information.
@@ -29,7 +29,7 @@ class ProjectDependencySynthesis extends AbstractDiagramSynthesis<ProjectDepende
     @Inject extension KRenderingExtensions
     @Inject extension KContainerRenderingExtensions
     @Inject extension KPolylineExtensions
-    //@Inject extension KColorExtensions
+    @Inject extension KColorExtensions
     
     private static val SynthesisOption EXT_DEPS = SynthesisOption::createCheckOption("External Dependencies", false);
     
@@ -41,7 +41,7 @@ class ProjectDependencySynthesis extends AbstractDiagramSynthesis<ProjectDepende
         return ImmutableList.of(
             specifyLayoutOption(LayoutOptions.ALGORITHM, null),
             specifyLayoutOption(LayoutOptions.EDGE_ROUTING, EdgeRouting.values().drop(1).sortBy[ it.name ]),
-            specifyLayoutOption(Properties.MERGE_PORTS, null)
+            specifyLayoutOption(Properties.MERGE_EDGES, null)
         );
     }
     
@@ -57,7 +57,11 @@ class ProjectDependencySynthesis extends AbstractDiagramSynthesis<ProjectDepende
                     projectNode.addRectangle => [ rect |
                         rect.addText(project.name).addPadding(5)
                         
-                        rect.addAction(Trigger.SINGLECLICK, "de.cau.cs.kieler.klighd.examples.dependencies.hightlightEdges")
+                        rect.addSingleClickAction("de.cau.cs.kieler.klighd.examples.dependencies.hightlightEdges")
+                        
+                        if (project.name.contains("de.cau.cs.kieler")) {
+                        	rect.background = "lightgray".color
+                        }
                     ]
                     
                     root.children += projectNode
@@ -91,6 +95,20 @@ class ProjectDependencySynthesis extends AbstractDiagramSynthesis<ProjectDepende
                             
                             extProject.addRectangle => [ rect |
                                 rect.addText(dep).addPadding(5)
+                                
+                                  rect.addSingleClickAction("de.cau.cs.kieler.klighd.examples.dependencies.hightlightEdges")
+                                  
+                                  if (dep.contains("de.cau.cs.kieler")) {
+			                        rect.background = "lightgray".color
+			                      } 
+			                      
+			                      if (dep.contains("gmf") || dep.contains("kivi")) {
+			                        rect.background = "red".color
+			                      }
+			                      
+			                      if (dep.contains("ui")) {
+			                        rect.background = "brown".color
+			                      }
                             ]
                             
                             root.children += extProject

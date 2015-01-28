@@ -21,6 +21,11 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.util.Iterator;
 
+import org.eclipse.emf.common.util.AbstractTreeIterator;
+import org.eclipse.emf.common.util.TreeIterator;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
@@ -71,6 +76,25 @@ public final class NodeUtil {
     }
 
     /**
+     * Applies the translation to the given node.
+     *
+     * @param node
+     *            the node
+     * @param x
+     *            the x-translation
+     * @param y
+     *            the y-translation
+     */
+    public static void applyTranslation(final PNode node, final double x, final double y) {
+        final AffineTransform t = node.getTransformReference(true);
+
+        if (t.getTranslateX() != x || t.getTranslateY() != y) {
+            // apply the translation
+            node.setOffset(x, y);
+        }
+    }
+
+    /**
      * Applies the bounds to the given node using the node's translation and its bounds.
      *
      * @param node
@@ -83,12 +107,9 @@ public final class NodeUtil {
      *            the width
      * @param height
      *            the height
-     *
-     * @author mri, chsch
      */
     public static void applyBounds(final PNode node, final double x, final double y,
             final double width, final double height) {
-        // apply the layout;
         // sets the size of the node, does not influence the above determined position
         node.setBounds(0, 0, width, height);
 
@@ -142,7 +163,7 @@ public final class NodeUtil {
      *            the {@link Bounds}
      */
     public static void applyBounds(final PNodeController<?> controller, final Bounds bounds) {
-        controller.getNode().setBounds(0, 0,  bounds.getWidth(), bounds.getHeight());
+        controller.getTransformedNode().setBounds(0, 0,  bounds.getWidth(), bounds.getHeight());
 
         applyTranslation(controller, bounds);
     }
@@ -157,34 +178,18 @@ public final class NodeUtil {
      *            the {@link Bounds}
      */
     public static void applyTranslation(final PNodeController<?> controller, final Bounds bounds) {
+        final PNode transformedNode = controller.getTransformedNode();
+
+        // reset the current affine transform
+        transformedNode.getTransformReference(true).setToIdentity();
+
         // apply the translation
-        final PNode node = controller.getNode();
-        node.getTransformReference(true).setToIdentity();
+        applyTranslation(transformedNode, bounds.getX(), bounds.getY());
 
+        // (re-)apply the rotation,
+        //  'controller' is in charge of caching the required angle and anchor data
+        //  invalidation of 'transformedNodes's current bounds already done in applyTranslation
         controller.applyRotation();
-
-        node.translate(bounds.getX(), bounds.getY());
-    }
-
-    /**
-     * Applies the translation to the given node.
-     *
-     * @param node
-     *            the node
-     * @param x
-     *            the x-translation
-     * @param y
-     *            the y-translation
-     *
-     * @author mri, chsch
-     */
-    public static void applyTranslation(final PNode node, final double x, final double y) {
-        final AffineTransform t = node.getTransformReference(true);
-
-        if (t.getTranslateX() != x || t.getTranslateY() != y) {
-            // apply the translation
-            node.setOffset(x, y);
-        }
     }
 
     /**
@@ -194,11 +199,8 @@ public final class NodeUtil {
      *            the node
      * @param translation
      *            the translation
-     *
-     * @author mri, chsch
      */
     public static void applyTranslation(final PNode node, final Point2D translation) {
-        // apply the translation
         applyTranslation(node, translation.getX(), translation.getY());
     }
 
@@ -557,5 +559,67 @@ public final class NodeUtil {
         }
 
         return result;
+    }
+
+
+    // Some convenient children iterator factory methods
+
+    /**
+     * Returns an {@link TreeIterator} providing {@code node}'s direct and recursively children.
+     *
+     * @param node
+     *            the root {@link PNode}
+     * @return the requested {@link Iterator}
+     */
+    public static TreeIterator<PNode> getDeepChildrenIterator(final PNode node) {
+        return getDeepChildrenIterator(node, false);
+    }
+
+    /**
+     * Returns an {@link TreeIterator} providing {@code node}'s direct and recursively children.
+     *
+     * @param node
+     *            the root {@link PNode}
+     * @param includeRoot
+     *            if <code>true</code> {@code node} is provided, too
+     * @return the requested {@link Iterator}
+     */
+    public static TreeIterator<PNode> getDeepChildrenIterator(final PNode node,
+            final boolean includeRoot) {
+        return getSubtreeFilteredDeepChildrenIterator(node, includeRoot, null);
+    }
+
+    /**
+     * Returns an {@link TreeIterator} providing {@code node}'s direct and recursively children.<br>
+     * <b>Caution:</b> If {@code filter(x)} returns <code>false</code> for a {@link PNode} {@code x}
+     * the children of {@code x} are not visited!
+     *
+     * @param node
+     *            the root {@link PNode}
+     * @param includeRoot
+     *            if <code>true</code> {@code node} is provided, too
+     * @param filter
+     *            the filter {@link Predicate} to apply to each child subtree, if equal to
+     *            <code>null</code> no filtering is performed
+     * @return the requested {@link Iterator}
+     */
+    public static TreeIterator<PNode> getSubtreeFilteredDeepChildrenIterator(
+            final PNode node, final boolean includeRoot, final Predicate<PNode> filter) {
+
+        return new AbstractTreeIterator<PNode>(node) {
+            private static final long serialVersionUID = -7784774420574849372L;
+
+            @Override
+            protected Iterator<PNode> getChildren(final Object object) {
+                @SuppressWarnings("unchecked")
+                final Iterator<PNode> res = ((PNode) object).getChildrenIterator();
+
+                if (filter == null) {
+                    return res;
+                } else {
+                    return Iterators.filter(res, filter);
+                }
+            }
+        };
     }
 }

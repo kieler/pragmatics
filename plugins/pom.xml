@@ -27,6 +27,8 @@
     <module>de.cau.cs.kieler.core.ui</module>
     <module>de.cau.cs.kieler.kiml</module>
     <module>de.cau.cs.kieler.kiml.adaptagrams</module>
+    <module>de.cau.cs.kieler.kiml.config.text</module>
+    <module>de.cau.cs.kieler.kiml.config.text.ui</module>
     <module>de.cau.cs.kieler.kiml.export</module>
     <module>de.cau.cs.kieler.kiml.formats</module>
     <module>de.cau.cs.kieler.kiml.formats.gml</module>
@@ -36,6 +38,9 @@
     <module>de.cau.cs.kieler.kiml.formats.svg</module>
     <module>de.cau.cs.kieler.kiml.gmf</module>
     <module>de.cau.cs.kieler.kiml.grana</module>
+    <module>de.cau.cs.kieler.kiml.grana.headless</module>
+    <module>de.cau.cs.kieler.kiml.grana.text</module>
+    <module>de.cau.cs.kieler.kiml.grana.text.ui</module>
     <module>de.cau.cs.kieler.kiml.graphiti</module>
     <module>de.cau.cs.kieler.kiml.graphviz.dot</module>
     <module>de.cau.cs.kieler.kiml.graphviz.layouter</module>
@@ -52,7 +57,7 @@
     <module>de.cau.cs.kieler.klighd.examples</module>
     <module>de.cau.cs.kieler.klighd.kivi</module>
 <!--
-    KLighD Incremental is disabled as long as it doesn't work with the Kepler version of EMF Compare.
+    KLighD Incremental is disabled as long as it doesn't work with the Kepler/Luna version of EMF Compare.
     <module>de.cau.cs.kieler.klighd.incremental</module>
 -->
     <module>de.cau.cs.kieler.klighd.piccolo</module>
@@ -61,6 +66,7 @@
     <module>de.cau.cs.kieler.klighd.piccolo.freehep</module>
     <module>de.cau.cs.kieler.klighd.xtext</module>
     <module>de.cau.cs.kieler.klighd.ui</module>
+    <module>de.cau.cs.kieler.klighd.ui.contrib3x</module>
     <module>de.cau.cs.kieler.klighd.ui.emf</module>
     <module>de.cau.cs.kieler.klighd.ui.wizard</module>
     <module>de.cau.cs.kieler.ksbase</module>

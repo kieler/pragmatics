@@ -24,7 +24,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -70,6 +69,7 @@ import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo;
 import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo.GeneType;
 import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
+import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.AnalysisData;
 import de.cau.cs.kieler.kiml.grana.AnalysisService;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
@@ -329,13 +329,13 @@ public class TestMetricsHandler extends AbstractHandler {
             
             if (layoutGraph != null) {
                 // perform analysis on the evaluation graph
-                Map<String, Object> analysisResults = AnalysisService.getInstance().analyzePresorted(
+                AnalysisContext context = AnalysisService.getInstance().analyzePresorted(
                         layoutGraph, analysisSequence, new BasicProgressMonitor(0));
                 ListIterator<AnalysisData> metricIter = metrics.listIterator();
                 while (metricIter.hasNext()) {
                     int metricIndex = metricIter.nextIndex();
                     AnalysisData metric = metricIter.next();
-                    Object value = analysisResults.get(metric.getId());
+                    Object value = context.getResult(metric.getId());
                     if (value instanceof Float) {
                         float x = (Float) value;
                         if (!Float.isNaN(x) && x >= 0 && x <= 1) {

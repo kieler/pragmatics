@@ -253,11 +253,17 @@ public class XtextBasedEditorActivationChangeTrigger extends AbstractTrigger imp
      * ------------------------------------------------------
      */
 
+    private boolean isSupported(final IWorkbenchPart part) {
+        return part instanceof XtextEditor
+                && !part.equals(this.currentEditor)
+                && !((XtextEditor) part).getLanguageName().equals("org.eclipse.xtend.core.Xtend");
+    }
+
     /**
      * {@inheritDoc}
      */
     public void partOpened(final IWorkbenchPart part) {
-        if (part instanceof XtextEditor && !part.equals(this.currentEditor)) {
+        if (isSupported(part)) {
             this.detachFromCurrentXtextEditor();
             this.attachToXtextEditor((XtextEditor) part, true);
         }
@@ -267,7 +273,7 @@ public class XtextBasedEditorActivationChangeTrigger extends AbstractTrigger imp
      * {@inheritDoc}
      */
     public void partBroughtToTop(final IWorkbenchPart part) {
-        if (part instanceof XtextEditor && !part.equals(this.currentEditor)) {
+        if (isSupported(part)) {
             this.detachFromCurrentXtextEditor();
             this.attachToXtextEditor((XtextEditor) part, false);
         }
@@ -277,7 +283,7 @@ public class XtextBasedEditorActivationChangeTrigger extends AbstractTrigger imp
      * {@inheritDoc}
      */
     public void partActivated(final IWorkbenchPart part) {
-        if (part instanceof XtextEditor && !part.equals(this.currentEditor)) {
+        if (isSupported(part)) {
             this.detachFromCurrentXtextEditor();
             this.attachToXtextEditor((XtextEditor) part, false);
         }
@@ -301,7 +307,7 @@ public class XtextBasedEditorActivationChangeTrigger extends AbstractTrigger imp
             this.currentEditor = null;
             this.detachFromCurrentXtextEditor();
         }
-        if (part instanceof XtextEditor) {
+        if (isSupported(part)) {
             this.xtextEditorClosed((XtextEditor) part);
         }
     }

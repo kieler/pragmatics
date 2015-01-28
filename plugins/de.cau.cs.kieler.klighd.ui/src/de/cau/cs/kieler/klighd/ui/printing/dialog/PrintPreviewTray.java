@@ -13,6 +13,9 @@
  */
 package de.cau.cs.kieler.klighd.ui.printing.dialog;
 
+import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,13 +30,15 @@ import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.dialogs.DialogTray;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 
+import de.cau.cs.kieler.klighd.DiagramExportConfig;
+import de.cau.cs.kieler.klighd.ui.printing.PrintExporter;
 import de.cau.cs.kieler.klighd.ui.printing.PrintOptions;
 
 /**
@@ -168,22 +173,23 @@ public class PrintPreviewTray extends DialogTray {
         composite.pack();
 
         composite.setLayout(new GridLayout(options.getPagesWide(), true));
+        final Point bodySize = body.getSize();
 
-        // ( body height - top border - bottom border -
-        // ((# of rows - 1) x border between images) ) / # of rows
+        // (body height - top border - bottom border - (# of rows - 1) x border between images)
+        //   / # of rows
         int imageHeight =
-                (body.getSize().y - BORDER_SIZE - BORDER_SIZE - ((options.getPagesTall() - 1)
-                        * BORDER_SIZE)) / options.getPagesTall();
+                (bodySize.y - (2 + options.getPagesTall() - 1) * BORDER_SIZE)
+                        / options.getPagesTall();
 
-        // ( body width - left border - right border -
-        // ((# of columns - 1) x border between images) ) / # of columns
+        // ( body width - left border - right border - (# of columns - 1) x border between images)
+        //   / # of columns
         int imageWidth =
-                (body.getSize().x - BORDER_SIZE - BORDER_SIZE - ((options.getPagesWide() - 1)
-                        * BORDER_SIZE)) / options.getPagesWide();
+                (bodySize.x - (2 + options.getPagesWide() - 1) * BORDER_SIZE)
+                        / options.getPagesWide();
 
         // now adjust to the limiting one based on aspect ratio
 
-        final Rectangle pageBounds = options.getPrinterBounds();
+        final Dimension pageBounds = options.getPrinterBounds();
 
         // width / height
         final float printerRatio = ((float) pageBounds.width) / ((float) pageBounds.height);
@@ -196,22 +202,38 @@ public class PrintPreviewTray extends DialogTray {
             imageHeight = (int) (imageWidth * (1.0f / printerRatio));
         }
 
-        // Adjust the scale according to relation between preview and printing size.
-        final double previewScale = (double) (imageWidth) / pageBounds.width;
-
-        final Rectangle imageBounds =
-                new Rectangle(0, 0, imageWidth, imageHeight);
-
         // make sure height and width are not 0, if too small <4, don't bother
         if (!(imageHeight <= MINIMAL_TILE_SIZE || imageWidth <= MINIMAL_TILE_SIZE)) {
-            for (int i = 0; i < options.getPagesTall(); i++) {
-                for (int j = 0; j < options.getPagesWide(); j++) {
-                    final Label label = new Label(composite, SWT.NULL);
-                    final Image pageImg = options.getExporter().exportPreview(j, i, imageBounds,
-                            options.getScaleFactor() * previewScale,
-                            options.getCenteringOffset(previewScale));
-                    label.setImage(pageImg);
+
+            final PrintExporter exporter = options.getExporter();
+
+            final int rows = options.getPagesTall();
+            final int columns = options.getPagesWide();
+
+            final DiagramExportConfig config = exporter.createExportConfig(options);
+
+            final Dimension imageBounds = new Dimension(imageWidth, imageHeight);
+
+            // Adjust the scale according to relation between preview and printing size.
+            final double previewScale = (double) (imageWidth) / pageBounds.width;
+
+            final Rectangle imageClip = exporter.getBasicPageClip(imageBounds,
+                    config.tileTrim.getScaled((float) previewScale));
+
+            final Point2D centeringOffset = options.getCenteringOffset(previewScale);
+
+            int pageNo = 0;
+
+            for (int row = 0; row < rows; row++) {
+                for (int column = 0; column < columns; column++) {
+
+                    config.setPageAndTileNumbers(++pageNo, row, column, rows, columns);
+
+                    final Image pageImg = exporter.exportPreview(
+                            config, imageBounds, imageClip, previewScale, centeringOffset);
                     imageList.add(pageImg);
+
+                    new Label(composite, SWT.NULL).setImage(pageImg);
                 }
             }
         }
@@ -219,7 +241,7 @@ public class PrintPreviewTray extends DialogTray {
         composite.pack();
 
         // Manually center the composite
-        final Rectangle compositeBounds = composite.getBounds();
+        final org.eclipse.swt.graphics.Rectangle compositeBounds = composite.getBounds();
 
         compositeBounds.x = (body.getSize().x - compositeBounds.width) / 2;
         compositeBounds.y = (body.getSize().y - compositeBounds.height) / 2;
