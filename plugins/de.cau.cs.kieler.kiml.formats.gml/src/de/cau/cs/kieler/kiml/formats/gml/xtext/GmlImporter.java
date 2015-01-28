@@ -13,7 +13,9 @@
  */
 package de.cau.cs.kieler.kiml.formats.gml.xtext;
 
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
@@ -29,9 +31,7 @@ import de.cau.cs.kieler.kiml.formats.gml.Element;
 import de.cau.cs.kieler.kiml.formats.gml.NumberElement;
 import de.cau.cs.kieler.kiml.formats.gml.CollectionElement;
 import de.cau.cs.kieler.kiml.formats.gml.GMLModel;
-//import de.cau.cs.kieler.kiml.formats.gml.gml.Element;
-//import de.cau.cs.kieler.kiml.formats.gml.gml.GmlFactory;
-//import de.cau.cs.kieler.kiml.formats.gml.gml.GmlModel;
+import de.cau.cs.kieler.kiml.formats.gml.GmlFormatHandler;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
@@ -46,7 +46,6 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class GmlImporter implements IGraphTransformer<GmlModel, KNode> {
 public class GmlImporter implements IGraphTransformer<GMLModel, KNode> {
 
     /** map of GML node identifiers to KNodes. */
@@ -55,6 +54,9 @@ public class GmlImporter implements IGraphTransformer<GMLModel, KNode> {
     /** GML element attached to each new KGraphElement. */
     private static final IProperty<Element> PROP_ELEM
             = new Property<Element>("gmlImporter.element");
+    /** GML collection element attached to each new KGraphElement. */
+    private static final IProperty<CollectionElement> PROP_COLLECT_ELEM
+            = new Property<CollectionElement>("gmlImporter.collectionElement");
     
     /**
      * {@inheritDoc}
@@ -212,7 +214,7 @@ public class GmlImporter implements IGraphTransformer<GMLModel, KNode> {
     private void applyLayout(final KNode parentNode) {
         for (KNode knode : parentNode.getChildren()) {
             KShapeLayout knodeLayout = knode.getData(KShapeLayout.class);
-            Element nodeElement = knodeLayout.getProperty(PROP_ELEM);
+            CollectionElement nodeElement = knodeLayout.getProperty(PROP_COLLECT_ELEM);
             if (nodeElement != null) {
                 // apply node layout
                 Element graphics = null;
@@ -223,71 +225,61 @@ public class GmlImporter implements IGraphTransformer<GMLModel, KNode> {
                     }
                 }
                 if (graphics == null) {
-                    graphics = GmlFactory.eINSTANCE.createElement();
-                    graphics.setKey("graphics");
+                    graphics = new CollectionElement(nodeElement, "graphics");
                     nodeElement.getElements().add(graphics);
-                }
-                Element x = null, y = null, w = null, h = null;
-                for (Element e : graphics.getElements()) {
+                } 
+                NumberElement x = null, y = null, w = null, h = null;
+                for (Element e : getElements(graphics)) {
                     if ("x".equals(e.getKey())) {
-                        x = e;
+                        x = new NumberElement(graphics, "x", knodeLayout.getXpos());
                     } else if ("y".equals(e.getKey())) {
-                        y = e;
+                        y = new NumberElement(graphics, "y", knodeLayout.getYpos());
                     } else if ("w".equals(e.getKey())) {
-                        w = e;
+                        w = new NumberElement(graphics, "w", knodeLayout.getWidth());
                     } else if ("h".equals(e.getKey())) {
-                        h = e;
+                        h = new NumberElement(graphics, "h", knodeLayout.getHeight());;
                     }
                 }
                 // set x coordinate position
                 if (x == null) {
-                    x = GmlFactory.eINSTANCE.createElement();
-                    x.setKey("x");
-                    graphics.getElements().add(x);
+                    x = new NumberElement(graphics, "x", knodeLayout.getXpos());
+                    getElements(graphics).add(x);
                 }
-                x.setValue(Float.toString(knodeLayout.getXpos()));
                 // set y coordinate position
                 if (y == null) {
-                    y = GmlFactory.eINSTANCE.createElement();
-                    y.setKey("y");
-                    graphics.getElements().add(y);
+                    y = new NumberElement(graphics, "y", knodeLayout.getYpos());
+                    getElements(graphics).add(y);
                 }
-                y.setValue(Float.toString(knodeLayout.getYpos()));
                 // set width
                 if (w == null) {
-                    w = GmlFactory.eINSTANCE.createElement();
-                    w.setKey("w");
-                    graphics.getElements().add(w);
+                    w = new NumberElement(graphics, "w", knodeLayout.getWidth());
+                    getElements(graphics).add(w);
                 }
-                w.setValue(Float.toString(knodeLayout.getWidth()));
-                // set height
+                // set height  
                 if (h == null) {
-                    h = GmlFactory.eINSTANCE.createElement();
-                    h.setKey("h");
-                    graphics.getElements().add(h);
+                    h = new NumberElement(graphics, "h", knodeLayout.getHeight());
+                    getElements(graphics).add(h);
                 }
-                h.setValue(Float.toString(knodeLayout.getHeight()));
             }
             
             for (KEdge kedge : knode.getOutgoingEdges()) {
                 KEdgeLayout kedgeLayout = kedge.getData(KEdgeLayout.class);
-                Element edgeElement = kedgeLayout.getProperty(PROP_ELEM);
+                CollectionElement edgeElement = kedgeLayout.getProperty(PROP_COLLECT_ELEM);
                 if (edgeElement != null) {
                     // apply edge layout
-                    Element graphics = null;
-                    for (Element e : edgeElement.getElements()) {
+                    CollectionElement graphics = null;
+                    for (Element e : getElements(edgeElement)) {
                         if ("graphics".equalsIgnoreCase(e.getKey())) {
-                            graphics = e;
+                            graphics = (CollectionElement) e;
                             break;
                         }
                     }
                     if (graphics == null) {
-                        graphics = GmlFactory.eINSTANCE.createElement();
-                        graphics.setKey("graphics");
+                        graphics = new CollectionElement(edgeElement, "graphics");
                         edgeElement.getElements().add(graphics);
                     }
                     // remove old points
-                    Iterator<Element> elementIter = graphics.getElements().iterator();
+                    Iterator<Element> elementIter = getElements(graphics).iterator();
                     while (elementIter.hasNext()) {
                         Element e = elementIter.next();
                         if ("point".equalsIgnoreCase(e.getKey())) {
@@ -295,13 +287,13 @@ public class GmlImporter implements IGraphTransformer<GMLModel, KNode> {
                         }
                     }
                     // create new points
-                    graphics.getElements().add(
-                            GmlFormatHandler.createPoint(kedgeLayout.getSourcePoint()));
+                    getElements(graphics).add(
+                            GmlFormatHandler.createPoint(graphics, kedgeLayout.getSourcePoint()));
                     for (KPoint point : kedgeLayout.getBendPoints()) {
-                        graphics.getElements().add(GmlFormatHandler.createPoint(point));
+                        getElements(graphics).add(GmlFormatHandler.createPoint(graphics, point));
                     }
-                    graphics.getElements().add(
-                            GmlFormatHandler.createPoint(kedgeLayout.getTargetPoint()));
+                    getElements(graphics).add(
+                            GmlFormatHandler.createPoint(graphics, kedgeLayout.getTargetPoint()));
                 }
             }
             
