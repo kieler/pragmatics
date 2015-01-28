@@ -25,6 +25,7 @@ import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
@@ -110,6 +111,11 @@ public final class LongEdgeJoiner implements ILayoutProcessor {
             longEdgeDummy.getPorts(PortSide.EAST).iterator().next().getOutgoingEdges();
         int edgeCount = inputPortEdges.size();
         
+        // If we are to add unnecessary bend points, we need to know where. We take the
+        // position of the first port we find. (It doesn't really matter which port we're
+        // using, so we opt to keep it simple.)
+        KVector unnecessaryBendpoint = longEdgeDummy.getPorts().get(0).getAbsoluteAnchor();
+        
         // The following code assumes that edges with the same indices in the two
         // lists originate from the same long edge, which is true for the current
         // implementation of LongEdgeSplitter and HyperedgeDummyMerger
@@ -127,7 +133,7 @@ public final class LongEdgeJoiner implements ILayoutProcessor {
             KVectorChain survivingBendPoints = survivingEdge.getBendPoints();
             
             if (addUnnecessaryBendpoints) {
-                survivingBendPoints.add(new KVector(longEdgeDummy.getPosition()));
+                survivingBendPoints.add(new KVector(unnecessaryBendpoint));
             }
             
             for (KVector bendPoint : droppedEdge.getBendPoints()) {
