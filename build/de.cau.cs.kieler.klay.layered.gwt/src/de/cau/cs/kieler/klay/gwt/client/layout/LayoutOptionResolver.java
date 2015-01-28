@@ -35,7 +35,9 @@ import static de.cau.cs.kieler.kiml.options.LayoutOptions.SEPARATE_CC;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.SIZE_CONSTRAINT;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.SIZE_OPTIONS;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.ASPECT_RATIO;
+import static de.cau.cs.kieler.klay.layered.properties.Properties.ADD_UNNECESSARY_BENDPOINTS;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.BORDER_SPACING;
+import static de.cau.cs.kieler.klay.layered.properties.Properties.CONTENT_ALIGNMENT;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.CROSS_MIN;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.CYCLE_BREAKING;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.DEBUG_MODE;
@@ -44,8 +46,10 @@ import static de.cau.cs.kieler.klay.layered.properties.Properties.EDGE_SPACING_F
 import static de.cau.cs.kieler.klay.layered.properties.Properties.EDGE_LABEL_SIDE_SELECTION;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.FEEDBACK_EDGES;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.FIXED_ALIGNMENT;
+import static de.cau.cs.kieler.klay.layered.properties.Properties.INTERACTIVE_REFERENCE_POINT;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.LAYER_CONSTRAINT;
-import static de.cau.cs.kieler.klay.layered.properties.Properties.MERGE_PORTS;
+import static de.cau.cs.kieler.klay.layered.properties.Properties.MERGE_EDGES;
+import static de.cau.cs.kieler.klay.layered.properties.Properties.MERGE_HIERARCHICAL_EDGES;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.NODE_LAYERING;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.NODE_PLACER;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.OBJ_SPACING;
@@ -53,6 +57,8 @@ import static de.cau.cs.kieler.klay.layered.properties.Properties.OBJ_SPACING_IN
 import static de.cau.cs.kieler.klay.layered.properties.Properties.PRIORITY;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.THOROUGHNESS;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.WIDE_NODES_ON_MULTIPLE_LAYERS;
+
+
 
 
 
@@ -88,8 +94,10 @@ import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
 import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
 import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
+import de.cau.cs.kieler.klay.layered.properties.ContentAlignment;
 import de.cau.cs.kieler.klay.layered.properties.EdgeLabelSideSelection;
 import de.cau.cs.kieler.klay.layered.properties.FixedAlignment;
+import de.cau.cs.kieler.klay.layered.properties.InteractiveReferencePoint;
 import de.cau.cs.kieler.klay.layered.properties.LayerConstraint;
 import de.cau.cs.kieler.klay.layered.properties.WideNodesStrategy;
 
@@ -100,7 +108,6 @@ import de.cau.cs.kieler.klay.layered.properties.WideNodesStrategy;
  * @author uru
  */
 public final class LayoutOptionResolver {
-
 
     /** A set to assure that non-unique suffixes are only used once. */
     private static final Set<String> SUFFIX_SET = Sets.newHashSet();
@@ -125,10 +132,12 @@ public final class LayoutOptionResolver {
             LAYOUT_HIERARCHY,
             SEPARATE_CC,
             // klay
+            ADD_UNNECESSARY_BENDPOINTS,
             DEBUG_MODE,
             DISTRIBUTE_NODES,
-            MERGE_PORTS,
-            FEEDBACK_EDGES
+            MERGE_EDGES,
+            FEEDBACK_EDGES,
+            MERGE_HIERARCHICAL_EDGES
             );
     
     private static final Pair<Set<String>, Map<String, IProperty<?>>> FLOAT_TYPES = createTypesSet(
@@ -157,14 +166,16 @@ public final class LayoutOptionResolver {
             NODE_PLACER,
             FIXED_ALIGNMENT,
             LAYER_CONSTRAINT,
-            WIDE_NODES_ON_MULTIPLE_LAYERS
+            WIDE_NODES_ON_MULTIPLE_LAYERS,
+            INTERACTIVE_REFERENCE_POINT
             );
     
     private static final Pair<Set<String>, Map<String, IProperty<?>>> ENUMSET_TYPES = createTypesSet(
             NODE_LABEL_PLACEMENT,
             SIZE_CONSTRAINT,
-            SIZE_OPTIONS
+            SIZE_OPTIONS,
             // klay
+            CONTENT_ALIGNMENT
             );
     
     private static final Pair<Set<String>, Map<String, IProperty<?>>> OTHER_TYPES = createTypesSet(
@@ -334,6 +345,8 @@ public final class LayoutOptionResolver {
                     enumeration = LayerConstraint.valueOf(enumValue);
                 } else if (equalsIdOrSuffix(WIDE_NODES_ON_MULTIPLE_LAYERS, id)) {
                     enumeration = WideNodesStrategy.valueOf(enumValue);
+                } else if (equalsIdOrSuffix(INTERACTIVE_REFERENCE_POINT, id)) {
+                    enumeration = InteractiveReferencePoint.valueOf(enumValue);
                 }
                 
             } catch (Exception e) {
@@ -388,6 +401,11 @@ public final class LayoutOptionResolver {
                         set = EnumSet.noneOf(SizeOptions.class);
                     }
                     set.add(NodeLabelPlacement.valueOf(component));
+                } else if (equalsIdOrSuffix(CONTENT_ALIGNMENT, id)) {
+                    if (set == null) {
+                        set = EnumSet.noneOf(ContentAlignment.class);
+                    }
+                    set.add(ContentAlignment.valueOf(component));
                 }
             }
             

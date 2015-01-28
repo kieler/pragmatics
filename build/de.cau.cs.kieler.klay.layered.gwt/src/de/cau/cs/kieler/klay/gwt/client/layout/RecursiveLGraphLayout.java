@@ -17,6 +17,8 @@ import com.google.gwt.json.client.JSONObject;
 
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.KlayLayered;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
@@ -29,6 +31,14 @@ import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
  * @author uru
  */
 public class RecursiveLGraphLayout {
+
+    /**
+     * As opposed to the java version of klay layered, we set the default value for layoutHierarchy
+     * to 'true' for the javascript version I.e, if the user did not explicitly turn it off it will
+     * be active.
+     */
+    public static final IProperty<Boolean> LAYOUT_HIERARCHY = new Property<Boolean>(
+            LayoutOptions.LAYOUT_HIERARCHY, true);
 
     /**
      * Layouts the passed hierarchical {@link LGraph}.
@@ -52,7 +62,7 @@ public class RecursiveLGraphLayout {
         // perform layer-based layout
         KlayLayered klayLayered = new KlayLayered();
 
-        if (graph.getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {
+        if (graph.getProperty(LAYOUT_HIERARCHY)) {
             klayLayered.doCompoundLayout(graph, new BasicProgressMonitor());
         } else {
             recLayout(klayLayered, graph);
@@ -77,7 +87,7 @@ public class RecursiveLGraphLayout {
                 n.getSize().y = res.getActualSize().y;
             }
         }
-        
+
         IKielerProgressMonitor pm = new BasicProgressMonitor();
 
         // check for fixed layout

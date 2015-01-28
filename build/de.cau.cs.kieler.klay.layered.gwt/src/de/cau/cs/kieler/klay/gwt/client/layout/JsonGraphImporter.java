@@ -229,7 +229,11 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         
         // for the top level node check if we wanna layout hierarchy
         if (layoutHierarchy == null) {
-            layoutHierarchy = graph.getProperty(LayoutOptions.LAYOUT_HIERARCHY);
+            // as opposed to the java version of klay layered,
+            //  we set the default value for layoutHierarchy to 'true'
+            //  for the javascript version
+            // I.e, if the user did not explicitly turn it off it will be active
+            layoutHierarchy = graph.getProperty(RecursiveLGraphLayout.LAYOUT_HIERARCHY);
         }
 
         // try to get the 'children' array from the json node
