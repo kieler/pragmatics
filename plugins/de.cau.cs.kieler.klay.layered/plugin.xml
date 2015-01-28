@@ -162,6 +162,9 @@
          <knownOption
                option="de.cau.cs.kieler.klay.layered.linearSegmentsDeflectionDampening">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.contentAlignment">
+         </knownOption>
       </layoutAlgorithm>
       <layoutOption
             advanced="true"
@@ -380,6 +383,14 @@
                option="de.cau.cs.kieler.klay.layered.nodeLayering"
                value="LONGEST_PATH">
          </dependency>
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            class="de.cau.cs.kieler.klay.layered.properties.ContentAlignment"
+            description="Specifies how the content of compound nodes is to be aligned, e.g. top-left."
+            id="de.cau.cs.kieler.klay.layered.contentAlignment"
+            name="Content Alignment"
+            type="enumset">
       </layoutOption>
    </extension>
 </plugin>
