@@ -58,6 +58,7 @@ import de.cau.cs.kieler.klay.layered.p4nodes.SimpleNodePlacer;
 import de.cau.cs.kieler.klay.layered.p5edges.OrthogonalEdgeRouter;
 import de.cau.cs.kieler.klay.layered.p5edges.PolylineEdgeRouter;
 import de.cau.cs.kieler.klay.layered.p5edges.SplineEdgeRouter;
+import de.cau.cs.kieler.klay.layered.properties.ContentAlignment;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
@@ -863,6 +864,28 @@ public final class KlayLayered {
             LInsets insets = lgraph.getInsets();
             lgraph.getSize().x = newWidth - insets.left - insets.right;
             lgraph.getSize().y = newHeight - insets.top - insets.bottom;
+            
+            // obey to specified alignment constraints
+            Set<ContentAlignment> contentAlignment =
+                    lgraph.getProperty(Properties.CONTENT_ALIGNMENT);
+
+            // horizontal alignment
+            if (minWidth > oldSize.x) {
+                if (contentAlignment.contains(ContentAlignment.H_CENTER)) {
+                    lgraph.getOffset().x += (minWidth - oldSize.x) / 2f;
+                } else if (contentAlignment.contains(ContentAlignment.H_RIGHT)) {
+                    lgraph.getOffset().x += minWidth - oldSize.x;
+                }
+            }
+
+            // vertical alignment
+            if (minHeight > oldSize.y) {
+                if (contentAlignment.contains(ContentAlignment.V_CENTER)) {
+                    lgraph.getOffset().y += (minHeight - oldSize.y) / 2f;
+                } else if (contentAlignment.contains(ContentAlignment.V_BOTTOM)) {
+                    lgraph.getOffset().y += minHeight - oldSize.y;
+                }
+            }
             
             // correct the position of eastern and southern hierarchical ports, if necessary
             if (lgraph.getProperty(InternalProperties.GRAPH_PROPERTIES).contains(
