@@ -22,6 +22,9 @@ import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.xtext.resource.SaveOptions;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceSet;
@@ -54,7 +57,12 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  * @kieler.rating proposed yellow by msp
  */
 public class GraphvizLayoutProvider extends AbstractLayoutProvider {
-    
+
+    /** preference constant for determining whether to reuse a single Graphviz process. */
+    public static final String PREF_GRAPHVIZ_REUSE_PROCESS = "graphviz.reuseProcess";
+    /** default setting of above defined preference. */
+    public static final boolean REUSE_PROCESS_DEFAULT = true;
+
     /** the serial call number for usage in debug mode. */
     private static int serialCallNo = 0;
     
@@ -66,12 +74,29 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
     private DotFormatHandler dotHandler;
     /** the call number for the current execution. */
     private int myCallNo;
+    /** the current configuration regarding the process handling. */
+    private boolean reuseProcess;
+    /** a corresponding pref change listener updating {@link #reuseProcess}. */
+    private IPropertyChangeListener prefListener;
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void initialize(final String parameter) {
+        final IPreferenceStore store = GraphvizLayouterPlugin.getDefault().getPreferenceStore();
+        reuseProcess = store.getBoolean(PREF_GRAPHVIZ_REUSE_PROCESS);
+        
+        prefListener = new IPropertyChangeListener() {
+            
+            public void propertyChange(final PropertyChangeEvent event) {
+               if (PREF_GRAPHVIZ_REUSE_PROCESS.equals(event.getProperty())) {
+                   reuseProcess = ((Boolean) event.getNewValue()).booleanValue();
+               }
+            }
+        };
+        store.addPropertyChangeListener(prefListener);
+
         command = Command.valueOf(parameter);
         graphvizTool = new GraphvizTool(command);
         // the dot format handler is indirectly fetched in order to ensure proper injection
@@ -93,6 +118,16 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
      */
     @Override
     public void dispose() {
+        final GraphvizLayouterPlugin plugin = GraphvizLayouterPlugin.getDefault();
+
+        // since during platform shutdown plug-ins will be stopped in reverse order of their dependencies
+        //  'plugin' is likely to be 'null' when kiml.service calls 'dispose()' on the layout managers
+        // in this case removing the preference change listener should be obsolete ;-)
+        if (plugin != null && prefListener != null) {
+            plugin.getPreferenceStore().removePropertyChangeListener(prefListener);
+        }
+        prefListener = null;
+
         graphvizTool.cleanup(Cleanup.STOP);
     }
 
@@ -139,7 +174,7 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
             transData.getTargetGraphs().set(0, graphvizOutput);
             dotHandler.getExporter().transferLayout(transData);
         } finally {
-            graphvizTool.cleanup(Cleanup.NORMAL);
+            graphvizTool.cleanup(reuseProcess ? Cleanup.NORMAL : Cleanup.STOP);
             progressMonitor.done();
         }
     }

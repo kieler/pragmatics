@@ -16,13 +16,13 @@ package de.cau.cs.kieler.kiml.evol.metrics;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
+import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
 import de.cau.cs.kieler.kiml.grana.analyses.EdgeCountAnalysis;
@@ -43,12 +43,12 @@ public class EdgeOrthogonalityMetric implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
+    public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Edge orthogonality analysis", 1);
         float result;
 
-        int numberOfEdges = (Integer) results.get(EdgeCountAnalysis.ID);
+        int numberOfEdges = (Integer) context.getResult(EdgeCountAnalysis.ID);
         if (numberOfEdges > 0) {
             boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
                     AnalysisOptions.ANALYZE_HIERARCHY);

@@ -58,6 +58,9 @@
                option="de.cau.cs.kieler.klay.layered.edgeSpacingFactor">
          </knownOption>
          <knownOption
+               option="de.cau.cs.kieler.klay.layered.unnecessaryBendpoints">
+         </knownOption>
+         <knownOption
                default="12"
                option="de.cau.cs.kieler.borderSpacing">
          </knownOption>
@@ -159,6 +162,9 @@
          <knownOption
                option="de.cau.cs.kieler.klay.layered.linearSegmentsDeflectionDampening">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.contentAlignment">
+         </knownOption>
       </layoutAlgorithm>
       <layoutOption
             advanced="true"
@@ -250,6 +256,15 @@
             description="Edges that have no ports are merged so they touch the connected nodes at the same points."
             id="de.cau.cs.kieler.klay.layered.mergeEdges"
             name="Merge Edges"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="false"
+            description="Adds bend points even if an edge does not change direction."
+            id="de.cau.cs.kieler.klay.layered.unnecessaryBendpoints"
+            name="Add Unnecessary Bendpoints"
             type="boolean">
       </layoutOption>
       <layoutOption
@@ -368,6 +383,14 @@
                option="de.cau.cs.kieler.klay.layered.nodeLayering"
                value="LONGEST_PATH">
          </dependency>
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            class="de.cau.cs.kieler.klay.layered.properties.ContentAlignment"
+            description="Specifies how the content of compound nodes is to be aligned, e.g. top-left."
+            id="de.cau.cs.kieler.klay.layered.contentAlignment"
+            name="Content Alignment"
+            type="enumset">
       </layoutOption>
    </extension>
 </plugin>
