@@ -85,45 +85,47 @@ class InLayerEdgeNeighboringNodeCrossingCounter {
     }
 
     private int countUpperLower() {
-        int crossings = countOnSideInOrder(PortSide.WEST, upperNode, lowerNode);
-        crossings += countOnSideInOrder(PortSide.EAST, upperNode, lowerNode);
+        int crossings = countOnSide(PortSide.WEST);
+        crossings += countOnSide(PortSide.EAST);
         return crossings;
     }
 
     private int countLowerUpper() {
-        notifyNodeSwitch(upperNode, lowerNode); // pretend to have switched
-        int crossings = countOnSideInOrder(PortSide.WEST, lowerNode, upperNode);
-        crossings += countOnSideInOrder(PortSide.EAST, lowerNode, upperNode);
-        notifyNodeSwitch(lowerNode, upperNode); // switch back
+        switchUpperLower();
+
+        int crossings = countUpperLower();
+
+        switchUpperLower();
+
         return crossings;
     }
 
-    private int countOnSideInOrder(final PortSide portSide, final LNode first, final LNode second) {
+    private void switchUpperLower() {
+        notifyNodeSwitch(upperNode, lowerNode);
+        LNode temp = upperNode;
+        upperNode = lowerNode;
+        lowerNode = temp;
+    }
+
+    private int countOnSide(final PortSide portSide) {
         inLayerEdgePorts.clear();
         betweenLayerEdgePorts.clear();
         inLayerEdges.clear();
-        int crossings = processNode(portSide, first);
-        crossings += processNode(portSide, second);
+        int crossings = processUpperNode(portSide);
+        crossings += processLowerNode(portSide);
         return crossings;
     }
 
-    /**
-     * The main algorithm. This method must be used for upperNode first and then for lowerNode.
-     * 
-     * @param portSide
-     *            The side of the inLayerEdges currently processed.
-     * @param node
-     *            The current node.
-     * @return the amount of crossings currently known for this node.
-     */
-    private int processNode(final PortSide portSide, final LNode node) {
+    private int processUpperNode(final PortSide portSide) {
         int crossings = 0;
 
-        for (LPort port : portsOrderedTopToBottom(node, portSide)) {
+        for (LPort port : portsOrderedTopToBottom(upperNode, portSide)) {
             for (LEdge edge : port.getConnectedEdges()) {
 
                 if (isInBetweenLayerEdge(edge)) {
-                    crossings += amountOfOpenInLayerEdges(port);
+                    if (portOrderIsFixedFor(upperNode)) {
+                        crossings += amountOfOpenInLayerEdges(port);
+                    }
                     betweenLayerEdgePorts.add(port.id);
 
                 } else if (isNotSelfLoop(edge)) {
@@ -140,7 +142,34 @@ class InLayerEdgeNeighboringNodeCrossingCounter {
         return crossings;
     }
 
-    boolean isVisited(final LEdge edge) {
+    private int processLowerNode(final PortSide portSide) {
+        int crossings = 0;
+        for (LPort port : portsOrderedTopToBottom(lowerNode, portSide)) {
+            for (LEdge edge : port.getConnectedEdges()) {
+
+                if (isInBetweenLayerEdge(edge)) {
+                    crossings += amountOfOpenInLayerEdges(port);
+                    if (portOrderIsFixedFor(lowerNode)) {
+                        betweenLayerEdgePorts.add(port.id);
+                    }
+
+                } else if (isNotSelfLoop(edge)) {
+                    if (isVisited(edge)) {
+                        close(edge);
+                    } else {
+                        if (portOrderIsFixedFor(lowerNode)) {
+                            open(edge);
+                        }
+                        crossings += countOpenPortsInBetweenEndsOf(edge);
+                    }
+                }
+
+            }
+        }
+        return crossings;
+    }
+
+    private boolean isVisited(final LEdge edge) {
         return inLayerEdges.contains(edge);
     }
 
@@ -152,19 +181,6 @@ class InLayerEdgeNeighboringNodeCrossingCounter {
 
     private boolean isNotSelfLoop(final LEdge edge) {
         return edge.getTarget().getNode() != edge.getSource().getNode();
-    }
-
-    /**
-     * We ignore inLayerEdges that connect the upper node and the lower node when no port order
-     * constraints are set.
-     * 
-     * @param The
-     *            edge to be tested
-     * @return Whether the edge is relevant or not.
-     */
-    private boolean notConnectsNodesWithNoFixedOrder(final LEdge edge) {
-        return portOrderIsFixedFor(upperNode) || portOrderIsFixedFor(lowerNode)
-                || !edgeConnectsNodes(edge, upperNode, lowerNode);
     }
 
     private int countOpenPortsInBetweenEndsOf(final LEdge edge) {
@@ -189,18 +205,6 @@ class InLayerEdgeNeighboringNodeCrossingCounter {
         return node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed();
     }
 
-    private boolean edgeConnectsNodes(final LEdge edge, final LNode upper, final LNode lower) {
-        LNode targetNode = edge.getTarget().getNode();
-        LNode sourceNode = edge.getSource().getNode();
-        boolean goesFromUpperToLower = targetNode == upper && sourceNode == lower;
-        boolean goesFromLowerToUpper = targetNode == lower && sourceNode == upper;
-        return goesFromUpperToLower || goesFromLowerToUpper;
-    }
-
-    private LPort getOtherEndOf(final LEdge edge, final LPort port) {
-        return edge.getSource() == port ? edge.getTarget() : edge.getSource();
-    }
-
     private int amountOfBetweenLayerPortsInbetween(final LPort port, final LPort endOfEdgePort) {
         int lowerBound = Math.min(port.id, endOfEdgePort.id);
         int upperBound = Math.max(port.id, endOfEdgePort.id);
@@ -216,9 +220,6 @@ class InLayerEdgeNeighboringNodeCrossingCounter {
     }
 
     private int amountOfOpenInLayerEdges(final LPort port) {
-        // The amount of inLayerEdgePorts with the same id as the port is equal to the amount of
-        // open inLayerEdges which can be neglected because they touch the same node as port and the
-        // port ordering is not fixed.
         return inLayerEdgePorts.tailMultiset(port.id, BoundType.OPEN).size();
     }
 
@@ -279,7 +280,9 @@ class InLayerEdgeNeighboringNodeCrossingCounter {
             final PortSide portSide, final int[] nodeCardinality) {
         int currentPortId = portId;
         int cardinality = 0;
+        boolean hasPorts = false;
         for (LPort port : portsOrderedTopToBottom(node, portSide)) {
+            hasPorts = true;
             port.id = currentPortId;
             // Ports whose order on the node is not set have the same id.
             if (portOrderIsFixedFor(node)) {
@@ -287,7 +290,7 @@ class InLayerEdgeNeighboringNodeCrossingCounter {
                 currentPortId++;
             }
         }
-        if (!portOrderIsFixedFor(node)) {
+        if (!portOrderIsFixedFor(node) && hasPorts) {
             cardinality++;
             currentPortId++;
         }
