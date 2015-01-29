@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.graphviz.layouter.preferences;
 
+import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.IntegerFieldEditor;
@@ -22,6 +23,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutMetaDataService;
+import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayoutProvider;
 import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayouterPlugin;
 import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizTool;
 
@@ -67,6 +69,11 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage implements
                 "Timeout (ms):", timeoutEditorParent);
         timeoutEditor.setValidRange(GraphvizTool.PROCESS_MIN_TIMEOUT, Integer.MAX_VALUE);
         addField(timeoutEditor);
+
+        BooleanFieldEditor restartGraphvizProcessCheckbox = new BooleanFieldEditor(
+                GraphvizLayoutProvider.PREF_GRAPHVIZ_REUSE_PROCESS,
+                "Reuse single graphviz process for better performance", getFieldEditorParent());
+        addField(restartGraphvizProcessCheckbox);
     }
 
     /**

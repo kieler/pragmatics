@@ -60,10 +60,12 @@ public class LayersAnalysis implements IAnalysis {
     
     /** a utility class to mark the start and end position of a layer. */
     public static final class Layer {
-        private float start;
-        private float end;
+        /** smalles coordinate of any node in the layer. */
+        public float start; // SUPPRESS CHECKSTYLE NEXT 6 VisibilityModifier
+        /** largest coordinate of any node in the layer. */
+        public float end;
         /** number of nodes in this layer. */
-        public List<KNode> nodes = Lists.newArrayList(); // SUPPRESS CHECKSTYLE NEXT 3 VisibilityModifier
+        public List<KNode> nodes = Lists.newArrayList(); 
         /** number of dummies for edges spanning this layer. */
         public int dummies = 0;
 

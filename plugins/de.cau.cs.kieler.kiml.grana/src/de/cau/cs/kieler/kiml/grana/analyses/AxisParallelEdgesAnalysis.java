@@ -40,7 +40,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
  * @author sor
  * @author uru
  */
-public class StraightEdgesAnalysis implements IAnalysis {
+public class AxisParallelEdgesAnalysis implements IAnalysis {
     
     /**
      * Identifier of the edge crossings analysis.
