@@ -2,14 +2,14 @@ package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
-import de.cau.cs.kieler.klay.layered.graph.LPort;
-import de.cau.cs.kieler.klay.layered.graph.Layer;
 
 public class TwoNodeInLayerEdgeCrossingCounterTest {
     private TestGraphCreator creator;
@@ -40,26 +40,6 @@ public class TwoNodeInLayerEdgeCrossingCounterTest {
 
         assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
         assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
-    }
-
-    @Test(expected = AssertionError.class)
-    public void screwUpIdsAndCountInLayerEdgeWithNormalEdgeCrossing() { // TODO should throw
-        graph = creator.getInLayerEdgesGraph();
-        LNode[][] currentOrder = creator.getCurrentOrder();
-        nodeOrder = currentOrder[1];
-        setAllIdsTo(1);
-        counter = new TwoNodeInLayerEdgeCrossingCounter(nodeOrder);
-    }
-
-    private void setAllIdsTo(final int id) {
-        for (Layer layer : graph) {
-            for (LNode node : layer) {
-                node.id = id;
-                for (LPort port : node.getPorts()) {
-                    port.id = id;
-                }
-            }
-        }
     }
 
     @Test
@@ -210,6 +190,11 @@ public class TwoNodeInLayerEdgeCrossingCounterTest {
     }
 
     @Test
+    public void oneLayerInLayerSwitchWouldReduceCrossings() {
+        graph = creator.getOneLayerWithInLayerCrossings();
+    }
+
+    @Test
     public void oneNode() {
         graph = creator.getOneNodeGraph();
 
@@ -238,6 +223,34 @@ public class TwoNodeInLayerEdgeCrossingCounterTest {
         assertThat("lowerUpperCrossings", lowerUpperCrossings, is(2));
     }
 
+    @Test
+    public void oneLayerInLayerShouldSwitch() {
+        graph = creator.getOneLayerWithInLayerCrossings();
+
+        countCrossingsInLayerForUpperNodeLowerNode(0, 0, 1);
+
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+
+        countCrossingsInLayerForUpperNodeLowerNode(0, 1, 2);
+
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+
+    }
+
+    @Ignore
+    public void notNeighbouringNodesShouldThrowAssertion() {
+        fail("Test not yet implemented.");// TODO-alan
+
+    }
+
+    @Ignore
+    public void moreThanOneEdgeIntoAPort() {
+        fail("Test not yet implemented.");// TODO-alan
+
+    }
+
     private void countCrossingsInLayerForUpperNodeLowerNode(final int layerIndex,
             final int upperNodeIndex, final int lowerNodeIndex) {
 
@@ -247,7 +260,7 @@ public class TwoNodeInLayerEdgeCrossingCounterTest {
     }
 
     private void countCrossings(final int upperNodeIndex, final int lowerNodeIndex) {
-        counter.countCrossings(upperNodeIndex, lowerNodeIndex);
+        counter.countCrossings(nodeOrder[upperNodeIndex], nodeOrder[lowerNodeIndex]);
         upperLowerCrossings = counter.getUpperLowerCrossings();
         lowerUpperCrossings = counter.getLowerUpperCrossings();
     }
@@ -272,7 +285,7 @@ public class TwoNodeInLayerEdgeCrossingCounterTest {
     }
 
     private void switchOrderAndNotifyCounter(final int indexOne, final int indexTwo) {
-        counter.nodesSwitched(nodeOrder[indexOne], nodeOrder[indexTwo]);
+        counter.notifyNodeSwitch(nodeOrder[indexOne], nodeOrder[indexTwo]);
         LNode one = nodeOrder[indexOne];
         nodeOrder[indexOne] = nodeOrder[indexTwo];
         nodeOrder[indexTwo] = one;

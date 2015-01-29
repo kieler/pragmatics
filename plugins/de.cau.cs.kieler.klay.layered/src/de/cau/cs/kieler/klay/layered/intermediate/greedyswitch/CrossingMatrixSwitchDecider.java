@@ -53,10 +53,10 @@ abstract class CrossingMatrixSwitchDecider extends SwitchDecider {
             return false;
         }
 
-        inLayerCounter.countCrossings(upperNodeIndex, lowerNodeIndex);
-
         LNode upperNode = super.getFreeLayer()[upperNodeIndex];
         LNode lowerNode = super.getFreeLayer()[lowerNodeIndex];
+        inLayerCounter.countCrossings(upperNode, lowerNode);
+
         int upperLowerCrossings =
                 getCrossingMatrixEntry(upperNode, lowerNode)
                         + inLayerCounter.getUpperLowerCrossings();

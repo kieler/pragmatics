@@ -684,6 +684,29 @@ public class TestGraphCreator {
 
     /**
      * <pre>
+     *   --*
+     *   |  
+     *   |/*
+     *  /|  
+     * | --*
+     *  \ 
+     *   \
+     *    \
+     *     *
+     * </pre>
+     * 
+     * @return
+     */
+    public LGraph getOneLayerWithInLayerCrossings() {
+        Layer layer = makeLayer();
+        LNode[] nodes = addNodesToLayer(4, layer);
+        addInLayerEdge(nodes[0], nodes[2], PortSide.WEST);
+        addInLayerEdge(nodes[1], nodes[3], PortSide.WEST);
+        return graph;
+    }
+
+    /**
+     * <pre>
      *     * <-- this ...
      *    /
      * *-+-* <-- cannot switch with this
