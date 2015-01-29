@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2013 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
 import java.util.List;
@@ -16,20 +29,41 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 
+/**
+ * Use to create test graphs. CAUTION: Layout algorithm assumes the ports to be ordered in a
+ * clockwise manner. You must think about this yourself when constructing a test graph. This means
+ * that the methods for creating edges cannot be used in every case.
+ * 
+ * @author alan
+ *
+ */
 public class TestGraphCreator {
     private int portId = 0;
     private int nodeId = 0;
     private final LGraph graph;
     private int edgeId = 0;
 
+    /**
+     * Makes a fancy test graph creator.
+     */
     public TestGraphCreator() {
         graph = new LGraph();
     }
 
+    /**
+     * Creates empty graph.
+     * 
+     * @return return empty graph.
+     */
     public LGraph getEmptyGraph() {
         return graph;
     }
 
+    /**
+     * Creates two nodes with no connection between them.
+     * 
+     * @return graph with two nodes with no connection between them.
+     */
     public LGraph getTwoNodesNoConnectionGraph() {
         Layer layer = makeLayer();
         addNodeToLayer(layer);
@@ -37,15 +71,17 @@ public class TestGraphCreator {
         return graph;
     }
 
+    // CHECKSTYLEOFF MagicNumber
     /**
      * <pre>
      * *  * 
      *  \/
      *  /\
      * *  *
+     * .
      * </pre>
      * 
-     * @return
+     * @return Graph of the form above.
      */
     public LGraph getCrossFormedGraph() {
 
@@ -68,9 +104,10 @@ public class TestGraphCreator {
      *  \/
      *  /\
      * *  *  <- before this node.
+     * .
      * </pre>
      * 
-     * @return
+     * @return Graph of the form above.
      */
     public LGraph getCrossFormedGraphWithConstraintsInSecondLayer() {
         getCrossFormedGraph();
@@ -81,6 +118,17 @@ public class TestGraphCreator {
         return graph;
     }
 
+    /**
+     * <pre>
+     * this node must be.. -> *  *  <- and this node must be ...
+     *                         \/
+     *                         /\
+     *    before this node -> *  *  <- before this node.
+     * .
+     * </pre>
+     * 
+     * @return Graph of the form above.
+     */
     public LGraph getCrossFormedGraphConstraintsPreventAnySwitch() {
         Layer leftLayer = makeLayer();
         Layer rightLayer = makeLayer();
@@ -97,6 +145,11 @@ public class TestGraphCreator {
         return graph;
     }
 
+    /**
+     * Creates graph with only one node.
+     * 
+     * @return graph with only one node.
+     */
     public LGraph getOneNodeGraph() {
         Layer layer = makeLayer();
         addNodeToLayer(layer);
@@ -110,6 +163,7 @@ public class TestGraphCreator {
      * *-+-*-* 
      *   | 
      *   --*
+     * .
      * </pre>
      * 
      * @return graph of the form above
@@ -137,6 +191,7 @@ public class TestGraphCreator {
      *   --* 
      *    
      *  *--*
+     * .
      * </pre>
      * 
      * @return graph of the form above
@@ -154,6 +209,19 @@ public class TestGraphCreator {
         return graph;
     }
 
+    /**
+     * <pre>
+     *     ______
+     *     |____|
+     *      |  |  ____
+     *      *--+--|  |
+     *         |  |  |
+     *         *--|__|
+     * .
+     * </pre>
+     * 
+     * @return Graph of the form above.
+     */
     public LGraph getNorthSouthCrossingGraph() {
         Layer leftLayer = makeLayer();
         Layer rightLayer = makeLayer();
@@ -185,9 +253,10 @@ public class TestGraphCreator {
      *      *--+--|  |
      *         |  |  |
      *         *--|__|
+     * .
      * </pre>
      * 
-     * @return
+     * @return Graph of the form above.
      */
     public LGraph getThreeLayerNorthSouthCrossingGraph() {
         // add left Node
@@ -206,6 +275,19 @@ public class TestGraphCreator {
         return graph;
     }
 
+    /**
+     * Constructs a cross formed graph with two edges between the corners
+     * 
+     * <pre>
+     * *    * 
+     *  \\//
+     *  //\\
+     * *    *
+     * .
+     * </pre>
+     * 
+     * @return Graph of the form above.
+     */
     public LGraph getMultipleEdgesBetweenSameNodesGraph() {
         Layer leftLayer = makeLayer();
         Layer rightLayer = makeLayer();
@@ -230,6 +312,7 @@ public class TestGraphCreator {
      * *-+-* 
      *  / \
      * *   *
+     * .
      * </pre>
      * 
      * @return graph of the form above
@@ -248,16 +331,29 @@ public class TestGraphCreator {
         return graph;
     }
 
+    /**
+     * Cross formed graph, but each node has three extra self loop edges.
+     * 
+     * <pre>
+     * *  * 
+     *  \/
+     *  /\
+     * *  *
+     * .
+     * </pre>
+     * 
+     * @return Graph of the form above.
+     */
     public LGraph getCrossWithManySelfLoopsGraph() {
-        LGraph graph = getCrossFormedGraph();
-        for (Layer layer : graph) {
+        LGraph selfLoopCrossGraph = getCrossFormedGraph();
+        for (Layer layer : selfLoopCrossGraph) {
             for (LNode lNode : layer) {
                 addEastWestEdgeFromTo(lNode, lNode);
                 addEastWestEdgeFromTo(lNode, lNode);
                 addEastWestEdgeFromTo(lNode, lNode);
             }
         }
-        return graph;
+        return selfLoopCrossGraph;
     }
 
     /**
@@ -267,11 +363,12 @@ public class TestGraphCreator {
      * *-*===*
      *  + /
      * * * --*
+     * .
      * </pre>
      * 
      * Port order not fixed.
      * 
-     * @return
+     * @return Graph of the form above.
      */
     public LGraph getMoreComplexThreeLayerGraph() {
         Layer leftLayer = makeLayer();
@@ -301,9 +398,10 @@ public class TestGraphCreator {
      * |  |\/
      * |__|/\
      *       *
+     * .
      * </pre>
      * 
-     * @return
+     * @return Graph of the form above.
      */
     public LGraph getFixedPortOrderGraph() {
         Layer leftLayer = makeLayer();
@@ -327,9 +425,10 @@ public class TestGraphCreator {
      *  \/
      *  /\
      * *  *---*
+     * .
      * </pre>
      * 
-     * @return
+     * @return Graph of the form above.
      */
     public LGraph getSwitchOnlyOneSided() {
         Layer[] layers = makeLayers(3);
@@ -352,9 +451,10 @@ public class TestGraphCreator {
      *     \/
      *     /\
      * *--*  *
+     * .
      * </pre>
      * 
-     * @return
+     * @return Graph of the form above.
      */
     public LGraph getSwitchOnlyEastOneSided() {
         Layer[] layers = makeLayers(3);
@@ -382,9 +482,10 @@ public class TestGraphCreator {
      *       |
      *       \
      *        *
+     * .
      * </pre>
      * 
-     * @return
+     * @return Graph of the form above.
      */
     public LGraph getInLayerEdgesGraphWithCrossingsToFixedPortOrder() {
         Layer[] layers = makeLayers(2);
@@ -413,11 +514,12 @@ public class TestGraphCreator {
      * *--|--*  <- with this
      *    |
      *    ---*
+     * .
      * </pre>
      * 
      * With fixed Port Order.
      * 
-     * @return
+     * @return Graph of the form above.
      */
     public LGraph getInLayerEdgesWithFixedPortOrderAndNormalEdgeCrossings() {
         Layer[] layer = makeLayers(2);
@@ -439,11 +541,12 @@ public class TestGraphCreator {
      *   | ____
      * *-+-|  |
      *    \|__|
+     * .
      * </pre>
      *
      * Port order not fixed.
      * 
-     * @return
+     * @return Graph of the form above.
      */
     public LGraph getInLayerEdgesCrossingsButNoFixedOrder() {
         Layer[] layer = makeLayers(2);
@@ -459,27 +562,63 @@ public class TestGraphCreator {
 
     /**
      * <pre>
-     *     ____
-     *    /|  |
-     * *-+-|__|
-     *   | 
-     * *-+-*
-     *    \
-     *     *
+     *      *
+     *   //
+     * *-++-* 
+     *   || ____
+     * *-++-|  |
+     *    \\|  |
+     *      |__|
+     *     
+     * .
      * </pre>
      *
      * Port order not fixed.
      * 
-     * @return
+     * @return Graph of the form above.
      */
-    public LGraph getInLayerEdgesCrossingsButNoFixedOrderNoEdgeBetweenUpperAndLower() {
+    public LGraph getInLayerEdgesCrossingsNoFixedOrderNoEdgeBetweenUpperAndLower() {
         Layer[] layer = makeLayers(2);
         LNode[] leftNodes = addNodesToLayer(2, layer[0]);
         LNode[] rightNodes = addNodesToLayer(3, layer[1]);
 
-        addEastWestEdgeFromTo(leftNodes[0], rightNodes[0]);
-        addInLayerEdge(rightNodes[0], rightNodes[2], PortSide.WEST);
         addEastWestEdgeFromTo(leftNodes[1], rightNodes[1]);
+        addInLayerEdge(rightNodes[0], rightNodes[2], PortSide.WEST);
+        addInLayerEdge(rightNodes[0], rightNodes[2], PortSide.WEST);
+        addEastWestEdgeFromTo(leftNodes[1], rightNodes[2]);
+
+        return graph;
+    }
+
+    /**
+     * <pre>
+     *      *
+     *     /____
+     *     \|  |
+     *    //|  |
+     * *-++-|  |
+     *   || |__|
+     *   ||
+     * *-++-*
+     *    \\
+     *      *
+     * .
+     * </pre>
+     *
+     * Port order not fixed.
+     * 
+     * @return Graph of the form above.
+     */
+    public LGraph getInLayerEdgesCrossingsNoFixedOrderNoEdgeBetweenUpperAndLowerUpsideDown() {
+        Layer[] layer = makeLayers(2);
+        LNode[] leftNodes = addNodesToLayer(2, layer[0]);
+        LNode[] rightNodes = addNodesToLayer(4, layer[1]);
+
+        addEastWestEdgeFromTo(leftNodes[0], rightNodes[1]);
+        addInLayerEdge(rightNodes[0], rightNodes[1], PortSide.WEST);
+        addInLayerEdge(rightNodes[1], rightNodes[3], PortSide.WEST);
+        addInLayerEdge(rightNodes[1], rightNodes[3], PortSide.WEST);
+        addEastWestEdgeFromTo(leftNodes[1], rightNodes[2]);
 
         return graph;
     }
@@ -491,6 +630,7 @@ public class TestGraphCreator {
      * *-+-*-+-* 
      *   |   |
      *   --*--
+     * .
      * </pre>
      * 
      * @return graph of the form above
@@ -517,11 +657,12 @@ public class TestGraphCreator {
      * ____ | |
      * |  |/  |
      * |__|---|
+     * .
      * </pre>
      *
      * Port order fixed.
      * 
-     * @return
+     * @return Graph of the form above.
      */
     public LGraph getFixedPortOrderInLayerEdgesDontCrossEachOther() {
         Layer layer = makeLayer();
@@ -546,11 +687,12 @@ public class TestGraphCreator {
      * ____ | |
      * |  |-+--
      * |__|-|
+     * .
      * </pre>
      *
      * Port order fixed.
      * 
-     * @return
+     * @return Graph of the form above.
      */
     public LGraph getFixedPortOrderInLayerEdgesWithCrossings() {
         Layer layer = makeLayer();
@@ -578,11 +720,12 @@ public class TestGraphCreator {
      *    \
      *     \
      *      *
+     * .
      * </pre>
      *
      * Port order fixed.
      * 
-     * @return
+     * @return Graph of the form above.
      */
     public LGraph getMoreComplexInLayerGraph() {
         Layer[] layers = makeLayers(3);
@@ -619,9 +762,10 @@ public class TestGraphCreator {
      *   |
      *    \
      *     *
+     * .
      * </pre>
      * 
-     * @return
+     * @return Graph of the form above.
      */
     public LGraph getInLayerEdgesDownwardGraph() {
         Layer[] layers = makeLayers(2);
@@ -643,6 +787,7 @@ public class TestGraphCreator {
      *  \/
      *  /\
      * *  *==*
+     * .
      * </pre>
      * 
      * First Layer and last layer in fixed order.
@@ -679,9 +824,10 @@ public class TestGraphCreator {
      *    \
      *     \
      *      *
+     * .
      * </pre>
      * 
-     * @return
+     * @return Graph of the form above.
      */
     public LGraph getInLayerEdgesMultipleEdgesIntoSinglePort() {
         Layer layerTwo = makeLayer();
@@ -710,9 +856,10 @@ public class TestGraphCreator {
      *   \
      *    \
      *     *
+     * .
      * </pre>
      * 
-     * @return
+     * @return Graph of the form above.
      */
     public LGraph getOneLayerWithInLayerCrossings() {
         Layer layer = makeLayer();
@@ -731,9 +878,10 @@ public class TestGraphCreator {
      * *  |  |
      *    |__|
      * 
+     * .
      * </pre>
      * 
-     * @return
+     * @return graph of the form above.
      */
     public LGraph getNodesInSameLayoutUnitPreventSwitch() {
         Layer[] layers = makeLayers(2);
@@ -754,6 +902,65 @@ public class TestGraphCreator {
         return graph;
     }
 
+    /**
+     * <pre>
+     *  ---*
+     *  |
+     *  | ____
+     * *+-|  |
+     * *+-|  |
+     *   \|__|
+     * Port order not fixed.
+     * .
+     * </pre>
+     * 
+     * @return Graph of the form above.
+     */
+    public LGraph multipleInBetweenLayerEdgesIntoNodeWithNoFixedPortOrder() {
+        Layer leftLayer = makeLayer();
+        LNode[] leftNodes = addNodesToLayer(2, leftLayer);
+        Layer rightLayer = makeLayer();
+        LNode[] rightNodes = addNodesToLayer(2, rightLayer);
+
+        addInLayerEdge(rightNodes[0], rightNodes[1], PortSide.WEST);
+        addEastWestEdgeFromTo(leftNodes[0], rightNodes[1]);
+        addEastWestEdgeFromTo(leftNodes[0], rightNodes[1]);
+        return graph;
+    }
+
+    /**
+     * <pre>
+     *  ---*
+     *  |
+     *  | ____
+     * *+-|  |
+     * *+-|  |
+     *  | |__|
+     *   \
+     *    *
+     * Port order not fixed.
+     * .
+     * </pre>
+     * 
+     * @return Graph of the form above.
+     */
+    public LGraph multipleInBetweenLayerEdgesIntoNodeWithNoFixedPortOrderCauseCrossings() {
+        Layer leftLayer = makeLayer();
+        LNode[] leftNodes = addNodesToLayer(2, leftLayer);
+        Layer rightLayer = makeLayer();
+        LNode[] rightNodes = addNodesToLayer(3, rightLayer);
+
+        addInLayerEdge(rightNodes[0], rightNodes[2], PortSide.WEST);
+        addEastWestEdgeFromTo(leftNodes[0], rightNodes[1]);
+        addEastWestEdgeFromTo(leftNodes[0], rightNodes[1]);
+        return graph;
+    }
+
+    /**
+     * Returns the nodes in the graph as two-dimensional array of LNodes.
+     * 
+     * @return graph as LNode[][].
+     */
     public LNode[][] getCurrentOrder() {
         LNode[][] nodeOrder = new LNode[graph.getLayers().size()][];
         List<Layer> layers = graph.getLayers();

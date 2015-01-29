@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2013 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -8,6 +21,13 @@ import org.junit.Test;
 
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 
+/**
+ * Tests In Layer edge crossing counter. See the {@link TestGraphCreator} methods used here for
+ * documentation about the form of the graphs used.
+ * 
+ * @author alan
+ *
+ */
 public class InLayerEdgeNeighboringNodeCrossingCounterTest {
     private TestGraphCreator creator;
     private InLayerEdgeNeighboringNodeCrossingCounter counter;
@@ -15,6 +35,8 @@ public class InLayerEdgeNeighboringNodeCrossingCounterTest {
     private int upperLowerCrossings;
     private LNode[] nodeOrder;
 
+    // CHECKSTYLEOFF javadoc
+    // CHECKSTYLEOFF MagicNumber
     @Before
     public void setUp() {
         creator = new TestGraphCreator();
@@ -110,8 +132,6 @@ public class InLayerEdgeNeighboringNodeCrossingCounterTest {
 
         assertThat("upperLowerCrossings", upperLowerCrossings, is(2));
         assertThat("lowerUpperCrossings", lowerUpperCrossings, is(1));
-        // assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
-        // assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
 
         switchOrderAndNotifyCounter(0, 1);
 
@@ -119,8 +139,6 @@ public class InLayerEdgeNeighboringNodeCrossingCounterTest {
 
         assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
         assertThat("lowerUpperCrossings", lowerUpperCrossings, is(2));
-        // assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
-        // assertThat("lowerUpperCrossings", lowerUpperCrossings, is(1));
     }
 
     @Test
@@ -146,12 +164,42 @@ public class InLayerEdgeNeighboringNodeCrossingCounterTest {
 
     @Test
     public void ignoresCrossingsWhenPortOrderNotSetNoEdgeBetweenUpperAndLower() {
-        creator.getInLayerEdgesCrossingsButNoFixedOrderNoEdgeBetweenUpperAndLower();
+        creator.getInLayerEdgesCrossingsNoFixedOrderNoEdgeBetweenUpperAndLower();
 
-        countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
+        countCrossingsInLayerForUpperNodeLowerNode(1, 1, 2);
 
-        assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(2));
         assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+
+    }
+
+    /**
+     * 
+     * <pre>
+     *      *
+     *     /____
+     *     \|  |
+     *    //|  | <-- count between this node
+     * *-++-|  |
+     *   || |__|
+     *   ||
+     * *-++-*    <-- and this node
+     *    \\
+     *      *
+     * .
+     * </pre>
+     * 
+     * Port order not fixed.
+     * 
+     */
+    @Test
+    public void ignoresCrossingsWhenPortOrderNotSetNoEdgeBetweenUpperAndLowerLowerUpsideDown() {
+        creator.getInLayerEdgesCrossingsNoFixedOrderNoEdgeBetweenUpperAndLowerUpsideDown();
+
+        countCrossingsInLayerForUpperNodeLowerNode(1, 1, 2);
+
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(2));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(1));
 
     }
 
@@ -238,6 +286,31 @@ public class InLayerEdgeNeighboringNodeCrossingCounterTest {
     @Test
     public void moreThanOneEdgeIntoAPort() {
         creator.getInLayerEdgesMultipleEdgesIntoSinglePort();
+
+        countCrossingsInLayerForUpperNodeLowerNode(1, 1, 2);
+
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(2));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+    }
+
+    @Test
+    public void multipleInBetweenLayerEdgesIntoNodeWithNoFixedPortOrder() {
+        creator.multipleInBetweenLayerEdgesIntoNodeWithNoFixedPortOrder();
+
+        countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
+
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+    }
+
+    @Test
+    public void multipleInBetweenLayerEdgesIntoNodeWithNoFixedPortOrderCauseCrossings() {
+        creator.multipleInBetweenLayerEdgesIntoNodeWithNoFixedPortOrderCauseCrossings();
+
+        countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
+
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(2));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
 
         countCrossingsInLayerForUpperNodeLowerNode(1, 1, 2);
 
