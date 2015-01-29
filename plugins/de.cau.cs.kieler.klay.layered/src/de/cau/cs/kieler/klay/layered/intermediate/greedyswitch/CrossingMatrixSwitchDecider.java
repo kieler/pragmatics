@@ -21,8 +21,8 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
  */
 abstract class CrossingMatrixSwitchDecider extends SwitchDecider {
 
-    private final InLayerEdgeNeighboringNodeCrossingCounter inLayerCounter;
-    private final InBetweenLayerEdgeTwoNodeCrossingCounter inBetweenLayerCrossingCounter;
+    private final InLayerEdgeCrossingCounter inLayerCounter;
+    private final InBetweenLayerEdgeTwoNodeCrossingCounter inBetweenLayerCrossCounter;
 
     /**
      * @param freeLayerIndex
@@ -31,8 +31,9 @@ abstract class CrossingMatrixSwitchDecider extends SwitchDecider {
     public CrossingMatrixSwitchDecider(final int freeLayerIndex, final LNode[][] graph) {
         super(freeLayerIndex, graph);
         initializeNodeIds(graph);
-        inBetweenLayerCrossingCounter = new InBetweenLayerEdgeTwoNodeCrossingCounter(graph, freeLayerIndex);
-        inLayerCounter = new InLayerEdgeNeighboringNodeCrossingCounter(super.getFreeLayer());
+        inBetweenLayerCrossCounter =
+                new InBetweenLayerEdgeTwoNodeCrossingCounter(graph, freeLayerIndex);
+        inLayerCounter = new InLayerEdgeCrossingCounter(super.getFreeLayer());
     }
 
     private void initializeNodeIds(final LNode[][] graph) {
@@ -55,7 +56,7 @@ abstract class CrossingMatrixSwitchDecider extends SwitchDecider {
 
         LNode upperNode = super.getFreeLayer()[upperNodeIndex];
         LNode lowerNode = super.getFreeLayer()[lowerNodeIndex];
-        inLayerCounter.countCrossings(upperNode, lowerNode);
+        inLayerCounter.countCrossingsBetweenNeighbouringNodes(upperNode, lowerNode);
 
         int upperLowerCrossings =
                 getCrossingMatrixEntry(upperNode, lowerNode)
@@ -67,10 +68,19 @@ abstract class CrossingMatrixSwitchDecider extends SwitchDecider {
         return upperLowerCrossings > lowerUpperCrossings;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void notifyOfSwitch(final int upperNodeIndex, final int lowerNodeIndex) {
+        inLayerCounter.notifyNodeSwitch(super.getFreeLayer()[upperNodeIndex],
+                super.getFreeLayer()[lowerNodeIndex]);
+    }
+
     abstract int getCrossingMatrixEntry(final LNode upperNode, final LNode lowerNode);
 
     protected InBetweenLayerEdgeTwoNodeCrossingCounter getTwoLayerCrossCounter() {
-        return inBetweenLayerCrossingCounter;
+        return inBetweenLayerCrossCounter;
     }
 
 }

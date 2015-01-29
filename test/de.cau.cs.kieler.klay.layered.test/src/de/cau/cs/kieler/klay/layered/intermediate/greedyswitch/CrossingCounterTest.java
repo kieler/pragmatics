@@ -2,7 +2,6 @@ package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -36,6 +35,13 @@ public class CrossingCounterTest {
     }
 
     @Test
+    public void inLayerCrossingsOneLayerNoCrossings() {
+        graph = testGraphCreator.getOneLayerWithoutInLayerCrossings();
+        int amountOfCrossings = whenCountingAllCrossings();
+        assertThat(amountOfCrossings, is(0));
+    }
+
+    @Test
     public void countNorthSouthCrossing() {
         graph = testGraphCreator.getNorthSouthCrossingGraph();
         int amountOfCrossings = whenCountingAllCrossings();
@@ -49,16 +55,11 @@ public class CrossingCounterTest {
         assertThat(amountOfCrossings, is(1));
     }
 
-    @Test
-    public void tooManyNorthSouthCrossingsWithTheOldMethod() {
-        fail("Test not yet implemented.");
-    }
-
     private int whenCountingNorthSouthCrossingsInLayer(final int layerIndex) {
         return new CrossingCounter(getAsLNodeArray(graph)).countNorthSouthPortCrossings(layerIndex);
     }
 
-    static LNode[][] getAsLNodeArray(final LGraph graph) {
+    private LNode[][] getAsLNodeArray(final LGraph graph) {
         LNode[][] result = new LNode[graph.getLayers().size()][];
         for (Layer layer : graph) {
             result[layer.getIndex()] = layer.getNodes().toArray(new LNode[0]);

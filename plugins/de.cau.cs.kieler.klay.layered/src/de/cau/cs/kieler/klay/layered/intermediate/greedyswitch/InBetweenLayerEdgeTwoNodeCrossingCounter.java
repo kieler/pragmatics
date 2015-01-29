@@ -40,14 +40,16 @@ class InBetweenLayerEdgeTwoNodeCrossingCounter {
     private final int freeLayerIndex;
 
     /**
-     * Create {@link InBetweenLayerEdgeTwoNodeCrossingCounter}. Naming assumes a left-right layer ordering.
+     * Create {@link InBetweenLayerEdgeTwoNodeCrossingCounter}. Naming assumes a left-right layer
+     * ordering.
      * 
      * @param currentNodeOrder
      *            Currently considered node ordering.
      * @param freeLayerIndex
      *            Index of free layer.
      */
-    public InBetweenLayerEdgeTwoNodeCrossingCounter(final LNode[][] currentNodeOrder, final int freeLayerIndex) {
+    public InBetweenLayerEdgeTwoNodeCrossingCounter(final LNode[][] currentNodeOrder,
+            final int freeLayerIndex) {
         this.currentNodeOrder = currentNodeOrder;
         this.freeLayerIndex = freeLayerIndex;
         initializeNodeAndPortIdsForNeighbouringLayers();

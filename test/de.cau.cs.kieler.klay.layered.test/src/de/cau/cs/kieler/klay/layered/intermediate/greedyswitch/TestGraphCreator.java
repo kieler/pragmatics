@@ -765,6 +765,8 @@ public class TestGraphCreator {
      * .
      * </pre>
      * 
+     * Port order fixed.
+     * 
      * @return Graph of the form above.
      */
     public LGraph getInLayerEdgesDownwardGraph() {
@@ -871,6 +873,27 @@ public class TestGraphCreator {
 
     /**
      * <pre>
+     *   --*
+     *   |  
+     *   |/*
+     *   |\
+     *   | *  
+     *   --*
+     * .
+     * </pre>
+     * 
+     * @return Graph of the form above.
+     */
+    public LGraph getOneLayerWithoutInLayerCrossings() {
+        Layer layer = makeLayer();
+        LNode[] nodes = addNodesToLayer(4, layer);
+        addInLayerEdge(nodes[0], nodes[3], PortSide.WEST);
+        addInLayerEdge(nodes[1], nodes[2], PortSide.WEST);
+        return graph;
+    }
+
+    /**
+     * <pre>
      *     * <-- this ...
      *    /
      * *-+-* <-- cannot switch with this
@@ -917,10 +940,8 @@ public class TestGraphCreator {
      * @return Graph of the form above.
      */
     public LGraph multipleInBetweenLayerEdgesIntoNodeWithNoFixedPortOrder() {
-        Layer leftLayer = makeLayer();
-        LNode[] leftNodes = addNodesToLayer(2, leftLayer);
-        Layer rightLayer = makeLayer();
-        LNode[] rightNodes = addNodesToLayer(2, rightLayer);
+        LNode[] leftNodes = addNodesToLayer(2, makeLayer());
+        LNode[] rightNodes = addNodesToLayer(2, makeLayer());
 
         addInLayerEdge(rightNodes[0], rightNodes[1], PortSide.WEST);
         addEastWestEdgeFromTo(leftNodes[0], rightNodes[1]);
@@ -945,14 +966,12 @@ public class TestGraphCreator {
      * @return Graph of the form above.
      */
     public LGraph multipleInBetweenLayerEdgesIntoNodeWithNoFixedPortOrderCauseCrossings() {
-        Layer leftLayer = makeLayer();
-        LNode[] leftNodes = addNodesToLayer(2, leftLayer);
-        Layer rightLayer = makeLayer();
-        LNode[] rightNodes = addNodesToLayer(3, rightLayer);
+        LNode[] leftNodes = addNodesToLayer(2, makeLayer());
+        LNode[] rightNodes = addNodesToLayer(3, makeLayer());
 
         addInLayerEdge(rightNodes[0], rightNodes[2], PortSide.WEST);
         addEastWestEdgeFromTo(leftNodes[0], rightNodes[1]);
-        addEastWestEdgeFromTo(leftNodes[0], rightNodes[1]);
+        addEastWestEdgeFromTo(leftNodes[1], rightNodes[1]);
         return graph;
     }
 

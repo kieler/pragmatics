@@ -31,7 +31,6 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *
  */
 public class GreedySwitchProcessor implements ILayoutProcessor {
-
     private SwitchDeciderFactory switchDeciderFactory;
     private LNode[][] currentNodeOrder;
     private LNode[][] bestNodeOrder;
@@ -65,7 +64,7 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
         progressMonitor.done();
     }
 
-    // TODO-alan remove initialization of other classes, maybe add checks.
+    // TODO-alan possibly remove initialization of other classes, maybe add checks.
     private void initialize(final LGraph graph) {
 
         layeredGraph = graph;
@@ -201,6 +200,7 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
 
             if (switchDecider.doesSwitchReduceCrossings(upperNodeIndex, lowerNodeIndex)) {
                 exchangeNodes(upperNodeIndex, lowerNodeIndex, layerIndex);
+                switchDecider.notifyOfSwitch(upperNodeIndex, lowerNodeIndex);
                 continueSwitching = true;
             }
         }
@@ -208,6 +208,7 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
     }
 
     private void exchangeNodes(final int indexOne, final int indexTwo, final int layerIndex) {
+
         LNode[] layer = currentNodeOrder[layerIndex];
         LNode temp = layer[indexTwo];
         layer[indexTwo] = layer[indexOne];

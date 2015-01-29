@@ -100,7 +100,7 @@ public class GreedySwitcherIntegrationTest extends AbstractLayeredProcessorTest 
 
     @Test
     public void crossingNumbersShouldNotBeWorseAfterward() {
-        LNode[][] graphLNodes = CrossingCounterTest.getAsLNodeArray(firstGraph);
+        LNode[][] graphLNodes = getAsLNodeArray(firstGraph);
         CrossingCounter crossCounter = new CrossingCounter(graphLNodes);
         int oldCrossingCount = crossCounter.countAllCrossingsInGraphWithOrder(graphLNodes);
 
@@ -113,11 +113,19 @@ public class GreedySwitcherIntegrationTest extends AbstractLayeredProcessorTest 
         }
     }
 
+    private LNode[][] getAsLNodeArray(final LGraph graph) {
+        LNode[][] result = new LNode[graph.getLayers().size()][];
+        for (Layer layer : graph) {
+            result[layer.getIndex()] = layer.getNodes().toArray(new LNode[0]);
+        }
+        return result;
+    }
+
     private void assertFewerOrEqualCrossingsAfterSwitching(final CrossingCounter crossCounter,
             final int oldCrossingCount, final GreedyType oneSidedType) {
         firstGraph.setProperty(Properties.GREEDY_TYPE, oneSidedType);
         layered.runLayoutTestStep(state);
-        LNode[][] newOrder = CrossingCounterTest.getAsLNodeArray(firstGraph);
+        LNode[][] newOrder = getAsLNodeArray(firstGraph);
         int newCrossingCount = crossCounter.countAllCrossingsInGraphWithOrder(newOrder);
         assertThat(newCrossingCount, is(lessThanOrEqualTo(oldCrossingCount)));
     }

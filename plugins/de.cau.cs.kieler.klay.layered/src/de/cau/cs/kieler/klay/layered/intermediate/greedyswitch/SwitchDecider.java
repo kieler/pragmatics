@@ -26,8 +26,8 @@ import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
  * crossing matrix show the amount of crossings between incident edges to nodes i and j when node i
  * is above node j. {@link GreedySwitchOnDemandCrossingMatrixProcessor} calculates the entries in
  * the crossing matrix only when needed. The last two both use
- * {@link InBetweenLayerEdgeTwoNodeCrossingCounter} which calculates two entries i,j and j,i in the crossing
- * matrix. All variants can
+ * {@link InBetweenLayerEdgeTwoNodeCrossingCounter} which calculates two entries i,j and j,i in the
+ * crossing matrix. All variants can
  * 
  * @author alan
  */
@@ -109,31 +109,14 @@ abstract class SwitchDecider {
         return hasSuccessorConstraint;
     }
 
-    /**
-     * Get Layer as LNode array for given index.
-     * 
-     * @param layerIndex
-     *            index of the layer.
-     * @return Layer as LNode array for given index.
-     */
     LNode[] getLayerForIndex(final int layerIndex) {
         return graph[layerIndex];
     }
 
-    /**
-     * Get the graph.
-     * 
-     * @return the node matrix
-     */
     LNode[][] getGraph() {
         return graph;
     }
 
-    /**
-     * Get the free layer index.
-     * 
-     * @return the index of the free layer.
-     */
     int getFreeLayerIndex() {
         return freeLayerIndex;
     }
@@ -146,7 +129,18 @@ abstract class SwitchDecider {
         return getFreeLayerIndex() != getGraph().length - 1;
     }
 
-    protected LNode[] getFreeLayer() {
+    LNode[] getFreeLayer() {
         return freeLayer;
+    }
+
+    /**
+     * Notify the SwitchDecider that a switch of nodes with given indexes has taken place in the
+     * free layer.
+     * 
+     * @param upperNodeIndex
+     * @param lowerNodeIndex
+     */
+    public void notifyOfSwitch(final int upperNodeIndex, final int lowerNodeIndex) {
+        // default implementation does nothing. Subclasses override if needed.
     }
 }

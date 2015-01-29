@@ -30,7 +30,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
  */
 public class InLayerEdgeNeighboringNodeCrossingCounterTest {
     private TestGraphCreator creator;
-    private InLayerEdgeNeighboringNodeCrossingCounter counter;
+    private InLayerEdgeCrossingCounter counter;
     private int lowerUpperCrossings;
     private int upperLowerCrossings;
     private LNode[] nodeOrder;
@@ -234,11 +234,6 @@ public class InLayerEdgeNeighboringNodeCrossingCounterTest {
     }
 
     @Test
-    public void oneLayerInLayerSwitchWouldReduceCrossings() {
-        creator.getOneLayerWithInLayerCrossings();
-    }
-
-    @Test
     public void oneNode() {
         creator.getOneNodeGraph();
 
@@ -327,7 +322,8 @@ public class InLayerEdgeNeighboringNodeCrossingCounterTest {
     }
 
     private void countCrossings(final int upperNodeIndex, final int lowerNodeIndex) {
-        counter.countCrossings(nodeOrder[upperNodeIndex], nodeOrder[lowerNodeIndex]);
+        counter.countCrossingsBetweenNeighbouringNodes(nodeOrder[upperNodeIndex],
+                nodeOrder[lowerNodeIndex]);
         upperLowerCrossings = counter.getUpperLowerCrossings();
         lowerUpperCrossings = counter.getLowerUpperCrossings();
     }
@@ -342,7 +338,7 @@ public class InLayerEdgeNeighboringNodeCrossingCounterTest {
         LNode[][] currentOrder = creator.getCurrentOrder();
         nodeOrder = currentOrder[layerIndex];
         numberIdsAscendinglyIn(nodeOrder);
-        counter = new InLayerEdgeNeighboringNodeCrossingCounter(nodeOrder);
+        counter = new InLayerEdgeCrossingCounter(nodeOrder);
     }
 
     private void numberIdsAscendinglyIn(final LNode[] nodes) {
