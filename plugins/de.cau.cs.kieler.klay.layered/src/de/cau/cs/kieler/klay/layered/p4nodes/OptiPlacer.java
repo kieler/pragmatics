@@ -144,7 +144,7 @@ public class OptiPlacer implements ILayoutPhase {
 
             // ports
             int[] p = new int[P];
-            int[] p_offset = new int[P];
+            float[] p_offset = new float[P];
             int p_cnt = 0;
 
             // edges
@@ -166,7 +166,7 @@ public class OptiPlacer implements ILayoutPhase {
                     for (LPort po : n.getPorts()) {
                         po.id = p_cnt++;
                         p[po.id] = po.getNode().id + 1;
-                        p_offset[po.id] = (int) po.getPosition().y;
+                        p_offset[po.id] = (float) po.getPosition().y;
                     }
                 }
             }
