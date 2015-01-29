@@ -48,11 +48,11 @@ class DoublyLinkedHashSet<T> {
         if (!map.containsKey(element)) {
             final Entry newEntry = new Entry();
             map.put(element, newEntry);
-            setNewYoungest(newEntry);
+            addNewYoungest(newEntry);
         }
     }
 
-    private void setNewYoungest(final Entry newEntry) {
+    private void addNewYoungest(final Entry newEntry) {
         newEntry.previous = youngest;
         if (newEntry.previous != null) {
             newEntry.previous.hasNext = true;
@@ -63,26 +63,36 @@ class DoublyLinkedHashSet<T> {
     }
 
     public void remove(final T element) {
-        removeEntry(element);
-    }
+        final Entry removedEntry = map.remove(element);
 
-    public int removeAndGetAmountOfEntriesAfter(final T element) {
-        Entry startEntry = removeEntry(element);
-
-        if (startEntry == null) {
-            return 0;
+        if (removedEntry == null) {
+            youngest = null;
+            return;
         }
 
-        return countAllNextEntries(startEntry);
+        if (removedEntry.hasPrevious && removedEntry.hasNext) { // connect
+            removedEntry.previous.next = removedEntry.next;
+            removedEntry.next.previous = removedEntry.previous;
+        } else if (removedEntry == youngest) { // is youngest
+            youngest = removedEntry.previous;
+            if (removedEntry.hasPrevious) {
+                final Entry previousEntry = removedEntry.previous;
+                previousEntry.next = null;
+                previousEntry.hasNext = false;
+            }
+        } else if (!removedEntry.hasPrevious && removedEntry.hasNext) {
+            final Entry nextEntry = removedEntry.next;
+            nextEntry.previous = null;
+            nextEntry.hasPrevious = false;
+        }
     }
 
-    public void clear() {
-        this.map.clear();
-    }
-
-    private int countAllNextEntries(final Entry startEntry) {
+    public int getAmountOfEntriesAfter(final T element) {
         int amount = 0;
-        Entry currentEntry = startEntry;
+        Entry currentEntry = map.get(element);
+        if (currentEntry == null) {
+            return 0;
+        }
         while (currentEntry.hasNext) {
             amount++;
             currentEntry = currentEntry.next;
@@ -90,53 +100,9 @@ class DoublyLinkedHashSet<T> {
         return amount;
     }
 
-    private Entry removeEntry(final T element) {
-        final Entry removedEntry = map.remove(element);
-
-        if (removedEntry == null) {
-            return null;
-        }
-
-        if (hasPreviousAndNextEntry(removedEntry)) {
-            final Entry previousEntry = removedEntry.previous;
-            final Entry nextEntry = removedEntry.previous;
-            connect(previousEntry, nextEntry);
-        } else if (isYoungest(removedEntry)) {
-            final Entry previousEntry = removedEntry.previous;
-            resetYoungestTo(previousEntry);
-        } else if (isEldest(removedEntry)) {
-            final Entry nextEntry = removedEntry.next;
-            resetEldest(nextEntry);
-        }
-
-        return removedEntry;
-    }
-
-    private boolean hasPreviousAndNextEntry(final Entry entry) {
-        return entry.hasPrevious && entry.hasNext;
-    }
-
-    private void connect(final Entry previousEntry, final Entry nextEntry) {
-        previousEntry.next = nextEntry;
-    }
-
-    private boolean isEldest(final Entry entry) {
-        return !entry.hasPrevious && entry.hasNext;
-    }
-
-    private boolean isYoungest(final Entry removedEntry) {
-        return removedEntry.hasPrevious && !removedEntry.hasNext;
-    }
-
-    private void resetYoungestTo(final Entry entry) {
-        entry.next = null;
-        entry.hasNext = false;
-        youngest = entry;
-    }
-
-    private void resetEldest(final Entry entry) {
-        entry.previous = null;
-        entry.hasPrevious = false;
+    public void clear() {
+        youngest = null;
+        this.map.clear();
     }
 
     /**

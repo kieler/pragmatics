@@ -6,8 +6,6 @@ import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.DoublyLinkedHashSet;
-
 public class DoublyLinkeHashSetTest {
 
     private DoublyLinkedHashSet<Integer> set;
@@ -43,15 +41,53 @@ public class DoublyLinkeHashSetTest {
         set.add(2);
         set.add(3);
         set.add(4);
-        assertThat(set.removeAndGetAmountOfEntriesAfter(2), is(2));
+        set.remove(2);
+        assertThat(set.getAmountOfEntriesAfter(1), is(2));
         assertThat(set.size(), is(3));
+    }
+
+    @Test
+    public void removeYoungestAndCountObjectAddedAfter() {
+        set.add(1);
+        set.add(2);
+        set.add(3);
+        set.add(4);
+        set.remove(4);
+        assertThat(set.getAmountOfEntriesAfter(1), is(2));
+        assertThat(set.size(), is(3));
+    }
+
+    @Test
+    public void removeEldestAndCountObjectAddedAfter() {
+        set.add(1);
+        set.add(2);
+        set.add(3);
+        set.add(4);
+        set.remove(1);
+        assertThat(set.getAmountOfEntriesAfter(2), is(2));
+        assertThat(set.size(), is(3));
+    }
+
+    @Test
+    public void removeAndReAddOften() {
+        set.add(1);
+        set.add(2);
+        set.remove(2);
+        set.add(3);
+        set.add(3);
+        set.add(3);
+        assertThat(set.getAmountOfEntriesAfter(1), is(1));
+        set.add(4);
+        set.remove(3);
+        assertThat(set.size(), is(2));
+        set.remove(1);
+        assertThat(set.size(), is(1));
     }
 
     @Test
     public void removeAndCountObjectAddedAfterNonExistingObject() {
         set.add(1);
-        assertThat(set.removeAndGetAmountOfEntriesAfter(5), is(0));
-        assertThat(set.size(), is(1));
+        assertThat(set.getAmountOfEntriesAfter(5), is(0));
     }
 
     @Test
@@ -60,7 +96,7 @@ public class DoublyLinkeHashSetTest {
         set.add(1);
         set.add(2);
         set.add(2);
-        assertThat(set.removeAndGetAmountOfEntriesAfter(1), is(1));
+        assertThat(set.getAmountOfEntriesAfter(1), is(1));
     }
 
     @Test
@@ -72,15 +108,4 @@ public class DoublyLinkeHashSetTest {
         assertThat(set.contains(4), is(false));
     }
 
-    @Test
-    public void addTwoItemsAndRemoveFromEnd() {
-        set.add(1);
-        set.add(2);
-        assertThat(set.size(), is(2));
-
-        assertThat(set.removeAndGetAmountOfEntriesAfter(2), is(0));
-        assertThat(set.removeAndGetAmountOfEntriesAfter(1), is(0));
-        assertThat(set.size(), is(0));
-
-    }
 }
