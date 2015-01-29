@@ -59,7 +59,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 public class AxisParallelEdgeSegmentsAnalysis implements IAnalysis {
 
     /**
-     * Identifier of the edge crossings analysis.
+     * Identifier of this analysis.
      */
     public static final String ID = "de.cau.cs.kieler.kiml.grana.axisParallelEdgeSegments";
 

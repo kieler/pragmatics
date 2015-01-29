@@ -43,9 +43,9 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 public class AxisParallelEdgesAnalysis implements IAnalysis {
     
     /**
-     * Identifier of the edge crossings analysis.
+     * Identifier of this analysis.
      */
-    public static final String ID = "de.cau.cs.kieler.kiml.grana.straightEdges";
+    public static final String ID = "de.cau.cs.kieler.kiml.grana.axisParallelEdges";
     
     /** tolerance for float equality. */
     private static final float TOLERANCE = 0.00001f;
@@ -131,13 +131,13 @@ public class AxisParallelEdgesAnalysis implements IAnalysis {
                     boolean onlyConformingBendpoints = true;
                     if (Math.abs(sourcePoint.getY() - targetPoint.getY()) < TOLERANCE
                             && sourcePoint.getX() < targetPoint.getX()) {
-                        float tmp = Math.abs(sourcePoint.getX() - targetPoint.getX());
                         
+                        float y = sourcePoint.getY();
                         // check for bendpoints that are not straight
                         for (KPoint point : bendPoints) {
                             // if only one bendpoint lies not on a straight line between source 
                             // and target, count one up
-                            if (Math.abs(tmp - point.getY()) > TOLERANCE) {
+                            if (Math.abs(y - point.getY()) > TOLERANCE) {
                                 onlyConformingBendpoints = false;
                                 break;
                             }
@@ -147,15 +147,15 @@ public class AxisParallelEdgesAnalysis implements IAnalysis {
                         if (onlyConformingBendpoints) {
                             edgeDirections[INDEX_RIGHT]++;
                         }
-                        break;
+                        continue;
                     } 
                     
                     // all other cases are analog to the one above
                     if (Math.abs(targetPoint.getY() - sourcePoint.getY()) < TOLERANCE
                             && targetPoint.getX() < sourcePoint.getX()) {
-                        float tmp = Math.abs(targetPoint.getX() - sourcePoint.getX());
+                        float y = sourcePoint.getY();
                         for (KPoint point : bendPoints) {
-                            if (Math.abs(tmp - point.getY()) > TOLERANCE) { 
+                            if (Math.abs(y - point.getY()) > TOLERANCE) { 
                                 onlyConformingBendpoints = false;
                                 break;
                             }
@@ -163,13 +163,13 @@ public class AxisParallelEdgesAnalysis implements IAnalysis {
                         if (onlyConformingBendpoints) {
                             edgeDirections[INDEX_LEFT]++;
                         }
-                        break;
+                        continue;
                     }             
                     if (Math.abs(sourcePoint.getX() - targetPoint.getX()) < TOLERANCE
                             && sourcePoint.getY() > targetPoint.getY()) {
-                        float tmp = Math.abs(sourcePoint.getY() - targetPoint.getY());
+                        float x = sourcePoint.getX();
                         for (KPoint point : bendPoints) {
-                            if (Math.abs(tmp - point.getX()) > TOLERANCE) {
+                            if (Math.abs(x - point.getX()) > TOLERANCE) {
                                 onlyConformingBendpoints = false;
                                 break;
                             }
@@ -177,13 +177,13 @@ public class AxisParallelEdgesAnalysis implements IAnalysis {
                         if (onlyConformingBendpoints) {
                             edgeDirections[INDEX_UP]++;
                         }
-                        break;
+                        continue;
                     }                   
                     if (Math.abs(targetPoint.getX() - sourcePoint.getX()) < TOLERANCE
                             && sourcePoint.getY() < targetPoint.getY()) {
-                        float tmp = Math.abs(sourcePoint.getY() - targetPoint.getY());
+                        float x = sourcePoint.getX();
                         for (KPoint point : bendPoints) {
-                            if (Math.abs(tmp - point.getX()) > TOLERANCE) {
+                            if (Math.abs(x - point.getX()) > TOLERANCE) {
                                 onlyConformingBendpoints = false;
                                 break;
                             }
@@ -191,7 +191,7 @@ public class AxisParallelEdgesAnalysis implements IAnalysis {
                         if (onlyConformingBendpoints) {    
                             edgeDirections[INDEX_DOWN]++;    
                         }
-                        break;
+                        continue;
                     }   
                 }
 
