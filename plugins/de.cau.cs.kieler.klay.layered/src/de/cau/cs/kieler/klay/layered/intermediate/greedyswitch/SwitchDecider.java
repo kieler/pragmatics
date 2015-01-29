@@ -26,7 +26,7 @@ import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
  * crossing matrix show the amount of crossings between incident edges to nodes i and j when node i
  * is above node j. {@link GreedySwitchOnDemandCrossingMatrixProcessor} calculates the entries in
  * the crossing matrix only when needed. The last two both use
- * {@link TwoNodeTwoLayerCrossingCounter} which calculates two entries i,j and j,i in the crossing
+ * {@link InBetweenLayerEdgeTwoNodeCrossingCounter} which calculates two entries i,j and j,i in the crossing
  * matrix. All variants can
  * 
  * @author alan

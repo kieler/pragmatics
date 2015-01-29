@@ -580,7 +580,7 @@ public class TestGraphCreator {
      *      *
      * </pre>
      *
-     * Port order fixed. ||||
+     * Port order fixed.
      * 
      * @return
      */
@@ -668,18 +668,35 @@ public class TestGraphCreator {
         return graph;
     }
 
-    public LNode[][] getCurrentOrder() {
-        LNode[][] nodeOrder = new LNode[graph.getLayers().size()][];
-        List<Layer> layers = graph.getLayers();
-        for (int i = 0; i < layers.size(); i++) {
-            Layer layer = layers.get(i);
-            List<LNode> nodes = layer.getNodes();
-            nodeOrder[i] = new LNode[nodes.size()];
-            for (int j = 0; j < nodes.size(); j++) {
-                nodeOrder[i][j] = nodes.get(j);
-            }
-        }
-        return nodeOrder;
+    /**
+     * <pre>
+     *    --*
+     *    |  
+     *    |/*
+     *   /|  
+     * *+--*  <-In-layer and normal edge into port.
+     *   \ 
+     *    \
+     *     \
+     *      *
+     * </pre>
+     * 
+     * @return
+     */
+    public LGraph getInLayerEdgesMultipleEdgesIntoSinglePort() {
+        Layer layerTwo = makeLayer();
+        LNode leftNode = addNodeToLayer(layerTwo);
+        Layer layerOne = makeLayer();
+        LNode[] rightNodes = addNodesToLayer(4, layerOne);
+
+        addInLayerEdge(rightNodes[1], rightNodes[3], PortSide.WEST);
+
+        LPort leftPort = addPortOnSide(leftNode, PortSide.EAST);
+        LPort rightTopPort = addPortOnSide(rightNodes[0], PortSide.WEST);
+        LPort rightMiddlePort = addPortOnSide(rightNodes[2], PortSide.WEST);
+        addEdgeBetweenPorts(leftPort, rightMiddlePort);
+        addEdgeBetweenPorts(rightTopPort, rightMiddlePort);
+        return graph;
     }
 
     /**
@@ -735,6 +752,20 @@ public class TestGraphCreator {
         rightNodes[2].setProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT, rightNodes[2]);
 
         return graph;
+    }
+
+    public LNode[][] getCurrentOrder() {
+        LNode[][] nodeOrder = new LNode[graph.getLayers().size()][];
+        List<Layer> layers = graph.getLayers();
+        for (int i = 0; i < layers.size(); i++) {
+            Layer layer = layers.get(i);
+            List<LNode> nodes = layer.getNodes();
+            nodeOrder[i] = new LNode[nodes.size()];
+            for (int j = 0; j < nodes.size(); j++) {
+                nodeOrder[i][j] = nodes.get(j);
+            }
+        }
+        return nodeOrder;
     }
 
     private void setInLayerOrderConstraint(final LNode thisNode, final LNode beforeThisNode) {

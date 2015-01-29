@@ -11,11 +11,11 @@ import org.junit.Test;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.TwoNodeTwoLayerCrossingCounter;
+import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.InBetweenLayerEdgeTwoNodeCrossingCounter;
 
-public class TwoNodeTwoLayerCrossingCounterTest {
+public class InBetweenLayerEdgeNeighboringNodeCrossingCounterTest {
     private TestGraphCreator creator;
-    private TwoNodeTwoLayerCrossingCounter crossingCounter;
+    private InBetweenLayerEdgeTwoNodeCrossingCounter crossingCounter;
     private LGraph graph;
     private LNode upperNode;
     private LNode lowerNode;
@@ -242,7 +242,7 @@ public class TwoNodeTwoLayerCrossingCounterTest {
     }
 
     private void initCrossingCounter(final int layerIndex) {
-        crossingCounter = new TwoNodeTwoLayerCrossingCounter(nodeOrder, layerIndex);
+        crossingCounter = new InBetweenLayerEdgeTwoNodeCrossingCounter(nodeOrder, layerIndex);
     }
 
     private String failMessage(final String configuration) {

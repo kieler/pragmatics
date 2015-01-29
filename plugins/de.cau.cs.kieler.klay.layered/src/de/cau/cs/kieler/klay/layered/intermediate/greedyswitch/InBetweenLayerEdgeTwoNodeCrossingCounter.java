@@ -30,7 +30,7 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
  * @author alan
  *
  */
-class TwoNodeTwoLayerCrossingCounter {
+class InBetweenLayerEdgeTwoNodeCrossingCounter {
     private int crossingsForOrderUpperLower;
     private int crossingsForOrderLowerUpper;
     private NodeData upper;
@@ -40,14 +40,14 @@ class TwoNodeTwoLayerCrossingCounter {
     private final int freeLayerIndex;
 
     /**
-     * Create {@link TwoNodeTwoLayerCrossingCounter}. Naming assumes a left-right layer ordering.
+     * Create {@link InBetweenLayerEdgeTwoNodeCrossingCounter}. Naming assumes a left-right layer ordering.
      * 
      * @param currentNodeOrder
      *            Currently considered node ordering.
      * @param freeLayerIndex
      *            Index of free layer.
      */
-    public TwoNodeTwoLayerCrossingCounter(final LNode[][] currentNodeOrder, final int freeLayerIndex) {
+    public InBetweenLayerEdgeTwoNodeCrossingCounter(final LNode[][] currentNodeOrder, final int freeLayerIndex) {
         this.currentNodeOrder = currentNodeOrder;
         this.freeLayerIndex = freeLayerIndex;
         initializeNodeAndPortIdsForNeighbouringLayers();

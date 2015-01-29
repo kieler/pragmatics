@@ -32,8 +32,8 @@ package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 //import de.cau.cs.kieler.klay.layered.graph.LPort;
 //import de.cau.cs.kieler.klay.layered.graph.Layer;
 //import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.GreedySwitchProcessor;
-//import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.TwoNodeInLayerEdgeCrossingCounter;
-//import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.TwoNodeTwoLayerCrossingCounter;
+//import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.InLayerEdgeNeighboringNodeCrossingCounter;
+//import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.InBetweenLayerEdgeTwoNodeCrossingCounter;
 //import de.cau.cs.kieler.klay.layered.test.AbstractLayeredProcessorTest;
 //import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
 //import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
@@ -94,8 +94,8 @@ package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 //                int[] nodeDegrees = greedyProcessor.getWestNodeDegrees()[i];
 //                for (LNode nodeOne : layer) {
 //                    for (LNode nodeTwo : layer) {
-//                        TwoNodeTwoLayerCrossingCounter crossCounter =
-//                                new TwoNodeTwoLayerCrossingCounter(nodeOne, nodeTwo, nodeDegrees,
+//                        InBetweenLayerEdgeTwoNodeCrossingCounter crossCounter =
+//                                new InBetweenLayerEdgeTwoNodeCrossingCounter(nodeOne, nodeTwo, nodeDegrees,
 //                                        nodePositions, portIndices);
 //                        crossCounter.countEasternCrossings();
 //                        assertTrue(crossCounter.getCrossingsForOrderUpperLower() >= 0);
@@ -112,8 +112,8 @@ package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 //                int[] nodeDegrees = greedyProcessor.getEastNodeDegrees()[i];
 //                for (LNode nodeOne : layer) {
 //                    for (LNode nodeTwo : layer) {
-//                        TwoNodeTwoLayerCrossingCounter crossCounter =
-//                                new TwoNodeTwoLayerCrossingCounter(nodeOne, nodeTwo, nodeDegrees,
+//                        InBetweenLayerEdgeTwoNodeCrossingCounter crossCounter =
+//                                new InBetweenLayerEdgeTwoNodeCrossingCounter(nodeOne, nodeTwo, nodeDegrees,
 //                                        nodePositions, portIndices);
 //                        crossCounter.countEasternCrossings();
 //                        assertTrue(crossCounter.getCrossingsForOrderUpperLower() >= 0);
@@ -168,14 +168,14 @@ package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 //                for (int k = 0; k < layer.getNodes().size(); k++) {
 //                    LNode nodeTwo = layer.getNodes().get(k);
 //                    Map<LPort, Integer> portIndices = greedyProcessor.getPortIndices();
-//                    TwoNodeTwoLayerCrossingCounter crossCounter =
-//                            new TwoNodeTwoLayerCrossingCounter(nodeOne, nodeTwo, nodeDegrees,
+//                    InBetweenLayerEdgeTwoNodeCrossingCounter crossCounter =
+//                            new InBetweenLayerEdgeTwoNodeCrossingCounter(nodeOne, nodeTwo, nodeDegrees,
 //                                    nodePositions, portIndices);
 //                    crossCounter.countEasternCrossings();
 //                    int actualEntry = crossCounter.getCrossingsForOrderUpperLower();
 //
-//                    TwoNodeInLayerEdgeCrossingCounter inLayerEdgeCrossCounter =
-//                            new TwoNodeInLayerEdgeCrossingCounter(nodePositions, nodeDegrees,
+//                    InLayerEdgeNeighboringNodeCrossingCounter inLayerEdgeCrossCounter =
+//                            new InLayerEdgeNeighboringNodeCrossingCounter(nodePositions, nodeDegrees,
 //                                    false, portIndices);
 //                    inLayerEdgeCrossCounter.countCrossings(nodeOne, nodeTwo);
 //                    actualEntry += inLayerEdgeCrossCounter.getCrossingsForOrderUpperLower();
@@ -214,14 +214,14 @@ package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 //                for (int k = 0; k < layer.getNodes().size(); k++) {
 //                    LNode nodeTwo = layer.getNodes().get(k);
 //                    Map<LPort, Integer> portIndices = greedyProcessor.getPortIndices();
-//                    TwoNodeTwoLayerCrossingCounter crossCounter =
-//                            new TwoNodeTwoLayerCrossingCounter(nodeOne, nodeTwo, nodeDegrees,
+//                    InBetweenLayerEdgeTwoNodeCrossingCounter crossCounter =
+//                            new InBetweenLayerEdgeTwoNodeCrossingCounter(nodeOne, nodeTwo, nodeDegrees,
 //                                    nodePositions, portIndices);
 //                    crossCounter.countEasternCrossings();
 //                    int actualEntry = crossCounter.getCrossingsForOrderUpperLower();
 //
-//                    TwoNodeInLayerEdgeCrossingCounter inLayerEdgeCrossCounter =
-//                            new TwoNodeInLayerEdgeCrossingCounter(nodePositions, nodeDegrees,
+//                    InLayerEdgeNeighboringNodeCrossingCounter inLayerEdgeCrossCounter =
+//                            new InLayerEdgeNeighboringNodeCrossingCounter(nodePositions, nodeDegrees,
 //                                    false, portIndices);
 //                    inLayerEdgeCrossCounter.countCrossings(nodeOne, nodeTwo);
 //                    actualEntry += inLayerEdgeCrossCounter.getCrossingsForOrderUpperLower();

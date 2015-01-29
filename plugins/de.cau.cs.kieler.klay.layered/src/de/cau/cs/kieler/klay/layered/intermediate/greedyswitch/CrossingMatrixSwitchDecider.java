@@ -21,8 +21,8 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
  */
 abstract class CrossingMatrixSwitchDecider extends SwitchDecider {
 
-    private final TwoNodeInLayerEdgeCrossingCounter inLayerCounter;
-    private final TwoNodeTwoLayerCrossingCounter inBetweenLayerCrossingCounter;
+    private final InLayerEdgeNeighboringNodeCrossingCounter inLayerCounter;
+    private final InBetweenLayerEdgeTwoNodeCrossingCounter inBetweenLayerCrossingCounter;
 
     /**
      * @param freeLayerIndex
@@ -31,8 +31,8 @@ abstract class CrossingMatrixSwitchDecider extends SwitchDecider {
     public CrossingMatrixSwitchDecider(final int freeLayerIndex, final LNode[][] graph) {
         super(freeLayerIndex, graph);
         initializeNodeIds(graph);
-        inBetweenLayerCrossingCounter = new TwoNodeTwoLayerCrossingCounter(graph, freeLayerIndex);
-        inLayerCounter = new TwoNodeInLayerEdgeCrossingCounter(super.getFreeLayer());
+        inBetweenLayerCrossingCounter = new InBetweenLayerEdgeTwoNodeCrossingCounter(graph, freeLayerIndex);
+        inLayerCounter = new InLayerEdgeNeighboringNodeCrossingCounter(super.getFreeLayer());
     }
 
     private void initializeNodeIds(final LNode[][] graph) {
@@ -69,7 +69,7 @@ abstract class CrossingMatrixSwitchDecider extends SwitchDecider {
 
     abstract int getCrossingMatrixEntry(final LNode upperNode, final LNode lowerNode);
 
-    protected TwoNodeTwoLayerCrossingCounter getTwoLayerCrossCounter() {
+    protected InBetweenLayerEdgeTwoNodeCrossingCounter getTwoLayerCrossCounter() {
         return inBetweenLayerCrossingCounter;
     }
 

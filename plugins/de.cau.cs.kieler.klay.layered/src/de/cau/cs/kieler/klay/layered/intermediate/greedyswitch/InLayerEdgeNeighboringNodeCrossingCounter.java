@@ -32,13 +32,13 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 
 /**
- * Counts the of in-layer Crossings between two neighbouring nodes. Nodes with multiple in- layer
- * edges in both directions may cause too many crossings. TODO-alan only neighbouring !!???
+ * Counts the of in-layer Crossings between two neighboring nodes. Nodes with multiple in- layer
+ * edges in both directions may cause too many crossings. 
  * 
  * @author alan
  *
  */
-class TwoNodeInLayerEdgeCrossingCounter {
+class InLayerEdgeNeighboringNodeCrossingCounter {
     private final SortedMultiset<Integer> inLayerEdgePorts;
     private final NavigableSet<Integer> betweenLayerEdgePorts;
     private int upperLowerCrossings;
@@ -48,7 +48,7 @@ class TwoNodeInLayerEdgeCrossingCounter {
     private int[] eastNodeCardinalities;
     private int[] westNodeCardinalities;
 
-    public TwoNodeInLayerEdgeCrossingCounter(final LNode[] nodeOrder) {
+    public InLayerEdgeNeighboringNodeCrossingCounter(final LNode[] nodeOrder) {
         inLayerEdgePorts = TreeMultiset.create();
         betweenLayerEdgePorts = new TreeSet<Integer>();
         initializeLayer(nodeOrder);
