@@ -2,16 +2,7 @@
 <?eclipse version="3.0"?>
 
 <plugin>
-
-  <extension point="org.eclipse.emf.ecore.generated_package">
-    <package 
-       uri = "http://kieler.cs.cau.de/GML" 
-       class = "de.cau.cs.kieler.kiml.formats.gml.gml.GmlPackage"
-       genModel = "de/cau/cs/kieler/kiml/formats/gml/GML.genmodel" /> 
-	
-  </extension>
   <extension point="org.eclipse.emf.ecore.extension_parser">
-<!--class="de.cau.cs.kieler.kiml.formats.gml.GmlExecutableExtensionFactory:org.eclipse.xtext.resource.IResourceFactory"-->
       <parser
           class="de.cau.cs.kieler.kiml.formats.gml.GmlResource$GmlResourceFactory"
           type="gml">
@@ -27,7 +18,4 @@
            name="GML">
      </handler>
   </extension>
-
-
-
 </plugin>

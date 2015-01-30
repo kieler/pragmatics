@@ -21,7 +21,6 @@ import java.util.Map;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
-import org.eclipse.xtext.resource.IResourceFactory;
 
 /**
  * A dedicated resource to load {@link GMLModel}s in the context of 
@@ -73,7 +72,7 @@ public class GmlResource extends ResourceImpl {
      * {@link IResourceFactory} for {@link GmlResource}s to be registered 
      * via EMF's 'extension_parser' extension point.
      */
-    public static class GmlResourceFactory implements IResourceFactory {
+    public static class GmlResourceFactory implements Resource.Factory {
 
         /**
          * {@inheritDoc}
