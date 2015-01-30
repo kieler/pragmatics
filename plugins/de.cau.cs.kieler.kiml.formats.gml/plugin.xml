@@ -20,7 +20,7 @@
   <extension
         point="de.cau.cs.kieler.kiml.formats.graphFormats">
      <handler
-           class="de.cau.cs.kieler.kiml.formats.gml.GmlExecutableExtensionFactory:de.cau.cs.kieler.kiml.formats.gml.GmlFormatHandler"
+           class="de.cau.cs.kieler.kiml.formats.gml.GmlFormatHandler"
            description="The Graph Modelling Language. See http://www.fim.uni-passau.de/en/fim/faculty/chairs/theoretische-informatik/projects.html"
            extensions="gml"
            id="de.uni-passau.fim.gml"

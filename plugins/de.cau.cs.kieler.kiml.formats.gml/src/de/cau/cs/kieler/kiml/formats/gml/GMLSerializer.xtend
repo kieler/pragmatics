@@ -24,28 +24,25 @@ final class GMLSerializer {
     
     static def serialize(GMLModel model) {
         return '''
-            «model.elements.map[it.serializeInt].join("\n")»
-        '''
+            «model.elements.map[it.serializeInt].join("\n")»'''
     }
     
     static def serialize(CollectionElement root) {
         return '''
-            «root.elements.map[it.serializeInt].join("\n")»
-        '''     
+            «root.elements.map[it.serializeInt].join("\n")»'''     
     }
     
     static def CharSequence serializeInt(Element e) {
         switch(e) {
             CollectionElement:
-                return '''
+                return '''  
                 «e.key» [
                     «e.elements.map[serializeInt(it)].join("\n")»
-                ]
-                '''
+                ]'''
+            StringElement: 
+                return '''«e.key» "«e.value»"'''
             default: 
-                return '''
-                «e.key» «e.value»
-                '''
+                return '''«e.key» «e.value»'''
         }
     }
     

@@ -38,6 +38,7 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  * Graph importer for the GML format.
  * 
  * @author msp
+ * @author mkr
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */

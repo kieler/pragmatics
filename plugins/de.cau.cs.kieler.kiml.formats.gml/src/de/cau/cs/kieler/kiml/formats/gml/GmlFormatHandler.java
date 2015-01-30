@@ -28,7 +28,9 @@ import de.cau.cs.kieler.kiml.formats.TransformationException;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 
 /**
- * @author uru
+ * Formats handler for the gml format.
+ * 
+ * @author mkr
  */
 public class GmlFormatHandler implements IGraphFormatHandler<GMLModel> {
     
@@ -53,15 +55,12 @@ public class GmlFormatHandler implements IGraphFormatHandler<GMLModel> {
      * {@inheritDoc}
      */
     public String serialize(final TransformationData<KNode, GMLModel> transData) {
-        GMLModel gm = null;
-        if (!transData.getTargetGraphs().isEmpty()) {
-           gm = transData.getTargetGraphs().get(0); 
+        StringBuffer sb = new StringBuffer();
+        for (GMLModel gm : transData.getTargetGraphs()) {
+            sb.append(GMLSerializer.serialize(gm));
+            sb.append("\n");
         }
-        if (gm.getElements().isEmpty()) {
-            return null;
-        } else {
-            return gm.toString();
-        }
+        return sb.toString();
     }
     
     private GmlImporter importer = new GmlImporter();
@@ -130,8 +129,8 @@ public class GmlFormatHandler implements IGraphFormatHandler<GMLModel> {
                 text.replace(i, i + 1, "&#" + (int) c + ";");
             }
         }
-        text.insert(0, '\"');
-        text.append('\"');
+        // text.insert(0, '\"');
+        // text.append('\"');
         Element l = new StringElement(parent, "label", text.toString());
         return l;
     }
