@@ -13,38 +13,92 @@
  */
 package de.cau.cs.kieler.kiml.formats.gml;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.List;
+
+import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.formats.IGraphFormatHandler;
 import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.formats.TransformationData;
-import de.cau.cs.kieler.kiml.formats.gml.xtext.GmlExporter;
-import de.cau.cs.kieler.kiml.formats.gml.xtext.GmlImporter;
+import de.cau.cs.kieler.kiml.formats.TransformationException;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 
 /**
  * @author uru
  */
 public class GmlFormatHandler implements IGraphFormatHandler<GMLModel> {
+    
+    /** the maximal allowed character value for GML. */
+    private static final char MAX_CHAR = 127;
 
     /**
      * {@inheritDoc}
      */
-    public void deserialize(String serializedGraph, TransformationData<GMLModel, KNode> transData) {
-        // TODO Auto-generated method stub
+    public void deserialize(final String serializedGraph,
+            final TransformationData<GMLModel, KNode> transData) {
+        try {
+            InputStream is = new ByteArrayInputStream(serializedGraph.getBytes());
+            transData.setSourceGraph(GMLParser.parse(is));
+        } catch (IOException e) {
+            throw new TransformationException("Cannot parse the passed " + "gml. ("
+                    + e.getMessage() + ")", e);
+        }
     }
 
     /**
      * {@inheritDoc}
      */
-    public String serialize(TransformationData<KNode, GMLModel> transData) {
-        // TODO Auto-generated method stub
-        return null;
+    public String serialize(final TransformationData<KNode, GMLModel> transData) {
+        GMLModel gm = null;
+        if (!transData.getTargetGraphs().isEmpty()) {
+           gm = transData.getTargetGraphs().get(0); 
+        }
+        if (gm.getElements().isEmpty()) {
+            return null;
+        } else {
+            return gm.toString();
+        }
+    }
+    
+    private GmlImporter importer = new GmlImporter();
+    /**
+     * {@inheritDoc}
+     */
+    public IGraphTransformer<GMLModel, KNode> getImporter() {
+        return importer;
+    }
+
+    private GmlExporter exporter = new GmlExporter();
+    /**
+     * {@inheritDoc}
+     */
+    public IGraphTransformer<KNode, GMLModel> getExporter() {
+        return exporter;
+    }
+    
+    /**
+     * Extracts a list (subgraph of a CollectionElement).
+     * 
+     * @param element element to extract list from
+     * @return the list of subgraph to transform
+     */
+    public static List<Element> getElements(final Element element) {
+        if (element instanceof CollectionElement) {
+            CollectionElement collectEle = (CollectionElement) element;
+            return collectEle.getElements();
+        } else {
+            return Collections.emptyList();
+        }
     }
     
     /**
      * Creates a GML Point for a KPoint.
      * 
-     * @param parent the parent collection, the GML Point is attached to
+     * @param parent the parent collection the GML Point is attached to
      * @param point a KPoint
      * @return a GML Element with the coordinates of the given point
      */
@@ -56,22 +110,30 @@ public class GmlFormatHandler implements IGraphFormatHandler<GMLModel> {
         p.getElements().add(y);
         return p;
     }
-
-    private GmlImporter importer = new GmlImporter();
-    /**
-     * {@inheritDoc}
-     */
-    public IGraphTransformer<GMLModel, KNode> getImporter() {
-        return importer;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public IGraphTransformer<KNode, GMLModel> getExporter() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     
+    /**
+     * Create a GML label for a KLabel.
+     * 
+     * @param parent the parent collection the GML Label is attached to
+     * @param klabel a KLabel
+     * @return a GML element with the label text
+     */
+    public static Element createLabel(final Element parent, final KLabel klabel) {
+        StringBuilder text = new StringBuilder(klabel.getText());
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if (c == '\"') {
+                text.replace(i, i + 1, "&quot;");
+            } else if (c == '&') {
+                text.replace(i, i + 1, "&amp;");
+            } else if (c > MAX_CHAR) {
+                text.replace(i, i + 1, "&#" + (int) c + ";");
+            }
+        }
+        text.insert(0, '\"');
+        text.append('\"');
+        Element l = new StringElement(parent, "label", text.toString());
+        return l;
+    }
+
 }
