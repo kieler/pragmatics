@@ -31,7 +31,8 @@ abstract class CrossingMatrixSwitchDecider extends SwitchDecider {
     public CrossingMatrixSwitchDecider(final int freeLayerIndex, final LNode[][] graph) {
         super(freeLayerIndex, graph);
         initializeNodeIds(graph);
-        inBetweenLayerCrossingCounter = new InBetweenLayerEdgeTwoNodeCrossingCounter(graph, freeLayerIndex);
+        inBetweenLayerCrossingCounter =
+                new InBetweenLayerEdgeTwoNodeCrossingCounter(graph, freeLayerIndex);
         inLayerCounter = new InLayerEdgeNeighboringNodeCrossingCounter(super.getFreeLayer());
     }
 
@@ -55,7 +56,7 @@ abstract class CrossingMatrixSwitchDecider extends SwitchDecider {
 
         LNode upperNode = super.getFreeLayer()[upperNodeIndex];
         LNode lowerNode = super.getFreeLayer()[lowerNodeIndex];
-        inLayerCounter.countCrossings(upperNode, lowerNode);
+        inLayerCounter.countCrossingsBetweenNeighbouringNodes(upperNode, lowerNode);
 
         int upperLowerCrossings =
                 getCrossingMatrixEntry(upperNode, lowerNode)

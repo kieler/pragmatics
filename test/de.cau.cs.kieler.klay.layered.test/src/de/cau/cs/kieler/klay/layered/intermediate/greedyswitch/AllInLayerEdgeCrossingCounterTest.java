@@ -35,7 +35,7 @@ public class AllInLayerEdgeCrossingCounterTest {
 
     private TestGraphCreator creator;
     private LNode[] nodeOrder;
-    private InLayerEdgeCrossingCounter counter;
+    private InLayerEdgeAllCrossingCounter counter;
 
     // CHECKSTYLEOFF MagicNumber
     // CHECKSTYLEOFF javadoc
@@ -180,6 +180,15 @@ public class AllInLayerEdgeCrossingCounterTest {
     }
 
     @Test
+    public void oneLayerInLayerNowCrossingReduction() {
+        creator.getOneLayerNoInLayerCrossings();
+
+        initCrossingCounterForLayerIndex(0);
+
+        assertThat(counter.countAllCrossings(), is(0));
+    }
+
+    @Test
     public void oneNode() {
         creator.getOneNodeGraph();
 
@@ -242,6 +251,22 @@ public class AllInLayerEdgeCrossingCounterTest {
         assertThat(counter.countAllCrossings(), is(2));
     }
 
+    @Test
+    public void oneLayerShouldNotCauseCrossings() {
+        creator.getOneLayerNoInLayerCrossings();
+        initCrossingCounterForLayerIndex(0);
+
+        assertThat(counter.countAllCrossings(), is(0));
+    }
+
+    @Test
+    public void noPortOrderConstraintShouldResolveCrossing() {
+        creator.getInLayerEdgesDownwardGraphNoFixedOrder();
+        initCrossingCounterForLayerIndex(1);
+
+        assertThat(counter.countAllCrossings(), is(0));
+    }
+
     /**
      * Initializes Crossing counter, sets nodeOrder with the nodes from the layer being considered
      * and numbers its in ascending form as required by the counter.
@@ -251,7 +276,7 @@ public class AllInLayerEdgeCrossingCounterTest {
     private void initCrossingCounterForLayerIndex(final int layerIndex) {
         LNode[][] currentOrder = creator.getCurrentOrder();
         nodeOrder = currentOrder[layerIndex];
-        counter = new InLayerEdgeCrossingCounter(nodeOrder);
+        counter = new InLayerEdgeAllCrossingCounter(nodeOrder);
     }
 
     private void switchOrder(final int indexOne, final int indexTwo) {

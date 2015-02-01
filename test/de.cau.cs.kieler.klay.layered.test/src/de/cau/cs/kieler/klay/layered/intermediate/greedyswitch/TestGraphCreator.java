@@ -765,6 +765,8 @@ public class TestGraphCreator {
      * .
      * </pre>
      * 
+     * Port order fixed.
+     * 
      * @return Graph of the form above.
      */
     public LGraph getInLayerEdgesDownwardGraph() {
@@ -773,6 +775,37 @@ public class TestGraphCreator {
         LNode[] rightNodes = addNodesToLayer(3, layers[1]);
 
         setFixedOrderConstraint(rightNodes[1]);
+
+        addEastWestEdgeFromTo(leftNode, rightNodes[1]);
+        addInLayerEdge(rightNodes[0], rightNodes[1], PortSide.WEST);
+        addInLayerEdge(rightNodes[1], rightNodes[2], PortSide.WEST);
+
+        return graph;
+    }
+
+    /**
+     * <pre>
+     * 
+     *   --*
+     *   | ____
+     *   |/|  |
+     *   /\|  |
+     *   | |  |
+     * *-+-|__|
+     *   |
+     *    \
+     *     *
+     * .
+     * </pre>
+     * 
+     * Port order not fixed.
+     * 
+     * @return Graph of the form above.
+     */
+    public LGraph getInLayerEdgesDownwardGraphNoFixedOrder() {
+        Layer[] layers = makeLayers(2);
+        LNode leftNode = addNodeToLayer(layers[0]);
+        LNode[] rightNodes = addNodesToLayer(3, layers[1]);
 
         addEastWestEdgeFromTo(leftNode, rightNodes[1]);
         addInLayerEdge(rightNodes[0], rightNodes[1], PortSide.WEST);
@@ -866,6 +899,30 @@ public class TestGraphCreator {
         LNode[] nodes = addNodesToLayer(4, layer);
         addInLayerEdge(nodes[0], nodes[2], PortSide.WEST);
         addInLayerEdge(nodes[1], nodes[3], PortSide.WEST);
+        return graph;
+    }
+
+    /**
+     * <pre>
+     * |---*
+     * |    
+     * | --*
+     * | |  
+     * | --*
+     *  \ 
+     *   \
+     *    \
+     *     *
+     * .
+     * </pre>
+     * 
+     * @return Graph of the form above.
+     */
+    public LGraph getOneLayerNoInLayerCrossings() {
+        Layer layer = makeLayer();
+        LNode[] nodes = addNodesToLayer(4, layer);
+        addInLayerEdge(nodes[0], nodes[3], PortSide.WEST);
+        addInLayerEdge(nodes[1], nodes[2], PortSide.WEST);
         return graph;
     }
 
