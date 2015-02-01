@@ -232,8 +232,8 @@ public class TestGraphCreator {
         setFixedOrderConstraint(leftNode);
         setFixedOrderConstraint(rightNode);
 
-        LPort leftNodeLeftPort = addPortOnSide(leftNode, PortSide.SOUTH);
         LPort leftNodeRightPort = addPortOnSide(leftNode, PortSide.SOUTH);
+        LPort leftNodeLeftPort = addPortOnSide(leftNode, PortSide.SOUTH);
 
         // ports are added in clockwise fashion, so add bottom port first.
         LPort rightNodeBottomPort = addPortOnSide(rightNode, PortSide.WEST);
