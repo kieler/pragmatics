@@ -3,13 +3,13 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
- * Copyright 2014 by
+ * Copyright 204 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
  * This code is provided under the terms of the Eclipse Public License (EPL).
- * See the file epl-v10.html for the license text.
+ * See the file epl-v0.html for the license text.
  */
 package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
@@ -21,6 +21,7 @@ import java.util.Set;
 
 import com.google.common.collect.BoundType;
 import com.google.common.collect.Iterators;
+import com.google.common.collect.Multiset;
 import com.google.common.collect.SortedMultiset;
 import com.google.common.collect.TreeMultiset;
 
@@ -43,9 +44,10 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
  */
 class InLayerEdgeCrossingCounter {
     /** We store port.ids in mutlisets, as nodes without fixed order have the same port.id. */
-    private final SortedMultiset<Integer> inLayerEdgePorts;
+    private final SortedMultiset<Integer> downwardUpperNodeEdgePorts;
     /** We store port.ids in mutlisets, as nodes without fixed order have the same port.id. */
     private final SortedMultiset<Integer> betweenLayerEdgePorts;
+    private final SortedMultiset<Integer> upwardUpperNodeEdgePorts;
     private final Set<LEdge> inLayerEdges;
     private int upperLowerCrossings;
     private int lowerUpperCrossings;
@@ -56,6 +58,7 @@ class InLayerEdgeCrossingCounter {
     /** The amount of inLayerEdges incident to each node from the west accessed by node.id. */
     private int[] westNodeCardinalities;
     private final LNode[] nodeOrder;
+    private final Multiset<Integer> downwardLowerNodeEdgePorts;
 
     /**
      * Creates counter for crossings between in-layer inLayerEdges of neighboring nodes.
@@ -64,8 +67,10 @@ class InLayerEdgeCrossingCounter {
      */
     public InLayerEdgeCrossingCounter(final LNode[] nodeOrder) {
         this.nodeOrder = nodeOrder;
-        inLayerEdgePorts = TreeMultiset.create();
+        downwardUpperNodeEdgePorts = TreeMultiset.create();
         betweenLayerEdgePorts = TreeMultiset.create();
+        upwardUpperNodeEdgePorts = TreeMultiset.create();
+        downwardLowerNodeEdgePorts = TreeMultiset.create();
         inLayerEdges = new HashSet<LEdge>();
         initializeLayer(nodeOrder);
     }
@@ -79,31 +84,43 @@ class InLayerEdgeCrossingCounter {
 
     private int countAllCrossingsOnSide(final PortSide portSide) {
         int crossings = 0;
-        inLayerEdgePorts.clear();
+        downwardUpperNodeEdgePorts.clear();
         inLayerEdges.clear();
         for (LNode node : nodeOrder) {
             for (LPort port : portsOrderedTopToBottom(node, portSide)) {
-                crossings += processPortForAllCrossings(port);
+                crossings += countCrossingsOnPort(port);
             }
         }
         return crossings;
     }
 
-    private int processPortForAllCrossings(final LPort port) {
+    private int countCrossingsOnPort(final LPort port) {
         int crossings = 0;
         for (LEdge edge : port.getConnectedEdges()) {
             if (isInBetweenLayerEdge(edge)) {
-                crossings += inLayerEdges.size() - inLayerEdgePorts.count(port.id);
+                crossings += inLayerEdges.size() - downwardUpperNodeEdgePorts.count(port.id);
             } else if (isNotSelfLoop(edge)) {
-                if (isVisited(edge)) {
-                    close(edge);
-                    crossings += countOpenPortsInBetweenEndsOf(edge);
+                if (inLayerEdges.contains(edge)) {
+                    closeEdge(edge);
+                    crossings += amountOfPortsInbetweenEndsOf(edge, downwardUpperNodeEdgePorts);
                 } else {
-                    open(edge);
+                    openEdge(edge);
                 }
             }
         }
         return crossings;
+    }
+
+    private void closeEdge(final LEdge edge) {
+        downwardUpperNodeEdgePorts.remove(edge.getSource().id);
+        downwardUpperNodeEdgePorts.remove(edge.getTarget().id);
+        inLayerEdges.remove(edge);
+    }
+
+    private void openEdge(final LEdge edge) {
+        inLayerEdges.add(edge);
+        downwardUpperNodeEdgePorts.add(edge.getSource().id);
+        downwardUpperNodeEdgePorts.add(edge.getTarget().id);
     }
 
     /**
@@ -146,69 +163,98 @@ class InLayerEdgeCrossingCounter {
     }
 
     private int countNeighbouringCrossingsOnSide(final PortSide portSide) {
-        inLayerEdgePorts.clear();
         betweenLayerEdgePorts.clear();
-        inLayerEdges.clear();
-        int crossings = processUpperNode(portSide);
-        crossings += processLowerNode(portSide);
+        upwardUpperNodeEdgePorts.clear();
+        downwardUpperNodeEdgePorts.clear();
+        downwardLowerNodeEdgePorts.clear();
+        addEdgesFromUpperNode(portSide);
+        int crossings = countCrossingsToLowerNode(portSide);
         return crossings;
     }
 
-    private int processUpperNode(final PortSide portSide) {
-        int crossings = 0;
-
+    private void addEdgesFromUpperNode(final PortSide portSide) {
         for (LPort port : portsOrderedTopToBottom(upperNode, portSide)) {
             for (LEdge edge : port.getConnectedEdges()) {
-
                 if (isInBetweenLayerEdge(edge)) {
-                    if (portOrderIsFixedFor(upperNode)) {
-                        crossings += amountOfOpenInLayerEdgesBehind(port);
-                    }
                     betweenLayerEdgePorts.add(port.id);
-
                 } else if (isNotSelfLoop(edge)) {
-                    if (isVisited(edge)) {
-                        close(edge);
-                    } else {
-                        open(edge);
-                        crossings += countOpenPortsInBetweenEndsOf(edge);
-                    }
+                    addInLayerEdge(port, edge);
                 }
-
             }
         }
-        return crossings;
     }
 
-    private int processLowerNode(final PortSide portSide) {
+    private void addInLayerEdge(final LPort port, final LEdge edge) {
+        if (isUpward(edge, port)) {
+            upwardUpperNodeEdgePorts.add(endOfEdgePort(edge, port).id);
+        } else {
+            downwardUpperNodeEdgePorts.add(endOfEdgePort(edge, port).id);
+        }
+        inLayerEdges.add(edge);
+    }
+
+    // TODO-alan Comment with ASCII-Drawing. This is super confusing.
+    private int countCrossingsToLowerNode(final PortSide portSide) {
         int crossings = 0;
         for (LPort port : portsOrderedTopToBottom(lowerNode, portSide)) {
             for (LEdge edge : port.getConnectedEdges()) {
 
                 if (isInBetweenLayerEdge(edge)) {
-                    crossings += amountOfOpenInLayerEdgesBehind(port);
-                    if (portOrderIsFixedFor(lowerNode)) {
-                        betweenLayerEdgePorts.add(port.id);
-                    }
-
+                    crossings += amountOfPortsAfter(port.id, downwardUpperNodeEdgePorts);
                 } else if (isNotSelfLoop(edge)) {
-                    if (isVisited(edge)) {
-                        close(edge);
+                    if (downwardUpperNodeEdgePorts.contains(port.id)) {
+                        crossings += countVisitedEdgeCrossings(port, edge);
+                        downwardUpperNodeEdgePorts.remove(port.id);
                     } else {
-                        if (portOrderIsFixedFor(lowerNode)) {
-                            open(edge);
+                        LPort endOfEdgePort = endOfEdgePort(edge, port);
+                        if (isUpward(edge, port)) {
+                            crossings += countUpwardEdgeCrossings(endOfEdgePort);
+                        } else {
+                            downwardLowerNodeEdgePorts.add(endOfEdgePort.id);
                         }
-                        crossings += countOpenPortsInBetweenEndsOf(edge);
                     }
                 }
 
             }
         }
+        // count crossings below lower Node
+        for (Integer id : downwardLowerNodeEdgePorts) {
+            crossings += amountOfPortsBefore(id, downwardUpperNodeEdgePorts);
+        }
         return crossings;
     }
 
-    private boolean isVisited(final LEdge edge) {
-        return inLayerEdges.contains(edge);
+    private int countUpwardEdgeCrossings(final LPort endOfEdgePort) {
+        int crossings = amountOfPortsBefore(endOfEdgePort.id, upwardUpperNodeEdgePorts);
+        crossings += amountOfPortsAfter(endOfEdgePort.id, betweenLayerEdgePorts);
+        crossings += downwardUpperNodeEdgePorts.size();
+        return crossings;
+    }
+
+    private int countVisitedEdgeCrossings(final LPort port, final LEdge edge) {
+        // Edges which are removed from the set go from the upperNode to the lowerNode.
+        // Between-layer edges have only been added for the upper node, so this edge crosses
+        // all between layer edges between its end ports.
+        int crossings = amountOfPortsInbetweenEndsOf(edge, betweenLayerEdgePorts);
+
+        // if the port order is fixed, this edge will also have crossed any edges which originate
+        // from the lower node and go downward.
+        if (portOrderIsFixedFor(lowerNode)) {
+            crossings += downwardLowerNodeEdgePorts.size();
+        }
+        return crossings;
+    }
+
+    private int amountOfPortsBefore(final Integer portId, final SortedMultiset<Integer> set) {
+        return set.headMultiset(portId, BoundType.OPEN).size();
+    }
+
+    private int amountOfPortsAfter(final int portId, final SortedMultiset<Integer> set) {
+        return set.tailMultiset(portId, BoundType.OPEN).size();
+    }
+
+    private LPort endOfEdgePort(final LEdge edge, final LPort port) {
+        return port == edge.getSource() ? edge.getTarget() : edge.getSource();
     }
 
     private boolean isInBetweenLayerEdge(final LEdge edge) {
@@ -221,44 +267,19 @@ class InLayerEdgeCrossingCounter {
         return edge.getTarget().getNode() != edge.getSource().getNode();
     }
 
-    private int countOpenPortsInBetweenEndsOf(final LEdge edge) {
-        int crossings = amountOfInLayerPortsInBetween(edge.getSource(), edge.getTarget());
-        crossings += amountOfBetweenLayerPortsInbetween(edge.getSource(), edge.getTarget());
-        return crossings;
-    }
-
-    private void open(final LEdge edge) {
-        inLayerEdgePorts.add(edge.getSource().id);
-        inLayerEdgePorts.add(edge.getTarget().id);
-        inLayerEdges.add(edge);
-    }
-
-    private void close(final LEdge edge) {
-        inLayerEdgePorts.remove(edge.getSource().id);
-        inLayerEdgePorts.remove(edge.getTarget().id);
-        inLayerEdges.remove(edge);
+    private boolean isUpward(final LEdge edge, final LPort port) {
+        return edge.getTarget() == port ? edge.getSource().id < edge.getTarget().id : edge
+                .getSource().id > edge.getTarget().id;
     }
 
     private boolean portOrderIsFixedFor(final LNode node) {
         return node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed();
     }
 
-    private int amountOfBetweenLayerPortsInbetween(final LPort port, final LPort endOfEdgePort) {
-        int lowerBound = Math.min(port.id, endOfEdgePort.id);
-        int upperBound = Math.max(port.id, endOfEdgePort.id);
-        return betweenLayerEdgePorts.subMultiset(lowerBound, BoundType.OPEN, upperBound,
-                BoundType.OPEN).size();
-    }
-
-    private int amountOfInLayerPortsInBetween(final LPort port, final LPort endOfEdgePort) {
-        int lowerBound = Math.min(port.id, endOfEdgePort.id);
-        int upperBound = Math.max(port.id, endOfEdgePort.id);
-        return inLayerEdgePorts.subMultiset(lowerBound, BoundType.OPEN, upperBound, BoundType.OPEN)
-                .size();
-    }
-
-    private int amountOfOpenInLayerEdgesBehind(final LPort port) {
-        return inLayerEdgePorts.tailMultiset(port.id, BoundType.OPEN).size();
+    private int amountOfPortsInbetweenEndsOf(final LEdge edge, final SortedMultiset<Integer> set) {
+        int lowerBound = Math.min(edge.getTarget().id, edge.getSource().id);
+        int upperBound = Math.max(edge.getTarget().id, edge.getSource().id);
+        return set.subMultiset(lowerBound, BoundType.OPEN, upperBound, BoundType.OPEN).size();
     }
 
     /**
