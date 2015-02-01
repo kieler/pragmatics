@@ -2,7 +2,6 @@ package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -50,8 +49,10 @@ public class CrossingCounterTest {
     }
 
     @Test
-    public void tooManyNorthSouthCrossingsWithTheOldMethod() {
-        fail("Test not yet implemented.");
+    public void tooManyInLayerCrossingsWithTheOldMethod() {
+        graph = testGraphCreator.getInLayerOneLayerNoCrossings();
+        int amountOfCrossings = whenCountingAllCrossings();
+        assertThat(amountOfCrossings, is(0));
     }
 
     private int whenCountingNorthSouthCrossingsInLayer(final int layerIndex) {

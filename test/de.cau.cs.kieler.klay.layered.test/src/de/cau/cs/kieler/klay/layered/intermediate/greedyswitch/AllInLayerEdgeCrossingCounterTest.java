@@ -181,7 +181,7 @@ public class AllInLayerEdgeCrossingCounterTest {
 
     @Test
     public void oneLayerInLayerNowCrossingReduction() {
-        creator.getOneLayerNoInLayerCrossings();
+        creator.getInLayerOneLayerNoCrossings();
 
         initCrossingCounterForLayerIndex(0);
 
@@ -253,7 +253,7 @@ public class AllInLayerEdgeCrossingCounterTest {
 
     @Test
     public void oneLayerShouldNotCauseCrossings() {
-        creator.getOneLayerNoInLayerCrossings();
+        creator.getInLayerOneLayerNoCrossings();
         initCrossingCounterForLayerIndex(0);
 
         assertThat(counter.countAllCrossings(), is(0));

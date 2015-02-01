@@ -310,7 +310,7 @@ public class InLayerEdgeNeighboringNodeCrossingCounterTest {
 
     @Test
     public void oneLayerShouldNotCauseCrossings() {
-        creator.getOneLayerNoInLayerCrossings();
+        creator.getInLayerOneLayerNoCrossings();
         countCrossingsInLayerForUpperNodeLowerNode(0, 0, 1);
         assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
         assertThat("lowerUpperCrossings", lowerUpperCrossings, is(1));

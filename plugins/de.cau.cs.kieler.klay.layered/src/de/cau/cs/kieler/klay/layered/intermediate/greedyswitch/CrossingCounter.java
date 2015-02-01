@@ -319,6 +319,10 @@ public class CrossingCounter {
      * @return the worst possible number of crossings
      */
     public int countInLayerEdgeCrossingsWithOrder(final LNode[] layer) {
+        return new InLayerEdgeAllCrossingCounter(layer).countAllCrossings();
+    }
+
+    private int oldInLayerEdgeCrossingCounter(final LNode[] layer) {
         int eastWestCrossings = 0;
         int northSouthCrossings = 0;
 

@@ -918,7 +918,7 @@ public class TestGraphCreator {
      * 
      * @return Graph of the form above.
      */
-    public LGraph getOneLayerNoInLayerCrossings() {
+    public LGraph getInLayerOneLayerNoCrossings() {
         Layer layer = makeLayer();
         LNode[] nodes = addNodesToLayer(4, layer);
         addInLayerEdge(nodes[0], nodes[3], PortSide.WEST);
