@@ -15,11 +15,12 @@ package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 
 /**
@@ -38,7 +39,7 @@ public class NorthSouthPortNeighbouringNodeCounterTest {
     @Test
     public void noNorthSouthNode() {
         creator.getCrossFormedGraph();
-        countCrossingsInLayerBetween(0, 0, 1);
+        countCrossingsInLayerBetweenNodes(0, 0, 1);
         assertThat(counter.getUpperLowerCrossings(), is(0));
         assertThat(counter.getLowerUpperCrossings(), is(0));
     }
@@ -46,36 +47,54 @@ public class NorthSouthPortNeighbouringNodeCounterTest {
     @Test
     public void southernNorthSouthNodeCrossing() {
         creator.getNorthSouthCrossingGraph();
-        countCrossingsInLayerBetween(0, 1, 2);
+        countCrossingsInLayerBetweenNodes(0, 1, 2);
         assertThat(counter.getUpperLowerCrossings(), is(1));
         assertThat(counter.getLowerUpperCrossings(), is(0));
     }
 
     @Test
-    public void northernNortSouthNodeCrossings() {
-        fail("Test not yet implemented.");// TODO-alan
-
+    public void northernNorthSouthNodeCrossings() {
+        creator.getNorthSouthUpwardCrossingGraph();
+        countCrossingsInLayerBetweenNodes(0, 0, 1);
+        assertThat(counter.getUpperLowerCrossings(), is(1));
+        assertThat(counter.getLowerUpperCrossings(), is(0));
     }
 
     @Test
     public void oneNodeIsLongEdgeDummy() {
-        fail("Test not yet implemented.");// TODO-alan
+        creator.getNorthSouthDummyEdgeCrossingGraph();
+        countCrossingsInLayerBetweenNodes(1, 1, 2);
+        assertThat(counter.getUpperLowerCrossings(), is(1));
+        assertThat(counter.getLowerUpperCrossings(), is(0));
+    }
 
+    @Test
+    public void oneNodeIsLongEdgeDummyNorthern() {
+        creator.getNorthernNorthSouthDummyEdgeCrossingGraph();
+        countCrossingsInLayerBetweenNodes(1, 0, 1);
+        assertThat(counter.getUpperLowerCrossings(), is(1));
+        assertThat(counter.getLowerUpperCrossings(), is(0));
     }
 
     @Test
     public void noFixedOrderConstraint() {
-        fail("Test not yet implemented.");// TODO-alan
-
+        creator.getNorthSouthCrossingGraph();
+        creator.getCurrentOrder()[0][0].setProperty(LayoutOptions.PORT_CONSTRAINTS,
+                PortConstraints.FIXED_SIDE);
+        countCrossingsInLayerBetweenNodes(0, 1, 2);
+        assertThat(counter.getUpperLowerCrossings(), is(0));
+        assertThat(counter.getLowerUpperCrossings(), is(0));
     }
 
     @Test
     public void withNormalNode() {
-        fail("Test not yet implemented.");// TODO-alan
-
+        creator.getNorthSouthCrossingGraph();
+        countCrossingsInLayerBetweenNodes(0, 0, 1);
+        assertThat(counter.getUpperLowerCrossings(), is(0));
+        assertThat(counter.getLowerUpperCrossings(), is(0));
     }
 
-    private void countCrossingsInLayerBetween(final int layerIndex, final int upperNodeIndex,
+    private void countCrossingsInLayerBetweenNodes(final int layerIndex, final int upperNodeIndex,
             final int lowerNodeIndex) {
         LNode[] layer = creator.getCurrentOrder()[layerIndex];
         counter = new NorthSouthPortNeighbouringNodeCounter(layer);

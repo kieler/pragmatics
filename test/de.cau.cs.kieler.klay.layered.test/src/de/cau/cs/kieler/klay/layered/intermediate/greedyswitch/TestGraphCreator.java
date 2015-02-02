@@ -211,6 +211,54 @@ public class TestGraphCreator {
 
     /**
      * <pre>
+     *         ____
+     *     *---|  |
+     *     |   |  |
+     *   *-+---|__|
+     *   | |
+     *  _|_|_
+     *  |   |
+     *  |___|
+     * </pre>
+     * 
+     * @return
+     */
+    public LGraph getNorthSouthUpwardCrossingGraph() {
+
+        LNode[] leftNodes = addNodesToLayer(3, makeLayer());
+        LNode rightNode = addNodeToLayer(makeLayer());
+
+        setFixedOrderConstraint(leftNodes[1]);
+        setFixedOrderConstraint(rightNode);
+        setAsNorthSouthNode(leftNodes[0]);
+        setAsNorthSouthNode(leftNodes[1]);
+
+        LPort leftBottomNodeLeftPort = addPortOnSide(leftNodes[1], PortSide.NORTH);
+        LPort leftMiddleNodeBottomPort = addPortOnSide(leftNodes[1], PortSide.SOUTH);
+        addEdgeBetweenPorts(leftBottomNodeLeftPort, leftMiddleNodeBottomPort);
+
+        LPort leftBottomNodeRightPort = addPortOnSide(leftNodes[1], PortSide.NORTH);
+        LPort leftTopNodeBottomPort = addPortOnSide(leftNodes[0], PortSide.SOUTH);
+        addEdgeBetweenPorts(leftBottomNodeRightPort, leftTopNodeBottomPort);
+
+        // ports are added in clockwise fashion, so add bottom port first.
+        LPort leftMiddleNodeRightPort = addPortOnSide(leftNodes[1], PortSide.EAST);
+        LPort rightNodeBottomPort = addPortOnSide(rightNode, PortSide.WEST);
+        addEdgeBetweenPorts(leftMiddleNodeRightPort, rightNodeBottomPort);
+
+        LPort leftTopNodeRightPort = addPortOnSide(leftNodes[0], PortSide.EAST);
+        LPort rightNodeTopPort = addPortOnSide(rightNode, PortSide.WEST);
+        addEdgeBetweenPorts(leftTopNodeRightPort, rightNodeTopPort);
+
+        return graph;
+    }
+
+    private void setAsNorthSouthNode(final LNode node) {
+        node.setProperty(InternalProperties.NODE_TYPE, NodeType.NORTH_SOUTH_PORT);
+    }
+
+    /**
+     * <pre>
      *     ______
      *     |____|
      *      |  |  ____
@@ -1014,6 +1062,58 @@ public class TestGraphCreator {
     }
 
     /**
+     * <pre>
+     *   *
+     *   | 
+     * *-+*--*
+     *   |
+     *   *---*
+     * </pre>
+     */
+    public void getNorthSouthDummyEdgeCrossingGraph() {
+        LNode leftNode = addNodeToLayer(makeLayer());
+        LNode[] middleNodes = addNodesToLayer(3, makeLayer());
+        LNode[] rightNodes = addNodesToLayer(2, makeLayer());
+
+        addEastWestEdgeFromTo(leftNode, middleNodes[1]);
+        addEastWestEdgeFromTo(middleNodes[1], rightNodes[0]);
+        middleNodes[1].setProperty(InternalProperties.NODE_TYPE, NodeType.LONG_EDGE);
+
+        LPort middleTopSouthPort = addPortOnSide(middleNodes[0], PortSide.SOUTH);
+        LPort middleBottomNorthPort = addPortOnSide(middleNodes[2], PortSide.NORTH);
+        addEdgeBetweenPorts(middleTopSouthPort, middleBottomNorthPort);
+        addEastWestEdgeFromTo(middleNodes[2], rightNodes[1]);
+        middleNodes[2].setProperty(InternalProperties.NODE_TYPE, NodeType.NORTH_SOUTH_PORT);
+
+    }
+
+    /**
+     * <pre>
+     *   *---*
+     *   | 
+     * *-+*--*
+     *   |
+     *   *
+     * </pre>
+     */
+    public void getNorthernNorthSouthDummyEdgeCrossingGraph() {
+        LNode leftNode = addNodeToLayer(makeLayer());
+        LNode[] middleNodes = addNodesToLayer(3, makeLayer());
+        LNode[] rightNodes = addNodesToLayer(2, makeLayer());
+
+        addEastWestEdgeFromTo(leftNode, middleNodes[1]);
+        addEastWestEdgeFromTo(middleNodes[1], rightNodes[1]);
+        middleNodes[1].setProperty(InternalProperties.NODE_TYPE, NodeType.LONG_EDGE);
+
+        LPort middleTopSouthPort = addPortOnSide(middleNodes[0], PortSide.SOUTH);
+        LPort middleBottomNorthPort = addPortOnSide(middleNodes[2], PortSide.NORTH);
+        addEdgeBetweenPorts(middleTopSouthPort, middleBottomNorthPort);
+        addEastWestEdgeFromTo(middleNodes[0], rightNodes[0]);
+        middleNodes[0].setProperty(InternalProperties.NODE_TYPE, NodeType.NORTH_SOUTH_PORT);
+
+    }
+
+    /**
      * Returns the nodes in the graph as two-dimensional array of LNodes.
      * 
      * @return graph as LNode[][].
@@ -1049,8 +1149,8 @@ public class TestGraphCreator {
         return layers;
     }
 
-    private MapPropertyHolder setFixedOrderConstraint(final LNode leftNode) {
-        return leftNode.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER);
+    private MapPropertyHolder setFixedOrderConstraint(final LNode node) {
+        return node.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER);
     }
 
     private void addSouthEdgeBetweenPorts(final LPort southOrigin, final LPort westTarget,
