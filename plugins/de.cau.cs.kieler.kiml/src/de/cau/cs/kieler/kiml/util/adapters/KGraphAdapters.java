@@ -76,6 +76,11 @@ public final class KGraphAdapters {
         protected T element;
         /** The layout data of the wrapped element. */
         protected KShapeLayout layout;
+        /**
+         * Internally used versatile data field. Can be used for arbitrary information.
+         * No assumptions about its value or validity should be made.
+         */
+        protected int id;
         // CHECKSTYLEON VisibilityModifier
         
         private static final IProperty<Float> OFFSET_PROXY = new Property<Float>(
@@ -178,6 +183,20 @@ public final class KGraphAdapters {
             // analog to the insets case, we copy the margins object here
             Margins newMargin = new Margins(margin); 
             layout.setProperty(LayoutOptions.MARGINS, newMargin);
+        }
+
+        /**
+         * @return the id
+         */
+        public int getVolatileId() {
+            return id;
+        }
+
+        /**
+         * @param id the id to set
+         */
+        public void setVolatileId(final int volatileId) {
+            this.id = volatileId;
         }
     }
 

@@ -117,6 +117,20 @@ public final class LGraphAdapters {
             return element.getProperty(prop);
         }
 
+        /**
+         * {@inheritDoc}
+         */
+        public int getVolatileId() {
+            return element.id;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public void setVolatileId(final int volatileId) {
+            element.id = volatileId;
+        }
+
     }
 
     /**
@@ -184,6 +198,20 @@ public final class LGraphAdapters {
                 }
             }
             return nodeAdapter;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public int getVolatileId() {
+            return element.id;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public void setVolatileId(final int volatileId) {
+            element.id = volatileId;
         }
 
     }

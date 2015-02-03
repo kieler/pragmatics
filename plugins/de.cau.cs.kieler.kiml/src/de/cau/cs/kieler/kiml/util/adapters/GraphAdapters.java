@@ -75,6 +75,17 @@ public interface GraphAdapters {
          * 
          */
         <P> P getProperty(final IProperty<P> prop);
+
+        /**
+         * @return the id. This should only be used internally and no assumptions about its values
+         *         should be made.
+         */
+        int getVolatileId();
+
+        /**
+         * @param volatileId the new id.
+         */
+        void setVolatileId(final int volatileId);
     }
 
     /**
