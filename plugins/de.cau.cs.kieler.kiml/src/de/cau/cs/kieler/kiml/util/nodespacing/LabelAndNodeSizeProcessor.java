@@ -13,7 +13,10 @@
  */
 package de.cau.cs.kieler.kiml.util.nodespacing;
 
+import java.util.EnumMap;
 import java.util.EnumSet;
+import java.util.List;
+import java.util.Map;
 
 import com.google.common.collect.ImmutableList;
 
@@ -125,6 +128,9 @@ public class LabelAndNodeSizeProcessor {
              * accordingly. Also compute the amount of space the node labels will need if stacked
              * vertically. Note that we don't have to know the final position of ports and of node
              * labels to calculate all this stuff.
+             *
+             * IMPORTANT NOTE: From this point on, the labels' ID fields are used to assign the location
+             * of the labels.
              */
             calculateRequiredPortLabelSpace(data);
             calculateRequiredNodeLabelSpace(data, labelSpacing);
@@ -511,35 +517,64 @@ public class LabelAndNodeSizeProcessor {
             return;
         }
 
-        // Compute a bounding box for all labels stacked vertically
-        data.nodeLabelsBoundingBox.x = 0;
-        data.nodeLabelsBoundingBox.y = 0;
+        // Retrieve the node's label placement policy
+        final Location nodeLabelPlacement =
+                Location.fromNodeLabelPlacement(data.node
+                        .getProperty(LayoutOptions.NODE_LABEL_PLACEMENT));
+
+        // Compute a bounding box for each location where labels should be placed.
+        // The size is calculated from the size of all labels stacked vertically at that location.
 
         for (final LabelAdapter<?> label : data.node.getLabels()) {
-            data.nodeLabelsBoundingBox.x =
-                    Math.max(data.nodeLabelsBoundingBox.x, label.getSize().x);
-            data.nodeLabelsBoundingBox.y += label.getSize().y + labelSpacing;
+            Location labelPlacement =
+                    Location.fromNodeLabelPlacement(label
+                            .getProperty(LayoutOptions.NODE_LABEL_PLACEMENT));
+            // If no valid placement is set on the label, use the node's placement policy.
+            if (labelPlacement == Location.IGNORED) {
+                labelPlacement = nodeLabelPlacement;
+            }
+            // Save the location of this label in its id field for later use.
+            label.setVolatileId(labelPlacement.ordinal());
+            // Create or get the labelgroup for the current label.
+            final Rectangle boundingBox = data.retrieveLabelGroupsBoundingBox(labelPlacement);
+            boundingBox.width = Math.max(boundingBox.width, label.getSize().x);
+            boundingBox.height += label.getSize().y + labelSpacing;
         }
-        data.nodeLabelsBoundingBox.y -= labelSpacing;
+        // From each existing labelgroup, remove the last superflous labelspacing
+        for (final Rectangle boundingBox : data.labelGroupsBoundingBoxes.values()) {
+            boundingBox.height -= labelSpacing;
+        }
 
-        // Retrieve label placement policy
-        final EnumSet<NodeLabelPlacement> nodeLabelPlacement =
-                data.node.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT);
-
-        // This method only sets insets if the node label is to be placed on the inside
-        if (nodeLabelPlacement.contains(NodeLabelPlacement.INSIDE)) {
-            // The primary distinction criterion is the vertical placement
-            if (nodeLabelPlacement.contains(NodeLabelPlacement.V_TOP)) {
-                data.requiredNodeLabelSpace.top = data.nodeLabelsBoundingBox.y + labelSpacing;
-            } else if (nodeLabelPlacement.contains(NodeLabelPlacement.V_BOTTOM)) {
-                data.requiredNodeLabelSpace.bottom = data.nodeLabelsBoundingBox.y + labelSpacing;
-            } else if (nodeLabelPlacement.contains(NodeLabelPlacement.V_CENTER)) {
-                // Check whether the label will be placed left or right
-                if (nodeLabelPlacement.contains(NodeLabelPlacement.H_LEFT)) {
-                    data.requiredNodeLabelSpace.left = data.nodeLabelsBoundingBox.x + labelSpacing;
-                } else if (nodeLabelPlacement.contains(NodeLabelPlacement.H_RIGHT)) {
-                    data.requiredNodeLabelSpace.right = data.nodeLabelsBoundingBox.x + labelSpacing;
-                }
+        // The following part only sets insets for labelgroups to be placed on the inside.
+        for (final Location location : data.labelGroupsBoundingBoxes.keySet()) {
+            final Rectangle boundingBox = data.labelGroupsBoundingBoxes.get(location);
+            switch (location) {
+            // Top 3 labelgroups
+            case IN_T_L:
+            case IN_T_C:
+            case IN_T_R:
+                data.requiredNodeLabelSpace.top =
+                        Math.max(data.requiredNodeLabelSpace.top, boundingBox.height + labelSpacing);
+                break;
+            // Left labelgroup
+            case IN_C_L:
+                data.requiredNodeLabelSpace.left =
+                        Math.max(data.requiredNodeLabelSpace.left, boundingBox.width + labelSpacing);
+                break;
+            // Right labelgroup
+            case IN_C_R:
+                data.requiredNodeLabelSpace.right =
+                        Math.max(data.requiredNodeLabelSpace.right, boundingBox.width
+                                + labelSpacing);
+                break;
+            // Bottom 3 labelgroups
+            case IN_B_L:
+            case IN_B_C:
+            case IN_B_R:
+                data.requiredNodeLabelSpace.bottom =
+                        Math.max(data.requiredNodeLabelSpace.bottom, boundingBox.height
+                                + labelSpacing);
+                break;
             }
         }
     }
@@ -625,33 +660,7 @@ public class LabelAndNodeSizeProcessor {
         // If the node label is to be accounted for, add its required space to the node size
         if (sizeConstraint.contains(SizeConstraint.NODE_LABELS)
                 && data.node.getLabels().iterator().hasNext()) {
-
-            final EnumSet<NodeLabelPlacement> nodeLabelPlacement =
-                    data.node.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT);
-
-            // Check if the label is to be placed inside or outside the node
-            if (nodeLabelPlacement.contains(NodeLabelPlacement.INSIDE)) {
-                nodeSize.x += data.requiredNodeLabelSpace.left + data.requiredNodeLabelSpace.right;
-                nodeSize.y += data.requiredNodeLabelSpace.top + data.requiredNodeLabelSpace.bottom;
-
-                // For center placement, the insets don't cover everything
-                if (nodeLabelPlacement.contains(NodeLabelPlacement.V_CENTER)) {
-                    nodeSize.y += data.nodeLabelsBoundingBox.y + 2 * labelSpacing;
-                }
-
-                if (nodeLabelPlacement.contains(NodeLabelPlacement.H_CENTER)) {
-                    nodeSize.x += data.nodeLabelsBoundingBox.x + 2 * labelSpacing;
-                }
-            } else if (nodeLabelPlacement.contains(NodeLabelPlacement.OUTSIDE)) {
-                // The node must be at least as high or wide as the label
-                if (nodeLabelPlacement.contains(NodeLabelPlacement.V_TOP)
-                        || nodeLabelPlacement.contains(NodeLabelPlacement.V_BOTTOM)) {
-
-                    nodeSize.x = Math.max(nodeSize.x, data.nodeLabelsBoundingBox.x);
-                } else if (nodeLabelPlacement.contains(NodeLabelPlacement.V_CENTER)) {
-                    nodeSize.y = Math.max(nodeSize.y, data.nodeLabelsBoundingBox.y);
-                }
-            }
+            enlargeNodeSizeForLabels(data, labelSpacing, nodeSize);
         }
 
         // Respect minimum size
@@ -695,6 +704,116 @@ public class LabelAndNodeSizeProcessor {
         }
         // apply the calculated node size back to the wrapped node
         data.node.setSize(nodeSize);
+    }
+
+    /**
+     * Enlarges the node size to the required label space.</br>
+     * </br>
+     * For outside labels, the minimal {width|height} results from the maximal sum of the 3
+     * {top|bottom|left|right} labelgroups' {width|height}.</br>
+     * For inside labels, the minimal height results from the sum of
+     * <li> top inset,
+     * <li> maximum of height of 3 vertical centered labelgroups,
+     * <li> bottom inset.
+     * </br>
+     * The minimal inside width results from the maximal sum of the 3 vertical {top|centered|bottom}
+     * labelgroups' width.
+     * 
+     * @param data
+     *            the data containing the node to resize.
+     * @param labelSpacing
+     *            the amount of space to leave between labels and other objects.
+     * @param nodeSize
+     *            the node's size to adjust.
+     */
+    private void enlargeNodeSizeForLabels(final NodeData data, final double labelSpacing,
+            final KVector nodeSize) {
+
+        double sumHeightOusideLeft   = 0; // sum of heights of 3 outside left labelgroups
+        double sumHeightOusideRight  = 0; // sum of heights of 3 outside right labelgroups
+        double maxHeightInsideCenter = 0; // max of heights of 3 inside vertical center labelgroups
+        double sumWidthOutsideTop    = 0; // sum of widths of 3 outside top labelgroups
+        double sumWidthOutsideBottom = 0; // sum of widths of 3 outside bottom labelgroups
+        double sumWidthInsideTop     = 0; // sum of widths of 3 inside vertical top labelgroups
+        double sumWidthInsideCenter  = 0; // sum of widths of 3 inside vertical center labelgroups
+        double sumWidthInsideBottom  = 0; // sum of widths of 3 inside vertical bottom labelgroups
+
+        for (final Location location : data.labelGroupsBoundingBoxes.keySet()) {
+            final Rectangle boundingBox = data.labelGroupsBoundingBoxes.get(location);
+            switch (location) {
+            // Inside groups
+            case IN_T_L:
+                sumWidthInsideTop += boundingBox.width + labelSpacing;
+                break;
+            case IN_T_C:
+                sumWidthInsideTop += boundingBox.width + labelSpacing * 2.0;
+                break;
+            case IN_T_R:
+                sumWidthInsideTop += boundingBox.width + labelSpacing;
+                break;
+            case IN_C_L:
+                sumWidthInsideCenter += boundingBox.width + labelSpacing;
+                maxHeightInsideCenter =
+                        Math.max(boundingBox.height + labelSpacing * 2.0, maxHeightInsideCenter);
+                break;
+            case IN_C_C:
+                sumWidthInsideCenter += boundingBox.width + labelSpacing * 2.0;
+                maxHeightInsideCenter =
+                        Math.max(boundingBox.height + labelSpacing * 2.0, maxHeightInsideCenter);
+                break;
+            case IN_C_R:
+                sumWidthInsideCenter += boundingBox.width + labelSpacing;
+                maxHeightInsideCenter =
+                        Math.max(boundingBox.height + labelSpacing * 2.0, maxHeightInsideCenter);
+                break;
+            case IN_B_L:
+                sumWidthInsideBottom += boundingBox.width + labelSpacing;
+                break;
+            case IN_B_C:
+                sumWidthInsideBottom += boundingBox.width + labelSpacing * 2.0;
+                break;
+            case IN_B_R:
+                sumWidthInsideBottom += boundingBox.width + labelSpacing;
+                break;
+
+            // Outside groups
+
+            // Top 3 labelgroups
+            case OUT_T_L:
+            case OUT_T_C:
+            case OUT_T_R:
+                sumWidthOutsideTop += boundingBox.width;
+                break;
+            // Bottom 3 labelgroups
+            case OUT_B_L:
+            case OUT_B_C:
+            case OUT_B_R:
+                sumWidthOutsideBottom += boundingBox.width;
+                break;
+            // Left 3 labelgroups
+            case OUT_L_T:
+            case OUT_L_C:
+            case OUT_L_B:
+                sumHeightOusideLeft += boundingBox.height;
+                break;
+            // Right 3 labelgroups
+            case OUT_R_T:
+            case OUT_R_C:
+            case OUT_R_B:
+                sumHeightOusideRight += boundingBox.height;
+                break;
+            }
+        }
+        nodeSize.x = Math.max(nodeSize.x, sumWidthOutsideTop);
+        nodeSize.x = Math.max(nodeSize.x, sumWidthInsideTop);
+        nodeSize.x = Math.max(nodeSize.x, sumWidthInsideCenter);
+        nodeSize.x = Math.max(nodeSize.x, sumWidthInsideBottom);
+        nodeSize.x = Math.max(nodeSize.x, sumWidthOutsideBottom);
+        nodeSize.y = Math.max(nodeSize.y, sumHeightOusideLeft);
+        nodeSize.y =
+                Math.max(nodeSize.y, data.requiredNodeLabelSpace.top + maxHeightInsideCenter
+                        + data.requiredNodeLabelSpace.bottom);
+        nodeSize.y = Math.max(nodeSize.y, sumHeightOusideRight);
     }
 
     /**
@@ -1104,111 +1223,118 @@ public class LabelAndNodeSizeProcessor {
      *            spacing between labels and other objects.
      */
     private void placeNodeLabels(final NodeData data, final double labelSpacing) {
-        // Retrieve the first node label, if any
+        // Check if there are any node labels
         if (!data.node.getLabels().iterator().hasNext()) {
             return;
         }
 
-        // Top left position where the node labels will start to be placed in a vertical stack
-        final KVector labelGroupPos = new KVector();
-
-        // Retrieve label placement policy
-        final EnumSet<NodeLabelPlacement> nodeLabelPlacement =
-                data.node.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT);
-
-        // This method only sets insets if the node label is to be placed on the inside
-        if (nodeLabelPlacement.contains(NodeLabelPlacement.INSIDE)) {
-            // Y coordinate
-            if (nodeLabelPlacement.contains(NodeLabelPlacement.V_TOP)) {
-                labelGroupPos.y = data.requiredPortLabelSpace.top + labelSpacing;
-            } else if (nodeLabelPlacement.contains(NodeLabelPlacement.V_CENTER)) {
-                labelGroupPos.y = (data.node.getSize().y - data.nodeLabelsBoundingBox.y) / 2.0;
-            } else if (nodeLabelPlacement.contains(NodeLabelPlacement.V_BOTTOM)) {
-                labelGroupPos.y =
-                        data.node.getSize().y - data.requiredPortLabelSpace.bottom
-                                - data.nodeLabelsBoundingBox.y - labelSpacing;
-            }
-
-            // X coordinate
-            if (nodeLabelPlacement.contains(NodeLabelPlacement.H_LEFT)) {
-                labelGroupPos.x = data.requiredPortLabelSpace.left + labelSpacing;
-            } else if (nodeLabelPlacement.contains(NodeLabelPlacement.H_CENTER)) {
-                labelGroupPos.x = (data.node.getSize().x - data.nodeLabelsBoundingBox.x) / 2.0;
-            } else if (nodeLabelPlacement.contains(NodeLabelPlacement.H_RIGHT)) {
-                labelGroupPos.x =
+        // TODO Outside label placement doesn't take ports into account yet.
+        
+        // For each present location, calculate the position of the top left corner of the labelgroup
+        for (final Location location : data.labelGroupsBoundingBoxes.keySet()) {
+            final Rectangle boundingBox = data.labelGroupsBoundingBoxes.get(location);
+            switch (location) {
+            case OUT_T_L:
+                boundingBox.x = 0;
+                boundingBox.y = -(boundingBox.height + labelSpacing);
+                break;
+            case OUT_T_C:
+                boundingBox.x = (data.node.getSize().x - boundingBox.width) / 2.0;
+                boundingBox.y = -(boundingBox.height + labelSpacing);
+                break;
+            case OUT_T_R:
+                boundingBox.x = data.node.getSize().x - boundingBox.width;
+                boundingBox.y = -(boundingBox.height + labelSpacing);
+                break;
+            case OUT_B_L:
+                boundingBox.x = 0;
+                boundingBox.y = data.node.getSize().y + labelSpacing;
+                break;
+            case OUT_B_C:
+                boundingBox.x = (data.node.getSize().x - boundingBox.width) / 2.0;
+                boundingBox.y = data.node.getSize().y + labelSpacing;
+                break;
+            case OUT_B_R:
+                boundingBox.x = data.node.getSize().x - boundingBox.width;
+                boundingBox.y = data.node.getSize().y + labelSpacing;
+                break;
+            case OUT_L_T:
+                boundingBox.x = -(boundingBox.width + labelSpacing);
+                boundingBox.y = 0;
+                break;
+            case OUT_L_C:
+                boundingBox.x = -(boundingBox.width + labelSpacing);
+                boundingBox.y = (data.node.getSize().y - boundingBox.height) / 2.0;
+                break;
+            case OUT_L_B:
+                boundingBox.x = -(boundingBox.width + labelSpacing);
+                boundingBox.y = data.node.getSize().y - boundingBox.height;
+                break;
+            case OUT_R_T:
+                boundingBox.x = data.node.getSize().x + labelSpacing;
+                boundingBox.y = 0;
+                break;
+            case OUT_R_C:
+                boundingBox.x = data.node.getSize().x + labelSpacing;
+                boundingBox.y = (data.node.getSize().y - boundingBox.height) / 2.0;
+                break;
+            case OUT_R_B:
+                boundingBox.x = data.node.getSize().x + labelSpacing;
+                boundingBox.y = data.node.getSize().y - boundingBox.height;
+                break;
+            case IN_T_L:
+                boundingBox.x = data.requiredPortLabelSpace.left + labelSpacing;
+                boundingBox.y = data.requiredPortLabelSpace.top + labelSpacing;
+                break;
+            case IN_T_C:
+                boundingBox.x = (data.node.getSize().x - boundingBox.width) / 2.0;
+                boundingBox.y = data.requiredPortLabelSpace.top + labelSpacing;
+                break;
+            case IN_T_R:
+                boundingBox.x =
                         data.node.getSize().x - data.requiredPortLabelSpace.right
-                                - data.nodeLabelsBoundingBox.x - labelSpacing;
-            }
-        } else if (nodeLabelPlacement.contains(NodeLabelPlacement.OUTSIDE)) {
-            // TODO: Outside placement doesn't take ports and port labels into account yet.
-
-            // Different placement logic depending on whether horizontal or vertical placement
-            // is prioritized
-            if (nodeLabelPlacement.contains(NodeLabelPlacement.H_PRIORITY)) {
-                boolean leftOrRight = false;
-
-                // X coordinate
-                if (nodeLabelPlacement.contains(NodeLabelPlacement.H_LEFT)) {
-                    labelGroupPos.x = -(data.nodeLabelsBoundingBox.x + labelSpacing);
-                    leftOrRight = true;
-                } else if (nodeLabelPlacement.contains(NodeLabelPlacement.H_CENTER)) {
-                    labelGroupPos.x = (data.node.getSize().x - data.nodeLabelsBoundingBox.x) / 2.0;
-                } else if (nodeLabelPlacement.contains(NodeLabelPlacement.H_RIGHT)) {
-                    labelGroupPos.x = data.node.getSize().x + labelSpacing;
-                    leftOrRight = true;
-                }
-
-                // Y coordinate
-                if (nodeLabelPlacement.contains(NodeLabelPlacement.V_TOP)) {
-                    if (leftOrRight) {
-                        labelGroupPos.y = 0;
-                    } else {
-                        labelGroupPos.y = -(data.nodeLabelsBoundingBox.y + labelSpacing);
-                    }
-                } else if (nodeLabelPlacement.contains(NodeLabelPlacement.V_CENTER)) {
-                    labelGroupPos.y = (data.node.getSize().y - data.nodeLabelsBoundingBox.y) / 2.0;
-                } else if (nodeLabelPlacement.contains(NodeLabelPlacement.V_BOTTOM)) {
-                    if (leftOrRight) {
-                        labelGroupPos.y = data.node.getSize().y - data.nodeLabelsBoundingBox.y;
-                    } else {
-                        labelGroupPos.y = data.node.getSize().y + labelSpacing;
-                    }
-                }
-            } else {
-                boolean topOrBottom = false;
-
-                // Y coordinate
-                if (nodeLabelPlacement.contains(NodeLabelPlacement.V_TOP)) {
-                    labelGroupPos.y = -(data.nodeLabelsBoundingBox.y + labelSpacing);
-                    topOrBottom = true;
-                } else if (nodeLabelPlacement.contains(NodeLabelPlacement.V_CENTER)) {
-                    labelGroupPos.y = (data.node.getSize().y - data.nodeLabelsBoundingBox.y) / 2.0;
-                } else if (nodeLabelPlacement.contains(NodeLabelPlacement.V_BOTTOM)) {
-                    labelGroupPos.y = data.node.getSize().y + labelSpacing;
-                    topOrBottom = true;
-                }
-
-                // X coordinate
-                if (nodeLabelPlacement.contains(NodeLabelPlacement.H_LEFT)) {
-                    if (topOrBottom) {
-                        labelGroupPos.x = 0;
-                    } else {
-                        labelGroupPos.x = -(data.nodeLabelsBoundingBox.x + labelSpacing);
-                    }
-                } else if (nodeLabelPlacement.contains(NodeLabelPlacement.H_CENTER)) {
-                    labelGroupPos.x = (data.node.getSize().x - data.nodeLabelsBoundingBox.x) / 2.0;
-                } else if (nodeLabelPlacement.contains(NodeLabelPlacement.H_RIGHT)) {
-                    if (topOrBottom) {
-                        labelGroupPos.x = data.node.getSize().x - data.nodeLabelsBoundingBox.x;
-                    } else {
-                        labelGroupPos.x = data.node.getSize().x + labelSpacing;
-                    }
-                }
+                                - boundingBox.width - labelSpacing;
+                boundingBox.y = data.requiredPortLabelSpace.top + labelSpacing;
+                break;
+            case IN_C_L:
+                boundingBox.x = data.requiredPortLabelSpace.left + labelSpacing;
+                boundingBox.y = (data.node.getSize().y - boundingBox.height) / 2.0;
+                break;
+            case IN_C_C:
+                boundingBox.x = (data.node.getSize().x - boundingBox.width) / 2.0;
+                boundingBox.y = (data.node.getSize().y - boundingBox.height) / 2.0;
+                break;
+            case IN_C_R:
+                boundingBox.x =
+                        data.node.getSize().x - data.requiredPortLabelSpace.right
+                                - boundingBox.width - labelSpacing;
+                boundingBox.y = (data.node.getSize().y - boundingBox.height) / 2.0;
+                break;
+            case IN_B_L:
+                boundingBox.x = data.requiredPortLabelSpace.left + labelSpacing;
+                boundingBox.y =
+                        data.node.getSize().y - data.requiredPortLabelSpace.bottom
+                                - boundingBox.height - labelSpacing;
+                break;
+            case IN_B_C:
+                boundingBox.x = (data.node.getSize().x - boundingBox.width) / 2.0;
+                boundingBox.y =
+                        data.node.getSize().y - data.requiredPortLabelSpace.bottom
+                                - boundingBox.height - labelSpacing;
+                break;
+            case IN_B_R:
+                boundingBox.x =
+                        data.node.getSize().x - data.requiredPortLabelSpace.right
+                                - boundingBox.width - labelSpacing;
+                boundingBox.y =
+                        data.node.getSize().y - data.requiredPortLabelSpace.bottom
+                                - boundingBox.height - labelSpacing;
+                break;
             }
         }
 
         // Place labels
-        applyNodeLabelPositions(data, labelGroupPos, labelSpacing);
+        applyNodeLabelPositions(data, labelSpacing);
     }
 
     /**
@@ -1216,59 +1342,35 @@ public class LabelAndNodeSizeProcessor {
      *
      * @param data
      *            the data containing the node whose labels are to be placed.
-     * @param startPosition
-     *            coordinates where the first label is to be placed.
      * @param labelSpacing
      *            space to be left between the labels.
      */
-    private void applyNodeLabelPositions(final NodeData data, final KVector startPosition,
-            final double labelSpacing) {
-
-        // The horizontal alignment depends on where the labels are placed exactly
-        final EnumSet<NodeLabelPlacement> nodeLabelPlacement =
-                data.node.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT);
-        NodeLabelPlacement horizontalPlacement = NodeLabelPlacement.H_CENTER;
-
-        if (nodeLabelPlacement.contains(NodeLabelPlacement.INSIDE)) {
-            // Inside placement
-            if (nodeLabelPlacement.contains(NodeLabelPlacement.H_LEFT)) {
-                horizontalPlacement = NodeLabelPlacement.H_LEFT;
-            } else if (nodeLabelPlacement.contains(NodeLabelPlacement.H_RIGHT)) {
-                horizontalPlacement = NodeLabelPlacement.H_RIGHT;
-            }
-        } else {
-            // Outside placement; alignment is reversed
-            if (nodeLabelPlacement.contains(NodeLabelPlacement.H_LEFT)) {
-                horizontalPlacement = NodeLabelPlacement.H_RIGHT;
-            } else if (nodeLabelPlacement.contains(NodeLabelPlacement.H_RIGHT)) {
-                horizontalPlacement = NodeLabelPlacement.H_LEFT;
-            }
-        }
-
-        // We have to keep track of the current y coordinate
-        double currentY = startPosition.y;
+    private void applyNodeLabelPositions(final NodeData data, final double labelSpacing) {
 
         // Place all labels
         for (final LabelAdapter<?> label : data.node.getLabels()) {
             final KVector position = new KVector(label.getPosition());
-            // Apply y coordinate
-            // label.getPosition().y = currentY;
-            position.y = currentY;
+            final Location location = Location.values()[label.getVolatileId()];
+            final LabelGroup boundingBox = data.labelGroupsBoundingBoxes.get(location);
+
+            // Set y coordinate
+            position.y = boundingBox.y + boundingBox.yOffset;
 
             // The x coordinate depends on the H_xxx constants
-            if (horizontalPlacement == NodeLabelPlacement.H_LEFT) {
-                position.x = startPosition.x;
-            } else if (horizontalPlacement == NodeLabelPlacement.H_CENTER) {
+            if (location.horizontalAlignment == NodeLabelPlacement.H_LEFT) {
+                position.x = boundingBox.x;
+            } else if (location.horizontalAlignment == NodeLabelPlacement.H_CENTER) {
                 position.x =
-                        startPosition.x + (data.nodeLabelsBoundingBox.x - label.getSize().x) / 2.0;
-            } else if (horizontalPlacement == NodeLabelPlacement.H_RIGHT) {
-                position.x = startPosition.x + data.nodeLabelsBoundingBox.x - label.getSize().x;
+                        boundingBox.x + (boundingBox.width - label.getSize().x) / 2.0;
+            } else if (location.horizontalAlignment == NodeLabelPlacement.H_RIGHT) {
+                position.x = boundingBox.x + boundingBox.width - label.getSize().x;
             }
 
+            // Apply new position
             label.setPosition(position);
 
-            // Update y position
-            currentY += label.getSize().y + labelSpacing;
+            // Update y offset
+            boundingBox.yOffset += label.getSize().y + labelSpacing;
         }
     }
 
@@ -1299,11 +1401,6 @@ public class LabelAndNodeSizeProcessor {
          * always taken into account to calculate the node size.
          */
         private final Insets requiredNodeLabelSpace = new Insets();
-
-        /**
-         * Space required by the node labels if stacked vertically.
-         */
-        private final KVector nodeLabelsBoundingBox = new KVector();
 
         /**
          * Number of ports on the western side. Only used if port constraints are not
@@ -1358,6 +1455,13 @@ public class LabelAndNodeSizeProcessor {
         private double southPortsWidth = 0.0;
 
         /**
+         * Contains the size and position of the corresponding label group for each element of
+         * {@link Location}.
+         */
+        private final Map<Location, LabelGroup> labelGroupsBoundingBoxes =
+                new EnumMap<Location, LabelGroup>(Location.class);
+
+        /**
          * Create a new information holder with default values and the given, currently processed node.
          *
          * @param node
@@ -1367,6 +1471,251 @@ public class LabelAndNodeSizeProcessor {
             this.node = node;
         }
 
+        /**
+         * Returns the bounding box to which the specified location is mapped.
+         * If there is no bounding box for the location yet, a new one is added and returned.
+         *
+         * @param location the location for which to retrieve the bounding box.
+         * @return the corresponding bounding box.
+         */
+        public Rectangle retrieveLabelGroupsBoundingBox(final Location location) {
+            if (!labelGroupsBoundingBoxes.containsKey(location)) {
+                labelGroupsBoundingBoxes.put(location, new LabelGroup());
+            }
+            return labelGroupsBoundingBoxes.get(location);
+        }
+
+    }
+
+    /**
+     * Enumeration over all possible label placements.
+     *
+     * @see NodeLabelPlacement
+     */
+    private static enum Location {
+        OUT_T_L(ImmutableList.of(EnumSet.of(
+                        NodeLabelPlacement.OUTSIDE,
+                        NodeLabelPlacement.V_TOP,
+                        NodeLabelPlacement.H_LEFT)),
+                NodeLabelPlacement.H_LEFT),
+        OUT_T_C(ImmutableList.of(
+                EnumSet.of(
+                        NodeLabelPlacement.OUTSIDE,
+                        NodeLabelPlacement.V_TOP,
+                        NodeLabelPlacement.H_CENTER),
+                EnumSet.of(
+                        NodeLabelPlacement.OUTSIDE,
+                        NodeLabelPlacement.V_TOP,
+                        NodeLabelPlacement.H_CENTER,
+                        NodeLabelPlacement.H_PRIORITY)),
+                NodeLabelPlacement.H_CENTER),
+        OUT_T_R(ImmutableList.of(EnumSet.of(
+                        NodeLabelPlacement.OUTSIDE,
+                        NodeLabelPlacement.V_TOP,
+                        NodeLabelPlacement.H_RIGHT)),
+                NodeLabelPlacement.H_RIGHT),
+        OUT_B_L(ImmutableList.of(EnumSet.of(
+                        NodeLabelPlacement.OUTSIDE,
+                        NodeLabelPlacement.V_BOTTOM,
+                        NodeLabelPlacement.H_LEFT)),
+                NodeLabelPlacement.H_LEFT),
+        OUT_B_C(ImmutableList.of(
+                EnumSet.of(
+                        NodeLabelPlacement.OUTSIDE,
+                        NodeLabelPlacement.V_BOTTOM,
+                        NodeLabelPlacement.H_CENTER),
+                EnumSet.of(
+                        NodeLabelPlacement.OUTSIDE,
+                        NodeLabelPlacement.V_BOTTOM,
+                        NodeLabelPlacement.H_CENTER,
+                        NodeLabelPlacement.H_PRIORITY)),
+                NodeLabelPlacement.H_CENTER),
+        OUT_B_R(ImmutableList.of(EnumSet.of(
+                        NodeLabelPlacement.OUTSIDE,
+                        NodeLabelPlacement.V_BOTTOM,
+                        NodeLabelPlacement.H_RIGHT)),
+                NodeLabelPlacement.H_RIGHT),
+        OUT_L_T(ImmutableList.of(EnumSet.of(
+                        NodeLabelPlacement.OUTSIDE,
+                        NodeLabelPlacement.H_LEFT,
+                        NodeLabelPlacement.V_TOP,
+                        NodeLabelPlacement.H_PRIORITY)),
+                NodeLabelPlacement.H_RIGHT),
+        OUT_L_C(ImmutableList.of(
+                EnumSet.of(
+                        NodeLabelPlacement.OUTSIDE,
+                        NodeLabelPlacement.H_LEFT,
+                        NodeLabelPlacement.V_CENTER),
+                EnumSet.of(
+                        NodeLabelPlacement.OUTSIDE,
+                        NodeLabelPlacement.H_LEFT,
+                        NodeLabelPlacement.V_CENTER,
+                        NodeLabelPlacement.H_PRIORITY)),
+                NodeLabelPlacement.H_RIGHT),
+        OUT_L_B(ImmutableList.of(EnumSet.of(
+                        NodeLabelPlacement.OUTSIDE,
+                        NodeLabelPlacement.H_LEFT,
+                        NodeLabelPlacement.V_BOTTOM,
+                        NodeLabelPlacement.H_PRIORITY)),
+                NodeLabelPlacement.H_RIGHT),
+        OUT_R_T(ImmutableList.of(EnumSet.of(
+                        NodeLabelPlacement.OUTSIDE,
+                        NodeLabelPlacement.H_RIGHT,
+                        NodeLabelPlacement.V_TOP,
+                        NodeLabelPlacement.H_PRIORITY)),
+                NodeLabelPlacement.H_LEFT),
+        OUT_R_C(ImmutableList.of(
+                EnumSet.of(
+                        NodeLabelPlacement.OUTSIDE,
+                        NodeLabelPlacement.H_RIGHT,
+                        NodeLabelPlacement.V_CENTER),
+                EnumSet.of(
+                        NodeLabelPlacement.OUTSIDE,
+                        NodeLabelPlacement.H_RIGHT,
+                        NodeLabelPlacement.V_CENTER,
+                        NodeLabelPlacement.H_PRIORITY)),
+                NodeLabelPlacement.H_LEFT),
+        OUT_R_B(ImmutableList.of(EnumSet.of(
+                        NodeLabelPlacement.OUTSIDE,
+                        NodeLabelPlacement.H_RIGHT,
+                        NodeLabelPlacement.V_BOTTOM,
+                        NodeLabelPlacement.H_PRIORITY)),
+                NodeLabelPlacement.H_LEFT),
+        IN_T_L(ImmutableList.of(
+                EnumSet.of(
+                        NodeLabelPlacement.INSIDE,
+                        NodeLabelPlacement.V_TOP,
+                        NodeLabelPlacement.H_LEFT),
+                EnumSet.of(
+                        NodeLabelPlacement.INSIDE,
+                        NodeLabelPlacement.V_TOP,
+                        NodeLabelPlacement.H_LEFT,
+                        NodeLabelPlacement.H_PRIORITY)),
+                NodeLabelPlacement.H_LEFT),
+        IN_T_C(ImmutableList.of(
+                EnumSet.of(
+                        NodeLabelPlacement.INSIDE,
+                        NodeLabelPlacement.V_TOP,
+                        NodeLabelPlacement.H_CENTER),
+                EnumSet.of(
+                        NodeLabelPlacement.INSIDE,
+                        NodeLabelPlacement.V_TOP,
+                        NodeLabelPlacement.H_CENTER,
+                        NodeLabelPlacement.H_PRIORITY)),
+                NodeLabelPlacement.H_CENTER),
+        IN_T_R(ImmutableList.of(
+                EnumSet.of(
+                        NodeLabelPlacement.INSIDE,
+                        NodeLabelPlacement.V_TOP,
+                        NodeLabelPlacement.H_RIGHT),
+                EnumSet.of(
+                        NodeLabelPlacement.INSIDE,
+                        NodeLabelPlacement.V_TOP,
+                        NodeLabelPlacement.H_RIGHT,
+                        NodeLabelPlacement.H_PRIORITY)),
+                NodeLabelPlacement.H_RIGHT),
+        IN_C_L(ImmutableList.of(
+                EnumSet.of(
+                        NodeLabelPlacement.INSIDE,
+                        NodeLabelPlacement.V_CENTER,
+                        NodeLabelPlacement.H_LEFT),
+                EnumSet.of(
+                        NodeLabelPlacement.INSIDE,
+                        NodeLabelPlacement.V_CENTER,
+                        NodeLabelPlacement.H_LEFT,
+                        NodeLabelPlacement.H_PRIORITY)),
+                NodeLabelPlacement.H_LEFT),
+        IN_C_C(ImmutableList.of(
+                EnumSet.of(
+                        NodeLabelPlacement.INSIDE,
+                        NodeLabelPlacement.V_CENTER,
+                        NodeLabelPlacement.H_CENTER),
+                EnumSet.of(
+                        NodeLabelPlacement.INSIDE,
+                        NodeLabelPlacement.V_CENTER,
+                        NodeLabelPlacement.H_CENTER,
+                        NodeLabelPlacement.H_PRIORITY)),
+                NodeLabelPlacement.H_CENTER),
+        IN_C_R(ImmutableList.of(
+                EnumSet.of(
+                        NodeLabelPlacement.INSIDE,
+                        NodeLabelPlacement.V_CENTER,
+                        NodeLabelPlacement.H_RIGHT),
+                EnumSet.of(
+                        NodeLabelPlacement.INSIDE,
+                        NodeLabelPlacement.V_CENTER,
+                        NodeLabelPlacement.H_RIGHT,
+                        NodeLabelPlacement.H_PRIORITY)),
+                NodeLabelPlacement.H_RIGHT),
+        IN_B_L(ImmutableList.of(
+                EnumSet.of(
+                        NodeLabelPlacement.INSIDE,
+                        NodeLabelPlacement.V_BOTTOM,
+                        NodeLabelPlacement.H_LEFT),
+                EnumSet.of(
+                        NodeLabelPlacement.INSIDE,
+                        NodeLabelPlacement.V_BOTTOM,
+                        NodeLabelPlacement.H_LEFT,
+                        NodeLabelPlacement.H_PRIORITY)),
+                NodeLabelPlacement.H_LEFT),
+        IN_B_C(ImmutableList.of(
+                EnumSet.of(
+                        NodeLabelPlacement.INSIDE,
+                        NodeLabelPlacement.V_BOTTOM,
+                        NodeLabelPlacement.H_CENTER),
+                EnumSet.of(
+                        NodeLabelPlacement.INSIDE,
+                        NodeLabelPlacement.V_BOTTOM,
+                        NodeLabelPlacement.H_CENTER,
+                        NodeLabelPlacement.H_PRIORITY)),
+                NodeLabelPlacement.H_CENTER),
+        IN_B_R(ImmutableList.of(
+                EnumSet.of(
+                        NodeLabelPlacement.INSIDE,
+                        NodeLabelPlacement.V_BOTTOM,
+                        NodeLabelPlacement.H_RIGHT),
+                EnumSet.of(
+                        NodeLabelPlacement.INSIDE,
+                        NodeLabelPlacement.V_BOTTOM,
+                        NodeLabelPlacement.H_RIGHT,
+                        NodeLabelPlacement.H_PRIORITY)),
+                NodeLabelPlacement.H_RIGHT),
+        IGNORED(ImmutableList.<EnumSet<NodeLabelPlacement>>of(),
+                null);
+
+        private final List<EnumSet<NodeLabelPlacement>> assignedPlacements;
+        private final NodeLabelPlacement horizontalAlignment;
+
+        /**
+         * Creates a new location with valid {@link NodeLabelPlacement} for this location.
+         *
+         * @param assignedPlacements
+         *            the valid {@link NodeLabelPlacement}s for this location.
+         */
+        private Location(final List<EnumSet<NodeLabelPlacement>> assignedPlacements,
+                final NodeLabelPlacement horizontalAlignment) {
+            this.assignedPlacements = assignedPlacements;
+            this.horizontalAlignment = horizontalAlignment;
+        }
+
+        /**
+         * @param labelPlacement
+         * @return
+         */
+        private static Location fromNodeLabelPlacement(
+                final EnumSet<NodeLabelPlacement> labelPlacement) {
+            for (final Location location : Location.values()) {
+                if (location.assignedPlacements.contains(labelPlacement)) {
+                    return location;
+                }
+            }
+            return Location.IGNORED;
+        }
+
+    }
+
+    private static final class LabelGroup extends Rectangle {
+        private double yOffset = 0;
     }
 
     // /////////////////////////////////////////////////////////////////////////////

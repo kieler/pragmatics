@@ -421,7 +421,7 @@
      </layoutOption>
      <layoutOption
            advanced="true"
-           appliesTo="nodes"
+           appliesTo="nodes,labels"
            class="de.cau.cs.kieler.kiml.options.NodeLabelPlacement"
            description="Hints for where node labels are to be placed; if empty, the node label&apos;s position is not modified."
            id="de.cau.cs.kieler.nodeLabelPlacement"
