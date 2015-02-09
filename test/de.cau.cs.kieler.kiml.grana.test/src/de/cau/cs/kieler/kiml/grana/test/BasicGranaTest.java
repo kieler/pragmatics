@@ -18,11 +18,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameters;
+
+import com.google.common.collect.ImmutableSet;
 
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.kiml.grana.AnalysisData;
@@ -130,14 +133,17 @@ public class BasicGranaTest extends KlayAutomatedJUnitTest {
             prevResults = currResults;
         }
     }
-
+    
+    // exclude some models from testing as we know they take very long
+    final Set<String> exclude = new ImmutableSet.Builder<String>().add("node_placement").build();
+    // other than that use as many models as possible
+    final TestPath[] testPaths = { new TestPath("klay_layered", true, true, TestPath.Type.KGRAPH, exclude) };
+    
     /**
      * {@inheritDoc}
      */
     @Override
     protected TestPath[] getBundleTestPath() {
-        // all models that we can find
-        TestPath[] testPaths = { new TestPath("klay_layered", true, true, TestPath.Type.KGRAPH) };
         return testPaths;
     }
 
