@@ -120,7 +120,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  */
 public final class KlayLayered {
 
-    // /////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
     // Variables
 
     /** connected components processor. */
@@ -136,7 +136,7 @@ public final class KlayLayered {
             Maps.newHashMap();
     
 
-    // /////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
     // Regular Layout
 
     /**
@@ -155,7 +155,7 @@ public final class KlayLayered {
         theMonitor.begin("Layered layout", 1);
 
         // Set special properties for the layered graph
-        setOptions(lgraph);
+        configureGraphProperties(lgraph);
 
         // Update the modules depending on user options
         updateModules(lgraph);
@@ -187,7 +187,7 @@ public final class KlayLayered {
     }
     
 
-    // /////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
     // Compound Graph Layout
 
     /**
@@ -242,7 +242,7 @@ public final class KlayLayered {
             }
             
             // Set special properties for the layered graph
-            setOptions(lgraph);
+            configureGraphProperties(lgraph);
     
             // Update the modules depending on user options
             updateModules(lgraph);
@@ -257,7 +257,7 @@ public final class KlayLayered {
         monitor.done();
     }
     
-    // /////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
     // Layout Testing
     
     /**
@@ -300,7 +300,7 @@ public final class KlayLayered {
         TestExecutionState state = new TestExecutionState();
         
         // set special properties for the layered graph
-        setOptions(lgraph);
+        configureGraphProperties(lgraph);
 
         // update the modules depending on user options
         updateModules(lgraph);
@@ -421,7 +421,7 @@ public final class KlayLayered {
     }
 
 
-    // /////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
     // Options and Modules Management
     
     /** intermediate processing configuration for basic graphs. */
@@ -430,37 +430,6 @@ public final class KlayLayered {
             .addBeforePhase4(IntermediateProcessorStrategy.NODE_MARGIN_CALCULATOR)
             .addBeforePhase4(IntermediateProcessorStrategy.LABEL_AND_NODE_SIZE_PROCESSOR)
             .addBeforePhase5(IntermediateProcessorStrategy.LAYER_SIZE_AND_GRAPH_HEIGHT_CALCULATOR);
-    /** the minimal spacing between edges, so edges won't overlap. */
-    private static final float MIN_EDGE_SPACING = 2.0f;
-
-    /**
-     * Set special layout options for the layered graph.
-     * 
-     * @param lgraph a new layered graph
-     */
-    private void setOptions(final LGraph lgraph) {
-        // check the bounds of some layout options
-        lgraph.checkProperties(Properties.OBJ_SPACING, Properties.BORDER_SPACING,
-                Properties.THOROUGHNESS, Properties.ASPECT_RATIO);
-        float spacing = lgraph.getProperty(Properties.OBJ_SPACING);
-        if (lgraph.getProperty(Properties.EDGE_SPACING_FACTOR) * spacing < MIN_EDGE_SPACING) {
-            // Edge spacing is determined by the product of object spacing and edge spacing factor.
-            // Make sure the resulting edge spacing is at least 2 in order to avoid overlapping edges.
-            lgraph.setProperty(Properties.EDGE_SPACING_FACTOR, MIN_EDGE_SPACING / spacing);
-        }
-        Direction direction = lgraph.getProperty(LayoutOptions.DIRECTION);
-        if (direction == Direction.UNDEFINED) {
-            lgraph.setProperty(LayoutOptions.DIRECTION, LGraphUtil.getDirection(lgraph));
-        }
-        
-        // set the random number generator based on the random seed option
-        Integer randomSeed = lgraph.getProperty(Properties.RANDOM_SEED);
-        if (randomSeed == 0) {
-            lgraph.setProperty(InternalProperties.RANDOM, new Random());
-        } else {
-            lgraph.setProperty(InternalProperties.RANDOM, new Random(randomSeed));
-        }
-    }
 
     /**
      * Update the modules depending on user options.
@@ -794,8 +763,8 @@ public final class KlayLayered {
     }
     
 
-    // /////////////////////////////////////////////////////////////////////////////
-    // Layout
+    ////////////////////////////////////////////////////////////////////////////////
+    // Actual Layout
 
     /**
      * Perform the five phases of the layered layouter.
@@ -876,8 +845,47 @@ public final class KlayLayered {
             processor.process(graph, new BasicProgressMonitor());
         }
     }
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////
+    // Graph Preprocessing (Property Configuration)
 
-    // /////////////////////////////////////////////////////////////////////////////
+    /** the minimal spacing between edges, so edges won't overlap. */
+    private static final float MIN_EDGE_SPACING = 2.0f;
+
+    /**
+     * Set special layout options for the layered graph.
+     * 
+     * @param lgraph a new layered graph
+     */
+    private void configureGraphProperties(final LGraph lgraph) {
+        // check the bounds of some layout options
+        lgraph.checkProperties(Properties.OBJ_SPACING, Properties.BORDER_SPACING,
+                Properties.THOROUGHNESS, Properties.ASPECT_RATIO);
+        
+        float spacing = lgraph.getProperty(Properties.OBJ_SPACING);
+        if (lgraph.getProperty(Properties.EDGE_SPACING_FACTOR) * spacing < MIN_EDGE_SPACING) {
+            // Edge spacing is determined by the product of object spacing and edge spacing factor.
+            // Make sure the resulting edge spacing is at least 2 in order to avoid overlapping edges.
+            lgraph.setProperty(Properties.EDGE_SPACING_FACTOR, MIN_EDGE_SPACING / spacing);
+        }
+        
+        Direction direction = lgraph.getProperty(LayoutOptions.DIRECTION);
+        if (direction == Direction.UNDEFINED) {
+            lgraph.setProperty(LayoutOptions.DIRECTION, LGraphUtil.getDirection(lgraph));
+        }
+        
+        // set the random number generator based on the random seed option
+        Integer randomSeed = lgraph.getProperty(Properties.RANDOM_SEED);
+        if (randomSeed == 0) {
+            lgraph.setProperty(InternalProperties.RANDOM, new Random());
+        } else {
+            lgraph.setProperty(InternalProperties.RANDOM, new Random(randomSeed));
+        }
+    }
+    
+
+    ////////////////////////////////////////////////////////////////////////////////
     // Graph Postprocessing (Size and External Ports)
     
     /**
