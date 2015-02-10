@@ -50,7 +50,6 @@ import de.cau.cs.kieler.klay.layered.p2layers.LongestPathLayerer;
 import de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer;
 import de.cau.cs.kieler.klay.layered.p3order.InteractiveCrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.p3order.LayerSweepCrossingMinimizer;
-import de.cau.cs.kieler.klay.layered.p4nodes.BJLNodePlacer;
 import de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer;
 import de.cau.cs.kieler.klay.layered.p4nodes.InteractiveNodePlacer;
 import de.cau.cs.kieler.klay.layered.p4nodes.LinearSegmentsNodePlacer;
@@ -556,14 +555,6 @@ public final class KlayLayered {
                 phaseCache.put(LinearSegmentsNodePlacer.class, nodePlacer);
             }
             break;
-        case BUCHHEIM_JUENGER_LEIPERT:
-            nodePlacer = phaseCache.get(BJLNodePlacer.class);
-            if (nodePlacer == null) {
-                nodePlacer = new BJLNodePlacer();
-                phaseCache.put(BJLNodePlacer.class, nodePlacer);
-            }
-            break;
-            
         default: // BRANDES_KOEPF
             nodePlacer = phaseCache.get(BKNodePlacer.class);
             if (nodePlacer == null) {

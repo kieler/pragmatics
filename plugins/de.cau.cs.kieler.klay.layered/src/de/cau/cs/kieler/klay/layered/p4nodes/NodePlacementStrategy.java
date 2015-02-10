@@ -42,11 +42,6 @@ public enum NodePlacementStrategy {
     /**
      * Node placement which groups nodes to blocks which result in straight edges.
      */
-    BRANDES_KOEPF,
-    
-    /**
-     * Node placement which groups nodes in classes which result in straight edges.
-     * */
-    BUCHHEIM_JUENGER_LEIPERT;
+    BRANDES_KOEPF;
   
 }
