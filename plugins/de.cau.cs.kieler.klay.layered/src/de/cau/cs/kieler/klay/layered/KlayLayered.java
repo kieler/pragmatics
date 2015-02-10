@@ -462,131 +462,18 @@ public final class KlayLayered {
         }
     }
 
-    // CHECKSTYLEOFF MethodLength
-    // This method is a bit longer than usual, but only consists of bookkeeping code.
     /**
      * Update the modules depending on user options.
      * 
      * @param lgraph the graph to be laid out.
      */
     private void updateModules(final LGraph lgraph) {
-        // check which cycle breaking strategy to use
-        ILayoutPhase cycleBreaker;
-        switch (lgraph.getProperty(Properties.CYCLE_BREAKING)) {
-        case INTERACTIVE:
-            cycleBreaker = phaseCache.get(InteractiveCycleBreaker.class);
-            if (cycleBreaker == null) {
-                cycleBreaker = new InteractiveCycleBreaker();
-                phaseCache.put(InteractiveCycleBreaker.class, cycleBreaker);
-            }
-            break;
-        default: // GREEDY
-            cycleBreaker = phaseCache.get(GreedyCycleBreaker.class);
-            if (cycleBreaker == null) {
-                cycleBreaker = new GreedyCycleBreaker();
-                phaseCache.put(GreedyCycleBreaker.class, cycleBreaker);
-            }
-        }
-        
-        // check which layering strategy to use
-        ILayoutPhase layerer;
-        switch (lgraph.getProperty(Properties.NODE_LAYERING)) {
-        case LONGEST_PATH:
-            layerer = phaseCache.get(LongestPathLayerer.class);
-            if (layerer == null) {
-                layerer = new LongestPathLayerer();
-                phaseCache.put(LongestPathLayerer.class, layerer);
-            }
-            break;
-        case INTERACTIVE:
-            layerer = phaseCache.get(InteractiveLayerer.class);
-            if (layerer == null) {
-                layerer = new InteractiveLayerer();
-                phaseCache.put(InteractiveLayerer.class, layerer);
-            }
-            break;
-        default: // NETWORK_SIMPLEX
-            layerer = phaseCache.get(NetworkSimplexLayerer.class);
-            if (layerer == null) {
-                layerer = new NetworkSimplexLayerer();
-                phaseCache.put(NetworkSimplexLayerer.class, layerer);
-            }
-        }
-        
-        // check which crossing minimization strategy to use
-        ILayoutPhase crossingMinimizer;
-        switch (lgraph.getProperty(Properties.CROSS_MIN)) {
-        case INTERACTIVE:
-            crossingMinimizer = phaseCache.get(InteractiveCrossingMinimizer.class);
-            if (crossingMinimizer == null) {
-                crossingMinimizer = new InteractiveCrossingMinimizer();
-                phaseCache.put(InteractiveCrossingMinimizer.class, crossingMinimizer);
-            }
-            break;
-        default: // LAYER_SWEEP
-            crossingMinimizer = phaseCache.get(LayerSweepCrossingMinimizer.class);
-            if (crossingMinimizer == null) {
-                crossingMinimizer = new LayerSweepCrossingMinimizer();
-                phaseCache.put(LayerSweepCrossingMinimizer.class, crossingMinimizer);
-            }
-        }
-
-        // check which node placement strategy to use
-        ILayoutPhase nodePlacer;
-        switch (lgraph.getProperty(Properties.NODE_PLACER)) {
-        case SIMPLE:
-            nodePlacer = phaseCache.get(SimpleNodePlacer.class);
-            if (nodePlacer == null) {
-                nodePlacer = new SimpleNodePlacer();
-                phaseCache.put(SimpleNodePlacer.class, nodePlacer);
-            }
-            break;
-        case INTERACTIVE:
-            nodePlacer = phaseCache.get(InteractiveNodePlacer.class);
-            if (nodePlacer == null) {
-                nodePlacer = new InteractiveNodePlacer();
-                phaseCache.put(InteractiveNodePlacer.class, nodePlacer);
-            }
-            break;
-        case LINEAR_SEGMENTS:
-            nodePlacer = phaseCache.get(LinearSegmentsNodePlacer.class);
-            if (nodePlacer == null) {
-                nodePlacer = new LinearSegmentsNodePlacer();
-                phaseCache.put(LinearSegmentsNodePlacer.class, nodePlacer);
-            }
-            break;
-        default: // BRANDES_KOEPF
-            nodePlacer = phaseCache.get(BKNodePlacer.class);
-            if (nodePlacer == null) {
-                nodePlacer = new BKNodePlacer();
-                phaseCache.put(BKNodePlacer.class, nodePlacer);
-            }
-        }
-
-        // check which edge router to use
-        ILayoutPhase edgeRouter;
-        switch (lgraph.getProperty(LayoutOptions.EDGE_ROUTING)) {
-        case ORTHOGONAL:
-            edgeRouter = phaseCache.get(OrthogonalEdgeRouter.class);
-            if (edgeRouter == null) {
-                edgeRouter = new OrthogonalEdgeRouter();
-                phaseCache.put(OrthogonalEdgeRouter.class, edgeRouter);
-            }
-            break;
-        case SPLINES:
-            edgeRouter = phaseCache.get(SplineEdgeRouter.class);
-            if (edgeRouter == null) {
-                edgeRouter = new SplineEdgeRouter();
-                phaseCache.put(SplineEdgeRouter.class, edgeRouter);
-            }
-            break;
-        default: // POLYLINE
-            edgeRouter = phaseCache.get(PolylineEdgeRouter.class);
-            if (edgeRouter == null) {
-                edgeRouter = new PolylineEdgeRouter();
-                phaseCache.put(PolylineEdgeRouter.class, edgeRouter);
-            }
-        }
+        // get instances for the different phases of our algorithm
+        ILayoutPhase cycleBreaker = cycleBreakerForGraph(lgraph);
+        ILayoutPhase layerer = layererForGraph(lgraph);
+        ILayoutPhase crossingMinimizer = crossingMinimizerForGraph(lgraph);
+        ILayoutPhase nodePlacer = nodePlacerForGraph(lgraph);
+        ILayoutPhase edgeRouter = edgeRouterForGraph(lgraph);
 
         // determine intermediate processor configuration
         IntermediateProcessingConfiguration intermediateProcessingConfiguration =
@@ -621,44 +508,199 @@ public final class KlayLayered {
         algorithm.addAll(getIntermediateProcessorList(intermediateProcessingConfiguration,
                         IntermediateProcessingConfiguration.Slot.AFTER_PHASE_5));
     }
-    // CHECKSTYLEON MethodLength
 
     /**
-     * Returns a list of layout processor instances for the given intermediate layout processing slot.
+     * Returns the cycle breaker to use for the given graph depending on the property settings.
      * 
-     * @param configuration the intermediate processing configuration
-     * @param slot the intermediate processing slot whose list of processors to return.
-     * @return list of layout processors.
+     * <p>If an instance of the requested implementation is already in the phase cache, that instance is
+     * used. Otherwise, a new instance is created and put in the phase cache.</p>
+     * 
+     * @param lgraph the graph to return the cycle breaker for.
+     * @return the cycle breaker to use.
      */
-    private List<ILayoutProcessor> getIntermediateProcessorList(
-            final IntermediateProcessingConfiguration configuration,
-            final IntermediateProcessingConfiguration.Slot slot) {
+    private ILayoutPhase cycleBreakerForGraph(final LGraph lgraph) {
+        ILayoutPhase cycleBreaker;
         
-        // fetch the set of layout processors configured for the given slot
-        Set<IntermediateProcessorStrategy> processors = configuration.getProcessors(slot);
-        List<ILayoutProcessor> result = new ArrayList<ILayoutProcessor>(processors.size());
-
-        // iterate through the layout processors and add them to the result list; the processors set
-        // guarantees that we iterate over the processors in the order in which they occur in
-        // the LayoutProcessorStrategy, thereby satisfying all of their runtime order
-        // dependencies without having to sort them in any way
-        for (IntermediateProcessorStrategy processor : processors) {
-            // check if an instance of the given layout processor is already in the cache
-            ILayoutProcessor processorImpl = intermediateLayoutProcessorCache.get(processor);
-
-            if (processorImpl == null) {
-                // It's not in the cache, so create it and put it in the cache
-                processorImpl = processor.create();
-                intermediateLayoutProcessorCache.put(processor, processorImpl);
+        switch (lgraph.getProperty(Properties.CYCLE_BREAKING)) {
+        case INTERACTIVE:
+            cycleBreaker = phaseCache.get(InteractiveCycleBreaker.class);
+            if (cycleBreaker == null) {
+                cycleBreaker = new InteractiveCycleBreaker();
+                phaseCache.put(InteractiveCycleBreaker.class, cycleBreaker);
             }
-
-            // add the layout processor to the list of processors for this slot
-            result.add(processorImpl);
+            break;
+            
+        default: // GREEDY
+            cycleBreaker = phaseCache.get(GreedyCycleBreaker.class);
+            if (cycleBreaker == null) {
+                cycleBreaker = new GreedyCycleBreaker();
+                phaseCache.put(GreedyCycleBreaker.class, cycleBreaker);
+            }
         }
-
-        return result;
+        
+        return cycleBreaker;
     }
 
+    /**
+     * Returns the layerer to use for the given graph depending on the property settings.
+     * 
+     * <p>If an instance of the requested implementation is already in the phase cache, that instance is
+     * used. Otherwise, a new instance is created and put in the phase cache.</p>
+     * 
+     * @param lgraph the graph to return the layerer for.
+     * @return the layerer to use.
+     */
+    private ILayoutPhase layererForGraph(final LGraph lgraph) {
+        ILayoutPhase layerer;
+        
+        switch (lgraph.getProperty(Properties.NODE_LAYERING)) {
+        case LONGEST_PATH:
+            layerer = phaseCache.get(LongestPathLayerer.class);
+            if (layerer == null) {
+                layerer = new LongestPathLayerer();
+                phaseCache.put(LongestPathLayerer.class, layerer);
+            }
+            break;
+            
+        case INTERACTIVE:
+            layerer = phaseCache.get(InteractiveLayerer.class);
+            if (layerer == null) {
+                layerer = new InteractiveLayerer();
+                phaseCache.put(InteractiveLayerer.class, layerer);
+            }
+            break;
+            
+        default: // NETWORK_SIMPLEX
+            layerer = phaseCache.get(NetworkSimplexLayerer.class);
+            if (layerer == null) {
+                layerer = new NetworkSimplexLayerer();
+                phaseCache.put(NetworkSimplexLayerer.class, layerer);
+            }
+        }
+        
+        return layerer;
+    }
+
+    /**
+     * Returns the crossing minimizer to use for the given graph depending on the property settings.
+     * 
+     * <p>If an instance of the requested implementation is already in the phase cache, that instance is
+     * used. Otherwise, a new instance is created and put in the phase cache.</p>
+     * 
+     * @param lgraph the graph to return the crossing minimizer for.
+     * @return the crossing minimizer to use.
+     */
+    private ILayoutPhase crossingMinimizerForGraph(final LGraph lgraph) {
+        ILayoutPhase crossingMinimizer;
+        
+        switch (lgraph.getProperty(Properties.CROSS_MIN)) {
+        case INTERACTIVE:
+            crossingMinimizer = phaseCache.get(InteractiveCrossingMinimizer.class);
+            if (crossingMinimizer == null) {
+                crossingMinimizer = new InteractiveCrossingMinimizer();
+                phaseCache.put(InteractiveCrossingMinimizer.class, crossingMinimizer);
+            }
+            break;
+            
+        default: // LAYER_SWEEP
+            crossingMinimizer = phaseCache.get(LayerSweepCrossingMinimizer.class);
+            if (crossingMinimizer == null) {
+                crossingMinimizer = new LayerSweepCrossingMinimizer();
+                phaseCache.put(LayerSweepCrossingMinimizer.class, crossingMinimizer);
+            }
+        }
+        
+        return crossingMinimizer;
+    }
+
+    /**
+     * Returns the node placer to use for the given graph depending on the property settings.
+     * 
+     * <p>If an instance of the requested implementation is already in the phase cache, that instance is
+     * used. Otherwise, a new instance is created and put in the phase cache.</p>
+     * 
+     * @param lgraph the graph to return the node placer for.
+     * @return the node placer to use.
+     */
+    private ILayoutPhase nodePlacerForGraph(final LGraph lgraph) {
+        ILayoutPhase nodePlacer;
+        
+        switch (lgraph.getProperty(Properties.NODE_PLACER)) {
+        case SIMPLE:
+            nodePlacer = phaseCache.get(SimpleNodePlacer.class);
+            if (nodePlacer == null) {
+                nodePlacer = new SimpleNodePlacer();
+                phaseCache.put(SimpleNodePlacer.class, nodePlacer);
+            }
+            break;
+            
+        case INTERACTIVE:
+            nodePlacer = phaseCache.get(InteractiveNodePlacer.class);
+            if (nodePlacer == null) {
+                nodePlacer = new InteractiveNodePlacer();
+                phaseCache.put(InteractiveNodePlacer.class, nodePlacer);
+            }
+            break;
+            
+        case LINEAR_SEGMENTS:
+            nodePlacer = phaseCache.get(LinearSegmentsNodePlacer.class);
+            if (nodePlacer == null) {
+                nodePlacer = new LinearSegmentsNodePlacer();
+                phaseCache.put(LinearSegmentsNodePlacer.class, nodePlacer);
+            }
+            break;
+            
+        default: // BRANDES_KOEPF
+            nodePlacer = phaseCache.get(BKNodePlacer.class);
+            if (nodePlacer == null) {
+                nodePlacer = new BKNodePlacer();
+                phaseCache.put(BKNodePlacer.class, nodePlacer);
+            }
+        }
+        
+        return nodePlacer;
+    }
+    
+    /**
+     * Returns the edge router to use for the given graph depending on the property settings.
+     * 
+     * <p>If an instance of the requested implementation is already in the phase cache, that instance is
+     * used. Otherwise, a new instance is created and put in the phase cache.</p>
+     * 
+     * @param lgraph the graph to return the edge router for.
+     * @return the edge router to use.
+     */
+    private ILayoutPhase edgeRouterForGraph(final LGraph lgraph) {
+        ILayoutPhase edgeRouter;
+        
+        switch (lgraph.getProperty(LayoutOptions.EDGE_ROUTING)) {
+        case ORTHOGONAL:
+            edgeRouter = phaseCache.get(OrthogonalEdgeRouter.class);
+            if (edgeRouter == null) {
+                edgeRouter = new OrthogonalEdgeRouter();
+                phaseCache.put(OrthogonalEdgeRouter.class, edgeRouter);
+            }
+            break;
+            
+        case SPLINES:
+            edgeRouter = phaseCache.get(SplineEdgeRouter.class);
+            if (edgeRouter == null) {
+                edgeRouter = new SplineEdgeRouter();
+                phaseCache.put(SplineEdgeRouter.class, edgeRouter);
+            }
+            break;
+            
+        default: // POLYLINE
+            edgeRouter = phaseCache.get(PolylineEdgeRouter.class);
+            if (edgeRouter == null) {
+                edgeRouter = new PolylineEdgeRouter();
+                phaseCache.put(PolylineEdgeRouter.class, edgeRouter);
+            }
+        }
+        
+        return edgeRouter;
+    }
+    
     /**
      * Returns an intermediate processing configuration with processors not tied to specific phases.
      * 
@@ -713,6 +755,42 @@ public final class KlayLayered {
         }
 
         return configuration;
+    }
+
+    /**
+     * Returns a list of layout processor instances for the given intermediate layout processing slot.
+     * 
+     * @param configuration the intermediate processing configuration
+     * @param slot the intermediate processing slot whose list of processors to return.
+     * @return list of layout processors.
+     */
+    private List<ILayoutProcessor> getIntermediateProcessorList(
+            final IntermediateProcessingConfiguration configuration,
+            final IntermediateProcessingConfiguration.Slot slot) {
+        
+        // fetch the set of layout processors configured for the given slot
+        Set<IntermediateProcessorStrategy> processors = configuration.getProcessors(slot);
+        List<ILayoutProcessor> result = new ArrayList<ILayoutProcessor>(processors.size());
+
+        // iterate through the layout processors and add them to the result list; the processors set
+        // guarantees that we iterate over the processors in the order in which they occur in
+        // the LayoutProcessorStrategy, thereby satisfying all of their runtime order
+        // dependencies without having to sort them in any way
+        for (IntermediateProcessorStrategy processor : processors) {
+            // check if an instance of the given layout processor is already in the cache
+            ILayoutProcessor processorImpl = intermediateLayoutProcessorCache.get(processor);
+
+            if (processorImpl == null) {
+                // It's not in the cache, so create it and put it in the cache
+                processorImpl = processor.create();
+                intermediateLayoutProcessorCache.put(processor, processorImpl);
+            }
+
+            // add the layout processor to the list of processors for this slot
+            result.add(processorImpl);
+        }
+
+        return result;
     }
     
 
