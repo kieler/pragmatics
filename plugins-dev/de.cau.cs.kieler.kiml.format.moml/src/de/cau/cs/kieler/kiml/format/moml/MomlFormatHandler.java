@@ -91,10 +91,11 @@ public class MomlFormatHandler extends AbstractEmfHandler<DocumentRoot> {
             DocumentRoot model = data.getSourceGraph();
             if (model != null) {
                 KlighdSynthesisProperties props = KlighdSynthesisProperties.create();
+                
                 // always use ptolemy diagram synthesis
-                props.setProperty(KlighdSynthesisProperties.REQUESTED_DIAGRAM_SYNTHESIS,
-                        PtolemyDiagramSynthesis.ID);
-                // here we dont want comments
+                props.useDiagramSynthesis(PtolemyDiagramSynthesis.ID);
+
+                // here we don't want comments
                 props.configureSynthesisOptionValue(PtolemyDiagramSynthesis.SHOW_COMMENTS, false);
                 
                 // some optional options
