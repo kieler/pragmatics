@@ -554,13 +554,12 @@ public final class KimlUtil {
     }
 
     /**
-     * Determines whether the given child node is a descendant of the parent
-     * node. This method does not regard a node as its own descendant.
+     * Determines whether the given child node is a descendant of the parent node. This method does
+     * not regard a node as its own descendant.
      * 
      * @param child a child node
      * @param parent a parent node
-     * @return {@code true} if {@code child} is a direct or indirect child of {@code
-     *         parent}.
+     * @return {@code true} if {@code child} is a direct or indirect child of {@code parent}.
      */
     public static boolean isDescendant(final KNode child, final KNode parent) {
         KNode current = child;
@@ -621,21 +620,31 @@ public final class KimlUtil {
      * @param yoffset y coordinate offset
      */
     public static void translate(final KNode parent, final float xoffset, final float yoffset) {
-        for (KNode node : parent.getChildren()) {
-            KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+        for (KNode child : parent.getChildren()) {
+            // Translate node position
+            KShapeLayout nodeLayout = child.getData(KShapeLayout.class);
             nodeLayout.setXpos(nodeLayout.getXpos() + xoffset);
             nodeLayout.setYpos(nodeLayout.getYpos() + yoffset);
-            for (KEdge edge : node.getOutgoingEdges()) {
-                KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-                translate(edgeLayout.getSourcePoint(), xoffset, yoffset);
-                for (KPoint bendPoint : edgeLayout.getBendPoints()) {
-                    translate(bendPoint, xoffset, yoffset);
-                }
-                translate(edgeLayout.getTargetPoint(), xoffset, yoffset);
-                for (KLabel edgeLabel : edge.getLabels()) {
-                    KShapeLayout labelLayout = edgeLabel.getData(KShapeLayout.class);
-                    labelLayout.setXpos(labelLayout.getXpos() + xoffset);
-                    labelLayout.setYpos(labelLayout.getYpos() + yoffset);
+            
+            // Translate edge bend points
+            for (KEdge edge : child.getOutgoingEdges()) {
+                // If the target of this edge is a descendent of the current child, its bend points are
+                // relative to the child's position and thus don't need to be translated
+                if (!isDescendant(edge.getTarget(), child)) {
+                    // Translate edge bend points
+                    KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
+                    translate(edgeLayout.getSourcePoint(), xoffset, yoffset);
+                    for (KPoint bendPoint : edgeLayout.getBendPoints()) {
+                        translate(bendPoint, xoffset, yoffset);
+                    }
+                    translate(edgeLayout.getTargetPoint(), xoffset, yoffset);
+                    
+                    // Translate edge label positions
+                    for (KLabel edgeLabel : edge.getLabels()) {
+                        KShapeLayout labelLayout = edgeLabel.getData(KShapeLayout.class);
+                        labelLayout.setXpos(labelLayout.getXpos() + xoffset);
+                        labelLayout.setYpos(labelLayout.getYpos() + yoffset);
+                    }
                 }
             }
         }

@@ -25,6 +25,7 @@ import com.google.common.collect.Iterables;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
 
 /**
@@ -42,7 +43,7 @@ public class BiconnectedComponentDensityAnalysis implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
+    public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Biconnected components density analysis", 1);
         int graphSize = parentNode.getChildren().size();

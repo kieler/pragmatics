@@ -23,9 +23,6 @@ import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.formats.TransformationData;
-import de.cau.cs.kieler.kiml.formats.gml.gml.Element;
-import de.cau.cs.kieler.kiml.formats.gml.gml.GmlFactory;
-import de.cau.cs.kieler.kiml.formats.gml.gml.GmlModel;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
@@ -35,10 +32,11 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  * Graph exporter for the GML format.
  *
  * @author msp
+ * @author mkr
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class GmlExporter implements IGraphTransformer<KNode, GmlModel> {
+public class GmlExporter implements IGraphTransformer<KNode, GMLModel> {
 
     /** property for node and port identifiers. */
     private static final IProperty<String> PROP_ID = new Property<String>("gmlExporter.id");
@@ -46,7 +44,7 @@ public class GmlExporter implements IGraphTransformer<KNode, GmlModel> {
     /**
      * {@inheritDoc}
      */
-    public void transform(final TransformationData<KNode, GmlModel> data) {
+    public void transform(final TransformationData<KNode, GMLModel> data) {
         // create identifiers for all nodes and ports
         LinkedList<KNode> nodes = new LinkedList<KNode>();
         nodes.add(data.getSourceGraph());
@@ -62,9 +60,8 @@ public class GmlExporter implements IGraphTransformer<KNode, GmlModel> {
         } while (!nodes.isEmpty());
         
         // transform into GML model
-        GmlModel gmlModel = GmlFactory.eINSTANCE.createGmlModel();
-        Element graphElement = GmlFactory.eINSTANCE.createElement();
-        graphElement.setKey("graph");
+        GMLModel gmlModel = new GMLModel();
+        Element graphElement = new CollectionElement(null, "graph");
         transform(data.getSourceGraph(), graphElement);
         gmlModel.getElements().add(graphElement);
         data.getTargetGraphs().add(gmlModel);
@@ -81,30 +78,24 @@ public class GmlExporter implements IGraphTransformer<KNode, GmlModel> {
             // transform node
             KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
             String nodeId = nodeLayout.getProperty(PROP_ID);
-            Element nodeElement = GmlFactory.eINSTANCE.createElement();
-            nodeElement.setKey("node");
-            Element id = GmlFactory.eINSTANCE.createElement();
-            id.setKey("id");
-            id.setValue(nodeId);
+            CollectionElement nodeElement = new CollectionElement(graphElement, "node");
+            Element id = new StringElement(nodeElement, "id", nodeId);
             nodeElement.getElements().add(id);
             for (KLabel klabel : knode.getLabels()) {
-                nodeElement.getElements().add(GmlFormatHandler.createLabel(klabel));
+                nodeElement.getElements().add(GmlFormatHandler.createLabel(nodeElement, klabel));
             }
             transform(nodeLayout, nodeElement);
-            graphElement.getElements().add(nodeElement);
+            GmlFormatHandler.getElements(graphElement).add(nodeElement);
             
             for (KPort kport : knode.getPorts()) {
                 // transform port
                 KShapeLayout portLayout = kport.getData(KShapeLayout.class);
                 String portId = portLayout.getProperty(PROP_ID);
-                Element portElement = GmlFactory.eINSTANCE.createElement();
-                portElement.setKey("port");
-                id = GmlFactory.eINSTANCE.createElement();
-                id.setKey("id");
-                id.setValue(portId);
+                CollectionElement portElement = new CollectionElement(nodeElement, "port");
+                id = new StringElement(portElement, "id", portId);
                 portElement.getElements().add(id);
                 for (KLabel klabel : kport.getLabels()) {
-                    portElement.getElements().add(GmlFormatHandler.createLabel(klabel));
+                    portElement.getElements().add(GmlFormatHandler.createLabel(portElement, klabel));
                 }
                 transform(portLayout, portElement);
                 nodeElement.getElements().add(portElement);
@@ -112,8 +103,7 @@ public class GmlExporter implements IGraphTransformer<KNode, GmlModel> {
             
             if (!knode.getChildren().isEmpty()) {
                 // transform subgraph
-                Element subgraphElement = GmlFactory.eINSTANCE.createElement();
-                subgraphElement.setKey("graph");
+                Element subgraphElement = new CollectionElement(nodeElement, "graph");
                 transform(knode, subgraphElement);
                 nodeElement.getElements().add(subgraphElement);
             }
@@ -122,40 +112,31 @@ public class GmlExporter implements IGraphTransformer<KNode, GmlModel> {
                 // transform edge
                 String sourceId = kedge.getSource().getData(KShapeLayout.class).getProperty(PROP_ID);
                 String targetId = kedge.getTarget().getData(KShapeLayout.class).getProperty(PROP_ID);
-                Element edgeElement = GmlFactory.eINSTANCE.createElement();
-                edgeElement.setKey("edge");
-                Element source = GmlFactory.eINSTANCE.createElement();
-                source.setKey("source");
-                source.setValue(sourceId);
+                CollectionElement edgeElement = new CollectionElement(graphElement, "edge");
+                Element source = new StringElement(edgeElement, "source", sourceId);
                 edgeElement.getElements().add(source);
                 if (kedge.getSourcePort() != null) {
                     String sourcePortId = kedge.getSourcePort().getData(KShapeLayout.class)
                             .getProperty(PROP_ID);
-                    Element sourcePort = GmlFactory.eINSTANCE.createElement();
-                    sourcePort.setKey("sourcePort");
-                    sourcePort.setValue(sourcePortId);
+                    Element sourcePort = new StringElement(edgeElement, "sourcePort", sourcePortId);
                     edgeElement.getElements().add(sourcePort);
                 }
-                Element target = GmlFactory.eINSTANCE.createElement();
-                target.setKey("target");
-                target.setValue(targetId);
+                Element target = new StringElement(edgeElement, "target", targetId);
                 edgeElement.getElements().add(target);
                 if (kedge.getTargetPort() != null) {
                     String targetPortId = kedge.getTargetPort().getData(KShapeLayout.class)
                             .getProperty(PROP_ID);
-                    Element targetPort = GmlFactory.eINSTANCE.createElement();
-                    targetPort.setKey("targetPort");
-                    targetPort.setValue(targetPortId);
+                    Element targetPort = new StringElement(edgeElement, "targetPort", targetPortId);
                     edgeElement.getElements().add(targetPort);
                 }
                 for (KLabel klabel : kedge.getLabels()) {
                     if (klabel.getText().length() > 0) {
-                        edgeElement.getElements().add(GmlFormatHandler.createLabel(klabel));
+                        edgeElement.getElements().add(GmlFormatHandler.createLabel(edgeElement, klabel));
                     }
                 }
                 KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
                 transform(edgeLayout, edgeElement);
-                graphElement.getElements().add(edgeElement);
+                GmlFormatHandler.getElements(graphElement).add(edgeElement);
             }
         }
     }
@@ -170,29 +151,20 @@ public class GmlExporter implements IGraphTransformer<KNode, GmlModel> {
         if (!shapeLayout.getProperty(LayoutOptions.NO_LAYOUT) && (shapeLayout.getXpos() != 0
                 || shapeLayout.getYpos() != 0 || shapeLayout.getWidth() != 0
                 || shapeLayout.getHeight() != 0)) {
-            Element graphics = GmlFactory.eINSTANCE.createElement();
-            graphics.setKey("graphics");
+            CollectionElement graphics = new CollectionElement(parentElement, "graphics");
             if (shapeLayout.getXpos() != 0 || shapeLayout.getYpos() != 0) {
-                Element x = GmlFactory.eINSTANCE.createElement();
-                x.setKey("x");
-                x.setValue(Float.toString(shapeLayout.getXpos()));
+                Element x = new NumberElement(graphics, "x", shapeLayout.getXpos());
                 graphics.getElements().add(x);
-                Element y = GmlFactory.eINSTANCE.createElement();
-                y.setKey("y");
-                y.setValue(Float.toString(shapeLayout.getYpos()));
+                Element y = new NumberElement(graphics, "y", shapeLayout.getYpos());
                 graphics.getElements().add(y);
             }
             if (shapeLayout.getWidth() != 0 || shapeLayout.getHeight() != 0) {
-                Element w = GmlFactory.eINSTANCE.createElement();
-                w.setKey("w");
-                w.setValue(Float.toString(shapeLayout.getWidth()));
+                Element w = new NumberElement(graphics, "w", shapeLayout.getWidth());
                 graphics.getElements().add(w);
-                Element h = GmlFactory.eINSTANCE.createElement();
-                h.setKey("h");
-                h.setValue(Float.toString(shapeLayout.getHeight()));
+                Element h = new NumberElement(graphics, "h", shapeLayout.getHeight());
                 graphics.getElements().add(h);
             }
-            parentElement.getElements().add(graphics);
+            GmlFormatHandler.getElements(parentElement).add(graphics);
         }
     }
     
@@ -209,21 +181,22 @@ public class GmlExporter implements IGraphTransformer<KNode, GmlModel> {
                 && (edgeLayout.getBendPoints().size() > 0
                 || sourcePoint.getX() != 0 || sourcePoint.getY() != 0
                 || targetPoint.getX() != 0 || targetPoint.getY() != 0)) {
-            Element graphics = GmlFactory.eINSTANCE.createElement();
-            graphics.setKey("graphics");
-            graphics.getElements().add(GmlFormatHandler.createPoint(edgeLayout.getSourcePoint()));
+            CollectionElement graphics = new CollectionElement(parentElement, "graphics");
+            graphics.getElements().add(GmlFormatHandler.createPoint(
+                                                        graphics, edgeLayout.getSourcePoint()));
             for (KPoint point : edgeLayout.getBendPoints()) {
-                graphics.getElements().add(GmlFormatHandler.createPoint(point));
+                graphics.getElements().add(GmlFormatHandler.createPoint(graphics, point));
             }
-            graphics.getElements().add(GmlFormatHandler.createPoint(edgeLayout.getTargetPoint()));
-            parentElement.getElements().add(graphics);
+            graphics.getElements().add(GmlFormatHandler.createPoint(
+                                                        graphics, edgeLayout.getTargetPoint()));
+            GmlFormatHandler.getElements(parentElement).add(graphics);
         }
     }
 
     /**
      * {@inheritDoc}
      */
-    public void transferLayout(final TransformationData<KNode, GmlModel> data) {
+    public void transferLayout(final TransformationData<KNode, GMLModel> data) {
         throw new UnsupportedOperationException("Layout transfer is not supported for GML export.");
     }
 
