@@ -43,20 +43,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
-import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
-import de.cau.cs.kieler.klay.layered.p1cycles.InteractiveCycleBreaker;
-import de.cau.cs.kieler.klay.layered.p2layers.InteractiveLayerer;
-import de.cau.cs.kieler.klay.layered.p2layers.LongestPathLayerer;
-import de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer;
-import de.cau.cs.kieler.klay.layered.p3order.InteractiveCrossingMinimizer;
-import de.cau.cs.kieler.klay.layered.p3order.LayerSweepCrossingMinimizer;
-import de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer;
-import de.cau.cs.kieler.klay.layered.p4nodes.InteractiveNodePlacer;
-import de.cau.cs.kieler.klay.layered.p4nodes.LinearSegmentsNodePlacer;
-import de.cau.cs.kieler.klay.layered.p4nodes.SimpleNodePlacer;
-import de.cau.cs.kieler.klay.layered.p5edges.OrthogonalEdgeRouter;
-import de.cau.cs.kieler.klay.layered.p5edges.PolylineEdgeRouter;
-import de.cau.cs.kieler.klay.layered.p5edges.SplineEdgeRouter;
+import de.cau.cs.kieler.klay.layered.p5edges.EdgeRouterFactory;
 import de.cau.cs.kieler.klay.layered.properties.ContentAlignment;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
@@ -120,7 +107,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  */
 public final class KlayLayered {
 
-    // /////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
     // Variables
 
     /** connected components processor. */
@@ -129,14 +116,14 @@ public final class KlayLayered {
     private CompoundGraphPreprocessor compoundGraphPreprocessor;
     /** compound graph postprocessor. */
     private CompoundGraphPostprocessor compoundGraphPostprocessor;
-    /** cache of instantiated layout phases. */
-    private final Map<Class<? extends ILayoutPhase>, ILayoutPhase> phaseCache = Maps.newHashMap();
+    /** cache of instantiated layout phases, from enumeration values to phase instances. */
+    private final Map<Object, ILayoutPhase> phaseCache = Maps.newHashMap();
     /** cache of instantiated intermediate modules. */
     private final Map<IntermediateProcessorStrategy, ILayoutProcessor> intermediateLayoutProcessorCache =
             Maps.newHashMap();
     
 
-    // /////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
     // Regular Layout
 
     /**
@@ -155,7 +142,7 @@ public final class KlayLayered {
         theMonitor.begin("Layered layout", 1);
 
         // Set special properties for the layered graph
-        setOptions(lgraph);
+        configureGraphProperties(lgraph);
 
         // Update the modules depending on user options
         updateModules(lgraph);
@@ -187,7 +174,7 @@ public final class KlayLayered {
     }
     
 
-    // /////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
     // Compound Graph Layout
 
     /**
@@ -242,7 +229,7 @@ public final class KlayLayered {
             }
             
             // Set special properties for the layered graph
-            setOptions(lgraph);
+            configureGraphProperties(lgraph);
     
             // Update the modules depending on user options
             updateModules(lgraph);
@@ -257,7 +244,7 @@ public final class KlayLayered {
         monitor.done();
     }
     
-    // /////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
     // Layout Testing
     
     /**
@@ -300,7 +287,7 @@ public final class KlayLayered {
         TestExecutionState state = new TestExecutionState();
         
         // set special properties for the layered graph
-        setOptions(lgraph);
+        configureGraphProperties(lgraph);
 
         // update the modules depending on user options
         updateModules(lgraph);
@@ -421,7 +408,7 @@ public final class KlayLayered {
     }
 
 
-    // /////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
     // Options and Modules Management
     
     /** intermediate processing configuration for basic graphs. */
@@ -430,37 +417,6 @@ public final class KlayLayered {
             .addBeforePhase4(IntermediateProcessorStrategy.NODE_MARGIN_CALCULATOR)
             .addBeforePhase4(IntermediateProcessorStrategy.LABEL_AND_NODE_SIZE_PROCESSOR)
             .addBeforePhase5(IntermediateProcessorStrategy.LAYER_SIZE_AND_GRAPH_HEIGHT_CALCULATOR);
-    /** the minimal spacing between edges, so edges won't overlap. */
-    private static final float MIN_EDGE_SPACING = 2.0f;
-
-    /**
-     * Set special layout options for the layered graph.
-     * 
-     * @param lgraph a new layered graph
-     */
-    private void setOptions(final LGraph lgraph) {
-        // check the bounds of some layout options
-        lgraph.checkProperties(Properties.OBJ_SPACING, Properties.BORDER_SPACING,
-                Properties.THOROUGHNESS, Properties.ASPECT_RATIO);
-        float spacing = lgraph.getProperty(Properties.OBJ_SPACING);
-        if (lgraph.getProperty(Properties.EDGE_SPACING_FACTOR) * spacing < MIN_EDGE_SPACING) {
-            // Edge spacing is determined by the product of object spacing and edge spacing factor.
-            // Make sure the resulting edge spacing is at least 2 in order to avoid overlapping edges.
-            lgraph.setProperty(Properties.EDGE_SPACING_FACTOR, MIN_EDGE_SPACING / spacing);
-        }
-        Direction direction = lgraph.getProperty(LayoutOptions.DIRECTION);
-        if (direction == Direction.UNDEFINED) {
-            lgraph.setProperty(LayoutOptions.DIRECTION, LGraphUtil.getDirection(lgraph));
-        }
-        
-        // set the random number generator based on the random seed option
-        Integer randomSeed = lgraph.getProperty(Properties.RANDOM_SEED);
-        if (randomSeed == 0) {
-            lgraph.setProperty(InternalProperties.RANDOM, new Random());
-        } else {
-            lgraph.setProperty(InternalProperties.RANDOM, new Random(randomSeed));
-        }
-    }
 
     /**
      * Update the modules depending on user options.
@@ -469,11 +425,12 @@ public final class KlayLayered {
      */
     private void updateModules(final LGraph lgraph) {
         // get instances for the different phases of our algorithm
-        ILayoutPhase cycleBreaker = cycleBreakerForGraph(lgraph);
-        ILayoutPhase layerer = layererForGraph(lgraph);
-        ILayoutPhase crossingMinimizer = crossingMinimizerForGraph(lgraph);
-        ILayoutPhase nodePlacer = nodePlacerForGraph(lgraph);
-        ILayoutPhase edgeRouter = edgeRouterForGraph(lgraph);
+        ILayoutPhase cycleBreaker = cachedLayoutPhase(lgraph.getProperty(Properties.CYCLE_BREAKING));
+        ILayoutPhase layerer = cachedLayoutPhase(lgraph.getProperty(Properties.NODE_LAYERING));
+        ILayoutPhase crossingMinimizer = cachedLayoutPhase(lgraph.getProperty(Properties.CROSS_MIN));
+        ILayoutPhase nodePlacer = cachedLayoutPhase(lgraph.getProperty(Properties.NODE_PLACER));
+        ILayoutPhase edgeRouter = cachedLayoutPhase(
+                EdgeRouterFactory.factoryFor(lgraph.getProperty(LayoutOptions.EDGE_ROUTING)));
 
         // determine intermediate processor configuration
         IntermediateProcessingConfiguration intermediateProcessingConfiguration =
@@ -518,187 +475,14 @@ public final class KlayLayered {
      * @param lgraph the graph to return the cycle breaker for.
      * @return the cycle breaker to use.
      */
-    private ILayoutPhase cycleBreakerForGraph(final LGraph lgraph) {
-        ILayoutPhase cycleBreaker;
-        
-        switch (lgraph.getProperty(Properties.CYCLE_BREAKING)) {
-        case INTERACTIVE:
-            cycleBreaker = phaseCache.get(InteractiveCycleBreaker.class);
-            if (cycleBreaker == null) {
-                cycleBreaker = new InteractiveCycleBreaker();
-                phaseCache.put(InteractiveCycleBreaker.class, cycleBreaker);
-            }
-            break;
-            
-        default: // GREEDY
-            cycleBreaker = phaseCache.get(GreedyCycleBreaker.class);
-            if (cycleBreaker == null) {
-                cycleBreaker = new GreedyCycleBreaker();
-                phaseCache.put(GreedyCycleBreaker.class, cycleBreaker);
-            }
+    private ILayoutPhase cachedLayoutPhase(final ILayoutPhaseFactory factory) {
+        ILayoutPhase layoutPhase = phaseCache.get(factory);
+        if (layoutPhase == null) {
+            layoutPhase = factory.create();
+            phaseCache.put(factory, layoutPhase);
         }
         
-        return cycleBreaker;
-    }
-
-    /**
-     * Returns the layerer to use for the given graph depending on the property settings.
-     * 
-     * <p>If an instance of the requested implementation is already in the phase cache, that instance is
-     * used. Otherwise, a new instance is created and put in the phase cache.</p>
-     * 
-     * @param lgraph the graph to return the layerer for.
-     * @return the layerer to use.
-     */
-    private ILayoutPhase layererForGraph(final LGraph lgraph) {
-        ILayoutPhase layerer;
-        
-        switch (lgraph.getProperty(Properties.NODE_LAYERING)) {
-        case LONGEST_PATH:
-            layerer = phaseCache.get(LongestPathLayerer.class);
-            if (layerer == null) {
-                layerer = new LongestPathLayerer();
-                phaseCache.put(LongestPathLayerer.class, layerer);
-            }
-            break;
-            
-        case INTERACTIVE:
-            layerer = phaseCache.get(InteractiveLayerer.class);
-            if (layerer == null) {
-                layerer = new InteractiveLayerer();
-                phaseCache.put(InteractiveLayerer.class, layerer);
-            }
-            break;
-            
-        default: // NETWORK_SIMPLEX
-            layerer = phaseCache.get(NetworkSimplexLayerer.class);
-            if (layerer == null) {
-                layerer = new NetworkSimplexLayerer();
-                phaseCache.put(NetworkSimplexLayerer.class, layerer);
-            }
-        }
-        
-        return layerer;
-    }
-
-    /**
-     * Returns the crossing minimizer to use for the given graph depending on the property settings.
-     * 
-     * <p>If an instance of the requested implementation is already in the phase cache, that instance is
-     * used. Otherwise, a new instance is created and put in the phase cache.</p>
-     * 
-     * @param lgraph the graph to return the crossing minimizer for.
-     * @return the crossing minimizer to use.
-     */
-    private ILayoutPhase crossingMinimizerForGraph(final LGraph lgraph) {
-        ILayoutPhase crossingMinimizer;
-        
-        switch (lgraph.getProperty(Properties.CROSS_MIN)) {
-        case INTERACTIVE:
-            crossingMinimizer = phaseCache.get(InteractiveCrossingMinimizer.class);
-            if (crossingMinimizer == null) {
-                crossingMinimizer = new InteractiveCrossingMinimizer();
-                phaseCache.put(InteractiveCrossingMinimizer.class, crossingMinimizer);
-            }
-            break;
-            
-        default: // LAYER_SWEEP
-            crossingMinimizer = phaseCache.get(LayerSweepCrossingMinimizer.class);
-            if (crossingMinimizer == null) {
-                crossingMinimizer = new LayerSweepCrossingMinimizer();
-                phaseCache.put(LayerSweepCrossingMinimizer.class, crossingMinimizer);
-            }
-        }
-        
-        return crossingMinimizer;
-    }
-
-    /**
-     * Returns the node placer to use for the given graph depending on the property settings.
-     * 
-     * <p>If an instance of the requested implementation is already in the phase cache, that instance is
-     * used. Otherwise, a new instance is created and put in the phase cache.</p>
-     * 
-     * @param lgraph the graph to return the node placer for.
-     * @return the node placer to use.
-     */
-    private ILayoutPhase nodePlacerForGraph(final LGraph lgraph) {
-        ILayoutPhase nodePlacer;
-        
-        switch (lgraph.getProperty(Properties.NODE_PLACER)) {
-        case SIMPLE:
-            nodePlacer = phaseCache.get(SimpleNodePlacer.class);
-            if (nodePlacer == null) {
-                nodePlacer = new SimpleNodePlacer();
-                phaseCache.put(SimpleNodePlacer.class, nodePlacer);
-            }
-            break;
-            
-        case INTERACTIVE:
-            nodePlacer = phaseCache.get(InteractiveNodePlacer.class);
-            if (nodePlacer == null) {
-                nodePlacer = new InteractiveNodePlacer();
-                phaseCache.put(InteractiveNodePlacer.class, nodePlacer);
-            }
-            break;
-            
-        case LINEAR_SEGMENTS:
-            nodePlacer = phaseCache.get(LinearSegmentsNodePlacer.class);
-            if (nodePlacer == null) {
-                nodePlacer = new LinearSegmentsNodePlacer();
-                phaseCache.put(LinearSegmentsNodePlacer.class, nodePlacer);
-            }
-            break;
-            
-        default: // BRANDES_KOEPF
-            nodePlacer = phaseCache.get(BKNodePlacer.class);
-            if (nodePlacer == null) {
-                nodePlacer = new BKNodePlacer();
-                phaseCache.put(BKNodePlacer.class, nodePlacer);
-            }
-        }
-        
-        return nodePlacer;
-    }
-    
-    /**
-     * Returns the edge router to use for the given graph depending on the property settings.
-     * 
-     * <p>If an instance of the requested implementation is already in the phase cache, that instance is
-     * used. Otherwise, a new instance is created and put in the phase cache.</p>
-     * 
-     * @param lgraph the graph to return the edge router for.
-     * @return the edge router to use.
-     */
-    private ILayoutPhase edgeRouterForGraph(final LGraph lgraph) {
-        ILayoutPhase edgeRouter;
-        
-        switch (lgraph.getProperty(LayoutOptions.EDGE_ROUTING)) {
-        case ORTHOGONAL:
-            edgeRouter = phaseCache.get(OrthogonalEdgeRouter.class);
-            if (edgeRouter == null) {
-                edgeRouter = new OrthogonalEdgeRouter();
-                phaseCache.put(OrthogonalEdgeRouter.class, edgeRouter);
-            }
-            break;
-            
-        case SPLINES:
-            edgeRouter = phaseCache.get(SplineEdgeRouter.class);
-            if (edgeRouter == null) {
-                edgeRouter = new SplineEdgeRouter();
-                phaseCache.put(SplineEdgeRouter.class, edgeRouter);
-            }
-            break;
-            
-        default: // POLYLINE
-            edgeRouter = phaseCache.get(PolylineEdgeRouter.class);
-            if (edgeRouter == null) {
-                edgeRouter = new PolylineEdgeRouter();
-                phaseCache.put(PolylineEdgeRouter.class, edgeRouter);
-            }
-        }
-        
-        return edgeRouter;
+        return layoutPhase;
     }
     
     /**
@@ -794,8 +578,8 @@ public final class KlayLayered {
     }
     
 
-    // /////////////////////////////////////////////////////////////////////////////
-    // Layout
+    ////////////////////////////////////////////////////////////////////////////////
+    // Actual Layout
 
     /**
      * Perform the five phases of the layered layouter.
@@ -876,8 +660,47 @@ public final class KlayLayered {
             processor.process(graph, new BasicProgressMonitor());
         }
     }
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////
+    // Graph Preprocessing (Property Configuration)
 
-    // /////////////////////////////////////////////////////////////////////////////
+    /** the minimal spacing between edges, so edges won't overlap. */
+    private static final float MIN_EDGE_SPACING = 2.0f;
+
+    /**
+     * Set special layout options for the layered graph.
+     * 
+     * @param lgraph a new layered graph
+     */
+    private void configureGraphProperties(final LGraph lgraph) {
+        // check the bounds of some layout options
+        lgraph.checkProperties(Properties.OBJ_SPACING, Properties.BORDER_SPACING,
+                Properties.THOROUGHNESS, Properties.ASPECT_RATIO);
+        
+        float spacing = lgraph.getProperty(Properties.OBJ_SPACING);
+        if (lgraph.getProperty(Properties.EDGE_SPACING_FACTOR) * spacing < MIN_EDGE_SPACING) {
+            // Edge spacing is determined by the product of object spacing and edge spacing factor.
+            // Make sure the resulting edge spacing is at least 2 in order to avoid overlapping edges.
+            lgraph.setProperty(Properties.EDGE_SPACING_FACTOR, MIN_EDGE_SPACING / spacing);
+        }
+        
+        Direction direction = lgraph.getProperty(LayoutOptions.DIRECTION);
+        if (direction == Direction.UNDEFINED) {
+            lgraph.setProperty(LayoutOptions.DIRECTION, LGraphUtil.getDirection(lgraph));
+        }
+        
+        // set the random number generator based on the random seed option
+        Integer randomSeed = lgraph.getProperty(Properties.RANDOM_SEED);
+        if (randomSeed == 0) {
+            lgraph.setProperty(InternalProperties.RANDOM, new Random());
+        } else {
+            lgraph.setProperty(InternalProperties.RANDOM, new Random(randomSeed));
+        }
+    }
+    
+
+    ////////////////////////////////////////////////////////////////////////////////
     // Graph Postprocessing (Size and External Ports)
     
     /**
