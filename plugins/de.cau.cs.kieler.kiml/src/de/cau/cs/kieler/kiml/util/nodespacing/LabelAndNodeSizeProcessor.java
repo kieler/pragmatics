@@ -1475,7 +1475,8 @@ public class LabelAndNodeSizeProcessor {
          * Returns the bounding box to which the specified location is mapped.
          * If there is no bounding box for the location yet, a new one is added and returned.
          *
-         * @param location the location for which to retrieve the bounding box.
+         * @param location
+         *            the location for which to retrieve the bounding box.
          * @return the corresponding bounding box.
          */
         public Rectangle retrieveLabelGroupsBoundingBox(final Location location) {
@@ -1484,8 +1485,10 @@ public class LabelAndNodeSizeProcessor {
             }
             return labelGroupsBoundingBoxes.get(location);
         }
-
     }
+
+    // /////////////////////////////////////////////////////////////////////////////
+    // LABEL PLACEMENT UTILITIES
 
     /**
      * Enumeration over all possible label placements.
@@ -1683,7 +1686,9 @@ public class LabelAndNodeSizeProcessor {
         IGNORED(ImmutableList.<EnumSet<NodeLabelPlacement>>of(),
                 null);
 
+        /* The corresponding placements to this location. */
         private final List<EnumSet<NodeLabelPlacement>> assignedPlacements;
+        /* The horizontal text alignment for this location. */
         private final NodeLabelPlacement horizontalAlignment;
 
         /**
@@ -1691,6 +1696,8 @@ public class LabelAndNodeSizeProcessor {
          *
          * @param assignedPlacements
          *            the valid {@link NodeLabelPlacement}s for this location.
+         * @param horizontalAlignment
+         *            the horizontal text alignment for this location.
          */
         private Location(final List<EnumSet<NodeLabelPlacement>> assignedPlacements,
                 final NodeLabelPlacement horizontalAlignment) {
@@ -1699,8 +1706,12 @@ public class LabelAndNodeSizeProcessor {
         }
 
         /**
+         * Converts a set of {@link NodeLabelPlacement}s to a {@link Location} if possible.
+         * 
          * @param labelPlacement
-         * @return
+         *            the set of placements to convert.
+         * @return the corresponding location. If no valid combination is given,
+         *         {@code Location.IGNORED} is returned.
          */
         private static Location fromNodeLabelPlacement(
                 final EnumSet<NodeLabelPlacement> labelPlacement) {
@@ -1714,6 +1725,13 @@ public class LabelAndNodeSizeProcessor {
 
     }
 
+    /**
+     * Information wrapper for size and position of a group of labels. Basically a {@link Rectangle}
+     * with an additional field for the current y-offset inside the group, used while placing the
+     * labels.
+     * 
+     * @author csp
+     */
     private static final class LabelGroup extends Rectangle {
         private double yOffset = 0;
     }
