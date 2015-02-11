@@ -159,6 +159,22 @@
          <knownOption
                option="de.cau.cs.kieler.klay.layered.linearSegmentsDeflectionDampening">
          </knownOption>
+         <knownOption
+               default="JUSTIFIED"
+               option="de.cau.cs.kieler.portAlignment">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.portAlignmentNorth">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.portAlignmentSouth">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.portAlignmentWest">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.portAlignmentEast">
+         </knownOption>
       </layoutAlgorithm>
       <layoutOption
             advanced="true"
