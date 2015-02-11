@@ -29,6 +29,7 @@ import com.google.common.collect.Maps;
  * analyses (see {@link AnalysisFailed}.
  * 
  * @author uru
+ * @kieler.ignore (excluded from review process)
  */
 public class AnalysisContext {
 
@@ -89,7 +90,14 @@ public class AnalysisContext {
     /**
      * @return the resultsMap
      */
-    public Map<String, Object> getResultsMap() {
+    public Map<String, Object> getResults() {
         return resultsMap;
+    }
+    
+    /**
+     * @return the analysisInstances
+     */
+    public Map<Class<?>, Object> getAnalysisInstances() {
+        return analysisInstances;
     }
 }

@@ -46,6 +46,7 @@ import de.cau.cs.kieler.kiml.evol.EvolPlugin;
 import de.cau.cs.kieler.kiml.evol.GenomeFactory;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
+import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.AnalysisData;
 import de.cau.cs.kieler.kiml.grana.AnalysisService;
 
@@ -224,7 +225,7 @@ public class EvaluationOperation implements IEvolutionaryOperation {
         }
         
         // perform analysis on the evaluation graph
-        Map<String, Object> results = AnalysisService.getInstance().analyzePresorted(
+        AnalysisContext context = AnalysisService.getInstance().analyzePresorted(
                 graph, analysisSequence, progressMonitor.subTask(1));
         
         Map<String, Double> metricWeights = population.getProperty(METRIC_WEIGHT);
@@ -239,7 +240,7 @@ public class EvaluationOperation implements IEvolutionaryOperation {
         double totalWeight = 0;
         for (AnalysisData analysisData : metrics) {
             String analysisId = analysisData.getId();
-            Object result = results.get(analysisId);
+            Object result = context.getResult(analysisId);
             if (result instanceof Float) {
                 float floatResult = (Float) result;
                 Double weight = metricWeights.get(analysisId);

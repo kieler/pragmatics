@@ -64,7 +64,7 @@ public class AnalysisEffect extends Job {
         final AnalysisContext context = AnalysisService.getInstance().analyze(parentNode, analyses,
                 new BasicProgressMonitor(0));
         // visualize the results using silent methods
-        VisualizationService.getInstance().visualize(analyses, context.getResultsMap(), true);
+        VisualizationService.getInstance().visualize(analyses, context.getResults(), true);
         
         return Status.OK_STATUS;
     }

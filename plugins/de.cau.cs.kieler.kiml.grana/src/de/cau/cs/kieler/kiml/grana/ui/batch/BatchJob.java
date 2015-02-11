@@ -98,7 +98,7 @@ public class BatchJob<T> {
         Map<String, Double> execResults =
                 graph.getData(KLayoutData.class).getProperty(BatchHandler.EXECUTION_TIME_RESULTS);
         BatchJobResult<T> batchJobResult =
-                new BatchJobResult<T>(this, context.getResultsMap(), execResults);
+                new BatchJobResult<T>(this, context.getResults(), execResults);
         monitor.done();
         return batchJobResult;
     }
