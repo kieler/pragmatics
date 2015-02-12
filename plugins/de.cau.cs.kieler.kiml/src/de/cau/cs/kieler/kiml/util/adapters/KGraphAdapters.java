@@ -76,12 +76,12 @@ public final class KGraphAdapters {
         protected T element;
         /** The layout data of the wrapped element. */
         protected KShapeLayout layout;
+        // CHECKSTYLEON VisibilityModifier
         /**
          * Internally used versatile data field. Can be used for arbitrary information.
          * No assumptions about its value or validity should be made.
          */
-        protected int id;
-        // CHECKSTYLEON VisibilityModifier
+        private int id;
         
         private static final IProperty<Float> OFFSET_PROXY = new Property<Float>(
                 LayoutOptions.OFFSET, 0.0f);
