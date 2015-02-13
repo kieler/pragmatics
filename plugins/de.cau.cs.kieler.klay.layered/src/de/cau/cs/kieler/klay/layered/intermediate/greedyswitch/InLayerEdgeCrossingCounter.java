@@ -13,9 +13,11 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 import com.google.common.collect.BoundType;
 import com.google.common.collect.Iterators;
@@ -34,6 +36,7 @@ abstract class InLayerEdgeCrossingCounter {
     /** The amount of inLayerEdges incident to each node from the west accessed by node.id. */
     private int[] westNodeCardinalities;
     private final LNode[] nodeOrder;
+    private final Map<LPort, Integer> portPositions;
 
     /**
      * Creates counter for crossings between in-layer inLayerEdges of neighboring nodes.
@@ -41,6 +44,7 @@ abstract class InLayerEdgeCrossingCounter {
      * @param nodeOrder
      */
     public InLayerEdgeCrossingCounter(final LNode[] nodeOrder) {
+        portPositions = new HashMap<LPort, Integer>();
         this.nodeOrder = nodeOrder;
         initializeLayer(nodeOrder);
     }
@@ -80,7 +84,7 @@ abstract class InLayerEdgeCrossingCounter {
         boolean hasPorts = false;
         for (LPort port : portsOrderedTopToBottom(node, portSide)) {
             hasPorts = true;
-            port.id = currentPortId;
+            portPositions.put(port, currentPortId);
             // Ports whose order on the node is not set have the same id.
             if (portOrderIsFixedFor(node)) {
                 cardinality++;
@@ -113,10 +117,10 @@ abstract class InLayerEdgeCrossingCounter {
     private void updatePortIds(final LNode firstNode, final LNode secondNode,
             final PortSide portSide, final int[] nodeCardinalities) {
         for (LPort port : portsOrderedTopToBottom(firstNode, portSide)) {
-            port.id += nodeCardinalities[secondNode.id];
+            portPositions.put(port, positionOf(port) + nodeCardinalities[secondNode.id]);
         }
         for (LPort port : portsOrderedTopToBottom(secondNode, portSide)) {
-            port.id -= nodeCardinalities[firstNode.id];
+            portPositions.put(port, positionOf(port) - nodeCardinalities[firstNode.id]);
         }
     }
 
@@ -147,8 +151,8 @@ abstract class InLayerEdgeCrossingCounter {
     }
 
     protected boolean isUpward(final LEdge edge, final LPort port) {
-        return edge.getTarget() == port ? edge.getSource().id < edge.getTarget().id : edge
-                .getSource().id > edge.getTarget().id;
+        return edge.getTarget() == port ? positionOf(edge.getSource()) < positionOf(edge
+                .getTarget()) : positionOf(edge.getSource()) > positionOf(edge.getTarget());
     }
 
     protected boolean portOrderIsFixedFor(final LNode node) {
@@ -156,8 +160,8 @@ abstract class InLayerEdgeCrossingCounter {
     }
 
     protected int amountOfPortsInbetweenEndsOf(final LEdge edge, final SortedMultiset<Integer> set) {
-        int lowerBound = Math.min(edge.getTarget().id, edge.getSource().id);
-        int upperBound = Math.max(edge.getTarget().id, edge.getSource().id);
+        int lowerBound = Math.min(positionOf(edge.getTarget()), positionOf(edge.getSource()));
+        int upperBound = Math.max(positionOf(edge.getTarget()), positionOf(edge.getSource()));
         return set.subMultiset(lowerBound, BoundType.OPEN, upperBound, BoundType.OPEN).size();
     }
 
@@ -193,5 +197,9 @@ abstract class InLayerEdgeCrossingCounter {
                 }
             }
         };
+    }
+
+    protected int positionOf(final LPort port) {
+        return portPositions.get(port);
     }
 }

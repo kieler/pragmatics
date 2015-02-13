@@ -90,12 +90,12 @@ public class InLayerEdgeNeighboringNodeCrossingCounter extends InLayerEdgeCrossi
         for (LPort port : portsOrderedTopToBottom(upperNode, portSide)) {
             for (LEdge edge : port.getConnectedEdges()) {
                 if (isInBetweenLayerEdge(edge)) {
-                    betweenLayerEdgePorts.add(port.id);
+                    betweenLayerEdgePorts.add(positionOf(port));
                 } else if (isNotSelfLoop(edge)) {
                     if (isUpward(edge, port)) {
-                        upwardUpperNodeEdgePorts.add(endOfEdgePort(edge, port).id);
+                        upwardUpperNodeEdgePorts.add(positionOf(endOfEdgePort(edge, port)));
                     } else {
-                        downwardUpperNodeEdgePorts.add(endOfEdgePort(edge, port).id);
+                        downwardUpperNodeEdgePorts.add(positionOf(endOfEdgePort(edge, port)));
                     }
                 }
             }
@@ -109,17 +109,17 @@ public class InLayerEdgeNeighboringNodeCrossingCounter extends InLayerEdgeCrossi
             for (LEdge edge : port.getConnectedEdges()) {
 
                 if (isInBetweenLayerEdge(edge)) {
-                    crossings += amountOfPortsAfter(port.id, downwardUpperNodeEdgePorts);
+                    crossings += amountOfPortsAfter(positionOf(port), downwardUpperNodeEdgePorts);
                 } else if (isNotSelfLoop(edge)) {
-                    if (downwardUpperNodeEdgePorts.contains(port.id)) {
+                    if (downwardUpperNodeEdgePorts.contains(positionOf(port))) {
                         crossings += countVisitedEdgeCrossings(port, edge);
-                        downwardUpperNodeEdgePorts.remove(port.id);
+                        downwardUpperNodeEdgePorts.remove(positionOf(port));
                     } else {
                         LPort endOfEdgePort = endOfEdgePort(edge, port);
                         if (isUpward(edge, port)) {
                             crossings += countUpwardEdgeCrossings(endOfEdgePort);
                         } else {
-                            downwardLowerNodeEdgePorts.add(endOfEdgePort.id);
+                            downwardLowerNodeEdgePorts.add(positionOf(endOfEdgePort));
                         }
                     }
                 }
@@ -134,8 +134,8 @@ public class InLayerEdgeNeighboringNodeCrossingCounter extends InLayerEdgeCrossi
     }
 
     private int countUpwardEdgeCrossings(final LPort endOfEdgePort) {
-        int crossings = amountOfPortsBefore(endOfEdgePort.id, upwardUpperNodeEdgePorts);
-        crossings += amountOfPortsAfter(endOfEdgePort.id, betweenLayerEdgePorts);
+        int crossings = amountOfPortsBefore(positionOf(endOfEdgePort), upwardUpperNodeEdgePorts);
+        crossings += amountOfPortsAfter(positionOf(endOfEdgePort), betweenLayerEdgePorts);
         crossings += downwardUpperNodeEdgePorts.size();
         return crossings;
     }

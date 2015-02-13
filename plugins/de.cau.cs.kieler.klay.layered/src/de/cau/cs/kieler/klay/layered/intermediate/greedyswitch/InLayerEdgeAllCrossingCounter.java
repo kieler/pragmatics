@@ -45,7 +45,9 @@ public class InLayerEdgeAllCrossingCounter extends InLayerEdgeCrossingCounter {
         int crossings = 0;
         for (LEdge edge : port.getConnectedEdges()) {
             if (isInBetweenLayerEdge(edge)) {
-                crossings += inLayerEdges.size() - downwardUpperNodeEdgePorts.count(port.id);
+                crossings +=
+                        inLayerEdges.size()
+                                - downwardUpperNodeEdgePorts.count(super.positionOf(port));
             } else if (isNotSelfLoop(edge)) {
                 if (inLayerEdges.contains(edge)) {
                     closeEdge(edge);
@@ -59,15 +61,15 @@ public class InLayerEdgeAllCrossingCounter extends InLayerEdgeCrossingCounter {
     }
 
     private void closeEdge(final LEdge edge) {
-        downwardUpperNodeEdgePorts.remove(edge.getSource().id);
-        downwardUpperNodeEdgePorts.remove(edge.getTarget().id);
+        downwardUpperNodeEdgePorts.remove(super.positionOf(edge.getSource()));
+        downwardUpperNodeEdgePorts.remove(super.positionOf(edge.getTarget()));
         inLayerEdges.remove(edge);
     }
 
     private void openEdge(final LEdge edge) {
         inLayerEdges.add(edge);
-        downwardUpperNodeEdgePorts.add(edge.getSource().id);
-        downwardUpperNodeEdgePorts.add(edge.getTarget().id);
+        downwardUpperNodeEdgePorts.add(super.positionOf(edge.getSource()));
+        downwardUpperNodeEdgePorts.add(super.positionOf(edge.getTarget()));
     }
 
 }
