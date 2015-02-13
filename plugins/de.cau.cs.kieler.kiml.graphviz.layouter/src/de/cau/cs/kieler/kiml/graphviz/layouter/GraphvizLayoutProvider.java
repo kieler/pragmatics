@@ -20,11 +20,17 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.xtext.resource.SaveOptions;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceSet;
+
+import com.google.inject.Injector;
 
 import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -36,6 +42,7 @@ import de.cau.cs.kieler.kiml.formats.GraphFormatData;
 import de.cau.cs.kieler.kiml.formats.IGraphFormatHandler;
 import de.cau.cs.kieler.kiml.formats.TransformationData;
 import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
+import de.cau.cs.kieler.kiml.graphviz.dot.GraphvizDotStandaloneSetup;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.GraphvizModel;
 import de.cau.cs.kieler.kiml.graphviz.dot.transform.Command;
 import de.cau.cs.kieler.kiml.graphviz.dot.transform.DotExporter;
@@ -54,7 +61,12 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  * @kieler.rating proposed yellow by msp
  */
 public class GraphvizLayoutProvider extends AbstractLayoutProvider {
-    
+
+    /** preference constant for determining whether to reuse a single Graphviz process. */
+    public static final String PREF_GRAPHVIZ_REUSE_PROCESS = "graphviz.reuseProcess";
+    /** default setting of above defined preference. */
+    public static final boolean REUSE_PROCESS_DEFAULT = true;
+
     /** the serial call number for usage in debug mode. */
     private static int serialCallNo = 0;
     
@@ -66,34 +78,84 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
     private DotFormatHandler dotHandler;
     /** the call number for the current execution. */
     private int myCallNo;
+    /** the current configuration regarding the process handling. */
+    private boolean reuseProcess;
+    /** a corresponding pref change listener updating {@link #reuseProcess}. */
+    private IPropertyChangeListener prefListener;
+    /** lazily created injector for creating required format handlers if running outside of Eclipse. */
+    private Injector injector;
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void initialize(final String parameter) {
+        final IPreferenceStore store = GraphvizLayouterPlugin.getDefault().getPreferenceStore();
+        reuseProcess = store.getBoolean(PREF_GRAPHVIZ_REUSE_PROCESS);
+        
+        prefListener = new IPropertyChangeListener() {
+            
+            public void propertyChange(final PropertyChangeEvent event) {
+               if (PREF_GRAPHVIZ_REUSE_PROCESS.equals(event.getProperty())) {
+                   reuseProcess = ((Boolean) event.getNewValue()).booleanValue();
+               }
+            }
+        };
+        store.addPropertyChangeListener(prefListener);
+
         command = Command.valueOf(parameter);
         graphvizTool = new GraphvizTool(command);
-        // the dot format handler is indirectly fetched in order to ensure proper injection
+        
+        // the dot format handler is indirectly fetched in order to ensure proper injection (if we're
+        // inside Eclipse, use the GraphFormatsService to retrieve the handler; otherwise, use an
+        // injector to retrieve an instance)
         IGraphFormatHandler<?> handler = null;
-        GraphFormatData formatData = GraphFormatsService.getInstance().getFormatData(
-                DotFormatHandler.ID);
-        if (formatData != null) {
-            handler = formatData.getHandler();
-        }
-        if (handler instanceof DotFormatHandler) {
-            dotHandler = (DotFormatHandler) handler;
+        if (Platform.isRunning()) {
+            GraphFormatData formatData = GraphFormatsService.getInstance().getFormatData(
+                    DotFormatHandler.ID);
+            if (formatData != null) {
+                handler = formatData.getHandler();
+            }
+            
+            if (handler instanceof DotFormatHandler) {
+                dotHandler = (DotFormatHandler) handler;
+            } else {
+                throw new IllegalStateException("The Graphviz Dot language support is not available.");
+            }
         } else {
-            throw new IllegalStateException("The Graphviz Dot language support is not available.");
+            dotHandler = getInjector().getInstance(DotFormatHandler.class);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public void dispose() {
+        final GraphvizLayouterPlugin plugin = GraphvizLayouterPlugin.getDefault();
+
+        // since during platform shutdown plug-ins will be stopped in reverse order of their dependencies
+        //  'plugin' is likely to be 'null' when kiml.service calls 'dispose()' on the layout managers
+        // in this case removing the preference change listener should be obsolete ;-)
+        if (plugin != null && prefListener != null) {
+            plugin.getPreferenceStore().removePropertyChangeListener(prefListener);
+        }
+        prefListener = null;
+
         graphvizTool.cleanup(Cleanup.STOP);
+    }
+    
+    /**
+     * Returns the injector, creating a new instance if none was created yet.
+     * 
+     * @return the injector.
+     */
+    private Injector getInjector() {
+        if (injector == null) {
+            injector = new GraphvizDotStandaloneSetup().createInjectorAndDoEMFRegistration();
+        }
+        
+        return injector;
     }
 
     /**
@@ -139,7 +201,7 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
             transData.getTargetGraphs().set(0, graphvizOutput);
             dotHandler.getExporter().transferLayout(transData);
         } finally {
-            graphvizTool.cleanup(Cleanup.NORMAL);
+            graphvizTool.cleanup(reuseProcess ? Cleanup.NORMAL : Cleanup.STOP);
             progressMonitor.done();
         }
     }

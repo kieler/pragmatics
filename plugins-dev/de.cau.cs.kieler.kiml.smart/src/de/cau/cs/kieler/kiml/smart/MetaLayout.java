@@ -22,6 +22,7 @@ import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.AnalysisFailed;
 import de.cau.cs.kieler.kiml.grana.AnalysisService;
 import de.cau.cs.kieler.kiml.options.GraphFeature;
@@ -41,7 +42,7 @@ public class MetaLayout {
     /** the configuration mapping. */
     private Map<IProperty<?>, Object> config;
     /** the analysis cache. */
-    private Map<String, Object> analysisCache;
+    private AnalysisContext context;
     /** set of recognized graph features. */
     private final EnumSet<GraphFeature> graphFeatures = EnumSet.noneOf(GraphFeature.class);
     /** the smart layout rule results. */
@@ -100,11 +101,11 @@ public class MetaLayout {
      */
     @SuppressWarnings("unchecked")
     public <T> T analyze(final String analysisId) {
-        if (analysisCache == null) {
-            analysisCache = Maps.newHashMap();
+        if (context == null) {
+            context = new AnalysisContext();
         }
         Object result = AnalysisService.getInstance().analyze(graph, analysisId,
-                new BasicProgressMonitor(0), analysisCache);
+                new BasicProgressMonitor(0), context);
         if (result instanceof AnalysisFailed) {
             AnalysisFailed fail = (AnalysisFailed) result;
             if (fail.getException() == null) {

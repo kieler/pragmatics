@@ -13,10 +13,13 @@
  */
 package de.cau.cs.kieler.klighd.xtext.transformations
 
+import com.google.common.base.Predicate
 import com.google.common.base.Strings
 import com.google.common.collect.ImmutableList
 import com.google.inject.Inject
+import de.cau.cs.kieler.core.kgraph.EMapPropertyHolder
 import de.cau.cs.kieler.core.kgraph.KEdge
+import de.cau.cs.kieler.core.kgraph.KGraphData
 import de.cau.cs.kieler.core.kgraph.KGraphElement
 import de.cau.cs.kieler.core.kgraph.KLabel
 import de.cau.cs.kieler.core.kgraph.KLabeledGraphElement
@@ -43,6 +46,7 @@ import de.cau.cs.kieler.kiml.util.KimlUtil
 import de.cau.cs.kieler.klighd.KlighdConstants
 import de.cau.cs.kieler.klighd.SynthesisOption
 import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
+import de.cau.cs.kieler.klighd.util.KlighdProperties
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier
 
@@ -111,6 +115,18 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
     /** Default rendering for spline edges. */
     private var KRendering defaultSplineRendering;
     
+    
+    // The next two definitions are used to load possibly persisted klighd information
+    //  that is ignored by kiml, e.g. the expansion state of nodes
+    private static val PREDICATE_IS_KGRAPHDATA  =  new Predicate<EMapPropertyHolder>() {
+        override apply(EMapPropertyHolder input) {
+            return input instanceof KGraphData;
+        }
+    }
+    private static val KNOWN_PROPS = ImmutableList.of(KlighdProperties.EXPAND, KlighdProperties.EXPANDED_RENDERING, 
+        KlighdProperties.COLLAPSED_RENDERING, KlighdProperties.TOOLTIP)
+    
+    
     /**
      * {@inheritDoc} 
      */
@@ -144,15 +160,20 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         val copier = new Copier()
         val KNode result = copier.copy(graph) as KNode
         copier.copyReferences()
-        
+
+        // Persistent entries of the original graph are already loaded in the KGraphResource
+        //  but until now nobody knows about any persisted entries that originate from KLighD.
+        // First, this might be the expansion state of nodes. Second, also KRendering elements
+        //  may carry persisted entries that have to be parsed before we build the view model.
+        KimlUtil.loadDataElements(result, PREDICATE_IS_KGRAPHDATA, KNOWN_PROPS)
+         
         // Evaluate the defaults property
         try {
             defaults = graph.getData(typeof(KLayoutData)).getProperty(DEFAULTS_PROPERTY)
         } catch (ClassCastException cce) {
-            /* This is a 'special' property not known as layout option hence it is not type-checked,
-             * possibly yielding a class cast exception if neither 'true' nor 'false' are specified
-             * as value.
-             */
+            // This is a 'special' property not known as layout option hence it is not type-checked,
+            //  possibly yielding a class cast exception if neither 'true' nor 'false' are specified
+            //  as value.
         }
         
         // Create a rendering library for reuse of renderings

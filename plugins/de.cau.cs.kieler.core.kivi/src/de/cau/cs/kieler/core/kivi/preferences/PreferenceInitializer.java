@@ -33,9 +33,9 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
     public void initializeDefaultPreferences() {
         final IPreferenceStore preferenceStore = KiViPlugin.getDefault().getPreferenceStore();
 
-        // chsch: deactivated initial kivi activation as it prone to
+        // chsch: deactivated initial kivi activation as it is prone to
         //  impair the memory management (garbage collection) due
-        //  to its nature of retaining of triggered trigger states
+        //  to its nature of retaining triggered trigger states
         preferenceStore.setDefault(KiVi.PROPERTY_ACTIVE, false);
     }
 }

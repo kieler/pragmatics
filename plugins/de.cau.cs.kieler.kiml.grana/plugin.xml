@@ -538,6 +538,53 @@
                name="P-Stress">
          </component>
       </analysis>
+      <analysis
+            category="de.cau.cs.kieler.kiml.grana.drawing"
+            class="de.cau.cs.kieler.kiml.grana.analyses.AxisParallelEdgesAnalysis"
+            description="Determines the number of edges that are straight and axis aligned."
+            id="de.cau.cs.kieler.kiml.grana.axisParallelEdges"
+            name="Axis-Parallel Edges">
+         <component
+               name="Top">
+         </component>
+         <component
+               name="Left">
+         </component>
+         <component
+               name="Bottom">
+         </component>
+         <component
+               name="Right">
+         </component>
+         <component
+                name="Sum">
+         </component>
+      </analysis>
+      <analysis
+            category="de.cau.cs.kieler.kiml.grana.drawing"
+            class="de.cau.cs.kieler.kiml.grana.analyses.AxisParallelEdgeSegmentsAnalysis"
+            description="Determines the number of edge segments that are straight and axis aligned."
+            id="de.cau.cs.kieler.kiml.grana.axisParallelEdgeSegments"
+            name="Axis-Parallel Edge Segments">
+         <component
+               name="Top">
+         </component>
+         <component
+               name="Left">
+         </component>
+         <component
+               name="Bottom">
+         </component>
+         <component
+               name="Right">
+         </component>
+         <component
+                name="Sum">
+         </component>
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.grana.layers">
+         </dependency>
+      </analysis>
    </extension>
 
 </plugin>

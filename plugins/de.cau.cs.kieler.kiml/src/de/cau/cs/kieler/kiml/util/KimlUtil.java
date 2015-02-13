@@ -23,11 +23,13 @@ import java.util.Set;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import de.cau.cs.kieler.core.kgraph.EMapPropertyHolder;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
@@ -60,9 +62,10 @@ import de.cau.cs.kieler.kiml.options.SizeOptions;
 /**
  * Utility methods for KGraphs and layout data.
  * 
+ * @author msp
+ * @author uru
  * @kieler.design proposed by msp
  * @kieler.rating 2009-12-11 proposed yellow msp
- * @author msp
  */
 public final class KimlUtil {
     
@@ -554,13 +557,12 @@ public final class KimlUtil {
     }
 
     /**
-     * Determines whether the given child node is a descendant of the parent
-     * node. This method does not regard a node as its own descendant.
+     * Determines whether the given child node is a descendant of the parent node. This method does
+     * not regard a node as its own descendant.
      * 
      * @param child a child node
      * @param parent a parent node
-     * @return {@code true} if {@code child} is a direct or indirect child of {@code
-     *         parent}.
+     * @return {@code true} if {@code child} is a direct or indirect child of {@code parent}.
      */
     public static boolean isDescendant(final KNode child, final KNode parent) {
         KNode current = child;
@@ -621,21 +623,31 @@ public final class KimlUtil {
      * @param yoffset y coordinate offset
      */
     public static void translate(final KNode parent, final float xoffset, final float yoffset) {
-        for (KNode node : parent.getChildren()) {
-            KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+        for (KNode child : parent.getChildren()) {
+            // Translate node position
+            KShapeLayout nodeLayout = child.getData(KShapeLayout.class);
             nodeLayout.setXpos(nodeLayout.getXpos() + xoffset);
             nodeLayout.setYpos(nodeLayout.getYpos() + yoffset);
-            for (KEdge edge : node.getOutgoingEdges()) {
-                KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-                translate(edgeLayout.getSourcePoint(), xoffset, yoffset);
-                for (KPoint bendPoint : edgeLayout.getBendPoints()) {
-                    translate(bendPoint, xoffset, yoffset);
-                }
-                translate(edgeLayout.getTargetPoint(), xoffset, yoffset);
-                for (KLabel edgeLabel : edge.getLabels()) {
-                    KShapeLayout labelLayout = edgeLabel.getData(KShapeLayout.class);
-                    labelLayout.setXpos(labelLayout.getXpos() + xoffset);
-                    labelLayout.setYpos(labelLayout.getYpos() + yoffset);
+            
+            // Translate edge bend points
+            for (KEdge edge : child.getOutgoingEdges()) {
+                // If the target of this edge is a descendent of the current child, its bend points are
+                // relative to the child's position and thus don't need to be translated
+                if (!isDescendant(edge.getTarget(), child)) {
+                    // Translate edge bend points
+                    KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
+                    translate(edgeLayout.getSourcePoint(), xoffset, yoffset);
+                    for (KPoint bendPoint : edgeLayout.getBendPoints()) {
+                        translate(bendPoint, xoffset, yoffset);
+                    }
+                    translate(edgeLayout.getTargetPoint(), xoffset, yoffset);
+                    
+                    // Translate edge label positions
+                    for (KLabel edgeLabel : edge.getLabels()) {
+                        KShapeLayout labelLayout = edgeLabel.getData(KShapeLayout.class);
+                        labelLayout.setXpos(labelLayout.getXpos() + xoffset);
+                        labelLayout.setYpos(labelLayout.getYpos() + yoffset);
+                    }
                 }
             }
         }
@@ -689,20 +701,53 @@ public final class KimlUtil {
     }
     
     /**
-     * Loads all {@link de.cau.cs.kieler.core.properties.IProperty} of KGraphData elements of a
-     * KGraph by deserializing {@link PersistentEntry} tuples.
-     * Values are parsed using layout option data obtained from the {@link LayoutMetaDataService}.
-     * Options that cannot be resolved immediately (e.g. because the extension points have not
-     * been read yet) are stored as {@link LayoutOptionProxy}.
+     * Loads all {@link de.cau.cs.kieler.core.properties.IProperty IProperty} of {@link KLayoutData}
+     * elements of a KGraph by deserializing {@link PersistentEntry} tuples. Values are parsed using
+     * layout option data obtained from the {@link LayoutMetaDataService}. Options that cannot be
+     * resolved immediately (e.g. because the extension points have not been read yet) are stored as
+     * {@link LayoutOptionProxy}.
      * 
-     * @param graph 
+     * @param graph
      *            the root element of the graph to load elements of.
      * @param knownProps
      *            a set of additional properties that are known, hence should be parsed properly
      */
     public static void loadDataElements(final KNode graph,
             final IProperty<?>... knownProps) {
-        
+        loadDataElements(graph, PREDICATE_IS_KLAYOUTDATA, knownProps);
+    }
+
+    /**
+     * A predicate returning true if the passed element is an instance 
+     * of {@link IPropertyHolder}.
+     */
+    public static final Predicate<EMapPropertyHolder> PREDICATE_IS_KLAYOUTDATA =
+            new Predicate<EMapPropertyHolder>() {
+                public boolean apply(final EMapPropertyHolder input) {
+                    return input instanceof KLayoutData;
+                }
+            };
+    
+    /**
+     * Loads all {@link de.cau.cs.kieler.core.properties.IProperty IProperty} of elements that pass
+     * the test performed by the {@code handledTypes} predicate of a KGraph by deserializing
+     * {@link PersistentEntry} tuples. Values are parsed using layout option data obtained from the
+     * {@link LayoutMetaDataService}. Options that cannot be resolved immediately (e.g. because the
+     * extension points have not been read yet) are stored as {@link LayoutOptionProxy}.
+     * 
+     * @param graph
+     *            the root element of the graph to load elements of.
+     * @param handledTypes
+     *            a predicate checking if we desire to load data elements for a certain subclass of
+     *            {@link EMapPropertyHolder}.
+     * @param knownProps
+     *            a set of additional properties that are known, hence should be parsed properly
+     * 
+     * @return the graph itself
+     */
+    public static KNode loadDataElements(final KNode graph,
+            final Predicate<EMapPropertyHolder> handledTypes, final IProperty<?>... knownProps) {
+
         Map<String, IProperty<?>> knowPropsMap = Maps.newHashMap();
         for (IProperty<?> p : knownProps) {
             knowPropsMap.put(p.getId(), p);
@@ -712,14 +757,17 @@ public final class KimlUtil {
         TreeIterator<EObject> iterator = graph.eAllContents();
         while (iterator.hasNext()) {
             EObject eObject = iterator.next();
-            if (eObject instanceof KLayoutData) {
-                final KLayoutData layoutData = (KLayoutData) eObject;
-                for (PersistentEntry persistentEntry : layoutData.getPersistentEntries()) {
-                    loadDataElement(dataService, layoutData, persistentEntry.getKey(),
+            if (eObject instanceof EMapPropertyHolder
+                    && handledTypes.apply((EMapPropertyHolder) eObject)) {
+                final EMapPropertyHolder holder = (EMapPropertyHolder) eObject;
+                for (PersistentEntry persistentEntry : holder.getPersistentEntries()) {
+                    loadDataElement(dataService, holder, persistentEntry.getKey(),
                             persistentEntry.getValue(), knowPropsMap);
                 }
             }
         }
+        
+        return graph;
     }
 
     /**
@@ -766,7 +814,8 @@ public final class KimlUtil {
      * @param value
      *            the desired option value
      * @param knownProps
-     *            a map with additional properties that are known, hence should be parsed properly
+     *            a map with additional properties that are known, hence should be parsed properly.
+     *            Only floats, integers, and boolean values can be parsed here.
      */
     public static void loadDataElement(final LayoutMetaDataService dataService,
             final IPropertyHolder propertyHolder, final String id, final String value,

@@ -14,10 +14,9 @@
 
 package de.cau.cs.kieler.kiml.grana.analyses;
 
-import java.util.Map;
-
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.AnalysisFailed;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
 
@@ -35,12 +34,12 @@ public class AspectRatioAnalysis implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
+    public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Aspect ratio analysis", 1);
         
         // Fetch the results of the area analysis
-        Object o = results.get(AreaAnalysis.ID);
+        Object o = context.getResult(AreaAnalysis.ID);
         if (o == null) {
             progressMonitor.done();
             

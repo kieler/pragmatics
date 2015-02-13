@@ -29,8 +29,9 @@ import de.cau.cs.kieler.core.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.core.math.KVector
 import de.cau.cs.kieler.core.math.KVectorChain
 import de.cau.cs.kieler.core.math.KielerMath
-import de.cau.cs.kieler.kiml.formats.gml.gml.Element
-import de.cau.cs.kieler.kiml.formats.gml.gml.GmlModel
+import de.cau.cs.kieler.kiml.formats.gml.CollectionElement
+import de.cau.cs.kieler.kiml.formats.gml.Element
+import de.cau.cs.kieler.kiml.formats.gml.GMLModel
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
 import de.cau.cs.kieler.kiml.options.LayoutOptions
@@ -47,7 +48,7 @@ import java.util.List
  * 
  * @author uru
  */
-class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GmlModel> {
+class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GMLModel> {
     
     @Inject extension KNodeExtensions
     @Inject extension KEdgeExtensions
@@ -70,7 +71,7 @@ class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GmlModel> {
          )
     } 
     
-    override transform(GmlModel model) {
+    override transform(GMLModel model) {
         
         return createNode => [ root | 
             
@@ -90,6 +91,16 @@ class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GmlModel> {
                 root.setLayoutOption(LayoutOptions.ALGORITHM, FixedLayoutProvider.ID)
             }
         ]
+    }
+    
+    private def Iterable<Element> getElements(Element d) {
+        switch (d) {
+            CollectionElement: {
+                val CollectionElement ce = (d as CollectionElement)
+                ce.elements
+            } 
+            default: #[]
+        }
     }
      
     private def void convert(Element d, KNode parent) {

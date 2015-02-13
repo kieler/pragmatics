@@ -17,6 +17,7 @@ import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
 import de.cau.cs.kieler.kiml.grana.analyses.EdgeCountAnalysis;
 import de.cau.cs.kieler.kiml.grana.analyses.EdgeCrossingsAnalysis;
@@ -38,10 +39,11 @@ public class EdgeCrossingsMetric implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
+    public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
             final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Edge crossings metric", 1);
         
+        Map<String, Object> results = context.getResults();
         // EdgeCrossingsAnalysis result is Object[] {min, avg, max, sum}
         Object[] crossingsResult = (Object[]) results.get(EdgeCrossingsAnalysis.ID);
         int crossingsCount = (Integer) crossingsResult[3]; // SUPPRESS CHECKSTYLE MagicNumber
