@@ -371,7 +371,6 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
         // In the old days, the ports were distributed at this point in time. This has been moved to
         // a
         // separate processor, the PortDistributionProcessor.
-
         dispose();
         monitor.done();
     }
@@ -999,7 +998,6 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                 }
             }
         }
-
         return crossings;
     }
 
