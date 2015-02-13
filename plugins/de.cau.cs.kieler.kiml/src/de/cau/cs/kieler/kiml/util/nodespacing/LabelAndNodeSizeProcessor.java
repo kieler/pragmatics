@@ -91,8 +91,7 @@ public class LabelAndNodeSizeProcessor {
 
             /*
              * PHASE 1 (SAD DUCK):
-             * PLACE PORT LABELS Port labels are placed and port margins are calculated. We
-             * currently only support one label per port.
+             * PLACE PORT LABELS Port labels are placed and port margins are calculated.
              */
             final PortLabelPlacement labelPlacement =
                     node.getProperty(LayoutOptions.PORT_LABEL_PLACEMENT);
@@ -614,7 +613,7 @@ public class LabelAndNodeSizeProcessor {
 
         case FIXED_POS:
             // Find the maximum position of ports
-            minSizeForPorts = calculateMaxPortPositions(data.node, accountForLabels);
+            minSizeForPorts = calculateMinNodeSizeForFixedPorts(data.node, accountForLabels);
             break;
         }
 
@@ -857,14 +856,17 @@ public class LabelAndNodeSizeProcessor {
     }
 
     /**
-     * For fixed node positions, returns the minimum size of the node to contain all ports.
+     * For fixed port positions, returns the minimum size of the node to contain all ports.
+     * The minimum size equals the position plus the size of the most bottom-right port
+     * (biggest x- and y-coordinate)
      *
      * @param node
      *            the node to calculate the minimum size for.
      * @param accountForLabels
-     * @return
+     *            whether to regard port labels.
+     * @return the minimum size to contain all port positions.
      */
-    private KVector calculateMaxPortPositions(final NodeAdapter<?> node,
+    private KVector calculateMinNodeSizeForFixedPorts(final NodeAdapter<?> node,
             final boolean accountForLabels) {
 
         // Port positions must be fixed for this method to be called
@@ -1109,7 +1111,7 @@ public class LabelAndNodeSizeProcessor {
 
         // The way we calculate everything depends on whether any additional port space is specified
         Margins additionalPortSpace = nodeData.node.getProperty(LayoutOptions.ADDITIONAL_PORT_SPACE);
-        Boolean isAdditionalPortSpace = true;
+        boolean isAdditionalPortSpace = true;
         
         if (additionalPortSpace == null) {
             isAdditionalPortSpace = false;

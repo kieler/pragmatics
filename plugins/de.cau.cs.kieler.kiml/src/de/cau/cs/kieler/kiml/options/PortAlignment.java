@@ -20,16 +20,16 @@ package de.cau.cs.kieler.kiml.options;
  */
 public enum PortAlignment {
 
-    /** Ports are placed at the most top resp. left position with minimal spacing. */
+    /** Ports are placed at the most top respectively left position with minimal spacing. */
     BEGIN,
 
     /** Ports are centered with minimal spacing. */
     CENTER,
 
-    /** Ports are placed at the most top resp. left position with minimal spacing. */
+    /** Ports are placed at the most top respectively left position with minimal spacing. */
     END,
 
     /** Ports are evenly distributed. */
-    JUSTIFIED
+    JUSTIFIED;
 
 }

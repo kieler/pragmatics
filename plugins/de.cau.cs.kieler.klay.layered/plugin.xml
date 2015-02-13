@@ -170,16 +170,16 @@
                option="de.cau.cs.kieler.portAlignment">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.portAlignmentNorth">
+               option="de.cau.cs.kieler.portAlignment.north">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.portAlignmentSouth">
+               option="de.cau.cs.kieler.portAlignment.south">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.portAlignmentWest">
+               option="de.cau.cs.kieler.portAlignment.west">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.portAlignmentEast">
+               option="de.cau.cs.kieler.portAlignment.east">
          </knownOption>
       </layoutAlgorithm>
       <layoutOption

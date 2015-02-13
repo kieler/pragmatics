@@ -395,25 +395,25 @@ public final class LayoutOptions {
      * The port distribution for northern side.
      */
     public static final IProperty<PortAlignment> PORT_ALIGNMENT_NORTH =
-            new Property<PortAlignment>("de.cau.cs.kieler.portAlignmentNorth", null);
+            new Property<PortAlignment>("de.cau.cs.kieler.portAlignment.north", null);
 
     /**
      * The port distribution for southern side.
      */
     public static final IProperty<PortAlignment> PORT_ALIGNMENT_SOUTH =
-            new Property<PortAlignment>("de.cau.cs.kieler.portAlignmentSouth", null);
+            new Property<PortAlignment>("de.cau.cs.kieler.portAlignment.south", null);
 
     /**
      * The port distribution for western side.
      */
     public static final IProperty<PortAlignment> PORT_ALIGNMENT_WEST =
-            new Property<PortAlignment>("de.cau.cs.kieler.portAlignmentWest", null);
+            new Property<PortAlignment>("de.cau.cs.kieler.portAlignment.west", null);
 
     /**
      * The port distribution for eastern side.
      */
     public static final IProperty<PortAlignment> PORT_ALIGNMENT_EAST =
-            new Property<PortAlignment>("de.cau.cs.kieler.portAlignmentEast", null);
+            new Property<PortAlignment>("de.cau.cs.kieler.portAlignment.east", null);
     
     /**
      * The position of a node, port, or label. This is used by the
