@@ -106,7 +106,8 @@ public class InLayerEdgeNeighboringNodeCrossingCounter extends InLayerEdgeCrossi
     }
 
     private void addEdgesFromUpperNode(final PortSide portSide) {
-        for (LPort port : portsOrderedTopToBottom(upperNode, portSide)) {
+        PortIterable ports = new PortIterable(upperNode, portSide);
+        for (LPort port : ports) {
             for (LEdge edge : port.getConnectedEdges()) {
                 if (isInBetweenLayerEdge(edge)) {
                     betweenLayerEdgePorts.add(positionOf(port));
@@ -124,7 +125,8 @@ public class InLayerEdgeNeighboringNodeCrossingCounter extends InLayerEdgeCrossi
     // TODO-alan Comment with ASCII-Drawing. This is super confusing.
     private int countCrossingsToLowerNode(final PortSide portSide) {
         int crossings = 0;
-        for (LPort port : portsOrderedTopToBottom(lowerNode, portSide)) {
+        PortIterable ports = new PortIterable(lowerNode, portSide);
+        for (LPort port : ports) {
             for (LEdge edge : port.getConnectedEdges()) {
 
                 if (isInBetweenLayerEdge(edge)) {

@@ -64,7 +64,8 @@ public class InLayerEdgeAllCrossingCounter extends InLayerEdgeCrossingCounter {
         downwardUpperNodeEdgePorts.clear();
         inLayerEdges.clear();
         for (LNode node : getNodeOrder()) {
-            for (LPort port : portsOrderedTopToBottom(node, portSide)) {
+            PortIterable ports = new PortIterable(node, portSide);
+            for (LPort port : ports) {
                 crossings += countCrossingsOnPort(port);
             }
         }

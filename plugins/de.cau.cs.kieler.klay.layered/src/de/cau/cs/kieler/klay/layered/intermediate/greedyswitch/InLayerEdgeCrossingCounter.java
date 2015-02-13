@@ -14,13 +14,9 @@
 package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 
 import com.google.common.collect.BoundType;
-import com.google.common.collect.Iterators;
 import com.google.common.collect.SortedMultiset;
 
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -88,7 +84,8 @@ abstract class InLayerEdgeCrossingCounter {
         int currentPortId = portId;
         int cardinality = 0;
         boolean hasPorts = false;
-        for (LPort port : portsOrderedTopToBottom(node, portSide)) {
+        PortIterable ports = new PortIterable(node, portSide);
+        for (LPort port : ports) {
             hasPorts = true;
             portPositions.put(port, currentPortId);
             // Ports whose order on the node is not set have the same id.
@@ -122,10 +119,12 @@ abstract class InLayerEdgeCrossingCounter {
 
     private void updatePortIds(final LNode firstNode, final LNode secondNode,
             final PortSide portSide, final int[] nodeCardinalities) {
-        for (LPort port : portsOrderedTopToBottom(firstNode, portSide)) {
+        PortIterable ports = new PortIterable(firstNode, portSide);
+        for (LPort port : ports) {
             portPositions.put(port, positionOf(port) + nodeCardinalities[secondNode.id]);
         }
-        for (LPort port : portsOrderedTopToBottom(secondNode, portSide)) {
+        ports = new PortIterable(secondNode, portSide);
+        for (LPort port : ports) {
             portPositions.put(port, positionOf(port) - nodeCardinalities[firstNode.id]);
         }
     }
@@ -165,40 +164,6 @@ abstract class InLayerEdgeCrossingCounter {
         int lowerBound = Math.min(positionOf(edge.getTarget()), positionOf(edge.getSource()));
         int upperBound = Math.max(positionOf(edge.getTarget()), positionOf(edge.getSource()));
         return set.subMultiset(lowerBound, BoundType.OPEN, upperBound, BoundType.OPEN).size();
-    }
-
-    /**
-     * Creates an Iterable which iterates over all ports on the given side of the layer from top to
-     * bottom.
-     * 
-     * @param node
-     * @param side
-     * @return
-     */
-    protected Iterable<LPort> portsOrderedTopToBottom(final LNode node, final PortSide side) {
-        return new Iterable<LPort>() {
-            public Iterator<LPort> iterator() {
-                if (side == PortSide.WEST) {
-                    final List<LPort> ports = node.getPorts();
-                    Iterator<LPort> iterable = new Iterator<LPort>() {
-                        private final ListIterator<LPort> listIterator = ports.listIterator(ports
-                                .size());
-
-                        public boolean hasNext() {
-                            return listIterator.hasPrevious();
-                        }
-
-                        public LPort next() {
-                            return listIterator.previous();
-                        }
-                    };
-                    return Iterators.filter(iterable, LPort.WEST_PREDICATE);
-                } else {
-                    Iterator<LPort> iterable = node.getPorts().iterator();
-                    return Iterators.filter(iterable, LPort.EAST_PREDICATE);
-                }
-            }
-        };
     }
 
     protected int positionOf(final LPort port) {
