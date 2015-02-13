@@ -107,7 +107,7 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
      *
      */
     private void layerSweepConsiderThreeLayers() {
-        sweepBackwardAndForwardInGraph();
+        sweepBackwardAndForwardInGraph(); // TODO-alan continue until improvement is false
         setAsGraph(currentNodeOrder);
     }
 
@@ -124,18 +124,18 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
     private void layerSweepConsiderTwoLayers() {
         int crossingsInGraph = getCurrentAmountOfCrossings();
         int crossingsInGraphInLastSweep = Integer.MAX_VALUE;
+        sweepBackwardAndForwardInGraph();
+        setCurrentNodeOrderAsBestNodeOrder();
         while (crossingsInGraphInLastSweep > crossingsInGraph) {
             setCurrentNodeOrderAsBestNodeOrder();
             if (crossingsInGraph == 0) {
                 break;
             }
-
             sweepBackwardAndForwardInGraph();
 
             crossingsInGraphInLastSweep = crossingsInGraph;
             crossingsInGraph = getCurrentAmountOfCrossings();
         }
-
         setAsGraph(bestNodeOrder);
     }
 
@@ -189,25 +189,27 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
             continueSwitching = sweepDownwardInLayer(freeLayerIndex, switchDecider);
             improved |= continueSwitching;
         } while (continueSwitching);
-        return improved;
+        return improved; // not doing anything with this //TODO-alan
     }
 
     private boolean sweepDownwardInLayer(final int layerIndex, final SwitchDecider switchDecider) {
         boolean continueSwitching = false;
-
         int lengthOfFreeLayer = currentNodeOrder[layerIndex].length;
         for (int upperNodeIndex = 0; upperNodeIndex < lengthOfFreeLayer - 1; upperNodeIndex++) {
             int lowerNodeIndex = upperNodeIndex + 1;
 
             if (switchDecider.doesSwitchReduceCrossings(upperNodeIndex, lowerNodeIndex)) {
-                exchangeNodes(upperNodeIndex, lowerNodeIndex, layerIndex);
+                exchangeNodes(upperNodeIndex, lowerNodeIndex, layerIndex, switchDecider);
                 continueSwitching = true;
             }
         }
         return continueSwitching;
     }
 
-    private void exchangeNodes(final int indexOne, final int indexTwo, final int layerIndex) {
+    private void exchangeNodes(final int indexOne, final int indexTwo, final int layerIndex,
+            final SwitchDecider switchDecider) {
+        switchDecider.notifyOfSwitch(currentNodeOrder[layerIndex][indexOne],
+                currentNodeOrder[layerIndex][indexTwo]);
         LNode[] layer = currentNodeOrder[layerIndex];
         LNode temp = layer[indexTwo];
         layer[indexTwo] = layer[indexOne];

@@ -17,6 +17,7 @@ import java.util.List;
 
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
+import de.cau.cs.kieler.klay.layered.properties.NodeType;
 
 /**
  * TODO-alan This class is an abstract superclass for six different variants of the greedy switch
@@ -26,8 +27,8 @@ import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
  * crossing matrix show the amount of crossings between incident edges to nodes i and j when node i
  * is above node j. {@link GreedySwitchOnDemandCrossingMatrixProcessor} calculates the entries in
  * the crossing matrix only when needed. The last two both use
- * {@link InBetweenLayerEdgeTwoNodeCrossingCounter} which calculates two entries i,j and j,i in the crossing
- * matrix. All variants can
+ * {@link InBetweenLayerEdgeTwoNodeCrossingCounter} which calculates two entries i,j and j,i in the
+ * crossing matrix. All variants can
  * 
  * @author alan
  */
@@ -61,7 +62,9 @@ abstract class SwitchDecider {
      *             on faulty input
      */
     SwitchDecider(final int freeLayerIndex, final LNode[][] graph) {
-        assert graph.length > freeLayerIndex;
+        if (freeLayerIndex >= graph.length) {
+            throw new IndexOutOfBoundsException();
+        }
         this.freeLayerIndex = freeLayerIndex;
         freeLayer = graph[freeLayerIndex];
         this.graph = graph;
@@ -78,6 +81,14 @@ abstract class SwitchDecider {
      */
     public abstract boolean doesSwitchReduceCrossings(final int upperNodeIndex,
             final int lowerNodeIndex);
+
+    protected void switchNodes(final int upperNodeIndex, final int lowerNodeIndex) {
+        LNode upperNode = graph[freeLayerIndex][upperNodeIndex];
+        graph[freeLayerIndex][upperNodeIndex] = graph[freeLayerIndex][lowerNodeIndex];
+        graph[freeLayerIndex][lowerNodeIndex] = upperNode;
+    }
+
+    public abstract void notifyOfSwitch(final LNode upperNode, final LNode lowerNode);
 
     /**
      * Check if in layer {@link InternalProperties.IN_LAYER_SUCCESSOR_CONSTRAINTS} or
@@ -106,7 +117,21 @@ abstract class SwitchDecider {
                                                                   // TODO-alan
             hasSuccessorConstraint |= upperLayoutUnit != lowerLayoutUnit; // ????
         }
+
+        boolean normalAndNorthSouthNode =
+                isNorthSouthPortNode(upperNode) && isNormalNode(lowerNode)
+                        || isNorthSouthPortNode(lowerNode) && isNormalNode(upperNode);
+        hasSuccessorConstraint |= normalAndNorthSouthNode;
+
         return hasSuccessorConstraint;
+    }
+
+    private boolean isNormalNode(final LNode node) {
+        return node.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORMAL;
+    }
+
+    private boolean isNorthSouthPortNode(final LNode node) {
+        return node.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT;
     }
 
     /**

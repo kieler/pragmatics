@@ -37,6 +37,7 @@ abstract class OnDemandCrossingMatrixSwitchDecider extends CrossingMatrixSwitchD
         if (!isCrossingMatrixFilled[upperNode.id][lowerNode.id]) {
             fillCrossingMatrix(upperNode, lowerNode);
             isCrossingMatrixFilled[upperNode.id][lowerNode.id] = true;
+            isCrossingMatrixFilled[lowerNode.id][upperNode.id] = true;
         }
         return crossingMatrix[upperNode.id][lowerNode.id];
     }

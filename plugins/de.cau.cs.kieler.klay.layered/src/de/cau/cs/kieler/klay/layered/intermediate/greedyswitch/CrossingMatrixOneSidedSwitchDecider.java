@@ -48,7 +48,7 @@ class CrossingMatrixOneSidedSwitchDecider extends CrossingMatrixSwitchDecider {
         }
     }
 
-    void calculateOneSidedCrossingMatrix(final CrossingCountSide direction) {
+    private void calculateOneSidedCrossingMatrix(final CrossingCountSide direction) {
         int matrixSize = super.getFreeLayer().length;
         for (int i = 0; i < matrixSize; i++) {
             for (int j = i + 1; j < matrixSize; j++) {

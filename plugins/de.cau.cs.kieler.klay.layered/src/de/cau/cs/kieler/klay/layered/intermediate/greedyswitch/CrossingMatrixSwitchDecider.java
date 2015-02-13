@@ -22,6 +22,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 abstract class CrossingMatrixSwitchDecider extends SwitchDecider {
 
     private final InLayerEdgeNeighboringNodeCrossingCounter inLayerCounter;
+    private final NorthSouthPortNeighbouringNodeCounter northSouthCounter;
     private final InBetweenLayerEdgeTwoNodeCrossingCounter inBetweenLayerCrossingCounter;
 
     /**
@@ -34,6 +35,7 @@ abstract class CrossingMatrixSwitchDecider extends SwitchDecider {
         inBetweenLayerCrossingCounter =
                 new InBetweenLayerEdgeTwoNodeCrossingCounter(graph, freeLayerIndex);
         inLayerCounter = new InLayerEdgeNeighboringNodeCrossingCounter(super.getFreeLayer());
+        northSouthCounter = new NorthSouthPortNeighbouringNodeCounter(super.getFreeLayer());
     }
 
     private void initializeNodeIds(final LNode[][] graph) {
@@ -57,15 +59,24 @@ abstract class CrossingMatrixSwitchDecider extends SwitchDecider {
         LNode upperNode = super.getFreeLayer()[upperNodeIndex];
         LNode lowerNode = super.getFreeLayer()[lowerNodeIndex];
         inLayerCounter.countCrossingsBetweenNeighbouringNodes(upperNode, lowerNode);
+        northSouthCounter.countCrossings(upperNode, lowerNode);
 
         int upperLowerCrossings =
                 getCrossingMatrixEntry(upperNode, lowerNode)
-                        + inLayerCounter.getUpperLowerCrossings();
+                        + inLayerCounter.getUpperLowerCrossings()
+                        + northSouthCounter.getUpperLowerCrossings();
         int lowerUpperCrossings =
                 getCrossingMatrixEntry(lowerNode, upperNode)
-                        + inLayerCounter.getLowerUpperCrossings();
+                        + inLayerCounter.getLowerUpperCrossings()
+                        + northSouthCounter.getLowerUpperCrossings();
 
         return upperLowerCrossings > lowerUpperCrossings;
+    }
+
+    @Override
+    public void notifyOfSwitch(final LNode upperNode, final LNode lowerNode) {
+        inLayerCounter.notifyNodeSwitch(upperNode, lowerNode);
+        northSouthCounter.notifyNodeSwitch(upperNode, lowerNode);
     }
 
     abstract int getCrossingMatrixEntry(final LNode upperNode, final LNode lowerNode);
