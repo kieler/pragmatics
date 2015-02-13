@@ -67,7 +67,7 @@ public class NorthSouthPortNeighbouringNodeCounterTest {
 
     @Test
     public void oneNodeIsLongEdgeDummy() {
-        creator.getNorthSouthDummyEdgeCrossingGraph();
+        creator.getSouthernNorthSouthDummyEdgeCrossingGraph();
         countCrossingsInLayerBetweenNodes(1, 1, 2);
         assertThat(counter.getUpperLowerCrossings(), is(1));
         assertThat(counter.getLowerUpperCrossings(), is(0));
@@ -122,10 +122,57 @@ public class NorthSouthPortNeighbouringNodeCounterTest {
         countCrossingsInLayerBetweenNodes(0, 0, 1);
         assertThat(counter.getUpperLowerCrossings(), is(1));
         assertThat(counter.getLowerUpperCrossings(), is(0));
-        switchNodes(0, 1);
-        counter.notifyNodeSwitch(layer[0], layer[1]);
-        counter.countCrossings(layer[0], layer[1]);
+        switchAndRecount(0, 1);
         assertThat(counter.getUpperLowerCrossings(), is(0));
+        assertThat(counter.getLowerUpperCrossings(), is(1));
+    }
+
+    private void switchAndRecount(final int upperNodeIndex, final int lowerNodeIndex) {
+        switchNodes(upperNodeIndex, lowerNodeIndex);
+        counter.countCrossings(layer[upperNodeIndex], layer[lowerNodeIndex]);
+    }
+
+    @Test
+    public void southernTwoWesternEdges() {
+        creator.getNorthSouthSouthernTwoWesternEdges();
+        countCrossingsInLayerBetweenNodes(1, 1, 2);
+        assertThat(counter.getUpperLowerCrossings(), is(1));
+        assertThat(counter.getLowerUpperCrossings(), is(0));
+        switchAndRecount(1, 2);
+        assertThat(counter.getUpperLowerCrossings(), is(0));
+        assertThat(counter.getLowerUpperCrossings(), is(1));
+    }
+
+    @Test
+    public void southernWesternPortToEastAndEasternPortToWest() {
+        creator.getNorthSouthSouthernWesternPortToEastAndEasternPortToWest();
+        countCrossingsInLayerBetweenNodes(1, 1, 2);
+        assertThat(counter.getUpperLowerCrossings(), is(1));
+        assertThat(counter.getLowerUpperCrossings(), is(1));
+        switchAndRecount(1, 2);
+        assertThat(counter.getUpperLowerCrossings(), is(1));
+        assertThat(counter.getLowerUpperCrossings(), is(1));
+    }
+
+    @Test
+    public void northernBothEdgesWestern() {
+        creator.getNorthSouthNorthernWesternEdges();
+        countCrossingsInLayerBetweenNodes(1, 0, 1);
+        assertThat(counter.getUpperLowerCrossings(), is(0));
+        assertThat(counter.getLowerUpperCrossings(), is(1));
+        switchAndRecount(0, 1);
+        assertThat(counter.getUpperLowerCrossings(), is(1));
+        assertThat(counter.getLowerUpperCrossings(), is(0));
+    }
+
+    @Test
+    public void northernEasternPortToWestWesternPortToEast() {
+        creator.getNorthSouthNorthernEasternPortToWestWesternPortToEast();
+        countCrossingsInLayerBetweenNodes(1, 0, 1);
+        assertThat(counter.getUpperLowerCrossings(), is(1));
+        assertThat(counter.getLowerUpperCrossings(), is(1));
+        switchAndRecount(0, 1);
+        assertThat(counter.getUpperLowerCrossings(), is(1));
         assertThat(counter.getLowerUpperCrossings(), is(1));
     }
 

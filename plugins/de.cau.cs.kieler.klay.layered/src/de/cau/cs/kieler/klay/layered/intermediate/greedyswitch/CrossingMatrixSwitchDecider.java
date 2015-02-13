@@ -76,7 +76,6 @@ abstract class CrossingMatrixSwitchDecider extends SwitchDecider {
     @Override
     public void notifyOfSwitch(final LNode upperNode, final LNode lowerNode) {
         inLayerCounter.notifyNodeSwitch(upperNode, lowerNode);
-        northSouthCounter.notifyNodeSwitch(upperNode, lowerNode);
     }
 
     abstract int getCrossingMatrixEntry(final LNode upperNode, final LNode lowerNode);
