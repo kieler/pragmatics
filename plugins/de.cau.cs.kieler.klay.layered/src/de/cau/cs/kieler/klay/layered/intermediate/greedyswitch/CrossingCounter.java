@@ -318,10 +318,12 @@ public class CrossingCounter {
         int crossings = 0;
         boolean northernSide = true;
         LNode recentNormalNode = null;
-
         int amountOfLongEdgeDummies = 0;
+        int amountOfNorthSouthEdges = 0;
+
         // Iterate through the layer's nodes
         for (int i = 0; i < layer.length; i++) {
+
             LNode node = layer[i];
             NodeType nodeType = node.getProperty(InternalProperties.NODE_TYPE);
             if (nodeType == NodeType.NORMAL) {
@@ -331,12 +333,14 @@ public class CrossingCounter {
                 recentNormalNode = node;
                 northernSide = false;
                 amountOfLongEdgeDummies = 0;
+                amountOfNorthSouthEdges = 0;
             } else if (nodeType == NodeType.LONG_EDGE) {
-                if (!northernSide) {
+                if (northernSide) {
+                    crossings += amountOfNorthSouthEdges;
+                } else {
                     amountOfLongEdgeDummies++;
                 }
             } else if (nodeType == NodeType.NORTH_SOUTH_PORT) {
-                crossings += amountOfLongEdgeDummies; // TODO-alan comment and Test
                 // If we have a dummy that represents a self-loop, continue with the next one
                 // (self-loops have no influence on the number of crossings anyway, regardless of
                 // where
@@ -352,6 +356,13 @@ public class CrossingCounter {
                     recentNormalNode = currentNormalNode;
                     northernSide = true;
                     amountOfLongEdgeDummies = 0;
+                    amountOfNorthSouthEdges = 0;
+                }
+
+                if (northernSide) { // TODO-alan
+                    amountOfNorthSouthEdges++;
+                } else {
+                    crossings += amountOfLongEdgeDummies;
                 }
 
                 // Check if the current normal node has a fixed port order; if not, we can ignore it
@@ -470,10 +481,6 @@ public class CrossingCounter {
                                     && node2InputPort == node2OutputPort) {
                                 crossings--;
                             }
-                        }
-                    } else if (node2Type == NodeType.LONG_EDGE) {
-                        if (northernSide) {
-                            crossings++;
                         }
                     }
                 }

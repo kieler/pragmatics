@@ -36,6 +36,7 @@ public class CrossingCounterTest {
     private TestGraphCreator testGraphCreator;
     private LGraph graph;
     private CrossingCounter counter;
+    private LNode[][] graphAsLNodeArray;
 
     // CHECKSTYLEOFF Javadoc
     // CHECKSTYLEOFF MagicNumber
@@ -75,7 +76,7 @@ public class CrossingCounterTest {
 
     @Test
     public void northSouthDummyEdgeCrossing() {
-        graph = testGraphCreator.getNorthSouthDummyEdgeCrossingGraph();
+        graph = testGraphCreator.getSouthernNorthSouthDummyEdgeCrossingGraph();
         int amountOfCrossings = whenCountingAllCrossings();
         assertThat(amountOfCrossings, is(1));
     }
@@ -112,6 +113,48 @@ public class CrossingCounterTest {
 
         nodeOrder = switchNodesInLayer(0, 1, 1);
         amountOfCrossings = counter.countCrossingsBetweenLayersInOrder(nodeOrder[0], nodeOrder[1]);
+        assertThat(amountOfCrossings, is(1));
+    }
+
+    @Test
+    public void southernTwoWesternEdges() {
+        graph = testGraphCreator.getNorthSouthSouthernTwoWesternEdges();
+        int amountOfCrossings = countNorthSouthCrossingsInLayer(1);
+        assertThat(amountOfCrossings, is(1));
+        amountOfCrossings = counter.countNorthSouthPortCrossings(switchNodesInLayer(1, 2, 1)[1]);
+        assertThat(amountOfCrossings, is(0));
+    }
+
+    private int countNorthSouthCrossingsInLayer(final int layerIndex) {
+        graphAsLNodeArray = getAsLNodeArray(graph);
+        counter = new CrossingCounter(graphAsLNodeArray);
+        return counter.countNorthSouthPortCrossings(layerIndex);
+    }
+
+    @Test
+    public void southernWesternPortToEastAndEasternPortToWest() {
+        graph = testGraphCreator.getNorthSouthSouthernWesternPortToEastAndEasternPortToWest();
+        int amountOfCrossings = countNorthSouthCrossingsInLayer(1);
+        assertThat(amountOfCrossings, is(1));
+        amountOfCrossings = counter.countNorthSouthPortCrossings(switchNodesInLayer(1, 2, 1)[1]);
+        assertThat(amountOfCrossings, is(1));
+    }
+
+    @Test
+    public void northernBothEdgesWestern() {
+        graph = testGraphCreator.getNorthSouthNorthernWesternEdges();
+        int amountOfCrossings = countNorthSouthCrossingsInLayer(1);
+        assertThat(amountOfCrossings, is(0));
+        amountOfCrossings = counter.countNorthSouthPortCrossings(switchNodesInLayer(0, 1, 1)[1]);
+        assertThat(amountOfCrossings, is(1));
+    }
+
+    @Test
+    public void northernEasternPortToWestWesternPortToEast() {
+        graph = testGraphCreator.getNorthSouthNorthernEasternPortToWestWesternPortToEast();
+        int amountOfCrossings = countNorthSouthCrossingsInLayer(1);
+        assertThat(amountOfCrossings, is(1));
+        amountOfCrossings = counter.countNorthSouthPortCrossings(switchNodesInLayer(0, 1, 1)[1]);
         assertThat(amountOfCrossings, is(1));
     }
 
@@ -188,6 +231,27 @@ public class CrossingCounterTest {
         graph = testGraphCreator.getGraphNoCrossingsDueToPortOrderNotFixed();
         int amountOfCrossings = whenCountingAllCrossings();
         assertThat(amountOfCrossings, is(0));
+    }
+
+    @Test
+    public void oneNodeIsLongEdgeDummy() {
+        graph = testGraphCreator.getSouthernNorthSouthDummyEdgeCrossingGraph();
+        int amountOfCrossings = whenCountingAllCrossings();
+        assertThat(amountOfCrossings, is(1));
+    }
+
+    @Test
+    public void oneNodeIsLongEdgeDummyNorthern() {
+        graph = testGraphCreator.getNorthernNorthSouthDummyEdgeCrossingGraph();
+        int amountOfCrossings = whenCountingAllCrossings();
+        assertThat(amountOfCrossings, is(1));
+    }
+
+    @Test
+    public void multipleNorthSouthAndLongEdgeDummiesOnBothSides() {
+        graph = testGraphCreator.getMultipleNorthSouthAndLongEdgeDummiesOnBothSides();
+        int amountOfCrossings = whenCountingAllCrossings();
+        assertThat(amountOfCrossings, is(4));
     }
 
     private int whenCountingAllCrossings() {

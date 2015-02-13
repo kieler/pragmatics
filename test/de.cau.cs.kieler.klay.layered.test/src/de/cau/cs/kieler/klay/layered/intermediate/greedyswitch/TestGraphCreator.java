@@ -1132,7 +1132,7 @@ public class TestGraphCreator {
      * 
      * @return Graph of the form above.
      */
-    public LGraph getNorthSouthDummyEdgeCrossingGraph() {
+    public LGraph getSouthernNorthSouthDummyEdgeCrossingGraph() {
         LNode leftNode = addNodeToLayer(makeLayer());
         LNode[] middleNodes = addNodesToLayer(3, makeLayer());
         LNode[] rightNodes = addNodesToLayer(2, makeLayer());
@@ -1141,11 +1141,7 @@ public class TestGraphCreator {
         eastWestEdgeFromTo(middleNodes[1], rightNodes[0]);
         middleNodes[1].setProperty(InternalProperties.NODE_TYPE, NodeType.LONG_EDGE);
 
-        LPort middleTopSouthPort = addPortOnSide(middleNodes[0], PortSide.SOUTH);
-        eastWestEdgeFromTo(middleNodes[2], rightNodes[1]);
-        middleNodes[2].getPorts().get(0).setProperty(InternalProperties.ORIGIN, middleTopSouthPort);
-        middleNodes[2].setProperty(InternalProperties.ORIGIN, middleNodes[0]);
-        middleNodes[2].setProperty(InternalProperties.NODE_TYPE, NodeType.NORTH_SOUTH_PORT);
+        addNorthSouthEdge(PortSide.SOUTH, middleNodes[0], middleNodes[2], rightNodes[1], true);
         return graph;
     }
 
@@ -1171,12 +1167,46 @@ public class TestGraphCreator {
         eastWestEdgeFromTo(middleNodes[1], rightNodes[1]);
         middleNodes[1].setProperty(InternalProperties.NODE_TYPE, NodeType.LONG_EDGE);
 
-        LPort middleBottomNorthPort = addPortOnSide(middleNodes[2], PortSide.NORTH);
-        eastWestEdgeFromTo(middleNodes[0], rightNodes[0]);
-        middleNodes[0].getPorts().get(0)
-                .setProperty(InternalProperties.ORIGIN, middleBottomNorthPort);
-        middleNodes[0].setProperty(InternalProperties.ORIGIN, middleNodes[0]);
-        middleNodes[0].setProperty(InternalProperties.NODE_TYPE, NodeType.NORTH_SOUTH_PORT);
+        addNorthSouthEdge(PortSide.NORTH, middleNodes[2], middleNodes[0], rightNodes[0], true);
+        return graph;
+
+    }
+
+    /**
+     * <pre>
+     *   ----*
+     *   |---*
+     *   ||  
+     * *-++--*
+     *   ||
+     *  ----
+     *  |__|
+     *   ||
+     * *-++--*
+     *   ||--*
+     *   |---*
+     * </pre>
+     * 
+     * .
+     * 
+     * @return Graph of the form above.
+     */
+    public LGraph getMultipleNorthSouthAndLongEdgeDummiesOnBothSides() {
+        LNode[] leftNodes = addNodesToLayer(2, makeLayer());
+        LNode[] middleNodes = addNodesToLayer(7, makeLayer());
+        LNode[] rightNodes = addNodesToLayer(6, makeLayer());
+
+        eastWestEdgeFromTo(leftNodes[0], middleNodes[2]);
+        eastWestEdgeFromTo(leftNodes[1], middleNodes[4]);
+        eastWestEdgeFromTo(middleNodes[2], rightNodes[2]);
+        eastWestEdgeFromTo(middleNodes[4], rightNodes[4]);
+        middleNodes[2].setProperty(InternalProperties.NODE_TYPE, NodeType.LONG_EDGE);
+        middleNodes[4].setProperty(InternalProperties.NODE_TYPE, NodeType.LONG_EDGE);
+
+        addNorthSouthEdge(PortSide.NORTH, middleNodes[3], middleNodes[0], rightNodes[0], true);
+        addNorthSouthEdge(PortSide.NORTH, middleNodes[3], middleNodes[1], rightNodes[1], true);
+        addNorthSouthEdge(PortSide.SOUTH, middleNodes[3], middleNodes[5], rightNodes[4], true);
+        addNorthSouthEdge(PortSide.SOUTH, middleNodes[3], middleNodes[6], rightNodes[5], true);
         return graph;
 
     }
@@ -1242,23 +1272,8 @@ public class TestGraphCreator {
 
         setFixedOrderConstraint(middleNodes[0]);
 
-        setAsNorthSouthNode(middleNodes[1]);
-        setAsNorthSouthNode(middleNodes[2]);
-        middleNodes[1].setProperty(InternalProperties.ORIGIN, middleNodes[0]);
-        middleNodes[2].setProperty(InternalProperties.ORIGIN, middleNodes[0]);
-
-        // ports are added in clockwise fashion, so add bottom port first.
-        LPort middleTopNodeRightPort = addPortOnSide(middleNodes[0], PortSide.SOUTH);
-        LPort middleMiddleNodeRightPort = addPortOnSide(middleNodes[1], PortSide.EAST);
-        LPort rightNodeLeftPort = addPortOnSide(rightNode, PortSide.WEST);
-        addEdgeBetweenPorts(middleMiddleNodeRightPort, rightNodeLeftPort);
-        middleMiddleNodeRightPort.setProperty(InternalProperties.ORIGIN, middleTopNodeRightPort);
-
-        LPort middleTopNodeLeftPort = addPortOnSide(middleNodes[0], PortSide.SOUTH);
-        LPort middleBottomNodeLeftPort = addPortOnSide(middleNodes[2], PortSide.WEST);
-        LPort leftNodeRightPort = addPortOnSide(leftNode, PortSide.EAST);
-        addEdgeBetweenPorts(leftNodeRightPort, middleBottomNodeLeftPort);
-        middleBottomNodeLeftPort.setProperty(InternalProperties.ORIGIN, middleTopNodeLeftPort);
+        addNorthSouthEdge(PortSide.SOUTH, middleNodes[0], middleNodes[1], rightNode, true);
+        addNorthSouthEdge(PortSide.SOUTH, middleNodes[0], middleNodes[2], leftNode, false);
         return graph;
     }
 
@@ -1283,24 +1298,148 @@ public class TestGraphCreator {
 
         setFixedOrderConstraint(middleNodes[0]);
 
-        setAsNorthSouthNode(middleNodes[1]);
-        setAsNorthSouthNode(middleNodes[2]);
-        middleNodes[1].setProperty(InternalProperties.ORIGIN, middleNodes[0]);
-        middleNodes[2].setProperty(InternalProperties.ORIGIN, middleNodes[0]);
+        // ports are added in clockwise fashion!
+        addNorthSouthEdge(PortSide.SOUTH, middleNodes[0], middleNodes[1], leftNode, true);
+        addNorthSouthEdge(PortSide.SOUTH, middleNodes[0], middleNodes[2], rightNode, false);
 
-        // ports are added in clockwise fashion, so add bottom port first.
-        LPort middleTopNodeRightPort = addPortOnSide(middleNodes[0], PortSide.SOUTH);
-        LPort middleMiddleNodeLeftPort = addPortOnSide(middleNodes[1], PortSide.WEST);
-        LPort leftNodeRightPort = addPortOnSide(leftNode, PortSide.EAST);
-        addEdgeBetweenPorts(leftNodeRightPort, middleMiddleNodeLeftPort);
-        middleMiddleNodeLeftPort.setProperty(InternalProperties.ORIGIN, middleTopNodeRightPort);
-
-        LPort middleTopNodeLeftPort = addPortOnSide(middleNodes[0], PortSide.SOUTH);
-        LPort middleBottomNodeRightPort = addPortOnSide(middleNodes[2], PortSide.EAST);
-        LPort rightNodeLeftPort = addPortOnSide(rightNode, PortSide.WEST);
-        addEdgeBetweenPorts(middleBottomNodeRightPort, rightNodeLeftPort);
-        middleBottomNodeRightPort.setProperty(InternalProperties.ORIGIN, middleTopNodeLeftPort);
         return graph;
+    }
+
+    /**
+     * <pre>
+     *     ______
+     *     |____|
+     *      |  |
+     *   *--+--|   
+     *   *--|
+     * 
+     * </pre>
+     * 
+     * .
+     * 
+     * @return Graph of the form above.
+     */
+    public LGraph getNorthSouthSouthernTwoWesternEdges() {
+        LNode[] leftNodes = addNodesToLayer(2, makeLayer());
+        LNode[] middleNodes = addNodesToLayer(3, makeLayer());
+
+        setFixedOrderConstraint(middleNodes[0]);
+
+        // ports are added in clockwise fashion!
+        addNorthSouthEdge(PortSide.SOUTH, middleNodes[0], middleNodes[1], leftNodes[0], true);
+        addNorthSouthEdge(PortSide.SOUTH, middleNodes[0], middleNodes[2], leftNodes[1], true);
+
+        return graph;
+    }
+
+    /**
+     * <pre>
+     * 
+     * *---|
+     *     |   
+     * *-- |
+     *   | |
+     *  _|_|_
+     *  |   |
+     *  |___|
+     *  .
+     * </pre>
+     * 
+     * @return Graph of the form above.
+     */
+    public LGraph getNorthSouthNorthernWesternEdges() {
+        LNode[] leftNodes = addNodesToLayer(2, makeLayer());
+        LNode[] middleNodes = addNodesToLayer(3, makeLayer());
+
+        setFixedOrderConstraint(middleNodes[2]);
+
+        // ports are added in clockwise fashion!
+        addNorthSouthEdge(PortSide.NORTH, middleNodes[2], middleNodes[1], leftNodes[1], true);
+        addNorthSouthEdge(PortSide.NORTH, middleNodes[2], middleNodes[0], leftNodes[0], true);
+
+        return graph;
+    }
+
+    /**
+     * <pre>
+     * 
+     * *----
+     *     |   
+     *   --+--*
+     *   | |
+     *  _|_|_
+     *  |   |
+     *  |___|
+     *  .
+     * </pre>
+     * 
+     * @return Graph of the form above.
+     */
+    public LGraph getNorthSouthNorthernEasternPortToWestWesternPortToEast() {
+        LNode leftNode = addNodeToLayer(makeLayer());
+        LNode[] middleNodes = addNodesToLayer(3, makeLayer());
+        LNode rightNode = addNodeToLayer(makeLayer());
+
+        setFixedOrderConstraint(middleNodes[2]);
+
+        // ports are added in clockwise fashion!
+        addNorthSouthEdge(PortSide.NORTH, middleNodes[2], middleNodes[1], rightNode, false);
+        addNorthSouthEdge(PortSide.NORTH, middleNodes[2], middleNodes[0], leftNode, true);
+
+        return graph;
+    }
+
+    /**
+     * <pre>
+     *     ______
+     *     |____|
+     *      |  |
+     *      |--+--*   
+     *         |
+     *   *-----|
+     * 
+     * </pre>
+     * 
+     * .
+     * 
+     * @return Graph of the form above.
+     */
+    public LGraph getNorthSouthSouthernWesternPortToEastAndEasternPortToWest() {
+        LNode leftNode = addNodeToLayer(makeLayer());
+        LNode[] middleNodes = addNodesToLayer(3, makeLayer());
+        LNode rightNode = addNodeToLayer(makeLayer());
+
+        setFixedOrderConstraint(middleNodes[0]);
+
+        // ports are added in clockwise fashion!
+        addNorthSouthEdge(PortSide.SOUTH, middleNodes[0], middleNodes[2], leftNode, true);
+        addNorthSouthEdge(PortSide.SOUTH, middleNodes[0], middleNodes[1], rightNode, false);
+
+        return graph;
+    }
+
+    private void addNorthSouthEdge(final PortSide side, final LNode nsPortNode,
+            final LNode northSouthNode, final LNode normalNode, final boolean normalNodeIsOrigin) {
+        boolean normalNodeEastOfNsPortNode =
+                normalNode.getLayer().getIndex() < nsPortNode.getLayer().getIndex();
+        PortSide direction = normalNodeEastOfNsPortNode ? PortSide.WEST : PortSide.EAST;
+        LPort nsNodePort = addPortOnSide(northSouthNode, direction);
+
+        PortSide targetNodePortSide = direction == PortSide.WEST ? PortSide.EAST : PortSide.WEST;
+        LPort normalNodePort = addPortOnSide(normalNode, targetNodePortSide);
+
+        if (normalNodeIsOrigin) {
+            addEdgeBetweenPorts(normalNodePort, nsNodePort);
+        } else {
+            addEdgeBetweenPorts(nsNodePort, normalNodePort);
+        }
+
+        northSouthNode.setProperty(InternalProperties.ORIGIN, nsPortNode);
+
+        setAsNorthSouthNode(northSouthNode);
+
+        LPort originPort = addPortOnSide(nsPortNode, side);
+        nsNodePort.setProperty(InternalProperties.ORIGIN, originPort);
     }
 
     /**
