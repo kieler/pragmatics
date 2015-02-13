@@ -25,12 +25,20 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 
+/**
+ * Test for extracted and modified CrossingCounter.
+ * 
+ * @author alan
+ *
+ */
 public class CrossingCounterTest {
 
     private TestGraphCreator testGraphCreator;
     private LGraph graph;
     private CrossingCounter counter;
 
+    // CHECKSTYLEOFF Javadoc
+    // CHECKSTYLEOFF MagicNumber
     @Before
     public void setup() {
         testGraphCreator = new TestGraphCreator();

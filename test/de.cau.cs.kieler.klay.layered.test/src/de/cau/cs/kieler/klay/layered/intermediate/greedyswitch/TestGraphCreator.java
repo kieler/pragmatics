@@ -994,9 +994,10 @@ public class TestGraphCreator {
      *  _|_|_
      *  |   |
      *  |___|
+     *  .
      * </pre>
      * 
-     * @return
+     * @return Graph of the form above.
      */
     public LGraph getNorthSouthUpwardCrossingGraph() {
 
@@ -1127,7 +1128,9 @@ public class TestGraphCreator {
      *   *---*
      * </pre>
      * 
-     * @return
+     * .
+     * 
+     * @return Graph of the form above.
      */
     public LGraph getNorthSouthDummyEdgeCrossingGraph() {
         LNode leftNode = addNodeToLayer(makeLayer());
@@ -1155,7 +1158,9 @@ public class TestGraphCreator {
      *   *
      * </pre>
      * 
-     * @return
+     * .
+     * 
+     * @return Graph of the form above.
      */
     public LGraph getNorthernNorthSouthDummyEdgeCrossingGraph() {
         LNode leftNode = addNodeToLayer(makeLayer());
@@ -1225,6 +1230,10 @@ public class TestGraphCreator {
      *   ___|      *
      *  *
      * </pre>
+     * 
+     * .
+     * 
+     * @return Graph of the form above.
      */
     public LGraph getNorthSouthCrossingGraphEdgesFromEastAndWestNoCrossings() {
         LNode leftNode = addNodeToLayer(makeLayer());
@@ -1262,6 +1271,10 @@ public class TestGraphCreator {
      *      |_____*
      * 
      * </pre>
+     * 
+     * .
+     * 
+     * @return Graph of the form above.
      */
     public LGraph getNorthSouthCrossingGraphEdgesFromEastAndWestAndCross() {
         LNode leftNode = addNodeToLayer(makeLayer());
@@ -1290,7 +1303,20 @@ public class TestGraphCreator {
         return graph;
     }
 
-    public LGraph shouldSwitchThreeTimesGraph() { // TODO rename.
+    /**
+     * <pre>
+     * |--/*
+     * *-+-*
+     *  /\ 
+     * *--+* 
+     *     *
+     * </pre>
+     * 
+     * .
+     * 
+     * @return Graph of the form above.
+     */
+    public LGraph shouldSwitchThreeTimesGraph() { // TODO-alan rename.
         LNode[] leftNodes = addNodesToLayer(2, makeLayer());
         LNode[] rightNodes = addNodesToLayer(4, makeLayer());
 
@@ -1304,7 +1330,21 @@ public class TestGraphCreator {
         return graph;
     }
 
-    public LGraph getSwitchedProblemGraph() { // TODO rename.
+    /**
+     * <pre>
+     * *----*
+     *  \\ 
+     *   \--*
+     *    --*
+     * *---/
+     *  \---*
+     * </pre>
+     * 
+     * .
+     * 
+     * @return Graph of the form above.
+     */
+    public LGraph getSwitchedProblemGraph() { // TODO-alan rename.
         LNode[] leftNodes = addNodesToLayer(2, makeLayer());
         LNode[] rightNodes = addNodesToLayer(4, makeLayer());
 
@@ -1326,9 +1366,9 @@ public class TestGraphCreator {
      * *   *
      * </pre>
      * 
-     * Graph of the form above.
+     * .
      * 
-     * @return
+     * @return Graph of the form above.
      */
     public LGraph twoEdgesIntoSamePort() {
         Layer leftLayer = makeLayer();
@@ -1358,9 +1398,9 @@ public class TestGraphCreator {
      * *---*
      * </pre>
      * 
-     * Graph of the form above.
+     * .
      * 
-     * @return
+     * @return Graph of the form above.
      */
     public LGraph twoEdgesIntoSamePortCrossesWhenSwitched() {
         Layer leftLayer = makeLayer();
@@ -1391,9 +1431,9 @@ public class TestGraphCreator {
      * *---*
      * </pre>
      * 
-     * Graph of the form above.
+     * .
      * 
-     * @return
+     * @return Graph of the form above.
      */
     public LGraph twoEdgesIntoSamePortResolvesCrossingWhenSwitched() {
         Layer leftLayer = makeLayer();
@@ -1427,9 +1467,7 @@ public class TestGraphCreator {
      * Two edges into same port.
      * </pre>
      * 
-     * Graph of the form above.
-     * 
-     * @return
+     * @return Graph of the form above.
      */
     public LGraph twoEdgesIntoSamePortFromEastWithFixedPortOrder() {
         Layer leftLayer = makeLayer();

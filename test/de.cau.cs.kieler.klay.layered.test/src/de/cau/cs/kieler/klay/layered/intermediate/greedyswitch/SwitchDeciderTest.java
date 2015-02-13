@@ -31,11 +31,24 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.SwitchDecider.CrossingCountSide;
 import de.cau.cs.kieler.klay.layered.properties.GreedyType;
 
+/**
+ * Checks all variants of SwitchDeciders. These are given as parameters with Parameterized.class to
+ * create six different test cases.
+ * 
+ * @author alan
+ *
+ */
 @RunWith(Parameterized.class)
 public class SwitchDeciderTest {
 
     private final GreedyType greedyType;
 
+    /**
+     * This method is needed by Parameterized.class. The parameters are all elements of the
+     * GreedyType enum.
+     * 
+     * @return parameters
+     */
     @Parameters(name = "{0}")
     public static Iterable<Object[]> greedyTypes() {
         return Arrays.asList(new Object[][] { { GreedyType.ONE_SIDED_COUNTER, },
@@ -45,9 +58,15 @@ public class SwitchDeciderTest {
                 { GreedyType.TWO_SIDED_ON_DEMAND_CROSSING_MATRIX } });
     }
 
-    public SwitchDeciderTest(final GreedyType greedyType) {
-        this.greedyType = greedyType;
-        factory = new SwitchDeciderFactory(greedyType);
+    /**
+     * Constructor is called and greedyType set by Parameterized.
+     * 
+     * @param gT
+     *            the greedy type
+     */
+    public SwitchDeciderTest(final GreedyType gT) {
+        greedyType = gT;
+        factory = new SwitchDeciderFactory(gT);
     }
 
     private final TestGraphCreator creator = new TestGraphCreator();
@@ -57,6 +76,8 @@ public class SwitchDeciderTest {
     private LNode[][] currentNodeOrder;
     private int freeLayerIndex;
 
+    // CHECKSTYLEOFF javadoc
+    // CHECKSTYLEOFF MagicNumber
     @Test
     public void crossFormed() {
         graph = creator.getCrossFormedGraph();
@@ -273,24 +294,24 @@ public class SwitchDeciderTest {
         return graph.getLayers().get(layerIndex).getNodes();
     }
 
-    private SwitchDecider givenDeciderForFreeLayer(final int freeLayerIndex,
+    private SwitchDecider givenDeciderForFreeLayer(final int layerIndex,
             final CrossingCountSide direction) {
-        this.freeLayerIndex = freeLayerIndex;
+        this.freeLayerIndex = layerIndex;
         currentNodeOrder = getCurrentNodeOrder();
-        return factory.getNewSwitchDecider(freeLayerIndex, currentNodeOrder, direction);
+        return factory.getNewSwitchDecider(layerIndex, currentNodeOrder, direction);
     }
 
     private LNode[][] getCurrentNodeOrder() {
-        LNode[][] currentNodeOrder = new LNode[graph.getLayers().size()][];
+        LNode[][] nodeOrder = new LNode[graph.getLayers().size()][];
         List<Layer> layers = graph.getLayers();
         for (int i = 0; i < layers.size(); i++) {
             Layer layer = layers.get(i);
             List<LNode> nodes = layer.getNodes();
-            currentNodeOrder[i] = new LNode[nodes.size()];
+            nodeOrder[i] = new LNode[nodes.size()];
             for (int j = 0; j < nodes.size(); j++) {
-                currentNodeOrder[i][j] = nodes.get(j);
+                nodeOrder[i][j] = nodes.get(j);
             }
         }
-        return currentNodeOrder;
+        return nodeOrder;
     }
 }

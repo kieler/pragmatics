@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2013 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -20,6 +33,13 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.properties.GreedyType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
+/**
+ * Tests all variants of greedy switch. All three one-sided methods must behave the same and all
+ * three two sided methods must behave the same.
+ * 
+ * @author alan
+ *
+ */
 @RunWith(Parameterized.class)
 public class GreedySwitchTest {
     private final TestGraphCreator creator = new TestGraphCreator();
@@ -28,12 +48,23 @@ public class GreedySwitchTest {
     private final IKielerProgressMonitor monitor;
     private final GreedyType greedyType;
 
-    public GreedySwitchTest(final GreedyType greedyType) {
-        this.greedyType = greedyType;
+    /**
+     * Constructor called by Parameterized.
+     * 
+     * @param gT
+     *            greedyType
+     */
+    public GreedySwitchTest(final GreedyType gT) {
+        greedyType = gT;
         greedySwitcher = new GreedySwitchProcessor();
         monitor = new BasicProgressMonitor();
     }
 
+    /**
+     * Sets the Parameters to be tested as all elements of the GreedyType enum.
+     * 
+     * @return parameters
+     */
     @Parameters(name = "{0}")
     public static Iterable<Object[]> greedyTypes() {
         return Arrays.asList(new Object[][] { { GreedyType.ONE_SIDED_COUNTER, },
@@ -43,6 +74,8 @@ public class GreedySwitchTest {
                 { GreedyType.TWO_SIDED_ON_DEMAND_CROSSING_MATRIX } });
     }
 
+    // CHECKSTYLEOFF javadoc
+    // CHECKSTYLEOFF MagicNumber
     @Test
     public void shouldSwitchCross() {
         graph = creator.getCrossFormedGraph();
@@ -119,15 +152,12 @@ public class GreedySwitchTest {
         assertThat(getNodesInLayer(layerIndex), is(expectedOrder));
     }
 
-    @Test
+    @Test(expected = AssertionError.class)
     public void emptyGraphShouldResultInException() {
         graph = creator.getEmptyGraph();
 
-        try {
-            startGreedySwitcherWithCurrentType();
-            fail("Did not cause AssertionError");
-        } catch (AssertionError e) {
-        }
+        startGreedySwitcherWithCurrentType();
+        fail("Did not cause AssertionError");
 
     }
 

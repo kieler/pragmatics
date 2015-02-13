@@ -54,7 +54,7 @@ public class GreedySwitcherIntegrationTest extends AbstractLayeredProcessorTest 
     private LGraph graph;
     private List<List<LNode>> originalOrder;
 
-    /** Inherited constructor */
+    // CHECKSTYLEOFF javadoc
     public GreedySwitcherIntegrationTest(final GraphTestObject testObject,
             final ILayoutConfigurator config) {
         super(testObject, config);
