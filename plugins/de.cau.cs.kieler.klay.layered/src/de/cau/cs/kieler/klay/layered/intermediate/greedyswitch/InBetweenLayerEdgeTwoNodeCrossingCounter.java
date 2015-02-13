@@ -40,14 +40,16 @@ class InBetweenLayerEdgeTwoNodeCrossingCounter {
     private final int freeLayerIndex;
 
     /**
-     * Create {@link InBetweenLayerEdgeTwoNodeCrossingCounter}. Naming assumes a left-right layer ordering.
+     * Create {@link InBetweenLayerEdgeTwoNodeCrossingCounter}. Naming assumes a left-right layer
+     * ordering.
      * 
      * @param currentNodeOrder
      *            Currently considered node ordering.
      * @param freeLayerIndex
      *            Index of free layer.
      */
-    public InBetweenLayerEdgeTwoNodeCrossingCounter(final LNode[][] currentNodeOrder, final int freeLayerIndex) {
+    public InBetweenLayerEdgeTwoNodeCrossingCounter(final LNode[][] currentNodeOrder,
+            final int freeLayerIndex) {
         this.currentNodeOrder = currentNodeOrder;
         this.freeLayerIndex = freeLayerIndex;
         initializeNodeAndPortIdsForNeighbouringLayers();
@@ -160,21 +162,19 @@ class InBetweenLayerEdgeTwoNodeCrossingCounter {
             return;
         }
 
-        if (hasNeighbours()) {
+        if (nodesHaveNeighbours()) {
             boolean edgesRemain = true;
             while (edgesRemain) {
                 if (nextEdgeCausesCrossingsToOrder(upper, lower)) {
                     crossingsForOrderUpperLower += upper.getAmountOfEdges();
-                    edgesRemain = fetchNextEdge(lower);
+                    edgesRemain = setToNextEdge(lower);
                 } else if (nextEdgeCausesCrossingsToOrder(lower, upper)) {
                     crossingsForOrderLowerUpper += lower.getAmountOfEdges();
-                    edgesRemain = fetchNextEdge(upper);
-                } else if (nextEdgeCausesCrossingsToBothOrders()) {
+                    edgesRemain = setToNextEdge(upper);
+                } else {
                     crossingsForOrderUpperLower += upper.getAmountOfEdgesWithoutCurrentNode();
                     crossingsForOrderLowerUpper += lower.getAmountOfEdgesWithoutCurrentNode();
-                    edgesRemain = fetchNextEdge(upper) && fetchNextEdge(lower);
-                } else {
-                    edgesRemain = false;
+                    edgesRemain = setToNextEdge(upper) && setToNextEdge(lower);
                 }
             }
         }
@@ -184,7 +184,7 @@ class InBetweenLayerEdgeTwoNodeCrossingCounter {
         return upper.getNode() == lower.getNode();
     }
 
-    private boolean hasNeighbours() {
+    private boolean nodesHaveNeighbours() {
         return upper.getNeighbourPort() != null && lower.getNeighbourPort() != null;
     }
 
@@ -211,7 +211,7 @@ class InBetweenLayerEdgeTwoNodeCrossingCounter {
         return neighbourToUpperNode.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed();
     }
 
-    private boolean fetchNextEdge(final NodeData nodeData) {
+    private boolean setToNextEdge(final NodeData nodeData) {
         boolean crossingsRemain;
         nodeData.decrementEdgeCount();
 
@@ -220,15 +220,6 @@ class InBetweenLayerEdgeTwoNodeCrossingCounter {
             nodeData.setNextPortAndRemoveEdge();
         }
         return crossingsRemain;
-    }
-
-    private boolean nextEdgeCausesCrossingsToBothOrders() {
-        LNode neighbourToLowerNode = lower.getNeighbourPort().getNode();
-        LNode neighbourToUpperNode = upper.getNeighbourPort().getNode();
-        boolean causesCrossingsToBoth =
-                neighbourToUpperNode.id == neighbourToLowerNode.id
-                        && !portOrderIsFixed(neighbourToUpperNode);
-        return causesCrossingsToBoth;
     }
 
     /**
