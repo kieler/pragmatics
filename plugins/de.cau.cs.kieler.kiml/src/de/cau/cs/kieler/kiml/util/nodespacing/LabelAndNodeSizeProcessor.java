@@ -50,6 +50,7 @@ import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
  * @author uru
  * @author csp
  */
+@SuppressWarnings("incomplete-switch")
 public class LabelAndNodeSizeProcessor {
 
     /**
@@ -1188,13 +1189,13 @@ public class LabelAndNodeSizeProcessor {
                 break;
             case CENTER:
                 // centered inside the usableWith (starting at the right)
-                portData.northX = nodeSize.x
+                portData.southX = nodeSize.x
                         - (usableWidth - usedPortSpace) / 2.0
                         - additionalPortSpace.right;
                 break;
             case END:
                 // Start at rightmost position, additionalSpace from the edge.
-                portData.northX = nodeSize.x - additionalPortSpace.right;
+                portData.southX = nodeSize.x - additionalPortSpace.right;
                 break;
             }
         }
@@ -1248,9 +1249,9 @@ public class LabelAndNodeSizeProcessor {
                 portData.eastY = additionalPortSpace.top + (usableHeight - usedPortSpace) / 2.0;
                 break;
             case END:
-                // Startposition is as far from the bottom edge as the ports' used space plus
+                // Start position is as far from the bottom edge as the ports' used space plus
                 // additionalSpace.
-                portData.westY = nodeSize.y - usedPortSpace - additionalPortSpace.bottom;
+                portData.eastY = nodeSize.y - usedPortSpace - additionalPortSpace.bottom;
                 break;
             }
         }
