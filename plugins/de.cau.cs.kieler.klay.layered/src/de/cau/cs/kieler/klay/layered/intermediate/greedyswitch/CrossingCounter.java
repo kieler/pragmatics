@@ -13,11 +13,8 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
-import java.util.HashMap;
 import java.util.ListIterator;
-import java.util.Map;
 
-import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -42,7 +39,8 @@ public class CrossingCounter {
      */
     private int[] portPos;
     private final LNode[][] layeredGraph;
-    private final LNode[][] originalOrder;
+    private int[][] amountOfPortsPerNode;
+    private int portCount;
 
     /**
      * Constructs and initializes a cross counter. Initialization iterates through all ports.
@@ -53,8 +51,7 @@ public class CrossingCounter {
      */
     public CrossingCounter(final LNode[][] layeredGraph) {
         this.layeredGraph = layeredGraph;
-        originalOrder = new LNode[layeredGraph.length][];
-        initialize();
+        initialize(layeredGraph);
     }
 
     /**
@@ -63,7 +60,7 @@ public class CrossingCounter {
      * @return the number of crossings for the node order passed to the constructor.
      */
     public int countAllCrossingsInGraph() {
-        return countAllCrossingsInGraphWithOrder(originalOrder);
+        return countAllCrossingsInGraphWithOrder(layeredGraph);
     }
 
     /**
@@ -74,15 +71,17 @@ public class CrossingCounter {
      * @return the amount of crossings
      */
     public int countAllCrossingsInGraphWithOrder(final LNode[][] currentOrder) {
+        initialize(currentOrder);
         int totalCrossings = 0;
         for (int layerIndex = 0; layerIndex < currentOrder.length; layerIndex++) {
             LNode[] fixedLayer = currentOrder[layerIndex];
-            totalCrossings += countNorthSouthPortCrossings(fixedLayer);
-            totalCrossings += countInLayerEdgeCrossingsWithOrder(fixedLayer);
             if (layerIndex < currentOrder.length - 1) {
                 LNode[] freeLayer = currentOrder[layerIndex + 1];
                 totalCrossings += countCrossingsBetweenLayersInOrder(fixedLayer, freeLayer);
             }
+            totalCrossings += countNorthSouthPortCrossings(fixedLayer);
+            totalCrossings += countInLayerEdgeCrossingsWithOrder(fixedLayer);
+            // totalCrossings += oldInLayerEdgeCrossingCounter(fixedLayer);
         }
         return totalCrossings;
     }
@@ -110,17 +109,22 @@ public class CrossingCounter {
                 || freeLayer.length == 0;
     }
 
-    private void initialize() {
-        int portCount = 0;
-        for (int i = 0; i < layeredGraph.length; i++) {
-            LNode[] layer = layeredGraph[i];
-            originalOrder[i] = new LNode[layer.length]; // TODO-alan WTF orginial order?
+    private void initialize(final LNode[][] graph) {
+        portCount = 0;
+        amountOfPortsPerNode = new int[graph.length][];
+        for (int i = 0; i < graph.length; i++) {
+            LNode[] layer = graph[i];
+            amountOfPortsPerNode[i] = new int[layer.length];
+            int nodeId = 0;
             for (int j = 0; j < layer.length; j++) {
-                LNode node = layeredGraph[i][j];
-                originalOrder[i][j] = node;
+                LNode node = layer[j];
+                node.id = nodeId++;
+                int amountOfPorts = 0;
                 for (LPort port : node.getPorts()) {
                     port.id = portCount++;
+                    amountOfPorts++;
                 }
+                amountOfPortsPerNode[i][j] = amountOfPorts;
             }
         }
 
@@ -265,38 +269,6 @@ public class CrossingCounter {
         return crossCount;
     }
 
-    /*
-     * The algorithm used to count crossings within a layer implemented in the following method has
-     * two parts:
-     * 
-     * Part 1 A normal node cannot be connected to another normal node in the same layer due to how
-     * layering is performed. It remains that at least one of the two nodes must be a dummy node.
-     * Currently, that can only happen due to odd port side handling. Because of the way dummies are
-     * created, there are only two cases:
-     * 
-     * - An eastern port can be connected to another eastern port. - A western port can be connected
-     * to another western port.
-     * 
-     * The algorithm now works by assigning numbers to eastern ports top-down, and to western ports
-     * bottom-up, all the time dependent on their number of incident edges. (the link direction is
-     * not important) Then we traverse the ports. If we find an eastern port connected to another
-     * eastern port, the difference of their indices tells us how many other ports with incident
-     * edges lie between them and can cause crossings.
-     * 
-     * Part 2 Additional crossings can happen due to nodes being placed between a node and its north
-     * / south dummies. The idea here is to use the first node sweep from part 1 to count the number
-     * of northern and southern North/South dummies for each node. Each north dummy is assigned a
-     * position in the list of northern dummies for its node. South dummies are treated accordingly.
-     * 
-     * In a second sweep, for each non-north/south dummy, the most recently encountered north/south
-     * dummy or normal node is retrieved. Its index is subtracted from the number of northern or
-     * southern dummies of its node. The result gives the number of crossings caused by the node
-     * being placed between a node and its north/south dummies.
-     * 
-     * Note that part two relies on information about layer layout units. If we find that they have
-     * not been set, we can skip this part.
-     */
-
     /**
      * Calculates the amount of In-Layer edges for the given layer in the order, with which
      * CrossingCounter was initialized with.
@@ -306,7 +278,7 @@ public class CrossingCounter {
      * @return north South Port crossing number
      */
     public int countInLayerEdgeCrossings(final int layerIndex) {
-        return countInLayerEdgeCrossingsWithOrder(originalOrder[layerIndex]);
+        return countInLayerEdgeCrossingsWithOrder(layeredGraph[layerIndex]);
     }
 
     /**
@@ -322,176 +294,6 @@ public class CrossingCounter {
         return new InLayerEdgeAllCrossingCounter(layer).countAllCrossings();
     }
 
-    private int oldInLayerEdgeCrossingCounter(final LNode[] layer) {
-        int eastWestCrossings = 0;
-        int northSouthCrossings = 0;
-
-        // Number of north/south dummies and indices
-        Map<LNode, Pair<Integer, Integer>> northSouthCrossingHints =
-                new HashMap<LNode, Pair<Integer, Integer>>();
-        Map<LNode, Integer> dummyIndices = new HashMap<LNode, Integer>();
-
-        // Assign numbers to the layer's eastern and western ports
-        Map<LPort, Integer> easternPortNumbers = new HashMap<LPort, Integer>();
-        Map<LPort, Integer> westernPortNumbers = new HashMap<LPort, Integer>();
-
-        numberEastWestPorts(layer, easternPortNumbers, westernPortNumbers);
-
-        // Iterate through the nodes
-        LNode currentNormalNode = null;
-        int northMaxCrossingHint = 0;
-        int southMaxCrossingHint = 0;
-        boolean northernSide = true;
-        boolean layerLayoutUnitsSet = true;
-
-        for (LNode node : layer) {
-
-            // Part 1 of the crossing counting algorithm
-            for (LPort port : node.getPorts()) {
-                switch (port.getSide()) {
-                case EAST:
-                    eastWestCrossings += countInLayerCrossings(port, easternPortNumbers);
-                    break;
-
-                case WEST:
-                    eastWestCrossings += countInLayerCrossings(port, westernPortNumbers);
-                    break;
-                }
-            }
-
-            // First sweep of part 2 of the crossing counting algorithm
-            NodeType nodeType = node.getProperty(InternalProperties.NODE_TYPE);
-            if (layerLayoutUnitsSet
-                    && (nodeType == NodeType.NORMAL || nodeType == NodeType.NORTH_SOUTH_PORT)) {
-
-                LNode newNormalNode = node.getProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT);
-                if (newNormalNode == null) {
-                    // Layer layout units don't seem to have been set
-                    layerLayoutUnitsSet = false;
-                    continue;
-                }
-
-                // Check if this node belongs to a new normal node
-                if (currentNormalNode != newNormalNode) {
-                    // Save the old normal node's values
-                    if (currentNormalNode != null) {
-                        northSouthCrossingHints.put(currentNormalNode, new Pair<Integer, Integer>(
-                                northMaxCrossingHint, southMaxCrossingHint));
-                    }
-
-                    // Reset the counters
-                    currentNormalNode = newNormalNode;
-                    northMaxCrossingHint = 0;
-                    southMaxCrossingHint = 0;
-                    northernSide = true;
-                }
-
-                // If the node is the normal node, we're entering its south side
-                if (node == currentNormalNode) {
-                    northernSide = false;
-                }
-
-                // Update and save crossing hints
-                if (northernSide) {
-                    northMaxCrossingHint += node.getProperty(InternalProperties.CROSSING_HINT);
-                    dummyIndices.put(node, northMaxCrossingHint);
-                } else {
-                    southMaxCrossingHint += node.getProperty(InternalProperties.CROSSING_HINT);
-                    dummyIndices.put(node, southMaxCrossingHint);
-                }
-            }
-        }
-
-        // Remember to save the values for the last normal node
-        if (currentNormalNode != null) {
-            northSouthCrossingHints.put(currentNormalNode, new Pair<Integer, Integer>(
-                    northMaxCrossingHint, southMaxCrossingHint));
-        }
-
-        // Second sweep of Part 2 of the algorithm
-        if (layerLayoutUnitsSet) {
-            LNode lastDummyNormalNode = null;
-            int lastDummyIndex = 0;
-            int dummyCount = 0;
-            northernSide = true;
-
-            for (LNode node : layer) {
-                NodeType nodeType = node.getProperty(InternalProperties.NODE_TYPE);
-
-                switch (nodeType) {
-                case NORMAL:
-                    lastDummyIndex = dummyIndices.get(node);
-
-                    dummyCount = northSouthCrossingHints.get(node).getSecond();
-                    lastDummyNormalNode = node;
-                    northernSide = false;
-
-                    break;
-
-                case NORTH_SOUTH_PORT:
-                    lastDummyIndex = dummyIndices.get(node);
-
-                    LNode newNormalNode = node.getProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT);
-                    if (newNormalNode != lastDummyNormalNode) {
-                        dummyCount = northSouthCrossingHints.get(newNormalNode).getFirst();
-                        lastDummyNormalNode = newNormalNode;
-                        northernSide = true;
-                    }
-                    break;
-
-                default:
-                    northSouthCrossings +=
-                            northernSide ? lastDummyIndex : dummyCount - lastDummyIndex;
-                }
-            }
-        }
-
-        return eastWestCrossings + northSouthCrossings;
-    }
-
-    /**
-     * Counts the crossings caused by in-layer edges connected to the given port. An edge is only
-     * counted once.
-     *
-     * @param port
-     *            the port whose edge crossings to count.
-     * @param portIndices
-     *            map of ports to their respective indices as calculated by
-     *            {@link #numberEastWestPorts(LNode[], Map, Map)}.
-     * @return the maximum number of crossings‚ for this port.
-     */
-    private int countInLayerCrossings(final LPort port, final Map<LPort, Integer> portIndices) {
-        int maxCrossings = 0;
-
-        // Find this port's index
-        Integer portIndex = portIndices.get(port);
-        if (portIndex == null) {
-            return 0;
-        }
-
-        // Find the maximum distance between two connected ports
-        Integer connectedPortIndex = null;
-        for (LEdge edge : port.getConnectedEdges()) {
-            if (edge.getSource() == port) {
-                connectedPortIndex = portIndices.get(edge.getTarget());
-            } else {
-                connectedPortIndex = portIndices.get(edge.getSource());
-            }
-
-            // Check if the edge is connected to another port in the same layer
-            if (connectedPortIndex != null) {
-                // Only count the edge once
-                if (portIndex.intValue() > connectedPortIndex.intValue()) {
-                    maxCrossings =
-                            Math.max(maxCrossings,
-                                    portIndex.intValue() - connectedPortIndex.intValue() - 1);
-                }
-            }
-        }
-
-        return maxCrossings;
-    }
-
     /**
      * Calculates the amount of North South Port crossings for the given layer in the order, with
      * which CrossingCounter was initialized with.
@@ -501,7 +303,7 @@ public class CrossingCounter {
      * @return north South Port crossing number
      */
     public int countNorthSouthPortCrossings(final int layerIndex) {
-        return countNorthSouthPortCrossings(originalOrder[layerIndex]);
+        return countNorthSouthPortCrossings(layeredGraph[layerIndex]);
     }
 
     /**
@@ -510,24 +312,31 @@ public class CrossingCounter {
      * @param layer
      *            the layer whose north / south port related crossings to count.
      * @return the number of crossings caused by edges connected to northern or southern ports.
+     *         TODO-alan consider moving to class TODO-alan This method is too long.
      */
     public int countNorthSouthPortCrossings(final LNode[] layer) {
         int crossings = 0;
         boolean northernSide = true;
         LNode recentNormalNode = null;
 
+        int amountOfLongEdgeDummies = 0;
         // Iterate through the layer's nodes
         for (int i = 0; i < layer.length; i++) {
             LNode node = layer[i];
             NodeType nodeType = node.getProperty(InternalProperties.NODE_TYPE);
-
             if (nodeType == NodeType.NORMAL) {
                 // We possibly have a new recentNormalNode; we definitely change the side to the
                 // normal
                 // node's south
                 recentNormalNode = node;
                 northernSide = false;
+                amountOfLongEdgeDummies = 0;
+            } else if (nodeType == NodeType.LONG_EDGE) {
+                if (!northernSide) {
+                    amountOfLongEdgeDummies++;
+                }
             } else if (nodeType == NodeType.NORTH_SOUTH_PORT) {
+                crossings += amountOfLongEdgeDummies; // TODO-alan comment and Test
                 // If we have a dummy that represents a self-loop, continue with the next one
                 // (self-loops have no influence on the number of crossings anyway, regardless of
                 // where
@@ -542,6 +351,7 @@ public class CrossingCounter {
                     // A have a new normal node and are on its northern side
                     recentNormalNode = currentNormalNode;
                     northernSide = true;
+                    amountOfLongEdgeDummies = 0;
                 }
 
                 // Check if the current normal node has a fixed port order; if not, we can ignore it
@@ -566,7 +376,6 @@ public class CrossingCounter {
                         nodeOutputPort = (LPort) port.getProperty(InternalProperties.ORIGIN);
                     }
                 }
-
                 // Iterate over the next nodes until we find a north / south port dummy belonging to
                 // a
                 // new normal node or until we find our current normal node
@@ -662,81 +471,16 @@ public class CrossingCounter {
                                 crossings--;
                             }
                         }
+                    } else if (node2Type == NodeType.LONG_EDGE) {
+                        if (northernSide) {
+                            crossings++;
+                        }
                     }
                 }
             }
         }
 
         return crossings;
-    }
-
-    /**
-     * Assigns numbers to the eastern ports of a layer, and to the western ports of a layer. A
-     * number is assigned to a port if it has incident edges. Eastern ports are numbered top-down,
-     * while western ports are numbered bottom-up.
-     *
-     * @param layer
-     *            the layer whose ports to index.
-     * @param easternMap
-     *            map to put the eastern ports' indices in.
-     * @param westernMap
-     *            map to put the western ports' indices in.
-     */
-    private void numberEastWestPorts(final LNode[] layer, final Map<LPort, Integer> easternMap,
-            final Map<LPort, Integer> westernMap) {
-
-        int currentEasternNumber = 0;
-        int currentWesternNumber = 0;
-
-        // Assign numbers to eastern ports, top-down
-        for (LNode node : layer) {
-            if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
-                for (LPort easternPort : node.getPorts(PortSide.EAST)) {
-                    if (easternPort.getDegree() > 0) {
-                        currentEasternNumber += easternPort.getDegree();
-                        easternMap.put(easternPort, currentEasternNumber);
-                    }
-                }
-            } else {
-                // Find the number of edges incident to eastern ports
-                for (LPort easternPort : node.getPorts(PortSide.EAST)) {
-                    currentEasternNumber += easternPort.getDegree();
-                }
-
-                // Assign the eastern number to all eastern ports
-                for (LPort easternPort : node.getPorts(PortSide.EAST)) {
-                    if (easternPort.getDegree() > 0) {
-                        easternMap.put(easternPort, currentEasternNumber);
-                    }
-                }
-            }
-        }
-
-        // Assign indices to western ports, bottom-up
-        for (int nodeIndex = layer.length - 1; nodeIndex >= 0; nodeIndex--) {
-            LNode node = layer[nodeIndex];
-
-            if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
-                for (LPort westernPort : node.getPorts(PortSide.WEST)) {
-                    if (westernPort.getDegree() > 0) {
-                        currentWesternNumber += westernPort.getDegree();
-                        westernMap.put(westernPort, currentWesternNumber);
-                    }
-                }
-            } else {
-                // Find the number of edges incident to western ports
-                for (LPort westernPort : node.getPorts(PortSide.WEST)) {
-                    currentWesternNumber += westernPort.getDegree();
-                }
-
-                // Assign the western number to all western ports
-                for (LPort westernPort : node.getPorts(PortSide.WEST)) {
-                    if (westernPort.getDegree() > 0) {
-                        westernMap.put(westernPort, currentWesternNumber);
-                    }
-                }
-            }
-        }
     }
 
     // /////////////////////////////////////////////////////////////////////////////
