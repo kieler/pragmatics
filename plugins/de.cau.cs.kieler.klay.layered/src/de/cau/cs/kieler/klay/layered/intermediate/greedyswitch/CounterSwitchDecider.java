@@ -52,12 +52,15 @@ abstract class CounterSwitchDecider extends SwitchDecider {
         if (amountOfCrossingsInCurrentLayer == 0) {
             return false;
         }
-
-        exchangeNodes(upperNodeIndex, lowerNodeIndex);
+        LNode upperNode = super.getFreeLayer()[upperNodeIndex];
+        LNode lowerNode = super.getFreeLayer()[upperNodeIndex];
+        notifyOfSwitch(upperNode, lowerNode);
+        switchNodes(upperNodeIndex, lowerNodeIndex);
 
         int newAmountOfCrossings = calculateCrossings();
 
-        exchangeNodes(lowerNodeIndex, upperNodeIndex);
+        switchNodes(upperNodeIndex, lowerNodeIndex);
+        notifyOfSwitch(upperNode, upperNode);
 
         boolean switchReducesCrossings = newAmountOfCrossings < amountOfCrossingsInCurrentLayer;
         if (switchReducesCrossings) {
@@ -67,10 +70,8 @@ abstract class CounterSwitchDecider extends SwitchDecider {
         return switchReducesCrossings;
     }
 
-    private void exchangeNodes(final int upperNodeIndex, final int lowerNodeIndex) {
-        LNode temp = super.getFreeLayer()[upperNodeIndex];
-        super.getFreeLayer()[upperNodeIndex] = super.getFreeLayer()[lowerNodeIndex];
-        super.getFreeLayer()[lowerNodeIndex] = temp; // TODO-alan check if this works
+    @Override
+    public void notifyOfSwitch(final LNode upperNode, final LNode lowerNode) {
     }
 
     /**
