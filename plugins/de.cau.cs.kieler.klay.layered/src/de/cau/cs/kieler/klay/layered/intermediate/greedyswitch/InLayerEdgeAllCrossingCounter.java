@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ *
+ * Copyright 2014 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ *
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
 import java.util.HashSet;
@@ -11,17 +24,34 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 
+/**
+ * Counts exact number of all crossings caused by in-layer edges.
+ * 
+ * @author alan
+ *
+ */
 public class InLayerEdgeAllCrossingCounter extends InLayerEdgeCrossingCounter {
     /** We store port.ids in mutlisets, as nodes without fixed order have the same port.id. */
     private final SortedMultiset<Integer> downwardUpperNodeEdgePorts;
-    protected final Set<LEdge> inLayerEdges;
+    private final Set<LEdge> inLayerEdges;
 
+    /**
+     * Create in-layer edge crossingCounter with current order of nodes.
+     * 
+     * @param nodeOrder
+     *            current node order.
+     */
     public InLayerEdgeAllCrossingCounter(final LNode[] nodeOrder) {
         super(nodeOrder);
         inLayerEdges = new HashSet<LEdge>();
         downwardUpperNodeEdgePorts = TreeMultiset.create();
     }
 
+    /**
+     * Counts all in-layer crossings.
+     * 
+     * @return in-layer crossings
+     */
     public int countAllCrossings() {
         int crossings = 0;
         crossings = countAllCrossingsOnSide(PortSide.WEST);
@@ -48,7 +78,7 @@ public class InLayerEdgeAllCrossingCounter extends InLayerEdgeCrossingCounter {
                 crossings +=
                         inLayerEdges.size()
                                 - downwardUpperNodeEdgePorts.count(super.positionOf(port));
-            } else if (isNotSelfLoop(edge)) {
+            } else if (!edge.isSelfLoop()) {
                 if (inLayerEdges.contains(edge)) {
                     closeEdge(edge);
                     crossings += amountOfPortsInbetweenEndsOf(edge, downwardUpperNodeEdgePorts);

@@ -30,6 +30,12 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 
+/**
+ * Abstract superclass for In-layer edge crossing counter to reduce code duplication.
+ * 
+ * @author alan
+ *
+ */
 abstract class InLayerEdgeCrossingCounter {
     /** The amount of inLayerEdges incident to each node from the east accessed by node.id. */
     private int[] eastNodeCardinalities;
@@ -144,10 +150,6 @@ abstract class InLayerEdgeCrossingCounter {
         Layer sourceLayer = edge.getSource().getNode().getLayer();
         Layer targetLayer = edge.getTarget().getNode().getLayer();
         return sourceLayer != targetLayer;
-    }
-
-    protected boolean isNotSelfLoop(final LEdge edge) {
-        return edge.getTarget().getNode() != edge.getSource().getNode();
     }
 
     protected boolean isUpward(final LEdge edge, final LPort port) {

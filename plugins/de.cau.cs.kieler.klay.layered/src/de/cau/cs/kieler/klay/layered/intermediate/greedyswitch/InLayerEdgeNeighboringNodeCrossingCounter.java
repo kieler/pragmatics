@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ *
+ * Copyright 2014 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ *
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
 import com.google.common.collect.SortedMultiset;
@@ -29,6 +42,12 @@ public class InLayerEdgeNeighboringNodeCrossingCounter extends InLayerEdgeCrossi
     private LNode lowerNode;
     private LNode upperNode;
 
+    /**
+     * Create a counter to count crossings with neighboring nodes.
+     * 
+     * @param nodeOrder
+     *            the current order of nodes in the layer.
+     */
     public InLayerEdgeNeighboringNodeCrossingCounter(final LNode[] nodeOrder) {
         super(nodeOrder);
         betweenLayerEdgePorts = TreeMultiset.create();
@@ -91,7 +110,7 @@ public class InLayerEdgeNeighboringNodeCrossingCounter extends InLayerEdgeCrossi
             for (LEdge edge : port.getConnectedEdges()) {
                 if (isInBetweenLayerEdge(edge)) {
                     betweenLayerEdgePorts.add(positionOf(port));
-                } else if (isNotSelfLoop(edge)) {
+                } else if (!edge.isSelfLoop()) {
                     if (isUpward(edge, port)) {
                         upwardUpperNodeEdgePorts.add(positionOf(endOfEdgePort(edge, port)));
                     } else {
@@ -110,7 +129,7 @@ public class InLayerEdgeNeighboringNodeCrossingCounter extends InLayerEdgeCrossi
 
                 if (isInBetweenLayerEdge(edge)) {
                     crossings += amountOfPortsAfter(positionOf(port), downwardUpperNodeEdgePorts);
-                } else if (isNotSelfLoop(edge)) {
+                } else if (!edge.isSelfLoop()) {
                     if (downwardUpperNodeEdgePorts.contains(positionOf(port))) {
                         crossings += countVisitedEdgeCrossings(port, edge);
                         downwardUpperNodeEdgePorts.remove(positionOf(port));

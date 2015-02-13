@@ -263,13 +263,11 @@ class InBetweenLayerEdgeTwoNodeCrossingCounter {
             for (LPort port : ports) {
                 for (LEdge edge : initWesternEdges ? port.getIncomingEdges() : port
                         .getOutgoingEdges()) {
-                    boolean edgeIsNotSelfLoop =
-                            edge.getSource().getNode() != edge.getTarget().getNode();
                     boolean edgeIsNotInLayerEdge =
                             edge.getSource().getNode().getLayer() != edge.getTarget().getNode()
                                     .getLayer();
 
-                    if (edgeIsNotSelfLoop && edgeIsNotInLayerEdge) {
+                    if (!edge.isSelfLoop() && edgeIsNotInLayerEdge) {
                         int index =
                                 initWesternEdges ? edge.getSource().getNode().id : edge.getTarget()
                                         .getNode().id;

@@ -293,7 +293,7 @@ public class SwitchDeciderTest {
     private List<LNode> getNodesInLayer(final int layerIndex) {
         return graph.getLayers().get(layerIndex).getNodes();
     }
-
+ 
     private SwitchDecider givenDeciderForFreeLayer(final int layerIndex,
             final CrossingCountSide direction) {
         this.freeLayerIndex = layerIndex;
