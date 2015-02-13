@@ -8,12 +8,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -31,7 +31,7 @@ public class GreedySwitchTest {
     public GreedySwitchTest(final GreedyType greedyType) {
         this.greedyType = greedyType;
         greedySwitcher = new GreedySwitchProcessor();
-        monitor = new DummyMonitor();
+        monitor = new BasicProgressMonitor();
     }
 
     @Parameters(name = "{0}")
@@ -175,24 +175,24 @@ public class GreedySwitchTest {
      * <pre>
      *     ______
      * *---|____|
-     *      |  |  ____
-     *      *--+--|  |
-     *         |  |  |
-     *         *--|__|
+     *      |  |  
+     *      *--+--*
+     *         | 
+     *         *--*
      * </pre>
      * 
      * The one-side decider should switch north-south port crossings in the center layer.
      */
-    @Ignore
-    // TODO-alan implement for crossing matrix counters
+    @Test
     public void northSouthPortCrossing() {
-        graph = creator.getThreeLayerNorthSouthCrossingGraph();
+        graph = creator.getThreeLayerNorthSouthCrossingShouldSwitchGraph();
 
         int layerIndex = 1;
-        List<LNode> expectedOrderOneSided = switchOrderOfNodesInLayer(0, 1, layerIndex);
         List<LNode> expectedOrderTwoSided = new ArrayList<LNode>(getNodesInLayer(layerIndex));
+        List<LNode> expectedOrderOneSided = switchOrderOfNodesInLayer(1, 2, layerIndex);
 
         startGreedySwitcherWithCurrentType();
+
         if (greedyType.isOneSided()) {
             assertThat(getNodesInLayer(layerIndex), is(expectedOrderOneSided));
         } else {
@@ -260,6 +260,34 @@ public class GreedySwitchTest {
         assertThat("Layer two", getNodesInLayer(1), is(expectedOrderSecondLayer));
     }
 
+    @Test
+    public void switchMoreThanOnce() {
+        graph = creator.shouldSwitchThreeTimesGraph();
+        List<LNode> oneSidedFirstLayer = new ArrayList<LNode>(getNodesInLayer(0));
+        List<LNode> oneSidedFirstSwitchSecondLayer = switchOrderOfNodesInLayer(0, 1, 1);
+        List<LNode> oneSidedsecondSwitchSecondLayer =
+                getCopyWithSwitchedOrder(2, 3, oneSidedFirstSwitchSecondLayer);
+        List<LNode> oneSidedThirdSwitchSecondLayer =
+                getCopyWithSwitchedOrder(1, 2, oneSidedsecondSwitchSecondLayer);
+
+        List<LNode> twoSidedFirstLayer = switchOrderOfNodesInLayer(0, 1, 0);
+        List<LNode> twoSidedFirstSwitchSecondLayer = switchOrderOfNodesInLayer(1, 2, 1);
+        List<LNode> twoSidedsecondSwitchSecondLayer =
+                getCopyWithSwitchedOrder(0, 1, twoSidedFirstSwitchSecondLayer);
+        startGreedySwitcherWithCurrentType();
+        if (greedyType.isOneSided()) {
+            assertThat("Layer one" + getNodesInLayer(0), getNodesInLayer(0), is(oneSidedFirstLayer));
+            assertThat("Layer two " + getNodesInLayer(1), getNodesInLayer(1),
+                    is(oneSidedThirdSwitchSecondLayer));
+        } else {
+            assertThat("Layer one " + getNodesInLayer(0), getNodesInLayer(0),
+                    is(twoSidedFirstLayer));
+            assertThat("Layer two " + getNodesInLayer(1), getNodesInLayer(1),
+                    is(twoSidedsecondSwitchSecondLayer));
+        }
+
+    }
+
     private List<LNode> getNodesInLayer(final int layerIndex) {
         return graph.getLayers().get(layerIndex).getNodes();
     }
@@ -267,6 +295,11 @@ public class GreedySwitchTest {
     private List<LNode> switchOrderOfNodesInLayer(final int nodeOne, final int nodeTwo,
             final int layerIndex) {
         List<LNode> layer = getNodesInLayer(layerIndex);
+        return getCopyWithSwitchedOrder(nodeOne, nodeTwo, layer);
+    }
+
+    private List<LNode> getCopyWithSwitchedOrder(final int nodeOne, final int nodeTwo,
+            final List<LNode> layer) {
         LNode firstNode = layer.get(nodeOne);
         LNode secondNode = layer.get(nodeTwo);
         List<LNode> switchedList = new ArrayList<LNode>(layer);

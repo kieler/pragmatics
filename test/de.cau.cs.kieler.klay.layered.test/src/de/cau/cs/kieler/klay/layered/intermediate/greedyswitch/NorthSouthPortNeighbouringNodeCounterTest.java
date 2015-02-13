@@ -30,6 +30,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 public class NorthSouthPortNeighbouringNodeCounterTest {
     private TestGraphCreator creator;
     private NorthSouthPortNeighbouringNodeCounter counter;
+    private LNode[] layer;
 
     @Before
     public void setUp() {
@@ -94,10 +95,48 @@ public class NorthSouthPortNeighbouringNodeCounterTest {
         assertThat(counter.getLowerUpperCrossings(), is(0));
     }
 
+    @Test
+    public void northSouthEdgesComeFromBothSidesDontCross() {
+        creator.getNorthSouthCrossingGraphEdgesFromEastAndWestNoCrossings();
+        countCrossingsInLayerBetweenNodes(1, 1, 2);
+        assertThat(counter.getUpperLowerCrossings(), is(0));
+        assertThat(counter.getLowerUpperCrossings(), is(0));
+    }
+
+    @Test
+    public void northSouthEdgesComeFromBothSidesDoCross() {
+        creator.getNorthSouthCrossingGraphEdgesFromEastAndWestAndCross();
+        countCrossingsInLayerBetweenNodes(1, 1, 2);
+        assertThat(counter.getUpperLowerCrossings(), is(1));
+        assertThat(counter.getLowerUpperCrossings(), is(1));
+
+    }
+
+    @Test
+    public void switchNodesAndRecount() {
+        creator.getNorthSouthUpwardCrossingGraph();
+        countCrossingsInLayerBetweenNodes(0, 0, 1);
+        assertThat(counter.getUpperLowerCrossings(), is(1));
+        assertThat(counter.getLowerUpperCrossings(), is(0));
+        switchNodes(0, 1);
+        counter.notifyNodeSwitch(layer[0], layer[1]);
+        counter.countCrossings(layer[0], layer[1]);
+        assertThat(counter.getUpperLowerCrossings(), is(0));
+        assertThat(counter.getLowerUpperCrossings(), is(1));
+    }
+
+    private void switchNodes(final int upper, final int lower) {
+        LNode upperNode = layer[upper];
+        LNode lowerNode = layer[lower];
+        layer[upper] = lowerNode;
+        layer[lower] = upperNode;
+    }
+
     private void countCrossingsInLayerBetweenNodes(final int layerIndex, final int upperNodeIndex,
             final int lowerNodeIndex) {
-        LNode[] layer = creator.getCurrentOrder()[layerIndex];
+        layer = creator.getCurrentOrder()[layerIndex];
         counter = new NorthSouthPortNeighbouringNodeCounter(layer);
         counter.countCrossings(layer[upperNodeIndex], layer[lowerNodeIndex]);
+
     }
 }

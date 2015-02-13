@@ -11,7 +11,6 @@ import org.junit.Test;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.InBetweenLayerEdgeTwoNodeCrossingCounter;
 
 public class InBetweenLayerEdgeNeighboringNodeCrossingCounterTest {
     private TestGraphCreator creator;
@@ -188,6 +187,87 @@ public class InBetweenLayerEdgeNeighboringNodeCrossingCounterTest {
         assertWesternSideLowerUpperCrossingsIs(0);
         assertBothSideUpperLowerCrossingsIs(1);
         assertBothSideLowerUpperCrossingsIs(0);
+    }
+
+    @Test
+    public void switchThreeTimes() {
+        graph = creator.shouldSwitchThreeTimesGraph();
+
+        nodeOrder = creator.getCurrentOrder();
+        setLayerToCountIn(0);
+        setUpperNode(0);
+        setLowerNode(1);
+
+        assertEasternSideUpperLowerCrossingsIs(3);
+        assertEasternSideLowerUpperCrossingsIs(2);
+        assertWesternSideUpperLowerCrossingsIs(0);
+        assertWesternSideLowerUpperCrossingsIs(0);
+        assertBothSideUpperLowerCrossingsIs(3);
+        assertBothSideLowerUpperCrossingsIs(2);
+    }
+
+    @Test
+    public void intoSamePort() {
+        graph = creator.twoEdgesIntoSamePort();
+        nodeOrder = creator.getCurrentOrder();
+        setLayerToCountIn(1);
+        setUpperNode(0);
+        setLowerNode(1);
+
+        assertEasternSideUpperLowerCrossingsIs(0);
+        assertEasternSideLowerUpperCrossingsIs(0);
+        assertWesternSideUpperLowerCrossingsIs(2);
+        assertWesternSideLowerUpperCrossingsIs(0);
+        assertBothSideUpperLowerCrossingsIs(2);
+        assertBothSideLowerUpperCrossingsIs(0);
+    }
+
+    @Test
+    public void intoSamePortCausesCrossingsOnSwitch() {
+        graph = creator.twoEdgesIntoSamePortCrossesWhenSwitched();
+        nodeOrder = creator.getCurrentOrder();
+        setLayerToCountIn(0);
+        setUpperNode(0);
+        setLowerNode(1);
+
+        assertEasternSideUpperLowerCrossingsIs(0);
+        assertEasternSideLowerUpperCrossingsIs(1);
+        assertWesternSideUpperLowerCrossingsIs(0);
+        assertWesternSideLowerUpperCrossingsIs(0);
+        assertBothSideUpperLowerCrossingsIs(0);
+        assertBothSideLowerUpperCrossingsIs(1);
+    }
+
+    @Test
+    public void intoSamePortReducesCrossingsOnSwitch() {
+        graph = creator.twoEdgesIntoSamePortResolvesCrossingWhenSwitched();
+        nodeOrder = creator.getCurrentOrder();
+        setLayerToCountIn(0);
+        setUpperNode(0);
+        setLowerNode(1);
+
+        assertEasternSideUpperLowerCrossingsIs(1);
+        assertEasternSideLowerUpperCrossingsIs(0);
+        assertWesternSideUpperLowerCrossingsIs(0);
+        assertWesternSideLowerUpperCrossingsIs(0);
+        assertBothSideUpperLowerCrossingsIs(1);
+        assertBothSideLowerUpperCrossingsIs(0);
+    }
+
+    @Test
+    public void intoSamePortFromEastSwitchWithFixedPortOrder() {
+        graph = creator.twoEdgesIntoSamePortFromEastWithFixedPortOrder();
+        nodeOrder = creator.getCurrentOrder();
+        setLayerToCountIn(0);
+        setUpperNode(0);
+        setLowerNode(1);
+
+        assertEasternSideUpperLowerCrossingsIs(0);
+        assertEasternSideLowerUpperCrossingsIs(1);
+        assertWesternSideUpperLowerCrossingsIs(0);
+        assertWesternSideLowerUpperCrossingsIs(0);
+        assertBothSideUpperLowerCrossingsIs(0);
+        assertBothSideLowerUpperCrossingsIs(1);
     }
 
     private void assertEasternSideLowerUpperCrossingsIs(final int expectedCrossings) {

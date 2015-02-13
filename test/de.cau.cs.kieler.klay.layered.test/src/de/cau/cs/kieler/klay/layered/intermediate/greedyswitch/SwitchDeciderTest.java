@@ -15,7 +15,6 @@ package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.List;
@@ -55,6 +54,8 @@ public class SwitchDeciderTest {
     private LGraph graph;
     private SwitchDecider decider;
     private final SwitchDeciderFactory factory;
+    private LNode[][] currentNodeOrder;
+    private int freeLayerIndex;
 
     @Test
     public void crossFormed() {
@@ -101,23 +102,6 @@ public class SwitchDeciderTest {
     }
 
     @Test
-    public void emptyGraphShouldResultInException() {
-        graph = creator.getEmptyGraph();
-
-        try {
-            decider = givenDeciderForFreeLayer(0, CrossingCountSide.WEST);
-            fail("Did not cause AssertionError");
-        } catch (AssertionError e) {
-        }
-
-        try {
-            decider = givenDeciderForFreeLayer(0, CrossingCountSide.EAST);
-            fail("Did not cause AssertionError");
-        } catch (AssertionError e) {
-        }
-    }
-
-    @Test
     public void multipleEdgesBetweenSameNodes() {
         graph = creator.getMultipleEdgesBetweenSameNodesGraph();
 
@@ -158,7 +142,7 @@ public class SwitchDeciderTest {
     @Ignore
     // TODO-alan implement for crossing matrix counters
     public void northSouthPortCrossing() {
-        graph = creator.getThreeLayerNorthSouthCrossingGraph();
+        graph = creator.getThreeLayerNorthSouthCrossingShouldSwitchGraph();
 
         decider = givenDeciderForFreeLayer(1, CrossingCountSide.WEST);
         assertThat(decider.doesSwitchReduceCrossings(0, 1), is(true));
@@ -217,9 +201,82 @@ public class SwitchDeciderTest {
         assertThat(decider.doesSwitchReduceCrossings(0, 1), is(false));
     }
 
+    @Test
+    public void switchAndRecount() {
+        graph = creator.getCrossFormedGraph();
+
+        decider = givenDeciderForFreeLayer(1, CrossingCountSide.WEST);
+        assertThat(decider.doesSwitchReduceCrossings(0, 1), is(true));
+
+        decider = givenDeciderForFreeLayer(0, CrossingCountSide.EAST);
+        assertThat(decider.doesSwitchReduceCrossings(0, 1), is(true));
+
+        switchNodes(0, 1);
+        decider.notifyOfSwitch(getNodesInLayer(0).get(0), getNodesInLayer(0).get(1));
+        assertThat(decider.doesSwitchReduceCrossings(0, 1), is(false));
+
+    }
+
+    @Test
+    public void switchAndRecountCounterBug() {
+        graph = creator.shouldSwitchThreeTimesGraph();
+        decider = givenDeciderForFreeLayer(1, CrossingCountSide.WEST);
+        assertThat(decider.doesSwitchReduceCrossings(0, 1), is(true));
+        assertThat(decider.doesSwitchReduceCrossings(1, 2), is(false));
+        assertThat(decider.doesSwitchReduceCrossings(2, 3), is(true));
+
+        decider.notifyOfSwitch(getNodesInLayer(1).get(0), getNodesInLayer(1).get(1));
+        switchNodes(0, 1);
+        assertThat(decider.doesSwitchReduceCrossings(0, 1), is(false));
+        assertThat(decider.doesSwitchReduceCrossings(1, 2), is(false));
+        assertThat(decider.doesSwitchReduceCrossings(2, 3), is(true));
+
+        decider.notifyOfSwitch(getNodesInLayer(1).get(2), getNodesInLayer(1).get(3));
+        switchNodes(2, 3);
+        assertThat(decider.doesSwitchReduceCrossings(0, 1), is(false));
+        assertThat(decider.doesSwitchReduceCrossings(1, 2), is(true));
+        assertThat(decider.doesSwitchReduceCrossings(2, 3), is(false));
+
+        decider.notifyOfSwitch(getNodesInLayer(1).get(1), getNodesInLayer(1).get(2));
+        switchNodes(1, 2);
+        assertThat(decider.doesSwitchReduceCrossings(0, 1), is(false));
+        assertThat(decider.doesSwitchReduceCrossings(1, 2), is(false));
+        assertThat(decider.doesSwitchReduceCrossings(2, 3), is(false));
+
+    }
+
+    @Test
+    public void switchAndRecountReducedCounterBug() {
+        graph = creator.getSwitchedProblemGraph();
+        decider = givenDeciderForFreeLayer(1, CrossingCountSide.WEST);
+        for (int i = 0; i < getNodesInLayer(1).size() - 1; i++) {
+            assertThat("attempted switch " + i + " with " + (i + 1),
+                    decider.doesSwitchReduceCrossings(i, i + 1), is(false));
+        }
+    }
+
+    @Test
+    public void ignoresNoFixedOrder() {
+        graph = creator.getGraphNoCrossingsDueToPortOrderNotFixed();
+        decider = givenDeciderForFreeLayer(1, CrossingCountSide.WEST);
+        assertThat(decider.doesSwitchReduceCrossings(0, 1), is(false));
+    }
+
+    private void switchNodes(final int upperNodeIndex, final int lowerNodeIndex) {
+        LNode upperNode = currentNodeOrder[freeLayerIndex][upperNodeIndex];
+        currentNodeOrder[freeLayerIndex][upperNodeIndex] =
+                currentNodeOrder[freeLayerIndex][lowerNodeIndex];
+        currentNodeOrder[freeLayerIndex][lowerNodeIndex] = upperNode;
+    }
+
+    private List<LNode> getNodesInLayer(final int layerIndex) {
+        return graph.getLayers().get(layerIndex).getNodes();
+    }
+
     private SwitchDecider givenDeciderForFreeLayer(final int freeLayerIndex,
             final CrossingCountSide direction) {
-        LNode[][] currentNodeOrder = getCurrentNodeOrder();
+        this.freeLayerIndex = freeLayerIndex;
+        currentNodeOrder = getCurrentNodeOrder();
         return factory.getNewSwitchDecider(freeLayerIndex, currentNodeOrder, direction);
     }
 
