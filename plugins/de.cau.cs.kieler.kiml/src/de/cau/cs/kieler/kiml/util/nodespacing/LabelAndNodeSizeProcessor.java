@@ -1092,6 +1092,8 @@ public class LabelAndNodeSizeProcessor {
      *            the data containing the node to compute the placement data for.
      * @return the port placement data.
      */
+    // CHECKSTYLEOFF MethodLength
+    // There's no sensible point to separate, too much parameters would have to be introduced.
     private PortPlacementData computePortPlacementData(final NodeData nodeData) {
         final PortPlacementData portData = new PortPlacementData();
         final KVector nodeSize = nodeData.node.getSize();
@@ -1111,26 +1113,21 @@ public class LabelAndNodeSizeProcessor {
 
         // The way we calculate everything depends on whether any additional port space is specified
         Margins additionalPortSpace = nodeData.node.getProperty(LayoutOptions.ADDITIONAL_PORT_SPACE);
-        boolean isAdditionalPortSpace = true;
         
         if (additionalPortSpace == null) {
-            isAdditionalPortSpace = false;
-            additionalPortSpace = new Margins();
-            // No additional port spacing, so we simply distribute the ports on each side according
-            // to alignment.
-            portData.westGaps = nodeData.westPortsCount + 1;
-            portData.eastGaps = nodeData.eastPortsCount + 1;
-            portData.northGaps = nodeData.northPortsCount + 1;
-            portData.southGaps = nodeData.southPortsCount + 1;
-        } else {
-            // Calculate how many gaps we have between ports (this is usually one less than the
-            // number of
-            // ports we have, but if it's just a single port, we have two gaps that surround it)
-            portData.northGaps = nodeData.northPortsCount == 1 ? 2 : nodeData.northPortsCount - 1;
-            portData.southGaps = nodeData.southPortsCount == 1 ? 2 : nodeData.southPortsCount - 1;
-            portData.westGaps = nodeData.westPortsCount == 1 ? 2 : nodeData.westPortsCount - 1;
-            portData.eastGaps = nodeData.eastPortsCount == 1 ? 2 : nodeData.eastPortsCount - 1;
+            // No additional port spacing set, so we set it to port spacing.
+            additionalPortSpace = new Margins(
+                    nodeData.portSpacing,
+                    nodeData.portSpacing,
+                    nodeData.portSpacing,
+                    nodeData.portSpacing);
         }
+        // Calculate how many gaps we have between ports (this is usually one less than the number
+        // of ports we have, but if it's just a single port, we have two gaps that surround it)
+        portData.northGaps = nodeData.northPortsCount == 1 ? 2 : nodeData.northPortsCount - 1;
+        portData.southGaps = nodeData.southPortsCount == 1 ? 2 : nodeData.southPortsCount - 1;
+        portData.westGaps = nodeData.westPortsCount == 1 ? 2 : nodeData.westPortsCount - 1;
+        portData.eastGaps = nodeData.eastPortsCount == 1 ? 2 : nodeData.eastPortsCount - 1;
 
         // Calculate how much space on each side may actually be used by ports
         final double usableWidth =
@@ -1138,156 +1135,128 @@ public class LabelAndNodeSizeProcessor {
         final double usableHeight =
                 nodeSize.y - additionalPortSpace.top - additionalPortSpace.bottom;
 
-
-        // Compute the space to be left between the ports
-        // Note: If the size constraints of this node are empty, the height and width of the
-        // ports
-        // on each side are zero. That is intentional: if this wasn't the case, bad things would
-        // happen if the ports would actually need more size than the node at its current
-        // (unchanged)
-        // size would be able to provide.
-        // Also compute the coordinate of the first port on each side
+        // Compute the space to be left between the ports and the coordinate of the first port on
+        // each side.
+        // Note:
+        // If the size constraints of this node are empty, the height and width of the ports on each
+        // side are zero. That is intentional: if this wasn't the case, bad things would happen if
+        // the ports would actually need more size than the node at its current (unchanged) size
+        // would be able to provide.
         
         // NORTH
         if (portAlignmentNorth == PortAlignment.JUSTIFIED) {
             portData.northGapSize = (usableWidth - nodeData.northPortsWidth) / portData.northGaps;
-            portData.northX = isAdditionalPortSpace
-                    ? (additionalPortSpace.left
-                            + (nodeData.northPortsCount == 1
-                                    ? portData.northGapSize
-                                    : 0))
-                    : portData.northGapSize;
+            portData.northX = additionalPortSpace.left
+                    + (nodeData.northPortsCount == 1 ? portData.northGapSize : 0);
         } else {
             portData.northGapSize = nodeData.portSpacing;
-            // Space occupied by all ports.
+            // Space occupied by all ports (including the in between gaps).
             double usedPortSpace = nodeData.northPortsWidth
                     + portData.northGapSize * (nodeData.northPortsCount - 1);
             switch (portAlignmentNorth) {
             case BEGIN:
-                // Start at leftmost position, 1 additionalSpace/gapsize space from the edge.
-                portData.northX =
-                        isAdditionalPortSpace ? additionalPortSpace.left : portData.northGapSize;
+                // Start at leftmost position, additionalSpace from the edge.
+                portData.northX = additionalPortSpace.left;
                 break;
             case CENTER:
-                // simple centered
-                portData.northX = (nodeSize.x - usedPortSpace) / 2.0;
+                // centered inside the usableWith
+                portData.northX = additionalPortSpace.left + (usableWidth - usedPortSpace) / 2.0;
                 break;
             case END:
                 // Startposition is as far from the right edge as the ports' used space plus
-                // 1 additionalSpace/gapsize.
-                portData.northX = nodeSize.x
-                        - usedPortSpace
-                        - (isAdditionalPortSpace
-                                ? additionalPortSpace.right : portData.northGapSize);
+                // additionalSpace.
+                portData.northX = nodeSize.x - usedPortSpace - additionalPortSpace.right;
                 break;
             }
         }
-        
+
         // SOUTH
         if (portAlignmentSouth == PortAlignment.JUSTIFIED) {
             portData.southGapSize = (usableWidth - nodeData.southPortsWidth) / portData.southGaps;
-            portData.southX = nodeSize.x
-                    - (isAdditionalPortSpace
-                            ? (additionalPortSpace.right
-                                    + (nodeData.southPortsCount == 1
-                                            ? portData.southGapSize
-                                            : 0))
-                            : portData.southGapSize);
+            portData.southX =  nodeSize.x - additionalPortSpace.right
+                    - (nodeData.southPortsCount == 1 ? portData.southGapSize : 0);
         } else {
             portData.southGapSize = nodeData.portSpacing;
-            // Space occupied by all ports.
+            // Space occupied by all ports (including the in between gaps).
             double usedPortSpace = nodeData.southPortsWidth
                     + portData.southGapSize * (nodeData.southPortsCount - 1);
             switch (portAlignmentSouth) {
             case BEGIN:
-                // Startposition is as far from the left edge as the ports' used space plus
-                // 1 additionalSpace/gapsize.
-                portData.southX = usedPortSpace
-                        + (isAdditionalPortSpace
-                                ? additionalPortSpace.left : portData.southGapSize);
+                // Startposition is as far from the right edge as the ports' used space plus
+                // additionalSpace.
+                portData.southX = usedPortSpace + additionalPortSpace.left;
                 break;
             case CENTER:
-                // Centered position + occupied width (startposition at the right).
-                portData.southX = (nodeSize.x - usedPortSpace) / 2.0 + usedPortSpace;
+                // centered inside the usableWith (starting at the right)
+                portData.northX = nodeSize.x
+                        - (usableWidth - usedPortSpace) / 2.0
+                        - additionalPortSpace.right;
                 break;
             case END:
-                // Start at rightmost position, 1 additionalSpace/gapsize from the edge.
-                portData.southX = nodeSize.x
-                        - (isAdditionalPortSpace
-                                ? additionalPortSpace.right : portData.southGapSize);
+                // Start at rightmost position, additionalSpace from the edge.
+                portData.northX = nodeSize.x - additionalPortSpace.right;
                 break;
             }
         }
-        
+
         // WEST
         if (portAlignmentWest == PortAlignment.JUSTIFIED) {
             portData.westGapSize = (usableHeight - nodeData.westPortsHeight) / portData.westGaps;
-            portData.westY = nodeSize.y
-                    - (isAdditionalPortSpace
-                            ? (additionalPortSpace.bottom 
-                                    + (nodeData.westPortsCount == 1
-                                            ? portData.westGapSize
-                                            : 0))
-                            : portData.westGapSize);
+            portData.westY =  nodeSize.y - additionalPortSpace.bottom
+                    - (nodeData.westPortsCount == 1 ? portData.westGapSize : 0);
         } else {
             portData.westGapSize = nodeData.portSpacing;
-            // Space occupied by all ports.
+            // Space occupied by all ports (including the in between gaps).
             double usedPortSpace = nodeData.westPortsHeight
                     + portData.westGapSize * (nodeData.westPortsCount - 1);
             switch (portAlignmentWest) {
             case BEGIN:
                 // Startposition is as far from the top edge as the ports' used space plus
-                // 1 additionalSpace/gapsize.
-                portData.westY = usedPortSpace
-                        + (isAdditionalPortSpace
-                                ? additionalPortSpace.top : portData.westGapSize);
+                // additionalSpace.
+                portData.westY = usedPortSpace + additionalPortSpace.top;
                 break;
             case CENTER:
-                portData.westY = (nodeSize.y - usedPortSpace) / 2.0 + usedPortSpace;
+                // centered inside the usableWith (starting at the bottom)
+                portData.westY = nodeSize.y
+                        - (usableHeight - usedPortSpace) / 2.0
+                        - additionalPortSpace.bottom;
                 break;
             case END:
-                // Start at bottommost position, 1 additionalSpace/gapsize from the edge.
-                portData.westY = nodeSize.y
-                        - (isAdditionalPortSpace
-                                ? additionalPortSpace.bottom : portData.westGapSize);
+                // Start at bottommost position, additionalSpace from the edge.
+                portData.westY = nodeSize.y - additionalPortSpace.bottom;
                 break;
             }
         }
-        
+
         // EAST
         if (portAlignmentEast == PortAlignment.JUSTIFIED) {
             portData.eastGapSize = (usableHeight - nodeData.eastPortsHeight) / portData.eastGaps;
-            portData.eastY = isAdditionalPortSpace
-                    ? (additionalPortSpace.top
-                            + (nodeData.eastPortsCount == 1
-                                    ? portData.eastGapSize
-                                    : 0))
-                    : portData.eastGapSize;
+            portData.eastY = additionalPortSpace.top
+                    + (nodeData.eastPortsCount == 1 ? portData.eastGapSize : 0);
         } else {
             portData.eastGapSize = nodeData.portSpacing;
-            // Space occupied by all ports.
+            // Space occupied by all ports (including the in between gaps).
             double usedPortSpace = nodeData.eastPortsHeight
                     + portData.eastGapSize * (nodeData.eastPortsCount - 1);
             switch (portAlignmentEast) {
             case BEGIN:
-                // Start at topmost position, 1 additionalSpace/gapsize from the edge.
-                portData.eastY = isAdditionalPortSpace ? additionalPortSpace.top : portData.eastGapSize;
+                // Start at topmost position, additionalSpace from the edge.
+                portData.eastY = additionalPortSpace.top;
                 break;
             case CENTER:
-                portData.eastY = (nodeSize.y - usedPortSpace) / 2.0;
+                // centered inside the usableWith
+                portData.eastY = additionalPortSpace.top + (usableHeight - usedPortSpace) / 2.0;
                 break;
             case END:
                 // Startposition is as far from the bottom edge as the ports' used space plus
-                // 1 additionalSpace/gapsize.
-                portData.eastY = nodeSize.y
-                        - usedPortSpace
-                        - (isAdditionalPortSpace
-                                ? additionalPortSpace.bottom : portData.eastGapSize);
+                // additionalSpace.
+                portData.westY = nodeSize.y - usedPortSpace - additionalPortSpace.bottom;
                 break;
             }
         }
         return portData;
     }
+    // CHECKSTYLEON MethodLength
 
     /**
      * Places the ports of a hypernode.
