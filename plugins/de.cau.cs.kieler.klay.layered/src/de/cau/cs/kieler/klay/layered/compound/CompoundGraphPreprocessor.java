@@ -178,7 +178,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
     private Collection<ExternalPort> transformHierarchyEdges(final LGraph graph,
             final LNode parentNode) {
         
-        // process all children and gather their external ports
+        // process all children and recurse down to gather their external ports
         List<ExternalPort> containedExternalPorts = new LinkedList<ExternalPort>();
         
         for (LNode node : graph.getLayerlessNodes()) {
@@ -196,7 +196,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
                     for (LPort port : node.getPorts()) {
                         if (dummyNodeMap.get(port) == null) {
                             LNode dummyNode = LGraphUtil.createExternalPortDummy(port,
-                                    PortConstraints.FREE, PortSide.UNDEFINED, -port.getNetFlow(),
+                                    PortConstraints.FREE, port.getSide(), -port.getNetFlow(),
                                     null, null, port.getSize(),
                                     nestedGraph.getProperty(LayoutOptions.DIRECTION), nestedGraph);
                             dummyNode.setProperty(InternalProperties.ORIGIN, port);
@@ -208,8 +208,10 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
             }
         }
         
-        // process the cross-hierarchy edges connected to the inside of the child nodes
+        // this will be the list of external ports we will export
         List<ExternalPort> exportedExternalPorts = new LinkedList<ExternalPort>();
+        
+        // process the cross-hierarchy edges connected to the inside of the child nodes
         processInnerHierarchicalEdgeSegments(graph, parentNode, exportedExternalPorts,
                 containedExternalPorts);
         
@@ -582,21 +584,25 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
         // check if external ports are to be merged
         boolean mergeExternalPorts = graph.getProperty(Properties.MERGE_HIERARCHICAL_EDGES);
         
-        // check if the edge connects to the parent node instead of to the outside world
-        boolean connectsToParent = false;
-        if (portType == PortType.INPUT) {
-            connectsToParent = origEdge.getSource().getNode() == parentNode;
-        } else {
-            connectsToParent = origEdge.getTarget().getNode() == parentNode;
+        // check if the edge connects to the parent node instead of to the outside world; if so, the
+        // parentEndPort will be non-null
+        LPort parentEndPort = null;
+        if (portType == PortType.INPUT && origEdge.getSource().getNode() == parentNode) {
+            parentEndPort = origEdge.getSource();
+        } else if (portType == PortType.OUTPUT && origEdge.getTarget().getNode() == parentNode) {
+            parentEndPort = origEdge.getTarget();
         }
         
         // only create a new external port if the current one is null or if ports are not to be merged
         // or if the connection actually ends at the parent node
         ExternalPort externalPort = defaultExternalPort;
-        if (externalPort == null || !mergeExternalPorts || connectsToParent) {
+        if (externalPort == null || !mergeExternalPorts || parentEndPort != null) {
             // create a dummy node that will represent the external port
+            PortSide externalPortSide = parentEndPort != null
+                    ? parentEndPort.getSide()
+                    : PortSide.UNDEFINED;
             LNode dummyNode = createExternalPortDummy(
-                    graph, parentNode, portType, PortSide.UNDEFINED, origEdge);
+                    graph, parentNode, portType, externalPortSide, origEdge);
             
             // create a dummy edge to be connected to the port
             LEdge dummyEdge = createDummyEdge(parentNode.getGraph(), origEdge);
@@ -617,7 +623,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
             // parent node)
             externalPort = new ExternalPort(origEdge, dummyEdge, dummyNode,
                     (LPort) dummyNode.getProperty(InternalProperties.ORIGIN), portType,
-                    !connectsToParent);
+                    parentEndPort == null);
         } else {
             // we use an existing external port, so simply add the original edge to its list of
             // original edges
@@ -677,7 +683,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
             if (dummyNode == null) {
                 dummyNode = LGraphUtil.createExternalPortDummy(
                         outsidePort,
-                        PortConstraints.FREE,
+                        parentNode.getProperty(LayoutOptions.PORT_CONSTRAINTS),
                         portSide,
                         portType == PortType.INPUT ? -1 : 1,
                         null,
@@ -695,7 +701,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
             float thickness = edge.getProperty(LayoutOptions.THICKNESS);
             dummyNode = LGraphUtil.createExternalPortDummy(
                     createExternalPortProperties(graph),
-                    PortConstraints.FREE,
+                    parentNode.getProperty(LayoutOptions.PORT_CONSTRAINTS),
                     portSide,
                     portType == PortType.INPUT ? -1 : 1,
                     null,
