@@ -88,10 +88,8 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  */
 public class CompoundGraphPreprocessor implements ILayoutProcessor {
     
-    /** map of original edges to generated cross-hierarchy edges. */
-    private Multimap<LEdge, CrossHierarchyEdge> crossHierarchyMap;
-    /** map of ports to their assigned dummy nodes in the nested graphs. */
-    private final BiMap<LPort, LNode> dummyNodeMap = HashBiMap.create();
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    // Class ExternalPort
 
     /**
      * An internal representation for external ports. This class is used to pass information
@@ -137,74 +135,36 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
         }
     }
     
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    // Variables
+    
+    /** map of original edges to generated cross-hierarchy edges. */
+    private Multimap<LEdge, CrossHierarchyEdge> crossHierarchyMap;
+    /** map of ports to their assigned dummy nodes in the nested graphs. */
+    private final BiMap<LPort, LNode> dummyNodeMap = HashBiMap.create();
+
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    // Processing
+    
     /**
      * {@inheritDoc}
      */
     public void process(final LGraph graph, final IKielerProgressMonitor monitor) {
         monitor.begin("Compound graph preprocessor", 1);
+        
         crossHierarchyMap = HashMultimap.create();
         
-        // create new dummy edges at hierarchy bounds
+        // create new dummy edges at hierarchy bounds and move the labels around accordingly
         transformHierarchyEdges(graph, null);
+        moveLabelsAndRemoveOriginalEdges(graph);
         
-        // move all labels of the original edges to the appropriate dummy edges and remove the original
-        // edges from the graph
-        for (LEdge origEdge : crossHierarchyMap.keySet()) {
-            // if the original edge had any labels, we need to move them to the newly introduced edge
-            // segments
-            if (origEdge.getLabels().size() > 0) {
-                // retrieve and sort the edge segments introduced for the original edge
-                List<CrossHierarchyEdge> edgeSegments = new ArrayList<CrossHierarchyEdge>(
-                        crossHierarchyMap.get(origEdge));
-                Collections.sort(edgeSegments, new CrossHierarchyEdgeComparator(graph));
-                
-                // iterate over the labels and move them to the edge segments
-                Iterator<LLabel> labelIterator = origEdge.getLabels().listIterator();
-                while (labelIterator.hasNext()) {
-                    LLabel currLabel = labelIterator.next();
-                    
-                    // find the index of the dummy edge we will move the label to
-                    int targetDummyEdgeIndex = -1;
-                    switch (currLabel.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)) {
-                    case HEAD:
-                        targetDummyEdgeIndex = edgeSegments.size() - 1;
-                        break;
-                    
-                    case CENTER:
-                        targetDummyEdgeIndex = edgeSegments.size() / 2;
-                        break;
-                        
-                    case TAIL:
-                        targetDummyEdgeIndex = 0;
-                        break;
-                        
-                    default:
-                        // we have no idea what to do with the label, so ignore it    
-                    }
-                    
-                    // move the label if we were lucky enough to find a new home for it
-                    if (targetDummyEdgeIndex != -1) {
-                        CrossHierarchyEdge targetSegment = edgeSegments.get(targetDummyEdgeIndex);
-                        targetSegment.getEdge().getLabels().add(currLabel);
-                        targetSegment.getEdge().getSource().getNode().getGraph().getProperty(
-                                InternalProperties.GRAPH_PROPERTIES).add(GraphProperties.END_LABELS);
-                        targetSegment.getEdge().getSource().getNode().getGraph().getProperty(
-                                InternalProperties.GRAPH_PROPERTIES).add(GraphProperties.CENTER_LABELS);
-                        
-                        labelIterator.remove();
-                        currLabel.setProperty(InternalProperties.ORIGINAL_LABEL_EDGE, origEdge);
-                    }
-                }
-            }
-            
-            // remove original edge
-            origEdge.setSource(null);
-            origEdge.setTarget(null);
-        }
-        
+        // Attach cross hierarchy map to the graph and cleanup
         graph.setProperty(InternalProperties.CROSS_HIERARCHY_MAP, crossHierarchyMap);
         crossHierarchyMap = null;
         dummyNodeMap.clear();
+        
         monitor.done();
     }
     
@@ -260,6 +220,73 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
         
         return exportedExternalPorts;
     }
+
+    /**
+     * Moves all labels of the original edges to the appropriate dummy edges and removes the original
+     * edges from the graph.
+     * 
+     * @param graph the top-level graph.
+     */
+    private void moveLabelsAndRemoveOriginalEdges(final LGraph graph) {
+        // move all labels of the original edges to the appropriate dummy edges and remove the original
+        // edges from the graph
+        for (LEdge origEdge : crossHierarchyMap.keySet()) {
+            // if the original edge had any labels, we need to move them to the newly introduced edge
+            // segments
+            if (origEdge.getLabels().size() > 0) {
+                // retrieve and sort the edge segments introduced for the original edge
+                List<CrossHierarchyEdge> edgeSegments = new ArrayList<CrossHierarchyEdge>(
+                        crossHierarchyMap.get(origEdge));
+                Collections.sort(edgeSegments, new CrossHierarchyEdgeComparator(graph));
+                
+                // iterate over the labels and move them to the edge segments
+                Iterator<LLabel> labelIterator = origEdge.getLabels().listIterator();
+                while (labelIterator.hasNext()) {
+                    LLabel currLabel = labelIterator.next();
+                    
+                    // find the index of the dummy edge we will move the label to
+                    int targetDummyEdgeIndex = -1;
+                    switch (currLabel.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)) {
+                    case HEAD:
+                        targetDummyEdgeIndex = edgeSegments.size() - 1;
+                        break;
+                    
+                    case CENTER:
+                        targetDummyEdgeIndex = edgeSegments.size() / 2;
+                        break;
+                        
+                    case TAIL:
+                        targetDummyEdgeIndex = 0;
+                        break;
+                        
+                    default:
+                        // we have no idea what to do with the label, so ignore it    
+                    }
+                    
+                    // move the label if we were lucky enough to find a new home for it
+                    if (targetDummyEdgeIndex != -1) {
+                        CrossHierarchyEdge targetSegment = edgeSegments.get(targetDummyEdgeIndex);
+                        targetSegment.getEdge().getLabels().add(currLabel);
+                        targetSegment.getEdge().getSource().getNode().getGraph().getProperty(
+                                InternalProperties.GRAPH_PROPERTIES).add(GraphProperties.END_LABELS);
+                        targetSegment.getEdge().getSource().getNode().getGraph().getProperty(
+                                InternalProperties.GRAPH_PROPERTIES).add(GraphProperties.CENTER_LABELS);
+                        
+                        labelIterator.remove();
+                        currLabel.setProperty(InternalProperties.ORIGINAL_LABEL_EDGE, origEdge);
+                    }
+                }
+            }
+            
+            // remove original edge
+            origEdge.setSource(null);
+            origEdge.setTarget(null);
+        }
+    }
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    // Inner Hierarchical Edge Segment Processing
     
     /**
      * Deals with the inner segments of hierarchical edges by breaking them between external ports.
@@ -430,6 +457,10 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
                 new CrossHierarchyEdge(dummyEdge, graph, externalOutputPort.type));
     }
     
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    // Outer Hierarchical Edge Segment Processing
+    
     /**
      * Deals with the outer segments of hierarchical edges by breaking them at their source or target.
      * For each hierarchical edge that starts or ends at one of the graph's children, this method adds
@@ -511,6 +542,10 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
         }
     }
     
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    // General Hierarchical Edge Segment Processing
+    
     /**
      * Does the actual work of creating a new hierarchical edge segment between an external port and a
      * given opposite port. The external port used for the segment is returned. This method does not
@@ -560,7 +595,8 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
         ExternalPort externalPort = defaultExternalPort;
         if (externalPort == null || !mergeExternalPorts || connectsToParent) {
             // create a dummy node that will represent the external port
-            LNode dummyNode = createExternalPortDummy(graph, parentNode, portType, origEdge);
+            LNode dummyNode = createExternalPortDummy(
+                    graph, parentNode, portType, PortSide.UNDEFINED, origEdge);
             
             // create a dummy edge to be connected to the port
             LEdge dummyEdge = createDummyEdge(parentNode.getGraph(), origEdge);
@@ -626,7 +662,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
      * @return an appropriate external port dummy.
      */
     private LNode createExternalPortDummy(final LGraph graph, final LNode parentNode,
-            final PortType portType, final LEdge edge) {
+            final PortType portType, final PortSide portSide, final LEdge edge) {
         
         LNode dummyNode = null;
         
@@ -642,7 +678,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
                 dummyNode = LGraphUtil.createExternalPortDummy(
                         outsidePort,
                         PortConstraints.FREE,
-                        PortSide.UNDEFINED,
+                        portSide,
                         portType == PortType.INPUT ? -1 : 1,
                         null,
                         null,
@@ -658,9 +694,9 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
             // create one as well
             float thickness = edge.getProperty(LayoutOptions.THICKNESS);
             dummyNode = LGraphUtil.createExternalPortDummy(
-                    getExternalPortProperties(graph),
+                    createExternalPortProperties(graph),
                     PortConstraints.FREE,
-                    PortSide.UNDEFINED,
+                    portSide,
                     portType == PortType.INPUT ? -1 : 1,
                     null,
                     null,
@@ -690,7 +726,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
      * @param graph the graph for which the dummy external port is created
      * @return properties to apply to the dummy port
      */
-    private static IPropertyHolder getExternalPortProperties(final LGraph graph) {
+    private static IPropertyHolder createExternalPortProperties(final LGraph graph) {
         IPropertyHolder propertyHolder = new MapPropertyHolder();
         float offset = graph.getProperty(Properties.OBJ_SPACING)
                 * graph.getProperty(Properties.EDGE_SPACING_FACTOR) / 2;
