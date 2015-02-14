@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -39,9 +38,9 @@ import de.cau.cs.kieler.core.util.ForkedOutputStream;
 import de.cau.cs.kieler.core.util.ForwardingInputStream;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.formats.GraphFormatData;
+import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
 import de.cau.cs.kieler.kiml.formats.IGraphFormatHandler;
 import de.cau.cs.kieler.kiml.formats.TransformationData;
-import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
 import de.cau.cs.kieler.kiml.graphviz.dot.GraphvizDotStandaloneSetup;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.GraphvizModel;
 import de.cau.cs.kieler.kiml.graphviz.dot.transform.Command;
@@ -79,7 +78,7 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
     /** the call number for the current execution. */
     private int myCallNo;
     /** the current configuration regarding the process handling. */
-    private boolean reuseProcess;
+    private boolean reuseProcess = REUSE_PROCESS_DEFAULT;
     /** a corresponding pref change listener updating {@link #reuseProcess}. */
     private IPropertyChangeListener prefListener;
     /** lazily created injector for creating required format handlers if running outside of Eclipse. */
@@ -90,19 +89,19 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
      */
     @Override
     public void initialize(final String parameter) {
-        final IPreferenceStore store = GraphvizLayouterPlugin.getDefault().getPreferenceStore();
-        reuseProcess = store.getBoolean(PREF_GRAPHVIZ_REUSE_PROCESS);
-        
-        prefListener = new IPropertyChangeListener() {
-            
-            public void propertyChange(final PropertyChangeEvent event) {
-               if (PREF_GRAPHVIZ_REUSE_PROCESS.equals(event.getProperty())) {
-                   reuseProcess = ((Boolean) event.getNewValue()).booleanValue();
-               }
-            }
-        };
-        store.addPropertyChangeListener(prefListener);
-
+        if (EclipseRuntimeDetector.isEclipseRunning()) {
+            final IPreferenceStore store = GraphvizLayouterPlugin.getDefault().getPreferenceStore();
+            reuseProcess = store.getBoolean(PREF_GRAPHVIZ_REUSE_PROCESS);
+            prefListener = new IPropertyChangeListener() {
+                
+                public void propertyChange(final PropertyChangeEvent event) {
+                   if (PREF_GRAPHVIZ_REUSE_PROCESS.equals(event.getProperty())) {
+                       reuseProcess = ((Boolean) event.getNewValue()).booleanValue();
+                   }
+                }
+            };
+            store.addPropertyChangeListener(prefListener);
+        } 
         command = Command.valueOf(parameter);
         graphvizTool = new GraphvizTool(command);
         
@@ -110,7 +109,7 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
         // inside Eclipse, use the GraphFormatsService to retrieve the handler; otherwise, use an
         // injector to retrieve an instance)
         IGraphFormatHandler<?> handler = null;
-        if (Platform.isRunning()) {
+        if (EclipseRuntimeDetector.isEclipseRunning()) {
             GraphFormatData formatData = GraphFormatsService.getInstance().getFormatData(
                     DotFormatHandler.ID);
             if (formatData != null) {

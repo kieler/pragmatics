@@ -21,7 +21,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.swt.widgets.Display;
@@ -203,7 +202,7 @@ public class GraphvizTool {
         
         // Load the graphviz path from the preferences, if any. However, do this only if we're really
         // running in an Eclipse context
-        if (Platform.isRunning()) {
+        if (EclipseRuntimeDetector.isEclipseRunning()) {
             IPreferenceStore preferenceStore = GraphvizLayouterPlugin.getDefault().getPreferenceStore();
             dotExecutable = preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);
             dotFile = new File(dotExecutable);
@@ -230,7 +229,7 @@ public class GraphvizTool {
         }
         
         // If we haven't found an executable yet, ask the user if so requested and if Eclipse is running
-        if (promptUser && Platform.isRunning()) {
+        if (promptUser && EclipseRuntimeDetector.isEclipseRunning()) {
             if (handleExecPath()) {
                 // fetch the executable string again after the user has entered a new path
                 IPreferenceStore preferenceStore =
@@ -517,7 +516,7 @@ public class GraphvizTool {
                 
                 // retrieve the current timeout value
                 int timeout = PROCESS_DEF_TIMEOUT;
-                if (Platform.isRunning()) {
+                if (EclipseRuntimeDetector.isEclipseRunning()) {
                     IPreferenceStore preferenceStore =
                             GraphvizLayouterPlugin.getDefault().getPreferenceStore();
                     int timeoutPreference = preferenceStore.getInt(PREF_TIMEOUT);
