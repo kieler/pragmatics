@@ -18,6 +18,10 @@ import org.eclipse.core.runtime.Platform;
 /**
  * Provides a way to check if the Eclipse platform is running or not.
  * 
+ * <p>The single static method of this class might find a more suitable home in
+ * {@link GraphvizLayouterPlugin}. However, at this point we are not sure if that class can be loaded if
+ * the platform is not running.</p>
+ * 
  * @author Jan Koehnlein
  */
 final class EclipseRuntimeDetector {
