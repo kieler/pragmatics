@@ -662,17 +662,6 @@
            type="boolean"
            variance="0">
      </layoutOption>
-     <layoutOption
-           advanced="true"
-           appliesTo="labels"
-           class="de.cau.cs.kieler.kiml.options.LabelSide"
-           default="UNKNOWN"
-           description="On which side of a edge a port label should be placed"
-           id="de.cau.cs.kieler.labelSide"
-           name="Label Side"
-           type="enum"
-           variance="0">
-     </layoutOption>
    </extension>
    
    <extension
