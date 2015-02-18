@@ -249,13 +249,13 @@ public class LabelAndNodeSizeProcessor {
                 y += labelSpacing + label.getSize().y;
                 break;
             case NORTH:
-                position.x = -label.getSize().x / 2;
+                position.x = (port.getSize().x - label.getSize().x) / 2;
                 position.y = y + labelSpacing;
 
                 y += labelSpacing + label.getSize().y;
                 break;
             case SOUTH:
-                position.x = -label.getSize().x / 2;
+                position.x = (port.getSize().x - label.getSize().x) / 2;
                 position.y = y - labelSpacing - label.getSize().y;
 
                 y -= labelSpacing + label.getSize().y;
@@ -282,7 +282,9 @@ public class LabelAndNodeSizeProcessor {
         }
 
         // Retrieve the first label's side
-        final LabelSide labelSide = labels.get(0).getSide();
+        LabelSide labelSide = labels.get(0).getSide();
+        // Default is BELOW.
+        labelSide = labelSide == LabelSide.UNKNOWN ? LabelSide.BELOW : labelSide;
 
         // The initial y position we'll be starting from depends on port and label sides
         double y = 0;
