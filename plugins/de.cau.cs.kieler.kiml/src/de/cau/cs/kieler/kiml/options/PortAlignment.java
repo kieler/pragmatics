@@ -20,6 +20,12 @@ package de.cau.cs.kieler.kiml.options;
  */
 public enum PortAlignment {
 
+    /** The alignment is not set. */
+    UNDEFINED,
+
+    /** Ports are evenly distributed. */
+    JUSTIFIED,
+
     /** Ports are placed at the most top respectively left position with minimal spacing. */
     BEGIN,
 
@@ -27,9 +33,6 @@ public enum PortAlignment {
     CENTER,
 
     /** Ports are placed at the most top respectively left position with minimal spacing. */
-    END,
-
-    /** Ports are evenly distributed. */
-    JUSTIFIED;
+    END;
 
 }
