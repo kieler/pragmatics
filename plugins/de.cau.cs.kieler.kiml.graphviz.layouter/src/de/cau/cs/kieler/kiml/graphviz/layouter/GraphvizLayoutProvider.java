@@ -29,6 +29,8 @@ import org.eclipse.xtext.resource.SaveOptions;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceSet;
 
+import com.google.inject.Injector;
+
 import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -36,9 +38,10 @@ import de.cau.cs.kieler.core.util.ForkedOutputStream;
 import de.cau.cs.kieler.core.util.ForwardingInputStream;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.formats.GraphFormatData;
+import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
 import de.cau.cs.kieler.kiml.formats.IGraphFormatHandler;
 import de.cau.cs.kieler.kiml.formats.TransformationData;
-import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
+import de.cau.cs.kieler.kiml.graphviz.dot.GraphvizDotStandaloneSetup;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.GraphvizModel;
 import de.cau.cs.kieler.kiml.graphviz.dot.transform.Command;
 import de.cau.cs.kieler.kiml.graphviz.dot.transform.DotExporter;
@@ -75,44 +78,54 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
     /** the call number for the current execution. */
     private int myCallNo;
     /** the current configuration regarding the process handling. */
-    private boolean reuseProcess;
+    private boolean reuseProcess = REUSE_PROCESS_DEFAULT;
     /** a corresponding pref change listener updating {@link #reuseProcess}. */
     private IPropertyChangeListener prefListener;
+    /** lazily created injector for creating required format handlers if running outside of Eclipse. */
+    private Injector injector;
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void initialize(final String parameter) {
-        final IPreferenceStore store = GraphvizLayouterPlugin.getDefault().getPreferenceStore();
-        reuseProcess = store.getBoolean(PREF_GRAPHVIZ_REUSE_PROCESS);
-        
-        prefListener = new IPropertyChangeListener() {
-            
-            public void propertyChange(final PropertyChangeEvent event) {
-               if (PREF_GRAPHVIZ_REUSE_PROCESS.equals(event.getProperty())) {
-                   reuseProcess = ((Boolean) event.getNewValue()).booleanValue();
-               }
-            }
-        };
-        store.addPropertyChangeListener(prefListener);
-
+        if (EclipseRuntimeDetector.isEclipseRunning()) {
+            final IPreferenceStore store = GraphvizLayouterPlugin.getDefault().getPreferenceStore();
+            reuseProcess = store.getBoolean(PREF_GRAPHVIZ_REUSE_PROCESS);
+            prefListener = new IPropertyChangeListener() {
+                
+                public void propertyChange(final PropertyChangeEvent event) {
+                   if (PREF_GRAPHVIZ_REUSE_PROCESS.equals(event.getProperty())) {
+                       reuseProcess = ((Boolean) event.getNewValue()).booleanValue();
+                   }
+                }
+            };
+            store.addPropertyChangeListener(prefListener);
+        } 
         command = Command.valueOf(parameter);
         graphvizTool = new GraphvizTool(command);
-        // the dot format handler is indirectly fetched in order to ensure proper injection
+        
+        // the dot format handler is indirectly fetched in order to ensure proper injection (if we're
+        // inside Eclipse, use the GraphFormatsService to retrieve the handler; otherwise, use an
+        // injector to retrieve an instance)
         IGraphFormatHandler<?> handler = null;
-        GraphFormatData formatData = GraphFormatsService.getInstance().getFormatData(
-                DotFormatHandler.ID);
-        if (formatData != null) {
-            handler = formatData.getHandler();
-        }
-        if (handler instanceof DotFormatHandler) {
-            dotHandler = (DotFormatHandler) handler;
+        if (EclipseRuntimeDetector.isEclipseRunning()) {
+            GraphFormatData formatData = GraphFormatsService.getInstance().getFormatData(
+                    DotFormatHandler.ID);
+            if (formatData != null) {
+                handler = formatData.getHandler();
+            }
+            
+            if (handler instanceof DotFormatHandler) {
+                dotHandler = (DotFormatHandler) handler;
+            } else {
+                throw new IllegalStateException("The Graphviz Dot language support is not available.");
+            }
         } else {
-            throw new IllegalStateException("The Graphviz Dot language support is not available.");
+            dotHandler = getInjector().getInstance(DotFormatHandler.class);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -129,6 +142,19 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
         prefListener = null;
 
         graphvizTool.cleanup(Cleanup.STOP);
+    }
+    
+    /**
+     * Returns the injector, creating a new instance if none was created yet.
+     * 
+     * @return the injector.
+     */
+    private Injector getInjector() {
+        if (injector == null) {
+            injector = new GraphvizDotStandaloneSetup().createInjectorAndDoEMFRegistration();
+        }
+        
+        return injector;
     }
 
     /**

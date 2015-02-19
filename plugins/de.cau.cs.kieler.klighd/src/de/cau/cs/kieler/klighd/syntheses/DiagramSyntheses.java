@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.klighd.syntheses;
 
+import java.util.Map;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
@@ -45,7 +47,6 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klighd.ViewContext;
 import de.cau.cs.kieler.klighd.util.ExpansionAwareLayoutOption;
 import de.cau.cs.kieler.klighd.util.KlighdProperties;
-import de.cau.cs.kieler.klighd.util.ExpansionAwareLayoutOption.ExpansionAwareLayoutOptionData;
 
 /**
  * Collection of KGraph/KRendering view model configuration methods.
@@ -85,8 +86,8 @@ public final class DiagramSyntheses {
     }
 
     /**
-     * Convenience method for defining layout options for {@link KGraphElement KGraphElements} 
-     * based on ids and possibly string representations of properties defined by 
+     * Convenience method for defining layout options for {@link KGraphElement KGraphElements}
+     * based on ids and possibly string representations of properties defined by
      * {@link java.util.EnumSet}s.
      *
      * @param <R>
@@ -97,7 +98,7 @@ public final class DiagramSyntheses {
      *            the particular layout option's id, e.g. one of
      *            {@link de.cau.cs.kieler.kiml.options.LayoutOptions LayoutOptions}
      * @param value
-     *            the option value. It is possible to pass string representations 
+     *            the option value. It is possible to pass string representations
      *            of EnumSets as well as any non-string property.
      * @return <code>element</code> allowing to perform multiple operations on it in one statement
      */
@@ -113,6 +114,38 @@ public final class DiagramSyntheses {
         }
         return element;
     }
+
+    /**
+     * Convenience method for defining multiple layout options for {@link KGraphElement
+     * KGraphElements}.<br>
+     * The required <code>optionValueMap</code> can be easily created via<br>
+     * {@link com.google.common.collect.ImmutableMap#of(Object, Object, Object, Object)
+     * ImmutableMap.&lt;IProperty&lt;?&gt;, Object&gt;of(option, value, option, value, ...)},
+     * for example.
+     *
+     * @param <R>
+     *            the concrete type of <code>element</code>
+     * @param element
+     *            the element to set the layout option on
+     * @param optionValueMap
+     *            a {@link Map} containing valid pairs of layout options, e.g. some of
+     *            {@link de.cau.cs.kieler.kiml.options.LayoutOptions LayoutOptions}, and
+     *            corresponding option values.
+     * @return <code>element</code> allowing to perform multiple operations on it in one statement
+     */
+    public static <R extends KGraphElement> R setLayoutOptions(final R element,
+            final Map<IProperty<?>, ?> optionValueMap) {
+        final KLayoutData sl = element.getData(KLayoutData.class);
+        if (sl != null && optionValueMap != null) {
+            for (final Map.Entry<IProperty<?>, ?> entry : optionValueMap.entrySet()) {
+                @SuppressWarnings("unchecked")
+                final IProperty<Object> key = (IProperty<Object>) entry.getKey();
+                sl.setProperty(key, entry.getValue());
+            }
+        }
+        return element;
+    }
+
 
     /**
      * Convenience method for defining collapse/expand state dependent layout options for
@@ -156,22 +189,17 @@ public final class DiagramSyntheses {
      *            the value in case <code>port</code>'s container node is collapsed
      * @param expandedValue
      *            the value in case <code>port</code>'s container node is expanded
-     * @return <code>node</code> allowing to perform multiple operations on it in one statement
+     * @return <code>port</code> allowing to perform multiple operations on it in one statement
      */
     public static <T> KPort setExpansionAwareLayoutOption(final KPort port,
             final IProperty<T> option, final T collapsedValue, final T expandedValue) {
         final KLayoutData sl = port.getData(KLayoutData.class);
-        ExpansionAwareLayoutOptionData data = sl.getProperty(ExpansionAwareLayoutOption.OPTION);
-
-        if (data == null) {
-            data = new ExpansionAwareLayoutOptionData();
-            sl.setProperty(ExpansionAwareLayoutOption.OPTION, data);
+        if (sl != null) {
+            ExpansionAwareLayoutOption.setProperty(sl, option, collapsedValue, expandedValue);
         }
-
-        data.setProperty(option, collapsedValue, expandedValue);
-
         return port;
     }
+
 
     /**
      * Configures the provided {@link KRendering} to represent the parent {@link KNode} if it is in
@@ -464,22 +492,44 @@ public final class DiagramSyntheses {
         return kText;
     }
 
+
+    /**
+     * Configures a tooltip on the provided {@link KGraphElement KGraphElement}. This method has no
+     * effect if another tooltip is defined on the root {@link KRendering} attached attached to this
+     * {@link KGraphElement} (except of blowing up the view model :-P).
+     *
+     * @param <T>
+     *            the concrete type of {@code kge}
+     * @param kge
+     *            the {@link KGraphElement} to be configured
+     * @param tooltip
+     *            the tooltip text to be shown while hovering over the corresponding diagram figure
+     * @return <code>kge</code> for convenience
+     */
+    public static <T extends KGraphElement> T setTooltip(final T kge, final String tooltip) {
+        kge.getData(KLayoutData.class).setProperty(KlighdProperties.TOOLTIP, tooltip);
+        return kge;
+    }
+
     /**
      * Configures a tooltip on the provided {@link KRendering root KRendering} of a
      * {@link KGraphElement}. Similar to {@link #setAsCollapsedView(KRendering)} or
      * {@link #setAsExpandedView(KRendering)} this method has no effect on nested {@link KRendering
-     * KRendering} (except of blowing up the view model :-P).
+     * KRenderings} (except of blowing up the view model :-P).
      *
+     * @param <T>
+     *            the concrete type of {@code rendering}
      * @param rendering
      *            the {@link KRendering} to be configured
      * @param tooltip
      *            the tooltip text to be shown while hovering over the corresponding diagram figure
      * @return <code>rendering</code> for convenience
      */
-    public static KRendering setTooltip(final KRendering rendering, final String tooltip) {
+    public static <T extends KRendering> T setTooltip(final T rendering, final String tooltip) {
         rendering.setProperty(KlighdProperties.TOOLTIP, tooltip);
         return rendering;
     }
+
 
     /**
      * Wraps the given rendering in a rendering displayed on selection and adds that to the given KGraph

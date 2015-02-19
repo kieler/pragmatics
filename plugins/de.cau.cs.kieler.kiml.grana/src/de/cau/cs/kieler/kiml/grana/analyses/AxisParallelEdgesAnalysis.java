@@ -43,9 +43,9 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 public class AxisParallelEdgesAnalysis implements IAnalysis {
     
     /**
-     * Identifier of the edge crossings analysis.
+     * Identifier of this analysis.
      */
-    public static final String ID = "de.cau.cs.kieler.kiml.grana.straightEdges";
+    public static final String ID = "de.cau.cs.kieler.kiml.grana.axisParallelEdges";
     
     /** tolerance for float equality. */
     private static final float TOLERANCE = 0.00001f;

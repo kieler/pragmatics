@@ -33,6 +33,8 @@ import org.ptolemy.moml.DocumentRoot
  */
 public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRoot> {
     
+    public static val ID = "de.cau.cs.kieler.ptolemy.klighd.PtolemyDiagramSynthesis"
+    
     // Our transformation options
     public static val SynthesisOption SHOW_COMMENTS = SynthesisOption::createCheckOption(
         "Comments", true)

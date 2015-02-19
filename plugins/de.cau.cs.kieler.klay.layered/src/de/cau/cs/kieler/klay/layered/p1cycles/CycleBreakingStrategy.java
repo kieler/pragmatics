@@ -13,14 +13,19 @@
  */
 package de.cau.cs.kieler.klay.layered.p1cycles;
 
+import de.cau.cs.kieler.klay.layered.ILayoutPhase;
+import de.cau.cs.kieler.klay.layered.ILayoutPhaseFactory;
+import de.cau.cs.kieler.klay.layered.NullPhase;
+
 /**
- * Definition of available cycle breaking strategies for the layered layouter.
+ * Enumeration of and factory for the different available cycle breaking strategies.
  * 
  * @author msp
+ * @author cds
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating yellow 2012-11-13 review KI-33 by grh, akoc
  */
-public enum CycleBreakingStrategy {
+public enum CycleBreakingStrategy implements ILayoutPhaseFactory {
 
     /**
      * Applies a greedy heuristic to minimize the number of reversed edges.
@@ -32,14 +37,33 @@ public enum CycleBreakingStrategy {
      * a node, that movement is reflected in the decision which edges to reverse.
      */
     INTERACTIVE,
-    /**
-     * Uses an integer program to solve the problem to optimality.
-     */
+    
     OPTIMAL,
-    /**
-     * No cycle breaking is done in the first phase. WARNING: This works only for layer
-     * assignment algorithms (phase 2) that are able to handle cycles!
-     */
+    
     NONE;
+    
+
+    /**
+     * {@inheritDoc}
+     */
+    public ILayoutPhase create() {
+        switch (this) {
+        case GREEDY:
+            return new GreedyCycleBreaker();
+            
+        case INTERACTIVE:
+            return new InteractiveCycleBreaker();
+            
+        case NONE: 
+            return new NullPhase();
+            
+        case OPTIMAL:
+            return new OptimalCycleBreaker();
+            
+        default:
+            throw new IllegalArgumentException(
+                    "No implementation is available for the cycle breaker " + this.toString());
+        }
+    }
 
 }

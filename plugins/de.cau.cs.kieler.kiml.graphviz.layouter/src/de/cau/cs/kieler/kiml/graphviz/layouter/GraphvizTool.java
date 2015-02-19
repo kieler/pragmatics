@@ -197,12 +197,18 @@ public class GraphvizTool {
      * @return path to the dot executable, or {@code null} if the executable was not found
      */
     public static String getDotExecutable(final boolean promptUser) {
-        // load the graphviz path from the preferences, if any
-        IPreferenceStore preferenceStore = GraphvizLayouterPlugin.getDefault().getPreferenceStore();
-        String dotExecutable = preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);
-        File dotFile = new File(dotExecutable);
-        if (dotFile.exists() && dotFile.canExecute()) {
-            return dotExecutable;
+        String dotExecutable;
+        File dotFile;
+        
+        // Load the graphviz path from the preferences, if any. However, do this only if we're really
+        // running in an Eclipse context
+        if (EclipseRuntimeDetector.isEclipseRunning()) {
+            IPreferenceStore preferenceStore = GraphvizLayouterPlugin.getDefault().getPreferenceStore();
+            dotExecutable = preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);
+            dotFile = new File(dotExecutable);
+            if (dotFile.exists() && dotFile.canExecute()) {
+                return dotExecutable;
+            }
         }
         
         // look in a selection of default locations where it might be installed
@@ -222,9 +228,12 @@ public class GraphvizTool {
             }
         }
         
-        if (promptUser) {
+        // If we haven't found an executable yet, ask the user if so requested and if Eclipse is running
+        if (promptUser && EclipseRuntimeDetector.isEclipseRunning()) {
             if (handleExecPath()) {
                 // fetch the executable string again after the user has entered a new path
+                IPreferenceStore preferenceStore =
+                        GraphvizLayouterPlugin.getDefault().getPreferenceStore();
                 dotExecutable = preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);
                 dotFile = new File(dotExecutable);
                 if (dotFile.exists() && dotFile.canExecute()) {
@@ -506,11 +515,14 @@ public class GraphvizTool {
                 }
                 
                 // retrieve the current timeout value
-                IPreferenceStore preferenceStore =
-                        GraphvizLayouterPlugin.getDefault().getPreferenceStore();
-                int timeout = preferenceStore.getInt(PREF_TIMEOUT);
-                if (timeout < PROCESS_MIN_TIMEOUT) {
-                    timeout = PROCESS_DEF_TIMEOUT;
+                int timeout = PROCESS_DEF_TIMEOUT;
+                if (EclipseRuntimeDetector.isEclipseRunning()) {
+                    IPreferenceStore preferenceStore =
+                            GraphvizLayouterPlugin.getDefault().getPreferenceStore();
+                    int timeoutPreference = preferenceStore.getInt(PREF_TIMEOUT);
+                    if (timeoutPreference >= PROCESS_MIN_TIMEOUT) {
+                        timeout = timeoutPreference;
+                    }
                 }
                 
                 boolean interrupted = false;
@@ -534,7 +546,6 @@ public class GraphvizTool {
                 
             } while (watchdog != null);
         }
-        
     }
 
 }
