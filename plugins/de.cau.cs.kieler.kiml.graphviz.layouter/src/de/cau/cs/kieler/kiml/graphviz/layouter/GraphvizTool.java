@@ -15,6 +15,7 @@ package de.cau.cs.kieler.kiml.graphviz.layouter;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -63,6 +64,16 @@ public class GraphvizTool {
     public static final int PROCESS_DEF_TIMEOUT = 20000;
     /** minimal timeout for waiting for Graphviz to give some output. */
     public static final int PROCESS_MIN_TIMEOUT = 200;
+    
+    /** different names for the Windows program files folder. */
+    private static final String[] PROGRAM_FILES_FOLDERS = {
+        "Program Files", "Program Files (x86)", "Programme", "Programme (x86)"
+    };
+    /**
+     * Default locations of the dot executable. Each entry ends with the path separator, so that the
+     * dot executable's file name can be directly appended.
+     */
+    private static final List<String> DEFAULT_LOCS = new ArrayList<String>();
 
     /** argument used to specify the command. */
     private static final String ARG_COMMAND = "-K";
@@ -70,11 +81,6 @@ public class GraphvizTool {
     private static final String ARG_NOWARNINGS = "-q";
     /** argument to invert the Y axis to conform with SWT. */
     private static final String ARG_INVERTYAXIS = "-y";
-    /**
-     * Default locations of the dot executable. Each entry ends with the path separator, so that the
-     * dot executable's file name can be directly appended.
-     */
-    private static final List<String> DEFAULT_LOCS = new ArrayList<String>();
 
     /** the process instance that is used for multiple layout runs. */
     private Process process;
@@ -87,6 +93,35 @@ public class GraphvizTool {
     
     
     static {
+        // If we're on Windows, we try to find the default Graphviz installation directory in the
+        // program files folder
+        if (File.separator.equals("\\")) {
+            for (String programFilesName : PROGRAM_FILES_FOLDERS) {
+                File programFilesFolder = new File("C:\\" + programFilesName);
+                if (programFilesFolder.exists()
+                        && programFilesFolder.isDirectory()
+                        && programFilesFolder.canRead()) {
+                    
+                    // Find Graphviz directories
+                    File[] graphvizDirs = programFilesFolder.listFiles(new FileFilter() {
+                        public boolean accept(final File pathname) {
+                            return pathname.isDirectory()
+                                    && pathname.canRead()
+                                    && pathname.getName().toLowerCase().startsWith("graphviz");
+                        }
+                    });
+                    
+                    // Add each Graphviz directory
+                    if (graphvizDirs != null) {
+                        for (File graphvizDir : graphvizDirs) {
+                            DEFAULT_LOCS.add(
+                                    graphvizDir.toString() + File.separator + "bin" + File.separator);
+                        }
+                    }
+                }
+            }
+        }
+        
         // Add all paths from the system PATH variable to the list of paths we will look for dot in
         // to our list of default locations
         String envPath = System.getenv("PATH");
