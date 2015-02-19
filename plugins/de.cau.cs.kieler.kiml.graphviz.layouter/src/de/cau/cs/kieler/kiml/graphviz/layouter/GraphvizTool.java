@@ -93,9 +93,37 @@ public class GraphvizTool {
     
     
     static {
-        // If we're on Windows, we try to find the default Graphviz installation directory in the
-        // program files folder
-        if (File.separator.equals("\\")) {
+        // Add all paths from the system PATH variable to the list of paths we will look for dot in
+        // to our list of default locations
+        String envPath = System.getenv("PATH");
+        if (envPath != null) {
+            String[] envPaths = envPath.split(File.pathSeparator);
+            
+            for (int i = 0; i < envPaths.length; i++) {
+                if (envPaths[i].trim().length() > 0) {
+                    String path; 
+                    if (envPaths[i].startsWith("\"") && envPaths[i].endsWith("\"")) {
+                        path = envPaths[i].substring(1, envPaths[i].length() - 1);
+                    } else {
+                        path = envPaths[i];
+                    }
+                    if (path.endsWith(File.separator)) {
+                        DEFAULT_LOCS.add(path);
+                    } else {
+                        DEFAULT_LOCS.add(path + File.separator);
+                    }
+                }
+            }
+        }
+        
+        if (File.separator.equals("/")) {
+            // Fallback list of default locations for Unix-like environments
+            DEFAULT_LOCS.add("/opt/local/bin/");
+            DEFAULT_LOCS.add("/usr/local/bin/");
+            DEFAULT_LOCS.add("/usr/bin/");
+        } else if (File.separator.equals("\\")) {
+            // If we're on Windows, we try to find the default Graphviz installation directory in the
+            // program files folder
             for (String programFilesName : PROGRAM_FILES_FOLDERS) {
                 File programFilesFolder = new File("C:\\" + programFilesName);
                 if (programFilesFolder.exists()
@@ -120,36 +148,6 @@ public class GraphvizTool {
                     }
                 }
             }
-        }
-        
-        // Add all paths from the system PATH variable to the list of paths we will look for dot in
-        // to our list of default locations
-        String envPath = System.getenv("PATH");
-        if (envPath != null) {
-            String[] envPaths = envPath.split(File.pathSeparator);
-            
-            for (int i = 0; i < envPaths.length; i++) {
-                if (envPaths[i].trim().length() > 0) {
-                    String path; 
-                    if (envPaths[i].startsWith("\"") && envPaths[i].endsWith("\"")) {
-                        path = envPaths[i].substring(1, envPaths[i].length() - 1);
-                    } else {
-                        path = envPaths[i];
-                    }
-                    if (path.endsWith(File.separator)) {
-                        DEFAULT_LOCS.add(path);
-                    } else {
-                        DEFAULT_LOCS.add(path + File.separator);
-                    }
-                }
-            }
-        }
-        
-        // Fallback list of default locations for Unix-like environments
-        if (File.separator.equals("/")) {
-            DEFAULT_LOCS.add("/opt/local/bin/");
-            DEFAULT_LOCS.add("/usr/local/bin/");
-            DEFAULT_LOCS.add("/usr/bin/");
         }
     }
     
