@@ -566,23 +566,14 @@
             description="Determines the number of edge segments that are straight and axis aligned."
             id="de.cau.cs.kieler.kiml.grana.axisParallelEdgeSegments"
             name="Axis-Parallel Edge Segments">
-         <component
-               name="Top">
-         </component>
-         <component
-               name="Left">
-         </component>
-         <component
-               name="Bottom">
-         </component>
-         <component
-               name="Right">
-         </component>
-         <component
-                name="Sum">
-         </component>
          <dependency
                analysis="de.cau.cs.kieler.kiml.grana.layers">
+         </dependency>
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.grana.edgeCount">
+         </dependency>
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.grana.bendpointCount">
          </dependency>
       </analysis>
    </extension>

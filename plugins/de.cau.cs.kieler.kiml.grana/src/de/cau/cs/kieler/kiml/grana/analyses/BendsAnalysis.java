@@ -50,6 +50,12 @@ public class BendsAnalysis implements IAnalysis {
      */
     public static final String ID = "de.cau.cs.kieler.kiml.grana.bendpointCount";
 
+    // SUPPRESS CHECKSTYLE NEXT 4 Javadoc
+    public static final int INDEX_MIN = 0;
+    public static final int INDEX_AVG = 1;
+    public static final int INDEX_MAX = 2;
+    public static final int INDEX_SUM = 3;
+    
     /**
      * {@inheritDoc}
      */
@@ -112,7 +118,14 @@ public class BendsAnalysis implements IAnalysis {
         }
 
         progressMonitor.done();
-        return new Object[] {min, avg, max, uniqueBendPoints.size()};
+        
+        final Object[] result = new Object[4]; // SUPPRESS CHECKSTYLE MagicNumber
+        result[INDEX_MIN] = min;
+        result[INDEX_AVG] = avg;
+        result[INDEX_MAX] = max;
+        result[INDEX_SUM] = uniqueBendPoints.size();
+        
+        return result;
     }
 
 }
