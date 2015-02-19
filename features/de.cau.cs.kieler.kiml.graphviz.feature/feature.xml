@@ -2,7 +2,7 @@
 <feature
       id="de.cau.cs.kieler.kiml.graphviz.feature"
       label="KIELER Layout - Graphviz Support (optional)"
-      version="0.8.2.qualifier"
+      version="0.8.3.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel"
       plugin="de.cau.cs.kieler.kiml.graphviz.layouter">
 
