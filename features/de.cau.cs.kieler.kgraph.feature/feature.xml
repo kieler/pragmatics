@@ -2,7 +2,7 @@
 <feature
       id="de.cau.cs.kieler.kgraph.feature"
       label="KIELER KGraph Editing and Visualization"
-      version="0.6.0.qualifier"
+      version="0.7.0.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel"
       plugin="de.cau.cs.kieler.core.kgraph">
 
@@ -452,6 +452,13 @@ litigation.
 
    <plugin
          id="de.cau.cs.kieler.klighd.ui.contrib3x"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.kiml"
          download-size="0"
          install-size="0"
          version="0.0.0"
