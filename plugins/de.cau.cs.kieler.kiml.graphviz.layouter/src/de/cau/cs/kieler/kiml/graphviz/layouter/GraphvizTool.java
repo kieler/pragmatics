@@ -95,10 +95,16 @@ public class GraphvizTool {
             
             for (int i = 0; i < envPaths.length; i++) {
                 if (envPaths[i].trim().length() > 0) {
-                    if (envPaths[i].endsWith(File.separator)) {
-                        DEFAULT_LOCS.add(envPaths[i]);
+                    String path; 
+                    if (envPaths[i].startsWith("\"") && envPaths[i].endsWith("\"")) {
+                        path = envPaths[i].substring(1, envPaths[i].length() - 1);
                     } else {
-                        DEFAULT_LOCS.add(envPaths[i] + File.separator);
+                        path = envPaths[i];
+                    }
+                    if (path.endsWith(File.separator)) {
+                        DEFAULT_LOCS.add(path);
+                    } else {
+                        DEFAULT_LOCS.add(path + File.separator);
                     }
                 }
             }
