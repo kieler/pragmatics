@@ -17,7 +17,7 @@
          point="de.cau.cs.kieler.klighd.diagramSyntheses">
       <diagramSynthesis
             class="de.cau.cs.kieler.klighd.syntheses.GuiceBasedSynthesisFactory:de.cau.cs.kieler.ptolemy.klighd.PtolemyDiagramSynthesis"
-            id="de.cau.cs.kieler.klighd.examples.uml2.UML2UseCaseDiagramSynthesis">
+            id="de.cau.cs.kieler.ptolemy.klighd.PtolemyDiagramSynthesis">
       </diagramSynthesis>
    </extension>
    <extension

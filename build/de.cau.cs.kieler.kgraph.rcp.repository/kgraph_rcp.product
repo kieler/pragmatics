@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="KIELER KGraph Editor" uid="de.cau.cs.kieler.kgraph.rcp.product" id="de.cau.cs.kieler.core.kgraph.rcp.product" application="org.eclipse.ui.ide.workbench" version="0.1.0.qualifier" useFeatures="true" includeLaunchers="true">
+<product name="KIELER KGraph Editor" uid="de.cau.cs.kieler.kgraph.rcp.product" id="de.cau.cs.kieler.core.kgraph.rcp.product" application="org.eclipse.ui.ide.workbench" version="0.4.0.qualifier" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
       <image path="/de.cau.cs.kieler.core.kgraph.rcp/icons/about.png"/>

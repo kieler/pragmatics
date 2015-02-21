@@ -99,7 +99,7 @@ final class GranaTextToBatchJob {
                     	
                     	val fileURI = URI.createURI(resource.path, true)
                     	val dir = new File(fileURI.toFileString)
-						if (!dir.exists) {
+						if (dir == null || !dir.exists) {
 							throw new IllegalArgumentException("Could not find resource location: '" 
 								+ resource.path + "'")
 						}                    	

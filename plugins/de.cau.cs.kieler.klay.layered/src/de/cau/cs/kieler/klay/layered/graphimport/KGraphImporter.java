@@ -463,6 +463,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                 KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
                 if (!labelLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
                     LLabel newLabel = new LLabel(layeredGraph, klabel.getText());
+                    newLabel.copyProperties(labelLayout);
                     newLabel.setProperty(InternalProperties.ORIGIN, klabel);
                     newLabel.getSize().x = labelLayout.getWidth();
                     newLabel.getSize().y = labelLayout.getHeight();
@@ -478,6 +479,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
             if (!labelLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
                 LLabel newLabel = new LLabel(layeredGraph, klabel.getText());
+                newLabel.copyProperties(labelLayout);
                 newLabel.setProperty(InternalProperties.ORIGIN, klabel);
                 newLabel.getSize().x = labelLayout.getWidth();
                 newLabel.getSize().y = labelLayout.getHeight();

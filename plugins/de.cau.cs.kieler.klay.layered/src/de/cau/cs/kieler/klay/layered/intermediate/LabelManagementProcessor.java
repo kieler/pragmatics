@@ -70,9 +70,11 @@ public final class LabelManagementProcessor implements ILayoutProcessor {
         ILabelSizeModifier labelSizeModifier =
                 layeredGraph.getProperty(LabelLayoutOptions.LABEL_SIZE_MODIFIER);
         if (labelSizeModifier != null) {
+            double labelSpacing = layeredGraph.getProperty(LayoutOptions.LABEL_SPACING);
+            
             // Iterate over all layers and call our nifty code
             for (Layer layer : layeredGraph) {
-                manageLabels(layer, labelSizeModifier);
+                manageLabels(layer, labelSizeModifier, labelSpacing);
             }
         }
         
@@ -88,8 +90,12 @@ public final class LabelManagementProcessor implements ILayoutProcessor {
      *            the layer whose labels to manage.
      * @param labelSizeModifier
      *            the label size modifier used.
+     * @param labelSpacing
+     *            spacing between labels and other objects.
      */
-    private void manageLabels(final Layer layer, final ILabelSizeModifier labelSizeModifier) {
+    private void manageLabels(final Layer layer, final ILabelSizeModifier labelSizeModifier,
+            final double labelSpacing) {
+        
         assert labelSizeModifier != null : "labelSizeModifier is null";
         
         double maxWidth = findMaxNonDummyNodeWidth(layer);
@@ -111,12 +117,12 @@ public final class LabelManagementProcessor implements ILayoutProcessor {
                     
                     // Adjust dummy height
                     newDummySize.x = Math.max(newDummySize.x, label.getSize().x);
-                    newDummySize.y += label.getSize().y + LabelDummyInserter.LABEL_SPACING;
+                    newDummySize.y += label.getSize().y + labelSpacing;
                 }
                 
                 // Subtract the most recent label spacing
                 if (newDummySize.y > 0.0) {
-                    newDummySize.y -= LabelDummyInserter.LABEL_SPACING;
+                    newDummySize.y -= labelSpacing;
                 }
                 
                 // Apply new dummy node size (we don't bother with the ports here since they will be
