@@ -312,7 +312,7 @@
          </dependency>
       </layoutOption>
       <layoutOption
-            advanced="true"
+            advanced="false"
             appliesTo="parents"
             class="de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy"
             default="BRANDES_KOEPF"
