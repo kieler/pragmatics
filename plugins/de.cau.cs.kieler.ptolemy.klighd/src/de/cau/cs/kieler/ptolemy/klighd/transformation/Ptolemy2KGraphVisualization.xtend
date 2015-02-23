@@ -433,6 +433,9 @@ class Ptolemy2KGraphVisualization {
                 }
                 layout.setProperty(LayoutOptions::PORT_INDEX, -index);
             }
+            case PortSide::UNDEFINED: {
+                // We don't know what to do
+            }
         }
         
         // Add rendering if this is not a modal model port
