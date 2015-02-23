@@ -53,6 +53,9 @@ public final class KlighdPreferencePage extends PreferencePage implements IWorkb
 
     /** checkbox for show zoom buttons on initializing diagrams. */
     private Button showZoomConfigButtons;
+    
+    /** checkbox for interactive drag. */
+    private Button interactiveDragCheckBox;
 
     private static final String ADVANCED_PANNING_TOOLTIP =
             "If enabled diagram panning continues when mouse pointer leaves the diagram area and stops,"
@@ -65,6 +68,9 @@ public final class KlighdPreferencePage extends PreferencePage implements IWorkb
     private static final String SHOW_ZOOM_CONFIG_BUTTONS_TOOLTIP =
             "Zoom buttons are used to change the zooming behavior."
             + " If deactivated the zoom buttons are not visible.";
+    
+    private static final String INTERACTIVE_DRAG_TOOLTIP = 
+            "If enabled, layout is adjustable by dragging a node to it's new position.";
 
     /** checkbox for 'zoom on workbench part change'. */
     private Button zoomOnWorkbenchpartChange;
@@ -113,6 +119,9 @@ public final class KlighdPreferencePage extends PreferencePage implements IWorkb
 
         preferenceStore.setValue(KlighdPreferences.EXPAND_SIDE_BAR,
                 expandSideBar.getSelection());
+        
+        preferenceStore.setValue(KlighdPreferences.INTERACTIVE_DRAG_ENABLED,
+                interactiveDragCheckBox.getSelection());
 
         preferenceStore.setValue(KlighdPreferences.SHOW_ZOOM_CONFIG_BUTTONS,
                 showZoomConfigButtons.getSelection());
@@ -150,6 +159,9 @@ public final class KlighdPreferencePage extends PreferencePage implements IWorkb
 
         expandSideBar.setSelection(preferenceStore
                 .getDefaultBoolean(KlighdPreferences.EXPAND_SIDE_BAR));
+        
+        interactiveDragCheckBox.setSelection(preferenceStore
+                .getDefaultBoolean(KlighdPreferences.INTERACTIVE_DRAG_ENABLED));
 
         showZoomConfigButtons.setSelection(preferenceStore
                 .getDefaultBoolean(KlighdPreferences.SHOW_ZOOM_CONFIG_BUTTONS));
@@ -232,6 +244,12 @@ public final class KlighdPreferencePage extends PreferencePage implements IWorkb
         expandSideBar.setToolTipText(EXPAND_SIDE_BAR_TOOLTIP);
         expandSideBar.setSelection(getPreferenceStore().getBoolean(
                 KlighdPreferences.EXPAND_SIDE_BAR));
+        
+        interactiveDragCheckBox = new Button(generalGroup, SWT.CHECK | SWT.LEFT);
+        interactiveDragCheckBox.setText("Interactive Drag");
+        interactiveDragCheckBox.setToolTipText(INTERACTIVE_DRAG_TOOLTIP);
+        interactiveDragCheckBox.setSelection(getPreferenceStore().getBoolean(
+                KlighdPreferences.INTERACTIVE_DRAG_ENABLED));
 
         return generalGroup;
     }

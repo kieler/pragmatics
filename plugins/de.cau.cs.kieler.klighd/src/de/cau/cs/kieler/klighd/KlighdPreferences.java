@@ -92,7 +92,14 @@ public final class KlighdPreferences {
 
     /** Default magnification lens scale value in percent. */
     public static final int MAGNIFICATION_LENS_SCALE_DEFAULT = 200;
-
+    
+    /** ID of the interactive drag enablement value. */
+    public static final String INTERACTIVE_DRAG_ENABLED =
+            "de.cau.cs.kieler.klighd.preferences.interactiveDrag";
+    
+    /** Default interactive drag enablement value. */
+    public static final boolean INTERACTIVE_DRAG_ENABLED_DEFAULT = false;
+  
     /**
      * ID of the advanced panning mode preference; advanced panning means diagram panning continues
      * if cursor leaves diagram area until in re-enters or button is released.
@@ -181,6 +188,15 @@ public final class KlighdPreferences {
      */
     public static boolean isExpandSideBar() {
         return STORE.getBoolean(EXPAND_SIDE_BAR);
+    }
+    
+    /**
+     * Getter.
+     * 
+     * @return <code>true</code> if interactive drag is active, <code>false</code> otherwise.
+     */
+    public static boolean isInteractiveDragEnabled(){
+        return STORE.getBoolean(INTERACTIVE_DRAG_ENABLED);
     }
 
     /**
