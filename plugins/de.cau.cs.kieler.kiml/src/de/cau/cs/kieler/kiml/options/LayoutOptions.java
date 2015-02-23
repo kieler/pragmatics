@@ -258,14 +258,6 @@ public final class LayoutOptions {
     public static final IProperty<Boolean> ZOOM_TO_FIT = new Property<Boolean>(
             "de.cau.cs.kieler.zoomToFit", false);
 
-    /**
-     * On which side of its corresponding edge a label is situated.
-     * FIXME is this the right place for this property?
-     * [programmatically set]
-     */
-    public static final IProperty<LabelSide> LABEL_SIDE = new Property<LabelSide>(
-            "de.cau.cs.kieler.labelSide", LabelSide.UNKNOWN);
-
     
     ///////  USER INTERFACE LAYOUT OPTIONS  ///////
 
