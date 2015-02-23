@@ -28,6 +28,7 @@ import de.cau.cs.kieler.kiml.grana.IAnalysis;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * A graph analysis that counts the number of bendpoints. Returns a four-component
@@ -38,8 +39,12 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
  * unrelated edges share a bend point. However, this case is very unlikely and wouldn't
  * make sense in a proper diagram anyway, so we live with not counting it.</p>
  * 
+ * <p>Care has to be taken for bendpoints within different compound nodes. Their 
+ * coordinates are converted to absolute values.</p>
+ * 
  * @author mri
  * @author cds
+ * @author uru
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow 2012-07-10 msp
  */
@@ -94,7 +99,10 @@ public class BendsAnalysis implements IAnalysis {
                 
                 // Add bend points to the set
                 for (KPoint bendPoint : bendPoints) {
-                    uniqueBendPoints.add(bendPoint.createVector());
+                    // convert bendpoint to a common, global coordinate system
+                    KVector local = bendPoint.createVector();
+                    KVector global = KimlUtil.toAbsolute(local, node);
+                    uniqueBendPoints.add(global);
                 }
                 
                 // Update per-edge analyses
