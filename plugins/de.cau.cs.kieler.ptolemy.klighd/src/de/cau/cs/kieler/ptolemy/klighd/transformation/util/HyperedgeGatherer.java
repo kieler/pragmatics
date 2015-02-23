@@ -33,6 +33,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  * nodes and ports and no target nodes or ports.
  * 
  * @author cds
+ * @kieler.rating proposed yellow cds 2015-02-23
  */
 public final class HyperedgeGatherer {
     
