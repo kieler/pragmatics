@@ -13,16 +13,28 @@
  */
 package de.cau.cs.kieler.kiml.grana.analyses;
 
+import java.util.Iterator;
+import java.util.Set;
+
+import org.eclipse.emf.ecore.EObject;
+
+import com.google.common.collect.ImmutableSet;
+
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.AnalysisFailed;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
+import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * This analysis reports the number of inter-layer edge segments that are axis-aligned with the axis
@@ -53,6 +65,12 @@ public class AxisParallelEdgeSegmentsAnalysis implements IAnalysis {
     private static final String KLAY_LAYERED_ID = "de.cau.cs.kieler.klay.layered";
     private static final IProperty<String> ALGORITHM = new Property<String>(
             "de.cau.cs.kieler.algorithm");
+    
+    private static final Set<Direction> LEFT_TO_RIGHT = ImmutableSet.of(Direction.UNDEFINED,
+            Direction.LEFT, Direction.RIGHT);
+    private static final Set<PortSide> NORTH_SOUTH = ImmutableSet
+            .of(PortSide.NORTH, PortSide.SOUTH);
+    private static final Set<PortSide> EAST_WEST = ImmutableSet.of(PortSide.WEST, PortSide.EAST);
 
     /**
      * {@inheritDoc}
@@ -71,7 +89,6 @@ public class AxisParallelEdgeSegmentsAnalysis implements IAnalysis {
             return new AnalysisFailed(AnalysisFailed.Type.Failed, new IllegalStateException(
                     "KlayLayered has to be used in conjunction with ORTHOGONAL edge routing."));
         }
-
         progressMonitor.begin("Axis-Parallel edge segments analysis", 1);
 
         Integer edgeCount = (Integer) context.getResult(EdgeCountAnalysis.ID);
@@ -81,8 +98,67 @@ public class AxisParallelEdgeSegmentsAnalysis implements IAnalysis {
         Integer bendpoints =
                 (Integer) ((Object[]) context
                         .getResult(BendsAnalysis.ID))[BendsAnalysis.INDEX_SUM];
+        
+        // north/southports need to be handled specially 
+        // every edge that starts or ends in an ns-port
+        // contributes exactly one bendpoint. Such an 
+        // edge is not considered axis-parallel. For an easy 
+        // calculation we add a second (pseudo) bendpoint,
+        // just to mark the edge as not being axis-parallel.
+        Iterator<EObject> allContents = parentNode.eAllContents();
+        int specialBendpoints = 0;
+        while (allContents.hasNext()) {
+            EObject e = allContents.next();
+            if (e instanceof KEdge) {
+                KEdge kedge = (KEdge) e;
+                
+                // get the direction of the edge's parent node
+                KNode parent = kedge.getSource().getParent();
+                if (kedge.getTarget().getParent() != kedge.getSource().getParent()) {
+                    // external port dummy
+                    if (KimlUtil.isDescendant(kedge.getTarget(), kedge.getSource())) {
+                        parent = kedge.getSource();
+                    }
+                }
+                
+                KLayoutData parentLayout = parent.getData(KLayoutData.class);
+                Direction direction = parentLayout.getProperty(LayoutOptions.DIRECTION);
+                
+                // edge's source
+                KPort src = kedge.getSourcePort();
+                if (src != null) {
+                    KLayoutData pld = src.getData(KLayoutData.class);
+                    if (LEFT_TO_RIGHT.contains(direction)) {
+                        if (NORTH_SOUTH.contains(pld.getProperty(LayoutOptions.PORT_SIDE))) {
+                            specialBendpoints++;
+                        }
+                    } else {
+                        if (EAST_WEST.contains(pld.getProperty(LayoutOptions.PORT_SIDE))) {
+                            specialBendpoints++;
+                            System.out.println(kedge);
+                        }
+                    }
+                }
+                
+                // edge's target
+                KPort tgt = kedge.getTargetPort();
+                if (tgt != null) {
+                    KLayoutData pld = tgt.getData(KLayoutData.class);
+                    if (LEFT_TO_RIGHT.contains(direction)) {
+                        if (NORTH_SOUTH.contains(pld.getProperty(LayoutOptions.PORT_SIDE))) {
+                            specialBendpoints++;
+                        }
+                    } else {
+                        if (EAST_WEST.contains(pld.getProperty(LayoutOptions.PORT_SIDE))) {
+                            specialBendpoints++;
+                            System.out.println(kedge);
+                        }
+                    }
+                }
+            }
+        }
 
-        int notAxisParallel = bendpoints / 2;
+        int notAxisParallel = (bendpoints + specialBendpoints) / 2;
         int axisParallel = edgeCount + dummies - notAxisParallel;
 
         progressMonitor.done();

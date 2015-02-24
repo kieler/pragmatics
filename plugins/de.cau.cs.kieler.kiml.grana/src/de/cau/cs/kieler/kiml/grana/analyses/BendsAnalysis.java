@@ -101,7 +101,13 @@ public class BendsAnalysis implements IAnalysis {
                 for (KPoint bendPoint : bendPoints) {
                     // convert bendpoint to a common, global coordinate system
                     KVector local = bendPoint.createVector();
-                    KVector global = KimlUtil.toAbsolute(local, node);
+                    KVector global;
+                    if (KimlUtil.isDescendant(edge.getTarget(), edge.getSource())) {
+                        global = KimlUtil.toAbsolute(local, edge.getSource());
+                    } else {
+                        global = KimlUtil.toAbsolute(local, edge.getSource().getParent());
+                    }
+                    
                     uniqueBendPoints.add(global);
                 }
                 
