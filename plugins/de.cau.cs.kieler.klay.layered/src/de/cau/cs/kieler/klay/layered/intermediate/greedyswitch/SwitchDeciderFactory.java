@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
 import de.cau.cs.kieler.klay.layered.graph.LNode;
-import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.SwitchDecider.CrossingCountSide;
 import de.cau.cs.kieler.klay.layered.properties.GreedyType;
 
 /**
@@ -56,6 +55,8 @@ class SwitchDeciderFactory {
                     currentNodeOrder, direction);
         case TWO_SIDED_ON_DEMAND_CROSSING_MATRIX:
             return new OnDemandCrossingMatrixTwoSidedSwitchDecider(freeLayerIndex, currentNodeOrder);
+        case OFF:
+            throw new UnsupportedOperationException("Should not reach this");
         }
         throw new UnsupportedOperationException("Not implemented yet");
     }

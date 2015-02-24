@@ -127,8 +127,7 @@ public final class Properties {
      * Property to choose a greedy Crossing Minimization Strategy.
      */
     public static final IProperty<GreedyType> GREEDY_TYPE = new Property<GreedyType>(
-            "de.cau.cs.kieler.klay.layered.greedySwitch",
-            GreedyType.TWO_SIDED_ON_DEMAND_CROSSING_MATRIX);
+            "de.cau.cs.kieler.klay.layered.greedySwitch", GreedyType.OFF);
 
     /**
      * Property to choose a node placement strategy.
@@ -212,16 +211,15 @@ public final class Properties {
             "de.cau.cs.kieler.klay.layered.feedBackEdges", false);
 
     /**
-     * If true, each long edge dummy will contribute a bend point to its edges and hierarchy-crossing
-     * edges will always get a bend point where they cross hierarchy boundaries. By default, bend points
-     * are only added where an edge changes direction.
+     * If true, each long edge dummy will contribute a bend point to its edges and
+     * hierarchy-crossing edges will always get a bend point where they cross hierarchy boundaries.
+     * By default, bend points are only added where an edge changes direction.
      */
     public static final IProperty<Boolean> ADD_UNNECESSARY_BENDPOINTS = new Property<Boolean>(
             "de.cau.cs.kieler.klay.layered.unnecessaryBendpoints", false);
 
     /**
-     * Specifies how the content of compound nodes is to be aligned, e.g. top-left 
-     * or center-center.
+     * Specifies how the content of compound nodes is to be aligned, e.g. top-left or center-center.
      */
     public static final IProperty<EnumSet<ContentAlignment>> CONTENT_ALIGNMENT =
             new Property<EnumSet<ContentAlignment>>(

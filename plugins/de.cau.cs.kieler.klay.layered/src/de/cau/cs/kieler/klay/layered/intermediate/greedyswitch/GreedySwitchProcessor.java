@@ -20,7 +20,6 @@ import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.SwitchDecider.CrossingCountSide;
 import de.cau.cs.kieler.klay.layered.properties.GreedyType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -43,16 +42,17 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
      * {@inheritDoc}
      */
     public void process(final LGraph graph, final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Begin Greedy Switch intermediate processor", 1);
+        progressMonitor.begin("Greedy switch crossing reduction", 1);
 
         switchDeciderType = graph.getProperty(Properties.GREEDY_TYPE);
-        switchDeciderFactory = new SwitchDeciderFactory(switchDeciderType);
 
         int layerCount = graph.getLayers().size();
-        if (layerCount < 2) {
+        if (layerCount < 2 || switchDeciderType == GreedyType.OFF) {
             progressMonitor.done();
             return;
         }
+
+        switchDeciderFactory = new SwitchDeciderFactory(switchDeciderType);
 
         initialize(graph);
 
@@ -123,8 +123,6 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
     private void layerSweepConsiderTwoLayers() {
         int crossingsInGraph = getCurrentAmountOfCrossings();
         int crossingsInGraphInLastSweep = Integer.MAX_VALUE;
-        sweepBackwardAndForwardInGraph();
-        setCurrentNodeOrderAsBestNodeOrder();
         while (crossingsInGraphInLastSweep > crossingsInGraph) {
             setCurrentNodeOrderAsBestNodeOrder();
             if (crossingsInGraph == 0) {
@@ -184,6 +182,7 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
 
     private boolean continueSwitchingUntilNoImprovementInLayer(final int freeLayerIndex,
             final SwitchDecider switchDecider) {
+        // System.out.println(freeLayerIndex);
         boolean improved = false;
         boolean continueSwitching;
         do {
@@ -196,10 +195,11 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
     private boolean sweepDownwardInLayer(final int layerIndex, final SwitchDecider switchDecider) {
         boolean continueSwitching = false;
         int lengthOfFreeLayer = currentNodeOrder[layerIndex].length;
+        // System.out.println(layerIndex);
         for (int upperNodeIndex = 0; upperNodeIndex < lengthOfFreeLayer - 1; upperNodeIndex++) {
             int lowerNodeIndex = upperNodeIndex + 1;
-
             if (switchDecider.doesSwitchReduceCrossings(upperNodeIndex, lowerNodeIndex)) {
+                // System.out.println(upperNodeIndex + " <-> " + lowerNodeIndex);
                 exchangeNodes(upperNodeIndex, lowerNodeIndex, layerIndex, switchDecider);
                 continueSwitching = true;
             }

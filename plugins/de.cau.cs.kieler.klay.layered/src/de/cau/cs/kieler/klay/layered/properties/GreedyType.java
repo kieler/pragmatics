@@ -31,7 +31,9 @@ public enum GreedyType {
     /** TODO-alan. */
     ONE_SIDED_ON_DEMAND_CROSSING_MATRIX,
     /** TODO-alan. */
-    TWO_SIDED_ON_DEMAND_CROSSING_MATRIX;
+    TWO_SIDED_ON_DEMAND_CROSSING_MATRIX,
+    /** TODO-alan */
+    OFF;
 
     /**
      * TODO-alan.
