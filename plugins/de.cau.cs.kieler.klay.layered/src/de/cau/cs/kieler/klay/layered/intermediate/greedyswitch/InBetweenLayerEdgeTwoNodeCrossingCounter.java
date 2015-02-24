@@ -304,15 +304,10 @@ class InBetweenLayerEdgeTwoNodeCrossingCounter {
             LPort resultNeighbourPort = null;
             while (!edges.isEmpty()) {
                 List<LEdge> edgesWithSameNodes = edges.firstEntry().getValue();
-                if (edgesWithSameNodes.get(0).getSource().getNode() == edgesWithSameNodes.get(0)
-                        .getTarget().getNode()) {
-                    edges.remove(edges.firstKey());
-                } else {
-                    resultNeighbourPort =
-                            side == PortSide.WEST ? edgesWithSameNodes.get(0).getSource()
-                                    : edgesWithSameNodes.get(0).getTarget();
-                    break;
-                }
+                resultNeighbourPort =
+                        side == PortSide.WEST ? edgesWithSameNodes.get(0).getSource()
+                                : edgesWithSameNodes.get(0).getTarget();
+                break;
             }
             return resultNeighbourPort;
         }
