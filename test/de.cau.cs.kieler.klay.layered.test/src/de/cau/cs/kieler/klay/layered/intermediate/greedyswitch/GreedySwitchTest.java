@@ -129,7 +129,13 @@ public class GreedySwitchTest {
 
     @Test
     public void layoutUnitConstraintPreventsSwitch() {
-        graph = creator.getNodesInSameLayoutUnitPreventSwitch();
+        graph = creator.getNodesInDifferentLayoutUnitsPreventSwitch();
+
+        List<LNode> expectedOrderLayerTwo = getNodesInLayer(1);
+
+        startGreedySwitcherWithCurrentType();
+
+        assertThat("Layer one", getNodesInLayer(1), is(expectedOrderLayerTwo));
     }
 
     @Test
@@ -319,7 +325,7 @@ public class GreedySwitchTest {
     }
 
     private List<LNode> getNodesInLayer(final int layerIndex) {
-        return graph.getLayers().get(layerIndex).getNodes();
+        return new ArrayList<LNode>(graph.getLayers().get(layerIndex).getNodes());
     }
 
     private List<LNode> switchOrderOfNodesInLayer(final int nodeOne, final int nodeTwo,

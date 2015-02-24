@@ -173,6 +173,7 @@ public class GreedySwitcherIntegrationTest extends AbstractLayeredProcessorTest 
         layered.runLayoutTestStep(state);
         LNode[][] newOrder = CrossingCounterTest.getAsLNodeArray(graph);
         int newCrossingCount = crossCounter.countAllCrossingsInGraphWithOrder(newOrder);
-        assertThat(newCrossingCount, is(lessThanOrEqualTo(oldCrossingCount)));
+        assertThat(oneSidedType.toString(), newCrossingCount,
+                is(lessThanOrEqualTo(oldCrossingCount)));
     }
 }
