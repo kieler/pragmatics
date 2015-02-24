@@ -19,7 +19,6 @@ import static org.junit.Assert.assertThat;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -28,7 +27,6 @@ import org.junit.runners.Parameterized.Parameters;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.SwitchDecider.CrossingCountSide;
 import de.cau.cs.kieler.klay.layered.properties.GreedyType;
 
 /**
@@ -160,13 +158,16 @@ public class SwitchDeciderTest {
      * 
      * 
      */
-    @Ignore
-    // TODO-alan implement for crossing matrix counters
+    @Test
     public void northSouthPortCrossing() {
-        graph = creator.getThreeLayerNorthSouthCrossingShouldSwitchGraph();
+        graph = creator.getThreeLayerNorthSouthCrossingGraph();
 
         decider = givenDeciderForFreeLayer(1, CrossingCountSide.WEST);
-        assertThat(decider.doesSwitchReduceCrossings(0, 1), is(true));
+        if (greedyType.isOneSided()) {
+            assertThat(decider.doesSwitchReduceCrossings(1, 2), is(true));
+        } else {
+            assertThat(decider.doesSwitchReduceCrossings(1, 2), is(false));
+        }
     }
 
     @Test
@@ -220,6 +221,13 @@ public class SwitchDeciderTest {
 
         decider = givenDeciderForFreeLayer(1, CrossingCountSide.WEST);
         assertThat(decider.doesSwitchReduceCrossings(0, 1), is(false));
+    }
+
+    @Test
+    public void inLayerUnitConstraintsPreventSwitch() {
+        graph = creator.getGraphWhereLayoutUnitPreventsSwitch();
+        decider = givenDeciderForFreeLayer(0, CrossingCountSide.WEST);
+        assertThat(decider.doesSwitchReduceCrossings(1, 2), is(false));
     }
 
     @Test
@@ -283,6 +291,27 @@ public class SwitchDeciderTest {
         assertThat(decider.doesSwitchReduceCrossings(0, 1), is(false));
     }
 
+    @Test
+    public void shouldSwitchWithLongEdgeDummies() {
+        graph = creator.getNorthernNorthSouthDummyEdgeCrossingGraph();
+        decider = givenDeciderForFreeLayer(1, CrossingCountSide.WEST);
+
+        assertThat(decider.doesSwitchReduceCrossings(1, 2), is(true));
+
+        if (greedyType.isOneSided()) {
+            assertThat(decider.doesSwitchReduceCrossings(0, 1), is(true));
+        }
+
+        graph = creator.getSouthernNorthSouthDummyEdgeCrossingGraph();
+        decider = givenDeciderForFreeLayer(1, CrossingCountSide.WEST);
+
+        assertThat(decider.doesSwitchReduceCrossings(0, 1), is(true));
+
+        if (greedyType.isOneSided()) {
+            assertThat(decider.doesSwitchReduceCrossings(1, 2), is(true));
+        }
+    }
+
     private void switchNodes(final int upperNodeIndex, final int lowerNodeIndex) {
         LNode upperNode = currentNodeOrder[freeLayerIndex][upperNodeIndex];
         currentNodeOrder[freeLayerIndex][upperNodeIndex] =
@@ -293,10 +322,10 @@ public class SwitchDeciderTest {
     private List<LNode> getNodesInLayer(final int layerIndex) {
         return graph.getLayers().get(layerIndex).getNodes();
     }
- 
+
     private SwitchDecider givenDeciderForFreeLayer(final int layerIndex,
             final CrossingCountSide direction) {
-        this.freeLayerIndex = layerIndex;
+        freeLayerIndex = layerIndex;
         currentNodeOrder = getCurrentNodeOrder();
         return factory.getNewSwitchDecider(layerIndex, currentNodeOrder, direction);
     }

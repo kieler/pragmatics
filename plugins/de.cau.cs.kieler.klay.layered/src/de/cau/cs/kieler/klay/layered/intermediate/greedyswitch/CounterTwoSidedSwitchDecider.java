@@ -16,7 +16,8 @@ package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 
 /**
- * TODO-alan.
+ * Counter SwitchDecider which takes both adjacent layers of the free layer int account. See
+ * {@link CounterSwitchDecider}.
  * 
  * @author alan
  *

@@ -44,7 +44,6 @@ public class CrossingCounter {
 
     /**
      * Constructs and initializes a cross counter. Initialization iterates through all ports.
-     * TODO-alan: consider asking for switch
      * 
      * @param layeredGraph
      *            The layered graph
@@ -81,7 +80,6 @@ public class CrossingCounter {
             }
             totalCrossings += countNorthSouthPortCrossings(fixedLayer);
             totalCrossings += countInLayerEdgeCrossingsWithOrder(fixedLayer);
-            // totalCrossings += oldInLayerEdgeCrossingCounter(fixedLayer);
         }
         return totalCrossings;
     }
@@ -312,7 +310,6 @@ public class CrossingCounter {
      * @param layer
      *            the layer whose north / south port related crossings to count.
      * @return the number of crossings caused by edges connected to northern or southern ports.
-     *         TODO-alan consider moving to class TODO-alan This method is too long.
      */
     public int countNorthSouthPortCrossings(final LNode[] layer) {
         int crossings = 0;

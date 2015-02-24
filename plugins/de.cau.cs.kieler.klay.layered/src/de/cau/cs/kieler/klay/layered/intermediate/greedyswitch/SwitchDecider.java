@@ -20,15 +20,23 @@ import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 
 /**
- * TODO-alan This class is an abstract superclass for six different variants of the greedy switch
- * algorithm: {@link GreedySwitchCounterProcessor} uses {@link CrossingCounterType} to count the
- * amount of crossings that would result from a switch. {@link GreedySwitchCrossingMatrixProcessor}
- * calculates the crossing matrix for a pair of fixed and free layers beforehand. Entries i,j in a
- * crossing matrix show the amount of crossings between incident edges to nodes i and j when node i
- * is above node j. {@link GreedySwitchOnDemandCrossingMatrixProcessor} calculates the entries in
- * the crossing matrix only when needed. The last two both use
- * {@link InBetweenLayerEdgeTwoNodeCrossingCounter} which calculates two entries i,j and j,i in the
- * crossing matrix. All variants can
+ * This class is an abstract superclass for six different variants of how to decide, whether two
+ * neighboring nodes should be switched: <br>
+ * The {@link CounterSwitchDecider} classes use {@link CrossingCounter} to count the amount of
+ * crossings that would result from a switch. <br>
+ * The {@link CrossingMatrixSwitchDecider} classes calculate the crossing matrix for a pair of fixed
+ * and free layers beforehand. Entries i,j in a crossing matrix show the amount of crossings between
+ * incident edges to nodes i and j when node i is above node j. <br>
+ * The {@link OnDemandCrossingMatrixSwitchDecider} classes calculate the entries in the crossing
+ * matrix only when needed. <br>
+ * These last two categories both mainly use {@link InBetweenLayerEdgeTwoNodeCrossingCounter} which
+ * calculates two entries i,j and j,i in the crossing matrix.
+ * 
+ * All three categories exist in two variants: <br>
+ * - OneSided – The traditional risky way: The decider checks if a switch would reduce crossings on
+ * the given side of the layer whose nodes are to be switched. <br>
+ * - TwoSided – The faithless way: The decider checks if a switch would reduce crossings on both
+ * sides of the layer whose nodes are to be switched.
  * 
  * @author alan
  */
@@ -38,21 +46,7 @@ abstract class SwitchDecider {
     private final LNode[] freeLayer;
 
     /**
-     * CrossingCountSide enum for one sided switchers.
-     * 
-     * @author alan
-     *
-     */
-    public static enum CrossingCountSide {
-        /** Sweep across graph from left to right. */
-        WEST,
-        /** Sweep across graph from right to left. */
-        EAST
-    }
-
-    /**
-     * Use factory method to create correct switchDecider, not this constructor. TODO-alan actually
-     * class access should be restricted, however tests are not in same package at the moment.
+     * Use factory method to create correct switchDecider, not this constructor.
      * 
      * @param freeLayerIndex
      *            The freeLayer to switch in.
@@ -71,12 +65,12 @@ abstract class SwitchDecider {
     }
 
     /**
-     * Calculate if switch reduces crossings. TODO-alan explain INDEX
+     * Calculate if switch reduces crossings.
      * 
      * @param upperNodeIndex
-     *            the upper node assuming left-right alignment.
+     *            the index of the upper node assuming left-right alignment.
      * @param lowerNodeIndex
-     *            the lower node assuming left-right alignment.
+     *            the index of thelower node assuming left-right alignment.
      * @return whether switching can help.
      */
     public abstract boolean doesSwitchReduceCrossings(final int upperNodeIndex,
@@ -92,38 +86,58 @@ abstract class SwitchDecider {
 
     /**
      * Check if in layer {@link InternalProperties.IN_LAYER_SUCCESSOR_CONSTRAINTS} or
-     * {@link InternalProperties.IN_LAYER_LAYOUT_UNIT} constraints prevent a possible switch.
+     * {@link InternalProperties.IN_LAYER_LAYOUT_UNIT} constraints prevent a possible switch or if
+     * the nodes are a normal node and a north south port dummy.
      * 
      * @param nodeIndex
      *            the index of the upper node, assuming a left-right order.
      * @param lowerNodeIndex
      *            the index of the lower node, assuming a left-right order.
-     * @return whether true if constraints should prevent switching.
+     * @return true if constraints should prevent switching.
      */
-    boolean constraintsPreventSwitch(final int nodeIndex, final int lowerNodeIndex) {
+    protected boolean constraintsPreventSwitch(final int nodeIndex, final int lowerNodeIndex) {
         LNode upperNode = freeLayer[nodeIndex];
         LNode lowerNode = freeLayer[lowerNodeIndex];
 
+        return haveSuccessorConstraints(upperNode, lowerNode)
+                || haveLayoutUnitConstraints(upperNode, lowerNode)
+                || areNormalAndNorthSouthPortDummy(upperNode, lowerNode);
+    }
+
+    private boolean haveSuccessorConstraints(final LNode upperNode, final LNode lowerNode) {
         List<LNode> constraints =
                 upperNode.getProperty(InternalProperties.IN_LAYER_SUCCESSOR_CONSTRAINTS);
         boolean hasSuccessorConstraint =
                 constraints != null && constraints.size() != 0 && constraints.contains(lowerNode);
+        return hasSuccessorConstraint;
+    }
 
-        // If upperNode and lowerNode are part of a layout unit, then the layout units must
-        // be equal for a switch to be allowed.
+    private boolean haveLayoutUnitConstraints(final LNode upperNode, final LNode lowerNode) {
+        // If upperNode and lowerNode are part of a layout unit not only containing themselves,
+        // then the layout units must be equal for a switch to be allowed.
         LNode upperLayoutUnit = upperNode.getProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT);
         LNode lowerLayoutUnit = lowerNode.getProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT);
-        if (upperLayoutUnit != null || lowerLayoutUnit != null) { // Are they null if not set?
-                                                                  // TODO-alan
-            hasSuccessorConstraint |= upperLayoutUnit != lowerLayoutUnit; // ????
-        }
+        boolean nodesHaveLayoutUnits =
+                partOfMultiNodeLayoutUnit(upperNode, upperLayoutUnit)
+                        || partOfMultiNodeLayoutUnit(lowerNode, lowerLayoutUnit);
 
-        boolean normalAndNorthSouthNode =
-                isNorthSouthPortNode(upperNode) && isNormalNode(lowerNode)
-                        || isNorthSouthPortNode(lowerNode) && isNormalNode(upperNode);
-        hasSuccessorConstraint |= normalAndNorthSouthNode;
+        NodeType firstNodeType = upperNode.getProperty(InternalProperties.NODE_TYPE);
+        NodeType secondNodeType = lowerNode.getProperty(InternalProperties.NODE_TYPE);
+        boolean neitherNodeIsLongEdgeDummy =
+                firstNodeType != NodeType.LONG_EDGE && secondNodeType != NodeType.LONG_EDGE;
 
-        return hasSuccessorConstraint;
+        boolean areInDifferentLayoutUnits = upperLayoutUnit != lowerLayoutUnit;
+
+        return nodesHaveLayoutUnits && neitherNodeIsLongEdgeDummy && areInDifferentLayoutUnits;
+    }
+
+    private boolean partOfMultiNodeLayoutUnit(final LNode node, final LNode layoutUnit) {
+        return layoutUnit != null && layoutUnit != node;
+    }
+
+    private boolean areNormalAndNorthSouthPortDummy(final LNode upperNode, final LNode lowerNode) {
+        return isNorthSouthPortNode(upperNode) && isNormalNode(lowerNode)
+                || isNorthSouthPortNode(lowerNode) && isNormalNode(upperNode);
     }
 
     private boolean isNormalNode(final LNode node) {
@@ -141,7 +155,7 @@ abstract class SwitchDecider {
      *            index of the layer.
      * @return Layer as LNode array for given index.
      */
-    LNode[] getLayerForIndex(final int layerIndex) {
+    protected LNode[] getLayerForIndex(final int layerIndex) {
         return graph[layerIndex];
     }
 
@@ -150,7 +164,7 @@ abstract class SwitchDecider {
      * 
      * @return the node matrix
      */
-    LNode[][] getGraph() {
+    protected LNode[][] getGraph() {
         return graph;
     }
 
@@ -159,15 +173,15 @@ abstract class SwitchDecider {
      * 
      * @return the index of the free layer.
      */
-    int getFreeLayerIndex() {
+    protected int getFreeLayerIndex() {
         return freeLayerIndex;
     }
 
-    boolean freeLayerIsNotFirstLayer() {
+    protected boolean freeLayerIsNotFirstLayer() {
         return getFreeLayerIndex() != 0;
     }
 
-    boolean freeLayerIsNotLastLayer() {
+    protected boolean freeLayerIsNotLastLayer() {
         return getFreeLayerIndex() != getGraph().length - 1;
     }
 

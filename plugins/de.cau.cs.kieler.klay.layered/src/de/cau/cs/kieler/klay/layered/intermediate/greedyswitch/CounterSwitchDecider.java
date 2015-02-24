@@ -16,7 +16,9 @@ package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 
 /**
- * See {@link SwitchDecider} for details. TODO-alan
+ * The {@link CounterSwitchDecider}s decide on whether to switch neighboring nodes by counting all
+ * current crossings between the free layer and one or two adjacent fixed layers, then switching the
+ * nodes and recounting.
  * 
  * @author alan
  */
@@ -26,7 +28,7 @@ abstract class CounterSwitchDecider extends SwitchDecider {
     private int amountOfCrossingsInCurrentLayer = 0;
 
     /**
-     * Constructs CounterSwitchDecider. TODO-alan
+     * Constructs CounterSwitchDecider.
      * 
      * @param freeLayerIndex
      *            the free layer index.

@@ -16,7 +16,8 @@ package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 
 /**
- * See {@link SwitchDecider} for details. TODO-alan
+ * Works just like {@link SwitchDecider}, but only counts the crossing on one side of the free
+ * layer.
  * 
  * @author alan
  */
@@ -24,7 +25,7 @@ class CounterOneSidedSwitchDecider extends CounterSwitchDecider {
     private final CrossingCountSide direction;
 
     /**
-     * Constructs CounterOneSidedSwitchDecider. TODO-alan
+     * Constructs CounterOneSidedSwitchDecider.
      * 
      * @param freeLayerIndex
      *            the free layer index.
