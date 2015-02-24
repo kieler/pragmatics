@@ -93,13 +93,13 @@ public class NorthSouthPortNeighbouringNodeCounter {
 
     private void processIfNormalNodeWithNSPortsAndLongEdgeDummy(final LNode upperNode,
             final LNode lowerNode) {
-        if (isNormalAndHasPortsOnSide(upperNode, PortSide.SOUTH) && isLongEdgeDummy(lowerNode)) {
+        if (isNormal(upperNode) && isLongEdgeDummy(lowerNode)) {
             upperLowerCrossings =
                     amountOfDummyEdgeCrossingsWithNSEdgesOnSide(upperNode, PortSide.SOUTH);
             lowerUpperCrossings =
                     amountOfDummyEdgeCrossingsWithNSEdgesOnSide(upperNode, PortSide.NORTH);
         }
-        if (isNormalAndHasPortsOnSide(lowerNode, PortSide.NORTH) && isLongEdgeDummy(upperNode)) {
+        if (isNormal(lowerNode) && isLongEdgeDummy(upperNode)) {
             upperLowerCrossings =
                     amountOfDummyEdgeCrossingsWithNSEdgesOnSide(lowerNode, PortSide.NORTH);
             lowerUpperCrossings =
@@ -116,10 +116,8 @@ public class NorthSouthPortNeighbouringNodeCounter {
         return amountOfPorts;
     }
 
-    private boolean isNormalAndHasPortsOnSide(final LNode node, final PortSide side) {
-        boolean isNormal = node.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORMAL;
-        boolean hasPortsOnSide = node.getPorts(side).iterator().hasNext();
-        return isNormal && hasPortsOnSide;
+    private boolean isNormal(final LNode node) {
+        return node.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORMAL;
     }
 
     private void processIfTwoNorthSouthNodes(final LNode upperNode, final LNode lowerNode) {

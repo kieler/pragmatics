@@ -1155,6 +1155,61 @@ public class TestGraphCreator {
 
     /**
      * <pre>
+     * *-----*-------*
+     *    ______
+     *    |     |
+     *    |_____|
+     *       |
+     * .     *-------*
+     * </pre>
+     * 
+     * @return Graph of the form above.
+     */
+    public LGraph getSouthPortOnNormalNodeBelowLongEdgeDummy() {
+        LNode leftNode = addNodeToLayer(makeLayer());
+        LNode[] middleNodes = addNodesToLayer(3, makeLayer());
+        LNode[] rightNodes = addNodesToLayer(2, makeLayer());
+
+        eastWestEdgeFromTo(leftNode, middleNodes[0]);
+        eastWestEdgeFromTo(middleNodes[0], rightNodes[0]);
+        middleNodes[0].setProperty(InternalProperties.NODE_TYPE, NodeType.LONG_EDGE);
+
+        addNorthSouthEdge(PortSide.SOUTH, middleNodes[1], middleNodes[2], rightNodes[1], false);
+
+        return graph;
+
+    }
+
+    /**
+     * <pre>
+     * .     *-------*
+     *       |
+     *    ___|___
+     *    |     |
+     *    |_____|
+     *    
+     * *-----*-------*
+     * </pre>
+     * 
+     * @return Graph of the form above.
+     */
+    public LGraph getNorthPortOndNormalNodeAboveLongEdgeDummy() {
+        LNode leftNode = addNodeToLayer(makeLayer());
+        LNode[] middleNodes = addNodesToLayer(3, makeLayer());
+        LNode[] rightNodes = addNodesToLayer(2, makeLayer());
+
+        eastWestEdgeFromTo(leftNode, middleNodes[2]);
+        eastWestEdgeFromTo(middleNodes[2], rightNodes[1]);
+        middleNodes[2].setProperty(InternalProperties.NODE_TYPE, NodeType.LONG_EDGE);
+
+        addNorthSouthEdge(PortSide.NORTH, middleNodes[1], middleNodes[0], rightNodes[0], false);
+
+        return graph;
+
+    }
+
+    /**
+     * <pre>
      *    ______
      *    |     |
      *    |_p_p_|

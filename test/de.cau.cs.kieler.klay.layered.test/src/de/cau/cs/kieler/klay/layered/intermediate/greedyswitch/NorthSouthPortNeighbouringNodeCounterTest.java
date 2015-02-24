@@ -160,6 +160,30 @@ public class NorthSouthPortNeighbouringNodeCounterTest {
         assertThat(counter.getLowerUpperCrossings(), is(1));
     }
 
+    @Test
+    public void southPortOndNormalNodeBelowLongEdgeDummy() {
+        creator.getSouthPortOnNormalNodeBelowLongEdgeDummy();
+
+        countCrossingsInLayerBetweenNodes(1, 0, 1);
+        assertThat(counter.getUpperLowerCrossings(), is(0));
+        assertThat(counter.getLowerUpperCrossings(), is(1));
+        switchAndRecount(0, 1);
+        assertThat(counter.getUpperLowerCrossings(), is(1));
+        assertThat(counter.getLowerUpperCrossings(), is(0));
+    }
+
+    @Test
+    public void northPortOndNormalNodeAboveLongEdgeDummy() {
+        creator.getNorthPortOndNormalNodeAboveLongEdgeDummy();
+
+        countCrossingsInLayerBetweenNodes(1, 1, 2);
+        assertThat(counter.getUpperLowerCrossings(), is(0));
+        assertThat(counter.getLowerUpperCrossings(), is(1));
+        switchAndRecount(1, 2);
+        assertThat(counter.getUpperLowerCrossings(), is(1));
+        assertThat(counter.getLowerUpperCrossings(), is(0));
+    }
+
     private void switchAndRecount(final int upperNodeIndex, final int lowerNodeIndex) {
         switchNodes(upperNodeIndex, lowerNodeIndex);
         counter.countCrossings(layer[upperNodeIndex], layer[lowerNodeIndex]);
