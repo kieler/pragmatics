@@ -71,6 +71,12 @@ public class NorthSouthPortNeighbouringNodeCounterTest {
         countCrossingsInLayerBetweenNodes(1, 1, 2);
         assertThat(counter.getUpperLowerCrossings(), is(1));
         assertThat(counter.getLowerUpperCrossings(), is(0));
+
+        switchNodes(1, 2);
+
+        countCrossingsInLayerBetweenNodes(1, 1, 2);
+        assertThat(counter.getUpperLowerCrossings(), is(0));
+        assertThat(counter.getLowerUpperCrossings(), is(1));
     }
 
     @Test
@@ -79,6 +85,12 @@ public class NorthSouthPortNeighbouringNodeCounterTest {
         countCrossingsInLayerBetweenNodes(1, 0, 1);
         assertThat(counter.getUpperLowerCrossings(), is(1));
         assertThat(counter.getLowerUpperCrossings(), is(0));
+
+        switchNodes(0, 1);
+
+        countCrossingsInLayerBetweenNodes(1, 0, 1);
+        assertThat(counter.getUpperLowerCrossings(), is(0));
+        assertThat(counter.getLowerUpperCrossings(), is(1));
     }
 
     @Test
@@ -101,15 +113,36 @@ public class NorthSouthPortNeighbouringNodeCounterTest {
 
     @Test
     public void northSouthEdgesComeFromBothSidesDontCross() {
-        creator.getNorthSouthCrossingGraphEdgesFromEastAndWestNoCrossings();
+        creator.getSouthernNorthSouthGraphEdgesFromEastAndWestNoCrossings();
         countCrossingsInLayerBetweenNodes(1, 1, 2);
+        assertThat(counter.getUpperLowerCrossings(), is(0));
+        assertThat(counter.getLowerUpperCrossings(), is(0));
+
+        creator.getNorthernNorthSouthGraphEdgesFromEastAndWestNoCrossings();
+        countCrossingsInLayerBetweenNodes(1, 0, 1);
+        assertThat(counter.getUpperLowerCrossings(), is(0));
+        assertThat(counter.getLowerUpperCrossings(), is(0));
+    }
+
+    @Test
+    public void southernNorthSouthEdgesBothToEast() {
+        creator.getSouthernNorthSouthEdgesBothToEast();
+        countCrossingsInLayerBetweenNodes(0, 1, 2);
+        assertThat(counter.getUpperLowerCrossings(), is(0));
+        assertThat(counter.getLowerUpperCrossings(), is(1));
+    }
+
+    @Test
+    public void crossingsWithNorthSouthPortsBelongingToDifferentNodesShouldNotBeCounted() {
+        creator.getGraphWhereLayoutUnitPreventsSwitch();
+        countCrossingsInLayerBetweenNodes(0, 1, 2);
         assertThat(counter.getUpperLowerCrossings(), is(0));
         assertThat(counter.getLowerUpperCrossings(), is(0));
     }
 
     @Test
     public void northSouthEdgesComeFromBothSidesDoCross() {
-        creator.getNorthSouthCrossingGraphEdgesFromEastAndWestAndCross();
+        creator.getNorthSouthEdgesFromEastAndWestAndCross();
         countCrossingsInLayerBetweenNodes(1, 1, 2);
         assertThat(counter.getUpperLowerCrossings(), is(1));
         assertThat(counter.getLowerUpperCrossings(), is(1));
@@ -176,6 +209,55 @@ public class NorthSouthPortNeighbouringNodeCounterTest {
         assertThat(counter.getLowerUpperCrossings(), is(1));
     }
 
+    @Test
+    public void normalNodesNorthSouthEdgesHaveCrossingsToLongEdgeDummy() {
+        creator.getNorthernNorthSouthDummyEdgeCrossingGraph();
+
+        countCrossingsInLayerBetweenNodes(1, 0, 1);
+
+        assertThat(counter.getUpperLowerCrossings(), is(1));
+        assertThat(counter.getLowerUpperCrossings(), is(0));
+
+        countCrossingsInLayerBetweenNodes(1, 1, 2);
+
+        assertThat(counter.getUpperLowerCrossings(), is(1));
+        assertThat(counter.getLowerUpperCrossings(), is(0));
+
+        creator.getSouthernNorthSouthDummyEdgeCrossingGraph();
+
+        countCrossingsInLayerBetweenNodes(1, 0, 1);
+
+        assertThat(counter.getUpperLowerCrossings(), is(1));
+        assertThat(counter.getLowerUpperCrossings(), is(0));
+
+        countCrossingsInLayerBetweenNodes(1, 1, 2);
+
+        assertThat(counter.getUpperLowerCrossings(), is(1));
+        assertThat(counter.getLowerUpperCrossings(), is(0));
+    }
+
+    @Test
+    public void normalNodesNorthSouthEdgesHaveCrossingsToLongEdgeDummyOnBothSides() {
+        creator.getMultipleNorthSouthAndLongEdgeDummiesOnBothSides();
+        countCrossingsInLayerBetweenNodes(1, 2, 3);
+
+        assertThat(counter.getUpperLowerCrossings(), is(2));
+        assertThat(counter.getLowerUpperCrossings(), is(2));
+    }
+
+    @Test
+    public void ignoresUnconnectedPortsForNormalNodeAndLongEdgeDummies() {
+        creator.getLongEdgeDummyAndNormalNodeWithUnusedPortsOnSouthernSide();
+        countCrossingsInLayerBetweenNodes(1, 0, 1);
+
+        assertThat(counter.getUpperLowerCrossings(), is(0));
+
+        creator.getLongEdgeDummyAndNormalNodeWithUnusedPortsOnNorthernSide();
+        countCrossingsInLayerBetweenNodes(1, 0, 1);
+
+        assertThat(counter.getUpperLowerCrossings(), is(0));
+    }
+
     private void switchNodes(final int upper, final int lower) {
         LNode upperNode = layer[upper];
         LNode lowerNode = layer[lower];
@@ -185,9 +267,15 @@ public class NorthSouthPortNeighbouringNodeCounterTest {
 
     private void countCrossingsInLayerBetweenNodes(final int layerIndex, final int upperNodeIndex,
             final int lowerNodeIndex) {
-        layer = creator.getCurrentOrder()[layerIndex];
+        setLayerIfNotSet(layerIndex);
         counter = new NorthSouthPortNeighbouringNodeCounter(layer);
         counter.countCrossings(layer[upperNodeIndex], layer[lowerNodeIndex]);
 
+    }
+
+    private void setLayerIfNotSet(final int layerIndex) {
+        if (layer == null) {
+            layer = creator.getCurrentOrder()[layerIndex];
+        }
     }
 }
