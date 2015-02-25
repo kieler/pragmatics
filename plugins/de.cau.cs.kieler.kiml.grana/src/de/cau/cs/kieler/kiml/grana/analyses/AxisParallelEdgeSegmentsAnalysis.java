@@ -135,7 +135,6 @@ public class AxisParallelEdgeSegmentsAnalysis implements IAnalysis {
                     } else {
                         if (EAST_WEST.contains(pld.getProperty(LayoutOptions.PORT_SIDE))) {
                             specialBendpoints++;
-                            System.out.println(kedge);
                         }
                     }
                 }
@@ -151,7 +150,6 @@ public class AxisParallelEdgeSegmentsAnalysis implements IAnalysis {
                     } else {
                         if (EAST_WEST.contains(pld.getProperty(LayoutOptions.PORT_SIDE))) {
                             specialBendpoints++;
-                            System.out.println(kedge);
                         }
                     }
                 }
