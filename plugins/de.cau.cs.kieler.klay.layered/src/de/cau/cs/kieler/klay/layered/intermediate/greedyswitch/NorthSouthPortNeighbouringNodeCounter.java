@@ -110,7 +110,7 @@ public class NorthSouthPortNeighbouringNodeCounter {
     private int amountOfDummyEdgeCrossingsWithNSEdgesOnSide(final LNode node, final PortSide side) {
         int amountOfPorts = 0;
         for (LPort port : node.getPorts(side)) {
-            List<LPort> nsPorts = port.getProperty(InternalProperties.CONNECTED_NORTH_SOUTH_PORTS);
+            List<LPort> nsPorts = port.getProperty(InternalProperties.CONNECTED_NORTH_SOUTH_PORT_DUMMIES);
             amountOfPorts += nsPorts.size();
         }
         return amountOfPorts;

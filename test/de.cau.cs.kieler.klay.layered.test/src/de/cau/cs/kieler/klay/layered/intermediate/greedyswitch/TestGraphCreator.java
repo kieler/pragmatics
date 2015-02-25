@@ -1835,7 +1835,8 @@ public class TestGraphCreator {
         LPort originPort = addPortOnSide(nodeWithNSPorts, side);
         nsNodePort.setProperty(InternalProperties.ORIGIN, originPort);
 
-        originPort.getProperty(InternalProperties.CONNECTED_NORTH_SOUTH_PORTS).add(nsNodePort);
+        originPort.getProperty(InternalProperties.CONNECTED_NORTH_SOUTH_PORT_DUMMIES).add(
+                nsNodePort);
     }
 
     private void setInLayerOrderConstraint(final LNode thisNode, final LNode beforeThisNode) {

@@ -577,7 +577,7 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
      */
     private void addToNSPortList(final LPort nsNodePort, final LPort portWithEdgeToNSNode) {
         List<LPort> connectedPorts =
-                portWithEdgeToNSNode.getProperty(InternalProperties.CONNECTED_NORTH_SOUTH_PORTS);
+                portWithEdgeToNSNode.getProperty(InternalProperties.CONNECTED_NORTH_SOUTH_PORT_DUMMIES);
         connectedPorts.add(nsNodePort);
     }
 
