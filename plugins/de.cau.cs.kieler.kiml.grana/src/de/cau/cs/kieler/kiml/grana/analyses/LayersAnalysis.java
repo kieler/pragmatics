@@ -51,6 +51,16 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  */
 public class LayersAnalysis implements IAnalysis {
 
+    /** Id of this analysis. */
+    public static final String ID = "de.cau.cs.kieler.kiml.grana.layers";
+    
+    // SUPPRESS CHECKSTYLE NEXT 6 Javadoc
+    public static final int INDEX_HORIZONTAL = 0;
+    public static final int INDEX_VERTICAL = 1;
+    public static final int INDEX_DUMMIES = 2;
+    public static final int INDEX_MAX_NODES_PER_LAYER = 3;
+    public static final int INDEX_MAX_NODES_PER_LAYER_DUMMIES = 4;
+    public static final int INDEX_EDGE_DENSITY = 5;
     
     // we store the determined layers in order for other 
     // analyses to access them
@@ -131,7 +141,14 @@ public class LayersAnalysis implements IAnalysis {
 
         progressMonitor.done();
         // SUPPRESS CHECKSTYLE NEXT 1 MagicNumber
-        return new Object[] { count[0], count[1], count[2], count[3] , count[4], count[5] };
+        return new Object[] { 
+                count[INDEX_HORIZONTAL], 
+                count[INDEX_VERTICAL], 
+                count[INDEX_DUMMIES],
+                count[INDEX_MAX_NODES_PER_LAYER],
+                count[INDEX_MAX_NODES_PER_LAYER_DUMMIES],
+                count[INDEX_EDGE_DENSITY]
+        };
     }
     
     /**

@@ -2,12 +2,12 @@
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
- * 
+ *
  * Copyright 2012 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
- * 
+ *
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
@@ -61,14 +61,14 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klighd.ZoomStyle;
 import de.cau.cs.kieler.klighd.internal.macrolayout.KlighdLayoutManager;
 import de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties;
+import de.cau.cs.kieler.klighd.piccolo.IKlighdNode.IKGraphElementNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.activities.ApplyBendPointsActivity;
 import de.cau.cs.kieler.klighd.piccolo.internal.activities.ApplySmartBoundsActivity;
 import de.cau.cs.kieler.klighd.piccolo.internal.activities.FadeEdgeInActivity;
 import de.cau.cs.kieler.klighd.piccolo.internal.activities.FadeNodeInActivity;
 import de.cau.cs.kieler.klighd.piccolo.internal.activities.IStartingAndFinishingActivity;
-import de.cau.cs.kieler.klighd.piccolo.internal.nodes.IGraphElement;
-import de.cau.cs.kieler.klighd.piccolo.internal.nodes.IGraphElement.ILabeledGraphElement;
-import de.cau.cs.kieler.klighd.piccolo.internal.nodes.INode;
+import de.cau.cs.kieler.klighd.piccolo.internal.nodes.IInternalKGraphElementNode;
+import de.cau.cs.kieler.klighd.piccolo.internal.nodes.IInternalKGraphElementNode.IKNodeNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KChildAreaNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KEdgeNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KLabelNode;
@@ -97,7 +97,7 @@ import edu.umd.cs.piccolo.util.PBounds;
  * to {@link KNodeRenderingController KNodeRenderingControllers}, {@link KPortRenderingController
  * KPortRenderingControllers}, {@link KEdgeRenderingController KEdgeRenderingControllers}, and
  * {@link KLabelRenderingController KLabelRenderingControllers}.
- * 
+ *
  * @author mri
  * @author chsch
  * @kieler.design proposed by chsch
@@ -106,9 +106,9 @@ import edu.umd.cs.piccolo.util.PBounds;
 public class DiagramController {
 
     /** the property for the Piccolo2D representation of a node. */
-    static final IProperty<INode> REP = new Property<INode>(
+    static final IProperty<IKNodeNode> REP = new Property<IKNodeNode>(
             "klighd.piccolo.representation");
-    
+
     /** the property for the Piccolo2D representation of an edge. */
     private static final IProperty<KEdgeNode> EDGE_REP = new Property<KEdgeNode>(
             "klighd.piccolo.representation");
@@ -116,20 +116,20 @@ public class DiagramController {
     /** the property for the Piccolo2D representation of a port. */
     private static final IProperty<KPortNode> PORT_REP = new Property<KPortNode>(
             "klighd.piccolo.representation");
-    
+
     /** the property for the Piccolo2D representation of a label. */
     private static final IProperty<KLabelNode> LABEL_REP = new Property<KLabelNode>(
             "klighd.piccolo.representation");
 
     /** the Piccolo2D node representing the top node in the graph. */
     private final KNodeTopNode topNode;
-    
+
     /** the main camera that determines the actually drawn picture. */
     private final KlighdMainCamera canvasCamera;
 
     /** the zoom controller implementing the zoom functionalities. */
     private final DiagramZoomController zoomController;
-    
+
     /** whether to sync the representation with the graph model. */
     private final boolean sync;
 
@@ -140,12 +140,12 @@ public class DiagramController {
     private boolean record = false;
 
     /** the layout changes to graph elements while recording. */
-    private final Map<IGraphElement<?>, Object> recordedChanges = Maps.newLinkedHashMap();
+    private final Map<IKGraphElementNode, Object> recordedChanges = Maps.newLinkedHashMap();
 
 
     /**
      * Constructs a diagram controller for the given KGraph.
-     * 
+     *
      * @param graph
      *            the diagram describing KGraph rooted by a {@link KNode}
      * @param camera
@@ -163,7 +163,7 @@ public class DiagramController {
 
         this.sync = sync;
         this.edgesFirst = edgesFirst;
-        
+
         this.canvasCamera = camera;
 
         this.topNode = new KNodeTopNode(graph, edgesFirst);
@@ -184,7 +184,7 @@ public class DiagramController {
 
     /**
      * Returns the root of the represented graph.
-     * 
+     *
      * @return the root node
      */
     public KNodeTopNode getNode() {
@@ -193,7 +193,7 @@ public class DiagramController {
 
     /**
      * Returns whether the representation is synchronized with the graph.
-     * 
+     *
      * @return true if the representation is synchronized with the graph; false else
      */
     public boolean getSync() {
@@ -202,7 +202,7 @@ public class DiagramController {
 
     /**
      * Returns the employed root camera.
-     * 
+     *
      * @return the employed root camera.
      */
     public KlighdMainCamera getMainCamera() {
@@ -211,7 +211,7 @@ public class DiagramController {
 
     /**
      * Returns the employed zoom controller.
-     * 
+     *
      * @return the employed zoom controller.
      */
     public DiagramZoomController getZoomController() {
@@ -220,7 +220,7 @@ public class DiagramController {
 
     /**
      * Returns the 'recording' state of <code>this</code> controller.
-     * 
+     *
      * @return <code>true</code> if <code>this</code> controller is in recording mode.
      */
     public boolean isRecording() {
@@ -232,7 +232,7 @@ public class DiagramController {
      * visualization.<br>
      * <br>
      * Executing {@link #stopRecording(ZoomStyle, KNode, int)} applies all recorded layout changes.
-     * 
+     *
      * @see de.cau.cs.kieler.klighd.internal.ILayoutRecorder#startRecording()
      *      ILayoutRecorder#startRecording()
      */
@@ -248,7 +248,7 @@ public class DiagramController {
      *            {@link ZoomStyle#ZOOM_TO_FOCUS}, is ignored otherwise
      * @param animationTime
      *            duration of the animated layout
-     * 
+     *
      * @see de.cau.cs.kieler.klighd.internal.ILayoutRecorder#stopRecording(ZoomStyle, KNode, int)
      *      ILayoutRecorder#stopRecording(ZoomStyle, KNode, int)
      */
@@ -263,56 +263,52 @@ public class DiagramController {
 
     /**
      * Returns the Piccolo2D representation for the given diagram element.
-     * 
-     * @param <T> the concrete type of the diagramElement
+     *
      * @param diagramElement
      *            the diagram element
      * @return the Piccolo2D representation
      */
-    public <T extends KGraphElement> IGraphElement<T> getRepresentation(final T diagramElement) {
-        @SuppressWarnings("unchecked")
-        final IGraphElement<T> result =
-                (IGraphElement<T>) RenderingContextData.get(diagramElement).getProperty(REP);
-        return result;
+    public IKGraphElementNode getRepresentation(final KGraphElement diagramElement) {
+        return RenderingContextData.get(diagramElement).getProperty(REP);
     }
 
     /**
      * Collapses the representation of the given node.
-     * 
+     *
      * @param node
      *            the node
      */
     public void collapse(final KNode node) {
-        final INode nodeRep = (INode) getRepresentation(node);
+        final IKNodeNode nodeRep = (IKNodeNode) getRepresentation(node);
         if (nodeRep != null) {
             nodeRep.getChildAreaNode().setExpanded(false);
         }
-        
+
         zoomController.setFocusNode(node);
     }
 
     /**
      * Expands the representation of the given node.
-     * 
+     *
      * @param node
      *            the node
      */
     public void expand(final KNode node) {
-        final INode nodeRep = (INode) getRepresentation(node);
+        final IKNodeNode nodeRep = (IKNodeNode) getRepresentation(node);
         if (nodeRep != null) {
             nodeRep.getChildAreaNode().setExpanded(true);
         }
-        
+
         zoomController.setFocusNode(node);
     }
-    
+
     /**
      * @param node
      *            the node
      * @return true if this node is expanded.
      */
     public boolean isExpanded(final KNode node) {
-        final INode nodeRep = (INode) getRepresentation(node);
+        final IKNodeNode nodeRep = (IKNodeNode) getRepresentation(node);
         if (nodeRep != null) {
             return nodeRep.getChildAreaNode().isExpanded();
         }
@@ -321,16 +317,16 @@ public class DiagramController {
 
     /**
      * Changes the representation of the given node.
-     * 
+     *
      * @param node
      *            the node
      */
     public void toggleExpansion(final KNode node) {
-        final INode nodeRep = (INode) getRepresentation(node);
+        final IKNodeNode nodeRep = (IKNodeNode) getRepresentation(node);
         if (nodeRep != null) {
             nodeRep.getChildAreaNode().toggleExpansion();
         }
-        
+
         zoomController.setFocusNode(node);
     }
 
@@ -344,7 +340,7 @@ public class DiagramController {
      * reasons. Thus, given the nested diagram nodes A contains B contains C with A collapsed this
      * method may return <code>true</code> for C if <code>checkContainment</code> is
      * <code>false</code>.
-     * 
+     *
      * @param diagramElement
      *            a {@link KGraphElement}
      * @param checkContainment
@@ -383,7 +379,7 @@ public class DiagramController {
             }
         }
 
-        final INode clip = getClipNode();
+        final IKNodeNode clip = getClipNode();
         final PBounds camBounds = canvasCamera.getViewBounds();
         final PBounds elemFullBounds = NodeUtil.clipRelativeGlobalBoundsOf(p, clip);
         return elemFullBounds != null && elemFullBounds.intersects(camBounds);
@@ -391,10 +387,10 @@ public class DiagramController {
 
     /**
      * Hides the given {@link KGraphElement} from the diagram by removing the related
-     * {@link IGraphElement} from the network of {@link PNode PNodes}. In combination with
+     * {@link IKGraphElementNode} from the network of {@link PNode PNodes}. In combination with
      * {@link #show(KGraphElement)} this method can be used for changing the diagram's amount of
      * detail without changing the view model.
-     * 
+     *
      * @param diagramElement
      *            the {@link KGraphElement} to hide from the diagram
      */
@@ -406,13 +402,13 @@ public class DiagramController {
 
         remove(diagramElement, false);
     }
-    
+
     /**
      * Shows the given {@link KGraphElement} from the diagram by (re-) adding a related
-     * {@link IGraphElement} to the network of {@link PNode PNodes}. In combination with
+     * {@link IKGraphElementNode} to the network of {@link PNode PNodes}. In combination with
      * {@link #hide(KGraphElement)} this method can be used for changing the diagram's amount of
      * detail without changing the view model.
-     * 
+     *
      * @param diagramElement
      *            the {@link KGraphElement} to (re-) show in the diagram
      */
@@ -424,7 +420,7 @@ public class DiagramController {
 
         add(diagramElement, true);
     }
-    
+
     private static final String INVALID_CLIP_NODE_ERROR_MSG =
             "KLighD: Diagram shall be clipped to KNode XX that is (currently) not depicted in the"
             + " diagram right now. Make sure that it is contained by expanding its full parent"
@@ -435,21 +431,21 @@ public class DiagramController {
      * causing any change on the view model. Hence, this method can be used for changing the
      * diagram's amount of detail without changing the view model.<br>
      * The clip can be reset to the whole diagram by calling <code>clip((KNode) null)</code>.
-     * 
+     *
      * @param diagramElement
      *            the diagram element to which the diagram view is to be limited, may be
      *            <code>null</code>
      */
     public void clip(final KNode diagramElement) {
-        final IGraphElement<KNode> node =
+        final IKGraphElementNode node =
                 (diagramElement == null) ? topNode : getRepresentation(diagramElement);
-        
+
         if (node == null) {
             throw new RuntimeException(INVALID_CLIP_NODE_ERROR_MSG.replace("XX",
                     diagramElement.toString()));
         }
 
-        final INode currentRootNode = canvasCamera.getDisplayedINode();
+        final IKNodeNode currentRootNode = canvasCamera.getDisplayedKNodeNode();
         if (currentRootNode == node) {
             return;
         }
@@ -459,32 +455,32 @@ public class DiagramController {
                     diagramElement.toString()));
         }
 
-        canvasCamera.exchangeDisplayedNode((INode) node);
+        canvasCamera.exchangeDisplayedNode((IKNodeNode) node);
         zoomController.setFocusNode(diagramElement);
     }
-    
-    private INode getClipNode() {
-        return canvasCamera.getDisplayedINode();
+
+    private IKNodeNode getClipNode() {
+        return canvasCamera.getDisplayedKNodeNode();
     }
-    
+
     /**
      * Provides the currently set diagram clip.
-     * 
+     *
      * @return the {@link KNode} that is currently clipped.
      */
     public KNode getClip() {
-        final INode node = getClipNode();
-        return node.getGraphElement();
+        final IKNodeNode node = getClipNode();
+        return node.getViewModelElement();
     }
 
     /* --------------------------------------------- */
     /* internal part */
     /* --------------------------------------------- */
 
-    void recordChange(final IGraphElement<?> node, final Object change) {
+    void recordChange(final IKGraphElementNode node, final Object change) {
         recordedChanges.put(node, change);
     }
-    
+
     private final Set<AbstractKGERenderingController<?, ?>> dirtyDiagramElements = Sets.newHashSet();
 
     void scheduleRenderingUpdate(final AbstractKGERenderingController<?, ?> controller) {
@@ -494,7 +490,7 @@ public class DiagramController {
         }
         renderingUpdater.schedule(1);
     }
-    
+
     private final Job renderingUpdater = new Job("KLighD DiagramElementUpdater") {
         {
             this.setSystem(true);
@@ -517,7 +513,7 @@ public class DiagramController {
              */
             public void run() {
                 final Set<AbstractKGERenderingController<?, ?>> copy;
-                synchronized (dirtyDiagramElements) {                
+                synchronized (dirtyDiagramElements) {
                     copy = ImmutableSet.copyOf(dirtyDiagramElements);
                     dirtyDiagramElements.clear();
                 }
@@ -527,7 +523,7 @@ public class DiagramController {
             }
         };
     };
-    
+
 
     /**
      * Applies the recorded layout changes by creating appropriate activities.
@@ -536,13 +532,13 @@ public class DiagramController {
             final int animationTime) {
 
         // create activities to apply all recorded changes
-        for (final Map.Entry<IGraphElement<?>, Object> recordedChange : recordedChanges.entrySet()) {
+        for (final Map.Entry<IKGraphElementNode, ?> recordedChange : recordedChanges.entrySet()) {
             // create the activity to apply the change
             PInterpolatingActivity activity;
             final PNode shapeNode;
             if (recordedChange.getKey() instanceof KEdgeNode) {
                 // edge layout changed
-                
+
                 final KEdgeNode edgeNode = (KEdgeNode) recordedChange.getKey();
                 shapeNode = edgeNode;
 
@@ -553,7 +549,7 @@ public class DiagramController {
                 final Pair<Point2D[], Point2D[]> value =
                         (Pair<Point2D[], Point2D[]>) recordedChange.getValue();
                 final Point2D[] bends = value.getFirst();
-                final Point2D[] junctions = value.getSecond(); 
+                final Point2D[] junctions = value.getSecond();
 
                 if (!edgeNode.getVisible()) {
                     // the visibility is set to false for newly introduced edges in #addEdge
@@ -578,7 +574,7 @@ public class DiagramController {
 
                 final float scale;
                 if (shapeNode instanceof KNodeNode) {
-                    scale = ((KNodeNode) shapeNode).getGraphElement().getData(KShapeLayout.class)
+                    scale = ((KNodeNode) shapeNode).getViewModelElement().getData(KShapeLayout.class)
                                     .getProperty(LayoutOptions.SCALE_FACTOR);
                 } else {
                     scale = 1f;
@@ -607,8 +603,8 @@ public class DiagramController {
                 // unschedule a currently running primary activity on the node if any
                 NodeUtil.unschedulePrimaryActivity(shapeNode);
                 // instantly apply the activity without scheduling it
-                ((IStartingAndFinishingActivity) activity).activityStarted(); 
-                ((IStartingAndFinishingActivity) activity).activityFinished(); 
+                ((IStartingAndFinishingActivity) activity).activityStarted();
+                ((IStartingAndFinishingActivity) activity).activityFinished();
             }
         }
         recordedChanges.clear();
@@ -619,14 +615,14 @@ public class DiagramController {
 
     /**
      * Adds a listener on the expansion of the child area of the given node representation.
-     * 
+     *
      * @param nodeNode
      *            the node representation
      */
-    private void addExpansionListener(final INode nodeNode) {
+    private void addExpansionListener(final IKNodeNode nodeNode) {
         final KChildAreaNode childAreaNode = nodeNode.getChildAreaNode();
         if (childAreaNode != null) {
-            final KNode node = nodeNode.getGraphElement();
+            final KNode node = nodeNode.getViewModelElement();
 
             childAreaNode.addPropertyChangeListener(KChildAreaNode.PROPERTY_EXPANSION,
                     new PropertyChangeListener() {
@@ -638,7 +634,7 @@ public class DiagramController {
                                 // i.e. the child area of node 'nodeNode' has been collapsed ...
                                 removeChildren(node);
                             }
-                            
+
                             if (nodeNode instanceof KNodeTopNode) {
                                 // we're done :-)
                                 // (root KNodes might also contain KRenderings, e.g. in case mouse
@@ -663,7 +659,7 @@ public class DiagramController {
      * Internal convenience method for adding representations of {@link KGraphElement
      * KGraphElements}. The addition requires the existence of a representation of the
      * <code>element</code>'s container {@link KGraphElement}.
-     * 
+     *
      * @param element
      *            the {@link KGraphElement} to be represented
      * @param forceShow
@@ -674,13 +670,14 @@ public class DiagramController {
         if (element.eContainer() == null) {
             return;
         }
-        
-        final IGraphElement<?> parentRep = getRepresentation((KGraphElement) element.eContainer());
-                                           
+
+        final IKGraphElementNode parentRep =
+                getRepresentation((KGraphElement) element.eContainer());
+
         switch (element.eClass().getClassifierID()) {
         case KGraphPackage.KNODE:
             if (parentRep != null) {
-                addNode((INode) parentRep, (KNode) element, forceShow);
+                addNode((IKNodeNode) parentRep, (KNode) element, forceShow);
             }
             break;
         case KGraphPackage.KPORT:
@@ -690,7 +687,8 @@ public class DiagramController {
             break;
         case KGraphPackage.KLABEL:
             if (parentRep != null) {
-                addLabel((ILabeledGraphElement<?>) parentRep, (KLabel) element, forceShow);
+                addLabel((IInternalKGraphElementNode.IKLabeledGraphElementNode<?>) parentRep,
+                        (KLabel) element, forceShow);
             }
             break;
         case KGraphPackage.KEDGE:
@@ -698,11 +696,11 @@ public class DiagramController {
             break;
         }
     }
-    
+
     /**
      * Internal convenience method for removing representations of {@link KGraphElement
      * KGraphElements}.
-     * 
+     *
      * @param element
      *            the {@link KGraphElement} to be removed from the diagram
      * @param releaseControllers
@@ -714,7 +712,7 @@ public class DiagramController {
         if (element.eContainer() == null) {
             return;
         }
-        
+
         switch (element.eClass().getClassifierID()) {
         case KGraphPackage.KNODE:
             removeNode((KNode) element, releaseControllers);
@@ -736,7 +734,7 @@ public class DiagramController {
      * Filter predicate returning <code>true</code> for those <code>kge</code>'s whose corresponding
      * KlighdProperties.SHOW property value evaluates to <code>true</code>, <code>false</code> else.
      */
-    private static final Predicate<KGraphElement> NON_HIDDEN_KGE_FILTER = 
+    private static final Predicate<KGraphElement> NON_HIDDEN_KGE_FILTER =
             new Predicate<KGraphElement>() {
         public boolean apply(final KGraphElement kge) {
             final KGraphData data = kge.getData(KLayoutDataPackage.eINSTANCE.getKLayoutData());
@@ -746,12 +744,12 @@ public class DiagramController {
 
     /**
      * Handles the children of the parent node.
-     * 
+     *
      * @param parentNode
      *            the parent structure node representing a KNode
      */
-    private void addChildren(final INode parentNode) {
-        final KNode parent = parentNode.getGraphElement();
+    private void addChildren(final IKNodeNode parentNode) {
+        final KNode parent = parentNode.getViewModelElement();
 
         // create the nodes
         for (final KNode child : parent.getChildren()) {
@@ -761,9 +759,9 @@ public class DiagramController {
         RenderingContextData.get(parent).setProperty(KlighdInternalProperties.POPULATED, true);
 
         if (sync) {
-            // remove any existing children sync adapters, which may be out-of-date 
+            // remove any existing children sync adapters, which may be out-of-date
             ModelingUtil.removeAdapters(parent, CHILDREN_SYNC_ADAPTERS);
-            
+
             // add an adapter on the node's children
             parent.eAdapters().add(new ChildrenSyncAdapter(parentNode));
         }
@@ -771,7 +769,7 @@ public class DiagramController {
 
     /**
      * Adds a representation for the node to the given parent.
-     * 
+     *
      * @param parent
      *            the parent node
      * @param node
@@ -780,9 +778,9 @@ public class DiagramController {
      *            if <code>true</code> add <code>element</code> to the diagram regardless of its
      *            {@link KlighdProperties#SHOW} property value
      */
-    private void addNode(final INode parent, final KNode node, final boolean forceShow) {
+    private void addNode(final IKNodeNode parent, final KNode node, final boolean forceShow) {
         final RenderingContextData contextData = RenderingContextData.get(node);
-        final INode nodeRep = contextData.getProperty(REP);
+        final IKNodeNode nodeRep = contextData.getProperty(REP);
 
         KNodeNode nodeNode;
         if (nodeRep instanceof KNodeTopNode) {
@@ -799,7 +797,7 @@ public class DiagramController {
         if (nodeNode != null && nodeNode.getParent() != null) {
             return;
         }
-        
+
         final int expand;
 
         // if there is no Piccolo2D representation of the node create it
@@ -814,12 +812,12 @@ public class DiagramController {
             contextData.setProperty(REP, nodeNode);
 
             updateRendering(nodeNode);
-            
+
             addExpansionListener(nodeNode);
 
             expand = data == null || data.getProperty(KlighdProperties.EXPAND) ?  1 : 0;
             // in case the EXPAND property is not set the default value 'true' is returned
-            
+
         } else {
             // touch the expansion state, see the methods javadoc for details
             expand = 2;
@@ -831,7 +829,7 @@ public class DiagramController {
             nodeNode.setVisible(false);
         }
 
-        // declare the node 'ACTIVE' just yet, it is required by 'handleEdges' 
+        // declare the node 'ACTIVE' just yet, it is required by 'handleEdges'
         contextData.setProperty(KlighdInternalProperties.ACTIVE, true);
 
         updateLayout(nodeNode);
@@ -860,7 +858,7 @@ public class DiagramController {
 
     /**
      * Handles the children of the parent node.
-     * 
+     *
      * @param parent
      *            the parent KNode
      */
@@ -871,7 +869,7 @@ public class DiagramController {
         RenderingContextData.get(parent).setProperty(KlighdInternalProperties.POPULATED, false);
 
         if (sync) {
-            // remove any existing children sync adapters, which may be out-of-date 
+            // remove any existing children sync adapters, which may be out-of-date
             ModelingUtil.removeAdapters(parent, CHILDREN_SYNC_ADAPTERS);
         }
     }
@@ -880,7 +878,7 @@ public class DiagramController {
      * Removes the representation for <code>node</code> from its parent.<br>
      * <code>node</code> is not marked collapsed, this way the memory of the expand-collapse-state
      * of nested nodes is preserved.
-     * 
+     *
      * @param node
      *            the node
      * @param releaseControllers
@@ -890,12 +888,12 @@ public class DiagramController {
      */
     private void removeNode(final KNode node, final boolean releaseControllers) {
         final RenderingContextData contextData = RenderingContextData.get(node);
-        final INode nodeRep = contextData.getProperty(REP);
+        final IKNodeNode nodeRep = contextData.getProperty(REP);
 
         if (nodeRep == null) {
             return;
         }
-        
+
         final KNodeNode nodeNode;
         if (nodeRep instanceof KNodeTopNode) {
             // if the node is the current top-node something went wrong
@@ -908,7 +906,7 @@ public class DiagramController {
             // nodeNode is not contained in the PNode tree since, e.g., it has been removed already
             return;
         }
-            
+
         // remove all incoming edges
         for (final KEdge incomingEdge : node.getIncomingEdges()) {
             removeEdge(incomingEdge, releaseControllers);
@@ -939,32 +937,32 @@ public class DiagramController {
             contextData.setProperty(REP, null);
         }
     }
-    
+
     private static final Predicate<Object> NODE_ADAPTERS = KlighdPredicates.instanceOf(
             ImmutableList.<Class<?>>of(KGEShapeLayoutPNodeUpdater.class, ChildrenSyncAdapter.class,
                     EdgeSyncAdapter.class, PortSyncAdapter.class, LabelSyncAdapter.class));
 
     /**
      * Adds representations for edges attached to the corresponding node.
-     * 
+     *
      * @param nodeNode
      *            the node representation
      */
     private void handleEdges(final KNodeNode nodeNode) {
-        final KNode node = nodeNode.getGraphElement();
+        final KNode node = nodeNode.getViewModelElement();
 
         // add all incoming edges
         for (final KEdge incomingEdge : node.getIncomingEdges()) {
             addEdge(incomingEdge, false);
         }
-        
+
         // add all outgoing edges
         for (final KEdge outgoingEdge : node.getOutgoingEdges()) {
             addEdge(outgoingEdge, false);
         }
-        
+
         if (sync) {
-            // remove any existing edge sync adapters, which may be out-of-date 
+            // remove any existing edge sync adapters, which may be out-of-date
             ModelingUtil.removeAdapters(node, EDGE_SYNC_ADAPTERS);
 
             // add the adapter
@@ -974,7 +972,7 @@ public class DiagramController {
 
     /**
      * Adds a representation for the edge to the appropriate child area.
-     * 
+     *
      * @param edge
      *            the edge
      * @param forceShow
@@ -992,15 +990,15 @@ public class DiagramController {
 
         final KNode source = edge.getSource();
         final KNode target = edge.getTarget();
-        
+
         final boolean sourceAndTargetActive = source != null && target != null
                 && RenderingContextData.get(source).getProperty(KlighdInternalProperties.ACTIVE)
                 && RenderingContextData.get(target).getProperty(KlighdInternalProperties.ACTIVE);
-        
+
         if (!sourceAndTargetActive) {
             return;
         }
-        
+
         // if there is no Piccolo2D representation for the node create it
         if (edgeNode == null) {
             if (!forceShow && !NON_HIDDEN_KGE_FILTER.apply(edge)) {
@@ -1010,7 +1008,7 @@ public class DiagramController {
 
             edgeNode = new KEdgeNode(edge);
             contextData.setProperty(EDGE_REP, edgeNode);
-            
+
             updateRendering(edgeNode);
         }
 
@@ -1020,7 +1018,7 @@ public class DiagramController {
             //  see #handleRecordedChanges()
             edgeNode.setVisible(false);
         }
-        
+
         // it is still not contained ...
         updateLayout(edgeNode);
         handleLabels(edgeNode, edge);
@@ -1032,14 +1030,14 @@ public class DiagramController {
         // find and set the parent of the edge, i.e. add it into the figure tree
         DiagramControllerHelper.updateEdgeParent(edgeNode);
         contextData.setProperty(KlighdInternalProperties.ACTIVE, true);
-        
+
         // update the offset of the edge layout to the containing child area
         DiagramControllerHelper.updateEdgeOffset(edgeNode);
     }
 
     /**
      * Removes the representation for the edge from its parent.
-     * 
+     *
      * @param edge
      *            the edge
      * @param releaseControllers
@@ -1064,7 +1062,7 @@ public class DiagramController {
         // recursively dispose all attached SWT Resources
         NodeDisposeListener.disposePNode(edgeNode);
 
-        // due to #removeNode() this method might be performed multiple times so: 
+        // due to #removeNode() this method might be performed multiple times so:
         if (releaseControllers && edgeNode.getRenderingController() != null) {
             // detach the synchronization adapters
             ModelingUtil.removeAdapters(edge, EDGE_ADAPTERS);
@@ -1078,19 +1076,19 @@ public class DiagramController {
             contextData.setProperty(EDGE_REP, null);
         }
     }
-    
+
     private static final Predicate<Object> EDGE_ADAPTERS = KlighdPredicates.instanceOf(
             ImmutableList.<Class<?>>of(KEdgeLayoutEdgeNodeUpdater.class, LabelSyncAdapter.class));
 
 
     /**
      * Adds representations for the ports attached to the node to the node's representation.
-     * 
+     *
      * @param nodeNode
      *            the node representation
      */
     private void handlePorts(final KNodeNode nodeNode) {
-        final KNode node = nodeNode.getGraphElement();
+        final KNode node = nodeNode.getViewModelElement();
 
         // create the ports
         for (final KPort port : node.getPorts()) {
@@ -1098,7 +1096,7 @@ public class DiagramController {
         }
 
         if (sync) {
-            // remove any existing port sync adapters, which may be out-of-date 
+            // remove any existing port sync adapters, which may be out-of-date
             ModelingUtil.removeAdapters(node, PORT_SYNC_ADAPTERS);
 
             // add the adapter
@@ -1108,7 +1106,7 @@ public class DiagramController {
 
     /**
      * Adds a representation for the port to the given parent.
-     * 
+     *
      * @param parent
      *            the parent node
      * @param port
@@ -1124,17 +1122,17 @@ public class DiagramController {
         if (portNode != null && portNode.getParent() != null) {
             return;
         }
-        
+
         // if there is no Piccolo2D representation of the port create it
         if (portNode == null) {
             if (!forceShow && !NON_HIDDEN_KGE_FILTER.apply(port)) {
                 contextData.setProperty(KlighdInternalProperties.ACTIVE, false);
                 return;
             }
-            
+
             portNode = new KPortNode(port);
             contextData.setProperty(PORT_REP, portNode);
-            
+
             updateRendering(portNode);
         }
 
@@ -1146,7 +1144,7 @@ public class DiagramController {
 
         updateLayout(portNode);
         handleLabels(portNode, port);
-        
+
         // add the port
         parent.addPort(portNode);
         contextData.setProperty(KlighdInternalProperties.ACTIVE, true);
@@ -1154,7 +1152,7 @@ public class DiagramController {
 
     /**
      * Removes the representation for the port from its parent.
-     * 
+     *
      * @param port
      *            the port
      * @param releaseControllers
@@ -1168,7 +1166,7 @@ public class DiagramController {
         if (portNode == null) {
             return;
         }
-        
+
         // remove the port representation from the containing node
         portNode.removeFromParent();
         contextData.setProperty(KlighdInternalProperties.ACTIVE, false);
@@ -1189,27 +1187,27 @@ public class DiagramController {
             contextData.setProperty(PORT_REP, null);
         }
     }
-    
+
     private static final Predicate<Object> PORT_ADAPTERS = KlighdPredicates.instanceOf(
             ImmutableList.<Class<?>>of(KGEShapeLayoutPNodeUpdater.class, LabelSyncAdapter.class));
 
 
     /**
      * Adds representations for the labels attached to the labeled element to the labeled node.
-     * 
+     *
      * @param labeledNode
      *            the labeled node
      * @param labeledElement
      *            the labeled element
      */
-    private void handleLabels(final ILabeledGraphElement<?> labeledNode,
+    private void handleLabels(final IInternalKGraphElementNode.IKLabeledGraphElementNode<?> labeledNode,
             final KLabeledGraphElement labeledElement) {
         for (final KLabel label : labeledElement.getLabels()) {
             addLabel(labeledNode, label, false);
         }
 
         if (sync) {
-            // remove any existing label sync adapters, which may be out-of-date 
+            // remove any existing label sync adapters, which may be out-of-date
             ModelingUtil.removeAdapters(labeledElement, LABEL_SYNC_ADAPTERS);
 
             // add an adapter on the labeled element's labels
@@ -1219,7 +1217,7 @@ public class DiagramController {
 
     /**
      * Adds a representation for the label to the given labeled node.
-     * 
+     *
      * @param labeledNode
      *            the labeled node
      * @param label
@@ -1228,8 +1226,9 @@ public class DiagramController {
      *            if <code>true</code> add <code>label</code> to the diagram regardless of its
      *            {@link KlighdProperties#SHOW} property value
      */
-    private void addLabel(final ILabeledGraphElement<?> labeledNode, final KLabel label,
-            final boolean forceShow) {
+    private void addLabel(
+            final IInternalKGraphElementNode.IKLabeledGraphElementNode<?> labeledNode,
+            final KLabel label, final boolean forceShow) {
         final RenderingContextData contextData = RenderingContextData.get(label);
         KLabelNode labelNode = contextData.getProperty(LABEL_REP);
 
@@ -1261,7 +1260,7 @@ public class DiagramController {
         labelNode.setText(label.getText());
 
         if (sync) {
-            // remove any existing text sync adapters, which may be out-of-date 
+            // remove any existing text sync adapters, which may be out-of-date
             ModelingUtil.removeAdapters(label, TEXT_SYNC_ADAPTERS);
 
             // add an adapter on the node's ports
@@ -1275,7 +1274,7 @@ public class DiagramController {
 
     /**
      * Removes the representation for the label from its parent.
-     * 
+     *
      * @param label
      *            the label
      * @param releaseControllers
@@ -1308,23 +1307,23 @@ public class DiagramController {
             contextData.setProperty(LABEL_REP, null);
         }
     }
-    
+
     private static final Predicate<Object> LABEL_ADAPTERS = KlighdPredicates.instanceOf(
             ImmutableList.<Class<?>>of(KGEShapeLayoutPNodeUpdater.class, TextSyncAdapter.class));
 
 
     private boolean isAutomaticallyArranged(final KGraphElement element) {
-        KShapeLayout shapeLayout = this.topNode.getGraphElement().getData(KShapeLayout.class);
-        if (shapeLayout == null || shapeLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
+        KLayoutData layoutData = this.topNode.getViewModelElement().getData(KLayoutData.class);
+        if (layoutData == null || layoutData.getProperty(LayoutOptions.NO_LAYOUT)) {
             return false;
         }
-        shapeLayout = element.getData(KShapeLayout.class);
-        if (shapeLayout != null && shapeLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
+        layoutData = element.getData(KLayoutData.class);
+        if (layoutData != null && layoutData.getProperty(LayoutOptions.NO_LAYOUT)) {
             return false;
         }
         final KNode container = ModelingUtil.eContainerOfType(element, KNode.class);
-        shapeLayout = container == null ? null : container.getData(KShapeLayout.class);
-        if (shapeLayout != null && shapeLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
+        layoutData = container == null ? null : container.getData(KLayoutData.class);
+        if (layoutData != null && layoutData.getProperty(LayoutOptions.NO_LAYOUT)) {
             return false;
         }
         return true;
@@ -1337,24 +1336,24 @@ public class DiagramController {
      * <br>
      * Besides, updates the bounds and translation of the node representation according to the
      * corresponding {@link KShapeLayout}.
-     * 
+     *
      * @param nodeNode
      *            the node representation
      */
     private void updateLayout(final KNodeNode nodeNode) {
         if (sync) {
-            final KNode node = nodeNode.getGraphElement();
+            final KNode node = nodeNode.getViewModelElement();
 
-            // remove the currently installed adapter if any; existing adapters get outdated if 
+            // remove the currently installed adapter if any; existing adapters get outdated if
             //  a) 'node' has been moved within the view model
             //  b) 'node' has been moved from one view model into another one
             ModelingUtil.removeAdapters(node, SHAPE_LAYOUT_SYNC_ADAPTERS);
-            
+
             // register adapter on the node to stay in sync
             node.eAdapters().add(new KGEShapeLayoutPNodeUpdater(nodeNode, this));
         }
- 
-        final KShapeLayout shapeLayout = nodeNode.getGraphElement().getData(KShapeLayout.class);
+
+        final KShapeLayout shapeLayout = nodeNode.getViewModelElement().getData(KShapeLayout.class);
         if (shapeLayout != null) {
             NodeUtil.applyBounds(nodeNode, shapeLayout);
         }
@@ -1366,25 +1365,25 @@ public class DiagramController {
      * <br>
      * Besides, updates the bounds and translation of the port representation according to the
      * corresponding {@link KShapeLayout}.
-     * 
+     *
      * @param portNode
      *            the port representation
      */
     private void updateLayout(final KPortNode portNode) {
 
         if (sync) {
-            final KPort port = portNode.getGraphElement();
+            final KPort port = portNode.getViewModelElement();
 
-            // remove the currently installed adapter if any; existing adapters get outdated if 
+            // remove the currently installed adapter if any; existing adapters get outdated if
             //  a) 'port' has been moved within the view model
             //  b) 'port' has been moved from one view model into another one
             ModelingUtil.removeAdapters(port, SHAPE_LAYOUT_SYNC_ADAPTERS);
-            
+
             // register adapter on the port to stay in sync
             port.eAdapters().add(new KGEShapeLayoutPNodeUpdater(portNode, this));
         }
 
-        final KShapeLayout shapeLayout = portNode.getGraphElement().getData(KShapeLayout.class);
+        final KShapeLayout shapeLayout = portNode.getViewModelElement().getData(KShapeLayout.class);
         if (shapeLayout != null) {
             NodeUtil.applyBounds(portNode, shapeLayout);
         }
@@ -1396,25 +1395,25 @@ public class DiagramController {
      * <br>
      * Besides, updates the bounds and translation of the label representation according to the
      * corresponding {@link KShapeLayout}.
-     * 
+     *
      * @param labelNode
      *            the label representation
      */
     private void updateLayout(final KLabelNode labelNode) {
 
         if (sync) {
-            final KLabel label = labelNode.getGraphElement();
-            
-            // remove the currently installed adapter if any; existing adapters get outdated if 
+            final KLabel label = labelNode.getViewModelElement();
+
+            // remove the currently installed adapter if any; existing adapters get outdated if
             //  a) 'label' has been moved within the view model
             //  b) 'label' has been moved from one view model into another one
             ModelingUtil.removeAdapters(label, SHAPE_LAYOUT_SYNC_ADAPTERS);
-            
+
             // register adapter on the label to stay in sync
             label.eAdapters().add(new KGEShapeLayoutPNodeUpdater(labelNode, this));
         }
 
-        final KShapeLayout shapeLayout = labelNode.getGraphElement().getData(KShapeLayout.class);
+        final KShapeLayout shapeLayout = labelNode.getViewModelElement().getData(KShapeLayout.class);
         if (shapeLayout != null) {
             NodeUtil.applyBounds(labelNode, shapeLayout);
         }
@@ -1426,16 +1425,16 @@ public class DiagramController {
      * <br>
      * Besides, updates the bounds and translation of the edge representation according to the
      * corresponding {@link KEdgeLayout}.
-     * 
+     *
      * @param edgeRep
      *            the edge representation
      */
     private void updateLayout(final KEdgeNode edgeRep) {
 
         if (sync) {
-            final KEdge edge = edgeRep.getGraphElement();
+            final KEdge edge = edgeRep.getViewModelElement();
 
-            // remove the currently installed adapter if any; existing adapters get outdated if 
+            // remove the currently installed adapter if any; existing adapters get outdated if
             //  a) 'edge' has been moved within the view model
             //  b) 'edge' has been moved from one view model into another one
             ModelingUtil.removeAdapters(edge, EDGE_LAYOUT_SYNC_ADAPTERS);
@@ -1444,13 +1443,13 @@ public class DiagramController {
             edge.eAdapters().add(new KEdgeLayoutEdgeNodeUpdater(edgeRep, this));
         }
 
-        final KEdge edge = edgeRep.getGraphElement();
+        final KEdge edge = edgeRep.getViewModelElement();
         final KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
         if (edgeLayout != null) {
             final KRendering rendering = KRenderingUtil.dereference(edge.getData(KRendering.class));
             final boolean renderedAsPolyline = rendering instanceof KPolyline
                     && !(rendering instanceof KSpline);
-            
+
             edgeRep.setBendPoints(KEdgeLayoutEdgeNodeUpdater.getBendPoints(edgeLayout,
                     renderedAsPolyline));
             edgeRep.setJunctionPoints(KEdgeLayoutEdgeNodeUpdater.getJunctionPoints(edgeLayout));
@@ -1459,7 +1458,7 @@ public class DiagramController {
 
     /**
      * Updates the rendering of the node.
-     * 
+     *
      * @param nodeRep
      *            the node representation
      */
@@ -1478,7 +1477,7 @@ public class DiagramController {
 
     /**
      * Updates the rendering of the port.
-     * 
+     *
      * @param portRep
      *            the port representation
      */
@@ -1497,7 +1496,7 @@ public class DiagramController {
 
     /**
      * Updates the rendering of the label.
-     * 
+     *
      * @param label
      *            the label representation
      */
@@ -1516,7 +1515,7 @@ public class DiagramController {
 
     /**
      * Updates the rendering of the edge.
-     * 
+     *
      * @param edgeRep
      *            the edge representation
      */
@@ -1542,7 +1541,7 @@ public class DiagramController {
 
     private static final Predicate<Object> EDGE_LAYOUT_SYNC_ADAPTERS
             = Predicates.instanceOf(KEdgeLayoutEdgeNodeUpdater.class);
-    
+
     // implementations of layout sync adapters are externalized into dedicated classes
 
     // ---------------------------------------------------------------------------------- //
@@ -1550,13 +1549,13 @@ public class DiagramController {
 
     private static final Predicate<Object> CHILDREN_SYNC_ADAPTERS
             = Predicates.instanceOf(ChildrenSyncAdapter.class);
-    
+
     private static final String UI_REQUIRED_ERROR_MSG =
             "KLighD: Adding & Removing XX is not allowed by any non-UI thead. "
             + "Put your executions into an instance of 'Runnable' and call "
             + "'PlatformUI.getWorkbench().getDisplay().(a)syncExec(Runnable)'!";
-    
-    private static final String UI_REQUIRED_ERROR_MSG_NODES = 
+
+    private static final String UI_REQUIRED_ERROR_MSG_NODES =
             UI_REQUIRED_ERROR_MSG.replaceFirst("XX", "KNodes");
 
     /**
@@ -1564,12 +1563,12 @@ public class DiagramController {
      * (in contrast to an anonymous subclass)
      */
     private final class ChildrenSyncAdapter extends AdapterImpl {
-        private final INode nodeRep;
-        
-        private ChildrenSyncAdapter(final INode theNodeRep) {
+        private final IKNodeNode nodeRep;
+
+        private ChildrenSyncAdapter(final IKNodeNode theNodeRep) {
             this.nodeRep = theNodeRep;
         }
-        
+
         @Override
         public void notifyChanged(final Notification notification) {
 
@@ -1577,7 +1576,7 @@ public class DiagramController {
                 if (UIExecRequired()) {
                     throw new RuntimeException(UI_REQUIRED_ERROR_MSG_NODES);
                 }
-                
+
                 switch (notification.getEventType()) {
                 case Notification.ADD: {
                     final KNode addedNode = (KNode) notification.getNewValue();
@@ -1636,7 +1635,7 @@ public class DiagramController {
     private static final Predicate<Object> EDGE_SYNC_ADAPTERS
             = Predicates.instanceOf(EdgeSyncAdapter.class);
 
-    private static final String UI_REQUIRED_ERROR_MSG_EDGES = 
+    private static final String UI_REQUIRED_ERROR_MSG_EDGES =
             UI_REQUIRED_ERROR_MSG.replaceFirst("XX", "KEdges");
 
     /**
@@ -1654,10 +1653,10 @@ public class DiagramController {
                 if (UIExecRequired()) {
                     throw new RuntimeException(UI_REQUIRED_ERROR_MSG_EDGES);
                 }
-                
+
                 final boolean releaseChildrenAndControllers =
                         featureId == KGraphPackage.KNODE__OUTGOING_EDGES;
-                
+
                 switch (notification.getEventType()) {
                 case Notification.ADD: {
                     final KEdge addedEdge = (KEdge) notification.getNewValue();
@@ -1698,7 +1697,7 @@ public class DiagramController {
     private static final Predicate<Object> PORT_SYNC_ADAPTERS
             = Predicates.instanceOf(PortSyncAdapter.class);
 
-    private static final String UI_REQUIRED_ERROR_MSG_PORTS = 
+    private static final String UI_REQUIRED_ERROR_MSG_PORTS =
             UI_REQUIRED_ERROR_MSG.replaceFirst("XX", "KPorts");
 
     /**
@@ -1707,18 +1706,18 @@ public class DiagramController {
      */
     private final class PortSyncAdapter extends AdapterImpl {
         private final KNodeNode nodeRep;
-        
+
         private PortSyncAdapter(final KNodeNode theNodeRep) {
             this.nodeRep = theNodeRep;
         }
-        
+
         @Override
         public void notifyChanged(final Notification notification) {
             if (notification.getFeatureID(KNode.class) == KGraphPackage.KNODE__PORTS) {
                 if (UIExecRequired()) {
                     throw new RuntimeException(UI_REQUIRED_ERROR_MSG_PORTS);
                 }
-                
+
                 switch (notification.getEventType()) {
                 case Notification.ADD: {
                     final KPort addedPort = (KPort) notification.getNewValue();
@@ -1759,7 +1758,7 @@ public class DiagramController {
     private static final Predicate<Object> LABEL_SYNC_ADAPTERS
             = Predicates.instanceOf(LabelSyncAdapter.class);
 
-    private static final String UI_REQUIRED_ERROR_MSG_LABELS = 
+    private static final String UI_REQUIRED_ERROR_MSG_LABELS =
             UI_REQUIRED_ERROR_MSG.replaceFirst("XX", "KLabels");
 
     /**
@@ -1767,21 +1766,22 @@ public class DiagramController {
      * (in contrast to an anonymous subclass)
      */
     private final class LabelSyncAdapter extends AdapterImpl {
-        private final ILabeledGraphElement<?> labeledNode;
-        
-        private LabelSyncAdapter(final ILabeledGraphElement<?> theLabeledNode) {
+        private final IInternalKGraphElementNode.IKLabeledGraphElementNode<?> labeledNode;
+
+        private LabelSyncAdapter(
+                final IInternalKGraphElementNode.IKLabeledGraphElementNode<?> theLabeledNode) {
             this.labeledNode = theLabeledNode;
         }
-        
+
         @Override
         public void notifyChanged(final Notification notification) {
-            
+
             if (notification.getFeatureID(KLabeledGraphElement.class)
                     == KGraphPackage.KLABELED_GRAPH_ELEMENT__LABELS) {
                 if (UIExecRequired()) {
                     throw new RuntimeException(UI_REQUIRED_ERROR_MSG_LABELS);
                 }
-                
+
                 switch (notification.getEventType()) {
                 case Notification.ADD: {
                     final KLabel addedLabel = (KLabel) notification.getNewValue();
@@ -1822,14 +1822,14 @@ public class DiagramController {
 
     private static final Predicate<Object> TEXT_SYNC_ADAPTERS
             = Predicates.instanceOf(TextSyncAdapter.class);
-    
+
     /**
      * A dedicated specialization of {@link AdapterImpl} allowing 'instanceof' tests.
      * (in contrast to an anonymous subclass)
      */
     private final class TextSyncAdapter extends AdapterImpl {
         private final KLabelNode labelRep;
-        
+
         private TextSyncAdapter(final KLabelNode theLabelRep) {
             this.labelRep = theLabelRep;
         }
@@ -1868,7 +1868,7 @@ public class DiagramController {
     /**
      * Checks whether the delegation to the Display thread is required for performing UI-relevant
      * executions.
-     * 
+     *
      * @return <code>true</code> if an Eclipse workbench is available and the current thread is not
      *         the UI thread ( {@link Display#getCurrent()} <code>== null</code>) indicating that
      *         calling {@link PlatformUI#getWorkbench()}.{@link org.eclipse.ui.IWorkbench#getDisplay()

@@ -460,7 +460,7 @@ public class PiccoloViewer extends AbstractViewer implements ILayoutRecorder,
             final PCamera camera = canvas.getCamera();
             final PBounds destBounds =
                     NodeUtil.clipRelativeGlobalBoundsOf(node, this.canvas.getCamera()
-                            .getDisplayedINode());
+                            .getDisplayedKNodeNode());
 
             if (destBounds != null) {
                 // move the camera so it includes the bounds of the node
@@ -492,7 +492,7 @@ public class PiccoloViewer extends AbstractViewer implements ILayoutRecorder,
             final PCamera camera = canvas.getCamera();
             final PBounds destBounds =
                     NodeUtil.clipRelativeGlobalBoundsOf(node, this.canvas.getCamera()
-                            .getDisplayedINode());
+                            .getDisplayedKNodeNode());
 
             if (destBounds != null) {
                 // center the camera on the node
@@ -526,7 +526,7 @@ public class PiccoloViewer extends AbstractViewer implements ILayoutRecorder,
 
             final PBounds destBounds =
                     NodeUtil.clipRelativeGlobalBoundsOf(node, this.canvas.getCamera()
-                            .getDisplayedINode());
+                            .getDisplayedKNodeNode());
 
             if (destBounds != null) {
                 final double scale = camera.getViewTransformReference().getScale();
@@ -557,7 +557,7 @@ public class PiccoloViewer extends AbstractViewer implements ILayoutRecorder,
 
         final PBounds destBounds =
                 NodeUtil.clipRelativeGlobalBoundsOf(camera.getDisplayedLayer(),
-                        camera.getDisplayedINode());
+                        camera.getDisplayedKNodeNode());
         t.translate(-destBounds.x, -destBounds.y);
         camera.animateViewToTransform(t, duration);
     }

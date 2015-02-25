@@ -335,6 +335,60 @@
             upperBound="1000"
             variance="7.0">
       </layoutOption>
+     <layoutOption
+           appliesTo="nodes"
+           class="de.cau.cs.kieler.kiml.options.PortAlignment"
+           default="JUSTIFIED"
+           description="Defines the default port distribution for a node."
+           id="de.cau.cs.kieler.portAlignment"
+           name="Port Alignment"
+           type="enum"
+           variance="0">
+     </layoutOption>
+     <layoutOption
+           appliesTo="nodes"
+           advanced="true"
+           class="de.cau.cs.kieler.kiml.options.PortAlignment"
+           default="UNDEFINED"
+           description="Defines how ports on the northern side are placed, overriding the node's general port alignment."
+           id="de.cau.cs.kieler.portAlignment.north"
+           name="Port Alignment (North)"
+           type="enum"
+           variance="0">
+     </layoutOption>
+     <layoutOption
+           appliesTo="nodes"
+           advanced="true"
+           class="de.cau.cs.kieler.kiml.options.PortAlignment"
+           default="UNDEFINED"
+           description="Defines how ports on the southern side are placed, overriding the node's general port alignment."
+           id="de.cau.cs.kieler.portAlignment.south"
+           name="Port Alignment (South)"
+           type="enum"
+           variance="0">
+     </layoutOption>
+     <layoutOption
+           appliesTo="nodes"
+           advanced="true"
+           class="de.cau.cs.kieler.kiml.options.PortAlignment"
+           default="UNDEFINED"
+           description="Defines how ports on the western side are placed, overriding the node's general port alignment."
+           id="de.cau.cs.kieler.portAlignment.west"
+           name="Port Alignment of (West)"
+           type="enum"
+           variance="0">
+     </layoutOption>
+     <layoutOption
+           appliesTo="nodes"
+           advanced="true"
+           class="de.cau.cs.kieler.kiml.options.PortAlignment"
+           default="UNDEFINED"
+           description="Defines how ports on the eastern side are placed, overriding the node's general port alignment."
+           id="de.cau.cs.kieler.portAlignment.east"
+           name="Port Alignment (Eastern)"
+           type="enum"
+           variance="0">
+     </layoutOption>
    
    <!-- Programmatic Layout Options -->
      <layoutOption
@@ -436,52 +490,6 @@
            description="Decides on a placement method for port labels."
            id="de.cau.cs.kieler.portLabelPlacement"
            name="Port Label Placement"
-           type="enum"
-           variance="0">
-     </layoutOption>
-     <layoutOption
-           appliesTo="nodes"
-           class="de.cau.cs.kieler.kiml.options.PortAlignment"
-           default="JUSTIFIED"
-           description="Defines the default port distribution for a node."
-           id="de.cau.cs.kieler.portAlignment"
-           name="Port Alignment"
-           type="enum"
-           variance="0">
-     </layoutOption>
-     <layoutOption
-           appliesTo="nodes"
-           class="de.cau.cs.kieler.kiml.options.PortAlignment"
-           description="Defines how ports on the northern side are placed."
-           id="de.cau.cs.kieler.portAlignment.north"
-           name="Alignment of Northern Ports"
-           type="enum"
-           variance="0">
-     </layoutOption>
-     <layoutOption
-           appliesTo="nodes"
-           class="de.cau.cs.kieler.kiml.options.PortAlignment"
-           description="Defines how ports on the southern side are placed."
-           id="de.cau.cs.kieler.portAlignment.south"
-           name="Alignment of Southern Ports"
-           type="enum"
-           variance="0">
-     </layoutOption>
-     <layoutOption
-           appliesTo="nodes"
-           class="de.cau.cs.kieler.kiml.options.PortAlignment"
-           description="Defines how ports on the western side are placed."
-           id="de.cau.cs.kieler.portAlignment.west"
-           name="Alignment of Western Ports"
-           type="enum"
-           variance="0">
-     </layoutOption>
-     <layoutOption
-           appliesTo="nodes"
-           class="de.cau.cs.kieler.kiml.options.PortAlignment"
-           description="Defines how ports on the eastern side are placed."
-           id="de.cau.cs.kieler.portAlignment.east"
-           name="Alignment of Eastern Ports"
            type="enum"
            variance="0">
      </layoutOption>

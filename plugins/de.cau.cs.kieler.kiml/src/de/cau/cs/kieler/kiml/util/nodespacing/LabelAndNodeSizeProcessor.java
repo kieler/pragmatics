@@ -25,7 +25,6 @@ import com.google.common.collect.ImmutableList;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.kiml.options.LabelSide;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.NodeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.PortAlignment;
@@ -249,13 +248,13 @@ public class LabelAndNodeSizeProcessor {
                 y += labelSpacing + label.getSize().y;
                 break;
             case NORTH:
-                position.x = -label.getSize().x / 2;
+                position.x = (port.getSize().x - label.getSize().x) / 2;
                 position.y = y + labelSpacing;
 
                 y += labelSpacing + label.getSize().y;
                 break;
             case SOUTH:
-                position.x = -label.getSize().x / 2;
+                position.x = (port.getSize().x - label.getSize().x) / 2;
                 position.y = y - labelSpacing - label.getSize().y;
 
                 y -= labelSpacing + label.getSize().y;
@@ -282,7 +281,9 @@ public class LabelAndNodeSizeProcessor {
         }
 
         // Retrieve the first label's side
-        final LabelSide labelSide = labels.get(0).getSide();
+        LabelSide labelSide = labels.get(0).getSide();
+        // Default is BELOW.
+        labelSide = labelSide == LabelSide.UNKNOWN ? LabelSide.BELOW : labelSide;
 
         // The initial y position we'll be starting from depends on port and label sides
         double y = 0;
@@ -1101,16 +1102,23 @@ public class LabelAndNodeSizeProcessor {
 
         // Get the port distribution from the node.
         PortAlignment portAlignment = nodeData.node.getProperty(LayoutOptions.PORT_ALIGNMENT);
+        // Use JUSTIFIED as default.
+        portAlignment =
+                portAlignment == PortAlignment.UNDEFINED ? PortAlignment.JUSTIFIED : portAlignment;
 
         // For each side get the port distribution. If it's null, replace it with the nodes policy.
         PortAlignment portAlignmentNorth = nodeData.node.getProperty(LayoutOptions.PORT_ALIGNMENT_NORTH);
         PortAlignment portAlignmentSouth = nodeData.node.getProperty(LayoutOptions.PORT_ALIGNMENT_SOUTH);
         PortAlignment portAlignmentWest = nodeData.node.getProperty(LayoutOptions.PORT_ALIGNMENT_WEST);
         PortAlignment portAlignmentEast = nodeData.node.getProperty(LayoutOptions.PORT_ALIGNMENT_EAST);
-        portAlignmentNorth = portAlignmentNorth == null ? portAlignment : portAlignmentNorth;
-        portAlignmentSouth = portAlignmentSouth == null ? portAlignment : portAlignmentSouth;
-        portAlignmentWest = portAlignmentWest == null ? portAlignment : portAlignmentWest;
-        portAlignmentEast = portAlignmentEast == null ? portAlignment : portAlignmentEast;
+        portAlignmentNorth =
+                portAlignmentNorth == PortAlignment.UNDEFINED ? portAlignment : portAlignmentNorth;
+        portAlignmentSouth =
+                portAlignmentSouth == PortAlignment.UNDEFINED ? portAlignment : portAlignmentSouth;
+        portAlignmentWest =
+                portAlignmentWest == PortAlignment.UNDEFINED ? portAlignment : portAlignmentWest;
+        portAlignmentEast =
+                portAlignmentEast == PortAlignment.UNDEFINED ? portAlignment : portAlignmentEast;
 
         // The way we calculate everything depends on whether any additional port space is specified
         Margins additionalPortSpace = nodeData.node.getProperty(LayoutOptions.ADDITIONAL_PORT_SPACE);
