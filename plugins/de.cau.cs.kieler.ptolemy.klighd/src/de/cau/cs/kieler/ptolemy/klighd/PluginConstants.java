@@ -17,6 +17,7 @@ package de.cau.cs.kieler.ptolemy.klighd;
  * Defines general constants used throughout the plug-in.
  * 
  * @author cds
+ * @kieler.rating proposed yellow cds 2015-02-23
  */
 public final class PluginConstants {
     

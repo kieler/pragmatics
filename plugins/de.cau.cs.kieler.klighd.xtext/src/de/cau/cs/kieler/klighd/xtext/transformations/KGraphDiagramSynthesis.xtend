@@ -124,7 +124,7 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         }
     }
     private static val KNOWN_PROPS = ImmutableList.of(KlighdProperties.EXPAND, KlighdProperties.EXPANDED_RENDERING, 
-        KlighdProperties.COLLAPSED_RENDERING, KlighdProperties.TOOLTIP)
+        KlighdProperties.COLLAPSED_RENDERING, KlighdProperties.TOOLTIP, KlighdProperties.NOT_SELECTABLE);
     
     
     /**
