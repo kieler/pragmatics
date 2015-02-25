@@ -515,7 +515,7 @@ public final class SplineSelfLoopRouter implements ILayoutProcessor {
              * {@inheritDoc}
              */
             public int compare(final SelfLoopEdge edge0, final SelfLoopEdge edge1) {
-                return Integer.compare(edge0.stepSize, edge1.stepSize);
+                return edge0.stepSize - edge1.stepSize;
             }
         }
     }
