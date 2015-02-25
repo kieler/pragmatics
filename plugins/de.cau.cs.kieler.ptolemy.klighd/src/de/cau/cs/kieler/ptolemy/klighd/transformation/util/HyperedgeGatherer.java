@@ -194,13 +194,13 @@ public final class HyperedgeGatherer {
         /** Relations that belong to this hyperedge. */
         public List<KNode> relations = Lists.newLinkedList();
         /** Source nodes that directly connect to a relation in this hyperedge. */
-        public Set<KNode> sourceNodes = Sets.newHashSet();
+        public Set<KNode> sourceNodes = Sets.newLinkedHashSet();
         /** Source ports that connect to a relation in this hyperedge. */
-        public Set<KPort> sourcePorts = Sets.newHashSet();
+        public Set<KPort> sourcePorts = Sets.newLinkedHashSet();
         /** Target nodes that directly connect to a relation in this hyperedge. */
-        public Set<KNode> targetNodes = Sets.newHashSet();
+        public Set<KNode> targetNodes = Sets.newLinkedHashSet();
         /** Target ports that connect to a relation in this hyperedge. */
-        public Set<KPort> targetPorts = Sets.newHashSet();
+        public Set<KPort> targetPorts = Sets.newLinkedHashSet();
         
         
         /**
