@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: de.cau.cs.kieler.kiml;singleton:=true
-Bundle-Version: 0.16.1.qualifier
+Bundle-Version: 0.17.0.qualifier
 Bundle-Localization: plugin
 Eclipse-BuddyPolicy: registered
 Require-Bundle: com.google.guava;bundle-version="10.0.0",

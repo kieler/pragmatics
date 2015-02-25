@@ -11,7 +11,10 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.options;
+package de.cau.cs.kieler.kiml.util.nodespacing;
+
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.Property;
 
 /**
  * Enumeration for the definition of a side of the edge to place the (edge) label to. Currently
@@ -26,4 +29,12 @@ public enum LabelSide {
     ABOVE,
     /** The label is placed below the edge. */
     BELOW;
+    
+
+    /**
+     * Property set on edge and port labels by layout algorithms depending on which side they decide is
+     * appropriate for any given label.
+     */
+    public static final IProperty<LabelSide> LABEL_SIDE = new Property<LabelSide>(
+            "de.cau.cs.kieler.labelSide", LabelSide.UNKNOWN);
 }

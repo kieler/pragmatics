@@ -32,7 +32,6 @@ import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.LabelSide;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
@@ -42,6 +41,7 @@ import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.GraphElementAdapter;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.LabelAdapter;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.NodeAdapter;
 import de.cau.cs.kieler.kiml.util.adapters.GraphAdapters.PortAdapter;
+import de.cau.cs.kieler.kiml.util.nodespacing.LabelSide;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Insets;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 
@@ -77,6 +77,11 @@ public final class KGraphAdapters {
         /** The layout data of the wrapped element. */
         protected KShapeLayout layout;
         // CHECKSTYLEON VisibilityModifier
+        /**
+         * Internally used versatile data field. Can be used for arbitrary information.
+         * No assumptions about its value or validity should be made.
+         */
+        private int id;
         
         private static final IProperty<Float> OFFSET_PROXY = new Property<Float>(
                 LayoutOptions.OFFSET, 0.0f);
@@ -178,6 +183,20 @@ public final class KGraphAdapters {
             // analog to the insets case, we copy the margins object here
             Margins newMargin = new Margins(margin); 
             layout.setProperty(LayoutOptions.MARGINS, newMargin);
+        }
+
+        /**
+         * @return the id
+         */
+        public int getVolatileId() {
+            return id;
+        }
+
+        /**
+         * @param id the id to set
+         */
+        public void setVolatileId(final int volatileId) {
+            this.id = volatileId;
         }
     }
 
@@ -312,7 +331,7 @@ public final class KGraphAdapters {
          * {@inheritDoc}
          */
         public LabelSide getSide() {
-            return layout.getProperty(LayoutOptions.LABEL_SIDE);
+            return layout.getProperty(LabelSide.LABEL_SIDE);
         }
     }
 

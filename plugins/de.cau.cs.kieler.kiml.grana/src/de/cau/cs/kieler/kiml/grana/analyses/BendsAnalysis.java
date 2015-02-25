@@ -28,6 +28,7 @@ import de.cau.cs.kieler.kiml.grana.IAnalysis;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * A graph analysis that counts the number of bendpoints. Returns a four-component
@@ -38,8 +39,12 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
  * unrelated edges share a bend point. However, this case is very unlikely and wouldn't
  * make sense in a proper diagram anyway, so we live with not counting it.</p>
  * 
+ * <p>Care has to be taken for bendpoints within different compound nodes. Their 
+ * coordinates are converted to absolute values.</p>
+ * 
  * @author mri
  * @author cds
+ * @author uru
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow 2012-07-10 msp
  */
@@ -50,6 +55,12 @@ public class BendsAnalysis implements IAnalysis {
      */
     public static final String ID = "de.cau.cs.kieler.kiml.grana.bendpointCount";
 
+    // SUPPRESS CHECKSTYLE NEXT 4 Javadoc
+    public static final int INDEX_MIN = 0;
+    public static final int INDEX_AVG = 1;
+    public static final int INDEX_MAX = 2;
+    public static final int INDEX_SUM = 3;
+    
     /**
      * {@inheritDoc}
      */
@@ -88,7 +99,16 @@ public class BendsAnalysis implements IAnalysis {
                 
                 // Add bend points to the set
                 for (KPoint bendPoint : bendPoints) {
-                    uniqueBendPoints.add(bendPoint.createVector());
+                    // convert bendpoint to a common, global coordinate system
+                    KVector local = bendPoint.createVector();
+                    KVector global;
+                    if (KimlUtil.isDescendant(edge.getTarget(), edge.getSource())) {
+                        global = KimlUtil.toAbsolute(local, edge.getSource());
+                    } else {
+                        global = KimlUtil.toAbsolute(local, edge.getSource().getParent());
+                    }
+                    
+                    uniqueBendPoints.add(global);
                 }
                 
                 // Update per-edge analyses
@@ -112,7 +132,14 @@ public class BendsAnalysis implements IAnalysis {
         }
 
         progressMonitor.done();
-        return new Object[] {min, avg, max, uniqueBendPoints.size()};
+        
+        final Object[] result = new Object[4]; // SUPPRESS CHECKSTYLE MagicNumber
+        result[INDEX_MIN] = min;
+        result[INDEX_AVG] = avg;
+        result[INDEX_MAX] = max;
+        result[INDEX_SUM] = uniqueBendPoints.size();
+        
+        return result;
     }
 
 }

@@ -52,9 +52,6 @@
                option="de.cau.cs.kieler.noLayout">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.additionalPortSpace">
-         </knownOption>
-         <knownOption
                option="de.cau.cs.kieler.klay.layered.edgeSpacingFactor">
          </knownOption>
          <knownOption
@@ -167,6 +164,22 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.klay.layered.contentAlignment">
+         </knownOption>
+         <knownOption
+               default="JUSTIFIED"
+               option="de.cau.cs.kieler.portAlignment">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.portAlignment.north">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.portAlignment.south">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.portAlignment.west">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.portAlignment.east">
          </knownOption>
       </layoutAlgorithm>
       <layoutOption
@@ -312,7 +325,7 @@
          </dependency>
       </layoutOption>
       <layoutOption
-            advanced="true"
+            advanced="false"
             appliesTo="parents"
             class="de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy"
             default="BRANDES_KOEPF"

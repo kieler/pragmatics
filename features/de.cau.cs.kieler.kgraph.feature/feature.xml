@@ -2,7 +2,7 @@
 <feature
       id="de.cau.cs.kieler.kgraph.feature"
       label="KIELER KGraph Editing and Visualization"
-      version="0.6.0.qualifier"
+      version="0.7.0.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel"
       plugin="de.cau.cs.kieler.core.kgraph">
 
@@ -224,6 +224,9 @@ litigation.
       <import feature="org.eclipse.emf" version="2.6.0" match="greaterOrEqual"/>
       <import plugin="com.google.guava"/>
       <import feature="de.cau.cs.kieler.kiml.feature"/>
+      <import feature="de.cau.cs.kieler.klighd.feature"/>
+      <import feature="de.cau.cs.kieler.kiml.graphviz.feature"/>
+      <import feature="de.cau.cs.kieler.kiml.ogdf.feature"/>
    </requires>
 
    <plugin
@@ -241,42 +244,7 @@ litigation.
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.klighd"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.klighd.piccolo"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.cau.cs.kieler.klighd.xtext"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.umd.cs.piccolo"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.core.krendering"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.core.krendering.extensions"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -318,13 +286,6 @@ litigation.
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.kiml.formats"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.cau.cs.kieler.kiml.formats.gml"
          download-size="0"
          install-size="0"
@@ -353,27 +314,6 @@ litigation.
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.kiml.graphviz.dot"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kiml.graphviz.layouter"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kiml.ogdf"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.graphdrawing.graphml"
          download-size="0"
          install-size="0"
@@ -396,20 +336,6 @@ litigation.
 
    <plugin
          id="de.cau.cs.kieler.klighd.kivi"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.klighd.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.core"
          download-size="0"
          install-size="0"
          version="0.0.0"
