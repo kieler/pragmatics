@@ -174,7 +174,7 @@ public final class SplineEdgeRouter implements ILayoutPhase {
         
         double xpos = 0.0, layerSpacing = 0.0;
         for (Layer layer : layeredGraph) {
-            boolean externalLayer = Iterables.all(layer, PolylineEdgeRouter.PRED_EXTERNAL_PORT);
+            boolean externalLayer = Iterables.all(layer, PolylineEdgeRouter.PRED_EXTERNAL_WEST_OR_EAST_PORT);
             // the rightmost layer is not given any node spacing
             if (externalLayer && xpos > 0) {
                 xpos -= spacing;
