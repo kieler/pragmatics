@@ -582,6 +582,9 @@
             description="Whitespace within a layer when layouted using a layer-based approach."
             id="de.cau.cs.kieler.kiml.grana.inlayerWhitespace"
             name="In-layer Whitespace">
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.grana.layers">
+         </dependency>
       </analysis>
    </extension>
 
