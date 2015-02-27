@@ -507,5 +507,19 @@
                value="MINIZINC">
          </dependency>
       </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            class="de.cau.cs.kieler.klay.layered.p4nodes.OptiPlacer$Objective"
+            default="false"
+            description="Objective when performing optimal node placement."
+            id="de.cau.cs.kieler.klay.layered.nodePlacementObjective"
+            name="Node Placement Objective"
+            type="enum">
+         <dependency
+               option="de.cau.cs.kieler.klay.layered.nodePlace"
+               value="OPTIMAL">
+         </dependency>
+      </layoutOption>
    </extension>
 </plugin>

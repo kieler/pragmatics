@@ -23,8 +23,9 @@ import com.google.common.collect.Lists;
 import com.google.common.io.CharStreams;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -46,12 +47,21 @@ import de.cau.cs.kieler.klay.layered.solver.ModelRunner;
  */
 public class OptiPlacer implements ILayoutPhase {
 
+    public static final IProperty<Objective> NODE_PLACEMENT_OBJECTIVE = new Property<Objective>(
+            "de.cau.cs.kieler.klay.layered.nodePlacementObjective", Objective.SEGMENTS);
+
+    public enum Objective {
+        EDGES,
+        SEGMENTS
+    }
+    static int cnt = 0;
     /**
      * {@inheritDoc}
      */
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Optimal Node Placement", 1);
 
+        System.out.println("Num " + cnt++);
         ISolverModel<Void, List<Integer>> solverModel = new NodePlacementSolverModel(layeredGraph);
 
         List<Integer> yPositions = null;
@@ -261,13 +271,18 @@ public class OptiPlacer implements ILayoutPhase {
             // upper bound on height
             upperBoundHeight += (N - 1) * nodeSpacing; 
             
-            sb.append("N = " + N + ";");
+            Objective obj = layeredGraph.getProperty(NODE_PLACEMENT_OBJECTIVE);
+            System.out.println(obj);
+            
+            sb.append("objective = " + (obj == Objective.SEGMENTS ? 0 : 1) + ";\n");
+            
+            sb.append("\nN = " + N + ";");
             sb.append("\nP = " + P + ";");
             sb.append("\nL = " + L + ";");
             
             sb.append("\nnodeSpacing = " + (int) nodeSpacing + ";");
             sb.append("\nedgeSpacing = " + (int) edgeSpacing + ";");
-            sb.append("\nupperBoundHeight = " + upperBoundHeight + ";");
+            sb.append("\nupperBoundHeight = " + (upperBoundHeight*3/4) + ";");
 
             sb.append("\n\nn_height = " + Arrays.toString(n_height) + ";");
             sb.append("\np_offset = " + Arrays.toString(p_offset) + ";");
