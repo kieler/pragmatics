@@ -141,9 +141,9 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
     
     /**
      * Iterates through all layers, restoring hierarchical port dummy nodes along the way. The
-     * restored nodes are connected to the temporary dummy nodes created for them. The
-     * restored nodes are added to the last layer. (which layer they are added to doesn't
-     * make any difference)
+     * restored nodes are connected to the temporary dummy nodes created for them (or, as Carsten
+     * calls them, the "dummy dummies"). The restored nodes are added to the last layer. (which layer
+     * they are added to doesn't make any difference)
      * 
      * @param layeredGraph the layered graph.
      * @return the list of restored external port dummies.
@@ -199,7 +199,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
         if (restoredDummies.contains(dummy)) {
             return;
         } else {
-            // Depending on the hierarchical port's side, we set the dummy's port's port side
+            // Depending on the hierarchical port's side, we set the port side of the dummy's ports
             // to be able to route properly (northern dummies must have a southern port)
             PortSide portSide = dummy.getProperty(InternalProperties.EXT_PORT_SIDE);
             LPort dummyPort = dummy.getPorts().get(0);
