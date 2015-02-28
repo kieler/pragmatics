@@ -62,14 +62,14 @@ public final class ModelRunner {
         Files.write(data.getBytes(), dataFile);
 
         if (DEBUG) {
-            System.out.println("Written: " + Files.readLines(dataFile, Charset.forName("utf8")));
+            //System.out.println("Written: " + Files.readLines(dataFile, Charset.forName("utf8")));
         }
 
         // #2 execute the solver
         String[] args = ObjectArrays.concat(model.getSolverArgs(), dataFile.getAbsolutePath());
 
         if (DEBUG) {
-            System.out.println("Args: " + Arrays.toString(args));
+            System.out.println("\tArgs: " + Arrays.toString(args));
         }
 
         Process process = Runtime.getRuntime().exec(args);

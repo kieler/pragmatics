@@ -61,7 +61,7 @@ public class OptiPlacer implements ILayoutPhase {
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Optimal Node Placement", 1);
 
-        System.out.println("Num " + cnt++);
+        System.out.println("\tNum " + cnt++);
         ISolverModel<Void, List<Integer>> solverModel = new NodePlacementSolverModel(layeredGraph);
 
         List<Integer> yPositions = null;
@@ -272,7 +272,7 @@ public class OptiPlacer implements ILayoutPhase {
             upperBoundHeight += (N - 1) * nodeSpacing; 
             
             Objective obj = layeredGraph.getProperty(NODE_PLACEMENT_OBJECTIVE);
-            System.out.println(obj);
+            //System.out.println(obj);
             
             sb.append("objective = " + (obj == Objective.SEGMENTS ? 0 : 1) + ";\n");
             
@@ -341,6 +341,10 @@ public class OptiPlacer implements ILayoutPhase {
             boolean start = false;
             for (String line : lines) {
                 // System.out.println(line);
+                if (line.startsWith("Time")) {
+                   System.out.println("\t" + line); 
+                   continue;
+                }
                 if (line.startsWith("Done")) {
                     break;
                 }

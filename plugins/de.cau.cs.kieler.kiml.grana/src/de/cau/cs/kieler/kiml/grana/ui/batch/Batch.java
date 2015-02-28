@@ -67,6 +67,7 @@ public class Batch {
                 return null;
             }
             try {
+                System.out.println("Evaluating " + batchJob.getParameter());
                 BatchJobResult<?> batchJobResult =
                         batchJob.execute(analyses, monitor.subTask(1));
                 batchResult.appendJobResult(batchJobResult);
