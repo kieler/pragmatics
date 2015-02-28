@@ -333,6 +333,17 @@
       </analysis>
       <analysis
             category="de.cau.cs.kieler.kiml.grana.drawing"
+            class="de.cau.cs.kieler.kiml.grana.analyses.OrthogonalCrossingsAnalysis"
+            description="The number of visible orthogonal crossings."
+            id="de.cau.cs.kieler.kiml.grana.orthogonalCrossings"
+            name="Orthogonal Crossings">
+         <component
+               abbreviation="Crossings"
+               name="Crossings">
+         </component>
+      </analysis>
+      <analysis
+            category="de.cau.cs.kieler.kiml.grana.drawing"
             class="de.cau.cs.kieler.kiml.grana.analyses.AreaAnalysis"
             description="The area a graph drawing occupies."
             id="de.cau.cs.kieler.kiml.grana.area"
