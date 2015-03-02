@@ -214,7 +214,7 @@ public final class SplineEdgeRouter implements ILayoutPhase {
             double rightLayersPosition = xpos + NODE_TO_VERTICAL_SEGMENT_GAP;
             if (rightLayer != null) {
                 externalRightLayer = rightLayer == null || Iterables.all(rightLayer.getNodes(),
-                        PolylineEdgeRouter.PRED_EXTERNAL_PORT);
+                        PolylineEdgeRouter.PRED_EXTERNAL_WEST_OR_EAST_PORT);
 
                 int maxRank = -1;
                 for (final SplineHyperEdge edge : hyperEdges) {
