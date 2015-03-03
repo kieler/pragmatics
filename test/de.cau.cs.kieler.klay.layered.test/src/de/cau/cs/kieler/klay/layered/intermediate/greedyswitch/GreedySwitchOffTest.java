@@ -24,7 +24,7 @@ import org.junit.Test;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
-import de.cau.cs.kieler.klay.layered.properties.GreedyType;
+import de.cau.cs.kieler.klay.layered.properties.GreedySwitchType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -39,7 +39,7 @@ public class GreedySwitchOffTest {
     public void greedySwitchIsOff() {
         TestGraphCreator creator = new TestGraphCreator();
         LGraph graph = creator.getCrossFormedGraph();
-        graph.setProperty(Properties.GREEDY_TYPE, GreedyType.OFF);
+        graph.setProperty(Properties.GREEDY_TYPE, GreedySwitchType.OFF);
 
         List<LNode> expectedOrderLayerOne = getNodesInLayer(0, graph);
         List<LNode> expectedOrderLayerTwo = getNodesInLayer(1, graph);

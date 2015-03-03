@@ -27,7 +27,7 @@ import org.junit.runners.Parameterized.Parameters;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.properties.GreedyType;
+import de.cau.cs.kieler.klay.layered.properties.GreedySwitchType;
 
 /**
  * Checks all variants of SwitchDeciders. These are given as parameters with Parameterized.class to
@@ -39,21 +39,21 @@ import de.cau.cs.kieler.klay.layered.properties.GreedyType;
 @RunWith(Parameterized.class)
 public class SwitchDeciderTest {
 
-    private final GreedyType greedyType;
+    private final GreedySwitchType greedyType;
 
     /**
      * This method is needed by Parameterized.class. The parameters are all elements of the
-     * GreedyType enum.
+     * GreedySwitchType enum.
      * 
      * @return parameters
      */
     @Parameters(name = "{0}")
     public static Iterable<Object[]> greedyTypes() {
-        return Arrays.asList(new Object[][] { { GreedyType.ONE_SIDED_COUNTER, },
-                { GreedyType.TWO_SIDED_COUNTER }, { GreedyType.ONE_SIDED_CROSSING_MATRIX },
-                { GreedyType.TWO_SIDED_CROSSING_MATRIX },
-                { GreedyType.ONE_SIDED_ON_DEMAND_CROSSING_MATRIX },
-                { GreedyType.TWO_SIDED_ON_DEMAND_CROSSING_MATRIX } });
+        return Arrays.asList(new Object[][] { { GreedySwitchType.ONE_SIDED_COUNTER, },
+                { GreedySwitchType.TWO_SIDED_COUNTER }, { GreedySwitchType.ONE_SIDED_CROSSING_MATRIX },
+                { GreedySwitchType.TWO_SIDED_CROSSING_MATRIX },
+                { GreedySwitchType.ONE_SIDED_ON_DEMAND_CROSSING_MATRIX },
+                { GreedySwitchType.TWO_SIDED_ON_DEMAND_CROSSING_MATRIX } });
     }
 
     /**
@@ -62,7 +62,7 @@ public class SwitchDeciderTest {
      * @param gT
      *            the greedy type
      */
-    public SwitchDeciderTest(final GreedyType gT) {
+    public SwitchDeciderTest(final GreedySwitchType gT) {
         greedyType = gT;
         factory = new SwitchDeciderFactory(gT);
     }

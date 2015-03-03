@@ -30,7 +30,7 @@ import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
-import de.cau.cs.kieler.klay.layered.properties.GreedyType;
+import de.cau.cs.kieler.klay.layered.properties.GreedySwitchType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -46,7 +46,7 @@ public class GreedySwitchTest {
     private LGraph graph;
     private final GreedySwitchProcessor greedySwitcher;
     private final IKielerProgressMonitor monitor;
-    private final GreedyType greedyType;
+    private final GreedySwitchType greedyType;
 
     /**
      * Constructor called by Parameterized.
@@ -54,24 +54,24 @@ public class GreedySwitchTest {
      * @param gT
      *            greedyType
      */
-    public GreedySwitchTest(final GreedyType gT) {
+    public GreedySwitchTest(final GreedySwitchType gT) {
         greedyType = gT;
         greedySwitcher = new GreedySwitchProcessor();
         monitor = new BasicProgressMonitor();
     }
 
     /**
-     * Sets the Parameters to be tested as all elements of the GreedyType enum.
+     * Sets the Parameters to be tested as all elements of the GreedySwitchType enum.
      * 
      * @return parameters
      */
     @Parameters(name = "{0}")
     public static Iterable<Object[]> greedyTypes() {
-        return Arrays.asList(new Object[][] { { GreedyType.ONE_SIDED_COUNTER, },
-                { GreedyType.ONE_SIDED_CROSSING_MATRIX },
-                { GreedyType.ONE_SIDED_ON_DEMAND_CROSSING_MATRIX },
-                { GreedyType.TWO_SIDED_COUNTER }, { GreedyType.TWO_SIDED_CROSSING_MATRIX },
-                { GreedyType.TWO_SIDED_ON_DEMAND_CROSSING_MATRIX } });
+        return Arrays.asList(new Object[][] { { GreedySwitchType.ONE_SIDED_COUNTER, },
+                { GreedySwitchType.ONE_SIDED_CROSSING_MATRIX },
+                { GreedySwitchType.ONE_SIDED_ON_DEMAND_CROSSING_MATRIX },
+                { GreedySwitchType.TWO_SIDED_COUNTER }, { GreedySwitchType.TWO_SIDED_CROSSING_MATRIX },
+                { GreedySwitchType.TWO_SIDED_ON_DEMAND_CROSSING_MATRIX } });
     }
 
     // CHECKSTYLEOFF javadoc

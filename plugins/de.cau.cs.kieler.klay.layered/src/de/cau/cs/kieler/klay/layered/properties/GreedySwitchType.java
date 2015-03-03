@@ -19,7 +19,7 @@ package de.cau.cs.kieler.klay.layered.properties;
  * @author alan
  *
  */
-public enum GreedyType {
+public enum GreedySwitchType {
     /** TODO-alan. */
     ONE_SIDED_COUNTER,
     /** TODO-alan. */

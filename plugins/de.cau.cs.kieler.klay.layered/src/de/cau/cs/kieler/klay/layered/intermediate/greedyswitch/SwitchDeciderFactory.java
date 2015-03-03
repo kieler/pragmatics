@@ -14,7 +14,7 @@
 package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
 import de.cau.cs.kieler.klay.layered.graph.LNode;
-import de.cau.cs.kieler.klay.layered.properties.GreedyType;
+import de.cau.cs.kieler.klay.layered.properties.GreedySwitchType;
 
 /**
  * TODO-alan.
@@ -24,9 +24,9 @@ import de.cau.cs.kieler.klay.layered.properties.GreedyType;
  */
 class SwitchDeciderFactory {
 
-    private final GreedyType greedyType;
+    private final GreedySwitchType greedyType;
 
-    public SwitchDeciderFactory(final GreedyType greedyType) {
+    public SwitchDeciderFactory(final GreedySwitchType greedyType) {
         this.greedyType = greedyType;
     }
 
@@ -56,9 +56,10 @@ class SwitchDeciderFactory {
         case TWO_SIDED_ON_DEMAND_CROSSING_MATRIX:
             return new OnDemandCrossingMatrixTwoSidedSwitchDecider(freeLayerIndex, currentNodeOrder);
         case OFF:
-            throw new UnsupportedOperationException("Should not reach this");
+            throw new UnsupportedOperationException("You are trying to make a SwitchDecider with "
+                    + this.getClass() + " although Greedy Switching is turned off");
         }
-        throw new UnsupportedOperationException("Not implemented yet");
+        throw new UnsupportedOperationException("Unsupported greedy switching type");
     }
 
 }

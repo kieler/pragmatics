@@ -26,11 +26,12 @@ import org.junit.Test;
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.properties.GreedyType;
+import de.cau.cs.kieler.klay.layered.properties.GreedySwitchType;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 import de.cau.cs.kieler.klay.layered.test.AbstractLayeredProcessorTest;
@@ -47,10 +48,10 @@ import de.cau.cs.kieler.klay.test.utils.TestPath;
 public class GreedySwitcherIntegrationTest extends AbstractLayeredProcessorTest {
 
     private static final String TEST_FOLDER = "klay_layered/greedy_switch_testgraphs";
-    private final GreedyType[] allOneSidedTypes = { GreedyType.ONE_SIDED_COUNTER,
-            GreedyType.ONE_SIDED_CROSSING_MATRIX, GreedyType.ONE_SIDED_ON_DEMAND_CROSSING_MATRIX };
-    private final GreedyType[] allTwoSidedTypes = { GreedyType.TWO_SIDED_COUNTER,
-            GreedyType.TWO_SIDED_CROSSING_MATRIX, GreedyType.TWO_SIDED_ON_DEMAND_CROSSING_MATRIX };
+    private final GreedySwitchType[] allOneSidedTypes = { GreedySwitchType.ONE_SIDED_COUNTER,
+            GreedySwitchType.ONE_SIDED_CROSSING_MATRIX, GreedySwitchType.ONE_SIDED_ON_DEMAND_CROSSING_MATRIX };
+    private final GreedySwitchType[] allTwoSidedTypes = { GreedySwitchType.TWO_SIDED_COUNTER,
+            GreedySwitchType.TWO_SIDED_CROSSING_MATRIX, GreedySwitchType.TWO_SIDED_ON_DEMAND_CROSSING_MATRIX };
     private LGraph graph;
     private List<List<LNode>> originalOrder;
 
@@ -91,7 +92,7 @@ public class GreedySwitcherIntegrationTest extends AbstractLayeredProcessorTest 
         testTypes(allOneSidedTypes);
     }
 
-    private void testTypes(final GreedyType[] types) {
+    private void testTypes(final GreedySwitchType[] types) {
         for (LGraph lGraph : state.getGraphs()) {
             graph = lGraph;
             originalOrder = copyNodeOrder(graph);
@@ -99,8 +100,9 @@ public class GreedySwitcherIntegrationTest extends AbstractLayeredProcessorTest 
         }
     }
 
-    private List<List<LNode>> getNodeOrderAfterExecuting(final GreedyType greedyType) {
+    private List<List<LNode>> getNodeOrderAfterExecuting(final GreedySwitchType greedyType) {
         graph.setProperty(Properties.GREEDY_TYPE, greedyType);
+        graph.setProperty(LayoutOptions.SEPARATE_CC, false);
         resetGraphToOriginalOrder();
         List<ILayoutProcessor> algorithms =
                 state.getGraphs().get(0).getProperty(InternalProperties.PROCESSORS);
@@ -118,7 +120,7 @@ public class GreedySwitcherIntegrationTest extends AbstractLayeredProcessorTest 
         throw new RuntimeException("Greedy processor not in configuration");
     }
 
-    private void resetGraphToOriginalOrder() {
+    private void resetGraphToOriginalOrder() {// TODO-alan sort methods
         for (int i = 0; i < graph.getLayers().size(); i++) {
             Layer layer = graph.getLayers().get(i);
             for (int j = 0; j < layer.getNodes().size(); j++) {
@@ -144,9 +146,9 @@ public class GreedySwitcherIntegrationTest extends AbstractLayeredProcessorTest 
         testTypes(allTwoSidedTypes);
     }
 
-    private void assertAllTypesResultsInSameGraph(final GreedyType[] types) {
+    private void assertAllTypesResultsInSameGraph(final GreedySwitchType[] types) {
         List<List<LNode>> firstNodeOrder = getNodeOrderAfterExecuting(types[0]);
-        for (GreedyType greedyType : types) {
+        for (GreedySwitchType greedyType : types) {
             List<List<LNode>> nodeOrder = getNodeOrderAfterExecuting(greedyType);
             assertThat(greedyType.toString(), firstNodeOrder, is(nodeOrder));
         }
@@ -158,17 +160,17 @@ public class GreedySwitcherIntegrationTest extends AbstractLayeredProcessorTest 
         CrossingCounter crossCounter = new CrossingCounter(graphLNodes);
         int oldCrossingCount = crossCounter.countAllCrossingsInGraphWithOrder(graphLNodes);
 
-        for (GreedyType oneSidedType : allOneSidedTypes) {
+        for (GreedySwitchType oneSidedType : allOneSidedTypes) {
             assertFewerOrEqualCrossingsAfterSwitching(crossCounter, oldCrossingCount, oneSidedType);
         }
 
-        for (GreedyType oneSidedType : allTwoSidedTypes) {
+        for (GreedySwitchType oneSidedType : allTwoSidedTypes) {
             assertFewerOrEqualCrossingsAfterSwitching(crossCounter, oldCrossingCount, oneSidedType);
         }
     }
 
     private void assertFewerOrEqualCrossingsAfterSwitching(final CrossingCounter crossCounter,
-            final int oldCrossingCount, final GreedyType oneSidedType) {
+            final int oldCrossingCount, final GreedySwitchType oneSidedType) {
         graph.setProperty(Properties.GREEDY_TYPE, oneSidedType);
         layered.runLayoutTestStep(state);
         LNode[][] newOrder = CrossingCounterTest.getAsLNodeArray(graph);
