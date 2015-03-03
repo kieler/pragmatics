@@ -16,7 +16,6 @@ package de.cau.cs.kieler.kiml.grana.analyses;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -37,12 +36,17 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
+ * <pre>
+ * While iterating through all hierarchical nodes, this analysis counts orthogonal crossings by:
+ *      1. collecting all vertical and horizontal segments of each edge once
+ *      2. merging all overlapping segments to one
+ *      3. counting intersections while ignoring those with a junction point on them
+ * </pre>
+ * 
  * @author alan
  *
  */
 public class OrthogonalCrossingsAnalysis implements IAnalysis {
-    /** tolerance for double equality. */
-    private static final double TOLERANCE = 1e-4;
 
     /**
      * Identifier of the orthogonal crossings analysis.
@@ -72,7 +76,7 @@ public class OrthogonalCrossingsAnalysis implements IAnalysis {
         int crossings = 0;
         while (!nodes.isEmpty()) {
             KNode node = nodes.remove(0);
-            crossings += getCrossingsForChildrenOf(node);
+            crossings += new SingleHierarchyLevelOrthogonalCrossCounter(node).count();
             if (shouldAnalyzeHierarchy) {
                 nodes.addAll(node.getChildren());
             }
@@ -80,193 +84,209 @@ public class OrthogonalCrossingsAnalysis implements IAnalysis {
         return crossings;
     }
 
-    private int getCrossingsForChildrenOf(final KNode parentNode) {
+    /**
+     * Given parent node counts crossings in all children.
+     * 
+     * @author alan
+     *
+     */
+    private static class SingleHierarchyLevelOrthogonalCrossCounter {
+        private static final double EPSILON = 1e-4;
+        private final Set<KVector> junctionPoints;
+        private final List<Line2D> segments;
+        private final KNode parentNode;
 
-        List<KNode> nodes = new ArrayList<KNode>(parentNode.getChildren());
-        List<Line2D> lines = Lists.newArrayList();
-        Set<KVector> junctionPoints = Sets.newHashSet();
-        for (KNode n : nodes) {
-            lines.addAll(collectLines(n, parentNode));
-            junctionPoints.addAll(getJunctionPoints(n));
+        public SingleHierarchyLevelOrthogonalCrossCounter(final KNode n) {
+            parentNode = n;
+            List<KNode> nodes = new ArrayList<KNode>(parentNode.getChildren());
+            segments = Lists.newArrayList();
+            junctionPoints = Sets.newHashSet();
+
+            for (KNode node : nodes) {
+                collectSegmentsOfEdgesConnectedTo(node);
+                addJunctionPointsOnEdgesConnectedTo(node);
+            }
+
+            mergeOverlappingSegments();
         }
 
-        mergeOverlappingLines(lines);
-
-        return countCrossings(lines, junctionPoints);
-    }
-
-    private Set<KVector> getJunctionPoints(final KNode node) {
-        Set<KVector> junctionPoints = Sets.newHashSet();
-        for (KEdge edge : node.getIncomingEdges()) {
-            junctionPoints.addAll(edge.getData(KEdgeLayout.class).getProperty(
-                    LayoutOptions.JUNCTION_POINTS));
-        }
-        for (KEdge edge : node.getOutgoingEdges()) {
-            junctionPoints.addAll(edge.getData(KEdgeLayout.class).getProperty(
-                    LayoutOptions.JUNCTION_POINTS));
-        }
-        return junctionPoints;
-    }
-
-    private List<Line2D> collectLines(final KNode node, final KNode parentNode) {
-        ArrayList<Line2D> lines = Lists.newArrayList();
-
-        for (KEdge edge : node.getIncomingEdges()) {
-            if (!node.getChildren().contains(edge.getSource())) {
-                lines.addAll(getLines(edge));
+        private void collectSegmentsOfEdgesConnectedTo(final KNode node) {
+            // Visit all incoming edges ignoring those in other hierarchy level
+            for (KEdge edge : node.getIncomingEdges()) {
+                if (notFromChildOf(edge, node)) {
+                    addSegmentsOf(edge);
+                }
+            }
+            // All edges between nodes inside of the parent node have been visited, except for those
+            // going to ports of the parent node.
+            for (KEdge edge : node.getOutgoingEdges()) {
+                if (edgeGoesToParentOutPort(edge)) {
+                    addSegmentsOf(edge);
+                }
             }
         }
-        for (KEdge edge : node.getOutgoingEdges()) {
-            if (edge.getTarget() == parentNode) {
-                lines.addAll(getLines(edge));
+
+        private boolean edgeGoesToParentOutPort(final KEdge e) {
+            return e.getTarget() == parentNode;
+        }
+
+        private boolean notFromChildOf(final KEdge e, final KNode n) {
+            return !n.getChildren().contains(e.getSource());
+        }
+
+        private void addSegmentsOf(final KEdge edge) {
+            KVectorChain chain = edge.getData(KEdgeLayout.class).createVectorChain();
+            Iterator<KVector> iterator = chain.iterator();
+            KVector start = iterator.next();
+            while (iterator.hasNext()) {
+                KVector end = iterator.next();
+                Line2D line = new Line2D.Double(start.x, start.y, end.x, end.y);
+                segments.add(line);
+                start = end;
             }
         }
-        return lines;
-    }
 
-    private Collection<? extends Line2D> getLines(final KEdge edge) {
-        ArrayList<Line2D> lines = Lists.newArrayList();
-        KVectorChain chain = edge.getData(KEdgeLayout.class).createVectorChain();
-        Iterator<KVector> iterator = chain.iterator();
-        KVector start = iterator.next();
-        while (iterator.hasNext()) {
-            KVector end = iterator.next();
-            Line2D line = new Line2D.Double(start.x, start.y, end.x, end.y);
-            lines.add(line);
-            start = end;
+        private void addJunctionPointsOnEdgesConnectedTo(final KNode node) {
+            for (KEdge edge : node.getIncomingEdges()) {
+                junctionPoints.addAll(edge.getData(KEdgeLayout.class).getProperty(
+                        LayoutOptions.JUNCTION_POINTS));
+            }
+            for (KEdge edge : node.getOutgoingEdges()) {
+                junctionPoints.addAll(edge.getData(KEdgeLayout.class).getProperty(
+                        LayoutOptions.JUNCTION_POINTS));
+            }
         }
-        return lines;
-    }
 
-    private void mergeOverlappingLines(final List<Line2D> lines) {
-        // Repeatedly iterate over all lines until all overlapping lines have been merged.
-        // This is necessary because the order in lines can be arbitrary, so we might miss
-        // a possible merge.
-        boolean hasMerged;
-        do {
-            hasMerged = false;
-            for (int i = 0; i < lines.size(); i++) {
-                for (int j = i + 1; j < lines.size(); j++) {
-                    Line2D lineOne = lines.get(i);
-                    Line2D lineTwo = lines.get(j);
-                    if (canBeMerged(lineOne, lineTwo)) {
-                        merge(lineOne, lineTwo);
-                        // Concurrent modification on purpose, size() is evaluated on each iteration
-                        lines.remove(j);
-                        hasMerged = true;
+        private void mergeOverlappingSegments() {
+            // Repeatedly iterate over all segments until all overlapping segments have been merged.
+            // This is necessary because the order in segments can be arbitrary, so we might miss
+            // a possible merge.
+            boolean hasMerged;
+            do {
+                hasMerged = false;
+                for (int i = 0; i < segments.size(); i++) {
+                    for (int j = i + 1; j < segments.size(); j++) {
+                        Line2D lineOne = segments.get(i);
+                        Line2D lineTwo = segments.get(j);
+                        if (canBeMerged(lineOne, lineTwo)) {
+                            merge(lineOne, lineTwo);
+                            // Concurrent modification on purpose, size() is evaluated on each
+                            // iteration
+                            segments.remove(j);
+                            hasMerged = true;
+                        }
+                    }
+                }
+            } while (hasMerged);
+        }
+
+        private void merge(final Line2D lineOne, final Line2D lineTwo) {
+            double x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+            if (isHorizontal(lineOne)) {
+                Double[] xCoords =
+                        new Double[] { lineOne.getX1(), lineOne.getX2(), lineTwo.getX1(),
+                                lineTwo.getX2() };
+                Arrays.sort(xCoords);
+                x1 = xCoords[0];
+                x2 = xCoords[xCoords.length - 1];
+                y1 = lineOne.getY1();
+                y2 = lineOne.getY1();
+            } else {
+                Double[] yCoords =
+                        new Double[] { lineOne.getY1(), lineOne.getY2(), lineTwo.getY1(),
+                                lineTwo.getY2() };
+                Arrays.sort(yCoords);
+                y1 = yCoords[0];
+                y2 = yCoords[yCoords.length - 1];
+                x1 = lineOne.getX1();
+                x2 = lineOne.getX1();
+            }
+            lineOne.setLine(x1, y1, x2, y2);
+        }
+
+        public int count() {
+            int crossings = 0;
+            for (int i = 0; i < segments.size(); i++) {
+                Line2D firstLine = segments.get(i);
+                for (int j = i + 1; j < segments.size(); j++) {
+                    Line2D secondLine = segments.get(j);
+                    if (crossingIsVisible(firstLine, secondLine)) {
+                        crossings++;
                     }
                 }
             }
-        } while (hasMerged);
-    }
-
-    private void merge(final Line2D lineOne, final Line2D lineTwo) {
-        double x1 = 0;
-        double x2 = 0;
-        double y1 = 0;
-        double y2 = 0;
-        if (isHorizontal(lineOne)) {
-            Double[] xCoords =
-                    new Double[] { lineOne.getX1(), lineOne.getX2(), lineTwo.getX1(),
-                            lineTwo.getX2() };
-            Arrays.sort(xCoords);
-            x1 = xCoords[0];
-            x2 = xCoords[3];
-            y1 = lineOne.getY1();
-            y2 = lineOne.getY1();
-        } else {
-            Double[] yCoords =
-                    new Double[] { lineOne.getY1(), lineOne.getY2(), lineTwo.getY1(),
-                            lineTwo.getY2() };
-            Arrays.sort(yCoords);
-            y1 = yCoords[0];
-            y2 = yCoords[3];
-            x1 = lineOne.getX1();
-            x2 = lineOne.getX1();
+            return crossings;
         }
-        lineOne.setLine(x1, y1, x2, y2);
-    }
 
-    private int countCrossings(final List<Line2D> lines, final Set<KVector> junctionPoints) {
-        int crossings = 0;
-        for (int i = 0; i < lines.size(); i++) {
-            Line2D firstLine = lines.get(i);
-            for (int j = i + 1; j < lines.size(); j++) {
-                Line2D secondLine = lines.get(j);
-                if (cross(firstLine, secondLine, junctionPoints)) {
-                    crossings++;
-                }
-            }
+        private boolean crossingIsVisible(final Line2D firstLine, final Line2D secondLine) {
+            return areNotParallel(firstLine, secondLine)
+                    && doNotOnlyTouchAtEnds(firstLine, secondLine)
+                    && intersect(firstLine, secondLine)
+                    && intersectionHasNoJunctionPoint(firstLine, secondLine);
         }
-        return crossings;
-    }
 
-    private boolean cross(final Line2D firstLine, final Line2D secondLine,
-            final Set<KVector> junctionPoints) {
-        return !areParallel(firstLine, secondLine) && !linesTouchAtEnds(firstLine, secondLine)
-                && intersect(firstLine, secondLine)
-                && !intersectionHasJunctionPoint(firstLine, secondLine, junctionPoints);
-    }
+        private boolean areNotParallel(final Line2D firstLine, final Line2D secondLine) {
+            return isVertical(firstLine) ^ isVertical(secondLine);
+        }
 
-    private boolean intersect(final Line2D firstLine, final Line2D secondLine) {
-        Line2D verticalLine = isVertical(firstLine) ? firstLine : secondLine;
-        Line2D horizontalLine = isHorizontal(firstLine) ? firstLine : secondLine;
-        double xValue = verticalLine.getX1();
-        double yValue = horizontalLine.getY1();
+        private boolean doNotOnlyTouchAtEnds(final Line2D firstLine, final Line2D secondLine) {
+            Line2D verticalLine = isVertical(firstLine) ? firstLine : secondLine;
+            Line2D horizontalLine = isVertical(firstLine) ? secondLine : firstLine;
 
-        boolean xIntersects =
-                Math.min(horizontalLine.getX1(), horizontalLine.getX2()) < xValue
-                        && Math.max(horizontalLine.getX1(), horizontalLine.getX2()) > xValue;
+            return !doubleEquals(horizontalLine.getX1(), verticalLine.getX1())
+                    && !doubleEquals(horizontalLine.getX2(), verticalLine.getX1())
+                    && !doubleEquals(horizontalLine.getY1(), verticalLine.getY1())
+                    && !doubleEquals(horizontalLine.getY1(), verticalLine.getY2());
+        }
 
-        boolean yInstersects =
-                Math.min(verticalLine.getY1(), verticalLine.getY2()) < yValue
-                        && Math.max(verticalLine.getY1(), verticalLine.getY2()) > yValue;
+        private boolean intersect(final Line2D firstLine, final Line2D secondLine) {
+            Line2D verticalLine = isVertical(firstLine) ? firstLine : secondLine;
+            Line2D horizontalLine = isVertical(firstLine) ? secondLine : firstLine;
+            double xValue = verticalLine.getX1();
+            double yValue = horizontalLine.getY1();
 
-        return xIntersects && yInstersects;
+            boolean xIntersects =
+                    Math.min(horizontalLine.getX1(), horizontalLine.getX2()) < xValue
+                            && Math.max(horizontalLine.getX1(), horizontalLine.getX2()) > xValue;
 
-    }
+            boolean yInstersects =
+                    Math.min(verticalLine.getY1(), verticalLine.getY2()) < yValue
+                            && Math.max(verticalLine.getY1(), verticalLine.getY2()) > yValue;
 
-    private boolean intersectionHasJunctionPoint(final Line2D firstLine, final Line2D secondLine,
-            final Set<KVector> junctionPoints) {
-        KVector intersection = intersectionOf(firstLine, secondLine);
-        return junctionPoints.contains(intersection);
-    }
+            return xIntersects && yInstersects;
 
-    private KVector intersectionOf(final Line2D firstLine, final Line2D secondLine) {
-        assert !areParallel(firstLine, secondLine);
-        Line2D verticalLine = isVertical(firstLine) ? firstLine : secondLine;
-        Line2D horizontalLine = isHorizontal(firstLine) ? firstLine : secondLine;
-        return new KVector(verticalLine.getX1(), horizontalLine.getY1());
-    }
+        }
 
-    private boolean linesTouchAtEnds(final Line2D firstLine, final Line2D secondLine) {
-        Line2D verticalLine = isVertical(firstLine) ? firstLine : secondLine;
-        Line2D horizontalLine = isHorizontal(firstLine) ? firstLine : secondLine;
-        return doubleEquals(horizontalLine.getX1(), verticalLine.getX1())
-                || doubleEquals(horizontalLine.getX2(), verticalLine.getX1())
-                || doubleEquals(horizontalLine.getY1(), verticalLine.getY1())
-                || doubleEquals(horizontalLine.getY1(), verticalLine.getY2());
-    }
+        private boolean intersectionHasNoJunctionPoint(final Line2D firstLine,
+                final Line2D secondLine) {
+            KVector intersection = intersectionOf(firstLine, secondLine);
+            // TODO-alan Potential Bug: KVector hashSet and equals use == on doubles. Seems to work
+            // up to now, though.
+            return !junctionPoints.contains(intersection);
+        }
 
-    private boolean isVertical(final Line2D line) {
-        return doubleEquals(line.getX1(), line.getX2());
-    }
+        private KVector intersectionOf(final Line2D firstLine, final Line2D secondLine) {
+            Line2D verticalLine = isVertical(firstLine) ? firstLine : secondLine;
+            Line2D horizontalLine = isHorizontal(firstLine) ? firstLine : secondLine;
+            return new KVector(verticalLine.getX1(), horizontalLine.getY1());
+        }
 
-    private boolean isHorizontal(final Line2D line) {
-        return doubleEquals(line.getY1(), line.getY2());
-    }
+        private boolean isVertical(final Line2D line) {
+            return doubleEquals(line.getX1(), line.getX2());
+        }
 
-    private boolean doubleEquals(final double y1, final double y2) {
-        return Math.abs(y1 - y2) < TOLERANCE;
-    }
+        private boolean isHorizontal(final Line2D line) {
+            return doubleEquals(line.getY1(), line.getY2());
+        }
 
-    private boolean canBeMerged(final Line2D line1, final Line2D line2) {
-        return line1.intersectsLine(line2) && areParallel(line1, line2);
-    }
+        private boolean doubleEquals(final double y1, final double y2) {
+            return Math.abs(y1 - y2) < EPSILON;
+        }
 
-    private boolean areParallel(final Line2D firstLine, final Line2D secondLine) {
-        return isVertical(firstLine) && isVertical(secondLine) || isHorizontal(firstLine)
-                && isHorizontal(secondLine);
+        private boolean canBeMerged(final Line2D line1, final Line2D line2) {
+            return line1.intersectsLine(line2) && !areNotParallel(line1, line2);
+        }
+
     }
 
 }
