@@ -23,6 +23,8 @@ import de.cau.cs.kieler.klay.layered.p5edges.splines.SplineEdgeRouter;
  * defined outside of KLay Layered and can thus not be made into a factory.
  * 
  * @author cds
+ * @kieler.design proposed by cds
+ * @kieler.rating proposed yellow by cds
  */
 public final class EdgeRouterFactory implements ILayoutPhaseFactory {
     

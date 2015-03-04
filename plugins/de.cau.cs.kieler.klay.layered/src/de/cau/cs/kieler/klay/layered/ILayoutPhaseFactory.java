@@ -23,6 +23,8 @@ package de.cau.cs.kieler.klay.layered;
  * distributed over five enumerations.</p>
  * 
  * @author cds
+ * @kieler.design proposed by cds
+ * @kieler.rating proposed yellow by cds
  */
 public interface ILayoutPhaseFactory {
     
