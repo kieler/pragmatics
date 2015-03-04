@@ -13,11 +13,8 @@
  */
 package de.cau.cs.kieler.klighd.piccolo.internal.nodes;
 
-import java.awt.geom.Rectangle2D;
-
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabeledGraphElement;
-import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.klighd.piccolo.IKlighdNode.IKGraphElementNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.controller.AbstractKGERenderingController;
 
@@ -83,41 +80,5 @@ public interface IInternalKGraphElementNode<T extends KGraphElement> extends IKG
          *            the label representation
          */
         void addLabel(KLabelNode label);
-    }
-
-
-    /**
-     * Common interface {@link de.cau.cs.kieler.klighd.piccolo.internal.nodes.KNodeNode KNodeNode} and
-     * {@link de.cau.cs.kieler.klighd.piccolo.internal.nodes.KNodeTopNode KNodeTopNode}, which represent
-     * represent {@link KNode KNodes}.
-     *
-     * @author mri
-     * @author chsch
-     */
-    public interface IKNodeNode extends IInternalKGraphElementNode<KNode> {
-
-        /**
-         * Returns the child area of this parent node.
-         *
-         * @return the child area
-         */
-        KChildAreaNode getChildAreaNode();
-
-        /**
-         * Returns the parent {@link IKNodeNode} that (deeply) contains this {@link IKNodeNode}.
-         *
-         * @return the parent {@link IKNodeNode}
-         */
-        IKNodeNode getParentNode();
-
-        /**
-         * Returns the bounds of this node's exportable area that are required to fully export the
-         * (visible) part(s) of this node in case it is completely shown as well as in case the diagram
-         * is clipped to this node. In the latter case the node's figures are skipped, only the child
-         * area, non-hidden ports, and non-hidden labels drawn.
-         *
-         * @return the adjusted bounds
-         */
-        Rectangle2D getExportedBounds();
     }
 }

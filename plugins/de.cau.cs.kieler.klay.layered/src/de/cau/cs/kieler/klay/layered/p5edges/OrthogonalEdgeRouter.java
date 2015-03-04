@@ -253,9 +253,9 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
                     rightLayerNodes, leftLayer == null ? xpos : xpos + edgeSpacing);
             
             boolean externalLeftLayer = leftLayer == null || Iterables.all(leftLayerNodes,
-                    PolylineEdgeRouter.PRED_EXTERNAL_PORT);
+                    PolylineEdgeRouter.PRED_EXTERNAL_WEST_OR_EAST_PORT);
             boolean externalRightLayer = rightLayer == null || Iterables.all(rightLayerNodes,
-                    PolylineEdgeRouter.PRED_EXTERNAL_PORT);
+                    PolylineEdgeRouter.PRED_EXTERNAL_WEST_OR_EAST_PORT);
             if (slotsCount > 0) {
                 // The space between each pair of edge segments, and between nodes and edges
                 double increment = slotsCount * edgeSpacing;

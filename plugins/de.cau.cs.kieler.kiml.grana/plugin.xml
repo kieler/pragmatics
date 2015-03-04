@@ -576,6 +576,16 @@
                analysis="de.cau.cs.kieler.kiml.grana.bendpointCount">
          </dependency>
       </analysis>
+      <analysis
+            category="de.cau.cs.kieler.kiml.grana.drawing"
+            class="de.cau.cs.kieler.kiml.grana.analyses.InlayerWhitespaceAnalysis"
+            description="Whitespace within a layer when layouted using a layer-based approach."
+            id="de.cau.cs.kieler.kiml.grana.inlayerWhitespace"
+            name="In-layer Whitespace">
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.grana.layers">
+         </dependency>
+      </analysis>
    </extension>
 
 </plugin>
