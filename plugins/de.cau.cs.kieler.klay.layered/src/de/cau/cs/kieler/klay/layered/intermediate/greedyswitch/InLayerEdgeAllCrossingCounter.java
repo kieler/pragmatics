@@ -23,6 +23,7 @@ import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
+import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.PortIterable.PortOrder;
 
 /**
  * Counts exact number of all crossings caused by in-layer edges.
@@ -32,7 +33,7 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
  */
 public class InLayerEdgeAllCrossingCounter extends InLayerEdgeCrossingCounter {
     /** We store port.ids in mutlisets, as nodes without fixed order have the same port.id. */
-    private final SortedMultiset<Integer> downwardUpperNodeEdgePorts;
+    private final SortedMultiset<Integer> inLayerPorts;
     private final Set<LEdge> inLayerEdges;
 
     /**
@@ -44,7 +45,7 @@ public class InLayerEdgeAllCrossingCounter extends InLayerEdgeCrossingCounter {
     public InLayerEdgeAllCrossingCounter(final LNode[] nodeOrder) {
         super(nodeOrder);
         inLayerEdges = new HashSet<LEdge>();
-        downwardUpperNodeEdgePorts = TreeMultiset.create();
+        inLayerPorts = TreeMultiset.create();
     }
 
     /**
@@ -54,53 +55,59 @@ public class InLayerEdgeAllCrossingCounter extends InLayerEdgeCrossingCounter {
      */
     public int countAllCrossings() {
         int crossings = 0;
-        crossings = countAllCrossingsOnSide(PortSide.WEST);
-        crossings += countAllCrossingsOnSide(PortSide.EAST);
+        crossings = iterateEdgesTopDownAndCountCrossingsOnSide(PortSide.WEST);
+        crossings += iterateEdgesTopDownAndCountCrossingsOnSide(PortSide.EAST);
         return crossings;
     }
 
-    private int countAllCrossingsOnSide(final PortSide portSide) {
+    private int iterateEdgesTopDownAndCountCrossingsOnSide(final PortSide portSide) {
         int crossings = 0;
-        downwardUpperNodeEdgePorts.clear();
-        inLayerEdges.clear();
         for (LNode node : getNodeOrder()) {
-            PortIterable ports = new PortIterable(node, portSide);
+            PortIterable ports = new PortIterable(node, portSide, PortOrder.TOPDOWN_LEFTRIGHT);
             for (LPort port : ports) {
-                crossings += countCrossingsOnPort(port);
-            }
-        }
-        return crossings;
-    }
-
-    private int countCrossingsOnPort(final LPort port) {
-        int crossings = 0;
-        for (LEdge edge : port.getConnectedEdges()) {
-            if (isInBetweenLayerEdge(edge)) {
-                crossings +=
-                        inLayerEdges.size()
-                                - downwardUpperNodeEdgePorts.count(super.positionOf(port));
-            } else if (!edge.isSelfLoop()) {
-                if (inLayerEdges.contains(edge)) {
-                    closeEdge(edge);
-                    crossings += amountOfPortsInbetweenEndsOf(edge, downwardUpperNodeEdgePorts);
-                } else {
-                    openEdge(edge);
+                for (LEdge edge : port.getConnectedEdges()) {
+                    if (!edge.isSelfLoop()) {
+                        crossings += countCrossingsOn(edge, port);
+                    }
                 }
             }
         }
+
         return crossings;
     }
 
-    private void closeEdge(final LEdge edge) {
-        downwardUpperNodeEdgePorts.remove(super.positionOf(edge.getSource()));
-        downwardUpperNodeEdgePorts.remove(super.positionOf(edge.getTarget()));
+    private int countCrossingsOn(final LEdge edge, final LPort port) {
+        int crossings = 0;
+        if (isInLayer(edge)) {
+            if (notVisited(edge)) {
+                add(edge);
+            } else {
+                remove(edge);
+                crossings += amountOfPortsInbetweenEndsOf(edge, inLayerPorts);
+            }
+        } else { // is in-between layer edge
+            crossings += amountOfOpenEdgesMinusThoseWithFreePortOrderOnSameNodeAs(port);
+        }
+        return crossings;
+    }
+
+    private boolean notVisited(final LEdge edge) {
+        return !inLayerEdges.contains(edge);
+    }
+
+    private int amountOfOpenEdgesMinusThoseWithFreePortOrderOnSameNodeAs(final LPort port) {
+        return inLayerEdges.size() - inLayerPorts.count(positionOf(port));
+    }
+
+    private void remove(final LEdge edge) {
+        inLayerPorts.remove(positionOf(edge.getSource()));
+        inLayerPorts.remove(positionOf(edge.getTarget()));
         inLayerEdges.remove(edge);
     }
 
-    private void openEdge(final LEdge edge) {
+    private void add(final LEdge edge) {
         inLayerEdges.add(edge);
-        downwardUpperNodeEdgePorts.add(super.positionOf(edge.getSource()));
-        downwardUpperNodeEdgePorts.add(super.positionOf(edge.getTarget()));
+        inLayerPorts.add(positionOf(edge.getSource()));
+        inLayerPorts.add(positionOf(edge.getTarget()));
     }
-
 }

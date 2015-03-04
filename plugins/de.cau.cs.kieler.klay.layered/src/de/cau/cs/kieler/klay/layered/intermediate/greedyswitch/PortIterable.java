@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -30,30 +31,64 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
 class PortIterable implements Iterable<LPort> {
     private final PortSide side;
     private final LNode node;
+    private final PortOrder order;
 
-    public PortIterable(final LNode node, final PortSide side) {
+    public enum PortOrder {
+        CLOCKWISE, COUNTER_CLOCKWISE, TOPDOWN_LEFTRIGHT
+    }
+
+    public PortIterable(final LNode node, final PortSide side, final PortOrder order) {
         this.node = node;
         this.side = side;
+        this.order = order;
     }
 
     public Iterator<LPort> iterator() {
-        if (side == PortSide.WEST) {
-            final List<LPort> ports = node.getPorts();
-            Iterator<LPort> iterable = new Iterator<LPort>() {
-                private final ListIterator<LPort> listIterator = ports.listIterator(ports.size());
-
-                public boolean hasNext() {
-                    return listIterator.hasPrevious();
-                }
-
-                public LPort next() {
-                    return listIterator.previous();
-                }
-            };
-            return Iterators.filter(iterable, LPort.WEST_PREDICATE);
-        } else {
-            Iterator<LPort> iterable = node.getPorts().iterator();
-            return Iterators.filter(iterable, LPort.EAST_PREDICATE);
+        final List<LPort> ports = node.getPorts();
+        switch (order) {
+        case CLOCKWISE:
+            return node.getPorts().iterator();
+        case COUNTER_CLOCKWISE:
+            return Iterators.filter(getCCWIterator(ports), getPredicate());
+        case TOPDOWN_LEFTRIGHT:
+            switch (side) {
+            case EAST:
+            case NORTH:
+                return Iterators.filter(ports.iterator(), getPredicate());
+            case SOUTH:
+            case WEST:
+                return Iterators.filter(getCCWIterator(ports), getPredicate());
+            }
         }
+        throw new UnsupportedOperationException("PortOrder not implemented.");
+    }
+
+    private Predicate<LPort> getPredicate() {
+        switch (side) {
+        case NORTH:
+            return LPort.NORTH_PREDICATE;
+        case EAST:
+            return LPort.EAST_PREDICATE;
+        case SOUTH:
+            return LPort.SOUTH_PREDICATE;
+        case WEST:
+            return LPort.WEST_PREDICATE;
+        }
+        throw new UnsupportedOperationException("Can't filter on undefined side");
+    }
+
+    private Iterator<LPort> getCCWIterator(final List<LPort> ports) {
+        Iterator<LPort> iterator = new Iterator<LPort>() {
+            private final ListIterator<LPort> listIterator = ports.listIterator(ports.size());
+
+            public boolean hasNext() {
+                return listIterator.hasPrevious();
+            }
+
+            public LPort next() {
+                return listIterator.previous();
+            }
+        };
+        return iterator;
     }
 }

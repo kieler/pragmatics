@@ -26,6 +26,7 @@ import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
+import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.PortIterable.PortOrder;
 
 /**
  * Calculates the number of crossings for incident edges to node i and j. Prerequisites: Node.id's
@@ -35,8 +36,8 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
  *
  */
 class InBetweenLayerEdgeTwoNodeCrossingCounter {
-    private int crossingsForOrderUpperLower;
-    private int crossingsForOrderLowerUpper;
+    private int upperLowerCrossings;
+    private int lowerUpperCrossings;
     private AdjacencyList upperAdjacencies;
     private AdjacencyList lowerAdjacencies;
     private final LNode[][] currentNodeOrder;
@@ -119,14 +120,14 @@ class InBetweenLayerEdgeTwoNodeCrossingCounter {
     }
 
     private void resetCrossingCount() {
-        crossingsForOrderLowerUpper = 0;
-        crossingsForOrderUpperLower = 0;
+        lowerUpperCrossings = 0;
+        upperLowerCrossings = 0;
     }
 
     private void addEasternCrossings(final LNode upperNode, final LNode lowerNode) {
         upperAdjacencies = new AdjacencyList(upperNode, PortSide.EAST);
         lowerAdjacencies = new AdjacencyList(lowerNode, PortSide.EAST);
-        if (upperAdjacencies.length == 0 || lowerAdjacencies.length == 0) {
+        if (upperAdjacencies.size() == 0 || lowerAdjacencies.size() == 0) {
             return;
         }
         countCrossingsByMergingAdjacencyLists();
@@ -135,7 +136,7 @@ class InBetweenLayerEdgeTwoNodeCrossingCounter {
     private void addWesternCrossings(final LNode upperNode, final LNode lowerNode) {
         upperAdjacencies = new AdjacencyList(upperNode, PortSide.WEST);
         lowerAdjacencies = new AdjacencyList(lowerNode, PortSide.WEST);
-        if (upperAdjacencies.length == 0 || lowerAdjacencies.length == 0) {
+        if (upperAdjacencies.size() == 0 || lowerAdjacencies.size() == 0) {
             return;
         }
         countCrossingsByMergingAdjacencyLists();
@@ -159,26 +160,20 @@ class InBetweenLayerEdgeTwoNodeCrossingCounter {
      * </pre>
      */
     private void countCrossingsByMergingAdjacencyLists() {
-        while (edgesRemain()) {
+        while (!upperAdjacencies.isEmpty() && !lowerAdjacencies.isEmpty()) {
             if (isBelow(upperAdjacencies.next(), lowerAdjacencies.next())) {
-                crossingsForOrderUpperLower += upperAdjacencies.length();
+                upperLowerCrossings += upperAdjacencies.size();
                 lowerAdjacencies.removeFirst();
             } else if (isBelow(lowerAdjacencies.next(), upperAdjacencies.next())) {
-                crossingsForOrderLowerUpper += lowerAdjacencies.length();
+                lowerUpperCrossings += lowerAdjacencies.size();
                 upperAdjacencies.removeFirst();
             } else {
-                crossingsForOrderUpperLower +=
-                        upperAdjacencies.amountOfAdjacenciesToNodesBelowFirst();
-                crossingsForOrderLowerUpper +=
-                        lowerAdjacencies.amountOfAdjacenciesToNodesBelowFirst();
+                upperLowerCrossings += upperAdjacencies.countAdjacenciesBelowNodeOfFirstPort();
+                lowerUpperCrossings += lowerAdjacencies.countAdjacenciesBelowNodeOfFirstPort();
                 upperAdjacencies.removeFirst();
                 lowerAdjacencies.removeFirst();
             }
         }
-    }
-
-    private boolean edgesRemain() {
-        return upperAdjacencies.length() > 0 && lowerAdjacencies.length() > 0;
     }
 
     /**
@@ -198,24 +193,24 @@ class InBetweenLayerEdgeTwoNodeCrossingCounter {
     private class AdjacencyList {
         private final LNode node;
         private SortedMap<Integer, List<LPort>> adjacencyList;
-        private int length;
+        private int size;
         private final PortSide side;
 
         public AdjacencyList(final LNode node, final PortSide side) {
             this.node = node;
             this.side = side;
-            fillAdjacencyList();
+            fillList();
         }
 
-        private void fillAdjacencyList() {
+        private void fillList() {
             adjacencyList = Maps.newTreeMap();
-            PortIterable ports = new PortIterable(node, side);
+            PortIterable ports = new PortIterable(node, side, PortOrder.TOPDOWN_LEFTRIGHT);
             for (LPort port : ports) {
                 List<LEdge> edges = getEdgesConnectedTo(port);
                 for (LEdge edge : edges) {
                     if (!edge.isSelfLoop() && isNotInLayer(edge)) {
                         addAdjacencyOf(edge);
-                        length++;
+                        size++;
                     }
                 }
             }
@@ -243,12 +238,12 @@ class InBetweenLayerEdgeTwoNodeCrossingCounter {
             return edge.getSource().getNode().getLayer() != edge.getTarget().getNode().getLayer();
         }
 
-        public int amountOfAdjacenciesToNodesBelowFirst() {
-            return length - adjacencyList.get(adjacencyList.firstKey()).size();
+        public int countAdjacenciesBelowNodeOfFirstPort() {
+            return size - adjacencyList.get(adjacencyList.firstKey()).size();
         }
 
         public void removeFirst() {
-            if (length == 0) {
+            if (size == 0) {
                 return;
             }
 
@@ -259,19 +254,23 @@ class InBetweenLayerEdgeTwoNodeCrossingCounter {
                 adjacencyList.get(adjacencyList.firstKey()).remove(0);
             }
 
-            length--;
+            size--;
+        }
+
+        public boolean isEmpty() {
+            return size == 0;
         }
 
         public LPort next() {
-            if (adjacencyList.isEmpty()) {
+            if (isEmpty()) {
                 return null;
             } else {
                 return adjacencyList.get(adjacencyList.firstKey()).get(0);
             }
         }
 
-        public int length() {
-            return length;
+        public int size() {
+            return size;
         }
 
         @Override
@@ -300,7 +299,7 @@ class InBetweenLayerEdgeTwoNodeCrossingCounter {
     private void setPortAndNodePositionsForLayer(final int layerIndex, final PortSide portSide) {
         int portId = 0;
         for (LNode node : currentNodeOrder[layerIndex]) {
-            PortIterable ports = new PortIterable(node, portSide);
+            PortIterable ports = new PortIterable(node, portSide, PortOrder.TOPDOWN_LEFTRIGHT);
             for (LPort port : ports) {
                 portPositions.put(port, portId);
                 if (portOrderIsFixed(node)) {
@@ -318,16 +317,16 @@ class InBetweenLayerEdgeTwoNodeCrossingCounter {
     }
 
     /**
-     * @return the crossingsForOrderUpperLower
+     * @return the upperLowerCrossings
      */
     public int getUpperLowerCrossings() {
-        return crossingsForOrderUpperLower;
+        return upperLowerCrossings;
     }
 
     /**
-     * @return the crossingsForOrderLowerUpper
+     * @return the lowerUpperCrossings
      */
     public int getLowerUpperCrossings() {
-        return crossingsForOrderLowerUpper;
+        return lowerUpperCrossings;
     }
 }

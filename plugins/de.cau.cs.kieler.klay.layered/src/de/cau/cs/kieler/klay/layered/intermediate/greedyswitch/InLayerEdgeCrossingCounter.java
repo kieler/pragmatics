@@ -25,6 +25,7 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
+import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.PortIterable.PortOrder;
 
 /**
  * Abstract superclass for In-layer edge crossing counter to reduce code duplication.
@@ -84,7 +85,7 @@ abstract class InLayerEdgeCrossingCounter {
         int currentPortId = portId;
         int cardinality = 0;
         boolean hasPorts = false;
-        PortIterable ports = new PortIterable(node, portSide);
+        PortIterable ports = new PortIterable(node, portSide, PortOrder.TOPDOWN_LEFTRIGHT);
         for (LPort port : ports) {
             hasPorts = true;
             portPositions.put(port, currentPortId);
@@ -119,11 +120,11 @@ abstract class InLayerEdgeCrossingCounter {
 
     private void updatePortIds(final LNode firstNode, final LNode secondNode,
             final PortSide portSide, final int[] nodeCardinalities) {
-        PortIterable ports = new PortIterable(firstNode, portSide);
+        PortIterable ports = new PortIterable(firstNode, portSide, PortOrder.TOPDOWN_LEFTRIGHT);
         for (LPort port : ports) {
             portPositions.put(port, positionOf(port) + nodeCardinalities[secondNode.id]);
         }
-        ports = new PortIterable(secondNode, portSide);
+        ports = new PortIterable(secondNode, portSide, PortOrder.TOPDOWN_LEFTRIGHT);
         for (LPort port : ports) {
             portPositions.put(port, positionOf(port) - nodeCardinalities[firstNode.id]);
         }
@@ -141,14 +142,14 @@ abstract class InLayerEdgeCrossingCounter {
         return set.tailMultiset(portId, BoundType.OPEN).size();
     }
 
-    protected LPort endOfEdgePort(final LEdge edge, final LPort port) {
+    protected LPort otherEndOf(final LEdge edge, final LPort port) {
         return port == edge.getSource() ? edge.getTarget() : edge.getSource();
     }
 
-    protected boolean isInBetweenLayerEdge(final LEdge edge) {
+    protected boolean isInLayer(final LEdge edge) {
         Layer sourceLayer = edge.getSource().getNode().getLayer();
         Layer targetLayer = edge.getTarget().getNode().getLayer();
-        return sourceLayer != targetLayer;
+        return sourceLayer == targetLayer;
     }
 
     protected boolean isUpward(final LEdge edge, final LPort port) {

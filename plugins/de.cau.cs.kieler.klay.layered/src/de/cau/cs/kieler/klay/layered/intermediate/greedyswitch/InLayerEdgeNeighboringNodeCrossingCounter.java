@@ -20,6 +20,7 @@ import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
+import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.PortIterable.PortOrder;
 
 /**
  * Counts crossings with in-layer inLayerEdges considering two neighboring nodes. Should the order
@@ -34,9 +35,8 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
 public class InLayerEdgeNeighboringNodeCrossingCounter extends InLayerEdgeCrossingCounter {
     /** We store port.ids in mutlisets, as nodes without fixed order have the same port.id. */
     private final SortedMultiset<Integer> betweenLayerEdgePorts;
-    private final SortedMultiset<Integer> upwardUpperNodeEdgePorts;
-    private final SortedMultiset<Integer> downwardLowerNodeEdgePorts;
-    private final SortedMultiset<Integer> downwardUpperNodeEdgePorts;
+    private final SortedMultiset<Integer> upwardEdgePorts;
+    private final SortedMultiset<Integer> downwardEdgePorts;
     private int upperLowerCrossings;
     private int lowerUpperCrossings;
     private LNode lowerNode;
@@ -51,9 +51,8 @@ public class InLayerEdgeNeighboringNodeCrossingCounter extends InLayerEdgeCrossi
     public InLayerEdgeNeighboringNodeCrossingCounter(final LNode[] nodeOrder) {
         super(nodeOrder);
         betweenLayerEdgePorts = TreeMultiset.create();
-        upwardUpperNodeEdgePorts = TreeMultiset.create();
-        downwardLowerNodeEdgePorts = TreeMultiset.create();
-        downwardUpperNodeEdgePorts = TreeMultiset.create();
+        upwardEdgePorts = TreeMultiset.create();
+        downwardEdgePorts = TreeMultiset.create();
     }
 
     /**
@@ -96,83 +95,75 @@ public class InLayerEdgeNeighboringNodeCrossingCounter extends InLayerEdgeCrossi
     }
 
     private int countNeighbouringCrossingsOnSide(final PortSide portSide) {
-        betweenLayerEdgePorts.clear();
-        upwardUpperNodeEdgePorts.clear();
-        downwardUpperNodeEdgePorts.clear();
-        downwardLowerNodeEdgePorts.clear();
-        addEdgesFromUpperNode(portSide);
-        int crossings = countCrossingsToLowerNode(portSide);
+        clearSets();
+        iterateUpperNodeEdgesAndAddPorts(portSide);
+        int crossings = iterateLowerNodeEdgesAndCountCrossings(portSide);
         return crossings;
     }
 
-    private void addEdgesFromUpperNode(final PortSide portSide) {
-        PortIterable ports = new PortIterable(upperNode, portSide);
+    private void iterateUpperNodeEdgesAndAddPorts(final PortSide portSide) {
+        PortIterable ports = new PortIterable(upperNode, portSide, PortOrder.TOPDOWN_LEFTRIGHT);
         for (LPort port : ports) {
             for (LEdge edge : port.getConnectedEdges()) {
-                if (isInBetweenLayerEdge(edge)) {
-                    betweenLayerEdgePorts.add(positionOf(port));
-                } else if (!edge.isSelfLoop()) {
-                    if (isUpward(edge, port)) {
-                        upwardUpperNodeEdgePorts.add(positionOf(endOfEdgePort(edge, port)));
-                    } else {
-                        downwardUpperNodeEdgePorts.add(positionOf(endOfEdgePort(edge, port)));
-                    }
+                if (!edge.isSelfLoop()) {
+                    addUpperNodeEdgePorts(port, edge);
                 }
             }
+        }
+    }
+
+    private void addUpperNodeEdgePorts(final LPort port, final LEdge edge) {
+        if (isInLayer(edge)) {
+            if (isUpward(edge, port)) {
+                upwardEdgePorts.add(positionOf(otherEndOf(edge, port)));
+            } else {
+                downwardEdgePorts.add(positionOf(otherEndOf(edge, port)));
+            }
+        } else { // is in between layer edge
+            betweenLayerEdgePorts.add(positionOf(port));
         }
     }
 
     // TODO-alan Comment with ASCII-Drawing. This is super confusing.
-    private int countCrossingsToLowerNode(final PortSide portSide) {
+    private int iterateLowerNodeEdgesAndCountCrossings(final PortSide portSide) {
         int crossings = 0;
-        PortIterable ports = new PortIterable(lowerNode, portSide);
+        PortIterable ports = new PortIterable(lowerNode, portSide, PortOrder.TOPDOWN_LEFTRIGHT);
         for (LPort port : ports) {
             for (LEdge edge : port.getConnectedEdges()) {
-
-                if (isInBetweenLayerEdge(edge)) {
-                    crossings += amountOfPortsAfter(positionOf(port), downwardUpperNodeEdgePorts);
-                } else if (!edge.isSelfLoop()) {
-                    if (downwardUpperNodeEdgePorts.contains(positionOf(port))) {
-                        crossings += countVisitedEdgeCrossings(port, edge);
-                        downwardUpperNodeEdgePorts.remove(positionOf(port));
-                    } else {
-                        LPort endOfEdgePort = endOfEdgePort(edge, port);
-                        if (isUpward(edge, port)) {
-                            crossings += countUpwardEdgeCrossings(endOfEdgePort);
-                        } else {
-                            downwardLowerNodeEdgePorts.add(positionOf(endOfEdgePort));
-                        }
-                    }
+                if (!edge.isSelfLoop()) {
+                    crossings += countCrossingsToUpperEdges(port, edge);
                 }
-
             }
         }
-        // count crossings below lower Node
-        for (Integer id : downwardLowerNodeEdgePorts) {
-            crossings += amountOfPortsBefore(id, downwardUpperNodeEdgePorts);
+        return crossings;
+    }
+
+    private int countCrossingsToUpperEdges(final LPort port, final LEdge edge) {
+        int crossings = 0;
+        if (isInLayer(edge)) {
+            if (downwardEdgePorts.contains(positionOf(port))) {
+                crossings += amountOfPortsInbetweenEndsOf(edge, betweenLayerEdgePorts);
+                downwardEdgePorts.remove(positionOf(port));
+            } else {
+                int endOfEdgePosition = positionOf(otherEndOf(edge, port));
+                if (isUpward(edge, port)) {
+                    crossings += amountOfPortsBefore(endOfEdgePosition, upwardEdgePorts);
+                    crossings += betweenLayerEdgePorts.size();
+                    crossings += downwardEdgePorts.size();
+                } else {
+                    crossings += amountOfPortsBefore(endOfEdgePosition, downwardEdgePorts);
+                }
+            }
+        } else { // is in between layer edge
+            crossings += amountOfPortsAfter(positionOf(port), downwardEdgePorts);
         }
         return crossings;
     }
 
-    private int countUpwardEdgeCrossings(final LPort endOfEdgePort) {
-        int crossings = amountOfPortsBefore(positionOf(endOfEdgePort), upwardUpperNodeEdgePorts);
-        crossings += amountOfPortsAfter(positionOf(endOfEdgePort), betweenLayerEdgePorts);
-        crossings += downwardUpperNodeEdgePorts.size();
-        return crossings;
-    }
-
-    private int countVisitedEdgeCrossings(final LPort port, final LEdge edge) {
-        // Edges which are removed from the set go from the upperNode to the lowerNode.
-        // Between-layer edges have only been added for the upper node, so this edge crosses
-        // all between layer edges between its end ports.
-        int crossings = amountOfPortsInbetweenEndsOf(edge, betweenLayerEdgePorts);
-
-        // if the port order is fixed, this edge will also have crossed any edges which originate
-        // from the lower node and go downward.
-        if (portOrderIsFixedFor(lowerNode)) {
-            crossings += downwardLowerNodeEdgePorts.size();
-        }
-        return crossings;
+    private void clearSets() {
+        betweenLayerEdgePorts.clear();
+        upwardEdgePorts.clear();
+        downwardEdgePorts.clear();
     }
 
     /**
