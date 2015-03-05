@@ -61,6 +61,13 @@ public class CrossingCounterTest {
     }
 
     @Test
+    public void countInLayerCrossingAndSwitch() {
+        graph = testGraphCreator.getInLayerEdgesGraph();
+        int amountOfCrossings = whenCountingAllCrossings();
+        assertThat(amountOfCrossings, is(1));
+    }
+
+    @Test
     public void countNorthSouthCrossing() {
         graph = testGraphCreator.getNorthSouthCrossingGraph();
         int amountOfCrossings = whenCountingAllCrossings();
@@ -99,7 +106,7 @@ public class CrossingCounterTest {
     }
 
     @Test
-    public void switchAndCountInLayer() {
+    public void switchAndCountBetweenLayer() {
         graph = testGraphCreator.getCrossFormedGraph();
         counter = new CrossingCounter(getAsLNodeArray(graph));
 

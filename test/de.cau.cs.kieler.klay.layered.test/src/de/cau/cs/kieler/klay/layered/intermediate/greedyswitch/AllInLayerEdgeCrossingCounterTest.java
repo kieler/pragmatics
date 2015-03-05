@@ -75,7 +75,7 @@ public class AllInLayerEdgeCrossingCounterTest {
 
     @Test
     public void fixedPortOrderNodeToNode() {
-        creator.getInLayerEdgesGraphWithCrossingsToFixedPortOrder();
+        creator.getInLayerEdgesGraphWithCrossingsToBetweenLayerEdgeWithFixedPortOrder();
         initCrossingCounterForLayerIndex(1);
 
         assertThat(counter.countAllCrossings(), is(1));
@@ -83,7 +83,7 @@ public class AllInLayerEdgeCrossingCounterTest {
 
     @Test
     public void fixedPortOrderNodeToNodeLowerNode() {
-        creator.getInLayerEdgesGraphWithCrossingsToFixedPortOrder();
+        creator.getInLayerEdgesGraphWithCrossingsToBetweenLayerEdgeWithFixedPortOrder();
 
         initCrossingCounterForLayerIndex(1);
         switchOrder(0, 1);
@@ -218,7 +218,7 @@ public class AllInLayerEdgeCrossingCounterTest {
 
     @Test
     public void downwardInLayerEdgesOnLowerNode() {
-        creator.getInLayerEdgesDownwardGraph();
+        creator.getInLayerEdgesFixedPortOrderInLayerAndInBetweenLayerCrossing();
         initCrossingCounterForLayerIndex(1);
 
         assertThat(counter.countAllCrossings(), is(2));

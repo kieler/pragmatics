@@ -458,7 +458,7 @@ public class TestGraphCreator {
      * 
      * @return Graph of the form above.
      */
-    public LGraph getInLayerEdgesGraphWithCrossingsToFixedPortOrder() {
+    public LGraph getInLayerEdgesGraphWithCrossingsToBetweenLayerEdgeWithFixedPortOrder() {
         Layer[] layers = makeLayers(2);
 
         LNode leftNode = addNodeToLayer(layers[0]);
@@ -488,7 +488,7 @@ public class TestGraphCreator {
      * .
      * </pre>
      * 
-     * With fixed Port Order.
+     * With fixed Port PortOrder.
      * 
      * @return Graph of the form above.
      */
@@ -740,7 +740,7 @@ public class TestGraphCreator {
      * 
      * @return Graph of the form above.
      */
-    public LGraph getInLayerEdgesDownwardGraph() {
+    public LGraph getInLayerEdgesFixedPortOrderInLayerAndInBetweenLayerCrossing() {
         Layer[] layers = makeLayers(2);
         LNode leftNode = addNodeToLayer(layers[0]);
         LNode[] rightNodes = addNodesToLayer(3, layers[1]);
@@ -750,6 +750,66 @@ public class TestGraphCreator {
         eastWestEdgeFromTo(leftNode, rightNodes[1]);
         addInLayerEdge(rightNodes[0], rightNodes[1], PortSide.WEST);
         addInLayerEdge(rightNodes[1], rightNodes[2], PortSide.WEST);
+
+        return graph;
+    }
+
+    /**
+     * <pre>
+     * 
+     *   --*
+     *   | ____
+     *   |/|  |
+     *   /\|  |
+     *   | |  |
+     *   | |__|
+     *   |
+     *    \
+     *     *
+     * .
+     * </pre>
+     * 
+     * Port order fixed.
+     * 
+     * @return Graph of the form above.
+     */
+    public LGraph getInLayerEdgesFixedPortOrderInLayerCrossing() {
+        LNode[] nodes = addNodesToLayer(3, makeLayer());
+
+        setFixedOrderConstraint(nodes[1]);
+
+        addInLayerEdge(nodes[0], nodes[1], PortSide.WEST);
+        addInLayerEdge(nodes[1], nodes[2], PortSide.WEST);
+
+        return graph;
+    }
+
+    /**
+     * <pre>
+     *     ____
+     *    /|  |
+     *   / |  |
+     * --+-|  |
+     * | | |__|
+     * | |
+     * \  \ 
+     *  \  *
+     *   \
+     *     *
+     * .
+     * </pre>
+     * 
+     * Port order fixed.
+     * 
+     * @return Graph of the form above.
+     */
+    public LGraph getFixedPortOrderTwoInLayerEdgesCrossEachOther() {
+        LNode[] nodes = addNodesToLayer(3, makeLayer());
+
+        setFixedOrderConstraint(nodes[0]);
+
+        addInLayerEdge(nodes[0], nodes[2], PortSide.WEST);
+        addInLayerEdge(nodes[0], nodes[1], PortSide.WEST);
 
         return graph;
     }
@@ -1716,10 +1776,10 @@ public class TestGraphCreator {
 
     /**
      * <pre>
-     * *---* <- Into same port
-     *   /
-     *  /
-     * *---*
+     * *  * 
+     *  \/
+     *  /\
+     * *--*<- Into same port
      * </pre>
      * 
      * .
