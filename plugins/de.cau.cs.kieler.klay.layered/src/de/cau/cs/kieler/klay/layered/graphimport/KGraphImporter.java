@@ -44,7 +44,6 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
-import de.cau.cs.kieler.klay.layered.graph.LGraphElement.HashCodeCounter;
 import de.cau.cs.kieler.klay.layered.graph.LGraphUtil;
 import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
@@ -67,18 +66,6 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  */
 public class KGraphImporter implements IGraphImporter<KNode> {
     
-    /** the hash code counter used to determine hash codes of graph elements. */
-    private final HashCodeCounter hashCodeCounter;
-    
-    /**
-     * Creates a graph importer with the given hash code counter.
-     * 
-     * @param counter the hash code counter used to determine hash codes of graph elements
-     */
-    public KGraphImporter(final HashCodeCounter counter) {
-        this.hashCodeCounter = counter;
-    }
-
     // //////////////////////////////////////////////////////////////////////////////
     // Transformation KGraph -> LGraph
 
@@ -185,7 +172,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
      * @return a new LGraph instance
      */
     private LGraph createLGraph(final KNode parentKNode) {
-        LGraph layeredGraph = new LGraph(hashCodeCounter);
+        LGraph layeredGraph = new LGraph();
         
         // Copy the properties of the KGraph to the layered graph
         KShapeLayout parentLayout = parentKNode.getData(KShapeLayout.class);
@@ -336,7 +323,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             for (KLabel klabel : kport.getLabels()) {
                 KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
                 if (!labelLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
-                    LLabel newLabel = new LLabel(layeredGraph, klabel.getText());
+                    LLabel newLabel = new LLabel(klabel.getText());
                     newLabel.setProperty(InternalProperties.ORIGIN, klabel);
                     newLabel.getSize().x = labelLayout.getWidth();
                     newLabel.getSize().y = labelLayout.getHeight();
@@ -407,7 +394,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             }
 
             // create layered port, copying its position
-            LPort newPort = new LPort(layeredGraph);
+            LPort newPort = new LPort();
             newPort.copyProperties(portLayout);
             newPort.setSide(portLayout.getProperty(LayoutOptions.PORT_SIDE));
             newPort.setProperty(InternalProperties.ORIGIN, kport);
@@ -462,7 +449,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             for (KLabel klabel : kport.getLabels()) {
                 KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
                 if (!labelLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
-                    LLabel newLabel = new LLabel(layeredGraph, klabel.getText());
+                    LLabel newLabel = new LLabel(klabel.getText());
                     newLabel.copyProperties(labelLayout);
                     newLabel.setProperty(InternalProperties.ORIGIN, klabel);
                     newLabel.getSize().x = labelLayout.getWidth();
@@ -478,7 +465,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         for (KLabel klabel : node.getLabels()) {
             KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
             if (!labelLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
-                LLabel newLabel = new LLabel(layeredGraph, klabel.getText());
+                LLabel newLabel = new LLabel(klabel.getText());
                 newLabel.copyProperties(labelLayout);
                 newLabel.setProperty(InternalProperties.ORIGIN, klabel);
                 newLabel.getSize().x = labelLayout.getWidth();
@@ -546,7 +533,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
             
             // Create a layered edge
-            LEdge newEdge = new LEdge(layeredGraph);
+            LEdge newEdge = new LEdge();
             newEdge.copyProperties(edgeLayout);
             newEdge.setProperty(InternalProperties.ORIGIN, kedge);
             elemMap.put(kedge, newEdge);
@@ -606,7 +593,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                 EdgeLabelPlacement labelPlacement = labelLayout.getProperty(
                         LayoutOptions.EDGE_LABEL_PLACEMENT);
                 if (!labelLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
-                    LLabel newLabel = new LLabel(layeredGraph, klabel.getText());
+                    LLabel newLabel = new LLabel(klabel.getText());
                     newLabel.getPosition().x = labelLayout.getXpos();
                     newLabel.getPosition().y = labelLayout.getYpos();
                     newLabel.getSize().x = labelLayout.getWidth();

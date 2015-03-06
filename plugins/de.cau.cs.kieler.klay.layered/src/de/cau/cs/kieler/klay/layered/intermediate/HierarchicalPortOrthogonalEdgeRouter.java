@@ -222,7 +222,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
      */
     private void connectNodeToDummy(final LGraph layeredGraph, final LNode node, final LNode dummy) {
         // First, add a port to the node. The port side depends on the node's hierarchical port side
-        LPort outPort = new LPort(layeredGraph);
+        LPort outPort = new LPort();
         outPort.setNode(node);
         
         PortSide extPortSide = node.getProperty(InternalProperties.EXT_PORT_SIDE);
@@ -232,7 +232,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
         LPort inPort = dummy.getPorts().get(0);
         
         // Connect the two nodes
-        LEdge edge = new LEdge(layeredGraph);
+        LEdge edge = new LEdge();
         edge.setSource(outPort);
         edge.setTarget(inPort);
     }

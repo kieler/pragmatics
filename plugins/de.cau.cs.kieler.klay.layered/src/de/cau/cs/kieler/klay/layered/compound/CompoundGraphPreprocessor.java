@@ -650,7 +650,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
      * @return a new dummy edge.
      */
     private LEdge createDummyEdge(final LGraph graph, final LEdge origEdge) {
-        LEdge dummyEdge = new LEdge(graph);
+        LEdge dummyEdge = new LEdge();
         dummyEdge.copyProperties(origEdge);
         dummyEdge.setProperty(LayoutOptions.JUNCTION_POINTS, null);
         return dummyEdge;
@@ -753,7 +753,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
         
         LGraph graph = parentNode.getGraph();
         Direction layoutDirection = LGraphUtil.getDirection(graph);
-        LPort port = new LPort(graph);
+        LPort port = new LPort();
         port.setNode(parentNode);
         switch (type) {
         case INPUT:

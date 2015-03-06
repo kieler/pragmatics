@@ -147,7 +147,7 @@ public class LabelAndNodeSizeProcessorOffsetTest {
         node.getSize().y = 100;
         
         // Create ports
-        LPort nPort = new LPort(graph);
+        LPort nPort = new LPort();
         nPort.setNode(node);
         nPort.setProperty(LayoutOptions.OFFSET, 0.0F);
         nPort.setSide(PortSide.NORTH);
@@ -156,7 +156,7 @@ public class LabelAndNodeSizeProcessorOffsetTest {
         nPort.getPosition().x = 50;
         nPort.getPosition().y = -300;
 
-        LPort sPort = new LPort(graph);
+        LPort sPort = new LPort();
         sPort.setNode(node);
         sPort.setProperty(LayoutOptions.OFFSET, 0.0F);
         sPort.setSide(PortSide.SOUTH);
@@ -165,7 +165,7 @@ public class LabelAndNodeSizeProcessorOffsetTest {
         sPort.getPosition().x = 50;
         sPort.getPosition().y = 300;
 
-        LPort ePort = new LPort(graph);
+        LPort ePort = new LPort();
         ePort.setNode(node);
         ePort.setProperty(LayoutOptions.OFFSET, 0.0F);
         ePort.setSide(PortSide.EAST);
@@ -174,7 +174,7 @@ public class LabelAndNodeSizeProcessorOffsetTest {
         ePort.getPosition().x = 300;
         ePort.getPosition().y = 50;
 
-        LPort wPort = new LPort(graph);
+        LPort wPort = new LPort();
         wPort.setNode(node);
         wPort.setProperty(LayoutOptions.OFFSET, 0.0F);
         wPort.setSide(PortSide.EAST);

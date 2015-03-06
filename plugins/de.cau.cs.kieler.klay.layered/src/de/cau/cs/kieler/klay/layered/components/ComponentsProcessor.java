@@ -122,7 +122,7 @@ public final class ComponentsProcessor {
                 Pair<List<LNode>, Set<PortSide>> componentData = dfs(node, null);
                 
                 if (componentData != null) {
-                    LGraph newGraph = new LGraph(graph);
+                    LGraph newGraph = new LGraph();
                     
                     newGraph.copyProperties(graph);
                     newGraph.setProperty(InternalProperties.EXT_PORT_CONNECTIONS,
