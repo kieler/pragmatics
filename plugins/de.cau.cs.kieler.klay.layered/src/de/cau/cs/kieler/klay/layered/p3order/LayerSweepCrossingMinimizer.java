@@ -13,12 +13,12 @@
  */
 package de.cau.cs.kieler.klay.layered.p3order;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Random;
 
-import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -40,22 +40,22 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * Crossing minimization module that performs one or more sweeps over the layers while applying a
  * two-layer crossing minimization heuristic on each pair of layers. Inspired by
  * <ul>
- * <li>Kozo Sugiyama, Shojiro Tagawa, and Mitsuhiko Toda. Methods for visual understanding of
- * hierarchical system structures. IEEE Transactions on Systems, Man and Cybernetics, 11(2):109–125,
- * February 1981.
- * <li>Michael Forster. A fast and simple heuristic for constrained two-level crossing reduction. In
- * <i>Graph Drawing</i>, volume 3383 of LNCS, pp. 206-216. Springer, 2005.</li>
+ *   <li>Kozo Sugiyama, Shojiro Tagawa, and Mitsuhiko Toda. Methods for visual understanding of
+ *     hierarchical system structures. IEEE Transactions on Systems, Man and Cybernetics, 11(2):109–125,
+ *     February 1981.
+ *   <li>Michael Forster. A fast and simple heuristic for constrained two-level crossing reduction. In
+ *     <i>Graph Drawing</i>, volume 3383 of LNCS, pp. 206-216. Springer, 2005.</li>
  * </ul>
  * <p>This is the main layer sweep crossing minimization class that makes use of a number of further
  * classes. This one implements the actual layer sweep logic.</p>
  * 
  * <dl>
- * <dt>Precondition:</dt>
- * <dd>The graph has a proper layering, i.e. all long edges have been splitted; all nodes have at
- * least fixed port sides.</dd>
+ *   <dt>Precondition:</dt>
+ *     <dd>The graph has a proper layering, i.e. all long edges have been splitted.
+ *     <dd>all nodes have at least fixed port sides.</dd>
  * <dt>Postcondition:</dt>
- * <dd>The order of nodes in each layer and the order of ports in each node are optimized to yield
- * as few edge crossings as possible</dd>
+ *   <dd>The order of nodes in each layer and the order of ports in each node are optimized to yield
+ *     as few edge crossings as possible</dd>
  * </dl>
  * 
  * @author msp
@@ -91,38 +91,22 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
         return configuration;
     }
     
-    /**
-     * Array of port ranks used for sorting nodes and ports.
-     */
+    /** Array of port ranks used for sorting nodes and ports. */
     private float[] portRanks;
-    /**
-     * Complete node order of the best layer sweep.
-     */
+    /** Complete node order of the best layer sweep. */
     private NodeGroup[][] bestSweep;
-    /**
-     * Complete node order of the current layer sweep.
-     */
+    /** Complete node order of the current layer sweep. */
     private NodeGroup[][] curSweep;
-    /**
-     * Complete node order of the previous layer sweep.
-     */
+    /** Complete node order of the previous layer sweep. */
     private NodeGroup[][] prevSweep;
-    /**
-     * Crossings counter for normal edges.
-     */
+    /** Crossings counter for normal edges. */
     private BarthJuengerMutzelCrossingsCounter normalCrossingsCounter;
-    /**
-     * Crossings counter for hyperedges.
-     */
+    /** Crossings counter for hyperedges. */
     private HyperedgeCrossingsCounter hyperedgeCrossingsCounter;
-    /**
-     * Whether the layers contain hyperedges or not.
-     */
+    /** Whether the layers contain hyperedges or not. */
     private boolean[] hasHyperedges;
-    /**
-     * Layout units represented by a single node.
-     */
-    private final Multimap<LNode, LNode> layoutUnits = HashMultimap.create();
+    /** Layout units represented by a single node. */
+    private final Multimap<LNode, LNode> layoutUnits = LinkedListMultimap.create();
     
     /**
      * Initialize all data for the layer sweep crossing minimizer.
@@ -310,11 +294,15 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                         portDistributor.calculatePortRanks(fixedLayer, PortType.OUTPUT);
                         minimizeCrossings(freeLayer, crossminHeuristic, true, !firstSweep, false);
                         if (hasHyperedges[layerIndex] || hasHyperedges[layerIndex - 1]) {
-                            curSweepCrossings += hyperedgeCrossingsCounter.countCrossings(fixedLayer, freeLayer);
-                            curSweepCrossings += hyperedgeCrossingsCounter.countCrossings(freeLayer, layerIndex);
+                            curSweepCrossings +=
+                                    hyperedgeCrossingsCounter.countCrossings(fixedLayer, freeLayer);
+                            curSweepCrossings +=
+                                    hyperedgeCrossingsCounter.countCrossings(freeLayer, layerIndex);
                         } else {
-                            curSweepCrossings += normalCrossingsCounter.countCrossings(fixedLayer, freeLayer);
-                            curSweepCrossings += normalCrossingsCounter.countCrossings(freeLayer, layerIndex);
+                            curSweepCrossings +=
+                                    normalCrossingsCounter.countCrossings(fixedLayer, freeLayer);
+                            curSweepCrossings +=
+                                    normalCrossingsCounter.countCrossings(freeLayer, layerIndex);
                         }
 
                         fixedLayer = freeLayer;
@@ -328,11 +316,15 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                         portDistributor.calculatePortRanks(fixedLayer, PortType.INPUT);
                         minimizeCrossings(freeLayer, crossminHeuristic, false, !firstSweep, false);
                         if (hasHyperedges[layerIndex] || hasHyperedges[layerIndex + 1]) {
-                            curSweepCrossings += hyperedgeCrossingsCounter.countCrossings(freeLayer, fixedLayer);
-                            curSweepCrossings += hyperedgeCrossingsCounter.countCrossings(freeLayer, layerIndex);
+                            curSweepCrossings +=
+                                    hyperedgeCrossingsCounter.countCrossings(freeLayer, fixedLayer);
+                            curSweepCrossings +=
+                                    hyperedgeCrossingsCounter.countCrossings(freeLayer, layerIndex);
                         } else {
-                            curSweepCrossings += normalCrossingsCounter.countCrossings(freeLayer, fixedLayer);
-                            curSweepCrossings += normalCrossingsCounter.countCrossings(freeLayer, layerIndex);
+                            curSweepCrossings +=
+                                    normalCrossingsCounter.countCrossings(freeLayer, fixedLayer);
+                            curSweepCrossings +=
+                                    normalCrossingsCounter.countCrossings(freeLayer, layerIndex);
                         }
 
                         fixedLayer = freeLayer;
@@ -390,7 +382,8 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
     private void minimizeCrossings(final NodeGroup[] layer,
             final ICrossingMinimizationHeuristic heuristic,
             final boolean forward, final boolean preOrdered, final boolean randomize) {
-        List<NodeGroup> nodeGroups = new LinkedList<NodeGroup>();
+        
+        List<NodeGroup> nodeGroups = Lists.newLinkedList();
         for (NodeGroup ng : layer) {
             nodeGroups.add(ng);
         }

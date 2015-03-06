@@ -66,19 +66,11 @@ import de.cau.cs.kieler.klay.layered.properties.NodeType;
  */
 public final class ComponentsProcessor {
     
-    /**
-     * Cached instance of a {@link ComponentGroupGraphPlacer}.
-     */
+    /** Cached instance of a {@link ComponentGroupGraphPlacer}. */
     private final ComponentGroupGraphPlacer componentGroupGraphPlacer = new ComponentGroupGraphPlacer();
-    
-    /**
-     * Cached instance of a {@link SimpleRowGraphPlacer}.
-     */
+    /** Cached instance of a {@link SimpleRowGraphPlacer}. */
     private final SimpleRowGraphPlacer simpleRowGraphPlacer = new SimpleRowGraphPlacer();
-    
-    /**
-     * Graph placer to be used to combine the different components back into a single graph.
-     */
+    /** Graph placer to be used to combine the different components back into a single graph. */
     private AbstractGraphPlacer graphPlacer;
     
 

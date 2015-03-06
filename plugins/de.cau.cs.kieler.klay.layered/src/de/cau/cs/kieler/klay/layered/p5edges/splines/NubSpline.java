@@ -16,7 +16,6 @@ package de.cau.cs.kieler.klay.layered.p5edges.splines;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -88,10 +87,10 @@ import de.cau.cs.kieler.core.math.KVectorChain;
         isClamped = nubSpline.isClamped;
         outerBox = nubSpline.outerBox;
         isBezier = nubSpline.isBezier;
-        knotVector = new LinkedList<Double>(nubSpline.knotVector);
+        knotVector = Lists.newLinkedList(nubSpline.knotVector);
         minKnot = nubSpline.minKnot;
         maxKnot = nubSpline.maxKnot;
-        controlPoints = new LinkedList<PolarCP>(nubSpline.controlPoints);
+        controlPoints = Lists.newLinkedList(nubSpline.controlPoints);
     }
 
     /**
@@ -195,8 +194,8 @@ import de.cau.cs.kieler.core.math.KVectorChain;
         final int oldDim = nubSpline.dimNUBS;
         final int newDim = oldDim - 1;
         final List<Double> oldKnotVector = nubSpline.knotVector;
-        final List<Double> newKnotVector =
-                new LinkedList<Double>(nubSpline.knotVector.subList(1, nubSpline.knotVector.size() - 1));
+        final List<Double> newKnotVector = Lists.newLinkedList(
+                nubSpline.knotVector.subList(1, nubSpline.knotVector.size() - 1));
         final List<KVector> newControlPoints = Lists.newLinkedList();
 
         // Calculate the new control points.
@@ -455,13 +454,12 @@ import de.cau.cs.kieler.core.math.KVectorChain;
      * @return A t value, representing the polar coordinate.
      */
     private static double getTFromPolar(final Collection<Double> polar) {
-        final int count = polar.size();
         double sum = 0.0;
-        
         for (final Double val : polar) {
             sum += val;
         }
-        return sum / count;
+        
+        return sum / polar.size();
     }
 
     /**
@@ -524,7 +522,7 @@ import de.cau.cs.kieler.core.math.KVectorChain;
             iterKnot.add(knotToInsert);
 
             // We will first construct the new CPs and than add them.
-            final Collection<PolarCP> newCPs = Lists.newLinkedList();
+            final List<PolarCP> newCPs = Lists.newLinkedList();
             // The first CP we need for the calculation.
             PolarCP secondCP = iterCP.next();
 

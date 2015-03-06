@@ -13,10 +13,10 @@
  */
 package de.cau.cs.kieler.klay.layered.p3order;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 
 import de.cau.cs.kieler.core.util.Pair;
@@ -146,7 +146,7 @@ public final class ForsterConstraintResolver implements IConstraintResolver {
             // Find sources of the constraint graph to start the constraints check
             if (nodeGroup.hasOutgoingConstraints() && nodeGroup.incomingConstraintsCount == 0) {
                 if (activeNodeGroups == null) {
-                    activeNodeGroups = new LinkedList<NodeGroup>();
+                    activeNodeGroups = Lists.newLinkedList();
                 }
                 activeNodeGroups.add(nodeGroup);
             }

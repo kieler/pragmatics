@@ -44,26 +44,20 @@ public final class ConnectedSelfLoopComponent {
     private final LNode owner; 
     
     /** All loop-edges that are part of this connectedSelfLoop. */
-    private final Set<LEdge> edges = Sets.newHashSet();
-    //TODO: linkedHashSet ?
-    /** All loop-edges that must be hidden in the graph, as their ports cannot be hidden due to
-     *  constraints (i.e. fixed side, connection to non-loop-edges). 
-     *  This is a subset of {@code edges}.*/
-    private final Set<LEdge> hiddenEdges = Sets.newHashSet();
-    //TODO: linkedHashSet ?
-    
+    private final Set<LEdge> edges = Sets.newLinkedHashSet();
+    /**
+     * All loop-edges that must be hidden in the graph, as their ports cannot be hidden due to
+     * constraints (i.e. fixed side, connection to non-loop-edges). This is a subset of {@code edges}.
+     */
+    private final Set<LEdge> hiddenEdges = Sets.newLinkedHashSet();
     /** Unconstrained ports only containing outgoing edges of the connected set. */
-    private final Set<LPort> exclusiveLoopSourcePorts = Sets.newHashSet();
-    //TODO: linkedHashSet ?
+    private final Set<LPort> exclusiveLoopSourcePorts = Sets.newLinkedHashSet();
     /** Unconstrained ports only containing incoming edges of the connected set. */
-    private final Set<LPort> exclusiveLoopTargetPorts = Sets.newHashSet();
-    //TODO: linkedHashSet ?
+    private final Set<LPort> exclusiveLoopTargetPorts = Sets.newLinkedHashSet();
     /** Ports constrained by an non-loop edge to an other node. */
-    private final Set<LPort> portsWithNonLoopEdge = Sets.newHashSet();
-    //TODO: linkedHashSet ?
+    private final Set<LPort> portsWithNonLoopEdge = Sets.newLinkedHashSet();
     /** Ports constrained by an already defined portSide. */
-    private final Set<LPort> portsWithPortSide = Sets.newHashSet();
-    //TODO: linkedHashSet ?
+    private final Set<LPort> portsWithPortSide = Sets.newLinkedHashSet();
     
     /** The maximum text width of this connectedSelfLoop. */
     private double textWidth;
@@ -230,7 +224,7 @@ public final class ConnectedSelfLoopComponent {
      */
     public Set<LPort> getSourceLoopPortsReversed() {
         final Set<LPort> retVal = Sets.newLinkedHashSet();
-        final List<LPort> list = new ArrayList<LPort>(exclusiveLoopSourcePorts);
+        final List<LPort> list = Lists.newArrayList(exclusiveLoopSourcePorts);
         Collections.reverse(list);
         for (final LPort port : list) {
             retVal.add(port);

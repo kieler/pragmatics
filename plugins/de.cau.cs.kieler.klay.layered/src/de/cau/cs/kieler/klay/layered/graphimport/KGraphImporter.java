@@ -14,11 +14,12 @@
 package de.cau.cs.kieler.klay.layered.graphimport;
 
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
@@ -74,7 +75,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
      */
     public LGraph importGraph(final KNode kgraph) {
         // Keep a map between KGraph nodes / ports and LGraph nodes / ports
-        Map<KGraphElement, LGraphElement> elemMap = new HashMap<KGraphElement, LGraphElement>();
+        Map<KGraphElement, LGraphElement> elemMap = Maps.newHashMap();
         
         // Create the layered graph
         LGraph topLevelGraph = createLGraph(kgraph);

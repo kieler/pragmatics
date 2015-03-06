@@ -13,11 +13,11 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -92,7 +92,7 @@ public final class SplineSelfLoopRouter implements ILayoutProcessor {
                 final List<LPort> ports = node.getPorts();
                 
                 // set of all loop-edges of the node
-                final Collection<LEdge> loopEdges = Sets.newHashSet();
+                final Set<LEdge> loopEdges = Sets.newLinkedHashSet();
                 for (final ConnectedSelfLoopComponent component : node
                         .getProperty(InternalProperties.SPLINE_SELFLOOP_COMPONENTS)) {
                     loopEdges.addAll(component.getEdges());
@@ -139,7 +139,7 @@ public final class SplineSelfLoopRouter implements ILayoutProcessor {
                 // While processing 
                 // - the loopPaddings collection is updated (add new paddings resulting from new loop)
                 // - all margins of loops are collected to calculate the node margin
-                final Collection<LoopPadding> loopPaddings = Sets.newHashSet();
+                final Set<LoopPadding> loopPaddings = Sets.newHashSet();
                 final Iterator<SelfLoopEdge> loopIter = selfLoops.iterator();
                 if (loopIter.hasNext()) {
                     final Rectangle loopRectangle = processSelfLoop(loopIter.next(), loopPaddings);
@@ -164,7 +164,7 @@ public final class SplineSelfLoopRouter implements ILayoutProcessor {
      * @return The {@link Rectangle} around this loop.
      */
     private Rectangle processSelfLoop(
-            final SelfLoopEdge selfLoop, final Collection<LoopPadding> loopPaddings) {
+            final SelfLoopEdge selfLoop, final Set<LoopPadding> loopPaddings) {
         Rectangle loopRectangle = null;
         
         // First filter for relevant paddings ...
@@ -379,8 +379,8 @@ public final class SplineSelfLoopRouter implements ILayoutProcessor {
      * @param side The side the self loop is laying on.
      * @return A margin around all placed labels or {@code null} if there is no label.
      */
-    private Rectangle placeLabels(
-            final Collection<LLabel> labels, final KVector rawPosition, final LoopSide side) {
+    private Rectangle placeLabels(final List<LLabel> labels, final KVector rawPosition,
+            final LoopSide side) {
         
         final Iterator<LLabel> iter = labels.iterator();
         // process all labels
