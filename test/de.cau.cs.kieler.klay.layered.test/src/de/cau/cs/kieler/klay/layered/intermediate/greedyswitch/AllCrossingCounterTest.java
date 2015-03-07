@@ -26,16 +26,16 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 
 /**
- * Test for extracted and modified CrossingCounter.
+ * Test for extracted and modified AllCrossingCounter.
  * 
  * @author alan
  *
  */
-public class CrossingCounterTest {
+public class AllCrossingCounterTest {
 
     private TestGraphCreator testGraphCreator;
     private LGraph graph;
-    private CrossingCounter counter;
+    private AllCrossingCounter counter;
     private LNode[][] graphAsLNodeArray;
 
     // CHECKSTYLEOFF Javadoc
@@ -89,13 +89,6 @@ public class CrossingCounterTest {
     }
 
     @Test
-    public void countNorthSouthCrossingInOneLayer() {
-        graph = testGraphCreator.getNorthSouthCrossingGraph();
-        int amountOfCrossings = whenCountingNorthSouthCrossingsInLayer(0);
-        assertThat(amountOfCrossings, is(1));
-    }
-
-    @Test
     public void switchAndCountTwice() {
         graph = testGraphCreator.getCrossFormedGraph();
         int amountOfCrossings = whenCountingAllCrossings();
@@ -103,66 +96,6 @@ public class CrossingCounterTest {
         switchNodesInLayer(0, 1, 1);
         amountOfCrossings = whenCountingAllCrossings();
         assertThat(amountOfCrossings, is(0));
-    }
-
-    @Test
-    public void switchAndCountBetweenLayer() {
-        graph = testGraphCreator.getCrossFormedGraph();
-        counter = new CrossingCounter(getAsLNodeArray(graph));
-
-        LNode[][] nodeOrder = getAsLNodeArray(graph);
-        int amountOfCrossings =
-                counter.countCrossingsBetweenLayersInOrder(nodeOrder[0], nodeOrder[1]);
-        assertThat(amountOfCrossings, is(1));
-        nodeOrder = switchNodesInLayer(0, 1, 1);
-        amountOfCrossings = counter.countCrossingsBetweenLayersInOrder(nodeOrder[0], nodeOrder[1]);
-        assertThat(amountOfCrossings, is(0));
-
-        nodeOrder = switchNodesInLayer(0, 1, 1);
-        amountOfCrossings = counter.countCrossingsBetweenLayersInOrder(nodeOrder[0], nodeOrder[1]);
-        assertThat(amountOfCrossings, is(1));
-    }
-
-    @Test
-    public void southernTwoWesternEdges() {
-        graph = testGraphCreator.getNorthSouthSouthernTwoWesternEdges();
-        int amountOfCrossings = countNorthSouthCrossingsInLayer(1);
-        assertThat(amountOfCrossings, is(1));
-        amountOfCrossings = counter.countNorthSouthPortCrossings(switchNodesInLayer(1, 2, 1)[1]);
-        assertThat(amountOfCrossings, is(0));
-    }
-
-    private int countNorthSouthCrossingsInLayer(final int layerIndex) {
-        graphAsLNodeArray = getAsLNodeArray(graph);
-        counter = new CrossingCounter(graphAsLNodeArray);
-        return counter.countNorthSouthPortCrossings(layerIndex);
-    }
-
-    @Test
-    public void southernWesternPortToEastAndEasternPortToWest() {
-        graph = testGraphCreator.getNorthSouthSouthernWesternPortToEastAndEasternPortToWest();
-        int amountOfCrossings = countNorthSouthCrossingsInLayer(1);
-        assertThat(amountOfCrossings, is(1));
-        amountOfCrossings = counter.countNorthSouthPortCrossings(switchNodesInLayer(1, 2, 1)[1]);
-        assertThat(amountOfCrossings, is(1));
-    }
-
-    @Test
-    public void northernBothEdgesWestern() {
-        graph = testGraphCreator.getNorthSouthNorthernWesternEdges();
-        int amountOfCrossings = countNorthSouthCrossingsInLayer(1);
-        assertThat(amountOfCrossings, is(0));
-        amountOfCrossings = counter.countNorthSouthPortCrossings(switchNodesInLayer(0, 1, 1)[1]);
-        assertThat(amountOfCrossings, is(1));
-    }
-
-    @Test
-    public void northernEasternPortToWestWesternPortToEast() {
-        graph = testGraphCreator.getNorthSouthNorthernEasternPortToWestWesternPortToEast();
-        int amountOfCrossings = countNorthSouthCrossingsInLayer(1);
-        assertThat(amountOfCrossings, is(1));
-        amountOfCrossings = counter.countNorthSouthPortCrossings(switchNodesInLayer(0, 1, 1)[1]);
-        assertThat(amountOfCrossings, is(1));
     }
 
     private LNode[][] switchNodesInLayer(final int upperNodeIndex, final int lowerNodeIndex,
@@ -184,10 +117,6 @@ public class CrossingCounterTest {
         assertThat(amountOfCrossings, is(0));
     }
 
-    private int whenCountingNorthSouthCrossingsInLayer(final int layerIndex) {
-        return new CrossingCounter(getAsLNodeArray(graph)).countNorthSouthPortCrossings(layerIndex);
-    }
-
     static LNode[][] getAsLNodeArray(final LGraph graph) {
         LNode[][] result = new LNode[graph.getLayers().size()][];
         for (Layer layer : graph) {
@@ -207,29 +136,6 @@ public class CrossingCounterTest {
     public void countCrossingsInEmptyGraph() {
         graph = testGraphCreator.getEmptyGraph();
         int amountOfCrossings = whenCountingAllCrossings();
-        assertThat(amountOfCrossings, is(0));
-    }
-
-    @Test
-    public void switchResolvesOneCrossing() {
-        graph = testGraphCreator.shouldSwitchThreeTimesGraph();
-        counter = new CrossingCounter(getAsLNodeArray(graph));
-
-        LNode[][] nodeOrder = getAsLNodeArray(graph);
-        int amountOfCrossings =
-                counter.countCrossingsBetweenLayersInOrder(nodeOrder[0], nodeOrder[1]);
-        assertThat(amountOfCrossings, is(3));
-
-        nodeOrder = switchNodesInLayer(0, 1, 1);
-        amountOfCrossings = counter.countCrossingsBetweenLayersInOrder(nodeOrder[0], nodeOrder[1]);
-        assertThat(amountOfCrossings, is(2));
-
-        nodeOrder = switchNodesInLayer(2, 3, 1);
-        amountOfCrossings = counter.countCrossingsBetweenLayersInOrder(nodeOrder[0], nodeOrder[1]);
-        assertThat(amountOfCrossings, is(1));
-
-        nodeOrder = switchNodesInLayer(1, 2, 1);
-        amountOfCrossings = counter.countCrossingsBetweenLayersInOrder(nodeOrder[0], nodeOrder[1]);
         assertThat(amountOfCrossings, is(0));
     }
 
@@ -262,7 +168,7 @@ public class CrossingCounterTest {
     }
 
     private int whenCountingAllCrossings() {
-        counter = new CrossingCounter(getAsLNodeArray(graph));
+        counter = new AllCrossingCounter(getAsLNodeArray(graph));
         return counter.countAllCrossingsInGraph();
     }
 }

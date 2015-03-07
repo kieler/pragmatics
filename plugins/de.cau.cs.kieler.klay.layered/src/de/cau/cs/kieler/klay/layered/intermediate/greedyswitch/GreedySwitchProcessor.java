@@ -35,7 +35,7 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
     private LNode[][] currentNodeOrder;
     private LNode[][] bestNodeOrder;
     private LGraph layeredGraph;
-    private CrossingCounter crossingCounter;
+    private AllCrossingCounter crossingCounter;
 
     /**
      * ¸ {@inheritDoc}
@@ -90,7 +90,7 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
                 bestNodeOrder[layerIndex][nodeIter.previousIndex()] = node;
             }
         }
-        crossingCounter = new CrossingCounter(currentNodeOrder);
+        crossingCounter = new AllCrossingCounter(currentNodeOrder);
     }
 
     /**

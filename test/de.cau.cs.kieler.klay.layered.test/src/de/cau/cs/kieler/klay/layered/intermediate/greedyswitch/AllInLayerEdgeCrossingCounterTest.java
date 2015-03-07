@@ -49,7 +49,7 @@ public class AllInLayerEdgeCrossingCounterTest {
         creator.getCrossFormedGraph();
         initCrossingCounterForLayerIndex(1);
 
-        assertThat(counter.countAllCrossings(), is(0));
+        assertThat(counter.countCrossings(), is(0));
     }
 
     @Test
@@ -57,7 +57,7 @@ public class AllInLayerEdgeCrossingCounterTest {
         creator.getInLayerEdgesGraph();
         initCrossingCounterForLayerIndex(1);
 
-        assertThat(counter.countAllCrossings(), is(1));
+        assertThat(counter.countCrossings(), is(1));
     }
 
     @Test
@@ -66,11 +66,11 @@ public class AllInLayerEdgeCrossingCounterTest {
 
         initCrossingCounterForLayerIndex(1);
 
-        assertThat(counter.countAllCrossings(), is(0));
+        assertThat(counter.countCrossings(), is(0));
 
         switchOrder(1, 2);
 
-        assertThat(counter.countAllCrossings(), is(1));
+        assertThat(counter.countCrossings(), is(1));
     }
 
     @Test
@@ -78,7 +78,7 @@ public class AllInLayerEdgeCrossingCounterTest {
         creator.getInLayerEdgesGraphWithCrossingsToBetweenLayerEdgeWithFixedPortOrder();
         initCrossingCounterForLayerIndex(1);
 
-        assertThat(counter.countAllCrossings(), is(1));
+        assertThat(counter.countCrossings(), is(1));
     }
 
     @Test
@@ -88,7 +88,7 @@ public class AllInLayerEdgeCrossingCounterTest {
         initCrossingCounterForLayerIndex(1);
         switchOrder(0, 1);
 
-        assertThat(counter.countAllCrossings(), is(2));
+        assertThat(counter.countCrossings(), is(2));
     }
 
     @Test
@@ -97,11 +97,11 @@ public class AllInLayerEdgeCrossingCounterTest {
 
         initCrossingCounterForLayerIndex(1);
 
-        assertThat(counter.countAllCrossings(), is(2));
+        assertThat(counter.countCrossings(), is(2));
 
         switchOrder(0, 1);
 
-        assertThat(counter.countAllCrossings(), is(1));
+        assertThat(counter.countCrossings(), is(1));
     }
 
     @Test
@@ -110,7 +110,7 @@ public class AllInLayerEdgeCrossingCounterTest {
 
         initCrossingCounterForLayerIndex(1);
 
-        assertThat(counter.countAllCrossings(), is(0));
+        assertThat(counter.countCrossings(), is(0));
     }
 
     @Test
@@ -119,7 +119,7 @@ public class AllInLayerEdgeCrossingCounterTest {
 
         initCrossingCounterForLayerIndex(1);
 
-        assertThat(counter.countAllCrossings(), is(0));
+        assertThat(counter.countCrossings(), is(0));
 
     }
 
@@ -129,7 +129,7 @@ public class AllInLayerEdgeCrossingCounterTest {
 
         initCrossingCounterForLayerIndex(1);
 
-        assertThat(counter.countAllCrossings(), is(2));
+        assertThat(counter.countCrossings(), is(2));
 
     }
 
@@ -139,7 +139,7 @@ public class AllInLayerEdgeCrossingCounterTest {
 
         initCrossingCounterForLayerIndex(1);
 
-        assertThat(counter.countAllCrossings(), is(2));
+        assertThat(counter.countCrossings(), is(2));
 
     }
 
@@ -149,7 +149,7 @@ public class AllInLayerEdgeCrossingCounterTest {
 
         initCrossingCounterForLayerIndex(1);
 
-        assertThat(counter.countAllCrossings(), is(2));
+        assertThat(counter.countCrossings(), is(2));
     }
 
     @Test
@@ -158,7 +158,7 @@ public class AllInLayerEdgeCrossingCounterTest {
 
         initCrossingCounterForLayerIndex(0);
 
-        assertThat(counter.countAllCrossings(), is(0));
+        assertThat(counter.countCrossings(), is(0));
     }
 
     @Test
@@ -167,7 +167,7 @@ public class AllInLayerEdgeCrossingCounterTest {
 
         initCrossingCounterForLayerIndex(0);
 
-        assertThat(counter.countAllCrossings(), is(1));
+        assertThat(counter.countCrossings(), is(1));
     }
 
     @Test
@@ -176,7 +176,7 @@ public class AllInLayerEdgeCrossingCounterTest {
 
         initCrossingCounterForLayerIndex(0);
 
-        assertThat(counter.countAllCrossings(), is(1));
+        assertThat(counter.countCrossings(), is(1));
     }
 
     @Test
@@ -185,7 +185,7 @@ public class AllInLayerEdgeCrossingCounterTest {
 
         initCrossingCounterForLayerIndex(0);
 
-        assertThat(counter.countAllCrossings(), is(0));
+        assertThat(counter.countCrossings(), is(0));
     }
 
     @Test
@@ -194,7 +194,7 @@ public class AllInLayerEdgeCrossingCounterTest {
 
         initCrossingCounterForLayerIndex(0);
 
-        assertThat(counter.countAllCrossings(), is(0));
+        assertThat(counter.countCrossings(), is(0));
     }
 
     @Test
@@ -203,7 +203,7 @@ public class AllInLayerEdgeCrossingCounterTest {
 
         initCrossingCounterForLayerIndex(1);
 
-        assertThat(counter.countAllCrossings(), is(6));
+        assertThat(counter.countCrossings(), is(6));
 
         // set port order as not fixed for layer in question.
         LGraph graph = creator.getMoreComplexInLayerGraph();
@@ -213,7 +213,7 @@ public class AllInLayerEdgeCrossingCounterTest {
         }
         initCrossingCounterForLayerIndex(1);
 
-        assertThat(counter.countAllCrossings(), is(2));
+        assertThat(counter.countCrossings(), is(2));
     }
 
     @Test
@@ -221,7 +221,7 @@ public class AllInLayerEdgeCrossingCounterTest {
         creator.getInLayerEdgesFixedPortOrderInLayerAndInBetweenLayerCrossing();
         initCrossingCounterForLayerIndex(1);
 
-        assertThat(counter.countAllCrossings(), is(2));
+        assertThat(counter.countCrossings(), is(2));
     }
 
     @Test
@@ -230,7 +230,7 @@ public class AllInLayerEdgeCrossingCounterTest {
 
         initCrossingCounterForLayerIndex(1);
 
-        assertThat(counter.countAllCrossings(), is(2));
+        assertThat(counter.countCrossings(), is(2));
     }
 
     @Test
@@ -239,7 +239,7 @@ public class AllInLayerEdgeCrossingCounterTest {
 
         initCrossingCounterForLayerIndex(1);
 
-        assertThat(counter.countAllCrossings(), is(0));
+        assertThat(counter.countCrossings(), is(0));
     }
 
     @Test
@@ -248,7 +248,7 @@ public class AllInLayerEdgeCrossingCounterTest {
 
         initCrossingCounterForLayerIndex(1);
 
-        assertThat(counter.countAllCrossings(), is(2));
+        assertThat(counter.countCrossings(), is(2));
     }
 
     @Test
@@ -256,7 +256,7 @@ public class AllInLayerEdgeCrossingCounterTest {
         creator.getInLayerOneLayerNoCrossings();
         initCrossingCounterForLayerIndex(0);
 
-        assertThat(counter.countAllCrossings(), is(0));
+        assertThat(counter.countCrossings(), is(0));
     }
 
     @Test
@@ -264,7 +264,7 @@ public class AllInLayerEdgeCrossingCounterTest {
         creator.getInLayerEdgesDownwardGraphNoFixedOrder();
         initCrossingCounterForLayerIndex(1);
 
-        assertThat(counter.countAllCrossings(), is(0));
+        assertThat(counter.countCrossings(), is(0));
     }
 
     /**

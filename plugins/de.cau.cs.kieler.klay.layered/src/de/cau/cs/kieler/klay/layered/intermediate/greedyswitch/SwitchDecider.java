@@ -22,7 +22,7 @@ import de.cau.cs.kieler.klay.layered.properties.NodeType;
 /**
  * This class is an abstract superclass for six different variants of how to decide, whether two
  * neighboring nodes should be switched: <br>
- * The {@link CounterSwitchDecider} classes use {@link CrossingCounter} to count the amount of
+ * The {@link CounterSwitchDecider} classes use {@link AllCrossingCounter} to count the amount of
  * crossings that would result from a switch. <br>
  * The {@link CrossingMatrixSwitchDecider} classes calculate the crossing matrix for a pair of fixed
  * and free layers beforehand. Entries i,j in a crossing matrix show the amount of crossings between

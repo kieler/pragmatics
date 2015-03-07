@@ -24,9 +24,9 @@ import org.junit.runners.Suite.SuiteClasses;
  *
  */
 @RunWith(Suite.class)
-@SuiteClasses({ CrossingCounterTest.class, AllInLayerEdgeCrossingCounterTest.class,
+@SuiteClasses({ AllCrossingCounterTest.class, AllInLayerEdgeCrossingCounterTest.class,
         SwitchDeciderTest.class, InLayerEdgeNeighboringNodeCrossingCounterTest.class,
-        InBetweenLayerEdgeNeighboringNodeCrossingCounterTest.class, GreedySwitchTest.class,
+        InBetweenLayerEdgeTwoNodeCrossingCounterTest.class, GreedySwitchTest.class,
         NorthSouthPortNeighbouringNodeCounterTest.class, GreedySwitchOffTest.class })
 public class AllGreedySwitchTests {
 

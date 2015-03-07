@@ -24,7 +24,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
  */
 abstract class CounterSwitchDecider extends SwitchDecider {
 
-    private final CrossingCounter crossingCounter;
+    private final InBetweenLayerEdgeAllCrossingCounter betweenLayerCounter;
     private int amountOfCrossingsInCurrentLayer = 0;
 
     /**
@@ -39,7 +39,7 @@ abstract class CounterSwitchDecider extends SwitchDecider {
      */
     public CounterSwitchDecider(final int freeLayerIndex, final LNode[][] graph) {
         super(freeLayerIndex, graph);
-        crossingCounter = new CrossingCounter(super.getGraph());
+        betweenLayerCounter = new InBetweenLayerEdgeAllCrossingCounter(super.getGraph());
     }
 
     @Override
@@ -83,13 +83,16 @@ abstract class CounterSwitchDecider extends SwitchDecider {
      */
     abstract int calculateCrossings();
 
-    /**
-     * Returns Crossing Counter.
-     * 
-     * @return the crossing counter
-     */
-    CrossingCounter getCrossingCounter() {
-        return crossingCounter;
+    protected InBetweenLayerEdgeAllCrossingCounter getBetweenLayerCounter() {
+        return betweenLayerCounter;
+    }
+
+    protected InLayerEdgeAllCrossingCounter getInLayerCounterFor(final LNode[] layer) {
+        return new InLayerEdgeAllCrossingCounter(layer);
+    }
+
+    protected NorthSouthPortAllCrossingCounter getNorthSoutPortCounterFor(final LNode[] layer) {
+        return new NorthSouthPortAllCrossingCounter(layer);
     }
 
 }

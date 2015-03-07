@@ -49,21 +49,17 @@ class CounterOneSidedSwitchDecider extends CounterSwitchDecider {
         case WEST:
             if (freeLayerIsNotFirstLayer()) {
                 LNode[] fixedLayer = getLayerForIndex(getFreeLayerIndex() - 1);
-                crossings =
-                        getCrossingCounter().countCrossingsBetweenLayersInOrder(fixedLayer,
-                                super.getFreeLayer());
+                crossings = getBetweenLayerCounter().countCrossings(fixedLayer, getFreeLayer());
             }
             break;
         case EAST:
             if (freeLayerIsNotLastLayer()) {
                 LNode[] fixedLayer = getLayerForIndex(getFreeLayerIndex() + 1);
-                crossings =
-                        getCrossingCounter().countCrossingsBetweenLayersInOrder(
-                                super.getFreeLayer(), fixedLayer);
+                crossings = getBetweenLayerCounter().countCrossings(getFreeLayer(), fixedLayer);
             }
         }
-        crossings += getCrossingCounter().countInLayerEdgeCrossingsWithOrder(super.getFreeLayer());
-        crossings += getCrossingCounter().countNorthSouthPortCrossings(getFreeLayer());
+        crossings += getInLayerCounterFor(getFreeLayer()).countCrossings();
+        crossings += getNorthSoutPortCounterFor(getFreeLayer()).countCrossings();
         return crossings;
     }
 

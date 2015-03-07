@@ -1655,15 +1655,15 @@ public class TestGraphCreator {
 
     /**
      * <pre>
-     * --==*
-     * | |
-     * *-+-*
+     * ----*
+     * |  /
+     * *++-*
      *  /\ 
      * *--+* 
      *     *
      * </pre>
      * 
-     * .
+     * Should have four crossings.
      * 
      * @return Graph of the form above.
      */

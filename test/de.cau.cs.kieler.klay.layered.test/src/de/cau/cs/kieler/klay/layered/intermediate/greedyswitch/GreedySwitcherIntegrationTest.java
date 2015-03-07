@@ -49,9 +49,11 @@ public class GreedySwitcherIntegrationTest extends AbstractLayeredProcessorTest 
 
     private static final String TEST_FOLDER = "klay_layered/greedy_switch_testgraphs";
     private final GreedySwitchType[] allOneSidedTypes = { GreedySwitchType.ONE_SIDED_COUNTER,
-            GreedySwitchType.ONE_SIDED_CROSSING_MATRIX, GreedySwitchType.ONE_SIDED_ON_DEMAND_CROSSING_MATRIX };
+            GreedySwitchType.ONE_SIDED_CROSSING_MATRIX,
+            GreedySwitchType.ONE_SIDED_ON_DEMAND_CROSSING_MATRIX };
     private final GreedySwitchType[] allTwoSidedTypes = { GreedySwitchType.TWO_SIDED_COUNTER,
-            GreedySwitchType.TWO_SIDED_CROSSING_MATRIX, GreedySwitchType.TWO_SIDED_ON_DEMAND_CROSSING_MATRIX };
+            GreedySwitchType.TWO_SIDED_CROSSING_MATRIX,
+            GreedySwitchType.TWO_SIDED_ON_DEMAND_CROSSING_MATRIX };
     private LGraph graph;
     private List<List<LNode>> originalOrder;
 
@@ -156,8 +158,8 @@ public class GreedySwitcherIntegrationTest extends AbstractLayeredProcessorTest 
 
     @Test
     public void crossingNumbersShouldNotBeWorseAfterward() {
-        LNode[][] graphLNodes = CrossingCounterTest.getAsLNodeArray(graph);
-        CrossingCounter crossCounter = new CrossingCounter(graphLNodes);
+        LNode[][] graphLNodes = AllCrossingCounterTest.getAsLNodeArray(graph);
+        AllCrossingCounter crossCounter = new AllCrossingCounter(graphLNodes);
         int oldCrossingCount = crossCounter.countAllCrossingsInGraphWithOrder(graphLNodes);
 
         for (GreedySwitchType oneSidedType : allOneSidedTypes) {
@@ -169,11 +171,11 @@ public class GreedySwitcherIntegrationTest extends AbstractLayeredProcessorTest 
         }
     }
 
-    private void assertFewerOrEqualCrossingsAfterSwitching(final CrossingCounter crossCounter,
+    private void assertFewerOrEqualCrossingsAfterSwitching(final AllCrossingCounter crossCounter,
             final int oldCrossingCount, final GreedySwitchType oneSidedType) {
         graph.setProperty(Properties.GREEDY_TYPE, oneSidedType);
         layered.runLayoutTestStep(state);
-        LNode[][] newOrder = CrossingCounterTest.getAsLNodeArray(graph);
+        LNode[][] newOrder = AllCrossingCounterTest.getAsLNodeArray(graph);
         int newCrossingCount = crossCounter.countAllCrossingsInGraphWithOrder(newOrder);
         assertThat(oneSidedType.toString(), newCrossingCount,
                 is(lessThanOrEqualTo(oldCrossingCount)));

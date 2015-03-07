@@ -16,7 +16,7 @@ package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
+import java.util.NavigableMap;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -192,7 +192,7 @@ class InBetweenLayerEdgeTwoNodeCrossingCounter {
      */
     private class AdjacencyList {
         private final LNode node;
-        private SortedMap<Integer, List<LPort>> adjacencyList;
+        private NavigableMap<Integer, List<LPort>> adjacencyList;
         private int size;
         private final PortSide side;
 
@@ -223,8 +223,8 @@ class InBetweenLayerEdgeTwoNodeCrossingCounter {
         private void addAdjacencyOf(final LEdge edge) {
             LPort adjacentPort = adjacentPortOf(edge, side);
             int adjacentPortPosition = portPositions.get(adjacentPort);
-            if (adjacencyList.containsKey(adjacentPortPosition)) {
-                adjacencyList.get(adjacentPortPosition).add(adjacentPort);
+            if (!adjacencyList.isEmpty() && adjacencyList.lastKey() == adjacentPortPosition) {
+                adjacencyList.lastEntry().getValue().add(adjacentPort);
             } else {
                 adjacencyList.put(adjacentPortPosition, Lists.newArrayList(adjacentPort));
             }
@@ -239,7 +239,7 @@ class InBetweenLayerEdgeTwoNodeCrossingCounter {
         }
 
         public int countAdjacenciesBelowNodeOfFirstPort() {
-            return size - adjacencyList.get(adjacencyList.firstKey()).size();
+            return size - adjacencyList.firstEntry().getValue().size();
         }
 
         public void removeFirst() {
@@ -247,11 +247,12 @@ class InBetweenLayerEdgeTwoNodeCrossingCounter {
                 return;
             }
 
-            List<LPort> nextPortsOnSameNode = adjacencyList.get(adjacencyList.firstKey());
+            List<LPort> nextPortsOnSameNode = adjacencyList.firstEntry().getValue();
             if (nextPortsOnSameNode.size() == 1) {
-                adjacencyList.remove(adjacencyList.firstKey());
+                adjacencyList.pollFirstEntry();
             } else {
-                adjacencyList.get(adjacencyList.firstKey()).remove(0);
+                List<LPort> ports = adjacencyList.firstEntry().getValue();
+                ports.remove(ports.size() - 1);
             }
 
             size--;
@@ -265,7 +266,7 @@ class InBetweenLayerEdgeTwoNodeCrossingCounter {
             if (isEmpty()) {
                 return null;
             } else {
-                return adjacencyList.get(adjacencyList.firstKey()).get(0);
+                return adjacencyList.firstEntry().getValue().get(0);
             }
         }
 

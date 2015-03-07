@@ -25,7 +25,7 @@ import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.PortIterable.Port
  * @author alan
  *
  */
-public class InLayerEdgeAllCrossingCounter extends InLayerEdgeCrossingCounter {
+class InLayerEdgeAllCrossingCounter extends InLayerEdgeCrossingCounter {
     /**
      * Create in-layer edge crossingCounter with current order of nodes.
      * 
@@ -41,7 +41,7 @@ public class InLayerEdgeAllCrossingCounter extends InLayerEdgeCrossingCounter {
      * 
      * @return in-layer crossings
      */
-    public int countAllCrossings() {
+    public int countCrossings() {
         int crossings = 0;
         crossings = iterateEdgesTopDownAndCountCrossingsOnSide(PortSide.WEST);
         crossings += iterateEdgesTopDownAndCountCrossingsOnSide(PortSide.EAST);

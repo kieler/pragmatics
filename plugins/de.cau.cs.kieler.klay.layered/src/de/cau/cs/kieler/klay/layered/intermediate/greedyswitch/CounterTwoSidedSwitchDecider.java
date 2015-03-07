@@ -40,27 +40,23 @@ class CounterTwoSidedSwitchDecider extends CounterSwitchDecider {
         }
 
         crossings += getInLayerCrossings();
-
         return crossings;
     }
 
     private int getInLayerCrossings() {
-        int crossings =
-                super.getCrossingCounter().countInLayerEdgeCrossingsWithOrder(super.getFreeLayer());
-        return crossings
-                + super.getCrossingCounter().countNorthSouthPortCrossings(super.getFreeLayer());
+        int crossings = getInLayerCounterFor(getFreeLayer()).countCrossings();
+        crossings += getNorthSoutPortCounterFor(getFreeLayer()).countCrossings();
+        return crossings;
     }
 
     private int getEasternCrossings() {
         LNode[] fixedLayer = getLayerForIndex(getFreeLayerIndex() + 1);
-        return super.getCrossingCounter().countCrossingsBetweenLayersInOrder(super.getFreeLayer(),
-                fixedLayer);
+        return getBetweenLayerCounter().countCrossings(getFreeLayer(), fixedLayer);
     }
 
     private int getWesternCrossings() {
         LNode[] fixedLayer = getLayerForIndex(getFreeLayerIndex() - 1);
-        return super.getCrossingCounter().countCrossingsBetweenLayersInOrder(fixedLayer,
-                super.getFreeLayer());
+        return getBetweenLayerCounter().countCrossings(fixedLayer, getFreeLayer());
     }
 
 }

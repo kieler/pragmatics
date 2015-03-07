@@ -178,8 +178,8 @@ abstract class InLayerEdgeCrossingCounter {
         return nodeOrder;
     }
 
-    protected LPort otherEndOf(final LEdge edge, final LPort port) {
-        return port == edge.getSource() ? edge.getTarget() : edge.getSource();
+    protected LPort otherEndOf(final LEdge edge, final LPort fromPort) {
+        return fromPort == edge.getSource() ? edge.getTarget() : edge.getSource();
     }
 
     protected boolean isInLayer(final LEdge edge) {

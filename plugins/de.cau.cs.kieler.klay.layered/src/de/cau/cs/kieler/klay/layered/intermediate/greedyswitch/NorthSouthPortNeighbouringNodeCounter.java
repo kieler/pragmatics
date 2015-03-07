@@ -91,6 +91,86 @@ public class NorthSouthPortNeighbouringNodeCounter {
         processIfNormalNodeWithNSPortsAndLongEdgeDummy(upperNode, lowerNode);
     }
 
+    private void processIfTwoNorthSouthNodes(final LNode upperNode, final LNode lowerNode) {
+        if (isNorthSouth(upperNode) && isNorthSouth(lowerNode)) {
+            if (noFixedPortOrderOn(originOf(upperNode))
+                    || haveDifferentOrigins(upperNode, lowerNode)) {
+                return;
+            }
+            if (isNorthOfNormalNode(upperNode)) {
+                northSouthDummiesNorthOfNormalNode(upperNode, lowerNode);
+            } else {
+                northSouthDummiesSouthOfNormalNode(upperNode, lowerNode);
+            }
+        }
+    }
+
+    private void northSouthDummiesNorthOfNormalNode(final LNode upperNode, final LNode lowerNode) {
+        PortSide upperNodePortSide = getPortDirectionFromNorthSouthNode(upperNode);
+        PortSide lowerNodePortSide = getPortDirectionFromNorthSouthNode(lowerNode);
+        countCrossingsOfTwoNorthSouthDummies(upperNode, lowerNode, upperNodePortSide,
+                lowerNodePortSide);
+    }
+
+    private void northSouthDummiesSouthOfNormalNode(final LNode closerToNormalNode,
+            final LNode furtherFromNormalNode) {
+        PortSide closerToNormalNodePortSide =
+                getPortDirectionFromNorthSouthNode(closerToNormalNode).opposed();
+        PortSide furtherFromNormalNodePortSide =
+                getPortDirectionFromNorthSouthNode(furtherFromNormalNode).opposed();
+        countCrossingsOfTwoNorthSouthDummies(furtherFromNormalNode, closerToNormalNode,
+                furtherFromNormalNodePortSide, closerToNormalNodePortSide);
+    }
+
+    private void countCrossingsOfTwoNorthSouthDummies(final LNode furtherFromNormalNode,
+            final LNode closerToNormalNode, final PortSide furtherNodePortSide,
+            final PortSide closerNodePortSide) {
+        if (furtherNodePortSide == PortSide.EAST && closerNodePortSide == PortSide.EAST) {
+            if (originPortsAreInClockwiseOrder(closerToNormalNode, furtherFromNormalNode)) {
+                upperLowerCrossings = 1;
+            } else {
+                lowerUpperCrossings = 1;
+            }
+        } else if (furtherNodePortSide == PortSide.WEST && closerNodePortSide == PortSide.WEST) {
+            if (originPortsAreInClockwiseOrder(furtherFromNormalNode, closerToNormalNode)) {
+                upperLowerCrossings = 1;
+            } else {
+                lowerUpperCrossings = 1;
+            }
+        } else if (furtherNodePortSide == PortSide.WEST && closerNodePortSide == PortSide.EAST) {
+            if (originPortsAreInClockwiseOrder(closerToNormalNode, furtherFromNormalNode)) {
+                upperLowerCrossings = 1;
+                lowerUpperCrossings = 1;
+            }
+        } else {
+            if (originPortsAreInClockwiseOrder(furtherFromNormalNode, closerToNormalNode)) {
+                upperLowerCrossings = 1;
+                lowerUpperCrossings = 1;
+            }
+        }
+    }
+
+    private boolean originPortsAreInClockwiseOrder(final LNode first, final LNode second) {
+        return originPortPositionOf(first) < originPortPositionOf(second);
+    }
+
+    private void processIfNorthSouthLongEdgeDummyCrossing(final LNode upperNode,
+            final LNode lowerNode) {
+        if (isNorthSouth(upperNode) && isLongEdgeDummy(lowerNode)) {
+            if (isNorthOfNormalNode(upperNode)) {
+                upperLowerCrossings = 1;
+            } else {
+                lowerUpperCrossings = 1;
+            }
+        } else if (isNorthSouth(lowerNode) && isLongEdgeDummy(upperNode)) {
+            if (isNorthOfNormalNode(lowerNode)) {
+                lowerUpperCrossings = 1;
+            } else {
+                upperLowerCrossings = 1;
+            }
+        }
+    }
+
     private void processIfNormalNodeWithNSPortsAndLongEdgeDummy(final LNode upperNode,
             final LNode lowerNode) {
         if (isNormal(upperNode) && isLongEdgeDummy(lowerNode)) {
@@ -110,105 +190,15 @@ public class NorthSouthPortNeighbouringNodeCounter {
     private int amountOfDummyEdgeCrossingsWithNSEdgesOnSide(final LNode node, final PortSide side) {
         int amountOfPorts = 0;
         for (LPort port : node.getPorts(side)) {
-            List<LPort> nsPorts = port.getProperty(InternalProperties.CONNECTED_NORTH_SOUTH_PORT_DUMMIES);
+            List<LPort> nsPorts =
+                    port.getProperty(InternalProperties.CONNECTED_NORTH_SOUTH_PORT_DUMMIES);
             amountOfPorts += nsPorts.size();
         }
         return amountOfPorts;
     }
 
-    private boolean isNormal(final LNode node) {
-        return node.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORMAL;
-    }
-
-    private void processIfTwoNorthSouthNodes(final LNode upperNode, final LNode lowerNode) {
-        if (isNorthSouth(upperNode) && isNorthSouth(lowerNode)) {
-            if (noFixedPortOrderOn(originOf(upperNode))
-                    || haveDifferentOrigins(upperNode, lowerNode)) {
-                return;
-            }
-            if (isNorthOfNormalNode(upperNode)) {
-                processNodesNorthOfNormalNode(upperNode, lowerNode);
-            } else {
-                processNodesSouthOfNormalNode(upperNode, lowerNode);
-            }
-        }
-    }
-
-    private void processIfNorthSouthLongEdgeDummyCrossing(final LNode upperNode,
-            final LNode lowerNode) {
-        if (isNorthSouth(upperNode) && isLongEdgeDummy(lowerNode)) {
-            if (isSouthOfConnectedNormalNode(upperNode)) {
-                lowerUpperCrossings = 1;
-            } else {
-                upperLowerCrossings = 1;
-            }
-        } else if (isNorthSouth(lowerNode) && isLongEdgeDummy(upperNode)) {
-            if (!isSouthOfConnectedNormalNode(lowerNode)) {
-                lowerUpperCrossings = 1;
-            } else {
-                upperLowerCrossings = 1;
-            }
-        }
-    }
-
     private boolean haveDifferentOrigins(final LNode upperNode, final LNode lowerNode) {
         return originOf(upperNode) != originOf(lowerNode);
-    }
-
-    private void processNodesNorthOfNormalNode(final LNode upperNode, final LNode lowerNode) {
-        PortSide upperNodePortSide = getPortDirectionFromNorthSouthNode(upperNode);
-        PortSide lowerNodePortSide = getPortDirectionFromNorthSouthNode(lowerNode);
-        if (upperNodePortSide == PortSide.EAST && lowerNodePortSide == PortSide.EAST) {
-            if (originPortsAreInClockwiseOrder(lowerNode, upperNode)) {
-                upperLowerCrossings = 1;
-            } else {
-                lowerUpperCrossings = 1;
-            }
-        } else if (upperNodePortSide == PortSide.WEST && lowerNodePortSide == PortSide.WEST) {
-            if (originPortsAreInClockwiseOrder(upperNode, lowerNode)) {
-                upperLowerCrossings = 1;
-            } else {
-                lowerUpperCrossings = 1;
-            }
-        } else if (upperNodePortSide == PortSide.WEST && lowerNodePortSide == PortSide.EAST) {
-            if (originPortsAreInClockwiseOrder(lowerNode, upperNode)) {
-                upperLowerCrossings = 1;
-                lowerUpperCrossings = 1;
-            }
-        } else {
-            if (originPortsAreInClockwiseOrder(upperNode, lowerNode)) {
-                upperLowerCrossings = 1;
-                lowerUpperCrossings = 1;
-            }
-        }
-    }
-
-    private void processNodesSouthOfNormalNode(final LNode upperNode, final LNode lowerNode) {
-        PortSide upperNodePortSide = getPortDirectionFromNorthSouthNode(upperNode);
-        PortSide lowerNodePortSide = getPortDirectionFromNorthSouthNode(lowerNode);
-        if (upperNodePortSide == PortSide.EAST && lowerNodePortSide == PortSide.EAST) {
-            if (originPortsAreInClockwiseOrder(lowerNode, upperNode)) {
-                upperLowerCrossings = 1;
-            } else {
-                lowerUpperCrossings = 1;
-            }
-        } else if (upperNodePortSide == PortSide.WEST && lowerNodePortSide == PortSide.WEST) {
-            if (originPortsAreInClockwiseOrder(upperNode, lowerNode)) {
-                upperLowerCrossings = 1;
-            } else {
-                lowerUpperCrossings = 1;
-            }
-        } else if (upperNodePortSide == PortSide.WEST && lowerNodePortSide == PortSide.EAST) {
-            if (originPortsAreInClockwiseOrder(upperNode, lowerNode)) {
-                upperLowerCrossings = 1;
-                lowerUpperCrossings = 1;
-            }
-        } else {
-            if (originPortsAreInClockwiseOrder(lowerNode, upperNode)) {
-                upperLowerCrossings = 1;
-                lowerUpperCrossings = 1;
-            }
-        }
     }
 
     private PortSide getPortDirectionFromNorthSouthNode(final LNode node) {
@@ -218,8 +208,16 @@ public class NorthSouthPortNeighbouringNodeCounter {
         return node.getPorts().get(0).getSide();
     }
 
-    private boolean originPortsAreInClockwiseOrder(final LNode first, final LNode second) {
-        return originPortPositionOf(first) < originPortPositionOf(second);
+    private int originPortPositionOf(final LNode node) {
+        LPort origin = originPortOf(node);
+        final LPort port = origin;
+        return portPositions.get(port);
+    }
+
+    private LPort originPortOf(final LNode node) {
+        LPort port = node.getPorts().get(0);
+        LPort origin = (LPort) port.getProperty(InternalProperties.ORIGIN);
+        return origin;
     }
 
     private boolean isNorthOfNormalNode(final LNode upperNode) {
@@ -234,10 +232,6 @@ public class NorthSouthPortNeighbouringNodeCounter {
         return !node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed();
     }
 
-    private boolean isSouthOfConnectedNormalNode(final LNode node) { // TODO-alan remove!
-        return originPortOf(node).getSide() == PortSide.SOUTH;
-    }
-
     private boolean isLongEdgeDummy(final LNode node) {
         return node.getProperty(InternalProperties.NODE_TYPE) == NodeType.LONG_EDGE;
     }
@@ -246,16 +240,8 @@ public class NorthSouthPortNeighbouringNodeCounter {
         return node.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT;
     }
 
-    private int originPortPositionOf(final LNode node) {
-        LPort origin = originPortOf(node);
-        final LPort port = origin;
-        return portPositions.get(port);
-    }
-
-    private LPort originPortOf(final LNode node) {
-        LPort port = node.getPorts().get(0);
-        LPort origin = (LPort) port.getProperty(InternalProperties.ORIGIN);
-        return origin;
+    private boolean isNormal(final LNode node) {
+        return node.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORMAL;
     }
 
     /**

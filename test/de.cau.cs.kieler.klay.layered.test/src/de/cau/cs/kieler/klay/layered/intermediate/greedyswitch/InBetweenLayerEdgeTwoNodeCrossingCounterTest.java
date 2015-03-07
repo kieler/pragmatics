@@ -31,7 +31,7 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
  * @author alan
  *
  */
-public class InBetweenLayerEdgeNeighboringNodeCrossingCounterTest {
+public class InBetweenLayerEdgeTwoNodeCrossingCounterTest {
     private TestGraphCreator creator;
     private InBetweenLayerEdgeTwoNodeCrossingCounter crossingCounter;
     private LGraph graph;
