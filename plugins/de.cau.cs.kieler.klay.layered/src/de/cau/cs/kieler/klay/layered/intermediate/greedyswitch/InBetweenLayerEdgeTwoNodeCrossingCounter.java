@@ -13,10 +13,9 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.NavigableMap;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -43,6 +42,8 @@ class InBetweenLayerEdgeTwoNodeCrossingCounter {
     private final LNode[][] currentNodeOrder;
     private final int freeLayerIndex;
     private final Map<LPort, Integer> portPositions;
+    private final Map<LNode, AdjacencyList> easternAdjacencies;
+    private final Map<LNode, AdjacencyList> westernAdjacencies;
 
     /**
      * Create {@link InBetweenLayerEdgeTwoNodeCrossingCounter}. Naming assumes a left-right layer
@@ -55,10 +56,49 @@ class InBetweenLayerEdgeTwoNodeCrossingCounter {
      */
     public InBetweenLayerEdgeTwoNodeCrossingCounter(final LNode[][] currentNodeOrder,
             final int freeLayerIndex) {
-        portPositions = new HashMap<LPort, Integer>();
+        portPositions = Maps.newHashMap();
+        easternAdjacencies = Maps.newHashMap();
+        westernAdjacencies = Maps.newHashMap();
         this.currentNodeOrder = currentNodeOrder;
         this.freeLayerIndex = freeLayerIndex;
-        initializeNodeAndPortIdsForNeighbouringLayers();
+        setPortPositionsForNeighbouringLayers();
+    }
+
+    private void setPortPositionsForNeighbouringLayers() {
+        if (freeLayerIsNotFirstLayer()) {
+            setPortPositionsForLayer(freeLayerIndex - 1, PortSide.EAST);
+        }
+        if (freeLayerIsNotLastLayer()) {
+            setPortPositionsForLayer(freeLayerIndex + 1, PortSide.WEST);
+        }
+    }
+
+    private boolean freeLayerIsNotFirstLayer() {
+        return freeLayerIndex > 0;
+    }
+
+    private boolean freeLayerIsNotLastLayer() {
+        return freeLayerIndex < currentNodeOrder.length - 1;
+    }
+
+    private void setPortPositionsForLayer(final int layerIndex, final PortSide portSide) {
+        int portId = 0;
+        for (LNode node : currentNodeOrder[layerIndex]) {
+            PortIterable ports = new PortIterable(node, portSide, PortOrder.TOPDOWN_LEFTRIGHT);
+            for (LPort port : ports) {
+                portPositions.put(port, portId);
+                if (portOrderIsFixed(node)) {
+                    portId++;
+                }
+            }
+            if (!portOrderIsFixed(node)) {
+                portId++;
+            }
+        }
+    }
+
+    private boolean portOrderIsFixed(final LNode neighbourToUpperNode) {
+        return neighbourToUpperNode.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed();
     }
 
     /**
@@ -120,22 +160,35 @@ class InBetweenLayerEdgeTwoNodeCrossingCounter {
     }
 
     private void resetCrossingCount() {
-        lowerUpperCrossings = 0;
         upperLowerCrossings = 0;
+        lowerUpperCrossings = 0;
     }
 
     private void addEasternCrossings(final LNode upperNode, final LNode lowerNode) {
-        upperAdjacencies = new AdjacencyList(upperNode, PortSide.EAST);
-        lowerAdjacencies = new AdjacencyList(lowerNode, PortSide.EAST);
+        upperAdjacencies = getAdjacencyFor(upperNode, PortSide.EAST, easternAdjacencies);
+        lowerAdjacencies = getAdjacencyFor(lowerNode, PortSide.EAST, easternAdjacencies);
         if (upperAdjacencies.size() == 0 || lowerAdjacencies.size() == 0) {
             return;
         }
         countCrossingsByMergingAdjacencyLists();
     }
 
+    private AdjacencyList getAdjacencyFor(final LNode node, final PortSide side,
+            final Map<LNode, AdjacencyList> adjacencies) {
+        if (adjacencies.isEmpty()) {
+            for (LNode n : currentNodeOrder[freeLayerIndex]) {
+                adjacencies.put(n, new AdjacencyList(n, side));
+            }
+        }
+        AdjacencyList aL = adjacencies.get(node);
+        aL.reset();
+        return aL;
+
+    }
+
     private void addWesternCrossings(final LNode upperNode, final LNode lowerNode) {
-        upperAdjacencies = new AdjacencyList(upperNode, PortSide.WEST);
-        lowerAdjacencies = new AdjacencyList(lowerNode, PortSide.WEST);
+        upperAdjacencies = getAdjacencyFor(upperNode, PortSide.WEST, westernAdjacencies);
+        lowerAdjacencies = getAdjacencyFor(lowerNode, PortSide.WEST, westernAdjacencies);
         if (upperAdjacencies.size() == 0 || lowerAdjacencies.size() == 0) {
             return;
         }
@@ -161,10 +214,10 @@ class InBetweenLayerEdgeTwoNodeCrossingCounter {
      */
     private void countCrossingsByMergingAdjacencyLists() {
         while (!upperAdjacencies.isEmpty() && !lowerAdjacencies.isEmpty()) {
-            if (isBelow(upperAdjacencies.next(), lowerAdjacencies.next())) {
+            if (isBelow(upperAdjacencies.first(), lowerAdjacencies.first())) {
                 upperLowerCrossings += upperAdjacencies.size();
                 lowerAdjacencies.removeFirst();
-            } else if (isBelow(lowerAdjacencies.next(), upperAdjacencies.next())) {
+            } else if (isBelow(lowerAdjacencies.first(), upperAdjacencies.first())) {
                 lowerUpperCrossings += lowerAdjacencies.size();
                 upperAdjacencies.removeFirst();
             } else {
@@ -176,34 +229,42 @@ class InBetweenLayerEdgeTwoNodeCrossingCounter {
         }
     }
 
-    /**
-     * True if firstPort is below secondPort.
-     * 
-     */
-    private boolean isBelow(final LPort firstPort, final LPort secondPort) {
-        return portPositions.get(firstPort) > portPositions.get(secondPort);
+    private boolean isBelow(final int firstPort, final int secondPort) {
+        return firstPort > secondPort;
     }
 
     /**
-     * Keeps and manipulates all data for each node currently being examined.
+     * The adjacency list of a node holds the position of connected ports in a neighboring layer on
+     * the given side. Since we want to save it for further use, the remove operation does not
+     * actually delete the entries in the adjacency list. Instead we use currentIndex, currentSize
+     * and currentAmount (in the inner class) to show the current state of the list. Use reset() to
+     * reset to the original state.
      * 
      * @author alan
      *
      */
     private class AdjacencyList {
         private final LNode node;
-        private NavigableMap<Integer, List<LPort>> adjacencyList;
-        private int size;
+        private final List<Adjacency> adjacencyList;
         private final PortSide side;
+        private int size;
+        private int currentSize;
+        private int currentIndex;
 
         public AdjacencyList(final LNode node, final PortSide side) {
             this.node = node;
             this.side = side;
-            fillList();
+            adjacencyList = Lists.newArrayList();
+            getAdjacenciesSortedByPosition();
         }
 
-        private void fillList() {
-            adjacencyList = Maps.newTreeMap();
+        private void getAdjacenciesSortedByPosition() {
+            iterateTroughEdgesCollectingAdjacencies();
+
+            Collections.sort(adjacencyList);
+        }
+
+        private void iterateTroughEdgesCollectingAdjacencies() {
             PortIterable ports = new PortIterable(node, side, PortOrder.TOPDOWN_LEFTRIGHT);
             for (LPort port : ports) {
                 List<LEdge> edges = getEdgesConnectedTo(port);
@@ -211,6 +272,7 @@ class InBetweenLayerEdgeTwoNodeCrossingCounter {
                     if (!edge.isSelfLoop() && isNotInLayer(edge)) {
                         addAdjacencyOf(edge);
                         size++;
+                        currentSize++;
                     }
                 }
             }
@@ -220,13 +282,20 @@ class InBetweenLayerEdgeTwoNodeCrossingCounter {
             return side == PortSide.WEST ? port.getIncomingEdges() : port.getOutgoingEdges();
         }
 
+        private boolean isNotInLayer(final LEdge edge) {
+            return edge.getSource().getNode().getLayer() != edge.getTarget().getNode().getLayer();
+        }
+
         private void addAdjacencyOf(final LEdge edge) {
             LPort adjacentPort = adjacentPortOf(edge, side);
             int adjacentPortPosition = portPositions.get(adjacentPort);
-            if (!adjacencyList.isEmpty() && adjacencyList.lastKey() == adjacentPortPosition) {
-                adjacencyList.lastEntry().getValue().add(adjacentPort);
+            int lastIndex = adjacencyList.size() - 1;
+            if (!adjacencyList.isEmpty()
+                    && adjacencyList.get(lastIndex).position == adjacentPortPosition) {
+                adjacencyList.get(lastIndex).amount++;
+                adjacencyList.get(lastIndex).currentAmount++;
             } else {
-                adjacencyList.put(adjacentPortPosition, Lists.newArrayList(adjacentPort));
+                adjacencyList.add(new Adjacency(adjacentPortPosition, adjacentPort));
             }
         }
 
@@ -234,87 +303,86 @@ class InBetweenLayerEdgeTwoNodeCrossingCounter {
             return portSide == PortSide.WEST ? edge.getSource() : edge.getTarget();
         }
 
-        private boolean isNotInLayer(final LEdge edge) {
-            return edge.getSource().getNode().getLayer() != edge.getTarget().getNode().getLayer();
+        public void reset() {
+            currentIndex = 0;
+            currentSize = size;
+            if (!isEmpty()) {
+                currentAdjacency().reset();
+            }
         }
 
         public int countAdjacenciesBelowNodeOfFirstPort() {
-            return size - adjacencyList.firstEntry().getValue().size();
+            return currentSize - currentAdjacency().currentAmount;
         }
 
         public void removeFirst() {
-            if (size == 0) {
+            if (isEmpty()) {
                 return;
             }
-
-            List<LPort> nextPortsOnSameNode = adjacencyList.firstEntry().getValue();
-            if (nextPortsOnSameNode.size() == 1) {
-                adjacencyList.pollFirstEntry();
+            Adjacency currentEntry = currentAdjacency();
+            if (currentEntry.currentAmount == 1) {
+                incrementCurrentIndex();
             } else {
-                List<LPort> ports = adjacencyList.firstEntry().getValue();
-                ports.remove(ports.size() - 1);
+                currentEntry.currentAmount--;
             }
 
-            size--;
+            currentSize--;
+        }
+
+        private void incrementCurrentIndex() {
+            currentIndex++;
+            // reset Adjacency
+            if (currentIndex < adjacencyList.size()) {
+                currentAdjacency().reset();
+            }
         }
 
         public boolean isEmpty() {
-            return size == 0;
+            return currentSize == 0;
         }
 
-        public LPort next() {
-            if (isEmpty()) {
-                return null;
-            } else {
-                return adjacencyList.firstEntry().getValue().get(0);
-            }
+        public int first() {
+            return currentAdjacency().position;
         }
 
         public int size() {
-            return size;
+            return currentSize;
+        }
+
+        private Adjacency currentAdjacency() {
+            return adjacencyList.get(currentIndex);
         }
 
         @Override
         public String toString() {
             return "AdjacencyList [node=" + node + ", adjacencies= " + adjacencyList + "]";
         }
-    }
 
-    private void initializeNodeAndPortIdsForNeighbouringLayers() {
-        if (freeLayerIsNotFirstLayer()) {
-            setPortAndNodePositionsForLayer(freeLayerIndex - 1, PortSide.EAST);
-        }
-        if (freeLayerIsNotLastLayer()) {
-            setPortAndNodePositionsForLayer(freeLayerIndex + 1, PortSide.WEST);
-        }
-    }
+        private class Adjacency implements Comparable<Adjacency> {
+            public final int position;
+            public int amount;
+            public int currentAmount;
 
-    private boolean freeLayerIsNotFirstLayer() {
-        return freeLayerIndex > 0;
-    }
-
-    private boolean freeLayerIsNotLastLayer() {
-        return freeLayerIndex < currentNodeOrder.length - 1;
-    }
-
-    private void setPortAndNodePositionsForLayer(final int layerIndex, final PortSide portSide) {
-        int portId = 0;
-        for (LNode node : currentNodeOrder[layerIndex]) {
-            PortIterable ports = new PortIterable(node, portSide, PortOrder.TOPDOWN_LEFTRIGHT);
-            for (LPort port : ports) {
-                portPositions.put(port, portId);
-                if (portOrderIsFixed(node)) {
-                    portId++;
-                }
+            public Adjacency(final int adjacentPortPosition, final LPort port) {
+                position = adjacentPortPosition;
+                amount = 1;
+                currentAmount = 1;
             }
-            if (!portOrderIsFixed(node)) {
-                portId++;
+
+            public void reset() {
+                currentAmount = amount;
+            }
+
+            public int compareTo(final Adjacency o) {
+                return Integer.compare(position, o.position);
+            }
+
+            @Override
+            public String toString() {
+                return "Adjacency [position=" + position + ", amount=" + amount
+                        + ", currentAmount=" + currentAmount + "]";
             }
         }
-    }
-
-    private boolean portOrderIsFixed(final LNode neighbourToUpperNode) {
-        return neighbourToUpperNode.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed();
     }
 
     /**

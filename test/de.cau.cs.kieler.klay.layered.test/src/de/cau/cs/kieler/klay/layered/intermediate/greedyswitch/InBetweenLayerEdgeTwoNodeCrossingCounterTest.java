@@ -291,6 +291,18 @@ public class InBetweenLayerEdgeTwoNodeCrossingCounterTest {
         assertBothSideLowerUpperCrossingsIs(1);
     }
 
+    @Test
+    public void multipleEdgesAndSingleEdgeShouldAlwaysReturnSameValue() {
+        graph = creator.multipleEdgesAndSingleEdge();
+        nodeOrder = creator.getCurrentOrder();
+        setLayerToCountIn(0);
+        setUpperNode(0);
+        setLowerNode(1);
+
+        assertEasternSideUpperLowerCrossingsIs(0);
+        assertEasternSideUpperLowerCrossingsIs(0);
+    }
+
     private void assertEasternSideLowerUpperCrossingsIs(final int expectedCrossings) {
         crossingCounter.countEasternEdgeCrossings(upperNode, lowerNode);
         int crossings = crossingCounter.getLowerUpperCrossings();

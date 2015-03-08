@@ -100,6 +100,32 @@ public class TestGraphCreator {
 
     /**
      * <pre>
+     * *   
+     *  \\
+     *   \\
+     * *---*
+     * .
+     * </pre>
+     * 
+     * @return Graph of the form above.
+     */
+    public LGraph multipleEdgesAndSingleEdge() {
+
+        Layer leftLayer = makeLayer();
+        Layer rightLayer = makeLayer();
+
+        LNode topLeft = addNodeToLayer(leftLayer);
+        LNode bottomLeft = addNodeToLayer(leftLayer);
+        LNode bottomRight = addNodeToLayer(rightLayer);
+
+        eastWestEdgeFromTo(topLeft, bottomRight);
+        eastWestEdgeFromTo(topLeft, bottomRight);
+        eastWestEdgeFromTo(bottomLeft, bottomRight);
+        return graph;
+    }
+
+    /**
+     * <pre>
      * *  *  <- this node must be ...
      *  \/
      *  /\
