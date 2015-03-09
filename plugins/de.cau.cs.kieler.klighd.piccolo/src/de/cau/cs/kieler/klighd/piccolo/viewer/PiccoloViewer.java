@@ -162,9 +162,6 @@ public class PiccoloViewer extends AbstractViewer implements ILayoutRecorder,
         camera.addInputEventListener(new KlighdBasicInputEventHandler(
                 new KlighdSelectiveZoomEventHandler(this)));
 
-        camera.addInputEventListener(new KlighdBasicInputEventHandler(
-                new KlighdInteractiveDragEventHandler(this)));
-
         // add a tooltip element
         new PiccoloTooltip(parent.getDisplay(), canvas.getCamera());
 
@@ -275,6 +272,10 @@ public class PiccoloViewer extends AbstractViewer implements ILayoutRecorder,
 
         // create a controller for the graph
         controller = new DiagramController(model, canvas.getCamera(), sync, edgesFirst);
+
+        canvas.getCamera().addInputEventListener(new KlighdBasicInputEventHandler(
+                new KlighdInteractiveDragEventHandler(this , controller)));
+
 
         // update the outline page
         if (outlinePage != null && !outlinePage.isDisposed()) {
