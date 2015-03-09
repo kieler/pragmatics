@@ -44,11 +44,10 @@ import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.klighd.internal.IDiagramOutlinePage;
 import de.cau.cs.kieler.klighd.piccolo.KlighdSWTGraphics;
+import de.cau.cs.kieler.klighd.piccolo.internal.KlighdCanvas;
 import de.cau.cs.kieler.klighd.piccolo.internal.KlighdSWTGraphicsEx;
 import de.cau.cs.kieler.klighd.piccolo.internal.events.KlighdBasicInputEventHandler;
-import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KNodeNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KNodeTopNode;
-import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdCanvas;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdMainCamera;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdPath;
 import de.cau.cs.kieler.klighd.piccolo.internal.util.KlighdPaintContext;
@@ -179,11 +178,12 @@ public class PiccoloOutlinePage implements IDiagramOutlinePage {
                     return;
                 }
 
-                // that the clip overlay invisible if the current clip node is the KNodeTopNode,
+                // set the clip overlay invisible if the current clip node is the KNodeTopNode,
                 //  and visible otherwise, the clip node is a KNodeNode in those cases
-                clipOutlineOverlay.setVisible(((KlighdMainCamera) evt.getSource())
-                        .getDisplayedKNodeNode() instanceof KNodeNode);
-                clipOutlineOverlay.repaint();
+                // switched from 'setVisible(...)' to 'setOccluded(...)' in order to prevent the
+                //  calls of 'repaint()' / 'invalidatePaint()' that are hard-coded in 'setVisible(...)'
+                clipOutlineOverlay.setOccluded(((KlighdMainCamera) evt.getSource())
+                        .getDisplayedKNodeNode() instanceof KNodeTopNode);
             }
         }
     };
@@ -199,15 +199,7 @@ public class PiccoloOutlinePage implements IDiagramOutlinePage {
 
         @Override
         public KlighdMainCamera createBasicSceneGraph() {
-            final PCamera origCam = super.createBasicSceneGraph();
-            final PNode root = origCam.getRoot();
-
-            // the API does not allow to inject a certain camera so we have to remove
-            //  the existing one and add the desired one ... yes this is quite ugly!
-
-            origCam.removeFromParent();
-
-            final KlighdMainCamera cam = new KlighdMainCamera() {
+            return new KlighdMainCamera(new KlighdRoot()) {
 
                 private static final long serialVersionUID = -3551541550083498908L;
 
@@ -220,11 +212,7 @@ public class PiccoloOutlinePage implements IDiagramOutlinePage {
                     //  an update of the outline camera is scheduled
                     PiccoloOutlinePage.this.cameraTimer.restart();
                 }
-
             };
-
-            root.addChild(cam);
-            return cam;
         }
 
         @Override
@@ -257,6 +245,7 @@ public class PiccoloOutlinePage implements IDiagramOutlinePage {
 
             public void actionPerformed(final ActionEvent e) {
                 adjustCamera();
+                adjustOutlineRect();
             }
         });
         cameraTimer.setRepeats(false);
@@ -266,6 +255,9 @@ public class PiccoloOutlinePage implements IDiagramOutlinePage {
                 new ActionListener() {
 
             public void actionPerformed(final ActionEvent e) {
+                if (cameraTimer.isRunning()) {
+                    return;
+                }
                 adjustOutlineRect();
             }
         });
@@ -407,8 +399,12 @@ public class PiccoloOutlinePage implements IDiagramOutlinePage {
         clipOutlineOverlay.setStrokeColor((RGB) null);
         clipOutlineOverlay.setPaint(clipOutlineOverlayColoring.getFirst());
         clipOutlineOverlay.setPaintAlpha(clipOutlineOverlayColoring.getSecond());
-        clipOutlineOverlay.setVisible(diagramMainCamera.getDisplayedKNodeNode() instanceof KNodeNode);
-        // ... implies to switch it off if displayedNode is a KNodeTopNode.
+
+        // switched from 'setVisible(...)' to 'setOccluded(...)' in order to prevent the
+        //  calls of 'repaint()' / 'invalidatePaint()' that are hard-coded in 'setVisible(...)'
+        clipOutlineOverlay.setOccluded(
+                // implies to switch it off if displayedKNodeNode is a KNodeTopNode
+                (diagramMainCamera.getDisplayedKNodeNode() instanceof KNodeTopNode));
 
         outlineCamera.addChild(clipOutlineOverlay);
 

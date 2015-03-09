@@ -141,7 +141,7 @@ public class SVGBrowsingViewer {
      */
     public KNode getModel() {
         if (controller != null) {
-            return controller.getNode().getGraphElement();
+            return controller.getNode().getViewModelElement();
         }
         return null;
     }
@@ -227,7 +227,7 @@ public class SVGBrowsingViewer {
         // if already wrapped dont wrap it again, but remember it in the hash map
         if ((parent instanceof WrappedKNodeNode)) {
             final WrappedKNodeNode wrapper = (WrappedKNodeNode) parent;
-            final KNode wrappedGraphElement = wrapper.getKnodeNode().getGraphElement();
+            final KNode wrappedGraphElement = wrapper.getKnodeNode().getViewModelElement();
             currentHashCodeMapping.put(wrappedGraphElement.hashCode(), wrappedGraphElement);
 
             // recurse the children
@@ -248,7 +248,7 @@ public class SVGBrowsingViewer {
                 if (child instanceof KNodeNode) {
                     final KNodeNode knodenode = (KNodeNode) child;
                     // if there are any children
-                    if (knodenode.getGraphElement().getChildren().size() > 0) {
+                    if (knodenode.getViewModelElement().getChildren().size() > 0) {
 
                         // wrap it
                         final WrappedKNodeNode wrapper = new WrappedKNodeNode(knodenode);
@@ -256,7 +256,7 @@ public class SVGBrowsingViewer {
 
                         // place it in the hash map
                         currentHashCodeMapping.put(knodenode.hashCode(),
-                                knodenode.getGraphElement());
+                                knodenode.getViewModelElement());
                     }
 
                 }

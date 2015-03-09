@@ -93,11 +93,8 @@ public class KlighdSVGCanvas implements PComponent {
         this.embedFonts = embedFonts;
 
         // create a new main camera
-        camera = new KlighdMainCamera();
-        
-        // the basic PRoot is sufficient as this canvas doesn't rely on any SWT stuff
-        final PRoot root = new PRoot();
-        root.addChild(camera);
+        //  the basic PRoot is sufficient as this canvas doesn't rely on any SWT stuff
+        camera = new KlighdMainCamera(new PRoot());
 
         // set the bounds of the camera,
         //  this is the actual size of the camera, not of what it is viewing
