@@ -52,9 +52,10 @@ public class UniqueEdgeBendsTest extends AbstractGranaTest {
     }
     
     private Map<String, Object[]> expectedResults = ImmutableMap.of(
-            "uniqueBendpointsHierarchy.kgt", new Object[]{1,1f,1,2},
-            "uniqueBendpointsHyperedge.kgt", new Object[]{1,1f,1,2},
-            "uniqueBendpointsExternalPort.kgt", new Object[]{1,1f,1,2}
+            // Results are MIN AVG MAX SUM SUM_NON_UNIQUE
+            "uniqueBendpointsHierarchy.kgt", new Object[]{1, 1f, 1, 2, 2},
+            "uniqueBendpointsHyperedge.kgt", new Object[]{1, 1f, 1, 2, 3},
+            "uniqueBendpointsExternalPort.kgt", new Object[]{1, 1f, 1, 2, 3}
             );
     
     /* ----------------------

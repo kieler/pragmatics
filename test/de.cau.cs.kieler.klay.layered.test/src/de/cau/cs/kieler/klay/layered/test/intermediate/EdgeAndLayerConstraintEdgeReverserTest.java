@@ -90,13 +90,15 @@ public class EdgeAndLayerConstraintEdgeReverserTest extends AbstractLayeredProce
                     // either no incoming edges or only from FIRST_SEPARATE nodes
                     for (LEdge inc : node.getIncomingEdges()) {
                         LNode src = inc.getSource().getNode();
-                        assertTrue(src.getProperty(Properties.LAYER_CONSTRAINT) == LayerConstraint.FIRST_SEPARATE);
+                        assertTrue(src.getProperty(Properties.LAYER_CONSTRAINT)
+                                == LayerConstraint.FIRST_SEPARATE);
                     }
                 } else if (constr == LayerConstraint.LAST) {
                     // either no outgoing edges or only to LAST_SEPARATE nodes
                     for (LEdge inc : node.getOutgoingEdges()) {
                         LNode src = inc.getTarget().getNode();
-                        assertTrue(src.getProperty(Properties.LAYER_CONSTRAINT) == LayerConstraint.LAST_SEPARATE);
+                        assertTrue(src.getProperty(Properties.LAYER_CONSTRAINT)
+                                == LayerConstraint.LAST_SEPARATE);
                     }
                 } else if (constr == LayerConstraint.FIRST_SEPARATE) {
                     assertTrue(Iterables.isEmpty(node.getIncomingEdges()));
