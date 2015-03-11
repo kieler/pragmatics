@@ -64,9 +64,13 @@ public enum LayeringStrategy implements ILayoutPhaseFactory {
         case INTERACTIVE:
             return new InteractiveLayerer();
             
+        case MINIZINC:
+        case HEURISTIC_GLAY:
+            return new MinizincLayerer();
+            
         default:
             throw new IllegalArgumentException(
-                    "No implementation is available for the cycle breaker " + this.toString());
+                    "No implementation is available for the layerer " + this.toString());
         }
     }
 
