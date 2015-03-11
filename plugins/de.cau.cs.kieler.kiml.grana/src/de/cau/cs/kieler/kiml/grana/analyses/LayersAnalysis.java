@@ -29,6 +29,7 @@ import de.cau.cs.kieler.kiml.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
+import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -192,7 +193,12 @@ public class LayersAnalysis implements IAnalysis {
                     // edges may be 'against' the main flow
                     float start = Math.min(el.getSourcePoint().getX(), el.getTargetPoint().getX());
                     float end = Math.max(el.getSourcePoint().getX(), el.getTargetPoint().getX());
-
+                    // cope with inverted ports that might "start" within a layer
+                    for (KPoint bend : el.getBendPoints()) {
+                        start = Math.min(start, bend.getX());
+                        end = Math.max(end, bend.getX());
+                    }
+                    
                     for (Layer layer : verticalLayers) {
                         if (start < layer.start && end > layer.end) {
                             dummyCount++;
@@ -208,7 +214,12 @@ public class LayersAnalysis implements IAnalysis {
                     // edges may be 'against' the main flow
                     float start = Math.min(el.getSourcePoint().getY(), el.getTargetPoint().getY());
                     float end = Math.max(el.getSourcePoint().getY(), el.getTargetPoint().getY());
-
+                    // cope with inverted ports that might "start" within a layer
+                    for (KPoint bend : el.getBendPoints()) {
+                        start = Math.min(start, bend.getY());
+                        end = Math.max(end, bend.getY());
+                    }
+                    
                     for (Layer layer : horizontalLayers) {
                         if (start < layer.start && end > layer.end) {
                             dummyCount++;

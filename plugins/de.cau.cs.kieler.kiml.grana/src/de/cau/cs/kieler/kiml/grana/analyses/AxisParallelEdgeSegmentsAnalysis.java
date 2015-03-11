@@ -97,7 +97,7 @@ public class AxisParallelEdgeSegmentsAnalysis implements IAnalysis {
                         .getResult(LayersAnalysis.ID))[LayersAnalysis.INDEX_DUMMIES];
         Integer bendpoints =
                 (Integer) ((Object[]) context
-                        .getResult(BendsAnalysis.ID))[BendsAnalysis.INDEX_SUM];
+                        .getResult(BendsAnalysis.ID))[BendsAnalysis.INDEX_SUM_NON_UNIQUE];
         
         // north/southports need to be handled specially 
         // every edge that starts or ends in an ns-port
