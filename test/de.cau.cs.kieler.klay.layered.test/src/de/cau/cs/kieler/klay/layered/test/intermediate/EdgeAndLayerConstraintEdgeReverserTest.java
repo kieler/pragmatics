@@ -23,6 +23,7 @@ import org.junit.Test;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
+import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.intermediate.EdgeAndLayerConstraintEdgeReverser;
@@ -76,16 +77,32 @@ public class EdgeAndLayerConstraintEdgeReverserTest extends AbstractLayeredProce
     /**
      * Every node with a FIRST or FIRST_SEPARATE {@link LayerConstraint} must not have any incoming
      * edge. Analog for the LAST and LAST_SEPARATE constraints.
+     * 
+     * There is an exception though. FIRST nodes are allowed to have incoming edges of FIRST_SEPARATE 
+     * nodes (likewise for LAST and LAST_SEPARATE). 
      */
     @Test
     public void testLayerConstraints() {
         for (LGraph g : state.getGraphs()) {
             for (LNode node : g.getLayerlessNodes()) {
                 LayerConstraint constr = node.getProperty(Properties.LAYER_CONSTRAINT);
-                if (constr == LayerConstraint.FIRST || constr == LayerConstraint.FIRST_SEPARATE) {
+                if (constr == LayerConstraint.FIRST) {
+                    // either no incoming edges or only from FIRST_SEPARATE nodes
+                    for (LEdge inc : node.getIncomingEdges()) {
+                        LNode src = inc.getSource().getNode();
+                        assertTrue(src.getProperty(Properties.LAYER_CONSTRAINT)
+                                == LayerConstraint.FIRST_SEPARATE);
+                    }
+                } else if (constr == LayerConstraint.LAST) {
+                    // either no outgoing edges or only to LAST_SEPARATE nodes
+                    for (LEdge inc : node.getOutgoingEdges()) {
+                        LNode src = inc.getTarget().getNode();
+                        assertTrue(src.getProperty(Properties.LAYER_CONSTRAINT)
+                                == LayerConstraint.LAST_SEPARATE);
+                    }
+                } else if (constr == LayerConstraint.FIRST_SEPARATE) {
                     assertTrue(Iterables.isEmpty(node.getIncomingEdges()));
-                } else if (constr == LayerConstraint.LAST
-                        || constr == LayerConstraint.LAST_SEPARATE) {
+                } else if (constr == LayerConstraint.LAST_SEPARATE) {
                     assertTrue(Iterables.isEmpty(node.getOutgoingEdges()));
                 }
             }
