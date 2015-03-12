@@ -16,12 +16,15 @@ package de.cau.cs.kieler.klay.layered.p5edges;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.ILayoutPhaseFactory;
+import de.cau.cs.kieler.klay.layered.p5edges.splines.SplineEdgeRouter;
 
 /**
  * Factory for edge routers. This factory is necessary since the {@link EdgeRouting} enumeration is
  * defined outside of KLay Layered and can thus not be made into a factory.
  * 
  * @author cds
+ * @kieler.design proposed by cds
+ * @kieler.rating proposed yellow by cds
  */
 public final class EdgeRouterFactory implements ILayoutPhaseFactory {
     

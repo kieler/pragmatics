@@ -23,8 +23,8 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 
 import de.cau.cs.kieler.klighd.KlighdPlugin;
+import de.cau.cs.kieler.klighd.piccolo.internal.KlighdCanvas;
 import de.cau.cs.kieler.klighd.piccolo.internal.events.IKlighdInputEventHandlerEx.IKlighdInputEvent;
-import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdCanvas;
 
 /**
  * Custom key listener implementation that is supposed to avoid the translation of SWT events into
@@ -53,22 +53,16 @@ public class KlighdKeyEventListener implements KeyListener {
      * {@inheritDoc}
      */
     public void keyPressed(final KeyEvent e) {
-        this.canvas
-                .getRoot()
-                .getDefaultInputManager()
-                .processEventFromCamera(new KlighdKeyEvent(e, SWT.KeyDown),
-                        java.awt.event.KeyEvent.KEY_PRESSED, this.canvas.getCamera());
+        this.canvas.sendInputEventToInputManager(new KlighdKeyEvent(e, SWT.KeyDown),
+                java.awt.event.KeyEvent.KEY_PRESSED);
     }
 
     /**
      * {@inheritDoc}
      */
     public void keyReleased(final KeyEvent e) {
-        this.canvas
-                .getRoot()
-                .getDefaultInputManager()
-                .processEventFromCamera(new KlighdKeyEvent(e, SWT.KeyUp),
-                        java.awt.event.KeyEvent.KEY_RELEASED, this.canvas.getCamera());
+        this.canvas.sendInputEventToInputManager(new KlighdKeyEvent(e, SWT.KeyUp),
+                java.awt.event.KeyEvent.KEY_RELEASED);
     }
 
 

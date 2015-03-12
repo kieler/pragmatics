@@ -33,6 +33,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * An analysis for the number of horizontal and vertical layers. Also analyzes 
@@ -185,46 +186,56 @@ public class LayersAnalysis implements IAnalysis {
         // analyze the number of dummy nodes (only valid for a layer-based layout)
         int dummyCount = 0;
         Direction dir = parentNode.getData(KLayoutData.class).getProperty(LayoutOptions.DIRECTION);
+        
+        // collect the edges we want to check
+        final List<KEdge> edges = Lists.newArrayList();
+        for (KNode node : parentNode.getChildren()) {
+            edges.addAll(node.getOutgoingEdges());
+        }
+        // edges of the parent's external ports
+        for (KEdge e : parentNode.getOutgoingEdges()) {
+            if (KimlUtil.isDescendant(e.getTarget(), parentNode)) {
+                edges.add(e);
+            }
+        }
+
+        
         if (dir == Direction.LEFT || dir == Direction.RIGHT 
                 || dir == Direction.UNDEFINED) { // default direction is kindof left-to-right
-            for (KNode node : parentNode.getChildren()) {
-                for (KEdge e : node.getOutgoingEdges()) {
-                    KEdgeLayout el = e.getData(KEdgeLayout.class);
-                    // edges may be 'against' the main flow
-                    float start = Math.min(el.getSourcePoint().getX(), el.getTargetPoint().getX());
-                    float end = Math.max(el.getSourcePoint().getX(), el.getTargetPoint().getX());
-                    // cope with inverted ports that might "start" within a layer
-                    for (KPoint bend : el.getBendPoints()) {
-                        start = Math.min(start, bend.getX());
-                        end = Math.max(end, bend.getX());
-                    }
-                    
-                    for (Layer layer : verticalLayers) {
-                        if (start < layer.start && end > layer.end) {
-                            dummyCount++;
-                            layer.dummies++;
-                        }
+            for (KEdge e : edges) {
+                KEdgeLayout el = e.getData(KEdgeLayout.class);
+                // edges may be 'against' the main flow
+                float start = Math.min(el.getSourcePoint().getX(), el.getTargetPoint().getX());
+                float end = Math.max(el.getSourcePoint().getX(), el.getTargetPoint().getX());
+                // cope with inverted ports that might "start" within a layer
+                for (KPoint bend : el.getBendPoints()) {
+                    start = Math.min(start, bend.getX());
+                    end = Math.max(end, bend.getX());
+                }
+
+                for (Layer layer : verticalLayers) {
+                    if (start < layer.start && end > layer.end) {
+                        dummyCount++;
+                        layer.dummies++;
                     }
                 }
             }
         } else {
-            for (KNode node : parentNode.getChildren()) {
-                for (KEdge e : node.getOutgoingEdges()) {
-                    KEdgeLayout el = e.getData(KEdgeLayout.class);
-                    // edges may be 'against' the main flow
-                    float start = Math.min(el.getSourcePoint().getY(), el.getTargetPoint().getY());
-                    float end = Math.max(el.getSourcePoint().getY(), el.getTargetPoint().getY());
-                    // cope with inverted ports that might "start" within a layer
-                    for (KPoint bend : el.getBendPoints()) {
-                        start = Math.min(start, bend.getY());
-                        end = Math.max(end, bend.getY());
-                    }
-                    
-                    for (Layer layer : horizontalLayers) {
-                        if (start < layer.start && end > layer.end) {
-                            dummyCount++;
-                            layer.dummies++;
-                        }
+            for (KEdge e : edges) {
+                KEdgeLayout el = e.getData(KEdgeLayout.class);
+                // edges may be 'against' the main flow
+                float start = Math.min(el.getSourcePoint().getY(), el.getTargetPoint().getY());
+                float end = Math.max(el.getSourcePoint().getY(), el.getTargetPoint().getY());
+                // cope with inverted ports that might "start" within a layer
+                for (KPoint bend : el.getBendPoints()) {
+                    start = Math.min(start, bend.getY());
+                    end = Math.max(end, bend.getY());
+                }
+
+                for (Layer layer : horizontalLayers) {
+                    if (start < layer.start && end > layer.end) {
+                        dummyCount++;
+                        layer.dummies++;
                     }
                 }
             }

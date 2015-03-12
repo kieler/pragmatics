@@ -137,4 +137,18 @@ public class LayerConstraintProcessorTest extends AbstractLayeredProcessorTest {
             }
         }
     }
+    
+    /**
+     * After constraint processing no empty layers should be left behind.
+     * 
+     * @see KIPRA-1561
+     */
+    @Test
+    public void noEmptyLayerTest() {
+        for (LGraph g : state.getGraphs()) {
+            for (Layer layer : g.getLayers()) {
+                assertTrue(!layer.getNodes().isEmpty());
+            }
+        }
+    }
 }

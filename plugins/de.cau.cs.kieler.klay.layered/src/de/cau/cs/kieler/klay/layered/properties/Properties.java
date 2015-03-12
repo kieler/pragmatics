@@ -241,6 +241,13 @@ public final class Properties {
      */
     public static final IProperty<Float> EDGE_REVERSAL_WEIGHT_FACTOR = new Property<Float>(
             "de.cau.cs.kieler.klay.layered.edgeReversalWeightFactor", 0.5f);
+    
+    /**
+     * The spline-self-loop distribution method.
+     */
+    public static final IProperty<SelfLoopPlacement> SPLINE_SELF_LOOP_PLACEMENT =
+            new Property<SelfLoopPlacement>("de.cau.cs.kieler.klay.layered.splines.selfLoopPlacement",
+                    SelfLoopPlacement.NORTH_STACKED);
 
     /**
      * The maximal number of layers allowed.

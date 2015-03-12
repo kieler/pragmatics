@@ -65,7 +65,9 @@ public class AxisParallelEdgeSegmentsAnalysis implements IAnalysis {
     private static final String KLAY_LAYERED_ID = "de.cau.cs.kieler.klay.layered";
     private static final IProperty<String> ALGORITHM = new Property<String>(
             "de.cau.cs.kieler.algorithm");
-    
+    private static final IProperty<Object> SIMPLE_NODE_PLACE = new Property<Object>(
+            "de.cau.cs.kieler.klay.layered.nodePlace");
+
     private static final Set<Direction> LEFT_TO_RIGHT = ImmutableSet.of(Direction.UNDEFINED,
             Direction.LEFT, Direction.RIGHT);
     private static final Set<PortSide> NORTH_SOUTH = ImmutableSet
@@ -99,12 +101,15 @@ public class AxisParallelEdgeSegmentsAnalysis implements IAnalysis {
                 (Integer) ((Object[]) context
                         .getResult(BendsAnalysis.ID))[BendsAnalysis.INDEX_SUM_NON_UNIQUE];
         
-        // north/southports need to be handled specially 
-        // every edge that starts or ends in an ns-port
-        // contributes exactly one bendpoint. Such an 
-        // edge is not considered axis-parallel. For an easy 
-        // calculation we add a second (pseudo) bendpoint,
-        // just to mark the edge as not being axis-parallel.
+        // North/southports need to be handled specially. 
+        //  Every edge that starts or ends in an ns-port
+        //  contributes exactly one bendpoint. Such an 
+        //  edge is not considered axis-parallel. For an easy 
+        //  calculation we add a second (pseudo) bendpoint,
+        //  just to mark the edge as not being axis-parallel.
+        // Note, however, that this is only true if the connected
+        //  edge segment is drawn straight, e.g. with the SIMPLE node
+        //  placer this assumption is not true.
         Iterator<EObject> allContents = parentNode.eAllContents();
         int specialBendpoints = 0;
         while (allContents.hasNext()) {
@@ -156,7 +161,12 @@ public class AxisParallelEdgeSegmentsAnalysis implements IAnalysis {
             }
         }
 
-        int notAxisParallel = (bendpoints + specialBendpoints) / 2;
+        int notAxisParallel = 0;
+        if ("SIMPLE".equals(ld.getProperty(SIMPLE_NODE_PLACE).toString())) {
+            notAxisParallel = (bendpoints - specialBendpoints) / 2;
+        } else {
+            notAxisParallel = (bendpoints + specialBendpoints) / 2;
+        }
         int axisParallel = edgeCount + dummies - notAxisParallel;
 
         progressMonitor.done();

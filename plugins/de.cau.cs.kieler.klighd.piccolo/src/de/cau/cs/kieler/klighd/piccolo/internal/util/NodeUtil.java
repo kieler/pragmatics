@@ -30,9 +30,9 @@ import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.klighd.microlayout.Bounds;
+import de.cau.cs.kieler.klighd.piccolo.IKlighdNode.IKNodeNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.controller.PNodeController;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.IInternalKGraphElementNode;
-import de.cau.cs.kieler.klighd.piccolo.internal.nodes.IInternalKGraphElementNode.IKNodeNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdMainCamera;
 import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
@@ -385,7 +385,7 @@ public final class NodeUtil {
             throw new IllegalArgumentException(
                     "KLighD: 'camera' in NodeUtil.isDisplayed(...) must not be 'null'");
         }
-        final PLayer displayedLayer = camera.getDisplayedLayer();
+        final PLayer displayedLayer = camera.getDisplayedKNodeNode();
 
         PNode parent = node;
 
@@ -461,7 +461,7 @@ public final class NodeUtil {
 
     /**
      * A simple implementation of the {@link Iterator} interface allowing to traverse the
-     * 'parent' chain of {@link IKNodeNode INodes}.
+     * 'parent' chain of {@link IKNodeNode IKNodeNodes}.
      *
      * @author chsch
      */
@@ -474,7 +474,7 @@ public final class NodeUtil {
                 throw new IllegalArgumentException("Class ParentINodeIterator:"
                         + "Constructor of ParentINodeIterator requires a non-null input.");
             }
-            this.node = includingSelf ? child : child.getParentNode();
+            this.node = includingSelf ? child : child.getParentKNodeNode();
         }
 
         public boolean hasNext() {
@@ -486,7 +486,7 @@ public final class NodeUtil {
                 throw new IllegalStateException("Class ParentINodeIterator: There is no more element.");
             }
             final IKNodeNode res = node;
-            node = node.getParentNode();
+            node = node.getParentKNodeNode();
             return res;
         }
 
@@ -517,12 +517,12 @@ public final class NodeUtil {
             return null;
 
         } else if (node0 == node1) {
-            return node0.getParentNode();
+            return node0.getParentKNodeNode();
 
         }
 
-        final IKNodeNode node0parent = node0.getParentNode();
-        final IKNodeNode node1parent = node1.getParentNode();
+        final IKNodeNode node0parent = node0.getParentKNodeNode();
+        final IKNodeNode node1parent = node1.getParentKNodeNode();
 
         // and some not so trivial cases...
         if (node0parent == null || node1parent == null) {
