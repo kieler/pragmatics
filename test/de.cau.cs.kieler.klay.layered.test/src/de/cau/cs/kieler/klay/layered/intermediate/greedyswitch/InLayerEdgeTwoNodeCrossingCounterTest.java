@@ -4,13 +4,14 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 
-public class InLayerEdgeNeighboringNodeCrossingCounterTest {
+public class InLayerEdgeTwoNodeCrossingCounterTest {
     private TestGraphCreator creator;
-    private InLayerEdgeNeighboringNodeCrossingCounter counter;
+    private InLayerEdgeTwoNodeCrossingCounter counter;
     private int lowerUpperCrossings;
     private int upperLowerCrossings;
     private LNode[] nodeOrder;
@@ -343,8 +344,20 @@ public class InLayerEdgeNeighboringNodeCrossingCounterTest {
 
         assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
         assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
-
     }
+
+    @Ignore
+    // this case is not supported by the current algorithm
+    public void multipleEdgesIntoOnePortAndFreePortOrderCausesCrossings() {
+        creator.multipleEdgesIntoOnePortAndFreePortOrder();
+
+        countCrossingsInLayerForUpperNodeLowerNode(0, 0, 1);
+
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+    }
+
+    // TODO-alan same with switch
 
     private void countCrossingsInLayerForUpperNodeLowerNode(final int layerIndex,
             final int upperNodeIndex, final int lowerNodeIndex) {
@@ -371,7 +384,7 @@ public class InLayerEdgeNeighboringNodeCrossingCounterTest {
         LNode[][] currentOrder = creator.getCurrentOrder();
         nodeOrder = currentOrder[layerIndex];
         numberIdsAscendinglyIn(nodeOrder);
-        counter = new InLayerEdgeNeighboringNodeCrossingCounter(nodeOrder);
+        counter = new InLayerEdgeTwoNodeCrossingCounter(nodeOrder);
     }
 
     private void numberIdsAscendinglyIn(final LNode[] nodes) {
@@ -381,7 +394,7 @@ public class InLayerEdgeNeighboringNodeCrossingCounterTest {
     }
 
     private void switchOrderAndNotifyCounter(final int indexOne, final int indexTwo) {
-        counter.notifyNodeSwitch(nodeOrder[indexOne], nodeOrder[indexTwo]);
+        counter.notifyOfSwitch(nodeOrder[indexOne], nodeOrder[indexTwo]);
         LNode one = nodeOrder[indexOne];
         nodeOrder[indexOne] = nodeOrder[indexTwo];
         nodeOrder[indexTwo] = one;

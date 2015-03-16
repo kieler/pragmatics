@@ -51,9 +51,14 @@ class SwitchDeciderFactory {
         case TWO_SIDED_CROSSING_MATRIX:
             return new CrossingMatrixTwoSidedSwitchDecider(freeLayerIndex, currentNodeOrder);
         case ONE_SIDED_ON_DEMAND_CROSSING_MATRIX:
+        case ONE_SIDED_ON_DEMAND_CROSSING_MATRIX_BEST_OF_UP_OR_DOWN:
+        case ONE_SIDED_ON_DEMAND_CROSSING_MATRIX_BEST_OF_UP_OR_DOWN_ORTHOGONAL_HYPEREDGES:
+        case ONE_SIDED_ON_DEMAND_CROSSING_MATRIX_ORTHOGONAL_HYPEREDGES:
             return new OnDemandCrossingMatrixOneSidedSwitchDecider(freeLayerIndex,
                     currentNodeOrder, direction);
         case TWO_SIDED_ON_DEMAND_CROSSING_MATRIX:
+        case TWO_SIDED_ON_DEMAND_CROSSING_MATRIX_BEST_OF_UP_OR_DOWN:
+        case TWO_SIDED_ON_DEMAND_CROSSING_MATRIX_BEST_OF_UP_OR_DOWN_ORTHOGONAL_HYPEREDGES:
             return new OnDemandCrossingMatrixTwoSidedSwitchDecider(freeLayerIndex, currentNodeOrder);
         case OFF:
             throw new UnsupportedOperationException("You are trying to make a SwitchDecider with "

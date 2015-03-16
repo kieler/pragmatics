@@ -33,7 +33,7 @@ import de.cau.cs.kieler.klay.layered.properties.NodeType;
  * @author alan
  *
  */
-public class NorthSouthPortNeighbouringNodeCounter {
+public class NorthSouthEdgeNeighbouringNodeCrossingsCounter {
 
     private int upperLowerCrossings;
     private int lowerUpperCrossings;
@@ -46,7 +46,7 @@ public class NorthSouthPortNeighbouringNodeCounter {
      * @param nodes
      *            the order of nodes in the layer in question.
      */
-    public NorthSouthPortNeighbouringNodeCounter(final LNode[] nodes) {
+    public NorthSouthEdgeNeighbouringNodeCrossingsCounter(final LNode[] nodes) {
         layer = nodes;
         portPositions = new HashMap<LPort, Integer>();
         initializePortPositions();

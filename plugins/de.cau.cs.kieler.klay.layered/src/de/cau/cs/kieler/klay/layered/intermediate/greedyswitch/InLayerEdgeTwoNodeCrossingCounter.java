@@ -17,7 +17,7 @@ import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.PortIterable.Port
  * @author alan
  *
  */
-class InLayerEdgeNeighboringNodeCrossingCounter extends InLayerEdgeCrossingCounter {
+class InLayerEdgeTwoNodeCrossingCounter extends InLayerEdgeCrossingsCounter {
 
     private final List<ComparableEdgeAndPort> relevantEdgesAndPorts;
     private int upperLowerCrossings;
@@ -25,7 +25,7 @@ class InLayerEdgeNeighboringNodeCrossingCounter extends InLayerEdgeCrossingCount
     private LNode upperNode;
     private LNode lowerNode;
 
-    public InLayerEdgeNeighboringNodeCrossingCounter(final LNode[] nodeOrder) {
+    public InLayerEdgeTwoNodeCrossingCounter(final LNode[] nodeOrder) {
         super(nodeOrder);
         relevantEdgesAndPorts = Lists.newArrayList();
     }
@@ -37,12 +37,12 @@ class InLayerEdgeNeighboringNodeCrossingCounter extends InLayerEdgeCrossingCount
         upperLowerCrossings = countCrossingsOnSide(PortSide.EAST);
         upperLowerCrossings += countCrossingsOnSide(PortSide.WEST);
 
-        notifyNodeSwitch(upperNode, lowerNode);
+        notifyOfSwitch(upperNode, lowerNode);
 
         lowerUpperCrossings = countCrossingsOnSide(PortSide.EAST);
         lowerUpperCrossings += countCrossingsOnSide(PortSide.WEST);
 
-        notifyNodeSwitch(lowerNode, upperNode);
+        notifyOfSwitch(lowerNode, upperNode);
     }
 
     private int countCrossingsOnSide(final PortSide side) {
@@ -60,7 +60,7 @@ class InLayerEdgeNeighboringNodeCrossingCounter extends InLayerEdgeCrossingCount
     }
 
     private void iterateThroughEdgesAndCollectThem(final LNode node, final PortSide side) {
-        Iterable<LPort> ports = new PortIterable(node, side, PortOrder.TOPDOWN_LEFTRIGHT);
+        Iterable<LPort> ports = new PortIterable(node, side, PortOrder.NORTHSOUTH_EASTWEST);
         for (LPort port : ports) {
             for (LEdge edge : port.getConnectedEdges()) {
                 if (!edge.isSelfLoop()) {

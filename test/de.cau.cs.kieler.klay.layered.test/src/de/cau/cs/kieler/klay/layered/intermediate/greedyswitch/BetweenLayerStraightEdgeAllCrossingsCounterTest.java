@@ -8,9 +8,9 @@ import org.junit.Test;
 
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 
-public class InBetweenLayerEdgeAllCrossingCounterTest {
+public class BetweenLayerStraightEdgeAllCrossingsCounterTest {
     private TestGraphCreator creator;
-    private InBetweenLayerEdgeAllCrossingCounter crossingCounter;
+    private BetweenLayerEdgeAllCrossingsCounter crossingCounter;
     private LNode[][] nodeOrder;
     private LNode[] leftLayer;
     private LNode[] rightLayer;
@@ -137,7 +137,7 @@ public class InBetweenLayerEdgeAllCrossingCounterTest {
     }
 
     private void initCrossingCounter() {
-        crossingCounter = new InBetweenLayerEdgeAllCrossingCounter(nodeOrder);
+        crossingCounter = new BetweenLayerStraightEdgeAllCrossingsCounter(nodeOrder);
     }
 
 }

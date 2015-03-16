@@ -24,10 +24,10 @@ import org.junit.runners.Suite.SuiteClasses;
  *
  */
 @RunWith(Suite.class)
-@SuiteClasses({ AllCrossingCounterTest.class, AllInLayerEdgeCrossingCounterTest.class,
-        SwitchDeciderTest.class, InLayerEdgeNeighboringNodeCrossingCounterTest.class,
-        InBetweenLayerEdgeTwoNodeCrossingCounterTest.class, GreedySwitchTest.class,
-        NorthSouthPortNeighbouringNodeCounterTest.class, GreedySwitchOffTest.class })
+@SuiteClasses({ AllCrossingsCounterTest.class, AllInLayerEdgeCrossingCounterTest.class,
+        SwitchDeciderTest.class, InLayerEdgeTwoNodeCrossingCounterTest.class,
+        BetweenLayerEdgeTwoNodeCrossingsCounterTest.class, GreedySwitchProcessorTest.class,
+        NorthSouthEdgeNeighbouringNodeCrossingsCounterTest.class, GreedySwitchOffTest.class })
 public class AllGreedySwitchTests {
 
 }

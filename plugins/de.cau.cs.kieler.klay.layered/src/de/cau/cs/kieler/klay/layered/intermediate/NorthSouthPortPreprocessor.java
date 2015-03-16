@@ -519,7 +519,7 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
             dummyInputPort.setSide(PortSide.WEST);
             dummyInputPort.setNode(dummy);
 
-            addToNSPortList(dummyInputPort, inPort);
+            addToConnectedNorthSouthPortList(dummyInputPort, inPort);
 
             // Reroute edges
             LEdge[] edgeArray =
@@ -545,7 +545,7 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
             dummyOutputPort.setSide(PortSide.EAST);
             dummyOutputPort.setNode(dummy);
 
-            addToNSPortList(dummyOutputPort, outPort);
+            addToConnectedNorthSouthPortList(dummyOutputPort, outPort);
 
             // Reroute edges
             LEdge[] edgeArray =
@@ -569,15 +569,10 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
         return dummy;
     }
 
-    /**
-     * TODO-alan discuss!!!
-     * 
-     * @param nsNodePort
-     * @param portWithEdgeToNSNode
-     */
-    private void addToNSPortList(final LPort nsNodePort, final LPort portWithEdgeToNSNode) {
+    private void addToConnectedNorthSouthPortList(final LPort nsNodePort, final LPort portWithEdgeToNSNode) {
         List<LPort> connectedPorts =
-                portWithEdgeToNSNode.getProperty(InternalProperties.CONNECTED_NORTH_SOUTH_PORT_DUMMIES);
+                portWithEdgeToNSNode
+                        .getProperty(InternalProperties.CONNECTED_NORTH_SOUTH_PORT_DUMMIES);
         connectedPorts.add(nsNodePort);
     }
 

@@ -43,7 +43,7 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
     public static val SynthesisOption COMMENT_ATTACHMENT_HEURISTIC =
         SynthesisOption::createCheckOption("Comment attachment heuristic", true)
     public static val SynthesisOption FLATTEN = SynthesisOption::createCheckOption(
-        "Flatten Composite Actors", false)
+        "Flatten Composite Actors", true)
     public static val SynthesisOption COMPOUND_NODE_ALPHA = SynthesisOption::createRangeOption(
         "Nested model darkness", 0f, 255f, 30f)
     

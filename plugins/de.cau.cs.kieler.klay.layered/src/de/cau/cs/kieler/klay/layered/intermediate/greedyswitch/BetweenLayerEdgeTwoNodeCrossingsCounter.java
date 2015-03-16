@@ -34,7 +34,7 @@ import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.PortIterable.Port
  * @author alan
  *
  */
-class InBetweenLayerEdgeTwoNodeCrossingCounter {
+class BetweenLayerEdgeTwoNodeCrossingsCounter {
     private int upperLowerCrossings;
     private int lowerUpperCrossings;
     private AdjacencyList upperAdjacencies;
@@ -46,7 +46,7 @@ class InBetweenLayerEdgeTwoNodeCrossingCounter {
     private final Map<LNode, AdjacencyList> westernAdjacencies;
 
     /**
-     * Create {@link InBetweenLayerEdgeTwoNodeCrossingCounter}. Naming assumes a left-right layer
+     * Create {@link BetweenLayerEdgeTwoNodeCrossingsCounter}. Naming assumes a left-right layer
      * ordering.
      * 
      * @param currentNodeOrder
@@ -54,7 +54,7 @@ class InBetweenLayerEdgeTwoNodeCrossingCounter {
      * @param freeLayerIndex
      *            Index of free layer.
      */
-    public InBetweenLayerEdgeTwoNodeCrossingCounter(final LNode[][] currentNodeOrder,
+    public BetweenLayerEdgeTwoNodeCrossingsCounter(final LNode[][] currentNodeOrder,
             final int freeLayerIndex) {
         portPositions = Maps.newHashMap();
         easternAdjacencies = Maps.newHashMap();
@@ -84,7 +84,7 @@ class InBetweenLayerEdgeTwoNodeCrossingCounter {
     private void setPortPositionsForLayer(final int layerIndex, final PortSide portSide) {
         int portId = 0;
         for (LNode node : currentNodeOrder[layerIndex]) {
-            PortIterable ports = new PortIterable(node, portSide, PortOrder.TOPDOWN_LEFTRIGHT);
+            PortIterable ports = new PortIterable(node, portSide, PortOrder.NORTHSOUTH_EASTWEST);
             for (LPort port : ports) {
                 portPositions.put(port, portId);
                 if (portOrderIsFixed(node)) {
@@ -103,7 +103,7 @@ class InBetweenLayerEdgeTwoNodeCrossingCounter {
 
     /**
      * Calculates the number of crossings for incident edges coming from the west to node i and j.
-     * The crossing amounts can be received with getCrossingForOrderUpperLower and
+     * The crossing numbers can be received with getCrossingForOrderUpperLower and
      * getCrossingForOrderLowerUpper for the order upperNode -> lowerNode or lowerNode -> upperNode
      * respectively.
      * 
@@ -122,7 +122,7 @@ class InBetweenLayerEdgeTwoNodeCrossingCounter {
 
     /**
      * Calculates the number of crossings for incident edges coming from the east to node i and j.
-     * The crossing amounts can be received with getCrossingForOrderUpperLower and
+     * The crossing numbers can be received with getCrossingForOrderUpperLower and
      * getCrossingForOrderLowerUpper for the order upperNode -> lowerNode or lowerNode -> upperNode
      * respectively.
      * 
@@ -140,10 +140,10 @@ class InBetweenLayerEdgeTwoNodeCrossingCounter {
     }
 
     /**
-     * Calculates the number of crossings for incident edges coming from the both sides to node i
-     * and j. The crossing amounts can be received with getCrossingForOrderUpperLower and
-     * getCrossingForOrderLowerUpper for the order upperNode -> lowerNode or lowerNode -> upperNode
-     * respectively.
+     * TODO-alan check for usage of the word amount Calculates the number of crossings for incident
+     * edges coming from the both sides to node i and j. The crossing numbers can be received with
+     * getCrossingForOrderUpperLower and getCrossingForOrderLowerUpper for the order upperNode ->
+     * lowerNode or lowerNode -> upperNode respectively.
      * 
      * @param upperNode
      *            Upper node assuming left-right layout.
@@ -265,7 +265,7 @@ class InBetweenLayerEdgeTwoNodeCrossingCounter {
         }
 
         private void iterateTroughEdgesCollectingAdjacencies() {
-            PortIterable ports = new PortIterable(node, side, PortOrder.TOPDOWN_LEFTRIGHT);
+            PortIterable ports = new PortIterable(node, side, PortOrder.NORTHSOUTH_EASTWEST);
             for (LPort port : ports) {
                 List<LEdge> edges = getEdgesConnectedTo(port);
                 for (LEdge edge : edges) {

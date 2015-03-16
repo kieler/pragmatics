@@ -25,14 +25,14 @@ import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.PortIterable.Port
  * @author alan
  *
  */
-class InLayerEdgeAllCrossingCounter extends InLayerEdgeCrossingCounter {
+class InLayerEdgeAllCrossingsCounter extends InLayerEdgeCrossingsCounter {
     /**
      * Create in-layer edge crossingCounter with current order of nodes.
      * 
      * @param nodeOrder
      *            current node order.
      */
-    public InLayerEdgeAllCrossingCounter(final LNode[] nodeOrder) {
+    public InLayerEdgeAllCrossingsCounter(final LNode[] nodeOrder) {
         super(nodeOrder);
     }
 
@@ -51,7 +51,7 @@ class InLayerEdgeAllCrossingCounter extends InLayerEdgeCrossingCounter {
     private int iterateEdgesTopDownAndCountCrossingsOnSide(final PortSide portSide) {
         int crossings = 0;
         for (LNode node : getNodeOrder()) {
-            PortIterable ports = new PortIterable(node, portSide, PortOrder.TOPDOWN_LEFTRIGHT);
+            PortIterable ports = new PortIterable(node, portSide, PortOrder.NORTHSOUTH_EASTWEST);
             for (LPort port : ports) {
                 for (LEdge edge : port.getConnectedEdges()) {
                     if (!edge.isSelfLoop()) {

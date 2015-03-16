@@ -3,10 +3,14 @@ package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 
-abstract class InBetweenLayerEdgeAllCrossingsCounter {
+abstract class BetweenLayerEdgeAllCrossingsCounter {
 
     protected int[] portPos;
-    int portCount;
+    protected int portCount;
+
+    public BetweenLayerEdgeAllCrossingsCounter(final LNode[][] graph) {
+        initialize(graph);
+    }
 
     /**
      * Calculate the number of crossings between the two given layers. Taken from
@@ -28,7 +32,7 @@ abstract class InBetweenLayerEdgeAllCrossingsCounter {
                 }
             }
         }
-    
+
         // Initialize the port positions and ranks arrays
         portPos = new int[portCount];
     }

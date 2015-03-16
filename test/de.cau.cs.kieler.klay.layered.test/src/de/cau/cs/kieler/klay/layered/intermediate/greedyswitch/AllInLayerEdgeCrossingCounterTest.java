@@ -35,7 +35,7 @@ public class AllInLayerEdgeCrossingCounterTest {
 
     private TestGraphCreator creator;
     private LNode[] nodeOrder;
-    private InLayerEdgeAllCrossingCounter counter;
+    private InLayerEdgeAllCrossingsCounter counter;
 
     // CHECKSTYLEOFF MagicNumber
     // CHECKSTYLEOFF javadoc
@@ -276,7 +276,7 @@ public class AllInLayerEdgeCrossingCounterTest {
     private void initCrossingCounterForLayerIndex(final int layerIndex) {
         LNode[][] currentOrder = creator.getCurrentOrder();
         nodeOrder = currentOrder[layerIndex];
-        counter = new InLayerEdgeAllCrossingCounter(nodeOrder);
+        counter = new InLayerEdgeAllCrossingsCounter(nodeOrder);
     }
 
     private void switchOrder(final int indexOne, final int indexTwo) {

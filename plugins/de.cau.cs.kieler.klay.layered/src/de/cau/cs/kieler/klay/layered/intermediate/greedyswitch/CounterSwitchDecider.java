@@ -24,8 +24,10 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
  */
 abstract class CounterSwitchDecider extends SwitchDecider {
 
-    private final InBetweenLayerEdgeAllCrossingCounter betweenLayerCounter;
+    private final BetweenLayerEdgeAllCrossingsCounter betweenLayerCounter;
     private int amountOfCrossingsInCurrentLayer = 0;
+    private InLayerEdgeAllCrossingsCounter inLayerEdgeAllCrossingCounter;
+    private NorthSouthEdgeAllCrossingsCounter northSouthPortAllCrossingCounter;
 
     /**
      * Constructs CounterSwitchDecider.
@@ -39,7 +41,7 @@ abstract class CounterSwitchDecider extends SwitchDecider {
      */
     public CounterSwitchDecider(final int freeLayerIndex, final LNode[][] graph) {
         super(freeLayerIndex, graph);
-        betweenLayerCounter = new InBetweenLayerEdgeAllCrossingCounter(super.getGraph());
+        betweenLayerCounter = new BetweenLayerStraightEdgeAllCrossingsCounter(super.getGraph());
     }
 
     @Override
@@ -74,6 +76,8 @@ abstract class CounterSwitchDecider extends SwitchDecider {
 
     @Override
     public void notifyOfSwitch(final LNode upperNode, final LNode lowerNode) {
+        inLayerEdgeAllCrossingCounter.notifyOfSwitch(upperNode, lowerNode);
+        northSouthPortAllCrossingCounter.notifyNodeSwitch(upperNode, lowerNode);
     }
 
     /**
@@ -83,16 +87,18 @@ abstract class CounterSwitchDecider extends SwitchDecider {
      */
     abstract int calculateCrossings();
 
-    protected InBetweenLayerEdgeAllCrossingCounter getBetweenLayerCounter() {
+    protected BetweenLayerEdgeAllCrossingsCounter getBetweenLayerCounter() {
         return betweenLayerCounter;
     }
 
-    protected InLayerEdgeAllCrossingCounter getInLayerCounterFor(final LNode[] layer) {
-        return new InLayerEdgeAllCrossingCounter(layer);
+    protected InLayerEdgeAllCrossingsCounter getInLayerCounterFor(final LNode[] layer) {
+        inLayerEdgeAllCrossingCounter = new InLayerEdgeAllCrossingsCounter(layer);
+        return inLayerEdgeAllCrossingCounter;
     }
 
-    protected NorthSouthPortAllCrossingCounter getNorthSoutPortCounterFor(final LNode[] layer) {
-        return new NorthSouthPortAllCrossingCounter(layer);
+    protected NorthSouthEdgeAllCrossingsCounter getNorthSoutPortCounterFor(final LNode[] layer) {
+        northSouthPortAllCrossingCounter = new NorthSouthEdgeAllCrossingsCounter(layer);
+        return northSouthPortAllCrossingCounter;
     }
 
 }

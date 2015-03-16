@@ -41,7 +41,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *
  */
 @RunWith(Parameterized.class)
-public class GreedySwitchTest {
+public class GreedySwitchProcessorTest {
     private final TestGraphCreator creator = new TestGraphCreator();
     private LGraph graph;
     private final GreedySwitchProcessor greedySwitcher;
@@ -54,7 +54,7 @@ public class GreedySwitchTest {
      * @param gT
      *            greedyType
      */
-    public GreedySwitchTest(final GreedySwitchType gT) {
+    public GreedySwitchProcessorTest(final GreedySwitchType gT) {
         greedyType = gT;
         greedySwitcher = new GreedySwitchProcessor();
         monitor = new BasicProgressMonitor();
@@ -70,8 +70,11 @@ public class GreedySwitchTest {
         return Arrays.asList(new Object[][] { { GreedySwitchType.ONE_SIDED_COUNTER, },
                 { GreedySwitchType.ONE_SIDED_CROSSING_MATRIX },
                 { GreedySwitchType.ONE_SIDED_ON_DEMAND_CROSSING_MATRIX },
-                { GreedySwitchType.TWO_SIDED_COUNTER }, { GreedySwitchType.TWO_SIDED_CROSSING_MATRIX },
-                { GreedySwitchType.TWO_SIDED_ON_DEMAND_CROSSING_MATRIX } });
+                { GreedySwitchType.ONE_SIDED_ON_DEMAND_CROSSING_MATRIX_BEST_OF_UP_OR_DOWN },
+                { GreedySwitchType.TWO_SIDED_COUNTER },
+                { GreedySwitchType.TWO_SIDED_CROSSING_MATRIX },
+                { GreedySwitchType.TWO_SIDED_ON_DEMAND_CROSSING_MATRIX },
+                { GreedySwitchType.TWO_SIDED_ON_DEMAND_CROSSING_MATRIX_BEST_OF_UP_OR_DOWN }, });
     }
 
     // CHECKSTYLEOFF javadoc
@@ -97,7 +100,7 @@ public class GreedySwitchTest {
     }
 
     private void startGreedySwitcherWithCurrentType() {
-        graph.setProperty(Properties.GREEDY_TYPE, greedyType);
+        graph.setProperty(Properties.GREEDY_SWITCH_TYPE, greedyType);
         greedySwitcher.process(graph, monitor);
     }
 
@@ -210,7 +213,7 @@ public class GreedySwitchTest {
     /**
      * <pre>
      *     ______
-     * *---|____|
+     *     |____|
      *      |  |  
      *      *--+--*
      *         | 
@@ -221,9 +224,9 @@ public class GreedySwitchTest {
      */
     @Test
     public void northSouthPortCrossing() {
-        graph = creator.getThreeLayerNorthSouthCrossingShouldSwitchGraph();
+        graph = creator.getNorthSouthDownwardCrossingGraph();
 
-        int layerIndex = 1;
+        int layerIndex = 0;
         List<LNode> expectedOrderTwoSided = new ArrayList<LNode>(getNodesInLayer(layerIndex));
         List<LNode> expectedOrderOneSided = switchOrderOfNodesInLayer(1, 2, layerIndex);
 
@@ -320,6 +323,21 @@ public class GreedySwitchTest {
                     is(twoSidedFirstLayer));
             assertThat("Layer two " + getNodesInLayer(1), getNodesInLayer(1),
                     is(twoSidedsecondSwitchSecondLayer));
+        }
+
+    }
+
+    @Test
+    public void onlyCorrectlyImprovedByBestOfForwardAndBackwardSweepsInSingleLayer() {
+        graph = creator.getOnlyCorrectlyImprovedByBestOfForwardAndBackwardSweepsInSingleLayer();
+        List<LNode> expectedUpDown = switchOrderOfNodesInLayer(1, 2, 1);
+        List<LNode> expectedNormal = switchOrderOfNodesInLayer(0, 1, 1);
+
+        startGreedySwitcherWithCurrentType();
+        if (greedyType.useBestOfUpOrDown()) {
+            assertThat("Layer one" + getNodesInLayer(0), getNodesInLayer(1), is(expectedUpDown));
+        } else {
+            assertThat("Layer one" + getNodesInLayer(0), getNodesInLayer(1), is(expectedNormal));
         }
 
     }

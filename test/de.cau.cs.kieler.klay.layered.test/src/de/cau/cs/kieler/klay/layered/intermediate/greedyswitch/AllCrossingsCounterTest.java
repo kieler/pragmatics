@@ -26,17 +26,16 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 
 /**
- * Test for extracted and modified AllCrossingCounter.
+ * Test for extracted and modified AllCrossingsCounter.
  * 
  * @author alan
  *
  */
-public class AllCrossingCounterTest {
+public class AllCrossingsCounterTest {
 
     private TestGraphCreator testGraphCreator;
     private LGraph graph;
-    private AllCrossingCounter counter;
-    private LNode[][] graphAsLNodeArray;
+    private AllCrossingsCounter counter;
 
     // CHECKSTYLEOFF Javadoc
     // CHECKSTYLEOFF MagicNumber
@@ -69,7 +68,7 @@ public class AllCrossingCounterTest {
 
     @Test
     public void countNorthSouthCrossing() {
-        graph = testGraphCreator.getNorthSouthCrossingGraph();
+        graph = testGraphCreator.getNorthSouthDownwardCrossingGraph();
         int amountOfCrossings = whenCountingAllCrossings();
         assertThat(amountOfCrossings, is(1));
     }
@@ -168,7 +167,7 @@ public class AllCrossingCounterTest {
     }
 
     private int whenCountingAllCrossings() {
-        counter = new AllCrossingCounter(getAsLNodeArray(graph));
+        counter = new AllCrossingsCounter(getAsLNodeArray(graph));
         return counter.countAllCrossingsInGraph();
     }
 }

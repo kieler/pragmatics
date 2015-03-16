@@ -9,41 +9,16 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 
-class InBetweenLayerEdgeAllCrossingCounter {
-    private int[] portPos;
-    private int portCount;
+class BetweenLayerStraightEdgeAllCrossingsCounter extends BetweenLayerEdgeAllCrossingsCounter {
 
-    public InBetweenLayerEdgeAllCrossingCounter(final LNode[][] nodeOrder) {
-        initialize(nodeOrder);
-    }
-
-    private void initialize(final LNode[][] graph) {
-        portCount = 0;
-        for (LNode[] layer : graph) {
-            for (LNode node : layer) {
-                for (LPort port : node.getPorts()) {
-                    port.id = portCount++;
-                }
-            }
-        }
-
-        // Initialize the port positions and ranks arrays
-        portPos = new int[portCount];
+    public BetweenLayerStraightEdgeAllCrossingsCounter(final LNode[][] nodeOrder) {
+        super(nodeOrder);
     }
 
     /**
-     * Calculate the number of crossings between the two given layers. Taken from
-     * <ul>
-     * <li>W. Barth , M. Juenger, P. Mutzel, Simple and efficient bilayer cross counting, In
-     * <i>Graph Drawing</i>, volume 2528 of LNCS, pp. 331-360. Springer, 2002.</li>
-     * </ul>
-     *
-     * @param leftLayer
-     *            the left layer
-     * @param rightLayer
-     *            the right layer
-     * @return the number of edge crossings
+     * {@inheritDoc}
      */
+    @Override
     public int countCrossings(final LNode[] leftLayer, final LNode[] rightLayer) {
         // Assign index values to the ports of the right layer
         int targetCount = 0, edgeCount = 0;

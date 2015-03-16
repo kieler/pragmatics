@@ -21,9 +21,9 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
  */
 abstract class CrossingMatrixSwitchDecider extends SwitchDecider {
 
-    private final InLayerEdgeNeighboringNodeCrossingCounter inLayerCounter;
-    private final NorthSouthPortNeighbouringNodeCounter northSouthCounter;
-    private final InBetweenLayerEdgeTwoNodeCrossingCounter inBetweenLayerCrossingCounter;
+    private final InLayerEdgeTwoNodeCrossingCounter inLayerCounter;
+    private final NorthSouthEdgeNeighbouringNodeCrossingsCounter northSouthCounter;
+    private final BetweenLayerEdgeTwoNodeCrossingsCounter inBetweenLayerCrossingCounter;
 
     /**
      * @param freeLayerIndex
@@ -33,10 +33,10 @@ abstract class CrossingMatrixSwitchDecider extends SwitchDecider {
         super(freeLayerIndex, graph);
         initializeNodeIds(graph);
         inBetweenLayerCrossingCounter =
-                new InBetweenLayerEdgeTwoNodeCrossingCounter(graph, freeLayerIndex);
-        inLayerCounter = new InLayerEdgeNeighboringNodeCrossingCounter(super.getFreeLayer());
+                new BetweenLayerEdgeTwoNodeCrossingsCounter(graph, freeLayerIndex);
+        inLayerCounter = new InLayerEdgeTwoNodeCrossingCounter(super.getFreeLayer());
         // TODO-alan consider changing for only one-layer!
-        northSouthCounter = new NorthSouthPortNeighbouringNodeCounter(super.getFreeLayer());
+        northSouthCounter = new NorthSouthEdgeNeighbouringNodeCrossingsCounter(super.getFreeLayer());
     }
 
     private void initializeNodeIds(final LNode[][] graph) {
@@ -77,12 +77,12 @@ abstract class CrossingMatrixSwitchDecider extends SwitchDecider {
 
     @Override
     public void notifyOfSwitch(final LNode upperNode, final LNode lowerNode) {
-        inLayerCounter.notifyNodeSwitch(upperNode, lowerNode);
+        inLayerCounter.notifyOfSwitch(upperNode, lowerNode);
     }
 
     abstract int getCrossingMatrixEntry(final LNode upperNode, final LNode lowerNode);
 
-    protected InBetweenLayerEdgeTwoNodeCrossingCounter getTwoLayerCrossCounter() {
+    protected BetweenLayerEdgeTwoNodeCrossingsCounter getTwoLayerCrossCounter() {
         return inBetweenLayerCrossingCounter;
     }
 

@@ -16,8 +16,12 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 
-public class InBetweenLayerEdgeHyperedgeAllCrossingsCounter extends
-        InBetweenLayerEdgeAllCrossingsCounter {
+public class BetweenLayerHyperedgeAllCrossingsCounter extends
+        BetweenLayerEdgeAllCrossingsCounter {
+
+    public BetweenLayerHyperedgeAllCrossingsCounter(final LNode[][] graph) {
+        super(graph);
+    }
 
     /**
      * Hyperedge representation.

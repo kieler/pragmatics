@@ -29,9 +29,9 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
  * @author alan
  *
  */
-public class NorthSouthPortNeighbouringNodeCounterTest {
+public class NorthSouthEdgeNeighbouringNodeCrossingsCounterTest {
     private TestGraphCreator creator;
-    private NorthSouthPortNeighbouringNodeCounter counter;
+    private NorthSouthEdgeNeighbouringNodeCrossingsCounter counter;
     private LNode[] layer;
 
     // CHECKSTYLEOFF javadoc
@@ -313,7 +313,7 @@ public class NorthSouthPortNeighbouringNodeCounterTest {
     private void countCrossingsInLayerBetweenNodes(final int layerIndex, final int upperNodeIndex,
             final int lowerNodeIndex) {
         setLayerIfNotSet(layerIndex);
-        counter = new NorthSouthPortNeighbouringNodeCounter(layer);
+        counter = new NorthSouthEdgeNeighbouringNodeCrossingsCounter(layer);
         counter.countCrossings(layer[upperNodeIndex], layer[lowerNodeIndex]);
 
     }

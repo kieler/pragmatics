@@ -39,7 +39,7 @@ public class GreedySwitchOffTest {
     public void greedySwitchIsOff() {
         TestGraphCreator creator = new TestGraphCreator();
         LGraph graph = creator.getCrossFormedGraph();
-        graph.setProperty(Properties.GREEDY_TYPE, GreedySwitchType.OFF);
+        graph.setProperty(Properties.GREEDY_SWITCH_TYPE, GreedySwitchType.OFF);
 
         List<LNode> expectedOrderLayerOne = getNodesInLayer(0, graph);
         List<LNode> expectedOrderLayerTwo = getNodesInLayer(1, graph);

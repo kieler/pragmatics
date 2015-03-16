@@ -16,20 +16,20 @@ package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 
 /**
- * Counts the amount of crossings between two given layers or all layers in a graph. Counts
+ * Counts the number of crossings between two given layers or all layers in a graph. Counts
  * crossings between layers, worst-case crossings caused by in-layer edges and crossings caused by
  * north-south ports.
  *
  * @author alan
  *
  */
-public class AllCrossingCounter {
+public class AllCrossingsCounter {
 
     private final LNode[][] layeredGraph;
-    private int portCount;
-    private InLayerEdgeAllCrossingCounter inLayerEdgeCrossingsCounter;
-    private InBetweenLayerEdgeAllCrossingCounter inbetweenLayerCounter;
-    private NorthSouthPortAllCrossingCounter northSouthPortCrossingCounter;
+    private boolean useOrthogonalCounter;
+    private InLayerEdgeAllCrossingsCounter inLayerEdgeCrossingsCounter;
+    private BetweenLayerEdgeAllCrossingsCounter inbetweenLayerCounter;
+    private NorthSouthEdgeAllCrossingsCounter northSouthPortCrossingCounter;
 
     /**
      * Constructs and initializes a cross counter. Initialization iterates through all ports.
@@ -37,8 +37,9 @@ public class AllCrossingCounter {
      * @param layeredGraph
      *            The layered graph
      */
-    public AllCrossingCounter(final LNode[][] layeredGraph) {
+    public AllCrossingsCounter(final LNode[][] layeredGraph) {
         this.layeredGraph = layeredGraph;
+        useOrthogonalCounter = false;
     }
 
     /**
@@ -55,7 +56,7 @@ public class AllCrossingCounter {
      *
      * @param currentOrder
      *            The current order of the nodes.
-     * @return the amount of crossings
+     * @return the number of crossings
      */
     public int countAllCrossingsInGraphWithOrder(final LNode[][] currentOrder) {
         int totalCrossings = 0;
@@ -76,7 +77,11 @@ public class AllCrossingCounter {
         if (isALayerEmpty(easternLayer, westernLayer)) {
             return 0;
         }
-        inbetweenLayerCounter = new InBetweenLayerEdgeAllCrossingCounter(layeredGraph);
+        if (useOrthogonalCounter) {
+            inbetweenLayerCounter = new BetweenLayerHyperedgeAllCrossingsCounter(layeredGraph);
+        } else {
+            inbetweenLayerCounter = new BetweenLayerStraightEdgeAllCrossingsCounter(layeredGraph);
+        }
         return inbetweenLayerCounter.countCrossings(easternLayer, westernLayer);
     }
 
@@ -86,12 +91,16 @@ public class AllCrossingCounter {
     }
 
     private int countInLayerEdgeCrossingsWithOrder(final LNode[] layer) {
-        inLayerEdgeCrossingsCounter = new InLayerEdgeAllCrossingCounter(layer);
+        inLayerEdgeCrossingsCounter = new InLayerEdgeAllCrossingsCounter(layer);
         return inLayerEdgeCrossingsCounter.countCrossings();
     }
 
     private int countNorthSouthPortCrossings(final LNode[] layer) {
-        northSouthPortCrossingCounter = new NorthSouthPortAllCrossingCounter(layer);
+        northSouthPortCrossingCounter = new NorthSouthEdgeAllCrossingsCounter(layer);
         return northSouthPortCrossingCounter.countCrossings();
+    }
+
+    public void useOrthogonalCounter() {
+        useOrthogonalCounter = true;
     }
 }

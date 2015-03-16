@@ -31,9 +31,9 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
  * @author alan
  *
  */
-public class InBetweenLayerEdgeTwoNodeCrossingCounterTest {
+public class BetweenLayerEdgeTwoNodeCrossingsCounterTest {
     private TestGraphCreator creator;
-    private InBetweenLayerEdgeTwoNodeCrossingCounter crossingCounter;
+    private BetweenLayerEdgeTwoNodeCrossingsCounter crossingCounter;
     private LGraph graph;
     private LNode upperNode;
     private LNode lowerNode;
@@ -355,7 +355,7 @@ public class InBetweenLayerEdgeTwoNodeCrossingCounterTest {
     }
 
     private void initCrossingCounter(final int layerIndex) {
-        crossingCounter = new InBetweenLayerEdgeTwoNodeCrossingCounter(nodeOrder, layerIndex);
+        crossingCounter = new BetweenLayerEdgeTwoNodeCrossingsCounter(nodeOrder, layerIndex);
     }
 
     private String failMessage(final String configuration) {

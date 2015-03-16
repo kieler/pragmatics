@@ -103,7 +103,7 @@ public class GreedySwitcherIntegrationTest extends AbstractLayeredProcessorTest 
     }
 
     private List<List<LNode>> getNodeOrderAfterExecuting(final GreedySwitchType greedyType) {
-        graph.setProperty(Properties.GREEDY_TYPE, greedyType);
+        graph.setProperty(Properties.GREEDY_SWITCH_TYPE, greedyType);
         graph.setProperty(LayoutOptions.SEPARATE_CC, false);
         resetGraphToOriginalOrder();
         List<ILayoutProcessor> algorithms =
@@ -158,8 +158,8 @@ public class GreedySwitcherIntegrationTest extends AbstractLayeredProcessorTest 
 
     @Test
     public void crossingNumbersShouldNotBeWorseAfterward() {
-        LNode[][] graphLNodes = AllCrossingCounterTest.getAsLNodeArray(graph);
-        AllCrossingCounter crossCounter = new AllCrossingCounter(graphLNodes);
+        LNode[][] graphLNodes = AllCrossingsCounterTest.getAsLNodeArray(graph);
+        AllCrossingsCounter crossCounter = new AllCrossingsCounter(graphLNodes);
         int oldCrossingCount = crossCounter.countAllCrossingsInGraphWithOrder(graphLNodes);
 
         for (GreedySwitchType oneSidedType : allOneSidedTypes) {
@@ -171,11 +171,11 @@ public class GreedySwitcherIntegrationTest extends AbstractLayeredProcessorTest 
         }
     }
 
-    private void assertFewerOrEqualCrossingsAfterSwitching(final AllCrossingCounter crossCounter,
+    private void assertFewerOrEqualCrossingsAfterSwitching(final AllCrossingsCounter crossCounter,
             final int oldCrossingCount, final GreedySwitchType oneSidedType) {
-        graph.setProperty(Properties.GREEDY_TYPE, oneSidedType);
+        graph.setProperty(Properties.GREEDY_SWITCH_TYPE, oneSidedType);
         layered.runLayoutTestStep(state);
-        LNode[][] newOrder = AllCrossingCounterTest.getAsLNodeArray(graph);
+        LNode[][] newOrder = AllCrossingsCounterTest.getAsLNodeArray(graph);
         int newCrossingCount = crossCounter.countAllCrossingsInGraphWithOrder(newOrder);
         assertThat(oneSidedType.toString(), newCrossingCount,
                 is(lessThanOrEqualTo(oldCrossingCount)));

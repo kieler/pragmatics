@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
+import java.util.Arrays;
 import java.util.ListIterator;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -35,7 +36,12 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
     private LNode[][] currentNodeOrder;
     private LNode[][] bestNodeOrder;
     private LGraph layeredGraph;
-    private AllCrossingCounter crossingCounter;
+    private AllCrossingsCounter crossingCounter;
+    private SwitchDecider switchDecider;
+    private boolean sweepDownwardInLayer = true;
+    private LNode[][] originalNodeOrder;
+    private GreedySwitchType greedySwitchType;
+    private int currentCrossings;
 
     /**
      * ¸ {@inheritDoc}
@@ -43,54 +49,55 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
     public void process(final LGraph graph, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Greedy switch crossing reduction", 1);
 
-        GreedySwitchType switchDeciderType = graph.getProperty(Properties.GREEDY_TYPE);
+        greedySwitchType = graph.getProperty(Properties.GREEDY_SWITCH_TYPE);
 
         int layerCount = graph.getLayers().size();
-        if (layerCount < 2 || switchDeciderType == GreedySwitchType.OFF) {
+        if (layerCount < 2 || greedySwitchType == GreedySwitchType.OFF) {
             progressMonitor.done();
             return;
         }
 
-        switchDeciderFactory = new SwitchDeciderFactory(switchDeciderType);
+        switchDeciderFactory = new SwitchDeciderFactory(greedySwitchType);
 
         initialize(graph);
 
-        if (switchDeciderType.isOneSided()) {
-            layerSweepConsiderTwoLayers();
+        if (greedySwitchType.useBestOfUpOrDown()) {
+            tryBothLayerSweepDirections();
         } else {
-            layerSweepConsiderThreeLayers();
+            sweepOneSidedOrTwoSided();
         }
+        setAsGraph(bestNodeOrder);
 
         progressMonitor.done();
     }
 
-    private void initialize(final LGraph graph) {
+    private void tryBothLayerSweepDirections() {
+        // in-layer sweep direction is downward
+        sweepOneSidedOrTwoSided();
+        LNode[][] downwardSweepOrder = copyNodeOrder();
+        int downwardSweepCrossings = getCrossingAmount();
 
-        layeredGraph = graph;
-        int layerCount = graph.getLayers().size();
-        bestNodeOrder = new LNode[layerCount][];
-        currentNodeOrder = new LNode[layerCount][];
+        // set in-layer sweepdirection to upward
+        sweepDownwardInLayer = false;
+        currentNodeOrder = originalNodeOrder;
+        sweepOneSidedOrTwoSided();
+        int upwardSweepCrossings = getCrossingAmount();
 
-        ListIterator<Layer> layerIter = graph.getLayers().listIterator();
-        while (layerIter.hasNext()) {
-            Layer layer = layerIter.next();
-
-            int layerNodeCount = layer.getNodes().size();
-            assert layerNodeCount > 0;
-
-            int layerIndex = layerIter.previousIndex();
-            bestNodeOrder[layerIndex] = new LNode[layerNodeCount];
-            currentNodeOrder[layerIndex] = new LNode[layerNodeCount];
-
-            ListIterator<LNode> nodeIter = layer.getNodes().listIterator();
-            while (nodeIter.hasNext()) {
-                LNode node = nodeIter.next();
-
-                currentNodeOrder[layerIndex][nodeIter.previousIndex()] = node;
-                bestNodeOrder[layerIndex][nodeIter.previousIndex()] = node;
-            }
+        if (downwardSweepCrossings <= upwardSweepCrossings) {
+            setAsBestNodeOrder(downwardSweepOrder);
         }
-        crossingCounter = new AllCrossingCounter(currentNodeOrder);
+    }
+
+    private int getCrossingAmount() {
+        return greedySwitchType.isOneSided() ? currentCrossings : countCurrentAmountOfCrossings();
+    }
+
+    private void sweepOneSidedOrTwoSided() {
+        if (greedySwitchType.isOneSided()) {
+            oneSidedLayerSweep();
+        } else {
+            twoSidedlayerSweep();
+        }
     }
 
     /**
@@ -99,9 +106,12 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
      * would reduce the amount of crossings on both sides of the middle layer. In this manner, the
      * amount of crossings can not be increased and we do not need to calculate the total amount of
      * crossings.
+     * 
+     * @param startCrossings
+     * @return
      *
      */
-    private void layerSweepConsiderThreeLayers() {
+    private void twoSidedlayerSweep() {
         boolean forward = true;
         boolean improved;
         do {
@@ -112,7 +122,7 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
             }
             forward = !forward;
         } while (improved);
-        setAsGraph(currentNodeOrder);
+        setAsBestNodeOrder(currentNodeOrder);
     }
 
     /**
@@ -125,32 +135,41 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
      * beginning and after each forward and backward sweep. The result with the fewest crossings
      * (possibly the original order) is taken.
      */
-    private void layerSweepConsiderTwoLayers() {
-        int crossingsInGraph = getCurrentAmountOfCrossings();
-        int crossingsInGraphInLastSweep = Integer.MAX_VALUE;
-        while (crossingsInGraphInLastSweep > crossingsInGraph) {
-            setCurrentNodeOrderAsBestNodeOrder();
+    private void oneSidedLayerSweep() {
+        int crossingsInGraph = countCurrentAmountOfCrossings();
+        int currentSweepCrossings = Integer.MAX_VALUE;
+        while (currentSweepCrossings > crossingsInGraph) {
+            setAsBestNodeOrder(currentNodeOrder);
 
             if (crossingsInGraph == 0) {
+                currentSweepCrossings = crossingsInGraph;
                 break;
             }
 
             sweepForward();
             sweepBackward();
 
-            crossingsInGraphInLastSweep = crossingsInGraph;
-            crossingsInGraph = getCurrentAmountOfCrossings();
+            currentSweepCrossings = crossingsInGraph;
+            crossingsInGraph = countCurrentAmountOfCrossings();
         }
-        setAsGraph(bestNodeOrder);
+        currentCrossings = currentSweepCrossings;
+    }
+
+    private LNode[][] copyNodeOrder() {
+        LNode[][] order = new LNode[bestNodeOrder.length][];
+        for (int i = 0; i < order.length; i++) {
+            order[i] = Arrays.copyOf(bestNodeOrder[i], bestNodeOrder[i].length);
+        }
+        return order;
     }
 
     private boolean sweepForward() {
         boolean improved = false;
         for (int freeLayerIndex = 0; freeLayerIndex < currentNodeOrder.length; freeLayerIndex++) {
-            SwitchDecider switchDecider =
+            switchDecider =
                     switchDeciderFactory.getNewSwitchDecider(freeLayerIndex, currentNodeOrder,
                             CrossingCountSide.WEST);
-            improved |= continueSwitchingUntilNoImprovementInLayer(freeLayerIndex, switchDecider);
+            improved |= continueSwitchingUntilNoImprovementInLayer(freeLayerIndex);
         }
         return improved;
     }
@@ -158,15 +177,15 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
     private boolean sweepBackward() {
         boolean improved = false;
         for (int freeLayerIndex = currentNodeOrder.length - 1; freeLayerIndex >= 0; freeLayerIndex--) {
-            SwitchDecider switchDecider =
+            switchDecider =
                     switchDeciderFactory.getNewSwitchDecider(freeLayerIndex, currentNodeOrder,
                             CrossingCountSide.EAST);
-            improved |= continueSwitchingUntilNoImprovementInLayer(freeLayerIndex, switchDecider);
+            improved |= continueSwitchingUntilNoImprovementInLayer(freeLayerIndex);
         }
         return improved;
     }
 
-    private int getCurrentAmountOfCrossings() {
+    private int countCurrentAmountOfCrossings() {
         return crossingCounter.countAllCrossingsInGraphWithOrder(currentNodeOrder);
     }
 
@@ -183,34 +202,57 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
         }
     }
 
-    private void setCurrentNodeOrderAsBestNodeOrder() {
+    private void setAsBestNodeOrder(final LNode[][] nodeOrder) {
         for (int i = 0; i < bestNodeOrder.length; i++) {
             for (int j = 0; j < bestNodeOrder[i].length; j++) {
-                bestNodeOrder[i][j] = currentNodeOrder[i][j];
+                bestNodeOrder[i][j] = nodeOrder[i][j];
             }
         }
     }
 
-    private boolean continueSwitchingUntilNoImprovementInLayer(final int freeLayerIndex,
-            final SwitchDecider switchDecider) {
+    private boolean continueSwitchingUntilNoImprovementInLayer(final int freeLayerIndex) {
         boolean improved = false;
         boolean continueSwitching;
         do {
-            continueSwitching = sweepDownwardInLayer(freeLayerIndex, switchDecider);
+            if (sweepDownwardInLayer) {
+                continueSwitching = sweepDownwardInLayer(freeLayerIndex);
+            } else {
+                continueSwitching = sweepUpwardInLayer(freeLayerIndex);
+            }
             improved |= continueSwitching;
         } while (continueSwitching);
         return improved;
     }
 
-    private boolean sweepDownwardInLayer(final int layerIndex, final SwitchDecider switchDecider) {
+    private boolean sweepDownwardInLayer(final int layerIndex) {
         boolean continueSwitching = false;
         int lengthOfFreeLayer = currentNodeOrder[layerIndex].length;
+        // System.out.println("Layer " + layerIndex);
         for (int upperNodeIndex = 0; upperNodeIndex < lengthOfFreeLayer - 1; upperNodeIndex++) {
             int lowerNodeIndex = upperNodeIndex + 1;
-            if (switchDecider.doesSwitchReduceCrossings(upperNodeIndex, lowerNodeIndex)) {
-                exchangeNodes(upperNodeIndex, lowerNodeIndex, layerIndex, switchDecider);
-                continueSwitching = true;
-            }
+            continueSwitching |= switchIfImproves(layerIndex, upperNodeIndex, lowerNodeIndex);
+        }
+        return continueSwitching;
+    }
+
+    private boolean sweepUpwardInLayer(final int layerIndex) {
+        boolean continueSwitching = false;
+        int lengthOfFreeLayer = currentNodeOrder[layerIndex].length;
+        // System.out.println("Layer " + layerIndex);
+        for (int lowerNodeIndex = lengthOfFreeLayer - 1; lowerNodeIndex > 0; lowerNodeIndex--) {
+            int upperNodeIndex = lowerNodeIndex - 1;
+            continueSwitching |= switchIfImproves(layerIndex, upperNodeIndex, lowerNodeIndex);
+        }
+        return continueSwitching;
+    }
+
+    private boolean switchIfImproves(final int layerIndex, final int upperNodeIndex,
+            final int lowerNodeIndex) {
+        boolean continueSwitching = false;
+        // System.out.println("upper " + upperNodeIndex + " lower " + lowerNodeIndex);
+        if (switchDecider.doesSwitchReduceCrossings(upperNodeIndex, lowerNodeIndex)) {
+            exchangeNodes(upperNodeIndex, lowerNodeIndex, layerIndex, switchDecider);
+            continueSwitching = true;
         }
         return continueSwitching;
     }
@@ -223,5 +265,40 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
         LNode temp = layer[indexTwo];
         layer[indexTwo] = layer[indexOne];
         layer[indexOne] = temp;
+    }
+
+    private void initialize(final LGraph graph) {
+
+        layeredGraph = graph;
+        int layerCount = graph.getLayers().size();
+        bestNodeOrder = new LNode[layerCount][];
+        currentNodeOrder = new LNode[layerCount][];
+        originalNodeOrder = new LNode[layerCount][];
+
+        ListIterator<Layer> layerIter = graph.getLayers().listIterator();
+        while (layerIter.hasNext()) {
+            Layer layer = layerIter.next();
+
+            int layerNodeCount = layer.getNodes().size();
+            assert layerNodeCount > 0;
+
+            int layerIndex = layerIter.previousIndex();
+            bestNodeOrder[layerIndex] = new LNode[layerNodeCount];
+            currentNodeOrder[layerIndex] = new LNode[layerNodeCount];
+            originalNodeOrder[layerIndex] = new LNode[layerNodeCount];
+
+            ListIterator<LNode> nodeIter = layer.getNodes().listIterator();
+            while (nodeIter.hasNext()) {
+                LNode node = nodeIter.next();
+
+                currentNodeOrder[layerIndex][nodeIter.previousIndex()] = node;
+                bestNodeOrder[layerIndex][nodeIter.previousIndex()] = node;
+                originalNodeOrder[layerIndex][nodeIter.previousIndex()] = node;
+            }
+        }
+        crossingCounter = new AllCrossingsCounter(currentNodeOrder);
+        if (greedySwitchType.useHyperedgeCounter()) {
+            crossingCounter.useOrthogonalCounter();
+        }
     }
 }

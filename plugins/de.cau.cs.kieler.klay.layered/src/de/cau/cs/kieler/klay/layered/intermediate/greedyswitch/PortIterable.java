@@ -34,7 +34,7 @@ class PortIterable implements Iterable<LPort> {
     private final PortOrder order;
 
     public enum PortOrder {
-        CLOCKWISE, COUNTER_CLOCKWISE, TOPDOWN_LEFTRIGHT
+        CLOCKWISE, COUNTER_CLOCKWISE, NORTHSOUTH_EASTWEST
     }
 
     public PortIterable(final LNode node, final PortSide side, final PortOrder order) {
@@ -50,7 +50,7 @@ class PortIterable implements Iterable<LPort> {
             return node.getPorts().iterator();
         case COUNTER_CLOCKWISE:
             return Iterators.filter(getCCWIterator(ports), getPredicate());
-        case TOPDOWN_LEFTRIGHT:
+        case NORTHSOUTH_EASTWEST:
             switch (side) {
             case EAST:
             case NORTH:

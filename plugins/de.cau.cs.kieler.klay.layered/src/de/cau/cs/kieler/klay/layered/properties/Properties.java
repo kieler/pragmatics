@@ -126,8 +126,9 @@ public final class Properties {
     /**
      * Property to choose a greedy Crossing Minimization Strategy.
      */
-    public static final IProperty<GreedySwitchType> GREEDY_TYPE = new Property<GreedySwitchType>(
-            "de.cau.cs.kieler.klay.layered.greedySwitch", GreedySwitchType.OFF);
+    public static final IProperty<GreedySwitchType> GREEDY_SWITCH_TYPE =
+            new Property<GreedySwitchType>("de.cau.cs.kieler.klay.layered.greedySwitch",
+                    GreedySwitchType.OFF);
 
     /**
      * Property to choose a node placement strategy.
@@ -239,4 +240,5 @@ public final class Properties {
      */
     private Properties() {
     }
+
 }
