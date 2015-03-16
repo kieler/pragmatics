@@ -21,6 +21,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
+import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.PortIterable.PortOrder;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 
@@ -58,16 +59,16 @@ public class NorthSouthPortNeighbouringNodeCounter {
      */
     private void initializePortPositions() {
         for (LNode node : layer) {
-            int portId = 0;
-            for (LPort port : node.getPorts()) {
-                if (port.getSide() == PortSide.NORTH || port.getSide() == PortSide.SOUTH) {
-                    portPositions.put(port, portId);
-                    portId++;
-                }
-                if (port.getSide() == PortSide.WEST) {
-                    break;
-                }
-            }
+            setPortIdsOn(node, PortSide.SOUTH);
+            setPortIdsOn(node, PortSide.NORTH);
+        }
+    }
+
+    private void setPortIdsOn(final LNode node, final PortSide side) {
+        Iterable<LPort> ports = new PortIterable(node, side, PortOrder.NORTHSOUTH_EASTWEST);
+        int portId = 0;
+        for (LPort port : ports) {
+            portPositions.put(port, portId++);
         }
     }
 
@@ -97,61 +98,44 @@ public class NorthSouthPortNeighbouringNodeCounter {
                     || haveDifferentOrigins(upperNode, lowerNode)) {
                 return;
             }
+            PortSide upperNodePortSide = getPortDirectionFromNorthSouthNode(upperNode);
+            PortSide lowerNodePortSide = getPortDirectionFromNorthSouthNode(lowerNode);
             if (isNorthOfNormalNode(upperNode)) {
-                northSouthDummiesNorthOfNormalNode(upperNode, lowerNode);
+                countCrossingsOfTwoNorthSouthDummies(upperNode, lowerNode, upperNodePortSide,
+                        lowerNodePortSide);
             } else {
-                northSouthDummiesSouthOfNormalNode(upperNode, lowerNode);
+                countCrossingsOfTwoNorthSouthDummies(lowerNode, upperNode, lowerNodePortSide,
+                        upperNodePortSide);
             }
         }
-    }
-
-    private void northSouthDummiesNorthOfNormalNode(final LNode upperNode, final LNode lowerNode) {
-        PortSide upperNodePortSide = getPortDirectionFromNorthSouthNode(upperNode);
-        PortSide lowerNodePortSide = getPortDirectionFromNorthSouthNode(lowerNode);
-        countCrossingsOfTwoNorthSouthDummies(upperNode, lowerNode, upperNodePortSide,
-                lowerNodePortSide);
-    }
-
-    private void northSouthDummiesSouthOfNormalNode(final LNode closerToNormalNode,
-            final LNode furtherFromNormalNode) {
-        PortSide closerToNormalNodePortSide =
-                getPortDirectionFromNorthSouthNode(closerToNormalNode).opposed();
-        PortSide furtherFromNormalNodePortSide =
-                getPortDirectionFromNorthSouthNode(furtherFromNormalNode).opposed();
-        countCrossingsOfTwoNorthSouthDummies(furtherFromNormalNode, closerToNormalNode,
-                furtherFromNormalNodePortSide, closerToNormalNodePortSide);
     }
 
     private void countCrossingsOfTwoNorthSouthDummies(final LNode furtherFromNormalNode,
             final LNode closerToNormalNode, final PortSide furtherNodePortSide,
             final PortSide closerNodePortSide) {
         if (furtherNodePortSide == PortSide.EAST && closerNodePortSide == PortSide.EAST) {
-            if (originPortsAreInClockwiseOrder(closerToNormalNode, furtherFromNormalNode)) {
+            if (originPortPositionOf(furtherFromNormalNode) > originPortPositionOf(closerToNormalNode)) {
                 upperLowerCrossings = 1;
             } else {
                 lowerUpperCrossings = 1;
             }
         } else if (furtherNodePortSide == PortSide.WEST && closerNodePortSide == PortSide.WEST) {
-            if (originPortsAreInClockwiseOrder(furtherFromNormalNode, closerToNormalNode)) {
+            if (originPortPositionOf(furtherFromNormalNode) < originPortPositionOf(closerToNormalNode)) {
                 upperLowerCrossings = 1;
             } else {
                 lowerUpperCrossings = 1;
             }
         } else if (furtherNodePortSide == PortSide.WEST && closerNodePortSide == PortSide.EAST) {
-            if (originPortsAreInClockwiseOrder(closerToNormalNode, furtherFromNormalNode)) {
+            if (originPortPositionOf(furtherFromNormalNode) > originPortPositionOf(closerToNormalNode)) {
                 upperLowerCrossings = 1;
                 lowerUpperCrossings = 1;
             }
         } else {
-            if (originPortsAreInClockwiseOrder(furtherFromNormalNode, closerToNormalNode)) {
+            if (originPortPositionOf(furtherFromNormalNode) < originPortPositionOf(closerToNormalNode)) {
                 upperLowerCrossings = 1;
                 lowerUpperCrossings = 1;
             }
         }
-    }
-
-    private boolean originPortsAreInClockwiseOrder(final LNode first, final LNode second) {
-        return originPortPositionOf(first) < originPortPositionOf(second);
     }
 
     private void processIfNorthSouthLongEdgeDummyCrossing(final LNode upperNode,
