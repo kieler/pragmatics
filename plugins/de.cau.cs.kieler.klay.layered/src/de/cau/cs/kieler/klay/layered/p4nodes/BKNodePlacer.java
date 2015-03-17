@@ -66,6 +66,18 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * in the paper. There are methods that divert from this convention, though, to achieve better code
  * readability.</p>
  * 
+ * <p>
+ * In terms of left-to-right layout, map the direction constants as follows. Arrows describe
+ * iteration direction, i.e. for BOTTOM the list of layers is traversed from right to left.
+ * 
+ * BOTTOM                TOP
+ * <----------           ------->
+ * 
+ * RIGHT ^              LEFT |
+ *       |                   |
+ *       |                   v
+ * </p>   
+ *      
  * <h4>The algorithm:</h4>
  * 
  * <p>The first step checks the graphs' edges and marks short edges which cross long edges (called
@@ -679,13 +691,14 @@ public final class BKNodePlacer implements ILayoutPhase {
         }
         
         // Initial placement
-        // TODO Fix the following two lines
-        // Placing the root at coordinate 0 causes problems later on. The initial position should
-        // be determined more intelligently. The second line was a first attempt that fixed the problem
-        // in the sample graph attached to KIPRA-1426, but I'm not convinced that it is a good solution
-        // in general.
+        // As opposed to the original algorithm we cannot rely on the fact that 
+        //  0.0 as initial block position is always feasible. This is due to 
+        //  the inside shift allowing for negative block positions in conjunction with
+        //  a RIGHT (bottom-to-top) traversal direction. Computing the minimum with 
+        //  an initial position of 0.0 thus leads to wrong results.
+        // The wrong behavior is documented in KIPRA-1426
+        boolean isInitialAssignment = true;
         bal.y.put(root, 0.0);
-        // bal.y.put(root, nextBlockYPosition);
         
         // Iterate through block and determine, where the block can be placed (until we arrive at the
         // block's root node again)
@@ -744,25 +757,37 @@ public final class BKNodePlacer implements ILayoutPhase {
                     
                     // Determine the block's final position
                     if (bal.vdir == VDirection.RIGHT) {
-                        bal.y.put(root,
-                                Math.min(bal.y.get(root),
-                                         bal.y.get(neighborRoot)
-                                             + bal.innerShift.get(neighbor)
-                                             - neighbor.getMargin().top
-                                             - spacing
-                                             - currentNode.getMargin().bottom
-                                             - currentNode.getSize().y
-                                             - bal.innerShift.get(currentNode)));
+                        double currentBlockPosition = bal.y.get(root);
+                        double newPosition = bal.y.get(neighborRoot)
+                                + bal.innerShift.get(neighbor)
+                                - neighbor.getMargin().top
+                                - spacing
+                                - currentNode.getMargin().bottom
+                                - currentNode.getSize().y
+                                - bal.innerShift.get(currentNode);
+
+                        if (isInitialAssignment) {
+                            isInitialAssignment = false;
+                            bal.y.put(root, newPosition);
+                        } else {
+                            bal.y.put(root, Math.min(currentBlockPosition, newPosition));
+                        }
                     } else {
-                        bal.y.put(root,
-                                Math.max(bal.y.get(root),
-                                         bal.y.get(neighborRoot)
-                                             + bal.innerShift.get(neighbor)
-                                             + neighbor.getSize().y
-                                             + neighbor.getMargin().bottom
-                                             + spacing
-                                             + currentNode.getMargin().top
-                                             - bal.innerShift.get(currentNode)));
+                        double currentBlockPosition = bal.y.get(root);
+                        double newPosition = bal.y.get(neighborRoot)
+                                + bal.innerShift.get(neighbor)
+                                + neighbor.getSize().y
+                                + neighbor.getMargin().bottom
+                                + spacing
+                                + currentNode.getMargin().top
+                                - bal.innerShift.get(currentNode);
+                        
+                        if (isInitialAssignment) {
+                            isInitialAssignment = false;
+                            bal.y.put(root, newPosition);
+                        } else {
+                            bal.y.put(root, Math.max(currentBlockPosition, newPosition));
+                        }
                     }
                 } else {
                     // TODO Take a look at this code
