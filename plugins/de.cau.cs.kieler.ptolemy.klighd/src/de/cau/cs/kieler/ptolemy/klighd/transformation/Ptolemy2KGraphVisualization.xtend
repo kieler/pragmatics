@@ -656,6 +656,10 @@ class Ptolemy2KGraphVisualization {
         } else {
             layout.setProperty(LayoutOptions::ALGORITHM, "de.cau.cs.kieler.klay.layered")
             layout.setProperty(LayoutOptions::EDGE_ROUTING, EdgeRouting::ORTHOGONAL)
+            
+            // explicitly set a layout direction as we do not want the diagram layouted 
+            // top-down due to direction inference of klay layered (almost always looks ugly)
+            layout.setProperty(LayoutOptions.DIRECTION, Direction.RIGHT)
         }
     }
 }
