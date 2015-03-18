@@ -85,7 +85,13 @@ public final class InternalProperties {
      */
     public static final IProperty<Boolean> INSIDE_CONNECTIONS = new Property<Boolean>(
             "insideConnections", false);
-
+    
+    /**
+     * The layer positions that are used to calculate the layout.
+     */
+    public static final IProperty<List<Float>> LAYER_POSITION = new Property<List<Float>>(
+            "layerPosition", new ArrayList<Float>());
+    
     /**
      * An LNode that represents a compound node can hold a reference to a nested LGraph which
      * represents the graph that is contained within the compound node.

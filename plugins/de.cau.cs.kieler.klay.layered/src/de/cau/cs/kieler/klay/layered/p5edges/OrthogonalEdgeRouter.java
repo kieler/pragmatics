@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klay.layered.p5edges;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
@@ -20,6 +21,8 @@ import java.util.Set;
 import com.google.common.collect.Iterables;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
@@ -161,6 +164,7 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
     /**
      * {@inheritDoc}
      */
+    @Override
     public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
             final LGraph graph) {
         
@@ -212,6 +216,7 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
         monitor.begin("Orthogonal edge routing", 1);
         
@@ -232,6 +237,7 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
         List<LNode> rightLayerNodes = null;
         int leftLayerIndex = -1;
         int rightLayerIndex = -1;
+        List<Float> layerPosition = new ArrayList<Float>();
         
         // Iterate!
         do {
@@ -273,14 +279,25 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
                 // If all edges are straight, use the usual spacing 
                 xpos += nodeSpacing;
             }
-            
+            layerPosition.add(xpos);
             leftLayer = rightLayer;
             leftLayerNodes = rightLayerNodes;
             leftLayerIndex = rightLayerIndex;
         } while (rightLayer != null);
-        
+ 
+        // calculate lost information of algorithm above to the layer
+        // position - only used for graphical reasons.
+        float test = layerPosition.get(layerPosition.size() - 1);
+        layerPosition.remove(layerPosition.size() - 1);
+        layerPosition.add(test + (float) edgeSpacing * 2f);
+
         layeredGraph.getSize().x = xpos;
-        
+
+        KNode node = (KNode) layeredGraph.getProperty(InternalProperties.ORIGIN);
+        node.getData(KShapeLayout.class).setProperty(InternalProperties.LAYER_POSITION, layerPosition);
+
+        layeredGraph.setProperty(InternalProperties.LAYER_POSITION, layerPosition);
+
         monitor.done();
     }
     

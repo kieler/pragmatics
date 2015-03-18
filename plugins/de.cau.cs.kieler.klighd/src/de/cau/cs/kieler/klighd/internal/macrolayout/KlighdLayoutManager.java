@@ -56,6 +56,7 @@ import de.cau.cs.kieler.kiml.service.EclipseLayoutConfig;
 import de.cau.cs.kieler.kiml.service.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.service.LayoutMapping;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klighd.IDiagramWorkbenchPart;
 import de.cau.cs.kieler.klighd.IViewer;
 import de.cau.cs.kieler.klighd.KlighdConstants;
@@ -633,6 +634,7 @@ public class KlighdLayoutManager implements IDiagramLayoutManager<KGraphElement>
                 public Boolean caseKNode(final KNode layoutNode) {
                     final KShapeLayout layoutLayout = layoutNode.getData(KShapeLayout.class);
                     final KShapeLayout nodeLayout = element.getData(KShapeLayout.class);
+                    
                     if (nodeLayout != null) {
                         transferShapeLayout(layoutLayout, nodeLayout, true, true);
                         nodeLayout.setProperty(INITIAL_NODE_SIZE, false);
@@ -642,6 +644,8 @@ public class KlighdLayoutManager implements IDiagramLayoutManager<KGraphElement>
                         // and the figure scaling will be set according this property setting
                         nodeLayout.setProperty(LayoutOptions.SCALE_FACTOR,
                                 layoutLayout.getProperty(LayoutOptions.SCALE_FACTOR));
+                        nodeLayout.setProperty(InternalProperties.LAYER_POSITION,
+                                layoutLayout.getProperty(InternalProperties.LAYER_POSITION));
                     }
                     return true;
                 }

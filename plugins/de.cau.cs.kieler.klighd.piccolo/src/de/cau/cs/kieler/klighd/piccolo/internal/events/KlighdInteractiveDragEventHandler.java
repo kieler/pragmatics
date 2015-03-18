@@ -23,11 +23,23 @@ import java.util.List;
 
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.LineAttributes;
 import org.eclipse.swt.graphics.RGB;
+
+import com.google.common.collect.ImmutableList;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.kiml.config.ILayoutConfig;
+import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
+import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
+import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 import de.cau.cs.kieler.klighd.KlighdConstants;
 import de.cau.cs.kieler.klighd.KlighdPreferences;
 import de.cau.cs.kieler.klighd.LightDiagramServices;
@@ -57,13 +69,15 @@ import edu.umd.cs.piccolo.util.PPickPath;
  * @author mkr
  */
 public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler {
-
+    
+    // Constant for half opacity
     private static final int HALF_OPACITY = KlighdConstants.ALPHA_FULL_OPAQUE / 2;
 
     private final PiccoloViewer pViewer;
     
     private final DiagramController diagController;
-
+    
+    // True if interactive drag is enabled, false else
     private boolean enabled;
 
     // The node picked by clicking on node/label
@@ -75,9 +89,23 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
     // The PNode representing the current position of the dragged KNode 
     private PNode node;
     
+    // Representing the incoming edges of the current dragged KNode
     private PNode pathNodeIncoming;
-    
+
+    // Representing the outgoing edges of the current dragged KNode
     private PNode pathNodeOutgoing;
+    
+    // Highlight the dragged node and the layer where to drag
+    private PNode dragArea;
+    
+    // Represent warning if position isn't valid
+    private PNode warning;
+    
+    // Highlighting of the current layer
+    private PNode layer;
+    
+    // Layer position used by the layout algorithm to calculate layout
+    private List<Float> layerPos;
     
     // Event listener to scale the transparent, dragged node.
     private PropertyChangeListener cameraViewListener;
@@ -86,8 +114,11 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
      *
      * @param pViewer
      *            the {@link PiccoloViewer} this handler is attached to
+     * @param diagController
+     *            the {@link DiagramController} used to layout diagram
      */
-    public KlighdInteractiveDragEventHandler(final PiccoloViewer pViewer, final DiagramController diagController) {
+    public KlighdInteractiveDragEventHandler(
+            final PiccoloViewer pViewer, final DiagramController diagController) {
         this.pViewer = pViewer;
         this.diagController = diagController;
         this.enabled = KlighdPreferences.isInteractiveDragEnabled();
@@ -114,7 +145,7 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
     @Override
     protected boolean shouldStartDragInteraction(final PInputEvent event) {
         final PNode object = event.getPickedNode();
-        pickedNode = null;
+        pickedNode = null;        
         
         // Extracts the KNodeNode, if selected element is type of
         // KlighdStyledText.
@@ -122,9 +153,12 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
             pickedNode = object;
         } else if (object instanceof KlighdStyledText) {
             final KlighdAlignmentNode pAligNode = (KlighdAlignmentNode) object.getParent();
-            final KLabelNode labelNode = (KLabelNode) pAligNode.getParent();
-            final KlighdDisposingLayer disposingLayer = (KlighdDisposingLayer) labelNode.getParent();
-            pickedNode = disposingLayer.getParent();
+            
+            if (!(pAligNode.getParent() instanceof KlighdPath)) {
+                final KLabelNode labelNode = (KLabelNode) pAligNode.getParent();
+                final KlighdDisposingLayer disposingLayer = (KlighdDisposingLayer) labelNode.getParent();
+                pickedNode = disposingLayer.getParent();
+            }
         }
         
         return event.isShiftDown() && enabled
@@ -132,7 +166,9 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
                 && pickedNode != null
                 && super.shouldStartDragInteraction(event);
     }
-
+    
+    // concatenate all transforms to ensure right graphic position
+    // of dragged node
     private final AffineTransform transform = new AffineTransform();
 
     /**
@@ -142,9 +178,10 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
     protected void startDrag(final PInputEvent event) {
         
         super.startDrag(event);
-        
+
         final KNodeNode nodeNode = (KNodeNode) pickedNode;
         knode = nodeNode.getViewModelElement();
+        layerPos = knode.getParent().getData(KShapeLayout.class).getProperty(InternalProperties.LAYER_POSITION);
         final Rectangle2D bounds = nodeNode.getFullBounds();
         final PAffineTransform invertedNodeNodeTransform =
                 new PAffineTransform(NodeUtil.invert(nodeNode.getTransform()));
@@ -201,7 +238,7 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
             // they would disappear twice, so we need to check
             // if the edges are children of the current dragged node.
             // If true, than continue the loop with the next edge.
-            if (edge.getSource().getParent() == knode) {
+            if (edge.getSource() == null || edge.getSource().getParent() == knode) {
                 continue;
             }
             
@@ -218,24 +255,19 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
             
             // Get all parents transforms, so edges are drawn at the right position.
             // Especially useful when they are related to more than one parent.
-            PNode p = e;
-            while (p.getParent() != null) {                
-                path.transformBy(p.getTransformReference(true));
-                p = p.getParent();
-            }
+            transformByAllParents(e, path);
             
             path.setStrokeColor(new RGB(255, 0, 0));
             path.setStrokeAlpha(HALF_OPACITY);
             pathNodeIncoming.addChild(path);
         }
         
-        
         // Same algorithm as above, but used for outgoing edges
         final List<KEdge> outgoing = knode.getOutgoingEdges();
         final Iterator<KEdge> outgoingIt = outgoing.iterator();
         while (outgoingIt.hasNext()) {
             final KEdge edge = outgoingIt.next();
-            if (edge.getTarget().getParent() == knode) {
+            if (edge.getTarget() == null || edge.getTarget().getParent() == knode) {
                 continue;
             }
 
@@ -246,11 +278,8 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
                     (Point2D) e.getBendPoints()[0].clone(), 
                     (Point2D) e.getBendPoints()[e.getBendPoints().length - 1].clone()});
             
-            PNode p = e;
-            while (p.getParent() != null) {                
-                path.transformBy(p.getTransformReference(true));
-                p = p.getParent();
-            }
+            transformByAllParents(e, path);
+            
             path.setStrokeColor(new RGB(0, 255, 0));
             path.setStrokeAlpha(HALF_OPACITY);
             pathNodeOutgoing.addChild(path);
@@ -276,6 +305,76 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
 //            path.setTransparency(HALF_OPACITY/100);
 //            pathNodeOutgoing.addChild(path);
 //        }
+
+        // PNode containing the information to highlight selected area
+        dragArea = new PNode();
+
+        // PickedNode attributes to calculate position of blue box (highlighting selected)
+        float xCoordinate = (float) pickedNode.getTransform().getTranslateX();
+        float yCoordinate = (float) pickedNode.getTransform().getTranslateY();
+        final float fullWidth = (float) pickedNode.getFullBounds().getWidth();
+        final float fullHeight = (float) pickedNode.getFullBounds().getHeight();
+        final float width = (float) pickedNode.getBounds().getWidth();
+        final float height = (float) pickedNode.getBounds().getHeight();
+        
+        xCoordinate = xCoordinate - (fullWidth / 2) + (width / 2);
+        yCoordinate = yCoordinate - (fullHeight / 2) + (height / 2);
+
+        
+        final float stdDistance = 6f;
+        final LineAttributes dottedLine = new LineAttributes(
+                1, SWT.CAP_FLAT, SWT.JOIN_MITER, SWT.LINE_DASH, null, 0, 10);
+
+//        
+//        // LOWER BORDER //
+//        final KlighdPath pathLowerBorder = new KlighdPath();
+//        
+//        pathLowerBorder.setPathToPolyline(new Point2D[]{
+//                new Point2D.Float(xCoordinate - 1000, yCoordinate + fullHeight + stdDistance),
+//                new Point2D.Float(xCoordinate + 1000, yCoordinate + fullHeight + stdDistance)
+//        });
+//        pathLowerBorder.setStrokeColor(new RGB(0, 0, 255));
+//        pathLowerBorder.setLineAttributes(dottedLine);
+//        
+//        PNode pLower = pickedNode.getParent();
+//        while (pLower.getParent() != null) {                
+//            pathLowerBorder.transformBy(pLower.getTransformReference(true));
+//            pLower = pLower.getParent();
+//        } 
+        
+        // LAYER BORDERS!
+        final Iterator<Float> layerIt = layerPos.iterator();
+        while (layerIt.hasNext()) {
+            final float pos = layerIt.next();
+            final KlighdPath path = new KlighdPath();
+            
+            path.setPathToPolyline(new Point2D[]{
+                    new Point2D.Float(pos, -100),
+                    new Point2D.Float(pos, 
+                            (float) pickedNode.getParent().getParent().getFullBounds().getHeight() + 100)
+            });
+            
+            path.setLineAttributes(dottedLine);
+            path.setStrokeColor(new RGB(0, 0, 255));
+            
+            transformByAllParents(pickedNode.getParent(), path);
+            
+            dragArea.addChild(path);
+        }
+        
+        // RECTANGLE //
+        final KlighdPath pathRectangle = new KlighdPath();
+        
+        pathRectangle.setPathToRectangle(
+                xCoordinate - stdDistance, yCoordinate - stdDistance, 
+                fullWidth + (2*stdDistance), fullHeight + (2*stdDistance));
+        pathRectangle.setTransparency(0.5f);
+        pathRectangle.setLineAttributes(dottedLine);
+        pathRectangle.setPaint(new RGB(0, 0, 255));
+        
+        transformByAllParents(pickedNode.getParent(), pathRectangle);
+                
+        dragArea.addChild(pathRectangle);
         
         // Initialize transform with identity
         transform.setToIdentity();
@@ -285,15 +384,8 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
         //Set the transform to the ones of the KNodeNode. 
         node.setBounds(bounds);
 
-        
-//        node.setTransform(pickpath.getPathTransformTo(pickedNode));
-//        node.transformBy(transform);
-//        
-//        final PAffineTransform parentViewGlobalTransform =
-//                pickpath.getTopCamera().getViewTransformReference();
-//        pathNodeOutgoing.setTransform(parentViewGlobalTransform);
-//        pathNodeIncoming.setTransform(parentViewGlobalTransform);
-        
+        layer = new PNode();
+        warning = new PNode();      
         
         // Add PropertyChangeListener to recognize mouse wheel events
         // used to scale the diagram. Scale will be used for the new
@@ -306,12 +398,19 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
                 node.setTransform(pickpath.getPathTransformTo(pickedNode));
                 node.transformBy(transform);
                 
+                warning.setTransform(pickpath.getPathTransformTo(pickedNode));
+                warning.transformBy(transform);
+                
                 // Set the edges transform to the current Transform of the
                 // view.
                 final PAffineTransform parentViewGlobalTransform =
                         pickpath.getTopCamera().getViewTransformReference();
                 pathNodeOutgoing.setTransform(parentViewGlobalTransform);
                 pathNodeIncoming.setTransform(parentViewGlobalTransform);
+                
+                dragArea.setTransform(parentViewGlobalTransform);
+                layer.setTransform(parentViewGlobalTransform);
+                
             }
         };
         
@@ -325,14 +424,19 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
                PCamera.PROPERTY_VIEW_TRANSFORM, cameraViewListener);
         
         // Adds the PNode to the top camera, so it will appear while dragging
-        // at layer. 
+        // at layer. Also all other necessary nodes are added.
         topCamera.addChild(node);
         topCamera.addChild(pathNodeIncoming);
         topCamera.addChild(pathNodeOutgoing);
-        
+        topCamera.addChild(dragArea);
+        topCamera.addChild(warning);
+        topCamera.addChild(layer);
         event.setHandled(true);
     }
-
+    
+    // Parent node of the dragged node, could be null if there is no parent
+    private PNode parent;
+    
     /**
      * {@inheritDoc}
      */
@@ -340,6 +444,10 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
     @Override
     protected void drag(final PInputEvent event) {
         super.drag(event);
+        
+        KlighdPath upperLeftToLowerRightKlighdPath = new KlighdPath();
+        upperLeftToLowerRightKlighdPath.removeFromParent();
+        upperLeftToLowerRightKlighdPath.setStrokeColor(new RGB(255, 0, 0));
 
         // Get the delta between the old and new mouse position. Translate it
         // to the new coordinates of the shown PNode.
@@ -355,6 +463,83 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
         
         node.transformBy(deltaTransform);
         
+        // Translate coordinates relative to the parent of the picked node
+     
+        KVector test = KimlUtil.toRelative(
+                new KVector(event.getPosition().getX(), event.getPosition().getY()), knode.getParent());
+
+        // Check if node out of parent bounds.
+        // Get possible parent KNodeNode, null if parent doesnt exists
+        parent = pickedNode.getParent();
+        
+        while (parent != null) {
+            if (parent instanceof KNodeNode) {
+                break;
+            }
+            
+            parent = parent.getParent();
+        }
+        
+        // Check position of the current node if parent exists.
+        if(parent != null) {
+        
+        double parentX = parent.getTransform().getTranslateX();
+        double parentY = parent.getTransform().getTranslateY();
+        double parentWidth = parent.getBounds().getWidth();
+        double parentHeight = parent.getBounds().getHeight();
+
+            if (event.getPosition().getX() < parentX 
+                    || event.getPosition().getY() < parentY
+                    || parentX + parentWidth < event.getPosition().getX()
+                    || parentY + parentHeight < event.getPosition().getY()) {
+                System.out.println("Out of Bounds!! ----------- " + event.getPosition()+ " ------ rel: " + test);
+                System.out.println(knode.getData().toArray().toString());
+                System.out.println(parentHeight + "    " + parentWidth);
+                
+                upperLeftToLowerRightKlighdPath.setPathToPolyline(new Point2D[]{
+                        new Point2D.Float(
+                                (float) pickedNode.getTransform().getTranslateX(), 
+                                (float) pickedNode.getTransform().getTranslateY()),
+                        new Point2D.Float(
+                                (float) pickedNode.getTransform().getTranslateX()
+                                + (float) pickedNode.getFullBounds().getWidth(),
+                                (float) pickedNode.getFullBounds().getWidth()
+                                + (float) pickedNode.getFullBounds().getHeight()
+                                + (float) pickedNode.getTransform().getTranslateX())        
+                });
+                
+                node.addChild(upperLeftToLowerRightKlighdPath);
+            }
+        }
+        
+        // Highlighting Layer
+        KlighdPath highlightedLayer = new KlighdPath();
+        layer.removeAllChildren();
+        
+        float choosenLayer = 0;
+        int index = 0;
+        for (float pos : layerPos) {
+            if (test.x < pos) {
+                break;
+            }
+            
+            choosenLayer = pos;
+            index++;
+        }
+        
+        if (index < layerPos.size()){
+        highlightedLayer.setPathToRectangle(
+                choosenLayer, -100, 
+                layerPos.get(index) - choosenLayer, (float) pickedNode.getParent().getParent().getFullBounds().getHeight() + 200f);
+        highlightedLayer.setLineWidth(0);
+        highlightedLayer.setPaint(new RGB(128, 128, 128));
+        highlightedLayer.setTransparency(0.25f);
+        }
+        
+        transformByAllParents(pickedNode.getParent(), highlightedLayer);
+        
+        layer.addChild(highlightedLayer);
+
         // Transform the y-coordinate of the incoming edges to get their new position.
         for (final KlighdPath path : (List<KlighdPath>) pathNodeIncoming.getChildrenReference()) {
             final Point2D[] shapePoints = path.getShapePoints();
@@ -381,26 +566,90 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
     protected void endDrag(final PInputEvent event) {
         super.endDrag(event);
 
+        KVector posRelativeToParent = KimlUtil.toRelative(
+                new KVector(event.getPosition().getX(), event.getPosition().getY()), knode.getParent());
 
         // Remove the PNode representing the new KNodes position from camera. 
         event.getTopCamera().removePropertyChangeListener(
                 PCamera.PROPERTY_VIEW_TRANSFORM, cameraViewListener);
+        layer.removeFromParent();
         node.removeFromParent();
         pathNodeIncoming.removeFromParent();
         pathNodeOutgoing.removeFromParent();
-
+        dragArea.removeFromParent();
+        warning.removeFromParent();
+        
         final KShapeLayout ksl = knode.getData(KShapeLayout.class);
-        ksl.setPos((float) node.getTransform().getTranslateX(), 
-                (float) node.getTransform().getTranslateY());
+//        ksl.setPos((float) node.getTransform().getTranslateX(), 
+//                (float) node.getTransform().getTranslateY());
+        
+        ksl.setPos((float) posRelativeToParent.x, 
+                (float) posRelativeToParent.y);
+        
+        // trigger new layout only in bounds
+//        boolean inBounds = true;
+//
+//        if (parent != null) {
+//
+//            double parentX = parent.getTransform().getTranslateX();
+//            double parentY = parent.getTransform().getTranslateY();
+//            double parentWidth = parent.getBounds().getWidth();
+//            double parentHeight = parent.getBounds().getHeight();
+//
+//            if (event.getPosition().getX() < parentX || event.getPosition().getY() < parentY
+//                    || parentX + parentWidth < event.getPosition().getX()
+//                    || parentY + parentHeight < event.getPosition().getY()) {
+//                inBounds = false;
+//            }
+//        }
+//
+//        if (inBounds) {
+            pViewer.getControl().getDisplay().asyncExec(new Runnable() {
+                public void run() {
+                        LightDiagramServices.layoutDiagram(pViewer.getViewContext(), config);
+                }
+            });
+       
 
-        pViewer.getControl().getDisplay().asyncExec(new Runnable() {
-            public void run() {
-                LightDiagramServices.layoutDiagram(pViewer.getViewContext());
-            }
-        });
         knode = null;
         node = null;
         pickedNode = null;
         event.setHandled(true);
     }
+    
+    /**
+     * Get all parent transforms, so edges are drawn at the right position.
+     * Especially useful when they are related to more than one parent.
+     * 
+     * @param node node to get parents from
+     * @param path path to transform
+     */
+    private void transformByAllParents(final PNode node, final KlighdPath path) {
+        // Get all parents transforms, so edges are drawn at the right position.
+        // Especially useful when they are related to more than one parent.
+        PNode p = node;
+        while (p.getParent() != null) {                
+            path.transformBy(p.getTransformReference(true));
+            p = p.getParent();
+        }
+    }
+    
+    /**
+     * Set values of diagram to interactive mode.
+     * 
+     * @author uru
+     * @author mkr
+     *
+     */
+    private static class InteractiveLayoutConfig extends VolatileLayoutConfig {
+        /**
+         * 
+         */
+        public InteractiveLayoutConfig() {
+           setValue(Properties.CYCLE_BREAKING, CycleBreakingStrategy.INTERACTIVE);
+           setValue(Properties.NODE_LAYERING, LayeringStrategy.INTERACTIVE);
+        }
+    }
+
+    private List<ILayoutConfig> config = ImmutableList.<ILayoutConfig>of(new InteractiveLayoutConfig());
 }

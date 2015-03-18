@@ -17,7 +17,8 @@ Require-Bundle: org.eclipse.core.resources;bundle-version="3.6.0",
  de.cau.cs.kieler.kiml;bundle-version="0.16.0";visibility:=reexport,
  de.cau.cs.kieler.kiml.service,
  de.cau.cs.kieler.core.kgraph;bundle-version="0.7.0";visibility:=reexport,
- de.cau.cs.kieler.core.krendering;bundle-version="0.6.0";visibility:=reexport
+ de.cau.cs.kieler.core.krendering;bundle-version="0.6.0";visibility:=reexport,
+ de.cau.cs.kieler.klay.layered;bundle-version="0.11.0"
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: de.cau.cs.kieler.klighd.KlighdPlugin
 Export-Package: de.cau.cs.kieler.klighd,
@@ -33,3 +34,4 @@ Export-Package: de.cau.cs.kieler.klighd,
  de.cau.cs.kieler.klighd.util,
  de.cau.cs.kieler.klighd.viewers
 DynamicImport-Package: de.cau.cs.kieler.klighd.kivi.internal
+Import-Package: de.cau.cs.kieler.klay.layered.properties
