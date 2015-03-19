@@ -53,15 +53,17 @@ public class KlayGWTPlainJS implements EntryPoint {
           klayregister(klay);
       } else {
         // try to guess how we want to register
-        
+       
+        // regular browser
         if (typeof document !== "undefined") {
-          // DEFAULT BROWSER 
           $wnd.$klay = klay;
-        } else if (typeof module === "object" && module.exports) { 
-          // NODE JS
+        } 
+        // nodejs
+        if (typeof module === "object" && module.exports) { 
           module.exports = klay;
-        } if (typeof document === "undefined" && typeof self !== "undefined") {
-          // WEB WORKER    
+        } 
+        // web worker
+        if (typeof document === "undefined" && typeof self !== "undefined") {
           self.addEventListener('message', function(e) { klay.layout(e.data); }, false);
         }
       }
