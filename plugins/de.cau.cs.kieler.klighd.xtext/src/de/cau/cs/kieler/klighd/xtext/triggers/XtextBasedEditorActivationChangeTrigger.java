@@ -13,8 +13,12 @@
  */
 package de.cau.cs.kieler.klighd.xtext.triggers;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
@@ -34,6 +38,7 @@ import org.eclipse.xtext.ui.util.ResourceUtil;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.kivi.AbstractTrigger;
@@ -194,9 +199,16 @@ public class XtextBasedEditorActivationChangeTrigger extends AbstractTrigger imp
                     break;
                 }
             }
+
+            List<IMarker> currentMarkers =
+                    Arrays.asList(underlyingFile.findMarkers(null, true, IResource.DEPTH_INFINITE));
+            if (marker != null) {
+                currentMarkers = Lists.newArrayList(currentMarkers);
+                currentMarkers.remove(marker);
+            }
             
             /* if model is correct... */
-            if (resource.getErrors().isEmpty()) {
+            if (resource.getErrors().isEmpty() && currentMarkers.isEmpty()) {
                 /* ...and a marker exists remove it and finish! */
                 if (marker != null) {
                     marker.delete();
@@ -206,7 +218,7 @@ public class XtextBasedEditorActivationChangeTrigger extends AbstractTrigger imp
             } else {
                 /* Otherwise create a marker if no one already exists. */
                 if (marker == null) {
-                    marker = ResourceUtil.getUnderlyingFile(resource).createMarker(IMarker.PROBLEM);
+                    marker = underlyingFile.createMarker(IMarker.PROBLEM);
                     marker.setAttribute(KIELER_XTEXT_ERROR_MARKER_ID, true);
                     marker.setAttribute(IMarker.MESSAGE, msg);
                     marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
