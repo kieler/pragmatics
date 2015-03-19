@@ -62,8 +62,8 @@ public class HyperedgeCrossingsCounter extends AbstractCrossingsCounter {
      * @param portPos
      *          Port position array used for counting the number of edge crossings
      */
-    public HyperedgeCrossingsCounter(int[] inLayerEdgeCount, boolean[] hasNorthSouthPorts,
-            final int[] portPos) {
+    public HyperedgeCrossingsCounter(final int[] inLayerEdgeCount,
+            final boolean[] hasNorthSouthPorts, final int[] portPos) {
         super(inLayerEdgeCount, hasNorthSouthPorts);
         this.portPos = portPos;
     }
@@ -155,8 +155,9 @@ public class HyperedgeCrossingsCounter extends AbstractCrossingsCounter {
      *            the right layer
      * @return the number of edge crossings
      */
+    // SUPPRESS CHECKSTYLE NEXT 1 MethodLength
     @Override
-    public int countCrossings(NodeGroup[] leftLayer, NodeGroup[] rightLayer) {
+    public int countCrossings(final NodeGroup[] leftLayer, final NodeGroup[] rightLayer) {
         // Assign index values to the ports of the left layer
         int sourceCount = 0;
         for (NodeGroup nodeGroup : leftLayer) {

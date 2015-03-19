@@ -14,15 +14,16 @@
 package de.cau.cs.kieler.klay.layered.intermediate;
 
 import java.util.List;
+import java.util.ListIterator;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.UnsupportedConfigurationException;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.LayerConstraint;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -31,12 +32,16 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * this processor, the {@link EdgeAndLayerConstraintEdgeReverser} can be used.
  * 
  * <dl>
- *   <dt>Precondition:</dt><dd>a layered graph; nodes to be placed in the first layer have only
- *     outgoing edges; nodes to be placed in the last layer have only incoming edges.</dd>
- *   <dt>Postcondition:</dt><dd>nodes with layer constraints have been placed in the
- *     appropriate layers.</dd>
- *   <dt>Slots:</dt><dd>Before phase 3.</dd>
- *   <dt>Same-slot dependencies:</dt><dd>{@link HierarchicalPortConstraintProcessor}</dd>
+ *   <dt>Precondition:</dt>
+ *     <dd>a layered graph.</dd>
+ *     <dd>nodes to be placed in the first layer have only outgoing edges</dd>
+ *     <dd>nodes to be placed in the last layer have only incoming edges</dd>
+ *   <dt>Postcondition:</dt>
+ *     <dd>nodes with layer constraints have been placed in the appropriate layers.</dd>
+ *   <dt>Slots:</dt>
+ *     <dd>Before phase 3.</dd>
+ *   <dt>Same-slot dependencies:</dt>
+ *     <dd>{@link HierarchicalPortConstraintProcessor}</dd>
  * </dl>
  * 
  * @see EdgeAndLayerConstraintEdgeReverser
@@ -100,12 +105,35 @@ public final class LayerConstraintProcessor implements ILayoutProcessor {
         }
         
         // Remove empty first and last layers
-        if (firstLayer.getNodes().isEmpty()) {
-            layers.remove(0);
-        }
         
-        if (firstLayer != lastLayer && lastLayer.getNodes().isEmpty()) {
-            layers.remove(layers.size() - 1);
+        // If the first (or last) layer of the graph consists of a single node
+        //  with LAYER_CONSTRAINTS set to FIRST (or LAST), the 'old' layer
+        //  of this node will be left empty. In a later step this would 
+        //  result in an unnecessary dummy node (KIPRA-1561). We thus have 
+        //  to check if the first two (or last two) layers are empty 
+        //  and if so, remove them.
+        int index = 0;
+        ListIterator<Layer> listIt = layers.listIterator();
+        while (listIt.hasNext()) {
+            Layer l = listIt.next();
+            if (l.getNodes().isEmpty()) {
+                listIt.remove();
+            }
+            if (++index == 2) {
+                break;
+            }
+        }
+
+        index = 0;
+        listIt = layers.listIterator(layers.size());
+        while (listIt.hasPrevious()) {
+            Layer l = listIt.previous();
+            if (l.getNodes().isEmpty()) {
+                listIt.remove();
+            }
+            if (++index == 2) {
+                break;
+            }
         }
         
         // Add non-empty new first and last layers

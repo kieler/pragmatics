@@ -417,6 +417,9 @@
                abbreviation="Sum"
                name="Sum">
          </component>
+         <component
+               name="Sum Non Unique">
+         </component>
       </analysis>
       <analysis
             category="de.cau.cs.kieler.kiml.grana.drawing"

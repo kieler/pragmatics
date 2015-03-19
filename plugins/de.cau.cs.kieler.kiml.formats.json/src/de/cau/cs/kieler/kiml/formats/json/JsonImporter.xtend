@@ -277,7 +277,6 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
                 padding.optDouble("right") => [insets.right = it.floatValueValid]
                 padding.optDouble("top") => [insets.top = it.floatValueValid]
                 padding.optDouble("bottom") => [insets.bottom = it.floatValueValid]
-                println(insets)
             }
         ]
     }
