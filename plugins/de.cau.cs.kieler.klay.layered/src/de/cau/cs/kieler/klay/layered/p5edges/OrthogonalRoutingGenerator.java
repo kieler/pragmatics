@@ -799,7 +799,7 @@ public final class OrthogonalRoutingGenerator {
         }
     
         // assign marks to all nodes, ignore dependencies of weight zero
-        Set<HyperNode> unprocessed = Sets.newLinkedHashSet();
+        Set<HyperNode> unprocessed = Sets.newTreeSet(nodes);
         int markBase = nodes.size();
         int nextRight = markBase - 1, nextLeft = markBase + 1;
         List<HyperNode> maxNodes = new ArrayList<HyperNode>();
