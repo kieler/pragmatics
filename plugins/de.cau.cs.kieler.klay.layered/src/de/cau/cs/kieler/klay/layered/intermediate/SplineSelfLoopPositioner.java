@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumMap;
@@ -48,24 +47,27 @@ import de.cau.cs.kieler.klay.layered.properties.SelfLoopPlacement;
 
 
 /**
- * Unhides ports that were hidden by the SplineSelfLoopPreProcessor before. A sorting of the components 
- * is done, in respect to the size of text labels of the edges. The ports are re-added to the node in 
- * a crossing minimizing order that depends on the SPLINE_SELF_LOOP_PLACEMENT property of the graph.
+ * Unhides ports that were hidden by the {@link SplineSelfLoopPreProcessor} before. A sorting of the
+ * components is done, in respect to the size of text labels of the edges. The ports are re-added to
+ * the node in a crossing minimizing order that depends on the
+ * {@link Properties#SPLINE_SELF_LOOP_PLACEMENT} property of the graph.
  * 
  * <dl>
- * <dt>Precondition:</dt>
- * <dd>A layered graph; port order is fixed. The {@code ConnectedSelfLoop} have a loop side set.</dd>
- * <dt>Postcondition:</dt>
- * <dd>All ports removed from the nodes before are added again. They are added in a way to minimize
- * crossings of edges.</dd>
- * <dt>Slots:</dt>
- * <dd>Between phase 3 and 4.</dd>
- * <dt>Same-slot dependencies:</dt>
- * <dd>None.</dd>
+ *   <dt>Precondition:</dt>
+ *     <dd>A layered graph.</dd>
+ *     <dd>Fixed port order.</dd>
+ *     <dd>All {@code ConnectedSelfLoop}s have a loop side set.</dd>
+ *   <dt>Postcondition:</dt>
+ *     <dd>All ports removed from the nodes before are added again. They are added in a way to minimize
+ *         crossings of edges.</dd>
+ *   <dt>Slots:</dt>
+ *     <dd>Between phase 3 and 4.</dd>
+ *   <dt>Same-slot dependencies:</dt>
+ *     <dd>None.</dd>
  * </dl>
  * 
- * @see SplineSelfLoopPreProcessor
  * @author tit
+ * @see SplineSelfLoopPreProcessor
  */
 public final class SplineSelfLoopPositioner implements ILayoutProcessor {
     
@@ -708,7 +710,9 @@ public final class SplineSelfLoopPositioner implements ILayoutProcessor {
          * Adds all ports of given {@link LoopSide} of this component-holder to the current 
          * position of the {@link ListIterator}. The ports are placed, so that source and target ports 
          * of an edge are placed next to each other. The source port of an edge will be places before
-         * the target port of an edge. 
+         * the target port of an edge.
+         * 
+         * FIXME: This method doesn't seem to be used anywhere. Remove?
          * 
          * @param loopSide The components of this {@link LoopSide} will be added. 
          * @param itr The {@link ListIterator} to add the ports into.
@@ -869,7 +873,7 @@ public final class SplineSelfLoopPositioner implements ILayoutProcessor {
                 // to one of the available straight sides.
                 // ////////////////////////////////////////////////////////////
 
-                final Collection<LoopSide> availableStraights = loopSides.availableStraightSides();
+                final Set<LoopSide> availableStraights = loopSides.availableStraightSides();
                 if (!availableStraights.isEmpty()) {
                     final Iterator<ConnectedSelfLoopComponent> itrComponent = withoutText.iterator();
                     final Iterator<LoopSide> itrAvailable =
@@ -905,7 +909,7 @@ public final class SplineSelfLoopPositioner implements ILayoutProcessor {
                 final LoopSide center = findCenter();
 
                 // The list of portSides we assign to the set of connected components.
-                final Collection<LoopSide> portSides = new LinkedList<LoopSide>();
+                final List<LoopSide> portSides = Lists.newLinkedList();
 
                 // How many times must a "full set" of LoopSide-elements be constructed?
                 final int fullSets = number / loopSides.availableNotAcrossSides().size();
@@ -1228,19 +1232,10 @@ public final class SplineSelfLoopPositioner implements ILayoutProcessor {
             }
             
             /**
-             * @return A {@link List} of all removed loopSides. 
-             */
-            private Collection<LoopSide> allRemovedSides() {
-                final Collection<LoopSide> retVal = LoopSide.getAllDefinedSides();
-                retVal.removeAll(availableSides());
-                return retVal;
-            }
-
-            /**
              * @return A {@link List} of all removed side loopSides.
              */
-            private Collection<LoopSide> allRemovedStraightSides() {
-                final Collection<LoopSide> retVal = LoopSide.getAllStraightSides();
+            private Set<LoopSide> allRemovedStraightSides() {
+                final Set<LoopSide> retVal = LoopSide.getAllStraightSides();
                 retVal.removeAll(availableStraightSides());
                 return retVal;
             }
@@ -1258,10 +1253,6 @@ public final class SplineSelfLoopPositioner implements ILayoutProcessor {
                     this.height = height;
                 }
                 
-                void setWidth(final double width) {
-                    this.width = width;
-                }
-                
                 void addWidth(final double w) {
                     this.width += w;
                 }
@@ -1270,10 +1261,6 @@ public final class SplineSelfLoopPositioner implements ILayoutProcessor {
                     return width;
                 }
 
-                void setHeight(final double height) {
-                    this.height = height;
-                }
-                
                 void addHeight(final double h) {
                     this.height += h;
                 }

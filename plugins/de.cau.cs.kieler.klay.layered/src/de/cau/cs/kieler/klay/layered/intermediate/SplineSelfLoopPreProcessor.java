@@ -14,12 +14,11 @@
 package de.cau.cs.kieler.klay.layered.intermediate;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
@@ -68,7 +67,7 @@ public final class SplineSelfLoopPreProcessor implements ILayoutProcessor {
         monitor.begin("Spline SelfLoop pre-processing.", 1);
        
         // A set of all loop edges of the currently processed node.
-        final Set<LEdge> loopEdges = new HashSet<LEdge>();
+        final Set<LEdge> loopEdges = Sets.newLinkedHashSet();
 
         // process all nodes
         for (final LNode node : layeredGraph.getLayerlessNodes()) {
@@ -96,14 +95,13 @@ public final class SplineSelfLoopPreProcessor implements ILayoutProcessor {
                 final PortSide sourcePortSide = edge.getSource().getSide();
                 final PortSide targetPortSide = edge.getTarget().getSide();
                 
-                if     (sourcePortSide == PortSide.NORTH
-                     && (targetPortSide == PortSide.EAST || targetPortSide == PortSide.SOUTH)
-                  ||   sourcePortSide == PortSide.EAST
-                     && targetPortSide == PortSide.SOUTH
-                  ||   sourcePortSide == PortSide.SOUTH
-                     && targetPortSide == PortSide.WEST
-                  ||   sourcePortSide == PortSide.WEST
-                     && (targetPortSide == PortSide.NORTH || targetPortSide == PortSide.EAST)) {
+                if ((sourcePortSide == PortSide.NORTH
+                     && (targetPortSide == PortSide.EAST || targetPortSide == PortSide.SOUTH))
+                  || (sourcePortSide == PortSide.EAST && targetPortSide == PortSide.SOUTH)
+                  || (sourcePortSide == PortSide.SOUTH && targetPortSide == PortSide.WEST)
+                  || (sourcePortSide == PortSide.WEST
+                     && (targetPortSide == PortSide.NORTH || targetPortSide == PortSide.EAST))) {
+                    
                     edge.reverse(layeredGraph, false);
                 }
             }
@@ -165,11 +163,10 @@ public final class SplineSelfLoopPreProcessor implements ILayoutProcessor {
      * @return A set of sets. Every single set represents a connected component.
      */
     private static List<ConnectedSelfLoopComponent> findAllConnectedComponents(
-            final Collection<LEdge> loopEdges, final LNode node) {
+            final Set<LEdge> loopEdges, final LNode node) {
         
         final List<ConnectedSelfLoopComponent> components = Lists.newLinkedList();
-        final Multimap<LPort, LEdge> portToEdge = HashMultimap.create();
-        //TODO: Hash is OK?
+        final Multimap<LPort, LEdge> portToEdge = LinkedListMultimap.create();
         
         for (final LEdge edge : loopEdges) {
             portToEdge.put(edge.getSource(), edge);
@@ -199,7 +196,7 @@ public final class SplineSelfLoopPreProcessor implements ILayoutProcessor {
     private static ConnectedSelfLoopComponent findAConnectedComponent(
             final Multimap<LPort, LEdge> portsToEdges, final LNode node, final boolean isFixedOrder) {
         
-        final Multimap<LEdge, LPort> edgeToPort = HashMultimap.create();
+        final Multimap<LEdge, LPort> edgeToPort = LinkedListMultimap.create();
         Multimaps.invertFrom(portsToEdges, edgeToPort);
         
         // The connected components element we are constructing.

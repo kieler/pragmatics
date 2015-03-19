@@ -13,7 +13,9 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
-import java.util.HashMap;
+import java.util.Map;
+
+import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
@@ -59,16 +61,16 @@ public final class EndLabelProcessor implements ILayoutProcessor {
      * In case of northern ports, labels have to be stacked to avoid overlaps.
      * The necessary offset is stored here.
      */
-    private HashMap<LNode, Double> northOffset; 
+    private Map<LNode, Double> northOffset; 
     
     /** The stacking offset for southern labels is stored here. */
-    private HashMap<LNode, Double> southOffset;
+    private Map<LNode, Double> southOffset;
     
     /**
      * Port labels have to be stacked on northern or southern ports as well if
      * placed outside. This offset is memorized here.
      */
-    private HashMap<LPort, Double> portLabelOffsetHint;
+    private Map<LPort, Double> portLabelOffsetHint;
     
     /**
      * {@inheritDoc}
@@ -79,9 +81,9 @@ public final class EndLabelProcessor implements ILayoutProcessor {
         double labelSpacing = layeredGraph.getProperty(LayoutOptions.LABEL_SPACING);
         
         // Initialize the offset maps
-        northOffset = new HashMap<LNode, Double>();
-        southOffset = new HashMap<LNode, Double>();
-        portLabelOffsetHint = new HashMap<LPort, Double>();
+        northOffset = Maps.newHashMap();
+        southOffset = Maps.newHashMap();
+        portLabelOffsetHint = Maps.newHashMap();
         
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
