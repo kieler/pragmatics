@@ -131,17 +131,19 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
      */
     @Override
     public void dispose() {
-    	if(prefListener != null) {
-	        final GraphvizLayouterPlugin plugin = GraphvizLayouterPlugin.getDefault();
-	
-	        // since during platform shutdown plug-ins will be stopped in reverse order of their dependencies
-	        //  'plugin' is likely to be 'null' when kiml.service calls 'dispose()' on the layout managers
-	        // in this case removing the preference change listener should be obsolete ;-)
-	        if (plugin != null && prefListener != null) {
-	            plugin.getPreferenceStore().removePropertyChangeListener((IPropertyChangeListener) prefListener);
-	        }
-	        prefListener = null;
-    	}
+        if (prefListener != null) {
+            final GraphvizLayouterPlugin plugin = GraphvizLayouterPlugin.getDefault();
+    
+            // since during platform shutdown plug-ins will be stopped in reverse order of their
+            // dependencies 'plugin' is likely to be 'null' when kiml.service calls 'dispose()' on the
+            // layout managers in this case removing the preference change listener should be
+            // obsolete ;-)
+            if (plugin != null && prefListener != null) {
+                plugin.getPreferenceStore().removePropertyChangeListener(
+                        (IPropertyChangeListener) prefListener);
+            }
+            prefListener = null;
+        }
 
         graphvizTool.cleanup(Cleanup.STOP);
     }
