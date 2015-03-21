@@ -15,7 +15,9 @@ package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
 import java.util.List;
 
+import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 
@@ -128,7 +130,21 @@ abstract class SwitchDecider {
 
         boolean areInDifferentLayoutUnits = upperLayoutUnit != lowerLayoutUnit;
 
-        return nodesHaveLayoutUnits && neitherNodeIsLongEdgeDummy && areInDifferentLayoutUnits;
+        boolean upperNodeHasNorthernEdges = hasEdgesOnSide(upperNode, PortSide.NORTH);
+        boolean lowerNodeHasSouthernEdges = hasEdgesOnSide(lowerNode, PortSide.SOUTH);
+
+        return neitherNodeIsLongEdgeDummy
+                && (nodesHaveLayoutUnits && areInDifferentLayoutUnits || upperNodeHasNorthernEdges || lowerNodeHasSouthernEdges);
+    }
+
+    private boolean hasEdgesOnSide(final LNode node, final PortSide side) {
+        Iterable<LPort> ports = node.getPorts(side);
+        for (LPort port : ports) {
+            if (!port.getProperty(InternalProperties.CONNECTED_NORTH_SOUTH_PORT_DUMMIES).isEmpty()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean partOfMultiNodeLayoutUnit(final LNode node, final LNode layoutUnit) {

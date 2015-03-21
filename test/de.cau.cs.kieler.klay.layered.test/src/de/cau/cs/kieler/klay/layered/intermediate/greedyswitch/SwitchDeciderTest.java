@@ -50,7 +50,8 @@ public class SwitchDeciderTest {
     @Parameters(name = "{0}")
     public static Iterable<Object[]> greedyTypes() {
         return Arrays.asList(new Object[][] { { GreedySwitchType.ONE_SIDED_COUNTER, },
-                { GreedySwitchType.TWO_SIDED_COUNTER }, { GreedySwitchType.ONE_SIDED_CROSSING_MATRIX },
+                { GreedySwitchType.TWO_SIDED_COUNTER },
+                { GreedySwitchType.ONE_SIDED_CROSSING_MATRIX },
                 { GreedySwitchType.TWO_SIDED_CROSSING_MATRIX },
                 { GreedySwitchType.ONE_SIDED_ON_DEMAND_CROSSING_MATRIX },
                 { GreedySwitchType.TWO_SIDED_ON_DEMAND_CROSSING_MATRIX } });
@@ -310,6 +311,33 @@ public class SwitchDeciderTest {
         if (greedyType.isOneSided()) {
             assertThat(decider.doesSwitchReduceCrossings(1, 2), is(true));
         }
+    }
+
+    @Test
+    public void layoutUnitConstraintPreventsSwitchWithNodeWithNorthernPorts() {
+        graph = creator.getGraphLayoutUnitPreventsSwitchWithNodeWithNodeWithNorthernEdges();
+
+        decider = givenDeciderForFreeLayer(0, CrossingCountSide.EAST);
+
+        assertThat(decider.doesSwitchReduceCrossings(1, 2), is(false));
+    }
+
+    @Test
+    public void layoutUnitConstraintPreventsSwitchWithNodeWithSouthernPorts() {
+        graph = creator.getGraphLayoutUnitPreventsSwitchWithNodeWithNodeWithSouthernEdges();
+
+        decider = givenDeciderForFreeLayer(0, CrossingCountSide.EAST);
+
+        assertThat(decider.doesSwitchReduceCrossings(0, 1), is(false));
+    }
+
+    @Test
+    public void layoutUnitConstraintDoesNotPreventSwitchWithWhenOtherNodeIsLongEdgeDummy() {
+        graph = creator.getGraphLayoutUnitDoesNotPreventSwitchWithLongEdgeDummy();
+
+        decider = givenDeciderForFreeLayer(1, CrossingCountSide.EAST);
+
+        assertThat(decider.doesSwitchReduceCrossings(0, 1), is(true));
     }
 
     private void switchNodes(final int upperNodeIndex, final int lowerNodeIndex) {

@@ -238,7 +238,6 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
     private boolean sweepUpwardInLayer(final int layerIndex) {
         boolean continueSwitching = false;
         int lengthOfFreeLayer = currentNodeOrder[layerIndex].length;
-        // System.out.println("Layer " + layerIndex);
         for (int lowerNodeIndex = lengthOfFreeLayer - 1; lowerNodeIndex > 0; lowerNodeIndex--) {
             int upperNodeIndex = lowerNodeIndex - 1;
             continueSwitching |= switchIfImproves(layerIndex, upperNodeIndex, lowerNodeIndex);
@@ -249,7 +248,6 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
     private boolean switchIfImproves(final int layerIndex, final int upperNodeIndex,
             final int lowerNodeIndex) {
         boolean continueSwitching = false;
-        // System.out.println("upper " + upperNodeIndex + " lower " + lowerNodeIndex);
         if (switchDecider.doesSwitchReduceCrossings(upperNodeIndex, lowerNodeIndex)) {
             exchangeNodes(upperNodeIndex, lowerNodeIndex, layerIndex, switchDecider);
             continueSwitching = true;

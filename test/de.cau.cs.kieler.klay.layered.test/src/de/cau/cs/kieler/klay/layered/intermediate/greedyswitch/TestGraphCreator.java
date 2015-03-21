@@ -1867,6 +1867,86 @@ public class TestGraphCreator {
 
     /**
      * <pre>
+     *   *------*
+     *   | 
+     *   |     -*
+     *  _|__  /
+     *  |__|-+--*     
+     *      /
+     *    *-
+     * </pre>
+     * 
+     * Lower north/south port dummy and normal node can't be switched.
+     * 
+     * @return Graph of the form above.
+     */
+    public LGraph getGraphLayoutUnitPreventsSwitchWithNodeWithNodeWithNorthernEdges() {
+        LNode[] leftNodes = addNodesToLayer(3, makeLayer());
+        LNode[] rightNodes = addNodesToLayer(3, makeLayer());
+
+        addNorthSouthEdge(PortSide.NORTH, leftNodes[1], leftNodes[0], rightNodes[0], false);
+        eastWestEdgeFromTo(leftNodes[1], rightNodes[2]);
+        eastWestEdgeFromTo(leftNodes[2], rightNodes[1]);
+
+        return graph;
+    }
+
+    /**
+     * <pre>
+     *    *-
+     *  ____\  
+     *  |__|-+--*     
+     *    |   \
+     *    |    -*
+     *    *-----*
+     * </pre>
+     * 
+     * Lower north/south port dummy and normal node can't be switched.
+     * 
+     * @return Graph of the form above.
+     */
+    public LGraph getGraphLayoutUnitPreventsSwitchWithNodeWithNodeWithSouthernEdges() {
+        LNode[] leftNodes = addNodesToLayer(4, makeLayer());
+        LNode[] rightNodes = addNodesToLayer(3, makeLayer());
+
+        eastWestEdgeFromTo(leftNodes[0], rightNodes[1]);
+        eastWestEdgeFromTo(leftNodes[1], rightNodes[0]);
+        addNorthSouthEdge(PortSide.SOUTH, leftNodes[1], leftNodes[2], rightNodes[2], false);
+
+        return graph;
+    }
+
+    /**
+     * <pre>
+     * *--*-   <- is long edge dummy
+     *  ____\  
+     *  |__|=+==*     
+     *    |   \
+     *    |     *
+     *    *-----*
+     * </pre>
+     * 
+     * Lower north/south port dummy and normal node can't be switched.
+     * 
+     * @return Graph of the form above.
+     */
+    public LGraph getGraphLayoutUnitDoesNotPreventSwitchWithLongEdgeDummy() {
+        LNode leftNode = addNodeToLayer(makeLayer());
+        LNode[] middleNodes = addNodesToLayer(4, makeLayer());
+        LNode[] rightNodes = addNodesToLayer(3, makeLayer());
+
+        setAsLongEdgeDummy(middleNodes[0]);
+        eastWestEdgeFromTo(leftNode, middleNodes[0]);
+        eastWestEdgeFromTo(middleNodes[0], rightNodes[1]);
+        eastWestEdgeFromTo(middleNodes[1], rightNodes[0]);
+        eastWestEdgeFromTo(middleNodes[1], rightNodes[0]);
+        addNorthSouthEdge(PortSide.SOUTH, middleNodes[1], middleNodes[2], rightNodes[2], false);
+
+        return graph;
+    }
+
+    /**
+     * <pre>
      * ----*
      * |  /
      * *++-*
