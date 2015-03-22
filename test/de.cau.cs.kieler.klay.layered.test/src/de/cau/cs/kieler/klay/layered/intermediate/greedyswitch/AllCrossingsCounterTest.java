@@ -68,21 +68,21 @@ public class AllCrossingsCounterTest {
 
     @Test
     public void countNorthSouthCrossing() {
-        graph = testGraphCreator.getNorthSouthDownwardCrossingGraph();
+        graph = new NorthSouthEdgeTestGraphCreator().getNorthSouthDownwardCrossingGraph();
         int amountOfCrossings = whenCountingAllCrossings();
         assertThat(amountOfCrossings, is(1));
     }
 
     @Test
     public void countNorthernNorthSouthCrossing() {
-        graph = testGraphCreator.getNorthSouthUpwardCrossingGraph();
+        graph = new NorthSouthEdgeTestGraphCreator().getNorthSouthUpwardCrossingGraph();
         int amountOfCrossings = whenCountingAllCrossings();
         assertThat(amountOfCrossings, is(1));
     }
 
     @Test
     public void northSouthDummyEdgeCrossing() {
-        graph = testGraphCreator.getSouthernNorthSouthDummyEdgeCrossingGraph();
+        graph = new NorthSouthEdgeTestGraphCreator().getSouthernNorthSouthDummyEdgeCrossingGraph();
         int amountOfCrossings = whenCountingAllCrossings();
         assertThat(amountOfCrossings, is(1));
     }
@@ -111,7 +111,7 @@ public class AllCrossingsCounterTest {
 
     @Test
     public void tooManyInLayerCrossingsWithTheOldMethod() {
-        graph = testGraphCreator.getInLayerOneLayerNoCrossings();
+        graph = new InLayerEdgeTestGraphCreator().getInLayerOneLayerNoCrossings();
         int amountOfCrossings = whenCountingAllCrossings();
         assertThat(amountOfCrossings, is(0));
     }
@@ -147,21 +147,23 @@ public class AllCrossingsCounterTest {
 
     @Test
     public void oneNodeIsLongEdgeDummy() {
-        graph = testGraphCreator.getSouthernNorthSouthDummyEdgeCrossingGraph();
+        graph = new NorthSouthEdgeTestGraphCreator().getSouthernNorthSouthDummyEdgeCrossingGraph();
         int amountOfCrossings = whenCountingAllCrossings();
         assertThat(amountOfCrossings, is(1));
     }
 
     @Test
     public void oneNodeIsLongEdgeDummyNorthern() {
-        graph = testGraphCreator.getNorthernNorthSouthDummyEdgeCrossingGraph();
+        graph = new NorthSouthEdgeTestGraphCreator().getNorthernNorthSouthDummyEdgeCrossingGraph();
         int amountOfCrossings = whenCountingAllCrossings();
         assertThat(amountOfCrossings, is(1));
     }
 
     @Test
     public void multipleNorthSouthAndLongEdgeDummiesOnBothSides() {
-        graph = testGraphCreator.getMultipleNorthSouthAndLongEdgeDummiesOnBothSides();
+        graph =
+                new NorthSouthEdgeTestGraphCreator()
+                        .getMultipleNorthSouthAndLongEdgeDummiesOnBothSides();
         int amountOfCrossings = whenCountingAllCrossings();
         assertThat(amountOfCrossings, is(4));
     }

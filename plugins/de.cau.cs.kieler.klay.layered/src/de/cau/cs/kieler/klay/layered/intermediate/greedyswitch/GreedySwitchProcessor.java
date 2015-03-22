@@ -25,7 +25,20 @@ import de.cau.cs.kieler.klay.layered.properties.GreedySwitchType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
- * TODO-alan.
+ * Implements the greedy switch heuristic: For two neighboring nodes, check to see if by exchanging
+ * their positions ("switching" them) the number of crossings is reduced. If it is, switch them, if
+ * it is not, don't. This principle is continued throughout the graph for all nodes in each layer. <br>
+ * Configuration depends on the {@link GreedySwitchType} set on the graph:
+ * <ul>
+ * <li>One-sided: fixes the order of one layer and changes the order in a neighboring layer using
+ * the number of crossings to this neighboring layer. To prevent increasing the number of crosses,
+ * after each forward and backward sweep the number of crossings in the graph are recounted.
+ * <li>useHperedgeCounter: uses the hyperedge crossing approximation algorithm to count
+ * between-layer edges.
+ * <li>Two-sided: sets a layer as free and counts crossings to both neighboring layers.
+ * <li>useBestOfUpOrDown: tries sweeping from top to bottom in a layer and other way around and
+ * takes the better solution.
+ * </ul>
  * 
  * @author alan
  *
@@ -44,7 +57,7 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
     private int currentCrossings;
 
     /**
-     * ¸ {@inheritDoc}
+     * {@inheritDoc}
      */
     public void process(final LGraph graph, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Greedy switch crossing reduction", 1);
@@ -75,21 +88,21 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
         // in-layer sweep direction is downward
         sweepOneSidedOrTwoSided();
         LNode[][] downwardSweepOrder = copyNodeOrder();
-        int downwardSweepCrossings = getCrossingAmount();
+        int downwardSweepCrossings = getCrossingCount();
 
         // set in-layer sweepdirection to upward
         sweepDownwardInLayer = false;
         currentNodeOrder = originalNodeOrder;
         sweepOneSidedOrTwoSided();
-        int upwardSweepCrossings = getCrossingAmount();
+        int upwardSweepCrossings = getCrossingCount();
 
         if (downwardSweepCrossings <= upwardSweepCrossings) {
             setAsBestNodeOrder(downwardSweepOrder);
         }
     }
 
-    private int getCrossingAmount() {
-        return greedySwitchType.isOneSided() ? currentCrossings : countCurrentAmountOfCrossings();
+    private int getCrossingCount() {
+        return greedySwitchType.isOneSided() ? currentCrossings : countCurrentNumberOfCrossings();
     }
 
     private void sweepOneSidedOrTwoSided() {
@@ -103,8 +116,8 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
     /**
      * This version of the greedy switch processor repeatedly sweeps only forward across the graph.
      * For each layer it holds the neighboring layers in place and switches the node order iff it
-     * would reduce the amount of crossings on both sides of the middle layer. In this manner, the
-     * amount of crossings can not be increased and we do not need to calculate the total amount of
+     * would reduce the number of crossings on both sides of the middle layer. In this manner, the
+     * number of crossings can not be increased and we do not need to calculate the total number of
      * crossings.
      * 
      * @param startCrossings
@@ -131,12 +144,12 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
      * place and changes the order of the western layer. A node is switched if it causes more
      * crossings between these two layers in the current order than in the switched order. Since the
      * layer following the western layer is not considered, this switch can cause more crossings in
-     * the whole graph. In order to prevent this, the amount of crossings are counted at the
+     * the whole graph. In order to prevent this, the number of crossings are counted at the
      * beginning and after each forward and backward sweep. The result with the fewest crossings
      * (possibly the original order) is taken.
      */
     private void oneSidedLayerSweep() {
-        int crossingsInGraph = countCurrentAmountOfCrossings();
+        int crossingsInGraph = countCurrentNumberOfCrossings();
         int currentSweepCrossings = Integer.MAX_VALUE;
         while (currentSweepCrossings > crossingsInGraph) {
             setAsBestNodeOrder(currentNodeOrder);
@@ -150,7 +163,7 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
             sweepBackward();
 
             currentSweepCrossings = crossingsInGraph;
-            crossingsInGraph = countCurrentAmountOfCrossings();
+            crossingsInGraph = countCurrentNumberOfCrossings();
         }
         currentCrossings = currentSweepCrossings;
     }
@@ -185,7 +198,7 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
         return improved;
     }
 
-    private int countCurrentAmountOfCrossings() {
+    private int countCurrentNumberOfCrossings() {
         return crossingCounter.countAllCrossingsInGraphWithOrder(currentNodeOrder);
     }
 
@@ -249,14 +262,13 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
             final int lowerNodeIndex) {
         boolean continueSwitching = false;
         if (switchDecider.doesSwitchReduceCrossings(upperNodeIndex, lowerNodeIndex)) {
-            exchangeNodes(upperNodeIndex, lowerNodeIndex, layerIndex, switchDecider);
+            exchangeNodes(upperNodeIndex, lowerNodeIndex, layerIndex);
             continueSwitching = true;
         }
         return continueSwitching;
     }
 
-    private void exchangeNodes(final int indexOne, final int indexTwo, final int layerIndex,
-            final SwitchDecider switchDecider) {
+    private void exchangeNodes(final int indexOne, final int indexTwo, final int layerIndex) {
         switchDecider.notifyOfSwitch(currentNodeOrder[layerIndex][indexOne],
                 currentNodeOrder[layerIndex][indexTwo]);
         LNode[] layer = currentNodeOrder[layerIndex];
@@ -296,7 +308,7 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
         }
         crossingCounter = new AllCrossingsCounter(currentNodeOrder);
         if (greedySwitchType.useHyperedgeCounter()) {
-            crossingCounter.useOrthogonalCounter();
+            crossingCounter.useHyperedgeCounter();
         }
     }
 }

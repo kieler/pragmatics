@@ -72,9 +72,6 @@ public class GreedySwitcherIntegrationTest extends AbstractLayeredProcessorTest 
         return testPaths;
     }
 
-    /**
-     * {@inheritDoc} TODO-alan ???
-     */
     @Override
     protected List<ILayoutConfigurator> getConfigurators() {
         return Lists.newArrayList();
@@ -91,14 +88,27 @@ public class GreedySwitcherIntegrationTest extends AbstractLayeredProcessorTest 
 
     @Test
     public void allOneSidedMethodsShouldResultInSameGraph() {
-        testTypes(allOneSidedTypes);
-    }
-
-    private void testTypes(final GreedySwitchType[] types) {
         for (LGraph lGraph : state.getGraphs()) {
             graph = lGraph;
             originalOrder = copyNodeOrder(graph);
-            assertAllTypesResultsInSameGraph(types);
+            assertAllTypesResultsInSameGraph(allOneSidedTypes);
+        }
+    }
+
+    @Test
+    public void allTwoSidedMethodsShouldResultInSameGraph() {
+        for (LGraph lGraph : state.getGraphs()) {
+            graph = lGraph;
+            originalOrder = copyNodeOrder(graph);
+            assertAllTypesResultsInSameGraph(allTwoSidedTypes);
+        }
+    }
+
+    private void assertAllTypesResultsInSameGraph(final GreedySwitchType[] types) {
+        List<List<LNode>> firstNodeOrder = getNodeOrderAfterExecuting(types[0]);
+        for (GreedySwitchType greedyType : types) {
+            List<List<LNode>> nodeOrder = getNodeOrderAfterExecuting(greedyType);
+            assertThat(greedyType.toString(), firstNodeOrder, is(nodeOrder));
         }
     }
 
@@ -113,16 +123,7 @@ public class GreedySwitcherIntegrationTest extends AbstractLayeredProcessorTest 
         return copyNodeOrder(graph);
     }
 
-    private ILayoutProcessor getGreedyProcessor(final List<ILayoutProcessor> algorithms) {
-        for (ILayoutProcessor iLayoutProcessor : algorithms) {
-            if (iLayoutProcessor instanceof GreedySwitchProcessor) {
-                return iLayoutProcessor;
-            }
-        }
-        throw new RuntimeException("Greedy processor not in configuration");
-    }
-
-    private void resetGraphToOriginalOrder() {// TODO-alan sort methods
+    private void resetGraphToOriginalOrder() {
         for (int i = 0; i < graph.getLayers().size(); i++) {
             Layer layer = graph.getLayers().get(i);
             for (int j = 0; j < layer.getNodes().size(); j++) {
@@ -143,17 +144,13 @@ public class GreedySwitcherIntegrationTest extends AbstractLayeredProcessorTest 
         return copyList;
     }
 
-    @Test
-    public void allTwoSidedMethodsShouldResultInSameGraph() {
-        testTypes(allTwoSidedTypes);
-    }
-
-    private void assertAllTypesResultsInSameGraph(final GreedySwitchType[] types) {
-        List<List<LNode>> firstNodeOrder = getNodeOrderAfterExecuting(types[0]);
-        for (GreedySwitchType greedyType : types) {
-            List<List<LNode>> nodeOrder = getNodeOrderAfterExecuting(greedyType);
-            assertThat(greedyType.toString(), firstNodeOrder, is(nodeOrder));
+    private ILayoutProcessor getGreedyProcessor(final List<ILayoutProcessor> algorithms) {
+        for (ILayoutProcessor iLayoutProcessor : algorithms) {
+            if (iLayoutProcessor instanceof GreedySwitchProcessor) {
+                return iLayoutProcessor;
+            }
         }
+        throw new RuntimeException("Greedy processor not in configuration");
     }
 
     @Test

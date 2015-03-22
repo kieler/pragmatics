@@ -24,10 +24,10 @@ import de.cau.cs.kieler.klay.layered.properties.NodeType;
 /**
  * This class is an abstract superclass for six different variants of how to decide, whether two
  * neighboring nodes should be switched: <br>
- * The {@link CounterSwitchDecider} classes use {@link AllCrossingsCounter} to count the amount of
- * crossings that would result from a switch. <br>
+ * The {@link CounterSwitchDecider} classes use {@link AllCrossingsCounter} to count the crossings
+ * that would result from a switch. <br>
  * The {@link CrossingMatrixSwitchDecider} classes calculate the crossing matrix for a pair of fixed
- * and free layers beforehand. Entries i,j in a crossing matrix show the amount of crossings between
+ * and free layers beforehand. Entries i,j in a crossing matrix show the number of crossings between
  * incident edges to nodes i and j when node i is above node j. <br>
  * The {@link OnDemandCrossingMatrixSwitchDecider} classes calculate the entries in the crossing
  * matrix only when needed. <br>
@@ -115,6 +115,11 @@ abstract class SwitchDecider {
     }
 
     private boolean haveLayoutUnitConstraints(final LNode upperNode, final LNode lowerNode) {
+        NodeType firstNodeType = upperNode.getProperty(InternalProperties.NODE_TYPE);
+        NodeType secondNodeType = lowerNode.getProperty(InternalProperties.NODE_TYPE);
+        boolean neitherNodeIsLongEdgeDummy =
+                firstNodeType != NodeType.LONG_EDGE && secondNodeType != NodeType.LONG_EDGE;
+
         // If upperNode and lowerNode are part of a layout unit not only containing themselves,
         // then the layout units must be equal for a switch to be allowed.
         LNode upperLayoutUnit = upperNode.getProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT);
@@ -122,19 +127,16 @@ abstract class SwitchDecider {
         boolean nodesHaveLayoutUnits =
                 partOfMultiNodeLayoutUnit(upperNode, upperLayoutUnit)
                         || partOfMultiNodeLayoutUnit(lowerNode, lowerLayoutUnit);
-
-        NodeType firstNodeType = upperNode.getProperty(InternalProperties.NODE_TYPE);
-        NodeType secondNodeType = lowerNode.getProperty(InternalProperties.NODE_TYPE);
-        boolean neitherNodeIsLongEdgeDummy =
-                firstNodeType != NodeType.LONG_EDGE && secondNodeType != NodeType.LONG_EDGE;
-
         boolean areInDifferentLayoutUnits = upperLayoutUnit != lowerLayoutUnit;
 
         boolean upperNodeHasNorthernEdges = hasEdgesOnSide(upperNode, PortSide.NORTH);
         boolean lowerNodeHasSouthernEdges = hasEdgesOnSide(lowerNode, PortSide.SOUTH);
 
-        return neitherNodeIsLongEdgeDummy
-                && (nodesHaveLayoutUnits && areInDifferentLayoutUnits || upperNodeHasNorthernEdges || lowerNodeHasSouthernEdges);
+        boolean hasLayoutUnitConstraint =
+                nodesHaveLayoutUnits && areInDifferentLayoutUnits || upperNodeHasNorthernEdges
+                        || lowerNodeHasSouthernEdges;
+
+        return neitherNodeIsLongEdgeDummy && hasLayoutUnitConstraint;
     }
 
     private boolean hasEdgesOnSide(final LNode node, final PortSide side) {

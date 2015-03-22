@@ -13,6 +13,10 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
+import java.util.Map;
+
+import com.google.common.collect.Maps;
+
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 
 /**
@@ -24,6 +28,8 @@ abstract class CrossingMatrixSwitchDecider extends SwitchDecider {
     private final InLayerEdgeTwoNodeCrossingCounter inLayerCounter;
     private final NorthSouthEdgeNeighbouringNodeCrossingsCounter northSouthCounter;
     private final BetweenLayerEdgeTwoNodeCrossingsCounter inBetweenLayerCrossingCounter;
+    /** To avoid interdependency errors between classes, the .id field of nodes is not used. */
+    private final Map<LNode, Integer> nodePositions;
 
     /**
      * @param freeLayerIndex
@@ -31,19 +37,19 @@ abstract class CrossingMatrixSwitchDecider extends SwitchDecider {
      */
     public CrossingMatrixSwitchDecider(final int freeLayerIndex, final LNode[][] graph) {
         super(freeLayerIndex, graph);
-        initializeNodeIds(graph);
         inBetweenLayerCrossingCounter =
                 new BetweenLayerEdgeTwoNodeCrossingsCounter(graph, freeLayerIndex);
         inLayerCounter = new InLayerEdgeTwoNodeCrossingCounter(super.getFreeLayer());
-        // TODO-alan consider changing for only one-layer!
         northSouthCounter = new NorthSouthEdgeNeighbouringNodeCrossingsCounter(super.getFreeLayer());
+        nodePositions = Maps.newHashMap();
+        initializeNodePositions(graph);
     }
 
-    private void initializeNodeIds(final LNode[][] graph) {
-        for (int i = 0; i < graph.length; i++) {
+    private void initializeNodePositions(final LNode[][] graph) {
+        for (LNode[] layer : graph) {
             int id = 0;
-            for (int j = 0; j < graph[i].length; j++) {
-                graph[i][j].id = id++;
+            for (LNode node : layer) {
+                nodePositions.put(node, id++);
             }
         }
     }
@@ -59,8 +65,7 @@ abstract class CrossingMatrixSwitchDecider extends SwitchDecider {
 
         LNode upperNode = super.getFreeLayer()[upperNodeIndex];
         LNode lowerNode = super.getFreeLayer()[lowerNodeIndex];
-        inLayerCounter.countCrossingsBetweenNeighbouringNodes(upperNode, lowerNode);
-        // TODO-alan consider changing for only one layer
+        inLayerCounter.countCrossingsBetweenNodes(upperNode, lowerNode);
         northSouthCounter.countCrossings(upperNode, lowerNode);
 
         int upperLowerCrossings =
@@ -84,6 +89,10 @@ abstract class CrossingMatrixSwitchDecider extends SwitchDecider {
 
     protected BetweenLayerEdgeTwoNodeCrossingsCounter getTwoLayerCrossCounter() {
         return inBetweenLayerCrossingCounter;
+    }
+
+    protected int positionOf(final LNode node) {
+        return nodePositions.get(node);
     }
 
 }

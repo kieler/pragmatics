@@ -260,7 +260,7 @@ public class OrthogonalCrossingsAnalysis implements IAnalysis {
         private boolean intersectionHasNoJunctionPoint(final Line2D firstLine,
                 final Line2D secondLine) {
             KVector intersection = intersectionOf(firstLine, secondLine);
-            // TODO-alan Potential Bug: KVector hashSet and equals use == on doubles. Seems to work
+            // TODO Potential Bug: KVector hashSet and equals use == on doubles. Seems to work
             // up to now, though.
             return !junctionPoints.contains(intersection);
         }

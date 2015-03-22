@@ -17,7 +17,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.properties.GreedySwitchType;
 
 /**
- * TODO-alan.
+ * Creates necessary {@link SwitchDecider} by given {@link GreedySwitchType}.
  * 
  * @author alan
  *
@@ -26,11 +26,19 @@ class SwitchDeciderFactory {
 
     private final GreedySwitchType greedyType;
 
+    /**
+     * Creates Factory.
+     * 
+     * @param greedyType
+     */
     public SwitchDeciderFactory(final GreedySwitchType greedyType) {
         this.greedyType = greedyType;
     }
 
     /**
+     * Given a free layer index, depending on the type specified on creation of the factory this
+     * returns a switch decider for one layer. Bear in mind to reuse the SwitchDecider because
+     * creation is a bit expensive.
      * 
      * @param freeLayerIndex
      * @param currentNodeOrder

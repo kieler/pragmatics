@@ -16,7 +16,8 @@ package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 
 /**
- * TODO-alan.
+ * Calculates the complete crossing matrix and evaluates the crossings on the specified side of the
+ * free layer.
  * 
  * @author alan
  *
@@ -67,6 +68,6 @@ class CrossingMatrixOneSidedSwitchDecider extends CrossingMatrixSwitchDecider {
 
     @Override
     int getCrossingMatrixEntry(final LNode upperNode, final LNode lowerNode) {
-        return crossingMatrix[upperNode.id][lowerNode.id];
+        return crossingMatrix[positionOf(upperNode)][positionOf(lowerNode)];
     }
 }

@@ -140,10 +140,10 @@ class BetweenLayerEdgeTwoNodeCrossingsCounter {
     }
 
     /**
-     * TODO-alan check for usage of the word amount Calculates the number of crossings for incident
-     * edges coming from the both sides to node i and j. The crossing numbers can be received with
-     * getCrossingForOrderUpperLower and getCrossingForOrderLowerUpper for the order upperNode ->
-     * lowerNode or lowerNode -> upperNode respectively.
+     * Calculates the number of crossings for incident edges coming from the both sides to node i
+     * and j. The crossing numbers can be received with getCrossingForOrderUpperLower and
+     * getCrossingForOrderLowerUpper for the order upperNode -> lowerNode or lowerNode -> upperNode
+     * respectively.
      * 
      * @param upperNode
      *            Upper node assuming left-right layout.
@@ -200,7 +200,7 @@ class BetweenLayerEdgeTwoNodeCrossingsCounter {
      * The main algorithm. 
      * Adjacency Lists are lists of ports connected to a node. If a connected node has no fixed port
      * ordering all ports have the same position value.
-     * By merging adjacency lists, both the amount of between-layer crossings for the order upper
+     * By merging adjacency lists, both the number of between-layer crossings for the order upper
      * - lower and for the opposite order can be found.
      * Consider:
      * A   p0 
@@ -237,8 +237,8 @@ class BetweenLayerEdgeTwoNodeCrossingsCounter {
      * The adjacency list of a node holds the position of connected ports in a neighboring layer on
      * the given side. Since we want to save it for further use, the remove operation does not
      * actually delete the entries in the adjacency list. Instead we use currentIndex, currentSize
-     * and currentAmount (in the inner class) to show the current state of the list. Use reset() to
-     * reset to the original state.
+     * and currentCardinality (in the inner class) to show the current state of the list. Use
+     * reset() to reset to the original state.
      * 
      * @author alan
      *
@@ -292,15 +292,15 @@ class BetweenLayerEdgeTwoNodeCrossingsCounter {
             int lastIndex = adjacencyList.size() - 1;
             if (!adjacencyList.isEmpty()
                     && adjacencyList.get(lastIndex).position == adjacentPortPosition) {
-                adjacencyList.get(lastIndex).amount++;
-                adjacencyList.get(lastIndex).currentAmount++;
+                adjacencyList.get(lastIndex).cardinality++;
+                adjacencyList.get(lastIndex).currentCardinality++;
             } else {
                 adjacencyList.add(new Adjacency(adjacentPortPosition, adjacentPort));
             }
         }
 
-        private LPort adjacentPortOf(final LEdge edge, final PortSide side) {
-            return side == PortSide.WEST ? edge.getSource() : edge.getTarget();
+        private LPort adjacentPortOf(final LEdge e, final PortSide s) {
+            return s == PortSide.WEST ? e.getSource() : e.getTarget();
         }
 
         public void reset() {
@@ -312,7 +312,7 @@ class BetweenLayerEdgeTwoNodeCrossingsCounter {
         }
 
         public int countAdjacenciesBelowNodeOfFirstPort() {
-            return currentSize - currentAdjacency().currentAmount;
+            return currentSize - currentAdjacency().currentCardinality;
         }
 
         public void removeFirst() {
@@ -320,10 +320,10 @@ class BetweenLayerEdgeTwoNodeCrossingsCounter {
                 return;
             }
             Adjacency currentEntry = currentAdjacency();
-            if (currentEntry.currentAmount == 1) {
+            if (currentEntry.currentCardinality == 1) {
                 incrementCurrentIndex();
             } else {
-                currentEntry.currentAmount--;
+                currentEntry.currentCardinality--;
             }
 
             currentSize--;
@@ -358,19 +358,28 @@ class BetweenLayerEdgeTwoNodeCrossingsCounter {
             return "AdjacencyList [node=" + node + ", adjacencies= " + adjacencyList + "]";
         }
 
+        /**
+         * Adjacency containing only the position and number of ports with the same position.
+         * 
+         * @author alan
+         *
+         */
         private class Adjacency implements Comparable<Adjacency> {
-            public final int position;
-            public int amount;
-            public int currentAmount;
+            /** The position of the port. */
+            private final int position;
+            /** The number of adjacencies with the same position. */
+            private int cardinality;
+            /** The current number of adjacencies with the same position. */
+            private int currentCardinality;
 
             public Adjacency(final int adjacentPortPosition, final LPort port) {
                 position = adjacentPortPosition;
-                amount = 1;
-                currentAmount = 1;
+                cardinality = 1;
+                currentCardinality = 1;
             }
 
             public void reset() {
-                currentAmount = amount;
+                currentCardinality = cardinality;
             }
 
             public int compareTo(final Adjacency o) {
@@ -379,8 +388,8 @@ class BetweenLayerEdgeTwoNodeCrossingsCounter {
 
             @Override
             public String toString() {
-                return "Adjacency [position=" + position + ", amount=" + amount
-                        + ", currentAmount=" + currentAmount + "]";
+                return "Adjacency [position=" + position + ", cardinality=" + cardinality
+                        + ", currentCardinality=" + currentCardinality + "]";
             }
         }
     }

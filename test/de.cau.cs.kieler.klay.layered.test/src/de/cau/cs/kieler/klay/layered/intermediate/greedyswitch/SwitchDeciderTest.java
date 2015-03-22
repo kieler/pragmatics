@@ -161,7 +161,7 @@ public class SwitchDeciderTest {
      */
     @Test
     public void northSouthPortCrossing() {
-        graph = creator.getThreeLayerNorthSouthCrossingGraph();
+        graph = new NorthSouthEdgeTestGraphCreator().getThreeLayerNorthSouthCrossingGraph();
 
         decider = givenDeciderForFreeLayer(1, CrossingCountSide.WEST);
         if (greedyType.isOneSided()) {
@@ -226,7 +226,7 @@ public class SwitchDeciderTest {
 
     @Test
     public void inLayerUnitConstraintsPreventSwitch() {
-        graph = creator.getGraphWhereLayoutUnitPreventsSwitch();
+        graph = new NorthSouthEdgeTestGraphCreator().getGraphWhereLayoutUnitPreventsSwitch();
         decider = givenDeciderForFreeLayer(0, CrossingCountSide.WEST);
         assertThat(decider.doesSwitchReduceCrossings(1, 2), is(false));
     }
@@ -294,7 +294,7 @@ public class SwitchDeciderTest {
 
     @Test
     public void shouldSwitchWithLongEdgeDummies() {
-        graph = creator.getNorthernNorthSouthDummyEdgeCrossingGraph();
+        graph = new NorthSouthEdgeTestGraphCreator().getNorthernNorthSouthDummyEdgeCrossingGraph();
         decider = givenDeciderForFreeLayer(1, CrossingCountSide.WEST);
 
         assertThat(decider.doesSwitchReduceCrossings(1, 2), is(true));
@@ -303,7 +303,7 @@ public class SwitchDeciderTest {
             assertThat(decider.doesSwitchReduceCrossings(0, 1), is(true));
         }
 
-        graph = creator.getSouthernNorthSouthDummyEdgeCrossingGraph();
+        graph = new NorthSouthEdgeTestGraphCreator().getSouthernNorthSouthDummyEdgeCrossingGraph();
         decider = givenDeciderForFreeLayer(1, CrossingCountSide.WEST);
 
         assertThat(decider.doesSwitchReduceCrossings(0, 1), is(true));
@@ -315,7 +315,9 @@ public class SwitchDeciderTest {
 
     @Test
     public void layoutUnitConstraintPreventsSwitchWithNodeWithNorthernPorts() {
-        graph = creator.getGraphLayoutUnitPreventsSwitchWithNodeWithNodeWithNorthernEdges();
+        graph =
+                new NorthSouthEdgeTestGraphCreator()
+                        .getGraphLayoutUnitPreventsSwitchWithNodeWithNodeWithNorthernEdges();
 
         decider = givenDeciderForFreeLayer(0, CrossingCountSide.EAST);
 
@@ -324,7 +326,9 @@ public class SwitchDeciderTest {
 
     @Test
     public void layoutUnitConstraintPreventsSwitchWithNodeWithSouthernPorts() {
-        graph = creator.getGraphLayoutUnitPreventsSwitchWithNodeWithNodeWithSouthernEdges();
+        graph =
+                new NorthSouthEdgeTestGraphCreator()
+                        .getGraphLayoutUnitPreventsSwitchWithNodeWithNodeWithSouthernEdges();
 
         decider = givenDeciderForFreeLayer(0, CrossingCountSide.EAST);
 
@@ -333,7 +337,9 @@ public class SwitchDeciderTest {
 
     @Test
     public void layoutUnitConstraintDoesNotPreventSwitchWithWhenOtherNodeIsLongEdgeDummy() {
-        graph = creator.getGraphLayoutUnitDoesNotPreventSwitchWithLongEdgeDummy();
+        graph =
+                new NorthSouthEdgeTestGraphCreator()
+                        .getGraphLayoutUnitDoesNotPreventSwitchWithLongEdgeDummy();
 
         decider = givenDeciderForFreeLayer(1, CrossingCountSide.EAST);
 

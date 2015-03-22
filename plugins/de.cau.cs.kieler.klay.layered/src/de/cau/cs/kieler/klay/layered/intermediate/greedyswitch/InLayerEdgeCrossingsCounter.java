@@ -37,16 +37,16 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
  *
  */
 abstract class InLayerEdgeCrossingsCounter {
-    /** The amount of inLayerEdges incident to each node from the east */
+    /** The number of inLayerEdges incident to each node from the east. */
     private final Map<LNode, Integer> eastNodeCardinalities;
-    /** The amount of inLayerEdges incident to each node from the west */
+    /** The number of inLayerEdges incident to each node from the west. */
     private final Map<LNode, Integer> westNodeCardinalities;
     /** If a node's port order is not fixed, each port of that node has the same position. */
     private final Map<LPort, Integer> portPositions;
     private final LNode[] nodeOrder;
     /** We store port.ids in mutlisets, as nodes without fixed order have the same port.id. */
-    protected final SortedMultiset<Integer> inLayerPorts;
-    protected final Set<LEdge> inLayerEdges;
+    private final SortedMultiset<Integer> inLayerPorts;
+    private final Set<LEdge> inLayerEdges;
 
     protected InLayerEdgeCrossingsCounter(final LNode[] nodeOrder) {
         eastNodeCardinalities = Maps.newHashMap();
@@ -126,8 +126,12 @@ abstract class InLayerEdgeCrossingsCounter {
     }
 
     /**
-     * This is the main algorithm for both for counting all in-layer crossings and for counting
-     * in-layer crossings between two nodes. TODO-alan explain with ASCII Drawing
+     * This is the main method called for one edge and port both for counting all in-layer crossings
+     * and for counting in-layer crossings between two nodes. <br>
+     * The algorithm works the following way: We step through each port: If the connected edge is a
+     * between-layer edge, we add the position of the port on this layer to the sorted list of
+     * ports. Each time we meet an edge which has been visited, we count all port position in
+     * between the end and start position of this edge and delete it from the list.
      * 
      * @param edge
      * @param port
@@ -140,10 +144,10 @@ abstract class InLayerEdgeCrossingsCounter {
                 add(edge);
             } else {
                 remove(edge);
-                crossings += amountOfPortsInbetweenEndsOf(edge, inLayerPorts);
+                crossings += numberOfPortsInbetweenEndsOf(edge, inLayerPorts);
             }
         } else { // is in-between layer edge
-            crossings += amountOfOpenEdgesMinusThoseWithFreePortOrderOnSameNodeAs(port);
+            crossings += numberOfOpenEdgesMinusThoseWithFreePortOrderOnSameNodeAs(port);
         }
         return crossings;
     }
@@ -152,13 +156,13 @@ abstract class InLayerEdgeCrossingsCounter {
         return !inLayerEdges.contains(edge);
     }
 
-    private int amountOfPortsInbetweenEndsOf(final LEdge edge, final SortedMultiset<Integer> set) {
+    private int numberOfPortsInbetweenEndsOf(final LEdge edge, final SortedMultiset<Integer> set) {
         int lowerBound = Math.min(positionOf(edge.getTarget()), positionOf(edge.getSource()));
         int upperBound = Math.max(positionOf(edge.getTarget()), positionOf(edge.getSource()));
         return set.subMultiset(lowerBound, BoundType.OPEN, upperBound, BoundType.OPEN).size();
     }
 
-    private int amountOfOpenEdgesMinusThoseWithFreePortOrderOnSameNodeAs(final LPort port) {
+    private int numberOfOpenEdgesMinusThoseWithFreePortOrderOnSameNodeAs(final LPort port) {
         return inLayerEdges.size() - inLayerPorts.count(positionOf(port));
     }
 

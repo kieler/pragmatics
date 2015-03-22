@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ *
+ * Copyright 2014 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ *
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
 import java.util.Iterator;
@@ -14,7 +27,14 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 
-public class NorthSouthEdgeAllCrossingsCounter {
+/**
+ * Counts all crossings caused by the ordering of north/south ports and between north/south edges
+ * and long-edge dummies.
+ * 
+ * @author alan
+ *
+ */
+class NorthSouthEdgeAllCrossingsCounter {
 
     private final Map<LNode, Integer> nodePositions;
     private final Map<LPort, Integer> portPositions;
@@ -22,10 +42,16 @@ public class NorthSouthEdgeAllCrossingsCounter {
     private final LNode[] layer;
     private final Map<LNode, Integer> southCardinalities;
     private LNode currentOriginNode;
-    private int amountOfNorthSouthEdges;
-    private int amountOfLongEdgeDummies;
+    private int numberOfNorthSouthEdges;
+    private int numberOfLongEdgeDummies;
     private boolean northOfCurrentOriginNode = true;
 
+    /**
+     * Creates counter.
+     * 
+     * @param layer
+     *            The current order of the nodes.
+     */
     public NorthSouthEdgeAllCrossingsCounter(final LNode[] layer) {
         this.layer = layer;
         nodePositions = Maps.newHashMap();
@@ -59,6 +85,30 @@ public class NorthSouthEdgeAllCrossingsCounter {
         cardinalities.put(node, portId);
     }
 
+    /**
+     * <pre>
+     * Counts all crossings caused by the ordering of north/south ports and between north/south
+     * edges and long-edge dummies.
+     *  Assume the following layout:
+     *       *---*
+     *       |
+     *     *-+--*
+     *     | |
+     *   x-+-+--*
+     *  _|_|_|_
+     *  |_____|.
+     *  This can be viewed as a matrix:
+     *   0 1 2 
+     * 0  |  *
+     * 1  |*__
+     * 2 x
+     *  Thereby node the eastern edge of node x causes crossings with north/south edges of all
+     *  nodes which are to the right and above it.
+     *  For western edges this is the same to the left and below.
+     * </pre>
+     * 
+     * @return number of crossings
+     */
     public int countCrossings() {
         int crossings = 0;
         for (LNode node : layer) {
@@ -75,28 +125,38 @@ public class NorthSouthEdgeAllCrossingsCounter {
         return crossings;
     }
 
-    // TODO-alan comment, What is origin node?
+    /**
+     * Each time we are on the north side of the origin node of north/south dummies, we collect the
+     * current number of north/south dummies which already have been visited and each time we meet a
+     * long edge dummy we add to the crossing count the current number of north/south dummies. On
+     * the southern side, we count the number of long edge dummies we meet and each time we meet a
+     * north/south dummy, we add to the crossing count the current number of long edge dummies. <br>
+     * Note, that an origin node is the normal node connected to a north/south dummy.
+     * 
+     * @param node
+     * @return
+     */
     private int getLongEdgeDummyCrossings(final LNode node) {
         int crossings = 0;
         if (isNorthSouth(node)) {
             if (originIsNotCurrentOrigin(node)) {
-                resetDummyAmountsAndSetCurrentOriginNodeTo(originPortOf(node).getNode());
+                resetDummyCountAndSetCurrentOriginNodeTo(originPortOf(node).getNode());
                 // since we always iterate from north to south in a layer:
                 northOfCurrentOriginNode = true;
             }
             if (northOfCurrentOriginNode) {
-                amountOfNorthSouthEdges++;
+                numberOfNorthSouthEdges++;
             } else {
-                crossings += amountOfLongEdgeDummies;
+                crossings += numberOfLongEdgeDummies;
             }
         } else if (isLongEdgeDummy(node)) {
             if (northOfCurrentOriginNode) {
-                crossings += amountOfNorthSouthEdges;
+                crossings += numberOfNorthSouthEdges;
             } else {
-                amountOfLongEdgeDummies++;
+                numberOfLongEdgeDummies++;
             }
         } else if (isNormal(node)) {
-            resetDummyAmountsAndSetCurrentOriginNodeTo(node);
+            resetDummyCountAndSetCurrentOriginNodeTo(node);
             // since we always iterate from north to south in a layer:
             northOfCurrentOriginNode = false;
         }
@@ -107,10 +167,10 @@ public class NorthSouthEdgeAllCrossingsCounter {
         return !originPortOf(node).getNode().equals(currentOriginNode);
     }
 
-    private void resetDummyAmountsAndSetCurrentOriginNodeTo(final LNode node) {
+    private void resetDummyCountAndSetCurrentOriginNodeTo(final LNode node) {
         currentOriginNode = node;
-        amountOfNorthSouthEdges = 0;
-        amountOfLongEdgeDummies = 0;
+        numberOfNorthSouthEdges = 0;
+        numberOfLongEdgeDummies = 0;
     }
 
     private boolean isNormal(final LNode node) {
@@ -132,10 +192,10 @@ public class NorthSouthEdgeAllCrossingsCounter {
             if (hasConnectedEdge(port)) {
                 LNode northSouthDummy = getConnectedNorthSouthDummy(port);
                 if (hasPortOnSide(northSouthDummy, PortSide.EAST)) {
-                    crossings += amountOfEasternCrossings(node, port, northSouthDummy, side);
+                    crossings += numberOfEasternCrossings(node, port, northSouthDummy, side);
                 }
                 if (hasPortOnSide(northSouthDummy, PortSide.WEST)) {
-                    crossings += amountOfWesternCrossings(node, port, northSouthDummy, side);
+                    crossings += numberOfWesternCrossings(node, port, northSouthDummy, side);
                 }
             }
         }
@@ -147,12 +207,12 @@ public class NorthSouthEdgeAllCrossingsCounter {
                 || port.getConnectedEdges().iterator().hasNext();
     }
 
-    private int amountOfWesternCrossings(final LNode node, final LPort port,
+    private int numberOfWesternCrossings(final LNode node, final LPort port,
             final LNode northSouthDummy, final PortSide side) {
         return Math.min(positionOf(port), nearnessBetween(node, northSouthDummy));
     }
 
-    private int amountOfEasternCrossings(final LNode node, final LPort port,
+    private int numberOfEasternCrossings(final LNode node, final LPort port,
             final LNode northSouthDummy, final PortSide side) {
         return Math.min(cardinalityOnSide(node, side) - 1 - positionOf(port),
                 nearnessBetween(node, northSouthDummy));
@@ -215,6 +275,14 @@ public class NorthSouthEdgeAllCrossingsCounter {
         return node.getPorts(side).iterator();
     }
 
+    /**
+     * Whenever the order of two nodes are switched this counter needs to be notified.
+     * 
+     * @param nodeOne
+     *            first node.
+     * @param nodeTwo
+     *            second node.
+     */
     public void notifyNodeSwitch(final LNode nodeOne, final LNode nodeTwo) {
         if (nodePositions.containsKey(nodeOne) && nodePositions.containsKey(nodeTwo)) {
             int formerPositionOfOne = nodePositions.get(nodeOne);

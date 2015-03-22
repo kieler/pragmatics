@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ *
+ * Copyright 2014 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ *
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
 import java.util.Arrays;
@@ -16,9 +29,29 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 
+/**
+ * Crossings counter implementation specialized for hyperedges. It also works for normal edges, but
+ * is considerably slower compared to other implementations. For normal edges the computed number of
+ * crossings is exact, while for hyperedges it is an estimation. In fact, it is impossible to
+ * reliably count the number of crossings at this stage of the layer-based approach. See the
+ * following publication for details.
+ * <ul>
+ * <li>M. Sp&ouml;nemann, C. D. Schulze, U. R&uuml;egg, R. von Hanxleden. Counting crossings for
+ * layered hypergraphs, In <i>DIAGRAMS 2014</i>, volume 8578 of LNAI, Springer, 2014.</li>
+ * </ul>
+ * 
+ * @author msp
+ *
+ */
 public class BetweenLayerHyperedgeAllCrossingsCounter extends
         BetweenLayerEdgeAllCrossingsCounter {
 
+    /**
+     * Create a hyperedge crossings counter.
+     * 
+     * @param graph
+     *            The current order of the nodes.
+     */
     public BetweenLayerHyperedgeAllCrossingsCounter(final LNode[][] graph) {
         super(graph);
     }
@@ -125,7 +158,7 @@ public class BetweenLayerHyperedgeAllCrossingsCounter extends
                         }
                     }
                     if (portEdges > 0) {
-                        portPos[port.id] = sourceCount++;
+                        getPortPos()[port.id] = sourceCount++;
                     }
                 }
 
@@ -138,7 +171,7 @@ public class BetweenLayerHyperedgeAllCrossingsCounter extends
                             nodeEdges++;
                         }
                     }
-                    portPos[port.id] = sourceCount;
+                    getPortPos()[port.id] = sourceCount;
                 }
                 if (nodeEdges > 0) {
                     sourceCount++;
@@ -178,10 +211,10 @@ public class BetweenLayerHyperedgeAllCrossingsCounter extends
                     }
                     if (portEdges > 0) {
                         if (port.getSide() == PortSide.NORTH) {
-                            portPos[port.id] = targetCount;
+                            getPortPos()[port.id] = targetCount;
                             targetCount++;
                         } else {
-                            portPos[port.id] = targetCount + northInputPorts + otherInputPorts;
+                            getPortPos()[port.id] = targetCount + northInputPorts + otherInputPorts;
                             otherInputPorts++;
                         }
                     }
@@ -197,7 +230,7 @@ public class BetweenLayerHyperedgeAllCrossingsCounter extends
                             nodeEdges++;
                         }
                     }
-                    portPos[port.id] = targetCount;
+                    getPortPos()[port.id] = targetCount;
                 }
                 if (nodeEdges > 0) {
                     targetCount++;
@@ -255,7 +288,7 @@ public class BetweenLayerHyperedgeAllCrossingsCounter extends
             he.upperLeft = sourceCount;
             he.upperRight = targetCount;
             for (LPort port : he.ports) {
-                int pos = portPos[port.id];
+                int pos = getPortPos()[port.id];
                 if (port.getNode().getLayer() == leftLayerRef) {
                     if (pos < he.upperLeft) {
                         he.upperLeft = pos;

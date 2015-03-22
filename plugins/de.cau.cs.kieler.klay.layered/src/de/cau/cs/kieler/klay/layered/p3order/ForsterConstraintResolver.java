@@ -42,7 +42,7 @@ import de.cau.cs.kieler.klay.layered.properties.NodeType;
 public final class ForsterConstraintResolver implements IConstraintResolver {
 
     /** the layout units for handling dummy nodes for north / south ports. */
-    private Multimap<LNode, LNode> layoutUnits;
+    private final Multimap<LNode, LNode> layoutUnits;
     
     /**
      * Constructs a Forster constraint resolver.
@@ -207,8 +207,8 @@ public final class ForsterConstraintResolver implements IConstraintResolver {
         // Create a new vertex from the two constrain-violating vertices; this also
         // automatically calculates the new vertex's barycenter value
         NodeGroup newNodeGroup = new NodeGroup(firstNodeGroup, secondNodeGroup);
-        assert newNodeGroup.barycenter >= secondNodeGroup.barycenter;
-        assert newNodeGroup.barycenter <= firstNodeGroup.barycenter;
+        // assert newNodeGroup.barycenter >= secondNodeGroup.barycenter;
+        // assert newNodeGroup.barycenter <= firstNodeGroup.barycenter;
 
         // Iterate through the vertices. Remove the old vertices. Insert the new one
         // according to the barycenter value, thereby keeping the list sorted. Along

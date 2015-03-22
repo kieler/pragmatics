@@ -30,7 +30,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
  *
  */
 public class NorthSouthEdgeNeighbouringNodeCrossingsCounterTest {
-    private TestGraphCreator creator;
+    private NorthSouthEdgeTestGraphCreator creator;
     private NorthSouthEdgeNeighbouringNodeCrossingsCounter counter;
     private LNode[] layer;
 
@@ -38,7 +38,7 @@ public class NorthSouthEdgeNeighbouringNodeCrossingsCounterTest {
     // CHECKSTYLEOFF MagicNumber
     @Before
     public void setUp() {
-        creator = new TestGraphCreator();
+        creator = new NorthSouthEdgeTestGraphCreator();
     }
 
     @Test

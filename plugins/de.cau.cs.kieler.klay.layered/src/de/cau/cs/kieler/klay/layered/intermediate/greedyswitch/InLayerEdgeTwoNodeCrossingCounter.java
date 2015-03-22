@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ *
+ * Copyright 2014 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ *
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
 import java.util.Collections;
@@ -12,7 +25,9 @@ import de.cau.cs.kieler.klay.layered.graph.LNode.PortOrder;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 
 /**
- * TODO-alan: Consider renaming to two node, and losing the upper node lowernode business.
+ * Counts crossings between in-layer edges incident to two nodes. This class simply collects all
+ * edges and ports connected to the two nodes in questions, sorts them by port position and uses the
+ * superclass method countCrossingsOn(LEdge edge, LPort port).
  * 
  * @author alan
  *
@@ -25,24 +40,37 @@ class InLayerEdgeTwoNodeCrossingCounter extends InLayerEdgeCrossingsCounter {
     private LNode upperNode;
     private LNode lowerNode;
 
+    /**
+     * Counts crossings between in-layer edges incident to two nodes.
+     * 
+     * @param nodeOrder
+     *            the current order of the layer to be counted in.
+     */
     public InLayerEdgeTwoNodeCrossingCounter(final LNode[] nodeOrder) {
         super(nodeOrder);
         relevantEdgesAndPorts = Lists.newArrayList();
     }
 
-    public void countCrossingsBetweenNeighbouringNodes(final LNode upperNode, final LNode lowerNode) {
-        this.upperNode = upperNode;
-        this.lowerNode = lowerNode;
+    /**
+     * Counts crossings between in-layer edges incident to the given nodes. Use
+     * getUpperLowerCrossings and getLowerUpperCrossings to access the calculated values.
+     * 
+     * @param upper
+     * @param lower
+     */
+    public void countCrossingsBetweenNodes(final LNode upper, final LNode lower) {
+        upperNode = upper;
+        lowerNode = lower;
 
         upperLowerCrossings = countCrossingsOnSide(PortSide.EAST);
         upperLowerCrossings += countCrossingsOnSide(PortSide.WEST);
 
-        notifyOfSwitch(upperNode, lowerNode);
+        notifyOfSwitch(upper, lower);
 
         lowerUpperCrossings = countCrossingsOnSide(PortSide.EAST);
         lowerUpperCrossings += countCrossingsOnSide(PortSide.WEST);
 
-        notifyOfSwitch(lowerNode, upperNode);
+        notifyOfSwitch(lower, upper);
     }
 
     private int countCrossingsOnSide(final PortSide side) {
@@ -96,15 +124,18 @@ class InLayerEdgeTwoNodeCrossingCounter extends InLayerEdgeCrossingsCounter {
     }
 
     /**
-     * This private class collects a port and a connected edge and can be by portPosition.
+     * This private class collects a port and a connected edge and can be sorted by portPosition.
      * 
      * @author alan
      *
      */
     private static class ComparableEdgeAndPort implements Comparable<ComparableEdgeAndPort> {
-        public final LPort port;
-        public final LEdge edge;
-        public final int portPosition;
+        /** The port. */
+        private final LPort port;
+        /** The edge connected to it. */
+        private final LEdge edge;
+        /** The position of the port. */
+        private final int portPosition;
 
         public ComparableEdgeAndPort(final LPort port, final LEdge edge, final int portPosition) {
             this.port = port;

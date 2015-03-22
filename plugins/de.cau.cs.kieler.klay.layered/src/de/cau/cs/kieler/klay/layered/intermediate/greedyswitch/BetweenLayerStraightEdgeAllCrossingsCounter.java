@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ *
+ * Copyright 2014 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ *
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
 import java.util.ListIterator;
@@ -9,6 +22,16 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 
+/**
+ * A very efficient crossings counter that assumes all edges to be drawn as straight lines. The
+ * result is exact for normal edges. Taken from
+ * <ul>
+ * <li>W. Barth , M. Juenger, P. Mutzel. Simple and efficient bilayer cross counting, In <i>Graph
+ * Drawing</i>, volume 2528 of LNCS, pp. 331-360. Springer, 2002.</li>
+ * </ul>
+ * 
+ * @author msp
+ */
 class BetweenLayerStraightEdgeAllCrossingsCounter extends BetweenLayerEdgeAllCrossingsCounter {
 
     public BetweenLayerStraightEdgeAllCrossingsCounter(final LNode[][] nodeOrder) {
@@ -55,10 +78,10 @@ class BetweenLayerStraightEdgeAllCrossingsCounter extends BetweenLayerEdgeAllCro
                     }
                     if (portEdges > 0) {
                         if (port.getSide() == PortSide.NORTH) {
-                            portPos[port.id] = targetCount;
+                            getPortPos()[port.id] = targetCount;
                             targetCount++;
                         } else {
-                            portPos[port.id] = targetCount + northInputPorts + otherInputPorts;
+                            getPortPos()[port.id] = targetCount + northInputPorts + otherInputPorts;
                             otherInputPorts++;
                         }
                         edgeCount += portEdges;
@@ -75,7 +98,7 @@ class BetweenLayerStraightEdgeAllCrossingsCounter extends BetweenLayerEdgeAllCro
                             nodeEdges++;
                         }
                     }
-                    portPos[port.id] = targetCount;
+                    getPortPos()[port.id] = targetCount;
                 }
                 if (nodeEdges > 0) {
                     targetCount++;
@@ -98,7 +121,7 @@ class BetweenLayerStraightEdgeAllCrossingsCounter extends BetweenLayerEdgeAllCro
                         if (target.getNode().getLayer() == rightLayerRef) {
                             assert i < edgeCount;
                             // If the port has multiple output edges, sort them by target port index
-                            insert(southSequence, start, i++, portPos[target.id]);
+                            insert(southSequence, start, i++, getPortPos()[target.id]);
                         }
                     }
                 }
@@ -110,7 +133,7 @@ class BetweenLayerStraightEdgeAllCrossingsCounter extends BetweenLayerEdgeAllCro
                         LPort target = edge.getTarget();
                         if (target.getNode().getLayer() == rightLayerRef) {
                             assert i < edgeCount;
-                            insert(southSequence, start, i++, portPos[target.id]);
+                            insert(southSequence, start, i++, getPortPos()[target.id]);
                         }
                     }
                 }

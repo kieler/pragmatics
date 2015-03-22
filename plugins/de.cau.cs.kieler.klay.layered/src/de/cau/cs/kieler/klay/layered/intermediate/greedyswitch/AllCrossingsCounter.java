@@ -23,10 +23,10 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
  * @author alan
  *
  */
-public class AllCrossingsCounter {
+class AllCrossingsCounter {
 
     private final LNode[][] layeredGraph;
-    private boolean useOrthogonalCounter;
+    private boolean useHyperedgeCounter;
     private InLayerEdgeAllCrossingsCounter inLayerEdgeCrossingsCounter;
     private BetweenLayerEdgeAllCrossingsCounter inbetweenLayerCounter;
     private NorthSouthEdgeAllCrossingsCounter northSouthPortCrossingCounter;
@@ -39,7 +39,7 @@ public class AllCrossingsCounter {
      */
     public AllCrossingsCounter(final LNode[][] layeredGraph) {
         this.layeredGraph = layeredGraph;
-        useOrthogonalCounter = false;
+        useHyperedgeCounter = false;
     }
 
     /**
@@ -72,12 +72,19 @@ public class AllCrossingsCounter {
         return totalCrossings;
     }
 
+    /**
+     * Between-layer edges are counted using the hyperedge crossing approximization algorithm.
+     */
+    public void useHyperedgeCounter() {
+        useHyperedgeCounter = true;
+    }
+
     private int countBetweenLayerCrossingsInOrder(final LNode[] easternLayer,
             final LNode[] westernLayer) {
         if (isALayerEmpty(easternLayer, westernLayer)) {
             return 0;
         }
-        if (useOrthogonalCounter) {
+        if (useHyperedgeCounter) {
             inbetweenLayerCounter = new BetweenLayerHyperedgeAllCrossingsCounter(layeredGraph);
         } else {
             inbetweenLayerCounter = new BetweenLayerStraightEdgeAllCrossingsCounter(layeredGraph);
@@ -98,9 +105,5 @@ public class AllCrossingsCounter {
     private int countNorthSouthPortCrossings(final LNode[] layer) {
         northSouthPortCrossingCounter = new NorthSouthEdgeAllCrossingsCounter(layer);
         return northSouthPortCrossingCounter.countCrossings();
-    }
-
-    public void useOrthogonalCounter() {
-        useOrthogonalCounter = true;
     }
 }

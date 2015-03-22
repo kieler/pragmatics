@@ -14,35 +14,52 @@
 package de.cau.cs.kieler.klay.layered.properties;
 
 /**
- * TODO-alan.
+ * Sets the variant of the greedy switch heuristic.
  * 
  * @author alan
  *
  */
 public enum GreedySwitchType {
-    /** TODO-alan. */
+    /** Only consider crossings to one side of the free layer. Recount all crossings each time. */
     ONE_SIDED_COUNTER(true, false, false),
-    /** TODO-alan. */
+    /** Consider crossings to both sides of the free layer. Recount all crossings each time. */
     TWO_SIDED_COUNTER(false, false, false),
-    /** TODO-alan. */
+    /** Only consider crossings to one side of the free layer. Calculate complete crossing matrix. */
     ONE_SIDED_CROSSING_MATRIX(true, false, false),
-    /** TODO-alan. */
+    /** Consider crossings to both sides of the free layer. Calculate complete crossing matrix. */
     TWO_SIDED_CROSSING_MATRIX(false, false, false),
-    /** TODO-alan. */
+    /** Only consider crossings to one side of the free layer. Calculate crossing matrix on demand. */
     ONE_SIDED_ON_DEMAND_CROSSING_MATRIX(true, false, false),
-    /** TODO-alan. */
+    /** Consider crossings to both sides of the free layer. Calculate crossing matrix on demand. */
     TWO_SIDED_ON_DEMAND_CROSSING_MATRIX(false, false, false),
-    /** TODO-alan. */
+    /**
+     * Only consider crossings to one side of the free layer. Calculate crossing matrix on demand.
+     * Compare all upward and downward sweeps.
+     */
     ONE_SIDED_ON_DEMAND_CROSSING_MATRIX_BEST_OF_UP_OR_DOWN(true, true, false),
-    /** TODO-alan. */
+    /**
+     * Consider crossings to both sides of the free layer. Calculate crossing matrix on demand.
+     * Compare all upward and downward sweeps.
+     */
     TWO_SIDED_ON_DEMAND_CROSSING_MATRIX_BEST_OF_UP_OR_DOWN(false, true, false),
-    /** TODO-alan. */
+    /**
+     * Only consider crossings to one side of the free layer. Calculate crossing matrix on demand.
+     * Compare all upward and downward sweeps. Use hyperedge crossings counter for between layer
+     * edges
+     */
     ONE_SIDED_ON_DEMAND_CROSSING_MATRIX_BEST_OF_UP_OR_DOWN_ORTHOGONAL_HYPEREDGES(true, true, true),
-    /** TODO-alan. */
+    /**
+     * Consider crossings to both sides of the free layer. Calculate crossing matrix on demand.
+     * Compare all upward and downward sweeps. Use hyperedge crossings counter for between layer
+     * edges.
+     */
     TWO_SIDED_ON_DEMAND_CROSSING_MATRIX_BEST_OF_UP_OR_DOWN_ORTHOGONAL_HYPEREDGES(false, true, true),
-    /** TODO-alan */
+    /**
+     * Only consider crossings to one side of the free layer. Calculate crossing matrix on demand.
+     * Use hyperedge crossings counter for between layer edges.
+     */
     ONE_SIDED_ON_DEMAND_CROSSING_MATRIX_ORTHOGONAL_HYPEREDGES(true, false, true),
-    /** TODO-alan. */
+    /** Don't use greedy switch heuristic. */
     OFF(false, false, false);
 
     private final boolean isOneSided;
@@ -57,7 +74,7 @@ public enum GreedySwitchType {
     }
 
     /**
-     * TODO-alan.
+     * Only considers crossings to one side of the free layer.
      * 
      * @return true if only considers two layers.
      */
@@ -65,10 +82,20 @@ public enum GreedySwitchType {
         return isOneSided;
     }
 
+    /**
+     * Compares top-bottom and bottom->top in layer sweep direction.
+     * 
+     * @return whether this applies.
+     */
     public boolean useBestOfUpOrDown() {
         return useBestOfUpOrDown;
     }
 
+    /**
+     * Uses hyperedge crossing count approximization for between-layer edges.
+     * 
+     * @return whether this applies.
+     */
     public boolean useHyperedgeCounter() {
         return useHperedgeCounter;
     }

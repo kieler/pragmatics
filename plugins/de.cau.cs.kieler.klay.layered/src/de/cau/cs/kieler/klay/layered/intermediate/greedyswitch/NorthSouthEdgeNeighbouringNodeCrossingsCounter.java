@@ -26,9 +26,9 @@ import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 
 /**
- * Counts the amount of crossings caused by the order of north south port dummies when their
- * respective normal node in the same layer has a fixed port order. Also counts crossings between
- * north south edges and long edge dummies.
+ * Counts the crossings caused by the order of north south port dummies when their respective normal
+ * node in the same layer has a fixed port order. Also counts crossings between north south edges
+ * and long edge dummies.
  * 
  * @author alan
  *
@@ -159,26 +159,26 @@ public class NorthSouthEdgeNeighbouringNodeCrossingsCounter {
             final LNode lowerNode) {
         if (isNormal(upperNode) && isLongEdgeDummy(lowerNode)) {
             upperLowerCrossings =
-                    amountOfDummyEdgeCrossingsWithNSEdgesOnSide(upperNode, PortSide.SOUTH);
+                    numberOfDummyEdgeCrossingsWithNSEdgesOnSide(upperNode, PortSide.SOUTH);
             lowerUpperCrossings =
-                    amountOfDummyEdgeCrossingsWithNSEdgesOnSide(upperNode, PortSide.NORTH);
+                    numberOfDummyEdgeCrossingsWithNSEdgesOnSide(upperNode, PortSide.NORTH);
         }
         if (isNormal(lowerNode) && isLongEdgeDummy(upperNode)) {
             upperLowerCrossings =
-                    amountOfDummyEdgeCrossingsWithNSEdgesOnSide(lowerNode, PortSide.NORTH);
+                    numberOfDummyEdgeCrossingsWithNSEdgesOnSide(lowerNode, PortSide.NORTH);
             lowerUpperCrossings =
-                    amountOfDummyEdgeCrossingsWithNSEdgesOnSide(lowerNode, PortSide.SOUTH);
+                    numberOfDummyEdgeCrossingsWithNSEdgesOnSide(lowerNode, PortSide.SOUTH);
         }
     }
 
-    private int amountOfDummyEdgeCrossingsWithNSEdgesOnSide(final LNode node, final PortSide side) {
-        int amountOfPorts = 0;
+    private int numberOfDummyEdgeCrossingsWithNSEdgesOnSide(final LNode node, final PortSide side) {
+        int numberOfPorts = 0;
         for (LPort port : node.getPorts(side)) {
             List<LPort> nsPorts =
                     port.getProperty(InternalProperties.CONNECTED_NORTH_SOUTH_PORT_DUMMIES);
-            amountOfPorts += nsPorts.size();
+            numberOfPorts += nsPorts.size();
         }
-        return amountOfPorts;
+        return numberOfPorts;
     }
 
     private boolean haveDifferentOrigins(final LNode upperNode, final LNode lowerNode) {
@@ -229,7 +229,7 @@ public class NorthSouthEdgeNeighbouringNodeCrossingsCounter {
     }
 
     /**
-     * Get crossing amounts.
+     * Get crossing count.
      * 
      * @return the crossings between when ordered upper - lower.
      */
@@ -239,7 +239,7 @@ public class NorthSouthEdgeNeighbouringNodeCrossingsCounter {
 
     /**
      * 
-     * Get crossing amounts.
+     * Get crossing count.
      * 
      * @return the crossings between when ordered lower - upper.
      */

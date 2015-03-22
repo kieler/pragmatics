@@ -33,7 +33,7 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
  */
 public class AllInLayerEdgeCrossingCounterTest {
 
-    private TestGraphCreator creator;
+    private InLayerEdgeTestGraphCreator creator;
     private LNode[] nodeOrder;
     private InLayerEdgeAllCrossingsCounter counter;
 
@@ -41,7 +41,7 @@ public class AllInLayerEdgeCrossingCounterTest {
     // CHECKSTYLEOFF javadoc
     @Before
     public void setUp() {
-        creator = new TestGraphCreator();
+        creator = new InLayerEdgeTestGraphCreator();
     }
 
     @Test

@@ -25,7 +25,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 abstract class CounterSwitchDecider extends SwitchDecider {
 
     private final BetweenLayerEdgeAllCrossingsCounter betweenLayerCounter;
-    private int amountOfCrossingsInCurrentLayer = 0;
+    private int numberOfCrossingsInCurrentLayer = 0;
     private InLayerEdgeAllCrossingsCounter inLayerEdgeAllCrossingCounter;
     private NorthSouthEdgeAllCrossingsCounter northSouthPortAllCrossingCounter;
 
@@ -51,9 +51,9 @@ abstract class CounterSwitchDecider extends SwitchDecider {
             return false;
         }
 
-        amountOfCrossingsInCurrentLayer = calculateCrossings();
+        numberOfCrossingsInCurrentLayer = calculateCrossings();
 
-        if (amountOfCrossingsInCurrentLayer == 0) {
+        if (numberOfCrossingsInCurrentLayer == 0) {
             return false;
         }
         LNode upperNode = super.getFreeLayer()[upperNodeIndex];
@@ -61,14 +61,14 @@ abstract class CounterSwitchDecider extends SwitchDecider {
         notifyOfSwitch(upperNode, lowerNode);
         switchNodes(upperNodeIndex, lowerNodeIndex);
 
-        int newAmountOfCrossings = calculateCrossings();
+        int newNumberOfCrossings = calculateCrossings();
 
         switchNodes(upperNodeIndex, lowerNodeIndex);
         notifyOfSwitch(upperNode, upperNode);
 
-        boolean switchReducesCrossings = newAmountOfCrossings < amountOfCrossingsInCurrentLayer;
+        boolean switchReducesCrossings = newNumberOfCrossings < numberOfCrossingsInCurrentLayer;
         if (switchReducesCrossings) {
-            amountOfCrossingsInCurrentLayer = newAmountOfCrossings;
+            numberOfCrossingsInCurrentLayer = newNumberOfCrossings;
         }
 
         return switchReducesCrossings;
@@ -81,9 +81,9 @@ abstract class CounterSwitchDecider extends SwitchDecider {
     }
 
     /**
-     * Calculate amount of crossings to be considered.
+     * Calculate number of crossings to be considered.
      * 
-     * @return Amount of crossings.
+     * @return Number of crossings.
      */
     abstract int calculateCrossings();
 

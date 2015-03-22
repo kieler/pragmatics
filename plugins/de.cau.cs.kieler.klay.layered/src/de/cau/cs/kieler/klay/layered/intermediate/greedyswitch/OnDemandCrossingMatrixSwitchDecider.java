@@ -16,7 +16,7 @@ package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 
 /**
- * TODO-alan.
+ * Superclass for SwitchDeciders that calculate the crossing matrix on demand.
  * 
  * @author alan
  *
@@ -34,20 +34,20 @@ abstract class OnDemandCrossingMatrixSwitchDecider extends CrossingMatrixSwitchD
 
     @Override
     int getCrossingMatrixEntry(final LNode upperNode, final LNode lowerNode) {
-        if (!isCrossingMatrixFilled[upperNode.id][lowerNode.id]) {
+        if (!isCrossingMatrixFilled[positionOf(upperNode)][positionOf(lowerNode)]) {
             fillCrossingMatrix(upperNode, lowerNode);
-            isCrossingMatrixFilled[upperNode.id][lowerNode.id] = true;
-            isCrossingMatrixFilled[lowerNode.id][upperNode.id] = true;
+            isCrossingMatrixFilled[positionOf(upperNode)][positionOf(lowerNode)] = true;
+            isCrossingMatrixFilled[positionOf(lowerNode)][positionOf(upperNode)] = true;
         }
-        return crossingMatrix[upperNode.id][lowerNode.id];
+        return crossingMatrix[positionOf(upperNode)][positionOf(lowerNode)];
     }
 
     abstract void fillCrossingMatrix(LNode upperNode, LNode lowerNode);
 
     protected void setCrossingMatrixEntriesFromCounter(final LNode upperNode, final LNode lowerNode) {
-        crossingMatrix[upperNode.id][lowerNode.id] =
+        crossingMatrix[positionOf(upperNode)][positionOf(lowerNode)] =
                 super.getTwoLayerCrossCounter().getUpperLowerCrossings();
-        crossingMatrix[lowerNode.id][upperNode.id] =
+        crossingMatrix[positionOf(lowerNode)][positionOf(upperNode)] =
                 super.getTwoLayerCrossCounter().getLowerUpperCrossings();
     }
 

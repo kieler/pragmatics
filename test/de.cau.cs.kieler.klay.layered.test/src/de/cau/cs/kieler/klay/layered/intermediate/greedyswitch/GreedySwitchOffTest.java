@@ -35,6 +35,8 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  */
 public class GreedySwitchOffTest {
 
+    // CHECKSTYLEOFF Javadoc
+    // CHECKSTYLEOFF MagicNumber
     @Test
     public void greedySwitchIsOff() {
         TestGraphCreator creator = new TestGraphCreator();
