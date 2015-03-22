@@ -24,8 +24,8 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LNode.PortOrder;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
-import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.PortIterable.PortOrder;
 
 /**
  * Calculates the number of crossings for incident edges to node i and j. Prerequisites: Node.id's
@@ -81,10 +81,10 @@ class BetweenLayerEdgeTwoNodeCrossingsCounter {
         return freeLayerIndex < currentNodeOrder.length - 1;
     }
 
-    private void setPortPositionsForLayer(final int layerIndex, final PortSide portSide) {
+    private void setPortPositionsForLayer(final int layerIndex, final PortSide side) {
         int portId = 0;
         for (LNode node : currentNodeOrder[layerIndex]) {
-            PortIterable ports = new PortIterable(node, portSide, PortOrder.NORTHSOUTH_EASTWEST);
+            Iterable<LPort> ports = node.getPorts(side, PortOrder.NORTHSOUTH_EASTWEST);
             for (LPort port : ports) {
                 portPositions.put(port, portId);
                 if (portOrderIsFixed(node)) {
@@ -265,7 +265,7 @@ class BetweenLayerEdgeTwoNodeCrossingsCounter {
         }
 
         private void iterateTroughEdgesCollectingAdjacencies() {
-            PortIterable ports = new PortIterable(node, side, PortOrder.NORTHSOUTH_EASTWEST);
+            Iterable<LPort> ports = node.getPorts(side, PortOrder.NORTHSOUTH_EASTWEST);
             for (LPort port : ports) {
                 List<LEdge> edges = getEdgesConnectedTo(port);
                 for (LEdge edge : edges) {
@@ -299,8 +299,8 @@ class BetweenLayerEdgeTwoNodeCrossingsCounter {
             }
         }
 
-        private LPort adjacentPortOf(final LEdge edge, final PortSide portSide) {
-            return portSide == PortSide.WEST ? edge.getSource() : edge.getTarget();
+        private LPort adjacentPortOf(final LEdge edge, final PortSide side) {
+            return side == PortSide.WEST ? edge.getSource() : edge.getTarget();
         }
 
         public void reset() {

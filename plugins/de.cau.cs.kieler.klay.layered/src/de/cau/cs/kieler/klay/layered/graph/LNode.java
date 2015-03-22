@@ -14,8 +14,10 @@
 package de.cau.cs.kieler.klay.layered.graph;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -51,6 +53,15 @@ public final class LNode extends LShape {
     /** the insets inside this node, usually reserved for port and label placement. */
     private final LInsets insets = new LInsets();
     
+    public enum PortOrder {
+        /** Clockwise order. */
+        CLOCKWISE,
+        /** Counter-clockwise order. */
+        COUNTER_CLOCKWISE,
+        /** Left-right order on the top and bottom of the node and top-bottom on the sides. */
+        NORTHSOUTH_EASTWEST
+    }
+
     /**
      * Creates a node.
      * 
@@ -64,6 +75,7 @@ public final class LNode extends LShape {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         return "n_" + getDesignation();
     }
@@ -114,14 +126,14 @@ public final class LNode extends LShape {
      * @param thelayer the owner to set
      */
     public void setLayer(final Layer thelayer) {
-        if (this.layer != null) {
-            this.layer.getNodes().remove(this);
+        if (layer != null) {
+            layer.getNodes().remove(this);
         }
         
-        this.layer = thelayer;
+        layer = thelayer;
         
-        if (this.layer != null) {
-            this.layer.getNodes().add(this);
+        if (layer != null) {
+            layer.getNodes().add(this);
         }
     }
     
@@ -145,7 +157,7 @@ public final class LNode extends LShape {
      */
     public void setGraph(final LGraph newGraph) {
         assert layer == null;
-        this.graph = newGraph;
+        graph = newGraph;
     }
     
     /**
@@ -164,11 +176,11 @@ public final class LNode extends LShape {
             throw new IllegalArgumentException("index must be >= 0 and <= layer node count");
         }
         
-        if (this.layer != null) {
-            this.layer.getNodes().remove(this);
+        if (layer != null) {
+            layer.getNodes().remove(this);
         }
         
-        this.layer = newlayer;
+        layer = newlayer;
         
         if (newlayer != null) {
             newlayer.getNodes().add(index, this);
@@ -198,82 +210,121 @@ public final class LNode extends LShape {
     /**
      * Returns an iterable for all ports of given type.
      * 
-     * @param portType a port type
+     * @param type
+     *            a port type
      * @return an iterable for the ports of given type
      */
-    public Iterable<LPort> getPorts(final PortType portType) {
-        switch (portType) {
-        case INPUT:
-            return Iterables.filter(ports, LPort.INPUT_PREDICATE);
-        case OUTPUT:
-            return Iterables.filter(ports, LPort.OUTPUT_PREDICATE);
-        default:
-            return Collections.emptyList();
+    public Iterable<LPort> getPorts(final PortType type) {
+        Predicate<LPort> predicate = getPredicate(type);
+        if (predicate == null) {
+            return Collections.emptySet();
         }
+        return Iterables.filter(ports, predicate);
     }
     
     /**
      * Returns an iterable for all ports of given side.
      * 
-     * @param side a port side
+     * @param side
+     *            a port side
      * @return an iterable for the ports of given side
      */
     public Iterable<LPort> getPorts(final PortSide side) {
-        switch (side) {
-        case NORTH:
-            return Iterables.filter(ports, LPort.NORTH_PREDICATE);
-        case EAST:
-            return Iterables.filter(ports, LPort.EAST_PREDICATE);
-        case SOUTH:
-            return Iterables.filter(ports, LPort.SOUTH_PREDICATE);
-        case WEST:
-            return Iterables.filter(ports, LPort.WEST_PREDICATE);
-        default:
-            return Collections.emptyList();
+        Predicate<LPort> predicate = getPredicate(side);
+        if (predicate == null) {
+            return Collections.emptySet();
         }
+        return Iterables.filter(ports, predicate);
     }
-    
+
     /**
      * Returns an iterable for all ports of a given type and side.
      * 
-     * @param portType a port type.
-     * @param side a port side.
+     * @param type
+     *            a port type.
+     * @param side
+     *            a port side.
      * @return an iterable for the ports of the given type and side.
      */
-    public Iterable<LPort> getPorts(final PortType portType, final PortSide side) {
-        Predicate<LPort> typePredicate = null;
-        switch (portType) {
-        case INPUT:
-            typePredicate = LPort.INPUT_PREDICATE;
-            break;
-        case OUTPUT:
-            typePredicate = LPort.OUTPUT_PREDICATE;
-            break;
+    public Iterable<LPort> getPorts(final PortType type, final PortSide side) {
+        Predicate<LPort> typePredicate = getPredicate(type);
+        Predicate<LPort> sidePredicate = getPredicate(side);
+        if (typePredicate == null || sidePredicate == null) {
+            return Collections.emptySet();
         }
-        
-        Predicate<LPort> sidePredicate = null;
+        return Iterables.filter(ports, Predicates.and(typePredicate, sidePredicate));
+    }
+
+    /**
+     * Returns an iterable for all ports on the given side in the order specified.
+     * 
+     * @param portType
+     *            a port type
+     * @return an iterable for the ports of given type
+     */
+    public Iterable<LPort> getPorts(final PortSide side, final PortOrder order) {
+        final Iterable<LPort> ports = getPorts(side);
+        switch (order) {
+        case CLOCKWISE:
+            return ports;
+        case COUNTER_CLOCKWISE:
+            return Iterables.filter(getCounterClockwiseIterator(), getPredicate(side));
+        case NORTHSOUTH_EASTWEST:
+            switch (side) {
+            case EAST:
+            case NORTH:
+                return ports;
+            case SOUTH:
+            case WEST:
+                return Iterables.filter(getCounterClockwiseIterator(), getPredicate(side));
+            }
+        }
+        throw new UnsupportedOperationException("PortOrder not implemented.");
+    }
+
+    private Iterable<LPort> getCounterClockwiseIterator() {
+        Iterable<LPort> iterable = new Iterable<LPort>() {
+            private final ListIterator<LPort> listIterator = ports.listIterator(ports.size());
+
+            public Iterator<LPort> iterator() {
+                return new Iterator<LPort>() {
+                    public boolean hasNext() {
+                        return listIterator.hasPrevious();
+                    }
+
+                    public LPort next() {
+                        return listIterator.previous();
+                    }
+                };
+            }
+        };
+        return iterable;
+    }
+
+    private Predicate<LPort> getPredicate(final PortSide side) {
         switch (side) {
         case NORTH:
-            sidePredicate = LPort.NORTH_PREDICATE;
-            break;
+            return LPort.NORTH_PREDICATE;
         case EAST:
-            sidePredicate = LPort.EAST_PREDICATE;
-            break;
+            return LPort.EAST_PREDICATE;
         case SOUTH:
-            sidePredicate = LPort.SOUTH_PREDICATE;
-            break;
+            return LPort.SOUTH_PREDICATE;
         case WEST:
-            sidePredicate = LPort.WEST_PREDICATE;
-            break;
+            return LPort.WEST_PREDICATE;
         }
-        
-        if (typePredicate != null && sidePredicate != null) {
-            return Iterables.filter(ports, Predicates.and(typePredicate, sidePredicate));
-        } else {
-            return Collections.emptyList();
-        }
+        return null;
     }
-    
+
+    private Predicate<LPort> getPredicate(final PortType type) {
+        switch (type) {
+        case INPUT:
+            return LPort.INPUT_PREDICATE;
+        case OUTPUT:
+            return LPort.OUTPUT_PREDICATE;
+        }
+        return null;
+    }
+
     /**
      * Returns an iterable for all inomcing edges.
      * 

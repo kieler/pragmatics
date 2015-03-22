@@ -9,8 +9,8 @@ import com.google.common.collect.Maps;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LNode.PortOrder;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
-import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.PortIterable.PortOrder;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 
@@ -51,7 +51,7 @@ public class NorthSouthEdgeAllCrossingsCounter {
 
     private void setPortPositionsAndCardinalitiesFor(final LNode node,
             final Map<LNode, Integer> cardinalities, final PortSide side) {
-        Iterable<LPort> ports = new PortIterable(node, side, PortOrder.NORTHSOUTH_EASTWEST);
+        Iterable<LPort> ports = node.getPorts(side, PortOrder.NORTHSOUTH_EASTWEST);
         int portId = 0;
         for (LPort port : ports) {
             portPositions.put(port, portId++);

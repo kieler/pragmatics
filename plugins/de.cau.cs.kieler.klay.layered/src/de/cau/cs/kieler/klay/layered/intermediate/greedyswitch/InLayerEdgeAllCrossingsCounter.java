@@ -16,8 +16,8 @@ package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LNode.PortOrder;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
-import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.PortIterable.PortOrder;
 
 /**
  * Counts exact number of all crossings caused by in-layer edges.
@@ -48,10 +48,10 @@ class InLayerEdgeAllCrossingsCounter extends InLayerEdgeCrossingsCounter {
         return crossings;
     }
 
-    private int iterateEdgesTopDownAndCountCrossingsOnSide(final PortSide portSide) {
+    private int iterateEdgesTopDownAndCountCrossingsOnSide(final PortSide side) {
         int crossings = 0;
         for (LNode node : getNodeOrder()) {
-            PortIterable ports = new PortIterable(node, portSide, PortOrder.NORTHSOUTH_EASTWEST);
+            Iterable<LPort> ports = node.getPorts(side, PortOrder.NORTHSOUTH_EASTWEST);
             for (LPort port : ports) {
                 for (LEdge edge : port.getConnectedEdges()) {
                     if (!edge.isSelfLoop()) {
