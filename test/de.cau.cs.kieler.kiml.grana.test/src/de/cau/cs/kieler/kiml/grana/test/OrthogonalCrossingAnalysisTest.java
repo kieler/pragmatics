@@ -26,11 +26,7 @@ public class OrthogonalCrossingAnalysisTest extends AbstractGranaTest {
                     .put("edgesDontCross.kgt", new Object[] { 0 })
                     .put("edgesOnTopOfEachOtherDontCross.kgt", new Object[] { 0 })
                     .put("edgesOnTopOfEachOtherOnlyCrossOnce.kgt", new Object[] { 1 })
-                    .put("hyperedgeShouldHaveNoCrossings.kgt", new Object[] { 0 })
-                    .put("hierarchicalSimpleCross.kgt", new Object[] { 1 })
-                    .put("uniqueBendpointsHyperedge.kgt", new Object[] { 0 })
-                    .put("inverted_ports.kgt", new Object[] { 0 })
-                    .put("hierarchy.kgt", new Object[] { 1 }).build();
+                    .put("hierarchicalSimpleCross.kgt", new Object[] { 1 }).build();
 
     /**
      * {@inheritDoc}
