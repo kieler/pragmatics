@@ -123,7 +123,9 @@ public final class LayerConstraintProcessor implements ILayoutProcessor {
             // If there are no edges to the second layer, we can move all first layer's nodes to the
             // second layer and remove the first layer.
             if (!hasEdgeToSndLayer) {
-                for (LNode node : firstLayer) {
+                // Iterate through a node array to avoid ConcurrentModificationExceptions
+                LNode [] nodes = firstLayer.getNodes().toArray(new LNode[firstLayer.getNodes().size()]);
+                for (LNode node : nodes) {
                     node.setLayer(sndFirstLayer);
                 }
                 layers.remove(firstLayer);
@@ -150,7 +152,9 @@ public final class LayerConstraintProcessor implements ILayoutProcessor {
             // If there are no edges from the second last layer, we can move all last layer's nodes to
             // the second last layer and remove the last layer.
             if (!hasEdgeToPrevLayer) {
-                for (LNode node : lastLayer) {
+                // Iterate through a node array to avoid ConcurrentModificationExceptions
+                LNode [] nodes = lastLayer.getNodes().toArray(new LNode[lastLayer.getNodes().size()]);
+                for (LNode node : nodes) {
                     node.setLayer(sndLastLayer);
                 }
                 layers.remove(lastLayer);
