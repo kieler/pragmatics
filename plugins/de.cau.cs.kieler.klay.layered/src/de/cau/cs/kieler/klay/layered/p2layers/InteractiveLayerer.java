@@ -58,6 +58,7 @@ public final class InteractiveLayerer implements ILayoutPhase {
     private static class LayerSpan {
         private double start;
         private double end;
+        // FIXME LinkedList
         private List<LNode> nodes = Lists.newLinkedList();
     }
 
@@ -68,6 +69,7 @@ public final class InteractiveLayerer implements ILayoutPhase {
         monitor.begin("Interactive node layering", 1);
 
         // create layers with a start and an end position, merging when they overlap with others
+        // FIXME LinkedList
         List<LayerSpan> currentSpans = Lists.newLinkedList();
         for (LNode node : layeredGraph.getLayerlessNodes()) {
             double minx = node.getPosition().x;

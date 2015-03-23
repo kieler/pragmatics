@@ -172,6 +172,7 @@ public final class NodeGroup implements Comparable<NodeGroup> {
      */
     public List<NodeGroup> getOutgoingConstraints() {
         if (outgoingConstraints == null) {
+            // FIXME LinkedList
             outgoingConstraints = Lists.newLinkedList();
         }
         return outgoingConstraints;
@@ -200,6 +201,7 @@ public final class NodeGroup implements Comparable<NodeGroup> {
      */
     public List<NodeGroup> getIncomingConstraints() {
         if (incomingConstraints == null) {
+            // FIXME LinkedList
             incomingConstraints = Lists.newLinkedList();
         }
         return incomingConstraints;

@@ -84,6 +84,7 @@ public class BigNodesPostProcessor implements ILayoutProcessor {
                 LNode lastDummy = removeBigNodeChain(node);
 
                 // move the east ports
+                // FIXME LinkedList
                 List<LPort> toMove = Lists.newLinkedList();
                 for (LPort p : lastDummy.getPorts(PortSide.EAST)) {
                     toMove.add(p);

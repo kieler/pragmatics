@@ -47,6 +47,7 @@ final class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
     /**
      * List of component groups holding the different components.
      */
+    // FIXME LinkedList
     private final List<ComponentGroup> componentGroups = Lists.newLinkedList();
     
     

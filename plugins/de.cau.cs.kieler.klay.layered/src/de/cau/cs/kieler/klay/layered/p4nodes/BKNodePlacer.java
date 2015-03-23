@@ -140,6 +140,7 @@ public final class BKNodePlacer implements ILayoutPhase {
     private static final double NORTH_SOUTH_SPACING = 10.0;
     
     /** List of edges involved in type 1 conflicts (see above). */
+    // FIXME LinkedList
     private final List<LEdge> markedEdges = Lists.newLinkedList();
     /** Basic spacing between nodes, determined by layout options. */
     private float normalSpacing;
@@ -240,6 +241,7 @@ public final class BKNodePlacer implements ILayoutPhase {
         // The layout with the smallest size is selected. If more than one smallest layout exists,
         // the first one of the competing layouts is selected.
         BKAlignedLayout chosenLayout = null;
+        // FIXME LinkedList
         LinkedList<BKAlignedLayout> layouts = new LinkedList<BKAlignedLayout>();
         switch (layeredGraph.getProperty(Properties.FIXED_ALIGNMENT)) {
         case LEFTDOWN:
@@ -951,6 +953,7 @@ public final class BKNodePlacer implements ILayoutPhase {
      * @return A list containing all upper neighbors
      */
     private List<LNode> allUpperNeighbors(final LNode node) {
+        // FIXME LinkedList
         List<LNode> result = new LinkedList<LNode>();
         int maxPriority = 0;
         
@@ -979,6 +982,7 @@ public final class BKNodePlacer implements ILayoutPhase {
      * @return A list containing all lower neighbors
      */
     private List<LNode> allLowerNeighbors(final LNode node) {
+        // FIXME LinkedList
         List<LNode> result = new LinkedList<LNode>();
         int maxPriority = 0;
         
@@ -1031,6 +1035,7 @@ public final class BKNodePlacer implements ILayoutPhase {
             List<LNode> blockContents = blocks.get(root);
             
             if (blockContents == null) {
+                // FIXME LinkedList
                 blockContents = Lists.newLinkedList();
                 blocks.put(root, blockContents);
             }
@@ -1057,6 +1062,7 @@ public final class BKNodePlacer implements ILayoutPhase {
             List<LNode> classContents = classes.get(sink);
             
             if (classContents == null) {
+                // FIXME LinkedList
                 classContents = Lists.newLinkedList();
                 classes.put(sink, classContents);
             }

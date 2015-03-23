@@ -72,6 +72,7 @@ public class HyperedgeCrossingsCounter extends AbstractCrossingsCounter {
      * Hyperedge representation.
      */
     private static class Hyperedge implements Comparable<Hyperedge> {
+        // FIXME LinkedList
         private List<LEdge> edges = Lists.newLinkedList();
         private List<LPort> ports = Lists.newLinkedList();
         private int upperLeft;

@@ -72,6 +72,7 @@ public final class SelfLoopProcessor implements ILayoutProcessor {
         monitor.begin("Self-loop processing", 1);
         
         // Iterate through all nodes
+        // FIXME LinkedList
         List<LNode> createdDummies = new LinkedList<LNode>();
         
         for (Layer layer : layeredGraph) {

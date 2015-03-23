@@ -63,6 +63,7 @@ public final class LabelDummyInserter implements ILayoutProcessor {
      */
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
         monitor.begin("Label dummy insertions", 1);
+        // FIXME LinkedList
         List<LNode> newDummyNodes = new LinkedList<LNode>();
         
         double labelSpacing = layeredGraph.getProperty(LayoutOptions.LABEL_SPACING);

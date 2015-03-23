@@ -223,6 +223,7 @@ public final class HierarchicalPortConstraintProcessor implements ILayoutProcess
         // current first layer. A map for the next layer is added on each iteration of the for loop
         extPortToDummyNodeMap.add(new HashMap<Object, LNode>());
         extPortToDummyNodeMap.add(new HashMap<Object, LNode>());
+        // FIXME LinkedList
         newDummyNodes.add(new LinkedList<LNode>());
         newDummyNodes.add(new LinkedList<LNode>());
         
@@ -240,6 +241,7 @@ public final class HierarchicalPortConstraintProcessor implements ILayoutProcess
             extPortToDummyNodeMap.add(nextExtPortToDummyNodesMap);
             
             List<LNode> prevNewDummyNodes = newDummyNodes.get(currLayerIdx);
+            // FIXME LinkedList
             List<LNode> nextNewDummyNodes = new LinkedList<LNode>();
             newDummyNodes.add(nextNewDummyNodes);
             

@@ -77,6 +77,7 @@ public final class GraphTransformer implements ILayoutProcessor {
      */
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
         monitor.begin("Graph transformation (" + mode + ")", 1);
+        // FIXME LinkedList
         List<LNode> nodes = new LinkedList<LNode>(layeredGraph.getLayerlessNodes());
         for (Layer layer : layeredGraph.getLayers()) {
             nodes.addAll(layer.getNodes());

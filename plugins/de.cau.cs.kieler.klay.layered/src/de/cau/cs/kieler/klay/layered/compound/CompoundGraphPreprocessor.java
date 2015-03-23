@@ -98,6 +98,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
      */
     private static class ExternalPort {
         /** the list of original edges for which the port is created. */
+        // FIXME LinkedList
         private List<LEdge> origEdges = Lists.newLinkedList();
         /** the new edge by which the original edge is replaced. */
         private LEdge newEdge;
@@ -179,6 +180,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
             final LNode parentNode) {
         
         // process all children and recurse down to gather their external ports
+       // FIXME LinkedList
         List<ExternalPort> containedExternalPorts = new LinkedList<ExternalPort>();
         
         for (LNode node : graph.getLayerlessNodes()) {
@@ -209,6 +211,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
         }
         
         // this will be the list of external ports we will export
+        // FIXME LinkedList
         List<ExternalPort> exportedExternalPorts = new LinkedList<ExternalPort>();
         
         // process the cross-hierarchy edges connected to the inside of the child nodes
@@ -308,6 +311,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
         // we remember the ports and the dummy nodes we create to add them to the graph afterwards
         // (this is not strictly necessary, but allows us to reuse methods we also use for outer
         // hierarchy edge segments)
+        // FIXME LinkedList
         List<ExternalPort> externalPorts = Lists.newLinkedList();
         
         // iterate over the list of contained external ports
@@ -478,6 +482,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
         
         // we need to remember the ports and the dummy nodes we create to add them to the graph
         // afterwards (to avoid concurrent modification exceptions)
+        // FIXME LinkedList
         List<ExternalPort> externalPorts = Lists.newLinkedList();
         
         // iterate over all ports of the graph's child nodes

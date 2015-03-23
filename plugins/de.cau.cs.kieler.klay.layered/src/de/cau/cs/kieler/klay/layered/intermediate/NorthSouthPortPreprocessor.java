@@ -142,6 +142,7 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
         monitor.begin("Odd port side processing", 1);
         
         int pointer;
+        // FIXME LinkedList
         List<LNode> northDummyNodes = new LinkedList<LNode>();
         List<LNode> southDummyNodes = new LinkedList<LNode>();
         
@@ -174,13 +175,15 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
                 // Clear the lists of northern and southern dummy nodes
                 northDummyNodes.clear();
                 southDummyNodes.clear();
-                
+
                 // Create a list of barycenter associates for the node
+                // FIXME LinkedList
                 List<LNode> barycenterAssociates = new LinkedList<LNode>();
                 
                 // Prepare a list of ports on the northern side, sorted from left
                 // to right (when viewed in the diagram); create the appropriate
                 // dummy nodes and assign them to the layer
+                // FIXME LinkedList
                 LinkedList<LPort> portList = new LinkedList<LPort>();
                 Iterables.addAll(portList, node.getPorts(PortSide.NORTH));
 

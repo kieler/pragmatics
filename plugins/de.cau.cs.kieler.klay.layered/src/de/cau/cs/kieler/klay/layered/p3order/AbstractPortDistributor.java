@@ -169,6 +169,7 @@ public abstract class AbstractPortDistributor {
                 
                 // list that keeps track of ports connected to other ports in the same layer; these are
                 // treated specially when calculating barycenters
+                // FIXME LinkedList
                 List<LPort> inLayerPorts = Lists.newLinkedList();
                 
                 // the minimum and maximum barycenter values assigned for ports of this node

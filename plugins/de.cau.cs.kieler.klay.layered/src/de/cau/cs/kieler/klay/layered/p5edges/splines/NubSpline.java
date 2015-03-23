@@ -49,8 +49,10 @@ import de.cau.cs.kieler.core.math.KVectorChain;
 
     /** The knotVector of this NubSpline. (The traditionally added 0 at the beginning and 1 at the end
      *  of the knot vector is not added, as these elements are not relevant for the calculation) */
+    // FIXME LinkedList
     private List<Double> knotVector = Lists.newLinkedList();
     /** The control points of this NubSpline. */
+    // FIXME LinkedList
     private List<PolarCP> controlPoints = Lists.newLinkedList();
 
     /** The dimension of this NubSpline. All contained and constructible vectors have the same dim. */
@@ -122,6 +124,7 @@ import de.cau.cs.kieler.core.math.KVectorChain;
             // create the knot vector
             createUniformKnotVector(clamped, kVectors.size() + dimNUBS - 1);
 
+            // FIXME LinkedList
             final List<Double> polarCoordinate = Lists.newLinkedList();
             final Iterator<Double> knotIter = knotVector.iterator();
 
@@ -196,6 +199,7 @@ import de.cau.cs.kieler.core.math.KVectorChain;
         final List<Double> oldKnotVector = nubSpline.knotVector;
         final List<Double> newKnotVector = Lists.newLinkedList(
                 nubSpline.knotVector.subList(1, nubSpline.knotVector.size() - 1));
+        // FIXME LinkedList
         final List<KVector> newControlPoints = Lists.newLinkedList();
 
         // Calculate the new control points.
@@ -208,8 +212,10 @@ import de.cau.cs.kieler.core.math.KVectorChain;
         }
 
         // Create the PolarCPs
+        // FIXME LinkedList
         final List<Double> polarCoordinate = Lists.newLinkedList();
         final Iterator<Double> knotIter = newKnotVector.iterator();
+        // FIXME LinkedList
         final List<PolarCP> newPolarVectors = Lists.newLinkedList();
 
         // the first (dimNUBS - 1) elements of the knotVector for the "sliding window" that
@@ -239,6 +245,7 @@ import de.cau.cs.kieler.core.math.KVectorChain;
      * @return The inverted NubSpline.
      */
     public static NubSpline generateInvertedNUBS(final NubSpline nubSpline) {
+        // FIXME LinkedList
         final List<Double> newKnotVector = Lists.newLinkedList();
         final double maxVector =  nubSpline.knotVector.get(nubSpline.knotVector.size() - 1); 
         for (final Double vector : nubSpline.knotVector) {
@@ -247,8 +254,10 @@ import de.cau.cs.kieler.core.math.KVectorChain;
         final List<KVector> newControlPoints = KVectorChain.reverse(nubSpline.getControlPoints());
 
         // Create the PolarCPs
+        // FIXME LinkedList
         final List<Double> polarCoordinate = Lists.newLinkedList();
         final Iterator<Double> knotIter = newKnotVector.iterator();
+        // FIXME LinkedList
         final List<PolarCP> newPolarVectors = Lists.newLinkedList();
 
         // the first (dimNUBS - 1) elements of the knotVector for the "sliding window" that
@@ -522,6 +531,7 @@ import de.cau.cs.kieler.core.math.KVectorChain;
             iterKnot.add(knotToInsert);
 
             // We will first construct the new CPs and than add them.
+            // FIXME LinkedList
             final List<PolarCP> newCPs = Lists.newLinkedList();
             // The first CP we need for the calculation.
             PolarCP secondCP = iterCP.next();

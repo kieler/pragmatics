@@ -355,6 +355,7 @@ public final class InternalProperties {
      */
     public static final IProperty<List<ConnectedSelfLoopComponent>> SPLINE_SELFLOOP_COMPONENTS = 
             new Property<List<ConnectedSelfLoopComponent>>("splineSelfLoopComponents", 
+                    // FIXME LinkedList
                     new LinkedList<ConnectedSelfLoopComponent>());
     
     /**

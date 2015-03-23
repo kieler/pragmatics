@@ -65,6 +65,7 @@ public final class InLayerConstraintProcessor implements ILayoutProcessor {
              */
             
             int topInsertionIndex = -1;
+            // FIXME LinkedList
             List<LNode> bottomConstrainedNodes = new LinkedList<LNode>();
             
             // Iterate through an array of its nodes

@@ -57,6 +57,7 @@ public final class CommentPostprocessor implements ILayoutProcessor {
         double spacing = layeredGraph.getProperty(Properties.OBJ_SPACING).doubleValue();
         
         for (Layer layer : layeredGraph) {
+            // FIXME LinkedList
             List<LNode> boxes = new LinkedList<LNode>();
             for (LNode node : layer) {
                 List<LNode> topBoxes = node.getProperty(InternalProperties.TOP_COMMENTS);

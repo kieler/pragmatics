@@ -261,6 +261,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
                 - layeredGraph.getOffset().y;
         
         // Lists of northern and southern external port dummies
+        // FIXME LinkedList
         List<LNode> northernDummies = new LinkedList<LNode>();
         List<LNode> southernDummies = new LinkedList<LNode>();
         
@@ -550,6 +551,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
      * @param layeredGraph the layered graph.
      */
     private void removeTemporaryNorthSouthDummies(final LGraph layeredGraph) {
+        // FIXME LinkedList
         List<LNode> nodesToRemove = new LinkedList<LNode>();
         
         // Iterate through all layers

@@ -67,6 +67,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
      */
     public static class LinearSegment implements Comparable<LinearSegment> {
         /** Nodes of the linear segment. */
+        // FIXME LinkedList
         private List<LNode> nodes = Lists.newLinkedList();
         /** Identifier value, used as index in the segments array. */
         private int id;
@@ -229,6 +230,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
      */
     private LinearSegment[] sortLinearSegments(final LGraph layeredGraph) {
         // set the identifier and input / output priority for all nodes
+        // FIXME LinkedList
         List<LinearSegment> segmentList = Lists.newLinkedList();
         for (Layer layer : layeredGraph) {
             for (LNode node : layer) {
@@ -268,6 +270,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
         List<List<LinearSegment>> outgoingList = Lists.newArrayListWithCapacity(segmentList.size());
         List<Integer> incomingCountList = Lists.newArrayListWithCapacity(segmentList.size());
         for (int i = 0; i < segmentList.size(); i++) {
+            // FIXME LinkedList
             outgoingList.add(new LinkedList<LinearSegment>());
             incomingCountList.add(0);
         }
@@ -288,6 +291,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
 
         // gather the sources of the segment ordering graph
         int nextRank = 0;
+        // FIXME LinkedList
         List<LinearSegment> noIncoming = Lists.newLinkedList();
         for (int i = 0; i < segments.length; i++) {
             if (incomingCount[i] == 0) {
@@ -419,6 +423,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
 
                         currentSegment = currentSegment.split(currentNode, nextLinearSegmentID++);
                         segmentList.add(currentSegment);
+                        // FIXME LinkedList
                         outgoingList.add(new LinkedList<LinearSegment>());
 
                         if (previousNode != null) {

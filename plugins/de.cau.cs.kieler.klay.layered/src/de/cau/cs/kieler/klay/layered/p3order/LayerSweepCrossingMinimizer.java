@@ -400,6 +400,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
     private void minimizeCrossings(final NodeGroup[] layer,
             final ICrossingMinimizationHeuristic heuristic,
             final boolean forward, final boolean preOrdered, final boolean randomize) {
+        // FIXME LinkedList
         List<NodeGroup> nodeGroups = new LinkedList<NodeGroup>();
         for (NodeGroup ng : layer) {
             nodeGroups.add(ng);

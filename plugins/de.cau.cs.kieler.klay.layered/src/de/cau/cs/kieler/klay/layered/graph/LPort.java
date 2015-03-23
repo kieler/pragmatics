@@ -52,10 +52,13 @@ public final class LPort extends LShape {
     /** the margin area around this port. */
     private final LInsets margin = new LInsets();
     /** this port's labels. */
+    // FIXME LinkedList
     private final List<LLabel> labels = new LinkedList<LLabel>();
     /** the edges going into the port. */
+    // FIXME LinkedList
     private final List<LEdge> incomingEdges = new LinkedList<LEdge>();
     /** the edges going out of the port. */
+    // FIXME LinkedList
     private final List<LEdge> outgoingEdges = new LinkedList<LEdge>();
     
     /** a predicate that checks for output ports, that is ports with outgoing edges. */

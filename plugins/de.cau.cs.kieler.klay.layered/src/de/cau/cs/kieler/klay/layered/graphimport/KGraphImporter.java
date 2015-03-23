@@ -93,6 +93,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         boolean hierarchicalLayout = kgraph.getData(KShapeLayout.class).getProperty(
                 LayoutOptions.LAYOUT_HIERARCHY);
         if (hierarchicalLayout) {
+            // FIXME LinkedList
             LinkedList<KNode> knodeQueue = new LinkedList<KNode>();
 
             // Transform the node's children
@@ -652,6 +653,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         KVector offset = lgraph.getOffset();
 
         // Along the way, we collect the list of edges to be processed later
+        // FIXME LinkedList
         List<LEdge> edgeList = new LinkedList<LEdge>();
 
         // Process the nodes

@@ -142,6 +142,7 @@ public class BigNodesSplitter implements ILayoutProcessor {
         
         this.layeredGraph = theLayeredGraph;
         // List<LNode> nodes = layeredGraph.getLayerlessNodes();
+        // FIXME LinkedList
         List<LNode> nodes = Lists.newLinkedList();
         for (Layer l : theLayeredGraph.getLayers()) {
             nodes.addAll(l.getNodes());
@@ -173,6 +174,7 @@ public class BigNodesSplitter implements ILayoutProcessor {
         minWidth = Math.max(MIN_WIDTH, minWidth);
 
         // collect all nodes that are considered "big"
+        // FIXME LinkedList
         List<BigNode> bigNodes = Lists.newLinkedList();
         double threshold = (minWidth + spacing);
         for (LNode node : nodes) {
@@ -333,6 +335,7 @@ public class BigNodesSplitter implements ILayoutProcessor {
         public void process() {
 
             // remember east ports
+            // FIXME LinkedList
             LinkedList<LPort> eastPorts = new LinkedList<LPort>();
             for (LPort port : node.getPorts()) {
                 if (port.getSide() == PortSide.EAST) {
@@ -394,6 +397,7 @@ public class BigNodesSplitter implements ILayoutProcessor {
                 final double originalWidth) {
 
             // remember all nodes we create to adapt the size later on
+            // FIXME LinkedList
             List<LNode> chainOfNodes = Lists.newLinkedList();
             chainOfNodes.add(bignode);
 
@@ -520,6 +524,7 @@ public class BigNodesSplitter implements ILayoutProcessor {
                 final double originalWidth) {
 
             // remember all nodes we create to adapt the size lateron
+            // FIXME LinkedList
             List<LNode> chainOfNodes = Lists.newLinkedList();
             chainOfNodes.add(bignode);
 
@@ -640,6 +645,7 @@ public class BigNodesSplitter implements ILayoutProcessor {
             }
 
             // remember all nodes we create to adapt the size lateron
+            // FIXME LinkedList
             List<LNode> chainOfNodes = Lists.newLinkedList();
             chainOfNodes.add(bignode);
 
@@ -718,6 +724,7 @@ public class BigNodesSplitter implements ILayoutProcessor {
             }
 
             // remember all nodes we create to adapt the size lateron
+            // FIXME LinkedList
             List<LNode> chainOfNodes = Lists.newLinkedList();
             chainOfNodes.add(bignode);
 

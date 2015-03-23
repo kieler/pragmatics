@@ -99,6 +99,7 @@ public final class SplineSelfLoopRouter implements ILayoutProcessor {
                 }
                 
                 // Construct a SelfLoopEdge for every loop-edge 
+                // FIXME LinkedList
                 final List<SelfLoopEdge> selfLoops = Lists.newLinkedList();
                 for (final LEdge edge : loopEdges) {
                     final LPort sourcePort = edge.getSource();

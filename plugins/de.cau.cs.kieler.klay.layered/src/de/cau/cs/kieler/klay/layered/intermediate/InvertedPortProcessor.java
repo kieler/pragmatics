@@ -80,6 +80,7 @@ public final class InvertedPortProcessor implements ILayoutProcessor {
         // modification exceptions)
         ListIterator<Layer> layerIterator = layers.listIterator();
         Layer currentLayer = null;
+        // FIXME LinkedList
         List<LNode> unassignedNodes = new LinkedList<LNode>();
         
         while (layerIterator.hasNext()) {

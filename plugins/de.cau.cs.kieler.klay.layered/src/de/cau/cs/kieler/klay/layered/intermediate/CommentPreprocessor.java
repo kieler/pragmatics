@@ -81,6 +81,7 @@ public final class CommentPreprocessor implements ILayoutProcessor {
                     nodeIter.remove();
                 } else {
                     // reverse edges that are oddly connected
+                    // FIXME LinkedList
                     List<LEdge> revEdges = new LinkedList<LEdge>();
                     for (LPort port : node.getPorts()) {
                         for (LEdge outedge : port.getOutgoingEdges()) {
@@ -150,6 +151,7 @@ public final class CommentPreprocessor implements ILayoutProcessor {
             // determine the position to use, favoring the top position
             List<LNode> topBoxes = realNode.getProperty(InternalProperties.TOP_COMMENTS);
             if (topBoxes == null) {
+                // FIXME LinkedList
                 boxList = new LinkedList<LNode>();
                 realNode.setProperty(InternalProperties.TOP_COMMENTS, boxList);
             } else if (onlyTop) {
@@ -157,6 +159,7 @@ public final class CommentPreprocessor implements ILayoutProcessor {
             } else {
                 List<LNode> bottomBoxes = realNode.getProperty(InternalProperties.BOTTOM_COMMENTS);
                 if (bottomBoxes == null) {
+                    // FIXME LinkedList
                     boxList = new LinkedList<LNode>();
                     realNode.setProperty(InternalProperties.BOTTOM_COMMENTS, boxList);
                 } else {
@@ -171,6 +174,7 @@ public final class CommentPreprocessor implements ILayoutProcessor {
             // determine the position to use, favoring the bottom position
             List<LNode> bottomBoxes = realNode.getProperty(InternalProperties.BOTTOM_COMMENTS);
             if (bottomBoxes == null) {
+                // FIXME LinkedList
                 boxList = new LinkedList<LNode>();
                 realNode.setProperty(InternalProperties.BOTTOM_COMMENTS, boxList);
             } else if (onlyBottom) {
@@ -178,6 +182,7 @@ public final class CommentPreprocessor implements ILayoutProcessor {
             } else {
                 List<LNode> topBoxes = realNode.getProperty(InternalProperties.TOP_COMMENTS);
                 if (topBoxes == null) {
+                    // FIXME LinkedList
                     boxList = new LinkedList<LNode>();
                     realNode.setProperty(InternalProperties.TOP_COMMENTS, boxList);
                 } else {

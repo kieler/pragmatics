@@ -43,6 +43,7 @@ public final class LEdge extends LGraphElement {
     /** the target port. */
     private LPort target;
     /** labels assigned to this edge. */
+    // FIXME LinkedList
     private final List<LLabel> labels = new LinkedList<LLabel>();
     
     /**

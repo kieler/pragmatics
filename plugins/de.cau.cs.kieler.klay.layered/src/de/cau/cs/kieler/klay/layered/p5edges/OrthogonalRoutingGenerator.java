@@ -311,6 +311,7 @@ public final class OrthogonalRoutingGenerator {
      */
     public class HyperNode implements Comparable<HyperNode> {
         /** ports represented by this hypernode. */
+        // FIXME LinkedList
         private List<LPort> ports = Lists.newLinkedList();
         /** mark value used for cycle breaking. */
         private int mark;
@@ -321,14 +322,18 @@ public final class OrthogonalRoutingGenerator {
         /** vertical ending position of this hypernode. */
         private double end = Double.NaN;
         /** positions of line segments going to the preceding layer. */
+        // FIXME LinkedList
         private LinkedList<Double> sourcePosis = Lists.newLinkedList();
         /** positions of line segments going to the next layer. */
+        // FIXME LinkedList
         private LinkedList<Double> targetPosis = Lists.newLinkedList();
         /** list of outgoing dependencies. */
+        // FIXME LinkedList
         private List<Dependency> outgoing = Lists.newLinkedList();
         /** sum of the weights of outgoing dependencies. */
         private int outweight;
         /** list of incoming dependencies. */
+        // FIXME LinkedList
         private List<Dependency> incoming = Lists.newLinkedList();
         /** sum of the weights of incoming depencencies. */
         private int inweight;
@@ -572,6 +577,7 @@ public final class OrthogonalRoutingGenerator {
             final int sourceLayerIndex, final Iterable<LNode> targetLayerNodes, final double startPos) {
         
         Map<LPort, HyperNode> portToHyperNodeMap = Maps.newHashMap();
+        // FIXME LinkedList
         List<HyperNode> hyperNodes = Lists.newLinkedList();
         
         // create hypernodes for eastern output ports of the left layer and for western
@@ -771,6 +777,7 @@ public final class OrthogonalRoutingGenerator {
      * @param random random number generator
      */
     private static void breakCycles(final List<HyperNode> nodes, final Random random) {
+        // FIXME LinkedList
         LinkedList<HyperNode> sources = new LinkedList<HyperNode>();
         LinkedList<HyperNode> sinks = new LinkedList<HyperNode>();
         
@@ -880,6 +887,7 @@ public final class OrthogonalRoutingGenerator {
      * @param sources list of sources
      * @param sinks list of sinks
      */
+    // FIXME LinkedList
     private static void updateNeighbors(final HyperNode node, final LinkedList<HyperNode> sources,
             final LinkedList<HyperNode> sinks) {
         // process following nodes
@@ -916,6 +924,7 @@ public final class OrthogonalRoutingGenerator {
         // determine sources, targets, incoming count and outgoing count; targets are only
         // added to the list if they only connect westward ports (that is, if all their
         // horizontal segments point to the right)
+        // FIXME LinkedList
         List<HyperNode> sources = new LinkedList<HyperNode>();
         List<HyperNode> rightwardTargets = new LinkedList<HyperNode>();
         for (HyperNode node : nodes) {

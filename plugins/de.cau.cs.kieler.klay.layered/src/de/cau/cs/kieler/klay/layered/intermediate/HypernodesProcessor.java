@@ -93,6 +93,7 @@ public final class HypernodesProcessor implements ILayoutProcessor {
     private void moveHypernode(final LGraph layeredGraph, final LNode hypernode,
             final boolean right) {
         // find edges that constitute the first join point of the hyperedge
+        // FIXME LinkedList
         List<LEdge> bendEdges = new LinkedList<LEdge>();
         double bendx = Integer.MAX_VALUE, diffx = Integer.MAX_VALUE, diffy = Integer.MAX_VALUE;
         if (right) {

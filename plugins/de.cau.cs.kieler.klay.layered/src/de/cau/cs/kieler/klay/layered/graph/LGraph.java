@@ -45,8 +45,10 @@ public final class LGraph extends LGraphElement implements Iterable<Layer> {
     /** the offset to be added to all positions. */
     private final KVector offset = new KVector();
     /** nodes that are not currently part of a layer. */
+    // FIXME LinkedList
     private final List<LNode> layerlessNodes = new LinkedList<LNode>();
     /** the layers of the layered graph. */
+    // FIXME LinkedList
     private final List<Layer> layers = new LinkedList<Layer>();
     
     

@@ -63,6 +63,7 @@ public final class HierarchicalPortDummySizeProcessor implements ILayoutProcesso
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
         monitor.begin("Hierarchical port dummy size processing", 1);
 
+        // FIXME LinkedList
         List<LNode> northernDummies = new LinkedList<LNode>();
         List<LNode> southernDummies = new LinkedList<LNode>();
         

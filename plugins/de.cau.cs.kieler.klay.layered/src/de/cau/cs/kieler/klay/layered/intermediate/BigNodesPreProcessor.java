@@ -118,6 +118,7 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
         minWidth = Math.max(MIN_WIDTH, minWidth);
 
         // collect all nodes that are considered "big"
+        // FIXME LinkedList
         List<BigNode> bigNodes = Lists.newLinkedList();
         double threshold = (minWidth + spacing);
         for (LNode node : nodes) {
@@ -224,6 +225,7 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
         public void process() {
 
             // remember east ports
+            // FIXME LinkedList
             LinkedList<LPort> eastPorts = new LinkedList<LPort>();
             for (LPort port : node.getPorts()) {
                 if (port.getSide() == PortSide.EAST) {

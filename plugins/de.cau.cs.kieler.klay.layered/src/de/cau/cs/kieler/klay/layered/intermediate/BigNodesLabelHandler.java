@@ -73,9 +73,11 @@ public final class BigNodesLabelHandler {
          * A multimap holding the dummies created for a label. It is important to use a
          * LinkedListMultimap in order to retain the order of the dummies.
          */
+        // FIXME LinkedList?
         private LinkedListMultimap<LLabel, LLabel> dumLabs = LinkedListMultimap.create();
 
         /** A list of post processing functions to be applied during {@link BigNodesPostProcessor}. */
+        // FIXME LinkedList
         private List<Function<Void, Void>> postProcs = Lists.newLinkedList();
 
         /**

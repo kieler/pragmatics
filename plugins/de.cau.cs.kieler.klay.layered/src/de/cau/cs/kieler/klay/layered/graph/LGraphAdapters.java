@@ -191,6 +191,7 @@ public final class LGraphAdapters {
          * {@inheritDoc}
          */
         public Iterable<NodeAdapter<?>> getNodes() {
+            // FIXME LinkedList
             List<NodeAdapter<?>> nodeAdapter = Lists.newLinkedList();
             for (Layer l : element.getLayers()) {
                 for (LNode n : l.getNodes()) {
@@ -232,6 +233,7 @@ public final class LGraphAdapters {
          * {@inheritDoc}
          */
         public Iterable<LabelAdapter<?>> getLabels() {
+            // FIXME LinkedList
             List<LabelAdapter<?>> labelAdapters = Lists.newLinkedList();
             for (LLabel l : element.getLabels()) {
                 labelAdapters.add(new LLabelAdapter(l));
@@ -243,6 +245,7 @@ public final class LGraphAdapters {
          * {@inheritDoc}
          */
         public Iterable<PortAdapter<?>> getPorts() {
+            // FIXME LinkedList
             List<PortAdapter<?>> portAdapters = Lists.newLinkedList();
             for (LPort p : element.getPorts()) {
                 portAdapters.add(new LPortAdapter(p));
@@ -381,6 +384,7 @@ public final class LGraphAdapters {
          * {@inheritDoc}
          */
         public Iterable<EdgeAdapter<?>> getIncomingEdges() {
+            // FIXME LinkedList
             List<EdgeAdapter<?>> edgeAdapters = Lists.newLinkedList();
             for (LEdge e : element.getIncomingEdges()) {
                 edgeAdapters.add(new LEdgeAdapter(e));
@@ -392,6 +396,7 @@ public final class LGraphAdapters {
          * {@inheritDoc}
          */
         public Iterable<EdgeAdapter<?>> getOutgoingEdges() {
+            // FIXME LinkedList
             List<EdgeAdapter<?>> edgeAdapters = Lists.newLinkedList();
             for (LEdge e : element.getOutgoingEdges()) {
                 edgeAdapters.add(new LEdgeAdapter(e));

@@ -165,6 +165,7 @@ public final class SplineSelfLoopPreProcessor implements ILayoutProcessor {
     private static List<ConnectedSelfLoopComponent> findAllConnectedComponents(
             final Set<LEdge> loopEdges, final LNode node) {
         
+        // FIXME LinkedList?
         final List<ConnectedSelfLoopComponent> components = Lists.newLinkedList();
         final Multimap<LPort, LEdge> portToEdge = LinkedListMultimap.create();
         
@@ -195,7 +196,8 @@ public final class SplineSelfLoopPreProcessor implements ILayoutProcessor {
      */
     private static ConnectedSelfLoopComponent findAConnectedComponent(
             final Multimap<LPort, LEdge> portsToEdges, final LNode node, final boolean isFixedOrder) {
-        
+
+        // FIXME LinkedList?
         final Multimap<LEdge, LPort> edgeToPort = LinkedListMultimap.create();
         Multimaps.invertFrom(portsToEdges, edgeToPort);
         
@@ -203,9 +205,11 @@ public final class SplineSelfLoopPreProcessor implements ILayoutProcessor {
         final ConnectedSelfLoopComponent connectedComponent = new ConnectedSelfLoopComponent(node);
 
         // Create a list of ports we have to check for connected ports. Initially add an arbitrary port.
+        // FIXME LinkedList
         final List<LPort> portsToProcess = Lists.newLinkedList();
         portsToProcess.add(portsToEdges.keys().iterator().next());
-        
+
+        // FIXME LinkedList
         final List<LPort> portsProcessed = Lists.newLinkedList();
         // Check ports for connection to current connected component till no port to check is left.
         while (!portsToProcess.isEmpty()) {

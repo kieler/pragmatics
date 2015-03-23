@@ -337,6 +337,7 @@ public final class LabelSideSelector implements ILayoutProcessor {
      * @return A list of all ports on the chosen side of the node
      */
     private List<LPort> getPortsBySide(final LNode node, final PortSide portSide) {
+        // FIXME LinkedList
         List<LPort> result = new LinkedList<LPort>();
         
         for (LPort port : node.getPorts(portSide)) {

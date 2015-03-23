@@ -43,8 +43,10 @@ public final class LNode extends LShape {
     /** the containing layer. */
     private Layer layer;
     /** the ports of the node. */
+    // FIXME LinkedList
     private final List<LPort> ports = new LinkedList<LPort>();
     /** this node's labels. */
+    // FIXME LinkedList
     private final List<LLabel> labels = new LinkedList<LLabel>();
     /** the margin area around this node. */
     private final LInsets margin = new LInsets();
@@ -279,6 +281,7 @@ public final class LNode extends LShape {
      * @return an iterable for all incoming edges.
      */
     public Iterable<LEdge> getIncomingEdges() {
+        // FIXME LinkedList
         List<Iterable<LEdge>> iterables = new LinkedList<Iterable<LEdge>>();
         for (LPort port : ports) {
             iterables.add(port.getIncomingEdges());
@@ -293,6 +296,7 @@ public final class LNode extends LShape {
      * @return an iterable for all outgoing edges.
      */
     public Iterable<LEdge> getOutgoingEdges() {
+        // FIXME LinkedList
         List<Iterable<LEdge>> iterables = new LinkedList<Iterable<LEdge>>();
         for (LPort port : ports) {
             iterables.add(port.getOutgoingEdges());
@@ -307,6 +311,7 @@ public final class LNode extends LShape {
      * @return an iterable for all connected edges.
      */
     public Iterable<LEdge> getConnectedEdges() {
+        // FIXME LinkedList
         List<Iterable<LEdge>> iterables = new LinkedList<Iterable<LEdge>>();
         for (LPort port : ports) {
             iterables.add(port.getConnectedEdges());

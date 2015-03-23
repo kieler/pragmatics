@@ -52,11 +52,13 @@ public final class LabelDummySwitcher implements ILayoutProcessor {
         monitor.begin("Label dummy switching", 1);
         
         // Mark all label nodes which can be swapped to the middle of a long edge
+        // FIXME LinkedList
         List<Pair<LNode, LNode>> nodesToSwap = new LinkedList<Pair<LNode, LNode>>();
         for (Layer layer : layeredGraph) {
             for (LNode node : layer.getNodes()) {
                 if (node.getProperty(InternalProperties.NODE_TYPE) == NodeType.LABEL) {
                     // Gather long edge dummies left of the label dummy
+                    // FIXME LinkedList
                     List<LNode> leftLongEdge = new LinkedList<LNode>();
                     LNode source = node;
                     do {
@@ -67,6 +69,7 @@ public final class LabelDummySwitcher implements ILayoutProcessor {
                     } while (source.getProperty(InternalProperties.NODE_TYPE) == NodeType.LONG_EDGE);
                     
                     // Gather long edge dummies right of the label dummy
+                    // FIXME LinkedList
                     List<LNode> rightLongEdge = new LinkedList<LNode>();
                     LNode target = node;
                     do {

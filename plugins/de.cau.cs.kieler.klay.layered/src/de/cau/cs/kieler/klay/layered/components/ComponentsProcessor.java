@@ -109,6 +109,7 @@ public final class ComponentsProcessor {
             }
             
             // Perform DFS starting on each node, collecting connected components
+            // FIXME LinkedList
             result = new LinkedList<LGraph>();
             for (LNode node : graph.getLayerlessNodes()) {
                 Pair<List<LNode>, Set<PortSide>> componentData = dfs(node, null);
@@ -161,6 +162,7 @@ public final class ComponentsProcessor {
             // Check if we already have a list of nodes for the connected component
             Pair<List<LNode>, Set<PortSide>> mutableData = data;
             if (mutableData == null) {
+                // FIXME LinkedList
                 List<LNode> component = new LinkedList<LNode>();
                 Set<PortSide> extPortSides = EnumSet.noneOf(PortSide.class);
                 

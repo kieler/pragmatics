@@ -254,6 +254,7 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
         } else {
             Arrays.fill(nodeVisited, false);
         }
+        // FIXME LinkedList
         componentNodes = Lists.newLinkedList();
 
         // re-index nodes
@@ -262,6 +263,7 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
             node.id = counter++;
         }
         // determine connected components
+        // FIXME LinkedList
         LinkedList<List<LNode>> components = Lists.newLinkedList();
         for (LNode node : theNodes) {
             if (!nodeVisited[node.id]) {
@@ -273,6 +275,7 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
                 } else {
                     components.addLast(componentNodes);
                 }
+                // FIXME LinkedList
                 componentNodes = Lists.newLinkedList();
             }
         }
@@ -335,12 +338,14 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
         lowestPoID = new int[numNodes];
         Arrays.fill(revLayer, numNodes);
 
+        // FIXME LinkedList
         sources = Lists.newLinkedList();
         sinks = Lists.newLinkedList();
         nodes = theNodes;
 
         // determine edges and re-index nodes
         int index = 0;
+        // FIXME LinkedList
         List<LEdge> theEdges = Lists.newLinkedList();
         for (LNode node : theNodes) {
             node.id = index++;
@@ -629,7 +634,8 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
                 }
             }
         }
-        
+
+        // FIXME LinkedList
         LinkedList<LNode> roots = Lists.newLinkedList(initialRootNodes);
         
         while (!roots.isEmpty()) {
@@ -845,6 +851,7 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
      */
     private void cutvalues() {
         // determine incident tree edges for each node
+        // FIXME LinkedList
         List<LNode> leafs = Lists.newLinkedList();
         int treeEdgeCount;
         List<Set<LEdge>> unknownCutvalues = Lists.newArrayListWithCapacity(nodes.size());

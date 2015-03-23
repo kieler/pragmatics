@@ -37,6 +37,7 @@ public final class Layer extends LGraphElement implements Iterable<LNode> {
     /** the size of the layer as drawn horizontally. */
     private final KVector size = new KVector();
     /** the nodes of the layer. */
+    // FIXME LinkedList
     private final List<LNode> nodes = new LinkedList<LNode>();
     
     /**

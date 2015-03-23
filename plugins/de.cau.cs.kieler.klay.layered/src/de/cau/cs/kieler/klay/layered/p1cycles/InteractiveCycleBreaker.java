@@ -62,6 +62,7 @@ public final class InteractiveCycleBreaker implements ILayoutPhase {
         monitor.begin("Interactive cycle breaking", 1);
         
         // gather edges that point to the wrong direction
+        // FIXME LinkedList
         LinkedList<LEdge> revEdges = new LinkedList<LEdge>();
         for (LNode source : layeredGraph.getLayerlessNodes()) {
             source.id = 1;
