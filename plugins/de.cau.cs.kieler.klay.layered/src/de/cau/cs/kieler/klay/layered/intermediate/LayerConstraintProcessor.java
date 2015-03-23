@@ -14,8 +14,6 @@
 package de.cau.cs.kieler.klay.layered.intermediate;
 
 import java.util.List;
-import java.util.ListIterator;
-
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.UnsupportedConfigurationException;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
