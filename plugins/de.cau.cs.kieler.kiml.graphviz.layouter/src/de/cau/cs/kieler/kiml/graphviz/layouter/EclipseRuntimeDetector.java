@@ -42,7 +42,7 @@ final class EclipseRuntimeDetector {
     static boolean isEclipseRunning() {
         try {
             return Platform.isRunning();
-        } catch (Exception exc) {
+        } catch (Throwable exc) {
             // assume Eclipse is not running
             return false;
         }

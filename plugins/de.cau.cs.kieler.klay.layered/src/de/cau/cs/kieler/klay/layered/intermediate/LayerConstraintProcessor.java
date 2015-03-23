@@ -32,12 +32,16 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * this processor, the {@link EdgeAndLayerConstraintEdgeReverser} can be used.
  * 
  * <dl>
- *   <dt>Precondition:</dt><dd>a layered graph; nodes to be placed in the first layer have only
- *     outgoing edges; nodes to be placed in the last layer have only incoming edges.</dd>
- *   <dt>Postcondition:</dt><dd>nodes with layer constraints have been placed in the
- *     appropriate layers.</dd>
- *   <dt>Slots:</dt><dd>Before phase 3.</dd>
- *   <dt>Same-slot dependencies:</dt><dd>{@link HierarchicalPortConstraintProcessor}</dd>
+ *   <dt>Precondition:</dt>
+ *     <dd>a layered graph.</dd>
+ *     <dd>nodes to be placed in the first layer have only outgoing edges</dd>
+ *     <dd>nodes to be placed in the last layer have only incoming edges</dd>
+ *   <dt>Postcondition:</dt>
+ *     <dd>nodes with layer constraints have been placed in the appropriate layers.</dd>
+ *   <dt>Slots:</dt>
+ *     <dd>Before phase 3.</dd>
+ *   <dt>Same-slot dependencies:</dt>
+ *     <dd>{@link HierarchicalPortConstraintProcessor}</dd>
  * </dl>
  * 
  * @see EdgeAndLayerConstraintEdgeReverser
