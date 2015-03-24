@@ -31,7 +31,9 @@ public class AnalysisFailed {
         /** the type for a canceled analysis. */
         Canceled,
         /** the type for a missing or wrong typed dependency result. */
-        Dependency
+        Dependency,
+        /** the type for a inapplicable layout configuration. */
+        Configuration
     }
 
     /** the message for a failed analysis. */

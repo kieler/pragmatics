@@ -103,7 +103,7 @@ public class BasicGranaTest extends KlayAutomatedJUnitTest {
     public void runConsecutiveAnalysesSameResults() {
 
         Map<String, Object> prevResults = null;
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 2; i++) {
 
             // create the batch
             Collection<AnalysisData> analyses = AnalysisService.getInstance().getAnalyses();
@@ -120,9 +120,16 @@ public class BasicGranaTest extends KlayAutomatedJUnitTest {
 
                     Object nValue = currResults.get(e.getKey());
                     if (e.getValue() instanceof AnalysisFailed && nValue instanceof AnalysisFailed) {
-                        System.err.println("Analysis failed internally: "
-                                + testObject.getFile().getAbsolutePath() + " "
-                                + ((AnalysisFailed) nValue).getException());
+                        if (((AnalysisFailed) e.getValue()).getType()
+                                    != AnalysisFailed.Type.Configuration
+                                && ((AnalysisFailed) nValue).getType()
+                                    != AnalysisFailed.Type.Configuration) {
+                            System.err.println("Analysis "
+                                    + e.getKey()
+                                    + " failed internally: "
+                                    + testObject.getFile().getAbsolutePath() + " "
+                                    + ((AnalysisFailed) nValue).getException());
+                        }
                     } else if (e.getValue() instanceof Object[]) {
                         Assert.assertArrayEquals((Object[]) nValue, (Object[]) e.getValue());
                     } else {
@@ -135,7 +142,10 @@ public class BasicGranaTest extends KlayAutomatedJUnitTest {
     }
     
     // exclude some models from testing as we know they take very long
-    final Set<String> exclude = new ImmutableSet.Builder<String>().add("node_placement").build();
+    final Set<String> exclude = ImmutableSet.of(
+            "node_placement",
+            "greedy_switch_testgraphs",
+            "sausagefolding");
     // other than that use as many models as possible
     final TestPath[] testPaths = {
         new TestPath("klay_layered", true, true, TestPath.Type.KGRAPH, exclude)

@@ -88,7 +88,7 @@ public class AxisParallelEdgeSegmentsAnalysis implements IAnalysis {
                 // edge routing
                 || ld.getProperty(LayoutOptions.EDGE_ROUTING) != EdgeRouting.ORTHOGONAL
             ) {
-            return new AnalysisFailed(AnalysisFailed.Type.Failed, new IllegalStateException(
+            return new AnalysisFailed(AnalysisFailed.Type.Configuration, new IllegalStateException(
                     "KlayLayered has to be used in conjunction with ORTHOGONAL edge routing."));
         }
         progressMonitor.begin("Axis-Parallel edge segments analysis", 1);
