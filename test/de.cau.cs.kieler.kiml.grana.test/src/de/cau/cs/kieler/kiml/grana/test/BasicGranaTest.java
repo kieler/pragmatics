@@ -137,7 +137,9 @@ public class BasicGranaTest extends KlayAutomatedJUnitTest {
     // exclude some models from testing as we know they take very long
     final Set<String> exclude = new ImmutableSet.Builder<String>().add("node_placement").build();
     // other than that use as many models as possible
-    final TestPath[] testPaths = { new TestPath("klay_layered", true, true, TestPath.Type.KGRAPH, exclude) };
+    final TestPath[] testPaths = {
+        new TestPath("klay_layered", true, true, TestPath.Type.KGRAPH, exclude)
+    };
     
     /**
      * {@inheritDoc}
