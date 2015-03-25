@@ -26,6 +26,7 @@ import de.cau.cs.kieler.core.util.Pair;
  * Properties used when representing Ptolemy models as KGraphs.
  * 
  * @author cds
+ * @kieler.rating proposed yellow cds 2015-02-23
  */
 public final class PtolemyProperties {
     /**

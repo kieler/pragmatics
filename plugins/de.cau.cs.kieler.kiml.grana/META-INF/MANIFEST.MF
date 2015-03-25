@@ -24,6 +24,7 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Export-Package: de.cau.cs.kieler.kiml.grana,
  de.cau.cs.kieler.kiml.grana.analyses,
+ de.cau.cs.kieler.kiml.grana.ui,
  de.cau.cs.kieler.kiml.grana.ui.batch,
  de.cau.cs.kieler.kiml.grana.util
 Bundle-Activator: de.cau.cs.kieler.kiml.grana.GranaPlugin

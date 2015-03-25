@@ -25,6 +25,7 @@ import com.google.common.collect.Maps;
  * too much about that.</p>
  * 
  * @author cds
+ * @kieler.rating proposed yellow cds 2015-02-23
  */
 public final class TransformationConstants {
     
