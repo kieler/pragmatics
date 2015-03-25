@@ -16,6 +16,7 @@ Export-Package: de.cau.cs.kieler.kiml,
  de.cau.cs.kieler.kiml.options,
  de.cau.cs.kieler.kiml.util,
  de.cau.cs.kieler.kiml.util.adapters,
+ de.cau.cs.kieler.kiml.util.labelspacing,
  de.cau.cs.kieler.kiml.util.nodespacing
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
