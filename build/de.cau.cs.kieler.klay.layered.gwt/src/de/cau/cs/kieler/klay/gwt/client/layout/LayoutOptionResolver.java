@@ -435,13 +435,14 @@ public final class LayoutOptionResolver {
                     if (set == null) {
                         set = EnumSet.noneOf(SizeConstraint.class);
                     }
-                    set.add(NodeLabelPlacement.valueOf(component));
+                    set.add(SizeConstraint.valueOf(component));
 
                 } else if (equalsIdOrSuffix(SIZE_OPTIONS, id)) {
                     if (set == null) {
                         set = EnumSet.noneOf(SizeOptions.class);
                     }
-                    set.add(NodeLabelPlacement.valueOf(component));
+                    set.add(SizeOptions.valueOf(component));
+                    
                 } else if (equalsIdOrSuffix(CONTENT_ALIGNMENT, id)) {
                     if (set == null) {
                         set = EnumSet.noneOf(ContentAlignment.class);
