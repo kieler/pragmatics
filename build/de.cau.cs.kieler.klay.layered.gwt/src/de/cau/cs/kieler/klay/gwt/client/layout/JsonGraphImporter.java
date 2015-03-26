@@ -495,6 +495,9 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         label.setProperty(InternalProperties.ORIGIN, jLabel);
         labelJsonMap.put(label, jLabel);
 
+        // dimensions
+        transformDimensions(jLabel, label);
+        
         // properties
         transformProperties(jLabel, label);
 
