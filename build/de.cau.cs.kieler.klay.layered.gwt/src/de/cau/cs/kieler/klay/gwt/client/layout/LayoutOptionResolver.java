@@ -13,56 +13,68 @@
  */
 package de.cau.cs.kieler.klay.gwt.client.layout;
 
+import static de.cau.cs.kieler.kiml.options.LayoutOptions.ADDITIONAL_PORT_SPACE;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.ALGORITHM;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.ALIGNMENT;
+import static de.cau.cs.kieler.kiml.options.LayoutOptions.ANIMATE;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.BEND_POINTS;
+import static de.cau.cs.kieler.kiml.options.LayoutOptions.COMMENT_BOX;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.DIRECTION;
+import static de.cau.cs.kieler.kiml.options.LayoutOptions.EDGE_LABEL_PLACEMENT;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.EDGE_ROUTING;
-import static de.cau.cs.kieler.kiml.options.LayoutOptions.THICKNESS;
+import static de.cau.cs.kieler.kiml.options.LayoutOptions.EDGE_TYPE;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.EXPAND_NODES;
+import static de.cau.cs.kieler.kiml.options.LayoutOptions.FONT_NAME;
+import static de.cau.cs.kieler.kiml.options.LayoutOptions.FONT_SIZE;
+import static de.cau.cs.kieler.kiml.options.LayoutOptions.HYPERNODE;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.INTERACTIVE;
+import static de.cau.cs.kieler.kiml.options.LayoutOptions.JUNCTION_POINTS;
+import static de.cau.cs.kieler.kiml.options.LayoutOptions.LABEL_SIDE;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.LABEL_SPACING;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.LAYOUT_HIERARCHY;
+import static de.cau.cs.kieler.kiml.options.LayoutOptions.MARGINS;
+import static de.cau.cs.kieler.kiml.options.LayoutOptions.MIN_HEIGHT;
+import static de.cau.cs.kieler.kiml.options.LayoutOptions.MIN_WIDTH;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.NODE_LABEL_PLACEMENT;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.NO_LAYOUT;
+import static de.cau.cs.kieler.kiml.options.LayoutOptions.OFFSET;
+import static de.cau.cs.kieler.kiml.options.LayoutOptions.PORT_ANCHOR;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.PORT_CONSTRAINTS;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.PORT_INDEX;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.PORT_LABEL_PLACEMENT;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.PORT_SIDE;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.POSITION;
-import static de.cau.cs.kieler.kiml.options.LayoutOptions.RANDOM_SEED;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.SEPARATE_CC;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.SIZE_CONSTRAINT;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.SIZE_OPTIONS;
-import static de.cau.cs.kieler.klay.layered.properties.Properties.ASPECT_RATIO;
+import static de.cau.cs.kieler.kiml.options.LayoutOptions.THICKNESS;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.ADD_UNNECESSARY_BENDPOINTS;
+import static de.cau.cs.kieler.klay.layered.properties.Properties.ASPECT_RATIO;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.BORDER_SPACING;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.CONTENT_ALIGNMENT;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.CROSS_MIN;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.CYCLE_BREAKING;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.DEBUG_MODE;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.DISTRIBUTE_NODES;
-import static de.cau.cs.kieler.klay.layered.properties.Properties.EDGE_SPACING_FACTOR;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.EDGE_LABEL_SIDE_SELECTION;
+import static de.cau.cs.kieler.klay.layered.properties.Properties.EDGE_SPACING_FACTOR;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.FEEDBACK_EDGES;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.FIXED_ALIGNMENT;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.INTERACTIVE_REFERENCE_POINT;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.LAYER_CONSTRAINT;
+import static de.cau.cs.kieler.klay.layered.properties.Properties.LINEAR_SEGMENTS_DEFLECTION_DAMPENING;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.MERGE_EDGES;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.MERGE_HIERARCHICAL_EDGES;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.NODE_LAYERING;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.NODE_PLACER;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.OBJ_SPACING;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.OBJ_SPACING_IN_LAYER_FACTOR;
+import static de.cau.cs.kieler.klay.layered.properties.Properties.PORT_SPACING;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.PRIORITY;
+import static de.cau.cs.kieler.klay.layered.properties.Properties.RANDOM_SEED;
+import static de.cau.cs.kieler.klay.layered.properties.Properties.SAUSAGE_FOLDING;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.THOROUGHNESS;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.WIDE_NODES_ON_MULTIPLE_LAYERS;
-
-
-
-
-
-
 
 import java.util.EnumSet;
 import java.util.Map;
@@ -82,13 +94,17 @@ import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.UnsupportedGraphException;
 import de.cau.cs.kieler.kiml.options.Alignment;
 import de.cau.cs.kieler.kiml.options.Direction;
+import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
+import de.cau.cs.kieler.kiml.options.EdgeType;
+import de.cau.cs.kieler.kiml.options.LabelSide;
 import de.cau.cs.kieler.kiml.options.NodeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortLabelPlacement;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.SizeConstraint;
 import de.cau.cs.kieler.kiml.options.SizeOptions;
+import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
@@ -113,42 +129,53 @@ public final class LayoutOptionResolver {
     private static final Set<String> SUFFIX_SET = Sets.newHashSet();
     
     private static final Pair<Set<String>, Map<String, IProperty<?>>> STRING_TYPES = createTypesSet(
-            ALGORITHM
+            ALGORITHM,
+            FONT_NAME
             // klay
             );
     
     private static final Pair<Set<String>, Map<String, IProperty<?>>> INT_TYPES = createTypesSet(
             PORT_INDEX,
             RANDOM_SEED,
+            FONT_SIZE,
             // klay
             PRIORITY,
             THOROUGHNESS
             );
     
     private static final Pair<Set<String>, Map<String, IProperty<?>>> BOOLEAN_TYPES = createTypesSet(
+            ANIMATE,
+            COMMENT_BOX,
             NO_LAYOUT,
             EXPAND_NODES,
             INTERACTIVE,
             LAYOUT_HIERARCHY,
             SEPARATE_CC,
+            HYPERNODE,
             // klay
             ADD_UNNECESSARY_BENDPOINTS,
             DEBUG_MODE,
             DISTRIBUTE_NODES,
             MERGE_EDGES,
             FEEDBACK_EDGES,
-            MERGE_HIERARCHICAL_EDGES
+            MERGE_HIERARCHICAL_EDGES,
+            SAUSAGE_FOLDING
             );
     
     private static final Pair<Set<String>, Map<String, IProperty<?>>> FLOAT_TYPES = createTypesSet(
+            MIN_WIDTH,
+            MIN_HEIGHT,
             LABEL_SPACING,
             THICKNESS,
+            OFFSET,
+            PORT_SPACING,
             // klay
             BORDER_SPACING,
             ASPECT_RATIO,
             OBJ_SPACING,
             OBJ_SPACING_IN_LAYER_FACTOR,
-            EDGE_SPACING_FACTOR
+            EDGE_SPACING_FACTOR,
+            LINEAR_SEGMENTS_DEFLECTION_DAMPENING
             );
 
     private static final Pair<Set<String>, Map<String, IProperty<?>>> ENUM_TYPES = createTypesSet(
@@ -156,6 +183,9 @@ public final class LayoutOptionResolver {
             ALIGNMENT,
             DIRECTION,
             EDGE_ROUTING,
+            EDGE_LABEL_PLACEMENT,
+            EDGE_TYPE,
+            LABEL_SIDE,
             PORT_CONSTRAINTS,
             PORT_LABEL_PLACEMENT,
             // klay
@@ -179,8 +209,12 @@ public final class LayoutOptionResolver {
             );
     
     private static final Pair<Set<String>, Map<String, IProperty<?>>> OTHER_TYPES = createTypesSet(
-            POSITION,
-            BEND_POINTS
+            ADDITIONAL_PORT_SPACE,
+            BEND_POINTS,
+            JUNCTION_POINTS, 
+            MARGINS,
+            PORT_ANCHOR, 
+            POSITION
             // klay
             );
     
@@ -234,6 +268,7 @@ public final class LayoutOptionResolver {
      *             in case anything went wrong. This might be due to the id not being registered or
      *             the value being of an invalid format.
      */
+    // SUPPRESS CHECKSTYLE NEXT 1 MethodLength
     @SuppressWarnings("unchecked")
     public static void setOption(final LGraphElement element, final String id,
             final JSONValue value, final boolean override) {
@@ -328,6 +363,12 @@ public final class LayoutOptionResolver {
                     enumeration = PortConstraints.valueOf(enumValue);
                 } else if (equalsIdOrSuffix(PORT_LABEL_PLACEMENT, id)) {
                     enumeration = PortLabelPlacement.valueOf(enumValue);
+                } else if (equalsIdOrSuffix(LABEL_SIDE, id)) {
+                    enumeration = LabelSide.valueOf(enumValue);
+                } else if (equalsIdOrSuffix(EDGE_TYPE, id)) {
+                    enumeration = EdgeType.valueOf(enumValue);
+                } else if (equalsIdOrSuffix(EDGE_LABEL_PLACEMENT, id)) {
+                    enumeration = EdgeLabelPlacement.valueOf(enumValue);
                 } else if (equalsIdOrSuffix(CYCLE_BREAKING, id)) {
                     // KLAY
                     enumeration = CycleBreakingStrategy.valueOf(enumValue);
@@ -421,12 +462,13 @@ public final class LayoutOptionResolver {
             /*----------------------------------------------------------------
              *          OTHER TYPE
              */
+            // CHECKSTYLEOFF RightCurly for the else if
             if (value.isString() == null) {
                 throw new UnsupportedGraphException("Invalid _other_ format for property '" + id
                         + "' (" + value + ").");
             }
-
-            if (equalsIdOrSuffix(POSITION, id)) {
+            // KVector
+            if (equalsIdOrSuffix(POSITION, id) || equalsIdOrSuffix(PORT_ANCHOR, id)) {
                 try {
                     KVector v = new KVector();
                     v.parse(value.isString().stringValue());
@@ -438,7 +480,9 @@ public final class LayoutOptionResolver {
                     throw new UnsupportedGraphException("Invalid KVector format for property '" + id
                             + "' " + value + ".");
                 }
-            } else if (equalsIdOrSuffix(BEND_POINTS, id)) {
+            } 
+            // KVectorChain
+            else if (equalsIdOrSuffix(BEND_POINTS, id) || equalsIdOrSuffix(JUNCTION_POINTS, id)) {
                 try {
                     KVectorChain vc = new KVectorChain();
                     vc.parse(value.isString().stringValue());
@@ -450,6 +494,20 @@ public final class LayoutOptionResolver {
                 } catch (IllegalArgumentException exception) {
                     throw new UnsupportedGraphException(
                             "Invalid KVectorChain format for property '" + id + "' " + value + ".");
+                }
+            }
+            // Margins
+            else if (equalsIdOrSuffix(MARGINS, id) || equalsIdOrSuffix(ADDITIONAL_PORT_SPACE, id)) {
+                try {
+                    Margins margins = new Margins();
+                    margins.parse(value.isString().stringValue());
+                    IProperty<Margins> p = 
+                            (IProperty<Margins>) OTHER_TYPES.getSecond().get(id);
+                    element.setProperty(p, margins);
+                    return;
+                } catch (IllegalArgumentException exception) {
+                    throw new UnsupportedGraphException(
+                            "Invalid Margins format for property '" + id + "' " + value + ".");
                 }
             }
 

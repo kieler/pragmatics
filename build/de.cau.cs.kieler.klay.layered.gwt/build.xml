@@ -190,6 +190,33 @@
 	<!-- TARGET Compile -->
 	<target name="compile" depends="copySrc, gwtc" description="Combiles to js" />
 
+	<!-- TARGET Compile Test -->
+	<target name="compileTest" depends="copySrc, javac" description="Compile jUnit Tests">
+		<mkdir dir="${outputFolder}/test" />
+		<javac srcdir="test" destdir="${outputFolder}/test" includeantruntime="true">
+			<classpath refid="project.class.path" />
+	    </javac>
+	</target>
+	
+	<!-- TARGET Test -->
+	<target name="test" depends="compileTest">
+		<junit haltonfailure="no" failureproperty="test.failed">
+			<classpath>
+				<path refid="project.class.path" />
+				<pathelement location="${outputFolder}/test" />
+			</classpath>
+			<batchtest>
+	   			<fileset dir="${outputFolder}/test">
+					<include name="**/*Test*" />
+	   			</fileset>
+			</batchtest>
+			<formatter type="plain" usefile="false"/>
+			<formatter type="xml"/>
+	  	</junit>
+		<!-- Let the build fail if any test failed -->
+		<fail message="Some tests failed ..." if="test.failed" />
+	</target>   
+	
 	<!-- TARGET Dist -->
 	<target name="dist" depends="compile" description="Copy the compiled js files to the target folder.">
 		<mkdir dir="${outputFolder}" />
@@ -252,6 +279,7 @@
 	<!-- TARGET buildall -->
 	<target name="buildall" description="Builds all configurations of the KLay js library.">
 		<antcall target="clean" />
+		<antcall target="test" />
 		<antcall target="stdlinker" />
 		<antcall target="cleancompilation" />
 		<antcall target="customlinker" />
