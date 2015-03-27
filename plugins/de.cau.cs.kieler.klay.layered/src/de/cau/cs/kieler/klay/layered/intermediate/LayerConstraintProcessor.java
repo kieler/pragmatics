@@ -160,6 +160,10 @@ public final class LayerConstraintProcessor implements ILayoutProcessor {
             }
         }
         
+        if (layers.size() == 1 && layers.get(0).getNodes().isEmpty()) {
+            layers.remove(0);
+        }
+        
         // Add non-empty new first and last layers
         if (!veryFirstLayer.getNodes().isEmpty()) {
             layers.add(0, veryFirstLayer);

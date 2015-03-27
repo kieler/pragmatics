@@ -200,8 +200,8 @@ public class XtextBasedEditorActivationChangeTrigger extends AbstractTrigger imp
                 }
             }
 
-            List<IMarker> currentMarkers =
-                    Arrays.asList(underlyingFile.findMarkers(null, true, IResource.DEPTH_INFINITE));
+            List<IMarker> currentMarkers = Arrays.asList(
+                    underlyingFile.findMarkers(IMarker.PROBLEM, false, IResource.DEPTH_INFINITE));
             if (marker != null) {
                 currentMarkers = Lists.newArrayList(currentMarkers);
                 currentMarkers.remove(marker);
