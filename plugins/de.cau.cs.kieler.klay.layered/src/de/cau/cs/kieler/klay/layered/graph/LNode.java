@@ -14,12 +14,12 @@
 package de.cau.cs.kieler.klay.layered.graph;
 
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -43,11 +43,9 @@ public final class LNode extends LShape {
     /** the containing layer. */
     private Layer layer;
     /** the ports of the node. */
-    // FIXME LinkedList
-    private final List<LPort> ports = new LinkedList<LPort>();
+    private final List<LPort> ports = Lists.newArrayList();
     /** this node's labels. */
-    // FIXME LinkedList
-    private final List<LLabel> labels = new LinkedList<LLabel>();
+    private final List<LLabel> labels = Lists.newArrayList();
     /** the margin area around this node. */
     private final LInsets margin = new LInsets();
     /** the insets inside this node, usually reserved for port and label placement. */
@@ -281,8 +279,7 @@ public final class LNode extends LShape {
      * @return an iterable for all incoming edges.
      */
     public Iterable<LEdge> getIncomingEdges() {
-        // FIXME LinkedList
-        List<Iterable<LEdge>> iterables = new LinkedList<Iterable<LEdge>>();
+        List<Iterable<LEdge>> iterables = Lists.newArrayList();
         for (LPort port : ports) {
             iterables.add(port.getIncomingEdges());
         }
@@ -296,8 +293,7 @@ public final class LNode extends LShape {
      * @return an iterable for all outgoing edges.
      */
     public Iterable<LEdge> getOutgoingEdges() {
-        // FIXME LinkedList
-        List<Iterable<LEdge>> iterables = new LinkedList<Iterable<LEdge>>();
+        List<Iterable<LEdge>> iterables = Lists.newArrayList();
         for (LPort port : ports) {
             iterables.add(port.getOutgoingEdges());
         }
@@ -311,8 +307,7 @@ public final class LNode extends LShape {
      * @return an iterable for all connected edges.
      */
     public Iterable<LEdge> getConnectedEdges() {
-        // FIXME LinkedList
-        List<Iterable<LEdge>> iterables = new LinkedList<Iterable<LEdge>>();
+        List<Iterable<LEdge>> iterables = Lists.newArrayList();
         for (LPort port : ports) {
             iterables.add(port.getConnectedEdges());
         }

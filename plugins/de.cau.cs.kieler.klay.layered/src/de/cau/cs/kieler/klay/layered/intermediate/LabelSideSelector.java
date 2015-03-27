@@ -15,11 +15,11 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -337,8 +337,7 @@ public final class LabelSideSelector implements ILayoutProcessor {
      * @return A list of all ports on the chosen side of the node
      */
     private List<LPort> getPortsBySide(final LNode node, final PortSide portSide) {
-        // FIXME LinkedList
-        List<LPort> result = new LinkedList<LPort>();
+        List<LPort> result = Lists.newArrayList();
         
         for (LPort port : node.getPorts(portSide)) {
             result.add(port);

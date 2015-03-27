@@ -14,9 +14,10 @@
 package de.cau.cs.kieler.klay.layered.graph;
 
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+
+import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
@@ -45,11 +46,9 @@ public final class LGraph extends LGraphElement implements Iterable<Layer> {
     /** the offset to be added to all positions. */
     private final KVector offset = new KVector();
     /** nodes that are not currently part of a layer. */
-    // FIXME LinkedList
-    private final List<LNode> layerlessNodes = new LinkedList<LNode>();
+    private final List<LNode> layerlessNodes = Lists.newArrayList();
     /** the layers of the layered graph. */
-    // FIXME LinkedList
-    private final List<Layer> layers = new LinkedList<Layer>();
+    private final List<Layer> layers = Lists.newArrayList();
     
     
     /**

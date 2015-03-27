@@ -311,8 +311,7 @@ public final class OrthogonalRoutingGenerator {
      */
     public class HyperNode implements Comparable<HyperNode> {
         /** ports represented by this hypernode. */
-        // FIXME LinkedList
-        private List<LPort> ports = Lists.newLinkedList();
+        private List<LPort> ports = Lists.newArrayList();
         /** mark value used for cycle breaking. */
         private int mark;
         /** the rank determines the horizontal distance to the preceding layer. */
@@ -322,19 +321,15 @@ public final class OrthogonalRoutingGenerator {
         /** vertical ending position of this hypernode. */
         private double end = Double.NaN;
         /** positions of line segments going to the preceding layer. */
-        // FIXME LinkedList
         private LinkedList<Double> sourcePosis = Lists.newLinkedList();
         /** positions of line segments going to the next layer. */
-        // FIXME LinkedList
         private LinkedList<Double> targetPosis = Lists.newLinkedList();
         /** list of outgoing dependencies. */
-        // FIXME LinkedList
-        private List<Dependency> outgoing = Lists.newLinkedList();
+        private List<Dependency> outgoing = Lists.newArrayList();
         /** sum of the weights of outgoing dependencies. */
         private int outweight;
         /** list of incoming dependencies. */
-        // FIXME LinkedList
-        private List<Dependency> incoming = Lists.newLinkedList();
+        private List<Dependency> incoming = Lists.newArrayList();
         /** sum of the weights of incoming depencencies. */
         private int inweight;
         
@@ -577,8 +572,7 @@ public final class OrthogonalRoutingGenerator {
             final int sourceLayerIndex, final Iterable<LNode> targetLayerNodes, final double startPos) {
         
         Map<LPort, HyperNode> portToHyperNodeMap = Maps.newHashMap();
-        // FIXME LinkedList
-        List<HyperNode> hyperNodes = Lists.newLinkedList();
+        List<HyperNode> hyperNodes = Lists.newArrayList();
         
         // create hypernodes for eastern output ports of the left layer and for western
         // output ports of the right layer
@@ -777,9 +771,8 @@ public final class OrthogonalRoutingGenerator {
      * @param random random number generator
      */
     private static void breakCycles(final List<HyperNode> nodes, final Random random) {
-        // FIXME LinkedList
-        LinkedList<HyperNode> sources = new LinkedList<HyperNode>();
-        LinkedList<HyperNode> sinks = new LinkedList<HyperNode>();
+        LinkedList<HyperNode> sources = Lists.newLinkedList();
+        LinkedList<HyperNode> sinks = Lists.newLinkedList();
         
         // initialize values for the algorithm
         int nextMark = -1;
@@ -887,9 +880,9 @@ public final class OrthogonalRoutingGenerator {
      * @param sources list of sources
      * @param sinks list of sinks
      */
-    // FIXME LinkedList
-    private static void updateNeighbors(final HyperNode node, final LinkedList<HyperNode> sources,
-            final LinkedList<HyperNode> sinks) {
+    private static void updateNeighbors(final HyperNode node, final List<HyperNode> sources,
+            final List<HyperNode> sinks) {
+        
         // process following nodes
         for (Dependency dep : node.outgoing) {
             if (dep.target.mark < 0 && dep.weight > 0) {
@@ -924,9 +917,8 @@ public final class OrthogonalRoutingGenerator {
         // determine sources, targets, incoming count and outgoing count; targets are only
         // added to the list if they only connect westward ports (that is, if all their
         // horizontal segments point to the right)
-        // FIXME LinkedList
-        List<HyperNode> sources = new LinkedList<HyperNode>();
-        List<HyperNode> rightwardTargets = new LinkedList<HyperNode>();
+        List<HyperNode> sources = Lists.newArrayList();
+        List<HyperNode> rightwardTargets = Lists.newArrayList();
         for (HyperNode node : nodes) {
             node.inweight = node.incoming.size();
             node.outweight = node.outgoing.size();

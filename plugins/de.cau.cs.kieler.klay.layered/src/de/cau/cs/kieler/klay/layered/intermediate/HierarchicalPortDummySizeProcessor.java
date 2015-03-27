@@ -13,8 +13,9 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
-import java.util.LinkedList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.Alignment;
@@ -63,9 +64,8 @@ public final class HierarchicalPortDummySizeProcessor implements ILayoutProcesso
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
         monitor.begin("Hierarchical port dummy size processing", 1);
 
-        // FIXME LinkedList
-        List<LNode> northernDummies = new LinkedList<LNode>();
-        List<LNode> southernDummies = new LinkedList<LNode>();
+        List<LNode> northernDummies = Lists.newArrayList();
+        List<LNode> southernDummies = Lists.newArrayList();
         
         // Calculate the width difference (this assumes CENTER node alignment)
         double normalSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING).doubleValue();

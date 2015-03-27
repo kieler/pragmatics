@@ -13,9 +13,10 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+
+import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -23,10 +24,10 @@ import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
@@ -80,8 +81,7 @@ public final class InvertedPortProcessor implements ILayoutProcessor {
         // modification exceptions)
         ListIterator<Layer> layerIterator = layers.listIterator();
         Layer currentLayer = null;
-        // FIXME LinkedList
-        List<LNode> unassignedNodes = new LinkedList<LNode>();
+        List<LNode> unassignedNodes = Lists.newArrayList();
         
         while (layerIterator.hasNext()) {
             // Find the current, previous and next layer. If this layer is the last one,

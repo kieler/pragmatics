@@ -13,12 +13,12 @@
  */
 package de.cau.cs.kieler.klay.layered.p3order;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Random;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -400,8 +400,8 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
     private void minimizeCrossings(final NodeGroup[] layer,
             final ICrossingMinimizationHeuristic heuristic,
             final boolean forward, final boolean preOrdered, final boolean randomize) {
-        // FIXME LinkedList
-        List<NodeGroup> nodeGroups = new LinkedList<NodeGroup>();
+        
+        List<NodeGroup> nodeGroups = Lists.newArrayList();
         for (NodeGroup ng : layer) {
             nodeGroups.add(ng);
         }

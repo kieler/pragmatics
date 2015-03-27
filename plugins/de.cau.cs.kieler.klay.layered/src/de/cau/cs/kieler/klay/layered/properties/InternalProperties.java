@@ -15,7 +15,6 @@ package de.cau.cs.kieler.klay.layered.properties;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -355,8 +354,7 @@ public final class InternalProperties {
      */
     public static final IProperty<List<ConnectedSelfLoopComponent>> SPLINE_SELFLOOP_COMPONENTS = 
             new Property<List<ConnectedSelfLoopComponent>>("splineSelfLoopComponents", 
-                    // FIXME LinkedList
-                    new LinkedList<ConnectedSelfLoopComponent>());
+                    new ArrayList<ConnectedSelfLoopComponent>());
     
     /**
      * A node's property storing the margins of a node required for it's self loops.

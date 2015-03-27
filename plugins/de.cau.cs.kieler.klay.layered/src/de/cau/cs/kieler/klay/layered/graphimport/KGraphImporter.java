@@ -14,11 +14,12 @@
 package de.cau.cs.kieler.klay.layered.graphimport;
 
 import java.util.EnumSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
@@ -93,13 +94,12 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         boolean hierarchicalLayout = kgraph.getData(KShapeLayout.class).getProperty(
                 LayoutOptions.LAYOUT_HIERARCHY);
         if (hierarchicalLayout) {
-            // FIXME LinkedList
-            LinkedList<KNode> knodeQueue = new LinkedList<KNode>();
+            Queue<KNode> knodeQueue = Lists.newLinkedList();
 
             // Transform the node's children
             knodeQueue.addAll(kgraph.getChildren());
             do {
-                KNode knode = knodeQueue.removeFirst();
+                KNode knode = knodeQueue.poll();
                 if (!knode.getData(KShapeLayout.class).getProperty(LayoutOptions.NO_LAYOUT)) {
                     LGraph parentGraph = topLevelGraph;
                     LNode parentLNode = (LNode) elemMap.get(knode.getParent());
@@ -120,7 +120,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             // Transform the edges
             knodeQueue.add(kgraph);
             do {
-                KNode knode = knodeQueue.removeFirst();
+                KNode knode = knodeQueue.poll();
                 for (KEdge kedge : knode.getOutgoingEdges()) {
                     if (!kedge.getData(KEdgeLayout.class).getProperty(LayoutOptions.NO_LAYOUT)) {
                         KNode parentKNode = knode;
@@ -653,8 +653,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         KVector offset = lgraph.getOffset();
 
         // Along the way, we collect the list of edges to be processed later
-        // FIXME LinkedList
-        List<LEdge> edgeList = new LinkedList<LEdge>();
+        List<LEdge> edgeList = Lists.newArrayList();
 
         // Process the nodes
         for (LNode lnode : lgraph.getLayerlessNodes()) {

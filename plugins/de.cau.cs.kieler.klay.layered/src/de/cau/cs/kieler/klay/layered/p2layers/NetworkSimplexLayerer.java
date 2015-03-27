@@ -254,8 +254,7 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
         } else {
             Arrays.fill(nodeVisited, false);
         }
-        // FIXME LinkedList
-        componentNodes = Lists.newLinkedList();
+        componentNodes = Lists.newArrayList();
 
         // re-index nodes
         int counter = 0;
@@ -263,7 +262,6 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
             node.id = counter++;
         }
         // determine connected components
-        // FIXME LinkedList
         LinkedList<List<LNode>> components = Lists.newLinkedList();
         for (LNode node : theNodes) {
             if (!nodeVisited[node.id]) {
@@ -275,8 +273,7 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
                 } else {
                     components.addLast(componentNodes);
                 }
-                // FIXME LinkedList
-                componentNodes = Lists.newLinkedList();
+                componentNodes = Lists.newArrayList();
             }
         }
         return components;
@@ -338,15 +335,13 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
         lowestPoID = new int[numNodes];
         Arrays.fill(revLayer, numNodes);
 
-        // FIXME LinkedList
-        sources = Lists.newLinkedList();
-        sinks = Lists.newLinkedList();
+        sources = Lists.newArrayList();
+        sinks = Lists.newArrayList();
         nodes = theNodes;
 
         // determine edges and re-index nodes
         int index = 0;
-        // FIXME LinkedList
-        List<LEdge> theEdges = Lists.newLinkedList();
+        List<LEdge> theEdges = Lists.newArrayList();
         for (LNode node : theNodes) {
             node.id = index++;
             for (LPort port : node.getPorts()) {
@@ -635,7 +630,6 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
             }
         }
 
-        // FIXME LinkedList
         LinkedList<LNode> roots = Lists.newLinkedList(initialRootNodes);
         
         while (!roots.isEmpty()) {
@@ -851,8 +845,7 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
      */
     private void cutvalues() {
         // determine incident tree edges for each node
-        // FIXME LinkedList
-        List<LNode> leafs = Lists.newLinkedList();
+        List<LNode> leafs = Lists.newArrayList();
         int treeEdgeCount;
         List<Set<LEdge>> unknownCutvalues = Lists.newArrayListWithCapacity(nodes.size());
         for (LNode node : nodes) {

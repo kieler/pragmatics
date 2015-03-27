@@ -13,8 +13,8 @@
  */
 package de.cau.cs.kieler.klay.layered.p4nodes;
 
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -27,10 +27,10 @@ import de.cau.cs.kieler.klay.layered.DebugUtil;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
@@ -67,8 +67,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
      */
     public static class LinearSegment implements Comparable<LinearSegment> {
         /** Nodes of the linear segment. */
-        // FIXME LinkedList
-        private List<LNode> nodes = Lists.newLinkedList();
+        private List<LNode> nodes = Lists.newArrayList();
         /** Identifier value, used as index in the segments array. */
         private int id;
         /** Index in the previous layer. Used for cycle avoidance. */
@@ -230,8 +229,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
      */
     private LinearSegment[] sortLinearSegments(final LGraph layeredGraph) {
         // set the identifier and input / output priority for all nodes
-        // FIXME LinkedList
-        List<LinearSegment> segmentList = Lists.newLinkedList();
+        List<LinearSegment> segmentList = Lists.newArrayList();
         for (Layer layer : layeredGraph) {
             for (LNode node : layer) {
                 node.id = -1;
@@ -270,8 +268,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
         List<List<LinearSegment>> outgoingList = Lists.newArrayListWithCapacity(segmentList.size());
         List<Integer> incomingCountList = Lists.newArrayListWithCapacity(segmentList.size());
         for (int i = 0; i < segmentList.size(); i++) {
-            // FIXME LinkedList
-            outgoingList.add(new LinkedList<LinearSegment>());
+            outgoingList.add(new ArrayList<LinearSegment>());
             incomingCountList.add(0);
         }
 
@@ -291,8 +288,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
 
         // gather the sources of the segment ordering graph
         int nextRank = 0;
-        // FIXME LinkedList
-        List<LinearSegment> noIncoming = Lists.newLinkedList();
+        List<LinearSegment> noIncoming = Lists.newArrayList();
         for (int i = 0; i < segments.length; i++) {
             if (incomingCount[i] == 0) {
                 noIncoming.add(segments[i]);
@@ -423,8 +419,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
 
                         currentSegment = currentSegment.split(currentNode, nextLinearSegmentID++);
                         segmentList.add(currentSegment);
-                        // FIXME LinkedList
-                        outgoingList.add(new LinkedList<LinearSegment>());
+                        outgoingList.add(new ArrayList<LinearSegment>());
 
                         if (previousNode != null) {
                             outgoingList.get(previousNode.id).add(currentSegment);

@@ -18,7 +18,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 import com.google.common.base.Function;
-import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -73,12 +73,10 @@ public final class BigNodesLabelHandler {
          * A multimap holding the dummies created for a label. It is important to use a
          * LinkedListMultimap in order to retain the order of the dummies.
          */
-        // FIXME LinkedList?
-        private LinkedListMultimap<LLabel, LLabel> dumLabs = LinkedListMultimap.create();
+        private ArrayListMultimap<LLabel, LLabel> dumLabs = ArrayListMultimap.create();
 
         /** A list of post processing functions to be applied during {@link BigNodesPostProcessor}. */
-        // FIXME LinkedList
-        private List<Function<Void, Void>> postProcs = Lists.newLinkedList();
+        private List<Function<Void, Void>> postProcs = Lists.newArrayList();
 
         /**
          * 
@@ -282,7 +280,8 @@ public final class BigNodesLabelHandler {
 
         /**
          * Post processing function removing all created label dummies, i.e labels that do not have
-         * an {@link Properties#ORIGIN}.
+         * an {@link de.cau.cs.kieler.klay.layered.properties.InternalProperties#ORIGIN
+         * InternalProperties.ORIGIN}.
          */
         private Function<Void, Void> funRemoveLabelDummies = new Function<Void, Void>() {
 

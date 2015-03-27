@@ -73,10 +73,8 @@ public final class GreedyCycleBreaker implements ILayoutPhase {
     /** mark for the nodes, inducing an ordering of the nodes. */
     private int[] mark;
     /** list of source nodes. */
-    // FIXME LinkedList
     private final LinkedList<LNode> sources = Lists.newLinkedList();
     /** list of sink nodes. */
-    // FIXME LinkedList
     private final LinkedList<LNode> sinks = Lists.newLinkedList();
     
     /**

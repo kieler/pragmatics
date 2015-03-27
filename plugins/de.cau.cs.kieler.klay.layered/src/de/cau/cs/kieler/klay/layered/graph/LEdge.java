@@ -13,8 +13,9 @@
  */
 package de.cau.cs.kieler.klay.layered.graph;
 
-import java.util.LinkedList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
@@ -43,8 +44,7 @@ public final class LEdge extends LGraphElement {
     /** the target port. */
     private LPort target;
     /** labels assigned to this edge. */
-    // FIXME LinkedList
-    private final List<LLabel> labels = new LinkedList<LLabel>();
+    private final List<LLabel> labels = Lists.newArrayList();
     
     /**
      * {@inheritDoc}

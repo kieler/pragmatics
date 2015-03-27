@@ -146,8 +146,7 @@ public final class ForsterConstraintResolver implements IConstraintResolver {
             // Find sources of the constraint graph to start the constraints check
             if (nodeGroup.hasOutgoingConstraints() && nodeGroup.incomingConstraintsCount == 0) {
                 if (activeNodeGroups == null) {
-                    // FIXME LinkedList
-                    activeNodeGroups = Lists.newLinkedList();
+                    activeNodeGroups = Lists.newArrayList();
                 }
                 activeNodeGroups.add(nodeGroup);
             }

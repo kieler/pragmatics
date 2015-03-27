@@ -42,12 +42,14 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * Edge router module that draws edges with non-orthogonal line segments.
  * 
  * <dl>
- *   <dt>Precondition:</dt><dd>the graph has a proper layering with
- *     assigned node and port positions; the size of each layer is
- *     correctly set; at least one of the nodes connected by an in-layer
- *     edge is a dummy node.</dd>
- *   <dt>Postcondition:</dt><dd>each node is assigned a horizontal coordinate;
- *     the bend points of each edge are set; the width of the whole graph is set</dd>
+ *   <dt>Precondition:</dt>
+ *      <dd>the graph has a proper layering with assigned node and port positions</dd>
+ *      <dd>the size of each layer is correctly set</dd>
+ *      <dd>at least one of the nodes connected by an in-layer edge is a dummy node</dd>
+ *   <dt>Postcondition:</dt>
+ *      <dd>each node is assigned a horizontal coordinate</dd>
+ *      <dd>the bend points of each edge are set</dd>
+ *      <dd>the width of the whole graph is set</dd>
  * </dl>
  *
  * @author msp
@@ -227,6 +229,7 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
                 
                 // Different node types have to be handled differently
                 NodeType nodeType = node.getProperty(InternalProperties.NODE_TYPE);
+                // FIXME use switch-case here?
                 if (nodeType == NodeType.NORMAL) {
                     processNormalNode(node, xpos, layer.getSize().x);
                 } else if (nodeType == NodeType.LONG_EDGE) {

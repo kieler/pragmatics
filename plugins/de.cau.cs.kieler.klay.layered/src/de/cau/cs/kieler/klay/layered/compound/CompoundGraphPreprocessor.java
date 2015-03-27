@@ -16,7 +16,6 @@ package de.cau.cs.kieler.klay.layered.compound;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -98,8 +97,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
      */
     private static class ExternalPort {
         /** the list of original edges for which the port is created. */
-        // FIXME LinkedList
-        private List<LEdge> origEdges = Lists.newLinkedList();
+        private List<LEdge> origEdges = Lists.newArrayList();
         /** the new edge by which the original edge is replaced. */
         private LEdge newEdge;
         /** the dummy node used by the algorithm as representative for the external port. */
@@ -180,8 +178,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
             final LNode parentNode) {
         
         // process all children and recurse down to gather their external ports
-       // FIXME LinkedList
-        List<ExternalPort> containedExternalPorts = new LinkedList<ExternalPort>();
+        List<ExternalPort> containedExternalPorts = Lists.newArrayList();
         
         for (LNode node : graph.getLayerlessNodes()) {
             LGraph nestedGraph = node.getProperty(InternalProperties.NESTED_LGRAPH);
@@ -211,8 +208,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
         }
         
         // this will be the list of external ports we will export
-        // FIXME LinkedList
-        List<ExternalPort> exportedExternalPorts = new LinkedList<ExternalPort>();
+        List<ExternalPort> exportedExternalPorts = Lists.newArrayList();
         
         // process the cross-hierarchy edges connected to the inside of the child nodes
         processInnerHierarchicalEdgeSegments(graph, parentNode, exportedExternalPorts,
@@ -311,8 +307,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
         // we remember the ports and the dummy nodes we create to add them to the graph afterwards
         // (this is not strictly necessary, but allows us to reuse methods we also use for outer
         // hierarchy edge segments)
-        // FIXME LinkedList
-        List<ExternalPort> externalPorts = Lists.newLinkedList();
+        List<ExternalPort> externalPorts = Lists.newArrayList();
         
         // iterate over the list of contained external ports
         for (ExternalPort externalPort : containedExternalPorts) {
@@ -482,8 +477,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
         
         // we need to remember the ports and the dummy nodes we create to add them to the graph
         // afterwards (to avoid concurrent modification exceptions)
-        // FIXME LinkedList
-        List<ExternalPort> externalPorts = Lists.newLinkedList();
+        List<ExternalPort> externalPorts = Lists.newArrayList();
         
         // iterate over all ports of the graph's child nodes
         for (LNode childNode : graph.getLayerlessNodes()) {

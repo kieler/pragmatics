@@ -13,11 +13,11 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
@@ -27,10 +27,10 @@ import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
-import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 
@@ -63,8 +63,8 @@ public final class LabelDummyInserter implements ILayoutProcessor {
      */
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
         monitor.begin("Label dummy insertions", 1);
-        // FIXME LinkedList
-        List<LNode> newDummyNodes = new LinkedList<LNode>();
+        
+        List<LNode> newDummyNodes = Lists.newArrayList();
         
         double labelSpacing = layeredGraph.getProperty(LayoutOptions.LABEL_SPACING);
 

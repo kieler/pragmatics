@@ -148,8 +148,7 @@ public final class SplineEdgeRouter implements ILayoutPhase {
         final Map<LEdge, LEdge> successingEdge = Maps.newHashMap();
         
         // a collection of all edges that have a normal node as their source
-        // FIXME LinkedList
-        final List<LEdge> startEdges = Lists.newLinkedList();
+        final List<LEdge> startEdges = Lists.newArrayList();
 
         boolean externalLeftLayer = true;
         boolean externalRightLayer = true;
@@ -160,9 +159,8 @@ public final class SplineEdgeRouter implements ILayoutPhase {
             /////////////////////////////////////
             // Creation of the SplineHyperEdges//
             // some variables we need
-            // FIXME LinkedList
-            final List<SplineHyperEdge> hyperEdges = Lists.newLinkedList();
-            final List<LEdge> edgesRemaining = Lists.newLinkedList();
+            final List<SplineHyperEdge> hyperEdges = Lists.newArrayList();
+            final List<LEdge> edgesRemaining = Lists.newArrayList();
             final Set<LPort> leftPorts = Sets.newLinkedHashSet();
             final Set<LPort> rightPorts = Sets.newLinkedHashSet();
             final Set<LEdge> selfLoops = Sets.newLinkedHashSet();
@@ -670,9 +668,8 @@ public final class SplineEdgeRouter implements ILayoutPhase {
      * @param random random number generator
      */
     private static void breakCycles(final List<SplineHyperEdge> edges, final Random random) {
-        // FIXME LinkedList
-        final LinkedList<SplineHyperEdge> sources = new LinkedList<SplineHyperEdge>();
-        final LinkedList<SplineHyperEdge> sinks = new LinkedList<SplineHyperEdge>();
+        final LinkedList<SplineHyperEdge> sources = Lists.newLinkedList();
+        final LinkedList<SplineHyperEdge> sinks = Lists.newLinkedList();
         
         // initialize values for the algorithm
         int nextMark = -1;
@@ -818,7 +815,6 @@ public final class SplineEdgeRouter implements ILayoutPhase {
         // determine sources, targets, incoming count and outgoing count; targets are only
         // added to the list if they only connect westward ports (that is, if all their
         // horizontal segments point to the right)
-        // FIXME LinkedList
         final List<SplineHyperEdge> sources = Lists.newLinkedList();
         final List<SplineHyperEdge> rightwardTargets = Lists.newLinkedList();
         for (final SplineHyperEdge edge : edges) {
@@ -1098,11 +1094,9 @@ public final class SplineEdgeRouter implements ILayoutPhase {
         /** This positions represent the lower position of the vertical segment. */
         private double bottomYPos;
         /** Outgoing dependencies are pointing to hyper-edges that must lay right of this hyper edge. */
-        // FIXME LinkedList
-        private final List<Dependency> outgoing = Lists.newLinkedList();
+        private final List<Dependency> outgoing = Lists.newArrayList();
         /** Incoming dependencies are pointing to hyper-edges that must lay left of this hyper edge. */
-        // FIXME LinkedList
-        private final List<Dependency> incoming = Lists.newLinkedList();
+        private final List<Dependency> incoming = Lists.newArrayList();
         /** Used to mark nodes in the cycle breaker. */
         private int mark;
         /** Determines how many elements are depending on this. */
