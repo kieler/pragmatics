@@ -50,6 +50,9 @@ import de.cau.cs.kieler.klay.layered.properties.NodeType;
  */
 public final class LabelManagementProcessor implements ILayoutProcessor {
 
+    /** Minimum width for shortened edge labels. */
+    private static final double MIN_WIDTH = 40;
+    
     /** Predicate that checks for center labels. */
     private static final Predicate<LLabel> CENTER_LABEL_PREDICATE = new Predicate<LLabel>() {
         public boolean apply(final LLabel label) {
@@ -98,7 +101,7 @@ public final class LabelManagementProcessor implements ILayoutProcessor {
         
         assert labelSizeModifier != null : "labelSizeModifier is null";
         
-        double maxWidth = findMaxNonDummyNodeWidth(layer);
+        double maxWidth = Math.max(MIN_WIDTH, findMaxNonDummyNodeWidth(layer));
         
         // Apply the maximum width to all label dummy nodes
         for (LNode labelDummy : layer) {
