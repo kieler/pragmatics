@@ -335,7 +335,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
 
                         portDistributor.calculatePortRanks(fixedLayer, PortType.OUTPUT);
                         minimizeCrossings(freeLayer, crossminHeuristic, true, !firstSweep, false);
-                        if (hasHyperedgesEast[layerIndex] || hasHyperedgesWest[layerIndex - 1]) {
+                        if (hasHyperedgesWest[layerIndex] || hasHyperedgesEast[layerIndex - 1]) {
                             curSweepCrossings += 
                                     hyperedgeCrossingsCounter.countCrossings(fixedLayer, freeLayer);
                             curSweepCrossings += 
