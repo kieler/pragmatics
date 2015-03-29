@@ -21,13 +21,13 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.kiml.util.nodespacing.LabelSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
-import de.cau.cs.kieler.klay.layered.graph.LLabel.LabelSide;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 
@@ -36,12 +36,20 @@ import de.cau.cs.kieler.klay.layered.properties.NodeType;
  * position.</p>
  * 
  * <dl>
- *   <dt>Precondition:</dt><dd>a layered graph; nodes are placed; edges are routed; center labels
- *     are represented by center label dummy nodes.</dd>
- *   <dt>Postcondition:</dt><dd>labels are placed; there are no dummy nodes of type
- *     {@link de.cau.cs.kieler.klay.layered.properties.NodeType#LABEL}.</dd>
- *   <dt>Slots:</dt><dd>After phase 5.</dd>
- *   <dt>Same-slot dependencies:</dt><dd>{@link HierarchicalPortOrthogonalEdgeRouter}</dd>
+ *   <dt>Precondition:</dt>
+ *     <dd>a layered graph<dd>
+ *     <dd>nodes are placed</dd>
+ *     <dd>edges are routed</dd>
+ *     <dd>center labels are represented by and attached to center label dummy nodes.</dd>
+ *   <dt>Postcondition:</dt>
+ *     <dd>labels are placed</dd>
+ *     <dd>there are no dummy nodes of type
+ *       {@link de.cau.cs.kieler.klay.layered.properties.NodeType#LABEL}.</dd>
+ *     <dd>center labels are attached to their original edges again.</dd>
+ *   <dt>Slots:</dt>
+ *     <dd>After phase 5.</dd>
+ *   <dt>Same-slot dependencies:</dt>
+ *     <dd>{@link HierarchicalPortOrthogonalEdgeRouter}</dd>
  * </dl>
  *
  * @author jjc
@@ -70,17 +78,17 @@ public final class LabelDummyRemover implements ILayoutProcessor {
                     LEdge originEdge = (LEdge) node.getProperty(InternalProperties.ORIGIN);
                     double ypos = node.getPosition().y;
                     
-                    if (!originEdge.getLabels().isEmpty()
-                            && originEdge.getLabels().get(0).getSide() == LabelSide.BELOW) {
-                        
+                    if (node.getProperty(InternalProperties.LABEL_SIDE) == LabelSide.BELOW) {
                         ypos += originEdge.getProperty(LayoutOptions.THICKNESS);
                     }
                     
-                    for (LLabel label : originEdge.getLabels()) {
+                    for (LLabel label : node.getProperty(InternalProperties.REPRESENTED_LABELS)) {
                         label.getPosition().x = node.getPosition().x
                                 + (node.getSize().x - label.getSize().x) / 2;
                         label.getPosition().y = ypos;
                         ypos += label.getSize().y + labelSpacing;
+                        
+                        originEdge.getLabels().add(label);
                     }
                     
                     // We can assume that there are exactly one western and eastern port

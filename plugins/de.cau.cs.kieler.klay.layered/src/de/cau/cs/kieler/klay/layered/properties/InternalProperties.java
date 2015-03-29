@@ -28,6 +28,7 @@ import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.kiml.util.nodespacing.LabelSide;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
@@ -129,6 +130,18 @@ public final class InternalProperties {
      * cross-hierarchy edge a label originally belonged to.
      */
     public static final IProperty<LEdge> ORIGINAL_LABEL_EDGE = new Property<LEdge>("originalLabelEdge");
+    
+    /**
+     * Edge labels represented by an edge label dummy node.
+     */
+    public static final IProperty<List<LLabel>> REPRESENTED_LABELS =
+            new Property<List<LLabel>>("representedLabels");
+    
+    /**
+     * The side (of an edge) a label is placed on.
+     */
+    public static final IProperty<LabelSide> LABEL_SIDE = new Property<LabelSide>(
+            "labelSide", LabelSide.UNKNOWN);
     
     /**
      * Flag for reversed edges.
