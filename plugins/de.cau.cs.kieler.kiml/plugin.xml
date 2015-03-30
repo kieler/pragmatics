@@ -395,7 +395,7 @@
            appliesTo="parents,labels"
            class="de.cau.cs.kieler.kiml.labels.ILabelSizeModifier"
            description="Label size modifiers can shorten labels upon a layout algorithm's request"
-           id="de.cau.cs.kieler.labelSizeModifier"
+           id="de.cau.cs.kieler.labels.labelSizeModifier"
            name="Label Size Modifier"
            type="object">
      </layoutOption>

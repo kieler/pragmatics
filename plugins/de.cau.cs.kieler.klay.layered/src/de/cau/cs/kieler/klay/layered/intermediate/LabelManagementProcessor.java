@@ -13,14 +13,10 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.labels.ILabelSizeModifier;
 import de.cau.cs.kieler.kiml.labels.LabelLayoutOptions;
-import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -53,14 +49,6 @@ public final class LabelManagementProcessor implements ILayoutProcessor {
     /** Minimum width for shortened edge labels. */
     private static final double MIN_WIDTH = 40;
     
-    /** Predicate that checks for center labels. */
-    private static final Predicate<LLabel> CENTER_LABEL_PREDICATE = new Predicate<LLabel>() {
-        public boolean apply(final LLabel label) {
-            return label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
-                    == EdgeLabelPlacement.CENTER;
-        }
-    };
-    
     
     /**
      * {@inheritDoc}
@@ -70,8 +58,9 @@ public final class LabelManagementProcessor implements ILayoutProcessor {
         
         // This processor should actually not be run in the first place if there is no label size
         // modifier set on the graph, but let's be sure anyway
-        ILabelSizeModifier labelSizeModifier =
-                layeredGraph.getProperty(LabelLayoutOptions.LABEL_SIZE_MODIFIER);
+        ILabelSizeModifier labelSizeModifier = layeredGraph.getProperty(
+                LabelLayoutOptions.LABEL_SIZE_MODIFIER);
+        
         if (labelSizeModifier != null) {
             double labelSpacing = layeredGraph.getProperty(LayoutOptions.LABEL_SPACING);
             
@@ -106,30 +95,30 @@ public final class LabelManagementProcessor implements ILayoutProcessor {
         // Apply the maximum width to all label dummy nodes
         for (LNode labelDummy : layer) {
             if (labelDummy.getProperty(InternalProperties.NODE_TYPE) == NodeType.LABEL) {
-                final KVector newDummySize = new KVector(0.0, 0.0); 
+                LEdge edge = labelDummy.getConnectedEdges().iterator().next();
+                double edgeThickness = edge.getProperty(LayoutOptions.THICKNESS);
                 
-                Iterable<LLabel> labels = findLabels(labelDummy);
+                final KVector newDummySize = new KVector(0.0, edgeThickness);
+                
+                Iterable<LLabel> labels = labelDummy.getProperty(InternalProperties.REPRESENTED_LABELS);
                 for (LLabel label : labels) {
                     // If the label has an origin, call the label size modifier
                     Object origin = label.getProperty(InternalProperties.ORIGIN);
                     if (origin != null) {
                         KVector newSize = labelSizeModifier.resizeLabelToWidth(origin, maxWidth);
-                        label.getSize().x = newSize.x;
-                        label.getSize().y = newSize.y;
+                        
+                        if (newSize != null) {
+                            label.getSize().x = newSize.x;
+                            label.getSize().y = newSize.y;
+                        }
                     }
                     
-                    // Adjust dummy height
                     newDummySize.x = Math.max(newDummySize.x, label.getSize().x);
                     newDummySize.y += label.getSize().y + labelSpacing;
                 }
                 
-                // Subtract the most recent label spacing
-                if (newDummySize.y > 0.0) {
-                    newDummySize.y -= labelSpacing;
-                }
-                
                 // Apply new dummy node size (we don't bother with the ports here since they will be
-                // meddled with later anyway)
+                // meddled with later by the LabelSideSelector anyway)
                 labelDummy.getSize().x = newDummySize.x;
                 labelDummy.getSize().y = newDummySize.y;
             }
@@ -153,21 +142,6 @@ public final class LabelManagementProcessor implements ILayoutProcessor {
         }
         
         return maxWidth;
-    }
-    
-    /**
-     * Retrieves the labels represented by the given label dummy node.
-     * 
-     * @param labelDummy
-     *            label dummy node.
-     * @return an iterable over the labels the given dummy node represents.
-     */
-    private Iterable<LLabel> findLabels(final LNode labelDummy) {
-        final LEdge edge = (LEdge) labelDummy.getProperty(InternalProperties.ORIGIN);
-        assert edge != null : "label dummy's original edge is null";
-        
-        // Return the first center label we find
-        return Iterables.filter(edge.getLabels(), CENTER_LABEL_PREDICATE);
     }
     
 }

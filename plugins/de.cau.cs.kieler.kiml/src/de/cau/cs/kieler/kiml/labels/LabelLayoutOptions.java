@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.labels;
 
+import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 
 /**
@@ -27,8 +28,16 @@ public final class LabelLayoutOptions {
      * by layout algorithms to modify labels that are too wide to try and shorten them to a given
      * target width.
      */
-    public static final Property<ILabelSizeModifier<?>> LABEL_SIZE_MODIFIER =
-            new Property<ILabelSizeModifier<?>>("de.cau.cs.kieler.labelSizeModifier", null);
+    public static final IProperty<ILabelSizeModifier> LABEL_SIZE_MODIFIER =
+            new Property<ILabelSizeModifier>("de.cau.cs.kieler.labels.labelSizeModifier", null);
+    
+    /**
+     * Whether a label's text has been changed by a label size modifier. This property is only
+     * necessary in the context of KLighD. KLighD only applies label text changes if this property
+     * is set to {@code true}.
+     */
+    public static final IProperty<Boolean> LABEL_TEXT_CHANGED =
+            new Property<Boolean>("de.cau.cs.kieler.labels.labelTextChanged", false);
     
     
     /**

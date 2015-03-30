@@ -28,18 +28,15 @@ import de.cau.cs.kieler.core.math.KVector;
  * </p>
  * 
  * <p>
- * There are lots of different shortening strategies. First, the modifier can simply cut off the
- * label's text, inserting an ellipsis (...) instead. Second, the modifier could re-wrap the label's
- * text. Increasing the height instead of the width may often be the better alternative. Third, the
- * modifier could abbreviate the label's text in an attempt to keep the semantics legible.
+ * Label size modifiers that are meant to be used with KLighD need to tell KLighD if they actually
+ * shortened a label. They do so by setting the
+ * {@link de.cau.cs.kieler.kiml.labels.LabelLayoutOptions#LABEL_TEXT_CHANGED
+ * LabelLayoutOptions.LABEL_TEXT_CHANGED} property to {@code true}.
  * </p>
- * 
- * @param <T>
- *            type of the labels that this modifier can shorten.
  * 
  * @author cds
  */
-public interface ILabelSizeModifier<T> {
+public interface ILabelSizeModifier {
     
     /**
      * Tries to shorten the label to keep it narrower than the given target width. This may increase
@@ -50,8 +47,9 @@ public interface ILabelSizeModifier<T> {
      *            the label to shorten.
      * @param targetWidth
      *            the width the label's new dimensions should try not to exceed.
-     * @return the label's dimensions after shortening.
+     * @return the label's dimensions after shortening or {@code null} if the label has not been
+     *         shortened.
      */
-    KVector resizeLabelToWidth(T label, double targetWidth);
+    KVector resizeLabelToWidth(Object label, double targetWidth);
     
 }
