@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.klay.layered.intermediate;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -141,8 +140,7 @@ public class BigNodesSplitter implements ILayoutProcessor {
         debug = theLayeredGraph.getProperty(LayoutOptions.DEBUG_MODE);
         
         this.layeredGraph = theLayeredGraph;
-        // List<LNode> nodes = layeredGraph.getLayerlessNodes();
-        List<LNode> nodes = Lists.newLinkedList();
+        List<LNode> nodes = Lists.newArrayList();
         for (Layer l : theLayeredGraph.getLayers()) {
             nodes.addAll(l.getNodes());
         }
@@ -173,7 +171,7 @@ public class BigNodesSplitter implements ILayoutProcessor {
         minWidth = Math.max(MIN_WIDTH, minWidth);
 
         // collect all nodes that are considered "big"
-        List<BigNode> bigNodes = Lists.newLinkedList();
+        List<BigNode> bigNodes = Lists.newArrayList();
         double threshold = (minWidth + spacing);
         for (LNode node : nodes) {
             if ((node.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORMAL)
@@ -333,7 +331,7 @@ public class BigNodesSplitter implements ILayoutProcessor {
         public void process() {
 
             // remember east ports
-            LinkedList<LPort> eastPorts = new LinkedList<LPort>();
+            List<LPort> eastPorts = Lists.newArrayList();
             for (LPort port : node.getPorts()) {
                 if (port.getSide() == PortSide.EAST) {
                     eastPorts.add(port);
@@ -394,7 +392,7 @@ public class BigNodesSplitter implements ILayoutProcessor {
                 final double originalWidth) {
 
             // remember all nodes we create to adapt the size later on
-            List<LNode> chainOfNodes = Lists.newLinkedList();
+            List<LNode> chainOfNodes = Lists.newArrayList();
             chainOfNodes.add(bignode);
 
             // create the dummies
@@ -519,8 +517,8 @@ public class BigNodesSplitter implements ILayoutProcessor {
         private Pair<Integer, Double> processOutLongEdge(final LNode bignode,
                 final double originalWidth) {
 
-            // remember all nodes we create to adapt the size lateron
-            List<LNode> chainOfNodes = Lists.newLinkedList();
+            // remember all nodes we create to adapt the size later on
+            List<LNode> chainOfNodes = Lists.newArrayList();
             chainOfNodes.add(bignode);
 
             // create dummies
@@ -639,8 +637,8 @@ public class BigNodesSplitter implements ILayoutProcessor {
                 return null;
             }
 
-            // remember all nodes we create to adapt the size lateron
-            List<LNode> chainOfNodes = Lists.newLinkedList();
+            // remember all nodes we create to adapt the size later on
+            List<LNode> chainOfNodes = Lists.newArrayList();
             chainOfNodes.add(bignode);
 
             // copy variables to make them mutable
@@ -717,8 +715,8 @@ public class BigNodesSplitter implements ILayoutProcessor {
                 return null;
             }
 
-            // remember all nodes we create to adapt the size lateron
-            List<LNode> chainOfNodes = Lists.newLinkedList();
+            // remember all nodes we create to adapt the size later on
+            List<LNode> chainOfNodes = Lists.newArrayList();
             chainOfNodes.add(bignode);
 
             // copy variables to make them mutable

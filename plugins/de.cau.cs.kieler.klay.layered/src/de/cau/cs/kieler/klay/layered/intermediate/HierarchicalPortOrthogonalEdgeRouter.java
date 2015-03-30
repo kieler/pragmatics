@@ -15,10 +15,10 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -261,8 +261,8 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
                 - layeredGraph.getOffset().y;
         
         // Lists of northern and southern external port dummies
-        List<LNode> northernDummies = new LinkedList<LNode>();
-        List<LNode> southernDummies = new LinkedList<LNode>();
+        List<LNode> northernDummies = Lists.newArrayList();
+        List<LNode> southernDummies = Lists.newArrayList();
         
         for (LNode dummy : northSouthDummies) {
             // Set x coordinate
@@ -550,7 +550,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
      * @param layeredGraph the layered graph.
      */
     private void removeTemporaryNorthSouthDummies(final LGraph layeredGraph) {
-        List<LNode> nodesToRemove = new LinkedList<LNode>();
+        List<LNode> nodesToRemove = Lists.newArrayList();
         
         // Iterate through all layers
         for (Layer layer : layeredGraph) {

@@ -191,7 +191,7 @@ public final class LGraphAdapters {
          * {@inheritDoc}
          */
         public Iterable<NodeAdapter<?>> getNodes() {
-            List<NodeAdapter<?>> nodeAdapter = Lists.newLinkedList();
+            List<NodeAdapter<?>> nodeAdapter = Lists.newArrayList();
             for (Layer l : element.getLayers()) {
                 for (LNode n : l.getNodes()) {
                     nodeAdapter.add(new LNodeAdapter(n));
@@ -232,7 +232,7 @@ public final class LGraphAdapters {
          * {@inheritDoc}
          */
         public Iterable<LabelAdapter<?>> getLabels() {
-            List<LabelAdapter<?>> labelAdapters = Lists.newLinkedList();
+            List<LabelAdapter<?>> labelAdapters = Lists.newArrayList();
             for (LLabel l : element.getLabels()) {
                 labelAdapters.add(new LLabelAdapter(l));
             }
@@ -243,7 +243,7 @@ public final class LGraphAdapters {
          * {@inheritDoc}
          */
         public Iterable<PortAdapter<?>> getPorts() {
-            List<PortAdapter<?>> portAdapters = Lists.newLinkedList();
+            List<PortAdapter<?>> portAdapters = Lists.newArrayList();
             for (LPort p : element.getPorts()) {
                 portAdapters.add(new LPortAdapter(p));
             }
@@ -381,7 +381,7 @@ public final class LGraphAdapters {
          * {@inheritDoc}
          */
         public Iterable<EdgeAdapter<?>> getIncomingEdges() {
-            List<EdgeAdapter<?>> edgeAdapters = Lists.newLinkedList();
+            List<EdgeAdapter<?>> edgeAdapters = Lists.newArrayList();
             for (LEdge e : element.getIncomingEdges()) {
                 edgeAdapters.add(new LEdgeAdapter(e));
             }
@@ -392,7 +392,7 @@ public final class LGraphAdapters {
          * {@inheritDoc}
          */
         public Iterable<EdgeAdapter<?>> getOutgoingEdges() {
-            List<EdgeAdapter<?>> edgeAdapters = Lists.newLinkedList();
+            List<EdgeAdapter<?>> edgeAdapters = Lists.newArrayList();
             for (LEdge e : element.getOutgoingEdges()) {
                 edgeAdapters.add(new LEdgeAdapter(e));
             }
