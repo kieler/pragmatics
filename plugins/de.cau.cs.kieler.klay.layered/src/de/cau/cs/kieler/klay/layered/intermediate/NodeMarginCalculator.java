@@ -67,6 +67,10 @@ public final class NodeMarginCalculator implements ILayoutProcessor {
             // Iterate through the layer's nodes
             for (LNode node : layer) {
                 processComments(node, spacing);
+                
+                // DEBUG START
+                System.out.println("Node margins for " + node + ": " + node.getMargin());
+                // DEBUG END
             }
         }
         

@@ -25,7 +25,6 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
-import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
@@ -81,8 +80,6 @@ public final class LabelDummyInserter implements ILayoutProcessor {
                     if (edge.getSource().getNode() != edge.getTarget().getNode()
                             && Iterables.any(edge.getLabels(), CENTER_LABEL)) {
                     
-                        LPort targetPort = edge.getTarget();
-                        
                         // Remember the list of edge labels represented by the dummy node
                         List<LLabel> representedLabels = Lists.newArrayListWithCapacity(
                                 edge.getLabels().size());
@@ -96,7 +93,10 @@ public final class LabelDummyInserter implements ILayoutProcessor {
                                 PortConstraints.FIXED_POS);
                         dummyNode.setProperty(InternalProperties.LONG_EDGE_SOURCE, edge.getSource());
                         dummyNode.setProperty(InternalProperties.LONG_EDGE_TARGET, edge.getTarget());
+                        newDummyNodes.add(dummyNode);
                         
+                        // Actually split the edge
+                        LongEdgeSplitter.splitEdge(edge, dummyNode);
                         
                         // Set thickness of the edge
                         float thickness = edge.getProperty(LayoutOptions.THICKNESS);
@@ -124,29 +124,11 @@ public final class LabelDummyInserter implements ILayoutProcessor {
                                 iterator.remove();
                             }
                         }
-                                
-                        // Create dummy ports
-                        LPort dummyInput = new LPort();
-                        dummyInput.setSide(PortSide.WEST);
-                        dummyInput.setNode(dummyNode);
-                        dummyInput.getPosition().y = portPos;
                         
-                        LPort dummyOutput = new LPort();
-                        dummyOutput.setSide(PortSide.EAST);
-                        dummyOutput.setNode(dummyNode);
-                        dummyOutput.getPosition().x = dummySize.x;
-                        dummyOutput.getPosition().y = portPos;
-                        
-                        edge.setTarget(dummyInput);
-                        
-                        // Create dummy edge
-                        LEdge dummyEdge = new LEdge();
-                        dummyEdge.copyProperties(edge);
-                        dummyEdge.setSource(dummyOutput);
-                        dummyEdge.setTarget(targetPort);
-                        
-                        // Remember created dummies
-                        newDummyNodes.add(dummyNode);
+                        // Apply port positions
+                        for (LPort dummyPort : dummyNode.getPorts()) {
+                            dummyPort.getPosition().y = portPos;
+                        }
                     }
                 }
             }

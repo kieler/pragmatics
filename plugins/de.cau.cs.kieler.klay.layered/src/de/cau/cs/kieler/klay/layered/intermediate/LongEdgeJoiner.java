@@ -39,6 +39,11 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * create dummy nodes: they should always put the original edge as first edge in the chain of edges,
  * so the original edge is restored.
  * 
+ * <p>
+ * The actual implementation that joins long edges is provided by this class as a public utility method
+ * to be used by other processors.
+ * </p>
+ * 
  * <dl>
  *   <dt>Preconditions:</dt>
  *     <dd>a layered graph</dd>
@@ -100,24 +105,24 @@ public final class LongEdgeJoiner implements ILayoutProcessor {
      *            {@code true} if a bend point should be added to the edges at the position of the
      *            dummy node.
      */
-    private void joinAt(final LNode longEdgeDummy, final boolean addUnnecessaryBendpoints) {
-        // Get the input and output port (of which we assume to have only one,
-        // on the western side and on the eastern side, respectively);
-        // the incoming edges are retained, and the outgoing edges are discarded
+    public static void joinAt(final LNode longEdgeDummy, final boolean addUnnecessaryBendpoints) {
+        // Get the input and output port (of which we assume to have only one, on the western side and
+        // on the eastern side, respectively); the incoming edges are retained, and the outgoing edges
+        // are discarded
         List<LEdge> inputPortEdges =
             longEdgeDummy.getPorts(PortSide.WEST).iterator().next().getIncomingEdges();
         List<LEdge> outputPortEdges =
             longEdgeDummy.getPorts(PortSide.EAST).iterator().next().getOutgoingEdges();
         int edgeCount = inputPortEdges.size();
         
-        // If we are to add unnecessary bend points, we need to know where. We take the
-        // position of the first port we find. (It doesn't really matter which port we're
-        // using, so we opt to keep it simple.)
+        // If we are to add unnecessary bend points, we need to know where. We take the position of the
+        // first port we find. (It doesn't really matter which port we're using, so we opt to keep it
+        // surprisingly simple.)
         KVector unnecessaryBendpoint = longEdgeDummy.getPorts().get(0).getAbsoluteAnchor();
         
-        // The following code assumes that edges with the same indices in the two
-        // lists originate from the same long edge, which is true for the current
-        // implementation of LongEdgeSplitter and HyperedgeDummyMerger
+        // The following code assumes that edges with the same indices in the two lists originate from
+        // the same long edge, which is true for the current implementation of LongEdgeSplitter and
+        // HyperedgeDummyMerger
         while (edgeCount-- > 0) {
             // Get the two edges
             LEdge survivingEdge = inputPortEdges.get(0);
