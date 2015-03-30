@@ -108,6 +108,11 @@ public final class LabelDummyInserter implements ILayoutProcessor {
                         dummySize.y = thickness;
                         double portPos = Math.floor(thickness / 2);
 
+                        // Apply port positions
+                        for (LPort dummyPort : dummyNode.getPorts()) {
+                            dummyPort.getPosition().y = portPos;
+                        }
+                        
                         // Determine label size
                         ListIterator<LLabel> iterator = edge.getLabels().listIterator();
                         while (iterator.hasNext()) {
@@ -123,11 +128,6 @@ public final class LabelDummyInserter implements ILayoutProcessor {
                                 representedLabels.add(label);
                                 iterator.remove();
                             }
-                        }
-                        
-                        // Apply port positions
-                        for (LPort dummyPort : dummyNode.getPorts()) {
-                            dummyPort.getPosition().y = portPos;
                         }
                     }
                 }
