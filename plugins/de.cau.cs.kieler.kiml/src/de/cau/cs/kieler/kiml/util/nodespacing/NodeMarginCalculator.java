@@ -123,9 +123,6 @@ public final class NodeMarginCalculator  {
 
         // Iterate through all nodes
         for (NodeAdapter<?> node : adapter.getNodes()) {
-            // DEBUG START
-            System.out.println(node);
-            // DEBUG END
             processNode(node, spacing);
         }
     }
