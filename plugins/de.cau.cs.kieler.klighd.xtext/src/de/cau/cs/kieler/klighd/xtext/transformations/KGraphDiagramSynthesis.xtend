@@ -49,6 +49,8 @@ import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
 import de.cau.cs.kieler.klighd.util.KlighdProperties
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier
+import de.cau.cs.kieler.kiml.labels.LabelLayoutOptions
+import de.cau.cs.kieler.klighd.labels.TruncatingLabelSizeModifier
 
 /**
  * Synthesizes a copy of the given {@code KNode} and adds default stuff.
@@ -101,6 +103,7 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
      */
     private static final IProperty<Boolean> DEFAULTS_PROPERTY = 
         new Property<Boolean>("de.cau.cs.kieler.kgraphsynthesis.defaults", false)
+        
     private static val DEFAULTS_AS_IN_MODEL = "As in Model"
     private static val DEFAULTS_ON = "On"
     private static val DEFAULTS_OFF = "Off"
@@ -112,10 +115,20 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
     private static val SynthesisOption DEFAULTS = SynthesisOption::createChoiceOption(
         "Default Values", 
         ImmutableList::of(DEFAULTS_AS_IN_MODEL, DEFAULTS_ON, DEFAULTS_OFF), DEFAULTS_AS_IN_MODEL)
-        
+    
+    /**
+     * Synthesis option specifying the styling to be used for nodes.
+     */
     private static val SynthesisOption STYLE = SynthesisOption::createChoiceOption(
         "Style", 
         ImmutableList::of("Boring", "Stylish", "Hello Kitty"), "Boring")
+    
+    /**
+     * Synthesis option specifying whether to install a label shortening strategy or not.
+     */
+    private static val SynthesisOption SHORTEN_LABELS = SynthesisOption::createCheckOption(
+        "Shorten Labels",
+        false)
     
     /**
      * {@inheritDoc} 
@@ -134,7 +147,7 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
      */
     override getDisplayedSynthesisOptions() {
         return ImmutableList::of(
-            DEFAULTS, STYLE
+            DEFAULTS, STYLE, SHORTEN_LABELS
         )
     }
     
@@ -189,6 +202,12 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
             // This is a 'special' property not known as layout option hence it is not type-checked,
             //  possibly yielding a class cast exception if neither 'true' nor 'false' are specified
             //  as value.
+        }
+        
+        // Evaluate the label shortening property
+        if (SHORTEN_LABELS.booleanValue) {
+            result.setLayoutOption(
+                LabelLayoutOptions.LABEL_SIZE_MODIFIER, new TruncatingLabelSizeModifier())
         }
         
         // Create a rendering library for reuse of renderings
