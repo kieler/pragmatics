@@ -36,7 +36,7 @@ public final class LabelSpaceCalculation {
 
     /**
      * Calculates the space required to accommodate the node labels (if any) and sets
-     * {@link #requiredNodeLabelSpace} as well as {@link #nodeLabelsBoundingBox}. If the labels are
+     * {@link #requiredNodeLabelSpace} as well as {@link #nodeLabelsBoundingBox}. If inside labels are
      * placed at the top or at the bottom, the top or bottom insets are set. If it is centered
      * vertically, the left or right insets are set if the labels are horizontally aligned leftwards
      * or rightwards. If they are centered in both directions, no insets are set. If they are placed
@@ -57,7 +57,7 @@ public final class LabelSpaceCalculation {
 
     /**
      * Calculates the space required to accommodate the node labels (if any) and sets
-     * {@link #requiredNodeLabelSpace} as well as {@link #nodeLabelsBoundingBox}. If the labels are
+     * {@link #requiredNodeLabelSpace} as well as {@link #nodeLabelsBoundingBox}. If inside labels are
      * placed at the top or at the bottom, the top or bottom insets are set. If it is centered
      * vertically, the left or right insets are set if the labels are horizontally aligned leftwards
      * or rightwards. If they are centered in both directions, no insets are set. If they are placed
