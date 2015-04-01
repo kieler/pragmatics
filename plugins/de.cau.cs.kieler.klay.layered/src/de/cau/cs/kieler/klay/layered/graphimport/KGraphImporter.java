@@ -75,7 +75,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
     
 
     /** Spacing around labels. */
-    double labelSpacing;
+    private double labelSpacing;
 
     /**
      * {@inheritDoc}
