@@ -77,11 +77,12 @@ public abstract class AbstractCrossingsCounter {
      * @param index the index of the layer inside the layered graph
      * @return the number of in-layer crossings of the given layer
      */
-    public final int countCrossings(final NodeGroup[] layer, int index) {
+    public final int countCrossings(final NodeGroup[] layer, final int index) {
         int c = 0;
         if (inLayerEdgeCount[index] > 0) {
             c += countInLayerEdgeCrossings(layer);
         }
+        
         if (hasNorthSouthPorts[index]) {
             c += countNorthSouthPortCrossings(layer);
         }

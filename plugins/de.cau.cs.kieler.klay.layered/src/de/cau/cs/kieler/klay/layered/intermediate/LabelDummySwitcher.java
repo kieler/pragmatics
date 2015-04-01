@@ -13,8 +13,9 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
-import java.util.LinkedList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.util.Pair;
@@ -52,12 +53,12 @@ public final class LabelDummySwitcher implements ILayoutProcessor {
         monitor.begin("Label dummy switching", 1);
         
         // Mark all label nodes which can be swapped to the middle of a long edge
-        List<Pair<LNode, LNode>> nodesToSwap = new LinkedList<Pair<LNode, LNode>>();
+        List<Pair<LNode, LNode>> nodesToSwap = Lists.newArrayList();
         for (Layer layer : layeredGraph) {
             for (LNode node : layer.getNodes()) {
                 if (node.getProperty(InternalProperties.NODE_TYPE) == NodeType.LABEL) {
                     // Gather long edge dummies left of the label dummy
-                    List<LNode> leftLongEdge = new LinkedList<LNode>();
+                    List<LNode> leftLongEdge = Lists.newArrayList();
                     LNode source = node;
                     do {
                         source = source.getIncomingEdges().iterator().next().getSource().getNode();
@@ -67,7 +68,7 @@ public final class LabelDummySwitcher implements ILayoutProcessor {
                     } while (source.getProperty(InternalProperties.NODE_TYPE) == NodeType.LONG_EDGE);
                     
                     // Gather long edge dummies right of the label dummy
-                    List<LNode> rightLongEdge = new LinkedList<LNode>();
+                    List<LNode> rightLongEdge = Lists.newArrayList();
                     LNode target = node;
                     do {
                         target = target.getOutgoingEdges().iterator().next().getTarget().getNode();

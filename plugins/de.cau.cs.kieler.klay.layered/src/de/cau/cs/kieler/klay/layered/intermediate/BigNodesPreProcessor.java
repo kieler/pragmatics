@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.klay.layered.intermediate;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -118,7 +117,7 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
         minWidth = Math.max(MIN_WIDTH, minWidth);
 
         // collect all nodes that are considered "big"
-        List<BigNode> bigNodes = Lists.newLinkedList();
+        List<BigNode> bigNodes = Lists.newArrayList();
         double threshold = (minWidth + spacing);
         for (LNode node : nodes) {
             if ((node.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORMAL)
@@ -224,7 +223,7 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
         public void process() {
 
             // remember east ports
-            LinkedList<LPort> eastPorts = new LinkedList<LPort>();
+            List<LPort> eastPorts = Lists.newArrayList();
             for (LPort port : node.getPorts()) {
                 if (port.getSide() == PortSide.EAST) {
                     eastPorts.add(port);
