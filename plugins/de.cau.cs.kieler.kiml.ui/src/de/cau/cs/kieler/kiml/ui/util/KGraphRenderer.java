@@ -33,7 +33,6 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
-import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
@@ -299,10 +298,7 @@ public class KGraphRenderer {
                 graphics.fillRectangle(rect.x, rect.y, rect.width, rect.height);
                 graphics.drawRectangle(rect.x, rect.y, rect.width, rect.height);
                 rect.painted = true;
-                KVector contentOffset = new KVector(childOffset);
-                KInsets insets = child.getData(KShapeLayout.class).getInsets();
-                contentOffset.add(insets.getLeft() * scale, insets.getTop() * scale);
-                renderNode(child, graphics, area, contentOffset, edgeSet, nodeAlpha);
+                renderNode(child, graphics, area, childOffset, edgeSet, nodeAlpha);
             }
 
             graphics.setAlpha(255);
@@ -424,9 +420,7 @@ public class KGraphRenderer {
         KVector offset = new KVector();
         while (node != graph) {
             KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-            KInsets insets = nodeLayout.getInsets();
-            offset.add(nodeLayout.getXpos() + insets.getLeft(),
-                    nodeLayout.getYpos() + insets.getTop());
+            offset.add(nodeLayout.getXpos(), nodeLayout.getYpos());
             node = node.getParent();
         }
         offset.scale(scale).add(baseOffset);
