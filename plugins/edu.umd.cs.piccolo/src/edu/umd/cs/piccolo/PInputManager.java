@@ -83,7 +83,7 @@ public class PInputManager extends PBasicInputEventHandler implements PRoot.Inpu
     private PInputEventListener keyboardFocus;
 
     /** Tracks the number mouse buttons currently pressed. */
-//    private int buttonsPressed;
+    private int buttonsPressed;
 
     /**
      * Creates a PInputManager and sets positions (last, current) to the origin
@@ -246,32 +246,27 @@ public class PInputManager extends PBasicInputEventHandler implements PRoot.Inpu
 
     /** {@inheritDoc} */
     public void mousePressed(final PInputEvent event) {
-//        if (buttonsPressed == 0) {
-//            setMouseFocus(getMouseOver());
-//        }
-//        buttonsPressed++;
-//        dispatchEventToListener(event, MouseEvent.MOUSE_PRESSED, mouseFocus);
-//        if (buttonsPressed < 1 || buttonsPressed > 3) {
-//            System.err.println("invalid pressedCount on mouse pressed: " + buttonsPressed);
-//        }
-        setMouseFocus(getMouseOver());
+        if (buttonsPressed == 0) {
+            setMouseFocus(getMouseOver());
+        }
+        buttonsPressed++;
         dispatchEventToListener(event, MouseEvent.MOUSE_PRESSED, mouseFocus);
+        if (buttonsPressed < 1 || buttonsPressed > 3) {
+            System.err.println("invalid pressedCount on mouse pressed: " + buttonsPressed);
+        }
     }
 
     /** {@inheritDoc} */
     public void mouseReleased(final PInputEvent event) {
-//        buttonsPressed--;
-//        checkForMouseEnteredAndExited(event);
-//        dispatchEventToListener(event, MouseEvent.MOUSE_RELEASED, mouseFocus);
-//        if (buttonsPressed == 0) {
-//            setMouseFocus(null);
-//        }
-//        if (buttonsPressed < 0 || buttonsPressed > 2) {
-//            System.err.println("invalid pressedCount on mouse released: " + buttonsPressed);
-//        }
+        buttonsPressed--;
         checkForMouseEnteredAndExited(event);
         dispatchEventToListener(event, MouseEvent.MOUSE_RELEASED, mouseFocus);
-        setMouseFocus(null);
+        if (buttonsPressed == 0) {
+            setMouseFocus(null);
+        }
+        if (buttonsPressed < 0 || buttonsPressed > 2) {
+            System.err.println("invalid pressedCount on mouse released: " + buttonsPressed);
+        }
     }
 
     /**
