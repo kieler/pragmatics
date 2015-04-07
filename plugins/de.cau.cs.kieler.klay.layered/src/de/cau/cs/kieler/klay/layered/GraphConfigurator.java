@@ -22,7 +22,7 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import de.cau.cs.kieler.kiml.labels.LabelLayoutOptions;
+import de.cau.cs.kieler.kiml.labels.LabelManagementOptions;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
@@ -246,8 +246,8 @@ final class GraphConfigurator {
             configuration.addBeforePhase3(IntermediateProcessorStrategy.PORT_SIDE_PROCESSOR);
         }
         
-        // If the graph has a label size modifier, add label management additions
-        if (lgraph.getProperty(LabelLayoutOptions.LABEL_SIZE_MODIFIER) != null) {
+        // If the graph has a label manager, so add label management additions
+        if (lgraph.getProperty(LabelManagementOptions.LABEL_MANAGER) != null) {
             configuration.addAll(LABEL_MANAGEMENT_ADDITIONS);
         }
 

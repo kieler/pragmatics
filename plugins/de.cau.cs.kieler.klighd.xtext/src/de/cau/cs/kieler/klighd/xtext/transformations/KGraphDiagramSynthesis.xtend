@@ -49,8 +49,8 @@ import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
 import de.cau.cs.kieler.klighd.util.KlighdProperties
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier
-import de.cau.cs.kieler.kiml.labels.LabelLayoutOptions
-import de.cau.cs.kieler.klighd.labels.TruncatingLabelSizeModifier
+import de.cau.cs.kieler.kiml.labels.LabelManagementOptions
+import de.cau.cs.kieler.klighd.labels.TruncatingLabelManager
 
 /**
  * Synthesizes a copy of the given {@code KNode} and adds default stuff.
@@ -206,8 +206,7 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         
         // Evaluate the label shortening property
         if (SHORTEN_LABELS.booleanValue) {
-            result.setLayoutOption(
-                LabelLayoutOptions.LABEL_SIZE_MODIFIER, new TruncatingLabelSizeModifier())
+            result.setLayoutOption(LabelManagementOptions.LABEL_MANAGER, new TruncatingLabelManager())
         }
         
         // Create a rendering library for reuse of renderings

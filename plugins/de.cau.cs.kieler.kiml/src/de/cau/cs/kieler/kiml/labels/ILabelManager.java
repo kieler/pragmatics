@@ -20,23 +20,22 @@ import de.cau.cs.kieler.core.math.KVector;
  * 
  * <p>
  * During layout, a layout algorithm may discover that the size of a label considerably increases
- * the size of a diagram. If the label (or a parent) has a label size modifier attached, the
- * modifier may be called to try and shorten the label to a given target width. The new size is
- * returned to the layout algorithm to work with. Of course, the changes to the label's text need to
- * actually be applied after automatic layout. How that works depends on the visualization framework
- * used.
+ * the size of a diagram. If the label (or a parent) has a label manager attached, the manager may
+ * be called to try and shorten the label to a given target width. The new size is returned to the
+ * layout algorithm to work with. Of course, the changes to the label's text need to actually be
+ * applied after automatic layout. How that works depends on the visualization framework used.
  * </p>
  * 
  * <p>
  * Label size modifiers that are meant to be used with KLighD need to tell KLighD if they actually
  * shortened a label. They do so by setting the
- * {@link de.cau.cs.kieler.kiml.labels.LabelLayoutOptions#LABEL_TEXT_CHANGED
- * LabelLayoutOptions.LABEL_TEXT_CHANGED} property to {@code true}.
+ * {@link de.cau.cs.kieler.kiml.labels.LabelManagementOptions#LABEL_MANAGEMENT_RESULT
+ * LabelLayoutOptions.LABEL_MANAGEMENT_RESULT} property to a sensible value.
  * </p>
  * 
  * @author cds
  */
-public interface ILabelSizeModifier {
+public interface ILabelManager {
     
     /**
      * Tries to shorten the label to keep it narrower than the given target width. This may increase
