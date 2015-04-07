@@ -13,8 +13,6 @@
  */
 package de.cau.cs.kieler.klay.layered.p5edges.splines;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,7 +20,6 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.TreeSet;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -151,7 +148,7 @@ public final class SplineEdgeRouter implements ILayoutPhase {
         final Map<LEdge, LEdge> successingEdge = Maps.newHashMap();
         
         // a collection of all edges that have a normal node as their source
-        final Collection<LEdge> startEdges = Lists.newLinkedList();
+        final List<LEdge> startEdges = Lists.newArrayList();
 
         boolean externalLeftLayer = true;
         boolean externalRightLayer = true;
@@ -162,11 +159,11 @@ public final class SplineEdgeRouter implements ILayoutPhase {
             /////////////////////////////////////
             // Creation of the SplineHyperEdges//
             // some variables we need
-            final List<SplineHyperEdge> hyperEdges = Lists.newLinkedList();
-            final Collection<LEdge> edgesRemaining = Lists.newLinkedList();
-            final Collection<LPort> leftPorts = Sets.newHashSet();
-            final Collection<LPort> rightPorts = Sets.newHashSet();
-            final Set<LEdge> selfLoops = Sets.newHashSet();
+            final List<SplineHyperEdge> hyperEdges = Lists.newArrayList();
+            final List<LEdge> edgesRemaining = Lists.newArrayList();
+            final Set<LPort> leftPorts = Sets.newLinkedHashSet();
+            final Set<LPort> rightPorts = Sets.newLinkedHashSet();
+            final Set<LEdge> selfLoops = Sets.newLinkedHashSet();
             
             // fill edgesRemaining and PortToEdgesPairs
             fillMappings(Pair.of(leftLayer, rightLayer), 
@@ -340,23 +337,23 @@ public final class SplineEdgeRouter implements ILayoutPhase {
      * @param leftRightLayer A pair of the current left and right Layer.
      * @param leftRightPorts A pair of current ports on the left and right layer involved in current
      *          iteration.
-     * @param allEdges A collection what will hold all edges.
-     * @param succeedingEdge A mapping from each edge to it's successor edge.
-     * @param startingEdges A collection of all edges that are not successor of another edge.
+     * @param allEdges A list that will hold all edges.
+     * @param succeedingEdge A mapping from each edge to its successor edge.
+     * @param startingEdges A list of all edges that are not successor of another edge.
      * @param selfLoops A set of all selfLoops starting in one of the given ports.
      */
     private void fillMappings(
             final Pair<Layer, Layer> leftRightLayer,
-            final Pair<Collection<LPort>, Collection<LPort>> leftRightPorts,
-            final Collection<LEdge> allEdges, 
+            final Pair<Set<LPort>, Set<LPort>> leftRightPorts,
+            final List<LEdge> allEdges, 
             final Map<LEdge, LEdge> succeedingEdge, 
-            final Collection<LEdge> startingEdges,
+            final List<LEdge> startingEdges,
             final Set<LEdge> selfLoops) {
         
         final Layer leftLayer = leftRightLayer.getFirst();
         final Layer rightLayer = leftRightLayer.getSecond();
-        final Collection<LPort> leftPorts = leftRightPorts.getFirst();
-        final Collection<LPort> rightPorts = leftRightPorts.getSecond();
+        final Set<LPort> leftPorts = leftRightPorts.getFirst();
+        final Set<LPort> rightPorts = leftRightPorts.getSecond();
 
         // iterate over all outgoing edges on the left layer.
         if (leftLayer != null) {
@@ -483,10 +480,10 @@ public final class SplineEdgeRouter implements ILayoutPhase {
      * @param hyperEdges The new hyper-edges will be added to this collection.
      */
     private void createHyperEdges(
-            final Collection<LEdge> edges,
-            final Collection<LPort> leftPorts,
-            final Collection<LPort> rightPorts,
-            final Collection<SplineHyperEdge> hyperEdges) {
+            final List<LEdge> edges,
+            final Set<LPort> leftPorts,
+            final Set<LPort> rightPorts,
+            final List<SplineHyperEdge> hyperEdges) {
         
         for (final LEdge edge : edges) {
             final LPort sourcePort = edge.getSource();
@@ -530,20 +527,20 @@ public final class SplineEdgeRouter implements ILayoutPhase {
      * @param hyperEdges The collection of hyperEdges that the created edges will be added to.
      */
     private void createHyperEdges(
-            final Collection<LPort> leftPorts, 
-            final Collection<LPort> rightPorts, 
+            final Set<LPort> leftPorts, 
+            final Set<LPort> rightPorts, 
             final SideToProcess sideToProcess,
             final boolean reversed,
-            final Collection<LEdge> edgesRemaining,
-            final Collection<SplineHyperEdge> hyperEdges) {
+            final List<LEdge> edgesRemaining,
+            final List<SplineHyperEdge> hyperEdges) {
 
-        Collection<LPort> portsToProcess;
+        Set<LPort> portsToProcess = null;
         if (sideToProcess == SideToProcess.LEFT) {
             portsToProcess = leftPorts;  
         } else if (sideToProcess == SideToProcess.RIGHT) {
             portsToProcess = rightPorts;
         } else {
-            throw new IllegalArgumentException("sideToProcess must be either LEFT or RIGHT.");
+            assert false : "sideToProcess must be either LEFT or RIGHT.";
         }
         
         // Iterate through all ports on the side to process.
@@ -671,8 +668,8 @@ public final class SplineEdgeRouter implements ILayoutPhase {
      * @param random random number generator
      */
     private static void breakCycles(final List<SplineHyperEdge> edges, final Random random) {
-        final LinkedList<SplineHyperEdge> sources = new LinkedList<SplineHyperEdge>();
-        final LinkedList<SplineHyperEdge> sinks = new LinkedList<SplineHyperEdge>();
+        final LinkedList<SplineHyperEdge> sources = Lists.newLinkedList();
+        final LinkedList<SplineHyperEdge> sinks = Lists.newLinkedList();
         
         // initialize values for the algorithm
         int nextMark = -1;
@@ -700,11 +697,11 @@ public final class SplineEdgeRouter implements ILayoutPhase {
         }
     
         // assign marks to all nodes, ignore dependencies of weight zero
-        final Set<SplineHyperEdge> unprocessed = new TreeSet<SplineHyperEdge>(edges);
+        final Set<SplineHyperEdge> unprocessed = Sets.newLinkedHashSet();
         final int markBase = edges.size();
         int nextLeft = markBase + 1;
         int nextRight = markBase - 1;
-        final List<SplineHyperEdge> maxEdges = new ArrayList<SplineHyperEdge>();
+        final List<SplineHyperEdge> maxEdges = Lists.newArrayList();
 
         while (!unprocessed.isEmpty()) {
             while (!sinks.isEmpty()) {
@@ -1097,9 +1094,9 @@ public final class SplineEdgeRouter implements ILayoutPhase {
         /** This positions represent the lower position of the vertical segment. */
         private double bottomYPos;
         /** Outgoing dependencies are pointing to hyper-edges that must lay right of this hyper edge. */
-        private final List<Dependency> outgoing = Lists.newLinkedList();
+        private final List<Dependency> outgoing = Lists.newArrayList();
         /** Incoming dependencies are pointing to hyper-edges that must lay left of this hyper edge. */
-        private final List<Dependency> incoming = Lists.newLinkedList();
+        private final List<Dependency> incoming = Lists.newArrayList();
         /** Used to mark nodes in the cycle breaker. */
         private int mark;
         /** Determines how many elements are depending on this. */

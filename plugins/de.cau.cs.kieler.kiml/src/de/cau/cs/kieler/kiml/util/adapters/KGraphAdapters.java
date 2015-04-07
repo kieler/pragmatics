@@ -65,6 +65,15 @@ public final class KGraphAdapters {
     }
 
     /**
+     * @param node
+     *            the node that should be wrapped in an adapter
+     * @return an {@link KNodeAdapter} for the passed node.
+     */
+    public static KNodeAdapter adaptSingleNode(final KNode node) {
+        return new KNodeAdapter(node);
+    }
+
+    /**
      * Implements basic adpater functionality for {@link KGraphElement}s.
      */
     private abstract static class AbstractKGraphElementAdapter<T extends KGraphElement> implements
@@ -90,7 +99,7 @@ public final class KGraphAdapters {
          * @param element
          *            the element that is wrapped in this adapter.
          */
-        public AbstractKGraphElementAdapter(final T element) {
+        protected AbstractKGraphElementAdapter(final T element) {
             this.element = element;
             try {
                 layout = element.getData(KShapeLayout.class);
@@ -228,14 +237,14 @@ public final class KGraphAdapters {
     /**
      * .
      */
-    public static class KNodeAdapter extends AbstractKGraphElementAdapter<KNode> implements
+    public static final class KNodeAdapter extends AbstractKGraphElementAdapter<KNode> implements
             NodeAdapter<KNode> {
 
         /**
          * @param node
          *            .
          */
-        public KNodeAdapter(final KNode node) {
+        private KNodeAdapter(final KNode node) {
             super(node);
         }
 
@@ -317,13 +326,13 @@ public final class KGraphAdapters {
     /**
      * .
      */
-    private static class KLabelAdapter extends AbstractKGraphElementAdapter<KLabel> implements
+    private static final class KLabelAdapter extends AbstractKGraphElementAdapter<KLabel> implements
             LabelAdapter<KLabel> {
 
         /**
          * 
          */
-        public KLabelAdapter(final KLabel label) {
+        private KLabelAdapter(final KLabel label) {
             super(label);
         }
 
@@ -338,7 +347,7 @@ public final class KGraphAdapters {
     /**
      * .
      */
-    private static class KPortAdapter extends AbstractKGraphElementAdapter<KPort>
+    private static final class KPortAdapter extends AbstractKGraphElementAdapter<KPort>
             implements PortAdapter<KPort> {
 
         /**
@@ -346,7 +355,7 @@ public final class KGraphAdapters {
          * 
          * @param port the port to adapt.
          */
-        public KPortAdapter(final KPort port) {
+        private KPortAdapter(final KPort port) {
             super(port);
         }
 
@@ -422,14 +431,14 @@ public final class KGraphAdapters {
     /**
      * .
      */
-    private static class KEdgeAdapter implements EdgeAdapter<KEdge> {
+    private static final class KEdgeAdapter implements EdgeAdapter<KEdge> {
 
         private KEdge element;
 
         /**
          * .
          */
-        public KEdgeAdapter(final KEdge e) {
+        private KEdgeAdapter(final KEdge e) {
             this.element = e;
         }
 

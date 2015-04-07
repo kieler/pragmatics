@@ -19,7 +19,6 @@ import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
-import de.cau.cs.kieler.klay.layered.graph.LGraphElement.HashCodeCounter;
 import de.cau.cs.kieler.klay.layered.graphimport.IGraphImporter;
 import de.cau.cs.kieler.klay.layered.graphimport.KGraphImporter;
 
@@ -53,14 +52,10 @@ public final class LayeredLayoutProvider extends AbstractLayoutProvider {
      */
     @Override
     public void doLayout(final KNode kgraph, final IKielerProgressMonitor progressMonitor) {
-        // Create the hash code counter used to create all graph elements; this is used to ensure
-        // that all hash codes are unique, but predictable independently of the object instances.
-        HashCodeCounter hashCodeCounter = new HashCodeCounter();
-
         // Import the graph (layeredGraph won't be null since the KGraphImporter always returns an
         // LGraph instance, even though the IGraphImporter interface would allow null as a return
         // value)
-        IGraphImporter<KNode> graphImporter = new KGraphImporter(hashCodeCounter);
+        IGraphImporter<KNode> graphImporter = new KGraphImporter();
         LGraph layeredGraph = graphImporter.importGraph(kgraph);
 
         // Check if hierarchy handling for a compound graph is requested
@@ -97,14 +92,10 @@ public final class LayeredLayoutProvider extends AbstractLayoutProvider {
      * @return an initialized test execution state
      */
     public KlayLayered.TestExecutionState startLayoutTest(final KNode kgraph) {
-        // Create the hash code counter used to create all graph elements; this is used to ensure
-        // that all hash codes are unique, but predictable independently of the object instances.
-        HashCodeCounter hashCodeCounter = new HashCodeCounter();
-
         // Import the graph (layeredGraph won't be null since the KGraphImporter always returns an
         // LGraph instance, even though the IGraphImporter interface would allow null as a return
         // value)
-        IGraphImporter<KNode> graphImporter = new KGraphImporter(hashCodeCounter);
+        IGraphImporter<KNode> graphImporter = new KGraphImporter();
         LGraph layeredGraph = graphImporter.importGraph(kgraph);
         
         // Prepare a layout test and return the test execution state

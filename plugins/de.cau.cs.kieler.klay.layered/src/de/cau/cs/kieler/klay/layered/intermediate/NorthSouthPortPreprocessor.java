@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -142,8 +143,8 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
         monitor.begin("Odd port side processing", 1);
         
         int pointer;
-        List<LNode> northDummyNodes = new LinkedList<LNode>();
-        List<LNode> southDummyNodes = new LinkedList<LNode>();
+        List<LNode> northDummyNodes = Lists.newArrayList();
+        List<LNode> southDummyNodes = Lists.newArrayList();
         
         // Iterate through the layers
         for (Layer layer : layeredGraph) {
@@ -174,14 +175,14 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
                 // Clear the lists of northern and southern dummy nodes
                 northDummyNodes.clear();
                 southDummyNodes.clear();
-                
+
                 // Create a list of barycenter associates for the node
-                List<LNode> barycenterAssociates = new LinkedList<LNode>();
+                List<LNode> barycenterAssociates = Lists.newArrayList();
                 
                 // Prepare a list of ports on the northern side, sorted from left
                 // to right (when viewed in the diagram); create the appropriate
                 // dummy nodes and assign them to the layer
-                LinkedList<LPort> portList = new LinkedList<LPort>();
+                LinkedList<LPort> portList = Lists.newLinkedList();
                 Iterables.addAll(portList, node.getPorts(PortSide.NORTH));
 
                 createDummyNodes(layeredGraph, portList, northDummyNodes, southDummyNodes,
@@ -489,7 +490,7 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
             // The port is expected to have edges connected to it
             assert !(inPort.getIncomingEdges().isEmpty() && inPort.getOutgoingEdges().isEmpty());
             
-            LPort dummyInputPort = new LPort(layeredGraph);
+            LPort dummyInputPort = new LPort();
             dummyInputPort.setProperty(InternalProperties.ORIGIN, inPort);
             dummy.setProperty(InternalProperties.ORIGIN, inPort.getNode());
             dummyInputPort.setSide(PortSide.WEST);
@@ -513,7 +514,7 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
             // The port is expected to have edges connected to it
             assert !(outPort.getIncomingEdges().isEmpty() && outPort.getOutgoingEdges().isEmpty());
             
-            LPort dummyOutputPort = new LPort(layeredGraph);
+            LPort dummyOutputPort = new LPort();
             dummy.setProperty(InternalProperties.ORIGIN, outPort.getNode());
             dummyOutputPort.setProperty(InternalProperties.ORIGIN, outPort);
             dummyOutputPort.setSide(PortSide.EAST);
@@ -558,13 +559,13 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
         dummy.setProperty(InternalProperties.ORIGIN, selfLoop);
         
         // Input port
-        LPort dummyInputPort = new LPort(layeredGraph);
+        LPort dummyInputPort = new LPort();
         dummyInputPort.setProperty(InternalProperties.ORIGIN, selfLoop.getTarget());
         dummyInputPort.setSide(PortSide.WEST);
         dummyInputPort.setNode(dummy);
         
         // Output port
-        LPort dummyOutputPort = new LPort(layeredGraph);
+        LPort dummyOutputPort = new LPort();
         dummyOutputPort.setProperty(InternalProperties.ORIGIN, selfLoop.getSource());
         dummyOutputPort.setSide(PortSide.EAST);
         dummyOutputPort.setNode(dummy);
@@ -605,7 +606,7 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
         northDummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         northDummy.setProperty(InternalProperties.ORIGIN, selfLoop.getSource().getNode());
         
-        LPort northDummyOutputPort = new LPort(layeredGraph);
+        LPort northDummyOutputPort = new LPort();
         northDummyOutputPort.setProperty(InternalProperties.ORIGIN, selfLoop.getSource());
         northDummyOutputPort.setSide(portSide);
         northDummyOutputPort.setNode(northDummy);
@@ -618,7 +619,7 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
         southDummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         southDummy.setProperty(InternalProperties.ORIGIN, selfLoop.getTarget().getNode());
         
-        LPort southDummyInputPort = new LPort(layeredGraph);
+        LPort southDummyInputPort = new LPort();
         southDummyInputPort.setProperty(InternalProperties.ORIGIN, selfLoop.getTarget());
         southDummyInputPort.setSide(portSide);
         southDummyInputPort.setNode(southDummy);

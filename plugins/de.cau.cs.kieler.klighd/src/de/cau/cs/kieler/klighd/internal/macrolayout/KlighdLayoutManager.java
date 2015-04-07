@@ -40,6 +40,8 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.kgraph.util.KGraphSwitch;
 import de.cau.cs.kieler.core.krendering.KRendering;
+import de.cau.cs.kieler.core.krendering.KRenderingFactory;
+import de.cau.cs.kieler.core.krendering.KRenderingRef;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
@@ -51,8 +53,8 @@ import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.labels.LabelLayoutOptions;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.service.EclipseLayoutConfig;
 import de.cau.cs.kieler.kiml.service.IDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.service.LayoutMapping;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
@@ -62,6 +64,7 @@ import de.cau.cs.kieler.klighd.KlighdConstants;
 import de.cau.cs.kieler.klighd.ViewContext;
 import de.cau.cs.kieler.klighd.internal.ILayoutRecorder;
 import de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties;
+import de.cau.cs.kieler.klighd.labels.KlighdLabelProperties;
 import de.cau.cs.kieler.klighd.microlayout.Bounds;
 import de.cau.cs.kieler.klighd.microlayout.PlacementUtil;
 import de.cau.cs.kieler.klighd.util.KlighdPredicates;
@@ -154,7 +157,6 @@ public class KlighdLayoutManager implements IDiagramLayoutManager<KGraphElement>
     public LayoutMapping<KGraphElement> buildLayoutGraph(final IWorkbenchPart workbenchPart,
             final Object diagramPart) {
         final KNode graph;
-        ILayoutRecorder recorder = null;
         final ViewContext viewContext;
 
         // search for the root node
@@ -183,22 +185,17 @@ public class KlighdLayoutManager implements IDiagramLayoutManager<KGraphElement>
                             + workbenchPart + ", diagram part " + diagramPart);
         }
 
+        final boolean performSizeEstimation = viewContext == null
+                ? true : !viewContext.getProperty(KlighdSynthesisProperties.SUPPRESS_SIZE_ESTIMATION);
+
         // create the mapping
-        final LayoutMapping<KGraphElement> mapping =
-                buildLayoutGraph(graph,
-                        !viewContext.getProperty(KlighdSynthesisProperties.SUPPRESS_SIZE_ESTIMATION));
-        mapping.setProperty(EclipseLayoutConfig.ACTIVATION, false);
+        final LayoutMapping<KGraphElement> mapping = buildLayoutGraph(graph, performSizeEstimation);
+
         if (viewContext != null) {
             mapping.setProperty(WORKBENCH_PART, viewContext.getDiagramWorkbenchPart());
-        }
 
-        // remember the layout recorder if any
-        if (viewContext != null) {
-            recorder = viewContext.getLayoutRecorder();
-
-            if (recorder != null) {
-                mapping.setProperty(KlighdInternalProperties.RECORDER, recorder);
-            }
+            // remember the layout recorder if any
+            mapping.setProperty(KlighdInternalProperties.RECORDER, viewContext.getLayoutRecorder());
         }
         return mapping;
     }
@@ -255,17 +252,17 @@ public class KlighdLayoutManager implements IDiagramLayoutManager<KGraphElement>
      *            the parent node
      * @param layoutParent
      *            the layout parent node
-     * @param suppressSizeEstimation
+     * @param performSizeEstimation
      *            whether the size of nodes & labels should be automatically estimated.
      */
     private void processNodes(final LayoutMapping<KGraphElement> mapping,
-            final KNode parent, final KNode layoutParent, final boolean suppressSizeEstimation) {
+            final KNode parent, final KNode layoutParent, final boolean performSizeEstimation) {
         // iterate through the parent's active children and put copies in the layout graph;
         //  a child is active if it contains RenderingContextData and the 'true' value wrt.
         //  the property KlighdConstants.ACTIVE, see the predicate definition above
         // furthermore, all nodes that have the LAYOUT_IGNORE property set are ignored
         for (final KNode node : Iterables.filter(parent.getChildren(), NODE_FILTER)) {
-            createNode(mapping, node, layoutParent, suppressSizeEstimation);
+            createNode(mapping, node, layoutParent, performSizeEstimation);
         }
     }
 
@@ -320,7 +317,7 @@ public class KlighdLayoutManager implements IDiagramLayoutManager<KGraphElement>
         //  will be false if all children are inactive and not added to the layout graph later on
         final boolean isCompoundNode =
                 isPopulated && Iterables.any(node.getChildren(), RenderingContextData.IS_ACTIVE);
-        
+
         final Bounds size;
         if (nodeLayout != null) {
             // there is layoutData attached to the node,
@@ -557,6 +554,7 @@ public class KlighdLayoutManager implements IDiagramLayoutManager<KGraphElement>
      */
     private void createLabel(final LayoutMapping<KGraphElement> mapping, final KLabel label,
             final KLabeledGraphElement layoutLabeledElement, final boolean estimateSize) {
+        
         final KLabel layoutLabel = KimlUtil.createInitializedLabel(layoutLabeledElement);
 
         // set the label layout
@@ -571,17 +569,28 @@ public class KlighdLayoutManager implements IDiagramLayoutManager<KGraphElement>
             // (through the listeners)
             final KRendering rootRendering = label.getData(KRendering.class);
 
-            if (estimateSize && rootRendering != null) {
-                // calculate the minimal size need for the rendering ...
-                final Bounds minSize = PlacementUtil.estimateTextSize(label);
-
-                final float minWidth = minSize.getWidth() > layoutLayout.getWidth()
-                        ? minSize.getWidth() : layoutLayout.getWidth();
-                final float minHeight = minSize.getHeight() > layoutLayout.getHeight()
-                        ? minSize.getHeight() : layoutLayout.getHeight();
-
-                // ... and update the node size if it exceeds its size
-                layoutLayout.setSize(minWidth, minHeight);
+            if (rootRendering != null) {
+                if (estimateSize) {
+                    // calculate the minimal size need for the rendering ...
+                    final Bounds minSize = PlacementUtil.estimateTextSize(label);
+                    
+                    final float minWidth = minSize.getWidth() > layoutLayout.getWidth()
+                            ? minSize.getWidth()
+                            : layoutLayout.getWidth();
+                    final float minHeight = minSize.getHeight() > layoutLayout.getHeight()
+                            ? minSize.getHeight()
+                            : layoutLayout.getHeight();
+                    
+                    // ... and update the node size if it exceeds its size
+                    layoutLayout.setSize(minWidth, minHeight);
+                    
+                }
+                
+                // attach a reference to the label's root rendering to the label so that our layout
+                // algorithms know how to estimate text sizes.
+                KRenderingRef rootRenderingRef = KRenderingFactory.eINSTANCE.createKRenderingRef();
+                rootRenderingRef.setRendering(rootRendering);
+                layoutLabel.getData().add(rootRenderingRef);
             }
         }
 
@@ -674,6 +683,15 @@ public class KlighdLayoutManager implements IDiagramLayoutManager<KGraphElement>
                     final KShapeLayout labelLayout = element.getData(KShapeLayout.class);
                     if (labelLayout != null) {
                         transferShapeLayout(layoutLayout, labelLayout, false, true);
+                        
+                        // if the label's text was changed during layout, remember the new text in a
+                        // special property
+                        if (layoutLayout.getProperty(LabelLayoutOptions.LABEL_TEXT_CHANGED)) {
+                            if (!layoutLabel.getText().equals(((KLabel) element).getText())) {
+                                labelLayout.setProperty(KlighdLabelProperties.LABEL_TEXT_OVERRIDE,
+                                        layoutLabel.getText());
+                            }
+                        }
                     }
                     return true;
                 }

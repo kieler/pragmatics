@@ -14,9 +14,10 @@
 package de.cau.cs.kieler.klay.layered.graph;
 
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+
+import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
@@ -45,40 +46,10 @@ public final class LGraph extends LGraphElement implements Iterable<Layer> {
     /** the offset to be added to all positions. */
     private final KVector offset = new KVector();
     /** nodes that are not currently part of a layer. */
-    private final List<LNode> layerlessNodes = new LinkedList<LNode>();
+    private final List<LNode> layerlessNodes = Lists.newArrayList();
     /** the layers of the layered graph. */
-    private final List<Layer> layers = new LinkedList<Layer>();
-    /** the hash code counter used to determine hash codes for new elements. */
-    private final HashCodeCounter hashCodeCounter;
+    private final List<Layer> layers = Lists.newArrayList();
     
-    /**
-     * Create a graph with a new hash code counter. This constructor should only be used when
-     * the content does not matter, e.g. when the graph remains empty.
-     */
-    public LGraph() {
-        super(new HashCodeCounter());
-        this.hashCodeCounter = new HashCodeCounter();
-    }
-    
-    /**
-     * Create an LGraph with given hash code counter.
-     * 
-     * @param counter the counter used to find a unique but predictable hash code.
-     */
-    public LGraph(final HashCodeCounter counter) {
-        super(counter);
-        this.hashCodeCounter = counter;
-    }
-    
-    /**
-     * Create an LGraph and copy the hash code counter of an existing one.
-     * 
-     * @param originalGraph the graph from which to copy the hash code counter
-     */
-    public LGraph(final LGraph originalGraph) {
-        super(originalGraph.hashCodeCounter);
-        this.hashCodeCounter = originalGraph.hashCodeCounter;
-    }
     
     /**
      * {@inheritDoc}
@@ -93,15 +64,6 @@ public final class LGraph extends LGraphElement implements Iterable<Layer> {
         return "G[layerless" + layerlessNodes.toString() + ", layers" + layers.toString() + "]";
     }
     
-    /**
-     * Returns the hash code counter for all graph elements, only visible by other package members.
-     * 
-     * @return the counter used to find a unique but predictable hash code.
-     */
-    HashCodeCounter hashCodeCounter() {
-        return hashCodeCounter;
-    }
-
     /**
      * Returns the size of the graph, that is the bounding box that covers the
      * whole drawing. The size does not include insets or anything. Modifying the

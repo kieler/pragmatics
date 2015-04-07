@@ -80,7 +80,7 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
     /** the current configuration regarding the process handling. */
     private boolean reuseProcess = REUSE_PROCESS_DEFAULT;
     /** a corresponding pref change listener updating {@link #reuseProcess}. */
-    private IPropertyChangeListener prefListener;
+    private Object prefListener;
     /** lazily created injector for creating required format handlers if running outside of Eclipse. */
     private Injector injector;
 
@@ -100,7 +100,7 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
                    }
                 }
             };
-            store.addPropertyChangeListener(prefListener);
+            store.addPropertyChangeListener((IPropertyChangeListener) prefListener);
         } 
         command = Command.valueOf(parameter);
         graphvizTool = new GraphvizTool(command);
@@ -131,15 +131,19 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
      */
     @Override
     public void dispose() {
-        final GraphvizLayouterPlugin plugin = GraphvizLayouterPlugin.getDefault();
-
-        // since during platform shutdown plug-ins will be stopped in reverse order of their dependencies
-        //  'plugin' is likely to be 'null' when kiml.service calls 'dispose()' on the layout managers
-        // in this case removing the preference change listener should be obsolete ;-)
-        if (plugin != null && prefListener != null) {
-            plugin.getPreferenceStore().removePropertyChangeListener(prefListener);
+        if (prefListener != null) {
+            final GraphvizLayouterPlugin plugin = GraphvizLayouterPlugin.getDefault();
+    
+            // since during platform shutdown plug-ins will be stopped in reverse order of their
+            // dependencies 'plugin' is likely to be 'null' when kiml.service calls 'dispose()' on the
+            // layout managers in this case removing the preference change listener should be
+            // obsolete ;-)
+            if (plugin != null && prefListener != null) {
+                plugin.getPreferenceStore().removePropertyChangeListener(
+                        (IPropertyChangeListener) prefListener);
+            }
+            prefListener = null;
         }
-        prefListener = null;
 
         graphvizTool.cleanup(Cleanup.STOP);
     }

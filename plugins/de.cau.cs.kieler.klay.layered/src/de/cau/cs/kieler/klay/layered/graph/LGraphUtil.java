@@ -319,7 +319,7 @@ public final class LGraphUtil {
             port = provideCollectorPort(layeredGraph, node, type,
                     type == PortType.OUTPUT ? defaultSide : defaultSide.opposed());
         } else {
-            port = new LPort(layeredGraph);
+            port = new LPort();
             port.setNode(node);
             
             if (endPoint != null) {
@@ -498,7 +498,7 @@ public final class LGraphUtil {
                     return inport;
                 }
             }
-            port = new LPort(layeredGraph);
+            port = new LPort();
             port.setProperty(InternalProperties.INPUT_COLLECT, true);
             break;
         case OUTPUT:
@@ -507,7 +507,7 @@ public final class LGraphUtil {
                     return outport;
                 }
             }
-            port = new LPort(layeredGraph);
+            port = new LPort();
             port.setProperty(InternalProperties.OUTPUT_COLLECT, true);
             break;
         }
@@ -684,7 +684,7 @@ public final class LGraphUtil {
         }
         dummy.setProperty(LayoutOptions.PORT_ANCHOR, anchor);
         
-        LPort dummyPort = new LPort(layeredGraph);
+        LPort dummyPort = new LPort();
         dummyPort.setNode(dummy);
         
         // If the port constraints are free, we need to determine where to put the dummy (and its port)
@@ -854,6 +854,7 @@ public final class LGraphUtil {
     /**
      * Converts the given point from the coordinate system of {@code oldGraph} to that of
      * {@code newGraph}. Insets and graph offset are included in the calculation.
+     * If the old and new graph are identical, no calculations are made.
      * 
      * @param point a relative point
      * @param oldGraph the graph to which the point is relative to
@@ -861,6 +862,12 @@ public final class LGraphUtil {
      */
     public static void changeCoordSystem(final KVector point, final LGraph oldGraph,
             final LGraph newGraph) {
+
+        if (oldGraph == newGraph) {
+            // nothing has to be done
+            return;
+        }
+
         // transform to absolute coordinates
         LGraph graph = oldGraph;
         LNode node;
@@ -882,7 +889,7 @@ public final class LGraphUtil {
             node = graph.getProperty(InternalProperties.PARENT_LNODE);
             if (node != null) {
                 LInsets insets = graph.getInsets();
-                point.add(-insets.left, -insets.top);
+                point.sub(insets.left, insets.top);
                 point.sub(node.getPosition());
                 graph = node.getGraph();
             }

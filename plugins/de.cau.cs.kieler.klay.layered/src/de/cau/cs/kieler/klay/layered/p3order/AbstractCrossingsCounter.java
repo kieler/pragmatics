@@ -13,8 +13,9 @@
  */
 package de.cau.cs.kieler.klay.layered.p3order;
 
-import java.util.HashMap;
 import java.util.Map;
+
+import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -76,11 +77,12 @@ public abstract class AbstractCrossingsCounter {
      * @param index the index of the layer inside the layered graph
      * @return the number of in-layer crossings of the given layer
      */
-    public final int countCrossings(final NodeGroup[] layer, int index) {
+    public final int countCrossings(final NodeGroup[] layer, final int index) {
         int c = 0;
         if (inLayerEdgeCount[index] > 0) {
             c += countInLayerEdgeCrossings(layer);
         }
+        
         if (hasNorthSouthPorts[index]) {
             c += countNorthSouthPortCrossings(layer);
         }
@@ -133,13 +135,12 @@ public abstract class AbstractCrossingsCounter {
         int northSouthCrossings = 0;
 
         // Number of north/south dummies and indices
-        Map<LNode, Pair<Integer, Integer>> northSouthCrossingHints 
-            = new HashMap<LNode, Pair<Integer, Integer>>();
-        Map<LNode, Integer> dummyIndices = new HashMap<LNode, Integer>();
+        Map<LNode, Pair<Integer, Integer>> northSouthCrossingHints  = Maps.newHashMap();
+        Map<LNode, Integer> dummyIndices = Maps.newHashMap();
 
         // Assign numbers to the layer's eastern and western ports
-        Map<LPort, Integer> easternPortNumbers = new HashMap<LPort, Integer>();
-        Map<LPort, Integer> westernPortNumbers = new HashMap<LPort, Integer>();
+        Map<LPort, Integer> easternPortNumbers = Maps.newHashMap();
+        Map<LPort, Integer> westernPortNumbers = Maps.newHashMap();
 
         numberEastWestPorts(layer, easternPortNumbers, westernPortNumbers);
 

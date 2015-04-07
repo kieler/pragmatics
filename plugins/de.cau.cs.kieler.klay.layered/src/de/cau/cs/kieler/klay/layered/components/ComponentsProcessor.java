@@ -15,17 +15,18 @@ package de.cau.cs.kieler.klay.layered.components;
 
 import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
+import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
-import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
@@ -66,19 +67,11 @@ import de.cau.cs.kieler.klay.layered.properties.NodeType;
  */
 public final class ComponentsProcessor {
     
-    /**
-     * Cached instance of a {@link ComponentGroupGraphPlacer}.
-     */
+    /** Cached instance of a {@link ComponentGroupGraphPlacer}. */
     private final ComponentGroupGraphPlacer componentGroupGraphPlacer = new ComponentGroupGraphPlacer();
-    
-    /**
-     * Cached instance of a {@link SimpleRowGraphPlacer}.
-     */
+    /** Cached instance of a {@link SimpleRowGraphPlacer}. */
     private final SimpleRowGraphPlacer simpleRowGraphPlacer = new SimpleRowGraphPlacer();
-    
-    /**
-     * Graph placer to be used to combine the different components back into a single graph.
-     */
+    /** Graph placer to be used to combine the different components back into a single graph. */
     private AbstractGraphPlacer graphPlacer;
     
 
@@ -117,12 +110,12 @@ public final class ComponentsProcessor {
             }
             
             // Perform DFS starting on each node, collecting connected components
-            result = new LinkedList<LGraph>();
+            result = Lists.newArrayList();
             for (LNode node : graph.getLayerlessNodes()) {
                 Pair<List<LNode>, Set<PortSide>> componentData = dfs(node, null);
                 
                 if (componentData != null) {
-                    LGraph newGraph = new LGraph(graph);
+                    LGraph newGraph = new LGraph();
                     
                     newGraph.copyProperties(graph);
                     newGraph.setProperty(InternalProperties.EXT_PORT_CONNECTIONS,
@@ -169,7 +162,7 @@ public final class ComponentsProcessor {
             // Check if we already have a list of nodes for the connected component
             Pair<List<LNode>, Set<PortSide>> mutableData = data;
             if (mutableData == null) {
-                List<LNode> component = new LinkedList<LNode>();
+                List<LNode> component = Lists.newArrayList();
                 Set<PortSide> extPortSides = EnumSet.noneOf(PortSide.class);
                 
                 mutableData = new Pair<List<LNode>, Set<PortSide>>(component, extPortSides);

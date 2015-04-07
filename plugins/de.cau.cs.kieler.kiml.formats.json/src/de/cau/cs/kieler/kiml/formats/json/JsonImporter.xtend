@@ -223,6 +223,8 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
                         
                         label.text = jsonLabel.optString("text")
                         
+                        jsonLabel.transformShapeLayout(label.layout)
+                        
                         jsonLabel.transformProperties(label.layout)
                         
                         // by default center the label
@@ -277,7 +279,6 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
                 padding.optDouble("right") => [insets.right = it.floatValueValid]
                 padding.optDouble("top") => [insets.top = it.floatValueValid]
                 padding.optDouble("bottom") => [insets.bottom = it.floatValueValid]
-                println(insets)
             }
         ]
     }

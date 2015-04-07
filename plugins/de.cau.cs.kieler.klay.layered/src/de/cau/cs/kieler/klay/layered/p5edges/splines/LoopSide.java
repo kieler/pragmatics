@@ -13,8 +13,10 @@
  */
 package de.cau.cs.kieler.klay.layered.p5edges.splines;
 
-import java.util.Collection;
+import java.util.Set;
+
 import com.google.common.collect.ImmutableSet;
+
 import de.cau.cs.kieler.kiml.options.PortSide;
 
 /**
@@ -56,54 +58,54 @@ public enum LoopSide {
     
     // Predefined sets for performance.
     /** All LoopSides. */
-    private static final ImmutableSet<LoopSide> ALL = 
+    private static final Set<LoopSide> ALL = 
             ImmutableSet.of(N, EN, E, SE, S, WS, W, NW, ENW, ESW, SEN, SWN);
     /** All straight LoopSides. */
-    private static final ImmutableSet<LoopSide> ALL_STRAIGHTS = 
+    private static final Set<LoopSide> ALL_STRAIGHTS = 
             ImmutableSet.of(N, E, S, W);
     /** All corner LoopSides. */
-    private static final ImmutableSet<LoopSide> ALL_CORNERS = 
+    private static final Set<LoopSide> ALL_CORNERS = 
             ImmutableSet.of(EN, SE, WS, NW);
     
     // Predefined sets for performance, listing the PortSides that a LoopSide is spanning.
     /** PortSides of the LoopSide N. */
-    private static final ImmutableSet<PortSide> SIDES_N = 
+    private static final Set<PortSide> SIDES_N = 
             ImmutableSet.of(PortSide.NORTH);
     /** PortSides of the LoopSide EN. */
-    private static final ImmutableSet<PortSide> SIDES_EN = 
+    private static final Set<PortSide> SIDES_EN = 
             ImmutableSet.of(PortSide.EAST, PortSide.NORTH);
     /** PortSides of the LoopSide E. */
-    private static final ImmutableSet<PortSide> SIDES_E = 
+    private static final Set<PortSide> SIDES_E = 
             ImmutableSet.of(PortSide.EAST);
     /** PortSides of the LoopSide SE. */
-    private static final ImmutableSet<PortSide> SIDES_SE = 
+    private static final Set<PortSide> SIDES_SE = 
             ImmutableSet.of(PortSide.SOUTH, PortSide.EAST);
     /** PortSides of the LoopSide S. */
-    private static final ImmutableSet<PortSide> SIDES_S = 
+    private static final Set<PortSide> SIDES_S = 
             ImmutableSet.of(PortSide.SOUTH);
     /** PortSides of the LoopSide WS. */
-    private static final ImmutableSet<PortSide> SIDES_WS = 
+    private static final Set<PortSide> SIDES_WS = 
             ImmutableSet.of(PortSide.WEST, PortSide.SOUTH);
     /** PortSides of the LoopSide W. */
-    private static final ImmutableSet<PortSide> SIDES_W = 
+    private static final Set<PortSide> SIDES_W = 
             ImmutableSet.of(PortSide.WEST);
     /** PortSides of the LoopSide NW. */
-    private static final ImmutableSet<PortSide> SIDES_NW = 
+    private static final Set<PortSide> SIDES_NW = 
             ImmutableSet.of(PortSide.NORTH, PortSide.WEST);
     /** PortSides of the LoopSide ENW. */
-    private static final ImmutableSet<PortSide> SIDES_ENW = 
+    private static final Set<PortSide> SIDES_ENW = 
             ImmutableSet.of(PortSide.EAST, PortSide.NORTH, PortSide.WEST);
     /** PortSides of the LoopSide ESW. */
-    private static final ImmutableSet<PortSide> SIDES_ESW = 
+    private static final Set<PortSide> SIDES_ESW = 
             ImmutableSet.of(PortSide.EAST, PortSide.SOUTH, PortSide.WEST);
     /** PortSides of the LoopSide SWN. */
-    private static final ImmutableSet<PortSide> SIDES_SWN = 
+    private static final Set<PortSide> SIDES_SWN = 
             ImmutableSet.of(PortSide.SOUTH, PortSide.WEST, PortSide.NORTH);
     /** PortSides of the LoopSide SEN. */
-    private static final ImmutableSet<PortSide> SIDES_SEN = 
+    private static final Set<PortSide> SIDES_SEN = 
             ImmutableSet.of(PortSide.SOUTH, PortSide.EAST, PortSide.NORTH);
     /** PortSides of the undefined LoopSide. */
-    private static final ImmutableSet<PortSide> SIDES_UNDEF = ImmutableSet.of();
+    private static final Set<PortSide> SIDES_UNDEF = ImmutableSet.of();
 
    
     /** The source portSide of the LoopSide. */
@@ -402,7 +404,7 @@ public enum LoopSide {
     /**
      * @return All {@link PortSide}s of this LoopSide.
      */
-    public Collection<PortSide> getPortSides() {
+    public Set<PortSide> getPortSides() {
         switch (this) {
         case N:
             return SIDES_N;
@@ -434,23 +436,23 @@ public enum LoopSide {
     }
     
     /**
-     * @return A {@link Collection} of all LoopSides except {@code UNDEFINED}.
+     * @return A {@link Set} of all LoopSides except {@code UNDEFINED}.
      */
-    public static Collection<LoopSide> getAllDefinedSides() {
+    public static Set<LoopSide> getAllDefinedSides() {
         return ALL;
     }
 
     /**
-     * @return A {@link Collection} of all LoopSides that are side loopSides.
+     * @return A {@link Set} of all LoopSides that are side loopSides.
      */
-    public static Collection<LoopSide> getAllStraightSides() {
+    public static Set<LoopSide> getAllStraightSides() {
        return ALL_STRAIGHTS;
     }
 
     /**
-     * @return A {@link Collection} of all LoopSides that are corner loopSides.
+     * @return A {@link Set} of all LoopSides that are corner loopSides.
      */
-    public static Collection<LoopSide> getAllCornerSides() {
+    public static Set<LoopSide> getAllCornerSides() {
        return ALL_CORNERS;
     }
     
