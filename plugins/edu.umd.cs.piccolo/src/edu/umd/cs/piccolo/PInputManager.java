@@ -329,7 +329,7 @@ public class PInputManager extends PBasicInputEventHandler implements PRoot.Inpu
         nextInput = null;
         nextType = 0;
 
-        final PInputEvent e = new PInputEvent(this, theNextInput);
+        final PInputEvent e = createInputEvent(theNextInput);
 
         Point2D newCurrentCanvasPosition = null;
         Point2D newLastCanvasPosition = null;
@@ -358,6 +358,21 @@ public class PInputManager extends PBasicInputEventHandler implements PRoot.Inpu
             currentCanvasPosition.setLocation(newCurrentCanvasPosition);
             lastCanvasPosition.setLocation(newLastCanvasPosition);
         }
+    }
+
+    /**
+     * Creates a {@link PInputEvent} based on the given Swing {@link InputEvent}.<br>
+     * Has been introduced for enabling the "injection" of specialized implementations (subclasses)
+     * via overriding this factory method, and, hence, is called instead of calling
+     * {@link PInputEvent#PInputEvent(PInputManager, InputEvent)} directly.
+     *
+     * @author chsch
+     * @param event
+     *            the Swing {@link InputEvent} to wrap
+     * @return the desired {@link PInputEvent}
+     */
+    protected PInputEvent createInputEvent(final InputEvent event) {
+        return new PInputEvent(this, event);
     }
 
     /**
