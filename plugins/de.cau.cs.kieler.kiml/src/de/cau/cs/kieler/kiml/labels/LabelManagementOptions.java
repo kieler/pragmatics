@@ -32,15 +32,6 @@ public final class LabelManagementOptions {
     public static final IProperty<ILabelManager> LABEL_MANAGER =
             new Property<ILabelManager>("de.cau.cs.kieler.labels.labelManager", null);
     
-    /**
-     * The result of invoking a label manager on a label, if a label manager is registered. This option
-     * is not a registered KIML layout option, since all labels in the layout graph are initially
-     * assumed to be unmanaged.
-     */
-    public static final IProperty<LabelManagementResult> LABEL_MANAGEMENT_RESULT =
-            new Property<LabelManagementResult>("de.cau.cs.kieler.labels.labelManagementResult",
-                    LabelManagementResult.UNMANAGED);
-    
     
     /**
      * Not supposed to be instantiated.

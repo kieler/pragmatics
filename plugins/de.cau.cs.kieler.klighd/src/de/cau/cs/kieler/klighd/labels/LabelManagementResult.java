@@ -11,11 +11,11 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.labels;
+package de.cau.cs.kieler.klighd.labels;
 
 /**
  * Enumeration of different outcomes of label management for a given label. Depending on the actual
- * outcome, a viewing framework can decide what to do with the label.
+ * outcome, KLighD will decide what to do with the label.
  * 
  * @author cds
  */

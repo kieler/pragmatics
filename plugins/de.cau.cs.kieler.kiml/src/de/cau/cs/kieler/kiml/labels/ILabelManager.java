@@ -26,13 +26,6 @@ import de.cau.cs.kieler.core.math.KVector;
  * applied after automatic layout. How that works depends on the visualization framework used.
  * </p>
  * 
- * <p>
- * Label size modifiers that are meant to be used with KLighD need to tell KLighD if they actually
- * shortened a label. They do so by setting the
- * {@link de.cau.cs.kieler.kiml.labels.LabelManagementOptions#LABEL_MANAGEMENT_RESULT
- * LabelLayoutOptions.LABEL_MANAGEMENT_RESULT} property to a sensible value.
- * </p>
- * 
  * @author cds
  */
 public interface ILabelManager {
