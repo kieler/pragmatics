@@ -131,7 +131,7 @@ public class SausageFolding implements ILayoutProcessor {
         
         // we have to take care not to break at points where there is a long edge dummy
         
-        int nodesPerRow = longestPath / rows;
+        int nodesPerRow = longestPath / Math.max(1, rows);
         int index = nodesPerRow;
         int newIndex = index;
         boolean wannaRevert = true;
