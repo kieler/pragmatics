@@ -75,7 +75,8 @@ public class SausageFolding implements ILayoutProcessor {
      * {@inheritDoc}
      */
     public void process(final LGraph graph, final IKielerProgressMonitor progressMonitor) {
-
+        progressMonitor.begin("Sausage Folding", 1);
+        
         spacing = graph.getProperty(Properties.OBJ_SPACING).doubleValue();
         inLayerSpacing = spacing * graph.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
 
@@ -83,7 +84,7 @@ public class SausageFolding implements ILayoutProcessor {
         double maxHeight = determineMaximalHeight(graph); // sum of heights of nodes in the layer
         int longestPath = graph.getLayers().size();
         double maxWidth = determineMaximalWidth(graph); // maximum node in one layer
-
+        
         double sumWidth = longestPath * maxWidth;
         
         // since the graph direction may be horizontal (default) or vertical,
@@ -98,16 +99,39 @@ public class SausageFolding implements ILayoutProcessor {
             desiredAR = 1 / graph.getProperty(Properties.ASPECT_RATIO);
         }
         
-        double currentAR = (sumWidth / maxHeight);
+        double currentAR = sumWidth / maxHeight;
+        if (desiredAR > currentAR) {
+            // nothing to do for us
+            progressMonitor.done();
+            return;
+        }
         
-        // get the number of rows into which to split the sausage
-        double rows = Math.max(1, currentAR / desiredAR - 1); 
+        // figure out a reasonable width and height for the desired aspect ratio
+        int rows = 0;
+        double dist = Double.MAX_VALUE, lastDist = Double.MAX_VALUE;
+        do {
+            rows++;
+            currentAR = (sumWidth / rows) / (maxHeight * rows);
+            lastDist = dist;
+            dist = Math.abs(currentAR - desiredAR); 
+        } while (currentAR > desiredAR);
         
-        // last row will not be as full
-        int nodesPerRow = longestPath / (int) Math.ceil(rows);
-
+        // select the width/height combination which is closer to the desired aspect ratio
+        if (lastDist < dist) {
+            rows--;
+        }
+        
+        // System.out.println("Max Height: " + maxHeight);
+        // System.out.println("Max Width: " + maxWidth);
+        // System.out.println("LongestPath: " + longestPath);
+        // System.out.println("SumWidth: " + sumWidth);
+        // System.out.println("Desired AR: " + desiredAR);
+        // System.out.println("Current AR:" + currentAR);
+        // System.out.println("Rows: " + rows);
+        
         // we have to take care not to break at points where there is a long edge dummy
         
+        int nodesPerRow = longestPath / rows;
         int index = nodesPerRow;
         int newIndex = index;
         boolean wannaRevert = true;
@@ -181,6 +205,7 @@ public class SausageFolding implements ILayoutProcessor {
             }
         }
         
+        progressMonitor.done();
     }
 
     private double determineMaximalHeight(final LGraph graph) {
@@ -205,7 +230,7 @@ public class SausageFolding implements ILayoutProcessor {
 
         for (Layer l : graph.getLayers()) {
             for (LNode n : l.getNodes()) {
-                double nW = l.getSize().x + n.getMargin().right + n.getMargin().left + spacing;
+                double nW = n.getSize().x + n.getMargin().right + n.getMargin().left + spacing;
                 maxW = Math.max(maxW, nW);
             }
 
