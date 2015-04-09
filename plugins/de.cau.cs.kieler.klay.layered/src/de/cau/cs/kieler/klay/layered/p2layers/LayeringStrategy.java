@@ -65,8 +65,10 @@ public enum LayeringStrategy implements ILayoutPhaseFactory {
             return new InteractiveLayerer();
             
         case MINIZINC:
-        case HEURISTIC_GLAY:
             return new MinizincLayerer();
+            
+        case HEURISTIC_GLAY:
+            return new HeuristicGeneralizedLayerer();
             
         default:
             throw new IllegalArgumentException(

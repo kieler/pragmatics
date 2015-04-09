@@ -536,5 +536,13 @@
                value="OPTIMAL">
          </dependency>
       </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            class="de.cau.cs.kieler.klay.layered.p2layers.HeuristicGeneralizedLayerer$GlayConstructionStrategy"
+            default="SIMPLE"
+            id="de.cau.cs.kieler.klay.glay.constructionStrategy"
+            name="construction strategy"
+            type="enum">
+      </layoutOption>
    </extension>
 </plugin>

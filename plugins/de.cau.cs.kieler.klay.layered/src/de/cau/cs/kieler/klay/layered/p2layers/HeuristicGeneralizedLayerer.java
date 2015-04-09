@@ -53,12 +53,12 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
     /**
      * . 
      */
-    enum GlayConstructionStrategy {
+    public enum GlayConstructionStrategy {
         SIMPLE,
         WEIGHT_BASED
     }
 
-    private static final IProperty<GlayConstructionStrategy> GLAY_CONSTRUCTION_STRATEGY =
+    public static final IProperty<GlayConstructionStrategy> GLAY_CONSTRUCTION_STRATEGY =
             new Property<HeuristicGeneralizedLayerer.GlayConstructionStrategy>(
                     "de.cau.cs.kieler.klay.glay.constructionStrategy",
                     GlayConstructionStrategy.SIMPLE);
@@ -272,15 +272,26 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
     }
     
     private void constructiveLayering() {
-        Set<LNode> unassigned = Sets.newHashSet();
-        Set<LNode> assigned = Sets.newHashSet();
-        Set<LNode> candidates = Sets.newHashSet();
+        Set<LNode> unassigned = Sets.newLinkedHashSet();
+        Set<LNode> assigned = Sets.newLinkedHashSet();
+        Set<LNode> candidates = Sets.newLinkedHashSet();
         
         unassigned.addAll(graph.getLayerlessNodes());
 
         // randomly choose a starting node
         int r = random.nextInt(graph.getLayerlessNodes().size());
         LNode u = graph.getLayerlessNodes().get(r);
+        
+        // NO ! highest degree!
+        int maxDeg = 0;
+        for (LNode n : graph.getLayerlessNodes()) {
+            int deg = Iterables.size(n.getConnectedEdges());
+            if (deg > maxDeg) {
+                maxDeg = deg;
+                u = n;
+            }
+        }
+        
         unassigned.remove(u);
         assigned.add(u);
 
@@ -333,56 +344,67 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
                     }
                 }
 
-                int score = du - da;
-                if (score < minDegree) {
-                    minDegNode = v;
+                int score = Integer.MAX_VALUE;
+                
+                if (graph.getProperty(GLAY_CONSTRUCTION_STRATEGY) == GlayConstructionStrategy.SIMPLE) {
+                    score = du - da;
                     
+                    // better solution?
+                    if (score < minDegree) {
+                        // ## strategy 2 (looks more promising atm)
+                        side = incAssigned - outAssigned;
+                    }
+                } else {
+
                     // decide which side to place the node to
 
-                    // score if placed on the left 
+                    // score if placed on the left
                     int edgeLengthLeft = 0;
-                    for (LNode adj : getAdjacentNodes(minDegNode)) {
+                    for (LNode adj : getAdjacentNodes(v)) {
                         if (assigned.contains(adj)) {
-                           edgeLengthLeft += Math.abs(adj.id - lIndex); 
+                            edgeLengthLeft += Math.abs(adj.id - lIndex);
                         }
                     }
                     int revEdgesLeft = 0;
-                    for (LNode pred : getPredecessorNodes(minDegNode)) {
+                    for (LNode pred : getPredecessorNodes(v)) {
                         if (assigned.contains(pred)) {
                             revEdgesLeft++;
                         }
                     }
                     double scoreLeft = wLen * edgeLengthLeft + wRev * revEdgesLeft;
-                    
+
                     // score if placed to the right
                     int edgeLengthRight = 0;
-                    for (LNode adj : getAdjacentNodes(minDegNode)) {
+                    for (LNode adj : getAdjacentNodes(v)) {
                         if (assigned.contains(adj)) {
-                            edgeLengthRight += Math.abs(rIndex - adj.id); 
-                         }
+                            edgeLengthRight += Math.abs(rIndex - adj.id);
+                        }
                     }
                     int revEdgesRight = 0;
-                    for (LNode succ: getSuccessorNodes(minDegNode)) {
+                    for (LNode succ : getSuccessorNodes(v)) {
                         if (assigned.contains(succ)) {
                             revEdgesRight++;
                         }
                     }
                     double scoreRight = wLen * edgeLengthRight + wRev * revEdgesRight;
-                     
-//                    System.out.println(revEdgesLeft + " " + revEdgesRight);
-//                    System.out.println("Right: " + scoreRight + " Left: " + scoreLeft);
 
-                    if (graph.getProperty(GLAY_CONSTRUCTION_STRATEGY) 
-                            == GlayConstructionStrategy.SIMPLE) {
-                        // ## strategy 2 (looks more promising atm)
-                        side = incAssigned - outAssigned;
-                    } else {
+                    // System.out.println(revEdgesLeft + " " + revEdgesRight);
+                    // System.out.println("Right: " + scoreRight + " Left: " + scoreLeft);
+
+                    //score = du - da;
+                    score = (int) Math.min(scoreLeft, scoreRight);
+                    
+                    // better solution?
+                    if (score < minDegree) {
                         // ## strategy 1 (thought this is more sophisticated)
                         side = scoreLeft - scoreRight;
                     }
-                    
                 }
-                minDegree = Math.min(minDegree, score);
+                
+                if (score < minDegree) {
+                    minDegNode = v;
+                    minDegree = Math.min(minDegree, score);
+                }
             }
 
             // label the selected node
