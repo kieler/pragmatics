@@ -37,7 +37,9 @@ class CrossingMatrixTwoSidedSwitchDecider extends CrossingMatrixSwitchDecider {
             for (int j = i + 1; j < matrixSize; j++) {
                 LNode upperNode = super.getFreeLayer()[i];
                 LNode lowerNode = super.getFreeLayer()[j];
+
                 getTwoLayerCrossCounter().countBothSideCrossings(upperNode, lowerNode);
+
                 crossingMatrix[i][j] += getTwoLayerCrossCounter().getUpperLowerCrossings();
                 crossingMatrix[j][i] += getTwoLayerCrossCounter().getLowerUpperCrossings();
             }
@@ -45,8 +47,8 @@ class CrossingMatrixTwoSidedSwitchDecider extends CrossingMatrixSwitchDecider {
     }
 
     @Override
-    int getCrossingMatrixEntry(final LNode upperNode, final LNode lowerNode) {
-        return crossingMatrix[positionOf(upperNode)][positionOf(lowerNode)];
+    protected int getCrossingMatrixEntry(final LNode upperNode, final LNode lowerNode) {
+        return crossingMatrix[idOf(upperNode)][idOf(lowerNode)];
     }
 
 }

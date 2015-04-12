@@ -44,7 +44,6 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *
  */
 public class GreedySwitchProcessor implements ILayoutProcessor {
-
     private SwitchDeciderFactory switchDeciderFactory;
     private LNode[][] currentNodeOrder;
     private LNode[][] bestNodeOrder;
@@ -79,19 +78,20 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
         } else {
             sweepOneSidedOrTwoSided();
         }
+
         setAsGraph(bestNodeOrder);
 
         progressMonitor.done();
     }
 
     private void tryBothLayerSweepDirections() {
-        // in-layer sweep direction is downward
         sweepOneSidedOrTwoSided();
+
         LNode[][] downwardSweepOrder = copyNodeOrder();
         int downwardSweepCrossings = getCrossingCount();
 
-        // set in-layer sweepdirection to upward
-        sweepDownwardInLayer = false;
+        // try other direction
+        sweepDownwardInLayer = !sweepDownwardInLayer;
         currentNodeOrder = originalNodeOrder;
         sweepOneSidedOrTwoSided();
         int upwardSweepCrossings = getCrossingCount();
@@ -99,10 +99,6 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
         if (downwardSweepCrossings <= upwardSweepCrossings) {
             setAsBestNodeOrder(downwardSweepOrder);
         }
-    }
-
-    private int getCrossingCount() {
-        return greedySwitchType.isOneSided() ? currentCrossings : countCurrentNumberOfCrossings();
     }
 
     private void sweepOneSidedOrTwoSided() {
@@ -113,40 +109,28 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
         }
     }
 
-    /**
-     * This version of the greedy switch processor repeatedly sweeps only forward across the graph.
-     * For each layer it holds the neighboring layers in place and switches the node order iff it
-     * would reduce the number of crossings on both sides of the middle layer. In this manner, the
-     * number of crossings can not be increased and we do not need to calculate the total number of
-     * crossings.
-     * 
-     * @param startCrossings
-     * @return
-     *
-     */
-    private void twoSidedlayerSweep() {
-        boolean forward = true;
-        boolean improved;
-        do {
-            if (forward) {
-                improved = sweepForward();
-            } else {
-                improved = sweepBackward();
-            }
-            forward = !forward;
-        } while (improved);
-        setAsBestNodeOrder(currentNodeOrder);
+    private LNode[][] copyNodeOrder() {
+        LNode[][] order = new LNode[bestNodeOrder.length][];
+        for (int i = 0; i < order.length; i++) {
+            order[i] = Arrays.copyOf(bestNodeOrder[i], bestNodeOrder[i].length);
+        }
+        return order;
     }
+
+    private int getCrossingCount() {
+        return greedySwitchType.isOneSided() ? currentCrossings : countCurrentNumberOfCrossings();
+    }
+
 
     /**
      * This version of the greedy switch processor sweeps forward and backward over the graph.
-     * Assuming a forward sweep, for each pair of layers it holds the nodes of the eastern layer in
-     * place and changes the order of the western layer. A node is switched if it causes more
+     * Assuming a forward sweep, for each pair of layers it holds the nodes of the western layer in
+     * place and changes the order of the eastern layer. A node is switched if it causes more
      * crossings between these two layers in the current order than in the switched order. Since the
-     * layer following the western layer is not considered, this switch can cause more crossings in
-     * the whole graph. In order to prevent this, the number of crossings are counted at the
-     * beginning and after each forward and backward sweep. The result with the fewest crossings
-     * (possibly the original order) is taken.
+     * layer following the free layer is not considered, this switch can cause more crossings in the
+     * whole graph. In order to prevent this, the number of crossings are counted at the beginning
+     * and after each forward and backward sweep. The result with the fewest crossings (possibly the
+     * original order) is taken.
      */
     private void oneSidedLayerSweep() {
         int crossingsInGraph = countCurrentNumberOfCrossings();
@@ -168,13 +152,28 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
         currentCrossings = currentSweepCrossings;
     }
 
-    private LNode[][] copyNodeOrder() {
-        LNode[][] order = new LNode[bestNodeOrder.length][];
-        for (int i = 0; i < order.length; i++) {
-            order[i] = Arrays.copyOf(bestNodeOrder[i], bestNodeOrder[i].length);
-        }
-        return order;
+    /**
+     * This version of the greedy switch processor repeatedly sweeps only forward across the graph.
+     * For each layer it holds the neighboring layers in place and switches the node order iff it
+     * would reduce the number of crossings on both sides of the middle layer. In this manner, the
+     * number of crossings can not be increased and we do not need to calculate the total number of
+     * crossings.
+     * 
+     */
+    private void twoSidedlayerSweep() {
+        boolean forward = true;
+        boolean improved;
+        do {
+            if (forward) {
+                improved = sweepForward();
+            } else {
+                improved = sweepBackward();
+            }
+            forward = !forward;
+        } while (improved);
+        setAsBestNodeOrder(currentNodeOrder);
     }
+
 
     private boolean sweepForward() {
         boolean improved = false;
@@ -198,8 +197,78 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
         return improved;
     }
 
+    private boolean continueSwitchingUntilNoImprovementInLayer(final int freeLayerIndex) {
+        boolean improved = false;
+        boolean continueSwitching;
+        do {
+
+            if (sweepDownwardInLayer) {
+                continueSwitching = sweepDownwardInLayer(freeLayerIndex);
+            } else {
+                continueSwitching = sweepUpwardInLayer(freeLayerIndex);
+            }
+
+            improved |= continueSwitching;
+        } while (continueSwitching);
+        return improved;
+    }
+
+    private boolean sweepDownwardInLayer(final int layerIndex) {
+        boolean continueSwitching = false;
+        int lengthOfFreeLayer = currentNodeOrder[layerIndex].length;
+        for (int upperNodeIndex = 0; upperNodeIndex < lengthOfFreeLayer - 1; upperNodeIndex++) {
+            int lowerNodeIndex = upperNodeIndex + 1;
+
+            continueSwitching |= switchIfImproves(layerIndex, upperNodeIndex, lowerNodeIndex);
+
+        }
+        return continueSwitching;
+    }
+
+
+    private boolean sweepUpwardInLayer(final int layerIndex) {
+        boolean continueSwitching = false;
+        int lengthOfFreeLayer = currentNodeOrder[layerIndex].length;
+        for (int lowerNodeIndex = lengthOfFreeLayer - 1; lowerNodeIndex > 0; lowerNodeIndex--) {
+            int upperNodeIndex = lowerNodeIndex - 1;
+
+            continueSwitching |= switchIfImproves(layerIndex, upperNodeIndex, lowerNodeIndex);
+
+        }
+        return continueSwitching;
+    }
+
+    private boolean switchIfImproves(final int layerIndex, final int upperNodeIndex,
+            final int lowerNodeIndex) {
+        boolean continueSwitching = false;
+
+        if (switchDecider.doesSwitchReduceCrossings(upperNodeIndex, lowerNodeIndex)) {
+            exchangeNodes(upperNodeIndex, lowerNodeIndex, layerIndex);
+
+            continueSwitching = true;
+        }
+        return continueSwitching;
+    }
+
     private int countCurrentNumberOfCrossings() {
         return crossingCounter.countAllCrossingsInGraphWithOrder(currentNodeOrder);
+    }
+
+    private void setAsBestNodeOrder(final LNode[][] nodeOrder) {
+        for (int i = 0; i < bestNodeOrder.length; i++) {
+            for (int j = 0; j < bestNodeOrder[i].length; j++) {
+                bestNodeOrder[i][j] = nodeOrder[i][j];
+            }
+        }
+    }
+
+    private void exchangeNodes(final int indexOne, final int indexTwo, final int layerIndex) {
+        switchDecider.notifyOfSwitch(currentNodeOrder[layerIndex][indexOne],
+                currentNodeOrder[layerIndex][indexTwo]);
+        LNode[] layer = currentNodeOrder[layerIndex];
+        LNode temp = layer[indexTwo];
+        layer[indexTwo] = layer[indexOne];
+        layer[indexOne] = temp;
     }
 
     private void setAsGraph(final LNode[][] nodeOrder) {
@@ -213,68 +282,6 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
                 nodeIter.set(nodes[nodeIter.previousIndex()]);
             }
         }
-    }
-
-    private void setAsBestNodeOrder(final LNode[][] nodeOrder) {
-        for (int i = 0; i < bestNodeOrder.length; i++) {
-            for (int j = 0; j < bestNodeOrder[i].length; j++) {
-                bestNodeOrder[i][j] = nodeOrder[i][j];
-            }
-        }
-    }
-
-    private boolean continueSwitchingUntilNoImprovementInLayer(final int freeLayerIndex) {
-        boolean improved = false;
-        boolean continueSwitching;
-        do {
-            if (sweepDownwardInLayer) {
-                continueSwitching = sweepDownwardInLayer(freeLayerIndex);
-            } else {
-                continueSwitching = sweepUpwardInLayer(freeLayerIndex);
-            }
-            improved |= continueSwitching;
-        } while (continueSwitching);
-        return improved;
-    }
-
-    private boolean sweepDownwardInLayer(final int layerIndex) {
-        boolean continueSwitching = false;
-        int lengthOfFreeLayer = currentNodeOrder[layerIndex].length;
-        // System.out.println("Layer " + layerIndex);
-        for (int upperNodeIndex = 0; upperNodeIndex < lengthOfFreeLayer - 1; upperNodeIndex++) {
-            int lowerNodeIndex = upperNodeIndex + 1;
-            continueSwitching |= switchIfImproves(layerIndex, upperNodeIndex, lowerNodeIndex);
-        }
-        return continueSwitching;
-    }
-
-    private boolean sweepUpwardInLayer(final int layerIndex) {
-        boolean continueSwitching = false;
-        int lengthOfFreeLayer = currentNodeOrder[layerIndex].length;
-        for (int lowerNodeIndex = lengthOfFreeLayer - 1; lowerNodeIndex > 0; lowerNodeIndex--) {
-            int upperNodeIndex = lowerNodeIndex - 1;
-            continueSwitching |= switchIfImproves(layerIndex, upperNodeIndex, lowerNodeIndex);
-        }
-        return continueSwitching;
-    }
-
-    private boolean switchIfImproves(final int layerIndex, final int upperNodeIndex,
-            final int lowerNodeIndex) {
-        boolean continueSwitching = false;
-        if (switchDecider.doesSwitchReduceCrossings(upperNodeIndex, lowerNodeIndex)) {
-            exchangeNodes(upperNodeIndex, lowerNodeIndex, layerIndex);
-            continueSwitching = true;
-        }
-        return continueSwitching;
-    }
-
-    private void exchangeNodes(final int indexOne, final int indexTwo, final int layerIndex) {
-        switchDecider.notifyOfSwitch(currentNodeOrder[layerIndex][indexOne],
-                currentNodeOrder[layerIndex][indexTwo]);
-        LNode[] layer = currentNodeOrder[layerIndex];
-        LNode temp = layer[indexTwo];
-        layer[indexTwo] = layer[indexOne];
-        layer[indexOne] = temp;
     }
 
     private void initialize(final LGraph graph) {

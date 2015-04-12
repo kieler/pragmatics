@@ -29,7 +29,7 @@ class CounterTwoSidedSwitchDecider extends CounterSwitchDecider {
     }
 
     @Override
-    int calculateCrossings() {
+    protected int calculateCrossings() {
         int crossings = 0;
 
         if (freeLayerIsNotFirstLayer()) {
@@ -45,7 +45,7 @@ class CounterTwoSidedSwitchDecider extends CounterSwitchDecider {
 
     private int getInLayerCrossings() {
         int crossings = getInLayerCounterFor(getFreeLayer()).countCrossings();
-        crossings += getNorthSoutPortCounterFor(getFreeLayer()).countCrossings();
+        crossings += getNorthSouthPortCounterFor(getFreeLayer()).countCrossings();
         return crossings;
     }
 

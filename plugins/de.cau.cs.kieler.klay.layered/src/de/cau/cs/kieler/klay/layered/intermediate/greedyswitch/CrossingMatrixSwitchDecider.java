@@ -20,6 +20,10 @@ import com.google.common.collect.Maps;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 
 /**
+ * A crossing matrix saves the amount of crossings caused by between layer edges incident to two
+ * nodes: Entry i,j shows the amount of crossings of these edges when i is above j and entry j,i
+ * shows the amount of crossings of these edges when j is above i.<br>
+ * 
  * @author alan
  *
  */
@@ -29,19 +33,15 @@ abstract class CrossingMatrixSwitchDecider extends SwitchDecider {
     private final NorthSouthEdgeNeighbouringNodeCrossingsCounter northSouthCounter;
     private final BetweenLayerEdgeTwoNodeCrossingsCounter inBetweenLayerCrossingCounter;
     /** To avoid interdependency errors between classes, the .id field of nodes is not used. */
-    private final Map<LNode, Integer> nodePositions;
+    private final Map<LNode, Integer> nodeIds;
 
-    /**
-     * @param freeLayerIndex
-     * @param graph
-     */
     public CrossingMatrixSwitchDecider(final int freeLayerIndex, final LNode[][] graph) {
         super(freeLayerIndex, graph);
         inBetweenLayerCrossingCounter =
                 new BetweenLayerEdgeTwoNodeCrossingsCounter(graph, freeLayerIndex);
         inLayerCounter = new InLayerEdgeTwoNodeCrossingCounter(super.getFreeLayer());
         northSouthCounter = new NorthSouthEdgeNeighbouringNodeCrossingsCounter(super.getFreeLayer());
-        nodePositions = Maps.newHashMap();
+        nodeIds = Maps.newHashMap();
         initializeNodePositions(graph);
     }
 
@@ -49,7 +49,7 @@ abstract class CrossingMatrixSwitchDecider extends SwitchDecider {
         for (LNode[] layer : graph) {
             int id = 0;
             for (LNode node : layer) {
-                nodePositions.put(node, id++);
+                nodeIds.put(node, id++);
             }
         }
     }
@@ -65,6 +65,7 @@ abstract class CrossingMatrixSwitchDecider extends SwitchDecider {
 
         LNode upperNode = super.getFreeLayer()[upperNodeIndex];
         LNode lowerNode = super.getFreeLayer()[lowerNodeIndex];
+
         inLayerCounter.countCrossingsBetweenNodes(upperNode, lowerNode);
         northSouthCounter.countCrossings(upperNode, lowerNode);
 
@@ -85,14 +86,14 @@ abstract class CrossingMatrixSwitchDecider extends SwitchDecider {
         inLayerCounter.notifyOfSwitch(upperNode, lowerNode);
     }
 
-    abstract int getCrossingMatrixEntry(final LNode upperNode, final LNode lowerNode);
+    protected abstract int getCrossingMatrixEntry(final LNode upperNode, final LNode lowerNode);
 
     protected BetweenLayerEdgeTwoNodeCrossingsCounter getTwoLayerCrossCounter() {
         return inBetweenLayerCrossingCounter;
     }
 
-    protected int positionOf(final LNode node) {
-        return nodePositions.get(node);
+    protected int idOf(final LNode node) {
+        return nodeIds.get(node);
     }
 
 }

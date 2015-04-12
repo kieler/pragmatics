@@ -27,7 +27,7 @@ class CrossingMatrixOneSidedSwitchDecider extends CrossingMatrixSwitchDecider {
     private final CrossingCountSide side;
     private final int[][] crossingMatrix;
 
-    CrossingMatrixOneSidedSwitchDecider(final int freeLayerIndex, final LNode[][] graph,
+    public CrossingMatrixOneSidedSwitchDecider(final int freeLayerIndex, final LNode[][] graph,
             final CrossingCountSide side) {
         super(freeLayerIndex, graph);
         this.side = side;
@@ -39,27 +39,29 @@ class CrossingMatrixOneSidedSwitchDecider extends CrossingMatrixSwitchDecider {
         switch (side) {
         case WEST:
             if (freeLayerIsNotFirstLayer()) {
-                calculateOneSidedCrossingMatrix(side);
+                calculateOneSidedCrossingMatrix();
             }
             break;
         case EAST:
             if (freeLayerIsNotLastLayer()) {
-                calculateOneSidedCrossingMatrix(side);
+                calculateOneSidedCrossingMatrix();
             }
         }
     }
 
-    private void calculateOneSidedCrossingMatrix(final CrossingCountSide direction) {
+    private void calculateOneSidedCrossingMatrix() {
         int matrixSize = super.getFreeLayer().length;
         for (int i = 0; i < matrixSize; i++) {
             for (int j = i + 1; j < matrixSize; j++) {
                 LNode upperNode = super.getFreeLayer()[i];
                 LNode lowerNode = super.getFreeLayer()[j];
-                if (direction == CrossingCountSide.WEST) {
+
+                if (side == CrossingCountSide.WEST) {
                     getTwoLayerCrossCounter().countWesternEdgeCrossings(upperNode, lowerNode);
                 } else {
                     getTwoLayerCrossCounter().countEasternEdgeCrossings(upperNode, lowerNode);
                 }
+
                 crossingMatrix[i][j] += getTwoLayerCrossCounter().getUpperLowerCrossings();
                 crossingMatrix[j][i] += getTwoLayerCrossCounter().getLowerUpperCrossings();
             }
@@ -67,7 +69,7 @@ class CrossingMatrixOneSidedSwitchDecider extends CrossingMatrixSwitchDecider {
     }
 
     @Override
-    int getCrossingMatrixEntry(final LNode upperNode, final LNode lowerNode) {
-        return crossingMatrix[positionOf(upperNode)][positionOf(lowerNode)];
+    protected int getCrossingMatrixEntry(final LNode upperNode, final LNode lowerNode) {
+        return crossingMatrix[idOf(upperNode)][idOf(lowerNode)];
     }
 }

@@ -33,21 +33,21 @@ abstract class OnDemandCrossingMatrixSwitchDecider extends CrossingMatrixSwitchD
     }
 
     @Override
-    int getCrossingMatrixEntry(final LNode upperNode, final LNode lowerNode) {
-        if (!isCrossingMatrixFilled[positionOf(upperNode)][positionOf(lowerNode)]) {
+    protected int getCrossingMatrixEntry(final LNode upperNode, final LNode lowerNode) {
+        if (!isCrossingMatrixFilled[idOf(upperNode)][idOf(lowerNode)]) {
             fillCrossingMatrix(upperNode, lowerNode);
-            isCrossingMatrixFilled[positionOf(upperNode)][positionOf(lowerNode)] = true;
-            isCrossingMatrixFilled[positionOf(lowerNode)][positionOf(upperNode)] = true;
+            isCrossingMatrixFilled[idOf(upperNode)][idOf(lowerNode)] = true;
+            isCrossingMatrixFilled[idOf(lowerNode)][idOf(upperNode)] = true;
         }
-        return crossingMatrix[positionOf(upperNode)][positionOf(lowerNode)];
+        return crossingMatrix[idOf(upperNode)][idOf(lowerNode)];
     }
 
-    abstract void fillCrossingMatrix(LNode upperNode, LNode lowerNode);
+    protected abstract void fillCrossingMatrix(LNode upperNode, LNode lowerNode);
 
     protected void setCrossingMatrixEntriesFromCounter(final LNode upperNode, final LNode lowerNode) {
-        crossingMatrix[positionOf(upperNode)][positionOf(lowerNode)] =
+        crossingMatrix[idOf(upperNode)][idOf(lowerNode)] =
                 super.getTwoLayerCrossCounter().getUpperLowerCrossings();
-        crossingMatrix[positionOf(lowerNode)][positionOf(upperNode)] =
+        crossingMatrix[idOf(lowerNode)][idOf(upperNode)] =
                 super.getTwoLayerCrossCounter().getLowerUpperCrossings();
     }
 

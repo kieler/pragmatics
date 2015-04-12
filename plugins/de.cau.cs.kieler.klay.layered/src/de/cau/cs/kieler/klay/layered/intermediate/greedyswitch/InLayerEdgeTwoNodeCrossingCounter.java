@@ -25,9 +25,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode.PortOrder;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 
 /**
- * Counts crossings between in-layer edges incident to two nodes. This class simply collects all
- * edges and ports connected to the two nodes in questions, sorts them by port position and uses the
- * superclass method countCrossingsOn(LEdge edge, LPort port).
+ * Counts crossings between in-layer edges incident to two nodes.
  * 
  * @author alan
  *
@@ -73,6 +71,12 @@ class InLayerEdgeTwoNodeCrossingCounter extends InLayerEdgeCrossingsCounter {
         notifyOfSwitch(lower, upper);
     }
 
+    /**
+     * This class simply collects all edges and ports connected to the two nodes in questions, sorts
+     * them by port position and uses the superclass method countCrossingsOn(LEdge edge, LPort
+     * port).
+     * 
+     */
     private int countCrossingsOnSide(final PortSide side) {
         relevantEdgesAndPorts.clear();
 

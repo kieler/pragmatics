@@ -16,8 +16,7 @@ package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 
 /**
- * Works just like {@link SwitchDecider}, but only counts the crossing on one side of the free
- * layer.
+ * Recounts all crossings each time. Only counts the crossing on one side of the free layer.
  * 
  * @author alan
  */
@@ -59,7 +58,7 @@ class CounterOneSidedSwitchDecider extends CounterSwitchDecider {
             }
         }
         crossings += getInLayerCounterFor(getFreeLayer()).countCrossings();
-        crossings += getNorthSoutPortCounterFor(getFreeLayer()).countCrossings();
+        crossings += getNorthSouthPortCounterFor(getFreeLayer()).countCrossings();
         return crossings;
     }
 

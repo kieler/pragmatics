@@ -34,7 +34,7 @@ abstract class BetweenLayerEdgeAllCrossingsCounter {
     }
 
     /**
-     * Calculate the number of crossings between the two given layers. Taken from
+     * Calculate the number of crossings between the two given layers.
      *
      * @param leftLayer
      *            the left layer

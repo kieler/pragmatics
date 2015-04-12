@@ -20,7 +20,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode.PortOrder;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 
 /**
- * Counts exact number of all crossings caused by in-layer edges.
+ * Counts number of all crossings caused by in-layer edges.
  * 
  * @author alan
  *

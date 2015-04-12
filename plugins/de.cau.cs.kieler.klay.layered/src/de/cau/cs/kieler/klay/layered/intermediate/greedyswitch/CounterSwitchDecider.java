@@ -25,7 +25,6 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 abstract class CounterSwitchDecider extends SwitchDecider {
 
     private final BetweenLayerEdgeAllCrossingsCounter betweenLayerCounter;
-    private int numberOfCrossingsInCurrentLayer = 0;
     private InLayerEdgeAllCrossingsCounter inLayerEdgeAllCrossingCounter;
     private NorthSouthEdgeAllCrossingsCounter northSouthPortAllCrossingCounter;
 
@@ -51,27 +50,25 @@ abstract class CounterSwitchDecider extends SwitchDecider {
             return false;
         }
 
-        numberOfCrossingsInCurrentLayer = calculateCrossings();
+        int originalNumberOfCrossings = calculateCrossings();
 
-        if (numberOfCrossingsInCurrentLayer == 0) {
+        if (originalNumberOfCrossings == 0) {
             return false;
         }
+        // switch nodes
         LNode upperNode = super.getFreeLayer()[upperNodeIndex];
         LNode lowerNode = super.getFreeLayer()[upperNodeIndex];
         notifyOfSwitch(upperNode, lowerNode);
         switchNodes(upperNodeIndex, lowerNodeIndex);
 
-        int newNumberOfCrossings = calculateCrossings();
+        // recount
+        int crossingsAfterSwitch = calculateCrossings();
 
+        // switch back
         switchNodes(upperNodeIndex, lowerNodeIndex);
         notifyOfSwitch(upperNode, upperNode);
 
-        boolean switchReducesCrossings = newNumberOfCrossings < numberOfCrossingsInCurrentLayer;
-        if (switchReducesCrossings) {
-            numberOfCrossingsInCurrentLayer = newNumberOfCrossings;
-        }
-
-        return switchReducesCrossings;
+        return crossingsAfterSwitch < originalNumberOfCrossings;
     }
 
     @Override
@@ -85,7 +82,7 @@ abstract class CounterSwitchDecider extends SwitchDecider {
      * 
      * @return Number of crossings.
      */
-    abstract int calculateCrossings();
+    protected abstract int calculateCrossings();
 
     protected BetweenLayerEdgeAllCrossingsCounter getBetweenLayerCounter() {
         return betweenLayerCounter;
@@ -96,7 +93,7 @@ abstract class CounterSwitchDecider extends SwitchDecider {
         return inLayerEdgeAllCrossingCounter;
     }
 
-    protected NorthSouthEdgeAllCrossingsCounter getNorthSoutPortCounterFor(final LNode[] layer) {
+    protected NorthSouthEdgeAllCrossingsCounter getNorthSouthPortCounterFor(final LNode[] layer) {
         northSouthPortAllCrossingCounter = new NorthSouthEdgeAllCrossingsCounter(layer);
         return northSouthPortAllCrossingCounter;
     }

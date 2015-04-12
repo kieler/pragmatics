@@ -22,7 +22,7 @@ import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 
 /**
- * This class is an abstract superclass for six different variants of how to decide, whether two
+ * This class is an abstract superclass for six different variants of how to decide whether two
  * neighboring nodes should be switched: <br>
  * The {@link CounterSwitchDecider} classes use {@link AllCrossingsCounter} to count the crossings
  * that would result from a switch. <br>
@@ -48,7 +48,7 @@ abstract class SwitchDecider {
     private final LNode[] freeLayer;
 
     /**
-     * Use factory method to create correct switchDecider, not this constructor.
+     * Use factory to create correct switchDecider, not this constructor.
      * 
      * @param freeLayerIndex
      *            The freeLayer to switch in.

@@ -16,6 +16,11 @@ package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 
 /**
+ * Calculates entries in the crossing matrix for edges from both directions on demand <br>
+ * A crossing matrix saves the amount of crossings caused by between layer edges incident to two
+ * nodes: Entry i,j shows the amount of crossings of these edges when i is above j and entry j,i
+ * shows the amount of crossings of these edges when j is above i.
+ * 
  * @author alan
  *
  */
@@ -34,7 +39,7 @@ class OnDemandCrossingMatrixTwoSidedSwitchDecider extends OnDemandCrossingMatrix
      * {@inheritDoc}
      */
     @Override
-    void fillCrossingMatrix(final LNode upperNode, final LNode lowerNode) {
+    protected void fillCrossingMatrix(final LNode upperNode, final LNode lowerNode) {
         super.getTwoLayerCrossCounter().countBothSideCrossings(upperNode, lowerNode);
         super.setCrossingMatrixEntriesFromCounter(upperNode, lowerNode);
     }

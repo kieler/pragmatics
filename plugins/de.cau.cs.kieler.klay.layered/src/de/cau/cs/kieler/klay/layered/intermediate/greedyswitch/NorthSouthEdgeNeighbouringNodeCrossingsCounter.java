@@ -55,7 +55,7 @@ public class NorthSouthEdgeNeighbouringNodeCrossingsCounter {
     /**
      * Since accessing the index of a port is linear, the positions are saved. To prevent dependency
      * problems, they are saved in a field of this Object. Ports are numbered as they are in the
-     * list returned by getPorts(), so
+     * list returned by getPorts().
      */
     private void initializePortPositions() {
         for (LNode node : layer) {

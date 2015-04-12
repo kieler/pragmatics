@@ -28,8 +28,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode.PortOrder;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 
 /**
- * Calculates the number of crossings for incident edges to node i and j. Prerequisites: Node.id's
- * set to original order
+ * Calculates the number of crossings for edges incident to two nodes.
  *
  * @author alan
  *
@@ -102,8 +101,8 @@ class BetweenLayerEdgeTwoNodeCrossingsCounter {
     }
 
     /**
-     * Calculates the number of crossings for incident edges coming from the west to node i and j.
-     * The crossing numbers can be received with getCrossingForOrderUpperLower and
+     * Calculates the number of crossings for incident edges coming from the west to the nodes. The
+     * crossing numbers can be received with getCrossingForOrderUpperLower and
      * getCrossingForOrderLowerUpper for the order upperNode -> lowerNode or lowerNode -> upperNode
      * respectively.
      * 
@@ -121,8 +120,8 @@ class BetweenLayerEdgeTwoNodeCrossingsCounter {
     }
 
     /**
-     * Calculates the number of crossings for incident edges coming from the east to node i and j.
-     * The crossing numbers can be received with getCrossingForOrderUpperLower and
+     * Calculates the number of crossings for incident edges coming from the east to the nodes. The
+     * crossing numbers can be received with getCrossingForOrderUpperLower and
      * getCrossingForOrderLowerUpper for the order upperNode -> lowerNode or lowerNode -> upperNode
      * respectively.
      * 
@@ -140,8 +139,8 @@ class BetweenLayerEdgeTwoNodeCrossingsCounter {
     }
 
     /**
-     * Calculates the number of crossings for incident edges coming from the both sides to node i
-     * and j. The crossing numbers can be received with getCrossingForOrderUpperLower and
+     * Calculates the number of crossings for incident edges coming from the both sides to the
+     * nodes. The crossing numbers can be received with getCrossingForOrderUpperLower and
      * getCrossingForOrderLowerUpper for the order upperNode -> lowerNode or lowerNode -> upperNode
      * respectively.
      * 
@@ -173,6 +172,10 @@ class BetweenLayerEdgeTwoNodeCrossingsCounter {
         countCrossingsByMergingAdjacencyLists();
     }
 
+    /**
+     * Since calculating adjacencies is a little expensive, it is only done once for each
+     * configuration and the sorted adjacencies saved in Maps.
+     */
     private AdjacencyList getAdjacencyFor(final LNode node, final PortSide side,
             final Map<LNode, AdjacencyList> adjacencies) {
         if (adjacencies.isEmpty()) {
@@ -183,7 +186,6 @@ class BetweenLayerEdgeTwoNodeCrossingsCounter {
         AdjacencyList aL = adjacencies.get(node);
         aL.reset();
         return aL;
-
     }
 
     private void addWesternCrossings(final LNode upperNode, final LNode lowerNode) {
@@ -207,10 +209,15 @@ class BetweenLayerEdgeTwoNodeCrossingsCounter {
      *  \\/
      *  /\\
      * B   p1
+     * 
      * The adjacency list La for A is: p1, p1
      * The adjacency list Lb for B is: p0
-     * Since p1 is below p0, edge (B, p0) is crossed by all edges from A and can p0 can be removed.
      * </pre>
+     * 
+     * Since p1 is below p0, edge (B, p0) is crossed by all edges from A and can p0 can be removed.
+     * If the next adjacencies in both lists have the same position value p we add to
+     * upperLowerCrossings the number of remaining adjacencies upperAdjacencies below the current
+     * node. We do the same for lowerUpperCrossings.
      */
     private void countCrossingsByMergingAdjacencyLists() {
         while (!upperAdjacencies.isEmpty() && !lowerAdjacencies.isEmpty()) {
@@ -331,7 +338,7 @@ class BetweenLayerEdgeTwoNodeCrossingsCounter {
 
         private void incrementCurrentIndex() {
             currentIndex++;
-            // reset Adjacency
+            // reset Adjacency for reuse
             if (currentIndex < adjacencyList.size()) {
                 currentAdjacency().reset();
             }

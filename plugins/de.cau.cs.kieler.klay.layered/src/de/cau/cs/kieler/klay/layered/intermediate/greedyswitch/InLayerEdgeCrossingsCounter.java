@@ -41,10 +41,9 @@ abstract class InLayerEdgeCrossingsCounter {
     private final Map<LNode, Integer> eastNodeCardinalities;
     /** The number of inLayerEdges incident to each node from the west. */
     private final Map<LNode, Integer> westNodeCardinalities;
-    /** If a node's port order is not fixed, each port of that node has the same position. */
     private final Map<LPort, Integer> portPositions;
     private final LNode[] nodeOrder;
-    /** We store port.ids in mutlisets, as nodes without fixed order have the same port.id. */
+    /** We store port-positions in mutlisets, as nodes without fixed order have the same port.id. */
     private final SortedMultiset<Integer> inLayerPorts;
     private final Set<LEdge> inLayerEdges;
 
@@ -97,7 +96,7 @@ abstract class InLayerEdgeCrossingsCounter {
     /**
      * This method should be used as soon as neighboring nodes have been switched. Use the first
      * parameter to pass which node was the upper node before a switch and the second to pass the
-     * lower node. We assume a left-right layout.
+     * former lower node. We assume a left-right layout.
      * 
      * @param wasUpperNode
      *            The node which was the upper node before switching.
@@ -131,11 +130,9 @@ abstract class InLayerEdgeCrossingsCounter {
      * The algorithm works the following way: We step through each port: If the connected edge is a
      * between-layer edge, we add the position of the port on this layer to the sorted list of
      * ports. Each time we meet an edge which has been visited, we count all port position in
-     * between the end and start position of this edge and delete it from the list.
+     * between the end and start position of this edge and delete it from the list.<br>
+     * Note that on nodes with free port order, all ports have the same port position.
      * 
-     * @param edge
-     * @param port
-     * @return
      */
     protected int countCrossingsOn(final LEdge edge, final LPort port) {
         int crossings = 0;
@@ -147,7 +144,8 @@ abstract class InLayerEdgeCrossingsCounter {
                 crossings += numberOfPortsInbetweenEndsOf(edge, inLayerPorts);
             }
         } else { // is in-between layer edge
-            crossings += numberOfOpenEdgesMinusThoseWithFreePortOrderOnSameNodeAs(port);
+            int portsOnNodeWithFreePortOrder = inLayerPorts.count(positionOf(port));
+            crossings += inLayerEdges.size() - portsOnNodeWithFreePortOrder;
         }
         return crossings;
     }
@@ -160,10 +158,6 @@ abstract class InLayerEdgeCrossingsCounter {
         int lowerBound = Math.min(positionOf(edge.getTarget()), positionOf(edge.getSource()));
         int upperBound = Math.max(positionOf(edge.getTarget()), positionOf(edge.getSource()));
         return set.subMultiset(lowerBound, BoundType.OPEN, upperBound, BoundType.OPEN).size();
-    }
-
-    private int numberOfOpenEdgesMinusThoseWithFreePortOrderOnSameNodeAs(final LPort port) {
-        return inLayerEdges.size() - inLayerPorts.count(positionOf(port));
     }
 
     private void remove(final LEdge edge) {

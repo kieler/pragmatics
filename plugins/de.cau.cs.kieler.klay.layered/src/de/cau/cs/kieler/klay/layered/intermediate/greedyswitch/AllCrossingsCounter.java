@@ -16,9 +16,7 @@ package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 
 /**
- * Counts the number of crossings between two given layers or all layers in a graph. Counts
- * crossings between layers, worst-case crossings caused by in-layer edges and crossings caused by
- * north-south ports.
+ * Counts the number of crossings between two given layers or all layers in a graph.
  *
  * @author alan
  *
@@ -32,7 +30,7 @@ class AllCrossingsCounter {
     private NorthSouthEdgeAllCrossingsCounter northSouthPortCrossingCounter;
 
     /**
-     * Constructs and initializes a cross counter. Initialization iterates through all ports.
+     * Constructs and initializes a cross counter.
      * 
      * @param layeredGraph
      *            The layered graph
@@ -52,7 +50,7 @@ class AllCrossingsCounter {
     }
 
     /**
-     * Counts all crossings in a graph in the originalOrder.
+     * Counts all crossings in a graph in the currentOrder.
      *
      * @param currentOrder
      *            The current order of the nodes.
