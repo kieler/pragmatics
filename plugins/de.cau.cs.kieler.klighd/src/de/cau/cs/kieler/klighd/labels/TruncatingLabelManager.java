@@ -18,8 +18,6 @@ import org.eclipse.swt.graphics.FontData;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.labels.ILabelSizeModifier;
-import de.cau.cs.kieler.kiml.labels.LabelLayoutOptions;
 import de.cau.cs.kieler.klighd.microlayout.Bounds;
 import de.cau.cs.kieler.klighd.microlayout.PlacementUtil;
 
@@ -27,54 +25,31 @@ import de.cau.cs.kieler.klighd.microlayout.PlacementUtil;
  * Modifies the size of labels by truncating them once the target width is reached. The rest of the
  * label's text is replaced by an ellipsis.
  * 
- * <p>
- * The label passed to this size modifier is the one from the layout KGraph fed to the layout
- * algorithm, not the one used in KLighD's view model. This means that we need to remember the
- * label's new text somewhere. We actually remember it by modifying the text of the layout graph's
- * label. When applying the layout results,
- * {@link de.cau.cs.kieler.klighd.internal.macrolayout.KlighdLayoutManager KlighdLayoutManager}
- * checks if the layout graph's label text differs from the text in the view model. If so, it
- * applies the label's new text to a property set on the label
- * ({@link KlighdLabelProperties#LABEL_TEXT_OVERRIDE}) which is then used as the label's text when
- * displaying the label.
- * </p>
- * 
  * @author cds
  */
-public final class TruncatingLabelSizeModifier implements ILabelSizeModifier {
+public final class TruncatingLabelManager extends AbstractKlighdLabelManager {
     
     /** The string appended to a truncated label text. */
     private static final String ELLIPSES = "...";
-    
+
     
     /**
      * {@inheritDoc}
      */
-    public KVector resizeLabelToWidth(final Object label, final double targetWidth) {
-        // Check if it's a KLabel
-        if (label instanceof KLabel) {
-            KLabel kLabel = (KLabel) label;
-            
-            // Find the label's size
-            final KShapeLayout labelLayout = kLabel.getData(KShapeLayout.class);
-            KVector labelSize = null;
-            
-            if (labelLayout.getWidth() > targetWidth) {
-                // Label exceeds target width, so shorten it
-                labelSize = truncateOverlyWideLabel(kLabel, targetWidth);
-            } else {
-                // We also shorten multiline labels
-                labelSize = truncateNarrowButMultilineLabel(kLabel);
-            }
-            
-            // Make sure KLighD knows that we shortened the label
-            if (labelSize != null) {
-                labelLayout.setProperty(LabelLayoutOptions.LABEL_TEXT_CHANGED, true);
-            }
-            return labelSize;
+    @Override
+    protected KVector doResizeLabelToWidth(final KLabel label, final double targetWidth) {
+        final KShapeLayout labelLayout = label.getData(KShapeLayout.class);
+        
+        KVector newLabelSize = null;
+        if (labelLayout.getWidth() > targetWidth) {
+            // Label exceeds target width, so shorten it
+            newLabelSize = truncateOverlyWideLabel(label, targetWidth);
         } else {
-            return null;
+            // We also shorten multiline labels
+            newLabelSize = truncateNarrowButMultilineLabel(label);
         }
+        
+        return newLabelSize;
     }
     
     /**

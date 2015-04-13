@@ -671,11 +671,13 @@ public final class PlacementUtil {
     public static FontData fontDataFor(final KLabel kLabel) {
         final Object rendering = Iterators.getNext(
                 ModelingUtil.eAllContentsOfType2(kLabel, KRenderingRef.class, KText.class),
-                KRendering.class);
+                null);
         
         EObject kText = null;
         if (rendering instanceof KRenderingRef) {
             kText = ((KRenderingRef) rendering).getRendering();
+        } else if (rendering instanceof KText) {
+            kText = (KText) rendering;
         }
         
         // Check if we really have a KText instance; the rendering ref could have insidiously referenced
