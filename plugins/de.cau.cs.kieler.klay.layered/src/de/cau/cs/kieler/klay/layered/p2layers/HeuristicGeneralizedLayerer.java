@@ -83,6 +83,8 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
 
     private Random random;
     
+    private static final int ITERATION_MAX = 100000;
+    
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION =
             IntermediateProcessingConfiguration.createEmpty()
@@ -271,7 +273,95 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
         graph = null;
     }
     
+    
     private void constructiveLayering() {
+
+        Set<LNode> unassigned = Sets.newLinkedHashSet();
+        Set<LNode> candidates = Sets.newLinkedHashSet();
+
+        int n = graph.getLayerlessNodes().size();
+        int[] score = new int[n];
+        int[] incAssigned = new int[n];
+        int[] outAssigned = new int[n];
+        int[] index = new int[n];
+        int lIndex = -1;
+        int rIndex = 0;
+        
+        int i = 0;
+        for (LNode node : graph.getLayerlessNodes()) {
+            node.id = i++;
+            score[node.id] = Iterables.size(node.getConnectedEdges());
+            unassigned.add(node);
+        }
+
+        // randomly choose a starting node
+        int r = random.nextInt(graph.getLayerlessNodes().size());
+        LNode u = graph.getLayerlessNodes().get(r);
+        
+//        // NO ! highest degree!
+//        int maxDeg = 0;
+//        for (LNode node : graph.getLayerlessNodes()) {
+//            int deg = Iterables.size(node.getConnectedEdges());
+//            if (deg > maxDeg) {
+//                maxDeg = deg;
+//                u = node;
+//            }
+//        }
+        
+        unassigned.remove(u);
+        LNode candidate = u;
+        int cScore = Integer.MAX_VALUE;
+        
+        int max = 0;
+        while (!unassigned.isEmpty() && max++ < ITERATION_MAX) {
+            if (incAssigned[candidate.id] < outAssigned[candidate.id]) {
+                index[candidate.id] = lIndex--;
+            } else {
+                index[candidate.id] = rIndex++;
+            }
+            
+            unassigned.remove(candidate);
+            
+            cScore = Integer.MAX_VALUE;
+            
+            for (LEdge e : candidate.getIncomingEdges()) {
+                LNode v = e.getSource().getNode();
+                if (!unassigned.contains(v)) {
+                    continue;
+                }
+                candidates.add(v);
+                score[v.id]--;
+                outAssigned[v.id]++;
+            }
+            for (LEdge e : candidate.getOutgoingEdges()) {
+                LNode v = e.getTarget().getNode();
+                if (!unassigned.contains(v)) {
+                    continue;
+                }
+                candidates.add(v);
+                score[v.id]--;
+                incAssigned[v.id]++;
+            }
+            
+            for (LNode v : candidates) {
+                if (score[v.id] < cScore) {
+                    cScore = score[v.id];
+                    candidate = v;
+                }
+            }
+            candidates.remove(candidate);
+        }
+        if (max >= ITERATION_MAX) {
+            throw new IllegalStateException(
+                    "Maximum number of iterations for layer construction exceeded.");
+        }
+        
+        for (LNode node : graph.getLayerlessNodes()) {
+            node.id = index[node.id];
+        }
+    }
+    
+    private void constructiveLayeringOld() {
         Set<LNode> unassigned = Sets.newLinkedHashSet();
         Set<LNode> assigned = Sets.newLinkedHashSet();
         Set<LNode> candidates = Sets.newLinkedHashSet();
@@ -410,6 +500,10 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
             // label the selected node
             // minDegNode.id = index;
 
+            if (minDegNode == null) {
+                minDegNode = Iterables.get(unassigned, 0);
+            }
+            
             if (side < 0) {
                 minDegNode.id = lIndex--;
             } else {
