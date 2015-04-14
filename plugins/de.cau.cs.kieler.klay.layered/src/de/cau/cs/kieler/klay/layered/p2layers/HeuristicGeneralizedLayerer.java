@@ -105,60 +105,9 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
         wLen = layeredGraph.getProperty(Properties.EDGE_LENGTH_WEIGHT);
         wRev = layeredGraph.getProperty(Properties.EDGE_REVERSAL_WEIGHT);
         
+   
         // ---------------------
-        // #1 Create an initial layering where each layer holds a single node
-        // ---------------------
-        IKielerProgressMonitor pmcl = progressMonitor.subTask(1);
-        pmcl.begin("Constructive Layering", 1);
-        constructiveLayering();
-        pmcl.done();
-        
-        // ---------------------
-        // #2 Reverse edges such that the graph is acyclic with regards to the order
-        //    calculated in #1
-        // ---------------------
-        for (LNode n : layeredGraph.getLayerlessNodes()) {
-            for (LEdge e : Lists.newArrayList(n.getOutgoingEdges())) {
-                boolean reversed = e.getTarget().getNode().id < n.id;
-                if (reversed) {
-                    e.reverse(layeredGraph, true);
-                    layeredGraph.setProperty(InternalProperties.CYCLIC, true);
-                }
-            }
-        }
-        
-        // ---------------------
-        // #3 run Gansner et al.'s algorithm to compact everything nicely
-        // ---------------------
-        new NetworkSimplexLayerer().process(layeredGraph, progressMonitor.subTask(1));
-
-        // store the layers we created for quick access
-        graphLayers = new Layer[graph.getLayers().size()];
-        int index = 0;
-        for (Layer l : graph.getLayers()) {
-            graphLayers[index++] = l;
-        }
-        
-        // ---------------------
-        // #4 Restore original edge directions
-        // ---------------------
-        for (Layer layer : layeredGraph) {
-            for (LNode node : layer) {
-                for (LPort port : node.getPorts()) {
-                    LEdge[] edgeArray = port.getOutgoingEdges().toArray(
-                            new LEdge[port.getOutgoingEdges().size()]);
-                    
-                    for (LEdge edge : edgeArray) {
-                        if (edge.getProperty(InternalProperties.REVERSED)) {
-                            edge.reverse(layeredGraph, true);
-                        }
-                    }
-                }
-            }
-        }
-
-        // ---------------------
-        // #5 Remove leafs
+        // #1 Remove leafs
         // ---------------------
         // collect all nodes to check for leafs
         Queue<LNode> nodeQueue = new LinkedList<LNode>();
@@ -180,9 +129,63 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
         }
         
         // ---------------------
+        // #2 Create an initial layering where each layer holds a single node
+        // ---------------------
+        IKielerProgressMonitor pmcl = progressMonitor.getParentMonitor().subTask(1);
+        pmcl.begin("Constructive Layering", 1);
+        constructiveLayering();
+        pmcl.done();
+        
+        // ---------------------
+        // #3 Reverse edges such that the graph is acyclic with regards to the order
+        //    calculated in #1
+        // ---------------------
+        for (LNode n : layeredGraph.getLayerlessNodes()) {
+            for (LEdge e : Lists.newArrayList(n.getOutgoingEdges())) {
+                boolean reversed = e.getTarget().getNode().id < n.id;
+                if (reversed) {
+                    e.reverse(layeredGraph, true);
+                    layeredGraph.setProperty(InternalProperties.CYCLIC, true);
+                }
+            }
+        }
+        
+        // ---------------------
+        // #4 run Gansner et al.'s algorithm to compact everything nicely
+        // ---------------------
+        new NetworkSimplexLayerer().process(layeredGraph, progressMonitor.subTask(1));
+
+        // store the layers we created for quick access
+        graphLayers = new Layer[graph.getLayers().size()];
+        int index = 0;
+        for (Layer l : graph.getLayers()) {
+            graphLayers[index++] = l;
+        }
+        
+        // ---------------------
+        // #5 Restore original edge directions
+        // ---------------------
+        for (Layer layer : layeredGraph) {
+            for (LNode node : layer) {
+                for (LPort port : node.getPorts()) {
+                    LEdge[] edgeArray = port.getOutgoingEdges().toArray(
+                            new LEdge[port.getOutgoingEdges().size()]);
+                    
+                    for (LEdge edge : edgeArray) {
+                        if (edge.getProperty(InternalProperties.REVERSED)) {
+                            edge.reverse(layeredGraph, true);
+                        }
+                    }
+                }
+            }
+        }
+
+
+        
+        // ---------------------
         // #6 Improve result by performing moves
         // ---------------------
-        IKielerProgressMonitor pmil = progressMonitor.subTask(1);
+        IKielerProgressMonitor pmil = progressMonitor.getParentMonitor().subTask(1);
         pmil.begin("Improve Layering", 1);
         
         initialize();
@@ -343,12 +346,17 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
                 incAssigned[v.id]++;
             }
             
+            candidate = null;
             for (LNode v : candidates) {
                 if (score[v.id] < cScore) {
                     cScore = score[v.id];
                     candidate = v;
                 }
             }
+            if (candidate == null && Iterables.size(unassigned) > 0) {
+                candidate = Iterables.get(unassigned, 0);
+            }
+            
             candidates.remove(candidate);
         }
         if (max >= ITERATION_MAX) {
