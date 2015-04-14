@@ -1155,7 +1155,7 @@ public class LabelAndNodeSizeProcessor {
                             / data.getPortGapsCount(PortSide.SOUTH);
             data.southX = nodeSize.x - (data.hasAdditionalPortSpace
                     ? (additionalPortSpace.right
-                            - (data.getPortsCount(PortSide.SOUTH) == 1
+                            + (data.getPortsCount(PortSide.SOUTH) == 1
                             ? data.portGapsSize[PortSide.SOUTH.ordinal()] : 0))
                     : data.portGapsSize[PortSide.SOUTH.ordinal()]);
         } else {
@@ -1190,7 +1190,7 @@ public class LabelAndNodeSizeProcessor {
                             / data.getPortGapsCount(PortSide.WEST);
             data.westY =  nodeSize.y - (data.hasAdditionalPortSpace
                     ? (additionalPortSpace.bottom
-                            - (data.getPortsCount(PortSide.WEST) == 1
+                            + (data.getPortsCount(PortSide.WEST) == 1
                             ? data.portGapsSize[PortSide.WEST.ordinal()] : 0))
                     : data.portGapsSize[PortSide.WEST.ordinal()]);
         } else {
