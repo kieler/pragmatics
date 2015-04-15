@@ -38,6 +38,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
+import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 import de.cau.cs.kieler.klighd.KlighdConstants;
@@ -109,6 +110,13 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
     
     // Event listener to scale the transparent, dragged node.
     private PropertyChangeListener cameraViewListener;
+    
+    boolean associatedNodeInNextLayer;
+    
+    boolean outOfParentBounds;
+    
+    private float stdDistance = 6f;
+    
     /**
      * Constructor.
      *
@@ -181,7 +189,8 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
 
         final KNodeNode nodeNode = (KNodeNode) pickedNode;
         knode = nodeNode.getViewModelElement();
-        layerPos = knode.getParent().getData(KShapeLayout.class).getProperty(InternalProperties.LAYER_POSITION);
+        layerPos = knode.getParent().getData(
+                KShapeLayout.class).getProperty(InternalProperties.LAYER_POSITION);
         final Rectangle2D bounds = nodeNode.getFullBounds();
         final PAffineTransform invertedNodeNodeTransform =
                 new PAffineTransform(NodeUtil.invert(nodeNode.getTransform()));
@@ -285,27 +294,6 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
             pathNodeOutgoing.addChild(path);
         }
         
-//        final List<KEdge> outgoing = knode.getOutgoingEdges();
-//        final Iterator<KEdge> outgoingIt = outgoing.iterator();
-//        while (outgoingIt.hasNext()) {
-//            final KEdge edge = outgoingIt.next();
-//            if (edge.getTarget().getParent() == knode) {
-//                continue;
-//            }
-//            final KEdgeLayout edgeLayout = (KEdgeLayout) edge.getData().get(0);
-//            final KPoint source = edgeLayout.getSourcePoint();
-//            final KPoint target = edgeLayout.getTargetPoint();
-//            
-//            final KlighdPath path = new KlighdPath();
-//            path.setPathToPolyline(new Point2D[]{
-//                    new Point2D.Float(source.getX(), source.getY()), 
-//                    new Point2D.Float(target.getX(), target.getY())});
-//            
-//            path.setStrokeColor(new RGB(0, 255, 0));
-//            path.setTransparency(HALF_OPACITY/100);
-//            pathNodeOutgoing.addChild(path);
-//        }
-
         // PNode containing the information to highlight selected area
         dragArea = new PNode();
 
@@ -321,28 +309,11 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
         yCoordinate = yCoordinate - (fullHeight / 2) + (height / 2);
 
         
-        final float stdDistance = 6f;
+//        final float stdDistance = 6f;
         final LineAttributes dottedLine = new LineAttributes(
                 1, SWT.CAP_FLAT, SWT.JOIN_MITER, SWT.LINE_DASH, null, 0, 10);
-
-//        
-//        // LOWER BORDER //
-//        final KlighdPath pathLowerBorder = new KlighdPath();
-//        
-//        pathLowerBorder.setPathToPolyline(new Point2D[]{
-//                new Point2D.Float(xCoordinate - 1000, yCoordinate + fullHeight + stdDistance),
-//                new Point2D.Float(xCoordinate + 1000, yCoordinate + fullHeight + stdDistance)
-//        });
-//        pathLowerBorder.setStrokeColor(new RGB(0, 0, 255));
-//        pathLowerBorder.setLineAttributes(dottedLine);
-//        
-//        PNode pLower = pickedNode.getParent();
-//        while (pLower.getParent() != null) {                
-//            pathLowerBorder.transformBy(pLower.getTransformReference(true));
-//            pLower = pLower.getParent();
-//        } 
         
-        // LAYER BORDERS!
+        // LAYER BORDERS! (if constant 100 is changed, change parts below)
         final Iterator<Float> layerIt = layerPos.iterator();
         while (layerIt.hasNext()) {
             final float pos = layerIt.next();
@@ -367,7 +338,7 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
         
         pathRectangle.setPathToRectangle(
                 xCoordinate - stdDistance, yCoordinate - stdDistance, 
-                fullWidth + (2*stdDistance), fullHeight + (2*stdDistance));
+                fullWidth + (2 * stdDistance), fullHeight + (2 * stdDistance));
         pathRectangle.setTransparency(0.5f);
         pathRectangle.setLineAttributes(dottedLine);
         pathRectangle.setPaint(new RGB(0, 0, 255));
@@ -385,7 +356,9 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
         node.setBounds(bounds);
 
         layer = new PNode();
-        warning = new PNode();      
+        warning = new PNode(); 
+        warning.setBounds(bounds);
+        
         
         // Add PropertyChangeListener to recognize mouse wheel events
         // used to scale the diagram. Scale will be used for the new
@@ -409,8 +382,7 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
                 pathNodeIncoming.setTransform(parentViewGlobalTransform);
                 
                 dragArea.setTransform(parentViewGlobalTransform);
-                layer.setTransform(parentViewGlobalTransform);
-                
+                layer.setTransform(parentViewGlobalTransform);                
             }
         };
         
@@ -445,10 +417,11 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
     protected void drag(final PInputEvent event) {
         super.drag(event);
         
-        KlighdPath upperLeftToLowerRightKlighdPath = new KlighdPath();
-        upperLeftToLowerRightKlighdPath.removeFromParent();
-        upperLeftToLowerRightKlighdPath.setStrokeColor(new RGB(255, 0, 0));
-
+        warning.removeAllChildren();
+        
+        KlighdPath upperLeftToLowerRightKlighdPath = new KlighdPath();        
+        KlighdPath upperRightToLowerLeftKlighdPath = new KlighdPath();   
+        
         // Get the delta between the old and new mouse position. Translate it
         // to the new coordinates of the shown PNode.
         final Dimension2D d = event.getDelta();
@@ -462,10 +435,11 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
         transform.concatenate(deltaTransform);
         
         node.transformBy(deltaTransform);
+        warning.transformBy(deltaTransform);
         
         // Translate coordinates relative to the parent of the picked node
      
-        KVector test = KimlUtil.toRelative(
+        KVector posRelativeToParent = KimlUtil.toRelative(
                 new KVector(event.getPosition().getX(), event.getPosition().getY()), knode.getParent());
 
         // Check if node out of parent bounds.
@@ -480,37 +454,6 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
             parent = parent.getParent();
         }
         
-        // Check position of the current node if parent exists.
-        if(parent != null) {
-        
-        double parentX = parent.getTransform().getTranslateX();
-        double parentY = parent.getTransform().getTranslateY();
-        double parentWidth = parent.getBounds().getWidth();
-        double parentHeight = parent.getBounds().getHeight();
-
-            if (event.getPosition().getX() < parentX 
-                    || event.getPosition().getY() < parentY
-                    || parentX + parentWidth < event.getPosition().getX()
-                    || parentY + parentHeight < event.getPosition().getY()) {
-                System.out.println("Out of Bounds!! ----------- " + event.getPosition()+ " ------ rel: " + test);
-                System.out.println(knode.getData().toArray().toString());
-                System.out.println(parentHeight + "    " + parentWidth);
-                
-                upperLeftToLowerRightKlighdPath.setPathToPolyline(new Point2D[]{
-                        new Point2D.Float(
-                                (float) pickedNode.getTransform().getTranslateX(), 
-                                (float) pickedNode.getTransform().getTranslateY()),
-                        new Point2D.Float(
-                                (float) pickedNode.getTransform().getTranslateX()
-                                + (float) pickedNode.getFullBounds().getWidth(),
-                                (float) pickedNode.getFullBounds().getWidth()
-                                + (float) pickedNode.getFullBounds().getHeight()
-                                + (float) pickedNode.getTransform().getTranslateX())        
-                });
-                
-                node.addChild(upperLeftToLowerRightKlighdPath);
-            }
-        }
         
         // Highlighting Layer
         KlighdPath highlightedLayer = new KlighdPath();
@@ -519,7 +462,7 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
         float choosenLayer = 0;
         int index = 0;
         for (float pos : layerPos) {
-            if (test.x < pos) {
+            if (posRelativeToParent.x < pos) {
                 break;
             }
             
@@ -527,13 +470,202 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
             index++;
         }
         
-        if (index < layerPos.size()){
+        // check if picked node is associated with node next layer
+        associatedNodeInNextLayer = false;
+        
+        Iterator<KEdge> checkIncoming = knode.getIncomingEdges().iterator();
+        while (checkIncoming.hasNext()) {
+            final KEdge edge = checkIncoming.next();
+            if (edge.getTarget() == null || edge.getTarget().getParent() == knode) {
+                continue;
+            }
+
+            KNodeNode n = (KNodeNode) diagController.getRepresentation(edge.getSource());
+            float incXPos = (float) n.getTransform().getTranslateX();
+            
+            if (index == layerPos.size()) {
+                index--;
+            }
+              
+            if (incXPos > choosenLayer
+                    && incXPos < layerPos.get(index)) {
+                associatedNodeInNextLayer = true;
+                break;
+            }     
+        }
+        
+        Iterator<KEdge> checkOutgoing = knode.getOutgoingEdges().iterator();
+        while (checkOutgoing.hasNext()) {
+            final KEdge edge = checkOutgoing.next();
+            if (edge.getSource() == null || edge.getSource().getParent() == knode) {
+                continue;
+            }
+            
+            KNodeNode n = (KNodeNode) diagController.getRepresentation(edge.getTarget());
+            float incXPos = (float) n.getTransform().getTranslateX();
+            
+            if (index == layerPos.size()) {
+                index--;
+            }
+            
+            if (incXPos > choosenLayer
+                    && incXPos < layerPos.get(index)) {
+                associatedNodeInNextLayer = true;
+                break;
+            }     
+        }
+        
+        outOfParentBounds = false;
+        
+        // Check position of the current node if parent exists.
+        if (parent != null) {
+
+        // constants 60 and 100 can be found at "Layerborders" and the "warning" part - also change this
+            if (posRelativeToParent.x < layerPos.get(0) - 60 
+                    || posRelativeToParent.y < -100
+                    || layerPos.get(layerPos.size() - 1) + 60 < posRelativeToParent.x
+                    || (float) pickedNode.getParent().getParent().getFullBounds().getHeight() + 100 < posRelativeToParent.y
+                    || associatedNodeInNextLayer) {
+                outOfParentBounds = true;      
+            }
+        }
+        
+        // red cross if action is not allowed!
+        if (associatedNodeInNextLayer
+                || outOfParentBounds) {            
+            upperLeftToLowerRightKlighdPath.setPathToPolyline(new Point2D[]{
+                    new Point2D.Float(
+                            (float) pickedNode.getTransform().getTranslateX() - 2 * stdDistance, 
+                            (float) pickedNode.getTransform().getTranslateY()),
+                            new Point2D.Float(
+                                    (float) pickedNode.getTransform().getTranslateX()
+                                    + (float) pickedNode.getFullBounds().getWidth() - 2 * stdDistance,
+                                    (float) pickedNode.getTransform().getTranslateY()
+                                    + (float) pickedNode.getFullBounds().getHeight())        
+            });
+            
+            upperLeftToLowerRightKlighdPath.setStrokeColor(new RGB(255, 0, 0));
+            upperLeftToLowerRightKlighdPath.setLineWidth(10f);
+//            upperLeftToLowerRightKlighdPath.setStrokeAlpha(HALF_OPACITY);
+            upperLeftToLowerRightKlighdPath.transformBy(pickedNode.getInverseTransform());
+            
+            upperRightToLowerLeftKlighdPath.setPathToPolyline(new Point2D[]{
+                    new Point2D.Float(
+                            (float) pickedNode.getTransform().getTranslateX()
+                            + (float) pickedNode.getFullBounds().getWidth() - 2 * stdDistance,
+                            (float) pickedNode.getTransform().getTranslateY()),
+                            new Point2D.Float(
+                                    (float) pickedNode.getTransform().getTranslateX() - 2 * stdDistance,
+                                    (float) pickedNode.getTransform().getTranslateY()
+                                    + (float) pickedNode.getFullBounds().getHeight())
+            });
+            
+            upperRightToLowerLeftKlighdPath.setStrokeColor(new RGB(255, 0, 0));
+            upperRightToLowerLeftKlighdPath.setLineWidth(10f);
+//            upperRightToLowerLeftKlighdPath.setStrokeAlpha(HALF_OPACITY);
+            upperRightToLowerLeftKlighdPath.transformBy(pickedNode.getInverseTransform());
+            
+            warning.addChild(upperLeftToLowerRightKlighdPath);
+            warning.addChild(upperRightToLowerLeftKlighdPath);
+        }
+        
+        // Highlight normal layers (if constant -100 is changed, change part above)
+        if (0 < index && index < layerPos.size()){
         highlightedLayer.setPathToRectangle(
-                choosenLayer, -100, 
-                layerPos.get(index) - choosenLayer, (float) pickedNode.getParent().getParent().getFullBounds().getHeight() + 200f);
+                choosenLayer, 
+                -100, 
+                layerPos.get(index) - choosenLayer, 
+                (float) pickedNode.getParent().getParent().getFullBounds().getHeight() + 200f);
         highlightedLayer.setLineWidth(0);
-        highlightedLayer.setPaint(new RGB(128, 128, 128));
+        
+        if (associatedNodeInNextLayer
+                || outOfParentBounds) {
+            highlightedLayer.setPaint(new RGB(255, 0, 0));
+        } else {
+            highlightedLayer.setPaint(new RGB(128, 128, 128));
+        }
+        
         highlightedLayer.setTransparency(0.25f);
+
+        }
+        
+        // Highlighted area before first or last layer, 
+        // first layer will shadered cause of special constraint
+        if (posRelativeToParent.x < layerPos.get(0)
+                || posRelativeToParent.x > layerPos.get(layerPos.size() - 1)) {
+            
+            index = posRelativeToParent.x < layerPos.get(0) ? 0 : layerPos.size() - 1;
+            int rectWidth = posRelativeToParent.x < layerPos.get(0) ? 60 : 0;         
+            
+            highlightedLayer.setPathToRectangle(
+                    layerPos.get(index) - rectWidth,
+                    -100, 
+                    60, 
+                    (float) pickedNode.getParent().getParent().getFullBounds().getHeight() + 200f);
+            highlightedLayer.setLineWidth(0);
+            if(outOfParentBounds) {
+                highlightedLayer.setPaint(new RGB(255, 0, 0));
+            } else {                
+                highlightedLayer.setPaint(new RGB(128, 128, 128));
+            }
+            highlightedLayer.setTransparency(0.25f);
+            
+            // shading of the highlighted area before first layer
+            float width = rectWidth;
+            float height = (float) pickedNode.getParent().getParent().getFullBounds().getHeight() + 200f;
+            
+            float curWidth = 0;
+            float curHeightLeft = height;
+            float curHeightRight = height;
+
+            KlighdPath shading;
+            
+            while (curWidth + 10 <= width) {
+                curWidth += 10;
+                curHeightLeft += 10;
+                shading = new KlighdPath();
+                shading.setPathToPolyline(new Point2D[]{
+                        new Point2D.Float(curWidth - width, height - height - 100),
+                        new Point2D.Float(0 - width, curHeightLeft - height - 100)
+                }); 
+                
+                shading.setStrokeColor(new RGB(128, 128, 128));
+                shading.setTransparency(0.25f);                
+                transformByAllParents(pickedNode.getParent(), shading);
+                layer.addChild(shading);
+            }
+            
+            while (curHeightLeft + 10 <= 2 * height) {
+                curHeightLeft += 10;
+                curHeightRight += 10;
+                shading = new KlighdPath();
+                shading.setPathToPolyline(new Point2D[]{
+                        new Point2D.Float(curWidth - width, curHeightRight - height - 100),
+                        new Point2D.Float(0 - width, curHeightLeft - height - 100)
+                }); 
+                
+                shading.setStrokeColor(new RGB(128, 128, 128));
+                shading.setTransparency(0.25f);                
+                transformByAllParents(pickedNode.getParent(), shading);
+                layer.addChild(shading);
+            }
+            
+            curWidth = curHeightLeft - 2 * height;
+            
+            while (curWidth + 10 <= width) {
+                curWidth += 10;
+                curHeightRight += 10;
+                shading = new KlighdPath();
+                shading.setPathToPolyline(new Point2D[]{
+                        new Point2D.Float(curWidth - width, height - 100),
+                        new Point2D.Float(width - width, curHeightRight - height - 100)
+                }); 
+                
+                shading.setStrokeColor(new RGB(128, 128, 128));
+                shading.setTransparency(0.25f);                
+                transformByAllParents(pickedNode.getParent(), shading);
+                layer.addChild(shading);
+            }
         }
         
         transformByAllParents(pickedNode.getParent(), highlightedLayer);
@@ -544,8 +676,7 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
         for (final KlighdPath path : (List<KlighdPath>) pathNodeIncoming.getChildrenReference()) {
             final Point2D[] shapePoints = path.getShapePoints();
             deltaTransform.transform(shapePoints[1], shapePoints[1]);
-            path.setPathToPolyline(shapePoints);
-           
+            path.setPathToPolyline(shapePoints);   
         }
 
         // Transform the x-coordinate of the outgoing edges to get their new position.
@@ -553,7 +684,6 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
             final Point2D[] shapePoints = path.getShapePoints();
             deltaTransform.transform(shapePoints[0], shapePoints[0]);
             path.setPathToPolyline(shapePoints);
-           
         }
         
         event.setHandled(true);
@@ -565,13 +695,18 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
     @Override
     protected void endDrag(final PInputEvent event) {
         super.endDrag(event);
+        
+        float height = (float) pickedNode.getFullBounds().getHeight() * 0.5f;
+        float width = (float) pickedNode.getFullBounds().getWidth() * 0.5f;
 
         KVector posRelativeToParent = KimlUtil.toRelative(
-                new KVector(event.getPosition().getX(), event.getPosition().getY()), knode.getParent());
+                new KVector(event.getPosition().getX() - width, event.getPosition().getY() - height),
+                knode.getParent());
 
         // Remove the PNode representing the new KNodes position from camera. 
         event.getTopCamera().removePropertyChangeListener(
                 PCamera.PROPERTY_VIEW_TRANSFORM, cameraViewListener);
+        
         layer.removeFromParent();
         node.removeFromParent();
         pathNodeIncoming.removeFromParent();
@@ -580,36 +715,23 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
         warning.removeFromParent();
         
         final KShapeLayout ksl = knode.getData(KShapeLayout.class);
-//        ksl.setPos((float) node.getTransform().getTranslateX(), 
-//                (float) node.getTransform().getTranslateY());
+        if (associatedNodeInNextLayer || outOfParentBounds) {
+            ksl.setPos((float) pickedNode.getTransform().getTranslateX(), 
+                    (float) pickedNode.getTransform().getTranslateY());
+        } else {
+            ksl.setPos((float) posRelativeToParent.x, 
+                    (float) posRelativeToParent.y);
+        }
         
-        ksl.setPos((float) posRelativeToParent.x, 
-                (float) posRelativeToParent.y);
-        
-        // trigger new layout only in bounds
-//        boolean inBounds = true;
-//
-//        if (parent != null) {
-//
-//            double parentX = parent.getTransform().getTranslateX();
-//            double parentY = parent.getTransform().getTranslateY();
-//            double parentWidth = parent.getBounds().getWidth();
-//            double parentHeight = parent.getBounds().getHeight();
-//
-//            if (event.getPosition().getX() < parentX || event.getPosition().getY() < parentY
-//                    || parentX + parentWidth < event.getPosition().getX()
-//                    || parentY + parentHeight < event.getPosition().getY()) {
-//                inBounds = false;
-//            }
-//        }
-//
-//        if (inBounds) {
+        // trigger new layout only in bounds/valid layer
+        if (!associatedNodeInNextLayer
+                || !outOfParentBounds) {
             pViewer.getControl().getDisplay().asyncExec(new Runnable() {
                 public void run() {
                         LightDiagramServices.layoutDiagram(pViewer.getViewContext(), config);
                 }
             });
-       
+        }
 
         knode = null;
         node = null;
@@ -621,13 +743,13 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
      * Get all parent transforms, so edges are drawn at the right position.
      * Especially useful when they are related to more than one parent.
      * 
-     * @param node node to get parents from
+     * @param nodeParent node to get parents from
      * @param path path to transform
      */
-    private void transformByAllParents(final PNode node, final KlighdPath path) {
+    private void transformByAllParents(final PNode nodeParent, final KlighdPath path) {
         // Get all parents transforms, so edges are drawn at the right position.
         // Especially useful when they are related to more than one parent.
-        PNode p = node;
+        PNode p = nodeParent;
         while (p.getParent() != null) {                
             path.transformBy(p.getTransformReference(true));
             p = p.getParent();
@@ -648,6 +770,7 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
         public InteractiveLayoutConfig() {
            setValue(Properties.CYCLE_BREAKING, CycleBreakingStrategy.INTERACTIVE);
            setValue(Properties.NODE_LAYERING, LayeringStrategy.INTERACTIVE);
+           setValue(Properties.CROSS_MIN, CrossingMinimizationStrategy.INTERACTIVE);
         }
     }
 

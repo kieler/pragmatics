@@ -287,10 +287,10 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
  
         // calculate lost information of algorithm above to the layer
         // position - only used for graphical reasons.
-        float test = layerPosition.get(layerPosition.size() - 1);
+        float lastLayer = layerPosition.get(layerPosition.size() - 1);
         layerPosition.remove(layerPosition.size() - 1);
-        layerPosition.add(test + (float) edgeSpacing * 2f);
-
+        layerPosition.add(lastLayer + (float) edgeSpacing * 2f);
+        
         layeredGraph.getSize().x = xpos;
 
         KNode node = (KNode) layeredGraph.getProperty(InternalProperties.ORIGIN);
