@@ -46,6 +46,7 @@ import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KLabeledGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
+import de.cau.cs.kieler.core.kgraph.impl.IPropertyToObjectMapImpl;
 import de.cau.cs.kieler.core.krendering.KPolyline;
 import de.cau.cs.kieler.core.krendering.KRendering;
 import de.cau.cs.kieler.core.krendering.KRenderingUtil;
@@ -61,6 +62,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klighd.ZoomStyle;
 import de.cau.cs.kieler.klighd.internal.macrolayout.KlighdLayoutManager;
 import de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties;
+import de.cau.cs.kieler.klighd.labels.KlighdLabelProperties;
 import de.cau.cs.kieler.klighd.piccolo.IKlighdNode.IKGraphElementNode;
 import de.cau.cs.kieler.klighd.piccolo.IKlighdNode.IKNodeNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.activities.ApplyBendPointsActivity;
@@ -82,6 +84,7 @@ import de.cau.cs.kieler.klighd.piccolo.internal.util.NodeUtil;
 import de.cau.cs.kieler.klighd.util.Iterables2;
 import de.cau.cs.kieler.klighd.util.KlighdPredicates;
 import de.cau.cs.kieler.klighd.util.KlighdProperties;
+import de.cau.cs.kieler.klighd.util.LimitedKGraphContentAdapter;
 import de.cau.cs.kieler.klighd.util.ModelingUtil;
 import de.cau.cs.kieler.klighd.util.RenderingContextData;
 import edu.umd.cs.piccolo.PNode;
@@ -1329,7 +1332,17 @@ public class DiagramController {
 
         updateLayout(labelNode);
 
-        labelNode.setText(label.getText());
+        // if the label's text is overriden by means of a property, use that property
+        String labelText = label.getText();
+        final KLayoutData layoutData = label.getData(KLayoutData.class);
+        if (layoutData != null) {
+            final String labelTextOverride =
+                    layoutData.getProperty(KlighdLabelProperties.LABEL_TEXT_OVERRIDE);
+            if (labelTextOverride != null) {
+                labelText = labelTextOverride;
+            }
+        }
+        labelNode.setText(labelText);
 
         if (sync) {
             // remove any existing text sync adapters, which may be out-of-date
@@ -1644,7 +1657,7 @@ public class DiagramController {
         @Override
         public void notifyChanged(final Notification notification) {
 
-            if (notification.getFeatureID(KNode.class) == KGraphPackage.KNODE__CHILDREN) {
+            if (notification.getFeature() == KGraphPackage.Literals.KNODE__CHILDREN) {
                 if (UIExecRequired()) {
                     throw new RuntimeException(UI_REQUIRED_ERROR_MSG_NODES);
                 }
@@ -1718,16 +1731,16 @@ public class DiagramController {
 
         @Override
         public void notifyChanged(final Notification notification) {
-            final int featureId = notification.getFeatureID(KNode.class);
+            final Object feature = notification.getFeature();
 
-            if (featureId == KGraphPackage.KNODE__OUTGOING_EDGES
-                    || featureId == KGraphPackage.KNODE__INCOMING_EDGES) {
+            if (feature == KGraphPackage.Literals.KNODE__OUTGOING_EDGES
+                    || feature == KGraphPackage.Literals.KNODE__INCOMING_EDGES) {
                 if (UIExecRequired()) {
                     throw new RuntimeException(UI_REQUIRED_ERROR_MSG_EDGES);
                 }
 
                 final boolean releaseChildrenAndControllers =
-                        featureId == KGraphPackage.KNODE__OUTGOING_EDGES;
+                        feature == KGraphPackage.Literals.KNODE__OUTGOING_EDGES;
 
                 switch (notification.getEventType()) {
                 case Notification.ADD: {
@@ -1785,7 +1798,7 @@ public class DiagramController {
 
         @Override
         public void notifyChanged(final Notification notification) {
-            if (notification.getFeatureID(KNode.class) == KGraphPackage.KNODE__PORTS) {
+            if (notification.getFeature() == KGraphPackage.Literals.KNODE__PORTS) {
                 if (UIExecRequired()) {
                     throw new RuntimeException(UI_REQUIRED_ERROR_MSG_PORTS);
                 }
@@ -1848,8 +1861,7 @@ public class DiagramController {
         @Override
         public void notifyChanged(final Notification notification) {
 
-            if (notification.getFeatureID(KLabeledGraphElement.class)
-                    == KGraphPackage.KLABELED_GRAPH_ELEMENT__LABELS) {
+            if (notification.getFeature() == KGraphPackage.Literals.KLABELED_GRAPH_ELEMENT__LABELS) {
                 if (UIExecRequired()) {
                     throw new RuntimeException(UI_REQUIRED_ERROR_MSG_LABELS);
                 }
@@ -1896,38 +1908,71 @@ public class DiagramController {
             = Predicates.instanceOf(TextSyncAdapter.class);
 
     /**
-     * A dedicated specialization of {@link AdapterImpl} allowing 'instanceof' tests.
-     * (in contrast to an anonymous subclass)
+     * This adapter listens for changes on a {@code KLabel} instance. Whenever the label text was
+     * changed (or the {@link KlighdLabelProperties#LABEL_TEXT_OVERRIDE} property value changes), the
+     * label's {@link KLabelNode} has its text updated, which in turn causes its PNode to be updated.
      */
-    private final class TextSyncAdapter extends AdapterImpl {
+    private final class TextSyncAdapter extends LimitedKGraphContentAdapter {
         private final KLabelNode labelRep;
 
         private TextSyncAdapter(final KLabelNode theLabelRep) {
+            super(KLayoutData.class);
+
             this.labelRep = theLabelRep;
         }
 
         @Override
         public void notifyChanged(final Notification notification) {
-            if (notification.getFeatureID(KLabel.class) == KGraphPackage.KLABEL__TEXT) {
+            super.notifyChanged(notification);
 
+            // flag that indicates whether we have found a new text for our label or not
+            boolean foundNewText = false;
+            String newText = null;
+
+            if (notification.getFeature() == KGraphPackage.Literals.KLABEL__TEXT) {
+                // this is the case if the original KLabel in the view model had its text changed
                 switch (notification.getEventType()) {
                 case Notification.SET:
-                    if (UIExecRequired()) {
-                        // Since changing the label text is no structural modification
-                        //  we support the automatic switching the Display thread here!
-                        // (several potentially concurrent modifications of the
-                        //  diagram's structure might lead to chaos...)
-                        PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-                            public void run() {
-                                labelRep.setText(notification.getNewStringValue());
-                            }
-                        });
-                    } else {
-                        labelRep.setText(notification.getNewStringValue());
-                    }
+                    foundNewText = true;
+                    newText = notification.getNewStringValue();
                     break;
                 default:
                     break;
+                }
+            } else {
+                // otherwise, it may be that the LABEL_TEXT_OVERRIDE property was set or changed; we
+                // find the corresponding property-to-object map entry and find out if the property
+                // equals LABEL_TEXT_OVERRIDE; if so, we apply the property value as the new text
+                IPropertyToObjectMapImpl entry = null;
+
+                if (notification.getNotifier() instanceof KLayoutData
+                    && notification.getNewValue() instanceof IPropertyToObjectMapImpl) {
+
+                    entry = (IPropertyToObjectMapImpl) notification.getNewValue();
+                } else if (notification.getNotifier() instanceof IPropertyToObjectMapImpl) {
+                    entry = (IPropertyToObjectMapImpl) notification.getNotifier();
+                }
+
+                if (entry != null && entry.getKey().equals(KlighdLabelProperties.LABEL_TEXT_OVERRIDE)) {
+                    foundNewText = true;
+                    newText = (String) entry.getValue();
+                }
+            }
+
+            // apply new label text, if necessary
+            if (foundNewText) {
+                if (UIExecRequired()) {
+                    // Since changing the label text is no structural modification we support the
+                    // automatic switching the Display thread here! (several potentially concurrent
+                    // modifications of the diagram's structure might lead to chaos...)
+                    final String finalNewText = newText;
+                    PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+                        public void run() {
+                            labelRep.setText(finalNewText);
+                        }
+                    });
+                } else {
+                    labelRep.setText(newText);
                 }
             }
         }

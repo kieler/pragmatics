@@ -29,14 +29,15 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
+import de.cau.cs.kieler.kiml.util.nodespacing.LabelSide;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
-import de.cau.cs.kieler.klay.layered.graph.LLabel.LabelSide;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.intermediate.LabelSideSelector;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.test.AbstractLayeredProcessorTest;
 import de.cau.cs.kieler.klay.layered.test.config.OrthogonalEdgeRoutingLayoutConfigurator;
 import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
@@ -115,13 +116,15 @@ public class LabelSideSelectorTest extends AbstractLayeredProcessorTest {
                     // port labels
                     for (LPort port : node.getPorts()) {
                         for (LLabel label : port.getLabels()) {
-                            assertTrue(label.getSide() != LabelSide.UNKNOWN);
+                            assertTrue(label.getProperty(InternalProperties.LABEL_SIDE)
+                                    != LabelSide.UNKNOWN);
                         }
                     }
 
                     for (LEdge edge : node.getOutgoingEdges()) {
                         for (LLabel label : edge.getLabels()) {
-                            assertTrue(label.getSide() != LabelSide.UNKNOWN);
+                            assertTrue(label.getProperty(InternalProperties.LABEL_SIDE)
+                                    != LabelSide.UNKNOWN);
                         }
                     }
                 }

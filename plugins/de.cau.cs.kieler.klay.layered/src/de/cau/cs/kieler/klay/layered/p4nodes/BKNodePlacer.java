@@ -18,7 +18,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -140,7 +139,7 @@ public final class BKNodePlacer implements ILayoutPhase {
     private static final double NORTH_SOUTH_SPACING = 10.0;
     
     /** List of edges involved in type 1 conflicts (see above). */
-    private final List<LEdge> markedEdges = Lists.newLinkedList();
+    private final List<LEdge> markedEdges = Lists.newArrayList();
     /** Basic spacing between nodes, determined by layout options. */
     private float normalSpacing;
     /** Spacing between dummy nodes, determined by layout options. */
@@ -240,7 +239,8 @@ public final class BKNodePlacer implements ILayoutPhase {
         // The layout with the smallest size is selected. If more than one smallest layout exists,
         // the first one of the competing layouts is selected.
         BKAlignedLayout chosenLayout = null;
-        LinkedList<BKAlignedLayout> layouts = new LinkedList<BKAlignedLayout>();
+        // SUPPRESS CHECKSTYLE NEXT MagicNumber
+        List<BKAlignedLayout> layouts = Lists.newArrayListWithCapacity(4);
         switch (layeredGraph.getProperty(Properties.FIXED_ALIGNMENT)) {
         case LEFTDOWN:
             layouts.add(lefttop);
@@ -951,7 +951,7 @@ public final class BKNodePlacer implements ILayoutPhase {
      * @return A list containing all upper neighbors
      */
     private List<LNode> allUpperNeighbors(final LNode node) {
-        List<LNode> result = new LinkedList<LNode>();
+        List<LNode> result = Lists.newArrayList();
         int maxPriority = 0;
         
         for (LEdge edge : node.getIncomingEdges()) {
@@ -979,7 +979,7 @@ public final class BKNodePlacer implements ILayoutPhase {
      * @return A list containing all lower neighbors
      */
     private List<LNode> allLowerNeighbors(final LNode node) {
-        List<LNode> result = new LinkedList<LNode>();
+        List<LNode> result = Lists.newArrayList();
         int maxPriority = 0;
         
         for (LEdge edge : node.getOutgoingEdges()) {
@@ -1031,7 +1031,7 @@ public final class BKNodePlacer implements ILayoutPhase {
             List<LNode> blockContents = blocks.get(root);
             
             if (blockContents == null) {
-                blockContents = Lists.newLinkedList();
+                blockContents = Lists.newArrayList();
                 blocks.put(root, blockContents);
             }
             
@@ -1057,7 +1057,7 @@ public final class BKNodePlacer implements ILayoutPhase {
             List<LNode> classContents = classes.get(sink);
             
             if (classContents == null) {
-                classContents = Lists.newLinkedList();
+                classContents = Lists.newArrayList();
                 classes.put(sink, classContents);
             }
             

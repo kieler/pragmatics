@@ -30,9 +30,10 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
  * The node's list of ports is sorted beginning at the leftmost northern port, going clockwise.
  * This order of ports may be used during crossing minimization for calculating port ranks.
  * 
- * In case of {@link PortConstraints#FIXED_ORDER FIXED_ORDER} the side and {@link LayoutOptions#PORT_INDEX PORT_INDEX}
- * are used if specified. Otherwise the order is inferred from specified port positions. 
- * For {@link PortConstraints#FIXED_POS FIXED_POS} solely the position of the ports determines the order.
+ * In case of {@link PortConstraints#FIXED_ORDER FIXED_ORDER} the side and
+ * {@link LayoutOptions#PORT_INDEX PORT_INDEX} are used if specified. Otherwise the order is inferred
+ * from specified port positions. For {@link PortConstraints#FIXED_POS FIXED_POS} solely the position of
+ * the ports determines the order.
  * 
  * <dl>
  *   <dt>Precondition:</dt><dd>a layered graph.</dd>
@@ -62,7 +63,9 @@ public final class PortListSorter implements ILayoutProcessor {
 
             // for FIXED_ORDER try the ports' sides and indices first
             //  note that both ports are children of the same node
-            if (port1.getNode().getProperty(LayoutOptions.PORT_CONSTRAINTS) == PortConstraints.FIXED_ORDER) {
+            if (port1.getNode().getProperty(LayoutOptions.PORT_CONSTRAINTS)
+                    == PortConstraints.FIXED_ORDER) {
+                
                 int ordinalDifference = port1.getSide().ordinal() - port2.getSide().ordinal();
 
                 // Sort by side first

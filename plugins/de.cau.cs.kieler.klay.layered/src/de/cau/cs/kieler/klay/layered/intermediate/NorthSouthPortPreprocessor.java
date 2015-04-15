@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -142,8 +143,8 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
         monitor.begin("Odd port side processing", 1);
         
         int pointer;
-        List<LNode> northDummyNodes = new LinkedList<LNode>();
-        List<LNode> southDummyNodes = new LinkedList<LNode>();
+        List<LNode> northDummyNodes = Lists.newArrayList();
+        List<LNode> southDummyNodes = Lists.newArrayList();
         
         // Iterate through the layers
         for (Layer layer : layeredGraph) {
@@ -174,14 +175,14 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
                 // Clear the lists of northern and southern dummy nodes
                 northDummyNodes.clear();
                 southDummyNodes.clear();
-                
+
                 // Create a list of barycenter associates for the node
-                List<LNode> barycenterAssociates = new LinkedList<LNode>();
+                List<LNode> barycenterAssociates = Lists.newArrayList();
                 
                 // Prepare a list of ports on the northern side, sorted from left
                 // to right (when viewed in the diagram); create the appropriate
                 // dummy nodes and assign them to the layer
-                LinkedList<LPort> portList = new LinkedList<LPort>();
+                LinkedList<LPort> portList = Lists.newLinkedList();
                 Iterables.addAll(portList, node.getPorts(PortSide.NORTH));
 
                 createDummyNodes(layeredGraph, portList, northDummyNodes, southDummyNodes,

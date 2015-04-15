@@ -59,7 +59,7 @@ public final class InteractiveLayerer implements ILayoutPhase {
     private static class LayerSpan {
         private double start;
         private double end;
-        private List<LNode> nodes = Lists.newLinkedList();
+        private List<LNode> nodes = Lists.newArrayList();
     }
 
     /**
@@ -70,7 +70,7 @@ public final class InteractiveLayerer implements ILayoutPhase {
         monitor.begin("Interactive node layering", 1);
 
         // create layers with a start and an end position, merging when they overlap with others
-        List<LayerSpan> currentSpans = Lists.newLinkedList();
+        List<LayerSpan> currentSpans = Lists.newArrayList();
         for (LNode node : layeredGraph.getLayerlessNodes()) {
             double minx = node.getPosition().x;
             double maxx = minx + node.getSize().x;

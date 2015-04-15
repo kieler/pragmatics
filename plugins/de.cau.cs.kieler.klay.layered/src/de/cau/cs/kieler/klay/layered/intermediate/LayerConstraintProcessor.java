@@ -14,8 +14,6 @@
 package de.cau.cs.kieler.klay.layered.intermediate;
 
 import java.util.List;
-import java.util.ListIterator;
-
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.UnsupportedConfigurationException;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
@@ -103,37 +101,67 @@ public final class LayerConstraintProcessor implements ILayoutProcessor {
                 }
             }
         }
-        
-        // Remove empty first and last layers
-        
-        // If the first (or last) layer of the graph consists of a single node
-        //  with LAYER_CONSTRAINTS set to FIRST (or LAST), the 'old' layer
-        //  of this node will be left empty. In a later step this would 
-        //  result in an unnecessary dummy node (KIPRA-1561). We thus have 
-        //  to check if the first two (or last two) layers are empty 
-        //  and if so, remove them.
-        int index = 0;
-        ListIterator<Layer> listIt = layers.listIterator();
-        while (listIt.hasNext()) {
-            Layer l = listIt.next();
-            if (l.getNodes().isEmpty()) {
-                listIt.remove();
+
+        // If there is a second first layer, check if any of the first layer's nodes has outgoing
+        // edges to the second layer.
+        if (layers.size() >= 2) {
+            boolean hasEdgeToSndLayer = false;
+            Layer sndFirstLayer = layers.get(1);
+            for (LNode node : firstLayer) {
+                for (LEdge edge : node.getOutgoingEdges()) {
+                    if (edge.getTarget().getNode().getLayer() == sndFirstLayer) {
+                        hasEdgeToSndLayer = true;
+                        break;
+                    }
+                }
+                if (hasEdgeToSndLayer) {
+                    break;
+                }
             }
-            if (++index == 2) {
-                break;
+            // If there are no edges to the second layer, we can move all first layer's nodes to the
+            // second layer and remove the first layer.
+            if (!hasEdgeToSndLayer) {
+                // Iterate through a node array to avoid ConcurrentModificationExceptions
+                LNode [] nodes = firstLayer.getNodes().toArray(new LNode[firstLayer.getNodes().size()]);
+                for (LNode node : nodes) {
+                    node.setLayer(sndFirstLayer);
+                }
+                layers.remove(firstLayer);
+                firstLayer = sndFirstLayer;
             }
         }
 
-        index = 0;
-        listIt = layers.listIterator(layers.size());
-        while (listIt.hasPrevious()) {
-            Layer l = listIt.previous();
-            if (l.getNodes().isEmpty()) {
-                listIt.remove();
+        // If there is a second last layer, check if any of the last layer's nodes has incoming
+        // edges from the second last layer.
+        if (layers.size() >= 2) {
+            boolean hasEdgeToPrevLayer = false;
+            Layer sndLastLayer = layers.get(layers.size() - 2);
+            for (LNode node : lastLayer) {
+                for (LEdge edge : node.getIncomingEdges()) {
+                    if (edge.getSource().getNode().getLayer() == sndLastLayer) {
+                        hasEdgeToPrevLayer = true;
+                        break;
+                    }
+                }
+                if (hasEdgeToPrevLayer) {
+                    break;
+                }
             }
-            if (++index == 2) {
-                break;
+            // If there are no edges from the second last layer, we can move all last layer's nodes to
+            // the second last layer and remove the last layer.
+            if (!hasEdgeToPrevLayer) {
+                // Iterate through a node array to avoid ConcurrentModificationExceptions
+                LNode [] nodes = lastLayer.getNodes().toArray(new LNode[lastLayer.getNodes().size()]);
+                for (LNode node : nodes) {
+                    node.setLayer(sndLastLayer);
+                }
+                layers.remove(lastLayer);
+                lastLayer = sndLastLayer;
             }
+        }
+        
+        if (layers.size() == 1 && layers.get(0).getNodes().isEmpty()) {
+            layers.remove(0);
         }
         
         // Add non-empty new first and last layers

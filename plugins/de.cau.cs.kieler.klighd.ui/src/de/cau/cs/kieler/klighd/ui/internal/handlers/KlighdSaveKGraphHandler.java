@@ -48,6 +48,7 @@ import de.cau.cs.kieler.klighd.KlighdTreeSelection;
 import de.cau.cs.kieler.klighd.ViewContext;
 import de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties;
 import de.cau.cs.kieler.klighd.ui.KlighdUIPlugin;
+import de.cau.cs.kieler.klighd.util.Iterables2;
 import de.cau.cs.kieler.klighd.util.KlighdProperties;
 import de.cau.cs.kieler.klighd.util.ModelingUtil;
 
@@ -145,8 +146,8 @@ public class KlighdSaveKGraphHandler extends AbstractHandler {
                     sl.setPos(0, 0);
 
                     // move all rendering libraries that we can find to the newly promoted root
-                    Iterable<KRenderingLibrary> libs =
-                            ModelingUtil.eAllContentsOfType(copy, KRenderingLibrary.class);
+                    Iterable<KRenderingLibrary> libs = Iterables2.toIterable(
+                            ModelingUtil.eAllContentsOfType(copy, KRenderingLibrary.class));
 
                     for (KRenderingLibrary lib : libs) {
                         // move the libs to the new root
@@ -172,11 +173,9 @@ public class KlighdSaveKGraphHandler extends AbstractHandler {
                 
                 // remove transient klighd state
                 // care: do not iterate over the elements of the 'copy' as the subgraph
-                // was already removed from its original containmet
-                @SuppressWarnings("unchecked")
-                Iterator<KGraphElement> kgeIt =
-                        (Iterator<KGraphElement>) (Iterator<?>) ModelingUtil.selfAndEAllContentsOfType2(
-                                copier.get(subgraph), KGraphElement.class);
+                // was already removed from its original containment
+                Iterator<KGraphElement> kgeIt = ModelingUtil.selfAndEAllContentsOfType2(
+                        copier.get(subgraph), KGraphElement.class);
                 try {
                     while (kgeIt.hasNext()) {
                         KGraphElement kge = kgeIt.next();

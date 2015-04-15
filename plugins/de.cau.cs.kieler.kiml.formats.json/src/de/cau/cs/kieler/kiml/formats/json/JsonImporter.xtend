@@ -223,6 +223,8 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
                         
                         label.text = jsonLabel.optString("text")
                         
+                        jsonLabel.transformShapeLayout(label.layout)
+                        
                         jsonLabel.transformProperties(label.layout)
                         
                         // by default center the label

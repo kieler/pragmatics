@@ -15,7 +15,6 @@ package de.cau.cs.kieler.klay.layered.properties;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -29,6 +28,7 @@ import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.kiml.util.nodespacing.LabelSide;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
@@ -136,6 +136,18 @@ public final class InternalProperties {
      * cross-hierarchy edge a label originally belonged to.
      */
     public static final IProperty<LEdge> ORIGINAL_LABEL_EDGE = new Property<LEdge>("originalLabelEdge");
+    
+    /**
+     * Edge labels represented by an edge label dummy node.
+     */
+    public static final IProperty<List<LLabel>> REPRESENTED_LABELS =
+            new Property<List<LLabel>>("representedLabels");
+    
+    /**
+     * The side (of an edge) a label is placed on.
+     */
+    public static final IProperty<LabelSide> LABEL_SIDE = new Property<LabelSide>(
+            "labelSide", LabelSide.UNKNOWN);
     
     /**
      * Flag for reversed edges.
@@ -361,7 +373,7 @@ public final class InternalProperties {
      */
     public static final IProperty<List<ConnectedSelfLoopComponent>> SPLINE_SELFLOOP_COMPONENTS = 
             new Property<List<ConnectedSelfLoopComponent>>("splineSelfLoopComponents", 
-                    new LinkedList<ConnectedSelfLoopComponent>());
+                    new ArrayList<ConnectedSelfLoopComponent>());
     
     /**
      * A node's property storing the margins of a node required for it's self loops.
