@@ -405,7 +405,7 @@ public class KNodeNode extends KNodeAbstractNode implements
         // The filter is in charge of masking out the rendering while the diagram is
         //  clipped to this node and it's being drawn via the diagram's main camera!
         if (getVisible() && (getPickable() || getChildrenPickable())
-                && fullIntersects(pickPath.getPickBounds())) {
+                && fullIntersectsOri(pickPath.getPickBounds())) {
             pickPath.pushNode(this);
             pickPath.pushTransform(getTransformReference(true));
 
@@ -479,7 +479,7 @@ public class KNodeNode extends KNodeAbstractNode implements
         // In contrast, the rendering figure is supposed to be drawn at all times
         //  while the diagram is drawn via the outline view's camera!
 
-        if (getVisible() && fullIntersects(paintContext.getLocalClip())) {
+        if (getVisible() && fullIntersectsOri(paintContext.getLocalClip())) {
             final PAffineTransform transform = getTransformReference(false);
             paintContext.pushTransform(transform);
             // paintContext.pushTransparency(getTransparency());
