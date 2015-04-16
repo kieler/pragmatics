@@ -216,6 +216,11 @@ public final class BKNodePlacer implements ILayoutPhase {
             // of all nodes.
             compacter.horizontalCompaction(bal);
         }
+        
+        BKStraightener straightener = new BKStraightener(layeredGraph);
+        for (BKAlignedLayout bal : layouts) {
+            straightener.improveStraightness(bal);
+        }
 
         // Debug output
         if (debugMode) {
