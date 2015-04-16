@@ -49,8 +49,8 @@ public final class LabelSpaceCalculation {
      */
     public static void calculateRequiredNodeLabelSpace(final NodeAdapter<?> node,
             final double labelSpacing) {
-        Insets insets =
-                calculateRequiredNodeLabelSpace(node, labelSpacing,
+
+        Insets insets = calculateRequiredNodeLabelSpace(node, labelSpacing,
                         new HashMap<LabelLocation, LabelGroup>(), node.getInsets());
         node.setInsets(insets);
     }

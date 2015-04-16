@@ -662,9 +662,6 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         
         // Get the offset to be added to all coordinates
         KVector offset = new KVector(lgraph.getOffset());
-        LInsets insets = lgraph.getInsets();
-        offset.x += insets.left;
-        offset.y += insets.top;
 
         // Along the way, we collect the list of edges to be processed later
         List<LEdge> edgeList = Lists.newArrayList();
