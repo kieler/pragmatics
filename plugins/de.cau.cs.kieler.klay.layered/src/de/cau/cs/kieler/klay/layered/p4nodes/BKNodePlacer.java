@@ -210,7 +210,8 @@ public final class BKNodePlacer implements ILayoutPhase {
             aligner.insideBlockShift(bal);
         }
 
-        BKCompacter compacter = new BKCompacter(layeredGraph);
+//        BKCompacter compacter = new BKCompacter(layeredGraph);
+        BKCompacterStraight compacter = new BKCompacterStraight(layeredGraph);
         for (BKAlignedLayout bal : layouts) {
             // This phase determines the y coordinates of the blocks and thus the vertical coordinates
             // of all nodes.
@@ -219,7 +220,7 @@ public final class BKNodePlacer implements ILayoutPhase {
         
         BKStraightener straightener = new BKStraightener(layeredGraph);
         for (BKAlignedLayout bal : layouts) {
-            straightener.improveStraightness(bal);
+//            straightener.improveStraightness(bal);
         }
 
         // Debug output

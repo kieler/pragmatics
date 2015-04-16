@@ -281,6 +281,7 @@ public class BKStraightener {
     
     private double getMinY(final BKAlignedLayout bal, final LNode n) {
 
+        // TODO consider external port spacing
         final double spacing;
         if (n.getProperty(InternalProperties.NODE_TYPE) != NodeType.NORMAL) {
            spacing = smallSpacing; 
@@ -297,7 +298,8 @@ public class BKStraightener {
     }
     
     private double getMaxY(final BKAlignedLayout bal, final LNode n) {
-      
+
+        // TODO consider external port spacing
         final double spacing;
         if (n.getProperty(InternalProperties.NODE_TYPE) != NodeType.NORMAL) {
            spacing = smallSpacing; 
