@@ -53,8 +53,6 @@ public enum IntermediateProcessorStrategy {
     /** Adds dummy nodes in edges where center labels are present. */
     LABEL_DUMMY_INSERTER,
 
-    // Before Phase 3
-
     /** Makes sure that layer constraints are taken care of. */
     LAYER_CONSTRAINT_PROCESSOR,
     /** Handles northern and southern hierarchical ports. */
