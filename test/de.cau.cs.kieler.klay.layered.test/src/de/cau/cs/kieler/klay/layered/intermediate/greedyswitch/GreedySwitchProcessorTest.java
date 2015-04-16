@@ -67,14 +67,10 @@ public class GreedySwitchProcessorTest {
      */
     @Parameters(name = "{0}")
     public static Iterable<Object[]> greedyTypes() {
-        return Arrays.asList(new Object[][] { { GreedySwitchType.ONE_SIDED_COUNTER, },
-                { GreedySwitchType.ONE_SIDED_CROSSING_MATRIX },
-                { GreedySwitchType.ONE_SIDED_ON_DEMAND_CROSSING_MATRIX },
-                { GreedySwitchType.ONE_SIDED_ON_DEMAND_CROSSING_MATRIX_BEST_OF_UP_OR_DOWN },
-                { GreedySwitchType.TWO_SIDED_COUNTER },
-                { GreedySwitchType.TWO_SIDED_CROSSING_MATRIX },
-                { GreedySwitchType.TWO_SIDED_ON_DEMAND_CROSSING_MATRIX },
-                { GreedySwitchType.TWO_SIDED_ON_DEMAND_CROSSING_MATRIX_BEST_OF_UP_OR_DOWN }, });
+        return Arrays.asList(new Object[][] {
+ { GreedySwitchType.ONE_SIDED },
+                { GreedySwitchType.ONE_SIDED_BEST_OF_UP_OR_DOWN }, { GreedySwitchType.TWO_SIDED },
+                { GreedySwitchType.TWO_SIDED_BEST_OF_UP_OR_DOWN }, });
     }
 
     // CHECKSTYLEOFF javadoc

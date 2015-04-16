@@ -27,6 +27,7 @@ import org.junit.runners.Parameterized.Parameters;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
+import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.OneSidedSwitchDecider.CrossingCountSide;
 import de.cau.cs.kieler.klay.layered.properties.GreedySwitchType;
 
 /**
@@ -49,12 +50,8 @@ public class SwitchDeciderTest {
      */
     @Parameters(name = "{0}")
     public static Iterable<Object[]> greedyTypes() {
-        return Arrays.asList(new Object[][] { { GreedySwitchType.ONE_SIDED_COUNTER, },
-                { GreedySwitchType.TWO_SIDED_COUNTER },
-                { GreedySwitchType.ONE_SIDED_CROSSING_MATRIX },
-                { GreedySwitchType.TWO_SIDED_CROSSING_MATRIX },
-                { GreedySwitchType.ONE_SIDED_ON_DEMAND_CROSSING_MATRIX },
-                { GreedySwitchType.TWO_SIDED_ON_DEMAND_CROSSING_MATRIX } });
+        return Arrays.asList(new Object[][] { { GreedySwitchType.ONE_SIDED },
+                { GreedySwitchType.TWO_SIDED } });
     }
 
     /**
@@ -65,13 +62,11 @@ public class SwitchDeciderTest {
      */
     public SwitchDeciderTest(final GreedySwitchType gT) {
         greedyType = gT;
-        factory = new SwitchDeciderFactory(gT);
     }
 
     private final TestGraphCreator creator = new TestGraphCreator();
     private LGraph graph;
     private SwitchDecider decider;
-    private final SwitchDeciderFactory factory;
     private LNode[][] currentNodeOrder;
     private int freeLayerIndex;
 
@@ -361,7 +356,11 @@ public class SwitchDeciderTest {
             final CrossingCountSide direction) {
         freeLayerIndex = layerIndex;
         currentNodeOrder = getCurrentNodeOrder();
-        return factory.getNewSwitchDecider(layerIndex, currentNodeOrder, direction);
+        if (greedyType.isOneSided()) {
+            return new OneSidedSwitchDecider(freeLayerIndex, currentNodeOrder, direction);
+        } else {
+            return new TwoSidedSwitchDecider(freeLayerIndex, currentNodeOrder);
+        }
     }
 
     private LNode[][] getCurrentNodeOrder() {

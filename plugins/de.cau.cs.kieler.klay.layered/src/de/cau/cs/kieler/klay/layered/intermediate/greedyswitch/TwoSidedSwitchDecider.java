@@ -24,13 +24,13 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
  * @author alan
  *
  */
-class OnDemandCrossingMatrixTwoSidedSwitchDecider extends OnDemandCrossingMatrixSwitchDecider {
+class TwoSidedSwitchDecider extends SwitchDecider {
 
     /**
      * @param freeLayerIndex
      * @param graph
      */
-    public OnDemandCrossingMatrixTwoSidedSwitchDecider(final int freeLayerIndex,
+    public TwoSidedSwitchDecider(final int freeLayerIndex,
             final LNode[][] graph) {
         super(freeLayerIndex, graph);
     }
@@ -43,5 +43,4 @@ class OnDemandCrossingMatrixTwoSidedSwitchDecider extends OnDemandCrossingMatrix
         super.getTwoLayerCrossCounter().countBothSideCrossings(upperNode, lowerNode);
         super.setCrossingMatrixEntriesFromCounter(upperNode, lowerNode);
     }
-
 }

@@ -30,7 +30,7 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
  * @author alan
  *
  */
-class InLayerEdgeTwoNodeCrossingCounter extends InLayerEdgeCrossingsCounter {
+class InLayerEdgeTwoNodeCrossingCounter extends InLayerEdgeAllCrossingsCounter {
 
     private final List<ComparableEdgeAndPort> relevantEdgesAndPorts;
     private int upperLowerCrossings;
@@ -165,6 +165,10 @@ class InLayerEdgeTwoNodeCrossingCounter extends InLayerEdgeCrossingsCounter {
 
     public int getLowerUpperCrossings() {
         return lowerUpperCrossings;
+    }
+
+    private LPort otherEndOf(final LEdge edge, final LPort fromPort) {
+        return fromPort == edge.getSource() ? edge.getTarget() : edge.getSource();
     }
 
 }

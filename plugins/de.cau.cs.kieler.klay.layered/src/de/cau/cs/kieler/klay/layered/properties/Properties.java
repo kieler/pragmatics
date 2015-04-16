@@ -128,7 +128,7 @@ public final class Properties {
      */
     public static final IProperty<GreedySwitchType> GREEDY_SWITCH_TYPE =
             new Property<GreedySwitchType>("de.cau.cs.kieler.klay.layered.greedySwitch",
-                    GreedySwitchType.OFF);
+                    GreedySwitchType.TWO_SIDED);
 
     /**
      * Property to choose a node placement strategy.

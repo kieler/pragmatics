@@ -21,6 +21,7 @@ import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
+import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.OneSidedSwitchDecider.CrossingCountSide;
 import de.cau.cs.kieler.klay.layered.properties.GreedySwitchType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -44,7 +45,6 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *
  */
 public class GreedySwitchProcessor implements ILayoutProcessor {
-    private SwitchDeciderFactory switchDeciderFactory;
     private LNode[][] currentNodeOrder;
     private LNode[][] bestNodeOrder;
     private LGraph layeredGraph;
@@ -69,7 +69,6 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
             return;
         }
 
-        switchDeciderFactory = new SwitchDeciderFactory(greedySwitchType);
 
         initialize(graph);
 
@@ -120,7 +119,6 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
     private int getCrossingCount() {
         return greedySwitchType.isOneSided() ? currentCrossings : countCurrentNumberOfCrossings();
     }
-
 
     /**
      * This version of the greedy switch processor sweeps forward and backward over the graph.
@@ -174,24 +172,27 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
         setAsBestNodeOrder(currentNodeOrder);
     }
 
-
     private boolean sweepForward() {
         boolean improved = false;
         for (int freeLayerIndex = 0; freeLayerIndex < currentNodeOrder.length; freeLayerIndex++) {
-            switchDecider =
-                    switchDeciderFactory.getNewSwitchDecider(freeLayerIndex, currentNodeOrder,
-                            CrossingCountSide.WEST);
+            switchDecider = getNewSwitchDecider(freeLayerIndex, CrossingCountSide.WEST);
             improved |= continueSwitchingUntilNoImprovementInLayer(freeLayerIndex);
         }
         return improved;
     }
 
+    private SwitchDecider getNewSwitchDecider(final int freeLayerIndex, final CrossingCountSide side) {
+        if (greedySwitchType.isOneSided()) {
+            return new OneSidedSwitchDecider(freeLayerIndex, currentNodeOrder, side);
+        } else {
+            return new TwoSidedSwitchDecider(freeLayerIndex, currentNodeOrder);
+        }
+    }
+
     private boolean sweepBackward() {
         boolean improved = false;
         for (int freeLayerIndex = currentNodeOrder.length - 1; freeLayerIndex >= 0; freeLayerIndex--) {
-            switchDecider =
-                    switchDeciderFactory.getNewSwitchDecider(freeLayerIndex, currentNodeOrder,
-                            CrossingCountSide.EAST);
+            switchDecider = getNewSwitchDecider(freeLayerIndex, CrossingCountSide.EAST);
             improved |= continueSwitchingUntilNoImprovementInLayer(freeLayerIndex);
         }
         return improved;
@@ -224,7 +225,6 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
         }
         return continueSwitching;
     }
-
 
     private boolean sweepUpwardInLayer(final int layerIndex) {
         boolean continueSwitching = false;

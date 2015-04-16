@@ -24,7 +24,20 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
  * @author alan
  *
  */
-class OnDemandCrossingMatrixOneSidedSwitchDecider extends OnDemandCrossingMatrixSwitchDecider {
+class OneSidedSwitchDecider extends SwitchDecider {
+
+    /**
+     * The side on which to count crossings for the one-sided SwitchDecider.
+     * 
+     * @author alan
+     *
+     */
+    enum CrossingCountSide {
+        /** Consider crossings to the west of the free layer. */
+        WEST,
+        /** Consider crossings to the east of the free layer. */
+        EAST
+    }
 
     private final CrossingCountSide direction;
 
@@ -32,7 +45,7 @@ class OnDemandCrossingMatrixOneSidedSwitchDecider extends OnDemandCrossingMatrix
      * @param freeLayerIndex
      * @param graph
      */
-    public OnDemandCrossingMatrixOneSidedSwitchDecider(final int freeLayerIndex,
+    public OneSidedSwitchDecider(final int freeLayerIndex,
             final LNode[][] graph, final CrossingCountSide direction) {
         super(freeLayerIndex, graph);
         this.direction = direction;

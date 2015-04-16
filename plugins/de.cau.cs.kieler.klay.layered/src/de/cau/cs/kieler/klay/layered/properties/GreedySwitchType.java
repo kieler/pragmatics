@@ -20,45 +20,38 @@ package de.cau.cs.kieler.klay.layered.properties;
  *
  */
 public enum GreedySwitchType {
-    /** Only consider crossings to one side of the free layer. Recount all crossings each time. */
-    ONE_SIDED_COUNTER(true, false, false),
-    /** Consider crossings to both sides of the free layer. Recount all crossings each time. */
-    TWO_SIDED_COUNTER(false, false, false),
-    /** Only consider crossings to one side of the free layer. Calculate complete crossing matrix. */
-    ONE_SIDED_CROSSING_MATRIX(true, false, false),
-    /** Consider crossings to both sides of the free layer. Calculate complete crossing matrix. */
-    TWO_SIDED_CROSSING_MATRIX(false, false, false),
+
     /** Only consider crossings to one side of the free layer. Calculate crossing matrix on demand. */
-    ONE_SIDED_ON_DEMAND_CROSSING_MATRIX(true, false, false),
+    ONE_SIDED(true, false, false),
     /** Consider crossings to both sides of the free layer. Calculate crossing matrix on demand. */
-    TWO_SIDED_ON_DEMAND_CROSSING_MATRIX(false, false, false),
+    TWO_SIDED(false, false, false),
     /**
      * Only consider crossings to one side of the free layer. Calculate crossing matrix on demand.
      * Compare all upward and downward sweeps.
      */
-    ONE_SIDED_ON_DEMAND_CROSSING_MATRIX_BEST_OF_UP_OR_DOWN(true, true, false),
+    ONE_SIDED_BEST_OF_UP_OR_DOWN(true, true, false),
     /**
      * Consider crossings to both sides of the free layer. Calculate crossing matrix on demand.
      * Compare all upward and downward sweeps.
      */
-    TWO_SIDED_ON_DEMAND_CROSSING_MATRIX_BEST_OF_UP_OR_DOWN(false, true, false),
+    TWO_SIDED_BEST_OF_UP_OR_DOWN(false, true, false),
     /**
      * Only consider crossings to one side of the free layer. Calculate crossing matrix on demand.
      * Compare all upward and downward sweeps. Use hyperedge crossings counter for between layer
      * edges
      */
-    ONE_SIDED_ON_DEMAND_CROSSING_MATRIX_BEST_OF_UP_OR_DOWN_ORTHOGONAL_HYPEREDGES(true, true, true),
+    ONE_SIDED_BEST_OF_UP_OR_DOWN_ORTHOGONAL_HYPEREDGES(true, true, true),
     /**
      * Consider crossings to both sides of the free layer. Calculate crossing matrix on demand.
      * Compare all upward and downward sweeps. Use hyperedge crossings counter for between layer
      * edges.
      */
-    TWO_SIDED_ON_DEMAND_CROSSING_MATRIX_BEST_OF_UP_OR_DOWN_ORTHOGONAL_HYPEREDGES(false, true, true),
+    TWO_SIDED_BEST_OF_UP_OR_DOWN_ORTHOGONAL_HYPEREDGES(false, true, true),
     /**
      * Only consider crossings to one side of the free layer. Calculate crossing matrix on demand.
      * Use hyperedge crossings counter for between layer edges.
      */
-    ONE_SIDED_ON_DEMAND_CROSSING_MATRIX_ORTHOGONAL_HYPEREDGES(true, false, true),
+    ONE_SIDED_ORTHOGONAL_HYPEREDGES(true, false, true),
     /** Don't use greedy switch heuristic. */
     OFF(false, false, false);
 
