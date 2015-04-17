@@ -13,10 +13,14 @@
  */
 package de.cau.cs.kieler.klay.layered.p4nodes;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
+import java.util.Set;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
@@ -41,6 +45,9 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @author uru
  */
 public class BKCompacterStraight {
+    
+    // TODO make this an option
+    private static final double THRESHOLD = 200; 
     
     /** The graph to process. */
     private LGraph layeredGraph;
@@ -93,6 +100,7 @@ public class BKCompacterStraight {
             layers = Lists.reverse(layers);
         }
 
+        blockFinished.clear();
         System.out.println("PLACING BLOCKS FOR " + bal);
         for (Layer layer : layers) {
             // As with layers, we need a reversed iterator for blocks for different directions
@@ -107,6 +115,12 @@ public class BKCompacterStraight {
                     placeBlock(v, bal);
                 }
             }
+        }
+        
+        // all blocks were placed, shift latecomers
+        while (!postProcessables.isEmpty()) {
+            LNode root = postProcessables.poll();
+            System.out.println("PostProcesS: " + root);
         }
 
         // Try to compact blocks by shifting them towards each other if there is space between them.
@@ -131,6 +145,9 @@ public class BKCompacterStraight {
             }
         }
     }
+    
+    private Set<LNode> blockFinished = Sets.newHashSet();
+    private Queue<LNode> postProcessables = new LinkedList<LNode>();
     
     /* Note: The following methods diverts from the convention of naming variables as they were named in
      *       the original paper for better code readability. (Since this is one of the most intricate
@@ -166,7 +183,8 @@ public class BKCompacterStraight {
         // Iterate through block and determine, where the block can be placed (until we arrive at the
         // block's root node again)
         LNode currentNode = root;
-        double minPos = bal.vdir == VDirection.DOWN ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
+        double minPos =
+                bal.vdir == VDirection.DOWN ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
         do {
             int currentIndexInLayer = currentNode.getIndex();
             int currentLayerSize = currentNode.getLayer().getNodes().size();
@@ -263,13 +281,20 @@ public class BKCompacterStraight {
 //                        } else {
 //                            bal.y.put(root, Math.min(currentBlockPosition, newPosition));
 //                        }
+                        
+                        double validNewPosition = newPosition;
+                        if (Math.abs(minPos - newPosition) < THRESHOLD) {
+                            validNewPosition = Math.min(newPosition, minPos);
+                        }
+                        
                         if (isInitialAssignment) {
                             isInitialAssignment = false;
-                            bal.y.put(root, Math.min(newPosition, minPos));
+                            bal.y.put(root, validNewPosition);
                         } else {
-                            bal.y.put(root, Math.min(currentBlockPosition, Math.min(newPosition, minPos)));
+                            bal.y.put(root, Math.min(currentBlockPosition, validNewPosition));
                         }
-                    } else {
+                    } else { // LEFT
+                        
                         double currentBlockPosition = bal.y.get(root);
                         double newPosition = bal.y.get(neighborRoot)
                                 + bal.innerShift.get(neighbor)
@@ -285,14 +310,22 @@ public class BKCompacterStraight {
 //                        } else {
 //                            bal.y.put(root, Math.max(currentBlockPosition, newPosition));
 //                        }
+                        
+                        double validNewPosition = newPosition;
+                        if (Math.abs(minPos - newPosition) < THRESHOLD) {
+                            validNewPosition = Math.max(newPosition, minPos);
+                        }
+                        
                        if (isInitialAssignment) {
                           isInitialAssignment = false;
-                          bal.y.put(root, Math.max(newPosition, minPos));
+                          bal.y.put(root, validNewPosition);
                       } else {
-                          bal.y.put(root, Math.max(currentBlockPosition, Math.max(newPosition, minPos)));
+                          bal.y.put(root, Math.max(currentBlockPosition, validNewPosition));
                       }
                     }
-                } else {
+                    
+                    
+                } else { // CLASSES
                     // TODO Take a look at this code
                     
                     // They are not part of the same class. Compute how the two classes can be compacted
@@ -322,51 +355,58 @@ public class BKCompacterStraight {
         } while (currentNode != root);
         
         System.out.println("\tDone with " + root);
+        blockFinished.add(root);
     }
     
     
     private double getBound(final BKAlignedLayout bal, final LNode root) {
-            
-            double minPos = bal.vdir == VDirection.UP ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
-            Iterable<LEdge> edges = bal.hdir == HDirection.RIGHT ? root.getIncomingEdges() : root.getOutgoingEdges();
-            
-            // PROBLEM !!! blocks with a SINGLE node!
-            
-            if (!Iterables.isEmpty(edges)) {
-                // pick the first edge 
-                // TODO probably better use the median? (no probably not, depends no node, check for two edges)
-                LEdge incidentEdge = Iterables.get(edges, 0);
-                LPort left = incidentEdge.getSource();
-                LPort right = incidentEdge.getTarget();
-                
-                LPort rootPort = bal.hdir == HDirection.RIGHT ? right : left;
-                LPort otherPort = bal.hdir == HDirection.RIGHT ? left : right;
 
-                //if (bal.y.get(bal.root.get(otherPort.getNode())) == null) {
-                if (!bal.y.containsKey(bal.root.get(otherPort.getNode()))) {
-                    System.out.println(bal + ": Not placed yet " + otherPort);
-                    return minPos;
-                }
-                
-                LNode otherRoot = bal.root.get(otherPort.getNode()); 
-                System.out.println("rot " + rootPort.getNode() + "oter " + otherRoot + " " + bal.y.get(otherRoot));
-                minPos = bal.y.get(otherRoot)
-                        + bal.innerShift.get(otherPort.getNode())
-                        + otherPort.getPosition().y
-                        + otherPort.getAnchor().y
-                        // root node
-                        - bal.innerShift.get(rootPort.getNode())
-                        - rootPort.getPosition().y
-                        - rootPort.getAnchor().y
-                        ;
+        double invalid =
+                bal.vdir == VDirection.UP ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
+        Iterable<LEdge> edges =
+                bal.hdir == HDirection.RIGHT ? root.getIncomingEdges() : root.getOutgoingEdges();
+
+        // PROBLEM !!! blocks with a SINGLE node!
+
+        if (!Iterables.isEmpty(edges)) {
+            // pick the first edge
+            // TODO probably better use the median? (no probably not, depends no node, check for two
+            // edges)
+            LEdge incidentEdge = Iterables.get(edges, 0);
+            LPort left = incidentEdge.getSource();
+            LPort right = incidentEdge.getTarget();
+
+            LPort rootPort = bal.hdir == HDirection.RIGHT ? right : left;
+            LPort otherPort = bal.hdir == HDirection.RIGHT ? left : right;
+
+            // if (bal.y.get(bal.root.get(otherPort.getNode())) == null) {
+            //if (!bal.y.containsKey(bal.root.get(otherPort.getNode()))) {
+            if (!blockFinished.contains(bal.root.get(otherPort.getNode()))) {
+                System.out.println(bal + ": Not placed yet " + otherPort);
+                postProcessables.add(rootPort.getNode());
+                return invalid;
             }
-        
+
+            LNode otherRoot = bal.root.get(otherPort.getNode());
+            System.out.println("rot " + rootPort.getNode() + "oter " + otherRoot + " "
+                    + bal.y.get(otherRoot));
+            double minPos = bal.y.get(otherRoot) 
+                            + bal.innerShift.get(otherPort.getNode())
+                            + otherPort.getPosition().y 
+                            + otherPort.getAnchor().y
+                            // root node
+                            - bal.innerShift.get(rootPort.getNode()) 
+                            - rootPort.getPosition().y
+                            - rootPort.getAnchor().y;
             return minPos;
+        }
+
+        return invalid;
     }
     
     private double getBound2(final BKAlignedLayout bal, final LNode root) {
         
-        double minPos = bal.vdir == VDirection.UP ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
+        double invalid = bal.vdir == VDirection.UP ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
         Iterable<LEdge> edges = bal.hdir == HDirection.LEFT ? root.getIncomingEdges() : root.getOutgoingEdges();
         
         // PROBLEM !!! blocks with a SINGLE node!
@@ -383,12 +423,14 @@ public class BKCompacterStraight {
             LPort otherPort = bal.hdir == HDirection.LEFT ? left : right;
 
             // if (bal.y.get(bal.root.get(otherPort.getNode())) == null) {
-            if (!bal.y.containsKey(bal.root.get(otherPort.getNode()))) {
+            // if (!bal.y.containsKey(bal.root.get(otherPort.getNode()))) {
+            if (!blockFinished.contains(bal.root.get(otherPort.getNode()))) {
                 System.out.println(bal + ": Not placed yet " + otherPort);
-                return minPos;
+                postProcessables.add(rootPort.getNode());
+                return invalid;
             }
             
-            minPos = bal.y.get(bal.root.get(otherPort.getNode()))
+            double minPos = bal.y.get(bal.root.get(otherPort.getNode()))
                     + bal.innerShift.get(otherPort.getNode())
                     + otherPort.getPosition().y
                     + otherPort.getAnchor().y
@@ -397,8 +439,9 @@ public class BKCompacterStraight {
                     - rootPort.getPosition().y
                     - rootPort.getAnchor().y
                     ;
+            return minPos;
         }
     
-        return minPos;
+        return invalid;
 }
 }
