@@ -71,7 +71,7 @@ public final class LabelDummyInserter implements ILayoutProcessor {
         
         List<LNode> newDummyNodes = Lists.newArrayList();
         
-        double labelSpacing = layeredGraph.getProperty(LayoutOptions.LABEL_SPACING);
+        double labelSpacing = layeredGraph.getProperty(LayoutOptions.LABEL_SPACING).doubleValue();
 
         for (LNode node : layeredGraph.getLayerlessNodes()) {
             for (LPort port : node.getPorts()) {

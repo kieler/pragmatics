@@ -59,7 +59,7 @@ public final class LabelDummyRemover implements ILayoutProcessor {
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
         monitor.begin("Label dummy removal", 1);
         
-        double labelSpacing = layeredGraph.getProperty(LayoutOptions.LABEL_SPACING);
+        double labelSpacing = layeredGraph.getProperty(LayoutOptions.LABEL_SPACING).doubleValue();
         
         for (Layer layer : layeredGraph.getLayers()) {
             // An iterator is necessary for traversing nodes, since

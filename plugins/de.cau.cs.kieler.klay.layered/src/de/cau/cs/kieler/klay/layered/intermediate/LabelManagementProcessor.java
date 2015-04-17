@@ -60,7 +60,7 @@ public final class LabelManagementProcessor implements ILayoutProcessor {
         // set on the graph, but let's be sure anyway
         ILabelManager labelManager = layeredGraph.getProperty(LabelManagementOptions.LABEL_MANAGER);
         if (labelManager != null) {
-            double labelSpacing = layeredGraph.getProperty(LayoutOptions.LABEL_SPACING);
+            double labelSpacing = layeredGraph.getProperty(LayoutOptions.LABEL_SPACING).doubleValue();
             
             // Iterate over all layers and call our nifty code
             for (Layer layer : layeredGraph) {
@@ -94,7 +94,7 @@ public final class LabelManagementProcessor implements ILayoutProcessor {
         for (LNode labelDummy : layer) {
             if (labelDummy.getProperty(InternalProperties.NODE_TYPE) == NodeType.LABEL) {
                 LEdge edge = labelDummy.getConnectedEdges().iterator().next();
-                double edgeThickness = edge.getProperty(LayoutOptions.THICKNESS);
+                double edgeThickness = edge.getProperty(LayoutOptions.THICKNESS).doubleValue();
                 
                 final KVector newDummySize = new KVector(0.0, edgeThickness);
                 

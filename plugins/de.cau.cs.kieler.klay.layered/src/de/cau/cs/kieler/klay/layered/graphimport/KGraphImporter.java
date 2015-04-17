@@ -86,7 +86,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         
         // Create the layered graph
         LGraph topLevelGraph = createLGraph(kgraph);
-        labelSpacing = topLevelGraph.getProperty(LayoutOptions.LABEL_SPACING);
+        labelSpacing = topLevelGraph.getProperty(LayoutOptions.LABEL_SPACING).doubleValue();
         
         // Transform the external ports
         Set<GraphProperties> graphProperties = topLevelGraph.getProperty(
