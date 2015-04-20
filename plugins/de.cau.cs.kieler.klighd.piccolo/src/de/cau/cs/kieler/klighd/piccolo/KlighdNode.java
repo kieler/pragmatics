@@ -357,7 +357,7 @@ public abstract class KlighdNode extends PNode implements IKlighdNode {
     }
 
 
-    private static final PBounds TEMP_RECT = new PBounds();
+    private final PBounds tempRect = new PBounds();
     private boolean isValidatingPaint = false;
 
     // By means of the following two methods the behavior of validating the drawing,
@@ -391,14 +391,14 @@ public abstract class KlighdNode extends PNode implements IKlighdNode {
     @Override
     public void validateFullPaint() {
         isValidatingPaint = true;
-        TEMP_RECT.resetToZero();
+        tempRect.resetToZero();
 
         super.validateFullPaint();
 
         isValidatingPaint = false;
 
-        if (!TEMP_RECT.isEmpty()) {
-            repaintFrom(TEMP_RECT, this);
+        if (!tempRect.isEmpty()) {
+            repaintFrom(tempRect, this);
         }
     }
 
@@ -411,7 +411,10 @@ public abstract class KlighdNode extends PNode implements IKlighdNode {
     @Override
     public void repaintFrom(final PBounds localBounds, final PNode childOrThis) {
         if (isValidatingPaint) {
-            TEMP_RECT.add(localBounds);
+            if (childOrThis != this) {
+                this.localToParent(localBounds);
+            }
+            tempRect.add(localBounds);
         } else {
             super.repaintFrom(localBounds, childOrThis);
         }
