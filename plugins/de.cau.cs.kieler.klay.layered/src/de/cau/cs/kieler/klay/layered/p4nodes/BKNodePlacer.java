@@ -32,12 +32,12 @@ import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.FixedAlignment;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
-import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -456,11 +456,11 @@ public final class BKNodePlacer implements ILayoutPhase {
      */
     private boolean incidentToInnerSegment(final LNode node, final int layer1, final int layer2) {
         // consider that big nodes include their respective start and end node.
-        if (node.getProperty(InternalProperties.NODE_TYPE) == NodeType.BIG_NODE) {
+        if (node.getNodeType() == NodeType.BIG_NODE) {
             // all nodes should be placed straightly
             for (LEdge edge : node.getIncomingEdges()) {
                 LNode source = edge.getSource().getNode();
-                if ((source.getProperty(InternalProperties.NODE_TYPE) == NodeType.BIG_NODE 
+                if ((source.getNodeType() == NodeType.BIG_NODE
                         || source.getProperty(InternalProperties.BIG_NODE_INITIAL))
                         && edge.getSource().getNode().getLayer().getIndex() == layer2
                         && node.getLayer().getIndex() == layer1) {
@@ -470,10 +470,9 @@ public final class BKNodePlacer implements ILayoutPhase {
             }
         }
         
-        if (node.getProperty(InternalProperties.NODE_TYPE) == NodeType.LONG_EDGE) {
+        if (node.getNodeType() == NodeType.LONG_EDGE) {
             for (LEdge edge : node.getIncomingEdges()) {
-                NodeType sourceNodeType =
-                        edge.getSource().getNode().getProperty(InternalProperties.NODE_TYPE);
+                NodeType sourceNodeType = edge.getSource().getNode().getNodeType();
                 
                 // TODO Using layer indices here is not a good idea in terms of performance
                 if (sourceNodeType == NodeType.LONG_EDGE

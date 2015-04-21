@@ -31,11 +31,11 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.properties.EdgeLabelSideSelection;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
-import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -114,7 +114,7 @@ public final class LabelSideSelector implements ILayoutProcessor {
                 }
                 
                 // If this is a label dummy node, move the ports if necessary
-                if (lNode.getProperty(InternalProperties.NODE_TYPE) == NodeType.LABEL) {
+                if (lNode.getNodeType() == NodeType.LABEL) {
                     if (lNode.getProperty(InternalProperties.LABEL_SIDE) == LabelSide.ABOVE) {
                         LEdge originEdge = (LEdge) lNode.getProperty(InternalProperties.ORIGIN);
                         float thickness = originEdge.getProperty(LayoutOptions.THICKNESS);
@@ -142,7 +142,7 @@ public final class LabelSideSelector implements ILayoutProcessor {
      */
     private void alwaysUp(final Iterable<LNode> nodes) {
         for (LNode node : nodes) {
-            if (node.getProperty(InternalProperties.NODE_TYPE) == NodeType.LABEL) {
+            if (node.getNodeType() == NodeType.LABEL) {
                 node.setProperty(InternalProperties.LABEL_SIDE, LabelSide.ABOVE);
             }
             
@@ -159,7 +159,7 @@ public final class LabelSideSelector implements ILayoutProcessor {
      */
     private void alwaysDown(final Iterable<LNode> nodes) {
         for (LNode node : nodes) {
-            if (node.getProperty(InternalProperties.NODE_TYPE) == NodeType.LABEL) {
+            if (node.getNodeType() == NodeType.LABEL) {
                 node.setProperty(InternalProperties.LABEL_SIDE, LabelSide.BELOW);
             }
             
@@ -176,7 +176,7 @@ public final class LabelSideSelector implements ILayoutProcessor {
      */
     private void directionUp(final Iterable<LNode> nodes) {
         for (LNode node : nodes) {
-            if (node.getProperty(InternalProperties.NODE_TYPE) == NodeType.LABEL) {
+            if (node.getNodeType() == NodeType.LABEL) {
                 LabelSide side = doesEdgePointRight(node) ? LabelSide.ABOVE : LabelSide.BELOW;
                 node.setProperty(InternalProperties.LABEL_SIDE, side);
             }
@@ -195,7 +195,7 @@ public final class LabelSideSelector implements ILayoutProcessor {
      */
     private void directionDown(final Iterable<LNode> nodes) {
         for (LNode node : nodes) {
-            if (node.getProperty(InternalProperties.NODE_TYPE) == NodeType.LABEL) {
+            if (node.getNodeType() == NodeType.LABEL) {
                 LabelSide side = doesEdgePointRight(node) ? LabelSide.BELOW : LabelSide.ABOVE;
                 node.setProperty(InternalProperties.LABEL_SIDE, side);
             }
@@ -224,8 +224,8 @@ public final class LabelSideSelector implements ILayoutProcessor {
                     LabelSide chosenSide = LabelSide.ABOVE;
                     LNode targetNode = edge.getTarget().getNode();
                     
-                    if (targetNode.getProperty(InternalProperties.NODE_TYPE) == NodeType.LONG_EDGE
-                            || targetNode.getProperty(InternalProperties.NODE_TYPE) == NodeType.LABEL) {
+                    if (targetNode.getNodeType() == NodeType.LONG_EDGE
+                            || targetNode.getNodeType() == NodeType.LABEL) {
                         
                         targetNode =
                                 targetNode.getProperty(InternalProperties.LONG_EDGE_TARGET).getNode();
@@ -347,7 +347,7 @@ public final class LabelSideSelector implements ILayoutProcessor {
      *         final drawing.
      */
     private boolean doesEdgePointRight(final LNode labelDummy) {
-        assert labelDummy.getProperty(InternalProperties.NODE_TYPE) == NodeType.LABEL;
+        assert labelDummy.getNodeType() == NodeType.LABEL;
         assert labelDummy.getIncomingEdges().iterator().hasNext();
         assert labelDummy.getOutgoingEdges().iterator().hasNext();
         

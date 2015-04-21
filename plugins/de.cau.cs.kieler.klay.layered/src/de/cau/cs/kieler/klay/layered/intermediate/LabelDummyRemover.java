@@ -23,9 +23,9 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
-import de.cau.cs.kieler.klay.layered.properties.NodeType;
 
 /**
  * <p>Processor that removes the inserted center label dummies and places the labels on their
@@ -69,7 +69,7 @@ public final class LabelDummyRemover implements ILayoutProcessor {
             while (nodeIterator.hasNext()) {
                 LNode node = nodeIterator.next();
                 
-                if (node.getProperty(InternalProperties.NODE_TYPE) == NodeType.LABEL) {
+                if (node.getNodeType() == NodeType.LABEL) {
                     // First, place labels on position of dummy node 
                     LEdge originEdge = (LEdge) node.getProperty(InternalProperties.ORIGIN);
                     double ypos = node.getPosition().y;

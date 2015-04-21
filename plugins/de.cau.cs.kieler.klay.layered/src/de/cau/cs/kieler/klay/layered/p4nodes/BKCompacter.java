@@ -19,12 +19,11 @@ import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer.BKAlignedLayout;
 import de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer.HDirection;
 import de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer.VDirection;
-import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
-import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -159,7 +158,7 @@ public class BKCompacter {
         do {
             int currentIndexInLayer = currentNode.getIndex();
             int currentLayerSize = currentNode.getLayer().getNodes().size();
-            NodeType currentNodeType = currentNode.getProperty(InternalProperties.NODE_TYPE);
+            NodeType currentNodeType = currentNode.getNodeType();
             
             // If the node is the top or bottom node of its layer, it can be placed safely since it is
             // the first to be placed in its layer. If it's not, we'll have to check its neighbours
@@ -177,7 +176,7 @@ public class BKCompacter {
                 neighborRoot = bal.root.get(neighbor);
                 
                 // The neighbour's node type is important for the spacing between the two later on
-                NodeType neighborNodeType = neighbor.getProperty(InternalProperties.NODE_TYPE);
+                NodeType neighborNodeType = neighbor.getNodeType();
 
                 // Ensure the neighbor was already placed
                 placeBlock(neighborRoot, bal);

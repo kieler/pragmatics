@@ -28,12 +28,12 @@ import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
-import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -205,7 +205,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                 }
                 
                 // Count north/south dummy nodes
-                if (node.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT) {
+                if (node.getNodeType() == NodeType.NORTH_SOUTH_PORT) {
                     inLayerEdgeCount[layerIndex]++;
                     hasNorthSouthPorts[layerIndex] = true;
                 }
@@ -239,7 +239,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
      *            the layer to check for hyperedges.
      * @return true if the given layer has any hyperedges from the left or to the right side.
      */
-    private boolean hasHyperedges(int layerIndex) {
+    private boolean hasHyperedges(final int layerIndex) {
         return hasHyperedgesEast[layerIndex] || hasHyperedgesWest[layerIndex];
     }
 

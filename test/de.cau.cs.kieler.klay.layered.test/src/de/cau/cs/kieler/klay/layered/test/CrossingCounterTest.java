@@ -26,6 +26,7 @@ import com.google.common.collect.Lists;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.p3order.BarthJuengerMutzelCrossingsCounter;
@@ -33,8 +34,6 @@ import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
 import de.cau.cs.kieler.klay.layered.p3order.HyperedgeCrossingsCounter;
 import de.cau.cs.kieler.klay.layered.p3order.LayerSweepCrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.p3order.NodeGroup;
-import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
-import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 import de.cau.cs.kieler.klay.layered.test.phases.SimplePhaseLayoutConfigurator;
 import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
@@ -190,7 +189,7 @@ public class CrossingCounterTest extends AbstractLayeredProcessorTest {
                 }
                 
                 // Count north/south dummy nodes
-                if (node.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT) {
+                if (node.getNodeType() == NodeType.NORTH_SOUTH_PORT) {
                     inLayerEdgeCount[layerIndex]++;
                     hasNorthSouthPorts[layerIndex] = true;
                 }
