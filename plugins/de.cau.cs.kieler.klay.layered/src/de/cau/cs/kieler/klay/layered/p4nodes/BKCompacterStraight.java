@@ -22,6 +22,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -47,7 +48,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
 public class BKCompacterStraight {
     
     // TODO make this an option
-    private static final double THRESHOLD = 200; 
+    private static final double THRESHOLD = 2000; 
     
     /** The graph to process. */
     private LGraph layeredGraph;
@@ -117,12 +118,6 @@ public class BKCompacterStraight {
             }
         }
         
-        // all blocks were placed, shift latecomers
-        while (!postProcessables.isEmpty()) {
-            LNode root = postProcessables.poll();
-            System.out.println("PostProcesS: " + root);
-        }
-
         // Try to compact blocks by shifting them towards each other if there is space between them.
         // It's important to traverse top-bottom or bottom-top here too
         // This is where 'classes' are compacted?!
@@ -144,10 +139,46 @@ public class BKCompacterStraight {
                 }
             }
         }
+        
+        
+        BKStraightener straightener = new BKStraightener(layeredGraph);
+        
+        // all blocks were placed, shift latecomers
+        while (!postProcessables.isEmpty()) {
+            LNode root = postProcessables.poll();
+            System.out.println("PostProcesS: " + root);
+            Pair<LPort, LPort> pair = postProcessables2.poll();
+            LPort block = pair.getFirst();
+            LPort fix = pair.getSecond(); 
+            
+            // t has to be the root node of a different block
+            double delta = straightener.calculateDelta(bal, fix, block);
+
+            if (delta > 0 && delta < THRESHOLD) {
+                System.out.println("SHOULD BE DOWN: " + bal.vdir);
+                // target y larger than source y --> shift upwards?
+                if (straightener.checkSpaceAbove(bal, fix.getNode(), block.getNode(), delta)) {
+                    straightener.shiftBlock(bal, block.getNode(), -delta);
+                }
+            } else if (delta < 0 && -delta < THRESHOLD) {
+                System.out.println("SHOULD BE UP: " + bal.vdir);
+                
+                // direction is up, we possibly shifted some blocks too far upward 
+                // for an edge to be straight, so check if we can shift down again
+                
+                // target y smaller than source y --> shift down?
+                if (straightener.checkSpaceBelow(bal, fix.getNode(), block.getNode(), -delta)) {
+                    straightener.shiftBlock(bal, block.getNode(), -delta);
+                }
+            }
+            
+        }
+        
     }
     
     private Set<LNode> blockFinished = Sets.newHashSet();
     private Queue<LNode> postProcessables = new LinkedList<LNode>();
+    private Queue<Pair<LPort, LPort>> postProcessables2 = Lists.newLinkedList();
     
     /* Note: The following methods diverts from the convention of naming variables as they were named in
      *       the original paper for better code readability. (Since this is one of the most intricate
@@ -348,6 +379,33 @@ public class BKCompacterStraight {
                                         - spacing));
                     }
                 }
+            } else {
+                
+                // Remember that for blocks with a single node both flags can be true
+                boolean isRoot = root.equals(currentNode);
+                boolean isLast = bal.align.get(currentNode).equals(root);
+                
+                if (bal.hdir == HDirection.RIGHT) {
+
+                    // Note that it is not guaranteed that adjacent nodes are already placed!
+                    
+                    if (isRoot) {
+                        minPos = getBound(bal, root);
+                    }
+                    if (Double.isInfinite(minPos) && isLast) {
+                        minPos = getBound2(bal, currentNode);
+                    }
+                    
+                } else { // LEFT
+                    
+                    if (isRoot) {
+                        minPos = getBound(bal, root);
+                    } 
+                    if (Double.isInfinite(minPos) && isLast) {
+                        minPos = getBound2(bal, currentNode);
+                    }
+                }
+                
             }
             
             // Get the next node in the block
@@ -384,6 +442,7 @@ public class BKCompacterStraight {
             if (!blockFinished.contains(bal.root.get(otherPort.getNode()))) {
                 System.out.println(bal + ": Not placed yet " + otherPort);
                 postProcessables.add(rootPort.getNode());
+                postProcessables2.add(Pair.of(rootPort, otherPort));
                 return invalid;
             }
 
@@ -427,6 +486,7 @@ public class BKCompacterStraight {
             if (!blockFinished.contains(bal.root.get(otherPort.getNode()))) {
                 System.out.println(bal + ": Not placed yet " + otherPort);
                 postProcessables.add(rootPort.getNode());
+                postProcessables2.add(Pair.of(rootPort, otherPort));
                 return invalid;
             }
             

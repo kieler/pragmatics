@@ -173,7 +173,7 @@ public class BKStraightener {
      *         This means that for {@code delta > 0} the target node has to be shifted upwards to
      *         straighten the edge.
      */
-    private double calculateDelta(final BKAlignedLayout bal, final LPort src, final LPort tgt) {
+    public double calculateDelta(final BKAlignedLayout bal, final LPort src, final LPort tgt) {
         double srcPos = bal.y.get(src.getNode()) + bal.innerShift.get(src.getNode()) 
                 + src.getPosition().y + src.getAnchor().y;
         double tgtPos = bal.y.get(tgt.getNode()) + bal.innerShift.get(tgt.getNode()) 
@@ -192,7 +192,7 @@ public class BKStraightener {
      * @param delta
      *            the delta by which the node should be move. Can be either positive or negative.
      */
-    private void shiftBlock(final BKAlignedLayout bal, final LNode root, final double delta) {
+    public void shiftBlock(final BKAlignedLayout bal, final LNode root, final double delta) {
         LNode current = root;
         do {
             double newPos = bal.y.get(current) + delta;
@@ -209,7 +209,7 @@ public class BKStraightener {
      * @param delta
      *          has to be a positive value
      */
-    private boolean checkSpaceAbove(final BKAlignedLayout bal, final LNode node,
+    public boolean checkSpaceAbove(final BKAlignedLayout bal, final LNode node,
             final LNode adjBlock, final double delta) {
 
         // adjBlock has to be a root node
@@ -248,7 +248,7 @@ public class BKStraightener {
      * @param delta
      *          has to be a positive value
      */
-    private boolean checkSpaceBelow(final BKAlignedLayout bal, final LNode node,
+    public boolean checkSpaceBelow(final BKAlignedLayout bal, final LNode node,
             final LNode adjBlock, final double delta) {
 
         // adjBlock has to be a root node
@@ -279,7 +279,7 @@ public class BKStraightener {
         return true;
     }
     
-    private double getMinY(final BKAlignedLayout bal, final LNode n) {
+    public double getMinY(final BKAlignedLayout bal, final LNode n) {
 
         // TODO consider external port spacing
         final double spacing;
@@ -297,7 +297,7 @@ public class BKStraightener {
             - spacing / 2d;
     }
     
-    private double getMaxY(final BKAlignedLayout bal, final LNode n) {
+    public double getMaxY(final BKAlignedLayout bal, final LNode n) {
 
         // TODO consider external port spacing
         final double spacing;
