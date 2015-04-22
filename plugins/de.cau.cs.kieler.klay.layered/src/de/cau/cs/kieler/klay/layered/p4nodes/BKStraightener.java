@@ -20,12 +20,11 @@ import com.google.common.collect.Sets;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer.BKAlignedLayout;
 import de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer.HDirection;
-import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
-import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -283,7 +282,7 @@ public class BKStraightener {
 
         // TODO consider external port spacing
         final double spacing;
-        if (n.getProperty(InternalProperties.NODE_TYPE) != NodeType.NORMAL) {
+        if (n.getNodeType() != NodeType.NORMAL) {
            spacing = smallSpacing; 
         } else {
             spacing = normalSpacing;
@@ -301,7 +300,7 @@ public class BKStraightener {
 
         // TODO consider external port spacing
         final double spacing;
-        if (n.getProperty(InternalProperties.NODE_TYPE) != NodeType.NORMAL) {
+        if (n.getNodeType() != NodeType.NORMAL) {
            spacing = smallSpacing; 
         } else {
             spacing = normalSpacing;
