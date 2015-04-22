@@ -234,4 +234,15 @@ public class KChildAreaNode extends KlighdDisposingLayer implements IKlighdNode.
 
         return false;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void fullPaint(final PPaintContext paintContext) {
+        super.validateFullBounds();
+        super.validateFullPaint();
+
+        super.fullPaint(paintContext);
+    }
 }
