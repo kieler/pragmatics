@@ -21,8 +21,8 @@ import com.google.common.collect.Multimap;
 
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
-import de.cau.cs.kieler.klay.layered.properties.NodeType;
 
 /**
  * Detects and resolves violated constraints. Inspired by
@@ -99,7 +99,7 @@ public final class ForsterConstraintResolver implements IConstraintResolver {
             }
 
             // Check if we're processing a a normal, none-dummy node
-            if (node.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORMAL) {
+            if (node.getNodeType() == NodeType.NORMAL) {
                 // If we already processed another normal, non-dummy node, we need to add
                 // constraints from all of that other node's layout unit's vertices to this
                 // node's layout unit's vertices

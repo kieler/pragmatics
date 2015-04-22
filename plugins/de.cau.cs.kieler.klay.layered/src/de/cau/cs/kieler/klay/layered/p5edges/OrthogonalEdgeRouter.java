@@ -222,7 +222,7 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
         
         // Prepare for iteration!
         OrthogonalRoutingGenerator routingGenerator = new OrthogonalRoutingGenerator(
-                OrthogonalRoutingGenerator.IRoutingDirectionStrategy.Strategy.WEST_TO_EAST,
+                OrthogonalRoutingGenerator.RoutingDirection.WEST_TO_EAST,
                 edgeSpacing, debug ? "phase5" : null);
         float xpos = 0.0f;
         ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
