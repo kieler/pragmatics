@@ -38,27 +38,27 @@ public final class NodeGroup implements Comparable<NodeGroup> {
      * The sum of the node weights. Each node weight is the sum of the weights of the ports the
      * node's ports are connected to.
      */
-    public float summedWeight;
+    float summedWeight;
 
     /**
      * The number of ports relevant to the barycenter calculation.
      */
-    public int degree;
+    int degree;
 
     /**
      * This vertex' barycenter value. (summedWeight / degree)
      */
-    public Float barycenter;
+    Float barycenter;
 
     /**
      * The number of incoming constraints.
      */
-    public int incomingConstraintsCount;
+    int incomingConstraintsCount;
     
     /**
      * Whether the node group has been visited in some traversing algorithm.
      */
-    public boolean visited;
+    boolean visited;
     
     // CHECKSTYLEON VisibilityModifier
 
