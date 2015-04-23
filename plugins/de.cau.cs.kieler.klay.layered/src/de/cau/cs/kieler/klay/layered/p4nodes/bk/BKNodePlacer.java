@@ -11,12 +11,10 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.layered.p4nodes;
+package de.cau.cs.kieler.klay.layered.p4nodes.bk;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +33,10 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
+import de.cau.cs.kieler.klay.layered.p4nodes.bk.BKAlignedLayout.HDirection;
+import de.cau.cs.kieler.klay.layered.p4nodes.bk.BKAlignedLayout.NeighborComparator;
+import de.cau.cs.kieler.klay.layered.p4nodes.bk.BKAlignedLayout.VDirection;
+import de.cau.cs.kieler.klay.layered.p4nodes.bk.ICompacter.CompactionStrategy;
 import de.cau.cs.kieler.klay.layered.properties.FixedAlignment;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
@@ -141,6 +143,7 @@ public final class BKNodePlacer implements ILayoutPhase {
         }
     }
     
+    private LGraph lGraph;
     /** List of edges involved in type 1 conflicts (see above). */
     private final List<LEdge> markedEdges = Lists.newArrayList();
 
@@ -155,6 +158,8 @@ public final class BKNodePlacer implements ILayoutPhase {
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
         monitor.begin("Brandes & Koepf node placement", 1);
 
+        this.lGraph = layeredGraph;
+        
         // Determine overall node count for an optimal initialization of maps.
         int nodeCount = 0;
         for (Layer layer : layeredGraph) {
@@ -162,10 +167,14 @@ public final class BKNodePlacer implements ILayoutPhase {
         }
 
         // Initialize four layouts which result from the two possible directions respectively.
-        BKAlignedLayout rightdown = new BKAlignedLayout(nodeCount, VDirection.DOWN, HDirection.RIGHT);
-        BKAlignedLayout rightup = new BKAlignedLayout(nodeCount, VDirection.UP, HDirection.RIGHT);
-        BKAlignedLayout leftdown = new BKAlignedLayout(nodeCount, VDirection.DOWN, HDirection.LEFT);
-        BKAlignedLayout leftup = new BKAlignedLayout(nodeCount, VDirection.UP, HDirection.LEFT);
+        BKAlignedLayout rightdown =
+                new BKAlignedLayout(layeredGraph, nodeCount, VDirection.DOWN, HDirection.RIGHT);
+        BKAlignedLayout rightup =
+                new BKAlignedLayout(layeredGraph, nodeCount, VDirection.UP, HDirection.RIGHT);
+        BKAlignedLayout leftdown =
+                new BKAlignedLayout(layeredGraph, nodeCount, VDirection.DOWN, HDirection.LEFT);
+        BKAlignedLayout leftup =
+                new BKAlignedLayout(layeredGraph, nodeCount, VDirection.UP, HDirection.LEFT);
 
         // Regard possible other layout options.
         debugMode = layeredGraph.getProperty(Properties.DEBUG_MODE);
@@ -210,17 +219,26 @@ public final class BKNodePlacer implements ILayoutPhase {
             aligner.insideBlockShift(bal);
         }
 
-//        BKCompacter compacter = new BKCompacter(layeredGraph);
-        BKCompacterStraight compacter = new BKCompacterStraight(layeredGraph);
+        ICompacter compacter;
+        switch (layeredGraph.getProperty(Properties.COMPACTION_STRATEGY)) {
+            case IMPROVE_STRAIGHTNESS:
+                compacter = new BKCompacterStraight(layeredGraph);
+                break;
+            default:
+                compacter = new BKCompacter(layeredGraph);
+        }
         for (BKAlignedLayout bal : layouts) {
             // This phase determines the y coordinates of the blocks and thus the vertical coordinates
             // of all nodes.
             compacter.horizontalCompaction(bal);
         }
-        
-        BKStraightener straightener = new BKStraightener(layeredGraph);
-        for (BKAlignedLayout bal : layouts) {
-//            straightener.improveStraightness(bal);
+
+        if (layeredGraph.getProperty(Properties.COMPACTION_STRATEGY) 
+                == CompactionStrategy.IMPROVE_STRAIGHTNESS_POSTPROCESS) {
+            BKStraightener straightener = new BKStraightener(layeredGraph);
+            for (BKAlignedLayout bal : layouts) {
+                straightener.improveStraightness(bal);
+            }
         }
 
         // Debug output
@@ -235,7 +253,7 @@ public final class BKNodePlacer implements ILayoutPhase {
         // The layout with the smallest size is selected. If more than one smallest layout exists,
         // the first one of the competing layouts is selected.
         BKAlignedLayout chosenLayout = null;
-        BKAlignedLayout balanced = new BKAlignedLayout(nodeCount, null, null);
+        BKAlignedLayout balanced = new BKAlignedLayout(layeredGraph, nodeCount, null, null);
 
         // If layout options chose to use the balanced layout, it is calculated and added here.
         // If it is broken for any reason, one of the four other layouts is selected by the
@@ -261,7 +279,7 @@ public final class BKNodePlacer implements ILayoutPhase {
         // If no layout is correct (which should never happen but is not strictly impossible),
         // the lefttop layout is chosen by default.
         if (chosenLayout == null) {
-            chosenLayout = layouts.get(0); // there hast to be at least one layout in the list
+            chosenLayout = layouts.get(0); // there has to be at least one layout in the list
         }
         
         // Apply calculated positions to nodes.
@@ -391,7 +409,7 @@ public final class BKNodePlacer implements ILayoutPhase {
             final int nodeCount) {
         
         final int noOfLayouts = layouts.size();
-        BKAlignedLayout balanced = new BKAlignedLayout(nodeCount, null, null);
+        BKAlignedLayout balanced = new BKAlignedLayout(lGraph, nodeCount, null, null);
         double[] width = new double[noOfLayouts];
         double[] min = new double[noOfLayouts];
         double[] max = new double[noOfLayouts];
@@ -680,154 +698,5 @@ public final class BKNodePlacer implements ILayoutPhase {
     }
     
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Class BKAlignedLayout
-
-    /**
-     * Class which holds all information about a layout in one of the four direction
-     * combinations.
-     */
-    public static final class BKAlignedLayout {
-        
-        // Allow the fields of this container to be accessed from package siblings.
-        // SUPPRESS CHECKSTYLE NEXT 24 VisibilityModifier
-        /** The root node of each node in a block. */
-        Map<LNode, LNode> root;
-        /** The size of a block. */
-        Map<LNode, Double> blockSize;
-        /** The next node in a block, or the first if the current node is the last, forming a ring. */
-        Map<LNode, LNode> align;
-        /** The value by which a node must be shifted to stay straight inside a block. */
-        Map<LNode, Double> innerShift;
-        /** The root node of a class, mapped from block root nodes to class root nodes. */
-        Map<LNode, LNode> sink;
-        /** The value by which a block must be shifted for a more compact placement. */
-        Map<LNode, Double> shift;
-        /** The y-coordinate of every node, forming the final layout. */
-        Map<LNode, Double> y;
-        /** The vertical direction of the current layout. */
-        VDirection vdir;
-        /** The horizontal direction of the current layout. */
-        HDirection hdir;
-
-        /**
-         * Basic constructor for a layout.
-         * 
-         * @param nodeCount
-         *            number of nodes in this layout
-         * @param vdir
-         *            vertical traversal direction of the algorithm
-         * @param hdir
-         *            horizontal traversal direction of the algorithm
-         */
-        public BKAlignedLayout(final int nodeCount, final VDirection vdir, final HDirection hdir) {
-            root = Maps.newLinkedHashMap();
-            blockSize = Maps.newHashMapWithExpectedSize(nodeCount);
-            align = Maps.newHashMapWithExpectedSize(nodeCount);
-            innerShift = Maps.newHashMapWithExpectedSize(nodeCount);
-            sink = Maps.newHashMapWithExpectedSize(nodeCount);
-            shift = Maps.newHashMapWithExpectedSize(nodeCount);
-            y = Maps.newHashMapWithExpectedSize(nodeCount);
-            this.vdir = vdir;
-            this.hdir = hdir;
-        }
-
-        /**
-         * Calculate the layout size for comparison.
-         * 
-         * @return The size of the layout
-         */
-        public double layoutSize() {
-            double min = Double.POSITIVE_INFINITY;
-            double max = Double.NEGATIVE_INFINITY;
-            // Prior to KIPRA-1426 the size of the layout was determined  
-            // only based on y coordinates, neglecting any block sizes.
-            // We now determine the maximal extend of the layout based on
-            // the minimum y coordinate of any node and the maximum
-            // y coordinate _plus_ the size of any block.
-            for (LNode n : y.keySet()) {
-                double yMin = y.get(n);
-                double yMax = yMin + blockSize.get(root.get(n));
-                min = Math.min(min, yMin);
-                max = Math.max(max, yMax);
-            }
-            return max - min;
-        }
-
-        @Override
-        public String toString() {
-            String result = "";
-            if (hdir == HDirection.RIGHT) {
-                result += "RIGHT";
-            } else if (hdir == HDirection.LEFT) {
-                result += "LEFT";
-            }
-            if (vdir == VDirection.DOWN) {
-                result += "DOWN";
-            } else if (vdir == VDirection.UP) {
-                result += "UP";
-            } else {
-                result += "BALANCED";
-            }
-            return result;
-        }
-    }
-    
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Class NeighborComparator
-
-    /**
-     * Comparator which determines the order of nodes in a layer.
-     */
-    public static final class NeighborComparator implements Comparator<LNode>, Serializable {
-        /** The serial version UID. */
-        private static final long serialVersionUID = 7540379553811800233L;
-        /** Singleton instance. */
-        public static final NeighborComparator INSTANCE = new NeighborComparator();
-        
-        /**
-         * Private constructor. Singleton.
-         */
-        private NeighborComparator() {
-            
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public int compare(final LNode o1, final LNode o2) {
-            int result = 0;
-            if (o1.getIndex() < o2.getIndex()) {
-                result = -1;
-            } else if (o1.getIndex() > o2.getIndex()) {
-                result = 1;
-            }
-            return result;
-        }
-    }
-    
-    
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Enumerations
-    
-    /**
-     * Vertical direction enumeration.
-     */
-    public static enum VDirection {
-        /** Iteration direction top-down. */
-        DOWN, 
-        /** Iteration direction bottom-up. */
-        UP;
-    }
-
-    /**
-     * Horizontal direction enumeration.
-     */
-    public static enum HDirection {
-        /** Iterating from right to left. */
-        RIGHT, 
-        /** Iterating from left to right. */
-        LEFT;
-    }
+   
 }

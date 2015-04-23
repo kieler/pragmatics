@@ -11,12 +11,12 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.layered.p4nodes;
+package de.cau.cs.kieler.klay.layered.p4nodes.bk;
 
-import static de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer.allLowerNeighbors;
-import static de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer.allUpperNeighbors;
-import static de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer.getBlocks;
-import static de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer.getEdge;
+import static de.cau.cs.kieler.klay.layered.p4nodes.bk.BKNodePlacer.allLowerNeighbors;
+import static de.cau.cs.kieler.klay.layered.p4nodes.bk.BKNodePlacer.allUpperNeighbors;
+import static de.cau.cs.kieler.klay.layered.p4nodes.bk.BKNodePlacer.getBlocks;
+import static de.cau.cs.kieler.klay.layered.p4nodes.bk.BKNodePlacer.getEdge;
 
 import java.util.List;
 import java.util.Map;
@@ -27,9 +27,8 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer.BKAlignedLayout;
-import de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer.HDirection;
-import de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer.VDirection;
+import de.cau.cs.kieler.klay.layered.p4nodes.bk.BKAlignedLayout.HDirection;
+import de.cau.cs.kieler.klay.layered.p4nodes.bk.BKAlignedLayout.VDirection;
 
 /**
  * For documentation see {@link BKNodePlacer}.
