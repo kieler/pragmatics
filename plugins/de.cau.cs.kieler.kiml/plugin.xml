@@ -318,7 +318,7 @@
       <layoutOption
             appliesTo="nodes"
             class="de.cau.cs.kieler.kiml.options.SizeOptions"
-            default="DEFAULT_MINIMUM_SIZE"
+            default="DEFAULT_MINIMUM_SIZE APPLY_ADDTIONAL_INSETS"
             description="Options modifying how the size constraints set on a node are interpreted."
             id="de.cau.cs.kieler.sizeOptions"
             name="Size Options"

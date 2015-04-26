@@ -52,7 +52,6 @@ import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.Transformation
 
 import static extension com.google.common.base.Strings.*
 import de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses
-import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins
 
 /**
  * Enriches a KGraph model freshly transformed from a Ptolemy2 model with the KRendering information
@@ -183,7 +182,6 @@ class Ptolemy2KGraphVisualization {
         ExpansionAwareLayoutOption::setProperty(layout, LayoutOptions::PORT_CONSTRAINTS,
             PortConstraints::FIXED_ORDER, PortConstraints::FREE)
         layout.setProperty(LayoutOptions::SIZE_CONSTRAINT, SizeConstraint::fixed)
-        layout.setProperty(LayoutOptions::ADDITIONAL_PORT_SPACE, new Margins(5, 5, 5, 5))
         
         node.setLayoutAlgorithm()
         
@@ -357,7 +355,6 @@ class Ptolemy2KGraphVisualization {
             NodeLabelPlacement::OUTSIDE, NodeLabelPlacement::H_LEFT, NodeLabelPlacement::V_TOP))
         layout.setProperty(LayoutOptions::PORT_LABEL_PLACEMENT, PortLabelPlacement::OUTSIDE)
         layout.setProperty(LayoutOptions::PORT_CONSTRAINTS, PortConstraints::FIXED_ORDER)
-        layout.setProperty(LayoutOptions::ADDITIONAL_PORT_SPACE, new Margins(5, 5, 5, 5))
         
         // Some kinds of nodes require special treatment
         val KRendering rendering = switch node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS) {

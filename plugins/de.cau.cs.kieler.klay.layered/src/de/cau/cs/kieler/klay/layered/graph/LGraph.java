@@ -36,18 +36,42 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  */
 public final class LGraph extends LGraphElement implements Iterable<Layer> {
     
-    /** the serial version UID. */
+    /**
+     * The serial version UID.
+     */
     private static final long serialVersionUID = -8006835373897072852L;
     
-    /** the total size of the drawing, without offset. */
+    /**
+     * The total size of the drawing. The total size includes neither insets nor border spacing. If the
+     * actual size, including insets and border spacing, is required, this can be obtained by calling
+     * {@link #getActualSize()}.
+     */
     private final KVector size = new KVector();
-    /** the graph's insets. */
+    
+    /**
+     * The graph's effective insets. This already includes the insets set on the imported graph by the
+     * client, as well as any space required for inside node labels. These are the effective insets
+     * returned to the client if {@link de.cau.cs.kieler.kiml.options.SizeOptions#COMPUTE_INSETS
+     * SizeOptions.COMPUTE_INSETS}
+     * is active.
+     */
     private final LInsets insets = new LInsets(0, 0, 0, 0);
-    /** the offset to be added to all positions. */
+    
+    /**
+     * The offset that will be applied to all node positions. Adding the offset to the coordinates of
+     * child nodes results in child node coordinates that are relative to the node's client area (which
+     * does not include the insets around it).
+     */
     private final KVector offset = new KVector();
-    /** nodes that are not currently part of a layer. */
+    
+    /**
+     * Nodes that are not currently part of a layer.
+     */
     private final List<LNode> layerlessNodes = Lists.newArrayList();
-    /** the layers of the layered graph. */
+    
+    /**
+     * The layers of the layered graph.
+     */
     private final List<Layer> layers = Lists.newArrayList();
     
     
