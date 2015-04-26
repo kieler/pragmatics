@@ -90,6 +90,9 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
     // The PNode representing the current position of the dragged KNode 
     private PNode node;
     
+    private KNode clipNode;
+    private PNode clipNodeNode;
+    
     // Representing the incoming edges of the current dragged KNode
     private PNode pathNodeIncoming;
 
@@ -154,7 +157,7 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
     protected boolean shouldStartDragInteraction(final PInputEvent event) {
         final PNode object = event.getPickedNode();
         pickedNode = null;        
-        
+        clipNodeNode = null;
         // Extracts the KNodeNode, if selected element is type of
         // KlighdStyledText.
         if (object instanceof KNodeNode) {
@@ -192,6 +195,10 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
         layerPos = knode.getParent().getData(
                 KShapeLayout.class).getProperty(InternalProperties.LAYER_POSITION);
         final Rectangle2D bounds = nodeNode.getFullBounds();
+        
+        clipNode = diagController.getClip();
+        clipNodeNode = (PNode) diagController.getRepresentation(clipNode);
+        
         final PAffineTransform invertedNodeNodeTransform =
                 new PAffineTransform(NodeUtil.invert(nodeNode.getTransform()));
         
@@ -535,34 +542,32 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
                 || outOfParentBounds) {            
             upperLeftToLowerRightKlighdPath.setPathToPolyline(new Point2D[]{
                     new Point2D.Float(
-                            (float) pickedNode.getTransform().getTranslateX() - 2 * stdDistance, 
+                            (float) pickedNode.getTransform().getTranslateX(), 
                             (float) pickedNode.getTransform().getTranslateY()),
                             new Point2D.Float(
                                     (float) pickedNode.getTransform().getTranslateX()
-                                    + (float) pickedNode.getFullBounds().getWidth() - 2 * stdDistance,
+                                    + (float) pickedNode.getBounds().getWidth(),
                                     (float) pickedNode.getTransform().getTranslateY()
-                                    + (float) pickedNode.getFullBounds().getHeight())        
+                                    + (float) pickedNode.getBounds().getHeight())        
             });
             
             upperLeftToLowerRightKlighdPath.setStrokeColor(new RGB(255, 0, 0));
-            upperLeftToLowerRightKlighdPath.setLineWidth(10f);
-//            upperLeftToLowerRightKlighdPath.setStrokeAlpha(HALF_OPACITY);
+            upperLeftToLowerRightKlighdPath.setLineWidth((10f / 80f) * (float) pickedNode.getBounds().getHeight());
             upperLeftToLowerRightKlighdPath.transformBy(pickedNode.getInverseTransform());
             
             upperRightToLowerLeftKlighdPath.setPathToPolyline(new Point2D[]{
                     new Point2D.Float(
                             (float) pickedNode.getTransform().getTranslateX()
-                            + (float) pickedNode.getFullBounds().getWidth() - 2 * stdDistance,
+                            + (float) pickedNode.getBounds().getWidth(),
                             (float) pickedNode.getTransform().getTranslateY()),
                             new Point2D.Float(
-                                    (float) pickedNode.getTransform().getTranslateX() - 2 * stdDistance,
+                                    (float) pickedNode.getTransform().getTranslateX(),
                                     (float) pickedNode.getTransform().getTranslateY()
-                                    + (float) pickedNode.getFullBounds().getHeight())
+                                    + (float) pickedNode.getBounds().getHeight())
             });
             
             upperRightToLowerLeftKlighdPath.setStrokeColor(new RGB(255, 0, 0));
-            upperRightToLowerLeftKlighdPath.setLineWidth(10f);
-//            upperRightToLowerLeftKlighdPath.setStrokeAlpha(HALF_OPACITY);
+            upperRightToLowerLeftKlighdPath.setLineWidth((10f / 80f) * (float) pickedNode.getBounds().getHeight());
             upperRightToLowerLeftKlighdPath.transformBy(pickedNode.getInverseTransform());
             
             warning.addChild(upperLeftToLowerRightKlighdPath);
@@ -736,6 +741,7 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
         knode = null;
         node = null;
         pickedNode = null;
+        clipNodeNode = null;
         event.setHandled(true);
     }
     
@@ -749,7 +755,7 @@ public class KlighdInteractiveDragEventHandler extends PDragSequenceEventHandler
     private void transformByAllParents(final PNode nodeParent, final KlighdPath path) {
         // Get all parents transforms, so edges are drawn at the right position.
         // Especially useful when they are related to more than one parent.
-        PNode p = nodeParent;
+        PNode p = clipNodeNode != null ? clipNodeNode : nodeParent;
         while (p.getParent() != null) {                
             path.transformBy(p.getTransformReference(true));
             p = p.getParent();

@@ -26,7 +26,9 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
+import de.cau.cs.kieler.klay.layered.properties.LayerConstraint;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * A node layerer that allows user interaction by respecting previous node positions.
@@ -71,14 +73,28 @@ public final class InteractiveLayerer implements ILayoutPhase {
 
         // create layers with a start and an end position, merging when they overlap with others
         List<LayerSpan> currentSpans = Lists.newArrayList();
+        List<LNode> dummysFirstSep = Lists.newArrayList();
+        List<LNode> dummysLastSep = Lists.newArrayList();
         for (LNode node : layeredGraph.getLayerlessNodes()) {
+            
+            // filter dummy nodes with constraint in layer/first sep.
+            if(node.getProperty(Properties.LAYER_CONSTRAINT) == LayerConstraint.FIRST_SEPARATE){
+                dummysFirstSep.add(node);
+                continue;
+            } else if(node.getProperty(Properties.LAYER_CONSTRAINT) == LayerConstraint.LAST_SEPARATE) {
+                dummysLastSep.add(node);
+                continue;
+            }
+            
             double minx = node.getPosition().x;
             double maxx = minx + node.getSize().x;
+
             // look for a position in the sorted list where the node can be inserted
             ListIterator<LayerSpan> spanIter = currentSpans.listIterator();
             LayerSpan foundSpan = null;
             while (spanIter.hasNext()) {
                 LayerSpan span = spanIter.next();
+                
                 if (span.start >= maxx) {
                     // the next layer span is further right, so insert the node here
                     spanIter.previous();
@@ -109,6 +125,24 @@ public final class InteractiveLayerer implements ILayoutPhase {
             }
         }
         
+        
+        // all dummy nodes with first_property add to first span
+        if(!dummysFirstSep.isEmpty()){
+            LayerSpan firstSpan = new LayerSpan();
+            firstSpan.start = 0;
+            firstSpan.end = currentSpans.get(0).start;
+            firstSpan.nodes.addAll(dummysFirstSep);
+            currentSpans.add(0, firstSpan);
+        }
+        
+        // all dummy nodes with last_property add to last span
+        if(!dummysLastSep.isEmpty()){
+            LayerSpan lastSpan = new LayerSpan();
+            lastSpan.start = currentSpans.get(currentSpans.size() - 1).end;
+            lastSpan.end = lastSpan.start + 5000;
+            lastSpan.nodes.addAll(dummysLastSep);
+            currentSpans.add(lastSpan);
+        }
         // create real layers from the layer spans
         List<Layer> layers = layeredGraph.getLayers();
         int nextIndex = 0;
