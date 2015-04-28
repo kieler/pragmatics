@@ -13,12 +13,10 @@
  */
 package de.cau.cs.kieler.klay.layered.p4nodes.bk;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -57,6 +55,10 @@ public class BKCompacterStraight implements ICompacter {
     /** Spacing between external ports, determined by layout options. */
     private float externalPortSpacing;
     
+    
+    private Set<LNode> blockFinished = Sets.newHashSet();
+    private Queue<Pair<LNode, Boolean>> postProcessables = Lists.newLinkedList();
+    
     /**
      * @param layeredGraph the graph to handle.
      */
@@ -67,7 +69,6 @@ public class BKCompacterStraight implements ICompacter {
                 * layeredGraph.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
         smallSpacing = normalSpacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
         externalPortSpacing = layeredGraph.getProperty(Properties.PORT_SPACING);
-
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -142,23 +143,45 @@ public class BKCompacterStraight implements ICompacter {
         
         // all blocks were placed, shift latecomers
         while (!postProcessables.isEmpty()) {
-            LNode root = postProcessables.poll();
-            System.out.println("PostProcesS: " + root);
-            Pair<LPort, LPort> pair = postProcessables2.poll();
-            LPort block = pair.getFirst();
-            LPort fix = pair.getSecond(); 
+            Pair<LNode, Boolean> pair = postProcessables.poll();
+            System.out.println("PostProcesS: " + pair);
+            
+            // TODO !!! it is quite important to check both directions here! 
+            // why ... elaborate
+            Pair<LEdge, Boolean> pick =
+                    pickEdge(bal, pair.getFirst(), pair.getSecond(), bal.y.get(pair.getFirst()),
+                            true);
+
+            if (pick.getFirst() == null) {
+                pick =
+                        pickEdge(bal, pair.getFirst(), pair.getSecond(),
+                                bal.y.get(pair.getFirst()), false);
+            }
+            
+            if (!pick.getSecond()) {
+                continue;
+            }
+            
+            if (pick.getFirst() == null) {
+                continue;   
+            }
+            
+            LEdge edge =  pick.getFirst();
+            LPort left = edge.getSource();
+            LPort right = edge.getTarget();
+            LPort block = bal.hdir == HDirection.LEFT ? right : left;
+            LPort fix = bal.hdir == HDirection.LEFT ? left : right;
             
             // t has to be the root node of a different block
             double delta = bal.calculateDelta(fix, block);
 
             if (delta > 0 && delta < THRESHOLD) {
-                System.out.println("SHOULD BE DOWN: " + bal.vdir);
+                
                 // target y larger than source y --> shift upwards?
                 if (bal.checkSpaceAbove(fix.getNode(), block.getNode(), delta)) {
                     bal.shiftBlock(block.getNode(), -delta);
                 }
             } else if (delta < 0 && -delta < THRESHOLD) {
-                System.out.println("SHOULD BE UP: " + bal.vdir);
                 
                 // direction is up, we possibly shifted some blocks too far upward 
                 // for an edge to be straight, so check if we can shift down again
@@ -172,15 +195,6 @@ public class BKCompacterStraight implements ICompacter {
         }
         
     }
-    
-    private Set<LNode> blockFinished = Sets.newHashSet();
-    private Queue<LNode> postProcessables = new LinkedList<LNode>();
-    private Queue<Pair<LPort, LPort>> postProcessables2 = Lists.newLinkedList();
-    
-    /* Note: The following methods diverts from the convention of naming variables as they were named in
-     *       the original paper for better code readability. (Since this is one of the most intricate
-     *       pieces of code in the algorithm.) The original variable names are mentioned in comments.
-     */
 
     /**
      * Blocks are placed based on their root node. This is done by going through all layers the block
@@ -211,7 +225,7 @@ public class BKCompacterStraight implements ICompacter {
         // Iterate through block and determine, where the block can be placed (until we arrive at the
         // block's root node again)
         LNode currentNode = root;
-        double minPos =
+        double thresh =
                 bal.vdir == VDirection.DOWN ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
         do {
             int currentIndexInLayer = currentNode.getIndex();
@@ -250,50 +264,11 @@ public class BKCompacterStraight implements ICompacter {
                     // They are part of the same class
                     
                     // The minimal spacing between the two nodes depends on their node type
-                    double spacing = smallSpacing;
-                    if (currentNodeType == NodeType.EXTERNAL_PORT
-                            && neighborNodeType == NodeType.EXTERNAL_PORT) {
-                        
-                        spacing = externalPortSpacing;
-                    } else if (currentNodeType == NodeType.NORMAL
-                            || neighborNodeType == NodeType.NORMAL) {
-                        
-                        // as soon as either of the two involved nodes is a regular node, 
-                        // use normal spacing
-                        spacing = normalSpacing;
-                    }
-                    
-                    // Straightening
-                    
-                    // Remember that for blocks with a single node both flags can be true
-                    boolean isRoot = root.equals(currentNode);
-                    boolean isLast = bal.align.get(currentNode).equals(root);
-                    
-                    if (bal.hdir == HDirection.RIGHT) {
-
-                        // Note that it is not guaranteed that adjacent nodes are already placed!
-                        
-                        if (isRoot) {
-                            minPos = getBound(bal, root);
-                        }
-                        if (Double.isInfinite(minPos) && isLast) {
-                            minPos = getBound2(bal, currentNode);
-                        }
-                        
-                    } else { // LEFT
-                        
-                        if (isRoot) {
-                            minPos = getBound(bal, root);
-                        } 
-                        if (Double.isInfinite(minPos) && isLast) {
-                            minPos = getBound2(bal, currentNode);
-                        }
-                    }
-                    
-                    
+                    double spacing = getSpacing(currentNodeType, neighborNodeType);
                     
                     // Determine the block's final position
                     if (bal.vdir == VDirection.UP) {
+                        
                         double currentBlockPosition = bal.y.get(root);
                         double newPosition = bal.y.get(neighborRoot)
                                 + bal.innerShift.get(neighbor)
@@ -303,25 +278,18 @@ public class BKCompacterStraight implements ICompacter {
                                 - currentNode.getSize().y
                                 - bal.innerShift.get(currentNode);
 
-//                        if (isInitialAssignment) {
-//                            isInitialAssignment = false;
-//                            bal.y.put(root, newPosition);
-//                        } else {
-//                            bal.y.put(root, Math.min(currentBlockPosition, newPosition));
-//                        }
-                        
-                        double validNewPosition = newPosition;
-                        if (Math.abs(minPos - newPosition) < THRESHOLD) {
-                            validNewPosition = Math.min(newPosition, minPos);
-                        }
+                        // calculate threshold value for additional straight edges
+                        thresh = calculateThreshold(bal, thresh, newPosition, root, currentNode);
                         
                         if (isInitialAssignment) {
                             isInitialAssignment = false;
-                            bal.y.put(root, validNewPosition);
+                            bal.y.put(root, Math.min(newPosition, thresh));
                         } else {
-                            bal.y.put(root, Math.min(currentBlockPosition, validNewPosition));
+                            bal.y.put(root, Math.min(currentBlockPosition, 
+                                                     Math.min(newPosition, thresh)));
                         }
-                    } else { // LEFT
+                        
+                    } else { // DOWN
                         
                         double currentBlockPosition = bal.y.get(root);
                         double newPosition = bal.y.get(neighborRoot)
@@ -331,27 +299,18 @@ public class BKCompacterStraight implements ICompacter {
                                 + spacing
                                 + currentNode.getMargin().top
                                 - bal.innerShift.get(currentNode);
+
+                        // calculate threshold value for additional straight edges
+                        thresh = calculateThreshold(bal, thresh, newPosition, root, currentNode);
                         
-//                        if (isInitialAssignment) {
-//                            isInitialAssignment = false;
-//                            bal.y.put(root, newPosition);
-//                        } else {
-//                            bal.y.put(root, Math.max(currentBlockPosition, newPosition));
-//                        }
-                        
-                        double validNewPosition = newPosition;
-                        if (Math.abs(minPos - newPosition) < THRESHOLD) {
-                            validNewPosition = Math.max(newPosition, minPos);
+                        if (isInitialAssignment) {
+                            isInitialAssignment = false;
+                            bal.y.put(root, Math.max(newPosition, thresh));
+                        } else {
+                            bal.y.put(root, Math.max(currentBlockPosition, 
+                                                     Math.max(newPosition, thresh)));
                         }
-                        
-                       if (isInitialAssignment) {
-                          isInitialAssignment = false;
-                          bal.y.put(root, validNewPosition);
-                      } else {
-                          bal.y.put(root, Math.max(currentBlockPosition, validNewPosition));
-                      }
                     }
-                    
                     
                 } else { // CLASSES
                     // TODO Take a look at this code
@@ -377,32 +336,9 @@ public class BKCompacterStraight implements ICompacter {
                     }
                 }
             } else {
-                
-                // Remember that for blocks with a single node both flags can be true
-                boolean isRoot = root.equals(currentNode);
-                boolean isLast = bal.align.get(currentNode).equals(root);
-                
-                if (bal.hdir == HDirection.RIGHT) {
-
-                    // Note that it is not guaranteed that adjacent nodes are already placed!
-                    
-                    if (isRoot) {
-                        minPos = getBound(bal, root);
-                    }
-                    if (Double.isInfinite(minPos) && isLast) {
-                        minPos = getBound2(bal, currentNode);
-                    }
-                    
-                } else { // LEFT
-                    
-                    if (isRoot) {
-                        minPos = getBound(bal, root);
-                    } 
-                    if (Double.isInfinite(minPos) && isLast) {
-                        minPos = getBound2(bal, currentNode);
-                    }
-                }
-                
+                // it's the first or last node of a layer, we sill wanna update the threshold value
+                // FIXME check if thresh is the right 'suggestion' here
+                thresh = calculateThreshold(bal, thresh, thresh, root, currentNode);
             }
             
             // Get the next node in the block
@@ -412,93 +348,193 @@ public class BKCompacterStraight implements ICompacter {
         System.out.println("\tDone with " + root);
         blockFinished.add(root);
     }
+
+    private double getSpacing(final NodeType currentNodeType, final NodeType neighborNodeType) {
+        double spacing = smallSpacing;
+        if (currentNodeType == NodeType.EXTERNAL_PORT
+                && neighborNodeType == NodeType.EXTERNAL_PORT) {
+            
+            spacing = externalPortSpacing;
+        } else if (currentNodeType == NodeType.NORMAL
+                || neighborNodeType == NodeType.NORMAL) {
+            
+            // as soon as either of the two involved nodes is a regular node, 
+            // use normal spacing
+            spacing = normalSpacing;
+        }
+        return spacing;
+    }
     
     
-    private double getBound(final BKAlignedLayout bal, final LNode root) {
+    private double calculateThreshold(final BKAlignedLayout bal, final double currentThreshold,
+            final double suggestion, final LNode root, final LNode currentNode) {
+        
+        double t = currentThreshold;
+        
+        // Remember that for blocks with a single node both flags can be true
+        boolean isRoot = root.equals(currentNode);
+        boolean isLast = bal.align.get(currentNode).equals(root);
+        
+        if (!(isRoot || isLast)) {
+            return t;
+        }
+        
+        if (bal.hdir == HDirection.RIGHT) {
 
-        double invalid =
-                bal.vdir == VDirection.UP ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
-        Iterable<LEdge> edges =
-                bal.hdir == HDirection.RIGHT ? root.getIncomingEdges() : root.getOutgoingEdges();
+            // Note that it is not guaranteed that adjacent nodes are already placed!
+            
+            if (isRoot) {
+                t = getBound(bal, root, true, suggestion);
+            }
+            if (Double.isInfinite(t) && isLast) {
+                t = getBound(bal, currentNode, false, suggestion);
+            }
+            
+        } else { // LEFT
+            
+            if (isRoot) {
+                t = getBound(bal, root, true, suggestion);
+            } 
+            if (Double.isInfinite(t) && isLast) {
+                t = getBound(bal, currentNode, false, suggestion);
+            }
+        }
+        
+        return t;
+    }
+    
+    /**
+     * Picks an edge that we consider the best choice when 
+     * seeking for additional alignments between nodes 
+     * of distinct blocks.
+     */
+    private Pair<LEdge, Boolean> pickEdge(final BKAlignedLayout bal, final LNode root, 
+            final boolean isRoot, final double suggestion, final boolean inverted) {
+   
+        Iterable<LEdge> edges;
+        if (isRoot) {
+            edges = bal.hdir == HDirection.RIGHT ? root.getIncomingEdges() : root.getOutgoingEdges();
+        } else {
+            edges = bal.hdir == HDirection.LEFT ? root.getIncomingEdges() : root.getOutgoingEdges();
+        }
+        
+        // pick the edge to check, we want to use the edge that
+        // connects to the closest node in iteration direction
+        LEdge pick = null;
+        double distance = Double.MAX_VALUE;
+        boolean hasEdges = false;
+        for (LEdge e : edges) {
+            hasEdges = true;
+            LPort left = e.getSource();
+            LPort right = e.getTarget();
+            LPort rootPort, otherPort;
+            if (isRoot) {
+                rootPort = bal.hdir == HDirection.RIGHT ? right : left;
+                otherPort = bal.hdir == HDirection.RIGHT ? left : right;
+            } else {
+                rootPort = bal.hdir == HDirection.LEFT ? right : left;
+                otherPort = bal.hdir == HDirection.LEFT ? left : right;
+            }
 
-        // PROBLEM !!! blocks with a SINGLE node!
-
-        if (!Iterables.isEmpty(edges)) {
-            // pick the first edge
-            // TODO probably better use the median? (no probably not, depends no node, check for two
-            // edges)
-            LEdge incidentEdge = Iterables.get(edges, 0);
-            LPort left = incidentEdge.getSource();
-            LPort right = incidentEdge.getTarget();
-
-            LPort rootPort = bal.hdir == HDirection.RIGHT ? right : left;
-            LPort otherPort = bal.hdir == HDirection.RIGHT ? left : right;
-
-            // if (bal.y.get(bal.root.get(otherPort.getNode())) == null) {
-            //if (!bal.y.containsKey(bal.root.get(otherPort.getNode()))) {
+            // if the other node does not have a position yet, ignore this edge
             if (!blockFinished.contains(bal.root.get(otherPort.getNode()))) {
-                System.out.println(bal + ": Not placed yet " + otherPort);
-                postProcessables.add(rootPort.getNode());
-                postProcessables2.add(Pair.of(rootPort, otherPort));
-                return invalid;
+                continue;
             }
 
             LNode otherRoot = bal.root.get(otherPort.getNode());
-            System.out.println("rot " + rootPort.getNode() + "oter " + otherRoot + " "
-                    + bal.y.get(otherRoot));
-            double minPos = bal.y.get(otherRoot) 
-                            + bal.innerShift.get(otherPort.getNode())
-                            + otherPort.getPosition().y 
-                            + otherPort.getAnchor().y
-                            // root node
-                            - bal.innerShift.get(rootPort.getNode()) 
-                            - rootPort.getPosition().y
-                            - rootPort.getAnchor().y;
-            return minPos;
+
+            double otherPos =
+                    bal.y.get(otherRoot) + bal.innerShift.get(otherPort.getNode())
+                            + otherPort.getPosition().y + otherPort.getAnchor().y;
+
+            double rootPos =
+                    suggestion + bal.innerShift.get(rootPort.getNode()) + rootPort.getPosition().y
+                            + rootPort.getAnchor().y;
+
+            double curDistance = Math.abs(otherPos - rootPos);
+            if (!inverted) {
+                if (bal.vdir == VDirection.DOWN) {
+                    if (otherPos > rootPos && curDistance < distance) {
+                        pick = e;
+                        distance = curDistance;
+                    }
+                } else {
+                    if (otherPos < rootPos && curDistance < distance) {
+                        pick = e;
+                        distance = curDistance;
+                    }
+                }
+            } else {
+                if (bal.vdir == VDirection.DOWN) {
+                    if (otherPos < rootPos && curDistance < distance) {
+                        pick = e;
+                        distance = curDistance;
+                    }
+                } else {
+                    if (otherPos > rootPos && curDistance < distance) {
+                        pick = e;
+                        distance = curDistance;
+                    }
+                }
+            }
         }
 
+        return Pair.of(pick, hasEdges);
+    }
+    
+    /**
+     * Get threshold value for the <b>root</b> node of the block to be aligned! (As opposed 
+     * to the last node in the block. 
+     */
+    private double getBound(final BKAlignedLayout bal, final LNode blockNode, final boolean isRoot,
+            final double suggestion) {
+
+        double invalid = bal.vdir == VDirection.UP ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
+
+        final Pair<LEdge, Boolean> pick = pickEdge(bal, blockNode, isRoot, suggestion, false);
+        
+        // if edges exist but we couldn't find a good one
+        if (pick.getFirst() == null && pick.getSecond()) {
+             postProcessables.add(Pair.of(blockNode, isRoot));
+             return invalid;
+        } else if (pick.getFirst() != null) {
+
+            double threshold;
+            LPort left = pick.getFirst().getSource();
+            LPort right = pick.getFirst().getTarget();
+
+            if (isRoot) {
+                // We handle the root (first) node of a block here
+                LPort rootPort = bal.hdir == HDirection.RIGHT ? right : left;
+                LPort otherPort = bal.hdir == HDirection.RIGHT ? left : right;
+    
+                LNode otherRoot = bal.root.get(otherPort.getNode());
+                threshold = bal.y.get(otherRoot) 
+                                  + bal.innerShift.get(otherPort.getNode())
+                                  + otherPort.getPosition().y 
+                                  + otherPort.getAnchor().y
+                                  // root node
+                                  - bal.innerShift.get(rootPort.getNode()) 
+                                  - rootPort.getPosition().y
+                                  - rootPort.getAnchor().y;
+            } else {
+                
+                // ... and the last node of a block here 
+                LPort rootPort = bal.hdir == HDirection.LEFT ? right : left;
+                LPort otherPort = bal.hdir == HDirection.LEFT ? left : right;
+
+                threshold = bal.y.get(bal.root.get(otherPort.getNode()))
+                        + bal.innerShift.get(otherPort.getNode())
+                        + otherPort.getPosition().y
+                        + otherPort.getAnchor().y
+                        // root node
+                        - bal.innerShift.get(rootPort.getNode())
+                        - rootPort.getPosition().y
+                        - rootPort.getAnchor().y;
+            }
+            return threshold;
+        }
         return invalid;
     }
     
-    private double getBound2(final BKAlignedLayout bal, final LNode root) {
-        
-        double invalid = bal.vdir == VDirection.UP ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
-        Iterable<LEdge> edges = bal.hdir == HDirection.LEFT ? root.getIncomingEdges() : root.getOutgoingEdges();
-        
-        // PROBLEM !!! blocks with a SINGLE node!
-        
-        if (!Iterables.isEmpty(edges)) {
-            // pick the first edge 
-            // TODO probably better use the median? (no probably not, depends no node, check for two edges)
-            LEdge incidentEdge = Iterables.get(edges, 0);
-            LPort left = incidentEdge.getSource();
-            LPort right = incidentEdge.getTarget();
-            
-            // RATHER lastNode, not root!
-            LPort rootPort = bal.hdir == HDirection.LEFT ? right : left;
-            LPort otherPort = bal.hdir == HDirection.LEFT ? left : right;
-
-            // if (bal.y.get(bal.root.get(otherPort.getNode())) == null) {
-            // if (!bal.y.containsKey(bal.root.get(otherPort.getNode()))) {
-            if (!blockFinished.contains(bal.root.get(otherPort.getNode()))) {
-                System.out.println(bal + ": Not placed yet " + otherPort);
-                postProcessables.add(rootPort.getNode());
-                postProcessables2.add(Pair.of(rootPort, otherPort));
-                return invalid;
-            }
-            
-            double minPos = bal.y.get(bal.root.get(otherPort.getNode()))
-                    + bal.innerShift.get(otherPort.getNode())
-                    + otherPort.getPosition().y
-                    + otherPort.getAnchor().y
-                    // root node
-                    - bal.innerShift.get(rootPort.getNode())
-                    - rootPort.getPosition().y
-                    - rootPort.getAnchor().y
-                    ;
-            return minPos;
-        }
-    
-        return invalid;
-}
 }
