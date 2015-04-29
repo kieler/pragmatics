@@ -556,8 +556,10 @@ public class DiagramLayoutEngine {
         }
 
         // notify listeners of the executed layout
-        for (final ILayoutTerminatedListener listener : layoutListeners) {
-            listener.layoutDone(mapping.getLayoutGraph(), progressMonitor);
+        if (layoutListeners != null) {
+            for (final ILayoutTerminatedListener listener : layoutListeners) {
+                listener.layoutDone(mapping.getLayoutGraph(), progressMonitor);
+            }
         }
         return status;
     }
