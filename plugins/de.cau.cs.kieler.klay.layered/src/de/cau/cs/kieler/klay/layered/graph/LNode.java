@@ -53,6 +53,7 @@ public final class LNode extends LShape {
     /** the insets inside this node, usually reserved for port and label placement. */
     private final LInsets insets = new LInsets();
     
+    /** Specify order in which to access the list of ports on the node. */
     public enum PortOrder {
         /** Clockwise order. */
         CLOCKWISE,
@@ -256,24 +257,27 @@ public final class LNode extends LShape {
     }
 
     /**
-     * Returns an iterable for all ports on the given side in the order specified.
+     * Returns an iterable for all ports on the given side in the order specified. Note that before
+     * the crossing minimization phase, this order is arbitrary.
      * 
-     * @param portType
-     *            a port type
+     * @param order
+     *            the order asked for
+     * @param side
+     *            on the given side
      * @return an iterable for the ports of given type
      */
     public Iterable<LPort> getPorts(final PortSide side, final PortOrder order) {
-        final Iterable<LPort> ports = getPorts(side);
+        final Iterable<LPort> ps = getPorts(side);
         switch (order) {
         case CLOCKWISE:
-            return ports;
+            return ps;
         case COUNTER_CLOCKWISE:
             return Iterables.filter(getCounterClockwiseIterator(), getPredicate(side));
         case NORTHSOUTH_EASTWEST:
             switch (side) {
             case EAST:
             case NORTH:
-                return ports;
+                return ps;
             case SOUTH:
             case WEST:
                 return Iterables.filter(getCounterClockwiseIterator(), getPredicate(side));
