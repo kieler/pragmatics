@@ -22,7 +22,6 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
  *
  */
 public class AllCrossingsCounter {
-
     private final LNode[][] layeredGraph;
     private boolean useHyperedgeCounter;
     private InLayerEdgeAllCrossingsCounter inLayerEdgeCrossingsCounter;
@@ -91,8 +90,7 @@ public class AllCrossingsCounter {
     }
 
     private boolean isALayerEmpty(final LNode[] easternLayer, final LNode[] westernLayer) {
-        return easternLayer == null || easternLayer.length == 0 || westernLayer == null
-                || westernLayer.length == 0;
+        return easternLayer.length == 0 || westernLayer.length == 0;
     }
 
     private int countInLayerEdgeCrossingsWithOrder(final LNode[] layer) {

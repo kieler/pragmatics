@@ -25,12 +25,14 @@ import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.NodeType;
 
 /**
- * This class decides whether two neighboring nodes should be switched: <br>
- * There are two variants:<br>
- * - OneSided – The traditional risky way: The decider checks if a switch would reduce crossings on
- * the given side of the layer whose nodes are to be switched. <br>
- * - TwoSided – The faithless way: The decider checks if a switch would reduce crossings on both
+ * 
+ * This class decides whether two neighboring nodes should be switched. There are two variants:
+ * <ul>
+ * <li>OneSided – The traditional risky way: The decider checks if a switch would reduce crossings
+ * on the given side of the layer whose nodes are to be switched.
+ * <li>TwoSided – The faithless way: The decider checks if a switch would reduce crossings on both
  * sides of the layer whose nodes are to be switched.
+ * </ul>
  * 
  * @author alan
  */
@@ -45,7 +47,7 @@ abstract class SwitchDecider {
     private final Map<LNode, Integer> nodeIds;
 
     /**
-     * Use factory to create correct switchDecider, not this constructor.
+     * Creates SwitchDecider.
      * 
      * @param freeLayerIndex
      *            The freeLayer to switch in.
@@ -74,14 +76,15 @@ abstract class SwitchDecider {
         initializeNodePositions(graph);
     }
 
-    public void notifyOfSwitch(final LNode upperNode, final LNode lowerNode) {
+    public final void notifyOfSwitch(final LNode upperNode, final LNode lowerNode) {
         inLayerCounter.notifyOfSwitch(upperNode, lowerNode);
     }
 
     /**
      * {@inheritDoc}
      */
-    public boolean doesSwitchReduceCrossings(final int upperNodeIndex, final int lowerNodeIndex) {
+    public final boolean doesSwitchReduceCrossings(final int upperNodeIndex,
+            final int lowerNodeIndex) {
         if (constraintsPreventSwitch(upperNodeIndex, lowerNodeIndex)) {
             return false;
         }
@@ -115,7 +118,8 @@ abstract class SwitchDecider {
 
     protected abstract void fillCrossingMatrix(LNode upperNode, LNode lowerNode);
 
-    protected void setCrossingMatrixEntriesFromCounter(final LNode upperNode, final LNode lowerNode) {
+    protected final void setCrossingMatrixEntriesFromCounter(final LNode upperNode,
+            final LNode lowerNode) {
         crossingMatrix[idOf(upperNode)][idOf(lowerNode)] =
                 inBetweenLayerCrossingCounter.getUpperLowerCrossings();
         crossingMatrix[idOf(lowerNode)][idOf(upperNode)] =
@@ -202,7 +206,7 @@ abstract class SwitchDecider {
         return node.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT;
     }
 
-    protected BetweenLayerEdgeTwoNodeCrossingsCounter getTwoLayerCrossCounter() {
+    protected final BetweenLayerEdgeTwoNodeCrossingsCounter getTwoLayerCrossCounter() {
         return inBetweenLayerCrossingCounter;
     }
 

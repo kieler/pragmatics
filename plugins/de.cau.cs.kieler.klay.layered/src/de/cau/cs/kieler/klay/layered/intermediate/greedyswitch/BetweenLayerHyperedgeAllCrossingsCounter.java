@@ -103,7 +103,7 @@ public class BetweenLayerHyperedgeAllCrossingsCounter extends
         }
 
         /** The corner type. */
-        enum Type {
+        private static enum Type {
             UPPER, LOWER;
         }
 

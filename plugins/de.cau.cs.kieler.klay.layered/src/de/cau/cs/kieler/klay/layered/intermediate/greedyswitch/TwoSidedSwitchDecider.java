@@ -27,6 +27,8 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 class TwoSidedSwitchDecider extends SwitchDecider {
 
     /**
+     * Creates a Switch Decider which takes the edges to both sides of the free layer into account.
+     * 
      * @param freeLayerIndex
      * @param graph
      */
@@ -41,6 +43,8 @@ class TwoSidedSwitchDecider extends SwitchDecider {
     @Override
     protected void fillCrossingMatrix(final LNode upperNode, final LNode lowerNode) {
         super.getTwoLayerCrossCounter().countBothSideCrossings(upperNode, lowerNode);
+        // gets the upper lower and lower upper crossings from the crossing counter and fills in
+        // the crossing matrix.
         super.setCrossingMatrixEntriesFromCounter(upperNode, lowerNode);
     }
 }

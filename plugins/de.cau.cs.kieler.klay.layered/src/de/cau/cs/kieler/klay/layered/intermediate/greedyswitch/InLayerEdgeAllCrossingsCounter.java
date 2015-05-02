@@ -31,7 +31,9 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 
 /**
- * Abstract superclass for In-layer edge crossing counter to reduce code duplication.
+ * In-layer edge crossing counter for all crossings in a layer. The subclass
+ * {@link InLayerEdgeTwoNodeCrossingCounter} accesses the countCrossingsOn method with only the
+ * nodes and edges relevant to the two nodes in question.
  * 
  * @author alan
  *
@@ -127,7 +129,7 @@ public class InLayerEdgeAllCrossingsCounter {
                 }
             }
         }
-    
+
         return crossings;
     }
 
@@ -153,7 +155,7 @@ public class InLayerEdgeAllCrossingsCounter {
                 add(edge);
             } else {
                 remove(edge);
-                crossings += numberOfPortsInbetweenEndsOf(edge, inLayerPorts);
+                crossings += numberOfPortsInBetweenEndsOf(edge, inLayerPorts);
             }
         } else { // is in-between layer edge
             int portsOnNodeWithFreePortOrder = inLayerPorts.count(positionOf(port));
@@ -166,7 +168,7 @@ public class InLayerEdgeAllCrossingsCounter {
         return !inLayerEdges.contains(edge);
     }
 
-    private int numberOfPortsInbetweenEndsOf(final LEdge edge, final SortedMultiset<Integer> set) {
+    private int numberOfPortsInBetweenEndsOf(final LEdge edge, final SortedMultiset<Integer> set) {
         int lowerBound = Math.min(positionOf(edge.getTarget()), positionOf(edge.getSource()));
         int upperBound = Math.max(positionOf(edge.getTarget()), positionOf(edge.getSource()));
         return set.subMultiset(lowerBound, BoundType.OPEN, upperBound, BoundType.OPEN).size();

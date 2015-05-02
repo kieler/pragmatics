@@ -198,22 +198,21 @@ class BetweenLayerEdgeTwoNodeCrossingsCounter {
     }
 
     /**
+     * The main algorithm. Adjacency Lists are lists of ports connected to a node. If a connected
+     * node has no fixed port ordering all ports have the same position value. By merging adjacency
+     * lists, both the number of between-layer crossings for the order upper - lower and for the
+     * opposite order can be found. Consider:
+     * 
      * <pre>
-     * The main algorithm. 
-     * Adjacency Lists are lists of ports connected to a node. If a connected node has no fixed port
-     * ordering all ports have the same position value.
-     * By merging adjacency lists, both the number of between-layer crossings for the order upper
-     * - lower and for the opposite order can be found.
-     * Consider:
      * A   p0 
      *  \\/
      *  /\\
      * B   p1
-     * 
-     * The adjacency list La for A is: p1, p1
-     * The adjacency list Lb for B is: p0
      * </pre>
-     * 
+     * <ul>
+     * <li>The adjacency list La for A is: p1, p1
+     * <li>The adjacency list Lb for B is: p0
+     * </ul>
      * Since p1 is below p0, edge (B, p0) is crossed by all edges from A and can p0 can be removed.
      * If the next adjacencies in both lists have the same position value p we add to
      * upperLowerCrossings the number of remaining adjacencies upperAdjacencies below the current

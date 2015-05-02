@@ -42,6 +42,8 @@ class OneSidedSwitchDecider extends SwitchDecider {
     private final CrossingCountSide direction;
 
     /**
+     * Creates a Switch Decider which takes the edges to one side into account.
+     * 
      * @param freeLayerIndex
      * @param graph
      */
@@ -60,6 +62,8 @@ class OneSidedSwitchDecider extends SwitchDecider {
         case WEST:
             super.getTwoLayerCrossCounter().countWesternEdgeCrossings(upperNode, lowerNode);
         }
+        // gets the upper lower and lower upper crossings from the crossing counter and fills in
+        // the crossing matrix.
         super.setCrossingMatrixEntriesFromCounter(upperNode, lowerNode);
     }
 

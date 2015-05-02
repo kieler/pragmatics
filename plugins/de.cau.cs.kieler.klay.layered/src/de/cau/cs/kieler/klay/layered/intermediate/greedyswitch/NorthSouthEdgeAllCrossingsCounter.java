@@ -39,8 +39,8 @@ class NorthSouthEdgeAllCrossingsCounter {
     private final Map<LNode, Integer> nodePositions;
     private final Map<LPort, Integer> portPositions;
     private final Map<LNode, Integer> northCardinalities;
-    private final LNode[] layer;
     private final Map<LNode, Integer> southCardinalities;
+    private final LNode[] layer;
     private LNode currentOriginNode;
     private int numberOfNorthSouthEdges;
     private int numberOfLongEdgeDummies;
@@ -86,26 +86,31 @@ class NorthSouthEdgeAllCrossingsCounter {
     }
 
     /**
-     * <pre>
      * Counts all crossings caused by the ordering of north/south ports and between north/south
-     * edges and long-edge dummies.
-     *  Assume the following layout:
+     * edges and long-edge dummies. Assume the following layout:
+     * 
+     * <pre>
      *       *---*
      *       |
      *     *-+--*
      *     | |
      *   x-+-+--*
      *  _|_|_|_
-     *  |_____|.
-     *  This can be viewed as a matrix:
+     *  |_____|
+     * </pre>
+     * 
+     * This can be viewed as a matrix:
+     * 
+     * <pre>
      *   0 1 2 
      * 0  |  *
      * 1  |*__
      * 2 x
-     *  Thereby node the eastern edge of node x causes crossings with north/south edges of all
-     *  nodes which are to the right and above it.
-     *  For western edges this is the same to the left and below.
      * </pre>
+     * 
+     * Thereby node the eastern edge of node x causes crossings with north/south edges of all nodes
+     * which are to the right and above it. For western edges this is the same to the left and
+     * below.
      * 
      * @return number of crossings
      */
@@ -249,8 +254,8 @@ class NorthSouthEdgeAllCrossingsCounter {
             return southCardinalities.get(node);
         default:
         }
-        throw new UnsupportedOperationException(
-                "The cardinality on this side has not been collected");
+        assert false : "Cardinality for port side " + side + " has not been collected!";
+        return 0;
     }
 
     private int positionOf(final LNode node) {

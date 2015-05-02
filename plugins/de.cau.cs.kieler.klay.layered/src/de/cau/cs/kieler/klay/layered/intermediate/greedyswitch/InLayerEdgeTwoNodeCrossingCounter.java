@@ -51,7 +51,8 @@ class InLayerEdgeTwoNodeCrossingCounter extends InLayerEdgeAllCrossingsCounter {
 
     /**
      * Counts crossings between in-layer edges incident to the given nodes. Use
-     * getUpperLowerCrossings and getLowerUpperCrossings to access the calculated values.
+     * {@link #getUpperLowerCrossings()} and {@link #getLowerUpperCrossings()} to access the
+     * calculated values.
      * 
      * @param upper
      * @param lower
@@ -121,10 +122,13 @@ class InLayerEdgeTwoNodeCrossingCounter extends InLayerEdgeAllCrossingsCounter {
     }
 
     private boolean notConnectedToOtherNode(final LEdge edge, final LNode node) {
-        return node.equals(upperNode) ? !edge.getTarget().getNode().equals(lowerNode)
-                && !edge.getSource().getNode().equals(lowerNode) : !edge.getTarget().getNode()
-                .equals(upperNode)
-                && !edge.getSource().getNode().equals(upperNode);
+        if (node.equals(upperNode)) {
+            return !edge.getTarget().getNode().equals(lowerNode)
+                    && !edge.getSource().getNode().equals(lowerNode);
+        } else {
+            return !edge.getTarget().getNode().equals(upperNode)
+                    && !edge.getSource().getNode().equals(upperNode);
+        }
     }
 
     /**
