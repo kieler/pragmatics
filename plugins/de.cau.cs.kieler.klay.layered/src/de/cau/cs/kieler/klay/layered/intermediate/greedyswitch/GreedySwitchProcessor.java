@@ -21,7 +21,7 @@ import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.OneSidedSwitchDecider.CrossingCountSide;
+import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.SwitchDecider.CrossingCountSide;
 import de.cau.cs.kieler.klay.layered.properties.GreedySwitchType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -79,7 +79,6 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
             progressMonitor.done();
             return;
         }
-
 
         initialize(graph);
 
@@ -196,11 +195,9 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
     }
 
     private SwitchDecider getNewSwitchDecider(final int freeLayerIndex, final CrossingCountSide side) {
-        if (greedySwitchType.isOneSided()) {
-            return new OneSidedSwitchDecider(freeLayerIndex, currentNodeOrder, side);
-        } else {
-            return new TwoSidedSwitchDecider(freeLayerIndex, currentNodeOrder);
-        }
+        CrossingMatrixFiller crossingMatrixFiller =
+                new CrossingMatrixFiller(greedySwitchType, currentNodeOrder, freeLayerIndex, side);
+        return new SwitchDecider(freeLayerIndex, currentNodeOrder, crossingMatrixFiller);
     }
 
     private boolean sweepBackwardReducingCrossings() {

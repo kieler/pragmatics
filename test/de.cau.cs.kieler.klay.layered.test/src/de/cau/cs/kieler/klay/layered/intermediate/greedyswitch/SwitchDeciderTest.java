@@ -27,7 +27,7 @@ import org.junit.runners.Parameterized.Parameters;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.OneSidedSwitchDecider.CrossingCountSide;
+import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.SwitchDecider.CrossingCountSide;
 import de.cau.cs.kieler.klay.layered.properties.GreedySwitchType;
 
 /**
@@ -356,11 +356,8 @@ public class SwitchDeciderTest {
             final CrossingCountSide direction) {
         freeLayerIndex = layerIndex;
         currentNodeOrder = getCurrentNodeOrder();
-        if (greedyType.isOneSided()) {
-            return new OneSidedSwitchDecider(freeLayerIndex, currentNodeOrder, direction);
-        } else {
-            return new TwoSidedSwitchDecider(freeLayerIndex, currentNodeOrder);
-        }
+        return new SwitchDecider(layerIndex, currentNodeOrder, new CrossingMatrixFiller(greedyType,
+                currentNodeOrder, layerIndex, direction));
     }
 
     private LNode[][] getCurrentNodeOrder() {

@@ -67,8 +67,7 @@ public class GreedySwitchProcessorTest {
      */
     @Parameters(name = "{0}")
     public static Iterable<Object[]> greedyTypes() {
-        return Arrays.asList(new Object[][] {
- { GreedySwitchType.ONE_SIDED },
+        return Arrays.asList(new Object[][] { { GreedySwitchType.ONE_SIDED },
                 { GreedySwitchType.ONE_SIDED_BEST_OF_UP_OR_DOWN }, { GreedySwitchType.TWO_SIDED },
                 { GreedySwitchType.TWO_SIDED_BEST_OF_UP_OR_DOWN }, });
     }

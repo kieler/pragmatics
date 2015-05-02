@@ -14,9 +14,6 @@
 package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
 import java.util.List;
-import java.util.Map;
-
-import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -36,15 +33,12 @@ import de.cau.cs.kieler.klay.layered.properties.NodeType;
  * 
  * @author alan
  */
-abstract class SwitchDecider {
+class SwitchDecider {
     private final LNode[] freeLayer;
-    private final boolean[][] isCrossingMatrixFilled;
-    private final int[][] crossingMatrix;
     private final InLayerEdgeTwoNodeCrossingCounter inLayerCounter;
     private final NorthSouthEdgeNeighbouringNodeCrossingsCounter northSouthCounter;
-    private final BetweenLayerEdgeTwoNodeCrossingsCounter inBetweenLayerCrossingCounter;
-    /** To avoid interdependency errors between classes, the .id field of nodes is not used. */
-    private final Map<LNode, Integer> nodeIds;
+
+    private final CrossingMatrixFiller crossingMatrixFiller;
 
     /**
      * Creates SwitchDecider.
@@ -56,24 +50,17 @@ abstract class SwitchDecider {
      * @throws SwitchDeciderException
      *             on faulty input
      */
-    SwitchDecider(final int freeLayerIndex, final LNode[][] graph) {
+    SwitchDecider(final int freeLayerIndex, final LNode[][] graph,
+            final CrossingMatrixFiller crossingMatrixFiller) {
+        this.crossingMatrixFiller = crossingMatrixFiller;
         if (freeLayerIndex >= graph.length) {
             throw new IndexOutOfBoundsException(
                     "Greedy SwitchDecider: Free layer layer not in graph.");
         }
         freeLayer = graph[freeLayerIndex];
 
-        isCrossingMatrixFilled =
-                new boolean[freeLayer.length][freeLayer.length];
-        crossingMatrix = new int[freeLayer.length][freeLayer.length];
-
-        inBetweenLayerCrossingCounter =
-                new BetweenLayerEdgeTwoNodeCrossingsCounter(graph, freeLayerIndex);
         inLayerCounter = new InLayerEdgeTwoNodeCrossingCounter(freeLayer);
         northSouthCounter = new NorthSouthEdgeNeighbouringNodeCrossingsCounter(freeLayer);
-
-        nodeIds = Maps.newHashMap();
-        initializeNodePositions(graph);
     }
 
     public final void notifyOfSwitch(final LNode upperNode, final LNode lowerNode) {
@@ -96,35 +83,17 @@ abstract class SwitchDecider {
         northSouthCounter.countCrossings(upperNode, lowerNode);
 
         int upperLowerCrossings =
-                getCrossingMatrixEntry(upperNode, lowerNode)
+                crossingMatrixFiller.getCrossingMatrixEntry(upperNode, lowerNode)
                         + inLayerCounter.getUpperLowerCrossings()
                         + northSouthCounter.getUpperLowerCrossings();
         int lowerUpperCrossings =
-                getCrossingMatrixEntry(lowerNode, upperNode)
+                crossingMatrixFiller.getCrossingMatrixEntry(lowerNode, upperNode)
                         + inLayerCounter.getLowerUpperCrossings()
                         + northSouthCounter.getLowerUpperCrossings();
 
         return upperLowerCrossings > lowerUpperCrossings;
     }
 
-    private int getCrossingMatrixEntry(final LNode upperNode, final LNode lowerNode) {
-        if (!isCrossingMatrixFilled[idOf(upperNode)][idOf(lowerNode)]) {
-            fillCrossingMatrix(upperNode, lowerNode);
-            isCrossingMatrixFilled[idOf(upperNode)][idOf(lowerNode)] = true;
-            isCrossingMatrixFilled[idOf(lowerNode)][idOf(upperNode)] = true;
-        }
-        return crossingMatrix[idOf(upperNode)][idOf(lowerNode)];
-    }
-
-    protected abstract void fillCrossingMatrix(LNode upperNode, LNode lowerNode);
-
-    protected final void setCrossingMatrixEntriesFromCounter(final LNode upperNode,
-            final LNode lowerNode) {
-        crossingMatrix[idOf(upperNode)][idOf(lowerNode)] =
-                inBetweenLayerCrossingCounter.getUpperLowerCrossings();
-        crossingMatrix[idOf(lowerNode)][idOf(upperNode)] =
-                inBetweenLayerCrossingCounter.getLowerUpperCrossings();
-    }
 
     /**
      * Check if in layer {@link InternalProperties.IN_LAYER_SUCCESSOR_CONSTRAINTS} or
@@ -206,20 +175,18 @@ abstract class SwitchDecider {
         return node.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT;
     }
 
-    protected final BetweenLayerEdgeTwoNodeCrossingsCounter getTwoLayerCrossCounter() {
-        return inBetweenLayerCrossingCounter;
-    }
 
-    private void initializeNodePositions(final LNode[][] g) {
-        for (LNode[] layer : g) {
-            int id = 0;
-            for (LNode node : layer) {
-                nodeIds.put(node, id++);
-            }
+
+    /**
+         * The side on which to count crossings for the one-sided SwitchDecider.
+         * 
+         * @author alan
+         *
+         */
+        protected enum CrossingCountSide {
+            /** Consider crossings to the west of the free layer. */
+            WEST,
+            /** Consider crossings to the east of the free layer. */
+            EAST
         }
-    }
-
-    private int idOf(final LNode node) {
-        return nodeIds.get(node);
-    }
 }
