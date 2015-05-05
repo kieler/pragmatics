@@ -164,7 +164,6 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
     /**
      * {@inheritDoc}
      */
-    @Override
     public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
             final LGraph graph) {
         
@@ -216,7 +215,6 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
         monitor.begin("Orthogonal edge routing", 1);
         
