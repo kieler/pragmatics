@@ -13,18 +13,19 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
-import java.util.LinkedList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -57,7 +58,7 @@ public final class CommentPostprocessor implements ILayoutProcessor {
         double spacing = layeredGraph.getProperty(Properties.OBJ_SPACING).doubleValue();
         
         for (Layer layer : layeredGraph) {
-            List<LNode> boxes = new LinkedList<LNode>();
+            List<LNode> boxes = Lists.newArrayList();
             for (LNode node : layer) {
                 List<LNode> topBoxes = node.getProperty(InternalProperties.TOP_COMMENTS);
                 List<LNode> bottomBoxes = node.getProperty(InternalProperties.BOTTOM_COMMENTS);

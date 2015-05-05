@@ -42,7 +42,7 @@ public class WrappedKNodeNode extends PNode {
      */
     public WrappedKNodeNode(final KNodeNode node) {
         this.knodenode = node;
-        this.node = knodenode.getGraphElement();
+        this.node = knodenode.getViewModelElement();
 
         // add the wrapped node as child
         addChild(node);

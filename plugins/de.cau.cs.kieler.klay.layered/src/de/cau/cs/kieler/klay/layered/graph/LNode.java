@@ -15,13 +15,13 @@ package de.cau.cs.kieler.klay.layered.graph;
 
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -37,6 +37,50 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  */
 public final class LNode extends LShape {
     
+    /**
+     * Definition of node types used in the layered approach.
+     * 
+     * @author msp
+     * @author cds
+     * @author ima
+     * @author jjc
+     * @kieler.design proposed by msp
+     * @kieler.rating proposed yellow by msp
+     */
+    public static enum NodeType {
+        
+        /** a normal node is created from a node of the original graph. */
+        NORMAL,
+        /** a dummy node created to split a long edge. */
+        LONG_EDGE,
+        /** a node representing an external port. */
+        EXTERNAL_PORT,
+        /** a dummy node created to cope with ports at the northern or southern side. */
+        NORTH_SOUTH_PORT,
+        /** a dummy node to represent a mid-label on an edge. */
+        LABEL,
+        /** a dummy node originating from a node spanning multiple layers. */
+        BIG_NODE;
+        
+        /**
+         * Return the color used when writing debug output graphs. The colors are given as strings of
+         * the form "#RGB", where each component is given as a two-digit hexadecimal value.
+         * 
+         * @return the color string
+         */
+        public String getColor() {
+            switch (this) {
+            case BIG_NODE: return "#cccccc";
+            case EXTERNAL_PORT: return "#cc99cc";
+            case LONG_EDGE: return "#eaed00";
+            case NORTH_SOUTH_PORT: return "#0034de";
+            case LABEL: return "#75c3c3";
+            default: return "#000000";
+            }
+        }
+
+    }
+    
     /** the serial version UID. */
     private static final long serialVersionUID = -4272570519129722541L;
     
@@ -44,10 +88,12 @@ public final class LNode extends LShape {
     private LGraph graph;
     /** the containing layer. */
     private Layer layer;
+    /** the node's node type. */
+    private NodeType nodeType = NodeType.NORMAL;
     /** the ports of the node. */
-    private final List<LPort> ports = new LinkedList<LPort>();
+    private final List<LPort> ports = Lists.newArrayList();
     /** this node's labels. */
-    private final List<LLabel> labels = new LinkedList<LLabel>();
+    private final List<LLabel> labels = Lists.newArrayList();
     /** the margin area around this node. */
     private final LInsets margin = new LInsets();
     /** the insets inside this node, usually reserved for port and label placement. */
@@ -69,7 +115,6 @@ public final class LNode extends LShape {
      * @param graph the graph for which the node is created 
      */
     public LNode(final LGraph graph) {
-        super(graph);
         this.graph = graph;
     }
 
@@ -118,13 +163,13 @@ public final class LNode extends LShape {
     }
 
     /**
-     * Sets the owning layer and adds itself to the end of the layer's list of nodes.
-     * If the node was previously in another layer, it is removed from
-     * that layer's list of nodes. Be careful not to use this method while
-     * iterating through the nodes list of the old layer nor of the new layer,
-     * since that could lead to {@link java.util.ConcurrentModificationException}s.
+     * Sets the owning layer and adds itself to the end of the layer's list of nodes. If the node
+     * was previously in another layer, it is removed from that layer's list of nodes. Be careful
+     * not to use this method while iterating through the nodes list of the old layer nor of the new
+     * layer, since that could lead to {@link java.util.ConcurrentModificationException}s.
      * 
-     * @param thelayer the owner to set
+     * @param thelayer
+     *            the owner to set
      */
     public void setLayer(final Layer thelayer) {
         if (layer != null) {
@@ -151,10 +196,11 @@ public final class LNode extends LShape {
     }
     
     /**
-     * Set the containing graph. This method must not be used when the layer has already been assigned.
-     * The graphs' lists of nodes are <em>not</em> automatically updated.
+     * Set the containing graph. This method must not be used when the layer has already been
+     * assigned. The graphs' lists of nodes are <em>not</em> automatically updated.
      * 
-     * @param newGraph the new containing graph
+     * @param newGraph
+     *            the new containing graph
      */
     public void setGraph(final LGraph newGraph) {
         assert layer == null;
@@ -162,15 +208,17 @@ public final class LNode extends LShape {
     }
     
     /**
-     * Sets the containing layer and adds itself to the layer's list of nodes at the
-     * specified position. If the node was previously in another layer, it is
-     * removed from that layer's list of nodes. Be careful not to use this method
-     * while iterating through the nodes list of the old layer nor of the new layer,
-     * since that could lead to {@link java.util.ConcurrentModificationException}s.
+     * Sets the containing layer and adds itself to the layer's list of nodes at the specified
+     * position. If the node was previously in another layer, it is removed from that layer's list
+     * of nodes. Be careful not to use this method while iterating through the nodes list of the old
+     * layer nor of the new layer, since that could lead to
+     * {@link java.util.ConcurrentModificationException}s.
      * 
-     * @param index where the node should be inserted in the layer. Must be {@code >= 0}
-     *              and {@code <= layer.getNodes().size()}.
-     * @param newlayer the new layer
+     * @param index
+     *            where the node should be inserted in the layer. Must be {@code >= 0} and
+     *            {@code <= layer.getNodes().size()}.
+     * @param newlayer
+     *            the new layer
      */
     public void setLayer(final int index, final Layer newlayer) {
         if (newlayer != null && (index < 0 || index > newlayer.getNodes().size())) {
@@ -187,14 +235,33 @@ public final class LNode extends LShape {
             newlayer.getNodes().add(index, this);
         }
     }
+    
+    /**
+     * Returns the node's node type. Parts of the algorithm will treat nodes of different types
+     * differently.
+     * 
+     * @return the node's node type.
+     */
+    public NodeType getNodeType() {
+        return nodeType;
+    }
+    
+    /**
+     * Sets this node's node type.
+     * 
+     * @param type
+     *            the node's new node type.
+     */
+    public void setNodeType(final NodeType type) {
+        nodeType = type;
+    }
 
     /**
-     * Returns the list of ports of this node. Note that all edges are connected to specific
-     * ports, even if the original diagram does not have any ports.
-     * Before the crossing minimization phase has passed, the port order in this list is
-     * arbitrary. After crossing minimization the order of ports corresponds to the clockwise
-     * order in which they are drawn, starting with the north side.
-     * Hence the order is
+     * Returns the list of ports of this node. Note that all edges are connected to specific ports,
+     * even if the original diagram does not have any ports. Before the crossing minimization phase
+     * has passed, the port order in this list is arbitrary. After crossing minimization the order
+     * of ports corresponds to the clockwise order in which they are drawn, starting with the north
+     * side. Hence the order is
      * <ul>
      *   <li>north ports from left to right,</li>
      *   <li>east ports from top to bottom,</li>
@@ -211,7 +278,7 @@ public final class LNode extends LShape {
     /**
      * Returns an iterable for all ports of given type.
      * 
-     * @param type
+     * @param portType
      *            a port type
      * @return an iterable for the ports of given type
      */
@@ -241,7 +308,7 @@ public final class LNode extends LShape {
     /**
      * Returns an iterable for all ports of a given type and side.
      * 
-     * @param type
+     * @param portType
      *            a port type.
      * @param side
      *            a port side.
@@ -335,7 +402,7 @@ public final class LNode extends LShape {
      * @return an iterable for all incoming edges.
      */
     public Iterable<LEdge> getIncomingEdges() {
-        List<Iterable<LEdge>> iterables = new LinkedList<Iterable<LEdge>>();
+        List<Iterable<LEdge>> iterables = Lists.newArrayList();
         for (LPort port : ports) {
             iterables.add(port.getIncomingEdges());
         }
@@ -349,7 +416,7 @@ public final class LNode extends LShape {
      * @return an iterable for all outgoing edges.
      */
     public Iterable<LEdge> getOutgoingEdges() {
-        List<Iterable<LEdge>> iterables = new LinkedList<Iterable<LEdge>>();
+        List<Iterable<LEdge>> iterables = Lists.newArrayList();
         for (LPort port : ports) {
             iterables.add(port.getOutgoingEdges());
         }
@@ -363,7 +430,7 @@ public final class LNode extends LShape {
      * @return an iterable for all connected edges.
      */
     public Iterable<LEdge> getConnectedEdges() {
-        List<Iterable<LEdge>> iterables = new LinkedList<Iterable<LEdge>>();
+        List<Iterable<LEdge>> iterables = Lists.newArrayList();
         for (LPort port : ports) {
             iterables.add(port.getConnectedEdges());
         }
@@ -424,13 +491,16 @@ public final class LNode extends LShape {
     }
     
     /**
-     * Converts the position of this node from coordinates relative to the parent node's
-     * border to coordinates relative to that node's content area. The content area is the
-     * parent node border minus insets minus border spacing minus offset.
+     * Converts the position of this node from coordinates relative to the parent node's border to
+     * coordinates relative to that node's content area. The content area is the parent node border
+     * minus insets minus border spacing minus offset.
      * 
-     * @param horizontal if {@code true}, the x coordinate will be translated.
-     * @param vertical if {@code true}, the y coordinate will be translated.
-     * @throws IllegalStateException if the node is not assigned to a layer in a layered graph.
+     * @param horizontal
+     *            if {@code true}, the x coordinate will be translated.
+     * @param vertical
+     *            if {@code true}, the y coordinate will be translated.
+     * @throws IllegalStateException
+     *             if the node is not assigned to a layer in a layered graph.
      */
     public void borderToContentAreaCoordinates(final boolean horizontal, final boolean vertical) {
         LGraph thegraph = getGraph();

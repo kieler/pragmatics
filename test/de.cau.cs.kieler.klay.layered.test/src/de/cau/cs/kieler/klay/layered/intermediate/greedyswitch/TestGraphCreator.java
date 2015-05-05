@@ -24,10 +24,10 @@ import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
-import de.cau.cs.kieler.klay.layered.properties.NodeType;
 
 /**
  * Use to create test graphs. CAUTION: Layout algorithm assumes the ports to be ordered in a
@@ -912,7 +912,7 @@ public class TestGraphCreator {
     // CHECKSTYLEOFF Javadoc
 
     protected void setAsNorthSouthNode(final LNode node) {
-        node.setProperty(InternalProperties.NODE_TYPE, NodeType.NORTH_SOUTH_PORT);
+        node.setNodeType(NodeType.NORTH_SOUTH_PORT);
     }
 
     protected void addNorthSouthEdge(final PortSide side, final LNode nodeWithNSPorts,
@@ -955,7 +955,7 @@ public class TestGraphCreator {
 
 
     protected void setAsLongEdgeDummy(final LNode node) {
-        node.setProperty(InternalProperties.NODE_TYPE, NodeType.LONG_EDGE);
+        node.setNodeType(NodeType.LONG_EDGE);
     }
 
     protected void setPortOrderFixed(final LNode node) {
@@ -997,7 +997,7 @@ public class TestGraphCreator {
 
     protected LNode addNodeToLayer(final Layer layer) {
         LNode node = new LNode(graph);
-        node.setProperty(InternalProperties.NODE_TYPE, NodeType.NORMAL);
+        node.setNodeType(NodeType.NORMAL);
         node.setProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT, node);
         node.setLayer(layer);
         node.id = nodeId++;
@@ -1011,7 +1011,7 @@ public class TestGraphCreator {
     }
 
     protected void addEdgeBetweenPorts(final LPort from, final LPort to) {
-        LEdge edge = new LEdge(graph);
+        LEdge edge = new LEdge();
         edge.setSource(from);
         edge.setTarget(to);
         edge.id = edgeId++;
@@ -1024,7 +1024,7 @@ public class TestGraphCreator {
     }
 
     private LPort addPortTo(final LNode node) {
-        LPort port = new LPort(graph);
+        LPort port = new LPort();
         port.setNode(node);
         port.id = portId++;
         return port;

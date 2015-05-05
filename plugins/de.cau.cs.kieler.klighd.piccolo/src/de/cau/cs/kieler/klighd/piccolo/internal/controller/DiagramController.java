@@ -26,12 +26,13 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
-
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
@@ -46,6 +47,7 @@ import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KLabeledGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
+import de.cau.cs.kieler.core.kgraph.impl.IPropertyToObjectMapImpl;
 import de.cau.cs.kieler.core.krendering.KPolyline;
 import de.cau.cs.kieler.core.krendering.KRendering;
 import de.cau.cs.kieler.core.krendering.KRenderingUtil;
@@ -61,17 +63,20 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klighd.ZoomStyle;
 import de.cau.cs.kieler.klighd.internal.macrolayout.KlighdLayoutManager;
 import de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties;
+import de.cau.cs.kieler.klighd.labels.KlighdLabelProperties;
+import de.cau.cs.kieler.klighd.piccolo.KlighdPiccoloPlugin;
 import de.cau.cs.kieler.klighd.piccolo.IKlighdNode.IKGraphElementNode;
+import de.cau.cs.kieler.klighd.piccolo.IKlighdNode.IKNodeNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.activities.ApplyBendPointsActivity;
 import de.cau.cs.kieler.klighd.piccolo.internal.activities.ApplySmartBoundsActivity;
 import de.cau.cs.kieler.klighd.piccolo.internal.activities.FadeEdgeInActivity;
 import de.cau.cs.kieler.klighd.piccolo.internal.activities.FadeNodeInActivity;
 import de.cau.cs.kieler.klighd.piccolo.internal.activities.IStartingAndFinishingActivity;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.IInternalKGraphElementNode;
-import de.cau.cs.kieler.klighd.piccolo.internal.nodes.IInternalKGraphElementNode.IKNodeNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KChildAreaNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KEdgeNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KLabelNode;
+import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KNodeAbstractNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KNodeNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KNodeTopNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KPortNode;
@@ -81,11 +86,16 @@ import de.cau.cs.kieler.klighd.piccolo.internal.util.NodeUtil;
 import de.cau.cs.kieler.klighd.util.Iterables2;
 import de.cau.cs.kieler.klighd.util.KlighdPredicates;
 import de.cau.cs.kieler.klighd.util.KlighdProperties;
+import de.cau.cs.kieler.klighd.util.LimitedKGraphContentAdapter;
 import de.cau.cs.kieler.klighd.util.ModelingUtil;
 import de.cau.cs.kieler.klighd.util.RenderingContextData;
 import edu.umd.cs.piccolo.PNode;
+import edu.umd.cs.piccolo.PRoot;
 import edu.umd.cs.piccolo.activities.PInterpolatingActivity;
 import edu.umd.cs.piccolo.util.PBounds;
+
+// SUPPRESS CHECKSTYLE PREVIOUS 100 Length
+//  Yes, this file is a bit too long, maybe to much documentation ... and too many imports ;-)
 
 /**
  * Overall manager of KGraph+KRendering+KLayoutData-based diagrams.<br>
@@ -106,7 +116,7 @@ import edu.umd.cs.piccolo.util.PBounds;
 public class DiagramController {
 
     /** the property for the Piccolo2D representation of a node. */
-    static final IProperty<IKNodeNode> REP = new Property<IKNodeNode>(
+    static final IProperty<KNodeAbstractNode> REP = new Property<KNodeAbstractNode>(
             "klighd.piccolo.representation");
 
     /** the property for the Piccolo2D representation of an edge. */
@@ -173,13 +183,14 @@ public class DiagramController {
         this.zoomController = new DiagramZoomController(topNode, canvasCamera, this);
 
         canvasCamera.getRoot().addChild(topNode);
-        canvasCamera.setDisplayedNode(topNode);
+        canvasCamera.setDisplayedKNodeNode(topNode);
 
         addExpansionListener(topNode);
 
         contextData.setProperty(KlighdInternalProperties.ACTIVE, true);
 
-        topNode.getChildAreaNode().setExpanded(true);
+        topNode.setExpanded(true);
+//        addChildren(topNode);
     }
 
     /**
@@ -273,15 +284,26 @@ public class DiagramController {
     }
 
     /**
+     * Returns the Piccolo2D representation for the given diagram element.
+     *
+     * @param diagramElement
+     *            the diagram element
+     * @return the Piccolo2D representation
+     */
+    private KNodeAbstractNode getKNodeRepresentation(final KNode diagramElement) {
+        return RenderingContextData.get(diagramElement).getProperty(REP);
+    }
+
+    /**
      * Collapses the representation of the given node.
      *
      * @param node
      *            the node
      */
     public void collapse(final KNode node) {
-        final IKNodeNode nodeRep = (IKNodeNode) getRepresentation(node);
+        final KNodeAbstractNode nodeRep = getKNodeRepresentation(node);
         if (nodeRep != null) {
-            nodeRep.getChildAreaNode().setExpanded(false);
+            nodeRep.setExpanded(false);
         }
 
         zoomController.setFocusNode(node);
@@ -294,9 +316,9 @@ public class DiagramController {
      *            the node
      */
     public void expand(final KNode node) {
-        final IKNodeNode nodeRep = (IKNodeNode) getRepresentation(node);
+        final KNodeAbstractNode nodeRep = getKNodeRepresentation(node);
         if (nodeRep != null) {
-            nodeRep.getChildAreaNode().setExpanded(true);
+            nodeRep.setExpanded(true);
         }
 
         zoomController.setFocusNode(node);
@@ -308,9 +330,9 @@ public class DiagramController {
      * @return true if this node is expanded.
      */
     public boolean isExpanded(final KNode node) {
-        final IKNodeNode nodeRep = (IKNodeNode) getRepresentation(node);
+        final KNodeAbstractNode nodeRep = getKNodeRepresentation(node);
         if (nodeRep != null) {
-            return nodeRep.getChildAreaNode().isExpanded();
+            return nodeRep.isExpanded();
         }
         return false;
     }
@@ -322,12 +344,71 @@ public class DiagramController {
      *            the node
      */
     public void toggleExpansion(final KNode node) {
-        final IKNodeNode nodeRep = (IKNodeNode) getRepresentation(node);
+        final KNodeAbstractNode nodeRep = getKNodeRepresentation(node);
         if (nodeRep != null) {
-            nodeRep.getChildAreaNode().toggleExpansion();
+            nodeRep.toggleExpansion();
         }
 
         zoomController.setFocusNode(node);
+    }
+
+    /**
+     * Provides the displaying state of the given diagram element. A diagram element is said to be
+     * displayed if it is part of the currently depicted diagram <b>regardless</b> of the currently
+     * visible diagram excerpt (viewport).<br>
+     * <br>
+     * Note that a recursive displaying check along the containment hierarchy is done only if
+     * <code>checkContainment</code> is <code>true</code>. Otherwise that is omitted for performance
+     * reasons. Thus, given the nested diagram nodes A contains B contains C with A collapsed this
+     * method may return <code>true</code> for C if <code>checkContainment</code> is
+     * <code>false</code>.
+     *
+     * @param diagramElement
+     *            a {@link KGraphElement}
+     * @param checkParents
+     *            whether the parent (containment) hierarchy is to be checked, too
+     * @return <code>true</code> if the {@link KGraphElement} <code>diagramElement</code> is
+     *         visible, <code>false</code> otherwise.
+     */
+    public boolean isDisplayed(final KGraphElement diagramElement, final boolean checkParents) {
+        final RenderingContextData contextData = RenderingContextData.basicGet(diagramElement);
+        if (contextData == null || !contextData.isActive(diagramElement)) {
+            // in this case either node rendering figure exists as of now or it has been
+            // removed from the diagram due to node collapse or a hide execution
+            return false;
+        }
+
+        if (checkParents) {
+            // TODO implementation to be fine-tuned wrt. performance etc.
+            final PNode node = (PNode) getRepresentation(diagramElement);
+            return node != null && NodeUtil.isDisplayed(node, canvasCamera);
+
+        } else {
+            // beyond testing for the 'active' flag I want to at least test the display of the
+            // corresponding parent node in case of labels and ports (and their labels)
+
+            if (diagramElement instanceof KNode) {
+                // nothing to do
+                return true;
+            }
+
+            if (diagramElement instanceof KEdge) {
+                // edges are handled explicitly at removal of nodes (see DiagramController) so we don't
+                //  test their source and target node explicitly here.
+                return true;
+            }
+
+            if (diagramElement instanceof KPort) {
+                return isDisplayed(((KPort) diagramElement).getNode(), false);
+            }
+
+            if (diagramElement instanceof KLabel) {
+                return isDisplayed(((KLabel) diagramElement).getParent(), false);
+            }
+
+            // the required default case, should never be executed!
+            return false;
+        }
     }
 
     /**
@@ -353,7 +434,7 @@ public class DiagramController {
 
         // first check whether 'diagramElement' is represented by any figure (PNode)
         //  that is contained by any other figure (and thus hopefully contained in the figure tree)
-        if (p == canvasCamera.getDisplayedLayer()) {
+        if (p == canvasCamera.getDisplayedKNodeNode()) {
             return true;
         } else if (p == null || p.getParent() == null) {
             return false;
@@ -379,7 +460,7 @@ public class DiagramController {
             }
         }
 
-        final IKNodeNode clip = getClipNode();
+        final KNodeAbstractNode clip = getClipNode();
         final PBounds camBounds = canvasCamera.getViewBounds();
         final PBounds elemFullBounds = NodeUtil.clipRelativeGlobalBoundsOf(p, clip);
         return elemFullBounds != null && elemFullBounds.intersects(camBounds);
@@ -437,29 +518,29 @@ public class DiagramController {
      *            <code>null</code>
      */
     public void clip(final KNode diagramElement) {
-        final IKGraphElementNode node =
-                (diagramElement == null) ? topNode : getRepresentation(diagramElement);
+        final KNodeAbstractNode node =
+                (diagramElement == null) ? topNode : getKNodeRepresentation(diagramElement);
 
         if (node == null) {
             throw new RuntimeException(INVALID_CLIP_NODE_ERROR_MSG.replace("XX",
                     diagramElement.toString()));
         }
 
-        final IKNodeNode currentRootNode = canvasCamera.getDisplayedKNodeNode();
+        final KNodeAbstractNode currentRootNode = canvasCamera.getDisplayedKNodeNode();
         if (currentRootNode == node) {
             return;
         }
 
-        if (((PNode) node).getRoot() == null) {
+        if (node.getRoot() == null) {
             throw new RuntimeException(INVALID_CLIP_NODE_ERROR_MSG.replace("XX",
                     diagramElement.toString()));
         }
 
-        canvasCamera.exchangeDisplayedNode((IKNodeNode) node);
+        canvasCamera.exchangeDisplayedKNodeNode(node);
         zoomController.setFocusNode(diagramElement);
     }
 
-    private IKNodeNode getClipNode() {
+    private KNodeAbstractNode getClipNode() {
         return canvasCamera.getDisplayedKNodeNode();
     }
 
@@ -469,7 +550,7 @@ public class DiagramController {
      * @return the {@link KNode} that is currently clipped.
      */
     public KNode getClip() {
-        final IKNodeNode node = getClipNode();
+        final KNodeAbstractNode node = getClipNode();
         return node.getViewModelElement();
     }
 
@@ -482,24 +563,55 @@ public class DiagramController {
     }
 
     private final Set<AbstractKGERenderingController<?, ?>> dirtyDiagramElements = Sets.newHashSet();
+    private final Map<AbstractKGERenderingController<?, ?>, Boolean> dirtyDiagramElementStyles =
+            Maps.newHashMap();
 
     void scheduleRenderingUpdate(final AbstractKGERenderingController<?, ?> controller) {
         renderingUpdater.cancel();
+
         synchronized (dirtyDiagramElements) {
             dirtyDiagramElements.add(controller);
         }
-        renderingUpdater.schedule(1);
+
+        renderingUpdater.schedule(RENDERING_UPDATER_DELAY);
     }
 
+    void scheduleStylesUpdate(final AbstractKGERenderingController<?, ?> controller,
+            final boolean bringToFront) {
+        renderingUpdater.cancel();
+
+        synchronized (dirtyDiagramElementStyles) {
+            dirtyDiagramElementStyles.put(controller, bringToFront);
+        }
+
+        renderingUpdater.schedule(RENDERING_UPDATER_DELAY);
+    }
+
+    private static final int RENDERING_UPDATER_DELAY = 5; /* ms */
+
     private final Job renderingUpdater = new Job("KLighD DiagramElementUpdater") {
-        {
+        /* Constructor */ {
             this.setSystem(true);
         }
 
         @Override
         protected IStatus run(final IProgressMonitor monitor) {
-            if (Display.getCurrent() == null && PlatformUI.isWorkbenchRunning()) {
+            if (PlatformUI.isWorkbenchRunning()) {
                 PlatformUI.getWorkbench().getDisplay().asyncExec(this.diagramUpdateRunnable);
+
+            } else if (Display.getCurrent() == null) {
+                // this case is required, e.g., for UI tests
+                try {
+                    Display.getDefault().asyncExec(this.diagramUpdateRunnable);
+
+                } catch (final SWTException e) {
+                    final String msg = "KLighD (piccolo): could access display!"
+                            + "Call 'Display.getDefault()' at startup of your application or test.";
+
+                    KlighdPiccoloPlugin.getDefault().getLog().log(
+                            new Status(IStatus.ERROR, KlighdPiccoloPlugin.PLUGIN_ID, msg));
+                }
+
             } else {
                 this.diagramUpdateRunnable.run();
             }
@@ -513,12 +625,25 @@ public class DiagramController {
              */
             public void run() {
                 final Set<AbstractKGERenderingController<?, ?>> copy;
+                final Map<AbstractKGERenderingController<?, ?>, Boolean> copyStyles;
+
                 synchronized (dirtyDiagramElements) {
                     copy = ImmutableSet.copyOf(dirtyDiagramElements);
                     dirtyDiagramElements.clear();
                 }
+
+                synchronized (dirtyDiagramElementStyles) {
+                    copyStyles = ImmutableMap.copyOf(dirtyDiagramElementStyles);
+                    dirtyDiagramElementStyles.clear();
+                }
+
                 for (final AbstractKGERenderingController<?, ?> ctrl : copy) {
                     ctrl.updateRenderingInUi();
+                }
+
+                for (final Map.Entry<AbstractKGERenderingController<?, ?>, Boolean> ctrl : copyStyles
+                        .entrySet()) {
+                    ctrl.getKey().updateStylesInUi(ctrl.getValue());
                 }
             }
         };
@@ -530,6 +655,7 @@ public class DiagramController {
      */
     private void handleRecordedChanges(final ZoomStyle zoomStyle, final KNode focusNode,
             final int animationTime) {
+        final PRoot root = topNode.getRoot();
 
         // create activities to apply all recorded changes
         for (final Map.Entry<IKGraphElementNode, ?> recordedChange : recordedChanges.entrySet()) {
@@ -598,7 +724,7 @@ public class DiagramController {
             }
             if (animationTime > 0) {
                 // schedule the activity
-                NodeUtil.schedulePrimaryActivity(shapeNode, activity);
+                NodeUtil.schedulePrimaryActivity(shapeNode, root, activity);
             } else {
                 // unschedule a currently running primary activity on the node if any
                 NodeUtil.unschedulePrimaryActivity(shapeNode);
@@ -619,12 +745,12 @@ public class DiagramController {
      * @param nodeNode
      *            the node representation
      */
-    private void addExpansionListener(final IKNodeNode nodeNode) {
+    private void addExpansionListener(final KNodeAbstractNode nodeNode) {
         final KChildAreaNode childAreaNode = nodeNode.getChildAreaNode();
         if (childAreaNode != null) {
             final KNode node = nodeNode.getViewModelElement();
 
-            childAreaNode.addPropertyChangeListener(KChildAreaNode.PROPERTY_EXPANSION,
+            ((PNode) nodeNode).addPropertyChangeListener(IKNodeNode.PROPERTY_EXPANSION,
                     new PropertyChangeListener() {
                         public void propertyChange(final PropertyChangeEvent event) {
                             if ((Boolean) event.getNewValue()) {
@@ -677,7 +803,7 @@ public class DiagramController {
         switch (element.eClass().getClassifierID()) {
         case KGraphPackage.KNODE:
             if (parentRep != null) {
-                addNode((IKNodeNode) parentRep, (KNode) element, forceShow);
+                addNode((KNodeAbstractNode) parentRep, (KNode) element, forceShow);
             }
             break;
         case KGraphPackage.KPORT:
@@ -748,7 +874,7 @@ public class DiagramController {
      * @param parentNode
      *            the parent structure node representing a KNode
      */
-    private void addChildren(final IKNodeNode parentNode) {
+    private void addChildren(final KNodeAbstractNode parentNode) {
         final KNode parent = parentNode.getViewModelElement();
 
         // create the nodes
@@ -778,9 +904,9 @@ public class DiagramController {
      *            if <code>true</code> add <code>element</code> to the diagram regardless of its
      *            {@link KlighdProperties#SHOW} property value
      */
-    private void addNode(final IKNodeNode parent, final KNode node, final boolean forceShow) {
+    private void addNode(final KNodeAbstractNode parent, final KNode node, final boolean forceShow) {
         final RenderingContextData contextData = RenderingContextData.get(node);
-        final IKNodeNode nodeRep = contextData.getProperty(REP);
+        final KNodeAbstractNode nodeRep = contextData.getProperty(REP);
 
         KNodeNode nodeNode;
         if (nodeRep instanceof KNodeTopNode) {
@@ -844,11 +970,11 @@ public class DiagramController {
         //  logic requires that (for registration of an transform change listener on the parents row)
         switch (expand) {
         case 1:
-            nodeNode.getChildAreaNode().setExpanded(true);
+            nodeNode.setExpanded(true);
             break;
         case 2:
             // touch the expansion state, see the methods javadoc for details
-            nodeNode.getChildAreaNode().touchExpanded();
+            nodeNode.touchExpanded();
             break;
         default:
             // e.g. case 0: don't expand
@@ -888,7 +1014,7 @@ public class DiagramController {
      */
     private void removeNode(final KNode node, final boolean releaseControllers) {
         final RenderingContextData contextData = RenderingContextData.get(node);
-        final IKNodeNode nodeRep = contextData.getProperty(REP);
+        final KNodeAbstractNode nodeRep = contextData.getProperty(REP);
 
         if (nodeRep == null) {
             return;
@@ -1257,7 +1383,17 @@ public class DiagramController {
 
         updateLayout(labelNode);
 
-        labelNode.setText(label.getText());
+        // if the label's text is overriden by means of a property, use that property
+        String labelText = label.getText();
+        final KLayoutData layoutData = label.getData(KLayoutData.class);
+        if (layoutData != null) {
+            final String labelTextOverride =
+                    layoutData.getProperty(KlighdLabelProperties.LABEL_TEXT_OVERRIDE);
+            if (labelTextOverride != null) {
+                labelText = labelTextOverride;
+            }
+        }
+        labelNode.setText(labelText);
 
         if (sync) {
             // remove any existing text sync adapters, which may be out-of-date
@@ -1563,16 +1699,16 @@ public class DiagramController {
      * (in contrast to an anonymous subclass)
      */
     private final class ChildrenSyncAdapter extends AdapterImpl {
-        private final IKNodeNode nodeRep;
+        private final KNodeAbstractNode nodeRep;
 
-        private ChildrenSyncAdapter(final IKNodeNode theNodeRep) {
+        private ChildrenSyncAdapter(final KNodeAbstractNode theNodeRep) {
             this.nodeRep = theNodeRep;
         }
 
         @Override
         public void notifyChanged(final Notification notification) {
 
-            if (notification.getFeatureID(KNode.class) == KGraphPackage.KNODE__CHILDREN) {
+            if (notification.getFeature() == KGraphPackage.Literals.KNODE__CHILDREN) {
                 if (UIExecRequired()) {
                     throw new RuntimeException(UI_REQUIRED_ERROR_MSG_NODES);
                 }
@@ -1646,16 +1782,16 @@ public class DiagramController {
 
         @Override
         public void notifyChanged(final Notification notification) {
-            final int featureId = notification.getFeatureID(KNode.class);
+            final Object feature = notification.getFeature();
 
-            if (featureId == KGraphPackage.KNODE__OUTGOING_EDGES
-                    || featureId == KGraphPackage.KNODE__INCOMING_EDGES) {
+            if (feature == KGraphPackage.Literals.KNODE__OUTGOING_EDGES
+                    || feature == KGraphPackage.Literals.KNODE__INCOMING_EDGES) {
                 if (UIExecRequired()) {
                     throw new RuntimeException(UI_REQUIRED_ERROR_MSG_EDGES);
                 }
 
                 final boolean releaseChildrenAndControllers =
-                        featureId == KGraphPackage.KNODE__OUTGOING_EDGES;
+                        feature == KGraphPackage.Literals.KNODE__OUTGOING_EDGES;
 
                 switch (notification.getEventType()) {
                 case Notification.ADD: {
@@ -1713,7 +1849,7 @@ public class DiagramController {
 
         @Override
         public void notifyChanged(final Notification notification) {
-            if (notification.getFeatureID(KNode.class) == KGraphPackage.KNODE__PORTS) {
+            if (notification.getFeature() == KGraphPackage.Literals.KNODE__PORTS) {
                 if (UIExecRequired()) {
                     throw new RuntimeException(UI_REQUIRED_ERROR_MSG_PORTS);
                 }
@@ -1776,8 +1912,7 @@ public class DiagramController {
         @Override
         public void notifyChanged(final Notification notification) {
 
-            if (notification.getFeatureID(KLabeledGraphElement.class)
-                    == KGraphPackage.KLABELED_GRAPH_ELEMENT__LABELS) {
+            if (notification.getFeature() == KGraphPackage.Literals.KLABELED_GRAPH_ELEMENT__LABELS) {
                 if (UIExecRequired()) {
                     throw new RuntimeException(UI_REQUIRED_ERROR_MSG_LABELS);
                 }
@@ -1824,38 +1959,71 @@ public class DiagramController {
             = Predicates.instanceOf(TextSyncAdapter.class);
 
     /**
-     * A dedicated specialization of {@link AdapterImpl} allowing 'instanceof' tests.
-     * (in contrast to an anonymous subclass)
+     * This adapter listens for changes on a {@code KLabel} instance. Whenever the label text was
+     * changed (or the {@link KlighdLabelProperties#LABEL_TEXT_OVERRIDE} property value changes), the
+     * label's {@link KLabelNode} has its text updated, which in turn causes its PNode to be updated.
      */
-    private final class TextSyncAdapter extends AdapterImpl {
+    private final class TextSyncAdapter extends LimitedKGraphContentAdapter {
         private final KLabelNode labelRep;
 
         private TextSyncAdapter(final KLabelNode theLabelRep) {
+            super(KLayoutData.class);
+
             this.labelRep = theLabelRep;
         }
 
         @Override
         public void notifyChanged(final Notification notification) {
-            if (notification.getFeatureID(KLabel.class) == KGraphPackage.KLABEL__TEXT) {
+            super.notifyChanged(notification);
 
+            // flag that indicates whether we have found a new text for our label or not
+            boolean foundNewText = false;
+            String newText = null;
+
+            if (notification.getFeature() == KGraphPackage.Literals.KLABEL__TEXT) {
+                // this is the case if the original KLabel in the view model had its text changed
                 switch (notification.getEventType()) {
                 case Notification.SET:
-                    if (UIExecRequired()) {
-                        // Since changing the label text is no structural modification
-                        //  we support the automatic switching the Display thread here!
-                        // (several potentially concurrent modifications of the
-                        //  diagram's structure might lead to chaos...)
-                        PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-                            public void run() {
-                                labelRep.setText(notification.getNewStringValue());
-                            }
-                        });
-                    } else {
-                        labelRep.setText(notification.getNewStringValue());
-                    }
+                    foundNewText = true;
+                    newText = notification.getNewStringValue();
                     break;
                 default:
                     break;
+                }
+            } else {
+                // otherwise, it may be that the LABEL_TEXT_OVERRIDE property was set or changed; we
+                // find the corresponding property-to-object map entry and find out if the property
+                // equals LABEL_TEXT_OVERRIDE; if so, we apply the property value as the new text
+                IPropertyToObjectMapImpl entry = null;
+
+                if (notification.getNotifier() instanceof KLayoutData
+                    && notification.getNewValue() instanceof IPropertyToObjectMapImpl) {
+
+                    entry = (IPropertyToObjectMapImpl) notification.getNewValue();
+                } else if (notification.getNotifier() instanceof IPropertyToObjectMapImpl) {
+                    entry = (IPropertyToObjectMapImpl) notification.getNotifier();
+                }
+
+                if (entry != null && entry.getKey().equals(KlighdLabelProperties.LABEL_TEXT_OVERRIDE)) {
+                    foundNewText = true;
+                    newText = (String) entry.getValue();
+                }
+            }
+
+            // apply new label text, if necessary
+            if (foundNewText) {
+                if (UIExecRequired()) {
+                    // Since changing the label text is no structural modification we support the
+                    // automatic switching the Display thread here! (several potentially concurrent
+                    // modifications of the diagram's structure might lead to chaos...)
+                    final String finalNewText = newText;
+                    PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+                        public void run() {
+                            labelRep.setText(finalNewText);
+                        }
+                    });
+                } else {
+                    labelRep.setText(newText);
                 }
             }
         }

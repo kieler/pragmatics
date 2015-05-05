@@ -21,8 +21,10 @@ import java.util.List;
 
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.xtext.resource.XtextResourceSet;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -40,8 +42,8 @@ import de.cau.cs.kieler.core.krendering.KStyle;
 import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier;
 import de.cau.cs.kieler.klighd.KlighdConstants;
 import de.cau.cs.kieler.klighd.piccolo.internal.controller.DiagramController;
-import de.cau.cs.kieler.klighd.piccolo.internal.nodes.IInternalKGraphElementNode.IKNodeNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KChildAreaNode;
+import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KNodeAbstractNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KNodeNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdMainCamera;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdPath;
@@ -84,6 +86,15 @@ public class RenderingTest {
     }
 
     /**
+     * Initialize the display as required by the employed {@link DiagramController},
+     * esp. its employed 'Job'.
+     */
+    @BeforeClass
+    public static void init() {
+        Display.getDefault();
+    }
+
+    /**
      * Some initialization to insert input KGraph into some Klighd structures.
      *
      * @param n
@@ -92,9 +103,7 @@ public class RenderingTest {
     private void initialize(final KNode n) {
         graph = n;
 
-        final KlighdMainCamera camera = new KlighdMainCamera();
-        final PRoot pRoot = new PRoot();
-        pRoot.addChild(camera);
+        final KlighdMainCamera camera = new KlighdMainCamera(new PRoot());
 
         controller = new DiagramController(graph, camera, true, false);
     }
@@ -112,7 +121,7 @@ public class RenderingTest {
 
         final String id = getKNodeId(node);
 
-        final IKNodeNode targetNode = findPNodeById(id, controller.getNode());
+        final KNodeAbstractNode targetNode = findPNodeById(id, controller.getNode());
         final KlighdPath path = getKlighdPath(targetNode);
         final KRendering ren = node.getData(KRendering.class);
         if (path != null && ren != null) {
@@ -135,7 +144,7 @@ public class RenderingTest {
         initialize(node);
 
         final String id = getKNodeId(node);
-        final IKNodeNode targetNode = findPNodeById(id, controller.getNode());
+        final KNodeAbstractNode targetNode = findPNodeById(id, controller.getNode());
         final KlighdPath path = getKlighdPath(targetNode);
         final KRendering ren = node.getData(KRendering.class);
         if (path != null && ren != null) {
@@ -261,7 +270,7 @@ public class RenderingTest {
      *            the node whose path to get
      * @return the KlighdPath attached to the given node
      */
-    private KlighdPath getKlighdPath(final IKNodeNode node) {
+    private KlighdPath getKlighdPath(final KNodeAbstractNode node) {
         if (node instanceof PNode) {
             for (int i = 0; i < ((PNode) node).getChildrenCount(); i++) {
                 final PNode pn = ((PNode) node).getChild(i);
@@ -281,7 +290,7 @@ public class RenderingTest {
      *            the piccolo graph in which to search
      * @return the node if found or null
      */
-    private IKNodeNode findPNodeById(final String id, final IKNodeNode node) {
+    private KNodeAbstractNode findPNodeById(final String id, final KNodeAbstractNode node) {
         KIdentifier nodeID = null;
         if (node instanceof KNodeNode) {
             nodeID = ((KNodeNode) node).getViewModelElement().getData(KIdentifier.class);
@@ -289,12 +298,12 @@ public class RenderingTest {
         if ((nodeID != null) && nodeID.getId().equals(id)) {
             return node;
         } else {
-            IKNodeNode result = null;
+            KNodeAbstractNode result = null;
             final KChildAreaNode kcan = node.getChildAreaNode();
             final PLayer nlay = kcan.getNodeLayer();
             if (nlay != null) {
                 for (int i = 0; i < nlay.getChildrenCount(); i++) {
-                    final IKNodeNode n = (IKNodeNode) nlay.getChild(i);
+                    final KNodeAbstractNode n = (KNodeAbstractNode) nlay.getChild(i);
                     result = findPNodeById(id, n);
                     if (result != null) {
                         return result;

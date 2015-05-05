@@ -2,12 +2,12 @@
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
- * 
+ *
  * Copyright 2013 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
- * 
+ *
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
@@ -30,7 +30,7 @@ import edu.umd.cs.piccolo.util.PDimension;
 /**
  * A specialization of {@link PPanEventHandler} with some customizations in the configuration and
  * non-configurable code. The latter requires some method overriding.
- * 
+ *
  * @author chsch
  */
 public class KlighdPanEventHandler extends PPanEventHandler {
@@ -43,7 +43,7 @@ public class KlighdPanEventHandler extends PPanEventHandler {
 
     /**
      * Constructor.
-     * 
+     *
      * @param widget
      *            an SWT {@link Widget} corresponding to the current diagram, required only for
      *            reacting on its disposal in order to cleanup installed change listeners
@@ -68,7 +68,27 @@ public class KlighdPanEventHandler extends PPanEventHandler {
 
     @Override
     protected boolean shouldStartDragInteraction(final PInputEvent event) {
-        return !event.isControlDown() && super.shouldStartDragInteraction(event);
+        return getAutopan() && !event.isControlDown() && super.shouldStartDragInteraction(event);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void mouseDragged(final PInputEvent event) {
+        // This method has been overridden in order to enable the call of 'drag' in case
+        //  'isDragging()' returns 'false', which always the case if auto panning if off
+        //  (which is the default setting), see 'shouldStartDragInteraction(...)' above.
+        // In case auto panning is active, I assume that a proper 'mouse pressed' is received first,
+        //  which will put the handler in dragging mode and enable the employed drag activity.
+
+        if (event.isControlDown()) {
+            // in this case the KlighdSelectiveZoomEventHandler or the
+            //  KlighdSelectionEventHandler are in charge of handling 'event'
+            return;
+        } else {
+            drag(event);
+        }
     }
 
     @Override
@@ -90,24 +110,20 @@ public class KlighdPanEventHandler extends PPanEventHandler {
         }
     }
 
-    
+
     @Override
     protected void dragActivityStep(final PInputEvent event) {
-        // Beyond the following check the reason for overriding this method is the replacement of
+        // The reason for overriding this method is the replacement of
         //  'event.getCamera()' by 'event.getTopCamera()'.
         // Besides some simplification have been done as our top camera always starts at (x,y) = (0,0).
-
-        if (!getAutopan()) {
-            return;
-        }
 
         final PCamera c = event.getTopCamera();
         final PBounds b = c.getBoundsReference();
         final Point2D.Double l = (Point2D.Double) event.getCanvasPosition();
-        
+
         final int outcode = b.outcode(l);
         final PDimension delta = new PDimension();
-        
+
         // SUPPRESS CHECKSTYLE NEXT 15 MagicNumber
 
         if ((outcode & Rectangle2D.OUT_TOP) != 0) {

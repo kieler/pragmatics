@@ -23,13 +23,13 @@ import java.util.List;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.p4nodes.LinearSegmentsNodePlacer.LinearSegment;
 import de.cau.cs.kieler.klay.layered.p5edges.OrthogonalRoutingGenerator.Dependency;
 import de.cau.cs.kieler.klay.layered.p5edges.OrthogonalRoutingGenerator.HyperNode;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
-import de.cau.cs.kieler.klay.layered.properties.NodeType;
 
 /**
  * A utility class for debugging of KLay Layered.
@@ -192,7 +192,7 @@ public final class DebugUtil {
             
             // Label
             options.append("label=\"");
-            if (node.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORMAL) {
+            if (node.getNodeType() == NodeType.NORMAL) {
                 // Normal nodes display their name, if any
                 if (node.getName() != null) {
                     options.append(node.getName().replace("\"", "\\\"") + " ");
@@ -204,7 +204,7 @@ public final class DebugUtil {
                 } else {
                     options.append("n_" + node.id + " ");
                 }
-                if (node.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT) {
+                if (node.getNodeType() == NodeType.NORTH_SOUTH_PORT) {
                     Object origin = node.getProperty(InternalProperties.ORIGIN);
                     if (origin instanceof LNode) {
                         options.append("(" + ((LNode) origin).toString() + ")");
@@ -214,12 +214,12 @@ public final class DebugUtil {
             options.append("(" + layerNumber + "," + nodeNumber + ")\",");
             
             // Node type
-            if (node.getProperty(InternalProperties.NODE_TYPE).equals(NodeType.NORMAL)) {
+            if (node.getNodeType() == NodeType.NORMAL) {
                 options.append("shape=box,");
             } else {
                 options.append("style=\"rounded,filled\",");
                 
-                String color = node.getProperty(InternalProperties.NODE_TYPE).getColor();
+                String color = node.getNodeType().getColor();
                 if (color != null) {
                     options.append("color=\"" + color + "\",");
                 }

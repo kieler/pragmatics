@@ -35,12 +35,18 @@ import edu.umd.cs.piccolo.PRoot;
  */
 public class SVGOffscreenRenderer extends AbstractOffscreenRenderer {
 
-    /**
-     * Property definition for declaring the desired SVG generator.<br>
-     */
+    /** The freeHEP-based SVG generator's id, requires the fragment "...klighd.piccolo.freehep". */
+    public static final String GENERATOR_SVG_FREEHEP_EXTENDED =
+            "de.cau.cs.kieler.klighd.piccolo.svggen.freeHEPExtended";
+
+    /** The Batik-based SVG generator's id, requires the fragment "...klighd.piccolo.batik". */
+    public static final String GENERATOR_SVG_BATIK =
+            "de.cau.cs.kieler.klighd.piccolo.svggen.batik";
+
+    /** Property definition for declaring the desired SVG generator. */
     public static final IProperty<String> GENERATOR = new Property<String>(
             "de.cau.cs.kieler.klighd.piccolo.svg.generator",
-            "de.cau.cs.kieler.klighd.piccolo.svggen.batik");
+            GENERATOR_SVG_FREEHEP_EXTENDED);
 
     /**
      * {@inheritDoc}
@@ -56,11 +62,8 @@ public class SVGOffscreenRenderer extends AbstractOffscreenRenderer {
                 ? properties.getProperty(GENERATOR) : GENERATOR.getDefault();
 
         // Construct a KLighD main camera ...
-        final KlighdMainCamera camera = new KlighdMainCamera();
-
-        // add it to a Piccolo2D root figure
-        //  (the basic PRoot is sufficient as this canvas doesn't rely on any SWT stuff)
-        new PRoot().addChild(camera);
+        //  (the basic PRoot is sufficient here, as this canvas doesn't rely on any SWT stuff)
+        final KlighdMainCamera camera = new KlighdMainCamera(new PRoot());
 
         try {
             // build up the diagram, i.e. apply the necessary diagram syntheses, etc.

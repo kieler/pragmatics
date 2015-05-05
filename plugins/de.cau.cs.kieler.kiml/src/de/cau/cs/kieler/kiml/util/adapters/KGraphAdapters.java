@@ -46,16 +46,21 @@ import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Insets;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 
 /**
- * Contains implementations of the {@link GraphAdapters} interfaces for the KGraph.
+ * Contains implementations of the {@link GraphAdapters} interfaces for the KGraph. To obtain an
+ * adapter for a full KGraph, simply call {@link #adapt(KGraph)}. To obtain an adapter only for a
+ * single node, call {@link #adaptSingleNode(KNode)}.
  * 
  * @author uru
  */
 public final class KGraphAdapters {
 
     private KGraphAdapters() {
+        throw new IllegalStateException("Private constructor instantiation! Bad!");
     }
 
     /**
+     * Creates the necessary adapters for the KGraph rooted at the given node.
+     * 
      * @param graph
      *            the graph that should be wrapped in an adapter
      * @return an {@link KGraphAdapter} for the passed graph.
@@ -65,11 +70,25 @@ public final class KGraphAdapters {
     }
 
     /**
+     * Creates a single node adapter for the given node.
+     * 
+     * @param node
+     *            the node that should be wrapped in an adapter
+     * @return an {@link KNodeAdapter} for the passed node.
+     */
+    public static KNodeAdapter adaptSingleNode(final KNode node) {
+        return new KNodeAdapter(node);
+    }
+
+    /**
      * Implements basic adpater functionality for {@link KGraphElement}s.
      */
     private abstract static class AbstractKGraphElementAdapter<T extends KGraphElement> implements
             GraphElementAdapter<T> {
-
+        
+        private static final IProperty<Float> OFFSET_PROXY = new Property<Float>(
+                LayoutOptions.OFFSET, 0.0f);
+        
         // let the elements be accessed by extending classes
         // CHECKSTYLEOFF VisibilityModifier
         /** The wrapped element. */
@@ -83,15 +102,16 @@ public final class KGraphAdapters {
          */
         private int id;
         
-        private static final IProperty<Float> OFFSET_PROXY = new Property<Float>(
-                LayoutOptions.OFFSET, 0.0f);
-
+        
         /**
+         * Creates a new adapter for the given graph element.
+         * 
          * @param element
-         *            the element that is wrapped in this adapter.
+         *            the element to be wrapped in this adapter.
          */
-        public AbstractKGraphElementAdapter(final T element) {
+        protected AbstractKGraphElementAdapter(final T element) {
             this.element = element;
+            
             try {
                 layout = element.getData(KShapeLayout.class);
             } catch (ClassCastException cce) {
@@ -100,12 +120,12 @@ public final class KGraphAdapters {
             }
         }
 
+
         /**
          * {@inheritDoc}
          */
         @SuppressWarnings("unchecked")
         public <P> P getProperty(final IProperty<P> prop) {
-            
             // the nodespacing implementation requires a default value for the offset property
             if (prop.equals(LayoutOptions.OFFSET)) {
                 return (P) layout.getProperty(OFFSET_PROXY);
@@ -184,16 +204,16 @@ public final class KGraphAdapters {
             Margins newMargin = new Margins(margin); 
             layout.setProperty(LayoutOptions.MARGINS, newMargin);
         }
-
+        
         /**
-         * @return the id
+         * {@inheritDoc}
          */
         public int getVolatileId() {
             return id;
         }
 
         /**
-         * @param id the id to set
+         * {@inheritDoc}
          */
         public void setVolatileId(final int volatileId) {
             this.id = volatileId;
@@ -201,13 +221,18 @@ public final class KGraphAdapters {
     }
 
     /**
-     * .
+     * Adapter for KGraphs rooted at a given node.
      */
     public static final class KGraphAdapter extends AbstractKGraphElementAdapter<KNode> implements
             GraphAdapter<KNode> {
+        
+        /** cached list of child node adapters. */
+        private List<NodeAdapter<?>> childNodes = null;
+        
         /**
-         * @param node
-         *            .
+         * Creates a new adapter for the KGraph rooted at the given node.
+         * 
+         * @param node root of the KGraph to be adapted.
          */
         private KGraphAdapter(final KNode node) {
             super(node);
@@ -217,36 +242,52 @@ public final class KGraphAdapters {
          * {@inheritDoc}
          */
         public Iterable<NodeAdapter<?>> getNodes() {
-            List<NodeAdapter<?>> children = Lists.newLinkedList();
-            for (KNode n : element.getChildren()) {
-                children.add(new KNodeAdapter(n));
+            if (childNodes == null) {
+                childNodes = Lists.newArrayListWithExpectedSize(element.getChildren().size());
+                for (KNode n : element.getChildren()) {
+                    childNodes.add(new KNodeAdapter(n));
+                }
             }
-            return children;
+            return childNodes;
         }
     }
 
     /**
-     * .
+     * Adapter for {@link KNode}s.
      */
-    public static class KNodeAdapter extends AbstractKGraphElementAdapter<KNode> implements
+    public static final class KNodeAdapter extends AbstractKGraphElementAdapter<KNode> implements
             NodeAdapter<KNode> {
-
+        
+        /** Cached list of label adapters. */
+        private List<LabelAdapter<?>> labelAdapters = null;
+        /** Cached list of port adapters. */
+        private List<PortAdapter<?>> portAdapters = null;
+        /** Cached list of edge adapters for incoming edges. */
+        private List<EdgeAdapter<?>> incomingEdgeAdapters = null;
+        /** Cached list of edge adapters for outgoing edges. */
+        private List<EdgeAdapter<?>> outgoingEdgeAdapters = null;
+        
+        
         /**
+         * Creates a new adapter for the given node.
+         * 
          * @param node
-         *            .
+         *            the node to adapt.
          */
-        public KNodeAdapter(final KNode node) {
+        private KNodeAdapter(final KNode node) {
             super(node);
         }
+        
 
         /**
          * {@inheritDoc}
          */
         public List<LabelAdapter<?>> getLabels() {
-            List<LabelAdapter<?>> labelAdapters =
-                    Lists.newArrayListWithExpectedSize(element.getLabels().size());
-            for (KLabel l : element.getLabels()) {
-                labelAdapters.add(new KLabelAdapter(l));
+            if (labelAdapters == null) {
+                labelAdapters = Lists.newArrayListWithExpectedSize(element.getLabels().size());
+                for (KLabel l : element.getLabels()) {
+                    labelAdapters.add(new KLabelAdapter(l));
+                }
             }
             return labelAdapters;
         }
@@ -255,10 +296,11 @@ public final class KGraphAdapters {
          * {@inheritDoc}
          */
         public List<PortAdapter<?>> getPorts() {
-            List<PortAdapter<?>> portAdapters =
-                    Lists.newArrayListWithExpectedSize(element.getPorts().size());
-            for (KPort p : element.getPorts()) {
-                portAdapters.add(new KPortAdapter(p));
+            if (portAdapters == null) {
+                portAdapters = Lists.newArrayListWithExpectedSize(element.getPorts().size());
+                for (KPort p : element.getPorts()) {
+                    portAdapters.add(new KPortAdapter(p));
+                }
             }
             return portAdapters;
         }
@@ -267,24 +309,28 @@ public final class KGraphAdapters {
          * {@inheritDoc}
          */
         public Iterable<EdgeAdapter<?>> getIncomingEdges() {
-            List<EdgeAdapter<?>> edgeAdapter =
-                    Lists.newArrayListWithExpectedSize(element.getIncomingEdges().size());
-            for (KEdge e : element.getIncomingEdges()) {
-                edgeAdapter.add(new KEdgeAdapter(e));
+            if (incomingEdgeAdapters == null) {
+                incomingEdgeAdapters = Lists.newArrayListWithExpectedSize(
+                        element.getIncomingEdges().size());
+                for (KEdge e : element.getIncomingEdges()) {
+                    incomingEdgeAdapters.add(new KEdgeAdapter(e));
+                }
             }
-            return edgeAdapter;
+            return incomingEdgeAdapters;
         }
         
         /**
          * {@inheritDoc}
          */
         public Iterable<EdgeAdapter<?>> getOutgoingEdges() {
-            List<EdgeAdapter<?>> edgeAdapter =
-                    Lists.newArrayListWithExpectedSize(element.getOutgoingEdges().size());
-            for (KEdge e : element.getOutgoingEdges()) {
-                edgeAdapter.add(new KEdgeAdapter(e));
+            if (outgoingEdgeAdapters == null) {
+                outgoingEdgeAdapters = Lists.newArrayListWithExpectedSize(
+                        element.getOutgoingEdges().size());
+                for (KEdge e : element.getOutgoingEdges()) {
+                    outgoingEdgeAdapters.add(new KEdgeAdapter(e));
+                }
             }
-            return edgeAdapter;
+            return outgoingEdgeAdapters;
         }
 
         /**
@@ -315,17 +361,21 @@ public final class KGraphAdapters {
     }
 
     /**
-     * .
+     * Adapter for {@link KLabel}s.
      */
-    private static class KLabelAdapter extends AbstractKGraphElementAdapter<KLabel> implements
+    private static final class KLabelAdapter extends AbstractKGraphElementAdapter<KLabel> implements
             LabelAdapter<KLabel> {
 
         /**
+         * Creates a new adapter for the given label.
          * 
+         * @param label
+         *            the label to adapt.
          */
-        public KLabelAdapter(final KLabel label) {
+        private KLabelAdapter(final KLabel label) {
             super(label);
         }
+        
 
         /**
          * {@inheritDoc}
@@ -336,20 +386,29 @@ public final class KGraphAdapters {
     }
 
     /**
-     * .
+     * Adapter for {@link KPort}s.
      */
-    private static class KPortAdapter extends AbstractKGraphElementAdapter<KPort>
+    private static final class KPortAdapter extends AbstractKGraphElementAdapter<KPort>
             implements PortAdapter<KPort> {
+        
+        /** Cached list of label adapters. */
+        private List<LabelAdapter<?>> labelAdapters = null;
+        /** Cached list of edge adapters for incoming edges. */
+        private List<EdgeAdapter<?>> incomingEdgeAdapters = null;
+        /** Cached list of edge adapters for outgoing edges. */
+        private List<EdgeAdapter<?>> outgoingEdgeAdapters = null;
 
+        
         /**
          * Creates a new adapter for the given port.
          * 
          * @param port the port to adapt.
          */
-        public KPortAdapter(final KPort port) {
+        private KPortAdapter(final KPort port) {
             super(port);
         }
 
+        
         /**
          * {@inheritDoc}
          */
@@ -360,11 +419,12 @@ public final class KGraphAdapters {
         /**
          * {@inheritDoc}
          */
-        public Iterable<LabelAdapter<?>> getLabels() {
-            List<LabelAdapter<?>> labelAdapters =
-                    Lists.newArrayListWithExpectedSize(element.getLabels().size());
-            for (KLabel l : element.getLabels()) {
-                labelAdapters.add(new KLabelAdapter(l));
+        public List<LabelAdapter<?>> getLabels() {
+            if (labelAdapters == null) {
+                labelAdapters = Lists.newArrayListWithExpectedSize(element.getLabels().size());
+                for (KLabel l : element.getLabels()) {
+                    labelAdapters.add(new KLabelAdapter(l));
+                }
             }
             return labelAdapters;
         }
@@ -373,26 +433,31 @@ public final class KGraphAdapters {
          * {@inheritDoc}
          */
         public Iterable<EdgeAdapter<?>> getIncomingEdges() {
-            List<EdgeAdapter<?>> edgeAdapters = Lists.newLinkedList();
-            for (KEdge e : element.getEdges()) {
-                if (e.getTarget().equals(element)) {
-                    edgeAdapters.add(new KEdgeAdapter(e));
+            if (incomingEdgeAdapters == null) {
+                // This overestimates the required list size
+                incomingEdgeAdapters = Lists.newArrayListWithCapacity(element.getEdges().size());
+                for (KEdge e : element.getEdges()) {
+                    if (e.getTarget().equals(element)) {
+                        incomingEdgeAdapters.add(new KEdgeAdapter(e));
+                    }
                 }
             }
-            return edgeAdapters;
+            return incomingEdgeAdapters;
         }
 
         /**
          * {@inheritDoc}
          */
         public Iterable<EdgeAdapter<?>> getOutgoingEdges() {
-            List<EdgeAdapter<?>> edgeAdapters = Lists.newLinkedList();
-            for (KEdge e : element.getEdges()) {
-                if (e.getSource().equals(element)) {
-                    edgeAdapters.add(new KEdgeAdapter(e));
+            if (outgoingEdgeAdapters == null) {
+                outgoingEdgeAdapters = Lists.newArrayListWithCapacity(element.getEdges().size());
+                for (KEdge e : element.getEdges()) {
+                    if (e.getSource().equals(element)) {
+                        outgoingEdgeAdapters.add(new KEdgeAdapter(e));
+                    }
                 }
             }
-            return edgeAdapters;
+            return outgoingEdgeAdapters;
         }
 
         /**
@@ -420,31 +485,38 @@ public final class KGraphAdapters {
     }
 
     /**
-     * .
+     * Adapter for {@link KEdge}s.
      */
-    private static class KEdgeAdapter implements EdgeAdapter<KEdge> {
-
+    private static final class KEdgeAdapter implements EdgeAdapter<KEdge> {
+        
+        /** The wrapped edge. */
         private KEdge element;
+        /** Cached list of label adapters. */
+        private List<LabelAdapter<?>> labelAdapters = null;
 
+        
         /**
-         * .
+         * Creates a new adapter for the given edge.
+         * 
+         * @param edge
+         *            the edge to adapt.
          */
-        public KEdgeAdapter(final KEdge e) {
-            this.element = e;
+        private KEdgeAdapter(final KEdge edge) {
+            this.element = edge;
         }
 
         /**
          * {@inheritDoc}
          */
         public Iterable<LabelAdapter<?>> getLabels() {
-            List<LabelAdapter<?>> labelAdapters =
-                    Lists.newArrayListWithExpectedSize(element.getLabels().size());
-            for (KLabel l : element.getLabels()) {
-                labelAdapters.add(new KLabelAdapter(l));
+            if (labelAdapters == null) {
+                labelAdapters = Lists.newArrayListWithExpectedSize(element.getLabels().size());
+                for (KLabel l : element.getLabels()) {
+                    labelAdapters.add(new KLabelAdapter(l));
+                }
             }
             return labelAdapters;
         }
-
     }
     
     /**
@@ -454,11 +526,10 @@ public final class KGraphAdapters {
     public static final PortComparator DEFAULT_PORTLIST_SORTER = new PortComparator();
     
     /**
-     * A comparer for ports. Ports are sorted by side (north, east, south, west) in clockwise order,
+     * A comparator for ports. Ports are sorted by side (north, east, south, west) in clockwise order,
      * beginning at the top left corner.
      */
     public static class PortComparator implements Comparator<KPort> {
-
         /**
          * {@inheritDoc}
          */

@@ -17,9 +17,9 @@ import java.util.List;
 
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
-import de.cau.cs.kieler.klay.layered.properties.NodeType;
 
 /**
  * 
@@ -124,10 +124,9 @@ class SwitchDecider {
     }
 
     private boolean haveLayoutUnitConstraints(final LNode upperNode, final LNode lowerNode) {
-        NodeType firstNodeType = upperNode.getProperty(InternalProperties.NODE_TYPE);
-        NodeType secondNodeType = lowerNode.getProperty(InternalProperties.NODE_TYPE);
         boolean neitherNodeIsLongEdgeDummy =
-                firstNodeType != NodeType.LONG_EDGE && secondNodeType != NodeType.LONG_EDGE;
+                upperNode.getNodeType() != NodeType.LONG_EDGE
+                        && lowerNode.getNodeType() != NodeType.LONG_EDGE;
 
         // If upperNode and lowerNode are part of a layout unit not only containing themselves,
         // then the layout units must be equal for a switch to be allowed.
@@ -168,11 +167,11 @@ class SwitchDecider {
     }
 
     private boolean isNormalNode(final LNode node) {
-        return node.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORMAL;
+        return node.getNodeType() == NodeType.NORMAL;
     }
 
     private boolean isNorthSouthPortNode(final LNode node) {
-        return node.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT;
+        return node.getNodeType() == NodeType.NORTH_SOUTH_PORT;
     }
 
 

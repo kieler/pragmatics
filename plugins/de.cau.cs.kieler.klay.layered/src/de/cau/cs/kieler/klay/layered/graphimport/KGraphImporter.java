@@ -14,11 +14,13 @@
 package de.cau.cs.kieler.klay.layered.graphimport;
 
 import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
@@ -41,10 +43,12 @@ import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.SizeConstraint;
 import de.cau.cs.kieler.kiml.options.SizeOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
+import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters;
+import de.cau.cs.kieler.kiml.util.labelspacing.LabelSpaceCalculation;
+import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Insets;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
-import de.cau.cs.kieler.klay.layered.graph.LGraphElement.HashCodeCounter;
 import de.cau.cs.kieler.klay.layered.graph.LGraphUtil;
 import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
@@ -67,30 +71,23 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  */
 public class KGraphImporter implements IGraphImporter<KNode> {
     
-    /** the hash code counter used to determine hash codes of graph elements. */
-    private final HashCodeCounter hashCodeCounter;
-    
-    /**
-     * Creates a graph importer with the given hash code counter.
-     * 
-     * @param counter the hash code counter used to determine hash codes of graph elements
-     */
-    public KGraphImporter(final HashCodeCounter counter) {
-        this.hashCodeCounter = counter;
-    }
-
     // //////////////////////////////////////////////////////////////////////////////
     // Transformation KGraph -> LGraph
+    
+
+    /** Spacing around labels. */
+    private double labelSpacing;
 
     /**
      * {@inheritDoc}
      */
     public LGraph importGraph(final KNode kgraph) {
         // Keep a map between KGraph nodes / ports and LGraph nodes / ports
-        Map<KGraphElement, LGraphElement> elemMap = new HashMap<KGraphElement, LGraphElement>();
+        Map<KGraphElement, LGraphElement> elemMap = Maps.newHashMap();
         
         // Create the layered graph
         LGraph topLevelGraph = createLGraph(kgraph);
+        labelSpacing = topLevelGraph.getProperty(LayoutOptions.LABEL_SPACING).doubleValue();
         
         // Transform the external ports
         Set<GraphProperties> graphProperties = topLevelGraph.getProperty(
@@ -105,12 +102,12 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         boolean hierarchicalLayout = kgraph.getData(KShapeLayout.class).getProperty(
                 LayoutOptions.LAYOUT_HIERARCHY);
         if (hierarchicalLayout) {
-            LinkedList<KNode> knodeQueue = new LinkedList<KNode>();
+            Queue<KNode> knodeQueue = Lists.newLinkedList();
 
             // Transform the node's children
             knodeQueue.addAll(kgraph.getChildren());
             do {
-                KNode knode = knodeQueue.removeFirst();
+                KNode knode = knodeQueue.poll();
                 if (!knode.getData(KShapeLayout.class).getProperty(LayoutOptions.NO_LAYOUT)) {
                     LGraph parentGraph = topLevelGraph;
                     LNode parentLNode = (LNode) elemMap.get(knode.getParent());
@@ -131,7 +128,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             // Transform the edges
             knodeQueue.add(kgraph);
             do {
-                KNode knode = knodeQueue.removeFirst();
+                KNode knode = knodeQueue.poll();
                 for (KEdge kedge : knode.getOutgoingEdges()) {
                     if (!kedge.getData(KEdgeLayout.class).getProperty(LayoutOptions.NO_LAYOUT)) {
                         KNode parentKNode = knode;
@@ -185,7 +182,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
      * @return a new LGraph instance
      */
     private LGraph createLGraph(final KNode parentKNode) {
-        LGraph layeredGraph = new LGraph(hashCodeCounter);
+        LGraph layeredGraph = new LGraph();
         
         // Copy the properties of the KGraph to the layered graph
         KShapeLayout parentLayout = parentKNode.getData(KShapeLayout.class);
@@ -200,13 +197,16 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         layeredGraph.setProperty(InternalProperties.GRAPH_PROPERTIES,
                 EnumSet.noneOf(GraphProperties.class));
         
+        // Adjust the insets to respect inside labels.
+        Insets insets = LabelSpaceCalculation.calculateRequiredNodeLabelSpace(
+                KGraphAdapters.adaptSingleNode(parentKNode), labelSpacing);
+        
         // Copy the insets to the layered graph
-        KInsets kinsets = parentLayout.getInsets();
         LInsets linsets = layeredGraph.getInsets();
-        linsets.left = kinsets.getLeft();
-        linsets.right = kinsets.getRight();
-        linsets.top = kinsets.getTop();
-        linsets.bottom = kinsets.getBottom();
+        linsets.left = insets.left;
+        linsets.right = insets.right;
+        linsets.top = insets.top;
+        linsets.bottom = insets.bottom;
         
         return layeredGraph;
     }
@@ -336,7 +336,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             for (KLabel klabel : kport.getLabels()) {
                 KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
                 if (!labelLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
-                    LLabel newLabel = new LLabel(layeredGraph, klabel.getText());
+                    LLabel newLabel = new LLabel(klabel.getText());
                     newLabel.setProperty(InternalProperties.ORIGIN, klabel);
                     newLabel.getSize().x = labelLayout.getWidth();
                     newLabel.getSize().y = labelLayout.getHeight();
@@ -407,7 +407,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             }
 
             // create layered port, copying its position
-            LPort newPort = new LPort(layeredGraph);
+            LPort newPort = new LPort();
             newPort.copyProperties(portLayout);
             newPort.setSide(portLayout.getProperty(LayoutOptions.PORT_SIDE));
             newPort.setProperty(InternalProperties.ORIGIN, kport);
@@ -462,7 +462,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             for (KLabel klabel : kport.getLabels()) {
                 KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
                 if (!labelLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
-                    LLabel newLabel = new LLabel(layeredGraph, klabel.getText());
+                    LLabel newLabel = new LLabel(klabel.getText());
                     newLabel.copyProperties(labelLayout);
                     newLabel.setProperty(InternalProperties.ORIGIN, klabel);
                     newLabel.getSize().x = labelLayout.getWidth();
@@ -478,7 +478,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         for (KLabel klabel : node.getLabels()) {
             KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
             if (!labelLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
-                LLabel newLabel = new LLabel(layeredGraph, klabel.getText());
+                LLabel newLabel = new LLabel(klabel.getText());
                 newLabel.copyProperties(labelLayout);
                 newLabel.setProperty(InternalProperties.ORIGIN, klabel);
                 newLabel.getSize().x = labelLayout.getWidth();
@@ -546,7 +546,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
             
             // Create a layered edge
-            LEdge newEdge = new LEdge(layeredGraph);
+            LEdge newEdge = new LEdge();
             newEdge.copyProperties(edgeLayout);
             newEdge.setProperty(InternalProperties.ORIGIN, kedge);
             elemMap.put(kedge, newEdge);
@@ -606,7 +606,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                 EdgeLabelPlacement labelPlacement = labelLayout.getProperty(
                         LayoutOptions.EDGE_LABEL_PLACEMENT);
                 if (!labelLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
-                    LLabel newLabel = new LLabel(layeredGraph, klabel.getText());
+                    LLabel newLabel = new LLabel(klabel.getText());
                     newLabel.getPosition().x = labelLayout.getXpos();
                     newLabel.getPosition().y = labelLayout.getYpos();
                     newLabel.getSize().x = labelLayout.getWidth();
@@ -661,10 +661,31 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         KNode parentNode = (KNode) graphOrigin;
         
         // Get the offset to be added to all coordinates
-        KVector offset = lgraph.getOffset();
+        KVector offset = new KVector(lgraph.getOffset());
+        
+        // Adjust offset (and with it the positions), if requested
+        KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
+        LInsets lInsets = lgraph.getInsets();
+        KInsets kInsets = parentLayout.getInsets();
+        final EnumSet<SizeOptions> sizeOptions = parentLayout.getProperty(LayoutOptions.SIZE_OPTIONS);
+        if (sizeOptions.contains(SizeOptions.APPLY_ADDITIONAL_INSETS)) {
+
+            offset.x += lInsets.left - kInsets.getLeft();
+            offset.y += lInsets.top - kInsets.getTop();
+        }
+        
+        // Set node insets, if requested
+        if (sizeOptions.contains(SizeOptions.COMPUTE_INSETS)) {
+            
+            // Apply insets
+            kInsets.setBottom((float) lInsets.bottom);
+            kInsets.setTop((float) lInsets.top);
+            kInsets.setLeft((float) lInsets.left);
+            kInsets.setRight((float) lInsets.right);
+        }
 
         // Along the way, we collect the list of edges to be processed later
-        List<LEdge> edgeList = new LinkedList<LEdge>();
+        List<LEdge> edgeList = Lists.newArrayList();
 
         // Process the nodes
         for (LNode lnode : lgraph.getLayerlessNodes()) {
@@ -714,19 +735,6 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                         }
                     }
                 }
-                
-                // Set node insets, if requested
-                if (nodeLayout.getProperty(LayoutOptions.SIZE_OPTIONS)
-                        .contains(SizeOptions.COMPUTE_INSETS)) {
-                    
-                    // Apply insets
-                    LInsets lInsets = lnode.getInsets();
-                    KInsets kInsets = nodeLayout.getInsets();
-                    kInsets.setBottom((float) lInsets.bottom);
-                    kInsets.setTop((float) lInsets.top);
-                    kInsets.setLeft((float) lInsets.left);
-                    kInsets.setRight((float) lInsets.right);
-                }
             } else if (origin instanceof KPort
                     && lgraph.getProperty(InternalProperties.PARENT_LNODE) == null) {
                 // It's an external port. Set its position if it hasn't already been done before
@@ -743,7 +751,6 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             }
         }
 
-        KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
         EdgeRouting routing = parentLayout.getProperty(LayoutOptions.EDGE_ROUTING);
         
         // Iterate through all edges
@@ -791,6 +798,8 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             for (LLabel label : ledge.getLabels()) {
                 KLabel klabel = (KLabel) label.getProperty(InternalProperties.ORIGIN);
                 KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
+                klabelLayout.setWidth((float) label.getSize().x);
+                klabelLayout.setHeight((float) label.getSize().y);
                 klabelLayout.applyVector(label.getPosition().add(edgeOffset));
             }
             

@@ -20,10 +20,10 @@ import java.util.Map;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.LNode.PortOrder;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
-import de.cau.cs.kieler.klay.layered.properties.NodeType;
 
 /**
  * Counts the crossings caused by the order of north south port dummies when their respective normal
@@ -217,15 +217,15 @@ public class NorthSouthEdgeNeighbouringNodeCrossingsCounter {
     }
 
     private boolean isLongEdgeDummy(final LNode node) {
-        return node.getProperty(InternalProperties.NODE_TYPE) == NodeType.LONG_EDGE;
+        return node.getNodeType() == NodeType.LONG_EDGE;
     }
 
     private boolean isNorthSouth(final LNode node) {
-        return node.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT;
+        return node.getNodeType() == NodeType.NORTH_SOUTH_PORT;
     }
 
     private boolean isNormal(final LNode node) {
-        return node.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORMAL;
+        return node.getNodeType() == NodeType.NORMAL;
     }
 
     /**

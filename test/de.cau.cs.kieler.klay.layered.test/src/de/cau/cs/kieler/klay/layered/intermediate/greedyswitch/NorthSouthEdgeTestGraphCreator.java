@@ -16,9 +16,9 @@ package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
-import de.cau.cs.kieler.klay.layered.properties.NodeType;
 
 /**
  * Creates getGraph()s for north south edge testing.
@@ -288,7 +288,7 @@ public class NorthSouthEdgeTestGraphCreator extends TestGraphCreator {
 
         eastWestEdgeFromTo(leftNode, middleNodes[0]);
         eastWestEdgeFromTo(middleNodes[0], rightNodes[0]);
-        middleNodes[0].setProperty(InternalProperties.NODE_TYPE, NodeType.LONG_EDGE);
+        middleNodes[0].setNodeType(NodeType.LONG_EDGE);
 
         addNorthSouthEdge(PortSide.SOUTH, middleNodes[1], middleNodes[2], rightNodes[1], false);
 
@@ -316,7 +316,7 @@ public class NorthSouthEdgeTestGraphCreator extends TestGraphCreator {
 
         eastWestEdgeFromTo(leftNode, middleNodes[2]);
         eastWestEdgeFromTo(middleNodes[2], rightNodes[1]);
-        middleNodes[2].setProperty(InternalProperties.NODE_TYPE, NodeType.LONG_EDGE);
+        middleNodes[2].setNodeType(NodeType.LONG_EDGE);
 
         addNorthSouthEdge(PortSide.NORTH, middleNodes[1], middleNodes[0], rightNodes[0], false);
 
@@ -375,7 +375,7 @@ public class NorthSouthEdgeTestGraphCreator extends TestGraphCreator {
 
         eastWestEdgeFromTo(leftNode, middleNodes[0]);
         eastWestEdgeFromTo(middleNodes[0], rightNode);
-        middleNodes[0].setProperty(InternalProperties.NODE_TYPE, NodeType.LONG_EDGE);
+        middleNodes[0].setNodeType(NodeType.LONG_EDGE);
 
         addPortOnSide(middleNodes[1], PortSide.NORTH);
         addPortOnSide(middleNodes[1], PortSide.NORTH);

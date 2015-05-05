@@ -32,6 +32,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -668,10 +669,24 @@ public final class PlacementUtil {
      * @return font information for the given label.
      */
     public static FontData fontDataFor(final KLabel kLabel) {
-        final KText kText = Iterators.getNext(filter(
-                ModelingUtil.eAllContentsOfType2(kLabel, KRendering.class), KText.class), null);
-
-        return fontDataFor(kText);
+        final Object rendering = Iterators.getNext(
+                ModelingUtil.eAllContentsOfType2(kLabel, KRenderingRef.class, KText.class),
+                null);
+        
+        EObject kText = null;
+        if (rendering instanceof KRenderingRef) {
+            kText = ((KRenderingRef) rendering).getRendering();
+        } else if (rendering instanceof KText) {
+            kText = (KText) rendering;
+        }
+        
+        // Check if we really have a KText instance; the rendering ref could have insidiously referenced
+        // some arbitrary object
+        if (kText instanceof KText) {
+            return fontDataFor((KText) kText);
+        } else {
+            return fontDataFor((KText) null);
+        }
     }
     
     /**
@@ -813,10 +828,11 @@ public final class PlacementUtil {
      * @return the minimal bounds for the string
      */
     public static Bounds estimateTextSize(final FontData fontData, final String text) {
-        Bounds textBounds = new Bounds(0, 0);
+        final Display display = Display.getCurrent();
+        final Bounds textBounds;
         
         // if no display is available fallback to awt metrics
-        if (Display.getCurrent() == null) {
+        if (display == null) {
 
             fmg.setFont(new java.awt.Font(fontData.getName(), KTextUtil.swtFontStyle2Awt(fontData
                     .getStyle()), fontData.getHeight()));
@@ -833,13 +849,13 @@ public final class PlacementUtil {
             // In order to estimate the required size of a given string according to the determined
             // font, style, and size a GC is instantiated, configured, and queried.
             if (gc == null) {
-                gc = new GC(Display.getDefault());
+                gc = new GC(display);
                 gc.setAntialias(SWT.OFF);
             }
 
             Font font = FONT_CACHE.get(fontData);
             if (font == null) {
-                font = new Font(Display.getDefault(), fontData);
+                font = new Font(display, fontData);
                 FONT_CACHE.put(fontData, font);
             }
             gc.setFont(font);

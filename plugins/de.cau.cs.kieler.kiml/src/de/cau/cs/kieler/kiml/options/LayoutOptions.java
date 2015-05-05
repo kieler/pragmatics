@@ -445,9 +445,10 @@ public final class LayoutOptions {
      * set corresponds to no further modifications.
      */
     public static final IProperty<EnumSet<SizeOptions>> SIZE_OPTIONS =
-            new Property<EnumSet<SizeOptions>>("de.cau.cs.kieler.sizeOptions",
-                    EnumSet.of(SizeOptions.DEFAULT_MINIMUM_SIZE));
-
+            new Property<EnumSet<SizeOptions>>("de.cau.cs.kieler.sizeOptions", EnumSet.of(
+                    SizeOptions.DEFAULT_MINIMUM_SIZE,
+                    SizeOptions.APPLY_ADDITIONAL_INSETS));
+    
     /**
      * Overall spacing between elements. This is mostly interpreted as the minimal distance between
      * each two nodes and should also influence the spacing between edges.

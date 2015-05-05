@@ -14,16 +14,14 @@
 package de.cau.cs.kieler.klay.layered.compound;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -35,9 +33,9 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
-import de.cau.cs.kieler.klay.layered.graph.LGraphUtil;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraphUtil;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -99,7 +97,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
      */
     private static class ExternalPort {
         /** the list of original edges for which the port is created. */
-        private List<LEdge> origEdges = Lists.newLinkedList();
+        private List<LEdge> origEdges = Lists.newArrayList();
         /** the new edge by which the original edge is replaced. */
         private LEdge newEdge;
         /** the dummy node used by the algorithm as representative for the external port. */
@@ -142,7 +140,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
     /** map of original edges to generated cross-hierarchy edges. */
     private Multimap<LEdge, CrossHierarchyEdge> crossHierarchyMap;
     /** map of ports to their assigned dummy nodes in the nested graphs. */
-    private final BiMap<LPort, LNode> dummyNodeMap = HashBiMap.create();
+    private final Map<LPort, LNode> dummyNodeMap = Maps.newHashMap();
 
     
     ////////////////////////////////////////////////////////////////////////////////////////////
@@ -154,6 +152,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
     public void process(final LGraph graph, final IKielerProgressMonitor monitor) {
         monitor.begin("Compound graph preprocessor", 1);
         
+        // This can be a HashMultimap since the values are sorted prior to working with them
         crossHierarchyMap = HashMultimap.create();
         
         // create new dummy edges at hierarchy bounds and move the labels around accordingly
@@ -175,17 +174,17 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
      * @param parentNode the parent node of the graph, or {@code null} if it is on top-level
      * @return the external ports created to split edges that cross the boundary of the parent node
      */
-    private Collection<ExternalPort> transformHierarchyEdges(final LGraph graph,
+    private List<ExternalPort> transformHierarchyEdges(final LGraph graph,
             final LNode parentNode) {
         
         // process all children and recurse down to gather their external ports
-        List<ExternalPort> containedExternalPorts = new LinkedList<ExternalPort>();
+        List<ExternalPort> containedExternalPorts = Lists.newArrayList();
         
         for (LNode node : graph.getLayerlessNodes()) {
             LGraph nestedGraph = node.getProperty(InternalProperties.NESTED_LGRAPH);
             if (nestedGraph != null) {
                 // recursively process the child graph
-                Collection<ExternalPort> childPorts = transformHierarchyEdges(nestedGraph, node);
+                List<ExternalPort> childPorts = transformHierarchyEdges(nestedGraph, node);
                 containedExternalPorts.addAll(childPorts);
                 
                 // make sure that all hierarchical ports have had dummy nodes created for them (some
@@ -209,7 +208,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
         }
         
         // this will be the list of external ports we will export
-        List<ExternalPort> exportedExternalPorts = new LinkedList<ExternalPort>();
+        List<ExternalPort> exportedExternalPorts = Lists.newArrayList();
         
         // process the cross-hierarchy edges connected to the inside of the child nodes
         processInnerHierarchicalEdgeSegments(graph, parentNode, exportedExternalPorts,
@@ -308,7 +307,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
         // we remember the ports and the dummy nodes we create to add them to the graph afterwards
         // (this is not strictly necessary, but allows us to reuse methods we also use for outer
         // hierarchy edge segments)
-        List<ExternalPort> externalPorts = Lists.newLinkedList();
+        List<ExternalPort> externalPorts = Lists.newArrayList();
         
         // iterate over the list of contained external ports
         for (ExternalPort externalPort : containedExternalPorts) {
@@ -478,7 +477,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
         
         // we need to remember the ports and the dummy nodes we create to add them to the graph
         // afterwards (to avoid concurrent modification exceptions)
-        List<ExternalPort> externalPorts = Lists.newLinkedList();
+        List<ExternalPort> externalPorts = Lists.newArrayList();
         
         // iterate over all ports of the graph's child nodes
         for (LNode childNode : graph.getLayerlessNodes()) {
@@ -650,7 +649,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
      * @return a new dummy edge.
      */
     private LEdge createDummyEdge(final LGraph graph, final LEdge origEdge) {
-        LEdge dummyEdge = new LEdge(graph);
+        LEdge dummyEdge = new LEdge();
         dummyEdge.copyProperties(origEdge);
         dummyEdge.setProperty(LayoutOptions.JUNCTION_POINTS, null);
         return dummyEdge;
@@ -753,7 +752,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
         
         LGraph graph = parentNode.getGraph();
         Direction layoutDirection = LGraphUtil.getDirection(graph);
-        LPort port = new LPort(graph);
+        LPort port = new LPort();
         port.setNode(parentNode);
         switch (type) {
         case INPUT:

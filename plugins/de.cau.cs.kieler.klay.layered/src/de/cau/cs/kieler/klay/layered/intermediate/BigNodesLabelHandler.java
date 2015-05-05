@@ -18,12 +18,11 @@ import java.util.EnumSet;
 import java.util.List;
 
 import com.google.common.base.Function;
-import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.NodeLabelPlacement;
-import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
@@ -61,9 +60,6 @@ public final class BigNodesLabelHandler {
      * Internal class storing a state for each node and its labels.
      */
     private static final class Handler {
-
-        private LGraph layeredGraph;
-
         private LNode node;
         private int chunks;
         private double minWidth;
@@ -77,10 +73,10 @@ public final class BigNodesLabelHandler {
          * A multimap holding the dummies created for a label. It is important to use a
          * LinkedListMultimap in order to retain the order of the dummies.
          */
-        private LinkedListMultimap<LLabel, LLabel> dumLabs = LinkedListMultimap.create();
+        private ArrayListMultimap<LLabel, LLabel> dumLabs = ArrayListMultimap.create();
 
         /** A list of post processing functions to be applied during {@link BigNodesPostProcessor}. */
-        private List<Function<Void, Void>> postProcs = Lists.newLinkedList();
+        private List<Function<Void, Void>> postProcs = Lists.newArrayList();
 
         /**
          * 
@@ -90,8 +86,6 @@ public final class BigNodesLabelHandler {
          *            the created dummy nodes
          */
         private Handler(final LNode node, final List<LNode> dummies, final double chunkWidth) {
-
-            this.layeredGraph = node.getGraph();
             this.node = node;
             this.chunks = dummies.size();
 
@@ -199,7 +193,7 @@ public final class BigNodesLabelHandler {
                 rPos += labelChunkSize;
 
                 LNode dummy = dummies.get(i);
-                LLabel dumLab = new LLabel(layeredGraph, subLabel);
+                LLabel dumLab = new LLabel(subLabel);
                 // TODO as soon as SizeConstraints are to be supported this should be used
                 // dumLab.getSize().x = labelChunkWidth;
                 dumLab.getSize().y = lab.getSize().y;
@@ -286,7 +280,8 @@ public final class BigNodesLabelHandler {
 
         /**
          * Post processing function removing all created label dummies, i.e labels that do not have
-         * an {@link Properties#ORIGIN}.
+         * an {@link de.cau.cs.kieler.klay.layered.properties.InternalProperties#ORIGIN
+         * InternalProperties.ORIGIN}.
          */
         private Function<Void, Void> funRemoveLabelDummies = new Function<Void, Void>() {
 

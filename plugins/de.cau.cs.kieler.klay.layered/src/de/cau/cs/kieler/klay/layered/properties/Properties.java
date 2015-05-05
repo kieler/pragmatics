@@ -230,7 +230,15 @@ public final class Properties {
      * Handles large sausages.
      */
     public static final IProperty<Boolean> SAUSAGE_FOLDING = new Property<Boolean>(
-            "de.cau.cs.kieler.klay.layered.sausageFolding", false);
+            "de.cau.cs.kieler.klay.layered.sausageFolding", false);    
+    
+    /**
+     * The spline-self-loop distribution method.
+     */
+    public static final IProperty<SelfLoopPlacement> SPLINE_SELF_LOOP_PLACEMENT =
+            new Property<SelfLoopPlacement>("de.cau.cs.kieler.klay.layered.splines.selfLoopPlacement",
+                    SelfLoopPlacement.NORTH_STACKED);
+
 
     // /////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR
