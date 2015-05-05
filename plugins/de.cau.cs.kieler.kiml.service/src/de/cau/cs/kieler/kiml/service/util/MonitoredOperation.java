@@ -208,6 +208,7 @@ public abstract class MonitoredOperation {
                         public void run() {
                             status.set(execute(new CancelableProgressMonitor()));
                             assert status.get() != null;
+                            display.wake();
                         }
                     });
                 }
