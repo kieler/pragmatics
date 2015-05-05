@@ -26,12 +26,13 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
-
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
@@ -63,6 +64,7 @@ import de.cau.cs.kieler.klighd.ZoomStyle;
 import de.cau.cs.kieler.klighd.internal.macrolayout.KlighdLayoutManager;
 import de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties;
 import de.cau.cs.kieler.klighd.labels.KlighdLabelProperties;
+import de.cau.cs.kieler.klighd.piccolo.KlighdPiccoloPlugin;
 import de.cau.cs.kieler.klighd.piccolo.IKlighdNode.IKGraphElementNode;
 import de.cau.cs.kieler.klighd.piccolo.IKlighdNode.IKNodeNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.activities.ApplyBendPointsActivity;
@@ -88,8 +90,12 @@ import de.cau.cs.kieler.klighd.util.LimitedKGraphContentAdapter;
 import de.cau.cs.kieler.klighd.util.ModelingUtil;
 import de.cau.cs.kieler.klighd.util.RenderingContextData;
 import edu.umd.cs.piccolo.PNode;
+import edu.umd.cs.piccolo.PRoot;
 import edu.umd.cs.piccolo.activities.PInterpolatingActivity;
 import edu.umd.cs.piccolo.util.PBounds;
+
+// SUPPRESS CHECKSTYLE PREVIOUS 100 Length
+//  Yes, this file is a bit too long, maybe to much documentation ... and too many imports ;-)
 
 /**
  * Overall manager of KGraph+KRendering+KLayoutData-based diagrams.<br>
@@ -557,24 +563,55 @@ public class DiagramController {
     }
 
     private final Set<AbstractKGERenderingController<?, ?>> dirtyDiagramElements = Sets.newHashSet();
+    private final Map<AbstractKGERenderingController<?, ?>, Boolean> dirtyDiagramElementStyles =
+            Maps.newHashMap();
 
     void scheduleRenderingUpdate(final AbstractKGERenderingController<?, ?> controller) {
         renderingUpdater.cancel();
+
         synchronized (dirtyDiagramElements) {
             dirtyDiagramElements.add(controller);
         }
-        renderingUpdater.schedule(1);
+
+        renderingUpdater.schedule(RENDERING_UPDATER_DELAY);
     }
 
+    void scheduleStylesUpdate(final AbstractKGERenderingController<?, ?> controller,
+            final boolean bringToFront) {
+        renderingUpdater.cancel();
+
+        synchronized (dirtyDiagramElementStyles) {
+            dirtyDiagramElementStyles.put(controller, bringToFront);
+        }
+
+        renderingUpdater.schedule(RENDERING_UPDATER_DELAY);
+    }
+
+    private static final int RENDERING_UPDATER_DELAY = 5; /* ms */
+
     private final Job renderingUpdater = new Job("KLighD DiagramElementUpdater") {
-        {
+        /* Constructor */ {
             this.setSystem(true);
         }
 
         @Override
         protected IStatus run(final IProgressMonitor monitor) {
-            if (Display.getCurrent() == null && PlatformUI.isWorkbenchRunning()) {
+            if (PlatformUI.isWorkbenchRunning()) {
                 PlatformUI.getWorkbench().getDisplay().asyncExec(this.diagramUpdateRunnable);
+
+            } else if (Display.getCurrent() == null) {
+                // this case is required, e.g., for UI tests
+                try {
+                    Display.getDefault().asyncExec(this.diagramUpdateRunnable);
+
+                } catch (final SWTException e) {
+                    final String msg = "KLighD (piccolo): could access display!"
+                            + "Call 'Display.getDefault()' at startup of your application or test.";
+
+                    KlighdPiccoloPlugin.getDefault().getLog().log(
+                            new Status(IStatus.ERROR, KlighdPiccoloPlugin.PLUGIN_ID, msg));
+                }
+
             } else {
                 this.diagramUpdateRunnable.run();
             }
@@ -588,12 +625,25 @@ public class DiagramController {
              */
             public void run() {
                 final Set<AbstractKGERenderingController<?, ?>> copy;
+                final Map<AbstractKGERenderingController<?, ?>, Boolean> copyStyles;
+
                 synchronized (dirtyDiagramElements) {
                     copy = ImmutableSet.copyOf(dirtyDiagramElements);
                     dirtyDiagramElements.clear();
                 }
+
+                synchronized (dirtyDiagramElementStyles) {
+                    copyStyles = ImmutableMap.copyOf(dirtyDiagramElementStyles);
+                    dirtyDiagramElementStyles.clear();
+                }
+
                 for (final AbstractKGERenderingController<?, ?> ctrl : copy) {
                     ctrl.updateRenderingInUi();
+                }
+
+                for (final Map.Entry<AbstractKGERenderingController<?, ?>, Boolean> ctrl : copyStyles
+                        .entrySet()) {
+                    ctrl.getKey().updateStylesInUi(ctrl.getValue());
                 }
             }
         };
@@ -605,6 +655,7 @@ public class DiagramController {
      */
     private void handleRecordedChanges(final ZoomStyle zoomStyle, final KNode focusNode,
             final int animationTime) {
+        final PRoot root = topNode.getRoot();
 
         // create activities to apply all recorded changes
         for (final Map.Entry<IKGraphElementNode, ?> recordedChange : recordedChanges.entrySet()) {
@@ -673,7 +724,7 @@ public class DiagramController {
             }
             if (animationTime > 0) {
                 // schedule the activity
-                NodeUtil.schedulePrimaryActivity(shapeNode, activity);
+                NodeUtil.schedulePrimaryActivity(shapeNode, root, activity);
             } else {
                 // unschedule a currently running primary activity on the node if any
                 NodeUtil.unschedulePrimaryActivity(shapeNode);

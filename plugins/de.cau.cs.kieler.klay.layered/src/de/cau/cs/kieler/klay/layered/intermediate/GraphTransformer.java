@@ -31,12 +31,12 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.properties.InLayerConstraint;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.LayerConstraint;
-import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -190,7 +190,7 @@ public final class GraphTransformer implements ILayoutProcessor {
             }
             
             // External port dummy?
-            if (node.getProperty(InternalProperties.NODE_TYPE) == NodeType.EXTERNAL_PORT) {
+            if (node.getNodeType() == NodeType.EXTERNAL_PORT) {
                 mirrorExternalPortSideX(node);
                 mirrorLayerConstraintX(node);
             }
@@ -367,7 +367,7 @@ public final class GraphTransformer implements ILayoutProcessor {
             }
             
             // External port dummy?
-            if (node.getProperty(InternalProperties.NODE_TYPE) == NodeType.EXTERNAL_PORT) {
+            if (node.getNodeType() == NodeType.EXTERNAL_PORT) {
                 mirrorExternalPortSideY(node);
                 mirrorInLayerConstraintY(node);
             }
@@ -520,7 +520,7 @@ public final class GraphTransformer implements ILayoutProcessor {
             }
             
             // External port dummy?
-            if (node.getProperty(InternalProperties.NODE_TYPE) == NodeType.EXTERNAL_PORT) {
+            if (node.getNodeType() == NodeType.EXTERNAL_PORT) {
                 transposeExternalPortSide(node);
                 transposeLayerConstraint(node);
             }

@@ -47,7 +47,9 @@ public class KimlViewerPlugin extends AbstractUIPlugin {
         super.start(context);
         plugin = this;
         // register a listener for layout
-        DiagramLayoutEngine.INSTANCE.addListener(new DiagramLayoutEngine.IListener() {
+        DiagramLayoutEngine.INSTANCE.addLayoutTerminatedListener(
+                new DiagramLayoutEngine.ILayoutTerminatedListener() {
+
             public void layoutDone(final KNode layoutGraph, final IKielerProgressMonitor monitor) {
                 new UpdateViewerEffect(layoutGraph, monitor).execute();
             }

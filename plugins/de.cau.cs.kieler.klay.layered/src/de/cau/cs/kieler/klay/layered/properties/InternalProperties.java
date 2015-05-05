@@ -104,12 +104,6 @@ public final class InternalProperties {
     public static final IProperty<LNode> PARENT_LNODE = new Property<LNode>("parentLNode");
     
     /**
-     * Node type.
-     */
-    public static final IProperty<NodeType> NODE_TYPE = new Property<NodeType>("nodeType",
-            NodeType.NORMAL);
-
-    /**
      * Offset of port position to the node border. An offset of 0 means that the port touches its
      * parent node on the outside, positive offsets move the port away from the node, and negative
      * offset move the port towards the inside.

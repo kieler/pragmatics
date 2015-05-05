@@ -66,7 +66,7 @@ public class AxisParallelEdgeSegmentsAnalysis implements IAnalysis {
     private static final IProperty<String> ALGORITHM = new Property<String>(
             "de.cau.cs.kieler.algorithm");
     private static final IProperty<Object> SIMPLE_NODE_PLACE = new Property<Object>(
-            "de.cau.cs.kieler.klay.layered.nodePlace");
+            "de.cau.cs.kieler.klay.layered.nodePlace", "");
 
     private static final Set<Direction> LEFT_TO_RIGHT = ImmutableSet.of(Direction.UNDEFINED,
             Direction.LEFT, Direction.RIGHT);

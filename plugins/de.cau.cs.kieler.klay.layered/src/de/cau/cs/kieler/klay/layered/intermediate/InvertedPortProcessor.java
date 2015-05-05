@@ -28,10 +28,10 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
-import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
 
 /**
@@ -112,8 +112,7 @@ public final class InvertedPortProcessor implements ILayoutProcessor {
             // Iterate through the layer's nodes
             for (LNode node : currentLayer) {
                 // Skip dummy nodes
-                if (!node.getProperty(InternalProperties.NODE_TYPE).equals(NodeType.NORMAL)
-                        || node.getProperty(InternalProperties.NODE_TYPE).equals(NodeType.BIG_NODE)) {
+                if (node.getNodeType() != NodeType.NORMAL) {
                     continue;
                 }
                 
@@ -182,9 +181,8 @@ public final class InvertedPortProcessor implements ILayoutProcessor {
         
         // Dummy node in the same layer
         LNode dummy = new LNode(layeredGraph);
+        dummy.setNodeType(NodeType.LONG_EDGE);
         dummy.setProperty(InternalProperties.ORIGIN, edge);
-        dummy.setProperty(InternalProperties.NODE_TYPE,
-                NodeType.LONG_EDGE);
         dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         layerNodeList.add(dummy);
         
@@ -244,9 +242,8 @@ public final class InvertedPortProcessor implements ILayoutProcessor {
         
         // Dummy node in the same layer
         LNode dummy = new LNode(layeredGraph);
+        dummy.setNodeType(NodeType.LONG_EDGE);
         dummy.setProperty(InternalProperties.ORIGIN, edge);
-        dummy.setProperty(InternalProperties.NODE_TYPE,
-                NodeType.LONG_EDGE);
         dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         layerNodeList.add(dummy);
         
@@ -294,10 +291,11 @@ public final class InvertedPortProcessor implements ILayoutProcessor {
         // There's exactly one edge connected to the input and output port
         LPort sourcePort = dummyInputPort.getIncomingEdges().get(0).getSource();
         LNode sourceNode = sourcePort.getNode();
-        NodeType sourceNodeType = sourceNode.getProperty(InternalProperties.NODE_TYPE);
+        NodeType sourceNodeType = sourceNode.getNodeType();
+        
         LPort targetPort = dummyOutputPort.getOutgoingEdges().get(0).getTarget();
         LNode targetNode = targetPort.getNode();
-        NodeType targetNodeType = targetNode.getProperty(InternalProperties.NODE_TYPE);
+        NodeType targetNodeType = targetNode.getNodeType();
         
         // Set the LONG_EDGE_SOURCE property
         if (sourceNodeType == NodeType.LONG_EDGE) {

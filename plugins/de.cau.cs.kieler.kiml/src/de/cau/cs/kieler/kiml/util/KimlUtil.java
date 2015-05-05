@@ -47,6 +47,7 @@ import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier;
+import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
@@ -576,7 +577,7 @@ public final class KimlUtil {
     
     /**
      * Converts the given relative point to an absolute location. The insets of the parent node
-     * are excluded from this calculation as they are already part of the nodes positions.
+     * are included in this calculation.
      * 
      * @param point a relative point
      * @param parent the parent node to which the point is relative to
@@ -586,8 +587,9 @@ public final class KimlUtil {
         KNode node = parent;
         while (node != null) {
             KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-            point.add(nodeLayout.getXpos(),
-                    nodeLayout.getYpos());
+            KInsets insets = nodeLayout.getInsets();
+            point.add(nodeLayout.getXpos() + insets.getLeft(),
+                    nodeLayout.getYpos() + insets.getTop());
             node = node.getParent();
         }
         return point;
@@ -595,7 +597,7 @@ public final class KimlUtil {
     
     /**
      * Converts the given absolute point to a relative location. The insets of the parent node
-     * are excluded from this calculation as they are already part of the nodes positions.
+     * are included in this calculation.
      * 
      * @param point an absolute point
      * @param parent the parent node to which the point shall be made relative to
@@ -605,8 +607,9 @@ public final class KimlUtil {
         KNode node = parent;
         while (node != null) {
             KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-            point.add(-nodeLayout.getXpos(),
-                        -nodeLayout.getYpos());
+            KInsets insets = nodeLayout.getInsets();
+            point.add(-nodeLayout.getXpos() - insets.getLeft(),
+                        -nodeLayout.getYpos() - insets.getTop());
             node = node.getParent();
         }
         return point;

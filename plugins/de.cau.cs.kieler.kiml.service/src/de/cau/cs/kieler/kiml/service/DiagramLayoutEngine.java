@@ -556,8 +556,10 @@ public class DiagramLayoutEngine {
         }
 
         // notify listeners of the executed layout
-        for (IListener listener : layoutListeners) {
-            listener.layoutDone(mapping.getLayoutGraph(), progressMonitor);
+        if (layoutListeners != null) {
+            for (final ILayoutTerminatedListener listener : layoutListeners) {
+                listener.layoutDone(mapping.getLayoutGraph(), progressMonitor);
+            }
         }
         return status;
     }
@@ -623,7 +625,7 @@ public class DiagramLayoutEngine {
      * Listener interface for graph layout. Implementations must not modify the graph in any way
      * and should execute as quickly as possible.
      */
-    public interface IListener {
+    public interface ILayoutTerminatedListener {
         /**
          * Called when layout has been done on a graph.
          * 
@@ -634,17 +636,43 @@ public class DiagramLayoutEngine {
     }
     
     /** list of registered layout listeners. */
-    private List<IListener> layoutListeners = new LinkedList<IListener>();
+    private List<ILayoutTerminatedListener> layoutListeners = null;
     
     /**
      * Add the given object to the list of layout listeners.
      * 
+     * @deprecated use {@link #addLayoutTerminatedListener(ILayoutTerminatedListener)}
+     * @param listener
+     *            a listener
+     */
+    public void addListener(final ILayoutTerminatedListener listener) {
+        addLayoutTerminatedListener(listener);
+    }
+
+    /**
+     * Add the given object to the list of layout listeners.
+     *
      * @param listener a listener
      */
-    public void addListener(final IListener listener) {
+    public void addLayoutTerminatedListener(final ILayoutTerminatedListener listener) {
+        if (layoutListeners == null) {
+            layoutListeners = new LinkedList<ILayoutTerminatedListener>();
+        }
         layoutListeners.add(listener);
     }
-    
+
+    /**
+     * Remove the given object from the list of layout listeners.
+     *
+     * @param listener a listener
+     */
+    public void removeLayoutTerminatedListener(final ILayoutTerminatedListener listener) {
+        if (layoutListeners == null) {
+            return;
+        }
+        layoutListeners.remove(listener);
+    }
+
     /**
      * Export the given layout graph in KGraph format.
      * 

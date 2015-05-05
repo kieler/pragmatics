@@ -39,7 +39,7 @@ import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
 
 /**
- * Edge routing implementation that creates orthogonal bend points. Inspired by
+ * Edge routing implementation that creates orthogonal bend points. Inspired by:
  * <ul>
  *   <li>Georg Sander. Layout of directed hypergraphs with orthogonal hyperedges. In
  *     <i>Proceedings of the 11th International Symposium on Graph Drawing (GD '03)</i>,
@@ -55,7 +55,6 @@ import de.cau.cs.kieler.klay.layered.properties.PortType;
  * external ports, this changes: edges are routed from south to north and north to south,
  * respectively. To support these different requirements, the routing direction-related
  * code is factored out into {@link IRoutingDirectionStrategy routing strategies}.</p>
- * 
  * 
  * <p>When instantiating a new routing generator, the concrete directional strategy must be
  * specified. Once that is done, {@link #routeEdges(LGraph, List, int, List, double)}
@@ -79,20 +78,7 @@ public final class OrthogonalRoutingGenerator {
      * 
      * @author cds
      */
-    public interface IRoutingDirectionStrategy {
-        
-        /**
-         * Enumeration of available strategies.
-         */
-        public enum Strategy {
-            /** west to east routing strategy. */
-            WEST_TO_EAST,
-            /** north to south routing strategy. */
-            NORTH_TO_SOUTH,
-            /** south to north routing strategy. */
-            SOUTH_TO_NORTH;
-        }
-        
+    private interface IRoutingDirectionStrategy {
         /**
          * Returns the port's position on a hyper edge axis. In the west-to-east routing
          * case, this would be the port's exact y coordinate.
@@ -137,8 +123,7 @@ public final class OrthogonalRoutingGenerator {
      * 
      * @author cds
      */
-    public class WestToEastRoutingStrategy implements IRoutingDirectionStrategy {
-
+    private class WestToEastRoutingStrategy implements IRoutingDirectionStrategy {
         /**
          * {@inheritDoc}
          */
@@ -186,7 +171,6 @@ public final class OrthogonalRoutingGenerator {
                 }
             }
         }
-        
     }
     
     /**
@@ -194,8 +178,7 @@ public final class OrthogonalRoutingGenerator {
      * 
      * @author cds
      */
-    public class NorthToSouthRoutingStrategy implements IRoutingDirectionStrategy {
-
+    private class NorthToSouthRoutingStrategy implements IRoutingDirectionStrategy {
         /**
          * {@inheritDoc}
          */
@@ -243,7 +226,6 @@ public final class OrthogonalRoutingGenerator {
                 }
             }
         }
-        
     }
     
     /**
@@ -251,8 +233,7 @@ public final class OrthogonalRoutingGenerator {
      * 
      * @author cds
      */
-    public class SouthToNorthRoutingStrategy implements IRoutingDirectionStrategy {
-
+    private class SouthToNorthRoutingStrategy implements IRoutingDirectionStrategy {
         /**
          * {@inheritDoc}
          */
@@ -300,8 +281,20 @@ public final class OrthogonalRoutingGenerator {
                 }
             }
         }
-        
     }
+    
+    /**
+     * Enumeration of available routing directions.
+     */
+    public static enum RoutingDirection {
+        /** west to east routing direction. */
+        WEST_TO_EAST,
+        /** north to south routing direction. */
+        NORTH_TO_SOUTH,
+        /** south to north routing direction. */
+        SOUTH_TO_NORTH;
+    }
+    
     
     ///////////////////////////////////////////////////////////////////////////////
     // Hyper Node Graph Structures
@@ -529,14 +522,15 @@ public final class OrthogonalRoutingGenerator {
     /**
      * Constructs a new instance.
      * 
-     * @param strategy the routing strategy to use.
+     * @param direction the direction edges should point at.
      * @param edgeSpacing the space between edges.
      * @param debugPrefix prefix of debug output files, or {@code null} if no debug output should
      *                    be generated.
      */
-    public OrthogonalRoutingGenerator(final IRoutingDirectionStrategy.Strategy strategy,
-            final double edgeSpacing, final String debugPrefix) {
-        switch (strategy) {
+    public OrthogonalRoutingGenerator(final RoutingDirection direction, final double edgeSpacing,
+            final String debugPrefix) {
+        
+        switch (direction) {
         case WEST_TO_EAST:
             this.routingStrategy = new WestToEastRoutingStrategy();
             break;

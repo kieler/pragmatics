@@ -68,7 +68,7 @@
                option="de.cau.cs.kieler.klay.layered.nodeLayering">
          </knownOption>
          <knownOption
-               default="POLYLINE"
+               default="ORTHOGONAL"
                option="de.cau.cs.kieler.edgeRouting">
          </knownOption>
          <knownOption

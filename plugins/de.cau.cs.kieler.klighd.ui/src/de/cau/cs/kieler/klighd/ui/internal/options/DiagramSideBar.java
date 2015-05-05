@@ -664,14 +664,20 @@ public final class DiagramSideBar {
             canvas.addDisposeListener(new DisposeListener() {
 
                 public void widgetDisposed(final DisposeEvent e) {
-                    // whenever a new model is shown in the KlighCanvas, the old one gets disposed,
-                    // along with the canvasZoomBtnsContainer.
-                    // Therefore we need to recreate it when the buttons are updated.
+                    // Whenever a new model is shown in the diagram view part, i.e. the view part
+                    // is re-initialized via DiagramViewPart.initialize(), the employed viewer
+                    //  and its canvas (KlighdCanvas) along with its child 'canvasZoomBtnsContainer'
+                    //  (if initialized) will be disposed (see ContextViewer.setModel()).
+                    // Therefore we need to re-create a new container when the buttons are updated,
+                    //  which is indicated by 'canvasZoomBtnsContainer == null'.
                     canvasZoomBtnsContainer = null;
                 }
             });
 
-            canvasZoomBtnsContainer = new Composite(canvas, SWT.NONE);
+            // The container composite must not accept the focus if 'canvas.setFocus()' is called.
+            // Otherwise 'SWT.KeyDown' and 'SWT.KeyUp' will be forwarded to that composite rather than
+            //  the canvas and the magnifier glass and other key-based features won't work anymore.
+            canvasZoomBtnsContainer = new Composite(canvas, SWT.NO_FOCUS);
             final Color white = new Color(Display.getCurrent(), KlighdConstants.WHITE);
             resources.add(white);
             canvasZoomBtnsContainer.setBackground(white);
@@ -824,10 +830,13 @@ public final class DiagramSideBar {
     }
 
     /**
-     * {@inheritDoc}
+     * Resets the layout option settings configured via the sidebar's controls.
+     *
+     * @param doLayout
+     *            if <code>true</code> a subsequent layout run will be triggered
      */
-    public void resetLayoutOptionsToDefaults() {
-        this.layoutOptionControlFactory.resetToDefaults();
+    public void resetLayoutOptionsToDefaults(final boolean doLayout) {
+        this.layoutOptionControlFactory.resetToDefaults(doLayout);
     }
 
     /**

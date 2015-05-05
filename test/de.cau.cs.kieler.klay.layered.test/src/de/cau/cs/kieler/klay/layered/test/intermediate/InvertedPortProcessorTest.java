@@ -26,10 +26,9 @@ import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.intermediate.InvertedPortProcessor;
-import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
-import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.test.AbstractLayeredProcessorTest;
 import de.cau.cs.kieler.klay.layered.test.config.OrthogonalEdgeRoutingLayoutConfigurator;
 import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
@@ -93,8 +92,7 @@ public class InvertedPortProcessorTest extends AbstractLayeredProcessorTest {
                         if (edge.getSource().getSide() == PortSide.WEST) {
                             LNode target = edge.getTarget().getNode();
                             // dummy in same layer
-                            assertTrue(target.getProperty(InternalProperties.NODE_TYPE)
-                                    == NodeType.LONG_EDGE);
+                            assertTrue(target.getNodeType() == NodeType.LONG_EDGE);
                             assertTrue(target.getLayer().getIndex() == layer.getIndex());
                         }
                     }
@@ -104,8 +102,7 @@ public class InvertedPortProcessorTest extends AbstractLayeredProcessorTest {
                         if (edge.getTarget().getSide() == PortSide.EAST) {
                             LNode source = edge.getSource().getNode();
                             // dummy in same layer
-                            assertTrue(source.getProperty(InternalProperties.NODE_TYPE)
-                                    == NodeType.LONG_EDGE);
+                            assertTrue(source.getNodeType() == NodeType.LONG_EDGE);
                             assertTrue(source.getLayer().getIndex() == layer.getIndex());
                         }
                     }

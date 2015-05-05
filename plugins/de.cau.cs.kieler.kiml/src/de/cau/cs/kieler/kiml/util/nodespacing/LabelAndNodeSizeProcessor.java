@@ -782,14 +782,14 @@ public class LabelAndNodeSizeProcessor {
         double additionalWidth;
         double additionalHeight;
 
-        final Margins additionalPortSpace =
-                data.node.getProperty(LayoutOptions.ADDITIONAL_PORT_SPACE);
-        if (additionalPortSpace == null) {
-            additionalWidth = 0;
-            additionalHeight = 0;
-        } else {
+        if (data.hasAdditionalPortSpace) {
+            final Margins additionalPortSpace =
+                    data.node.getProperty(LayoutOptions.ADDITIONAL_PORT_SPACE);
             additionalWidth = additionalPortSpace.left + additionalPortSpace.right;
             additionalHeight = additionalPortSpace.top + additionalPortSpace.bottom;
+        } else {
+            additionalWidth = portSpacing * 2;
+            additionalHeight = portSpacing * 2;
         }
 
         // Calculate the required width and height, taking the necessary spacing between (and
