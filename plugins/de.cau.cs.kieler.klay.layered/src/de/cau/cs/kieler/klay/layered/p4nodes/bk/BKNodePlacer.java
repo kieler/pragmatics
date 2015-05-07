@@ -253,20 +253,20 @@ public final class BKNodePlacer implements ILayoutPhase {
         // The layout with the smallest size is selected. If more than one smallest layout exists,
         // the first one of the competing layouts is selected.
         BKAlignedLayout chosenLayout = null;
-        BKAlignedLayout balanced = new BKAlignedLayout(layeredGraph, nodeCount, null, null);
 
         // If layout options chose to use the balanced layout, it is calculated and added here.
         // If it is broken for any reason, one of the four other layouts is selected by the
         // given criteria.
         if (produceBalancedLayout) {
-            balanced = createBalancedLayout(layouts, nodeCount);
-            chosenLayout = balanced;
-        }
+            BKAlignedLayout balanced = createBalancedLayout(layouts, nodeCount);
+            if (checkOrderConstraint(layeredGraph, balanced)) {
+                chosenLayout = balanced;
+            }
+        } 
         
-        // Since it is possible that the balanced layout violates ordering constraints, this cannot
-        // simply be an else case to the previous if statement
-        if (!produceBalancedLayout || !checkOrderConstraint(layeredGraph, balanced)) {
-            chosenLayout = null;
+        // Either if no balanced layout is requested, or, if the balanced layout
+        // violates order constraints, pick the one with the smallest height
+        if (chosenLayout == null) {
             for (BKAlignedLayout bal : layouts) {
                 if (checkOrderConstraint(layeredGraph, bal)) {
                     if (chosenLayout == null || chosenLayout.layoutSize() > bal.layoutSize()) {
@@ -275,9 +275,9 @@ public final class BKNodePlacer implements ILayoutPhase {
                 }
             }
         }
-        
+             
         // If no layout is correct (which should never happen but is not strictly impossible),
-        // the lefttop layout is chosen by default.
+        // the RIGHTDOWN layout is chosen by default.
         if (chosenLayout == null) {
             chosenLayout = layouts.get(0); // there has to be at least one layout in the list
         }
@@ -401,6 +401,8 @@ public final class BKNodePlacer implements ILayoutPhase {
      * lowest y-coordinate placement, is used as a starting point. Then, the median position of each of
      * the four layouts is used to determine the final position.</p>
      * 
+     * <p>During this process, a node's inner shift value is regarded.</p>
+     * 
      * @param layouts The four calculated layouts
      * @param nodeCount The number of nodes in the graph
      * @return A balanced layout, the median of the four layouts
@@ -422,20 +424,18 @@ public final class BKNodePlacer implements ILayoutPhase {
         }
         
         for (int i = 0; i < noOfLayouts; i++) {
-            BKAlignedLayout current = layouts.get(i);
-            for (double y : current.y.values()) {
-                if (min[i] > y) {
-                    min[i] = y;
-                }
-                
-                if (max[i] < y) {
-                    max[i] = y;
-                }
-            }
-            
-            width[i] = max[i] - min[i];
+            BKAlignedLayout bal = layouts.get(i);
+            width[i] = bal.layoutSize();
             if (width[minWidthLayout] > width[i]) {
                 minWidthLayout = i;
+            }
+            
+            for (Layer l : lGraph) {
+                for (LNode n : l) {
+                    double nodePosY = bal.y.get(n) + bal.innerShift.get(n);
+                    min[i] = Math.min(min[i], nodePosY);
+                    max[i] = Math.max(max[i], nodePosY + n.getSize().y);
+                }
             }
         }
 
@@ -453,13 +453,18 @@ public final class BKNodePlacer implements ILayoutPhase {
         double[] calculatedYs = new double[noOfLayouts];
         for (LNode node : layouts.get(0).y.keySet()) {
             for (int i = 0; i < noOfLayouts; i++) {
-                calculatedYs[i] = layouts.get(i).y.get(node) + shift[i];
+                // it's important to include the innerShift here!
+                calculatedYs[i] =
+                        layouts.get(i).y.get(node) + layouts.get(i).innerShift.get(node) + shift[i];
             }
-            
+           
             Arrays.sort(calculatedYs);
             balanced.y.put(node, (calculatedYs[1] + calculatedYs[2]) / 2.0);
-            balanced.innerShift.put(node,
-                    layouts.get(minWidthLayout).innerShift.get(node));
+            // since we include the inner shift in the calculation of a balanced y 
+            // coordinate we don't need it any more
+            // note that after this step no further processing of the graph that 
+            // would include the inner shift is possible
+            balanced.innerShift.put(node, 0d);
         }
 
         return balanced;
