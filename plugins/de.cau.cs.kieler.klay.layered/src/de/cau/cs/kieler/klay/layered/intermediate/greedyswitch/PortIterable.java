@@ -33,7 +33,13 @@ class PortIterable implements Iterable<LPort> {
     private final LNode node;
     private final PortOrder order;
 
-    public enum PortOrder {
+    /**
+     * Choose the order in which the ports are to be returned in using this enum.
+     * 
+     * @author alan
+     *
+     */
+    static enum PortOrder {
         CLOCKWISE, COUNTER_CLOCKWISE, NORTHSOUTH_EASTWEST
     }
 
