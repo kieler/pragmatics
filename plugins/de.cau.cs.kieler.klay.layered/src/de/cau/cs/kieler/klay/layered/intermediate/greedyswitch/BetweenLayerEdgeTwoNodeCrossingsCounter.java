@@ -24,8 +24,8 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
-import de.cau.cs.kieler.klay.layered.graph.LNode.PortOrder;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
+import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.PortIterable.PortOrder;
 
 /**
  * Calculates the number of crossings for edges incident to two nodes.
@@ -80,10 +80,10 @@ class BetweenLayerEdgeTwoNodeCrossingsCounter {
         return freeLayerIndex < currentNodeOrder.length - 1;
     }
 
-    private void setPortPositionsForLayer(final int layerIndex, final PortSide side) {
+    private void setPortPositionsForLayer(final int layerIndex, final PortSide portSide) {
         int portId = 0;
         for (LNode node : currentNodeOrder[layerIndex]) {
-            Iterable<LPort> ports = node.getPorts(side, PortOrder.NORTHSOUTH_EASTWEST);
+            PortIterable ports = new PortIterable(node, portSide, PortOrder.NORTHSOUTH_EASTWEST);
             for (LPort port : ports) {
                 portPositions.put(port, portId);
                 if (portOrderIsFixed(node)) {
@@ -271,7 +271,7 @@ class BetweenLayerEdgeTwoNodeCrossingsCounter {
         }
 
         private void iterateTroughEdgesCollectingAdjacencies() {
-            Iterable<LPort> ports = node.getPorts(side, PortOrder.NORTHSOUTH_EASTWEST);
+            PortIterable ports = new PortIterable(node, side, PortOrder.NORTHSOUTH_EASTWEST);
             for (LPort port : ports) {
                 List<LEdge> edges = getEdgesConnectedTo(port);
                 for (LEdge edge : edges) {
