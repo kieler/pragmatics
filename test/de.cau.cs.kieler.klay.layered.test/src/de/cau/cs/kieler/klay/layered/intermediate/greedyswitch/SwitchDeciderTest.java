@@ -75,12 +75,22 @@ public class SwitchDeciderTest {
     @Test
     public void crossFormed() {
         graph = creator.getCrossFormedGraph();
+        setUpIds();
 
         decider = givenDeciderForFreeLayer(1, CrossingCountSide.WEST);
         assertThat(decider.doesSwitchReduceCrossings(0, 1), is(true));
 
         decider = givenDeciderForFreeLayer(0, CrossingCountSide.EAST);
         assertThat(decider.doesSwitchReduceCrossings(0, 1), is(true));
+    }
+
+    private void setUpIds() {
+        for (Layer l : graph) {
+            int i = 0;
+            for (LNode n : l) {
+                n.id = i++;
+            }
+        }
     }
 
     @Test

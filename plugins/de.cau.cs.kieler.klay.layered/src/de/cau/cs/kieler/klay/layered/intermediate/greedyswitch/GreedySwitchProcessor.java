@@ -318,8 +318,10 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
             originalNodeOrder[layerIndex] = new LNode[layerNodeCount];
 
             ListIterator<LNode> nodeIter = layer.getNodes().listIterator();
+            int id = 0;
             while (nodeIter.hasNext()) {
                 LNode node = nodeIter.next();
+                node.id = id++;
 
                 currentNodeOrder[layerIndex][nodeIter.previousIndex()] = node;
                 bestNodeOrder[layerIndex][nodeIter.previousIndex()] = node;

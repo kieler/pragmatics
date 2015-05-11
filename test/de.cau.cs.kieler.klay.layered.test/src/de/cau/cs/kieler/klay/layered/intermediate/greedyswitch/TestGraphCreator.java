@@ -47,6 +47,7 @@ public class TestGraphCreator {
      * @return the graph
      */
     protected LGraph getGraph() {
+        setUpIds();
         return graph;
     }
 
@@ -65,6 +66,7 @@ public class TestGraphCreator {
      * @return return empty graph.
      */
     public LGraph getEmptyGraph() {
+        setUpIds();
         return graph;
     }
 
@@ -77,7 +79,17 @@ public class TestGraphCreator {
         Layer layer = makeLayer();
         addNodeToLayer(layer);
         addNodeToLayer(layer);
+        setUpIds();
         return graph;
+    }
+
+    private void setUpIds() {
+        for (Layer l : graph) {
+            int i = 0;
+            for (LNode n : l) {
+                n.id = i++;
+            }
+        }
     }
 
     // CHECKSTYLEOFF MagicNumber
@@ -104,6 +116,7 @@ public class TestGraphCreator {
 
         eastWestEdgeFromTo(topLeft, bottomRight);
         eastWestEdgeFromTo(bottomLeft, topRight);
+        setUpIds();
         return graph;
     }
 
@@ -130,6 +143,7 @@ public class TestGraphCreator {
         eastWestEdgeFromTo(topLeft, bottomRight);
         eastWestEdgeFromTo(topLeft, bottomRight);
         eastWestEdgeFromTo(bottomLeft, bottomRight);
+        setUpIds();
         return graph;
     }
 
@@ -150,6 +164,7 @@ public class TestGraphCreator {
         LNode topNode = layerOne.getNodes().get(0);
         LNode secondNode = layerOne.getNodes().get(1);
         setInLayerOrderConstraint(topNode, secondNode);
+        setUpIds();
         return graph;
     }
 
@@ -177,6 +192,7 @@ public class TestGraphCreator {
         eastWestEdgeFromTo(bottomLeft, topRight);
         setInLayerOrderConstraint(topRight, bottomRight);
         setInLayerOrderConstraint(topLeft, bottomLeft);
+        setUpIds();
         return graph;
     }
 
@@ -188,6 +204,7 @@ public class TestGraphCreator {
     public LGraph getOneNodeGraph() {
         Layer layer = makeLayer();
         addNodeToLayer(layer);
+        setUpIds();
         return graph;
     }
 
@@ -216,6 +233,7 @@ public class TestGraphCreator {
         eastWestEdgeFromTo(middleNodes[1], rightNode);
         eastWestEdgeFromTo(leftNode, middleNodes[1]);
         addInLayerEdge(middleNodes[0], middleNodes[2], PortSide.WEST);
+        setUpIds();
         return graph;
     }
 
@@ -241,6 +259,7 @@ public class TestGraphCreator {
         addInLayerEdge(rightNodes[0], rightNodes[1], PortSide.WEST);
         eastWestEdgeFromTo(leftNode, rightNodes[2]);
 
+        setUpIds();
         return graph;
     }
 
@@ -271,6 +290,7 @@ public class TestGraphCreator {
         eastWestEdgeFromTo(bottomLeft, topRight);
         eastWestEdgeFromTo(bottomLeft, topRight);
 
+        setUpIds();
         return graph;
     }
 
@@ -297,6 +317,7 @@ public class TestGraphCreator {
         eastWestEdgeFromTo(leftNodes[1], rightNodes[1]);
         eastWestEdgeFromTo(leftNodes[2], rightNodes[0]);
 
+        setUpIds();
         return graph;
     }
 
@@ -365,6 +386,7 @@ public class TestGraphCreator {
         eastWestEdgeFromTo(middleNodes[1], rightNodes[0]);
         eastWestEdgeFromTo(middleNodes[1], rightNodes[2]);
 
+        setUpIds();
         return graph;
     }
 
@@ -394,6 +416,7 @@ public class TestGraphCreator {
         eastWestEdgeFromTo(leftNode, rightBottomNode);
         eastWestEdgeFromTo(leftNode, rightTopNode);
 
+        setUpIds();
         return graph;
     }
 
@@ -422,6 +445,7 @@ public class TestGraphCreator {
         eastWestEdgeFromTo(leftNode, rightBottomNode);
         eastWestEdgeFromTo(leftNode, rightTopNode);
 
+        setUpIds();
         return graph;
     }
 
@@ -448,6 +472,7 @@ public class TestGraphCreator {
         eastWestEdgeFromTo(middleNodes[0], rightNodes[0]);
         eastWestEdgeFromTo(middleNodes[1], rightNodes[1]);
 
+        setUpIds();
         return graph;
     }
 
@@ -474,6 +499,7 @@ public class TestGraphCreator {
         eastWestEdgeFromTo(middleNodes[0], rightNodes[1]);
         eastWestEdgeFromTo(middleNodes[1], rightNodes[0]);
 
+        setUpIds();
         return graph;
     }
 
@@ -504,6 +530,7 @@ public class TestGraphCreator {
         LPort lowerPortLowerNode = addPortOnSide(nodes[1], PortSide.EAST);
         addEdgeBetweenPorts(upperPortUpperNode, lowerPortLowerNode);
         addEdgeBetweenPorts(lowerPortUpperNode, upperPortLowerNode);
+        setUpIds();
         return graph;
     }
 
@@ -530,6 +557,7 @@ public class TestGraphCreator {
         addInLayerEdge(nodes[0], nodes[1], PortSide.EAST);
         addInLayerEdge(nodes[0], nodes[1], PortSide.EAST);
 
+        setUpIds();
         return graph;
     }
 
@@ -574,6 +602,7 @@ public class TestGraphCreator {
         addInLayerEdge(middleNodes[0], middleNodes[1], PortSide.EAST);
         eastWestEdgeFromTo(middleNodes[0], rightNode);
 
+        setUpIds();
         return graph;
 
     }
@@ -607,6 +636,7 @@ public class TestGraphCreator {
         eastWestEdgeFromTo(middleNodes[0], rightNodes[1]);
         eastWestEdgeFromTo(middleNodes[1], rightNodes[0]);
 
+        setUpIds();
         return graph;
     }
 
@@ -640,6 +670,7 @@ public class TestGraphCreator {
         rightNodes[1].setProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT, rightNodes[2]);
         rightNodes[2].setProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT, rightNodes[2]);
 
+        setUpIds();
         return graph;
     }
 
@@ -666,6 +697,7 @@ public class TestGraphCreator {
         addInLayerEdge(rightNodes[0], rightNodes[1], PortSide.WEST);
         eastWestEdgeFromTo(leftNodes[0], rightNodes[1]);
         eastWestEdgeFromTo(leftNodes[0], rightNodes[1]);
+        setUpIds();
         return graph;
     }
 
@@ -694,6 +726,7 @@ public class TestGraphCreator {
         addInLayerEdge(rightNodes[0], rightNodes[2], PortSide.WEST);
         eastWestEdgeFromTo(leftNodes[0], rightNodes[1]);
         eastWestEdgeFromTo(leftNodes[0], rightNodes[1]);
+        setUpIds();
         return graph;
     }
 
@@ -724,6 +757,7 @@ public class TestGraphCreator {
         eastWestEdgeFromTo(leftNodes[0], rightNodes[1]);
         eastWestEdgeFromTo(leftNodes[0], rightNodes[3]);
 
+        setUpIds();
         return graph;
     }
 
@@ -752,6 +786,7 @@ public class TestGraphCreator {
         eastWestEdgeFromTo(leftNodes[0], rightNodes[1]);
         eastWestEdgeFromTo(leftNodes[0], rightNodes[2]);
 
+        setUpIds();
         return graph;
     }
 
@@ -784,6 +819,7 @@ public class TestGraphCreator {
 
         addEdgeBetweenPorts(bottomLeftFirstPort, topRightFirstPort);
         addEdgeBetweenPorts(bottomLeftSecondPort, topRightSecondPort);
+        setUpIds();
         return graph;
     }
 
@@ -817,6 +853,7 @@ public class TestGraphCreator {
 
         eastWestEdgeFromTo(bottomLeft, bottomRight);
 
+        setUpIds();
         return graph;
     }
 
@@ -850,6 +887,7 @@ public class TestGraphCreator {
 
         eastWestEdgeFromTo(bottomLeft, topRight);
 
+        setUpIds();
         return graph;
     }
 
@@ -887,6 +925,7 @@ public class TestGraphCreator {
         addEdgeBetweenPorts(bottomLeftPort, topRightPort);
         addEdgeBetweenPorts(topLeftPort, topRightPort);
 
+        setUpIds();
         return graph;
     }
 
@@ -1054,6 +1093,7 @@ public class TestGraphCreator {
         LPort portUpperNode = addPortOnSide(nodes[0], PortSide.WEST);
         addEdgeBetweenPorts(portUpperNode, addPortOnSide(nodes[2], PortSide.WEST));
         addEdgeBetweenPorts(portUpperNode, addPortOnSide(nodes[1], PortSide.WEST));
+        setUpIds();
         return graph;
     }
 
@@ -1079,6 +1119,7 @@ public class TestGraphCreator {
         eastWestEdgeFromTo(leftNode, rightNodes[2]);
         eastWestEdgeFromTo(leftNode, rightNodes[1]);
         addInLayerEdge(rightNodes[0], rightNodes[2], PortSide.WEST);
+        setUpIds();
         return graph;
     }
 

@@ -13,24 +13,18 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
-import java.util.HashMap;
-
-import com.google.common.collect.Maps;
-
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.SwitchDecider.CrossingCountSide;
 import de.cau.cs.kieler.klay.layered.properties.GreedySwitchType;
 
 /**
  * This class manages the crossing matrix and fills it on demand. It needs to be reinitialized for
- * each free layer.
+ * each free layer. For each layer the node.id fields MUST be set from 0 to layer.getSize() - 1!
  * 
  * @author alan
  *
  */
 class CrossingMatrixFiller {
-    /** To avoid interdependency errors between classes, the .id field of nodes is not used. */
-    private final HashMap<LNode, Integer> nodeIds;
     private final boolean[][] isCrossingMatrixFilled;
     private final int[][] crossingMatrix;
     private final BetweenLayerEdgeTwoNodeCrossingsCounter inBetweenLayerCrossingCounter;
@@ -39,8 +33,6 @@ class CrossingMatrixFiller {
 
     /**
      * Constructs class which manages the crossing matrix.
-     * 
-     * @param greedyType
      */
     public CrossingMatrixFiller(final GreedySwitchType greedyType, final LNode[][] graph,
             final int freeLayerIndex, final CrossingCountSide direction) {
@@ -53,18 +45,19 @@ class CrossingMatrixFiller {
 
         inBetweenLayerCrossingCounter =
                 new BetweenLayerEdgeTwoNodeCrossingsCounter(graph, freeLayerIndex);
-
-        nodeIds = Maps.newHashMap();
-        initializeNodePositions(freeLayer);
     }
 
+    /**
+     * Returns entry for crossings between edges incident to two nodes, where upperNode is above
+     * lowerNode in the layer.
+     */
     public int getCrossingMatrixEntry(final LNode upperNode, final LNode lowerNode) {
-        if (!isCrossingMatrixFilled[idOf(upperNode)][idOf(lowerNode)]) {
+        if (!isCrossingMatrixFilled[upperNode.id][lowerNode.id]) {
             fillCrossingMatrix(upperNode, lowerNode);
-            isCrossingMatrixFilled[idOf(upperNode)][idOf(lowerNode)] = true;
-            isCrossingMatrixFilled[idOf(lowerNode)][idOf(upperNode)] = true;
+            isCrossingMatrixFilled[upperNode.id][lowerNode.id] = true;
+            isCrossingMatrixFilled[lowerNode.id][upperNode.id] = true;
         }
-        return crossingMatrix[idOf(upperNode)][idOf(lowerNode)];
+        return crossingMatrix[upperNode.id][lowerNode.id];
     }
 
     private void fillCrossingMatrix(final LNode upperNode, final LNode lowerNode) {
@@ -79,21 +72,10 @@ class CrossingMatrixFiller {
         } else {
             inBetweenLayerCrossingCounter.countBothSideCrossings(upperNode, lowerNode);
         }
-        crossingMatrix[idOf(upperNode)][idOf(lowerNode)] =
+        crossingMatrix[upperNode.id][lowerNode.id] =
                 inBetweenLayerCrossingCounter.getUpperLowerCrossings();
-        crossingMatrix[idOf(lowerNode)][idOf(upperNode)] =
+        crossingMatrix[lowerNode.id][upperNode.id] =
                 inBetweenLayerCrossingCounter.getLowerUpperCrossings();
-    }
-
-    private void initializeNodePositions(final LNode[] layer) {
-        int id = 0;
-        for (LNode node : layer) {
-            nodeIds.put(node, id++);
-        }
-    }
-
-    private int idOf(final LNode node) {
-        return nodeIds.get(node);
     }
 
 }
