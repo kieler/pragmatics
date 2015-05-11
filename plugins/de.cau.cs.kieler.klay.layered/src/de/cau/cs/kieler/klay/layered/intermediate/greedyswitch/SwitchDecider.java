@@ -37,7 +37,6 @@ class SwitchDecider {
     private final LNode[] freeLayer;
     private final InLayerEdgeTwoNodeCrossingCounter inLayerCounter;
     private final NorthSouthEdgeNeighbouringNodeCrossingsCounter northSouthCounter;
-
     private final CrossingMatrixFiller crossingMatrixFiller;
 
     /**

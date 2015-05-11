@@ -185,7 +185,7 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
     private boolean sweepForwardReducingCrossings() {
         boolean improved = false;
         for (int freeLayerIndex = 0; freeLayerIndex < currentNodeOrder.length; freeLayerIndex++) {
-            // For each free layer the Switchdecider instantiates the necessary crossing counters
+            // For each free layer the SwitchDecider instantiates the necessary crossing counters
             // upon creation, which is why we need create a new switch decider for each visited free
             // layer
             switchDecider = getNewSwitchDecider(freeLayerIndex, CrossingCountSide.WEST);
@@ -203,7 +203,7 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
     private boolean sweepBackwardReducingCrossings() {
         boolean improved = false;
         for (int freeLayerIndex = currentNodeOrder.length - 1; freeLayerIndex >= 0; freeLayerIndex--) {
-            // For each free layer the Switchdecider instantiates the necessary crossing counters
+            // For each free layer the SwitchDecider instantiates the necessary crossing counters
             // upon creation, which is why we need create a new switch decider for each visited free
             // layer
             switchDecider = getNewSwitchDecider(freeLayerIndex, CrossingCountSide.EAST);

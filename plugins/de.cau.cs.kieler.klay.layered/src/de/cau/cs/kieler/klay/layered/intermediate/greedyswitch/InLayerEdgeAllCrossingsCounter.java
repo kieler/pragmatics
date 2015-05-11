@@ -45,7 +45,7 @@ public class InLayerEdgeAllCrossingsCounter {
     private final Map<LNode, Integer> westNodeCardinalities;
     private final Map<LPort, Integer> portPositions;
     private final LNode[] nodeOrder;
-    /** We store port-positions in mutlisets, as nodes without fixed order have the same port.id. */
+    /** We store port-positions in mutlisets, as nodes without fixed order have the same port ids. */
     private final SortedMultiset<Integer> inLayerPorts;
     private final Set<LEdge> inLayerEdges;
 

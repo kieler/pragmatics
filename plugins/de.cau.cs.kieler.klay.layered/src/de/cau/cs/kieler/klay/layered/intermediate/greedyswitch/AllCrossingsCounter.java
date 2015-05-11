@@ -21,7 +21,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
  * @author alan
  *
  */
-public class AllCrossingsCounter {
+public final class AllCrossingsCounter {
     private final LNode[][] layeredGraph;
     private boolean useHyperedgeCounter;
     private InLayerEdgeAllCrossingsCounter inLayerEdgeCrossingsCounter;
