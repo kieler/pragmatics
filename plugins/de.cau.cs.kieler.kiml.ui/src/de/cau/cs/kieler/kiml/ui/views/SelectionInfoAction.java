@@ -232,7 +232,7 @@ public class SelectionInfoAction extends Action {
             html.append("</ul>");
         }
         
-        if (infoAvailable == false) {
+        if (!infoAvailable) {
             html.append("No information available.");
         }
         
