@@ -32,6 +32,7 @@ import org.eclipse.ui.PlatformUI;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
@@ -65,11 +66,13 @@ import de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties;
 import de.cau.cs.kieler.klighd.labels.KlighdLabelProperties;
 import de.cau.cs.kieler.klighd.piccolo.IKlighdNode.IKGraphElementNode;
 import de.cau.cs.kieler.klighd.piccolo.IKlighdNode.IKNodeNode;
+import de.cau.cs.kieler.klighd.piccolo.internal.KlighdCanvas;
 import de.cau.cs.kieler.klighd.piccolo.internal.activities.ApplyBendPointsActivity;
 import de.cau.cs.kieler.klighd.piccolo.internal.activities.ApplySmartBoundsActivity;
 import de.cau.cs.kieler.klighd.piccolo.internal.activities.FadeEdgeInActivity;
 import de.cau.cs.kieler.klighd.piccolo.internal.activities.FadeNodeInActivity;
 import de.cau.cs.kieler.klighd.piccolo.internal.activities.IStartingAndFinishingActivity;
+import de.cau.cs.kieler.klighd.piccolo.internal.controller.AbstractKGERenderingController.ElementMovement;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.IInternalKGraphElementNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KChildAreaNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KEdgeNode;
@@ -88,8 +91,12 @@ import de.cau.cs.kieler.klighd.util.LimitedKGraphContentAdapter;
 import de.cau.cs.kieler.klighd.util.ModelingUtil;
 import de.cau.cs.kieler.klighd.util.RenderingContextData;
 import edu.umd.cs.piccolo.PNode;
+import edu.umd.cs.piccolo.PRoot;
 import edu.umd.cs.piccolo.activities.PInterpolatingActivity;
 import edu.umd.cs.piccolo.util.PBounds;
+
+// SUPPRESS CHECKSTYLE PREVIOUS 100 Length
+//  Yes, this file is a bit too long, maybe to much documentation ... and too many imports ;-)
 
 /**
  * Overall manager of KGraph+KRendering+KLayoutData-based diagrams.<br>
@@ -146,6 +153,8 @@ public class DiagramController {
     /** the layout changes to graph elements while recording. */
     private final Map<IKGraphElementNode, Object> recordedChanges = Maps.newLinkedHashMap();
 
+    /** indicates whether scheduled diagram element updates must be executed via this display. */
+    private final Display display;
 
     /**
      * Constructs a diagram controller for the given KGraph.
@@ -169,6 +178,13 @@ public class DiagramController {
         this.edgesFirst = edgesFirst;
 
         this.canvasCamera = camera;
+
+        // check whether the employed mainCamera has a component set that is a KlighdCanvas;
+        // this indicates the requirement to switch to the display for updating the diagram
+        //  figures, since a display is required to instantiate a KlighdCanvas and the Display
+        //  class enforces UI manipulations to be executed by a corresponding UI thread
+        this.display = canvasCamera.getComponent() instanceof KlighdCanvas
+                ? ((KlighdCanvas) canvasCamera.getComponent()).getDisplay() : null;
 
         this.topNode = new KNodeTopNode(graph, edgesFirst);
         final RenderingContextData contextData = RenderingContextData.get(graph);
@@ -557,27 +573,49 @@ public class DiagramController {
     }
 
     private final Set<AbstractKGERenderingController<?, ?>> dirtyDiagramElements = Sets.newHashSet();
+    private final Map<AbstractKGERenderingController<?, ?>, ElementMovement> dirtyDiagramElementStyles =
+            Maps.newHashMap();
 
     void scheduleRenderingUpdate(final AbstractKGERenderingController<?, ?> controller) {
         renderingUpdater.cancel();
+
         synchronized (dirtyDiagramElements) {
             dirtyDiagramElements.add(controller);
         }
-        renderingUpdater.schedule(1);
+
+        renderingUpdater.schedule(RENDERING_UPDATER_DELAY);
     }
 
+    void scheduleStylesUpdate(final AbstractKGERenderingController<?, ?> controller,
+            final ElementMovement movement) {
+        renderingUpdater.cancel();
+
+        synchronized (dirtyDiagramElementStyles) {
+            dirtyDiagramElementStyles.put(controller, movement);
+        }
+
+        renderingUpdater.schedule(RENDERING_UPDATER_DELAY);
+    }
+
+    private static final int RENDERING_UPDATER_DELAY = 5; /* ms */
+
     private final Job renderingUpdater = new Job("KLighD DiagramElementUpdater") {
-        {
+
+        /* Constructor */ {
             this.setSystem(true);
         }
 
         @Override
         protected IStatus run(final IProgressMonitor monitor) {
-            if (Display.getCurrent() == null && PlatformUI.isWorkbenchRunning()) {
-                PlatformUI.getWorkbench().getDisplay().asyncExec(this.diagramUpdateRunnable);
+            if (display != null) {
+                display.asyncExec(diagramUpdateRunnable);
+
             } else {
-                this.diagramUpdateRunnable.run();
+                // if no SWT display is required just execute 'diagramUpdateRunnable'
+                //  (within this job's worker thread)
+                diagramUpdateRunnable.run();
             }
+
             return Status.OK_STATUS;
         }
 
@@ -588,12 +626,25 @@ public class DiagramController {
              */
             public void run() {
                 final Set<AbstractKGERenderingController<?, ?>> copy;
+                final Map<AbstractKGERenderingController<?, ?>, ElementMovement> copyStyles;
+
                 synchronized (dirtyDiagramElements) {
                     copy = ImmutableSet.copyOf(dirtyDiagramElements);
                     dirtyDiagramElements.clear();
                 }
+
+                synchronized (dirtyDiagramElementStyles) {
+                    copyStyles = ImmutableMap.copyOf(dirtyDiagramElementStyles);
+                    dirtyDiagramElementStyles.clear();
+                }
+
                 for (final AbstractKGERenderingController<?, ?> ctrl : copy) {
-                    ctrl.updateRenderingInUi();
+                    ctrl.updateRendering();
+                }
+
+                for (final Map.Entry<AbstractKGERenderingController<?, ?>, ElementMovement> ctrl
+                        : copyStyles.entrySet()) {
+                    ctrl.getKey().updateStyles(ctrl.getValue());
                 }
             }
         };
@@ -605,6 +656,7 @@ public class DiagramController {
      */
     private void handleRecordedChanges(final ZoomStyle zoomStyle, final KNode focusNode,
             final int animationTime) {
+        final PRoot root = topNode.getRoot();
 
         // create activities to apply all recorded changes
         for (final Map.Entry<IKGraphElementNode, ?> recordedChange : recordedChanges.entrySet()) {
@@ -673,7 +725,7 @@ public class DiagramController {
             }
             if (animationTime > 0) {
                 // schedule the activity
-                NodeUtil.schedulePrimaryActivity(shapeNode, activity);
+                NodeUtil.schedulePrimaryActivity(shapeNode, root, activity);
             } else {
                 // unschedule a currently running primary activity on the node if any
                 NodeUtil.unschedulePrimaryActivity(shapeNode);
@@ -723,7 +775,7 @@ public class DiagramController {
                             //  expansion state, so ...
                             if (Iterables.any(Iterables.filter(node.getData(), KRendering.class),
                                     KlighdPredicates.isCollapsedOrExpandedRendering())) {
-                                nodeNode.getRenderingController().updateRenderingInUi();
+                                nodeNode.getRenderingController().updateRendering();
                             }
                         }
                     });

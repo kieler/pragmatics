@@ -22,9 +22,11 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -160,28 +162,35 @@ public class SelectionInfoAction extends Action {
      */
     private String createInfo() {
         LayoutMetaDataService layoutServices = LayoutMetaDataService.getInstance();
-        StringBuilder builder = new StringBuilder();
+        boolean infoAvailable = false;
+        
+        StringBuilder html = new StringBuilder("<HTML><HEAD>")
+            .append(generateCSS())
+            .append("</HEAD><BODY>");
         
         // display editor part
         IWorkbenchPart workbenchPart = layoutView.getCurrentWorkbenchPart();
         if (workbenchPart != null) {
-            builder.append("<b>Workbench part class</b><ul><li>"
+            infoAvailable = true;
+            html.append("<b>Workbench part class</b><ul><li>"
                     + workbenchPart.getClass().getName() + "</li></ul>");
         }
         
         // display edit part and domain model class
         Object diagramPart = layoutView.getCurrentDiagramPart();
         if (diagramPart != null) {
-            builder.append("<b>Diagram part class</b><ul><li>"
+            infoAvailable = true;
+            html.append("<b>Diagram part class</b><ul><li>"
                     + diagramPart.getClass().getName() + "</li></ul>");
+            
             Object model = LayoutManagersService.getInstance().getContextValue(
                     LayoutContext.DOMAIN_MODEL, null, diagramPart);
             if (model != null) {
                 if (model instanceof EObject) {
-                    builder.append("<b>Domain model class</b><ul><li>"
+                    html.append("<b>Domain model class</b><ul><li>"
                             + ((EObject) model).eClass().getInstanceTypeName() + "</li></ul>");
                 } else {
-                    builder.append("<b>Domain model class</b><ul><li>"
+                    html.append("<b>Domain model class</b><ul><li>"
                             + model.getClass().getName() + "</li></ul>");
                 }
             }
@@ -190,39 +199,77 @@ public class SelectionInfoAction extends Action {
         // display layout algorithms
         LayoutAlgorithmData[] layouterData = layoutView.getCurrentLayouterData();
         if (layouterData != null && layouterData.length > 0) {
-            builder.append("<b>Involved layout algorithms</b><ul>");
+            infoAvailable = true;
+            html.append("<b>Involved layout algorithms</b><ul>");
+            
             for (LayoutAlgorithmData data : layouterData) {
                 if (data != null) {
-                    builder.append("<li>" + data.getName());
+                    html.append("<li>" + data.getName());
                     String category = layoutServices.getCategoryName(data.getCategory());
                     if (category != null) {
-                        builder.append(" (" + category + ")");
+                        html.append(" (" + category + ")");
                     }
-                    builder.append(" - " + data.getId() + "</li>");
+                    html.append(" - " + data.getId() + "</li>");
                 }
             }
-            builder.append("</ul>");
+            html.append("</ul>");
         }
         
         // display layout options
         List<IPropertySheetEntry> selectedOptions = layoutView.getSelection();
         if (!selectedOptions.isEmpty()) {
-            builder.append("<b>Selected options</b><ul>");
+            infoAvailable = true;
+            html.append("<b>Selected options</b><ul>");
+            
             for (IPropertySheetEntry entry : selectedOptions) {
                 final LayoutOptionData optionData = KimlUiUtil.getOptionData(layouterData,
                         entry.getDisplayName());
                 if (optionData != null) {
-                    builder.append("<li>" + optionData.getName() + " (" + optionData.getType().literal()
+                    html.append("<li>" + optionData.getName() + " (" + optionData.getType().literal()
                             + ") - " + optionData.getId() + "</li>");
                 }
             }
-            builder.append("</ul>");
+            html.append("</ul>");
         }
         
-        if (builder.length() == 0) {
-            builder.append("No information available.");
+        if (!infoAvailable) {
+            html.append("No information available.");
         }
-        return builder.toString();
+        
+        html.append("</BODY></HTML>");
+        
+        return html.toString();
+    }
+    
+    /**
+     * Generates the CSS code necessary for the HTML output to look good.
+     * 
+     * @return CSS code.
+     */
+    private static String generateCSS() {
+        // Get the standard dialog font and the font used for headings
+        FontData headerFont = JFaceResources.getHeaderFont().getFontData()[0];
+        boolean boldHeaderFont = (headerFont.getStyle() & SWT.BOLD) != 0;
+        FontData dialogFont = JFaceResources.getDialogFont().getFontData()[0];
+        
+        StringBuilder css = new StringBuilder("<style TYPE='text/css'><!--")
+            .append("body, table { font-family: \"" + dialogFont.getName() + "\";")
+            .append("              font-size: " + dialogFont.getHeight() + "pt; }")
+            .append("h1 { font-family: \"" + headerFont.getName() + "\";")
+            .append("     font-size: " + headerFont.getHeight() + "pt;")
+            .append("     font-weight: " + (boldHeaderFont ? "bold" : "normal") + "; }")
+            .append("table { border-bottom: 1pt solid #aaaaaa;")
+            .append("        margin-left: 20pt; margin-bottom: 20pt; }")
+            .append("th { background: #fafafa;")
+            .append("     border-bottom: 2pt solid #aaaaaa; border-top: 2pt solid #aaaaaa;")
+            .append("     font-weight: bold; text-align: left; }")
+            .append("td { border-bottom: 1pt solid #aaaaaa; }")
+            .append(".analysisName { font-weight: normal; }")
+            .append(".even { background: white; }")
+            .append(".odd { background: white; }")
+            .append("--></style>");
+        
+        return css.toString();
     }
 
 }

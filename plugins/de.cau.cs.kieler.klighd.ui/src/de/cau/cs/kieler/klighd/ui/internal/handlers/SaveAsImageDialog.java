@@ -47,6 +47,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 
+import com.google.common.base.Strings;
+
 import de.cau.cs.kieler.klighd.IDiagramExporter.ExportData;
 import de.cau.cs.kieler.klighd.IDiagramExporter.TilingData;
 import de.cau.cs.kieler.klighd.KlighdDataManager;
@@ -289,9 +291,8 @@ public class SaveAsImageDialog extends Dialog {
         final String[] imageFormats = new String[descriptors.size()];
         int i = 0;
         for (final ExporterDescriptor descr : descriptors) {
-            final String descrText =
-                    descr.description != null ? " (" + descr.description + ")" : "";
-            imageFormats[i++] = descr.fileExtension + descrText;
+            imageFormats[i++] = Strings.isNullOrEmpty(descr.description)
+                    ? descr.fileExtension : descr.description;
         }
 
         // image formats
@@ -548,9 +549,9 @@ public class SaveAsImageDialog extends Dialog {
         if (fileText.getText().length() > 0 && Path.ROOT.isValidPath(fileText.getText())) {
             final IPath filePath = new Path(fileText.getText());
             String ext = imageFormatCombo.getText().toLowerCase();
-            // remove any details contained in parentheses
-            if (ext.contains("(")) {
-                ext = ext.substring(0, ext.indexOf("(")).trim();
+            // retrieve the extension from the display string
+            if (ext.contains(")")) {
+                ext = ext.substring(ext.indexOf(".") + 1, ext.indexOf(')')).trim();
             }
             if (filePath.getFileExtension() != null) {
                 if (!filePath.getFileExtension().equals(ext)) {
