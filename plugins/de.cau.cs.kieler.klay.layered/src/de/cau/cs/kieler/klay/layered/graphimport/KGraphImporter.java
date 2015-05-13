@@ -756,9 +756,10 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         // Iterate through all edges
         for (LEdge ledge : edgeList) {
             KEdge kedge = (KEdge) ledge.getProperty(InternalProperties.ORIGIN);
-            // Self-loops are currently left untouched unless the edge router is set to
-            // the orthogonal router
-            if (kedge == null || ledge.isSelfLoop() && routing != EdgeRouting.ORTHOGONAL) {
+            
+            // Prior versions of the code left self-loops untouched unless edge routing is set to
+            // orthogonal, but we don't care anymore
+            if (kedge == null) {
                 continue;
             }
             
