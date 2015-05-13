@@ -459,6 +459,15 @@ public class KGraphRenderer {
             rect.painted = true;
         }
         
+        // paint junction points
+        KVectorChain vc = edgeLayout.getProperty(LayoutOptions.JUNCTION_POINTS);
+        if (vc != null) {
+            for (KVector v : vc) {
+                KVector center = v.clone().scale(scale).add(offset).sub(2, 2);
+                graphics.fillOval((int) center.x, (int) center.y, 6, 6);
+            }
+        }
+        
         // paint the edge labels
         for (KLabel label : edge.getLabels()) {
             renderLabel(label, graphics, area, offset, labelAlpha);
