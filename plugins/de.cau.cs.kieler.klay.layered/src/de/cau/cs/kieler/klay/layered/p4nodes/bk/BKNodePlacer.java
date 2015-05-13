@@ -362,14 +362,14 @@ public final class BKNodePlacer implements ILayoutPhase {
                 if (l_1 == ((layerSize[i + 1]) - 1) || incidentToInnerSegment(v_l_i, i + 1, i)) {
                     int k_1 = layerSize[i] - 1;
                     if (incidentToInnerSegment(v_l_i, i + 1, i)) {
-                        k_1 = allUpperNeighbors(v_l_i).get(0).getIndex();
+                        k_1 = allLeftNeighbors(v_l_i).get(0).getIndex();
                     }
                     
                     while (l <= l_1) {
                         LNode v_l = currentLayer.getNodes().get(l);
                         
                         if (!incidentToInnerSegment(v_l, i + 1, i)) {
-                            for (LNode upperNeighbor : allUpperNeighbors(v_l)) {
+                            for (LNode upperNeighbor : allLeftNeighbors(v_l)) {
                                 int k = upperNeighbor.getIndex();
                                 
                                 if (k < k_0 || k > k_1) {
@@ -522,7 +522,7 @@ public final class BKNodePlacer implements ILayoutPhase {
      * @param node The node which might have neighbors
      * @return A list containing all upper neighbors
      */
-    static List<LNode> allUpperNeighbors(final LNode node) {
+    static List<LNode> allLeftNeighbors(final LNode node) {
         List<LNode> result = Lists.newArrayList();
         int maxPriority = 0;
         
@@ -550,7 +550,7 @@ public final class BKNodePlacer implements ILayoutPhase {
      * @param node The node which might have neighbors
      * @return A list containing all lower neighbors
      */
-    static List<LNode> allLowerNeighbors(final LNode node) {
+    static List<LNode> allRightNeighbors(final LNode node) {
         List<LNode> result = Lists.newArrayList();
         int maxPriority = 0;
         

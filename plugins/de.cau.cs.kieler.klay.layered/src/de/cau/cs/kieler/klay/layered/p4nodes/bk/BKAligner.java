@@ -13,8 +13,8 @@
  */
 package de.cau.cs.kieler.klay.layered.p4nodes.bk;
 
-import static de.cau.cs.kieler.klay.layered.p4nodes.bk.BKNodePlacer.allLowerNeighbors;
-import static de.cau.cs.kieler.klay.layered.p4nodes.bk.BKNodePlacer.allUpperNeighbors;
+import static de.cau.cs.kieler.klay.layered.p4nodes.bk.BKNodePlacer.allRightNeighbors;
+import static de.cau.cs.kieler.klay.layered.p4nodes.bk.BKNodePlacer.allLeftNeighbors;
 import static de.cau.cs.kieler.klay.layered.p4nodes.bk.BKNodePlacer.getBlocks;
 import static de.cau.cs.kieler.klay.layered.p4nodes.bk.BKNodePlacer.getEdge;
 
@@ -99,9 +99,9 @@ public class BKAligner {
             for (LNode v_i_k : nodes) {
                 List<LNode> neighbors = null;
                 if (bal.hdir == HDirection.LEFT) {
-                    neighbors = allLowerNeighbors(v_i_k);
+                    neighbors = allRightNeighbors(v_i_k);
                 } else {
-                    neighbors = allUpperNeighbors(v_i_k);
+                    neighbors = allLeftNeighbors(v_i_k);
                 }
 
                 if (neighbors.size() > 0) {
