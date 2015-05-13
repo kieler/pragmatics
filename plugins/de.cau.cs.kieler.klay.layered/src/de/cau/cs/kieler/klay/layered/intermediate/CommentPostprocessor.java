@@ -27,7 +27,6 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
-import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Post-processor for comment boxes. If any comments are found that were removed by the
@@ -55,7 +54,7 @@ public final class CommentPostprocessor implements ILayoutProcessor {
      */
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
         monitor.begin("Comment post-processing", 1);
-        double spacing = layeredGraph.getProperty(Properties.OBJ_SPACING).doubleValue();
+        double spacing = layeredGraph.getProperty(InternalProperties.SPACING).doubleValue();
         
         for (Layer layer : layeredGraph) {
             List<LNode> boxes = Lists.newArrayList();

@@ -26,6 +26,7 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.nodespacing.LabelSide;
@@ -44,7 +45,7 @@ import de.cau.cs.kieler.klay.layered.p5edges.splines.LoopSide;
 
 /**
  * Container for property definitions for internal use of the algorithm. These properties should
- * not be accessed from outside.
+ * not be accessed from outside. The properties are 
  * 
  * @author msp
  * @author cds
@@ -62,14 +63,14 @@ public final class InternalProperties {
     /**
      * The intermediate processing configuration for an input graph.
      */
-    public static final IProperty<IntermediateProcessingConfiguration> CONFIGURATION
-            = new Property<IntermediateProcessingConfiguration>("processingConfiguration");
+    public static final IProperty<IntermediateProcessingConfiguration> CONFIGURATION =
+            new Property<IntermediateProcessingConfiguration>("processingConfiguration");
     
     /**
      * The list of layout processors executed for an input graph.
      */
-    public static final IProperty<List<ILayoutProcessor>> PROCESSORS
-            = new Property<List<ILayoutProcessor>>("processors");
+    public static final IProperty<List<ILayoutProcessor>> PROCESSORS =
+            new Property<List<ILayoutProcessor>>("processors");
     
     /**
      * Whether the original node an LNode was created from was a compound node or not. This might
@@ -96,13 +97,6 @@ public final class InternalProperties {
      * A nested LGraph has a reference to the LNode that contains it.
      */
     public static final IProperty<LNode> PARENT_LNODE = new Property<LNode>("parentLNode");
-    
-    /**
-     * Offset of port position to the node border. An offset of 0 means that the port touches its
-     * parent node on the outside, positive offsets move the port away from the node, and negative
-     * offset move the port towards the inside.
-     */
-    public static final IProperty<Float> OFFSET = new Property<Float>(LayoutOptions.OFFSET, 0.0f);
 
     /**
      * The original bend points of an edge.
@@ -181,8 +175,7 @@ public final class InternalProperties {
      * {@link de.cau.cs.kieler.klay.layered.intermediate.InLayerConstraintProcessor}.
      */
     public static final IProperty<InLayerConstraint> IN_LAYER_CONSTRAINT 
-           = new Property<InLayerConstraint>(
-            "inLayerConstraint", InLayerConstraint.NONE);
+           = new Property<InLayerConstraint>("inLayerConstraint", InLayerConstraint.NONE);
 
     /**
      * Indicates that a node {@code x} may only appear inside a layer before the node {@code y} the
@@ -323,11 +316,13 @@ public final class InternalProperties {
         
     /** 
      * Original labels of a big node. 
-     * */
+     */
     public static final IProperty<List<LLabel>> BIGNODES_ORIG_LABELS = new Property<List<LLabel>>(
             "de.cau.cs.kieler.klay.layered.bigNodeLabels", new ArrayList<LLabel>());
     
-    /** A post processing function that is called during big nodes post processing. */
+    /**
+     * A post processing function that is called during big nodes post processing.
+     */
     public static final IProperty<Function<Void, Void>> BIGNODES_POST_PROCESS =
             new Property<Function<Void, Void>>("de.cau.cs.kieler.klay.layered.postProcess", null);
 
@@ -368,6 +363,52 @@ public final class InternalProperties {
      */
     public static final IProperty<Margins> SPLINE_SELF_LOOP_MARGINS = 
             new Property<Margins>("splineSelfLoopMargins", new Margins());
+
+    
+    // /////////////////////////////////////////////////////////////////////////////
+    // OVERWRITTEN PROPERTIES
+    
+    /**
+     * Offset of port position to the node border. An offset of 0 means that the port touches its
+     * parent node on the outside, positive offsets move the port away from the node, and negative
+     * offset move the port towards the inside.
+     */
+    public static final IProperty<Float> OFFSET = new Property<Float>(LayoutOptions.OFFSET, 0.0f);
+
+    /**
+     * Minimal spacing between objects.
+     */
+    public static final Property<Float> SPACING = new Property<Float>(LayoutOptions.SPACING,
+            20.0f, 1.0f);
+
+    /**
+     * Minimal spacing between ports.
+     */
+    public static final Property<Float> PORT_SPACING = new Property<Float>(LayoutOptions.PORT_SPACING,
+            10.0f, 1.0f);
+
+    /**
+     * Spacing to the border of the drawing.
+     */
+    public static final Property<Float> BORDER_SPACING = new Property<Float>(
+            LayoutOptions.BORDER_SPACING, 12.0f, 0.0f);
+
+    /**
+     * Priority of elements. controls how much single edges are emphasized.
+     */
+    public static final Property<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY, 0);
+
+    /**
+     * The aspect ratio for packing connected components.
+     */
+    public static final Property<Float> ASPECT_RATIO = new Property<Float>(
+            LayoutOptions.ASPECT_RATIO, 1.6f, 0.0f);
+    
+    /**
+     * How to route edges.
+     */
+    public static final Property<EdgeRouting> EDGE_ROUTING = new Property<EdgeRouting>(
+            LayoutOptions.EDGE_ROUTING, EdgeRouting.ORTHOGONAL);
 
     
     // /////////////////////////////////////////////////////////////////////////////
