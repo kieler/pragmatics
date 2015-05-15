@@ -98,10 +98,10 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *  
  * <p>======================= END =======================</p>
  * 
- * <p>The action of the last step depends on a layout option. If "Less Edge Bends" is set to true, one
- * of the four calculated layouts is selected and applied, choosing the layout which uses the least
- * space. If it is false, a balanced layout is chosen by calculating a median layout of all four
- * layouts.</p>
+ * <p>The action of the last step depends on a layout option. If "fixedAlignment" is not set to 
+ * BALANCED, one of the four calculated layouts is selected and applied, choosing the layout which 
+ * uses the least space. If it is false, a balanced layout is chosen by calculating a median layout 
+ * of all four layouts.</p>
  * 
  * <p>In rare cases, it is possible that one or more layouts is not correct, e.g. having nodes which
  * overlap each other or violating the layer ordering constraint. If the algorithm detects that, the
@@ -116,6 +116,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *     <dd>The size of each layer is set according to the area occupied by its nodes</dd>
  *     <dd>The height of the graph is set to the maximal layer height</dd>
  * </dl>
+ * 
  * 
  * @author jjc
  * @author uru

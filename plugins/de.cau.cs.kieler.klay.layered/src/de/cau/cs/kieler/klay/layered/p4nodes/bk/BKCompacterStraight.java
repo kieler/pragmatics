@@ -14,21 +14,16 @@
 package de.cau.cs.kieler.klay.layered.p4nodes.bk;
 
 import java.util.List;
-import java.util.Queue;
-import java.util.Set;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
-import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
-import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.p4nodes.bk.BKAlignedLayout.HDirection;
 import de.cau.cs.kieler.klay.layered.p4nodes.bk.BKAlignedLayout.VDirection;
+import de.cau.cs.kieler.klay.layered.p4nodes.bk.ThresholdStrategy.SimpleThresholdStrategy;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -36,15 +31,12 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * As opposed to the default {@link BKCompacter} this version
  * trades maximal compactness with straight edges. In other words,
- * where possible it favours additional straight edges over compactness. 
+ * where possible it favors additional straight edges over compactness. 
  * 
  * @author jjc
  * @author uru
  */
 public class BKCompacterStraight implements ICompacter {
-    
-    // TODO make this an option
-    private static final double THRESHOLD = 2000; 
     
     /** The graph to process. */
     private LGraph layeredGraph;
@@ -55,9 +47,8 @@ public class BKCompacterStraight implements ICompacter {
     /** Spacing between external ports, determined by layout options. */
     private float externalPortSpacing;
     
+    private ThresholdStrategy threshStrategy;
     
-    private Set<LNode> blockFinished = Sets.newHashSet();
-    private Queue<Pair<LNode, Boolean>> postProcessables = Lists.newLinkedList();
     
     /**
      * @param layeredGraph the graph to handle.
@@ -69,6 +60,8 @@ public class BKCompacterStraight implements ICompacter {
                 * layeredGraph.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
         smallSpacing = normalSpacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
         externalPortSpacing = layeredGraph.getProperty(Properties.PORT_SPACING);
+        
+        threshStrategy = new SimpleThresholdStrategy();
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -100,7 +93,9 @@ public class BKCompacterStraight implements ICompacter {
             layers = Lists.reverse(layers);
         }
 
-        blockFinished.clear();
+        // init threshold strategy
+        threshStrategy.init(bal);
+        
         System.out.println("PLACING BLOCKS FOR " + bal);
         for (Layer layer : layers) {
             // As with layers, we need a reversed iterator for blocks for different directions
@@ -139,60 +134,8 @@ public class BKCompacterStraight implements ICompacter {
             }
         }
         
-        
-        
         // all blocks were placed, shift latecomers
-        while (!postProcessables.isEmpty()) {
-            Pair<LNode, Boolean> pair = postProcessables.poll();
-            System.out.println("PostProcesS: " + pair);
-            
-            // TODO !!! it is quite important to check both directions here! 
-            // why ... elaborate
-            Pair<LEdge, Boolean> pick =
-                    pickEdge(bal, pair.getFirst(), pair.getSecond(), bal.y.get(pair.getFirst()),
-                            true);
-
-            if (pick.getFirst() == null) {
-                pick =
-                        pickEdge(bal, pair.getFirst(), pair.getSecond(),
-                                bal.y.get(pair.getFirst()), false);
-            }
-            
-            if (!pick.getSecond()) {
-                continue;
-            }
-            
-            if (pick.getFirst() == null) {
-                continue;   
-            }
-            
-            LEdge edge =  pick.getFirst();
-            LPort left = edge.getSource();
-            LPort right = edge.getTarget();
-            LPort block = bal.hdir == HDirection.LEFT ? right : left;
-            LPort fix = bal.hdir == HDirection.LEFT ? left : right;
-            
-            // t has to be the root node of a different block
-            double delta = bal.calculateDelta(fix, block);
-
-            if (delta > 0 && delta < THRESHOLD) {
-                
-                // target y larger than source y --> shift upwards?
-                if (bal.checkSpaceAbove(fix.getNode(), block.getNode(), delta)) {
-                    bal.shiftBlock(block.getNode(), -delta);
-                }
-            } else if (delta < 0 && -delta < THRESHOLD) {
-                
-                // direction is up, we possibly shifted some blocks too far upward 
-                // for an edge to be straight, so check if we can shift down again
-                
-                // target y smaller than source y --> shift down?
-                if (bal.checkSpaceBelow(fix.getNode(), block.getNode(), -delta)) {
-                    bal.shiftBlock(block.getNode(), -delta);
-                }
-            }
-            
-        }
+        threshStrategy.postProcess();
         
     }
 
@@ -231,7 +174,7 @@ public class BKCompacterStraight implements ICompacter {
             int currentIndexInLayer = currentNode.getIndex();
             int currentLayerSize = currentNode.getLayer().getNodes().size();
             NodeType currentNodeType = currentNode.getNodeType();
-            
+
             // If the node is the top or bottom node of its layer, it can be placed safely since it is
             // the first to be placed in its layer. If it's not, we'll have to check its neighbours
             if ((bal.vdir == VDirection.DOWN && currentIndexInLayer > 0)
@@ -252,6 +195,12 @@ public class BKCompacterStraight implements ICompacter {
 
                 // Ensure the neighbor was already placed
                 placeBlock(neighborRoot, bal);
+                
+                // calculate threshold value for additional straight edges
+                // this call has to be _after_ place block, otherwise the 
+                // order of the elements in the postprocessing queue is wrong 
+                thresh = threshStrategy.calculateThreshold(thresh, root, currentNode);
+                // thresh = threshStrategy.calculateThreshold(bal, thresh, 0, root, currentNode);
                 
                 // Note that the two nodes and their blocks form a unit called class in the original
                 // algorithm. These are combinations of blocks which play a role in the final compaction
@@ -278,9 +227,6 @@ public class BKCompacterStraight implements ICompacter {
                                 - currentNode.getSize().y
                                 - bal.innerShift.get(currentNode);
 
-                        // calculate threshold value for additional straight edges
-                        thresh = calculateThreshold(bal, thresh, newPosition, root, currentNode);
-                        
                         if (isInitialAssignment) {
                             isInitialAssignment = false;
                             bal.y.put(root, Math.min(newPosition, thresh));
@@ -299,9 +245,6 @@ public class BKCompacterStraight implements ICompacter {
                                 + spacing
                                 + currentNode.getMargin().top
                                 - bal.innerShift.get(currentNode);
-
-                        // calculate threshold value for additional straight edges
-                        thresh = calculateThreshold(bal, thresh, newPosition, root, currentNode);
                         
                         if (isInitialAssignment) {
                             isInitialAssignment = false;
@@ -313,32 +256,48 @@ public class BKCompacterStraight implements ICompacter {
                     }
                     
                 } else { // CLASSES
-                    // TODO Take a look at this code
                     
                     // They are not part of the same class. Compute how the two classes can be compacted
-                    // later
+                    // later. Hence we determine a minimal required space between the two classes 
+                    // relative two the two class sinks.
                     double spacing = normalSpacing;
                     
                     if (bal.vdir == VDirection.UP) {
-                        bal.shift.put(
-                                bal.sink.get(neighborRoot),
-                                Math.max(bal.shift.get(bal.sink.get(neighborRoot)), bal.y.get(root)
-                                        - bal.y.get(neighborRoot)
-                                        + bal.blockSize.get(root)
-                                        + spacing));
+                        //  possible setup:
+                        //  root         --> currentNode  
+                        //  neighborRoot --> neighbor
+                        double requiredSpace = 
+                                bal.y.get(root)
+                                + bal.innerShift.get(currentNode)
+                                + currentNode.getSize().y
+                                + currentNode.getMargin().top
+                                + spacing
+                                - bal.y.get(neighborRoot)
+                                - bal.innerShift.get(neighbor)
+                                - neighbor.getMargin().top;
+                        
+                        bal.shift.put(bal.sink.get(neighborRoot),
+                                Math.max(bal.shift.get(bal.sink.get(neighborRoot)), requiredSpace));
                     } else {
-                        bal.shift.put(
-                                bal.sink.get(neighborRoot),
-                                Math.min(bal.shift.get(bal.sink.get(neighborRoot)), bal.y.get(root)
-                                        - bal.y.get(neighborRoot)
-                                        - bal.blockSize.get(neighborRoot)
-                                        - spacing));
+                        //  possible setup:
+                        //  neighborRoot --> neighbor 
+                        //  root         --> currentNode
+                        double requiredSpace =
+                                bal.y.get(root) 
+                                + bal.innerShift.get(currentNode)
+                                + currentNode.getMargin().top
+                                - bal.y.get(neighborRoot)
+                                - bal.innerShift.get(neighbor)
+                                - neighbor.getSize().y
+                                - neighbor.getMargin().bottom
+                                - spacing;
+                        
+                        bal.shift.put(bal.sink.get(neighborRoot),
+                                Math.min(bal.shift.get(bal.sink.get(neighborRoot)), requiredSpace));
                     }
                 }
             } else {
-                // it's the first or last node of a layer, we sill wanna update the threshold value
-                // FIXME check if thresh is the right 'suggestion' here
-                thresh = calculateThreshold(bal, thresh, thresh, root, currentNode);
+                thresh = threshStrategy.calculateThreshold(thresh, root, currentNode);
             }
             
             // Get the next node in the block
@@ -346,7 +305,7 @@ public class BKCompacterStraight implements ICompacter {
         } while (currentNode != root);
         
         System.out.println("\tDone with " + root);
-        blockFinished.add(root);
+        threshStrategy.finishBlock(root);
     }
 
     private double getSpacing(final NodeType currentNodeType, final NodeType neighborNodeType) {
@@ -363,178 +322,6 @@ public class BKCompacterStraight implements ICompacter {
             spacing = normalSpacing;
         }
         return spacing;
-    }
-    
-    
-    private double calculateThreshold(final BKAlignedLayout bal, final double currentThreshold,
-            final double suggestion, final LNode root, final LNode currentNode) {
-        
-        double t = currentThreshold;
-        
-        // Remember that for blocks with a single node both flags can be true
-        boolean isRoot = root.equals(currentNode);
-        boolean isLast = bal.align.get(currentNode).equals(root);
-        
-        if (!(isRoot || isLast)) {
-            return t;
-        }
-        
-        if (bal.hdir == HDirection.RIGHT) {
-
-            // Note that it is not guaranteed that adjacent nodes are already placed!
-            
-            if (isRoot) {
-                t = getBound(bal, root, true, suggestion);
-            }
-            if (Double.isInfinite(t) && isLast) {
-                t = getBound(bal, currentNode, false, suggestion);
-            }
-            
-        } else { // LEFT
-            
-            if (isRoot) {
-                t = getBound(bal, root, true, suggestion);
-            } 
-            if (Double.isInfinite(t) && isLast) {
-                t = getBound(bal, currentNode, false, suggestion);
-            }
-        }
-        
-        return t;
-    }
-    
-    /**
-     * Picks an edge that we consider the best choice when 
-     * seeking for additional alignments between nodes 
-     * of distinct blocks.
-     */
-    private Pair<LEdge, Boolean> pickEdge(final BKAlignedLayout bal, final LNode root, 
-            final boolean isRoot, final double suggestion, final boolean inverted) {
-   
-        Iterable<LEdge> edges;
-        if (isRoot) {
-            edges = bal.hdir == HDirection.RIGHT ? root.getIncomingEdges() : root.getOutgoingEdges();
-        } else {
-            edges = bal.hdir == HDirection.LEFT ? root.getIncomingEdges() : root.getOutgoingEdges();
-        }
-        
-        // pick the edge to check, we want to use the edge that
-        // connects to the closest node in iteration direction
-        LEdge pick = null;
-        double distance = Double.MAX_VALUE;
-        boolean hasEdges = false;
-        for (LEdge e : edges) {
-            hasEdges = true;
-            LPort left = e.getSource();
-            LPort right = e.getTarget();
-            LPort rootPort, otherPort;
-            if (isRoot) {
-                rootPort = bal.hdir == HDirection.RIGHT ? right : left;
-                otherPort = bal.hdir == HDirection.RIGHT ? left : right;
-            } else {
-                rootPort = bal.hdir == HDirection.LEFT ? right : left;
-                otherPort = bal.hdir == HDirection.LEFT ? left : right;
-            }
-
-            // if the other node does not have a position yet, ignore this edge
-            if (!blockFinished.contains(bal.root.get(otherPort.getNode()))) {
-                continue;
-            }
-
-            LNode otherRoot = bal.root.get(otherPort.getNode());
-
-            double otherPos =
-                    bal.y.get(otherRoot) + bal.innerShift.get(otherPort.getNode())
-                            + otherPort.getPosition().y + otherPort.getAnchor().y;
-
-            double rootPos =
-                    suggestion + bal.innerShift.get(rootPort.getNode()) + rootPort.getPosition().y
-                            + rootPort.getAnchor().y;
-
-            double curDistance = Math.abs(otherPos - rootPos);
-            if (!inverted) {
-                if (bal.vdir == VDirection.DOWN) {
-                    if (otherPos > rootPos && curDistance < distance) {
-                        pick = e;
-                        distance = curDistance;
-                    }
-                } else {
-                    if (otherPos < rootPos && curDistance < distance) {
-                        pick = e;
-                        distance = curDistance;
-                    }
-                }
-            } else {
-                if (bal.vdir == VDirection.DOWN) {
-                    if (otherPos < rootPos && curDistance < distance) {
-                        pick = e;
-                        distance = curDistance;
-                    }
-                } else {
-                    if (otherPos > rootPos && curDistance < distance) {
-                        pick = e;
-                        distance = curDistance;
-                    }
-                }
-            }
-        }
-
-        return Pair.of(pick, hasEdges);
-    }
-    
-    /**
-     * Get threshold value for the <b>root</b> node of the block to be aligned! (As opposed 
-     * to the last node in the block. 
-     */
-    private double getBound(final BKAlignedLayout bal, final LNode blockNode, final boolean isRoot,
-            final double suggestion) {
-
-        double invalid = bal.vdir == VDirection.UP ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
-
-        final Pair<LEdge, Boolean> pick = pickEdge(bal, blockNode, isRoot, suggestion, false);
-        
-        // if edges exist but we couldn't find a good one
-        if (pick.getFirst() == null && pick.getSecond()) {
-             postProcessables.add(Pair.of(blockNode, isRoot));
-             return invalid;
-        } else if (pick.getFirst() != null) {
-
-            double threshold;
-            LPort left = pick.getFirst().getSource();
-            LPort right = pick.getFirst().getTarget();
-
-            if (isRoot) {
-                // We handle the root (first) node of a block here
-                LPort rootPort = bal.hdir == HDirection.RIGHT ? right : left;
-                LPort otherPort = bal.hdir == HDirection.RIGHT ? left : right;
-    
-                LNode otherRoot = bal.root.get(otherPort.getNode());
-                threshold = bal.y.get(otherRoot) 
-                                  + bal.innerShift.get(otherPort.getNode())
-                                  + otherPort.getPosition().y 
-                                  + otherPort.getAnchor().y
-                                  // root node
-                                  - bal.innerShift.get(rootPort.getNode()) 
-                                  - rootPort.getPosition().y
-                                  - rootPort.getAnchor().y;
-            } else {
-                
-                // ... and the last node of a block here 
-                LPort rootPort = bal.hdir == HDirection.LEFT ? right : left;
-                LPort otherPort = bal.hdir == HDirection.LEFT ? left : right;
-
-                threshold = bal.y.get(bal.root.get(otherPort.getNode()))
-                        + bal.innerShift.get(otherPort.getNode())
-                        + otherPort.getPosition().y
-                        + otherPort.getAnchor().y
-                        // root node
-                        - bal.innerShift.get(rootPort.getNode())
-                        - rootPort.getPosition().y
-                        - rootPort.getAnchor().y;
-            }
-            return threshold;
-        }
-        return invalid;
     }
     
 }
