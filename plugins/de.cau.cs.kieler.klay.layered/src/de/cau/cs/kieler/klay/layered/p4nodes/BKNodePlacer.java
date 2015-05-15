@@ -498,14 +498,14 @@ public final class BKNodePlacer implements ILayoutPhase {
         int maxPriority = 0;
         
         for (LEdge edge : node.getIncomingEdges()) {
-            if (edge.getProperty(Properties.PRIORITY) > maxPriority) {
-                maxPriority = edge.getProperty(Properties.PRIORITY);
+            if (edge.getProperty(InternalProperties.PRIORITY) > maxPriority) {
+                maxPriority = edge.getProperty(InternalProperties.PRIORITY);
             }
         }
         
         for (LEdge edge : node.getIncomingEdges()) {
             if (node.getLayer() != edge.getSource().getNode().getLayer()
-                    && edge.getProperty(Properties.PRIORITY) == maxPriority) {
+                    && edge.getProperty(InternalProperties.PRIORITY) == maxPriority) {
                 result.add(edge.getSource().getNode());
             }
         }
@@ -526,14 +526,14 @@ public final class BKNodePlacer implements ILayoutPhase {
         int maxPriority = 0;
         
         for (LEdge edge : node.getOutgoingEdges()) {
-            if (edge.getProperty(Properties.PRIORITY) > maxPriority) {
-                maxPriority = edge.getProperty(Properties.PRIORITY);
+            if (edge.getProperty(InternalProperties.PRIORITY) > maxPriority) {
+                maxPriority = edge.getProperty(InternalProperties.PRIORITY);
             }
         }
         
         for (LEdge edge : node.getOutgoingEdges()) {
             if (node.getLayer() != edge.getTarget().getNode().getLayer()
-                    && edge.getProperty(Properties.PRIORITY) == maxPriority) {
+                    && edge.getProperty(InternalProperties.PRIORITY) == maxPriority) {
                 
                 result.add(edge.getTarget().getNode());
             }

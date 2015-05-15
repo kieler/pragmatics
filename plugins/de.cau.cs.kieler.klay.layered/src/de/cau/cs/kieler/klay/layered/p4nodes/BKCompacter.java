@@ -24,6 +24,7 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer.BKAlignedLayout;
 import de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer.HDirection;
 import de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer.VDirection;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -49,10 +50,10 @@ public class BKCompacter {
     public BKCompacter(final LGraph layeredGraph) {
         this.layeredGraph = layeredGraph;
         // Initialize spacing value from layout options.
-        normalSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING) 
+        normalSpacing = layeredGraph.getProperty(InternalProperties.SPACING) 
                 * layeredGraph.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
         smallSpacing = normalSpacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
-        externalPortSpacing = layeredGraph.getProperty(Properties.PORT_SPACING);
+        externalPortSpacing = layeredGraph.getProperty(InternalProperties.PORT_SPACING);
 
     }
 
@@ -240,26 +241,44 @@ public class BKCompacter {
                         }
                     }
                 } else {
-                    // TODO Take a look at this code
-                    
+
                     // They are not part of the same class. Compute how the two classes can be compacted
-                    // later
+                    // later. Hence we determine a minimal required space between the two classes 
+                    // relative two the two class sinks.
                     double spacing = normalSpacing;
                     
                     if (bal.vdir == VDirection.UP) {
-                        bal.shift.put(
-                                bal.sink.get(neighborRoot),
-                                Math.max(bal.shift.get(bal.sink.get(neighborRoot)), bal.y.get(root)
-                                        - bal.y.get(neighborRoot)
-                                        + bal.blockSize.get(root)
-                                        + spacing));
+                        //  possible setup:
+                        //  root         --> currentNode  
+                        //  neighborRoot --> neighbor
+                        double requiredSpace = 
+                                bal.y.get(root)
+                                + bal.innerShift.get(currentNode)
+                                + currentNode.getSize().y
+                                + currentNode.getMargin().top
+                                + spacing
+                                - bal.y.get(neighborRoot)
+                                - bal.innerShift.get(neighbor)
+                                - neighbor.getMargin().top;
+                        
+                        bal.shift.put(bal.sink.get(neighborRoot),
+                                Math.max(bal.shift.get(bal.sink.get(neighborRoot)), requiredSpace));
                     } else {
-                        bal.shift.put(
-                                bal.sink.get(neighborRoot),
-                                Math.min(bal.shift.get(bal.sink.get(neighborRoot)), bal.y.get(root)
-                                        - bal.y.get(neighborRoot)
-                                        - bal.blockSize.get(neighborRoot)
-                                        - spacing));
+                        //  possible setup:
+                        //  neighborRoot --> neighbor 
+                        //  root         --> currentNode
+                        double requiredSpace =
+                                bal.y.get(root) 
+                                + bal.innerShift.get(currentNode)
+                                + currentNode.getMargin().top
+                                - bal.y.get(neighborRoot)
+                                - bal.innerShift.get(neighbor)
+                                - neighbor.getSize().y
+                                - neighbor.getMargin().bottom
+                                - spacing;
+                        
+                        bal.shift.put(bal.sink.get(neighborRoot),
+                                Math.min(bal.shift.get(bal.sink.get(neighborRoot)), requiredSpace));
                     }
                 }
             }
