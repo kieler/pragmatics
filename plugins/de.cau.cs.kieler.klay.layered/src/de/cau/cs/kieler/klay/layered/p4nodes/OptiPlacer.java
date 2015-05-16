@@ -132,6 +132,8 @@ public class OptiPlacer implements ILayoutPhase {
         public String serializeSourceModel(final Void model) {
             StringBuffer sb = new StringBuffer();
 
+            Objective obj = layeredGraph.getProperty(NODE_PLACEMENT_OBJECTIVE);
+            
             // SUPPRESS CHECKSTYLE NEXT 100 Name
             int L = layeredGraph.getLayers().size();
             int N = 0;
@@ -215,50 +217,52 @@ public class OptiPlacer implements ILayoutPhase {
                                                 edge.getTarget().id + 1));
                             }
                         }
-                    }
+                    }   
                 }
             }
             
-            // collect real edges. That is from real node to real node
-            for (Layer l : layeredGraph) {
-                for (LNode n : l) {
-                    if (n.getProperty(InternalProperties.NODE_TYPE) != NodeType.NORMAL
-                            && n.getProperty(InternalProperties.NODE_TYPE) != NodeType.EXTERNAL_PORT) {
-                        continue;
-                    }
-                    for (LPort po : n.getPorts()) {
-                        for (LEdge edge : po.getOutgoingEdges()) {
-
-                            // find the target
-                            LPort target = edge.getTarget();
-                            LEdge dummyEdge = edge;
-                            while (target.getNode().getProperty(InternalProperties.NODE_TYPE) != NodeType.NORMAL
-                                    && target.getNode().getProperty(InternalProperties.NODE_TYPE) != NodeType.EXTERNAL_PORT) {
-                                
-                                boolean found = false;
-                                for (LEdge tmpEdge : target.getNode().getOutgoingEdges()) {
-                                    dummyEdge = tmpEdge;
-                                    target = tmpEdge.getTarget();
-                                    found = true;
+            if (obj == Objective.EDGES) {
+                // collect real edges. That is from real node to real node
+                for (Layer l : layeredGraph) {
+                    for (LNode n : l) {
+                        if (n.getProperty(InternalProperties.NODE_TYPE) != NodeType.NORMAL
+                                && n.getProperty(InternalProperties.NODE_TYPE) != NodeType.EXTERNAL_PORT) {
+                            continue;
+                        }
+                        for (LPort po : n.getPorts()) {
+                            for (LEdge edge : po.getOutgoingEdges()) {
+    
+                                // find the target
+                                LPort target = edge.getTarget();
+                                LEdge dummyEdge = edge;
+                                while (target.getNode().getProperty(InternalProperties.NODE_TYPE) != NodeType.NORMAL
+                                        && target.getNode().getProperty(InternalProperties.NODE_TYPE) != NodeType.EXTERNAL_PORT) {
+                                    
+                                    boolean found = false;
+                                    for (LEdge tmpEdge : target.getNode().getOutgoingEdges()) {
+                                        dummyEdge = tmpEdge;
+                                        target = tmpEdge.getTarget();
+                                        found = true;
+                                    }
+                                    
+                                    if (!found) {
+                                    throw new IllegalStateException("Could not infer original edge. "
+                                            + " Found a "
+                                            + target.getNode()
+                                                    .getProperty(InternalProperties.NODE_TYPE));
+                                    }
                                 }
                                 
-                                if (!found) {
-                                throw new IllegalStateException("Could not infer original edge. "
-                                        + " Found a "
-                                        + target.getNode()
-                                                .getProperty(InternalProperties.NODE_TYPE));
-                                }
+                                // SUPPRESS CHECKSTYLE NEXT 10 MagicNumber
+                                int[] src = edges[E];
+                                E++;
+                                src[0] = edge.getSource().id + 1;
+                                src[1] = edge.getTarget().id + 1;
+                                src[2] = dummyEdge.getSource().id + 1;
+                                src[3] = dummyEdge.getTarget().id + 1;
+                                
+                                // System.out.println("Edge: " + po.getNode() + " " + target.getNode());
                             }
-                            
-                            // SUPPRESS CHECKSTYLE NEXT 10 MagicNumber
-                            int[] src = edges[E];
-                            E++;
-                            src[0] = edge.getSource().id + 1;
-                            src[1] = edge.getTarget().id + 1;
-                            src[2] = dummyEdge.getSource().id + 1;
-                            src[3] = dummyEdge.getTarget().id + 1;
-                            
-                            // System.out.println("Edge: " + po.getNode() + " " + target.getNode());
                         }
                     }
                 }
@@ -271,7 +275,6 @@ public class OptiPlacer implements ILayoutPhase {
             // upper bound on height
             upperBoundHeight += (N - 1) * nodeSpacing; 
             
-            Objective obj = layeredGraph.getProperty(NODE_PLACEMENT_OBJECTIVE);
             //System.out.println(obj);
             
             sb.append("objective = " + (obj == Objective.SEGMENTS ? 0 : 1) + ";\n");
