@@ -15,20 +15,20 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.kiml.labels.ILabelSizeModifier;
-import de.cau.cs.kieler.kiml.labels.LabelLayoutOptions;
+import de.cau.cs.kieler.kiml.labels.ILabelManager;
+import de.cau.cs.kieler.kiml.labels.LabelManagementOptions;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
-import de.cau.cs.kieler.klay.layered.properties.NodeType;
 
 /**
- * Invokes a potentially registered label size modifier on center edge label dummy nodes.
+ * Invokes a potentially registered label manager on center edge label dummy nodes.
  * 
  * <dl>
  *   <dt>Precondition:</dt>
@@ -56,17 +56,15 @@ public final class LabelManagementProcessor implements ILayoutProcessor {
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
         monitor.begin("Label management", 1);
         
-        // This processor should actually not be run in the first place if there is no label size
-        // modifier set on the graph, but let's be sure anyway
-        ILabelSizeModifier labelSizeModifier = layeredGraph.getProperty(
-                LabelLayoutOptions.LABEL_SIZE_MODIFIER);
-        
-        if (labelSizeModifier != null) {
-            double labelSpacing = layeredGraph.getProperty(LayoutOptions.LABEL_SPACING);
+        // This processor should actually not be run in the first place if there is no label manager
+        // set on the graph, but let's be sure anyway
+        ILabelManager labelManager = layeredGraph.getProperty(LabelManagementOptions.LABEL_MANAGER);
+        if (labelManager != null) {
+            double labelSpacing = layeredGraph.getProperty(LayoutOptions.LABEL_SPACING).doubleValue();
             
             // Iterate over all layers and call our nifty code
             for (Layer layer : layeredGraph) {
-                manageLabels(layer, labelSizeModifier, labelSpacing);
+                manageLabels(layer, labelManager, labelSpacing);
             }
         }
         
@@ -75,28 +73,28 @@ public final class LabelManagementProcessor implements ILayoutProcessor {
     
     
     /**
-     * Iterates over the nodes labels and invokes the label size modifier on label dummy nodes. The
-     * target width for labels is the width of the widest non-dummy node.
+     * Iterates over the nodes labels and invokes the label manager on label dummy nodes. The target
+     * width for labels is the width of the widest non-dummy node.
      * 
      * @param layer
      *            the layer whose labels to manage.
-     * @param labelSizeModifier
-     *            the label size modifier used.
+     * @param labelManager
+     *            the label manager used.
      * @param labelSpacing
      *            spacing between labels and other objects.
      */
-    private void manageLabels(final Layer layer, final ILabelSizeModifier labelSizeModifier,
+    private void manageLabels(final Layer layer, final ILabelManager labelManager,
             final double labelSpacing) {
         
-        assert labelSizeModifier != null : "labelSizeModifier is null";
+        assert labelManager != null : "labelManager is null";
         
         double maxWidth = Math.max(MIN_WIDTH, findMaxNonDummyNodeWidth(layer));
         
         // Apply the maximum width to all label dummy nodes
         for (LNode labelDummy : layer) {
-            if (labelDummy.getProperty(InternalProperties.NODE_TYPE) == NodeType.LABEL) {
+            if (labelDummy.getNodeType() == NodeType.LABEL) {
                 LEdge edge = labelDummy.getConnectedEdges().iterator().next();
-                double edgeThickness = edge.getProperty(LayoutOptions.THICKNESS);
+                double edgeThickness = edge.getProperty(LayoutOptions.THICKNESS).doubleValue();
                 
                 final KVector newDummySize = new KVector(0.0, edgeThickness);
                 
@@ -105,7 +103,7 @@ public final class LabelManagementProcessor implements ILayoutProcessor {
                     // If the label has an origin, call the label size modifier
                     Object origin = label.getProperty(InternalProperties.ORIGIN);
                     if (origin != null) {
-                        KVector newSize = labelSizeModifier.resizeLabelToWidth(origin, maxWidth);
+                        KVector newSize = labelManager.resizeLabelToWidth(origin, maxWidth);
                         
                         if (newSize != null) {
                             label.getSize().x = newSize.x;
@@ -136,7 +134,7 @@ public final class LabelManagementProcessor implements ILayoutProcessor {
         double maxWidth = 0.0;
         
         for (LNode node : layer) {
-            if (node.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORMAL) {
+            if (node.getNodeType() == NodeType.NORMAL) {
                 maxWidth = Math.max(maxWidth, node.getSize().x);
             }
         }

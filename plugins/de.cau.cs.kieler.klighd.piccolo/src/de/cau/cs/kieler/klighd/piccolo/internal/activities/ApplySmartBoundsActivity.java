@@ -2,17 +2,18 @@
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
- * 
+ *
  * Copyright 2012 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
- * 
+ *
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
 package de.cau.cs.kieler.klighd.piccolo.internal.activities;
 
+import de.cau.cs.kieler.klighd.piccolo.IKlighdNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.IInternalKGraphElementNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.util.NodeUtil;
 import edu.umd.cs.piccolo.PNode;
@@ -21,7 +22,7 @@ import edu.umd.cs.piccolo.util.PBounds;
 
 /**
  * The Piccolo2D activity for applying smart bounds to a Piccolo2D node.
- * 
+ *
  * @author mri, chsch
  */
 public class ApplySmartBoundsActivity extends PInterpolatingActivity implements
@@ -29,7 +30,7 @@ public class ApplySmartBoundsActivity extends PInterpolatingActivity implements
 
     /** the node for this activity. */
     private final PNode node;
-    
+
     /** the source bounds. */
     private PBounds sourceBounds;
     /** the target bounds. */
@@ -43,10 +44,10 @@ public class ApplySmartBoundsActivity extends PInterpolatingActivity implements
 
     /** a local memory indicating whether a style update took place already. */
     private boolean stylesModified = false;
-    
+
     /**
      * Constructs an activity to apply smart bounds to a Piccolo2D node over a duration.
-     * 
+     *
      * @param node
      *            the Piccolo2D node
      * @param bounds
@@ -63,7 +64,7 @@ public class ApplySmartBoundsActivity extends PInterpolatingActivity implements
         this.targetBounds = bounds;
         this.targetScale = scaleFactor;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -73,14 +74,14 @@ public class ApplySmartBoundsActivity extends PInterpolatingActivity implements
         this.deltaBounds = new PBounds(targetBounds.x - sourceBounds.x, targetBounds.y
                 - sourceBounds.y, targetBounds.width - sourceBounds.width, targetBounds.height
                 - sourceBounds.height);
-        
-        this.sourceScale = node.getTransform().getScale();
+
+        this.sourceScale = node.getTransformReference(true).getScale();
         this.deltaScale = this.targetScale - this.sourceScale;
-        
+
         node.setVisible(true);
         super.activityStarted();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -125,6 +126,8 @@ public class ApplySmartBoundsActivity extends PInterpolatingActivity implements
             }
         }
         super.activityFinished();
+
+        node.firePropertyChange(0, IKlighdNode.PROPERTY_BOUNDS_FINISHED, null, Boolean.TRUE);
     }
 
     /**
@@ -137,7 +140,7 @@ public class ApplySmartBoundsActivity extends PInterpolatingActivity implements
 
     /**
      * Getter.
-     * 
+     *
      * @return the node
      */
     PNode getNode() {
@@ -146,7 +149,7 @@ public class ApplySmartBoundsActivity extends PInterpolatingActivity implements
 
     /**
      * Getter.
-     * 
+     *
      * @return the targetBounds
      */
     PBounds getTargetBounds() {

@@ -20,10 +20,10 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LGraph;
 
 /**
  * Sorts the port lists of nodes with fixed port orders or fixed port positions. 
@@ -60,18 +60,18 @@ public final class PortListSorter implements ILayoutProcessor {
          * {@inheritDoc}
          */
         public int compare(final LPort port1, final LPort port2) {
-
-            // for FIXED_ORDER try the ports' sides and indices first
-            //  note that both ports are children of the same node
+            // Sort by side first (if the comparison ends here, the ports were on different sides;
+            // otherwise, the ports must be on the same side)
+            int ordinalDifference = port1.getSide().ordinal() - port2.getSide().ordinal();
+            if (ordinalDifference != 0) {
+                return ordinalDifference;
+            }
+            
+            // If the ports are on the same side and the node has FIXED_ORDER port constraints (that is,
+            // the coordinates of the ports don't necessarily make sense), we check if the port index
+            // has been explicitly set
             if (port1.getNode().getProperty(LayoutOptions.PORT_CONSTRAINTS)
                     == PortConstraints.FIXED_ORDER) {
-                
-                int ordinalDifference = port1.getSide().ordinal() - port2.getSide().ordinal();
-
-                // Sort by side first
-                if (ordinalDifference != 0) {
-                    return ordinalDifference;
-                }
 
                 // In case of equal sides, sort by port index property
                 Integer index1 = port1.getProperty(LayoutOptions.PORT_INDEX);

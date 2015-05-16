@@ -83,7 +83,7 @@ public class PInputManager extends PBasicInputEventHandler implements PRoot.Inpu
     private PInputEventListener keyboardFocus;
 
     /** Tracks the number mouse buttons currently pressed. */
-//    private int buttonsPressed;
+    private int buttonsPressed;
 
     /**
      * Creates a PInputManager and sets positions (last, current) to the origin
@@ -246,32 +246,27 @@ public class PInputManager extends PBasicInputEventHandler implements PRoot.Inpu
 
     /** {@inheritDoc} */
     public void mousePressed(final PInputEvent event) {
-//        if (buttonsPressed == 0) {
-//            setMouseFocus(getMouseOver());
-//        }
-//        buttonsPressed++;
-//        dispatchEventToListener(event, MouseEvent.MOUSE_PRESSED, mouseFocus);
-//        if (buttonsPressed < 1 || buttonsPressed > 3) {
-//            System.err.println("invalid pressedCount on mouse pressed: " + buttonsPressed);
-//        }
-        setMouseFocus(getMouseOver());
+        if (buttonsPressed == 0) {
+            setMouseFocus(getMouseOver());
+        }
+        buttonsPressed++;
         dispatchEventToListener(event, MouseEvent.MOUSE_PRESSED, mouseFocus);
+        if (buttonsPressed < 1 || buttonsPressed > 3) {
+            System.err.println("invalid pressedCount on mouse pressed: " + buttonsPressed);
+        }
     }
 
     /** {@inheritDoc} */
     public void mouseReleased(final PInputEvent event) {
-//        buttonsPressed--;
-//        checkForMouseEnteredAndExited(event);
-//        dispatchEventToListener(event, MouseEvent.MOUSE_RELEASED, mouseFocus);
-//        if (buttonsPressed == 0) {
-//            setMouseFocus(null);
-//        }
-//        if (buttonsPressed < 0 || buttonsPressed > 2) {
-//            System.err.println("invalid pressedCount on mouse released: " + buttonsPressed);
-//        }
+        buttonsPressed--;
         checkForMouseEnteredAndExited(event);
         dispatchEventToListener(event, MouseEvent.MOUSE_RELEASED, mouseFocus);
-        setMouseFocus(null);
+        if (buttonsPressed == 0) {
+            setMouseFocus(null);
+        }
+        if (buttonsPressed < 0 || buttonsPressed > 2) {
+            System.err.println("invalid pressedCount on mouse released: " + buttonsPressed);
+        }
     }
 
     /**
@@ -329,7 +324,7 @@ public class PInputManager extends PBasicInputEventHandler implements PRoot.Inpu
         nextInput = null;
         nextType = 0;
 
-        final PInputEvent e = new PInputEvent(this, theNextInput);
+        final PInputEvent e = createInputEvent(theNextInput);
 
         Point2D newCurrentCanvasPosition = null;
         Point2D newLastCanvasPosition = null;
@@ -358,6 +353,21 @@ public class PInputManager extends PBasicInputEventHandler implements PRoot.Inpu
             currentCanvasPosition.setLocation(newCurrentCanvasPosition);
             lastCanvasPosition.setLocation(newLastCanvasPosition);
         }
+    }
+
+    /**
+     * Creates a {@link PInputEvent} based on the given Swing {@link InputEvent}.<br>
+     * Has been introduced for enabling the "injection" of specialized implementations (subclasses)
+     * via overriding this factory method, and, hence, is called instead of calling
+     * {@link PInputEvent#PInputEvent(PInputManager, InputEvent)} directly.
+     *
+     * @author chsch
+     * @param event
+     *            the Swing {@link InputEvent} to wrap
+     * @return the desired {@link PInputEvent}
+     */
+    protected PInputEvent createInputEvent(final InputEvent event) {
+        return new PInputEvent(this, event);
     }
 
     /**

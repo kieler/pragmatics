@@ -33,6 +33,7 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
@@ -298,7 +299,10 @@ public class KGraphRenderer {
                 graphics.fillRectangle(rect.x, rect.y, rect.width, rect.height);
                 graphics.drawRectangle(rect.x, rect.y, rect.width, rect.height);
                 rect.painted = true;
-                renderNode(child, graphics, area, childOffset, edgeSet, nodeAlpha);
+                KVector contentOffset = new KVector(childOffset);
+                KInsets insets = child.getData(KShapeLayout.class).getInsets();
+                contentOffset.add(insets.getLeft() * scale, insets.getTop() * scale);
+                renderNode(child, graphics, area, contentOffset, edgeSet, nodeAlpha);
             }
 
             graphics.setAlpha(255);
@@ -420,7 +424,9 @@ public class KGraphRenderer {
         KVector offset = new KVector();
         while (node != graph) {
             KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-            offset.add(nodeLayout.getXpos(), nodeLayout.getYpos());
+            KInsets insets = nodeLayout.getInsets();
+            offset.add(nodeLayout.getXpos() + insets.getLeft(),
+                    nodeLayout.getYpos() + insets.getTop());
             node = node.getParent();
         }
         offset.scale(scale).add(baseOffset);
@@ -451,6 +457,15 @@ public class KGraphRenderer {
                 }
             }
             rect.painted = true;
+        }
+        
+        // paint junction points
+        KVectorChain vc = edgeLayout.getProperty(LayoutOptions.JUNCTION_POINTS);
+        if (vc != null) {
+            for (KVector v : vc) {
+                KVector center = v.clone().scale(scale).add(offset).sub(2, 2);
+                graphics.fillOval((int) center.x, (int) center.y, 6, 6);
+            }
         }
         
         // paint the edge labels

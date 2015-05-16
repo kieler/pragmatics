@@ -24,10 +24,9 @@ import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.intermediate.NorthSouthPortPostprocessor;
-import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
-import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.test.AbstractLayeredProcessorTest;
 import de.cau.cs.kieler.klay.layered.test.config.OrthogonalEdgeRoutingLayoutConfigurator;
 import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
@@ -81,7 +80,7 @@ public class NorthSouthPortPostprocessorTest extends AbstractLayeredProcessorTes
             for (Layer layer : g.getLayers()) {
                 for (LNode node : layer.getNodes()) {
                     noOverallNodes++;
-                    if (node.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORTH_SOUTH_PORT) {
+                    if (node.getNodeType() == NodeType.NORTH_SOUTH_PORT) {
                         noTypeNodes++;
                     }
                 }
@@ -101,8 +100,7 @@ public class NorthSouthPortPostprocessorTest extends AbstractLayeredProcessorTes
         for (LGraph g : state.getGraphs()) {
             for (Layer layer : g.getLayers()) {
                 for (LNode node : layer.getNodes()) {
-                    assertTrue(node.getProperty(InternalProperties.NODE_TYPE)
-                            != NodeType.NORTH_SOUTH_PORT);
+                    assertTrue(node.getNodeType() != NodeType.NORTH_SOUTH_PORT);
                     noNodesAfter++;
                 }
             }

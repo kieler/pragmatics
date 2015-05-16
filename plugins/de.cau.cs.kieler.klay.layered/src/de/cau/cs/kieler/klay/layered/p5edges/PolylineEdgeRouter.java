@@ -29,12 +29,12 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LGraphUtil;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
-import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -63,7 +63,7 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
      */
     public static final Predicate<LNode> PRED_EXTERNAL_WEST_OR_EAST_PORT = new Predicate<LNode>() {
         public boolean apply(final LNode node) {
-            return node.getProperty(InternalProperties.NODE_TYPE) == NodeType.EXTERNAL_PORT
+            return node.getNodeType() == NodeType.EXTERNAL_PORT
                     && (node.getProperty(InternalProperties.EXT_PORT_SIDE) == PortSide.WEST
                             || node.getProperty(InternalProperties.EXT_PORT_SIDE) == PortSide.EAST);
         }
@@ -178,7 +178,7 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
         monitor.begin("Polyline edge routing", 1);
         
-        float nodeSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
+        float nodeSpacing = layeredGraph.getProperty(InternalProperties.SPACING);
         float edgeSpaceFac = layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
 
         double xpos = 0.0;
@@ -228,7 +228,7 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
                 }
                 
                 // Different node types have to be handled differently
-                NodeType nodeType = node.getProperty(InternalProperties.NODE_TYPE);
+                NodeType nodeType = node.getNodeType();
                 // FIXME use switch-case here?
                 if (nodeType == NodeType.NORMAL) {
                     processNormalNode(node, xpos, layer.getSize().x);
@@ -495,7 +495,7 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
         }
         
         // FIRST BEND POINT (if the source node is a dummy node)
-        if (sourcePort.getNode().getProperty(InternalProperties.NODE_TYPE) != NodeType.NORMAL) {
+        if (sourcePort.getNode().getNodeType() != NodeType.NORMAL) {
             edge.getBendPoints().add(new KVector(nearX, sourcePort.getAbsoluteAnchor().y));
         }
         
@@ -505,7 +505,7 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
                 (sourcePort.getAbsoluteAnchor().y + targetPort.getAbsoluteAnchor().y) / 2.0));
         
         // THIRD BEND POINT (if the target node is a dummy node)
-        if (targetPort.getNode().getProperty(InternalProperties.NODE_TYPE) != NodeType.NORMAL) {
+        if (targetPort.getNode().getNodeType() != NodeType.NORMAL) {
             edge.getBendPoints().add(new KVector(nearX, targetPort.getAbsoluteAnchor().y));
         }
     }

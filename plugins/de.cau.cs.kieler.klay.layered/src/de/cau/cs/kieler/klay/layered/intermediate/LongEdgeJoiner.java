@@ -26,9 +26,8 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
-import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -83,7 +82,7 @@ public final class LongEdgeJoiner implements ILayoutProcessor {
                 LNode node = nodeIterator.next();
                 
                 // Check if it's a dummy edge we're looking for
-                if (node.getProperty(InternalProperties.NODE_TYPE).equals(NodeType.LONG_EDGE)) {
+                if (node.getNodeType() == NodeType.LONG_EDGE) {
                     joinAt(node, addUnnecessaryBendpoints);
                     
                     // Remove the node

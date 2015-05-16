@@ -13,19 +13,13 @@
  */
 package de.cau.cs.kieler.klighd.xtext;
 
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.resource.XtextResource;
-import org.eclipse.xtext.ui.editor.XtextEditor;
-import org.eclipse.xtext.ui.editor.model.IXtextDocument;
-import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
-import de.cau.cs.kieler.core.util.RunnableWithResult;
 import de.cau.cs.kieler.klighd.kivi.effects.KlighdCloseDiagramEffect;
 import de.cau.cs.kieler.klighd.kivi.effects.KlighdUpdateDiagramEffect;
 import de.cau.cs.kieler.klighd.krendering.SimpleUpdateStrategy;
-import de.cau.cs.kieler.klighd.util.KlighdProperties;
 import de.cau.cs.kieler.klighd.util.KlighdSynthesisProperties;
 import de.cau.cs.kieler.klighd.xtext.triggers.XtextBasedEditorActivationChangeTrigger.XtextModelChangeState;
 import de.cau.cs.kieler.klighd.xtext.triggers.XtextBasedEditorActivationChangeTrigger.XtextModelChangeState.EventType;
@@ -65,39 +59,12 @@ public class UpdateXtextModelKLighDCombination extends AbstractCombination {
             
             // Create the update effect and set basic properties on it
             KlighdUpdateDiagramEffect effect = new KlighdUpdateDiagramEffect(
-                    id,
-                    state.getEditorInputPath().lastSegment(),
-                    resource.getContents().get(0),
+                    id, state.getEditorInputPath().lastSegment(),
+                    KLighDXtextPlugin.getXtextModelAccessProxy(state.getEditor()),
                     state.getEditor());
             effect.setProperty(KlighdSynthesisProperties.REQUESTED_UPDATE_STRATEGY,
                     getRequestedUpdateStrategy(state));
-            effect.setProperty(KlighdProperties.MODEL_ACCESS, new RunnableWithResult<EObject>() {
 
-                private EObject result = null;
-                
-                public void run() {
-                    XtextEditor editor = state.getEditor();
-                    if (editor == null) {
-                        return;
-                    }
-                    IXtextDocument document = editor.getDocument();
-                    if (document == null) {
-                        return;
-                    }
-                    state.getEditor().getDocument().readOnly(new IUnitOfWork.Void<XtextResource>() {
-
-                        @Override
-                        public void process(final XtextResource state) throws Exception {
-                            result = state.getContents().get(0);
-                        }
-                    });
-                }
-
-                public EObject getResult() {
-                    return result;
-                }
-                
-            });
             
             // Subclasses may specify IDs of transformations that must explicitly be used to display
             // the model in the KLighD view

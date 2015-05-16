@@ -33,7 +33,6 @@ class KlighdProjectContributor implements IProjectFactoryContributor {
     }
 
     override def contributeFiles(IProject project, IFileCreator fileWriter) {
-        contributeBuildProperties(fileWriter)
         contributePluginExtensions(fileWriter)
         contributeJDTprefs(fileWriter);
 
@@ -45,6 +44,9 @@ class KlighdProjectContributor implements IProjectFactoryContributor {
         
         if (projectInfo.createMenuContribution) {
             contributeCommandHandler(fileWriter);
+            if (projectInfo.useFileEnding) {            
+                contributeHandlerHelperClass(fileWriter);
+            }
         }
     }
     
@@ -55,20 +57,28 @@ class KlighdProjectContributor implements IProjectFactoryContributor {
      *  settings" using "compliance from execution environment 'J2SE-1.5' on the 'Java Build Path'".
      */
     def private contributeJDTprefs(IFileCreator fileWriter) {
+        
+        val version = switch (projectInfo.executionEnvironment) {
+            case "JavaSE-1.6": "1.6"
+            case "JavaSE-1.7": "1.7"
+            case "JavaSE-1.8": "1.8"
+            default: "1.5"
+        }
+        
         '''
-        eclipse.preferences.version=1
-        org.eclipse.jdt.core.compiler.codegen.inlineJsrBytecode=enabled
-        org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.5
-        org.eclipse.jdt.core.compiler.codegen.unusedLocal=preserve
-        org.eclipse.jdt.core.compiler.compliance=1.5
-        org.eclipse.jdt.core.compiler.debug.lineNumber=generate
-        org.eclipse.jdt.core.compiler.debug.localVariable=generate
-        org.eclipse.jdt.core.compiler.debug.sourceFile=generate
-        org.eclipse.jdt.core.compiler.problem.assertIdentifier=error
-        org.eclipse.jdt.core.compiler.problem.enumIdentifier=error
-        org.eclipse.jdt.core.compiler.source=1.5
-        '''.writeToFile(fileWriter, KlighdWizardSetup.SETTINGS_FOLDER + '/'
-                + KlighdWizardSetup.JDT_PREFS_FILE);
+            eclipse.preferences.version=1
+            org.eclipse.jdt.core.compiler.codegen.inlineJsrBytecode=enabled
+            org.eclipse.jdt.core.compiler.codegen.targetPlatform=«version»
+            org.eclipse.jdt.core.compiler.codegen.unusedLocal=preserve
+            org.eclipse.jdt.core.compiler.compliance=«version»
+            org.eclipse.jdt.core.compiler.debug.lineNumber=generate
+            org.eclipse.jdt.core.compiler.debug.localVariable=generate
+            org.eclipse.jdt.core.compiler.debug.sourceFile=generate
+            org.eclipse.jdt.core.compiler.problem.assertIdentifier=error
+            org.eclipse.jdt.core.compiler.problem.enumIdentifier=error
+            org.eclipse.jdt.core.compiler.source=«version»
+        '''.writeToFile(fileWriter,
+            KlighdWizardSetup.SETTINGS_FOLDER + '/' + KlighdWizardSetup.JDT_PREFS_FILE);
     }
 
     def private contributeXtendTransformationFile(IFileCreator fileWriter) {
@@ -144,16 +154,6 @@ class KlighdProjectContributor implements IProjectFactoryContributor {
             projectInfo.transformationName
     }
 
-    def private contributeBuildProperties(IFileCreator fileWriter) {
-        '''
-            source.. = «IF projectInfo.createXtendFile»xtend-gen/,\«ENDIF»
-                      src/
-            bin.includes = META-INF/,\
-                    plugin.xml,\
-                         .
-        '''.writeToFile(fileWriter, "build.properties")
-    }
-
     def private contributePluginExtensions(IFileCreator fileWriter) {
         
         val beginning =
@@ -172,6 +172,8 @@ class KlighdProjectContributor implements IProjectFactoryContributor {
         '''   
         
         var fileEndingCondition = ""
+        var xtextEditorCondition = ""
+        
         if (projectInfo.useFileEnding) {
             fileEndingCondition =
             '''
@@ -182,7 +184,23 @@ class KlighdProjectContributor implements IProjectFactoryContributor {
                           value="«projectInfo.fileEnding»">
                     </test>
                 </adapt>
-            '''        
+            '''
+            
+            xtextEditorCondition =
+            '''
+                <and>
+                   <with
+                         variable="activeEditor">
+                      <instanceof
+                            value="org.eclipse.xtext.ui.editor.XtextEditor">
+                      </instanceof>
+                   </with>
+                   <with
+                         variable="activeEditorInput">
+                      «fileEndingCondition»
+                   </with>
+                </and>
+           '''
         }
              
         val menuContribution =
@@ -213,14 +231,17 @@ class KlighdProjectContributor implements IProjectFactoryContributor {
                         style="push">
                      <visibleWhen
                            checkEnabled="false">
-                        <iterate ifEmpty="false" operator="or">
-                           <or>
-                               <instanceof
+                        <or>
+                           «xtextEditorCondition»
+                           <iterate ifEmpty="false" operator="or">
+                              <or>
+                                 <instanceof
                                      value="«projectInfo.sourceModelClassFullyQualified»">
-                               </instanceof>
-                               «fileEndingCondition»
-                           </or>
-                        </iterate>
+                                 </instanceof>
+                                 «fileEndingCondition»
+                              </or>
+                           </iterate>
+                        </or>
                      </visibleWhen>
                   </command>
                </menuContribution>
@@ -239,6 +260,20 @@ class KlighdProjectContributor implements IProjectFactoryContributor {
     }
     
     def private contributeCommandHandler(IFileCreator fileWriter) {
+        val xtextEditorSupport = if (projectInfo.useFileEnding) '''
+            if (selection instanceof ITextSelection) {
+                // because of the visibility expressions in the plugin.xml guarding the menu contributions
+                //  we can conclude to have a selection stemming from an XtextEditor; thus...
+                DiagramViewManager.createView(
+                        "«projectInfo.transformationPackage».«projectInfo.sourceModelClassSimple»Diagram", "«projectInfo.sourceModelClassSimple» Diagram",
+                        XtextEditorUtil.getXtextModelAccessProxy(HandlerUtil.getActiveEditor(event)));
+
+            } else ''' else "";
+        
+        val importITextSelection = if (projectInfo.useFileEnding) '''
+            import org.eclipse.jface.text.ITextSelection;
+        ''';
+        
         '''
         package «projectInfo.transformationPackage»;
         
@@ -252,14 +287,14 @@ class KlighdProjectContributor implements IProjectFactoryContributor {
         import org.eclipse.emf.ecore.resource.Resource;
         import org.eclipse.emf.ecore.resource.ResourceSet;
         import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+        import org.eclipse.emf.ecore.util.EcoreUtil;
         import org.eclipse.jface.dialogs.MessageDialog;
-        import org.eclipse.jface.viewers.ISelection;
+        «importITextSelection»import org.eclipse.jface.viewers.ISelection;
         import org.eclipse.jface.viewers.IStructuredSelection;
         import org.eclipse.ui.handlers.HandlerUtil;
         import org.eclipse.ui.statushandlers.StatusManager;
         
         import de.cau.cs.kieler.klighd.ui.DiagramViewManager;
-        import de.cau.cs.kieler.klighd.util.KlighdSynthesisProperties;
         
         /**
          * A simple handler for opening diagrams.
@@ -271,29 +306,41 @@ class KlighdProjectContributor implements IProjectFactoryContributor {
              */
             public Object execute(final ExecutionEvent event) throws ExecutionException {
                 final ISelection selection = HandlerUtil.getCurrentSelection(event);
-                if (selection instanceof IStructuredSelection) {
+
+                «xtextEditorSupport»if (selection instanceof IStructuredSelection) {
                     final IStructuredSelection sSelection  = (IStructuredSelection) selection;
-                    Object model = null;
-                    if (sSelection.getFirstElement() instanceof IFile) {
+
+                    final Object firstElement = sSelection.getFirstElement();
+                    final Object model;
+
+                    if (firstElement instanceof IFile) {
                         try {
-                            IFile f = (IFile) sSelection.getFirstElement();
-                            ResourceSet rs = new ResourceSetImpl();
-                            Resource r =
-                            rs.getResource(URI.createFileURI(f.getFullPath().toString()), true);
+                            final ResourceSet rs = new ResourceSetImpl();
+                            final Resource r = rs.getResource(URI.createPlatformResourceURI(
+                                    ((IFile) firstElement).getFullPath().toString(), true), true);
+                            EcoreUtil.resolveAll(r);
+
                             if (r.getContents().size() > 0) {
                                 model = r.getContents().get(0);
+                                r.unload();
+                            } else {
+                                r.unload();
+                                return null;
                             }
+
                         } catch (Exception e) {
+                            final String message = "Could not load selected file.";
                             StatusManager.getManager().handle(
-                            new Status(IStatus.ERROR, this.getClass().getCanonicalName(),
-                            "Could not load selected file.", e), StatusManager.SHOW);
+                                    new Status(IStatus.ERROR, this.getClass().getCanonicalName(), message, e),
+                                    StatusManager.SHOW);
+                            return null;
                         }
                     } else {
-                        model = sSelection.getFirstElement();
+                        model = firstElement;
                     }
-                    
+
                     DiagramViewManager.createView(
-                            "«projectInfo.transformationPackage».«projectInfo.sourceModelClassSimple»Diagram", "«projectInfo.sourceModelClassSimple» Diagram", model, KlighdSynthesisProperties.create());
+                            "«projectInfo.transformationPackage».«projectInfo.sourceModelClassSimple»Diagram", "«projectInfo.sourceModelClassSimple» Diagram", model);
                 } else {
                     MessageDialog.openInformation(HandlerUtil.getActiveShell(event), "Unsupported element",
                             "KLighD diagram synthesis is unsupported for the current selection "
@@ -302,9 +349,68 @@ class KlighdProjectContributor implements IProjectFactoryContributor {
                 return null;
             }
         }
-        '''.writeToFile(fileWriter,  KlighdWizardSetup.SRC_FOLDER + projectInfo.transformationPackage.replace(".", "/") + "/OpenDiagramHandler.java");
+        '''.writeToFile(fileWriter, KlighdWizardSetup.SRC_FOLDER + projectInfo.transformationPackage.replace(".", "/") + "/OpenDiagramHandler.java");
         
-    } 
+    }
+    
+    def private contributeHandlerHelperClass(IFileCreator fileWriter) {
+        '''
+        package «projectInfo.transformationPackage»;
+        
+        import org.eclipse.ui.IEditorPart;
+        import org.eclipse.xtext.resource.XtextResource;
+        import org.eclipse.xtext.ui.editor.XtextEditor;
+        import org.eclipse.xtext.util.concurrent.IUnitOfWork;
+        
+        import com.google.common.base.Function;
+        
+        import de.cau.cs.kieler.core.util.Maybe;
+        import de.cau.cs.kieler.klighd.ISourceProxy;
+        
+        public class XtextEditorUtil {
+        
+            /**
+             * Factory method providing an implementation of {@link ISourceProxy} enabling the execution of
+             * KLighD operations properly within Xtext's {@link IUnitOfWork IUnitOfWorks}.
+             *
+             * @param editorPart
+             *            the {@link XtextEditor} whose model shall be accessed
+             * @return the desired {@link ISourceProxy} implementation
+             */
+            public static ISourceProxy getXtextModelAccessProxy(final IEditorPart editorPart) {
+                if (editorPart instanceof XtextEditor) {
+                    final XtextEditor xtextEditor = (XtextEditor) editorPart;
+        
+                    return new ISourceProxy() {
+        
+                        public <T> T execute(final Function<Object, T> function) {
+                            if (xtextEditor.getDocument() == null) {
+                                return null;
+                            }
+        
+                            final Maybe<T> result = new Maybe<T>();
+        
+                            xtextEditor.getDocument().readOnly(new IUnitOfWork.Void<XtextResource>() {
+        
+                                @Override
+                                public void process(final XtextResource state) throws Exception {
+                                    if (!state.getContents().isEmpty()) {
+                                        result.set(function.apply(state.getContents().get(0)));
+                                    }
+                                };
+                            });
+        
+                            return result.get();
+                        }
+                    };
+        
+                } else {
+                    return null;
+                }
+            }
+        }
+        '''.writeToFile(fileWriter, KlighdWizardSetup.SRC_FOLDER + projectInfo.transformationPackage.replace(".", "/") + "/XtextEditorUtil.java");
+    }
 
     def protected IFile writeToFile(CharSequence chrSeq, IFileCreator fCreator, String fileName) {
         return fCreator.writeToFile(chrSeq, fileName);

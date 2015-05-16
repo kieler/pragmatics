@@ -45,6 +45,7 @@ import de.cau.cs.kieler.kiml.options.SizeOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters;
 import de.cau.cs.kieler.kiml.util.labelspacing.LabelSpaceCalculation;
+import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Insets;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
@@ -86,7 +87,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         
         // Create the layered graph
         LGraph topLevelGraph = createLGraph(kgraph);
-        labelSpacing = topLevelGraph.getProperty(LayoutOptions.LABEL_SPACING);
+        labelSpacing = topLevelGraph.getProperty(LayoutOptions.LABEL_SPACING).doubleValue();
         
         // Transform the external ports
         Set<GraphProperties> graphProperties = topLevelGraph.getProperty(
@@ -197,16 +198,15 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                 EnumSet.noneOf(GraphProperties.class));
         
         // Adjust the insets to respect inside labels.
-        LabelSpaceCalculation.calculateRequiredNodeLabelSpace(
+        Insets insets = LabelSpaceCalculation.calculateRequiredNodeLabelSpace(
                 KGraphAdapters.adaptSingleNode(parentKNode), labelSpacing);
         
         // Copy the insets to the layered graph
-        KInsets kinsets = parentLayout.getInsets();
         LInsets linsets = layeredGraph.getInsets();
-        linsets.left = kinsets.getLeft();
-        linsets.right = kinsets.getRight();
-        linsets.top = kinsets.getTop();
-        linsets.bottom = kinsets.getBottom();
+        linsets.left = insets.left;
+        linsets.right = insets.right;
+        linsets.top = insets.top;
+        linsets.bottom = insets.bottom;
         
         return layeredGraph;
     }
@@ -662,9 +662,27 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         
         // Get the offset to be added to all coordinates
         KVector offset = new KVector(lgraph.getOffset());
-        LInsets insets = lgraph.getInsets();
-        offset.x += insets.left;
-        offset.y += insets.top;
+        
+        // Adjust offset (and with it the positions), if requested
+        KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
+        LInsets lInsets = lgraph.getInsets();
+        KInsets kInsets = parentLayout.getInsets();
+        final EnumSet<SizeOptions> sizeOptions = parentLayout.getProperty(LayoutOptions.SIZE_OPTIONS);
+        if (sizeOptions.contains(SizeOptions.APPLY_ADDITIONAL_INSETS)) {
+
+            offset.x += lInsets.left - kInsets.getLeft();
+            offset.y += lInsets.top - kInsets.getTop();
+        }
+        
+        // Set node insets, if requested
+        if (sizeOptions.contains(SizeOptions.COMPUTE_INSETS)) {
+            
+            // Apply insets
+            kInsets.setBottom((float) lInsets.bottom);
+            kInsets.setTop((float) lInsets.top);
+            kInsets.setLeft((float) lInsets.left);
+            kInsets.setRight((float) lInsets.right);
+        }
 
         // Along the way, we collect the list of edges to be processed later
         List<LEdge> edgeList = Lists.newArrayList();
@@ -717,19 +735,6 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                         }
                     }
                 }
-                
-                // Set node insets, if requested
-                if (nodeLayout.getProperty(LayoutOptions.SIZE_OPTIONS)
-                        .contains(SizeOptions.COMPUTE_INSETS)) {
-                    
-                    // Apply insets
-                    LInsets lInsets = lnode.getInsets();
-                    KInsets kInsets = nodeLayout.getInsets();
-                    kInsets.setBottom((float) lInsets.bottom);
-                    kInsets.setTop((float) lInsets.top);
-                    kInsets.setLeft((float) lInsets.left);
-                    kInsets.setRight((float) lInsets.right);
-                }
             } else if (origin instanceof KPort
                     && lgraph.getProperty(InternalProperties.PARENT_LNODE) == null) {
                 // It's an external port. Set its position if it hasn't already been done before
@@ -746,15 +751,15 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             }
         }
 
-        KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
-        EdgeRouting routing = parentLayout.getProperty(LayoutOptions.EDGE_ROUTING);
+        EdgeRouting routing = parentLayout.getProperty(InternalProperties.EDGE_ROUTING);
         
         // Iterate through all edges
         for (LEdge ledge : edgeList) {
             KEdge kedge = (KEdge) ledge.getProperty(InternalProperties.ORIGIN);
-            // Self-loops are currently left untouched unless the edge router is set to
-            // the orthogonal router
-            if (kedge == null || ledge.isSelfLoop() && routing != EdgeRouting.ORTHOGONAL) {
+            
+            // Only the orthogonal edge routing algorithm supports self-loops. Thus, leave self-loops
+            // untouched if another routing algorithm is selected.
+            if (kedge == null || (ledge.isSelfLoop() && routing != EdgeRouting.ORTHOGONAL)) {
                 continue;
             }
             
@@ -811,10 +816,10 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             // Mark the edge with information about its routing
             if (routing == EdgeRouting.SPLINES) {
                 // SPLINES means that bend points shall be interpreted as control points for splines
-                edgeLayout.setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.SPLINES);
+                edgeLayout.setProperty(InternalProperties.EDGE_ROUTING, EdgeRouting.SPLINES);
             } else {
                 // null means that bend points shall be interpreted as bend points
-                edgeLayout.setProperty(LayoutOptions.EDGE_ROUTING, null);
+                edgeLayout.setProperty(InternalProperties.EDGE_ROUTING, null);
             }
         }
 

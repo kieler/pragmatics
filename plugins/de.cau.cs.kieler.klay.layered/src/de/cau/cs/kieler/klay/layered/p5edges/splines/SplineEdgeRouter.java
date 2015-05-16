@@ -38,13 +38,13 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LGraphUtil;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.p5edges.PolylineEdgeRouter;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
-import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -135,7 +135,7 @@ public final class SplineEdgeRouter implements ILayoutPhase {
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
         monitor.begin("Spline edge routing", 1);
         // Retrieve some generic values
-        final float nodeSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
+        final float nodeSpacing = layeredGraph.getProperty(InternalProperties.SPACING);
         edgeSpacing = nodeSpacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
         double xpos = 0.0;
 
@@ -372,10 +372,10 @@ public final class SplineEdgeRouter implements ILayoutPhase {
                         findAndAddSuccessor(edge, succeedingEdge);
 
                         // Check if edge is a startingEdge
-                        final NodeType sourceNodeType = 
-                                edge.getSource().getNode().getProperty(InternalProperties.NODE_TYPE);
-                        if (sourceNodeType == NodeType.NORMAL 
+                        final NodeType sourceNodeType = edge.getSource().getNode().getNodeType();
+                        if (sourceNodeType == NodeType.NORMAL
                                 || sourceNodeType == NodeType.NORTH_SOUTH_PORT) {
+                            
                             startingEdges.add(edge);
                         }
                         
@@ -422,10 +422,10 @@ public final class SplineEdgeRouter implements ILayoutPhase {
                         findAndAddSuccessor(edge, succeedingEdge);
 
                         // Check if edge is a startingEdge
-                        final NodeType sourceNodeType = 
-                                edge.getSource().getNode().getProperty(InternalProperties.NODE_TYPE);
+                        final NodeType sourceNodeType = edge.getSource().getNode().getNodeType();
                         if (sourceNodeType == NodeType.NORMAL
                                 || sourceNodeType == NodeType.NORTH_SOUTH_PORT) {
+                            
                             startingEdges.add(edge);
                         }
                         
@@ -459,7 +459,7 @@ public final class SplineEdgeRouter implements ILayoutPhase {
         final LNode targetNode = edge.getTarget().getNode();
         
         // if target node is a normal node there is no successor
-        if (targetNode.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORMAL) {
+        if (targetNode.getNodeType() == NodeType.NORMAL) {
             return;
         }
         
@@ -898,7 +898,7 @@ public final class SplineEdgeRouter implements ILayoutPhase {
         ///////////////////////////////////////
         // Process the source end of the edge-chain. 
         LPort sourcePort = edge.getSource();
-        final NodeType sourceNodeType = sourcePort.getNode().getProperty(InternalProperties.NODE_TYPE);
+        final NodeType sourceNodeType = sourcePort.getNode().getNodeType();
         
         // edge must be the first edge of a chain of edges
         if (sourceNodeType != NodeType.NORMAL && sourceNodeType != NodeType.NORTH_SOUTH_PORT) {
@@ -968,8 +968,7 @@ public final class SplineEdgeRouter implements ILayoutPhase {
         LPort targetPort = lastEdge.getTarget();
         
         // Calculate and add a NubSpline bend-point for a north or south port and reroute the edge.
-        if (targetPort.getNode().getProperty(InternalProperties.NODE_TYPE) 
-                == NodeType.NORTH_SOUTH_PORT) {
+        if (targetPort.getNode().getNodeType() == NodeType.NORTH_SOUTH_PORT) {
             final LPort originPort = (LPort) targetPort.getProperty(InternalProperties.ORIGIN);
             allCP.add(new KVector(
                     originPort.getAbsoluteAnchor().x, 
@@ -1057,10 +1056,8 @@ public final class SplineEdgeRouter implements ILayoutPhase {
      * @return {@code true}, if the layer only contains dummy nodes.
      */
     private boolean layerOnlyContainsDummies(final Layer layer) {
-
         for (final LNode n : layer.getNodes()) {
-            if (n.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORMAL
-                    || n.getProperty(InternalProperties.NODE_TYPE) == NodeType.BIG_NODE) {
+            if (n.getNodeType() == NodeType.NORMAL || n.getNodeType() == NodeType.BIG_NODE) {
                 return false;
             }
         }

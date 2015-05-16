@@ -18,12 +18,17 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
+import de.cau.cs.kieler.klighd.piccolo.KlighdNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.controller.AbstractKGERenderingController;
 import de.cau.cs.kieler.klighd.piccolo.internal.controller.KNodeRenderingController;
+import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdMainCamera.KlighdPickPath;
+import de.cau.cs.kieler.klighd.piccolo.internal.util.KlighdPaintContext;
 import de.cau.cs.kieler.klighd.piccolo.internal.util.NodeUtil;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PLayer;
@@ -43,6 +48,8 @@ public class KNodeNode extends KNodeAbstractNode implements
         IInternalKGraphElementNode.IKLabeledGraphElementNode<KNode> {
 
     private static final long serialVersionUID = 6311105654943173693L;
+
+    private static final Predicate<Object> IS_MAIN_CAM = Predicates.instanceOf(KlighdMainCamera.class);
 
     /** the parent {@link AbstractKNodeNode}. */
     private KNodeAbstractNode parent;
@@ -68,6 +75,17 @@ public class KNodeNode extends KNodeAbstractNode implements
     /** this flag indicates whether this node is currently observed by the {@link KlighdMainCamera}. */
     private boolean isRootLayer = false;
 
+    /**
+     * tracks whether this node has been drawn once; required for {@link #isBoundsValidationRequired()}.
+     */
+    private boolean hasBeenDrawn = false;
+
+    /**
+     * This helper is required for relying on the visibility evaluation methods of {@link KlighdNode}.
+     * It is only initialized with an instance, if visibility restrictions are defined in the
+     * corresponding {@link KNode}.
+     */
+    private final KlighdNode visibilityHelper;
 
     /**
      * Constructs a Piccolo2D node for representing a <code>KNode</code>.
@@ -80,6 +98,9 @@ public class KNodeNode extends KNodeAbstractNode implements
      */
     public KNodeNode(final KNode node, final boolean edgesFirst) {
         super(node, edgesFirst);
+
+        this.visibilityHelper =
+                KGraphElementNode.evaluateVisibilityDefinitions(node.getData(KLayoutData.class), null);
 
         this.childAreaCamera = new PCamera() {
 
@@ -104,6 +125,15 @@ public class KNodeNode extends KNodeAbstractNode implements
                     // return true;
                 }
                 return false;
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void repaintFromLayer(final PBounds viewBounds, final PLayer repaintedLayer) {
+                // don't forward repaint notifications from the observed KChildArea,
+                //  the notification will reach this KNodeNode via the ordinary parent hierarchy
             }
         };
 
@@ -131,8 +161,7 @@ public class KNodeNode extends KNodeAbstractNode implements
                     // if there is a KlighdMainCamera in the list of observing cameras
                     //  that one is supposed to be the diagram main camera and, thus,
                     //  the diagram is assumed to be clipped to this node
-                    final boolean isRoot =
-                            Iterables.any(newCameras, Predicates.instanceOf(KlighdMainCamera.class));
+                    final boolean isRoot = Iterables.any(newCameras, IS_MAIN_CAM);
                     thisNode.isRootLayer = isRoot;
 
                     final PNode childAreaParent = thisNode.childArea.getParent();
@@ -172,6 +201,15 @@ public class KNodeNode extends KNodeAbstractNode implements
                 }
             }
         });
+
+        if (visibilityHelper != null) {
+            addPropertyChangeListener(PROPERTY_BOUNDS_FINISHED, new PropertyChangeListener() {
+                public void propertyChange(final PropertyChangeEvent evt) {
+                    visibilityHelper.updateScaleBasedVisibilityBounds(
+                        KNodeNode.this.getBoundsReference());
+                }
+            });
+        }
     }
 
     /**
@@ -307,11 +345,68 @@ public class KNodeNode extends KNodeAbstractNode implements
         }
     }
 
+    /** tracks scale setting.
+     * Setter for notifying {@link #containingINode}'s scale factor, called from
+     * {@link KNodeNode#setScale(double)}, used to adjust the
+     * {@link KlighdPaintContext#getCameraZoomScale() camera zoom scale} before/after drawing the
+     * contained {@link KNodeNode KNodeNodes}.
+     *  */
+    private Double nodeScale = null;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setScale(final double scale) {
+        super.setScale(scale);
+        this.nodeScale = Double.valueOf(scale);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected boolean isBoundsValidationRequired() {
+        return this.isRootLayer || this.hasBeenDrawn;
+    }
+
+    /**
+     * This method override lets the API call {@link PNode#fullIntersects(Rectangle2D)} work as
+     * expected for {@link KNodeNode KNodeNodes}, since the
+     * {@link KlighdDisposingLayer#fullIntersects(Rectangle2D) override} in the super class
+     * {@link KlighdDisposingLayer} returns just <code>true</code> for the sake of reducing
+     * superfluous checks while drawing. <br>
+     * This implementation just delegates to
+     * {@link KlighdDisposingLayer#fullIntersectsOri(Rectangle2D)}.<br>
+     * <br>
+     * Since this class' specializations of {@link #fullPaint(PPaintContext)} and
+     * {@link #fullPick(PPickPath)} directly call
+     * {@link KlighdDisposingLayer#fullIntersectsOri(Rectangle2D)} this method is not called
+     * internally.
+     *
+     * @param parentBounds
+     *            the bounds to test for intersection against (specified in parent's coordinate
+     *            system)
+     * @return the result of {@link PNode#fullIntersects(Rectangle2D)}
+     */
+    @Override
+    public boolean fullIntersects(final Rectangle2D parentBounds) {
+        return super.fullIntersectsOri(parentBounds);
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
     public boolean fullPick(final PPickPath pickPath) {
+        final KlighdPickPath kpp = (KlighdPickPath) pickPath;
+
+        // first test whether this figure is visible at all
+        if (!this.isRootLayer && this.visibilityHelper != null
+                && this.visibilityHelper.isNotVisibleOn(kpp.getCameraZoomScale())) {
+            return false;
+        }
+
         final boolean fullPick = fullPickOri(pickPath);
 
         // in case the diagram is clipped to this kNodeNode (isRootLayer == true)
@@ -343,9 +438,19 @@ public class KNodeNode extends KNodeAbstractNode implements
         // The filter is in charge of masking out the rendering while the diagram is
         //  clipped to this node and it's being drawn via the diagram's main camera!
         if (getVisible() && (getPickable() || getChildrenPickable())
-                && fullIntersects(pickPath.getPickBounds())) {
+                && fullIntersectsOri(pickPath.getPickBounds())) {
             pickPath.pushNode(this);
             pickPath.pushTransform(getTransformReference(true));
+
+            final boolean applyScale = nodeScale != null;
+
+            final KlighdPickPath kpp;
+            if (applyScale) {
+                kpp = (KlighdPickPath) pickPath;
+                kpp.pushNodeScale(nodeScale.doubleValue());
+            } else {
+                kpp = null;
+            }
 
             final boolean thisPickable = getPickable() && pickPath.acceptsNode(this);
 
@@ -374,6 +479,10 @@ public class KNodeNode extends KNodeAbstractNode implements
                 return true;
             }
 
+            if (applyScale) {
+                kpp.popNodeScale();
+            }
+
             pickPath.popTransform(getTransformReference(false));
             pickPath.popNode(this);
         }
@@ -387,6 +496,12 @@ public class KNodeNode extends KNodeAbstractNode implements
      */
     @Override
     public void fullPaint(final PPaintContext paintContext) {
+        final KlighdPaintContext kpc = (KlighdPaintContext) paintContext;
+        if (!this.isRootLayer && this.visibilityHelper != null
+                && this.visibilityHelper.isNotVisibleOn(kpc)) {
+            return;
+        }
+
         // Unfortunately I had to copy the whole method just for
         //  introducing the filter in the loop below, since 'PNode#fullPaint(...)'
         //  accesses the child list directly rather via 'getChildrenReference()'.
@@ -397,9 +512,17 @@ public class KNodeNode extends KNodeAbstractNode implements
         // In contrast, the rendering figure is supposed to be drawn at all times
         //  while the diagram is drawn via the outline view's camera!
 
-        if (getVisible() && fullIntersects(paintContext.getLocalClip())) {
-            paintContext.pushTransform(getTransformReference(false));
+        if (getVisible() && (kpc.isOutline() || fullIntersectsOri(paintContext.getLocalClip()))) {
+            final PAffineTransform transform = getTransformReference(false);
+            paintContext.pushTransform(transform);
             paintContext.pushTransparency(getTransparency());
+
+            this.hasBeenDrawn = true;
+
+            final boolean applyScale = this.nodeScale != null;
+            if (applyScale) {
+                kpc.pushNodeScale(this.nodeScale.doubleValue());
+            }
 
             if (!getOccluded()) {
                 paint(paintContext);
@@ -425,10 +548,15 @@ public class KNodeNode extends KNodeAbstractNode implements
 
             paintAfterChildren(paintContext);
 
+            if (applyScale) {
+                kpc.popNodeScale();
+            }
+
             paintContext.popTransparency(getTransparency());
-            paintContext.popTransform(getTransformReference(false));
+            paintContext.popTransform(transform);
         }
     }
+
 
     /**
      * {@inheritDoc}

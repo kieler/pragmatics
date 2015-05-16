@@ -318,7 +318,7 @@
       <layoutOption
             appliesTo="nodes"
             class="de.cau.cs.kieler.kiml.options.SizeOptions"
-            default="DEFAULT_MINIMUM_SIZE"
+            default="DEFAULT_MINIMUM_SIZE APPLY_ADDTIONAL_INSETS"
             description="Options modifying how the size constraints set on a node are interpreted."
             id="de.cau.cs.kieler.sizeOptions"
             name="Size Options"
@@ -393,10 +393,10 @@
    <!-- Programmatic Layout Options -->
      <layoutOption
            appliesTo="parents,labels"
-           class="de.cau.cs.kieler.kiml.labels.ILabelSizeModifier"
-           description="Label size modifiers can shorten labels upon a layout algorithm's request"
-           id="de.cau.cs.kieler.labels.labelSizeModifier"
-           name="Label Size Modifier"
+           class="de.cau.cs.kieler.kiml.labels.ILabelManager"
+           description="Label managers can shorten labels upon a layout algorithm's request"
+           id="de.cau.cs.kieler.labels.labelManager"
+           name="Label Manager"
            type="object">
      </layoutOption>
      <layoutOption
