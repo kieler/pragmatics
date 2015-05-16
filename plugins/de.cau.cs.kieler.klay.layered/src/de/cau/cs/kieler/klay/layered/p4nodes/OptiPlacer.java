@@ -31,12 +31,12 @@ import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
-import de.cau.cs.kieler.klay.layered.properties.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 import de.cau.cs.kieler.klay.layered.solver.AbstractCPLEXModel;
 import de.cau.cs.kieler.klay.layered.solver.ISolverModel;
@@ -47,14 +47,15 @@ import de.cau.cs.kieler.klay.layered.solver.ModelRunner;
  */
 public class OptiPlacer implements ILayoutPhase {
 
+    // SUPPRESS CHECKSTYLE NEXT 10 Javadoc
     public static final IProperty<Objective> NODE_PLACEMENT_OBJECTIVE = new Property<Objective>(
             "de.cau.cs.kieler.klay.layered.nodePlacementObjective", Objective.SEGMENTS);
 
     public enum Objective {
-        EDGES,
-        SEGMENTS
+        EDGES, SEGMENTS
     }
-    static int cnt = 0;
+
+    private static int cnt = 0;
     /**
      * {@inheritDoc}
      */
@@ -164,7 +165,7 @@ public class OptiPlacer implements ILayoutPhase {
 
             // edges
             int E = 0;
-            int[][] edges = new int[P][4];
+            int[][] edges = new int[P][4]; // SUPPRESS CHECKSTYLE MagicNumber
             
             int Eprime = 0;
             int[][] segments = new int[P][P];
@@ -180,8 +181,9 @@ public class OptiPlacer implements ILayoutPhase {
 
                 for (LNode n : l.getNodes()) {
                     n.id = n_cnt++;
-                    n_height[n.id] = (int) n.getSize().y;
-                    upperBoundHeight += Math.ceil(n.getSize().y);
+                    n_height[n.id] = (int) (n.getSize().y + n.getMargin().top + n.getMargin().bottom);
+                    upperBoundHeight += Math.ceil((n.getSize().y + n.getMargin().top
+                            + n.getMargin().bottom));
 
                     for (LPort po : n.getPorts()) {
                         
@@ -208,9 +210,9 @@ public class OptiPlacer implements ILayoutPhase {
                             //System.out.println("Segment: " + edge);
                             
                             // record long edge dummies
-                            if (edge.getSource().getNode().getProperty(InternalProperties.NODE_TYPE) 
+                            if (edge.getSource().getNode().getNodeType()
                                     == NodeType.LONG_EDGE
-                                && edge.getTarget().getNode().getProperty(InternalProperties.NODE_TYPE) 
+                                && edge.getTarget().getNode().getNodeType()
                                     == NodeType.LONG_EDGE) {
                                 longEdgeDummyPairs.add(
                                         Pair.of(edge.getSource().id + 1,
@@ -225,8 +227,8 @@ public class OptiPlacer implements ILayoutPhase {
                 // collect real edges. That is from real node to real node
                 for (Layer l : layeredGraph) {
                     for (LNode n : l) {
-                        if (n.getProperty(InternalProperties.NODE_TYPE) != NodeType.NORMAL
-                                && n.getProperty(InternalProperties.NODE_TYPE) != NodeType.EXTERNAL_PORT) {
+                        if (n.getNodeType() != NodeType.NORMAL
+                                && n.getNodeType() != NodeType.EXTERNAL_PORT) {
                             continue;
                         }
                         for (LPort po : n.getPorts()) {
@@ -235,8 +237,8 @@ public class OptiPlacer implements ILayoutPhase {
                                 // find the target
                                 LPort target = edge.getTarget();
                                 LEdge dummyEdge = edge;
-                                while (target.getNode().getProperty(InternalProperties.NODE_TYPE) != NodeType.NORMAL
-                                        && target.getNode().getProperty(InternalProperties.NODE_TYPE) != NodeType.EXTERNAL_PORT) {
+                                while (target.getNode().getNodeType() != NodeType.NORMAL
+                                        && target.getNode().getNodeType() != NodeType.EXTERNAL_PORT) {
                                     
                                     boolean found = false;
                                     for (LEdge tmpEdge : target.getNode().getOutgoingEdges()) {
@@ -248,8 +250,7 @@ public class OptiPlacer implements ILayoutPhase {
                                     if (!found) {
                                     throw new IllegalStateException("Could not infer original edge. "
                                             + " Found a "
-                                            + target.getNode()
-                                                    .getProperty(InternalProperties.NODE_TYPE));
+                                            + target.getNode().getNodeType());
                                     }
                                 }
                                 
@@ -268,7 +269,7 @@ public class OptiPlacer implements ILayoutPhase {
                 }
             }
             
-            float nodeSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING)
+            float nodeSpacing = layeredGraph.getProperty(InternalProperties.SPACING)
                     * layeredGraph.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
             float edgeSpacing = nodeSpacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
             
@@ -285,7 +286,8 @@ public class OptiPlacer implements ILayoutPhase {
             
             sb.append("\nnodeSpacing = " + (int) nodeSpacing + ";");
             sb.append("\nedgeSpacing = " + (int) edgeSpacing + ";");
-            sb.append("\nupperBoundHeight = " + (upperBoundHeight*3/4) + ";");
+            // SUPPRESS CHECKSTYLE NEXT 1 MagicNumber
+            sb.append("\nupperBoundHeight = " + (upperBoundHeight * 3 / 4) + ";");
 
             sb.append("\n\nn_height = " + Arrays.toString(n_height) + ";");
             sb.append("\np_offset = " + Arrays.toString(p_offset) + ";");

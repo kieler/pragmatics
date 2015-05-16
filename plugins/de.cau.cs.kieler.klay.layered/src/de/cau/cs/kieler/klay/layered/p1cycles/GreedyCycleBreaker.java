@@ -28,6 +28,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Cycle breaker implementation that uses a greedy algorithm. Inspired by
