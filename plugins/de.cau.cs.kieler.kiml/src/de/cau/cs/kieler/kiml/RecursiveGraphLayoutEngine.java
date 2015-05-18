@@ -14,8 +14,10 @@
 package de.cau.cs.kieler.kiml;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
+import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.GraphFeature;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -58,27 +60,27 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
      */
     private void layoutRecursively(final KNode layoutNode,
             final IKielerProgressMonitor progressMonitor) {
+        
         if (progressMonitor.isCanceled()) {
             return;
         }
         
         KShapeLayout layoutNodeShapeLayout = layoutNode.getData(KShapeLayout.class);
         
-        if (!layoutNode.getChildren().isEmpty()
-                && !layoutNodeShapeLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
-            
+        if (isCompoundNode(layoutNode) && !layoutNodeShapeLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
             // this node has children and is thus a compound node;
             // fetch the layout algorithm that should be used to compute a layout for its content
             LayoutAlgorithmData algorithmData = getAlgorithm(layoutNode);
+            boolean algorithmSupportsHierarchy = algorithmData.getFeatureSupport(GraphFeature.COMPOUND)
+                    > LayoutAlgorithmData.MIN_PRIORITY;
+            boolean algorithmSupportsClusters = algorithmData.getFeatureSupport(GraphFeature.CLUSTERS)
+                    > LayoutAlgorithmData.MIN_PRIORITY;
             
             // if the layout provider supports hierarchy, it is expected to layout the node's compound
             // node children as well
             int nodeCount;
             if (layoutNodeShapeLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY)
-                    && (algorithmData.getFeatureSupport(GraphFeature.COMPOUND)
-                            > LayoutAlgorithmData.MIN_PRIORITY
-                        || algorithmData.getFeatureSupport(GraphFeature.CLUSTERS)
-                            > LayoutAlgorithmData.MIN_PRIORITY)) {
+                    && (algorithmSupportsHierarchy || algorithmSupportsClusters)) {
                 
                 // the layout algorithm will compute a layout for all levels of hierarchy under the
                 // current one
@@ -105,11 +107,42 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                 layoutProvider.doLayout(layoutNode, progressMonitor.subTask(nodeCount));
                 algorithmData.getInstancePool().release(layoutProvider);
             } catch (RuntimeException exception) {
-                // the layout provider has failed - destroy it
+                // the layout provider has failed - destroy it slowly and painfully
                 layoutProvider.dispose();
                 throw exception;
             }
         }
+    }
+    
+    /**
+     * Checks if the given node is a compound node and thus requires a layout run. A node is regarded as
+     * a compound node if it has children or if it has self loops that should be routed on its inside
+     * instead of around it.
+     * 
+     * @param node the node to check.
+     * @return {@code true} if the node is a compound node, {@code false} otherwise.
+     */
+    private boolean isCompoundNode(final KNode node) {
+        return !node.getChildren().isEmpty() || hasInsideSelfLoops(node);
+    }
+    
+    /**
+     * Checks if the given node has any self loops that should be routed inside the node.
+     * 
+     * @param node the node to check.
+     * @return {@code true} if the node has such self loops, {@code false} otherwise.
+     */
+    private boolean hasInsideSelfLoops(final KNode node) {
+        for (KEdge edge : node.getOutgoingEdges()) {
+            if (edge.getTarget() == node) {
+                final KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
+                if (edgeLayout.getProperty(LayoutOptions.SELF_LOOP_INSIDE)) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
     }
 
     /**

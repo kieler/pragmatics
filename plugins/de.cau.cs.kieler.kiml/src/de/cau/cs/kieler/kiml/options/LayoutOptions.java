@@ -430,6 +430,14 @@ public final class LayoutOptions {
             "de.cau.cs.kieler.randomSeed");
     
     /**
+     * Whether a self loop should be routed around a node or inside that node. The latter will make
+     * the node a compound node if it isn't already, and will require the layout algorithm to support
+     * compound nodes with hierarchical ports.
+     */
+    public static final IProperty<Boolean> SELF_LOOP_INSIDE = new Property<Boolean>(
+            "de.cau.cs.kieler.selfLoopInside", false);
+    
+    /**
      * Property for choosing whether connected components are processed separately.
      */
     public static final IProperty<Boolean> SEPARATE_CC = new Property<Boolean>(

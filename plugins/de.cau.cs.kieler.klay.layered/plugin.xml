@@ -108,6 +108,9 @@
                option="de.cau.cs.kieler.aspectRatio">
          </knownOption>
          <knownOption
+               option="de.cau.cs.kieler.selfLoopInside">
+         </knownOption>
+         <knownOption
                option="de.cau.cs.kieler.sizeConstraint">
          </knownOption>
          <knownOption

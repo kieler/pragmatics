@@ -157,16 +157,30 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             // Transform the edges
             for (KNode child : kgraph.getChildren()) {
                 for (KEdge kedge : child.getOutgoingEdges()) {
+                    KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
+                    boolean isInsideSelfLoop = kedge.getTarget() == child
+                            && edgeLayout.getProperty(LayoutOptions.SELF_LOOP_INSIDE);
+                    boolean isHierarchyEdge = kedge.getTarget() == kgraph;
+                    boolean isRegularEdge = kedge.getTarget().getParent() == kgraph;
+                    
                     // Exclude edges that pass hierarchy bounds
-                    if ((kedge.getTarget().getParent() == kgraph || kedge.getTarget() == kgraph)
-                            && !kedge.getData(KEdgeLayout.class).getProperty(LayoutOptions.NO_LAYOUT)) {
+                    if (!edgeLayout.getProperty(LayoutOptions.NO_LAYOUT) && !isInsideSelfLoop
+                            && (isHierarchyEdge || isRegularEdge)) {
+                        
                         transformEdge(kedge, topLevelGraph, elemMap);
                     }
                 }
             }
+            
             for (KEdge kedge : kgraph.getOutgoingEdges()) {
-                if (kedge.getTarget().getParent() == kgraph
-                        && !kedge.getData(KEdgeLayout.class).getProperty(LayoutOptions.NO_LAYOUT)) {
+                KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
+                boolean isHierarchicalEdge = kedge.getTarget().getParent() == kgraph;
+                boolean isInsideSelfLoop = kedge.getTarget() == kgraph
+                        && edgeLayout.getProperty(LayoutOptions.SELF_LOOP_INSIDE);
+                
+                if (!edgeLayout.getProperty(LayoutOptions.NO_LAYOUT)
+                        && (isHierarchicalEdge || isInsideSelfLoop)) {
+                    
                     transformEdge(kedge, topLevelGraph, elemMap);
                 }
             }
@@ -221,21 +235,28 @@ public class KGraphImporter implements IGraphImporter<KNode> {
      *   <li>
      *     At least one of the ports has an edge that connects to the insides of the parent node.
      *   </li>
+     *   <li>
+     *     There is a self-loop that should be routed inside the node.
+     *   </li>
      * </ul>
      * 
      * @param parentNode a parent KNode
      * @param graphProperties the set of graph properties to modify
      */
     private void checkExternalPorts(final KNode parentNode, final Set<GraphProperties> graphProperties) {
-        PortLabelPlacement portLabelPlacement = parentNode.getData(KShapeLayout.class).getProperty(
-                LayoutOptions.PORT_LABEL_PLACEMENT);
+        PortLabelPlacement portLabelPlacement =
+                parentNode.getData(KShapeLayout.class).getProperty(LayoutOptions.PORT_LABEL_PLACEMENT);
         
         for (KPort kport : parentNode.getPorts()) {
             int hierarchicalEdges = 0;
 
             for (KEdge kedge : kport.getEdges()) {
-                if (parentNode.equals(kedge.getSource().getParent())
-                        || parentNode.equals(kedge.getTarget().getParent())) {
+                boolean isInsideSelfLoop = kedge.getSource() == kedge.getTarget()
+                        && kedge.getData(KEdgeLayout.class).getProperty(LayoutOptions.SELF_LOOP_INSIDE);
+                boolean isHierarchyEdge = parentNode == kedge.getSource().getParent()
+                        || parentNode == kedge.getTarget().getParent();
+                
+                if (isInsideSelfLoop || isHierarchyEdge) {
                     hierarchicalEdges++;
                     if (hierarchicalEdges > 1) {
                         break;
@@ -282,13 +303,13 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         int outputPortVote = 0, inputPortVote = 0;
         for (KEdge edge : kport.getEdges()) {
             if (edge.getSourcePort() == kport) {
-                if (edge.getTarget().getParent() == graph) {
+                if (edge.getTarget().getParent() == graph || edge.getTarget() == graph) {
                     inputPortVote++;
                 } else {
                     outputPortVote++;
                 }
             } else {
-                if (edge.getSource().getParent() == graph) {
+                if (edge.getSource().getParent() == graph || edge.getSource() == graph) {
                     outputPortVote++;
                 } else {
                     inputPortVote++;
@@ -676,7 +697,6 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         
         // Set node insets, if requested
         if (sizeOptions.contains(SizeOptions.COMPUTE_INSETS)) {
-            
             // Apply insets
             kInsets.setBottom((float) lInsets.bottom);
             kInsets.setTop((float) lInsets.top);
