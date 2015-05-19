@@ -414,13 +414,13 @@ public final class KlayLayered {
                     return;
                 }
                 // Graph debug output
-                DebugUtil.writeDebugGraph(lgraph, slotIndex++);
+                JsonDebugUtil.writeDebugGraph(lgraph, slotIndex++);
 
                 processor.process(lgraph, monitor.subTask(monitorProgress));
             }
 
             // Graph debug output
-            DebugUtil.writeDebugGraph(lgraph, slotIndex++);
+            JsonDebugUtil.writeDebugGraph(lgraph, slotIndex++);
         } else {
             // Invoke each layout processor
             for (ILayoutProcessor processor : algorithm) {
