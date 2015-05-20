@@ -41,12 +41,16 @@ public class BKCompacter implements ICompacter {
     private float smallSpacing;
     /** Spacing between external ports, determined by layout options. */
     private float externalPortSpacing;
+    /** Information about a node's neighbors and index within its layer. */
+    private NeighborhoodInformation ni; 
     
     /**
      * @param layeredGraph the graph to handle.
+     * @param ni precalculated information about a node's neighbors.
      */
-    public BKCompacter(final LGraph layeredGraph) {
+    public BKCompacter(final LGraph layeredGraph, final NeighborhoodInformation ni) {
         this.layeredGraph = layeredGraph;
+        this.ni = ni;
         // Initialize spacing value from layout options.
         normalSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING) 
                 * layeredGraph.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
@@ -155,7 +159,7 @@ public class BKCompacter implements ICompacter {
         // block's root node again)
         LNode currentNode = root;
         do {
-            int currentIndexInLayer = currentNode.getIndex();
+            int currentIndexInLayer = ni.nodeIndex[currentNode.id];
             int currentLayerSize = currentNode.getLayer().getNodes().size();
             NodeType currentNodeType = currentNode.getNodeType();
             

@@ -13,17 +13,15 @@
  */
 package de.cau.cs.kieler.klay.layered.p4nodes.bk;
 
-import java.io.Serializable;
-import java.util.Comparator;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
-import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
+import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -56,7 +54,6 @@ public final class BKAlignedLayout {
     /** The horizontal direction of the current layout. */
     HDirection hdir;
 
-    
     /** The graph to process. */
     private LGraph layeredGraph;
     /** Basic spacing between nodes, determined by layout options. */
@@ -66,10 +63,11 @@ public final class BKAlignedLayout {
     /** Spacing between external ports, determined by layout options. */
     private float externalPortSpacing;
     
-    
     /**
      * Basic constructor for a layout.
      * 
+     * @param layeredGraph
+     *            the layered graph.
      * @param nodeCount
      *            number of nodes in this layout
      * @param vdir
@@ -77,8 +75,8 @@ public final class BKAlignedLayout {
      * @param hdir
      *            horizontal traversal direction of the algorithm
      */
-    public BKAlignedLayout(final LGraph layeredGraph, final int nodeCount, final VDirection vdir,
-            final HDirection hdir) {
+    public BKAlignedLayout(final LGraph layeredGraph, final int nodeCount, 
+            final VDirection vdir, final HDirection hdir) {
 
         this.layeredGraph = layeredGraph;
         // Initialize spacing value from layout options.
@@ -334,42 +332,6 @@ public final class BKAlignedLayout {
         return result;
     }
 
-
-    
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Class NeighborComparator
-    
-    /**
-     * Comparator which determines the order of nodes in a layer.
-     */
-    public static final class NeighborComparator implements Comparator<LNode>, Serializable {
-        /** The serial version UID. */
-        private static final long serialVersionUID = 7540379553811800233L;
-        /** Singleton instance. */
-        public static final NeighborComparator INSTANCE = new NeighborComparator();
-        
-        /**
-         * Private constructor. Singleton.
-         */
-        private NeighborComparator() {
-            
-        }
-    
-        /**
-         * {@inheritDoc}
-         */
-        public int compare(final LNode o1, final LNode o2) {
-            int result = 0;
-            if (o1.getIndex() < o2.getIndex()) {
-                result = -1;
-            } else if (o1.getIndex() > o2.getIndex()) {
-                result = 1;
-            }
-            return result;
-        }
-    }
-    
-    
     /////////////////////////////////////////////////////////////////////////////////////////////////////
     // Enumerations
     

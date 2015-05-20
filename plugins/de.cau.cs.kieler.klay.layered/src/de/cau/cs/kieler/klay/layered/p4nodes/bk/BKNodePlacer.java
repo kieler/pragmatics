@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.klay.layered.p4nodes.bk;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +24,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -34,7 +34,6 @@ import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.p4nodes.bk.BKAlignedLayout.HDirection;
-import de.cau.cs.kieler.klay.layered.p4nodes.bk.BKAlignedLayout.NeighborComparator;
 import de.cau.cs.kieler.klay.layered.p4nodes.bk.BKAlignedLayout.VDirection;
 import de.cau.cs.kieler.klay.layered.p4nodes.bk.ICompacter.CompactionStrategy;
 import de.cau.cs.kieler.klay.layered.properties.FixedAlignment;
@@ -147,12 +146,14 @@ public final class BKNodePlacer implements ILayoutPhase {
     private LGraph lGraph;
     /** List of edges involved in type 1 conflicts (see above). */
     private final List<LEdge> markedEdges = Lists.newArrayList();
+    /**  Precalculated information on nodes' neighborhoods etc. */
+    private NeighborhoodInformation ni;
 
     /** Flag which switches debug output of the algorithm on or off. */
     private boolean debugMode = false;
     /** Whether to produce a balanced layout or not. */
     private boolean produceBalancedLayout = false;
-
+    
     /**
      * {@inheritDoc}
      */
@@ -161,21 +162,19 @@ public final class BKNodePlacer implements ILayoutPhase {
 
         this.lGraph = layeredGraph;
         
-        // Determine overall node count for an optimal initialization of maps.
-        int nodeCount = 0;
-        for (Layer layer : layeredGraph) {
-            nodeCount += layer.getNodes().size();
-        }
+        // Precalculate some information that we require during the 
+        // following processes. 
+        ni = NeighborhoodInformation.buildFor(layeredGraph);
 
         // Initialize four layouts which result from the two possible directions respectively.
         BKAlignedLayout rightdown =
-                new BKAlignedLayout(layeredGraph, nodeCount, VDirection.DOWN, HDirection.RIGHT);
+                new BKAlignedLayout(layeredGraph, ni.nodeCount, VDirection.DOWN, HDirection.RIGHT);
         BKAlignedLayout rightup =
-                new BKAlignedLayout(layeredGraph, nodeCount, VDirection.UP, HDirection.RIGHT);
+                new BKAlignedLayout(layeredGraph, ni.nodeCount, VDirection.UP, HDirection.RIGHT);
         BKAlignedLayout leftdown =
-                new BKAlignedLayout(layeredGraph, nodeCount, VDirection.DOWN, HDirection.LEFT);
+                new BKAlignedLayout(layeredGraph, ni.nodeCount, VDirection.DOWN, HDirection.LEFT);
         BKAlignedLayout leftup =
-                new BKAlignedLayout(layeredGraph, nodeCount, VDirection.UP, HDirection.LEFT);
+                new BKAlignedLayout(layeredGraph, ni.nodeCount, VDirection.UP, HDirection.LEFT);
 
         // Regard possible other layout options.
         debugMode = layeredGraph.getProperty(Properties.DEBUG_MODE);
@@ -208,7 +207,7 @@ public final class BKNodePlacer implements ILayoutPhase {
                 layouts.add(leftup); 
         }
         
-        BKAligner aligner = new BKAligner(layeredGraph);
+        BKAligner aligner = new BKAligner(layeredGraph, ni);
         for (BKAlignedLayout bal : layouts) {
             // Phase which determines the nodes' memberships in blocks. This happens in four different
             // ways, either from processing the nodes from the first layer to the last or vice versa.
@@ -223,10 +222,10 @@ public final class BKNodePlacer implements ILayoutPhase {
         ICompacter compacter;
         switch (layeredGraph.getProperty(Properties.COMPACTION_STRATEGY)) {
             case IMPROVE_STRAIGHTNESS:
-                compacter = new BKCompacterStraight(layeredGraph);
+                compacter = new BKCompacterStraight(layeredGraph, ni);
                 break;
             default:
-                compacter = new BKCompacter(layeredGraph);
+                compacter = new BKCompacter(layeredGraph, ni);
         }
         for (BKAlignedLayout bal : layouts) {
             // This phase determines the y coordinates of the blocks and thus the vertical coordinates
@@ -259,7 +258,7 @@ public final class BKNodePlacer implements ILayoutPhase {
         // If it is broken for any reason, one of the four other layouts is selected by the
         // given criteria.
         if (produceBalancedLayout) {
-            BKAlignedLayout balanced = createBalancedLayout(layouts, nodeCount);
+            BKAlignedLayout balanced = createBalancedLayout(layouts, ni.nodeCount);
             if (checkOrderConstraint(layeredGraph, balanced)) {
                 chosenLayout = balanced;
             }
@@ -363,21 +362,21 @@ public final class BKNodePlacer implements ILayoutPhase {
                 if (l_1 == ((layerSize[i + 1]) - 1) || incidentToInnerSegment(v_l_i, i + 1, i)) {
                     int k_1 = layerSize[i] - 1;
                     if (incidentToInnerSegment(v_l_i, i + 1, i)) {
-                        k_1 = allLeftNeighbors(v_l_i).get(0).getIndex();
+                        k_1 = ni.nodeIndex[ni.leftNeighbors.get(v_l_i.id).get(0).getFirst().id];
                     }
                     
                     while (l <= l_1) {
                         LNode v_l = currentLayer.getNodes().get(l);
                         
                         if (!incidentToInnerSegment(v_l, i + 1, i)) {
-                            for (LNode upperNeighbor : allLeftNeighbors(v_l)) {
-                                int k = upperNeighbor.getIndex();
+                            for (Pair<LNode, LEdge> upperNeighbor : ni.leftNeighbors.get(v_l.id)) {
+                                int k = ni.nodeIndex[upperNeighbor.getFirst().id];
                                 
                                 if (k < k_0 || k > k_1) {
                                     // Marked edge can't return null here, because the upper neighbor
                                     // relationship between v_l and upperNeighbor enforces the existence
                                     // of at least one edge between the two nodes
-                                    markedEdges.add(getEdge(upperNeighbor, v_l));
+                                    markedEdges.add(upperNeighbor.getSecond());
                                 }
                             }
                         }
@@ -492,9 +491,9 @@ public final class BKNodePlacer implements ILayoutPhase {
                 LNode source = edge.getSource().getNode();
                 if ((source.getNodeType() == NodeType.BIG_NODE
                         || source.getProperty(InternalProperties.BIG_NODE_INITIAL))
-                        && edge.getSource().getNode().getLayer().getIndex() == layer2
-                        && node.getLayer().getIndex() == layer1) {
-
+                        && ni.layerIndex[edge.getSource().getNode().getLayer().id] == layer2
+                        && ni.layerIndex[node.getLayer().id] == layer1) {
+                        
                     return true;
                 }
             }
@@ -504,10 +503,9 @@ public final class BKNodePlacer implements ILayoutPhase {
             for (LEdge edge : node.getIncomingEdges()) {
                 NodeType sourceNodeType = edge.getSource().getNode().getNodeType();
                 
-                // TODO Using layer indices here is not a good idea in terms of performance
                 if (sourceNodeType == NodeType.LONG_EDGE
-                        && edge.getSource().getNode().getLayer().getIndex() == layer2
-                        && node.getLayer().getIndex() == layer1) {
+                        && ni.layerIndex[edge.getSource().getNode().getLayer().id] == layer2
+                        && ni.layerIndex[node.getLayer().id] == layer1) {
                     
                     return true;
                 }
@@ -515,64 +513,7 @@ public final class BKNodePlacer implements ILayoutPhase {
         }
         return false;
     }
-
-    /**
-     * Gives all upper neighbors of a given node. An upper neighbor is a node in a previous layer that
-     * has an edge pointing to the given node.
-     * 
-     * @param node The node which might have neighbors
-     * @return A list containing all upper neighbors
-     */
-    static List<LNode> allLeftNeighbors(final LNode node) {
-        List<LNode> result = Lists.newArrayList();
-        int maxPriority = 0;
-        
-        for (LEdge edge : node.getIncomingEdges()) {
-            if (edge.getProperty(Properties.PRIORITY) > maxPriority) {
-                maxPriority = edge.getProperty(Properties.PRIORITY);
-            }
-        }
-        
-        for (LEdge edge : node.getIncomingEdges()) {
-            if (node.getLayer() != edge.getSource().getNode().getLayer()
-                    && edge.getProperty(Properties.PRIORITY) == maxPriority) {
-                result.add(edge.getSource().getNode());
-            }
-        }
-        
-        Collections.sort(result, NeighborComparator.INSTANCE);
-        return result;
-    }
-
-    /**
-     * Give all lower neighbors of a given node. A lower neighbor is a node in a following layer that
-     * has an edge coming from the given node.
-     * 
-     * @param node The node which might have neighbors
-     * @return A list containing all lower neighbors
-     */
-    static List<LNode> allRightNeighbors(final LNode node) {
-        List<LNode> result = Lists.newArrayList();
-        int maxPriority = 0;
-        
-        for (LEdge edge : node.getOutgoingEdges()) {
-            if (edge.getProperty(Properties.PRIORITY) > maxPriority) {
-                maxPriority = edge.getProperty(Properties.PRIORITY);
-            }
-        }
-        
-        for (LEdge edge : node.getOutgoingEdges()) {
-            if (node.getLayer() != edge.getTarget().getNode().getLayer()
-                    && edge.getProperty(Properties.PRIORITY) == maxPriority) {
-                
-                result.add(edge.getTarget().getNode());
-            }
-        }
-        
-        Collections.sort(result, NeighborComparator.INSTANCE);
-        return result;
-    }
-
+  
     /**
      * Find an edge between two given nodes.
      * 
@@ -702,7 +643,4 @@ public final class BKNodePlacer implements ILayoutPhase {
         
         return feasible;
     }
-    
-
-   
 }
