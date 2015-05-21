@@ -39,7 +39,16 @@ public enum LayeringStrategy implements ILayoutPhaseFactory {
      * as given in the input diagram are considered here. This means that if the user moves
      * a node, that movement is reflected in the layering of the graph.
      */
-    INTERACTIVE;
+    INTERACTIVE,
+    /**
+     * Nodes are put into Layers according to the average out-degree and their rank.
+     * Could be similar to LONGEST_PATH
+     * Taken from " In Search for Efficient Heuristics for Minimum-Width Graph
+     * Layering with Consideration of Dummy Nodes"
+     * wrtten by Nikolas S. Nikolov, Alexandre Tarassov, and Jürgen Branke
+
+     */
+    STRETCH_WIDTH;
 
     
     /**
@@ -55,7 +64,10 @@ public enum LayeringStrategy implements ILayoutPhaseFactory {
             
         case INTERACTIVE:
             return new InteractiveLayerer();
-            
+
+        case STRETCH_WIDTH:
+            return new StretchWidth();
+          
         default:
             throw new IllegalArgumentException(
                     "No implementation is available for the layerer " + this.toString());
