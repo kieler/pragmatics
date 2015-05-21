@@ -18,6 +18,7 @@ import static de.cau.cs.kieler.klay.layered.p4nodes.bk.BKNodePlacer.getEdge;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
 
@@ -64,7 +65,7 @@ public class BKAligner {
      * @param bal One of the four layouts which shall be used in this step 
      * @param markedEdges List with all edges that were marked as type 1 conflicts
      */
-    public void verticalAlignment(final BKAlignedLayout bal, final List<LEdge> markedEdges) {
+    public void verticalAlignment(final BKAlignedLayout bal, final Set<LEdge> markedEdges) {
         // Initialize root and align maps
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode v : layer.getNodes()) {

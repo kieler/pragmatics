@@ -145,7 +145,7 @@ public final class BKNodePlacer implements ILayoutPhase {
     
     private LGraph lGraph;
     /** List of edges involved in type 1 conflicts (see above). */
-    private final List<LEdge> markedEdges = Lists.newArrayList();
+    private final Set<LEdge> markedEdges = Sets.newHashSet();
     /**  Precalculated information on nodes' neighborhoods etc. */
     private NeighborhoodInformation ni;
 
