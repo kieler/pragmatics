@@ -224,12 +224,21 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
                         == WideNodesStrategy.AGGRESSIVE) {
             strategy.addAll(BIG_NODES_PROCESSING_ADDITIONS_AGGRESSIVE);
             wideNodesStrategy = WideNodesStrategy.AGGRESSIVE;
+            //TODO remove test
+            System.out.println("wide nodes on multiple layers; used: BIG_NODES_PREPROCESSOR, "
+                    + "BIG_NODES_INTERMEDIATEPROCESSOR, BIG_NODES_POSTPROCESSOR");
             
         } else if (graph.getProperty(Properties.WIDE_NODES_ON_MULTIPLE_LAYERS) 
                         == WideNodesStrategy.CAREFUL) {
             strategy.addAll(BIG_NODES_PROCESSING_ADDITIONS_CAREFUL);
             wideNodesStrategy = WideNodesStrategy.CAREFUL;
+          //TODO remove test
+            System.out.println("wide nodes on multiple layers; used: BIG_NODES_SPLITTER, "
+                    + "BIG_NODES_POSTPROCESSOR");
         }
+        
+        //adding one dimensional compaction
+        strategy.addAfterPhase5(IntermediateProcessorStrategy.ONE_D_COMPACTOR);
 
         return strategy;
     }
