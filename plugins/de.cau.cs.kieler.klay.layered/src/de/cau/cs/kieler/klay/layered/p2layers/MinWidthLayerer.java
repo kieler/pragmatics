@@ -13,10 +13,17 @@
  */
 package de.cau.cs.kieler.klay.layered.p2layers;
 
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.Layer;
 
 /**
  * TODO: NEW COMMENTS, This is only a copy of the longest path layerer!
@@ -35,23 +42,83 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
  * @kieler.rating yellow 2012-11-13 review KI-33 by grh, akoc
  */
 public final class MinWidthLayerer implements ILayoutPhase {
-
-    /**
-     * {@inheritDoc}
-     */
-    public void process(final LGraph layeredGraph, final IKielerProgressMonitor progressMonitor) {
-        // TODO Auto-generated method stub
-        
-    }
-
     /**
      * {@inheritDoc}
      */
     public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
             final LGraph graph) {
-        // TODO Auto-generated method stub
+        // TODO Configure this; Don't know yet how.
         return null;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void process(final LGraph layeredGraph, final IKielerProgressMonitor progressMonitor) {
+        List<LNode> notInserted = layeredGraph.getLayerlessNodes();
+        List<Layer> layers = layeredGraph.getLayers();
+        //Requieres: DAG G = (V, E) ~ Type LGraph, integers UBW and c ~ hard coded for now, worry
+        //worry about config later.
+        Set<LNode> v = new HashSet<LNode>(notInserted);
+        int ubw = 4;
+        int c = 1;
+        
+        //Guarantee ConditionSelect by ordering the nodes by descending maximum outdegree in advance.
+        notInserted.sort(new MaxOutgoingEdgesComparator());
+        
+        //first naive implementation of the minWidth-algorithm
+        Set<LNode> u = new HashSet<LNode>();
+        Set<LNode> z = new HashSet<LNode>();
+        
+        Layer currentLayer = new Layer(layeredGraph);
+        int widthCurrent = 0;
+        int widthUp = 0;
+        
+        while (!u.equals(v)) {
+          //implement all the other stuff!   
+        }
+        
+    }
+    
+    /**
+     * Comparator for determining whether a LNode has more outgoing edges
+     * than another one.
+     * 
+     * @author mic
+     */
+    private class MaxOutgoingEdgesComparator implements Comparator<LNode> {
+        /**
+         * {@inheritDoc}
+         */
+        public int compare(final LNode o1, final LNode o2) {
+            int outs1 = countElems(o1.getOutgoingEdges());
+            int outs2 = countElems(o2.getOutgoingEdges());
+            
+            if (outs1 < outs2) {
+                return -1; 
+            }
+            if (outs1 == outs2) {
+                return 0; 
+            }
+            return 1;
+        }
+        
+        /**
+         * Returns the size of given Iterable. (Iterable doesn't have a method size().) 
+         * @param iter Iterable whose elements are to be counted
+         * @return size of given Iterable
+         */
+        @SuppressWarnings("unused")
+        private <E> int countElems(final Iterable<E> iter) {
+            int i = 0;
+            for (E elem : iter) {
+                i++;
+            }
+            return i;
+        } 
+    }
+
+
     
 //    /** intermediate processing configuration. */
 //    private static final IntermediateProcessingConfiguration BASELINE_PROCESSING_CONFIGURATION =

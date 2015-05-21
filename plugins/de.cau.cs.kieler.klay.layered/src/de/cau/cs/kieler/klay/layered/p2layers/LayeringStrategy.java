@@ -39,7 +39,11 @@ public enum LayeringStrategy implements ILayoutPhaseFactory {
      * as given in the input diagram are considered here. This means that if the user moves
      * a node, that movement is reflected in the layering of the graph.
      */
-    INTERACTIVE;
+    INTERACTIVE,
+    /**
+     * TODO: Comment.
+     */
+    MIN_WIDTH;
 
     
     /**
@@ -55,6 +59,9 @@ public enum LayeringStrategy implements ILayoutPhaseFactory {
             
         case INTERACTIVE:
             return new InteractiveLayerer();
+            
+        case MIN_WIDTH:
+            return new MinWidthLayerer();
             
         default:
             throw new IllegalArgumentException(
