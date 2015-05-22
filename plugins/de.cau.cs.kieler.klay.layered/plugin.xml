@@ -424,6 +424,7 @@
             type="enumset">
       </layoutOption>
       <layoutOption
+            advanced="true"
             appliesTo="parents"
             class="de.cau.cs.kieler.klay.layered.p4nodes.bk.ICompacter$CompactionStrategy"
             description="Specifies the compaction strategy when using the Brandes and Koepf node placer."
