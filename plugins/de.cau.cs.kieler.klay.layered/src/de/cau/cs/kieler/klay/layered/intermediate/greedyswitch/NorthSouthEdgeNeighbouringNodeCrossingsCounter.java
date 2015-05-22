@@ -22,7 +22,6 @@ import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
-import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.PortIterable.PortOrder;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 
 /**
@@ -65,7 +64,7 @@ public class NorthSouthEdgeNeighbouringNodeCrossingsCounter {
     }
 
     private void setPortIdsOn(final LNode node, final PortSide side) {
-        Iterable<LPort> ports = new PortIterable(node, side, PortOrder.NORTHSOUTH_EASTWEST);
+        Iterable<LPort> ports = PortIterable.inNorthSouthEastWestOrder(node, side);
         int portId = 0;
         for (LPort port : ports) {
             portPositions.put(port, portId++);

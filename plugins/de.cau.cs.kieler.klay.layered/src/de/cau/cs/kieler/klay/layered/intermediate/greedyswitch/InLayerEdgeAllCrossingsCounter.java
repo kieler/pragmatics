@@ -28,7 +28,6 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.PortIterable.PortOrder;
 
 /**
  * In-layer edge crossing counter for all crossings in a layer. The subclass
@@ -83,7 +82,7 @@ public class InLayerEdgeAllCrossingsCounter {
         int currentPortId = portId;
         int cardinality = 0;
         boolean hasPorts = false;
-        Iterable<LPort> ports = new PortIterable(node, side, PortOrder.NORTHSOUTH_EASTWEST);
+        Iterable<LPort> ports =PortIterable.inNorthSouthEastWestOrder(node, side);
         for (LPort port : ports) {
             hasPorts = true;
             portPositions.put(port, currentPortId);
@@ -120,7 +119,7 @@ public class InLayerEdgeAllCrossingsCounter {
     private int iterateEdgesTopDownAndCountCrossingsOnSide(final PortSide portSide) {
         int crossings = 0;
         for (LNode node : nodeOrder) {
-            PortIterable ports = new PortIterable(node, portSide, PortOrder.NORTHSOUTH_EASTWEST);
+            Iterable<LPort> ports = PortIterable.inNorthSouthEastWestOrder(node, portSide);
             for (LPort port : ports) {
                 for (LEdge edge : port.getConnectedEdges()) {
                     if (!edge.isSelfLoop()) {
@@ -227,11 +226,11 @@ public class InLayerEdgeAllCrossingsCounter {
 
     private void updatePortIds(final LNode firstNode, final LNode secondNode, final PortSide side,
             final Map<LNode, Integer> cardinalities) {
-        Iterable<LPort> ports = new PortIterable(firstNode, side, PortOrder.NORTHSOUTH_EASTWEST);
+        Iterable<LPort> ports = PortIterable.inNorthSouthEastWestOrder(firstNode, side);
         for (LPort port : ports) {
             portPositions.put(port, positionOf(port) + cardinalities.get(secondNode));
         }
-        ports = new PortIterable(secondNode, side, PortOrder.NORTHSOUTH_EASTWEST);
+        ports = PortIterable.inNorthSouthEastWestOrder(secondNode, side);
         for (LPort port : ports) {
             portPositions.put(port, positionOf(port) - cardinalities.get(firstNode));
         }

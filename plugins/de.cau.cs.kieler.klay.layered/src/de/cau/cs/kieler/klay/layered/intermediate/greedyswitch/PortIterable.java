@@ -25,10 +25,12 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 
 /**
+ * Utility class for iterating over ports in any direction.
+ * 
  * @author alan
  *
  */
-class PortIterable implements Iterable<LPort> {
+final class PortIterable implements Iterable<LPort> {
     private final PortSide side;
     private final LNode node;
     private final PortOrder order;
@@ -39,16 +41,26 @@ class PortIterable implements Iterable<LPort> {
      * @author alan
      *
      */
-    static enum PortOrder {
+    private static enum PortOrder {
         CLOCKWISE, COUNTER_CLOCKWISE, NORTHSOUTH_EASTWEST
     }
 
-    public PortIterable(final LNode node, final PortSide side, final PortOrder order) {
+    private PortIterable(final LNode node, final PortSide side, final PortOrder order) {
         this.node = node;
         this.side = side;
         this.order = order;
     }
 
+    public static Iterable<LPort> inNorthSouthEastWestOrder(final LNode node, final PortSide side) {
+        return new PortIterable(node, side, PortOrder.NORTHSOUTH_EASTWEST);
+    }
+    public static Iterable<LPort> inClockwiseOrder(final LNode node, final PortSide side) {
+        return new PortIterable(node, side, PortOrder.CLOCKWISE);
+    }
+    public static Iterable<LPort> inCounterClockwiseOrder(final LNode node, final PortSide side) {
+        return new PortIterable(node, side, PortOrder.COUNTER_CLOCKWISE);
+    }
+    
     public Iterator<LPort> iterator() {
         final List<LPort> ports = node.getPorts();
         switch (order) {

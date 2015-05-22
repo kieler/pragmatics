@@ -22,7 +22,6 @@ import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
-import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.PortIterable.PortOrder;
 
 /**
  * Counts crossings between in-layer edges incident to two nodes.
@@ -93,7 +92,7 @@ class InLayerEdgeTwoNodeCrossingCounter extends InLayerEdgeAllCrossingsCounter {
     }
 
     private void iterateThroughEdgesAndCollectThem(final LNode node, final PortSide side) {
-        Iterable<LPort> ports = new PortIterable(node, side, PortOrder.NORTHSOUTH_EASTWEST);
+        Iterable<LPort> ports = PortIterable.inNorthSouthEastWestOrder(node, side);
         for (LPort port : ports) {
             for (LEdge edge : port.getConnectedEdges()) {
                 if (!edge.isSelfLoop()) {
