@@ -99,7 +99,6 @@ public class BKCompacterStraight implements ICompacter {
         // init threshold strategy
         threshStrategy.init(bal);
         
-        System.out.println("PLACING BLOCKS FOR " + bal);
         for (Layer layer : layers) {
             // As with layers, we need a reversed iterator for blocks for different directions
             List<LNode> nodes = layer.getNodes();
@@ -270,22 +269,23 @@ public class BKCompacterStraight implements ICompacter {
                                 bal.y.get(root)
                                 + bal.innerShift.get(currentNode)
                                 + currentNode.getSize().y
-                                + currentNode.getMargin().top
+                                + currentNode.getMargin().bottom
                                 + spacing
-                                - bal.y.get(neighborRoot)
-                                - bal.innerShift.get(neighbor)
-                                - neighbor.getMargin().top;
+                                - (bal.y.get(neighborRoot)
+                                   + bal.innerShift.get(neighbor)
+                                   - neighbor.getMargin().top
+                                   );
                         
                         bal.shift.put(bal.sink.get(neighborRoot),
                                 Math.max(bal.shift.get(bal.sink.get(neighborRoot)), requiredSpace));
-                    } else {
+                    } else { // DOWN
                         //  possible setup:
                         //  neighborRoot --> neighbor 
                         //  root         --> currentNode
                         double requiredSpace =
                                 bal.y.get(root) 
                                 + bal.innerShift.get(currentNode)
-                                + currentNode.getMargin().top
+                                - currentNode.getMargin().top
                                 - bal.y.get(neighborRoot)
                                 - bal.innerShift.get(neighbor)
                                 - neighbor.getSize().y

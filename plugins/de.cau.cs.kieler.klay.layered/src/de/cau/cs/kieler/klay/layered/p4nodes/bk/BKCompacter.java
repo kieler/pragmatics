@@ -257,11 +257,12 @@ public class BKCompacter implements ICompacter {
                                 bal.y.get(root)
                                 + bal.innerShift.get(currentNode)
                                 + currentNode.getSize().y
-                                + currentNode.getMargin().top
+                                + currentNode.getMargin().bottom
                                 + spacing
-                                - bal.y.get(neighborRoot)
-                                - bal.innerShift.get(neighbor)
-                                - neighbor.getMargin().top;
+                                - (bal.y.get(neighborRoot)
+                                   + bal.innerShift.get(neighbor)
+                                   - neighbor.getMargin().top
+                                   );
                         
                         bal.shift.put(bal.sink.get(neighborRoot),
                                 Math.max(bal.shift.get(bal.sink.get(neighborRoot)), requiredSpace));
@@ -272,7 +273,7 @@ public class BKCompacter implements ICompacter {
                         double requiredSpace =
                                 bal.y.get(root) 
                                 + bal.innerShift.get(currentNode)
-                                + currentNode.getMargin().top
+                                - currentNode.getMargin().top
                                 - bal.y.get(neighborRoot)
                                 - bal.innerShift.get(neighbor)
                                 - neighbor.getSize().y
