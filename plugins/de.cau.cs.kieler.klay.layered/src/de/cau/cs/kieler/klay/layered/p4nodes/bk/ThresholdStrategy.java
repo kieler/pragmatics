@@ -28,13 +28,11 @@ import de.cau.cs.kieler.klay.layered.p4nodes.bk.BKAlignedLayout.VDirection;
 
 /**
  * @author uru
- *
  */
-
 public abstract class ThresholdStrategy {
 
-    // TODO make this an option
-    private static final double THRESHOLD = 2000; 
+    // TODO make this an option?!
+    private static final double THRESHOLD = Double.MAX_VALUE; 
     
     // SUPPRESS CHECKSTYLE NEXT 20 VisibilityModifier
     /**
@@ -232,7 +230,6 @@ public abstract class ThresholdStrategy {
             // if edges exist but we couldn't find a good one
             if (pick.getFirst() == null && pick.getSecond()) {
                  postProcessables.add(Pair.of(blockNode, isRoot));
-                 System.out.println("Adding for post process" + Pair.of(blockNode, isRoot));
                  return invalid;
             } else if (pick.getFirst() != null) {
     
@@ -283,8 +280,6 @@ public abstract class ThresholdStrategy {
                 
                 // first is the node, second whether it is regarded as root
                 Pair<LNode, Boolean> pair = postProcessables.poll();
-                System.out.println("PostProcesS: " + pair);
-                
                 Pair<LEdge, Boolean> pick = pickEdge(pair.getFirst(), pair.getSecond());
     
                 if (pick.getFirst() == null) {
@@ -303,7 +298,7 @@ public abstract class ThresholdStrategy {
                 if (delta > 0 && delta < THRESHOLD) {
                     
                     // target y larger than source y --> shift upwards?
-                    if (bal.checkSpaceAbove(fix.getNode(), block.getNode(), delta)) {
+                    if (bal.checkSpaceAbove(block.getNode(), delta)) {
                         bal.shiftBlock(block.getNode(), -delta);
                     }
                 } else if (delta < 0 && -delta < THRESHOLD) {
@@ -312,7 +307,7 @@ public abstract class ThresholdStrategy {
                     // for an edge to be straight, so check if we can shift down again
                     
                     // target y smaller than source y --> shift down?
-                    if (bal.checkSpaceBelow(fix.getNode(), block.getNode(), -delta)) {
+                    if (bal.checkSpaceBelow(block.getNode(), -delta)) {
                         bal.shiftBlock(block.getNode(), -delta);
                     }
                 }
@@ -322,74 +317,81 @@ public abstract class ThresholdStrategy {
     }
     
     
-    
-    
+    /**
+     * The following code does not work in its current form. It contains
+     * a more sophisticated idea of the {@link #pickEdge(LNode, boolean)} 
+     * method that might be subject to future work and 
+     * re-activated in the future.
+     * 
+     * @experimental
+     */
     public static class SophisticatedThresholdStrategy extends ThresholdStrategy {
-
-        
 
         /**
          * {@inheritDoc}
          */
         @Override
-        public double calculateThreshold(double oldThresh, LNode blockRoot, LNode currentNode) {
-            // TODO Auto-generated method stub
+        public double calculateThreshold(final double oldThresh, final LNode blockRoot,
+                final LNode currentNode) {
+            calculateThreshold(bal, oldThresh, 0, blockRoot, currentNode);
             return 0;
         }
 
-        
         private double calculateThreshold(final BKAlignedLayout bal, final double currentThreshold,
                 final double suggestion, final LNode root, final LNode currentNode) {
-            
+
             double t = currentThreshold;
-            
+
             // Remember that for blocks with a single node both flags can be true
             boolean isRoot = root.equals(currentNode);
             boolean isLast = bal.align.get(currentNode).equals(root);
-            
+
             if (!(isRoot || isLast)) {
                 return t;
             }
-            
+
             if (bal.hdir == HDirection.RIGHT) {
-    
+
                 // Note that it is not guaranteed that adjacent nodes are already placed!
-                
+
                 if (isRoot) {
                     t = getBound(bal, root, true, suggestion);
                 }
                 if (Double.isInfinite(t) && isLast) {
                     t = getBound(bal, currentNode, false, suggestion);
                 }
-                
+
             } else { // LEFT
-                
+
                 if (isRoot) {
                     t = getBound(bal, root, true, suggestion);
-                } 
+                }
                 if (Double.isInfinite(t) && isLast) {
                     t = getBound(bal, currentNode, false, suggestion);
                 }
             }
-            
+
             return t;
         }
-        
+
         /**
-         * Picks an edge that we consider the best choice when 
-         * seeking for additional alignments between nodes 
-         * of distinct blocks.
+         * Picks an edge that we consider the best choice when seeking for additional alignments
+         * between nodes of distinct blocks.
          */
-        private Pair<LEdge, Boolean> pickEdge(final BKAlignedLayout bal, final LNode root, 
+        private Pair<LEdge, Boolean> pickEdge(final BKAlignedLayout bal, final LNode root,
                 final boolean isRoot, final double suggestion, final boolean inverted) {
-       
+
             Iterable<LEdge> edges;
             if (isRoot) {
-                edges = bal.hdir == HDirection.RIGHT ? root.getIncomingEdges() : root.getOutgoingEdges();
+                edges =
+                        bal.hdir == HDirection.RIGHT ? root.getIncomingEdges() : root
+                                .getOutgoingEdges();
             } else {
-                edges = bal.hdir == HDirection.LEFT ? root.getIncomingEdges() : root.getOutgoingEdges();
+                edges =
+                        bal.hdir == HDirection.LEFT ? root.getIncomingEdges() : root
+                                .getOutgoingEdges();
             }
-            
+
             // pick the edge to check, we want to use the edge that
             // connects to the closest node in iteration direction
             LEdge pick = null;
@@ -407,22 +409,22 @@ public abstract class ThresholdStrategy {
                     rootPort = bal.hdir == HDirection.LEFT ? right : left;
                     otherPort = bal.hdir == HDirection.LEFT ? left : right;
                 }
-    
+
                 // if the other node does not have a position yet, ignore this edge
                 if (!blockFinished.contains(bal.root.get(otherPort.getNode()))) {
                     continue;
                 }
-    
+
                 LNode otherRoot = bal.root.get(otherPort.getNode());
-    
+
                 double otherPos =
                         bal.y.get(otherRoot) + bal.innerShift.get(otherPort.getNode())
                                 + otherPort.getPosition().y + otherPort.getAnchor().y;
-    
+
                 double rootPos =
-                        suggestion + bal.innerShift.get(rootPort.getNode()) + rootPort.getPosition().y
-                                + rootPort.getAnchor().y;
-    
+                        suggestion + bal.innerShift.get(rootPort.getNode())
+                                + rootPort.getPosition().y + rootPort.getAnchor().y;
+
                 double curDistance = Math.abs(otherPos - rootPos);
                 if (!inverted) {
                     if (bal.vdir == VDirection.DOWN) {
@@ -450,125 +452,121 @@ public abstract class ThresholdStrategy {
                     }
                 }
             }
-    
+
             return Pair.of(pick, hasEdges);
         }
-        
+
         /**
-         * Get threshold value for the <b>root</b> node of the block to be aligned! (As opposed 
-         * to the last node in the block. 
+         * Get threshold value for the <b>root</b> node of the block to be aligned! (As opposed to
+         * the last node in the block.
          */
-        private double getBound(final BKAlignedLayout bal, final LNode blockNode, final boolean isRoot,
-                final double suggestion) {
-    
-            double invalid = bal.vdir == VDirection.UP ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
-    
+        private double getBound(final BKAlignedLayout bal, final LNode blockNode,
+                final boolean isRoot, final double suggestion) {
+
+            double invalid =
+                    bal.vdir == VDirection.UP ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
+
             final Pair<LEdge, Boolean> pick = pickEdge(bal, blockNode, isRoot, suggestion, false);
-            
+
             // if edges exist but we couldn't find a good one
             if (pick.getFirst() == null && pick.getSecond()) {
-                 postProcessables.add(Pair.of(blockNode, isRoot));
-                 return invalid;
+                postProcessables.add(Pair.of(blockNode, isRoot));
+                return invalid;
             } else if (pick.getFirst() != null) {
-    
+
                 double threshold;
                 LPort left = pick.getFirst().getSource();
                 LPort right = pick.getFirst().getTarget();
-    
+
                 if (isRoot) {
                     // We handle the root (first) node of a block here
                     LPort rootPort = bal.hdir == HDirection.RIGHT ? right : left;
                     LPort otherPort = bal.hdir == HDirection.RIGHT ? left : right;
-        
+
                     LNode otherRoot = bal.root.get(otherPort.getNode());
-                    threshold = bal.y.get(otherRoot) 
-                                      + bal.innerShift.get(otherPort.getNode())
-                                      + otherPort.getPosition().y 
-                                      + otherPort.getAnchor().y
-                                      // root node
-                                      - bal.innerShift.get(rootPort.getNode()) 
-                                      - rootPort.getPosition().y
-                                      - rootPort.getAnchor().y;
+                    threshold =
+                            bal.y.get(otherRoot) + bal.innerShift.get(otherPort.getNode())
+                                    + otherPort.getPosition().y + otherPort.getAnchor().y
+                                    // root node
+                                    - bal.innerShift.get(rootPort.getNode())
+                                    - rootPort.getPosition().y - rootPort.getAnchor().y;
                 } else {
-                    
-                    // ... and the last node of a block here 
+
+                    // ... and the last node of a block here
                     LPort rootPort = bal.hdir == HDirection.LEFT ? right : left;
                     LPort otherPort = bal.hdir == HDirection.LEFT ? left : right;
-    
-                    threshold = bal.y.get(bal.root.get(otherPort.getNode()))
-                            + bal.innerShift.get(otherPort.getNode())
-                            + otherPort.getPosition().y
-                            + otherPort.getAnchor().y
-                            // root node
-                            - bal.innerShift.get(rootPort.getNode())
-                            - rootPort.getPosition().y
-                            - rootPort.getAnchor().y;
+
+                    threshold =
+                            bal.y.get(bal.root.get(otherPort.getNode()))
+                                    + bal.innerShift.get(otherPort.getNode())
+                                    + otherPort.getPosition().y + otherPort.getAnchor().y
+                                    // root node
+                                    - bal.innerShift.get(rootPort.getNode())
+                                    - rootPort.getPosition().y - rootPort.getAnchor().y;
                 }
                 return threshold;
             }
             return invalid;
         }
-        
+
         /**
          * {@inheritDoc}
          */
         @Override
-       public void postProcess() {
-    
+        public void postProcess() {
+
             while (!postProcessables.isEmpty()) {
                 Pair<LNode, Boolean> pair = postProcessables.poll();
                 System.out.println("PostProcesS: " + pair);
-                
-                // TODO !!! it is quite important to check both directions here! 
+
+                // TODO !!! it is quite important to check both directions here!
                 // why ... elaborate
                 Pair<LEdge, Boolean> pick =
-                        pickEdge(bal, pair.getFirst(), pair.getSecond(), bal.y.get(pair.getFirst()),
-                                true);
-    
+                        pickEdge(bal, pair.getFirst(), pair.getSecond(),
+                                bal.y.get(pair.getFirst()), true);
+
                 if (pick.getFirst() == null) {
                     pick =
                             pickEdge(bal, pair.getFirst(), pair.getSecond(),
                                     bal.y.get(pair.getFirst()), false);
                 }
-                
+
                 if (!pick.getSecond()) {
                     continue;
                 }
-                
+
                 if (pick.getFirst() == null) {
-                    continue;   
+                    continue;
                 }
-                
-                LEdge edge =  pick.getFirst();
+
+                LEdge edge = pick.getFirst();
                 LPort left = edge.getSource();
                 LPort right = edge.getTarget();
                 LPort block = bal.hdir == HDirection.LEFT ? right : left;
                 LPort fix = bal.hdir == HDirection.LEFT ? left : right;
-                
+
                 // t has to be the root node of a different block
                 double delta = bal.calculateDelta(fix, block);
-    
+
                 if (delta > 0 && delta < THRESHOLD) {
-                    
+
                     // target y larger than source y --> shift upwards?
-                    if (bal.checkSpaceAbove(fix.getNode(), block.getNode(), delta)) {
+                    if (bal.checkSpaceAbove(block.getNode(), delta)) {
                         bal.shiftBlock(block.getNode(), -delta);
                     }
                 } else if (delta < 0 && -delta < THRESHOLD) {
-                    
-                    // direction is up, we possibly shifted some blocks too far upward 
+
+                    // direction is up, we possibly shifted some blocks too far upward
                     // for an edge to be straight, so check if we can shift down again
-                    
+
                     // target y smaller than source y --> shift down?
-                    if (bal.checkSpaceBelow(fix.getNode(), block.getNode(), -delta)) {
+                    if (bal.checkSpaceBelow(block.getNode(), -delta)) {
                         bal.shiftBlock(block.getNode(), -delta);
                     }
                 }
-                
-            }
-            
-        }
 
+            }
+        }
     }
     
 }

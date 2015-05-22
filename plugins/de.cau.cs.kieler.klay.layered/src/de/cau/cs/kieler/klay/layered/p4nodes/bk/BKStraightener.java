@@ -23,7 +23,6 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.p4nodes.bk.BKAlignedLayout.HDirection;
-import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * @author uru
@@ -32,23 +31,12 @@ public class BKStraightener {
 
     /** The graph to process. */
     private LGraph layeredGraph;
-    /** Basic spacing between nodes, determined by layout options. */
-    private float normalSpacing;
-    /** Spacing between dummy nodes, determined by layout options. */
-    private float smallSpacing;
-    /** Spacing between external ports, determined by layout options. */
-    private float externalPortSpacing;
    
     /**
      * @param layeredGraph the graph to handle.
      */
     public BKStraightener(final LGraph layeredGraph) {
         this.layeredGraph = layeredGraph;
-        // Initialize spacing value from layout options.
-        normalSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING) 
-                * layeredGraph.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
-        smallSpacing = normalSpacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
-        externalPortSpacing = layeredGraph.getProperty(Properties.PORT_SPACING);
     }
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -141,13 +129,13 @@ public class BKStraightener {
 
                         if (delta > 0) {
                             // target y larger than source y --> shift upwards?
-                            if (bal.checkSpaceAbove(fix.getNode(), block.getNode(), delta)) {
+                            if (bal.checkSpaceAbove(block.getNode(), delta)) {
                                 bal.shiftBlock(block.getNode(), -delta);
                                 didSomething = true;
                             }
                         } else if (delta < 0) {
                             // target y smaller than source y --> shift down?
-                            if (bal.checkSpaceBelow(fix.getNode(), block.getNode(), -delta)) {
+                            if (bal.checkSpaceBelow(block.getNode(), -delta)) {
                                 bal.shiftBlock(block.getNode(), -delta);
                                 didSomething = true;
                             }

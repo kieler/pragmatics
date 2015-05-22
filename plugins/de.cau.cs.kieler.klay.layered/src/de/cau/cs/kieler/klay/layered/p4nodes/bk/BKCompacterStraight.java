@@ -150,14 +150,12 @@ public class BKCompacterStraight implements ICompacter {
      * @param root The root node of the block (usually called {@code v})
      * @param bal One of the four layouts which shall be used in this step
      */
-    private void placeBlock(final LNode root, final BKAlignedLayout bal) {
+    // SUPPRESS CHECKSTYLE NEXT 1 MethodLength
+    private void placeBlock(final LNode root, final BKAlignedLayout bal) { 
         // Skip if the block was already placed
         if (bal.y.containsKey(root)) {
             return;
         }
-        
-        System.out.println("Placing Block " + root);
-        
         // Initial placement
         // As opposed to the original algorithm we cannot rely on the fact that 
         //  0.0 as initial block position is always feasible. This is due to 
@@ -203,7 +201,6 @@ public class BKCompacterStraight implements ICompacter {
                 // this call has to be _after_ place block, otherwise the 
                 // order of the elements in the postprocessing queue is wrong 
                 thresh = threshStrategy.calculateThreshold(thresh, root, currentNode);
-                // thresh = threshStrategy.calculateThreshold(bal, thresh, 0, root, currentNode);
                 
                 // Note that the two nodes and their blocks form a unit called class in the original
                 // algorithm. These are combinations of blocks which play a role in the final compaction
@@ -307,7 +304,6 @@ public class BKCompacterStraight implements ICompacter {
             currentNode = bal.align.get(currentNode);
         } while (currentNode != root);
         
-        System.out.println("\tDone with " + root);
         threshStrategy.finishBlock(root);
     }
 

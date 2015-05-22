@@ -35,6 +35,7 @@ public final class BKAlignedLayout {
     
     // Allow the fields of this container to be accessed from package siblings.
     // SUPPRESS CHECKSTYLE NEXT 24 VisibilityModifier
+    // TODO one should use arrays indexed by LNode#id to improve performance
     /** The root node of each node in a block. */
     Map<LNode, LNode> root;
     /** The size of a block. */
@@ -55,6 +56,7 @@ public final class BKAlignedLayout {
     HDirection hdir;
 
     /** The graph to process. */
+    @SuppressWarnings("unused")
     private LGraph layeredGraph;
     /** Basic spacing between nodes, determined by layout options. */
     private float normalSpacing;
@@ -84,7 +86,6 @@ public final class BKAlignedLayout {
                 * layeredGraph.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
         smallSpacing = normalSpacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
         externalPortSpacing = layeredGraph.getProperty(Properties.PORT_SPACING);
-        
         
         root = Maps.newLinkedHashMap();
         blockSize = Maps.newHashMapWithExpectedSize(nodeCount);
@@ -157,38 +158,34 @@ public final class BKAlignedLayout {
     }
     
     /**
-     * .
-     * @param node .
-     * @param adjBlock .
+     * Checks whether a block with root node {@code blockRoot} can be shifted upwards by
+     * {@code delta} without overlapping any of the block's nodes upper neighbors.
+     * 
+     * @param blockRoot
+     *            root node of a block
      * @param delta
-     *          has to be a positive value
+     *            a positive value
      * @return true if there is space.
      */
-    public boolean checkSpaceAbove(final LNode node,
-            final LNode adjBlock, final double delta) {
-
-        // adjBlock has to be a root node
-        assert blockSize.containsKey(adjBlock);
-        final LNode rootNode = adjBlock;
-
+    public boolean checkSpaceAbove(final LNode blockRoot, final double delta) {
+       
+        final LNode rootNode = blockRoot;
         // iterate through the block
         LNode current = rootNode;
         do {
             current = align.get(current);
-            assert current != null;
-            
+            // get minimum possible position of the current node
             double minYCurrent = getMinY(current);
 
-            LNode neighbour = getUpperNeighbor(current, current.getIndex()); // FIXME getindex SLOW
-            if (neighbour != null) {
-                double maxYNeighbor = getMaxY(neighbour);
+            LNode neighbor = getUpperNeighbor(current, current.getIndex()); // FIXME getindex SLOW
+            if (neighbor != null) {
+                double maxYNeighbor = getMaxY(neighbor);
 
                 // can we shift the current node by delta upwards?
-                if (!(minYCurrent - delta > maxYNeighbor)) {
+                if (!(minYCurrent - delta - getSpacing(current, neighbor) >= maxYNeighbor)) {
                     return false;
                 }
             }
-
             // until we wrap around
         } while (rootNode != current);
 
@@ -196,38 +193,35 @@ public final class BKAlignedLayout {
     }
     
     /**
-     * .
-     * @param node .
-     * @param adjBlock .
+     * Checks whether a block with root node {@code blockRoot} can be shifted downwards by
+     * {@code delta} without overlapping any of the block's nodes lower neighbors.
+     * 
+     * @param blockRoot
+     *            root node of a block
      * @param delta
-     *          has to be a positive value
-     *          @return true if there is space.
+     *            a positive value
+     * @return true if there is space.
      */
-    public boolean checkSpaceBelow(final LNode node,
-            final LNode adjBlock, final double delta) {
+    public boolean checkSpaceBelow(final LNode blockRoot, final double delta) {
 
-        // adjBlock has to be a root node
-        assert blockSize.containsKey(adjBlock);
-        final LNode rootNode = adjBlock;
-
+        final LNode rootNode = blockRoot;
         // iterate through the block
         LNode current = rootNode;
         do {
             current = align.get(current);
-            assert current != null;
-            
+            // get maximum possible position of the current node
             double maxYCurrent = getMaxY(current);
 
+            // get the lower neighbor and check its position allows shifting
             LNode neighbour = getLowerNeighbor(current, current.getIndex()); // FIXME getindex SLOW
             if (neighbour != null) {
                 double minYNeighbor = getMinY(neighbour);
 
                 // can we shift the current node by delta downwards?
-                if (!(maxYCurrent + delta < minYNeighbor)) {
+                if (!(maxYCurrent + delta + getSpacing(current, neighbour) <= minYNeighbor)) {
                     return false;
                 }
             }
-
             // until we wrap around
         } while (rootNode != current);
 
@@ -235,56 +229,61 @@ public final class BKAlignedLayout {
     }
     
     /**
-     * .
-     * @param n .
-     * @return .
+     * Determines the required spacing between the two nodes {@code n1} and {@code n2} based on the
+     * two nodes' type.
      */
-    public double getMinY(final LNode n) {
-
-        // TODO consider external port spacing
-        final double spacing;
-        if (n.getNodeType() != NodeType.NORMAL) {
+    private float getSpacing(final LNode n1, final LNode n2) {
+        float spacing;
+        if (n1.getNodeType() == NodeType.EXTERNAL_PORT || n2.getNodeType() == NodeType.EXTERNAL_PORT) {
+            spacing = externalPortSpacing;
+        } else if (n1.getNodeType() != NodeType.NORMAL || n2.getNodeType() != NodeType.NORMAL) {
            spacing = smallSpacing; 
         } else {
             spacing = normalSpacing;
         }
-        
+        return spacing;
+    }
+    
+    /**
+     * Returns the minimum position of node {@code n} and its margins, that is,
+     * {@code node.y + node.innerShift - node.margin.top}. Note that no spacing is accounted for.
+     * 
+     * @param n
+     *            a node
+     * @return the minimum position.
+     */
+    public double getMinY(final LNode n) {
+
         // node size + margins + inside shift etc
         LNode rootNode = root.get(n);
         return y.get(rootNode)
             + innerShift.get(n)
-            - n.getMargin().top
-            - spacing / 2d;
+            - n.getMargin().top;
     }
     
     /**
-     * .
-     * @param n .
-     * @return .
+     * Returns the maximum position of node {@code n} and its margins, that is,
+     * {@code node.y + node.innerShift + node.size + node.margin.bottom}. Note that no spacing is
+     * accounted for.
+     * 
+     * @param n
+     *            a node
+     * @return the minimum position.
      */
     public double getMaxY(final LNode n) {
-
-        // TODO consider external port spacing
-        final double spacing;
-        if (n.getNodeType() != NodeType.NORMAL) {
-           spacing = smallSpacing; 
-        } else {
-            spacing = normalSpacing;
-        }
         
         // node size + margins + inside shift etc
         LNode rootNode = root.get(n);
         return y.get(rootNode)
             + innerShift.get(n)
             + n.getSize().y
-            + n.getMargin().bottom
-            + spacing / 2d;
+            + n.getMargin().bottom;
     }
     
     
     /**
      * @param n
-     *            the node of which the neigbhbor is requested.
+     *            the node for which the neighbor is requested.
      * @param layerIndex
      *            the index of {@code n} within its layer.
      * @return the node with a <b>larger</b> y than {@code n} within {@code n}'s layer if it exists,
@@ -300,7 +299,7 @@ public final class BKAlignedLayout {
 
     /**
      * @param n
-     *            the node of which the neigbhbor is requested.
+     *            the node for which the neighbor is requested.
      * @param layerIndex
      *            the index of {@code n} within its layer.
      * @return the node with a <b>smaller</b> y than {@code n} within {@code n}'s layer if it
