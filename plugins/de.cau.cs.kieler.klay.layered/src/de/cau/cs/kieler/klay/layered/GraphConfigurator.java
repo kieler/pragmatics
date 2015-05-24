@@ -280,6 +280,12 @@ final class GraphConfigurator {
                 .addBeforePhase1(IntermediateProcessorStrategy.COMMENT_PREPROCESSOR)
                 .addAfterPhase5(IntermediateProcessorStrategy.COMMENT_POSTPROCESSOR);
         }
+        
+        // Additional prettification
+        if (lgraph.getProperty(Properties.ONE_DIMENSIONAL_COMPACTION)) {
+            configuration
+                .addAfterPhase5(IntermediateProcessorStrategy.ONE_D_COMPACTOR);
+        }  
 
         return configuration;
     }

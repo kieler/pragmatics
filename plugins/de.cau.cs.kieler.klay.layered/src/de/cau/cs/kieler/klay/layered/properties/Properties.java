@@ -33,6 +33,11 @@ import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
  * @kieler.rating proposed yellow by msp
  */
 public final class Properties {
+    /**
+     * Property to switch one dimensional compaction postprocessing on or off.
+     */
+    public static final IProperty<Boolean> ONE_DIMENSIONAL_COMPACTION = new Property<Boolean>(
+            "de.cau.cs.kieler.klay.layered.oneDimensionalCompaction", true);
 
     /**
      * A pre-defined seed for pseudo-random number generators.
