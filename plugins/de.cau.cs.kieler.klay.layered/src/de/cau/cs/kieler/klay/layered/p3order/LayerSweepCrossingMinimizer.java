@@ -151,8 +151,6 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
         // Iterate through the layers, initializing port and node IDs, collecting
         // the nodes into the current sweep and building the layout unit map
         ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
-        boolean allLayersHaveHyperedges = true;
-        boolean noLayerHasHyperedges = true;
         while (layerIter.hasNext()) {
             Layer layer = layerIter.next();
 
@@ -210,23 +208,30 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                     hasNorthSouthPorts[layerIndex] = true;
                 }
             }
-            if (hasHyperedges(layerIndex)) {
-                noLayerHasHyperedges = false;
-            } else {
-                allLayersHaveHyperedges = false;
-            }
         }
-
+        
+        // Check whether every (or no) combination of layers, considering both
+        //  forward and backward sweeps, involves hyperedges
+        // If neither is the case, we need a counting algorithm for both 
+        //  hyperedges and straightline edges
+        boolean allLayerCombinationsHaveHyperedges = true;
+        boolean noLayerCombinationHasHyperedges = true;
+        for (int i = 0; i < hasHyperedgesWest.length - 1; i++) {
+            boolean b = hasHyperedgesEast[i] || hasHyperedgesWest[i + 1];
+            allLayerCombinationsHaveHyperedges &= b;
+            noLayerCombinationHasHyperedges &= !b;
+        }
+        
         // Initialize the port positions and ranks arrays
         portRanks = new float[portCount];
         int[] portPos = new int[portCount];
         
         // Create the crossings counter modules
-        if (!allLayersHaveHyperedges) {
+        if (!allLayerCombinationsHaveHyperedges) {
             normalCrossingsCounter = new BarthJuengerMutzelCrossingsCounter(inLayerEdgeCount,
                     hasNorthSouthPorts, portPos);
         }
-        if (!noLayerHasHyperedges) {
+        if (!noLayerCombinationHasHyperedges) {
             hyperedgeCrossingsCounter = new HyperedgeCrossingsCounter(inLayerEdgeCount,
                     hasNorthSouthPorts, portPos);
         }
