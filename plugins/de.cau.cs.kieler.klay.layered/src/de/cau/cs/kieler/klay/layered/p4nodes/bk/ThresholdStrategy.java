@@ -120,12 +120,38 @@ public abstract class ThresholdStrategy {
 
     
     /**
-     * Does three things.
+     * {@link ThresholdStrategy} for the classic compaction phase of the original bk algorithm.
      * 
-     *  - Only calculates threshold for the first and last node of a block
-     *  - Picks the first edge it encounters that is valid
-     *  
-     *
+     * It calculates a threshold value such that it has no effect.
+     */
+    public static class NullThresholdStrategy extends ThresholdStrategy {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public double calculateThreshold(final double oldThresh, final LNode blockRoot,
+                final LNode currentNode) {
+            if (bal.vdir == VDirection.UP) {
+                // new value calculated using min(a,thresh) --> thresh = +infty has no effect
+                return Double.MAX_VALUE;
+            } else {
+                return Double.MIN_VALUE;
+            }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void postProcess() {
+        }
+    }
+
+    /**
+     * <ul>
+     *  <li> Only calculates threshold for the first and last node of a block.</li>
+     *  <li> Picks the first edge it encounters that is valid.</li>
+     * </ul>
      */
     public static class SimpleThresholdStrategy extends ThresholdStrategy {
         
