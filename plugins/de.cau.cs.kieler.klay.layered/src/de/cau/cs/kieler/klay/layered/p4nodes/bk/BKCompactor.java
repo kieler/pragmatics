@@ -30,14 +30,14 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
 /**
  * For documentation see {@link BKNodePlacer}.
  * 
- * As opposed to the default {@link BKCompacter} this version
+ * As opposed to the default {@link BKCompactor} this version
  * trades maximal compactness with straight edges. In other words,
  * where possible it favors additional straight edges over compactness. 
  * 
  * @author jjc
  * @author uru
  */
-public class BKCompacter implements ICompacter {
+public class BKCompactor implements ICompactor {
     
     /** The graph to process. */
     private LGraph layeredGraph;
@@ -56,7 +56,7 @@ public class BKCompacter implements ICompacter {
      * @param layeredGraph the graph to handle.
      * @param ni precalculated information about a node's neighbors.
      */
-    public BKCompacter(final LGraph layeredGraph, final NeighborhoodInformation ni) {
+    public BKCompactor(final LGraph layeredGraph, final NeighborhoodInformation ni) {
         this.layeredGraph = layeredGraph;
         this.ni = ni;
         // Initialize spacing value from layout options.

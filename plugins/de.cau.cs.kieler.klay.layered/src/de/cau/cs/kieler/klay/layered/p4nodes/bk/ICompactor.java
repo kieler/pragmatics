@@ -18,7 +18,7 @@ package de.cau.cs.kieler.klay.layered.p4nodes.bk;
  * 
  * @author uru
  */
-public interface ICompacter {
+public interface ICompactor {
     
     /**
      * In this step, actual coordinates are calculated for blocks and its nodes.

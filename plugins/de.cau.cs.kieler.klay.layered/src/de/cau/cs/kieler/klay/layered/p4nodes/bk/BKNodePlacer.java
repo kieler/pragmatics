@@ -35,7 +35,7 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.p4nodes.bk.BKAlignedLayout.HDirection;
 import de.cau.cs.kieler.klay.layered.p4nodes.bk.BKAlignedLayout.VDirection;
-import de.cau.cs.kieler.klay.layered.p4nodes.bk.ICompacter.CompactionStrategy;
+import de.cau.cs.kieler.klay.layered.p4nodes.bk.ICompactor.CompactionStrategy;
 import de.cau.cs.kieler.klay.layered.properties.FixedAlignment;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
@@ -219,14 +219,7 @@ public final class BKNodePlacer implements ILayoutPhase {
             aligner.insideBlockShift(bal);
         }
 
-        ICompacter compacter;
-        switch (layeredGraph.getProperty(Properties.COMPACTION_STRATEGY)) {
-            case IMPROVE_STRAIGHTNESS:
-                compacter = new BKCompacterStraight(layeredGraph, ni);
-                break;
-            default:
-                compacter = new BKCompacter(layeredGraph, ni);
-        }
+        ICompactor compacter = new BKCompactor(layeredGraph, ni);
         for (BKAlignedLayout bal : layouts) {
             // This phase determines the y coordinates of the blocks and thus the vertical coordinates
             // of all nodes.

@@ -35,7 +35,7 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.p4nodes.LinearSegmentsNodePlacer;
 import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
 import de.cau.cs.kieler.klay.layered.p4nodes.bk.BKNodePlacer;
-import de.cau.cs.kieler.klay.layered.p4nodes.bk.ICompacter.CompactionStrategy;
+import de.cau.cs.kieler.klay.layered.p4nodes.bk.ICompactor.CompactionStrategy;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 import de.cau.cs.kieler.klay.layered.test.AbstractLayeredProcessorTest;
 import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;

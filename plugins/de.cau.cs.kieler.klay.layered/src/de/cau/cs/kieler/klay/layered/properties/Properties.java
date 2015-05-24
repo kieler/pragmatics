@@ -22,7 +22,7 @@ import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
 import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
 import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
-import de.cau.cs.kieler.klay.layered.p4nodes.bk.ICompacter.CompactionStrategy;
+import de.cau.cs.kieler.klay.layered.p4nodes.bk.ICompactor.CompactionStrategy;
 
 /**
  * Container for public property definitions. These are layout options that can be set on graph

@@ -133,9 +133,9 @@ public abstract class ThresholdStrategy {
                 final LNode currentNode) {
             if (bal.vdir == VDirection.UP) {
                 // new value calculated using min(a,thresh) --> thresh = +infty has no effect
-                return Double.MAX_VALUE;
+                return Double.POSITIVE_INFINITY;
             } else {
-                return Double.MIN_VALUE;
+                return Double.NEGATIVE_INFINITY;
             }
         }
 
