@@ -117,6 +117,11 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
      */
     private HyperedgeCrossingsCounter hyperedgeCrossingsCounter;
     /**
+     * Both of the two previous crossing counters use the same 
+     * code to count in-layer crossings.
+     */
+    private AbstractCrossingsCounter inlayerCrossingsCounter;
+    /**
      * Whether the layers contain hyperedges or not.
      */
     private boolean[] hasHyperedgesEast;
@@ -230,22 +235,13 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
         if (!allLayerCombinationsHaveHyperedges) {
             normalCrossingsCounter = new BarthJuengerMutzelCrossingsCounter(inLayerEdgeCount,
                     hasNorthSouthPorts, portPos);
+            inlayerCrossingsCounter = normalCrossingsCounter;
         }
         if (!noLayerCombinationHasHyperedges) {
             hyperedgeCrossingsCounter = new HyperedgeCrossingsCounter(inLayerEdgeCount,
                     hasNorthSouthPorts, portPos);
+            inlayerCrossingsCounter = hyperedgeCrossingsCounter;
         }
-    }
-    
-    /**
-     * Checks whether the given layer has any connected hyper edges.
-     * 
-     * @param layerIndex
-     *            the layer to check for hyperedges.
-     * @return true if the given layer has any hyperedges from the left or to the right side.
-     */
-    private boolean hasHyperedges(final int layerIndex) {
-        return hasHyperedgesEast[layerIndex] || hasHyperedgesWest[layerIndex];
     }
 
     /**
@@ -325,13 +321,8 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                 prevSweepCrossings = curSweepCrossings;
                 curSweepCrossings = 0;
                 
-                if (hasHyperedges(fixedLayerIndex)) {
-                    curSweepCrossings += 
-                            hyperedgeCrossingsCounter.countCrossings(fixedLayer, fixedLayerIndex);
-                } else {
-                    curSweepCrossings += 
-                            normalCrossingsCounter.countCrossings(fixedLayer, fixedLayerIndex);
-                }
+                // count in-layer crossings
+                curSweepCrossings += inlayerCrossingsCounter.countCrossings(fixedLayer, fixedLayerIndex);
                 
                 if (forward) {
                     // Perform a forward sweep
@@ -340,17 +331,19 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
 
                         portDistributor.calculatePortRanks(fixedLayer, PortType.OUTPUT);
                         minimizeCrossings(freeLayer, crossminHeuristic, true, !firstSweep, false);
+
+                        // in-layer crossings
+                        curSweepCrossings +=
+                                inlayerCrossingsCounter.countCrossings(freeLayer, layerIndex);
+                        // between-layers crossings
                         if (hasHyperedgesWest[layerIndex] || hasHyperedgesEast[layerIndex - 1]) {
                             curSweepCrossings += 
                                     hyperedgeCrossingsCounter.countCrossings(fixedLayer, freeLayer);
-                            curSweepCrossings += 
-                                    hyperedgeCrossingsCounter.countCrossings(freeLayer, layerIndex);
                         } else {
                             curSweepCrossings += 
                                     normalCrossingsCounter.countCrossings(fixedLayer, freeLayer);
-                            curSweepCrossings += 
-                                    normalCrossingsCounter.countCrossings(freeLayer, layerIndex);
                         }
+                        
 
                         fixedLayer = freeLayer;
                     }
@@ -362,16 +355,17 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
 
                         portDistributor.calculatePortRanks(fixedLayer, PortType.INPUT);
                         minimizeCrossings(freeLayer, crossminHeuristic, false, !firstSweep, false);
+
+                        // in-layer crossings
+                        curSweepCrossings +=
+                                inlayerCrossingsCounter.countCrossings(freeLayer, layerIndex);
+                        // between-layers crossings
                         if (hasHyperedgesEast[layerIndex] || hasHyperedgesWest[layerIndex + 1]) {
                             curSweepCrossings += 
                                     hyperedgeCrossingsCounter.countCrossings(freeLayer, fixedLayer);
-                            curSweepCrossings += 
-                                    hyperedgeCrossingsCounter.countCrossings(freeLayer, layerIndex);
                         } else {
                             curSweepCrossings += 
                                     normalCrossingsCounter.countCrossings(freeLayer, fixedLayer);
-                            curSweepCrossings += 
-                                    normalCrossingsCounter.countCrossings(freeLayer, layerIndex);
                         }
 
                         fixedLayer = freeLayer;
