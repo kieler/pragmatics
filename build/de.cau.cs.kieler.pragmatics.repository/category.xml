@@ -59,6 +59,16 @@
       <category name="kieler-sources"/>
    </feature>
 
+   <feature url="features/de.cau.cs.kieler.kiml.libavoid_0.2.0.qualifier.jar" id="de.cau.cs.kieler.kiml.libavoid.feature" version="0.2.0.qualifier">
+      <category name="kieler-layout"/>
+   </feature>
+   <feature url="features/de.cau.cs.kieler.kiml.libavoid.source_0.2.0.qualifier.jar" id="de.cau.cs.kieler.kiml.libavoid.feature.source" version="0.2.0.qualifier">
+      <category name="kieler-sources"/>
+   </feature>
+   <feature url="features/org.adaptagrams.libavoid_0.2.0.qualifier.jar" id="org.adaptagrams.libavoid.feature" version="0.2.0.qualifier" os="linux,macosx,solaris,win32" arch="sparc,x86,x86_64">
+      <category name="kieler-layout"/>
+   </feature>
+   
    <feature url="features/de.cau.cs.kieler.kiml.ogdf_0.6.2.qualifier.jar" id="de.cau.cs.kieler.kiml.ogdf.feature" version="0.6.2.qualifier">
       <category name="kieler-layout"/>
    </feature>
@@ -66,16 +76,6 @@
       <category name="kieler-sources"/>
    </feature>
    <feature url="features/net.ogdf.bin_2.0.2.qualifier.jar" id="net.ogdf.bin.feature" version="2.0.2.qualifier" os="linux,macosx,solaris,win32" arch="sparc,x86,x86_64">
-      <category name="kieler-layout"/>
-   </feature>
-
-   <feature url="features/de.cau.cs.kieler.kiml.adaptagrams_0.1.0.qualifier.jar" id="de.cau.cs.kieler.kiml.adaptagrams.feature" version="0.1.0.qualifier">
-      <category name="kieler-layout"/>
-   </feature>
-   <feature url="features/de.cau.cs.kieler.kiml.adaptagrams.source_0.1.0.qualifier.jar" id="de.cau.cs.kieler.kiml.adaptagrams.feature.source" version="0.1.0.qualifier">
-      <category name="kieler-sources"/>
-   </feature>
-   <feature url="features/org.adaptagrams_0.1.0.qualifier.jar" id="org.adaptagrams.feature" version="0.1.0.qualifier" os="linux,macosx,solaris,win32" arch="sparc,x86,x86_64">
       <category name="kieler-layout"/>
    </feature>
 
