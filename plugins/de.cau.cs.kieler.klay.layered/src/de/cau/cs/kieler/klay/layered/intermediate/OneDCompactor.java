@@ -13,8 +13,11 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
+import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -29,12 +32,27 @@ import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
+import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
+
+/* 
+ * 
+ * 
+ * changes in:
+ * IntermediateProcessorStrategy
+ * GraphConfigurator
+ * Properties
+ */
 
 /**
  * @author dag
@@ -42,220 +60,212 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
  */
 public class OneDCompactor implements ILayoutProcessor {
 
-    private Map<Rectangle2D, LGraphElement> boxMap = Maps.newHashMap();
-    private List<Node> boxes = Lists.newArrayList();
+	private List<Pair<LGraphElement, Rectangle2D.Double>> boxes = new ArrayList<Pair<LGraphElement, Rectangle2D.Double>>();
 
-    // private DebugFrame debugFrame = new DebugFrame(); // maybe not static to get 1 frame per
-    // connected component
+	/**
+	 * {@inheritDoc}
+	 */
+	public void process(final LGraph layeredGraph,
+			final IKielerProgressMonitor progressMonitor) {
 
-    /**
-     * {@inheritDoc}
-     */
-    public void process(final LGraph layeredGraph, final IKielerProgressMonitor progressMonitor) {
+		progressMonitor.begin("1 D compacting", 1);
 
-        progressMonitor.begin("1 D compacting", 1);
+		boxes.clear();
+		
+		for (Layer layer : layeredGraph) {
+			for (LNode node : layer) {
+				// add all kinds of nodes
+				Rectangle2D.Double r = new Rectangle2D.Double(
+						node.getPosition().x, node.getPosition().y,
+						node.getSize().x, node.getSize().y);
 
-        // drawDebugView(layeredGraph.getSize());
+				boxes.add(new Pair<LGraphElement, Rectangle2D.Double>(node, r));
+				
+				//add vertical edge segments
+				for (LEdge edge : node.getOutgoingEdges()) {
+					if (edge.getBendPoints().iterator().hasNext()) {
+						
+						Iterator<KVector> bends = edge.getBendPoints().iterator();
+						KVector bend1 = bends.next();
+						KVector bend2 = bends.next();
+						
+						double x,y,h;
+						if (bend1.y < bend2.y) {
+							x = bend1.x;
+							y = bend1.y;
+							h = bend2.y-y;
+						} else {
+							x = bend2.x;
+							y = bend2.y;
+							h = bend1.y-y;
+						}
+						
+						Rectangle2D.Double rEdge = new Rectangle2D.Double(x, y, 0, h);
+						
+						boxes.add(new Pair<LGraphElement, Rectangle2D.Double>(edge, rEdge));
+					}
+				}
+			}
+		}
 
-        // ulf
-        boxes.clear();
 
-        // 1) Derive all vertical edges of either nodes or edge segments
-        // for (LNode n : layeredGraph.getLayerlessNodes()) {
-        for (Layer l : layeredGraph) {
-            for (LNode n : l) {
+		drawDebugView(boxes, 800, 600, layeredGraph); // FIXME determine size
 
-                Rectangle2D.Double rect =
-                        new Rectangle2D.Double(n.getPosition().x, n.getPosition().y, n.getSize().x,
-                                n.getSize().y);
+		progressMonitor.done();
 
-                Node node = new Node(n, rect);
-                boxes.add(node);
+	}
 
-                for (LEdge e : n.getOutgoingEdges()) {
-                    // FIXME consider start and end
-                    Iterator<KVector> bends = e.getBendPoints().iterator();
-                    if (bends.hasNext()) {
-                        KVector start = bends.next();
-                        while (bends.hasNext()) {
-                            KVector current = bends.next();
+	private void drawDebugView(
+			final List<Pair<LGraphElement, Rectangle2D.Double>> boxes,
+			final int width, final int height, final LGraph layeredGraph) {
 
-                            if (Math.abs(start.x - current.x) < 0.001) {
-                                Rectangle2D.Double rect2 =
-                                        new Rectangle2D.Double(start.x,
-                                                Math.min(start.y, current.y), start.x + 1,
-                                                Math.abs(start.y - current.y));
-                                node = new Node(e, rect);// rect2?
-                                // boxes.add(node);
-                            }
+		double xMin = 0, xMax = 0, yMin = 0, yMax = 0;
+		
+		
 
-                            start = current;
-                        }
-                    }
-                }
-            }
-        }
+		List<Rectangle> regularNodes = new ArrayList<Rectangle>();
+		List<Rectangle> longEdgeNodes = new ArrayList<Rectangle>();
+		List<Rectangle> vertEdgeSeg = new ArrayList<Rectangle>();
+		
 
-        // 2) Sort them
-        Collections.sort(boxes, new Comparator<Node>() {
-            /**
-             * {@inheritDoc}
-             */
-            public int compare(Node o1, Node o2) {
-                if (o1.getMinX() < o2.getMinX()) {
-                    return -1;
-                } else if (Math.abs(o1.getMinX() - o2.getMinX()) < 0.001) {
-                    return 0;
-                } else {
-                    return 1;
-                }
-            }
-        });
-        System.out.println(boxes.size());
-        System.out.println(boxes);
-        new DebugFrame(layeredGraph.getSize());
+		/*for (Pair<LGraphElement, Rectangle2D.Double> box : boxes) {
+			if (box.getSecond().getMinX() < xMin)
+				xMin = box.getSecond().getMinX();
+			if (box.getSecond().getMaxX() > xMax)
+				xMax = box.getSecond().getMaxX();
+			if (box.getSecond().getMinY() < yMin)
+				yMin = box.getSecond().getMinY();
+			if (box.getSecond().getMaxY() > yMax)
+				yMax = box.getSecond().getMaxY();
+		}
+		
+		System.out.println(xMin+" "+xMax+" - "+yMin+" "+yMax+" ^= "+layeredGraph.getSize().x+" "+layeredGraph.getSize().y);
+*/
+		xMax = layeredGraph.getSize().x;
+		yMax = layeredGraph.getSize().y;
+		
+		double f = width / (xMax - xMin); //TODO simplify
 
-        // 3) generate constraints
-        for (Node box1 : boxes) {
-            for (Node box2 : boxes) {
-                if (box1 != box2) {
+		double xOffset = -xMin, yOffset = -yMin;
 
-                    double minDist = 20;
+		for (Pair<LGraphElement, Rectangle2D.Double> box : boxes) {
 
-                    if (box1.getMinX() < box2.getMinX()) {
+			if (box.getFirst().getClass() == LNode.class) {
 
-                        // Edge edge = new Edge(box1.getWidth() + minDist, box1, box2);
-                        // Edges have to point "backwards"
-                        Edge edge = new Edge(box1.getWidth() + minDist, box2, box1);
+				LNode node = (LNode) box.getFirst();
 
-                        List<LNode> tgts = Lists.newArrayList();
-                        for (LEdge ee : ((LNode) box1.graphElement).getOutgoingEdges()) {
-                            tgts.add(ee.getTarget().getNode());
-                        }
-                        if (tgts.contains(box2.graphElement)) {
-                            System.out.println("adding edge " + box1.graphElement + " "
-                                    + box2.graphElement + " " + (box1.getWidth() + minDist));
-                            box2.outgoingEdges.add(edge);
-                        }
-                    } else {
+				if (node.getNodeType().equals(NodeType.NORMAL)) {
 
-                        // constraint is generated anyway as we iterate over V x V
-                        // Edge edge = new Edge(box2.getWidth() + minDist, box2, box1);
-                        // box2.outgoingEdges.add(edge);
-                    }
-                }
-            }
-        }
+					regularNodes.add(new Rectangle((int) Math.round(box
+							.getSecond().x * f + xOffset), (int) Math.round(box
+							.getSecond().y * f + yOffset), (int) Math.round(box
+							.getSecond().width * f), (int) Math.round(box
+							.getSecond().height * f)));
+				}
 
-        // 4) longest path layering ...
-        for (Node n : boxes) {
-            visit(n);
-        }
+				if (node.getNodeType().equals(NodeType.LONG_EDGE)) {
 
-        int max = 0;
-        for (Node n : boxes) {
-            max = Math.max(n.position, max);
-        }
+					longEdgeNodes.add(new Rectangle((int) Math.round(box
+							.getSecond().x * f + xOffset - 1), (int) Math
+							.round(box.getSecond().y * f + yOffset - 1), 2, 2));
+				}
+			} else { // probably an edge
+				
+				vertEdgeSeg.add(new Rectangle((int) Math.round(box
+						.getSecond().x * f + xOffset), (int) Math.round(box
+						.getSecond().y * f + yOffset), (int) Math.round(box
+						.getSecond().width * f), (int) Math.round(box
+						.getSecond().height * f)));
+			}
+		}
 
-        for (Node n : boxes) {
-            System.out.println(n.graphElement + " " + (n.position));
-        }
+		new DebugFrame(width, height, layeredGraph, regularNodes, longEdgeNodes, vertEdgeSeg);
 
-        progressMonitor.done();
+	}
 
-    }
+	private class DebugFrame extends JFrame {
 
-    private int visit(final Node n) {
-        if (n.position >= 0) {
-            // already visited
-            return n.position;
-        } else {
-            int maxId = 0;
-            for (Edge e : n.outgoingEdges) {
-                // no selfloops
-                if (!e.tgt.equals(n) && e.tgt != n && e.tgt.graphElement != n.graphElement) {
-                    int targetId = visit(e.tgt);
-                    maxId = Math.max(maxId, targetId + (int) e.weight);
-                }
-            }
-            n.position = maxId;
-            return maxId;
-        }
-    }
+		private List<Rectangle> regularNodes = new ArrayList<Rectangle>();
+		private List<Rectangle> longEdgeNodes = new ArrayList<Rectangle>();
+		private List<Rectangle> vertEdgeSeg = new ArrayList<Rectangle>();
 
-    private static class Node extends Rectangle2D.Double {
+		private int BORDER_SPACING, OBJECT_SPACING, EDGE_SPACING;
 
-        int position = -1;
+		public DebugFrame(final int width, final int height,
+				final LGraph layeredGraph, final List<Rectangle> regularNodes,
+				final List<Rectangle> longEdgeNodes, final List<Rectangle> vertEdgeSeg) {
 
-        LGraphElement graphElement;
-        List<Edge> outgoingEdges = Lists.newLinkedList();
+			super("Debug Frame");
 
-        public Node(LGraphElement graphElement, Rectangle2D.Double bounds) {
-            this.graphElement = graphElement;
-            setRect(bounds);
-        }
+			this.regularNodes = regularNodes;
+			this.longEdgeNodes = longEdgeNodes;
+			this.vertEdgeSeg = vertEdgeSeg;
 
-    }
+			this.BORDER_SPACING = (int) Math.round(layeredGraph
+					.getProperty(InternalProperties.BORDER_SPACING));
+			this.OBJECT_SPACING = (int) Math
+					.round(layeredGraph.getProperty(InternalProperties.SPACING)
+							* layeredGraph
+									.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR));
+			this.EDGE_SPACING = (int) Math
+					.round(layeredGraph.getProperty(InternalProperties.SPACING)
+							* layeredGraph
+									.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR)
+							* layeredGraph
+									.getProperty(Properties.EDGE_SPACING_FACTOR));
+			
 
-    private static class Edge {
+			setContentPane(new DrawPane());
 
-        public Edge(double weight, Node src, Node tgt) {
-            super();
-            this.weight = weight;
-            this.src = src;
-            this.tgt = tgt;
-        }
+			setSize(width + 2 * BORDER_SPACING, height + 2 * BORDER_SPACING);
 
-        double weight;
-        Node src;
-        Node tgt;
-    }
+			setVisible(true);
+		}
 
-    private void drawDebugView(final Graphics g, final int width, final int height) {
+		private class DrawPane extends JPanel {
+			/**
+			 * whatever
+			 */
+			private static final long serialVersionUID = 1L;
 
-        double xMin = 0, xMax = 0, yMin = 0, yMax = 0;
+			public void paintComponent(Graphics g) {
+				
+				g.setColor(Color.green);
+				for (Rectangle rectangle : regularNodes) {
+					g.drawRect(rectangle.x + BORDER_SPACING, rectangle.y
+							+ BORDER_SPACING, rectangle.width + OBJECT_SPACING, rectangle.height + OBJECT_SPACING);
+				}
+				
+				g.setColor(Color.yellow);
+				for (Rectangle rectangle : vertEdgeSeg) {
+					g.drawRect(rectangle.x + BORDER_SPACING - EDGE_SPACING, rectangle.y
+							+ BORDER_SPACING - EDGE_SPACING, rectangle.width + 2 * EDGE_SPACING, rectangle.height + 2 * EDGE_SPACING);
+				}
+				
+				
+				g.setColor(Color.black);
+				for (Rectangle rectangle : regularNodes) {
+					g.drawRect(rectangle.x + BORDER_SPACING, rectangle.y
+							+ BORDER_SPACING, rectangle.width, rectangle.height);
+				}
 
-        for (Node box : boxes) {
-            if (box.getMinX() < xMin)
-                xMin = box.getMinX();
-            if (box.getMaxX() > xMax)
-                xMax = box.getMaxX();
-            if (box.getMinY() < yMin)
-                yMin = box.getMinY();
-            if (box.getMaxY() > yMax)
-                yMax = box.getMaxY();
-        }
-        
-        double f = width / (xMax - xMin);
-        //TODO height
-        double xOffset = -xMin, yOffset = -yMin;
-        
-        System.out.println(width+"x"+height+" f:"+f+" xOffset:"+xOffset+" yOffset:"+yOffset);
+				
+				g.setColor(Color.red);
+				for (Rectangle rectangle : longEdgeNodes) {
+					g.drawRect(rectangle.x + BORDER_SPACING, rectangle.y
+							+ BORDER_SPACING, rectangle.width, rectangle.height);
+				}
+				
+				
+				g.setColor(Color.blue);
+				for (Rectangle rectangle : vertEdgeSeg) {
+					g.drawRect(rectangle.x + BORDER_SPACING, rectangle.y
+							+ BORDER_SPACING, rectangle.width, rectangle.height);
+				}
 
-        for (Node node : boxes) {
-            g.drawRect((int) Math.round(node.x * f + xOffset), (int) Math.round(node.y * f + yOffset),
-                    (int) Math.round(node.width * f), (int) Math.round(node.height * f));
-        }
 
-    }
+			}
+		}
 
-    private class DebugFrame extends JFrame {
-
-        public DebugFrame(KVector size) {
-            super("Debug Frame");
-
-            setContentPane(new DrawPane());
-
-            setSize((int) Math.round(size.x) + 300, (int) Math.round(size.y) + 200); // FIXME
-
-            setVisible(true);
-        }
-
-        private class DrawPane extends JPanel {
-            public void paintComponent(Graphics g) {
-                drawDebugView(g, this.getWidth(), this.getHeight());
-            }
-        }
-
-    }
+	}
 }
