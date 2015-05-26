@@ -22,6 +22,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -82,10 +83,10 @@ public final class BKAlignedLayout {
 
         this.layeredGraph = layeredGraph;
         // Initialize spacing value from layout options.
-        normalSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING) 
+        normalSpacing = layeredGraph.getProperty(InternalProperties.SPACING) 
                 * layeredGraph.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
         smallSpacing = normalSpacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
-        externalPortSpacing = layeredGraph.getProperty(Properties.PORT_SPACING);
+        externalPortSpacing = layeredGraph.getProperty(InternalProperties.PORT_SPACING);
         
         root = Maps.newLinkedHashMap();
         blockSize = Maps.newHashMapWithExpectedSize(nodeCount);

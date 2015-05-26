@@ -910,7 +910,7 @@ public final class LGraphUtil {
     public static Direction getDirection(final LGraph graph) {
         Direction direction = graph.getProperty(LayoutOptions.DIRECTION);
         if (direction == Direction.UNDEFINED) {
-            float aspectRatio = graph.getProperty(Properties.ASPECT_RATIO);
+            float aspectRatio = graph.getProperty(InternalProperties.ASPECT_RATIO);
             if (aspectRatio >= 1) {
                 return Direction.RIGHT;
             } else {

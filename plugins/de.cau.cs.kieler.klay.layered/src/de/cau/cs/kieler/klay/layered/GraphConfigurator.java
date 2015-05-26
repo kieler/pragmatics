@@ -87,10 +87,10 @@ final class GraphConfigurator {
      */
     private void configureGraphProperties(final LGraph lgraph) {
         // check the bounds of some layout options
-        lgraph.checkProperties(Properties.OBJ_SPACING, Properties.BORDER_SPACING,
-                Properties.THOROUGHNESS, Properties.ASPECT_RATIO);
+        lgraph.checkProperties(InternalProperties.SPACING, InternalProperties.BORDER_SPACING,
+                Properties.THOROUGHNESS, InternalProperties.ASPECT_RATIO);
         
-        float spacing = lgraph.getProperty(Properties.OBJ_SPACING);
+        float spacing = lgraph.getProperty(InternalProperties.SPACING);
         if (lgraph.getProperty(Properties.EDGE_SPACING_FACTOR) * spacing < MIN_EDGE_SPACING) {
             // Edge spacing is determined by the product of object spacing and edge spacing factor.
             // Make sure the resulting edge spacing is at least 2 in order to avoid overlapping edges.
@@ -131,7 +131,7 @@ final class GraphConfigurator {
         ILayoutPhase crossingMinimizer = cachedLayoutPhase(lgraph.getProperty(Properties.CROSS_MIN));
         ILayoutPhase nodePlacer = cachedLayoutPhase(lgraph.getProperty(Properties.NODE_PLACER));
         ILayoutPhase edgeRouter = cachedLayoutPhase(
-                EdgeRouterFactory.factoryFor(lgraph.getProperty(LayoutOptions.EDGE_ROUTING)));
+                EdgeRouterFactory.factoryFor(lgraph.getProperty(InternalProperties.EDGE_ROUTING)));
 
         // determine intermediate processor configuration
         IntermediateProcessingConfiguration intermediateProcessingConfiguration =

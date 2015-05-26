@@ -33,7 +33,6 @@ class KlighdProjectContributor implements IProjectFactoryContributor {
     }
 
     override def contributeFiles(IProject project, IFileCreator fileWriter) {
-        contributeBuildProperties(fileWriter)
         contributePluginExtensions(fileWriter)
         contributeJDTprefs(fileWriter);
 
@@ -58,20 +57,28 @@ class KlighdProjectContributor implements IProjectFactoryContributor {
      *  settings" using "compliance from execution environment 'J2SE-1.5' on the 'Java Build Path'".
      */
     def private contributeJDTprefs(IFileCreator fileWriter) {
+        
+        val version = switch (projectInfo.executionEnvironment) {
+            case "JavaSE-1.6": "1.6"
+            case "JavaSE-1.7": "1.7"
+            case "JavaSE-1.8": "1.8"
+            default: "1.5"
+        }
+        
         '''
-        eclipse.preferences.version=1
-        org.eclipse.jdt.core.compiler.codegen.inlineJsrBytecode=enabled
-        org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.5
-        org.eclipse.jdt.core.compiler.codegen.unusedLocal=preserve
-        org.eclipse.jdt.core.compiler.compliance=1.5
-        org.eclipse.jdt.core.compiler.debug.lineNumber=generate
-        org.eclipse.jdt.core.compiler.debug.localVariable=generate
-        org.eclipse.jdt.core.compiler.debug.sourceFile=generate
-        org.eclipse.jdt.core.compiler.problem.assertIdentifier=error
-        org.eclipse.jdt.core.compiler.problem.enumIdentifier=error
-        org.eclipse.jdt.core.compiler.source=1.5
-        '''.writeToFile(fileWriter, KlighdWizardSetup.SETTINGS_FOLDER + '/'
-                + KlighdWizardSetup.JDT_PREFS_FILE);
+            eclipse.preferences.version=1
+            org.eclipse.jdt.core.compiler.codegen.inlineJsrBytecode=enabled
+            org.eclipse.jdt.core.compiler.codegen.targetPlatform=«version»
+            org.eclipse.jdt.core.compiler.codegen.unusedLocal=preserve
+            org.eclipse.jdt.core.compiler.compliance=«version»
+            org.eclipse.jdt.core.compiler.debug.lineNumber=generate
+            org.eclipse.jdt.core.compiler.debug.localVariable=generate
+            org.eclipse.jdt.core.compiler.debug.sourceFile=generate
+            org.eclipse.jdt.core.compiler.problem.assertIdentifier=error
+            org.eclipse.jdt.core.compiler.problem.enumIdentifier=error
+            org.eclipse.jdt.core.compiler.source=«version»
+        '''.writeToFile(fileWriter,
+            KlighdWizardSetup.SETTINGS_FOLDER + '/' + KlighdWizardSetup.JDT_PREFS_FILE);
     }
 
     def private contributeXtendTransformationFile(IFileCreator fileWriter) {
@@ -92,6 +99,8 @@ class KlighdProjectContributor implements IProjectFactoryContributor {
             import de.cau.cs.kieler.core.krendering.extensions.KPolylineExtensions
             import de.cau.cs.kieler.core.krendering.extensions.KColorExtensions
             import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
+            
+            import static de.cau.cs.kieler.klighd.syntheses.DiagramLayoutOptions.*
             
             import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
             
@@ -115,6 +124,9 @@ class KlighdProjectContributor implements IProjectFactoryContributor {
                     
                     // Your dsl element <-> diagram figure mapping goes here!!
                     
+                    // Notice the statically imported classes 'DiagramSyntheses' and 'DiagramLayoutOptions'
+                    //  that contribute direct access to a couple of (layout) configurations
+                    
                     return root;
                 }
                 
@@ -128,14 +140,26 @@ class KlighdProjectContributor implements IProjectFactoryContributor {
         '''
             package «projectInfo.transformationPackage»;
             
+            import static de.cau.cs.kieler.klighd.syntheses.DiagramLayoutOptions.*;
+            import static de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*;
+            
             import de.cau.cs.kieler.core.kgraph.KNode;
+            import de.cau.cs.kieler.kiml.util.KimlUtil;
             import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis;
             import «projectInfo.sourceModelClassFullyQualified»;
             
             public class «projectInfo.transformationName» extends AbstractDiagramSynthesis<«projectInfo.sourceModelClassSimple»> {
             
                 public KNode transform(final «projectInfo.sourceModelClassSimple» model) {
-                    throw new UnsupportedOperationException("TODO: auto-generated method stub");
+                    final KNode root = KimlUtil.createInitializedNode();
+                    associateWith(root, model);
+                    
+                    // Your dsl element <-> diagram figure mapping goes here!!
+                    
+                    // Notice the statically imported classes 'DiagramSyntheses' and 'DiagramLayoutOptions'
+                    //  that contribute direct access to a couple of (layout) configurations
+                    
+                    return root;
                 }
             }
         '''.writeToFile(fileWriter, getTransformationPath() + ".java")
@@ -145,16 +169,6 @@ class KlighdProjectContributor implements IProjectFactoryContributor {
     def private getTransformationPath() {
         KlighdWizardSetup.SRC_FOLDER + projectInfo.transformationPackage.replace(".", "/") + "/" +
             projectInfo.transformationName
-    }
-
-    def private contributeBuildProperties(IFileCreator fileWriter) {
-        '''
-            source.. = «IF projectInfo.createXtendFile»xtend-gen/,\«ENDIF»
-                      src/
-            bin.includes = META-INF/,\
-                    plugin.xml,\
-                         .
-        '''.writeToFile(fileWriter, "build.properties")
     }
 
     def private contributePluginExtensions(IFileCreator fileWriter) {

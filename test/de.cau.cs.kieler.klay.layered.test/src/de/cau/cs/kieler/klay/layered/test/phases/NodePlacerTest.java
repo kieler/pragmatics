@@ -36,6 +36,7 @@ import de.cau.cs.kieler.klay.layered.p4nodes.LinearSegmentsNodePlacer;
 import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
 import de.cau.cs.kieler.klay.layered.p4nodes.bk.BKNodePlacer;
 import de.cau.cs.kieler.klay.layered.p4nodes.bk.ICompactor.CompactionStrategy;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 import de.cau.cs.kieler.klay.layered.test.AbstractLayeredProcessorTest;
 import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
@@ -165,10 +166,10 @@ public class NodePlacerTest extends AbstractLayeredProcessorTest {
     
     private double getSpacing(final LGraph g, final LNode n1, final LNode n2) {
         
-        float normalSpacing = g.getProperty(Properties.OBJ_SPACING) 
+        float normalSpacing = g.getProperty(InternalProperties.SPACING) 
                 * g.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
         float smallSpacing = normalSpacing * g.getProperty(Properties.EDGE_SPACING_FACTOR);
-        float externalPortSpacing = g.getProperty(Properties.PORT_SPACING);
+        float externalPortSpacing = g.getProperty(InternalProperties.PORT_SPACING);
         
         double spacing = smallSpacing;
         if (n1.getNodeType() == NodeType.EXTERNAL_PORT

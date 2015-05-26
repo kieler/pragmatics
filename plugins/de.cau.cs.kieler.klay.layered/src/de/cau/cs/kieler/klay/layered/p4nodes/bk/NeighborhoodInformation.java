@@ -24,7 +24,7 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.properties.Properties;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 
 /**
  * Class holds neighborhood information for a layered graph that is used during bk node placing.
@@ -125,14 +125,14 @@ public final class NeighborhoodInformation {
                 int maxPriority = 0;
 
                 for (LEdge edge : n.getOutgoingEdges()) {
-                    if (edge.getProperty(Properties.PRIORITY) > maxPriority) {
-                        maxPriority = edge.getProperty(Properties.PRIORITY);
+                    if (edge.getProperty(InternalProperties.PRIORITY) > maxPriority) {
+                        maxPriority = edge.getProperty(InternalProperties.PRIORITY);
                     }
                 }
 
                 for (LEdge edge : n.getOutgoingEdges()) {
                     if (n.getLayer() != edge.getTarget().getNode().getLayer()
-                            && edge.getProperty(Properties.PRIORITY) == maxPriority) {
+                            && edge.getProperty(InternalProperties.PRIORITY) == maxPriority) {
 
                         result.add(Pair.of(edge.getTarget().getNode(), edge));
                     }
@@ -159,14 +159,14 @@ public final class NeighborhoodInformation {
                 int maxPriority = 0;
                 
                 for (LEdge edge : n.getIncomingEdges()) {
-                    if (edge.getProperty(Properties.PRIORITY) > maxPriority) {
-                        maxPriority = edge.getProperty(Properties.PRIORITY);
+                    if (edge.getProperty(InternalProperties.PRIORITY) > maxPriority) {
+                        maxPriority = edge.getProperty(InternalProperties.PRIORITY);
                     }
                 }
                 
                 for (LEdge edge : n.getIncomingEdges()) {
                     if (n.getLayer() != edge.getSource().getNode().getLayer()
-                            && edge.getProperty(Properties.PRIORITY) == maxPriority) {
+                            && edge.getProperty(InternalProperties.PRIORITY) == maxPriority) {
                         result.add(Pair.of(edge.getSource().getNode(), edge));
                     }
                 }

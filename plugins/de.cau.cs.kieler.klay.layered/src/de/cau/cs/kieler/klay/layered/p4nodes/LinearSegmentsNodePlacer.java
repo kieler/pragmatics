@@ -236,11 +236,11 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
                 int inprio = Integer.MIN_VALUE, outprio = Integer.MIN_VALUE;
                 for (LPort port : node.getPorts()) {
                     for (LEdge edge : port.getIncomingEdges()) {
-                        int prio = edge.getProperty(Properties.PRIORITY);
+                        int prio = edge.getProperty(InternalProperties.PRIORITY);
                         inprio = Math.max(inprio, prio);
                     }
                     for (LEdge edge : port.getOutgoingEdges()) {
-                        int prio = edge.getProperty(Properties.PRIORITY);
+                        int prio = edge.getProperty(InternalProperties.PRIORITY);
                         outprio = Math.max(outprio, prio);
                     }
                 }
@@ -545,11 +545,11 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
      *            the layered graph to create an unbalanced placement for.
      */
     private void createUnbalancedPlacement(final LGraph layeredGraph) {
-        float normalSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING)
+        float normalSpacing = layeredGraph.getProperty(InternalProperties.SPACING)
                 * layeredGraph.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
         float smallSpacing = normalSpacing
                 * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
-        float externalPortSpacing = layeredGraph.getProperty(Properties.PORT_SPACING);
+        float externalPortSpacing = layeredGraph.getProperty(InternalProperties.PORT_SPACING);
 
         // How many nodes are currently placed in each layer
         int[] nodeCount = new int[layeredGraph.getLayers().size()];
@@ -629,10 +629,10 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
      * @param layeredGraph a layered graph
      */
     private void balancePlacement(final LGraph layeredGraph) {
-        float spacing = layeredGraph.getProperty(Properties.OBJ_SPACING)
+        float spacing = layeredGraph.getProperty(InternalProperties.SPACING)
                 * layeredGraph.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
         float smallSpacing = spacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
-        float externalPortSpacing = layeredGraph.getProperty(Properties.PORT_SPACING);
+        float externalPortSpacing = layeredGraph.getProperty(InternalProperties.PORT_SPACING);
         double deflectionDampening = layeredGraph.getProperty(
                 Properties.LINEAR_SEGMENTS_DEFLECTION_DAMPENING).doubleValue();
         
@@ -730,7 +730,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
                         if (segment != linearSegments[otherNode.id]) {
                             int otherPrio = Math.max(otherNode.getProperty(INPUT_PRIO),
                                     otherNode.getProperty(OUTPUT_PRIO));
-                            int prio = edge.getProperty(Properties.PRIORITY);
+                            int prio = edge.getProperty(InternalProperties.PRIORITY);
                             if (prio >= minPrio && prio >= otherPrio) {
                                 nodeDeflection += otherNode.getPosition().y
                                         + otherPort.getPosition().y + otherPort.getAnchor().y
@@ -748,7 +748,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
                         if (segment != linearSegments[otherNode.id]) {
                             int otherPrio = Math.max(otherNode.getProperty(INPUT_PRIO),
                                     otherNode.getProperty(OUTPUT_PRIO));
-                            int prio = edge.getProperty(Properties.PRIORITY);
+                            int prio = edge.getProperty(InternalProperties.PRIORITY);
                             if (prio >= minPrio && prio >= otherPrio) {
                                 nodeDeflection += otherNode.getPosition().y
                                         + otherPort.getPosition().y + otherPort.getAnchor().y
@@ -858,7 +858,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
      *            the layered graph
      */
     private void postProcess(final LGraph layeredGraph) {
-        float normalSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING)
+        float normalSpacing = layeredGraph.getProperty(InternalProperties.SPACING)
                 * layeredGraph.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
         float smallSpacing = normalSpacing
                 * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);

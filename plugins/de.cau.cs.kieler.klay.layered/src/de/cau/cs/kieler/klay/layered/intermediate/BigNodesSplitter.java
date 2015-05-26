@@ -35,7 +35,6 @@ import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
-import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * This processor splits bignode, i.e. nodes that are wider than most of the diagram's nodes. The
@@ -152,7 +151,7 @@ public class BigNodesSplitter implements ILayoutProcessor {
         }
 
         // the object spacing in the drawn graph
-        spacing = layeredGraph.getProperty(Properties.OBJ_SPACING).doubleValue();
+        spacing = layeredGraph.getProperty(InternalProperties.SPACING).doubleValue();
         direction = layeredGraph.getProperty(LayoutOptions.DIRECTION);
         // the ID for the most recently created dummy node
         dummyID = nodes.size();

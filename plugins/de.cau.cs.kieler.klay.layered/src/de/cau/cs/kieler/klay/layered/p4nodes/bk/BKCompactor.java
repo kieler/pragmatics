@@ -25,6 +25,7 @@ import de.cau.cs.kieler.klay.layered.p4nodes.bk.BKAlignedLayout.HDirection;
 import de.cau.cs.kieler.klay.layered.p4nodes.bk.BKAlignedLayout.VDirection;
 import de.cau.cs.kieler.klay.layered.p4nodes.bk.ThresholdStrategy.NullThresholdStrategy;
 import de.cau.cs.kieler.klay.layered.p4nodes.bk.ThresholdStrategy.SimpleThresholdStrategy;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -60,10 +61,10 @@ public class BKCompactor implements ICompactor {
         this.layeredGraph = layeredGraph;
         this.ni = ni;
         // Initialize spacing value from layout options.
-        normalSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING) 
+        normalSpacing = layeredGraph.getProperty(InternalProperties.SPACING) 
                 * layeredGraph.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
         smallSpacing = normalSpacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
-        externalPortSpacing = layeredGraph.getProperty(Properties.PORT_SPACING);
+        externalPortSpacing = layeredGraph.getProperty(InternalProperties.PORT_SPACING);
         
         // configure the requested threshold strategy
         if (layeredGraph.getProperty(Properties.COMPACTION_STRATEGY) 
