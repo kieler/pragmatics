@@ -21,3 +21,4 @@ Export-Package: de.cau.cs.kieler.klay.layered,
  de.cau.cs.kieler.klay.layered.p5edges,
  de.cau.cs.kieler.klay.layered.p5edges.splines,
  de.cau.cs.kieler.klay.layered.properties
+Import-Package: com.google.common.collect
