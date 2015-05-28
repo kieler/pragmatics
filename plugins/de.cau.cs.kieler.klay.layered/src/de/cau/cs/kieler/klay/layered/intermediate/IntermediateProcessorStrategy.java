@@ -55,6 +55,9 @@ public enum IntermediateProcessorStrategy {
     
     // Before Phase 3
     
+
+    /** Node-promotion for prettier graphs. */
+    NODE_PROMOTION,
     /** Makes sure that layer constraints are taken care of. */
     LAYER_CONSTRAINT_PROCESSOR,
     /** Handles northern and southern hierarchical ports. */
@@ -76,7 +79,7 @@ public enum IntermediateProcessorStrategy {
     /** Orders the port lists of nodes with fixed port order. */
     PORT_LIST_SORTER,
     /** Inserts dummy nodes to take care of northern and southern ports. */
-    NORTH_SOUTH_PORT_PREPROCESSOR,
+    NORTH_SOUTH_PORT_PREPROCESSOR, 
    
     
     // Before Phase 4
@@ -213,6 +216,9 @@ public enum IntermediateProcessorStrategy {
             
         case LABEL_SIDE_SELECTOR:
             return new LabelSideSelector();
+            
+        case NODE_PROMOTION:
+            return new NodePromotion();
         
         case LAYER_CONSTRAINT_PROCESSOR:
             return new LayerConstraintProcessor();

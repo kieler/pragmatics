@@ -33,6 +33,12 @@ import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
  * @kieler.rating proposed yellow by msp
  */
 public final class Properties {
+    
+    /** JAVADOC! TODO!!
+     * 
+     */
+    public static final IProperty<Boolean> NODE_PROMOTION = new Property<Boolean>(
+            "de.cau.cs.kieler.klay.layered.nodePromotion", true);
 
     /**
      * A pre-defined seed for pseudo-random number generators.

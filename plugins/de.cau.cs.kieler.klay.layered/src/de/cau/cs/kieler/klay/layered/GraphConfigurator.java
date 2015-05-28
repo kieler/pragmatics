@@ -280,6 +280,12 @@ final class GraphConfigurator {
                 .addBeforePhase1(IntermediateProcessorStrategy.COMMENT_PREPROCESSOR)
                 .addAfterPhase5(IntermediateProcessorStrategy.COMMENT_POSTPROCESSOR);
         }
+        
+        // Node-Promotion appliable for improvement of graph
+        if (lgraph.getProperty(Properties.NODE_PROMOTION)) {
+            configuration
+                .addBeforePhase3(IntermediateProcessorStrategy.NODE_PROMOTION);
+        }
 
         return configuration;
     }
