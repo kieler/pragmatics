@@ -19,6 +19,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -28,16 +29,37 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 
 /**
- * TODO: NEW COMMENTS, This is only a copy of the longest path layerer!
+ * Implementation of the heuristic MinWidth for solving the NP-hard minimum-width layering problem
+ * with consideration of dummy nodes. MinWidth is based on the longest-path algorithm, which finds
+ * layerings with the minimum height, but doesn't consider the width of the graph. MinWidth also
+ * considers an upper bound on the width of a given graph.
  * 
- * The most basic layering algorithm, which assign layers according to the longest path to a sink.
+ * The algorithm is described in
+ * <ul>
+ * <li>Nikola S. Nikolov, Alexandre Tarassov, and Jürgen Branke. 2005. In search for efficient
+ * heuristics for minimum-width graph layering with consideration of dummy nodes. J. Exp.
+ * Algorithmics 10, Article 2.7 (December 2005). DOI=10.1145/1064546.1180618
+ * http://doi.acm.org/10.1145/1064546.1180618</li>
+ * </ul>
+ * 
+ * MinWidth takes two additional parameters, which can be configured as a property:
+ * <ul>
+ * <li>Upper Bound On Width (de.cau.cs.kieler.klay.layered.minWidthUpperBoundOnWidth) – Defines a
+ * loose upper bound on the width of the MinWidth layerer. Defaults to 4, lower bound is 1.</li>
+ * <li>Upper Layer Estimation Scaling Factor
+ * (de.cau.cs.kieler.klay.layered.minWidthUpperLayerEstimationScalingFactor) – Multiplied with Upper
+ * Bound On Width for defining an upper bound on the width of layers which haven't been determined
+ * yet, but whose maximum width had been (roughly) estimated by the MinWidth algorithm. Compensates
+ * for too high estimations. Defaults to 2, lower bound is 1.</li>
+ * </ul>
  * 
  * <dl>
  * <dt>Precondition:</dt>
- * <dd>the graph has no cycles</dd>
+ * <dd>the graph has no cycles, but might contain self-loops</dd>
  * <dt>Postcondition:</dt>
  * <dd>all nodes have been assigned a layer such that edges connect only nodes from layers with
  * increasing indices</dd>
@@ -53,7 +75,6 @@ public final class MinWidthLayerer implements ILayoutPhase {
             final LGraph graph) {
         return IntermediateProcessingConfiguration
                 .createEmpty()
-                // Look at doku
                 .addBeforePhase1(
                         IntermediateProcessorStrategy.EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER)
                 .addBeforePhase3(IntermediateProcessorStrategy.LAYER_CONSTRAINT_PROCESSOR);
@@ -63,109 +84,132 @@ public final class MinWidthLayerer implements ILayoutPhase {
      * {@inheritDoc}
      */
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor progressMonitor) {
+        progressMonitor.begin("MinWidth layering", 1);
         List<Layer> layers = layeredGraph.getLayers();
         List<LNode> notInserted = layeredGraph.getLayerlessNodes();
-        // Requieres: DAG G = (V, E) ~ Type LGraph, integers UBW and c ~ hard coded for now, worry
-        // worry about config later. In this version selfloops are allowed.
-        final int ubw = 4;
-        final int c = 1;
 
-        // Guarantee ConditionSelect by ordering the nodes by descending maximum outdegree in
-        // advance.
-        // We're using the nodes id property to store the outdegree (so it's not an id anymore in
-        // the
-        // strict sense, as it might not be unique).
-        for (LNode node : notInserted) {
-            node.id = countElems(node.getOutgoingEdges());
-        }
-        notInserted.sort(new MaxOutgoingEdgesComparator());
-        // LinkesHassets respect ordering
-        Set<LNode> v = new LinkedHashSet<LNode>(notInserted);
-
-        // first naive implementation of the minWidth-algorithm
-        Set<LNode> u = new HashSet<LNode>();
-        Set<LNode> z = new HashSet<LNode>();
-
-        Layer currentLayer = new Layer(layeredGraph);
-        layers.add(currentLayer);
-        int widthCurrent = 0;
-        int widthUp = 0;
+        // Some local variables we're going to use in the while-loop of the MinWidth algorithm down
+        // below
         boolean noNodeSelected = false;
         int inDegree = 0;
-        // better defaultvalue?
         int outDegree = 0;
 
-        while (!u.equals(v)) {
-            // Use some googly magic: TODO: Explain.
-            SetView<LNode> vWithoutU = com.google.common.collect.Sets.difference(v, u);
+        // Requires: DAG G = (V, E). In this version self-loops are allowed.
+        // Additional properties as described above (called UBW and c in the original paper):
+        final int upperBoundOnWidth = layeredGraph.getProperty(Properties.UPPER_BOUND_ON_WIDTH);
+        final int compensator =
+                layeredGraph.getProperty(Properties.UPPER_LAYER_ESTIMATION_SCALING_FACTOR);
 
+        // Guarantee ConditionSelect from the paper, which states that nodes with maximum outdegree
+        // should be preferred during layer placement, by ordering the nodes by descending maximum
+        // outdegree in advance.
+        // We're using the nodes id property to store the outdegree (so it's not an id anymore in
+        // the strict sense, as it might not be unique).
+        for (LNode node : notInserted) {
+            node.id = countEdgesExceptSelfLoops(node.getOutgoingEdges());
+        }
+        notInserted.sort(new MaxOutgoingEdgesComparator());
+
+        // This naive implementation uses sets, just like in the papers pseudocode. We use a
+        // LinkedHashSet for the set of al real nodes of the graph in order to maintain the ordering
+        // by maximum outdegree.
+        Set<LNode> allNodes = new LinkedHashSet<LNode>(notInserted);
+
+        // The actual algorithm from the paper begins here:
+        // In the Paper the Set U contains all nodes, which have already been placed, and the set Z
+        // contains all nodes already placed in layers which have been determined before the
+        // currentLayer.
+        Set<LNode> alreadyPlacedNodes = new HashSet<LNode>();
+        Set<LNode> alreadyPlacedInOtherLayers = new HashSet<LNode>();
+
+        // Set up the first layers
+        Layer currentLayer = new Layer(layeredGraph);
+        layers.add(currentLayer);
+
+        // Intial values for the width of the current layer and the estimated width of the coming
+        // layers
+        int widthCurrent = 0;
+        int widthUp = 0;
+
+        // As long as not all nodes have been placed in a layer, do:
+        while (!alreadyPlacedNodes.equals(allNodes)) {
+            // Creates a view of allNodes minus the alreadyPlacedNodes without modifying the given
+            // sets.
+            SetView<LNode> unplacedNodes = Sets.difference(allNodes, alreadyPlacedNodes);
+
+            // If you can find a node, whose edges only point to nodes in the Set
+            // alreadyPlacedInOtherLayers, the try block won't fail …
             try {
-                LNode currentNode = this.selectNode(vWithoutU, z);
+                // This block of code will only be completed, if a node can be found by the
+                // following instruction; see definition of selectNode(nodes, targets).
+                LNode currentNode = this.selectNode(unplacedNodes, alreadyPlacedInOtherLayers);
                 currentNode.setLayer(currentLayer);
-                u.add(currentNode);
-                // id==outDegree
+                alreadyPlacedNodes.add(currentNode);
+
                 outDegree = currentNode.id;
                 widthCurrent += 1 - outDegree;
-                inDegree = countElems(currentNode.getIncomingEdges());
+
+                inDegree = countEdgesExceptSelfLoops(currentNode.getIncomingEdges());
                 widthUp += inDegree;
-                // System.out.println("chosen: " + currentNode.id);
             } catch (NoElementLeftException e) { // In case no node can be found
+                // … otherwise make sure you're going to the next layer
                 noNodeSelected = true;
-                // System.out.println("no node chosen");
             }
-            if (noNodeSelected || (widthCurrent >= ubw && outDegree < 1) || widthUp >= c * ubw) {
-                // System.out.println("new layer");
+            // Go to the next layer if,
+            // 1) no node has been selected,
+            // 2) The conditionGoUp from the paper is satisfied, i.e.
+            // 2.1) the width of the current layer is greater than the upper bound on the width and
+            // the amount of dummy nodes in the layer can't be reduced, as only nodes with no
+            // outgoing edges are left for being considered for the current layer; or:
+            // 2.2) The estimated width of the not yet determined layers is greater than the
+            // scaling factor/compensator times the upper bound on the width.
+            if (noNodeSelected || (widthCurrent >= upperBoundOnWidth && outDegree < 1)
+                    || widthUp >= compensator * upperBoundOnWidth) {
                 noNodeSelected = false;
                 currentLayer = new Layer(layeredGraph);
-                /* Don't forget to add the layer to your graph! */
                 layers.add(currentLayer);
-                z.addAll(u);
+                alreadyPlacedInOtherLayers.addAll(alreadyPlacedNodes);
                 widthCurrent = widthUp;
                 widthUp = 0;
             }
-            
-//         // EVIL: Should have used breakpoints instead
-//            System.out.println("v: " + v);
-//            System.out.println("u: " + u);
-//            System.out.println("vOhneU: " + vWithoutU);
-//            String od = "vOhneU-grad: ";
-//            for (LNode node : vWithoutU) {
-//                od += node.id + " ";
-//            }
-//            System.out.println(od);
-//            System.out.println("z: " + z);
-//            System.out.println("---------------------------- ");
-
-            // layeredGraph.getProperty(Properties.) … I Need this for configuring ubw and c
         }
 
+        // The algorithm constructs the layering bottom up, but KlayLayered expects the list of
+        // layers to be ordered top down.
+        java.util.Collections.reverse(layers);
+        // After the algorithm, there should be no nodes left to be put in a layer.
         notInserted.clear();
-E        java.util.Collections.reverse(layers);
-//        System.out.println(layeredGraph.getLayers());
+
+        progressMonitor.done();
     }
 
     /**
+     * Returns the first LNode in the given SetView, whose outgoing edges end only in nodes of the
+     * Set targets. Self-loops are ignored.
+     * 
      * @param nodes
-     * @param successors
-     * @return
+     *            SetView to choose LNode from
+     * @param targets
+     *            Set of LNode
+     * @return chosen LNode from nodes, whose outgoing edges all end in a node contained in targets
      * @throws NoElementLeftException
+     *             when no node satisfies the condition.
      */
-    private LNode selectNode(final SetView<LNode> nodes, final Set<LNode> successors)
+    private LNode selectNode(final SetView<LNode> nodes, final Set<LNode> targets)
             throws NoElementLeftException {
         Set<LNode> outNodes = new HashSet<LNode>();
 
         for (LNode node : nodes) {
-            // System.out.println(node.id);
             outNodes.clear();
             Iterable<LEdge> outEdges = node.getOutgoingEdges();
 
             for (LEdge edge : outEdges) {
-                if (!edge.getSource().getNode().equals(edge.getTarget().getNode())) {
+                if (!isSelfLoop(edge)) {
                     outNodes.add(edge.getTarget().getNode());
                 }
             }
 
-            if (successors.containsAll(outNodes)) {
+            if (targets.containsAll(outNodes)) {
                 return node;
             }
         }
@@ -173,17 +217,16 @@ E        java.util.Collections.reverse(layers);
     }
 
     /**
-     * TODO: CHANGE DOC, Type not generic anymore. Returns the size of given Iterable. (Iterable
-     * doesn't have a method size().)
+     * Returns the amount of LEdge edges in the given Iterable, but ignores self-loops.
      * 
-     * @param iter
-     *            Iterable whose elements are to be counted
-     * @return size of given Iterable
+     * @param edges
+     *            Iterable whose edges without self-loops are to be counted
+     * @return amount of LEdge edges without self-loops
      */
-    private static int countElems(final Iterable<LEdge> edges) {
+    private static int countEdgesExceptSelfLoops(final Iterable<LEdge> edges) {
         int i = 0;
         for (LEdge edge : edges) {
-            if (!edge.getSource().getNode().equals(edge.getTarget().getNode())) {
+            if (!isSelfLoop(edge)) {
                 i++;
             }
         }
@@ -191,9 +234,19 @@ E        java.util.Collections.reverse(layers);
     }
 
     /**
-     * Comparator for determining whether a LNode has more outgoing edges than another one.
-     *
-     * Requires the LNode property "id" to be set to the number of outgoing edges of the node.
+     * Checks whether an edge is a self-loop (i.e. source node == target node).
+     * 
+     * @param edge
+     *            LEdge to be tested
+     * @return true if edge is self-loop, false otherwise
+     */
+    private static boolean isSelfLoop(final LEdge edge) {
+        return edge.getSource().getNode().equals(edge.getTarget().getNode());
+    }
+
+    /**
+     * Comparator for determining whether a LNode has more outgoing edges than another one. Requires
+     * the LNode property "id" to be set to the number of outgoing edges of the node.
      * 
      * @author mic
      */
@@ -224,144 +277,5 @@ E        java.util.Collections.reverse(layers);
     private class NoElementLeftException extends Exception {
         private static final long serialVersionUID = -7510397180858968135L;
     }
-
-    // /** intermediate processing configuration. */
-    // private static final IntermediateProcessingConfiguration BASELINE_PROCESSING_CONFIGURATION =
-    // IntermediateProcessingConfiguration.createEmpty()
-    // .addBeforePhase1(IntermediateProcessorStrategy.EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER)
-    // .addBeforePhase3(IntermediateProcessorStrategy.LAYER_CONSTRAINT_PROCESSOR);
-    //
-    // /** additional processor dependencies for handling big nodes. */
-    // private static final IntermediateProcessingConfiguration
-    // BIG_NODES_PROCESSING_ADDITIONS_AGGRESSIVE =
-    // IntermediateProcessingConfiguration.createEmpty()
-    // .addBeforePhase2(IntermediateProcessorStrategy.BIG_NODES_PREPROCESSOR)
-    // .addBeforePhase3(IntermediateProcessorStrategy.BIG_NODES_INTERMEDIATEPROCESSOR)
-    // .addAfterPhase5(IntermediateProcessorStrategy.BIG_NODES_POSTPROCESSOR);
-    //
-    // /** additional processor dependencies for handling big nodes after cross min. */
-    // private static final IntermediateProcessingConfiguration
-    // BIG_NODES_PROCESSING_ADDITIONS_CAREFUL =
-    // IntermediateProcessingConfiguration.createEmpty()
-    // .addBeforePhase4(IntermediateProcessorStrategy.BIG_NODES_SPLITTER)
-    // .addAfterPhase5(IntermediateProcessorStrategy.BIG_NODES_POSTPROCESSOR);
-    //
-    // /** the layered graph to which layers are added. */
-    // private LGraph layeredGraph;
-    // /** map of nodes to their height in the layering. */
-    // private int[] nodeHeights;
-    //
-    // /**
-    // * {@inheritDoc}
-    // */
-    // @SuppressWarnings("deprecation")
-    // public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
-    // final LGraph graph) {
-    //
-    // // Basic strategy
-    // IntermediateProcessingConfiguration strategy =
-    // IntermediateProcessingConfiguration.fromExisting(BASELINE_PROCESSING_CONFIGURATION);
-    //
-    // // Additional dependencies
-    // if (graph.getProperty(Properties.DISTRIBUTE_NODES)
-    // || graph.getProperty(Properties.WIDE_NODES_ON_MULTIPLE_LAYERS)
-    // == WideNodesStrategy.AGGRESSIVE) {
-    // strategy.addAll(BIG_NODES_PROCESSING_ADDITIONS_AGGRESSIVE);
-    //
-    // } else if (graph.getProperty(Properties.WIDE_NODES_ON_MULTIPLE_LAYERS)
-    // == WideNodesStrategy.CAREFUL) {
-    // strategy.addAll(BIG_NODES_PROCESSING_ADDITIONS_CAREFUL);
-    // }
-    //
-    // if (graph.getProperty(Properties.SAUSAGE_FOLDING)) {
-    // strategy.addBeforePhase4(IntermediateProcessorStrategy.SAUSAGE_COMPACTION);
-    // }
-    //
-    // return strategy;
-    // }
-    //
-    // /**
-    // * {@inheritDoc}
-    // */
-    // public void process(final LGraph thelayeredGraph, final IKielerProgressMonitor monitor) {
-    // monitor.begin("Longest path layering", 1);
-    //
-    // layeredGraph = thelayeredGraph;
-    // List<LNode> nodes = layeredGraph.getLayerlessNodes();
-    //
-    // // initialize values required for the computation
-    // nodeHeights = new int[nodes.size()];
-    // int index = 0;
-    // for (LNode node : nodes) {
-    // // the node id is used as index for the nodeHeights array
-    // node.id = index;
-    // nodeHeights[index] = -1;
-    // index++;
-    // }
-    //
-    // // process all nodes
-    // for (LNode node : nodes) {
-    // visit(node);
-    // }
-    //
-    // // empty the list of unlayered nodes
-    // nodes.clear();
-    //
-    // // release the created resources
-    // this.layeredGraph = null;
-    // this.nodeHeights = null;
-    //
-    // monitor.done();
-    // }
-    //
-    //
-    // /**
-    // * Visit a node: if not already visited, find the longest path to a sink.
-    // *
-    // * @param node node to visit
-    // * @return height of the given node in the layered graph
-    // */
-    // private int visit(final LNode node) {
-    // int height = nodeHeights[node.id];
-    // if (height >= 0) {
-    // // the node was already visited (the case height == 0 should never occur)
-    // return height;
-    // } else {
-    // int maxHeight = 1;
-    // for (LPort port : node.getPorts()) {
-    // for (LEdge edge : port.getOutgoingEdges()) {
-    // LNode targetNode = edge.getTarget().getNode();
-    //
-    // // ignore self-loops
-    // if (node != targetNode) {
-    // int targetHeight = visit(targetNode);
-    // maxHeight = Math.max(maxHeight, targetHeight + 1);
-    // }
-    // }
-    // }
-    // putNode(node, maxHeight);
-    // return maxHeight;
-    // }
-    // }
-    //
-    // /**
-    // * Puts the given node into the layered graph, adding new layers as necessary.
-    // *
-    // * @param node a node
-    // * @param height height of the layer where the node shall be added
-    // * (height = number of layers - layer index)
-    // */
-    // private void putNode(final LNode node, final int height) {
-    // List<Layer> layers = layeredGraph.getLayers();
-    //
-    // // add layers so as to guarantee that number of layers >= height
-    // for (int i = layers.size(); i < height; i++) {
-    // layers.add(0, new Layer(layeredGraph));
-    // }
-    //
-    // // layer index = number of layers - height
-    // node.setLayer(layers.get(layers.size() - height));
-    // nodeHeights[node.id] = height;
-    // }
 
 }

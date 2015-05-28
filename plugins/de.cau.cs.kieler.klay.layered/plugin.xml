@@ -420,5 +420,25 @@
             name="Content Alignment"
             type="enumset">
       </layoutOption>
+      <layoutOption
+            advanced="false"
+            appliesTo="parents"
+            default="4"
+            description="Defines a loose upper bound on the width of the MinWidth layerer."
+            id="de.cau.cs.kieler.klay.layered.minWidthUpperBoundOnWidth"
+            lowerBound="1"
+            name="Upper Bound On Width [MinWidth Layerer]"
+            type="int">
+      </layoutOption>
+      <layoutOption
+            advanced="false"
+            appliesTo="parents"
+            default="2"
+            description="Multiplied with Upper Bound On Width for defining an upper bound on the width of layers which haven&apos;t been determined yet, but whose maximum width had been (roughly) estimated by the MinWidth algorithm. Compensates for too high estimations."
+            id="de.cau.cs.kieler.klay.layered.minWidthUpperLayerEstimationScalingFactor"
+            lowerBound="1"
+            name="Upper Layer Estimation Scaling Factor [MinWidth Layerer]"
+            type="int">
+      </layoutOption>
    </extension>
 </plugin>

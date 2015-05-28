@@ -35,17 +35,17 @@ public enum LayeringStrategy implements ILayoutPhaseFactory {
      */
     LONGEST_PATH,
     /**
-     * Nodes are put into layers according to their relative position. The actual positions
-     * as given in the input diagram are considered here. This means that if the user moves
-     * a node, that movement is reflected in the layering of the graph.
+     * Nodes are put into layers according to their relative position. The actual positions as given
+     * in the input diagram are considered here. This means that if the user moves a node, that
+     * movement is reflected in the layering of the graph.
      */
     INTERACTIVE,
     /**
-     * TODO: Comment.
+     * Implementation of the heuristic MinWidth for solving the NP-hard minimum-width layering
+     * problem with consideration of dummy nodes.
      */
     MIN_WIDTH;
 
-    
     /**
      * {@inheritDoc}
      */
@@ -53,19 +53,19 @@ public enum LayeringStrategy implements ILayoutPhaseFactory {
         switch (this) {
         case NETWORK_SIMPLEX:
             return new NetworkSimplexLayerer();
-            
+
         case LONGEST_PATH:
             return new LongestPathLayerer();
-            
+
         case INTERACTIVE:
             return new InteractiveLayerer();
-            
+
         case MIN_WIDTH:
             return new MinWidthLayerer();
-            
+
         default:
-            throw new IllegalArgumentException(
-                    "No implementation is available for the layerer " + this.toString());
+            throw new IllegalArgumentException("No implementation is available for the layerer "
+                    + this.toString());
         }
     }
 
