@@ -96,10 +96,13 @@ public class StretchWidth implements ILayoutPhase {
         // end if
         // end while
 
+        progressMonitor.begin("StretchWidth", 1);
+        System.out.println("start");
         // set graph
         currentGraph = layeredGraph;
         // Layer currently worked on
         Layer currentLayer = new Layer(currentGraph);
+        currentGraph.getLayers().add(currentLayer);
         // compute average out-degree
         computeAverageDegree();
         // sort the nodes at beginning, since the rank will not change
@@ -119,6 +122,7 @@ public class StretchWidth implements ILayoutPhase {
             if (selectedNode == null || (conditionGoUp() && !diff.isEmpty())) {
                 /* go to the next layer */
                 currentLayer = new Layer(currentGraph);
+                currentGraph.getLayers().add(currentLayer);
                 // union of z and u in z
                 z.addAll(u);
                 // change width
@@ -131,6 +135,8 @@ public class StretchWidth implements ILayoutPhase {
                     currentGraph.getLayers().clear();
                     // create the new first layer;
                     currentLayer = new Layer(currentGraph);
+                    currentGraph.getLayers().add(currentLayer);
+
                     // reset variables
                     widthCurrent = 0;
                     widthUp = 0;
@@ -138,6 +144,8 @@ public class StretchWidth implements ILayoutPhase {
                     z.clear();
                     // increase maxWidth
                     maxWidth++;
+                    // reset layerless nodes
+                    tempLayerlessNodes = Lists.newArrayList(sortedLayerlessNodes);
 
                 } else {
                     /* add node to current layer */
@@ -148,8 +156,8 @@ public class StretchWidth implements ILayoutPhase {
                     // add node to u
                     u.add(selectedNode);
                     // compute new widthCurrent and widthUp
-                    widthCurrent -= getOutDegree(selectedNode);
-                    widthUp += getInDegree(selectedNode);
+                    widthCurrent = widthCurrent - getOutDegree(selectedNode) + 1;
+                    widthUp = widthUp + getInDegree(selectedNode);
 
                 }
             }
@@ -158,8 +166,10 @@ public class StretchWidth implements ILayoutPhase {
 
         // layering done, delete original layerlessNodes
         layeredGraph.getLayerlessNodes().clear();
+        //
         // Algorithm is Bottom-Up -> reverse Layers
         java.util.Collections.reverse(layeredGraph.getLayers());
+        progressMonitor.done();
     }
 
     /**
@@ -186,8 +196,6 @@ public class StretchWidth implements ILayoutPhase {
             }
             // if all successors of node are n z, choose this node, since the list is sorted by rank
             if (z.containsAll(accSucc)) {
-                // one could discuss if this would be better placed here oder in the wile-loop:
-                // tempLayerlessNodes.remove(node);
                 return node;
             }
             accSucc.clear();
@@ -216,9 +224,9 @@ public class StretchWidth implements ILayoutPhase {
             public int compare(final Pair<LNode, Integer> o1, final Pair<LNode, Integer> o2) {
                 // descending sort
                 if ((Integer) o1.getSecond() < (Integer) o2.getSecond()) {
-                    return -1;
-                } else if ((Integer) o1.getSecond() > (Integer) o2.getSecond()) {
                     return 1;
+                } else if ((Integer) o1.getSecond() > (Integer) o2.getSecond()) {
+                    return -1;
                 }
                 return 0;
             }
@@ -260,9 +268,8 @@ public class StretchWidth implements ILayoutPhase {
      * @return out-degree of the node
      */
     private Integer getOutDegree(final LNode node) {
-        // TODO geht das?
         int i = 0;
-        while (node.getOutgoingEdges().iterator().hasNext()) {
+        for (LEdge edge : node.getOutgoingEdges()) {
             i++;
         }
         return i;
@@ -277,7 +284,7 @@ public class StretchWidth implements ILayoutPhase {
      */
     private Integer getInDegree(final LNode node) {
         int i = 0;
-        while (node.getIncomingEdges().iterator().hasNext()) {
+        for (LEdge edge : node.getIncomingEdges()) {
             i++;
         }
         return i;
