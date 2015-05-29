@@ -60,14 +60,14 @@ public class BKStraightener {
         final Set<LNode> roots = Sets.newHashSet();
         final Set<LNode> sinks = Sets.newHashSet();
 
-        roots.addAll(bal.blockSize.keySet());
-        for (Layer l : layeredGraph) {
-            for (LNode n : l) {
-                if (roots.contains(bal.align.get(n))) {
-                    sinks.add(n);
-                }
-            }
-        }
+//        roots.addAll(bal.blockSize.keySet());
+//        for (Layer l : layeredGraph) {
+//            for (LNode n : l) {
+//                if (roots.contains(bal.align.get(n))) {
+//                    sinks.add(n);
+//                }
+//            }
+//        }
 
         // start post-processing
         boolean didSomething = false;

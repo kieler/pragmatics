@@ -69,9 +69,9 @@ public class BKAligner {
         // Initialize root and align maps
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode v : layer.getNodes()) {
-                bal.root.put(v, v);
-                bal.align.put(v, v);
-                bal.innerShift.put(v, 0.0);
+                bal.root[v.id] = v;
+                bal.align[v.id] = v;
+                bal.innerShift[v.id] = 0.0;
             }
         }
 
@@ -119,7 +119,7 @@ public class BKAligner {
                     if (bal.vdir == VDirection.UP) {
                         // Check, whether v_i_k can be added to a block of its upper/lower neighbor(s)
                         for (int m = high; m >= low; m--) {
-                            if (bal.align.get(v_i_k).equals(v_i_k)) {
+                            if (bal.align[v_i_k.id].equals(v_i_k)) {
                                 Pair<LNode, LEdge> u_m_pair = neighbors.get(m);
                                 LNode u_m = u_m_pair.getFirst();
                                 
@@ -127,9 +127,9 @@ public class BKAligner {
                                 // ensures that at least one edge exists
                                 if (!markedEdges.contains(u_m_pair.getSecond()) 
                                         && r > ni.nodeIndex[u_m.id]) {
-                                    bal.align.put(u_m, v_i_k);
-                                    bal.root.put(v_i_k, bal.root.get(u_m));
-                                    bal.align.put(v_i_k, bal.root.get(v_i_k));
+                                    bal.align[u_m.id] =  v_i_k;
+                                    bal.root[v_i_k.id] = bal.root[u_m.id];
+                                    bal.align[v_i_k.id] = bal.root[v_i_k.id];
                                     
                                     r = ni.nodeIndex[u_m.id];
                                 }
@@ -138,15 +138,15 @@ public class BKAligner {
                     } else {
                         // Check, whether vik can be added to a block of its upper/lower neighbor(s)
                         for (int m = low; m <= high; m++) {
-                            if (bal.align.get(v_i_k).equals(v_i_k)) {
+                            if (bal.align[v_i_k.id].equals(v_i_k)) {
                                 Pair<LNode, LEdge> um_pair = neighbors.get(m);
                                 LNode um = um_pair.getFirst();
                                 
                                 if (!markedEdges.contains(um_pair.getSecond()) 
                                         && r < ni.nodeIndex[um.id]) {
-                                    bal.align.put(um, v_i_k);
-                                    bal.root.put(v_i_k, bal.root.get(um));
-                                    bal.align.put(v_i_k, bal.root.get(v_i_k));
+                                    bal.align[um.id] = v_i_k;
+                                    bal.root[v_i_k.id] = bal.root[um.id];
+                                    bal.align[v_i_k.id] = bal.root[v_i_k.id];
                                     
                                     r = ni.nodeIndex[um.id];
                                 }
@@ -181,12 +181,12 @@ public class BKAligner {
             // Reserve space for the root node
             spaceAbove = root.getMargin().top;
             spaceBelow = root.getSize().y + root.getMargin().bottom;
-            bal.innerShift.put(root, 0.0);
+            bal.innerShift[root.id] = 0.0;
             
             // Iterate over all other nodes of the block
             LNode current = root;
             LNode next;
-            while ((next = bal.align.get(current)) != root) {
+            while ((next = bal.align[current.id]) != root) {
                 // Find the edge between the current and the next node
                 LEdge edge = getEdge(current, next);
                 
@@ -203,8 +203,8 @@ public class BKAligner {
                 
                 // The current node already has an inner shift value that we need to use as the basis
                 // to calculate the next node's inner shift
-                double nextInnerShift = bal.innerShift.get(current) + portPosDiff;
-                bal.innerShift.put(next, nextInnerShift);
+                double nextInnerShift = bal.innerShift[current.id] + portPosDiff;
+                bal.innerShift[next.id] = nextInnerShift;
                 
                 // Update the space required above and below the root node's top left corner
                 spaceAbove = Math.max(spaceAbove,
@@ -220,12 +220,12 @@ public class BKAligner {
             // corner (which the inner shifts are relative to at the moment)
             current = root;
             do {
-                bal.innerShift.put(current, bal.innerShift.get(current) + spaceAbove);
-                current = bal.align.get(current);
+                bal.innerShift[current.id] = bal.innerShift[current.id] + spaceAbove;
+                current = bal.align[current.id];
             } while (current  != root);
             
             // Remember the block size
-            bal.blockSize.put(root, spaceAbove + spaceBelow);
+            bal.blockSize[root.id] = spaceAbove + spaceBelow;
         }
     }
 
