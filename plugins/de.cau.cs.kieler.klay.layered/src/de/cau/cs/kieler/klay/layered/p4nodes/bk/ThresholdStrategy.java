@@ -322,20 +322,16 @@ public abstract class ThresholdStrategy {
                 double delta = bal.calculateDelta(fix, block);
     
                 if (delta > 0 && delta < THRESHOLD) {
-                    
                     // target y larger than source y --> shift upwards?
-                    if (bal.checkSpaceAbove(block.getNode(), delta)) {
-                        bal.shiftBlock(block.getNode(), -delta);
-                    }
+                    double availableSpace = bal.checkSpaceAbove(block.getNode(), delta);
+                    bal.shiftBlock(block.getNode(), -availableSpace);
+                    
                 } else if (delta < 0 && -delta < THRESHOLD) {
                     
                     // direction is up, we possibly shifted some blocks too far upward 
                     // for an edge to be straight, so check if we can shift down again
-                    
-                    // target y smaller than source y --> shift down?
-                    if (bal.checkSpaceBelow(block.getNode(), -delta)) {
-                        bal.shiftBlock(block.getNode(), -delta);
-                    }
+                    double availableSpace = bal.checkSpaceBelow(block.getNode(), -delta);
+                    bal.shiftBlock(block.getNode(), availableSpace);
                 }
                 
             }
@@ -577,18 +573,18 @@ public abstract class ThresholdStrategy {
                 if (delta > 0 && delta < THRESHOLD) {
 
                     // target y larger than source y --> shift upwards?
-                    if (bal.checkSpaceAbove(block.getNode(), delta)) {
-                        bal.shiftBlock(block.getNode(), -delta);
-                    }
+//                    if (bal.checkSpaceAbove(block.getNode(), delta)) {
+//                        bal.shiftBlock(block.getNode(), -delta);
+//                    }
                 } else if (delta < 0 && -delta < THRESHOLD) {
 
                     // direction is up, we possibly shifted some blocks too far upward
                     // for an edge to be straight, so check if we can shift down again
 
                     // target y smaller than source y --> shift down?
-                    if (bal.checkSpaceBelow(block.getNode(), -delta)) {
-                        bal.shiftBlock(block.getNode(), -delta);
-                    }
+//                    if (bal.checkSpaceBelow(block.getNode(), -delta)) {
+//                        bal.shiftBlock(block.getNode(), -delta);
+//                    }
                 }
 
             }

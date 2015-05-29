@@ -166,10 +166,12 @@ public final class BKAlignedLayout {
      *            root node of a block
      * @param delta
      *            a positive value
-     * @return true if there is space.
+     * @return A value smaller or equal to {@code delta} indicating the maximal distance the
+     *         block can be moved upward.
      */
-    public boolean checkSpaceAbove(final LNode blockRoot, final double delta) {
-       
+    public double checkSpaceAbove(final LNode blockRoot, final double delta) {
+        
+        double availableSpace = delta;
         final LNode rootNode = blockRoot;
         // iterate through the block
         LNode current = rootNode;
@@ -181,16 +183,15 @@ public final class BKAlignedLayout {
             LNode neighbor = getUpperNeighbor(current, current.getIndex()); // FIXME getindex SLOW
             if (neighbor != null) {
                 double maxYNeighbor = getMaxY(neighbor);
-
-                // can we shift the current node by delta upwards?
-                if (!(minYCurrent - delta - getSpacing(current, neighbor) >= maxYNeighbor)) {
-                    return false;
-                }
+                // minimal position at which the current block node could validly be placed
+                availableSpace =
+                        Math.min(availableSpace,
+                                minYCurrent - (maxYNeighbor + getSpacing(current, neighbor)));
             }
             // until we wrap around
         } while (rootNode != current);
 
-        return true;
+        return availableSpace;
     }
     
     /**
@@ -201,10 +202,12 @@ public final class BKAlignedLayout {
      *            root node of a block
      * @param delta
      *            a positive value
-     * @return true if there is space.
+     * @return A value smaller or equal to {@code delta} indicating the maximal distance the
+     *         block can be moved upward.
      */
-    public boolean checkSpaceBelow(final LNode blockRoot, final double delta) {
+    public double checkSpaceBelow(final LNode blockRoot, final double delta) {
 
+        double availableSpace = delta;
         final LNode rootNode = blockRoot;
         // iterate through the block
         LNode current = rootNode;
@@ -214,19 +217,19 @@ public final class BKAlignedLayout {
             double maxYCurrent = getMaxY(current);
 
             // get the lower neighbor and check its position allows shifting
-            LNode neighbour = getLowerNeighbor(current, current.getIndex()); // FIXME getindex SLOW
-            if (neighbour != null) {
-                double minYNeighbor = getMinY(neighbour);
+            LNode neighbor = getLowerNeighbor(current, current.getIndex()); // FIXME getindex SLOW
+            if (neighbor != null) {
+                double minYNeighbor = getMinY(neighbor);
 
-                // can we shift the current node by delta downwards?
-                if (!(maxYCurrent + delta + getSpacing(current, neighbour) <= minYNeighbor)) {
-                    return false;
-                }
+                // minimal position at which the current block node could validly be placed
+                availableSpace =
+                        Math.min(availableSpace,
+                                minYNeighbor - (maxYCurrent + getSpacing(current, neighbor)));
             }
             // until we wrap around
         } while (rootNode != current);
 
-        return true;
+        return availableSpace;
     }
     
     /**
@@ -237,7 +240,7 @@ public final class BKAlignedLayout {
         float spacing;
         if (n1.getNodeType() == NodeType.EXTERNAL_PORT || n2.getNodeType() == NodeType.EXTERNAL_PORT) {
             spacing = externalPortSpacing;
-        } else if (n1.getNodeType() != NodeType.NORMAL || n2.getNodeType() != NodeType.NORMAL) {
+        } else if (n1.getNodeType() != NodeType.NORMAL && n2.getNodeType() != NodeType.NORMAL) {
            spacing = smallSpacing; 
         } else {
             spacing = normalSpacing;

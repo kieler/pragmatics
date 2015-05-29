@@ -129,13 +129,13 @@ public class BKStraightener {
 
                         if (delta > 0) {
                             // target y larger than source y --> shift upwards?
-                            if (bal.checkSpaceAbove(block.getNode(), delta)) {
+                            if (bal.checkSpaceAbove(block.getNode(), delta) == delta) {
                                 bal.shiftBlock(block.getNode(), -delta);
                                 didSomething = true;
                             }
                         } else if (delta < 0) {
                             // target y smaller than source y --> shift down?
-                            if (bal.checkSpaceBelow(block.getNode(), -delta)) {
+                            if (bal.checkSpaceBelow(block.getNode(), -delta) == delta) {
                                 bal.shiftBlock(block.getNode(), -delta);
                                 didSomething = true;
                             }

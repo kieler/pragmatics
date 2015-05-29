@@ -69,7 +69,7 @@ public class NodePlacerTest extends AbstractLayeredProcessorTest {
      */
     protected TestPath[] getBundleTestPath() {
         return ObjectArrays.concat(super.getBundleTestPath(),
-                new TestPath("klay_layered/node_placement/bk", false, false, TestPath.Type.KGRAPH));
+                new TestPath("klay_layered/node_placement/bk", true, false, TestPath.Type.KGRAPH));
     }
 
     /**
