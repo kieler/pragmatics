@@ -35,7 +35,7 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
  */
 public class NodePromotion implements ILayoutProcessor {
 
-    /** Layering of the graph which is modified. */
+    /* Layering of the graph which is modified. */
     private List<Layer> layering;
 
     /** Holds all nodes of the graph that have incoming edges. */
@@ -49,9 +49,11 @@ public class NodePromotion implements ILayoutProcessor {
         progressMonitor.begin("Node-promotion heuristic", 1);
 
         setIndexforID(layeredGraph);
-        
+        System.out.println("Vorher: " + layeredGraph.getLayers());
+        java.util.Collections.reverse(layeredGraph.getLayers());
+        System.out.println("Nachher: " + layeredGraph.getLayers());
+
         layering = Lists.newArrayList(layeredGraph.getLayers());
-        debugStuff();
         nodesWithInEdges = Lists.newArrayList();
 
         int promotions;
@@ -59,30 +61,69 @@ public class NodePromotion implements ILayoutProcessor {
         List<Layer> layeringBackUp = Lists.newArrayList(layering);
 
         determineNodesWithInEdges(layeredGraph);
-        int var = 0;
         do {
             promotions = 0;
             // Start promotion for all nodes with incoming edges.
 
-            if (var < 3) {
-                debugStuff();
-                var++;
-            }
+            debugStuff();
             for (LNode nodeWithE : nodesWithInEdges) {
-                if (promoteNode(nodeWithE, layeredGraph) < 0) {
-                    promotions++;
-                    layeringBackUp.clear();
-                    layeringBackUp.addAll(layering);
+                int dummydiff = promoteNode(nodeWithE, layeredGraph);
+                if (dummydiff < 0) {
+                    if (layering.get(0).getNodes().isEmpty()) {
+                        layering = Lists.newArrayList(layeringBackUp);
+                    } else {
+                        promotions++;
+                        layeringBackUp = Lists.newArrayList(layering);
+                        System.out.println(layeredGraph.getLayers());
+                    }
                 } else {
-                    layering.clear();
-                    layering.addAll(layeringBackUp);
+                    layering = Lists.newArrayList(layeringBackUp);
                 }
+            }
+            System.out.println("rom " + promotions);
+            if (layering.get(0).getNodes().isEmpty()) {
+                promotions = 0;
             }
 
         } while (promotions != 0);
 
+        System.out.println("RAUS!");
+        System.out.println(layering);
+        List<Layer> lap = Lists.newArrayList();
+        for (Layer lay : layering) {
+            if (lay.getNodes().isEmpty())
+                lap.add(lay);
+        }
+        layering.removeAll(lap);
+        java.util.Collections.reverse(layering);
+        layeredGraph.getLayers().clear();
+        layeredGraph.getLayers().addAll(layering);
+        
+
+        System.out.println(layeredGraph.getLayers());
         progressMonitor.done();
 
+    }
+
+    /**
+     * @param layeredGraph
+     */
+    private void reverseLayering(LGraph layeredGraph) {
+        List<Layer> temp = Lists.newArrayList();
+        java.util.Collections.reverse(layeredGraph.getLayers());
+        for (Layer layer : layeredGraph.getLayers()) {
+            Layer newLayer = new Layer(layeredGraph);
+            for (LNode node : layer.getNodes()) {
+                newLayer.id = node.getLayer().id;
+            }
+            temp.add(newLayer);
+        }
+        System.out.println("Meine layer: ");
+        layeredGraph.getLayers().clear();
+        for (Layer layer : temp) {
+            layeredGraph.getLayers().set(layer.id, layer);
+        }
+        System.out.println(layeredGraph.getLayers());
     }
 
     /**
@@ -93,11 +134,11 @@ public class NodePromotion implements ILayoutProcessor {
         // l.id = index
         // index++
         // int revId = layers.size - l.id
-        
+
         int index = layeredGraph.getLayers().size() - 1;
         for (Layer layer : layeredGraph.getLayers()) {
-//            System.out.println("Layerindex: " + layer.getIndex());
-//            System.out.println("Layer reverse: " + index);
+            // System.out.println("Layerindex: " + layer.getIndex());
+            // System.out.println("Layer reverse: " + index);
             layer.id = index;
             index--;
         }
@@ -141,6 +182,8 @@ public class NodePromotion implements ILayoutProcessor {
             masterLayer = layering.get(nodeNewLayerPos);
         } else {
             masterLayer = new Layer(layeredGraph);
+            masterLayer.id = layeredGraph.getLayers().size();
+            layeredGraph.getLayers().add(masterLayer);
         }
 
         node.setLayer(masterLayer);
@@ -170,8 +213,7 @@ public class NodePromotion implements ILayoutProcessor {
         System.out.println("doobeedoo");
         for (Layer layer : layering) {
             for (LNode nodey : layer.getNodes()) {
-                System.out.println("Layer: " + nodey.getLayer().id + "; node: "
-                        + nodey.getName());
+                System.out.println("Layer: " + nodey.getLayer().id + "; node: " + nodey.getName());
             }
         }
 
