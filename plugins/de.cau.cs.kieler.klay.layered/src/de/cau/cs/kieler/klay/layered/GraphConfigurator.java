@@ -24,6 +24,7 @@ import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.kiml.labels.LabelManagementOptions;
 import de.cau.cs.kieler.kiml.options.Direction;
+import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LGraphUtil;
@@ -281,11 +282,19 @@ final class GraphConfigurator {
                 .addAfterPhase5(IntermediateProcessorStrategy.COMMENT_POSTPROCESSOR);
         }
         
+<<<<<<< HEAD
         // Node-Promotion appliable for improvement of graph
         if (lgraph.getProperty(Properties.NODE_PROMOTION)) {
             configuration
                 .addBeforePhase3(IntermediateProcessorStrategy.NODE_PROMOTION);
         }
+=======
+        // Additional prettification only if orthogonal edge routing is applied
+        if (lgraph.getProperty(Properties.ONE_DIMENSIONAL_COMPACTION) && lgraph.getProperty(InternalProperties.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL) {
+            configuration
+                .addAfterPhase5(IntermediateProcessorStrategy.ONE_D_COMPACTOR);
+        }  
+>>>>>>> prac/layout/master
 
         return configuration;
     }

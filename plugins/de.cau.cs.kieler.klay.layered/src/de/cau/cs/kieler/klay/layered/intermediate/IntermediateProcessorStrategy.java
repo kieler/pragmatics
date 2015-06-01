@@ -118,6 +118,8 @@ public enum IntermediateProcessorStrategy {
     
     // After Phase 5
     
+    /** TODO */
+    ONE_D_COMPACTOR,
     /** Reinserts and places comment boxes that have been removed before. */
     COMMENT_POSTPROCESSOR,
     /** Moves hypernodes horizontally for better placement. */
@@ -244,6 +246,9 @@ public enum IntermediateProcessorStrategy {
         
         case NORTH_SOUTH_PORT_PREPROCESSOR:
             return new NorthSouthPortPreprocessor();
+            
+        case ONE_D_COMPACTOR:
+            return new OneDCompactor();
         
         case INVERTED_PORT_PROCESSOR:
             return new InvertedPortProcessor();

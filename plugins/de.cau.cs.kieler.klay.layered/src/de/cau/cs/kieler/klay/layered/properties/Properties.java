@@ -33,12 +33,20 @@ import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
  * @kieler.rating proposed yellow by msp
  */
 public final class Properties {
+
     
-    /** JAVADOC! TODO!!
-     * 
+    /** 
+     * Property to enable or disable node-promotion.
      */
     public static final IProperty<Boolean> NODE_PROMOTION = new Property<Boolean>(
-            "de.cau.cs.kieler.klay.layered.nodePromotion", true);
+            "de.cau.cs.kieler.klay.layered.nodePromotion", false);
+
+    /**
+     * Property to switch one dimensional compaction post-processing on or off.
+     */
+    public static final IProperty<Boolean> ONE_DIMENSIONAL_COMPACTION = new Property<Boolean>(
+            "de.cau.cs.kieler.klay.layered.oneDimensionalCompaction", true);
+
 
     /**
      * A pre-defined seed for pseudo-random number generators.
@@ -202,8 +210,31 @@ public final class Properties {
     public static final IProperty<SelfLoopPlacement> SPLINE_SELF_LOOP_PLACEMENT =
             new Property<SelfLoopPlacement>("de.cau.cs.kieler.klay.layered.splines.selfLoopPlacement",
                     SelfLoopPlacement.NORTH_STACKED);
+    
+    /**
+     * Defines a loose upper bound on the width of the MinWidth layerer.
+     */
+    public static final IProperty<Integer> UPPER_BOUND_ON_WIDTH = new Property<Integer>(
+            "de.cau.cs.kieler.klay.layered.minWidthUpperBoundOnWidth", 4, 1);
+    /**
+     * Multiplied with Upper Bound On Width for defining an upper bound on the width of layers which
+     * haven't been determined yet, but whose maximum width had been (roughly) estimated by the MinWidth
+     * algorithm. Compensates for too high estimations.
+     */
+    public static final IProperty<Integer> UPPER_LAYER_ESTIMATION_SCALING_FACTOR = new Property<Integer>(
+            "de.cau.cs.kieler.klay.layered.minWidthUpperLayerEstimationScalingFactor", 2, 1);
 
-
+    /**
+     * Defines the Start of maxWidth variable in den StretchWidth layerer,
+     * this variable is a multiplicator for the criteria, to move to the next
+     * layer while layering the graph.
+     * Since the algorithm increases maxWidth dynamically, if it fails to perform a layering, 
+     * this is a loose bound.
+     */
+    public static final IProperty<Integer> MAX_WIDTH_START = new Property<Integer>(
+            "de.cau.cs.kieler.klay.layered.stretchWidthMaxWidthStart", 1, 0);
+    
+    
     // /////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR
 
