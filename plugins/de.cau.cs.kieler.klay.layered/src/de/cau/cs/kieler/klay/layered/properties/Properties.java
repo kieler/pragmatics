@@ -196,6 +196,19 @@ public final class Properties {
     public static final IProperty<SelfLoopPlacement> SPLINE_SELF_LOOP_PLACEMENT =
             new Property<SelfLoopPlacement>("de.cau.cs.kieler.klay.layered.splines.selfLoopPlacement",
                     SelfLoopPlacement.NORTH_STACKED);
+    
+    /**
+     * Defines a loose upper bound on the width of the MinWidth layerer.
+     */
+    public static final IProperty<Integer> UPPER_BOUND_ON_WIDTH = new Property<Integer>(
+            "de.cau.cs.kieler.klay.layered.minWidthUpperBoundOnWidth", 4, 1);
+    /**
+     * Multiplied with Upper Bound On Width for defining an upper bound on the width of layers which
+     * haven't been determined yet, but whose maximum width had been (roughly) estimated by the MinWidth
+     * algorithm. Compensates for too high estimations.
+     */
+    public static final IProperty<Integer> UPPER_LAYER_ESTIMATION_SCALING_FACTOR = new Property<Integer>(
+            "de.cau.cs.kieler.klay.layered.minWidthUpperLayerEstimationScalingFactor", 2, 1);
 
 
     // /////////////////////////////////////////////////////////////////////////////
