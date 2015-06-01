@@ -181,6 +181,9 @@
          <knownOption
                option="de.cau.cs.kieler.portAlignment.east">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.stretchWidthMaxWidthStart">
+         </knownOption>
       </layoutAlgorithm>
       <layoutOption
             advanced="true"
@@ -428,6 +431,35 @@
             id="de.cau.cs.kieler.klay.layered.oneDimensionalCompaction"
             name="One Dimensional Compaction"
             type="boolean">
+      </layoutOption>
+      <layoutOption
+            advanced="false"
+            appliesTo="parents"
+            default="4"
+            description="Defines a loose upper bound on the width of the MinWidth layerer."
+            id="de.cau.cs.kieler.klay.layered.minWidthUpperBoundOnWidth"
+            lowerBound="1"
+            name="Upper Bound On Width [MinWidth Layerer]"
+            type="int">
+      </layoutOption>
+      <layoutOption
+            advanced="false"
+            appliesTo="parents"
+            default="2"
+            description="Multiplied with Upper Bound On Width for defining an upper bound on the width of layers which haven&apos;t been determined yet, but whose maximum width had been (roughly) estimated by the MinWidth algorithm. Compensates for too high estimations."
+            id="de.cau.cs.kieler.klay.layered.minWidthUpperLayerEstimationScalingFactor"
+            lowerBound="1"
+            name="Upper Layer Estimation Scaling Factor [MinWidth Layerer]"
+            type="int">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="1"
+            id="de.cau.cs.kieler.klay.layered.stretchWidthMaxWidthStart"
+            lowerBound="0"
+            name="StretchWidth_MaxWidth_Start"
+            type="int">
       </layoutOption>
    </extension>
 </plugin>
