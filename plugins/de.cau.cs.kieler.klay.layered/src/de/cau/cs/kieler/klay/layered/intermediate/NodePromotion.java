@@ -35,11 +35,17 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
  */
 public class NodePromotion implements ILayoutProcessor {
 
-    /* Layering of the graph which is modified. */
-    private List<Layer> layering;
-
-    /** Holds all nodes of the graph that have incoming edges. */
+    /* Holds all nodes of the graph that have incoming edges. */
     private List<LNode> nodesWithInEdges;
+
+    /* Stores all nodes of the graph. */
+    private List<LNode> nodes;
+
+    /* Contains the layernumber for each node. */
+    private int[] layers;
+
+    /* Precalculated difference between count of incoming and outgoing edges for each node. */
+    private int[] degreeDiff;
 
     /**
      * {@inheritDoc}
@@ -48,59 +54,28 @@ public class NodePromotion implements ILayoutProcessor {
 
         progressMonitor.begin("Node-promotion heuristic", 1);
 
-        setIndexforID(layeredGraph);
-        System.out.println("Vorher: " + layeredGraph.getLayers());
-        java.util.Collections.reverse(layeredGraph.getLayers());
-        System.out.println("Nachher: " + layeredGraph.getLayers());
-
-        layering = Lists.newArrayList(layeredGraph.getLayers());
-        nodesWithInEdges = Lists.newArrayList();
+        precalculateAndSetInformation(layeredGraph);
 
         int promotions;
+        //
+        int[] layeringBackUp = layers.clone();
 
-        List<Layer> layeringBackUp = Lists.newArrayList(layering);
-
-        determineNodesWithInEdges(layeredGraph);
+        // determineNodesWithInEdges(layeredGraph);
         do {
             promotions = 0;
             // Start promotion for all nodes with incoming edges.
-
-            debugStuff();
             for (LNode nodeWithE : nodesWithInEdges) {
-                int dummydiff = promoteNode(nodeWithE, layeredGraph);
-                if (dummydiff < 0) {
-                    if (layering.get(0).getNodes().isEmpty()) {
-                        layering = Lists.newArrayList(layeringBackUp);
-                    } else {
-                        promotions++;
-                        layeringBackUp = Lists.newArrayList(layering);
-                        System.out.println(layeredGraph.getLayers());
-                    }
+                if (promoteNode(nodeWithE, layeredGraph) < 0) {
+                    promotions++;
+                    layeringBackUp = layers.clone();
                 } else {
-                    layering = Lists.newArrayList(layeringBackUp);
+                    layers = layeringBackUp.clone();
                 }
             }
-            System.out.println("rom " + promotions);
-            if (layering.get(0).getNodes().isEmpty()) {
-                promotions = 0;
-            }
-
         } while (promotions != 0);
 
-        System.out.println("RAUS!");
-        System.out.println(layering);
-        List<Layer> lap = Lists.newArrayList();
-        for (Layer lay : layering) {
-            if (lay.getNodes().isEmpty())
-                lap.add(lay);
-        }
-        layering.removeAll(lap);
-        java.util.Collections.reverse(layering);
-        layeredGraph.getLayers().clear();
-        layeredGraph.getLayers().addAll(layering);
-        
+        setNewLayering(layeredGraph);
 
-        System.out.println(layeredGraph.getLayers());
         progressMonitor.done();
 
     }
@@ -108,54 +83,70 @@ public class NodePromotion implements ILayoutProcessor {
     /**
      * @param layeredGraph
      */
-    private void reverseLayering(LGraph layeredGraph) {
-        List<Layer> temp = Lists.newArrayList();
-        java.util.Collections.reverse(layeredGraph.getLayers());
-        for (Layer layer : layeredGraph.getLayers()) {
-            Layer newLayer = new Layer(layeredGraph);
-            for (LNode node : layer.getNodes()) {
-                newLayer.id = node.getLayer().id;
+    private void setNewLayering(LGraph layeredGraph) {
+
+        int max = layers[0];
+        for (int in : layers) {
+            if (in > max) {
+                max = in;
             }
-            temp.add(newLayer);
         }
-        System.out.println("Meine layer: ");
+
+        List<Layer> layLay = Lists.newArrayList();
+        for (int i = 0; i <= max; i++) {
+            Layer laLaLayer = new Layer(layeredGraph);
+            laLaLayer.id = max - i;
+            layLay.add(laLaLayer);
+        }
+
+        for (LNode node : nodes) {
+            node.setLayer(layLay.get(max - layers[node.id]));
+        }
+
         layeredGraph.getLayers().clear();
-        for (Layer layer : temp) {
-            layeredGraph.getLayers().set(layer.id, layer);
-        }
-        System.out.println(layeredGraph.getLayers());
+        layeredGraph.getLayers().addAll(layLay);
+
     }
 
     /**
+     * Helper method for doing stuff.
+     * 
      * @param layeredGraph
      */
-    private void setIndexforID(final LGraph layeredGraph) {
-        // for l in layers
-        // l.id = index
-        // index++
-        // int revId = layers.size - l.id
+    private void precalculateAndSetInformation(final LGraph layeredGraph) {
 
-        int index = layeredGraph.getLayers().size() - 1;
+        // Set IDs for all layers and nodes.
+        // Layer IDs are reversed for easier handling in the heuristic.
+        int layerID = layeredGraph.getLayers().size() - 1;
+        int nodeID = 0;
         for (Layer layer : layeredGraph.getLayers()) {
-            // System.out.println("Layerindex: " + layer.getIndex());
-            // System.out.println("Layer reverse: " + index);
-            layer.id = index;
-            index--;
+            layer.id = layerID;
+            layerID--;
+            for (LNode node : layer.getNodes()) {
+                node.id = nodeID;
+                nodeID++;
+            }
         }
-    }
 
-    /**
-     * @param layeredGraph
-     */
-    private void determineNodesWithInEdges(final LGraph layeredGraph) {
+        // fill layers-array with position information of nodes
+        layers = new int[nodeID];
+        degreeDiff = new int[nodeID];
+        nodes = Lists.newArrayList();
+        nodesWithInEdges = Lists.newArrayList();
+
+        int inDegree;
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
-                int degree = countEdges(node.getIncomingEdges());
-                if (degree > 0) {
+                layers[node.id] = node.getLayer().id;
+                inDegree = countEdges(node.getIncomingEdges());
+                degreeDiff[node.id] = countEdges(node.getOutgoingEdges()) - inDegree;
+                if (inDegree > 0) {
                     nodesWithInEdges.add(node);
                 }
+                nodes.add(node);
             }
         }
+
     }
 
     /**
@@ -168,28 +159,17 @@ public class NodePromotion implements ILayoutProcessor {
 
         int dummydiff = 0;
         // Calculate layernumber for promoted node.
-        int nodeNewLayerPos = node.getLayer().id + 1;
-        Layer masterLayer;
+        int nodeNewLayerPos = layers[node.id] + 1;
 
         for (LEdge edge : node.getIncomingEdges()) {
             LNode masterNode = edge.getSource().getNode();
-            if (masterNode.getLayer().id == nodeNewLayerPos) {
+            if (layers[masterNode.id] == nodeNewLayerPos) {
                 dummydiff = dummydiff + promoteNode(masterNode, layeredGraph);
             }
         }
 
-        if (nodeNewLayerPos < layering.size()) {
-            masterLayer = layering.get(nodeNewLayerPos);
-        } else {
-            masterLayer = new Layer(layeredGraph);
-            masterLayer.id = layeredGraph.getLayers().size();
-            layeredGraph.getLayers().add(masterLayer);
-        }
-
-        node.setLayer(masterLayer);
-        int incomingCount = countEdges(node.getIncomingEdges());
-        int outgoingCount = countEdges(node.getOutgoingEdges());
-        dummydiff = dummydiff - incomingCount + outgoingCount;
+        layers[node.id] = nodeNewLayerPos;
+        dummydiff = dummydiff + degreeDiff[node.id];
 
         return dummydiff;
     }
@@ -206,17 +186,6 @@ public class NodePromotion implements ILayoutProcessor {
             count++;
         }
         return count;
-    }
-
-    // To be deleted.
-    private void debugStuff() {
-        System.out.println("doobeedoo");
-        for (Layer layer : layering) {
-            for (LNode nodey : layer.getNodes()) {
-                System.out.println("Layer: " + nodey.getLayer().id + "; node: " + nodey.getName());
-            }
-        }
-
     }
 
 }
