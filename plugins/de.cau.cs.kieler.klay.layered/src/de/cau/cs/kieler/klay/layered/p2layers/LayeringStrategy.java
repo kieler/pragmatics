@@ -41,7 +41,6 @@ public enum LayeringStrategy implements ILayoutPhaseFactory {
      */
     INTERACTIVE,
     /**
-<<<<<<< HEAD
      * Nodes are put into Layers according to the average out-degree and their rank.
      * Could be similar to LONGEST_PATH
      * Taken from " In Search for Efficient Heuristics for Minimum-Width Graph

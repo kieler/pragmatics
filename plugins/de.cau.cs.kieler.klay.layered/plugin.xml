@@ -424,6 +424,15 @@
             type="enumset">
       </layoutOption>
       <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="true"
+            description="whether additional compaction of the layout should be applied"
+            id="de.cau.cs.kieler.klay.layered.oneDimensionalCompaction"
+            name="One Dimensional Compaction"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
             advanced="false"
             appliesTo="parents"
             default="4"
