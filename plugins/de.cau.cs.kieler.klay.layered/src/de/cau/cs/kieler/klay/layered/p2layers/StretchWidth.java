@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.util.Pair;
@@ -189,11 +190,14 @@ public class StretchWidth implements ILayoutPhase {
      * @return node to be placed in the current layer
      */
     private LNode selectNode() {
-        List<LNode> accSucc = Lists.newArrayList();
+        HashSet<LNode> accSucc = Sets.newHashSet();
         for (LNode node : tempLayerlessNodes) {
             for (LEdge edge : node.getOutgoingEdges()) {
                 accSucc.add(edge.getTarget().getNode());
             }
+
+            // remove current node from accSucc to deal with self-loops
+            accSucc.remove(node);
             // if all successors of node are n z, choose this node, since the list is sorted by rank
             if (z.containsAll(accSucc)) {
                 return node;
