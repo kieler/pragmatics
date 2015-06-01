@@ -173,6 +173,10 @@ public class StretchWidth implements ILayoutPhase {
         //
         // Algorithm is Bottom-Up -> reverse Layers
         java.util.Collections.reverse(layeredGraph.getLayers());
+        
+        //reset variables
+        widthCurrent = 0;
+        widthUp = 0;
         progressMonitor.done();
     }
 

@@ -218,7 +218,7 @@ public final class Properties {
      * this is a loose bound.
      */
     public static final IProperty<Integer> MAX_WIDTH_START = new Property<Integer>(
-            "de.cau.cs.kieler.klay.layered.stretchWidthMaxWidthStart", 4, 0);
+            "de.cau.cs.kieler.klay.layered.stretchWidthMaxWidthStart", 1, 0);
     
     
     // /////////////////////////////////////////////////////////////////////////////
